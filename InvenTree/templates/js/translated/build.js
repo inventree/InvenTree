@@ -1413,6 +1413,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
                         filters: {
                             bom_item: bom_item.pk,
                             in_stock: true,
+                            available: true,
                             part_detail: true,
                             location_detail: true,
                         },

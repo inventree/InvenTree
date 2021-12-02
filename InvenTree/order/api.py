@@ -551,6 +551,39 @@ class SODetail(generics.RetrieveUpdateDestroyAPIView):
         return queryset
 
 
+class SOLineItemFilter(rest_filters.FilterSet):
+    """
+    Custom filters for SOLineItemList endpoint
+    """
+
+    class Meta:
+        model = models.SalesOrderLineItem
+        fields = [
+            'order',
+            'part',
+        ]
+
+    completed = rest_filters.BooleanFilter(label='completed', method='filter_completed')
+
+    def filter_completed(self, queryset, name, value):
+        """
+        Filter by lines which are "completed"
+
+        A line is completed when shipped >= quantity
+        """
+
+        value = str2bool(value)
+
+        q = Q(shipped__gte=F('quantity'))
+
+        if value:
+            queryset = queryset.filter(q)
+        else:
+            queryset = queryset.exclude(q)
+
+        return queryset
+
+
 class SOLineItemList(generics.ListCreateAPIView):
     """
     API endpoint for accessing a list of SalesOrderLineItem objects.
@@ -558,6 +591,7 @@ class SOLineItemList(generics.ListCreateAPIView):
 
     queryset = models.SalesOrderLineItem.objects.all()
     serializer_class = serializers.SOLineItemSerializer
+    filterset_class = SOLineItemFilter
 
     def get_serializer(self, *args, **kwargs):
 
@@ -618,6 +652,28 @@ class SOLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = models.SalesOrderLineItem.objects.all()
     serializer_class = serializers.SOLineItemSerializer
+
+
+class SalesOrderComplete(generics.CreateAPIView):
+    """
+    API endpoint for manually marking a SalesOrder as "complete".
+    """
+
+    queryset = models.SalesOrder.objects.all()
+    serializer_class = serializers.SalesOrderShipmentCompleteSerializer
+
+    def get_serializer_context(self):
+
+        ctx = super().get_serializer_context()
+
+        ctx['request'] = self.request
+
+        try:
+            ctx['order'] = models.SalesOrder.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
+        return ctx
 
 
 class SalesOrderAllocate(generics.CreateAPIView):
@@ -758,7 +814,7 @@ class SOShipmentList(generics.ListCreateAPIView):
     ]
 
 
-class SOShipmentDetail(generics.RetrieveUpdateAPIView):
+class SOShipmentDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     API detail endpooint for SalesOrderShipment model
     """
@@ -863,6 +919,7 @@ order_api_urls = [
 
         # Sales order detail view
         url(r'^(?P<pk>\d+)/', include([
+            url(r'^complete/', SalesOrderComplete.as_view(), name='api-so-complete'),
             url(r'^allocate/', SalesOrderAllocate.as_view(), name='api-so-allocate'),
             url(r'^.*$', SODetail.as_view(), name='api-so-detail'),
         ])),

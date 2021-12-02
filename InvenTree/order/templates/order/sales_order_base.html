@@ -63,8 +63,8 @@ src="{% static 'img/blank_image.png' %}"
 
 </div>
 {% if order.status == SalesOrderStatus.PENDING %}
-<button type='button' class='btn btn-success' id='ship-order' title='{% trans "Ship Order" %}'>
-    <span class='fas fa-truck'></span> {% trans "Ship Order" %}
+<button type='button' class='btn btn-success' id='complete-order' title='{% trans "Complete Sales Order" %}'>
+    <span class='fas fa-check-circle'></span> {% trans "Complete Order" %}
 </button>
 {% endif %}
 {% endif %}
@@ -123,6 +123,18 @@ src="{% static 'img/blank_image.png' %}"
         <td>{{ order.customer_reference }}{% include "clip.html"%}</td>
     </tr>
     {% endif %}
+    <tr>
+        <td><span class='fas fa-tasks'></span></td>
+        <td>{% trans "Completed Line Items" %}</td>
+        <td>
+            {{ order.completed_line_count }} / {{ order.line_count }}
+            {% if order.is_completed %}
+            <span class='badge bg-success badge-right rounded-pill'>{% trans "Complete" %}</span>
+            {% else %}
+            <span class='badge bg-danger badge-right rounded-pill'>{% trans "Incomplete" %}</span>
+            {% endif %}
+        </td>
+    </tr>
     {% if order.link %}
     <tr>
         <td><span class='fas fa-link'></span></td>
@@ -147,13 +159,6 @@ src="{% static 'img/blank_image.png' %}"
         <td><span class='fas fa-truck'></span></td>
         <td>{% trans "Shipped" %}</td>
         <td>{{ order.shipment_date }}<span class='badge badge-right rounded-pill bg-dark'>{{ order.shipped_by }}</span></td>
-    </tr>
-    {% endif %}
-    {% if order.status == PurchaseOrderStatus.COMPLETE %}
-    <tr>
-        <td><span class='fas fa-calendar-alt'></span></td>
-        <td>{% trans "Received" %}</td>
-        <td>{{ order.complete_date }}<span class='badge badge-right rounded-pill bg-dark'>{{ order.received_by }}</span></td>
     </tr>
     {% endif %}
     {% if order.responsible %}
@@ -203,10 +208,8 @@ $("#cancel-order").click(function() {
     });
 });
 
-$("#ship-order").click(function() {
-    launchModalForm("{% url 'so-ship' order.id %}", {
-        reload: true,
-    });
+$("#complete-order").click(function() {
+    completeSalesOrder({{ order.pk }});
 });
 
 {% if report_enabled %}

@@ -310,6 +310,7 @@ function getAvailableTableFilters(tableKey) {
             },
         };
     }
+
     // Filters for the PurchaseOrder table
     if (tableKey == 'purchaseorder') {
 
@@ -342,6 +343,15 @@ function getAvailableTableFilters(tableKey) {
             overdue: {
                 type: 'bool',
                 title: '{% trans "Overdue" %}',
+            },
+        };
+    }
+
+    if (tableKey == 'salesorderlineitem') {
+        return {
+            completed: {
+                type: 'bool',
+                title: '{% trans "Completed" %}',
             },
         };
     }

@@ -489,6 +489,8 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     item_detail = stock.serializers.StockItemSerializer(source='item', many=False, read_only=True)
     location_detail = stock.serializers.LocationSerializer(source='item.location', many=False, read_only=True)
 
+    shipment_date = serializers.DateField(source='shipment.shipment_date', read_only=True)
+
     def __init__(self, *args, **kwargs):
 
         order_detail = kwargs.pop('order_detail', False)
@@ -527,6 +529,7 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
             'part',
             'part_detail',
             'shipment',
+            'shipment_date',
         ]
 
 
@@ -732,6 +735,20 @@ class SOShipmentAllocationItemSerializer(serializers.Serializer):
             })
 
         return data
+
+
+class SalesOrderCompleteSerializer(serializers.Serializer):
+    """
+    DRF serializer for manually marking a sales order as complete
+    """
+
+    def save(self):
+
+        request = self.context['request']
+        order = self.context['order']
+        data = self.validated_data
+
+        
 
 
 class SOShipmentAllocationSerializer(serializers.Serializer):

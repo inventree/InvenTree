@@ -363,11 +363,30 @@ class PurchaseOrder(Order):
 
         return self.lines.filter(quantity__gt=F('received'))
 
+    def completed_line_items(self):
+        """
+        Return a list of completed line items against this order
+        """
+        return self.lines.filter(quantity__lte=F('received'))
+
+    @property
+    def line_count(self):
+        return self.lines.count()
+
+    @property
+    def completed_line_count(self):
+
+        return self.completed_line_items().count()
+
+    @property
+    def pending_line_count(self):
+        return self.pending_line_items().count()
+
     @property
     def is_complete(self):
         """ Return True if all line items have been received """
 
-        return self.pending_line_items().count() == 0
+        return self.lines.count() > 0 and self.pending_line_items().count() == 0
 
     @transaction.atomic
     def receive_line_item(self, line, location, quantity, user, status=StockStatus.OK, purchase_price=None, **kwargs):
@@ -601,8 +620,7 @@ class SalesOrder(Order):
         and mark it as "shipped" if so.
         """
 
-        return all([line.is_completed() for line in self.lines.all()])
-
+        return self.lines.count() > 0 and all([line.is_completed() for line in self.lines.all()])
 
     def can_cancel(self):
         """
@@ -634,6 +652,30 @@ class SalesOrder(Order):
                 allocation.delete()
 
         return True
+
+    @property
+    def line_count(self):
+        return self.lines.count()
+
+    def completed_line_items(self):
+        """
+        Return a queryset of the completed line items for this order
+        """
+        return self.lines.filter(shipped__gte=F('quantity'))
+
+    def pending_line_items(self):
+        """
+        Return a queryset of the pending line items for this order
+        """
+        return self.lines.filter(shipped__lt=F('quantity'))
+
+    @property
+    def completed_line_count(self):
+        return self.completed_line_items().count()
+
+    @property
+    def pending_line_count(self):
+        return self.pending_line_items().count()
 
 
 class PurchaseOrderAttachment(InvenTreeAttachment):
