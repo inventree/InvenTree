@@ -1,6 +1,6 @@
-# Checks for each PR / push
+# Checks for each PR
 
-name: QC checks
+name: PR checks
 
 on:
   push:
@@ -14,46 +14,17 @@ on:
 env:
   python_version: 3.7
   node_version: 16
+
   server_start_sleep: 60
 
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  # general database settings
   INVENTREE_DB_ENGINE: sqlite3
   INVENTREE_DB_NAME: inventree
-  INVENTREE_DB_NAME_main: inventree
   INVENTREE_MEDIA_ROOT: ./media
   INVENTREE_STATIC_ROOT: ./static
 
-  # for full databases
-  INVENTREE_DB_USER: root
-  INVENTREE_DB_PASSWORD: password
-  INVENTREE_DB_HOST: '127.0.0.1'
-  INVENTREE_DEBUG: info
-  DB_PORT_mysql: 3306
-  DB_PORT_postgres: 5432
-
 
 jobs:
-
-  init:
-    name: set parameters
-    runs-on: ubuntu-latest
-    outputs:
-      user: ${{ steps.step1.outputs.user }}
-      password: ${{ steps.step1.outputs.password }}
-      host: ${{ steps.step1.outputs.host }}
-      port_mysql: ${{ steps.step1.outputs.host }}
-      port_postgres: ${{ steps.step1.outputs.host }}
-
-    steps:
-    - id: step1
-      run: |
-        echo "::set-output name=user::${{ env.INVENTREE_DB_USER }}"
-        echo "::set-output name=password::${{ env.INVENTREE_DB_PASSWORD }}"
-        echo "::set-output name=host::${{ env.INVENTREE_DB_HOST }}"
-        echo "::set-output name=port_mysql::${{ env.DB_PORT_mysql }}"
-        echo "::set-output name=port_postgres::${{ env.DB_PORT_postgres }}"
 
   check_version:
     name: version number
@@ -68,7 +39,7 @@ jobs:
 
   pep_style:
     name: PEP style (python)
-    needs: ['init', 'check_version']
+    needs: check_version
     runs-on: ubuntu-latest
 
     steps:
@@ -191,7 +162,6 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      INVENTREE_DB_NAME: ./inventree.sqlite
       INVENTREE_DB_ENGINE: sqlite3
 
     steps:
@@ -216,7 +186,7 @@ jobs:
           invoke migrate
           invoke import-fixtures
           invoke export-records -f data.json
-          rm ${{ env.INVENTREE_DB_NAME_main }}.sqlite
+          rm ${{ env.INVENTREE_DB_NAME }}.sqlite
           invoke migrate
           invoke import-records -f data.json
           invoke import-records -f data.json
@@ -236,20 +206,21 @@ jobs:
 
     env:
       INVENTREE_DB_ENGINE: django.db.backends.postgresql
-      INVENTREE_DB_USER: ${{needs.job1.outputs.user }}
-      INVENTREE_DB_PASSWORD: ${{needs.job1.outputs.password }}
-      INVENTREE_DB_HOST: ${{needs.job1.outputs.host }}
-      INVENTREE_DB_PORT: ${{needs.job1.outputs.port_postgres }}
+      INVENTREE_DB_USER: inventree
+      INVENTREE_DB_PASSWORD: password
+      INVENTREE_DB_HOST: '127.0.0.1'
+      INVENTREE_DB_PORT: 5432
+      INVENTREE_DEBUG: info
       INVENTREE_CACHE_HOST: localhost
 
     services:
       postgres:
         image: postgres
         env:
-          POSTGRES_USER: ${{needs.job1.outputs.user }}
-          POSTGRES_PASSWORD: ${{needs.job1.outputs.password }}
+          POSTGRES_USER: inventree
+          POSTGRES_PASSWORD: password
         ports:
-          - ${{needs.job1.outputs.port_postgres }}:${{needs.job1.outputs.port_postgres }}
+          - 5432:5432
 
       redis:
         image: redis
@@ -289,10 +260,11 @@ jobs:
     env:
       # Database backend configuration
       INVENTREE_DB_ENGINE: django.db.backends.mysql
-      INVENTREE_DB_USER: ${{needs.job1.outputs.user }}
-      INVENTREE_DB_PASSWORD: ${{needs.job1.outputs.password }}
-      INVENTREE_DB_HOST: ${{needs.job1.outputs.host }}
-      INVENTREE_DB_PORT: ${{needs.job1.outputs.port_mysql }}
+      INVENTREE_DB_USER: root
+      INVENTREE_DB_PASSWORD: password
+      INVENTREE_DB_HOST: '127.0.0.1'
+      INVENTREE_DB_PORT: 3306
+      INVENTREE_DEBUG: info
 
     services:
       mysql:
@@ -300,12 +272,12 @@ jobs:
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_DATABASE: ${{ env.INVENTREE_DB_NAME }}
-          MYSQL_USER: ${{needs.job1.outputs.user }}
-          MYSQL_PASSWORD: ${{needs.job1.outputs.password }}
-          MYSQL_ROOT_PASSWORD: ${{needs.job1.outputs.password }}
+          MYSQL_USER: inventree
+          MYSQL_PASSWORD: password
+          MYSQL_ROOT_PASSWORD: password
         options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
         ports:
-          - ${{needs.job1.outputs.port_mysql }}:${{needs.job1.outputs.port_mysql }}
+          - 3306:3306
 
     steps:
       - name: Checkout Code
