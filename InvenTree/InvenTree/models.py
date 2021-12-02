@@ -72,22 +72,25 @@ class ReferenceIndexingMixin(models.Model):
 
         reference = getattr(self, 'reference', '')
 
-        # Default value if we cannot convert to an integer
-        ref_int = 0
-
-        # Look at the start of the string - can it be "integerized"?
-        result = re.match(r"^(\d+)", reference)
-
-        if result and len(result.groups()) == 1:
-            ref = result.groups()[0]
-            try:
-                ref_int = int(ref)
-            except:
-                ref_int = 0
-
-        self.reference_int = ref_int
+        self.reference_int = extract_int(reference)
 
     reference_int = models.BigIntegerField(default=0)
+
+
+def extract_int(reference):
+    # Default value if we cannot convert to an integer
+    ref_int = 0
+
+    # Look at the start of the string - can it be "integerized"?
+    result = re.match(r"^(\d+)", reference)
+
+    if result and len(result.groups()) == 1:
+        ref = result.groups()[0]
+        try:
+            ref_int = int(ref)
+        except:
+            ref_int = 0
+    return ref_int
 
 
 class InvenTreeAttachment(models.Model):

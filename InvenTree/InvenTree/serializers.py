@@ -28,6 +28,8 @@ from rest_framework.fields import empty
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import DecimalField
 
+from .models import extract_int
+
 
 class InvenTreeMoneySerializer(MoneyField):
     """
@@ -246,9 +248,9 @@ class ReferenceIndexingSerializerMixin():
     for the BigIntegerField
     """
     def validate_reference(self, value):
-        if int(value) < -models.BigIntegerField.MAX_BIGINT:
+        if extract_int(value) < -models.BigIntegerField.MAX_BIGINT:
             raise serializers.ValidationError('reference is to to small')
-        if int(value) > models.BigIntegerField.MAX_BIGINT:
+        if extract_int(value) > models.BigIntegerField.MAX_BIGINT:
             raise serializers.ValidationError('reference is to to big')
         return value
 
