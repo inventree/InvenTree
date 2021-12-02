@@ -85,7 +85,6 @@ jobs:
           python check_js_templates.py
       - name: Lint Javascript Files
         run: |
-          npm install eslint eslint-config-google
           invoke render-js-files
           npx eslint js_tmp/*.js
 
@@ -115,7 +114,6 @@ jobs:
           invoke static
       - name: Check HTML Files
         run: |
-          npm install markuplint
           npx markuplint InvenTree/build/templates/build/*.html
           npx markuplint InvenTree/company/templates/company/*.html
           npx markuplint InvenTree/order/templates/order/*.html
