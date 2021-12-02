@@ -77,8 +77,6 @@ dev/
 locale_stats.json
 
 # node.js
-package-lock.json
-package.json
 node_modules/
 
 # maintenance locker
