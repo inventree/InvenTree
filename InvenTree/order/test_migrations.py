@@ -111,7 +111,7 @@ class TestShipmentMigration(MigratorTestCase):
         # The "shipment" model does not exist yet
         with self.assertRaises(LookupError):
             self.old_state.apps.get_model('order', 'salesordershipment')
-    
+
     def test_shipment_creation(self):
         """
         Check that a SalesOrderShipment has been created

@@ -10,7 +10,7 @@ from company.models import Company
 
 from InvenTree import status_codes as status
 
-from order.models import SalesOrder, SalesOrderLineItem, SalesOrderShipment, SalesOrderAllocation
+from order.models import SalesOrder, SalesOrderLineItem, SalesOrderAllocation
 
 from part.models import Part
 

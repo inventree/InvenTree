@@ -812,7 +812,7 @@ class PurchaseOrderLineItem(OrderLineItem):
     def get_destination(self):
         """
         Show where the line item is or should be placed
-        
+
         NOTE: If a line item gets split when recieved, only an arbitrary
               stock items location will be reported as the location for the
               entire line.
@@ -993,7 +993,7 @@ class SalesOrderShipment(models.Model):
         if self.shipment_date:
             # Shipment has already been sent!
             raise ValidationError(_("Shipment has already been sent"))
- 
+
         if self.allocations.count() == 0:
             raise ValidationError(_("Shipment has no allocated stock items"))
 
@@ -1014,11 +1014,10 @@ class SalesOrderShipment(models.Model):
 
         # Iterate through each stock item assigned to this shipment
         for allocation in allocations:
-            
             # Mark the allocation as "complete"
             allocation.complete_allocation(user)
 
-        # Update the "shipment" date 
+        # Update the "shipment" date
         self.shipment_date = datetime.now()
         self.shipped_by = user
 

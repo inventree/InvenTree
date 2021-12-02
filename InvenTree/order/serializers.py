@@ -11,6 +11,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models, transaction
 from django.db.models import Case, When, Value
 from django.db.models import BooleanField, ExpressionWrapper, F
+from InvenTree.InvenTree.status_codes import SalesOrderStatus
 
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
@@ -653,7 +654,7 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
             return
 
         data = self.validated_data
-        
+
         request = self.context['request']
         user = request.user
 
@@ -748,7 +749,9 @@ class SalesOrderCompleteSerializer(serializers.Serializer):
         order = self.context['order']
         data = self.validated_data
 
-        
+        # Mark this order as complete!
+        order.status = SalesOrderStatus.SHIPPED
+        order.save()
 
 
 class SOShipmentAllocationSerializer(serializers.Serializer):
@@ -816,7 +819,6 @@ class SOShipmentAllocationSerializer(serializers.Serializer):
 
         with transaction.atomic():
             for entry in items:
-                
                 # Create a new SalesOrderAllocation
                 order.models.SalesOrderAllocation.objects.create(
                     line=entry.get('line_item'),
