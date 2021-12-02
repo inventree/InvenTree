@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 
 from .models import InvenTreeSetting
 from .models import NotificationEntry
-
+from .notifications import NotificationMethod
 
 class SettingsTest(TestCase):
     """
@@ -108,3 +108,23 @@ class NotificationEntryTest(TestCase):
         self.assertFalse(NotificationEntry.check_recent('test.notification2', 1, delta))
 
         self.assertTrue(NotificationEntry.check_recent('test.notification', 1, delta))
+
+
+class NotificationTests(TestCase):
+
+    def test_NotificationMethod(self):
+        """ensure the implementation requirements are tested"""
+
+        class FalseNotificationMethod(NotificationMethod):
+            pass
+
+        class AnotherFalseNotificationMethod(NotificationMethod):
+            def send(self):
+                pass
+
+        with self.assertRaises(NotImplementedError):
+            FalseNotificationMethod('', '', '')
+
+        with self.assertRaises(NotImplementedError):
+            AnotherFalseNotificationMethod('', '', '')
+
