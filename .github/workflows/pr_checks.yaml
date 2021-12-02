@@ -27,7 +27,9 @@ env:
 
   # for full databases
   INVENTREE_DB_USER: inventree
+  POSTGRES_USER: inventree
   INVENTREE_DB_PASSWORD: password
+  POSTGRES_PASSWORD: password
   INVENTREE_DB_HOST: '127.0.0.1'
   INVENTREE_DEBUG: info
 
@@ -222,9 +224,6 @@ jobs:
     services:
       postgres:
         image: postgres
-        env:
-          POSTGRES_USER: ${{ env.INVENTREE_DB_USER }}
-          POSTGRES_PASSWORD: ${{ env.INVENTREE_DB_PASSWORD }}
         ports:
           - ${{ env.INVENTREE_DB_PORT }}:${{ env.INVENTREE_DB_PORT }}
 
