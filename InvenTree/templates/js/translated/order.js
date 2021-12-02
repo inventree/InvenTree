@@ -1317,8 +1317,22 @@ function loadSalesOrderShipmentTable(table, options={}) {
                 switchable: false,
             },
             {
+                field: 'allocations',
+                title: '{% trans "Items" %}',
+                switchable: false,
+                sortable: true,
+                formatter: function(value, row) {
+                    if (row && row.allocations) {
+                        return row.allocations.length;
+                    } else {
+                        return '-';
+                    }
+                }
+            },
+            {
                 field: 'shipment_date',
                 title: '{% trans "Shipment Date" %}',
+                sortable: true,
                 formatter: function(value, row) {
                     if (value) {
                         return value;
