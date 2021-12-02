@@ -132,14 +132,27 @@ def deliver_notification(cls: NotificationMethod, obj, entry_name: str, receiver
     method = cls(obj, entry_name, receivers)
 
     if method.recipiends and method.recipiends.count() > 0:
+        # Log start
         logger.info(f"Notify users via '{method.method_name}' for notification '{entry_name}' for '{str(obj)}'")
 
+        success = True
+        success_count = 0
+
         if hasattr(method, 'send_bulk'):
-            method.send_bulk(notification_context)
+            success = method.send_bulk(notification_context)
+            success_count = method.recipiends.count()
 
         elif hasattr(method, 'send'):
             for rec in method.recipiends:
-                method.send(rec, notification_context)
+                if method.send(rec, notification_context):
+                    success_count += 1
+                else:
+                    success = False
 
         else:
             raise NotImplementedError('No delivery method found')
+
+        # Log results
+        logger.info(f"Notified {success_count} users via '{method.method_name}' for notification '{entry_name}' for '{str(obj)}' successfully")
+        if not success:
+            logger.info("There were some problems")
