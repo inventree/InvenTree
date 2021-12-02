@@ -32,7 +32,7 @@ class NotificationMethod:
         self.recipiends = self.get_recipiends()
 
     def get_recipiends(self):
-        return False
+        raise NotImplementedError('The `get_recipiends` method must be implemented!')
 
     def cleanup(self):
         return True
