@@ -122,6 +122,8 @@ def trigger_notifaction(obj, entry_name=None, obj_ref='pk', receivers=None, rece
             logger.info(f"Triggering method '{method.method_name}'")
             try:
                 deliver_notification(method, obj, entry_name, receivers, notification_context)
+            except NotImplementedError as error:
+                raise error
             except Exception as error:
                 logger.error(error)
 
