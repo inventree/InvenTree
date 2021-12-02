@@ -83,13 +83,13 @@ def trigger_notifaction(obj, entry_name=None, obj_ref='pk', receivers=None, rece
     Send out an notification
     """
 
-    # set defaults
+    # Set defaults
     if not entry_name:
         entry_name = obj._meta.modelname
 
-    # resolve objekt reference
+    # Resolve objekt reference
     obj_ref_value = getattr(obj, obj_ref)
-    # lets try with some dafaults
+    # Try with some defaults
     if not obj_ref_value:
         obj_ref_value = getattr(obj, 'pk')
     if not obj_ref_value:
@@ -112,7 +112,7 @@ def trigger_notifaction(obj, entry_name=None, obj_ref='pk', receivers=None, rece
     if receivers:
         logger.info(f"Sending notification '{entry_name}' for '{str(obj)}'")
 
-        # collect possible methods
+        # Collect possible methods
         delivery_methods = inheritors(NotificationMethod)
 
         for method in [a for a in delivery_methods if a not in [SingleNotificationMethod, BulkNotificationMethod]]:
@@ -129,6 +129,7 @@ def trigger_notifaction(obj, entry_name=None, obj_ref='pk', receivers=None, rece
 
 
 def deliver_notification(cls: NotificationMethod, obj, entry_name: str, receivers, notification_context: dict):
+    # Init delivery method
     method = cls(obj, entry_name, receivers)
 
     if method.recipiends and method.recipiends.count() > 0:
@@ -138,6 +139,7 @@ def deliver_notification(cls: NotificationMethod, obj, entry_name: str, receiver
         success = True
         success_count = 0
 
+        # Select delivery method and execute it
         if hasattr(method, 'send_bulk'):
             success = method.send_bulk(notification_context)
             success_count = method.recipiends.count()
