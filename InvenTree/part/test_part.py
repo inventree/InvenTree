@@ -467,8 +467,8 @@ class PartSubscriptionTests(TestCase):
         self.assertTrue(self.part.is_starred_by(self.user))
 
 
-class PartNotificationTest(TestCase):
-    """ Integration test for part notifications """
+class BaseNotificationIntegrationTest(TestCase):
+    """ Integration test for notifications """
 
     fixtures = [
         'location',
@@ -490,21 +490,29 @@ class PartNotificationTest(TestCase):
         # Add Mailadress
         EmailAddress.objects.create(user=self.user, email='test@testing.com')
 
-    def test_notification(self):
+        # Define part that will be tested
+        self.part = Part.objects.get(name='R_2K2_0805')
+
+    def _notification_run(self):
         # There  should be no notification runs
         self.assertEqual(NotificationEntry.objects.all().count(), 0)
 
         # Test that notifications run through without errors
-        self.r1 = Part.objects.get(name='R_2K2_0805')
-        self.r1.minimum_stock = self.r1.get_stock_count() + 1  # make sure minimum is one higher than current count
-        self.r1.save()
+        self.part.minimum_stock = self.part.get_stock_count() + 1  # make sure minimum is one higher than current count
+        self.part.save()
 
         # There should be no notification as no-one is subscribed
         self.assertEqual(NotificationEntry.objects.all().count(), 0)
 
         # Subscribe and run again
-        self.r1.set_starred(self.user, True)
-        self.r1.save()
+        self.part.set_starred(self.user, True)
+        self.part.save()
 
         # There should be 1 notification
         self.assertEqual(NotificationEntry.objects.all().count(), 1)
+
+class PartNotificationTest(BaseNotificationIntegrationTest):
+    """ Integration test for part notifications """
+
+    def test_notification(self):
+        self._notification_run()
