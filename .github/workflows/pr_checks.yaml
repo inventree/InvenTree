@@ -13,6 +13,13 @@ on:
 
 env:
   python_version: 3.7
+  node_version: 16
+
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  INVENTREE_DB_ENGINE: sqlite3
+  INVENTREE_DB_NAME: inventree
+  INVENTREE_MEDIA_ROOT: ./media
+  INVENTREE_STATIC_ROOT: ./static
 
 
 jobs:
@@ -47,3 +54,37 @@ jobs:
       - name: flake8
         run: |
           flake8 InvenTree
+
+  javascript:
+    name: javascript template files
+    needs: pep_style
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Install node.js ${{ env.node_version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.node_version }}
+      - run: npm install
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.python_version }}
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install gettext
+          pip3 install invoke
+          invoke install
+          invoke static
+      - name: Check Templated Files
+        run: |
+          cd ci
+          python check_js_templates.py
+      - name: Lint Javascript Files
+        run: |
+          npm install eslint eslint-config-google
+          invoke render-js-files
+          npx eslint js_tmp/*.js
