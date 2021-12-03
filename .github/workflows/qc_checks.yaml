@@ -35,7 +35,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Check version number
         run: |
-          python3 ci/check_version_number.py --branch ${{ github.base_ref }}
+          python3 ci/check_version_number.py --branch ${{ github.base_ref || github.ref }}
 
   pep_style:
     name: PEP style (python)
