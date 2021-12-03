@@ -1400,7 +1400,7 @@ function loadSalesOrderShipmentTable(table, options={}) {
             },
             {
                 field: 'reference',
-                title: '{% trans "Shipment" %}',
+                title: '{% trans "Shipment Reference" %}',
                 switchable: false,
             },
             {

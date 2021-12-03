@@ -18,7 +18,7 @@
             <h4>{% trans "Sales Order Items" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                {% if roles.sales_order.change %}
+                {% if roles.sales_order.change and order.is_pending %}
                 <button type='button' class='btn btn-success' id='new-so-line'>
                     <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
                 </button>
@@ -52,9 +52,11 @@
 
                 </ul>
                 {% endif %}
+                {% if roles.sales_order.change %}
                 <button type='button' class='btn btn-success' id='new-shipment'>
                     <span class='fas fa-plus-circle'></span> {% trans "New Shipment" %}
                 </button>
+                {% endif %}
             </div>
         </div>
     </div>
