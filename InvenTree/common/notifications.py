@@ -1,5 +1,6 @@
 import logging
 from datetime import timedelta
+from django.conf import settings
 
 from django.template.loader import render_to_string
 
@@ -117,6 +118,9 @@ def trigger_notifaction(obj, entry_name=None, obj_ref='pk', receivers=None, rece
 
         # Collect possible methods
         delivery_methods = inheritors(NotificationMethod)
+        if settings.TESTING:
+            print('TESTING')
+            print(delivery_methods)
 
         for method in [a for a in delivery_methods if a not in [SingleNotificationMethod, BulkNotificationMethod]]:
             logger.info(f"Triggering method '{method.method_name}'")
