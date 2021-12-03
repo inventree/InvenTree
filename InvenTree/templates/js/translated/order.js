@@ -22,6 +22,7 @@
     allocateStockToSalesOrder,
     completeShipment,
     createSalesOrder,
+    createSalesOrderShipment,
     editPurchaseOrderLineItem,
     exportOrder,
     loadPurchaseOrderLineItemTable,
@@ -1529,12 +1530,8 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
 
     var table_entries = '';
 
-    for (var idx = 0; idx < line_items.length; idx++ ){
+    for (var idx = 0; idx < line_items.length; idx++ ) {
         var line_item = line_items[idx];
-
-        var todo = "auto-calculate remaining quantity";
-
-        var todo = "see how it is done for the build order allocation system!";
 
         var remaining = 0;
 
@@ -1879,8 +1876,6 @@ function showAllocationSubTable(index, row, element, options) {
 
     var table = $(`#allocation-table-${row.pk}`);
 
-    var shipped = options.shipped;
-
     function setupCallbacks() {
         // Add callbacks for 'edit' buttons
         table.find('.button-allocation-edit').click(function() {
@@ -2211,7 +2206,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 switchable: false,
                 sortable: true,
                 formatter: function(value, row, index, field) {
-                        return makeProgressBar(row.allocated, row.quantity, {
+                    return makeProgressBar(row.allocated, row.quantity, {
                         id: `order-line-progress-${row.pk}`,
                     });
                 },
