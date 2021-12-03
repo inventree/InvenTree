@@ -767,7 +767,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                         }
                     }
                 );
-            })
+            });
         },
         columns: [
             {
