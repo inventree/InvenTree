@@ -29,13 +29,14 @@ jobs:
   check_version:
     name: version number
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' }}
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
       - name: Check version number
         run: |
-          python3 ci/check_version_number.py --branch ${{ github.base_ref || github.ref }}
+          python3 ci/check_version_number.py --branch ${{ github.base_ref }}
 
   pep_style:
     name: PEP style (python)
