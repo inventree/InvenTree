@@ -511,6 +511,7 @@ class BaseNotificationIntegrationTest(TestCase):
         # There should be 1 notification
         self.assertEqual(NotificationEntry.objects.all().count(), 1)
 
+
 class PartNotificationTest(BaseNotificationIntegrationTest):
     """ Integration test for part notifications """
 
