@@ -153,12 +153,7 @@ function partFields(options={}) {
         delete fields['default_expiry'];
     }
 
-    // Additional fields when "creating" a new part
-    if (options.create) {
-
-        // No supplier parts available yet
-        delete fields['default_supplier'];
-
+    if (options.create || options.duplicate) {
         if (global_settings.PART_CREATE_INITIAL) {
 
             fields.initial_stock = {
@@ -187,6 +182,13 @@ function partFields(options={}) {
                 group: 'create',
             };
         }
+    }
+
+    // Additional fields when "creating" a new part
+    if (options.create) {
+
+        // No supplier parts available yet
+        delete fields['default_supplier'];
 
         fields.copy_category_parameters = {
             type: 'boolean',
@@ -348,6 +350,10 @@ function duplicatePart(pk, options={}) {
             var fields = partFields({
                 duplicate: pk,
             });
+
+            if (fields.initial_stock_location) {
+                fields.initial_stock_location.value = data.default_location;
+            }
 
             // Remove "default_supplier" field
             delete fields['default_supplier'];
