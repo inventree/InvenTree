@@ -17,7 +17,7 @@ logger = logging.getLogger('inventree')
 # region notification classes
 # region base classes
 class NotificationMethod:
-    method_name = ''
+    METHOD_NAME = ''
 
     def __init__(self, obj, entry_name, receivers) -> None:
         # Check if a sending fnc is defined
@@ -55,7 +55,7 @@ class BulkNotificationMethod(NotificationMethod):
 
 # region implementations
 class EmailNotification(BulkNotificationMethod):
-    method_name = 'mail'
+    METHOD_NAME = 'mail'
 
     def get_recipients(self):
         return EmailAddress.objects.filter(
@@ -124,7 +124,7 @@ def trigger_notifaction(obj, entry_name=None, obj_ref='pk', receivers=None, rece
             print(delivery_methods)
 
         for method in [a for a in delivery_methods if a not in [SingleNotificationMethod, BulkNotificationMethod]]:
-            logger.info(f"Triggering method '{method.method_name}'")
+            logger.info(f"Triggering method '{method.METHOD_NAME}'")
             try:
                 deliver_notification(method, obj, entry_name, receivers, notification_context)
             except NotImplementedError as error:
@@ -146,7 +146,7 @@ def deliver_notification(cls: NotificationMethod, obj, entry_name: str, receiver
 
     if method.recipients and method.recipients.count() > 0:
         # Log start
-        logger.info(f"Notify users via '{method.method_name}' for notification '{entry_name}' for '{str(obj)}'")
+        logger.info(f"Notify users via '{method.METHOD_NAME}' for notification '{entry_name}' for '{str(obj)}'")
 
         # Run setup for delivery method
         method.setup()
@@ -173,6 +173,6 @@ def deliver_notification(cls: NotificationMethod, obj, entry_name: str, receiver
         method.cleanup()
 
         # Log results
-        logger.info(f"Notified {success_count} users via '{method.method_name}' for notification '{entry_name}' for '{str(obj)}' successfully")
+        logger.info(f"Notified {success_count} users via '{method.METHOD_NAME}' for notification '{entry_name}' for '{str(obj)}' successfully")
         if not success:
             logger.info("There were some problems")
