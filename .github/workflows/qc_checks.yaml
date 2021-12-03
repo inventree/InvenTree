@@ -37,6 +37,8 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         run: |
           python3 ci/check_version_number.py --branch ${{ github.base_ref }}
+      - name: Finish
+        run: echo 'done'
 
   pep_style:
     name: PEP style (python)
