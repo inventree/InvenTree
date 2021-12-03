@@ -25,6 +25,7 @@ class NotificationTests(BaseNotificationIntegrationTest):
 
     def test_SingleNotificationMethod(self):
         """ensure the implementation requirements are tested"""
+        print('TESTING SingleNotificationMethod')
 
         class WrongImplementation(SingleNotificationMethod):
             def setup(self):
@@ -36,6 +37,7 @@ class NotificationTests(BaseNotificationIntegrationTest):
 
     def test_BulkNotificationMethod(self):
         """ensure the implementation requirements are tested"""
+        print('TESTING BulkNotificationMethod')
 
         class WrongImplementation(BulkNotificationMethod):
             def setup(self):

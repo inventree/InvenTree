@@ -118,8 +118,9 @@ def trigger_notifaction(obj, entry_name=None, obj_ref='pk', receivers=None, rece
 
         # Collect possible methods
         delivery_methods = inheritors(NotificationMethod)
+
+        # TODO remove -> this is for debugging the delivery method runfs
         if settings.TESTING:
-            print('TESTING')
             print(delivery_methods)
 
         for method in [a for a in delivery_methods if a not in [SingleNotificationMethod, BulkNotificationMethod]]:
@@ -127,8 +128,10 @@ def trigger_notifaction(obj, entry_name=None, obj_ref='pk', receivers=None, rece
             try:
                 deliver_notification(method, obj, entry_name, receivers, notification_context)
             except NotImplementedError as error:
+                print('NotImplementedError')
                 raise error
             except Exception as error:
+                print(error)
                 logger.error(error)
 
         # Set delivery flag
