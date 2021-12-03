@@ -1650,7 +1650,6 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
                             var available = Math.max((data.quantity || 0) - (data.allocated || 0), 0);
 
                             // Remaining quantity to be allocated?
-                            var todo = "fix this calculation!";
                             var remaining = opts.quantity || available;
 
                             // Maximum amount that we need
@@ -2252,8 +2251,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
         }
     });
 
-    columns.push(
-    {
+    columns.push({
         field: 'notes',
         title: '{% trans "Notes" %}',
     });
