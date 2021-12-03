@@ -27,7 +27,9 @@ class NotificationTests(BaseNotificationIntegrationTest):
         """ensure the implementation requirements are tested"""
 
         class WrongImplementation(SingleNotificationMethod):
-            pass
+            def setup(self):
+                print('running setup on WrongImplementation')
+                return super().setup()
 
         with self.assertRaises(NotImplementedError):
             self._notification_run()
@@ -36,7 +38,9 @@ class NotificationTests(BaseNotificationIntegrationTest):
         """ensure the implementation requirements are tested"""
 
         class WrongImplementation(BulkNotificationMethod):
-            pass
+            def setup(self):
+                print('running setup on WrongImplementation')
+                return super().setup()
 
         with self.assertRaises(NotImplementedError):
             self._notification_run()
