@@ -35,6 +35,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
       - name: Check version number
+        if: ${{ github.event_name == 'pull_request' }}
         run: |
           python3 ci/check_version_number.py --branch ${{ github.base_ref }}
 
