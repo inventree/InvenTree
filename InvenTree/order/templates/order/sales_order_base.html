@@ -167,8 +167,13 @@ src="{% static 'img/blank_image.png' %}"
     {% if order.shipment_date %}
     <tr>
         <td><span class='fas fa-truck'></span></td>
-        <td>{% trans "Shipped" %}</td>
-        <td>{{ order.shipment_date }}<span class='badge badge-right rounded-pill bg-dark'>{{ order.shipped_by }}</span></td>
+        <td>{% trans "Completed" %}</td>
+        <td>
+            {{ order.shipment_date }}
+            {% if order.shipped_by %}
+            <span class='badge badge-right rounded-pill bg-dark'>{{ order.shipped_by }}</span>
+            {% endif %}
+        </td>
     </tr>
     {% endif %}
     {% if order.responsible %}
