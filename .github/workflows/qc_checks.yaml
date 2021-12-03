@@ -42,6 +42,7 @@ jobs:
     name: PEP style (python)
     needs: check_version
     runs-on: ubuntu-latest
+    if: always()
 
     steps:
       - name: Checkout code
