@@ -293,12 +293,35 @@ class POLineItemList(generics.ListCreateAPIView):
 
         try:
             kwargs['part_detail'] = str2bool(self.request.query_params.get('part_detail', False))
+            kwargs['order_detail'] = str2bool(self.request.query_params.get('order_detail', False))
         except AttributeError:
             pass
 
         kwargs['context'] = self.get_serializer_context()
 
         return self.serializer_class(*args, **kwargs)
+
+    def filter_queryset(self, queryset):
+        """
+        Additional filtering options
+        """
+
+        params = self.request.query_params
+
+        queryset = super().filter_queryset(queryset)
+
+        base_part = params.get('base_part', None)
+
+        if base_part:
+            try:
+                base_part = Part.objects.get(pk=base_part)
+
+                queryset = queryset.filter(part__part=base_part)
+
+            except (ValueError, Part.DoesNotExist):
+                pass
+
+        return queryset
 
     filter_backends = [
         rest_filters.DjangoFilterBackend,

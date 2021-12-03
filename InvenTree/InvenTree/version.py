@@ -12,13 +12,17 @@ import common.models
 INVENTREE_SW_VERSION = "0.6.0 dev"
 
 # InvenTree API version
-INVENTREE_API_VERSION = 19
+INVENTREE_API_VERSION = 21
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
-v19 -> 2021-11-16
+v21 -> 2021-12-04
     - Adds support for multiple "Shipments" against a SalesOrder
     - Refactors process for stock allocation against a SalesOrder
+
+v20 -> 2021-12-03
+    - Adds ability to filter POLineItem endpoint by "base_part"
+    - Adds optional "order_detail" to POLineItem list endpoint
 
 v19 -> 2021-12-02
     - Adds the ability to filter the StockItem API by "part_tree"
