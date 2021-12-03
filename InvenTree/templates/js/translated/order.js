@@ -988,7 +988,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 field: 'buttons',
                 title: '',
                 formatter: function(value, row, index, field) {
-                    var html = `<div class='btn-group'>`;
+                    var html = `<div class='btn-group' role='group'>`;
     
                     var pk = row.pk;
     

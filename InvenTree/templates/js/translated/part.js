@@ -733,7 +733,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
         filters[key] = options.params[key];
     }
 
-    setupFilterList('partpurchaseorders', $(table));
+    setupFilterList('purchaseorderlineitem', $(table), '#filter-list-partpurchaseorders');
 
     $(table).inventreeTable({
         url: '{% url "api-po-line-list" %}',
@@ -741,8 +741,33 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
         name: 'partpurchaseorders',
         original: options.params,
         showColumns: true,
+        uniqueId: 'pk',
         formatNoMatches: function() {
             return '{% trans "No purchase orders found" %}';
+        },
+        onPostBody: function() {
+            $(table).find('.button-line-receive').click(function() {
+                var pk = $(this).attr('pk');
+
+                var line_item = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+                if (!line_item) {
+                    console.log('WARNING: getRowByUniqueId returned null');
+                    return;
+                }
+
+                receivePurchaseOrderItems(
+                    line_item.order,
+                    [
+                        line_item,
+                    ],
+                    {
+                        success: function() {
+                            $(table).bootstrapTable('refresh');
+                        }
+                    }
+                );
+            })
         },
         columns: [
             {
@@ -758,7 +783,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
 
                     var ref = global_settings.PURCHASEORDER_REFERENCE_PREFIX + order.reference;
 
-                    var html = renderLink(ref, `/order/po/${order.pk}/`);
+                    var html = renderLink(ref, `/order/purchase-order/${order.pk}/`);
 
                     html += purchaseOrderStatusDisplay(
                         order.status,
@@ -825,6 +850,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
             {
                 field: 'purchase_price',
                 title: '{% trans "Price" %}',
+                switchable: true,
                 formatter: function(value, row) {
                     var formatter = new Intl.NumberFormat(
                         'en-US',
@@ -836,8 +862,27 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
 
                     return formatter.format(row.purchase_price);
                 }
+            },
+            {
+                field: 'actions',
+                title: '',
+                formatter: function(value, row) {
+                    
+                    if (row.received >= row.quantity) {
+                        // Already recevied
+                        return `<span class='badge bg-success rounded-pill'>{% trans "Received" %}</span>`;
+                    } else {
+                        var html = `<div class='btn-group' role='group'>`;
+                        var pk = row.pk;
+
+                        html += makeIconButton('fa-sign-in-alt', 'button-line-receive', pk, '{% trans "Receive line item" %}');
+
+                        html += `</div>`;
+                        return html;
+                    }
+                }
             }
-        ]
+        ],
     });
 }
 
