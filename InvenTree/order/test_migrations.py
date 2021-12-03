@@ -8,13 +8,13 @@ from InvenTree import helpers
 from InvenTree.status_codes import SalesOrderStatus
 
 
-class TestForwardMigrations(MigratorTestCase):
+class TestRefIntMigrations(MigratorTestCase):
     """
     Test entire schema migration
     """
 
-    migrate_from = ('order', helpers.getOldestMigrationFile('order'))
-    migrate_to = ('order', helpers.getNewestMigrationFile('order'))
+    migrate_from = ('order', '0040_salesorder_target_date')
+    migrate_to = ('order', '0061_merge_0054_auto_20211201_2139_0060_auto_20211129_1339')
 
     def prepare(self):
         """
