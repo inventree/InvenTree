@@ -761,6 +761,9 @@ function removePurchaseOrderLineItem(e) {
 }
 
 
+/*
+ * Load a table displaying list of purchase orders
+ */
 function loadPurchaseOrderTable(table, options) {
     /* Create a purchase-order table */
 
@@ -808,13 +811,6 @@ function loadPurchaseOrderTable(table, options) {
 
                     var html = renderLink(value, `/order/purchase-order/${row.pk}/`);
 
-                    html += purchaseOrderStatusDisplay(
-                        row.status,
-                        {
-                            classes: 'float-right',
-                        }
-                    );
-
                     if (row.overdue) {
                         html += makeIconBadge('fa-calendar-times icon-red', '{% trans "Order is overdue" %}');
                     }
@@ -838,6 +834,15 @@ function loadPurchaseOrderTable(table, options) {
             {
                 field: 'description',
                 title: '{% trans "Description" %}',
+            },
+            {
+                field: 'status',
+                title: '{% trans "Status" %}',
+                switchable: true,
+                sortable: true,
+                formatter: function(value, row) {
+                    return purchaseOrderStatusDisplay(row.status);
+                }
             },
             {
                 field: 'creation_date',
@@ -1172,6 +1177,9 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
 }
 
 
+/*
+ * Load table displaying list of sales orders
+ */
 function loadSalesOrderTable(table, options) {
 
     options.params = options.params || {};
@@ -1254,7 +1262,7 @@ function loadSalesOrderTable(table, options) {
                 field: 'status',
                 title: '{% trans "Status" %}',
                 formatter: function(value, row) {
-                    return salesOrderStatusDisplay(row.status, row.status_text);
+                    return salesOrderStatusDisplay(row.status);
                 }
             },
             {
