@@ -143,11 +143,16 @@ class POLineItemSerializer(InvenTreeModelSerializer):
 
         part_detail = kwargs.pop('part_detail', False)
 
+        order_detail = kwargs.pop('order_detail', False)
+
         super().__init__(*args, **kwargs)
 
         if part_detail is not True:
             self.fields.pop('part_detail')
             self.fields.pop('supplier_part_detail')
+
+        if order_detail is not True:
+            self.fields.pop('order_detail')
 
     quantity = serializers.FloatField(default=1)
     received = serializers.FloatField(default=0)
@@ -170,6 +175,8 @@ class POLineItemSerializer(InvenTreeModelSerializer):
         help_text=_('Purchase price currency'),
     )
 
+    order_detail = POSerializer(source='order', read_only=True, many=False)
+
     class Meta:
         model = PurchaseOrderLineItem
 
@@ -179,6 +186,7 @@ class POLineItemSerializer(InvenTreeModelSerializer):
             'reference',
             'notes',
             'order',
+            'order_detail',
             'part',
             'part_detail',
             'supplier_part_detail',
