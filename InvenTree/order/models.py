@@ -617,10 +617,33 @@ class SalesOrder(Order):
     def is_completed(self):
         """
         Check if this order is "shipped" (all line items delivered),
-        and mark it as "shipped" if so.
         """
 
         return self.lines.count() > 0 and all([line.is_completed() for line in self.lines.all()])
+
+    def complete_order(self, user):
+        """
+        Mark this order as "complete"
+        """
+
+        if self.lines.count() == 0:
+            # Order without line items cannot be completed
+            raise ValidationError(_('Order cannot be completed as no parts have been assigned'))
+
+        if self.status != SalesOrderStatus.PENDING:
+            # Only a PENDING order can be marked as SHIPPED
+            raise ValidationError(_('Only a pending order can be marked as complete'))
+
+        # Check if there are any incomplete shipments
+        for shipment in self.shipments.all():
+            if not shipment.shipment_date:
+                raise ValidationError(_('Order cannot be completed as there are pending shipments'))
+
+        self.status = SalesOrderStatus.SHIPPED
+        self.shipped_by = user
+        self.shipment_date = datetime.now()
+
+        self.save()
 
     def can_cancel(self):
         """
@@ -987,6 +1010,9 @@ class SalesOrderShipment(models.Model):
         verbose_name=_('Tracking Number'),
         help_text=_('Shipment tracking information'),
     )
+
+    def is_complete(self):
+        return self.shipment_date is not None
 
     def check_can_complete(self):
 

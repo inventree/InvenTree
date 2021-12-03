@@ -26,7 +26,7 @@ from InvenTree.serializers import InvenTreeModelSerializer
 from InvenTree.serializers import InvenTreeDecimalField
 from InvenTree.serializers import InvenTreeMoneySerializer
 from InvenTree.serializers import ReferenceIndexingSerializerMixin
-from InvenTree.status_codes import StockStatus, SalesOrderStatus
+from InvenTree.status_codes import StockStatus
 
 import order.models
 
@@ -745,11 +745,11 @@ class SalesOrderCompleteSerializer(serializers.Serializer):
 
         request = self.context['request']
         order = self.context['order']
-        data = self.validated_data
+        # data = self.validated_data
 
-        # Mark this order as complete!
-        order.status = SalesOrderStatus.SHIPPED
-        order.save()
+        user = getattr(request, 'user', None)
+
+        order.complete_order(user)
 
 
 class SOShipmentAllocationSerializer(serializers.Serializer):

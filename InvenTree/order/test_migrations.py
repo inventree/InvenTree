@@ -4,7 +4,6 @@ Unit tests for the 'order' model data migrations
 
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
 
-from InvenTree import helpers
 from InvenTree.status_codes import SalesOrderStatus
 
 

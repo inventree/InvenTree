@@ -792,14 +792,12 @@ class OrderParts(AjaxView):
                 order.add_line_item(supplier_part, quantity, purchase_price=purchase_price)
 
 
-
-#### TODO: This class MUST be converted to the API forms!
-#### TODO: We MUST select the shipment
 class SalesOrderAssignSerials(AjaxView, FormMixin):
     """
     View for assigning stock items to a sales order,
     by serial number lookup.
     """
+    # TODO: Remove this class and replace with an API endpoint
 
     model = SalesOrderAllocation
     role_required = 'sales_order.change'
