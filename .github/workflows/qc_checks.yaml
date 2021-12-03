@@ -193,7 +193,7 @@ jobs:
           invoke migrate
           invoke import-fixtures
           invoke export-records -f data.json
-          rm ${{ env.INVENTREE_DB_NAME }}.sqlite
+          rm inventree.sqlite
           invoke migrate
           invoke import-records -f data.json
           invoke import-records -f data.json
