@@ -107,7 +107,7 @@ class PurchaseOrderStatus(StatusCode):
     }
 
     colors = {
-        PENDING: 'primary',
+        PENDING: 'secondary',
         PLACED: 'primary',
         COMPLETE: 'success',
         CANCELLED: 'danger',
@@ -147,7 +147,7 @@ class SalesOrderStatus(StatusCode):
     }
 
     colors = {
-        PENDING: 'primary',
+        PENDING: 'secondary',
         SHIPPED: 'success',
         CANCELLED: 'danger',
         LOST: 'warning',
