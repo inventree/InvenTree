@@ -69,6 +69,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ env.node_version }}
+          cache: 'npm'
       - run: npm install
       - name: Setup Python
         uses: actions/setup-python@v2
@@ -102,6 +103,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ env.node_version }}
+          cache: 'npm'
       - run: npm install
       - name: Setup Python
         uses: actions/setup-python@v2
