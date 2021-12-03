@@ -49,6 +49,7 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.python_version }}
+          cache: 'pip'
       - name: Install deps
         run: |
           pip install flake8==3.8.3
@@ -75,6 +76,7 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.python_version }}
+          cache: 'pip'
       - name: Install Dependencies
         run: |
           sudo apt-get update
@@ -109,6 +111,7 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.python_version }}
+          cache: 'pip'
       - name: Install Dependencies
         run: |
           sudo apt-get update
@@ -174,6 +177,7 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.python_version }}
+          cache: 'pip'
       - name: Install Dependencies
         run: |
           sudo apt-get update
@@ -235,6 +239,7 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.python_version }}
+          cache: 'pip'
       - name: Install Dependencies
         run: |
           sudo apt-get install libpq-dev
@@ -287,6 +292,7 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.python_version }}
+          cache: 'pip'
       - name: Install Dependencies
         run: |
           sudo apt-get install mysql-server libmysqlclient-dev
