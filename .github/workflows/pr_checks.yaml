@@ -162,6 +162,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
+      INVENTREE_DB_NAME: ./inventree.sqlite
       INVENTREE_DB_ENGINE: sqlite3
 
     steps:
