@@ -135,6 +135,16 @@ src="{% static 'img/blank_image.png' %}"
             {% endif %}
         </td>
     </tr>
+    <tr>
+        <td><span class='fas fa-truck'></span></td>
+        <td>{% trans "Completed Shipments" %}</td>
+        <td>
+            {{ order.completed_shipment_count }} / {{ order.shipment_count }}
+            {% if order.pending_shipment_count > 0 %}
+            <span class='badge bg-danger badge-right rounded-pill'>{% trans "Incomplete" %}</span>
+            {% endif %}
+        </td>
+    </tr>
     {% if order.link %}
     <tr>
         <td><span class='fas fa-link'></span></td>

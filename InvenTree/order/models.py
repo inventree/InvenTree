@@ -700,6 +700,30 @@ class SalesOrder(Order):
     def pending_line_count(self):
         return self.pending_line_items().count()
 
+    def completed_shipments(self):
+        """
+        Return a queryset of the completed shipments for this order
+        """
+        return self.shipments.exclude(shipment_date=None)
+
+    def pending_shipments(self):
+        """
+        Return a queryset of the pending shipments for this order
+        """
+
+        return self.shipments.filter(shipment_date=None)
+
+    @property
+    def shipment_count(self):
+        return self.shipments.count()
+
+    @property
+    def completed_shipment_count(self):
+        return self.completed_shipments().count()
+
+    @property
+    def pending_shipment_count(self):
+        return self.pending_shipments().count()
 
 class PurchaseOrderAttachment(InvenTreeAttachment):
     """
