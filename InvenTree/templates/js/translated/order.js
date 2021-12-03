@@ -648,6 +648,13 @@ function loadPurchaseOrderTable(table, options) {
 
                     var html = renderLink(value, `/order/purchase-order/${row.pk}/`);
 
+                    html += purchaseOrderStatusDisplay(
+                        row.status,
+                        {
+                            classes: 'float-right',
+                        }
+                    );
+
                     if (row.overdue) {
                         html += makeIconBadge('fa-calendar-times icon-red', '{% trans "Order is overdue" %}');
                     }
@@ -671,14 +678,6 @@ function loadPurchaseOrderTable(table, options) {
             {
                 field: 'description',
                 title: '{% trans "Description" %}',
-            },
-            {
-                field: 'status',
-                title: '{% trans "Status" %}',
-                sortable: true,
-                formatter: function(value, row) {
-                    return purchaseOrderStatusDisplay(row.status, row.status_text);
-                }
             },
             {
                 field: 'creation_date',
@@ -989,7 +988,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 field: 'buttons',
                 title: '',
                 formatter: function(value, row, index, field) {
-                    var html = `<div class='btn-group'>`;
+                    var html = `<div class='btn-group' role='group'>`;
     
                     var pk = row.pk;
     
