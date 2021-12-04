@@ -583,6 +583,8 @@ class PartFilter(rest_filters.FilterSet):
 
     active = rest_filters.BooleanFilter()
 
+    virtual = rest_filters.BooleanFilter()
+
 
 class PartList(generics.ListCreateAPIView):
     """

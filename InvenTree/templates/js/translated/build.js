@@ -34,7 +34,12 @@ function buildFormFields() {
         reference: {
             prefix: global_settings.BUILDORDER_REFERENCE_PREFIX,
         },
-        part: {},
+        part: {
+            filters: {
+                assembly: true,
+                virtual: false,
+            }
+        },
         title: {},
         quantity: {},
         parent: {
