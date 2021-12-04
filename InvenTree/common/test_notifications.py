@@ -67,6 +67,8 @@ class NotificationTests(BaseNotificationIntegrationTest):
         self._notification_run()
 
 
+class ClassNotificationTests(BaseNotificationIntegrationTest):
+
     def test_SingleNotificationMethod(self):
         """ensure the implementation requirements are tested"""
 
