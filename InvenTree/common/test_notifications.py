@@ -24,15 +24,15 @@ class NotificationTests(BaseNotificationIntegrationTest):
 
         # no send / send bulk
         with self.assertRaises(NotImplementedError):
-            FalseNotificationMethod('', '', '')
+            FalseNotificationMethod('', '', '', '', )
 
         # no gathering
         with self.assertRaises(NotImplementedError):
-            AnotherFalseNotificationMethod('', '', '')
+            AnotherFalseNotificationMethod('', '', '', '', )
 
         # no METHOD_NAME
         with self.assertRaises(NotImplementedError):
-            NoNameNotificationMethod('', '', '')
+            NoNameNotificationMethod('', '', '', '', )
 
     def test_SingleNotificationMethod(self):
         """ensure the implementation requirements are tested"""
