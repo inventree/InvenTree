@@ -20,6 +20,7 @@ from InvenTree.status_codes import BuildStatus
 from .models import Build, BuildItem, BuildOrderAttachment
 from .serializers import BuildAttachmentSerializer, BuildCompleteSerializer, BuildSerializer, BuildItemSerializer
 from .serializers import BuildAllocationSerializer, BuildUnallocationSerializer
+from users.models import Owner
 
 
 class BuildFilter(rest_filters.FilterSet):
@@ -48,6 +49,25 @@ class BuildFilter(rest_filters.FilterSet):
             queryset = queryset.filter(Build.OVERDUE_FILTER)
         else:
             queryset = queryset.exclude(Build.OVERDUE_FILTER)
+
+        return queryset
+
+    assigned_to_me = rest_filters.BooleanFilter(label='assigned_to_me', method='filter_assigned_to_me')
+
+    def filter_assigned_to_me(self, queryset, name, value):
+        """
+        Filter by orders which are assigned to the current user
+        """
+
+        value = str2bool(value)
+
+        # Work out who "me" is!
+        owners = Owner.get_owners_matching_user(self.request.user)
+
+        if value:
+            queryset = queryset.filter(responsible__in=owners)
+        else:
+            queryset = queryset.exclude(responsible__in=owners)
 
         return queryset
 

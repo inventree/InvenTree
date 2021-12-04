@@ -63,6 +63,10 @@ class LocationAdmin(ImportExportModelAdmin):
         LocationInline,
     ]
 
+    autocomplete_fields = [
+        'parent',
+    ]
+
 
 class StockItemResource(ModelResource):
     """ Class for managing StockItem data import/export """
@@ -136,19 +140,44 @@ class StockItemAdmin(ImportExportModelAdmin):
         'batch',
     ]
 
+    autocomplete_fields = [
+        'belongs_to',
+        'build',
+        'customer',
+        'location',
+        'parent',
+        'part',
+        'purchase_order',
+        'sales_order',
+        'stocktake_user',
+        'supplier_part',
+    ]
+
 
 class StockAttachmentAdmin(admin.ModelAdmin):
 
     list_display = ('stock_item', 'attachment', 'comment')
 
+    autocomplete_fields = [
+        'stock_item',
+    ]
+
 
 class StockTrackingAdmin(ImportExportModelAdmin):
     list_display = ('item', 'date', 'label')
+
+    autocomplete_fields = [
+        'item',
+    ]
 
 
 class StockItemTestResultAdmin(admin.ModelAdmin):
 
     list_display = ('stock_item', 'test', 'result', 'value')
+
+    autocomplete_fields = [
+        'stock_item',
+    ]
 
 
 admin.site.register(StockLocation, LocationAdmin)
