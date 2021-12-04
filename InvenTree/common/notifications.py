@@ -1,7 +1,6 @@
 import logging
 from datetime import timedelta
 
-from django.conf import settings
 from django.template.loader import render_to_string
 
 from allauth.account.models import EmailAddress
@@ -120,6 +119,7 @@ class EmailNotification(BulkNotificationMethod):
 
         return True
 
+
 class UIMessageNotification(SingleNotificationMethod):
     METHOD_NAME = 'ui_message'
 
@@ -128,12 +128,12 @@ class UIMessageNotification(SingleNotificationMethod):
 
     def send(self, target):
         NotificationMessage.objects.create(
-            target_object = self.obj,
-            source_object = target,
-            user = target,
-            category = self.category,
-            name = self.context['name'],
-            message = self.context['message'],
+            target_object=self.obj,
+            source_object=target,
+            user=target,
+            category=self.category,
+            name=self.context['name'],
+            message=self.context['message'],
         )
 # endregion
 # endregion

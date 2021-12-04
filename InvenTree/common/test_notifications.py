@@ -43,10 +43,6 @@ class NotificationTests(BaseNotificationIntegrationTest):
             def get_targets(self):
                 return []
 
-            def setup(self):
-                print('running setup on WrongImplementation')
-                return super().setup()
-
         with self.assertRaises(NotImplementedError):
             self._notification_run()
 
@@ -58,10 +54,6 @@ class NotificationTests(BaseNotificationIntegrationTest):
 
             def get_targets(self):
                 return []
-
-            def setup(self):
-                print('running setup on WrongImplementation')
-                return super().setup()
 
         with self.assertRaises(NotImplementedError):
             self._notification_run()
