@@ -20,19 +20,38 @@ class NotificationTests(BaseNotificationIntegrationTest):
                 """a comment so we do not need a pass"""
 
         class NoNameNotificationMethod(NotificationMethod):
-            pass
+
+            def send(self):
+                """a comment so we do not need a pass"""
+
+        class WrongContextNotificationMethod(NotificationMethod):
+            METHOD_NAME = 'WrongContextNotification'
+            CONTEXT_EXTRA = [
+                'aa',
+                ('aa', 'bb', ),
+                ('templates', 'ccc', ),
+                (123, )
+            ]
+
+            def send(self):
+                """a comment so we do not need a pass"""
 
         # no send / send bulk
         with self.assertRaises(NotImplementedError):
             FalseNotificationMethod('', '', '', '', )
 
-        # no gathering
-        with self.assertRaises(NotImplementedError):
-            AnotherFalseNotificationMethod('', '', '', '', )
-
         # no METHOD_NAME
         with self.assertRaises(NotImplementedError):
             NoNameNotificationMethod('', '', '', '', )
+
+        # a not existant context check
+        with self.assertRaises(NotImplementedError):
+            WrongContextNotificationMethod('', '', '', '', )
+
+        # no get_targets
+        with self.assertRaises(NotImplementedError):
+            AnotherFalseNotificationMethod('', '', '', {'name': 1, 'message': 2, } )
+
 
     def test_SingleNotificationMethod(self):
         """ensure the implementation requirements are tested"""
