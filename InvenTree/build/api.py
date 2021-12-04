@@ -53,7 +53,7 @@ class BuildFilter(rest_filters.FilterSet):
         return queryset
 
     assigned_to_me = rest_filters.BooleanFilter(label='assigned_to_me', method='filter_assigned_to_me')
-    
+
     def filter_assigned_to_me(self, queryset, name, value):
         """
         Filter by orders which are assigned to the current user

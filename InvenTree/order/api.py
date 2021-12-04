@@ -8,9 +8,6 @@ from __future__ import unicode_literals
 from django.conf.urls import url, include
 from django.db.models import Q, F
 
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
-
 from django_filters import rest_framework as rest_filters
 from rest_framework import generics
 from rest_framework import filters, status
@@ -35,7 +32,7 @@ class POFilter(rest_filters.FilterSet):
     """
 
     assigned_to_me = rest_filters.BooleanFilter(label='assigned_to_me', method='filter_assigned_to_me')
-    
+
     def filter_assigned_to_me(self, queryset, name, value):
         """
         Filter by orders which are assigned to the current user
