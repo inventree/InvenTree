@@ -19,19 +19,177 @@
 */
 
 /* exported
+    allocateStockToSalesOrder,
+    completeShipment,
     createSalesOrder,
+    createSalesOrderShipment,
     editPurchaseOrderLineItem,
     exportOrder,
     loadPurchaseOrderLineItemTable,
     loadPurchaseOrderTable,
     loadSalesOrderAllocationTable,
     loadSalesOrderLineItemTable,
+    loadSalesOrderShipmentTable,
     loadSalesOrderTable,
     newPurchaseOrderFromOrderWizard,
     newSupplierPartFromOrderWizard,
     removeOrderRowFromOrderWizard,
     removePurchaseOrderLineItem,
 */
+
+
+function salesOrderShipmentFields(options={}) {
+    var fields = {
+        order: {},
+        reference: {},
+        tracking_number: {
+            icon: 'fa-hashtag',
+        },
+    };
+
+    // If order is specified, hide the order field
+    if (options.order) {
+        fields.order.value = options.order;
+        fields.order.hidden = true;
+    }
+
+    return fields;
+}
+
+
+/*
+ * Complete a shipment
+ */
+function completeShipment(shipment_id) {
+
+    // Request the list of stock items which will be shipped
+    inventreeGet(`/api/order/so/shipment/${shipment_id}/`, {}, {
+        success: function(shipment) {
+            var allocations = shipment.allocations;
+
+            var html = '';
+
+            if (!allocations || allocations.length == 0) {
+                html = `
+                <div class='alert alert-block alert-danger'>
+                {% trans "No stock items have been allocated to this shipment" %}
+                </div>
+                `;
+            } else {
+                html = `
+                {% trans "The following stock items will be shipped" %}
+                <table class='table table-striped table-condensed'>
+                    <thead>
+                        <tr>
+                            <th>{% trans "Part" %}</th>
+                            <th>{% trans "Stock Item" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                `;
+
+                allocations.forEach(function(allocation) {
+
+                    var part = allocation.part_detail;
+                    var thumb = thumbnailImage(part.thumbnail || part.image);
+
+                    var stock = '';
+
+                    if (allocation.serial) {
+                        stock = `{% trans "Serial Number" %}: ${allocation.serial}`;
+                    } else {
+                        stock = `{% trans "Quantity" %}: ${allocation.quantity}`;
+                    }
+
+                    html += `
+                    <tr>
+                        <td>${thumb} ${part.full_name}</td>
+                        <td>${stock}</td>
+                    </tr>
+                    `;
+                });
+
+                html += `
+                    </tbody>
+                </table>
+                `;
+            }
+
+            constructForm(`/api/order/so/shipment/${shipment_id}/ship/`, {
+                method: 'POST',
+                title: '{% trans "Complete Shipment" %}',
+                fields: {
+                    tracking_number: {},
+                },
+                preFormContent: html,
+                confirm: true,
+                confirmMessage: '{% trans "Confirm Shipment" %}',
+                onSuccess: function(data) {
+                    // Reload tables
+                    $('#so-lines-table').bootstrapTable('refresh');
+                    $('#pending-shipments-table').bootstrapTable('refresh');
+                    $('#completed-shipments-table').bootstrapTable('refresh');
+                }
+            });
+        }
+    });
+}
+
+
+// Open a dialog to create a new sales order shipment
+function createSalesOrderShipment(options={}) {
+
+    // Work out the next shipment number for the given order
+    inventreeGet(
+        '{% url "api-so-shipment-list" %}',
+        {
+            order: options.order,
+        },
+        {
+            success: function(results) {
+                // "predict" the next reference number
+                var ref = results.length + 1;
+
+                var found = false;
+
+                while (!found) {
+
+                    var no_match = true;
+
+                    for (var ii = 0; ii < results.length; ii++) {
+                        if (ref.toString() == results[ii].reference.toString()) {
+                            no_match = false;
+                            break;
+                        }
+                    }
+
+                    if (no_match) {
+                        break;
+                    } else {
+                        ref++;
+                    }
+                }
+
+                var fields = salesOrderShipmentFields(options);
+
+                fields.reference.value = ref;
+                fields.reference.prefix = global_settings.SALESORDER_REFERENCE_PREFIX + options.reference;
+
+                constructForm('{% url "api-so-shipment-list" %}', {
+                    method: 'POST',
+                    fields: fields,
+                    title: '{% trans "Create New Shipment" %}',
+                    onSuccess: function(data) {
+                        if (options.onSuccess) {
+                            options.onSuccess(data);
+                        }
+                    }
+                });
+            }
+        }
+    );
+}
+
 
 // Create a new SalesOrder
 function createSalesOrder(options={}) {
@@ -295,7 +453,9 @@ function newPurchaseOrderFromOrderWizard(e) {
  */
 function receivePurchaseOrderItems(order_id, line_items, options={}) {
 
+    // Zero items selected?
     if (line_items.length == 0) {
+
         showAlertDialog(
             '{% trans "Select Line Items" %}',
             '{% trans "At least one line item must be selected" %}',
@@ -601,6 +761,9 @@ function removePurchaseOrderLineItem(e) {
 }
 
 
+/*
+ * Load a table displaying list of purchase orders
+ */
 function loadPurchaseOrderTable(table, options) {
     /* Create a purchase-order table */
 
@@ -675,9 +838,10 @@ function loadPurchaseOrderTable(table, options) {
             {
                 field: 'status',
                 title: '{% trans "Status" %}',
+                switchable: true,
                 sortable: true,
                 formatter: function(value, row) {
-                    return purchaseOrderStatusDisplay(row.status, row.status_text);
+                    return purchaseOrderStatusDisplay(row.status);
                 }
             },
             {
@@ -989,7 +1153,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 field: 'buttons',
                 title: '',
                 formatter: function(value, row, index, field) {
-                    var html = `<div class='btn-group'>`;
+                    var html = `<div class='btn-group' role='group'>`;
     
                     var pk = row.pk;
     
@@ -1013,6 +1177,9 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
 }
 
 
+/*
+ * Load table displaying list of sales orders
+ */
 function loadSalesOrderTable(table, options) {
 
     options.params = options.params || {};
@@ -1095,7 +1262,7 @@ function loadSalesOrderTable(table, options) {
                 field: 'status',
                 title: '{% trans "Status" %}',
                 formatter: function(value, row) {
-                    return salesOrderStatusDisplay(row.status, row.status_text);
+                    return salesOrderStatusDisplay(row.status);
                 }
             },
             {
@@ -1123,6 +1290,493 @@ function loadSalesOrderTable(table, options) {
 }
 
 
+/*
+ * Load a table displaying Shipment information against a particular order
+ */
+function loadSalesOrderShipmentTable(table, options={}) {
+
+    options.table = table;
+
+    options.params = options.params || {};
+
+    // Filter by order
+    options.params.order = options.order;
+
+    // Filter by "shipped" status
+    options.params.shipped = options.shipped || false;
+
+    var filters = loadTableFilters('salesordershipment');
+
+    for (var key in options.params) {
+        filters[key] = options.params[key];
+    }
+
+    setupFilterList('salesordershipment', $(table), options.filter_target);
+
+    function makeShipmentActions(row) {
+        // Construct "actions" for the given shipment row
+        var pk = row.pk;
+
+        var html = `<div class='btn-group float-right' role='group'>`;
+
+        html += makeIconButton('fa-edit icon-blue', 'button-shipment-edit', pk, '{% trans "Edit shipment" %}');
+
+        if (!options.shipped) {
+            html += makeIconButton('fa-truck icon-green', 'button-shipment-ship', pk, '{% trans "Complete shipment" %}');
+        }
+
+        var enable_delete = row.allocations && row.allocations.length == 0;
+
+        html += makeIconButton('fa-trash-alt icon-red', 'button-shipment-delete', pk, '{% trans "Delete shipment" %}', {disabled: !enable_delete});
+
+        html += `</div>`;
+
+        return html;
+
+    }
+
+    function setupShipmentCallbacks() {
+        // Setup action button callbacks
+
+        $(table).find('.button-shipment-edit').click(function() {
+            var pk = $(this).attr('pk');
+
+            var fields = salesOrderShipmentFields();
+
+            delete fields.order;
+
+            constructForm(`/api/order/so/shipment/${pk}/`, {
+                fields: fields,
+                title: '{% trans "Edit Shipment" %}',
+                onSuccess: function() {
+                    $(table).bootstrapTable('refresh');
+                }
+            });
+        });
+
+        $(table).find('.button-shipment-ship').click(function() {
+            var pk = $(this).attr('pk');
+
+            completeShipment(pk);
+        });
+
+        $(table).find('.button-shipment-delete').click(function() {
+            var pk = $(this).attr('pk');
+
+            constructForm(`/api/order/so/shipment/${pk}/`, {
+                title: '{% trans "Delete Shipment" %}',
+                method: 'DELETE',
+                onSuccess: function() {
+                    $(table).bootstrapTable('refresh');
+                }
+            });
+        });
+    }
+
+    $(table).inventreeTable({
+        url: '{% url "api-so-shipment-list" %}',
+        queryParams: filters,
+        original: options.params,
+        name: options.name || 'salesordershipment',
+        search: false,
+        paginationVAlign: 'bottom',
+        showColumns: true,
+        detailView: true,
+        detailViewByClick: false,
+        detailFilter: function(index, row) {
+            return row.allocations.length > 0;
+        },
+        detailFormatter: function(index, row, element) {
+            return showAllocationSubTable(index, row, element, options);
+        },
+        onPostBody: function() {
+            setupShipmentCallbacks();
+
+            // Auto-expand rows on the "pending" table
+            if (!options.shipped) {
+                $(table).bootstrapTable('expandAllRows');
+            }
+        },
+        formatNoMatches: function() {
+            return '{% trans "No matching shipments found" %}';
+        },
+        columns: [
+            {
+                visible: false,
+                checkbox: true,
+                switchable: false,
+            },
+            {
+                field: 'reference',
+                title: '{% trans "Shipment Reference" %}',
+                switchable: false,
+            },
+            {
+                field: 'allocations',
+                title: '{% trans "Items" %}',
+                switchable: false,
+                sortable: true,
+                formatter: function(value, row) {
+                    if (row && row.allocations) {
+                        return row.allocations.length;
+                    } else {
+                        return '-';
+                    }
+                }
+            },
+            {
+                field: 'shipment_date',
+                title: '{% trans "Shipment Date" %}',
+                sortable: true,
+                formatter: function(value, row) {
+                    if (value) {
+                        return value;
+                    } else {
+                        return '{% trans "Not shipped" %}';
+                    }
+                }
+            },
+            {
+                field: 'tracking_number',
+                title: '{% trans "Tracking" %}',
+            },
+            {
+                field: 'notes',
+                title: '{% trans "Notes" %}',
+                visible: false,
+                // TODO: Implement 'notes' field
+            },
+            {
+                title: '',
+                switchable: false,
+                formatter: function(value, row) {
+                    return makeShipmentActions(row);
+                }
+            }
+        ],
+    });
+}
+
+
+/**
+ * Allocate stock items against a SalesOrder
+ * 
+ * arguments:
+ * - order_id: The ID / PK value for the SalesOrder
+ * - lines: A list of SalesOrderLineItem objects to be allocated
+ * 
+ * options:
+ *  - source_location: ID / PK of the top-level StockLocation to source stock from (or null)
+ */
+function allocateStockToSalesOrder(order_id, line_items, options={}) {
+    
+    function renderLineItemRow(line_item, quantity) {
+        // Function to render a single line_item row
+
+        var pk = line_item.pk;
+        
+        var part = line_item.part_detail;
+
+        var thumb = thumbnailImage(part.thumbnail || part.image);
+
+        var delete_button = `<div class='btn-group float-right' role='group'>`;
+
+        delete_button += makeIconButton(
+            'fa-times icon-red',
+            'button-row-remove',
+            pk,
+            '{% trans "Remove row" %}',
+        );
+
+        delete_button += '</div>';
+
+        var quantity_input = constructField(
+            `items_quantity_${pk}`,
+            {
+                type: 'decimal',
+                min_value: 0,
+                value: quantity || 0,
+                title: '{% trans "Specify stock allocation quantity" %}',
+                required: true,
+            },
+            {
+                hideLabels: true,
+            }
+        );
+
+        var stock_input = constructField(
+            `items_stock_item_${pk}`,
+            {
+                type: 'related field',
+                required: 'true',
+            },
+            {
+                hideLabels: true,
+            }
+        );
+
+        var html = `
+        <tr id='allocation_row_${pk}' class='line-allocation-row'>
+            <td id='part_${pk}'>
+                ${thumb} ${part.full_name}
+            </td>
+            <td id='stock_item_${pk}'>
+                ${stock_input}
+            </td>
+            <td id='quantity_${pk}'>
+                ${quantity_input}
+            </td>
+            <td id='buttons_${pk}>
+                ${delete_button}
+            </td>
+        </tr>
+        `;
+
+        return html;
+    }
+
+    var table_entries = '';
+
+    for (var idx = 0; idx < line_items.length; idx++ ) {
+        var line_item = line_items[idx];
+
+        var remaining = 0;
+
+        table_entries += renderLineItemRow(line_item, remaining);
+    }
+
+    if (table_entries.length == 0) {
+        showAlertDialog(
+            '{% trans "Select Parts" %}',
+            '{% trans "You must select at least one part to allocate" %}',
+        );
+        
+        return;
+    }
+
+    var html = '';
+
+    // Render a "source location" input field
+    html += constructField(
+        'take_from',
+        {
+            type: 'related field',
+            label: '{% trans "Source Location" %}',
+            help_text: '{% trans "Select source location (leave blank to take from all locations)" %}',
+            required: false,
+        },
+        {},
+    );
+
+    // Create table of line items
+    html += `
+    <table class='table table-striped table-condensed' id='stock-allocation-table'>
+        <thead>
+            <tr>
+                <th>{% trans "Part" %}</th>
+                <th style='min-width: 250px;'>{% trans "Stock Item" %}</th>
+                <th>{% trans "Quantity" %}</th>
+                <th></th>
+        </thead>
+        <tbody>
+            ${table_entries}
+        </tbody>
+    </table>`;
+
+    constructForm(`/api/order/so/${order_id}/allocate/`, {
+        method: 'POST',
+        fields: {
+            shipment: {
+                filters: {
+                    order: order_id,
+                    shipped: false,
+                },
+                value: options.shipment || null,
+                auto_fill: true,
+            }
+        },
+        preFormContent: html,
+        confirm: true,
+        confirmMessage: '{% trans "Confirm stock allocation" %}',
+        title: '{% trans "Allocate Stock Items to Sales Order" %}',
+        afterRender: function(fields, opts) {
+
+            // Initialize source location field
+            var take_from_field = {
+                name: 'take_from',
+                model: 'stocklocation',
+                api_url: '{% url "api-location-list" %}',
+                required: false,
+                type: 'related field',
+                value: options.source_location || null,
+                noResults: function(query) {
+                    return '{% trans "No matching stock locations" %}';
+                },
+            };
+
+            initializeRelatedField(
+                take_from_field,
+                null,
+                opts
+            );
+
+            // Add callback to "clear" button for take_from field
+            addClearCallback(
+                'take_from',
+                take_from_field,
+                opts,
+            );
+
+            // Initialize fields for each line item
+            line_items.forEach(function(line_item) {
+                var pk = line_item.pk;
+
+                initializeRelatedField(
+                    {
+                        name: `items_stock_item_${pk}`,
+                        api_url: '{% url "api-stock-list" %}',
+                        filters: {
+                            part: line_item.part,
+                            in_stock: true,
+                            part_detail: true,
+                            location_detail: true,
+                            available: true,
+                        },
+                        model: 'stockitem',
+                        required: true,
+                        render_part_detail: true,
+                        render_location_detail: true,
+                        auto_fill: true,
+                        onSelect: function(data, field, opts) {
+                            // Adjust the 'quantity' field based on availability
+
+                            if (!('quantity' in data)) {
+                                return;
+                            }
+
+                            // Calculate the available quantity
+                            var available = Math.max((data.quantity || 0) - (data.allocated || 0), 0);
+
+                            // Remaining quantity to be allocated?
+                            var remaining = opts.quantity || available;
+
+                            // Maximum amount that we need
+                            var desired = Math.min(available, remaining);
+
+                            updateFieldValue(`items_quantity_${pk}`, desired, {}, opts);
+
+                        },
+                        adjustFilters: function(filters) {
+                            // Restrict query to the selected location
+                            var location = getFormFieldValue(
+                                'take_from',
+                                {},
+                                {
+                                    modal: opts.modal,
+                                }
+                            );
+
+                            filters.location = location;
+                            filters.cascade = true;
+
+                            // Exclude expired stock?
+                            if (global_settings.STOCK_ENABLE_EXPIRY && !global_settings.STOCK_ALLOW_EXPIRED_SALE) {
+                                filters.expired = false;
+                            }
+
+                            return filters;
+                        },
+                        noResults: function(query) {
+                            return '{% trans "No matching stock items" %}';
+                        }
+                    },
+                    null,
+                    opts
+                );
+            });
+
+            // Add remove-row button callbacks
+            $(opts.modal).find('.button-row-remove').click(function() {
+                var pk = $(this).attr('pk');
+
+                $(opts.modal).find(`#allocation_row_${pk}`).remove();
+            });
+        },
+        onSubmit: function(fields, opts) {
+            // Extract data elements from the form
+            var data = {
+                items: [],
+                shipment: getFormFieldValue(
+                    'shipment',
+                    {},
+                    opts
+                )
+            };
+
+            var item_pk_values = [];
+
+            line_items.forEach(function(item) {
+
+                var pk = item.pk;
+
+                var quantity = getFormFieldValue(
+                    `items_quantity_${pk}`,
+                    {},
+                    opts
+                );
+
+                var stock_item = getFormFieldValue(
+                    `items_stock_item_${pk}`,
+                    {},
+                    opts
+                );
+
+                if (quantity != null) {
+                    data.items.push({
+                        line_item: pk,
+                        stock_item: stock_item,
+                        quantity: quantity,
+                    });
+
+                    item_pk_values.push(pk);
+                }
+            });
+
+            // Provide nested values
+            opts.nested = {
+                'items': item_pk_values
+            };
+
+            inventreePut(
+                opts.url,
+                data,
+                {
+                    method: 'POST',
+                    success: function(response) {
+                        $(opts.modal).modal('hide');
+
+                        if (options.success) {
+                            options.success(response);
+                        }
+                    },
+                    error: function(xhr) {
+                        switch (xhr.status) {
+                        case 400:
+                            handleFormErrors(xhr.responseJSON, fields, opts);
+                            break;
+                        default:
+                            $(opts.modal).modal('hide');
+                            showApiError(xhr);
+                            break;
+                        }
+                    }
+                }
+            );
+        },
+    });
+}
+
+
 function loadSalesOrderAllocationTable(table, options={}) {
     /**
      * Load a table with SalesOrderAllocation items
@@ -1146,7 +1800,7 @@ function loadSalesOrderAllocationTable(table, options={}) {
     $(table).inventreeTable({
         url: '{% url "api-so-allocation-list" %}',
         queryParams: filters,
-        name: 'salesorderallocation',
+        name: options.name || 'salesorderallocation',
         groupBy: false,
         search: false,
         paginationVAlign: 'bottom',
@@ -1204,7 +1858,7 @@ function loadSalesOrderAllocationTable(table, options={}) {
                 field: 'quantity',
                 title: '{% trans "Quantity" %}',
                 sortable: true,
-            }
+            },
         ]
     });
 }
@@ -1221,16 +1875,12 @@ function showAllocationSubTable(index, row, element, options) {
     // Construct a sub-table element
     var html = `
     <div class='sub-table'>
-        <table class='table table-striped table-condensed' id='allocation-table-${row.pk}'>
-        </table>
+        <table class='table table-striped table-condensed' id='allocation-table-${row.pk}'></table>
     </div>`;
 
     element.html(html);
 
     var table = $(`#allocation-table-${row.pk}`);
-
-    // Is the parent SalesOrder pending?
-    var pending = options.status == {{ SalesOrderStatus.PENDING }};
 
     function setupCallbacks() {
         // Add callbacks for 'edit' buttons
@@ -1276,11 +1926,18 @@ function showAllocationSubTable(index, row, element, options) {
     table.bootstrapTable({
         onPostBody: setupCallbacks,
         data: row.allocations,
-        showHeader: false,
+        showHeader: true,
         columns: [
             {
+                field: 'part_detail',
+                title: '{% trans "Part" %}',
+                formatter: function(part, row) {
+                    return imageHoverIcon(part.thumbnail) + renderLink(part.full_name, `/part/${part.pk}/`);
+                }
+            },
+            {
                 field: 'allocated',
-                title: '{% trans "Quantity" %}',
+                title: '{% trans "Stock Item" %}',
                 formatter: function(value, row, index, field) {
                     var text = '';
 
@@ -1298,32 +1955,30 @@ function showAllocationSubTable(index, row, element, options) {
                 title: '{% trans "Location" %}',
                 formatter: function(value, row, index, field) {
 
-                    // Location specified
-                    if (row.location) {
+                    if (row.shipment_date) {
+                        return `<em>{% trans "Shipped to customer" %} - ${row.shipment_date}</em>`;
+                    } else if (row.location) {
+                        // Location specified
                         return renderLink(
                             row.location_detail.pathstring || '{% trans "Location" %}',
                             `/stock/location/${row.location}/`
                         );
                     } else {
-                        return `<i>{% trans "Stock location not specified" %}`;
+                        return `<em>{% trans "Stock location not specified" %}</em>`;
                     }
                 },
             },
-            // TODO: ?? What is 'po' field all about?
-            /*
-            {
-                field: 'po'
-            },
-            */
             {
                 field: 'buttons',
-                title: '{% trans "Actions" %}',
+                title: '{% trans "" %}',
                 formatter: function(value, row, index, field) {
 
                     var html = `<div class='btn-group float-right' role='group'>`;
                     var pk = row.pk;
 
-                    if (pending) {
+                    if (row.shipment_date) {
+                        html += `<span class='badge bg-success badge-right'>{% trans "Shipped" %}</span>`;
+                    } else {
                         html += makeIconButton('fa-edit icon-blue', 'button-allocation-edit', pk, '{% trans "Edit stock allocation" %}');
                         html += makeIconButton('fa-trash-alt icon-red', 'button-allocation-delete', pk, '{% trans "Delete stock allocation" %}');
                     }
@@ -1362,8 +2017,9 @@ function showFulfilledSubTable(index, row, element, options) {
         queryParams: {
             part: row.part,
             sales_order: options.order,
+            location_detail: true,
         },
-        showHeader: false,
+        showHeader: true,
         columns: [
             {
                 field: 'pk',
@@ -1371,6 +2027,7 @@ function showFulfilledSubTable(index, row, element, options) {
             },
             {
                 field: 'stock',
+                title: '{% trans "Stock Item" %}',
                 formatter: function(value, row) {
                     var text = '';
                     if (row.serial && row.quantity == 1) {
@@ -1382,11 +2039,25 @@ function showFulfilledSubTable(index, row, element, options) {
                     return renderLink(text, `/stock/item/${row.pk}/`);
                 },
             },
-            /*
             {
-                field: 'po'
-            },
-            */
+                field: 'location',
+                title: '{% trans "Location" %}',
+                formatter: function(value, row) {
+                    if (row.customer) {
+                        return renderLink(
+                            '{% trans "Shipped to customer" %}',
+                            `/company/${row.customer}/`
+                        );
+                    } else if (row.location && row.location_detail) {
+                        return renderLink(
+                            row.location_detail.pathstring,
+                            `/stock/location/${row.location}`,
+                        );
+                    } else {
+                        return `<em>{% trans "Stock location not specified" %}</em>`;
+                    }
+                }
+            }
         ],
     });
 }
@@ -1430,7 +2101,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
     var filter_target = options.filter_target || '#filter-list-sales-order-lines';
 
-    setupFilterList('salesorderlineitems', $(table), filter_target);
+    setupFilterList('salesorderlineitem', $(table), filter_target);
 
     // Is the order pending?
     var pending = options.status == {{ SalesOrderStatus.PENDING }};
@@ -1452,7 +2123,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
         */
         {
             sortable: true,
-            sortName: 'part__name',
+            sortName: 'part_detail.name',
             field: 'part',
             title: '{% trans "Part" %}',
             switchable: false,
@@ -1549,40 +2220,65 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 },
             },
         );
+
+        columns.push(
+            {
+                field: 'allocated',
+                title: '{% trans "Allocated" %}',
+                switchable: false,
+                sortable: true,
+                formatter: function(value, row, index, field) {
+                    return makeProgressBar(row.allocated, row.quantity, {
+                        id: `order-line-progress-${row.pk}`,
+                    });
+                },
+                sorter: function(valA, valB, rowA, rowB) {
+    
+                    var A = rowA.allocated;
+                    var B = rowB.allocated;
+    
+                    if (A == 0 && B == 0) {
+                        return (rowA.quantity > rowB.quantity) ? 1 : -1;
+                    }
+    
+                    var progressA = parseFloat(A) / rowA.quantity;
+                    var progressB = parseFloat(B) / rowB.quantity;
+    
+                    return (progressA < progressB) ? 1 : -1;
+                }
+            },
+        );
     }
 
-    columns.push(
-        {
-            field: 'allocated',
-            title: pending ? '{% trans "Allocated" %}' : '{% trans "Fulfilled" %}',
-            switchable: false,
-            formatter: function(value, row, index, field) {
+    columns.push({
+        field: 'shipped',
+        title: '{% trans "Shipped" %}',
+        switchable: false,
+        sortable: true,
+        formatter: function(value, row) {
+            return makeProgressBar(row.shipped, row.quantity, {
+                id: `order-line-shipped-${row.pk}`
+            });
+        },
+        sorter: function(valA, valB, rowA, rowB) {
+            var A = rowA.shipped;
+            var B = rowB.shipped;
 
-                var quantity = pending ? row.allocated : row.fulfilled;
-                return makeProgressBar(quantity, row.quantity, {
-                    id: `order-line-progress-${row.pk}`,
-                });
-            },
-            sorter: function(valA, valB, rowA, rowB) {
-
-                var A = pending ? rowA.allocated : rowA.fulfilled;
-                var B = pending ? rowB.allocated : rowB.fulfilled;
-
-                if (A == 0 && B == 0) {
-                    return (rowA.quantity > rowB.quantity) ? 1 : -1;
-                }
-
-                var progressA = parseFloat(A) / rowA.quantity;
-                var progressB = parseFloat(B) / rowB.quantity;
-
-                return (progressA < progressB) ? 1 : -1;
+            if (A == 0 && B == 0) {
+                return (rowA.quantity > rowB.quantity) ? 1 : -1;
             }
-        },
-        {
-            field: 'notes',
-            title: '{% trans "Notes" %}',
-        },
-    );
+
+            var progressA = parseFloat(A) / rowA.quantity;
+            var progressB = parseFloat(B) / rowB.quantity;
+
+            return (progressA < progressB) ? 1 : -1;
+        }
+    });
+
+    columns.push({
+        field: 'notes',
+        title: '{% trans "Notes" %}',
+    });
 
     if (pending) {
         columns.push({
@@ -1615,7 +2311,21 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 }
 
                 html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line item" %}');
-                html += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, '{% trans "Delete line item " %}');
+
+                var delete_disabled = false;
+
+                var title = '{% trans "Delete line item" %}';
+
+                if (!!row.shipped) {
+                    delete_disabled = true;
+                    title = '{% trans "Cannot be deleted as items have been shipped" %}';
+                } else if (!!row.allocated) {
+                    delete_disabled = true;
+                    title = '{% trans "Cannot be deleted as items have been allocated" %}';
+                }
+
+                // Prevent deletion of the line item if items have been allocated or shipped!
+                html += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, title, {disabled: delete_disabled});
 
                 html += `</div>`;
 
@@ -1663,15 +2373,30 @@ function loadSalesOrderLineItemTable(table, options={}) {
         $(table).find('.button-add-by-sn').click(function() {
             var pk = $(this).attr('pk');
 
-            // TODO: Migrate this form to the API forms
             inventreeGet(`/api/order/so-line/${pk}/`, {},
                 {
                     success: function(response) {
-                        launchModalForm('{% url "so-assign-serials" %}', {
-                            success: reloadTable,
-                            data: {
-                                line: pk,
-                                part: response.part, 
+
+                        constructForm(`/api/order/so/${options.order}/allocate-serials/`, {
+                            method: 'POST',
+                            title: '{% trans "Allocate Serial Numbers" %}',
+                            fields: {
+                                line_item: {
+                                    value: pk,
+                                    hidden: true,
+                                },
+                                quantity: {},
+                                serial_numbers: {},
+                                shipment: {
+                                    filters: {
+                                        order: options.order,
+                                        shipped: false,
+                                    },
+                                    auto_fill: true,
+                                }
+                            },
+                            onSuccess: function() {
+                                $(table).bootstrapTable('refresh');
                             }
                         });
                     }
@@ -1685,61 +2410,19 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
             var line_item = $(table).bootstrapTable('getRowByUniqueId', pk);
 
-            // Quantity remaining to be allocated
-            var remaining = (line_item.quantity || 0) - (line_item.allocated || 0);
-
-            if (remaining < 0) {
-                remaining = 0;
-            }
-
-            var fields = {
-                // SalesOrderLineItem reference
-                line: {
-                    hidden: true,
-                    value: pk,
-                },
-                item: {
-                    filters: {
-                        part_detail: true,
-                        location_detail: true,
-                        in_stock: true,
-                        part: line_item.part,
-                        exclude_so_allocation: options.order,
-                    },
-                    auto_fill: true,
-                    onSelect: function(data, field, opts) {
-                        // Quantity available from this stock item
-
-                        if (!('quantity' in data)) {
-                            return;
-                        }
-
-                        // Calculate the available quantity
-                        var available = Math.max((data.quantity || 0) - (data.allocated || 0), 0);
-
-                        // Maximum amount that we need
-                        var desired = Math.min(available, remaining);
-
-                        updateFieldValue('quantity', desired, {}, opts);
-                    }
-                },
-                quantity: {
-                    value: remaining,
-                },
-            };
-
-            // Exclude expired stock?
-            if (global_settings.STOCK_ENABLE_EXPIRY && !global_settings.STOCK_ALLOW_EXPIRED_SALE) {
-                fields.item.filters.expired = false;
-            }
-
-            constructForm(
-                `/api/order/so-allocation/`,
+            allocateStockToSalesOrder(
+                options.order,
+                [
+                    line_item
+                ],
                 {
-                    method: 'POST',
-                    fields: fields,
-                    title: '{% trans "Allocate Stock Item" %}',
-                    onSuccess: reloadTable,
+                    success: function() {
+                        // Reload this table
+                        $(table).bootstrapTable('refresh');
+
+                        // Reload the pending shipment table
+                        $('#pending-shipments-table').bootstrapTable('refresh');
+                    }
                 }
             );
         });
@@ -1810,7 +2493,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
     $(table).inventreeTable({
         onPostBody: setupCallbacks,
         name: 'salesorderlineitems',
-        sidePagination: 'server',
+        sidePagination: 'client',
         formatNoMatches: function() {
             return '{% trans "No matching line items" %}';
         },
@@ -1826,7 +2509,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 // Order is pending
                 return row.allocated > 0;
             } else {
-                return row.fulfilled > 0;
+                return row.shipped > 0;
             }
         },
         detailFormatter: function(index, row, element) {

@@ -73,7 +73,7 @@
     <div class='panel-content'>
         <div id='po-button-bar'>
             <div class='button-toolbar container-fluid' style='float: right;'>
-                {% include "filter_list.html" with id="purchaseorder" %}
+                {% include "filter_list.html" with id="partpurchaseorders" %}
             </div>
         </div>
         
@@ -703,12 +703,10 @@
     });
 
     onPanelLoad("purchase-orders", function() {
-        loadPurchaseOrderTable($("#purchase-order-table"), {
-            url: "{% url 'api-po-list' %}",
-            params: {
-                part: {{ part.id }},
-            },
-        });
+        loadPartPurchaseOrderTable(
+            "#purchase-order-table",
+            {{ part.pk }},
+        );
     });
 
     onPanelLoad("sales-orders", function() {
