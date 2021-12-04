@@ -33,7 +33,7 @@ def notify_low_stock(part: part.models.Part):
         part,
         'part.notify_low_stock',
         target_fnc=part.get_subscribers,
-        notification_context=context,
+        context=context,
     )
 
 
