@@ -144,11 +144,6 @@ def trigger_notifaction(obj, category=None, obj_ref='pk', targets=None, target_f
     """
     Send out an notification
     """
-
-    # Set defaults
-    if not category:
-        category = obj._meta.modelname
-
     # Resolve objekt reference
     obj_ref_value = getattr(obj, obj_ref)
     # Try with some defaults
