@@ -8,10 +8,9 @@ from import_export.resources import ModelResource
 from import_export.fields import Field
 import import_export.widgets as widgets
 
-import part.models as models
-
-from stock.models import StockLocation
 from company.models import SupplierPart
+import part.models as models
+from stock.models import StockLocation
 
 
 class PartResource(ModelResource):
@@ -76,6 +75,13 @@ class PartAdmin(ImportExportModelAdmin):
 
     search_fields = ('name', 'description', 'category__name', 'category__description', 'IPN')
 
+    autocomplete_fields = [
+        'variant_of',
+        'category',
+        'default_location',
+        'default_supplier',
+    ]
+
 
 class PartCategoryResource(ModelResource):
     """ Class for managing PartCategory data import/export """
@@ -105,13 +111,6 @@ class PartCategoryResource(ModelResource):
         models.PartCategory.objects.rebuild()
 
 
-class PartCategoryInline(admin.TabularInline):
-    """
-    Inline for PartCategory model
-    """
-    model = models.PartCategory
-
-
 class PartCategoryAdmin(ImportExportModelAdmin):
 
     resource_class = PartCategoryResource
@@ -120,34 +119,43 @@ class PartCategoryAdmin(ImportExportModelAdmin):
 
     search_fields = ('name', 'description')
 
-    inlines = [
-        PartCategoryInline,
-    ]
+    autocomplete_fields = ('parent', 'default_location',)
 
 
 class PartRelatedAdmin(admin.ModelAdmin):
-    ''' Class to manage PartRelated objects '''
-    pass
+    """
+    Class to manage PartRelated objects
+    """
+        
+    autocomplete_fields = ('part_1', 'part_2')
 
 
 class PartAttachmentAdmin(admin.ModelAdmin):
 
     list_display = ('part', 'attachment', 'comment')
 
+    autocomplete_fields = ('part',)
+
 
 class PartStarAdmin(admin.ModelAdmin):
 
     list_display = ('part', 'user')
 
+    autocomplete_fields = ('part',)
+
 
 class PartCategoryStarAdmin(admin.ModelAdmin):
 
     list_display = ('category', 'user')
+    
+    autocomplete_fields = ('category',)
 
 
 class PartTestTemplateAdmin(admin.ModelAdmin):
 
     list_display = ('part', 'test_name', 'required')
+
+    autocomplete_fields = ('part',)
 
 
 class BomItemResource(ModelResource):
@@ -253,9 +261,13 @@ class BomItemAdmin(ImportExportModelAdmin):
 
     search_fields = ('part__name', 'part__description', 'sub_part__name', 'sub_part__description')
 
+    autocomplete_fields = ('part', 'sub_part',)
+
 
 class ParameterTemplateAdmin(ImportExportModelAdmin):
     list_display = ('name', 'units')
+
+    search_fields = ('name', 'units')
 
 
 class ParameterResource(ModelResource):
@@ -282,10 +294,12 @@ class ParameterAdmin(ImportExportModelAdmin):
 
     list_display = ('part', 'template', 'data')
 
+    autocomplete_fields = ('part', 'template')
+
 
 class PartCategoryParameterAdmin(admin.ModelAdmin):
 
-    pass
+    autocomplete_fields = ('category', 'parameter_template',)
 
 
 class PartSellPriceBreakAdmin(admin.ModelAdmin):
@@ -302,6 +316,8 @@ class PartInternalPriceBreakAdmin(admin.ModelAdmin):
         model = models.PartInternalPriceBreak
 
     list_display = ('part', 'quantity', 'price',)
+
+    autocomplete_fields = ('part',)
 
 
 admin.site.register(models.Part, PartAdmin)
