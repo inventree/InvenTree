@@ -71,6 +71,8 @@ class SupplierPartAdmin(ImportExportModelAdmin):
         'SKU',
     ]
 
+    autocomplete_fields = ('part', 'supplier', 'manufacturer_part',)
+
 
 class ManufacturerPartResource(ModelResource):
     """
@@ -92,23 +94,6 @@ class ManufacturerPartResource(ModelResource):
         clean_model_instances = True
 
 
-class ManufacturerPartParameterInline(admin.TabularInline):
-    """
-    Inline for editing ManufacturerPartParameter objects,
-    directly from the ManufacturerPart admin view.
-    """
-
-    model = ManufacturerPartParameter
-
-
-class SupplierPartInline(admin.TabularInline):
-    """
-    Inline for the SupplierPart model
-    """
-
-    model = SupplierPart
-
-
 class ManufacturerPartAdmin(ImportExportModelAdmin):
     """
     Admin class for ManufacturerPart model
@@ -124,10 +109,7 @@ class ManufacturerPartAdmin(ImportExportModelAdmin):
         'MPN',
     ]
 
-    inlines = [
-        SupplierPartInline,
-        ManufacturerPartParameterInline,
-    ]
+    autocomplete_fields = ('part', 'manufacturer',)
 
 
 class ManufacturerPartParameterResource(ModelResource):
@@ -157,6 +139,8 @@ class ManufacturerPartParameterAdmin(ImportExportModelAdmin):
         'value'
     ]
 
+    autocomplete_fields = ('manufacturer_part',)
+
 
 class SupplierPriceBreakResource(ModelResource):
     """ Class for managing SupplierPriceBreak data import/export """
@@ -185,6 +169,8 @@ class SupplierPriceBreakAdmin(ImportExportModelAdmin):
     resource_class = SupplierPriceBreakResource
 
     list_display = ('part', 'quantity', 'price')
+
+    autocomplete_fields = ('part',)
 
 
 admin.site.register(Company, CompanyAdmin)

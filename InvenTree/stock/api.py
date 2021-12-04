@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.conf.urls import url, include
 from django.http import JsonResponse
-from django.db.models import Q
+from django.db.models import Q, F
 from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
 
@@ -301,6 +301,24 @@ class StockFilter(rest_filters.FilterSet):
             queryset = queryset.filter(StockItem.IN_STOCK_FILTER)
         else:
             queryset = queryset.exclude(StockItem.IN_STOCK_FILTER)
+
+        return queryset
+
+    available = rest_filters.BooleanFilter(label='Available', method='filter_available')
+
+    def filter_available(self, queryset, name, value):
+        """
+        Filter by whether the StockItem is "available" or not.
+
+        Here, "available" means that the allocated quantity is less than the total quantity
+        """
+
+        if str2bool(value):
+            # The 'quantity' field is greater than the calculated 'allocated' field
+            queryset = queryset.filter(Q(quantity__gt=F('allocated')))
+        else:
+            # The 'quantity' field is less than (or equal to) the calculated 'allocated' field
+            queryset = queryset.filter(Q(quantity__lte=F('allocated')))
 
         return queryset
 

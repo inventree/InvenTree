@@ -252,7 +252,7 @@
     <div class='alert alert-block alert-info'>
         {% object_link 'so-detail' allocation.line.order.id allocation.line.order as link %}
         {% decimal allocation.quantity as qty %}
-        {% blocktrans %}This stock item is allocated to Sales Order {{ link }} (Quantity: {{ qty }}){% endblocktrans %}
+        {% trans "This stock item is allocated to Sales Order" %} {{ link }} {% if qty < item.quantity %}({% trans "Quantity" %}: {{ qty }}){% endif %}
     </div>
     {% endfor %}
 
@@ -260,7 +260,7 @@
     <div class='alert alert-block alert-info'>
         {% object_link 'build-detail' allocation.build.id allocation.build %}
         {% decimal allocation.quantity as qty %}
-        {% blocktrans %}This stock item is allocated to Build {{ link }} (Quantity: {{ qty }}){% endblocktrans %}
+        {% trans "This stock item is allocated to Build Order" %} {{ link }} {% if qty < item.quantity %}({% trans "Quantity" %}: {{ qty }}){% endif %}
     </div>
     {% endfor %}
     
