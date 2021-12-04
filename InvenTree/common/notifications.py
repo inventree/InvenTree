@@ -21,7 +21,7 @@ class NotificationMethod:
     CONTEXT_BUILTIN = ['name', 'message', ]
     CONTEXT_EXTRA = []
 
-    def __init__(self, obj, entry_name, targets, context) -> None:
+    def __init__(self, obj, category, targets, context) -> None:
         # Check if a sending fnc is defined
         if (not hasattr(self, 'send')) and (not hasattr(self, 'send_bulk')):
             raise NotImplementedError('A NotificationMethod must either define a `send` or a `send_bulk` method')
@@ -32,7 +32,7 @@ class NotificationMethod:
 
         # Define arguments
         self.obj = obj
-        self.entry_name = entry_name
+        self.category = category
         self.targets = targets
         self.context = self.check_context(context)
 
@@ -131,7 +131,7 @@ class UIMessageNotification(SingleNotificationMethod):
             target_object = self.obj,
             source_object = target,
             user = target,
-            category = self.entry_name,
+            category = self.category,
             name = self.context['name'],
             message = self.context['message'],
         )
@@ -139,14 +139,14 @@ class UIMessageNotification(SingleNotificationMethod):
 # endregion
 
 
-def trigger_notifaction(obj, entry_name=None, obj_ref='pk', targets=None, target_fnc=None, target_args=[], target_kwargs={}, context={}):
+def trigger_notifaction(obj, category=None, obj_ref='pk', targets=None, target_fnc=None, target_args=[], target_kwargs={}, context={}):
     """
     Send out an notification
     """
 
     # Set defaults
-    if not entry_name:
-        entry_name = obj._meta.modelname
+    if not category:
+        category = obj._meta.modelname
 
     # Resolve objekt reference
     obj_ref_value = getattr(obj, obj_ref)
@@ -161,17 +161,17 @@ def trigger_notifaction(obj, entry_name=None, obj_ref='pk', targets=None, target
     # Check if we have notified recently...
     delta = timedelta(days=1)
 
-    if NotificationEntry.check_recent(entry_name, obj_ref_value, delta):
-        logger.info(f"Notification '{entry_name}' has recently been sent for '{str(obj)}' - SKIPPING")
+    if NotificationEntry.check_recent(category, obj_ref_value, delta):
+        logger.info(f"Notification '{category}' has recently been sent for '{str(obj)}' - SKIPPING")
         return
 
-    logger.info(f"Gathering users for notification '{entry_name}'")
+    logger.info(f"Gathering users for notification '{category}'")
     # Collect possible targets
     if not targets:
         targets = target_fnc(*target_args, **target_kwargs)
 
     if targets:
-        logger.info(f"Sending notification '{entry_name}' for '{str(obj)}'")
+        logger.info(f"Sending notification '{category}' for '{str(obj)}'")
 
         # Collect possible methods
         delivery_methods = inheritors(NotificationMethod)
@@ -183,7 +183,7 @@ def trigger_notifaction(obj, entry_name=None, obj_ref='pk', targets=None, target
         for method in [a for a in delivery_methods if a not in [SingleNotificationMethod, BulkNotificationMethod]]:
             logger.info(f"Triggering method '{method.METHOD_NAME}'")
             try:
-                deliver_notification(method, obj, entry_name, targets, context)
+                deliver_notification(method, obj, category, targets, context)
             except NotImplementedError as error:
                 print('NotImplementedError')
                 raise error
@@ -192,18 +192,18 @@ def trigger_notifaction(obj, entry_name=None, obj_ref='pk', targets=None, target
                 logger.error(error)
 
         # Set delivery flag
-        NotificationEntry.notify(entry_name, obj_ref_value)
+        NotificationEntry.notify(category, obj_ref_value)
     else:
-        logger.info(f"No possible users for notification '{entry_name}'")
+        logger.info(f"No possible users for notification '{category}'")
 
 
-def deliver_notification(cls: NotificationMethod, obj, entry_name: str, targets, context: dict):
+def deliver_notification(cls: NotificationMethod, obj, category: str, targets, context: dict):
     # Init delivery method
-    method = cls(obj, entry_name, targets, context)
+    method = cls(obj, category, targets, context)
 
     if method.recipients and len(method.recipients) > 0:
         # Log start
-        logger.info(f"Notify users via '{method.METHOD_NAME}' for notification '{entry_name}' for '{str(obj)}'")
+        logger.info(f"Notify users via '{method.METHOD_NAME}' for notification '{category}' for '{str(obj)}'")
 
         # Run setup for delivery method
         method.setup()
@@ -230,6 +230,6 @@ def deliver_notification(cls: NotificationMethod, obj, entry_name: str, targets,
         method.cleanup()
 
         # Log results
-        logger.info(f"Notified {success_count} users via '{method.METHOD_NAME}' for notification '{entry_name}' for '{str(obj)}' successfully")
+        logger.info(f"Notified {success_count} users via '{method.METHOD_NAME}' for notification '{category}' for '{str(obj)}' successfully")
         if not success:
             logger.info("There were some problems")
