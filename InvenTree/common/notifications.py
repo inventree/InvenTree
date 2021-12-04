@@ -21,7 +21,7 @@ class NotificationMethod:
     CONTEXT_BUILTIN = ['name', 'message', ]
     CONTEXT_EXTRA = []
 
-    def __init__(self, obj, entry_name, receivers, context) -> None:
+    def __init__(self, obj, entry_name, targets, context) -> None:
         # Check if a sending fnc is defined
         if (not hasattr(self, 'send')) and (not hasattr(self, 'send_bulk')):
             raise NotImplementedError('A NotificationMethod must either define a `send` or a `send_bulk` method')
@@ -33,7 +33,7 @@ class NotificationMethod:
         # Define arguments
         self.obj = obj
         self.entry_name = entry_name
-        self.receivers = receivers
+        self.targets = targets
         self.context = self.check_context(context)
 
         # Gather recipients
@@ -109,7 +109,7 @@ class EmailNotification(BulkNotificationMethod):
 
     def get_recipients(self):
         return EmailAddress.objects.filter(
-            user__in=self.receivers,
+            user__in=self.targets,
         )
 
     def send_bulk(self):
@@ -124,7 +124,7 @@ class UIMessageNotification(SingleNotificationMethod):
     METHOD_NAME = 'ui_message'
 
     def get_recipients(self):
-        return self.receivers
+        return self.targets
 
     def send(self, receiver):
         NotificationMessage.objects.create(
@@ -139,7 +139,7 @@ class UIMessageNotification(SingleNotificationMethod):
 # endregion
 
 
-def trigger_notifaction(obj, entry_name=None, obj_ref='pk', receivers=None, receiver_fnc=None, receiver_args=[], receiver_kwargs={}, notification_context={}):
+def trigger_notifaction(obj, entry_name=None, obj_ref='pk', targets=None, receiver_fnc=None, receiver_args=[], receiver_kwargs={}, notification_context={}):
     """
     Send out an notification
     """
@@ -166,11 +166,11 @@ def trigger_notifaction(obj, entry_name=None, obj_ref='pk', receivers=None, rece
         return
 
     logger.info(f"Gathering users for notification '{entry_name}'")
-    # Collect possible receivers
-    if not receivers:
-        receivers = receiver_fnc(*receiver_args, **receiver_kwargs)
+    # Collect possible targets
+    if not targets:
+        targets = receiver_fnc(*receiver_args, **receiver_kwargs)
 
-    if receivers:
+    if targets:
         logger.info(f"Sending notification '{entry_name}' for '{str(obj)}'")
 
         # Collect possible methods
@@ -183,7 +183,7 @@ def trigger_notifaction(obj, entry_name=None, obj_ref='pk', receivers=None, rece
         for method in [a for a in delivery_methods if a not in [SingleNotificationMethod, BulkNotificationMethod]]:
             logger.info(f"Triggering method '{method.METHOD_NAME}'")
             try:
-                deliver_notification(method, obj, entry_name, receivers, notification_context)
+                deliver_notification(method, obj, entry_name, targets, notification_context)
             except NotImplementedError as error:
                 print('NotImplementedError')
                 raise error
@@ -197,9 +197,9 @@ def trigger_notifaction(obj, entry_name=None, obj_ref='pk', receivers=None, rece
         logger.info(f"No possible users for notification '{entry_name}'")
 
 
-def deliver_notification(cls: NotificationMethod, obj, entry_name: str, receivers, notification_context: dict):
+def deliver_notification(cls: NotificationMethod, obj, entry_name: str, targets, notification_context: dict):
     # Init delivery method
-    method = cls(obj, entry_name, receivers, notification_context)
+    method = cls(obj, entry_name, targets, notification_context)
 
     if method.recipients and len(method.recipients) > 0:
         # Log start
