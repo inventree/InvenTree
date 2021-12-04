@@ -52,6 +52,19 @@ class NotificationTests(BaseNotificationIntegrationTest):
         with self.assertRaises(NotImplementedError):
             AnotherFalseNotificationMethod('', '', '', {'name': 1, 'message': 2, }, )
 
+    def test_errors_passing(self):
+        """ensure that errors do not kill the whole delivery"""
+
+        class ErrorImplementation(SingleNotificationMethod):
+            METHOD_NAME = 'ErrorImplementation'
+
+            def get_targets(self):
+                return [1, ]
+
+            def send(self, target):
+                raise KeyError('This could be any error')
+
+        self._notification_run()
 
 
     def test_SingleNotificationMethod(self):
