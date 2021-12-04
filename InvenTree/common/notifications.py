@@ -139,7 +139,7 @@ class UIMessageNotification(SingleNotificationMethod):
 # endregion
 
 
-def trigger_notifaction(obj, entry_name=None, obj_ref='pk', targets=None, target_fnc=None, target_args=[], target_kwargs={}, notification_context={}):
+def trigger_notifaction(obj, entry_name=None, obj_ref='pk', targets=None, target_fnc=None, target_args=[], target_kwargs={}, context={}):
     """
     Send out an notification
     """
@@ -183,7 +183,7 @@ def trigger_notifaction(obj, entry_name=None, obj_ref='pk', targets=None, target
         for method in [a for a in delivery_methods if a not in [SingleNotificationMethod, BulkNotificationMethod]]:
             logger.info(f"Triggering method '{method.METHOD_NAME}'")
             try:
-                deliver_notification(method, obj, entry_name, targets, notification_context)
+                deliver_notification(method, obj, entry_name, targets, context)
             except NotImplementedError as error:
                 print('NotImplementedError')
                 raise error
@@ -197,9 +197,9 @@ def trigger_notifaction(obj, entry_name=None, obj_ref='pk', targets=None, target
         logger.info(f"No possible users for notification '{entry_name}'")
 
 
-def deliver_notification(cls: NotificationMethod, obj, entry_name: str, targets, notification_context: dict):
+def deliver_notification(cls: NotificationMethod, obj, entry_name: str, targets, context: dict):
     # Init delivery method
-    method = cls(obj, entry_name, targets, notification_context)
+    method = cls(obj, entry_name, targets, context)
 
     if method.recipients and len(method.recipients) > 0:
         # Log start
