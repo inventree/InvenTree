@@ -42,6 +42,8 @@ class PurchaseOrderAdmin(ImportExportModelAdmin):
         PurchaseOrderLineItemInlineAdmin
     ]
 
+    autocomplete_fields = ('supplier',)
+
 
 class SalesOrderAdmin(ImportExportModelAdmin):
 
@@ -62,6 +64,8 @@ class SalesOrderAdmin(ImportExportModelAdmin):
         'customer__name',
         'description',
     ]
+
+    autocomplete_fields = ('customer',)
 
 
 class POLineItemResource(ModelResource):
@@ -124,6 +128,10 @@ class PurchaseOrderLineItemAdmin(ImportExportModelAdmin):
         'reference'
     )
 
+    search_fields = ('reference',)
+
+    autocomplete_fields = ('order', 'part', 'destination',)
+
 
 class SalesOrderLineItemAdmin(ImportExportModelAdmin):
 
@@ -136,6 +144,15 @@ class SalesOrderLineItemAdmin(ImportExportModelAdmin):
         'reference'
     )
 
+    search_fields = [
+        'part__name',
+        'order__reference',
+        'order__customer__name',
+        'reference',
+    ]
+
+    autocomplete_fields = ('order', 'part',)
+
 
 class SalesOrderShipmentAdmin(ImportExportModelAdmin):
 
@@ -145,6 +162,14 @@ class SalesOrderShipmentAdmin(ImportExportModelAdmin):
         'reference',
     ]
 
+    search_fields = [
+        'reference',
+        'order__reference',
+        'order__customer__name',
+    ]
+
+    autocomplete_fields = ('order',)
+
 
 class SalesOrderAllocationAdmin(ImportExportModelAdmin):
 
@@ -153,6 +178,8 @@ class SalesOrderAllocationAdmin(ImportExportModelAdmin):
         'item',
         'quantity'
     )
+
+    autocomplete_fields = ('line', 'shipment', 'item',)
 
 
 admin.site.register(PurchaseOrder, PurchaseOrderAdmin)
