@@ -15,10 +15,8 @@ from InvenTree.helpers import clean_decimal
 
 from common.forms import MatchItemForm
 
-import part.models
-
 from .models import PurchaseOrder
-from .models import SalesOrder, SalesOrderLineItem
+from .models import SalesOrder
 
 
 class IssuePurchaseOrderForm(HelperForm):
@@ -62,46 +60,6 @@ class CancelSalesOrderForm(HelperForm):
         model = SalesOrder
         fields = [
             'confirm',
-        ]
-
-
-class AllocateSerialsToSalesOrderForm(forms.Form):
-    """
-    Form for assigning stock to a sales order,
-    by serial number lookup
-
-    TODO: Refactor this form / view to use the new API forms interface
-    """
-
-    line = forms.ModelChoiceField(
-        queryset=SalesOrderLineItem.objects.all(),
-    )
-
-    part = forms.ModelChoiceField(
-        queryset=part.models.Part.objects.all(),
-    )
-
-    serials = forms.CharField(
-        label=_("Serial Numbers"),
-        required=True,
-        help_text=_('Enter stock item serial numbers'),
-    )
-
-    quantity = forms.IntegerField(
-        label=_('Quantity'),
-        required=True,
-        help_text=_('Enter quantity of stock items'),
-        initial=1,
-        min_value=1
-    )
-
-    class Meta:
-
-        fields = [
-            'line',
-            'part',
-            'serials',
-            'quantity',
         ]
 
 

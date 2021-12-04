@@ -41,11 +41,6 @@ sales_order_detail_urls = [
 ]
 
 sales_order_urls = [
-    # URLs for sales order allocations
-    url(r'^allocation/', include([
-        url(r'^assign-serials/', views.SalesOrderAssignSerials.as_view(), name='so-assign-serials'),
-    ])),
-
     # Display detail view for a single SalesOrder
     url(r'^(?P<pk>\d+)/', include(sales_order_detail_urls)),
 

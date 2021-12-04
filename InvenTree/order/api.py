@@ -699,6 +699,30 @@ class SalesOrderComplete(generics.CreateAPIView):
         return ctx
 
 
+class SalesOrderAllocateSerials(generics.CreateAPIView):
+    """
+    API endpoint to allocation stock items against a SalesOrder,
+    by specifying serial numbers.
+    """
+
+    queryset = models.SalesOrder.objects.none()
+    serializer_class = serializers.SOSerialAllocationSerializer
+
+    def get_serializer_context(self):
+
+        ctx = super().get_serializer_context()
+
+        # Pass through the SalesOrder object to the serializer
+        try:
+            ctx['order'] = models.SalesOrder.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
+        ctx['request'] = self.request
+
+        return ctx
+
+
 class SalesOrderAllocate(generics.CreateAPIView):
     """
     API endpoint to allocate stock items against a SalesOrder
@@ -944,6 +968,7 @@ order_api_urls = [
         url(r'^(?P<pk>\d+)/', include([
             url(r'^complete/', SalesOrderComplete.as_view(), name='api-so-complete'),
             url(r'^allocate/', SalesOrderAllocate.as_view(), name='api-so-allocate'),
+            url(r'^allocate-serials/', SalesOrderAllocateSerials.as_view(), name='api-so-allocate-serials'),
             url(r'^.*$', SODetail.as_view(), name='api-so-detail'),
         ])),
 

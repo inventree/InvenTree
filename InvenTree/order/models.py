@@ -725,6 +725,7 @@ class SalesOrder(Order):
     def pending_shipment_count(self):
         return self.pending_shipments().count()
 
+
 class PurchaseOrderAttachment(InvenTreeAttachment):
     """
     Model for storing file attachments against a PurchaseOrder object

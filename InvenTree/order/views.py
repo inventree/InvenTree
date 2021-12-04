@@ -9,12 +9,10 @@ from django.db import transaction
 from django.db.utils import IntegrityError
 from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404
-from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DetailView, ListView
-from django.views.generic.edit import FormMixin
 from django.forms import HiddenInput, IntegerField
 
 import logging
@@ -22,7 +20,6 @@ from decimal import Decimal, InvalidOperation
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .models import SalesOrder, SalesOrderLineItem
-from .models import SalesOrderAllocation
 from .admin import POLineItemResource, SOLineItemResource
 from build.models import Build
 from company.models import Company, SupplierPart  # ManufacturerPart
@@ -38,7 +35,6 @@ from part.views import PartPricing
 
 from InvenTree.views import AjaxView, AjaxUpdateView
 from InvenTree.helpers import DownloadFile, str2bool
-from InvenTree.helpers import extract_serial_numbers
 from InvenTree.views import InvenTreeRoleMixin
 
 from InvenTree.status_codes import PurchaseOrderStatus
@@ -790,175 +786,6 @@ class OrderParts(AjaxView):
                 purchase_price = item.purchase_price
 
                 order.add_line_item(supplier_part, quantity, purchase_price=purchase_price)
-
-
-class SalesOrderAssignSerials(AjaxView, FormMixin):
-    """
-    View for assigning stock items to a sales order,
-    by serial number lookup.
-    """
-    # TODO: Remove this class and replace with an API endpoint
-
-    model = SalesOrderAllocation
-    role_required = 'sales_order.change'
-    ajax_template_name = 'order/so_allocate_by_serial.html'
-    ajax_form_title = _('Allocate Serial Numbers')
-    form_class = order_forms.AllocateSerialsToSalesOrderForm
-
-    # Keep track of SalesOrderLineItem and Part references
-    line = None
-    part = None
-
-    def get_initial(self):
-        """
-        Initial values are passed as query params
-        """
-
-        initials = super().get_initial()
-
-        try:
-            self.line = SalesOrderLineItem.objects.get(pk=self.request.GET.get('line', None))
-            initials['line'] = self.line
-        except (ValueError, SalesOrderLineItem.DoesNotExist):
-            pass
-
-        try:
-            self.part = Part.objects.get(pk=self.request.GET.get('part', None))
-            initials['part'] = self.part
-        except (ValueError, Part.DoesNotExist):
-            pass
-
-        return initials
-
-    def post(self, request, *args, **kwargs):
-
-        self.form = self.get_form()
-
-        # Validate the form
-        self.form.is_valid()
-        self.validate()
-
-        valid = self.form.is_valid()
-
-        if valid:
-            self.allocate_items()
-
-        data = {
-            'form_valid': valid,
-            'form_errors': self.form.errors.as_json(),
-            'non_field_errors': self.form.non_field_errors().as_json(),
-            'success': _("Allocated {n} items").format(n=len(self.stock_items))
-        }
-
-        return self.renderJsonResponse(request, self.form, data)
-
-    def validate(self):
-
-        data = self.form.cleaned_data
-
-        # Extract hidden fields from posted data
-        self.line = data.get('line', None)
-        self.part = data.get('part', None)
-
-        if self.line:
-            self.form.fields['line'].widget = HiddenInput()
-        else:
-            self.form.add_error('line', _('Select line item'))
-
-        if self.part:
-            self.form.fields['part'].widget = HiddenInput()
-        else:
-            self.form.add_error('part', _('Select part'))
-
-        if not self.form.is_valid():
-            return
-
-        # Form is otherwise valid - check serial numbers
-        serials = data.get('serials', '')
-        quantity = data.get('quantity', 1)
-
-        # Save a list of serial_numbers
-        self.serial_numbers = None
-        self.stock_items = []
-
-        try:
-            self.serial_numbers = extract_serial_numbers(serials, quantity)
-
-            for serial in self.serial_numbers:
-                try:
-                    # Find matching stock item
-                    stock_item = StockItem.objects.get(
-                        part=self.part,
-                        serial=serial
-                    )
-                except StockItem.DoesNotExist:
-                    self.form.add_error(
-                        'serials',
-                        _('No matching item for serial {serial}').format(serial=serial)
-                    )
-                    continue
-
-                # Now we have a valid stock item - but can it be added to the sales order?
-
-                # If not in stock, cannot be added to the order
-                if not stock_item.in_stock:
-                    self.form.add_error(
-                        'serials',
-                        _('{serial} is not in stock').format(serial=serial)
-                    )
-                    continue
-
-                # Already allocated to an order
-                if stock_item.is_allocated():
-                    self.form.add_error(
-                        'serials',
-                        _('{serial} already allocated to an order').format(serial=serial)
-                    )
-                    continue
-
-                # Add it to the list!
-                self.stock_items.append(stock_item)
-
-        except ValidationError as e:
-            self.form.add_error('serials', e.messages)
-
-    def allocate_items(self):
-        """
-        Create stock item allocations for each selected serial number
-        """
-
-        for stock_item in self.stock_items:
-            SalesOrderAllocation.objects.create(
-                item=stock_item,
-                line=self.line,
-                quantity=1,
-            )
-
-    def get_form(self):
-
-        form = super().get_form()
-
-        if self.line:
-            form.fields['line'].widget = HiddenInput()
-
-        if self.part:
-            form.fields['part'].widget = HiddenInput()
-
-        return form
-
-    def get_context_data(self):
-        return {
-            'line': self.line,
-            'part': self.part,
-        }
-
-    def get(self, request, *args, **kwargs):
-
-        return self.renderJsonResponse(
-            request,
-            self.get_form(),
-            context=self.get_context_data(),
-        )
 
 
 class LineItemPricing(PartPricing):

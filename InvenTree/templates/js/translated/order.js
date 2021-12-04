@@ -2357,15 +2357,30 @@ function loadSalesOrderLineItemTable(table, options={}) {
         $(table).find('.button-add-by-sn').click(function() {
             var pk = $(this).attr('pk');
 
-            // TODO: Migrate this form to the API forms
             inventreeGet(`/api/order/so-line/${pk}/`, {},
                 {
                     success: function(response) {
-                        launchModalForm('{% url "so-assign-serials" %}', {
-                            success: reloadTable,
-                            data: {
-                                line: pk,
-                                part: response.part, 
+
+                        constructForm(`/api/order/so/${options.order}/allocate-serials/`, {
+                            method: 'POST',
+                            title: '{% trans "Allocate Serial Numbers" %}',
+                            fields: {
+                                line_item: {
+                                    value: pk,
+                                    hidden: true,
+                                },
+                                quantity: {},
+                                serial_numbers: {},
+                                shipment: {
+                                    filters: {
+                                        order: options.order,
+                                        shipped: false,
+                                    },
+                                    auto_fill: true,
+                                }
+                            },
+                            onSuccess: function() {
+                                $(table).bootstrapTable('refresh');
                             }
                         });
                     }
