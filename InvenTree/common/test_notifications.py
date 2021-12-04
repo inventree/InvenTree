@@ -17,7 +17,7 @@ class NotificationTests(BaseNotificationIntegrationTest):
             METHOD_NAME = 'AnotherFalseNotification'
 
             def send(self):
-                pass
+                """a comment so we do not need a pass"""
 
         class NoNameNotificationMethod(NotificationMethod):
             pass
