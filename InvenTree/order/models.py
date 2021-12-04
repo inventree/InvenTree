@@ -657,13 +657,15 @@ class SalesOrder(Order):
         """
 
         if not self.can_complete():
-            return
+            return False
 
         self.status = SalesOrderStatus.SHIPPED
         self.shipped_by = user
         self.shipment_date = datetime.now()
 
         self.save()
+
+        return True
 
     def can_cancel(self):
         """

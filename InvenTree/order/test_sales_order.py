@@ -132,9 +132,12 @@ class SalesOrderTest(TestCase):
         self.assertEqual(SalesOrderAllocation.objects.count(), 0)
         self.assertEqual(self.order.status, status.SalesOrderStatus.CANCELLED)
 
-        # Now try to ship it - should fail
         with self.assertRaises(ValidationError):
-            self.order.complete_order(None)
+            self.order.can_complete(raise_error=True)
+
+        # Now try to ship it - should fail
+        result = self.order.complete_order(None)
+        self.assertFalse(result)
 
     def test_complete_order(self):
         # Allocate line items, then ship the order
@@ -149,8 +152,9 @@ class SalesOrderTest(TestCase):
         self.assertEqual(SalesOrderAllocation.objects.count(), 2)
 
         # Attempt to complete the order (but shipments are not completed!)
-        with self.assertRaises(ValidationError):
-            self.order.complete_order(None)
+        result = self.order.complete_order(None)
+
+        self.assertFalse(result)
 
         self.assertIsNone(self.shipment.shipment_date)
         self.assertFalse(self.shipment.is_complete())
@@ -160,7 +164,9 @@ class SalesOrderTest(TestCase):
         self.assertTrue(self.shipment.is_complete())
 
         # Now, should be OK to ship
-        self.order.complete_order(None)
+        result = self.order.complete_order(None)
+
+        self.assertTrue(result)
 
         self.assertEqual(self.order.status, status.SalesOrderStatus.SHIPPED)
         self.assertIsNotNone(self.order.shipment_date)
