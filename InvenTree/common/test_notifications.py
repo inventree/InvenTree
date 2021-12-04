@@ -50,7 +50,8 @@ class NotificationTests(BaseNotificationIntegrationTest):
 
         # no get_targets
         with self.assertRaises(NotImplementedError):
-            AnotherFalseNotificationMethod('', '', '', {'name': 1, 'message': 2, } )
+            AnotherFalseNotificationMethod('', '', '', {'name': 1, 'message': 2, }, )
+
 
 
     def test_SingleNotificationMethod(self):
