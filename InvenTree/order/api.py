@@ -51,6 +51,7 @@ class POFilter(rest_filters.FilterSet):
         return queryset
 
     class Meta:
+        model = models.PurchaseOrder
         fields = [
             'supplier',
         ]
