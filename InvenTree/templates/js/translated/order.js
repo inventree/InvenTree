@@ -2017,8 +2017,9 @@ function showFulfilledSubTable(index, row, element, options) {
         queryParams: {
             part: row.part,
             sales_order: options.order,
+            location_detail: true,
         },
-        showHeader: false,
+        showHeader: true,
         columns: [
             {
                 field: 'pk',
@@ -2026,6 +2027,7 @@ function showFulfilledSubTable(index, row, element, options) {
             },
             {
                 field: 'stock',
+                title: '{% trans "Stock Item" %}',
                 formatter: function(value, row) {
                     var text = '';
                     if (row.serial && row.quantity == 1) {
@@ -2037,11 +2039,25 @@ function showFulfilledSubTable(index, row, element, options) {
                     return renderLink(text, `/stock/item/${row.pk}/`);
                 },
             },
-            /*
             {
-                field: 'po'
-            },
-            */
+                field: 'location',
+                title: '{% trans "Location" %}',
+                formatter: function(value, row) {
+                    if (row.customer) {
+                        return renderLink(
+                            '{% trans "Shipped to customer" %}',
+                            `/company/${row.customer}/`
+                        );
+                    } else if (row.location && row.location_detail) {
+                        return renderLink(
+                            row.location_detail.pathstring,
+                            `/stock/location/${row.location}`,
+                        );
+                    } else {
+                        return `<em>{% trans "Stock location not specified" %}</em>`;
+                    }
+                }
+            }
         ],
     });
 }
