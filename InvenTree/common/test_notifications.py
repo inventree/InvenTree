@@ -67,25 +67,13 @@ class BaseNotificationTests(BaseNotificationIntegrationTest):
         self._notification_run()
 
 
-class ClassNotificationTests(BaseNotificationIntegrationTest):
-
-    def test_SingleNotificationMethod(self):
-        """ensure the implementation requirements are tested"""
-
-        class WrongImplementation(SingleNotificationMethod):
-            METHOD_NAME = 'WrongImplementation1'
-
-            def get_targets(self):
-                return [1, ]
-
-        with self.assertRaises(NotImplementedError):
-            self._notification_run()
+class BulkNotificationMethodTests(BaseNotificationIntegrationTest):
 
     def test_BulkNotificationMethod(self):
         """ensure the implementation requirements are tested"""
 
         class WrongImplementation(BulkNotificationMethod):
-            METHOD_NAME = 'WrongImplementation2'
+            METHOD_NAME = 'WrongImplementationBulk'
 
             def get_targets(self):
                 return [1, ]
@@ -93,5 +81,19 @@ class ClassNotificationTests(BaseNotificationIntegrationTest):
         with self.assertRaises(NotImplementedError):
             self._notification_run()
 
+
+class SingleNotificationMethodTests(BaseNotificationIntegrationTest):
+
+    def test_SingleNotificationMethod(self):
+        """ensure the implementation requirements are tested"""
+
+        class WrongImplementation(SingleNotificationMethod):
+            METHOD_NAME = 'WrongImplementationSingle'
+
+            def get_targets(self):
+                return [1, ]
+
+        with self.assertRaises(NotImplementedError):
+            self._notification_run()
 
 # A integration test for notifications is provided in test_part.PartNotificationTest
