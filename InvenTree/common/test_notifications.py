@@ -11,11 +11,16 @@ class NotificationTests(BaseNotificationIntegrationTest):
         """ensure the implementation requirements are tested"""
 
         class FalseNotificationMethod(NotificationMethod):
-            pass
+            METHOD_NAME = 'FalseNotification' 
 
         class AnotherFalseNotificationMethod(NotificationMethod):
+            METHOD_NAME = 'AnotherFalseNotification'
+
             def send(self):
                 pass
+
+        class NoNameNotificationMethod(NotificationMethod):
+            pass
 
         with self.assertRaises(NotImplementedError):
             FalseNotificationMethod('', '', '')
@@ -23,11 +28,16 @@ class NotificationTests(BaseNotificationIntegrationTest):
         with self.assertRaises(NotImplementedError):
             AnotherFalseNotificationMethod('', '', '')
 
+        with self.assertRaises(NotImplementedError):
+            NoNameNotificationMethod('', '', '')
+
     def test_SingleNotificationMethod(self):
         """ensure the implementation requirements are tested"""
         print('TESTING SingleNotificationMethod')
 
         class WrongImplementation(SingleNotificationMethod):
+            METHOD_NAME = 'WrongImplementation1'
+
             def setup(self):
                 print('running setup on WrongImplementation')
                 return super().setup()
@@ -40,6 +50,8 @@ class NotificationTests(BaseNotificationIntegrationTest):
         print('TESTING BulkNotificationMethod')
 
         class WrongImplementation(BulkNotificationMethod):
+            METHOD_NAME = 'WrongImplementation2'
+
             def setup(self):
                 print('running setup on WrongImplementation')
                 return super().setup()
