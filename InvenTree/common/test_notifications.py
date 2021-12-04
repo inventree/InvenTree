@@ -36,10 +36,12 @@ class NotificationTests(BaseNotificationIntegrationTest):
 
     def test_SingleNotificationMethod(self):
         """ensure the implementation requirements are tested"""
-        print('TESTING SingleNotificationMethod')
 
         class WrongImplementation(SingleNotificationMethod):
             METHOD_NAME = 'WrongImplementation1'
+
+            def get_targets(self):
+                return []
 
             def setup(self):
                 print('running setup on WrongImplementation')
@@ -50,10 +52,12 @@ class NotificationTests(BaseNotificationIntegrationTest):
 
     def test_BulkNotificationMethod(self):
         """ensure the implementation requirements are tested"""
-        print('TESTING BulkNotificationMethod')
 
         class WrongImplementation(BulkNotificationMethod):
             METHOD_NAME = 'WrongImplementation2'
+
+            def get_targets(self):
+                return []
 
             def setup(self):
                 print('running setup on WrongImplementation')
