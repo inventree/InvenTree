@@ -517,3 +517,7 @@ class PartNotificationTest(BaseNotificationIntegrationTest):
 
     def test_notification(self):
         self._notification_run()
+
+        # Try again -> cover the already send line
+        self.part.save()
+
