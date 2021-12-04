@@ -7,7 +7,7 @@ from django.template.loader import render_to_string
 from allauth.account.models import EmailAddress
 
 from InvenTree.helpers import inheritors
-from common.models import NotificationEntry
+from common.models import NotificationEntry, NotificationMessage
 import InvenTree.tasks
 
 
@@ -82,6 +82,22 @@ class EmailNotification(BulkNotificationMethod):
         InvenTree.tasks.send_email(context['template']['subject'], '', recipients, html_message=html_message)
 
         return True
+
+class UIMessageNotification(SingleNotificationMethod):
+    METHOD_NAME = 'ui_message'
+
+    def get_recipients(self):
+        return self.receivers
+
+    def send(self, receiver, context):
+        NotificationMessage.objects.create(
+            target_object = self.obj,
+            source_object = receiver,
+            user = receiver,
+            category = self.entry_name,
+            name = context['name'],
+            message = context['message'],
+        )
 # endregion
 # endregion
 
