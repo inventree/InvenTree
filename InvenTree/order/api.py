@@ -22,8 +22,39 @@ from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
 
 import order.models as models
 import order.serializers as serializers
-
 from part.models import Part
+from users.models import Owner
+
+
+class POFilter(rest_filters.FilterSet):
+    """
+    Custom API filters for the POList endpoint
+    """
+
+    assigned_to_me = rest_filters.BooleanFilter(label='assigned_to_me', method='filter_assigned_to_me')
+
+    def filter_assigned_to_me(self, queryset, name, value):
+        """
+        Filter by orders which are assigned to the current user
+        """
+
+        value = str2bool(value)
+
+        # Work out who "me" is!
+        owners = Owner.get_owners_matching_user(self.request.user)
+
+        if value:
+            queryset = queryset.filter(responsible__in=owners)
+        else:
+            queryset = queryset.exclude(responsible__in=owners)
+
+        return queryset
+
+    class Meta:
+        model = models.PurchaseOrder
+        fields = [
+            'supplier',
+        ]
 
 
 class POList(generics.ListCreateAPIView):
@@ -35,6 +66,7 @@ class POList(generics.ListCreateAPIView):
 
     queryset = models.PurchaseOrder.objects.all()
     serializer_class = serializers.POSerializer
+    filterset_class = POFilter
 
     def create(self, request, *args, **kwargs):
         """
@@ -149,10 +181,6 @@ class POList(generics.ListCreateAPIView):
     ordering_field_aliases = {
         'reference': ['reference_int', 'reference'],
     }
-
-    filter_fields = [
-        'supplier',
-    ]
 
     search_fields = [
         'reference',
