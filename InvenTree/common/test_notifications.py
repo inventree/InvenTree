@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from .notifications import NotificationMethod, SingleNotificationMethod, BulkNotificationMethod
+from common.notifications import NotificationMethod, SingleNotificationMethod, BulkNotificationMethod
 from part.test_part import BaseNotificationIntegrationTest
 
 
