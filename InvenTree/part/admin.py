@@ -126,7 +126,7 @@ class PartRelatedAdmin(admin.ModelAdmin):
     """
     Class to manage PartRelated objects
     """
-        
+
     autocomplete_fields = ('part_1', 'part_2')
 
 
@@ -147,7 +147,7 @@ class PartStarAdmin(admin.ModelAdmin):
 class PartCategoryStarAdmin(admin.ModelAdmin):
 
     list_display = ('category', 'user')
-    
+
     autocomplete_fields = ('category',)
 
 
