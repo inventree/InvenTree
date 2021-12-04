@@ -119,6 +119,18 @@ src="{% static 'img/blank_image.png' %}"
         <td>{{ order.supplier_reference }}{% include "clip.html"%}</td>
     </tr>
     {% endif %}
+    <tr>
+        <td><span class='fas fa-tasks'></span></td>
+        <td>{% trans "Completed Line Items" %}</td>
+        <td>
+            {{ order.completed_line_count }} / {{ order.line_count }}
+            {% if order.is_complete %}
+            <span class='badge bg-success badge-right rounded-pill'>{% trans "Complete" %}</span>
+            {% else %}
+            <span class='badge bg-danger badge-right rounded-pill'>{% trans "Incomplete" %}</span>
+            {% endif %}
+        </td>
+    </tr>
     {% if order.link %}
     <tr>
         <td><span class='fas fa-link'></span></td>
