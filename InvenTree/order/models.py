@@ -621,23 +621,43 @@ class SalesOrder(Order):
 
         return self.lines.count() > 0 and all([line.is_completed() for line in self.lines.all()])
 
+    def can_complete(self, raise_error=False):
+        """
+        Test if this SalesOrder can be completed.
+
+        Throws a ValidationError if cannot be completed.
+        """
+
+        # Order without line items cannot be completed
+        if self.lines.count() == 0:
+            if raise_error:
+                raise ValidationError(_('Order cannot be completed as no parts have been assigned'))
+
+        # Only a PENDING order can be marked as SHIPPED
+        elif self.status != SalesOrderStatus.PENDING:
+            if raise_error:
+                raise ValidationError(_('Only a pending order can be marked as complete'))
+
+        elif self.pending_shipment_count > 0:
+            if raise_error:
+                raise ValidationError(_("Order cannot be completed as there are incomplete shipments"))
+
+        elif self.pending_line_count > 0:
+            if raise_error:
+                raise ValidationError(_("Order cannot be completed as there are incomplete line items"))
+
+        else:
+            return True
+
+        return False
+
     def complete_order(self, user):
         """
         Mark this order as "complete"
         """
 
-        if self.lines.count() == 0:
-            # Order without line items cannot be completed
-            raise ValidationError(_('Order cannot be completed as no parts have been assigned'))
-
-        if self.status != SalesOrderStatus.PENDING:
-            # Only a PENDING order can be marked as SHIPPED
-            raise ValidationError(_('Only a pending order can be marked as complete'))
-
-        # Check if there are any incomplete shipments
-        for shipment in self.shipments.all():
-            if not shipment.shipment_date:
-                raise ValidationError(_('Order cannot be completed as there are pending shipments'))
+        if not self.can_complete():
+            return
 
         self.status = SalesOrderStatus.SHIPPED
         self.shipped_by = user

@@ -749,11 +749,20 @@ class SalesOrderCompleteSerializer(serializers.Serializer):
     DRF serializer for manually marking a sales order as complete
     """
 
+    def validate(self, data):
+
+        data = super().validate(data)
+
+        order = self.context['order']
+
+        order.can_complete(raise_error=True)
+
+        return data
+
     def save(self):
 
         request = self.context['request']
         order = self.context['order']
-        # data = self.validated_data
 
         user = getattr(request, 'user', None)
 

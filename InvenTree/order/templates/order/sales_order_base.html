@@ -63,7 +63,7 @@ src="{% static 'img/blank_image.png' %}"
 
 </div>
 {% if order.status == SalesOrderStatus.PENDING %}
-<button type='button' class='btn btn-success' id='complete-order' title='{% trans "Complete Sales Order" %}'>
+<button type='button' class='btn btn-success' id='complete-order' title='{% trans "Complete Sales Order" %}'{% if not order.is_completed %} disabled{% endif %}>
     <span class='fas fa-check-circle'></span> {% trans "Complete Order" %}
 </button>
 {% endif %}
@@ -224,7 +224,12 @@ $("#cancel-order").click(function() {
 });
 
 $("#complete-order").click(function() {
-    completeSalesOrder({{ order.pk }});
+    constructForm('{% url "api-so-complete" order.id %}', {
+        method: 'POST',
+        title: '{% trans "Complete Sales Order" %}',
+        confirm: true,
+        reload: true,
+    });
 });
 
 {% if report_enabled %}

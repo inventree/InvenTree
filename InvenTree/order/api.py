@@ -683,7 +683,7 @@ class SalesOrderComplete(generics.CreateAPIView):
     """
 
     queryset = models.SalesOrder.objects.all()
-    serializer_class = serializers.SalesOrderShipmentCompleteSerializer
+    serializer_class = serializers.SalesOrderCompleteSerializer
 
     def get_serializer_context(self):
 
