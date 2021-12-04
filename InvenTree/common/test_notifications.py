@@ -22,12 +22,15 @@ class NotificationTests(BaseNotificationIntegrationTest):
         class NoNameNotificationMethod(NotificationMethod):
             pass
 
+        # no send / send bulk
         with self.assertRaises(NotImplementedError):
             FalseNotificationMethod('', '', '')
 
+        # no gathering
         with self.assertRaises(NotImplementedError):
             AnotherFalseNotificationMethod('', '', '')
 
+        # no METHOD_NAME
         with self.assertRaises(NotImplementedError):
             NoNameNotificationMethod('', '', '')
 
