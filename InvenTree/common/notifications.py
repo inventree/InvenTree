@@ -80,7 +80,7 @@ class NotificationMethod:
     def setup(self):
         return True
 
-    # def send(self, receiver)
+    # def send(self, targets)
     # def send_bulk(self)
 
     def cleanup(self):
@@ -88,7 +88,7 @@ class NotificationMethod:
 
 
 class SingleNotificationMethod(NotificationMethod):
-    def send(self, receiver):
+    def send(self, target):
         raise NotImplementedError('The `send` method must be overriden!')
 
 
@@ -126,11 +126,11 @@ class UIMessageNotification(SingleNotificationMethod):
     def get_recipients(self):
         return self.targets
 
-    def send(self, receiver):
+    def send(self, target):
         NotificationMessage.objects.create(
             target_object = self.obj,
-            source_object = receiver,
-            user = receiver,
+            source_object = target,
+            user = target,
             category = self.entry_name,
             name = self.context['name'],
             message = self.context['message'],
