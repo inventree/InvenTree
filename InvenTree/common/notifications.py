@@ -218,6 +218,9 @@ def deliver_notification(cls: NotificationMethod, obj, category: str, targets, c
                 else:
                     success = False
 
+        else:
+            raise NotImplementedError('No delivery method found')
+
         # Run cleanup for delivery method
         method.cleanup()
 
