@@ -18,7 +18,7 @@ from .templatetags import inventree_extras
 
 import part.settings
 
-from common.models import InvenTreeSetting, NotificationEntry
+from common.models import InvenTreeSetting, NotificationEntry, NotificationMessage
 
 
 class TemplateTagTest(TestCase):
@@ -518,6 +518,11 @@ class PartNotificationTest(BaseNotificationIntegrationTest):
     def test_notification(self):
         self._notification_run()
 
+        # There should be 1 notification message right now
+        self.assertEqual(NotificationMessage.objects.all().count(), 1)
+
         # Try again -> cover the already send line
         self.part.save()
 
+        # There should not be more messages
+        self.assertEqual(NotificationMessage.objects.all().count(), 1)
