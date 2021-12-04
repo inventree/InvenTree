@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-04 12:09+0000\n"
-"PO-Revision-Date: 2021-12-04 12:11\n"
+"PO-Revision-Date: 2021-12-04 16:00\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -8115,7 +8115,7 @@ msgstr "Letzte Seriennummer"
 
 #: templates/js/translated/stock.js:99
 msgid "Confirm Stock Serialization"
-msgstr ""
+msgstr "Lager-Serialisierung bestätigen"
 
 #: templates/js/translated/stock.js:108
 msgid "Parent stock location"
@@ -8287,15 +8287,15 @@ msgstr "Lagerartikel läuft demnächst ab"
 
 #: templates/js/translated/stock.js:1283
 msgid "Serialized stock item has been allocated"
-msgstr ""
+msgstr "Serialisierter Lagerartikel wurde zugewiesen"
 
 #: templates/js/translated/stock.js:1285
 msgid "Stock item has been fully allocated"
-msgstr ""
+msgstr "Lagerartikel wurde vollständig zugewiesen"
 
 #: templates/js/translated/stock.js:1287
 msgid "Stock item has been partially allocated"
-msgstr ""
+msgstr "Lagerartikel wurde teilweise zugewiesen"
 
 #: templates/js/translated/stock.js:1292
 msgid "Stock item has been installed in another item"
@@ -8502,7 +8502,7 @@ msgstr "Teil wurde zugeordnet"
 
 #: templates/js/translated/table_filters.js:179
 msgid "Stock is available for use"
-msgstr ""
+msgstr "Lagerartikel ist zur Verwendung verfügbar"
 
 #: templates/js/translated/table_filters.js:184
 msgid "Include stock in sublocations"
@@ -8572,7 +8572,7 @@ msgstr "Bauauftrags-Status"
 #: templates/js/translated/table_filters.js:303
 #: templates/js/translated/table_filters.js:336
 msgid "Assigned to me"
-msgstr ""
+msgstr "Mir zugewiesen"
 
 #: templates/js/translated/table_filters.js:323
 #: templates/js/translated/table_filters.js:344
