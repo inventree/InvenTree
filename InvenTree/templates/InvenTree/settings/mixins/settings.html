@@ -1,0 +1,13 @@
+{% load i18n %}
+{% load plugin_extras %}
+
+<h4>{% trans "Settings" %}</h4>
+{% plugin_globalsettings plugin_key as plugin_settings %}
+
+<table class='table table-striped table-condensed'>
+    <tbody>
+    {% for setting in plugin_settings %}
+        {% include "InvenTree/settings/setting.html" with key=setting%}
+    {% endfor %}
+    </tbody>
+</table>

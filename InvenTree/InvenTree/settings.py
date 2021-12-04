@@ -130,6 +130,11 @@ LOGGING = {
         'handlers': ['console'],
         'level': log_level,
     },
+    'filters': {
+        'require_not_maintenance_mode_503': {
+            '()': 'maintenance_mode.logging.RequireNotMaintenanceMode503',
+        },
+    },
 }
 
 # Get a logger instance for this setup file
@@ -262,6 +267,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
 
+    # Maintenance
+    'maintenance_mode',
+
     # InvenTree apps
     'build.apps.BuildConfig',
     'common.apps.CommonConfig',
@@ -272,6 +280,7 @@ INSTALLED_APPS = [
     'report.apps.ReportConfig',
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
+    'plugin.apps.PluginAppConfig',
     'InvenTree.apps.InvenTreeConfig',       # InvenTree app runs last
 
     # Third part add-ons
@@ -308,6 +317,7 @@ MIDDLEWARE = CONFIG.get('middleware', [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'InvenTree.middleware.AuthRequiredMiddleware',
+    'maintenance_mode.middleware.MaintenanceModeMiddleware',
 ])
 
 # Error reporting middleware
@@ -335,7 +345,6 @@ TEMPLATES = [
             os.path.join(MEDIA_ROOT, 'report'),
             os.path.join(MEDIA_ROOT, 'label'),
         ],
-        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -347,6 +356,13 @@ TEMPLATES = [
                 'InvenTree.context.health_status',
                 'InvenTree.context.status_codes',
                 'InvenTree.context.user_roles',
+            ],
+            'loaders': [(
+                'django.template.loaders.cached.Loader', [
+                    'plugin.loader.PluginTemplateLoader',
+                    'django.template.loaders.filesystem.Loader',
+                    'django.template.loaders.app_directories.Loader',
+                ])
             ],
         },
     },
@@ -876,3 +892,23 @@ MARKDOWNIFY_WHITELIST_ATTRS = [
 ]
 
 MARKDOWNIFY_BLEACH = False
+
+# Maintenance mode
+MAINTENANCE_MODE_RETRY_AFTER = 60
+
+
+# Plugins
+PLUGIN_DIRS = ['plugin.builtin', ]
+
+if not TESTING:
+    # load local deploy directory in prod
+    PLUGIN_DIRS.append('plugins')
+
+if DEBUG or TESTING:
+    # load samples in debug mode
+    PLUGIN_DIRS.append('plugin.samples')
+
+# Plugin test settings
+PLUGIN_TESTING = get_setting('PLUGIN_TESTING', TESTING)  # are plugins beeing tested?
+PLUGIN_TESTING_SETUP = get_setting('PLUGIN_TESTING_SETUP', False)  # load plugins from setup hooks in testing?
+PLUGIN_RETRY = get_setting('PLUGIN_RETRY', 5)  # how often should plugin loading be tried?

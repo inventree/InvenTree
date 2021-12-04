@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+"""Class for ActionPlugin"""
 
 import logging
 
-import plugins.plugin as plugin
+import plugin.plugin as plugin
 
 
 logger = logging.getLogger("inventree")
@@ -42,7 +43,6 @@ class ActionPlugin(plugin.InvenTreePlugin):
         """
         Override this method to perform the action!
         """
-        pass
 
     def get_result(self):
         """
@@ -68,25 +68,3 @@ class ActionPlugin(plugin.InvenTreePlugin):
             "result": self.get_result(),
             "info": self.get_info(),
         }
-
-
-class SimpleActionPlugin(ActionPlugin):
-    """
-    An EXTREMELY simple action plugin which demonstrates
-    the capability of the ActionPlugin class
-    """
-
-    PLUGIN_NAME = "SimpleActionPlugin"
-    ACTION_NAME = "simple"
-
-    def perform_action(self):
-        print("Action plugin in action!")
-
-    def get_info(self):
-        return {
-            "user": self.user.username,
-            "hello": "world",
-        }
-
-    def get_result(self):
-        return True
