@@ -15,5 +15,4 @@ def get_plugin_urls():
     for plugin in plugin_reg.plugins.values():
         if plugin.mixin_enabled('urls'):
             urls.append(plugin.urlpatterns)
-    # TODO wrap everything in plugin_url_wrapper
     return url(f'^{PLUGIN_BASE}/', include((urls, 'plugin')))
