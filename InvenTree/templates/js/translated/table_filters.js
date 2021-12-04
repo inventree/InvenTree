@@ -173,6 +173,11 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Is allocated" %}',
                 description: '{% trans "Item has been allocated" %}',
             },
+            available: {
+                type: 'bool',
+                title: '{% trans "Available" %}',
+                description: '{% trans "Stock is available for use" %}',
+            },
             cascade: {
                 type: 'bool',
                 title: '{% trans "Include sublocations" %}',
@@ -293,6 +298,10 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Overdue" %}',
             },
+            assigned_to_me: {
+                type: 'bool',
+                title: '{% trans "Assigned to me" %}',
+            },
         };
     }
 
@@ -305,6 +314,7 @@ function getAvailableTableFilters(tableKey) {
             },
         };
     }
+
     // Filters for the PurchaseOrder table
     if (tableKey == 'purchaseorder') {
 
@@ -320,6 +330,10 @@ function getAvailableTableFilters(tableKey) {
             overdue: {
                 type: 'bool',
                 title: '{% trans "Overdue" %}',
+            },
+            assigned_to_me: {
+                type: 'bool',
+                title: '{% trans "Assigned to me" %}',
             },
         };
     }
@@ -337,6 +351,15 @@ function getAvailableTableFilters(tableKey) {
             overdue: {
                 type: 'bool',
                 title: '{% trans "Overdue" %}',
+            },
+        };
+    }
+
+    if (tableKey == 'salesorderlineitem') {
+        return {
+            completed: {
+                type: 'bool',
+                title: '{% trans "Completed" %}',
             },
         };
     }
