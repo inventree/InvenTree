@@ -16,13 +16,16 @@ logger = logging.getLogger("inventree")
 
 
 def notify_low_stock(part: part.models.Part):
+    name = _("Low stock notification")
+    message = _(f'The available stock for {part.name} has fallen below the configured minimum level')
     context = {
-        # Pass the "Part" object through to the template context
         'part': part,
+        'name': name,
+        'message': message,
         'link': InvenTree.helpers.construct_absolute_url(part.get_absolute_url()),
         'template': {
             'html': 'email/low_stock_notification.html',
-            'subject': "[InvenTree] " + _("Low stock notification"),
+            'subject': "[InvenTree] " + name,
         },
     }
 

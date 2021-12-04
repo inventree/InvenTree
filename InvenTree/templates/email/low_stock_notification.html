@@ -4,7 +4,7 @@
 {% load inventree_extras %}
 
 {% block title %}
-{% blocktrans with part=part.name %} The available stock for {{ part }} has fallen below the configured minimum level{% endblocktrans %}
+{{ message }}
 {% if link %}
 <p>{% trans "Click on the following link to view this part" %}: <a href="{{ link }}">{{ link }}</a></p>
 {% endif %}
