@@ -477,6 +477,34 @@ class Owner(models.Model):
     owner: Returns the Group or User instance combining the owner_type and owner_id fields
     """
 
+    @classmethod
+    def get_owners_matching_user(cls, user):
+        """
+        Return all "owner" objects matching the provided user:
+
+        A) An exact match for the user
+        B) Any groups that the user is a part of
+        """
+
+        user_type = ContentType.objects.get(app_label='auth', model='user')
+        group_type = ContentType.objects.get(app_label='auth', model='group')
+
+        owners = []
+
+        try:
+            owners.append(cls.objects.get(owner_id=user.pk, owner_type=user_type))
+        except:
+            pass
+
+        for group in user.groups.all():
+            try:
+                owner = cls.objects.get(owner_id=group.pk, owner_type=group_type)
+                owners.append(owner)
+            except:
+                pass
+
+        return owners
+
     @staticmethod
     def get_api_url():
         return reverse('api-owner-list')
