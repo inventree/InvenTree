@@ -135,6 +135,7 @@ class UIMessageNotification(SingleNotificationMethod):
             name=self.context['name'],
             message=self.context['message'],
         )
+        return True
 # endregion
 # endregion
 
