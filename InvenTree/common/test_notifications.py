@@ -5,7 +5,7 @@ from .notifications import NotificationMethod, SingleNotificationMethod, BulkNot
 from part.test_part import BaseNotificationIntegrationTest
 
 
-class NotificationTests(BaseNotificationIntegrationTest):
+class BaseNotificationTests(BaseNotificationIntegrationTest):
 
     def test_NotificationMethod(self):
         """ensure the implementation requirements are tested"""
