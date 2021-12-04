@@ -1,7 +1,7 @@
 import logging
 from datetime import timedelta
-from django.conf import settings
 
+from django.conf import settings
 from django.template.loader import render_to_string
 
 from allauth.account.models import EmailAddress
@@ -23,6 +23,10 @@ class NotificationMethod:
         # Check if a sending fnc is defined
         if (not hasattr(self, 'send')) and (not hasattr(self, 'send_bulk')):
             raise NotImplementedError('A NotificationMethod must either define a `send` or a `send_bulk` method')
+
+        # No method name is no good
+        if self.METHOD_NAME in ('', None):
+            raise NotImplementedError(f'The NotificationMethod {self.__class__} did not provide a METHOD_NAME')
 
         # Define arguments
         self.obj = obj
