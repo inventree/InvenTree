@@ -32,7 +32,7 @@ def notify_low_stock(part: part.models.Part):
     common.notifications.trigger_notifaction(
         part,
         'part.notify_low_stock',
-        receiver_fnc=part.get_subscribers,
+        target_fnc=part.get_subscribers,
         notification_context=context,
     )
 

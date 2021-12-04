@@ -139,7 +139,7 @@ class UIMessageNotification(SingleNotificationMethod):
 # endregion
 
 
-def trigger_notifaction(obj, entry_name=None, obj_ref='pk', targets=None, receiver_fnc=None, receiver_args=[], receiver_kwargs={}, notification_context={}):
+def trigger_notifaction(obj, entry_name=None, obj_ref='pk', targets=None, target_fnc=None, target_args=[], target_kwargs={}, notification_context={}):
     """
     Send out an notification
     """
@@ -168,7 +168,7 @@ def trigger_notifaction(obj, entry_name=None, obj_ref='pk', targets=None, receiv
     logger.info(f"Gathering users for notification '{entry_name}'")
     # Collect possible targets
     if not targets:
-        targets = receiver_fnc(*receiver_args, **receiver_kwargs)
+        targets = target_fnc(*target_args, **target_kwargs)
 
     if targets:
         logger.info(f"Sending notification '{entry_name}' for '{str(obj)}'")
