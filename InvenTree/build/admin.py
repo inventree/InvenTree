@@ -29,6 +29,14 @@ class BuildAdmin(ImportExportModelAdmin):
         'part__description',
     ]
 
+    autocomplete_fields = [
+        'parent',
+        'part',
+        'sales_order',
+        'take_from',
+        'destination',
+    ]
+
 
 class BuildItemAdmin(admin.ModelAdmin):
 
@@ -37,6 +45,13 @@ class BuildItemAdmin(admin.ModelAdmin):
         'stock_item',
         'quantity'
     )
+
+    autocomplete_fields = [
+        'build',
+        'bom_item',
+        'stock_item',
+        'install_into',
+    ]
 
 
 admin.site.register(Build, BuildAdmin)

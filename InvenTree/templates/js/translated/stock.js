@@ -95,6 +95,9 @@ function serializeStockItem(pk, options={}) {
         });
     }
 
+    options.confirm = true;
+    options.confirmMessage = '{% trans "Confirm Stock Serialization" %}';
+
     constructForm(url, options);
 }
 
@@ -1275,7 +1278,14 @@ function loadStockTable(table, options) {
             }
 
             if (row.allocated) {
-                html += makeIconBadge('fa-bookmark', '{% trans "Stock item has been allocated" %}');
+
+                if (row.serial != null && row.quantity == 1) {
+                    html += makeIconBadge('fa-bookmark icon-yellow', '{% trans "Serialized stock item has been allocated" %}');
+                } else if (row.allocated >= row.quantity) {
+                    html += makeIconBadge('fa-bookmark icon-yellow', '{% trans "Stock item has been fully allocated" %}');
+                } else {
+                    html += makeIconBadge('fa-bookmark', '{% trans "Stock item has been partially allocated" %}');
+                }
             }
 
             if (row.belongs_to) {

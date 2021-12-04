@@ -10,7 +10,7 @@ from import_export.fields import Field
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .models import SalesOrder, SalesOrderLineItem
-from .models import SalesOrderAllocation
+from .models import SalesOrderShipment, SalesOrderAllocation
 
 
 class PurchaseOrderLineItemInlineAdmin(admin.StackedInline):
@@ -42,6 +42,8 @@ class PurchaseOrderAdmin(ImportExportModelAdmin):
         PurchaseOrderLineItemInlineAdmin
     ]
 
+    autocomplete_fields = ('supplier',)
+
 
 class SalesOrderAdmin(ImportExportModelAdmin):
 
@@ -62,6 +64,8 @@ class SalesOrderAdmin(ImportExportModelAdmin):
         'customer__name',
         'description',
     ]
+
+    autocomplete_fields = ('customer',)
 
 
 class POLineItemResource(ModelResource):
@@ -124,6 +128,10 @@ class PurchaseOrderLineItemAdmin(ImportExportModelAdmin):
         'reference'
     )
 
+    search_fields = ('reference',)
+
+    autocomplete_fields = ('order', 'part', 'destination',)
+
 
 class SalesOrderLineItemAdmin(ImportExportModelAdmin):
 
@@ -136,6 +144,32 @@ class SalesOrderLineItemAdmin(ImportExportModelAdmin):
         'reference'
     )
 
+    search_fields = [
+        'part__name',
+        'order__reference',
+        'order__customer__name',
+        'reference',
+    ]
+
+    autocomplete_fields = ('order', 'part',)
+
+
+class SalesOrderShipmentAdmin(ImportExportModelAdmin):
+
+    list_display = [
+        'order',
+        'shipment_date',
+        'reference',
+    ]
+
+    search_fields = [
+        'reference',
+        'order__reference',
+        'order__customer__name',
+    ]
+
+    autocomplete_fields = ('order',)
+
 
 class SalesOrderAllocationAdmin(ImportExportModelAdmin):
 
@@ -145,6 +179,8 @@ class SalesOrderAllocationAdmin(ImportExportModelAdmin):
         'quantity'
     )
 
+    autocomplete_fields = ('line', 'shipment', 'item',)
+
 
 admin.site.register(PurchaseOrder, PurchaseOrderAdmin)
 admin.site.register(PurchaseOrderLineItem, PurchaseOrderLineItemAdmin)
@@ -152,4 +188,5 @@ admin.site.register(PurchaseOrderLineItem, PurchaseOrderLineItemAdmin)
 admin.site.register(SalesOrder, SalesOrderAdmin)
 admin.site.register(SalesOrderLineItem, SalesOrderLineItemAdmin)
 
+admin.site.register(SalesOrderShipment, SalesOrderShipmentAdmin)
 admin.site.register(SalesOrderAllocation, SalesOrderAllocationAdmin)
