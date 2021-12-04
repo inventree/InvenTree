@@ -208,6 +208,7 @@ def deliver_notification(cls: NotificationMethod, obj, category: str, targets, c
         # Run setup for delivery method
         method.setup()
 
+        # Counters for success logs
         success = True
         success_count = 0
 
