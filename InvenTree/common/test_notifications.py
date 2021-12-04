@@ -11,7 +11,7 @@ class NotificationTests(BaseNotificationIntegrationTest):
         """ensure the implementation requirements are tested"""
 
         class FalseNotificationMethod(NotificationMethod):
-            METHOD_NAME = 'FalseNotification' 
+            METHOD_NAME = 'FalseNotification'
 
         class AnotherFalseNotificationMethod(NotificationMethod):
             METHOD_NAME = 'AnotherFalseNotification'
