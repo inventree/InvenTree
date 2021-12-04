@@ -41,7 +41,7 @@ class NotificationTests(BaseNotificationIntegrationTest):
             METHOD_NAME = 'WrongImplementation1'
 
             def get_targets(self):
-                return []
+                return [1, ]
 
         with self.assertRaises(NotImplementedError):
             self._notification_run()
@@ -53,7 +53,7 @@ class NotificationTests(BaseNotificationIntegrationTest):
             METHOD_NAME = 'WrongImplementation2'
 
             def get_targets(self):
-                return []
+                return [1, ]
 
         with self.assertRaises(NotImplementedError):
             self._notification_run()
