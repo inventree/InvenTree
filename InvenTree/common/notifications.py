@@ -36,8 +36,8 @@ class NotificationMethod:
         self.targets = targets
         self.context = self.check_context(context)
 
-        # Gather recipients
-        self.recipients = self.get_recipients()
+        # Gather targets
+        self.targets = self.get_targets()
 
     def check_context(self, context):
         def check(ref, obj):
@@ -74,8 +74,8 @@ class NotificationMethod:
 
         return context
 
-    def get_recipients(self):
-        raise NotImplementedError('The `get_recipients` method must be implemented!')
+    def get_targets(self):
+        raise NotImplementedError('The `get_targets` method must be implemented!')
 
     def setup(self):
         return True
@@ -107,23 +107,23 @@ class EmailNotification(BulkNotificationMethod):
         ('template', 'subject', ),
     ]
 
-    def get_recipients(self):
+    def get_targets(self):
         return EmailAddress.objects.filter(
             user__in=self.targets,
         )
 
     def send_bulk(self):
         html_message = render_to_string(self.context['template']['html'], self.context)
-        recipients = self.recipients.values_list('email', flat=True)
+        targets = self.targets.values_list('email', flat=True)
 
-        InvenTree.tasks.send_email(self.context['template']['subject'], '', recipients, html_message=html_message)
+        InvenTree.tasks.send_email(self.context['template']['subject'], '', targets, html_message=html_message)
 
         return True
 
 class UIMessageNotification(SingleNotificationMethod):
     METHOD_NAME = 'ui_message'
 
-    def get_recipients(self):
+    def get_targets(self):
         return self.targets
 
     def send(self, target):
@@ -201,7 +201,7 @@ def deliver_notification(cls: NotificationMethod, obj, category: str, targets, c
     # Init delivery method
     method = cls(obj, category, targets, context)
 
-    if method.recipients and len(method.recipients) > 0:
+    if method.targets and len(method.targets) > 0:
         # Log start
         logger.info(f"Notify users via '{method.METHOD_NAME}' for notification '{category}' for '{str(obj)}'")
 
@@ -214,11 +214,11 @@ def deliver_notification(cls: NotificationMethod, obj, category: str, targets, c
         # Select delivery method and execute it
         if hasattr(method, 'send_bulk'):
             success = method.send_bulk()
-            success_count = len(method.recipients)
+            success_count = len(method.targets)
 
         elif hasattr(method, 'send'):
-            for rec in method.recipients:
-                if method.send(rec):
+            for target in method.targets:
+                if method.send(target):
                     success_count += 1
                 else:
                     success = False
