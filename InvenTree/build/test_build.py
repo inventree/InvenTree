@@ -10,7 +10,6 @@ from InvenTree import status_codes as status
 from build.models import Build, BuildItem, get_next_build_number
 from part.models import Part, BomItem
 from stock.models import StockItem
-from stock.tasks import delete_old_stock_items
 
 
 class BuildTest(TestCase):
@@ -353,11 +352,6 @@ class BuildTest(TestCase):
 
         # the original BuildItem objects should have been deleted!
         self.assertEqual(BuildItem.objects.count(), 0)
-
-        self.assertEqual(StockItem.objects.count(), 8)
-
-        # Clean up old stock items
-        delete_old_stock_items()
 
         # New stock items should have been created!
         self.assertEqual(StockItem.objects.count(), 7)

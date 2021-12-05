@@ -332,8 +332,6 @@ class StockTest(TestCase):
         w1 = StockItem.objects.get(pk=100)
         w2 = StockItem.objects.get(pk=101)
 
-        self.assertFalse(w2.scheduled_for_deletion)
-
         # Take 25 units from w1 (there are only 10 in stock)
         w1.take_stock(30, None, notes='Took 30')
 
@@ -343,15 +341,6 @@ class StockTest(TestCase):
 
         # Take 25 units from w2 (will be deleted)
         w2.take_stock(30, None, notes='Took 30')
-
-        # w2 should now be marked for future deletion
-        w2 = StockItem.objects.get(pk=101)
-        self.assertTrue(w2.scheduled_for_deletion)
-
-        from stock.tasks import delete_old_stock_items
-
-        # Now run the "background task" to delete these stock items
-        delete_old_stock_items()
 
         # This StockItem should now have been deleted
         with self.assertRaises(StockItem.DoesNotExist):

@@ -69,13 +69,6 @@ class InvenTreeConfig(AppConfig):
             schedule_type=Schedule.DAILY,
         )
 
-        # Delete "old" stock items
-        InvenTree.tasks.schedule_task(
-            'stock.tasks.delete_old_stock_items',
-            schedule_type=Schedule.MINUTES,
-            minutes=30,
-        )
-
         # Delete old notification records
         InvenTree.tasks.schedule_task(
             'common.tasks.delete_old_notifications',
