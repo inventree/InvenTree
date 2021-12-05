@@ -215,10 +215,6 @@ MAINTENANCE_MODE_STATE_FILE_PATH = os.path.join(
     'maintenance_mode_state.txt',
 )
 
-MAINTENANCE_MODE_IGNORE_ADMIN_SITE = True
-
-MAINTENANCE_MODE_IGNORE_SUPERUSER = True
-
 # List of allowed hosts (default = allow all)
 ALLOWED_HOSTS = CONFIG.get('allowed_hosts', ['*'])
 
