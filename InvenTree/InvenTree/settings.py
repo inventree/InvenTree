@@ -86,6 +86,9 @@ if not os.path.exists(cfg_filename):
 with open(cfg_filename, 'r') as cfg:
     CONFIG = yaml.safe_load(cfg)
 
+# We will place any config files in the same directory as the config file
+config_dir = os.path.dirname(cfg_filename)
+
 # Default action is to run the system in Debug mode
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = _is_true(get_setting(
@@ -205,6 +208,16 @@ MEDIA_ROOT = os.path.abspath(
 if MEDIA_ROOT is None:
     print("ERROR: INVENTREE_MEDIA_ROOT directory is not defined")
     sys.exit(1)
+
+# Options for django-maintenance-mode : https://pypi.org/project/django-maintenance-mode/
+MAINTENANCE_MODE_STATE_FILE_PATH = os.path.join(
+    config_dir,
+    'maintenance_mode_state.txt',
+)
+
+MAINTENANCE_MODE_IGNORE_ADMIN_SITE = True
+
+MAINTENANCE_MODE_IGNORE_SUPERUSER = True
 
 # List of allowed hosts (default = allow all)
 ALLOWED_HOSTS = CONFIG.get('allowed_hosts', ['*'])
