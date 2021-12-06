@@ -70,6 +70,39 @@ class CategorySerializer(InvenTreeModelSerializer):
         ]
 
 
+class CategoryTree(InvenTreeModelSerializer):
+    """ Serializer for PartCategory """
+
+    id = serializers.IntegerField(source='pk', read_only=True)
+
+    text = serializers.CharField(source='name', read_only=True)
+
+    parent = serializers.SerializerMethodField()
+
+    children = serializers.SerializerMethodField()
+
+    a_attr = serializers.SerializerMethodField()
+
+    def get_parent(self, obj):
+        return obj.parent.pk if obj.parent else '#'
+
+    def get_children(self, obj):
+        return True if obj.has_children else False
+
+    def get_a_attr(self, obj):
+        return {'href': obj.get_absolute_url()}
+
+    class Meta:
+        model = PartCategory
+        fields = [
+            'id',
+            'text',
+            'parent',
+            'children',
+            'a_attr',
+        ]
+
+
 class PartAttachmentSerializer(InvenTreeAttachmentSerializer):
     """
     Serializer for the PartAttachment class

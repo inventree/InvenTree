@@ -145,6 +145,43 @@ function enableSidebar(label, options={}) {
 
 }
 
+/**
+ * Enable support for a sidetree on this page
+ */
+ function enableSidetree(label, options={}) {
+    $('#tree').jstree({
+        'core' : {
+            'data' : {
+                'url' : function (node) {
+                    return '/api/part/category/tree/root/'
+                },
+                'data' : function (node) {
+                    return { 'id' : node.id };
+                }
+            }
+        }
+    }).bind("select_node.jstree",function (e, data) {
+        window.location.href = data.node.a_attr.href;
+    });
+
+    $('#sidetree-toggle').click(function() {
+        // Add callback to "collapse" and "expand" the sidebar
+
+        // By default, the menu is "expanded"
+        var state = localStorage.getItem(`inventree-tree-state-${label}`) || 'expanded';
+        
+        // We wish to "toggle" the state!
+        setSidebarState(label, state == 'expanded' ? 'collapsed' : 'expanded');
+    });
+
+    // Set the initial state (default = expanded)
+    var state = localStorage.getItem(`inventree-tree-state-${label}`) || 'expanded';
+
+    // setSidebarState(label, state);
+
+    // Finally, show the sidebar
+    $('#sidetree').show();
+}
 
 /*
  * Set the "toggle" state of the sidebar

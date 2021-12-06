@@ -6,6 +6,10 @@
 {% include 'part/category_sidebar.html' %}
 {% endblock %}
 
+{% block sidetree %}
+<div id="tree"></div>
+{% endblock %}
+
 {% block heading %}
 {% if category %}
 {% trans "Part Category" %}: {{ category.name }}
@@ -240,6 +244,7 @@
     {% endif %}
 
     enableSidebar('category');
+    enableSidetree('category');
 
     loadPartCategoryTable(
         $('#subcategory-table'), {

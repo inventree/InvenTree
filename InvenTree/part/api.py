@@ -239,6 +239,32 @@ class CategoryParameterList(generics.ListAPIView):
         return queryset
 
 
+class CategoryTree(generics.ListAPIView):
+    """ API endpoint for accessing a list of PartCategory objects ready for rendering a jstree.
+    """
+
+    queryset = PartCategory.objects.all()
+    serializer_class = part_serializers.CategoryTree
+
+    def filter_queryset(self, queryset):
+        """
+        """
+        queryset = super().filter_queryset(queryset)
+
+        params = self.request.query_params
+        cat_id = params.get('id', None)
+
+        if cat_id in (None, '', '#', ):
+            queryset = queryset.filter(parent=None)
+        else:
+            queryset = queryset.filter(parent_id=cat_id)
+
+        return queryset
+
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+
 class PartSalePriceList(generics.ListCreateAPIView):
     """
     API endpoint for list view of PartSalePriceBreak model
@@ -1515,6 +1541,7 @@ part_api_urls = [
 
     # Base URL for PartCategory API endpoints
     url(r'^category/', include([
+        url(r'^tree/(?P<slug>[-\w]+)/', CategoryTree.as_view(), name='api-part-category-tree'),
         url(r'^parameters/', CategoryParameterList.as_view(), name='api-part-category-parameter-list'),
 
         url(r'^(?P<pk>\d+)/?', CategoryDetail.as_view(), name='api-part-category-detail'),
