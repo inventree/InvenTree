@@ -148,16 +148,12 @@ function enableSidebar(label, options={}) {
 /**
  * Enable support for a sidetree on this page
  */
- function enableSidetree(label, options={}) {
+ function enableSidetree(label) {
     $('#tree').jstree({
         'core' : {
             'data' : {
-                'url' : function (node) {
-                    return '/api/part/category/tree/root/'
-                },
-                'data' : function (node) {
-                    return { 'id' : node.id };
-                }
+                'url' : '/api/part/category/tree/root/',
+                'data' : function (node) { return { 'id' : node.id }; }
             }
         }
     }).bind("select_node.jstree",function (e, data) {
