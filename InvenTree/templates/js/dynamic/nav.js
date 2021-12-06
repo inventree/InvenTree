@@ -227,7 +227,7 @@ function setSidebarState(label, state) {
 function addSidebarItem(options={}) {
 
     var html = `
-    <a href='#' id='select-${options.label}' title='${options.text}' class='list-group-item sidebar-list-group-item border-end-0 d-inline-block text-truncate sidebar-selector' data-bs-parent='#sidebar'>
+    <a href='#' id='select-${options.label}' title='${options.text}' class='list-group-item sidebar-list-group-item border-end d-inline-block text-truncate sidebar-selector' data-bs-parent='#sidebar'>
         <i class='bi bi-bootstrap'></i>
         ${options.content_before || ''}
         <span class='sidebar-item-icon fas ${options.icon}'></span>
@@ -246,7 +246,7 @@ function addSidebarItem(options={}) {
 function addSidebarHeader(options={}) {
 
     var html = `
-    <span title='${options.text}' class="list-group-item sidebar-list-group-item border-end-0 d-inline-block text-truncate" data-bs-parent="#sidebar">
+    <span title='${options.text}' class="list-group-item sidebar-list-group-item border-end d-inline-block text-truncate" data-bs-parent="#sidebar">
         <h6>
             <i class="bi bi-bootstrap"></i>
             <span class='sidebar-item-text' style='display: none;'>${options.text}</span>
