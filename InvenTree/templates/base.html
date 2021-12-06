@@ -73,6 +73,12 @@
 <div class='main body wrapper container-fluid inventree-body'>
 
     <div class='row flex-nowrap inventree-body'>
+        <div class='col-auto px-1 sidetree-wrapper'>
+            <div id='sidetree' class='collapse collapse-horizontal show border-end' style='display: none;'>
+            {% block sidetree %}
+            {% endblock %}
+            </div>
+        </div>
         <div class='col-auto px-1 sidebar-wrapper'>
             <div id='sidebar' class='collapse collapse-horizontal show border-end' style='display: none;'>
                 <div id='sidebar-nav' class='list-group text-sm-start'>
@@ -80,7 +86,7 @@
                         {% block sidebar %}
                         <!-- Sidebar goes here -->
                         {% endblock %}
-                        {% include "sidebar_toggle.html" %}
+                        {% include "sidebar_toggle.html" with target='sidebar' %}
                     </ul>
                 </div>
             </div>
