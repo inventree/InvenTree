@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-05 22:51+0000\n"
-"PO-Revision-Date: 2021-12-06 19:38\n"
+"PO-Revision-Date: 2021-12-06 21:09\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -573,7 +573,7 @@ msgstr ""
 
 #: barcodes/api.py:223
 msgid "Barcode associated with StockItem"
-msgstr ""
+msgstr "Le code-barre a été associé à StockItem"
 
 #: build/forms.py:36 build/models.py:1283
 #: build/templates/build/build_base.html:132
@@ -612,7 +612,7 @@ msgstr "Quantité"
 
 #: build/forms.py:37
 msgid "Enter quantity for build output"
-msgstr ""
+msgstr "Entrer la quantité désiré pour la fabrication"
 
 #: build/forms.py:41 order/serializers.py:814 stock/forms.py:95
 #: stock/serializers.py:312 templates/js/translated/stock.js:228
@@ -622,7 +622,7 @@ msgstr "Numéros de série"
 
 #: build/forms.py:43
 msgid "Enter serial numbers for build outputs"
-msgstr ""
+msgstr "Entrer les numéros de séries pour la fabrication"
 
 #: build/forms.py:49
 msgid "Confirm creation of build output"
@@ -630,11 +630,11 @@ msgstr "Confirmer la création de la sortie de l'assemblage"
 
 #: build/forms.py:70
 msgid "Confirm deletion of build output"
-msgstr ""
+msgstr "Confirmer la supression de la fabrication"
 
 #: build/forms.py:94
 msgid "Mark build as complete"
-msgstr ""
+msgstr "Indiquer la fabrication comme terminé"
 
 #: build/forms.py:107
 msgid "Confirm cancel"
@@ -642,11 +642,11 @@ msgstr "Confirmer l'annulation"
 
 #: build/forms.py:107 build/views.py:65
 msgid "Confirm build cancellation"
-msgstr ""
+msgstr "Confirmer l'annulation de la fabrication"
 
 #: build/models.py:133
 msgid "Invalid choice for parent build"
-msgstr ""
+msgstr "Choix invalide pour la fabrication parente"
 
 #: build/models.py:137 build/templates/build/build_base.html:9
 #: build/templates/build/build_base.html:27
@@ -681,16 +681,16 @@ msgstr "Référence"
 
 #: build/models.py:210
 msgid "Brief description of the build"
-msgstr ""
+msgstr "Brève description de la fabrication"
 
 #: build/models.py:219 build/templates/build/build_base.html:164
 #: build/templates/build/detail.html:88
 msgid "Parent Build"
-msgstr ""
+msgstr "Fabrication parente"
 
 #: build/models.py:220
 msgid "BuildOrder to which this build is allocated"
-msgstr ""
+msgstr "BuildOrder associé a cette fabrication"
 
 #: build/models.py:225 build/templates/build/build_base.html:77
 #: build/templates/build/detail.html:30 company/models.py:705
@@ -728,7 +728,7 @@ msgstr "Sélectionnez la pièce à construire"
 
 #: build/models.py:238
 msgid "Sales Order Reference"
-msgstr ""
+msgstr "Bon de commande de référence"
 
 #: build/models.py:242
 msgid "SalesOrder to which this build is allocated"
