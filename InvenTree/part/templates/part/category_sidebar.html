@@ -4,7 +4,8 @@
 
 {% settings_value 'PART_SHOW_IMPORT' as show_import %}
 
-{% include "sidebar_toggle.html" with target="sidetree" %}
+{% trans "Tree" as text %}
+{% include "sidebar_toggle.html" with target="sidetree" text=text %}
 <a class="m-1"></a>
 
 {% trans "Subcategories" as text %}
