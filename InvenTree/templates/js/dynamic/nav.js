@@ -152,7 +152,7 @@ function enableSidebar(label, options={}) {
     $('#tree').jstree({
         'core' : {
             'data' : {
-                'url' : '/api/part/category/tree/root/',
+                'url' : '/api/part/category/tree/',
                 'data' : function (node) { return { 'id' : node.id }; }
             }
         }

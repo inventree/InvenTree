@@ -1541,7 +1541,7 @@ part_api_urls = [
 
     # Base URL for PartCategory API endpoints
     url(r'^category/', include([
-        url(r'^tree/(?P<slug>[-\w]+)/', CategoryTree.as_view(), name='api-part-category-tree'),
+        url(r'^tree/', CategoryTree.as_view(), name='api-part-category-tree'),
         url(r'^parameters/', CategoryParameterList.as_view(), name='api-part-category-parameter-list'),
 
         url(r'^(?P<pk>\d+)/?', CategoryDetail.as_view(), name='api-part-category-detail'),
