@@ -154,7 +154,7 @@ function enableSidetree(label) {
         'core': {
             'data': {
                 'url': '/api/part/category/tree/',
-                'data': function(node){return {'id': node.id }; }
+                'data': function(node) {return {'id': node.id}; }
             }
         }
     }).bind('select_node.jstree', function(e, data) {
@@ -168,16 +168,27 @@ function enableSidetree(label) {
         var state = localStorage.getItem(`inventree-tree-state-${label}`) || 'expanded';
         
         // We wish to "toggle" the state!
-        setSidebarState(label, state == 'expanded' ? 'collapsed' : 'expanded');
+        setSidetreeState(label, state == 'expanded' ? 'collapsed' : 'expanded');
     });
 
     // Set the initial state (default = expanded)
     var state = localStorage.getItem(`inventree-tree-state-${label}`) || 'expanded';
 
-    // setSidebarState(label, state);
+    setSidetreeState(label, state);
 
     // Finally, show the sidebar
     $('#sidetree').show();
+
+    function setSidetreeState(label, state) {
+        if (state == 'collapsed') {
+            $('.sidetree-wrapper').hide(100);
+            $(`#sidetree-toggle-icon`).removeClass('fa-chevron-left').addClass('fa-chevron-right');
+        } else {
+            $('.sidetree-wrapper').show(100);
+            $(`#sidetree-toggle-icon`).removeClass('fa-chevron-right').addClass('fa-chevron-left');
+        }
+        localStorage.setItem(`inventree-tree-state-${label}`, state);
+    }
 }
 
 /*
