@@ -181,10 +181,10 @@ function enableSidetree(label) {
 
     function setSidetreeState(label, state) {
         if (state == 'collapsed') {
-            $('.sidetree-wrapper').hide(100);
+            $('#sidetree').hide(100);
             $(`#sidetree-toggle-icon`).removeClass('fa-chevron-left').addClass('fa-chevron-right');
         } else {
-            $('.sidetree-wrapper').show(100);
+            $('#sidetree').show(100);
             $(`#sidetree-toggle-icon`).removeClass('fa-chevron-right').addClass('fa-chevron-left');
         }
         localStorage.setItem(`inventree-tree-state-${label}`, state);
