@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-05 22:51+0000\n"
-"PO-Revision-Date: 2021-12-05 23:09\n"
+"PO-Revision-Date: 2021-12-06 19:38\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -117,11 +117,11 @@ msgstr "Le nombre de numéros de série uniques ({s}) doit correspondre à la qu
 
 #: InvenTree/models.py:120
 msgid "Missing file"
-msgstr ""
+msgstr "Fichier manquant"
 
 #: InvenTree/models.py:121
 msgid "Missing external link"
-msgstr ""
+msgstr "Lien externe manquant"
 
 #: InvenTree/models.py:132 stock/models.py:1852
 #: templates/js/translated/attachment.js:117
@@ -501,15 +501,15 @@ msgstr "Caractère invalide dans le nom ({x})"
 
 #: InvenTree/validators.py:133 InvenTree/validators.py:149
 msgid "Overage value must not be negative"
-msgstr ""
+msgstr "La valeur de surplus ne doit pas être négative"
 
 #: InvenTree/validators.py:151
 msgid "Overage must not exceed 100%"
-msgstr ""
+msgstr "Le surplus ne doit pas dépasser 100%"
 
 #: InvenTree/validators.py:158
 msgid "Overage must be an integer value or a percentage"
-msgstr ""
+msgstr "La valeur de surplus doit être un nombre entier ou un pourcentage"
 
 #: InvenTree/views.py:538
 msgid "Delete Item"
@@ -557,11 +557,11 @@ msgstr "Aucun article d'inventaire correspondant trouvé"
 
 #: barcodes/api.py:191
 msgid "Barcode already matches StockItem object"
-msgstr ""
+msgstr "Le code-barres correspond déjà à l'objet StockItem"
 
 #: barcodes/api.py:195
 msgid "Barcode already matches StockLocation object"
-msgstr ""
+msgstr "Le code-barre correspond déjà a l'objet StockLocation"
 
 #: barcodes/api.py:199
 msgid "Barcode already matches Part object"
