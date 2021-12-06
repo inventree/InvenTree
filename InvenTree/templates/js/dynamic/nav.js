@@ -178,9 +178,6 @@ function enableSidetree(label) {
 
     setSidetreeState(label, state);
 
-    // Finally, show the sidebar
-    $('#sidetree').show();
-
     function setSidetreeState(label, state) {
         if (state == 'collapsed') {
             $('#sidetree').hide(100);
