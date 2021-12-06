@@ -188,21 +188,21 @@ class BarcodeAssign(APIView):
 
             if plugin.getStockItem() is not None:
                 match_found = True
-                response['error'] = _('Barcode already matches StockItem object')
+                response['error'] = _('Barcode already matches Stock Item')
 
             if plugin.getStockLocation() is not None:
                 match_found = True
-                response['error'] = _('Barcode already matches StockLocation object')
+                response['error'] = _('Barcode already matches Stock Location')
 
             if plugin.getPart() is not None:
                 match_found = True
-                response['error'] = _('Barcode already matches Part object')
+                response['error'] = _('Barcode already matches Part')
 
             if not match_found:
                 item = plugin.getStockItemByHash()
 
                 if item is not None:
-                    response['error'] = _('Barcode hash already matches StockItem object')
+                    response['error'] = _('Barcode hash already matches Stock Item')
                     match_found = True
 
         else:
@@ -214,13 +214,13 @@ class BarcodeAssign(APIView):
             # Lookup stock item by hash
             try:
                 item = StockItem.objects.get(uid=hash)
-                response['error'] = _('Barcode hash already matches StockItem object')
+                response['error'] = _('Barcode hash already matches Stock Item')
                 match_found = True
             except StockItem.DoesNotExist:
                 pass
 
         if not match_found:
-            response['success'] = _('Barcode associated with StockItem')
+            response['success'] = _('Barcode associated with Stock Item')
 
             # Save the barcode hash
             item.uid = response['hash']
