@@ -154,7 +154,9 @@ function enableSidetree(label) {
         'core': {
             'data': {
                 'url': '/api/part/category/tree/',
-                'data': function(node) {return {'id': node.id}; }
+                'data': function(node) {
+                    return {'id': node.id};
+                }
             }
         }
     }).bind('select_node.jstree', function(e, data) {
