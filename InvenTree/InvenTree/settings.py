@@ -86,6 +86,9 @@ if not os.path.exists(cfg_filename):
 with open(cfg_filename, 'r') as cfg:
     CONFIG = yaml.safe_load(cfg)
 
+# We will place any config files in the same directory as the config file
+config_dir = os.path.dirname(cfg_filename)
+
 # Default action is to run the system in Debug mode
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = _is_true(get_setting(
@@ -129,6 +132,11 @@ LOGGING = {
     'root': {
         'handlers': ['console'],
         'level': log_level,
+    },
+    'filters': {
+        'require_not_maintenance_mode_503': {
+            '()': 'maintenance_mode.logging.RequireNotMaintenanceMode503',
+        },
     },
 }
 
@@ -201,6 +209,12 @@ if MEDIA_ROOT is None:
     print("ERROR: INVENTREE_MEDIA_ROOT directory is not defined")
     sys.exit(1)
 
+# Options for django-maintenance-mode : https://pypi.org/project/django-maintenance-mode/
+MAINTENANCE_MODE_STATE_FILE_PATH = os.path.join(
+    config_dir,
+    'maintenance_mode_state.txt',
+)
+
 # List of allowed hosts (default = allow all)
 ALLOWED_HOSTS = CONFIG.get('allowed_hosts', ['*'])
 
@@ -262,6 +276,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
 
+    # Maintenance
+    'maintenance_mode',
+
     # InvenTree apps
     'build.apps.BuildConfig',
     'common.apps.CommonConfig',
@@ -272,6 +289,7 @@ INSTALLED_APPS = [
     'report.apps.ReportConfig',
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
+    'plugin.apps.PluginAppConfig',
     'InvenTree.apps.InvenTreeConfig',       # InvenTree app runs last
 
     # Third part add-ons
@@ -308,6 +326,7 @@ MIDDLEWARE = CONFIG.get('middleware', [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'InvenTree.middleware.AuthRequiredMiddleware',
+    'maintenance_mode.middleware.MaintenanceModeMiddleware',
 ])
 
 # Error reporting middleware
@@ -335,7 +354,6 @@ TEMPLATES = [
             os.path.join(MEDIA_ROOT, 'report'),
             os.path.join(MEDIA_ROOT, 'label'),
         ],
-        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -347,6 +365,13 @@ TEMPLATES = [
                 'InvenTree.context.health_status',
                 'InvenTree.context.status_codes',
                 'InvenTree.context.user_roles',
+            ],
+            'loaders': [(
+                'django.template.loaders.cached.Loader', [
+                    'plugin.loader.PluginTemplateLoader',
+                    'django.template.loaders.filesystem.Loader',
+                    'django.template.loaders.app_directories.Loader',
+                ])
             ],
         },
     },
@@ -876,3 +901,23 @@ MARKDOWNIFY_WHITELIST_ATTRS = [
 ]
 
 MARKDOWNIFY_BLEACH = False
+
+# Maintenance mode
+MAINTENANCE_MODE_RETRY_AFTER = 60
+
+
+# Plugins
+PLUGIN_DIRS = ['plugin.builtin', ]
+
+if not TESTING:
+    # load local deploy directory in prod
+    PLUGIN_DIRS.append('plugins')
+
+if DEBUG or TESTING:
+    # load samples in debug mode
+    PLUGIN_DIRS.append('plugin.samples')
+
+# Plugin test settings
+PLUGIN_TESTING = get_setting('PLUGIN_TESTING', TESTING)  # are plugins beeing tested?
+PLUGIN_TESTING_SETUP = get_setting('PLUGIN_TESTING_SETUP', False)  # load plugins from setup hooks in testing?
+PLUGIN_RETRY = get_setting('PLUGIN_RETRY', 5)  # how often should plugin loading be tried?

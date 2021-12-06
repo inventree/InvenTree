@@ -86,17 +86,6 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
 
         return self.serializer_class(*args, **kwargs)
 
-    def perform_destroy(self, instance):
-        """
-        Instead of "deleting" the StockItem
-        (which may take a long time)
-        we instead schedule it for deletion at a later date.
-
-        The background worker will delete these in the future
-        """
-
-        instance.mark_for_deletion()
-
 
 class StockItemSerialize(generics.CreateAPIView):
     """
@@ -622,9 +611,6 @@ class StockList(generics.ListCreateAPIView):
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = StockSerializers.StockItemSerializer.annotate_queryset(queryset)
-
-        # Do not expose StockItem objects which are scheduled for deletion
-        queryset = queryset.filter(scheduled_for_deletion=False)
 
         return queryset
 
