@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-05 22:51+0000\n"
-"PO-Revision-Date: 2021-12-06 21:09\n"
+"PO-Revision-Date: 2021-12-06 22:07\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -753,7 +753,7 @@ msgstr "Sélectionnez l'emplacement où les éléments complétés seront stock�
 
 #: build/models.py:264
 msgid "Build Quantity"
-msgstr ""
+msgstr "Quantité a fabriquer"
 
 #: build/models.py:267
 msgid "Number of stock items to build"
