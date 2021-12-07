@@ -5,10 +5,6 @@
 {% settings_value "PART_INTERNAL_PRICE" as show_internal_price %}
 {% settings_value 'PART_SHOW_RELATED' as show_related %}
 
-{% trans "Tree" as text %}
-{% include "sidebar_toggle.html" with target="sidetree" text=text %}
-<a class="m-1"></a>
-
 {% trans "Parameters" as text %}
 {% include "sidebar_item.html" with label="part-parameters" text=text icon="fa-th-list" %}
 {% if part.is_template %}
