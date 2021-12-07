@@ -246,38 +246,6 @@ class CategoryTree(generics.ListAPIView):
     queryset = PartCategory.objects.all()
     serializer_class = part_serializers.CategoryTree
 
-    def filter_queryset(self, queryset):
-        """
-        """
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-        cat_id = params.get('id', None)
-
-        if cat_id in (None, '', '#', ):
-            filter_kwargs = {}
-            # get whole tree
-            if 'ref_type' in self.kwargs and 'ref' in self.kwargs:
-                if 'part' in self.kwargs['ref_type']:
-                    filter_kwargs['parts__id'] = self.kwargs['ref']
-                elif 'category' in self.kwargs['ref_type']:
-                    filter_kwargs['id'] = self.kwargs['ref']
-                else:
-                    filter_kwargs['id'] = None
-            branch = queryset.model.objects.filter(**filter_kwargs).get_ancestors(include_self=True)
-            queryset = queryset.filter(parent=None) | branch
-            self.kwargs['ancestors'] = branch
-        else:
-            queryset = queryset.filter(parent_id=cat_id)
-
-        return queryset
-
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        if 'ancestors' in self.kwargs:
-            context['ancestors'] = self.kwargs['ancestors']
-        return context
-
 
 class PartSalePriceList(generics.ListCreateAPIView):
     """
@@ -1555,7 +1523,6 @@ part_api_urls = [
 
     # Base URL for PartCategory API endpoints
     url(r'^category/', include([
-        url(r'^tree/(?P<ref_type>[-\w]+)/(?P<ref>\d+)/', CategoryTree.as_view(), name='api-part-category-root-tree'),
         url(r'^tree/', CategoryTree.as_view(), name='api-part-category-tree'),
         url(r'^parameters/', CategoryParameterList.as_view(), name='api-part-category-parameter-list'),
 
