@@ -57,12 +57,6 @@ class InvenTreeConfig(AppConfig):
             schedule_type=Schedule.DAILY,
         )
 
-        # Remove expired sessions
-        InvenTree.tasks.schedule_task(
-            'InvenTree.tasks.delete_expired_sessions',
-            schedule_type=Schedule.DAILY,
-        )
-
         # Delete old error messages
         InvenTree.tasks.schedule_task(
             'InvenTree.tasks.delete_old_error_logs',
