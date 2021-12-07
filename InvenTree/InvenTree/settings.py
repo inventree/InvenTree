@@ -583,7 +583,7 @@ _cache_port = _cache_config.get(
 if _cache_host:
     # We are going to rely upon a possibly non-localhost for our cache,
     # so don't wait too long for the cache as nothing in the cache should be
-    # irreplacable.  Django Q Cluster will just try again later.
+    # irreplacable.
     _cache_options = {
         "CLIENT_CLASS": "django_redis.client.DefaultClient",
         "SOCKET_CONNECT_TIMEOUT": int(os.getenv("CACHE_CONNECT_TIMEOUT", "2")),
@@ -609,15 +609,9 @@ if _cache_host:
         },
     }
     CACHES = {
-        # Connection configuration for Django Q Cluster
-        "worker": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": f"redis://{_cache_host}:{_cache_port}/0",
-            "OPTIONS": _cache_options,
-        },
         "default": {
             "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": f"redis://{_cache_host}:{_cache_port}/1",
+            "LOCATION": f"redis://{_cache_host}:{_cache_port}/0",
             "OPTIONS": _cache_options,
         },
     }
