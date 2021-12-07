@@ -153,7 +153,13 @@ function enableSidetree(label) {
     $('#tree').jstree({
         'core': {
             'data': {
-                'url': '/api/part/category/tree/',
+                'url': function(node) {
+                    if (node.id == '#') {
+                        var url_parts = String(window.location).split("/").slice(-3);
+                        return `/api/part/category/tree/${url_parts[0]}/${url_parts[1]}/`;
+                    }
+                    return '/api/part/category/tree/'
+                },
                 'data': function(node) {
                     return {'id': node.id};
                 }

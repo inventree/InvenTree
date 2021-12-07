@@ -83,6 +83,8 @@ class CategoryTree(InvenTreeModelSerializer):
 
     a_attr = serializers.SerializerMethodField()
 
+    state = serializers.SerializerMethodField()
+
     def get_parent(self, obj):
         return obj.parent.pk if obj.parent else '#'
 
@@ -92,6 +94,11 @@ class CategoryTree(InvenTreeModelSerializer):
     def get_a_attr(self, obj):
         return {'href': obj.get_absolute_url()}
 
+    def get_state(self, obj):
+        if 'ancestors' in self.context:
+            return {'opened': obj in self.context['ancestors'] }
+        return {}
+
     class Meta:
         model = PartCategory
         fields = [
@@ -100,6 +107,7 @@ class CategoryTree(InvenTreeModelSerializer):
             'parent',
             'children',
             'a_attr',
+            'state',
         ]
 
 
