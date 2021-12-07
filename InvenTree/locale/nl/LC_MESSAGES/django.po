@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-07 00:31+0000\n"
+"POT-Creation-Date: 2021-12-07 23:22+0000\n"
 "PO-Revision-Date: 2021-11-30 21:51\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
@@ -556,23 +556,33 @@ msgid "No matching stock item found"
 msgstr "Geen overeenkomend voorraaditem gevonden"
 
 #: barcodes/api.py:191
-msgid "Barcode already matches StockItem object"
+#, fuzzy
+#| msgid "Barcode already matches StockItem object"
+msgid "Barcode already matches Stock Item"
 msgstr "Barcode komt al overeen met StockItem object"
 
 #: barcodes/api.py:195
-msgid "Barcode already matches StockLocation object"
+#, fuzzy
+#| msgid "Barcode already matches StockLocation object"
+msgid "Barcode already matches Stock Location"
 msgstr "Barcode komt al overeen met StockLocation object"
 
 #: barcodes/api.py:199
-msgid "Barcode already matches Part object"
+#, fuzzy
+#| msgid "Barcode already matches Part object"
+msgid "Barcode already matches Part"
 msgstr "Barcode komt al overeen met Part object"
 
 #: barcodes/api.py:205 barcodes/api.py:217
-msgid "Barcode hash already matches StockItem object"
+#, fuzzy
+#| msgid "Barcode hash already matches StockItem object"
+msgid "Barcode hash already matches Stock Item"
 msgstr "Barcode komt al overeen met StockItem object"
 
 #: barcodes/api.py:223
-msgid "Barcode associated with StockItem"
+#, fuzzy
+#| msgid "Barcode associated with StockItem"
+msgid "Barcode associated with Stock Item"
 msgstr "Barcode gekoppeld aan StockItem"
 
 #: build/forms.py:36 build/models.py:1283
