@@ -82,11 +82,6 @@ class CategoryTree(InvenTreeModelSerializer):
     def get_parent(self, obj):
         return obj.parent.pk if obj.parent else '#'
 
-    # children = serializers.SerializerMethodField()
-
-    # def get_children(self, obj):
-    #     return True if obj.has_children else False
-
     a_attr = serializers.SerializerMethodField()
 
     def get_a_attr(self, obj):
@@ -107,7 +102,6 @@ class CategoryTree(InvenTreeModelSerializer):
             'id',
             'text',
             'parent',
-            #'children',
             'a_attr',
             #'state',
         ]
