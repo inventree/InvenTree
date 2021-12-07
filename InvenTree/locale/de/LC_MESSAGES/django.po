@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-06 22:26+0000\n"
+"POT-Creation-Date: 2021-12-07 00:30+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -341,7 +341,7 @@ msgid "InvenTree system health checks failed"
 msgstr "InvenTree Status-Überprüfung fehlgeschlagen"
 
 #: InvenTree/status_codes.py:101 InvenTree/status_codes.py:142
-#: InvenTree/status_codes.py:311
+#: InvenTree/status_codes.py:311 templates/js/translated/table_filters.js:313
 msgid "Pending"
 msgstr "Ausstehend"
 
@@ -556,23 +556,33 @@ msgid "No matching stock item found"
 msgstr "Keine passende Lagerartikel gefunden"
 
 #: barcodes/api.py:191
-msgid "Barcode already matches StockItem object"
+#, fuzzy
+#| msgid "Barcode already matches StockItem object"
+msgid "Barcode already matches Stock Item"
 msgstr "Barcode entspricht bereits einem Lagerartikel"
 
 #: barcodes/api.py:195
-msgid "Barcode already matches StockLocation object"
+#, fuzzy
+#| msgid "Barcode already matches StockLocation object"
+msgid "Barcode already matches Stock Location"
 msgstr "Barcode entspricht bereits Bestandslagerort"
 
 #: barcodes/api.py:199
-msgid "Barcode already matches Part object"
+#, fuzzy
+#| msgid "Barcode already matches Part object"
+msgid "Barcode already matches Part"
 msgstr "Barcode entspricht bereits Teil"
 
 #: barcodes/api.py:205 barcodes/api.py:217
-msgid "Barcode hash already matches StockItem object"
+#, fuzzy
+#| msgid "Barcode hash already matches StockItem object"
+msgid "Barcode hash already matches Stock Item"
 msgstr "Barcode ist bereits Lagerartikel zugeordnet"
 
 #: barcodes/api.py:223
-msgid "Barcode associated with StockItem"
+#, fuzzy
+#| msgid "Barcode associated with StockItem"
+msgid "Barcode associated with Stock Item"
 msgstr "Barcode Lagerartikel zugeordnet"
 
 #: build/forms.py:36 build/models.py:1283
@@ -1115,8 +1125,8 @@ msgstr "Bauauftrag war fällig am %(target)s"
 #: order/templates/order/order_base.html:98
 #: order/templates/order/sales_order_base.html:93
 #: templates/js/translated/table_filters.js:299
-#: templates/js/translated/table_filters.js:332
-#: templates/js/translated/table_filters.js:353
+#: templates/js/translated/table_filters.js:340
+#: templates/js/translated/table_filters.js:361
 msgid "Overdue"
 msgstr "Überfällig"
 
@@ -1124,8 +1134,7 @@ msgstr "Überfällig"
 #: build/templates/build/detail.html:68 build/templates/build/detail.html:143
 #: order/templates/order/sales_order_base.html:170
 #: templates/js/translated/build.js:1647
-#: templates/js/translated/table_filters.js:313
-#: templates/js/translated/table_filters.js:362
+#: templates/js/translated/table_filters.js:370
 msgid "Completed"
 msgstr "Fertig"
 
@@ -1642,7 +1651,7 @@ msgstr "Kategorie-Parameter Vorlagen kopieren wenn ein Teil angelegt wird"
 
 #: common/models.py:703 part/models.py:2429 report/models.py:187
 #: templates/js/translated/table_filters.js:38
-#: templates/js/translated/table_filters.js:396
+#: templates/js/translated/table_filters.js:404
 msgid "Template"
 msgstr "Vorlage"
 
@@ -1652,7 +1661,7 @@ msgstr "Teile sind standardmäßig Vorlagen"
 
 #: common/models.py:710 part/models.py:888 templates/js/translated/bom.js:956
 #: templates/js/translated/table_filters.js:168
-#: templates/js/translated/table_filters.js:408
+#: templates/js/translated/table_filters.js:416
 msgid "Assembly"
 msgstr "Baugruppe"
 
@@ -1661,7 +1670,7 @@ msgid "Parts can be assembled from other components by default"
 msgstr "Teile können standardmäßig aus anderen Teilen angefertigt werden"
 
 #: common/models.py:717 part/models.py:894
-#: templates/js/translated/table_filters.js:412
+#: templates/js/translated/table_filters.js:420
 msgid "Component"
 msgstr "Komponente"
 
@@ -1678,7 +1687,7 @@ msgid "Parts are purchaseable by default"
 msgstr "Artikel sind grundsätzlich kaufbar"
 
 #: common/models.py:731 part/models.py:910
-#: templates/js/translated/table_filters.js:420
+#: templates/js/translated/table_filters.js:428
 msgid "Salable"
 msgstr "Verkäuflich"
 
@@ -1689,7 +1698,7 @@ msgstr "Artikel sind grundsätzlich verkaufbar"
 #: common/models.py:738 part/models.py:900
 #: templates/js/translated/table_filters.js:46
 #: templates/js/translated/table_filters.js:100
-#: templates/js/translated/table_filters.js:424
+#: templates/js/translated/table_filters.js:432
 msgid "Trackable"
 msgstr "Nachverfolgbar"
 
@@ -3197,6 +3206,7 @@ msgstr "Zuliefererteil"
 #: order/models.py:862 order/templates/order/order_base.html:163
 #: templates/js/translated/order.js:589 templates/js/translated/order.js:1118
 #: templates/js/translated/part.js:847 templates/js/translated/part.js:873
+#: templates/js/translated/table_filters.js:317
 msgid "Received"
 msgstr "Empfangen"
 
@@ -4165,7 +4175,7 @@ msgstr "Kann dieses Teil an Kunden verkauft werden?"
 #: templates/js/translated/table_filters.js:34
 #: templates/js/translated/table_filters.js:96
 #: templates/js/translated/table_filters.js:295
-#: templates/js/translated/table_filters.js:391
+#: templates/js/translated/table_filters.js:399
 msgid "Active"
 msgstr "Aktiv"
 
@@ -8380,7 +8390,7 @@ msgid "No category"
 msgstr "Keine Kategorie"
 
 #: templates/js/translated/part.js:1230
-#: templates/js/translated/table_filters.js:404
+#: templates/js/translated/table_filters.js:412
 msgid "Low stock"
 msgstr "Bestand niedrig"
 
@@ -8872,12 +8882,12 @@ msgstr "Lagerorte einschließen"
 
 #: templates/js/translated/table_filters.js:121
 #: templates/js/translated/table_filters.js:122
-#: templates/js/translated/table_filters.js:381
+#: templates/js/translated/table_filters.js:389
 msgid "Include subcategories"
 msgstr "Unterkategorien einschließen"
 
 #: templates/js/translated/table_filters.js:126
-#: templates/js/translated/table_filters.js:416
+#: templates/js/translated/table_filters.js:424
 msgid "Subscribed"
 msgstr "Abonniert"
 
@@ -8919,7 +8929,7 @@ msgid "Batch code"
 msgstr "Losnummer"
 
 #: templates/js/translated/table_filters.js:163
-#: templates/js/translated/table_filters.js:371
+#: templates/js/translated/table_filters.js:379
 msgid "Active parts"
 msgstr "Aktive Teile"
 
@@ -9011,43 +9021,44 @@ msgid "Build status"
 msgstr "Bauauftrags-Status"
 
 #: templates/js/translated/table_filters.js:303
-#: templates/js/translated/table_filters.js:336
+#: templates/js/translated/table_filters.js:344
 #, fuzzy
 #| msgid "Assigned Stock"
 msgid "Assigned to me"
 msgstr "Zugeordneter Bestand"
 
-#: templates/js/translated/table_filters.js:323
-#: templates/js/translated/table_filters.js:344
+#: templates/js/translated/table_filters.js:320
+#: templates/js/translated/table_filters.js:331
+#: templates/js/translated/table_filters.js:352
 msgid "Order status"
 msgstr "Bestellstatus"
 
-#: templates/js/translated/table_filters.js:328
-#: templates/js/translated/table_filters.js:349
+#: templates/js/translated/table_filters.js:336
+#: templates/js/translated/table_filters.js:357
 msgid "Outstanding"
 msgstr "ausstehend"
 
-#: templates/js/translated/table_filters.js:382
+#: templates/js/translated/table_filters.js:390
 msgid "Include parts in subcategories"
 msgstr "Teile in Unterkategorien einschließen"
 
-#: templates/js/translated/table_filters.js:386
+#: templates/js/translated/table_filters.js:394
 msgid "Has IPN"
 msgstr "Hat IPN"
 
-#: templates/js/translated/table_filters.js:387
+#: templates/js/translated/table_filters.js:395
 msgid "Part has internal part number"
 msgstr "Teil hat Interne Teilenummer"
 
-#: templates/js/translated/table_filters.js:392
+#: templates/js/translated/table_filters.js:400
 msgid "Show active parts"
 msgstr "Aktive Teile anzeigen"
 
-#: templates/js/translated/table_filters.js:400
+#: templates/js/translated/table_filters.js:408
 msgid "Stock available"
 msgstr "verfügbarer Bestand"
 
-#: templates/js/translated/table_filters.js:428
+#: templates/js/translated/table_filters.js:436
 msgid "Purchasable"
 msgstr "Käuflich"
 
