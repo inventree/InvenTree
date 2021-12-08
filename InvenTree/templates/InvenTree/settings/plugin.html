@@ -1,0 +1,146 @@
+{% extends "panel.html" %}
+{% load i18n %}
+{% load inventree_extras %}
+{% load plugin_extras %}
+
+{% block label %}plugin{% endblock %}
+
+
+{% block heading %}
+{% trans "Plugin Settings" %}
+{% endblock %}
+
+{% block content %}
+
+<div class='alert alert-block alert-danger'>
+    {% trans "Changing the settings below require you to immediatly restart InvenTree. Do not change this while under active usage." %}
+</div>
+
+<div class='table-responsive'>
+<table class='table table-striped table-condensed'>
+    <tbody>
+        {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_URL" %}
+        {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_NAVIGATION" %}
+        {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_GLOBALSETTING"%}
+        {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_APP"%}
+    </tbody>
+</table>
+</div>
+
+<div class='panel-heading'>
+    <div class='d-flex flex-wrap'>
+        <h4>{% trans "Plugin list" %}</h4>
+        {% include "spacer.html" %}
+        <div class='btn-group' role='group'>
+            {% url 'admin:plugin_pluginconfig_changelist' as url %}
+            {% include "admin_button.html" with url=url %}
+            <button class="btn btn-success" id="install-plugin" title="{% trans 'Install Plugin' %}"><span class='fas fa-plus-circle'></span> {% trans "Install Plugin" %}</button>        
+        </div>
+    </div>
+</div>
+
+<div class='table-responsive'>
+<table class='table table-striped table-condensed'>
+    <thead>
+        <tr>
+            <th>{% trans "Admin" %}</th>
+            <th>{% trans "Name" %}</th>
+            <th>{% trans "Author" %}</th>
+            <th>{% trans "Date" %}</th>
+            <th>{% trans "Version" %}</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        {% plugin_list as pl_list %}
+        {% for plugin_key, plugin in pl_list.items %}
+        {% mixin_enabled plugin 'urls' as urls %}
+        {% mixin_enabled plugin 'settings' as settings %}
+
+        <tr>
+            <td>
+                {% if user.is_staff and perms.plugin.change_pluginconfig %}
+                {% url 'admin:plugin_pluginconfig_change' plugin.pk as url %}
+                {% include "admin_button.html" with url=url %}
+                {% endif %}
+            </td>
+            <td>{{ plugin.human_name }}<span class="text-muted"> - {{plugin_key}}</span>
+                {% define plugin.registered_mixins as mixin_list %}
+
+                {% if mixin_list %}
+                {% for mixin in mixin_list %}
+                <a class='sidebar-selector' id='select-plugin-{{plugin_key}}' data-bs-parent="#sidebar">
+                    <span class='badge bg-dark badge-right'>{% blocktrans with name=mixin.human_name %}has {{name}}{% endblocktrans %}</span>
+                </a>
+                {% endfor %}
+                {% endif %}
+
+                {% if plugin.website %}
+                <a href="{{ plugin.website }}"><i class="fas fa-globe"></i></a>
+                {% endif %}
+            </td>
+            <td>{{ plugin.author }}</td>
+            <td>{{ plugin.pub_date }}</td>
+            <td>{% if plugin.version %}{{ plugin.version }}{% endif %}</td>
+        </tr>
+        {% endfor %}
+
+        {% inactive_plugin_list as in_pl_list %}
+        {% if in_pl_list %}
+        <tr><td colspan="5"></td></tr>
+        <tr><td colspan="5"><h6>{% trans 'Inactive plugins' %}</h6></td></tr>
+        {% for plugin_key, plugin in in_pl_list.items %}
+        <tr>
+            <td>
+                {% if user.is_staff and perms.plugin.change_pluginconfig %}
+                {% url 'admin:plugin_pluginconfig_change' plugin.pk as url %}
+                {% include "admin_button.html" with url=url %}
+                {% endif %}
+            </td>
+            <td>{{plugin.name}}<span class="text-muted"> - {{plugin.key}}</span></td>
+            <td colspan="3"></td>
+        </tr>
+        {% endfor %}
+        {% endif %}
+    </tbody>
+</table>
+</div>
+
+
+{% plugin_errors as pl_errors %}
+{% if pl_errors %}
+<div class='panel-heading'>
+    <div class='d-flex flex-wrap'>
+        <h4>{% trans "Plugin Error Stack" %}</h4>
+        {% include "spacer.html" %}
+    </div>
+</div>
+
+<div class='table-responsive'>
+    <table class='table table-striped table-condensed'>
+        <thead>
+            <tr>
+                <th>{% trans "Stage" %}</th>
+                <th>{% trans "Name" %}</th>
+                <th>{% trans "Message" %}</th>
+            </tr>
+        </thead>
+        
+        <tbody>
+        {% for stage, errors in pl_errors.items %}
+            {% for error_detail in errors %}
+            {% for name, message in error_detail.items %}
+            <tr>
+                <td>{{ stage }}</td>
+                <td>{{ name }}</td>
+                <td>{{ message }}</td>
+            </tr>
+            {% endfor %}
+            {% endfor %}
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+{% endif %}
+
+{% endblock %}

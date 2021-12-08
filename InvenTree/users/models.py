@@ -76,6 +76,7 @@ class RuleSet(models.Model):
             'otp_totp_totpdevice',
             'otp_static_statictoken',
             'otp_static_staticdevice',
+            'plugin_pluginconfig'
         ],
         'part_category': [
             'part_partcategory',

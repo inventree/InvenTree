@@ -16,6 +16,7 @@ django-error-report==0.2.0      # Error report viewer for the admin interface
 django-filter==2.4.0            # Extended filtering options
 django-formtools==2.3           # Form wizard tools
 django-import-export==2.5.0     # Data import / export for admin interface
+django-maintenance-mode==0.16.1 # Shut down application while reloading etc.
 django-markdownify==0.8.0       # Markdown rendering
 django-markdownx==3.0.1         # Markdown form fields
 django-money==1.1               # Django app for currency management
@@ -29,6 +30,7 @@ django-weasyprint==1.0.1        # django weasyprint integration
 djangorestframework==3.12.4     # DRF framework
 flake8==3.8.3                   # PEP checking
 gunicorn>=20.1.0                # Gunicorn web server
+importlib_metadata              # Backport for importlib.metadata
 inventree                       # Install the latest version of the InvenTree API python library
 markdown==3.3.4                 # Force particular version of markdown
 pep8-naming==0.11.1             # PEP naming convention extension
