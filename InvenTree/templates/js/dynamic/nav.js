@@ -157,7 +157,11 @@ function enableSidetree(label) {
                 'data': function(node) {
                     return {'id': node.id};
                 }
-            }
+            },
+            'themes': {
+                'icons': false,
+                'responsive': true,
+            },
         }
     }).bind('select_node.jstree', function(e, data) {
         window.location.href = data.node.a_attr.href;
