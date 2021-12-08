@@ -1,9 +1,11 @@
 {% load static %}
 {% load inventree_extras %}
+{% load plugin_extras %}
 {% load i18n %}
 
 {% settings_value 'BARCODE_ENABLE' as barcodes %}
 {% settings_value 'STICKY_HEADER' user=request.user as sticky %}
+{% navigation_enabled as plugin_nav %}
 {% inventree_demo_mode as demo %}
 
 <nav class="navbar {% if sticky %}fixed-top{% endif %} navbar-expand-lg navbar-light">
@@ -57,6 +59,29 @@
           </ul>
         </li>
         {% endif %}
+
+        {% if plugin_nav %}
+        {% plugin_list as pl_list %}
+        {% for plugin_key, plugin in pl_list.items %}
+          {% mixin_enabled plugin 'navigation' as navigation %}
+          {% if navigation %}
+          <li class='nav-item dropdown'>
+            <a class='nav-link dropdown-toggle' data-bs-toggle="dropdown" aria-expanded="false" href='#'>
+              <span class='{{plugin.navigation_icon}} icon-header'></span>{{plugin.navigation_name}}
+            </a>
+            <ul class='dropdown-menu'>
+             {% for nav_item in plugin.navigation %}
+                {% safe_url nav_item.link as nav_link %}
+                {% if nav_link %}
+                <li><a href="{{ nav_link }}" class="dropdown-item"><span class='{{nav_item.icon}} icon-header'></span>{{nav_item.name}}</a>
+                {% endif %}
+             {% endfor %}
+            </ul>
+          </li>
+          {% endif %}
+        {% endfor %}
+        {% endif %}
+
       </ul>
     </div>
     {% if demo %}

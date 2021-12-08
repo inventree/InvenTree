@@ -18,6 +18,7 @@ from part.urls import part_urls
 from stock.urls import stock_urls
 from build.urls import build_urls
 from order.urls import order_urls
+from plugin.urls import get_plugin_urls
 
 from barcodes.api import barcode_api_urls
 from common.api import common_api_urls
@@ -28,6 +29,7 @@ from build.api import build_api_urls
 from order.api import order_api_urls
 from label.api import label_api_urls
 from report.api import report_api_urls
+from plugin.api import plugin_api_urls
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -61,6 +63,7 @@ apipatterns = [
     url(r'^order/', include(order_api_urls)),
     url(r'^label/', include(label_api_urls)),
     url(r'^report/', include(report_api_urls)),
+    url(r'^plugin/', include(plugin_api_urls)),
 
     # User URLs
     url(r'^user/', include(user_urls)),
@@ -116,6 +119,7 @@ translated_javascript_urls = [
     url(r'^part.js', DynamicJsView.as_view(template_name='js/translated/part.js'), name='part.js'),
     url(r'^report.js', DynamicJsView.as_view(template_name='js/translated/report.js'), name='report.js'),
     url(r'^stock.js', DynamicJsView.as_view(template_name='js/translated/stock.js'), name='stock.js'),
+    url(r'^plugin.js', DynamicJsView.as_view(template_name='js/translated/plugin.js'), name='plugin.js'),
     url(r'^tables.js', DynamicJsView.as_view(template_name='js/translated/tables.js'), name='tables.js'),
     url(r'^table_filters.js', DynamicJsView.as_view(template_name='js/translated/table_filters.js'), name='table_filters.js'),
 ]
@@ -157,6 +161,9 @@ urlpatterns = [
 
     url(r'^api/', include(apipatterns)),
     url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
+
+    # plugin urls
+    get_plugin_urls(),  # appends currently loaded plugin urls = None
 
     url(r'^markdownx/', include('markdownx.urls')),
 

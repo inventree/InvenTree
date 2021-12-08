@@ -438,6 +438,12 @@
     width: 30%;
 }
 
+/* tracking table column size */
+#track-table .table-condensed th {
+    inline-size: 30%;
+    overflow-wrap: break-word;
+}
+
 .panel-heading .badge {
     float: right;
 }
