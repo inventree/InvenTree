@@ -277,13 +277,31 @@ class POLineItemFilter(rest_filters.FilterSet):
             'part'
         ]
 
-    completed = rest_filters.BooleanFilter(label='completed', method='filter_completed')
+    pending = rest_filters.BooleanFilter(label='pending', method='filter_pending')
 
-    def filter_completed(self, queryset, name, value):
+    def filter_pending(self, queryset, name, value):
         """
-        Filter by lines which are "completed" (or "not" completed)
+        Filter by "pending" status (order status = pending)
+        """
 
-        A line is completed when received >= quantity
+        value = str2bool(value)
+
+        if value:
+            queryset = queryset.filter(order__status__in=PurchaseOrderStatus.OPEN)
+        else:
+            queryset = queryset.exclude(order__status__in=PurchaseOrderStatus.OPEN)
+
+        return queryset
+
+    order_status = rest_filters.NumberFilter(label='order_status', field_name='order__status')
+
+    received = rest_filters.BooleanFilter(label='received', method='filter_received')
+
+    def filter_received(self, queryset, name, value):
+        """
+        Filter by lines which are "received" (or "not" received)
+
+        A line is considered "received" when received >= quantity
         """
 
         value = str2bool(value)
@@ -293,7 +311,8 @@ class POLineItemFilter(rest_filters.FilterSet):
         if value:
             queryset = queryset.filter(q)
         else:
-            queryset = queryset.exclude(q)
+            # Only count "pending" orders
+            queryset = queryset.exclude(q).filter(order__status__in=PurchaseOrderStatus.OPEN)
 
         return queryset
 

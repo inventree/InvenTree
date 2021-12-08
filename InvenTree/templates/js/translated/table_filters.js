@@ -308,9 +308,17 @@ function getAvailableTableFilters(tableKey) {
     // Filters for PurchaseOrderLineItem table
     if (tableKey == 'purchaseorderlineitem') {
         return {
-            completed: {
+            pending: {
                 type: 'bool',
-                title: '{% trans "Completed" %}',
+                title: '{% trans "Pending" %}',
+            },
+            received: {
+                type: 'bool',
+                title: '{% trans "Received" %}',
+            },
+            order_status: {
+                title: '{% trans "Order status" %}',
+                options: purchaseOrderCodes,
             },
         };
     }
