@@ -1,6 +1,7 @@
 {% load i18n %}
 {% load static %}
 {% load inventree_extras %}
+{% load plugin_extras %}
 
 {% trans "User Settings" as text %}
 {% include "sidebar_header.html" with text=text icon='fa-user' %}
@@ -45,5 +46,16 @@
 {% include "sidebar_item.html" with label='purchase-order' text=text icon="fa-shopping-cart" %}
 {% trans "Sales Orders" as text %}
 {% include "sidebar_item.html" with label='sales-order' text=text icon="fa-truck" %}
+
+{% include "sidebar_header.html" with text="Plugin Settings" %}
+
+{% include "sidebar_item.html" with label='plugin' text="Plugin" icon="fa-plug" %}
+
+{% plugin_list as pl_list %}
+{% for plugin_key, plugin in pl_list.items %}
+    {% if plugin.registered_mixins %}
+        {% include "sidebar_item.html" with label='plugin-'|add:plugin_key text=plugin.human_name %}
+    {% endif %}
+{% endfor %}
 
 {% endif %}
