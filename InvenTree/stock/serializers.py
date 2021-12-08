@@ -28,6 +28,8 @@ from .models import StockItemTestResult
 
 import common.models
 from common.settings import currency_code_default, currency_code_mappings
+
+import company.models
 from company.serializers import SupplierPartSerializer
 
 import InvenTree.helpers
@@ -536,6 +538,122 @@ class StockTrackingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'tracking_type',
         ]
 
+
+class StockAssignmentItemSerializer(serializers.Serializer):
+    """
+    Serializer for a single StockItem with in StockAssignment request.
+
+    Here, the particular StockItem is being assigned (manually) to a customer
+
+    Fields:
+        - item: StockItem object
+    """
+
+    class Meta:
+        fields = [
+            'item',
+        ]
+
+    item = serializers.PrimaryKeyRelatedField(
+        queryset=StockItem.objects.all(),
+        many=False,
+        allow_null=False,
+        required=True,
+        label=_('Stock Item'),
+    )
+
+    def validate_item(self, item):
+
+        # The item must currently be "in stock"
+        if not item.in_stock:
+            raise ValidationError(_("Item must be in stock"))
+
+        # The item must not be allocated to a sales order
+        if item.sales_order_allocations.count() > 0:
+            raise ValidationError(_("Item is allocated to a sales order"))
+
+        # The item must not be allocated to a build order
+        if item.allocations.count() > 0:
+            raise ValidationError(_("Item is allocated to a build order"))
+
+        return item
+
+
+class StockAssignmentSerializer(serializers.Serializer):
+    """
+    Serializer for assigning one (or more) stock items to a customer.
+
+    This is a manual assignment process, separate for (for example) a Sales Order
+    """
+
+    class Meta:
+        fields = [
+            'items',
+            'customer',
+            'notes',
+        ]
+
+    items = StockAssignmentItemSerializer(
+        many=True,
+        required=True,
+    )
+
+    customer = serializers.PrimaryKeyRelatedField(
+        queryset=company.models.Company.objects.all(),
+        many=False,
+        allow_null=False,
+        required=True,
+        label=_('Customer'),
+        help_text=_('Customer to assign stock items'),
+    )
+
+    def validate_customer(self, customer):
+
+        if customer and not customer.is_customer:
+            raise ValidationError(_('Selected company is not a customer'))
+
+        return customer
+
+    notes = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        label=_('Notes'),
+        help_text=_('Stock assignment notes'),
+    )
+
+    def validate(self, data):
+
+        data = super().validate(data)
+
+        items = data.get('items', [])
+
+        if len(items) == 0:
+            raise ValidationError(_("A list of stock items must be provided"))
+
+        return data
+
+    def save(self):
+
+        request = self.context['request']
+
+        user = getattr(request, 'user', None)
+
+        data = self.validated_data
+
+        items = data['items']
+        customer = data['customer']
+        notes = data.get('notes', '')
+
+        with transaction.atomic():
+            for item in items:
+
+                stock_item = item['item']
+
+                stock_item.allocateToCustomer(
+                    customer,
+                    user=user,
+                    notes=notes,
+                )
 
 class StockAdjustmentItemSerializer(serializers.Serializer):
     """

@@ -163,6 +163,23 @@ class StockTransfer(StockAdjustView):
     serializer_class = StockSerializers.StockTransferSerializer
 
 
+class StockAssign(generics.CreateAPIView):
+    """
+    API endpoint for assigning stock to a particular customer
+    """
+
+    queryset = StockItem.objects.all()
+    serializer_class = StockSerializers.StockAssignmentSerializer
+
+    def get_serializer_context(self):
+
+        ctx = super().get_serializer_context()
+
+        ctx['request'] = self.request
+
+        return ctx
+
+
 class StockLocationList(generics.ListCreateAPIView):
     """
     API endpoint for list view of StockLocation objects:
@@ -1174,6 +1191,7 @@ stock_api_urls = [
     url(r'^add/', StockAdd.as_view(), name='api-stock-add'),
     url(r'^remove/', StockRemove.as_view(), name='api-stock-remove'),
     url(r'^transfer/', StockTransfer.as_view(), name='api-stock-transfer'),
+    url(r'^assign/', StockAssign.as_view(), name='api-stock-assign'),
 
     # StockItemAttachment API endpoints
     url(r'^attachment/', include([
