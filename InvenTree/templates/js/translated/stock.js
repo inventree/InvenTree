@@ -662,7 +662,7 @@ function assignStockToCustomer(items, options={}) {
 
             opts.nested = {
                 'items': item_pk_values,
-            }
+            };
 
             inventreePut(
                 '{% url "api-stock-assign" %}',
