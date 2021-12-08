@@ -4,8 +4,6 @@ import string
 import hashlib
 import logging
 
-from InvenTree import plugins as InvenTreePlugins
-from barcodes import plugins as BarcodePlugins
 
 from stock.models import StockItem
 from stock.serializers import StockItemSerializer, LocationSerializer
@@ -139,24 +137,3 @@ class BarcodePlugin:
         Default implementation returns False
         """
         return False
-
-
-def load_barcode_plugins(debug=False):
-    """
-    Function to load all barcode plugins
-    """
-
-    logger.debug("Loading barcode plugins")
-
-    plugins = InvenTreePlugins.get_plugins(BarcodePlugins, BarcodePlugin)
-
-    if debug:
-        if len(plugins) > 0:
-            logger.info(f"Discovered {len(plugins)} barcode plugins")
-
-            for p in plugins:
-                logger.debug(" - {p}".format(p=p.PLUGIN_NAME))
-        else:
-            logger.debug("No barcode plugins found")
-
-    return plugins

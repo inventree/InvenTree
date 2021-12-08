@@ -78,3 +78,9 @@ locale_stats.json
 
 # node.js
 node_modules/
+
+# maintenance locker
+maintenance_mode_state.txt
+
+# plugin dev directory
+plugins/

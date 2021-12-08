@@ -18,7 +18,6 @@ from InvenTree.api_tester import InvenTreeAPITestCase
 from common.models import InvenTreeSetting
 
 from .models import StockItem, StockLocation
-from .tasks import delete_old_stock_items
 
 
 class StockAPITestCase(InvenTreeAPITestCase):
@@ -593,11 +592,7 @@ class StockItemDeletionTest(StockAPITestCase):
 
     def test_delete(self):
 
-        # Check there are no stock items scheduled for deletion
-        self.assertEqual(
-            StockItem.objects.filter(scheduled_for_deletion=True).count(),
-            0
-        )
+        n = StockItem.objects.count()
 
         # Create and then delete a bunch of stock items
         for idx in range(10):
@@ -615,9 +610,7 @@ class StockItemDeletionTest(StockAPITestCase):
 
             pk = response.data['pk']
 
-            item = StockItem.objects.get(pk=pk)
-
-            self.assertFalse(item.scheduled_for_deletion)
+            self.assertEqual(StockItem.objects.count(), n + 1)
 
             # Request deletion via the API
             self.delete(
@@ -625,19 +618,7 @@ class StockItemDeletionTest(StockAPITestCase):
                 expected_code=204
             )
 
-        # There should be 100x StockItem objects marked for deletion
-        self.assertEqual(
-            StockItem.objects.filter(scheduled_for_deletion=True).count(),
-            10
-        )
-
-        # Perform the actual delete (will take some time)
-        delete_old_stock_items()
-
-        self.assertEqual(
-            StockItem.objects.filter(scheduled_for_deletion=True).count(),
-            0
-        )
+        self.assertEqual(StockItem.objects.count(), n)
 
 
 class StockTestResultTest(StockAPITestCase):
