@@ -568,6 +568,10 @@ class StockAssignmentItemSerializer(serializers.Serializer):
         if not item.in_stock:
             raise ValidationError(_("Item must be in stock"))
 
+        # The base part must be "salable"
+        if not item.part.salable:
+            raise ValidationError(_("Part must be salable"))
+
         # The item must not be allocated to a sales order
         if item.sales_order_allocations.count() > 0:
             raise ValidationError(_("Item is allocated to a sales order"))
@@ -654,6 +658,7 @@ class StockAssignmentSerializer(serializers.Serializer):
                     user=user,
                     notes=notes,
                 )
+
 
 class StockAdjustmentItemSerializer(serializers.Serializer):
     """

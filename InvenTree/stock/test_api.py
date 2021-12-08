@@ -818,7 +818,7 @@ class StockAssignTest(StockAPITestCase):
 
             stock_item = StockItem.objects.create(
                 part=part.models.Part.objects.get(pk=1),
-                quantity=i+5,
+                quantity=i + 5,
             )
 
             stock_items.append({
@@ -829,7 +829,7 @@ class StockAssignTest(StockAPITestCase):
 
         self.assertEqual(customer.assigned_stock.count(), 0)
 
-        response = self.post(
+        self.post(
             self.URL,
             data={
                 'items': stock_items,

@@ -651,7 +651,7 @@ function assignStockToCustomer(items, options={}) {
                 // Does the row exist in the form?
                 var row = $(opts.modal).find(`#stock_item_${pk}`);
 
-                if (row) {
+                if (row.exists()) {
                     item_pk_values.push(pk);
 
                     data.items.push({
@@ -931,7 +931,7 @@ function adjustStock(action, items, options={}) {
                 // Does the row exist in the form?
                 var row = $(opts.modal).find(`#stock_item_${pk}`);
 
-                if (row) {
+                if (row.exists()) {
 
                     item_pk_values.push(pk);
                     
@@ -1873,6 +1873,17 @@ function loadStockTable(table, options) {
 
     $('#multi-item-move').click(function() {
         stockAdjustment('move');
+    });
+
+    $('#multi-item-assign').click(function() {
+
+        var items = $(table).bootstrapTable('getSelections');
+
+        assignStockToCustomer(items, {
+            success: function() {
+                $(table).bootstrapTable('refresh');
+            }
+        });
     });
 
     $('#multi-item-order').click(function() {
