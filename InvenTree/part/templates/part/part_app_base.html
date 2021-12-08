@@ -14,6 +14,7 @@
 {% endblock %}
 
 {% block breadcrumbs %}
+<a id='sidetree-toggle' class="breadcrumb-item"><i class="fas fa-bars"></i></a>
 {% if part %}
 {% include "part/cat_link.html" with category=part.category part=part %}
 {% else %}
