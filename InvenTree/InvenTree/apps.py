@@ -18,10 +18,31 @@ class InvenTreeConfig(AppConfig):
     def ready(self):
 
         if canAppAccessDatabase():
+
+            self.remove_obsolete_tasks()
+
             self.start_background_tasks()
 
             if not isInTestMode():
                 self.update_exchange_rates()
+
+    def remove_obsolete_tasks(self):
+        """
+        Delete any obsolete scheduled tasks in the database
+        """
+
+        obsolete = [
+            'InvenTree.tasks.delete_expired_sessions',
+            'stock.tasks.delete_old_stock_items',
+        ]
+
+        try:
+            from django_q.models import Schedule
+        except (AppRegistryNotReady):
+            return
+
+        # Remove any existing obsolete tasks
+        Schedule.objects.filter(func__in=obsolete).delete()
 
     def start_background_tasks(self):
 
@@ -57,23 +78,10 @@ class InvenTreeConfig(AppConfig):
             schedule_type=Schedule.DAILY,
         )
 
-        # Remove expired sessions
-        InvenTree.tasks.schedule_task(
-            'InvenTree.tasks.delete_expired_sessions',
-            schedule_type=Schedule.DAILY,
-        )
-
         # Delete old error messages
         InvenTree.tasks.schedule_task(
             'InvenTree.tasks.delete_old_error_logs',
             schedule_type=Schedule.DAILY,
-        )
-
-        # Delete "old" stock items
-        InvenTree.tasks.schedule_task(
-            'stock.tasks.delete_old_stock_items',
-            schedule_type=Schedule.MINUTES,
-            minutes=30,
         )
 
         # Delete old notification records
