@@ -817,7 +817,7 @@ class StockAssignTest(StockAPITestCase):
         for i in range(5):
 
             stock_item = StockItem.objects.create(
-                part=part.models.Part.objects.get(pk=1),
+                part=part.models.Part.objects.get(pk=25),
                 quantity=i + 5,
             )
 
@@ -829,7 +829,7 @@ class StockAssignTest(StockAPITestCase):
 
         self.assertEqual(customer.assigned_stock.count(), 0)
 
-        self.post(
+        response = self.post(
             self.URL,
             data={
                 'items': stock_items,
@@ -837,6 +837,8 @@ class StockAssignTest(StockAPITestCase):
             },
             expected_code=201,
         )
+
+        self.assertEqual(response.data['customer'], 4)
 
         # 5 stock items should now have been assigned to this customer
         self.assertEqual(customer.assigned_stock.count(), 5)
