@@ -16,8 +16,9 @@ from InvenTree.status_codes import StockStatus
 from InvenTree.api_tester import InvenTreeAPITestCase
 
 from common.models import InvenTreeSetting
-
-from .models import StockItem, StockLocation
+import company.models
+import part.models
+from stock.models import StockItem, StockLocation
 
 
 class StockAPITestCase(InvenTreeAPITestCase):
@@ -732,3 +733,112 @@ class StockTestResultTest(StockAPITestCase):
 
             # Check that an attachment has been uploaded
             self.assertIsNotNone(response.data['attachment'])
+
+
+class StockAssignTest(StockAPITestCase):
+    """
+    Unit tests for the stock assignment API endpoint,
+    where stock items are manually assigned to a customer
+    """
+
+    URL = reverse('api-stock-assign')
+
+    def test_invalid(self):
+
+        # Test with empty data
+        response = self.post(
+            self.URL,
+            data={},
+            expected_code=400,
+        )
+
+        self.assertIn('This field is required', str(response.data['items']))
+        self.assertIn('This field is required', str(response.data['customer']))
+
+        # Test with an invalid customer
+        response = self.post(
+            self.URL,
+            data={
+                'customer': 999,
+            },
+            expected_code=400,
+        )
+
+        self.assertIn('object does not exist', str(response.data['customer']))
+
+        # Test with a company which is *not* a customer
+        response = self.post(
+            self.URL,
+            data={
+                'customer': 3,
+            },
+            expected_code=400,
+        )
+
+        self.assertIn('company is not a customer', str(response.data['customer']))
+
+        # Test with an empty items list
+        response = self.post(
+            self.URL,
+            data={
+                'items': [],
+                'customer': 4,
+            },
+            expected_code=400,
+        )
+
+        self.assertIn('A list of stock items must be provided', str(response.data))
+
+        stock_item = StockItem.objects.create(
+            part=part.models.Part.objects.get(pk=1),
+            status=StockStatus.DESTROYED,
+            quantity=5,
+        )
+
+        response = self.post(
+            self.URL,
+            data={
+                'items': [
+                    {
+                        'item': stock_item.pk,
+                    },
+                ],
+                'customer': 4,
+            },
+            expected_code=400,
+        )
+
+        self.assertIn('Item must be in stock', str(response.data['items'][0]))
+
+    def test_valid(self):
+
+        stock_items = []
+
+        for i in range(5):
+
+            stock_item = StockItem.objects.create(
+                part=part.models.Part.objects.get(pk=25),
+                quantity=i + 5,
+            )
+
+            stock_items.append({
+                'item': stock_item.pk
+            })
+
+        customer = company.models.Company.objects.get(pk=4)
+
+        self.assertEqual(customer.assigned_stock.count(), 0)
+
+        response = self.post(
+            self.URL,
+            data={
+                'items': stock_items,
+                'customer': 4,
+            },
+            expected_code=201,
+        )
+
+        self.assertEqual(response.data['customer'], 4)
+
+        # 5 stock items should now have been assigned to this customer
+        self.assertEqual(customer.assigned_stock.count(), 5)
