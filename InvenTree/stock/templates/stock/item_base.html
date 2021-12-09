@@ -568,11 +568,19 @@ $("#stock-convert").click(function() {
 
 {% if item.in_stock %}
 $("#stock-assign-to-customer").click(function() {
-    launchModalForm("{% url 'stock-item-assign' item.id %}",
-        {
-            reload: true,
+
+    inventreeGet('{% url "api-stock-detail" item.pk %}', {}, {
+        success: function(response) {
+            assignStockToCustomer(
+                [response],
+                {
+                    success: function() {
+                        location.reload();
+                    },
+                }
+            );
         }
-    );
+    });
 });
 
 $("#stock-move").click(function() {
