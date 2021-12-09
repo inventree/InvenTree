@@ -132,6 +132,7 @@ backendpatterns = [
     url(r'^api/', include(apipatterns)),
     url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
 
+    # 3rd party endpoints
     url(r'^markdownx/', include('markdownx.urls')),
 ]
 
