@@ -129,10 +129,6 @@ backendpatterns = [
     url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^auth/?', auth_request),
 
-    url(r'^admin/error_log/', include('error_report.urls')),
-    url(r'^admin/shell/', include('django_admin_shell.urls')),
-    url(r'^admin/', admin.site.urls, name='inventree-admin'),
-
     url(r'^api/', include(apipatterns)),
     url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
 
@@ -164,6 +160,11 @@ frontendpatterns = [
 
     # plugin urls
     get_plugin_urls(),  # appends currently loaded plugin urls = None
+
+    # admin sites
+    url(r'^admin/error_log/', include('error_report.urls')),
+    url(r'^admin/shell/', include('django_admin_shell.urls')),
+    url(r'^admin/', admin.site.urls, name='inventree-admin'),
 
     # DB user sessions
     url(r'^accounts/sessions/other/delete/$', view=CustomSessionDeleteOtherView.as_view(), name='session_delete_other', ),
