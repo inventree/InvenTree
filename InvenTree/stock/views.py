@@ -294,39 +294,6 @@ class StockLocationQRCode(QRCodeView):
             return None
 
 
-class StockItemAssignToCustomer(AjaxUpdateView):
-    """
-    View for manually assigning a StockItem to a Customer
-    """
-
-    model = StockItem
-    ajax_form_title = _("Assign to Customer")
-    context_object_name = "item"
-    form_class = StockForms.AssignStockItemToCustomerForm
-
-    def validate(self, item, form, **kwargs):
-
-        customer = form.cleaned_data.get('customer', None)
-
-        if not customer:
-            form.add_error('customer', _('Customer must be specified'))
-
-    def save(self, item, form, **kwargs):
-        """
-        Assign the stock item to the customer.
-        """
-
-        customer = form.cleaned_data.get('customer', None)
-
-        if customer:
-            item = item.allocateToCustomer(
-                customer,
-                user=self.request.user
-            )
-
-            item.clearAllocations()
-
-
 class StockItemReturnToStock(AjaxUpdateView):
     """
     View for returning a stock item (which is assigned to a customer) to stock.
