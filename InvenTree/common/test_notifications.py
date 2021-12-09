@@ -61,7 +61,8 @@ class BaseNotificationTests(BaseNotificationIntegrationTest):
         with self.assertRaises(NotImplementedError):
             AnotherFalseNotificationMethod('', '', '', {'name': 1, 'message': 2, }, )
 
-        # cover faling delivery
+    def test_failing_passing(self):
+        # cover failing delivery
         self._notification_run()
 
     def test_errors_passing(self):
