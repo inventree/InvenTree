@@ -390,6 +390,20 @@ class SerializeStockItemSerializer(serializers.Serializer):
         )
 
 
+class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+    """
+    Serializer for a simple tree view
+    """
+
+    class Meta:
+        model = StockLocation
+        fields = [
+            'pk',
+            'name',
+            'parent',
+        ]
+
+
 class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """ Detailed information about a stock location
     """

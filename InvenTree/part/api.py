@@ -239,6 +239,23 @@ class CategoryParameterList(generics.ListAPIView):
         return queryset
 
 
+class CategoryTree(generics.ListAPIView):
+    """
+    API endpoint for accessing a list of PartCategory objects ready for rendering a tree.
+    """
+
+    queryset = PartCategory.objects.all()
+    serializer_class = part_serializers.CategoryTree
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+    ]
+
+    # Order by tree level (top levels first) and then name
+    ordering = ['level', 'name']
+
+
 class PartSalePriceList(generics.ListCreateAPIView):
     """
     API endpoint for list view of PartSalePriceBreak model
@@ -1495,6 +1512,7 @@ part_api_urls = [
 
     # Base URL for PartCategory API endpoints
     url(r'^category/', include([
+        url(r'^tree/', CategoryTree.as_view(), name='api-part-category-tree'),
         url(r'^parameters/', CategoryParameterList.as_view(), name='api-part-category-parameter-list'),
 
         url(r'^(?P<pk>\d+)/?', CategoryDetail.as_view(), name='api-part-category-detail'),

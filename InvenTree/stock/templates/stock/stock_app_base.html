@@ -18,9 +18,10 @@
 {% endblock %}
 
 {% block breadcrumbs %}
+<a href='#' id='breadcrumb-tree-toggle' class="breadcrumb-item"><i class="fas fa-bars"></i></a>
 {% if item %}
 {% include 'stock/loc_link.html' with location=item.location %}
 {% else %}
 {% include 'stock/loc_link.html' with location=location %}
 {% endif %}
-{% endblock %}
+{% endblock breadcrumbs %}
