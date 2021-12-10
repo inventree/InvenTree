@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-08 23:43+0000\n"
-"PO-Revision-Date: 2021-12-08 23:46\n"
+"POT-Creation-Date: 2021-12-10 21:11+0000\n"
+"PO-Revision-Date: 2021-12-10 21:19\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -575,8 +575,8 @@ msgstr ""
 msgid "Barcode associated with Stock Item"
 msgstr ""
 
-#: build/forms.py:36 build/models.py:1283
-#: build/templates/build/build_base.html:132
+#: build/forms.py:36 build/models.py:1286
+#: build/templates/build/build_base.html:82
 #: build/templates/build/detail.html:35 common/models.py:1253
 #: company/forms.py:42 company/templates/company/supplier_part.html:251
 #: order/models.py:794 order/models.py:1205 order/serializers.py:810
@@ -891,21 +891,21 @@ msgstr ""
 msgid "Quantity must be 1 for serialized stock"
 msgstr ""
 
-#: build/models.py:1193
+#: build/models.py:1196
 msgid "Selected stock item not found in BOM"
 msgstr ""
 
-#: build/models.py:1253 stock/templates/stock/item_base.html:346
+#: build/models.py:1256 stock/templates/stock/item_base.html:346
 #: templates/InvenTree/search.html:143 templates/js/translated/build.js:1605
 #: templates/navbar.html:35
 msgid "Build"
 msgstr "Assemblage"
 
-#: build/models.py:1254
+#: build/models.py:1257
 msgid "Build to allocate parts"
 msgstr ""
 
-#: build/models.py:1270 build/serializers.py:328 order/serializers.py:690
+#: build/models.py:1273 build/serializers.py:334 order/serializers.py:690
 #: order/serializers.py:708 stock/serializers.py:562
 #: stock/templates/stock/item_base.html:8
 #: stock/templates/stock/item_base.html:16
@@ -919,23 +919,23 @@ msgstr ""
 msgid "Stock Item"
 msgstr "Article en stock"
 
-#: build/models.py:1271
+#: build/models.py:1274
 msgid "Source stock item"
 msgstr ""
 
-#: build/models.py:1284
+#: build/models.py:1287
 msgid "Stock quantity to allocate to build"
 msgstr ""
 
-#: build/models.py:1292
+#: build/models.py:1295
 msgid "Install into"
 msgstr "Installer dans"
 
-#: build/models.py:1293
+#: build/models.py:1296
 msgid "Destination stock item"
 msgstr ""
 
-#: build/serializers.py:137 build/serializers.py:357
+#: build/serializers.py:137 build/serializers.py:363
 msgid "Build Output"
 msgstr "Sortie d'assemblage"
 
@@ -1000,33 +1000,33 @@ msgstr ""
 msgid "Build output must point to the same build"
 msgstr ""
 
-#: build/serializers.py:319
+#: build/serializers.py:325
 msgid "bom_item.part must point to the same part as the build order"
 msgstr ""
 
-#: build/serializers.py:334 stock/serializers.py:569
+#: build/serializers.py:340 stock/serializers.py:569
 msgid "Item must be in stock"
 msgstr "L'article doit être en stock"
 
-#: build/serializers.py:348 order/models.py:277 order/serializers.py:240
+#: build/serializers.py:354 order/models.py:277 order/serializers.py:240
 #: stock/models.py:365 stock/models.py:1081 stock/serializers.py:305
 msgid "Quantity must be greater than zero"
 msgstr "La quantité doit être supérieure à zéro"
 
-#: build/serializers.py:390 order/serializers.py:741
+#: build/serializers.py:396 order/serializers.py:741
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr "Quantité disponible ({q}) dépassée"
 
-#: build/serializers.py:396
+#: build/serializers.py:402
 msgid "Build output must be specified for allocation of tracked parts"
 msgstr ""
 
-#: build/serializers.py:403
+#: build/serializers.py:409
 msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr ""
 
-#: build/serializers.py:431 order/serializers.py:984
+#: build/serializers.py:437 order/serializers.py:984
 msgid "Allocation items must be provided"
 msgstr ""
 
@@ -1067,33 +1067,33 @@ msgstr "Supprimer l'assemblage"
 msgid "Complete Build"
 msgstr "Compléter l'assemblage"
 
-#: build/templates/build/build_base.html:82
+#: build/templates/build/build_base.html:87
 msgid "Build Description"
 msgstr ""
 
-#: build/templates/build/build_base.html:91
+#: build/templates/build/build_base.html:96
 #, python-format
 msgid "This Build Order is allocated to Sales Order %(link)s"
 msgstr ""
 
-#: build/templates/build/build_base.html:98
+#: build/templates/build/build_base.html:103
 #, python-format
 msgid "This Build Order is a child of Build Order %(link)s"
 msgstr ""
 
-#: build/templates/build/build_base.html:105
+#: build/templates/build/build_base.html:110
 msgid "Build Order is ready to mark as completed"
 msgstr ""
 
-#: build/templates/build/build_base.html:110
+#: build/templates/build/build_base.html:115
 msgid "Build Order cannot be completed as outstanding outputs remain"
 msgstr ""
 
-#: build/templates/build/build_base.html:115
+#: build/templates/build/build_base.html:120
 msgid "Required build quantity has not yet been completed"
 msgstr ""
 
-#: build/templates/build/build_base.html:120
+#: build/templates/build/build_base.html:125
 msgid "Stock has not been fully allocated to this Build Order"
 msgstr ""
 
