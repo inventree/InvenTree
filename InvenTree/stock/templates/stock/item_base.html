@@ -9,8 +9,14 @@
 {% endblock %}
 
 {% block breadcrumbs %}
+<a href='#' id='breadcrumb-tree-toggle' class="breadcrumb-item"><i class="fas fa-bars"></i></a>
 {% include 'stock/loc_link.html' with location=item.location %}
 {% endblock %}
+
+{% block breadcrumb_tree %}
+<div id="breadcrumb-tree"></div>
+{% endblock breadcrumb_tree %}
+
 
 {% block heading %}
     {% trans "Stock Item" %}: {{ item.part.full_name}}
@@ -609,6 +615,20 @@ $("#stock-return-from-customer").click(function() {
 
 $('#serial-number-search').click(function() {
     findStockItemBySerialNumber({{ item.part.pk }});
+});
+
+enableBreadcrumbTree({
+    label: 'stockitem',
+    url: '{% url "api-location-tree" %}',
+    {% if item.location %}
+    selected: {{ item.location.pk }},
+    {% endif %}
+    processNode: function(node) {
+        node.text = node.name;
+        node.href = `/stock/item/${node.pk}/`;
+
+        return node;
+    }
 });
 
 {% endblock %}
