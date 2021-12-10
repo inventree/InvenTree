@@ -75,12 +75,6 @@
 
     <div class='row flex-nowrap inventree-body'>
         <div class='col-auto px-1 sidebar-wrapper'>
-            <div id='sidetree' class='collapse collapse-horizontal show border' style='display: none;'>
-            {% block sidetree %}
-            {% endblock %}
-            </div>
-        </div>
-        <div class='col-auto px-1 sidebar-wrapper'>
             <div id='sidebar' class='collapse collapse-horizontal show' style='display: none;'>
                 <div id='sidebar-nav' class='list-group text-sm-start'>
                     <ul id='sidebar-list-group' class='list-group sidebar-list-group'>
@@ -120,6 +114,13 @@
                 </nav>
             </div>
             {% endblock %}
+
+            <div class='col-auto px-1 sidebar-wrapper'>
+                <div id='sidetree' class='collapse collapse-horizontal show border' style='display: none;'>
+                {% block sidetree %}
+                {% endblock %}
+                </div>
+            </div>
 
             {% block content %}
                 <!-- Each view fills in here.. -->
