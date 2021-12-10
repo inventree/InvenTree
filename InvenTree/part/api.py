@@ -240,11 +240,20 @@ class CategoryParameterList(generics.ListAPIView):
 
 
 class CategoryTree(generics.ListAPIView):
-    """ API endpoint for accessing a list of PartCategory objects ready for rendering a jstree.
+    """
+    API endpoint for accessing a list of PartCategory objects ready for rendering a tree.
     """
 
     queryset = PartCategory.objects.all()
     serializer_class = part_serializers.CategoryTree
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+    ]
+
+    # Order by tree level (top levels first) and then name
+    ordering = ['level', 'name']
 
 
 class PartSalePriceList(generics.ListCreateAPIView):

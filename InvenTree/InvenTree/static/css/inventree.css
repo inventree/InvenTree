@@ -215,7 +215,7 @@
 }
 
 .treeview .list-group-item {
-    padding: 10px 5px;
+    padding: 3px 5px;
 }
 
 .treeview .list-group-item .indent {
@@ -1012,25 +1012,4 @@ input[type='number']{
 a {
     text-decoration: none;
     background-color: transparent;
-}
-
-/* .jstree CSS classes */
-
-.jstree-container-ul {
-    background-color: var(--secondary-color);
-}
-
-.jstree-node {
-    padding-top: 2px;
-    padding-bottom: 2px;
-    width: 100% !important;
-}
-
-.jstree-hovered {
-    color: var(--highlight-color) !important;
-    background-color: var(--bs-body-color) !important;
-}
-
-.breadcrumb-tree-collapse {
-    margin-bottom: 10px;
 }

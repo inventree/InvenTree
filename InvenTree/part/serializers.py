@@ -71,29 +71,16 @@ class CategorySerializer(InvenTreeModelSerializer):
 
 
 class CategoryTree(InvenTreeModelSerializer):
-    """ Serializer for PartCategory """
-
-    id = serializers.IntegerField(source='pk', read_only=True)
-
-    text = serializers.CharField(source='name', read_only=True)
-
-    parent = serializers.SerializerMethodField()
-
-    def get_parent(self, obj):
-        return obj.parent.pk if obj.parent else '#'
-
-    a_attr = serializers.SerializerMethodField()
-
-    def get_a_attr(self, obj):
-        return {'href': obj.get_absolute_url()}
+    """
+    Serializer for PartCategory tree
+    """
 
     class Meta:
         model = PartCategory
         fields = [
-            'id',
-            'text',
+            'pk',
+            'name',
             'parent',
-            'a_attr',
         ]
 
 

@@ -247,7 +247,19 @@
     enableSidebar('category');
 
     // Enable breadcrumb tree view
-    enableBreadcrumbTree('category');
+    enableBreadcrumbTree({
+        label: 'category',
+        url: '{% url "api-part-category-tree" %}',
+        {% if category %}
+        selected: {{ category.pk }},
+        {% endif %}
+        processNode: function(node) {
+            node.text = node.name;
+            node.href = `/part/category/${node.pk}/`;
+
+            return node;
+        }
+    });
 
     loadPartCategoryTable(
         $('#subcategory-table'), {

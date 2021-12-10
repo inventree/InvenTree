@@ -1066,6 +1066,18 @@
 
     enableSidebar('part');
 
-    enableBreadcrumbTree('part');
+    enableBreadcrumbTree({
+        label: 'part',
+        url: '{% url "api-part-category-tree" %}',
+        {% if part.category %}
+        selected: {{ part.category.pk }},
+        {% endif %}
+        processNode: function(node) {
+            node.text = node.name;
+            node.href = `/part/category/${node.pk}/`;
+
+            return node;
+        }
+    });
 
 {% endblock %}

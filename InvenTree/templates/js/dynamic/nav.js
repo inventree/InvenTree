@@ -149,23 +149,81 @@ function enableSidebar(label, options={}) {
 /**
  * Enable support for breadcrumb tree navigation on this page
  */
-function enableBreadcrumbTree(label) {
-    $('#breadcrumb-tree').jstree({
-        'core': {
-            'data': {
-                'url': '/api/part/category/tree/',
-                'data': function(node) {
-                    return {'id': node.id};
+function enableBreadcrumbTree(options) {
+
+    var label = options.label;
+
+    if (!label) {
+        console.log("ERROR: enableBreadcrumbTree called without supplying label");
+        return;
+    }
+
+    var filters = options.filters || {};
+
+    function list_to_tree(data) {
+
+        
+
+        return roots;
+    }
+
+    inventreeGet(
+        options.url,
+        filters,
+        {
+            success: function(data) {
+
+                // Data are returned from the InvenTree server as a flattened list;
+                // We need to convert this into a tree structure
+
+                var nodes = {};
+                var roots = [];
+                var node = null;
+
+                for (var i = 0; i < data.length; i++) {
+                    node = data[i];
+                    node.nodes = [];    // Initialize with empty node set
+
+                    nodes[node.pk] = node;
+                    node.selectable = false;
+
+                    if (options.processNode) {
+                        node = options.processNode(node);
+                    }
+
+                    node.state = {
+                        expanded: node.pk == options.selected,
+                        selected: node.pk == options.selected,
+                    };
                 }
-            },
-            'themes': {
-                'icons': false,
-                'responsive': true,
-            },
+
+                for (var i = 0; i < data.length; i++) {
+                    node = data[i];
+
+                    if (node.parent != null) {
+                        nodes[node.parent].nodes.push(node);
+
+                        if (node.state.expanded) {
+                            nodes[node.parent].state.expanded = true;
+                        }
+                        
+                    } else {
+                        roots.push(node);
+                    }
+                }
+
+                $('#breadcrumb-tree').treeview({
+                    data: roots,
+                    showTags: true,
+                    enableLinks: true,
+                    expandIcon: 'fas fa-chevron-right',
+                    collapseIcon: 'fa fa-chevron-down',
+                });
+
+                setBreadcrumbTreeState(label, state);
+            }
         }
-    }).bind('select_node.jstree', function(e, data) {
-        window.location.href = data.node.a_attr.href;
-    });
+    );
 
     $('#breadcrumb-tree-toggle').click(function() {
         // Add callback to "collapse" and "expand" the sidebar
@@ -179,8 +237,6 @@ function enableBreadcrumbTree(label) {
 
     // Set the initial state (default = expanded)
     var state = localStorage.getItem(`inventree-tree-state-${label}`) || 'expanded';
-
-    setBreadcrumbTreeState(label, state);
 
     function setBreadcrumbTreeState(label, state) {
 
