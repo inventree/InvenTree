@@ -6,6 +6,10 @@
 {% include 'part/category_sidebar.html' %}
 {% endblock %}
 
+{% block breadcrumb_tree %}
+<div id="breadcrumb-tree"></div>
+{% endblock breadcrumb_tree %}
+
 {% block heading %}
 {% if category %}
 {% trans "Part Category" %}: {{ category.name }}
@@ -239,7 +243,23 @@
 
     {% endif %}
 
+    // Enable left-hand navigation sidebar
     enableSidebar('category');
+
+    // Enable breadcrumb tree view
+    enableBreadcrumbTree({
+        label: 'category',
+        url: '{% url "api-part-category-tree" %}',
+        {% if category %}
+        selected: {{ category.pk }},
+        {% endif %}
+        processNode: function(node) {
+            node.text = node.name;
+            node.href = `/part/category/${node.pk}/`;
+
+            return node;
+        }
+    });
 
     loadPartCategoryTable(
         $('#subcategory-table'), {

@@ -1658,7 +1658,7 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
                             var available = Math.max((data.quantity || 0) - (data.allocated || 0), 0);
 
                             // Remaining quantity to be allocated?
-                            var remaining = opts.quantity || available;
+                            var remaining = Math.max(line_item.quantity - line_item.shipped - line_item.allocated, 0);
 
                             // Maximum amount that we need
                             var desired = Math.min(available, remaining);
