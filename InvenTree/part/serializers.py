@@ -70,6 +70,20 @@ class CategorySerializer(InvenTreeModelSerializer):
         ]
 
 
+class CategoryTree(InvenTreeModelSerializer):
+    """
+    Serializer for PartCategory tree
+    """
+
+    class Meta:
+        model = PartCategory
+        fields = [
+            'pk',
+            'name',
+            'parent',
+        ]
+
+
 class PartAttachmentSerializer(InvenTreeAttachmentSerializer):
     """
     Serializer for the PartAttachment class

@@ -7,6 +7,10 @@
 {% include "stock/location_sidebar.html" %}
 {% endblock %}
 
+{% block breadcrumb_tree %}
+<div id="breadcrumb-tree"></div>
+{% endblock breadcrumb_tree %}
+
 {% block heading %}
 {% if location %}
 {% trans "Stock Location" %}: {{ location.name }}
@@ -347,5 +351,20 @@
     });
 
     enableSidebar('stocklocation');
+
+    // Enable breadcrumb tree view
+    enableBreadcrumbTree({
+        label: 'location',
+        url: '{% url "api-location-tree" %}',
+        {% if location %}
+        selected: {{ location.pk }},
+        {% endif %}
+        processNode: function(node) {
+            node.text = node.name;
+            node.href = `/stock/location/${node.pk}/`;
+
+            return node;
+        }
+    });
 
 {% endblock %}
