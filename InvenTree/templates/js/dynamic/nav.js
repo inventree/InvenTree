@@ -6,8 +6,8 @@
     addSidebarHeader,
     addSidebarItem,
     addSidebarLink,
+    enableBreadcrumbTree,
     enableSidebar,
-    enableSidetree,
     onPanelLoad,
 */
 
@@ -147,10 +147,10 @@ function enableSidebar(label, options={}) {
 }
 
 /**
- * Enable support for a sidetree on this page
+ * Enable support for breadcrumb tree navigation on this page
  */
-function enableSidetree(label) {
-    $('#tree').jstree({
+function enableBreadcrumbTree(label) {
+    $('#breadcrumb-tree').jstree({
         'core': {
             'data': {
                 'url': '/api/part/category/tree/',
@@ -167,29 +167,29 @@ function enableSidetree(label) {
         window.location.href = data.node.a_attr.href;
     });
 
-    $('#sidetree-toggle').click(function() {
+    $('#breadcrumb-tree-toggle').click(function() {
         // Add callback to "collapse" and "expand" the sidebar
 
         // By default, the menu is "expanded"
         var state = localStorage.getItem(`inventree-tree-state-${label}`) || 'expanded';
         
         // We wish to "toggle" the state!
-        setSidetreeState(label, state == 'expanded' ? 'collapsed' : 'expanded');
+        setBreadcrumbTreeState(label, state == 'expanded' ? 'collapsed' : 'expanded');
     });
 
     // Set the initial state (default = expanded)
     var state = localStorage.getItem(`inventree-tree-state-${label}`) || 'expanded';
 
-    setSidetreeState(label, state);
+    setBreadcrumbTreeState(label, state);
 
-    function setSidetreeState(label, state) {
+    function setBreadcrumbTreeState(label, state) {
+
         if (state == 'collapsed') {
-            $('#sidetree').hide(100);
-            $(`#sidetree-toggle-icon`).removeClass('fa-chevron-left').addClass('fa-chevron-right');
+            $('#breadcrumb-tree-collapse').hide(100);
         } else {
-            $('#sidetree').show(100);
-            $(`#sidetree-toggle-icon`).removeClass('fa-chevron-right').addClass('fa-chevron-left');
+            $('#breadcrumb-tree-collapse').show(100);
         }
+
         localStorage.setItem(`inventree-tree-state-${label}`, state);
     }
 }

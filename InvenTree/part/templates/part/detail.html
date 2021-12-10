@@ -9,9 +9,9 @@
 {% include 'part/part_sidebar.html' %}
 {% endblock %}
 
-{% block sidetree %}
-<div id="tree"></div>
-{% endblock %}
+{% block breadcrumb_tree %}
+<div id="breadcrumb-tree"></div>
+{% endblock breadcrumb_tree %}
 
 {% block page_content %}
 
@@ -1065,6 +1065,7 @@
     {% endif %}
 
     enableSidebar('part');
-    enableSidetree('part');
+
+    enableBreadcrumbTree('part');
 
 {% endblock %}

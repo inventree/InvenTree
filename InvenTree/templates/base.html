@@ -105,22 +105,21 @@
             {% endblock %}
 
             {% block breadcrumb_list %}
-            <div class='container-fluid navigation'>
+            <div class='container-fluid navigation' id='breadcrumb-div'>
                 <nav aria-label='breadcrumb'>
-                    <ol class='breadcrumb'>
+                    <ol class='breadcrumb' id='breadcrumb-list'>
                         {% block breadcrumbs %}
                         {% endblock %}
                     </ol>
                 </nav>
-            </div>
-            {% endblock %}
 
-            <div class='col-auto px-1 sidebar-wrapper'>
-                <div id='sidetree' class='collapse collapse-horizontal show border' style='display: none;'>
-                {% block sidetree %}
-                {% endblock %}
+                <div id='breadcrumb-tree-collapse' class='collapse collapse-horizontal show border' style='display: none;'>
+                    {% block breadcrumb_tree %}
+                    {% endblock %}
                 </div>
             </div>
+
+            {% endblock %}
 
             {% block content %}
                 <!-- Each view fills in here.. -->

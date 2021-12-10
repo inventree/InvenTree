@@ -6,9 +6,9 @@
 {% include 'part/category_sidebar.html' %}
 {% endblock %}
 
-{% block sidetree %}
-<div id="tree"></div>
-{% endblock %}
+{% block breadcrumb_tree %}
+<div id="breadcrumb-tree"></div>
+{% endblock breadcrumb_tree %}
 
 {% block heading %}
 {% if category %}
@@ -243,8 +243,11 @@
 
     {% endif %}
 
+    // Enable left-hand navigation sidebar
     enableSidebar('category');
-    enableSidetree('category');
+
+    // Enable breadcrumb tree view
+    enableBreadcrumbTree('category');
 
     loadPartCategoryTable(
         $('#subcategory-table'), {
