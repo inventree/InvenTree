@@ -154,18 +154,11 @@ function enableBreadcrumbTree(options) {
     var label = options.label;
 
     if (!label) {
-        console.log("ERROR: enableBreadcrumbTree called without supplying label");
+        console.log('ERROR: enableBreadcrumbTree called without supplying label');
         return;
     }
 
     var filters = options.filters || {};
-
-    function list_to_tree(data) {
-
-        
-
-        return roots;
-    }
 
     inventreeGet(
         options.url,
@@ -182,8 +175,7 @@ function enableBreadcrumbTree(options) {
 
                 for (var i = 0; i < data.length; i++) {
                     node = data[i];
-                    node.nodes = [];    // Initialize with empty node set
-
+                    node.nodes = [];
                     nodes[node.pk] = node;
                     node.selectable = false;
 
