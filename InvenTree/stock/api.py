@@ -277,6 +277,24 @@ class StockLocationList(generics.ListCreateAPIView):
     ]
 
 
+class StockLocationTree(generics.ListAPIView):
+    """
+    API endpoint for accessing a list of StockLocation objects,
+    ready for rendering as a tree
+    """
+
+    queryset = StockLocation.objects.all()
+    serializer_class = StockSerializers.LocationTreeSerializer
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+    ]
+
+    # Order by tree level (top levels first) and then name
+    ordering = ['level', 'name']
+
+
 class StockFilter(rest_filters.FilterSet):
     """
     FilterSet for StockItem LIST API
@@ -1182,6 +1200,9 @@ class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
 
 stock_api_urls = [
     url(r'^location/', include([
+
+        url(r'^tree/', StockLocationTree.as_view(), name='api-location-tree'),
+
         url(r'^(?P<pk>\d+)/', LocationDetail.as_view(), name='api-location-detail'),
         url(r'^.*$', StockLocationList.as_view(), name='api-location-list'),
     ])),

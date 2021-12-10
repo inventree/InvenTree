@@ -1,3 +1,4 @@
-<a href="#" id='sidebar-toggle' class="list-group-item sidebar-list-group-item border-end-0 d-inline-block text-truncate sidebar-toggle" data-bs-parent="#sidebar" style='display: none;'>
+<a href="#" id='{{ target }}-toggle' class="list-group-item sidebar-list-group-item border-end d-inline-block text-truncate sidebar-toggle" data-bs-parent="#sidebar" style='display: none;'>
     <i class="bi bi-bootstrap"></i><span id='sidebar-toggle-icon' class='sidebar-item-icon fas fa-chevron-left'></span>
+    {% if text %}<span class='sidebar-item-text' style='display: none;'>{{ text }}</span>{% endif %}
 </a>

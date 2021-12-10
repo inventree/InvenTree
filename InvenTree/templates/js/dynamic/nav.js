@@ -6,6 +6,7 @@
     addSidebarHeader,
     addSidebarItem,
     addSidebarLink,
+    enableBreadcrumbTree,
     enableSidebar,
     onPanelLoad,
 */
@@ -145,6 +146,101 @@ function enableSidebar(label, options={}) {
 
 }
 
+/**
+ * Enable support for breadcrumb tree navigation on this page
+ */
+function enableBreadcrumbTree(options) {
+
+    var label = options.label;
+
+    if (!label) {
+        console.log('ERROR: enableBreadcrumbTree called without supplying label');
+        return;
+    }
+
+    var filters = options.filters || {};
+
+    inventreeGet(
+        options.url,
+        filters,
+        {
+            success: function(data) {
+
+                // Data are returned from the InvenTree server as a flattened list;
+                // We need to convert this into a tree structure
+
+                var nodes = {};
+                var roots = [];
+                var node = null;
+
+                for (var i = 0; i < data.length; i++) {
+                    node = data[i];
+                    node.nodes = [];
+                    nodes[node.pk] = node;
+                    node.selectable = false;
+
+                    if (options.processNode) {
+                        node = options.processNode(node);
+                    }
+
+                    node.state = {
+                        expanded: node.pk == options.selected,
+                        selected: node.pk == options.selected,
+                    };
+                }
+
+                for (var i = 0; i < data.length; i++) {
+                    node = data[i];
+
+                    if (node.parent != null) {
+                        nodes[node.parent].nodes.push(node);
+
+                        if (node.state.expanded) {
+                            nodes[node.parent].state.expanded = true;
+                        }
+                        
+                    } else {
+                        roots.push(node);
+                    }
+                }
+
+                $('#breadcrumb-tree').treeview({
+                    data: roots,
+                    showTags: true,
+                    enableLinks: true,
+                    expandIcon: 'fas fa-chevron-right',
+                    collapseIcon: 'fa fa-chevron-down',
+                });
+
+                setBreadcrumbTreeState(label, state);
+            }
+        }
+    );
+
+    $('#breadcrumb-tree-toggle').click(function() {
+        // Add callback to "collapse" and "expand" the sidebar
+
+        // By default, the menu is "expanded"
+        var state = localStorage.getItem(`inventree-tree-state-${label}`) || 'expanded';
+        
+        // We wish to "toggle" the state!
+        setBreadcrumbTreeState(label, state == 'expanded' ? 'collapsed' : 'expanded');
+    });
+
+    // Set the initial state (default = expanded)
+    var state = localStorage.getItem(`inventree-tree-state-${label}`) || 'expanded';
+
+    function setBreadcrumbTreeState(label, state) {
+
+        if (state == 'collapsed') {
+            $('#breadcrumb-tree-collapse').hide(100);
+        } else {
+            $('#breadcrumb-tree-collapse').show(100);
+        }
+
+        localStorage.setItem(`inventree-tree-state-${label}`, state);
+    }
+}
 
 /*
  * Set the "toggle" state of the sidebar
@@ -180,7 +276,7 @@ function setSidebarState(label, state) {
 function addSidebarItem(options={}) {
 
     var html = `
-    <a href='#' id='select-${options.label}' title='${options.text}' class='list-group-item sidebar-list-group-item border-end-0 d-inline-block text-truncate sidebar-selector' data-bs-parent='#sidebar'>
+    <a href='#' id='select-${options.label}' title='${options.text}' class='list-group-item sidebar-list-group-item border-end d-inline-block text-truncate sidebar-selector' data-bs-parent='#sidebar'>
         <i class='bi bi-bootstrap'></i>
         ${options.content_before || ''}
         <span class='sidebar-item-icon fas ${options.icon}'></span>
@@ -199,7 +295,7 @@ function addSidebarItem(options={}) {
 function addSidebarHeader(options={}) {
 
     var html = `
-    <span title='${options.text}' class="list-group-item sidebar-list-group-item border-end-0 d-inline-block text-truncate" data-bs-parent="#sidebar">
+    <span title='${options.text}' class="list-group-item sidebar-list-group-item border-end d-inline-block text-truncate" data-bs-parent="#sidebar">
         <h6>
             <i class="bi bi-bootstrap"></i>
             <span class='sidebar-item-text' style='display: none;'>${options.text}</span>

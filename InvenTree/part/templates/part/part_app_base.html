@@ -14,9 +14,10 @@
 {% endblock %}
 
 {% block breadcrumbs %}
+<a href='#' id='breadcrumb-tree-toggle' class="breadcrumb-item"><i class="fas fa-bars"></i></a>
 {% if part %}
 {% include "part/cat_link.html" with category=part.category part=part %}
 {% else %}
 {% include 'part/cat_link.html' with category=category %}
 {% endif %}
-{% endblock %}
+{% endblock breadcrumbs %}
