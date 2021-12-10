@@ -539,7 +539,7 @@
     padding: 0px 10px;
 }
 
-.breadcrump {
+.breadcrumb {
     margin-bottom: 5px;
     margin-left: 5px;
     margin-right: 10px;
@@ -1014,6 +1014,23 @@ a {
     background-color: transparent;
 }
 
+/* .jstree CSS classes */
+
 .jstree-container-ul {
     background-color: var(--secondary-color);
+}
+
+.jstree-node {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    width: 100% !important;
+}
+
+.jstree-hovered {
+    color: var(--highlight-color) !important;
+    background-color: var(--bs-body-color) !important;
+}
+
+.breadcrumb-tree-collapse {
+    margin-bottom: 10px;
 }
