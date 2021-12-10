@@ -1150,7 +1150,7 @@ class BuildItem(models.Model):
 
         bom_item_valid = False
 
-        if self.bom_item:
+        if self.bom_item and self.build:
             """
             A BomItem object has already been assigned. This is valid if:
 
@@ -1162,9 +1162,12 @@ class BuildItem(models.Model):
                 iii) The Part referenced by the StockItem is a valid substitute for the BomItem
             """
 
-            if self.build and self.build.part == self.bom_item.part:
-
+            if self.build.part == self.bom_item.part:
                 bom_item_valid = self.bom_item.is_stock_item_valid(self.stock_item)
+
+            elif self.bom_item.inherited:
+                if self.build.part in self.bom_item.part.get_descendants(include_self=False):
+                    bom_item_valid = self.bom_item.is_stock_item_valid(self.stock_item)
 
         # If the existing BomItem is *not* valid, try to find a match
         if not bom_item_valid:
