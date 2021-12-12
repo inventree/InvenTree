@@ -175,7 +175,6 @@ function enableBreadcrumbTree(options) {
 
                 for (var i = 0; i < data.length; i++) {
                     node = data[i];
-                    node.nodes = [];
                     nodes[node.pk] = node;
                     node.selectable = false;
 
@@ -193,7 +192,11 @@ function enableBreadcrumbTree(options) {
                     node = data[i];
 
                     if (node.parent != null) {
-                        nodes[node.parent].nodes.push(node);
+						if (nodes[node.parent].nodes) {
+							nodes[node.parent].nodes.push(node);
+						} else {
+							nodes[node.parent].nodes = [node];
+						}
 
                         if (node.state.expanded) {
                             nodes[node.parent].state.expanded = true;
