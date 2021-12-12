@@ -199,7 +199,10 @@ function enableBreadcrumbTree(options) {
 						}
 
                         if (node.state.expanded) {
-                            nodes[node.parent].state.expanded = true;
+							while (node.parent != null) {
+								nodes[node.parent].state.expanded = true;
+								node = nodes[node.parent]
+							}
                         }
                         
                     } else {
