@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-10 22:16+0000\n"
+"POT-Creation-Date: 2021-12-12 10:05+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
@@ -34,50 +34,50 @@ msgstr "Eşleşen eylem bulunamadı"
 msgid "Enter date"
 msgstr "Tarih giriniz"
 
-#: InvenTree/forms.py:120 build/forms.py:48 build/forms.py:69 build/forms.py:93
+#: InvenTree/forms.py:126 build/forms.py:48 build/forms.py:69 build/forms.py:93
 #: order/forms.py:24 order/forms.py:35 order/forms.py:46 order/forms.py:57
 #: part/forms.py:108 templates/account/email_confirm.html:20
 #: templates/js/translated/forms.js:595
 msgid "Confirm"
 msgstr "Onay"
 
-#: InvenTree/forms.py:136
+#: InvenTree/forms.py:142
 msgid "Confirm delete"
 msgstr "Silmeyi Onayla"
 
-#: InvenTree/forms.py:137
+#: InvenTree/forms.py:143
 msgid "Confirm item deletion"
 msgstr "Silmeyi onayla"
 
-#: InvenTree/forms.py:168
+#: InvenTree/forms.py:174
 msgid "Enter password"
 msgstr "Şifrenizi girin"
 
-#: InvenTree/forms.py:169
+#: InvenTree/forms.py:175
 msgid "Enter new password"
 msgstr "Lütfen Yeni Parolayı Girin"
 
-#: InvenTree/forms.py:176
+#: InvenTree/forms.py:182
 msgid "Confirm password"
 msgstr "Parolayı doğrulayın"
 
-#: InvenTree/forms.py:177
+#: InvenTree/forms.py:183
 msgid "Confirm new password"
 msgstr "Yeni parolayı doğrulayın"
 
-#: InvenTree/forms.py:209
+#: InvenTree/forms.py:215
 msgid "Select Category"
 msgstr "Kategori Seçin"
 
-#: InvenTree/forms.py:230
+#: InvenTree/forms.py:236
 msgid "Email (again)"
 msgstr ""
 
-#: InvenTree/forms.py:234
+#: InvenTree/forms.py:240
 msgid "Email address confirmation"
 msgstr ""
 
-#: InvenTree/forms.py:254
+#: InvenTree/forms.py:260
 msgid "You must type the same email each time."
 msgstr ""
 
@@ -153,8 +153,8 @@ msgstr "Yorum"
 msgid "File comment"
 msgstr "Dosya yorumu"
 
-#: InvenTree/models.py:149 InvenTree/models.py:150 common/models.py:1213
-#: common/models.py:1214 part/models.py:2205 part/models.py:2225
+#: InvenTree/models.py:149 InvenTree/models.py:150 common/models.py:1219
+#: common/models.py:1220 part/models.py:2205 part/models.py:2225
 #: report/templates/report/inventree_test_report_base.html:96
 #: templates/js/translated/stock.js:2341
 msgid "User"
@@ -248,83 +248,83 @@ msgstr "Geçerli bir numara olmalı"
 msgid "Filename"
 msgstr ""
 
-#: InvenTree/settings.py:689
+#: InvenTree/settings.py:698
 msgid "German"
 msgstr "Almanca"
 
-#: InvenTree/settings.py:690
+#: InvenTree/settings.py:699
 msgid "Greek"
 msgstr "Yunanca"
 
-#: InvenTree/settings.py:691
+#: InvenTree/settings.py:700
 msgid "English"
 msgstr "İngilizce"
 
-#: InvenTree/settings.py:692
+#: InvenTree/settings.py:701
 msgid "Spanish"
 msgstr "İspanyolca"
 
-#: InvenTree/settings.py:693
+#: InvenTree/settings.py:702
 msgid "Spanish (Mexican)"
 msgstr ""
 
-#: InvenTree/settings.py:694
+#: InvenTree/settings.py:703
 msgid "French"
 msgstr "Fransızca"
 
-#: InvenTree/settings.py:695
+#: InvenTree/settings.py:704
 msgid "Hebrew"
 msgstr "İbranice"
 
-#: InvenTree/settings.py:696
+#: InvenTree/settings.py:705
 msgid "Italian"
 msgstr "İtalyanca"
 
-#: InvenTree/settings.py:697
+#: InvenTree/settings.py:706
 msgid "Japanese"
 msgstr "Japonca"
 
-#: InvenTree/settings.py:698
+#: InvenTree/settings.py:707
 msgid "Korean"
 msgstr "Korece"
 
-#: InvenTree/settings.py:699
+#: InvenTree/settings.py:708
 msgid "Dutch"
 msgstr "Flemenkçe"
 
-#: InvenTree/settings.py:700
+#: InvenTree/settings.py:709
 msgid "Norwegian"
 msgstr "Norveççe"
 
-#: InvenTree/settings.py:701
+#: InvenTree/settings.py:710
 msgid "Polish"
 msgstr "Polonyaca"
 
-#: InvenTree/settings.py:702
+#: InvenTree/settings.py:711
 msgid "Portugese"
 msgstr ""
 
-#: InvenTree/settings.py:703
+#: InvenTree/settings.py:712
 msgid "Russian"
 msgstr "Rusça"
 
-#: InvenTree/settings.py:704
+#: InvenTree/settings.py:713
 msgid "Swedish"
 msgstr "İsveççe"
 
-#: InvenTree/settings.py:705
+#: InvenTree/settings.py:714
 msgid "Thai"
 msgstr "Tay dili"
 
-#: InvenTree/settings.py:706
+#: InvenTree/settings.py:715
 msgid "Turkish"
 msgstr "Türkçe"
 
-#: InvenTree/settings.py:707
+#: InvenTree/settings.py:716
 msgid "Vietnamese"
 msgstr ""
 
-#: InvenTree/settings.py:708
+#: InvenTree/settings.py:717
 msgid "Chinese"
 msgstr "Çince"
 
@@ -587,7 +587,7 @@ msgstr "Barkod başka bir stok kalemiyle ilişkili"
 
 #: build/forms.py:36 build/models.py:1286
 #: build/templates/build/build_base.html:82
-#: build/templates/build/detail.html:35 common/models.py:1253
+#: build/templates/build/detail.html:35 common/models.py:1259
 #: company/forms.py:42 company/templates/company/supplier_part.html:251
 #: order/models.py:794 order/models.py:1205 order/serializers.py:810
 #: order/templates/order/order_wizard/match_parts.html:30
@@ -1501,7 +1501,7 @@ msgstr "{name.title()} Dosya"
 msgid "Select {name} file to upload"
 msgstr "{name} dosyasını yüklemek için seçin"
 
-#: common/models.py:340 common/models.py:998 common/models.py:1206
+#: common/models.py:340 common/models.py:1004 common/models.py:1212
 msgid "Settings key (must be unique - case insensitive"
 msgstr ""
 
@@ -1965,256 +1965,264 @@ msgid "Group to which new users are assigned on registration"
 msgstr ""
 
 #: common/models.py:961
-msgid "Enable URL integration"
+msgid "Enforce MFA"
 msgstr ""
 
 #: common/models.py:962
-msgid "Enable plugins to add URL routes"
+msgid "Users must use multifactor security."
+msgstr ""
+
+#: common/models.py:967
+msgid "Enable URL integration"
 msgstr ""
 
 #: common/models.py:968
+msgid "Enable plugins to add URL routes"
+msgstr ""
+
+#: common/models.py:974
 msgid "Enable navigation integration"
 msgstr ""
 
-#: common/models.py:969
+#: common/models.py:975
 msgid "Enable plugins to integrate into navigation"
 msgstr ""
 
-#: common/models.py:975
+#: common/models.py:981
 msgid "Enable global setting integration"
 msgstr ""
 
-#: common/models.py:976
+#: common/models.py:982
 msgid "Enable plugins to integrate into inventree global settings"
 msgstr ""
 
-#: common/models.py:982
+#: common/models.py:988
 msgid "Enable app integration"
 msgstr ""
 
-#: common/models.py:983
+#: common/models.py:989
 msgid "Enable plugins to add apps"
 msgstr ""
 
-#: common/models.py:1029
+#: common/models.py:1035
 msgid "Show subscribed parts"
 msgstr ""
 
-#: common/models.py:1030
+#: common/models.py:1036
 msgid "Show subscribed parts on the homepage"
 msgstr ""
 
-#: common/models.py:1035
+#: common/models.py:1041
 msgid "Show subscribed categories"
 msgstr ""
 
-#: common/models.py:1036
+#: common/models.py:1042
 msgid "Show subscribed part categories on the homepage"
 msgstr ""
 
-#: common/models.py:1041
+#: common/models.py:1047
 msgid "Show latest parts"
 msgstr ""
 
-#: common/models.py:1042
+#: common/models.py:1048
 msgid "Show latest parts on the homepage"
 msgstr ""
 
-#: common/models.py:1047
+#: common/models.py:1053
 msgid "Recent Part Count"
 msgstr ""
 
-#: common/models.py:1048
+#: common/models.py:1054
 msgid "Number of recent parts to display on index page"
 msgstr ""
 
-#: common/models.py:1054
+#: common/models.py:1060
 msgid "Show unvalidated BOMs"
 msgstr ""
 
-#: common/models.py:1055
+#: common/models.py:1061
 msgid "Show BOMs that await validation on the homepage"
 msgstr ""
 
-#: common/models.py:1060
+#: common/models.py:1066
 msgid "Show recent stock changes"
 msgstr ""
 
-#: common/models.py:1061
+#: common/models.py:1067
 msgid "Show recently changed stock items on the homepage"
 msgstr ""
 
-#: common/models.py:1066
+#: common/models.py:1072
 msgid "Recent Stock Count"
 msgstr ""
 
-#: common/models.py:1067
+#: common/models.py:1073
 msgid "Number of recent stock items to display on index page"
 msgstr ""
 
-#: common/models.py:1072
+#: common/models.py:1078
 msgid "Show low stock"
 msgstr ""
 
-#: common/models.py:1073
+#: common/models.py:1079
 msgid "Show low stock items on the homepage"
 msgstr ""
 
-#: common/models.py:1078
+#: common/models.py:1084
 msgid "Show depleted stock"
 msgstr ""
 
-#: common/models.py:1079
+#: common/models.py:1085
 msgid "Show depleted stock items on the homepage"
 msgstr ""
 
-#: common/models.py:1084
+#: common/models.py:1090
 msgid "Show needed stock"
 msgstr ""
 
-#: common/models.py:1085
+#: common/models.py:1091
 msgid "Show stock items needed for builds on the homepage"
 msgstr ""
 
-#: common/models.py:1090
+#: common/models.py:1096
 msgid "Show expired stock"
 msgstr ""
 
-#: common/models.py:1091
+#: common/models.py:1097
 msgid "Show expired stock items on the homepage"
 msgstr ""
 
-#: common/models.py:1096
+#: common/models.py:1102
 msgid "Show stale stock"
 msgstr ""
 
-#: common/models.py:1097
+#: common/models.py:1103
 msgid "Show stale stock items on the homepage"
 msgstr ""
 
-#: common/models.py:1102
+#: common/models.py:1108
 msgid "Show pending builds"
 msgstr ""
 
-#: common/models.py:1103
+#: common/models.py:1109
 msgid "Show pending builds on the homepage"
 msgstr ""
 
-#: common/models.py:1108
+#: common/models.py:1114
 msgid "Show overdue builds"
 msgstr ""
 
-#: common/models.py:1109
+#: common/models.py:1115
 msgid "Show overdue builds on the homepage"
 msgstr ""
 
-#: common/models.py:1114
+#: common/models.py:1120
 msgid "Show outstanding POs"
 msgstr ""
 
-#: common/models.py:1115
+#: common/models.py:1121
 msgid "Show outstanding POs on the homepage"
 msgstr ""
 
-#: common/models.py:1120
+#: common/models.py:1126
 msgid "Show overdue POs"
 msgstr ""
 
-#: common/models.py:1121
+#: common/models.py:1127
 msgid "Show overdue POs on the homepage"
 msgstr ""
 
-#: common/models.py:1126
+#: common/models.py:1132
 msgid "Show outstanding SOs"
 msgstr ""
 
-#: common/models.py:1127
+#: common/models.py:1133
 msgid "Show outstanding SOs on the homepage"
 msgstr ""
 
-#: common/models.py:1132
+#: common/models.py:1138
 msgid "Show overdue SOs"
 msgstr ""
 
-#: common/models.py:1133
+#: common/models.py:1139
 msgid "Show overdue SOs on the homepage"
 msgstr ""
 
-#: common/models.py:1139
+#: common/models.py:1145
 msgid "Inline label display"
 msgstr ""
 
-#: common/models.py:1140
+#: common/models.py:1146
 msgid "Display PDF labels in the browser, instead of downloading as a file"
 msgstr ""
 
-#: common/models.py:1146
+#: common/models.py:1152
 msgid "Inline report display"
 msgstr ""
 
-#: common/models.py:1147
+#: common/models.py:1153
 msgid "Display PDF reports in the browser, instead of downloading as a file"
 msgstr ""
 
-#: common/models.py:1153
+#: common/models.py:1159
 msgid "Search Preview Results"
 msgstr ""
 
-#: common/models.py:1154
+#: common/models.py:1160
 msgid "Number of results to show in search preview window"
 msgstr ""
 
-#: common/models.py:1160
+#: common/models.py:1166
 msgid "Search Show Stock"
 msgstr ""
 
-#: common/models.py:1161
+#: common/models.py:1167
 msgid "Display stock levels in search preview window"
 msgstr ""
 
-#: common/models.py:1167
+#: common/models.py:1173
 msgid "Hide Inactive Parts"
 msgstr ""
 
-#: common/models.py:1168
+#: common/models.py:1174
 msgid "Hide inactive parts in search preview window"
 msgstr ""
 
-#: common/models.py:1174
+#: common/models.py:1180
 msgid "Show Quantity in Forms"
 msgstr "Formlarda Miktarı Göster"
 
-#: common/models.py:1175
+#: common/models.py:1181
 msgid "Display available part quantity in some forms"
 msgstr ""
 
-#: common/models.py:1181
+#: common/models.py:1187
 msgid "Escape Key Closes Forms"
 msgstr ""
 
-#: common/models.py:1182
+#: common/models.py:1188
 msgid "Use the escape key to close modal forms"
 msgstr ""
 
-#: common/models.py:1188
+#: common/models.py:1194
 msgid "Fixed Navbar"
 msgstr ""
 
-#: common/models.py:1189
+#: common/models.py:1195
 msgid "InvenTree navbar position is fixed to the top of the screen"
 msgstr ""
 
-#: common/models.py:1254 company/forms.py:43
+#: common/models.py:1260 company/forms.py:43
 msgid "Price break quantity"
 msgstr ""
 
-#: common/models.py:1261 company/serializers.py:264
+#: common/models.py:1267 company/serializers.py:264
 #: company/templates/company/supplier_part.html:256
 #: templates/js/translated/part.js:852 templates/js/translated/part.js:1801
 msgid "Price"
 msgstr "Fiyat"
 
-#: common/models.py:1262
+#: common/models.py:1268
 msgid "Unit price at specified quantity"
 msgstr ""
 
@@ -2302,7 +2310,7 @@ msgid "Contact phone number"
 msgstr "İletişim telefon numarası"
 
 #: company/models.py:125 company/templates/company/company_base.html:129
-#: templates/InvenTree/settings/user.html:47
+#: templates/InvenTree/settings/user.html:48
 msgid "Email"
 msgstr "E-posta"
 
@@ -2758,7 +2766,7 @@ msgstr "Tedarikçi parçalarını sil"
 #: company/templates/company/manufacturer_part.html:254
 #: part/templates/part/detail.html:344 part/templates/part/detail.html:372
 #: templates/js/translated/company.js:425 templates/js/translated/helpers.js:31
-#: users/models.py:206
+#: users/models.py:209
 msgid "Delete"
 msgstr ""
 
@@ -6468,7 +6476,7 @@ msgstr ""
 msgid "Login Settings"
 msgstr ""
 
-#: templates/InvenTree/settings/login.html:20 templates/account/signup.html:5
+#: templates/InvenTree/settings/login.html:21 templates/account/signup.html:5
 msgid "Signup"
 msgstr ""
 
@@ -6777,7 +6785,7 @@ msgstr ""
 msgid "Last Name"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:55
+#: templates/InvenTree/settings/user.html:54
 msgid "The following email addresses are associated with your account:"
 msgstr ""
 
@@ -6802,143 +6810,198 @@ msgid "Re-send Verification"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:87
-#: templates/InvenTree/settings/user.html:154
+#: templates/InvenTree/settings/user.html:149
 msgid "Remove"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:94
+#: templates/InvenTree/settings/user.html:95
+#: templates/InvenTree/settings/user.html:201
 msgid "Warning:"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:95
+#: templates/InvenTree/settings/user.html:96
 msgid "You currently do not have any email address set up. You should really add an email address so you can receive notifications, reset your password, etc."
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:102
+#: templates/InvenTree/settings/user.html:104
 msgid "Add Email Address"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:112
-msgid "Enter e-mail address"
-msgstr ""
-
-#: templates/InvenTree/settings/user.html:114
+#: templates/InvenTree/settings/user.html:109
 msgid "Add Email"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:124
+#: templates/InvenTree/settings/user.html:117
 msgid "Social Accounts"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:129
+#: templates/InvenTree/settings/user.html:122
 msgid "You can sign in to your account using any of the following third party accounts:"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:163
-msgid "There are no social network accounts connected to your InvenTree account"
+#: templates/InvenTree/settings/user.html:157
+msgid "You currently have no social network accounts connected to this account."
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:168
+#: templates/InvenTree/settings/user.html:162
 msgid "Add a 3rd Party Account"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:179
-msgid "Active Sessions"
+#: templates/InvenTree/settings/user.html:172
+#, fuzzy
+#| msgid "Manufacturer"
+msgid "Multifactor"
+msgstr "Üretici"
+
+#: templates/InvenTree/settings/user.html:177
+msgid "You have these factors available:"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:185
-msgid "Log out active sessions (except this one)"
+#: templates/InvenTree/settings/user.html:187
+msgid "TOTP"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:186
-msgid "Log Out Active Sessions"
-msgstr ""
-
-#: templates/InvenTree/settings/user.html:195
-msgid "<em>unknown on unknown</em>"
-msgstr ""
-
-#: templates/InvenTree/settings/user.html:196
-msgid "<em>unknown</em>"
-msgstr ""
-
-#: templates/InvenTree/settings/user.html:200
-msgid "IP Address"
-msgstr ""
-
-#: templates/InvenTree/settings/user.html:201
-msgid "Device"
-msgstr ""
+#: templates/InvenTree/settings/user.html:193
+#, fuzzy
+#| msgid "Status"
+msgid "Static"
+msgstr "Durum"
 
 #: templates/InvenTree/settings/user.html:202
-msgid "Last Activity"
+msgid "You currently do not have any factors set up."
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:211
-#, python-format
-msgid "%(time)s ago (this session)"
+#: templates/InvenTree/settings/user.html:209
+msgid "Change factors"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:213
-#, python-format
-msgid "%(time)s ago"
+#: templates/InvenTree/settings/user.html:210
+#, fuzzy
+#| msgid "Select manufacturer"
+msgid "Setup multifactor"
+msgstr "Üretici seçin"
+
+#: templates/InvenTree/settings/user.html:212
+msgid "Remove multifactor"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:224
-msgid "Do you really want to remove the selected email address?"
-msgstr ""
-
+#: templates/InvenTree/settings/user.html:219
 #: templates/InvenTree/settings/user_display.html:25
 msgid "Theme Settings"
 msgstr "Tema Ayarları"
 
+#: templates/InvenTree/settings/user.html:227
 #: templates/InvenTree/settings/user_display.html:35
 msgid "Select theme"
 msgstr ""
 
+#: templates/InvenTree/settings/user.html:237
 #: templates/InvenTree/settings/user_display.html:46
 msgid "Set Theme"
 msgstr "Tema Seç"
 
+#: templates/InvenTree/settings/user.html:246
 #: templates/InvenTree/settings/user_display.html:54
 msgid "Language Settings"
 msgstr "Dil Ayarları"
 
+#: templates/InvenTree/settings/user.html:254
 #: templates/InvenTree/settings/user_display.html:63
 msgid "Select language"
 msgstr ""
 
+#: templates/InvenTree/settings/user.html:270
 #: templates/InvenTree/settings/user_display.html:79
 #, python-format
 msgid "%(lang_translated)s%% translated"
 msgstr ""
 
+#: templates/InvenTree/settings/user.html:272
 #: templates/InvenTree/settings/user_display.html:81
 msgid "No translations available"
 msgstr ""
 
+#: templates/InvenTree/settings/user.html:279
 #: templates/InvenTree/settings/user_display.html:88
 msgid "Set Language"
 msgstr "Dili Ayarla"
 
+#: templates/InvenTree/settings/user.html:281
 #: templates/InvenTree/settings/user_display.html:91
 msgid "Some languages are not complete"
 msgstr ""
 
+#: templates/InvenTree/settings/user.html:283
 #: templates/InvenTree/settings/user_display.html:93
 msgid "Show only sufficent"
 msgstr ""
 
-#: templates/InvenTree/settings/user_display.html:95
-msgid "and hidden."
-msgstr ""
-
+#: templates/InvenTree/settings/user.html:285
 #: templates/InvenTree/settings/user_display.html:95
 msgid "Show them too"
 msgstr ""
 
+#: templates/InvenTree/settings/user.html:292
 #: templates/InvenTree/settings/user_display.html:101
 msgid "Help the translation efforts!"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:293
+#, python-format
+msgid ""
+"Native language translation of the\n"
+"            InvenTree web application is <a href=\"%(link)s\">community contributed via crowdin</a>. Contributions are\n"
+"            welcomed and encouraged."
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:302
+msgid "Active Sessions"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:308
+msgid "Log out active sessions (except this one)"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:309
+msgid "Log Out Active Sessions"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:318
+msgid "<em>unknown on unknown</em>"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:319
+msgid "<em>unknown</em>"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:323
+msgid "IP Address"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:324
+msgid "Device"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:325
+msgid "Last Activity"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:334
+#, python-format
+msgid "%(time)s ago (this session)"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:336
+#, python-format
+msgid "%(time)s ago"
+msgstr ""
+
+#: templates/InvenTree/settings/user.html:348
+msgid "Do you really want to remove the selected email address?"
+msgstr ""
+
+#: templates/InvenTree/settings/user_display.html:95
+msgid "and hidden."
 msgstr ""
 
 #: templates/InvenTree/settings/user_display.html:102
@@ -7135,6 +7198,73 @@ msgstr ""
 
 #: templates/admin_button.html:2
 msgid "View in administration panel"
+msgstr ""
+
+#: templates/allauth_2fa/authenticate.html:5
+msgid "Two-Factor Authentication"
+msgstr ""
+
+#: templates/allauth_2fa/authenticate.html:12
+msgid "Authenticate"
+msgstr ""
+
+#: templates/allauth_2fa/backup_tokens.html:6
+msgid "Two-Factor Authentication Backup Tokens"
+msgstr ""
+
+#: templates/allauth_2fa/backup_tokens.html:17
+msgid "Backup tokens have been generated, but are not revealed here for security reasons. Press the button below to generate new ones."
+msgstr ""
+
+#: templates/allauth_2fa/backup_tokens.html:20
+msgid "No tokens. Press the button below to generate some."
+msgstr ""
+
+#: templates/allauth_2fa/backup_tokens.html:27
+msgid "Generate backup tokens"
+msgstr ""
+
+#: templates/allauth_2fa/backup_tokens.html:31
+#: templates/allauth_2fa/setup.html:40
+#, fuzzy
+#| msgid "Category Settings"
+msgid "back to settings"
+msgstr "Kategori Ayarları"
+
+#: templates/allauth_2fa/remove.html:6
+msgid "Disable Two-Factor Authentication"
+msgstr ""
+
+#: templates/allauth_2fa/remove.html:9
+msgid "Are you sure?"
+msgstr ""
+
+#: templates/allauth_2fa/remove.html:14
+msgid "Disable Two-Factor"
+msgstr ""
+
+#: templates/allauth_2fa/setup.html:6
+msgid "Setup Two-Factor Authentication"
+msgstr ""
+
+#: templates/allauth_2fa/setup.html:10
+msgid "Step 1"
+msgstr ""
+
+#: templates/allauth_2fa/setup.html:14
+msgid "Scan the QR code below with a token generator of your choice (for instance Google Authenticator)."
+msgstr ""
+
+#: templates/allauth_2fa/setup.html:23
+msgid "Step 2"
+msgstr ""
+
+#: templates/allauth_2fa/setup.html:27
+msgid "Input a token generated by the app:"
+msgstr ""
+
+#: templates/allauth_2fa/setup.html:35
+msgid "Verify"
 msgstr ""
 
 #: templates/attachment_button.html:4 templates/js/translated/attachment.js:54
@@ -8650,7 +8780,7 @@ msgstr ""
 msgid "Add Stock"
 msgstr ""
 
-#: templates/js/translated/stock.js:731 users/models.py:202
+#: templates/js/translated/stock.js:731 users/models.py:205
 msgid "Add"
 msgstr ""
 
@@ -9287,35 +9417,35 @@ msgstr ""
 msgid "Important dates"
 msgstr ""
 
-#: users/models.py:189
+#: users/models.py:192
 msgid "Permission set"
 msgstr ""
 
-#: users/models.py:197
+#: users/models.py:200
 msgid "Group"
 msgstr ""
 
-#: users/models.py:200
+#: users/models.py:203
 msgid "View"
 msgstr ""
 
-#: users/models.py:200
+#: users/models.py:203
 msgid "Permission to view items"
 msgstr ""
 
-#: users/models.py:202
+#: users/models.py:205
 msgid "Permission to add items"
 msgstr ""
 
-#: users/models.py:204
+#: users/models.py:207
 msgid "Change"
 msgstr ""
 
-#: users/models.py:204
+#: users/models.py:207
 msgid "Permissions to edit items"
 msgstr ""
 
-#: users/models.py:206
+#: users/models.py:209
 msgid "Permission to delete items"
 msgstr ""
 
