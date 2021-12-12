@@ -475,9 +475,9 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     validated = serializers.BooleanField(read_only=True, source='is_line_valid')
 
-    purchase_price_min = MoneyField(max_digits=10, decimal_places=6, read_only=True)
+    purchase_price_min = MoneyField(max_digits=19, decimal_places=4, read_only=True)
 
-    purchase_price_max = MoneyField(max_digits=10, decimal_places=6, read_only=True)
+    purchase_price_max = MoneyField(max_digits=19, decimal_places=4, read_only=True)
 
     purchase_price_avg = serializers.SerializerMethodField()
 
