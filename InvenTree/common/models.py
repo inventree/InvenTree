@@ -957,6 +957,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': '',
             'choices': settings_group_options
         },
+        'LOGIN_ENFORCE_MFA': {
+            'name': _('Enforce MFA'),
+            'description': _('Users must use multifactor security.'),
+            'default': False,
+            'validator': bool,
+        },
         'ENABLE_PLUGINS_URL': {
             'name': _('Enable URL integration'),
             'description': _('Enable plugins to add URL routes'),
