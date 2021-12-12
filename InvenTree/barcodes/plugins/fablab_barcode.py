@@ -40,3 +40,11 @@ class FablabBarcodePlugin(BarcodePlugin):
         
         # Invalid if data does not match any of the standards
         return False
+
+    def getPart(self):
+
+        try:
+            part = Part.objects.get(IPN__iexact=self.data)
+            return part
+        except (ValueError, Part.DoesNotExist):
+                raise ValidationError({'part', 'Part does not exist'})
