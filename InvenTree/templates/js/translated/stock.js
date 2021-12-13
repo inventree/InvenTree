@@ -38,6 +38,7 @@
 */
 
 /* exported
+    assignStockToCustomer,
     createNewStockItem,
     createStockLocation,
     duplicateStockItem,
@@ -94,6 +95,9 @@ function serializeStockItem(pk, options={}) {
             async: false,
         });
     }
+
+    options.confirm = true;
+    options.confirmMessage = '{% trans "Confirm Stock Serialization" %}';
 
     constructForm(url, options);
 }
@@ -530,8 +534,161 @@ function exportStock(params={}) {
                 url += `&${key}=${params[key]}`;
             }
 
-            console.log(url);
             location.href = url;
+        }
+    });
+}
+
+
+/**
+ * Assign multiple stock items to a customer
+ */
+function assignStockToCustomer(items, options={}) {
+
+    // Generate HTML content for the form
+    var html = `
+    <table class='table table-striped table-condensed' id='stock-assign-table'>
+    <thead>
+        <tr>
+            <th>{% trans "Part" %}</th>
+            <th>{% trans "Stock Item" %}</th>
+            <th>{% trans "Location" %}</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    `;
+
+    for (var idx = 0; idx < items.length; idx++) {
+
+        var item = items[idx];
+        
+        var pk = item.pk;
+
+        var part = item.part_detail;
+
+        var thumbnail = thumbnailImage(part.thumbnail || part.image);
+
+        var status = stockStatusDisplay(item.status, {classes: 'float-right'});
+
+        var quantity = '';
+
+        if (item.serial && item.quantity == 1) {
+            quantity = `{% trans "Serial" %}: ${item.serial}`;
+        } else {
+            quantity = `{% trans "Quantity" %}: ${item.quantity}`;
+        }
+
+        quantity += status;
+
+        var location = locationDetail(item, false);
+
+        var buttons = `<div class='btn-group' role='group'>`;
+
+        buttons += makeIconButton(
+            'fa-times icon-red',
+            'button-stock-item-remove',
+            pk,
+            '{% trans "Remove row" %}',
+        );
+
+        buttons += '</div>';
+
+        html += `
+            <tr id='stock_item_${pk}' class='stock-item'row'>
+                <td id='part_${pk}'>${thumbnail} ${part.full_name}</td>
+                <td id='stock_${pk}'>
+                    <div id='div_id_items_item_${pk}'>
+                        ${quantity}
+                        <div id='errors-items_item_${pk}'></div>
+                    </div>
+                </td>
+                <td id='location_${pk}'>${location}</td>
+                <td id='buttons_${pk}'>${buttons}</td>
+            </tr>
+        `;
+    }
+
+    html += `</tbody></table>`;
+
+    constructForm('{% url "api-stock-assign" %}', {
+        method: 'POST',
+        preFormContent: html,
+        fields: {
+            'customer': {
+                value: options.customer,
+                filters: {
+                    is_customer: true,
+                },
+            },
+            'notes': {},
+        },
+        confirm: true,
+        confirmMessage: '{% trans "Confirm stock assignment" %}',
+        title: '{% trans "Assign Stock to Customer" %}',
+        afterRender: function(fields, opts) {
+            // Add button callbacks to remove rows
+            $(opts.modal).find('.button-stock-item-remove').click(function() {
+                var pk = $(this).attr('pk');
+
+                $(opts.modal).find(`#stock_item_${pk}`).remove();
+            });
+        },
+        onSubmit: function(fields, opts) {
+
+            // Extract data elements from the form
+            var data = {
+                customer: getFormFieldValue('customer', {}, opts),
+                notes: getFormFieldValue('notes', {}, opts),
+                items: [],
+            };
+
+            var item_pk_values = [];
+
+            items.forEach(function(item) {
+                var pk = item.pk;
+
+                // Does the row exist in the form?
+                var row = $(opts.modal).find(`#stock_item_${pk}`);
+
+                if (row.exists()) {
+                    item_pk_values.push(pk);
+
+                    data.items.push({
+                        item: pk,
+                    });
+                }
+            });
+
+            opts.nested = {
+                'items': item_pk_values,
+            };
+
+            inventreePut(
+                '{% url "api-stock-assign" %}',
+                data,
+                {
+                    method: 'POST',
+                    success: function(response) {
+                        $(opts.modal).modal('hide');
+
+                        if (options.success) {
+                            options.success(response);
+                        }
+                    },
+                    error: function(xhr) {
+                        switch (xhr.status) {
+                        case 400:
+                            handleFormErrors(xhr.responseJSON, fields, opts);
+                            break;
+                        default:
+                            $(opts.modal).modal('hide');
+                            showApiError(xhr, opts.url);
+                            break;
+                        }
+                    }
+                }
+            );
         }
     });
 }
@@ -774,7 +931,7 @@ function adjustStock(action, items, options={}) {
                 // Does the row exist in the form?
                 var row = $(opts.modal).find(`#stock_item_${pk}`);
 
-                if (row) {
+                if (row.exists()) {
 
                     item_pk_values.push(pk);
                     
@@ -1095,7 +1252,7 @@ function locationDetail(row, showLink=true) {
         // StockItem has been assigned to a sales order
         text = '{% trans "Assigned to Sales Order" %}';
         url = `/order/sales-order/${row.sales_order}/`;
-    } else if (row.location) {
+    } else if (row.location && row.location_detail) {
         text = row.location_detail.pathstring;
         url = `/stock/location/${row.location}/`;
     } else {
@@ -1275,7 +1432,14 @@ function loadStockTable(table, options) {
             }
 
             if (row.allocated) {
-                html += makeIconBadge('fa-bookmark', '{% trans "Stock item has been allocated" %}');
+
+                if (row.serial != null && row.quantity == 1) {
+                    html += makeIconBadge('fa-bookmark icon-yellow', '{% trans "Serialized stock item has been allocated" %}');
+                } else if (row.allocated >= row.quantity) {
+                    html += makeIconBadge('fa-bookmark icon-yellow', '{% trans "Stock item has been fully allocated" %}');
+                } else {
+                    html += makeIconBadge('fa-bookmark', '{% trans "Stock item has been partially allocated" %}');
+                }
             }
 
             if (row.belongs_to) {
@@ -1709,6 +1873,17 @@ function loadStockTable(table, options) {
 
     $('#multi-item-move').click(function() {
         stockAdjustment('move');
+    });
+
+    $('#multi-item-assign').click(function() {
+
+        var items = $(table).bootstrapTable('getSelections');
+
+        assignStockToCustomer(items, {
+            success: function() {
+                $(table).bootstrapTable('refresh');
+            }
+        });
     });
 
     $('#multi-item-order').click(function() {

@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.conf.urls import url, include
 from django.http import JsonResponse
-from django.db.models import Q
+from django.db.models import Q, F
 from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
 
@@ -85,17 +85,6 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
         kwargs['context'] = self.get_serializer_context()
 
         return self.serializer_class(*args, **kwargs)
-
-    def perform_destroy(self, instance):
-        """
-        Instead of "deleting" the StockItem
-        (which may take a long time)
-        we instead schedule it for deletion at a later date.
-
-        The background worker will delete these in the future
-        """
-
-        instance.mark_for_deletion()
 
 
 class StockItemSerialize(generics.CreateAPIView):
@@ -172,6 +161,23 @@ class StockTransfer(StockAdjustView):
     """
 
     serializer_class = StockSerializers.StockTransferSerializer
+
+
+class StockAssign(generics.CreateAPIView):
+    """
+    API endpoint for assigning stock to a particular customer
+    """
+
+    queryset = StockItem.objects.all()
+    serializer_class = StockSerializers.StockAssignmentSerializer
+
+    def get_serializer_context(self):
+
+        ctx = super().get_serializer_context()
+
+        ctx['request'] = self.request
+
+        return ctx
 
 
 class StockLocationList(generics.ListCreateAPIView):
@@ -271,6 +277,24 @@ class StockLocationList(generics.ListCreateAPIView):
     ]
 
 
+class StockLocationTree(generics.ListAPIView):
+    """
+    API endpoint for accessing a list of StockLocation objects,
+    ready for rendering as a tree
+    """
+
+    queryset = StockLocation.objects.all()
+    serializer_class = StockSerializers.LocationTreeSerializer
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+    ]
+
+    # Order by tree level (top levels first) and then name
+    ordering = ['level', 'name']
+
+
 class StockFilter(rest_filters.FilterSet):
     """
     FilterSet for StockItem LIST API
@@ -301,6 +325,24 @@ class StockFilter(rest_filters.FilterSet):
             queryset = queryset.filter(StockItem.IN_STOCK_FILTER)
         else:
             queryset = queryset.exclude(StockItem.IN_STOCK_FILTER)
+
+        return queryset
+
+    available = rest_filters.BooleanFilter(label='Available', method='filter_available')
+
+    def filter_available(self, queryset, name, value):
+        """
+        Filter by whether the StockItem is "available" or not.
+
+        Here, "available" means that the allocated quantity is less than the total quantity
+        """
+
+        if str2bool(value):
+            # The 'quantity' field is greater than the calculated 'allocated' field
+            queryset = queryset.filter(Q(quantity__gt=F('allocated')))
+        else:
+            # The 'quantity' field is less than (or equal to) the calculated 'allocated' field
+            queryset = queryset.filter(Q(quantity__lte=F('allocated')))
 
         return queryset
 
@@ -604,9 +646,6 @@ class StockList(generics.ListCreateAPIView):
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = StockSerializers.StockItemSerializer.annotate_queryset(queryset)
-
-        # Do not expose StockItem objects which are scheduled for deletion
-        queryset = queryset.filter(scheduled_for_deletion=False)
 
         return queryset
 
@@ -1161,6 +1200,9 @@ class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
 
 stock_api_urls = [
     url(r'^location/', include([
+
+        url(r'^tree/', StockLocationTree.as_view(), name='api-location-tree'),
+
         url(r'^(?P<pk>\d+)/', LocationDetail.as_view(), name='api-location-detail'),
         url(r'^.*$', StockLocationList.as_view(), name='api-location-list'),
     ])),
@@ -1170,6 +1212,7 @@ stock_api_urls = [
     url(r'^add/', StockAdd.as_view(), name='api-stock-add'),
     url(r'^remove/', StockRemove.as_view(), name='api-stock-remove'),
     url(r'^transfer/', StockTransfer.as_view(), name='api-stock-transfer'),
+    url(r'^assign/', StockAssign.as_view(), name='api-stock-assign'),
 
     # StockItemAttachment API endpoints
     url(r'^attachment/', include([

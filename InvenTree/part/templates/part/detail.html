@@ -9,6 +9,10 @@
 {% include 'part/part_sidebar.html' %}
 {% endblock %}
 
+{% block breadcrumb_tree %}
+<div id="breadcrumb-tree"></div>
+{% endblock breadcrumb_tree %}
+
 {% block page_content %}
 
 <div class='panel panel-hidden' id='panel-part-stock'>
@@ -73,7 +77,7 @@
     <div class='panel-content'>
         <div id='po-button-bar'>
             <div class='button-toolbar container-fluid' style='float: right;'>
-                {% include "filter_list.html" with id="purchaseorder" %}
+                {% include "filter_list.html" with id="partpurchaseorders" %}
             </div>
         </div>
         
@@ -130,10 +134,6 @@
         {{ part.notes | markdownify }}
         {% endif %}
     </div>
-</div>
-
-<div class='panel panel-hidden' id='panel-pricing'>
-    <!-- TODO -->
 </div>
 
 <div class='panel panel-hidden' id='panel-variants'>
@@ -697,12 +697,10 @@
     });
 
     onPanelLoad("purchase-orders", function() {
-        loadPurchaseOrderTable($("#purchase-order-table"), {
-            url: "{% url 'api-po-list' %}",
-            params: {
-                part: {{ part.id }},
-            },
-        });
+        loadPartPurchaseOrderTable(
+            "#purchase-order-table",
+            {{ part.pk }},
+        );
     });
 
     onPanelLoad("sales-orders", function() {
@@ -1061,5 +1059,19 @@
     {% endif %}
 
     enableSidebar('part');
+
+    enableBreadcrumbTree({
+        label: 'part',
+        url: '{% url "api-part-category-tree" %}',
+        {% if part.category %}
+        selected: {{ part.category.pk }},
+        {% endif %}
+        processNode: function(node) {
+            node.text = node.name;
+            node.href = `/part/category/${node.pk}/`;
+
+            return node;
+        }
+    });
 
 {% endblock %}

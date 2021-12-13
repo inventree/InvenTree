@@ -730,6 +730,9 @@ function submitFormData(fields, options) {
         data = options.processBeforeUpload(data);
     }
 
+    // Show the progress spinner
+    $(options.modal).find('#modal-progress-spinner').show();
+
     // Submit data
     upload_func(
         options.url,
@@ -737,10 +740,13 @@ function submitFormData(fields, options) {
         {
             method: options.method,
             success: function(response) {
+                $(options.modal).find('#modal-progress-spinner').hide();
                 handleFormSuccess(response, options);
             },
             error: function(xhr) {
                 
+                $(options.modal).find('#modal-progress-spinner').hide();
+
                 switch (xhr.status) {
                 case 400:
                     handleFormErrors(xhr.responseJSON, fields, options);
@@ -1714,6 +1720,9 @@ function renderModelData(name, model, data, parameters, options) {
         break;
     case 'salesorder':
         renderer = renderSalesOrder;
+        break;
+    case 'salesordershipment':
+        renderer = renderSalesOrderShipment;
         break;
     case 'manufacturerpart':
         renderer = renderManufacturerPart;

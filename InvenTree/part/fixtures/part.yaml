@@ -69,6 +69,7 @@
     name: 'Widget'
     description: 'A watchamacallit'
     category: 7
+    salable: true
     assembly: true
     trackable: true
     tree_id: 0
@@ -83,6 +84,7 @@
     name: 'Orphan'
     description: 'A part without a category'
     category: null
+    salable: true
     tree_id: 0
     level: 0
     lft: 0
@@ -95,6 +97,7 @@
     name: 'Bob'
     description: 'Can we build it?'
     assembly: true
+    salable: true
     purchaseable: false
     category: 7
     active: False
@@ -113,6 +116,7 @@
     description: 'A chair'
     is_template: True
     trackable: true
+    salable: true
     category: 7
     tree_id: 1
     level: 0
