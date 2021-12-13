@@ -282,6 +282,7 @@ jobs:
           cache: 'pip'
       - name: Install Dependencies
         run: |
+          sudo apt-get update
           sudo apt-get install mysql-server libmysqlclient-dev
           pip3 install invoke
           pip3 install mysqlclient
