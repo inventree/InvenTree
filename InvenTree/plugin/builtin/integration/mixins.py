@@ -1,4 +1,7 @@
 """default mixins for IntegrationMixins"""
+import json
+import requests
+
 from django.conf.urls import url, include
 
 from plugin.urls import PLUGIN_BASE
@@ -167,3 +170,72 @@ class AppMixin:
         this plugin is always an app with this plugin
         """
         return True
+
+
+class APICallMixin:
+    """Mixin that enables easier API calls for a plugin
+    
+    1. Add this mixin
+    2. Add two global settings for the required url and token/passowrd (use `GlobalSettingsMixin`)
+    3. Save the references to `API_URL_SETTING` and `API_PASSWORD_SETTING`
+    4. Set `API_TOKEN` to the name required for the token / password by the external API
+    5. (Optional) Override the `api_url` property method if some part of the APIs url is static
+    6. (Optional) Override `api_headers` to add extra headers (by default the token/password and Content-Type are contained)
+    6. Access the API in you plugin code via `api_call`
+    """
+    API_METHOD = 'https'
+    API_URL_SETTING = None
+    API_PASSWORD_SETTING = None
+
+    API_TOKEN = 'Bearer'
+
+    class MixinMeta:
+        """meta options for this mixin"""
+        MIXIN_NAME = 'external API usage'
+
+    def __init__(self):
+        super().__init__()
+        self.add_mixin('api_call', 'has_api_call', __class__)
+
+    @property
+    def has_api_call(self):
+        """Is the mixin ready to call external APIs?"""
+        # TODO check if settings are set
+        return True
+
+    @property
+    def api_url(self):
+        return f'{self.API_METHOD}://{self.get_globalsetting(self.API_URL_SETTING)}'
+
+    @property
+    def api_headers(self):
+        return {self.API_TOKEN: self.get_globalsetting(self.API_PASSWORD_SETTING), 'Content-Type': 'application/json'}
+
+    def api_build_url_args(self, arguments):
+        groups = []
+        for key, val in arguments.items():
+            groups.append(f'{key}={",".join([str(a) for a in val])}')
+        return f'?{"&".join(groups)}'
+
+    def api_call(self, endpoint, method: str='GET', url_args=None, data=None, headers=None, simple_response: bool = True):
+        if url_args:
+            endpoint += self.api_build_url_args(url_args)
+
+        if headers is None:
+            headers = self.api_headers
+
+        # build kwargs for call
+        kwargs = {
+            'url': f'{self.api_url}/{endpoint}',
+            'headers': headers,
+        }
+        if data:
+            kwargs['data'] = json.dumps(data)
+
+        # run command
+        response = requests.request(method, **kwargs)
+
+        # return
+        if simple_response:
+            return response.json()
+        return response
