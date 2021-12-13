@@ -218,7 +218,6 @@ function enableBreadcrumbTree(options) {
                     collapseIcon: 'fa fa-chevron-down',
                 });
 
-                setBreadcrumbTreeState(label, state);
             }
         }
     );
@@ -226,26 +225,11 @@ function enableBreadcrumbTree(options) {
     $('#breadcrumb-tree-toggle').click(function() {
         // Add callback to "collapse" and "expand" the sidebar
 
-        // By default, the menu is "expanded"
-        var state = localStorage.getItem(`inventree-tree-state-${label}`) || 'expanded';
+        // Toggle treeview visibilty
+		$('#breadcrumb-tree-collapse').toggle();
         
-        // We wish to "toggle" the state!
-        setBreadcrumbTreeState(label, state == 'expanded' ? 'collapsed' : 'expanded');
     });
 
-    // Set the initial state (default = expanded)
-    var state = localStorage.getItem(`inventree-tree-state-${label}`) || 'expanded';
-
-    function setBreadcrumbTreeState(label, state) {
-
-        if (state == 'collapsed') {
-            $('#breadcrumb-tree-collapse').hide(100);
-        } else {
-            $('#breadcrumb-tree-collapse').show(100);
-        }
-
-        localStorage.setItem(`inventree-tree-state-${label}`, state);
-    }
 }
 
 /*
