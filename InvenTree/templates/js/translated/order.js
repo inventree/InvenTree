@@ -1600,26 +1600,6 @@ function loadSalesOrderLineItemTable(table, options={}) {
         });
     }
 
-    if (waiting_for_package) {
-        columns.push({
-            field: 'buttons',
-            formatter: function(value, row, index, field) {
-
-                var html = `<div class='btn-group float-right' role='group'>`;
-                var pk = row.pk;
-
-                if (row.part) {
-                    var part = row.part_detail;
-                    html += makeIconButton('fa-sign-in-alt icon-green', 'button-fill', pk, '{% trans "Fulfill stock" %}');
-                }
-
-                html += `</div>`;
-
-                return html;
-            }
-        });
-    }
-
     function reloadTable() {
         $(table).bootstrapTable('refresh');
     }
@@ -1710,45 +1690,6 @@ function loadSalesOrderLineItemTable(table, options={}) {
                     method: 'POST',
                     fields: fields,
                     title: '{% trans "Allocate Stock Item" %}',
-                    onSuccess: reloadTable,
-                }
-            );
-        });
-
-        $(table).find('.button-fill').click(function() {
-            var pk = $(this).attr('pk');
-            // var line_item = $(table).bootstrapTable('getRowByUniqueId', pk);
-
-            // var fields = {
-            //     // SalesOrderLineItem reference
-            //     // line: {
-            //     //     hidden: true,
-            //     //     value: pk,
-            //     // },
-            //     // item: {
-            //     //     // filters: {
-            //     //     //     part_detail: true,
-            //     //     //     location_detail: true,
-            //     //     //     in_stock: true,
-            //     //     //     part: line_item.part,
-            //     //     //     exclude_so_allocation: options.order,
-            //     //     // }
-            //     // },
-            //     quantity: {
-            //     },
-            // };
-
-            // Exclude expired stock?
-            // if (global_settings.STOCK_ENABLE_EXPIRY && !global_settings.STOCK_ALLOW_EXPIRED_SALE) {
-            //     fields.item.filters.expired = false;
-            // }
-
-            constructForm(
-                `/api/order/so-allocation/fulfill/${pk}`,
-                {
-                    method: 'DELETE',
-                    // fields: fields,
-                    title: '{% trans "Fulfill Stock Item" %}',
                     onSuccess: reloadTable,
                 }
             );

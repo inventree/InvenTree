@@ -655,14 +655,15 @@ class SOAllocationFulFill(generics.RetrieveUpdateDestroyAPIView):
 
     def delete (self, request, *args, **kwargs):
         try:
-            quantity = request.data.get('quantity', None)
-            instance = self.get_object()
-            if quantity is not None and quantity < instance.quantity:
-                instance.complete_allocation(quantity=quantity)
+            quantity = int(self.kwargs['quantity'])
+            stock_item_pk = self.kwargs['pk']
+            instance = SalesOrderAllocation.objects.filter(item=stock_item_pk).first()
+            if quantity < instance.quantity:
+                instance.complete_allocation(request.user, quantity=quantity)
                 instance.quantity = instance.quantity - quantity
                 instance.save()
             else:
-                instance.complete_allocation()
+                instance.complete_allocation(request.user)
                 self.perform_destroy(instance)
         except Http404:
             pass
@@ -819,7 +820,7 @@ order_api_urls = [
 
     # API endpoints for sales order allocations
     url(r'^so-allocation/', include([
-        url(r'^fulfill/(?P<pk>\d+)', SOAllocationFulFill.as_view(), name='api-so-allocation-fulfill'),
+        url(r'^fulfill/(?P<pk>\d+)/(?P<quantity>\d+)', SOAllocationFulFill.as_view(), name='api-so-allocation-fulfill'),
         url(r'^(?P<pk>\d+)/$', SOAllocationDetail.as_view(), name='api-so-allocation-detail'),
         url(r'^.*$', SOAllocationList.as_view(), name='api-so-allocation-list'),
     ])),

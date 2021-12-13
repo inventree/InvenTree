@@ -24,6 +24,16 @@
             <button type='button' class='btn btn-success' id='new-so-line'>
                 <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
             </button>
+            {% if order.status == SalesOrderStatus.PENDING or order.status == SalesOrderStatus.IN_BASKET %}
+            <button type='button' class='btn btn-success' id='new-so-line'>
+                <span class='fas fa-plus-circle'></span> {% trans "Allocate by barcode item" %}
+            </button>
+            {% endif %}
+            {% if order.status == SalesOrderStatus.WAITING_FOR_PACKING %}
+            <button type='button' class='btn btn-warning' id='fulfill-stock-item-btn'>
+                <span class='fas fa-box-open'></span> {% trans "Fulfill by barcode item" %}
+            </button>
+            {% endif %}
         </div>
         {% endif %}
         <table class='table table-striped table-condensed' id='so-lines-table' data-toolbar='#order-toolbar-buttons'>
@@ -197,5 +207,9 @@
     $("#barcode-scan-into-basket").click(function() {
         scanOrderIntoBasket([{{ order.id }}]);
     });
+
+    $("#fulfill-stock-item-btn").click(function() {
+        scanBarcodeForFulfill()
+    })
 
 {% endblock %}
