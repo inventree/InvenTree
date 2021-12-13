@@ -174,7 +174,7 @@ class AppMixin:
 
 class APICallMixin:
     """Mixin that enables easier API calls for a plugin
-    
+
     1. Add this mixin
     2. Add two global settings for the required url and token/passowrd (use `GlobalSettingsMixin`)
     3. Save the references to `API_URL_SETTING` and `API_PASSWORD_SETTING`
@@ -217,7 +217,7 @@ class APICallMixin:
             groups.append(f'{key}={",".join([str(a) for a in val])}')
         return f'?{"&".join(groups)}'
 
-    def api_call(self, endpoint, method: str='GET', url_args=None, data=None, headers=None, simple_response: bool = True):
+    def api_call(self, endpoint, method: str = 'GET', url_args=None, data=None, headers=None, simple_response: bool = True):
         if url_args:
             endpoint += self.api_build_url_args(url_args)
 
