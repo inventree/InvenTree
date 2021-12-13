@@ -645,6 +645,7 @@ class SOAllocationDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = SalesOrderAllocation.objects.all()
     serializer_class = SalesOrderAllocationSerializer
 
+
 class SOAllocationFulFill(generics.RetrieveUpdateDestroyAPIView):
     """
     API endpoint for detali view of a SalesOrderAllocation object
@@ -658,13 +659,15 @@ class SOAllocationFulFill(generics.RetrieveUpdateDestroyAPIView):
             quantity = int(self.kwargs['quantity'])
             stock_item_pk = self.kwargs['pk']
             instance = SalesOrderAllocation.objects.filter(item=stock_item_pk).first()
-            if quantity < instance.quantity:
-                instance.complete_allocation(request.user, quantity=quantity)
+            if quantity <= instance.quantity:
+                instance.complete_allocation(request.user, quantity=quantity, is_fulfilling=True)
                 instance.quantity = instance.quantity - quantity
                 instance.save()
+                if (instance.quantity == 0):
+                    self.perform_destroy(instance)
+                return Response({"succcess": "Item fulfilled successfully"}, status=status.HTTP_200_OK)
             else:
-                instance.complete_allocation(request.user)
-                self.perform_destroy(instance)
+                return Response({"error": "Quantity exceeded "}, status=status.HTTP_204_NO_CONTENT)
         except Http404:
             pass
         return Response(status=status.HTTP_204_NO_CONTENT)

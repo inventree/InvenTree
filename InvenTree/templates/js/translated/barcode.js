@@ -817,7 +817,7 @@ function scanBarcodeForFulfill(options={}) {
             onSubmit: function() {
                 // Called when the 'check-in' button is pressed
                 
-                quantity = $('#quantity').val() || 0
+                quantity = $('#quantity').val() || 1
                 if (!stock_item) {
                     return;
                 }
@@ -833,7 +833,7 @@ function scanBarcodeForFulfill(options={}) {
                                 showAlertOrCache('alert-success', response.success, true);
                                 location.reload();
                             } else {
-                                showAlertOrCache('alert-danger', '{% trans "Error transferring stock" %}', false);
+                                showAlertOrCache('alert-danger', '{% trans "Error fulfilling item" %}', false);
                             }
                         }
                     },
