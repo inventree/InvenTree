@@ -4,12 +4,15 @@ Helper forms which subclass Django forms to provide additional functionality
 
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from urllib.parse import urlencode
 import logging
 
 from django.utils.translation import ugettext_lazy as _
 from django import forms
 from django.contrib.auth.models import User, Group
 from django.conf import settings
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field
@@ -18,6 +21,9 @@ from crispy_forms.bootstrap import PrependedText, AppendedText, PrependedAppende
 from allauth.account.forms import SignupForm, set_form_field_order
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
+from allauth.exceptions import ImmediateHttpResponse
+from allauth_2fa.adapter import OTPAdapter
+from allauth_2fa.utils import user_has_valid_totp_device
 
 from part.models import PartCategory
 from common.models import InvenTreeSetting
@@ -278,7 +284,7 @@ class RegistratonMixin:
         return user
 
 
-class CustomAccountAdapter(RegistratonMixin, DefaultAccountAdapter):
+class CustomAccountAdapter(RegistratonMixin, OTPAdapter, DefaultAccountAdapter):
     """
     Override of adapter to use dynamic settings
     """
@@ -297,3 +303,27 @@ class CustomSocialAccountAdapter(RegistratonMixin, DefaultSocialAccountAdapter):
         if InvenTreeSetting.get_setting('LOGIN_SIGNUP_SSO_AUTO', True):
             return super().is_auto_signup_allowed(request, sociallogin)
         return False
+
+    # from OTPAdapter
+    def has_2fa_enabled(self, user):
+        """Returns True if the user has 2FA configured."""
+        return user_has_valid_totp_device(user)
+
+    def login(self, request, user):
+        # Require two-factor authentication if it has been configured.
+        if self.has_2fa_enabled(user):
+            # Cast to string for the case when this is not a JSON serializable
+            # object, e.g. a UUID.
+            request.session['allauth_2fa_user_id'] = str(user.id)
+
+            redirect_url = reverse('two-factor-authenticate')
+            # Add GET parameters to the URL if they exist.
+            if request.GET:
+                redirect_url += u'?' + urlencode(request.GET)
+
+            raise ImmediateHttpResponse(
+                response=HttpResponseRedirect(redirect_url)
+            )
+
+        # Otherwise defer to the original allauth adapter.
+        return super().login(request, user)

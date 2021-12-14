@@ -811,7 +811,9 @@ function updateFieldValue(name, value, field, options) {
 
     switch (field.type) {
     case 'boolean':
-        el.prop('checked', value);
+        if (value == true || value.toString().toLowerCase() == 'true') {
+            el.prop('checked');
+        }
         break;
     case 'related field':
         // Clear?
@@ -2034,8 +2036,15 @@ function constructInputOptions(name, classes, type, parameters) {
     }
 
     if (parameters.value != null) {
-        // Existing value?
-        opts.push(`value='${parameters.value}'`);
+        if (parameters.type == 'boolean') {
+            // Special consideration of a boolean (checkbox) value
+            if (parameters.value == true || parameters.value.toString().toLowerCase() == 'true') {
+                opts.push('checked');
+            }
+        } else {
+            // Existing value?
+            opts.push(`value='${parameters.value}'`);
+        }
     } else if (parameters.default != null) {
         // Otherwise, a defualt value?
         opts.push(`value='${parameters.default}'`);

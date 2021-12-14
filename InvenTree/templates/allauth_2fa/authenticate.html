@@ -1,0 +1,15 @@
+{% extends "account/base.html" %}
+{% load i18n crispy_forms_tags %}
+
+{% block content %}
+<h1>{% trans "Two-Factor Authentication" %}</h1>
+
+<form method="post" class="login">
+  {% csrf_token %}
+  {{ form|crispy }}
+
+  <button type="submit" class="btn btn-primary">
+    {% trans 'Authenticate' %}
+  </button>
+</form>
+{% endblock %}

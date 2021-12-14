@@ -1,0 +1,33 @@
+{% extends "account/base.html" %}
+{% load i18n %}
+
+{% block content %}
+<h3>
+  {% trans "Two-Factor Authentication Backup Tokens" %}
+</h3>
+
+{% if backup_tokens %}
+  {% if reveal_tokens %}
+    <ul>
+      {% for token in backup_tokens %}
+        <li>{{ token.token }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    {% trans 'Backup tokens have been generated, but are not revealed here for security reasons. Press the button below to generate new ones.' %}
+  {% endif %}
+{% else %}
+  {% trans 'No tokens. Press the button below to generate some.' %}
+{% endif %}
+
+<br>
+<form method="post">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-primary w-100">
+    {% trans 'Generate backup tokens' %}
+  </button>
+</form>
+<br>
+<a href="{% url 'settings' %}" class="btn btn-secondary w-100 btn-sm">{% trans "back to settings" %}</a>
+
+{% endblock %}
