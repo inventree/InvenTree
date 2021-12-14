@@ -192,17 +192,17 @@ function enableBreadcrumbTree(options) {
                     node = data[i];
 
                     if (node.parent != null) {
-						if (nodes[node.parent].nodes) {
-							nodes[node.parent].nodes.push(node);
-						} else {
-							nodes[node.parent].nodes = [node];
-						}
+                        if (nodes[node.parent].nodes) {
+                            nodes[node.parent].nodes.push(node);
+                        } else {
+                            nodes[node.parent].nodes = [node];
+                        }
 
                         if (node.state.expanded) {
-							while (node.parent != null) {
-								nodes[node.parent].state.expanded = true;
-								node = nodes[node.parent]
-							}
+                            while (node.parent != null) {
+                                nodes[node.parent].state.expanded = true;
+                                node = nodes[node.parent];
+                            }
                         }
                         
                     } else {
@@ -226,7 +226,7 @@ function enableBreadcrumbTree(options) {
         // Add callback to "collapse" and "expand" the sidebar
 
         // Toggle treeview visibilty
-		$('#breadcrumb-tree-collapse').toggle();
+        $('#breadcrumb-tree-collapse').toggle();
         
     });
 
