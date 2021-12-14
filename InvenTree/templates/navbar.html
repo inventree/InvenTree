@@ -51,13 +51,9 @@
             <span class='fas fa-truck icon-header'></span>{% trans "Sell" %}
           </a>
           <ul class='dropdown-menu'>
-            <li><a href="{% url 'customer-index' %}"><span class='fas fa-user-tie icon-header'></span>{% trans "Customers" %}</a>
-            {% if enable_so %}
-            <li><a href="{% url 'so-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Sales Orders" %}</a></li>
-            {% endif %}
-            <li><a href="{% url 'basket-index' %}"><span class='fas fa-shopping-basket icon-header'></span>{% trans "Baskets" %}</a></li>
-            <li><a class='dropdown-item' href="{% url 'customer-index' %}"><span class='fas fa-user-tie icon-header'></span>{% trans "Customers" %}</a>
             <li><a class='dropdown-item' href="{% url 'so-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Sales Orders" %}</a></li>
+            <li><a class='dropdown-item' href="{% url 'basket-index' %}"><span class='fas fa-shopping-basket icon-header'></span>{% trans "Baskets" %}</a></li>
+            <li><a class='dropdown-item' href="{% url 'customer-index' %}"><span class='fas fa-user-tie icon-header'></span>{% trans "Customers" %}</a>
           </ul>
         </li>
         {% endif %}
