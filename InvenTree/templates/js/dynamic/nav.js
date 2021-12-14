@@ -175,7 +175,6 @@ function enableBreadcrumbTree(options) {
 
                 for (var i = 0; i < data.length; i++) {
                     node = data[i];
-                    node.nodes = [];
                     nodes[node.pk] = node;
                     node.selectable = false;
 
@@ -193,10 +192,17 @@ function enableBreadcrumbTree(options) {
                     node = data[i];
 
                     if (node.parent != null) {
-                        nodes[node.parent].nodes.push(node);
+                        if (nodes[node.parent].nodes) {
+                            nodes[node.parent].nodes.push(node);
+                        } else {
+                            nodes[node.parent].nodes = [node];
+                        }
 
                         if (node.state.expanded) {
-                            nodes[node.parent].state.expanded = true;
+                            while (node.parent != null) {
+                                nodes[node.parent].state.expanded = true;
+                                node = nodes[node.parent];
+                            }
                         }
                         
                     } else {
@@ -212,7 +218,6 @@ function enableBreadcrumbTree(options) {
                     collapseIcon: 'fa fa-chevron-down',
                 });
 
-                setBreadcrumbTreeState(label, state);
             }
         }
     );
@@ -220,26 +225,11 @@ function enableBreadcrumbTree(options) {
     $('#breadcrumb-tree-toggle').click(function() {
         // Add callback to "collapse" and "expand" the sidebar
 
-        // By default, the menu is "expanded"
-        var state = localStorage.getItem(`inventree-tree-state-${label}`) || 'expanded';
+        // Toggle treeview visibilty
+        $('#breadcrumb-tree-collapse').toggle();
         
-        // We wish to "toggle" the state!
-        setBreadcrumbTreeState(label, state == 'expanded' ? 'collapsed' : 'expanded');
     });
 
-    // Set the initial state (default = expanded)
-    var state = localStorage.getItem(`inventree-tree-state-${label}`) || 'expanded';
-
-    function setBreadcrumbTreeState(label, state) {
-
-        if (state == 'collapsed') {
-            $('#breadcrumb-tree-collapse').hide(100);
-        } else {
-            $('#breadcrumb-tree-collapse').show(100);
-        }
-
-        localStorage.setItem(`inventree-tree-state-${label}`, state);
-    }
 }
 
 /*

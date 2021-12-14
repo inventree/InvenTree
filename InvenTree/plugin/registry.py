@@ -11,7 +11,7 @@ from importlib import reload
 from django.apps import apps
 from django.conf import settings
 from django.db.utils import OperationalError, ProgrammingError
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.urls import clear_url_caches
 from django.contrib import admin
 from django.utils.text import slugify
@@ -412,7 +412,7 @@ class Plugins:
         self.plugins_inactive = {}
 
     def _update_urls(self):
-        from InvenTree.urls import urlpatterns
+        from InvenTree.urls import urlpatterns as global_pattern, frontendpatterns as urlpatterns
         from plugin.urls import get_plugin_urls
 
         for index, a in enumerate(urlpatterns):
@@ -421,6 +421,9 @@ class Plugins:
                     urlpatterns[index] = url(r'^admin/', admin.site.urls, name='inventree-admin')
                 elif a.app_name == 'plugin':
                     urlpatterns[index] = get_plugin_urls()
+
+        # replace frontendpatterns
+        global_pattern[0] = url('', include(urlpatterns))
         clear_url_caches()
 
     def _reload_apps(self, force_reload: bool = False):
