@@ -42,11 +42,12 @@ from common.files import FileManager
 from common.views import FileManagementFormView, FileManagementAjaxView
 from common.forms import UploadFileForm, MatchFieldForm
 
-from stock.models import StockLocation
+from stock.models import StockItem, StockLocation
 
 import common.settings as inventree_settings
 
 from . import forms as part_forms
+from . import settings as part_settings
 from .bom import MakeBomTemplate, ExportBom, IsValidBOMFormat
 from order.models import PurchaseOrderLineItem
 
@@ -245,6 +246,7 @@ class PartImport(FileManagementFormView):
             'Category',
             'default_location',
             'default_supplier',
+            'variant_of',
         ]
 
         OPTIONAL_HEADERS = [
@@ -256,6 +258,17 @@ class PartImport(FileManagementFormView):
             'minimum_stock',
             'Units',
             'Notes',
+            'Active',
+            'base_cost',
+            'Multiple',
+            'Assembly',
+            'Component',
+            'is_template',
+            'Purchaseable',
+            'Salable',
+            'Trackable',
+            'Virtual',
+            'Stock',
         ]
 
     name = 'part'
@@ -284,6 +297,18 @@ class PartImport(FileManagementFormView):
         'category': 'category',
         'default_location': 'default_location',
         'default_supplier': 'default_supplier',
+        'variant_of': 'variant_of',
+        'active': 'active',
+        'base_cost': 'base_cost',
+        'multiple': 'multiple',
+        'assembly': 'assembly',
+        'component': 'component',
+        'is_template': 'is_template',
+        'purchaseable': 'purchaseable',
+        'salable': 'salable',
+        'trackable': 'trackable',
+        'virtual': 'virtual',
+        'stock': 'stock',
     }
     file_manager_class = PartFileManager
 
@@ -299,6 +324,8 @@ class PartImport(FileManagementFormView):
         self.matches['default_location'] = ['name__contains']
         self.allowed_items['default_supplier'] = SupplierPart.objects.all()
         self.matches['default_supplier'] = ['SKU__contains']
+        self.allowed_items['variant_of'] = Part.objects.all()
+        self.matches['variant_of'] = ['name__contains']
 
         # setup
         self.file_manager.setup()
@@ -364,9 +391,29 @@ class PartImport(FileManagementFormView):
                 category=optional_matches['Category'],
                 default_location=optional_matches['default_location'],
                 default_supplier=optional_matches['default_supplier'],
+                variant_of=optional_matches['variant_of'],
+                active=str2bool(part_data.get('active', True)),
+                base_cost=part_data.get('base_cost', 0),
+                multiple=part_data.get('multiple', 1),
+                assembly=str2bool(part_data.get('assembly', part_settings.part_assembly_default())),
+                component=str2bool(part_data.get('component', part_settings.part_component_default())),
+                is_template=str2bool(part_data.get('is_template', part_settings.part_template_default())),
+                purchaseable=str2bool(part_data.get('purchaseable', part_settings.part_purchaseable_default())),
+                salable=str2bool(part_data.get('salable', part_settings.part_salable_default())),
+                trackable=str2bool(part_data.get('trackable', part_settings.part_trackable_default())),
+                virtual=str2bool(part_data.get('virtual', part_settings.part_virtual_default())),
             )
             try:
                 new_part.save()
+
+                # add stock item if set
+                if part_data.get('stock', None):
+                    stock = StockItem(
+                        part=new_part,
+                        location=new_part.default_location,
+                        quantity=int(part_data.get('stock', 1)),
+                    )
+                    stock.save()
                 import_done += 1
             except ValidationError as _e:
                 import_error.append(', '.join(set(_e.messages)))
@@ -404,21 +451,15 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
 
     # Add in some extra context information based on query params
     def get_context_data(self, **kwargs):
-        """ Provide extra context data to template
-
-        - If '?editing=True', set 'editing_enabled' context variable
+        """
+        Provide extra context data to template
         """
         context = super().get_context_data(**kwargs)
 
         part = self.get_object()
 
-        if str2bool(self.request.GET.get('edit', '')):
-            # Allow BOM editing if the part is active
-            context['editing_enabled'] = 1 if part.active else 0
-        else:
-            context['editing_enabled'] = 0
-
         ctx = part.get_context_data(self.request)
+        
         context.update(**ctx)
 
         # Pricing information
@@ -1476,17 +1517,28 @@ class CategoryDetail(InvenTreeRoleMixin, DetailView):
 
         if category:
             cascade = kwargs.get('cascade', True)
+
             # Prefetch parts parameters
             parts_parameters = category.prefetch_parts_parameters(cascade=cascade)
+            
             # Get table headers (unique parameters names)
             context['headers'] = category.get_unique_parameters(cascade=cascade,
                                                                 prefetch=parts_parameters)
+            
             # Insert part information
             context['headers'].insert(0, 'description')
             context['headers'].insert(0, 'part')
+
             # Get parameters data
             context['parameters'] = category.get_parts_parameters(cascade=cascade,
                                                                   prefetch=parts_parameters)
+
+            # Insert "starred" information
+            context['starred'] = category.is_starred_by(self.request.user)
+            context['starred_directly'] = context['starred'] and category.is_starred_by(
+                self.request.user,
+                include_parents=False,
+            )
 
         return context
 

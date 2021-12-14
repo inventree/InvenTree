@@ -35,5 +35,4 @@ jobs:
           target: production
           build-args:
             tag: ${{ github.event.release.tag_name }}
-          repository: inventree/inventree
           tags: inventree/inventree:${{ github.event.release.tag_name }}

@@ -123,6 +123,12 @@ def inventree_title(*args, **kwargs):
 
 
 @register.simple_tag()
+def inventree_base_url(*args, **kwargs):
+    """ Return the INVENTREE_BASE_URL setting """
+    return InvenTreeSetting.get_setting('INVENTREE_BASE_URL')
+
+
+@register.simple_tag()
 def python_version(*args, **kwargs):
     """
     Return the current python version
@@ -246,6 +252,45 @@ def global_settings(*args, **kwargs):
 
 
 @register.simple_tag()
+def progress_bar(val, max, *args, **kwargs):
+    """
+    Render a progress bar element
+    """
+
+    id = kwargs.get('id', 'progress-bar')
+
+    if val > max:
+        style = 'progress-bar-over'
+    elif val < max:
+        style = 'progress-bar-under'
+    else:
+        style = ''
+
+    percent = float(val / max) * 100
+
+    if percent > 100:
+        percent = 100
+    elif percent < 0:
+        percent = 0
+
+    style_tags = []
+
+    max_width = kwargs.get('max_width', None)
+
+    if max_width:
+        style_tags.append(f'max-width: {max_width};')
+
+    html = f"""
+    <div id='{id}' class='progress' style='{" ".join(style_tags)}'>
+        <div class='progress-bar {style}' role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width:{percent}%'></div>
+        <div class='progress-value'>{val} / {max}</div>
+    </div>
+    """
+
+    return mark_safe(html)
+
+
+@register.simple_tag()
 def get_color_theme_css(username):
     try:
         user_theme = ColorTheme.objects.filter(user=username).get()
@@ -349,6 +394,12 @@ def object_link(url_name, pk, ref):
 
     ref_url = reverse(url_name, kwargs={'pk': pk})
     return mark_safe('<b><a href="{}">{}</a></b>'.format(ref_url, ref))
+
+
+@register.simple_tag()
+def mail_configured():
+    """ Return if mail is configured """
+    return bool(settings.EMAIL_HOST)
 
 
 class I18nStaticNode(StaticNode):

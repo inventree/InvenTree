@@ -3,113 +3,121 @@
 {% load i18n %}
 
 {% settings_value 'BARCODE_ENABLE' as barcodes %}
-{% settings_value 'BUILD_FUNCTION_ENABLE' as enable_build %}
-{% settings_value 'BUY_FUNCTION_ENABLE' as enable_buy %}
-{% settings_value 'SELL_FUNCTION_ENABLE' as enable_sell %}
-{% settings_value 'STOCK_FUNCTION_ENABLE' as enable_stock %}
-{% settings_value 'SO_FUNCTION_ENABLE' as enable_so %}
-{% settings_value 'PO_FUNCTION_ENABLE' as enable_po %}
+{% settings_value 'STICKY_HEADER' user=request.user as sticky %}
 
-<nav class="navbar navbar-xs navbar-default navbar-fixed-top ">
+<nav class="navbar {% if sticky %}fixed-top{% endif %} navbar-expand-lg navbar-light">
   <div class="container-fluid">
     <div class="navbar-header clearfix content-heading">
       <a class="navbar-brand" id='logo' href="{% url 'index' %}" style="padding-top: 7px; padding-bottom: 5px;"><img src="{% static 'img/inventree.png' %}" width="32" height="32" style="display:block; margin: auto;"/></a>
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="sr-only">{% trans "Toggle navigation" %}</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </button>
-      </div>
     </div>
-    <div class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
+    <div class="navbar-collapse collapse" id="navbar-objects">
+      <ul class="navbar-nav">
         {% if roles.part.view %}
-        <li><a href="{% url 'part-index' %}"><span class='fas fa-shapes icon-header'></span>{% trans "Parts" %}</a></li>
+        <li class='nav-item'>
+          <a class='nav-link' href="{% url 'part-index' %}">
+            <span class='fas fa-shapes icon-header'></span>{% trans "Parts" %}
+          </a>
+        </li>
         {% endif %}
-        {% if roles.stock.view and enable_stock %}
-        <li><a href="{% url 'stock-index' %}"><span class='fas fa-boxes icon-header'></span>{% trans "Stock" %}</a></li>
+        {% if roles.stock.view %}
+        <li class='nav-item'>
+          <a class='nav-link' href="{% url 'stock-index' %}">
+            <span class='fas fa-boxes icon-header'></span>{% trans "Stock" %}
+          </a>
+        </li>
         {% endif %}
-        {% if roles.build.view and enable_build %}
-        <li><a href="{% url 'build-index' %}"><span class='fas fa-tools icon-header'></span>{% trans "Build" %}</a></li>
+        {% if roles.build.view %}
+        <li class='nav-item'>
+          <a class='nav-link' href="{% url 'build-index' %}">
+            <span class='fas fa-tools icon-header'></span>{% trans "Build" %}
+          </a>
+        </li>
         {% endif %}
-        {% if roles.purchase_order.view and enable_buy %}
-        <li class='nav navbar-nav'>
-          <a class='dropdown-toggle' data-toggle='dropdown' href='#'><span class='fas fa-shopping-cart icon-header'></span>{% trans "Buy" %}</a>
-          <ul class='dropdown-menu'>
-            <li><a href="{% url 'supplier-index' %}"><span class='fas fa-building icon-header'></span>{% trans "Suppliers" %}</a></li>
-            <li><a href="{% url 'manufacturer-index' %}"><span class='fas fa-industry icon-header'></span>{% trans "Manufacturers" %}</a></li>
-            {% if enable_po %}
-            <li><a href="{% url 'po-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Purchase Orders" %}</a></li>
-            {% endif %}
+        {% if roles.purchase_order.view %}
+        <li class='nav-item dropdown'>
+          <a class='nav-link dropdown-toggle' href='#' id='buyMenuDropdown' role='button' data-bs-toggle='dropdown'>
+            <span class='fas fa-shopping-cart icon-header'></span>{% trans "Buy" %}
+          </a>
+          <ul class='dropdown-menu' aria-labelledby="buyMenuDropdown">
+            <li><a class='dropdown-item' href="{% url 'supplier-index' %}"><span class='fas fa-building icon-header'></span>{% trans "Suppliers" %}</a></li>
+            <li><a class='dropdown-item' href="{% url 'manufacturer-index' %}"><span class='fas fa-industry icon-header'></span>{% trans "Manufacturers" %}</a></li>
+            <li><a class='dropdown-item' href="{% url 'po-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Purchase Orders" %}</a></li>
           </ul>
         </li>
         {% endif %}
-        {% if roles.sales_order.view and enable_sell %}
-        <li class='nav navbar-nav'>
-          <a class='dropdown-toggle' data-toggle='dropdown' href='#'><span class='fas fa-truck icon-header'></span>{% trans "Sell" %}</a>
+        {% if roles.sales_order.view %}
+        <li class='nav-item dropdown'>
+          <a class='nav-link dropdown-toggle' href='#' id='sellMenuDropdown' role='button' data-bs-toggle='dropdown'>
+            <span class='fas fa-truck icon-header'></span>{% trans "Sell" %}
+          </a>
           <ul class='dropdown-menu'>
             <li><a href="{% url 'customer-index' %}"><span class='fas fa-user-tie icon-header'></span>{% trans "Customers" %}</a>
             {% if enable_so %}
             <li><a href="{% url 'so-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Sales Orders" %}</a></li>
             {% endif %}
             <li><a href="{% url 'basket-index' %}"><span class='fas fa-shopping-basket icon-header'></span>{% trans "Baskets" %}</a></li>
+            <li><a class='dropdown-item' href="{% url 'customer-index' %}"><span class='fas fa-user-tie icon-header'></span>{% trans "Customers" %}</a>
+            <li><a class='dropdown-item' href="{% url 'so-index' %}"><span class='fas fa-list icon-header'></span>{% trans "Sales Orders" %}</a></li>
           </ul>
         </li>
         {% endif %}
       </ul>
-      <ul class="nav navbar-nav navbar-right">
-          {% include "search_form.html" %}
-          {% if barcodes %}
-          <li id='navbar-barcode-li'>
-            <button id='barcode-scan' class='btn btn-default' title='{% trans "Scan Barcode" %}'>
-                <span class='fas fa-qrcode'></span>
-            </button>
-          </li>
-          {% endif %}
-          <li class='dropdown'>
-            <a class='dropdown-toggle' data-toggle='dropdown' href="#">
-              {% if user.is_staff %}
-              {% if not system_healthy %}
-                <span class='fas fa-exclamation-triangle icon-red'></span>
-              {% elif not up_to_date %}
-              <span class='fas fa-info-circle icon-green'></span>
-              {% endif %}
-              {% endif %}
-              <span class="fas fa-user"></span> <strong>{{ user.get_username }}</strong></a>
-            <ul class='dropdown-menu'>
-                {% if user.is_authenticated %}
-                {% if user.is_staff %}
-                <li><a href="/admin/"><span class="fas fa-user"></span> {% trans "Admin" %}</a></li>
-                {% endif %}
-                <li><a href="{% url 'logout' %}"><span class="fas fa-sign-out-alt"></span> {% trans "Logout" %}</a></li>
-                {% else %}
-                <li><a href="{% url 'login' %}"><span class="fas fa-sign-in-alt"></span> {% trans "Login" %}</a></li>
-                {% endif %}
-                <hr>
-                <li><a href="{% url 'settings' %}"><span class="fas fa-cog"></span> {% trans "Settings" %}</a></li>
-                <li id='launch-stats'><a href='#'>
-                  {% if system_healthy or not user.is_staff %}
-                  <span class='fas fa-server'></span>
-                  {% else %}
-                  <span class='fas fa-server icon-red'></span>
-                  {% endif %}
-                  </span> {% trans "System Information" %}
-                </a></li>
-                <li id='launch-about'>
-                  <a href='#'>
-                    {% if up_to_date %}
-                    <span class="fas fa-info-circle">
-                    {% else %}
-                    <span class='fas fa-info-circle icon-red'>
-                    {% endif %}
-                    </span> {% trans "About InvenTree" %}
-                  </a>
-                </li>
-              </ul>
-            </li> 
-      </ul>
     </div>
+    {% include "search_form.html" %}
+    <ul class='navbar-nav flex-row'>
+      {% if barcodes %}
+      <li class='nav-item' id='navbar-barcode-li'>
+        <button id='barcode-scan' class='btn btn-secondary' title='{% trans "Scan Barcode" %}'>
+          <span class='fas fa-qrcode'></span>
+        </button>
+      </li>
+      {% endif %}
+      <li class='nav-item' id='navbar-barcode-li'>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-objects" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </li>
+      <li class='nav-item dropdown'>
+        <a class='nav-link dropdown-toggle' href='#' id='userMenuDropdown' role='button' data-bs-toggle='dropdown'>
+          <span class='fas fa-user'></span> <strong>{{ user.get_username }}</strong>
+        </a>
+        <ul class='dropdown-menu dropdown-menu-end inventree-navbar-menu'>
+          {% if user.is_authenticated %}
+          {% if user.is_staff %}
+          <li><a class='dropdown-item' href="/admin/"><span class="fas fa-user"></span> {% trans "Admin" %}</a></li>
+          {% endif %}
+          <li><a class='dropdown-item' href="{% url 'account_logout' %}"><span class="fas fa-sign-out-alt"></span> {% trans "Logout" %}</a></li>
+          {% else %}
+          <li><a class='dropdown-item' href="{% url 'account_login' %}"><span class="fas fa-sign-in-alt"></span> {% trans "Login" %}</a></li>
+          {% endif %}
+          <hr>
+          <li><a class='dropdown-item' href="{% url 'settings' %}"><span class="fas fa-cog"></span> {% trans "Settings" %}</a></li>
+          <li id='launch-stats'>
+            <a class='dropdown-item' href='#'>
+              {% if system_healthy or not user.is_staff %}
+              <span class='fas fa-server'></span>
+              {% else %}
+              <span class='fas fa-server icon-red'></span>
+              {% endif %}
+              {% trans "System Information" %}
+            </a>
+          </li>
+          <li id='launch-about'>
+            <a class='dropdown-item' href='#'>
+              {% if up_to_date %}
+              <span class="fas fa-info-circle"></span>
+              {% else %}
+              <span class='fas fa-info-circle icon-red'></span>
+              {% endif %}
+              {% trans "About InvenTree" %}
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
   </div>
 </nav>
+
+{% if sticky %}
+<div class='navbar-spacer'></div>
+{% endif %}

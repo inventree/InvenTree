@@ -17,13 +17,19 @@ from django.urls import reverse_lazy
 from django.shortcuts import redirect
 from django.conf import settings
 
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, FormView, DeleteView, UpdateView
 from django.views.generic.base import RedirectView, TemplateView
 
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
+from allauth.account.forms import AddEmailForm
+from allauth.socialaccount.forms import DisconnectForm
+from allauth.account.models import EmailAddress
+from allauth.account.views import EmailView, PasswordResetFromKeyView
+from allauth.socialaccount.views import ConnectionsView
+
 from common.settings import currency_code_default, currency_codes
 
 from part.models import Part, PartCategory
@@ -34,8 +40,6 @@ from users.models import check_user_role, RuleSet
 from .forms import DeleteForm, EditUserForm, SetPasswordForm
 from .forms import SettingCategorySelectForm
 from .helpers import str2bool
-
-from rest_framework import views
 
 
 def auth_request(request):
@@ -49,84 +53,6 @@ def auth_request(request):
         return HttpResponse(status=200)
     else:
         return HttpResponse(status=403)
-
-
-class TreeSerializer(views.APIView):
-    """ JSON View for serializing a Tree object.
-
-    Turns a 'tree' model into a JSON object compatible with bootstrap-treview.
-
-    Ref: https://github.com/jonmiles/bootstrap-treeview
-    """
-
-    @property
-    def root_url(self):
-        """ Return the root URL for the tree. Implementation is class dependent.
-
-        Default implementation returns #
-        """
-
-        return '#'
-
-    def itemToJson(self, item):
-
-        data = {
-            'pk': item.id,
-            'text': item.name,
-            'href': item.get_absolute_url(),
-            'tags': [item.item_count],
-        }
-
-        if item.has_children:
-            nodes = []
-
-            for child in item.children.all().order_by('name'):
-                nodes.append(self.itemToJson(child))
-
-            data['nodes'] = nodes
-
-        return data
-
-    def get_items(self):
-
-        return self.model.objects.all()
-
-    def generate_tree(self):
-
-        nodes = []
-
-        items = self.get_items()
-
-        # Construct the top-level items
-        top_items = [i for i in items if i.parent is None]
-
-        top_count = 0
-
-        # Construct the top-level items
-        top_items = [i for i in items if i.parent is None]
-
-        for item in top_items:
-            nodes.append(self.itemToJson(item))
-            top_count += item.item_count
-
-        self.tree = {
-            'pk': None,
-            'text': self.title,
-            'href': self.root_url,
-            'nodes': nodes,
-            'tags': [top_count],
-        }
-
-    def get(self, request, *args, **kwargs):
-        """ Respond to a GET request for the Tree """
-
-        self.generate_tree()
-
-        response = {
-            'tree': [self.tree]
-        }
-
-        return JsonResponse(response, safe=False)
 
 
 class InvenTreeRoleMixin(PermissionRequiredMixin):
@@ -729,17 +655,6 @@ class IndexView(TemplateView):
 
         context = super(TemplateView, self).get_context_data(**kwargs)
 
-        # TODO - Re-implement this when a less expensive method is worked out
-        # context['starred'] = [star.part for star in self.request.user.starred_parts.all()]
-
-        # Generate a list of orderable parts which have stock below their minimum values
-        # TODO - Is there a less expensive way to get these from the database
-        # context['to_order'] = [part for part in Part.objects.filter(purchaseable=True) if part.need_to_restock()]
-
-        # Generate a list of assembly parts which have stock below their minimum values
-        # TODO - Is there a less expensive way to get these from the database
-        # context['to_build'] = [part for part in Part.objects.filter(assembly=True) if part.need_to_restock()]
-
         return context
 
 
@@ -810,7 +725,45 @@ class SettingsView(TemplateView):
         except:
             ctx["locale_stats"] = {}
 
+        # Forms and context for allauth
+        ctx['add_email_form'] = AddEmailForm
+        ctx["can_add_email"] = EmailAddress.objects.can_add_email(self.request.user)
+
+        # Form and context for allauth social-accounts
+        ctx["request"] = self.request
+        ctx['social_form'] = DisconnectForm(request=self.request)
+
         return ctx
+
+
+class AllauthOverrides(LoginRequiredMixin):
+    """
+    Override allauths views to always redirect to success_url
+    """
+    def get(self, request, *args, **kwargs):
+        # always redirect to settings
+        return HttpResponseRedirect(self.success_url)
+
+
+class CustomEmailView(AllauthOverrides, EmailView):
+    """
+    Override of allauths EmailView to always show the settings but leave the functions allow
+    """
+    success_url = reverse_lazy("settings")
+
+
+class CustomConnectionsView(AllauthOverrides, ConnectionsView):
+    """
+    Override of allauths ConnectionsView to always show the settings but leave the functions allow
+    """
+    success_url = reverse_lazy("settings")
+
+
+class CustomPasswordResetFromKeyView(PasswordResetFromKeyView):
+    """
+    Override of allauths PasswordResetFromKeyView to always show the settings but leave the functions allow
+    """
+    success_url = reverse_lazy("account_login")
 
 
 class CurrencyRefreshView(RedirectView):

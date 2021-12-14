@@ -16,20 +16,18 @@
     <td><strong>{% trans setting.name %}</strong></td>
     <td>
         {% if setting.is_bool %}
-        <div>
-            <input fieldname='{{ setting.key.upper }}' id='setting-value-{{ setting.key.upper }}' type='checkbox' disabled='' {% if setting.as_bool %}checked=''{% endif %}>
+        <div class='form-check form-switch'>
+            <input class='form-check-input' fieldname='{{ setting.key.upper }}' id='setting-value-{{ setting.key.upper }}' type='checkbox' disabled='' {% if setting.as_bool %}checked=''{% endif %}>
         </div>
         {% else %}
         <div id='setting-{{ setting.pk }}'>
-            <strong>
             <span id='setting-value-{{ setting.key.upper }}' fieldname='{{ setting.key.upper }}'>
                 {% if setting.value %}
-                {{ setting.value }}
+                <strong>{{ setting.value }}</strong>
                 {% else %}
-                <em>{% trans "No value set" %}</em>
+                <em style='color: #855;'>{% trans "No value set" %}</em>
                 {% endif %}
             </span>
-            </strong>
             {{ setting.units }}
         </div>
         {% endif %}
@@ -38,7 +36,7 @@
     </td>
     <td>
         <div class='btn-group float-right'>
-            <button class='btn btn-default btn-glyph btn-edit-setting' pk='{{ setting.pk }}' setting='{{ setting.key.upper }}' title='{% trans "Edit setting" %}' {% if user_setting %}user='{{request.user.id}}'{% endif %}>
+            <button class='btn btn-outline-secondary btn-small btn-edit-setting' pk='{{ setting.pk }}' setting='{{ setting.key.upper }}' title='{% trans "Edit setting" %}' {% if user_setting %}user='{{request.user.id}}'{% endif %}>
                 <span class='fas fa-edit icon-green'></span>
             </button>
         </div>

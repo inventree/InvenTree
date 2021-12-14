@@ -20,12 +20,9 @@ class StatusCode:
             return key
 
         value = cls.options.get(key, key)
-        color = cls.colors.get(key, 'grey')
+        color = cls.colors.get(key, 'secondary')
 
-        if large:
-            span_class = 'label label-large label-large-{c}'.format(c=color)
-        else:
-            span_class = 'label label-{c}'.format(c=color)
+        span_class = f'badge rounded-pill bg-{color}'
 
         return "<span class='{cl}'>{value}</span>".format(
             cl=span_class,
@@ -110,12 +107,12 @@ class PurchaseOrderStatus(StatusCode):
     }
 
     colors = {
-        PENDING: 'blue',
-        PLACED: 'blue',
-        COMPLETE: 'green',
-        CANCELLED: 'red',
-        LOST: 'yellow',
-        RETURNED: 'yellow',
+        PENDING: 'primary',
+        PLACED: 'primary',
+        COMPLETE: 'success',
+        CANCELLED: 'danger',
+        LOST: 'warning',
+        RETURNED: 'warning',
     }
 
     # Open orders
@@ -160,7 +157,12 @@ class SalesOrderStatus(StatusCode):
         LOST: 'yellow',
         IN_BASKET:"purple",
         RETURNED: 'yellow',
-        WAITING_FOR_PACKING: 'orange'
+        WAITING_FOR_PACKING: 'orange',
+        PENDING: 'primary',
+        SHIPPED: 'success',
+        CANCELLED: 'danger',
+        LOST: 'warning',
+        RETURNED: 'warning',
     }
 
     # Open orders
@@ -199,12 +201,12 @@ class StockStatus(StatusCode):
     }
 
     colors = {
-        OK: 'green',
-        ATTENTION: 'yellow',
-        DAMAGED: 'red',
-        DESTROYED: 'red',
-        LOST: 'grey',
-        REJECTED: 'red',
+        OK: 'success',
+        ATTENTION: 'warning',
+        DAMAGED: 'danger',
+        DESTROYED: 'danger',
+        LOST: 'dark',
+        REJECTED: 'danger',
     }
 
     # The following codes correspond to parts that are 'available' or 'in stock'
@@ -340,10 +342,10 @@ class BuildStatus(StatusCode):
     }
 
     colors = {
-        PENDING: 'blue',
-        PRODUCTION: 'blue',
-        COMPLETE: 'green',
-        CANCELLED: 'red',
+        PENDING: 'secondary',
+        PRODUCTION: 'primary',
+        COMPLETE: 'success',
+        CANCELLED: 'danger',
     }
 
     ACTIVE_CODES = [

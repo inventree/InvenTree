@@ -11,8 +11,6 @@ build_detail_urls = [
     url(r'^delete/', views.BuildDelete.as_view(), name='build-delete'),
     url(r'^create-output/', views.BuildOutputCreate.as_view(), name='build-output-create'),
     url(r'^delete-output/', views.BuildOutputDelete.as_view(), name='build-output-delete'),
-    url(r'^complete-output/', views.BuildOutputComplete.as_view(), name='build-output-complete'),
-    url(r'^unallocate/', views.BuildUnallocate.as_view(), name='build-unallocate'),
     url(r'^complete/', views.BuildComplete.as_view(), name='build-complete'),
 
     url(r'^.*$', views.BuildDetail.as_view(), name='build-detail'),

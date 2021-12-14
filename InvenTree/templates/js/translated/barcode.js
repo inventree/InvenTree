@@ -10,7 +10,6 @@
     modalSetSubmitText,
     modalShowSubmitButton,
     modalSubmit,
-    showAlertOrCache,
     showQuestionDialog,
 */
 
@@ -38,7 +37,7 @@ function makeBarcodeInput(placeholderText='', hintText='') {
         <label class='control-label' for='barcode'>{% trans "Barcode" %}</label>
         <div class='controls'>
             <div class='input-group'>
-                <span class='input-group-addon'>
+                <span class='input-group-text'>
                     <span class='fas fa-qrcode'></span>
                 </span>
                 <input id='barcode' class='textinput textInput form-control' type='text' name='barcode' placeholder='${placeholderText}'>
@@ -61,7 +60,7 @@ function makeNotesField(options={}) {
         <label class='control-label' for='notes'>{% trans "Notes" %}</label>
         <div class='controls'>
             <div class='input-group'>
-                <span class='input-group-addon'>
+                <span class='input-group-text'>
                     <span class='fas fa-sticky-note'></span>
                 </span>
                 <input id='notes' class='textinput textInput form-control' type='text' name='notes' placeholder='${placeholder}'>
@@ -279,7 +278,7 @@ function barcodeDialog(title, options={}) {
 
     $(modal).modal({
         backdrop: 'static',
-        keyboard: false,
+        keyboard: user_settings.FORMS_CLOSE_USING_ESCAPE,
     });
 
     if (options.preShow) {
@@ -501,10 +500,13 @@ function barcodeCheckIn(location_id) {
                             $(modal).modal('hide');
                             if (status == 'success' && 'success' in response) {
 
-                                showAlertOrCache('alert-success', response.success, true);
+                                addCachedAlert(response.success);
                                 location.reload();
                             } else {
-                                showAlertOrCache('alert-success', '{% trans "Error transferring stock" %}', false);
+                                showMessage('{% trans "Error transferring stock" %}', {
+                                    style: 'danger',
+                                    icon: 'fas fa-times-circle',
+                                });
                             }
                         }
                     }
@@ -625,10 +627,12 @@ function scanItemsIntoLocation(item_id_list, options={}) {
                             $(modal).modal('hide');
 
                             if (status == 'success' && 'success' in response) {
-                                showAlertOrCache('alert-success', response.success, true);
+                                addCachedAlert(response.success);
                                 location.reload();
                             } else {
-                                showAlertOrCache('alert-danger', '{% trans "Error transferring stock" %}', false);
+                                showMessage('{% trans "Error transferring stock" %}', {
+                                    style: 'danger',
+                                });
                             }
                         }
                     }

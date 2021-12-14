@@ -68,14 +68,22 @@ class RuleSet(models.Model):
             'report_billofmaterialsreport',
             'report_purchaseorderreport',
             'report_salesorderreport',
+            'account_emailaddress',
+            'account_emailconfirmation',
+            'sites_site',
+            'socialaccount_socialaccount',
+            'socialaccount_socialapp',
+            'socialaccount_socialtoken',
         ],
         'part_category': [
             'part_partcategory',
             'part_partcategoryparametertemplate',
+            'part_partcategorystar',
         ],
         'part': [
             'part_part',
             'part_bomitem',
+            'part_bomitemsubstitute',
             'part_partattachment',
             'part_partsellpricebreak',
             'part_partinternalpricebreak',
@@ -84,6 +92,7 @@ class RuleSet(models.Model):
             'part_partparameter',
             'part_partrelated',
             'part_partstar',
+            'part_partcategorystar',
             'company_supplierpart',
             'company_manufacturerpart',
             'company_manufacturerpartparameter',
@@ -105,6 +114,7 @@ class RuleSet(models.Model):
             'part_part',
             'part_partcategory',
             'part_bomitem',
+            'part_bomitemsubstitute',
             'build_build',
             'build_builditem',
             'build_buildorderattachment',
@@ -145,6 +155,7 @@ class RuleSet(models.Model):
         'common_colortheme',
         'common_inventreesetting',
         'common_inventreeusersetting',
+        'common_notificationentry',
         'company_contact',
         'users_owner',
 
@@ -214,7 +225,10 @@ class RuleSet(models.Model):
                     return True
 
         # Print message instead of throwing an error
-        logger.info(f"User '{user.name}' failed permission check for {table}.{permission}")
+        name = getattr(user, 'name', user.pk)
+
+        logger.info(f"User '{name}' failed permission check for {table}.{permission}")
+
         return False
 
     @staticmethod

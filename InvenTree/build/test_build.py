@@ -118,6 +118,26 @@ class BuildTest(TestCase):
 
         self.stock_3_1 = StockItem.objects.create(part=self.sub_part_3, quantity=1000)
 
+    def test_ref_int(self):
+        """
+        Test the "integer reference" field used for natural sorting
+        """
+
+        for ii in range(10):
+            build = Build(
+                reference=f"{ii}_abcde",
+                quantity=1,
+                part=self.assembly,
+                title="Making some parts"
+            )
+
+            self.assertEqual(build.reference_int, 0)
+
+            build.save()
+
+            # After saving, the integer reference should have been updated
+            self.assertEqual(build.reference_int, ii)
+
     def test_init(self):
         # Perform some basic tests before we start the ball rolling
 
@@ -250,7 +270,7 @@ class BuildTest(TestCase):
 
         self.assertEqual(len(unallocated), 1)
 
-        self.build.unallocateUntracked()
+        self.build.unallocateStock()
 
         unallocated = self.build.unallocatedParts(None)
 
@@ -319,11 +339,11 @@ class BuildTest(TestCase):
         self.assertTrue(self.build.isFullyAllocated(self.output_1))
         self.assertTrue(self.build.isFullyAllocated(self.output_2))
 
-        self.build.completeBuildOutput(self.output_1, None)
+        self.build.complete_build_output(self.output_1, None)
 
         self.assertFalse(self.build.can_complete)
 
-        self.build.completeBuildOutput(self.output_2, None)
+        self.build.complete_build_output(self.output_2, None)
 
         self.assertTrue(self.build.can_complete)
 

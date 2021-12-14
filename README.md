@@ -9,7 +9,7 @@
 ![SQLite](https://github.com/inventree/inventree/actions/workflows/coverage.yaml/badge.svg)
 ![MySQL](https://github.com/inventree/inventree/actions/workflows/mysql.yaml/badge.svg)
 ![PostgreSQL](https://github.com/inventree/inventree/actions/workflows/postgresql.yaml/badge.svg)
-
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/InvenTree/InvenTree)
 
 InvenTree is an open-source Inventory Management System which provides powerful low-level stock control and part tracking. The core of the InvenTree system is a Python/Django database backend which provides an admin interface (web-based) and a JSON API for interaction with external interfaces and applications.
 
@@ -20,6 +20,7 @@ However, powerful business logic works in the background to ensure that stock tr
 # Docker
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/inventree/inventree)](https://hub.docker.com/r/inventree/inventree)
+![Docker Build](https://github.com/inventree/inventree/actions/workflows/docker_latest.yaml/badge.svg)
 
 InvenTree is [available via Docker](https://hub.docker.com/r/inventree/inventree). Read the [docker guide](https://inventree.readthedocs.io/en/latest/start/docker/) for full details.
 

@@ -10,19 +10,19 @@ from django.core.exceptions import ValidationError
 from django.views.generic import DetailView, ListView
 from django.forms import HiddenInput
 
-from part.models import Part
 from .models import Build
 from . import forms
-from stock.models import StockLocation, StockItem
+from stock.models import StockItem
 
 from InvenTree.views import AjaxUpdateView, AjaxDeleteView
 from InvenTree.views import InvenTreeRoleMixin
-from InvenTree.helpers import str2bool, extract_serial_numbers, isNull
-from InvenTree.status_codes import BuildStatus, StockStatus
+from InvenTree.helpers import str2bool, extract_serial_numbers
+from InvenTree.status_codes import BuildStatus
 
 
 class BuildIndex(InvenTreeRoleMixin, ListView):
-    """ View for displaying list of Builds
+    """
+    View for displaying list of Builds
     """
     model = Build
     template_name = 'build/index.html'
@@ -246,88 +246,6 @@ class BuildOutputDelete(AjaxUpdateView):
         }
 
 
-class BuildUnallocate(AjaxUpdateView):
-    """ View to un-allocate all parts from a build.
-
-    Provides a simple confirmation dialog with a BooleanField checkbox.
-    """
-
-    model = Build
-    form_class = forms.UnallocateBuildForm
-    ajax_form_title = _("Unallocate Stock")
-    ajax_template_name = "build/unallocate.html"
-
-    def get_initial(self):
-
-        initials = super().get_initial()
-
-        # Pointing to a particular build output?
-        output = self.get_param('output')
-
-        if output:
-            initials['output_id'] = output
-
-        # Pointing to a particular part?
-        part = self.get_param('part')
-
-        if part:
-            initials['part_id'] = part
-
-        return initials
-
-    def post(self, request, *args, **kwargs):
-
-        build = self.get_object()
-        form = self.get_form()
-
-        confirm = request.POST.get('confirm', False)
-
-        output_id = request.POST.get('output_id', None)
-
-        if output_id:
-
-            # If a "null" output is provided, we are trying to unallocate "untracked" stock
-            if isNull(output_id):
-                output = None
-            else:
-                try:
-                    output = StockItem.objects.get(pk=output_id)
-                except (ValueError, StockItem.DoesNotExist):
-                    output = None
-
-        part_id = request.POST.get('part_id', None)
-
-        try:
-            part = Part.objects.get(pk=part_id)
-        except (ValueError, Part.DoesNotExist):
-            part = None
-
-        valid = False
-
-        if confirm is False:
-            form.add_error('confirm', _('Confirm unallocation of build stock'))
-            form.add_error(None, _('Check the confirmation box'))
-        else:
-
-            valid = True
-
-            # Unallocate the entire build
-            if not output_id:
-                build.unallocateAll()
-            # Unallocate a single output
-            elif output:
-                build.unallocateOutput(output, part=part)
-            # Unallocate "untracked" parts
-            else:
-                build.unallocateUntracked(part=part)
-
-        data = {
-            'form_valid': valid,
-        }
-
-        return self.renderJsonResponse(request, form, data)
-
-
 class BuildComplete(AjaxUpdateView):
     """
     View to mark the build as complete.
@@ -361,178 +279,10 @@ class BuildComplete(AjaxUpdateView):
         }
 
 
-class BuildOutputComplete(AjaxUpdateView):
-    """
-    View to mark a particular build output as Complete.
-
-    - Notifies the user of which parts will be removed from stock.
-    - Assignes (tracked) allocated items from stock to the build output
-    - Deletes pending BuildItem objects
-    """
-
-    model = Build
-    form_class = forms.CompleteBuildOutputForm
-    context_object_name = "build"
-    ajax_form_title = _("Complete Build Output")
-    ajax_template_name = "build/complete_output.html"
-
-    def get_form(self):
-
-        build = self.get_object()
-
-        form = super().get_form()
-
-        # Extract the build output object
-        output = None
-        output_id = form['output'].value()
-
-        try:
-            output = StockItem.objects.get(pk=output_id)
-        except (ValueError, StockItem.DoesNotExist):
-            pass
-
-        if output:
-            if build.isFullyAllocated(output):
-                form.fields['confirm_incomplete'].widget = HiddenInput()
-
-        return form
-
-    def validate(self, build, form, **kwargs):
-        """
-        Custom validation steps for the BuildOutputComplete" form
-        """
-
-        data = form.cleaned_data
-
-        output = data.get('output', None)
-
-        stock_status = data.get('stock_status', StockStatus.OK)
-
-        # Any "invalid" stock status defaults to OK
-        try:
-            stock_status = int(stock_status)
-        except (ValueError):
-            stock_status = StockStatus.OK
-
-        if int(stock_status) not in StockStatus.keys():
-            form.add_error('stock_status', _('Invalid stock status value selected'))
-
-        if output:
-
-            quantity = data.get('quantity', None)
-
-            if quantity and quantity > output.quantity:
-                form.add_error('quantity', _('Quantity to complete cannot exceed build output quantity'))
-
-            if not build.isFullyAllocated(output):
-                confirm = str2bool(data.get('confirm_incomplete', False))
-
-                if not confirm:
-                    form.add_error('confirm_incomplete', _('Confirm completion of incomplete build'))
-
-        else:
-            form.add_error(None, _('Build output must be specified'))
-
-    def get_initial(self):
-        """ Get initial form data for the CompleteBuild form
-
-        - If the part being built has a default location, pre-select that location
-        """
-
-        initials = super().get_initial()
-        build = self.get_object()
-
-        if build.part.default_location is not None:
-            try:
-                location = StockLocation.objects.get(pk=build.part.default_location.id)
-                initials['location'] = location
-            except StockLocation.DoesNotExist:
-                pass
-
-        output = self.get_param('output', None)
-
-        if output:
-            try:
-                output = StockItem.objects.get(pk=output)
-            except (ValueError, StockItem.DoesNotExist):
-                output = None
-
-        # Output has not been supplied? Try to "guess"
-        if not output:
-
-            incomplete = build.get_build_outputs(complete=False)
-
-            if incomplete.count() == 1:
-                output = incomplete[0]
-
-        if output is not None:
-            initials['output'] = output
-
-        initials['location'] = build.destination
-
-        return initials
-
-    def get_context_data(self, **kwargs):
-        """
-        Get context data for passing to the rendered form
-
-        - Build information is required
-        """
-
-        build = self.get_object()
-
-        context = {}
-
-        # Build object
-        context['build'] = build
-
-        form = self.get_form()
-
-        output = form['output'].value()
-
-        if output:
-            try:
-                output = StockItem.objects.get(pk=output)
-                context['output'] = output
-                context['fully_allocated'] = build.isFullyAllocated(output)
-                context['allocated_parts'] = build.allocatedParts(output)
-                context['unallocated_parts'] = build.unallocatedParts(output)
-            except (ValueError, StockItem.DoesNotExist):
-                pass
-
-        return context
-
-    def save(self, build, form, **kwargs):
-
-        data = form.cleaned_data
-
-        location = data.get('location', None)
-        output = data.get('output', None)
-        stock_status = data.get('stock_status', StockStatus.OK)
-
-        # Any "invalid" stock status defaults to OK
-        try:
-            stock_status = int(stock_status)
-        except (ValueError):
-            stock_status = StockStatus.OK
-
-        # Complete the build output
-        build.completeBuildOutput(
-            output,
-            self.request.user,
-            location=location,
-            status=stock_status,
-        )
-
-    def get_data(self):
-        """ Provide feedback data back to the form """
-        return {
-            'success': _('Build output completed')
-        }
-
-
 class BuildDetail(InvenTreeRoleMixin, DetailView):
-    """ Detail view of a single Build object. """
+    """
+    Detail view of a single Build object.
+    """
 
     model = Build
     template_name = 'build/detail.html'
@@ -560,7 +310,9 @@ class BuildDetail(InvenTreeRoleMixin, DetailView):
 
 
 class BuildDelete(AjaxDeleteView):
-    """ View to delete a build """
+    """
+    View to delete a build
+    """
 
     model = Build
     ajax_template_name = 'build/delete_build.html'

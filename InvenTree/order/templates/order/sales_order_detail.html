@@ -10,16 +10,27 @@
 
 {% block menubar %}
 {% include "order/so_navbar.html"  %}
+{% block sidebar %}
+{% include "order/so_sidebar.html"  %}
 {% endblock %}
 
 {% block page_content %}
 
-<div class='panel panel-default panel-inventree panel-hidden' id='panel-order-items'>
+<div class='panel panel-hidden' id='panel-order-items'>
     <div class='panel-heading'>
-        <h4>{% trans "Sales Order Items" %}</h4>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Sales Order Items" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.sales_order.change %}
+                <button type='button' class='btn btn-success' id='new-so-line'>
+                    <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
-        {% if roles.sales_order.change %}
         <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
             <button type='button' class='btn btn-success' id='new-so-line'>
                 <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
@@ -34,14 +45,16 @@
                 <span class='fas fa-box-open'></span> {% trans "Fulfill by barcode item" %}
             </button>
             {% endif %}
+            <div class='btn-group'>
+                {% include "filter_list.html" with id="sales-order-lines" %}
+            </div>
         </div>
-        {% endif %}
         <table class='table table-striped table-condensed' id='so-lines-table' data-toolbar='#order-toolbar-buttons'>
         </table>
     </div>
 </div>
 
-<div class='panel panel-default panel-inventree panel-hidden' id='panel-order-builds'>
+<div class='panel panel-hidden' id='panel-order-builds'>
     <div class='panel-heading'>
         <h4>{% trans "Build Orders" %}</h4>
     </div>
@@ -50,16 +63,22 @@
     </div>
 </div>
 
-<div class='panel panel-default panel-inventree panel-hidden' id='panel-order-attachments'>
+<div class='panel panel-hidden' id='panel-order-attachments'>
     <div class='panel-heading'>
-        <h4>{% trans "Attachments" %}</h4>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Attachments" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% include "attachment_button.html" %}
+            </div>
+        </div>
     </div>
     <div class='panel-content'>
         {% include "attachment_table.html" %}
     </div>
 </div>
 
-<div class='panel panel-default panel-inventree panel-hidden' id='panel-order-notes'>
+<div class='panel panel-hidden' id='panel-order-notes'>
     <div class='panel-heading'>
         <div class='row'>
             <div class='col-sm-6'>
@@ -67,7 +86,7 @@
             </div>
             <div class='col-sm-6'>
                 <div class='btn-group float-right'>
-                    <button type='button' id='edit-notes' title='{% trans "Edit Notes" %}' class='btn btn-small btn-default'>
+                    <button type='button' id='edit-notes' title='{% trans "Edit Notes" %}' class='btn outline-secondary'>
                         <span class='fas fa-edit'>      
                         </span>
                     </button>
@@ -212,4 +231,6 @@
         scanBarcodeForFulfill()
     })
 
+    enableSidebar('salesorder');
+    
 {% endblock %}

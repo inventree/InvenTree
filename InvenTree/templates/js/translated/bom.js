@@ -35,6 +35,18 @@ function bomItemFields() {
             hidden: true,
         },
         sub_part: {
+            secondary: {
+                title: '{% trans "New Part" %}',
+                fields: function() {
+                    var fields = partFields();
+
+                    // Set to a "component" part
+                    fields.component.value = true;
+
+                    return fields;
+                },
+                groups: partGroups(),
+            }
         },
         quantity: {},
         reference: {},
@@ -131,6 +143,174 @@ function newPartFromBomWizard(e) {
 }
 
 
+/*
+ * Launch a modal dialog displaying the "substitute parts" for a particular BomItem
+ *
+ * If editable, allows substitutes to be added and deleted
+ */
+function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
+
+    // Reload data for the parent table
+    function reloadParentTable() {
+        if (options.table) {
+            options.table.bootstrapTable('refresh');
+        }
+    }
+
+    // Extract a list of all existing "substitute" id values
+    function getSubstituteIdValues(modal) {
+
+        var id_values = [];
+
+        $(modal).find('.substitute-row').each(function(el) {
+            var part = $(this).attr('part');
+            id_values.push(part);
+        });
+
+        return id_values;
+    }
+
+    function renderSubstituteRow(substitute) {
+
+        var pk = substitute.pk;
+
+        var part = substitute.part_detail;
+
+        var thumb = thumbnailImage(part.thumbnail || part.image);
+
+        var buttons = '';
+
+        buttons += makeIconButton('fa-times icon-red', 'button-row-remove', pk, '{% trans "Remove substitute part" %}');
+
+        // Render a single row
+        var html = `
+        <tr id='substitute-row-${pk}' class='substitute-row' part='${substitute.part}'>
+            <td id='part-${pk}'>
+                <a href='/part/${part.pk}/'>
+                    ${thumb} ${part.full_name}
+                </a>
+            </td>
+            <td id='description-${pk}'><em>${part.description}</em></td>
+            <td>${buttons}</td>
+        </tr>
+        `;
+
+        return html;
+    }
+
+    // Construct a table to render the rows
+    var rows = '';
+
+    substitutes.forEach(function(sub) {
+        rows += renderSubstituteRow(sub);
+    });
+
+    var html = `
+    <table class='table table-striped table-condensed' id='substitute-table'>
+        <thead>
+            <tr>
+                <th>{% trans "Part" %}</th>
+                <th>{% trans "Description" %}</th>
+                <th><!-- Actions --></th>
+            </tr>
+        </thead>
+        <tbody>
+            ${rows}
+        </tbody>
+    </table>
+    `;
+
+    html += `
+    <div class='alert alert-success alert-block'>
+        {% trans "Select and add a new variant item using the input below" %}
+    </div>
+    `;
+
+    // Add a callback to remove a row from the table
+    function addRemoveCallback(modal, element) {
+        $(modal).find(element).click(function() {
+            var pk = $(this).attr('pk');
+
+            var pre = `
+            <div class='alert alert-block alert-warning'>
+            {% trans "Are you sure you wish to remove this substitute part link?" %}
+            </div>
+            `;
+
+            constructForm(`/api/bom/substitute/${pk}/`, {
+                method: 'DELETE',
+                title: '{% trans "Remove Substitute Part" %}',
+                preFormContent: pre,
+                confirm: true,
+                onSuccess: function() {
+                    $(modal).find(`#substitute-row-${pk}`).remove();
+                    reloadParentTable();
+                }
+            });
+        });
+    }
+
+    constructForm('{% url "api-bom-substitute-list" %}', {
+        method: 'POST',
+        fields: {
+            bom_item: {
+                hidden: true,
+                value: bom_item_id,
+            },
+            part: {
+                required: false,
+                adjustFilters: function(query, opts) {
+
+                    var subs = getSubstituteIdValues(opts.modal);
+
+                    // Also exclude the "master" part (if provided)
+                    if (options.sub_part) {
+                        subs.push(options.sub_part);
+                    }
+
+                    if (subs.length > 0) {
+                        query.exclude_id = subs;
+                    }
+
+                    return query;
+                }
+            },
+        },
+        preFormContent: html,
+        cancelText: '{% trans "Close" %}',
+        submitText: '{% trans "Add Substitute" %}',
+        title: '{% trans "Edit BOM Item Substitutes" %}',
+        afterRender: function(fields, opts) {
+            addRemoveCallback(opts.modal, '.button-row-remove');
+        },
+        preventClose: true,
+        onSuccess: function(response, opts) {
+
+            // Clear the form
+            var field = {
+                type: 'related field',
+            };
+
+            updateFieldValue('part', null, field, opts);
+
+            // Add the new substitute to the table
+            var row = renderSubstituteRow(response);
+            $(opts.modal).find('#substitute-table > tbody:last-child').append(row);
+
+            // Add a callback to the new button
+            addRemoveCallback(opts.modal, `#button-row-remove-${response.pk}`);
+
+            // Re-enable the "submit" button
+            $(opts.modal).find('#modal-form-submit').prop('disabled', false);
+            
+            // Reload the parent BOM table
+            reloadParentTable();
+        }
+    });
+
+}
+
+
 function loadBomTable(table, options) {
     /* Load a BOM table with some configurable options.
      * 
@@ -217,9 +397,17 @@ function loadBomTable(table, options) {
 
                 html += makePartIcons(row.sub_part_detail);
 
+                if (row.substitutes && row.substitutes.length > 0) {
+                    html += makeIconBadge('fa-exchange-alt', '{% trans "Substitutes Available" %}');
+                }
+
+                if (row.allow_variants) {
+                    html += makeIconBadge('fa-sitemap', '{% trans "Variant stock allowed" %}');
+                }
+
                 // Display an extra icon if this part is an assembly
                 if (sub_part.assembly) {
-                    var text = `<span title='{% trans "Open subassembly" %}' class='fas fa-stream label-right'></span>`;
+                    var text = `<span title='{% trans "Open subassembly" %}' class='fas fa-stream float-right'></span>`;
 
                     html += renderLink(text, `/part/${row.sub_part}/bom/`);
                 }
@@ -282,10 +470,24 @@ function loadBomTable(table, options) {
             var text = value;
 
             if (value == null || value <= 0) {
-                text = `<span class='label label-warning'>{% trans "No Stock" %}</span>`;
+                text = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
             }
 
             return renderLink(text, url);
+        }
+    });
+
+    cols.push({
+        field: 'substitutes',
+        title: '{% trans "Substitutes" %}',
+        searchable: false,
+        sortable: true,
+        formatter: function(value, row) {
+            if (row.substitutes && row.substitutes.length > 0) {
+                return row.substitutes.length;
+            } else {
+                return `-`;
+            }
         }
     });
     
@@ -408,24 +610,27 @@ function loadBomTable(table, options) {
 
                 if (row.part == options.parent_id) {
 
-                    var bValidate = `<button title='{% trans "Validate BOM Item" %}' class='bom-validate-button btn btn-default btn-glyph' type='button' pk='${row.pk}'><span class='fas fa-check-circle icon-blue'/></button>`;
+                    var bValidate = makeIconButton('fa-check-circle icon-green', 'bom-validate-button', row.pk, '{% trans "Validate BOM Item" %}');
 
-                    var bValid = `<span title='{% trans "This line has been validated" %}' class='fas fa-check-double icon-green'/>`;
+                    var bValid = makeIconButton('fa-check-double icon-green', 'bom-valid-button', row.pk, '{% trans "This line has been validated" %}', {disabled: true});
 
-                    var bEdit = `<button title='{% trans "Edit BOM Item" %}' class='bom-edit-button btn btn-default btn-glyph' type='button' pk='${row.pk}'><span class='fas fa-edit'></span></button>`;
+                    var bSubs = makeIconButton('fa-exchange-alt icon-blue', 'bom-substitutes-button', row.pk, '{% trans "Edit substitute parts" %}');
 
-                    var bDelt = `<button title='{% trans "Delete BOM Item" %}' class='bom-delete-button btn btn-default btn-glyph' type='button' pk='${row.pk}'><span class='fas fa-trash-alt icon-red'></span></button>`;
+                    var bEdit = makeIconButton('fa-edit icon-blue', 'bom-edit-button', row.pk, '{% trans "Edit BOM Item" %}');
 
-                    var html = `<div class='btn-group' role='group'>`;
+                    var bDelt = makeIconButton('fa-trash-alt icon-red', 'bom-delete-button', row.pk, '{% trans "Delete BOM Item" %}');
 
-                    html += bEdit;
-                    html += bDelt;
+                    var html = `<div class='btn-group float-right' role='group' style='min-width: 100px;'>`;
 
                     if (!row.validated) {
                         html += bValidate;
                     } else {
                         html += bValid;
                     }
+
+                    html += bEdit;
+                    html += bSubs;
+                    html += bDelt;
 
                     html += `</div>`;
 
@@ -478,6 +683,7 @@ function loadBomTable(table, options) {
         treeEnable: !options.editable,
         rootParentId: parent_id,
         idField: 'pk',
+        uniqueId: 'pk',
         parentIdField: 'parentId',
         treeShowField: 'sub_part',
         showColumns: true,
@@ -554,19 +760,27 @@ function loadBomTable(table, options) {
     // In editing mode, attached editables to the appropriate table elements
     if (options.editable) {
 
+        // Callback for "delete" button
         table.on('click', '.bom-delete-button', function() {
 
             var pk = $(this).attr('pk');
 
+            var html = `
+            <div class='alert alert-block alert-danger'>
+            {% trans "Are you sure you want to delete this BOM item?" %}
+            </div>`;
+
             constructForm(`/api/bom/${pk}/`, {
                 method: 'DELETE',
                 title: '{% trans "Delete BOM Item" %}',
+                preFormContent: html,
                 onSuccess: function() {
                     reloadBomTable(table);
                 }
             }); 
         });
 
+        // Callback for "edit" button
         table.on('click', '.bom-edit-button', function() {
 
             var pk = $(this).attr('pk');
@@ -576,12 +790,14 @@ function loadBomTable(table, options) {
             constructForm(`/api/bom/${pk}/`, {
                 fields: fields,
                 title: '{% trans "Edit BOM Item" %}',
+                focus: 'sub_part',
                 onSuccess: function() {
                     reloadBomTable(table);
                 }
             });
         });
 
+        // Callback for "validate" button
         table.on('click', '.bom-validate-button', function() {
 
             var pk = $(this).attr('pk');
@@ -597,6 +813,23 @@ function loadBomTable(table, options) {
                     success: function() {
                         reloadBomTable(table);
                     }
+                }
+            );
+        });
+
+        // Callback for "substitutes" button
+        table.on('click', '.bom-substitutes-button', function() {
+            var pk = $(this).attr('pk');
+
+            var row = table.bootstrapTable('getRowByUniqueId', pk);
+            var subs = row.substitutes || [];
+
+            bomSubstitutesDialog(
+                pk,
+                subs,
+                {
+                    table: table,
+                    sub_part: row.sub_part,
                 }
             );
         });
