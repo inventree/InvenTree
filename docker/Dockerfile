@@ -59,7 +59,7 @@ RUN apk -U upgrade
 # Install required system packages
 RUN apk add --no-cache git make bash \
     gcc libgcc g++ libstdc++ \
-    libjpeg-turbo libjpeg-turbo-dev jpeg jpeg-dev \
+    libjpeg-turbo libjpeg-turbo-dev jpeg jpeg-dev openjpeg-dev jpeg-dev \
     libffi libffi-dev \
     zlib zlib-dev \
     # Required deps for WeasyPrint
