@@ -73,6 +73,9 @@ class RuleSet(models.Model):
             'socialaccount_socialaccount',
             'socialaccount_socialapp',
             'socialaccount_socialtoken',
+            'otp_totp_totpdevice',
+            'otp_static_statictoken',
+            'otp_static_staticdevice',
             'plugin_pluginconfig'
         ],
         'part_category': [
@@ -237,7 +240,7 @@ class RuleSet(models.Model):
         given the app_model name, and the permission type.
         """
 
-        app, model = model.split('_')
+        model, app = split_model(model)
 
         return "{app}.{perm}_{model}".format(
             app=app,
@@ -278,6 +281,30 @@ class RuleSet(models.Model):
         """
 
         return self.RULESET_MODELS.get(self.name, [])
+
+
+def split_model(model):
+    """get modelname and app from modelstring"""
+    *app, model = model.split('_')
+
+    # handle models that have
+    if len(app) > 1:
+        app = '_'.join(app)
+    else:
+        app = app[0]
+
+    return model, app
+
+
+def split_permission(app, perm):
+    """split permission string into permission and model"""
+    permission_name, *model = perm.split('_')
+    # handle models that have underscores
+    if len(model) > 1:
+        app += '_' + '_'.join(model[:-1])
+        perm = permission_name + '_' + model[-1:][0]
+    model = model[-1:][0]
+    return perm, model
 
 
 def update_group_roles(group, debug=False):
@@ -383,7 +410,7 @@ def update_group_roles(group, debug=False):
 
         (app, perm) = permission_string.split('.')
 
-        (permission_name, model) = perm.split('_')
+        perm, model = split_permission(app, perm)
 
         try:
             content_type = ContentType.objects.get(app_label=app, model=model)

@@ -154,6 +154,18 @@ def clean_settings(c):
     manage(c, "clean_settings")
 
 
+@task(help={'mail': 'mail of the user whos MFA should be disabled'})
+def remove_mfa(c, mail=''):
+    """
+    Remove MFA for a user
+    """
+
+    if not mail:
+        print('You must provide a users mail')
+
+    manage(c, f"remove_mfa {mail}")
+
+
 @task(post=[rebuild_models, rebuild_thumbnails])
 def migrate(c):
     """

@@ -1,12 +1,18 @@
 from django.shortcuts import HttpResponseRedirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, Resolver404
 from django.db import connection
 from django.shortcuts import redirect
+from django.conf.urls import include, url
 import logging
 import time
 import operator
 
 from rest_framework.authtoken.models import Token
+from allauth_2fa.middleware import BaseRequire2FAMiddleware, AllauthTwoFactorMiddleware
+
+from InvenTree.urls import frontendpatterns
+from common.models import InvenTreeSetting
+
 
 logger = logging.getLogger("inventree")
 
@@ -146,3 +152,28 @@ class QueryCountMiddleware(object):
                     print(x[0], ':', x[1])
 
         return response
+
+
+url_matcher = url('', include(frontendpatterns))
+
+
+class Check2FAMiddleware(BaseRequire2FAMiddleware):
+    """check if user is required to have MFA enabled"""
+    def require_2fa(self, request):
+        # Superusers are require to have 2FA.
+        try:
+            if url_matcher.resolve(request.path[1:]):
+                return InvenTreeSetting.get_setting('LOGIN_ENFORCE_MFA')
+        except Resolver404:
+            pass
+        return False
+
+
+class CustomAllauthTwoFactorMiddleware(AllauthTwoFactorMiddleware):
+    """This function ensures only frontend code triggers the MFA auth cycle"""
+    def process_request(self, request):
+        try:
+            if not url_matcher.resolve(request.path[1:]):
+                super().process_request(request)
+        except Resolver404:
+            pass
