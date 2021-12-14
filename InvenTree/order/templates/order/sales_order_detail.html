@@ -10,6 +10,7 @@
 
 {% block menubar %}
 {% include "order/so_navbar.html"  %}
+{% endblock %}
 {% block sidebar %}
 {% include "order/so_sidebar.html"  %}
 {% endblock %}
@@ -217,11 +218,6 @@
             status: {{ order.status }},
         }
     );
-
-    attachNavCallbacks({
-        name: 'sales-order',
-        default: 'order-items'
-    });
 
     $("#barcode-scan-into-basket").click(function() {
         scanOrderIntoBasket([{{ order.id }}]);
