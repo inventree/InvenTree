@@ -1192,13 +1192,9 @@ class BomExport(AjaxView):
     """
 
     model = Part
-    form_class = part_forms.BomExportForm
     ajax_form_title = _("Export Bill of Materials")
 
     role_required = 'part.view'
-
-    def get(self, request, *args, **kwargs):
-        return self.renderJsonResponse(request, self.form_class())
 
     def post(self, request, *args, **kwargs):
 
