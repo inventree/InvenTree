@@ -12,7 +12,7 @@ on:
       - l10*
 
 env:
-  python_version: 3.7
+  python_version: 3.8
   node_version: 16
 
   server_start_sleep: 60
@@ -284,9 +284,9 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install mysql-server-8.0 mysql-client-8.0 default-libmysqlclient-dev
+          sudo apt-get install mysql-server default-libmysqlclient-dev
           pip3 install invoke
-          pip3 install mysqlclient==2.1.0
+          pip3 install mysqlclient
           invoke install
       - name: Run Tests
         run: invoke test
