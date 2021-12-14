@@ -72,7 +72,7 @@ if __name__ == '__main__':
 
         if verbose:
             print(f"| {locale.ljust(4, ' ')} : {str(percentage).rjust(4, ' ')}% |")
-    
+
         locales_perc[locale] = percentage
 
         percentages.append(percentage)
