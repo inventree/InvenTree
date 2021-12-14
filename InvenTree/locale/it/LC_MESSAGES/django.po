@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-14 12:17+0000\n"
-"PO-Revision-Date: 2021-12-14 12:53\n"
+"PO-Revision-Date: 2021-12-14 14:48\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -117,11 +117,11 @@ msgstr "Il numero dei numeri seriali univoci ({s}) deve essere uguale alla quant
 
 #: InvenTree/models.py:120
 msgid "Missing file"
-msgstr ""
+msgstr "File mancante"
 
 #: InvenTree/models.py:121
 msgid "Missing external link"
-msgstr ""
+msgstr "Link esterno mancante"
 
 #: InvenTree/models.py:132 stock/models.py:1852
 #: templates/js/translated/attachment.js:117
