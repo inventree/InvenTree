@@ -121,14 +121,25 @@ translated_javascript_urls = [
     url(r'^table_filters.js', DynamicJsView.as_view(template_name='js/translated/table_filters.js'), name='table_filters.js'),
 ]
 
-urlpatterns = [
-    url(r'^part/', include(part_urls)),
-    url(r'^manufacturer-part/', include(manufacturer_part_urls)),
-    url(r'^supplier-part/', include(supplier_part_urls)),
-
+backendpatterns = [
     # "Dynamic" javascript files which are rendered using InvenTree templating.
     url(r'^js/dynamic/', include(dynamic_javascript_urls)),
     url(r'^js/i18n/', include(translated_javascript_urls)),
+
+    url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^auth/?', auth_request),
+
+    url(r'^api/', include(apipatterns)),
+    url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
+
+    # 3rd party endpoints
+    url(r'^markdownx/', include('markdownx.urls')),
+]
+
+frontendpatterns = [
+    url(r'^part/', include(part_urls)),
+    url(r'^manufacturer-part/', include(manufacturer_part_urls)),
+    url(r'^supplier-part/', include(supplier_part_urls)),
 
     url(r'^common/', include(common_urls)),
 
@@ -139,30 +150,22 @@ urlpatterns = [
 
     url(r'^build/', include(build_urls)),
 
-    url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
-
     url(r'^settings/', include(settings_urls)),
 
     url(r'^edit-user/', EditUserView.as_view(), name='edit-user'),
     url(r'^set-password/', SetPasswordView.as_view(), name='set-password'),
 
-    url(r'^admin/error_log/', include('error_report.urls')),
-    url(r'^admin/shell/', include('django_admin_shell.urls')),
-    url(r'^admin/', admin.site.urls, name='inventree-admin'),
-
     url(r'^index/', IndexView.as_view(), name='index'),
     url(r'^search/', SearchView.as_view(), name='search'),
     url(r'^stats/', DatabaseStatsView.as_view(), name='stats'),
 
-    url(r'^auth/?', auth_request),
-
-    url(r'^api/', include(apipatterns)),
-    url(r'^api-doc/', include_docs_urls(title='InvenTree API')),
-
     # plugin urls
     get_plugin_urls(),  # appends currently loaded plugin urls = None
 
-    url(r'^markdownx/', include('markdownx.urls')),
+    # admin sites
+    url(r'^admin/error_log/', include('error_report.urls')),
+    url(r'^admin/shell/', include('django_admin_shell.urls')),
+    url(r'^admin/', admin.site.urls, name='inventree-admin'),
 
     # DB user sessions
     url(r'^accounts/sessions/other/delete/$', view=CustomSessionDeleteOtherView.as_view(), name='session_delete_other', ),
@@ -173,7 +176,13 @@ urlpatterns = [
     url(r'^accounts/email/', CustomEmailView.as_view(), name='account_email'),
     url(r'^accounts/social/connections/', CustomConnectionsView.as_view(), name='socialaccount_connections'),
     url(r"^accounts/password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/$", CustomPasswordResetFromKeyView.as_view(), name="account_reset_password_from_key"),
-    url(r'^accounts/', include('allauth.urls')),  # included urlpatterns
+    url(r'^accounts/', include('allauth_2fa.urls')),    # MFA support
+    url(r'^accounts/', include('allauth.urls')),        # included urlpatterns
+]
+
+urlpatterns = [
+    url('', include(frontendpatterns)),
+    url('', include(backendpatterns)),
 ]
 
 # Server running in "DEBUG" mode?

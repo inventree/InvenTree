@@ -215,7 +215,7 @@
 }
 
 .treeview .list-group-item {
-    padding: 10px 5px;
+    padding: 3px 5px;
 }
 
 .treeview .list-group-item .indent {
@@ -539,7 +539,7 @@
     padding: 0px 10px;
 }
 
-.breadcrump {
+.breadcrumb {
     margin-bottom: 5px;
     margin-left: 5px;
     margin-right: 10px;

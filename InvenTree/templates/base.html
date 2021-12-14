@@ -35,13 +35,13 @@
 
     <div class='row flex-nowrap inventree-body'>
         <div class='col-auto px-1 sidebar-wrapper'>
-            <div id='sidebar' class='collapse collapse-horizontal show border-end' style='display: none;'>
+            <div id='sidebar' class='collapse collapse-horizontal show' style='display: none;'>
                 <div id='sidebar-nav' class='list-group text-sm-start'>
                     <ul id='sidebar-list-group' class='list-group sidebar-list-group'>
                         {% block sidebar %}
                         <!-- Sidebar goes here -->
                         {% endblock %}
-                        {% include "sidebar_toggle.html" %}
+                        {% include "sidebar_toggle.html" with target='sidebar' %}
                     </ul>
                 </div>
             </div>
@@ -65,14 +65,20 @@
             {% endblock %}
 
             {% block breadcrumb_list %}
-            <div class='container-fluid navigation'>
+            <div class='container-fluid navigation' id='breadcrumb-div'>
                 <nav aria-label='breadcrumb'>
-                    <ol class='breadcrumb'>
+                    <ol class='breadcrumb' id='breadcrumb-list'>
                         {% block breadcrumbs %}
                         {% endblock %}
                     </ol>
                 </nav>
+
+                <div id='breadcrumb-tree-collapse' class='collapse collapse-horizontal show border' style='display: none;'>
+                    {% block breadcrumb_tree %}
+                    {% endblock %}
+                </div>
             </div>
+
             {% endblock %}
 
             {% block content %}
