@@ -62,8 +62,8 @@ RUN apk add --no-cache git make bash \
     libjpeg-turbo libjpeg-turbo-dev jpeg jpeg-dev \
     libffi libffi-dev \
     zlib zlib-dev \
-    # Cairo deps for WeasyPrint (these will be deprecated once WeasyPrint drops cairo requirement)
-    cairo cairo-dev pango pango-dev \
+    # Required deps for WeasyPrint
+    pango \
     # Fonts
     fontconfig ttf-droid ttf-liberation ttf-dejavu ttf-opensans ttf-ubuntu-font-family font-croscore font-noto \
     # Core python
