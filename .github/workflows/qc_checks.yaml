@@ -284,9 +284,9 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install mysql-server-8.0 mysql-client-8.0 libmysqlclient-dev
+          sudo apt-get install mysql-server-8.0 mysql-client-8.0 default-libmysqlclient-dev
           pip3 install invoke
-          pip3 install mysqlclient
+          pip3 install mysqlclient==2.1.0
           invoke install
       - name: Run Tests
         run: invoke test
