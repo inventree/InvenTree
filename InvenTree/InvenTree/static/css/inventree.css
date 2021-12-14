@@ -215,7 +215,7 @@
 }
 
 .treeview .list-group-item {
-    padding: 10px 5px;
+    padding: 3px 5px;
 }
 
 .treeview .list-group-item .indent {
@@ -438,6 +438,12 @@
     width: 30%;
 }
 
+/* tracking table column size */
+#track-table .table-condensed th {
+    inline-size: 30%;
+    overflow-wrap: break-word;
+}
+
 .panel-heading .badge {
     float: right;
 }
@@ -533,7 +539,7 @@
     padding: 0px 10px;
 }
 
-.breadcrump {
+.breadcrumb {
     margin-bottom: 5px;
     margin-left: 5px;
     margin-right: 10px;
@@ -781,6 +787,7 @@ input[type="submit"] {
 .btn-small {
     padding: 3px;
     padding-left: 5px;
+    padding-right: 5px;
 }
 
 .btn-remove {

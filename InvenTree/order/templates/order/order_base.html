@@ -53,15 +53,17 @@
     <span class='fas fa-shopping-cart icon-blue'></span>
 </button>
 {% elif order.status == PurchaseOrderStatus.PLACED %}
-<button type='button' class='btn btn-outline-secondary' id='receive-order' title='{% trans "Receive items" %}'>
-    <span class='fas fa-sign-in-alt icon-blue'></span>
+<button type='button' class='btn btn-primary' id='receive-order' title='{% trans "Receive items" %}'>
+    <span class='fas fa-sign-in-alt'></span>
+    {% trans "Receive Items" %}
 </button>
-<button type='button' class='btn btn-outline-secondary' id='complete-order' title='{% trans "Mark order as complete" %}'>
-    <span class='fas fa-check-circle icon-green'></span>
+<button type='button' class='btn btn-success' id='complete-order' title='{% trans "Mark order as complete" %}'>
+    <span class='fas fa-check-circle'></span>
+    {% trans "Complete Order" %}
 </button>
 {% endif %}
 {% endif %}
-{% endblock %}
+{% endblock actions %}
 
 {% block thumbnail %}
 <img class='part-thumb'
@@ -75,23 +77,17 @@ src="{% static 'img/blank_image.png' %}"
 
 {% block details %}
 
-<h4>
-    {% purchase_order_status_label order.status large=True %}
-    {% if order.is_overdue %}
-    <span class='badge rounded-pill bg-danger'>{% trans "Overdue" %}</span>
-    {% endif %}
-</h4>
-<p>{{ order.description }}{% include "clip.html"%}</p>
-
-{% endblock %}
-
-{% block details_right %}
-<table class='table'>
+<table class='table table-striped table-condensed'>
     <col width='25'>
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
         <td>{% trans "Order Reference" %}</td>
         <td>{% settings_value 'PURCHASEORDER_REFERENCE_PREFIX' %}{{ order.reference }}{% include "clip.html"%}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-info-circle'></span></td>
+        <td>{% trans "Order Description" %}</td>
+        <td>{{ order.description }}{% include "clip.html" %}</td>
     </tr>
     <tr>
         <td><span class='fas fa-info'></span></td>
@@ -103,6 +99,14 @@ src="{% static 'img/blank_image.png' %}"
             {% endif %}
         </td>
     </tr>
+
+</table>
+
+{% endblock %}
+
+{% block details_right %}
+<table class='table table-condensed table-striped'>
+    <col width='25'>
     <tr>
         <td><span class='fas fa-building'></span></td>
         <td>{% trans "Supplier" %}</td>
@@ -115,6 +119,18 @@ src="{% static 'img/blank_image.png' %}"
         <td>{{ order.supplier_reference }}{% include "clip.html"%}</td>
     </tr>
     {% endif %}
+    <tr>
+        <td><span class='fas fa-tasks'></span></td>
+        <td>{% trans "Completed Line Items" %}</td>
+        <td>
+            {{ order.completed_line_count }} / {{ order.line_count }}
+            {% if order.is_complete %}
+            <span class='badge bg-success badge-right rounded-pill'>{% trans "Complete" %}</span>
+            {% else %}
+            <span class='badge bg-danger badge-right rounded-pill'>{% trans "Incomplete" %}</span>
+            {% endif %}
+        </td>
+    </tr>
     {% if order.link %}
     <tr>
         <td><span class='fas fa-link'></span></td>

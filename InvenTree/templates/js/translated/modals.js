@@ -72,6 +72,7 @@ function createNewModal(options={}) {
                         <!-- Extra buttons can be inserted here -->
                     </div>
                     <span class='flex-item' style='flex-grow: 1;'></span>
+                    <h4><span id='modal-progress-spinner' class='fas fa-circle-notch fa-spin' style='display: none;'></span></h4>
                     <button type='button' class='btn btn-secondary' id='modal-form-close' data-bs-dismiss='modal'>{% trans "Cancel" %}</button>
                     <button type='button' class='btn btn-primary' id='modal-form-submit'>{% trans "Submit" %}</button>
                 </div>

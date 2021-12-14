@@ -40,8 +40,8 @@
 <link rel="stylesheet" href="{% static 'bootstrap-table/extensions/group-by-v2/bootstrap-table-group-by.css' %}">
 <link rel="stylesheet" href="{% static 'bootstrap-table/extensions/filter-control/bootstrap-table-filter-control.css' %}">
 <link rel='stylesheet' href='{% static "treegrid/css/jquery.treegrid.css" %}'>
-<link rel="stylesheet" href="{% static 'fontawesome/css/brands.css' %}">
-<link rel="stylesheet" href="{% static 'fontawesome/css/solid.css' %}">
+<link rel="stylesheet" href="{% static 'fontawesome/css/brands.min.css' %}">
+<link rel="stylesheet" href="{% static 'fontawesome/css/solid.min.css' %}">
 <link rel="stylesheet" href="{% static 'select2/css/select2.css' %}">
 <link rel="stylesheet" href="{% static 'select2/css/select2-bootstrap-5-theme.css' %}">
 <link rel="stylesheet" href="{% static 'fullcalendar/main.css' %}">
@@ -74,13 +74,13 @@
 
     <div class='row flex-nowrap inventree-body'>
         <div class='col-auto px-1 sidebar-wrapper'>
-            <div id='sidebar' class='collapse collapse-horizontal show border-end' style='display: none;'>
+            <div id='sidebar' class='collapse collapse-horizontal show' style='display: none;'>
                 <div id='sidebar-nav' class='list-group text-sm-start'>
                     <ul id='sidebar-list-group' class='list-group sidebar-list-group'>
                         {% block sidebar %}
                         <!-- Sidebar goes here -->
                         {% endblock %}
-                        {% include "sidebar_toggle.html" %}
+                        {% include "sidebar_toggle.html" with target='sidebar' %}
                     </ul>
                 </div>
             </div>
@@ -104,14 +104,20 @@
             {% endblock %}
 
             {% block breadcrumb_list %}
-            <div class='container-fluid navigation'>
+            <div class='container-fluid navigation' id='breadcrumb-div'>
                 <nav aria-label='breadcrumb'>
-                    <ol class='breadcrumb'>
+                    <ol class='breadcrumb' id='breadcrumb-list'>
                         {% block breadcrumbs %}
                         {% endblock %}
                     </ol>
                 </nav>
+
+                <div id='breadcrumb-tree-collapse' class='collapse collapse-horizontal show border' style='display: none;'>
+                    {% block breadcrumb_tree %}
+                    {% endblock %}
+                </div>
             </div>
+
             {% endblock %}
 
             {% block content %}
@@ -177,12 +183,13 @@
 <script type='text/javascript' src="{% i18n_static 'part.js' %}"></script>
 <script type='text/javascript' src="{% i18n_static 'report.js' %}"></script>
 <script type='text/javascript' src="{% i18n_static 'stock.js' %}"></script>
+<script type='text/javascript' src="{% i18n_static 'plugin.js' %}"></script>
 <script type='text/javascript' src="{% i18n_static 'tables.js' %}"></script>
 <script type='text/javascript' src="{% i18n_static 'table_filters.js' %}"></script>
 
-<script type='text/javascript' src="{% static 'fontawesome/js/solid.js' %}"></script>
-<script type='text/javascript' src="{% static 'fontawesome/js/brands.js' %}"></script>
-<script type='text/javascript' src="{% static 'fontawesome/js/fontawesome.js' %}"></script>
+<script type='text/javascript' src="{% static 'fontawesome/js/solid.min.js' %}"></script>
+<script type='text/javascript' src="{% static 'fontawesome/js/brands.min.js' %}"></script>
+<script type='text/javascript' src="{% static 'fontawesome/js/fontawesome.min.js' %}"></script>
 
 {% block js_load %}
 {% endblock %}

@@ -16,7 +16,7 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
 from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentSerializer
-from InvenTree.serializers import UserSerializerBrief
+from InvenTree.serializers import UserSerializerBrief, ReferenceIndexingSerializerMixin
 
 import InvenTree.helpers
 from InvenTree.serializers import InvenTreeDecimalField
@@ -32,7 +32,7 @@ from users.serializers import OwnerSerializer
 from .models import Build, BuildItem, BuildOrderAttachment
 
 
-class BuildSerializer(InvenTreeModelSerializer):
+class BuildSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSerializer):
     """
     Serializes a Build object
     """
@@ -309,14 +309,20 @@ class BuildAllocationItemSerializer(serializers.Serializer):
     )
 
     def validate_bom_item(self, bom_item):
-
-        # TODO: Fix this validation - allow for variants and substitutes!
+        """
+        Check if the parts match!
+        """
 
         build = self.context['build']
 
-        # BomItem must point to the same 'part' as the parent build
+        # BomItem should point to the same 'part' as the parent build
         if build.part != bom_item.part:
-            raise ValidationError(_("bom_item.part must point to the same part as the build order"))
+
+            # If not, it may be marked as "inherited" from a parent part
+            if bom_item.inherited and build.part in bom_item.part.get_descendants(include_self=False):
+                pass
+            else:
+                raise ValidationError(_("bom_item.part must point to the same part as the build order"))
 
         return bom_item
 
@@ -423,7 +429,7 @@ class BuildAllocationSerializer(serializers.Serializer):
         Validation
         """
 
-        super().validate(data)
+        data = super().validate(data)
 
         items = data.get('items', [])
 

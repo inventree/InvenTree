@@ -7,7 +7,6 @@ Stock database model definitions
 from __future__ import unicode_literals
 
 import os
-import re
 
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError, FieldError
@@ -39,6 +38,7 @@ import label.models
 from InvenTree.status_codes import StockStatus, StockHistoryCode
 from InvenTree.models import InvenTreeTree, InvenTreeAttachment
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
+from InvenTree.serializers import extract_int
 
 from users.models import Owner
 
@@ -212,17 +212,11 @@ class StockItem(MPTTModel):
         belongs_to=None,
         customer=None,
         is_building=False,
-        status__in=StockStatus.AVAILABLE_CODES,
-        scheduled_for_deletion=False,
+        status__in=StockStatus.AVAILABLE_CODES
     )
 
     # A query filter which can be used to filter StockItem objects which have expired
     EXPIRED_FILTER = IN_STOCK_FILTER & ~Q(expiry_date=None) & Q(expiry_date__lt=datetime.now().date())
-
-    def mark_for_deletion(self):
-
-        self.scheduled_for_deletion = True
-        self.save()
 
     def update_serial_number(self):
         """
@@ -236,17 +230,7 @@ class StockItem(MPTTModel):
         serial_int = 0
 
         if serial is not None:
-
-            serial = str(serial)
-
-            # Look at the start of the string - can it be "integerized"?
-            result = re.match(r'^(\d+)', serial)
-
-            if result and len(result.groups()) == 1:
-                try:
-                    serial_int = int(result.groups()[0])
-                except:
-                    serial_int = 0
+            serial_int = extract_int(str(serial))
 
         self.serial_int = serial_int
 
@@ -624,12 +608,6 @@ class StockItem(MPTTModel):
                               verbose_name=_('Owner'),
                               help_text=_('Select Owner'),
                               related_name='stock_items')
-
-    scheduled_for_deletion = models.BooleanField(
-        default=False,
-        verbose_name=_('Scheduled for deletion'),
-        help_text=_('This StockItem will be deleted by the background worker'),
-    )
 
     def is_stale(self):
         """
@@ -1337,7 +1315,7 @@ class StockItem(MPTTModel):
         self.quantity = quantity
 
         if quantity == 0 and self.delete_on_deplete and self.can_delete():
-            self.mark_for_deletion()
+            self.delete()
 
             return False
         else:

@@ -730,6 +730,9 @@ function submitFormData(fields, options) {
         data = options.processBeforeUpload(data);
     }
 
+    // Show the progress spinner
+    $(options.modal).find('#modal-progress-spinner').show();
+
     // Submit data
     upload_func(
         options.url,
@@ -737,10 +740,13 @@ function submitFormData(fields, options) {
         {
             method: options.method,
             success: function(response) {
+                $(options.modal).find('#modal-progress-spinner').hide();
                 handleFormSuccess(response, options);
             },
             error: function(xhr) {
                 
+                $(options.modal).find('#modal-progress-spinner').hide();
+
                 switch (xhr.status) {
                 case 400:
                     handleFormErrors(xhr.responseJSON, fields, options);
@@ -805,7 +811,9 @@ function updateFieldValue(name, value, field, options) {
 
     switch (field.type) {
     case 'boolean':
-        el.prop('checked', value);
+        if (value == true || value.toString().toLowerCase() == 'true') {
+            el.prop('checked');
+        }
         break;
     case 'related field':
         // Clear?
@@ -1713,6 +1721,9 @@ function renderModelData(name, model, data, parameters, options) {
     case 'salesorder':
         renderer = renderSalesOrder;
         break;
+    case 'salesordershipment':
+        renderer = renderSalesOrderShipment;
+        break;
     case 'manufacturerpart':
         renderer = renderManufacturerPart;
         break;
@@ -2025,8 +2036,15 @@ function constructInputOptions(name, classes, type, parameters) {
     }
 
     if (parameters.value != null) {
-        // Existing value?
-        opts.push(`value='${parameters.value}'`);
+        if (parameters.type == 'boolean') {
+            // Special consideration of a boolean (checkbox) value
+            if (parameters.value == true || parameters.value.toString().toLowerCase() == 'true') {
+                opts.push('checked');
+            }
+        } else {
+            // Existing value?
+            opts.push(`value='${parameters.value}'`);
+        }
     } else if (parameters.default != null) {
         // Otherwise, a defualt value?
         opts.push(`value='${parameters.default}'`);

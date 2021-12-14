@@ -7,10 +7,14 @@ from django.core.exceptions import ValidationError
 from datetime import datetime, timedelta
 
 from company.models import Company
-from stock.models import StockItem
-from order.models import SalesOrder, SalesOrderLineItem, SalesOrderAllocation
-from part.models import Part
+
 from InvenTree import status_codes as status
+
+from order.models import SalesOrder, SalesOrderLineItem, SalesOrderAllocation, SalesOrderShipment
+
+from part.models import Part
+
+from stock.models import StockItem
 
 
 class SalesOrderTest(TestCase):
@@ -36,6 +40,12 @@ class SalesOrderTest(TestCase):
             customer=self.customer,
             reference='1234',
             customer_reference='ABC 55555'
+        )
+
+        # Create a Shipment against this SalesOrder
+        self.shipment = SalesOrderShipment.objects.create(
+            order=self.order,
+            reference='001',
         )
 
         # Create a line item
@@ -82,11 +92,13 @@ class SalesOrderTest(TestCase):
         # Allocate stock to the order
         SalesOrderAllocation.objects.create(
             line=self.line,
+            shipment=self.shipment,
             item=StockItem.objects.get(pk=self.Sa.pk),
             quantity=25)
 
         SalesOrderAllocation.objects.create(
             line=self.line,
+            shipment=self.shipment,
             item=StockItem.objects.get(pk=self.Sb.pk),
             quantity=25 if full else 20
         )
@@ -120,11 +132,14 @@ class SalesOrderTest(TestCase):
         self.assertEqual(SalesOrderAllocation.objects.count(), 0)
         self.assertEqual(self.order.status, status.SalesOrderStatus.CANCELLED)
 
-        # Now try to ship it - should fail
         with self.assertRaises(ValidationError):
-            self.order.ship_order(None)
+            self.order.can_complete(raise_error=True)
 
-    def test_ship_order(self):
+        # Now try to ship it - should fail
+        result = self.order.complete_order(None)
+        self.assertFalse(result)
+
+    def test_complete_order(self):
         # Allocate line items, then ship the order
 
         # Assert some stuff before we run the test
@@ -136,7 +151,25 @@ class SalesOrderTest(TestCase):
 
         self.assertEqual(SalesOrderAllocation.objects.count(), 2)
 
-        self.order.ship_order(None)
+        # Attempt to complete the order (but shipments are not completed!)
+        result = self.order.complete_order(None)
+
+        self.assertFalse(result)
+
+        self.assertIsNone(self.shipment.shipment_date)
+        self.assertFalse(self.shipment.is_complete())
+
+        # Mark the shipments as complete
+        self.shipment.complete_shipment(None)
+        self.assertTrue(self.shipment.is_complete())
+
+        # Now, should be OK to ship
+        result = self.order.complete_order(None)
+
+        self.assertTrue(result)
+
+        self.assertEqual(self.order.status, status.SalesOrderStatus.SHIPPED)
+        self.assertIsNotNone(self.order.shipment_date)
 
         # There should now be 4 stock items
         self.assertEqual(StockItem.objects.count(), 4)
@@ -158,12 +191,12 @@ class SalesOrderTest(TestCase):
         self.assertEqual(sa.sales_order, None)
         self.assertEqual(sb.sales_order, None)
 
-        # And no allocations
-        self.assertEqual(SalesOrderAllocation.objects.count(), 0)
+        # And the allocations still exist
+        self.assertEqual(SalesOrderAllocation.objects.count(), 2)
 
         self.assertEqual(self.order.status, status.SalesOrderStatus.SHIPPED)
 
         self.assertTrue(self.order.is_fully_allocated())
         self.assertTrue(self.line.is_fully_allocated())
         self.assertEqual(self.line.fulfilled_quantity(), 50)
-        self.assertEqual(self.line.allocated_quantity(), 0)
+        self.assertEqual(self.line.allocated_quantity(), 50)

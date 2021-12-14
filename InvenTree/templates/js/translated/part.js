@@ -29,6 +29,7 @@
     loadParametricPartTable,
     loadPartCategoryTable,
     loadPartParameterTable,
+    loadPartPurchaseOrderTable,
     loadPartTable,
     loadPartTestTemplateTable,
     loadPartVariantTable,
@@ -153,12 +154,7 @@ function partFields(options={}) {
         delete fields['default_expiry'];
     }
 
-    // Additional fields when "creating" a new part
-    if (options.create) {
-
-        // No supplier parts available yet
-        delete fields['default_supplier'];
-
+    if (options.create || options.duplicate) {
         if (global_settings.PART_CREATE_INITIAL) {
 
             fields.initial_stock = {
@@ -187,6 +183,13 @@ function partFields(options={}) {
                 group: 'create',
             };
         }
+    }
+
+    // Additional fields when "creating" a new part
+    if (options.create) {
+
+        // No supplier parts available yet
+        delete fields['default_supplier'];
 
         fields.copy_category_parameters = {
             type: 'boolean',
@@ -348,6 +351,10 @@ function duplicatePart(pk, options={}) {
             var fields = partFields({
                 duplicate: pk,
             });
+
+            if (fields.initial_stock_location) {
+                fields.initial_stock_location.value = data.default_location;
+            }
 
             // Remove "default_supplier" field
             delete fields['default_supplier'];
@@ -702,6 +709,180 @@ function loadPartParameterTable(table, url, options) {
                 });
             });
         }
+    });
+}
+
+
+/*
+ * Construct a table showing a list of purchase orders for a given part.
+ * 
+ * This requests API data from the PurchaseOrderLineItem endpoint
+ */
+function loadPartPurchaseOrderTable(table, part_id, options={}) {
+
+    options.params = options.params || {};
+
+    // Construct API filterset
+    options.params.base_part = part_id;
+    options.params.part_detail = true;
+    options.params.order_detail = true;
+    
+    var filters = loadTableFilters('partpurchaseorders');
+
+    for (var key in options.params) {
+        filters[key] = options.params[key];
+    }
+
+    setupFilterList('purchaseorderlineitem', $(table), '#filter-list-partpurchaseorders');
+
+    $(table).inventreeTable({
+        url: '{% url "api-po-line-list" %}',
+        queryParams: filters,
+        name: 'partpurchaseorders',
+        original: options.params,
+        showColumns: true,
+        uniqueId: 'pk',
+        formatNoMatches: function() {
+            return '{% trans "No purchase orders found" %}';
+        },
+        onPostBody: function() {
+            $(table).find('.button-line-receive').click(function() {
+                var pk = $(this).attr('pk');
+
+                var line_item = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+                if (!line_item) {
+                    console.log('WARNING: getRowByUniqueId returned null');
+                    return;
+                }
+
+                receivePurchaseOrderItems(
+                    line_item.order,
+                    [
+                        line_item,
+                    ],
+                    {
+                        success: function() {
+                            $(table).bootstrapTable('refresh');
+                        }
+                    }
+                );
+            });
+        },
+        columns: [
+            {
+                field: 'order',
+                title: '{% trans "Purchase Order" %}',
+                switchable: false,
+                formatter: function(value, row) {
+                    var order = row.order_detail;
+
+                    if (!order) {
+                        return '-';
+                    }
+
+                    var ref = global_settings.PURCHASEORDER_REFERENCE_PREFIX + order.reference;
+
+                    var html = renderLink(ref, `/order/purchase-order/${order.pk}/`);
+
+                    html += purchaseOrderStatusDisplay(
+                        order.status,
+                        {
+                            classes: 'float-right',
+                        }
+                    );
+
+                    return html;
+                },
+            },
+            {
+                field: 'supplier',
+                title: '{% trans "Supplier" %}',
+                switchable: true,
+                formatter: function(value, row) {
+
+                    if (row.supplier_part_detail && row.supplier_part_detail.supplier_detail) {
+                        var supp = row.supplier_part_detail.supplier_detail;
+                        var html = imageHoverIcon(supp.thumbnail || supp.image);
+
+                        html += ' ' + renderLink(supp.name, `/company/${supp.pk}/`);
+
+                        return html;
+                    } else {
+                        return '-';
+                    }
+                }
+            },
+            {
+                field: 'sku',
+                title: '{% trans "SKU" %}',
+                switchable: true,
+                formatter: function(value, row) {
+                    if (row.supplier_part_detail) {
+                        var supp = row.supplier_part_detail;
+
+                        return renderLink(supp.SKU, `/supplier-part/${supp.pk}/`);
+                    } else {
+                        return '-';
+                    }
+                },
+            },
+            {
+                field: 'mpn',
+                title: '{% trans "MPN" %}',
+                switchable: true,
+                formatter: function(value, row) {
+                    if (row.supplier_part_detail && row.supplier_part_detail.manufacturer_part_detail) {
+                        var manu = row.supplier_part_detail.manufacturer_part_detail;
+                        return renderLink(manu.MPN, `/manufacturer-part/${manu.pk}/`);
+                    }
+                }
+            },
+            {
+                field: 'quantity',
+                title: '{% trans "Quantity" %}',
+            },
+            {
+                field: 'received',
+                title: '{% trans "Received" %}',
+                switchable: true,
+            },
+            {
+                field: 'purchase_price',
+                title: '{% trans "Price" %}',
+                switchable: true,
+                formatter: function(value, row) {
+                    var formatter = new Intl.NumberFormat(
+                        'en-US',
+                        {
+                            style: 'currency',
+                            currency: row.purchase_price_currency,
+                        }
+                    );
+
+                    return formatter.format(row.purchase_price);
+                }
+            },
+            {
+                field: 'actions',
+                title: '',
+                formatter: function(value, row) {
+                    
+                    if (row.received >= row.quantity) {
+                        // Already recevied
+                        return `<span class='badge bg-success rounded-pill'>{% trans "Received" %}</span>`;
+                    } else {
+                        var html = `<div class='btn-group' role='group'>`;
+                        var pk = row.pk;
+
+                        html += makeIconButton('fa-sign-in-alt', 'button-line-receive', pk, '{% trans "Receive line item" %}');
+
+                        html += `</div>`;
+                        return html;
+                    }
+                }
+            }
+        ],
     });
 }
 

@@ -439,10 +439,14 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
                         line['price_part'] = stock_item.supplier_part.unit_pricing
 
                 # set date for graph labels
-                if stock_item.purchase_order:
+                if stock_item.purchase_order and stock_item.purchase_order.issue_date:
                     line['date'] = stock_item.purchase_order.issue_date.strftime('%d.%m.%Y')
-                else:
+                elif stock_item.tracking_info.count() > 0:
                     line['date'] = stock_item.tracking_info.first().date.strftime('%d.%m.%Y')
+                else:
+                    # Not enough information
+                    continue
+
                 price_history.append(line)
 
             ctx['price_history'] = price_history
@@ -1188,13 +1192,9 @@ class BomExport(AjaxView):
     """
 
     model = Part
-    form_class = part_forms.BomExportForm
     ajax_form_title = _("Export Bill of Materials")
 
     role_required = 'part.view'
-
-    def get(self, request, *args, **kwargs):
-        return self.renderJsonResponse(request, self.form_class())
 
     def post(self, request, *args, **kwargs):
 
