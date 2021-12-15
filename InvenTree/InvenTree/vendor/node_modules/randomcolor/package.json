@@ -1,0 +1,28 @@
+{
+  "name": "randomcolor",
+  "version": "0.6.2",
+  "description": "A tiny script for generating attractive random colors",
+  "main": "randomColor.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/davidmerfield/randomColor.git"
+  },
+  "files": [],
+  "keywords": [
+    "attractive",
+    "random",
+    "color",
+    "generator"
+  ],
+  "author": "David Merfield",
+  "license": "CC0",
+  "bugs": {
+    "url": "https://github.com/davidmerfield/randomColor/issues"
+  },
+  "homepage": "https://randomcolor.lllllllllllllllll.com/",
+  "spm": {
+    "main": "randomColor.js"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}
