@@ -61,6 +61,11 @@ src="{% static 'img/blank_image.png' %}"
 
 </div>
 {% if order.status == SalesOrderStatus.PENDING %}
+<button type='button' class='btn btn-outline-secondary btn-default' id='barcode-scan-into-basket' title='{% trans "Scan to basket" %}'>
+    <span class='fas fa-shopping-basket'></span>
+</button>
+{% endif %}
+{% if order.status == SalesOrderStatus.PENDING %}
 <button type='button' class='btn btn-success' id='ship-order' title='{% trans "Ship Order" %}'>
     <span class='fas fa-truck'></span> {% trans "Ship Order" %}
 </button>
@@ -70,44 +75,29 @@ src="{% static 'img/blank_image.png' %}"
 
 {% block details %}
 
-<h4>
-    {% sales_order_status_label order.status large=True %}
-    {% if order.is_overdue %}
-    <span class='badge rounded-pill bg-danger'>{% trans "Overdue" %}</span>
-    {% endif %}
-</h4>
-<p>{{ order.description }}{% include "clip.html"%}</p>
-<div class='btn-row'>
-    <div class='btn-group action-buttons'>
-        <button type='button' class='btn btn-default' id='print-order-report' title='{% trans "Print" %}'>
-            <span class='fas fa-print'></span> 
-        </button>
-        <button type='button' class='btn btn-default' id='export-order' title='{% trans "Export order to file" %}'>
-            <span class='fas fa-file-download'></span>
-        </button>
-        {% if roles.sales_order.change %}
-        <button type='button' class='btn btn-default' id='edit-order' title='{% trans "Edit order information" %}'>
-            <span class='fas fa-edit icon-green'></span>
-        </button>
-        {% if order.status == SalesOrderStatus.PENDING %}
-        <button type='button' class='btn btn-default' id='ship-order' title='{% trans "Ship order" %}'>
-            <span class='fas fa-paper-plane icon-blue'></span>
-        </button>
-        <button type='button' class='btn btn-default' id='cancel-order' title='{% trans "Cancel order" %}'>
-            <span class='fas fa-times-circle icon-red'></span>
-        </button>
-        {% endif %}
-        {% endif %}
-        {% if order.status == SalesOrderStatus.PENDING %}
-        <button type='button' class='btn btn-default' id='barcode-scan-into-basket' title='{% trans "Scan to basket" %}'>
-            <span class='fas fa-shopping-basket'></span>
-        </button>
-        {% endif %}
-        <!--
-        <button type='button' disabled='' class='btn btn-default' id='packing-list' title='{% trans "Packing List" %}'>
-            <span class='fas fa-clipboard-list'></span>
-        </button>
-        -->
+<table class='table table-striped table-condensed'>
+    <col width='25'>
+    <tr>
+        <td><span class='fas fa-hashtag'></span></td>
+        <td>{% trans "Order Reference" %}</td>
+        <td>{% settings_value 'SALESORDER_REFERENCE_PREFIX' %}{{ order.reference }}{% include "clip.html"%}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-info-circle'></span></td>
+        <td>{% trans "Order Description" %}</td>
+        <td>{{ order.description }}{% include "clip.html" %}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-info'></span></td>
+        <td>{% trans "Order Status" %}</td>
+        <td>
+            {% sales_order_status_label order.status %}
+            {% if order.is_overdue %}
+            <span class='badge rounded-pill bg-danger'>{% trans "Overdue" %}</span>
+            {% endif %}
+        </td>
+    </tr>
+</table>
 
 <div class='info-messages'>
     {% if order.status == SalesOrderStatus.PENDING and not order.is_fully_allocated %}
@@ -122,21 +112,6 @@ src="{% static 'img/blank_image.png' %}"
 {% block details_right %}
 <table class='table table-striped table-condensed'>
     <col width='25'>
-    <tr>
-        <td><span class='fas fa-hashtag'></span></td>
-        <td>{% trans "Order Reference" %}</td>
-        <td>{% settings_value 'SALESORDER_REFERENCE_PREFIX' %}{{ order.reference }}{% include "clip.html"%}</td>
-    </tr>
-    <tr>
-        <td><span class='fas fa-info'></span></td>
-        <td>{% trans "Order Status" %}</td>
-        <td>
-            {% sales_order_status_label order.status %}
-            {% if order.is_overdue %}
-            <span class='badge rounded-pill bg-danger'>{% trans "Overdue" %}</span>
-            {% endif %}
-        </td>
-    </tr>
     {% if order.customer %}
     <tr>
         <td><span class='fas fa-building'></span></td>
@@ -151,6 +126,28 @@ src="{% static 'img/blank_image.png' %}"
         <td>{{ order.customer_reference }}{% include "clip.html"%}</td>
     </tr>
     {% endif %}
+    <tr>
+        <td><span class='fas fa-tasks'></span></td>
+        <td>{% trans "Completed Line Items" %}</td>
+        <td>
+            {{ order.completed_line_count }} / {{ order.line_count }}
+            {% if order.is_completed %}
+            <span class='badge bg-success badge-right rounded-pill'>{% trans "Complete" %}</span>
+            {% else %}
+            <span class='badge bg-danger badge-right rounded-pill'>{% trans "Incomplete" %}</span>
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-truck'></span></td>
+        <td>{% trans "Completed Shipments" %}</td>
+        <td>
+            {{ order.completed_shipment_count }} / {{ order.shipment_count }}
+            {% if order.pending_shipment_count > 0 %}
+            <span class='badge bg-danger badge-right rounded-pill'>{% trans "Incomplete" %}</span>
+            {% endif %}
+        </td>
+    </tr>
     {% if order.link %}
     <tr>
         <td><span class='fas fa-link'></span></td>
@@ -173,15 +170,13 @@ src="{% static 'img/blank_image.png' %}"
     {% if order.shipment_date %}
     <tr>
         <td><span class='fas fa-truck'></span></td>
-        <td>{% trans "Shipped" %}</td>
-        <td>{{ order.shipment_date }}<span class='badge badge-right rounded-pill bg-dark'>{{ order.shipped_by }}</span></td>
-    </tr>
-    {% endif %}
-    {% if order.status == PurchaseOrderStatus.COMPLETE %}
-    <tr>
-        <td><span class='fas fa-calendar-alt'></span></td>
-        <td>{% trans "Received" %}</td>
-        <td>{{ order.complete_date }}<span class='badge badge-right rounded-pill bg-dark'>{{ order.received_by }}</span></td>
+        <td>{% trans "Completed" %}</td>
+        <td>
+            {{ order.shipment_date }}
+            {% if order.shipped_by %}
+            <span class='badge badge-right rounded-pill bg-dark'>{{ order.shipped_by }}</span>
+            {% endif %}
+        </td>
     </tr>
     {% endif %}
     {% if order.responsible %}
