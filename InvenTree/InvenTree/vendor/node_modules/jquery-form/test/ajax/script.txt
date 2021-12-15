@@ -1,0 +1,3 @@
+formScriptTest = function() {
+    // no-op
+}

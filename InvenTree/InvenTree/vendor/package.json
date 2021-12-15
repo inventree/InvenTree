@@ -6,6 +6,7 @@
     "chart.js": "^3.0.2",
     "clipboard": "^2.0.8",
     "fullcalendar": "^5.5.0",
+    "jquery-form": "^4.3.0",
     "moment": "^2.29.1",
     "randomcolor": "^0.6.2",
     "select2": "^4.0.13",
