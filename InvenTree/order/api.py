@@ -21,6 +21,7 @@ from InvenTree.api import AttachmentMixin
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
 
 from part.models import Part
+from stock.models import StockItem
 from company.models import SupplierPart
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
@@ -655,9 +656,11 @@ class SOAllocationFulFill(generics.RetrieveUpdateDestroyAPIView):
             quantity = int(self.kwargs['quantity'])
             stock_item_pk = self.kwargs['pk']
             instance = SalesOrderAllocation.objects.filter(item=stock_item_pk).first()
+            item = StockItem.objects.get(pk=stock_item_pk)
             if quantity <= instance.quantity:
                 instance.complete_allocation(request.user, quantity=quantity, is_fulfilling=True)
                 instance.quantity = instance.quantity - quantity
+                instance.item = item
                 instance.save()
                 if (instance.quantity == 0):
                     self.perform_destroy(instance)

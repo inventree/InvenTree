@@ -151,13 +151,8 @@ class SalesOrderStatus(StatusCode):
     }
 
     colors = {
-        PENDING: 'blue',
-        SHIPPED: 'green',
-        CANCELLED: 'red',
-        LOST: 'yellow',
-        IN_BASKET:"purple",
-        RETURNED: 'yellow',
-        WAITING_FOR_PACKING: 'orange',
+        IN_BASKET:"warning",
+        WAITING_FOR_PACKING: 'warning',
         PENDING: 'primary',
         SHIPPED: 'success',
         CANCELLED: 'danger',
@@ -320,9 +315,8 @@ class BasketStatus(StatusCode):
     }
 
     colors = {
-        EMPTY: 'green',
-        BUSY: 'red',
-        WAITING_FOR_PACKAGE: 'yellow',
+        EMPTY: 'success',
+        BUSY: 'danger',
     }
 
 

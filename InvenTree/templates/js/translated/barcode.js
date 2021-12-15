@@ -829,19 +829,20 @@ function scanBarcodeForFulfill(options={}) {
                 inventreePut(
                     `/api/order/so-allocation/fulfill/${stock_item.pk}/${quantity}`,
                     {
-                        success: function(response, status) {
-                            // First hide the modal
-                            $(modal).modal('hide');
+                        // success: function(response, status) {
+                        //     console.log(status, response)
+                        //     // First hide the modal
+                        //     $(modal).modal('hide');
 
-                            if (status == 'success' && 'success' in response) {
-                                showAlertOrCache('alert-success', response.success, true);
-                                location.reload();
-                            } else {
-                                showAlertOrCache('alert-danger', '{% trans "Error fulfilling item" %}', false);
-                            }
-                        }
+                        //     if (status == 'success' && 'success' in response) {
+                        //         showAlertOrCache('alert-success', response.success, true);
+                        //         location.reload();
+                        //     } else {
+                        //         showAlertOrCache('alert-danger', '{% trans "Error fulfilling item" %}', false);
+                        //     }
+                        // }
                     },
-                    {method: 'DELETE'},
+                    {method: 'DELETE', reloadOnSuccess: true},
                 );
             },
             onScan: function(response) {
