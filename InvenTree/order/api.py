@@ -9,6 +9,7 @@ from django.conf.urls import url, include
 from django.db.models import Q, F
 
 from django.http import Http404
+
 from django_filters import rest_framework as rest_filters
 from rest_framework import generics
 from rest_framework import filters, status
@@ -654,16 +655,25 @@ class SOAllocationFulFill(generics.RetrieveUpdateDestroyAPIView):
     def delete (self, request, *args, **kwargs):
         try:
             quantity = int(self.kwargs['quantity'])
-            stock_item_pk = self.kwargs['pk']
+            stock_item_pk = self.kwargs['item_pk']
             instance = SalesOrderAllocation.objects.filter(item=stock_item_pk).first()
             item = StockItem.objects.get(pk=stock_item_pk)
+            so = SalesOrder.objects.get(pk=instance.order)
             if quantity <= instance.quantity:
                 instance.complete_allocation(request.user, quantity=quantity, is_fulfilling=True)
                 instance.quantity = instance.quantity - quantity
                 instance.item = item
                 instance.save()
+
+                if so.status != SalesOrderStatus.PACKING:
+                    so.status = SalesOrderStatus.PACKING
+                    so.save()
+                    
                 if (instance.quantity == 0):
                     self.perform_destroy(instance)
+                    so.status = SalesOrderStatus.PACKED
+                    so.save()
+                    
                 return Response({"succcess": "Item fulfilled successfully"}, status=status.HTTP_200_OK)
             else:
                 return Response({"error": "Quantity exceeded "}, status=status.HTTP_204_NO_CONTENT)
@@ -822,7 +832,7 @@ order_api_urls = [
 
     # API endpoints for sales order allocations
     url(r'^so-allocation/', include([
-        url(r'^fulfill/(?P<pk>\d+)/(?P<quantity>\d+)', SOAllocationFulFill.as_view(), name='api-so-allocation-fulfill'),
+        url(r'^fulfill/(?P<item_pk>\d+)/(?P<quantity>\d+)', SOAllocationFulFill.as_view(), name='api-so-allocation-fulfill'),
         url(r'^(?P<pk>\d+)/$', SOAllocationDetail.as_view(), name='api-so-allocation-detail'),
         url(r'^.*$', SOAllocationList.as_view(), name='api-so-allocation-list'),
     ])),

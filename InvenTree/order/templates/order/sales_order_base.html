@@ -65,7 +65,7 @@ src="{% static 'img/blank_image.png' %}"
     <span class='fas fa-shopping-basket'></span>
 </button>
 {% endif %}
-{% if order.status == SalesOrderStatus.PENDING %}
+{% if order.status == SalesOrderStatus.PENDING | order.status == SalesOrderStatus.PACKED %}
 <button type='button' class='btn btn-success' id='ship-order' title='{% trans "Ship Order" %}'>
     <span class='fas fa-truck'></span> {% trans "Ship Order" %}
 </button>

@@ -139,6 +139,8 @@ class SalesOrderStatus(StatusCode):
     LOST = 50  # Order was lost
     RETURNED = 60  # Order was returned
     WAITING_FOR_PACKING = 70 # Order allocated and wait for packing
+    PACKING = 80
+    PACKED = 90
 
     options = {
         PENDING: _("Pending"),
@@ -147,12 +149,16 @@ class SalesOrderStatus(StatusCode):
         CANCELLED: _("Cancelled"),
         LOST: _("Lost"),
         RETURNED: _("Returned"),
-        WAITING_FOR_PACKING: _("Waiting for packing")
+        WAITING_FOR_PACKING: _("Waiting for packing"),
+        PACKING: _("Packing"),
+        PACKED: _("Packed"),
     }
 
     colors = {
         IN_BASKET:"warning",
         WAITING_FOR_PACKING: 'warning',
+        PACKING: 'warning',
+        PACKED: 'warning',
         PENDING: 'primary',
         SHIPPED: 'success',
         CANCELLED: 'danger',
