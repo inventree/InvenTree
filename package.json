@@ -1,4 +1,18 @@
 {
+  "name": "InvenTree",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "directories": {
+    "doc": "docs"
+  },
+  "devDependencies": {},
   "dependencies": {
     "eslint": "^8.3.0",
     "eslint-config-google": "^0.14.0",
