@@ -1,0 +1,489 @@
+﻿.grid-main {
+    margin-top: 5px;
+    position: relative;
+}
+
+.grid-header {
+    overflow: hidden;
+}
+
+.grid-data {
+    overflow-x: auto;
+    overflow-y: auto;
+}
+
+.grid-header-table, .grid-data-table {
+    border-spacing: 0;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.grid-data-table {
+    margin-top: -1px;
+}
+
+.grid-header-table th {
+    background: #DFEFFC;
+    border: 1px solid #A6C9E2;
+    color: #18335E;
+    font-weight: bold;
+    text-align: center;
+}
+
+    .grid-header-table th:hover {
+        background: #d0e5f5;
+        color: #1d5987;
+    }
+
+.grid-header-inner-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+    .grid-header-inner-table * {
+        padding: 0;
+        margin: 0;
+        border-spacing: 0;
+    }
+
+    .grid-header-inner-table td {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+.grid-header-table th.grid-fake-column {
+    padding: 2px 0px;
+    width: 0px;
+    border-top: 0px solid transparent;
+    border-right: 0px solid transparent;
+    border-bottom: 0px solid transparent;
+    background: #fcfdfd;
+}
+
+.grid-data-table tr {
+    background: #fcfdfd;
+    color: #222222;
+}
+
+.grid-data-table td {
+    border: 1px solid #a6c9e2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 2px 5px;
+}
+
+.grid-data-table tr:hover {
+    border: 1px solid #79b7e7;
+    background: #d0e5f5;
+    color: #1d5987;
+}
+
+.grid-data-table tr.grid-info-row td {
+    border: none;
+}
+
+.grid-data-table tr.grid-info-row:hover {
+    border: none;
+    color: #222222;
+    background: #fcfdfd;
+}
+
+
+.grid-data-table td.first {
+    border-top: 1px solid transparent;
+}
+
+.grid-data-table .right {
+    text-align: right;
+}
+
+.grid-data-table .center {
+    text-align: center;
+}
+
+.grid-resize {
+    background: transparent;
+    cursor: col-resize;
+    width: 5px;
+}
+
+.grid-resizer {
+    cursor: se-resize;
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    right: -3px;
+    bottom: -3px;
+    background: url(Images/icons2.png) -64px -224px no-repeat;
+    z-index: 2;
+}
+
+.grid-sort {
+    cursor: pointer;
+    font-weight: bold;
+    text-align: center;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.grid-sort-asc {
+    display: inline-block;
+    vertical-align: middle;
+    background: url(Images/icons3.png) -2px -21px no-repeat;
+    width: 9px;
+    height: 6px;
+}
+
+.grid-header-table th:hover .grid-sort-asc {
+    background-image: url(Images/icons4.png);
+}
+
+.grid-sort-desc {
+    display: inline-block;
+    vertical-align: middle;
+    background: url(Images/icons3.png) -67px -21px no-repeat;
+    width: 9px;
+    height: 6px;
+}
+
+.grid-header-table th:hover .grid-sort-desc {
+    background-image: url(Images/icons4.png);
+}
+
+.grid-resize-ghost {
+    display: none;
+    position: absolute;
+    top: 0;
+    width: 2px;
+    border: none;
+    background: #DDD;
+    cursor: col-resize;
+}
+
+.grid-resize-ghost-col1 {
+    display: none;
+    position: absolute;
+    top: 0;
+    width: 2px;
+    border: none;
+    background: #DDD;
+}
+
+.grid-resize-ghost-col2 {
+    display: none;
+    position: absolute;
+    top: 0;
+    width: 2px;
+    border: none;
+    background: #DDD;
+}
+
+.grid-group {
+    float: left;
+    width: 18px;
+    height: 13px;
+    background: url(Images/plus-minus.png) no-repeat;
+    vertical-align: central;
+    cursor: pointer;
+}
+
+.grid-plus {
+    background-position: -18px 0px;
+}
+
+.grid-minus {
+    background-position: -36px 0px;
+}
+
+.grid-wait {
+    background: url(Images/ajax-loader.gif) no-repeat;
+    margin-top: -2px;
+    height: 16px;
+}
+
+tr.grid-active-row td {
+    background-color: #DBECF8;
+}
+
+.grid-buttons {
+    float: right;
+    margin-right: 1px;
+}
+
+.grid-toolbar {
+    border-top: 1px solid #fcfdfd;
+    background: #5c9ccc;
+    overflow: hidden;
+    height: 20px;
+    position: relative;
+}
+
+.grid-btn-hide {
+    background: url(Images/icons.png) -208px -192px no-repeat;
+    width: 17px;
+    height: 17px;
+    float: right;
+    position: relative;
+    margin-top: 1px;
+    border: 1px solid transparent;
+}
+
+    .grid-btn-hide:hover {
+        background-image: url(Images/icons2.png);
+        border: 1px solid #79b7e7;
+        background-color: #d0e5f5;
+    }
+
+.grid-btn-min {
+    background: url(Images/icons.png) -95px -192px no-repeat;
+    width: 17px;
+    height: 17px;
+    float: right;
+    position: relative;
+    margin-top: 1px;
+    border: 1px solid transparent;
+}
+
+    .grid-btn-min:hover {
+        background-image: url(Images/icons2.png);
+        border: 1px solid #79b7e7;
+        background-color: #d0e5f5;
+    }
+
+.grid-btn-unmin {
+    background: url(Images/icons.png) -63px -192px no-repeat;
+    width: 17px;
+    height: 17px;
+    float: right;
+    position: relative;
+    margin-top: 1px;
+    border: 1px solid transparent;
+}
+
+    .grid-btn-unmin:hover {
+        background-image: url(Images/icons2.png);
+        border: 1px solid #79b7e7;
+        background-color: #d0e5f5;
+    }
+    
+.grid-btn-max {
+    background: url(Images/icons.png) -111px -192px no-repeat;
+    width: 17px;
+    height: 17px;
+    float: right;
+    position: relative;
+    margin-top: 1px;
+    border: 1px solid transparent;
+}
+
+    .grid-btn-max:hover {
+        background-image: url(Images/icons2.png);
+        border: 1px solid #79b7e7;
+        background-color: #d0e5f5;
+    }
+
+.grid-btn-unmax {
+    background: url(Images/icons.png) -143px -192px no-repeat;
+    width: 17px;
+    height: 17px;
+    float: right;
+    position: relative;
+    margin-top: 1px;
+    border: 1px solid transparent;
+}
+
+    .grid-btn-unmax:hover {
+        background-image: url(Images/icons2.png);
+        border: 1px solid #79b7e7;
+        background-color: #d0e5f5;
+    }
+
+.grid-hide {
+    background-color: #fcfdfd;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    display: none;
+    overflow: auto;
+    padding-bottom: 2px;
+}
+
+.grid-hide-table {
+    width: 100%;
+}
+
+.grid-hide-btn-apply, .grid-hide-btn-close, .grid-hide-btn-default {
+    display: block;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid #759dc0;
+    padding: 2px 4px 4px 4px;
+    color: #18335E;
+    background: #DFEFFC;
+    font-weight: bolder;
+    text-align: center;
+}
+
+    .grid-hide-btn-apply:hover, .grid-hide-btn-close:hover, .grid-hide-btn-default:hover {
+        background: #d0e5f5;
+        color: #1d5987;
+    }
+
+.grid-tree {
+    overflow: auto;
+    top: 20px;
+    bottom: 40px;
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+
+.grid-tree-bottom {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+
+.grid-tree-node {
+    list-style-type: none;
+    background: url(Images/combotree_i.gif) repeat-y;
+    margin-left: 18px;
+    zoom: 1;
+}
+
+    .grid-tree-node.last {
+        background: url(Images/combotree.png) 0 -198px no-repeat;
+    }
+
+.grid-tree-expand {
+    width: 18px;
+    height: 18px;
+    float: left;
+}
+
+.grid-tree-node.open .grid-tree-expand {
+    background: url(Images/combotree.png) 0 -114px no-repeat;
+    cursor: pointer;
+}
+
+.grid-tree-node.closed .grid-tree-expand {
+    background: url(Images/combotree.png) 0 -142px no-repeat;
+    cursor: pointer;
+}
+
+.grid-tree-node.leaf .grid-tree-expand {
+    background: url(Images/combotree.png) 0 -56px no-repeat;
+    cursor: auto;
+}
+
+.grid-tree-content {
+    min-height: 18px;
+    margin-left: 18px;
+    height: 18px;
+    overflow: hidden;
+}
+
+.grid-tree-node.open .grid-tree-ul {
+    display: block;
+    padding: 0;
+}
+
+.grid-tree-node.closed .grid-tree-ul {
+    display: none;
+}
+
+.grid-tree-content a {
+    color: black;
+    margin-right: 5px;
+}
+
+.grid-tree-check {
+    background: url(Images/checkbox.png) 0 0 no-repeat;
+    width: 13px;
+    height: 13px;
+    float: left;
+    margin: 2px;
+}
+
+a:hover .grid-tree-check {
+    background-position: 0 -23px;
+}
+
+.grid-tree-check.checked {
+    background-position: 0 -46px;
+}
+
+a:hover .grid-tree-check.checked {
+    background-position: 0 -69px;
+}
+
+.grid-tree-check.null {
+    background-position: 0 -92px;
+}
+
+a:hover .grid-tree-check.null {
+    background-position: 0 -115px;
+}
+
+.grid-titlebar {
+    padding: .3em .2em .2em .3em;
+    position: relative;
+    border-left: 0 none;
+    border-right: 0 none;
+    border-top: 0 none;
+    height: 25px;
+    background: #5c9ccc;
+}
+
+.grid-title {
+    color: #fff;
+    font-weight: bold;
+    margin: 2px 20px 0 5px;
+    height: 1.3em;
+    overflow: hidden;
+}
+
+.grid-btn-close {
+    position: absolute;
+    top: 50%;
+    width: 19px;
+    margin: -10px 0 0 0;
+    padding: 1px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.grid-btn-close span {
+    display: block;
+    margin: 1px;
+}
+
+.grid-btn-close:hover {
+    padding: 0;
+}
+
+.grid-checkbox {
+    float: none;
+    display: inline-block;
+    margin-top: 7px;
+}
+
+.grid-loader {
+    background-image: url(Images/ajax-loader.gif);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-color: #F2F2F2;
+    position: absolute;
+    z-index: 999;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    -moz-opacity: .75;
+    filter: alpha(opacity=75);
+    opacity: .75;
+}

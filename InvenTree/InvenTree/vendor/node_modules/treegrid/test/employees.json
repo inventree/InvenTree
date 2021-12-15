@@ -1,0 +1,321 @@
+{
+    "ID": "employees",
+    "Caption": "Employees",
+    "ExpandFirstLevel": false,
+    "Key": "id",
+    "Group": null,
+    "OrderByColumn": null,
+    "Columns": [
+        {
+            "Name": "Name",
+            "Caption": "Name",
+            "Type": "string",
+            "Precision": 0,
+            "Hidden": false,
+            "Width": 0,
+            "Align": "center",
+            "Children": []
+        },
+        {
+            "Name": "Surname",
+            "Caption": "Surname",
+            "Type": "string",
+            "Precision": 0,
+            "Hidden": false,
+            "Width": 0,
+            "Align": "center",
+            "Children": []
+        },
+        {
+            "Name": "Email",
+            "Caption": "Email",
+            "Type": "string",
+            "Precision": 0,
+            "Hidden": false,
+            "Width": 150,
+            "Align": null,
+            "Children": []
+        },
+        {
+            "Name": "Position",
+            "Caption": "Position",
+            "Type": "string",
+            "Precision": 0,
+            "Hidden": false,
+            "Width": 0,
+            "Align": null,
+            "Children": []
+        },
+        {
+            "Name": "Country",
+            "Caption": "Country",
+            "Type": "string",
+            "Precision": 0,
+            "Hidden": false,
+            "Width": 80,
+            "Align": null,
+            "Children": []
+        },
+        {
+            "Name": "Birthday",
+            "Caption": "Birthday",
+            "Type": "date",
+            "Precision": 0,
+            "Hidden": false,
+            "Width": 0,
+            "Align": null,
+            "Children": []
+        },
+        {
+            "Name": "Hour",
+            "Caption": "Hour",
+            "Type": "number",
+            "Precision": 0,
+            "Hidden": false,
+            "Width": 50,
+            "Align": null,
+            "Children": []
+        },
+        {
+            "Name": "Active",
+            "Caption": "Active",
+            "Type": "bool",
+            "Precision": 0,
+            "Hidden": false,
+            "Width": 50,
+            "Align": "center",
+            "Children": []
+        },
+        {
+            "Name": "About",
+            "Caption": "About",
+            "Type": "string",
+            "Precision": 0,
+            "Hidden": false,
+            "Width": 150,
+            "Align": null,
+            "Children": []
+        }
+    ],
+    "Data": {
+        "Type": null,
+        "Schema": [
+            "id",
+            "name",
+            "surname",
+            "email",
+            "position",
+            "country",
+            "birthday",
+            "hour",
+            "active",
+            "about"
+        ],
+        "Rows": [
+            [
+                "1",
+                "Ted",
+                "Smith",
+                "ted.smith@gmail.com",
+                "Java Developer",
+                "USA",
+                "06/22/1953",
+                "52",
+                "true",
+                "Likes to play on guitar"
+            ],
+            [
+                "2",
+                "Ed",
+                "Johnson",
+                "ed.johnson@gmail.com",
+                "C/C++ Market Data Developer",
+                "England",
+                "09/12/1971",
+                "6",
+                "true",
+                "Proffesional persone"
+            ],
+            [
+                "3",
+                "Sam",
+                "Williams",
+                "sam.williams@gmail.com",
+                "Technical Analyst",
+                "USA",
+                "09/02/1973",
+                "40",
+                "true",
+                "Dreams about travel around the world"
+            ],
+            [
+                "4",
+                "Alexander",
+                "Brown",
+                "alexander.brown@gmail.com",
+                "Project Manager",
+                "USA",
+                "09/25/1991",
+                "33",
+                "true",
+                "Has big family"
+            ],
+            [
+                "5",
+                "Nicholas",
+                "Miller",
+                "nicholas.miller@gmail.com",
+                "Senior Software Engineer",
+                "Canada",
+                "08/24/1959",
+                "50",
+                "false",
+                "Has country house where team spent holidays"
+            ],
+            [
+                "6",
+                "Andrew",
+                "Thompson",
+                "andrew.thompson@gmail.com",
+                "Agile Project Manager",
+                "Germany",
+                "08/18/1978",
+                "27",
+                "true",
+                "Encourages team"
+            ],
+            [
+                "7",
+                "Ryan",
+                "Walker",
+                "ryan.walker@gmail.com",
+                "Application Support Engineer",
+                "England",
+                "04/02/1981",
+                "40",
+                "true",
+                "Intelligent and polite, works with VIP clients"
+            ],
+            [
+                "8",
+                "John",
+                "Scott",
+                "john.scott@gmail.com",
+                "Flex Developer",
+                "USA",
+                "02/14/1960",
+                "71",
+                "true",
+                "Cool at support"
+            ],
+            [
+                "9",
+                "James",
+                "Phillips",
+                "james.phillips@gmail.com",
+                "Senior C++/C# Developer",
+                "USA",
+                "10/18/1991",
+                "58",
+                "true",
+                "Works 24 hours per day"
+            ],
+            [
+                "10",
+                "Brian",
+                "Edwards",
+                "brian.edwards@gmail.com",
+                "UNIX/C++ Developer",
+                "USA",
+                "04/16/1963",
+                "64",
+                "false",
+                "Dreams to built self car"
+            ],
+            [
+                "11",
+                "Jack",
+                "Richardson",
+                "jack.richardson@gmail.com",
+                "Ruby Developer",
+                "Germany",
+                "11/20/1982",
+                "58",
+                "true",
+                "Helps in office"
+            ],
+            [
+                "12",
+                "Alex",
+                "Howard",
+                "alex.howard@gmail.com",
+                "CSS3/HTML5 Developer",
+                "USA",
+                "07/22/1987",
+                "66",
+                "true",
+                "Manages meetings"
+            ],
+            [
+                "13",
+                "Carlos",
+                "Wood",
+                "carlos.wood@gmail.com",
+                "Node.js Developer",
+                "USA",
+                "08/08/1988",
+                "41",
+                "true",
+                "Like to present product on performances"
+            ],
+            [
+                "14",
+                "Adrian",
+                "Russell",
+                "adrian.russell@gmail.com",
+                "Frontend Developer",
+                "Canada",
+                "06/19/1969",
+                "25",
+                "true",
+                "Dreams to buy plain"
+            ],
+            [
+                "15",
+                "Jeremy",
+                "Hamilton",
+                "jeremy.hamilton@gmail.com",
+                "Scala Developer",
+                "USA",
+                "04/17/1950",
+                "69",
+                "true",
+                "Dreams to go in cruis with all team"
+            ],
+            [
+                "16",
+                "Ivan",
+                "Woods",
+                "ivan.woods@gmail.com",
+                "Objective C Developer",
+                "USA",
+                "03/25/1964",
+                "64",
+                "false",
+                "Likes to play hockey"
+            ],
+            [
+                "17",
+                "Peter",
+                "West",
+                "peter.west@gmail.com",
+                "PHP/HTML Developer",
+                "England",
+                "09/06/1977",
+                "30",
+                "true",
+                "Just married  "
+            ]
+       ]
+    }
+}

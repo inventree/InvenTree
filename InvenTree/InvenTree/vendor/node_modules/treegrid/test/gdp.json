@@ -1,0 +1,260 @@
+{
+    "ID": "gdp",
+    "Caption": "GDP",
+    "ExpandFirstLevel": false,
+    "Key": null,
+    "Group": null,
+    "OrderByColumn": null,
+    "Columns": [
+        {
+            "Name": "Country",
+            "Caption": "Country",
+            "Type": "string",
+            "Precision": 0,
+            "Hidden": false,
+            "Width": 0,
+            "Align": null,
+            "Children": []
+        },
+        {
+            "Name": "Area",
+            "Caption": "Area, km<sup>2</sup>",
+            "Type": "number",
+            "Precision": 0,
+            "Hidden": false,
+            "Width": 0,
+            "Align": null,
+            "Children": []
+        },
+        {
+            "Name": null,
+            "Caption": "Population",
+            "Type": "string",
+            "Precision": 0,
+            "Hidden": false,
+            "Width": 0,
+            "Align": null,
+            "Children": [
+                {
+                    "Name": "Population_Total",
+                    "Caption": "Total",
+                    "Type": "number",
+                    "Precision": 0,
+                    "Hidden": false,
+                    "Width": 0,
+                    "Align": null,
+                    "Children": []
+                },
+                {
+                    "Name": "Population_Urban",
+                    "Caption": "Urban",
+                    "Type": "percent",
+                    "Precision": 0,
+                    "Hidden": false,
+                    "Width": 0,
+                    "Align": null,
+                    "Children": []
+                }
+            ]
+        },
+        {
+            "Name": null,
+            "Caption": "Nominal GDP",
+            "Type": "string",
+            "Precision": 0,
+            "Hidden": false,
+            "Width": 0,
+            "Align": null,
+            "Children": [
+                {
+                    "Name": "GDP_Total",
+                    "Caption": "Total, mln $",
+                    "Type": "number",
+                    "Precision": 0,
+                    "Hidden": false,
+                    "Width": 0,
+                    "Align": null,
+                    "Children": []
+                },
+                {
+                    "Name": null,
+                    "Caption": "By Sector",
+                    "Type": "percent",
+                    "Precision": 1,
+                    "Hidden": false,
+                    "Width": 0,
+                    "Align": null,
+                    "Children": [
+                        {
+                            "Name": "GDP_Agriculture",
+                            "Caption": "Agriculture",
+                            "Type": "percent",
+                            "Precision": 1,
+                            "Hidden": false,
+                            "Width": 0,
+                            "Align": null,
+                            "Children": []
+                        },
+                        {
+                            "Name": "GDP_Industry",
+                            "Caption": "Industry",
+                            "Type": "percent",
+                            "Precision": 1,
+                            "Hidden": false,
+                            "Width": 0,
+                            "Align": null,
+                            "Children": []
+                        },
+                        {
+                            "Name": "GDP_Services",
+                            "Caption": "Services",
+                            "Type": "percent",
+                            "Precision": 1,
+                            "Hidden": false,
+                            "Width": 0,
+                            "Align": null,
+                            "Children": []
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "Data": {
+        "Type": null,
+        "Schema": [
+            "id",
+            "country",
+            "area",
+            "population_urban",
+            "population_rural",
+            "population_total",
+            "gdp_agriculture",
+            "gdp_industry",
+            "gdp_services",
+            "gdp_total"
+        ],
+        "Rows": [
+            [
+                1,
+                "Brazil",
+                8515767,
+                0.85,
+                0.15,
+                205809000,
+                0.054,
+                0.274,
+                0.672,
+                2353025
+            ],
+            [
+                2,
+                "China",
+                9388211,
+                0.54,
+                0.46,
+                1375530000,
+                0.091,
+                0.426,
+                0.483,
+                10380380
+            ],
+            [
+                3,
+                "France",
+                675417,
+                0.79,
+                0.21,
+                64529000,
+                0.019,
+                0.183,
+                0.798,
+                2846889
+            ],
+            [
+                4,
+                "Germany",
+                357021,
+                0.75,
+                0.25,
+                81459000,
+                0.008,
+                0.281,
+                0.711,
+                3859547
+            ],
+            [
+                5,
+                "India",
+                3287590,
+                0.32,
+                0.68,
+                1286260000,
+                0.174,
+                0.258,
+                0.569,
+                2047811
+            ],
+            [
+                6,
+                "Italy",
+                301230,
+                0.69,
+                0.31,
+                60676361,
+                0.02,
+                0.242,
+                0.738,
+                2147952
+            ],
+            [
+                7,
+                "Japan",
+                377835,
+                0.93,
+                0.07,
+                126920000,
+                0.012,
+                0.275,
+                0.714,
+                4616335
+            ],
+            [
+                8,
+                "Russia",
+                17098242,
+                0.74,
+                0.26,
+                146544710,
+                0.039,
+                0.36,
+                0.601,
+                1857461
+            ],
+            [
+                9,
+                "United States",
+                9147420,
+                0.81,
+                0.19,
+                323097000,
+                0.0112,
+                0.191,
+                0.797,
+                17418925
+            ],
+            [
+                10,
+                "United Kingdom",
+                244820,
+                0.82,
+                0.18,
+                65097000,
+                0.007,
+                0.21,
+                0.783,
+                2945146
+            ]
+        ]
+    }
+}
