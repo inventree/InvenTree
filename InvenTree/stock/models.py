@@ -664,7 +664,7 @@ class StockItem(MPTTModel):
         # Delete outstanding BuildOrder allocations
         self.allocations.all().delete()
 
-    def allocateToCustomer(self, customer, quantity=None, order=None, user=None, notes=None, is_fulfilling=False):
+    def allocateToCustomer(self, customer, quantity=None, order=None, user=None, notes=None):
         """
         Allocate a StockItem to a customer.
 
@@ -692,8 +692,7 @@ class StockItem(MPTTModel):
         item.sales_order = order
         item.customer = customer
         item.location = None
-        if (is_fulfilling):
-            item.uid = ''
+        item.uid = ''
         item.save()
 
         # TODO - Remove any stock item allocations from this stock item

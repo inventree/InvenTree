@@ -1022,7 +1022,7 @@ class SalesOrderAllocation(models.Model):
     def get_po(self):
         return self.item.purchase_order
 
-    def complete_allocation(self, user, quantity=None, is_fulfilling=False):
+    def complete_allocation(self, user, quantity=None):
         """
         Complete this allocation (called when the parent SalesOrder is marked as "shipped"):
 
@@ -1037,7 +1037,6 @@ class SalesOrderAllocation(models.Model):
             quantity=quantity if quantity is not None else self.quantity,
             order=order,
             user=user,
-            is_fulfilling=is_fulfilling
         )
 
         # Update our own reference to the StockItem

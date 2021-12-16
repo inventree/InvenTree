@@ -19,7 +19,7 @@ from rest_framework.response import Response
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import str2bool
 from InvenTree.api import AttachmentMixin
-from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
+from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, BasketStatus
 
 from part.models import Part
 from stock.models import StockItem
@@ -659,7 +659,7 @@ class SOAllocationFulFill(generics.RetrieveUpdateDestroyAPIView):
             instance = SalesOrderAllocation.objects.filter(item=stock_item_pk).first()
             item = StockItem.objects.get(pk=stock_item_pk)
             if quantity <= instance.quantity:
-                instance.complete_allocation(request.user, quantity=quantity, is_fulfilling=True)
+                instance.complete_allocation(request.user, quantity=quantity)
                 instance.quantity = instance.quantity - quantity
                 instance.item = item
                 instance.save()
@@ -670,6 +670,7 @@ class SOAllocationFulFill(generics.RetrieveUpdateDestroyAPIView):
 
                 if (instance.quantity == 0):
                     instance.line.order.status = SalesOrderStatus.PACKED
+                    instance.line.order.basket.status = BasketStatus.EMPTY
                     instance.line.order.save()
                     self.perform_destroy(instance)
                     
