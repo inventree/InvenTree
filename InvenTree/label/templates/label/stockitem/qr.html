@@ -27,19 +27,26 @@
     position: fixed;
     left: {{ height }}mm;
     bottom: 0.5mm;
-    font-size: 2mm;
+    font-size: 2.1mm;
+}
+
+hr {
+    height: .1px;
+    color: black;
+    background-color: black;
 }
 {% endblock %}
 
 {% block content %}
 
-<img class='qr' src='{% qrcode qr_data %}'>
+<img class='qr' src='{% qrcode qr_url %}'>
 
 <div class='part'>
     {{ part.full_name }}
 </div>
 
+
 <div class='fab'>
-    Check in inventory.fablabbcn.org
+    Or check in:<br> https://inventory.fablabbcn.org/part/{{ part.id }}/
 </div>
 {% endblock %}

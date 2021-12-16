@@ -12,22 +12,32 @@
     width: {{ height }}mm;
 }
 
-.part {
-    font-family: Arial, Helvetica, sans-serif;
-    display: inline;
-    position: absolute;
+.part { 
+    font-family: Arial, Helvetica, sans-serif; 
+    position: fixed; 
+    left: {{ height }}mm; 
+    top: 0mm; 
+}
+
+.fab {
+    position: fixed;
     left: {{ height }}mm;
-    top: 2mm;
+    bottom: 0.5mm;
+    font-size: 2mm;
 }
 
 {% endblock %}
 
 {% block content %}
 
-<img class='qr' src='{% qrcode qr_data %}'>
+<img class='qr' src='{% qrcode qr_url %}'>
 
 <div class='part'>
     {{ part.full_name }}
+</div>
+
+<div class='fab'>
+    Or also check in:<br> https://inventory.fablabbcn.org/part/{{ part.id }}/
 </div>
 
 {% endblock %}
