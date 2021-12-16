@@ -658,21 +658,22 @@ class SOAllocationFulFill(generics.RetrieveUpdateDestroyAPIView):
             stock_item_pk = self.kwargs['item_pk']
             instance = SalesOrderAllocation.objects.filter(item=stock_item_pk).first()
             item = StockItem.objects.get(pk=stock_item_pk)
-            so = SalesOrder.objects.get(pk=instance.order)
             if quantity <= instance.quantity:
                 instance.complete_allocation(request.user, quantity=quantity, is_fulfilling=True)
                 instance.quantity = instance.quantity - quantity
                 instance.item = item
                 instance.save()
 
-                if so.status != SalesOrderStatus.PACKING:
-                    so.status = SalesOrderStatus.PACKING
-                    so.save()
-                    
+                if instance.line.order.status != SalesOrderStatus.PACKING:
+                    instance.line.order.status = SalesOrderStatus.PACKING
+                    instance.line.order.save()
+
                 if (instance.quantity == 0):
+                    instance.line.order.status = SalesOrderStatus.PACKED
+                    instance.line.order.save()
                     self.perform_destroy(instance)
-                    so.status = SalesOrderStatus.PACKED
-                    so.save()
+                    
+                    
                     
                 return Response({"succcess": "Item fulfilled successfully"}, status=status.HTTP_200_OK)
             else:

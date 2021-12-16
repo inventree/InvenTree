@@ -33,7 +33,7 @@
                     <span class='fas fa-plus-circle'></span> {% trans "Allocate by barcode item" %}
                 </button>
                 {% endif %}
-                {% if order.status == SalesOrderStatus.WAITING_FOR_PACKING %}
+                {% if order.status == SalesOrderStatus.WAITING_FOR_PACKING or  order.status == SalesOrderStatus.PACKING  %}
                 <button type='button' class='btn btn-warning ms-3' id='fulfill-stock-item-btn'>
                     <span class='fas fa-box-open'></span> {% trans "Fulfill by barcode item" %}
                 </button>
