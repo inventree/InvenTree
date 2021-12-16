@@ -222,7 +222,7 @@
     });
 
     $("#fulfill-stock-item-btn").click(function() {
-        scanBarcodeForFulfill()
+        scanBarcodeInsideOrder({fulfill: true})
     })
 
     enableSidebar('salesorder');

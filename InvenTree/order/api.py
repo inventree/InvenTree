@@ -670,7 +670,11 @@ class SOAllocationFulFill(generics.RetrieveUpdateDestroyAPIView):
 
                 if (instance.quantity == 0):
                     instance.line.order.status = SalesOrderStatus.PACKED
-                    instance.line.order.basket.status = BasketStatus.EMPTY
+                    try:
+                        instance.line.order.basket.status = BasketStatus.EMPTY
+                        instance.line.order.basket.save()
+                    except Exception as e:
+                        print(e)
                     instance.line.order.save()
                     self.perform_destroy(instance)
                     

@@ -767,17 +767,14 @@ function scanOrderIntoBasket(item_id_list, options={}) {
     );
 }
 
-function scanBarcodeForAllocate() {
-    //Something
-
-}
 
 
-function scanBarcodeForFulfill(options={}) {
+function scanBarcodeInsideOrder(options={}) {
 
     var modal = options.modal || '#modal-form';
 
     var stock_item = null;
+    var endpoint = '';
 
     // Extra form fields`
     var extra = makeQuantityField();
@@ -825,25 +822,50 @@ function scanBarcodeForFulfill(options={}) {
                 if (!stock_item) {
                     return;
                 }
-                // Send API request
-                inventreePut(
-                    `/api/order/so-allocation/fulfill/${stock_item.pk}/${quantity}`,
-                    {
-                        // success: function(response, status) {
-                        //     console.log(status, response)
-                        //     // First hide the modal
-                        //     $(modal).modal('hide');
+                // Call if process is fulfilling e.g. packing
+                if (options.fulfill) {
+                     // Send API request
+                    inventreePut(
+                        `/api/order/so-allocation/fulfill/${stock_item.pk}/${quantity}`,
+                        {
+                            // success: function(response, status) {
+                            //     console.log(status, response)
+                            //     // First hide the modal
+                            //     $(modal).modal('hide');
+    
+                            //     if (status == 'success' && 'success' in response) {
+                            //         showAlertOrCache('alert-success', response.success, true);
+                            //         location.reload();
+                            //     } else {
+                            //         showAlertOrCache('alert-danger', '{% trans "Error fulfilling item" %}', false);
+                            //     }
+                            // }
+                        },
+                        {method: 'DELETE', reloadOnSuccess: true},
+                    );
+                }
 
-                        //     if (status == 'success' && 'success' in response) {
-                        //         showAlertOrCache('alert-success', response.success, true);
-                        //         location.reload();
-                        //     } else {
-                        //         showAlertOrCache('alert-danger', '{% trans "Error fulfilling item" %}', false);
-                        //     }
-                        // }
-                    },
-                    {method: 'DELETE', reloadOnSuccess: true},
-                );
+                if (options.allocate) {
+                    inventreePut(
+                        `/api/order/so-allocation/`,
+                        {
+                            // success: function(response, status) {
+                            //     console.log(status, response)
+                            //     // First hide the modal
+                            //     $(modal).modal('hide');
+    
+                            //     if (status == 'success' && 'success' in response) {
+                            //         showAlertOrCache('alert-success', response.success, true);
+                            //         location.reload();
+                            //     } else {
+                            //         showAlertOrCache('alert-danger', '{% trans "Error fulfilling item" %}', false);
+                            //     }
+                            // }
+                        },
+                        {method: 'DELETE', reloadOnSuccess: true},
+                    )
+                }
+               
             },
             onScan: function(response) {
                 updateInfo(null);
