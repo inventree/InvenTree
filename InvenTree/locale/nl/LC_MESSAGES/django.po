@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-14 12:17+0000\n"
-"PO-Revision-Date: 2021-12-17 15:34\n"
+"PO-Revision-Date: 2021-12-17 16:42\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -43,7 +43,7 @@ msgstr "Bevestigen"
 
 #: InvenTree/forms.py:142
 msgid "Confirm delete"
-msgstr "Bevestigen verwijdering"
+msgstr "Bevestig verwijdering"
 
 #: InvenTree/forms.py:143
 msgid "Confirm item deletion"
@@ -79,7 +79,7 @@ msgstr "E-mailadres bevestiging"
 
 #: InvenTree/forms.py:260
 msgid "You must type the same email each time."
-msgstr "U moet elke keer hetzelfde e-mailadres invoeren."
+msgstr "Er moet hetzelfde e-mailadres ingevoerd worden."
 
 #: InvenTree/helpers.py:430
 #, python-brace-format
@@ -461,11 +461,11 @@ msgstr "Geretourneerd door klant"
 
 #: InvenTree/status_codes.py:294
 msgid "Build order output created"
-msgstr "Montageopdracht gecreëerd"
+msgstr "Product aangemaakt"
 
 #: InvenTree/status_codes.py:295
 msgid "Build order output completed"
-msgstr "Montageopdracht voltooid"
+msgstr "Product voltooid"
 
 #: InvenTree/status_codes.py:297
 msgid "Received against purchase order"
@@ -654,7 +654,7 @@ msgstr "Ongeldige keuze voor bovenliggende build"
 #: report/templates/report/inventree_build_order_base.html:106
 #: templates/js/translated/build.js:402
 msgid "Build Order"
-msgstr "Productieopdracht"
+msgstr "Productie-opdracht"
 
 #: build/models.py:138 build/templates/build/build_base.html:13
 #: build/templates/build/index.html:8 build/templates/build/index.html:12
@@ -664,11 +664,11 @@ msgstr "Productieopdracht"
 #: templates/InvenTree/search.html:145
 #: templates/InvenTree/settings/sidebar.html:43 users/models.py:44
 msgid "Build Orders"
-msgstr "Bouwopdrachten"
+msgstr "Productie-opdrachten"
 
 #: build/models.py:198
 msgid "Build Order Reference"
-msgstr "Bouwopdracht referentie"
+msgstr "Productie-opdracht referentie"
 
 #: build/models.py:199 order/models.py:210 order/models.py:536
 #: order/models.py:801 part/models.py:2585
@@ -691,7 +691,7 @@ msgstr "Bovenliggende bouw"
 
 #: build/models.py:220
 msgid "BuildOrder to which this build is allocated"
-msgstr "Productieopdracht waar deze build aan is toegewezen"
+msgstr "Productie-opdracht waar dit product aan is toegewezen"
 
 #: build/models.py:225 build/templates/build/build_base.html:77
 #: build/templates/build/detail.html:30 company/models.py:705
@@ -729,11 +729,11 @@ msgstr "Selecteer onderdeel om te bouwen"
 
 #: build/models.py:238
 msgid "Sales Order Reference"
-msgstr "Verkoop Order Referentie"
+msgstr "Verkooporder referentie"
 
 #: build/models.py:242
 msgid "SalesOrder to which this build is allocated"
-msgstr "Verkooporder waaraan deze build is toegewezen"
+msgstr "Verkooporder waar dit product aan is toegewezen"
 
 #: build/models.py:247 templates/js/translated/build.js:1352
 #: templates/js/translated/order.js:1564
@@ -791,7 +791,7 @@ msgstr "Aanmaakdatum"
 
 #: build/models.py:296 order/models.py:558
 msgid "Target completion date"
-msgstr "Verwachte voltooiingsdatum"
+msgstr "Verwachte opleveringsdatum"
 
 #: build/models.py:297
 msgid "Target date for build completion. Build will be overdue after this date."
@@ -800,7 +800,7 @@ msgstr ""
 #: build/models.py:300 order/models.py:252
 #: templates/js/translated/build.js:1703
 msgid "Completion Date"
-msgstr "Voltooiingsdatum"
+msgstr "Opleveringsdatum"
 
 #: build/models.py:306
 msgid "completed by"
@@ -812,7 +812,7 @@ msgstr ""
 
 #: build/models.py:315
 msgid "User who issued this build order"
-msgstr "Gebruiker die bouwopdracht heeft gegeven"
+msgstr "Gebruiker die de productie-opdracht heeft gegeven"
 
 #: build/models.py:323 build/templates/build/build_base.html:185
 #: build/templates/build/detail.html:116 order/models.py:140
@@ -825,7 +825,7 @@ msgstr "Verantwoordelijke"
 
 #: build/models.py:324
 msgid "User responsible for this build order"
-msgstr "Gebruiker verantwoordelijk voor deze bouwopdracht"
+msgstr "Gebruiker verantwoordelijk voor deze productie-opdracht"
 
 #: build/models.py:329 build/templates/build/detail.html:102
 #: company/templates/company/manufacturer_part.html:102
@@ -868,7 +868,7 @@ msgstr "Bouwuitvoer is al voltooid"
 
 #: build/models.py:716
 msgid "Build output does not match Build Order"
-msgstr "Bouwuitvoer komt niet overeen met bouwopdracht"
+msgstr "Product komt niet overeen met de productie-opdracht"
 
 #: build/models.py:1108
 msgid "Build item must specify a build output, as master part is marked as trackable"
@@ -1074,20 +1074,20 @@ msgstr ""
 #: build/templates/build/build_base.html:96
 #, python-format
 msgid "This Build Order is allocated to Sales Order %(link)s"
-msgstr "Deze bouwopdracht is toegewezen aan verkooporder %(link)s"
+msgstr "Deze productie-opdracht is toegewezen aan verkooporder %(link)s"
 
 #: build/templates/build/build_base.html:103
 #, python-format
 msgid "This Build Order is a child of Build Order %(link)s"
-msgstr "Deze bouwopdracht is een onderdeel van bouwopdracht %(link)s"
+msgstr "Deze productie-opdracht is een onderdeel van productie-opdracht %(link)s"
 
 #: build/templates/build/build_base.html:110
 msgid "Build Order is ready to mark as completed"
-msgstr "Bouwopdracht is gereed om te markeren als voltooid"
+msgstr "Productie-opdracht is gereed om te markeren als voltooid"
 
 #: build/templates/build/build_base.html:115
 msgid "Build Order cannot be completed as outstanding outputs remain"
-msgstr "Bouwopdracht kan niet worden voltooid omdat openstaande outputs blijven"
+msgstr "Productie-opdracht kan niet worden voltooid omdat er nog producties openstaan"
 
 #: build/templates/build/build_base.html:120
 msgid "Required build quantity has not yet been completed"
@@ -1095,7 +1095,7 @@ msgstr "Vereiste bouwhoeveelheid is nog niet bereikt"
 
 #: build/templates/build/build_base.html:125
 msgid "Stock has not been fully allocated to this Build Order"
-msgstr "Voorraad is niet volledig toegewezen aan deze bouwopdracht"
+msgstr "Voorraad is niet volledig toegewezen aan deze productie-opdracht"
 
 #: build/templates/build/build_base.html:146
 #: build/templates/build/detail.html:132
@@ -1139,7 +1139,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:314
 #: templates/js/translated/order.js:1218
 msgid "Sales Order"
-msgstr "Verkoop Order"
+msgstr "Verkooporder"
 
 #: build/templates/build/build_base.html:178
 #: build/templates/build/detail.html:109
@@ -1153,7 +1153,7 @@ msgstr "Onvolledige bouwuitvoer"
 
 #: build/templates/build/build_base.html:224
 msgid "Build Order cannot be completed as incomplete build outputs remain"
-msgstr "Bouwopdracht kan niet worden voltooid omdat onvolledige bouwuitvoer blijft bestaan"
+msgstr "Productie-opdracht kan niet worden voltooid omdat er onvoltooide producten openstaan"
 
 #: build/templates/build/build_output_create.html:7
 msgid "The Bill of Materials contains trackable parts"
@@ -1181,11 +1181,11 @@ msgstr "Weet je zeker dat je de bouw wilt annuleren?"
 
 #: build/templates/build/complete.html:8
 msgid "Build Order is complete"
-msgstr "Bouwopdracht is voltooid"
+msgstr "Productie-opdracht is voltooid"
 
 #: build/templates/build/complete.html:12
 msgid "Build Order is incomplete"
-msgstr "Bouwopdracht is onvolledig"
+msgstr "Productie-opdracht is onvolledig"
 
 #: build/templates/build/complete.html:15
 msgid "Incompleted build outputs remain"
@@ -1253,7 +1253,7 @@ msgstr ""
 
 #: build/templates/build/detail.html:173
 msgid "Allocate Stock to Build"
-msgstr ""
+msgstr "Voorraad toewijzen aan Product"
 
 #: build/templates/build/detail.html:177 templates/js/translated/build.js:1207
 msgid "Unallocate stock"
@@ -1265,7 +1265,7 @@ msgstr "Niet toegewezen voorraad"
 
 #: build/templates/build/detail.html:180
 msgid "Allocate stock to build"
-msgstr ""
+msgstr "Voorraad toewijzen aan product"
 
 #: build/templates/build/detail.html:181 build/templates/build/sidebar.html:8
 msgid "Allocate Stock"
@@ -1280,7 +1280,7 @@ msgstr ""
 #: company/templates/company/detail.html:85 order/views.py:463
 #: part/templates/part/category.html:177
 msgid "Order Parts"
-msgstr "Bestel onderdelen"
+msgstr "Onderdelen bestellen"
 
 #: build/templates/build/detail.html:197
 msgid "Untracked stock has been fully allocated for this Build Order"
@@ -1474,11 +1474,11 @@ msgstr ""
 
 #: common/forms.py:34
 msgid "File"
-msgstr ""
+msgstr "Bestand"
 
 #: common/forms.py:35
 msgid "Select file to upload"
-msgstr ""
+msgstr "Selecteer bestand om te uploaden"
 
 #: common/forms.py:50
 msgid "{name.title()} File"
@@ -1487,7 +1487,7 @@ msgstr ""
 #: common/forms.py:51
 #, python-brace-format
 msgid "Select {name} file to upload"
-msgstr ""
+msgstr "Kies {name} bestand om te uploaden"
 
 #: common/models.py:340 common/models.py:1004 common/models.py:1212
 msgid "Settings key (must be unique - case insensitive"
@@ -1503,7 +1503,7 @@ msgstr "Moet een geheel getal zijn"
 
 #: common/models.py:382
 msgid "Chosen value is not a valid option"
-msgstr ""
+msgstr "Gekozen waarde is geen geldige optie"
 
 #: common/models.py:405
 msgid "Value must be a boolean value"
@@ -4609,7 +4609,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:319
 msgid "Build Order Allocations"
-msgstr "Toewijzingen bouwopdracht"
+msgstr "Productie-opdracht toewijzingen"
 
 #: part/templates/part/detail.html:329
 msgid "Part Suppliers"
@@ -7119,12 +7119,12 @@ msgstr ""
 #: templates/js/translated/build.js:1755
 #: templates/js/translated/table_filters.js:178
 msgid "Available"
-msgstr ""
+msgstr "Beschikbaar"
 
 #: templates/email/build_order_required_stock.html:38
 #: templates/email/low_stock_notification.html:31
 msgid "You are receiving this email because you are subscribed to notifications for this part "
-msgstr ""
+msgstr "Je ontvangt deze e-mail omdat je bent geabonneerd op notificaties van dit onderdeel "
 
 #: templates/email/email.html:35
 msgid "InvenTree version"
@@ -7550,7 +7550,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:429 templates/js/translated/order.js:1848
 msgid "Location not specified"
-msgstr ""
+msgstr "Locatie is niet opgegeven"
 
 #: templates/js/translated/build.js:608
 msgid "No active build outputs found"
@@ -7559,12 +7559,12 @@ msgstr ""
 #: templates/js/translated/build.js:1057 templates/js/translated/build.js:1766
 #: templates/js/translated/order.js:1982
 msgid "Edit stock allocation"
-msgstr ""
+msgstr "Voorraadtoewijzing bewerken"
 
 #: templates/js/translated/build.js:1059 templates/js/translated/build.js:1767
 #: templates/js/translated/order.js:1983
 msgid "Delete stock allocation"
-msgstr ""
+msgstr "Voorraadtoewijzing verwijderen"
 
 #: templates/js/translated/build.js:1077
 msgid "Edit Allocation"
@@ -7585,7 +7585,7 @@ msgstr ""
 #: templates/js/translated/build.js:1139 templates/js/translated/build.js:1365
 #: templates/js/translated/build.js:1762 templates/js/translated/order.js:2227
 msgid "Allocated"
-msgstr ""
+msgstr "Toegewezen"
 
 #: templates/js/translated/build.js:1195 templates/js/translated/order.js:2307
 msgid "Build stock"
@@ -7597,7 +7597,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:1202 templates/js/translated/order.js:2300
 msgid "Allocate stock"
-msgstr ""
+msgstr "Voorraad toewijzen"
 
 #: templates/js/translated/build.js:1267 templates/js/translated/order.js:1499
 msgid "Specify stock allocation quantity"
@@ -7606,15 +7606,15 @@ msgstr ""
 #: templates/js/translated/build.js:1338 templates/js/translated/label.js:134
 #: templates/js/translated/order.js:1550 templates/js/translated/report.js:225
 msgid "Select Parts"
-msgstr ""
+msgstr "Onderdelen selecteren"
 
 #: templates/js/translated/build.js:1339 templates/js/translated/order.js:1551
 msgid "You must select at least one part to allocate"
-msgstr ""
+msgstr "Er moet op zijn minst één onderdeel toegewezen worden"
 
 #: templates/js/translated/build.js:1353 templates/js/translated/order.js:1565
 msgid "Select source location (leave blank to take from all locations)"
-msgstr ""
+msgstr "Selecteer bron locatie (laat het veld leeg om iedere locatie te gebruiken)"
 
 #: templates/js/translated/build.js:1382 templates/js/translated/order.js:1600
 msgid "Confirm stock allocation"
