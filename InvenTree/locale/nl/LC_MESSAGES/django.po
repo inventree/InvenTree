@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-14 12:17+0000\n"
-"PO-Revision-Date: 2021-12-14 12:53\n"
+"PO-Revision-Date: 2021-12-17 15:34\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -654,7 +654,7 @@ msgstr "Ongeldige keuze voor bovenliggende build"
 #: report/templates/report/inventree_build_order_base.html:106
 #: templates/js/translated/build.js:402
 msgid "Build Order"
-msgstr "Bouwopdracht"
+msgstr "Productieopdracht"
 
 #: build/models.py:138 build/templates/build/build_base.html:13
 #: build/templates/build/index.html:8 build/templates/build/index.html:12
@@ -691,7 +691,7 @@ msgstr "Bovenliggende bouw"
 
 #: build/models.py:220
 msgid "BuildOrder to which this build is allocated"
-msgstr "BuildOrder waaraan deze build is toegewezen"
+msgstr "Productieopdracht waar deze build aan is toegewezen"
 
 #: build/models.py:225 build/templates/build/build_base.html:77
 #: build/templates/build/detail.html:30 company/models.py:705
