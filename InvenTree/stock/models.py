@@ -455,10 +455,11 @@ class StockItem(MPTTModel):
 
     uid = models.CharField(blank=True, max_length=128, help_text=("Unique identifier field"))
 
+    # Note: When a StockItem is deleted, a pre_delete signal handles the parent/child relationship
     parent = TreeForeignKey(
         'self',
         verbose_name=_('Parent Stock Item'),
-        on_delete=models.SET_NULL,
+        on_delete=models.DO_NOTHING,
         blank=True, null=True,
         related_name='children'
     )
@@ -477,6 +478,7 @@ class StockItem(MPTTModel):
         help_text=_('Select a matching supplier part for this stock item')
     )
 
+    # Note: When a StockLocation is deleted, stock items are updated via a signal
     location = TreeForeignKey(
         StockLocation, on_delete=models.DO_NOTHING,
         verbose_name=_('Stock Location'),
@@ -492,10 +494,11 @@ class StockItem(MPTTModel):
         help_text=_('Packaging this stock item is stored in')
     )
 
+    # When deleting a stock item with installed items, those installed items are also installed
     belongs_to = models.ForeignKey(
         'self',
         verbose_name=_('Installed In'),
-        on_delete=models.DO_NOTHING,
+        on_delete=models.CASCADE,
         related_name='installed_parts', blank=True, null=True,
         help_text=_('Is this item installed in another item?')
     )
@@ -800,14 +803,14 @@ class StockItem(MPTTModel):
     def can_delete(self):
         """ Can this stock item be deleted? It can NOT be deleted under the following circumstances:
 
-        - Has child StockItems
+        - Has installed stock items
         - Has a serial number and is tracked
         - Is installed inside another StockItem
         - It has been assigned to a SalesOrder
         - It has been assigned to a BuildOrder
         """
 
-        if self.child_count > 0:
+        if self.installed_item_count() > 0:
             return False
 
         if self.part.trackable and self.serial is not None:
@@ -853,19 +856,12 @@ class StockItem(MPTTModel):
 
         return installed
 
-    def installedItemCount(self):
+    def installed_item_count(self):
         """
         Return the number of stock items installed inside this one.
         """
 
         return self.installed_parts.count()
-
-    def hasInstalledItems(self):
-        """
-        Returns true if this stock item has other stock items installed in it.
-        """
-
-        return self.installedItemCount() > 0
 
     @transaction.atomic
     def installStockItem(self, other_item, quantity, user, notes):
@@ -1225,6 +1221,8 @@ class StockItem(MPTTModel):
         location = kwargs.get('location', None)
         notes = kwargs.get('notes', None)
 
+        parent_id = self.parent.pk if self.parent else None
+
         for other in other_items:
             # If the stock item cannot be merged, return
             if not self.can_merge(other, raise_error=raise_error, **kwargs):
@@ -1246,7 +1244,11 @@ class StockItem(MPTTModel):
                 allocation.stock_item = self()
                 allocation.save()
 
-            # Delete the other stock item
+            # Prevent atomicity issues when we are merging our own "parent" part in
+            if parent_id and parent_id == other.pk:
+                self.parent = None
+                self.save()
+
             other.delete()
 
         self.add_tracking_entry(
@@ -1757,7 +1759,8 @@ class StockItem(MPTTModel):
 
 @receiver(pre_delete, sender=StockItem, dispatch_uid='stock_item_pre_delete_log')
 def before_delete_stock_item(sender, instance, using, **kwargs):
-    """ Receives pre_delete signal from StockItem object.
+    """
+    Receives pre_delete signal from StockItem object.
 
     Before a StockItem is deleted, ensure that each child object is updated,
     to point to the new parent item.
