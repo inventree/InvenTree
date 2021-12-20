@@ -458,7 +458,7 @@ class StockItem(MPTTModel):
     parent = TreeForeignKey(
         'self',
         verbose_name=_('Parent Stock Item'),
-        on_delete=models.DO_NOTHING,
+        on_delete=models.SET_NULL,
         blank=True, null=True,
         related_name='children'
     )
@@ -1252,6 +1252,7 @@ class StockItem(MPTTModel):
         self.add_tracking_entry(
             StockHistoryCode.MERGED_STOCK_ITEMS,
             user,
+            quantity=self.quantity,
             notes=notes,
             deltas={
                 'location': location.pk,

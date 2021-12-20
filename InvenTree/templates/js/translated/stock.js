@@ -867,7 +867,7 @@ function mergeStockItems(items, options={}) {
                         }
                     }
                 }
-            )
+            );
         }
     });
 }
