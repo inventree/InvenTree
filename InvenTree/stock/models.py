@@ -1166,6 +1166,9 @@ class StockItem(MPTTModel):
             if self.belongs_to:
                 raise ValidationError(_('Stock item is installed in another item'))
 
+            if self.installed_item_count() > 0:
+                raise ValidationError(_('Stock item contains other items'))
+
             if self.customer:
                 raise ValidationError(_('Stock item has been assigned to a customer'))
 
