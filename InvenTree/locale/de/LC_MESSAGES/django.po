@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-15 21:52+0000\n"
+"POT-Creation-Date: 2021-12-20 00:57+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -136,7 +136,7 @@ msgstr "Datei zum Anhängen auswählen"
 #: company/models.py:564 order/models.py:124 part/models.py:797
 #: report/templates/report/inventree_build_order_base.html:165
 #: templates/js/translated/company.js:537
-#: templates/js/translated/company.js:826 templates/js/translated/part.js:1258
+#: templates/js/translated/company.js:826 templates/js/translated/part.js:1260
 msgid "Link"
 msgstr "Link"
 
@@ -202,7 +202,7 @@ msgstr "Ungültige Auswahl"
 #: templates/InvenTree/settings/plugin_settings.html:23
 #: templates/InvenTree/settings/settings.html:268
 #: templates/js/translated/company.js:638 templates/js/translated/part.js:506
-#: templates/js/translated/part.js:643 templates/js/translated/part.js:1565
+#: templates/js/translated/part.js:643 templates/js/translated/part.js:1567
 #: templates/js/translated/stock.js:2134
 msgid "Name"
 msgstr "Name"
@@ -224,9 +224,9 @@ msgstr "Name"
 #: templates/js/translated/company.js:548
 #: templates/js/translated/company.js:837 templates/js/translated/order.js:836
 #: templates/js/translated/order.js:1019 templates/js/translated/order.js:1258
-#: templates/js/translated/part.js:565 templates/js/translated/part.js:933
-#: templates/js/translated/part.js:1018 templates/js/translated/part.js:1188
-#: templates/js/translated/part.js:1584 templates/js/translated/part.js:1653
+#: templates/js/translated/part.js:565 templates/js/translated/part.js:935
+#: templates/js/translated/part.js:1020 templates/js/translated/part.js:1190
+#: templates/js/translated/part.js:1586 templates/js/translated/part.js:1655
 #: templates/js/translated/stock.js:1390 templates/js/translated/stock.js:2146
 #: templates/js/translated/stock.js:2191
 msgid "Description"
@@ -614,8 +614,8 @@ msgstr "Barcode Lagerartikel zugeordnet"
 #: templates/js/translated/order.js:1578 templates/js/translated/order.js:1859
 #: templates/js/translated/order.js:1947 templates/js/translated/order.js:2036
 #: templates/js/translated/order.js:2150 templates/js/translated/part.js:843
-#: templates/js/translated/part.js:1796 templates/js/translated/part.js:1919
-#: templates/js/translated/part.js:1997 templates/js/translated/stock.js:382
+#: templates/js/translated/part.js:1798 templates/js/translated/part.js:1921
+#: templates/js/translated/part.js:1999 templates/js/translated/stock.js:382
 #: templates/js/translated/stock.js:579 templates/js/translated/stock.js:2326
 #: templates/js/translated/stock.js:2428
 msgid "Quantity"
@@ -726,8 +726,8 @@ msgstr "Bauauftrag, zu dem dieser Bauauftrag zugwiesen ist"
 #: templates/js/translated/company.js:746 templates/js/translated/order.js:84
 #: templates/js/translated/order.js:586 templates/js/translated/order.js:1004
 #: templates/js/translated/order.js:1576 templates/js/translated/order.js:1933
-#: templates/js/translated/order.js:2128 templates/js/translated/part.js:918
-#: templates/js/translated/part.js:999 templates/js/translated/part.js:1166
+#: templates/js/translated/order.js:2128 templates/js/translated/part.js:920
+#: templates/js/translated/part.js:1001 templates/js/translated/part.js:1168
 #: templates/js/translated/stock.js:553 templates/js/translated/stock.js:747
 #: templates/js/translated/stock.js:1347 templates/js/translated/stock.js:2416
 msgid "Part"
@@ -2226,7 +2226,7 @@ msgstr "Preisstaffelungs Anzahl"
 
 #: common/models.py:1267 company/serializers.py:264
 #: company/templates/company/supplier_part.html:256
-#: templates/js/translated/part.js:852 templates/js/translated/part.js:1801
+#: templates/js/translated/part.js:852 templates/js/translated/part.js:1803
 msgid "Price"
 msgstr "Preis"
 
@@ -2906,8 +2906,8 @@ msgstr "Preisstaffel löschen"
 #: templates/InvenTree/search.html:156
 #: templates/InvenTree/settings/sidebar.html:41
 #: templates/js/translated/bom.js:328 templates/js/translated/part.js:434
-#: templates/js/translated/part.js:569 templates/js/translated/part.js:1059
-#: templates/js/translated/part.js:1220 templates/js/translated/stock.js:748
+#: templates/js/translated/part.js:569 templates/js/translated/part.js:1061
+#: templates/js/translated/part.js:1222 templates/js/translated/stock.js:748
 #: templates/js/translated/stock.js:1401 templates/navbar.html:28
 msgid "Stock"
 msgstr "Bestand"
@@ -3983,7 +3983,7 @@ msgstr "Teil-Kategorien"
 #: part/templates/part/category_sidebar.html:9
 #: templates/InvenTree/index.html:85 templates/InvenTree/search.html:88
 #: templates/InvenTree/settings/sidebar.html:37
-#: templates/js/translated/part.js:1597 templates/navbar.html:21
+#: templates/js/translated/part.js:1599 templates/navbar.html:21
 #: templates/stats.html:80 templates/stats.html:89 users/models.py:41
 msgid "Parts"
 msgstr "Teile"
@@ -4050,7 +4050,7 @@ msgstr "Schlüsselworte um die Sichtbarkeit in Suchergebnissen zu verbessern"
 #: part/templates/part/part_base.html:265
 #: part/templates/part/set_category.html:15
 #: templates/InvenTree/settings/settings.html:172
-#: templates/js/translated/part.js:1202
+#: templates/js/translated/part.js:1204
 msgid "Category"
 msgstr "Kategorie"
 
@@ -4059,7 +4059,7 @@ msgid "Part category"
 msgstr "Teile-Kategorie"
 
 #: part/models.py:784 part/templates/part/part_base.html:274
-#: templates/js/translated/part.js:557 templates/js/translated/part.js:1155
+#: templates/js/translated/part.js:557 templates/js/translated/part.js:1157
 #: templates/js/translated/stock.js:1373
 msgid "IPN"
 msgstr "IPN (Interne Produktnummer)"
@@ -4181,7 +4181,7 @@ msgstr "Test-Vorlagen können nur für verfolgbare Teile angelegt werden"
 msgid "Test with this name already exists for this part"
 msgstr "Ein Test mit diesem Namen besteht bereits für dieses Teil"
 
-#: part/models.py:2310 templates/js/translated/part.js:1648
+#: part/models.py:2310 templates/js/translated/part.js:1650
 #: templates/js/translated/stock.js:1097
 msgid "Test Name"
 msgstr "Test-Name"
@@ -4198,7 +4198,7 @@ msgstr "Test-Beschreibung"
 msgid "Enter description for this test"
 msgstr "Beschreibung für diesen Test eingeben"
 
-#: part/models.py:2322 templates/js/translated/part.js:1657
+#: part/models.py:2322 templates/js/translated/part.js:1659
 #: templates/js/translated/table_filters.js:281
 msgid "Required"
 msgstr "Benötigt"
@@ -4207,7 +4207,7 @@ msgstr "Benötigt"
 msgid "Is this test required to pass?"
 msgstr "Muss dieser Test erfolgreich sein?"
 
-#: part/models.py:2328 templates/js/translated/part.js:1665
+#: part/models.py:2328 templates/js/translated/part.js:1667
 msgid "Requires Value"
 msgstr "Erfordert Wert"
 
@@ -4215,7 +4215,7 @@ msgstr "Erfordert Wert"
 msgid "Does this test require a value when adding a test result?"
 msgstr "Muss für diesen Test ein Wert für das Test-Ergebnis eingetragen werden?"
 
-#: part/models.py:2334 templates/js/translated/part.js:1672
+#: part/models.py:2334 templates/js/translated/part.js:1674
 msgid "Requires Attachment"
 msgstr "Anhang muss eingegeben werden"
 
@@ -4886,7 +4886,7 @@ msgstr "Dieses Teil ist eine Variante von %(link)s"
 msgid "In Stock"
 msgstr "Auf Lager"
 
-#: part/templates/part/part_base.html:203 templates/js/translated/part.js:1235
+#: part/templates/part/part_base.html:203 templates/js/translated/part.js:1237
 msgid "On Order"
 msgstr "Bestellt"
 
@@ -4906,8 +4906,8 @@ msgstr "Zu Bauaufträgen zugeordnet"
 msgid "Can Build"
 msgstr "Herstellbar"
 
-#: part/templates/part/part_base.html:245 templates/js/translated/part.js:1066
-#: templates/js/translated/part.js:1239
+#: part/templates/part/part_base.html:245 templates/js/translated/part.js:1068
+#: templates/js/translated/part.js:1241
 msgid "Building"
 msgstr "Im Bau"
 
@@ -5125,8 +5125,8 @@ msgid "Set category for the following parts"
 msgstr "Kategorie für Teile setzen"
 
 #: part/templates/part/stock_count.html:7 templates/js/translated/bom.js:588
-#: templates/js/translated/part.js:436 templates/js/translated/part.js:1056
-#: templates/js/translated/part.js:1243
+#: templates/js/translated/part.js:436 templates/js/translated/part.js:1058
+#: templates/js/translated/part.js:1245
 msgid "No Stock"
 msgstr "Kein Bestand"
 
@@ -7826,8 +7826,8 @@ msgstr "Keine passenden Lagerbestände"
 msgid "No builds matching query"
 msgstr "Keine Bauaufträge passen zur Anfrage"
 
-#: templates/js/translated/build.js:1599 templates/js/translated/part.js:1147
-#: templates/js/translated/part.js:1558 templates/js/translated/stock.js:1333
+#: templates/js/translated/build.js:1599 templates/js/translated/part.js:1149
+#: templates/js/translated/part.js:1560 templates/js/translated/stock.js:1333
 #: templates/js/translated/stock.js:2128
 msgid "Select"
 msgstr "Auswählen"
@@ -8278,7 +8278,7 @@ msgid "Total"
 msgstr "Summe"
 
 #: templates/js/translated/order.js:1068 templates/js/translated/order.js:2163
-#: templates/js/translated/part.js:1775 templates/js/translated/part.js:1986
+#: templates/js/translated/part.js:1777 templates/js/translated/part.js:1988
 msgid "Unit Price"
 msgstr "Stück-Preis"
 
@@ -8549,92 +8549,92 @@ msgstr "Verkäufliches Teil"
 msgid "No variants found"
 msgstr "Keine Varianten gefunden"
 
-#: templates/js/translated/part.js:946
+#: templates/js/translated/part.js:948
 msgid "Delete part relationship"
 msgstr "Teile-Beziehung löschen"
 
-#: templates/js/translated/part.js:970
+#: templates/js/translated/part.js:972
 msgid "Delete Part Relationship"
 msgstr "Teile-Beziehung löschen"
 
-#: templates/js/translated/part.js:1037 templates/js/translated/part.js:1297
+#: templates/js/translated/part.js:1039 templates/js/translated/part.js:1299
 msgid "No parts found"
 msgstr "Keine Teile gefunden"
 
-#: templates/js/translated/part.js:1207
+#: templates/js/translated/part.js:1209
 msgid "No category"
 msgstr "Keine Kategorie"
 
-#: templates/js/translated/part.js:1230
+#: templates/js/translated/part.js:1232
 #: templates/js/translated/table_filters.js:412
 msgid "Low stock"
 msgstr "Bestand niedrig"
 
-#: templates/js/translated/part.js:1321 templates/js/translated/part.js:1493
+#: templates/js/translated/part.js:1323 templates/js/translated/part.js:1495
 #: templates/js/translated/stock.js:2089
 msgid "Display as list"
 msgstr "Listenansicht"
 
-#: templates/js/translated/part.js:1337
+#: templates/js/translated/part.js:1339
 msgid "Display as grid"
 msgstr "Rasteransicht"
 
-#: templates/js/translated/part.js:1512 templates/js/translated/stock.js:2108
+#: templates/js/translated/part.js:1514 templates/js/translated/stock.js:2108
 msgid "Display as tree"
 msgstr "Baumansicht"
 
-#: templates/js/translated/part.js:1576
+#: templates/js/translated/part.js:1578
 msgid "Subscribed category"
 msgstr "Abonnierte Kategorie"
 
-#: templates/js/translated/part.js:1590 templates/js/translated/stock.js:2152
+#: templates/js/translated/part.js:1592 templates/js/translated/stock.js:2152
 msgid "Path"
 msgstr "Pfad"
 
-#: templates/js/translated/part.js:1634
+#: templates/js/translated/part.js:1636
 msgid "No test templates matching query"
 msgstr "Keine zur Anfrage passenden Testvorlagen"
 
-#: templates/js/translated/part.js:1685 templates/js/translated/stock.js:1055
+#: templates/js/translated/part.js:1687 templates/js/translated/stock.js:1055
 msgid "Edit test result"
 msgstr "Testergebnis bearbeiten"
 
-#: templates/js/translated/part.js:1686 templates/js/translated/stock.js:1056
+#: templates/js/translated/part.js:1688 templates/js/translated/stock.js:1056
 msgid "Delete test result"
 msgstr "Testergebnis löschen"
 
-#: templates/js/translated/part.js:1692
+#: templates/js/translated/part.js:1694
 msgid "This test is defined for a parent part"
 msgstr "Dieses Testergebnis ist für ein Hauptteil"
 
-#: templates/js/translated/part.js:1714
+#: templates/js/translated/part.js:1716
 msgid "Edit Test Result Template"
 msgstr "Testergebnis-Vorlage bearbeiten"
 
-#: templates/js/translated/part.js:1728
+#: templates/js/translated/part.js:1730
 msgid "Delete Test Result Template"
 msgstr "Testergebnis-Vorlage löschen"
 
-#: templates/js/translated/part.js:1753
+#: templates/js/translated/part.js:1755
 #, python-brace-format
 msgid "No ${human_name} information found"
 msgstr "Keine ${human_name} Informationen gefunden"
 
-#: templates/js/translated/part.js:1808
+#: templates/js/translated/part.js:1810
 #, python-brace-format
 msgid "Edit ${human_name}"
 msgstr "${human_name} bearbeiten"
 
-#: templates/js/translated/part.js:1809
+#: templates/js/translated/part.js:1811
 #, python-brace-format
 msgid "Delete ${human_name}"
 msgstr "${human_name} löschen"
 
-#: templates/js/translated/part.js:1910
+#: templates/js/translated/part.js:1912
 msgid "Single Price"
 msgstr "Einzelpreis"
 
-#: templates/js/translated/part.js:1929
+#: templates/js/translated/part.js:1931
 msgid "Single Price Difference"
 msgstr "Einzelpreisdifferenz"
 
