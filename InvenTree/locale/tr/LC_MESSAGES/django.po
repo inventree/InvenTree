@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-20 00:57+0000\n"
+"POT-Creation-Date: 2021-12-20 02:32+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
@@ -671,7 +671,7 @@ msgstr "Yapım İşi Emri"
 #: order/templates/order/sales_order_detail.html:92
 #: order/templates/order/so_sidebar.html:13
 #: part/templates/part/part_sidebar.html:20 templates/InvenTree/index.html:221
-#: templates/InvenTree/search.html:145
+#: templates/InvenTree/search.html:139
 #: templates/InvenTree/settings/sidebar.html:43 users/models.py:44
 msgid "Build Orders"
 msgstr "Yapım İşi Emirleri"
@@ -716,7 +716,7 @@ msgstr "Bu yapım işinin tahsis edildiği yapım işi emri"
 #: report/templates/report/inventree_build_order_base.html:110
 #: report/templates/report/inventree_po_report.html:90
 #: report/templates/report/inventree_so_report.html:90
-#: templates/InvenTree/search.html:86
+#: templates/InvenTree/search.html:80
 #: templates/email/build_order_required_stock.html:17
 #: templates/email/low_stock_notification.html:16
 #: templates/js/translated/barcode.js:383 templates/js/translated/bom.js:326
@@ -906,7 +906,7 @@ msgid "Selected stock item not found in BOM"
 msgstr ""
 
 #: build/models.py:1256 stock/templates/stock/item_base.html:352
-#: templates/InvenTree/search.html:143 templates/js/translated/build.js:1605
+#: templates/InvenTree/search.html:137 templates/js/translated/build.js:1605
 #: templates/navbar.html:35
 msgid "Build"
 msgstr "Yapım İşi"
@@ -2526,7 +2526,7 @@ msgstr "Para Birimi Kodu"
 
 #: company/templates/company/company_base.html:8
 #: company/templates/company/company_base.html:12
-#: templates/InvenTree/search.html:182 templates/js/translated/company.js:322
+#: templates/InvenTree/search.html:176 templates/js/translated/company.js:322
 msgid "Company"
 msgstr ""
 
@@ -2595,7 +2595,7 @@ msgstr ""
 
 #: company/templates/company/detail.html:15
 #: company/templates/company/manufacturer_part_sidebar.html:7
-#: templates/InvenTree/search.html:124
+#: templates/InvenTree/search.html:118
 msgid "Supplier Parts"
 msgstr "Tedarikçi Parçaları"
 
@@ -2635,7 +2635,7 @@ msgstr "Parçaları sil"
 msgid "Delete Parts"
 msgstr "Parçaları Sil"
 
-#: company/templates/company/detail.html:62 templates/InvenTree/search.html:109
+#: company/templates/company/detail.html:62 templates/InvenTree/search.html:103
 msgid "Manufacturer Parts"
 msgstr ""
 
@@ -2658,7 +2658,7 @@ msgstr "Tedarikçi Stoku"
 #: order/templates/order/purchase_orders.html:8
 #: order/templates/order/purchase_orders.html:12
 #: part/templates/part/detail.html:68 part/templates/part/part_sidebar.html:33
-#: templates/InvenTree/index.html:252 templates/InvenTree/search.html:203
+#: templates/InvenTree/index.html:252 templates/InvenTree/search.html:197
 #: templates/InvenTree/settings/sidebar.html:45 templates/navbar.html:47
 #: users/models.py:45
 msgid "Purchase Orders"
@@ -2680,7 +2680,7 @@ msgstr "Yeni Satın Alma Emri"
 #: order/templates/order/sales_orders.html:8
 #: order/templates/order/sales_orders.html:15
 #: part/templates/part/detail.html:91 part/templates/part/part_sidebar.html:37
-#: templates/InvenTree/index.html:283 templates/InvenTree/search.html:223
+#: templates/InvenTree/index.html:283 templates/InvenTree/search.html:217
 #: templates/InvenTree/settings/sidebar.html:47 templates/navbar.html:58
 #: users/models.py:46
 msgid "Sales Orders"
@@ -2722,7 +2722,7 @@ msgid "Supplier List"
 msgstr ""
 
 #: company/templates/company/manufacturer_part.html:14 company/views.py:55
-#: part/templates/part/prices.html:167 templates/InvenTree/search.html:184
+#: part/templates/part/prices.html:167 templates/InvenTree/search.html:178
 #: templates/navbar.html:46
 msgid "Manufacturers"
 msgstr "Üreticiler"
@@ -2752,7 +2752,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part.html:114
 #: company/templates/company/supplier_part.html:15 company/views.py:49
 #: part/templates/part/part_sidebar.html:31 part/templates/part/prices.html:163
-#: templates/InvenTree/search.html:194 templates/navbar.html:45
+#: templates/InvenTree/search.html:188 templates/navbar.html:45
 msgid "Suppliers"
 msgstr ""
 
@@ -2895,7 +2895,7 @@ msgstr ""
 #: part/templates/part/part_sidebar.html:14
 #: stock/templates/stock/loc_link.html:3 stock/templates/stock/location.html:18
 #: stock/templates/stock/stock_app_base.html:10
-#: templates/InvenTree/search.html:156
+#: templates/InvenTree/search.html:150
 #: templates/InvenTree/settings/sidebar.html:41
 #: templates/js/translated/bom.js:328 templates/js/translated/part.js:434
 #: templates/js/translated/part.js:569 templates/js/translated/part.js:1061
@@ -2923,7 +2923,7 @@ msgstr "Fiyatlandırma"
 #: stock/templates/stock/location.html:151
 #: stock/templates/stock/location.html:163
 #: stock/templates/stock/location_sidebar.html:7
-#: templates/InvenTree/search.html:158 templates/js/translated/stock.js:2158
+#: templates/InvenTree/search.html:152 templates/js/translated/stock.js:2158
 #: templates/stats.html:93 templates/stats.html:102 users/models.py:43
 msgid "Stock Items"
 msgstr "Stok Kalemleri"
@@ -2936,7 +2936,7 @@ msgstr "Yeni Tedarikçi"
 msgid "New Manufacturer"
 msgstr "Yeni Üretici"
 
-#: company/views.py:61 templates/InvenTree/search.html:214
+#: company/views.py:61 templates/InvenTree/search.html:208
 #: templates/navbar.html:57
 msgid "Customers"
 msgstr "Müşteriler"
@@ -3950,7 +3950,7 @@ msgid "Part Category"
 msgstr ""
 
 #: part/models.py:96 part/templates/part/category.html:128
-#: templates/InvenTree/search.html:101 templates/stats.html:84
+#: templates/InvenTree/search.html:95 templates/stats.html:84
 #: users/models.py:40
 msgid "Part Categories"
 msgstr "Parça Kategorileri"
@@ -3959,7 +3959,7 @@ msgstr "Parça Kategorileri"
 #: part/templates/part/category.html:17 part/templates/part/category.html:133
 #: part/templates/part/category.html:153
 #: part/templates/part/category_sidebar.html:9
-#: templates/InvenTree/index.html:85 templates/InvenTree/search.html:88
+#: templates/InvenTree/index.html:85 templates/InvenTree/search.html:82
 #: templates/InvenTree/settings/sidebar.html:37
 #: templates/js/translated/part.js:1599 templates/navbar.html:21
 #: templates/stats.html:80 templates/stats.html:89 users/models.py:41
@@ -6141,7 +6141,7 @@ msgstr "Bu konumun sahipleri listesinde değilsiniz. Bu stok konumu düzenleneme
 msgid "Sublocations"
 msgstr "Alt konumlar"
 
-#: stock/templates/stock/location.html:146 templates/InvenTree/search.html:170
+#: stock/templates/stock/location.html:146 templates/InvenTree/search.html:164
 #: templates/stats.html:97 users/models.py:42
 msgid "Stock Locations"
 msgstr "Stok Konumları"
@@ -6369,10 +6369,6 @@ msgstr ""
 
 #: templates/InvenTree/search.html:8
 msgid "Search Results"
-msgstr ""
-
-#: templates/InvenTree/search.html:22
-msgid "Enter a search query"
 msgstr ""
 
 #: templates/InvenTree/settings/barcode.html:8
