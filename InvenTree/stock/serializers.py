@@ -674,6 +674,39 @@ class StockAssignmentSerializer(serializers.Serializer):
                 )
 
 
+class StockMergeSerializer(serializers.Serializer):
+    """
+    Serializer for merging two (or more) stock items together
+    """
+
+    class Meta:
+        fields = [
+            # 'items',
+            'location',
+        ]
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        many=False,
+        required=True,
+        allow_null=False,
+        label=_('Location'),
+        help_text=_('Destination stock location'),
+    )
+
+    def validate(self, data):
+
+        data = super().validate(data)
+
+        # TODO: Custom data validation
+
+        return data
+
+    def save(self):
+        # TODO
+        pass
+
+
 class StockAdjustmentItemSerializer(serializers.Serializer):
     """
     Serializer for a single StockItem within a stock adjument request.
@@ -837,7 +870,7 @@ class StockTransferSerializer(StockAdjustmentSerializer):
 
     def validate(self, data):
 
-        super().validate(data)
+        data = super().validate(data)
 
         # TODO: Any specific validation of location field?
 
