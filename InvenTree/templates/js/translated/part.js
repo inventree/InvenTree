@@ -871,7 +871,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                     if (row.received >= row.quantity) {
                         // Already recevied
                         return `<span class='badge bg-success rounded-pill'>{% trans "Received" %}</span>`;
-                    } else {
+                    } else if (row.order_detail && row.order_detail.status == {{ PurchaseOrderStatus.PLACED }}) {
                         var html = `<div class='btn-group' role='group'>`;
                         var pk = row.pk;
 
@@ -879,6 +879,8 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
 
                         html += `</div>`;
                         return html;
+                    } else {
+                        return '';
                     }
                 }
             }
