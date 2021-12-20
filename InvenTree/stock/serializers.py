@@ -701,6 +701,7 @@ class StockMergeItemSerializer(serializers.Serializer):
 
         return item
 
+
 class StockMergeSerializer(serializers.Serializer):
     """
     Serializer for merging two (or more) stock items together
@@ -710,6 +711,9 @@ class StockMergeSerializer(serializers.Serializer):
         fields = [
             'items',
             'location',
+            'notes',
+            'allow_mismatched_suppliers',
+            'allow_mismatched_status',
         ]
 
     items = StockMergeItemSerializer(
@@ -726,6 +730,25 @@ class StockMergeSerializer(serializers.Serializer):
         help_text=_('Destination stock location'),
     )
 
+    notes = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        label=_('Notes'),
+        help_text=_('Stock merging notes'),
+    )
+
+    allow_mismatched_suppliers = serializers.BooleanField(
+        required=False,
+        label=_('Allow mismatched suppliers'),
+        help_text=_('Allow stock items with different supplier parts to be merged'),
+    )
+
+    allow_mismatched_status = serializers.BooleanField(
+        required=False,
+        label=_('Allow mismatched status'),
+        help_text=_('Allow stock items with different status codes to be merged'),
+    )
+
     def validate(self, data):
 
         data = super().validate(data)
@@ -735,11 +758,63 @@ class StockMergeSerializer(serializers.Serializer):
         if len(items) < 2:
             raise ValidationError(_('At least two stock items must be provided'))
 
+        unique_items = set()
+
+        # The "base item" is the first item
+        base_item = items[0]['item']
+
+        data['base_item'] = base_item
+
+        # Ensure stock items are unique!
+        for element in items:
+            item = element['item']
+
+            if item.pk in unique_items:
+                raise ValidationError(_('Duplicate stock items'))
+
+            unique_items.add(item.pk)
+
+            # Checks from here refer to the "base_item"
+            if item == base_item:
+                continue
+
+            # Check that this item can be merged with the base_item
+            item.can_merge(
+                raise_error=True,
+                other=base_item,
+                allow_mismatched_suppliers=data.get('allow_mismatched_suppliers', False),
+                allow_mismatched_status=data.get('allow_mismatched_status', False),
+            )
+
         return data
 
     def save(self):
-        # TODO
-        pass
+        """
+        Actually perform the stock merging action.
+        At this point we are confident that the merge can take place
+        """
+
+        data = self.validated_data
+
+        base_item = data['base_item']
+        items = data['items'][1:]
+
+        request = self.context['request']
+        user = getattr(request, 'user', None)
+
+        items = []
+
+        for item in data['items'][1:]:
+            items.append(item['item'])
+
+        base_item.merge_stock_items(
+            items,
+            allow_mismatched_suppliers=data.get('allow_mismatched_suppliers', False),
+            allow_mismatched_status=data.get('allow_mismatched_status', False),
+            user=user,
+            location=data['location'],
+            notes=data.get('notes', None)
+        )
 
 
 class StockAdjustmentItemSerializer(serializers.Serializer):

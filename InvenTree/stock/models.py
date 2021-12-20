@@ -1153,17 +1153,50 @@ class StockItem(MPTTModel):
             result.stock_item = self
             result.save()
 
-    def can_merge(self, other=None, raise_error=False):
+    def can_merge(self, other=None, raise_error=False, **kwargs):
         """
-        Check if this stock item can be merged into another
+        Check if this stock item can be merged into another stock item
         """
 
+        allow_mismatched_suppliers = kwargs.get('allow_mismatched_suppliers', False)
+
+        allow_mismatched_status = kwargs.get('allow_mismatched_status', False)
+
         try:
-            if not self.in_stock:
-                raise ValidationError(_("Item must be in stock"))
+            # Generic checks (do not rely on the 'other' part)
+            if self.sales_order:
+                raise ValidationError(_('Stock item has been assigned to a sales order'))
+
+            if self.belongs_to:
+                raise ValidationError(_('Stock item is installed in another item'))
+
+            if self.customer:
+                raise ValidationError(_('Stock item has been assigned to a customer'))
+
+            if self.is_building:
+                raise ValidationError(_('Stock item is currently in production'))
 
             if self.serialized:
                 raise ValidationError(_("Serialized stock cannot be merged"))
+
+            if other:
+                # Specific checks (rely on the 'other' part)
+
+                # Prevent stock item being merged with itself
+                if self == other:
+                    raise ValidationError(_('Duplicate stock items'))
+
+                # Base part must match
+                if self.part != other.part:
+                    raise ValidationError(_("Stock items must refer to the same part"))
+
+                # Check if supplier part references match
+                if self.supplier_part != other.supplier_part and not allow_mismatched_suppliers:
+                    raise ValidationError(_("Stock items must refer to the same supplier part"))
+
+                # Check if stock status codes match
+                if self.status != other.status and not allow_mismatched_status:
+                    raise ValidationError(_("Stock status codes must match"))
 
         except ValidationError as e:
             if raise_error:
@@ -1174,7 +1207,7 @@ class StockItem(MPTTModel):
         return True
 
     @transaction.atomic
-    def merge_stock_item(self, other, **kwargs):
+    def merge_stock_items(self, other_items, raise_error=False, **kwargs):
         """
         Merge another stock item into this one; the two become one!
 
@@ -1185,15 +1218,48 @@ class StockItem(MPTTModel):
         - Any allocations (build order, sales order) are moved to this StockItem
         """
 
-        # If the stock item cannot be merged, return
-        if not self.can_merge(other):
+        if len(other_items) == 0:
             return
 
         user = kwargs.get('user', None)
         location = kwargs.get('location', None)
+        notes = kwargs.get('notes', None)
 
-        # TODO: Merge!
+        for other in other_items:
+            # If the stock item cannot be merged, return
+            if not self.can_merge(other, raise_error=raise_error, **kwargs):
+                return
 
+        for other in other_items:
+
+            self.quantity += other.quantity
+
+            # Any "build order allocations" for the other item must be assigned to this one
+            for allocation in other.allocations.all():
+
+                allocation.stock_item = self
+                allocation.save()
+
+            # Any "sales order allocations" for the other item must be assigned to this one
+            for allocation in other.sales_order_allocations.all():
+
+                allocation.stock_item = self()
+                allocation.save()
+
+            # Delete the other stock item
+            other.delete()
+
+        self.add_tracking_entry(
+            StockHistoryCode.MERGED_STOCK_ITEMS,
+            user,
+            notes=notes,
+            deltas={
+                'location': location.pk,
+            }
+        )
+
+        self.location = location
+        self.save()
 
     @transaction.atomic
     def splitStock(self, quantity, location, user, **kwargs):
