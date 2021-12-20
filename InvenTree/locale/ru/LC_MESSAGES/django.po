@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-20 02:32+0000\n"
-"PO-Revision-Date: 2021-12-20 02:39\n"
+"PO-Revision-Date: 2021-12-20 14:11\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -565,7 +565,7 @@ msgstr ""
 
 #: barcodes/api.py:199
 msgid "Barcode already matches Part"
-msgstr ""
+msgstr "Штрих-код уже совпадает с Компонентом"
 
 #: barcodes/api.py:205 barcodes/api.py:217
 msgid "Barcode hash already matches Stock Item"
@@ -1128,7 +1128,7 @@ msgstr "Просрочено"
 #: templates/js/translated/build.js:1647
 #: templates/js/translated/table_filters.js:370
 msgid "Completed"
-msgstr ""
+msgstr "Завершённые"
 
 #: build/templates/build/build_base.html:171
 #: build/templates/build/detail.html:95 order/models.py:925
@@ -1139,7 +1139,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:314
 #: templates/js/translated/order.js:1218
 msgid "Sales Order"
-msgstr ""
+msgstr "Заказ покупателя"
 
 #: build/templates/build/build_base.html:178
 #: build/templates/build/detail.html:109
