@@ -1153,6 +1153,48 @@ class StockItem(MPTTModel):
             result.stock_item = self
             result.save()
 
+    def can_merge(self, other=None, raise_error=False):
+        """
+        Check if this stock item can be merged into another
+        """
+
+        try:
+            if not self.in_stock:
+                raise ValidationError(_("Item must be in stock"))
+
+            if self.serialized:
+                raise ValidationError(_("Serialized stock cannot be merged"))
+
+        except ValidationError as e:
+            if raise_error:
+                raise e
+            else:
+                return False
+
+        return True
+
+    @transaction.atomic
+    def merge_stock_item(self, other, **kwargs):
+        """
+        Merge another stock item into this one; the two become one!
+
+        *This* stock item subsumes the other, which is essentially deleted:
+
+        - The quantity of this StockItem is increased
+        - Tracking history for the *other* item is deleted
+        - Any allocations (build order, sales order) are moved to this StockItem
+        """
+
+        # If the stock item cannot be merged, return
+        if not self.can_merge(other):
+            return
+
+        user = kwargs.get('user', None)
+        location = kwargs.get('location', None)
+
+        # TODO: Merge!
+
+
     @transaction.atomic
     def splitStock(self, quantity, location, user, **kwargs):
         """ Split this stock item into two items, in the same location.

@@ -674,6 +674,33 @@ class StockAssignmentSerializer(serializers.Serializer):
                 )
 
 
+class StockMergeItemSerializer(serializers.Serializer):
+    """
+    Serializer for a single StockItem within the StockMergeSerializer class.
+
+    Here, the individual StockItem is being checked for merge compatibility.
+    """
+
+    class Meta:
+        fields = [
+            'item',
+        ]
+
+    item = serializers.PrimaryKeyRelatedField(
+        queryset=StockItem.objects.all(),
+        many=False,
+        allow_null=False,
+        required=True,
+        label=_('Stock Item'),
+    )
+
+    def validate_item(self, item):
+
+        # Check that the stock item is able to be merged
+        item.can_merge(raise_error=True)
+
+        return item
+
 class StockMergeSerializer(serializers.Serializer):
     """
     Serializer for merging two (or more) stock items together
@@ -681,9 +708,14 @@ class StockMergeSerializer(serializers.Serializer):
 
     class Meta:
         fields = [
-            # 'items',
+            'items',
             'location',
         ]
+
+    items = StockMergeItemSerializer(
+        many=True,
+        required=True,
+    )
 
     location = serializers.PrimaryKeyRelatedField(
         queryset=StockLocation.objects.all(),
@@ -698,7 +730,10 @@ class StockMergeSerializer(serializers.Serializer):
 
         data = super().validate(data)
 
-        # TODO: Custom data validation
+        items = data['items']
+
+        if len(items) < 2:
+            raise ValidationError(_('At least two stock items must be provided'))
 
         return data
 
