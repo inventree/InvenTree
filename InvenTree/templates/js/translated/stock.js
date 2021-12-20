@@ -1458,7 +1458,7 @@ function loadStockTable(table, options) {
             }
 
             if (row.quantity <= 0) {
-                html += `<span class='badge rounded-pill bg-danger'>{% trans "Depleted" %}</span>`;
+                html += `<span class='badge badge-right rounded-pill bg-danger'>{% trans "Depleted" %}</span>`;
             }
 
             return html;
