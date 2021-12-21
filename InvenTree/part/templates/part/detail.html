@@ -609,12 +609,10 @@
         });
 
         $("#validate-bom").click(function() {
-            launchModalForm(
-                "{% url 'bom-validate' part.id %}",
-                {
-                    reload: true,
-                }
-            );
+
+            validateBom({{ part.id }}, {
+                reload: true
+            });
         });
 
         $("#download-bom").click(function () {

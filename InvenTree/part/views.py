@@ -694,48 +694,6 @@ class PartImageSelect(AjaxUpdateView):
         return self.renderJsonResponse(request, form, data)
 
 
-class BomValidate(AjaxUpdateView):
-    """
-    Modal form view for validating a part BOM
-    """
-
-    model = Part
-    ajax_form_title = _("Validate BOM")
-    ajax_template_name = 'part/bom_validate.html'
-    context_object_name = 'part'
-    form_class = part_forms.BomValidateForm
-
-    def get_context(self):
-        return {
-            'part': self.get_object(),
-        }
-
-    def get(self, request, *args, **kwargs):
-
-        form = self.get_form()
-
-        return self.renderJsonResponse(request, form, context=self.get_context())
-
-    def validate(self, part, form, **kwargs):
-
-        confirm = str2bool(form.cleaned_data.get('validate', False))
-
-        if not confirm:
-            form.add_error('validate', _('Confirm that the BOM is valid'))
-
-    def save(self, part, form, **kwargs):
-        """
-        Mark the BOM as validated
-        """
-
-        part.validate_bom(self.request.user)
-
-    def get_data(self):
-        return {
-            'success': _('Validated Bill of Materials')
-        }
-
-
 class BomUpload(InvenTreeRoleMixin, FileManagementFormView):
     """ View for uploading a BOM file, and handling BOM data importing.
 
