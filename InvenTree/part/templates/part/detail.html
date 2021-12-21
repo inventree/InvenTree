@@ -585,14 +585,12 @@
         });
 
         $('#bom-duplicate').click(function() {
-            launchModalForm(
-                "{% url 'duplicate-bom' part.id %}",
-                {
-                    success: function() {
-                        $('#bom-table').bootstrapTable('refresh');
-                    }
+
+            duplicateBom({{ part.pk }}, {
+                success: function(response) {
+                    $('#bom-table').bootstrapTable('refresh');
                 }
-            );
+            });
         });
 
         $("#bom-item-new").click(function () {
@@ -616,12 +614,10 @@
         });
 
         $("#validate-bom").click(function() {
-            launchModalForm(
-                "{% url 'bom-validate' part.id %}",
-                {
-                    reload: true,
-                }
-            );
+
+            validateBom({{ part.id }}, {
+                reload: true
+            });
         });
 
         $("#download-bom").click(function () {

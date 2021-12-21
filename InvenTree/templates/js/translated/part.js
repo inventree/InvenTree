@@ -21,6 +21,7 @@
 */
 
 /* exported
+    duplicateBom,
     duplicatePart,
     editCategory,
     editPart,
@@ -39,6 +40,7 @@
     loadStockPricingChart,
     partStockLabel,
     toggleStar,
+    validateBom,
 */
 
 /* Part API functions
@@ -425,6 +427,59 @@ function toggleStar(options) {
             );
         }
     });
+}
+
+
+/* Validate a BOM */
+function validateBom(part_id, options={}) {
+
+    var html = `
+    <div class='alert alert-block alert-success'>
+    {% trans "Validating the BOM will mark each line item as valid" %}
+    </div>
+    `;
+
+    constructForm(`/api/part/${part_id}/bom-validate/`, {
+        method: 'PUT',
+        fields: {
+            valid: {},
+        },
+        preFormContent: html,
+        title: '{% trans "Validate Bill of Materials" %}',
+        reload: options.reload,
+        onSuccess: function(response) {
+            showMessage('{% trans "Validated Bill of Materials" %}');
+        }
+    });
+}
+
+
+/* Duplicate a BOM */
+function duplicateBom(part_id, options={}) {
+
+    constructForm(`/api/part/${part_id}/bom-copy/`, {
+        method: 'POST',
+        fields: {
+            part: {
+                icon: 'fa-shapes',
+                filters: {
+                    assembly: true,
+                    exclude_tree: part_id,
+                }
+            },
+            include_inherited: {},
+            remove_existing: {},
+            skip_invalid: {},
+        },
+        confirm: true,
+        title: '{% trans "Copy Bill of Materials" %}',
+        onSuccess: function(response) {
+            if (options.success) {
+                options.success(response);
+            }
+        },
+    });
+
 }
 
 
