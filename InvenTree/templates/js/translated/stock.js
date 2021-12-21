@@ -1468,7 +1468,7 @@ function loadStockTable(table, options) {
 
     var params = options.params || {};
 
-    var filterListElement = options.filterList || '#filter-list-stock';
+    var filterTarget = options.filterTarget || '#filter-list-stock';
 
     var filters = {};
 
@@ -1484,7 +1484,7 @@ function loadStockTable(table, options) {
         original[k] = params[k];
     }
 
-    setupFilterList(filterKey, table, filterListElement);
+    setupFilterList(filterKey, table, filterTarget);
 
     // Override the default values, or add new ones
     for (var key in params) {
