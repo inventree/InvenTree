@@ -380,6 +380,7 @@ function loadCompanyTable(table, url, options={}) {
         url: url,
         method: 'get',
         queryParams: filters,
+        original: params,
         groupBy: false,
         sidePagination: 'server',
         formatNoMatches: function() {
