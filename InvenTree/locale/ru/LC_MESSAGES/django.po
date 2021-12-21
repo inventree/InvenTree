@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-21 12:08+0000\n"
-"PO-Revision-Date: 2021-12-21 12:11\n"
+"PO-Revision-Date: 2021-12-21 13:09\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -452,7 +452,7 @@ msgstr "Разбить дочерний элемент"
 
 #: InvenTree/status_codes.py:294 templates/js/translated/stock.js:2064
 msgid "Merged stock items"
-msgstr ""
+msgstr "Объединенные позиции на складе"
 
 #: InvenTree/status_codes.py:296 templates/js/translated/table_filters.js:213
 msgid "Sent to customer"
@@ -995,7 +995,7 @@ msgstr ""
 #: build/serializers.py:259 build/serializers.py:308 part/models.py:2733
 #: part/models.py:2892
 msgid "BOM Item"
-msgstr ""
+msgstr "BOM Компонент"
 
 #: build/serializers.py:269
 msgid "Build output"
@@ -1011,17 +1011,17 @@ msgstr ""
 
 #: build/serializers.py:340 stock/serializers.py:583
 msgid "Item must be in stock"
-msgstr ""
+msgstr "Компонент должен быть в наличии"
 
 #: build/serializers.py:354 order/models.py:277 order/serializers.py:240
 #: stock/models.py:365 stock/models.py:1077 stock/serializers.py:305
 msgid "Quantity must be greater than zero"
-msgstr ""
+msgstr "Количество должно быть больше нуля"
 
 #: build/serializers.py:396 order/serializers.py:741
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
-msgstr ""
+msgstr "Превышено доступное количество ({q})"
 
 #: build/serializers.py:402
 msgid "Build output must be specified for allocation of tracked parts"
@@ -1037,7 +1037,7 @@ msgstr ""
 
 #: build/tasks.py:92
 msgid "Stock required for build order"
-msgstr ""
+msgstr "Для заказа сборки необходим остаток"
 
 #: build/templates/build/build_base.html:39
 #: order/templates/order/order_base.html:28
@@ -1047,7 +1047,7 @@ msgstr ""
 
 #: build/templates/build/build_base.html:43
 msgid "Print build order report"
-msgstr ""
+msgstr "Печать отчета о заказе сборки"
 
 #: build/templates/build/build_base.html:50
 msgid "Build actions"
@@ -1055,16 +1055,16 @@ msgstr ""
 
 #: build/templates/build/build_base.html:54
 msgid "Edit Build"
-msgstr ""
+msgstr "Редактировать сборку"
 
 #: build/templates/build/build_base.html:56
 #: build/templates/build/build_base.html:215 build/views.py:56
 msgid "Cancel Build"
-msgstr ""
+msgstr "Отменить сборку"
 
 #: build/templates/build/build_base.html:59
 msgid "Delete Build"
-msgstr ""
+msgstr "Удалить сборку"
 
 #: build/templates/build/build_base.html:64
 #: build/templates/build/build_base.html:65
@@ -1154,7 +1154,7 @@ msgstr "Выдано"
 
 #: build/templates/build/build_base.html:223
 msgid "Incomplete Outputs"
-msgstr ""
+msgstr "Незавершенные выходные данные"
 
 #: build/templates/build/build_base.html:224
 msgid "Build Order cannot be completed as incomplete build outputs remain"
