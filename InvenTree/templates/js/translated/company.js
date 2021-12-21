@@ -464,7 +464,9 @@ function loadManufacturerPartTable(table, url, options) {
         filters[key] = params[key];
     }
 
-    setupFilterList('manufacturer-part', $(table));
+    var filterTarget = options.filterTarget || '#filter-list-manufacturer-part';
+
+    setupFilterList('manufacturer-part', $(table), filterTarget);
 
     $(table).inventreeTable({
         url: url,
