@@ -4,6 +4,7 @@ Plugin model definitions
 
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from enum import unique
 
 from django.utils.translation import gettext_lazy as _
 from django.db import models
@@ -91,3 +92,34 @@ class PluginConfig(models.Model):
                 plugin_reg.reload_plugins()
 
         return ret
+
+
+class PluginSetting(models.Model):
+    """
+    This model represents settings for individual plugins
+    """
+
+    class Meta:
+        unique_together = [
+            ('plugin', 'key'),
+        ]
+
+    plugin = models.ForeignKey(
+        PluginConfig,
+        related_name='settings',
+        null=False,
+        verbose_name=_('Plugin'),
+        on_delete=models.CASCADE,
+    )
+
+    key = models.CharField(
+        max_length=50, blank=False, unique=False,
+        verbose_name=_('Key'),
+        help_text=_('Settings key'),
+    )
+
+    value = models.CharField(
+        max_length=200, blank=False, unique=False,
+        verbose_name=_('Value'),
+        help_text=_('Settings value'),
+    )

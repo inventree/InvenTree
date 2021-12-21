@@ -35,12 +35,20 @@ def plugin_deactivate(modeladmin, request, queryset):
     plugin_update(queryset, False)
 
 
+class PluginSettingInlineAdmin(admin.TabularInline):
+    model = models.PluginSetting
+    extra = 0
+
+
 class PluginConfigAdmin(admin.ModelAdmin):
-    """Custom admin with restricted id fields"""
+    """
+    Custom admin with restricted id fields
+    """
+    
     readonly_fields = ["key", "name", ]
-    list_display = ['active', '__str__', 'key', 'name', ]
+    list_display = ['name', 'key', 'active', '__str__', ]
     list_filter = ['active']
     actions = [plugin_activate, plugin_deactivate, ]
-
+    inlines = [PluginSettingInlineAdmin,]
 
 admin.site.register(models.PluginConfig, PluginConfigAdmin)
