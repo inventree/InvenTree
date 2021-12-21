@@ -621,7 +621,9 @@ function loadPartParameterTable(table, url, options) {
         filters[key] = params[key];
     }
 
-    // setupFilterList("#part-parameters", $(table));
+    var filterTarget = options.filterTarget || '#filter-list-parameters';
+
+    setupFilterList('part-parameters', $(table), filterTarget);
 
     $(table).inventreeTable({
         url: url,
