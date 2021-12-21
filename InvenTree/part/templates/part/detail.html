@@ -582,7 +582,9 @@
         $('#bom-duplicate').click(function() {
 
             duplicateBom({{ part.pk }}, {
-
+                success: function(response) {
+                    $('#bom-table').bootstrapTable('refresh');
+                }
             });
         });
 

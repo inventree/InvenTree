@@ -438,15 +438,20 @@ function duplicateBom(part_id, options={}) {
                 icon: 'fa-shapes',
                 filters: {
                     assembly: true,
-                    ancestor: part_id,
+                    exclude_tree: part_id,
                 }
             },
-            remove_existing: {
-                value: true,
-            },
+            include_inherited: {},
+            remove_existing: {},
+            skip_invalid: {},
         },
         confirm: true,
         title: '{% trans "Copy Bill of Materials" %}',
+        onSuccess: function(response) {
+            if (options.success) {
+                options.success(response);
+            }
+        },
     });
 
 }

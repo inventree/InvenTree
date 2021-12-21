@@ -664,14 +664,24 @@ class PartCopyBOMSerializer(serializers.Serializer):
         Check that a 'valid' part was selected
         """
 
-        # Check if the BOM can be copied from the provided part
-        base_part = self.context['part']
-
         return part
 
     remove_existing = serializers.BooleanField(
         label=_('Remove Existing Data'),
-        help_text=_('Remove existing BOM items before copying')
+        help_text=_('Remove existing BOM items before copying'),
+        default=True,
+    )
+
+    include_inherited = serializers.BooleanField(
+        label=_('Include Inherited'),
+        help_text=_('Include BOM items which are inherited from templated parts'),
+        default=False,
+    )
+
+    skip_invalid = serializers.BooleanField(
+        label=_('Skip Invalid Rows'),
+        help_text=_('Enable this option to skip invalid rows'),
+        default=False,
     )
 
     def save(self):
@@ -683,7 +693,9 @@ class PartCopyBOMSerializer(serializers.Serializer):
 
         data = self.validated_data
 
-        part = data['part']
-        clear = data.get('remove_existing', True)
-
-        base_part.copy_bom_from(part, clear=clear)
+        base_part.copy_bom_from(
+            data['part'],
+            clear=data.get('remove_existing', True),
+            skip_invalid=data.get('skip_invalid', False),
+            include_inherited=data.get('include_inherited', False),
+        )
