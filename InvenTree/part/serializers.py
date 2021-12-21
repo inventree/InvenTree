@@ -9,6 +9,7 @@ from django.urls import reverse_lazy
 from django.db import models
 from django.db.models import Q
 from django.db.models.functions import Coalesce
+from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
@@ -636,3 +637,53 @@ class CategoryParameterTemplateSerializer(InvenTreeModelSerializer):
             'parameter_template',
             'default_value',
         ]
+
+
+class PartCopyBOMSerializer(serializers.Serializer):
+    """
+    Serializer for copying a BOM from another part
+    """
+
+    class Meta:
+        fields = [
+            'part',
+            'remove_existing',
+        ]
+
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=Part.objects.all(),
+        many=False,
+        required=True,
+        allow_null=False,
+        label=_('Part'),
+        help_text=_('Select part to copy BOM from'),
+    )
+
+    def validate_part(self, part):
+        """
+        Check that a 'valid' part was selected
+        """
+
+        # Check if the BOM can be copied from the provided part
+        base_part = self.context['part']
+
+        return part
+
+    remove_existing = serializers.BooleanField(
+        label=_('Remove Existing Data'),
+        help_text=_('Remove existing BOM items before copying')
+    )
+
+    def save(self):
+        """
+        Actually duplicate the BOM
+        """
+
+        base_part = self.context['part']
+
+        data = self.validated_data
+
+        part = data['part']
+        clear = data.get('remove_existing', True)
+
+        base_part.copy_bom_from(part, clear=clear)

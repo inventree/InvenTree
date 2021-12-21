@@ -55,39 +55,6 @@ class PartImageDownloadForm(HelperForm):
         ]
 
 
-class BomDuplicateForm(HelperForm):
-    """
-    Simple confirmation form for BOM duplication.
-
-    Select which parent to select from.
-    """
-
-    parent = PartModelChoiceField(
-        label=_('Parent Part'),
-        help_text=_('Select parent part to copy BOM from'),
-        queryset=Part.objects.filter(is_template=True),
-    )
-
-    clear = forms.BooleanField(
-        required=False, initial=True,
-        help_text=_('Clear existing BOM items')
-    )
-
-    confirm = forms.BooleanField(
-        required=False, initial=False,
-        label=_('Confirm'),
-        help_text=_('Confirm BOM duplication')
-    )
-
-    class Meta:
-        model = Part
-        fields = [
-            'parent',
-            'clear',
-            'confirm',
-        ]
-
-
 class BomValidateForm(HelperForm):
     """ Simple confirmation form for BOM validation.
     User is presented with a single checkbox input,

@@ -454,6 +454,26 @@ class PartSerialNumberDetail(generics.RetrieveAPIView):
         return Response(data)
 
 
+class PartCopyBOM(generics.CreateAPIView):
+    """
+    API endpoint for duplicating a BOM
+    """
+
+    queryset = Part.objects.all()
+    serializer_class = part_serializers.PartCopyBOMSerializer
+
+    def get_serializer_context(self):
+
+        ctx = super().get_serializer_context()
+
+        try:
+            ctx['part'] = Part.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
+        return ctx
+
+
 class PartDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a single Part object """
 
@@ -1584,6 +1604,9 @@ part_api_urls = [
 
         # Endpoint for extra serial number information
         url(r'^serial-numbers/', PartSerialNumberDetail.as_view(), name='api-part-serial-number-detail'),
+
+        # Endpoint for duplicating a BOM
+        url(r'^copy-bom/', PartCopyBOM.as_view(), name='api-part-copy-bom'),
 
         # Part detail endpoint
         url(r'^.*$', PartDetail.as_view(), name='api-part-detail'),

@@ -694,58 +694,6 @@ class PartImageSelect(AjaxUpdateView):
         return self.renderJsonResponse(request, form, data)
 
 
-class BomDuplicate(AjaxUpdateView):
-    """
-    View for duplicating BOM from a parent item.
-    """
-
-    model = Part
-    context_object_name = 'part'
-    ajax_form_title = _('Duplicate BOM')
-    ajax_template_name = 'part/bom_duplicate.html'
-    form_class = part_forms.BomDuplicateForm
-
-    def get_form(self):
-
-        form = super().get_form()
-
-        # Limit choices to parents of the current part
-        parents = self.get_object().get_ancestors()
-
-        form.fields['parent'].queryset = parents
-
-        return form
-
-    def get_initial(self):
-        initials = super().get_initial()
-
-        parents = self.get_object().get_ancestors()
-
-        if parents.count() == 1:
-            initials['parent'] = parents[0]
-
-        return initials
-
-    def validate(self, part, form):
-
-        confirm = str2bool(form.cleaned_data.get('confirm', False))
-
-        if not confirm:
-            form.add_error('confirm', _('Confirm duplication of BOM from parent'))
-
-    def save(self, part, form):
-        """
-        Duplicate BOM from the specified parent
-        """
-
-        parent = form.cleaned_data.get('parent', None)
-
-        clear = str2bool(form.cleaned_data.get('clear', True))
-
-        if parent:
-            part.copy_bom_from(parent, clear=clear)
-
-
 class BomValidate(AjaxUpdateView):
     """
     Modal form view for validating a part BOM

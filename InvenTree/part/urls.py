@@ -40,7 +40,6 @@ part_detail_urls = [
     url(r'^pricing/', views.PartPricing.as_view(), name='part-pricing'),
 
     url(r'^bom-upload/?', views.BomUpload.as_view(), name='upload-bom'),
-    url(r'^bom-duplicate/?', views.BomDuplicate.as_view(), name='duplicate-bom'),
 
     url(r'^qr_code/?', views.PartQRCode.as_view(), name='part-qr'),
 

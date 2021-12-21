@@ -580,14 +580,10 @@
         });
 
         $('#bom-duplicate').click(function() {
-            launchModalForm(
-                "{% url 'duplicate-bom' part.id %}",
-                {
-                    success: function() {
-                        $('#bom-table').bootstrapTable('refresh');
-                    }
-                }
-            );
+
+            duplicateBom({{ part.pk }}, {
+
+            });
         });
 
         $("#bom-item-new").click(function () {

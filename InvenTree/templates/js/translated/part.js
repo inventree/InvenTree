@@ -21,6 +21,7 @@
 */
 
 /* exported
+    duplicateBom,
     duplicatePart,
     editCategory,
     editPart,
@@ -425,6 +426,29 @@ function toggleStar(options) {
             );
         }
     });
+}
+
+
+/* Duplicate a BOM */
+function duplicateBom(part_id, options={}) {
+    constructForm(`/api/part/${part_id}/copy-bom/`, {
+        method: 'POST',
+        fields: {
+            part: {
+                icon: 'fa-shapes',
+                filters: {
+                    assembly: true,
+                    ancestor: part_id,
+                }
+            },
+            remove_existing: {
+                value: true,
+            },
+        },
+        confirm: true,
+        title: '{% trans "Copy Bill of Materials" %}',
+    });
+
 }
 
 
