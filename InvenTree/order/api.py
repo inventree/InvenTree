@@ -688,6 +688,7 @@ class SOAllocationFulFill(generics.RetrieveUpdateDestroyAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+
 class SOAllocationList(generics.ListCreateAPIView):
     """
     API endpoint for listing SalesOrderAllocation objects
@@ -695,13 +696,21 @@ class SOAllocationList(generics.ListCreateAPIView):
     queryset = SalesOrderAllocation.objects.all()
     serializer_class = SalesOrderAllocationSerializer
 
-     # Check order if_packable and fully_allocated and if so set status to WAITING TO PACKING
     def create(self, request):
+        #TODO allocate by barcode
+        #Check if the item has the allocation, if so get it and encrease encrease quantity
+        # try:
+        #     allocation = SalesOrderAllocation.objects.filter(item__pk=request.data['item']).first()
+        #     line = SalesOrderLineItem.objects.filter(allocations=request.data['line']).first()
+        #     if line.quantity - allocation.quantity <= request.data['quantity']:
+     
+        # except Exception as e:
+        #     print+-     QAW(e)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         item = serializer.save()
-
         
+        # Check order if_packable and fully_allocated and if so set status to WAITING TO PACKING
         order = SalesOrder.objects.filter(pk=item.line.order.pk).first()
         if order.is_fully_allocated() and order.is_packable:
             order.status = SalesOrderStatus.WAITING_FOR_PACKING

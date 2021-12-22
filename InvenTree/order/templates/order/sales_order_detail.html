@@ -29,7 +29,7 @@
                 </button>
                 {% endif %}
                 {% if order.status == SalesOrderStatus.PENDING or order.status == SalesOrderStatus.IN_BASKET %}
-                <button type='button' class='btn btn-success' id='new-so-line'>
+                <button type='button' class='btn btn-success' id='allocate-so-item'>
                     <span class='fas fa-plus-circle'></span> {% trans "Allocate by barcode item" %}
                 </button>
                 {% endif %}
@@ -220,6 +220,10 @@
     $("#barcode-scan-into-basket").click(function() {
         scanOrderIntoBasket([{{ order.id }}]);
     });
+
+    $("#allocate-so-item").click(function() {
+        scanBarcodeInsideOrder({allocate: true})
+    })
 
     $("#fulfill-stock-item-btn").click(function() {
         scanBarcodeInsideOrder({fulfill: true})

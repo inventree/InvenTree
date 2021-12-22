@@ -1681,7 +1681,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
             var pk = $(this).attr('pk');
 
             var line_item = $(table).bootstrapTable('getRowByUniqueId', pk);
-
+            
             // Quantity remaining to be allocated
             var remaining = (line_item.quantity || 0) - (line_item.allocated || 0);
 

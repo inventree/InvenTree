@@ -769,7 +769,20 @@ function scanOrderIntoBasket(item_id_list, options={}) {
 
 
 
+
 function scanBarcodeInsideOrder(options={}) {
+    var row = null;
+
+    function findRow(item) {
+        let part_names = $('a[href*="part"]');
+        part_names.each((i,el) => {
+            if ($(el).text() === item.part_detail.name) {
+                row = $(el).parent().parent();
+                row =  row.data('uniqueid');
+                return;
+            }
+        });
+    }
 
     var modal = options.modal || '#modal-form';
 
@@ -810,7 +823,8 @@ function scanBarcodeInsideOrder(options={}) {
             headerContent: header,
             extraFields: extra,
             preShow: function() {
-                modalSetSubmitText(modal, '{% trans "FulFill" %}');
+                const buttonText = options.allocate ? '{% trans "Allocate" %}' : '{% trans "FulFill" %}';
+                modalSetSubmitText(modal, buttonText);
                 modalEnable(modal, false);
             },
             onShow: function() {
@@ -822,6 +836,7 @@ function scanBarcodeInsideOrder(options={}) {
                 if (!stock_item) {
                     return;
                 }
+                
                 // Call if process is fulfilling e.g. packing
                 if (options.fulfill) {
                      // Send API request
@@ -844,36 +859,33 @@ function scanBarcodeInsideOrder(options={}) {
                         {method: 'DELETE', reloadOnSuccess: true},
                     );
                 }
+                
 
                 if (options.allocate) {
                     inventreePut(
                         `/api/order/so-allocation/`,
                         {
-                            // success: function(response, status) {
-                            //     console.log(status, response)
-                            //     // First hide the modal
-                            //     $(modal).modal('hide');
-    
-                            //     if (status == 'success' && 'success' in response) {
-                            //         showAlertOrCache('alert-success', response.success, true);
-                            //         location.reload();
-                            //     } else {
-                            //         showAlertOrCache('alert-danger', '{% trans "Error fulfilling item" %}', false);
-                            //     }
-                            // }
+                            line: row,
+                            item: stock_item.pk,
+                            quantity: quantity
                         },
-                        {method: 'DELETE', reloadOnSuccess: true},
+                        {method: 'POST', success: function(response, status) {
+                            window.location.reload();
+                            console.log(response, status);
+                        }},
                     )
                 }
-               
             },
             onScan: function(response) {
                 updateInfo(null);
                 if ('stockitem' in response) {
                     // Barcode corresponds to a StockLocation
                     stock_item = response.stockitem;
+                    findRow(stock_item);
                     updateInfo(stock_item);
                     modalEnable(modal, true);
+
+                    
 
                 } else {
                     // Barcode does *NOT* correspond to a StockLocation
