@@ -784,7 +784,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
     options.params.part_detail = true;
     options.params.order_detail = true;
     
-    var filters = loadTableFilters('partpurchaseorders');
+    var filters = loadTableFilters('purchaseorderlineitem');
 
     for (var key in options.params) {
         filters[key] = options.params[key];
