@@ -646,7 +646,7 @@ class SOAllocationDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class SOAllocationFulFill(generics.RetrieveUpdateDestroyAPIView):
     """
-    API endpoint for detali view of a SalesOrderAllocation object
+    API endpoint for fullfill by barcode reader 1 by 1 or set quantity
     """
 
     queryset = SalesOrderAllocation.objects.all()
@@ -697,27 +697,30 @@ class SOAllocationList(generics.ListCreateAPIView):
     serializer_class = SalesOrderAllocationSerializer
 
     def create(self, request):
-        #TODO allocate by barcode
-        #Check if the item has the allocation, if so get it and encrease encrease quantity
-        # try:
-        #     allocation = SalesOrderAllocation.objects.filter(item__pk=request.data['item']).first()
-        #     line = SalesOrderLineItem.objects.filter(allocations=request.data['line']).first()
-        #     if line.quantity - allocation.quantity <= request.data['quantity']:
-     
-        # except Exception as e:
-        #     print+-     QAW(e)
+
+        #Check if the item has the allocation, if so get it and encrease quantity 
+        #for allocate by barcode 1 by 1
+        try:
+            allocation = SalesOrderAllocation.objects.filter(item__pk=request.data['item']).first()
+            quantity =  int(request.data['quantity'])
+            if allocation.line.quantity - allocation.quantity >= quantity:
+                allocation.quantity = allocation.quantity + quantity
+                allocation.save()
+                return  Response({'success': 'Allocation updated'}, status=status.HTTP_200_OK)
+        except Exception as e:
+           print(e)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         item = serializer.save()
         
         # Check order if_packable and fully_allocated and if so set status to WAITING TO PACKING
+        # for pass workflow to another person
         order = SalesOrder.objects.filter(pk=item.line.order.pk).first()
         if order.is_fully_allocated() and order.is_packable:
             order.status = SalesOrderStatus.WAITING_FOR_PACKING
             order.save()
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
 
     def get_serializer(self, *args, **kwargs):
 
