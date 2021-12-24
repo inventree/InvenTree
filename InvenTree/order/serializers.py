@@ -504,6 +504,7 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
         order_detail = kwargs.pop('order_detail', False)
         part_detail = kwargs.pop('part_detail', True)
         item_detail = kwargs.pop('item_detail', False)
+        shipment = kwargs.pop('shipment', False)
         location_detail = kwargs.pop('location_detail', False)
 
         super().__init__(*args, **kwargs)
@@ -519,6 +520,10 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
 
         if not location_detail:
             self.fields.pop('location_detail')
+
+        if not shipment:
+            self.fields.pop('shipment')
+            self.fields.pop('shipment_date')
 
     class Meta:
         model = order.models.SalesOrderAllocation
