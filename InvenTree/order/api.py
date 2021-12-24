@@ -858,7 +858,7 @@ class SOAllocationFulFill(generics.RetrieveUpdateDestroyAPIView):
 
 
 
-class SOAllocationList(generics.ListAPIView):
+class SOAllocationList(generics.ListCreateAPIView):
     """
     API endpoint for listing SalesOrderAllocation objects
     """
