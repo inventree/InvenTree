@@ -23,8 +23,8 @@
             <h4>{% trans "Sales Order Items" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                {% if roles.sales_order.change %}
-                <button type='button' class='btn btn-success me-3' id='new-so-line'>
+                {% if roles.sales_order.change and order.is_pending %}
+                <button type='button' class='btn btn-success' id='new-so-line'>
                     <span class='fas fa-plus-circle'></span> {% trans "Add Line Item" %}
                 </button>
                 {% endif %}
@@ -53,12 +53,67 @@
     </div>
 </div>
 
+{% if order.is_pending %}
+<div class='panel panel-hidden' id='panel-order-shipments'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-row'>
+            <h4>{% trans "Pending Shipments" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if 0 %}
+                <button id='pending-shipment-options' title='{% trans "Actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
+                    <span class='fas fa-tools'></span> <span class='caret'></span>
+                </button>
+                <ul class='dropdown-menu' role='menu'>
+
+                </ul>
+                {% endif %}
+                {% if roles.sales_order.change %}
+                <button type='button' class='btn btn-success' id='new-shipment'>
+                    <span class='fas fa-plus-circle'></span> {% trans "New Shipment" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        {% if roles.sales_order.change %}
+        <div id='pending-shipment-toolbar' class='btn-group' style='float: right;'>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id="pending-shipments" %}
+            </div>
+        </div>
+        {% endif %}
+        <table class='table table-striped table-condensed' id='pending-shipments-table' data-toolbar='#pending-shipment-toolbar'></table>
+    </div>
+</div>
+{% endif %}
+
+<div class='panel panel-hidden' id='panel-order-shipments-complete'>
+    <div class='panel-heading'>
+        <h4>{% trans "Completed Shipments" %}</h4>
+    </div>
+    <div class='panel-content'>
+        <div id='completed-shipment-toolbar' class='btn-group' style='float: right;'>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id="completed-shipments" %}
+            </div>
+        </div>
+        <table class='table table-striped table-condensed' id='completed-shipments-table' data-toolbar='#completed-shipment-toolbar'></table>
+    </div>
+</div>
+
 <div class='panel panel-hidden' id='panel-order-builds'>
     <div class='panel-heading'>
         <h4>{% trans "Build Orders" %}</h4>
     </div>
     <div class='panel-content'>
-        <table class='table table-striped table-condensed' id='builds-table'></table>
+        <div id='builds-toolbar' class='btn-group' style='float: right;'>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id='build' %}
+            </div>
+        </div>
+        <table class='table table-striped table-condensed' id='builds-table' data-toolbar='#builds-toolbar'></table>
     </div>
 </div>
 
@@ -105,6 +160,38 @@
 {% block js_ready %}
 {{ block.super }}
 
+    // Callback when the "shipments" panel is first loaded
+    onPanelLoad('order-shipments', function() {
+
+        {% if order.is_pending %}
+        loadSalesOrderShipmentTable('#pending-shipments-table', {
+            order: {{ order.pk }},
+            shipped: false,
+            filter_target: '#filter-list-pending-shipments',
+        });
+
+        $('#new-shipment').click(function() {
+            createSalesOrderShipment({
+                order: {{ order.pk }},
+                reference: '{{ order.reference }}',
+                onSuccess: function(data) {
+                    $('#pending-shipments-table').bootstrapTable('refresh');
+                }
+            });
+        });
+
+        {% endif %}
+
+    });
+    
+    onPanelLoad('order-shipments-complete', function() {
+        loadSalesOrderShipmentTable('#completed-shipments-table', {
+            order: {{ order.pk }},
+            shipped: true,
+            filter_target: '#filter-list-completed-shipments',
+        });
+    });
+
     $('#edit-notes').click(function() {
         constructForm('{% url "api-so-detail" order.pk %}', {
             fields: {
@@ -126,55 +213,21 @@
             },
             label: 'attachment',
             success: function(data, status, xhr) {
-                location.reload();
+                reloadAttachmentTable();
             }
         }
     );
 
-    loadAttachmentTable(
-        '{% url "api-so-attachment-list" %}',
-        {
-            filters: {
-                order: {{ order.pk }},
+    loadAttachmentTable('{% url "api-so-attachment-list" %}', {
+        filters: {
+            order: {{ order.pk }},
+        },
+        fields: {
+            order: {
+                value: {{ order.pk }},
+                hidden: true,
             },
-            onEdit: function(pk) {
-                var url = `/api/order/so/attachment/${pk}/`;
-
-                constructForm(url, {
-                    fields: {
-                        filename: {},
-                        comment: {},
-                    },
-                    onSuccess: reloadAttachmentTable,
-                    title: '{% trans "Edit Attachment" %}',
-                });
-            },
-            onDelete: function(pk) {
-                constructForm(`/api/order/so/attachment/${pk}/`, {
-                    method: 'DELETE',
-                    confirmMessage: '{% trans "Confirm Delete Operation" %}',
-                    title: '{% trans "Delete Attachment" %}',
-                    onSuccess: reloadAttachmentTable,
-                });
-            }
         }
-    );
-
-    $("#new-attachment").click(function() {
-
-        constructForm('{% url "api-so-attachment-list" %}', {
-            method: 'POST',
-            fields: {
-                attachment: {},
-                comment: {},
-                order: {
-                    value: {{ order.pk }},
-                    hidden: true
-                }
-            },
-            onSuccess: reloadAttachmentTable,
-            title: '{% trans "Add Attachment" %}'
-        });
     });
 
     loadBuildTable($("#builds-table"), {

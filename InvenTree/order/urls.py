@@ -33,20 +33,13 @@ purchase_order_urls = [
 
 sales_order_detail_urls = [
     url(r'^cancel/', views.SalesOrderCancel.as_view(), name='so-cancel'),
-    url(r'^ship/', views.SalesOrderShip.as_view(), name='so-ship'),
     url(r'^export/', views.SalesOrderExport.as_view(), name='so-export'),
     url(r'^.*$', views.SalesOrderDetail.as_view(), name='so-detail'),
 ]
 
 sales_order_urls = [
-    # URLs for sales order allocations
-    url(r'^allocation/', include([
-        url(r'^assign-serials/', views.SalesOrderAssignSerials.as_view(), name='so-assign-serials'),
-    ])),
-    url(r'^fulfill/(?P<pk>\d+)/', views.SalesOrderAllocationFulfill.as_view(), name='so-line-item-allocation-fulfill'),
     # Display detail view for a single SalesOrder
     url(r'^(?P<pk>\d+)/', include(sales_order_detail_urls)),
-   
     # Display list of all sales orders
     url(r'^.*$', views.SalesOrderIndex.as_view(), name='so-index'),
 ]

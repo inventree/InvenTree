@@ -9,7 +9,6 @@ import sys
 import re
 import os
 import argparse
-import requests
 
 if __name__ == '__main__':
 
@@ -65,7 +64,7 @@ if __name__ == '__main__':
         e.g. "0.5 dev"
         """
 
-        print(f"Checking development branch")
+        print("Checking development branch")
 
         pattern = "^\d+(\.\d+)+ dev$"
 
@@ -81,7 +80,7 @@ if __name__ == '__main__':
         e.g. "0.5.1"
         """
 
-        print(f"Checking release branch")
+        print("Checking release branch")
 
         pattern = "^\d+(\.\d+)+$"
 

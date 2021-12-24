@@ -39,7 +39,9 @@ src="{% static 'img/blank_image.png' %}"
         <span class='fas fa-print'></span> <span class='caret'></span>
     </button>
     <ul class='dropdown-menu' role='menu'>
+        {% if report_enabled %}
         <li><a class='dropdown-item' href='#' id='print-order-report'><span class='fas fa-file-pdf'></span> {% trans "Print sales order report" %}</a></li>
+        {% endif %}
         <li><a class='dropdown-item' href='#' id='export-order'><span class='fas fa-file-download'></span> {% trans "Export order to file" %}</a></li>
         <!--
         <li><a class='dropdown-item' href='#' id='print-packing-list'><span class='fas fa-clipboard-list'></span>{% trans "Print packing list" %}</a></li>
@@ -68,10 +70,12 @@ src="{% static 'img/blank_image.png' %}"
 {% if order.status == SalesOrderStatus.PENDING  %}
 <button type='button' class='btn btn-success' id='ship-order' title='{% trans "Ship Order" %}'>
     <span class='fas fa-truck'></span> {% trans "Ship Order" %}
+<button type='button' class='btn btn-success' id='complete-order' title='{% trans "Complete Sales Order" %}'{% if not order.is_completed %} disabled{% endif %}>
+    <span class='fas fa-check-circle'></span> {% trans "Complete Order" %}
 </button>
 {% endif %}
 {% endif %}
-{% endblock %}
+{% endblock actions %}
 
 {% block details %}
 
@@ -227,15 +231,20 @@ $("#cancel-order").click(function() {
     });
 });
 
-$("#ship-order").click(function() {
-    launchModalForm("{% url 'so-ship' order.id %}", {
+$("#complete-order").click(function() {
+    constructForm('{% url "api-so-complete" order.id %}', {
+        method: 'POST',
+        title: '{% trans "Complete Sales Order" %}',
+        confirm: true,
         reload: true,
     });
 });
 
+{% if report_enabled %}
 $('#print-order-report').click(function() {
     printSalesOrderReports([{{ order.pk }}]);
 });
+{% endif %}
 
 $('#export-order').click(function() {
     exportOrder('{% url "so-export" order.id %}');

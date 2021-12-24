@@ -107,7 +107,7 @@ class PurchaseOrderStatus(StatusCode):
     }
 
     colors = {
-        PENDING: 'primary',
+        PENDING: 'secondary',
         PLACED: 'primary',
         COMPLETE: 'success',
         CANCELLED: 'danger',
@@ -159,7 +159,7 @@ class SalesOrderStatus(StatusCode):
         WAITING_FOR_PACKING: 'warning',
         PACKING: 'warning',
         PACKED: 'warning',
-        PENDING: 'primary',
+        PENDING: 'secondary',
         SHIPPED: 'success',
         CANCELLED: 'danger',
         LOST: 'warning',
@@ -264,6 +264,9 @@ class StockHistoryCode(StatusCode):
     SPLIT_FROM_PARENT = 40
     SPLIT_CHILD_ITEM = 42
 
+    # Stock merging operations
+    MERGED_STOCK_ITEMS = 45
+
     # Build order codes
     BUILD_OUTPUT_CREATED = 50
     BUILD_OUTPUT_COMPLETED = 55
@@ -299,6 +302,8 @@ class StockHistoryCode(StatusCode):
 
         SPLIT_FROM_PARENT: _('Split from parent item'),
         SPLIT_CHILD_ITEM: _('Split child item'),
+
+        MERGED_STOCK_ITEMS: _('Merged stock items'),
 
         SENT_TO_CUSTOMER: _('Sent to customer'),
         RETURNED_FROM_CUSTOMER: _('Returned from customer'),

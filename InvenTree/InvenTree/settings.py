@@ -15,6 +15,7 @@ import logging
 
 import os
 import random
+import socket
 import string
 import shutil
 import sys
@@ -25,6 +26,7 @@ import moneyed
 import yaml
 from django.utils.translation import gettext_lazy as _
 from django.contrib.messages import constants as messages
+import django.conf.locale
 
 
 def _is_true(x):
@@ -84,11 +86,20 @@ if not os.path.exists(cfg_filename):
 with open(cfg_filename, 'r') as cfg:
     CONFIG = yaml.safe_load(cfg)
 
+# We will place any config files in the same directory as the config file
+config_dir = os.path.dirname(cfg_filename)
+
 # Default action is to run the system in Debug mode
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = _is_true(get_setting(
     'INVENTREE_DEBUG',
     CONFIG.get('debug', True)
+))
+
+# Determine if we are running in "demo mode"
+DEMO_MODE = _is_true(get_setting(
+    'INVENTREE_DEMO',
+    CONFIG.get('demo', False)
 ))
 
 DOCKER = _is_true(get_setting(
@@ -121,6 +132,11 @@ LOGGING = {
     'root': {
         'handlers': ['console'],
         'level': log_level,
+    },
+    'filters': {
+        'require_not_maintenance_mode_503': {
+            '()': 'maintenance_mode.logging.RequireNotMaintenanceMode503',
+        },
     },
 }
 
@@ -193,6 +209,12 @@ if MEDIA_ROOT is None:
     print("ERROR: INVENTREE_MEDIA_ROOT directory is not defined")
     sys.exit(1)
 
+# Options for django-maintenance-mode : https://pypi.org/project/django-maintenance-mode/
+MAINTENANCE_MODE_STATE_FILE_PATH = os.path.join(
+    config_dir,
+    'maintenance_mode_state.txt',
+)
+
 # List of allowed hosts (default = allow all)
 ALLOWED_HOSTS = CONFIG.get('allowed_hosts', ['*'])
 
@@ -233,7 +255,10 @@ STATIC_COLOR_THEMES_DIR = os.path.join(STATIC_ROOT, 'css', 'color-themes')
 MEDIA_URL = '/media/'
 
 if DEBUG:
-    logger.info("InvenTree running in DEBUG mode")
+    logger.info("InvenTree running with DEBUG enabled")
+
+if DEMO_MODE:
+    logger.warning("InvenTree running in DEMO mode")
 
 logger.debug(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
 logger.debug(f"STATIC_ROOT: '{STATIC_ROOT}'")
@@ -246,10 +271,13 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
+    'user_sessions',                # db user sessions
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+
+    # Maintenance
+    'maintenance_mode',
 
     # InvenTree apps
     'build.apps.BuildConfig',
@@ -262,6 +290,7 @@ INSTALLED_APPS = [
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
     'basket.apps.BasketConfig',
+    'plugin.apps.PluginAppConfig',
     'InvenTree.apps.InvenTreeConfig',       # InvenTree app runs last
 
     # Third part add-ons
@@ -285,19 +314,29 @@ INSTALLED_APPS = [
     'allauth',                              # Base app for SSO
     'allauth.account',                      # Extend user with accounts
     'allauth.socialaccount',                # Use 'social' providers
+
+    'django_otp',                           # OTP is needed for MFA - base package
+    'django_otp.plugins.otp_totp',          # Time based OTP
+    'django_otp.plugins.otp_static',        # Backup codes
+
+    'allauth_2fa',                          # MFA flow for allauth
 ]
 
 MIDDLEWARE = CONFIG.get('middleware', [
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    'user_sessions.middleware.SessionMiddleware',                   # db user sessions
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django_otp.middleware.OTPMiddleware',                      # MFA support
+    'InvenTree.middleware.CustomAllauthTwoFactorMiddleware',    # Flow control for allauth
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'InvenTree.middleware.AuthRequiredMiddleware'
+    'InvenTree.middleware.AuthRequiredMiddleware',
+    'InvenTree.middleware.Check2FAMiddleware',                  # Check if the user should be forced to use MFA
+    'maintenance_mode.middleware.MaintenanceModeMiddleware',
 ])
 
 # Error reporting middleware
@@ -325,7 +364,6 @@ TEMPLATES = [
             os.path.join(MEDIA_ROOT, 'report'),
             os.path.join(MEDIA_ROOT, 'label'),
         ],
-        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -337,6 +375,13 @@ TEMPLATES = [
                 'InvenTree.context.health_status',
                 'InvenTree.context.status_codes',
                 'InvenTree.context.user_roles',
+            ],
+            'loaders': [(
+                'django.template.loaders.cached.Loader', [
+                    'plugin.loader.PluginTemplateLoader',
+                    'django.template.loaders.filesystem.Loader',
+                    'django.template.loaders.app_directories.Loader',
+                ])
             ],
         },
     },
@@ -361,30 +406,6 @@ REST_FRAMEWORK = {
 }
 
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
-
-background_workers = os.environ.get('INVENTREE_BACKGROUND_WORKERS', None)
-
-if background_workers is not None:
-    try:
-        background_workers = int(background_workers)
-    except ValueError:
-        background_workers = None
-
-if background_workers is None:
-    # Sensible default?
-    background_workers = 4
-
-# django-q configuration
-Q_CLUSTER = {
-    'name': 'InvenTree',
-    'workers': background_workers,
-    'timeout': 90,
-    'retry': 120,
-    'queue_limit': 50,
-    'bulk': 10,
-    'orm': 'default',
-    'sync': False,
-}
 
 """
 Configure the database backend based on the user-specified values.
@@ -563,11 +584,83 @@ DATABASES = {
 }
 
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-    },
+_cache_config = CONFIG.get("cache", {})
+_cache_host = _cache_config.get("host", os.getenv("INVENTREE_CACHE_HOST"))
+_cache_port = _cache_config.get(
+    "port", os.getenv("INVENTREE_CACHE_PORT", "6379")
+)
+
+if _cache_host:
+    # We are going to rely upon a possibly non-localhost for our cache,
+    # so don't wait too long for the cache as nothing in the cache should be
+    # irreplacable.
+    _cache_options = {
+        "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        "SOCKET_CONNECT_TIMEOUT": int(os.getenv("CACHE_CONNECT_TIMEOUT", "2")),
+        "SOCKET_TIMEOUT": int(os.getenv("CACHE_SOCKET_TIMEOUT", "2")),
+        "CONNECTION_POOL_KWARGS": {
+            "socket_keepalive": _is_true(
+                os.getenv("CACHE_TCP_KEEPALIVE", "1")
+            ),
+            "socket_keepalive_options": {
+                socket.TCP_KEEPCNT: int(
+                    os.getenv("CACHE_KEEPALIVES_COUNT", "5")
+                ),
+                socket.TCP_KEEPIDLE: int(
+                    os.getenv("CACHE_KEEPALIVES_IDLE", "1")
+                ),
+                socket.TCP_KEEPINTVL: int(
+                    os.getenv("CACHE_KEEPALIVES_INTERVAL", "1")
+                ),
+                socket.TCP_USER_TIMEOUT: int(
+                    os.getenv("CACHE_TCP_USER_TIMEOUT", "1000")
+                ),
+            },
+        },
+    }
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": f"redis://{_cache_host}:{_cache_port}/0",
+            "OPTIONS": _cache_options,
+        },
+    }
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        },
+    }
+
+try:
+    # 4 background workers seems like a sensible default
+    background_workers = int(os.environ.get('INVENTREE_BACKGROUND_WORKERS', 4))
+except ValueError:
+    background_workers = 4
+
+# django-q configuration
+Q_CLUSTER = {
+    'name': 'InvenTree',
+    'workers': background_workers,
+    'timeout': 90,
+    'retry': 120,
+    'queue_limit': 50,
+    'bulk': 10,
+    'orm': 'default',
+    'sync': False,
 }
+
+if _cache_host:
+    # If using external redis cache, make the cache the broker for Django Q
+    # as well
+    Q_CLUSTER["django_redis"] = "worker"
+
+# database user sessions
+SESSION_ENGINE = 'user_sessions.backends.db'
+LOGOUT_REDIRECT_URL = 'index'
+SILENCED_SYSTEM_CHECKS = [
+    'admin.E410',
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -607,6 +700,7 @@ LANGUAGES = [
     ('el', _('Greek')),
     ('en', _('English')),
     ('es', _('Spanish')),
+    ('es-mx', _('Spanish (Mexican)')),
     ('fr', _('French')),
     ('he', _('Hebrew')),
     ('it', _('Italian')),
@@ -615,6 +709,7 @@ LANGUAGES = [
     ('nl', _('Dutch')),
     ('no', _('Norwegian')),
     ('pl', _('Polish')),
+    ('pt', _('Portugese')),
     ('ru', _('Russian')),
     ('sv', _('Swedish')),
     ('th', _('Thai')),
@@ -622,6 +717,25 @@ LANGUAGES = [
     ('vi', _('Vietnamese')),
     ('zh-cn', _('Chinese')),
 ]
+
+# Testing interface translations
+if get_setting('TEST_TRANSLATIONS', False):
+    # Set default language
+    LANGUAGE_CODE = 'xx'
+
+    # Add to language catalog
+    LANGUAGES.append(('xx', 'Test'))
+
+    # Add custom languages not provided by Django
+    EXTRA_LANG_INFO = {
+        'xx': {
+            'code': 'xx',
+            'name': 'Test',
+            'name_local': 'Test'
+        },
+    }
+    LANG_INFO = dict(django.conf.locale.LANG_INFO, **EXTRA_LANG_INFO)
+    django.conf.locale.LANG_INFO = LANG_INFO
 
 # Currencies available for use
 CURRENCIES = CONFIG.get(
@@ -791,3 +905,23 @@ MARKDOWNIFY_WHITELIST_ATTRS = [
 ]
 
 MARKDOWNIFY_BLEACH = False
+
+# Maintenance mode
+MAINTENANCE_MODE_RETRY_AFTER = 60
+
+
+# Plugins
+PLUGIN_DIRS = ['plugin.builtin', ]
+
+if not TESTING:
+    # load local deploy directory in prod
+    PLUGIN_DIRS.append('plugins')
+
+if DEBUG or TESTING:
+    # load samples in debug mode
+    PLUGIN_DIRS.append('plugin.samples')
+
+# Plugin test settings
+PLUGIN_TESTING = get_setting('PLUGIN_TESTING', TESTING)  # are plugins beeing tested?
+PLUGIN_TESTING_SETUP = get_setting('PLUGIN_TESTING_SETUP', False)  # load plugins from setup hooks in testing?
+PLUGIN_RETRY = get_setting('PLUGIN_RETRY', 5)  # how often should plugin loading be tried?

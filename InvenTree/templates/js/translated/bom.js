@@ -2,6 +2,7 @@
 
 /* globals
     constructForm,
+    exportFormatOptions,
     imageHoverIcon,
     inventreeGet,
     inventreePut,
@@ -14,18 +15,130 @@
 */
 
 /* exported
+    downloadBomTemplate,
+    exportBom,
     newPartFromBomWizard,
     loadBomTable,
+    loadUsedInTable,
     removeRowFromBomWizard,
     removeColFromBomWizard,
 */
 
-/* BOM management functions.
- * Requires follwing files to be loaded first:
- * - api.js
- * - part.js
- * - modals.js
+function downloadBomTemplate(options={}) {
+
+    var format = options.format;
+
+    if (!format) {
+        format = inventreeLoad('bom-export-format', 'csv');
+    }
+
+    constructFormBody({}, {
+        title: '{% trans "Download BOM Template" %}',
+        fields: {
+            format: {
+                label: '{% trans "Format" %}',
+                help_text: '{% trans "Select file format" %}',
+                required: true,
+                type: 'choice',
+                value: format,
+                choices: exportFormatOptions(),
+            }
+        },
+        onSubmit: function(fields, opts) {
+            var format = getFormFieldValue('format', fields['format'], opts);
+
+            // Save the format for next time
+            inventreeSave('bom-export-format', format);
+
+            // Hide the modal
+            $(opts.modal).modal('hide');
+
+            // Download the file
+            location.href = `{% url "bom-upload-template" %}?format=${format}`;
+
+        }
+    });
+}
+
+
+/**
+ * Export BOM (Bill of Materials) for the specified Part instance
  */
+function exportBom(part_id, options={}) {
+
+    constructFormBody({}, {
+        title: '{% trans "Export BOM" %}',
+        fields: {
+            format: {
+                label: '{% trans "Format" %}',
+                help_text: '{% trans "Select file format" %}',
+                required: true,
+                type: 'choice',
+                value: inventreeLoad('bom-export-format', 'csv'),
+                choices: exportFormatOptions(),
+            },
+            cascading: {
+                label: '{% trans "Cascading" %}',
+                help_text: '{% trans "Download cascading / multi-level BOM" %}',
+                type: 'boolean',
+                value: inventreeLoad('bom-export-cascading', true),
+            },
+            levels: {
+                label: '{% trans "Levels" %}',
+                help_text: '{% trans "Select maximum number of BOM levels to export (0 = all levels)" %}',
+                type: 'integer',
+                value: 0,
+                min_value: 0,
+            },
+            parameter_data: {
+                label: '{% trans "Include Parameter Data" %}',
+                help_text: '{% trans "Include part  parameter data in exported BOM" %}',
+                type: 'boolean',
+                value: inventreeLoad('bom-export-parameter_data', false),
+            },
+            stock_data: {
+                label: '{% trans "Include Stock Data" %}',
+                help_text: '{% trans "Include part stock data in exported BOM" %}',
+                type: 'boolean',
+                value: inventreeLoad('bom-export-stock_data', false),
+            },
+            manufacturer_data: {
+                label: '{% trans "Include Manufacturer Data" %}',
+                help_text: '{% trans "Include part manufacturer data in exported BOM" %}',
+                type: 'boolean',
+                value: inventreeLoad('bom-export-manufacturer_data', false),
+            },
+            supplier_data: {
+                label: '{% trans "Include Supplier Data" %}',
+                help_text: '{% trans "Include part supplier data in exported BOM" %}',
+                type: 'boolean',
+                value: inventreeLoad('bom-export-supplier_data', false),
+            }
+        },
+        onSubmit: function(fields, opts) {
+
+            // Extract values from the form
+            var field_names = ['format', 'cascading', 'levels', 'parameter_data', 'stock_data', 'manufacturer_data', 'supplier_data'];
+
+            var url = `/part/${part_id}/bom-download/?`;
+
+            field_names.forEach(function(fn) {
+                var val = getFormFieldValue(fn, fields[fn], opts);
+
+                // Update user preferences
+                inventreeSave(`bom-export-${fn}`, val);
+
+                url += `${fn}=${val}&`;
+            });
+
+            $(opts.modal).modal('hide');
+
+            // Redirect to the BOM file download
+            location.href = url;
+        }
+    });
+
+}
 
 
 function bomItemFields() {
@@ -191,6 +304,7 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
                 </a>
             </td>
             <td id='description-${pk}'><em>${part.description}</em></td>
+            <td id='stock-${pk}'><em>${part.stock}</em></td>
             <td>${buttons}</td>
         </tr>
         `;
@@ -211,6 +325,7 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
             <tr>
                 <th>{% trans "Part" %}</th>
                 <th>{% trans "Description" %}</th>
+                <th>{% trans "Stock" %}</th>
                 <th><!-- Actions --></th>
             </tr>
         </thead>
@@ -311,7 +426,7 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
 }
 
 
-function loadBomTable(table, options) {
+function loadBomTable(table, options={}) {
     /* Load a BOM table with some configurable options.
      * 
      * Following options are available:
@@ -395,7 +510,7 @@ function loadBomTable(table, options) {
 
                 var sub_part = row.sub_part_detail;
 
-                html += makePartIcons(row.sub_part_detail);
+                html += makePartIcons(sub_part);
 
                 if (row.substitutes && row.substitutes.length > 0) {
                     html += makeIconBadge('fa-exchange-alt', '{% trans "Substitutes Available" %}');
@@ -546,7 +661,7 @@ function loadBomTable(table, options) {
             if (!row.inherited) {
                 return yesNoLabel(false);
             } else if (row.part == options.parent_id) {
-                return '{% trans "Inherited" %}';
+                return yesNoLabel(true);
             } else {
                 // If this BOM item is inherited from a parent part
                 return renderLink(
@@ -672,8 +787,9 @@ function loadBomTable(table, options) {
 
                     table.treegrid('collapseAll');
                 },
-                error: function() {
+                error: function(xhr) {
                     console.log('Error requesting BOM for part=' + part_pk);
+                    showApiError(xhr);
                 }
             }
         );
@@ -834,4 +950,167 @@ function loadBomTable(table, options) {
             );
         });
     }
+}
+
+
+/*
+ * Load a table which shows the assemblies which "require" a certain part.
+ *
+ * Arguments:
+ * - table: The ID string of the table element e.g. '#used-in-table'
+ * - part_id: The ID (PK) of the part we are interested in
+ * 
+ * Options:
+ * - 
+ * 
+ * The following "options" are available.
+ */
+function loadUsedInTable(table, part_id, options={}) {
+
+    var params = options.params || {};
+
+    params.uses = part_id;
+    params.part_detail = true;
+    params.sub_part_detail = true,
+    params.show_pricing = global_settings.PART_SHOW_PRICE_IN_BOM;
+
+    var filters = {};
+
+    if (!options.disableFilters) {
+        filters = loadTableFilters('usedin');
+    }
+
+    for (var key in params) {
+        filters[key] = params[key];
+    }
+
+    setupFilterList('usedin', $(table), options.filterTarget || '#filter-list-usedin');
+
+    function loadVariantData(row) {
+        // Load variants information for inherited BOM rows
+
+        inventreeGet(
+            '{% url "api-part-list" %}',
+            {
+                assembly: true,
+                ancestor: row.part,
+            },
+            {
+                success: function(variantData) {
+                    // Iterate through each variant item
+                    for (var jj = 0; jj < variantData.length; jj++) {
+                        variantData[jj].parent = row.pk;
+                        
+                        var variant = variantData[jj];
+
+                        // Add this variant to the table, augmented
+                        $(table).bootstrapTable('append', [{
+                            // Point the parent to the "master" assembly row 
+                            parent: row.pk,
+                            part: variant.pk,                       
+                            part_detail: variant,
+                            sub_part: row.sub_part,
+                            sub_part_detail: row.sub_part_detail,
+                            quantity: row.quantity,
+                        }]);
+                    }
+                },
+                error: function(xhr) {
+                    showApiError(xhr);
+                }
+            }
+        );
+    }
+
+    $(table).inventreeTable({
+        url: options.url || '{% url "api-bom-list" %}',
+        name: options.table_name || 'usedin',
+        sortable: true,
+        search: true,
+        showColumns: true,
+        queryParams: filters,
+        original: params,
+        rootParentId: 'top-level-item',
+        idField: 'pk',
+        uniqueId: 'pk',
+        parentIdField: 'parent',
+        treeShowField: 'part',
+        onLoadSuccess: function(tableData) {
+            // Once the initial data are loaded, check if there are any "inherited" BOM lines
+            for (var ii = 0; ii < tableData.length; ii++) {
+                var row = tableData[ii];
+
+                // This is a "top level" item in the table
+                row.parent = 'top-level-item';
+
+                // Ignore this row as it is not "inherited" by variant parts
+                if (!row.inherited) {
+                    continue;
+                }
+
+                loadVariantData(row);
+            }
+        },
+        onPostBody: function() {
+            $(table).treegrid({
+                treeColumn: 0,
+            });
+        },
+        columns: [
+            {
+                field: 'pk',
+                title: 'ID',
+                visible: false,
+                switchable: false,
+            },
+            {
+                field: 'part',
+                title: '{% trans "Assembly" %}',
+                switchable: false,
+                sortable: true,
+                formatter: function(value, row) {
+                    var url = `/part/${value}/?display=bom`;
+                    var html = '';
+
+                    var part = row.part_detail;
+
+                    html += imageHoverIcon(part.thumbnail);
+                    html += renderLink(part.full_name, url);
+                    html += makePartIcons(part);
+
+                    return html;
+                }
+            },
+            {
+                field: 'sub_part',
+                title: '{% trans "Required Part" %}',
+                sortable: true,
+                formatter: function(value, row) {
+                    var url = `/part/${value}/`;
+                    var html = '';
+
+                    var sub_part = row.sub_part_detail;
+
+                    html += imageHoverIcon(sub_part.thumbnail);
+                    html += renderLink(sub_part.full_name, url);
+                    html += makePartIcons(sub_part);
+
+                    return html;
+                }
+            },
+            {
+                field: 'quantity',
+                title: '{% trans "Required Quantity" %}',
+                formatter: function(value, row) {
+                    var html = value;
+
+                    if (row.parent && row.parent != 'top-level-item') {
+                        html += ` <em>({% trans "Inherited from parent BOM" %})</em>`;
+                    }
+
+                    return html;
+                }
+            }
+        ]
+    });
 }

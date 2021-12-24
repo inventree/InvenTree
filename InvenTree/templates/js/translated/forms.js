@@ -28,6 +28,7 @@
     disableFormInput,
     enableFormInput,
     hideFormInput,
+    setFormInputPlaceholder,
     setFormGroupVisibility,
     showFormInput,
 */
@@ -198,14 +199,6 @@ function constructChangeForm(fields, options) {
             json: 'application/json',
         },
         success: function(data) {
-
-            // Push existing 'value' to each field
-            for (const field in data) {
-
-                if (field in fields) {
-                    fields[field].value = data[field];
-                }
-            }
             
             // An optional function can be provided to process the returned results,
             // before they are rendered to the form
@@ -215,6 +208,14 @@ function constructChangeForm(fields, options) {
                 // If the processResults function returns data, it will be stored
                 if (processed) {
                     data = processed;
+                }
+            }
+
+            // Push existing 'value' to each field
+            for (const field in data) {
+
+                if (field in fields) {
+                    fields[field].value = data[field];
                 }
             }
 
@@ -723,6 +724,14 @@ function submitFormData(fields, options) {
         data = form_data;
     }
 
+    // Optionally pre-process the data before uploading to the server
+    if (options.processBeforeUpload) {
+        data = options.processBeforeUpload(data);
+    }
+
+    // Show the progress spinner
+    $(options.modal).find('#modal-progress-spinner').show();
+
     // Submit data
     upload_func(
         options.url,
@@ -730,10 +739,13 @@ function submitFormData(fields, options) {
         {
             method: options.method,
             success: function(response) {
+                $(options.modal).find('#modal-progress-spinner').hide();
                 handleFormSuccess(response, options);
             },
             error: function(xhr) {
                 
+                $(options.modal).find('#modal-progress-spinner').hide();
+
                 switch (xhr.status) {
                 case 400:
                     handleFormErrors(xhr.responseJSON, fields, options);
@@ -798,7 +810,9 @@ function updateFieldValue(name, value, field, options) {
 
     switch (field.type) {
     case 'boolean':
-        el.prop('checked', value);
+        if (value == true || value.toString().toLowerCase() == 'true') {
+            el.prop('checked');
+        }
         break;
     case 'related field':
         // Clear?
@@ -918,8 +932,8 @@ function handleFormSuccess(response, options) {
     var cache = (options.follow && response.url) || options.redirect || options.reload;
 
     // Display any messages
-    if (response && response.success) {
-        showAlertOrCache(response.success, cache, {style: 'success'});
+    if (response && (response.success || options.successMessage)) {
+        showAlertOrCache(response.success || options.successMessage, cache, {style: 'success'});
     }
     
     if (response && response.info) {
@@ -1268,6 +1282,11 @@ function initializeGroups(fields, options) {
             hideFormGroup(group, options);
         }
     }
+}
+
+// Set the placeholder value for a field
+function setFormInputPlaceholder(name, placeholder, options) {
+    $(options.modal).find(`#id_${name}`).attr('placeholder', placeholder);
 }
 
 // Clear a form input
@@ -1701,6 +1720,9 @@ function renderModelData(name, model, data, parameters, options) {
     case 'salesorder':
         renderer = renderSalesOrder;
         break;
+    case 'salesordershipment':
+        renderer = renderSalesOrderShipment;
+        break;
     case 'manufacturerpart':
         renderer = renderManufacturerPart;
         break;
@@ -2013,8 +2035,15 @@ function constructInputOptions(name, classes, type, parameters) {
     }
 
     if (parameters.value != null) {
-        // Existing value?
-        opts.push(`value='${parameters.value}'`);
+        if (parameters.type == 'boolean') {
+            // Special consideration of a boolean (checkbox) value
+            if (parameters.value == true || parameters.value.toString().toLowerCase() == 'true') {
+                opts.push('checked');
+            }
+        } else {
+            // Existing value?
+            opts.push(`value='${parameters.value}'`);
+        }
     } else if (parameters.default != null) {
         // Otherwise, a defualt value?
         opts.push(`value='${parameters.default}'`);

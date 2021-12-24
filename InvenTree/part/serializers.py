@@ -9,12 +9,14 @@ from django.urls import reverse_lazy
 from django.db import models
 from django.db.models import Q
 from django.db.models.functions import Coalesce
+from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
 from djmoney.contrib.django_rest_framework import MoneyField
 
 from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
+                                   InvenTreeDecimalField,
                                    InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer,
                                    InvenTreeAttachmentSerializer,
@@ -24,7 +26,7 @@ from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus
 from stock.models import StockItem
 
 from .models import (BomItem, BomItemSubstitute,
-                     Part, PartAttachment, PartCategory,
+                     Part, PartAttachment, PartCategory, PartRelated,
                      PartParameter, PartParameterTemplate, PartSellPriceBreak,
                      PartStar, PartTestTemplate, PartCategoryParameterTemplate,
                      PartInternalPriceBreak)
@@ -69,12 +71,24 @@ class CategorySerializer(InvenTreeModelSerializer):
         ]
 
 
+class CategoryTree(InvenTreeModelSerializer):
+    """
+    Serializer for PartCategory tree
+    """
+
+    class Meta:
+        model = PartCategory
+        fields = [
+            'pk',
+            'name',
+            'parent',
+        ]
+
+
 class PartAttachmentSerializer(InvenTreeAttachmentSerializer):
     """
     Serializer for the PartAttachment class
     """
-
-    attachment = InvenTreeAttachmentSerializerField(required=True)
 
     class Meta:
         model = PartAttachment
@@ -84,6 +98,7 @@ class PartAttachmentSerializer(InvenTreeAttachmentSerializer):
             'part',
             'attachment',
             'filename',
+            'link',
             'comment',
             'upload_date',
         ]
@@ -120,7 +135,7 @@ class PartSalePriceSerializer(InvenTreeModelSerializer):
     Serializer for sale prices for Part model.
     """
 
-    quantity = serializers.FloatField()
+    quantity = InvenTreeDecimalField()
 
     price = InvenTreeMoneySerializer(
         allow_null=True
@@ -144,7 +159,7 @@ class PartInternalPriceSerializer(InvenTreeModelSerializer):
     Serializer for internal prices for Part model.
     """
 
-    quantity = serializers.FloatField()
+    quantity = InvenTreeDecimalField()
 
     price = InvenTreeMoneySerializer(
         allow_null=True
@@ -387,6 +402,25 @@ class PartSerializer(InvenTreeModelSerializer):
         ]
 
 
+class PartRelationSerializer(InvenTreeModelSerializer):
+    """
+    Serializer for a PartRelated model
+    """
+
+    part_1_detail = PartSerializer(source='part_1', read_only=True, many=False)
+    part_2_detail = PartSerializer(source='part_2', read_only=True, many=False)
+
+    class Meta:
+        model = PartRelated
+        fields = [
+            'pk',
+            'part_1',
+            'part_1_detail',
+            'part_2',
+            'part_2_detail',
+        ]
+
+
 class PartStarSerializer(InvenTreeModelSerializer):
     """ Serializer for a PartStar object """
 
@@ -428,7 +462,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     price_range = serializers.CharField(read_only=True)
 
-    quantity = serializers.FloatField()
+    quantity = InvenTreeDecimalField()
 
     part = serializers.PrimaryKeyRelatedField(queryset=Part.objects.filter(assembly=True))
 
@@ -442,12 +476,12 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     validated = serializers.BooleanField(read_only=True, source='is_line_valid')
 
-    purchase_price_min = MoneyField(max_digits=10, decimal_places=6, read_only=True)
+    purchase_price_min = MoneyField(max_digits=19, decimal_places=4, read_only=True)
 
-    purchase_price_max = MoneyField(max_digits=10, decimal_places=6, read_only=True)
-    
+    purchase_price_max = MoneyField(max_digits=19, decimal_places=4, read_only=True)
+
     purchase_price_avg = serializers.SerializerMethodField()
-    
+
     purchase_price_range = serializers.SerializerMethodField()
 
     def __init__(self, *args, **kwargs):
@@ -519,7 +553,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     def get_purchase_price_avg(self, obj):
         """ Return purchase price average """
-        
+
         try:
             purchase_price_avg = obj.purchase_price_avg
         except AttributeError:
@@ -603,3 +637,65 @@ class CategoryParameterTemplateSerializer(InvenTreeModelSerializer):
             'parameter_template',
             'default_value',
         ]
+
+
+class PartCopyBOMSerializer(serializers.Serializer):
+    """
+    Serializer for copying a BOM from another part
+    """
+
+    class Meta:
+        fields = [
+            'part',
+            'remove_existing',
+        ]
+
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=Part.objects.all(),
+        many=False,
+        required=True,
+        allow_null=False,
+        label=_('Part'),
+        help_text=_('Select part to copy BOM from'),
+    )
+
+    def validate_part(self, part):
+        """
+        Check that a 'valid' part was selected
+        """
+
+        return part
+
+    remove_existing = serializers.BooleanField(
+        label=_('Remove Existing Data'),
+        help_text=_('Remove existing BOM items before copying'),
+        default=True,
+    )
+
+    include_inherited = serializers.BooleanField(
+        label=_('Include Inherited'),
+        help_text=_('Include BOM items which are inherited from templated parts'),
+        default=False,
+    )
+
+    skip_invalid = serializers.BooleanField(
+        label=_('Skip Invalid Rows'),
+        help_text=_('Enable this option to skip invalid rows'),
+        default=False,
+    )
+
+    def save(self):
+        """
+        Actually duplicate the BOM
+        """
+
+        base_part = self.context['part']
+
+        data = self.validated_data
+
+        base_part.copy_bom_from(
+            data['part'],
+            clear=data.get('remove_existing', True),
+            skip_invalid=data.get('skip_invalid', False),
+            include_inherited=data.get('include_inherited', False),
+        )

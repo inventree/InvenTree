@@ -16,10 +16,11 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
 from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentSerializer
-from InvenTree.serializers import InvenTreeAttachmentSerializerField, UserSerializerBrief
+from InvenTree.serializers import UserSerializerBrief, ReferenceIndexingSerializerMixin
 
-from InvenTree.status_codes import StockStatus
 import InvenTree.helpers
+from InvenTree.serializers import InvenTreeDecimalField
+from InvenTree.status_codes import StockStatus
 
 from stock.models import StockItem, StockLocation
 from stock.serializers import StockItemSerializerBrief, LocationSerializer
@@ -31,7 +32,7 @@ from users.serializers import OwnerSerializer
 from .models import Build, BuildItem, BuildOrderAttachment
 
 
-class BuildSerializer(InvenTreeModelSerializer):
+class BuildSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSerializer):
     """
     Serializes a Build object
     """
@@ -41,7 +42,7 @@ class BuildSerializer(InvenTreeModelSerializer):
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
-    quantity = serializers.FloatField()
+    quantity = InvenTreeDecimalField()
 
     overdue = serializers.BooleanField(required=False, read_only=True)
 
@@ -308,14 +309,20 @@ class BuildAllocationItemSerializer(serializers.Serializer):
     )
 
     def validate_bom_item(self, bom_item):
-        
-        # TODO: Fix this validation - allow for variants and substitutes!
+        """
+        Check if the parts match!
+        """
 
         build = self.context['build']
 
-        # BomItem must point to the same 'part' as the parent build
+        # BomItem should point to the same 'part' as the parent build
         if build.part != bom_item.part:
-            raise ValidationError(_("bom_item.part must point to the same part as the build order"))
+
+            # If not, it may be marked as "inherited" from a parent part
+            if bom_item.inherited and build.part in bom_item.part.get_descendants(include_self=False):
+                pass
+            else:
+                raise ValidationError(_("bom_item.part must point to the same part as the build order"))
 
         return bom_item
 
@@ -331,7 +338,7 @@ class BuildAllocationItemSerializer(serializers.Serializer):
 
         if not stock_item.in_stock:
             raise ValidationError(_("Item must be in stock"))
-        
+
         return stock_item
 
     quantity = serializers.DecimalField(
@@ -397,7 +404,7 @@ class BuildAllocationItemSerializer(serializers.Serializer):
 
         # Output *cannot* be set for un-tracked parts
         if output is not None and not bom_item.sub_part.trackable:
-            
+
             raise ValidationError({
                 'output': _('Build output cannot be specified for allocation of untracked parts')
             })
@@ -421,14 +428,14 @@ class BuildAllocationSerializer(serializers.Serializer):
         """
         Validation
         """
-        
-        super().validate(data)
+
+        data = super().validate(data)
 
         items = data.get('items', [])
 
         if len(items) == 0:
             raise ValidationError(_('Allocation items must be provided'))
-        
+
         return data
 
     def save(self):
@@ -473,7 +480,7 @@ class BuildItemSerializer(InvenTreeModelSerializer):
     stock_item_detail = StockItemSerializerBrief(source='stock_item', read_only=True)
     location_detail = LocationSerializer(source='stock_item.location', read_only=True)
 
-    quantity = serializers.FloatField()
+    quantity = InvenTreeDecimalField()
 
     def __init__(self, *args, **kwargs):
 
@@ -515,8 +522,6 @@ class BuildAttachmentSerializer(InvenTreeAttachmentSerializer):
     Serializer for a BuildAttachment
     """
 
-    attachment = InvenTreeAttachmentSerializerField(required=True)
-
     class Meta:
         model = BuildOrderAttachment
 
@@ -524,6 +529,7 @@ class BuildAttachmentSerializer(InvenTreeAttachmentSerializer):
             'pk',
             'build',
             'attachment',
+            'link',
             'filename',
             'comment',
             'upload_date',

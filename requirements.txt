@@ -1,5 +1,5 @@
 # Please keep this list sorted
-Django==3.2.5                   # Django package
+Django==3.2.10                   # Django package
 certifi                         # Certifi is (most likely) installed through one of the requirements above
 coreapi==2.3.0                  # API documentation
 coverage==5.3                   # Unit test coverage
@@ -7,6 +7,7 @@ coveralls==2.1.2                # Coveralls linking (for Travis)
 cryptography==3.4.8             # Cryptography support
 django-admin-shell==0.1.2       # Python shell for the admin interface
 django-allauth==0.45.0          # SSO for external providers via OpenID
+django-allauth-2fa==0.8         # MFA / 2FA
 django-cleanup==5.1.0           # Manage deletion of old / unused uploaded files
 django-cors-headers==3.2.0      # CORS headers extension for DRF
 django-crispy-forms==1.11.2     # Form helpers
@@ -15,19 +16,24 @@ django-error-report==0.2.0      # Error report viewer for the admin interface
 django-filter==2.4.0            # Extended filtering options
 django-formtools==2.3           # Form wizard tools
 django-import-export==2.5.0     # Data import / export for admin interface
+django-maintenance-mode==0.16.1 # Shut down application while reloading etc.
 django-markdownify==0.8.0       # Markdown rendering
 django-markdownx==3.0.1         # Markdown form fields
 django-money==1.1               # Django app for currency management
 django-mptt==0.11.0             # Modified Preorder Tree Traversal
+django-redis>=5.0.0
 django-q==1.3.4                 # Background task scheduling
 django-sql-utils==0.5.0         # Advanced query annotation / aggregation
 django-stdimage==5.1.1          # Advanced ImageField management
 django-test-migrations==1.1.0   # Unit testing for database migrations
+django-user-sessions==1.7.1     # user sessions in DB
 django-weasyprint==1.0.1        # django weasyprint integration
 djangorestframework==3.12.4     # DRF framework
 flake8==3.8.3                   # PEP checking
 gunicorn>=20.1.0                # Gunicorn web server
+importlib_metadata              # Backport for importlib.metadata
 inventree                       # Install the latest version of the InvenTree API python library
+markdown==3.3.4                 # Force particular version of markdown
 pep8-naming==0.11.1             # PEP naming convention extension
 pillow==8.3.2                   # Image manipulation
 py-moneyed==0.8.0               # Specific version requirement for py-moneyed

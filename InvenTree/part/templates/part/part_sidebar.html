@@ -5,34 +5,47 @@
 {% settings_value "PART_INTERNAL_PRICE" as show_internal_price %}
 {% settings_value 'PART_SHOW_RELATED' as show_related %}
 
-{% include "sidebar_item.html" with label="part-details" text="Details" icon="fa-shapes" %}
-{% include "sidebar_item.html" with label="part-parameters" text="Parameters" icon="fa-th-list" %}
+{% trans "Parameters" as text %}
+{% include "sidebar_item.html" with label="part-parameters" text=text icon="fa-th-list" %}
 {% if part.is_template %}
-{% include "sidebar_item.html" with label="variants" text="Variants" icon="fa-shapes" %}
+{% trans "Variants" as text %}
+{% include "sidebar_item.html" with label="variants" text=text icon="fa-shapes" %}
 {% endif %}
-{% include "sidebar_item.html" with label="part-stock" text="Stock" icon="fa-boxes" %}
+{% trans "Stock" as text %}
+{% include "sidebar_item.html" with label="part-stock" text=text icon="fa-boxes" %}
 {% if part.assembly %}
-{% include "sidebar_item.html" with label="bom" text="Bill of Materials" icon="fa-list" %}
+{% trans "Bill of Materials" as text %}
+{% include "sidebar_item.html" with label="bom" text=text icon="fa-list" %}
 {% if roles.build.view %}
-{% include "sidebar_item.html" with label="build-orders" text="Build Orders" icon="fa-tools" %}
+{% trans "Build Orders" as text %}
+{% include "sidebar_item.html" with label="build-orders" text=text icon="fa-tools" %}
 {% endif %}
 {% endif %}
 {% if part.component %}
-{% include "sidebar_item.html" with label="used-in" text="Used In" icon="fa-layer-group" %}
+{% trans "Used In" as text %}
+{% include "sidebar_item.html" with label="used-in" text=text icon="fa-layer-group" %}
 {% endif %}
-{% include "sidebar_item.html" with label="pricing" text="Pricing" icon="fa-dollar-sign" %}
+{% trans "Pricing" as text %}
+{% include "sidebar_item.html" with label="pricing" text=text icon="fa-dollar-sign" %}
 {% if part.purchaseable and roles.purchase_order.view %}
-{% include "sidebar_item.html" with label="suppliers" text="Suppliers" icon="fa-building" %}
-{% include "sidebar_item.html" with label="purchase-orders" text="Purchase Orders" icon="fa-shopping-cart" %}
+{% trans "Suppliers" as text %}
+{% include "sidebar_item.html" with label="suppliers" text=text icon="fa-building" %}
+{% trans "Purchase Orders" as text %}
+{% include "sidebar_item.html" with label="purchase-orders" text=text icon="fa-shopping-cart" %}
 {% endif %}
 {% if part.salable and roles.sales_order.view %}
-{% include "sidebar_item.html" with label="sales-orders" text="Sales Orders" icon="fa-truck" %}
+{% trans "Sales Orders" as text %}
+{% include "sidebar_item.html" with label="sales-orders" text=text icon="fa-truck" %}
 {% endif %}
 {% if part.trackable %}
-{% include "sidebar_item.html" with label="test-templates" text="Test Templates" icon="fa-vial" %}
+{% trans "Test Templates" as text %}
+{% include "sidebar_item.html" with label="test-templates" text=text icon="fa-vial" %}
 {% endif %}
 {% if show_related %}
-{% include "sidebar_item.html" with label="related-parts" text="Related Parts" icon="fa-random" %}
+{% trans "Related Parts" as text %}
+{% include "sidebar_item.html" with label="related-parts" text=text icon="fa-random" %}
 {% endif %}
-{% include "sidebar_item.html" with label="part-attachments" text="Attachments" icon="fa-paperclip" %}
-{% include "sidebar_item.html" with label="part-notes" text="Notes" icon="fa-clipboard" %}
+{% trans "Attachments" as text %}
+{% include "sidebar_item.html" with label="part-attachments" text=text icon="fa-paperclip" %}
+{% trans "Notes" as text %}
+{% include "sidebar_item.html" with label="part-notes" text=text icon="fa-clipboard" %}

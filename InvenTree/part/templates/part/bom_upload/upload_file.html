@@ -5,7 +5,8 @@
 
 {% block sidebar %}
 {% url "part-detail" part.id as url %}
-{% include "sidebar_link.html" with url=url text="Return to BOM" icon="fa-undo" %}
+{% trans "Return to BOM" as text %}
+{% include "sidebar_link.html" with url=url text=text icon="fa-undo" %}
 {% endblock %}
 
 {% block heading %}
@@ -31,7 +32,7 @@
     <div class='alert alert-info alert-block'>
         <strong>{% trans "Requirements for BOM upload" %}:</strong>
         <ul>
-            <li>{% trans "The BOM file must contain the required named columns as provided in the " %} <strong><a href="/part/bom_template/">{% trans "BOM Upload Template" %}</a></strong></li>
+            <li>{% trans "The BOM file must contain the required named columns as provided in the " %} <strong><a href='#' id='bom-template-download'>{% trans "BOM Upload Template" %}</a></strong></li>
             <li>{% trans "Each part must already exist in the database" %}</li>
         </ul>
     </div>
@@ -58,5 +59,9 @@
 {{ block.super }}
 
 enableSidebar('bom-upload');
+
+$('#bom-template-download').click(function() {
+    downloadBomTemplate();
+});
 
 {% endblock js_ready %}

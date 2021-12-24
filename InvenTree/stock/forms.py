@@ -21,20 +21,6 @@ from part.models import Part
 from .models import StockLocation, StockItem, StockItemTracking
 
 
-class AssignStockItemToCustomerForm(HelperForm):
-    """
-    Form for manually assigning a StockItem to a Customer
-
-    TODO: This could be a simple API driven form!
-    """
-
-    class Meta:
-        model = StockItem
-        fields = [
-            'customer',
-        ]
-
-
 class ReturnStockItemForm(HelperForm):
     """
     Form for manually returning a StockItem into stock
@@ -83,7 +69,7 @@ class ConvertStockItemForm(HelperForm):
 class CreateStockItemForm(HelperForm):
     """
     Form for creating a new StockItem
-    
+
     TODO: Migrate this form to the modern API forms interface
     """
 
@@ -143,7 +129,7 @@ class CreateStockItemForm(HelperForm):
 class SerializeStockForm(HelperForm):
     """
     Form for serializing a StockItem.
-    
+
     TODO: Migrate this form to the modern API forms interface
     """
 

@@ -21,6 +21,7 @@
 */
 
 /* exported
+    duplicateBom,
     duplicatePart,
     editCategory,
     editPart,
@@ -29,14 +30,17 @@
     loadParametricPartTable,
     loadPartCategoryTable,
     loadPartParameterTable,
+    loadPartPurchaseOrderTable,
     loadPartTable,
     loadPartTestTemplateTable,
     loadPartVariantTable,
+    loadRelatedPartsTable,
     loadSellPricingChart,
     loadSimplePartTable,
     loadStockPricingChart,
     partStockLabel,
     toggleStar,
+    validateBom,
 */
 
 /* Part API functions
@@ -152,12 +156,7 @@ function partFields(options={}) {
         delete fields['default_expiry'];
     }
 
-    // Additional fields when "creating" a new part
-    if (options.create) {
-
-        // No supplier parts available yet
-        delete fields['default_supplier'];
-
+    if (options.create || options.duplicate) {
         if (global_settings.PART_CREATE_INITIAL) {
 
             fields.initial_stock = {
@@ -186,6 +185,13 @@ function partFields(options={}) {
                 group: 'create',
             };
         }
+    }
+
+    // Additional fields when "creating" a new part
+    if (options.create) {
+
+        // No supplier parts available yet
+        delete fields['default_supplier'];
 
         fields.copy_category_parameters = {
             type: 'boolean',
@@ -331,6 +337,7 @@ function editPart(pk) {
         groups: groups,
         title: '{% trans "Edit Part" %}',
         reload: true,
+        successMessage: '{% trans "Part edited" %}',
     });
 }
 
@@ -346,6 +353,10 @@ function duplicatePart(pk, options={}) {
             var fields = partFields({
                 duplicate: pk,
             });
+
+            if (fields.initial_stock_location) {
+                fields.initial_stock_location.value = data.default_location;
+            }
 
             // Remove "default_supplier" field
             delete fields['default_supplier'];
@@ -416,6 +427,59 @@ function toggleStar(options) {
             );
         }
     });
+}
+
+
+/* Validate a BOM */
+function validateBom(part_id, options={}) {
+
+    var html = `
+    <div class='alert alert-block alert-success'>
+    {% trans "Validating the BOM will mark each line item as valid" %}
+    </div>
+    `;
+
+    constructForm(`/api/part/${part_id}/bom-validate/`, {
+        method: 'PUT',
+        fields: {
+            valid: {},
+        },
+        preFormContent: html,
+        title: '{% trans "Validate Bill of Materials" %}',
+        reload: options.reload,
+        onSuccess: function(response) {
+            showMessage('{% trans "Validated Bill of Materials" %}');
+        }
+    });
+}
+
+
+/* Duplicate a BOM */
+function duplicateBom(part_id, options={}) {
+
+    constructForm(`/api/part/${part_id}/bom-copy/`, {
+        method: 'POST',
+        fields: {
+            part: {
+                icon: 'fa-shapes',
+                filters: {
+                    assembly: true,
+                    exclude_tree: part_id,
+                }
+            },
+            include_inherited: {},
+            remove_existing: {},
+            skip_invalid: {},
+        },
+        confirm: true,
+        title: '{% trans "Copy Bill of Materials" %}',
+        onSuccess: function(response) {
+            if (options.success) {
+                options.success(response);
+            }
+        },
+    });
+
 }
 
 
@@ -612,7 +676,9 @@ function loadPartParameterTable(table, url, options) {
         filters[key] = params[key];
     }
 
-    // setupFilterList("#part-parameters", $(table));
+    var filterTarget = options.filterTarget || '#filter-list-parameters';
+
+    setupFilterList('part-parameters', $(table), filterTarget);
 
     $(table).inventreeTable({
         url: url,
@@ -700,6 +766,273 @@ function loadPartParameterTable(table, url, options) {
                 });
             });
         }
+    });
+}
+
+
+/*
+ * Construct a table showing a list of purchase orders for a given part.
+ * 
+ * This requests API data from the PurchaseOrderLineItem endpoint
+ */
+function loadPartPurchaseOrderTable(table, part_id, options={}) {
+
+    options.params = options.params || {};
+
+    // Construct API filterset
+    options.params.base_part = part_id;
+    options.params.part_detail = true;
+    options.params.order_detail = true;
+    
+    var filters = loadTableFilters('purchaseorderlineitem');
+
+    for (var key in options.params) {
+        filters[key] = options.params[key];
+    }
+
+    setupFilterList('purchaseorderlineitem', $(table), '#filter-list-partpurchaseorders');
+
+    $(table).inventreeTable({
+        url: '{% url "api-po-line-list" %}',
+        queryParams: filters,
+        name: 'partpurchaseorders',
+        original: options.params,
+        showColumns: true,
+        uniqueId: 'pk',
+        formatNoMatches: function() {
+            return '{% trans "No purchase orders found" %}';
+        },
+        onPostBody: function() {
+            $(table).find('.button-line-receive').click(function() {
+                var pk = $(this).attr('pk');
+
+                var line_item = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+                if (!line_item) {
+                    console.log('WARNING: getRowByUniqueId returned null');
+                    return;
+                }
+
+                receivePurchaseOrderItems(
+                    line_item.order,
+                    [
+                        line_item,
+                    ],
+                    {
+                        success: function() {
+                            $(table).bootstrapTable('refresh');
+                        }
+                    }
+                );
+            });
+        },
+        columns: [
+            {
+                field: 'order',
+                title: '{% trans "Purchase Order" %}',
+                switchable: false,
+                formatter: function(value, row) {
+                    var order = row.order_detail;
+
+                    if (!order) {
+                        return '-';
+                    }
+
+                    var ref = global_settings.PURCHASEORDER_REFERENCE_PREFIX + order.reference;
+
+                    var html = renderLink(ref, `/order/purchase-order/${order.pk}/`);
+
+                    html += purchaseOrderStatusDisplay(
+                        order.status,
+                        {
+                            classes: 'float-right',
+                        }
+                    );
+
+                    return html;
+                },
+            },
+            {
+                field: 'supplier',
+                title: '{% trans "Supplier" %}',
+                switchable: true,
+                formatter: function(value, row) {
+
+                    if (row.supplier_part_detail && row.supplier_part_detail.supplier_detail) {
+                        var supp = row.supplier_part_detail.supplier_detail;
+                        var html = imageHoverIcon(supp.thumbnail || supp.image);
+
+                        html += ' ' + renderLink(supp.name, `/company/${supp.pk}/`);
+
+                        return html;
+                    } else {
+                        return '-';
+                    }
+                }
+            },
+            {
+                field: 'sku',
+                title: '{% trans "SKU" %}',
+                switchable: true,
+                formatter: function(value, row) {
+                    if (row.supplier_part_detail) {
+                        var supp = row.supplier_part_detail;
+
+                        return renderLink(supp.SKU, `/supplier-part/${supp.pk}/`);
+                    } else {
+                        return '-';
+                    }
+                },
+            },
+            {
+                field: 'mpn',
+                title: '{% trans "MPN" %}',
+                switchable: true,
+                formatter: function(value, row) {
+                    if (row.supplier_part_detail && row.supplier_part_detail.manufacturer_part_detail) {
+                        var manu = row.supplier_part_detail.manufacturer_part_detail;
+                        return renderLink(manu.MPN, `/manufacturer-part/${manu.pk}/`);
+                    }
+                }
+            },
+            {
+                field: 'quantity',
+                title: '{% trans "Quantity" %}',
+            },
+            {
+                field: 'received',
+                title: '{% trans "Received" %}',
+                switchable: true,
+            },
+            {
+                field: 'purchase_price',
+                title: '{% trans "Price" %}',
+                switchable: true,
+                formatter: function(value, row) {
+                    var formatter = new Intl.NumberFormat(
+                        'en-US',
+                        {
+                            style: 'currency',
+                            currency: row.purchase_price_currency,
+                        }
+                    );
+
+                    return formatter.format(row.purchase_price);
+                }
+            },
+            {
+                field: 'actions',
+                title: '',
+                formatter: function(value, row) {
+                    
+                    if (row.received >= row.quantity) {
+                        // Already recevied
+                        return `<span class='badge bg-success rounded-pill'>{% trans "Received" %}</span>`;
+                    } else if (row.order_detail && row.order_detail.status == {{ PurchaseOrderStatus.PLACED }}) {
+                        var html = `<div class='btn-group' role='group'>`;
+                        var pk = row.pk;
+
+                        html += makeIconButton('fa-sign-in-alt', 'button-line-receive', pk, '{% trans "Receive line item" %}');
+
+                        html += `</div>`;
+                        return html;
+                    } else {
+                        return '';
+                    }
+                }
+            }
+        ],
+    });
+}
+
+
+function loadRelatedPartsTable(table, part_id, options={}) {
+    /*
+     * Load table of "related" parts
+     */
+
+    options.params = options.params || {};
+
+    options.params.part = part_id;
+
+    var filters = {};
+
+    for (var key in options.params) {
+        filters[key] = options.params[key];
+    }
+
+    setupFilterList('related', $(table), options.filterTarget);
+
+    function getPart(row) {
+        if (row.part_1 == part_id) {
+            return row.part_2_detail;
+        } else {
+            return row.part_1_detail;
+        }
+    }
+
+    var columns = [
+        {
+            field: 'name',
+            title: '{% trans "Part" %}',
+            switchable: false,
+            formatter: function(value, row) {
+
+                var part = getPart(row);
+
+                var html = imageHoverIcon(part.thumbnail) + renderLink(part.full_name, `/part/${part.pk}/`);
+
+                html += makePartIcons(part);
+
+                return html;
+            }
+        },
+        {
+            field: 'description',
+            title: '{% trans "Description" %}',
+            formatter: function(value, row) {
+                return getPart(row).description;
+            }
+        },
+        {
+            field: 'actions',
+            title: '',
+            switchable: false,
+            formatter: function(value, row) {
+                
+                var html = `<div class='btn-group float-right' role='group'>`;
+
+                html += makeIconButton('fa-trash-alt icon-red', 'button-related-delete', row.pk, '{% trans "Delete part relationship" %}');
+
+                html += '</div>';
+
+                return html;
+            }
+        }
+    ];
+
+    $(table).inventreeTable({
+        url: '{% url "api-part-related-list" %}',
+        groupBy: false,
+        name: 'related',
+        original: options.params,
+        queryParams: filters,
+        columns: columns,
+        showColumns: false,
+        search: true,
+        onPostBody: function() {
+            $(table).find('.button-related-delete').click(function() {
+                var pk = $(this).attr('pk');
+
+                constructForm(`/api/part/related/${pk}/`, {
+                    method: 'DELETE',
+                    title: '{% trans "Delete Part Relationship" %}',
+                    onSuccess: function() {
+                        $(table).bootstrapTable('refresh');
+                    }
+                });
+            });
+        },
     });
 }
 
@@ -835,6 +1168,7 @@ function loadPartTable(table, url, options={}) {
      *      query: extra query params for API request
      *      buttons: If provided, link buttons to selection status of this table
      *      disableFilters: If true, disable custom filters
+     *      actions: Provide a callback function to construct an "actions" column
      */
 
     // Ensure category detail is included
@@ -877,7 +1211,7 @@ function loadPartTable(table, url, options={}) {
 
     col = {
         field: 'IPN',
-        title: 'IPN',
+        title: '{% trans "IPN" %}',
     };
 
     if (!options.params.ordering) {
@@ -894,7 +1228,7 @@ function loadPartTable(table, url, options={}) {
 
             var name = row.full_name;
 
-            var display = imageHoverIcon(row.thumbnail) + renderLink(name, '/part/' + row.pk + '/');
+            var display = imageHoverIcon(row.thumbnail) + renderLink(name, `/part/${row.pk}/`);
 
             display += makePartIcons(row);
 
@@ -992,7 +1326,22 @@ function loadPartTable(table, url, options={}) {
         }
     });
 
-    var grid_view = inventreeLoad('part-grid-view') == 1;
+    // Push an "actions" column
+    if (options.actions) {
+        columns.push({
+            field: 'actions',
+            title: '',
+            switchable: false,
+            visible: true,
+            searchable: false,
+            sortable: false,
+            formatter: function(value, row) {
+                return options.actions(value, row);
+            }
+        });
+    }
+
+    var grid_view = options.gridView && inventreeLoad('part-grid-view') == 1;
 
     $(table).inventreeTable({
         url: url,
@@ -1019,8 +1368,12 @@ function loadPartTable(table, url, options={}) {
                 $('#view-part-grid').removeClass('btn-secondary').addClass('btn-outline-secondary');
                 $('#view-part-list').removeClass('btn-outline-secondary').addClass('btn-secondary');
             }
+
+            if (options.onPostBody) {
+                options.onPostBody();
+            }
         },
-        buttons: [
+        buttons: options.gridView ? [
             {
                 icon: 'fas fa-bars',
                 attributes: {
@@ -1053,7 +1406,7 @@ function loadPartTable(table, url, options={}) {
                     );
                 }
             }
-        ],
+        ] : [],
         customView: function(data) {
 
             var html = '';

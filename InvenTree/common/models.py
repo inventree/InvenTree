@@ -34,6 +34,19 @@ import logging
 logger = logging.getLogger('inventree')
 
 
+class EmptyURLValidator(URLValidator):
+
+    def __call__(self, value):
+
+        value = str(value).strip()
+
+        if len(value) == 0:
+            pass
+
+        else:
+            super().__call__(value)
+
+
 class BaseInvenTreeSetting(models.Model):
     """
     An base InvenTreeSetting object is a key:value pair used for storing
@@ -45,8 +58,20 @@ class BaseInvenTreeSetting(models.Model):
     class Meta:
         abstract = True
 
+    def save(self, *args, **kwargs):
+        """
+        Enforce validation and clean before saving
+        """
+
+        self.key = str(self.key).upper()
+
+        self.clean()
+        self.validate_unique()
+
+        super().save()
+
     @classmethod
-    def allValues(cls, user=None):
+    def allValues(cls, user=None, exclude_hidden=False):
         """
         Return a dict of "all" defined global settings.
 
@@ -71,13 +96,21 @@ class BaseInvenTreeSetting(models.Model):
         for key in cls.GLOBAL_SETTINGS.keys():
 
             if key.upper() not in settings:
-
                 settings[key.upper()] = cls.get_setting_default(key)
+
+            if exclude_hidden:
+                hidden = cls.GLOBAL_SETTINGS[key].get('hidden', False)
+
+                if hidden:
+                    # Remove hidden items
+                    del settings[key.upper()]
 
         for key, value in settings.items():
             validator = cls.get_setting_validator(key)
 
-            if cls.validator_is_bool(validator):
+            if cls.is_protected(key):
+                value = '***'
+            elif cls.validator_is_bool(validator):
                 value = InvenTree.helpers.str2bool(value)
             elif cls.validator_is_int(validator):
                 try:
@@ -343,6 +376,11 @@ class BaseInvenTreeSetting(models.Model):
             except (ValueError):
                 raise ValidationError(_('Must be an integer value'))
 
+        options = self.valid_options()
+
+        if options and self.value not in options:
+            raise ValidationError(_("Chosen value is not a valid option"))
+
         if validator is not None:
             self.run_validator(validator)
 
@@ -409,6 +447,18 @@ class BaseInvenTreeSetting(models.Model):
 
         return self.__class__.get_setting_choices(self.key)
 
+    def valid_options(self):
+        """
+        Return a list of valid options for this setting
+        """
+
+        choices = self.choices()
+
+        if not choices:
+            return None
+
+        return [opt[0] for opt in choices]
+
     def is_bool(self):
         """
         Check if this setting is required to be a boolean value
@@ -426,6 +476,20 @@ class BaseInvenTreeSetting(models.Model):
         """
 
         return InvenTree.helpers.str2bool(self.value)
+
+    def setting_type(self):
+        """
+        Return the field type identifier for this setting object
+        """
+
+        if self.is_bool():
+            return 'boolean'
+
+        elif self.is_int():
+            return 'integer'
+
+        else:
+            return 'string'
 
     @classmethod
     def validator_is_bool(cls, validator):
@@ -476,6 +540,19 @@ class BaseInvenTreeSetting(models.Model):
 
         return value
 
+    @classmethod
+    def is_protected(cls, key):
+        """
+        Check if the setting value is protected
+        """
+
+        key = str(key).strip().upper()
+
+        if key in cls.GLOBAL_SETTINGS:
+            return cls.GLOBAL_SETTINGS[key].get('protected', False)
+        else:
+            return False
+
 
 def settings_group_options():
     """build up group tuple for settings based on gour choices"""
@@ -490,6 +567,17 @@ class InvenTreeSetting(BaseInvenTreeSetting):
     The class provides a way of retrieving the value for a particular key,
     even if that key does not exist.
     """
+
+    def save(self, *args, **kwargs):
+        """
+        When saving a global setting, check to see if it requires a server restart.
+        If so, set the "SERVER_RESTART_REQUIRED" setting to True
+        """
+
+        super().save()
+
+        if self.requires_restart():
+            InvenTreeSetting.set_setting('SERVER_REQUIRES_RESTART', True, None)
 
     """
     Dict of all global settings values:
@@ -508,6 +596,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
     """
 
     GLOBAL_SETTINGS = {
+
+        'SERVER_RESTART_REQUIRED': {
+            'name': _('Restart required'),
+            'description': _('A setting has been changed which requires a server restart'),
+            'default': False,
+            'validator': bool,
+            'hidden': True,
+        },
 
         'INVENTREE_INSTANCE': {
             'name': _('InvenTree Instance Name'),
@@ -531,7 +627,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'INVENTREE_BASE_URL': {
             'name': _('Base URL'),
             'description': _('Base URL for server instance'),
-            'validator': URLValidator(),
+            'validator': EmptyURLValidator(),
             'default': '',
         },
 
@@ -714,6 +810,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': InvenTree.validators.validate_part_name_format
         },
 
+        'REPORT_ENABLE': {
+            'name': _('Enable Reports'),
+            'description': _('Enable generation of reports'),
+            'default': False,
+            'validator': bool,
+        },
+
         'REPORT_DEBUG_MODE': {
             'name': _('Debug Mode'),
             'description': _('Generate reports in debug mode (HTML output)'),
@@ -850,9 +953,43 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
         'SIGNUP_GROUP': {
             'name': _('Group on signup'),
-            'description': _('Group new user are asigned on registration'),
+            'description': _('Group to which new users are assigned on registration'),
             'default': '',
             'choices': settings_group_options
+        },
+        'LOGIN_ENFORCE_MFA': {
+            'name': _('Enforce MFA'),
+            'description': _('Users must use multifactor security.'),
+            'default': False,
+            'validator': bool,
+        },
+        'ENABLE_PLUGINS_URL': {
+            'name': _('Enable URL integration'),
+            'description': _('Enable plugins to add URL routes'),
+            'default': False,
+            'validator': bool,
+            'requires_restart': True,
+        },
+        'ENABLE_PLUGINS_NAVIGATION': {
+            'name': _('Enable navigation integration'),
+            'description': _('Enable plugins to integrate into navigation'),
+            'default': False,
+            'validator': bool,
+            'requires_restart': True,
+        },
+        'ENABLE_PLUGINS_GLOBALSETTING': {
+            'name': _('Enable global setting integration'),
+            'description': _('Enable plugins to integrate into inventree global settings'),
+            'default': False,
+            'validator': bool,
+            'requires_restart': True,
+        },
+        'ENABLE_PLUGINS_APP': {
+            'name': _('Enable app integration'),
+            'description': _('Enable plugins to add apps'),
+            'default': False,
+            'validator': bool,
+            'requires_restart': True,
         },
     }
 
@@ -866,6 +1003,26 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         unique=True,
         help_text=_('Settings key (must be unique - case insensitive'),
     )
+
+    def to_native_value(self):
+        """
+        Return the "pythonic" value,
+        e.g. convert "True" to True, and "1" to 1
+        """
+
+        return self.__class__.get_setting(self.key)
+
+    def requires_restart(self):
+        """
+        Return True if this setting requires a server restart after changing
+        """
+
+        options = InvenTreeSetting.GLOBAL_SETTINGS.get(self.key, None)
+
+        if options:
+            return options.get('requires_restart', False)
+        else:
+            return False
 
 
 class InvenTreeUserSetting(BaseInvenTreeSetting):
@@ -1077,6 +1234,14 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'user__id': kwargs['user'].id
         }
 
+    def to_native_value(self):
+        """
+        Return the "pythonic" value,
+        e.g. convert "True" to True, and "1" to 1
+        """
+
+        return self.__class__.get_setting(self.key, user=self.user)
+
 
 class PriceBreak(models.Model):
     """
@@ -1192,9 +1357,6 @@ def get_price(instance, quantity, moq=True, multiples=True, currency=None, break
 
 class ColorTheme(models.Model):
     """ Color Theme Setting """
-
-    default_color_theme = ('', _('Default'))
-
     name = models.CharField(max_length=20,
                             default='',
                             blank=True)
@@ -1214,10 +1376,7 @@ class ColorTheme(models.Model):
         # Get color themes choices (CSS sheets)
         choices = [(file_name.lower(), _(file_name.replace('-', ' ').title()))
                    for file_name, file_ext in files_list
-                   if file_ext == '.css' and file_name.lower() != 'default']
-
-        # Add default option as empty option
-        choices.insert(0, cls.default_color_theme)
+                   if file_ext == '.css']
 
         return choices
 

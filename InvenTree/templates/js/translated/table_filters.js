@@ -77,12 +77,30 @@ function getAvailableTableFilters(tableKey) {
         };
     }
 
+    // Filters for the "related parts" table
+    if (tableKey == 'related') {
+        return {
+        };
+    }
+
     // Filters for the "used in" table
     if (tableKey == 'usedin') {
         return {
+            'inherited': {
+                type: 'bool',
+                title: '{% trans "Inherited" %}',
+            },
+            'optional': {
+                type: 'bool',
+                title: '{% trans "Optional" %}',
+            },
             'part_active': {
                 type: 'bool',
                 title: '{% trans "Active" %}',
+            },
+            'part_trackable': {
+                type: 'bool',
+                title: '{% trans "Trackable" %}',
             },
         };
     }
@@ -167,6 +185,11 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Is allocated" %}',
                 description: '{% trans "Item has been allocated" %}',
+            },
+            available: {
+                type: 'bool',
+                title: '{% trans "Available" %}',
+                description: '{% trans "Stock is available for use" %}',
             },
             cascade: {
                 type: 'bool',
@@ -288,18 +311,31 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Overdue" %}',
             },
+            assigned_to_me: {
+                type: 'bool',
+                title: '{% trans "Assigned to me" %}',
+            },
         };
     }
 
     // Filters for PurchaseOrderLineItem table
     if (tableKey == 'purchaseorderlineitem') {
         return {
-            completed: {
+            pending: {
                 type: 'bool',
-                title: '{% trans "Completed" %}',
+                title: '{% trans "Pending" %}',
+            },
+            received: {
+                type: 'bool',
+                title: '{% trans "Received" %}',
+            },
+            order_status: {
+                title: '{% trans "Order status" %}',
+                options: purchaseOrderCodes,
             },
         };
     }
+
     // Filters for the PurchaseOrder table
     if (tableKey == 'purchaseorder') {
 
@@ -315,6 +351,10 @@ function getAvailableTableFilters(tableKey) {
             overdue: {
                 type: 'bool',
                 title: '{% trans "Overdue" %}',
+            },
+            assigned_to_me: {
+                type: 'bool',
+                title: '{% trans "Assigned to me" %}',
             },
         };
     }
@@ -336,11 +376,38 @@ function getAvailableTableFilters(tableKey) {
         };
     }
 
+    if (tableKey == 'salesorderlineitem') {
+        return {
+            completed: {
+                type: 'bool',
+                title: '{% trans "Completed" %}',
+            },
+        };
+    }
+
     if (tableKey == 'supplier-part') {
         return {
             active: {
                 type: 'bool',
                 title: '{% trans "Active parts" %}',
+            },
+        };
+    }
+
+    // Filters for "company" table
+    if (tableKey == 'company') {
+        return {
+            is_manufacturer: {
+                type: 'bool',
+                title: '{% trans "Manufacturer" %}',
+            },
+            is_supplier: {
+                type: 'bool',
+                title: '{% trans "Supplier" %}',
+            },
+            is_customer: {
+                type: 'bool',
+                title: '{% trans "Customer" %}',
             },
         };
     }

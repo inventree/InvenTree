@@ -124,6 +124,7 @@ function supplierPartFields() {
                 part_detail: true,
                 manufacturer_detail: true,
             },
+            auto_fill: true,
         },
         description: {},
         link: {
@@ -379,6 +380,7 @@ function loadCompanyTable(table, url, options={}) {
         url: url,
         method: 'get',
         queryParams: filters,
+        original: params,
         groupBy: false,
         sidePagination: 'server',
         formatNoMatches: function() {
@@ -462,7 +464,9 @@ function loadManufacturerPartTable(table, url, options) {
         filters[key] = params[key];
     }
 
-    setupFilterList('manufacturer-part', $(table));
+    var filterTarget = options.filterTarget || '#filter-list-manufacturer-part';
+
+    setupFilterList('manufacturer-part', $(table), filterTarget);
 
     $(table).inventreeTable({
         url: url,

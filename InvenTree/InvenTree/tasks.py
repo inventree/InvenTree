@@ -106,7 +106,7 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
         except NameError:
             logger.warning(f"WARNING: '{taskname}' not started - No function named '{func}'")
             return
-        
+
         # Workers are not running: run it as synchronous task
         _func(*args, **kwargs)
 
@@ -229,25 +229,6 @@ def check_for_updates():
         tag,
         None
     )
-
-
-def delete_expired_sessions():
-    """
-    Remove any expired user sessions from the database
-    """
-
-    try:
-        from django.contrib.sessions.models import Session
-
-        # Delete any sessions that expired more than a day ago
-        expired = Session.objects.filter(expire_date__lt=timezone.now() - timedelta(days=1))
-
-        if expired.count() > 0:
-            logger.info(f"Deleting {expired.count()} expired sessions.")
-            expired.delete()
-
-    except AppRegistryNotReady:
-        logger.info("Could not perform 'delete_expired_sessions' - App registry not ready")
 
 
 def update_exchange_rates():

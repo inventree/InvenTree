@@ -16,6 +16,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import ugettext_lazy as _
+from django.db import models
 
 from djmoney.contrib.django_rest_framework.fields import MoneyField
 from djmoney.money import Money
@@ -26,6 +27,8 @@ from rest_framework.utils import model_meta
 from rest_framework.fields import empty
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import DecimalField
+
+from .models import extract_int
 
 
 class InvenTreeMoneySerializer(MoneyField):
@@ -66,7 +69,7 @@ class InvenTreeMoneySerializer(MoneyField):
 
         if currency and amount is not None and not isinstance(amount, MONEY_CLASSES) and amount is not empty:
             return Money(amount, currency)
-        
+
         return amount
 
 
@@ -239,20 +242,15 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
         return data
 
 
-class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):
+class ReferenceIndexingSerializerMixin():
     """
-    Special case of an InvenTreeModelSerializer, which handles an "attachment" model.
-
-    The only real addition here is that we support "renaming" of the attachment file.
+    This serializer mixin ensures the the reference is not to big / small
+    for the BigIntegerField
     """
-
-    # The 'filename' field must be present in the serializer
-    filename = serializers.CharField(
-        label=_('Filename'),
-        required=False,
-        source='basename',
-        allow_blank=False,
-    )
+    def validate_reference(self, value):
+        if extract_int(value) > models.BigIntegerField.MAX_BIGINT:
+            raise serializers.ValidationError('reference is to to big')
+        return value
 
 
 class InvenTreeAttachmentSerializerField(serializers.FileField):
@@ -284,6 +282,27 @@ class InvenTreeAttachmentSerializerField(serializers.FileField):
         return os.path.join(str(settings.MEDIA_URL), str(value))
 
 
+class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):
+    """
+    Special case of an InvenTreeModelSerializer, which handles an "attachment" model.
+
+    The only real addition here is that we support "renaming" of the attachment file.
+    """
+
+    attachment = InvenTreeAttachmentSerializerField(
+        required=False,
+        allow_null=False,
+    )
+
+    # The 'filename' field must be present in the serializer
+    filename = serializers.CharField(
+        label=_('Filename'),
+        required=False,
+        source='basename',
+        allow_blank=False,
+    )
+
+
 class InvenTreeImageSerializerField(serializers.ImageField):
     """
     Custom image serializer.
@@ -296,3 +315,17 @@ class InvenTreeImageSerializerField(serializers.ImageField):
             return None
 
         return os.path.join(str(settings.MEDIA_URL), str(value))
+
+
+class InvenTreeDecimalField(serializers.FloatField):
+    """
+    Custom serializer for decimal fields. Solves the following issues:
+
+    - The normal DRF DecimalField renders values with trailing zeros
+    - Using a FloatField can result in rounding issues: https://code.djangoproject.com/ticket/30290
+    """
+
+    def to_internal_value(self, data):
+
+        # Convert the value to a string, and then a decimal
+        return Decimal(str(data))

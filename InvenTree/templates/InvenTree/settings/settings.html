@@ -3,6 +3,10 @@
 {% load i18n %}
 {% load static %}
 {% load inventree_extras %}
+{% load plugin_extras %}
+
+{% block breadcrumb_list %}
+{% endblock %}
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Settings" %}
@@ -35,6 +39,14 @@
 {% include "InvenTree/settings/build.html" %}
 {% include "InvenTree/settings/po.html" %}
 {% include "InvenTree/settings/so.html" %}
+{% include "InvenTree/settings/plugin.html" %}
+
+{% plugin_list as pl_list %}
+{% for plugin_key, plugin in pl_list.items %}
+    {% if plugin.registered_mixins %}
+        {% include "InvenTree/settings/plugin_settings.html" %}
+    {% endif %}
+{% endfor %}
 
 {% endif %}
 
@@ -50,26 +62,17 @@
 $('table').find('.btn-edit-setting').click(function() {
     var setting = $(this).attr('setting');
     var pk = $(this).attr('pk');
-    var url = `/settings/${pk}/edit/`;
+
+    var is_global = true;
 
     if ($(this).attr('user')){
-        url += `user/`;
+        is_global = false;
     }
 
-    launchModalForm(
-        url,
-        {
-            success: function(response) {
-
-                if (response.is_bool) {
-                    var enabled = response.value.toLowerCase() == 'true';
-                    $(`#setting-value-${setting}`).prop('checked', enabled);
-                } else {
-                    $(`#setting-value-${setting}`).html(response.value);
-                }
-            }
-        }
-    );
+    editSetting(pk, {
+        global: is_global,
+        title: is_global ? '{% trans "Edit Global Setting" %}' : '{% trans "Edit User Setting" %}',
+    });
 });
 
 $("#edit-user").on('click', function() {
@@ -256,18 +259,18 @@ $("#param-table").inventreeTable({
     columns: [
         {
             field: 'pk',
-            title: 'ID',
+            title: '{% trans "ID" %}',
             visible: false,
             switchable: false,
         },
         {
             field: 'name',
-            title: 'Name',
+            title: '{% trans "Name" %}',
             sortable: 'true',
         },
         {
             field: 'units',
-            title: 'Units',
+            title: '{% trans "Units" %}',
             sortable: 'true',
         },
         {
@@ -317,6 +320,10 @@ $("#param-table").on('click', '.template-delete', function() {
 
 $("#import-part").click(function() {
     launchModalForm("{% url 'api-part-import' %}?reset", {});
+});
+
+$("#install-plugin").click(function() {
+    installPlugin();
 });
 
 enableSidebar('settings');

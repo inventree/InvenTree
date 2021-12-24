@@ -54,6 +54,7 @@ function inventreeGet(url, filters={}, options={}) {
         data: filters,
         dataType: 'json',
         contentType: 'application/json',
+        async: (options.async == false) ? false : true,
         success: function(response) {
             if (options.success) {
                 options.success(response);
@@ -61,7 +62,11 @@ function inventreeGet(url, filters={}, options={}) {
         },
         error: function(xhr, ajaxOptions, thrownError) {
             console.error('Error on GET at ' + url);
-            console.error(thrownError);
+
+            if (thrownError) {
+                console.error('Error: ' + thrownError);
+            }
+
             if (options.error) {
                 options.error({
                     error: thrownError
@@ -174,7 +179,7 @@ function showApiError(xhr, url) {
     var title = null;
     var message = null;
 
-    switch (xhr.status) {
+    switch (xhr.status || 0) {
     // No response
     case 0:
         title = '{% trans "No Response" %}';
@@ -202,6 +207,11 @@ function showApiError(xhr, url) {
         title = '{% trans "Error 404: Resource Not Found" %}';
         message = '{% trans "The requested resource could not be located on the server" %}';
         break;
+    // Method not allowed
+    case 405:
+        title = '{% trans "Error 405: Method Not Allowed" %}';
+        message = '{% trans "HTTP method not allowed at URL" %}';
+        break;
     // Timeout
     case 408:
         title = '{% trans "Error 408: Timeout" %}';
@@ -213,8 +223,10 @@ function showApiError(xhr, url) {
         break;
     }
 
-    message += '<hr>';
-    message += `URL: ${url}`;
+    if (url) {
+        message += '<hr>';
+        message += `URL: ${url}`;
+    }
 
     showMessage(title, {
         style: 'danger',

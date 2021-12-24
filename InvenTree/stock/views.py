@@ -294,39 +294,6 @@ class StockLocationQRCode(QRCodeView):
             return None
 
 
-class StockItemAssignToCustomer(AjaxUpdateView):
-    """
-    View for manually assigning a StockItem to a Customer
-    """
-
-    model = StockItem
-    ajax_form_title = _("Assign to Customer")
-    context_object_name = "item"
-    form_class = StockForms.AssignStockItemToCustomerForm
-
-    def validate(self, item, form, **kwargs):
-
-        customer = form.cleaned_data.get('customer', None)
-
-        if not customer:
-            form.add_error('customer', _('Customer must be specified'))
-
-    def save(self, item, form, **kwargs):
-        """
-        Assign the stock item to the customer.
-        """
-
-        customer = form.cleaned_data.get('customer', None)
-
-        if customer:
-            item = item.allocateToCustomer(
-                customer,
-                user=self.request.user
-            )
-
-            item.clearAllocations()
-
-
 class StockItemReturnToStock(AjaxUpdateView):
     """
     View for returning a stock item (which is assigned to a customer) to stock.
@@ -543,7 +510,7 @@ class StockItemInstall(AjaxUpdateView):
         - Items must be in BOM of stock item
         - Items must be serialized
         """
-        
+
         # Filter items in stock
         items = StockItem.objects.filter(StockItem.IN_STOCK_FILTER)
 
@@ -560,9 +527,8 @@ class StockItemInstall(AjaxUpdateView):
 
             # Filter for parts to install in this item
             if self.install_item:
-                # Get parts used in this part's BOM
-                bom_items = self.part.get_bom_items()
-                allowed_parts = [item.sub_part for item in bom_items]
+                # Get all parts which can be installed into this part
+                allowed_parts = self.part.get_installed_part_options()
                 # Filter
                 items = items.filter(part__in=allowed_parts)
 
@@ -901,7 +867,7 @@ class StockItemEdit(AjaxUpdateView):
         item.save(user=self.request.user)
 
         return item
-        
+
 
 class StockItemConvert(AjaxUpdateView):
     """

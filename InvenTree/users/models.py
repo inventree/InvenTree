@@ -74,6 +74,10 @@ class RuleSet(models.Model):
             'socialaccount_socialaccount',
             'socialaccount_socialapp',
             'socialaccount_socialtoken',
+            'otp_totp_totpdevice',
+            'otp_static_statictoken',
+            'otp_static_staticdevice',
+            'plugin_pluginconfig'
         ],
         'part_category': [
             'part_partcategory',
@@ -135,12 +139,14 @@ class RuleSet(models.Model):
         'sales_order': [
             'company_company',
             'order_salesorder',
+            'order_salesorderallocation',
             'order_salesorderattachment',
             'order_salesorderlineitem',
             'order_salesorderallocation',
         ],
         'basket': [
             'basket_salesorderbasket',
+            'order_salesordershipment',
         ]
     }
 
@@ -149,7 +155,6 @@ class RuleSet(models.Model):
         # Core django models (not user configurable)
         'admin_logentry',
         'contenttypes_contenttype',
-        'sessions_session',
 
         # Models which currently do not require permissions
         'common_colortheme',
@@ -163,6 +168,7 @@ class RuleSet(models.Model):
         'error_report_error',
         'exchange_rate',
         'exchange_exchangebackend',
+        'user_sessions_session',
 
         # Django-q
         'django_q_ormq',
@@ -238,7 +244,7 @@ class RuleSet(models.Model):
         given the app_model name, and the permission type.
         """
 
-        app, model = model.split('_')
+        model, app = split_model(model)
 
         return "{app}.{perm}_{model}".format(
             app=app,
@@ -279,6 +285,30 @@ class RuleSet(models.Model):
         """
 
         return self.RULESET_MODELS.get(self.name, [])
+
+
+def split_model(model):
+    """get modelname and app from modelstring"""
+    *app, model = model.split('_')
+
+    # handle models that have
+    if len(app) > 1:
+        app = '_'.join(app)
+    else:
+        app = app[0]
+
+    return model, app
+
+
+def split_permission(app, perm):
+    """split permission string into permission and model"""
+    permission_name, *model = perm.split('_')
+    # handle models that have underscores
+    if len(model) > 1:
+        app += '_' + '_'.join(model[:-1])
+        perm = permission_name + '_' + model[-1:][0]
+    model = model[-1:][0]
+    return perm, model
 
 
 def update_group_roles(group, debug=False):
@@ -384,7 +414,7 @@ def update_group_roles(group, debug=False):
 
         (app, perm) = permission_string.split('.')
 
-        (permission_name, model) = perm.split('_')
+        perm, model = split_permission(app, perm)
 
         try:
             content_type = ContentType.objects.get(app_label=app, model=model)
@@ -479,6 +509,34 @@ class Owner(models.Model):
     owner_id: Group or User instance primary key
     owner: Returns the Group or User instance combining the owner_type and owner_id fields
     """
+
+    @classmethod
+    def get_owners_matching_user(cls, user):
+        """
+        Return all "owner" objects matching the provided user:
+
+        A) An exact match for the user
+        B) Any groups that the user is a part of
+        """
+
+        user_type = ContentType.objects.get(app_label='auth', model='user')
+        group_type = ContentType.objects.get(app_label='auth', model='group')
+
+        owners = []
+
+        try:
+            owners.append(cls.objects.get(owner_id=user.pk, owner_type=user_type))
+        except:
+            pass
+
+        for group in user.groups.all():
+            try:
+                owner = cls.objects.get(owner_id=group.pk, owner_type=group_type)
+                owners.append(owner)
+            except:
+                pass
+
+        return owners
 
     @staticmethod
     def get_api_url():

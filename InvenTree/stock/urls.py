@@ -11,7 +11,7 @@ location_urls = [
     url(r'^(?P<pk>\d+)/', include([
         url(r'^delete/?', views.StockLocationDelete.as_view(), name='stock-location-delete'),
         url(r'^qr_code/?', views.StockLocationQRCode.as_view(), name='stock-location-qr'),
-        
+
         # Anything else
         url('^.*$', views.StockLocationDetail.as_view(), name='stock-location-detail'),
     ])),
@@ -23,7 +23,6 @@ stock_item_detail_urls = [
     url(r'^delete/', views.StockItemDelete.as_view(), name='stock-item-delete'),
     url(r'^qr_code/', views.StockItemQRCode.as_view(), name='stock-item-qr'),
     url(r'^delete_test_data/', views.StockItemDeleteTestData.as_view(), name='stock-item-delete-test-data'),
-    url(r'^assign/', views.StockItemAssignToCustomer.as_view(), name='stock-item-assign'),
     url(r'^return/', views.StockItemReturnToStock.as_view(), name='stock-item-return'),
     url(r'^install/', views.StockItemInstall.as_view(), name='stock-item-install'),
 

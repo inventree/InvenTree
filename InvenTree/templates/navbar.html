@@ -1,9 +1,12 @@
 {% load static %}
 {% load inventree_extras %}
+{% load plugin_extras %}
 {% load i18n %}
 
 {% settings_value 'BARCODE_ENABLE' as barcodes %}
 {% settings_value 'STICKY_HEADER' user=request.user as sticky %}
+{% navigation_enabled as plugin_nav %}
+{% inventree_demo_mode as demo %}
 
 <nav class="navbar {% if sticky %}fixed-top{% endif %} navbar-expand-lg navbar-light">
   <div class="container-fluid">
@@ -57,8 +60,34 @@
           </ul>
         </li>
         {% endif %}
+
+        {% if plugin_nav %}
+        {% plugin_list as pl_list %}
+        {% for plugin_key, plugin in pl_list.items %}
+          {% mixin_enabled plugin 'navigation' as navigation %}
+          {% if navigation %}
+          <li class='nav-item dropdown'>
+            <a class='nav-link dropdown-toggle' data-bs-toggle="dropdown" aria-expanded="false" href='#'>
+              <span class='{{plugin.navigation_icon}} icon-header'></span>{{plugin.navigation_name}}
+            </a>
+            <ul class='dropdown-menu'>
+             {% for nav_item in plugin.navigation %}
+                {% safe_url nav_item.link as nav_link %}
+                {% if nav_link %}
+                <li><a href="{{ nav_link }}" class="dropdown-item"><span class='{{nav_item.icon}} icon-header'></span>{{nav_item.name}}</a>
+                {% endif %}
+             {% endfor %}
+            </ul>
+          </li>
+          {% endif %}
+        {% endfor %}
+        {% endif %}
+
       </ul>
     </div>
+    {% if demo %}
+    {% include "navbar_demo.html" %}
+    {% endif %}
     {% include "search_form.html" %}
     <ul class='navbar-nav flex-row'>
       {% if barcodes %}
@@ -79,7 +108,7 @@
         </a>
         <ul class='dropdown-menu dropdown-menu-end inventree-navbar-menu'>
           {% if user.is_authenticated %}
-          {% if user.is_staff %}
+          {% if user.is_staff and not demo %}
           <li><a class='dropdown-item' href="/admin/"><span class="fas fa-user"></span> {% trans "Admin" %}</a></li>
           {% endif %}
           <li><a class='dropdown-item' href="{% url 'account_logout' %}"><span class="fas fa-sign-out-alt"></span> {% trans "Logout" %}</a></li>

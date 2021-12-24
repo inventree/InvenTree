@@ -12,10 +12,34 @@ import common.models
 INVENTREE_SW_VERSION = "0.6.0 dev"
 
 # InvenTree API version
-INVENTREE_API_VERSION = 16
+INVENTREE_API_VERSION = 22
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v22 -> 2021-12-20
+    - Adds API endpoint to "merge" multiple stock items
+
+v21 -> 2021-12-04
+    - Adds support for multiple "Shipments" against a SalesOrder
+    - Refactors process for stock allocation against a SalesOrder
+
+v20 -> 2021-12-03
+    - Adds ability to filter POLineItem endpoint by "base_part"
+    - Adds optional "order_detail" to POLineItem list endpoint
+
+v19 -> 2021-12-02
+    - Adds the ability to filter the StockItem API by "part_tree"
+    - Returns only stock items which match a particular part.tree_id field
+
+v18 -> 2021-11-15
+    - Adds the ability to filter BomItem API by "uses" field
+    - This returns a list of all BomItems which "use" the specified part
+    - Includes inherited BomItem objects
+
+v17 -> 2021-11-09
+    - Adds API endpoints for GLOBAL and USER settings objects
+    - Ref: https://github.com/inventree/InvenTree/pull/2275
 
 v16 -> 2021-10-17
     - Adds API endpoint for completing build order outputs
@@ -111,10 +135,10 @@ def isInvenTreeDevelopmentVersion():
 def inventreeDocsVersion():
     """
     Return the version string matching the latest documentation.
-    
+
     Development -> "latest"
     Release -> "major.minor.sub" e.g. "0.5.2"
-    
+
     """
 
     if isInvenTreeDevelopmentVersion():

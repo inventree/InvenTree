@@ -481,7 +481,7 @@ class Part(MPTTModel):
     def __str__(self):
         return f"{self.full_name} - {self.description}"
 
-    def checkAddToBOM(self, parent):
+    def check_add_to_bom(self, parent, raise_error=False, recursive=True):
         """
         Check if this Part can be added to the BOM of another part.
 
@@ -491,33 +491,44 @@ class Part(MPTTModel):
         b) The parent part is used in the BOM for *this* part
         c) The parent part is used in the BOM for any child parts under this one
 
-        Failing this check raises a ValidationError!
-
         """
 
-        if parent is None:
-            return
+        result = True
 
-        if self.pk == parent.pk:
-            raise ValidationError({'sub_part': _("Part '{p1}' is  used in BOM for '{p2}' (recursive)").format(
-                p1=str(self),
-                p2=str(parent)
-            )})
-
-        bom_items = self.get_bom_items()
-
-        # Ensure that the parent part does not appear under any child BOM item!
-        for item in bom_items.all():
-
-            # Check for simple match
-            if item.sub_part == parent:
+        try:
+            if self.pk == parent.pk:
                 raise ValidationError({'sub_part': _("Part '{p1}' is  used in BOM for '{p2}' (recursive)").format(
-                    p1=str(parent),
-                    p2=str(self)
+                    p1=str(self),
+                    p2=str(parent)
                 )})
 
-            # And recursively check too
-            item.sub_part.checkAddToBOM(parent)
+            bom_items = self.get_bom_items()
+
+            # Ensure that the parent part does not appear under any child BOM item!
+            for item in bom_items.all():
+
+                # Check for simple match
+                if item.sub_part == parent:
+                    raise ValidationError({'sub_part': _("Part '{p1}' is  used in BOM for '{p2}' (recursive)").format(
+                        p1=str(parent),
+                        p2=str(self)
+                    )})
+
+                # And recursively check too
+                if recursive:
+                    result = result and item.sub_part.check_add_to_bom(
+                        parent,
+                        recursive=True,
+                        raise_error=raise_error
+                    )
+
+        except ValidationError as e:
+            if raise_error:
+                raise e
+            else:
+                return False
+
+        return result
 
     def checkIfSerialNumberExists(self, sn, exclude_self=False):
         """
@@ -1392,6 +1403,27 @@ class Part(MPTTModel):
 
         return BomItem.objects.filter(self.get_bom_item_filter(include_inherited=include_inherited))
 
+    def get_installed_part_options(self, include_inherited=True, include_variants=True):
+        """
+        Return a set of all Parts which can be "installed" into this part, based on the BOM.
+
+        arguments:
+            include_inherited - If set, include BomItem entries defined for parent parts
+            include_variants - If set, include variant parts for BomItems which allow variants
+        """
+
+        parts = set()
+
+        for bom_item in self.get_bom_items(include_inherited=include_inherited):
+
+            if include_variants and bom_item.allow_variants:
+                for part in bom_item.sub_part.get_descendants(include_self=True):
+                    parts.add(part)
+            else:
+                parts.add(bom_item.sub_part)
+
+        return parts
+
     def get_used_in_filter(self, include_inherited=True):
         """
         Return a query filter for all parts that this part is used in.
@@ -1566,7 +1598,7 @@ class Part(MPTTModel):
         # Exclude any parts that this part is used *in* (to prevent recursive BOMs)
         used_in = self.get_used_in().all()
 
-        parts = parts.exclude(id__in=[item.part.id for item in used_in])
+        parts = parts.exclude(id__in=[part.id for part in used_in])
 
         return parts
 
@@ -1795,23 +1827,45 @@ class Part(MPTTModel):
             clear - Remove existing BOM items first (default=True)
         """
 
+        # Ignore if the other part is actually this part?
+        if other == self:
+            return
+
         if clear:
             # Remove existing BOM items
             # Note: Inherited BOM items are *not* deleted!
             self.bom_items.all().delete()
 
+        # List of "ancestor" parts above this one
+        my_ancestors = self.get_ancestors(include_self=False)
+
+        raise_error = not kwargs.get('skip_invalid', True)
+
+        include_inherited = kwargs.get('include_inherited', False)
+
         # Copy existing BOM items from another part
         # Note: Inherited BOM Items will *not* be duplicated!!
-        for bom_item in other.get_bom_items(include_inherited=False).all():
+        for bom_item in other.get_bom_items(include_inherited=include_inherited).all():
             # If this part already has a BomItem pointing to the same sub-part,
             # delete that BomItem from this part first!
 
-            try:
-                existing = BomItem.objects.get(part=self, sub_part=bom_item.sub_part)
-                existing.delete()
-            except (BomItem.DoesNotExist):
-                pass
+            # Ignore invalid BomItem objects
+            if not bom_item.part or not bom_item.sub_part:
+                continue
 
+            # Ignore ancestor parts which are inherited
+            if bom_item.part in my_ancestors and bom_item.inherited:
+                continue
+
+            # Skip if already exists
+            if BomItem.objects.filter(part=self, sub_part=bom_item.sub_part).exists():
+                continue
+
+            # Skip (or throw error) if BomItem is not valid
+            if not bom_item.sub_part.check_add_to_bom(self, raise_error=raise_error):
+                continue
+
+            # Construct a new BOM item
             bom_item.part = self
             bom_item.pk = None
 
@@ -2097,7 +2151,7 @@ class Part(MPTTModel):
         """
         Returns True if the total stock for this part is less than the minimum stock level
         """
-        
+
         return self.get_stock_count() < self.minimum_stock
 
 
@@ -2112,20 +2166,6 @@ def after_save_part(sender, instance: Part, created, **kwargs):
 
         # Run this check in the background
         InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance)
-
-
-def attach_file(instance, filename):
-    """ Function for storing a file for a PartAttachment
-
-    Args:
-        instance: Instance of a PartAttachment object
-        filename: name of uploaded file
-
-    Returns:
-        path to store file, format: 'part_file_<pk>_filename'
-    """
-    # Construct a path to store a file attachment
-    return os.path.join('part_files', str(instance.part.id), filename)
 
 
 class PartAttachment(InvenTreeAttachment):
@@ -2148,7 +2188,7 @@ class PartSellPriceBreak(common.models.PriceBreak):
     """
     Represents a price break for selling this part
     """
-    
+
     @staticmethod
     def get_api_url():
         return reverse('api-part-sale-price-list')
@@ -2670,7 +2710,7 @@ class BomItem(models.Model):
         try:
             # Check for circular BOM references
             if self.sub_part:
-                self.sub_part.checkAddToBOM(self.part)
+                self.sub_part.check_add_to_bom(self.part, raise_error=True)
 
                 # If the sub_part is 'trackable' then the 'quantity' field must be an integer
                 if self.sub_part.trackable:
