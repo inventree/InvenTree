@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-21 12:08+0000\n"
-"PO-Revision-Date: 2021-12-21 12:11\n"
+"PO-Revision-Date: 2021-12-27 23:09\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Language: es_MX\n"
@@ -269,63 +269,63 @@ msgstr "Español (México)"
 
 #: InvenTree/settings.py:703
 msgid "French"
-msgstr ""
+msgstr "Francés"
 
 #: InvenTree/settings.py:704
 msgid "Hebrew"
-msgstr ""
+msgstr "Hebreo"
 
 #: InvenTree/settings.py:705
 msgid "Italian"
-msgstr ""
+msgstr "Italiano"
 
 #: InvenTree/settings.py:706
 msgid "Japanese"
-msgstr ""
+msgstr "Japonés"
 
 #: InvenTree/settings.py:707
 msgid "Korean"
-msgstr ""
+msgstr "Coreano"
 
 #: InvenTree/settings.py:708
 msgid "Dutch"
-msgstr ""
+msgstr "Holandés"
 
 #: InvenTree/settings.py:709
 msgid "Norwegian"
-msgstr ""
+msgstr "Noruego"
 
 #: InvenTree/settings.py:710
 msgid "Polish"
-msgstr ""
+msgstr "Polaco"
 
 #: InvenTree/settings.py:711
 msgid "Portugese"
-msgstr ""
+msgstr "Portugués"
 
 #: InvenTree/settings.py:712
 msgid "Russian"
-msgstr ""
+msgstr "Ruso"
 
 #: InvenTree/settings.py:713
 msgid "Swedish"
-msgstr ""
+msgstr "Sueco"
 
 #: InvenTree/settings.py:714
 msgid "Thai"
-msgstr ""
+msgstr "Tailandés"
 
 #: InvenTree/settings.py:715
 msgid "Turkish"
-msgstr ""
+msgstr "Turco"
 
 #: InvenTree/settings.py:716
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnamita"
 
 #: InvenTree/settings.py:717
 msgid "Chinese"
-msgstr ""
+msgstr "Chino"
 
 #: InvenTree/status.py:94
 msgid "Background worker check failed"
@@ -333,66 +333,66 @@ msgstr ""
 
 #: InvenTree/status.py:98
 msgid "Email backend not configured"
-msgstr ""
+msgstr "No se ha configurado el backend de correo"
 
 #: InvenTree/status.py:101
 msgid "InvenTree system health checks failed"
-msgstr ""
+msgstr "Las comprobaciones de estado del sistema InvenTree fallaron"
 
 #: InvenTree/status_codes.py:101 InvenTree/status_codes.py:142
 #: InvenTree/status_codes.py:316 templates/js/translated/table_filters.js:313
 msgid "Pending"
-msgstr ""
+msgstr "Pendiente"
 
 #: InvenTree/status_codes.py:102
 msgid "Placed"
-msgstr ""
+msgstr "Colocado"
 
 #: InvenTree/status_codes.py:103 InvenTree/status_codes.py:319
 #: order/templates/order/order_base.html:128
 #: order/templates/order/sales_order_base.html:132
 msgid "Complete"
-msgstr ""
+msgstr "Terminado"
 
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:144
 #: InvenTree/status_codes.py:318
 msgid "Cancelled"
-msgstr ""
+msgstr "Cancelado"
 
 #: InvenTree/status_codes.py:105 InvenTree/status_codes.py:145
 #: InvenTree/status_codes.py:187
 msgid "Lost"
-msgstr ""
+msgstr "Perdido"
 
 #: InvenTree/status_codes.py:106 InvenTree/status_codes.py:146
 #: InvenTree/status_codes.py:189
 msgid "Returned"
-msgstr ""
+msgstr "Devuelto"
 
 #: InvenTree/status_codes.py:143 order/models.py:941
 #: templates/js/translated/order.js:1980 templates/js/translated/order.js:2255
 msgid "Shipped"
-msgstr ""
+msgstr "Enviado"
 
 #: InvenTree/status_codes.py:183
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: InvenTree/status_codes.py:184
 msgid "Attention needed"
-msgstr ""
+msgstr "Atención necesaria"
 
 #: InvenTree/status_codes.py:185
 msgid "Damaged"
-msgstr ""
+msgstr "Dañado"
 
 #: InvenTree/status_codes.py:186
 msgid "Destroyed"
-msgstr ""
+msgstr "Destruido"
 
 #: InvenTree/status_codes.py:188
 msgid "Rejected"
-msgstr ""
+msgstr "Rechazado"
 
 #: InvenTree/status_codes.py:272
 msgid "Legacy stock tracking entry"
@@ -400,15 +400,15 @@ msgstr ""
 
 #: InvenTree/status_codes.py:274
 msgid "Stock item created"
-msgstr ""
+msgstr "Artículo de stock creado"
 
 #: InvenTree/status_codes.py:276
 msgid "Edited stock item"
-msgstr ""
+msgstr "Elemento de stock editado"
 
 #: InvenTree/status_codes.py:277
 msgid "Assigned serial number"
-msgstr ""
+msgstr "Número de serie asignado"
 
 #: InvenTree/status_codes.py:279
 msgid "Stock counted"
@@ -416,31 +416,31 @@ msgstr ""
 
 #: InvenTree/status_codes.py:280
 msgid "Stock manually added"
-msgstr ""
+msgstr "Stock añadido manualmente"
 
 #: InvenTree/status_codes.py:281
 msgid "Stock manually removed"
-msgstr ""
+msgstr "Stock eliminado manualmente"
 
 #: InvenTree/status_codes.py:283
 msgid "Location changed"
-msgstr ""
+msgstr "Ubicación cambiada"
 
 #: InvenTree/status_codes.py:285
 msgid "Installed into assembly"
-msgstr ""
+msgstr "Instalado en el ensamblaje"
 
 #: InvenTree/status_codes.py:286
 msgid "Removed from assembly"
-msgstr ""
+msgstr "Retirado del ensamblaje"
 
 #: InvenTree/status_codes.py:288
 msgid "Installed component item"
-msgstr ""
+msgstr "Artículo del componente instalado"
 
 #: InvenTree/status_codes.py:289
 msgid "Removed component item"
-msgstr ""
+msgstr "Elemento de componente eliminado"
 
 #: InvenTree/status_codes.py:291
 msgid "Split from parent item"
@@ -452,19 +452,19 @@ msgstr ""
 
 #: InvenTree/status_codes.py:294 templates/js/translated/stock.js:2064
 msgid "Merged stock items"
-msgstr ""
+msgstr "Artículos de stock combinados"
 
 #: InvenTree/status_codes.py:296 templates/js/translated/table_filters.js:213
 msgid "Sent to customer"
-msgstr ""
+msgstr "Enviado al cliente"
 
 #: InvenTree/status_codes.py:297
 msgid "Returned from customer"
-msgstr ""
+msgstr "Devuelto por el cliente"
 
 #: InvenTree/status_codes.py:299
 msgid "Build order output created"
-msgstr ""
+msgstr "Trabajo de ensamblaje creado"
 
 #: InvenTree/status_codes.py:300
 msgid "Build order output completed"
@@ -472,7 +472,7 @@ msgstr ""
 
 #: InvenTree/status_codes.py:302
 msgid "Received against purchase order"
-msgstr ""
+msgstr "Recibido contra la orden de compra"
 
 #: InvenTree/status_codes.py:317
 msgid "Production"
