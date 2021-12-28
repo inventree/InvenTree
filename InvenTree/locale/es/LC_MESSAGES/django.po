@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-21 12:08+0000\n"
-"PO-Revision-Date: 2021-12-27 23:09\n"
+"PO-Revision-Date: 2021-12-28 00:04\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Language: es_MX\n"
@@ -396,7 +396,7 @@ msgstr "Rechazado"
 
 #: InvenTree/status_codes.py:272
 msgid "Legacy stock tracking entry"
-msgstr ""
+msgstr "Entrada antigua de rastreo de stock"
 
 #: InvenTree/status_codes.py:274
 msgid "Stock item created"
@@ -412,7 +412,7 @@ msgstr "Número de serie asignado"
 
 #: InvenTree/status_codes.py:279
 msgid "Stock counted"
-msgstr ""
+msgstr "Stock contado"
 
 #: InvenTree/status_codes.py:280
 msgid "Stock manually added"
@@ -464,7 +464,7 @@ msgstr "Devuelto por el cliente"
 
 #: InvenTree/status_codes.py:299
 msgid "Build order output created"
-msgstr "Trabajo de ensamblaje creado"
+msgstr "Orden de ensamble Trabajo de ensamblaje creado"
 
 #: InvenTree/status_codes.py:300
 msgid "Build order output completed"
@@ -480,103 +480,103 @@ msgstr ""
 
 #: InvenTree/validators.py:23
 msgid "Not a valid currency code"
-msgstr ""
+msgstr "No es un código de moneda válido"
 
 #: InvenTree/validators.py:51
 msgid "Invalid character in part name"
-msgstr ""
+msgstr "Carácter inválido en el nombre del artículo"
 
 #: InvenTree/validators.py:64
 #, python-brace-format
 msgid "IPN must match regex pattern {pat}"
-msgstr ""
+msgstr "El IPN debe coincidir con la expresión regular {pat}"
 
 #: InvenTree/validators.py:78 InvenTree/validators.py:92
 #: InvenTree/validators.py:106
 #, python-brace-format
 msgid "Reference must match pattern {pattern}"
-msgstr ""
+msgstr "La referencia debe coincidir con la expresión regular {pattern}"
 
 #: InvenTree/validators.py:114
 #, python-brace-format
 msgid "Illegal character in name ({x})"
-msgstr ""
+msgstr "Carácter ilegal en el nombre ({x})"
 
 #: InvenTree/validators.py:133 InvenTree/validators.py:149
 msgid "Overage value must not be negative"
-msgstr ""
+msgstr "El valor excedente no debe ser negativo"
 
 #: InvenTree/validators.py:151
 msgid "Overage must not exceed 100%"
-msgstr ""
+msgstr "El excedente no debe superar el 100%"
 
 #: InvenTree/validators.py:158
 msgid "Overage must be an integer value or a percentage"
-msgstr ""
+msgstr "El excedente debe ser un valor entero o un porcentaje"
 
 #: InvenTree/views.py:538
 msgid "Delete Item"
-msgstr ""
+msgstr "Eliminar elemento"
 
 #: InvenTree/views.py:587
 msgid "Check box to confirm item deletion"
-msgstr ""
+msgstr "Marque la casilla para confirmar la eliminación del artículo"
 
 #: InvenTree/views.py:602 templates/InvenTree/settings/user.html:21
 msgid "Edit User Information"
-msgstr ""
+msgstr "Editar datos del usuario"
 
 #: InvenTree/views.py:613 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
-msgstr ""
+msgstr "Configurar Contraseña"
 
 #: InvenTree/views.py:632
 msgid "Password fields must match"
-msgstr ""
+msgstr "Los campos de contraseña deben coincidir"
 
 #: InvenTree/views.py:883 templates/navbar.html:126
 msgid "System Information"
-msgstr ""
+msgstr "Información del sistema"
 
 #: barcodes/api.py:54 barcodes/api.py:151
 msgid "Must provide barcode_data parameter"
-msgstr ""
+msgstr "Debe proporcionar el parámetro barcode_data"
 
 #: barcodes/api.py:127
 msgid "No match found for barcode data"
-msgstr ""
+msgstr "No se encontró ninguna coincidencia para los datos del código de barras"
 
 #: barcodes/api.py:129
 msgid "Match found for barcode data"
-msgstr ""
+msgstr "Coincidencia encontrada para datos de códigos de barras"
 
 #: barcodes/api.py:154
 msgid "Must provide stockitem parameter"
-msgstr ""
+msgstr "Debe proporcionar el parámetro stockitem"
 
 #: barcodes/api.py:161
 msgid "No matching stock item found"
-msgstr ""
+msgstr "No se ha encontrado ningún artículo de stock que coincida"
 
 #: barcodes/api.py:191
 msgid "Barcode already matches Stock Item"
-msgstr ""
+msgstr "El código de barras ya corresponde a un Elemento del Stock"
 
 #: barcodes/api.py:195
 msgid "Barcode already matches Stock Location"
-msgstr ""
+msgstr "El código de barras ya corresponde a una Ubicación de Stock"
 
 #: barcodes/api.py:199
 msgid "Barcode already matches Part"
-msgstr ""
+msgstr "El código de barras ya corresponde a una parte"
 
 #: barcodes/api.py:205 barcodes/api.py:217
 msgid "Barcode hash already matches Stock Item"
-msgstr ""
+msgstr "La comprobación (hash) del código de barras ya corresponde a un Elemento del Stock"
 
 #: barcodes/api.py:223
 msgid "Barcode associated with Stock Item"
-msgstr ""
+msgstr "Código de barras asignado al Elemento del Stock"
 
 #: build/forms.py:36 build/models.py:1286
 #: build/templates/build/build_base.html:82
@@ -612,7 +612,7 @@ msgstr ""
 #: templates/js/translated/stock.js:580 templates/js/translated/stock.js:750
 #: templates/js/translated/stock.js:2519 templates/js/translated/stock.js:2621
 msgid "Quantity"
-msgstr ""
+msgstr "Cantidad"
 
 #: build/forms.py:37
 msgid "Enter quantity for build output"
@@ -622,7 +622,7 @@ msgstr ""
 #: stock/serializers.py:314 templates/js/translated/stock.js:230
 #: templates/js/translated/stock.js:384
 msgid "Serial Numbers"
-msgstr ""
+msgstr "Números de serie"
 
 #: build/forms.py:43
 msgid "Enter serial numbers for build outputs"
@@ -638,11 +638,11 @@ msgstr ""
 
 #: build/forms.py:94
 msgid "Mark build as complete"
-msgstr ""
+msgstr "Marcar construcción como completa"
 
 #: build/forms.py:107
 msgid "Confirm cancel"
-msgstr ""
+msgstr "¿Deseas cancelar?"
 
 #: build/forms.py:107 build/views.py:65
 msgid "Confirm build cancellation"
@@ -657,7 +657,7 @@ msgstr "Opción no válida para el armado principal"
 #: report/templates/report/inventree_build_order_base.html:106
 #: templates/js/translated/build.js:402
 msgid "Build Order"
-msgstr ""
+msgstr "Orden de Producción"
 
 #: build/models.py:138 build/templates/build/build_base.html:13
 #: build/templates/build/index.html:8 build/templates/build/index.html:12
@@ -667,11 +667,11 @@ msgstr ""
 #: templates/InvenTree/search.html:139
 #: templates/InvenTree/settings/sidebar.html:43 users/models.py:44
 msgid "Build Orders"
-msgstr ""
+msgstr "Ordenes de Producción"
 
 #: build/models.py:198
 msgid "Build Order Reference"
-msgstr ""
+msgstr "Referencia de Orden de Producción"
 
 #: build/models.py:199 order/models.py:210 order/models.py:536
 #: order/models.py:803 part/models.py:2618
@@ -681,11 +681,11 @@ msgstr ""
 #: templates/js/translated/bom.js:547 templates/js/translated/build.js:1124
 #: templates/js/translated/order.js:1050 templates/js/translated/order.js:2144
 msgid "Reference"
-msgstr ""
+msgstr "Referencia"
 
 #: build/models.py:210
 msgid "Brief description of the build"
-msgstr ""
+msgstr "Breve descripción de la producción"
 
 #: build/models.py:219 build/templates/build/build_base.html:164
 #: build/templates/build/detail.html:88
@@ -694,7 +694,7 @@ msgstr "Armado Principal"
 
 #: build/models.py:220
 msgid "BuildOrder to which this build is allocated"
-msgstr ""
+msgstr "Orden de Producción a la cual esta producción pertenece"
 
 #: build/models.py:225 build/templates/build/build_base.html:77
 #: build/templates/build/detail.html:30 company/models.py:705
@@ -725,24 +725,24 @@ msgstr ""
 #: templates/js/translated/stock.js:926 templates/js/translated/stock.js:1526
 #: templates/js/translated/stock.js:2609
 msgid "Part"
-msgstr ""
+msgstr "Parte"
 
 #: build/models.py:233
 msgid "Select part to build"
-msgstr ""
+msgstr "Seleccionar parte a producir"
 
 #: build/models.py:238
 msgid "Sales Order Reference"
-msgstr ""
+msgstr "Referencia de Orden de Venta"
 
 #: build/models.py:242
 msgid "SalesOrder to which this build is allocated"
-msgstr ""
+msgstr "Ordenes de Venta a la cual esta producción pertenece"
 
 #: build/models.py:247 templates/js/translated/build.js:1352
 #: templates/js/translated/order.js:1564
 msgid "Source Location"
-msgstr ""
+msgstr "Ubicación de origen"
 
 #: build/models.py:251
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
@@ -986,7 +986,7 @@ msgstr ""
 #: templates/js/translated/order.js:1263 templates/js/translated/stock.js:1651
 #: templates/js/translated/stock.js:2488 templates/js/translated/stock.js:2637
 msgid "Status"
-msgstr ""
+msgstr "Estado"
 
 #: build/serializers.py:213
 msgid "A list of build outputs must be provided"
