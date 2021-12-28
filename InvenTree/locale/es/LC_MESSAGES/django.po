@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-21 12:08+0000\n"
-"PO-Revision-Date: 2021-12-28 21:47\n"
+"PO-Revision-Date: 2021-12-28 22:48\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Language: es_MX\n"
@@ -1144,17 +1144,17 @@ msgstr "Completado"
 #: stock/templates/stock/item_base.html:306
 #: templates/js/translated/order.js:1218
 msgid "Sales Order"
-msgstr ""
+msgstr "Orden de Venta"
 
 #: build/templates/build/build_base.html:178
 #: build/templates/build/detail.html:109
 #: report/templates/report/inventree_build_order_base.html:153
 msgid "Issued By"
-msgstr ""
+msgstr "Emitido por"
 
 #: build/templates/build/build_base.html:223
 msgid "Incomplete Outputs"
-msgstr ""
+msgstr "Salidas incompletas"
 
 #: build/templates/build/build_base.html:224
 msgid "Build Order cannot be completed as incomplete build outputs remain"
@@ -1219,7 +1219,7 @@ msgstr ""
 #: build/templates/build/detail.html:50 order/models.py:878 stock/forms.py:136
 #: templates/js/translated/order.js:592 templates/js/translated/order.js:1138
 msgid "Destination"
-msgstr ""
+msgstr "Destinación"
 
 #: build/templates/build/detail.html:57
 msgid "Destination location not specified"
@@ -1227,7 +1227,7 @@ msgstr ""
 
 #: build/templates/build/detail.html:74 templates/js/translated/build.js:652
 msgid "Allocated Parts"
-msgstr ""
+msgstr "Partes asignadas"
 
 #: build/templates/build/detail.html:81
 #: stock/templates/stock/item_base.html:330
@@ -1235,7 +1235,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:151
 #: templates/js/translated/table_filters.js:238
 msgid "Batch"
-msgstr ""
+msgstr "Lote"
 
 #: build/templates/build/detail.html:127
 #: order/templates/order/order_base.html:143
@@ -1262,11 +1262,11 @@ msgstr ""
 
 #: build/templates/build/detail.html:177 templates/js/translated/build.js:1207
 msgid "Unallocate stock"
-msgstr ""
+msgstr "Desasignar stock"
 
 #: build/templates/build/detail.html:178
 msgid "Unallocate Stock"
-msgstr ""
+msgstr "Desasignar stock"
 
 #: build/templates/build/detail.html:180
 msgid "Allocate stock to build"
@@ -1274,7 +1274,7 @@ msgstr ""
 
 #: build/templates/build/detail.html:181 build/templates/build/sidebar.html:8
 msgid "Allocate Stock"
-msgstr ""
+msgstr "Asignar stock"
 
 #: build/templates/build/detail.html:184
 msgid "Order required parts"
@@ -1339,7 +1339,7 @@ msgstr ""
 #: part/templates/part/part_sidebar.html:48 stock/templates/stock/item.html:95
 #: stock/templates/stock/stock_sidebar.html:19
 msgid "Attachments"
-msgstr ""
+msgstr "Adjuntos"
 
 #: build/templates/build/detail.html:294
 msgid "Build Notes"
