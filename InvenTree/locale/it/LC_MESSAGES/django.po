@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-21 12:08+0000\n"
-"PO-Revision-Date: 2021-12-21 12:11\n"
+"PO-Revision-Date: 2021-12-28 00:04\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -8370,7 +8370,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:448
 msgid "Validate Bill of Materials"
-msgstr ""
+msgstr "Convalida la distinta dei materiali"
 
 #: templates/js/translated/part.js:451
 msgid "Validated Bill of Materials"
@@ -8382,7 +8382,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:503 templates/js/translated/part.js:588
 msgid "Trackable part"
-msgstr ""
+msgstr "Parte tracciabile"
 
 #: templates/js/translated/part.js:507 templates/js/translated/part.js:592
 msgid "Virtual part"
@@ -8402,7 +8402,7 @@ msgstr "Nessuna variante trovata"
 
 #: templates/js/translated/part.js:1005
 msgid "Delete part relationship"
-msgstr ""
+msgstr "Elimina relazione tra i componenti"
 
 #: templates/js/translated/part.js:1029
 msgid "Delete Part Relationship"
@@ -8444,15 +8444,15 @@ msgstr "Percorso"
 
 #: templates/js/translated/part.js:1693
 msgid "No test templates matching query"
-msgstr ""
+msgstr "Nessun modello di test corrispondente"
 
 #: templates/js/translated/part.js:1744 templates/js/translated/stock.js:1234
 msgid "Edit test result"
-msgstr ""
+msgstr "Modificare il risultato del test"
 
 #: templates/js/translated/part.js:1745 templates/js/translated/stock.js:1235
 msgid "Delete test result"
-msgstr ""
+msgstr "Cancellare il risultato del test"
 
 #: templates/js/translated/part.js:1751
 msgid "This test is defined for a parent part"
@@ -8491,7 +8491,7 @@ msgstr ""
 
 #: templates/js/translated/plugin.js:22
 msgid "The Plugin was installed"
-msgstr ""
+msgstr "Il Plugin è stato installato"
 
 #: templates/js/translated/report.js:67
 msgid "items selected"
@@ -8513,7 +8513,7 @@ msgstr ""
 #: templates/js/translated/report.js:243 templates/js/translated/report.js:297
 #: templates/js/translated/report.js:351
 msgid "No Reports Found"
-msgstr ""
+msgstr "Nessun Report Trovato"
 
 #: templates/js/translated/report.js:137
 msgid "No report templates found which match selected stock item(s)"
