@@ -661,7 +661,7 @@ function loadBomTable(table, options={}) {
             if (!row.inherited) {
                 return yesNoLabel(false);
             } else if (row.part == options.parent_id) {
-                return '{% trans "Inherited" %}';
+                return yesNoLabel(true);
             } else {
                 // If this BOM item is inherited from a parent part
                 return renderLink(

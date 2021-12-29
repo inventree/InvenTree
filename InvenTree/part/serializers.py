@@ -9,6 +9,7 @@ from django.urls import reverse_lazy
 from django.db import models
 from django.db.models import Q
 from django.db.models.functions import Coalesce
+from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
@@ -636,3 +637,65 @@ class CategoryParameterTemplateSerializer(InvenTreeModelSerializer):
             'parameter_template',
             'default_value',
         ]
+
+
+class PartCopyBOMSerializer(serializers.Serializer):
+    """
+    Serializer for copying a BOM from another part
+    """
+
+    class Meta:
+        fields = [
+            'part',
+            'remove_existing',
+        ]
+
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=Part.objects.all(),
+        many=False,
+        required=True,
+        allow_null=False,
+        label=_('Part'),
+        help_text=_('Select part to copy BOM from'),
+    )
+
+    def validate_part(self, part):
+        """
+        Check that a 'valid' part was selected
+        """
+
+        return part
+
+    remove_existing = serializers.BooleanField(
+        label=_('Remove Existing Data'),
+        help_text=_('Remove existing BOM items before copying'),
+        default=True,
+    )
+
+    include_inherited = serializers.BooleanField(
+        label=_('Include Inherited'),
+        help_text=_('Include BOM items which are inherited from templated parts'),
+        default=False,
+    )
+
+    skip_invalid = serializers.BooleanField(
+        label=_('Skip Invalid Rows'),
+        help_text=_('Enable this option to skip invalid rows'),
+        default=False,
+    )
+
+    def save(self):
+        """
+        Actually duplicate the BOM
+        """
+
+        base_part = self.context['part']
+
+        data = self.validated_data
+
+        base_part.copy_bom_from(
+            data['part'],
+            clear=data.get('remove_existing', True),
+            skip_invalid=data.get('skip_invalid', False),
+            include_inherited=data.get('include_inherited', False),
+        )
