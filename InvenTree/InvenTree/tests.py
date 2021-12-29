@@ -255,15 +255,15 @@ class TestSerialNumberExtraction(TestCase):
 
         sn = e("4, 1+2", 4, 1)
         self.assertEqual(len(sn), 4)
-        self.assertEqual(sn, ["4", 1, 2, 3])
+        self.assertEqual(sn, [4, 1, 2, 3])
 
         sn = e("~", 1, 1)
         self.assertEqual(len(sn), 1)
-        self.assertEqual(sn, ['1'])
+        self.assertEqual(sn, [1])
 
         sn = e("~", 1, 3)
         self.assertEqual(len(sn), 1)
-        self.assertEqual(sn, ['3'])
+        self.assertEqual(sn, [3])
 
         sn = e("~+", 2, 5)
         self.assertEqual(len(sn), 2)
@@ -305,11 +305,11 @@ class TestSerialNumberExtraction(TestCase):
 
         sn = e("1 3-5 9+2", 7, 1)
         self.assertEqual(len(sn), 7)
-        self.assertEqual(sn, ['1', 3, 4, 5, 9, 10, 11])
+        self.assertEqual(sn, [1, 3, 4, 5, 9, 10, 11])
 
         sn = e("1,3-5,9+2", 7, 1)
         self.assertEqual(len(sn), 7)
-        self.assertEqual(sn, ['1', 3, 4, 5, 9, 10, 11])
+        self.assertEqual(sn, [1, 3, 4, 5, 9, 10, 11])
 
         sn = e("~+2", 3, 14)
         self.assertEqual(len(sn), 3)

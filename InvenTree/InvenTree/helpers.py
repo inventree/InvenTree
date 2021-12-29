@@ -504,7 +504,7 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
             if group in numbers:
                 errors.append(_("Duplicate serial: {g}".format(g=group)))
             else:
-                numbers.append(group)
+                numbers.append(int(group))
 
     if len(errors) > 0:
         raise ValidationError(errors)
