@@ -259,17 +259,17 @@ class TestSerialNumberExtraction(TestCase):
 
         sn = e("~", 1, 1)
         self.assertEqual(len(sn), 1)
-        self.assertEqual(sn, [1])
+        self.assertEqual(sn, ['1'])
 
         sn = e("~", 1, 3)
         self.assertEqual(len(sn), 1)
-        self.assertEqual(sn, [3])
+        self.assertEqual(sn, ['3'])
 
         sn = e("~+", 2, 5)
         self.assertEqual(len(sn), 2)
         self.assertEqual(sn, [5, 6])
 
-        sn = e("~+3", 2, 5)
+        sn = e("~+3", 4, 5)
         self.assertEqual(len(sn), 4)
         self.assertEqual(sn, [5, 6, 7, 8])
 
