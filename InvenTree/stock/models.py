@@ -457,6 +457,7 @@ class StockItem(MPTTModel):
 
     uid = models.CharField(blank=True, max_length=128, help_text=("Unique identifier field"))
 
+    # Note: When a StockItem is deleted, a pre_delete signal handles the parent/child relationship
     parent = TreeForeignKey(
         'self',
         verbose_name=_('Parent Stock Item'),
@@ -479,6 +480,7 @@ class StockItem(MPTTModel):
         help_text=_('Select a matching supplier part for this stock item')
     )
 
+    # Note: When a StockLocation is deleted, stock items are updated via a signal
     location = TreeForeignKey(
         StockLocation, on_delete=models.DO_NOTHING,
         verbose_name=_('Stock Location'),
@@ -494,10 +496,11 @@ class StockItem(MPTTModel):
         help_text=_('Packaging this stock item is stored in')
     )
 
+    # When deleting a stock item with installed items, those installed items are also installed
     belongs_to = models.ForeignKey(
         'self',
         verbose_name=_('Installed In'),
-        on_delete=models.DO_NOTHING,
+        on_delete=models.CASCADE,
         related_name='installed_parts', blank=True, null=True,
         help_text=_('Is this item installed in another item?')
     )
@@ -802,14 +805,14 @@ class StockItem(MPTTModel):
     def can_delete(self):
         """ Can this stock item be deleted? It can NOT be deleted under the following circumstances:
 
-        - Has child StockItems
+        - Has installed stock items
         - Has a serial number and is tracked
         - Is installed inside another StockItem
         - It has been assigned to a SalesOrder
         - It has been assigned to a BuildOrder
         """
 
-        if self.child_count > 0:
+        if self.installed_item_count() > 0:
             return False
 
         if self.part.trackable and self.serial is not None:
@@ -855,19 +858,12 @@ class StockItem(MPTTModel):
 
         return installed
 
-    def installedItemCount(self):
+    def installed_item_count(self):
         """
         Return the number of stock items installed inside this one.
         """
 
         return self.installed_parts.count()
-
-    def hasInstalledItems(self):
-        """
-        Returns true if this stock item has other stock items installed in it.
-        """
-
-        return self.installedItemCount() > 0
 
     @transaction.atomic
     def installStockItem(self, other_item, quantity, user, notes):
@@ -1154,6 +1150,124 @@ class StockItem(MPTTModel):
             result.pk = None
             result.stock_item = self
             result.save()
+
+    def can_merge(self, other=None, raise_error=False, **kwargs):
+        """
+        Check if this stock item can be merged into another stock item
+        """
+
+        allow_mismatched_suppliers = kwargs.get('allow_mismatched_suppliers', False)
+
+        allow_mismatched_status = kwargs.get('allow_mismatched_status', False)
+
+        try:
+            # Generic checks (do not rely on the 'other' part)
+            if self.sales_order:
+                raise ValidationError(_('Stock item has been assigned to a sales order'))
+
+            if self.belongs_to:
+                raise ValidationError(_('Stock item is installed in another item'))
+
+            if self.installed_item_count() > 0:
+                raise ValidationError(_('Stock item contains other items'))
+
+            if self.customer:
+                raise ValidationError(_('Stock item has been assigned to a customer'))
+
+            if self.is_building:
+                raise ValidationError(_('Stock item is currently in production'))
+
+            if self.serialized:
+                raise ValidationError(_("Serialized stock cannot be merged"))
+
+            if other:
+                # Specific checks (rely on the 'other' part)
+
+                # Prevent stock item being merged with itself
+                if self == other:
+                    raise ValidationError(_('Duplicate stock items'))
+
+                # Base part must match
+                if self.part != other.part:
+                    raise ValidationError(_("Stock items must refer to the same part"))
+
+                # Check if supplier part references match
+                if self.supplier_part != other.supplier_part and not allow_mismatched_suppliers:
+                    raise ValidationError(_("Stock items must refer to the same supplier part"))
+
+                # Check if stock status codes match
+                if self.status != other.status and not allow_mismatched_status:
+                    raise ValidationError(_("Stock status codes must match"))
+
+        except ValidationError as e:
+            if raise_error:
+                raise e
+            else:
+                return False
+
+        return True
+
+    @transaction.atomic
+    def merge_stock_items(self, other_items, raise_error=False, **kwargs):
+        """
+        Merge another stock item into this one; the two become one!
+
+        *This* stock item subsumes the other, which is essentially deleted:
+
+        - The quantity of this StockItem is increased
+        - Tracking history for the *other* item is deleted
+        - Any allocations (build order, sales order) are moved to this StockItem
+        """
+
+        if len(other_items) == 0:
+            return
+
+        user = kwargs.get('user', None)
+        location = kwargs.get('location', None)
+        notes = kwargs.get('notes', None)
+
+        parent_id = self.parent.pk if self.parent else None
+
+        for other in other_items:
+            # If the stock item cannot be merged, return
+            if not self.can_merge(other, raise_error=raise_error, **kwargs):
+                return
+
+        for other in other_items:
+
+            self.quantity += other.quantity
+
+            # Any "build order allocations" for the other item must be assigned to this one
+            for allocation in other.allocations.all():
+
+                allocation.stock_item = self
+                allocation.save()
+
+            # Any "sales order allocations" for the other item must be assigned to this one
+            for allocation in other.sales_order_allocations.all():
+
+                allocation.stock_item = self()
+                allocation.save()
+
+            # Prevent atomicity issues when we are merging our own "parent" part in
+            if parent_id and parent_id == other.pk:
+                self.parent = None
+                self.save()
+
+            other.delete()
+
+        self.add_tracking_entry(
+            StockHistoryCode.MERGED_STOCK_ITEMS,
+            user,
+            quantity=self.quantity,
+            notes=notes,
+            deltas={
+                'location': location.pk,
+            }
+        )
+
+        self.location = location
+        self.save()
 
     @transaction.atomic
     def splitStock(self, quantity, location, user, **kwargs):
@@ -1650,7 +1764,8 @@ class StockItem(MPTTModel):
 
 @receiver(pre_delete, sender=StockItem, dispatch_uid='stock_item_pre_delete_log')
 def before_delete_stock_item(sender, instance, using, **kwargs):
-    """ Receives pre_delete signal from StockItem object.
+    """
+    Receives pre_delete signal from StockItem object.
 
     Before a StockItem is deleted, ensure that each child object is updated,
     to point to the new parent item.

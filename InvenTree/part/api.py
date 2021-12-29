@@ -454,6 +454,76 @@ class PartSerialNumberDetail(generics.RetrieveAPIView):
         return Response(data)
 
 
+class PartCopyBOM(generics.CreateAPIView):
+    """
+    API endpoint for duplicating a BOM
+    """
+
+    queryset = Part.objects.all()
+    serializer_class = part_serializers.PartCopyBOMSerializer
+
+    def get_serializer_context(self):
+
+        ctx = super().get_serializer_context()
+
+        try:
+            ctx['part'] = Part.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
+        return ctx
+
+
+class PartValidateBOM(generics.RetrieveUpdateAPIView):
+    """
+    API endpoint for 'validating' the BOM for a given Part
+    """
+
+    class BOMValidateSerializer(serializers.ModelSerializer):
+
+        class Meta:
+            model = Part
+            fields = [
+                'checksum',
+                'valid',
+            ]
+
+        checksum = serializers.CharField(
+            read_only=True,
+            source='bom_checksum',
+        )
+
+        valid = serializers.BooleanField(
+            write_only=True,
+            default=False,
+            label=_('Valid'),
+            help_text=_('Validate entire Bill of Materials'),
+        )
+
+        def validate_valid(self, valid):
+            if not valid:
+                raise ValidationError(_('This option must be selected'))
+
+    queryset = Part.objects.all()
+
+    serializer_class = BOMValidateSerializer
+
+    def update(self, request, *args, **kwargs):
+
+        part = self.get_object()
+
+        partial = kwargs.pop('partial', False)
+
+        serializer = self.get_serializer(part, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+
+        part.validate_bom(request.user)
+
+        return Response({
+            'checksum': part.bom_checksum,
+        })
+
+
 class PartDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a single Part object """
 
@@ -1564,6 +1634,12 @@ part_api_urls = [
 
         # Endpoint for extra serial number information
         url(r'^serial-numbers/', PartSerialNumberDetail.as_view(), name='api-part-serial-number-detail'),
+
+        # Endpoint for duplicating a BOM for the specific Part
+        url(r'^bom-copy/', PartCopyBOM.as_view(), name='api-part-bom-copy'),
+
+        # Endpoint for validating a BOM for the specific Part
+        url(r'^bom-validate/', PartValidateBOM.as_view(), name='api-part-bom-validate'),
 
         # Part detail endpoint
         url(r'^.*$', PartDetail.as_view(), name='api-part-detail'),

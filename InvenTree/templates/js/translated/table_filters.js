@@ -381,6 +381,24 @@ function getAvailableTableFilters(tableKey) {
         };
     }
 
+    // Filters for "company" table
+    if (tableKey == 'company') {
+        return {
+            is_manufacturer: {
+                type: 'bool',
+                title: '{% trans "Manufacturer" %}',
+            },
+            is_supplier: {
+                type: 'bool',
+                title: '{% trans "Supplier" %}',
+            },
+            is_customer: {
+                type: 'bool',
+                title: '{% trans "Customer" %}',
+            },
+        };
+    }
+
     // Filters for the "Parts" table
     if (tableKey == 'parts') {
         return {

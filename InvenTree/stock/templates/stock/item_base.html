@@ -274,14 +274,6 @@
     <div class='alert alert-block alert-warning'>
         {% trans "This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted." %}
     </div>
-    {% elif item.child_count > 0 %}
-    <div class='alert alert-block alert-warning'>
-        {% trans "This stock item cannot be deleted as it has child items" %}
-    </div>
-    {% elif item.delete_on_deplete and item.can_delete %}
-    <div class='alert alert-block alert-warning'>
-        {% trans "This stock item will be automatically deleted when all stock is depleted." %}
-    </div>
     {% endif %}
     
 </div>

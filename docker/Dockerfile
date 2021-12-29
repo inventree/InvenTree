@@ -101,7 +101,7 @@ RUN chown -R inventree:inventreegroup ${INVENTREE_HOME}/*
 USER inventree
 
 # Install InvenTree packages
-RUN pip3 install --no-cache-dir --disable-pip-version-check -r ${INVENTREE_HOME}/requirements.txt
+RUN pip3 install --user --no-cache-dir --disable-pip-version-check -r ${INVENTREE_HOME}/requirements.txt
 
 # Need to be running from within this directory
 WORKDIR ${INVENTREE_MNG_DIR}
