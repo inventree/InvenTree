@@ -415,6 +415,7 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
     - Serial numbers can be supplied as <start>+<length> for getting <length> numbers starting from <start>
 
     Args:
+        serials: input string with patterns
         expected_quantity: The number of (unique) serial numbers we expect
         next_number(int): the next possible serial number
     """
