@@ -500,6 +500,7 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
                 errors.append(_("Invalid group: {g}").format(g=group))
                 continue
 
+        # Group is a number
         else:
             if group in numbers:
                 errors.append(_("Duplicate serial: {g}".format(g=group)))
