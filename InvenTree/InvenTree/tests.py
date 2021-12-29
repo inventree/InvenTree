@@ -300,7 +300,6 @@ class TestSerialNumberExtraction(TestCase):
         with self.assertRaises(ValidationError):
             e("10, a, 7-70j", 4, 1)
 
-
     def test_combinations(self):
         e = helpers.extract_serial_numbers
 
