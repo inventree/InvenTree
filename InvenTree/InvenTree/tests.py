@@ -301,6 +301,26 @@ class TestSerialNumberExtraction(TestCase):
             e("10, a, 7-70j", 4, 1)
 
 
+    def test_combinations(self):
+        e = helpers.extract_serial_numbers
+
+        sn = e("1 3-5 9+2", 7, 1)
+        self.assertEqual(len(sn), 7)
+        self.assertEqual(sn, ['1', 3, 4, 5, 9, 10, 11])
+
+        sn = e("1,3-5,9+2", 7, 1)
+        self.assertEqual(len(sn), 7)
+        self.assertEqual(sn, ['1', 3, 4, 5, 9, 10, 11])
+
+        sn = e("~+2", 3, 14)
+        self.assertEqual(len(sn), 3)
+        self.assertEqual(sn, [14, 15, 16])
+
+        sn = e("~+", 2, 14)
+        self.assertEqual(len(sn), 2)
+        self.assertEqual(sn, [14, 15])
+
+
 class TestVersionNumber(TestCase):
     """
     Unit tests for version number functions
