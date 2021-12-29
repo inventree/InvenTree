@@ -11,6 +11,7 @@ from PIL import Image
 from decimal import Decimal, InvalidOperation
 
 from wsgiref.util import FileWrapper
+from django.db.models.expressions import RawSQL
 from django.http import StreamingHttpResponse
 from django.core.exceptions import ValidationError, FieldError
 from django.utils.translation import ugettext_lazy as _
@@ -500,12 +501,20 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
                 errors.append(_("Invalid group: {g}").format(g=group))
                 continue
 
-        # Group is a number
+        # Group should be a number
+        elif group:
+            # try conversion
+            try:
+                number = int(group)
+            except:
+                # seem like it is not a number
+                raise ValidationError(_(f"Invalid group {group}"))
+
+            number_add(number)
+
+        # No valid input group detected
         else:
-            if group in numbers:
-                errors.append(_("Duplicate serial: {g}".format(g=group)))
-            else:
-                numbers.append(int(group))
+            raise ValidationError(_(f"Invalid/no group {group}"))
 
     if len(errors) > 0:
         raise ValidationError(errors)
