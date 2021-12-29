@@ -471,7 +471,7 @@ class StockList(generics.ListCreateAPIView):
         if serial_numbers:
             # If serial numbers are specified, check that they match!
             try:
-                serials = extract_serial_numbers(serial_numbers, data['quantity'])
+                serials = extract_serial_numbers(serial_numbers, quantity)
             except DjangoValidationError as e:
                 raise ValidationError({
                     'quantity': e.messages,
