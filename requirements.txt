@@ -21,6 +21,7 @@ django-markdownify==0.8.0       # Markdown rendering
 django-markdownx==3.0.1         # Markdown form fields
 django-money==1.1               # Django app for currency management
 django-mptt==0.11.0             # Modified Preorder Tree Traversal
+django-redis>=5.0.0
 django-q==1.3.4                 # Background task scheduling
 django-sql-utils==0.5.0         # Advanced query annotation / aggregation
 django-stdimage==5.1.1          # Advanced ImageField management

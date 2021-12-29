@@ -12,7 +12,7 @@ InvenTree is an open-source Inventory Management System which provides powerful 
 
 InvenTree is designed to be lightweight and easy to use for SME or hobbyist applications, where many existing stock management solutions are bloated and cumbersome to use. Updating stock is a single-action process and does not require a complex system of work orders or stock transactions. 
 
-However, powerful business logic works in the background to ensure that stock tracking history is maintained, and users have ready access to stock level information.
+Powerful business logic works in the background to ensure that stock tracking history is maintained, and users have ready access to stock level information.
 
 # Demo
 

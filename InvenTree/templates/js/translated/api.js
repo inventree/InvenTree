@@ -207,6 +207,11 @@ function showApiError(xhr, url) {
         title = '{% trans "Error 404: Resource Not Found" %}';
         message = '{% trans "The requested resource could not be located on the server" %}';
         break;
+    // Method not allowed
+    case 405:
+        title = '{% trans "Error 405: Method Not Allowed" %}';
+        message = '{% trans "HTTP method not allowed at URL" %}';
+        break;
     // Timeout
     case 408:
         title = '{% trans "Error 408: Timeout" %}';
