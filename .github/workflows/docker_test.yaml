@@ -26,9 +26,9 @@ jobs:
       - name: Build Docker Image
         run: |
           cd docker
-          docker-compose -f docker-compose.dev.yml build
-          docker-compose -f docker-compose.dev.yml run inventree-dev-server invoke update
-          docker-compose -f docker-compose.dev.yml up -d
+          docker-compose -f docker-compose.sqlite.yml build
+          docker-compose -f docker-compose.sqlite.yml run inventree-dev-server invoke update
+          docker-compose -f docker-compose.sqlite.yml up -d
       - name: Sleepy Time
         run: sleep 60
       - name: Test API
