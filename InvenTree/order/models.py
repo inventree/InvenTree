@@ -628,28 +628,30 @@ class SalesOrder(Order):
         Throws a ValidationError if cannot be completed.
         """
 
-        # Order without line items cannot be completed
-        if self.lines.count() == 0:
-            if raise_error:
+        try:
+
+            # Order without line items cannot be completed
+            if self.lines.count() == 0:
                 raise ValidationError(_('Order cannot be completed as no parts have been assigned'))
 
-        # Only a PENDING order can be marked as SHIPPED
-        elif self.status != SalesOrderStatus.PENDING:
-            if raise_error:
+            # Only a PENDING order can be marked as SHIPPED
+            elif self.status != SalesOrderStatus.PENDING:
                 raise ValidationError(_('Only a pending order can be marked as complete'))
 
-        elif self.pending_shipment_count > 0:
-            if raise_error:
+            elif self.pending_shipment_count > 0:
                 raise ValidationError(_("Order cannot be completed as there are incomplete shipments"))
 
-        elif self.pending_line_count > 0:
-            if raise_error:
+            elif self.pending_line_count > 0:
                 raise ValidationError(_("Order cannot be completed as there are incomplete line items"))
 
-        else:
-            return True
+        except ValidationError as e:
 
-        return False
+            if raise_error:
+                raise e
+            else:
+                return False
+
+        return True
 
     def complete_order(self, user):
         """
