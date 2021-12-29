@@ -21,6 +21,7 @@
 */
 
 /* exported
+    duplicateBom,
     duplicatePart,
     editCategory,
     editPart,
@@ -39,6 +40,7 @@
     loadStockPricingChart,
     partStockLabel,
     toggleStar,
+    validateBom,
 */
 
 /* Part API functions
@@ -428,6 +430,59 @@ function toggleStar(options) {
 }
 
 
+/* Validate a BOM */
+function validateBom(part_id, options={}) {
+
+    var html = `
+    <div class='alert alert-block alert-success'>
+    {% trans "Validating the BOM will mark each line item as valid" %}
+    </div>
+    `;
+
+    constructForm(`/api/part/${part_id}/bom-validate/`, {
+        method: 'PUT',
+        fields: {
+            valid: {},
+        },
+        preFormContent: html,
+        title: '{% trans "Validate Bill of Materials" %}',
+        reload: options.reload,
+        onSuccess: function(response) {
+            showMessage('{% trans "Validated Bill of Materials" %}');
+        }
+    });
+}
+
+
+/* Duplicate a BOM */
+function duplicateBom(part_id, options={}) {
+
+    constructForm(`/api/part/${part_id}/bom-copy/`, {
+        method: 'POST',
+        fields: {
+            part: {
+                icon: 'fa-shapes',
+                filters: {
+                    assembly: true,
+                    exclude_tree: part_id,
+                }
+            },
+            include_inherited: {},
+            remove_existing: {},
+            skip_invalid: {},
+        },
+        confirm: true,
+        title: '{% trans "Copy Bill of Materials" %}',
+        onSuccess: function(response) {
+            if (options.success) {
+                options.success(response);
+            }
+        },
+    });
+
+}
+
+
 function partStockLabel(part, options={}) {
 
     if (part.in_stock) {
@@ -621,7 +676,9 @@ function loadPartParameterTable(table, url, options) {
         filters[key] = params[key];
     }
 
-    // setupFilterList("#part-parameters", $(table));
+    var filterTarget = options.filterTarget || '#filter-list-parameters';
+
+    setupFilterList('part-parameters', $(table), filterTarget);
 
     $(table).inventreeTable({
         url: url,
@@ -727,7 +784,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
     options.params.part_detail = true;
     options.params.order_detail = true;
     
-    var filters = loadTableFilters('partpurchaseorders');
+    var filters = loadTableFilters('purchaseorderlineitem');
 
     for (var key in options.params) {
         filters[key] = options.params[key];
@@ -871,7 +928,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                     if (row.received >= row.quantity) {
                         // Already recevied
                         return `<span class='badge bg-success rounded-pill'>{% trans "Received" %}</span>`;
-                    } else {
+                    } else if (row.order_detail && row.order_detail.status == {{ PurchaseOrderStatus.PLACED }}) {
                         var html = `<div class='btn-group' role='group'>`;
                         var pk = row.pk;
 
@@ -879,6 +936,8 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
 
                         html += `</div>`;
                         return html;
+                    } else {
+                        return '';
                     }
                 }
             }

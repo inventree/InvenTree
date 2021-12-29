@@ -67,6 +67,8 @@ function loadAttachmentTable(url, options) {
 
     var table = options.table || '#attachment-table';
 
+    setupFilterList('attachments', $(table), '#filter-list-attachments');
+
     addAttachmentButtonCallbacks(url, options.fields || {});
 
     $(table).inventreeTable({
