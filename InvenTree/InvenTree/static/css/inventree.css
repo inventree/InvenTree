@@ -14,6 +14,10 @@
     --bs-body-color: #68686a;
 }
 
+main {
+    overflow-x: clip;
+}
+
 .login-screen {
     background: url(/static/img/paper_splash.jpg) no-repeat center fixed; 
     background-size: cover;

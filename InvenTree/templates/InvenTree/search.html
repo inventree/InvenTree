@@ -16,12 +16,6 @@
 <div class='panel panel-inventree'>
     <div class='panel-content'>
         {% include "search_form.html" with query_text=query %}
-        {% if query %}
-        {% else %}
-        <div id='empty-search-query'>
-            <h4><em>{% trans "Enter a search query" %}</em></h4>
-        </div>
-        {% endif %}
     </div>
 </div>
 
