@@ -11,7 +11,6 @@ from PIL import Image
 from decimal import Decimal, InvalidOperation
 
 from wsgiref.util import FileWrapper
-from django.db.models.expressions import RawSQL
 from django.http import StreamingHttpResponse
 from django.core.exceptions import ValidationError, FieldError
 from django.utils.translation import ugettext_lazy as _
