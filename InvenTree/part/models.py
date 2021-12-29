@@ -583,6 +583,26 @@ class Part(MPTTModel):
         # No serial numbers found
         return None
 
+    def getLatestSerialNumberInt(self):
+        """
+        Return the "latest" serial number for this Part as a integer.
+        If it is not an integer the result is 0
+        """
+
+        latest = self.getLatestSerialNumber()
+
+        # No serial number = > 0
+        if latest is None:
+            latest = 0
+
+        # Attempt to turn into an integer and return
+        try:
+            latest = int(latest)
+            return latest
+        except:
+            # not an integer so 0
+            return 0
+
     def getSerialNumberString(self, quantity=1):
         """
         Return a formatted string representing the next available serial numbers,
