@@ -124,8 +124,8 @@
     </div>
 </div>
 
-{% mixin_enabled plugin 'globalsettings' as globalsettings %}
-{% if globalsettings %}
+{% mixin_enabled plugin 'settings' as settings %}
+{% if settings %}
     {% include 'InvenTree/settings/mixins/settings.html' %}
 {% endif %}
 

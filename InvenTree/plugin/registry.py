@@ -49,8 +49,9 @@ class Plugins:
 
         # integration specific
         self.installed_apps = []         # Holds all added plugin_paths
+
         # mixins
-        self.mixins_globalsettings = {}
+        self.mixins_settings = {}
 
     # region public plugin functions
     def load_plugins(self):
@@ -234,36 +235,40 @@ class Plugins:
         plugins = self.plugins.items()
         logger.info(f'Found {len(plugins)} active plugins')
 
-        self.activate_integration_globalsettings(plugins)
+        self.activate_integration_settings(plugins)
         self.activate_integration_app(plugins, force_reload=force_reload)
 
     def _deactivate_plugins(self):
         """run integration deactivation functions for all plugins"""
         self.deactivate_integration_app()
-        self.deactivate_integration_globalsettings()
+        self.deactivate_integration_settings()
     # endregion
 
     # region specific integrations
-    # region integration_globalsettings
-    def activate_integration_globalsettings(self, plugins):
+    # region integration_settings
+    def activate_integration_settings(self, plugins):
         from common.models import InvenTreeSetting
+
+        #todo delete me
 
         if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_GLOBALSETTING'):
             logger.info('Registering IntegrationPlugin global settings')
             for slug, plugin in plugins:
-                if plugin.mixin_enabled('globalsettings'):
-                    plugin_setting = plugin.globalsettingspatterns
-                    self.mixins_globalsettings[slug] = plugin_setting
+                if plugin.mixin_enabled('settings'):
+                    plugin_setting = plugin.settingspatterns
+                    self.mixins_settings[slug] = plugin_setting
 
                     # Add to settings dir
                     InvenTreeSetting.GLOBAL_SETTINGS.update(plugin_setting)
 
-    def deactivate_integration_globalsettings(self):
+    def deactivate_integration_settings(self):
         from common.models import InvenTreeSetting
+
+        #todo delete me
 
         # collect all settings
         plugin_settings = {}
-        for _, plugin_setting in self.mixins_globalsettings.items():
+        for _, plugin_setting in self.mixins_settings.items():
             plugin_settings.update(plugin_setting)
 
         # remove settings
@@ -271,7 +276,7 @@ class Plugins:
             InvenTreeSetting.GLOBAL_SETTINGS.pop(setting)
 
         # clear cache
-        self.mixins_globalsettings = {}
+        self.mixins_settings = {}
     # endregion
 
     # region integration_app

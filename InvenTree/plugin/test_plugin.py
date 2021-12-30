@@ -63,11 +63,11 @@ class PluginTagTests(TestCase):
         """test that all inactive plugins are listed"""
         self.assertEqual(plugin_tags.inactive_plugin_list(), plugin_reg.plugins_inactive)
 
-    def test_tag_plugin_globalsettings(self):
+    def test_tag_plugin_settings(self):
         """check all plugins are listed"""
         self.assertEqual(
-            plugin_tags.plugin_globalsettings(self.sample),
-            plugin_reg.mixins_globalsettings.get(self.sample)
+            plugin_tags.plugin_settings(self.sample),
+            plugin_reg.mixins_settings.get(self.sample)
         )
 
     def test_tag_mixin_enabled(self):

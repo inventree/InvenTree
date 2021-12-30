@@ -20,48 +20,57 @@ class SettingsMixin:
 
     def __init__(self):
         super().__init__()
-        self.add_mixin('globalsettings', 'has_globalsettings', __class__)
-        self.globalsettings = self.setup_globalsettings()
+        self.add_mixin('settings', 'has_settings', __class__)
+        self.settings = self.setup_settings()
 
-    def setup_globalsettings(self):
+    def setup_settings(self):
         """
         setup global settings for this plugin
         """
         return getattr(self, 'SETTINGS', None)
 
     @property
-    def has_globalsettings(self):
+    def has_settings(self):
         """
         does this plugin use custom global settings
         """
-        return bool(self.globalsettings)
+        return bool(self.settings)
 
     @property
-    def globalsettingspatterns(self):
+    def settingspatterns(self):
         """
         get patterns for InvenTreeSetting defintion
         """
-        if self.has_globalsettings:
-            return {f'PLUGIN_{self.slug.upper()}_{key}': value for key, value in self.globalsettings.items()}
+
+        #todo delete me
+        if self.has_settings:
+            return {f'PLUGIN_{self.slug.upper()}_{key}': value for key, value in self.settings.items()}
         return None
 
-    def _globalsetting_name(self, key):
+    def _setting_name(self, key):
         """get global name of setting"""
+
+        #todo delete me
         return f'PLUGIN_{self.slug.upper()}_{key}'
 
-    def get_globalsetting(self, key):
+    def get_setting(self, key):
         """
         get plugin global setting by key
         """
-        from common.models import InvenTreeSetting
-        return InvenTreeSetting.get_setting(self._globalsetting_name(key))
 
-    def set_globalsetting(self, key, value, user):
+        #todo delete me
+        from common.models import InvenTreeSetting
+        return InvenTreeSetting.get_setting(self._setting_name(key))
+
+    def set_setting(self, key, value, user):
         """
         set plugin global setting by key
         """
+
+        #todo delete me
+
         from common.models import InvenTreeSetting
-        return InvenTreeSetting.set_setting(self._globalsetting_name(key), value, user)
+        return InvenTreeSetting.set_setting(self._setting_name(key), value, user)
 
 
 class UrlsMixin:
