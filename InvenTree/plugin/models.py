@@ -65,7 +65,7 @@ class PluginConfig(models.Model):
         """
         Override to set original state of the plugin-config instance
         """
-        
+
         super().__init__(*args, **kwargs)
         self.__org_active = self.active
 
