@@ -12,12 +12,11 @@ from plugin import plugin_reg
 
 
 class PluginConfig(models.Model):
-    """ A PluginConfig object holds settings for plugins.
-
-    It is used to designate a Part as 'subscribed' for a given User.
+    """
+    A PluginConfig object holds settings for plugins.
 
     Attributes:
-        key: slug of the plugin - must be unique
+        key: slug of the plugin (this must be unique across all installed plugins!)
         name: PluginName of the plugin - serves for a manual double check  if the right plugin is used
         active: Should the plugin be loaded?
     """
@@ -52,14 +51,21 @@ class PluginConfig(models.Model):
             name += '(not active)'
         return name
 
-    # extra attributes from the registry
     def mixins(self):
-        return self.plugin._mixinreg
+        """
+        Return the mixins associated with this plugin
+        """
 
-    # functions
+        if self.plugin:
+            return self.plugin._mixinreg
+        else:
+            return {}
 
     def __init__(self, *args, **kwargs):
-        """override to set original state of"""
+        """
+        Override to set original state of the plugin-config instance
+        """
+        
         super().__init__(*args, **kwargs)
         self.__org_active = self.active
 
