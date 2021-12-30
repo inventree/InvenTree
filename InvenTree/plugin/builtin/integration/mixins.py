@@ -1,14 +1,19 @@
-"""default mixins for IntegrationMixins"""
+"""
+Plugin mixin classes
+"""
+
 from django.conf.urls import url, include
 
 from plugin.urls import PLUGIN_BASE
 
 
 class GlobalSettingsMixin:
-    """Mixin that enables global settings for the plugin"""
+    """
+    Mixin that enables global settings for the plugin
+    """
+    
     class MixinMeta:
-        """meta options for this mixin"""
-        MIXIN_NAME = 'Global settings'
+        MIXIN_NAME = 'Settings'
 
     def __init__(self):
         super().__init__()
@@ -19,7 +24,7 @@ class GlobalSettingsMixin:
         """
         setup global settings for this plugin
         """
-        return getattr(self, 'GLOBALSETTINGS', None)
+        return getattr(self, 'SETTINGS', None)
 
     @property
     def has_globalsettings(self):
