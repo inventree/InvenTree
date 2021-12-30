@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-30 10:02+0000\n"
-"PO-Revision-Date: 2021-12-30 19:38\n"
+"PO-Revision-Date: 2021-12-30 20:35\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -3823,19 +3823,19 @@ msgstr "Válido"
 
 #: part/api.py:500
 msgid "Validate entire Bill of Materials"
-msgstr ""
+msgstr "Validación de Lista de Materiales"
 
 #: part/api.py:505
 msgid "This option must be selected"
-msgstr ""
+msgstr "Esta opción debe ser seleccionada"
 
 #: part/api.py:847
 msgid "Must be greater than zero"
-msgstr ""
+msgstr "Debe ser mayor que 0"
 
 #: part/api.py:851
 msgid "Must be a valid quantity"
-msgstr ""
+msgstr "Debe ser una cantidad válida"
 
 #: part/api.py:866
 msgid "Specify location for initial part stock"
@@ -4311,38 +4311,38 @@ msgstr ""
 
 #: part/serializers.py:682
 msgid "Skip Invalid Rows"
-msgstr ""
+msgstr "Omitir filas no válidas"
 
 #: part/serializers.py:683
 msgid "Enable this option to skip invalid rows"
-msgstr ""
+msgstr "Activar esta opción para omitir filas inválidas"
 
 #: part/tasks.py:53
 msgid "Low stock notification"
-msgstr ""
+msgstr "Notificación por bajo stock"
 
 #: part/templates/part/bom.html:6
 msgid "You do not have permission to edit the BOM."
-msgstr ""
+msgstr "No tienes permiso para editar la lista de materiales."
 
 #: part/templates/part/bom.html:15
 #, python-format
 msgid "The BOM for <em>%(part)s</em> has changed, and must be validated.<br>"
-msgstr ""
+msgstr "El BOM para <em>%(part)s</em> ha cambiado y debe ser validado.<br>"
 
 #: part/templates/part/bom.html:17
 #, python-format
 msgid "The BOM for <em>%(part)s</em> was last checked by %(checker)s on %(check_date)s"
-msgstr ""
+msgstr "El BOM para <em>%(part)s</em> fue revisado por última vez por %(checker)s el %(check_date)s"
 
 #: part/templates/part/bom.html:21
 #, python-format
 msgid "The BOM for <em>%(part)s</em> has not been validated."
-msgstr ""
+msgstr "El BOM para <em>%(part)s</em> no ha sido validada."
 
 #: part/templates/part/bom.html:30 part/templates/part/detail.html:253
 msgid "BOM actions"
-msgstr ""
+msgstr "Acciones BOM"
 
 #: part/templates/part/bom.html:34
 msgid "Delete Items"
@@ -4350,31 +4350,31 @@ msgstr "Eliminar elementos"
 
 #: part/templates/part/bom_upload/match_parts.html:29
 msgid "Select Part"
-msgstr ""
+msgstr "Seleccionar pieza"
 
 #: part/templates/part/bom_upload/upload_file.html:8
 msgid "Return to BOM"
-msgstr ""
+msgstr "Volver al BOM"
 
 #: part/templates/part/bom_upload/upload_file.html:13
 msgid "Upload Bill of Materials"
-msgstr ""
+msgstr "Cargar Lista de Materiales"
 
 #: part/templates/part/bom_upload/upload_file.html:33
 msgid "Requirements for BOM upload"
-msgstr ""
+msgstr "Requisitos para subir BOM"
 
 #: part/templates/part/bom_upload/upload_file.html:35
 msgid "The BOM file must contain the required named columns as provided in the "
-msgstr ""
+msgstr "El archivo BOM debe contener las columnas con nombre requeridos como se indica en el "
 
 #: part/templates/part/bom_upload/upload_file.html:35
 msgid "BOM Upload Template"
-msgstr ""
+msgstr "Plantilla de subida BOM"
 
 #: part/templates/part/bom_upload/upload_file.html:36
 msgid "Each part must already exist in the database"
-msgstr ""
+msgstr "Cada parte debe existir en la base de datos"
 
 #: part/templates/part/category.html:28 part/templates/part/category.html:32
 msgid "You are subscribed to notifications for this category"
@@ -4611,15 +4611,15 @@ msgstr "Validar BOM"
 
 #: part/templates/part/detail.html:266
 msgid "New BOM Item"
-msgstr ""
+msgstr "Nuevo Item en el BOM"
 
 #: part/templates/part/detail.html:267
 msgid "Add BOM Item"
-msgstr ""
+msgstr "Añadir artículo al BOM"
 
 #: part/templates/part/detail.html:280
 msgid "Assemblies"
-msgstr ""
+msgstr "Ensamblajes"
 
 #: part/templates/part/detail.html:297
 msgid "Part Builds"
@@ -4631,11 +4631,11 @@ msgstr "Construir adjudicaciones de pedidos"
 
 #: part/templates/part/detail.html:332
 msgid "Part Suppliers"
-msgstr ""
+msgstr "Proveedores de piezas"
 
 #: part/templates/part/detail.html:360
 msgid "Part Manufacturers"
-msgstr ""
+msgstr "Fabricantes de piezas"
 
 #: part/templates/part/detail.html:376
 msgid "Delete manufacturer parts"
@@ -4651,23 +4651,23 @@ msgstr "Todos los elementos BOM seleccionados serán eliminados"
 
 #: part/templates/part/detail.html:608
 msgid "Create BOM Item"
-msgstr ""
+msgstr "Crear artículo para el BOM"
 
 #: part/templates/part/detail.html:652
 msgid "Related Part"
-msgstr ""
+msgstr "Partes relacionadas"
 
 #: part/templates/part/detail.html:660
 msgid "Add Related Part"
-msgstr ""
+msgstr "Añadir artículos relacionados"
 
 #: part/templates/part/detail.html:755
 msgid "Add Test Result Template"
-msgstr ""
+msgstr "Añadir plantilla de resultados de prueba"
 
 #: part/templates/part/detail.html:812
 msgid "Edit Part Notes"
-msgstr ""
+msgstr "Editar notas del artículo"
 
 #: part/templates/part/detail.html:925
 #, python-format
@@ -4692,108 +4692,108 @@ msgstr "Precio unitario - %(currency)s"
 #: part/templates/part/import_wizard/ajax_part_upload.html:29
 #: part/templates/part/import_wizard/part_upload.html:53
 msgid "Unsuffitient privileges."
-msgstr ""
+msgstr "Privilegios insuficientes."
 
 #: part/templates/part/import_wizard/part_upload.html:8
 msgid "Return to Parts"
-msgstr ""
+msgstr "Volver a los artículos"
 
 #: part/templates/part/import_wizard/part_upload.html:16
 msgid "Import Parts from File"
-msgstr ""
+msgstr "Importar artículos desde archivo"
 
 #: part/templates/part/part_app_base.html:12
 msgid "Part List"
-msgstr ""
+msgstr "Listado de artículos"
 
 #: part/templates/part/part_base.html:27 part/templates/part/part_base.html:31
 msgid "You are subscribed to notifications for this part"
-msgstr ""
+msgstr "Estás suscrito a las notificaciones de este artículo"
 
 #: part/templates/part/part_base.html:35
 msgid "Subscribe to notifications for this part"
-msgstr ""
+msgstr "Suscríbete a las notificaciones de este artículo"
 
 #: part/templates/part/part_base.html:43
 #: stock/templates/stock/item_base.html:34
 #: stock/templates/stock/location.html:33
 msgid "Barcode actions"
-msgstr ""
+msgstr "Acciones para código de barras"
 
 #: part/templates/part/part_base.html:45
 #: stock/templates/stock/item_base.html:38
 #: stock/templates/stock/location.html:35 templates/qr_button.html:1
 msgid "Show QR Code"
-msgstr ""
+msgstr "Mostrar código QR"
 
 #: part/templates/part/part_base.html:46
 #: stock/templates/stock/item_base.html:54
 #: stock/templates/stock/location.html:36
 msgid "Print Label"
-msgstr ""
+msgstr "Imprimir etiqueta"
 
 #: part/templates/part/part_base.html:51
 msgid "Show pricing information"
-msgstr ""
+msgstr "Mostrar información de precios"
 
 #: part/templates/part/part_base.html:56
 #: stock/templates/stock/item_base.html:109
 #: stock/templates/stock/location.html:44
 msgid "Stock actions"
-msgstr ""
+msgstr "Acciones de stock"
 
 #: part/templates/part/part_base.html:63
 msgid "Count part stock"
-msgstr ""
+msgstr "Contar stock de piezas"
 
 #: part/templates/part/part_base.html:69
 msgid "Transfer part stock"
-msgstr ""
+msgstr "Transferir stock de piezas"
 
 #: part/templates/part/part_base.html:84
 msgid "Part actions"
-msgstr ""
+msgstr "Acciones para piezas"
 
 #: part/templates/part/part_base.html:87
 msgid "Duplicate part"
-msgstr ""
+msgstr "Duplicar pieza"
 
 #: part/templates/part/part_base.html:90
 msgid "Edit part"
-msgstr ""
+msgstr "Editar pieza"
 
 #: part/templates/part/part_base.html:93
 msgid "Delete part"
-msgstr ""
+msgstr "Eliminar pieza"
 
 #: part/templates/part/part_base.html:112
 msgid "Part is a template part (variants can be made from this part)"
-msgstr ""
+msgstr "La pieza es una pieza de plantilla (las variantes se pueden hacer a partir de esta pieza)"
 
 #: part/templates/part/part_base.html:116
 msgid "Part can be assembled from other parts"
-msgstr ""
+msgstr "La pieza puede ser ensamblada desde otras piezas"
 
 #: part/templates/part/part_base.html:120
 msgid "Part can be used in assemblies"
-msgstr ""
+msgstr "La pieza puede ser usada en ensamblajes"
 
 #: part/templates/part/part_base.html:124
 msgid "Part stock is tracked by serial number"
-msgstr ""
+msgstr "El stock de esta pieza está rastreado por número de serie"
 
 #: part/templates/part/part_base.html:128
 msgid "Part can be purchased from external suppliers"
-msgstr ""
+msgstr "La pieza puede ser comprada de proveedores externos"
 
 #: part/templates/part/part_base.html:132
 msgid "Part can be sold to customers"
-msgstr ""
+msgstr "La pieza puede ser vendida a clientes"
 
 #: part/templates/part/part_base.html:138
 #: part/templates/part/part_base.html:146
 msgid "Part is virtual (not a physical part)"
-msgstr ""
+msgstr "La pieza es virtual (no una pieza física)"
 
 #: part/templates/part/part_base.html:139
 #: templates/js/translated/company.js:508
@@ -4801,7 +4801,7 @@ msgstr ""
 #: templates/js/translated/model_renderers.js:175
 #: templates/js/translated/part.js:527 templates/js/translated/part.js:604
 msgid "Inactive"
-msgstr ""
+msgstr "Inactivo"
 
 #: part/templates/part/part_base.html:156
 #: part/templates/part/part_base.html:579
