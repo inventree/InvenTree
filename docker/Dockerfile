@@ -59,6 +59,7 @@ RUN apk -U upgrade
 # Install required system packages
 RUN apk add --no-cache git make bash \
     gcc libgcc g++ libstdc++ \
+    gnupg \
     libjpeg-turbo libjpeg-turbo-dev jpeg jpeg-dev \
     libffi libffi-dev \
     zlib zlib-dev \
