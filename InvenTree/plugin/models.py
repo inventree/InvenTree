@@ -54,7 +54,11 @@ class PluginConfig(models.Model):
 
     # extra attributes from the registry
     def mixins(self):
-        return self.plugin._mixinreg
+
+        if self.plugin:
+            return self.plugin._mixinreg
+        else:
+            return {}
 
     # functions
 
