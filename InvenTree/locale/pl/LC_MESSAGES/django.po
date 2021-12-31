@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-31 06:22+0000\n"
-"PO-Revision-Date: 2021-12-31 06:27\n"
+"PO-Revision-Date: 2021-12-31 09:30\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -70,7 +70,7 @@ msgstr "Wybierz kategorię"
 
 #: InvenTree/forms.py:236
 msgid "Email (again)"
-msgstr ""
+msgstr "Adres e-mail (ponownie)"
 
 #: InvenTree/forms.py:240
 msgid "Email address confirmation"
@@ -78,7 +78,7 @@ msgstr "Potwierdzenie adresu email"
 
 #: InvenTree/forms.py:260
 msgid "You must type the same email each time."
-msgstr ""
+msgstr "Należy ponownie wpisać ten sam adres e-mail."
 
 #: InvenTree/helpers.py:437
 #, python-brace-format
@@ -103,12 +103,12 @@ msgstr "Nieprawidłowa grupa: {g}"
 #: InvenTree/helpers.py:510
 #, python-brace-format
 msgid "Invalid group {group}"
-msgstr ""
+msgstr "Nieprawidłowa grupa {group}"
 
 #: InvenTree/helpers.py:516
 #, python-brace-format
 msgid "Invalid/no group {group}"
-msgstr ""
+msgstr "Nieprawidłowa/Brak grupy {group}"
 
 #: InvenTree/helpers.py:522
 msgid "No serial numbers found"
@@ -121,11 +121,11 @@ msgstr "Ilość numerów seryjnych ({s}) musi odpowiadać ilości ({q})"
 
 #: InvenTree/models.py:120
 msgid "Missing file"
-msgstr ""
+msgstr "Brak pliku"
 
 #: InvenTree/models.py:121
 msgid "Missing external link"
-msgstr ""
+msgstr "Brak zewnętrznego odnośnika"
 
 #: InvenTree/models.py:132 stock/models.py:1967
 #: templates/js/translated/attachment.js:119
@@ -170,24 +170,24 @@ msgstr "data przesłania"
 
 #: InvenTree/models.py:176
 msgid "Filename must not be empty"
-msgstr ""
+msgstr "Nazwa pliku nie może być pusta"
 
 #: InvenTree/models.py:199
 msgid "Invalid attachment directory"
-msgstr ""
+msgstr "Nieprawidłowy katalog załącznika"
 
 #: InvenTree/models.py:209
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr ""
+msgstr "Nazwa pliku zawiera niedozwolony znak '{c}'"
 
 #: InvenTree/models.py:212
 msgid "Filename missing extension"
-msgstr ""
+msgstr "Brak rozszerzenia w nazwie pliku"
 
 #: InvenTree/models.py:219
 msgid "Attachment with this filename already exists"
-msgstr ""
+msgstr "Załącznik o tej nazwie już istnieje"
 
 #: InvenTree/models.py:226
 msgid "Error renaming file"
