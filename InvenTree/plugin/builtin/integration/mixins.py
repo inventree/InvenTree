@@ -7,7 +7,7 @@ from django.conf.urls import url, include
 from plugin.urls import PLUGIN_BASE
 
 
-class GlobalSettingsMixin:
+class SettingsMixin:
     """
     Mixin that enables global settings for the plugin
     """
