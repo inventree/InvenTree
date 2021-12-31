@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-31 06:22+0000\n"
-"PO-Revision-Date: 2021-12-31 14:28\n"
+"PO-Revision-Date: 2021-12-31 16:26\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -1016,7 +1016,7 @@ msgstr ""
 
 #: build/serializers.py:340 stock/serializers.py:584
 msgid "Item must be in stock"
-msgstr ""
+msgstr "Towar musi znajdować się w magazynie"
 
 #: build/serializers.py:354 order/models.py:277 order/serializers.py:240
 #: stock/models.py:365 stock/models.py:1077 stock/serializers.py:305
@@ -2839,13 +2839,13 @@ msgstr ""
 #: company/templates/company/supplier_part.html:141
 #: part/templates/part/detail.html:24 stock/templates/stock/location.html:166
 msgid "Create new stock item"
-msgstr ""
+msgstr "Utwórz nowy towar"
 
 #: company/templates/company/supplier_part.html:142
 #: part/templates/part/detail.html:25 stock/templates/stock/location.html:167
 #: templates/js/translated/stock.js:360
 msgid "New Stock Item"
-msgstr ""
+msgstr "Nowy towar"
 
 #: company/templates/company/supplier_part.html:155
 #: company/templates/company/supplier_part_navbar.html:19
@@ -2923,7 +2923,7 @@ msgstr "Cennik"
 #: templates/InvenTree/search.html:152 templates/js/translated/stock.js:2351
 #: templates/stats.html:93 templates/stats.html:102 users/models.py:43
 msgid "Stock Items"
-msgstr ""
+msgstr "Towary"
 
 #: company/views.py:50
 msgid "New Supplier"
@@ -4183,7 +4183,7 @@ msgstr ""
 
 #: part/models.py:2614
 msgid "Select parent part"
-msgstr ""
+msgstr "Wybierz część nadrzędną"
 
 #: part/models.py:2622
 msgid "Sub part"
@@ -5052,11 +5052,11 @@ msgstr ""
 #: templates/js/translated/part.js:491 templates/js/translated/part.js:1115
 #: templates/js/translated/part.js:1302
 msgid "No Stock"
-msgstr ""
+msgstr "Brak w magazynie"
 
 #: part/templates/part/stock_count.html:9 templates/InvenTree/index.html:158
 msgid "Low Stock"
-msgstr ""
+msgstr "Mała ilość w magazynie"
 
 #: part/templates/part/variant_part.html:9
 msgid "Create new part variant"
@@ -5403,7 +5403,7 @@ msgstr "Data ważności"
 
 #: stock/forms.py:78 stock/forms.py:252
 msgid "Expiration date for this stock item"
-msgstr ""
+msgstr "Data ważności tego zasobu"
 
 #: stock/forms.py:81
 msgid "Enter unique serial numbers (or leave blank)"
@@ -5485,7 +5485,7 @@ msgstr ""
 
 #: stock/models.py:461
 msgid "Parent Stock Item"
-msgstr ""
+msgstr "Nadrzędny towar"
 
 #: stock/models.py:470
 msgid "Base part"
@@ -5493,7 +5493,7 @@ msgstr "Część podstawowa"
 
 #: stock/models.py:478
 msgid "Select a matching supplier part for this stock item"
-msgstr ""
+msgstr "Wybierz pasującą część dostawcy dla tego towaru"
 
 #: stock/models.py:484 stock/templates/stock/location.html:16
 #: stock/templates/stock/stock_app_base.html:8
@@ -5579,7 +5579,7 @@ msgstr "Ilość musi być liczbą całkowitą"
 #: stock/models.py:1080
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({n})"
-msgstr ""
+msgstr "Ilość nie może przekraczać dostępnej ilości towaru ({n})"
 
 #: stock/models.py:1083
 msgid "Serial numbers must be a list of integers"
@@ -5672,11 +5672,11 @@ msgstr ""
 
 #: stock/serializers.py:173
 msgid "Purchase price of this stock item"
-msgstr ""
+msgstr "Cena zakupu tego towaru"
 
 #: stock/serializers.py:180
 msgid "Purchase currency of this stock item"
-msgstr ""
+msgstr "Waluta zakupu tego towaru"
 
 #: stock/serializers.py:294
 msgid "Enter number of stock items to serialize"
