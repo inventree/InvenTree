@@ -55,9 +55,9 @@ class PluginConfig(models.Model):
     # extra attributes from the registry
     def mixins(self):
 
-        if self.plugin:
+        try:
             return self.plugin._mixinreg
-        else:
+        except (AttributeError, ValueError):
             return {}
 
     # functions
