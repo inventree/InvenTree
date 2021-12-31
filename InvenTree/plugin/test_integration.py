@@ -29,7 +29,7 @@ class SettingsMixinTest(BaseMixinDefinition, TestCase):
 
     def setUp(self):
         class SettingsCls(SettingsMixin, IntegrationPluginBase):
-            GLOBALSETTINGS = self.TEST_SETTINGS
+            SETTINGS = self.TEST_SETTINGS
         self.mixin = SettingsCls()
 
         class NoSettingsCls(SettingsMixin, IntegrationPluginBase):
