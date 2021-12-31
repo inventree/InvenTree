@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-30 10:02+0000\n"
-"PO-Revision-Date: 2021-12-30 10:13\n"
+"POT-Creation-Date: 2021-12-31 04:17+0000\n"
+"PO-Revision-Date: 2021-12-31 04:19\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -5204,11 +5204,11 @@ msgstr ""
 msgid "Is the plugin active"
 msgstr ""
 
-#: plugin/samples/integration/sample.py:39
+#: plugin/samples/integration/sample.py:42
 msgid "Enable PO"
 msgstr ""
 
-#: plugin/samples/integration/sample.py:40
+#: plugin/samples/integration/sample.py:43
 msgid "Enable PO functionality in InvenTree interface"
 msgstr ""
 
@@ -6389,7 +6389,7 @@ msgid "The Base-URL for this plugin is <a href=\"/%(base)s\" target=\"_blank\"><
 msgstr ""
 
 #: templates/InvenTree/settings/mixins/urls.html:21
-msgid "open in new tab"
+msgid "Open in new tab"
 msgstr ""
 
 #: templates/InvenTree/settings/part.html:7
@@ -6440,11 +6440,6 @@ msgstr ""
 msgid "Version"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:73
-#, python-format
-msgid "has %(name)s"
-msgstr ""
-
 #: templates/InvenTree/settings/plugin.html:91
 msgid "Inactive plugins"
 msgstr ""
@@ -6478,53 +6473,53 @@ msgstr ""
 msgid "License"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin_settings.html:70
+#: templates/InvenTree/settings/plugin_settings.html:71
 msgid "The code information is pulled from the latest git commit for this plugin. It might not reflect official version numbers or information but the actual code running."
 msgstr ""
 
-#: templates/InvenTree/settings/plugin_settings.html:74
+#: templates/InvenTree/settings/plugin_settings.html:77
 msgid "Package information"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin_settings.html:80
+#: templates/InvenTree/settings/plugin_settings.html:83
 msgid "Installation method"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin_settings.html:83
+#: templates/InvenTree/settings/plugin_settings.html:86
 msgid "This plugin was installed as a package"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin_settings.html:85
+#: templates/InvenTree/settings/plugin_settings.html:88
 msgid "This plugin was found in a local InvenTree path"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin_settings.html:91
+#: templates/InvenTree/settings/plugin_settings.html:94
 msgid "Installation path"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin_settings.html:97
+#: templates/InvenTree/settings/plugin_settings.html:100
 msgid "Commit Author"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin_settings.html:101
+#: templates/InvenTree/settings/plugin_settings.html:104
 #: templates/about.html:47
 msgid "Commit Date"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin_settings.html:105
+#: templates/InvenTree/settings/plugin_settings.html:108
 #: templates/about.html:40
 msgid "Commit Hash"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin_settings.html:109
+#: templates/InvenTree/settings/plugin_settings.html:112
 msgid "Commit Message"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin_settings.html:114
+#: templates/InvenTree/settings/plugin_settings.html:117
 msgid "Sign Status"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin_settings.html:119
+#: templates/InvenTree/settings/plugin_settings.html:122
 msgid "Sign Key"
 msgstr ""
 
