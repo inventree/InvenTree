@@ -17,14 +17,8 @@ class SettingsMixin:
 
     def __init__(self):
         super().__init__()
-        self.add_mixin('globalsettings', 'has_globalsettings', __class__)
-        self.globalsettings = self.setup_globalsettings()
-
-    def setup_globalsettings(self):
-        """
-        Setup global settings for this plugin
-        """
-        return getattr(self, 'SETTINGS', None)
+        self.add_mixin('settings', 'has_globalsettings', __class__)
+        self.globalsettings = getattr(self, 'SETTINGS', None)
 
     @property
     def has_globalsettings(self):

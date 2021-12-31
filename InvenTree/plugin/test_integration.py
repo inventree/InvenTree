@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 from datetime import datetime
 
 from plugin import IntegrationPluginBase
-from plugin.mixins import AppMixin, GlobalSettingsMixin, UrlsMixin, NavigationMixin
+from plugin.mixins import AppMixin, SettingsMixin, UrlsMixin, NavigationMixin
 from plugin.urls import PLUGIN_BASE
 
 
@@ -20,19 +20,19 @@ class BaseMixinDefinition:
         self.assertEqual(self.mixin.registered_mixins[0]['human_name'], self.MIXIN_HUMAN_NAME)
 
 
-class GlobalSettingsMixinTest(BaseMixinDefinition, TestCase):
+class SettingsMixinTest(BaseMixinDefinition, TestCase):
     MIXIN_HUMAN_NAME = 'Settings'
-    MIXIN_NAME = 'globalsettings'
+    MIXIN_NAME = 'settings'
     MIXIN_ENABLE_CHECK = 'has_globalsettings'
 
     TEST_SETTINGS = {'SETTING1': {'default': '123', }}
 
     def setUp(self):
-        class SettingsCls(GlobalSettingsMixin, IntegrationPluginBase):
+        class SettingsCls(SettingsMixin, IntegrationPluginBase):
             GLOBALSETTINGS = self.TEST_SETTINGS
         self.mixin = SettingsCls()
 
-        class NoSettingsCls(GlobalSettingsMixin, IntegrationPluginBase):
+        class NoSettingsCls(SettingsMixin, IntegrationPluginBase):
             pass
         self.mixin_nothing = NoSettingsCls()
 
