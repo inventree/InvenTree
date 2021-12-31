@@ -21,7 +21,7 @@ class BaseMixinDefinition:
 
 
 class GlobalSettingsMixinTest(BaseMixinDefinition, TestCase):
-    MIXIN_HUMAN_NAME = 'Global settings'
+    MIXIN_HUMAN_NAME = 'Settings'
     MIXIN_NAME = 'globalsettings'
     MIXIN_ENABLE_CHECK = 'has_globalsettings'
 
