@@ -1,7 +1,9 @@
 {% load i18n %}
 {% load inventree_extras %}
 
-<h4>{% trans "URLs" %}</h4>
+<div class='panel-heading'>
+    <h4>{% trans "URLs" %}</h4>
+</div>
 {% define plugin.base_url as base %}
 <p>{% blocktrans %}The Base-URL for this plugin is <a href="/{{ base }}" target="_blank"><strong>{{ base }}</strong></a>.{% endblocktrans %}</p>
 
