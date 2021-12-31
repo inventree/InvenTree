@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-31 04:17+0000\n"
+"POT-Creation-Date: 2021-12-31 06:22+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -202,7 +202,7 @@ msgstr "选择无效"
 #: InvenTree/models.py:277 InvenTree/models.py:278 company/models.py:415
 #: label/models.py:112 part/models.py:772 part/models.py:2442
 #: plugin/models.py:39 report/models.py:181
-#: templates/InvenTree/settings/mixins/urls.html:11
+#: templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/plugin.html:47
 #: templates/InvenTree/settings/plugin.html:124
 #: templates/InvenTree/settings/plugin_settings.html:23
@@ -2281,7 +2281,7 @@ msgid "Previous Step"
 msgstr ""
 
 #: company/forms.py:24 part/forms.py:46
-#: templates/InvenTree/settings/mixins/urls.html:12
+#: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
 msgstr "URL"
 
@@ -6495,21 +6495,21 @@ msgstr ""
 msgid "Signup"
 msgstr ""
 
-#: templates/InvenTree/settings/mixins/settings.html:4
+#: templates/InvenTree/settings/mixins/settings.html:5
 #: templates/InvenTree/settings/settings.html:12 templates/navbar.html:118
 msgid "Settings"
 msgstr "设置"
 
-#: templates/InvenTree/settings/mixins/urls.html:4
+#: templates/InvenTree/settings/mixins/urls.html:5
 msgid "URLs"
 msgstr ""
 
-#: templates/InvenTree/settings/mixins/urls.html:6
+#: templates/InvenTree/settings/mixins/urls.html:8
 #, python-format
 msgid "The Base-URL for this plugin is <a href=\"/%(base)s\" target=\"_blank\"><strong>%(base)s</strong></a>."
 msgstr ""
 
-#: templates/InvenTree/settings/mixins/urls.html:21
+#: templates/InvenTree/settings/mixins/urls.html:23
 msgid "Open in new tab"
 msgstr ""
 
