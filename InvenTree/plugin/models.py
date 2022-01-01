@@ -8,16 +8,17 @@ from __future__ import unicode_literals
 from django.utils.translation import gettext_lazy as _
 from django.db import models
 
+import common.models
+
 from plugin import plugin_reg
 
 
 class PluginConfig(models.Model):
-    """ A PluginConfig object holds settings for plugins.
-
-    It is used to designate a Part as 'subscribed' for a given User.
+    """
+    A PluginConfig object holds settings for plugins.
 
     Attributes:
-        key: slug of the plugin - must be unique
+        key: slug of the plugin (this must be unique across all installed plugins!)
         name: PluginName of the plugin - serves for a manual double check  if the right plugin is used
         active: Should the plugin be loaded?
     """
@@ -63,7 +64,10 @@ class PluginConfig(models.Model):
     # functions
 
     def __init__(self, *args, **kwargs):
-        """override to set original state of"""
+        """
+        Override to set original state of the plugin-config instance
+        """
+
         super().__init__(*args, **kwargs)
         self.__org_active = self.active
 
@@ -82,7 +86,9 @@ class PluginConfig(models.Model):
         }
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
-        """extend save method to reload plugins if the 'active' status changes"""
+        """
+        Extend save method to reload plugins if the 'active' status changes
+        """
         reload = kwargs.pop('no_reload', False)  # check if no_reload flag is set
 
         ret = super().save(force_insert, force_update, *args, **kwargs)
@@ -95,3 +101,37 @@ class PluginConfig(models.Model):
                 plugin_reg.reload_plugins()
 
         return ret
+
+
+class PluginSetting(common.models.BaseInvenTreeSetting):
+    """
+    This model represents settings for individual plugins
+    """
+
+    class Meta:
+        unique_together = [
+            ('plugin', 'key'),
+        ]
+
+    @classmethod
+    def get_filters(cls, key, **kwargs):
+        """
+        Override filters method to ensure settings are filtered by plugin id
+        """
+
+        filters = super().get_filters(key, **kwargs)
+
+        plugin = kwargs.get('plugin', None)
+
+        if plugin:
+            filters['plugin'] = plugin
+
+        return filters
+
+    plugin = models.ForeignKey(
+        PluginConfig,
+        related_name='settings',
+        null=False,
+        verbose_name=_('Plugin'),
+        on_delete=models.CASCADE,
+    )

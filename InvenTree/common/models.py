@@ -65,13 +65,13 @@ class BaseInvenTreeSetting(models.Model):
 
         self.key = str(self.key).upper()
 
-        self.clean()
+        self.clean(**kwargs)
         self.validate_unique()
 
         super().save()
 
     @classmethod
-    def allValues(cls, user=None, exclude_hidden=False):
+    def allValues(cls, user=None, plugin=None, exclude_hidden=False):
         """
         Return a dict of "all" defined global settings.
 
@@ -82,8 +82,13 @@ class BaseInvenTreeSetting(models.Model):
 
         results = cls.objects.all()
 
+        # Optionally filter by user
         if user is not None:
             results = results.filter(user=user)
+
+        # Optionally filter by plugin
+        if plugin is not None:
+            results = results.filter(plugin=plugin)
 
         # Query the database
         settings = {}
@@ -123,98 +128,92 @@ class BaseInvenTreeSetting(models.Model):
         return settings
 
     @classmethod
-    def get_setting_name(cls, key):
+    def get_setting_definition(cls, key, **kwargs):
+        """
+        Return the 'definition' of a particular settings value, as a dict object.
+
+        - The 'settings' dict can be passed as a kwarg
+        - If not passed, look for cls.GLOBAL_SETTINGS
+        - Returns an empty dict if the key is not found
+        """
+
+        settings = kwargs.get('settings', cls.GLOBAL_SETTINGS)
+
+        key = str(key).strip().upper()
+
+        if settings is not None and key in settings:
+            return settings[key]
+        else:
+            return {}
+
+    @classmethod
+    def get_setting_name(cls, key, **kwargs):
         """
         Return the name of a particular setting.
 
         If it does not exist, return an empty string.
         """
 
-        key = str(key).strip().upper()
-
-        if key in cls.GLOBAL_SETTINGS:
-            setting = cls.GLOBAL_SETTINGS[key]
-            return setting.get('name', '')
-        else:
-            return ''
+        setting = cls.get_setting_definition(key, **kwargs)
+        return setting.get('name', '')
 
     @classmethod
-    def get_setting_description(cls, key):
+    def get_setting_description(cls, key, **kwargs):
         """
         Return the description for a particular setting.
 
         If it does not exist, return an empty string.
         """
 
-        key = str(key).strip().upper()
+        setting = cls.get_setting_definition(key, **kwargs)
 
-        if key in cls.GLOBAL_SETTINGS:
-            setting = cls.GLOBAL_SETTINGS[key]
-            return setting.get('description', '')
-        else:
-            return ''
+        return setting.get('description', '')
 
     @classmethod
-    def get_setting_units(cls, key):
+    def get_setting_units(cls, key, **kwargs):
         """
         Return the units for a particular setting.
 
         If it does not exist, return an empty string.
         """
 
-        key = str(key).strip().upper()
+        setting = cls.get_setting_definition(key, **kwargs)
 
-        if key in cls.GLOBAL_SETTINGS:
-            setting = cls.GLOBAL_SETTINGS[key]
-            return setting.get('units', '')
-        else:
-            return ''
+        return setting.get('units', '')
 
     @classmethod
-    def get_setting_validator(cls, key):
+    def get_setting_validator(cls, key, **kwargs):
         """
         Return the validator for a particular setting.
 
         If it does not exist, return None
         """
 
-        key = str(key).strip().upper()
+        setting = cls.get_setting_definition(key, **kwargs)
 
-        if key in cls.GLOBAL_SETTINGS:
-            setting = cls.GLOBAL_SETTINGS[key]
-            return setting.get('validator', None)
-        else:
-            return None
+        return setting.get('validator', None)
 
     @classmethod
-    def get_setting_default(cls, key):
+    def get_setting_default(cls, key, **kwargs):
         """
         Return the default value for a particular setting.
 
         If it does not exist, return an empty string
         """
 
-        key = str(key).strip().upper()
+        setting = cls.get_setting_definition(key, **kwargs)
 
-        if key in cls.GLOBAL_SETTINGS:
-            setting = cls.GLOBAL_SETTINGS[key]
-            return setting.get('default', '')
-        else:
-            return ''
+        return setting.get('default', '')
 
     @classmethod
-    def get_setting_choices(cls, key):
+    def get_setting_choices(cls, key, **kwargs):
         """
         Return the validator choices available for a particular setting.
         """
 
-        key = str(key).strip().upper()
+        setting = cls.get_setting_definition(key, **kwargs)
 
-        if key in cls.GLOBAL_SETTINGS:
-            setting = cls.GLOBAL_SETTINGS[key]
-            choices = setting.get('choices', None)
-        else:
-            choices = None
+        choices = setting.get('choices', None)
 
         if callable(choices):
             # Evaluate the function (we expect it will return a list of tuples...)
@@ -237,8 +236,20 @@ class BaseInvenTreeSetting(models.Model):
 
         key = str(key).strip().upper()
 
+        settings = cls.objects.all()
+
+        user = kwargs.get('user', None)
+
+        if user is not None:
+            settings = settings.filter(user=user)
+
+        plugin = kwargs.get('plugin', None)
+
+        if plugin is not None:
+            settings = settings.filter(plugin=plugin)
+
         try:
-            setting = cls.objects.filter(**cls.get_filters(key, **kwargs)).first()
+            setting = settings.filter(**cls.get_filters(key, **kwargs)).first()
         except (ValueError, cls.DoesNotExist):
             setting = None
         except (IntegrityError, OperationalError):
@@ -247,7 +258,12 @@ class BaseInvenTreeSetting(models.Model):
         # Setting does not exist! (Try to create it)
         if not setting:
 
-            setting = cls(key=key, value=cls.get_setting_default(key), **kwargs)
+            # Attempt to create a new settings object
+            setting = cls(
+                key=key,
+                value=cls.get_setting_default(key, **kwargs),
+                **kwargs
+            )
 
             try:
                 # Wrap this statement in "atomic", so it can be rolled back if it fails
@@ -260,21 +276,6 @@ class BaseInvenTreeSetting(models.Model):
         return setting
 
     @classmethod
-    def get_setting_pk(cls, key):
-        """
-        Return the primary-key value for a given setting.
-
-        If the setting does not exist, return None
-        """
-
-        setting = cls.get_setting_object(cls)
-
-        if setting:
-            return setting.pk
-        else:
-            return None
-
-    @classmethod
     def get_setting(cls, key, backup_value=None, **kwargs):
         """
         Get the value of a particular setting.
@@ -283,18 +284,19 @@ class BaseInvenTreeSetting(models.Model):
 
         # If no backup value is specified, atttempt to retrieve a "default" value
         if backup_value is None:
-            backup_value = cls.get_setting_default(key)
+            backup_value = cls.get_setting_default(key, **kwargs)
 
         setting = cls.get_setting_object(key, **kwargs)
 
         if setting:
             value = setting.value
 
-            # If the particular setting is defined as a boolean, cast the value to a boolean
-            if setting.is_bool():
+            # Cast to boolean if necessary
+            if setting.is_bool(**kwargs):
                 value = InvenTree.helpers.str2bool(value)
 
-            if setting.is_int():
+            # Cast to integer if necessary
+            if setting.is_int(**kwargs):
                 try:
                     value = int(value)
                 except (ValueError, TypeError):
@@ -357,7 +359,7 @@ class BaseInvenTreeSetting(models.Model):
     def units(self):
         return self.__class__.get_setting_units(self.key)
 
-    def clean(self):
+    def clean(self, **kwargs):
         """
         If a validator (or multiple validators) are defined for a particular setting key,
         run them against the 'value' field.
@@ -365,7 +367,7 @@ class BaseInvenTreeSetting(models.Model):
 
         super().clean()
 
-        validator = self.__class__.get_setting_validator(self.key)
+        validator = self.__class__.get_setting_validator(self.key, **kwargs)
 
         if self.is_bool():
             self.value = InvenTree.helpers.str2bool(self.value)
@@ -459,12 +461,12 @@ class BaseInvenTreeSetting(models.Model):
 
         return [opt[0] for opt in choices]
 
-    def is_bool(self):
+    def is_bool(self, **kwargs):
         """
         Check if this setting is required to be a boolean value
         """
 
-        validator = self.__class__.get_setting_validator(self.key)
+        validator = self.__class__.get_setting_validator(self.key, **kwargs)
 
         return self.__class__.validator_is_bool(validator)
 
@@ -477,15 +479,15 @@ class BaseInvenTreeSetting(models.Model):
 
         return InvenTree.helpers.str2bool(self.value)
 
-    def setting_type(self):
+    def setting_type(self, **kwargs):
         """
         Return the field type identifier for this setting object
         """
 
-        if self.is_bool():
+        if self.is_bool(**kwargs):
             return 'boolean'
 
-        elif self.is_int():
+        elif self.is_int(**kwargs):
             return 'integer'
 
         else:
@@ -504,12 +506,12 @@ class BaseInvenTreeSetting(models.Model):
 
         return False
 
-    def is_int(self):
+    def is_int(self, **kwargs):
         """
         Check if the setting is required to be an integer value:
         """
 
-        validator = self.__class__.get_setting_validator(self.key)
+        validator = self.__class__.get_setting_validator(self.key, **kwargs)
 
         return self.__class__.validator_is_int(validator)
 
@@ -541,17 +543,14 @@ class BaseInvenTreeSetting(models.Model):
         return value
 
     @classmethod
-    def is_protected(cls, key):
+    def is_protected(cls, key, **kwargs):
         """
         Check if the setting value is protected
         """
 
-        key = str(key).strip().upper()
+        setting = cls.get_setting_definition(key, **kwargs)
 
-        if key in cls.GLOBAL_SETTINGS:
-            return cls.GLOBAL_SETTINGS[key].get('protected', False)
-        else:
-            return False
+        return setting.get('protected', False)
 
 
 def settings_group_options():
@@ -973,13 +972,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'ENABLE_PLUGINS_NAVIGATION': {
             'name': _('Enable navigation integration'),
             'description': _('Enable plugins to integrate into navigation'),
-            'default': False,
-            'validator': bool,
-            'requires_restart': True,
-        },
-        'ENABLE_PLUGINS_GLOBALSETTING': {
-            'name': _('Enable global setting integration'),
-            'description': _('Enable plugins to integrate into inventree global settings'),
             'default': False,
             'validator': bool,
             'requires_restart': True,
