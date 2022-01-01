@@ -17,11 +17,11 @@ class SettingsMixin:
 
     def __init__(self):
         super().__init__()
-        self.add_mixin('settings', 'has_globalsettings', __class__)
+        self.add_mixin('settings', 'has_settings', __class__)
         self.globalsettings = getattr(self, 'SETTINGS', None)
 
     @property
-    def has_globalsettings(self):
+    def has_settings(self):
         """
         Does this plugin use custom global settings
         """
@@ -32,7 +32,7 @@ class SettingsMixin:
         """
         Get patterns for InvenTreeSetting defintion
         """
-        if self.has_globalsettings:
+        if self.has_settings:
             return {f'PLUGIN_{self.slug.upper()}_{key}': value for key, value in self.globalsettings.items()}
         return None
 
