@@ -53,7 +53,7 @@ class BaseInvenTreeSetting(models.Model):
     single values (e.g. one-off settings values).
     """
 
-    GLOBAL_SETTINGS = {}
+    SETTINGS = {}
 
     class Meta:
         abstract = True
@@ -98,13 +98,13 @@ class BaseInvenTreeSetting(models.Model):
                 settings[setting.key.upper()] = setting.value
 
         # Specify any "default" values which are not in the database
-        for key in cls.GLOBAL_SETTINGS.keys():
+        for key in cls.SETTINGS.keys():
 
             if key.upper() not in settings:
                 settings[key.upper()] = cls.get_setting_default(key)
 
             if exclude_hidden:
-                hidden = cls.GLOBAL_SETTINGS[key].get('hidden', False)
+                hidden = cls.SETTINGS[key].get('hidden', False)
 
                 if hidden:
                     # Remove hidden items
@@ -133,11 +133,11 @@ class BaseInvenTreeSetting(models.Model):
         Return the 'definition' of a particular settings value, as a dict object.
 
         - The 'settings' dict can be passed as a kwarg
-        - If not passed, look for cls.GLOBAL_SETTINGS
+        - If not passed, look for cls.SETTINGS
         - Returns an empty dict if the key is not found
         """
 
-        settings = kwargs.get('settings', cls.GLOBAL_SETTINGS)
+        settings = kwargs.get('settings', cls.SETTINGS)
 
         key = str(key).strip().upper()
 
@@ -594,7 +594,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
     The keys must be upper-case
     """
 
-    GLOBAL_SETTINGS = {
+    SETTINGS = {
 
         'SERVER_RESTART_REQUIRED': {
             'name': _('Restart required'),
@@ -1009,7 +1009,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         Return True if this setting requires a server restart after changing
         """
 
-        options = InvenTreeSetting.GLOBAL_SETTINGS.get(self.key, None)
+        options = InvenTreeSetting.SETTINGS.get(self.key, None)
 
         if options:
             return options.get('requires_restart', False)
@@ -1022,7 +1022,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
     An InvenTreeSetting object with a usercontext
     """
 
-    GLOBAL_SETTINGS = {
+    SETTINGS = {
         'HOMEPAGE_PART_STARRED': {
             'name': _('Show subscribed parts'),
             'description': _('Show subscribed parts on the homepage'),

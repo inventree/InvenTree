@@ -40,7 +40,7 @@ class PluginSettingInline(admin.TabularInline):
     Inline admin class for PluginSetting
     """
 
-    model = models.PluginSetting    
+    model = models.PluginSetting
 
 
 class PluginConfigAdmin(admin.ModelAdmin):
@@ -49,6 +49,7 @@ class PluginConfigAdmin(admin.ModelAdmin):
     list_display = ['name', 'key', '__str__', 'active', ]
     list_filter = ['active']
     actions = [plugin_activate, plugin_deactivate, ]
-    inlines = [PluginSettingInline,]
+    inlines = [PluginSettingInline, ]
+
 
 admin.site.register(models.PluginConfig, PluginConfigAdmin)

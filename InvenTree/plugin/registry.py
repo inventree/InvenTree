@@ -256,7 +256,7 @@ class Plugins:
                     self.mixins_globalsettings[slug] = plugin_setting
 
                     # Add to settings dir
-                    InvenTreeSetting.GLOBAL_SETTINGS.update(plugin_setting)
+                    InvenTreeSetting.SETTINGS.update(plugin_setting)
 
     def deactivate_integration_globalsettings(self):
         from common.models import InvenTreeSetting
@@ -268,7 +268,7 @@ class Plugins:
 
         # remove settings
         for setting in plugin_settings:
-            InvenTreeSetting.GLOBAL_SETTINGS.pop(setting)
+            InvenTreeSetting.SETTINGS.pop(setting)
 
         # clear cache
         self.mixins_globalsettings = {}
