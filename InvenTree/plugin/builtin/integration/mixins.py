@@ -36,16 +36,13 @@ class SettingsMixin:
 
         # Find the plugin configuration associated with this plugin
 
-        try:
-            plugin, _ = PluginConfig.objects.get_or_create(key=self.plugin_slug(), name=self.plugin_name())
-        except (OperationalError, ProgrammingError) as error:
-            plugin = None
-        
-        if not plugin:
+        plugin = self.plugin_config()
+
+        if plugin:
+            return PluginSetting.get_setting(key, plugin=plugin, settings=self.settings)
+        else:
             # Plugin cannot be found, return default value
             return PluginSetting.get_setting_default(key, settings=self.settings)
-
-        return PluginSetting.get_setting(key, plugin=plugin, settings=self.settings)
 
     def set_setting(self, key, value, user):
         """
@@ -54,12 +51,12 @@ class SettingsMixin:
 
         try:
             plugin, _ = PluginConfig.objects.get_or_create(key=self.plugin_slug(), name=self.plugin_name())
-        except (OperationalError, ProgrammingError) as error:
+        except (OperationalError, ProgrammingError):
             plugin = None
 
         if not plugin:
             # Cannot find associated plugin model, return
-            return        
+            return
 
         PluginSetting.set_setting(key, value, user, plugin=plugin, settings=self.settings)
 

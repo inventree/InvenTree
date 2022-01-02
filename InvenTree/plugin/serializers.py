@@ -14,7 +14,9 @@ from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
 
-from plugin.models import PluginConfig
+from common.serializers import SettingsSerializer
+
+from plugin.models import PluginConfig, PluginSetting
 
 
 class PluginConfigSerializer(serializers.ModelSerializer):
@@ -117,3 +119,24 @@ class PluginConfigInstallSerializer(serializers.Serializer):
         # TODO
 
         return ret
+
+
+class PluginSettingSerializer(SettingsSerializer):
+    """
+    Serializer for the PluginSetting model
+    """
+
+    plugin = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = PluginSetting
+        fields = [
+            'pk',
+            'key',
+            'value',
+            'name',
+            'description',
+            'type',
+            'choices',
+            'plugin',
+        ]

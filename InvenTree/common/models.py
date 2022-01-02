@@ -71,7 +71,7 @@ class BaseInvenTreeSetting(models.Model):
         super().save()
 
     @classmethod
-    def allValues(cls, user=None, plugin=None, exclude_hidden=False):
+    def allValues(cls, user=None, exclude_hidden=False):
         """
         Return a dict of "all" defined global settings.
 
@@ -85,10 +85,6 @@ class BaseInvenTreeSetting(models.Model):
         # Optionally filter by user
         if user is not None:
             results = results.filter(user=user)
-
-        # Optionally filter by plugin
-        if plugin is not None:
-            results = results.filter(plugin=plugin)
 
         # Query the database
         settings = {}
@@ -238,15 +234,11 @@ class BaseInvenTreeSetting(models.Model):
 
         settings = cls.objects.all()
 
+        # Filter by user
         user = kwargs.get('user', None)
 
         if user is not None:
             settings = settings.filter(user=user)
-
-        plugin = kwargs.get('plugin', None)
-
-        if plugin is not None:
-            settings = settings.filter(plugin=plugin)
 
         try:
             setting = settings.filter(**cls.get_filters(key, **kwargs)).first()
@@ -254,6 +246,16 @@ class BaseInvenTreeSetting(models.Model):
             setting = None
         except (IntegrityError, OperationalError):
             setting = None
+
+        plugin = kwargs.pop('plugin', None)
+
+        if plugin:
+            from plugin import InvenTreePlugin
+
+            if issubclass(plugin.__class__, InvenTreePlugin):
+                plugin = plugin.plugin_config()
+
+            kwargs['plugin'] = plugin
 
         # Setting does not exist! (Try to create it)
         if not setting:
@@ -554,7 +556,9 @@ class BaseInvenTreeSetting(models.Model):
 
 
 def settings_group_options():
-    """build up group tuple for settings based on gour choices"""
+    """
+    Build up group tuple for settings based on your choices
+    """
     return [('', _('No group')), *[(str(a.id), str(a)) for a in Group.objects.all()]]
 
 

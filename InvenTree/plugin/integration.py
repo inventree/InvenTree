@@ -9,7 +9,6 @@ import pathlib
 
 from django.urls.base import reverse
 from django.conf import settings
-from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 
 import plugin.plugin as plugin

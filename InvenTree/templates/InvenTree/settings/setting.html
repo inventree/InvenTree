@@ -1,10 +1,12 @@
 {% load inventree_extras %}
 {% load i18n %}
 
-{% if user_setting %}
-    {% setting_object key user=request.user as setting %}
+{% if plugin %}
+{% setting_object key plugin=plugin as setting %}
+{% elif user_setting %}
+{% setting_object key user=request.user as setting %}
 {% else %}
-    {% setting_object key as setting %}
+{% setting_object key as setting %}
 {% endif %}
 
 <tr>

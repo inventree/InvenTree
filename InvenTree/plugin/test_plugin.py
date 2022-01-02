@@ -8,7 +8,7 @@ from plugin.samples.integration.sample import SampleIntegrationPlugin
 from plugin.samples.integration.another_sample import WrongIntegrationPlugin, NoIntegrationPlugin
 # from plugin.plugins import load_action_plugins, load_barcode_plugins
 import plugin.templatetags.plugin_extras as plugin_tags
-from plugin import plugin_reg
+from plugin import plugin_registry
 
 
 class InvenTreePluginTests(TestCase):
@@ -57,17 +57,17 @@ class PluginTagTests(TestCase):
 
     def test_tag_plugin_list(self):
         """test that all plugins are listed"""
-        self.assertEqual(plugin_tags.plugin_list(), plugin_reg.plugins)
+        self.assertEqual(plugin_tags.plugin_list(), plugin_registry.plugins)
 
     def test_tag_incative_plugin_list(self):
         """test that all inactive plugins are listed"""
-        self.assertEqual(plugin_tags.inactive_plugin_list(), plugin_reg.plugins_inactive)
+        self.assertEqual(plugin_tags.inactive_plugin_list(), plugin_registry.plugins_inactive)
 
     def test_tag_plugin_settings(self):
         """check all plugins are listed"""
         self.assertEqual(
             plugin_tags.plugin_settings(self.sample),
-            plugin_reg.mixins_settings.get(self.sample)
+            plugin_registry.mixins_settings.get(self.sample)
         )
 
     def test_tag_mixin_enabled(self):
@@ -89,4 +89,4 @@ class PluginTagTests(TestCase):
 
     def test_tag_plugin_errors(self):
         """test that all errors are listed"""
-        self.assertEqual(plugin_tags.plugin_errors(), plugin_reg.errors)
+        self.assertEqual(plugin_tags.plugin_errors(), plugin_registry.errors)

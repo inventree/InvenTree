@@ -6,6 +6,7 @@ from django.contrib import admin
 import plugin.models as models
 import plugin.registry as registry
 
+
 def plugin_update(queryset, new_status: bool):
     """general function for bulk changing plugins"""
     apps_changed = False

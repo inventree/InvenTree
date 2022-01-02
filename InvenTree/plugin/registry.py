@@ -33,7 +33,7 @@ from .helpers import get_plugin_error, IntegrationPluginError
 logger = logging.getLogger('inventree')
 
 
-class Plugins:
+class PluginsRegistry:
     def __init__(self) -> None:
         # plugin registry
         self.plugins = {}
@@ -225,7 +225,8 @@ class Plugins:
                 self.plugins_inactive[plug_key] = plugin_db_setting
 
     def _activate_plugins(self, force_reload=False):
-        """run integration functions for all plugins
+        """
+        Run integration functions for all plugins
 
         :param force_reload: force reload base apps, defaults to False
         :type force_reload: bool, optional
@@ -238,13 +239,13 @@ class Plugins:
         self.activate_integration_app(plugins, force_reload=force_reload)
 
     def _deactivate_plugins(self):
-        """run integration deactivation functions for all plugins"""
+        """
+        Run integration deactivation functions for all plugins
+        """
         self.deactivate_integration_app()
         self.deactivate_integration_globalsettings()
     # endregion
 
-    # region specific integrations
-    # region integration_globalsettings
     def activate_integration_globalsettings(self, plugins):
         from common.models import InvenTreeSetting
 
@@ -255,24 +256,16 @@ class Plugins:
                     plugin_setting = plugin.settings
                     self.mixins_settings[slug] = plugin_setting
 
-                    # Add to settings dir
-                    InvenTreeSetting.SETTINGS.update(plugin_setting)
-
     def deactivate_integration_globalsettings(self):
-        from common.models import InvenTreeSetting
 
         # collect all settings
         plugin_settings = {}
+
         for _, plugin_setting in self.mixins_settings.items():
             plugin_settings.update(plugin_setting)
 
-        # remove settings
-        for setting in plugin_settings:
-            InvenTreeSetting.SETTINGS.pop(setting)
-
         # clear cache
         self.mixins_Fsettings = {}
-    # endregion
 
     # region integration_app
     def activate_integration_app(self, plugins, force_reload=False):
@@ -452,4 +445,4 @@ class Plugins:
     # endregion
 
 
-plugins = Plugins()
+plugin_registry = PluginsRegistry()

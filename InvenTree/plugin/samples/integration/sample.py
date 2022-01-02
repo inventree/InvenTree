@@ -52,6 +52,18 @@ class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixi
             'name': _('Numerical'),
             'description': _('A numerical setting'),
             'validator': int,
+            'default': 123,
+        },
+        'CHOICE_SETTING': {
+            'name': _("Choice Setting"),
+            'description': _('A setting with multiple choices'),
+            'choices': [
+                ('A', 'Anaconda'),
+                ('B', 'Bat'),
+                ('C', 'Cat'),
+                ('D', 'Dog'),
+            ],
+            'default': 'A',
         },
     }
 

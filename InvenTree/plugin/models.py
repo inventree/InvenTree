@@ -10,7 +10,7 @@ from django.db import models
 
 import common.models
 
-from plugin import plugin_reg
+from plugin import InvenTreePlugin, plugin_registry
 
 
 class PluginConfig(models.Model):
@@ -72,7 +72,7 @@ class PluginConfig(models.Model):
         self.__org_active = self.active
 
         # append settings from registry
-        self.plugin = plugin_reg.plugins.get(self.key, None)
+        self.plugin = plugin_registry.plugins.get(self.key, None)
 
         def get_plugin_meta(name):
             if self.plugin:
@@ -95,10 +95,10 @@ class PluginConfig(models.Model):
 
         if not reload:
             if self.active is False and self.__org_active is True:
-                plugin_reg.reload_plugins()
+                plugin_registry.reload_plugins()
 
             elif self.active is True and self.__org_active is False:
-                plugin_reg.reload_plugins()
+                plugin_registry.reload_plugins()
 
         return ret
 
@@ -113,6 +113,58 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
             ('plugin', 'key'),
         ]
 
+    """
+    We override the following class methods,
+    so that we can pass the plugin instance
+    """
+
+    @property
+    def name(self):
+        return self.__class__.get_setting_name(self.key, plugin=self.plugin)
+
+    @property
+    def default_value(self):
+        return self.__class__.get_setting_default(self.key, plugin=self.plugin)
+
+    @property
+    def description(self):
+        return self.__class__.get_setting_description(self.key, plugin=self.plugin)
+
+    @property
+    def units(self):
+        return self.__class__.get_setting_units(self.key, plugin=self.plugin)
+
+    def choices(self):
+        return self.__class__.get_setting_choices(self.key, plugin=self.plugin)
+
+    @classmethod
+    def get_setting_definition(cls, key, **kwargs):
+        """
+        In the BaseInvenTreeSetting class, we have a class attribute named 'SETTINGS',
+        which is a dict object that fully defines all the setting parameters.
+
+        Here, unlike the BaseInvenTreeSetting, we do not know the definitions of all settings
+        'ahead of time' (as they are defined externally in the plugins).
+
+        Settings can be provided by the caller, as kwargs['settings'].
+
+        If not provided, we'll look at the plugin registry to see what settings are available,
+        (if the plugin is specified!)
+        """
+
+        if 'settings' not in kwargs:
+
+            plugin = kwargs.pop('plugin', None)
+
+            if plugin:
+
+                if issubclass(plugin.__class__, InvenTreePlugin):
+                    plugin = plugin.plugin_config()
+
+                kwargs['settings'] = plugin_registry.mixins_settings.get(plugin.key, {})
+
+        return super().get_setting_definition(key, **kwargs)
+
     @classmethod
     def get_filters(cls, key, **kwargs):
         """
@@ -124,6 +176,8 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
         plugin = kwargs.get('plugin', None)
 
         if plugin:
+            if issubclass(plugin.__class__, InvenTreePlugin):
+                plugin = plugin.plugin_config()
             filters['plugin'] = plugin
 
         return filters
