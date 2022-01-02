@@ -26,9 +26,9 @@ def inactive_plugin_list(*args, **kwargs):
 
 
 @register.simple_tag()
-def plugin_globalsettings(plugin, *args, **kwargs):
-    """ Return a list of all global settings for a plugin """
-    return plugin_reg.mixins_globalsettings.get(plugin)
+def plugin_settings(plugin, *args, **kwargs):
+    """ Return a list of all custom settings for a plugin """
+    return plugin_reg.mixins_settings.get(plugin)
 
 
 @register.simple_tag()

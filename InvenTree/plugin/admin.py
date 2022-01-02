@@ -4,8 +4,7 @@ from __future__ import unicode_literals
 from django.contrib import admin
 
 import plugin.models as models
-from plugin import plugin_reg
-
+import plugin.registry as registry
 
 def plugin_update(queryset, new_status: bool):
     """general function for bulk changing plugins"""
@@ -20,7 +19,7 @@ def plugin_update(queryset, new_status: bool):
 
     # reload plugins if they changed
     if apps_changed:
-        plugin_reg.reload_plugins()
+        registry.plugin_registry.reload_plugins()
 
 
 @admin.action(description='Activate plugin(s)')
@@ -41,6 +40,13 @@ class PluginSettingInline(admin.TabularInline):
     """
 
     model = models.PluginSetting
+
+    read_only_fields = [
+        'key',
+    ]
+
+    def has_add_permission(self, request, obj):
+        return False
 
 
 class PluginConfigAdmin(admin.ModelAdmin):

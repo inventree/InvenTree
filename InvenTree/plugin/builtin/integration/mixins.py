@@ -3,7 +3,9 @@ Plugin mixin classes
 """
 
 from django.conf.urls import url, include
+from django.db.utils import OperationalError, ProgrammingError
 
+from plugin.models import PluginConfig, PluginSetting
 from plugin.urls import PLUGIN_BASE
 
 
@@ -18,43 +20,48 @@ class SettingsMixin:
     def __init__(self):
         super().__init__()
         self.add_mixin('settings', 'has_settings', __class__)
-        self.globalsettings = getattr(self, 'SETTINGS', None)
+        self.settings = getattr(self, 'SETTINGS', {})
 
     @property
     def has_settings(self):
         """
         Does this plugin use custom global settings
         """
-        return bool(self.globalsettings)
+        return bool(self.settings)
 
-    @property
-    def globalsettingspatterns(self):
+    def get_setting(self, key):
         """
-        Get patterns for InvenTreeSetting defintion
+        Return the 'value' of the setting associated with this plugin
         """
-        if self.has_settings:
-            return {f'PLUGIN_{self.slug.upper()}_{key}': value for key, value in self.globalsettings.items()}
-        return None
 
-    def _globalsetting_name(self, key):
-        """
-        Get global name of setting
-        """
-        return f'PLUGIN_{self.slug.upper()}_{key}'
+        # Find the plugin configuration associated with this plugin
 
-    def get_globalsetting(self, key):
-        """
-        get plugin global setting by key
-        """
-        from common.models import InvenTreeSetting
-        return InvenTreeSetting.get_setting(self._globalsetting_name(key))
+        try:
+            plugin, _ = PluginConfig.objects.get_or_create(key=self.plugin_slug(), name=self.plugin_name())
+        except (OperationalError, ProgrammingError) as error:
+            plugin = None
+        
+        if not plugin:
+            # Plugin cannot be found, return default value
+            return PluginSetting.get_setting_default(key, settings=self.settings)
 
-    def set_globalsetting(self, key, value, user):
+        return PluginSetting.get_setting(key, plugin=plugin, settings=self.settings)
+
+    def set_setting(self, key, value, user):
         """
-        set plugin global setting by key
+        Set plugin setting value by key
         """
-        from common.models import InvenTreeSetting
-        return InvenTreeSetting.set_setting(self._globalsetting_name(key), value, user)
+
+        try:
+            plugin, _ = PluginConfig.objects.get_or_create(key=self.plugin_slug(), name=self.plugin_name())
+        except (OperationalError, ProgrammingError) as error:
+            plugin = None
+
+        if not plugin:
+            # Cannot find associated plugin model, return
+            return        
+
+        PluginSetting.set_setting(key, value, user, plugin=plugin, settings=self.settings)
 
 
 class UrlsMixin:

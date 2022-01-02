@@ -13,7 +13,7 @@
         <span class='fas {{ icon }}'></span>
         {% endif %}
     </td>
-    <td><strong>{% trans setting.name %}</strong></td>
+    <td><strong>{{ setting.name }}</strong></td>
     <td>
         {% if setting.is_bool %}
         <div class='form-check form-switch'>
@@ -32,7 +32,7 @@
         </div>
         {% endif %}
     <td>
-        {% trans setting.description %}
+        {{ setting.description }}
     </td>
     <td>
         <div class='btn-group float-right'>

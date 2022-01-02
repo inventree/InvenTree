@@ -50,7 +50,7 @@ class Plugins:
         # integration specific
         self.installed_apps = []         # Holds all added plugin_paths
         # mixins
-        self.mixins_globalsettings = {}
+        self.mixins_settings = {}
 
     # region public plugin functions
     def load_plugins(self):
@@ -252,8 +252,8 @@ class Plugins:
             logger.info('Registering IntegrationPlugin global settings')
             for slug, plugin in plugins:
                 if plugin.mixin_enabled('settings'):
-                    plugin_setting = plugin.globalsettingspatterns
-                    self.mixins_globalsettings[slug] = plugin_setting
+                    plugin_setting = plugin.settings
+                    self.mixins_settings[slug] = plugin_setting
 
                     # Add to settings dir
                     InvenTreeSetting.SETTINGS.update(plugin_setting)
@@ -263,7 +263,7 @@ class Plugins:
 
         # collect all settings
         plugin_settings = {}
-        for _, plugin_setting in self.mixins_globalsettings.items():
+        for _, plugin_setting in self.mixins_settings.items():
             plugin_settings.update(plugin_setting)
 
         # remove settings
@@ -271,7 +271,7 @@ class Plugins:
             InvenTreeSetting.SETTINGS.pop(setting)
 
         # clear cache
-        self.mixins_globalsettings = {}
+        self.mixins_Fsettings = {}
     # endregion
 
     # region integration_app

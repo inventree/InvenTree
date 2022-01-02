@@ -46,15 +46,15 @@ class SettingsMixinTest(BaseMixinDefinition, TestCase):
 
         # calling settings
         # not existing
-        self.assertEqual(self.mixin.get_globalsetting('ABCD'), '')
-        self.assertEqual(self.mixin_nothing.get_globalsetting('ABCD'), '')
+        self.assertEqual(self.mixin.get_setting('ABCD'), '')
+        self.assertEqual(self.mixin_nothing.get_setting('ABCD'), '')
 
         # right setting
-        self.mixin.set_globalsetting('SETTING1', '12345', self.test_user)
-        self.assertEqual(self.mixin.get_globalsetting('SETTING1'), '12345')
+        self.mixin.set_setting('SETTING1', '12345', self.test_user)
+        self.assertEqual(self.mixin.get_setting('SETTING1'), '12345')
 
         # no setting
-        self.assertEqual(self.mixin_nothing.get_globalsetting(''), '')
+        self.assertEqual(self.mixin_nothing.get_setting(''), '')
 
 
 class UrlsMixinTest(BaseMixinDefinition, TestCase):
