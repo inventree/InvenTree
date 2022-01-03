@@ -22,3 +22,4 @@ jobs:
         stale-issue-label: 'no-activity'
         stale-pr-label: 'no-activity'
         start-date: '2022-01-01'
+        exempt-all-milestones: true
