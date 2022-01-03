@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-31 06:22+0000\n"
-"PO-Revision-Date: 2021-12-31 06:27\n"
+"PO-Revision-Date: 2022-01-03 09:49\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -1138,7 +1138,7 @@ msgstr "Achterstallig"
 #: templates/js/translated/build.js:1647
 #: templates/js/translated/table_filters.js:370
 msgid "Completed"
-msgstr ""
+msgstr "Voltooid"
 
 #: build/templates/build/build_base.html:171
 #: build/templates/build/detail.html:95 order/models.py:927
@@ -1224,15 +1224,15 @@ msgstr ""
 #: build/templates/build/detail.html:50 order/models.py:878 stock/forms.py:136
 #: templates/js/translated/order.js:592 templates/js/translated/order.js:1138
 msgid "Destination"
-msgstr ""
+msgstr "Bestemming"
 
 #: build/templates/build/detail.html:57
 msgid "Destination location not specified"
-msgstr ""
+msgstr "Bestemmingslocatie niet opgegeven"
 
 #: build/templates/build/detail.html:74 templates/js/translated/build.js:652
 msgid "Allocated Parts"
-msgstr ""
+msgstr "Toegewezen onderdelen"
 
 #: build/templates/build/detail.html:81
 #: stock/templates/stock/item_base.html:330
