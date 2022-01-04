@@ -8,30 +8,38 @@ import plugin.registry as registry
 
 
 def plugin_update(queryset, new_status: bool):
-    """general function for bulk changing plugins"""
+    """
+    General function for bulk changing plugins
+    """
+
     apps_changed = False
 
-    # run through all plugins in the queryset as the save method needs to be overridden
+    # Run through all plugins in the queryset as the save method needs to be overridden
     for plugin in queryset:
         if plugin.active is not new_status:
             plugin.active = new_status
             plugin.save(no_reload=True)
             apps_changed = True
 
-    # reload plugins if they changed
+    # Reload plugins if they changed
     if apps_changed:
         registry.plugin_registry.reload_plugins()
 
 
 @admin.action(description='Activate plugin(s)')
 def plugin_activate(modeladmin, request, queryset):
-    """activate a set of plugins"""
+    """
+    Activate a set of plugins
+    """
     plugin_update(queryset, True)
 
 
 @admin.action(description='Deactivate plugin(s)')
 def plugin_deactivate(modeladmin, request, queryset):
-    """deactivate a set of plugins"""
+    """
+    Deactivate a set of plugins
+    """
+
     plugin_update(queryset, False)
 
 
@@ -51,7 +59,10 @@ class PluginSettingInline(admin.TabularInline):
 
 
 class PluginConfigAdmin(admin.ModelAdmin):
-    """Custom admin with restricted id fields"""
+    """
+    Custom admin with restricted id fields
+    """
+
     readonly_fields = ["key", "name", ]
     list_display = ['name', 'key', '__str__', 'active', ]
     list_filter = ['active']

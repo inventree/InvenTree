@@ -42,7 +42,7 @@ class SettingsMixinTest(BaseMixinDefinition, TestCase):
 
     def test_function(self):
         # settings variable
-        self.assertEqual(self.mixin.globalsettings, self.TEST_SETTINGS)
+        self.assertEqual(self.mixin.settings, self.TEST_SETTINGS)
 
         # calling settings
         # not existing

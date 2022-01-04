@@ -19,19 +19,27 @@ logger = logging.getLogger("inventree")
 
 
 class MixinBase:
-    """general base for mixins"""
+    """
+    General base for mixins
+    """
 
     def __init__(self) -> None:
         self._mixinreg = {}
         self._mixins = {}
 
     def add_mixin(self, key: str, fnc_enabled=True, cls=None):
-        """add a mixin to the plugins registry"""
+        """
+        Add a mixin to the plugins registry
+        """
+
         self._mixins[key] = fnc_enabled
         self.setup_mixin(key, cls=cls)
 
     def setup_mixin(self, key, cls=None):
-        """define mixin details for the current mixin -> provides meta details for all active mixins"""
+        """
+        Define mixin details for the current mixin -> provides meta details for all active mixins
+        """
+
         # get human name
         human_name = getattr(cls.MixinMeta, 'MIXIN_NAME', key) if cls and hasattr(cls, 'MixinMeta') else key
 
@@ -43,7 +51,10 @@ class MixinBase:
 
     @property
     def registered_mixins(self, with_base: bool = False):
-        """get all registered mixins for the plugin"""
+        """
+        Get all registered mixins for the plugin
+        """
+
         mixins = getattr(self, '_mixinreg', None)
         if mixins:
             # filter out base

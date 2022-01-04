@@ -1,5 +1,5 @@
 """
-JSON serializers for Stock app
+JSON serializers for plugin app
 """
 
 # -*- coding: utf-8 -*-
@@ -20,7 +20,8 @@ from plugin.models import PluginConfig, PluginSetting
 
 
 class PluginConfigSerializer(serializers.ModelSerializer):
-    """ Serializer for a PluginConfig:
+    """
+    Serializer for a PluginConfig:
     """
 
     meta = serializers.DictField(read_only=True)
@@ -73,7 +74,7 @@ class PluginConfigInstallSerializer(serializers.Serializer):
         if not data.get('confirm'):
             raise ValidationError({'confirm': _('Installation not confirmed')})
         if (not data.get('url')) and (not data.get('packagename')):
-            msg = _('Either packagenmae of url must be provided')
+            msg = _('Either packagename of URL must be provided')
             raise ValidationError({'url': msg, 'packagename': msg})
 
         return data
@@ -115,7 +116,7 @@ class PluginConfigInstallSerializer(serializers.Serializer):
             ret['result'] = str(error.output, 'utf-8')
             ret['error'] = True
 
-        # register plugins
+        # Register plugins
         # TODO
 
         return ret

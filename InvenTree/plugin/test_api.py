@@ -8,7 +8,7 @@ from InvenTree.api_tester import InvenTreeAPITestCase
 
 class PluginDetailAPITest(InvenTreeAPITestCase):
     """
-    Tests the plugin AP I endpoints
+    Tests the plugin API endpoints
     """
 
     roles = [
@@ -19,7 +19,7 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
     ]
 
     def setUp(self):
-        self.MSG_NO_PKG = 'Either packagenmae of url must be provided'
+        self.MSG_NO_PKG = 'Either packagename of URL must be provided'
 
         self.PKG_NAME = 'minimal'
         super().setUp()

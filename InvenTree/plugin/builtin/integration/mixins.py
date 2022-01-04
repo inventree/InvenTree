@@ -34,17 +34,9 @@ class SettingsMixin:
         Return the 'value' of the setting associated with this plugin
         """
 
-        # Find the plugin configuration associated with this plugin
+        return PluginSetting.get_setting(key, plugin=self)
 
-        plugin = self.plugin_config()
-
-        if plugin:
-            return PluginSetting.get_setting(key, plugin=plugin, settings=self.settings)
-        else:
-            # Plugin cannot be found, return default value
-            return PluginSetting.get_setting_default(key, settings=self.settings)
-
-    def set_setting(self, key, value, user):
+    def set_setting(self, key, value, user=None):
         """
         Set plugin setting value by key
         """
@@ -58,7 +50,7 @@ class SettingsMixin:
             # Cannot find associated plugin model, return
             return
 
-        PluginSetting.set_setting(key, value, user, plugin=plugin, settings=self.settings)
+        PluginSetting.set_setting(key, value, user, plugin=plugin)
 
 
 class UrlsMixin:

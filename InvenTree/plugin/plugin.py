@@ -18,9 +18,9 @@ class InvenTreePlugin():
     # Override the plugin name for each concrete plugin instance
     PLUGIN_NAME = ''
 
-    PLUGIN_SLUG = ''
+    PLUGIN_SLUG = None
 
-    PLUGIN_TITLE = ''
+    PLUGIN_TITLE = None
 
     def plugin_name(self):
         """
@@ -35,11 +35,14 @@ class InvenTreePlugin():
         if slug is None:
             slug = self.plugin_name()
 
-        return slugify(slug)
+        return slugify(slug.lower())
 
     def plugin_title(self):
 
-        return self.PLUGIN_TITLE
+        if self.PLUGIN_TITLE:
+            return self.PLUGIN_TITLE
+        else:
+            return self.plugin_name()
 
     def plugin_config(self, raise_error=False):
         """
