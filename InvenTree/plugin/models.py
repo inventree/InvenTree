@@ -113,6 +113,12 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
             ('plugin', 'key'),
         ]
 
+    def clean(self, **kwargs):
+
+        kwargs['plugin'] = self.plugin
+
+        super().clean(**kwargs)
+
     """
     We override the following class methods,
     so that we can pass the plugin instance

@@ -371,22 +371,13 @@ class BaseInvenTreeSetting(models.Model):
 
         validator = self.__class__.get_setting_validator(self.key, **kwargs)
 
-        if self.is_bool():
-            self.value = InvenTree.helpers.str2bool(self.value)
-
-        if self.is_int():
-            try:
-                self.value = int(self.value)
-            except (ValueError):
-                raise ValidationError(_('Must be an integer value'))
+        if validator is not None:
+            self.run_validator(validator)
 
         options = self.valid_options()
 
         if options and self.value not in options:
             raise ValidationError(_("Chosen value is not a valid option"))
-
-        if validator is not None:
-            self.run_validator(validator)
 
     def run_validator(self, validator):
         """
@@ -399,7 +390,7 @@ class BaseInvenTreeSetting(models.Model):
         value = self.value
 
         # Boolean validator
-        if self.is_bool():
+        if validator is bool:
             # Value must "look like" a boolean value
             if InvenTree.helpers.is_bool(value):
                 # Coerce into either "True" or "False"
@@ -410,7 +401,7 @@ class BaseInvenTreeSetting(models.Model):
                 })
 
         # Integer validator
-        if self.is_int():
+        if validator is int:
 
             try:
                 # Coerce into an integer value

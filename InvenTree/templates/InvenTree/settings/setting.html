@@ -38,7 +38,7 @@
     </td>
     <td>
         <div class='btn-group float-right'>
-            <button class='btn btn-outline-secondary btn-small btn-edit-setting' pk='{{ setting.pk }}' setting='{{ setting.key.upper }}' title='{% trans "Edit setting" %}' {% if user_setting %}user='{{request.user.id}}'{% endif %}>
+            <button class='btn btn-outline-secondary btn-small btn-edit-setting' pk='{{ setting.pk }}' setting='{{ setting.key.upper }}' title='{% trans "Edit setting" %}' {% if plugin %}plugin='{{ plugin.pk }}'{% endif %}{% if user_setting %}user='{{request.user.id}}'{% endif %}>
                 <span class='fas fa-edit icon-green'></span>
             </button>
         </div>
