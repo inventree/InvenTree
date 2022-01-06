@@ -70,7 +70,7 @@
                 {% if mixin_list %}
                 {% for mixin in mixin_list %}
                 <a class='sidebar-selector' id='select-plugin-{{plugin_key}}' data-bs-parent="#sidebar">
-                    <span class='badge bg-dark badge-right'>{% blocktrans with name=mixin.human_name %}has {{name}}{% endblocktrans %}</span>
+                    <span class='badge bg-dark badge-right'>{{ mixin.human_name }}</span>
                 </a>
                 {% endfor %}
                 {% endif %}

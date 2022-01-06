@@ -109,7 +109,7 @@ class BuildOutputCreate(AjaxUpdateView):
         # Check that the serial numbers are valid
         if serials:
             try:
-                extracted = extract_serial_numbers(serials, quantity)
+                extracted = extract_serial_numbers(serials, quantity, build.part.getLatestSerialNumberInt())
 
                 if extracted:
                     # Check for conflicting serial numbers
@@ -143,7 +143,7 @@ class BuildOutputCreate(AjaxUpdateView):
         serials = data.get('serial_numbers', None)
 
         if serials:
-            serial_numbers = extract_serial_numbers(serials, quantity)
+            serial_numbers = extract_serial_numbers(serials, quantity, build.part.getLatestSerialNumberInt())
         else:
             serial_numbers = None
 
