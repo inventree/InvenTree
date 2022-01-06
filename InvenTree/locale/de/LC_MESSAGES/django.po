@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-31 06:22+0000\n"
-"PO-Revision-Date: 2022-01-06 00:14\n"
+"PO-Revision-Date: 2022-01-06 01:23\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -3297,11 +3297,11 @@ msgstr "Anzahl für serialisierte Lagerartikel muss 1 sein"
 
 #: order/models.py:1173
 msgid "Sales order does not match shipment"
-msgstr ""
+msgstr "Auftrag gehört nicht zu Sendung"
 
 #: order/models.py:1174
 msgid "Shipment does not match sales order"
-msgstr ""
+msgstr "Sendung gehört nicht zu Auftrag"
 
 #: order/models.py:1182
 msgid "Line"
@@ -3402,7 +3402,7 @@ msgstr "Folgende Serienummern konnten nicht gefunden werden"
 
 #: order/serializers.py:904
 msgid "The following serial numbers are already allocated"
-msgstr ""
+msgstr "Folgende Seriennummern sind bereits zugewiesen"
 
 #: order/templates/order/delete_attachment.html:5
 #: stock/templates/stock/attachment_delete.html:5
@@ -3460,13 +3460,13 @@ msgstr "Bestellstatus"
 #: order/templates/order/order_base.html:124
 #: order/templates/order/sales_order_base.html:128
 msgid "Completed Line Items"
-msgstr ""
+msgstr "Abgeschlossene Positionen"
 
 #: order/templates/order/order_base.html:130
 #: order/templates/order/sales_order_base.html:134
 #: order/templates/order/sales_order_base.html:144
 msgid "Incomplete"
-msgstr ""
+msgstr "Unvollständig"
 
 #: order/templates/order/order_base.html:149
 #: report/templates/report/inventree_build_order_base.html:122
@@ -3702,7 +3702,7 @@ msgstr "Paketliste drucken"
 #: order/templates/order/sales_order_base.html:66
 #: order/templates/order/sales_order_base.html:229
 msgid "Complete Sales Order"
-msgstr ""
+msgstr "Auftrag abschließen"
 
 #: order/templates/order/sales_order_base.html:102
 msgid "This Sales Order has not been fully allocated"
@@ -3717,7 +3717,7 @@ msgstr "Kundenreferenz"
 #: order/templates/order/sales_order_detail.html:78
 #: order/templates/order/so_sidebar.html:11
 msgid "Completed Shipments"
-msgstr ""
+msgstr "Abgeschlossene Sendungen"
 
 #: order/templates/order/sales_order_base.html:215
 msgid "Edit Sales Order"
@@ -3739,7 +3739,7 @@ msgstr "Auftrags-Positionen"
 #: order/templates/order/sales_order_detail.html:44
 #: order/templates/order/so_sidebar.html:8
 msgid "Pending Shipments"
-msgstr ""
+msgstr "Ausstehende Sendungen"
 
 #: order/templates/order/sales_order_detail.html:48
 #: templates/js/translated/bom.js:720 templates/js/translated/build.js:1188
@@ -3748,7 +3748,7 @@ msgstr "Aktionen"
 
 #: order/templates/order/sales_order_detail.html:57
 msgid "New Shipment"
-msgstr ""
+msgstr "Neue Sendung"
 
 #: order/views.py:99
 msgid "Cancel Order"
