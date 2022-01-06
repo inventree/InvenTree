@@ -861,7 +861,7 @@ class SOSerialAllocationSerializer(serializers.Serializer):
         part = line_item.part
 
         try:
-            data['serials'] = extract_serial_numbers(serial_numbers, quantity)
+            data['serials'] = extract_serial_numbers(serial_numbers, quantity, part.getLatestSerialNumberInt())
         except DjangoValidationError as e:
             raise ValidationError({
                 'serial_numbers': e.messages,

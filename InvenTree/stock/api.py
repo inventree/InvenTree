@@ -480,18 +480,6 @@ class StockList(generics.ListCreateAPIView):
 
         notes = data.get('notes', '')
 
-        serials = None
-
-        if serial_numbers:
-            # If serial numbers are specified, check that they match!
-            try:
-                serials = extract_serial_numbers(serial_numbers, data['quantity'])
-            except DjangoValidationError as e:
-                raise ValidationError({
-                    'quantity': e.messages,
-                    'serial_numbers': e.messages,
-                })
-
         with transaction.atomic():
 
             # Create an initial stock item
@@ -506,6 +494,19 @@ class StockList(generics.ListCreateAPIView):
 
                 if item.part.default_expiry > 0:
                     item.expiry_date = datetime.now().date() + timedelta(days=item.part.default_expiry)
+
+            # fetch serial numbers
+            serials = None
+
+            if serial_numbers:
+                # If serial numbers are specified, check that they match!
+                try:
+                    serials = extract_serial_numbers(serial_numbers, quantity, item.part.getLatestSerialNumberInt())
+                except DjangoValidationError as e:
+                    raise ValidationError({
+                        'quantity': e.messages,
+                        'serial_numbers': e.messages,
+                    })
 
             # Finally, save the item (with user information)
             item.save(user=user)
