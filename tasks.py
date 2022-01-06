@@ -71,16 +71,31 @@ def manage(c, cmd, pty=False):
         cmd=cmd
     ), pty=pty)
 
-
 @task
+def plugins(c):
+    """
+    Installs all plugins as specified in 'plugins.txt'
+    """
+
+    from InvenTree.InvenTree.config import get_plugin_file
+
+    plugin_file = get_plugin_file()
+
+    print(f"Installing plugin packages from '{plugin_file}'")
+
+    # Install the plugins
+    c.run(f"pip3 install -U -r '{plugin_file}'")
+
+@task(post=[plugins])
 def install(c):
     """
     Installs required python packages
     """
 
+    print("Installing required python packages from 'requirements.txt'")
+
     # Install required Python packages with PIP
     c.run('pip3 install -U -r requirements.txt')
-
 
 @task
 def shell(c):

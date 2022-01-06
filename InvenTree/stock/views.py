@@ -1241,7 +1241,7 @@ class StockItemCreate(AjaxCreateView):
 
             if len(sn) > 0:
                 try:
-                    serials = extract_serial_numbers(sn, quantity)
+                    serials = extract_serial_numbers(sn, quantity, part.getLatestSerialNumberInt())
                 except ValidationError as e:
                     serials = None
                     form.add_error('serial_numbers', e.messages)
@@ -1283,7 +1283,7 @@ class StockItemCreate(AjaxCreateView):
 
             # Create a single stock item for each provided serial number
             if len(sn) > 0:
-                serials = extract_serial_numbers(sn, quantity)
+                serials = extract_serial_numbers(sn, quantity, part.getLatestSerialNumberInt())
 
                 for serial in serials:
                     item = StockItem(

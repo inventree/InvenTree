@@ -407,20 +407,27 @@ def DownloadFile(data, filename, content_type='application/text', inline=False):
     return response
 
 
-def extract_serial_numbers(serials, expected_quantity):
+def extract_serial_numbers(serials, expected_quantity, next_number: int):
     """ Attempt to extract serial numbers from an input string.
     - Serial numbers must be integer values
     - Serial numbers must be positive
     - Serial numbers can be split by whitespace / newline / commma chars
     - Serial numbers can be supplied as an inclusive range using hyphen char e.g. 10-20
+    - Serial numbers can be defined as ~ for getting the next available serial number
     - Serial numbers can be supplied as <start>+ for getting all expecteded numbers starting from <start>
     - Serial numbers can be supplied as <start>+<length> for getting <length> numbers starting from <start>
 
     Args:
+        serials: input string with patterns
         expected_quantity: The number of (unique) serial numbers we expect
+        next_number(int): the next possible serial number
     """
 
     serials = serials.strip()
+
+    # fill in the next serial number into the serial
+    if '~' in serials:
+        serials = serials.replace('~', str(next_number))
 
     groups = re.split("[\s,]+", serials)
 
@@ -496,11 +503,20 @@ def extract_serial_numbers(serials, expected_quantity):
                 errors.append(_("Invalid group: {g}").format(g=group))
                 continue
 
+        # Group should be a number
+        elif group:
+            # try conversion
+            try:
+                number = int(group)
+            except:
+                # seem like it is not a number
+                raise ValidationError(_(f"Invalid group {group}"))
+
+            number_add(number)
+
+        # No valid input group detected
         else:
-            if group in numbers:
-                errors.append(_("Duplicate serial: {g}".format(g=group)))
-            else:
-                numbers.append(group)
+            raise ValidationError(_(f"Invalid/no group {group}"))
 
     if len(errors) > 0:
         raise ValidationError(errors)
