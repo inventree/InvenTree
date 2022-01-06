@@ -251,7 +251,7 @@ class Plugins:
         if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_GLOBALSETTING'):
             logger.info('Registering IntegrationPlugin global settings')
             for slug, plugin in plugins:
-                if plugin.mixin_enabled('globalsettings'):
+                if plugin.mixin_enabled('settings'):
                     plugin_setting = plugin.globalsettingspatterns
                     self.mixins_globalsettings[slug] = plugin_setting
 
