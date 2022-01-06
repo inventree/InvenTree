@@ -71,19 +71,6 @@ def manage(c, cmd, pty=False):
         cmd=cmd
     ), pty=pty)
 
-
-@task
-def install(c):
-    """
-    Installs required python packages
-    """
-
-    print("Installing required python packages from 'requirements.txt'")
-
-    # Install required Python packages with PIP
-    c.run('pip3 install -U -r requirements.txt')
-
-
 @task
 def plugins(c):
     """
@@ -99,11 +86,23 @@ def plugins(c):
     if not os.path.exists(PLUGIN_FILE):
         # Create an empty plugin 
         print(f"Plugins file '{PLUGIN_FILE}' does not exist")
+        return
 
     print(f"Installing plugin packages from '{PLUGIN_FILE}'")
 
     # Install the plugins
     c.run(f"pip3 install -U -r '{PLUGIN_FILE}'")
+
+@task(post=[plugins])
+def install(c):
+    """
+    Installs required python packages
+    """
+
+    print("Installing required python packages from 'requirements.txt'")
+
+    # Install required Python packages with PIP
+    c.run('pip3 install -U -r requirements.txt')
 
 @task
 def shell(c):

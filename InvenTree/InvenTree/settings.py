@@ -934,23 +934,6 @@ if DEBUG or TESTING:
     # load samples in debug mode
     PLUGIN_DIRS.append('plugin.samples')
 
-# Check if an external plugin directory has been specified as an environment variable
-# Note: This should be specified as INVENTREE_PLUGIN_DIR
-plugin_dir = os.getenv('INVENTREE_PLUGIN_DIR')
-
-if plugin_dir:
-    if not os.path.exists(plugin_dir):
-        logger.info(f"Plugin directory '{plugin_dir}' does not exist")
-
-        try:
-            os.makedirs(plugin_dir, exist_ok=True)
-            logger.info(f"Created plugin directory '{plugin_dir}'")
-        except:
-            logger.warning(f"Could not create plugins directory '{plugin_dir}'")
-
-    if os.path.exists(plugin_dir):
-        PLUGIN_DIRS.append(plugin_dir)
-
 # Plugin test settings
 PLUGIN_TESTING = get_setting('PLUGIN_TESTING', TESTING)  # are plugins beeing tested?
 PLUGIN_TESTING_SETUP = get_setting('PLUGIN_TESTING_SETUP', False)  # load plugins from setup hooks in testing?
