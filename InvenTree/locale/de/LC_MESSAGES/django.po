@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-31 06:22+0000\n"
-"PO-Revision-Date: 2022-01-05 23:00\n"
+"PO-Revision-Date: 2022-01-06 00:14\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -457,7 +457,7 @@ msgstr "Unterobjekt geteilt"
 
 #: InvenTree/status_codes.py:294 templates/js/translated/stock.js:2064
 msgid "Merged stock items"
-msgstr ""
+msgstr "Lagerartikel zusammengeführt"
 
 #: InvenTree/status_codes.py:296 templates/js/translated/table_filters.js:213
 msgid "Sent to customer"
@@ -565,23 +565,23 @@ msgstr "Keine passende Lagerartikel gefunden"
 
 #: barcodes/api.py:191
 msgid "Barcode already matches Stock Item"
-msgstr ""
+msgstr "Barcode entspricht bereits einem Lagerartikel"
 
 #: barcodes/api.py:195
 msgid "Barcode already matches Stock Location"
-msgstr ""
+msgstr "Barcode entspricht bereits Lagerort"
 
 #: barcodes/api.py:199
 msgid "Barcode already matches Part"
-msgstr ""
+msgstr "Barcode entspricht bereits Teil"
 
 #: barcodes/api.py:205 barcodes/api.py:217
 msgid "Barcode hash already matches Stock Item"
-msgstr ""
+msgstr "Barcode-Hash entspricht bereits einem Lagerartikel"
 
 #: barcodes/api.py:223
 msgid "Barcode associated with Stock Item"
-msgstr ""
+msgstr "Barcode Lagerartikel zugeordnet"
 
 #: build/forms.py:36 build/models.py:1286
 #: build/templates/build/build_base.html:82
@@ -1964,15 +1964,15 @@ msgstr "Gruppe der neue Benutzer bei der Registrierung zugewiesen werden"
 
 #: common/models.py:961
 msgid "Enforce MFA"
-msgstr ""
+msgstr "MFA erzwingen"
 
 #: common/models.py:962
 msgid "Users must use multifactor security."
-msgstr ""
+msgstr "Benutzer müssen Multifaktor-Authentifizierung verwenden."
 
 #: common/models.py:967
 msgid "Enable URL integration"
-msgstr ""
+msgstr "URL-Integration aktivieren"
 
 #: common/models.py:968
 msgid "Enable plugins to add URL routes"
@@ -3153,19 +3153,19 @@ msgstr "Versand von"
 
 #: order/models.py:635
 msgid "Order cannot be completed as no parts have been assigned"
-msgstr ""
+msgstr "Auftrag kann nicht abgeschlossen werden, da keine Teile zugewiesen wurden"
 
 #: order/models.py:639
 msgid "Only a pending order can be marked as complete"
-msgstr ""
+msgstr "Nur ein ausstehender Auftrag kann als abgeschlossen markiert werden"
 
 #: order/models.py:642
 msgid "Order cannot be completed as there are incomplete shipments"
-msgstr ""
+msgstr "Auftrag kann nicht abgeschlossen werden, da unvollständige Sendungen vorhanden sind"
 
 #: order/models.py:645
 msgid "Order cannot be completed as there are incomplete line items"
-msgstr ""
+msgstr "Auftrag kann nicht abgeschlossen werden, da es unvollständige Positionen gibt"
 
 #: order/models.py:797
 msgid "Item quantity"
@@ -3233,43 +3233,43 @@ msgstr "Stückverkaufspreis"
 
 #: order/models.py:942
 msgid "Shipped quantity"
-msgstr ""
+msgstr "Versendete Menge"
 
 #: order/models.py:1029
 msgid "Date of shipment"
-msgstr ""
+msgstr "Versanddatum"
 
 #: order/models.py:1036
 msgid "Checked By"
-msgstr ""
+msgstr "Kontrolliert von"
 
 #: order/models.py:1037
 msgid "User who checked this shipment"
-msgstr ""
+msgstr "Benutzer, der diese Sendung kontrolliert hat"
 
 #: order/models.py:1045
 msgid "Shipment number"
-msgstr ""
+msgstr "Sendungsnummer"
 
 #: order/models.py:1052
 msgid "Shipment notes"
-msgstr ""
+msgstr "Versandhinweise"
 
 #: order/models.py:1059
 msgid "Tracking Number"
-msgstr ""
+msgstr "Sendungsverfolgungsnummer"
 
 #: order/models.py:1060
 msgid "Shipment tracking information"
-msgstr ""
+msgstr "Informationen zur Sendungsverfolgung"
 
 #: order/models.py:1070
 msgid "Shipment has already been sent"
-msgstr ""
+msgstr "Sendung wurde bereits versandt"
 
 #: order/models.py:1073
 msgid "Shipment has no allocated stock items"
-msgstr ""
+msgstr "Sendung hat keine zugewiesene Lagerartikel"
 
 #: order/models.py:1149 order/models.py:1151
 msgid "Stock item has not been assigned"
@@ -3310,11 +3310,11 @@ msgstr "Position"
 #: order/models.py:1190 order/serializers.py:825 order/serializers.py:953
 #: templates/js/translated/model_renderers.js:251
 msgid "Shipment"
-msgstr ""
+msgstr "Sendung"
 
 #: order/models.py:1191
 msgid "Sales order shipment reference"
-msgstr ""
+msgstr "Sendungsnummer-Referenz"
 
 #: order/models.py:1203
 msgid "Item"
@@ -3374,31 +3374,31 @@ msgstr "Verkaufspreis-Währung"
 
 #: order/serializers.py:649
 msgid "No shipment details provided"
-msgstr ""
+msgstr "Keine Sendungsdetails angegeben"
 
 #: order/serializers.py:699 order/serializers.py:802
 msgid "Line item is not associated with this order"
-msgstr ""
+msgstr "Position ist nicht diesem Auftrag zugeordnet"
 
 #: order/serializers.py:721
 msgid "Quantity must be positive"
-msgstr ""
+msgstr "Anzahl muss positiv sein"
 
 #: order/serializers.py:815
 msgid "Enter serial numbers to allocate"
-msgstr ""
+msgstr "Seriennummern zum Zuweisen eingeben"
 
 #: order/serializers.py:839 order/serializers.py:964
 msgid "Shipment has already been shipped"
-msgstr ""
+msgstr "Sendung wurde bereits versandt"
 
 #: order/serializers.py:842 order/serializers.py:967
 msgid "Shipment is not associated with this order"
-msgstr ""
+msgstr "Sendung ist nicht diesem Auftrag zugeordnet"
 
 #: order/serializers.py:894
 msgid "No match found for the following serial numbers"
-msgstr ""
+msgstr "Folgende Serienummern konnten nicht gefunden werden"
 
 #: order/serializers.py:904
 msgid "The following serial numbers are already allocated"
