@@ -89,13 +89,6 @@ with open(cfg_filename, 'r') as cfg:
 # We will place any config files in the same directory as the config file
 config_dir = os.path.dirname(cfg_filename)
 
-# Check if the plugin.txt file (specifying required plugins) is specified
-PLUGIN_FILE = os.getenv('INVENTREE_PLUGIN_FILE')
-
-if not PLUGIN_FILE:
-    # If not specified, look in the same directory as the configuration file
-    PLUGIN_FILE = os.path.join(config_dir, 'plugins.txt')
-
 # Default action is to run the system in Debug mode
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = _is_true(get_setting(
@@ -149,6 +142,21 @@ LOGGING = {
 
 # Get a logger instance for this setup file
 logger = logging.getLogger("inventree")
+
+# Check if the plugin.txt file (specifying required plugins) is specified
+PLUGIN_FILE = os.getenv('INVENTREE_PLUGIN_FILE')
+
+if not PLUGIN_FILE:
+    # If not specified, look in the same directory as the configuration file
+    PLUGIN_FILE = os.path.join(config_dir, 'plugins.txt')
+
+if not os.path.exists(PLUGIN_FILE):
+    logger.warning("Plugin configuration file does not exist")
+    logger.info(f"Creating plugin file at '{PLUGIN_FILE}'")
+
+    # If opening the file fails (no write permission, for example), then this will throw an error
+    with open(PLUGIN_FILE, 'w') as plugin_file:
+        plugin_file.write("# InvenTree Plugins (uses PIP framework to install)\n\n")
 
 """
 Specify a secret key to be used by django.

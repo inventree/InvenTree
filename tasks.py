@@ -78,9 +78,32 @@ def install(c):
     Installs required python packages
     """
 
+    print("Installing required python packages from 'requirements.txt'")
+
     # Install required Python packages with PIP
     c.run('pip3 install -U -r requirements.txt')
 
+
+@task
+def plugins(c):
+    """
+    Installs all plugins as specified in 'plugins.txt'
+    """
+
+    try:
+        from InvenTree.InvenTree.settings import PLUGIN_FILE
+    except:
+        print("Error: Could not import PLUGIN_FILE from settings.py")
+        return
+    
+    if not os.path.exists(PLUGIN_FILE):
+        # Create an empty plugin 
+        print(f"Plugins file '{PLUGIN_FILE}' does not exist")
+
+    print(f"Installing plugin packages from '{PLUGIN_FILE}'")
+
+    # Install the plugins
+    c.run(f"pip3 install -U -r '{PLUGIN_FILE}'")
 
 @task
 def shell(c):
