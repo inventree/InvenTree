@@ -17,7 +17,6 @@ import os
 import random
 import socket
 import string
-import shutil
 import sys
 from datetime import datetime
 
@@ -28,30 +27,12 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.messages import constants as messages
 import django.conf.locale
 
+from .config import get_base_dir, get_config_file, get_plugin_file, get_setting
+
 
 def _is_true(x):
     # Shortcut function to determine if a value "looks" like a boolean
-    return str(x).lower() in ['1', 'y', 'yes', 't', 'true']
-
-
-def get_setting(environment_var, backup_val, default_value=None):
-    """
-    Helper function for retrieving a configuration setting value
-
-    - First preference is to look for the environment variable
-    - Second preference is to look for the value of the settings file
-    - Third preference is the default value
-    """
-
-    val = os.getenv(environment_var)
-
-    if val is not None:
-        return val
-
-    if backup_val is not None:
-        return backup_val
-
-    return default_value
+    return str(x).strip().lower() in ['1', 'y', 'yes', 't', 'true']
 
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
@@ -61,33 +42,17 @@ TESTING = 'test' in sys.argv
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = get_base_dir()
 
-# Specify where the "config file" is located.
-# By default, this is 'config.yaml'
-
-cfg_filename = os.getenv('INVENTREE_CONFIG_FILE')
-
-if cfg_filename:
-    cfg_filename = cfg_filename.strip()
-    cfg_filename = os.path.abspath(cfg_filename)
-
-else:
-    # Config file is *not* specified - use the default
-    cfg_filename = os.path.join(BASE_DIR, 'config.yaml')
-
-if not os.path.exists(cfg_filename):
-    print("InvenTree configuration file 'config.yaml' not found - creating default file")
-
-    cfg_template = os.path.join(BASE_DIR, "config_template.yaml")
-    shutil.copyfile(cfg_template, cfg_filename)
-    print(f"Created config file {cfg_filename}")
+cfg_filename = get_config_file()
 
 with open(cfg_filename, 'r') as cfg:
     CONFIG = yaml.safe_load(cfg)
 
 # We will place any config files in the same directory as the config file
 config_dir = os.path.dirname(cfg_filename)
+
+PLUGIN_FILE = get_plugin_file()
 
 # Default action is to run the system in Debug mode
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -142,21 +107,6 @@ LOGGING = {
 
 # Get a logger instance for this setup file
 logger = logging.getLogger("inventree")
-
-# Check if the plugin.txt file (specifying required plugins) is specified
-PLUGIN_FILE = os.getenv('INVENTREE_PLUGIN_FILE')
-
-if not PLUGIN_FILE:
-    # If not specified, look in the same directory as the configuration file
-    PLUGIN_FILE = os.path.join(config_dir, 'plugins.txt')
-
-if not os.path.exists(PLUGIN_FILE):
-    logger.warning("Plugin configuration file does not exist")
-    logger.info(f"Creating plugin file at '{PLUGIN_FILE}'")
-
-    # If opening the file fails (no write permission, for example), then this will throw an error
-    with open(PLUGIN_FILE, 'w') as plugin_file:
-        plugin_file.write("# InvenTree Plugins (uses PIP framework to install)\n\n")
 
 """
 Specify a secret key to be used by django.

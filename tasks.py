@@ -77,21 +77,14 @@ def plugins(c):
     Installs all plugins as specified in 'plugins.txt'
     """
 
-    try:
-        from InvenTree.InvenTree.settings import PLUGIN_FILE
-    except:
-        print("Error: Could not import PLUGIN_FILE from settings.py")
-        return
-    
-    if not os.path.exists(PLUGIN_FILE):
-        # Create an empty plugin 
-        print(f"Plugins file '{PLUGIN_FILE}' does not exist")
-        return
+    from InvenTree.InvenTree.config import get_plugin_file
 
-    print(f"Installing plugin packages from '{PLUGIN_FILE}'")
+    plugin_file = get_plugin_file()
+
+    print(f"Installing plugin packages from '{plugin_file}'")
 
     # Install the plugins
-    c.run(f"pip3 install -U -r '{PLUGIN_FILE}'")
+    c.run(f"pip3 install -U -r '{plugin_file}'")
 
 @task(post=[plugins])
 def install(c):
