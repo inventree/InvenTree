@@ -1,44 +1,45 @@
-"""default mixins for IntegrationMixins"""
+"""
+Plugin mixin classes
+"""
+
 from django.conf.urls import url, include
 
 from plugin.urls import PLUGIN_BASE
 
 
-class GlobalSettingsMixin:
-    """Mixin that enables global settings for the plugin"""
+class SettingsMixin:
+    """
+    Mixin that enables global settings for the plugin
+    """
+
     class MixinMeta:
-        """meta options for this mixin"""
-        MIXIN_NAME = 'Global settings'
+        MIXIN_NAME = 'Settings'
 
     def __init__(self):
         super().__init__()
-        self.add_mixin('globalsettings', 'has_globalsettings', __class__)
-        self.globalsettings = self.setup_globalsettings()
-
-    def setup_globalsettings(self):
-        """
-        setup global settings for this plugin
-        """
-        return getattr(self, 'GLOBALSETTINGS', None)
+        self.add_mixin('settings', 'has_globalsettings', __class__)
+        self.globalsettings = getattr(self, 'SETTINGS', None)
 
     @property
     def has_globalsettings(self):
         """
-        does this plugin use custom global settings
+        Does this plugin use custom global settings
         """
         return bool(self.globalsettings)
 
     @property
     def globalsettingspatterns(self):
         """
-        get patterns for InvenTreeSetting defintion
+        Get patterns for InvenTreeSetting defintion
         """
         if self.has_globalsettings:
             return {f'PLUGIN_{self.slug.upper()}_{key}': value for key, value in self.globalsettings.items()}
         return None
 
     def _globalsetting_name(self, key):
-        """get global name of setting"""
+        """
+        Get global name of setting
+        """
         return f'PLUGIN_{self.slug.upper()}_{key}'
 
     def get_globalsetting(self, key):
@@ -57,9 +58,11 @@ class GlobalSettingsMixin:
 
 
 class UrlsMixin:
-    """Mixin that enables urls for the plugin"""
+    """
+    Mixin that enables custom URLs for the plugin
+    """
+
     class MixinMeta:
-        """meta options for this mixin"""
         MIXIN_NAME = 'URLs'
 
     def __init__(self):
@@ -105,7 +108,10 @@ class UrlsMixin:
 
 
 class NavigationMixin:
-    """Mixin that enables adding navigation links with the plugin"""
+    """
+    Mixin that enables custom navigation links with the plugin
+    """
+
     NAVIGATION_TAB_NAME = None
     NAVIGATION_TAB_ICON = "fas fa-question"
 
@@ -152,7 +158,10 @@ class NavigationMixin:
 
 
 class AppMixin:
-    """Mixin that enables full django app functions for a plugin"""
+    """
+    Mixin that enables full django app functions for a plugin
+    """
+
     class MixinMeta:
         """meta options for this mixin"""
         MIXIN_NAME = 'App registration'

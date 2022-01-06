@@ -30,9 +30,11 @@ ENV INVENTREE_MNG_DIR="${INVENTREE_HOME}/InvenTree"
 ENV INVENTREE_DATA_DIR="${INVENTREE_HOME}/data"
 ENV INVENTREE_STATIC_ROOT="${INVENTREE_DATA_DIR}/static"
 ENV INVENTREE_MEDIA_ROOT="${INVENTREE_DATA_DIR}/media"
+ENV INVENTREE_PLUGIN_DIR="${INVENTREE_DATA_DIR}/plugins"
 
 ENV INVENTREE_CONFIG_FILE="${INVENTREE_DATA_DIR}/config.yaml"
 ENV INVENTREE_SECRET_KEY_FILE="${INVENTREE_DATA_DIR}/secret_key.txt"
+ENV INVENTREE_PLUGIN_FILE="${INVENTREE_DATA_DIR}/plugins.txt"
 
 # Worker configuration (can be altered by user)
 ENV INVENTREE_GUNICORN_WORKERS="4"
@@ -59,6 +61,7 @@ RUN apk -U upgrade
 # Install required system packages
 RUN apk add --no-cache git make bash \
     gcc libgcc g++ libstdc++ \
+    gnupg \
     libjpeg-turbo libjpeg-turbo-dev jpeg jpeg-dev \
     libffi libffi-dev \
     zlib zlib-dev \
@@ -128,8 +131,12 @@ ENV INVENTREE_PY_ENV="${INVENTREE_DEV_DIR}/env"
 # Override default path settings
 ENV INVENTREE_STATIC_ROOT="${INVENTREE_DEV_DIR}/static"
 ENV INVENTREE_MEDIA_ROOT="${INVENTREE_DEV_DIR}/media"
+ENV INVENTREE_PLUGIN_DIR="${INVENTREE_DEV_DIR}/plugins"
+
 ENV INVENTREE_CONFIG_FILE="${INVENTREE_DEV_DIR}/config.yaml"
 ENV INVENTREE_SECRET_KEY_FILE="${INVENTREE_DEV_DIR}/secret_key.txt"
+ENV INVENTREE_PLUGIN_FILE="${INVENTREE_DEV_DIR}/plugins.txt"
+
 
 WORKDIR ${INVENTREE_HOME}
 

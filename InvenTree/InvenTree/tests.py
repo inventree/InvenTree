@@ -237,25 +237,41 @@ class TestSerialNumberExtraction(TestCase):
 
         e = helpers.extract_serial_numbers
 
-        sn = e("1-5", 5)
-        self.assertEqual(len(sn), 5)
+        sn = e("1-5", 5, 1)
+        self.assertEqual(len(sn), 5, 1)
         for i in range(1, 6):
             self.assertIn(i, sn)
 
-        sn = e("1, 2, 3, 4, 5", 5)
+        sn = e("1, 2, 3, 4, 5", 5, 1)
         self.assertEqual(len(sn), 5)
 
-        sn = e("1-5, 10-15", 11)
+        sn = e("1-5, 10-15", 11, 1)
         self.assertIn(3, sn)
         self.assertIn(13, sn)
 
-        sn = e("1+", 10)
+        sn = e("1+", 10, 1)
         self.assertEqual(len(sn), 10)
         self.assertEqual(sn, [_ for _ in range(1, 11)])
 
-        sn = e("4, 1+2", 4)
+        sn = e("4, 1+2", 4, 1)
         self.assertEqual(len(sn), 4)
-        self.assertEqual(sn, ["4", 1, 2, 3])
+        self.assertEqual(sn, [4, 1, 2, 3])
+
+        sn = e("~", 1, 1)
+        self.assertEqual(len(sn), 1)
+        self.assertEqual(sn, [1])
+
+        sn = e("~", 1, 3)
+        self.assertEqual(len(sn), 1)
+        self.assertEqual(sn, [3])
+
+        sn = e("~+", 2, 5)
+        self.assertEqual(len(sn), 2)
+        self.assertEqual(sn, [5, 6])
+
+        sn = e("~+3", 4, 5)
+        self.assertEqual(len(sn), 4)
+        self.assertEqual(sn, [5, 6, 7, 8])
 
     def test_failures(self):
 
@@ -263,26 +279,45 @@ class TestSerialNumberExtraction(TestCase):
 
         # Test duplicates
         with self.assertRaises(ValidationError):
-            e("1,2,3,3,3", 5)
+            e("1,2,3,3,3", 5, 1)
 
         # Test invalid length
         with self.assertRaises(ValidationError):
-            e("1,2,3", 5)
+            e("1,2,3", 5, 1)
 
         # Test empty string
         with self.assertRaises(ValidationError):
-            e(", , ,", 0)
+            e(", , ,", 0, 1)
 
         # Test incorrect sign in group
         with self.assertRaises(ValidationError):
-            e("10-2", 8)
+            e("10-2", 8, 1)
 
         # Test invalid group
         with self.assertRaises(ValidationError):
-            e("1-5-10", 10)
+            e("1-5-10", 10, 1)
 
         with self.assertRaises(ValidationError):
-            e("10, a, 7-70j", 4)
+            e("10, a, 7-70j", 4, 1)
+
+    def test_combinations(self):
+        e = helpers.extract_serial_numbers
+
+        sn = e("1 3-5 9+2", 7, 1)
+        self.assertEqual(len(sn), 7)
+        self.assertEqual(sn, [1, 3, 4, 5, 9, 10, 11])
+
+        sn = e("1,3-5,9+2", 7, 1)
+        self.assertEqual(len(sn), 7)
+        self.assertEqual(sn, [1, 3, 4, 5, 9, 10, 11])
+
+        sn = e("~+2", 3, 14)
+        self.assertEqual(len(sn), 3)
+        self.assertEqual(sn, [14, 15, 16])
+
+        sn = e("~+", 2, 14)
+        self.assertEqual(len(sn), 2)
+        self.assertEqual(sn, [14, 15])
 
 
 class TestVersionNumber(TestCase):
