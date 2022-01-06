@@ -49,6 +49,7 @@ static_i18n
 
 # Local config file
 config.yaml
+plugins.txt
 
 # Default data file
 data.json
