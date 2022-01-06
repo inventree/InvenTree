@@ -165,7 +165,7 @@ class BuildOutputSerializer(serializers.Serializer):
         ]
 
 
-class BuildCompleteSerializer(serializers.Serializer):
+class BuildOutputCompleteSerializer(serializers.Serializer):
     """
     DRF serializer for completing one or more build outputs
     """
@@ -238,6 +238,25 @@ class BuildCompleteSerializer(serializers.Serializer):
                     status=data['status'],
                     notes=data.get('notes', '')
                 )
+
+
+class BuildCompleteSerializer(serializers.Serializer):
+    """
+    DRF serializer for marking a BuildOrder as complete
+    """
+
+    accept_unallocated = serializers.BooleanField(
+        label=_('Accept Unallocated'),
+        help_text=_('Accept that stock items have not been fully allocated to this build order'),
+    )
+
+    accept_incomplete = serializers.BooleanField(
+        label=_('Accept Incomplete'),
+        help_text=_('Accept that the required number of build outputs have not been completed'),
+    )
+
+    def save(self):
+        pass
 
 
 class BuildUnallocationSerializer(serializers.Serializer):
