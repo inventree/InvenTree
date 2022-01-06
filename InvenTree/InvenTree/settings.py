@@ -923,8 +923,7 @@ MARKDOWNIFY_BLEACH = False
 # Maintenance mode
 MAINTENANCE_MODE_RETRY_AFTER = 60
 
-
-# Plugins
+# Plugin Directories (local plugins will be loaded from these directories)
 PLUGIN_DIRS = ['plugin.builtin', ]
 
 if not TESTING:
@@ -934,6 +933,23 @@ if not TESTING:
 if DEBUG or TESTING:
     # load samples in debug mode
     PLUGIN_DIRS.append('plugin.samples')
+
+# Check if an external plugin directory has been specified as an environment variable
+# Note: This should be specified as INVENTREE_PLUGIN_DIR
+plugin_dir = os.getenv('INVENTREE_PLUGIN_DIR')
+
+if plugin_dir:
+    if not os.path.exists(plugin_dir):
+        logger.info(f"Plugin directory '{plugin_dir}' does not exist")
+
+        try:
+            os.makedirs(plugin_dir, exist_ok=True)
+            logger.info(f"Created plugin directory '{plugin_dir}'")
+        except:
+            logger.warning(f"Could not create plugins directory '{plugin_dir}'")
+
+    if os.path.exists(plugin_dir):
+        PLUGIN_DIRS.append(plugin_dir)
 
 # Plugin test settings
 PLUGIN_TESTING = get_setting('PLUGIN_TESTING', TESTING)  # are plugins beeing tested?
