@@ -957,6 +957,8 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+
+        # Settings for plugin mixin features
         'ENABLE_PLUGINS_URL': {
             'name': _('Enable URL integration'),
             'description': _('Enable plugins to add URL routes'),
@@ -984,7 +986,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
             'requires_restart': True,
-        }
+        },
+        'ENABLE_PLUGINS_EVENTS': {
+            'name': _('Enable event integration'),
+            'description': _('Enable plugins to respond to internal events'),
+            'default': False,
+            'validator': bool,
+            'requires_restart': True,
+        },
     }
 
     class Meta:

@@ -7,6 +7,10 @@ from __future__ import unicode_literals
 
 import logging
 
+from django.conf import settings
+
+from common.models import InvenTreeSetting
+
 from InvenTree.tasks import offload_task
 
 
@@ -40,3 +44,5 @@ def process_event(event, *args, **kwargs):
     logger.info(f"Processing event '{event}'")
 
     # Determine if there are any plugins which are interested in responding
+    if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_EVENTS'):
+        pass
