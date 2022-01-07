@@ -26,12 +26,12 @@ class ScheduledTaskPlugin(ScheduleMixin, IntegrationPluginBase):
 
     SCHEDULED_TASKS = {
         'hello': {
-            'func': 'plugin.builtin.integration.mixins.ScheduleMixin.print_hello',
+            'func': 'plugin.samples.integration.scheduled_task.print_hello',
             'schedule': 'I',
             'minutes': 5,
         },
         'world': {
-            'func': 'plugin.builtin.integration.mixins.ScheduleMixin.print_world',
+            'func': 'plugin.samples.integration.scheduled_task.print_hello',
             'schedule': 'H',
         }
     }

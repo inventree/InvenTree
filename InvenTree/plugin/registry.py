@@ -262,18 +262,21 @@ class PluginsRegistry:
         logger.info(f'Found {len(plugins)} active plugins')
 
         self.activate_integration_settings(plugins)
+        self.activate_integration_schedule(plugins)
         self.activate_integration_app(plugins, force_reload=force_reload)
 
     def _deactivate_plugins(self):
         """
         Run integration deactivation functions for all plugins
         """
+
         self.deactivate_integration_app()
+        self.deactivate_integration_schedule()
         self.deactivate_integration_settings()
 
     def activate_integration_settings(self, plugins):
 
-        logger.info('Registering IntegrationPlugin global settings')
+        logger.info('Activating plugin settings')
 
         self.mixins_settings = {}
 
@@ -293,8 +296,50 @@ class PluginsRegistry:
         # clear cache
         self.mixins_settings = {}
 
+    def activate_integration_schedule(self, plugins):
+
+        logger.info('Activating plugin tasks')
+        
+        from common.models import InvenTreeSetting
+        from django_q.models import Schedule
+
+        # List of tasks we have activated
+        task_keys = []
+
+        if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_SCHEDULE'):
+            
+            for slug, plugin in plugins:
+
+                if plugin.mixin_enabled('schedule'):
+                    config = plugin.plugin_config()
+
+                    # Only active tasks for plugins which are enabled
+                    if config and config.active:
+                        plugin.register_tasks()
+                        task_keys += plugin.get_task_names()
+
+        logger.info(f"Activated {len(task_keys)} scheduled tasks")
+
+        # Remove any scheduled tasks which do not match
+        # This stops 'old' plugin tasks from accumulating
+        scheduled_plugin_tasks = Schedule.objects.filter(name__istartswith="plugin.")
+
+        deleted_count = 0
+
+        for task in scheduled_plugin_tasks:
+            if task.name not in task_keys:
+                task.delete()
+                deleted_count += 1
+
+        if deleted_count > 0:
+            logger.info(f"Removed {deleted_count} old scheduled tasks")
+
+    def deactivate_integration_schedule(self):
+        pass
+
     def activate_integration_app(self, plugins, force_reload=False):
-        """activate AppMixin plugins - add custom apps and reload
+        """
+        Activate AppMixin plugins - add custom apps and reload
 
         :param plugins: list of IntegrationPlugins that should be installed
         :type plugins: dict
@@ -378,7 +423,10 @@ class PluginsRegistry:
         return plugin_path
 
     def deactivate_integration_app(self):
-        """deactivate integration app - some magic required"""
+        """
+        Deactivate integration app - some magic required
+        """
+        
         # unregister models from admin
         for plugin_path in self.installed_apps:
             models = []  # the modelrefs need to be collected as poping an item in a iter is not welcomed

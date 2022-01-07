@@ -2,11 +2,16 @@
 Plugin mixin classes
 """
 
+import logging
+
 from django.conf.urls import url, include
 from django.db.utils import OperationalError, ProgrammingError
 
 from plugin.models import PluginConfig, PluginSetting
 from plugin.urls import PLUGIN_BASE
+
+
+logger = logging.getLogger('inventree')
 
 
 class SettingsMixin:
@@ -115,6 +120,58 @@ class ScheduleMixin:
             # If 'minutes' is selected, it must be provided!
             if schedule == 'I' and 'minutes' not in task:
                 raise ValueError(f"Task '{key}' is missing 'minutes' parameter")
+
+    def get_task_name(self, key):
+        # Generate a 'unique' task name
+        slug = self.plugin_slug()
+        return f"plugin.{slug}.{key}"
+
+    def get_task_names(self):
+        # Returns a list of all task names associated with this plugin instance
+        return [self.get_task_name(key) for key in self.scheduled_tasks.keys()]
+
+    def register_tasks(self):
+        """
+        Register the tasks with the database
+        """
+
+        from django_q.models import Schedule
+
+        for key, task in self.scheduled_tasks.items():
+
+            task_name = self.get_task_name(key)
+
+            # If a matching scheduled task does not exist, create it!
+            if not Schedule.objects.filter(name=task_name).exists():
+
+                logger.info(f"Adding scheduled task '{task_name}'")
+
+                Schedule.objects.create(
+                    name=task_name,
+                    func=task['func'],
+                    schedule_type=task['schedule'],
+                    minutes=task.get('minutes', None),
+                    repeats=task.get('repeats', -1),
+                )
+                
+
+    def unregister_tasks(self):
+        """
+        Deregister the tasks with the database
+        """
+
+        from django_q.models import Schedule
+
+        for key, task in self.scheduled_tasks.items():
+
+            task_name = self.get_task_name(key)
+
+            try:
+                scheduled_task = Schedule.objects.get(name=task_name)
+                scheduled_task.delete()
+            except Schedule.DoesNotExist:
+                pass
+
 
 class UrlsMixin:
     """
