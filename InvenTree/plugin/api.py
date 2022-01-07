@@ -11,7 +11,8 @@ from rest_framework import generics
 from rest_framework import status
 from rest_framework.response import Response
 
-from plugin.models import PluginConfig
+from common.api import GlobalSettingsPermissions
+from plugin.models import PluginConfig, PluginSetting
 import plugin.serializers as PluginSerializers
 
 
@@ -76,7 +77,46 @@ class PluginInstall(generics.CreateAPIView):
         return serializer.save()
 
 
+class PluginSettingList(generics.ListAPIView):
+    """
+    List endpoint for all plugin related settings.
+
+    - read only
+    - only accessible by staff users
+    """
+
+    queryset = PluginSetting.objects.all()
+    serializer_class = PluginSerializers.PluginSettingSerializer
+
+    permission_classes = [
+        GlobalSettingsPermissions,
+    ]
+
+
+class PluginSettingDetail(generics.RetrieveUpdateAPIView):
+    """
+    Detail endpoint for a plugin-specific setting.
+
+    Note that these cannot be created or deleted via the API
+    """
+
+    queryset = PluginSetting.objects.all()
+    serializer_class = PluginSerializers.PluginSettingSerializer
+
+    # Staff permission required
+    permission_classes = [
+        GlobalSettingsPermissions,
+    ]
+
+
 plugin_api_urls = [
+
+    # Plugin settings URLs
+    url(r'^settings/', include([
+        url(r'^(?P<pk>\d+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail'),
+        url(r'^.*$', PluginSettingList.as_view(), name='api-plugin-setting-list'),
+    ])),
+
     # Detail views for a single PluginConfig item
     url(r'^(?P<pk>\d+)/', include([
         url(r'^.*$', PluginDetail.as_view(), name='api-plugin-detail'),

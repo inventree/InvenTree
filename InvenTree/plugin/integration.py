@@ -9,7 +9,6 @@ import pathlib
 
 from django.urls.base import reverse
 from django.conf import settings
-from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 
 import plugin.plugin as plugin
@@ -20,19 +19,27 @@ logger = logging.getLogger("inventree")
 
 
 class MixinBase:
-    """general base for mixins"""
+    """
+    General base for mixins
+    """
 
     def __init__(self) -> None:
         self._mixinreg = {}
         self._mixins = {}
 
     def add_mixin(self, key: str, fnc_enabled=True, cls=None):
-        """add a mixin to the plugins registry"""
+        """
+        Add a mixin to the plugins registry
+        """
+
         self._mixins[key] = fnc_enabled
         self.setup_mixin(key, cls=cls)
 
     def setup_mixin(self, key, cls=None):
-        """define mixin details for the current mixin -> provides meta details for all active mixins"""
+        """
+        Define mixin details for the current mixin -> provides meta details for all active mixins
+        """
+
         # get human name
         human_name = getattr(cls.MixinMeta, 'MIXIN_NAME', key) if cls and hasattr(cls, 'MixinMeta') else key
 
@@ -44,7 +51,10 @@ class MixinBase:
 
     @property
     def registered_mixins(self, with_base: bool = False):
-        """get all registered mixins for the plugin"""
+        """
+        Get all registered mixins for the plugin
+        """
+
         mixins = getattr(self, '_mixinreg', None)
         if mixins:
             # filter out base
@@ -59,8 +69,6 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
     """
     The IntegrationPluginBase class is used to integrate with 3rd party software
     """
-    PLUGIN_SLUG = None
-    PLUGIN_TITLE = None
 
     AUTHOR = None
     DESCRIPTION = None
@@ -84,11 +92,11 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
     # region properties
     @property
     def slug(self):
-        """slug for the plugin"""
-        slug = getattr(self, 'PLUGIN_SLUG', None)
-        if not slug:
-            slug = self.plugin_name()
-        return slugify(slug)
+        return self.plugin_slug()
+
+    @property
+    def name(self):
+        return self.plugin_name()
 
     @property
     def human_name(self):

@@ -371,7 +371,12 @@ function customGroupSorter(sortName, sortOrder, sortData) {
             return `${pageNumber} {% trans "rows per page" %}`;
         },
         formatShowingRows: function(pageFrom, pageTo, totalRows) {
-            return `{% trans "Showing" %} ${pageFrom} {% trans "to" %} ${pageTo} {% trans "of" %} ${totalRows} {% trans "rows" %}`;
+
+            if (totalRows === undefined || totalRows === NaN) {
+                return '{% trans "Showing all rows" %}';
+            } else {
+                return `{% trans "Showing" %} ${pageFrom} {% trans "to" %} ${pageTo} {% trans "of" %} ${totalRows} {% trans "rows" %}`;
+            }
         },
         formatSearch: function() {
             return '{% trans "Search" %}';
