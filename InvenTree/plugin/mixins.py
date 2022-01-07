@@ -53,6 +53,51 @@ class SettingsMixin:
         PluginSetting.set_setting(key, value, user, plugin=plugin)
 
 
+class ScheduleMixin:
+    """
+    Mixin that provides support for scheduled tasks.
+
+    Implementing classes must provide a dict object called SCHEDULED_TASKS,
+    which provides information on the tasks to be scheduled.
+
+    SCHEDULED_TASKS = {
+        # Name of the task (will be prepended with the plugin name)
+        'test_server': {
+            'func': 'myplugin.tasks.test_server',   # Python function to call (no arguments!)
+            'schedule': "I",                        # Schedule type (see django_q.Schedule)
+            'minutes': 30,                          # Number of minutes (only if schedule type = Minutes)
+            'repeats': 5,                           # Number of repeats (leave blank for 'forever')
+        }
+    }
+    """
+
+    SCHEDULED_TASKS = {}
+
+    class MixinMeta:
+        MIXIN_NAME = 'Schedule'
+
+    def __init__(self):
+        super().__init__()
+        self.add_mixin('schedule', 'has_scheduled_tasks', __class__)
+        self.scheduled_tasks = getattr(self, 'SCHEDULED_TASKS', {})
+
+        self.validate_scheduled_tasks()
+
+    @property
+    def has_scheduled_tasks(self):
+        return bool(self.scheduled_tasks)
+
+    def validate_scheduled_tasks(self):
+        """
+        Check that the provided scheduled tasks are valid
+        """
+
+        if not self.has_scheduled_tasks():
+            raise ValueError(f"SCHEDULED_TASKS not defined for plugin '{__class__}'")
+
+        for key, task in self.scheduled_tasks.items():
+            print(key, task)
+
 class UrlsMixin:
     """
     Mixin that enables custom URLs for the plugin
@@ -112,7 +157,9 @@ class NavigationMixin:
     NAVIGATION_TAB_ICON = "fas fa-question"
 
     class MixinMeta:
-        """meta options for this mixin"""
+        """
+        meta options for this mixin
+        """
         MIXIN_NAME = 'Navigation Links'
 
     def __init__(self):
