@@ -19,7 +19,7 @@ logger = logging.getLogger('inventree')
 
 def trigger_event(event, *args, **kwargs):
     """
-    Trigger an even with optional arguments.
+    Trigger an event with optional arguments.
 
     This event will be stored in the database,
     and the worker will respond to it later on.
@@ -28,11 +28,12 @@ def trigger_event(event, *args, **kwargs):
     logger.debug(f"Event triggered: '{event}'")
 
     offload_task(
-        'InvenTree.events.process_event',
+        'plugin.events.process_event',
         event,
         *args,
         **kwargs,
     )
+
 
 def process_event(event, *args, **kwargs):
     """
