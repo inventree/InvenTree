@@ -102,16 +102,16 @@ class ScheduleMixin:
         """
 
         if not self.has_scheduled_tasks:
-            raise ValueError(f"SCHEDULED_TASKS not defined")
+            raise ValueError("SCHEDULED_TASKS not defined")
 
         for key, task in self.scheduled_tasks.items():
-            
+
             if 'func' not in task:
                 raise ValueError(f"Task '{key}' is missing 'func' parameter")
-            
+
             if 'schedule' not in task:
                 raise ValueError(f"Task '{key}' is missing 'schedule' parameter")
-            
+
             schedule = task['schedule'].upper().strip()
 
             if schedule not in self.ALLOWABLE_SCHEDULE_TYPES:
@@ -153,7 +153,6 @@ class ScheduleMixin:
                     minutes=task.get('minutes', None),
                     repeats=task.get('repeats', -1),
                 )
-                
 
     def unregister_tasks(self):
         """

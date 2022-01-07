@@ -299,7 +299,7 @@ class PluginsRegistry:
     def activate_integration_schedule(self, plugins):
 
         logger.info('Activating plugin tasks')
-        
+
         from common.models import InvenTreeSetting
         from django_q.models import Schedule
 
@@ -307,7 +307,7 @@ class PluginsRegistry:
         task_keys = []
 
         if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_SCHEDULE'):
-            
+
             for slug, plugin in plugins:
 
                 if plugin.mixin_enabled('schedule'):
@@ -427,7 +427,7 @@ class PluginsRegistry:
         """
         Deactivate integration app - some magic required
         """
-        
+
         # unregister models from admin
         for plugin_path in self.installed_apps:
             models = []  # the modelrefs need to be collected as poping an item in a iter is not welcomed

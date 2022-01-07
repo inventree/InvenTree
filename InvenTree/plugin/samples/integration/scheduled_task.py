@@ -15,6 +15,10 @@ def print_world():
     print("World")
 
 
+def fail_task():
+    raise ValueError("This task should fail!")
+
+
 class ScheduledTaskPlugin(ScheduleMixin, IntegrationPluginBase):
     """
     A sample plugin which provides support for scheduled tasks
@@ -33,5 +37,9 @@ class ScheduledTaskPlugin(ScheduleMixin, IntegrationPluginBase):
         'world': {
             'func': 'plugin.samples.integration.scheduled_task.print_hello',
             'schedule': 'H',
-        }
+        },
+        'failure': {
+            'func': 'plugin.samples.integration.scheduled_task.fail_task',
+            'schedule': 'D',
+        },
     }
