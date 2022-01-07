@@ -11,12 +11,13 @@ import subprocess
 from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 
 from rest_framework import serializers
 
-from common.serializers import SettingsSerializer
-
 from plugin.models import PluginConfig, PluginSetting
+from InvenTree.config import get_plugin_file
+from common.serializers import SettingsSerializer
 
 
 class PluginConfigSerializer(serializers.ModelSerializer):
@@ -86,38 +87,44 @@ class PluginConfigInstallSerializer(serializers.Serializer):
         url = data.get('url', '')
 
         # build up the command
-        command = 'python -m pip install'.split()
+        install_name = []
 
         if url:
             # use custom registration / VCS
             if True in [identifier in url for identifier in ['git+https', 'hg+https', 'svn+svn', ]]:
                 # using a VCS provider
                 if packagename:
-                    command.append(f'{packagename}@{url}')
+                    install_name.append(f'{packagename}@{url}')
                 else:
-                    command.append(url)
+                    install_name.append(url)
             else:
                 # using a custom package repositories
-                command.append('-i')
-                command.append(url)
-                command.append(packagename)
+                install_name.append('-i')
+                install_name.append(url)
+                install_name.append(packagename)
 
         elif packagename:
             # use pypi
-            command.append(packagename)
+            install_name.append(packagename)
 
+        command = 'python -m pip install'.split()
+        command.extend(install_name)
         ret = {'command': ' '.join(command)}
+        success = False
         # execute pypi
         try:
             result = subprocess.check_output(command, cwd=os.path.dirname(settings.BASE_DIR))
             ret['result'] = str(result, 'utf-8')
             ret['success'] = True
+            success = True
         except subprocess.CalledProcessError as error:
             ret['result'] = str(error.output, 'utf-8')
             ret['error'] = True
 
-        # Register plugins
-        # TODO
+        # save plugin to plugin_file if installed successfull
+        if success:
+            with open(get_plugin_file(), "a") as plugin_file:
+                plugin_file.write(f'{" ".join(install_name)}  # Installed {timezone.now()} by {str(self.context["request"].user)}\n')
 
         return ret
 

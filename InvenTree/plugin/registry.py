@@ -173,9 +173,12 @@ class PluginsRegistry:
         if (not settings.PLUGIN_TESTING) or (settings.PLUGIN_TESTING and settings.PLUGIN_TESTING_SETUP):
             # Collect plugins from setup entry points
             for entry in metadata.entry_points().get('inventree_plugins', []):
-                plugin = entry.load()
-                plugin.is_package = True
-                self.plugin_modules.append(plugin)
+                try:
+                    plugin = entry.load()
+                    plugin.is_package = True
+                    self.plugin_modules.append(plugin)
+                except Exception as error:
+                    get_plugin_error(error, do_log=True, log_name='discovery')
 
         # Log collected plugins
         logger.info(f'Collected {len(self.plugin_modules)} plugins!')
