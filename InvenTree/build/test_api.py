@@ -49,7 +49,7 @@ class BuildCompleteTest(BuildAPITest):
 
         self.build = Build.objects.get(pk=1)
 
-        self.url = reverse('api-build-complete', kwargs={'pk': self.build.pk})
+        self.url = reverse('api-build-output-complete', kwargs={'pk': self.build.pk})
 
     def test_invalid(self):
         """
@@ -58,7 +58,7 @@ class BuildCompleteTest(BuildAPITest):
 
         # Test with an invalid build ID
         self.post(
-            reverse('api-build-complete', kwargs={'pk': 99999}),
+            reverse('api-build-output-complete', kwargs={'pk': 99999}),
             {},
             expected_code=400
         )
