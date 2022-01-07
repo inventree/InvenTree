@@ -272,14 +272,15 @@ class PluginsRegistry:
         self.deactivate_integration_settings()
 
     def activate_integration_settings(self, plugins):
-        from common.models import InvenTreeSetting
 
-        if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_GLOBALSETTING'):
-            logger.info('Registering IntegrationPlugin global settings')
-            for slug, plugin in plugins:
-                if plugin.mixin_enabled('settings'):
-                    plugin_setting = plugin.settings
-                    self.mixins_settings[slug] = plugin_setting
+        logger.info('Registering IntegrationPlugin global settings')
+
+        self.mixins_settings = {}
+
+        for slug, plugin in plugins:
+            if plugin.mixin_enabled('settings'):
+                plugin_setting = plugin.settings
+                self.mixins_settings[slug] = plugin_setting
 
     def deactivate_integration_settings(self):
 
@@ -290,7 +291,7 @@ class PluginsRegistry:
             plugin_settings.update(plugin_setting)
 
         # clear cache
-        self.mixins_Fsettings = {}
+        self.mixins_settings = {}
 
     def activate_integration_app(self, plugins, force_reload=False):
         """activate AppMixin plugins - add custom apps and reload
