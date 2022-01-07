@@ -301,7 +301,6 @@ class PluginsRegistry:
         logger.info('Activating plugin tasks')
 
         from common.models import InvenTreeSetting
-        from django_q.models import Schedule
 
         # List of tasks we have activated
         task_keys = []
@@ -323,17 +322,23 @@ class PluginsRegistry:
 
         # Remove any scheduled tasks which do not match
         # This stops 'old' plugin tasks from accumulating
-        scheduled_plugin_tasks = Schedule.objects.filter(name__istartswith="plugin.")
+        try:
+            from django_q.models import Schedule
 
-        deleted_count = 0
+            scheduled_plugin_tasks = Schedule.objects.filter(name__istartswith="plugin.")
 
-        for task in scheduled_plugin_tasks:
-            if task.name not in task_keys:
-                task.delete()
-                deleted_count += 1
+            deleted_count = 0
 
-        if deleted_count > 0:
-            logger.info(f"Removed {deleted_count} old scheduled tasks")
+            for task in scheduled_plugin_tasks:
+                if task.name not in task_keys:
+                    task.delete()
+                    deleted_count += 1
+
+            if deleted_count > 0:
+                logger.info(f"Removed {deleted_count} old scheduled tasks")
+        except OperationalError:
+            # Database might not yet be ready
+            pass
 
     def deactivate_integration_schedule(self):
         pass

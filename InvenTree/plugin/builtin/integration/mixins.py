@@ -135,41 +135,49 @@ class ScheduleMixin:
         Register the tasks with the database
         """
 
-        from django_q.models import Schedule
+        try:
+            from django_q.models import Schedule
 
-        for key, task in self.scheduled_tasks.items():
+            for key, task in self.scheduled_tasks.items():
 
-            task_name = self.get_task_name(key)
+                task_name = self.get_task_name(key)
 
-            # If a matching scheduled task does not exist, create it!
-            if not Schedule.objects.filter(name=task_name).exists():
+                # If a matching scheduled task does not exist, create it!
+                if not Schedule.objects.filter(name=task_name).exists():
 
-                logger.info(f"Adding scheduled task '{task_name}'")
+                    logger.info(f"Adding scheduled task '{task_name}'")
 
-                Schedule.objects.create(
-                    name=task_name,
-                    func=task['func'],
-                    schedule_type=task['schedule'],
-                    minutes=task.get('minutes', None),
-                    repeats=task.get('repeats', -1),
-                )
+                    Schedule.objects.create(
+                        name=task_name,
+                        func=task['func'],
+                        schedule_type=task['schedule'],
+                        minutes=task.get('minutes', None),
+                        repeats=task.get('repeats', -1),
+                    )
+        except OperationalError:
+            # Database might not yet be ready
+            pass
 
     def unregister_tasks(self):
         """
         Deregister the tasks with the database
         """
 
-        from django_q.models import Schedule
+        try:
+            from django_q.models import Schedule
 
-        for key, task in self.scheduled_tasks.items():
+            for key, task in self.scheduled_tasks.items():
 
-            task_name = self.get_task_name(key)
+                task_name = self.get_task_name(key)
 
-            try:
-                scheduled_task = Schedule.objects.get(name=task_name)
-                scheduled_task.delete()
-            except Schedule.DoesNotExist:
-                pass
+                try:
+                    scheduled_task = Schedule.objects.get(name=task_name)
+                    scheduled_task.delete()
+                except Schedule.DoesNotExist:
+                    pass
+        except OperationalError:
+            # Database might not yet be ready
+            pass
 
 
 class UrlsMixin:
