@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-07 01:46+0000\n"
-"PO-Revision-Date: 2022-01-07 01:49\n"
+"POT-Creation-Date: 2022-01-07 02:46+0000\n"
+"PO-Revision-Date: 2022-01-07 02:49\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -9102,48 +9102,52 @@ msgstr "Caricamento dati"
 msgid "rows per page"
 msgstr "righe per pagina"
 
-#: templates/js/translated/tables.js:374
+#: templates/js/translated/tables.js:376
+msgid "Showing all rows"
+msgstr ""
+
+#: templates/js/translated/tables.js:378
 msgid "Showing"
 msgstr "Visualizzo"
 
-#: templates/js/translated/tables.js:374
+#: templates/js/translated/tables.js:378
 msgid "to"
 msgstr "a"
 
-#: templates/js/translated/tables.js:374
+#: templates/js/translated/tables.js:378
 msgid "of"
 msgstr "di"
 
-#: templates/js/translated/tables.js:374
+#: templates/js/translated/tables.js:378
 msgid "rows"
 msgstr "righe"
 
-#: templates/js/translated/tables.js:377 templates/search_form.html:6
+#: templates/js/translated/tables.js:382 templates/search_form.html:6
 #: templates/search_form.html:7
 msgid "Search"
 msgstr "Cerca"
 
-#: templates/js/translated/tables.js:380
+#: templates/js/translated/tables.js:385
 msgid "No matching results"
 msgstr "Nessun risultato corrispondente"
 
-#: templates/js/translated/tables.js:383
+#: templates/js/translated/tables.js:388
 msgid "Hide/Show pagination"
 msgstr "Mostra/nascondi la paginazione"
 
-#: templates/js/translated/tables.js:386
+#: templates/js/translated/tables.js:391
 msgid "Refresh"
 msgstr "Aggiorna"
 
-#: templates/js/translated/tables.js:389
+#: templates/js/translated/tables.js:394
 msgid "Toggle"
 msgstr "Attiva/disattiva"
 
-#: templates/js/translated/tables.js:392
+#: templates/js/translated/tables.js:397
 msgid "Columns"
 msgstr "Colonne"
 
-#: templates/js/translated/tables.js:395
+#: templates/js/translated/tables.js:400
 msgid "All"
 msgstr "Tutti"
 
