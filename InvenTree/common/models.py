@@ -571,7 +571,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         super().save()
 
         if self.requires_restart():
-            InvenTreeSetting.set_setting('SERVER_REQUIRES_RESTART', True, None)
+            InvenTreeSetting.set_setting('SERVER_RESTART_REQUIRED', True, None)
 
     """
     Dict of all global settings values:
@@ -978,6 +978,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
             'requires_restart': True,
         },
+        'ENABLE_PLUGINS_SCHEDULE': {
+            'name': _('Enable schedule integration'),
+            'description': _('Enable plugins to run scheduled tasks'),
+            'default': False,
+            'validator': bool,
+            'requires_restart': True,
+        }
     }
 
     class Meta:
