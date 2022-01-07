@@ -318,7 +318,8 @@ class PluginsRegistry:
                         plugin.register_tasks()
                         task_keys += plugin.get_task_names()
 
-        logger.info(f"Activated {len(task_keys)} scheduled tasks")
+        if len(task_keys) > 0:
+            logger.info(f"Activated {len(task_keys)} scheduled tasks")
 
         # Remove any scheduled tasks which do not match
         # This stops 'old' plugin tasks from accumulating
