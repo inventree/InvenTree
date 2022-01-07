@@ -338,7 +338,7 @@ class PluginsRegistry:
                 logger.info(f"Removed {deleted_count} old scheduled tasks")
         except (ProgrammingError, OperationalError):
             # Database might not yet be ready
-            pass
+            logger.warning("activate_integration_schedule failed, database not ready")
 
     def deactivate_integration_schedule(self):
         pass

@@ -156,7 +156,7 @@ class ScheduleMixin:
                     )
         except (ProgrammingError, OperationalError):
             # Database might not yet be ready
-            pass
+            logger.warning("register_tasks failed, database not ready")
 
     def unregister_tasks(self):
         """
@@ -177,7 +177,7 @@ class ScheduleMixin:
                     pass
         except (ProgrammingError, OperationalError):
             # Database might not yet be ready
-            pass
+            logger.warning("unregister_tasks failed, database not ready")
 
 
 class UrlsMixin:
