@@ -80,6 +80,7 @@ class ScheduleMixin:
 
     ALLOWABLE_SCHEDULE_TYPES = ['I', 'H', 'D', 'W', 'M', 'Q', 'Y']
 
+    # Override this in subclass model
     SCHEDULED_TASKS = {}
 
     class MixinMeta:
@@ -178,6 +179,69 @@ class ScheduleMixin:
         except (ProgrammingError, OperationalError):
             # Database might not yet be ready
             logger.warning("unregister_tasks failed, database not ready")
+
+
+class EventMixin:
+    """
+    Mixin that provides support for responding to triggered events.
+
+    Implementing classes must provide a list of tuples,
+    which provide pairs of 'event':'function'
+
+    Notes:
+    
+    Events are called by name, and based on the django signal nomenclature,
+    e.g. 'part.pre_save'
+    
+    Receiving functions must be prototyped to match the 'event' they receive.
+
+    Example:
+
+    EVENTS = [
+        ('part.pre_save', 'myplugin.functions.do_stuff'),
+        ('build.complete', 'myplugin.functions.process_completed_build'),
+    ]
+    """
+
+    # Override this in subclass model
+    EVENTS = []
+
+    class MixinMeta:
+        MIXIN_NAME = 'Events'
+
+    def __init__(self):
+        super().__init__()
+        self.add_mixin('events', 'has_events', __class__)
+        self.events = getattr(self, 'EVENTS', [])
+
+        self.validate_events()
+
+    @property
+    def has_events(self):
+        return bool(self.events) and len(self.events) > 0
+
+    def validate_events(self):
+        """
+        Check that the provided event callbacks are valid
+        """
+
+        if not self.has_events:
+            raise ValueError('EVENTS not defined')
+
+        for pair in self.events:
+            valid = True
+
+            if len(pair) == 2:
+                event = pair[0].strip()
+                func = pair[1].strip()
+
+                if len(event) == 0 or len(func) == 0:
+                    valid = False
+            else:
+                valid = False
+
+            if not valid:
+                raise ValueError("Invalid event callback: " + str(pair))
 
 
 class UrlsMixin:
