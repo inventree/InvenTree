@@ -154,7 +154,7 @@ class ScheduleMixin:
                         minutes=task.get('minutes', None),
                         repeats=task.get('repeats', -1),
                     )
-        except OperationalError:
+        except (ProgrammingError, OperationalError):
             # Database might not yet be ready
             pass
 
@@ -175,7 +175,7 @@ class ScheduleMixin:
                     scheduled_task.delete()
                 except Schedule.DoesNotExist:
                     pass
-        except OperationalError:
+        except (ProgrammingError, OperationalError):
             # Database might not yet be ready
             pass
 

@@ -336,7 +336,7 @@ class PluginsRegistry:
 
             if deleted_count > 0:
                 logger.info(f"Removed {deleted_count} old scheduled tasks")
-        except OperationalError:
+        except (ProgrammingError, OperationalError):
             # Database might not yet be ready
             pass
 
