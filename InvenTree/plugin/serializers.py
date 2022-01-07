@@ -83,26 +83,28 @@ class PluginConfigInstallSerializer(serializers.Serializer):
         url = data.get('url', '')
 
         # build up the command
-        command = 'python -m pip install'.split()
+        install_name = []
 
         if url:
             # use custom registration / VCS
             if True in [identifier in url for identifier in ['git+https', 'hg+https', 'svn+svn', ]]:
                 # using a VCS provider
                 if packagename:
-                    command.append(f'{packagename}@{url}')
+                    install_name.append(f'{packagename}@{url}')
                 else:
-                    command.append(url)
+                    install_name.append(url)
             else:
                 # using a custom package repositories
-                command.append('-i')
-                command.append(url)
-                command.append(packagename)
+                install_name.append('-i')
+                install_name.append(url)
+                install_name.append(packagename)
 
         elif packagename:
             # use pypi
-            command.append(packagename)
+            install_name.append(packagename)
 
+        command = 'python -m pip install'.split()
+        command.extend(install_name)
         ret = {'command': ' '.join(command)}
         # execute pypi
         try:
