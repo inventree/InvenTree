@@ -11,10 +11,12 @@ import subprocess
 from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 
 from rest_framework import serializers
 
 from plugin.models import PluginConfig
+from InvenTree.config import get_plugin_file
 
 
 class PluginConfigSerializer(serializers.ModelSerializer):
@@ -106,16 +108,20 @@ class PluginConfigInstallSerializer(serializers.Serializer):
         command = 'python -m pip install'.split()
         command.extend(install_name)
         ret = {'command': ' '.join(command)}
+        success = False
         # execute pypi
         try:
             result = subprocess.check_output(command, cwd=os.path.dirname(settings.BASE_DIR))
             ret['result'] = str(result, 'utf-8')
             ret['success'] = True
+            success = True
         except subprocess.CalledProcessError as error:
             ret['result'] = str(error.output, 'utf-8')
             ret['error'] = True
 
-        # register plugins
-        # TODO
+        # save plugin to plugin_file if installed successfull
+        if success:
+            with open(get_plugin_file(), "a") as plugin_file:
+                plugin_file.write(f'{" ".join(install_name)}  # Installed {timezone.now()} by {str(self.context["request"].user)}\n')
 
         return ret
