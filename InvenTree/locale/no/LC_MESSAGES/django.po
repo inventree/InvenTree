@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-07 01:46+0000\n"
+"POT-Creation-Date: 2022-01-07 02:46+0000\n"
 "PO-Revision-Date: 2021-11-30 21:51\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
@@ -9139,48 +9139,52 @@ msgstr ""
 msgid "rows per page"
 msgstr ""
 
-#: templates/js/translated/tables.js:374
+#: templates/js/translated/tables.js:376
+msgid "Showing all rows"
+msgstr ""
+
+#: templates/js/translated/tables.js:378
 msgid "Showing"
 msgstr ""
 
-#: templates/js/translated/tables.js:374
+#: templates/js/translated/tables.js:378
 msgid "to"
 msgstr ""
 
-#: templates/js/translated/tables.js:374
+#: templates/js/translated/tables.js:378
 msgid "of"
 msgstr ""
 
-#: templates/js/translated/tables.js:374
+#: templates/js/translated/tables.js:378
 msgid "rows"
 msgstr ""
 
-#: templates/js/translated/tables.js:377 templates/search_form.html:6
+#: templates/js/translated/tables.js:382 templates/search_form.html:6
 #: templates/search_form.html:7
 msgid "Search"
 msgstr ""
 
-#: templates/js/translated/tables.js:380
+#: templates/js/translated/tables.js:385
 msgid "No matching results"
 msgstr ""
 
-#: templates/js/translated/tables.js:383
+#: templates/js/translated/tables.js:388
 msgid "Hide/Show pagination"
 msgstr ""
 
-#: templates/js/translated/tables.js:386
+#: templates/js/translated/tables.js:391
 msgid "Refresh"
 msgstr ""
 
-#: templates/js/translated/tables.js:389
+#: templates/js/translated/tables.js:394
 msgid "Toggle"
 msgstr ""
 
-#: templates/js/translated/tables.js:392
+#: templates/js/translated/tables.js:397
 msgid "Columns"
 msgstr ""
 
-#: templates/js/translated/tables.js:395
+#: templates/js/translated/tables.js:400
 msgid "All"
 msgstr ""
 
