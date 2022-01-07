@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-07 07:27+0000\n"
+"POT-Creation-Date: 2022-01-07 09:21+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
@@ -5310,41 +5310,41 @@ msgstr ""
 msgid "A setting with multiple choices"
 msgstr ""
 
-#: plugin/serializers.py:49
+#: plugin/serializers.py:50
 #, fuzzy
 #| msgid "Source Location"
 msgid "Source URL"
 msgstr "Lokalizacja źródła"
 
-#: plugin/serializers.py:50
+#: plugin/serializers.py:51
 msgid "Source for the package - this can be a custom registry or a VCS path"
 msgstr ""
 
-#: plugin/serializers.py:55
+#: plugin/serializers.py:56
 msgid "Package Name"
 msgstr ""
 
-#: plugin/serializers.py:56
+#: plugin/serializers.py:57
 msgid "Name for the Plugin Package - can also contain a version indicator"
 msgstr ""
 
-#: plugin/serializers.py:59
+#: plugin/serializers.py:60
 #, fuzzy
 #| msgid "Confirm stock allocation"
 msgid "Confirm plugin installation"
 msgstr "Potwierdź przydział zapasów"
 
-#: plugin/serializers.py:60
+#: plugin/serializers.py:61
 msgid "This will install this plugin now into the current instance. The instance will go into maintenance."
 msgstr ""
 
-#: plugin/serializers.py:75
+#: plugin/serializers.py:76
 #, fuzzy
 #| msgid "Destination location not specified"
 msgid "Installation not confirmed"
 msgstr "Nie określono lokalizacji docelowej"
 
-#: plugin/serializers.py:77
+#: plugin/serializers.py:78
 msgid "Either packagename of URL must be provided"
 msgstr ""
 
