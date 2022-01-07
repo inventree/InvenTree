@@ -60,6 +60,8 @@ import common.models
 
 import part.settings as part_settings
 
+from plugin.events import trigger_event
+
 
 logger = logging.getLogger("inventree")
 
@@ -1980,10 +1982,10 @@ class Part(MPTTModel):
 
     @property
     def attachment_count(self):
-        """ Count the number of attachments for this part.
+        """
+        Count the number of attachments for this part.
         If the part is a variant of a template part,
         include the number of attachments for the template part.
-
         """
 
         return self.part_attachments.count()
@@ -2181,7 +2183,11 @@ def after_save_part(sender, instance: Part, created, **kwargs):
     Function to be executed after a Part is saved
     """
 
-    if not created:
+    trigger_event('part.saved', part_id=instance.pk)
+
+    if created:
+        trigger_event('part.created', part_id=instance.pk)
+    else:
         # Check part stock only if we are *updating* the part (not creating it)
 
         # Run this check in the background

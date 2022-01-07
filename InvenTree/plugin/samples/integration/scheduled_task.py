@@ -32,7 +32,7 @@ class ScheduledTaskPlugin(ScheduleMixin, IntegrationPluginBase):
         'hello': {
             'func': 'plugin.samples.integration.scheduled_task.print_hello',
             'schedule': 'I',
-            'minutes': 5,
+            'minutes': 45,
         },
         'world': {
             'func': 'plugin.samples.integration.scheduled_task.print_hello',

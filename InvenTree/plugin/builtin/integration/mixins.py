@@ -189,10 +189,10 @@ class EventMixin:
     which provide pairs of 'event':'function'
 
     Notes:
-    
+
     Events are called by name, and based on the django signal nomenclature,
     e.g. 'part.pre_save'
-    
+
     Receiving functions must be prototyped to match the 'event' they receive.
 
     Example:
