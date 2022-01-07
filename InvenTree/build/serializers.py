@@ -250,13 +250,35 @@ class BuildCompleteSerializer(serializers.Serializer):
         help_text=_('Accept that stock items have not been fully allocated to this build order'),
     )
 
+    def validate_accept_unallocated(self, value):
+
+        build = self.context['build']
+
+        if not build.areUntrackedPartsFullyAllocated() and not value:
+            raise ValidationError(_('Required stock has not been fully allocated'))
+
+        return value
+
     accept_incomplete = serializers.BooleanField(
         label=_('Accept Incomplete'),
         help_text=_('Accept that the required number of build outputs have not been completed'),
     )
 
+    def validate_accept_incomplete(self, value):
+
+        build = self.context['build']
+
+        if build.remaining > 0 and not value:
+            raise ValidationError(_('Required build quantity has not been completed'))
+
+        return value
+
     def save(self):
-        pass
+
+        request = self.context['request']
+        build = self.context['build']
+
+        build.complete_build(request.user)
 
 
 class BuildUnallocationSerializer(serializers.Serializer):

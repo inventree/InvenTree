@@ -275,6 +275,7 @@ class BuildFinish(generics.CreateAPIView):
 
         return ctx
 
+
 class BuildAllocate(generics.CreateAPIView):
     """
     API endpoint to allocate stock items to a build order
