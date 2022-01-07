@@ -229,15 +229,6 @@ src="{% static 'img/blank_image.png' %}"
             allocated: {% if build.areUntrackedPartsFullyAllocated %}true{% else %}false{% endif %},
             completed: {% if build.remaining == 0 %}true{% else %}false{% endif %},
         });
-
-        return;
-        launchModalForm(
-            "{% url 'build-complete' build.id %}",
-            {
-                reload: true,
-                submit_text: '{% trans "Complete Build" %}',
-            }
-        );
         {% endif %}
     });
 
