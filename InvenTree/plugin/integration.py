@@ -95,6 +95,10 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
         return self.plugin_slug()
 
     @property
+    def name(self):
+        return self.plugin_name()
+
+    @property
     def human_name(self):
         """human readable name for labels etc."""
         human_name = getattr(self, 'PLUGIN_TITLE', None)

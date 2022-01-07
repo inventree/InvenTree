@@ -69,7 +69,11 @@ class ScheduleMixin:
             'repeats': 5,                           # Number of repeats (leave blank for 'forever')
         }
     }
+
+    Note: 'schedule' parameter must be one of ['I', 'H', 'D', 'W', 'M', 'Q', 'Y']
     """
+
+    ALLOWABLE_SCHEDULE_TYPES = ['I', 'H', 'D', 'W', 'M', 'Q', 'Y']
 
     SCHEDULED_TASKS = {}
 
@@ -92,11 +96,25 @@ class ScheduleMixin:
         Check that the provided scheduled tasks are valid
         """
 
-        if not self.has_scheduled_tasks():
-            raise ValueError(f"SCHEDULED_TASKS not defined for plugin '{__class__}'")
+        if not self.has_scheduled_tasks:
+            raise ValueError(f"SCHEDULED_TASKS not defined")
 
         for key, task in self.scheduled_tasks.items():
-            print(key, task)
+            
+            if 'func' not in task:
+                raise ValueError(f"Task '{key}' is missing 'func' parameter")
+            
+            if 'schedule' not in task:
+                raise ValueError(f"Task '{key}' is missing 'schedule' parameter")
+            
+            schedule = task['schedule'].upper().strip()
+
+            if schedule not in self.ALLOWABLE_SCHEDULE_TYPES:
+                raise ValueError(f"Task '{key}': Schedule '{schedule}' is not a valid option")
+
+            # If 'minutes' is selected, it must be provided!
+            if schedule == 'I' and 'minutes' not in task:
+                raise ValueError(f"Task '{key}' is missing 'minutes' parameter")
 
 class UrlsMixin:
     """

@@ -6,6 +6,15 @@ from plugin import IntegrationPluginBase
 from plugin.mixins import ScheduleMixin
 
 
+# Define some simple tasks to perform
+def print_hello():
+    print("Hello")
+
+
+def print_world():
+    print("World")
+
+
 class ScheduledTaskPlugin(ScheduleMixin, IntegrationPluginBase):
     """
     A sample plugin which provides support for scheduled tasks
@@ -13,4 +22,16 @@ class ScheduledTaskPlugin(ScheduleMixin, IntegrationPluginBase):
 
     PLUGIN_NAME = "ScheduledTasksPlugin"
     PLUGIN_SLUG = "schedule"
-    PLUGIN_TITLE = "A plugin which provides scheduled task support"
+    PLUGIN_TITLE = "Scheduled Tasks"
+
+    SCHEDULED_TASKS = {
+        'hello': {
+            'func': 'plugin.builtin.integration.mixins.ScheduleMixin.print_hello',
+            'schedule': 'I',
+            'minutes': 5,
+        },
+        'world': {
+            'func': 'plugin.builtin.integration.mixins.ScheduleMixin.print_world',
+            'schedule': 'H',
+        }
+    }

@@ -978,6 +978,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
             'requires_restart': True,
         },
+        'ENABLE_PLUGINS_SCHEDULE': {
+            'name': _('Enable schedule integration'),
+            'description': _('Enable plugins to run scheduled tasks'),
+            'default': False,
+            'validator': bool,
+            'requires_restart': True,
+        }
     }
 
     class Meta:
