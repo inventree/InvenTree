@@ -1,7 +1,10 @@
 """
-registry for plugins
-holds the class and the object that contains all code to maintain plugin states
+Registry for loading and managing multiple plugins at run-time
+
+- Holds the class and the object that contains all code to maintain plugin states
+- Manages setup and teardown of plugin class instances
 """
+
 import importlib
 import pathlib
 import logging
@@ -33,7 +36,11 @@ from .helpers import get_plugin_error, IntegrationPluginError
 logger = logging.getLogger('inventree')
 
 
-class Plugins:
+class PluginsRegistry:
+    """
+    The PluginsRegistry class
+    """
+
     def __init__(self) -> None:
         # plugin registry
         self.plugins = {}
@@ -50,15 +57,19 @@ class Plugins:
         # integration specific
         self.installed_apps = []         # Holds all added plugin_paths
         # mixins
-        self.mixins_globalsettings = {}
+        self.mixins_settings = {}
 
     # region public plugin functions
     def load_plugins(self):
-        """load and activate all IntegrationPlugins"""
+        """
+        Load and activate all IntegrationPlugins
+        """
+
         from plugin.helpers import log_plugin_error
 
         logger.info('Start loading plugins')
-        # set maintanace mode
+
+        # Set maintanace mode
         _maintenance = bool(get_maintenance_mode())
         if not _maintenance:
             set_maintenance_mode(True)
@@ -68,7 +79,7 @@ class Plugins:
         retry_counter = settings.PLUGIN_RETRY
         while not registered_sucessfull:
             try:
-                # we are using the db so for migrations etc we need to try this block
+                # We are using the db so for migrations etc we need to try this block
                 self._init_plugins(blocked_plugin)
                 self._activate_plugins()
                 registered_sucessfull = True
@@ -81,13 +92,14 @@ class Plugins:
                 log_plugin_error({error.path: error.message}, 'load')
                 blocked_plugin = error.path  # we will not try to load this app again
 
-                # init apps without any integration plugins
+                # Initialize apps without any integration plugins
                 self._clean_registry()
                 self._clean_installed_apps()
                 self._activate_plugins(force_reload=True)
 
-                # we do not want to end in an endless loop
+                # We do not want to end in an endless loop
                 retry_counter -= 1
+
                 if retry_counter <= 0:
                     if settings.PLUGIN_TESTING:
                         print('[PLUGIN] Max retries, breaking loading')
@@ -98,15 +110,20 @@ class Plugins:
 
                 # now the loading will re-start up with init
 
-        # remove maintenance
+        # Remove maintenance mode
         if not _maintenance:
             set_maintenance_mode(False)
+
         logger.info('Finished loading plugins')
 
     def unload_plugins(self):
-        """unload and deactivate all IntegrationPlugins"""
+        """
+        Unload and deactivate all IntegrationPlugins
+        """
+
         logger.info('Start unloading plugins')
-        # set maintanace mode
+
+        # Set maintanace mode
         _maintenance = bool(get_maintenance_mode())
         if not _maintenance:
             set_maintenance_mode(True)
@@ -123,21 +140,27 @@ class Plugins:
         logger.info('Finished unloading plugins')
 
     def reload_plugins(self):
-        """safely reload IntegrationPlugins"""
-        # do not reload whe currently loading
+        """
+        Safely reload IntegrationPlugins
+        """
+
+        # Do not reload whe currently loading
         if self.is_loading:
             return
 
         logger.info('Start reloading plugins')
+
         with maintenance_mode_on():
             self.unload_plugins()
             self.load_plugins()
-        logger.info('Finished reloading plugins')
-    # endregion
 
-    # region general plugin managment mechanisms
+        logger.info('Finished reloading plugins')
+
     def collect_plugins(self):
-        """collect integration plugins from all possible ways of loading"""
+        """
+        Collect integration plugins from all possible ways of loading
+        """
+
         self.plugin_modules = []  # clear
 
         # Collect plugins from paths
@@ -146,7 +169,7 @@ class Plugins:
             if modules:
                 [self.plugin_modules.append(item) for item in modules]
 
-        # check if not running in testing mode and apps should be loaded from hooks
+        # Check if not running in testing mode and apps should be loaded from hooks
         if (not settings.PLUGIN_TESTING) or (settings.PLUGIN_TESTING and settings.PLUGIN_TESTING_SETUP):
             # Collect plugins from setup entry points
             for entry in metadata.entry_points().get('inventree_plugins', []):
@@ -159,22 +182,25 @@ class Plugins:
         logger.info(", ".join([a.__module__ for a in self.plugin_modules]))
 
     def _init_plugins(self, disabled=None):
-        """initialise all found plugins
+        """
+        Initialise all found plugins
 
         :param disabled: loading path of disabled app, defaults to None
         :type disabled: str, optional
         :raises error: IntegrationPluginError
         """
+
         from plugin.models import PluginConfig
 
         logger.info('Starting plugin initialisation')
+
         # Initialize integration plugins
         for plugin in self.plugin_modules:
-            # check if package
+            # Check if package
             was_packaged = getattr(plugin, 'is_package', False)
 
-            # check if activated
-            # these checks only use attributes - never use plugin supplied functions -> that would lead to arbitrary code execution!!
+            # Check if activated
+            # These checks only use attributes - never use plugin supplied functions -> that would lead to arbitrary code execution!!
             plug_name = plugin.PLUGIN_NAME
             plug_key = plugin.PLUGIN_SLUG if getattr(plugin, 'PLUGIN_SLUG', None) else plug_name
             plug_key = slugify(plug_key)  # keys are slugs!
@@ -186,23 +212,23 @@ class Plugins:
                     raise error
                 plugin_db_setting = None
 
-            # always activate if testing
+            # Always activate if testing
             if settings.PLUGIN_TESTING or (plugin_db_setting and plugin_db_setting.active):
-                # check if the plugin was blocked -> threw an error
+                # Check if the plugin was blocked -> threw an error
                 if disabled:
                     # option1: package, option2: file-based
                     if (plugin.__name__ == disabled) or (plugin.__module__ == disabled):
-                        # errors are bad so disable the plugin in the database
+                        # Errors are bad so disable the plugin in the database
                         if not settings.PLUGIN_TESTING:
                             plugin_db_setting.active = False
                             # TODO save the error to the plugin
                             plugin_db_setting.save(no_reload=True)
 
-                        # add to inactive plugins so it shows up in the ui
+                        # Add to inactive plugins so it shows up in the ui
                         self.plugins_inactive[plug_key] = plugin_db_setting
                         continue  # continue -> the plugin is not loaded
 
-                # init package
+                # Initialize package
                 # now we can be sure that an admin has activated the plugin
                 # TODO check more stuff -> as of Nov 2021 there are not many checks in place
                 # but we could enhance those to check signatures, run the plugin against a whitelist etc.
@@ -225,7 +251,8 @@ class Plugins:
                 self.plugins_inactive[plug_key] = plugin_db_setting
 
     def _activate_plugins(self, force_reload=False):
-        """run integration functions for all plugins
+        """
+        Run integration functions for all plugins
 
         :param force_reload: force reload base apps, defaults to False
         :type force_reload: bool, optional
@@ -234,47 +261,37 @@ class Plugins:
         plugins = self.plugins.items()
         logger.info(f'Found {len(plugins)} active plugins')
 
-        self.activate_integration_globalsettings(plugins)
+        self.activate_integration_settings(plugins)
         self.activate_integration_app(plugins, force_reload=force_reload)
 
     def _deactivate_plugins(self):
-        """run integration deactivation functions for all plugins"""
+        """
+        Run integration deactivation functions for all plugins
+        """
         self.deactivate_integration_app()
-        self.deactivate_integration_globalsettings()
-    # endregion
+        self.deactivate_integration_settings()
 
-    # region specific integrations
-    # region integration_globalsettings
-    def activate_integration_globalsettings(self, plugins):
+    def activate_integration_settings(self, plugins):
         from common.models import InvenTreeSetting
 
         if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_GLOBALSETTING'):
             logger.info('Registering IntegrationPlugin global settings')
             for slug, plugin in plugins:
                 if plugin.mixin_enabled('settings'):
-                    plugin_setting = plugin.globalsettingspatterns
-                    self.mixins_globalsettings[slug] = plugin_setting
+                    plugin_setting = plugin.settings
+                    self.mixins_settings[slug] = plugin_setting
 
-                    # Add to settings dir
-                    InvenTreeSetting.GLOBAL_SETTINGS.update(plugin_setting)
-
-    def deactivate_integration_globalsettings(self):
-        from common.models import InvenTreeSetting
+    def deactivate_integration_settings(self):
 
         # collect all settings
         plugin_settings = {}
-        for _, plugin_setting in self.mixins_globalsettings.items():
+
+        for _, plugin_setting in self.mixins_settings.items():
             plugin_settings.update(plugin_setting)
 
-        # remove settings
-        for setting in plugin_settings:
-            InvenTreeSetting.GLOBAL_SETTINGS.pop(setting)
-
         # clear cache
-        self.mixins_globalsettings = {}
-    # endregion
+        self.mixins_Fsettings = {}
 
-    # region integration_app
     def activate_integration_app(self, plugins, force_reload=False):
         """activate AppMixin plugins - add custom apps and reload
 
@@ -448,8 +465,6 @@ class Plugins:
             return True, []
         except Exception as error:
             get_plugin_error(error, do_raise=True)
-    # endregion
-    # endregion
 
 
-plugins = Plugins()
+plugin_registry = PluginsRegistry()

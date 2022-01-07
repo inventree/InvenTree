@@ -19,10 +19,9 @@
 <div class='table-responsive'>
 <table class='table table-striped table-condensed'>
     <tbody>
-        {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_URL" %}
-        {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_NAVIGATION" %}
-        {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_GLOBALSETTING"%}
-        {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_APP"%}
+        {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_URL" icon="fa-link" %}
+        {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_NAVIGATION" icon="fa-sitemap" %}
+        {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_APP" icon="fa-rocket" %}
     </tbody>
 </table>
 </div>
@@ -70,7 +69,7 @@
                 {% if mixin_list %}
                 {% for mixin in mixin_list %}
                 <a class='sidebar-selector' id='select-plugin-{{plugin_key}}' data-bs-parent="#sidebar">
-                    <span class='badge bg-dark badge-right'>{{ mixin.human_name }}</span>
+                    <span class='badge bg-dark badge-right rounded-pill'>{{ mixin.human_name }}</span>
                 </a>
                 {% endfor %}
                 {% endif %}
