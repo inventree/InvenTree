@@ -555,12 +555,17 @@ function renderErrorMessage(xhr) {
 }
 
 
-function showAlertDialog(title, content) {
+function showAlertDialog(title, content, options={}) {
     /* Display a modal dialog message box.
      * 
      * title - Title text 
      * content - HTML content of the dialog window
      */
+
+    if (options.alert_style) {
+        // Wrap content in an alert block
+        content = `<div class='alert alert-block alert-${options.alert_style}'>${content}</div>`;
+    }
 
 
     var modal = createNewModal({
