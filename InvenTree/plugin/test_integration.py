@@ -23,7 +23,7 @@ class BaseMixinDefinition:
 class SettingsMixinTest(BaseMixinDefinition, TestCase):
     MIXIN_HUMAN_NAME = 'Settings'
     MIXIN_NAME = 'settings'
-    MIXIN_ENABLE_CHECK = 'has_globalsettings'
+    MIXIN_ENABLE_CHECK = 'has_settings'
 
     TEST_SETTINGS = {'SETTING1': {'default': '123', }}
 
@@ -42,25 +42,19 @@ class SettingsMixinTest(BaseMixinDefinition, TestCase):
 
     def test_function(self):
         # settings variable
-        self.assertEqual(self.mixin.globalsettings, self.TEST_SETTINGS)
-
-        # settings pattern
-        target_pattern = {f'PLUGIN_{self.mixin.slug.upper()}_{key}': value for key, value in self.mixin.globalsettings.items()}
-        self.assertEqual(self.mixin.globalsettingspatterns, target_pattern)
-
-        # no settings
-        self.assertIsNone(self.mixin_nothing.globalsettings)
-        self.assertIsNone(self.mixin_nothing.globalsettingspatterns)
+        self.assertEqual(self.mixin.settings, self.TEST_SETTINGS)
 
         # calling settings
         # not existing
-        self.assertEqual(self.mixin.get_globalsetting('ABCD'), '')
-        self.assertEqual(self.mixin_nothing.get_globalsetting('ABCD'), '')
+        self.assertEqual(self.mixin.get_setting('ABCD'), '')
+        self.assertEqual(self.mixin_nothing.get_setting('ABCD'), '')
+
         # right setting
-        self.mixin.set_globalsetting('SETTING1', '12345', self.test_user)
-        self.assertEqual(self.mixin.get_globalsetting('SETTING1'), '12345')
+        self.mixin.set_setting('SETTING1', '12345', self.test_user)
+        self.assertEqual(self.mixin.get_setting('SETTING1'), '12345')
+
         # no setting
-        self.assertEqual(self.mixin_nothing.get_globalsetting(''), '')
+        self.assertEqual(self.mixin_nothing.get_setting(''), '')
 
 
 class UrlsMixinTest(BaseMixinDefinition, TestCase):
