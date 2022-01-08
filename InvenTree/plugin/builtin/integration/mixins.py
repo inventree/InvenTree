@@ -342,7 +342,10 @@ class APICallMixin:
 
     @property
     def api_headers(self):
-        return {self.API_TOKEN: self.get_globalsetting(self.API_PASSWORD_SETTING), 'Content-Type': 'application/json'}
+        return {
+            self.API_TOKEN: self.get_globalsetting(self.API_PASSWORD_SETTING),
+            'Content-Type': 'application/json'
+        }
 
     def api_build_url_args(self, arguments):
         groups = []
