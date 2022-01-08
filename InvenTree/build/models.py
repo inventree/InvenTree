@@ -555,7 +555,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         if self.incomplete_count > 0:
             return False
 
-        if self.completed < self.quantity:
+        if self.remaining > 0:
             return False
 
         if not self.areUntrackedPartsFullyAllocated():

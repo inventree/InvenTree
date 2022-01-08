@@ -2,9 +2,16 @@
 Plugin mixin classes
 """
 
-from django.conf.urls import url, include
+import logging
 
+from django.conf.urls import url, include
+from django.db.utils import OperationalError, ProgrammingError
+
+from plugin.models import PluginConfig, PluginSetting
 from plugin.urls import PLUGIN_BASE
+
+
+logger = logging.getLogger('inventree')
 
 
 class SettingsMixin:
@@ -17,44 +24,160 @@ class SettingsMixin:
 
     def __init__(self):
         super().__init__()
-        self.add_mixin('settings', 'has_globalsettings', __class__)
-        self.globalsettings = getattr(self, 'SETTINGS', None)
+        self.add_mixin('settings', 'has_settings', __class__)
+        self.settings = getattr(self, 'SETTINGS', {})
 
     @property
-    def has_globalsettings(self):
+    def has_settings(self):
         """
         Does this plugin use custom global settings
         """
-        return bool(self.globalsettings)
+        return bool(self.settings)
+
+    def get_setting(self, key):
+        """
+        Return the 'value' of the setting associated with this plugin
+        """
+
+        return PluginSetting.get_setting(key, plugin=self)
+
+    def set_setting(self, key, value, user=None):
+        """
+        Set plugin setting value by key
+        """
+
+        try:
+            plugin, _ = PluginConfig.objects.get_or_create(key=self.plugin_slug(), name=self.plugin_name())
+        except (OperationalError, ProgrammingError):
+            plugin = None
+
+        if not plugin:
+            # Cannot find associated plugin model, return
+            return
+
+        PluginSetting.set_setting(key, value, user, plugin=plugin)
+
+
+class ScheduleMixin:
+    """
+    Mixin that provides support for scheduled tasks.
+
+    Implementing classes must provide a dict object called SCHEDULED_TASKS,
+    which provides information on the tasks to be scheduled.
+
+    SCHEDULED_TASKS = {
+        # Name of the task (will be prepended with the plugin name)
+        'test_server': {
+            'func': 'myplugin.tasks.test_server',   # Python function to call (no arguments!)
+            'schedule': "I",                        # Schedule type (see django_q.Schedule)
+            'minutes': 30,                          # Number of minutes (only if schedule type = Minutes)
+            'repeats': 5,                           # Number of repeats (leave blank for 'forever')
+        }
+    }
+
+    Note: 'schedule' parameter must be one of ['I', 'H', 'D', 'W', 'M', 'Q', 'Y']
+    """
+
+    ALLOWABLE_SCHEDULE_TYPES = ['I', 'H', 'D', 'W', 'M', 'Q', 'Y']
+
+    SCHEDULED_TASKS = {}
+
+    class MixinMeta:
+        MIXIN_NAME = 'Schedule'
+
+    def __init__(self):
+        super().__init__()
+        self.add_mixin('schedule', 'has_scheduled_tasks', __class__)
+        self.scheduled_tasks = getattr(self, 'SCHEDULED_TASKS', {})
+
+        self.validate_scheduled_tasks()
 
     @property
-    def globalsettingspatterns(self):
-        """
-        Get patterns for InvenTreeSetting defintion
-        """
-        if self.has_globalsettings:
-            return {f'PLUGIN_{self.slug.upper()}_{key}': value for key, value in self.globalsettings.items()}
-        return None
+    def has_scheduled_tasks(self):
+        return bool(self.scheduled_tasks)
 
-    def _globalsetting_name(self, key):
+    def validate_scheduled_tasks(self):
         """
-        Get global name of setting
+        Check that the provided scheduled tasks are valid
         """
-        return f'PLUGIN_{self.slug.upper()}_{key}'
 
-    def get_globalsetting(self, key):
-        """
-        get plugin global setting by key
-        """
-        from common.models import InvenTreeSetting
-        return InvenTreeSetting.get_setting(self._globalsetting_name(key))
+        if not self.has_scheduled_tasks:
+            raise ValueError("SCHEDULED_TASKS not defined")
 
-    def set_globalsetting(self, key, value, user):
+        for key, task in self.scheduled_tasks.items():
+
+            if 'func' not in task:
+                raise ValueError(f"Task '{key}' is missing 'func' parameter")
+
+            if 'schedule' not in task:
+                raise ValueError(f"Task '{key}' is missing 'schedule' parameter")
+
+            schedule = task['schedule'].upper().strip()
+
+            if schedule not in self.ALLOWABLE_SCHEDULE_TYPES:
+                raise ValueError(f"Task '{key}': Schedule '{schedule}' is not a valid option")
+
+            # If 'minutes' is selected, it must be provided!
+            if schedule == 'I' and 'minutes' not in task:
+                raise ValueError(f"Task '{key}' is missing 'minutes' parameter")
+
+    def get_task_name(self, key):
+        # Generate a 'unique' task name
+        slug = self.plugin_slug()
+        return f"plugin.{slug}.{key}"
+
+    def get_task_names(self):
+        # Returns a list of all task names associated with this plugin instance
+        return [self.get_task_name(key) for key in self.scheduled_tasks.keys()]
+
+    def register_tasks(self):
         """
-        set plugin global setting by key
+        Register the tasks with the database
         """
-        from common.models import InvenTreeSetting
-        return InvenTreeSetting.set_setting(self._globalsetting_name(key), value, user)
+
+        try:
+            from django_q.models import Schedule
+
+            for key, task in self.scheduled_tasks.items():
+
+                task_name = self.get_task_name(key)
+
+                # If a matching scheduled task does not exist, create it!
+                if not Schedule.objects.filter(name=task_name).exists():
+
+                    logger.info(f"Adding scheduled task '{task_name}'")
+
+                    Schedule.objects.create(
+                        name=task_name,
+                        func=task['func'],
+                        schedule_type=task['schedule'],
+                        minutes=task.get('minutes', None),
+                        repeats=task.get('repeats', -1),
+                    )
+        except (ProgrammingError, OperationalError):
+            # Database might not yet be ready
+            logger.warning("register_tasks failed, database not ready")
+
+    def unregister_tasks(self):
+        """
+        Deregister the tasks with the database
+        """
+
+        try:
+            from django_q.models import Schedule
+
+            for key, task in self.scheduled_tasks.items():
+
+                task_name = self.get_task_name(key)
+
+                try:
+                    scheduled_task = Schedule.objects.get(name=task_name)
+                    scheduled_task.delete()
+                except Schedule.DoesNotExist:
+                    pass
+        except (ProgrammingError, OperationalError):
+            # Database might not yet be ready
+            logger.warning("unregister_tasks failed, database not ready")
 
 
 class UrlsMixin:
@@ -116,7 +239,9 @@ class NavigationMixin:
     NAVIGATION_TAB_ICON = "fas fa-question"
 
     class MixinMeta:
-        """meta options for this mixin"""
+        """
+        meta options for this mixin
+        """
         MIXIN_NAME = 'Navigation Links'
 
     def __init__(self):
