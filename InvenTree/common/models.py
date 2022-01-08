@@ -872,13 +872,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        'STOCK_GROUP_BY_PART': {
-            'name': _('Group by Part'),
-            'description': _('Group stock items by part reference in table views'),
-            'default': True,
-            'validator': bool,
-        },
-
         'BUILDORDER_REFERENCE_PREFIX': {
             'name': _('Build Order Reference Prefix'),
             'description': _('Prefix value for build order reference'),
