@@ -224,13 +224,11 @@ src="{% static 'img/blank_image.png' %}"
             '{% trans "Build Order cannot be completed as incomplete build outputs remain" %}'
         );
         {% else %}
-        launchModalForm(
-            "{% url 'build-complete' build.id %}",
-            {
-                reload: true,
-                submit_text: '{% trans "Complete Build" %}',
-            }
-        );
+
+        completeBuildOrder({{ build.pk }}, {
+            allocated: {% if build.areUntrackedPartsFullyAllocated %}true{% else %}false{% endif %},
+            completed: {% if build.remaining == 0 %}true{% else %}false{% endif %},
+        });
         {% endif %}
     });
 
