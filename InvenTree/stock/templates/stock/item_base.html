@@ -3,6 +3,7 @@
 {% load inventree_extras %}
 {% load status_codes %}
 {% load i18n %}
+{% load l10n %}
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Stock Item" %} - {{ item }}
@@ -429,7 +430,7 @@ $("#stock-serialize").click(function() {
         part: {{ item.part.pk }},
         reload: true,
         data: {
-            quantity: {{ item.quantity }},
+            quantity: {{ item.quantity|unlocalize }},
             {% if item.location %}
             destination: {{ item.location.pk }},
             {% elif item.part.default_location %}

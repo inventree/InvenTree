@@ -19,17 +19,17 @@
 <div class='table-responsive'>
 <table class='table table-striped table-condensed'>
     <tbody>
-        {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_URL" %}
-        {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_NAVIGATION" %}
-        {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_GLOBALSETTING"%}
-        {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_APP"%}
+        {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_SCHEDULE" icon="fa-calendar-alt" %}
+        {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_URL" icon="fa-link" %}
+        {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_NAVIGATION" icon="fa-sitemap" %}
+        {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_APP" icon="fa-rocket" %}
     </tbody>
 </table>
 </div>
 
 <div class='panel-heading'>
     <div class='d-flex flex-wrap'>
-        <h4>{% trans "Plugin list" %}</h4>
+        <h4>{% trans "Plugins" %}</h4>
         {% include "spacer.html" %}
         <div class='btn-group' role='group'>
             {% url 'admin:plugin_pluginconfig_changelist' as url %}
@@ -70,7 +70,7 @@
                 {% if mixin_list %}
                 {% for mixin in mixin_list %}
                 <a class='sidebar-selector' id='select-plugin-{{plugin_key}}' data-bs-parent="#sidebar">
-                    <span class='badge bg-dark badge-right'>{% blocktrans with name=mixin.human_name %}has {{name}}{% endblocktrans %}</span>
+                    <span class='badge bg-dark badge-right rounded-pill'>{{ mixin.human_name }}</span>
                 </a>
                 {% endfor %}
                 {% endif %}
