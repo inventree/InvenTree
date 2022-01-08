@@ -318,7 +318,7 @@ class APICallMixin:
     """
     API_METHOD = 'https'
     API_URL_SETTING = None
-    API_PASSWORD_SETTING = None
+    API_TOKEN_SETTING = None
 
     API_TOKEN = 'Bearer'
 
@@ -343,7 +343,7 @@ class APICallMixin:
     @property
     def api_headers(self):
         return {
-            self.API_TOKEN: self.get_globalsetting(self.API_PASSWORD_SETTING),
+            self.API_TOKEN: self.get_globalsetting(self.API_TOKEN_SETTING),
             'Content-Type': 'application/json'
         }
 
