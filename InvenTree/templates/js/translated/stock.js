@@ -111,10 +111,15 @@ function stockLocationFields(options={}) {
         },
         name: {},
         description: {},
+        owner: {},
     };
 
     if (options.parent) {
         fields.parent.value = options.parent;
+    }
+
+    if (!global_settings.STOCK_OWNERSHIP_CONTROL) {
+        delete fields['owner'];
     }
 
     return fields;
@@ -129,6 +134,8 @@ function editStockLocation(pk, options={}) {
     var url = `/api/stock/location/${pk}/`;
 
     options.fields = stockLocationFields(options);
+
+    options.title = '{% trans "Edit Stock Location" %}';
 
     constructForm(url, options);
 }
