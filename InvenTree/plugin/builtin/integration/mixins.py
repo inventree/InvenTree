@@ -306,14 +306,15 @@ class AppMixin:
 
 
 class APICallMixin:
-    """Mixin that enables easier API calls for a plugin
+    """
+    Mixin that enables easier API calls for a plugin
 
-    1. Add this mixin
-    2. Add two global settings for the required url and token/passowrd (use `GlobalSettingsMixin`)
-    3. Save the references to `API_URL_SETTING` and `API_PASSWORD_SETTING`
-    4. Set `API_TOKEN` to the name required for the token / password by the external API
-    5. (Optional) Override the `api_url` property method if some part of the APIs url is static
-    6. (Optional) Override `api_headers` to add extra headers (by default the token/password and Content-Type are contained)
+    1. Add this mixin before (left of) SettingsMixin and PluginBase
+    2. Add two settings for the required url and token/passowrd (use `SettingsMixin`)
+    3. Save the references to keys of the settings in `API_URL_SETTING` and `API_TOKEN_SETTING`
+    4. (Optional) Set `API_TOKEN` to the name required for the token by the external API - Defaults to `Bearer`
+    5. (Optional) Override the `api_url` property method if the setting needs to be extended
+    6. (Optional) Override `api_headers` to add extra headers (by default the token and Content-Type are contained)
     6. Access the API in you plugin code via `api_call`
     """
     API_METHOD = 'https'
