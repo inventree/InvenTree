@@ -20,6 +20,7 @@
 
 /* exported
     allocateStockToBuild,
+    completeBuildOrder,
     editBuildOrder,
     loadAllocationTable,
     loadBuildOrderAllocationTable,
@@ -116,6 +117,57 @@ function newBuildOrder(options={}) {
         method: 'POST',
         title: '{% trans "Create Build Order" %}',
         onSuccess: options.onSuccess,
+    });
+}
+
+
+/* Construct a form to "complete" (finish) a build order */
+function completeBuildOrder(build_id, options={}) {
+
+    var url = `/api/build/${build_id}/finish/`;
+
+    var fields = {
+        accept_unallocated: {},
+        accept_incomplete: {},
+    };
+
+    var html = '';
+
+    if (options.can_complete) {
+
+    } else {
+        html += `
+        <div class='alert alert-block alert-danger'>
+        <strong>{% trans "Build Order is incomplete" %}</strong>
+        </div>
+        `;
+
+        if (!options.allocated) {
+            html += `<div class='alert alert-block alert-warning'>{% trans "Required stock has not been fully allocated" %}</div>`;
+        }
+
+        if (!options.completed) {
+            html += `<div class='alert alert-block alert-warning'>{% trans "Required build quantity has not been completed" %}</div>`;
+        }
+    }
+
+    // Hide particular fields if they are not required
+
+    if (options.allocated) {
+        delete fields.accept_unallocated;
+    }
+
+    if (options.completed) {
+        delete fields.accept_incomplete;
+    }
+
+    constructForm(url, {
+        fields: fields,
+        reload: true,
+        confirm: true,
+        method: 'POST',
+        title: '{% trans "Complete Build Order" %}',
+        preFormContent: html,
     });
 }
 
