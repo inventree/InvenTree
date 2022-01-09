@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-08 21:14+0000\n"
-"PO-Revision-Date: 2022-01-08 21:40\n"
+"POT-Creation-Date: 2022-01-09 11:40+0000\n"
+"PO-Revision-Date: 2022-01-09 12:32\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -910,7 +910,7 @@ msgstr "生产"
 msgid "Build to allocate parts"
 msgstr ""
 
-#: build/models.py:1273 build/serializers.py:375 order/serializers.py:690
+#: build/models.py:1273 build/serializers.py:388 order/serializers.py:690
 #: order/serializers.py:708 stock/serializers.py:577 stock/serializers.py:695
 #: stock/templates/stock/item_base.html:9
 #: stock/templates/stock/item_base.html:23
@@ -941,7 +941,7 @@ msgstr "安装到"
 msgid "Destination stock item"
 msgstr ""
 
-#: build/serializers.py:137 build/serializers.py:404
+#: build/serializers.py:137 build/serializers.py:417
 msgid "Build Output"
 msgstr ""
 
@@ -1001,62 +1001,66 @@ msgstr ""
 msgid "Accept that stock items have not been fully allocated to this build order"
 msgstr ""
 
-#: build/serializers.py:258 templates/js/translated/build.js:149
+#: build/serializers.py:260 templates/js/translated/build.js:149
 msgid "Required stock has not been fully allocated"
 msgstr "所需库存尚未完全分配"
 
-#: build/serializers.py:263
+#: build/serializers.py:265
 msgid "Accept Incomplete"
 msgstr ""
 
-#: build/serializers.py:264
+#: build/serializers.py:266
 msgid "Accept that the required number of build outputs have not been completed"
 msgstr ""
 
-#: build/serializers.py:272 templates/js/translated/build.js:153
+#: build/serializers.py:276 templates/js/translated/build.js:153
 msgid "Required build quantity has not been completed"
 msgstr "所需生产数量尚未完成"
 
-#: build/serializers.py:300 build/serializers.py:349 part/models.py:2753
+#: build/serializers.py:285
+msgid "Build order has incomplete outputs"
+msgstr ""
+
+#: build/serializers.py:313 build/serializers.py:362 part/models.py:2753
 #: part/models.py:2912
 msgid "BOM Item"
 msgstr ""
 
-#: build/serializers.py:310
+#: build/serializers.py:323
 msgid "Build output"
 msgstr ""
 
-#: build/serializers.py:319
+#: build/serializers.py:332
 msgid "Build output must point to the same build"
 msgstr ""
 
-#: build/serializers.py:366
+#: build/serializers.py:379
 msgid "bom_item.part must point to the same part as the build order"
 msgstr ""
 
-#: build/serializers.py:381 stock/serializers.py:584
+#: build/serializers.py:394 stock/serializers.py:584
 msgid "Item must be in stock"
 msgstr ""
 
-#: build/serializers.py:395 order/models.py:277 order/serializers.py:240
+#: build/serializers.py:408 order/models.py:277 order/serializers.py:240
 #: stock/models.py:365 stock/models.py:1077 stock/serializers.py:305
 msgid "Quantity must be greater than zero"
 msgstr ""
 
-#: build/serializers.py:437 order/serializers.py:741
+#: build/serializers.py:450 order/serializers.py:741
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr ""
 
-#: build/serializers.py:443
+#: build/serializers.py:456
 msgid "Build output must be specified for allocation of tracked parts"
 msgstr ""
 
-#: build/serializers.py:450
+#: build/serializers.py:463
 msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr ""
 
-#: build/serializers.py:478 order/serializers.py:984
+#: build/serializers.py:491 order/serializers.py:984
 msgid "Allocation items must be provided"
 msgstr ""
 
