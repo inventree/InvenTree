@@ -277,6 +277,15 @@ class BuildCompleteSerializer(serializers.Serializer):
 
         return value
 
+    def validate(self, data):
+
+        build = self.context['build']
+
+        if build.incomplete_count > 0:
+            raise ValidationError(_("Build order has incomplete outputs"))            
+
+        return data
+
     def save(self):
 
         request = self.context['request']
