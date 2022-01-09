@@ -248,6 +248,8 @@ class BuildCompleteSerializer(serializers.Serializer):
     accept_unallocated = serializers.BooleanField(
         label=_('Accept Unallocated'),
         help_text=_('Accept that stock items have not been fully allocated to this build order'),
+        required=False,
+        default=False,
     )
 
     def validate_accept_unallocated(self, value):
@@ -262,6 +264,8 @@ class BuildCompleteSerializer(serializers.Serializer):
     accept_incomplete = serializers.BooleanField(
         label=_('Accept Incomplete'),
         help_text=_('Accept that the required number of build outputs have not been completed'),
+        required=False,
+        default=False,
     )
 
     def validate_accept_incomplete(self, value):
