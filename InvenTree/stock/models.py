@@ -138,6 +138,18 @@ def before_delete_stock_location(sender, instance, using, **kwargs):
     trigger_event('location.deleted')
 
 
+@receiver(post_save, sender=StockLocation, dispatch_uid='stock_location_post_save_log')
+def after_save_stock_location(sender, instance: StockLocation, created, **kwargs):
+    """
+    Hook function to be executed after StockLocation object is saved/updated
+    """
+
+    if created:
+        trigger_event('stocklocation.created', location_id=instance.pk)
+    else:
+        trigger_event('stocklocation.saved', location_id=instance.pk)
+
+
 class StockItemManager(TreeManager):
     """
     Custom database manager for the StockItem class.
@@ -722,6 +734,12 @@ class StockItem(MPTTModel):
             notes=notes,
         )
 
+        trigger_event(
+            'stockitem.assignedtocustomer',
+            item_id=self.id,
+            customer_id=customer.id,
+        )
+
         # Return the reference to the stock item
         return item
 
@@ -748,6 +766,11 @@ class StockItem(MPTTModel):
 
         self.customer = None
         self.location = location
+
+        trigger_event(
+            'stockitem.returnedfromcustomer',
+            item_id=self.id,
+        )
 
         self.save()
 
@@ -1995,3 +2018,12 @@ class StockItemTestResult(models.Model):
         auto_now_add=True,
         editable=False
     )
+
+
+@receiver(post_save, sender=StockItemTestResult, dispatch_uid='stock_item_test_result_post_save_log')
+def after_save_test_result(sender, instance: StockItemTestResult, created: bool, **kwargs):
+
+    if created:
+        trigger_event('stockitemtestresult.created', test_id=instance.pk)
+    else:
+        trigger_event('stockitemtestresult.saved', test_id=instance.pk)
