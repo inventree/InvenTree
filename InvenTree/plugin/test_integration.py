@@ -171,6 +171,11 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
                 '''
                 return self.api_call('api/users/2')
         self.mixin = MixinCls()
+
+        class WrongCLS(APICallMixin, IntegrationPluginBase):
+            pass
+        self.mixin_nothing = WrongCLS()
+
     def test_function(self):
         # api_url
         self.assertEqual('https://reqres.in', self.mixin.api_url)
@@ -184,6 +189,10 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         result = self.mixin.get_external_url()
         self.assertTrue(result)
         self.assertIn('data', result,)
+
+        # wrongly defined plugins should not load
+        with self.assertRaises(ValueError):
+            self.mixin_nothing.has_api_call()
 
 
 class IntegrationPluginBaseTests(TestCase):
