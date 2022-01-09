@@ -4,6 +4,7 @@ from django.test import TestCase
 
 from plugin import plugin_registry
 
+
 class SampleApiCallerPluginTests(TestCase):
     """ Tests for SampleApiCallerPluginTests """
 
