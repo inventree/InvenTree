@@ -31,7 +31,7 @@ def trigger_event(event, *args, **kwargs):
     logger.debug(f"Event triggered: '{event}'")
 
     offload_task(
-        'plugin.event.register_event',
+        'plugin.events.register_event',
         event,
         *args,
         **kwargs
