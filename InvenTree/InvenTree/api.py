@@ -5,8 +5,6 @@ Main JSON interface views
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import logging
-
 from django.utils.translation import ugettext_lazy as _
 from django.http import JsonResponse
 
@@ -21,15 +19,7 @@ from .views import AjaxView
 from .version import inventreeVersion, inventreeApiVersion, inventreeInstanceName
 from .status import is_worker_running
 
-from plugin.plugins import load_action_plugins
-
-
-logger = logging.getLogger("inventree")
-
-
-logger.info("Loading action plugins...")
-action_plugins = load_action_plugins()
-
+from plugin import plugin_registry
 
 class InfoView(AjaxView):
     """ Simple JSON endpoint for InvenTree information.
@@ -110,10 +100,11 @@ class ActionPluginView(APIView):
                 'error': _("No action specified")
             })
 
+        action_plugins = plugin_registry.with_mixin('action')
         for plugin_class in action_plugins:
             if plugin_class.action_name() == action:
-
-                plugin = plugin_class(request.user, data=data)
+                # TODO @matmair use easier syntax once InvenTree 0.7.0 is released
+                plugin = plugin_class.init(request.user, data=data)
 
                 plugin.perform_action()
 

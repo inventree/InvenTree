@@ -8,10 +8,6 @@ import logging
 
 from django.core.exceptions import AppRegistryNotReady
 
-# Action plugins
-import plugin.builtin.action as action
-from plugin.action import ActionPlugin
-
 
 logger = logging.getLogger("inventree")
 
@@ -95,13 +91,6 @@ def load_plugins(name: str, cls, module):
             logger.debug(" - %s", plugin.PLUGIN_NAME)
 
     return plugins
-
-
-def load_action_plugins():
-    """
-    Return a list of all registered action plugins
-    """
-    return load_plugins('action', ActionPlugin, action)
 
 
 def load_barcode_plugins():

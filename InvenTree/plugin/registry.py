@@ -183,7 +183,17 @@ class PluginsRegistry:
         # Log collected plugins
         logger.info(f'Collected {len(self.plugin_modules)} plugins!')
         logger.info(", ".join([a.__module__ for a in self.plugin_modules]))
+    def with_mixin(self, mixin: str):
+        """
+        Returns reference to all plugins that have a specified mixin enabled
+        """
+        result = []
 
+        for plugin in self.plugins.items():
+            if plugin.mixin_enabled(mixin):
+                result.append(plugin)
+
+        return result
     def _init_plugins(self, disabled=None):
         """
         Initialise all found plugins
