@@ -1,8 +1,6 @@
 """
 Sample plugin for calling an external API
 """
-from django.utils.translation import ugettext_lazy as _
-
 from plugin import IntegrationPluginBase
 from plugin.mixins import APICallMixin, SettingsMixin
 
