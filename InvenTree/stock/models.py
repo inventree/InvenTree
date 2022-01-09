@@ -35,6 +35,8 @@ import common.models
 import report.models
 import label.models
 
+from plugin.events import trigger_event
+
 from InvenTree.status_codes import StockStatus, StockHistoryCode
 from InvenTree.models import InvenTreeTree, InvenTreeAttachment
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
@@ -132,6 +134,8 @@ def before_delete_stock_location(sender, instance, using, **kwargs):
     for child in instance.children.all():
         child.parent = instance.parent
         child.save()
+
+    trigger_event('location.deleted')
 
 
 class StockItemManager(TreeManager):
@@ -1774,6 +1778,8 @@ def before_delete_stock_item(sender, instance, using, **kwargs):
         child.parent = instance.parent
         child.save()
 
+    trigger_event('stockitem.deleted')
+
 
 @receiver(post_delete, sender=StockItem, dispatch_uid='stock_item_post_delete_log')
 def after_delete_stock_item(sender, instance: StockItem, **kwargs):
@@ -1786,10 +1792,15 @@ def after_delete_stock_item(sender, instance: StockItem, **kwargs):
 
 
 @receiver(post_save, sender=StockItem, dispatch_uid='stock_item_post_save_log')
-def after_save_stock_item(sender, instance: StockItem, **kwargs):
+def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
     """
     Hook function to be executed after StockItem object is saved/updated
     """
+
+    if created:
+        trigger_event('stockitem.created', item_id=instance.pk)
+    else:
+        trigger_event('stockitem.saved', item_id=instance.pk)
 
     # Run this check in the background
     InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance.part)

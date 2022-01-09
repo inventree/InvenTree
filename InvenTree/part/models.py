@@ -280,6 +280,8 @@ def before_delete_part_category(sender, instance, using, **kwargs):
         child.parent = instance.parent
         child.save()
 
+    trigger_event('category.deleted')
+
 
 def rename_part_image(instance, filename):
     """ Function for renaming a part image file
@@ -2183,11 +2185,11 @@ def after_save_part(sender, instance: Part, created, **kwargs):
     Function to be executed after a Part is saved
     """
 
-    trigger_event('part.saved', part_id=instance.pk)
-
     if created:
         trigger_event('part.created', part_id=instance.pk)
     else:
+        trigger_event('part.saved', part_id=instance.pk)
+
         # Check part stock only if we are *updating* the part (not creating it)
 
         # Run this check in the background
