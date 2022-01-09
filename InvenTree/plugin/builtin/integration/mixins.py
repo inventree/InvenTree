@@ -359,7 +359,7 @@ class APICallMixin:
 
     class MixinMeta:
         """meta options for this mixin"""
-        MIXIN_NAME = 'external API usage'
+        MIXIN_NAME = 'API calls'
 
     def __init__(self):
         super().__init__()
