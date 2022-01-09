@@ -201,7 +201,6 @@ class BuildOutputCompleteTest(BuildAPITest):
             expected_code=201,
         )
 
-        # Accept unfinished
         self.build.refresh_from_db()
 
         # Build should have been marked as complete
