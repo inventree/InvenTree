@@ -368,7 +368,10 @@ class APICallMixin:
     @property
     def has_api_call(self):
         """Is the mixin ready to call external APIs?"""
-        # TODO check if settings are set
+        if not bool(self.API_URL_SETTING):
+            raise ValueError("API_URL_SETTING must be defined")
+        if not bool(self.API_TOKEN_SETTING):
+            raise ValueError("API_TOKEN_SETTING must be defined")
         return True
 
     @property
