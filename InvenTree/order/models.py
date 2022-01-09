@@ -471,7 +471,7 @@ class PurchaseOrder(Order):
 
 
 @receiver(post_save, sender=PurchaseOrder, dispatch_uid='po_post_save_log')
-def after_save_build(sender, instance: PurchaseOrder, created: bool, **kwargs):
+def after_save_po(sender, instance: PurchaseOrder, created: bool, **kwargs):
 
     if created:
         trigger_event('purchaseorder.created', order_id=instance.pk)
@@ -773,7 +773,7 @@ class SalesOrder(Order):
 
 
 @receiver(post_save, sender=SalesOrder, dispatch_uid='so_post_save_log')
-def after_save_build(sender, instance: SalesOrder, created: bool, **kwargs):
+def after_save_so(sender, instance: SalesOrder, created: bool, **kwargs):
 
     if created:
         trigger_event('salesorder.created', order_id=instance.pk)

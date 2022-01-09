@@ -1067,10 +1067,10 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
         # Run checks on required parts
         InvenTree.tasks.offload_task('build.tasks.check_build_stock', instance)
 
-        trigger_event(
-            'build.created',
-            build_id=instance.pk,
-        )
+        trigger_event('build.created', build_id=instance.pk)
+
+    else:
+        trigger_event('build.saved', build_id=instance.pk)
 
 
 class BuildOrderAttachment(InvenTreeAttachment):
