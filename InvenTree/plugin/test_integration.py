@@ -174,7 +174,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
 
         class WrongCLS(APICallMixin, IntegrationPluginBase):
             pass
-        self.mixin_nothing = WrongCLS()
+        self.mixin_wrong = WrongCLS()
 
     def test_function(self):
         # api_url
@@ -192,7 +192,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
 
         # wrongly defined plugins should not load
         with self.assertRaises(ValueError):
-            self.mixin_nothing.has_api_call()
+            self.mixin_wrong.has_api_call()
 
 
 class IntegrationPluginBaseTests(TestCase):
