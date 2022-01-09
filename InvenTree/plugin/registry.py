@@ -59,7 +59,6 @@ class PluginsRegistry:
 
         # mixins
         self.mixins_settings = {}
-        self.mixins_events = {}
 
     # region public plugin functions
     def load_plugins(self):
@@ -267,7 +266,6 @@ class PluginsRegistry:
         logger.info(f'Found {len(plugins)} active plugins')
 
         self.activate_integration_settings(plugins)
-        self.activate_integration_events(plugins)
         self.activate_integration_schedule(plugins)
         self.activate_integration_app(plugins, force_reload=force_reload)
 
@@ -278,7 +276,6 @@ class PluginsRegistry:
 
         self.deactivate_integration_app()
         self.deactivate_integration_schedule()
-        self.deactivate_integration_events()
         self.deactivate_integration_settings()
 
     def activate_integration_settings(self, plugins):
@@ -302,41 +299,6 @@ class PluginsRegistry:
 
         # clear cache
         self.mixins_settings = {}
-
-    def activate_integration_events(self, plugins):
-        """
-        Activate triggered events mixin for applicable plugins
-        """
-
-        logger.info('Activating plugin events')
-
-        from common.models import InvenTreeSetting
-
-        self.mixins_events = {}
-
-        event_count = 0
-
-        if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_EVENTS'):
-
-            for slug, plugin in plugins:
-
-                if plugin.mixin_enabled('events'):
-                    config = plugin.plugin_config()
-
-                    # Only activate events for plugins which are enabled
-                    if config and config.active:
-                        self.mixins_events[slug] = plugin.events
-
-                        event_count += len(plugin.events)
-
-        if event_count > 0:
-            logger.info(f"Registered callbacks for {event_count} events")
-
-    def deactivate_integration_events(self):
-        """
-        Deactivate events for all plugins
-        """
-        self.mixins_events = {}
 
     def activate_integration_schedule(self, plugins):
 

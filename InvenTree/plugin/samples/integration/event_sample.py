@@ -6,16 +6,7 @@ from plugin import IntegrationPluginBase
 from plugin.mixins import EventMixin
 
 
-def on_part_saved(*args, **kwargs):
-    """
-    Simple function which responds to a triggered event
-    """
-
-    part_id = kwargs['part_id']
-    print(f"func on_part_saved() - part: {part_id}")
-
-
-class EventPlugin(EventMixin, IntegrationPluginBase):
+class EventPluginSample(EventMixin, IntegrationPluginBase):
     """
     A sample plugin which provides supports for triggered events
     """
@@ -24,6 +15,9 @@ class EventPlugin(EventMixin, IntegrationPluginBase):
     PLUGIN_SLUG = "event"
     PLUGIN_TITLE = "Triggered Events"
 
-    EVENTS = [
-        ('part.saved', 'plugin.samples.integration.event_sample.on_part_saved'),
-    ]
+    def process_event(self, event, *args, **kwargs):
+        """ Custom event processing """
+
+        print(f"Processing triggered event: '{event}'")
+        print("args:", str(args))
+        print("kwargs:", str(kwargs))
