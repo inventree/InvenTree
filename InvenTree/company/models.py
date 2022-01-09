@@ -11,6 +11,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 
+from django.db.models.signals import post_save
+from django.dispatch.dispatcher import receiver
 from django.db import models
 from django.db.models import Sum, Q, UniqueConstraint
 
@@ -32,6 +34,8 @@ import InvenTree.validators
 import common.models
 import common.settings
 from common.settings import currency_code_default
+
+from plugin.events import trigger_event
 
 
 def rename_company_image(instance, filename):
@@ -267,6 +271,15 @@ class Company(models.Model):
         return self.purchase_orders.filter(status__in=PurchaseOrderStatus.FAILED)
 
 
+@receiver(post_save, sender=Company, dispatch_uid='company_post_save_log')
+def after_save_company(sender, instance: Company, created: bool, **kwargs):
+
+    if created:
+        trigger_event('company.created', company_id=instance.pk)
+    else:
+        trigger_event('company.saved', company_id=instance.pk)
+
+
 class Contact(models.Model):
     """ A Contact represents a person who works at a particular company.
     A Company may have zero or more associated Contact objects.
@@ -384,6 +397,15 @@ class ManufacturerPart(models.Model):
         s += f'{self.MPN}'
 
         return s
+
+
+@receiver(post_save, sender=ManufacturerPart, dispatch_uid='manufacturerpart_post_save_log')
+def after_save_manufacturer_part(sender, instance: ManufacturerPart, created: bool, **kwargs):
+
+    if created:
+        trigger_event('manufacturerpart.created', manufacturer_part_id=instance.pk)
+    else:
+        trigger_event('manufacturerpart.saved', manufacturer_part_id=instance.pk)
 
 
 class ManufacturerPartParameter(models.Model):
@@ -684,6 +706,15 @@ class SupplierPart(models.Model):
             s = s + ' | ' + self.manufacturer_string
 
         return s
+
+
+@receiver(post_save, sender=SupplierPart, dispatch_uid='supplierpart_post_save_log')
+def after_save_supplier_part(sender, instance: SupplierPart, created: bool, **kwargs):
+
+    if created:
+        trigger_event('supplierpart.created', supplier_part_id=instance.pk)
+    else:
+        trigger_event('supplierpart.saved', supplier_part_id=instance.pk)
 
 
 class SupplierPriceBreak(common.models.PriceBreak):
