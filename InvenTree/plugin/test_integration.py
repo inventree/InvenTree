@@ -182,7 +182,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
 
     def test_function(self):
         # check init
-        self.assertTrue(self.mixin.has_api_call())
+        self.assertTrue(self.mixin.has_api_call)
         # api_url
         self.assertEqual('https://reqres.in', self.mixin.api_url)
 
