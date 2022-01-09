@@ -36,6 +36,8 @@ import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.tasks
 
+from plugin.events import trigger_event
+
 from part import models as PartModels
 from stock import models as StockModels
 from users import models as UserModels
@@ -585,6 +587,13 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         # which point to thie Build Order
         self.allocated_stock.all().delete()
 
+        # Register an event
+        trigger_event(
+            'build.completed',
+            build_id=self.pk,
+            user_id=user.pk,
+        )
+
     @transaction.atomic
     def cancelBuild(self, user):
         """ Mark the Build as CANCELLED
@@ -603,6 +612,12 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
         self.status = BuildStatus.CANCELLED
         self.save()
+
+        trigger_event(
+            'build.cancelled',
+            build_id=self.pk,
+            user_id=user.pk,
+        )
 
     @transaction.atomic
     def unallocateStock(self, bom_item=None, output=None):
@@ -1041,6 +1056,11 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
 
         # Run checks on required parts
         InvenTree.tasks.offload_task('build.tasks.check_build_stock', instance)
+
+        trigger_event(
+            'build.created',
+            build_id=instance.pk,
+        )
 
 
 class BuildOrderAttachment(InvenTreeAttachment):

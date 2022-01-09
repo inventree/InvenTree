@@ -178,7 +178,7 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
             fnc_name = self._mixins.get(key)
 
             # Allow for simple case where the mixin is "always" ready
-            if fnc_name == True:
+            if fnc_name is True:
                 return True
 
             return getattr(self, fnc_name, True)

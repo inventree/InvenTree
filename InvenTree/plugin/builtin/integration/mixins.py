@@ -191,7 +191,7 @@ class EventMixin:
     def process_event(self, event, *args, **kwargs):
         # Default implementation does not do anything
         raise NotImplementedError
-    
+
     class MixinMeta:
         MIXIN_NAME = 'Events'
 

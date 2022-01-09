@@ -30,27 +30,47 @@ def trigger_event(event, *args, **kwargs):
 
     logger.debug(f"Event triggered: '{event}'")
 
-    # Offload a separate task for each plugin
+    offload_task(
+        'plugin.event.register_event',
+        event,
+        *args,
+        **kwargs
+    )
+
+
+def register_event(event, *args, **kwargs):
+    """
+    Register the event with any interested plugins.
+
+    Note: This function is processed by the background worker,
+    as it performs multiple database access operations.
+    """
+
+    logger.debug(f"Registering triggered event: '{event}'")
+
     # Determine if there are any plugins which are interested in responding
     if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_EVENTS'):
 
-        for slug, plugin in plugin_registry.plugins.items():
+        with transaction.atomic():
 
-            if plugin.mixin_enabled('events'):
+            for slug, plugin in plugin_registry.plugins.items():
 
-                config = plugin.plugin_config()
+                if plugin.mixin_enabled('events'):
 
-                if config and config.active:
+                    config = plugin.plugin_config()
 
-                    logger.debug(f"Registering callback for plugin '{slug}'")
+                    if config and config.active:
 
-                    offload_task(
-                        'plugin.events.process_event',
-                        slug,
-                        event,
-                        *args,
-                        **kwargs
-                    )
+                        logger.debug(f"Registering callback for plugin '{slug}'")
+
+                        # Offload a separate task for each plugin
+                        offload_task(
+                            'plugin.events.process_event',
+                            slug,
+                            event,
+                            *args,
+                            **kwargs
+                        )
 
 
 def process_event(plugin_slug, event, *args, **kwargs):
