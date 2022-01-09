@@ -309,6 +309,7 @@ class APICallMixin:
     """
     Mixin that enables easier API calls for a plugin
 
+    Steps to set up:
     1. Add this mixin before (left of) SettingsMixin and PluginBase
     2. Add two settings for the required url and token/passowrd (use `SettingsMixin`)
     3. Save the references to keys of the settings in `API_URL_SETTING` and `API_TOKEN_SETTING`
