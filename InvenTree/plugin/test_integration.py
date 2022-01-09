@@ -176,7 +176,13 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
             pass
         self.mixin_wrong = WrongCLS()
 
+        class WrongCLS2(APICallMixin, IntegrationPluginBase):
+            API_URL_SETTING = 'test'
+        self.mixin_wrong2 = WrongCLS2()
+
     def test_function(self):
+        # check init
+        self.assertTrue(self.mixin.has_api_call())
         # api_url
         self.assertEqual('https://reqres.in', self.mixin.api_url)
 
@@ -201,6 +207,10 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         self.assertIn('data', result,)
 
         # wrongly defined plugins should not load
+        with self.assertRaises(ValueError):
+            self.mixin_wrong.has_api_call()
+
+        # cover wrong token setting
         with self.assertRaises(ValueError):
             self.mixin_wrong.has_api_call()
 
