@@ -315,7 +315,40 @@ class APICallMixin:
     4. (Optional) Set `API_TOKEN` to the name required for the token by the external API - Defaults to `Bearer`
     5. (Optional) Override the `api_url` property method if the setting needs to be extended
     6. (Optional) Override `api_headers` to add extra headers (by default the token and Content-Type are contained)
-    6. Access the API in you plugin code via `api_call`
+    7. Access the API in you plugin code via `api_call`
+
+    Example:
+    ```
+    from plugin import IntegrationPluginBase
+    from plugin.mixins import APICallMixin, SettingsMixin
+
+
+    class SampleApiCallerPlugin(APICallMixin, SettingsMixin, IntegrationPluginBase):
+        '''
+        A small api call sample
+        '''
+        PLUGIN_NAME = "Sample API Caller"
+
+        SETTINGS = {
+            'API_TOKEN': {
+                'name': 'API Token',
+                'protected': True,
+            },
+            'API_URL': {
+                'name': 'External URL',
+                'description': 'Where is your API located?',
+                'default': 'https://reqres.in',
+            },
+        }
+        API_URL_SETTING = 'API_URL'
+        API_TOKEN_SETTING = 'API_TOKEN'
+
+        def get_external_url(self):
+            '''
+            returns data from the sample endpoint
+            '''
+            return self.api_call('api/users/2')
+    ```
     """
     API_METHOD = 'https'
     API_URL_SETTING = None
