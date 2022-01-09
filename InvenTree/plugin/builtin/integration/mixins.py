@@ -373,12 +373,12 @@ class APICallMixin:
 
     @property
     def api_url(self):
-        return f'{self.API_METHOD}://{self.get_globalsetting(self.API_URL_SETTING)}'
+        return f'{self.API_METHOD}://{self.get_setting(self.API_URL_SETTING)}'
 
     @property
     def api_headers(self):
         return {
-            self.API_TOKEN: self.get_globalsetting(self.API_TOKEN_SETTING),
+            self.API_TOKEN: self.get_setting(self.API_TOKEN_SETTING),
             'Content-Type': 'application/json'
         }
 
