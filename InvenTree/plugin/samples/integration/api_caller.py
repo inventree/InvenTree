@@ -19,7 +19,7 @@ class SampleApiCallerPlugin(APICallMixin, SettingsMixin, IntegrationPluginBase):
         'API_URL': {
             'name': 'External URL',
             'description': 'Where is your API located?',
-            'default': 'https://reqres.in',
+            'default': 'reqres.in',
         },
     }
     API_URL_SETTING = 'API_URL'
