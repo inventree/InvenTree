@@ -15,9 +15,9 @@ from plugin.urls import PLUGIN_BASE
 class BaseMixinDefinition:
     def test_mixin_name(self):
         # mixin name
-        self.assertEqual(self.mixin.registered_mixins[0]['key'], self.MIXIN_NAME)
+        self.assertIn(self.MIXIN_NAME, [item['key'] for item in self.mixin.registered_mixins])
         # human name
-        self.assertEqual(self.mixin.registered_mixins[0]['human_name'], self.MIXIN_HUMAN_NAME)
+        self.assertIn(self.MIXIN_HUMAN_NAME, [item['human_name'] for item in self.mixin.registered_mixins])
 
 
 class SettingsMixinTest(BaseMixinDefinition, TestCase):
