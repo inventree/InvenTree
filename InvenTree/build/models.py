@@ -587,11 +587,16 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         # which point to thie Build Order
         self.allocated_stock.all().delete()
 
+        if user:
+            user_id = user.pk
+        else:
+            user_id = None
+
         # Register an event
         trigger_event(
             'build.completed',
             build_id=self.pk,
-            user_id=user.pk,
+            user_id=user_id,
         )
 
     @transaction.atomic
@@ -613,10 +618,15 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         self.status = BuildStatus.CANCELLED
         self.save()
 
+        if user:
+            user_id = user.pk
+        else:
+            user_id = None
+
         trigger_event(
             'build.cancelled',
             build_id=self.pk,
-            user_id=user.pk,
+            user_id=user_id,
         )
 
     @transaction.atomic
