@@ -185,6 +185,16 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         self.assertEqual(headers, {'Bearer': '', 'Content-Type': 'application/json'})
 
         # api_build_url_args
+        # 1 arg
+        result = self.mixin.api_build_url_args({'a': 'b'})
+        self.assertEqual(result, '?a=b')
+        # more args
+        result = self.mixin.api_build_url_args({'a': 'b', 'c': 'd'})
+        self.assertEqual(result, '?a=b&c=d')
+        # list args
+        result = self.mixin.api_build_url_args({'a': 'b', 'c': ['d', 'e', 'f', ]})
+        self.assertEqual(result, '?a=b&c=d,e,f')
+
         # api_call
         result = self.mixin.get_external_url()
         self.assertTrue(result)
