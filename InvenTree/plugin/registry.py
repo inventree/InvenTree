@@ -192,7 +192,7 @@ class PluginsRegistry:
         """
         result = []
 
-        for plugin in self.plugins.items():
+        for plugin in self.plugins.values():
             if plugin.mixin_enabled(mixin):
                 result.append(plugin)
 
