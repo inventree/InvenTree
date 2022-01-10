@@ -584,7 +584,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         self.subtractUntrackedStock(user)
 
         # Ensure that there are no longer any BuildItem objects
-        # which point to thie Build Order
+        # which point to thisFcan Build Order
         self.allocated_stock.all().delete()
 
         # Register an event
