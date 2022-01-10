@@ -254,18 +254,4 @@ $('#export-order').click(function() {
     exportOrder('{% url "so-export" order.id %}');
 });
 
-
-
-$('#print-label').click(function() {
-    $.ajax({
-        type: "GET",
-        url: "https://api-shipx-pl.easypack24.net/v1/organizations/35707/shipments/666386896/label?format=zpl",
-        headers: {"Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJhcGktc2hpcHgtcGwuZWFzeXBhY2syNC5uZXQiLCJzdWIiOiJhcGktc2hpcHgtcGwuZWFzeXBhY2syNC5uZXQiLCJleHAiOjE2MjAyOTUyOTksImlhdCI6MTYyMDI5NTI5OSwianRpIjoiZGI3MTc4YzItN2Y3OS00ZGI2LThhMmYtZWVhNDkzYTA5NmU2In0.DoY20v05JcumX4oEpxGvn77-1IbbOu47yDfKcHun2m7lkXFfrbAtwdG1N0SsKCjmmJKyzuelJnMJHbeCxlwUzw"},
-        success: function(responce){
-            console.log(responce)
-        },
-        dataType: 'application/json',
-    });
-})
-
 {% endblock %}
