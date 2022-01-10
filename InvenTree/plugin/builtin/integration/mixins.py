@@ -328,6 +328,7 @@ class AppMixin:
 class APICallMixin:
     """
     Mixin that enables easier API calls for a plugin
+
     Steps to set up:
     1. Add this mixin before (left of) SettingsMixin and PluginBase
     2. Add two settings for the required url and token/passowrd (use `SettingsMixin`)
@@ -336,15 +337,19 @@ class APICallMixin:
     5. (Optional) Override the `api_url` property method if the setting needs to be extended
     6. (Optional) Override `api_headers` to add extra headers (by default the token and Content-Type are contained)
     7. Access the API in you plugin code via `api_call`
+
     Example:
     ```
     from plugin import IntegrationPluginBase
     from plugin.mixins import APICallMixin, SettingsMixin
+
+
     class SampleApiCallerPlugin(APICallMixin, SettingsMixin, IntegrationPluginBase):
         '''
         A small api call sample
         '''
         PLUGIN_NAME = "Sample API Caller"
+
         SETTINGS = {
             'API_TOKEN': {
                 'name': 'API Token',
@@ -358,6 +363,7 @@ class APICallMixin:
         }
         API_URL_SETTING = 'API_URL'
         API_TOKEN_SETTING = 'API_TOKEN'
+
         def get_external_url(self):
             '''
             returns data from the sample endpoint
