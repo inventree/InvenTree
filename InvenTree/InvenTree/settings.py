@@ -874,7 +874,7 @@ MARKDOWNIFY_BLEACH = False
 MAINTENANCE_MODE_RETRY_AFTER = 60
 
 # Plugin Directories (local plugins will be loaded from these directories)
-PLUGIN_DIRS = ['plugin.builtin', 'barcodes.plugins', ]
+PLUGIN_DIRS = ['plugin.builtin', 'barcodes.acion', 'barcodes.plugins', ]
 
 if not TESTING:
     # load local deploy directory in prod
