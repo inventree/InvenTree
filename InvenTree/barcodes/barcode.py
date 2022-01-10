@@ -7,6 +7,7 @@ import plugin.integration
 
 hash_barcode = mixin.hash_barcode
 
+
 class BarcodePlugin(mixin.BarcodeMixin, plugin.integration.IntegrationPluginBase):
     """
     Legacy barcode plugin definition - will be replaced

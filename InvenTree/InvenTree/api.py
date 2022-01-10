@@ -21,6 +21,7 @@ from .status import is_worker_running
 
 from plugin import plugin_registry
 
+
 class InfoView(AjaxView):
     """ Simple JSON endpoint for InvenTree information.
     Use to confirm that the server is running, etc.

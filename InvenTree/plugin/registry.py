@@ -185,6 +185,7 @@ class PluginsRegistry:
         logger.info(f'Collected {len(self.plugin_modules)} plugins!')
         logger.info(", ".join([a.__module__ for a in self.plugin_modules]))
     # endregion
+    
     # region registry functions
     def with_mixin(self, mixin: str):
         """
@@ -543,5 +544,6 @@ class PluginsRegistry:
         except Exception as error:
             get_plugin_error(error, do_raise=True)
     # endregion
+
 
 plugin_registry = PluginsRegistry()

@@ -2,6 +2,7 @@
 Plugin mixin classes for action plugin
 """
 
+
 class ActionMixin:
     """
     Mixin that enables custom actions

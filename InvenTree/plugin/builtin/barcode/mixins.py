@@ -63,7 +63,6 @@ class BarcodeMixin:
 
         self.data = barcode_data
 
-
     def getStockItem(self):
         """
         Attempt to retrieve a StockItem associated with this barcode.
