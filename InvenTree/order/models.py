@@ -11,6 +11,7 @@ from decimal import Decimal
 from django.db import models, transaction
 from django.db.models import Q, F, Sum
 from django.db.models.functions import Coalesce
+
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
@@ -24,6 +25,7 @@ from users import models as UserModels
 from part import models as PartModels
 from stock import models as stock_models
 from company.models import Company, SupplierPart
+from plugin.events import trigger_event
 
 from InvenTree.fields import InvenTreeModelMoneyField, RoundingDecimalField
 from InvenTree.helpers import decimal2string, increment, getSetting
@@ -317,6 +319,8 @@ class PurchaseOrder(Order):
             self.issue_date = datetime.now().date()
             self.save()
 
+            trigger_event('purchaseorder.placed', id=self.pk)
+
     @transaction.atomic
     def complete_order(self):
         """ Marks the PurchaseOrder as COMPLETE. Order must be currently PLACED. """
@@ -325,6 +329,8 @@ class PurchaseOrder(Order):
             self.status = PurchaseOrderStatus.COMPLETE
             self.complete_date = datetime.now().date()
             self.save()
+
+            trigger_event('purchaseorder.completed', id=self.pk)
 
     @property
     def is_overdue(self):
@@ -355,6 +361,8 @@ class PurchaseOrder(Order):
         if self.can_cancel():
             self.status = PurchaseOrderStatus.CANCELLED
             self.save()
+
+            trigger_event('purchaseorder.cancelled', id=self.pk)
 
     def pending_line_items(self):
         """ Return a list of pending line items for this order.
@@ -667,6 +675,8 @@ class SalesOrder(Order):
 
         self.save()
 
+        trigger_event('salesorder.completed', id=self.pk)
+
         return True
 
     def can_cancel(self):
@@ -697,6 +707,8 @@ class SalesOrder(Order):
         for line in self.lines.all():
             for allocation in line.allocations.all():
                 allocation.delete()
+
+        trigger_event('salesorder.cancelled', id=self.pk)
 
         return True
 
@@ -1103,6 +1115,8 @@ class SalesOrderShipment(models.Model):
             self.tracking_number = tracking_number
 
         self.save()
+
+        trigger_event('salesordershipment.completed', id=self.pk)
 
 
 class SalesOrderAllocation(models.Model):

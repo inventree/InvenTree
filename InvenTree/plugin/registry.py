@@ -56,6 +56,7 @@ class PluginsRegistry:
 
         # integration specific
         self.installed_apps = []         # Holds all added plugin_paths
+
         # mixins
         self.mixins_settings = {}
 

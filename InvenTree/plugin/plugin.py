@@ -63,3 +63,15 @@ class InvenTreePlugin():
                 raise error
 
         return cfg
+
+    def is_active(self):
+        """
+        Return True if this plugin is currently active
+        """
+
+        cfg = self.plugin_config()
+
+        if cfg:
+            return cfg.active
+        else:
+            return False

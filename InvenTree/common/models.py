@@ -872,13 +872,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        'STOCK_GROUP_BY_PART': {
-            'name': _('Group by Part'),
-            'description': _('Group stock items by part reference in table views'),
-            'default': True,
-            'validator': bool,
-        },
-
         'BUILDORDER_REFERENCE_PREFIX': {
             'name': _('Build Order Reference Prefix'),
             'description': _('Prefix value for build order reference'),
@@ -957,6 +950,8 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+
+        # Settings for plugin mixin features
         'ENABLE_PLUGINS_URL': {
             'name': _('Enable URL integration'),
             'description': _('Enable plugins to add URL routes'),
@@ -984,7 +979,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
             'requires_restart': True,
-        }
+        },
+        'ENABLE_PLUGINS_EVENTS': {
+            'name': _('Enable event integration'),
+            'description': _('Enable plugins to respond to internal events'),
+            'default': False,
+            'validator': bool,
+            'requires_restart': True,
+        },
     }
 
     class Meta:
