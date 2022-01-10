@@ -60,11 +60,12 @@ class BarcodeScan(APIView):
         # Look for a barcode plugin which knows how to deal with this barcode
         plugin = None
 
-        for plugin_class in plugins:
-            plugin_instance = plugin_class(barcode_data)
+        for current_plugin in plugins:
+            # TODO @matmair make simpler after InvenTree 0.7.0 release
+            current_plugin.init(barcode_data)
 
-            if plugin_instance.validate():
-                plugin = plugin_instance
+            if current_plugin.validate():
+                plugin = current_plugin
                 break
 
         match_found = False
@@ -164,11 +165,12 @@ class BarcodeAssign(APIView):
 
         plugin = None
 
-        for plugin_class in plugins:
-            plugin_instance = plugin_class(barcode_data)
+        for current_plugin in plugins:
+            # TODO @matmair make simpler after InvenTree 0.7.0 release
+            current_plugin.init(barcode_data)
 
-            if plugin_instance.validate():
-                plugin = plugin_instance
+            if current_plugin.validate():
+                plugin = current_plugin
                 break
 
         match_found = False
