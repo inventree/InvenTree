@@ -14,6 +14,7 @@ from django.dispatch.dispatcher import receiver
 
 from common.models import InvenTreeSetting
 
+from InvenTree.ready import canAppAccessDatabase
 from InvenTree.tasks import offload_task
 
 from plugin.registry import plugin_registry
@@ -29,6 +30,10 @@ def trigger_event(event, *args, **kwargs):
     This event will be stored in the database,
     and the worker will respond to it later on.
     """
+
+    if not canAppAccessDatabase():
+        logger.debug(f"Ignoring triggered event '{event}' - database not ready")
+        return
 
     logger.debug(f"Event triggered: '{event}'")
 
