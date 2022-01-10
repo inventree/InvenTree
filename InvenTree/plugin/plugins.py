@@ -4,12 +4,8 @@
 import inspect
 import importlib
 import pkgutil
-import logging
 
 from django.core.exceptions import AppRegistryNotReady
-
-
-logger = logging.getLogger("inventree")
 
 
 def iter_namespace(pkg):
@@ -70,34 +66,3 @@ def get_plugins(pkg, baseclass, recursive: bool = False):
                 plugins.append(plugin)
 
     return plugins
-
-
-def load_plugins(name: str, cls, module):
-    """general function to load a plugin class
-
-    :param name: name of the plugin for logs
-    :type name: str
-    :param module: module from which the plugins should be loaded
-    :return: class of the to-be-loaded plugin
-    """
-    logger.debug("Loading %s plugins", name)
-
-    plugins = get_plugins(module, cls)
-
-    if len(plugins) > 0:
-        logger.info("Discovered %i %s plugins:", len(plugins), name)
-
-        for plugin in plugins:
-            logger.debug(" - %s", plugin.PLUGIN_NAME)
-
-    return plugins
-
-
-def load_barcode_plugins():
-    """
-    Return a list of all registered barcode plugins
-    """
-    from barcodes import plugins as BarcodePlugins
-    from barcodes.barcode import BarcodePlugin
-
-    return load_plugins('barcode', BarcodePlugin, BarcodePlugins)

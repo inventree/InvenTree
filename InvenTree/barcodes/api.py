@@ -13,7 +13,7 @@ from stock.models import StockItem
 from stock.serializers import StockItemSerializer
 
 from barcodes.barcode import hash_barcode
-from plugin.plugins import load_barcode_plugins
+from plugin import plugin_registry
 
 
 class BarcodeScan(APIView):
@@ -53,7 +53,7 @@ class BarcodeScan(APIView):
         if 'barcode' not in data:
             raise ValidationError({'barcode': _('Must provide barcode_data parameter')})
 
-        plugins = load_barcode_plugins()
+        plugins = plugin_registry.with_mixin('barcode')
 
         barcode_data = data.get('barcode')
 
@@ -160,7 +160,7 @@ class BarcodeAssign(APIView):
         except (ValueError, StockItem.DoesNotExist):
             raise ValidationError({'stockitem': _('No matching stock item found')})
 
-        plugins = load_barcode_plugins()
+        plugins = plugin_registry.with_mixin('barcode')
 
         plugin = None
 
