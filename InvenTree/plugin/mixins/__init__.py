@@ -2,7 +2,7 @@
 Utility class to enable simpler imports
 """
 
-from ..builtin.integration.mixins import AppMixin, SettingsMixin, ScheduleMixin, UrlsMixin, NavigationMixin
+from ..builtin.integration.mixins import AppMixin, SettingsMixin, ScheduleMixin, UrlsMixin, NavigationMixin, APICallMixin
 
 __all__ = [
     'AppMixin',
@@ -10,4 +10,5 @@ __all__ = [
     'ScheduleMixin',
     'SettingsMixin',
     'UrlsMixin',
+    'APICallMixin',
 ]
