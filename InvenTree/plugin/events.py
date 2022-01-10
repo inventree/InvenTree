@@ -91,6 +91,42 @@ def process_event(plugin_slug, event, *args, **kwargs):
     plugin.process_event(event, *args, **kwargs)
 
 
+def allow_table_event(table_name):
+    """
+    Determine if an automatic event should be fired for a given table.
+    We *do not* want events to be fired for some tables!
+    """
+
+    table_name = table_name.lower().strip()
+
+    # Ignore any tables which start with these prefixes
+    ignore_prefixes = [
+        'account_',
+        'auth_',
+        'authtoken_',
+        'django_',
+        'error_',
+        'exchange_',
+        'otp_',
+        'plugin_',
+        'socialaccount_',
+        'user_',
+        'users_',
+    ]
+
+    if any([table_name.startswith(prefix) for prefix in ignore_prefixes]):
+        return False
+
+    ignore_tables = [
+        'common_notificationentry',
+    ]
+
+    if table_name in ignore_tables:
+        return False
+
+    return True
+
+
 @receiver(post_save)
 def after_save(sender, instance, created, **kwargs):
     """
@@ -99,8 +135,7 @@ def after_save(sender, instance, created, **kwargs):
 
     table = sender.objects.model._meta.db_table
 
-    if table.startswith('django_q'):
-        # Ignore django_q tables, to avoid recursion
+    if not allow_table_event(table):
         return
 
     if created:
@@ -127,8 +162,7 @@ def after_delete(sender, instance, **kwargs):
 
     table = sender.objects.model._meta.db_table
 
-    if table.startswith('django_q'):
-        # Ignore django_q tables, to avoid recursion
+    if not allow_table_event(table):
         return
 
     trigger_event(
