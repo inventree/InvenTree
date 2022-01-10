@@ -9,6 +9,8 @@ import logging
 
 from django.conf import settings
 from django.db import transaction
+from django.db.models.signals import post_save, post_delete
+from django.dispatch.dispatcher import receiver
 
 from common.models import InvenTreeSetting
 
@@ -87,3 +89,54 @@ def process_event(plugin_slug, event, *args, **kwargs):
     plugin = plugin_registry.plugins[plugin_slug]
 
     plugin.process_event(event, *args, **kwargs)
+
+
+"""
+Register some default event triggers on model signals
+"""
+
+@receiver(post_save)
+def after_save(sender, instance, created, **kwargs):
+    """
+    Trigger an event whenever a database entry is saved
+    """
+
+    table = sender.objects.model._meta.db_table
+
+    if table.startswith('django_q'):
+        # Ignore django_q tables, to avoid recursion
+        return
+
+    if created:
+        trigger_event(
+            'instance.created',
+            id=instance.id,
+            model=sender.__name__,
+            table=table,
+        )
+    else:
+        trigger_event(
+            'instance.saved',
+            id=instance.id,
+            model=sender.__name__,
+            table=table,
+        )
+
+
+@receiver(post_delete)
+def after_delete(sender, instance, **kwargs):
+    """
+    Trigger an event whenever a database entry is deleted
+    """
+
+    table = sender.objects.model._meta.db_table
+
+    if table.startswith('django_q'):
+        # Ignore django_q tables, to avoid recursion
+        return
+
+    trigger_event(
+        'instance.deleted',
+        model=sender.__name__,
+        table=table,
+    )

@@ -470,15 +470,6 @@ class PurchaseOrder(Order):
             self.complete_order()  # This will save the model
 
 
-@receiver(post_save, sender=PurchaseOrder, dispatch_uid='po_post_save_log')
-def after_save_po(sender, instance: PurchaseOrder, created: bool, **kwargs):
-
-    if created:
-        trigger_event('purchaseorder.created', order_id=instance.pk)
-    else:
-        trigger_event('purchasesorder.saved', order_id=instance.pk)
-
-
 class SalesOrder(Order):
     """
     A SalesOrder represents a list of goods shipped outwards to a customer.
@@ -770,15 +761,6 @@ class SalesOrder(Order):
     @property
     def pending_shipment_count(self):
         return self.pending_shipments().count()
-
-
-@receiver(post_save, sender=SalesOrder, dispatch_uid='so_post_save_log')
-def after_save_so(sender, instance: SalesOrder, created: bool, **kwargs):
-
-    if created:
-        trigger_event('salesorder.created', order_id=instance.pk)
-    else:
-        trigger_event('salesorder.saved', order_id=instance.pk)
 
 
 class PurchaseOrderAttachment(InvenTreeAttachment):

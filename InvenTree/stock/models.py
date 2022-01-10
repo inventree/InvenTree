@@ -135,20 +135,6 @@ def before_delete_stock_location(sender, instance, using, **kwargs):
         child.parent = instance.parent
         child.save()
 
-    trigger_event('location.deleted')
-
-
-@receiver(post_save, sender=StockLocation, dispatch_uid='stock_location_post_save_log')
-def after_save_stock_location(sender, instance: StockLocation, created, **kwargs):
-    """
-    Hook function to be executed after StockLocation object is saved/updated
-    """
-
-    if created:
-        trigger_event('stocklocation.created', location_id=instance.pk)
-    else:
-        trigger_event('stocklocation.saved', location_id=instance.pk)
-
 
 class StockItemManager(TreeManager):
     """
@@ -1801,8 +1787,6 @@ def before_delete_stock_item(sender, instance, using, **kwargs):
         child.parent = instance.parent
         child.save()
 
-    trigger_event('stockitem.deleted')
-
 
 @receiver(post_delete, sender=StockItem, dispatch_uid='stock_item_post_delete_log')
 def after_delete_stock_item(sender, instance: StockItem, **kwargs):
@@ -1819,11 +1803,6 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
     """
     Hook function to be executed after StockItem object is saved/updated
     """
-
-    if created:
-        trigger_event('stockitem.created', item_id=instance.pk)
-    else:
-        trigger_event('stockitem.saved', item_id=instance.pk)
 
     # Run this check in the background
     InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance.part)
@@ -2018,12 +1997,3 @@ class StockItemTestResult(models.Model):
         auto_now_add=True,
         editable=False
     )
-
-
-@receiver(post_save, sender=StockItemTestResult, dispatch_uid='stock_item_test_result_post_save_log')
-def after_save_test_result(sender, instance: StockItemTestResult, created: bool, **kwargs):
-
-    if created:
-        trigger_event('stockitemtestresult.created', test_id=instance.pk)
-    else:
-        trigger_event('stockitemtestresult.saved', test_id=instance.pk)

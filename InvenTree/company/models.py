@@ -271,15 +271,6 @@ class Company(models.Model):
         return self.purchase_orders.filter(status__in=PurchaseOrderStatus.FAILED)
 
 
-@receiver(post_save, sender=Company, dispatch_uid='company_post_save_log')
-def after_save_company(sender, instance: Company, created: bool, **kwargs):
-
-    if created:
-        trigger_event('company.created', company_id=instance.pk)
-    else:
-        trigger_event('company.saved', company_id=instance.pk)
-
-
 class Contact(models.Model):
     """ A Contact represents a person who works at a particular company.
     A Company may have zero or more associated Contact objects.
@@ -397,15 +388,6 @@ class ManufacturerPart(models.Model):
         s += f'{self.MPN}'
 
         return s
-
-
-@receiver(post_save, sender=ManufacturerPart, dispatch_uid='manufacturerpart_post_save_log')
-def after_save_manufacturer_part(sender, instance: ManufacturerPart, created: bool, **kwargs):
-
-    if created:
-        trigger_event('manufacturerpart.created', manufacturer_part_id=instance.pk)
-    else:
-        trigger_event('manufacturerpart.saved', manufacturer_part_id=instance.pk)
 
 
 class ManufacturerPartParameter(models.Model):
@@ -706,15 +688,6 @@ class SupplierPart(models.Model):
             s = s + ' | ' + self.manufacturer_string
 
         return s
-
-
-@receiver(post_save, sender=SupplierPart, dispatch_uid='supplierpart_post_save_log')
-def after_save_supplier_part(sender, instance: SupplierPart, created: bool, **kwargs):
-
-    if created:
-        trigger_event('supplierpart.created', supplier_part_id=instance.pk)
-    else:
-        trigger_event('supplierpart.saved', supplier_part_id=instance.pk)
 
 
 class SupplierPriceBreak(common.models.PriceBreak):
