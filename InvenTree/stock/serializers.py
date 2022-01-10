@@ -426,6 +426,7 @@ class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'parent',
             'pathstring',
             'items',
+            'owner',
         ]
 
 

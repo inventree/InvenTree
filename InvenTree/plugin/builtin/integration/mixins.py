@@ -82,6 +82,7 @@ class ScheduleMixin:
 
     ALLOWABLE_SCHEDULE_TYPES = ['I', 'H', 'D', 'W', 'M', 'Q', 'Y']
 
+    # Override this in subclass model
     SCHEDULED_TASKS = {}
 
     class MixinMeta:
@@ -180,6 +181,25 @@ class ScheduleMixin:
         except (ProgrammingError, OperationalError):
             # Database might not yet be ready
             logger.warning("unregister_tasks failed, database not ready")
+
+
+class EventMixin:
+    """
+    Mixin that provides support for responding to triggered events.
+
+    Implementing classes must provide a "process_event" function:
+    """
+
+    def process_event(self, event, *args, **kwargs):
+        # Default implementation does not do anything
+        raise NotImplementedError
+
+    class MixinMeta:
+        MIXIN_NAME = 'Events'
+
+    def __init__(self):
+        super().__init__()
+        self.add_mixin('events', True, __class__)
 
 
 class UrlsMixin:

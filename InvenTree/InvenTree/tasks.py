@@ -64,51 +64,55 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
 
     try:
         from django_q.tasks import AsyncTask
+
+        import importlib
+        from InvenTree.status import is_worker_running
+
+        if is_worker_running() and not force_sync:
+            # Running as asynchronous task
+            try:
+                task = AsyncTask(taskname, *args, **kwargs)
+                task.run()
+            except ImportError:
+                logger.warning(f"WARNING: '{taskname}' not started - Function not found")
+        else:
+            # Split path
+            try:
+                app, mod, func = taskname.split('.')
+                app_mod = app + '.' + mod
+            except ValueError:
+                logger.warning(f"WARNING: '{taskname}' not started - Malformed function path")
+                return
+
+            # Import module from app
+            try:
+                _mod = importlib.import_module(app_mod)
+            except ModuleNotFoundError:
+                logger.warning(f"WARNING: '{taskname}' not started - No module named '{app_mod}'")
+                return
+
+            # Retrieve function
+            try:
+                _func = getattr(_mod, func)
+            except AttributeError:
+                # getattr does not work for local import
+                _func = None
+
+            try:
+                if not _func:
+                    _func = eval(func)
+            except NameError:
+                logger.warning(f"WARNING: '{taskname}' not started - No function named '{func}'")
+                return
+
+            # Workers are not running: run it as synchronous task
+            _func(*args, **kwargs)
+
     except (AppRegistryNotReady):
-        logger.warning("Could not offload task - app registry not ready")
+        logger.warning(f"Could not offload task '{taskname}' - app registry not ready")
         return
-    import importlib
-    from InvenTree.status import is_worker_running
-
-    if is_worker_running() and not force_sync:
-        # Running as asynchronous task
-        try:
-            task = AsyncTask(taskname, *args, **kwargs)
-            task.run()
-        except ImportError:
-            logger.warning(f"WARNING: '{taskname}' not started - Function not found")
-    else:
-        # Split path
-        try:
-            app, mod, func = taskname.split('.')
-            app_mod = app + '.' + mod
-        except ValueError:
-            logger.warning(f"WARNING: '{taskname}' not started - Malformed function path")
-            return
-
-        # Import module from app
-        try:
-            _mod = importlib.import_module(app_mod)
-        except ModuleNotFoundError:
-            logger.warning(f"WARNING: '{taskname}' not started - No module named '{app_mod}'")
-            return
-
-        # Retrieve function
-        try:
-            _func = getattr(_mod, func)
-        except AttributeError:
-            # getattr does not work for local import
-            _func = None
-
-        try:
-            if not _func:
-                _func = eval(func)
-        except NameError:
-            logger.warning(f"WARNING: '{taskname}' not started - No function named '{func}'")
-            return
-
-        # Workers are not running: run it as synchronous task
-        _func(*args, **kwargs)
+    except (OperationalError, ProgrammingError):
+        logger.warning(f"Could not offload task '{taskname}' - database not ready")
 
 
 def heartbeat():

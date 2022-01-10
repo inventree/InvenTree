@@ -108,7 +108,7 @@
         <ul class='dropdown-menu dropdown-menu-end inventree-navbar-menu'>
           {% if user.is_authenticated %}
           {% if user.is_staff and not demo %}
-          <li><a class='dropdown-item' href="/admin/"><span class="fas fa-user"></span> {% trans "Admin" %}</a></li>
+          <li><a class='dropdown-item' href="/admin/"><span class="fas fa-user-shield"></span> {% trans "Admin" %}</a></li>
           {% endif %}
           <li><a class='dropdown-item' href="{% url 'account_logout' %}"><span class="fas fa-sign-out-alt"></span> {% trans "Logout" %}</a></li>
           {% else %}
