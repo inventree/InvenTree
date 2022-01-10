@@ -102,10 +102,10 @@ class ActionPluginView(APIView):
             })
 
         action_plugins = plugin_registry.with_mixin('action')
-        for plugin_class in action_plugins:
-            if plugin_class.action_name() == action:
+        for plugin in action_plugins:
+            if plugin.action_name() == action:
                 # TODO @matmair use easier syntax once InvenTree 0.7.0 is released
-                plugin = plugin_class.init(request.user, data=data)
+                plugin.init(request.user, data=data)
 
                 plugin.perform_action()
 
