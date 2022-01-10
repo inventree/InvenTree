@@ -12,10 +12,18 @@ import common.models
 INVENTREE_SW_VERSION = "0.6.0 dev"
 
 # InvenTree API version
-INVENTREE_API_VERSION = 21
+INVENTREE_API_VERSION = 23
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v23 -> 2022-02-02
+    - Adds API endpoints for managing plugin classes
+    - Adds API endpoints for managing plugin settings
+
+v22 -> 2021-12-20
+    - Adds API endpoint to "merge" multiple stock items
+
 v21 -> 2021-12-04
     - Adds support for multiple "Shipments" against a SalesOrder
     - Refactors process for stock allocation against a SalesOrder

@@ -1,6 +1,15 @@
-"""utility class to enable simpler imports"""
-from ..builtin.integration.mixins import AppMixin, GlobalSettingsMixin, UrlsMixin, NavigationMixin
+"""
+Utility class to enable simpler imports
+"""
+
+from ..builtin.integration.mixins import APICallMixin, AppMixin, SettingsMixin, EventMixin, ScheduleMixin, UrlsMixin, NavigationMixin
 
 __all__ = [
-    'AppMixin', 'GlobalSettingsMixin', 'UrlsMixin', 'NavigationMixin',
+    'APICallMixin',
+    'AppMixin',
+    'EventMixin',
+    'NavigationMixin',
+    'ScheduleMixin',
+    'SettingsMixin',
+    'UrlsMixin',
 ]

@@ -8,31 +8,31 @@ from django.contrib.auth import get_user_model
 from datetime import datetime
 
 from plugin import IntegrationPluginBase
-from plugin.mixins import AppMixin, GlobalSettingsMixin, UrlsMixin, NavigationMixin
+from plugin.mixins import AppMixin, SettingsMixin, UrlsMixin, NavigationMixin, APICallMixin
 from plugin.urls import PLUGIN_BASE
 
 
 class BaseMixinDefinition:
     def test_mixin_name(self):
         # mixin name
-        self.assertEqual(self.mixin.registered_mixins[0]['key'], self.MIXIN_NAME)
+        self.assertIn(self.MIXIN_NAME, [item['key'] for item in self.mixin.registered_mixins])
         # human name
-        self.assertEqual(self.mixin.registered_mixins[0]['human_name'], self.MIXIN_HUMAN_NAME)
+        self.assertIn(self.MIXIN_HUMAN_NAME, [item['human_name'] for item in self.mixin.registered_mixins])
 
 
-class GlobalSettingsMixinTest(BaseMixinDefinition, TestCase):
-    MIXIN_HUMAN_NAME = 'Global settings'
-    MIXIN_NAME = 'globalsettings'
-    MIXIN_ENABLE_CHECK = 'has_globalsettings'
+class SettingsMixinTest(BaseMixinDefinition, TestCase):
+    MIXIN_HUMAN_NAME = 'Settings'
+    MIXIN_NAME = 'settings'
+    MIXIN_ENABLE_CHECK = 'has_settings'
 
     TEST_SETTINGS = {'SETTING1': {'default': '123', }}
 
     def setUp(self):
-        class SettingsCls(GlobalSettingsMixin, IntegrationPluginBase):
-            GLOBALSETTINGS = self.TEST_SETTINGS
+        class SettingsCls(SettingsMixin, IntegrationPluginBase):
+            SETTINGS = self.TEST_SETTINGS
         self.mixin = SettingsCls()
 
-        class NoSettingsCls(GlobalSettingsMixin, IntegrationPluginBase):
+        class NoSettingsCls(SettingsMixin, IntegrationPluginBase):
             pass
         self.mixin_nothing = NoSettingsCls()
 
@@ -42,25 +42,19 @@ class GlobalSettingsMixinTest(BaseMixinDefinition, TestCase):
 
     def test_function(self):
         # settings variable
-        self.assertEqual(self.mixin.globalsettings, self.TEST_SETTINGS)
-
-        # settings pattern
-        target_pattern = {f'PLUGIN_{self.mixin.slug.upper()}_{key}': value for key, value in self.mixin.globalsettings.items()}
-        self.assertEqual(self.mixin.globalsettingspatterns, target_pattern)
-
-        # no settings
-        self.assertIsNone(self.mixin_nothing.globalsettings)
-        self.assertIsNone(self.mixin_nothing.globalsettingspatterns)
+        self.assertEqual(self.mixin.settings, self.TEST_SETTINGS)
 
         # calling settings
         # not existing
-        self.assertEqual(self.mixin.get_globalsetting('ABCD'), '')
-        self.assertEqual(self.mixin_nothing.get_globalsetting('ABCD'), '')
+        self.assertEqual(self.mixin.get_setting('ABCD'), '')
+        self.assertEqual(self.mixin_nothing.get_setting('ABCD'), '')
+
         # right setting
-        self.mixin.set_globalsetting('SETTING1', '12345', self.test_user)
-        self.assertEqual(self.mixin.get_globalsetting('SETTING1'), '12345')
+        self.mixin.set_setting('SETTING1', '12345', self.test_user)
+        self.assertEqual(self.mixin.get_setting('SETTING1'), '12345')
+
         # no setting
-        self.assertEqual(self.mixin_nothing.get_globalsetting(''), '')
+        self.assertEqual(self.mixin_nothing.get_setting(''), '')
 
 
 class UrlsMixinTest(BaseMixinDefinition, TestCase):
@@ -146,6 +140,79 @@ class NavigationMixinTest(BaseMixinDefinition, TestCase):
         # navigation name
         self.assertEqual(self.mixin.navigation_name, 'abcd1')
         self.assertEqual(self.nothing_mixin.navigation_name, '')
+
+
+class APICallMixinTest(BaseMixinDefinition, TestCase):
+    MIXIN_HUMAN_NAME = 'API calls'
+    MIXIN_NAME = 'api_call'
+    MIXIN_ENABLE_CHECK = 'has_api_call'
+
+    def setUp(self):
+        class MixinCls(APICallMixin, SettingsMixin, IntegrationPluginBase):
+            PLUGIN_NAME = "Sample API Caller"
+
+            SETTINGS = {
+                'API_TOKEN': {
+                    'name': 'API Token',
+                    'protected': True,
+                },
+                'API_URL': {
+                    'name': 'External URL',
+                    'description': 'Where is your API located?',
+                    'default': 'reqres.in',
+                },
+            }
+            API_URL_SETTING = 'API_URL'
+            API_TOKEN_SETTING = 'API_TOKEN'
+
+            def get_external_url(self):
+                '''
+                returns data from the sample endpoint
+                '''
+                return self.api_call('api/users/2')
+        self.mixin = MixinCls()
+
+        class WrongCLS(APICallMixin, IntegrationPluginBase):
+            pass
+        self.mixin_wrong = WrongCLS()
+
+        class WrongCLS2(APICallMixin, IntegrationPluginBase):
+            API_URL_SETTING = 'test'
+        self.mixin_wrong2 = WrongCLS2()
+
+    def test_function(self):
+        # check init
+        self.assertTrue(self.mixin.has_api_call)
+        # api_url
+        self.assertEqual('https://reqres.in', self.mixin.api_url)
+
+        # api_headers
+        headers = self.mixin.api_headers
+        self.assertEqual(headers, {'Bearer': '', 'Content-Type': 'application/json'})
+
+        # api_build_url_args
+        # 1 arg
+        result = self.mixin.api_build_url_args({'a': 'b'})
+        self.assertEqual(result, '?a=b')
+        # more args
+        result = self.mixin.api_build_url_args({'a': 'b', 'c': 'd'})
+        self.assertEqual(result, '?a=b&c=d')
+        # list args
+        result = self.mixin.api_build_url_args({'a': 'b', 'c': ['d', 'e', 'f', ]})
+        self.assertEqual(result, '?a=b&c=d,e,f')
+
+        # api_call
+        result = self.mixin.get_external_url()
+        self.assertTrue(result)
+        self.assertIn('data', result,)
+
+        # wrongly defined plugins should not load
+        with self.assertRaises(ValueError):
+            self.mixin_wrong.has_api_call()
+
+        # cover wrong token setting
+        with self.assertRaises(ValueError):
+            self.mixin_wrong.has_api_call()
 
 
 class IntegrationPluginBaseTests(TestCase):

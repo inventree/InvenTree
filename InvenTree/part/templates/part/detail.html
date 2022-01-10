@@ -181,6 +181,9 @@
     <div class='panel-content'>
         <div id='param-button-toolbar'>
             <div class='button-toolbar container-fluid' style='float: right;'>
+                <div class='btn-group' role='group'>
+                    {% include "filter_list.html" with id="parameters" %}
+                </div>
             </div>
         </div>
         <table id='parameter-table' class='table table-condensed table-striped' data-toolbar="#param-button-toolbar"></table>
@@ -217,7 +220,7 @@
         </div>
     </div>
     <div class='panel-content'>
-        <div id='related-button-bar'>
+        <div id='related-button-toolbar'>
             <div class='btn-group' role='group'>
                 {% include "filter_list.html" with id="related" %}
             </div>
@@ -344,6 +347,7 @@
                         <li><a class='dropdown-item' href='#' id='supplier-part-delete' title='{% trans "Delete supplier parts" %}'>{% trans "Delete" %}</a></li>
                     </ul>
                 </div>
+                {% include "filter_list.html" with id="supplier-part" %}
             </div>
         </div>
         
@@ -371,6 +375,7 @@
                         <ul class="dropdown-menu">
                             <li><a class='dropdown-item' href='#' id='manufacturer-part-delete' title='{% trans "Delete manufacturer parts" %}'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete" %}</a></li>
                         </ul>
+                        {% include "filter_list.html" with id="manufacturer-part" %}
                     </div>
                 </div>
             </div>
@@ -580,14 +585,12 @@
         });
 
         $('#bom-duplicate').click(function() {
-            launchModalForm(
-                "{% url 'duplicate-bom' part.id %}",
-                {
-                    success: function() {
-                        $('#bom-table').bootstrapTable('refresh');
-                    }
+
+            duplicateBom({{ part.pk }}, {
+                success: function(response) {
+                    $('#bom-table').bootstrapTable('refresh');
                 }
-            );
+            });
         });
 
         $("#bom-item-new").click(function () {
@@ -611,12 +614,10 @@
         });
 
         $("#validate-bom").click(function() {
-            launchModalForm(
-                "{% url 'bom-validate' part.id %}",
-                {
-                    reload: true,
-                }
-            );
+
+            validateBom({{ part.id }}, {
+                reload: true
+            });
         });
 
         $("#download-bom").click(function () {

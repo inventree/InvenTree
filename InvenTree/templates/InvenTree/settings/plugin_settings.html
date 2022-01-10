@@ -67,7 +67,10 @@
         </div>
 
         {% if plugin.is_package == False %}
-        <p>{% trans 'The code information is pulled from the latest git commit for this plugin. It might not reflect official version numbers or information but the actual code running.' %}</p>
+        <div class='alert alert-block alert-info'>
+            {% trans 'The code information is pulled from the latest git commit for this plugin. It might not reflect official version numbers or information but the actual code running.' %}
+        </div>
+            
         {% endif %}
     </div>
     <div class="col">
@@ -87,7 +90,7 @@
                 </td>
             </tr>
             <tr>
-                <td></td>
+                <td><span class='fas fa-sitemap'></span></td>
                 <td>{% trans "Installation path" %}</td>
                 <td>{{ plugin.package_path }}</td>
             </tr>
@@ -124,8 +127,8 @@
     </div>
 </div>
 
-{% mixin_enabled plugin 'globalsettings' as globalsettings %}
-{% if globalsettings %}
+{% mixin_enabled plugin 'settings' as settings %}
+{% if settings %}
     {% include 'InvenTree/settings/mixins/settings.html' %}
 {% endif %}
 

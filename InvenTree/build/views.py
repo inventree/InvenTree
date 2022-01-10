@@ -109,7 +109,7 @@ class BuildOutputCreate(AjaxUpdateView):
         # Check that the serial numbers are valid
         if serials:
             try:
-                extracted = extract_serial_numbers(serials, quantity)
+                extracted = extract_serial_numbers(serials, quantity, build.part.getLatestSerialNumberInt())
 
                 if extracted:
                     # Check for conflicting serial numbers
@@ -143,7 +143,7 @@ class BuildOutputCreate(AjaxUpdateView):
         serials = data.get('serial_numbers', None)
 
         if serials:
-            serial_numbers = extract_serial_numbers(serials, quantity)
+            serial_numbers = extract_serial_numbers(serials, quantity, build.part.getLatestSerialNumberInt())
         else:
             serial_numbers = None
 
@@ -243,39 +243,6 @@ class BuildOutputDelete(AjaxUpdateView):
     def get_data(self):
         return {
             'danger': _('Build output deleted'),
-        }
-
-
-class BuildComplete(AjaxUpdateView):
-    """
-    View to mark the build as complete.
-
-    Requirements:
-    - There can be no outstanding build outputs
-    - The "completed" value must meet or exceed the "quantity" value
-    """
-
-    model = Build
-    form_class = forms.CompleteBuildForm
-
-    ajax_form_title = _('Complete Build Order')
-    ajax_template_name = 'build/complete.html'
-
-    def validate(self, build, form, **kwargs):
-
-        if build.incomplete_count > 0:
-            form.add_error(None, _('Build order cannot be completed - incomplete outputs remain'))
-
-    def save(self, build, form, **kwargs):
-        """
-        Perform the build completion step
-        """
-
-        build.complete_build(self.request.user)
-
-    def get_data(self):
-        return {
-            'success': _('Completed build order')
         }
 
 

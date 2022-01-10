@@ -180,6 +180,20 @@ class StockAssign(generics.CreateAPIView):
         return ctx
 
 
+class StockMerge(generics.CreateAPIView):
+    """
+    API endpoint for merging multiple stock items
+    """
+
+    queryset = StockItem.objects.none()
+    serializer_class = StockSerializers.StockMergeSerializer
+
+    def get_serializer_context(self):
+        ctx = super().get_serializer_context()
+        ctx['request'] = self.request
+        return ctx
+
+
 class StockLocationList(generics.ListCreateAPIView):
     """
     API endpoint for list view of StockLocation objects:
@@ -466,18 +480,6 @@ class StockList(generics.ListCreateAPIView):
 
         notes = data.get('notes', '')
 
-        serials = None
-
-        if serial_numbers:
-            # If serial numbers are specified, check that they match!
-            try:
-                serials = extract_serial_numbers(serial_numbers, data['quantity'])
-            except DjangoValidationError as e:
-                raise ValidationError({
-                    'quantity': e.messages,
-                    'serial_numbers': e.messages,
-                })
-
         with transaction.atomic():
 
             # Create an initial stock item
@@ -492,6 +494,19 @@ class StockList(generics.ListCreateAPIView):
 
                 if item.part.default_expiry > 0:
                     item.expiry_date = datetime.now().date() + timedelta(days=item.part.default_expiry)
+
+            # fetch serial numbers
+            serials = None
+
+            if serial_numbers:
+                # If serial numbers are specified, check that they match!
+                try:
+                    serials = extract_serial_numbers(serial_numbers, quantity, item.part.getLatestSerialNumberInt())
+                except DjangoValidationError as e:
+                    raise ValidationError({
+                        'quantity': e.messages,
+                        'serial_numbers': e.messages,
+                    })
 
             # Finally, save the item (with user information)
             item.save(user=user)
@@ -1213,6 +1228,7 @@ stock_api_urls = [
     url(r'^remove/', StockRemove.as_view(), name='api-stock-remove'),
     url(r'^transfer/', StockTransfer.as_view(), name='api-stock-transfer'),
     url(r'^assign/', StockAssign.as_view(), name='api-stock-assign'),
+    url(r'^merge/', StockMerge.as_view(), name='api-stock-merge'),
 
     # StockItemAttachment API endpoints
     url(r'^attachment/', include([

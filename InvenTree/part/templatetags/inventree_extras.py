@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-""" This module provides template tags for extra functionality
+"""
+This module provides template tags for extra functionality,
 over and above the built-in Django tags.
 """
 
@@ -21,6 +22,8 @@ import InvenTree.helpers
 
 from common.models import InvenTreeSetting, ColorTheme, InvenTreeUserSetting
 from common.settings import currency_code_default
+
+from plugin.models import PluginSetting
 
 register = template.Library()
 
@@ -223,8 +226,16 @@ def setting_object(key, *args, **kwargs):
     if a user-setting was requested return that
     """
 
+    if 'plugin' in kwargs:
+        # Note, 'plugin' is an instance of an InvenTreePlugin class
+
+        plugin = kwargs['plugin']
+
+        return PluginSetting.get_setting_object(key, plugin=plugin)
+
     if 'user' in kwargs:
         return InvenTreeUserSetting.get_setting_object(key, user=kwargs['user'])
+
     return InvenTreeSetting.get_setting_object(key)
 
 

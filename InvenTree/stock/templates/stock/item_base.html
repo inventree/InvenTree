@@ -3,6 +3,7 @@
 {% load inventree_extras %}
 {% load status_codes %}
 {% load i18n %}
+{% load l10n %}
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Stock Item" %} - {{ item }}
@@ -274,14 +275,6 @@
     <div class='alert alert-block alert-warning'>
         {% trans "This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted." %}
     </div>
-    {% elif item.child_count > 0 %}
-    <div class='alert alert-block alert-warning'>
-        {% trans "This stock item cannot be deleted as it has child items" %}
-    </div>
-    {% elif item.delete_on_deplete and item.can_delete %}
-    <div class='alert alert-block alert-warning'>
-        {% trans "This stock item will be automatically deleted when all stock is depleted." %}
-    </div>
     {% endif %}
     
 </div>
@@ -437,7 +430,7 @@ $("#stock-serialize").click(function() {
         part: {{ item.part.pk }},
         reload: true,
         data: {
-            quantity: {{ item.quantity }},
+            quantity: {{ item.quantity|unlocalize }},
             {% if item.location %}
             destination: {{ item.location.pk }},
             {% elif item.part.default_location %}
