@@ -59,7 +59,8 @@ class PluginsRegistry:
         # mixins
         self.mixins_settings = {}
 
-    # region public plugin functions
+    # region public functions
+    # region loading / unloading
     def load_plugins(self):
         """
         Load and activate all IntegrationPlugins
@@ -183,6 +184,8 @@ class PluginsRegistry:
         # Log collected plugins
         logger.info(f'Collected {len(self.plugin_modules)} plugins!')
         logger.info(", ".join([a.__module__ for a in self.plugin_modules]))
+    # endregion
+    # region registry functions
     def with_mixin(self, mixin: str):
         """
         Returns reference to all plugins that have a specified mixin enabled
@@ -194,6 +197,10 @@ class PluginsRegistry:
                 result.append(plugin)
 
         return result
+    # endregion
+    # endregion
+
+    # region general internal loading /activating / deactivating / deloading
     def _init_plugins(self, disabled=None):
         """
         Initialise all found plugins
@@ -286,7 +293,9 @@ class PluginsRegistry:
         self.deactivate_integration_app()
         self.deactivate_integration_schedule()
         self.deactivate_integration_settings()
+    # endregion
 
+    # region mixin specific loading ...
     def activate_integration_settings(self, plugins):
 
         logger.info('Activating plugin settings')
@@ -533,6 +542,6 @@ class PluginsRegistry:
             return True, []
         except Exception as error:
             get_plugin_error(error, do_raise=True)
-
+    # endregion
 
 plugin_registry = PluginsRegistry()
