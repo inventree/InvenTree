@@ -40,9 +40,7 @@ class PluginIntegrationTests(TestCase):
     def test_plugin_loading(self):
         """check if plugins load as expected"""
         # plugin_names_barcode = [a().plugin_name() for a in load_barcode_plugins()]  # TODO refactor barcode plugin to support standard loading
-        # plugin_names_action = [a().plugin_name() for a in load_action_plugins()]  # TODO refactor action plugin to support standard loading
 
-        # self.assertEqual(plugin_names_action, '')
         # self.assertEqual(plugin_names_barcode, '')
 
         # TODO remove test once loading is moved
