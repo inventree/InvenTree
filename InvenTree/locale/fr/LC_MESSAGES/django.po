@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-09 11:40+0000\n"
-"PO-Revision-Date: 2022-01-09 12:32\n"
+"POT-Creation-Date: 2022-01-10 03:54+0000\n"
+"PO-Revision-Date: 2022-01-10 03:57\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -7148,15 +7148,15 @@ msgstr ""
 msgid "Add Attachment"
 msgstr "Ajouter une pièce jointe"
 
-#: templates/base.html:96
+#: templates/base.html:97
 msgid "Server Restart Required"
 msgstr ""
 
-#: templates/base.html:99
+#: templates/base.html:100
 msgid "A configuration option has been changed which requires a server restart"
 msgstr ""
 
-#: templates/base.html:99
+#: templates/base.html:100
 msgid "Contact your system administrator for further information"
 msgstr ""
 
