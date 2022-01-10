@@ -11,6 +11,7 @@ from django.db.utils import OperationalError, ProgrammingError
 
 from plugin.models import PluginConfig, PluginSetting
 from plugin.urls import PLUGIN_BASE
+from plugin.helpers import MixinImplementationError, MixinNotImplementedError
 
 
 logger = logging.getLogger('inventree')
@@ -105,24 +106,24 @@ class ScheduleMixin:
         """
 
         if not self.has_scheduled_tasks:
-            raise ValueError("SCHEDULED_TASKS not defined")
+            raise MixinImplementationError("SCHEDULED_TASKS not defined")
 
         for key, task in self.scheduled_tasks.items():
 
             if 'func' not in task:
-                raise ValueError(f"Task '{key}' is missing 'func' parameter")
+                raise MixinImplementationError(f"Task '{key}' is missing 'func' parameter")
 
             if 'schedule' not in task:
-                raise ValueError(f"Task '{key}' is missing 'schedule' parameter")
+                raise MixinImplementationError(f"Task '{key}' is missing 'schedule' parameter")
 
             schedule = task['schedule'].upper().strip()
 
             if schedule not in self.ALLOWABLE_SCHEDULE_TYPES:
-                raise ValueError(f"Task '{key}': Schedule '{schedule}' is not a valid option")
+                raise MixinImplementationError(f"Task '{key}': Schedule '{schedule}' is not a valid option")
 
             # If 'minutes' is selected, it must be provided!
             if schedule == 'I' and 'minutes' not in task:
-                raise ValueError(f"Task '{key}' is missing 'minutes' parameter")
+                raise MixinImplementationError(f"Task '{key}' is missing 'minutes' parameter")
 
     def get_task_name(self, key):
         # Generate a 'unique' task name
@@ -192,7 +193,7 @@ class EventMixin:
 
     def process_event(self, event, *args, **kwargs):
         # Default implementation does not do anything
-        raise NotImplementedError
+        raise MixinNotImplementedError
 
     class MixinMeta:
         MIXIN_NAME = 'Events'
@@ -280,7 +281,7 @@ class NavigationMixin:
             # check if needed values are configured
             for link in nav_links:
                 if False in [a in link for a in ('link', 'name', )]:
-                    raise NotImplementedError('Wrong Link definition', link)
+                    raise MixinNotImplementedError('Wrong Link definition', link)
         return nav_links
 
     @property

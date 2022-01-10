@@ -29,6 +29,21 @@ class IntegrationPluginError(Exception):
         return self.message
 
 
+class MixinImplementationError(ValueError):
+    """
+    Error if mixin was implemented wrong in plugin
+    Mostly raised if constant is missing 
+    """
+    pass
+
+
+class MixinNotImplementedError(NotImplementedError):
+    """
+    Error if necessary mixin function was not overwritten
+    """
+    pass
+
+
 def get_plugin_error(error, do_raise: bool = False, do_log: bool = False, log_name: str = ''):
     package_path = traceback.extract_tb(error.__traceback__)[-1].filename
     install_path = sysconfig.get_paths()["purelib"]
