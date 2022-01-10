@@ -3,8 +3,6 @@ Plugin mixin classes
 """
 
 import logging
-import json
-import requests
 
 from django.conf.urls import url, include
 from django.db.utils import OperationalError, ProgrammingError
