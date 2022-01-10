@@ -871,8 +871,10 @@ class SOAllocationList(generics.ListCreateAPIView):
         #Check if the item has the allocation, if so get it and encrease quantity 
         #for allocate by barcode 1 by 1
         try:
-            allocation =  models.SalesOrderAllocation.objects.filter(item__pk=request.data['item']).first()
-            quantity =  int(request.data['quantity'])
+            allocation = models.SalesOrderAllocation.objects.filter(
+                line__pk=request.data["line"]
+            ).first()
+            quantity = int(request.data["quantity"])
             if allocation.line.quantity - allocation.quantity >= quantity:
                 allocation.quantity = allocation.quantity + quantity
                 allocation.save()
