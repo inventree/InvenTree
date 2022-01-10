@@ -91,10 +91,6 @@ def process_event(plugin_slug, event, *args, **kwargs):
     plugin.process_event(event, *args, **kwargs)
 
 
-"""
-Register some default event triggers on model signals
-"""
-
 @receiver(post_save)
 def after_save(sender, instance, created, **kwargs):
     """

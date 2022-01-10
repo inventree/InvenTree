@@ -722,8 +722,8 @@ class StockItem(MPTTModel):
 
         trigger_event(
             'stockitem.assignedtocustomer',
-            item_id=self.id,
-            customer_id=customer.id,
+            id=self.id,
+            customer=customer.id,
         )
 
         # Return the reference to the stock item
@@ -755,7 +755,7 @@ class StockItem(MPTTModel):
 
         trigger_event(
             'stockitem.returnedfromcustomer',
-            item_id=self.id,
+            id=self.id,
         )
 
         self.save()

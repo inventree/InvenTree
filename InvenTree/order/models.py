@@ -11,8 +11,7 @@ from decimal import Decimal
 from django.db import models, transaction
 from django.db.models import Q, F, Sum
 from django.db.models.functions import Coalesce
-from django.db.models.signals import post_save
-from django.dispatch.dispatcher import receiver
+
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
@@ -320,7 +319,7 @@ class PurchaseOrder(Order):
             self.issue_date = datetime.now().date()
             self.save()
 
-            trigger_event('purchaseorder.placed', order_id=self.pk)
+            trigger_event('purchaseorder.placed', id=self.pk)
 
     @transaction.atomic
     def complete_order(self):
@@ -331,7 +330,7 @@ class PurchaseOrder(Order):
             self.complete_date = datetime.now().date()
             self.save()
 
-            trigger_event('purchaseorder.completed', order_id=self.pk)
+            trigger_event('purchaseorder.completed', id=self.pk)
 
     @property
     def is_overdue(self):
@@ -363,7 +362,7 @@ class PurchaseOrder(Order):
             self.status = PurchaseOrderStatus.CANCELLED
             self.save()
 
-            trigger_event('purchaseorder.cancelled', order_id=self.pk)
+            trigger_event('purchaseorder.cancelled', id=self.pk)
 
     def pending_line_items(self):
         """ Return a list of pending line items for this order.
@@ -676,7 +675,7 @@ class SalesOrder(Order):
 
         self.save()
 
-        trigger_event('salesorder.completed', order_id=self.pk)
+        trigger_event('salesorder.completed', id=self.pk)
 
         return True
 
@@ -709,7 +708,7 @@ class SalesOrder(Order):
             for allocation in line.allocations.all():
                 allocation.delete()
 
-        trigger_event('salesorder.cancelled', order_id=self.pk)
+        trigger_event('salesorder.cancelled', id=self.pk)
 
         return True
 
@@ -1117,7 +1116,7 @@ class SalesOrderShipment(models.Model):
 
         self.save()
 
-        trigger_event('salesordershipment.completed', shipment_id=self.pk)
+        trigger_event('salesordershipment.completed', id=self.pk)
 
 
 class SalesOrderAllocation(models.Model):

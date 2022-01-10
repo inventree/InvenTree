@@ -11,8 +11,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 
-from django.db.models.signals import post_save
-from django.dispatch.dispatcher import receiver
 from django.db import models
 from django.db.models import Sum, Q, UniqueConstraint
 
@@ -34,8 +32,6 @@ import InvenTree.validators
 import common.models
 import common.settings
 from common.settings import currency_code_default
-
-from plugin.events import trigger_event
 
 
 def rename_company_image(instance, filename):

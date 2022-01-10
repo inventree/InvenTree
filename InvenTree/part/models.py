@@ -60,8 +60,6 @@ import common.models
 
 import part.settings as part_settings
 
-from plugin.events import trigger_event
-
 
 logger = logging.getLogger("inventree")
 
