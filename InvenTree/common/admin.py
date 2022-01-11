@@ -38,6 +38,11 @@ class UserSettingsAdmin(ImportExportModelAdmin):
             return []
 
 
+class WebhookAdmin(ImportExportModelAdmin):
+
+    list_display = ('endpoint_id', 'name', 'active', 'user')
+
+
 class NotificationEntryAdmin(admin.ModelAdmin):
 
     list_display = ('key', 'uid', 'updated', )
@@ -45,4 +50,6 @@ class NotificationEntryAdmin(admin.ModelAdmin):
 
 admin.site.register(common.models.InvenTreeSetting, SettingsAdmin)
 admin.site.register(common.models.InvenTreeUserSetting, UserSettingsAdmin)
+admin.site.register(common.models.WebhookEndpoint, WebhookAdmin)
+admin.site.register(common.models.WebhookMessage, ImportExportModelAdmin)
 admin.site.register(common.models.NotificationEntry, NotificationEntryAdmin)
