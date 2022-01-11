@@ -26,7 +26,7 @@ class IntegrationPluginError(Exception):
 class MixinImplementationError(ValueError):
     """
     Error if mixin was implemented wrong in plugin
-    Mostly raised if constant is missing 
+    Mostly raised if constant is missing
     """
     pass
 

@@ -3,7 +3,7 @@ Utility file to enable simper imports
 """
 
 from .registry import registry
-from .plugin import InvenTreePlugin
+from .plugin import AAInvenTreePlugin as InvenTreePlugin
 from .integration import IntegrationPluginBase
 from .action import ActionPlugin
 

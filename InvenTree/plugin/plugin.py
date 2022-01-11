@@ -7,7 +7,7 @@ from django.db.utils import OperationalError, ProgrammingError
 from django.utils.text import slugify
 
 
-class InvenTreePlugin():
+class AAInvenTreePlugin():
     """
     Base class for a plugin
     """
@@ -33,7 +33,6 @@ class InvenTreePlugin():
         Slug of plugin
         If not set plugin name slugified
         """
-
 
         slug = getattr(self, 'PLUGIN_SLUG', None)
 
