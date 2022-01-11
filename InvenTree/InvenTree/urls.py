@@ -185,7 +185,7 @@ frontendpatterns = [
 
 # Append custom plugin URLs (if plugin support is enabled)
 if settings.PLUGINS_ENABLED:
-    frontendpatterns += get_plugin_urls()
+    frontendpatterns.append(get_plugin_urls())
 
 urlpatterns = [
     url('', include(frontendpatterns)),
