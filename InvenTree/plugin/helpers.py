@@ -9,7 +9,7 @@ from django.conf import settings
 
 
 # region logging / errors
-def log_plugin_error(error, reference: str = 'general'):
+def log_error(error, reference: str = 'general'):
     """
     Log an plugin error
     """
@@ -77,7 +77,7 @@ def handle_plugin_error(error, do_raise: bool = True, do_log: bool = True, do_re
         log_kwargs = {}
         if log_name:
             log_kwargs['reference'] = log_name
-        log_plugin_error({package_name: str(error)}, **log_kwargs)
+        log_error({package_name: str(error)}, **log_kwargs)
 
     new_error = IntegrationPluginError(package_name, str(error))
 
