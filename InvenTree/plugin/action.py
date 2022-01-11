@@ -4,14 +4,14 @@
 import logging
 import warnings
 
-import plugin.plugin as plugin_base
 from plugin.builtin.action.mixins import ActionMixin
+import plugin.integration
 
 
 logger = logging.getLogger("inventree")
 
 
-class ActionPlugin(ActionMixin, plugin_base.integration.IntegrationPluginBase):
+class ActionPlugin(ActionMixin, plugin.integration.IntegrationPluginBase):
     """
     Legacy action definition - will be replaced
     Please use the new Integration Plugin API and the Action mixin
