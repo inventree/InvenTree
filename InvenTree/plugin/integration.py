@@ -114,10 +114,7 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
         """
         Human readable name of plugin
         """
-        human_name = getattr(self, 'PLUGIN_TITLE', None)
-        if not human_name:
-            human_name = self.plugin_name()
-        return human_name
+        return self.plugin_title()
 
     @property
     def description(self):
