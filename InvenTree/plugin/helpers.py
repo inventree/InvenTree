@@ -50,7 +50,7 @@ class MixinNotImplementedError(NotImplementedError):
     pass
 
 
-def handle_plugin_error(error, do_raise: bool = True, do_log: bool = True, do_return: bool = False, log_name: str = ''):
+def handle_error(error, do_raise: bool = True, do_log: bool = True, do_return: bool = False, log_name: str = ''):
     """
     Handles an error and casts it as an IntegrationPluginError
     """

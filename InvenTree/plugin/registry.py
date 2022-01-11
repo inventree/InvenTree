@@ -30,7 +30,7 @@ from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
 
 from plugin import plugins as inventree_plugins
 from .integration import IntegrationPluginBase
-from .helpers import handle_plugin_error, IntegrationPluginError
+from .helpers import handle_error, IntegrationPluginError
 
 
 logger = logging.getLogger('inventree')
@@ -67,7 +67,7 @@ class PluginsRegistry:
         Load and activate all IntegrationPlugins
         """
 
-        from plugin.helpers import log_plugin_error
+        from plugin.helpers import log_error
 
         logger.info('Start loading plugins')
 
@@ -91,7 +91,7 @@ class PluginsRegistry:
                 break
             except IntegrationPluginError as error:
                 logger.error(f'[PLUGIN] Encountered an error with {error.path}:\n{error.message}')
-                log_plugin_error({error.path: error.message}, 'load')
+                log_error({error.path: error.message}, 'load')
                 blocked_plugin = error.path  # we will not try to load this app again
 
                 # Initialize apps without any integration plugins
@@ -180,7 +180,7 @@ class PluginsRegistry:
                     plugin.is_package = True
                     self.plugin_modules.append(plugin)
                 except Exception as error:
-                    handle_plugin_error(error, do_raise=False, log_name='discovery')
+                    handle_error(error, do_raise=False, log_name='discovery')
 
         # Log collected plugins
         logger.info(f'Collected {len(self.plugin_modules)} plugins!')
@@ -259,7 +259,7 @@ class PluginsRegistry:
                     plugin = plugin()
                 except Exception as error:
                     # log error and raise it -> disable plugin
-                    handle_plugin_error(error, log_name='init')
+                    handle_error(error, log_name='init')
 
                 logger.info(f'Loaded integration plugin {plugin.slug}')
                 plugin.is_package = was_packaged
@@ -543,7 +543,7 @@ class PluginsRegistry:
             cmd(*args, **kwargs)
             return True, []
         except Exception as error:
-            handle_plugin_error(error)
+            handle_error(error)
     # endregion
 
 

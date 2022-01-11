@@ -15,7 +15,7 @@ def iter_namespace(pkg):
 
 def get_modules(pkg, recursive: bool = False):
     """get all modules in a package"""
-    from plugin.helpers import log_plugin_error
+    from plugin.helpers import log_error
 
     if not recursive:
         return [importlib.import_module(name) for finder, name, ispkg in iter_namespace(pkg)]
@@ -35,7 +35,7 @@ def get_modules(pkg, recursive: bool = False):
             # this 'protects' against malformed plugin modules by more or less silently failing
 
             # log to stack
-            log_plugin_error({name: str(error)}, 'discovery')
+            log_error({name: str(error)}, 'discovery')
 
     return [v for k, v in context.items()]
 
