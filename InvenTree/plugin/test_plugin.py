@@ -4,7 +4,6 @@ Unit tests for plugins
 
 from django.test import TestCase
 
-import plugin.integration
 from plugin.samples.integration.sample import SampleIntegrationPlugin
 from plugin.samples.integration.another_sample import WrongIntegrationPlugin, NoIntegrationPlugin
 import plugin.templatetags.plugin_extras as plugin_tags
