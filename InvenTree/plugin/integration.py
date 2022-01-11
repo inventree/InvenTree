@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-"""class for IntegrationPluginBase and Mixins for it"""
+"""
+Class for IntegrationPluginBase and Mixin Base
+"""
 
 import logging
 import os
