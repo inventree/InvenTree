@@ -124,6 +124,8 @@ def allow_table_event(table_name):
 
     ignore_tables = [
         'common_notificationentry',
+        'common_webhookendpoint',
+        'common_webhookmessage',
     ]
 
     if table_name in ignore_tables:
@@ -139,6 +141,11 @@ def after_save(sender, instance, created, **kwargs):
     """
 
     table = sender.objects.model._meta.db_table
+
+    instance_id = getattr(instance, 'id', None)
+
+    if instance_id is None:
+        return
 
     if not allow_table_event(table):
         return
