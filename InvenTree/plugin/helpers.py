@@ -9,20 +9,6 @@ from django.conf import settings
 
 
 # region logging / errors
-def log_error(error, reference: str = 'general'):
-    """
-    Log an plugin error
-    """
-    from plugin import registry
-
-    # make sure the registry is set up
-    if reference not in registry.errors:
-        registry.errors[reference] = []
-
-    # add error to stack
-    registry.errors[reference].append(error)
-
-
 class IntegrationPluginError(Exception):
     """
     Error that encapsulates another error and adds the path / reference of the raising plugin
@@ -48,6 +34,20 @@ class MixinNotImplementedError(NotImplementedError):
     Error if necessary mixin function was not overwritten
     """
     pass
+
+
+def log_error(error, reference: str = 'general'):
+    """
+    Log an plugin error
+    """
+    from plugin import registry
+
+    # make sure the registry is set up
+    if reference not in registry.errors:
+        registry.errors[reference] = []
+
+    # add error to stack
+    registry.errors[reference].append(error)
 
 
 def handle_error(error, do_raise: bool = True, do_log: bool = True, do_return: bool = False, log_name: str = ''):
