@@ -87,6 +87,9 @@ class ScheduleMixin:
     SCHEDULED_TASKS = {}
 
     class MixinMeta:
+        """
+        Meta options for this mixin
+        """
         MIXIN_NAME = 'Schedule'
 
     def __init__(self):
@@ -98,6 +101,9 @@ class ScheduleMixin:
 
     @property
     def has_scheduled_tasks(self):
+        """
+        Are tasks defined for this plugin
+        """
         return bool(self.scheduled_tasks)
 
     def validate_scheduled_tasks(self):
@@ -126,11 +132,17 @@ class ScheduleMixin:
                 raise MixinImplementationError(f"Task '{key}' is missing 'minutes' parameter")
 
     def get_task_name(self, key):
+        """
+        Task name for key
+        """
         # Generate a 'unique' task name
         slug = self.plugin_slug()
         return f"plugin.{slug}.{key}"
 
     def get_task_names(self):
+        """
+        All defined task names
+        """
         # Returns a list of all task names associated with this plugin instance
         return [self.get_task_name(key) for key in self.scheduled_tasks.keys()]
 
@@ -192,10 +204,17 @@ class EventMixin:
     """
 
     def process_event(self, event, *args, **kwargs):
+        """
+        Function to handle events
+        Must be overridden by plugin
+        """
         # Default implementation does not do anything
         raise MixinNotImplementedError
 
     class MixinMeta:
+        """
+        Meta options for this mixin
+        """
         MIXIN_NAME = 'Events'
 
     def __init__(self):
@@ -209,6 +228,9 @@ class UrlsMixin:
     """
 
     class MixinMeta:
+        """
+        Meta options for this mixin
+        """
         MIXIN_NAME = 'URLs'
 
     def __init__(self):
@@ -218,28 +240,28 @@ class UrlsMixin:
 
     def setup_urls(self):
         """
-        setup url endpoints for this plugin
+        Setup url endpoints for this plugin
         """
         return getattr(self, 'URLS', None)
 
     @property
     def base_url(self):
         """
-        returns base url for this plugin
+        Base url for this plugin
         """
         return f'{PLUGIN_BASE}/{self.slug}/'
 
     @property
     def internal_name(self):
         """
-        returns the internal url pattern name
+        Internal url pattern name
         """
         return f'plugin:{self.slug}:'
 
     @property
     def urlpatterns(self):
         """
-        returns the urlpatterns for this plugin
+        Urlpatterns for this plugin
         """
         if self.has_urls:
             return url(f'^{self.slug}/', include((self.urls, self.slug)), name=self.slug)
@@ -248,7 +270,7 @@ class UrlsMixin:
     @property
     def has_urls(self):
         """
-        does this plugin use custom urls
+        Does this plugin use custom urls
         """
         return bool(self.urls)
 
@@ -263,7 +285,7 @@ class NavigationMixin:
 
     class MixinMeta:
         """
-        meta options for this mixin
+        Meta options for this mixin
         """
         MIXIN_NAME = 'Navigation Links'
 
@@ -274,7 +296,7 @@ class NavigationMixin:
 
     def setup_navigation(self):
         """
-        setup navigation links for this plugin
+        Setup navigation links for this plugin
         """
         nav_links = getattr(self, 'NAVIGATION', None)
         if nav_links:
@@ -287,13 +309,15 @@ class NavigationMixin:
     @property
     def has_naviation(self):
         """
-        does this plugin define navigation elements
+        Does this plugin define navigation elements
         """
         return bool(self.navigation)
 
     @property
     def navigation_name(self):
-        """name for navigation tab"""
+        """
+        Name for navigation tab
+        """
         name = getattr(self, 'NAVIGATION_TAB_NAME', None)
         if not name:
             name = self.human_name
@@ -301,7 +325,9 @@ class NavigationMixin:
 
     @property
     def navigation_icon(self):
-        """icon for navigation tab"""
+        """
+        Icon-name for navigation tab
+        """
         return getattr(self, 'NAVIGATION_TAB_ICON', "fas fa-question")
 
 
@@ -311,7 +337,9 @@ class AppMixin:
     """
 
     class MixinMeta:
-        """meta options for this mixin"""
+        """m
+        Mta options for this mixin
+        """
         MIXIN_NAME = 'App registration'
 
     def __init__(self):
@@ -321,7 +349,7 @@ class AppMixin:
     @property
     def has_app(self):
         """
-        this plugin is always an app with this plugin
+        This plugin is always an app with this plugin
         """
         return True
 

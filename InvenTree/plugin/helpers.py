@@ -10,6 +10,9 @@ from django.conf import settings
 
 # region logging / errors
 def log_plugin_error(error, reference: str = 'general'):
+    """
+    Log an plugin error
+    """
     from plugin import registry
 
     # make sure the registry is set up
@@ -21,6 +24,9 @@ def log_plugin_error(error, reference: str = 'general'):
 
 
 class IntegrationPluginError(Exception):
+    """
+    Error that encapsulates another error and adds the path / reference of the raising plugin
+    """
     def __init__(self, path, message):
         self.path = path
         self.message = message
@@ -85,7 +91,9 @@ def handle_plugin_error(error, do_raise: bool = True, do_log: bool = True, do_re
 
 # region git-helpers
 def get_git_log(path):
-    """get dict with info of the last commit to file named in path"""
+    """
+    Get dict with info of the last commit to file named in path
+    """
     path = path.replace(os.path.dirname(settings.BASE_DIR), '')[1:]
     command = ['git', 'log', '-n', '1', "--pretty=format:'%H%n%aN%n%aE%n%aI%n%f%n%G?%n%GK'", '--follow', '--', path]
     try:
@@ -100,9 +108,13 @@ def get_git_log(path):
 
 
 class GitStatus:
-    """class for resolving git gpg singing state"""
+    """
+    Class for resolving git gpg singing state
+    """
     class Definition:
-        """definition of a git gpg sing state"""
+        """
+        Definition of a git gpg sing state
+        """
         key: str = 'N'
         status: int = 2
         msg: str = ''

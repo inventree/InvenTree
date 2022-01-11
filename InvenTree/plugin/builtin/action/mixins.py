@@ -19,18 +19,12 @@ class ActionMixin:
         super().__init__()
         self.add_mixin('action', 'has_action', __class__)
 
-    @property
-    def has_action(self):
-        """
-        Does this plugin have everything needed for an action?
-        """
-        return True
-
     def action_name(self):
         """
-        Return the action name for this plugin.
+        Action name for this plugin.
+
         If the ACTION_NAME parameter is empty,
-        look at the PLUGIN_NAME instead.
+        uses the PLUGIN_NAME instead.
         """
         if self.ACTION_NAME:
             return self.ACTION_NAME
