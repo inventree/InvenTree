@@ -28,9 +28,8 @@ except:
 from maintenance_mode.core import maintenance_mode_on
 from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
 
-from plugin import plugins as inventree_plugins
 from .integration import IntegrationPluginBase
-from .helpers import handle_error, log_error, IntegrationPluginError
+from .helpers import handle_error, log_error, get_plugins, IntegrationPluginError
 
 
 logger = logging.getLogger('inventree')
@@ -177,7 +176,7 @@ class PluginsRegistry:
 
         # Collect plugins from paths
         for plugin in settings.PLUGIN_DIRS:
-            modules = inventree_plugins.get_plugins(importlib.import_module(plugin), IntegrationPluginBase)
+            modules = get_plugins(importlib.import_module(plugin), IntegrationPluginBase)
             if modules:
                 [self.plugin_modules.append(item) for item in modules]
 
