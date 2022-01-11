@@ -83,7 +83,7 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
         self.def_path = inspect.getfile(self.__class__)
         self.path = os.path.dirname(self.def_path)
 
-        self.set_package()
+        self.define_package()
 
     @property
     def _is_package(self):
@@ -217,23 +217,23 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
     # endregion
 
     # region package info
-    def get_package_commit(self):
+    def _get_package_commit(self):
         """
         Get last git commit for the plugin
         """
         return get_git_log(self.def_path)
 
-    def get_package_metadata(self):
+    def _get_package_metadata(self):
         """
         Get package metadata for plugin
         """
         return {}
 
-    def set_package(self):
+    def define_package(self):
         """
         Add package info of the plugin into plugins context
         """
-        package = self.get_package_metadata() if self._is_package else self.get_package_commit()
+        package = self._get_package_metadata() if self._is_package else self._get_package_commit()
 
         # process date
         if package.get('date'):
