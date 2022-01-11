@@ -52,8 +52,6 @@ with open(cfg_filename, 'r') as cfg:
 # We will place any config files in the same directory as the config file
 config_dir = os.path.dirname(cfg_filename)
 
-PLUGIN_FILE = get_plugin_file()
-
 # Default action is to run the system in Debug mode
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = _is_true(get_setting(
@@ -872,6 +870,14 @@ MARKDOWNIFY_BLEACH = False
 
 # Maintenance mode
 MAINTENANCE_MODE_RETRY_AFTER = 60
+
+# Are plugins enabled?
+PLUGINS_ENABLED = _is_true(get_setting(
+    'INVENTREE_PLUGINS_ENABLED',
+    CONFIG.get('plugins_enabled', False),
+))
+
+PLUGIN_FILE = get_plugin_file()
 
 # Plugin Directories (local plugins will be loaded from these directories)
 PLUGIN_DIRS = ['plugin.builtin', ]
