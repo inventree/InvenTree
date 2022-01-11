@@ -30,7 +30,7 @@ from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
 
 from plugin import plugins as inventree_plugins
 from .integration import IntegrationPluginBase
-from .helpers import handle_error, IntegrationPluginError
+from .helpers import handle_error, log_error, IntegrationPluginError
 
 
 logger = logging.getLogger('inventree')
