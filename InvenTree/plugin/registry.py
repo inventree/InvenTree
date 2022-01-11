@@ -30,7 +30,7 @@ from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
 
 from plugin import plugins as inventree_plugins
 from .integration import IntegrationPluginBase
-from .helpers import get_plugin_error, IntegrationPluginError
+from .helpers import handle_plugin_error, IntegrationPluginError
 
 
 logger = logging.getLogger('inventree')
@@ -180,7 +180,7 @@ class PluginsRegistry:
                     plugin.is_package = True
                     self.plugin_modules.append(plugin)
                 except Exception as error:
-                    get_plugin_error(error, do_log=True, log_name='discovery')
+                    handle_plugin_error(error, do_raise=False, log_name='discovery')
 
         # Log collected plugins
         logger.info(f'Collected {len(self.plugin_modules)} plugins!')
@@ -259,7 +259,7 @@ class PluginsRegistry:
                     plugin = plugin()
                 except Exception as error:
                     # log error and raise it -> disable plugin
-                    get_plugin_error(error, do_raise=True, do_log=True, log_name='init')
+                    handle_plugin_error(error, log_name='init')
 
                 logger.info(f'Loaded integration plugin {plugin.slug}')
                 plugin.is_package = was_packaged
@@ -543,7 +543,7 @@ class PluginsRegistry:
             cmd(*args, **kwargs)
             return True, []
         except Exception as error:
-            get_plugin_error(error, do_raise=True)
+            handle_plugin_error(error)
     # endregion
 
 

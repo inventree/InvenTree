@@ -44,7 +44,10 @@ class MixinNotImplementedError(NotImplementedError):
     pass
 
 
-def get_plugin_error(error, do_raise: bool = False, do_log: bool = False, log_name: str = ''):
+def handle_plugin_error(error, do_raise: bool = True, do_log: bool = True, do_return: bool = False, log_name: str = ''):
+    """
+    Handles an error and casts it as an IntegrationPluginError
+    """
     package_path = traceback.extract_tb(error.__traceback__)[-1].filename
     install_path = sysconfig.get_paths()["purelib"]
     try:
@@ -70,10 +73,13 @@ def get_plugin_error(error, do_raise: bool = False, do_log: bool = False, log_na
             log_kwargs['reference'] = log_name
         log_plugin_error({package_name: str(error)}, **log_kwargs)
 
+    new_error = IntegrationPluginError(package_name, str(error))
+
     if do_raise:
         raise IntegrationPluginError(package_name, str(error))
 
-    return package_name, str(error)
+    if do_return:
+        return new_error
 # endregion
 
 
