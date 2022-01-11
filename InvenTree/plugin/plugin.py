@@ -24,11 +24,16 @@ class InvenTreePlugin():
 
     def plugin_name(self):
         """
-        Return the name of this plugin plugin
+        Name of plugin
         """
         return self.PLUGIN_NAME
 
     def plugin_slug(self):
+        """
+        Slug of plugin
+        If not set plugin name slugified
+        """
+
 
         slug = getattr(self, 'PLUGIN_SLUG', None)
 
@@ -38,6 +43,9 @@ class InvenTreePlugin():
         return slugify(slug.lower())
 
     def plugin_title(self):
+        """
+        Title of plugin
+        """
 
         if self.PLUGIN_TITLE:
             return self.PLUGIN_TITLE
