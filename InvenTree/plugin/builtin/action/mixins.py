@@ -17,7 +17,7 @@ class ActionMixin:
 
     def __init__(self):
         super().__init__()
-        self.add_mixin('action', 'has_action', __class__)
+        self.add_mixin('action', True, __class__)
 
     def action_name(self):
         """
