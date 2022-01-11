@@ -1,4 +1,6 @@
-"""Helpers for plugin app"""
+"""
+Helpers for plugin app
+"""
 import os
 import subprocess
 import pathlib
