@@ -6742,7 +6742,6 @@
       key: "getVisibleColumns",
       value: function getVisibleColumns() {
         var _this22 = this;
-
         return this.columns.filter(function (column) {
           return column.visible && !_this22.isSelectionColumn(column);
         });

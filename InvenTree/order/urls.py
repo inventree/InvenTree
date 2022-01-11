@@ -14,10 +14,8 @@ purchase_order_detail_urls = [
     url(r'^cancel/', views.PurchaseOrderCancel.as_view(), name='po-cancel'),
     url(r'^issue/', views.PurchaseOrderIssue.as_view(), name='po-issue'),
     url(r'^complete/', views.PurchaseOrderComplete.as_view(), name='po-complete'),
-
     url(r'^upload/', views.PurchaseOrderUpload.as_view(), name='po-upload'),
     url(r'^export/', views.PurchaseOrderExport.as_view(), name='po-export'),
-
     url(r'^.*$', views.PurchaseOrderDetail.as_view(), name='po-detail'),
 ]
 
@@ -36,14 +34,12 @@ purchase_order_urls = [
 sales_order_detail_urls = [
     url(r'^cancel/', views.SalesOrderCancel.as_view(), name='so-cancel'),
     url(r'^export/', views.SalesOrderExport.as_view(), name='so-export'),
-
     url(r'^.*$', views.SalesOrderDetail.as_view(), name='so-detail'),
 ]
 
 sales_order_urls = [
     # Display detail view for a single SalesOrder
     url(r'^(?P<pk>\d+)/', include(sales_order_detail_urls)),
-
     # Display list of all sales orders
     url(r'^.*$', views.SalesOrderIndex.as_view(), name='so-index'),
 ]

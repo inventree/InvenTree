@@ -18,6 +18,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
+
 from markdownx.models import MarkdownxField
 from mptt.models import TreeForeignKey
 
@@ -30,6 +31,8 @@ from plugin.events import trigger_event
 from InvenTree.fields import InvenTreeModelMoneyField, RoundingDecimalField
 from InvenTree.helpers import decimal2string, increment, getSetting
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus, StockHistoryCode
+from InvenTree.models import InvenTreeAttachment
+from basket.models import SalesOrderBasket
 from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
 
 
@@ -120,6 +123,7 @@ class Order(ReferenceIndexingMixin):
 
     class Meta:
         abstract = True
+        managed = True
 
     description = models.CharField(max_length=250, verbose_name=_('Description'), help_text=_('Order description'))
 
@@ -476,6 +480,7 @@ class SalesOrder(Order):
     Attributes:
         customer: Reference to the company receiving the goods in the order
         customer_reference: Optional field for customer order reference code
+        is_packable: Determinate should order be process to packing before shiping
         target_date: Target date for SalesOrder completion (optional)
     """
 
@@ -546,6 +551,16 @@ class SalesOrder(Order):
         default=get_next_so_number,
     )
 
+    basket = models.ForeignKey(
+        SalesOrderBasket,
+        on_delete=models.SET_NULL,
+        related_name='sales_orders',
+        null=True,
+        blank=True,
+        verbose_name=_('Basket'),
+        help_text=_('Select basket to put order')
+    )
+
     customer = models.ForeignKey(
         Company,
         on_delete=models.SET_NULL,
@@ -576,6 +591,8 @@ class SalesOrder(Order):
         related_name='+',
         verbose_name=_('shipped by')
     )
+
+    is_packable = models.BooleanField(default=False,  verbose_name=_('is packable'), help_text=_('Do you packing order before shiping?'))
 
     @property
     def is_overdue(self):
@@ -967,7 +984,7 @@ class SalesOrderLineItem(OrderLineItem):
         """
 
         query = self.order.stock_items.filter(part=self.part).aggregate(fulfilled=Coalesce(Sum('quantity'), Decimal(0)))
-
+    
         return query['fulfilled']
 
     def allocated_quantity(self):
@@ -1183,9 +1200,13 @@ class SalesOrderAllocation(models.Model):
         if self.item.serial and not self.quantity == 1:
             errors['quantity'] = _('Quantity must be 1 for serialized stock item')
 
-        if self.line.order != self.shipment.order:
-            errors['line'] = _('Sales order does not match shipment')
-            errors['shipment'] = _('Shipment does not match sales order')
+        try:
+            if self.line.order != self.shipment.order:
+                errors['line'] = _('Sales order does not match shipment')
+                errors['shipment'] = _('Shipment does not match sales order')
+        except Exception as e:
+            print(e)
+            print('There is no shipment yet')
 
         if len(errors) > 0:
             raise ValidationError(errors)
@@ -1199,6 +1220,8 @@ class SalesOrderAllocation(models.Model):
 
     shipment = models.ForeignKey(
         SalesOrderShipment,
+        null=True,
+        blank=True,
         on_delete=models.CASCADE,
         related_name='allocations',
         verbose_name=_('Shipment'),
@@ -1235,7 +1258,7 @@ class SalesOrderAllocation(models.Model):
     def get_po(self):
         return self.item.purchase_order
 
-    def complete_allocation(self, user):
+    def complete_allocation(self, user, quantity=None):
         """
         Complete this allocation (called when the parent SalesOrder is marked as "shipped"):
 
@@ -1247,9 +1270,9 @@ class SalesOrderAllocation(models.Model):
 
         item = self.item.allocateToCustomer(
             order.customer,
-            quantity=self.quantity,
+            quantity=quantity if quantity is not None else self.quantity,
             order=order,
-            user=user
+            user=user,
         )
 
         # Update the 'shipped' quantity

@@ -25,6 +25,7 @@ from InvenTree.helpers import validateFilterString, normalize
 
 import common.models
 import stock.models
+import order.models
 import part.models
 
 
@@ -57,6 +58,12 @@ def validate_stock_item_filters(filters):
 def validate_stock_location_filters(filters):
 
     filters = validateFilterString(filters, model=stock.models.StockLocation)
+
+    return filters
+
+def validate_basket_filters(filters):
+
+    filters = validateFilterString(filters, model=order.models.SalesOrderBasket)
 
     return filters
 
@@ -401,4 +408,52 @@ class PartLabel(LabelTemplate):
             'qr_data': part.format_barcode(brief=True),
             'qr_url': part.format_barcode(url=True, request=request),
             'parameters': part.parameters_map(),
+        }
+
+
+class BasketLabel(LabelTemplate):
+    """
+    Template for printing Basket labels
+    """
+
+    @staticmethod
+    def get_api_url():
+        return reverse('api-basket-label-list')
+
+    SUBDIR = "basket"
+
+    filters = models.CharField(
+        blank=True, max_length=250,
+        help_text=_('Query filters (comma-separated list of key=value pairs'),
+        verbose_name=_('Filters'),
+        validators=[
+            validate_basket_filters]
+    )
+
+    def matches_basket(self, basket):
+        """
+        Test if this label template matches a given Basket object
+        """
+
+        try:
+            filters = validateFilterString(self.filters)
+            baskets = order.models.SalesOrderBasket.objects.filter(**filters)
+        except (ValidationError, FieldError):
+            return False
+
+        baskets = baskets.filter(pk=basket.pk)
+
+        return baskets.exists()
+
+    def get_context_data(self, request):
+        """
+        Generate context data for each provided Basket
+        """
+
+        basket = self.object_to_print
+
+        return {
+            'basket': basket,
+            'basket_name': basket.name,
+            'qr_data': basket.format_barcode(brief=True),
         }

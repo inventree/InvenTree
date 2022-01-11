@@ -44,6 +44,7 @@ class RuleSet(models.Model):
         ('build', _('Build Orders')),
         ('purchase_order', _('Purchase Orders')),
         ('sales_order', _('Sales Orders')),
+        ('basket', _('Baskets')),
     ]
 
     RULESET_NAMES = [
@@ -142,6 +143,10 @@ class RuleSet(models.Model):
             'order_salesorderallocation',
             'order_salesorderattachment',
             'order_salesorderlineitem',
+            'order_salesorderallocation',
+        ],
+        'basket': [
+            'basket_salesorderbasket',
             'order_salesordershipment',
         ]
     }

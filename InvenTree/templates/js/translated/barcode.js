@@ -19,6 +19,8 @@
     linkBarcodeDialog,
     scanItemsIntoLocation,
     unlinkBarcode,
+    scanOrderIntoBasket,
+    scanBarcodeForFulfill
 */
 
 function makeBarcodeInput(placeholderText='', hintText='') {
@@ -64,6 +66,25 @@ function makeNotesField(options={}) {
                 <input id='notes' class='textinput textInput form-control' type='text' name='notes' placeholder='${placeholder}'>
             </div>
             <div id='hint_notes' class='help_block'>${tooltip}</div>
+        </div>
+    </div>`;
+}
+
+function makeQuantityField(options={}) {
+    var tooltip = options.tooltip || '{% trans "Enter quantity for stock transfer" %}';
+    var placeholder = options.placeholder || '{% trans "Enter quantity" %}';
+
+    return `
+    <div class='form-group'>
+        <label class='control-label' for='quantity'>{% trans "Quantity" %}</label>
+        <div class='controls'>
+            <div class='input-group'>
+                <span class='input-group-addon'>
+                    <span class='fas fa-th'></i></span>
+                </span>
+                <input id='quantity' class='textinput textInput form-control' type='number' value='1' name='quantity' placeholder='${placeholder}'>
+            </div>
+            <div id='quantity' class='help_block'>${tooltip}</div>
         </div>
     </div>`;
 }
@@ -631,6 +652,246 @@ function scanItemsIntoLocation(item_id_list, options={}) {
                     showBarcodeMessage(
                         modal,
                         '{% trans "Barcode does not match a valid location" %}',
+                        'warning',
+                    );
+                }
+            }
+        }
+    );
+}
+
+
+/*
+ * Display dialog to check a single stock item into a stock location
+ */
+function scanOrderIntoBasket(item_id_list, options={}) {
+
+    var modal = options.modal || '#modal-form';
+
+    var basket = null;
+
+    // Extra form fields
+    // var extra = makeNotesField();
+
+    // Header contentfor
+    var header = `
+    <div id='header-div'>
+    </div>
+    `;
+
+    function updateBasketInfo(basket) {
+        var div = $(modal + ' #header-div');
+        if (basket && basket.pk) {
+            div.html(`
+            <div class='alert alert-block alert-info'>
+            <b>{% trans "Basket" %}</b></br>
+            ${basket.name}<br>
+            // <i>${basket.status_text}</i>
+            </div>
+            `);
+        } else {
+            div.html('');
+        }
+    }
+
+    barcodeDialog(
+        '{% trans "Check Into Basket" %}',
+        {
+            headerContent: header,
+            // extraFields: extra,
+            preShow: function() {
+                modalSetSubmitText(modal, '{% trans "Check In" %}');
+                modalEnable(modal, false);
+            },
+            onShow: function() {
+            },
+            onSubmit: function() {
+                // Called when the 'check-in' button is pressed
+                if (!basket) {
+                    return;
+                }
+
+                var items = [];
+
+                item_id_list.forEach(function(pk) {
+                    items.push({
+                        pk: pk,
+                    });
+                });
+
+                var data = {
+                    order: items[0],
+                    basket: basket.pk
+                    // notes: $(modal + ' #notes').val(),
+                    // orders: orders,
+                };
+
+                // Send API request
+                inventreePut(
+                    "{% url 'api-basket-addorder' %}add_order/",
+                    data,
+                    {
+                        method: 'POST',
+                        success: function(response, status) {
+                            // First hide the modal
+                            $(modal).modal('hide');
+                            if (status == 'success' && 'success' in response) {
+                                showAlertOrCache('alert-success', response.success, true);
+                                location.reload();
+                            } else {
+                                showAlertOrCache('alert-danger', '{% trans "Error adding order to basket" %}', false);
+                            }
+                        }
+                    }
+                );
+            },
+            onScan: function(response) {
+                updateBasketInfo(null);
+                if ('orderbasket' in response) {
+                    // Barcode corresponds to a StockLocation
+                    basket = response.orderbasket;
+
+                    updateBasketInfo(basket);
+                    modalEnable(modal, true);
+
+                } else {
+                    // Barcode does *NOT* correspond to a StockLocation
+                    showBarcodeMessage(
+                        modal,
+                        '{% trans "Barcode does not match a valid basket" %}',
+                        'warning',
+                    );
+                }
+            }
+        }
+    );
+}
+
+
+
+
+function scanBarcodeInsideOrder(options={}) {
+    var row = null;
+
+    function findRow(item) {
+        let part_names = $('a[href*="part"]');
+        part_names.each((i,el) => {
+            if ($(el).text() === item.part_detail.name) {
+                row = $(el).parent().parent();
+                row =  row.data('uniqueid');
+                return;
+            }
+        });
+    }
+
+    var modal = options.modal || '#modal-form';
+
+    var stock_item = null;
+    var endpoint = '';
+
+    // Extra form fields`
+    var extra = makeQuantityField();
+
+    // Header contentfor
+    var header = `
+    <div id='header-div'>
+    </div>
+    `;
+
+    function checkItemInAllocations() {
+        
+    }
+
+    function updateInfo(stock_item) {
+        var div = $(modal + ' #header-div');
+
+        if (stock_item && stock_item.pk) {
+            div.html(`
+            <div class='alert alert-block alert-info'>
+            <b>{% trans "Stock item" %}</b></br>
+            ${stock_item.part_detail.name}<br>
+            </div>
+            `);
+        } else {
+            div.html('');
+        }
+    }
+
+    barcodeDialog(
+        '{% trans "Fulfill stock item" %}',
+        {
+            headerContent: header,
+            extraFields: extra,
+            preShow: function() {
+                const buttonText = options.allocate ? '{% trans "Allocate" %}' : '{% trans "FulFill" %}';
+                modalSetSubmitText(modal, buttonText);
+                modalEnable(modal, false);
+            },
+            onShow: function() {
+            },
+            onSubmit: function() {
+                // Called when the 'check-in' button is pressed
+                
+                quantity = $('#quantity').val() || 1
+                if (!stock_item) {
+                    return;
+                }
+                
+                // Call if process is fulfilling e.g. packing
+                if (options.fulfill) {
+                     // Send API request
+                    inventreePut(
+                        `/api/order/so-allocation/fulfill/${stock_item.pk}/${quantity}`,
+                        {
+                            // success: function(response, status) {
+                            //     console.log(status, response)
+                            //     // First hide the modal
+                            //     $(modal).modal('hide');
+    
+                            //     if (status == 'success' && 'success' in response) {
+                            //         showAlertOrCache('alert-success', response.success, true);
+                            //         location.reload();
+                            //     } else {
+                            //         showAlertOrCache('alert-danger', '{% trans "Error fulfilling item" %}', false);
+                            //     }
+                            // }
+                        },
+                        {method: 'DELETE', reloadOnSuccess: true},
+                    );
+                }
+                
+
+                if (options.allocate) {
+                    inventreePut(
+                        `/api/order/so-allocation/`,
+                        {
+                            line: row,
+                            item: stock_item.pk,
+                            quantity: quantity
+                        },
+                        {method: 'POST', success: function(response, status) {
+                            window.location.reload();
+                            console.log(response, status);
+                        }},
+                    )
+                }
+            },
+            onScan: function(response) {
+                updateInfo(null);
+                if ('stockitem' in response) {
+                    // Barcode corresponds to a StockLocation
+                    stock_item = response.stockitem;
+                    findRow(stock_item);
+                    updateInfo(stock_item);
+                    modalEnable(modal, true);
+
+                    
+
+                } else {
+                    // Barcode does *NOT* correspond to a StockLocation
+                    showBarcodeMessage(
+                        modal,
+                        '{% trans "Barcode does not match a valid allocated stock item" %}',
                         'warning',
                     );
                 }

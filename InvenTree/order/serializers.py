@@ -409,11 +409,11 @@ class SalesOrderSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSeria
     def __init__(self, *args, **kwargs):
 
         customer_detail = kwargs.pop('customer_detail', False)
-
         super().__init__(*args, **kwargs)
 
         if customer_detail is not True:
             self.fields.pop('customer_detail')
+        
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -469,6 +469,7 @@ class SalesOrderSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSeria
             'status_text',
             'shipment_date',
             'target_date',
+            'is_packable',
         ]
 
         read_only_fields = [
@@ -503,6 +504,7 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
         order_detail = kwargs.pop('order_detail', False)
         part_detail = kwargs.pop('part_detail', True)
         item_detail = kwargs.pop('item_detail', False)
+        shipment = kwargs.pop('shipment', False)
         location_detail = kwargs.pop('location_detail', False)
 
         super().__init__(*args, **kwargs)
@@ -518,6 +520,10 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
 
         if not location_detail:
             self.fields.pop('location_detail')
+
+        if not shipment:
+            self.fields.pop('shipment')
+            self.fields.pop('shipment_date')
 
     class Meta:
         model = order.models.SalesOrderAllocation

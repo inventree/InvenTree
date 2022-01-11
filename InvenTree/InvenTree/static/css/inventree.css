@@ -10,6 +10,8 @@
     --label-green: #50aa51;
     --label-grey: #aaa;
     --label-yellow: #fdc82a;
+    --label-purple: #DA70D6;
+    --label-orange: #ff4d00;
 
     --bs-body-color: #68686a;
 }
@@ -230,6 +232,99 @@ main {
 .list-group-item-condensed {
     padding: 5px 10px;
 }
+
+/* Extra label styles */
+
+.label-large {
+    margin: 3px;
+    font-size: 100%;
+    border: 3px solid;
+    border-radius: 15px;
+    background: none;
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.label-large-red {
+    color: var(--label-red);
+    border-color: var(--label-red);
+}
+
+.label-form {
+    margin: 2px;
+    padding: 3px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 5px;
+}
+
+.label-red {
+    background: var(--label-red);
+}
+
+.label-large-purple {
+    color: var(--label-purple);
+    border-color: var(--label-purple);
+}
+
+.label-purple {
+    background: var(--label-purple);
+}
+
+.label-large-orange {
+    color: var(--label-orange);
+    border-color: var(--label-orange);
+}
+
+.label-orange {
+    background: var(--label-orange);
+}
+
+.label-large-blue {
+    color: var(--label-blue);
+    border-color: var(--label-blue);
+}
+
+.label-blue {
+    background: var(--label-blue);
+}
+
+.label-large-green {
+    color: var(--label-green);
+    border-color: var(--label-green);
+}
+
+.label-green {
+    background: var(--label-green);
+}
+
+.label-large-grey {
+    color: var(--label-grey);
+    border-color: var(--label-grey);
+}
+
+.label-grey {
+    background: var(--label-grey);
+}
+
+.label-large-yellow {
+    color: var(--label-yellow);
+    border-color: var(--label-yellow);
+}
+
+.label-yellow {
+    background: var(--label-yellow);
+}
+
+.label-right {
+    float: right;
+    margin-left: 3px;
+    margin-right: 3px;
+}
+
+/* Bootstrap table overrides */
 
 .stock-sub-group td {
     background-color: #ebf4f4;

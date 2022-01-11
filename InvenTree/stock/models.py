@@ -705,7 +705,7 @@ class StockItem(MPTTModel):
         item.sales_order = order
         item.customer = customer
         item.location = None
-
+        item.uid = ''
         item.save()
 
         # TODO - Remove any stock item allocations from this stock item

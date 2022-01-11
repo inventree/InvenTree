@@ -8,6 +8,8 @@ from __future__ import unicode_literals
 from django.conf.urls import url, include
 from django.db.models import Q, F
 
+from django.http import Http404
+
 from django_filters import rest_framework as rest_filters
 from rest_framework import generics
 from rest_framework import filters, status
@@ -18,11 +20,13 @@ from company.models import SupplierPart
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import str2bool
 from InvenTree.api import AttachmentMixin
-from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
+from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, BasketStatus
 
 import order.models as models
 import order.serializers as serializers
 from part.models import Part
+from stock.models import StockItem
+from company.models import SupplierPart
 from users.models import Owner
 
 
@@ -469,6 +473,7 @@ class SOList(generics.ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
 
         item = serializer.save()
+        
         item.created_by = request.user
         item.save()
 
@@ -536,6 +541,9 @@ class SOList(generics.ListCreateAPIView):
         if status is not None:
             queryset = queryset.filter(status=status)
 
+        basket = params.get('basket', None)
+        if basket is not None:
+            queryset = queryset.filter(basket=basket)
         # Filter by "Part"
         # Only return SalesOrder which have LineItem referencing the part
         part = params.get('part', None)
@@ -805,13 +813,86 @@ class SOAllocationDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.SalesOrderAllocationSerializer
 
 
-class SOAllocationList(generics.ListAPIView):
+class SOAllocationFulFill(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for fullfill by barcode reader 1 by 1 or set quantity
+    """
+
+    queryset = models.SalesOrderAllocation.objects.all()
+    serializer_class = serializers.SalesOrderAllocationSerializer
+
+    def delete (self, request, *args, **kwargs):
+        try:
+            quantity = int(self.kwargs['quantity'])
+            stock_item_pk = self.kwargs['item_pk']
+            instance = models.SalesOrderAllocation.objects.filter(item=stock_item_pk).first()
+            item = StockItem.objects.get(pk=stock_item_pk)
+            if quantity <= instance.quantity:
+                instance.complete_allocation(request.user, quantity=quantity)
+                instance.quantity = instance.quantity - quantity
+                instance.item = item
+                instance.save()
+
+                if instance.line.order.status != SalesOrderStatus.PACKING:
+                    instance.line.order.status = SalesOrderStatus.PACKING
+                    instance.line.order.save()
+
+                if (instance.quantity == 0):
+                    instance.line.order.status = SalesOrderStatus.PACKED
+                    try:
+                        instance.line.order.basket.status = BasketStatus.EMPTY
+                        instance.line.order.basket.save()
+                    except Exception as e:
+                        print(e)
+                    instance.line.order.save()
+                    self.perform_destroy(instance)
+                    
+                    
+                    
+                return Response({"succcess": "Item fulfilled successfully"}, status=status.HTTP_200_OK)
+            else:
+                return Response({"error": "Quantity exceeded "}, status=status.HTTP_204_NO_CONTENT)
+        except Http404:
+            pass
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+class SOAllocationList(generics.ListCreateAPIView):
     """
     API endpoint for listing SalesOrderAllocation objects
     """
 
     queryset = models.SalesOrderAllocation.objects.all()
     serializer_class = serializers.SalesOrderAllocationSerializer
+
+    def create(self, request):
+
+        #Check if the item has the allocation, if so get it and encrease quantity 
+        #for allocate by barcode 1 by 1
+        try:
+            allocation = models.SalesOrderAllocation.objects.filter(
+                line__pk=request.data["line"]
+            ).first()
+            quantity = int(request.data["quantity"])
+            if allocation.line.quantity - allocation.quantity >= quantity:
+                allocation.quantity = allocation.quantity + quantity
+                allocation.save()
+                return  Response({'success': 'Allocation updated'}, status=status.HTTP_200_OK)
+        except Exception as e:
+           print(e)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        item = serializer.save()
+        
+        # Check order if_packable and fully_allocated and if so set status to WAITING TO PACKING
+        # for pass workflow to another person
+        order =  models.SalesOrder.objects.filter(pk=item.line.order.pk).first()
+        if order.is_fully_allocated() and order.is_packable:
+            order.status = SalesOrderStatus.WAITING_FOR_PACKING
+            order.save()
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def get_serializer(self, *args, **kwargs):
 
@@ -1031,6 +1112,7 @@ order_api_urls = [
 
     # API endpoints for sales order allocations
     url(r'^so-allocation/', include([
+        url(r'^fulfill/(?P<item_pk>\d+)/(?P<quantity>\d+)', SOAllocationFulFill.as_view(), name='api-so-allocation-fulfill'),
         url(r'^(?P<pk>\d+)/$', SOAllocationDetail.as_view(), name='api-so-allocation-detail'),
         url(r'^.*$', SOAllocationList.as_view(), name='api-so-allocation-list'),
     ])),

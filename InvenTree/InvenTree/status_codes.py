@@ -134,19 +134,31 @@ class SalesOrderStatus(StatusCode):
 
     PENDING = 10  # Order is pending
     SHIPPED = 20  # Order has been shipped to customer
+    IN_BASKET = 30 # Order currently in basket
     CANCELLED = 40  # Order has been cancelled
     LOST = 50  # Order was lost
     RETURNED = 60  # Order was returned
+    WAITING_FOR_PACKING = 70 # Order allocated and wait for packing
+    PACKING = 80
+    PACKED = 90
 
     options = {
         PENDING: _("Pending"),
         SHIPPED: _("Shipped"),
+        IN_BASKET: _("In basket"),
         CANCELLED: _("Cancelled"),
         LOST: _("Lost"),
         RETURNED: _("Returned"),
+        WAITING_FOR_PACKING: _("Waiting for packing"),
+        PACKING: _("Packing"),
+        PACKED: _("Packed"),
     }
 
     colors = {
+        IN_BASKET:"warning",
+        WAITING_FOR_PACKING: 'warning',
+        PACKING: 'warning',
+        PACKED: 'warning',
         PENDING: 'secondary',
         SHIPPED: 'success',
         CANCELLED: 'danger',
@@ -301,6 +313,21 @@ class StockHistoryCode(StatusCode):
 
         RECEIVED_AGAINST_PURCHASE_ORDER: _('Received against purchase order')
 
+    }
+
+class BasketStatus(StatusCode):
+    BUSY = 10
+    EMPTY = 20
+    WAITING_FOR_PACKAGE = 30
+    options = {
+        BUSY:_("Busy"),
+        EMPTY: _("Empty"),
+        WAITING_FOR_PACKAGE: _("Waiting for packing"),
+    }
+
+    colors = {
+        EMPTY: 'success',
+        BUSY: 'danger',
     }
 
 

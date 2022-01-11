@@ -431,7 +431,6 @@ function constructFormBody(fields, options) {
             }
         }
     }
-
     // Initialize an "empty" field for each specified field
     for (field in displayed_fields) {
         if (!(field in fields)) {

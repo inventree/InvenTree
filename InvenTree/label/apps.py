@@ -38,6 +38,7 @@ class LabelConfig(AppConfig):
             self.create_stock_item_labels()
             self.create_stock_location_labels()
             self.create_part_labels()
+            self.create_basket_labels()
 
     def create_stock_item_labels(self):
         """
@@ -296,6 +297,100 @@ class LabelConfig(AppConfig):
             logger.info(f"Creating entry for PartLabel '{label['name']}'")
 
             PartLabel.objects.create(
+                name=label['name'],
+                description=label['description'],
+                label=filename,
+                filters='',
+                enabled=True,
+                width=label['width'],
+                height=label['height'],
+            )
+
+    def create_basket_labels(self):
+        """
+        Create database entries for the default StockItemLocation templates,
+        if they do not already exist
+        """
+
+        try:
+            from .models import BasketLabel
+        except:
+            # Database might not yet be ready
+            return
+
+        src_dir = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            'templates',
+            'label',
+            'basket',
+        )
+
+        dst_dir = os.path.join(
+            settings.MEDIA_ROOT,
+            'label',
+            'inventree',
+            'basket',
+        )
+
+        if not os.path.exists(dst_dir):
+            logger.info(f"Creating required directory: '{dst_dir}'")
+            os.makedirs(dst_dir, exist_ok=True)
+
+        labels = [
+            {
+                'file': 'qr.html',
+                'name': 'QR Code',
+                'description': 'Simple QR code label',
+                'width': 24,
+                'height': 24,
+            },
+            {
+                'file': 'qr_and_text.html',
+                'name': 'QR and text',
+                'description': 'Label with QR code and name of basket',
+                'width': 50,
+                'height': 24,
+            }
+        ]
+
+        for label in labels:
+
+            filename = os.path.join(
+                'label',
+                'inventree',
+                'basket',
+                label['file'],
+            )
+
+            # Check if the file exists in the media directory
+            src_file = os.path.join(src_dir, label['file'])
+            dst_file = os.path.join(settings.MEDIA_ROOT, filename)
+
+            to_copy = False
+
+            if os.path.exists(dst_file):
+                # File already exists - let's see if it is the "same",
+                # or if we need to overwrite it with a newer copy!
+
+                if not hashFile(dst_file) == hashFile(src_file):
+                    logger.info(f"Hash differs for '{filename}'")
+                    to_copy = True
+
+            else:
+                logger.info(f"Label template '{filename}' is not present")
+                to_copy = True
+
+            if to_copy:
+                logger.info(f"Copying label template '{dst_file}'")
+                shutil.copyfile(src_file, dst_file)
+
+            # Check if a label matching the template already exists
+            if BasketLabel.objects.filter(label=filename).exists():
+                continue
+
+            logger.info(f"Creating entry for BasketLabel '{label['name']}'")
+
+            BasketLabel.objects.create(
                 name=label['name'],
                 description=label['description'],
                 label=filename,
