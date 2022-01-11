@@ -13,7 +13,7 @@ from django.urls.base import reverse
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
-import plugin.plugin as plugin
+import plugin.plugin as plugin_base
 from plugin.helpers import get_git_log, GitStatus
 
 
@@ -67,7 +67,7 @@ class MixinBase:
         return mixins
 
 
-class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
+class IntegrationPluginBase(MixinBase, plugin_base.InvenTreePluginBase):
     """
     The IntegrationPluginBase class is used to integrate with 3rd party software
     """

@@ -4,20 +4,19 @@ Unit tests for plugins
 
 from django.test import TestCase
 
-import plugin.plugin
 import plugin.integration
 from plugin.samples.integration.sample import SampleIntegrationPlugin
 from plugin.samples.integration.another_sample import WrongIntegrationPlugin, NoIntegrationPlugin
 import plugin.templatetags.plugin_extras as plugin_tags
-from plugin import registry
+from plugin import registry, InvenTreePluginBase
 
 
 class InvenTreePluginTests(TestCase):
     """ Tests for InvenTreePlugin """
     def setUp(self):
-        self.plugin = plugin.plugin.InvenTreePlugin()
+        self.plugin = InvenTreePluginBase()
 
-        class NamedPlugin(plugin.plugin.InvenTreePlugin):
+        class NamedPlugin(InvenTreePluginBase):
             """a named plugin"""
             PLUGIN_NAME = 'abc123'
 

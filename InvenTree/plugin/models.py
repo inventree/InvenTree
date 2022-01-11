@@ -10,7 +10,7 @@ from django.db import models
 
 import common.models
 
-from plugin import InvenTreePlugin, registry
+from plugin import InvenTreePluginBase, registry
 
 
 class PluginConfig(models.Model):
@@ -164,7 +164,7 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
 
             if plugin:
 
-                if issubclass(plugin.__class__, InvenTreePlugin):
+                if issubclass(plugin.__class__, InvenTreePluginBase):
                     plugin = plugin.plugin_config()
 
                 kwargs['settings'] = registry.mixins_settings.get(plugin.key, {})
@@ -182,7 +182,7 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
         plugin = kwargs.get('plugin', None)
 
         if plugin:
-            if issubclass(plugin.__class__, InvenTreePlugin):
+            if issubclass(plugin.__class__, InvenTreePluginBase):
                 plugin = plugin.plugin_config()
             filters['plugin'] = plugin
 

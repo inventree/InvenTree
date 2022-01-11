@@ -250,9 +250,9 @@ class BaseInvenTreeSetting(models.Model):
         plugin = kwargs.pop('plugin', None)
 
         if plugin:
-            from plugin import InvenTreePlugin
+            from plugin import InvenTreePluginBase
 
-            if issubclass(plugin.__class__, InvenTreePlugin):
+            if issubclass(plugin.__class__, InvenTreePluginBase):
                 plugin = plugin.plugin_config()
 
             kwargs['plugin'] = plugin
