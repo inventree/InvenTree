@@ -6,7 +6,6 @@ import warnings
 
 import plugin.plugin as plugin_base
 from plugin.builtin.action.mixins import ActionMixin
-import plugin.integration
 
 
 logger = logging.getLogger("inventree")
