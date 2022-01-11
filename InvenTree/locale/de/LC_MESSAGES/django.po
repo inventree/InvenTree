@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-11 04:42+0000\n"
-"PO-Revision-Date: 2022-01-11 04:48\n"
+"POT-Creation-Date: 2022-01-11 22:51+0000\n"
+"PO-Revision-Date: 2022-01-11 22:54\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -205,7 +205,7 @@ msgstr "Ungültige Auswahl"
 #: templates/InvenTree/settings/plugin.html:48
 #: templates/InvenTree/settings/plugin.html:125
 #: templates/InvenTree/settings/plugin_settings.html:23
-#: templates/InvenTree/settings/settings.html:279
+#: templates/InvenTree/settings/settings.html:282
 #: templates/js/translated/company.js:641 templates/js/translated/part.js:567
 #: templates/js/translated/part.js:706 templates/js/translated/part.js:1630
 #: templates/js/translated/stock.js:2334
@@ -253,83 +253,83 @@ msgstr "Muss eine gültige Nummer sein"
 msgid "Filename"
 msgstr "Dateiname"
 
-#: InvenTree/settings.py:663
+#: InvenTree/settings.py:661
 msgid "German"
 msgstr "Deutsch"
 
-#: InvenTree/settings.py:664
+#: InvenTree/settings.py:662
 msgid "Greek"
 msgstr "Griechisch"
 
-#: InvenTree/settings.py:665
+#: InvenTree/settings.py:663
 msgid "English"
 msgstr "Englisch"
 
-#: InvenTree/settings.py:666
+#: InvenTree/settings.py:664
 msgid "Spanish"
 msgstr "Spanisch"
 
-#: InvenTree/settings.py:667
+#: InvenTree/settings.py:665
 msgid "Spanish (Mexican)"
 msgstr "Spanisch (Mexikanisch)"
 
-#: InvenTree/settings.py:668
+#: InvenTree/settings.py:666
 msgid "French"
 msgstr "Französisch"
 
-#: InvenTree/settings.py:669
+#: InvenTree/settings.py:667
 msgid "Hebrew"
 msgstr "Hebräisch"
 
-#: InvenTree/settings.py:670
+#: InvenTree/settings.py:668
 msgid "Italian"
 msgstr "Italienisch"
 
-#: InvenTree/settings.py:671
+#: InvenTree/settings.py:669
 msgid "Japanese"
 msgstr "Japanisch"
 
-#: InvenTree/settings.py:672
+#: InvenTree/settings.py:670
 msgid "Korean"
 msgstr "Koreanisch"
 
-#: InvenTree/settings.py:673
+#: InvenTree/settings.py:671
 msgid "Dutch"
 msgstr "Niederländisch"
 
-#: InvenTree/settings.py:674
+#: InvenTree/settings.py:672
 msgid "Norwegian"
 msgstr "Norwegisch"
 
-#: InvenTree/settings.py:675
+#: InvenTree/settings.py:673
 msgid "Polish"
 msgstr "Polnisch"
 
-#: InvenTree/settings.py:676
+#: InvenTree/settings.py:674
 msgid "Portugese"
 msgstr "Portugiesisch"
 
-#: InvenTree/settings.py:677
+#: InvenTree/settings.py:675
 msgid "Russian"
 msgstr "Russisch"
 
-#: InvenTree/settings.py:678
+#: InvenTree/settings.py:676
 msgid "Swedish"
 msgstr "Schwedisch"
 
-#: InvenTree/settings.py:679
+#: InvenTree/settings.py:677
 msgid "Thai"
 msgstr "Thailändisch"
 
-#: InvenTree/settings.py:680
+#: InvenTree/settings.py:678
 msgid "Turkish"
 msgstr "Türkisch"
 
-#: InvenTree/settings.py:681
+#: InvenTree/settings.py:679
 msgid "Vietnamese"
 msgstr "Vietnamesisch"
 
-#: InvenTree/settings.py:682
+#: InvenTree/settings.py:680
 msgid "Chinese"
 msgstr "Chinesisch"
 
@@ -2505,7 +2505,7 @@ msgstr "Parameterwert"
 
 #: company/models.py:429 part/models.py:913 part/models.py:2452
 #: part/templates/part/part_base.html:288
-#: templates/InvenTree/settings/settings.html:284
+#: templates/InvenTree/settings/settings.html:287
 #: templates/js/translated/company.js:653 templates/js/translated/part.js:721
 msgid "Units"
 msgstr "Einheiten"
@@ -2993,7 +2993,7 @@ msgstr "Bepreisung"
 #: stock/templates/stock/location.html:163
 #: stock/templates/stock/location_sidebar.html:7
 #: templates/InvenTree/search.html:152 templates/js/translated/stock.js:2358
-#: templates/stats.html:93 templates/stats.html:102 users/models.py:43
+#: templates/stats.html:105 templates/stats.html:114 users/models.py:43
 msgid "Stock Items"
 msgstr "Lagerartikel"
 
@@ -3960,7 +3960,7 @@ msgid "Part Category"
 msgstr "Teil-Kategorie"
 
 #: part/models.py:96 part/templates/part/category.html:128
-#: templates/InvenTree/search.html:95 templates/stats.html:84
+#: templates/InvenTree/search.html:95 templates/stats.html:96
 #: users/models.py:40
 msgid "Part Categories"
 msgstr "Teil-Kategorien"
@@ -3972,7 +3972,7 @@ msgstr "Teil-Kategorien"
 #: templates/InvenTree/index.html:85 templates/InvenTree/search.html:82
 #: templates/InvenTree/settings/sidebar.html:37
 #: templates/js/translated/part.js:1662 templates/navbar.html:21
-#: templates/stats.html:80 templates/stats.html:89 users/models.py:41
+#: templates/stats.html:92 templates/stats.html:101 users/models.py:41
 msgid "Parts"
 msgstr "Teile"
 
@@ -4037,7 +4037,7 @@ msgstr "Schlüsselworte um die Sichtbarkeit in Suchergebnissen zu verbessern"
 #: part/models.py:809 part/models.py:2278 part/models.py:2527
 #: part/templates/part/part_base.html:265
 #: part/templates/part/set_category.html:15
-#: templates/InvenTree/settings/settings.html:183
+#: templates/InvenTree/settings/settings.html:186
 #: templates/js/translated/part.js:1267
 msgid "Category"
 msgstr "Kategorie"
@@ -4225,7 +4225,7 @@ msgid "Parent Part"
 msgstr "Ausgangsteil"
 
 #: part/models.py:2484 part/models.py:2533 part/models.py:2534
-#: templates/InvenTree/settings/settings.html:178
+#: templates/InvenTree/settings/settings.html:181
 msgid "Parameter Template"
 msgstr "Parameter Vorlage"
 
@@ -4237,7 +4237,7 @@ msgstr "Wert"
 msgid "Parameter Value"
 msgstr "Parameter Wert"
 
-#: part/models.py:2538 templates/InvenTree/settings/settings.html:187
+#: part/models.py:2538 templates/InvenTree/settings/settings.html:190
 msgid "Default Value"
 msgstr "Standard-Wert"
 
@@ -5133,7 +5133,7 @@ msgstr "Neue Teilevariante anlegen"
 msgid "Create a new variant of template <em>'%(full_name)s'</em>."
 msgstr "Neue Variante von Vorlage anlegen <em>'%(full_name)s'</em>."
 
-#: part/templatetags/inventree_extras.py:116
+#: part/templatetags/inventree_extras.py:125
 msgid "Unknown database"
 msgstr "Unbekannte Datenbank"
 
@@ -6190,7 +6190,7 @@ msgid "Sublocations"
 msgstr "Unter-Lagerorte"
 
 #: stock/templates/stock/location.html:146 templates/InvenTree/search.html:164
-#: templates/stats.html:97 users/models.py:42
+#: templates/stats.html:109 users/models.py:42
 msgid "Stock Locations"
 msgstr "Bestand-Lagerorte"
 
@@ -6634,37 +6634,37 @@ msgstr "Kein Wert angegeben"
 msgid "Edit setting"
 msgstr "Einstellungen ändern"
 
-#: templates/InvenTree/settings/settings.html:75
+#: templates/InvenTree/settings/settings.html:78
 msgid "Edit Plugin Setting"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:77
+#: templates/InvenTree/settings/settings.html:80
 msgid "Edit Global Setting"
 msgstr "Allgemeine Einstellungen bearbeiten"
 
-#: templates/InvenTree/settings/settings.html:79
+#: templates/InvenTree/settings/settings.html:82
 msgid "Edit User Setting"
 msgstr "Benutzereinstellungen bearbeiten"
 
-#: templates/InvenTree/settings/settings.html:168
+#: templates/InvenTree/settings/settings.html:171
 msgid "No category parameter templates found"
 msgstr "Keine Kategorie-Parametervorlagen gefunden"
 
-#: templates/InvenTree/settings/settings.html:190
-#: templates/InvenTree/settings/settings.html:289
+#: templates/InvenTree/settings/settings.html:193
+#: templates/InvenTree/settings/settings.html:292
 msgid "Edit Template"
 msgstr "Vorlage bearbeiten"
 
-#: templates/InvenTree/settings/settings.html:191
-#: templates/InvenTree/settings/settings.html:290
+#: templates/InvenTree/settings/settings.html:194
+#: templates/InvenTree/settings/settings.html:293
 msgid "Delete Template"
 msgstr "Vorlage löschen"
 
-#: templates/InvenTree/settings/settings.html:269
+#: templates/InvenTree/settings/settings.html:272
 msgid "No part parameter templates found"
 msgstr "Keine Teilparametervorlagen gefunden"
 
-#: templates/InvenTree/settings/settings.html:273
+#: templates/InvenTree/settings/settings.html:276
 msgid "ID"
 msgstr "ID"
 
@@ -9310,31 +9310,43 @@ msgstr "Docker-Modus"
 msgid "Server is deployed using docker"
 msgstr "Server wird mit Docker bereitgestellt"
 
-#: templates/stats.html:40
+#: templates/stats.html:39
+msgid "Plugin Support"
+msgstr ""
+
+#: templates/stats.html:43
+msgid "Plugin support enabled"
+msgstr ""
+
+#: templates/stats.html:45
+msgid "Plugin support disabled"
+msgstr ""
+
+#: templates/stats.html:52
 msgid "Server status"
 msgstr "Serverstatus"
 
-#: templates/stats.html:43
+#: templates/stats.html:55
 msgid "Healthy"
 msgstr "Gesund"
 
-#: templates/stats.html:45
+#: templates/stats.html:57
 msgid "Issues detected"
 msgstr "Probleme erkannt"
 
-#: templates/stats.html:52
+#: templates/stats.html:64
 msgid "Background Worker"
 msgstr "Hintergrund-Prozess"
 
-#: templates/stats.html:55
+#: templates/stats.html:67
 msgid "Background worker not running"
 msgstr "Hintergrund-Prozess läuft nicht"
 
-#: templates/stats.html:63
+#: templates/stats.html:75
 msgid "Email Settings"
 msgstr "E-Mail-Einstellungen"
 
-#: templates/stats.html:66
+#: templates/stats.html:78
 msgid "Email settings not configured"
 msgstr "E-Mail-Einstellungen nicht konfiguriert"
 
