@@ -547,4 +547,4 @@ class PluginsRegistry:
     # endregion
 
 
-plugin_registry = PluginsRegistry()
+registry = PluginsRegistry()

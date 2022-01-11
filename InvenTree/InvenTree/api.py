@@ -19,7 +19,7 @@ from .views import AjaxView
 from .version import inventreeVersion, inventreeApiVersion, inventreeInstanceName
 from .status import is_worker_running
 
-from plugin import plugin_registry
+from plugin import registry
 
 
 class InfoView(AjaxView):
@@ -101,7 +101,7 @@ class ActionPluginView(APIView):
                 'error': _("No action specified")
             })
 
-        action_plugins = plugin_registry.with_mixin('action')
+        action_plugins = registry.with_mixin('action')
         for plugin in action_plugins:
             if plugin.action_name() == action:
                 # TODO @matmair use easier syntax once InvenTree 0.7.0 is released

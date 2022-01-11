@@ -4,7 +4,7 @@ URL lookup for plugin app
 
 from django.conf.urls import url, include
 
-from plugin import plugin_registry
+from plugin import registry
 
 
 PLUGIN_BASE = 'plugin'  # Constant for links
@@ -17,7 +17,7 @@ def get_plugin_urls():
 
     urls = []
 
-    for plugin in plugin_registry.plugins.values():
+    for plugin in registry.plugins.values():
         if plugin.mixin_enabled('urls'):
             urls.append(plugin.urlpatterns)
 

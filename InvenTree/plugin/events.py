@@ -17,7 +17,7 @@ from common.models import InvenTreeSetting
 from InvenTree.ready import canAppAccessDatabase
 from InvenTree.tasks import offload_task
 
-from plugin.registry import plugin_registry
+from plugin.registry import registry
 
 
 logger = logging.getLogger('inventree')
@@ -60,7 +60,7 @@ def register_event(event, *args, **kwargs):
 
         with transaction.atomic():
 
-            for slug, plugin in plugin_registry.plugins.items():
+            for slug, plugin in registry.plugins.items():
 
                 if plugin.mixin_enabled('events'):
 
@@ -91,7 +91,7 @@ def process_event(plugin_slug, event, *args, **kwargs):
 
     logger.info(f"Plugin '{plugin_slug}' is processing triggered event '{event}'")
 
-    plugin = plugin_registry.plugins[plugin_slug]
+    plugin = registry.plugins[plugin_slug]
 
     plugin.process_event(event, *args, **kwargs)
 

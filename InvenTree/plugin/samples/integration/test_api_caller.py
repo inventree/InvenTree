@@ -2,7 +2,7 @@
 
 from django.test import TestCase
 
-from plugin import plugin_registry
+from plugin import registry
 
 
 class SampleApiCallerPluginTests(TestCase):
@@ -11,8 +11,8 @@ class SampleApiCallerPluginTests(TestCase):
     def test_return(self):
         """check if the external api call works"""
         # The plugin should be defined
-        self.assertIn('sample-api-caller', plugin_registry.plugins)
-        plg = plugin_registry.plugins['sample-api-caller']
+        self.assertIn('sample-api-caller', registry.plugins)
+        plg = registry.plugins['sample-api-caller']
         self.assertTrue(plg)
 
         # do an api call

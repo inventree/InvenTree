@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.contrib import admin
 
 import plugin.models as models
-import plugin.registry as registry
+import plugin.registry as pl_registry
 
 
 def plugin_update(queryset, new_status: bool):
@@ -23,7 +23,7 @@ def plugin_update(queryset, new_status: bool):
 
     # Reload plugins if they changed
     if apps_changed:
-        registry.plugin_registry.reload_plugins()
+        pl_registry.registry.reload_plugins()
 
 
 @admin.action(description='Activate plugin(s)')

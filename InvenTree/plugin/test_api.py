@@ -64,14 +64,14 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
         Test the PluginConfig action commands
         """
         from plugin.models import PluginConfig
-        from plugin import plugin_registry
+        from plugin import registry
 
         url = reverse('admin:plugin_pluginconfig_changelist')
         fixtures = PluginConfig.objects.all()
 
         # check if plugins were registered -> in some test setups the startup has no db access
         if not fixtures:
-            plugin_registry.reload_plugins()
+            registry.reload_plugins()
             fixtures = PluginConfig.objects.all()
 
         print([str(a) for a in fixtures])
