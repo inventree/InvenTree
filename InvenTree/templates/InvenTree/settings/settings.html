@@ -40,7 +40,8 @@
 {% include "InvenTree/settings/po.html" %}
 {% include "InvenTree/settings/so.html" %}
 
-{% if plugins_enabled %}
+{% plugins_enabled as plug %}
+{% if plug %}
 {% include "InvenTree/settings/plugin.html" %}
 {% plugin_list as pl_list %}
 {% for plugin_key, plugin in pl_list.items %}
@@ -335,7 +336,8 @@ $("#import-part").click(function() {
     launchModalForm("{% url 'api-part-import' %}?reset", {});
 });
 
-{% if plugins_enabled %}
+{% plugins_enabled as plug %}
+{% if plug %}
 $("#install-plugin").click(function() {
     installPlugin();
 });
