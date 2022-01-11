@@ -23,7 +23,7 @@ def plugin_update(queryset, new_status: bool):
 
     # Reload plugins if they changed
     if apps_changed:
-        pl_registry.registry.reload_plugins()
+        pl_registry.reload_plugins()
 
 
 @admin.action(description='Activate plugin(s)')
