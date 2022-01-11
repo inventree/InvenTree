@@ -10,7 +10,7 @@ from django.db import models
 
 import common.models
 
-from plugin import InvenTreePlugin, plugin_registry
+from plugin import InvenTreePlugin, registry
 
 
 class PluginConfig(models.Model):
@@ -72,7 +72,7 @@ class PluginConfig(models.Model):
         self.__org_active = self.active
 
         # append settings from registry
-        self.plugin = plugin_registry.plugins.get(self.key, None)
+        self.plugin = registry.plugins.get(self.key, None)
 
         def get_plugin_meta(name):
             if self.plugin:
@@ -95,10 +95,10 @@ class PluginConfig(models.Model):
 
         if not reload:
             if self.active is False and self.__org_active is True:
-                plugin_registry.reload_plugins()
+                registry.reload_plugins()
 
             elif self.active is True and self.__org_active is False:
-                plugin_registry.reload_plugins()
+                registry.reload_plugins()
 
         return ret
 
@@ -167,7 +167,7 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
                 if issubclass(plugin.__class__, InvenTreePlugin):
                     plugin = plugin.plugin_config()
 
-                kwargs['settings'] = plugin_registry.mixins_settings.get(plugin.key, {})
+                kwargs['settings'] = registry.mixins_settings.get(plugin.key, {})
 
         return super().get_setting_definition(key, **kwargs)
 
