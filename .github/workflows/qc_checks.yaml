@@ -156,6 +156,7 @@ jobs:
     env:
       INVENTREE_DB_NAME: ./inventree.sqlite
       INVENTREE_DB_ENGINE: sqlite3
+      INVENTREE_PLUGINS_ENABLED: true
 
     steps:
       - name: Checkout Code
@@ -204,6 +205,7 @@ jobs:
       INVENTREE_DB_PORT: 5432
       INVENTREE_DEBUG: info
       INVENTREE_CACHE_HOST: localhost
+      INVENTREE_PLUGINS_ENABLED: true
 
     services:
       postgres:
@@ -259,6 +261,7 @@ jobs:
       INVENTREE_DB_HOST: '127.0.0.1'
       INVENTREE_DB_PORT: 3306
       INVENTREE_DEBUG: info
+      INVENTREE_PLUGINS_ENABLED: true
 
     services:
       mysql:
