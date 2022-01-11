@@ -7,7 +7,7 @@ over and above the built-in Django tags.
 
 import os
 import sys
-import django
+
 from django.utils.html import format_html
 
 from django.utils.translation import ugettext_lazy as _
@@ -17,6 +17,7 @@ from django import template
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.templatetags.static import StaticNode
+
 from InvenTree import version, settings
 
 import InvenTree.helpers
