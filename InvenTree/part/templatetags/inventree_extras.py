@@ -7,6 +7,7 @@ over and above the built-in Django tags.
 
 import os
 import sys
+
 from django.utils.html import format_html
 
 from django.utils.translation import ugettext_lazy as _
@@ -16,6 +17,7 @@ from django import template
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.templatetags.static import StaticNode
+
 from InvenTree import version, settings
 
 import InvenTree.helpers
@@ -105,6 +107,13 @@ def inventree_docker_mode(*args, **kwargs):
     """ Return True if the server is running as a Docker image """
 
     return djangosettings.DOCKER
+
+
+@register.simple_tag()
+def plugins_enabled(*args, **kwargs):
+    """ Return True if plugins are enabled for the server instance """
+
+    return djangosettings.PLUGINS_ENABLED
 
 
 @register.simple_tag()

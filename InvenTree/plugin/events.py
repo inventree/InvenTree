@@ -31,6 +31,10 @@ def trigger_event(event, *args, **kwargs):
     and the worker will respond to it later on.
     """
 
+    if not settings.PLUGINS_ENABLED:
+        # Do nothing if plugins are not enabled
+        return
+
     if not canAppAccessDatabase():
         logger.debug(f"Ignoring triggered event '{event}' - database not ready")
         return
