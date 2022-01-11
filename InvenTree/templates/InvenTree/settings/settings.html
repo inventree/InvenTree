@@ -39,14 +39,16 @@
 {% include "InvenTree/settings/build.html" %}
 {% include "InvenTree/settings/po.html" %}
 {% include "InvenTree/settings/so.html" %}
-{% include "InvenTree/settings/plugin.html" %}
 
+{% if plugins_enabled %}
+{% include "InvenTree/settings/plugin.html" %}
 {% plugin_list as pl_list %}
 {% for plugin_key, plugin in pl_list.items %}
     {% if plugin.registered_mixins %}
         {% include "InvenTree/settings/plugin_settings.html" %}
     {% endif %}
 {% endfor %}
+{% endif %}
 
 {% endif %}
 
@@ -333,9 +335,11 @@ $("#import-part").click(function() {
     launchModalForm("{% url 'api-part-import' %}?reset", {});
 });
 
+{% if plugins_enabled %}
 $("#install-plugin").click(function() {
     installPlugin();
 });
+{% endif %}
 
 enableSidebar('settings');
 
