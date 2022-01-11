@@ -71,6 +71,9 @@ apipatterns = [
     # Plugin endpoints
     url(r'^action/', ActionPluginView.as_view(), name='api-action-plugin'),
 
+    # Webhook enpoint
+    path('', include(common_api_urls)),
+
     # InvenTree information endpoint
     url(r'^$', InfoView.as_view(), name='api-inventree-info'),
 

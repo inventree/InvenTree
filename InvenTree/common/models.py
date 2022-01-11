@@ -9,6 +9,12 @@ from __future__ import unicode_literals
 import os
 import decimal
 import math
+import uuid
+import hmac
+import json
+import hashlib
+import base64
+from secrets import compare_digest
 from datetime import datetime, timedelta
 
 from django.db import models, transaction
@@ -19,6 +25,8 @@ from django.conf import settings
 from djmoney.settings import CURRENCY_CHOICES
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
+
+from rest_framework.exceptions import PermissionDenied
 
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator, URLValidator
@@ -1389,6 +1397,184 @@ class ColorTheme(models.Model):
                 return True
 
         return False
+
+
+class VerificationMethod:
+    NONE = 0
+    TOKEN = 1
+    HMAC = 2
+
+
+class WebhookEndpoint(models.Model):
+    """ Defines a Webhook entdpoint
+
+    Attributes:
+        endpoint_id: Path to the webhook,
+        name: Name of the webhook,
+        active: Is this webhook active?,
+        user: User associated with webhook,
+        token: Token for sending a webhook,
+        secret: Shared secret for HMAC verification,
+    """
+
+    # Token
+    TOKEN_NAME = "Token"
+    VERIFICATION_METHOD = VerificationMethod.NONE
+
+    MESSAGE_OK = "Message was received."
+    MESSAGE_TOKEN_ERROR = "Incorrect token in header."
+
+    endpoint_id = models.CharField(
+        max_length=255,
+        verbose_name=_('Endpoint'),
+        help_text=_('Endpoint at which this webhook is received'),
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    name = models.CharField(
+        max_length=255,
+        blank=True, null=True,
+        verbose_name=_('Name'),
+        help_text=_('Name for this webhook')
+    )
+
+    active = models.BooleanField(
+        default=True,
+        verbose_name=_('Active'),
+        help_text=_('Is this webhook active')
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        verbose_name=_('User'),
+        help_text=_('User'),
+    )
+
+    token = models.CharField(
+        max_length=255,
+        blank=True, null=True,
+        verbose_name=_('Token'),
+        help_text=_('Token for access'),
+        default=uuid.uuid4,
+    )
+
+    secret = models.CharField(
+        max_length=255,
+        blank=True, null=True,
+        verbose_name=_('Secret'),
+        help_text=_('Shared secret for HMAC'),
+    )
+
+    # To be overridden
+
+    def init(self, request, *args, **kwargs):
+        self.verify = self.VERIFICATION_METHOD
+
+    def process_webhook(self):
+        if self.token:
+            self.token = self.token
+            self.verify = VerificationMethod.TOKEN
+            # TODO make a object-setting
+        if self.secret:
+            self.secret = self.secret
+            self.verify = VerificationMethod.HMAC
+            # TODO make a object-setting
+        return True
+
+    def validate_token(self, payload, headers, request):
+        token = headers.get(self.TOKEN_NAME, "")
+
+        # no token
+        if self.verify == VerificationMethod.NONE:
+            pass
+
+        # static token
+        elif self.verify == VerificationMethod.TOKEN:
+            if not compare_digest(token, self.token):
+                raise PermissionDenied(self.MESSAGE_TOKEN_ERROR)
+
+        # hmac token
+        elif self.verify == VerificationMethod.HMAC:
+            digest = hmac.new(self.secret.encode('utf-8'), request.body, hashlib.sha256).digest()
+            computed_hmac = base64.b64encode(digest)
+            if not hmac.compare_digest(computed_hmac, token.encode('utf-8')):
+                raise PermissionDenied(self.MESSAGE_TOKEN_ERROR)
+
+        return True
+
+    def save_data(self, payload, headers=None, request=None):
+        return WebhookMessage.objects.create(
+            host=request.get_host(),
+            header=json.dumps({key: val for key, val in headers.items()}),
+            body=payload,
+            endpoint=self,
+        )
+
+    def process_payload(self, message, payload=None, headers=None):
+        return True
+
+    def get_return(self, payload, headers=None, request=None):
+        return self.MESSAGE_OK
+
+
+class WebhookMessage(models.Model):
+    """ Defines a webhook message
+
+    Attributes:
+        message_id: Unique identifier for this message,
+        host: Host from which this message was received,
+        header: Header of this message,
+        body: Body of this message,
+        endpoint: Endpoint on which this message was received,
+        worked_on: Was the work on this message finished?
+    """
+
+    message_id = models.UUIDField(
+        verbose_name=_('Message ID'),
+        help_text=_('Unique identifier for this message'),
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+
+    host = models.CharField(
+        max_length=255,
+        verbose_name=_('Host'),
+        help_text=_('Host from which this message was received'),
+        editable=False,
+    )
+
+    header = models.CharField(
+        max_length=255,
+        blank=True, null=True,
+        verbose_name=_('Header'),
+        help_text=_('Header of this message'),
+        editable=False,
+    )
+
+    body = models.JSONField(
+        blank=True, null=True,
+        verbose_name=_('Body'),
+        help_text=_('Body of this message'),
+        editable=False,
+    )
+
+    endpoint = models.ForeignKey(
+        WebhookEndpoint,
+        on_delete=models.SET_NULL,
+        blank=True, null=True,
+        verbose_name=_('Endpoint'),
+        help_text=_('Endpoint on which this message was received'),
+    )
+
+    worked_on = models.BooleanField(
+        default=False,
+        verbose_name=_('Worked on'),
+        help_text=_('Was the work on this message finished?'),
+    )
 
 
 class NotificationEntry(models.Model):
