@@ -2,23 +2,14 @@
 """general functions for plugin handeling"""
 
 import inspect
-import importlib
 import pkgutil
 
 from django.core.exceptions import AppRegistryNotReady
 
 
-def iter_namespace(pkg):
-    """get all modules in a package"""
-    return pkgutil.iter_modules(pkg.__path__, pkg.__name__ + ".")
-
-
-def get_modules(pkg, recursive: bool = False):
+def get_modules(pkg):
     """get all modules in a package"""
     from plugin.helpers import log_error
-
-    if not recursive:
-        return [importlib.import_module(name) for finder, name, ispkg in iter_namespace(pkg)]
 
     context = {}
     for loader, name, ispkg in pkgutil.walk_packages(pkg.__path__):
@@ -45,7 +36,7 @@ def get_classes(module):
     return inspect.getmembers(module, inspect.isclass)
 
 
-def get_plugins(pkg, baseclass, recursive: bool = False):
+def get_plugins(pkg, baseclass):
     """
     Return a list of all modules under a given package.
 
@@ -55,7 +46,7 @@ def get_plugins(pkg, baseclass, recursive: bool = False):
 
     plugins = []
 
-    modules = get_modules(pkg, recursive)
+    modules = get_modules(pkg)
 
     # Iterate through each module in the package
     for mod in modules:

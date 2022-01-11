@@ -177,7 +177,7 @@ class PluginsRegistry:
 
         # Collect plugins from paths
         for plugin in settings.PLUGIN_DIRS:
-            modules = inventree_plugins.get_plugins(importlib.import_module(plugin), IntegrationPluginBase, True)
+            modules = inventree_plugins.get_plugins(importlib.import_module(plugin), IntegrationPluginBase)
             if modules:
                 [self.plugin_modules.append(item) for item in modules]
 
