@@ -59,6 +59,22 @@ class PluginsRegistry:
         # mixins
         self.mixins_settings = {}
 
+    def call_plugin_function(self, slug, func, *args, **kwargs):
+        """
+        Call a member function (named by 'func') of the plugin named by 'slug'.
+
+        As this is intended to be run by the background worker,
+        we do not perform any try/except here.
+
+        Instead, any error messages are returned to the worker.
+        """
+
+        plugin = self.plugins[slug]
+
+        plugin_func = getattr(plugin, func)
+
+        plugin_func(*args, **kwargs)
+
     # region public functions
     # region loading / unloading
     def load_plugins(self):
