@@ -29,6 +29,8 @@ from markdownx.models import MarkdownxField
 
 from django_cleanup import cleanup
 
+from djmoney.contrib.exchange.exceptions import MissingRate
+
 from mptt.models import TreeForeignKey, MPTTModel
 from mptt.exceptions import InvalidMove
 from mptt.managers import TreeManager
@@ -1832,9 +1834,14 @@ class Part(MPTTModel):
 
     def get_purchase_price(self, quantity):
         currency = currency_code_default()
-        prices = [convert_money(item.purchase_price, currency).amount for item in self.stock_items.all() if item.purchase_price]
+        try:
+            prices = [convert_money(item.purchase_price, currency).amount for item in self.stock_items.all() if item.purchase_price]
+        except MissingRate:
+            prices = None
+
         if prices:
             return min(prices) * quantity, max(prices) * quantity
+
         return None
 
     @transaction.atomic
