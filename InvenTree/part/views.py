@@ -20,6 +20,7 @@ from django.contrib import messages
 
 from moneyed import CURRENCIES
 from djmoney.contrib.exchange.models import convert_money
+from djmoney.contrib.exchange.exceptions import MissingRate
 
 from PIL import Image
 
@@ -425,7 +426,11 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
                     continue
 
                 # convert purchase price to current currency - only one currency in the graph
-                price = convert_money(stock_item.purchase_price, default_currency)
+                try:
+                    price = convert_money(stock_item.purchase_price, default_currency)
+                except MissingRate:
+                    continue
+
                 line = {
                     'price': price.amount,
                     'qty': stock_item.quantity
@@ -487,7 +492,11 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
                 if None in [sale_item.purchase_price, sale_item.quantity]:
                     continue
 
-                price = convert_money(sale_item.purchase_price, default_currency)
+                try:
+                    price = convert_money(sale_item.purchase_price, default_currency)
+                except MissingRate:
+                    continue
+
                 line = {
                     'price': price.amount if price else 0,
                     'qty': sale_item.quantity,
