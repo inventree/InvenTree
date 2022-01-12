@@ -4,20 +4,18 @@ Unit tests for plugins
 
 from django.test import TestCase
 
-import plugin.plugin
-import plugin.integration
 from plugin.samples.integration.sample import SampleIntegrationPlugin
 from plugin.samples.integration.another_sample import WrongIntegrationPlugin, NoIntegrationPlugin
 import plugin.templatetags.plugin_extras as plugin_tags
-from plugin import plugin_registry
+from plugin import registry, InvenTreePluginBase
 
 
 class InvenTreePluginTests(TestCase):
     """ Tests for InvenTreePlugin """
     def setUp(self):
-        self.plugin = plugin.plugin.InvenTreePlugin()
+        self.plugin = InvenTreePluginBase()
 
-        class NamedPlugin(plugin.plugin.InvenTreePlugin):
+        class NamedPlugin(InvenTreePluginBase):
             """a named plugin"""
             PLUGIN_NAME = 'abc123'
 
@@ -34,20 +32,6 @@ class InvenTreePluginTests(TestCase):
         self.assertEqual(self.named_plugin.plugin_name(), 'abc123')
 
 
-class PluginIntegrationTests(TestCase):
-    """ Tests for general plugin functions """
-
-    def test_plugin_loading(self):
-        """check if plugins load as expected"""
-        # plugin_names_barcode = [a().plugin_name() for a in load_barcode_plugins()]  # TODO refactor barcode plugin to support standard loading
-        # plugin_names_action = [a().plugin_name() for a in load_action_plugins()]  # TODO refactor action plugin to support standard loading
-
-        # self.assertEqual(plugin_names_action, '')
-        # self.assertEqual(plugin_names_barcode, '')
-
-        # TODO remove test once loading is moved
-
-
 class PluginTagTests(TestCase):
     """ Tests for the plugin extras """
 
@@ -58,17 +42,17 @@ class PluginTagTests(TestCase):
 
     def test_tag_plugin_list(self):
         """test that all plugins are listed"""
-        self.assertEqual(plugin_tags.plugin_list(), plugin_registry.plugins)
+        self.assertEqual(plugin_tags.plugin_list(), registry.plugins)
 
     def test_tag_incative_plugin_list(self):
         """test that all inactive plugins are listed"""
-        self.assertEqual(plugin_tags.inactive_plugin_list(), plugin_registry.plugins_inactive)
+        self.assertEqual(plugin_tags.inactive_plugin_list(), registry.plugins_inactive)
 
     def test_tag_plugin_settings(self):
         """check all plugins are listed"""
         self.assertEqual(
             plugin_tags.plugin_settings(self.sample),
-            plugin_registry.mixins_settings.get(self.sample)
+            registry.mixins_settings.get(self.sample)
         )
 
     def test_tag_mixin_enabled(self):
@@ -90,4 +74,4 @@ class PluginTagTests(TestCase):
 
     def test_tag_plugin_errors(self):
         """test that all errors are listed"""
-        self.assertEqual(plugin_tags.plugin_errors(), plugin_registry.errors)
+        self.assertEqual(plugin_tags.plugin_errors(), registry.errors)
