@@ -76,7 +76,8 @@ class RuleSet(models.Model):
             'otp_totp_totpdevice',
             'otp_static_statictoken',
             'otp_static_staticdevice',
-            'plugin_pluginconfig'
+            'plugin_pluginconfig',
+            'plugin_pluginsetting',
         ],
         'part_category': [
             'part_partcategory',
@@ -155,6 +156,8 @@ class RuleSet(models.Model):
         'common_colortheme',
         'common_inventreesetting',
         'common_inventreeusersetting',
+        'common_webhookendpoint',
+        'common_webhookmessage',
         'common_notificationentry',
         'common_notificationmessage',
         'company_contact',

@@ -83,24 +83,6 @@ class BuildOutputDeleteForm(HelperForm):
         ]
 
 
-class CompleteBuildForm(HelperForm):
-    """
-    Form for marking a build as complete
-    """
-
-    confirm = forms.BooleanField(
-        required=True,
-        label=_('Confirm'),
-        help_text=_('Mark build as complete'),
-    )
-
-    class Meta:
-        model = Build
-        fields = [
-            'confirm',
-        ]
-
-
 class CancelBuildForm(HelperForm):
     """ Form for cancelling a build """
 

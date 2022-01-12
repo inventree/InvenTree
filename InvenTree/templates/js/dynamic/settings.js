@@ -28,9 +28,13 @@ function editSetting(pk, options={}) {
     // Is this a global setting or a user setting?
     var global = options.global || false;
 
+    var plugin = options.plugin;
+
     var url = '';
 
-    if (global) {
+    if (plugin) {
+        url = `/api/plugin/settings/${pk}/`;
+    } else if (global) {
         url = `/api/settings/global/${pk}/`;
     } else {
         url = `/api/settings/user/${pk}/`;

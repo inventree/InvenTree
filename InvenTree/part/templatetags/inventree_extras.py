@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
-""" This module provides template tags for extra functionality
+"""
+This module provides template tags for extra functionality,
 over and above the built-in Django tags.
 """
 
 import os
 import sys
+
 from django.utils.html import format_html
 
 from django.utils.translation import ugettext_lazy as _
@@ -15,12 +17,15 @@ from django import template
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.templatetags.static import StaticNode
+
 from InvenTree import version, settings
 
 import InvenTree.helpers
 
 from common.models import InvenTreeSetting, ColorTheme, InvenTreeUserSetting
 from common.settings import currency_code_default
+
+from plugin.models import PluginSetting
 
 register = template.Library()
 
@@ -102,6 +107,13 @@ def inventree_docker_mode(*args, **kwargs):
     """ Return True if the server is running as a Docker image """
 
     return djangosettings.DOCKER
+
+
+@register.simple_tag()
+def plugins_enabled(*args, **kwargs):
+    """ Return True if plugins are enabled for the server instance """
+
+    return djangosettings.PLUGINS_ENABLED
 
 
 @register.simple_tag()
@@ -223,8 +235,16 @@ def setting_object(key, *args, **kwargs):
     if a user-setting was requested return that
     """
 
+    if 'plugin' in kwargs:
+        # Note, 'plugin' is an instance of an InvenTreePlugin class
+
+        plugin = kwargs['plugin']
+
+        return PluginSetting.get_setting_object(key, plugin=plugin)
+
     if 'user' in kwargs:
         return InvenTreeUserSetting.get_setting_object(key, user=kwargs['user'])
+
     return InvenTreeSetting.get_setting_object(key)
 
 

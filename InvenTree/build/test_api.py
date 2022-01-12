@@ -38,7 +38,7 @@ class BuildAPITest(InvenTreeAPITestCase):
         super().setUp()
 
 
-class BuildCompleteTest(BuildAPITest):
+class BuildOutputCompleteTest(BuildAPITest):
     """
     Unit testing for the build complete API endpoint
     """
@@ -49,7 +49,7 @@ class BuildCompleteTest(BuildAPITest):
 
         self.build = Build.objects.get(pk=1)
 
-        self.url = reverse('api-build-complete', kwargs={'pk': self.build.pk})
+        self.url = reverse('api-build-output-complete', kwargs={'pk': self.build.pk})
 
     def test_invalid(self):
         """
@@ -58,7 +58,7 @@ class BuildCompleteTest(BuildAPITest):
 
         # Test with an invalid build ID
         self.post(
-            reverse('api-build-complete', kwargs={'pk': 99999}),
+            reverse('api-build-output-complete', kwargs={'pk': 99999}),
             {},
             expected_code=400
         )
@@ -140,6 +140,9 @@ class BuildCompleteTest(BuildAPITest):
         Test build order completion
         """
 
+        # Initially, build should not be able to be completed
+        self.assertFalse(self.build.can_complete)
+
         # We start without any outputs assigned against the build
         self.assertEqual(self.build.incomplete_outputs.count(), 0)
 
@@ -153,7 +156,7 @@ class BuildCompleteTest(BuildAPITest):
         self.assertEqual(self.build.completed, 0)
 
         # We shall complete 4 of these outputs
-        outputs = self.build.incomplete_outputs[0:4]
+        outputs = self.build.incomplete_outputs.all()
 
         self.post(
             self.url,
@@ -165,19 +168,43 @@ class BuildCompleteTest(BuildAPITest):
             expected_code=201
         )
 
-        # There now should be 6 incomplete build outputs remaining
-        self.assertEqual(self.build.incomplete_outputs.count(), 6)
+        self.assertEqual(self.build.incomplete_outputs.count(), 0)
 
-        # And there should be 4 completed outputs
+        # And there should be 10 completed outputs
         outputs = self.build.complete_outputs
-        self.assertEqual(outputs.count(), 4)
+        self.assertEqual(outputs.count(), 10)
 
         for output in outputs:
             self.assertFalse(output.is_building)
             self.assertEqual(output.build, self.build)
 
         self.build.refresh_from_db()
-        self.assertEqual(self.build.completed, 40)
+        self.assertEqual(self.build.completed, 100)
+
+        # Try to complete the build (it should fail)
+        finish_url = reverse('api-build-finish', kwargs={'pk': self.build.pk})
+
+        response = self.post(
+            finish_url,
+            {},
+            expected_code=400
+        )
+
+        self.assertTrue('accept_unallocated' in response.data)
+
+        # Accept unallocated stock
+        response = self.post(
+            finish_url,
+            {
+                'accept_unallocated': True,
+            },
+            expected_code=201,
+        )
+
+        self.build.refresh_from_db()
+
+        # Build should have been marked as complete
+        self.assertTrue(self.build.is_complete)
 
 
 class BuildAllocationTest(BuildAPITest):

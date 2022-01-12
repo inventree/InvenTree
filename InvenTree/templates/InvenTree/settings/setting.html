@@ -1,10 +1,12 @@
 {% load inventree_extras %}
 {% load i18n %}
 
-{% if user_setting %}
-    {% setting_object key user=request.user as setting %}
+{% if plugin %}
+{% setting_object key plugin=plugin as setting %}
+{% elif user_setting %}
+{% setting_object key user=request.user as setting %}
 {% else %}
-    {% setting_object key as setting %}
+{% setting_object key as setting %}
 {% endif %}
 
 <tr>
@@ -13,7 +15,7 @@
         <span class='fas {{ icon }}'></span>
         {% endif %}
     </td>
-    <td><strong>{% trans setting.name %}</strong></td>
+    <td><strong>{{ setting.name }}</strong></td>
     <td>
         {% if setting.is_bool %}
         <div class='form-check form-switch'>
@@ -32,11 +34,11 @@
         </div>
         {% endif %}
     <td>
-        {% trans setting.description %}
+        {{ setting.description }}
     </td>
     <td>
         <div class='btn-group float-right'>
-            <button class='btn btn-outline-secondary btn-small btn-edit-setting' pk='{{ setting.pk }}' setting='{{ setting.key.upper }}' title='{% trans "Edit setting" %}' {% if user_setting %}user='{{request.user.id}}'{% endif %}>
+            <button class='btn btn-outline-secondary btn-small btn-edit-setting' pk='{{ setting.pk }}' setting='{{ setting.key.upper }}' title='{% trans "Edit setting" %}' {% if plugin %}plugin='{{ plugin.pk }}'{% endif %}{% if user_setting %}user='{{request.user.id}}'{% endif %}>
                 <span class='fas fa-edit icon-green'></span>
             </button>
         </div>

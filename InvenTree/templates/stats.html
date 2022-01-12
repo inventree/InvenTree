@@ -34,6 +34,18 @@
         <td>{% trans "Server is deployed using docker" %}</td>
     </tr>
     {% endif %}
+    <tr>
+        <td><span class='fas fa-plug'></span></td>
+        <td>{% trans "Plugin Support" %}</td>
+        <td>
+            {% plugins_enabled as p_en %}
+            {% if p_en %}
+            <span class='badge rounded-pill bg-success'>{% trans "Plugin support enabled" %}</span>
+            {% else %}
+            <span class='badge rounded-pill bg-warning'>{% trans "Plugin support disabled" %}</span>
+            {% endif %}
+        </td>
+    </tr>
     {% if user.is_staff %}
     <tr>
         <td><span class='fas fa-server'></span></td>

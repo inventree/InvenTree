@@ -36,6 +36,8 @@ import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.tasks
 
+from plugin.events import trigger_event
+
 from part import models as PartModels
 from stock import models as StockModels
 from users import models as UserModels
@@ -555,7 +557,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         if self.incomplete_count > 0:
             return False
 
-        if self.completed < self.quantity:
+        if self.remaining > 0:
             return False
 
         if not self.areUntrackedPartsFullyAllocated():
@@ -582,8 +584,11 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         self.subtractUntrackedStock(user)
 
         # Ensure that there are no longer any BuildItem objects
-        # which point to thie Build Order
+        # which point to thisFcan Build Order
         self.allocated_stock.all().delete()
+
+        # Register an event
+        trigger_event('build.completed', id=self.pk)
 
     @transaction.atomic
     def cancelBuild(self, user):
@@ -603,6 +608,8 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
         self.status = BuildStatus.CANCELLED
         self.save()
+
+        trigger_event('build.cancelled', id=self.pk)
 
     @transaction.atomic
     def unallocateStock(self, bom_item=None, output=None):

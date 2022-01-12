@@ -35,6 +35,8 @@ import common.models
 import report.models
 import label.models
 
+from plugin.events import trigger_event
+
 from InvenTree.status_codes import StockStatus, StockHistoryCode
 from InvenTree.models import InvenTreeTree, InvenTreeAttachment
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
@@ -718,6 +720,12 @@ class StockItem(MPTTModel):
             notes=notes,
         )
 
+        trigger_event(
+            'stockitem.assignedtocustomer',
+            id=self.id,
+            customer=customer.id,
+        )
+
         # Return the reference to the stock item
         return item
 
@@ -744,6 +752,11 @@ class StockItem(MPTTModel):
 
         self.customer = None
         self.location = location
+
+        trigger_event(
+            'stockitem.returnedfromcustomer',
+            id=self.id,
+        )
 
         self.save()
 
@@ -1786,7 +1799,7 @@ def after_delete_stock_item(sender, instance: StockItem, **kwargs):
 
 
 @receiver(post_save, sender=StockItem, dispatch_uid='stock_item_post_save_log')
-def after_save_stock_item(sender, instance: StockItem, **kwargs):
+def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
     """
     Hook function to be executed after StockItem object is saved/updated
     """
