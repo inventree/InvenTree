@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-12 01:25+0000\n"
+"POT-Creation-Date: 2022-01-12 03:41+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -18,15 +18,15 @@ msgstr ""
 "X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 138\n"
 
-#: InvenTree/api.py:64
+#: InvenTree/api.py:55
 msgid "API endpoint not found"
 msgstr "未找到 API 端点"
 
-#: InvenTree/api.py:110
+#: InvenTree/api.py:101
 msgid "No action specified"
 msgstr "未指定操作"
 
-#: InvenTree/api.py:124
+#: InvenTree/api.py:116
 msgid "No matching action found"
 msgstr "未找到指定操作"
 
@@ -548,51 +548,51 @@ msgstr "密码字段必须相匹配。"
 msgid "System Information"
 msgstr "系统信息"
 
-#: barcodes/api.py:54 barcodes/api.py:151
+#: barcodes/api.py:54 barcodes/api.py:152
 msgid "Must provide barcode_data parameter"
 msgstr "必须提供条码数据参数"
 
-#: barcodes/api.py:127
+#: barcodes/api.py:128
 msgid "No match found for barcode data"
 msgstr "未找到匹配条形码数据"
 
-#: barcodes/api.py:129
+#: barcodes/api.py:130
 msgid "Match found for barcode data"
 msgstr "找到匹配条形码数据"
 
-#: barcodes/api.py:154
+#: barcodes/api.py:155
 msgid "Must provide stockitem parameter"
 msgstr "必须提供库存项参数"
 
-#: barcodes/api.py:161
+#: barcodes/api.py:162
 msgid "No matching stock item found"
 msgstr "未找到匹配的库存项"
 
-#: barcodes/api.py:191
+#: barcodes/api.py:193
 #, fuzzy
 #| msgid "Barcode already matches StockItem object"
 msgid "Barcode already matches Stock Item"
 msgstr "条形码已经匹配库存项"
 
-#: barcodes/api.py:195
+#: barcodes/api.py:197
 #, fuzzy
 #| msgid "Barcode already matches StockLocation object"
 msgid "Barcode already matches Stock Location"
 msgstr "条形码已经匹配仓储地对象"
 
-#: barcodes/api.py:199
+#: barcodes/api.py:201
 #, fuzzy
 #| msgid "Barcode already matches Part object"
 msgid "Barcode already matches Part"
 msgstr "条形码已经匹配商品对象"
 
-#: barcodes/api.py:205 barcodes/api.py:217
+#: barcodes/api.py:207 barcodes/api.py:219
 #, fuzzy
 #| msgid "Barcode hash already matches StockItem object"
 msgid "Barcode hash already matches Stock Item"
 msgstr "条码哈希值已经匹配库存项目"
 
-#: barcodes/api.py:223
+#: barcodes/api.py:225
 #, fuzzy
 #| msgid "Barcode associated with StockItem"
 msgid "Barcode associated with Stock Item"
@@ -5309,13 +5309,13 @@ msgstr ""
 msgid "Delete Internal Price Break"
 msgstr ""
 
-#: plugin/integration.py:124
+#: plugin/integration.py:138
 #, fuzzy
 #| msgid "No parameters found"
 msgid "No author found"
 msgstr "无指定参数"
 
-#: plugin/integration.py:136
+#: plugin/integration.py:152
 #, fuzzy
 #| msgid "No parameters found"
 msgid "No date found"
