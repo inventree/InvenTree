@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-12 03:41+0000\n"
+"POT-Creation-Date: 2022-01-12 03:54+0000\n"
 "PO-Revision-Date: 2021-11-30 21:51\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
@@ -6456,6 +6456,20 @@ msgstr ""
 
 #: templates/404.html:14
 msgid "The requested page does not exist"
+msgstr ""
+
+#: templates/500.html:5 templates/500.html:11
+#, fuzzy
+#| msgid "Internal Prices"
+msgid "Internal Server Error"
+msgstr "Interne prijzen"
+
+#: templates/500.html:14
+msgid "The InvenTree server raised an internal error"
+msgstr ""
+
+#: templates/500.html:15
+msgid "Refer to the error log in the admin interface for further details"
 msgstr ""
 
 #: templates/503.html:10 templates/503.html:35
