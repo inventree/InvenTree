@@ -73,7 +73,7 @@ class PluginsRegistry:
 
         plugin_func = getattr(plugin, func)
 
-        plugin_func(*args, **kwargs)
+        return plugin_func(*args, **kwargs)
 
     # region public functions
     # region loading / unloading
@@ -573,3 +573,7 @@ class PluginsRegistry:
 
 
 registry = PluginsRegistry()
+
+def call_function(plugin_name, function_name):
+    """ Global helper function to call a specific member function of a plugin """
+    return registry.call_plugin_function(plugin_name, function_name)

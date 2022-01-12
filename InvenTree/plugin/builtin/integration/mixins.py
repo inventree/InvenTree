@@ -202,7 +202,7 @@ class ScheduleMixin:
 
                     Schedule.objects.create(
                         name=task_name,
-                        func='plugin.registry.registry.call_plugin_function',
+                        func='plugin.registry.call_function',
                         args=f"'{slug}', '{func_name}'",
                         schedule_type=task['schedule'],
                         minutes=task.get('minutes', None),
