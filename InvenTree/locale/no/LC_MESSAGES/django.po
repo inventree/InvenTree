@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-12 01:25+0000\n"
-"PO-Revision-Date: 2022-01-12 01:26\n"
+"POT-Creation-Date: 2022-01-12 03:41+0000\n"
+"PO-Revision-Date: 2022-01-12 03:44\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -18,15 +18,15 @@ msgstr ""
 "X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 138\n"
 
-#: InvenTree/api.py:64
+#: InvenTree/api.py:55
 msgid "API endpoint not found"
 msgstr "API endepunkt ikke funnet"
 
-#: InvenTree/api.py:110
+#: InvenTree/api.py:101
 msgid "No action specified"
 msgstr "Ingen handling spesifisert"
 
-#: InvenTree/api.py:124
+#: InvenTree/api.py:116
 msgid "No matching action found"
 msgstr "Ingen samsvarende handling funnet"
 
@@ -544,43 +544,43 @@ msgstr ""
 msgid "System Information"
 msgstr ""
 
-#: barcodes/api.py:54 barcodes/api.py:151
+#: barcodes/api.py:54 barcodes/api.py:152
 msgid "Must provide barcode_data parameter"
 msgstr "Må oppgi gyldig strekkode_data parameter"
 
-#: barcodes/api.py:127
+#: barcodes/api.py:128
 msgid "No match found for barcode data"
 msgstr "Ingen treff funnet for strekkodedata"
 
-#: barcodes/api.py:129
+#: barcodes/api.py:130
 msgid "Match found for barcode data"
 msgstr "Treff funnet for strekkodedata"
 
-#: barcodes/api.py:154
+#: barcodes/api.py:155
 msgid "Must provide stockitem parameter"
 msgstr "Må oppgi lagervareparameter"
 
-#: barcodes/api.py:161
+#: barcodes/api.py:162
 msgid "No matching stock item found"
 msgstr "Ingen samsvarende lagervare funnet"
 
-#: barcodes/api.py:191
+#: barcodes/api.py:193
 msgid "Barcode already matches Stock Item"
 msgstr ""
 
-#: barcodes/api.py:195
+#: barcodes/api.py:197
 msgid "Barcode already matches Stock Location"
 msgstr ""
 
-#: barcodes/api.py:199
+#: barcodes/api.py:201
 msgid "Barcode already matches Part"
 msgstr ""
 
-#: barcodes/api.py:205 barcodes/api.py:217
+#: barcodes/api.py:207 barcodes/api.py:219
 msgid "Barcode hash already matches Stock Item"
 msgstr ""
 
-#: barcodes/api.py:223
+#: barcodes/api.py:225
 msgid "Barcode associated with Stock Item"
 msgstr ""
 
@@ -5236,11 +5236,11 @@ msgstr ""
 msgid "Delete Internal Price Break"
 msgstr ""
 
-#: plugin/integration.py:124
+#: plugin/integration.py:138
 msgid "No author found"
 msgstr ""
 
-#: plugin/integration.py:136
+#: plugin/integration.py:152
 msgid "No date found"
 msgstr ""
 
