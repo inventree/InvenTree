@@ -176,6 +176,11 @@ class IntegrationPluginBase(MixinBase, plugin.InvenTreePlugin):
         """check if mixin is enabled and ready"""
         if self.mixin(key):
             fnc_name = self._mixins.get(key)
+
+            # Allow for simple case where the mixin is "always" ready
+            if fnc_name is True:
+                return True
+
             return getattr(self, fnc_name, True)
         return False
     # endregion

@@ -133,8 +133,11 @@ function completeBuildOrder(build_id, options={}) {
 
     var html = '';
 
-    if (options.can_complete) {
-
+    if (options.allocated && options.completed) {
+        html += `
+        <div class='alert alert-block alert-success'>
+        {% trans "Build order is ready to be completed" %}
+        </div>`;
     } else {
         html += `
         <div class='alert alert-block alert-danger'>

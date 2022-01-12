@@ -56,6 +56,7 @@ class PluginsRegistry:
 
         # integration specific
         self.installed_apps = []         # Holds all added plugin_paths
+
         # mixins
         self.mixins_settings = {}
 
@@ -64,6 +65,10 @@ class PluginsRegistry:
         """
         Load and activate all IntegrationPlugins
         """
+
+        if not settings.PLUGINS_ENABLED:
+            # Plugins not enabled, do nothing
+            return
 
         from plugin.helpers import log_plugin_error
 
@@ -74,15 +79,16 @@ class PluginsRegistry:
         if not _maintenance:
             set_maintenance_mode(True)
 
-        registered_sucessfull = False
+        registered_successful = False
         blocked_plugin = None
         retry_counter = settings.PLUGIN_RETRY
-        while not registered_sucessfull:
+
+        while not registered_successful:
             try:
                 # We are using the db so for migrations etc we need to try this block
                 self._init_plugins(blocked_plugin)
                 self._activate_plugins()
-                registered_sucessfull = True
+                registered_successful = True
             except (OperationalError, ProgrammingError):
                 # Exception if the database has not been migrated yet
                 logger.info('Database not accessible while loading plugins')
@@ -120,6 +126,10 @@ class PluginsRegistry:
         """
         Unload and deactivate all IntegrationPlugins
         """
+
+        if not settings.PLUGINS_ENABLED:
+            # Plugins not enabled, do nothing
+            return
 
         logger.info('Start unloading plugins')
 
@@ -160,6 +170,10 @@ class PluginsRegistry:
         """
         Collect integration plugins from all possible ways of loading
         """
+
+        if not settings.PLUGINS_ENABLED:
+            # Plugins not enabled, do nothing
+            return
 
         self.plugin_modules = []  # clear
 

@@ -52,7 +52,14 @@ from users.api import user_urls
 
 admin.site.site_header = "InvenTree Admin"
 
-apipatterns = [
+apipatterns = []
+
+if settings.PLUGINS_ENABLED:
+    apipatterns.append(
+        url(r'^plugin/', include(plugin_api_urls))
+    )
+
+apipatterns += [
     url(r'^barcode/', include(barcode_api_urls)),
     url(r'^settings/', include(common_api_urls)),
     url(r'^part/', include(part_api_urls)),
@@ -63,13 +70,15 @@ apipatterns = [
     url(r'^order/', include(order_api_urls)),
     url(r'^label/', include(label_api_urls)),
     url(r'^report/', include(report_api_urls)),
-    url(r'^plugin/', include(plugin_api_urls)),
 
     # User URLs
     url(r'^user/', include(user_urls)),
 
     # Plugin endpoints
     url(r'^action/', ActionPluginView.as_view(), name='api-action-plugin'),
+
+    # Webhook enpoint
+    path('', include(common_api_urls)),
 
     # InvenTree information endpoint
     url(r'^$', InfoView.as_view(), name='api-inventree-info'),
@@ -159,9 +168,6 @@ frontendpatterns = [
     url(r'^search/', SearchView.as_view(), name='search'),
     url(r'^stats/', DatabaseStatsView.as_view(), name='stats'),
 
-    # plugin urls
-    get_plugin_urls(),  # appends currently loaded plugin urls = None
-
     # admin sites
     url(r'^admin/error_log/', include('error_report.urls')),
     url(r'^admin/shell/', include('django_admin_shell.urls')),
@@ -179,6 +185,10 @@ frontendpatterns = [
     url(r'^accounts/', include('allauth_2fa.urls')),    # MFA support
     url(r'^accounts/', include('allauth.urls')),        # included urlpatterns
 ]
+
+# Append custom plugin URLs (if plugin support is enabled)
+if settings.PLUGINS_ENABLED:
+    frontendpatterns.append(get_plugin_urls())
 
 urlpatterns = [
     url('', include(frontendpatterns)),
