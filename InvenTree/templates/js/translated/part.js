@@ -345,6 +345,12 @@ function editPart(pk) {
 // Launch form to duplicate a part
 function duplicatePart(pk, options={}) {
 
+    var title = '{% trans "Duplicate Part" %}';
+
+    if (options.variant) {
+        title = '{% trans "Create Part Variant" %}';
+    }
+
     // First we need all the part information
     inventreeGet(`/api/part/${pk}/`, {}, {
 
@@ -372,7 +378,7 @@ function duplicatePart(pk, options={}) {
                 method: 'POST',
                 fields: fields,
                 groups: partGroups(),
-                title: '{% trans "Duplicate Part" %}',
+                title: title,
                 data: data,
                 onSuccess: function(data) {
                     // Follow the new part

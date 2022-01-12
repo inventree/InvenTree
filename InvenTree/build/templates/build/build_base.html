@@ -221,7 +221,10 @@ src="{% static 'img/blank_image.png' %}"
         {% if build.incomplete_count > 0 %}
         showAlertDialog(
             '{% trans "Incomplete Outputs" %}',
-            '{% trans "Build Order cannot be completed as incomplete build outputs remain" %}'
+            '{% trans "Build Order cannot be completed as incomplete build outputs remain" %}',
+            {
+                alert_style: 'danger',
+            }
         );
         {% else %}
 

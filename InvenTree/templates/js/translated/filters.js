@@ -305,7 +305,16 @@ function setupFilterList(tableKey, table, target) {
         var title = getFilterTitle(tableKey, key);
         var description = getFilterDescription(tableKey, key);
 
-        element.append(`<div title='${description}' class='filter-tag'>${title} = ${value}<span ${tag}='${key}' class='close'>x</span></div>`);
+        var filter_tag = `
+        <div title='${description}' class='filter-tag'>
+            ${title} = ${value}
+            <span ${tag}='${key}' class='close' style='color: #F55;'>
+                <span aria-hidden='true'><strong>&times;</strong></span>
+            </span>
+        </div>
+        `;
+
+        element.append(filter_tag);
     }
 
     // Callback for reloading the table

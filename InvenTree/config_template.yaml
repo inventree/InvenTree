@@ -14,18 +14,15 @@ database:
 
   # --- Available options: ---
   # ENGINE: Database engine. Selection from:
-  #         - sqlite3
   #         - mysql
   #         - postgresql
+  #         - sqlite3
   # NAME: Database name
   # USER: Database username (if required)
   # PASSWORD: Database password (if required)
   # HOST: Database host address (if required)
   # PORT: Database host port (if required)
 
-  # --- Example Configuration - sqlite3 ---
-  # ENGINE: sqlite3
-  # NAME: '/home/inventree/database.sqlite3'
 
   # --- Example Configuration - MySQL ---
   #ENGINE: mysql
@@ -42,6 +39,10 @@ database:
   #PASSWORD: inventree_password
   #HOST: 'localhost'
   #PORT: '5432'
+  
+  # --- Example Configuration - sqlite3 ---
+  # ENGINE: sqlite3
+  # NAME: '/home/inventree/database.sqlite3'
 
 # Select default system language (default is 'en-us')
 language: en-us
@@ -100,6 +101,10 @@ debug: True
 # Note: This will only be displayed if DEBUG mode is enabled, 
 #       and only if InvenTree is accessed from a local IP (127.0.0.1)
 debug_toolbar: False
+
+# Set this variable to True to enable InvenTree Plugins
+# Alternatively, use the environment variable INVENTREE_PLUGINS_ENABLED
+plugins_enabled: False
 
 # Configure the system logging level
 # Use environment variable INVENTREE_LOG_LEVEL
