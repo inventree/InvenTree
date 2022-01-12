@@ -880,7 +880,7 @@ PLUGINS_ENABLED = _is_true(get_setting(
 PLUGIN_FILE = get_plugin_file()
 
 # Plugin Directories (local plugins will be loaded from these directories)
-PLUGIN_DIRS = ['plugin.builtin', ]
+PLUGIN_DIRS = ['plugin.builtin', 'barcodes.plugins', ]
 
 if not TESTING:
     # load local deploy directory in prod

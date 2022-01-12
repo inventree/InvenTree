@@ -929,6 +929,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
             {
                 field: 'actions',
                 title: '',
+                switchable: false,
                 formatter: function(value, row) {
                     
                     if (row.received >= row.quantity) {
