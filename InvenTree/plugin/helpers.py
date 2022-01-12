@@ -1,26 +1,23 @@
-"""Helpers for plugin app"""
+"""
+Helpers for plugin app
+"""
 import os
 import subprocess
 import pathlib
 import sysconfig
 import traceback
+import inspect
+import pkgutil
 
 from django.conf import settings
+from django.core.exceptions import AppRegistryNotReady
 
 
 # region logging / errors
-def log_plugin_error(error, reference: str = 'general'):
-    from plugin import plugin_registry
-
-    # make sure the registry is set up
-    if reference not in plugin_registry.errors:
-        plugin_registry.errors[reference] = []
-
-    # add error to stack
-    plugin_registry.errors[reference].append(error)
-
-
 class IntegrationPluginError(Exception):
+    """
+    Error that encapsulates another error and adds the path / reference of the raising plugin
+    """
     def __init__(self, path, message):
         self.path = path
         self.message = message
@@ -29,7 +26,39 @@ class IntegrationPluginError(Exception):
         return self.message
 
 
-def get_plugin_error(error, do_raise: bool = False, do_log: bool = False, log_name: str = ''):
+class MixinImplementationError(ValueError):
+    """
+    Error if mixin was implemented wrong in plugin
+    Mostly raised if constant is missing
+    """
+    pass
+
+
+class MixinNotImplementedError(NotImplementedError):
+    """
+    Error if necessary mixin function was not overwritten
+    """
+    pass
+
+
+def log_error(error, reference: str = 'general'):
+    """
+    Log an plugin error
+    """
+    from plugin import registry
+
+    # make sure the registry is set up
+    if reference not in registry.errors:
+        registry.errors[reference] = []
+
+    # add error to stack
+    registry.errors[reference].append(error)
+
+
+def handle_error(error, do_raise: bool = True, do_log: bool = True, do_return: bool = False, log_name: str = ''):
+    """
+    Handles an error and casts it as an IntegrationPluginError
+    """
     package_path = traceback.extract_tb(error.__traceback__)[-1].filename
     install_path = sysconfig.get_paths()["purelib"]
     try:
@@ -53,18 +82,23 @@ def get_plugin_error(error, do_raise: bool = False, do_log: bool = False, log_na
         log_kwargs = {}
         if log_name:
             log_kwargs['reference'] = log_name
-        log_plugin_error({package_name: str(error)}, **log_kwargs)
+        log_error({package_name: str(error)}, **log_kwargs)
+
+    new_error = IntegrationPluginError(package_name, str(error))
 
     if do_raise:
         raise IntegrationPluginError(package_name, str(error))
 
-    return package_name, str(error)
+    if do_return:
+        return new_error
 # endregion
 
 
 # region git-helpers
 def get_git_log(path):
-    """get dict with info of the last commit to file named in path"""
+    """
+    Get dict with info of the last commit to file named in path
+    """
     path = path.replace(os.path.dirname(settings.BASE_DIR), '')[1:]
     command = ['git', 'log', '-n', '1', "--pretty=format:'%H%n%aN%n%aE%n%aI%n%f%n%G?%n%GK'", '--follow', '--', path]
     try:
@@ -79,9 +113,13 @@ def get_git_log(path):
 
 
 class GitStatus:
-    """class for resolving git gpg singing state"""
+    """
+    Class for resolving git gpg singing state
+    """
     class Definition:
-        """definition of a git gpg sing state"""
+        """
+        Definition of a git gpg sing state
+        """
         key: str = 'N'
         status: int = 2
         msg: str = ''
@@ -99,4 +137,57 @@ class GitStatus:
     Y = Definition(key='Y', status=1, msg='good signature, expired key',)
     R = Definition(key='R', status=2, msg='good signature, revoked key',)
     E = Definition(key='E', status=1, msg='cannot be checked',)
+# endregion
+
+
+# region plugin finders
+def get_modules(pkg):
+    """get all modules in a package"""
+
+    context = {}
+    for loader, name, ispkg in pkgutil.walk_packages(pkg.__path__):
+        try:
+            module = loader.find_module(name).load_module(name)
+            pkg_names = getattr(module, '__all__', None)
+            for k, v in vars(module).items():
+                if not k.startswith('_') and (pkg_names is None or k in pkg_names):
+                    context[k] = v
+            context[name] = module
+        except AppRegistryNotReady:
+            pass
+        except Exception as error:
+            # this 'protects' against malformed plugin modules by more or less silently failing
+
+            # log to stack
+            log_error({name: str(error)}, 'discovery')
+
+    return [v for k, v in context.items()]
+
+
+def get_classes(module):
+    """get all classes in a given module"""
+    return inspect.getmembers(module, inspect.isclass)
+
+
+def get_plugins(pkg, baseclass):
+    """
+    Return a list of all modules under a given package.
+
+    - Modules must be a subclass of the provided 'baseclass'
+    - Modules must have a non-empty PLUGIN_NAME parameter
+    """
+
+    plugins = []
+
+    modules = get_modules(pkg)
+
+    # Iterate through each module in the package
+    for mod in modules:
+        # Iterate through each class in the module
+        for item in get_classes(mod):
+            plugin = item[1]
+            if issubclass(plugin, baseclass) and plugin.PLUGIN_NAME:
+                plugins.append(plugin)
+
+    return plugins
 # endregion

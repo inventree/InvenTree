@@ -2,14 +2,16 @@
 """
 Base Class for InvenTree plugins
 """
+import warnings
 
 from django.db.utils import OperationalError, ProgrammingError
 from django.utils.text import slugify
 
 
-class InvenTreePlugin():
+class InvenTreePluginBase():
     """
     Base class for a plugin
+    DO NOT USE THIS DIRECTLY, USE plugin.IntegrationPluginBase
     """
 
     def __init__(self):
@@ -24,11 +26,15 @@ class InvenTreePlugin():
 
     def plugin_name(self):
         """
-        Return the name of this plugin plugin
+        Name of plugin
         """
         return self.PLUGIN_NAME
 
     def plugin_slug(self):
+        """
+        Slug of plugin
+        If not set plugin name slugified
+        """
 
         slug = getattr(self, 'PLUGIN_SLUG', None)
 
@@ -38,6 +44,9 @@ class InvenTreePlugin():
         return slugify(slug.lower())
 
     def plugin_title(self):
+        """
+        Title of plugin
+        """
 
         if self.PLUGIN_TITLE:
             return self.PLUGIN_TITLE
@@ -75,3 +84,13 @@ class InvenTreePlugin():
             return cfg.active
         else:
             return False
+
+
+# TODO @matmair remove after InvenTree 0.7.0 release
+class InvenTreePlugin(InvenTreePluginBase):
+    """
+    This is here for leagcy reasons and will be removed in the next major release
+    """
+    def __init__(self):
+        warnings.warn("Using the InvenTreePlugin is depreceated", DeprecationWarning)
+        super().__init__()

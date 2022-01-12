@@ -28,9 +28,8 @@ except:
 from maintenance_mode.core import maintenance_mode_on
 from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
 
-from plugin import plugins as inventree_plugins
 from .integration import IntegrationPluginBase
-from .helpers import get_plugin_error, IntegrationPluginError
+from .helpers import handle_error, log_error, get_plugins, IntegrationPluginError
 
 
 logger = logging.getLogger('inventree')
@@ -60,17 +59,15 @@ class PluginsRegistry:
         # mixins
         self.mixins_settings = {}
 
-    # region public plugin functions
+    # region public functions
+    # region loading / unloading
     def load_plugins(self):
         """
         Load and activate all IntegrationPlugins
         """
-
         if not settings.PLUGINS_ENABLED:
             # Plugins not enabled, do nothing
             return
-
-        from plugin.helpers import log_plugin_error
 
         logger.info('Start loading plugins')
 
@@ -95,7 +92,7 @@ class PluginsRegistry:
                 break
             except IntegrationPluginError as error:
                 logger.error(f'[PLUGIN] Encountered an error with {error.path}:\n{error.message}')
-                log_plugin_error({error.path: error.message}, 'load')
+                log_error({error.path: error.message}, 'load')
                 blocked_plugin = error.path  # we will not try to load this app again
 
                 # Initialize apps without any integration plugins
@@ -179,7 +176,7 @@ class PluginsRegistry:
 
         # Collect plugins from paths
         for plugin in settings.PLUGIN_DIRS:
-            modules = inventree_plugins.get_plugins(importlib.import_module(plugin), IntegrationPluginBase, True)
+            modules = get_plugins(importlib.import_module(plugin), IntegrationPluginBase)
             if modules:
                 [self.plugin_modules.append(item) for item in modules]
 
@@ -192,12 +189,29 @@ class PluginsRegistry:
                     plugin.is_package = True
                     self.plugin_modules.append(plugin)
                 except Exception as error:
-                    get_plugin_error(error, do_log=True, log_name='discovery')
+                    handle_error(error, do_raise=False, log_name='discovery')
 
         # Log collected plugins
         logger.info(f'Collected {len(self.plugin_modules)} plugins!')
         logger.info(", ".join([a.__module__ for a in self.plugin_modules]))
+    # endregion
 
+    # region registry functions
+    def with_mixin(self, mixin: str):
+        """
+        Returns reference to all plugins that have a specified mixin enabled
+        """
+        result = []
+
+        for plugin in self.plugins.values():
+            if plugin.mixin_enabled(mixin):
+                result.append(plugin)
+
+        return result
+    # endregion
+    # endregion
+
+    # region general internal loading /activating / deactivating / deloading
     def _init_plugins(self, disabled=None):
         """
         Initialise all found plugins
@@ -254,7 +268,7 @@ class PluginsRegistry:
                     plugin = plugin()
                 except Exception as error:
                     # log error and raise it -> disable plugin
-                    get_plugin_error(error, do_raise=True, do_log=True, log_name='init')
+                    handle_error(error, log_name='init')
 
                 logger.info(f'Loaded integration plugin {plugin.slug}')
                 plugin.is_package = was_packaged
@@ -290,7 +304,9 @@ class PluginsRegistry:
         self.deactivate_integration_app()
         self.deactivate_integration_schedule()
         self.deactivate_integration_settings()
+    # endregion
 
+    # region mixin specific loading ...
     def activate_integration_settings(self, plugins):
 
         logger.info('Activating plugin settings')
@@ -536,7 +552,8 @@ class PluginsRegistry:
             cmd(*args, **kwargs)
             return True, []
         except Exception as error:
-            get_plugin_error(error, do_raise=True)
+            handle_error(error)
+    # endregion
 
 
-plugin_registry = PluginsRegistry()
+registry = PluginsRegistry()
