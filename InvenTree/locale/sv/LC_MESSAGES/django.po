@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-13 06:19+0000\n"
-"PO-Revision-Date: 2022-01-13 06:26\n"
+"POT-Creation-Date: 2022-01-13 13:27+0000\n"
+"PO-Revision-Date: 2022-01-13 13:37\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -5268,7 +5268,7 @@ msgstr ""
 msgid "Is the plugin active"
 msgstr ""
 
-#: plugin/models.py:195
+#: plugin/models.py:201
 msgid "Plugin"
 msgstr ""
 
