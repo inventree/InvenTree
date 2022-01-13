@@ -574,6 +574,7 @@ class PluginsRegistry:
 
 registry = PluginsRegistry()
 
-def call_function(plugin_name, function_name):
+
+def call_function(plugin_name, function_name, *args, **kwargs):
     """ Global helper function to call a specific member function of a plugin """
-    return registry.call_plugin_function(plugin_name, function_name)
+    return registry.call_plugin_function(plugin_name, function_name, *args, **kwargs)
