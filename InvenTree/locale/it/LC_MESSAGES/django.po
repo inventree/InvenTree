@@ -5365,7 +5365,7 @@ msgstr ""
 msgid "Is the plugin active"
 msgstr "Quest'articolo è attivo?"
 
-#: plugin/models.py:201
+#: plugin/models.py:195
 #, fuzzy
 #| msgid "Install into"
 msgid "Plugin"

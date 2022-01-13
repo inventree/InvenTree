@@ -5270,7 +5270,7 @@ msgstr ""
 msgid "Is the plugin active"
 msgstr ""
 
-#: plugin/models.py:201
+#: plugin/models.py:195
 msgid "Plugin"
 msgstr ""
 
