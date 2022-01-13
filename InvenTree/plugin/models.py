@@ -124,6 +124,12 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
     so that we can pass the plugin instance
     """
 
+    def is_bool(self, **kwargs):
+
+        kwargs['plugin'] = self.plugin
+
+        return super().is_bool(**kwargs)
+
     @property
     def name(self):
         return self.__class__.get_setting_name(self.key, plugin=self.plugin)
