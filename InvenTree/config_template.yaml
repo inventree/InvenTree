@@ -102,6 +102,10 @@ debug: True
 #       and only if InvenTree is accessed from a local IP (127.0.0.1)
 debug_toolbar: False
 
+# Set this variable to True to enable InvenTree Plugins
+# Alternatively, use the environment variable INVENTREE_PLUGINS_ENABLED
+plugins_enabled: False
+
 # Configure the system logging level
 # Use environment variable INVENTREE_LOG_LEVEL
 # Options: DEBUG / INFO / WARNING / ERROR / CRITICAL

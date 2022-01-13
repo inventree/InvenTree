@@ -28,9 +28,8 @@ except:
 from maintenance_mode.core import maintenance_mode_on
 from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
 
-from plugin import plugins as inventree_plugins
 from .integration import IntegrationPluginBase
-from .helpers import get_plugin_error, IntegrationPluginError
+from .helpers import handle_error, log_error, get_plugins, IntegrationPluginError
 
 
 logger = logging.getLogger('inventree')
@@ -60,13 +59,31 @@ class PluginsRegistry:
         # mixins
         self.mixins_settings = {}
 
-    # region public plugin functions
+    def call_plugin_function(self, slug, func, *args, **kwargs):
+        """
+        Call a member function (named by 'func') of the plugin named by 'slug'.
+
+        As this is intended to be run by the background worker,
+        we do not perform any try/except here.
+
+        Instead, any error messages are returned to the worker.
+        """
+
+        plugin = self.plugins[slug]
+
+        plugin_func = getattr(plugin, func)
+
+        return plugin_func(*args, **kwargs)
+
+    # region public functions
+    # region loading / unloading
     def load_plugins(self):
         """
         Load and activate all IntegrationPlugins
         """
-
-        from plugin.helpers import log_plugin_error
+        if not settings.PLUGINS_ENABLED:
+            # Plugins not enabled, do nothing
+            return
 
         logger.info('Start loading plugins')
 
@@ -75,22 +92,23 @@ class PluginsRegistry:
         if not _maintenance:
             set_maintenance_mode(True)
 
-        registered_sucessfull = False
+        registered_successful = False
         blocked_plugin = None
         retry_counter = settings.PLUGIN_RETRY
-        while not registered_sucessfull:
+
+        while not registered_successful:
             try:
                 # We are using the db so for migrations etc we need to try this block
                 self._init_plugins(blocked_plugin)
                 self._activate_plugins()
-                registered_sucessfull = True
+                registered_successful = True
             except (OperationalError, ProgrammingError):
                 # Exception if the database has not been migrated yet
                 logger.info('Database not accessible while loading plugins')
                 break
             except IntegrationPluginError as error:
                 logger.error(f'[PLUGIN] Encountered an error with {error.path}:\n{error.message}')
-                log_plugin_error({error.path: error.message}, 'load')
+                log_error({error.path: error.message}, 'load')
                 blocked_plugin = error.path  # we will not try to load this app again
 
                 # Initialize apps without any integration plugins
@@ -121,6 +139,10 @@ class PluginsRegistry:
         """
         Unload and deactivate all IntegrationPlugins
         """
+
+        if not settings.PLUGINS_ENABLED:
+            # Plugins not enabled, do nothing
+            return
 
         logger.info('Start unloading plugins')
 
@@ -162,11 +184,15 @@ class PluginsRegistry:
         Collect integration plugins from all possible ways of loading
         """
 
+        if not settings.PLUGINS_ENABLED:
+            # Plugins not enabled, do nothing
+            return
+
         self.plugin_modules = []  # clear
 
         # Collect plugins from paths
         for plugin in settings.PLUGIN_DIRS:
-            modules = inventree_plugins.get_plugins(importlib.import_module(plugin), IntegrationPluginBase, True)
+            modules = get_plugins(importlib.import_module(plugin), IntegrationPluginBase)
             if modules:
                 [self.plugin_modules.append(item) for item in modules]
 
@@ -179,12 +205,29 @@ class PluginsRegistry:
                     plugin.is_package = True
                     self.plugin_modules.append(plugin)
                 except Exception as error:
-                    get_plugin_error(error, do_log=True, log_name='discovery')
+                    handle_error(error, do_raise=False, log_name='discovery')
 
         # Log collected plugins
         logger.info(f'Collected {len(self.plugin_modules)} plugins!')
         logger.info(", ".join([a.__module__ for a in self.plugin_modules]))
+    # endregion
 
+    # region registry functions
+    def with_mixin(self, mixin: str):
+        """
+        Returns reference to all plugins that have a specified mixin enabled
+        """
+        result = []
+
+        for plugin in self.plugins.values():
+            if plugin.mixin_enabled(mixin):
+                result.append(plugin)
+
+        return result
+    # endregion
+    # endregion
+
+    # region general internal loading /activating / deactivating / deloading
     def _init_plugins(self, disabled=None):
         """
         Initialise all found plugins
@@ -241,7 +284,7 @@ class PluginsRegistry:
                     plugin = plugin()
                 except Exception as error:
                     # log error and raise it -> disable plugin
-                    get_plugin_error(error, do_raise=True, do_log=True, log_name='init')
+                    handle_error(error, log_name='init')
 
                 logger.info(f'Loaded integration plugin {plugin.slug}')
                 plugin.is_package = was_packaged
@@ -277,7 +320,9 @@ class PluginsRegistry:
         self.deactivate_integration_app()
         self.deactivate_integration_schedule()
         self.deactivate_integration_settings()
+    # endregion
 
+    # region mixin specific loading ...
     def activate_integration_settings(self, plugins):
 
         logger.info('Activating plugin settings')
@@ -523,7 +568,13 @@ class PluginsRegistry:
             cmd(*args, **kwargs)
             return True, []
         except Exception as error:
-            get_plugin_error(error, do_raise=True)
+            handle_error(error)
+    # endregion
 
 
-plugin_registry = PluginsRegistry()
+registry = PluginsRegistry()
+
+
+def call_function(plugin_name, function_name, *args, **kwargs):
+    """ Global helper function to call a specific member function of a plugin """
+    return registry.call_plugin_function(plugin_name, function_name, *args, **kwargs)
