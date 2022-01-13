@@ -372,6 +372,14 @@ function attachSelect(modal) {
 }
 
 
+function attachBootstrapCheckbox(modal) {
+    /* Attach 'switch' functionality to any checkboxes on the form */
+
+    $(modal + ' .checkboxinput').addClass('form-check-input');
+    $(modal + ' .checkboxinput').wrap(`<div class='form-check form-switch'></div>`);
+}
+
+
 function loadingMessageContent() {
     /* Render a 'loading' message to display in a form 
      * when waiting for a response from the server
@@ -686,7 +694,9 @@ function injectModalForm(modal, form_html) {
      * Updates the HTML of the form content, and then applies some other updates
      */
     $(modal).find('.modal-form-content').html(form_html);
+
     attachSelect(modal);
+    attachBootstrapCheckbox(modal);
 }
 
 
