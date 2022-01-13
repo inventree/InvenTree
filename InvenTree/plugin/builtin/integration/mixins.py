@@ -75,10 +75,18 @@ class ScheduleMixin:
             'schedule': "I",                        # Schedule type (see django_q.Schedule)
             'minutes': 30,                          # Number of minutes (only if schedule type = Minutes)
             'repeats': 5,                           # Number of repeats (leave blank for 'forever')
-        }
+        },
+        'member_func': {
+            'func': 'my_class_func',                # Note, without the 'dot' notation, it will call a class member function
+            'schedule': "H",                        # Once per hour
+        },
     }
 
     Note: 'schedule' parameter must be one of ['I', 'H', 'D', 'W', 'M', 'Q', 'Y']
+
+    Note: The 'func' argument can take two different forms:
+        - Dotted notation e.g. 'module.submodule.func' - calls a global function with the defined path
+        - Member notation e.g. 'my_func' (no dots!) - calls a member function of the calling class
     """
 
     ALLOWABLE_SCHEDULE_TYPES = ['I', 'H', 'D', 'W', 'M', 'Q', 'Y']
@@ -94,10 +102,13 @@ class ScheduleMixin:
 
     def __init__(self):
         super().__init__()
-        self.add_mixin('schedule', 'has_scheduled_tasks', __class__)
-        self.scheduled_tasks = getattr(self, 'SCHEDULED_TASKS', {})
-
+        self.scheduled_tasks = self.get_scheduled_tasks()
         self.validate_scheduled_tasks()
+
+        self.add_mixin('schedule', 'has_scheduled_tasks', __class__)
+
+    def get_scheduled_tasks(self):
+        return getattr(self, 'SCHEDULED_TASKS', {})
 
     @property
     def has_scheduled_tasks(self):
@@ -158,18 +169,46 @@ class ScheduleMixin:
 
                 task_name = self.get_task_name(key)
 
-                # If a matching scheduled task does not exist, create it!
-                if not Schedule.objects.filter(name=task_name).exists():
+                if Schedule.objects.filter(name=task_name).exists():
+                    # Scheduled task already exists - continue!
+                    continue
 
-                    logger.info(f"Adding scheduled task '{task_name}'")
+                logger.info(f"Adding scheduled task '{task_name}'")
+
+                func_name = task['func'].strip()
+
+                if '.' in func_name:
+                    """
+                    Dotted notation indicates that we wish to run a globally defined function,
+                    from a specified Python module.
+                    """
 
                     Schedule.objects.create(
                         name=task_name,
-                        func=task['func'],
+                        func=func_name,
                         schedule_type=task['schedule'],
                         minutes=task.get('minutes', None),
                         repeats=task.get('repeats', -1),
                     )
+
+                else:
+                    """
+                    Non-dotted notation indicates that we wish to call a 'member function' of the calling plugin.
+
+                    This is managed by the plugin registry itself.
+                    """
+
+                    slug = self.plugin_slug()
+
+                    Schedule.objects.create(
+                        name=task_name,
+                        func='plugin.registry.call_function',
+                        args=f"'{slug}', '{func_name}'",
+                        schedule_type=task['schedule'],
+                        minutes=task.get('minutes', None),
+                        repeats=task.get('repeats', -1),
+                    )
+
         except (ProgrammingError, OperationalError):
             # Database might not yet be ready
             logger.warning("register_tasks failed, database not ready")
