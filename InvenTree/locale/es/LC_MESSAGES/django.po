@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-13 13:27+0000\n"
-"PO-Revision-Date: 2022-01-15 16:27\n"
+"PO-Revision-Date: 2022-01-15 17:22\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -4247,7 +4247,7 @@ msgstr ""
 
 #: part/models.py:2623
 msgid "Select parent part"
-msgstr ""
+msgstr "Seleccionar parte principal"
 
 #: part/models.py:2631
 msgid "Sub part"
@@ -4265,7 +4265,7 @@ msgstr ""
 #: templates/js/translated/bom.js:640
 #: templates/js/translated/table_filters.js:92
 msgid "Optional"
-msgstr ""
+msgstr "Opcional"
 
 #: part/models.py:2640
 msgid "This BOM item is optional"
@@ -4319,7 +4319,7 @@ msgstr "La cantidad debe ser un valor entero para las partes rastreables"
 
 #: part/models.py:2757 part/models.py:2759
 msgid "Sub part must be specified"
-msgstr ""
+msgstr "Debe especificar la subparte"
 
 #: part/models.py:2888
 msgid "BOM Item Substitute"
@@ -4347,7 +4347,7 @@ msgstr ""
 
 #: part/models.py:2945
 msgid "Select Related Part"
-msgstr ""
+msgstr "Seleccionar parte relacionada"
 
 #: part/models.py:2977
 msgid "Error creating relationship: check that the part is not related to itself and that the relationship is unique"
@@ -5188,7 +5188,7 @@ msgstr ""
 
 #: part/views.py:1175
 msgid "Part Pricing"
-msgstr ""
+msgstr "Precio de parte"
 
 #: part/views.py:1324
 msgid "Create Part Parameter Template"
