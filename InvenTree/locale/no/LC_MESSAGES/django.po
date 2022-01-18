@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-13 13:27+0000\n"
-"PO-Revision-Date: 2022-01-13 13:37\n"
+"PO-Revision-Date: 2022-01-18 10:51\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -46,7 +46,7 @@ msgstr "Bekreft sletting"
 
 #: InvenTree/forms.py:143
 msgid "Confirm item deletion"
-msgstr ""
+msgstr "Bekfret sletting av element"
 
 #: InvenTree/forms.py:174
 msgid "Enter password"
@@ -70,15 +70,15 @@ msgstr "Velg kategori"
 
 #: InvenTree/forms.py:236
 msgid "Email (again)"
-msgstr ""
+msgstr "E-post (gjenta)"
 
 #: InvenTree/forms.py:240
 msgid "Email address confirmation"
-msgstr ""
+msgstr "Bekreftelsen på e-postaddresse"
 
 #: InvenTree/forms.py:260
 msgid "You must type the same email each time."
-msgstr ""
+msgstr "Du må angi samme e-post hver gang."
 
 #: InvenTree/helpers.py:437
 #, python-brace-format
@@ -103,12 +103,12 @@ msgstr "Ugyldig gruppe: {g}"
 #: InvenTree/helpers.py:510
 #, python-brace-format
 msgid "Invalid group {group}"
-msgstr ""
+msgstr "Ugyldig gruppe {group}"
 
 #: InvenTree/helpers.py:516
 #, python-brace-format
 msgid "Invalid/no group {group}"
-msgstr ""
+msgstr "Ugyldig/ingen gruppe {group}"
 
 #: InvenTree/helpers.py:522
 msgid "No serial numbers found"
@@ -121,11 +121,11 @@ msgstr "Antall unike serienummer ({s}) må samsvare mengde ({q})"
 
 #: InvenTree/models.py:120
 msgid "Missing file"
-msgstr ""
+msgstr "Fil mangler"
 
 #: InvenTree/models.py:121
 msgid "Missing external link"
-msgstr ""
+msgstr "Mangler eksternlenke"
 
 #: InvenTree/models.py:132 stock/models.py:1980
 #: templates/js/translated/attachment.js:119
@@ -142,12 +142,12 @@ msgstr "Velg fil å legge ved"
 #: templates/js/translated/company.js:540
 #: templates/js/translated/company.js:829 templates/js/translated/part.js:1324
 msgid "Link"
-msgstr ""
+msgstr "Lenke"
 
 #: InvenTree/models.py:140 build/models.py:332 part/models.py:831
 #: stock/models.py:529
 msgid "Link to external URL"
-msgstr ""
+msgstr "Lenke til ekstern URL"
 
 #: InvenTree/models.py:143 templates/js/translated/attachment.js:163
 msgid "Comment"
@@ -171,28 +171,28 @@ msgstr "opplastet dato"
 
 #: InvenTree/models.py:176
 msgid "Filename must not be empty"
-msgstr ""
+msgstr "Filnavn må ikke være tom"
 
 #: InvenTree/models.py:199
 msgid "Invalid attachment directory"
-msgstr ""
+msgstr "Ugyldig vedleggskatalog"
 
 #: InvenTree/models.py:209
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr ""
+msgstr "Filnavn inneholder ugyldig tegn '{c}'"
 
 #: InvenTree/models.py:212
 msgid "Filename missing extension"
-msgstr ""
+msgstr "Filnavn mangler filtype"
 
 #: InvenTree/models.py:219
 msgid "Attachment with this filename already exists"
-msgstr ""
+msgstr "Vedlegg med dette filnavnet finnes allerede"
 
 #: InvenTree/models.py:226
 msgid "Error renaming file"
-msgstr ""
+msgstr "Feil ved endring av navn"
 
 #: InvenTree/models.py:261
 msgid "Invalid choice"
@@ -243,7 +243,7 @@ msgstr "Beskrivelse (valgfritt)"
 
 #: InvenTree/models.py:293
 msgid "parent"
-msgstr ""
+msgstr "overkategori"
 
 #: InvenTree/serializers.py:65 part/models.py:2736
 msgid "Must be a valid number"
@@ -251,7 +251,7 @@ msgstr "Nummer må være gyldig"
 
 #: InvenTree/serializers.py:299
 msgid "Filename"
-msgstr ""
+msgstr "Filnavn"
 
 #: InvenTree/settings.py:661
 msgid "German"
@@ -271,7 +271,7 @@ msgstr "Spansk"
 
 #: InvenTree/settings.py:665
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "Spansk (Meksikansk)"
 
 #: InvenTree/settings.py:666
 msgid "French"
@@ -307,7 +307,7 @@ msgstr "Polsk"
 
 #: InvenTree/settings.py:674
 msgid "Portugese"
-msgstr ""
+msgstr "Portugesisk"
 
 #: InvenTree/settings.py:675
 msgid "Russian"
@@ -339,66 +339,66 @@ msgstr "Bakgrunnsarbeiderkontroll mislyktes"
 
 #: InvenTree/status.py:98
 msgid "Email backend not configured"
-msgstr ""
+msgstr "E-post backend ikke konfigurert"
 
 #: InvenTree/status.py:101
 msgid "InvenTree system health checks failed"
-msgstr ""
+msgstr "Helsekontroll av IvenTree system mislyktes"
 
 #: InvenTree/status_codes.py:101 InvenTree/status_codes.py:142
 #: InvenTree/status_codes.py:316 templates/js/translated/table_filters.js:313
 msgid "Pending"
-msgstr ""
+msgstr "Ventende"
 
 #: InvenTree/status_codes.py:102
 msgid "Placed"
-msgstr ""
+msgstr "Plassert"
 
 #: InvenTree/status_codes.py:103 InvenTree/status_codes.py:319
 #: order/templates/order/order_base.html:128
 #: order/templates/order/sales_order_base.html:132
 msgid "Complete"
-msgstr ""
+msgstr "Fullført"
 
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:144
 #: InvenTree/status_codes.py:318
 msgid "Cancelled"
-msgstr ""
+msgstr "Kansellert"
 
 #: InvenTree/status_codes.py:105 InvenTree/status_codes.py:145
 #: InvenTree/status_codes.py:187
 msgid "Lost"
-msgstr ""
+msgstr "Tapt"
 
 #: InvenTree/status_codes.py:106 InvenTree/status_codes.py:146
 #: InvenTree/status_codes.py:189
 msgid "Returned"
-msgstr ""
+msgstr "Returnert"
 
 #: InvenTree/status_codes.py:143 order/models.py:953
 #: templates/js/translated/order.js:1980 templates/js/translated/order.js:2255
 msgid "Shipped"
-msgstr ""
+msgstr "Sendt"
 
 #: InvenTree/status_codes.py:183
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: InvenTree/status_codes.py:184
 msgid "Attention needed"
-msgstr ""
+msgstr "Merknad nødvendig"
 
 #: InvenTree/status_codes.py:185
 msgid "Damaged"
-msgstr ""
+msgstr "Skadet"
 
 #: InvenTree/status_codes.py:186
 msgid "Destroyed"
-msgstr ""
+msgstr "Ødelagt"
 
 #: InvenTree/status_codes.py:188
 msgid "Rejected"
-msgstr ""
+msgstr "Avvist"
 
 #: InvenTree/status_codes.py:272
 msgid "Legacy stock tracking entry"
