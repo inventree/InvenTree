@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-13 13:27+0000\n"
-"PO-Revision-Date: 2022-01-18 10:51\n"
+"PO-Revision-Date: 2022-01-18 11:49\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -402,147 +402,147 @@ msgstr "Avvist"
 
 #: InvenTree/status_codes.py:272
 msgid "Legacy stock tracking entry"
-msgstr ""
+msgstr "Legacy stock sporingsoppføring"
 
 #: InvenTree/status_codes.py:274
 msgid "Stock item created"
-msgstr ""
+msgstr "Lagevare opprettet"
 
 #: InvenTree/status_codes.py:276
 msgid "Edited stock item"
-msgstr ""
+msgstr "Redigerte lagervare"
 
 #: InvenTree/status_codes.py:277
 msgid "Assigned serial number"
-msgstr ""
+msgstr "Tildelt serienummer"
 
 #: InvenTree/status_codes.py:279
 msgid "Stock counted"
-msgstr ""
+msgstr "Lager tellet"
 
 #: InvenTree/status_codes.py:280
 msgid "Stock manually added"
-msgstr ""
+msgstr "Lager manuelt lagt til"
 
 #: InvenTree/status_codes.py:281
 msgid "Stock manually removed"
-msgstr ""
+msgstr "Lager manuelt fjernet"
 
 #: InvenTree/status_codes.py:283
 msgid "Location changed"
-msgstr ""
+msgstr "Posisjon endret"
 
 #: InvenTree/status_codes.py:285
 msgid "Installed into assembly"
-msgstr ""
+msgstr "Installert i montering"
 
 #: InvenTree/status_codes.py:286
 msgid "Removed from assembly"
-msgstr ""
+msgstr "Fjernet fra montering"
 
 #: InvenTree/status_codes.py:288
 msgid "Installed component item"
-msgstr ""
+msgstr "Installert komponentelement"
 
 #: InvenTree/status_codes.py:289
 msgid "Removed component item"
-msgstr ""
+msgstr "Fjernet komponentelement"
 
 #: InvenTree/status_codes.py:291
 msgid "Split from parent item"
-msgstr ""
+msgstr "Delt fra overordnet element"
 
 #: InvenTree/status_codes.py:292
 msgid "Split child item"
-msgstr ""
+msgstr "Delt fra underelement"
 
 #: InvenTree/status_codes.py:294 templates/js/translated/stock.js:2071
 msgid "Merged stock items"
-msgstr ""
+msgstr "Sammenslått lagervare"
 
 #: InvenTree/status_codes.py:296 templates/js/translated/table_filters.js:213
 msgid "Sent to customer"
-msgstr ""
+msgstr "Sendt til kunde"
 
 #: InvenTree/status_codes.py:297
 msgid "Returned from customer"
-msgstr ""
+msgstr "Returnert av kunde"
 
 #: InvenTree/status_codes.py:299
 msgid "Build order output created"
-msgstr ""
+msgstr "Build ordreutgang opprettet"
 
 #: InvenTree/status_codes.py:300
 msgid "Build order output completed"
-msgstr ""
+msgstr "Build ordreutg fullført"
 
 #: InvenTree/status_codes.py:302
 msgid "Received against purchase order"
-msgstr ""
+msgstr "Mottatt mot innkjøpsordre"
 
 #: InvenTree/status_codes.py:317
 msgid "Production"
-msgstr ""
+msgstr "Produksjon"
 
 #: InvenTree/validators.py:23
 msgid "Not a valid currency code"
-msgstr ""
+msgstr "Ikke en gyldig valutanr"
 
 #: InvenTree/validators.py:51
 msgid "Invalid character in part name"
-msgstr ""
+msgstr "Ugylding tegn i varenavn"
 
 #: InvenTree/validators.py:64
 #, python-brace-format
 msgid "IPN must match regex pattern {pat}"
-msgstr ""
+msgstr "IPN må matche regex-mønster {pat}"
 
 #: InvenTree/validators.py:78 InvenTree/validators.py:92
 #: InvenTree/validators.py:106
 #, python-brace-format
 msgid "Reference must match pattern {pattern}"
-msgstr ""
+msgstr "Referansen må samsvare med mønster {pattern}"
 
 #: InvenTree/validators.py:114
 #, python-brace-format
 msgid "Illegal character in name ({x})"
-msgstr ""
+msgstr "Ugyldig tegn i navn ({x})"
 
 #: InvenTree/validators.py:133 InvenTree/validators.py:149
 msgid "Overage value must not be negative"
-msgstr ""
+msgstr "Overde-verdien må ikke være negativ"
 
 #: InvenTree/validators.py:151
 msgid "Overage must not exceed 100%"
-msgstr ""
+msgstr "Overde må ikke overstige 100%"
 
 #: InvenTree/validators.py:158
 msgid "Overage must be an integer value or a percentage"
-msgstr ""
+msgstr "Overde må være en heltallsverdi eller en prosentandel"
 
 #: InvenTree/views.py:538
 msgid "Delete Item"
-msgstr ""
+msgstr "Slett element"
 
 #: InvenTree/views.py:587
 msgid "Check box to confirm item deletion"
-msgstr ""
+msgstr "Kryss av i boksen for å bekrefte sletting av element"
 
 #: InvenTree/views.py:602 templates/InvenTree/settings/user.html:21
 msgid "Edit User Information"
-msgstr ""
+msgstr "Rediger brukerinformasjon"
 
 #: InvenTree/views.py:613 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
-msgstr ""
+msgstr "Velg passord"
 
 #: InvenTree/views.py:632
 msgid "Password fields must match"
-msgstr ""
+msgstr "Passordfeltene må samsvare"
 
 #: InvenTree/views.py:883 templates/navbar.html:126
 msgid "System Information"
-msgstr ""
+msgstr "Systeminformasjon"
 
 #: barcodes/api.py:54 barcodes/api.py:152
 msgid "Must provide barcode_data parameter"
@@ -566,15 +566,15 @@ msgstr "Ingen samsvarende lagervare funnet"
 
 #: barcodes/api.py:193
 msgid "Barcode already matches Stock Item"
-msgstr ""
+msgstr "Strekkoden samsvarer allerede med lagervare"
 
 #: barcodes/api.py:197
 msgid "Barcode already matches Stock Location"
-msgstr ""
+msgstr "Strekkode samsvarer allerede med lagerplassering"
 
 #: barcodes/api.py:201
 msgid "Barcode already matches Part"
-msgstr ""
+msgstr "Strekkode samsvarer allerede med delen"
 
 #: barcodes/api.py:207 barcodes/api.py:219
 msgid "Barcode hash already matches Stock Item"
@@ -582,7 +582,7 @@ msgstr ""
 
 #: barcodes/api.py:225
 msgid "Barcode associated with Stock Item"
-msgstr ""
+msgstr "Strekkode tilknyttet lagervare"
 
 #: build/forms.py:36 build/models.py:1293
 #: build/templates/build/build_base.html:82
@@ -618,17 +618,17 @@ msgstr ""
 #: templates/js/translated/stock.js:587 templates/js/translated/stock.js:757
 #: templates/js/translated/stock.js:2526 templates/js/translated/stock.js:2628
 msgid "Quantity"
-msgstr ""
+msgstr "Antall"
 
 #: build/forms.py:37
 msgid "Enter quantity for build output"
-msgstr ""
+msgstr "Angi antall for build utgang"
 
 #: build/forms.py:41 order/serializers.py:814 stock/forms.py:81
 #: stock/serializers.py:314 templates/js/translated/stock.js:237
 #: templates/js/translated/stock.js:391
 msgid "Serial Numbers"
-msgstr ""
+msgstr "Serienummer"
 
 #: build/forms.py:43
 msgid "Enter serial numbers for build outputs"
@@ -768,45 +768,45 @@ msgstr ""
 
 #: build/models.py:273
 msgid "Completed items"
-msgstr ""
+msgstr "Fullførte elementer"
 
 #: build/models.py:275
 msgid "Number of stock items which have been completed"
-msgstr ""
+msgstr "Antall lagervarer som er fullført"
 
 #: build/models.py:279 part/templates/part/part_base.html:234
 msgid "Build Status"
-msgstr ""
+msgstr "Byggstatus"
 
 #: build/models.py:283
 msgid "Build status code"
-msgstr ""
+msgstr "Byggstatuskode"
 
 #: build/models.py:287 stock/models.py:533
 msgid "Batch Code"
-msgstr ""
+msgstr "Batch kode"
 
 #: build/models.py:291
 msgid "Batch code for this build output"
-msgstr ""
+msgstr "Batch kode for denne build output"
 
 #: build/models.py:294 order/models.py:128 part/models.py:969
 #: part/templates/part/part_base.html:313 templates/js/translated/order.js:1271
 msgid "Creation Date"
-msgstr ""
+msgstr "Opprettelsesdato"
 
 #: build/models.py:298 order/models.py:566
 msgid "Target completion date"
-msgstr ""
+msgstr "Forventet sluttdato"
 
 #: build/models.py:299
 msgid "Target date for build completion. Build will be overdue after this date."
-msgstr ""
+msgstr "Forventet dato for ferdigstillelse. Build er forvalt etter denne datoen."
 
 #: build/models.py:302 order/models.py:254
 #: templates/js/translated/build.js:1758
 msgid "Completion Date"
-msgstr ""
+msgstr "Fullført dato"
 
 #: build/models.py:308
 msgid "completed by"
