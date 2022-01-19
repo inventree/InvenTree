@@ -1424,6 +1424,11 @@ function addSecondaryModal(field, fields, options) {
             };
         }
 
+        // Relinquish keyboard focus for this modal
+        $(options.modal).modal({
+            keyboard: false,
+        });
+
         // Method should be "POST" for creation
         secondary.method = secondary.method || 'POST';
 
