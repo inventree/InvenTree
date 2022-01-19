@@ -127,6 +127,9 @@ function createNewModal(options={}) {
         $(modal_name).find('#modal-form-cancel').hide();
     }
 
+    // Steal keyboard focus
+    $(modal_name).focus();
+
     // Return the "name" of the modal
     return modal_name;
 }

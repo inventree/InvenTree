@@ -1380,23 +1380,23 @@ function initializeRelatedFields(fields, options) {
  */
 function addSecondaryModal(field, fields, options) {
 
-    var name = field.name;
+    var field_name = getFieldName(field.name, options);
 
     var depth = options.depth || 0;
 
-    var secondary = field.secondary;
-
     var html = `
     <span style='float: right;'>
-        <div type='button' class='btn btn-primary btn-secondary btn-form-secondary' title='${secondary.title || secondary.label}' id='btn-new-${name}'>
-            ${secondary.label || secondary.title}
+        <div type='button' class='btn btn-primary btn-secondary btn-form-secondary' title='${field.secondary.title || field.secondary.label}' id='btn-new-${field_name}'>
+            ${field.secondary.label || field.secondary.title}
         </div>
     </span>`;
 
-    $(options.modal).find(`label[for="id_${name}"]`).append(html);
+    $(options.modal).find(`label[for="id_${field_name}"]`).append(html);
 
     // Callback function when the secondary button is pressed
-    $(options.modal).find(`#btn-new-${name}`).click(function() {
+    $(options.modal).find(`#btn-new-${field_name}`).click(function() {
+
+        var secondary = field.secondary;
 
         // Determine the API query URL
         var url = secondary.api_url || field.api_url;
@@ -1417,8 +1417,7 @@ function addSecondaryModal(field, fields, options) {
                 // Force refresh from the API, to get full detail
                 inventreeGet(`${url}${data.pk}/`, {}, {
                     success: function(responseData) {
-
-                        setRelatedFieldData(name, responseData, options);
+                        setRelatedFieldData(field.name, responseData, options);
                     }
                 });
             };
@@ -1431,6 +1430,8 @@ function addSecondaryModal(field, fields, options) {
 
         // Method should be "POST" for creation
         secondary.method = secondary.method || 'POST';
+
+        secondary.modal = null;
 
         secondary.depth = depth + 1;
 
