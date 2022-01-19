@@ -76,6 +76,7 @@ services:
 
     ### Optional: Serve static and media files using nginx
     ### Uncomment the following lines to enable nginx proxy for testing
+    ### Note: If enabling the proxy, change "ports" to "expose" for the inventree-dev-server container (above)
     #inventree-dev-proxy:
     #    container_name: inventree-dev-proxy
     #    image: nginx:stable
