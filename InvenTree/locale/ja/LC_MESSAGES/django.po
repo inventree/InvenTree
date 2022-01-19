@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-18 23:41+0000\n"
-"PO-Revision-Date: 2022-01-18 23:42\n"
+"POT-Creation-Date: 2022-01-19 04:18+0000\n"
+"PO-Revision-Date: 2022-01-19 04:28\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -6475,7 +6475,7 @@ msgid "Signup"
 msgstr ""
 
 #: templates/InvenTree/settings/mixins/settings.html:5
-#: templates/InvenTree/settings/settings.html:12 templates/navbar.html:118
+#: templates/InvenTree/settings/settings.html:12 templates/navbar.html:113
 msgid "Settings"
 msgstr ""
 
@@ -9264,11 +9264,11 @@ msgstr ""
 msgid "Sell"
 msgstr ""
 
-#: templates/navbar.html:113
+#: templates/navbar.html:114
 msgid "Logout"
 msgstr ""
 
-#: templates/navbar.html:115
+#: templates/navbar.html:116
 msgid "Login"
 msgstr ""
 
