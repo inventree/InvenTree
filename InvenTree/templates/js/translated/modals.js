@@ -127,6 +127,9 @@ function createNewModal(options={}) {
         $(modal_name).find('#modal-form-cancel').hide();
     }
 
+    // Steal keyboard focus
+    $(modal_name).focus();
+
     // Return the "name" of the modal
     return modal_name;
 }
@@ -369,6 +372,14 @@ function attachSelect(modal) {
 
     $(modal + ' .select2-container').addClass('select-full-width');
     $(modal + ' .select2-container').css('width', '100%');
+}
+
+
+function attachBootstrapCheckbox(modal) {
+    /* Attach 'switch' functionality to any checkboxes on the form */
+
+    $(modal + ' .checkboxinput').addClass('form-check-input');
+    $(modal + ' .checkboxinput').wrap(`<div class='form-check form-switch'></div>`);
 }
 
 
@@ -686,7 +697,9 @@ function injectModalForm(modal, form_html) {
      * Updates the HTML of the form content, and then applies some other updates
      */
     $(modal).find('.modal-form-content').html(form_html);
+
     attachSelect(modal);
+    attachBootstrapCheckbox(modal);
 }
 
 

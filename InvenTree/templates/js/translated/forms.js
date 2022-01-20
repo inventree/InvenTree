@@ -835,7 +835,9 @@ function updateFieldValue(name, value, field, options) {
 // Find the named field element in the modal DOM
 function getFormFieldElement(name, options) {
 
-    var el = $(options.modal).find(`#id_${name}`);
+    var field_name = getFieldName(name, options);
+
+    var el = $(options.modal).find(`#id_${field_name}`);
 
     if (!el.exists) {
         console.log(`ERROR: Could not find form element for field '${name}'`);
@@ -1148,7 +1150,9 @@ function handleFormErrors(errors, fields, options) {
 /*
  * Add a rendered error message to the provided field
  */
-function addFieldErrorMessage(field_name, error_text, error_idx, options) {
+function addFieldErrorMessage(name, error_text, error_idx, options) {
+
+    field_name = getFieldName(name, options);
 
     // Add the 'form-field-error' class
     $(options.modal).find(`#div_id_${field_name}`).addClass('form-field-error');
@@ -1226,7 +1230,9 @@ function addClearCallbacks(fields, options) {
 
 function addClearCallback(name, field, options) {
 
-    var el = $(options.modal).find(`#clear_${name}`);
+    var field_name = getFieldName(name, options);
+
+    var el = $(options.modal).find(`#clear_${field_name}`);
     
     if (!el) {
         console.log(`WARNING: addClearCallback could not find field '${name}'`);
@@ -1374,21 +1380,23 @@ function initializeRelatedFields(fields, options) {
  */
 function addSecondaryModal(field, fields, options) {
 
-    var name = field.name;
+    var field_name = getFieldName(field.name, options);
 
-    var secondary = field.secondary;
+    var depth = options.depth || 0;
 
     var html = `
     <span style='float: right;'>
-        <div type='button' class='btn btn-primary btn-secondary btn-form-secondary' title='${secondary.title || secondary.label}' id='btn-new-${name}'>
-            ${secondary.label || secondary.title}
+        <div type='button' class='btn btn-primary btn-secondary btn-form-secondary' title='${field.secondary.title || field.secondary.label}' id='btn-new-${field_name}'>
+            ${field.secondary.label || field.secondary.title}
         </div>
     </span>`;
 
-    $(options.modal).find(`label[for="id_${name}"]`).append(html);
+    $(options.modal).find(`label[for="id_${field_name}"]`).append(html);
 
     // Callback function when the secondary button is pressed
-    $(options.modal).find(`#btn-new-${name}`).click(function() {
+    $(options.modal).find(`#btn-new-${field_name}`).click(function() {
+
+        var secondary = field.secondary;
 
         // Determine the API query URL
         var url = secondary.api_url || field.api_url;
@@ -1409,15 +1417,23 @@ function addSecondaryModal(field, fields, options) {
                 // Force refresh from the API, to get full detail
                 inventreeGet(`${url}${data.pk}/`, {}, {
                     success: function(responseData) {
-
-                        setRelatedFieldData(name, responseData, options);
+                        setRelatedFieldData(field.name, responseData, options);
                     }
                 });
             };
         }
 
+        // Relinquish keyboard focus for this modal
+        $(options.modal).modal({
+            keyboard: false,
+        });
+
         // Method should be "POST" for creation
         secondary.method = secondary.method || 'POST';
+
+        secondary.modal = null;
+
+        secondary.depth = depth + 1;
 
         constructForm(
             url,
@@ -1758,6 +1774,20 @@ function renderModelData(name, model, data, parameters, options) {
 
 
 /*
+ * Construct a field name for the given field
+ */
+function getFieldName(name, options) {
+    var field_name = name;
+
+    if (options.depth) {
+        field_name += `_${options.depth}`;
+    }
+
+    return field_name;
+}
+
+
+/*
  * Construct a single form 'field' for rendering in a form.
  * 
  * arguments:
@@ -1783,7 +1813,7 @@ function constructField(name, parameters, options) {
         return constructCandyInput(name, parameters, options);
     }
 
-    var field_name = `id_${name}`;
+    var field_name = getFieldName(name, options);
 
     // Hidden inputs are rendered without label / help text / etc
     if (parameters.hidden) {
@@ -1803,6 +1833,8 @@ function constructField(name, parameters, options) {
 
         var group = parameters.group;
 
+        var group_id = getFieldName(group, options);
+
         var group_options = options.groups[group] || {};
 
         // Are we starting a new group?
@@ -1810,12 +1842,12 @@ function constructField(name, parameters, options) {
         if (parameters.group != options.current_group) {
 
             html += `
-            <div class='panel form-panel' id='form-panel-${group}' group='${group}'>
-                <div class='panel-heading form-panel-heading' id='form-panel-heading-${group}'>`;
+            <div class='panel form-panel' id='form-panel-${group_id}' group='${group}'>
+                <div class='panel-heading form-panel-heading' id='form-panel-heading-${group_id}'>`;
             if (group_options.collapsible) {
                 html += `
-                <div data-bs-toggle='collapse' data-bs-target='#form-panel-content-${group}'>
-                    <a href='#'><span id='group-icon-${group}' class='fas fa-angle-up'></span> 
+                <div data-bs-toggle='collapse' data-bs-target='#form-panel-content-${group_id}'>
+                    <a href='#'><span id='group-icon-${group_id}' class='fas fa-angle-up'></span> 
                 `;
             } else {
                 html += `<div>`;
@@ -1829,7 +1861,7 @@ function constructField(name, parameters, options) {
 
             html += `
                 </div></div>
-                <div class='panel-content form-panel-content' id='form-panel-content-${group}'>
+                <div class='panel-content form-panel-content' id='form-panel-content-${group_id}'>
             `;
         }
 
@@ -1848,7 +1880,7 @@ function constructField(name, parameters, options) {
         html += parameters.before;
     }
     
-    html += `<div id='div_${field_name}' class='${form_classes}'>`;
+    html += `<div id='div_id_${field_name}' class='${form_classes}'>`;
 
     // Add a label
     if (!options.hideLabels) {
@@ -1886,13 +1918,13 @@ function constructField(name, parameters, options) {
         }
     }
 
-    html += constructInput(name, parameters, options);
+    html += constructInput(field_name, parameters, options);
 
     if (extra) {
 
         if (!parameters.required) {
             html += `
-            <span class='input-group-text form-clear' id='clear_${name}' title='{% trans "Clear input" %}'>
+            <span class='input-group-text form-clear' id='clear_${field_name}' title='{% trans "Clear input" %}'>
                 <span class='icon-red fas fa-backspace'></span>
             </span>`;
         }
@@ -1909,7 +1941,7 @@ function constructField(name, parameters, options) {
     }
 
     // Div for error messages
-    html += `<div id='errors-${name}'></div>`;
+    html += `<div id='errors-${field_name}'></div>`;
 
 
     html += `</div>`; // controls
