@@ -1487,6 +1487,7 @@ class WebhookEndpoint(models.Model):
 
         # no token
         if self.verify == VerificationMethod.NONE:
+            # do nothing as no method was chosen
             pass
 
         # static token
