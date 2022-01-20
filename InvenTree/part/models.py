@@ -2188,9 +2188,7 @@ def after_save_part(sender, instance: Part, created, **kwargs):
     Function to be executed after a Part is saved
     """
 
-    if created:
-        pass
-    else:
+    if not created:
         # Check part stock only if we are *updating* the part (not creating it)
 
         # Run this check in the background
