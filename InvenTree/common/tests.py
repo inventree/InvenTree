@@ -10,6 +10,8 @@ from django.contrib.auth import get_user_model
 from .models import InvenTreeSetting, WebhookEndpoint, WebhookMessage, NotificationEntry
 from .api import WebhookView
 
+CONTENT_TYPE_JSON = 'application/json'
+
 
 class SettingsTest(TestCase):
     """
@@ -105,7 +107,7 @@ class WebhookMessageTests(TestCase):
     def test_missing_token(self):
         response = self.client.post(
             self.url,
-            content_type='application/json',
+            content_type=CONTENT_TYPE_JSON,
         )
 
         assert response.status_code == HTTPStatus.FORBIDDEN
@@ -116,7 +118,7 @@ class WebhookMessageTests(TestCase):
     def test_bad_token(self):
         response = self.client.post(
             self.url,
-            content_type='application/json',
+            content_type=CONTENT_TYPE_JSON,
             **{'HTTP_TOKEN': '1234567fghj'},
         )
 
@@ -126,7 +128,7 @@ class WebhookMessageTests(TestCase):
     def test_bad_url(self):
         response = self.client.post(
             '/api/webhook/1234/',
-            content_type='application/json',
+            content_type=CONTENT_TYPE_JSON,
         )
 
         assert response.status_code == HTTPStatus.NOT_FOUND
@@ -135,7 +137,7 @@ class WebhookMessageTests(TestCase):
         response = self.client.post(
             self.url,
             data="{'this': 123}",
-            content_type='application/json',
+            content_type=CONTENT_TYPE_JSON,
             **{'HTTP_TOKEN': str(self.endpoint_def.token)},
         )
 
@@ -152,7 +154,7 @@ class WebhookMessageTests(TestCase):
         # check
         response = self.client.post(
             self.url,
-            content_type='application/json',
+            content_type=CONTENT_TYPE_JSON,
         )
 
         assert response.status_code == HTTPStatus.OK
@@ -167,7 +169,7 @@ class WebhookMessageTests(TestCase):
         # check
         response = self.client.post(
             self.url,
-            content_type='application/json',
+            content_type=CONTENT_TYPE_JSON,
         )
 
         assert response.status_code == HTTPStatus.FORBIDDEN
@@ -182,7 +184,7 @@ class WebhookMessageTests(TestCase):
         # check
         response = self.client.post(
             self.url,
-            content_type='application/json',
+            content_type=CONTENT_TYPE_JSON,
             **{'HTTP_TOKEN': str('68MXtc/OiXdA5e2Nq9hATEVrZFpLb3Zb0oau7n8s31I=')},
         )
 
@@ -193,7 +195,7 @@ class WebhookMessageTests(TestCase):
         response = self.client.post(
             self.url,
             data={"this": "is a message"},
-            content_type='application/json',
+            content_type=CONTENT_TYPE_JSON,
             **{'HTTP_TOKEN': str(self.endpoint_def.token)},
         )
 
