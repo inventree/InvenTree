@@ -390,6 +390,10 @@ class PluginsRegistry:
             logger.warning("activate_integration_schedule failed, database not ready")
 
     def deactivate_integration_schedule(self):
+        """
+        Deactivate ScheduleMixin
+        currently nothing is done
+        """
         pass
 
     def activate_integration_app(self, plugins, force_reload=False):
