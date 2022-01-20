@@ -124,12 +124,12 @@ class BarcodeAPITest(APITestCase):
 
         self.assertIn('success', data)
 
-        hash = data['hash']
+        result_hash = data['hash']
 
         # Read the item out from the database again
         item = StockItem.objects.get(pk=522)
 
-        self.assertEqual(hash, item.uid)
+        self.assertEqual(result_hash, item.uid)
 
         # Ensure that the same UID cannot be assigned to a different stock item!
         response = self.client.post(
