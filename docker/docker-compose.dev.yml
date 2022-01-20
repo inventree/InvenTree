@@ -45,6 +45,10 @@ services:
         ports:
             # Expose web server on port 8000
             - 8000:8000
+        # Note: If using the inventree-dev-proxy container (see below),
+        # comment out the "ports" directive (above) and uncomment the "expose" directive
+        #expose:
+        #    - 8000
         volumes:
             # Ensure you specify the location of the 'src' directory at the end of this file
             - src:/home/inventree
@@ -69,6 +73,25 @@ services:
             # Environment variables required for the dev server are configured in dev-config.env
             - dev-config.env
         restart: unless-stopped
+
+    ### Optional: Serve static and media files using nginx
+    ### Uncomment the following lines to enable nginx proxy for testing
+    ### Note: If enabling the proxy, change "ports" to "expose" for the inventree-dev-server container (above)
+    #inventree-dev-proxy:
+    #    container_name: inventree-dev-proxy
+    #    image: nginx:stable
+    #    depends_on:
+    #        - inventree-dev-server
+    #    ports:
+    #        # Change "8000" to the port that you want InvenTree web server to be available on
+    #        - 8000:80
+    #    volumes:
+    #        # Provide ./nginx.conf file to the container
+    #        # Refer to the provided example file as a starting point
+    #        - ./nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
+    #        # nginx proxy needs access to static and media files
+    #        - src:/var/www
+    #    restart: unless-stopped
 
 volumes:
     # NOTE: Change "../" to a directory on your local machine, where the InvenTree source code is located
