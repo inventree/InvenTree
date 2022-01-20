@@ -451,8 +451,17 @@ class I18nStaticNode(StaticNode):
     replaces a variable named *lng* in the path with the current language
     """
     def render(self, context):
-        self.path.var = self.path.var.format(lng=context.request.LANGUAGE_CODE)
+
+        self.original = getattr(self, 'original', None)
+
+        if not self.original:
+            # Store the original (un-rendered) path template, as it gets overwritten below
+            self.original = self.path.var
+
+        self.path.var = self.original.format(lng=context.request.LANGUAGE_CODE)
+
         ret = super().render(context)
+
         return ret
 
 
@@ -480,4 +489,5 @@ else:
         # change path to called ressource
         bits[1] = f"'{loc_name}/{{lng}}.{bits[1][1:-1]}'"
         token.contents = ' '.join(bits)
+
         return I18nStaticNode.handle_token(parser, token)
