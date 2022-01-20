@@ -1475,11 +1475,9 @@ class WebhookEndpoint(models.Model):
 
     def process_webhook(self):
         if self.token:
-            self.token = self.token
             self.verify = VerificationMethod.TOKEN
             # TODO make a object-setting
         if self.secret:
-            self.secret = self.secret
             self.verify = VerificationMethod.HMAC
             # TODO make a object-setting
         return True
