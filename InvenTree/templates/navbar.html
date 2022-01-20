@@ -110,12 +110,12 @@
           {% if user.is_staff and not demo %}
           <li><a class='dropdown-item' href="/admin/"><span class="fas fa-user-shield"></span> {% trans "Admin" %}</a></li>
           {% endif %}
+          <li><a class='dropdown-item' href="{% url 'settings' %}"><span class="fas fa-cog"></span> {% trans "Settings" %}</a></li>
           <li><a class='dropdown-item' href="{% url 'account_logout' %}"><span class="fas fa-sign-out-alt"></span> {% trans "Logout" %}</a></li>
           {% else %}
           <li><a class='dropdown-item' href="{% url 'account_login' %}"><span class="fas fa-sign-in-alt"></span> {% trans "Login" %}</a></li>
           {% endif %}
           <hr>
-          <li><a class='dropdown-item' href="{% url 'settings' %}"><span class="fas fa-cog"></span> {% trans "Settings" %}</a></li>
           <li id='launch-stats'>
             <a class='dropdown-item' href='#'>
               {% if system_healthy or not user.is_staff %}

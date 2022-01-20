@@ -27,6 +27,7 @@ from stock import models as stock_models
 from company.models import Company, SupplierPart
 from plugin.events import trigger_event
 
+import InvenTree.helpers
 from InvenTree.fields import InvenTreeModelMoneyField, RoundingDecimalField
 from InvenTree.helpers import decimal2string, increment, getSetting
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus, StockHistoryCode
@@ -414,16 +415,12 @@ class PurchaseOrder(Order):
             )
 
         try:
-            if not (quantity % 1 == 0):
-                raise ValidationError({
-                    "quantity": _("Quantity must be an integer")
-                })
             if quantity < 0:
                 raise ValidationError({
                     "quantity": _("Quantity must be a positive number")
                 })
-            quantity = int(quantity)
-        except (ValueError, TypeError):
+            quantity = InvenTree.helpers.clean_decimal(quantity)
+        except TypeError:
             raise ValidationError({
                 "quantity": _("Invalid quantity provided")
             })
