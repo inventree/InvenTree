@@ -95,7 +95,7 @@ class PluginConfig(models.Model):
 
         if not reload:
             if (self.active is False and self.__org_active is True) or \
-                (self.active is True and self.__org_active is False):
+               (self.active is True and self.__org_active is False):
                 registry.reload_plugins()
 
         return ret
