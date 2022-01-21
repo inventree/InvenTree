@@ -31,7 +31,7 @@ class InvenTreeExchange(SimpleExchangeBackend):
         try:
             super().update_rates(base=base_currency, symbols=symbols)
         # catch connection errors
-        except (HTTPError, URLError):
+        except URLError:
             print('Encountered connection error while updating')
         except OperationalError as e:
             if 'SerializationFailure' in e.__cause__.__class__.__name__:
