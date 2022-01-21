@@ -173,8 +173,8 @@ class IntegrationPluginBase(MixinBase, plugin_base.InvenTreePluginBase):
         """
         License of plugin
         """
-        license = getattr(self, 'LICENSE', None)
-        return license
+        lic = getattr(self, 'LICENSE', None)
+        return lic
     # endregion
 
     @property

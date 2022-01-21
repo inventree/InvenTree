@@ -92,5 +92,4 @@ class OrderMatchItemForm(MatchItemForm):
                 default_amount=clean_decimal(row.get('purchase_price', '')),
             )
 
-        # return default
         return super().get_special_field(col_guess, row, file_manager)
