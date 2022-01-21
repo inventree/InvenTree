@@ -75,7 +75,6 @@ class BomMatchItemForm(MatchItemForm):
                 })
             )
 
-        # return default
         return super().get_special_field(col_guess, row, file_manager)
 
 

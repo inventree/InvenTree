@@ -446,10 +446,10 @@ class PartSerialNumberDetail(generics.RetrieveAPIView):
         }
 
         if latest is not None:
-            next = increment(latest)
+            next_serial = increment(latest)
 
-            if next != increment:
-                data['next'] = next
+            if next_serial != increment:
+                data['next'] = next_serial
 
         return Response(data)
 
