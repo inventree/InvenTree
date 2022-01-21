@@ -1022,7 +1022,7 @@ class StockItem(MPTTModel):
     def has_tracking_info(self):
         return self.tracking_info_count > 0
 
-    def add_tracking_entry(self, entry_type, user, deltas={}, notes='', **kwargs):
+    def add_tracking_entry(self, entry_type, user, deltas=None, notes='', **kwargs):
         """
         Add a history tracking entry for this StockItem
 
@@ -1033,6 +1033,8 @@ class StockItem(MPTTModel):
             notes - User notes associated with this tracking entry
             url - Optional URL associated with this tracking entry
         """
+        if deltas is None:
+            deltas = {}
 
         # Has a location been specified?
         location = kwargs.get('location', None)

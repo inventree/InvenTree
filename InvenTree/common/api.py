@@ -67,7 +67,6 @@ class WebhookView(CsrfExemptMixin, APIView):
                 message,
             )
 
-        # return results
         data = self.webhook.get_return(payload, headers, request)
         return HttpResponse(data)
 
