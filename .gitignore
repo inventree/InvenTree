@@ -84,4 +84,4 @@ node_modules/
 maintenance_mode_state.txt
 
 # plugin dev directory
-plugins/
+# plugins/
