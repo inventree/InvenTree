@@ -25,8 +25,8 @@ def hash_barcode(barcode_data):
 
     barcode_data = ''.join(list(printable_chars))
 
-    hash = hashlib.md5(str(barcode_data).encode())
-    return str(hash.hexdigest())
+    result_hash = hashlib.md5(str(barcode_data).encode())
+    return str(result_hash.hexdigest())
 
 
 class BarcodeMixin:
