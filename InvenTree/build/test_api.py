@@ -193,7 +193,7 @@ class BuildOutputCompleteTest(BuildAPITest):
         self.assertTrue('accept_unallocated' in response.data)
 
         # Accept unallocated stock
-        response = self.post(
+        self.post(
             finish_url,
             {
                 'accept_unallocated': True,

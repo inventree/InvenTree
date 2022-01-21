@@ -109,14 +109,14 @@ class BarcodeScan(APIView):
         # No plugin is found!
         # However, the hash of the barcode may still be associated with a StockItem!
         else:
-            hash = hash_barcode(barcode_data)
+            result_hash = hash_barcode(barcode_data)
 
-            response['hash'] = hash
+            response['hash'] = result_hash
             response['plugin'] = None
 
             # Try to look for a matching StockItem
             try:
-                item = StockItem.objects.get(uid=hash)
+                item = StockItem.objects.get(uid=result_hash)
                 serializer = StockItemSerializer(item, part_detail=True, location_detail=True, supplier_part_detail=True)
                 response['stockitem'] = serializer.data
                 response['url'] = reverse('stock-item-detail', kwargs={'pk': item.id})
@@ -182,8 +182,8 @@ class BarcodeAssign(APIView):
         # Matching plugin was found
         if plugin is not None:
 
-            hash = plugin.hash()
-            response['hash'] = hash
+            result_hash = plugin.hash()
+            response['hash'] = result_hash
             response['plugin'] = plugin.name
 
             # Ensure that the barcode does not already match a database entry
@@ -208,14 +208,14 @@ class BarcodeAssign(APIView):
                     match_found = True
 
         else:
-            hash = hash_barcode(barcode_data)
+            result_hash = hash_barcode(barcode_data)
 
-            response['hash'] = hash
+            response['hash'] = result_hash
             response['plugin'] = None
 
             # Lookup stock item by hash
             try:
-                item = StockItem.objects.get(uid=hash)
+                item = StockItem.objects.get(uid=result_hash)
                 response['error'] = _('Barcode hash already matches Stock Item')
                 match_found = True
             except StockItem.DoesNotExist:
