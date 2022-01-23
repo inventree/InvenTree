@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-21 00:29+0000\n"
-"PO-Revision-Date: 2022-01-23 09:29\n"
+"PO-Revision-Date: 2022-01-23 12:09\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -8126,7 +8126,7 @@ msgstr "Bestell-ID"
 
 #: templates/js/translated/model_renderers.js:253
 msgid "Shipment ID"
-msgstr ""
+msgstr "Sendungs-ID"
 
 #: templates/js/translated/model_renderers.js:273
 msgid "Category ID"
@@ -8142,7 +8142,7 @@ msgstr "Zuliefererteil-ID"
 
 #: templates/js/translated/order.js:75
 msgid "No stock items have been allocated to this shipment"
-msgstr ""
+msgstr "Dieser Sendung wurden keine Artikel zugewiesen"
 
 #: templates/js/translated/order.js:80
 msgid "The following stock items will be shipped"
@@ -8158,7 +8158,7 @@ msgstr ""
 
 #: templates/js/translated/order.js:181
 msgid "Create New Shipment"
-msgstr ""
+msgstr "Sendung anlegen"
 
 #: templates/js/translated/order.js:206
 msgid "Add Customer"
@@ -8263,7 +8263,7 @@ msgstr "Ungültiger Kunde"
 
 #: templates/js/translated/order.js:1322
 msgid "Edit shipment"
-msgstr ""
+msgstr "Sendung bearbeiten"
 
 #: templates/js/translated/order.js:1325
 msgid "Complete shipment"
@@ -8271,15 +8271,15 @@ msgstr ""
 
 #: templates/js/translated/order.js:1330
 msgid "Delete shipment"
-msgstr ""
+msgstr "Sendung löschen"
 
 #: templates/js/translated/order.js:1350
 msgid "Edit Shipment"
-msgstr ""
+msgstr "Sendung bearbeiten"
 
 #: templates/js/translated/order.js:1367
 msgid "Delete Shipment"
-msgstr ""
+msgstr "Sendung löschen"
 
 #: templates/js/translated/order.js:1401
 msgid "No matching shipments found"
@@ -8287,7 +8287,7 @@ msgstr ""
 
 #: templates/js/translated/order.js:1411
 msgid "Shipment Reference"
-msgstr ""
+msgstr "Sendunsreferenz"
 
 #: templates/js/translated/order.js:1435
 msgid "Not shipped"
