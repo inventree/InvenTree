@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-21 00:29+0000\n"
-"PO-Revision-Date: 2022-01-23 08:32\n"
+"PO-Revision-Date: 2022-01-23 09:29\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -2286,7 +2286,7 @@ msgstr "Body dieser Nachricht"
 
 #: common/models.py:1569
 msgid "Endpoint on which this message was received"
-msgstr ""
+msgstr "Endpunkt, über den diese Nachricht empfangen wurde"
 
 #: common/models.py:1574
 msgid "Worked on"
@@ -3895,7 +3895,7 @@ msgstr ""
 
 #: part/api.py:505
 msgid "This option must be selected"
-msgstr ""
+msgstr "Diese Option muss ausgewählt werden"
 
 #: part/api.py:847
 msgid "Must be greater than zero"
@@ -4355,7 +4355,7 @@ msgstr ""
 
 #: part/serializers.py:670
 msgid "Remove Existing Data"
-msgstr ""
+msgstr "Bestehende Daten entfernen"
 
 #: part/serializers.py:671
 msgid "Remove existing BOM items before copying"
@@ -4363,7 +4363,7 @@ msgstr ""
 
 #: part/serializers.py:676
 msgid "Include Inherited"
-msgstr ""
+msgstr "Vererbtes einschließen"
 
 #: part/serializers.py:677
 msgid "Include BOM items which are inherited from templated parts"
@@ -4371,11 +4371,11 @@ msgstr ""
 
 #: part/serializers.py:682
 msgid "Skip Invalid Rows"
-msgstr ""
+msgstr "Ungültige Zeilen überspringen"
 
 #: part/serializers.py:683
 msgid "Enable this option to skip invalid rows"
-msgstr ""
+msgstr "Aktiviere diese Option, um ungültige Zeilen zu überspringen"
 
 #: part/tasks.py:53
 msgid "Low stock notification"
@@ -5240,7 +5240,7 @@ msgstr ""
 
 #: plugin/integration.py:152
 msgid "No date found"
-msgstr ""
+msgstr "Kein Datum gefunden"
 
 #: plugin/models.py:26
 msgid "Plugin Configuration"
@@ -6345,23 +6345,23 @@ msgstr "Seite existiert nicht"
 
 #: templates/500.html:5 templates/500.html:11
 msgid "Internal Server Error"
-msgstr ""
+msgstr "Interner Serverfehler"
 
 #: templates/500.html:14
 msgid "The InvenTree server raised an internal error"
-msgstr ""
+msgstr "Der InvenTree-Server hat einen internen Fehler geworfen"
 
 #: templates/500.html:15
 msgid "Refer to the error log in the admin interface for further details"
-msgstr ""
+msgstr "Weitere Details finden Sie im Fehlerlog im Admin-Interface"
 
 #: templates/503.html:10 templates/503.html:35
 msgid "Site is in Maintenance"
-msgstr ""
+msgstr "System wird gewartet"
 
 #: templates/503.html:41
 msgid "The site is currently in maintenance and should be up again soon!"
-msgstr ""
+msgstr "Die Seite ist derzeit in Wartung und sollte bald wieder verfügbar sein!"
 
 #: templates/InvenTree/index.html:7
 msgid "Index"
@@ -6483,12 +6483,12 @@ msgstr "Einstellungen"
 
 #: templates/InvenTree/settings/mixins/urls.html:5
 msgid "URLs"
-msgstr ""
+msgstr "URLs"
 
 #: templates/InvenTree/settings/mixins/urls.html:8
 #, python-format
 msgid "The Base-URL for this plugin is <a href=\"/%(base)s\" target=\"_blank\"><strong>%(base)s</strong></a>."
-msgstr ""
+msgstr "Die Basis-URL für dieses Plugin ist <a href=\"/%(base)s\" target=\"_blank\"><strong>%(base)s</strong></a>."
 
 #: templates/InvenTree/settings/mixins/urls.html:23
 msgid "Open in new tab"
@@ -6512,20 +6512,20 @@ msgstr "Teil-Parametervorlage"
 
 #: templates/InvenTree/settings/plugin.html:10
 msgid "Plugin Settings"
-msgstr ""
+msgstr "Plugin-Einstellungen"
 
 #: templates/InvenTree/settings/plugin.html:16
 msgid "Changing the settings below require you to immediatly restart InvenTree. Do not change this while under active usage."
-msgstr ""
+msgstr "Wenn Sie die folgenden Einstellungen ändern, müssen Sie InvenTree sofort neu starten. Ändern Sie dies nicht während der aktiven Nutzung."
 
 #: templates/InvenTree/settings/plugin.html:33
 msgid "Plugins"
-msgstr ""
+msgstr "Plugins"
 
 #: templates/InvenTree/settings/plugin.html:38
 #: templates/js/translated/plugin.js:15
 msgid "Install Plugin"
-msgstr ""
+msgstr "Plugin installieren"
 
 #: templates/InvenTree/settings/plugin.html:47 templates/navbar.html:111
 #: users/models.py:39
@@ -6544,7 +6544,7 @@ msgstr "Version"
 
 #: templates/InvenTree/settings/plugin.html:92
 msgid "Inactive plugins"
-msgstr ""
+msgstr "Inaktive Plugins"
 
 #: templates/InvenTree/settings/plugin.html:115
 msgid "Plugin Error Stack"
@@ -6561,15 +6561,15 @@ msgstr ""
 #: templates/InvenTree/settings/plugin_settings.html:10
 #, python-format
 msgid "Plugin details for %(name)s"
-msgstr ""
+msgstr "Plugin-Details für %(name)s"
 
 #: templates/InvenTree/settings/plugin_settings.html:17
 msgid "Plugin information"
-msgstr ""
+msgstr "Plugin-Informationen"
 
 #: templates/InvenTree/settings/plugin_settings.html:48
 msgid "no version information supplied"
-msgstr ""
+msgstr "keine Versionsinformation angegeben"
 
 #: templates/InvenTree/settings/plugin_settings.html:62
 msgid "License"
@@ -6585,23 +6585,23 @@ msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:83
 msgid "Installation method"
-msgstr ""
+msgstr "Installationsmethode"
 
 #: templates/InvenTree/settings/plugin_settings.html:86
 msgid "This plugin was installed as a package"
-msgstr ""
+msgstr "Dieses Plugin wurde als Paket installiert"
 
 #: templates/InvenTree/settings/plugin_settings.html:88
 msgid "This plugin was found in a local InvenTree path"
-msgstr ""
+msgstr "Dieses Plugin wurde in einem lokalen InvenTree Pfad gefunden"
 
 #: templates/InvenTree/settings/plugin_settings.html:94
 msgid "Installation path"
-msgstr ""
+msgstr "Installationspfad"
 
 #: templates/InvenTree/settings/plugin_settings.html:100
 msgid "Commit Author"
-msgstr ""
+msgstr "Commit-Autor"
 
 #: templates/InvenTree/settings/plugin_settings.html:104
 #: templates/about.html:47
@@ -6615,7 +6615,7 @@ msgstr "Commit-Hash"
 
 #: templates/InvenTree/settings/plugin_settings.html:112
 msgid "Commit Message"
-msgstr ""
+msgstr "Commit-Nachricht"
 
 #: templates/InvenTree/settings/plugin_settings.html:117
 msgid "Sign Status"
@@ -7186,23 +7186,23 @@ msgstr ""
 
 #: templates/allauth_2fa/setup.html:6
 msgid "Setup Two-Factor Authentication"
-msgstr ""
+msgstr "Zwei-Faktor-Authentifizierung einrichten"
 
 #: templates/allauth_2fa/setup.html:10
 msgid "Step 1"
-msgstr ""
+msgstr "Schritt 1"
 
 #: templates/allauth_2fa/setup.html:14
 msgid "Scan the QR code below with a token generator of your choice (for instance Google Authenticator)."
-msgstr ""
+msgstr "Scannen Sie den QR-Code unten mit einem Token-Generator Ihrer Wahl (z.B. Google Authenticator)."
 
 #: templates/allauth_2fa/setup.html:23
 msgid "Step 2"
-msgstr ""
+msgstr "Schritt 2"
 
 #: templates/allauth_2fa/setup.html:27
 msgid "Input a token generated by the app:"
-msgstr ""
+msgstr "Geben Sie das von der App generierte Token ein:"
 
 #: templates/allauth_2fa/setup.html:35
 msgid "Verify"
@@ -7342,7 +7342,7 @@ msgstr "Die angefragte Ressource kann auf diesem Server nicht gefunden werden"
 
 #: templates/js/translated/api.js:212
 msgid "Error 405: Method Not Allowed"
-msgstr ""
+msgstr "Fehler 405: Methode nicht erlaubt"
 
 #: templates/js/translated/api.js:213
 msgid "HTTP method not allowed at URL"
