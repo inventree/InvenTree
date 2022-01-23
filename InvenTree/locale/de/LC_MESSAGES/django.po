@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-21 00:29+0000\n"
-"PO-Revision-Date: 2022-01-21 00:35\n"
+"PO-Revision-Date: 2022-01-23 08:32\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -2214,15 +2214,15 @@ msgstr "Stückpreis für die angegebene Anzahl"
 
 #: common/models.py:1429 common/models.py:1568
 msgid "Endpoint"
-msgstr ""
+msgstr "Endpunkt"
 
 #: common/models.py:1430
 msgid "Endpoint at which this webhook is received"
-msgstr ""
+msgstr "Endpunkt, an dem dieser Webhook empfangen wird"
 
 #: common/models.py:1439
 msgid "Name for this webhook"
-msgstr ""
+msgstr "Name für diesen Webhook"
 
 #: common/models.py:1444 part/models.py:948 plugin/models.py:46
 #: templates/js/translated/table_filters.js:34
@@ -2234,15 +2234,15 @@ msgstr "Aktiv"
 
 #: common/models.py:1445
 msgid "Is this webhook active"
-msgstr ""
+msgstr "Ist dieser Webhook aktiv"
 
 #: common/models.py:1459
 msgid "Token"
-msgstr ""
+msgstr "Token"
 
 #: common/models.py:1460
 msgid "Token for access"
-msgstr ""
+msgstr "Token für Zugang"
 
 #: common/models.py:1467
 msgid "Secret"
@@ -2258,31 +2258,31 @@ msgstr ""
 
 #: common/models.py:1536
 msgid "Unique identifier for this message"
-msgstr ""
+msgstr "Eindeutige Kennung für diese Nachricht"
 
 #: common/models.py:1544
 msgid "Host"
-msgstr ""
+msgstr "Host"
 
 #: common/models.py:1545
 msgid "Host from which this message was received"
-msgstr ""
+msgstr "Host von dem diese Nachricht empfangen wurde"
 
 #: common/models.py:1552
 msgid "Header"
-msgstr ""
+msgstr "Header"
 
 #: common/models.py:1553
 msgid "Header of this message"
-msgstr ""
+msgstr "Header dieser Nachricht"
 
 #: common/models.py:1559
 msgid "Body"
-msgstr ""
+msgstr "Body"
 
 #: common/models.py:1560
 msgid "Body of this message"
-msgstr ""
+msgstr "Body dieser Nachricht"
 
 #: common/models.py:1569
 msgid "Endpoint on which this message was received"
@@ -6492,7 +6492,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/mixins/urls.html:23
 msgid "Open in new tab"
-msgstr ""
+msgstr "In neuem Tab öffnen"
 
 #: templates/InvenTree/settings/part.html:7
 msgid "Part Settings"
@@ -6540,7 +6540,7 @@ msgstr ""
 #: templates/InvenTree/settings/plugin.html:51
 #: templates/InvenTree/settings/plugin_settings.html:43
 msgid "Version"
-msgstr ""
+msgstr "Version"
 
 #: templates/InvenTree/settings/plugin.html:92
 msgid "Inactive plugins"
@@ -6573,7 +6573,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:62
 msgid "License"
-msgstr ""
+msgstr "Lizenz"
 
 #: templates/InvenTree/settings/plugin_settings.html:71
 msgid "The code information is pulled from the latest git commit for this plugin. It might not reflect official version numbers or information but the actual code running."
