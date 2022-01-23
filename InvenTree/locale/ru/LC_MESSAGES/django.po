@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-21 00:29+0000\n"
-"PO-Revision-Date: 2022-01-21 00:35\n"
+"PO-Revision-Date: 2022-01-23 10:32\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -103,12 +103,12 @@ msgstr "Некорректный идентификатор группы {g}"
 #: InvenTree/helpers.py:512
 #, python-brace-format
 msgid "Invalid group {group}"
-msgstr ""
+msgstr "Недопустимая группа {group}"
 
 #: InvenTree/helpers.py:518
 #, python-brace-format
 msgid "Invalid/no group {group}"
-msgstr ""
+msgstr "Недопустимая/несуществующая группа {group}"
 
 #: InvenTree/helpers.py:524
 msgid "No serial numbers found"
