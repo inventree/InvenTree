@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-21 00:29+0000\n"
-"PO-Revision-Date: 2022-01-23 12:09\n"
+"PO-Revision-Date: 2022-01-23 13:08\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -5244,11 +5244,11 @@ msgstr "Kein Datum gefunden"
 
 #: plugin/models.py:26
 msgid "Plugin Configuration"
-msgstr ""
+msgstr "Plugin-Konfiguration"
 
 #: plugin/models.py:27
 msgid "Plugin Configurations"
-msgstr ""
+msgstr "Plugin-Konfigurationen"
 
 #: plugin/models.py:32
 msgid "Key"
@@ -5288,23 +5288,23 @@ msgstr ""
 
 #: plugin/samples/integration/sample.py:52
 msgid "Numerical"
-msgstr ""
+msgstr "Numerisch"
 
 #: plugin/samples/integration/sample.py:53
 msgid "A numerical setting"
-msgstr ""
+msgstr "Eine numerische Einstellung"
 
 #: plugin/samples/integration/sample.py:58
 msgid "Choice Setting"
-msgstr ""
+msgstr "Auswahleinstellungen"
 
 #: plugin/samples/integration/sample.py:59
 msgid "A setting with multiple choices"
-msgstr ""
+msgstr "Eine Einstellung mit mehreren Optionen"
 
 #: plugin/serializers.py:50
 msgid "Source URL"
-msgstr ""
+msgstr "Quell-URL"
 
 #: plugin/serializers.py:51
 msgid "Source for the package - this can be a custom registry or a VCS path"
@@ -5312,7 +5312,7 @@ msgstr ""
 
 #: plugin/serializers.py:56
 msgid "Package Name"
-msgstr ""
+msgstr "Paket-Name"
 
 #: plugin/serializers.py:57
 msgid "Name for the Plugin Package - can also contain a version indicator"
@@ -5320,7 +5320,7 @@ msgstr ""
 
 #: plugin/serializers.py:60
 msgid "Confirm plugin installation"
-msgstr ""
+msgstr "Plugin-Installation bestätigen"
 
 #: plugin/serializers.py:61
 msgid "This will install this plugin now into the current instance. The instance will go into maintenance."
@@ -5686,7 +5686,7 @@ msgstr "Seriennummern {exists} existieren bereits"
 
 #: stock/models.py:1179
 msgid "Stock item has been assigned to a sales order"
-msgstr ""
+msgstr "Artikel wurde einem Kundenauftrag zugewiesen"
 
 #: stock/models.py:1182
 msgid "Stock item is installed in another item"
@@ -5710,7 +5710,7 @@ msgstr ""
 
 #: stock/models.py:1201 stock/serializers.py:775
 msgid "Duplicate stock items"
-msgstr ""
+msgstr "Artikel duplizeren"
 
 #: stock/models.py:1205
 msgid "Stock items must refer to the same part"
@@ -5799,11 +5799,11 @@ msgstr ""
 
 #: stock/serializers.py:593
 msgid "Item is allocated to a sales order"
-msgstr ""
+msgstr "Artikel ist einem Kundenauftrag zugeordnet"
 
 #: stock/serializers.py:597
 msgid "Item is allocated to a build order"
-msgstr ""
+msgstr "Artikel ist einem Fertigungsauftrag zugeordnet"
 
 #: stock/serializers.py:627
 msgid "Customer to assign stock items"
@@ -5811,7 +5811,7 @@ msgstr ""
 
 #: stock/serializers.py:633
 msgid "Selected company is not a customer"
-msgstr ""
+msgstr "Ausgewählte Firma ist kein Kunde"
 
 #: stock/serializers.py:641
 msgid "Stock assignment notes"
@@ -7178,7 +7178,7 @@ msgstr ""
 
 #: templates/allauth_2fa/remove.html:9
 msgid "Are you sure?"
-msgstr ""
+msgstr "Bist du sicher?"
 
 #: templates/allauth_2fa/remove.html:14
 msgid "Disable Two-Factor"
@@ -7493,7 +7493,7 @@ msgstr "Barcode entspricht keinem Lagerort"
 
 #: templates/js/translated/bom.js:36
 msgid "Download BOM Template"
-msgstr ""
+msgstr "Vorlage einer Stückliste herunterladen"
 
 #: templates/js/translated/bom.js:39 templates/js/translated/bom.js:73
 #: templates/js/translated/order.js:369 templates/js/translated/stock.js:517
@@ -8146,15 +8146,15 @@ msgstr "Dieser Sendung wurden keine Artikel zugewiesen"
 
 #: templates/js/translated/order.js:80
 msgid "The following stock items will be shipped"
-msgstr ""
+msgstr "Die folgenden Artikel werden verschickt"
 
 #: templates/js/translated/order.js:120
 msgid "Complete Shipment"
-msgstr ""
+msgstr "Sendung fertigstellen"
 
 #: templates/js/translated/order.js:126
 msgid "Confirm Shipment"
-msgstr ""
+msgstr "Sendung bestätigen"
 
 #: templates/js/translated/order.js:181
 msgid "Create New Shipment"
@@ -8267,7 +8267,7 @@ msgstr "Sendung bearbeiten"
 
 #: templates/js/translated/order.js:1325
 msgid "Complete shipment"
-msgstr ""
+msgstr "Sendung fertigstellen"
 
 #: templates/js/translated/order.js:1330
 msgid "Delete shipment"
@@ -8283,7 +8283,7 @@ msgstr "Sendung löschen"
 
 #: templates/js/translated/order.js:1401
 msgid "No matching shipments found"
-msgstr ""
+msgstr "Keine passenden Sendungen gefunden"
 
 #: templates/js/translated/order.js:1411
 msgid "Shipment Reference"
@@ -8291,15 +8291,15 @@ msgstr "Sendunsreferenz"
 
 #: templates/js/translated/order.js:1435
 msgid "Not shipped"
-msgstr ""
+msgstr "Nicht versandt"
 
 #: templates/js/translated/order.js:1441
 msgid "Tracking"
-msgstr ""
+msgstr "Nachverfolgen"
 
 #: templates/js/translated/order.js:1601
 msgid "Allocate Stock Items to Sales Order"
-msgstr ""
+msgstr "Artikel zu Kundenauftrag zuweisen"
 
 #: templates/js/translated/order.js:1809
 msgid "No sales order allocations found"
@@ -8340,11 +8340,11 @@ msgstr "Preis berechnen"
 
 #: templates/js/translated/order.js:2321
 msgid "Cannot be deleted as items have been shipped"
-msgstr ""
+msgstr "Kann nicht gelöscht werden, da Artikel versandt wurden"
 
 #: templates/js/translated/order.js:2324
 msgid "Cannot be deleted as items have been allocated"
-msgstr ""
+msgstr "Kann nicht gelöscht werden, da Artikel zugewiesen sind"
 
 #: templates/js/translated/order.js:2382
 msgid "Allocate Serial Numbers"
@@ -8448,7 +8448,7 @@ msgstr "Teil bearbeitet"
 
 #: templates/js/translated/part.js:351
 msgid "Create Part Variant"
-msgstr ""
+msgstr "Teil-Variante anlegen"
 
 #: templates/js/translated/part.js:418
 msgid "You are subscribed to notifications for this item"
@@ -8472,7 +8472,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:454
 msgid "Validate Bill of Materials"
-msgstr ""
+msgstr "Stückliste prüfen"
 
 #: templates/js/translated/part.js:457
 msgid "Validated Bill of Materials"
@@ -8480,7 +8480,7 @@ msgstr "überprüfte Stückliste"
 
 #: templates/js/translated/part.js:481
 msgid "Copy Bill of Materials"
-msgstr ""
+msgstr "Stückliste kopieren"
 
 #: templates/js/translated/part.js:509 templates/js/translated/part.js:594
 msgid "Trackable part"
@@ -8593,7 +8593,7 @@ msgstr "Einzelpreisdifferenz"
 
 #: templates/js/translated/plugin.js:22
 msgid "The Plugin was installed"
-msgstr ""
+msgstr "Das Plugin wurde installiert"
 
 #: templates/js/translated/report.js:67
 msgid "items selected"
@@ -8747,11 +8747,11 @@ msgstr ""
 
 #: templates/js/translated/stock.js:713
 msgid "Warning: Merge operation cannot be reversed"
-msgstr ""
+msgstr "Achtung: Das Zusammenführen kann nicht rückgängig gemacht werden"
 
 #: templates/js/translated/stock.js:714
 msgid "Some information will be lost when merging stock items"
-msgstr ""
+msgstr "Einige Informationen gehen verloren, wenn Artikel zusammengeführt werden"
 
 #: templates/js/translated/stock.js:716
 msgid "Stock transaction history will be deleted for merged items"
@@ -8763,11 +8763,11 @@ msgstr ""
 
 #: templates/js/translated/stock.js:803
 msgid "Confirm stock item merge"
-msgstr ""
+msgstr "Zusammenführung der Artikel bestätigen"
 
 #: templates/js/translated/stock.js:804
 msgid "Merge Stock Items"
-msgstr ""
+msgstr "Artikel zusammenführen"
 
 #: templates/js/translated/stock.js:899
 msgid "Transfer Stock"
@@ -9211,7 +9211,7 @@ msgstr "Zeilen pro Seite"
 
 #: templates/js/translated/tables.js:376
 msgid "Showing all rows"
-msgstr ""
+msgstr "Alle Zeilen anzeigen"
 
 #: templates/js/translated/tables.js:378
 msgid "Showing"
@@ -9320,15 +9320,15 @@ msgstr "Server wird mit Docker bereitgestellt"
 
 #: templates/stats.html:39
 msgid "Plugin Support"
-msgstr ""
+msgstr "Plugin-Unterstützung"
 
 #: templates/stats.html:43
 msgid "Plugin support enabled"
-msgstr ""
+msgstr "Plugin-Unterstützung aktiviert"
 
 #: templates/stats.html:45
 msgid "Plugin support disabled"
-msgstr ""
+msgstr "Plugin-Unterstützung deaktiviert"
 
 #: templates/stats.html:52
 msgid "Server status"
@@ -9396,11 +9396,11 @@ msgstr "Bestand verschieben"
 
 #: templates/stock_table.html:52
 msgid "Merge selected stock items"
-msgstr ""
+msgstr "Ausgewählte Artikel zusammenführen"
 
 #: templates/stock_table.html:52
 msgid "Merge stock"
-msgstr ""
+msgstr "Bestand zusammenführen"
 
 #: templates/stock_table.html:53
 msgid "Order selected items"
