@@ -1,5 +1,5 @@
 from common.settings import currency_code_default, currency_codes
-from urllib.error import HTTPError, URLError
+from urllib.error import URLError
 
 from djmoney.contrib.exchange.backends.base import SimpleExchangeBackend
 from django.db.utils import OperationalError
