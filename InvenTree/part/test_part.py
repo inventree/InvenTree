@@ -30,8 +30,8 @@ class TemplateTagTest(TestCase):
         self.assertEqual(type(inventree_extras.inventree_version()), str)
 
     def test_hash(self):
-        hash = inventree_extras.inventree_commit_hash()
-        self.assertGreater(len(hash), 5)
+        result_hash = inventree_extras.inventree_commit_hash()
+        self.assertGreater(len(result_hash), 5)
 
     def test_date(self):
         d = inventree_extras.inventree_commit_date()
