@@ -293,7 +293,7 @@ def progress_bar(val, max, *args, **kwargs):
     Render a progress bar element
     """
 
-    id = kwargs.get('id', 'progress-bar')
+    item_id = kwargs.get('id', 'progress-bar')
 
     if val > max:
         style = 'progress-bar-over'
@@ -317,7 +317,7 @@ def progress_bar(val, max, *args, **kwargs):
         style_tags.append(f'max-width: {max_width};')
 
     html = f"""
-    <div id='{id}' class='progress' style='{" ".join(style_tags)}'>
+    <div id='{item_id}' class='progress' style='{" ".join(style_tags)}'>
         <div class='progress-bar {style}' role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width:{percent}%'></div>
         <div class='progress-value'>{val} / {max}</div>
     </div>
