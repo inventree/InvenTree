@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-21 00:29+0000\n"
-"PO-Revision-Date: 2022-01-21 00:34\n"
+"PO-Revision-Date: 2022-01-25 18:45\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -103,7 +103,7 @@ msgstr "Groupe invalide : {g}"
 #: InvenTree/helpers.py:512
 #, python-brace-format
 msgid "Invalid group {group}"
-msgstr ""
+msgstr "Groupe invalide {group}"
 
 #: InvenTree/helpers.py:518
 #, python-brace-format
