@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-21 00:29+0000\n"
-"PO-Revision-Date: 2022-01-25 18:45\n"
+"PO-Revision-Date: 2022-01-25 19:44\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -108,7 +108,7 @@ msgstr "Groupe invalide {group}"
 #: InvenTree/helpers.py:518
 #, python-brace-format
 msgid "Invalid/no group {group}"
-msgstr ""
+msgstr "Invalide/aucun groupe {group}"
 
 #: InvenTree/helpers.py:524
 msgid "No serial numbers found"
@@ -566,15 +566,15 @@ msgstr "Aucun article d'inventaire correspondant trouvé"
 
 #: barcodes/api.py:193
 msgid "Barcode already matches Stock Item"
-msgstr ""
+msgstr "Le code-barres correspond déjà à l'objet StockItem"
 
 #: barcodes/api.py:197
 msgid "Barcode already matches Stock Location"
-msgstr ""
+msgstr "Le code-barres correspond déjà à l'objet Stock Location"
 
 #: barcodes/api.py:201
 msgid "Barcode already matches Part"
-msgstr ""
+msgstr "Le code-barres correspond déjà à l'objet Part"
 
 #: barcodes/api.py:207 barcodes/api.py:219
 msgid "Barcode hash already matches Stock Item"
