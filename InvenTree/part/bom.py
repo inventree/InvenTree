@@ -205,7 +205,7 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
 
                             supplier_parts_used.add(sp_part)
 
-                            if sp_part.supplier and sp_part.supplier:
+                            if sp_part.supplier:
                                 supplier_name = sp_part.supplier.name
                             else:
                                 supplier_name = ''

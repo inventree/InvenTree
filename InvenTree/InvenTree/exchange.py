@@ -1,5 +1,5 @@
 from common.settings import currency_code_default, currency_codes
-from urllib.error import HTTPError, URLError
+from urllib.error import URLError
 
 from djmoney.contrib.exchange.backends.base import SimpleExchangeBackend
 from django.db.utils import OperationalError
@@ -31,7 +31,7 @@ class InvenTreeExchange(SimpleExchangeBackend):
         try:
             super().update_rates(base=base_currency, symbols=symbols)
         # catch connection errors
-        except (HTTPError, URLError):
+        except URLError:
             print('Encountered connection error while updating')
         except OperationalError as e:
             if 'SerializationFailure' in e.__cause__.__class__.__name__:
