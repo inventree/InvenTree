@@ -788,7 +788,12 @@ class StockItem(MPTTModel):
 
         query = self.allocations.aggregate(q=Coalesce(Sum('quantity'), Decimal(0)))
 
-        return query['q']
+        total = query['q']
+
+        if total is None:
+            total = Decimal(0)
+
+        return total
 
     def sales_order_allocation_count(self):
         """
@@ -797,14 +802,22 @@ class StockItem(MPTTModel):
 
         query = self.sales_order_allocations.aggregate(q=Coalesce(Sum('quantity'), Decimal(0)))
 
-        return query['q']
+        total = query['q']
+
+        if total is None:
+            total = Decimal(0)
+
+        return total
 
     def allocation_count(self):
         """
         Return the total quantity allocated to builds or orders
         """
 
-        return self.build_allocation_count() + self.sales_order_allocation_count()
+        bo = self.build_allocation_count()
+        so = self.sales_order_allocation_count()
+
+        return bo + so
 
     def unallocated_quantity(self):
         """
