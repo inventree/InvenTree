@@ -1734,6 +1734,9 @@ function renderModelData(name, model, data, parameters, options) {
     case 'partparametertemplate':
         renderer = renderPartParameterTemplate;
         break;
+    case 'purchaseorder':
+        renderer = renderPurchaseOrder;
+        break;
     case 'salesorder':
         renderer = renderSalesOrder;
         break;
