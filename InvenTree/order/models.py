@@ -826,13 +826,14 @@ class PurchaseOrderLineItem(OrderLineItem):
         unique_together = (
             ('order', 'part', 'quantity', 'purchase_price')
         )
-    
 
     @staticmethod
     def get_api_url():
         return reverse('api-po-line-list')
 
     def clean(self):
+
+        super().clean()
 
         if self.order.supplier and self.part:
             # Supplier part *must* point to the same supplier!
