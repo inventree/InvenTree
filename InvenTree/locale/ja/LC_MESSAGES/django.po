@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-27 03:12+0000\n"
-"PO-Revision-Date: 2022-01-27 03:19\n"
+"POT-Creation-Date: 2022-01-27 03:49+0000\n"
+"PO-Revision-Date: 2022-01-27 04:36\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -2521,8 +2521,8 @@ msgstr ""
 #: company/models.py:545 company/templates/company/company_base.html:78
 #: company/templates/company/supplier_part.html:87 order/models.py:227
 #: order/templates/order/order_base.html:112
-#: order/templates/order/order_wizard/select_pos.html:30 part/bom.py:219
-#: part/bom.py:247 stock/templates/stock/item_base.html:397
+#: order/templates/order/order_wizard/select_pos.html:30 part/bom.py:237
+#: part/bom.py:265 stock/templates/stock/item_base.html:397
 #: templates/js/translated/company.js:337
 #: templates/js/translated/company.js:774 templates/js/translated/order.js:823
 #: templates/js/translated/part.js:215 templates/js/translated/part.js:863
@@ -2535,7 +2535,7 @@ msgid "Select supplier"
 msgstr ""
 
 #: company/models.py:551 company/templates/company/supplier_part.html:91
-#: part/bom.py:220 part/bom.py:248 templates/js/translated/order.js:1025
+#: part/bom.py:238 part/bom.py:266 templates/js/translated/order.js:1025
 #: templates/js/translated/part.js:226 templates/js/translated/part.js:881
 msgid "SKU"
 msgstr ""
@@ -3922,8 +3922,17 @@ msgstr ""
 msgid "Default Location"
 msgstr ""
 
-#: part/bom.py:126 part/templates/part/part_base.html:185
+#: part/bom.py:126 templates/email/low_stock_notification.html:17
+msgid "Total Stock"
+msgstr ""
+
+#: part/bom.py:127 part/templates/part/part_base.html:185
 msgid "Available Stock"
+msgstr ""
+
+#: part/bom.py:128 part/templates/part/part_base.html:203
+#: templates/js/translated/part.js:1301
+msgid "On Order"
 msgstr ""
 
 #: part/forms.py:84
@@ -4880,10 +4889,6 @@ msgstr ""
 #: part/templates/part/part_base.html:190 templates/js/translated/order.js:2217
 #: templates/js/translated/table_filters.js:193
 msgid "In Stock"
-msgstr ""
-
-#: part/templates/part/part_base.html:203 templates/js/translated/part.js:1301
-msgid "On Order"
 msgstr ""
 
 #: part/templates/part/part_base.html:210 templates/InvenTree/index.html:178
@@ -7280,10 +7285,6 @@ msgstr ""
 
 #: templates/email/low_stock_notification.html:9
 msgid "Click on the following link to view this part"
-msgstr ""
-
-#: templates/email/low_stock_notification.html:17
-msgid "Total Stock"
 msgstr ""
 
 #: templates/email/low_stock_notification.html:19
