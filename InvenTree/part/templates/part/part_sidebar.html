@@ -27,6 +27,10 @@
 {% endif %}
 {% trans "Pricing" as text %}
 {% include "sidebar_item.html" with label="pricing" text=text icon="fa-dollar-sign" %}
+{% if part.salable or part.component %}
+{% trans "Allocations" as text %}
+{% include "sidebar_item.html" with label="allocations" text=text icon="fa-bookmark" %}
+{% endif %}
 {% if part.purchaseable and roles.purchase_order.view %}
 {% trans "Suppliers" as text %}
 {% include "sidebar_item.html" with label="suppliers" text=text icon="fa-building" %}
