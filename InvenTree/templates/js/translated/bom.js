@@ -337,7 +337,7 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
 
     html += `
     <div class='alert alert-success alert-block'>
-        {% trans "Select and add a new variant item using the input below" %}
+        {% trans "Select and add a new substitute part using the input below" %}
     </div>
     `;
 
