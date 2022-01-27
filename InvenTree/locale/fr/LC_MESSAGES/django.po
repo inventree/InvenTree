@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-27 05:00+0000\n"
-"PO-Revision-Date: 2022-01-27 18:19\n"
+"PO-Revision-Date: 2022-01-27 19:20\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -8761,23 +8761,23 @@ msgstr ""
 
 #: templates/js/translated/stock.js:636
 msgid "Confirm stock assignment"
-msgstr ""
+msgstr "Confirmer l'assignation de stock"
 
 #: templates/js/translated/stock.js:637
 msgid "Assign Stock to Customer"
-msgstr ""
+msgstr "Assigner le stock au client"
 
 #: templates/js/translated/stock.js:714
 msgid "Warning: Merge operation cannot be reversed"
-msgstr ""
+msgstr "Attention : l'opération de fusion est irréversible"
 
 #: templates/js/translated/stock.js:715
 msgid "Some information will be lost when merging stock items"
-msgstr ""
+msgstr "Certaines informations seront perdues lors de la fusion des articles en stock"
 
 #: templates/js/translated/stock.js:717
 msgid "Stock transaction history will be deleted for merged items"
-msgstr ""
+msgstr "L'historique des transactions de stock sera supprimé pour les éléments fusionnés"
 
 #: templates/js/translated/stock.js:718
 msgid "Supplier part information will be deleted for merged items"
@@ -8785,180 +8785,180 @@ msgstr ""
 
 #: templates/js/translated/stock.js:804
 msgid "Confirm stock item merge"
-msgstr ""
+msgstr "Confirmer la fusion de l'article en stock"
 
 #: templates/js/translated/stock.js:805
 msgid "Merge Stock Items"
-msgstr ""
+msgstr "Fusionner les articles en stock"
 
 #: templates/js/translated/stock.js:900
 msgid "Transfer Stock"
-msgstr ""
+msgstr "Transférer le stock"
 
 #: templates/js/translated/stock.js:901
 msgid "Move"
-msgstr ""
+msgstr "Transférer"
 
 #: templates/js/translated/stock.js:907
 msgid "Count Stock"
-msgstr ""
+msgstr "Compter le stock"
 
 #: templates/js/translated/stock.js:908
 msgid "Count"
-msgstr ""
+msgstr "Compter"
 
 #: templates/js/translated/stock.js:912
 msgid "Remove Stock"
-msgstr ""
+msgstr "Supprimer du stock"
 
 #: templates/js/translated/stock.js:913
 msgid "Take"
-msgstr ""
+msgstr "Supprimer"
 
 #: templates/js/translated/stock.js:917
 msgid "Add Stock"
-msgstr ""
+msgstr "Ajouter du stock"
 
 #: templates/js/translated/stock.js:918 users/models.py:208
 msgid "Add"
-msgstr ""
+msgstr "Ajouter"
 
 #: templates/js/translated/stock.js:922 templates/stock_table.html:58
 msgid "Delete Stock"
-msgstr ""
+msgstr "Supprimer le stock"
 
 #: templates/js/translated/stock.js:1011
 msgid "Quantity cannot be adjusted for serialized stock"
-msgstr ""
+msgstr "La quantité ne peut pas être ajustée pour un stock sérialisé"
 
 #: templates/js/translated/stock.js:1011
 msgid "Specify stock quantity"
-msgstr ""
+msgstr "Spécifiez la quantité du stock"
 
 #: templates/js/translated/stock.js:1051
 msgid "You must select at least one available stock item"
-msgstr ""
+msgstr "Vous devez sélectionner au moins un article en stock disponible"
 
 #: templates/js/translated/stock.js:1209
 msgid "PASS"
-msgstr ""
+msgstr "RÉUSSI"
 
 #: templates/js/translated/stock.js:1211
 msgid "FAIL"
-msgstr ""
+msgstr "ÉCHEC"
 
 #: templates/js/translated/stock.js:1216
 msgid "NO RESULT"
-msgstr ""
+msgstr "AUCUN RÉSULTAT"
 
 #: templates/js/translated/stock.js:1238
 msgid "Add test result"
-msgstr ""
+msgstr "Ajouter un résultat de test"
 
 #: templates/js/translated/stock.js:1264
 msgid "No test results found"
-msgstr ""
+msgstr "Aucun résultat de test trouvé"
 
 #: templates/js/translated/stock.js:1321
 msgid "Test Date"
-msgstr ""
+msgstr "Date du test"
 
 #: templates/js/translated/stock.js:1428
 msgid "In production"
-msgstr ""
+msgstr "En production"
 
 #: templates/js/translated/stock.js:1432
 msgid "Installed in Stock Item"
-msgstr ""
+msgstr "Article en stock installé dans un autre article en stock"
 
 #: templates/js/translated/stock.js:1440
 msgid "Assigned to Sales Order"
-msgstr ""
+msgstr "Assigné à une commande de vente"
 
 #: templates/js/translated/stock.js:1446
 msgid "No stock location set"
-msgstr ""
+msgstr "Aucun emplacement de stock défini"
 
 #: templates/js/translated/stock.js:1604
 msgid "Stock item is in production"
-msgstr ""
+msgstr "L'article de stock est en production"
 
 #: templates/js/translated/stock.js:1609
 msgid "Stock item assigned to sales order"
-msgstr ""
+msgstr "L'article en stock a été assigné à une commande de vente"
 
 #: templates/js/translated/stock.js:1612
 msgid "Stock item assigned to customer"
-msgstr ""
+msgstr "L'article en stock a été assigné à un client"
 
 #: templates/js/translated/stock.js:1616
 msgid "Stock item has expired"
-msgstr ""
+msgstr "L'article en stock a expiré"
 
 #: templates/js/translated/stock.js:1618
 msgid "Stock item will expire soon"
-msgstr ""
+msgstr "L'article en stock va bientôt expirer"
 
 #: templates/js/translated/stock.js:1624
 msgid "Serialized stock item has been allocated"
-msgstr ""
+msgstr "L'article de stock sérialisé a été alloué"
 
 #: templates/js/translated/stock.js:1626
 msgid "Stock item has been fully allocated"
-msgstr ""
+msgstr "L'article de stock a été complètement alloué"
 
 #: templates/js/translated/stock.js:1628
 msgid "Stock item has been partially allocated"
-msgstr ""
+msgstr "L'article de stock a été partiellement alloué"
 
 #: templates/js/translated/stock.js:1633
 msgid "Stock item has been installed in another item"
-msgstr ""
+msgstr "L'article en stock a été installé dans un autre article"
 
 #: templates/js/translated/stock.js:1640
 msgid "Stock item has been rejected"
-msgstr ""
+msgstr "L'article de stock a été rejeté"
 
 #: templates/js/translated/stock.js:1642
 msgid "Stock item is lost"
-msgstr ""
+msgstr "L'article de stock est perdu"
 
 #: templates/js/translated/stock.js:1644
 msgid "Stock item is destroyed"
-msgstr ""
+msgstr "L'article de stock est détruit"
 
 #: templates/js/translated/stock.js:1648
 #: templates/js/translated/table_filters.js:188
 msgid "Depleted"
-msgstr ""
+msgstr "Epuisé"
 
 #: templates/js/translated/stock.js:1698
 msgid "Stocktake"
-msgstr ""
+msgstr "Prise d'inventaire"
 
 #: templates/js/translated/stock.js:1771
 msgid "Supplier part not specified"
-msgstr ""
+msgstr "Pièce de fournisseur non précisée"
 
 #: templates/js/translated/stock.js:1809
 msgid "No stock items matching query"
-msgstr ""
+msgstr "Aucun article de stock ne correspond à la requête"
 
 #: templates/js/translated/stock.js:1830 templates/js/translated/stock.js:1878
 msgid "items"
-msgstr ""
+msgstr "articles"
 
 #: templates/js/translated/stock.js:1918
 msgid "batches"
-msgstr ""
+msgstr "lots"
 
 #: templates/js/translated/stock.js:1945
 msgid "locations"
-msgstr ""
+msgstr "emplacements"
 
 #: templates/js/translated/stock.js:1947
 msgid "Undefined location"
-msgstr ""
+msgstr "Emplacement indéfini"
 
 #: templates/js/translated/stock.js:2146
 msgid "Set Stock Status"
