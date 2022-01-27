@@ -40,12 +40,17 @@
 <div class='panel panel-hidden' id='panel-allocations'>
     <div class='panel-heading'>
         <div class='d-flex flex-wrap'>
-            <h4>{% trans "Part Allocations" %}</h4>
+            <h4>{% trans "Part Stock Allocations" %}</h4>
             {% include "spacer.html" %}
         </div>
     </div>
     <div class='panel-content'>
-        <table class='table table-striped table-condensed' id='part-allocation-table'></table>
+        <div id='allocations-button-toolbar'>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id="allocations" %}
+            </div>
+        </div>
+        <table class='table table-striped table-condensed' data-toolbar='#allocations-button-toolbar' id='part-allocation-table'></table>
     </div>
 </div>
 
@@ -641,6 +646,19 @@
             printBomReports([{{ part.pk }}]);
         });
         {% endif %}
+    });
+
+    // Load the "allocations" tab
+    onPanelLoad('allocations', function() {
+
+        loadStockAllocationTable(
+            $("#part-allocation-table"),
+            {
+                params: { 
+                    part: {{ part.pk }},
+                },
+            }
+        );
     });
 
     // Load the "related parts" tab

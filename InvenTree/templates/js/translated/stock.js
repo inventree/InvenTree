@@ -47,6 +47,7 @@
     exportStock,
     findStockItemBySerialNumber,
     loadInstalledInTable,
+    loadStockAllocationTable,
     loadStockLocationTable,
     loadStockTable,
     loadStockTestResultsTable,
@@ -2203,6 +2204,111 @@ function loadStockTable(table, options) {
 }
 
 
+/*
+ * Display a table of allocated stock, for either a part or stock item
+ * Allocations are displayed for:
+ * 
+ * a) Sales Orders
+ * b) Build Orders
+ */
+function loadStockAllocationTable(table, options={}) {
+
+    var params = options.params || {};
+
+    params.build_detail = true;
+
+    var filterListElement = options.filterList || '#filter-list-allocations';
+
+    var filters = {};
+
+    var filterKey = options.filterKey || options.name || 'allocations';
+
+    var original = {};
+
+    for (var k in params) {
+        original[k] = params[k];
+        filters[k] = params[k];
+    }
+
+    setupFilterList(filterKey, table, filterListElement);
+
+    /*
+     * We have two separate API queries to make here:
+     * a) Build Order Allocations
+     * b) Sales Order Allocations
+     * 
+     * We will let the call to inventreeTable take care of build orders,
+     * and then load sales orders after that.
+     */
+    table.inventreeTable({
+        url: '{% url "api-build-item-list" %}',
+        name: 'allocations',
+        original: original,
+        method: 'get',
+        queryParams: filters,
+        sidePagination: 'client',
+        showColumns: false,
+        onLoadSuccess: function(tableData) {
+            // TODO
+            console.log("onLoadSuccess");
+        },
+        columns: [
+            {
+                field: 'order',
+                title: '{% trans "Order" %}',
+                formatter: function(value, row) {
+
+                    var html = '';
+
+                    if (row.build) {
+                        html = renderLink(
+                            global_settings.BUILDORDER_REFERENCE_PREFIX + row.build_detail.reference,
+                            `/build/${row.build}/`
+                        );
+
+                        html += makeIconBadge('fa-tools', '{% trans "Build Order" %}');
+                    } else if (row.order) {
+                        html += renderLink(
+                            global_settings.SALESORDER_REFERENCE_PREFIX + row.order,
+                            `/order/so/${row.order}/`
+                        );
+
+                        html += makeIconBadge('fa-truck', '{% trans "Sales Order" %}');
+                    } else {
+                        return '-';
+                    }
+
+                    return html;
+                }
+            },
+            {
+                field: 'status',
+                title: '{% trans "Order Status" %}',
+                formatter: function(value, row) {
+                    if (row.build) {
+                        return buildStatusDisplay(row.build_detail.status);
+                    } else if (row.order) {
+                        return 'order status';
+                    } else {
+                        return '-';
+                    }
+                }
+            },
+            {
+                field: 'quantity',
+                title: '{% trans "Allocated Quantity" %}',
+                formatter: function(value, row) {
+                    var text = value;
+                    var url = `/stock/item/${row.stock_item}/`;
+
+                    return renderLink(text, url);
+                }
+            },
+        ]
+    });
+}
+
+
 /* 
  * Display a table of stock locations
  */
@@ -2252,7 +2358,6 @@ function loadStockLocationTable(table, options) {
         method: 'get',
         url: options.url || '{% url "api-location-list" %}',
         queryParams: filters,
-        sidePagination: 'server',
         name: 'location',
         original: original,
         showColumns: true,
