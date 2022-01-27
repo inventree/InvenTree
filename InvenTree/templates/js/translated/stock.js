@@ -2291,8 +2291,7 @@ function loadStockAllocationTable(table, options={}) {
                     } else if (row.order) {
 
                         // Add an icon for the customer
-                        html += thumbnailImage(
-                            row.customer_detail.thumbnail || row.customer_detail.image, {
+                        html += thumbnailImage(row.customer_detail.thumbnail || row.customer_detail.image, {
                             title: row.customer_detail.name,
                         });
                         
