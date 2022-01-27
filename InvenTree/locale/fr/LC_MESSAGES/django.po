@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-27 05:00+0000\n"
-"PO-Revision-Date: 2022-01-27 05:39\n"
+"PO-Revision-Date: 2022-01-27 17:18\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -764,7 +764,7 @@ msgstr "Quantité a fabriquer"
 
 #: build/models.py:269
 msgid "Number of stock items to build"
-msgstr ""
+msgstr "Nombre de stock items à construire"
 
 #: build/models.py:273
 msgid "Completed items"
@@ -776,15 +776,15 @@ msgstr ""
 
 #: build/models.py:279 part/templates/part/part_base.html:234
 msgid "Build Status"
-msgstr ""
+msgstr "État de la construction"
 
 #: build/models.py:283
 msgid "Build status code"
-msgstr ""
+msgstr "Code de statut de construction"
 
 #: build/models.py:287 stock/models.py:533
 msgid "Batch Code"
-msgstr ""
+msgstr "Code de lot"
 
 #: build/models.py:291
 msgid "Batch code for this build output"
