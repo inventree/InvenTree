@@ -846,6 +846,12 @@ class SOAllocationList(generics.ListAPIView):
         if order is not None:
             queryset = queryset.filter(line__order=order)
 
+        # Filter by "stock item"
+        item = params.get('item', params.get('stock_item', None))
+
+        if item is not None:
+            queryset = queryset.filter(item=item)
+
         # Filter by "outstanding" order status
         outstanding = params.get('outstanding', None)
 
@@ -865,7 +871,6 @@ class SOAllocationList(generics.ListAPIView):
 
     # Default filterable fields
     filter_fields = [
-        'item',
     ]
 
 

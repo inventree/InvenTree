@@ -2308,9 +2308,14 @@ function loadStockAllocationTable(table, options={}) {
                 title: '{% trans "Allocated Quantity" %}',
                 formatter: function(value, row) {
                     var text = value;
-                    var url = `/stock/item/${row.stock_item}/`;
+                    var pk = row.stock_item || row.item;
 
-                    return renderLink(text, url);
+                    if (pk) {
+                        var url = `/stock/item/${pk}/`;
+                        return renderLink(text, url);
+                    } else {
+                        return value;
+                    }
                 }
             },
         ]
