@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-26 12:45+0000\n"
-"PO-Revision-Date: 2022-01-26 12:48\n"
+"POT-Creation-Date: 2022-01-27 03:12+0000\n"
+"PO-Revision-Date: 2022-01-27 03:19\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -127,7 +127,7 @@ msgstr ""
 msgid "Missing external link"
 msgstr ""
 
-#: InvenTree/models.py:132 stock/models.py:1982
+#: InvenTree/models.py:132 stock/models.py:1995
 #: templates/js/translated/attachment.js:119
 msgid "Attachment"
 msgstr ""
@@ -850,7 +850,7 @@ msgstr ""
 #: part/templates/part/detail.html:120 part/templates/part/part_sidebar.html:50
 #: report/templates/report/inventree_build_order_base.html:173
 #: stock/forms.py:140 stock/forms.py:190 stock/forms.py:224 stock/models.py:599
-#: stock/models.py:1882 stock/models.py:1988 stock/serializers.py:332
+#: stock/models.py:1895 stock/models.py:2001 stock/serializers.py:332
 #: stock/serializers.py:640 stock/serializers.py:738 stock/serializers.py:870
 #: stock/templates/stock/stock_sidebar.html:21
 #: templates/js/translated/barcode.js:58 templates/js/translated/bom.js:711
@@ -1044,7 +1044,7 @@ msgid "Item must be in stock"
 msgstr ""
 
 #: build/serializers.py:408 order/models.py:280 order/serializers.py:240
-#: stock/models.py:367 stock/models.py:1092 stock/serializers.py:305
+#: stock/models.py:367 stock/models.py:1105 stock/serializers.py:305
 msgid "Quantity must be greater than zero"
 msgstr ""
 
@@ -2494,7 +2494,7 @@ msgstr ""
 
 #: company/models.py:422
 #: report/templates/report/inventree_test_report_base.html:95
-#: stock/models.py:1975 templates/js/translated/company.js:647
+#: stock/models.py:1988 templates/js/translated/company.js:647
 #: templates/js/translated/part.js:715 templates/js/translated/stock.js:1303
 msgid "Value"
 msgstr ""
@@ -5448,12 +5448,12 @@ msgid "Test Results"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:93
-#: stock/models.py:1963
+#: stock/models.py:1976
 msgid "Test"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:94
-#: stock/models.py:1969
+#: stock/models.py:1982
 msgid "Result"
 msgstr ""
 
@@ -5483,8 +5483,12 @@ msgstr ""
 msgid "Serial"
 msgstr ""
 
-#: stock/api.py:478
+#: stock/api.py:476
 msgid "Quantity is required"
+msgstr ""
+
+#: stock/api.py:483
+msgid "Valid part must be supplied"
 msgstr ""
 
 #: stock/forms.py:77 stock/forms.py:251 stock/models.py:576
@@ -5660,105 +5664,105 @@ msgstr ""
 msgid "Single unit purchase price at time of purchase"
 msgstr ""
 
-#: stock/models.py:1083
+#: stock/models.py:1096
 msgid "Part is not set as trackable"
 msgstr ""
 
-#: stock/models.py:1089
+#: stock/models.py:1102
 msgid "Quantity must be integer"
-msgstr ""
-
-#: stock/models.py:1095
-#, python-brace-format
-msgid "Quantity must not exceed available stock quantity ({n})"
-msgstr ""
-
-#: stock/models.py:1098
-msgid "Serial numbers must be a list of integers"
-msgstr ""
-
-#: stock/models.py:1101
-msgid "Quantity does not match serial numbers"
 msgstr ""
 
 #: stock/models.py:1108
 #, python-brace-format
+msgid "Quantity must not exceed available stock quantity ({n})"
+msgstr ""
+
+#: stock/models.py:1111
+msgid "Serial numbers must be a list of integers"
+msgstr ""
+
+#: stock/models.py:1114
+msgid "Quantity does not match serial numbers"
+msgstr ""
+
+#: stock/models.py:1121
+#, python-brace-format
 msgid "Serial numbers already exist: {exists}"
 msgstr ""
 
-#: stock/models.py:1179
+#: stock/models.py:1192
 msgid "Stock item has been assigned to a sales order"
 msgstr ""
 
-#: stock/models.py:1182
+#: stock/models.py:1195
 msgid "Stock item is installed in another item"
 msgstr ""
 
-#: stock/models.py:1185
+#: stock/models.py:1198
 msgid "Stock item contains other items"
 msgstr ""
 
-#: stock/models.py:1188
+#: stock/models.py:1201
 msgid "Stock item has been assigned to a customer"
 msgstr ""
 
-#: stock/models.py:1191
+#: stock/models.py:1204
 msgid "Stock item is currently in production"
 msgstr ""
 
-#: stock/models.py:1194
+#: stock/models.py:1207
 msgid "Serialized stock cannot be merged"
 msgstr ""
 
-#: stock/models.py:1201 stock/serializers.py:775
+#: stock/models.py:1214 stock/serializers.py:775
 msgid "Duplicate stock items"
 msgstr ""
 
-#: stock/models.py:1205
+#: stock/models.py:1218
 msgid "Stock items must refer to the same part"
 msgstr ""
 
-#: stock/models.py:1209
+#: stock/models.py:1222
 msgid "Stock items must refer to the same supplier part"
 msgstr ""
 
-#: stock/models.py:1213
+#: stock/models.py:1226
 msgid "Stock status codes must match"
 msgstr ""
 
-#: stock/models.py:1384
+#: stock/models.py:1397
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr ""
 
-#: stock/models.py:1883
+#: stock/models.py:1896
 msgid "Entry notes"
 msgstr ""
 
-#: stock/models.py:1940
+#: stock/models.py:1953
 msgid "Value must be provided for this test"
 msgstr ""
 
-#: stock/models.py:1946
+#: stock/models.py:1959
 msgid "Attachment must be uploaded for this test"
 msgstr ""
 
-#: stock/models.py:1964
+#: stock/models.py:1977
 msgid "Test name"
 msgstr ""
 
-#: stock/models.py:1970 templates/js/translated/table_filters.js:271
+#: stock/models.py:1983 templates/js/translated/table_filters.js:271
 msgid "Test result"
 msgstr ""
 
-#: stock/models.py:1976
+#: stock/models.py:1989
 msgid "Test output value"
 msgstr ""
 
-#: stock/models.py:1983
+#: stock/models.py:1996
 msgid "Test result attachment"
 msgstr ""
 
-#: stock/models.py:1989
+#: stock/models.py:2002
 msgid "Test notes"
 msgstr ""
 
