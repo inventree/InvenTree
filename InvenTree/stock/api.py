@@ -469,8 +469,6 @@ class StockList(generics.ListCreateAPIView):
         data = OrderedDict()
         data.update(request.data)
 
-        data = request.data
-
         quantity = data.get('quantity', None)
 
         if quantity is None:
