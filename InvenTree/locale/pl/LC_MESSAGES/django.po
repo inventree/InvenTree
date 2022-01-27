@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-27 21:57+0000\n"
+"POT-Creation-Date: 2022-01-27 22:27+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
@@ -7744,7 +7744,7 @@ msgid "Remove substitute part"
 msgstr ""
 
 #: templates/js/translated/bom.js:340
-msgid "Select and add a new variant item using the input below"
+msgid "Select and add a new substitute part using the input below"
 msgstr ""
 
 #: templates/js/translated/bom.js:351
