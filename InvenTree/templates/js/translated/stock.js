@@ -2251,7 +2251,11 @@ function loadStockAllocationTable(table, options={}) {
         onLoadSuccess: function(tableData) {
 
             var query_params = params;
+
+            query_params.customer_detail = true;
             query_params.order_detail = true;
+
+            delete query_params.build_detail;
 
             // Load sales order allocation data
             inventreeGet('{% url "api-so-allocation-list" %}', query_params, {
@@ -2270,24 +2274,53 @@ function loadStockAllocationTable(table, options={}) {
                     var html = '';
 
                     if (row.build) {
-                        html = renderLink(
+
+                        // Add an icon for the part being built
+                        html += thumbnailImage(row.build_detail.part_detail.thumbnail, {
+                            title: row.build_detail.part_detail.full_name
+                        });
+                        
+                        html += ' ';
+
+                        html += renderLink(
                             global_settings.BUILDORDER_REFERENCE_PREFIX + row.build_detail.reference,
                             `/build/${row.build}/`
                         );
 
                         html += makeIconBadge('fa-tools', '{% trans "Build Order" %}');
                     } else if (row.order) {
-                        html += renderLink(
-                            global_settings.SALESORDER_REFERENCE_PREFIX + row.order,
-                            `/order/so/${row.order}/`
-                        );
 
+                        // Add an icon for the customer
+                        html += thumbnailImage(
+                            row.customer_detail.thumbnail || row.customer_detail.image, {
+                            title: row.customer_detail.name,
+                        });
+                        
+                        html += ' ';
+
+                        html += renderLink(
+                            global_settings.SALESORDER_REFERENCE_PREFIX + row.order_detail.reference,
+                            `/order/sales-order/${row.order}/`
+                        );
                         html += makeIconBadge('fa-truck', '{% trans "Sales Order" %}');
                     } else {
                         return '-';
                     }
 
                     return html;
+                }
+            },
+            {
+                field: 'description',
+                title: '{% trans "Description" %}',
+                formatter: function(value, row) {
+                    if (row.order_detail) {
+                        return row.order_detail.description;
+                    } else if (row.build_detail) {
+                        return row.build_detail.title;
+                    } else {
+                        return '-';
+                    }
                 }
             },
             {
