@@ -543,7 +543,7 @@ class StockList(generics.ListCreateAPIView):
                     item.pk = None
                     item.serial = serial
 
-                    item.save()
+                    item.save(user=user)
 
                 response_data = {
                     'quantity': quantity,

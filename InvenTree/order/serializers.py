@@ -495,6 +495,7 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     part_detail = PartBriefSerializer(source='item.part', many=False, read_only=True)
     item_detail = stock.serializers.StockItemSerializer(source='item', many=False, read_only=True)
     location_detail = stock.serializers.LocationSerializer(source='item.location', many=False, read_only=True)
+    customer_detail = CompanyBriefSerializer(source='line.order.customer', many=False, read_only=True)
 
     shipment_date = serializers.DateField(source='shipment.shipment_date', read_only=True)
 
@@ -504,6 +505,7 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
         part_detail = kwargs.pop('part_detail', True)
         item_detail = kwargs.pop('item_detail', False)
         location_detail = kwargs.pop('location_detail', False)
+        customer_detail = kwargs.pop('customer_detail', False)
 
         super().__init__(*args, **kwargs)
 
@@ -519,12 +521,16 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
         if not location_detail:
             self.fields.pop('location_detail')
 
+        if not customer_detail:
+            self.fields.pop('customer_detail')
+
     class Meta:
         model = order.models.SalesOrderAllocation
 
         fields = [
             'pk',
             'line',
+            'customer_detail',
             'serial',
             'quantity',
             'location',

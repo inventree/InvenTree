@@ -822,6 +822,7 @@ class SOAllocationList(generics.ListAPIView):
             kwargs['item_detail'] = str2bool(params.get('item_detail', False))
             kwargs['order_detail'] = str2bool(params.get('order_detail', False))
             kwargs['location_detail'] = str2bool(params.get('location_detail', False))
+            kwargs['customer_detail'] = str2bool(params.get('customer_detail', False))
         except AttributeError:
             pass
 
