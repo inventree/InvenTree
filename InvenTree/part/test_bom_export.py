@@ -154,7 +154,9 @@ class BomExportTest(TestCase):
                 'inherited',
                 'allow_variants',
                 'Default Location',
+                'Total Stock',
                 'Available Stock',
+                'On Order',
             ]
 
             for header in expected:
