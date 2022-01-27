@@ -2249,8 +2249,17 @@ function loadStockAllocationTable(table, options={}) {
         sidePagination: 'client',
         showColumns: false,
         onLoadSuccess: function(tableData) {
-            // TODO
-            console.log("onLoadSuccess");
+
+            var query_params = params;
+            query_params.order_detail = true;
+
+            // Load sales order allocation data
+            inventreeGet('{% url "api-so-allocation-list" %}', query_params, {
+                success: function(data) {
+                    // Update table to include sales order data
+                    $(table).bootstrapTable('append', data);
+                }
+            });
         },
         columns: [
             {
@@ -2288,7 +2297,7 @@ function loadStockAllocationTable(table, options={}) {
                     if (row.build) {
                         return buildStatusDisplay(row.build_detail.status);
                     } else if (row.order) {
-                        return 'order status';
+                        return salesOrderStatusDisplay(row.order_detail.status);
                     } else {
                         return '-';
                     }
