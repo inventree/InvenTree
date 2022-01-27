@@ -342,7 +342,7 @@ class StockItemTest(StockAPITestCase):
             }
         )
 
-        self.assertContains(response, 'This field is required', status_code=status.HTTP_400_BAD_REQUEST)
+        self.assertContains(response, 'Valid part must be supplied', status_code=status.HTTP_400_BAD_REQUEST)
 
         # POST with an invalid part reference
 
@@ -355,7 +355,7 @@ class StockItemTest(StockAPITestCase):
             }
         )
 
-        self.assertContains(response, 'does not exist', status_code=status.HTTP_400_BAD_REQUEST)
+        self.assertContains(response, 'Valid part must be supplied', status_code=status.HTTP_400_BAD_REQUEST)
 
         # POST without quantity
         response = self.post(

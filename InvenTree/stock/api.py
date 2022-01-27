@@ -5,6 +5,7 @@ JSON API for the Stock app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from collections import OrderedDict
 from datetime import datetime, timedelta
 
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -463,6 +464,11 @@ class StockList(generics.ListCreateAPIView):
         """
 
         user = request.user
+
+        # Copy the request data, to side-step "mutability" issues
+        data = OrderedDict()
+        data.update(request.data)
+
         data = request.data
 
         quantity = data.get('quantity', None)
@@ -476,7 +482,7 @@ class StockList(generics.ListCreateAPIView):
             part = Part.objects.get(pk=data.get('part', None))
         except (ValueError, Part.DoesNotExist):
             raise ValidationError({
-                'part': _('Valid part ID must be supplied'),
+                'part': _('Valid part must be supplied'),
             })
 
         # Set default location (if not provided)
