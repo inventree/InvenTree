@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-28 04:11+0000\n"
-"PO-Revision-Date: 2022-01-28 13:52\n"
+"PO-Revision-Date: 2022-01-28 14:47\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -1493,27 +1493,27 @@ msgstr "Sélectionner le fichier {name} à uploader"
 
 #: common/models.py:352 common/models.py:1008 common/models.py:1216
 msgid "Settings key (must be unique - case insensitive"
-msgstr ""
+msgstr "Clé du paramètre (doit être unique - insensible à la casse)"
 
 #: common/models.py:354
 msgid "Settings value"
-msgstr ""
+msgstr "Valeur du paramètre"
 
 #: common/models.py:388
 msgid "Chosen value is not a valid option"
-msgstr ""
+msgstr "La valeur choisie n'est pas une option valide"
 
 #: common/models.py:408
 msgid "Value must be a boolean value"
-msgstr ""
+msgstr "La valeur doit être une valeur booléenne"
 
 #: common/models.py:419
 msgid "Value must be an integer value"
-msgstr ""
+msgstr "La valeur doit être un nombre entier"
 
 #: common/models.py:442
 msgid "Key string must be unique"
-msgstr ""
+msgstr "La chaîne de caractères constituant la clé doit être unique"
 
 #: common/models.py:561
 msgid "No group"
@@ -1525,23 +1525,23 @@ msgstr "Redémarrage nécessaire"
 
 #: common/models.py:604
 msgid "A setting has been changed which requires a server restart"
-msgstr ""
+msgstr "Un paramètre a été modifié, ce qui nécessite un redémarrage du serveur"
 
 #: common/models.py:611
 msgid "InvenTree Instance Name"
-msgstr ""
+msgstr "Nom de l'instance InvenTree"
 
 #: common/models.py:613
 msgid "String descriptor for the server instance"
-msgstr ""
+msgstr "Chaîne de caractères descriptive pour l'instance serveur"
 
 #: common/models.py:617
 msgid "Use instance name"
-msgstr ""
+msgstr "Utiliser le nom de l'instance"
 
 #: common/models.py:618
 msgid "Use the instance name in the title-bar"
-msgstr ""
+msgstr "Utiliser le nom de l’instance dans la barre de titre"
 
 #: common/models.py:624 company/models.py:100 company/models.py:101
 msgid "Company name"
@@ -1549,15 +1549,15 @@ msgstr "Nom de la société"
 
 #: common/models.py:625
 msgid "Internal company name"
-msgstr ""
+msgstr "Nom de société interne"
 
 #: common/models.py:630
 msgid "Base URL"
-msgstr ""
+msgstr "URL de base"
 
 #: common/models.py:631
 msgid "Base URL for server instance"
-msgstr ""
+msgstr "URL de base pour l'instance serveur"
 
 #: common/models.py:637
 msgid "Default Currency"
@@ -1573,15 +1573,15 @@ msgstr "Télécharger depuis l'URL"
 
 #: common/models.py:645
 msgid "Allow download of remote images and files from external URL"
-msgstr ""
+msgstr "Autoriser le téléchargement d'images distantes et de fichiers à partir d'URLs externes"
 
 #: common/models.py:651 templates/InvenTree/settings/sidebar.html:31
 msgid "Barcode Support"
-msgstr ""
+msgstr "Support des code-barres"
 
 #: common/models.py:652
 msgid "Enable barcode scanner support"
-msgstr ""
+msgstr "Activer le support du scanner de code-barres"
 
 #: common/models.py:658
 msgid "IPN Regex"
@@ -1617,37 +1617,37 @@ msgstr ""
 
 #: common/models.py:684
 msgid "Copy Part Parameter Data"
-msgstr ""
+msgstr "Copier les données des paramètres de la pièce"
 
 #: common/models.py:685
 msgid "Copy parameter data by default when duplicating a part"
-msgstr ""
+msgstr "Copier les données des paramètres par défaut lors de la duplication d'une pièce"
 
 #: common/models.py:691
 msgid "Copy Part Test Data"
-msgstr ""
+msgstr "Copier les données de test de la pièce"
 
 #: common/models.py:692
 msgid "Copy test data by default when duplicating a part"
-msgstr ""
+msgstr "Copier les données de test par défaut lors de la duplication d'une pièce"
 
 #: common/models.py:698
 msgid "Copy Category Parameter Templates"
-msgstr ""
+msgstr "Copier les templates de paramètres de catégorie"
 
 #: common/models.py:699
 msgid "Copy category parameter templates when creating a part"
-msgstr ""
+msgstr "Copier les templates de paramètres de la catégorie lors de la création d'une pièce"
 
 #: common/models.py:705 part/models.py:2489 report/models.py:187
 #: templates/js/translated/table_filters.js:38
 #: templates/js/translated/table_filters.js:422
 msgid "Template"
-msgstr ""
+msgstr "Template"
 
 #: common/models.py:706
 msgid "Parts are templates by default"
-msgstr ""
+msgstr "Les pièces sont des templates par défaut"
 
 #: common/models.py:712 part/models.py:921 templates/js/translated/bom.js:1082
 #: templates/js/translated/table_filters.js:168
@@ -1679,36 +1679,36 @@ msgstr "Les pièces sont achetables par défaut"
 #: common/models.py:733 part/models.py:943
 #: templates/js/translated/table_filters.js:446
 msgid "Salable"
-msgstr ""
+msgstr "Vendable"
 
 #: common/models.py:734
 msgid "Parts are salable by default"
-msgstr ""
+msgstr "Les pièces sont vendables par défaut"
 
 #: common/models.py:740 part/models.py:933
 #: templates/js/translated/table_filters.js:46
 #: templates/js/translated/table_filters.js:100
 #: templates/js/translated/table_filters.js:450
 msgid "Trackable"
-msgstr ""
+msgstr "Traçable"
 
 #: common/models.py:741
 msgid "Parts are trackable by default"
-msgstr ""
+msgstr "Les pièces sont traçables par défaut"
 
 #: common/models.py:747 part/models.py:953
 #: part/templates/part/part_base.html:147
 #: templates/js/translated/table_filters.js:42
 msgid "Virtual"
-msgstr ""
+msgstr "Virtuelle"
 
 #: common/models.py:748
 msgid "Parts are virtual by default"
-msgstr ""
+msgstr "Les pièces sont virtuelles par défaut"
 
 #: common/models.py:754
 msgid "Show Import in Views"
-msgstr ""
+msgstr "Afficher l'import dans les vues"
 
 #: common/models.py:755
 msgid "Display the import wizard in some part views"
@@ -1716,43 +1716,43 @@ msgstr "Afficher l'assistant d'importation pour certaine vues de produits"
 
 #: common/models.py:761
 msgid "Show Price in Forms"
-msgstr ""
+msgstr "Afficher le prix dans les formulaires"
 
 #: common/models.py:762
 msgid "Display part price in some forms"
-msgstr ""
+msgstr "Afficher le prix de la pièce dans certains formulaires"
 
 #: common/models.py:773
 msgid "Show Price in BOM"
-msgstr ""
+msgstr "Afficher le prix dans la BOM"
 
 #: common/models.py:774
 msgid "Include pricing information in BOM tables"
-msgstr ""
+msgstr "Inclure les informations de prix dans les tableaux de la BOM"
 
 #: common/models.py:780
 msgid "Show related parts"
-msgstr ""
+msgstr "Afficher les pièces connexes"
 
 #: common/models.py:781
 msgid "Display related parts for a part"
-msgstr ""
+msgstr "Afficher les pièces connexes à une pièce"
 
 #: common/models.py:787
 msgid "Create initial stock"
-msgstr ""
+msgstr "Créer un stock initial"
 
 #: common/models.py:788
 msgid "Create initial stock on part creation"
-msgstr ""
+msgstr "Créer le stock initial lors de la création d'une pièce"
 
 #: common/models.py:794
 msgid "Internal Prices"
-msgstr ""
+msgstr "Prix internes"
 
 #: common/models.py:795
 msgid "Enable internal prices for parts"
-msgstr ""
+msgstr "Activer les prix internes pour les pièces"
 
 #: common/models.py:801
 msgid "Internal Price as BOM-Price"
@@ -1968,11 +1968,11 @@ msgstr ""
 
 #: common/models.py:978
 msgid "Enable app integration"
-msgstr ""
+msgstr "Activer l'intégration de plugins"
 
 #: common/models.py:979
 msgid "Enable plugins to add apps"
-msgstr ""
+msgstr "Activer l'intégration de plugin pour ajouter des apps"
 
 #: common/models.py:985
 msgid "Enable schedule integration"
@@ -8729,35 +8729,35 @@ msgstr ""
 
 #: templates/js/translated/stock.js:420
 msgid "Find Serial Number"
-msgstr ""
+msgstr "Trouver un numéro de série"
 
 #: templates/js/translated/stock.js:424 templates/js/translated/stock.js:425
 msgid "Enter serial number"
-msgstr ""
+msgstr "Entrer le numéro de série"
 
 #: templates/js/translated/stock.js:441
 msgid "Enter a serial number"
-msgstr ""
+msgstr "Entrer un numéro de série"
 
 #: templates/js/translated/stock.js:461
 msgid "No matching serial number"
-msgstr ""
+msgstr "Aucun numéro de série correspondant"
 
 #: templates/js/translated/stock.js:470
 msgid "More than one matching result found"
-msgstr ""
+msgstr "Plus d'un résultat correspondant trouvé"
 
 #: templates/js/translated/stock.js:515
 msgid "Export Stock"
-msgstr ""
+msgstr "Exporter le stock"
 
 #: templates/js/translated/stock.js:526
 msgid "Include Sublocations"
-msgstr ""
+msgstr "Inclure les sous-emplacements"
 
 #: templates/js/translated/stock.js:527
 msgid "Include stock items in sublocations"
-msgstr ""
+msgstr "Inclure les articles en stock dans les sous-emplacements"
 
 #: templates/js/translated/stock.js:636
 msgid "Confirm stock assignment"
@@ -9043,17 +9043,17 @@ msgstr ""
 #: templates/js/translated/table_filters.js:110
 #: templates/js/translated/table_filters.js:183
 msgid "Include sublocations"
-msgstr ""
+msgstr "Inclure les sous-emplacements"
 
 #: templates/js/translated/table_filters.js:111
 msgid "Include locations"
-msgstr ""
+msgstr "Inclure les emplacements"
 
 #: templates/js/translated/table_filters.js:121
 #: templates/js/translated/table_filters.js:122
 #: templates/js/translated/table_filters.js:407
 msgid "Include subcategories"
-msgstr ""
+msgstr "Inclure les sous-catégories"
 
 #: templates/js/translated/table_filters.js:126
 #: templates/js/translated/table_filters.js:442
@@ -9063,7 +9063,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:136
 #: templates/js/translated/table_filters.js:218
 msgid "Is Serialized"
-msgstr ""
+msgstr "A un numéro de série"
 
 #: templates/js/translated/table_filters.js:139
 #: templates/js/translated/table_filters.js:225
