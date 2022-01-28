@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-28 04:11+0000\n"
-"PO-Revision-Date: 2022-01-28 16:50\n"
+"PO-Revision-Date: 2022-01-28 17:58\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -7367,27 +7367,27 @@ msgstr "Erreur 405: Méthode non autorisée"
 
 #: templates/js/translated/api.js:213
 msgid "HTTP method not allowed at URL"
-msgstr ""
+msgstr "Méthode HTTP non autorisée à l'adresse URL"
 
 #: templates/js/translated/api.js:217 templates/js/translated/modals.js:1078
 msgid "Error 408: Timeout"
-msgstr ""
+msgstr "Erreur 408: Délai dépassé"
 
 #: templates/js/translated/api.js:218 templates/js/translated/modals.js:1079
 msgid "Connection timeout while requesting data from server"
-msgstr ""
+msgstr "Délai de connexion dépassé lors de la demande de données depuis le serveur"
 
 #: templates/js/translated/api.js:221
 msgid "Unhandled Error Code"
-msgstr ""
+msgstr "Code d'erreur non géré"
 
 #: templates/js/translated/api.js:222
 msgid "Error code"
-msgstr ""
+msgstr "Code d’erreur"
 
 #: templates/js/translated/attachment.js:78
 msgid "No attachments found"
-msgstr ""
+msgstr "Aucune pièce jointe trouvée"
 
 #: templates/js/translated/attachment.js:100
 msgid "Edit Attachment"
@@ -7395,88 +7395,88 @@ msgstr "Modifier la pièce jointe"
 
 #: templates/js/translated/attachment.js:110
 msgid "Confirm Delete"
-msgstr ""
+msgstr "Confirmer la suppression"
 
 #: templates/js/translated/attachment.js:111
 msgid "Delete Attachment"
-msgstr ""
+msgstr "Supprimer la pièce jointe"
 
 #: templates/js/translated/attachment.js:167
 msgid "Upload Date"
-msgstr ""
+msgstr "Date d'upload"
 
 #: templates/js/translated/attachment.js:180
 msgid "Edit attachment"
-msgstr ""
+msgstr "Modifier la pièce jointe"
 
 #: templates/js/translated/attachment.js:187
 msgid "Delete attachment"
-msgstr ""
+msgstr "Supprimer la pièce jointe"
 
 #: templates/js/translated/barcode.js:29
 msgid "Scan barcode data here using wedge scanner"
-msgstr ""
+msgstr "Scannez les données du code-barres ici en utilisant un wedge scanner"
 
 #: templates/js/translated/barcode.js:31
 msgid "Enter barcode data"
-msgstr ""
+msgstr "Saisir les données du code-barres"
 
 #: templates/js/translated/barcode.js:35
 msgid "Barcode"
-msgstr ""
+msgstr "Code-barres"
 
 #: templates/js/translated/barcode.js:53
 msgid "Enter optional notes for stock transfer"
-msgstr ""
+msgstr "Saisir les notes optionnelles pour le transfert de stock"
 
 #: templates/js/translated/barcode.js:54
 msgid "Enter notes"
-msgstr ""
+msgstr "Saisir des notes"
 
 #: templates/js/translated/barcode.js:92
 msgid "Server error"
-msgstr ""
+msgstr "Erreur serveur"
 
 #: templates/js/translated/barcode.js:113
 msgid "Unknown response from server"
-msgstr ""
+msgstr "Réponse inconnue du serveur"
 
 #: templates/js/translated/barcode.js:140
 #: templates/js/translated/modals.js:1043
 msgid "Invalid server response"
-msgstr ""
+msgstr "Réponse du serveur invalide"
 
 #: templates/js/translated/barcode.js:233
 msgid "Scan barcode data below"
-msgstr ""
+msgstr "Scanner les données du code-barres ci-dessous"
 
 #: templates/js/translated/barcode.js:280 templates/navbar.html:94
 msgid "Scan Barcode"
-msgstr ""
+msgstr "Scanner le code-barres"
 
 #: templates/js/translated/barcode.js:291
 msgid "No URL in response"
-msgstr ""
+msgstr "Aucune URL dans la réponse"
 
 #: templates/js/translated/barcode.js:309
 msgid "Link Barcode to Stock Item"
-msgstr ""
+msgstr "Lier le code-barres à l'article de stock"
 
 #: templates/js/translated/barcode.js:332
 msgid "This will remove the association between this stock item and the barcode"
-msgstr ""
+msgstr "Ceci supprimera l'association entre cet article de stock et le code-barres"
 
 #: templates/js/translated/barcode.js:338
 msgid "Unlink"
-msgstr ""
+msgstr "Délier"
 
 #: templates/js/translated/barcode.js:397 templates/js/translated/stock.js:1026
 msgid "Remove stock item"
-msgstr ""
+msgstr "Supprimer l'article de stock"
 
 #: templates/js/translated/barcode.js:439
 msgid "Check Stock Items into Location"
-msgstr ""
+msgstr "Vérifier les articles de stock dans l'emplacement"
 
 #: templates/js/translated/barcode.js:443
 #: templates/js/translated/barcode.js:573
@@ -7486,35 +7486,35 @@ msgstr ""
 #: templates/js/translated/barcode.js:485
 #: templates/js/translated/barcode.js:612
 msgid "Error transferring stock"
-msgstr ""
+msgstr "Erreur lors du transfert de stock"
 
 #: templates/js/translated/barcode.js:507
 msgid "Stock Item already scanned"
-msgstr ""
+msgstr "Article de stock déjà scanné"
 
 #: templates/js/translated/barcode.js:511
 msgid "Stock Item already in this location"
-msgstr ""
+msgstr "Article de stock déjà à cet emplacement"
 
 #: templates/js/translated/barcode.js:518
 msgid "Added stock item"
-msgstr ""
+msgstr "Article de stock ajouté"
 
 #: templates/js/translated/barcode.js:525
 msgid "Barcode does not match Stock Item"
-msgstr ""
+msgstr "Le code-barres ne correspond pas à l'article de stock"
 
 #: templates/js/translated/barcode.js:568
 msgid "Check Into Location"
-msgstr ""
+msgstr "Vérifier dans l'emplacement"
 
 #: templates/js/translated/barcode.js:633
 msgid "Barcode does not match a valid location"
-msgstr ""
+msgstr "Le code-barres ne correspond pas à un emplacement valide"
 
 #: templates/js/translated/bom.js:36
 msgid "Download BOM Template"
-msgstr ""
+msgstr "Télécharger le template de la BOM"
 
 #: templates/js/translated/bom.js:39 templates/js/translated/bom.js:73
 #: templates/js/translated/order.js:369 templates/js/translated/stock.js:518
@@ -7524,15 +7524,15 @@ msgstr ""
 #: templates/js/translated/bom.js:40 templates/js/translated/bom.js:74
 #: templates/js/translated/order.js:370 templates/js/translated/stock.js:519
 msgid "Select file format"
-msgstr ""
+msgstr "Sélectionner un format de fichier"
 
 #: templates/js/translated/bom.js:81
 msgid "Cascading"
-msgstr ""
+msgstr "En cascade"
 
 #: templates/js/translated/bom.js:82
 msgid "Download cascading / multi-level BOM"
-msgstr ""
+msgstr "Télécharger la BOM en cascade / à plusieurs niveaux"
 
 #: templates/js/translated/bom.js:87
 msgid "Levels"
@@ -7540,19 +7540,19 @@ msgstr "Niveaux"
 
 #: templates/js/translated/bom.js:88
 msgid "Select maximum number of BOM levels to export (0 = all levels)"
-msgstr ""
+msgstr "Sélectionner le nombre maximum de niveaux de BOM à exporter (0 = tous les niveaux)"
 
 #: templates/js/translated/bom.js:94
 msgid "Include Parameter Data"
-msgstr ""
+msgstr "Inclure les données de paramètre"
 
 #: templates/js/translated/bom.js:95
 msgid "Include part  parameter data in exported BOM"
-msgstr ""
+msgstr "Inclure les données de paramètre de la pièce dans la BOM exporté"
 
 #: templates/js/translated/bom.js:100
 msgid "Include Stock Data"
-msgstr ""
+msgstr "Inclure les données de stock"
 
 #: templates/js/translated/bom.js:101
 msgid "Include part stock data in exported BOM"
