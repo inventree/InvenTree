@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-28 04:11+0000\n"
-"PO-Revision-Date: 2022-01-28 14:47\n"
+"PO-Revision-Date: 2022-01-28 15:49\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -4211,49 +4211,49 @@ msgstr "Adjunto obligatorio"
 
 #: part/models.py:2395
 msgid "Does this test require a file attachment when adding a test result?"
-msgstr ""
+msgstr "¿Esta prueba requiere un archivo adjunto al agregar un resultado de la prueba?"
 
 #: part/models.py:2406
 #, python-brace-format
 msgid "Illegal character in template name ({c})"
-msgstr ""
+msgstr "Carácter no válido en el nombre de la plantilla ({c})"
 
 #: part/models.py:2442
 msgid "Parameter template name must be unique"
-msgstr ""
+msgstr "El nombre de parámetro en la plantilla tiene que ser único"
 
 #: part/models.py:2450
 msgid "Parameter Name"
-msgstr ""
+msgstr "Nombre de Parámetro"
 
 #: part/models.py:2457
 msgid "Parameter Units"
-msgstr ""
+msgstr "Unidad del Parámetro"
 
 #: part/models.py:2487
 msgid "Parent Part"
-msgstr ""
+msgstr "Parte principal"
 
 #: part/models.py:2489 part/models.py:2538 part/models.py:2539
 #: templates/InvenTree/settings/settings.html:181
 msgid "Parameter Template"
-msgstr ""
+msgstr "Plantilla de parámetro"
 
 #: part/models.py:2491
 msgid "Data"
-msgstr ""
+msgstr "Data"
 
 #: part/models.py:2491
 msgid "Parameter Value"
-msgstr ""
+msgstr "Valor del parámetro"
 
 #: part/models.py:2543 templates/InvenTree/settings/settings.html:190
 msgid "Default Value"
-msgstr ""
+msgstr "Valor predeterminado"
 
 #: part/models.py:2544
 msgid "Default Parameter Value"
-msgstr ""
+msgstr "Valor de parámetro por defecto"
 
 #: part/models.py:2621
 msgid "Select parent part"
@@ -4261,15 +4261,15 @@ msgstr "Seleccionar parte principal"
 
 #: part/models.py:2629
 msgid "Sub part"
-msgstr ""
+msgstr "Sub parte"
 
 #: part/models.py:2630
 msgid "Select part to be used in BOM"
-msgstr ""
+msgstr "Seleccionar parte a utilizar en BOM"
 
 #: part/models.py:2636
 msgid "BOM quantity for this BOM item"
-msgstr ""
+msgstr "Cantidad del artículo en BOM"
 
 #: part/models.py:2638 templates/js/translated/bom.js:578
 #: templates/js/translated/bom.js:652
@@ -4279,7 +4279,7 @@ msgstr "Opcional"
 
 #: part/models.py:2638
 msgid "This BOM item is optional"
-msgstr ""
+msgstr "Este elemento BOM es opcional"
 
 #: part/models.py:2641
 msgid "Overage"
@@ -4291,25 +4291,25 @@ msgstr "Cantidad estimada de desperdicio de construcción (absoluta o porcentaje
 
 #: part/models.py:2645
 msgid "BOM item reference"
-msgstr ""
+msgstr "Referencia de artículo de BOM"
 
 #: part/models.py:2648
 msgid "BOM item notes"
-msgstr ""
+msgstr "Notas del artículo de BOM"
 
 #: part/models.py:2650
 msgid "Checksum"
-msgstr ""
+msgstr "Checksum"
 
 #: part/models.py:2650
 msgid "BOM line checksum"
-msgstr ""
+msgstr "Suma de comprobación de la línea en BOM"
 
 #: part/models.py:2654 templates/js/translated/bom.js:669
 #: templates/js/translated/table_filters.js:68
 #: templates/js/translated/table_filters.js:88
 msgid "Inherited"
-msgstr ""
+msgstr "Heredado"
 
 #: part/models.py:2655
 msgid "This BOM item is inherited by BOMs for variant parts"
@@ -4317,7 +4317,7 @@ msgstr "Este artículo BOM es heredado por BOMs para partes variantes"
 
 #: part/models.py:2660 templates/js/translated/bom.js:661
 msgid "Allow Variants"
-msgstr ""
+msgstr "Permitir variantes"
 
 #: part/models.py:2661
 msgid "Stock items for variant parts can be used for this BOM item"
