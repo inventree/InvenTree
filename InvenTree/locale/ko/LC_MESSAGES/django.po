@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-28 04:11+0000\n"
-"PO-Revision-Date: 2022-01-28 05:10\n"
+"PO-Revision-Date: 2022-01-28 07:43\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -3799,7 +3799,7 @@ msgstr ""
 #: order/templates/order/sales_order_cancel.html:8
 #: stock/templates/stock/stockitem_convert.html:13
 msgid "Warning"
-msgstr ""
+msgstr "경고"
 
 #: order/templates/order/sales_order_cancel.html:9
 msgid "Cancelling this order means that the order will no longer be editable."
