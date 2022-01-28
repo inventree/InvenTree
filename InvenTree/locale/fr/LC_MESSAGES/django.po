@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-28 04:11+0000\n"
-"PO-Revision-Date: 2022-01-28 04:13\n"
+"PO-Revision-Date: 2022-01-28 10:54\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -8781,7 +8781,7 @@ msgstr "L'historique des transactions de stock sera supprimé pour les élément
 
 #: templates/js/translated/stock.js:718
 msgid "Supplier part information will be deleted for merged items"
-msgstr ""
+msgstr "Les informations sur la pièce du fournisseur seront supprimées pour les éléments fusionnés"
 
 #: templates/js/translated/stock.js:804
 msgid "Confirm stock item merge"
@@ -8962,7 +8962,7 @@ msgstr "Emplacement indéfini"
 
 #: templates/js/translated/stock.js:2146
 msgid "Set Stock Status"
-msgstr ""
+msgstr "Définir l'état du stock"
 
 #: templates/js/translated/stock.js:2160
 msgid "Select Status Code"
