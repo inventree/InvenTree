@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-28 04:11+0000\n"
-"PO-Revision-Date: 2022-01-28 12:56\n"
+"PO-Revision-Date: 2022-01-28 13:52\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -1077,7 +1077,7 @@ msgstr "Actions d'impression"
 
 #: build/templates/build/build_base.html:43
 msgid "Print build order report"
-msgstr ""
+msgstr "Imprimer le rapport d'ordre de construction"
 
 #: build/templates/build/build_base.html:50
 msgid "Build actions"
@@ -1211,11 +1211,11 @@ msgstr ""
 
 #: build/templates/build/cancel.html:5
 msgid "Are you sure you wish to cancel this build?"
-msgstr ""
+msgstr "Êtes-vous sûr de vouloir annuler cette construction?"
 
 #: build/templates/build/detail.html:16
 msgid "Build Details"
-msgstr ""
+msgstr "Détails de la construction"
 
 #: build/templates/build/detail.html:39
 msgid "Stock Source"
@@ -1236,7 +1236,7 @@ msgstr ""
 
 #: build/templates/build/detail.html:74 templates/js/translated/build.js:707
 msgid "Allocated Parts"
-msgstr ""
+msgstr "Pièces allouées"
 
 #: build/templates/build/detail.html:81
 #: stock/templates/stock/item_base.html:331
@@ -1271,19 +1271,19 @@ msgstr ""
 
 #: build/templates/build/detail.html:177 templates/js/translated/build.js:1262
 msgid "Unallocate stock"
-msgstr ""
+msgstr "Désallouer le stock"
 
 #: build/templates/build/detail.html:178
 msgid "Unallocate Stock"
-msgstr ""
+msgstr "Désallouer le stock"
 
 #: build/templates/build/detail.html:180
 msgid "Allocate stock to build"
-msgstr ""
+msgstr "Allouer le stock à une construction"
 
 #: build/templates/build/detail.html:181 build/templates/build/sidebar.html:8
 msgid "Allocate Stock"
-msgstr ""
+msgstr "Allouer le stock"
 
 #: build/templates/build/detail.html:184
 msgid "Order required parts"
@@ -1298,19 +1298,19 @@ msgstr "Commander des pièces"
 
 #: build/templates/build/detail.html:197
 msgid "Untracked stock has been fully allocated for this Build Order"
-msgstr ""
+msgstr "Le stock non suivi a été entièrement alloué pour cet ordre de construction"
 
 #: build/templates/build/detail.html:201
 msgid "Untracked stock has not been fully allocated for this Build Order"
-msgstr ""
+msgstr "Du stock non suivi n'a pas été entièrement alloué pour cet ordre de construction"
 
 #: build/templates/build/detail.html:208
 msgid "Allocate selected items"
-msgstr ""
+msgstr "Allouer les éléments sélectionnés"
 
 #: build/templates/build/detail.html:218
 msgid "This Build Order does not have any associated untracked BOM items"
-msgstr ""
+msgstr "Cet ordre de construction n'a aucun objet de BOM non suivi associé"
 
 #: build/templates/build/detail.html:227
 msgid "Incomplete Build Outputs"
@@ -1352,7 +1352,7 @@ msgstr "Pieces jointes"
 
 #: build/templates/build/detail.html:294
 msgid "Build Notes"
-msgstr ""
+msgstr "Notes de construction"
 
 #: build/templates/build/detail.html:298 build/templates/build/detail.html:453
 #: company/templates/company/detail.html:188
@@ -1368,7 +1368,7 @@ msgstr "Modifier les notes"
 
 #: build/templates/build/detail.html:477
 msgid "Allocation Complete"
-msgstr ""
+msgstr "Allocation terminée"
 
 #: build/templates/build/detail.html:478
 msgid "All untracked stock items have been allocated"
@@ -1376,23 +1376,23 @@ msgstr ""
 
 #: build/templates/build/index.html:18 part/templates/part/detail.html:320
 msgid "New Build Order"
-msgstr ""
+msgstr "Nouvel ordre de construction"
 
 #: build/templates/build/index.html:37 build/templates/build/index.html:38
 msgid "Print Build Orders"
-msgstr ""
+msgstr "Imprimer les commandes de construction"
 
 #: build/templates/build/index.html:44
 #: order/templates/order/purchase_orders.html:34
 #: order/templates/order/sales_orders.html:37
 msgid "Display calendar view"
-msgstr ""
+msgstr "Affichage du calendrier"
 
 #: build/templates/build/index.html:47
 #: order/templates/order/purchase_orders.html:37
 #: order/templates/order/sales_orders.html:40
 msgid "Display list view"
-msgstr ""
+msgstr "Affichage en liste"
 
 #: build/templates/build/sidebar.html:5
 msgid "Build Order Details"
@@ -1404,11 +1404,11 @@ msgstr "Articles en attente"
 
 #: build/templates/build/sidebar.html:15
 msgid "Completed Items"
-msgstr ""
+msgstr "Articles terminés"
 
 #: build/views.py:76
 msgid "Build was cancelled"
-msgstr ""
+msgstr "La construction a été annulée"
 
 #: build/views.py:88
 msgid "Create Build Output"
@@ -1420,7 +1420,7 @@ msgstr "La quantité maximale de sortie est "
 
 #: build/views.py:122 stock/serializers.py:363 stock/views.py:1257
 msgid "Serial numbers already exist"
-msgstr ""
+msgstr "Les numéros de série existent déjà"
 
 #: build/views.py:131
 msgid "Serial numbers required for trackable build output"
@@ -1436,7 +1436,7 @@ msgstr ""
 
 #: build/views.py:219 stock/views.py:352
 msgid "Check the confirmation box"
-msgstr ""
+msgstr "Cocher la case de confirmation"
 
 #: build/views.py:231
 msgid "Build output does not match build"
@@ -1452,7 +1452,7 @@ msgstr ""
 
 #: build/views.py:286
 msgid "Delete Build Order"
-msgstr ""
+msgstr "Supprimer l'ordre de construction"
 
 #: common/files.py:65
 msgid "Unsupported file format: {ext.upper()}"
@@ -1460,19 +1460,19 @@ msgstr "Format de fichier non pris en charge : {ext.upper()}"
 
 #: common/files.py:67
 msgid "Error reading file (invalid encoding)"
-msgstr ""
+msgstr "Erreur de lecture du fichier (encodage invalide)"
 
 #: common/files.py:72
 msgid "Error reading file (invalid format)"
-msgstr ""
+msgstr "Erreur de lecture du fichier (format invalide)"
 
 #: common/files.py:74
 msgid "Error reading file (incorrect dimension)"
-msgstr ""
+msgstr "Erreur de lecture du fichier (dimension incorrecte)"
 
 #: common/files.py:76
 msgid "Error reading file (data could be corrupted)"
-msgstr ""
+msgstr "Erreur de lecture du fichier (les données pourraient être corrompues)"
 
 #: common/forms.py:34
 msgid "File"
@@ -1489,7 +1489,7 @@ msgstr "{name.title()} Fichier"
 #: common/forms.py:51
 #, python-brace-format
 msgid "Select {name} file to upload"
-msgstr ""
+msgstr "Sélectionner le fichier {name} à uploader"
 
 #: common/models.py:352 common/models.py:1008 common/models.py:1216
 msgid "Settings key (must be unique - case insensitive"
@@ -6602,53 +6602,53 @@ msgstr "License"
 
 #: templates/InvenTree/settings/plugin_settings.html:71
 msgid "The code information is pulled from the latest git commit for this plugin. It might not reflect official version numbers or information but the actual code running."
-msgstr ""
+msgstr "Les informations de code sont tirées de la dernière version de git pour ce plugin. Elles peuvent ne pas refléter les informations ou numéros de version officiels, mais elles se rapportent au code réellement en cours d'exécution."
 
 #: templates/InvenTree/settings/plugin_settings.html:77
 msgid "Package information"
-msgstr ""
+msgstr "Informations du paquet"
 
 #: templates/InvenTree/settings/plugin_settings.html:83
 msgid "Installation method"
-msgstr ""
+msgstr "Méthode d'installation"
 
 #: templates/InvenTree/settings/plugin_settings.html:86
 msgid "This plugin was installed as a package"
-msgstr ""
+msgstr "Ce plugin a été installé en tant que paquet"
 
 #: templates/InvenTree/settings/plugin_settings.html:88
 msgid "This plugin was found in a local InvenTree path"
-msgstr ""
+msgstr "Ce plugin a été trouvé dans un chemin local d'InvenTree"
 
 #: templates/InvenTree/settings/plugin_settings.html:94
 msgid "Installation path"
-msgstr ""
+msgstr "Chemin d'installation"
 
 #: templates/InvenTree/settings/plugin_settings.html:100
 msgid "Commit Author"
-msgstr ""
+msgstr "Auteur du commit"
 
 #: templates/InvenTree/settings/plugin_settings.html:104
 #: templates/about.html:47
 msgid "Commit Date"
-msgstr ""
+msgstr "Date du commit"
 
 #: templates/InvenTree/settings/plugin_settings.html:108
 #: templates/about.html:40
 msgid "Commit Hash"
-msgstr ""
+msgstr "Hash du commit"
 
 #: templates/InvenTree/settings/plugin_settings.html:112
 msgid "Commit Message"
-msgstr ""
+msgstr "Message du commit"
 
 #: templates/InvenTree/settings/plugin_settings.html:117
 msgid "Sign Status"
-msgstr ""
+msgstr "Statut de la signature"
 
 #: templates/InvenTree/settings/plugin_settings.html:122
 msgid "Sign Key"
-msgstr ""
+msgstr "Clé de signature"
 
 #: templates/InvenTree/settings/po.html:7
 msgid "Purchase Order Settings"
