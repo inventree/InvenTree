@@ -319,7 +319,19 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
         rows += renderSubstituteRow(sub);
     });
 
+    var part_thumb = thumbnailImage(options.sub_part_detail.thumbnail || options.sub_part_detail.image);
+    var part_name = options.sub_part_detail.full_name;
+    var part_desc = options.sub_part_detail.description;
+
     var html = `
+    <div class='alert alert-block'>
+    <strong>{% trans "Base Part" %}</strong><hr>
+    ${part_thumb} ${part_name} - <em>${part_desc}</em>
+    </div>
+    `;
+    
+    // Add a table of individual rows
+    html += `
     <table class='table table-striped table-condensed' id='substitute-table'>
         <thead>
             <tr>
@@ -945,7 +957,9 @@ function loadBomTable(table, options={}) {
                 subs,
                 {
                     table: table,
+                    part: row.part,
                     sub_part: row.sub_part,
+                    sub_part_detail: row.sub_part_detail,
                 }
             );
         });
