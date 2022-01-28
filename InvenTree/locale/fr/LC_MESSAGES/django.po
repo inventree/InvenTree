@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-28 04:11+0000\n"
-"PO-Revision-Date: 2022-01-28 10:54\n"
+"PO-Revision-Date: 2022-01-28 11:53\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -458,7 +458,7 @@ msgstr "Fractionner l'élément enfant"
 
 #: InvenTree/status_codes.py:294 templates/js/translated/stock.js:2072
 msgid "Merged stock items"
-msgstr ""
+msgstr "Articles de stock fusionnés"
 
 #: InvenTree/status_codes.py:296 templates/js/translated/table_filters.js:213
 msgid "Sent to customer"
@@ -582,7 +582,7 @@ msgstr "Le code-barres correspond déjà à l'objet Stock Item"
 
 #: barcodes/api.py:225
 msgid "Barcode associated with Stock Item"
-msgstr ""
+msgstr "Code-barres associé à l'article en stock"
 
 #: build/forms.py:36 build/models.py:1293
 #: build/templates/build/build_base.html:82
@@ -739,7 +739,7 @@ msgstr "Bon de commande de référence"
 
 #: build/models.py:244
 msgid "SalesOrder to which this build is allocated"
-msgstr ""
+msgstr "Commande de vente à laquelle cette construction est allouée"
 
 #: build/models.py:249 templates/js/translated/build.js:1407
 #: templates/js/translated/order.js:1564
@@ -748,7 +748,7 @@ msgstr "Emplacement d'origine"
 
 #: build/models.py:253
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
-msgstr ""
+msgstr "Sélectionner l'emplacement à partir duquel le stock doit être pris pour cette construction (laisser vide pour prendre à partir de n'importe quel emplacement de stock)"
 
 #: build/models.py:258
 msgid "Destination Location"
@@ -768,11 +768,11 @@ msgstr "Nombre de stock items à construire"
 
 #: build/models.py:273
 msgid "Completed items"
-msgstr ""
+msgstr "Articles terminés"
 
 #: build/models.py:275
 msgid "Number of stock items which have been completed"
-msgstr ""
+msgstr "Nombre d'articles de stock qui ont été terminés"
 
 #: build/models.py:279 part/templates/part/part_base.html:234
 msgid "Build Status"
@@ -883,15 +883,15 @@ msgstr "L'élément de construction doit spécifier une sortie de construction, 
 #: build/models.py:1124
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not execed available stock quantity ({a})"
-msgstr ""
+msgstr "La quantité allouée ({q}) ne doit pas excéder la quantité disponible ({a})"
 
 #: build/models.py:1134
 msgid "Stock item is over-allocated"
-msgstr ""
+msgstr "L'article de stock est suralloué"
 
 #: build/models.py:1140 order/models.py:1189
 msgid "Allocation quantity must be greater than zero"
-msgstr ""
+msgstr "La quantité allouée doit être supérieure à zéro"
 
 #: build/models.py:1146
 msgid "Quantity must be 1 for serialized stock"
@@ -909,7 +909,7 @@ msgstr "Assemblage"
 
 #: build/models.py:1264
 msgid "Build to allocate parts"
-msgstr ""
+msgstr "Construction à laquelle allouer des pièces"
 
 #: build/models.py:1280 build/serializers.py:388 order/serializers.py:696
 #: order/serializers.py:714 stock/serializers.py:578 stock/serializers.py:696
@@ -932,7 +932,7 @@ msgstr ""
 
 #: build/models.py:1294
 msgid "Stock quantity to allocate to build"
-msgstr ""
+msgstr "Quantité de stock à allouer à la construction"
 
 #: build/models.py:1302
 msgid "Install into"
@@ -1067,7 +1067,7 @@ msgstr ""
 
 #: build/tasks.py:92
 msgid "Stock required for build order"
-msgstr ""
+msgstr "Stock requis pour la commande de construction"
 
 #: build/templates/build/build_base.html:39
 #: order/templates/order/order_base.html:28
@@ -1103,7 +1103,7 @@ msgstr "Compléter l'assemblage"
 
 #: build/templates/build/build_base.html:87
 msgid "Build Description"
-msgstr ""
+msgstr "Description de la construction"
 
 #: build/templates/build/build_base.html:96
 #, python-format
@@ -8572,11 +8572,11 @@ msgstr ""
 
 #: templates/js/translated/part.js:1751 templates/js/translated/stock.js:1242
 msgid "Edit test result"
-msgstr ""
+msgstr "Modifier le résultat du test"
 
 #: templates/js/translated/part.js:1752 templates/js/translated/stock.js:1243
 msgid "Delete test result"
-msgstr ""
+msgstr "Supprimer le résultat du test"
 
 #: templates/js/translated/part.js:1758
 msgid "This test is defined for a parent part"
@@ -8966,19 +8966,19 @@ msgstr "Définir l'état du stock"
 
 #: templates/js/translated/stock.js:2160
 msgid "Select Status Code"
-msgstr ""
+msgstr "Sélectionner le code de statut"
 
 #: templates/js/translated/stock.js:2161
 msgid "Status code must be selected"
-msgstr ""
+msgstr "Le code de statut doit être sélectionné"
 
 #: templates/js/translated/stock.js:2340
 msgid "Allocated Quantity"
-msgstr ""
+msgstr "Quantité Allouée"
 
 #: templates/js/translated/stock.js:2535
 msgid "Invalid date"
-msgstr ""
+msgstr "Date invalide"
 
 #: templates/js/translated/stock.js:2557
 msgid "Details"
@@ -8986,27 +8986,27 @@ msgstr "Détails"
 
 #: templates/js/translated/stock.js:2582
 msgid "Location no longer exists"
-msgstr ""
+msgstr "L'emplacement n'existe plus"
 
 #: templates/js/translated/stock.js:2601
 msgid "Purchase order no longer exists"
-msgstr ""
+msgstr "La commande d'achat n'existe plus"
 
 #: templates/js/translated/stock.js:2620
 msgid "Customer no longer exists"
-msgstr ""
+msgstr "Le client n'existe plus"
 
 #: templates/js/translated/stock.js:2638
 msgid "Stock item no longer exists"
-msgstr ""
+msgstr "L'article de stock n'existe plus"
 
 #: templates/js/translated/stock.js:2661
 msgid "Added"
-msgstr ""
+msgstr "Ajouté"
 
 #: templates/js/translated/stock.js:2669
 msgid "Removed"
-msgstr ""
+msgstr "Supprimé"
 
 #: templates/js/translated/stock.js:2710
 msgid "Edit tracking entry"
