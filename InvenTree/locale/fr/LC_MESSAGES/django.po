@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-28 04:11+0000\n"
-"PO-Revision-Date: 2022-01-28 11:53\n"
+"PO-Revision-Date: 2022-01-28 12:56\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -1081,7 +1081,7 @@ msgstr ""
 
 #: build/templates/build/build_base.html:50
 msgid "Build actions"
-msgstr ""
+msgstr "Modifier construction/ordre de construction"
 
 #: build/templates/build/build_base.html:54
 msgid "Edit Build"
@@ -1108,28 +1108,28 @@ msgstr "Description de la construction"
 #: build/templates/build/build_base.html:96
 #, python-format
 msgid "This Build Order is allocated to Sales Order %(link)s"
-msgstr ""
+msgstr "Cet ordre de construction est allouée à la commande de vente %(link)s"
 
 #: build/templates/build/build_base.html:103
 #, python-format
 msgid "This Build Order is a child of Build Order %(link)s"
-msgstr ""
+msgstr "Cet ordre de construction est un enfant de l'ordre de construction %(link)s"
 
 #: build/templates/build/build_base.html:110
 msgid "Build Order is ready to mark as completed"
-msgstr ""
+msgstr "L'ordre de construction est prêt à être marqué comme terminé"
 
 #: build/templates/build/build_base.html:115
 msgid "Build Order cannot be completed as outstanding outputs remain"
-msgstr ""
+msgstr "L'ordre de construction ne peut pas être achevé car il reste des outputs en suspens"
 
 #: build/templates/build/build_base.html:120
 msgid "Required build quantity has not yet been completed"
-msgstr ""
+msgstr "Le nombre de constructions requis n'a pas encore été atteint"
 
 #: build/templates/build/build_base.html:125
 msgid "Stock has not been fully allocated to this Build Order"
-msgstr ""
+msgstr "Le stock n'a pas été entièrement alloué à cet ordre de construction"
 
 #: build/templates/build/build_base.html:146
 #: build/templates/build/detail.html:132
@@ -1144,7 +1144,7 @@ msgstr "Date Cible"
 #: build/templates/build/build_base.html:151
 #, python-format
 msgid "This build was due on %(target)s"
-msgstr ""
+msgstr "Cette construction était due le %(target)s"
 
 #: build/templates/build/build_base.html:151
 #: build/templates/build/build_base.html:196
@@ -1179,7 +1179,7 @@ msgstr "Commandes"
 #: build/templates/build/detail.html:109
 #: report/templates/report/inventree_build_order_base.html:153
 msgid "Issued By"
-msgstr ""
+msgstr "Émis par"
 
 #: build/templates/build/build_base.html:223
 msgid "Incomplete Outputs"
@@ -1187,7 +1187,7 @@ msgstr ""
 
 #: build/templates/build/build_base.html:224
 msgid "Build Order cannot be completed as incomplete build outputs remain"
-msgstr ""
+msgstr "L'ordre de fabrication ne peut pas être achevé car il reste des outputs en suspens"
 
 #: build/templates/build/build_output_create.html:7
 msgid "The Bill of Materials contains trackable parts"
@@ -6586,19 +6586,19 @@ msgstr ""
 #: templates/InvenTree/settings/plugin_settings.html:10
 #, python-format
 msgid "Plugin details for %(name)s"
-msgstr ""
+msgstr "Détails du plugin %(name)s"
 
 #: templates/InvenTree/settings/plugin_settings.html:17
 msgid "Plugin information"
-msgstr ""
+msgstr "Informations sur le plugin"
 
 #: templates/InvenTree/settings/plugin_settings.html:48
 msgid "no version information supplied"
-msgstr ""
+msgstr "aucune information de version fournie"
 
 #: templates/InvenTree/settings/plugin_settings.html:62
 msgid "License"
-msgstr ""
+msgstr "License"
 
 #: templates/InvenTree/settings/plugin_settings.html:71
 msgid "The code information is pulled from the latest git commit for this plugin. It might not reflect official version numbers or information but the actual code running."
@@ -9090,37 +9090,37 @@ msgstr ""
 #: templates/js/translated/table_filters.js:221
 #: templates/js/translated/table_filters.js:222
 msgid "Serial number"
-msgstr ""
+msgstr "Numéro de série"
 
 #: templates/js/translated/table_filters.js:152
 #: templates/js/translated/table_filters.js:239
 msgid "Batch code"
-msgstr ""
+msgstr "Code de lot"
 
 #: templates/js/translated/table_filters.js:163
 #: templates/js/translated/table_filters.js:379
 msgid "Active parts"
-msgstr ""
+msgstr "Pièces actives"
 
 #: templates/js/translated/table_filters.js:164
 msgid "Show stock for active parts"
-msgstr ""
+msgstr "Afficher le stock pour les pièces actives"
 
 #: templates/js/translated/table_filters.js:169
 msgid "Part is an assembly"
-msgstr ""
+msgstr "La pièce est un assemblage"
 
 #: templates/js/translated/table_filters.js:173
 msgid "Is allocated"
-msgstr ""
+msgstr "Est alloué"
 
 #: templates/js/translated/table_filters.js:174
 msgid "Item has been allocated"
-msgstr ""
+msgstr "L'élément a été alloué"
 
 #: templates/js/translated/table_filters.js:179
 msgid "Stock is available for use"
-msgstr ""
+msgstr "Le stock est disponible pour utilisation"
 
 #: templates/js/translated/table_filters.js:184
 msgid "Include stock in sublocations"
@@ -9156,56 +9156,56 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:209
 msgid "Show stock items which are installed in another item"
-msgstr ""
+msgstr "Afficher les articles de stock qui sont installés dans un autre article"
 
 #: templates/js/translated/table_filters.js:214
 msgid "Show items which have been assigned to a customer"
-msgstr ""
+msgstr "Afficher les articles qui ont été assignés à un client"
 
 #: templates/js/translated/table_filters.js:234
 #: templates/js/translated/table_filters.js:235
 msgid "Stock status"
-msgstr ""
+msgstr "État du stock"
 
 #: templates/js/translated/table_filters.js:243
 msgid "Has purchase price"
-msgstr ""
+msgstr "A un prix d'achat"
 
 #: templates/js/translated/table_filters.js:244
 msgid "Show stock items which have a purchase price set"
-msgstr ""
+msgstr "Afficher les articles de stock qui ont un prix d'achat défini"
 
 #: templates/js/translated/table_filters.js:253
 msgid "Show stock items which have expired"
-msgstr ""
+msgstr "Afficher les articles de stock qui ont expiré"
 
 #: templates/js/translated/table_filters.js:259
 msgid "Show stock which is close to expiring"
-msgstr ""
+msgstr "Afficher le stock qui est proche de l'expiration"
 
 #: templates/js/translated/table_filters.js:290
 msgid "Build status"
-msgstr ""
+msgstr "État de la construction"
 
 #: templates/js/translated/table_filters.js:303
 #: templates/js/translated/table_filters.js:344
 msgid "Assigned to me"
-msgstr ""
+msgstr "Assigné à moi"
 
 #: templates/js/translated/table_filters.js:320
 #: templates/js/translated/table_filters.js:331
 #: templates/js/translated/table_filters.js:352
 msgid "Order status"
-msgstr ""
+msgstr "État de la commande"
 
 #: templates/js/translated/table_filters.js:336
 #: templates/js/translated/table_filters.js:357
 msgid "Outstanding"
-msgstr ""
+msgstr "En suspens"
 
 #: templates/js/translated/table_filters.js:408
 msgid "Include parts in subcategories"
-msgstr ""
+msgstr "Inclure les pièces des sous-catégories"
 
 #: templates/js/translated/table_filters.js:412
 msgid "Has IPN"
@@ -9213,64 +9213,64 @@ msgstr "A un IPN"
 
 #: templates/js/translated/table_filters.js:413
 msgid "Part has internal part number"
-msgstr ""
+msgstr "La pièce a un numéro de pièce interne"
 
 #: templates/js/translated/table_filters.js:418
 msgid "Show active parts"
-msgstr ""
+msgstr "Afficher les pièces actives"
 
 #: templates/js/translated/table_filters.js:426
 msgid "Stock available"
-msgstr ""
+msgstr "Stock disponible"
 
 #: templates/js/translated/table_filters.js:454
 msgid "Purchasable"
-msgstr ""
+msgstr "Achetable"
 
 #: templates/js/translated/tables.js:368
 msgid "Loading data"
-msgstr ""
+msgstr "Chargement des données"
 
 #: templates/js/translated/tables.js:371
 msgid "rows per page"
-msgstr ""
+msgstr "résultats par page"
 
 #: templates/js/translated/tables.js:376
 msgid "Showing all rows"
-msgstr ""
+msgstr "Afficher toutes les lignes"
 
 #: templates/js/translated/tables.js:378
 msgid "Showing"
-msgstr ""
+msgstr "Afficher"
 
 #: templates/js/translated/tables.js:378
 msgid "to"
-msgstr ""
+msgstr "à"
 
 #: templates/js/translated/tables.js:378
 msgid "of"
-msgstr ""
+msgstr "de"
 
 #: templates/js/translated/tables.js:378
 msgid "rows"
-msgstr ""
+msgstr "lignes"
 
 #: templates/js/translated/tables.js:382 templates/search_form.html:6
 #: templates/search_form.html:7
 msgid "Search"
-msgstr ""
+msgstr "Rechercher"
 
 #: templates/js/translated/tables.js:385
 msgid "No matching results"
-msgstr ""
+msgstr "Aucun résultat correspondant n'a été trouvé"
 
 #: templates/js/translated/tables.js:388
 msgid "Hide/Show pagination"
-msgstr ""
+msgstr "Masquer/Afficher la pagination"
 
 #: templates/js/translated/tables.js:391
 msgid "Refresh"
-msgstr ""
+msgstr "Actualiser"
 
 #: templates/js/translated/tables.js:394
 msgid "Toggle"
@@ -9278,15 +9278,15 @@ msgstr ""
 
 #: templates/js/translated/tables.js:397
 msgid "Columns"
-msgstr ""
+msgstr "Colonnes"
 
 #: templates/js/translated/tables.js:400
 msgid "All"
-msgstr ""
+msgstr "Tout"
 
 #: templates/navbar.html:42
 msgid "Buy"
-msgstr ""
+msgstr "Acheter"
 
 #: templates/navbar.html:54
 msgid "Sell"
@@ -9294,35 +9294,35 @@ msgstr "Ventes"
 
 #: templates/navbar.html:114
 msgid "Logout"
-msgstr ""
+msgstr "Se déconnecter"
 
 #: templates/navbar.html:116
 msgid "Login"
-msgstr ""
+msgstr "Se connecter"
 
 #: templates/navbar.html:136
 msgid "About InvenTree"
-msgstr ""
+msgstr "À propos d'InvenTree"
 
 #: templates/navbar_demo.html:5
 msgid "InvenTree demo mode"
-msgstr ""
+msgstr "Mode démo de InvenTree"
 
 #: templates/qr_code.html:11
 msgid "QR data not provided"
-msgstr ""
+msgstr "Données QR non fournies"
 
 #: templates/registration/logged_out.html:6
 msgid "You were logged out successfully."
-msgstr ""
+msgstr "Vous avez été déconnecté avec succès."
 
 #: templates/registration/logged_out.html:8
 msgid "Log in again"
-msgstr ""
+msgstr "Se reconnecter"
 
 #: templates/stats.html:9
 msgid "Server"
-msgstr ""
+msgstr "Serveur"
 
 #: templates/stats.html:13
 msgid "Instance Name"
@@ -9330,43 +9330,43 @@ msgstr ""
 
 #: templates/stats.html:18
 msgid "Database"
-msgstr ""
+msgstr "Base de données"
 
 #: templates/stats.html:26
 msgid "Server is running in debug mode"
-msgstr ""
+msgstr "Le serveur fonctionne en mode débogage"
 
 #: templates/stats.html:33
 msgid "Docker Mode"
-msgstr ""
+msgstr "Mode Docker"
 
 #: templates/stats.html:34
 msgid "Server is deployed using docker"
-msgstr ""
+msgstr "Le serveur est déployé en utilisant docker"
 
 #: templates/stats.html:39
 msgid "Plugin Support"
-msgstr ""
+msgstr "Support des plugins"
 
 #: templates/stats.html:43
 msgid "Plugin support enabled"
-msgstr ""
+msgstr "Prise en charge des plugins activée"
 
 #: templates/stats.html:45
 msgid "Plugin support disabled"
-msgstr ""
+msgstr "Prise en charge des plugins désactivée"
 
 #: templates/stats.html:52
 msgid "Server status"
-msgstr ""
+msgstr "Statut serveur"
 
 #: templates/stats.html:55
 msgid "Healthy"
-msgstr ""
+msgstr "Bon"
 
 #: templates/stats.html:57
 msgid "Issues detected"
-msgstr ""
+msgstr "Problèmes détectés"
 
 #: templates/stats.html:64
 msgid "Background Worker"
