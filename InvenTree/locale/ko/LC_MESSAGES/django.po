@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-28 04:11+0000\n"
-"PO-Revision-Date: 2022-01-28 04:13\n"
+"PO-Revision-Date: 2022-01-28 05:10\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -74,7 +74,7 @@ msgstr ""
 
 #: InvenTree/forms.py:240
 msgid "Email address confirmation"
-msgstr ""
+msgstr "이메일 주소 확인"
 
 #: InvenTree/forms.py:260
 msgid "You must type the same email each time."
@@ -130,11 +130,11 @@ msgstr ""
 #: InvenTree/models.py:132 stock/models.py:1995
 #: templates/js/translated/attachment.js:119
 msgid "Attachment"
-msgstr ""
+msgstr "첨부파일"
 
 #: InvenTree/models.py:133
 msgid "Select file to attach"
-msgstr ""
+msgstr "첨부할 파일을 선택하세요"
 
 #: InvenTree/models.py:139 company/models.py:131 company/models.py:348
 #: company/models.py:564 order/models.py:127 part/models.py:830
@@ -180,7 +180,7 @@ msgstr ""
 #: InvenTree/models.py:209
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr ""
+msgstr "파일명에 허용되지 않은 문자 '{c}'가 포함되어 있습니다"
 
 #: InvenTree/models.py:212
 msgid "Filename missing extension"
@@ -188,11 +188,11 @@ msgstr ""
 
 #: InvenTree/models.py:219
 msgid "Attachment with this filename already exists"
-msgstr ""
+msgstr "같은 이름의 첨부파일이 이미 존재합니다"
 
 #: InvenTree/models.py:226
 msgid "Error renaming file"
-msgstr ""
+msgstr "파일 이름 바꾸기 오류"
 
 #: InvenTree/models.py:261
 msgid "Invalid choice"
@@ -839,7 +839,7 @@ msgstr ""
 #: part/templates/part/part_base.html:354 stock/models.py:527
 #: stock/templates/stock/item_base.html:373
 msgid "External Link"
-msgstr ""
+msgstr "외부 링크"
 
 #: build/models.py:336 build/serializers.py:201
 #: build/templates/build/sidebar.html:21 company/models.py:142
@@ -974,7 +974,7 @@ msgstr ""
 #: templates/js/translated/stock.js:729 templates/js/translated/stock.js:936
 #: templates/js/translated/stock.js:1684 templates/js/translated/stock.js:2569
 msgid "Location"
-msgstr ""
+msgstr "위치"
 
 #: build/serializers.py:191
 msgid "Location for completed build outputs"
@@ -988,7 +988,7 @@ msgstr ""
 #: templates/js/translated/order.js:1263 templates/js/translated/stock.js:1659
 #: templates/js/translated/stock.js:2646 templates/js/translated/stock.js:2795
 msgid "Status"
-msgstr ""
+msgstr "상태"
 
 #: build/serializers.py:213
 msgid "A list of build outputs must be provided"
@@ -1521,7 +1521,7 @@ msgstr ""
 
 #: common/models.py:603
 msgid "Restart required"
-msgstr ""
+msgstr "재시작 필요"
 
 #: common/models.py:604
 msgid "A setting has been changed which requires a server restart"
@@ -1561,15 +1561,15 @@ msgstr ""
 
 #: common/models.py:637
 msgid "Default Currency"
-msgstr ""
+msgstr "기본 통화"
 
 #: common/models.py:638
 msgid "Default currency"
-msgstr ""
+msgstr "기본 통화"
 
 #: common/models.py:644
 msgid "Download from URL"
-msgstr ""
+msgstr "URL에서 다운로드"
 
 #: common/models.py:645
 msgid "Allow download of remote images and files from external URL"
@@ -1577,7 +1577,7 @@ msgstr ""
 
 #: common/models.py:651 templates/InvenTree/settings/sidebar.html:31
 msgid "Barcode Support"
-msgstr ""
+msgstr "바코드 지원"
 
 #: common/models.py:652
 msgid "Enable barcode scanner support"
@@ -1670,7 +1670,7 @@ msgstr ""
 
 #: common/models.py:726 part/models.py:938
 msgid "Purchaseable"
-msgstr ""
+msgstr "구입 가능"
 
 #: common/models.py:727
 msgid "Parts are purchaseable by default"
@@ -1679,7 +1679,7 @@ msgstr ""
 #: common/models.py:733 part/models.py:943
 #: templates/js/translated/table_filters.js:446
 msgid "Salable"
-msgstr ""
+msgstr "판매 가능"
 
 #: common/models.py:734
 msgid "Parts are salable by default"
@@ -1780,7 +1780,7 @@ msgstr ""
 
 #: common/models.py:823 templates/stats.html:25
 msgid "Debug Mode"
-msgstr ""
+msgstr "디버그 모드"
 
 #: common/models.py:824
 msgid "Generate reports in debug mode (HTML output)"
@@ -1788,11 +1788,11 @@ msgstr ""
 
 #: common/models.py:830
 msgid "Page Size"
-msgstr ""
+msgstr "페이지 크기"
 
 #: common/models.py:831
 msgid "Default page size for PDF reports"
-msgstr ""
+msgstr "PDF 보고서 기본 페이지 크기"
 
 #: common/models.py:841
 msgid "Test Reports"
@@ -1896,7 +1896,7 @@ msgstr ""
 
 #: common/models.py:920
 msgid "Enable SSO"
-msgstr ""
+msgstr "SSO 활성화"
 
 #: common/models.py:921
 msgid "Enable SSO on the login pages"
@@ -2402,7 +2402,7 @@ msgstr ""
 
 #: company/models.py:139 part/models.py:840
 msgid "Image"
-msgstr ""
+msgstr "이미지"
 
 #: company/models.py:144
 msgid "is customer"
@@ -2600,7 +2600,7 @@ msgstr ""
 #: company/templates/company/company_base.html:12
 #: templates/InvenTree/search.html:176 templates/js/translated/company.js:322
 msgid "Company"
-msgstr ""
+msgstr "회사"
 
 #: company/templates/company/company_base.html:22
 #: templates/js/translated/order.js:279
