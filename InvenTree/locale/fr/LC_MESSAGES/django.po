@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-28 04:11+0000\n"
-"PO-Revision-Date: 2022-01-28 14:47\n"
+"PO-Revision-Date: 2022-01-28 15:49\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -1203,7 +1203,7 @@ msgstr ""
 
 #: build/templates/build/build_output_create.html:15
 msgid "Trackable parts can have serial numbers specified"
-msgstr ""
+msgstr "Les pièces traçables peuvent avoir des numéros de série spécifiés"
 
 #: build/templates/build/build_output_create.html:16
 msgid "Enter serial numbers to generate multiple single build outputs"
@@ -3458,7 +3458,7 @@ msgstr ""
 
 #: order/serializers.py:821
 msgid "Enter serial numbers to allocate"
-msgstr ""
+msgstr "Entrez les numéros de série à allouer"
 
 #: order/serializers.py:845 order/serializers.py:970
 msgid "Shipment has already been shipped"
@@ -3470,11 +3470,11 @@ msgstr ""
 
 #: order/serializers.py:900
 msgid "No match found for the following serial numbers"
-msgstr ""
+msgstr "Aucune correspondance trouvée pour les numéros de série suivants"
 
 #: order/serializers.py:910
 msgid "The following serial numbers are already allocated"
-msgstr ""
+msgstr "Les numéros de série suivants sont déjà alloués"
 
 #: order/templates/order/delete_attachment.html:5
 #: stock/templates/stock/attachment_delete.html:5
@@ -3997,15 +3997,15 @@ msgstr ""
 
 #: part/models.py:644
 msgid "Next available serial numbers are"
-msgstr ""
+msgstr "Les prochains numéros de série disponibles sont"
 
 #: part/models.py:648
 msgid "Next available serial number is"
-msgstr ""
+msgstr "Le prochain numéro de série disponible est"
 
 #: part/models.py:653
 msgid "Most recent serial number is"
-msgstr ""
+msgstr "Le numéro de série le plus récent est"
 
 #: part/models.py:748
 msgid "Duplicate IPN not allowed in part settings"
@@ -4858,7 +4858,7 @@ msgstr ""
 
 #: part/templates/part/part_base.html:124
 msgid "Part stock is tracked by serial number"
-msgstr ""
+msgstr "La pièce en stock est tracée par un numéro de série"
 
 #: part/templates/part/part_base.html:128
 msgid "Part can be purchased from external suppliers"
@@ -4923,12 +4923,12 @@ msgstr ""
 
 #: part/templates/part/part_base.html:324
 msgid "Latest Serial Number"
-msgstr ""
+msgstr "Dernier numéro de série"
 
 #: part/templates/part/part_base.html:328
 #: stock/templates/stock/item_base.html:166
 msgid "Search for serial number"
-msgstr ""
+msgstr "Rechercher un numéro de série"
 
 #: part/templates/part/part_base.html:449 part/templates/part/prices.html:144
 msgid "Calculate"
@@ -5456,7 +5456,7 @@ msgstr ""
 #: templates/js/translated/order.js:99 templates/js/translated/order.js:1945
 #: templates/js/translated/order.js:2034 templates/js/translated/stock.js:423
 msgid "Serial Number"
-msgstr ""
+msgstr "Numéro de série"
 
 #: report/templates/report/inventree_test_report_base.html:88
 msgid "Test Results"
@@ -5518,7 +5518,7 @@ msgstr ""
 
 #: stock/forms.py:81
 msgid "Enter unique serial numbers (or leave blank)"
-msgstr ""
+msgstr "Entrer des numéros de série uniques (ou laisser vide)"
 
 #: stock/forms.py:136
 msgid "Destination for serialized stock (by default, will remain in current location)"
@@ -5526,11 +5526,11 @@ msgstr ""
 
 #: stock/forms.py:138
 msgid "Serial numbers"
-msgstr ""
+msgstr "Numéros de série"
 
 #: stock/forms.py:138
 msgid "Unique serial numbers (must match quantity)"
-msgstr ""
+msgstr "Numéros de série uniques (doivent correspondre à la quantité)"
 
 #: stock/forms.py:140 stock/forms.py:224
 msgid "Add transaction note (optional)"
@@ -5567,7 +5567,7 @@ msgstr "Sélectionner un propriétaire"
 
 #: stock/models.py:338
 msgid "StockItem with this serial number already exists"
-msgstr ""
+msgstr "Il existe déjà un article en stock avec ce numéro de série"
 
 #: stock/models.py:374
 #, python-brace-format
@@ -5576,11 +5576,11 @@ msgstr ""
 
 #: stock/models.py:384 stock/models.py:393
 msgid "Quantity must be 1 for item with a serial number"
-msgstr ""
+msgstr "La quantité doit être de 1 pour un article avec un numéro de série"
 
 #: stock/models.py:385
 msgid "Serial number cannot be set if quantity greater than 1"
-msgstr ""
+msgstr "Le numéro de série ne peut pas être défini si la quantité est supérieure à 1"
 
 #: stock/models.py:407
 msgid "Item cannot belong to itself"
@@ -5629,7 +5629,7 @@ msgstr ""
 
 #: stock/models.py:521
 msgid "Serial number for this item"
-msgstr ""
+msgstr "Numéro de série pour cet article"
 
 #: stock/models.py:535
 msgid "Batch code for this stock item"
@@ -5694,16 +5694,16 @@ msgstr ""
 
 #: stock/models.py:1111
 msgid "Serial numbers must be a list of integers"
-msgstr ""
+msgstr "Les numéros de série doivent être une liste de nombres entiers"
 
 #: stock/models.py:1114
 msgid "Quantity does not match serial numbers"
-msgstr ""
+msgstr "La quantité ne correspond pas au nombre de numéros de série"
 
 #: stock/models.py:1121
 #, python-brace-format
 msgid "Serial numbers already exist: {exists}"
-msgstr ""
+msgstr "Les numéros de série existent déja : {exists}"
 
 #: stock/models.py:1192
 msgid "Stock item has been assigned to a sales order"
@@ -5791,7 +5791,7 @@ msgstr ""
 
 #: stock/serializers.py:294
 msgid "Enter number of stock items to serialize"
-msgstr ""
+msgstr "Entrez le nombre d'articles en stock à sérialiser"
 
 #: stock/serializers.py:309
 #, python-brace-format
@@ -5800,7 +5800,7 @@ msgstr ""
 
 #: stock/serializers.py:315
 msgid "Enter serial numbers for new items"
-msgstr ""
+msgstr "Entrez les numéros de série pour les nouveaux articles"
 
 #: stock/serializers.py:326 stock/serializers.py:732 stock/serializers.py:973
 msgid "Destination stock location"
@@ -5812,7 +5812,7 @@ msgstr ""
 
 #: stock/serializers.py:346
 msgid "Serial numbers cannot be assigned to this part"
-msgstr ""
+msgstr "Les numéros de série ne peuvent pas être assignés à cette pièce"
 
 #: stock/serializers.py:589
 msgid "Part must be salable"
@@ -6021,7 +6021,7 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:161
 msgid "Navigate to previous serial number"
-msgstr ""
+msgstr "Accéder au numéro de série précédent"
 
 #: stock/templates/stock/item_base.html:170
 msgid "next page"
@@ -6029,7 +6029,7 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:170
 msgid "Navigate to next serial number"
-msgstr ""
+msgstr "Accéder au numéro de série suivant"
 
 #: stock/templates/stock/item_base.html:197
 #, python-format
@@ -6090,7 +6090,7 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:276
 msgid "This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted."
-msgstr ""
+msgstr "Cet article de stock est sérialisé - il a un numéro de série unique et la quantité ne peut pas être ajustée."
 
 #: stock/templates/stock/item_base.html:317
 #: templates/js/translated/build.js:1095
@@ -6165,7 +6165,7 @@ msgstr ""
 
 #: stock/templates/stock/item_serialize.html:7
 msgid "Select quantity to serialize, and unique serial numbers."
-msgstr ""
+msgstr "Sélectionner la quantité à sérialiser et les numéros de série uniques."
 
 #: stock/templates/stock/location.html:37
 msgid "Check-in Items"
@@ -8342,7 +8342,7 @@ msgstr ""
 #: templates/js/translated/order.js:1959 templates/js/translated/order.js:2048
 #: templates/js/translated/stock.js:1436
 msgid "Shipped to customer"
-msgstr ""
+msgstr "Livré au client"
 
 #: templates/js/translated/order.js:1967 templates/js/translated/order.js:2057
 msgid "Stock location not specified"
@@ -8350,15 +8350,15 @@ msgstr ""
 
 #: templates/js/translated/order.js:2297
 msgid "Allocate serial numbers"
-msgstr ""
+msgstr "Allouer des numéros de série"
 
 #: templates/js/translated/order.js:2303
 msgid "Purchase stock"
-msgstr ""
+msgstr "Acheter du stock"
 
 #: templates/js/translated/order.js:2310 templates/js/translated/order.js:2476
 msgid "Calculate price"
-msgstr ""
+msgstr "Calculer le prix"
 
 #: templates/js/translated/order.js:2321
 msgid "Cannot be deleted as items have been shipped"
@@ -8370,7 +8370,7 @@ msgstr ""
 
 #: templates/js/translated/order.js:2382
 msgid "Allocate Serial Numbers"
-msgstr ""
+msgstr "Allouer des numéros de série"
 
 #: templates/js/translated/order.js:2484
 msgid "Update Unit Price"
@@ -8382,27 +8382,27 @@ msgstr ""
 
 #: templates/js/translated/part.js:54
 msgid "Part Attributes"
-msgstr ""
+msgstr "Attributs de la pièce"
 
 #: templates/js/translated/part.js:58
 msgid "Part Creation Options"
-msgstr ""
+msgstr "Options de création de pièce"
 
 #: templates/js/translated/part.js:62
 msgid "Part Duplication Options"
-msgstr ""
+msgstr "Options de duplication de pièces"
 
 #: templates/js/translated/part.js:66
 msgid "Supplier Options"
-msgstr ""
+msgstr "Options de fournisseur"
 
 #: templates/js/translated/part.js:80
 msgid "Add Part Category"
-msgstr ""
+msgstr "Ajouter une catégorie de pièce"
 
 #: templates/js/translated/part.js:164
 msgid "Create Initial Stock"
-msgstr ""
+msgstr "Créer un stock initial"
 
 #: templates/js/translated/part.js:165
 msgid "Create an initial stock item for this part"
@@ -8438,7 +8438,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:264
 msgid "Copy Image"
-msgstr ""
+msgstr "Copier l'image"
 
 #: templates/js/translated/part.js:265
 msgid "Copy image from original part"
@@ -8450,7 +8450,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:280
 msgid "Copy Parameters"
-msgstr ""
+msgstr "Copier les paramètres"
 
 #: templates/js/translated/part.js:281
 msgid "Copy parameter data from original part"
@@ -8462,15 +8462,15 @@ msgstr ""
 
 #: templates/js/translated/part.js:338
 msgid "Edit Part"
-msgstr ""
+msgstr "Modifier la pièce"
 
 #: templates/js/translated/part.js:340
 msgid "Part edited"
-msgstr ""
+msgstr "Pièce modifiée"
 
 #: templates/js/translated/part.js:351
 msgid "Create Part Variant"
-msgstr ""
+msgstr "Créer une variante de pièce"
 
 #: templates/js/translated/part.js:418
 msgid "You are subscribed to notifications for this item"
@@ -8506,11 +8506,11 @@ msgstr ""
 
 #: templates/js/translated/part.js:509 templates/js/translated/part.js:594
 msgid "Trackable part"
-msgstr ""
+msgstr "Pièce traçable"
 
 #: templates/js/translated/part.js:513 templates/js/translated/part.js:598
 msgid "Virtual part"
-msgstr ""
+msgstr "Pièce virtuelle"
 
 #: templates/js/translated/part.js:525
 msgid "Subscribed part"
@@ -8518,7 +8518,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:529
 msgid "Salable part"
-msgstr ""
+msgstr "Pièce vendable"
 
 #: templates/js/translated/part.js:644
 msgid "No variants found"
@@ -8534,29 +8534,29 @@ msgstr ""
 
 #: templates/js/translated/part.js:1103 templates/js/translated/part.js:1363
 msgid "No parts found"
-msgstr ""
+msgstr "Aucune pièce trouvée"
 
 #: templates/js/translated/part.js:1273
 msgid "No category"
-msgstr ""
+msgstr "Aucune catégorie"
 
 #: templates/js/translated/part.js:1296
 #: templates/js/translated/table_filters.js:430
 msgid "Low stock"
-msgstr ""
+msgstr "Stock bas"
 
 #: templates/js/translated/part.js:1387 templates/js/translated/part.js:1559
 #: templates/js/translated/stock.js:2440
 msgid "Display as list"
-msgstr ""
+msgstr "Afficher sous forme de liste"
 
 #: templates/js/translated/part.js:1403
 msgid "Display as grid"
-msgstr ""
+msgstr "Afficher sous forme de grille"
 
 #: templates/js/translated/part.js:1578 templates/js/translated/stock.js:2459
 msgid "Display as tree"
-msgstr ""
+msgstr "Afficher sous forme d'arborescence"
 
 #: templates/js/translated/part.js:1642
 msgid "Subscribed category"
@@ -8564,7 +8564,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:1656 templates/js/translated/stock.js:2503
 msgid "Path"
-msgstr ""
+msgstr "Chemin d'accès"
 
 #: templates/js/translated/part.js:1700
 msgid "No test templates matching query"
@@ -8615,15 +8615,15 @@ msgstr ""
 
 #: templates/js/translated/plugin.js:22
 msgid "The Plugin was installed"
-msgstr ""
+msgstr "Le plugin a été installé"
 
 #: templates/js/translated/report.js:67
 msgid "items selected"
-msgstr ""
+msgstr "éléments sélectionnés"
 
 #: templates/js/translated/report.js:75
 msgid "Select Report Template"
-msgstr ""
+msgstr "Sélectionner un template de reporting"
 
 #: templates/js/translated/report.js:90
 msgid "Select Test Report Template"
@@ -8689,11 +8689,11 @@ msgstr ""
 
 #: templates/js/translated/stock.js:92 templates/js/translated/stock.js:181
 msgid "Next available serial number"
-msgstr ""
+msgstr "Prochain numéro de série disponible"
 
 #: templates/js/translated/stock.js:94 templates/js/translated/stock.js:183
 msgid "Latest serial number"
-msgstr ""
+msgstr "Dernier numéro de série"
 
 #: templates/js/translated/stock.js:102
 msgid "Confirm Stock Serialization"
@@ -8717,7 +8717,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:239
 msgid "Enter serial numbers for new stock (or leave blank)"
-msgstr ""
+msgstr "Entrez les numéros de série pour le nouveau stock (ou laisser vide)"
 
 #: templates/js/translated/stock.js:382
 msgid "Created new stock item"
@@ -9026,7 +9026,7 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:56
 msgid "Trackable Part"
-msgstr ""
+msgstr "Pièce traçable"
 
 #: templates/js/translated/table_filters.js:60
 msgid "Assembled Part"
@@ -9034,7 +9034,7 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:64
 msgid "Validated"
-msgstr ""
+msgstr "Validée"
 
 #: templates/js/translated/table_filters.js:72
 msgid "Allow Variant Stock"
@@ -9068,22 +9068,22 @@ msgstr "A un numéro de série"
 #: templates/js/translated/table_filters.js:139
 #: templates/js/translated/table_filters.js:225
 msgid "Serial number GTE"
-msgstr ""
+msgstr "Numéro de série PGE"
 
 #: templates/js/translated/table_filters.js:140
 #: templates/js/translated/table_filters.js:226
 msgid "Serial number greater than or equal to"
-msgstr ""
+msgstr "Numéro de série supérieur ou égal à"
 
 #: templates/js/translated/table_filters.js:143
 #: templates/js/translated/table_filters.js:229
 msgid "Serial number LTE"
-msgstr ""
+msgstr "Numéro de série PPE"
 
 #: templates/js/translated/table_filters.js:144
 #: templates/js/translated/table_filters.js:230
 msgid "Serial number less than or equal to"
-msgstr ""
+msgstr "Numéro de série inférieur ou égal à"
 
 #: templates/js/translated/table_filters.js:147
 #: templates/js/translated/table_filters.js:148
