@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-29 00:17+0000\n"
-"PO-Revision-Date: 2022-01-29 03:42\n"
+"PO-Revision-Date: 2022-01-29 04:45\n"
 "Last-Translator: \n"
 "Language-Team: Hebrew\n"
 "Language: he_IL\n"
@@ -24,11 +24,11 @@ msgstr ""
 
 #: InvenTree/api.py:101
 msgid "No action specified"
-msgstr ""
+msgstr "לא פורטה הפעולה"
 
 #: InvenTree/api.py:116
 msgid "No matching action found"
-msgstr ""
+msgstr "פעולה מבוקשת לא נמצאה"
 
 #: InvenTree/fields.py:100
 msgid "Enter date"
@@ -74,11 +74,11 @@ msgstr "אימייל (שנית)"
 
 #: InvenTree/forms.py:240
 msgid "Email address confirmation"
-msgstr ""
+msgstr "אישור כתובת אימייל"
 
 #: InvenTree/forms.py:260
 msgid "You must type the same email each time."
-msgstr ""
+msgstr "חובה לרשום את אותו אימייל בכל פעם."
 
 #: InvenTree/helpers.py:439
 #, python-brace-format
@@ -98,43 +98,43 @@ msgstr ""
 #: InvenTree/helpers.py:502
 #, python-brace-format
 msgid "Invalid group: {g}"
-msgstr ""
+msgstr "קבוצה שגויה: {g}"
 
 #: InvenTree/helpers.py:512
 #, python-brace-format
 msgid "Invalid group {group}"
-msgstr ""
+msgstr "קבוצה שגויה {group}"
 
 #: InvenTree/helpers.py:518
 #, python-brace-format
 msgid "Invalid/no group {group}"
-msgstr ""
+msgstr "קבוצה שגויה / לא נמצאה {group}"
 
 #: InvenTree/helpers.py:524
 msgid "No serial numbers found"
-msgstr ""
+msgstr "מספרים סידוריים לא נמצאו"
 
 #: InvenTree/helpers.py:528
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
-msgstr ""
+msgstr "כמות המספרים הסידוריים ({s}) מוכרים להיות תואמים לכמות ({q})"
 
 #: InvenTree/models.py:120
 msgid "Missing file"
-msgstr ""
+msgstr "קובץ חסר"
 
 #: InvenTree/models.py:121
 msgid "Missing external link"
-msgstr ""
+msgstr "חסר קישור חיצוני"
 
 #: InvenTree/models.py:132 stock/models.py:1995
 #: templates/js/translated/attachment.js:119
 msgid "Attachment"
-msgstr ""
+msgstr "קובץ מצורף"
 
 #: InvenTree/models.py:133
 msgid "Select file to attach"
-msgstr ""
+msgstr "בחר קובץ לצירוף"
 
 #: InvenTree/models.py:139 company/models.py:131 company/models.py:348
 #: company/models.py:564 order/models.py:127 part/models.py:830
@@ -142,20 +142,20 @@ msgstr ""
 #: templates/js/translated/company.js:540
 #: templates/js/translated/company.js:829 templates/js/translated/part.js:1324
 msgid "Link"
-msgstr ""
+msgstr "קישור"
 
 #: InvenTree/models.py:140 build/models.py:332 part/models.py:831
 #: stock/models.py:529
 msgid "Link to external URL"
-msgstr ""
+msgstr "קישור חיצוני"
 
 #: InvenTree/models.py:143 templates/js/translated/attachment.js:163
 msgid "Comment"
-msgstr ""
+msgstr "הערה"
 
 #: InvenTree/models.py:143
 msgid "File comment"
-msgstr ""
+msgstr "הערת קובץ"
 
 #: InvenTree/models.py:149 InvenTree/models.py:150 common/models.py:1223
 #: common/models.py:1224 common/models.py:1452 common/models.py:1453
@@ -163,24 +163,24 @@ msgstr ""
 #: report/templates/report/inventree_test_report_base.html:96
 #: templates/js/translated/stock.js:2692
 msgid "User"
-msgstr ""
+msgstr "משתמש"
 
 #: InvenTree/models.py:153
 msgid "upload date"
-msgstr ""
+msgstr "תאריך העלאה"
 
 #: InvenTree/models.py:176
 msgid "Filename must not be empty"
-msgstr ""
+msgstr "חובה למלא שם קובץ"
 
 #: InvenTree/models.py:199
 msgid "Invalid attachment directory"
-msgstr ""
+msgstr "תיקיית קובץ שגויה"
 
 #: InvenTree/models.py:209
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr ""
+msgstr "שם הקובץ מכיל תו '{c}' שאינו חוקי"
 
 #: InvenTree/models.py:212
 msgid "Filename missing extension"
@@ -192,11 +192,11 @@ msgstr ""
 
 #: InvenTree/models.py:226
 msgid "Error renaming file"
-msgstr ""
+msgstr "שגיאה בשינוי שם פריט"
 
 #: InvenTree/models.py:261
 msgid "Invalid choice"
-msgstr ""
+msgstr "בחירה שגויה"
 
 #: InvenTree/models.py:277 InvenTree/models.py:278 common/models.py:1438
 #: company/models.py:415 label/models.py:112 part/models.py:774
@@ -210,7 +210,7 @@ msgstr ""
 #: templates/js/translated/part.js:706 templates/js/translated/part.js:1631
 #: templates/js/translated/stock.js:2485
 msgid "Name"
-msgstr ""
+msgstr "שם"
 
 #: InvenTree/models.py:284 build/models.py:209
 #: build/templates/build/detail.html:25 company/models.py:354
@@ -235,23 +235,23 @@ msgstr ""
 #: templates/js/translated/stock.js:1577 templates/js/translated/stock.js:2314
 #: templates/js/translated/stock.js:2497 templates/js/translated/stock.js:2542
 msgid "Description"
-msgstr ""
+msgstr "תיאור"
 
 #: InvenTree/models.py:285
 msgid "Description (optional)"
-msgstr ""
+msgstr "תיאור (לא חובה)"
 
 #: InvenTree/models.py:293
 msgid "parent"
-msgstr ""
+msgstr "מקור"
 
 #: InvenTree/serializers.py:65 part/models.py:2734
 msgid "Must be a valid number"
-msgstr ""
+msgstr "המספר חייב להיות תקין"
 
 #: InvenTree/serializers.py:299
 msgid "Filename"
-msgstr ""
+msgstr "שם קובץ"
 
 #: InvenTree/settings.py:661
 msgid "German"
@@ -263,75 +263,75 @@ msgstr "יוונית"
 
 #: InvenTree/settings.py:663
 msgid "English"
-msgstr ""
+msgstr "אנגלית"
 
 #: InvenTree/settings.py:664
 msgid "Spanish"
-msgstr ""
+msgstr "ספרדית"
 
 #: InvenTree/settings.py:665
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "ספרדית (מקסיקנית)"
 
 #: InvenTree/settings.py:666
 msgid "French"
-msgstr ""
+msgstr "צרפתית"
 
 #: InvenTree/settings.py:667
 msgid "Hebrew"
-msgstr ""
+msgstr "עברית"
 
 #: InvenTree/settings.py:668
 msgid "Italian"
-msgstr ""
+msgstr "איטלקית"
 
 #: InvenTree/settings.py:669
 msgid "Japanese"
-msgstr ""
+msgstr "יפנית"
 
 #: InvenTree/settings.py:670
 msgid "Korean"
-msgstr ""
+msgstr "קוריאנית"
 
 #: InvenTree/settings.py:671
 msgid "Dutch"
-msgstr ""
+msgstr "הולנדית"
 
 #: InvenTree/settings.py:672
 msgid "Norwegian"
-msgstr ""
+msgstr "נורווגית"
 
 #: InvenTree/settings.py:673
 msgid "Polish"
-msgstr ""
+msgstr "פולנית"
 
 #: InvenTree/settings.py:674
 msgid "Portugese"
-msgstr ""
+msgstr "פורטוגזית"
 
 #: InvenTree/settings.py:675
 msgid "Russian"
-msgstr ""
+msgstr "רוסית"
 
 #: InvenTree/settings.py:676
 msgid "Swedish"
-msgstr ""
+msgstr "שוודית"
 
 #: InvenTree/settings.py:677
 msgid "Thai"
-msgstr ""
+msgstr "תאילנדית"
 
 #: InvenTree/settings.py:678
 msgid "Turkish"
-msgstr ""
+msgstr "טורקית"
 
 #: InvenTree/settings.py:679
 msgid "Vietnamese"
-msgstr ""
+msgstr "ווייטנאמית"
 
 #: InvenTree/settings.py:680
 msgid "Chinese"
-msgstr ""
+msgstr "סינית"
 
 #: InvenTree/status.py:94
 msgid "Background worker check failed"
@@ -348,57 +348,57 @@ msgstr ""
 #: InvenTree/status_codes.py:101 InvenTree/status_codes.py:142
 #: InvenTree/status_codes.py:316 templates/js/translated/table_filters.js:313
 msgid "Pending"
-msgstr ""
+msgstr "בהמתנה"
 
 #: InvenTree/status_codes.py:102
 msgid "Placed"
-msgstr ""
+msgstr "מוקם"
 
 #: InvenTree/status_codes.py:103 InvenTree/status_codes.py:319
 #: order/templates/order/order_base.html:128
 #: order/templates/order/sales_order_base.html:132
 msgid "Complete"
-msgstr ""
+msgstr "הושלם"
 
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:144
 #: InvenTree/status_codes.py:318
 msgid "Cancelled"
-msgstr ""
+msgstr "מבוטל"
 
 #: InvenTree/status_codes.py:105 InvenTree/status_codes.py:145
 #: InvenTree/status_codes.py:187
 msgid "Lost"
-msgstr ""
+msgstr "אבד"
 
 #: InvenTree/status_codes.py:106 InvenTree/status_codes.py:146
 #: InvenTree/status_codes.py:189
 msgid "Returned"
-msgstr ""
+msgstr "הוחזר"
 
 #: InvenTree/status_codes.py:143 order/models.py:961
 #: templates/js/translated/order.js:1980 templates/js/translated/order.js:2255
 msgid "Shipped"
-msgstr ""
+msgstr "נשלח"
 
 #: InvenTree/status_codes.py:183
 msgid "OK"
-msgstr ""
+msgstr "מצב טוב"
 
 #: InvenTree/status_codes.py:184
 msgid "Attention needed"
-msgstr ""
+msgstr "דרושה תשומת לב"
 
 #: InvenTree/status_codes.py:185
 msgid "Damaged"
-msgstr ""
+msgstr "פגום"
 
 #: InvenTree/status_codes.py:186
 msgid "Destroyed"
-msgstr ""
+msgstr "הרוס"
 
 #: InvenTree/status_codes.py:188
 msgid "Rejected"
-msgstr ""
+msgstr "נדחה"
 
 #: InvenTree/status_codes.py:272
 msgid "Legacy stock tracking entry"
@@ -430,7 +430,7 @@ msgstr ""
 
 #: InvenTree/status_codes.py:283
 msgid "Location changed"
-msgstr ""
+msgstr "מיקום שונה"
 
 #: InvenTree/status_codes.py:285
 msgid "Installed into assembly"
@@ -462,11 +462,11 @@ msgstr ""
 
 #: InvenTree/status_codes.py:296 templates/js/translated/table_filters.js:213
 msgid "Sent to customer"
-msgstr ""
+msgstr "נשלח ללקוח"
 
 #: InvenTree/status_codes.py:297
 msgid "Returned from customer"
-msgstr ""
+msgstr "הוחזר מלקוח"
 
 #: InvenTree/status_codes.py:299
 msgid "Build order output created"
@@ -482,11 +482,11 @@ msgstr ""
 
 #: InvenTree/status_codes.py:317
 msgid "Production"
-msgstr ""
+msgstr "ייצור"
 
 #: InvenTree/validators.py:23
 msgid "Not a valid currency code"
-msgstr ""
+msgstr "קוד מטבע לא מאושר"
 
 #: InvenTree/validators.py:51
 msgid "Invalid character in part name"
@@ -522,7 +522,7 @@ msgstr ""
 
 #: InvenTree/views.py:538
 msgid "Delete Item"
-msgstr ""
+msgstr "מחק פריט"
 
 #: InvenTree/views.py:587
 msgid "Check box to confirm item deletion"
@@ -530,23 +530,23 @@ msgstr ""
 
 #: InvenTree/views.py:602 templates/InvenTree/settings/user.html:21
 msgid "Edit User Information"
-msgstr ""
+msgstr "ערוך מידע אודות המשתמש"
 
 #: InvenTree/views.py:613 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
-msgstr ""
+msgstr "הגדר סיסמא"
 
 #: InvenTree/views.py:632
 msgid "Password fields must match"
-msgstr ""
+msgstr "הסיסמאות מוכרחות להיות תואמות"
 
 #: InvenTree/views.py:883 templates/navbar.html:126
 msgid "System Information"
-msgstr ""
+msgstr "מידע אודות המערכת"
 
 #: barcodes/api.py:54 barcodes/api.py:152
 msgid "Must provide barcode_data parameter"
-msgstr ""
+msgstr "הפרמטר barcode_data מוכרח להיות תקין"
 
 #: barcodes/api.py:128
 msgid "No match found for barcode data"
@@ -618,7 +618,7 @@ msgstr ""
 #: templates/js/translated/stock.js:588 templates/js/translated/stock.js:758
 #: templates/js/translated/stock.js:2677 templates/js/translated/stock.js:2779
 msgid "Quantity"
-msgstr ""
+msgstr "כמות"
 
 #: build/forms.py:37
 msgid "Enter quantity for build output"
@@ -628,7 +628,7 @@ msgstr ""
 #: stock/serializers.py:314 templates/js/translated/stock.js:238
 #: templates/js/translated/stock.js:392
 msgid "Serial Numbers"
-msgstr ""
+msgstr "מספרים סידוריים"
 
 #: build/forms.py:43
 msgid "Enter serial numbers for build outputs"
@@ -683,16 +683,16 @@ msgstr ""
 #: templates/js/translated/bom.js:559 templates/js/translated/build.js:1179
 #: templates/js/translated/order.js:1050 templates/js/translated/order.js:2144
 msgid "Reference"
-msgstr ""
+msgstr "מקט"
 
 #: build/models.py:212
 msgid "Brief description of the build"
-msgstr ""
+msgstr "תיאור קצר אודות הבנייה"
 
 #: build/models.py:221 build/templates/build/build_base.html:164
 #: build/templates/build/detail.html:88
 msgid "Parent Build"
-msgstr ""
+msgstr "מקור הבנייה"
 
 #: build/models.py:222
 msgid "BuildOrder to which this build is allocated"
@@ -727,11 +727,11 @@ msgstr ""
 #: templates/js/translated/stock.js:934 templates/js/translated/stock.js:1534
 #: templates/js/translated/stock.js:2767
 msgid "Part"
-msgstr ""
+msgstr "רכיב"
 
 #: build/models.py:235
 msgid "Select part to build"
-msgstr ""
+msgstr "בחר רכיב לבנייה"
 
 #: build/models.py:240
 msgid "Sales Order Reference"
@@ -760,7 +760,7 @@ msgstr ""
 
 #: build/models.py:266
 msgid "Build Quantity"
-msgstr ""
+msgstr "כמות בניה"
 
 #: build/models.py:269
 msgid "Number of stock items to build"
