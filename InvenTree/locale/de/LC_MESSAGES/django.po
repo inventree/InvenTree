@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-28 04:11+0000\n"
+"POT-Creation-Date: 2022-01-29 00:17+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -1517,8 +1517,10 @@ msgstr "{name.title()} Datei"
 msgid "Select {name} file to upload"
 msgstr "{name} Datei zum Hochladen auswählen"
 
-#: common/models.py:352 common/models.py:1008 common/models.py:1216
-msgid "Settings key (must be unique - case insensitive"
+#: common/models.py:352
+#, fuzzy
+#| msgid "Settings key (must be unique - case insensitive"
+msgid "Settings key (must be unique - case insensitive)"
 msgstr "Einstellungs-Schlüssel (muss einzigartig sein, Groß-/ Kleinschreibung wird nicht beachtet)"
 
 #: common/models.py:354
@@ -2025,6 +2027,10 @@ msgstr "Anmeldung erlauben"
 #: common/models.py:993
 msgid "Enable plugins to respond to internal events"
 msgstr ""
+
+#: common/models.py:1008 common/models.py:1216
+msgid "Settings key (must be unique - case insensitive"
+msgstr "Einstellungs-Schlüssel (muss einzigartig sein, Groß-/ Kleinschreibung wird nicht beachtet)"
 
 #: common/models.py:1039
 msgid "Show subscribed parts"
