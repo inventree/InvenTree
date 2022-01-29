@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-29 00:17+0000\n"
-"PO-Revision-Date: 2022-01-29 01:11\n"
+"PO-Revision-Date: 2022-01-29 03:42\n"
 "Last-Translator: \n"
 "Language-Team: Hebrew\n"
 "Language: he_IL\n"
@@ -32,45 +32,45 @@ msgstr ""
 
 #: InvenTree/fields.py:100
 msgid "Enter date"
-msgstr ""
+msgstr "הזן תאריך סיום"
 
 #: InvenTree/forms.py:126 build/forms.py:48 build/forms.py:69 order/forms.py:24
 #: order/forms.py:35 order/forms.py:46 order/forms.py:57
 #: templates/account/email_confirm.html:20 templates/js/translated/forms.js:595
 msgid "Confirm"
-msgstr ""
+msgstr "אשר"
 
 #: InvenTree/forms.py:142
 msgid "Confirm delete"
-msgstr ""
+msgstr "אשר מחיקה"
 
 #: InvenTree/forms.py:143
 msgid "Confirm item deletion"
-msgstr ""
+msgstr "אשר מחיקה"
 
 #: InvenTree/forms.py:174
 msgid "Enter password"
-msgstr ""
+msgstr "הכנס סיסמה"
 
 #: InvenTree/forms.py:175
 msgid "Enter new password"
-msgstr ""
+msgstr "הכנס סיסמה חדשה"
 
 #: InvenTree/forms.py:182
 msgid "Confirm password"
-msgstr ""
+msgstr "אישור סיסמה"
 
 #: InvenTree/forms.py:183
 msgid "Confirm new password"
-msgstr ""
+msgstr "אשר סיסמה חדשה"
 
 #: InvenTree/forms.py:215
 msgid "Select Category"
-msgstr ""
+msgstr "בחר קטגוריה"
 
 #: InvenTree/forms.py:236
 msgid "Email (again)"
-msgstr ""
+msgstr "אימייל (שנית)"
 
 #: InvenTree/forms.py:240
 msgid "Email address confirmation"
@@ -255,11 +255,11 @@ msgstr ""
 
 #: InvenTree/settings.py:661
 msgid "German"
-msgstr ""
+msgstr "גרמנית"
 
 #: InvenTree/settings.py:662
 msgid "Greek"
-msgstr ""
+msgstr "יוונית"
 
 #: InvenTree/settings.py:663
 msgid "English"
