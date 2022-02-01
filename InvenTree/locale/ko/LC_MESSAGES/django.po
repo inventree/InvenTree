@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-01 05:37+0000\n"
-"PO-Revision-Date: 2022-02-01 05:40\n"
+"PO-Revision-Date: 2022-02-01 10:01\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -38,7 +38,7 @@ msgstr ""
 #: order/forms.py:35 order/forms.py:46 order/forms.py:57
 #: templates/account/email_confirm.html:20 templates/js/translated/forms.js:595
 msgid "Confirm"
-msgstr ""
+msgstr "확인"
 
 #: InvenTree/forms.py:142
 msgid "Confirm delete"
@@ -58,11 +58,11 @@ msgstr "새로운 비밀번호를 입력하세요"
 
 #: InvenTree/forms.py:182
 msgid "Confirm password"
-msgstr ""
+msgstr "비밀번호 확인"
 
 #: InvenTree/forms.py:183
 msgid "Confirm new password"
-msgstr ""
+msgstr "새 비밀번호 확인"
 
 #: InvenTree/forms.py:215
 msgid "Select Category"
@@ -3077,7 +3077,7 @@ msgstr ""
 
 #: label/models.py:140
 msgid "Width [mm]"
-msgstr ""
+msgstr "너비 [mm]"
 
 #: label/models.py:141
 msgid "Label width, specified in mm"
@@ -3085,7 +3085,7 @@ msgstr ""
 
 #: label/models.py:147
 msgid "Height [mm]"
-msgstr ""
+msgstr "높이 [mm]"
 
 #: label/models.py:148
 msgid "Label height, specified in mm"
@@ -4669,7 +4669,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:253 part/templates/part/part_sidebar.html:17
 msgid "Bill of Materials"
-msgstr ""
+msgstr "자재 명세서"
 
 #: part/templates/part/detail.html:258
 msgid "Export actions"
@@ -5277,7 +5277,7 @@ msgstr ""
 
 #: plugin/models.py:32
 msgid "Key"
-msgstr ""
+msgstr "키"
 
 #: plugin/models.py:33
 msgid "Key of plugin"
@@ -5305,7 +5305,7 @@ msgstr ""
 
 #: plugin/samples/integration/sample.py:48
 msgid "API Key"
-msgstr ""
+msgstr "API 키"
 
 #: plugin/samples/integration/sample.py:49
 msgid "Key required for accessing external API"
@@ -6563,12 +6563,12 @@ msgstr ""
 #: templates/InvenTree/settings/plugin.html:47 templates/navbar.html:111
 #: users/models.py:39
 msgid "Admin"
-msgstr ""
+msgstr "관리자"
 
 #: templates/InvenTree/settings/plugin.html:49
 #: templates/InvenTree/settings/plugin_settings.html:28
 msgid "Author"
-msgstr ""
+msgstr "작성자"
 
 #: templates/InvenTree/settings/plugin.html:51
 #: templates/InvenTree/settings/plugin_settings.html:43
@@ -6712,12 +6712,12 @@ msgstr ""
 #: templates/InvenTree/settings/sidebar.html:6
 #: templates/InvenTree/settings/user_settings.html:9
 msgid "User Settings"
-msgstr ""
+msgstr "사용자 설정"
 
 #: templates/InvenTree/settings/sidebar.html:9
 #: templates/InvenTree/settings/user.html:12
 msgid "Account Settings"
-msgstr ""
+msgstr "계정 설정"
 
 #: templates/InvenTree/settings/sidebar.html:11
 #: templates/InvenTree/settings/user_display.html:9
@@ -6726,7 +6726,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:13
 msgid "Home Page"
-msgstr ""
+msgstr "홈페이지"
 
 #: templates/InvenTree/settings/sidebar.html:15
 #: templates/InvenTree/settings/user_search.html:9
@@ -6821,7 +6821,7 @@ msgstr ""
 #: templates/InvenTree/settings/user.html:95
 #: templates/InvenTree/settings/user.html:201
 msgid "Warning:"
-msgstr ""
+msgstr "경고:"
 
 #: templates/InvenTree/settings/user.html:96
 msgid "You currently do not have any email address set up. You should really add an email address so you can receive notifications, reset your password, etc."
@@ -6829,11 +6829,11 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:104
 msgid "Add Email Address"
-msgstr ""
+msgstr "이메일 주소 추가"
 
 #: templates/InvenTree/settings/user.html:109
 msgid "Add Email"
-msgstr ""
+msgstr "이메일 추가"
 
 #: templates/InvenTree/settings/user.html:117
 msgid "Social Accounts"
@@ -6913,7 +6913,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:243
 msgid "Last Activity"
-msgstr ""
+msgstr "마지막 활동"
 
 #: templates/InvenTree/settings/user.html:252
 #, python-format
@@ -6997,7 +6997,7 @@ msgstr ""
 
 #: templates/about.html:10
 msgid "InvenTree Version Information"
-msgstr ""
+msgstr "InvenTree 버전 정보"
 
 #: templates/about.html:11 templates/about.html:105
 #: templates/js/translated/bom.js:407 templates/js/translated/modals.js:53
@@ -7009,11 +7009,11 @@ msgstr ""
 
 #: templates/about.html:20
 msgid "InvenTree Version"
-msgstr ""
+msgstr "InvenTree 버전"
 
 #: templates/about.html:25
 msgid "Development Version"
-msgstr ""
+msgstr "개발 버전"
 
 #: templates/about.html:28
 msgid "Up to Date"
@@ -7025,7 +7025,7 @@ msgstr ""
 
 #: templates/about.html:53
 msgid "InvenTree Documentation"
-msgstr ""
+msgstr "InvenTree 문서"
 
 #: templates/about.html:58
 msgid "API Version"
@@ -7033,15 +7033,15 @@ msgstr "API 버전"
 
 #: templates/about.html:63
 msgid "Python Version"
-msgstr ""
+msgstr "Python 버전"
 
 #: templates/about.html:68
 msgid "Django Version"
-msgstr ""
+msgstr "Django 버전"
 
 #: templates/about.html:73
 msgid "View Code on GitHub"
-msgstr ""
+msgstr "GitHub에서 코드 보기"
 
 #: templates/about.html:78
 msgid "Credits"
@@ -7049,7 +7049,7 @@ msgstr ""
 
 #: templates/about.html:83
 msgid "Mobile App"
-msgstr ""
+msgstr "모바일 앱"
 
 #: templates/about.html:88
 msgid "Submit Bug Report"
@@ -7061,7 +7061,7 @@ msgstr ""
 
 #: templates/about.html:95
 msgid "copy version information"
-msgstr ""
+msgstr "버전 정보 복사"
 
 #: templates/account/email_confirm.html:6
 #: templates/account/email_confirm.html:10
@@ -7081,7 +7081,7 @@ msgstr ""
 #: templates/account/login.html:6 templates/account/login.html:16
 #: templates/account/login.html:39
 msgid "Sign In"
-msgstr ""
+msgstr "로그인"
 
 #: templates/account/login.html:21
 #, python-format
@@ -7115,15 +7115,15 @@ msgstr ""
 #: templates/account/logout.html:5 templates/account/logout.html:8
 #: templates/account/logout.html:20
 msgid "Sign Out"
-msgstr ""
+msgstr "로그아웃"
 
 #: templates/account/logout.html:10
 msgid "Are you sure you want to sign out?"
-msgstr ""
+msgstr "정말 로그아웃하시겠습니까?"
 
 #: templates/account/logout.html:19
 msgid "Back to Site"
-msgstr ""
+msgstr "사이트로 돌아가기"
 
 #: templates/account/password_reset.html:5
 #: templates/account/password_reset.html:12
@@ -7298,7 +7298,7 @@ msgstr ""
 
 #: templates/email/email.html:35
 msgid "InvenTree version"
-msgstr ""
+msgstr "InvenTree 버전"
 
 #: templates/email/low_stock_notification.html:7
 #, python-format
@@ -7379,7 +7379,7 @@ msgstr ""
 
 #: templates/js/translated/api.js:217 templates/js/translated/modals.js:1078
 msgid "Error 408: Timeout"
-msgstr ""
+msgstr "오류 408: 시간 초과"
 
 #: templates/js/translated/api.js:218 templates/js/translated/modals.js:1079
 msgid "Connection timeout while requesting data from server"
@@ -7431,7 +7431,7 @@ msgstr ""
 
 #: templates/js/translated/barcode.js:35
 msgid "Barcode"
-msgstr ""
+msgstr "바코드"
 
 #: templates/js/translated/barcode.js:53
 msgid "Enter optional notes for stock transfer"
@@ -7443,7 +7443,7 @@ msgstr ""
 
 #: templates/js/translated/barcode.js:92
 msgid "Server error"
-msgstr ""
+msgstr "서버 오류"
 
 #: templates/js/translated/barcode.js:113
 msgid "Unknown response from server"
@@ -7826,7 +7826,7 @@ msgstr ""
 #: templates/js/translated/part.js:1624 templates/js/translated/stock.js:1520
 #: templates/js/translated/stock.js:2479
 msgid "Select"
-msgstr ""
+msgstr "선택"
 
 #: templates/js/translated/build.js:1674
 msgid "Build order is overdue"
