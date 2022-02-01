@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-01 05:37+0000\n"
-"PO-Revision-Date: 2022-02-01 10:01\n"
+"PO-Revision-Date: 2022-02-01 11:19\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -4669,7 +4669,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:253 part/templates/part/part_sidebar.html:17
 msgid "Bill of Materials"
-msgstr "자재 명세서"
+msgstr "부품 명세서"
 
 #: part/templates/part/detail.html:258
 msgid "Export actions"
@@ -5197,7 +5197,7 @@ msgstr ""
 
 #: part/views.py:1110
 msgid "Export Bill of Materials"
-msgstr ""
+msgstr "부품 명세서 내보내기"
 
 #: part/views.py:1159
 msgid "Confirm Part Deletion"
@@ -8510,7 +8510,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:481
 msgid "Copy Bill of Materials"
-msgstr ""
+msgstr "부품 명세서 복사"
 
 #: templates/js/translated/part.js:509 templates/js/translated/part.js:594
 msgid "Trackable part"
