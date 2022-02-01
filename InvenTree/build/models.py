@@ -437,6 +437,9 @@ class Build(MPTTModel, ReferenceIndexingMixin):
     def output_count(self):
         return self.build_outputs.count()
 
+    def has_build_outputs(self):
+        return self.output_count > 0
+
     def get_build_outputs(self, **kwargs):
         """
         Return a list of build outputs.

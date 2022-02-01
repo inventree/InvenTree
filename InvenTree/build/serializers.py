@@ -284,6 +284,9 @@ class BuildCompleteSerializer(serializers.Serializer):
         if build.incomplete_count > 0:
             raise ValidationError(_("Build order has incomplete outputs"))
 
+        if not build.has_build_outputs():
+            raise ValidationError(_("No build outputs have been created for this build order"))
+
         return data
 
     def save(self):
