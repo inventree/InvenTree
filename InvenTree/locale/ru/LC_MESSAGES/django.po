@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-30 10:46+0000\n"
+"POT-Creation-Date: 2022-02-01 05:37+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -598,7 +598,7 @@ msgstr "Хэш штрих-кода уже соответствует объек�
 msgid "Barcode associated with Stock Item"
 msgstr "Штрих-код, связанный с инвентарем"
 
-#: build/forms.py:36 build/models.py:1293
+#: build/forms.py:36 build/models.py:1296
 #: build/templates/build/build_base.html:82
 #: build/templates/build/detail.html:35 common/models.py:1263
 #: company/forms.py:42 company/templates/company/supplier_part.html:251
@@ -703,7 +703,7 @@ msgstr ""
 msgid "Brief description of the build"
 msgstr ""
 
-#: build/models.py:221 build/templates/build/build_base.html:164
+#: build/models.py:221 build/templates/build/build_base.html:169
 #: build/templates/build/detail.html:88
 msgid "Parent Build"
 msgstr ""
@@ -834,7 +834,7 @@ msgstr ""
 msgid "User who issued this build order"
 msgstr ""
 
-#: build/models.py:325 build/templates/build/build_base.html:185
+#: build/models.py:325 build/templates/build/build_base.html:190
 #: build/templates/build/detail.html:116 order/models.py:143
 #: order/templates/order/order_base.html:170
 #: order/templates/order/sales_order_base.html:182 part/models.py:973
@@ -878,54 +878,54 @@ msgstr "Заметки"
 msgid "Extra build notes"
 msgstr ""
 
-#: build/models.py:717
+#: build/models.py:720
 msgid "No build output specified"
 msgstr ""
 
-#: build/models.py:720
+#: build/models.py:723
 msgid "Build output is already completed"
 msgstr ""
 
-#: build/models.py:723
+#: build/models.py:726
 msgid "Build output does not match Build Order"
 msgstr ""
 
-#: build/models.py:1115
+#: build/models.py:1118
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr ""
 
-#: build/models.py:1124
+#: build/models.py:1127
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not execed available stock quantity ({a})"
 msgstr ""
 
-#: build/models.py:1134
+#: build/models.py:1137
 msgid "Stock item is over-allocated"
 msgstr ""
 
-#: build/models.py:1140 order/models.py:1189
+#: build/models.py:1143 order/models.py:1189
 msgid "Allocation quantity must be greater than zero"
 msgstr ""
 
-#: build/models.py:1146
+#: build/models.py:1149
 msgid "Quantity must be 1 for serialized stock"
 msgstr ""
 
-#: build/models.py:1203
+#: build/models.py:1206
 msgid "Selected stock item not found in BOM"
 msgstr ""
 
-#: build/models.py:1263 stock/templates/stock/item_base.html:345
+#: build/models.py:1266 stock/templates/stock/item_base.html:345
 #: templates/InvenTree/search.html:137 templates/js/translated/build.js:1660
 #: templates/navbar.html:35
 msgid "Build"
 msgstr "Сборка"
 
-#: build/models.py:1264
+#: build/models.py:1267
 msgid "Build to allocate parts"
 msgstr ""
 
-#: build/models.py:1280 build/serializers.py:388 order/serializers.py:696
+#: build/models.py:1283 build/serializers.py:391 order/serializers.py:696
 #: order/serializers.py:714 stock/serializers.py:578 stock/serializers.py:696
 #: stock/templates/stock/item_base.html:9
 #: stock/templates/stock/item_base.html:23
@@ -940,23 +940,23 @@ msgstr ""
 msgid "Stock Item"
 msgstr ""
 
-#: build/models.py:1281
+#: build/models.py:1284
 msgid "Source stock item"
 msgstr ""
 
-#: build/models.py:1294
+#: build/models.py:1297
 msgid "Stock quantity to allocate to build"
 msgstr ""
 
-#: build/models.py:1302
+#: build/models.py:1305
 msgid "Install into"
 msgstr ""
 
-#: build/models.py:1303
+#: build/models.py:1306
 msgid "Destination stock item"
 msgstr ""
 
-#: build/serializers.py:137 build/serializers.py:417
+#: build/serializers.py:137 build/serializers.py:420
 msgid "Build Output"
 msgstr ""
 
@@ -994,7 +994,7 @@ msgstr "Расположение"
 msgid "Location for completed build outputs"
 msgstr ""
 
-#: build/serializers.py:197 build/templates/build/build_base.html:137
+#: build/serializers.py:197 build/templates/build/build_base.html:142
 #: build/templates/build/detail.html:63 order/models.py:557
 #: order/serializers.py:247 stock/templates/stock/item_base.html:187
 #: templates/js/translated/barcode.js:140 templates/js/translated/build.js:1716
@@ -1042,46 +1042,52 @@ msgstr ""
 msgid "Build order has incomplete outputs"
 msgstr "Вывод заказа сборки завершён"
 
-#: build/serializers.py:313 build/serializers.py:362 part/models.py:2760
+#: build/serializers.py:288 build/templates/build/build_base.html:95
+#, fuzzy
+#| msgid "Stock manually added"
+msgid "No build outputs have been created for this build order"
+msgstr "Добавлен вручную"
+
+#: build/serializers.py:316 build/serializers.py:365 part/models.py:2760
 #: part/models.py:2919
 msgid "BOM Item"
 msgstr ""
 
-#: build/serializers.py:323
+#: build/serializers.py:326
 msgid "Build output"
 msgstr ""
 
-#: build/serializers.py:332
+#: build/serializers.py:335
 msgid "Build output must point to the same build"
 msgstr ""
 
-#: build/serializers.py:379
+#: build/serializers.py:382
 msgid "bom_item.part must point to the same part as the build order"
 msgstr ""
 
-#: build/serializers.py:394 stock/serializers.py:585
+#: build/serializers.py:397 stock/serializers.py:585
 msgid "Item must be in stock"
 msgstr ""
 
-#: build/serializers.py:408 order/models.py:280 order/serializers.py:240
+#: build/serializers.py:411 order/models.py:280 order/serializers.py:240
 #: stock/models.py:367 stock/models.py:1105 stock/serializers.py:305
 msgid "Quantity must be greater than zero"
 msgstr ""
 
-#: build/serializers.py:450 order/serializers.py:747
+#: build/serializers.py:453 order/serializers.py:747
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr ""
 
-#: build/serializers.py:456
+#: build/serializers.py:459
 msgid "Build output must be specified for allocation of tracked parts"
 msgstr ""
 
-#: build/serializers.py:463
+#: build/serializers.py:466
 msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr ""
 
-#: build/serializers.py:491 order/serializers.py:990
+#: build/serializers.py:494 order/serializers.py:990
 msgid "Allocation items must be provided"
 msgstr ""
 
@@ -1108,7 +1114,7 @@ msgid "Edit Build"
 msgstr ""
 
 #: build/templates/build/build_base.html:56
-#: build/templates/build/build_base.html:215 build/views.py:56
+#: build/templates/build/build_base.html:220 build/views.py:56
 msgid "Cancel Build"
 msgstr ""
 
@@ -1127,33 +1133,33 @@ msgstr "Завершить сборку"
 msgid "Build Description"
 msgstr "Описание"
 
-#: build/templates/build/build_base.html:96
+#: build/templates/build/build_base.html:101
 #, python-format
 msgid "This Build Order is allocated to Sales Order %(link)s"
 msgstr ""
 
-#: build/templates/build/build_base.html:103
+#: build/templates/build/build_base.html:108
 #, python-format
 msgid "This Build Order is a child of Build Order %(link)s"
 msgstr ""
 
-#: build/templates/build/build_base.html:110
+#: build/templates/build/build_base.html:115
 msgid "Build Order is ready to mark as completed"
 msgstr ""
 
-#: build/templates/build/build_base.html:115
+#: build/templates/build/build_base.html:120
 msgid "Build Order cannot be completed as outstanding outputs remain"
 msgstr ""
 
-#: build/templates/build/build_base.html:120
+#: build/templates/build/build_base.html:125
 msgid "Required build quantity has not yet been completed"
 msgstr ""
 
-#: build/templates/build/build_base.html:125
+#: build/templates/build/build_base.html:130
 msgid "Stock has not been fully allocated to this Build Order"
 msgstr ""
 
-#: build/templates/build/build_base.html:146
+#: build/templates/build/build_base.html:151
 #: build/templates/build/detail.html:132
 #: order/templates/order/order_base.html:156
 #: order/templates/order/sales_order_base.html:163
@@ -1163,13 +1169,13 @@ msgstr ""
 msgid "Target Date"
 msgstr "Целевая дата"
 
-#: build/templates/build/build_base.html:151
+#: build/templates/build/build_base.html:156
 #, python-format
 msgid "This build was due on %(target)s"
 msgstr ""
 
-#: build/templates/build/build_base.html:151
-#: build/templates/build/build_base.html:196
+#: build/templates/build/build_base.html:156
+#: build/templates/build/build_base.html:201
 #: order/templates/order/order_base.html:98
 #: order/templates/order/sales_order_base.html:93
 #: templates/js/translated/table_filters.js:299
@@ -1178,7 +1184,7 @@ msgstr ""
 msgid "Overdue"
 msgstr "Просрочено"
 
-#: build/templates/build/build_base.html:158
+#: build/templates/build/build_base.html:163
 #: build/templates/build/detail.html:68 build/templates/build/detail.html:143
 #: order/templates/order/sales_order_base.html:170
 #: templates/js/translated/build.js:1702
@@ -1186,7 +1192,7 @@ msgstr "Просрочено"
 msgid "Completed"
 msgstr ""
 
-#: build/templates/build/build_base.html:171
+#: build/templates/build/build_base.html:176
 #: build/templates/build/detail.html:95 order/models.py:947
 #: order/models.py:1043 order/templates/order/sales_order_base.html:9
 #: order/templates/order/sales_order_base.html:28
@@ -1197,17 +1203,17 @@ msgstr ""
 msgid "Sales Order"
 msgstr ""
 
-#: build/templates/build/build_base.html:178
+#: build/templates/build/build_base.html:183
 #: build/templates/build/detail.html:109
 #: report/templates/report/inventree_build_order_base.html:153
 msgid "Issued By"
 msgstr "Выдано"
 
-#: build/templates/build/build_base.html:223
+#: build/templates/build/build_base.html:228
 msgid "Incomplete Outputs"
 msgstr ""
 
-#: build/templates/build/build_base.html:224
+#: build/templates/build/build_base.html:229
 msgid "Build Order cannot be completed as incomplete build outputs remain"
 msgstr ""
 
