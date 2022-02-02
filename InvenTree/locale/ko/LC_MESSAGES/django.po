@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-01 05:37+0000\n"
-"PO-Revision-Date: 2022-02-02 15:25\n"
+"PO-Revision-Date: 2022-02-02 17:28\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -628,7 +628,7 @@ msgstr ""
 #: stock/serializers.py:314 templates/js/translated/stock.js:238
 #: templates/js/translated/stock.js:392
 msgid "Serial Numbers"
-msgstr ""
+msgstr "일련번호"
 
 #: build/forms.py:43
 msgid "Enter serial numbers for build outputs"
@@ -1424,7 +1424,7 @@ msgstr ""
 
 #: build/views.py:122 stock/serializers.py:363 stock/views.py:1257
 msgid "Serial numbers already exist"
-msgstr ""
+msgstr "일련번호가 이미 존재합니다"
 
 #: build/views.py:131
 msgid "Serial numbers required for trackable build output"
@@ -1488,12 +1488,12 @@ msgstr "업로드할 파일을 선택하세요"
 
 #: common/forms.py:50
 msgid "{name.title()} File"
-msgstr ""
+msgstr "{name.title()} 파일"
 
 #: common/forms.py:51
 #, python-brace-format
 msgid "Select {name} file to upload"
-msgstr ""
+msgstr "업로드할 {name} 파일을 선택하세요"
 
 #: common/models.py:352
 msgid "Settings key (must be unique - case insensitive)"
@@ -1904,7 +1904,7 @@ msgstr "SSO 활성화"
 
 #: common/models.py:921
 msgid "Enable SSO on the login pages"
-msgstr ""
+msgstr "로그인 페이지에서 SSO 활성화"
 
 #: common/models.py:926
 msgid "Email required"
@@ -1924,7 +1924,7 @@ msgstr ""
 
 #: common/models.py:938
 msgid "Mail twice"
-msgstr ""
+msgstr "두 번 보내기"
 
 #: common/models.py:939
 msgid "On signup ask users twice for their mail"
@@ -3426,7 +3426,7 @@ msgstr ""
 
 #: order/serializers.py:251
 msgid "Barcode Hash"
-msgstr ""
+msgstr "바코드 해시"
 
 #: order/serializers.py:252
 msgid "Unique identifier field"
@@ -3434,7 +3434,7 @@ msgstr ""
 
 #: order/serializers.py:269
 msgid "Barcode is already in use"
-msgstr ""
+msgstr "이미 사용 중인 바코드입니다"
 
 #: order/serializers.py:307
 msgid "Line items must be provided"
@@ -4249,7 +4249,7 @@ msgstr ""
 
 #: part/models.py:2491
 msgid "Data"
-msgstr ""
+msgstr "데이터"
 
 #: part/models.py:2491
 msgid "Parameter Value"
@@ -4440,7 +4440,7 @@ msgstr ""
 
 #: part/templates/part/bom_upload/upload_file.html:13
 msgid "Upload Bill of Materials"
-msgstr ""
+msgstr "부품 명세서 업로드"
 
 #: part/templates/part/bom_upload/upload_file.html:33
 msgid "Requirements for BOM upload"
@@ -4810,7 +4810,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:39
 #: stock/templates/stock/location.html:35 templates/qr_button.html:1
 msgid "Show QR Code"
-msgstr ""
+msgstr "QR 코드 보기"
 
 #: part/templates/part/part_base.html:46
 #: stock/templates/stock/item_base.html:55
@@ -4936,7 +4936,7 @@ msgstr ""
 #: part/templates/part/part_base.html:328
 #: stock/templates/stock/item_base.html:166
 msgid "Search for serial number"
-msgstr ""
+msgstr "일련번호 검색"
 
 #: part/templates/part/part_base.html:449 part/templates/part/prices.html:144
 msgid "Calculate"
@@ -5534,7 +5534,7 @@ msgstr ""
 
 #: stock/forms.py:138
 msgid "Serial numbers"
-msgstr ""
+msgstr "일련번호"
 
 #: stock/forms.py:138
 msgid "Unique serial numbers (must match quantity)"
@@ -6525,7 +6525,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/mixins/urls.html:23
 msgid "Open in new tab"
-msgstr ""
+msgstr "새 탭에서 열기"
 
 #: templates/InvenTree/settings/part.html:7
 msgid "Part Settings"
@@ -8745,11 +8745,11 @@ msgstr "일련번호를 입력하세요"
 
 #: templates/js/translated/stock.js:441
 msgid "Enter a serial number"
-msgstr ""
+msgstr "일련번호를 입력하세요"
 
 #: templates/js/translated/stock.js:461
 msgid "No matching serial number"
-msgstr ""
+msgstr "일치하는 일련번호가 없습니다"
 
 #: templates/js/translated/stock.js:470
 msgid "More than one matching result found"
@@ -9098,7 +9098,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:221
 #: templates/js/translated/table_filters.js:222
 msgid "Serial number"
-msgstr ""
+msgstr "일련번호"
 
 #: templates/js/translated/table_filters.js:152
 #: templates/js/translated/table_filters.js:239
