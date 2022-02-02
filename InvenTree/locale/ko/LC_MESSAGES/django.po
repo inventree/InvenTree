@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-01 05:37+0000\n"
-"PO-Revision-Date: 2022-02-02 14:17\n"
+"PO-Revision-Date: 2022-02-02 15:25\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -390,11 +390,11 @@ msgstr ""
 
 #: InvenTree/status_codes.py:185
 msgid "Damaged"
-msgstr ""
+msgstr "파손됨"
 
 #: InvenTree/status_codes.py:186
 msgid "Destroyed"
-msgstr ""
+msgstr "파괴됨"
 
 #: InvenTree/status_codes.py:188
 msgid "Rejected"
@@ -530,7 +530,7 @@ msgstr ""
 
 #: InvenTree/views.py:602 templates/InvenTree/settings/user.html:21
 msgid "Edit User Information"
-msgstr ""
+msgstr "사용자 정보 수정"
 
 #: InvenTree/views.py:613 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
@@ -1050,7 +1050,7 @@ msgstr ""
 #: build/serializers.py:411 order/models.py:280 order/serializers.py:240
 #: stock/models.py:367 stock/models.py:1105 stock/serializers.py:305
 msgid "Quantity must be greater than zero"
-msgstr ""
+msgstr "수량 값은 0보다 커야 합니다"
 
 #: build/serializers.py:453 order/serializers.py:747
 #, python-brace-format
