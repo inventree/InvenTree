@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-01 05:37+0000\n"
-"PO-Revision-Date: 2022-02-01 11:19\n"
+"PO-Revision-Date: 2022-02-02 14:17\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -70,7 +70,7 @@ msgstr ""
 
 #: InvenTree/forms.py:236
 msgid "Email (again)"
-msgstr ""
+msgstr "이메일 (다시 입력)"
 
 #: InvenTree/forms.py:240
 msgid "Email address confirmation"
@@ -247,7 +247,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:65 part/models.py:2734
 msgid "Must be a valid number"
-msgstr ""
+msgstr "유효한 숫자여야 합니다"
 
 #: InvenTree/serializers.py:299
 msgid "Filename"
@@ -363,7 +363,7 @@ msgstr ""
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:144
 #: InvenTree/status_codes.py:318
 msgid "Cancelled"
-msgstr ""
+msgstr "취소됨"
 
 #: InvenTree/status_codes.py:105 InvenTree/status_codes.py:145
 #: InvenTree/status_codes.py:187
