@@ -176,6 +176,10 @@ class RuleSet(models.Model):
         'django_q_success',
     ]
 
+    RULESET_CHANGE_DELETE = [
+        ('part', 'bomitem')
+    ]
+
     RULE_OPTIONS = [
         'can_view',
         'can_add',
@@ -225,13 +229,15 @@ class RuleSet(models.Model):
         for role in cls.RULESET_NAMES:
             if table in cls.RULESET_MODELS[role]:
 
+                print(f'{user} | {role} | {permission}')
+
                 if check_user_role(user, role, permission):
                     return True
 
         # Print message instead of throwing an error
         name = getattr(user, 'name', user.pk)
 
-        logger.info(f"User '{name}' failed permission check for {table}.{permission}")
+        print(f"User '{name}' failed permission check for {table}.{permission}")
 
         return False
 
@@ -452,6 +458,32 @@ def update_group_roles(group, debug=False):
 
         if debug:
             print(f"Removing permission {perm} from group {group.name}")
+
+    print(group_permissions)
+
+    # Automatically enable delete permission for children models if parent model has change permission
+    for change_delete in RuleSet.RULESET_CHANGE_DELETE:
+        perm_change = f'{change_delete[0]}.change_{change_delete[0]}'
+        perm_delete = f'{change_delete[0]}.delete_{change_delete[1]}'
+
+        print(perm_change)
+        # Check if permission is in the group
+        if perm_change in group_permissions:
+            if perm_delete not in group_permissions:
+                # Create delete permission object
+                add_model(f'{change_delete[0]}_{change_delete[1]}', 'delete', ruleset.can_delete)
+
+                # Add to group
+                permission = get_permission_object(perm_delete)
+                print(permission)
+
+                if permission:
+                    group.permissions.add(permission)
+                    print(f"Added permission {perm_delete} to group {group.name}")
+            else:
+                print(f'{perm_delete} already exists for group {group.name}')
+        else:
+            print(f'{perm_change} disabled')
 
 
 @receiver(post_save, sender=Group, dispatch_uid='create_missing_rule_sets')
