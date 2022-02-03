@@ -610,7 +610,7 @@ function loadBuildOutputTable(build_info, options={}) {
                     data: {
                         output: pk
                     },
-                    onSuccess: function() {
+                    success: function() {
                         $(table).bootstrapTable('refresh');
                     }
                 }
