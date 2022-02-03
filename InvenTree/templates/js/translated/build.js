@@ -594,6 +594,7 @@ function loadBuildOutputTable(build_info, options={}) {
                 {
                     success: function() {
                         $(table).bootstrapTable('refresh');
+                        $('#build-stock-table').bootstrapTable('refresh');
                     }
                 }
             );
