@@ -91,6 +91,7 @@ $('table').find('.boolean-setting').change(function() {
             onSuccess: function(data) {
             },
             error: function(xhr) {
+                showApiError(xhr, url);
             }
         }
     );
