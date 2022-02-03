@@ -77,7 +77,7 @@ function exportBom(part_id, options={}) {
                 value: inventreeLoad('bom-export-format', 'csv'),
                 choices: exportFormatOptions(),
             },
-            cascading: {
+            cascade: {
                 label: '{% trans "Cascading" %}',
                 help_text: '{% trans "Download cascading / multi-level BOM" %}',
                 type: 'boolean',
@@ -118,7 +118,7 @@ function exportBom(part_id, options={}) {
         onSubmit: function(fields, opts) {
 
             // Extract values from the form
-            var field_names = ['format', 'cascading', 'levels', 'parameter_data', 'stock_data', 'manufacturer_data', 'supplier_data'];
+            var field_names = ['format', 'cascade', 'levels', 'parameter_data', 'stock_data', 'manufacturer_data', 'supplier_data'];
 
             var url = `/part/${part_id}/bom-download/?`;
 
