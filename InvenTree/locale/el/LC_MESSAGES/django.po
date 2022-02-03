@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-03 04:32+0000\n"
+"POT-Creation-Date: 2022-02-03 05:08+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
@@ -205,7 +205,7 @@ msgstr ""
 #: templates/InvenTree/settings/plugin.html:48
 #: templates/InvenTree/settings/plugin.html:125
 #: templates/InvenTree/settings/plugin_settings.html:23
-#: templates/InvenTree/settings/settings.html:282
+#: templates/InvenTree/settings/settings.html:319
 #: templates/js/translated/company.js:641 templates/js/translated/part.js:567
 #: templates/js/translated/part.js:706 templates/js/translated/part.js:1631
 #: templates/js/translated/stock.js:2485
@@ -2517,7 +2517,7 @@ msgstr ""
 
 #: company/models.py:429 part/models.py:915 part/models.py:2457
 #: part/templates/part/part_base.html:288
-#: templates/InvenTree/settings/settings.html:287
+#: templates/InvenTree/settings/settings.html:324
 #: templates/js/translated/company.js:653 templates/js/translated/part.js:721
 msgid "Units"
 msgstr ""
@@ -4059,7 +4059,7 @@ msgstr ""
 #: part/models.py:811 part/models.py:2283 part/models.py:2532
 #: part/templates/part/part_base.html:265
 #: part/templates/part/set_category.html:15
-#: templates/InvenTree/settings/settings.html:186
+#: templates/InvenTree/settings/settings.html:223
 #: templates/js/translated/part.js:1268
 msgid "Category"
 msgstr ""
@@ -4247,7 +4247,7 @@ msgid "Parent Part"
 msgstr ""
 
 #: part/models.py:2489 part/models.py:2538 part/models.py:2539
-#: templates/InvenTree/settings/settings.html:181
+#: templates/InvenTree/settings/settings.html:218
 msgid "Parameter Template"
 msgstr ""
 
@@ -4259,7 +4259,7 @@ msgstr ""
 msgid "Parameter Value"
 msgstr ""
 
-#: part/models.py:2543 templates/InvenTree/settings/settings.html:190
+#: part/models.py:2543 templates/InvenTree/settings/settings.html:227
 msgid "Default Value"
 msgstr ""
 
@@ -6672,45 +6672,45 @@ msgstr ""
 msgid "Report Settings"
 msgstr ""
 
-#: templates/InvenTree/settings/setting.html:30
+#: templates/InvenTree/settings/setting.html:33
 msgid "No value set"
 msgstr ""
 
-#: templates/InvenTree/settings/setting.html:41
+#: templates/InvenTree/settings/setting.html:38
 msgid "Edit setting"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:78
+#: templates/InvenTree/settings/settings.html:115
 msgid "Edit Plugin Setting"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:80
+#: templates/InvenTree/settings/settings.html:117
 msgid "Edit Global Setting"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:82
+#: templates/InvenTree/settings/settings.html:119
 msgid "Edit User Setting"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:171
+#: templates/InvenTree/settings/settings.html:208
 msgid "No category parameter templates found"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:193
-#: templates/InvenTree/settings/settings.html:292
+#: templates/InvenTree/settings/settings.html:230
+#: templates/InvenTree/settings/settings.html:329
 msgid "Edit Template"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:194
-#: templates/InvenTree/settings/settings.html:293
+#: templates/InvenTree/settings/settings.html:231
+#: templates/InvenTree/settings/settings.html:330
 msgid "Delete Template"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:272
+#: templates/InvenTree/settings/settings.html:309
 msgid "No part parameter templates found"
 msgstr ""
 
-#: templates/InvenTree/settings/settings.html:276
+#: templates/InvenTree/settings/settings.html:313
 msgid "ID"
 msgstr ""
 
