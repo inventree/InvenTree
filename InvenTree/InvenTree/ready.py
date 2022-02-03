@@ -6,10 +6,16 @@ def isInTestMode():
     Returns True if the database is in testing mode
     """
 
-    if 'test' in sys.argv:
-        return True
+    return 'test' in sys.argv
 
-    return False
+
+def isImportingData():
+    """
+    Returns True if the database is currently importing data,
+    e.g. 'loaddata' command is performed
+    """
+
+    return 'loaddata' in sys.argv
 
 
 def canAppAccessDatabase(allow_test=False):
