@@ -778,6 +778,11 @@ function loadBomTable(table, options={}) {
     // This function may be called recursively for multi-level BOMs
     function requestSubItems(bom_pk, part_pk) {
 
+        // TODO: 2022-02-03 Currently, multi-level BOMs are not actually displayed.
+
+        // Re-enable this function once multi-level display has been re-deployed
+        return;
+
         inventreeGet(
             options.bom_url,
             {
