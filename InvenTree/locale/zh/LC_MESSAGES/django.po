@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-02 02:35+0000\n"
+"POT-Creation-Date: 2022-02-03 03:44+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -1444,43 +1444,49 @@ msgstr "生产已取消"
 msgid "Create Build Output"
 msgstr "创建创建生产产出"
 
-#: build/views.py:106
+#: build/views.py:107
 msgid "Maximum output quantity is "
 msgstr "最大产出量是 "
 
-#: build/views.py:122 stock/serializers.py:363 stock/views.py:1257
+#: build/views.py:113
+#, fuzzy
+#| msgid "Allocation quantity must be greater than zero"
+msgid "Output quantity must be greater than zero"
+msgstr "分配数量必须大于0"
+
+#: build/views.py:129 stock/serializers.py:363 stock/views.py:1257
 msgid "Serial numbers already exist"
 msgstr "序列号已存在"
 
-#: build/views.py:131
+#: build/views.py:138
 msgid "Serial numbers required for trackable build output"
 msgstr "可追踪的生产产出需要序列号"
 
-#: build/views.py:197
+#: build/views.py:204
 msgid "Delete Build Output"
 msgstr "删除生产产出"
 
-#: build/views.py:218
+#: build/views.py:225
 msgid "Confirm unallocation of build stock"
 msgstr ""
 
-#: build/views.py:219 stock/views.py:352
+#: build/views.py:226 stock/views.py:352
 msgid "Check the confirmation box"
 msgstr "选中确认框"
 
-#: build/views.py:231
+#: build/views.py:238
 msgid "Build output does not match build"
 msgstr "生产产出与生产不匹配"
 
-#: build/views.py:233
+#: build/views.py:240
 msgid "Build output must be specified"
 msgstr "必须指定生成产出"
 
-#: build/views.py:245
+#: build/views.py:252
 msgid "Build output deleted"
 msgstr "生产产出已删除"
 
-#: build/views.py:286
+#: build/views.py:293
 msgid "Delete Build Order"
 msgstr "删除生产订单"
 
