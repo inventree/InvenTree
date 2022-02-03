@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-03 05:08+0000\n"
+"POT-Creation-Date: 2022-02-03 05:30+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
@@ -1073,7 +1073,7 @@ msgstr ""
 msgid "Allocation items must be provided"
 msgstr ""
 
-#: build/tasks.py:92
+#: build/tasks.py:98
 msgid "Stock required for build order"
 msgstr ""
 
@@ -4423,7 +4423,7 @@ msgstr ""
 msgid "Enable this option to skip invalid rows"
 msgstr ""
 
-#: part/tasks.py:53
+#: part/tasks.py:58
 msgid "Low stock notification"
 msgstr ""
 
