@@ -20,7 +20,7 @@ class PluginAppConfig(AppConfig):
 
     def ready(self):
         if settings.PLUGINS_ENABLED:
-            
+
             if isImportingData():
                 logger.info('Skipping plugin loading for data import')
             else:
