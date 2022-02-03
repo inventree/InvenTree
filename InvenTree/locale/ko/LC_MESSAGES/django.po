@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-01 05:37+0000\n"
-"PO-Revision-Date: 2022-02-02 17:28\n"
+"POT-Creation-Date: 2022-02-03 03:44+0000\n"
+"PO-Revision-Date: 2022-02-03 03:51\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -1418,43 +1418,47 @@ msgstr ""
 msgid "Create Build Output"
 msgstr ""
 
-#: build/views.py:106
+#: build/views.py:107
 msgid "Maximum output quantity is "
 msgstr ""
 
-#: build/views.py:122 stock/serializers.py:363 stock/views.py:1257
+#: build/views.py:113
+msgid "Output quantity must be greater than zero"
+msgstr ""
+
+#: build/views.py:129 stock/serializers.py:363 stock/views.py:1257
 msgid "Serial numbers already exist"
 msgstr "일련번호가 이미 존재합니다"
 
-#: build/views.py:131
+#: build/views.py:138
 msgid "Serial numbers required for trackable build output"
 msgstr ""
 
-#: build/views.py:197
+#: build/views.py:204
 msgid "Delete Build Output"
 msgstr ""
 
-#: build/views.py:218
+#: build/views.py:225
 msgid "Confirm unallocation of build stock"
 msgstr ""
 
-#: build/views.py:219 stock/views.py:352
+#: build/views.py:226 stock/views.py:352
 msgid "Check the confirmation box"
 msgstr ""
 
-#: build/views.py:231
+#: build/views.py:238
 msgid "Build output does not match build"
 msgstr ""
 
-#: build/views.py:233
+#: build/views.py:240
 msgid "Build output must be specified"
 msgstr ""
 
-#: build/views.py:245
+#: build/views.py:252
 msgid "Build output deleted"
 msgstr ""
 
-#: build/views.py:286
+#: build/views.py:293
 msgid "Delete Build Order"
 msgstr ""
 
