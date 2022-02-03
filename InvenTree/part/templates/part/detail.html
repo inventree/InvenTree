@@ -126,9 +126,12 @@
     </div>
 </div>
 
+{% settings_value "PART_SHOW_PRICE_HISTORY" as show_price_history %}
+{% if show_price_history %}
 <div class='panel panel-hidden' id='panel-pricing'>
     {% include "part/prices.html" %}
 </div>
+{% endif %}
 
 <div class='panel panel-hidden' id='panel-part-notes'>
     <div class='panel-heading'>
