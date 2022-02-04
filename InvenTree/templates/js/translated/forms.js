@@ -2071,7 +2071,7 @@ function constructInput(name, parameters, options) {
 
 
 // Construct a set of default input options which apply to all input types
-function constructInputOptions(name, classes, type, parameters) {
+function constructInputOptions(name, classes, type, parameters, options={}) {
 
     var opts = [];
 
@@ -2153,11 +2153,18 @@ function constructInputOptions(name, classes, type, parameters) {
     if (parameters.multiline) {
         return `<textarea ${opts.join(' ')}></textarea>`;
     } else if (parameters.type == 'boolean') {
+
+        var help_text = '';
+
+        if (!options.hideLabels && parameters.help_text) {
+            help_text = `<em><small>${parameters.help_text}</small></em>`;
+        }
+
         return `
         <div class='form-check form-switch'>
             <input ${opts.join(' ')}>
             <label class='form-check-label' for=''>
-                <em><small>${parameters.help_text}</small></em>
+                ${help_text}
             </label>
         </div>
         `;
@@ -2180,13 +2187,14 @@ function constructHiddenInput(name, parameters) {
 
 
 // Construct a "checkbox" input
-function constructCheckboxInput(name, parameters) {
+function constructCheckboxInput(name, parameters, options={}) {
 
     return constructInputOptions(
         name,
         'form-check-input',
         'checkbox',
-        parameters
+        parameters,
+        options
     );
 }
 

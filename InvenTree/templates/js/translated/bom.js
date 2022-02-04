@@ -35,20 +35,37 @@ function constructBomUploadTable(data, options={}) {
         // TODO: Error message!
         return;
     }
-    
-    function constructRow(row, idx) {
+
+    function constructRow(row, idx, fields) {
         // Construct an individual row from the provided data
 
-        var part_input = constructField(
-            `part_${idx}`,
-            {
-                type: 'related field',
-                required: 'true',
-            },
-            {
-                hideLabels: true,
+        var field_options = {
+            hideLabels: true,
+        };
+
+        function constructRowField(field_name) {
+
+            var field = fields[field_name] || null;
+
+            if (!field) {
+                return `Cannot render field '${field_name}`;
             }
-        );
+
+            field.value = row[field_name];
+
+            return constructField(`${field_name}_${idx}`, field, field_options);
+
+        }
+
+        // Construct form inputs
+        var sub_part = constructRowField('sub_part');
+        var quantity = constructRowField('quantity');
+        var reference = constructRowField('reference');
+        var overage = constructRowField('overage');
+        var variants = constructRowField('allow_variants');
+        var inherited = constructRowField('inherited');
+        var optional = constructRowField('optional');
+        var note = constructRowField('note');
 
         var buttons = `<div class='btn-group float-right' role='group'>`;
 
@@ -59,14 +76,14 @@ function constructBomUploadTable(data, options={}) {
 
         var html = `
         <tr id='bom_import_row_${idx}' class='bom-import-row'>
-            <td id='col_part_${idx}'>${part_input}</td>
-            <td id='col_quantity_${idx}'>quantity</td>
-            <td id='col_reference_${idx}'>reference</td>
-            <td id='col_overage_${idx}'>overage</td>
-            <td id='col_variants_${idx}'>variants</td>
-            <td id='col_inherited_${idx}'>inherited</td>
-            <td id='col_optional_${idx}'>optional</td>
-            <td id='col_note_${idx}'>note</td>
+            <td id='col_sub_part_${idx}'>${sub_part}</td>
+            <td id='col_quantity_${idx}'>${quantity}</td>
+            <td id='col_reference_${idx}'>${reference}</td>
+            <td id='col_overage_${idx}'>${overage}</td>
+            <td id='col_variants_${idx}'>${variants}</td>
+            <td id='col_inherited_${idx}'>${inherited}</td>
+            <td id='col_optional_${idx}'>${optional}</td>
+            <td id='col_note_${idx}'>${note}</td>
             <td id='col_buttons_${idx}'>${buttons}</td>
         </tr>`;
 
@@ -75,7 +92,7 @@ function constructBomUploadTable(data, options={}) {
         // Initialize the "part" selector for this row
         initializeRelatedField(
             {
-                name: `part_${idx}`,
+                name: `sub_part_${idx}`,
                 value: row.part,
                 api_url: '{% url "api-part-list" %}',
                 filters: {
@@ -96,8 +113,14 @@ function constructBomUploadTable(data, options={}) {
         });
     }
 
-    data.rows.forEach(function(row, idx) {
-        constructRow(row, idx);
+    // Request API endpoint options
+    getApiEndpointOptions('{% url "api-bom-list" %}', function(response) {
+        
+        var fields = response.actions.POST;
+
+        data.rows.forEach(function(row, idx) {
+            constructRow(row, idx, fields);
+        });
     });
 }
 
