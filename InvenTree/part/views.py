@@ -1060,7 +1060,7 @@ class BomDownload(AjaxView):
 
         part = get_object_or_404(Part, pk=self.kwargs['pk'])
 
-        export_format = request.GET.get('file_format', 'csv')
+        export_format = request.GET.get('format', 'csv')
 
         cascade = str2bool(request.GET.get('cascade', False))
 
@@ -1101,55 +1101,6 @@ class BomDownload(AjaxView):
         return {
             'info': 'Exported BOM'
         }
-
-
-class BomExport(AjaxView):
-    """ Provide a simple form to allow the user to select BOM download options.
-    """
-
-    model = Part
-    ajax_form_title = _("Export Bill of Materials")
-
-    role_required = 'part.view'
-
-    def post(self, request, *args, **kwargs):
-
-        # Extract POSTed form data
-        fmt = request.POST.get('file_format', 'csv').lower()
-        cascade = str2bool(request.POST.get('cascading', False))
-        levels = request.POST.get('levels', None)
-        parameter_data = str2bool(request.POST.get('parameter_data', False))
-        stock_data = str2bool(request.POST.get('stock_data', False))
-        supplier_data = str2bool(request.POST.get('supplier_data', False))
-        manufacturer_data = str2bool(request.POST.get('manufacturer_data', False))
-
-        try:
-            part = Part.objects.get(pk=self.kwargs['pk'])
-        except:
-            part = None
-
-        # Format a URL to redirect to
-        if part:
-            url = reverse('bom-download', kwargs={'pk': part.pk})
-        else:
-            url = ''
-
-        url += '?file_format=' + fmt
-        url += '&cascade=' + str(cascade)
-        url += '&parameter_data=' + str(parameter_data)
-        url += '&stock_data=' + str(stock_data)
-        url += '&supplier_data=' + str(supplier_data)
-        url += '&manufacturer_data=' + str(manufacturer_data)
-
-        if levels:
-            url += '&levels=' + str(levels)
-
-        data = {
-            'form_valid': part is not None,
-            'url': url,
-        }
-
-        return self.renderJsonResponse(request, self.form_class(), data=data)
 
 
 class PartDelete(AjaxDeleteView):
