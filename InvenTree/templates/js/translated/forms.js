@@ -837,7 +837,15 @@ function getFormFieldElement(name, options) {
 
     var field_name = getFieldName(name, options);
 
-    var el = $(options.modal).find(`#id_${field_name}`);
+    var el = null;
+
+    if (options && options.modal) {
+        // Field element is associated with a model?
+        el = $(options.modal).find(`#id_${field_name}`);
+    } else {
+        // Field element is top-level
+        el = $(`#id_${field_name}`);
+    }
 
     if (!el.exists) {
         console.log(`ERROR: Could not find form element for field '${name}'`);
@@ -1330,10 +1338,12 @@ function hideFormGroup(group, options) {
     $(options.modal).find(`#form-panel-${group}`).hide();
 }
 
+
 // Show a form group
 function showFormGroup(group, options) {
     $(options.modal).find(`#form-panel-${group}`).show();
 }
+
 
 function setFormGroupVisibility(group, vis, options) {
     if (vis) {
@@ -1344,7 +1354,7 @@ function setFormGroupVisibility(group, vis, options) {
 }
 
 
-function initializeRelatedFields(fields, options) {
+function initializeRelatedFields(fields, options={}) {
 
     var field_names = options.field_names;
 
@@ -1452,12 +1462,11 @@ function addSecondaryModal(field, fields, options) {
  * - field: Field definition from the OPTIONS request
  * - options: Original options object provided by the client
  */
-function initializeRelatedField(field, fields, options) {
+function initializeRelatedField(field, fields, options={}) {
 
     var name = field.name;
 
     if (!field.api_url) {
-        // TODO: Provide manual api_url option?
         console.log(`WARNING: Related field '${name}' missing 'api_url' parameter.`);
         return;
     }
@@ -1654,7 +1663,7 @@ function initializeRelatedField(field, fields, options) {
  * - data: JSON data representing the model instance
  * - options: The modal form specifications
  */
-function setRelatedFieldData(name, data, options) {
+function setRelatedFieldData(name, data, options={}) {
 
     var select = getFormFieldElement(name, options);
 
@@ -1779,10 +1788,10 @@ function renderModelData(name, model, data, parameters, options) {
 /*
  * Construct a field name for the given field
  */
-function getFieldName(name, options) {
+function getFieldName(name, options={}) {
     var field_name = name;
 
-    if (options.depth) {
+    if (options && options.depth) {
         field_name += `_${options.depth}`;
     }
 

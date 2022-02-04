@@ -15,6 +15,7 @@
 */
 
 /* exported
+    constructBomUploadTable,
     downloadBomTemplate,
     exportBom,
     newPartFromBomWizard,
@@ -23,6 +24,69 @@
     removeRowFromBomWizard,
     removeColFromBomWizard,
 */
+
+
+/* Construct a table of data extracted from a BOM file.
+ * This data is used to import a BOM interactively.
+ */
+function constructBomUploadTable(data, options={}) {
+
+    if (!data.rows) {
+        // TODO: Error message!
+        return;
+    }
+    
+    function constructRow(row, idx) {
+        // Construct an individual row from the provided data
+
+        var part_input = constructField(
+            `part_${idx}`,
+            {
+                type: 'related field',
+                required: 'true',
+            },
+            {
+                hideLabels: true,
+            }
+        );
+
+        var html = `
+        <tr id='bom_import_row_${idx}' class='bom-import-row'>
+            <td id='col_part_${idx}'>${part_input}</td>
+            <td id='col_quantity_${idx}'>quantity</td>
+            <td id='col_reference_${idx}'>reference</td>
+            <td id='col_overage_${idx}'>overage</td>
+            <td id='col_variants_${idx}'>variants</td>
+            <td id='col_inherited_${idx}'>inherited</td>
+            <td id='col_optional_${idx}'>optional</td>
+            <td id='col_note_${idx}'>note</td>
+        </tr>`;
+
+        $('#bom-import-table tbody').append(html);
+
+        // Initialize the "part" selector for this row
+        initializeRelatedField(
+            {
+                name: `part_${idx}`,
+                api_url: '{% url "api-part-list" %}',
+                filters: {
+                    component: true,
+                },
+                model: 'part',
+                required: true,
+                auto_fill: false,
+                onSelect: function(data, field, opts) {
+                    // TODO?
+                },
+            }
+        );
+    }
+
+    data.rows.forEach(function(row, idx) {
+        constructRow(row, idx);
+    });
+}
+
 
 function downloadBomTemplate(options={}) {
 
