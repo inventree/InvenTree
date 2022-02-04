@@ -4,6 +4,8 @@ JSON serializers for Part app
 
 import imghdr
 from decimal import Decimal
+import os
+import tablib
 
 from django.urls import reverse_lazy
 from django.db import models
@@ -25,6 +27,7 @@ from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
 from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus
 from stock.models import StockItem
 
+from .admin import BomItemResource
 from .models import (BomItem, BomItemSubstitute,
                      Part, PartAttachment, PartCategory, PartRelated,
                      PartParameter, PartParameterTemplate, PartSellPriceBreak,
@@ -699,3 +702,138 @@ class PartCopyBOMSerializer(serializers.Serializer):
             skip_invalid=data.get('skip_invalid', False),
             include_inherited=data.get('include_inherited', False),
         )
+
+
+class BomExtractSerializer(serializers.Serializer):
+    """
+    Serializer for uploading a file and extracting data from it.
+
+    Note: 2022-02-04 - This needs a *serious* refactor in future, probably
+
+    When parsing the file, the following things happen:
+
+    a) Check file format and validity
+    b) Look for "required" fields
+    c) Look for "part" fields - used to "infer" part
+
+    Once the file itself has been validated, we iterate through each data row:
+
+    - If the "level" column is provided, ignore anything below level 1
+    - Try to "guess" the part based on part_id / part_name / part_ipn
+    - Extract other fields as required
+
+    """
+
+    bom_file = serializers.FileField(
+        label=_("BOM File"),
+        help_text=_("Select Bill of Materials file"),
+        required=True,
+        allow_empty_file=False,
+    )
+
+    def validate_bom_file(self, bom_file):
+        """
+        Perform validation checks on the uploaded BOM file
+        """
+
+        name, ext = os.path.splitext(bom_file.name)
+
+        # Remove the leading . from the extension
+        ext = ext[1:]
+
+        accepted_file_types = [
+            'xls', 'xlsx',
+            'csv', 'tsv',
+            'xml',
+        ]
+
+        if ext not in accepted_file_types:
+            raise serializers.ValidationError(_("Unsupported file type"))
+
+        # Impose a 50MB limit on uploaded BOM files
+        max_upload_file_size = 50 * 1024 * 1024
+
+        if bom_file.size > max_upload_file_size:
+            raise serializers.ValidationError(_("File is too large"))
+
+        # Read file data into memory (bytes object)
+        data = bom_file.read()
+
+        if ext in ['csv', 'tsv', 'xml']:
+            data = data.decode()
+
+        # Convert to a tablib dataset (we expect headers)
+        self.dataset = tablib.Dataset().load(data, ext, headers=True)
+
+        # These columns must be present
+        required_columns = [
+            'quantity',
+        ]
+
+        # We need at least one column to specify a "part"
+        part_columns = [
+            'part',
+            'part_id',
+            'part_name',
+            'part_ipn',
+        ]
+
+        # These columns are "optional"
+        optional_columns = [
+            'allow_variants',
+            'inherited',
+            'optional',
+            'overage',
+            'note',
+            'reference',
+        ]
+
+        def find_matching_column(col_name, columns):
+
+            # Direct match
+            if col_name in columns:
+                return col_name
+
+            col_name = col_name.lower().strip()
+
+            for col in columns:
+                if col.lower().strip() == col_name:
+                    return col
+
+            # No match
+            return None
+
+        for header in required_columns:
+
+            match = find_matching_column(header, self.dataset.headers)
+
+            if match is None:
+                raise serializers.ValidationError(_("Missing required column") + f": '{header}'")
+
+        part_column_matches = {}
+
+        part_match = False
+
+        for col in part_columns:
+            col_match = find_matching_column(col, self.dataset.headers)
+
+            part_column_matches[col] = col_match
+
+            if col_match is not None:
+                part_match = True
+
+        if not part_match:
+            raise serializers.ValidationError(_("No part column found"))
+
+        return bom_file
+
+    class Meta:
+        fields = [
+            'bom_file',
+        ]
+
+    def save(self):
+        """
+        There is no action associated with "saving" this serializer
+        """
+        pass

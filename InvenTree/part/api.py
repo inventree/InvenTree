@@ -1533,6 +1533,15 @@ class BomList(generics.ListCreateAPIView):
     ]
 
 
+class BomExtract(generics.CreateAPIView):
+    """
+    API endpoint for extracting BOM data from a BOM file.
+    """
+
+    queryset = Part.objects.none()
+    serializer_class = part_serializers.BomExtractSerializer
+
+
 class BomDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a single BomItem object """
 
@@ -1685,6 +1694,7 @@ bom_api_urls = [
         url(r'^.*$', BomDetail.as_view(), name='api-bom-item-detail'),
     ])),
 
+    url(r'^extract/', BomExtract.as_view(), name='api-bom-extract'),
     # Catch-all
     url(r'^.*$', BomList.as_view(), name='api-bom-list'),
 ]
