@@ -762,6 +762,15 @@ class BomExtractSerializer(serializers.Serializer):
         # No match
         return None
 
+    def find_matching_data(self, row, col_name, columns):
+        """
+        Extract data from the row, based on the "expected" column name
+        """
+
+        col_name = self.find_matching_column(col_name, columns)
+
+        return row.get(col_name, None)
+
     bom_file = serializers.FileField(
         label=_("BOM File"),
         help_text=_("Select Bill of Materials file"),
@@ -836,12 +845,68 @@ class BomExtractSerializer(serializers.Serializer):
 
         rows = []
 
+        headers = self.dataset.headers
+
+        level_column = self.find_matching_column('level', headers)
+
         for row in self.dataset.dict:
+
+            """
+            If the "level" column is specified, and this is not a top-level BOM item, ignore the row!
+            """
+            if level_column is not None:
+                level = row.get('level', None)
+
+                if level is not None:
+                    try:
+                        level = int(level)
+                        if level != 1:
+                            continue
+                    except:
+                        pass
+
+            """
+            Next, we try to "guess" the part, based on the provided data.
+
+            A) If the part_id is supplied, use that!
+            B) If the part name and/or part_ipn are supplied, maybe we can use those?
+            """
+            part_id = self.find_matching_data(row, 'part_id', headers)
+            part_name = self.find_matching_data(row, 'part_name', headers)
+            part_ipn = self.find_matching_data(row, 'part_ipn', headers)
+
+            part = None
+
+            if part_id is not None:
+                try:
+                    part = Part.objects.get(pk=part_id)
+                except (ValueError, Part.DoesNotExist):
+                    pass
+
+            if part is None:
+
+                if part_name is not None or part_ipn is not None:
+                    queryset = Part.objects.all()
+
+                    if part_name is not None:
+                        queryset = queryset.filter(name=part_name)
+
+                    if part_ipn is not None:
+                        queryset = queryset.filter(IPN=part_ipn)
+
+                    # Only if we have a single direct match
+                    if queryset.exists() and queryset.count() == 1:
+                        part = queryset.first()
+
+            row['part'] = part.pk if part is not None else None
+
+            print("part:", part)
+
             rows.append(row)
 
         return {
             'rows': rows,
-            'headers': self.dataset.headers,
+            'headers': headers,
             'filename': self.filename,
         }
 
