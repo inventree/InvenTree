@@ -724,6 +724,44 @@ class BomExtractSerializer(serializers.Serializer):
 
     """
 
+    # These columns must be present
+    REQUIRED_COLUMNS = [
+        'quantity',
+    ]
+
+    # We need at least one column to specify a "part"
+    PART_COLUMNS = [
+        'part',
+        'part_id',
+        'part_name',
+        'part_ipn',
+    ]
+
+    # These columns are "optional"
+    OPTIONAL_COLUMNS = [
+        'allow_variants',
+        'inherited',
+        'optional',
+        'overage',
+        'note',
+        'reference',
+    ]
+
+    def find_matching_column(self, col_name, columns):
+
+        # Direct match
+        if col_name in columns:
+            return col_name
+
+        col_name = col_name.lower().strip()
+
+        for col in columns:
+            if col.lower().strip() == col_name:
+                return col
+
+        # No match
+        return None
+
     bom_file = serializers.FileField(
         label=_("BOM File"),
         help_text=_("Select Bill of Materials file"),
@@ -735,6 +773,8 @@ class BomExtractSerializer(serializers.Serializer):
         """
         Perform validation checks on the uploaded BOM file
         """
+
+        self.filename = bom_file.name
 
         name, ext = os.path.splitext(bom_file.name)
 
@@ -765,47 +805,9 @@ class BomExtractSerializer(serializers.Serializer):
         # Convert to a tablib dataset (we expect headers)
         self.dataset = tablib.Dataset().load(data, ext, headers=True)
 
-        # These columns must be present
-        required_columns = [
-            'quantity',
-        ]
+        for header in self.REQUIRED_COLUMNS:
 
-        # We need at least one column to specify a "part"
-        part_columns = [
-            'part',
-            'part_id',
-            'part_name',
-            'part_ipn',
-        ]
-
-        # These columns are "optional"
-        optional_columns = [
-            'allow_variants',
-            'inherited',
-            'optional',
-            'overage',
-            'note',
-            'reference',
-        ]
-
-        def find_matching_column(col_name, columns):
-
-            # Direct match
-            if col_name in columns:
-                return col_name
-
-            col_name = col_name.lower().strip()
-
-            for col in columns:
-                if col.lower().strip() == col_name:
-                    return col
-
-            # No match
-            return None
-
-        for header in required_columns:
-
-            match = find_matching_column(header, self.dataset.headers)
+            match = self.find_matching_column(header, self.dataset.headers)
 
             if match is None:
                 raise serializers.ValidationError(_("Missing required column") + f": '{header}'")
@@ -814,8 +816,8 @@ class BomExtractSerializer(serializers.Serializer):
 
         part_match = False
 
-        for col in part_columns:
-            col_match = find_matching_column(col, self.dataset.headers)
+        for col in self.PART_COLUMNS:
+            col_match = self.find_matching_column(col, self.dataset.headers)
 
             part_column_matches[col] = col_match
 
@@ -826,6 +828,22 @@ class BomExtractSerializer(serializers.Serializer):
             raise serializers.ValidationError(_("No part column found"))
 
         return bom_file
+
+    def extract_data(self):
+        """
+        Read individual rows out of the BOM file
+        """
+
+        rows = []
+
+        for row in self.dataset.dict:
+            rows.append(row)
+
+        return {
+            'rows': rows,
+            'headers': self.dataset.headers,
+            'filename': self.filename,
+        }
 
     class Meta:
         fields = [

@@ -1541,6 +1541,21 @@ class BomExtract(generics.CreateAPIView):
     queryset = Part.objects.none()
     serializer_class = part_serializers.BomExtractSerializer
 
+    def create(self, request, *args, **kwargs):
+        """
+        Custom create function to return the extracted data
+        """
+        
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+
+        data = serializer.extract_data()
+
+        return Response(data, status=status.HTTP_201_CREATED, headers=headers)
+
+
 
 class BomDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a single BomItem object """
