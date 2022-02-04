@@ -50,6 +50,13 @@ function constructBomUploadTable(data, options={}) {
             }
         );
 
+        var buttons = `<div class='btn-group float-right' role='group'>`;
+
+        buttons += makeIconButton('fa-file-alt', 'button-row-data', idx, '{% trans "Display row data" %}');
+        buttons += makeIconButton('fa-times icon-red', 'button-row-remove', idx, '{% trans "Remove row" %}');
+
+        buttons += `</div>`;
+
         var html = `
         <tr id='bom_import_row_${idx}' class='bom-import-row'>
             <td id='col_part_${idx}'>${part_input}</td>
@@ -60,6 +67,7 @@ function constructBomUploadTable(data, options={}) {
             <td id='col_inherited_${idx}'>inherited</td>
             <td id='col_optional_${idx}'>optional</td>
             <td id='col_note_${idx}'>note</td>
+            <td id='col_buttons_${idx}'>${buttons}</td>
         </tr>`;
 
         $('#bom-import-table tbody').append(html);
@@ -68,6 +76,7 @@ function constructBomUploadTable(data, options={}) {
         initializeRelatedField(
             {
                 name: `part_${idx}`,
+                value: row.part,
                 api_url: '{% url "api-part-list" %}',
                 filters: {
                     component: true,

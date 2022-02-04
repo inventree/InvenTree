@@ -1484,10 +1484,19 @@ function initializeRelatedField(field, fields, options={}) {
     // limit size for AJAX requests
     var pageSize = options.pageSize || 25;
 
+    var parent = null;
+    var auto_width = true;
+
+    // Special considerations if the select2 input is a child of a modal
+    if (options && options.modal) {
+        parent = $(options.modal);
+        auto_width = true;
+    }
+
     select.select2({
         placeholder: '',
-        dropdownParent: $(options.modal),
-        dropdownAutoWidth: false,
+        dropdownParent: parent,
+        dropdownAutoWidth: auto_width,
         language: {
             noResults: function(query) {
                 if (field.noResults) {
