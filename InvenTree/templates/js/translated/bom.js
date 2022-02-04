@@ -89,6 +89,11 @@ function constructBomUploadTable(data, options={}) {
                 },
             }
         );
+
+        // Add callback for "remove row" button
+        $(`#button-row-remove-${idx}`).click(function() {
+            $(`#bom_import_row_${idx}`).remove();
+        });
     }
 
     data.rows.forEach(function(row, idx) {
