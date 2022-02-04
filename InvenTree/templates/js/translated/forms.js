@@ -1240,8 +1240,14 @@ function addClearCallback(name, field, options) {
 
     var field_name = getFieldName(name, options);
 
-    var el = $(options.modal).find(`#clear_${field_name}`);
-    
+    var el = null;
+
+    if (options && options.modal) {
+        el = $(options.modal).find(`#clear_${field_name}`);
+    } else {
+        el = $(`#clear_${field_name}`);
+    }
+
     if (!el) {
         console.log(`WARNING: addClearCallback could not find field '${name}'`);
         return;

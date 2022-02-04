@@ -69,13 +69,14 @@ function constructBomUploadTable(data, options={}) {
 
         var buttons = `<div class='btn-group float-right' role='group'>`;
 
-        buttons += makeIconButton('fa-file-alt', 'button-row-data', idx, '{% trans "Display row data" %}');
+        // buttons += makeIconButton('fa-file-alt', 'button-row-data', idx, '{% trans "Display row data" %}');
         buttons += makeIconButton('fa-times icon-red', 'button-row-remove', idx, '{% trans "Remove row" %}');
 
         buttons += `</div>`;
 
         var html = `
         <tr id='bom_import_row_${idx}' class='bom-import-row'>
+            <td id='col_buttons_${idx}'>${buttons}</td>
             <td id='col_sub_part_${idx}'>${sub_part}</td>
             <td id='col_quantity_${idx}'>${quantity}</td>
             <td id='col_reference_${idx}'>${reference}</td>
@@ -84,7 +85,6 @@ function constructBomUploadTable(data, options={}) {
             <td id='col_inherited_${idx}'>${inherited}</td>
             <td id='col_optional_${idx}'>${optional}</td>
             <td id='col_note_${idx}'>${note}</td>
-            <td id='col_buttons_${idx}'>${buttons}</td>
         </tr>`;
 
         $('#bom-import-table tbody').append(html);
@@ -111,6 +111,15 @@ function constructBomUploadTable(data, options={}) {
         $(`#button-row-remove-${idx}`).click(function() {
             $(`#bom_import_row_${idx}`).remove();
         });
+
+        // Add callbacks for the fields which allow it
+        function addRowClearCallback(field_name) {
+            addClearCallback(`${field_name}_${idx}`, fields[field_name]);
+        }
+        
+        addRowClearCallback('reference');
+        addRowClearCallback('overage');
+        addRowClearCallback('note');
     }
 
     // Request API endpoint options
