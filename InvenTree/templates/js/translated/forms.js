@@ -1236,7 +1236,7 @@ function addClearCallbacks(fields, options) {
 }
 
 
-function addClearCallback(name, field, options) {
+function addClearCallback(name, field, options={}) {
 
     var field_name = getFieldName(name, options);
 
@@ -1491,7 +1491,7 @@ function initializeRelatedField(field, fields, options={}) {
     var pageSize = options.pageSize || 25;
 
     var parent = null;
-    var auto_width = true;
+    var auto_width = false;
 
     // Special considerations if the select2 input is a child of a modal
     if (options && options.modal) {

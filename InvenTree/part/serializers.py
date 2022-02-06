@@ -883,6 +883,16 @@ class BomExtractSerializer(serializers.Serializer):
                 except (ValueError, Part.DoesNotExist):
                     pass
 
+            # Optionally, specify using field "part"
+            if part is None:
+                pk = self.find_matching_data(row, 'part', headers)
+
+                if pk is not None:
+                    try:
+                        part = Part.objects.get(pk=pk)
+                    except (ValueError, Part.DoesNotExist):
+                        pass
+
             if part is None:
 
                 if part_name is not None or part_ipn is not None:
@@ -899,8 +909,6 @@ class BomExtractSerializer(serializers.Serializer):
                         part = queryset.first()
 
             row['part'] = part.pk if part is not None else None
-
-            print("part:", part)
 
             rows.append(row)
 
