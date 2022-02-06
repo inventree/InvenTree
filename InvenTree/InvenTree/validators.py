@@ -2,7 +2,7 @@
 Custom field validators for InvenTree
 """
 
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -138,7 +138,7 @@ def validate_overage(value):
 
         # Looks like a number
         return True
-    except ValueError:
+    except (ValueError, InvalidOperation):
         pass
 
     # Now look for a percentage value
@@ -159,7 +159,7 @@ def validate_overage(value):
             pass
 
     raise ValidationError(
-        _("Overage must be an integer value or a percentage")
+        _("Invalid value for overage")
     )
 
 

@@ -23,6 +23,7 @@
     loadUsedInTable,
     removeRowFromBomWizard,
     removeColFromBomWizard,
+    submitBomTable
 */
 
 
@@ -41,6 +42,7 @@ function constructBomUploadTable(data, options={}) {
 
         var field_options = {
             hideLabels: true,
+            hideClearButton: true,
         };
 
         function constructRowField(field_name) {
@@ -53,7 +55,7 @@ function constructBomUploadTable(data, options={}) {
 
             field.value = row[field_name];
 
-            return constructField(`${field_name}_${idx}`, field, field_options);
+            return constructField(`items_${field_name}_${idx}`, field, field_options);
 
         }
 
@@ -75,8 +77,7 @@ function constructBomUploadTable(data, options={}) {
         buttons += `</div>`;
 
         var html = `
-        <tr id='bom_import_row_${idx}' class='bom-import-row'>
-            <td id='col_buttons_${idx}'>${buttons}</td>
+        <tr id='bom_import_row_${idx}' class='bom-import-row' idx='${idx}'>
             <td id='col_sub_part_${idx}'>${sub_part}</td>
             <td id='col_quantity_${idx}'>${quantity}</td>
             <td id='col_reference_${idx}'>${reference}</td>
@@ -85,6 +86,7 @@ function constructBomUploadTable(data, options={}) {
             <td id='col_inherited_${idx}'>${inherited}</td>
             <td id='col_optional_${idx}'>${optional}</td>
             <td id='col_note_${idx}'>${note}</td>
+            <td id='col_buttons_${idx}'>${buttons}</td>
         </tr>`;
 
         $('#bom-import-table tbody').append(html);
@@ -92,7 +94,7 @@ function constructBomUploadTable(data, options={}) {
         // Initialize the "part" selector for this row
         initializeRelatedField(
             {
-                name: `sub_part_${idx}`,
+                name: `items_sub_part_${idx}`,
                 value: row.part,
                 api_url: '{% url "api-part-list" %}',
                 filters: {
@@ -111,15 +113,6 @@ function constructBomUploadTable(data, options={}) {
         $(`#button-row-remove-${idx}`).click(function() {
             $(`#bom_import_row_${idx}`).remove();
         });
-
-        // Add callbacks for the fields which allow it
-        function addRowClearCallback(field_name) {
-            addClearCallback(`${field_name}_${idx}`, fields[field_name]);
-        }
-        
-        addRowClearCallback('reference');
-        addRowClearCallback('overage');
-        addRowClearCallback('note');
     }
 
     // Request API endpoint options
@@ -129,6 +122,70 @@ function constructBomUploadTable(data, options={}) {
 
         data.rows.forEach(function(row, idx) {
             constructRow(row, idx, fields);
+        });
+    });
+}
+
+
+/* Extract rows from the BOM upload table,
+ * and submit data to the server
+ */
+function submitBomTable(part_id, options={}) {
+
+    // Extract rows from the form
+    var rows = [];
+
+    var idx_values = [];
+
+    var url = '{% url "api-bom-upload" %}';
+
+    $('.bom-import-row').each(function() {
+        var idx = $(this).attr('idx');
+
+        idx_values.push(idx);
+
+        // Extract each field from the row
+        rows.push({
+            part: part_id,
+            sub_part: getFormFieldValue(`items_sub_part_${idx}`, {}),
+            quantity: getFormFieldValue(`items_quantity_${idx}`, {}),
+            reference: getFormFieldValue(`items_reference_${idx}`, {}),
+            overage: getFormFieldValue(`items_overage_${idx}`, {}),
+            allow_variants: getFormFieldValue(`items_allow_variants_${idx}`, {type: 'boolean'}),
+            inherited: getFormFieldValue(`items_inherited_${idx}`, {type: 'boolean'}),
+            optional: getFormFieldValue(`items_optional_${idx}`, {type: 'boolean'}),
+            note: getFormFieldValue(`items_note_${idx}`, {}),
+        })
+    });
+
+    var data = {
+        items: rows,
+    };
+
+    var options = {
+        nested: {
+            items: idx_values,
+        }
+    };
+
+    getApiEndpointOptions(url, function(response) {
+        var fields = response.actions.POST;
+
+        inventreePut(url, data, {
+            method: 'POST',
+            success: function(response) {
+                // TODO: Return to the "bom" page
+            },
+            error: function(xhr) {
+                switch (xhr.status) {
+                case 400:
+                    handleFormErrors(xhr.responseJSON, fields, options);
+                    break;
+                default:
+                    showApiError(xhr, url);
+                    break;
+                }
+            }
         });
     });
 }

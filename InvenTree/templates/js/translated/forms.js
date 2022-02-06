@@ -890,12 +890,13 @@ function validateFormField(name, options) {
  * - field: The field specification provided from the OPTIONS request
  * - options: The original options object provided by the client
  */
-function getFormFieldValue(name, field, options) {
+function getFormFieldValue(name, field={}, options={}) {
 
     // Find the HTML element
     var el = getFormFieldElement(name, options);
 
     if (!el) {
+        console.log(`ERROR: getFormFieldValue could not locate field '{name}'`);
         return null;
     }
 
@@ -981,16 +982,22 @@ function handleFormSuccess(response, options) {
 /*
  * Remove all error text items from the form
  */
-function clearFormErrors(options) {
+function clearFormErrors(options={}) {
 
-    // Remove the individual error messages
-    $(options.modal).find('.form-error-message').remove();
+    if (options && options.modal) {
+        // Remove the individual error messages
+        $(options.modal).find('.form-error-message').remove();
 
-    // Remove the "has error" class
-    $(options.modal).find('.form-field-error').removeClass('form-field-error');
+        // Remove the "has error" class
+        $(options.modal).find('.form-field-error').removeClass('form-field-error');
 
-    // Hide the 'non field errors'
-    $(options.modal).find('#non-field-errors').html('');
+        // Hide the 'non field errors'
+        $(options.modal).find('#non-field-errors').html('');
+    } else {
+        $('.form-error-message').remove();
+        $('.form-field-errors').removeClass('form-field-error');
+        $('#non-field-errors').html('');
+    }
 }
 
 /*
@@ -1018,7 +1025,7 @@ function clearFormErrors(options) {
  * 
  */
 
-function handleNestedErrors(errors, field_name, options) {
+function handleNestedErrors(errors, field_name, options={}) {
 
     var error_list = errors[field_name];
 
@@ -1074,15 +1081,23 @@ function handleNestedErrors(errors, field_name, options) {
  * - fields: The form data object
  * - options: Form options provided by the client
  */
-function handleFormErrors(errors, fields, options) {
+function handleFormErrors(errors, fields={}, options={}) {
 
     // Reset the status of the "submit" button
-    $(options.modal).find('#modal-form-submit').prop('disabled', false);
+    if (options.modal) {
+        $(options.modal).find('#modal-form-submit').prop('disabled', false);
+    }
 
     // Remove any existing error messages from the form
     clearFormErrors(options);
 
-    var non_field_errors = $(options.modal).find('#non-field-errors');
+    var non_field_errors = null;
+    
+    if (options.modal) {
+        non_field_errors = $(options.modal).find('#non-field-errors');
+    } else {
+        non_field_errors = $('#non-field-errors');
+    }
 
     // TODO: Display the JSON error text when hovering over the "info" icon
     non_field_errors.append(
@@ -1158,14 +1173,19 @@ function handleFormErrors(errors, fields, options) {
 /*
  * Add a rendered error message to the provided field
  */
-function addFieldErrorMessage(name, error_text, error_idx, options) {
+function addFieldErrorMessage(name, error_text, error_idx, options={}) {
 
     field_name = getFieldName(name, options);
 
-    // Add the 'form-field-error' class
-    $(options.modal).find(`#div_id_${field_name}`).addClass('form-field-error');
+    var field_dom = null;
 
-    var field_dom = $(options.modal).find(`#errors-${field_name}`);
+    if (options.modal) {
+        $(options.modal).find(`#div_id_${field_name}`).addClass('form-field-error');
+        field_dom = $(options.modal).find(`#errors-${field_name}`);
+    } else {
+        $(`#div_id_${field_name}`).addClass('form-field-error');
+        field_dom = $(`#errors-${field_name}`);
+    }
 
     if (field_dom) {
 
@@ -1492,17 +1512,20 @@ function initializeRelatedField(field, fields, options={}) {
 
     var parent = null;
     var auto_width = false;
+    var width = '100%';
 
     // Special considerations if the select2 input is a child of a modal
     if (options && options.modal) {
         parent = $(options.modal);
         auto_width = true;
+        width = null;
     }
 
     select.select2({
         placeholder: '',
         dropdownParent: parent,
         dropdownAutoWidth: auto_width,
+        width: width,
         language: {
             noResults: function(query) {
                 if (field.noResults) {
@@ -1949,7 +1972,7 @@ function constructField(name, parameters, options) {
 
     if (extra) {
 
-        if (!parameters.required) {
+        if (!parameters.required && !options.hideClearButton) {
             html += `
             <span class='input-group-text form-clear' id='clear_${field_name}' title='{% trans "Clear input" %}'>
                 <span class='icon-red fas fa-backspace'></span>

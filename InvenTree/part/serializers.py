@@ -8,7 +8,7 @@ import os
 import tablib
 
 from django.urls import reverse_lazy
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Q
 from django.db.models.functions import Coalesce
 from django.utils.translation import ugettext_lazy as _
@@ -465,7 +465,13 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     price_range = serializers.CharField(read_only=True)
 
-    quantity = InvenTreeDecimalField()
+    quantity = InvenTreeDecimalField(required=True)
+
+    def validate_quantity(self, quantity):
+        if quantity <= 0:
+            raise serializers.ValidationError(_("Quantity must be greater than zero"))
+        
+        return quantity
 
     part = serializers.PrimaryKeyRelatedField(queryset=Part.objects.filter(assembly=True))
 
@@ -928,3 +934,36 @@ class BomExtractSerializer(serializers.Serializer):
         There is no action associated with "saving" this serializer
         """
         pass
+
+
+class BomUploadSerializer(serializers.Serializer):
+    """
+    Serializer for uploading a BOM against a specified part.
+
+    A "BOM" is a set of BomItem objects which are to be validated together as a set
+    """
+
+    items = BomItemSerializer(many=True, required=True)
+
+    def validate(self, data):
+
+        data = super().validate(data)
+
+        items = data['items']
+
+        if len(items) == 0:
+            raise serializers.ValidationError(_("At least one BOM item is required"))
+
+        return data
+
+    def save(self):
+
+        data = self.validated_data
+
+        items = data['items']
+
+        with transaction.atomic():
+
+            for item in items:
+                print(item)
+        

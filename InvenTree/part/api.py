@@ -1545,7 +1545,7 @@ class BomExtract(generics.CreateAPIView):
         """
         Custom create function to return the extracted data
         """
-        
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -1555,6 +1555,16 @@ class BomExtract(generics.CreateAPIView):
 
         return Response(data, status=status.HTTP_201_CREATED, headers=headers)
 
+
+class BomUpload(generics.CreateAPIView):
+    """
+    API endpoint for uploading a complete Bill of Materials.
+
+    It is assumed that the BOM has been extracted from a file using the BomExtract endpoint.
+    """
+
+    queryset = Part.objects.all()
+    serializer_class = part_serializers.BomUploadSerializer
 
 
 class BomDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -1710,6 +1720,9 @@ bom_api_urls = [
     ])),
 
     url(r'^extract/', BomExtract.as_view(), name='api-bom-extract'),
+
+    url(r'^upload/', BomUpload.as_view(), name='api-bom-upload'),
+
     # Catch-all
     url(r'^.*$', BomList.as_view(), name='api-bom-list'),
 ]
