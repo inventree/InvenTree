@@ -2,6 +2,8 @@
 Custom field validators for InvenTree
 """
 
+from decimal import Decimal
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
@@ -115,24 +117,26 @@ def validate_tree_name(value):
 
 
 def validate_overage(value):
-    """ Validate that a BOM overage string is properly formatted.
+    """
+    Validate that a BOM overage string is properly formatted.
 
     An overage string can look like:
 
     - An integer number ('1' / 3 / 4)
+    - A decimal number ('0.123')
     - A percentage ('5%' / '10 %')
     """
 
     value = str(value).lower().strip()
 
-    # First look for a simple integer value
+    # First look for a simple numerical value
     try:
-        i = int(value)
+        i = Decimal(value)
 
         if i < 0:
             raise ValidationError(_("Overage value must not be negative"))
 
-        # Looks like an integer!
+        # Looks like a number
         return True
     except ValueError:
         pass
