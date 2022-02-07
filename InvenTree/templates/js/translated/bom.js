@@ -156,7 +156,7 @@ function submitBomTable(part_id, options={}) {
             inherited: getFormFieldValue(`items_inherited_${idx}`, {type: 'boolean'}),
             optional: getFormFieldValue(`items_optional_${idx}`, {type: 'boolean'}),
             note: getFormFieldValue(`items_note_${idx}`, {}),
-        })
+        });
     });
 
     var data = {
