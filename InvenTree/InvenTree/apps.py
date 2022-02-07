@@ -100,7 +100,7 @@ class InvenTreeConfig(AppConfig):
 
         try:
             from djmoney.contrib.exchange.models import ExchangeBackend
-            from datetime import datetime, timedelta
+
             from InvenTree.tasks import update_exchange_rates
             from common.settings import currency_code_default
         except AppRegistryNotReady:
