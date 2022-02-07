@@ -27,7 +27,6 @@ from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
 from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus
 from stock.models import StockItem
 
-from .admin import BomItemResource
 from .models import (BomItem, BomItemSubstitute,
                      Part, PartAttachment, PartCategory, PartRelated,
                      PartParameter, PartParameterTemplate, PartSellPriceBreak,
@@ -470,7 +469,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
     def validate_quantity(self, quantity):
         if quantity <= 0:
             raise serializers.ValidationError(_("Quantity must be greater than zero"))
-        
+
         return quantity
 
     part = serializers.PrimaryKeyRelatedField(queryset=Part.objects.filter(assembly=True))
@@ -955,7 +954,7 @@ class BomExtractSerializer(serializers.Serializer):
     )
 
     def save(self):
-        
+
         data = self.validated_data
 
         master_part = data['part']
@@ -977,7 +976,6 @@ class BomUploadSerializer(serializers.Serializer):
     items = BomItemSerializer(many=True, required=True)
 
     def validate(self, data):
-
 
         items = data['items']
 
@@ -1008,6 +1006,6 @@ class BomUploadSerializer(serializers.Serializer):
 
                     # Create a new BomItem object
                     BomItem.objects.create(**item)
-            
+
         except Exception as e:
             raise serializers.ValidationError(detail=serializers.as_serializer_error(e))

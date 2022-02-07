@@ -28,20 +28,17 @@ import requests
 import os
 import io
 
-from rapidfuzz import fuzz
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal
 
 from .models import PartCategory, Part
 from .models import PartParameterTemplate
 from .models import PartCategoryParameterTemplate
-from .models import BomItem
 from .models import PartSellPriceBreak, PartInternalPriceBreak
 
 from common.models import InvenTreeSetting
 from company.models import SupplierPart
 from common.files import FileManager
 from common.views import FileManagementFormView, FileManagementAjaxView
-from common.forms import UploadFileForm, MatchFieldForm
 
 from stock.models import StockItem, StockLocation
 
