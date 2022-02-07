@@ -233,15 +233,15 @@ class RuleSet(models.Model):
                 if check_user_role(user, role, permission):
                     return True
 
-            # Check for children models which inherits from parent role
-            for child in cls.RULESET_CHANGE_INHERIT:
-                # Get child model name
-                child_name = f'{child[0]}_{child[1]}'
+        # Check for children models which inherits from parent role
+        for (parent, child) in cls.RULESET_CHANGE_INHERIT:
+            # Get child model name
+            parent_child_string = f'{parent}_{child}'
 
-                if child_name == table:
-                    # Check if parent role has change permission
-                    if check_user_role(user, role, 'change'):
-                        return True
+            if parent_child_string == table:
+                # Check if parent role has change permission
+                if check_user_role(user, parent, 'change'):
+                    return True
 
         # Print message instead of throwing an error
         name = getattr(user, 'name', user.pk)
