@@ -118,20 +118,20 @@ class InvenTreeConfig(AppConfig):
             if last_update is not None:
                 delta = datetime.now().date() - last_update.date()
                 if delta > timedelta(days=1):
-                    print(f"Last update was {last_update}")
+                    logger.info(f"Last update was {last_update}")
                     update = True
             else:
                 # Never been updated
-                print("Exchange backend has never been updated")
+                logger.info("Exchange backend has never been updated")
                 update = True
 
             # Backend currency has changed?
             if not base_currency == backend.base_currency:
-                print(f"Base currency changed from {backend.base_currency} to {base_currency}")
+                logger.info(f"Base currency changed from {backend.base_currency} to {base_currency}")
                 update = True
 
         except (ExchangeBackend.DoesNotExist):
-            print("Exchange backend not found - updating")
+            logger.info("Exchange backend not found - updating")
             update = True
 
         except:
@@ -139,4 +139,7 @@ class InvenTreeConfig(AppConfig):
             return
 
         if update:
-            update_exchange_rates()
+            try:
+                update_exchange_rates()
+            except Exception as e:
+                logger.error(f"Error updating exchange rates: {e}")

@@ -1,3 +1,7 @@
+import certifi
+import ssl
+from urllib.request import urlopen
+
 from common.settings import currency_code_default, currency_codes
 from urllib.error import URLError
 
@@ -23,6 +27,22 @@ class InvenTreeExchange(SimpleExchangeBackend):
         # No API key is required
         return {
         }
+
+    def get_response(self, **kwargs):
+        """
+        Custom code to get response from server.
+        Note: Adds a 5-second timeout
+        """
+
+        url = self.get_url(**kwargs)
+
+        try:
+            context = ssl.create_default_context(cafile=certifi.where())
+            response = urlopen(url, timeout=5, context=context)
+            return response.read()
+        except:
+            # Returning None here will raise an error upstream
+            return None
 
     def update_rates(self, base_currency=currency_code_default()):
 
