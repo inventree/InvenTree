@@ -15,6 +15,7 @@
 */
 
 /* exported
+    constructBomUploadTable,
     downloadBomTemplate,
     exportBom,
     newPartFromBomWizard,
@@ -22,7 +23,174 @@
     loadUsedInTable,
     removeRowFromBomWizard,
     removeColFromBomWizard,
+    submitBomTable
 */
+
+
+/* Construct a table of data extracted from a BOM file.
+ * This data is used to import a BOM interactively.
+ */
+function constructBomUploadTable(data, options={}) {
+
+    if (!data.rows) {
+        // TODO: Error message!
+        return;
+    }
+
+    function constructRow(row, idx, fields) {
+        // Construct an individual row from the provided data
+
+        var field_options = {
+            hideLabels: true,
+            hideClearButton: true,
+            form_classes: 'bom-form-group',
+        };
+
+        function constructRowField(field_name) {
+
+            var field = fields[field_name] || null;
+
+            if (!field) {
+                return `Cannot render field '${field_name}`;
+            }
+
+            field.value = row[field_name];
+
+            return constructField(`items_${field_name}_${idx}`, field, field_options);
+
+        }
+
+        // Construct form inputs
+        var sub_part = constructRowField('sub_part');
+        var quantity = constructRowField('quantity');
+        var reference = constructRowField('reference');
+        var overage = constructRowField('overage');
+        var variants = constructRowField('allow_variants');
+        var inherited = constructRowField('inherited');
+        var optional = constructRowField('optional');
+        var note = constructRowField('note');
+
+        var buttons = `<div class='btn-group float-right' role='group'>`;
+
+        // buttons += makeIconButton('fa-file-alt', 'button-row-data', idx, '{% trans "Display row data" %}');
+        buttons += makeIconButton('fa-times icon-red', 'button-row-remove', idx, '{% trans "Remove row" %}');
+
+        buttons += `</div>`;
+
+        var html = `
+        <tr id='items_${idx}' class='bom-import-row' idx='${idx}'>
+            <td id='col_sub_part_${idx}'>${sub_part}</td>
+            <td id='col_quantity_${idx}'>${quantity}</td>
+            <td id='col_reference_${idx}'>${reference}</td>
+            <td id='col_overage_${idx}'>${overage}</td>
+            <td id='col_variants_${idx}'>${variants}</td>
+            <td id='col_inherited_${idx}'>${inherited}</td>
+            <td id='col_optional_${idx}'>${optional}</td>
+            <td id='col_note_${idx}'>${note}</td>
+            <td id='col_buttons_${idx}'>${buttons}</td>
+        </tr>`;
+
+        $('#bom-import-table tbody').append(html);
+
+        // Initialize the "part" selector for this row
+        initializeRelatedField(
+            {
+                name: `items_sub_part_${idx}`,
+                value: row.part,
+                api_url: '{% url "api-part-list" %}',
+                filters: {
+                    component: true,
+                },
+                model: 'part',
+                required: true,
+                auto_fill: false,
+                onSelect: function(data, field, opts) {
+                    // TODO?
+                },
+            }
+        );
+
+        // Add callback for "remove row" button
+        $(`#button-row-remove-${idx}`).click(function() {
+            $(`#items_${idx}`).remove();
+        });
+    }
+
+    // Request API endpoint options
+    getApiEndpointOptions('{% url "api-bom-list" %}', function(response) {
+        
+        var fields = response.actions.POST;
+
+        data.rows.forEach(function(row, idx) {
+            constructRow(row, idx, fields);
+        });
+    });
+}
+
+
+/* Extract rows from the BOM upload table,
+ * and submit data to the server
+ */
+function submitBomTable(part_id, options={}) {
+
+    // Extract rows from the form
+    var rows = [];
+
+    var idx_values = [];
+
+    var url = '{% url "api-bom-upload" %}';
+
+    $('.bom-import-row').each(function() {
+        var idx = $(this).attr('idx');
+
+        idx_values.push(idx);
+
+        // Extract each field from the row
+        rows.push({
+            part: part_id,
+            sub_part: getFormFieldValue(`items_sub_part_${idx}`, {}),
+            quantity: getFormFieldValue(`items_quantity_${idx}`, {}),
+            reference: getFormFieldValue(`items_reference_${idx}`, {}),
+            overage: getFormFieldValue(`items_overage_${idx}`, {}),
+            allow_variants: getFormFieldValue(`items_allow_variants_${idx}`, {type: 'boolean'}),
+            inherited: getFormFieldValue(`items_inherited_${idx}`, {type: 'boolean'}),
+            optional: getFormFieldValue(`items_optional_${idx}`, {type: 'boolean'}),
+            note: getFormFieldValue(`items_note_${idx}`, {}),
+        });
+    });
+
+    var data = {
+        items: rows,
+    };
+
+    var options = {
+        nested: {
+            items: idx_values,
+        }
+    };
+
+    getApiEndpointOptions(url, function(response) {
+        var fields = response.actions.POST;
+
+        inventreePut(url, data, {
+            method: 'POST',
+            success: function(response) {
+                window.location.href = `/part/${part_id}/?display=bom`;
+            },
+            error: function(xhr) {
+                switch (xhr.status) {
+                case 400:
+                    handleFormErrors(xhr.responseJSON, fields, options);
+                    break;
+                default:
+                    showApiError(xhr, url);
+                    break;
+                }
+            }
+        });
+    });
+}
+
 
 function downloadBomTemplate(options={}) {
 

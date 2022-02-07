@@ -161,7 +161,7 @@ function renderPart(name, data, parameters, options) {
     html += ` <span>${data.full_name || data.name}</span>`;
 
     if (data.description) {
-        html += ` - <i>${data.description}</i>`;
+        html += ` - <i><small>${data.description}</small></i>`;
     }
 
     var extra = '';
