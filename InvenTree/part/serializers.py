@@ -746,6 +746,13 @@ class BomExtractSerializer(serializers.Serializer):
 
     """
 
+    class Meta:
+        fields = [
+            'bom_file',
+            'part',
+            'clear_existing',
+        ]
+
     # These columns must be present
     REQUIRED_COLUMNS = [
         'quantity',
@@ -940,16 +947,24 @@ class BomExtractSerializer(serializers.Serializer):
             'filename': self.filename,
         }
 
-    class Meta:
-        fields = [
-            'bom_file',
-        ]
+    part = serializers.PrimaryKeyRelatedField(queryset=Part.objects.filter(assembly=True), required=True)
+
+    clear_existing = serializers.BooleanField(
+        label=_("Clear Existing BOM"),
+        help_text=_("Delete existing BOM data first"),
+    )
 
     def save(self):
-        """
-        There is no action associated with "saving" this serializer
-        """
-        pass
+        
+        data = self.validated_data
+
+        master_part = data['part']
+        clear_existing = data['clear_existing']
+
+        if clear_existing:
+
+            # Remove all existing BOM items
+            master_part.bom_items.all().delete()
 
 
 class BomUploadSerializer(serializers.Serializer):
@@ -963,12 +978,13 @@ class BomUploadSerializer(serializers.Serializer):
 
     def validate(self, data):
 
-        data = super().validate(data)
 
         items = data['items']
 
         if len(items) == 0:
             raise serializers.ValidationError(_("At least one BOM item is required"))
+
+        data = super().validate(data)
 
         return data
 

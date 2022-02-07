@@ -1059,6 +1059,28 @@ function handleNestedErrors(errors, field_name, options={}) {
 
             var errors = error_item[sub_field_name];
 
+            if (sub_field_name == 'non_field_errors') {
+
+                var row = null;
+
+                if (options.modal) {
+                    row = $(options.modal).find(`#items_${nest_id}`);
+                } else {
+                    row = $(`#items_${nest_id}`);
+                }
+
+                for (var ii = errors.length - 1; ii >= 0; ii--) {
+
+                    var html = `
+                    <div id='error_${ii}_non_field_error' class='help-block form-field-error form-error-message'>
+                        <strong>${errors[ii]}</strong>
+                    </div>`;
+
+                    row.after(html);
+                }
+                
+            }
+
             // Find the target (nested) field
             var target = `${field_name}_${sub_field_name}_${nest_id}`;
 

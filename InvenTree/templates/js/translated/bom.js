@@ -112,7 +112,7 @@ function constructBomUploadTable(data, options={}) {
 
         // Add callback for "remove row" button
         $(`#button-row-remove-${idx}`).click(function() {
-            $(`#bom_import_row_${idx}`).remove();
+            $(`#items_${idx}`).remove();
         });
     }
 
@@ -172,22 +172,36 @@ function submitBomTable(part_id, options={}) {
     getApiEndpointOptions(url, function(response) {
         var fields = response.actions.POST;
 
-        inventreePut(url, data, {
+        constructForm(url, {
             method: 'POST',
-            success: function(response) {
-                // TODO: Return to the "bom" page
-            },
-            error: function(xhr) {
-                switch (xhr.status) {
-                case 400:
-                    handleFormErrors(xhr.responseJSON, fields, options);
-                    break;
-                default:
-                    showApiError(xhr, url);
-                    break;
-                }
+            fields: {
+                clear_existing: {},
+            },  
+            title: '{% trans "Submit BOM Data" %}',
+            onSubmit: function(fields, opts) {
+
+                data.clear_existing = getFormFieldValue('clear_existing', {}, opts);
+
+                $(opts.modal).modal('hide');
+
+                inventreePut(url, data, {
+                    method: 'POST',
+                    success: function(response) {
+                        // TODO: Return to the "bom" page
+                    },
+                    error: function(xhr) {
+                        switch (xhr.status) {
+                        case 400:
+                            handleFormErrors(xhr.responseJSON, fields, options);
+                            break;
+                        default:
+                            showApiError(xhr, url);
+                            break;
+                        }
+                    }
+                });
             }
-        });
+        });      
     });
 }
 
