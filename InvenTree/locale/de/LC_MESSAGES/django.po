@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-07 02:55+0000\n"
+"POT-Creation-Date: 2022-02-07 03:47+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -226,7 +226,7 @@ msgstr "Name"
 #: report/templates/report/inventree_build_order_base.html:118
 #: stock/templates/stock/location.html:93
 #: templates/InvenTree/settings/plugin_settings.html:33
-#: templates/js/translated/bom.js:339 templates/js/translated/bom.js:552
+#: templates/js/translated/bom.js:507 templates/js/translated/bom.js:720
 #: templates/js/translated/build.js:1683 templates/js/translated/company.js:345
 #: templates/js/translated/company.js:551
 #: templates/js/translated/company.js:840 templates/js/translated/order.js:836
@@ -488,41 +488,43 @@ msgstr "Gegen Bestellung empfangen"
 msgid "Production"
 msgstr "in Arbeit"
 
-#: InvenTree/validators.py:23
+#: InvenTree/validators.py:25
 msgid "Not a valid currency code"
 msgstr "Kein gültiger Währungscode"
 
-#: InvenTree/validators.py:51
+#: InvenTree/validators.py:53
 msgid "Invalid character in part name"
 msgstr "Ungültiger Buchstabe im Teilenamen"
 
-#: InvenTree/validators.py:64
+#: InvenTree/validators.py:66
 #, python-brace-format
 msgid "IPN must match regex pattern {pat}"
 msgstr "IPN muss zu Regex-Muster  {pat} passen"
 
-#: InvenTree/validators.py:78 InvenTree/validators.py:92
-#: InvenTree/validators.py:106
+#: InvenTree/validators.py:80 InvenTree/validators.py:94
+#: InvenTree/validators.py:108
 #, python-brace-format
 msgid "Reference must match pattern {pattern}"
 msgstr "Referenz muss zu Regex-Muster {pattern} passen"
 
-#: InvenTree/validators.py:114
+#: InvenTree/validators.py:116
 #, python-brace-format
 msgid "Illegal character in name ({x})"
 msgstr "Ungültiges Zeichen im Namen ({x})"
 
-#: InvenTree/validators.py:133 InvenTree/validators.py:149
+#: InvenTree/validators.py:137 InvenTree/validators.py:153
 msgid "Overage value must not be negative"
 msgstr "Überschuss-Wert darf nicht negativ sein"
 
-#: InvenTree/validators.py:151
+#: InvenTree/validators.py:155
 msgid "Overage must not exceed 100%"
 msgstr "Überschuss darf 100% nicht überschreiten"
 
-#: InvenTree/validators.py:158
-msgid "Overage must be an integer value or a percentage"
-msgstr "Überschuss muss eine Ganzzahl oder ein Prozentwert sein"
+#: InvenTree/validators.py:162
+#, fuzzy
+#| msgid "Invalid response from server"
+msgid "Invalid value for overage"
+msgstr "ungültige Antwort vom Server"
 
 #: InvenTree/views.py:538
 msgid "Delete Item"
@@ -606,9 +608,9 @@ msgstr "Barcode Lagerartikel zugeordnet"
 #: order/templates/order/order_wizard/match_parts.html:30
 #: order/templates/order/order_wizard/select_parts.html:34 part/forms.py:144
 #: part/forms.py:160 part/forms.py:176 part/models.py:2636
-#: part/templates/part/bom_upload/match_parts.html:31
 #: part/templates/part/detail.html:995 part/templates/part/detail.html:1081
 #: part/templates/part/part_pricing.html:16
+#: part/templates/part/upload_bom.html:50
 #: report/templates/report/inventree_build_order_base.html:114
 #: report/templates/report/inventree_po_report.html:91
 #: report/templates/report/inventree_so_report.html:91
@@ -618,7 +620,7 @@ msgstr "Barcode Lagerartikel zugeordnet"
 #: stock/templates/stock/item_base.html:181
 #: stock/templates/stock/item_base.html:262
 #: stock/templates/stock/item_base.html:270
-#: templates/js/translated/barcode.js:385 templates/js/translated/bom.js:567
+#: templates/js/translated/barcode.js:385 templates/js/translated/bom.js:735
 #: templates/js/translated/build.js:295 templates/js/translated/build.js:495
 #: templates/js/translated/build.js:690 templates/js/translated/build.js:700
 #: templates/js/translated/build.js:1076 templates/js/translated/build.js:1423
@@ -691,10 +693,10 @@ msgstr "Bauauftragsreferenz"
 
 #: build/models.py:201 order/models.py:213 order/models.py:541
 #: order/models.py:812 part/models.py:2645
-#: part/templates/part/bom_upload/match_parts.html:30
+#: part/templates/part/upload_bom.html:51
 #: report/templates/report/inventree_po_report.html:92
 #: report/templates/report/inventree_so_report.html:92
-#: templates/js/translated/bom.js:559 templates/js/translated/build.js:1180
+#: templates/js/translated/bom.js:727 templates/js/translated/build.js:1180
 #: templates/js/translated/order.js:1050 templates/js/translated/order.js:2144
 msgid "Reference"
 msgstr "Referenz"
@@ -718,18 +720,19 @@ msgstr "Bauauftrag, zu dem dieser Bauauftrag zugwiesen ist"
 #: order/templates/order/order_wizard/select_parts.html:32 part/models.py:359
 #: part/models.py:2211 part/models.py:2227 part/models.py:2246
 #: part/models.py:2263 part/models.py:2365 part/models.py:2487
-#: part/models.py:2620 part/models.py:2927 part/serializers.py:658
+#: part/models.py:2620 part/models.py:2927 part/serializers.py:666
 #: part/templates/part/part_app_base.html:8
 #: part/templates/part/part_pricing.html:12
 #: part/templates/part/set_category.html:13
+#: part/templates/part/upload_bom.html:49
 #: report/templates/report/inventree_build_order_base.html:110
 #: report/templates/report/inventree_po_report.html:90
 #: report/templates/report/inventree_so_report.html:90
 #: templates/InvenTree/search.html:80
 #: templates/email/build_order_required_stock.html:17
 #: templates/email/low_stock_notification.html:16
-#: templates/js/translated/barcode.js:383 templates/js/translated/bom.js:338
-#: templates/js/translated/bom.js:517 templates/js/translated/build.js:681
+#: templates/js/translated/barcode.js:383 templates/js/translated/bom.js:506
+#: templates/js/translated/bom.js:685 templates/js/translated/build.js:681
 #: templates/js/translated/build.js:1049 templates/js/translated/build.js:1420
 #: templates/js/translated/build.js:1688 templates/js/translated/company.js:492
 #: templates/js/translated/company.js:749 templates/js/translated/order.js:84
@@ -867,7 +870,7 @@ msgstr "Externer Link"
 #: stock/models.py:1895 stock/models.py:2001 stock/serializers.py:332
 #: stock/serializers.py:640 stock/serializers.py:738 stock/serializers.py:870
 #: stock/templates/stock/stock_sidebar.html:25
-#: templates/js/translated/barcode.js:58 templates/js/translated/bom.js:723
+#: templates/js/translated/barcode.js:58 templates/js/translated/bom.js:891
 #: templates/js/translated/company.js:845 templates/js/translated/order.js:1149
 #: templates/js/translated/order.js:1445 templates/js/translated/order.js:2280
 #: templates/js/translated/stock.js:1317 templates/js/translated/stock.js:1803
@@ -1074,7 +1077,8 @@ msgid "Item must be in stock"
 msgstr "Teil muss auf Lager sein"
 
 #: build/serializers.py:411 order/models.py:280 order/serializers.py:240
-#: stock/models.py:367 stock/models.py:1105 stock/serializers.py:305
+#: part/serializers.py:471 stock/models.py:367 stock/models.py:1105
+#: stock/serializers.py:305
 msgid "Quantity must be greater than zero"
 msgstr "Anzahl muss größer Null sein"
 
@@ -1689,7 +1693,7 @@ msgstr "Vorlage"
 msgid "Parts are templates by default"
 msgstr "Teile sind standardmäßig Vorlagen"
 
-#: common/models.py:712 part/models.py:921 templates/js/translated/bom.js:1087
+#: common/models.py:712 part/models.py:921 templates/js/translated/bom.js:1255
 #: templates/js/translated/table_filters.js:168
 #: templates/js/translated/table_filters.js:434
 msgid "Assembly"
@@ -2370,17 +2374,14 @@ msgstr ""
 
 #: common/views.py:93 order/templates/order/order_wizard/po_upload.html:49
 #: order/templates/order/purchase_order_detail.html:24 order/views.py:243
-#: part/templates/part/bom_upload/upload_file.html:52
-#: part/templates/part/import_wizard/part_upload.html:47 part/views.py:213
-#: part/views.py:774
+#: part/templates/part/import_wizard/part_upload.html:47 part/views.py:210
 msgid "Upload File"
 msgstr "Datei hochgeladen"
 
 #: common/views.py:94 order/templates/order/order_wizard/match_fields.html:52
-#: order/views.py:244 part/templates/part/bom_upload/match_fields.html:52
+#: order/views.py:244
 #: part/templates/part/import_wizard/ajax_match_fields.html:45
-#: part/templates/part/import_wizard/match_fields.html:52 part/views.py:214
-#: part/views.py:775
+#: part/templates/part/import_wizard/match_fields.html:52 part/views.py:211
 msgid "Match Fields"
 msgstr "Übereinstimmende Felder"
 
@@ -2399,9 +2400,6 @@ msgstr "Teile importiert"
 #: common/views.py:517 order/templates/order/order_wizard/match_fields.html:27
 #: order/templates/order/order_wizard/match_parts.html:19
 #: order/templates/order/order_wizard/po_upload.html:47
-#: part/templates/part/bom_upload/match_fields.html:27
-#: part/templates/part/bom_upload/match_parts.html:19
-#: part/templates/part/bom_upload/upload_file.html:50
 #: part/templates/part/import_wizard/match_fields.html:27
 #: part/templates/part/import_wizard/match_references.html:19
 #: part/templates/part/import_wizard/part_upload.html:45
@@ -2510,7 +2508,7 @@ msgid "Default currency used for this company"
 msgstr "Standard-Währung für diese Firma"
 
 #: company/models.py:320 company/models.py:535 stock/models.py:471
-#: stock/templates/stock/item_base.html:142 templates/js/translated/bom.js:328
+#: stock/templates/stock/item_base.html:142 templates/js/translated/bom.js:496
 msgid "Base Part"
 msgstr "Basisteil"
 
@@ -2629,7 +2627,8 @@ msgid "Supplier part description"
 msgstr "Zuliefererbeschreibung des Teils"
 
 #: company/models.py:576 company/templates/company/supplier_part.html:119
-#: part/models.py:2648 report/templates/report/inventree_po_report.html:93
+#: part/models.py:2648 part/templates/part/upload_bom.html:56
+#: report/templates/report/inventree_po_report.html:93
 #: report/templates/report/inventree_so_report.html:93
 msgid "Note"
 msgstr "Notiz"
@@ -3012,7 +3011,7 @@ msgstr "Preisinformationen ansehen"
 
 #: company/templates/company/supplier_part.html:184
 #: company/templates/company/supplier_part.html:290
-#: part/templates/part/prices.html:271 part/views.py:1629
+#: part/templates/part/prices.html:271 part/views.py:1319
 msgid "Add Price Break"
 msgstr "Preisstaffel hinzufügen"
 
@@ -3020,11 +3019,11 @@ msgstr "Preisstaffel hinzufügen"
 msgid "No price break information found"
 msgstr "Keine Informationen zur Preisstaffel gefunden"
 
-#: company/templates/company/supplier_part.html:224 part/views.py:1691
+#: company/templates/company/supplier_part.html:224 part/views.py:1381
 msgid "Delete Price Break"
 msgstr "Preisstaffel löschen"
 
-#: company/templates/company/supplier_part.html:238 part/views.py:1677
+#: company/templates/company/supplier_part.html:238 part/views.py:1367
 msgid "Edit Price Break"
 msgstr "Preisstaffel bearbeiten"
 
@@ -3042,7 +3041,7 @@ msgstr "Preisstaffel löschen"
 #: stock/templates/stock/stock_app_base.html:10
 #: templates/InvenTree/search.html:150
 #: templates/InvenTree/settings/sidebar.html:41
-#: templates/js/translated/bom.js:340 templates/js/translated/part.js:495
+#: templates/js/translated/bom.js:508 templates/js/translated/part.js:495
 #: templates/js/translated/part.js:630 templates/js/translated/part.js:1125
 #: templates/js/translated/part.js:1286 templates/js/translated/stock.js:935
 #: templates/js/translated/stock.js:1588 templates/navbar.html:28
@@ -3098,20 +3097,20 @@ msgstr "Firmen"
 msgid "New Company"
 msgstr "Neue Firma"
 
-#: company/views.py:129 part/views.py:594
+#: company/views.py:129 part/views.py:591
 msgid "Download Image"
 msgstr "Bild herunterladen"
 
-#: company/views.py:158 part/views.py:626
+#: company/views.py:158 part/views.py:623
 msgid "Image size exceeds maximum allowable size for download"
 msgstr "Bildgröße überschreitet maximal-erlaubte Größe für Downloads"
 
-#: company/views.py:165 part/views.py:633
+#: company/views.py:165 part/views.py:630
 #, python-brace-format
 msgid "Invalid response: {code}"
 msgstr "Ungültige Antwort {code}"
 
-#: company/views.py:174 part/views.py:642
+#: company/views.py:174 part/views.py:639
 msgid "Supplied URL is not a valid image file"
 msgstr "Angegebene URL ist kein gültiges Bild"
 
@@ -3701,14 +3700,12 @@ msgid "After placing this purchase order, line items will no longer be editable.
 msgstr "Nachdem diese Bestellung plaziert ist können die Positionen nicht länger bearbeitbar ist."
 
 #: order/templates/order/order_wizard/match_fields.html:9
-#: part/templates/part/bom_upload/match_fields.html:9
 #: part/templates/part/import_wizard/ajax_match_fields.html:9
 #: part/templates/part/import_wizard/match_fields.html:9
 msgid "Missing selections for the following required columns"
 msgstr "Es fehlt eine Auswahl für die folgende benötigte Spalte"
 
 #: order/templates/order/order_wizard/match_fields.html:20
-#: part/templates/part/bom_upload/match_fields.html:20
 #: part/templates/part/import_wizard/ajax_match_fields.html:20
 #: part/templates/part/import_wizard/match_fields.html:20
 msgid "Duplicate selections found, see below. Fix them then retry submitting."
@@ -3716,29 +3713,24 @@ msgstr "Doppelte Auswahlen gefunden, siehe unten. Reparieren und erneut versuche
 
 #: order/templates/order/order_wizard/match_fields.html:29
 #: order/templates/order/order_wizard/match_parts.html:21
-#: part/templates/part/bom_upload/match_fields.html:29
-#: part/templates/part/bom_upload/match_parts.html:21
 #: part/templates/part/import_wizard/match_fields.html:29
 #: part/templates/part/import_wizard/match_references.html:21
 msgid "Submit Selections"
 msgstr "Auswahl übertragen"
 
 #: order/templates/order/order_wizard/match_fields.html:35
-#: part/templates/part/bom_upload/match_fields.html:35
 #: part/templates/part/import_wizard/ajax_match_fields.html:28
 #: part/templates/part/import_wizard/match_fields.html:35
 msgid "File Fields"
 msgstr "Datei-Felder"
 
 #: order/templates/order/order_wizard/match_fields.html:42
-#: part/templates/part/bom_upload/match_fields.html:42
 #: part/templates/part/import_wizard/ajax_match_fields.html:35
 #: part/templates/part/import_wizard/match_fields.html:42
 msgid "Remove column"
 msgstr "Spalte entfernen"
 
 #: order/templates/order/order_wizard/match_fields.html:60
-#: part/templates/part/bom_upload/match_fields.html:60
 #: part/templates/part/import_wizard/ajax_match_fields.html:53
 #: part/templates/part/import_wizard/match_fields.html:60
 msgid "Duplicate selection"
@@ -3746,27 +3738,24 @@ msgstr "Auswahl duplizieren"
 
 #: order/templates/order/order_wizard/match_fields.html:71
 #: order/templates/order/order_wizard/match_parts.html:52
-#: part/templates/part/bom_upload/match_fields.html:71
-#: part/templates/part/bom_upload/match_parts.html:53
 #: part/templates/part/import_wizard/ajax_match_fields.html:64
 #: part/templates/part/import_wizard/ajax_match_references.html:42
 #: part/templates/part/import_wizard/match_fields.html:71
 #: part/templates/part/import_wizard/match_references.html:49
-#: templates/js/translated/build.js:300 templates/js/translated/build.js:1312
-#: templates/js/translated/order.js:537 templates/js/translated/order.js:1488
-#: templates/js/translated/stock.js:601 templates/js/translated/stock.js:769
+#: templates/js/translated/bom.js:76 templates/js/translated/build.js:300
+#: templates/js/translated/build.js:1312 templates/js/translated/order.js:537
+#: templates/js/translated/order.js:1488 templates/js/translated/stock.js:601
+#: templates/js/translated/stock.js:769
 msgid "Remove row"
 msgstr "Zeile entfernen"
 
 #: order/templates/order/order_wizard/match_parts.html:12
-#: part/templates/part/bom_upload/match_parts.html:12
 #: part/templates/part/import_wizard/ajax_match_references.html:12
 #: part/templates/part/import_wizard/match_references.html:12
 msgid "Errors exist in the submitted data"
 msgstr "Fehler in den übermittelten Daten"
 
 #: order/templates/order/order_wizard/match_parts.html:28
-#: part/templates/part/bom_upload/match_parts.html:28
 #: part/templates/part/import_wizard/ajax_match_references.html:21
 #: part/templates/part/import_wizard/match_references.html:28
 msgid "Row"
@@ -3785,7 +3774,6 @@ msgid "Upload File for Purchase Order"
 msgstr "Datei zur Bestellung hochladen"
 
 #: order/templates/order/order_wizard/po_upload.html:25
-#: part/templates/part/bom_upload/upload_file.html:21
 #: part/templates/part/import_wizard/ajax_part_upload.html:10
 #: part/templates/part/import_wizard/part_upload.html:23
 #, python-format
@@ -3951,7 +3939,7 @@ msgid "Pending Shipments"
 msgstr "Ausstehende Einträge"
 
 #: order/templates/order/sales_order_detail.html:48
-#: templates/js/translated/bom.js:732 templates/js/translated/build.js:1244
+#: templates/js/translated/bom.js:900 templates/js/translated/build.js:1244
 msgid "Actions"
 msgstr "Aktionen"
 
@@ -4415,8 +4403,8 @@ msgstr "Teil für die Nutzung in der Stückliste auswählen"
 msgid "BOM quantity for this BOM item"
 msgstr "Stücklisten-Anzahl für dieses Stücklisten-Teil"
 
-#: part/models.py:2638 templates/js/translated/bom.js:578
-#: templates/js/translated/bom.js:652
+#: part/models.py:2638 part/templates/part/upload_bom.html:55
+#: templates/js/translated/bom.js:746 templates/js/translated/bom.js:820
 #: templates/js/translated/table_filters.js:92
 msgid "Optional"
 msgstr "Optional"
@@ -4425,7 +4413,7 @@ msgstr "Optional"
 msgid "This BOM item is optional"
 msgstr "Diese Stücklisten-Position ist optional"
 
-#: part/models.py:2641
+#: part/models.py:2641 part/templates/part/upload_bom.html:52
 msgid "Overage"
 msgstr "Überschuss"
 
@@ -4449,7 +4437,8 @@ msgstr "Prüfsumme"
 msgid "BOM line checksum"
 msgstr "Prüfsumme der Stückliste"
 
-#: part/models.py:2654 templates/js/translated/bom.js:669
+#: part/models.py:2654 part/templates/part/upload_bom.html:54
+#: templates/js/translated/bom.js:837
 #: templates/js/translated/table_filters.js:68
 #: templates/js/translated/table_filters.js:88
 msgid "Inherited"
@@ -4459,7 +4448,8 @@ msgstr "Geerbt"
 msgid "This BOM item is inherited by BOMs for variant parts"
 msgstr "Diese Stücklisten-Position wird in die Stücklisten von Teil-Varianten vererbt"
 
-#: part/models.py:2660 templates/js/translated/bom.js:661
+#: part/models.py:2660 part/templates/part/upload_bom.html:53
+#: templates/js/translated/bom.js:829
 msgid "Allow Variants"
 msgstr "Varianten zulassen"
 
@@ -4507,43 +4497,93 @@ msgstr "verknüpftes Teil auswählen"
 msgid "Error creating relationship: check that the part is not related to itself and that the relationship is unique"
 msgstr "Fehler bei Verwandschaft: Ist das Teil mit sich selbst verwandt oder ist das die Verwandtschaft nicht eindeutig?"
 
-#: part/serializers.py:659
+#: part/serializers.py:667
 #, fuzzy
 #| msgid "Select parent part to copy BOM from"
 msgid "Select part to copy BOM from"
 msgstr "Teil für Stücklisten-Kopie auswählen"
 
-#: part/serializers.py:670
+#: part/serializers.py:678
 #, fuzzy
 #| msgid "Remove substitute part"
 msgid "Remove Existing Data"
 msgstr "Ersatzteil entfernen"
 
-#: part/serializers.py:671
+#: part/serializers.py:679
 #, fuzzy
 #| msgid "Clear existing BOM items"
 msgid "Remove existing BOM items before copying"
 msgstr "Stücklisten-Position(en) löschen"
 
-#: part/serializers.py:676
+#: part/serializers.py:684
 #, fuzzy
 #| msgid "Inherited"
 msgid "Include Inherited"
 msgstr "Geerbt"
 
-#: part/serializers.py:677
+#: part/serializers.py:685
 #, fuzzy
 #| msgid "This BOM item is inherited by BOMs for variant parts"
 msgid "Include BOM items which are inherited from templated parts"
 msgstr "Diese Stücklisten-Position wird in die Stücklisten von Teil-Varianten vererbt"
 
-#: part/serializers.py:682
+#: part/serializers.py:690
 msgid "Skip Invalid Rows"
 msgstr ""
 
-#: part/serializers.py:683
+#: part/serializers.py:691
 msgid "Enable this option to skip invalid rows"
 msgstr ""
+
+#: part/serializers.py:787
+#, fuzzy
+#| msgid "File"
+msgid "BOM File"
+msgstr "Datei"
+
+#: part/serializers.py:788
+#, fuzzy
+#| msgid "Bill of Materials"
+msgid "Select Bill of Materials file"
+msgstr "Stückliste"
+
+#: part/serializers.py:812
+#, fuzzy
+#| msgid "Unsupported file format: {ext.upper()}"
+msgid "Unsupported file type"
+msgstr "Dateiformat nicht unterstützt: {ext.upper()}"
+
+#: part/serializers.py:818
+msgid "File is too large"
+msgstr ""
+
+#: part/serializers.py:834
+#, fuzzy
+#| msgid "Missing selections for the following required columns"
+msgid "Missing required column"
+msgstr "Es fehlt eine Auswahl für die folgende benötigte Spalte"
+
+#: part/serializers.py:849
+#, fuzzy
+#| msgid "No parts found"
+msgid "No part column found"
+msgstr "Keine Teile gefunden"
+
+#: part/serializers.py:936
+msgid "Clear Existing BOM"
+msgstr ""
+
+#: part/serializers.py:937
+#, fuzzy
+#| msgid "Delete Test Data"
+msgid "Delete existing BOM data first"
+msgstr "Testdaten löschen"
+
+#: part/serializers.py:967
+#, fuzzy
+#| msgid "At least one line item must be selected"
+msgid "At least one BOM item is required"
+msgstr "Mindestens eine Position muss ausgewählt werden"
 
 #: part/tasks.py:58
 msgid "Low stock notification"
@@ -4575,34 +4615,6 @@ msgstr "Stücklisten-Aktionen"
 #: part/templates/part/bom.html:34
 msgid "Delete Items"
 msgstr "Einträge löschen"
-
-#: part/templates/part/bom_upload/match_parts.html:29
-msgid "Select Part"
-msgstr "Teil auswählen"
-
-#: part/templates/part/bom_upload/upload_file.html:8
-msgid "Return to BOM"
-msgstr "Zurück zur Stückliste"
-
-#: part/templates/part/bom_upload/upload_file.html:13
-msgid "Upload Bill of Materials"
-msgstr "Stückliste hochladen"
-
-#: part/templates/part/bom_upload/upload_file.html:33
-msgid "Requirements for BOM upload"
-msgstr "Anforderungen für Stückliste-Datei"
-
-#: part/templates/part/bom_upload/upload_file.html:35
-msgid "The BOM file must contain the required named columns as provided in the "
-msgstr "Die Stückliste-Datei muss die aufgeführten Spalten enthalten; siehe"
-
-#: part/templates/part/bom_upload/upload_file.html:35
-msgid "BOM Upload Template"
-msgstr "Vorlage für Stückliste"
-
-#: part/templates/part/bom_upload/upload_file.html:36
-msgid "Each part must already exist in the database"
-msgstr "Jedes Teil muss bereits in der Datenbank bestehen"
 
 #: part/templates/part/category.html:28 part/templates/part/category.html:32
 msgid "You are subscribed to notifications for this category"
@@ -4669,7 +4681,7 @@ msgstr "Exportieren"
 msgid "Create new part"
 msgstr "Neues Teil anlegen"
 
-#: part/templates/part/category.html:161 templates/js/translated/bom.js:152
+#: part/templates/part/category.html:161 templates/js/translated/bom.js:320
 msgid "New Part"
 msgstr "Neues Teil"
 
@@ -4823,7 +4835,7 @@ msgstr "Stückliste"
 msgid "Export actions"
 msgstr "Export-Aktionen"
 
-#: part/templates/part/detail.html:265 templates/js/translated/bom.js:70
+#: part/templates/part/detail.html:265 templates/js/translated/bom.js:238
 msgid "Export BOM"
 msgstr "Stückliste exportieren"
 
@@ -5066,7 +5078,7 @@ msgstr "Benötigt für Aufträge"
 msgid "Allocated to Orders"
 msgstr "Zu Bauaufträgen zugeordnet"
 
-#: part/templates/part/part_base.html:239 templates/js/translated/bom.js:690
+#: part/templates/part/part_base.html:239 templates/js/translated/bom.js:858
 msgid "Can Build"
 msgstr "Herstellbar"
 
@@ -5127,7 +5139,7 @@ msgid "Total Cost"
 msgstr "Gesamtkosten"
 
 #: part/templates/part/part_pricing.html:40 part/templates/part/prices.html:40
-#: templates/js/translated/bom.js:644
+#: templates/js/translated/bom.js:812
 msgid "No supplier pricing available"
 msgstr "Keine Zulieferer-Preise verfügbar"
 
@@ -5253,7 +5265,7 @@ msgstr "Verkaufspreis anzeigen"
 msgid "Calculation parameters"
 msgstr "Berechnungsparameter"
 
-#: part/templates/part/prices.html:155 templates/js/translated/bom.js:638
+#: part/templates/part/prices.html:155 templates/js/translated/bom.js:806
 msgid "Supplier Cost"
 msgstr "Zuliefererkosten"
 
@@ -5275,7 +5287,7 @@ msgstr "Für dieses Teil sind keine Bestandspreise verfügbar."
 msgid "Internal Cost"
 msgstr "Interne Kosten"
 
-#: part/templates/part/prices.html:215 part/views.py:1700
+#: part/templates/part/prices.html:215 part/views.py:1390
 msgid "Add Internal Price Break"
 msgstr "Interne Preisspanne hinzufügen"
 
@@ -5295,7 +5307,7 @@ msgstr "Keine Verkaufsgeschichte für diesen Teil verfügbar."
 msgid "Set category for the following parts"
 msgstr "Kategorie für Teile setzen"
 
-#: part/templates/part/stock_count.html:7 templates/js/translated/bom.js:600
+#: part/templates/part/stock_count.html:7 templates/js/translated/bom.js:768
 #: templates/js/translated/part.js:497 templates/js/translated/part.js:1122
 #: templates/js/translated/part.js:1309
 msgid "No Stock"
@@ -5304,6 +5316,49 @@ msgstr "Kein Bestand"
 #: part/templates/part/stock_count.html:9 templates/InvenTree/index.html:158
 msgid "Low Stock"
 msgstr "niedriger Bestand"
+
+#: part/templates/part/upload_bom.html:8
+msgid "Return to BOM"
+msgstr "Zurück zur Stückliste"
+
+#: part/templates/part/upload_bom.html:13
+msgid "Upload Bill of Materials"
+msgstr "Stückliste hochladen"
+
+#: part/templates/part/upload_bom.html:19
+#, fuzzy
+#| msgid "BOM Upload Template"
+msgid "BOM upload requirements"
+msgstr "Vorlage für Stückliste"
+
+#: part/templates/part/upload_bom.html:23
+#: part/templates/part/upload_bom.html:87
+#, fuzzy
+#| msgid "Upload File"
+msgid "Upload BOM File"
+msgstr "Datei hochgeladen"
+
+#: part/templates/part/upload_bom.html:26
+#, fuzzy
+#| msgid "Submit Bug Report"
+msgid "Submit BOM Data"
+msgstr "Fehlerbericht senden"
+
+#: part/templates/part/upload_bom.html:34
+msgid "Requirements for BOM upload"
+msgstr "Anforderungen für Stückliste-Datei"
+
+#: part/templates/part/upload_bom.html:36
+msgid "The BOM file must contain the required named columns as provided in the "
+msgstr "Die Stückliste-Datei muss die aufgeführten Spalten enthalten; siehe"
+
+#: part/templates/part/upload_bom.html:36
+msgid "BOM Upload Template"
+msgstr "Vorlage für Stückliste"
+
+#: part/templates/part/upload_bom.html:37
+msgid "Each part must already exist in the database"
+msgstr "Jedes Teil muss bereits in der Datenbank bestehen"
 
 #: part/templates/part/variant_part.html:9
 msgid "Create new part variant"
@@ -5318,104 +5373,96 @@ msgstr "Neue Variante von Vorlage anlegen <em>'%(full_name)s'</em>."
 msgid "Unknown database"
 msgstr "Unbekannte Datenbank"
 
-#: part/views.py:93
+#: part/views.py:90
 msgid "Set Part Category"
 msgstr "Teil-Kategorie auswählen"
 
-#: part/views.py:143
+#: part/views.py:140
 #, python-brace-format
 msgid "Set category for {n} parts"
 msgstr "Kategorie für {n} Teile setzen"
 
-#: part/views.py:215
+#: part/views.py:212
 msgid "Match References"
 msgstr "Referenzen zuteilen"
 
-#: part/views.py:512
+#: part/views.py:509
 msgid "None"
 msgstr "Kein(e)"
 
-#: part/views.py:571
+#: part/views.py:568
 msgid "Part QR Code"
 msgstr "Teil-QR-Code"
 
-#: part/views.py:673
+#: part/views.py:670
 msgid "Select Part Image"
 msgstr "Teilbild auswählen"
 
-#: part/views.py:699
+#: part/views.py:696
 msgid "Updated part image"
 msgstr "Teilbild aktualisiert"
 
-#: part/views.py:702
+#: part/views.py:699
 msgid "Part image not found"
 msgstr "Teilbild nicht gefunden"
 
-#: part/views.py:776
-msgid "Match Parts"
-msgstr "Teile zuordnen"
-
-#: part/views.py:1111
-msgid "Export Bill of Materials"
-msgstr "Stückliste exportieren"
-
-#: part/views.py:1160
+#: part/views.py:850
 msgid "Confirm Part Deletion"
 msgstr "Löschen des Teils bestätigen"
 
-#: part/views.py:1167
+#: part/views.py:857
 msgid "Part was deleted"
 msgstr "Teil wurde gelöscht"
 
-#: part/views.py:1176
+#: part/views.py:866
 msgid "Part Pricing"
 msgstr "Teilbepreisung"
 
-#: part/views.py:1325
+#: part/views.py:1015
 msgid "Create Part Parameter Template"
 msgstr "Teilparametervorlage anlegen"
 
-#: part/views.py:1335
+#: part/views.py:1025
 msgid "Edit Part Parameter Template"
 msgstr "Teilparametervorlage bearbeiten"
 
-#: part/views.py:1342
+#: part/views.py:1032
 msgid "Delete Part Parameter Template"
 msgstr "Teilparametervorlage löschen"
 
-#: part/views.py:1401 templates/js/translated/part.js:315
+#: part/views.py:1091 templates/js/translated/part.js:315
 msgid "Edit Part Category"
 msgstr "Teil-Kategorie bearbeiten"
 
-#: part/views.py:1439
+#: part/views.py:1129
 msgid "Delete Part Category"
 msgstr "Teil-Kategorie löschen"
 
-#: part/views.py:1445
+#: part/views.py:1135
 msgid "Part category was deleted"
 msgstr "Teil-Kategorie wurde gelöscht"
 
-#: part/views.py:1454
+#: part/views.py:1144
 msgid "Create Category Parameter Template"
 msgstr "Kategorieparametervorlage anlegen"
 
-#: part/views.py:1555
+#: part/views.py:1245
 msgid "Edit Category Parameter Template"
 msgstr "Kategorieparametervorlage bearbeiten"
 
-#: part/views.py:1611
+#: part/views.py:1301
 msgid "Delete Category Parameter Template"
 msgstr "Kategorieparametervorlage löschen"
 
-#: part/views.py:1633
+#: part/views.py:1323
 msgid "Added new price break"
 msgstr "neue Preisstaffel hinzufügt"
 
-#: part/views.py:1709
+#: part/views.py:1399
 msgid "Edit Internal Price Break"
 msgstr "Interne Preisspanne bearbeiten"
 
-#: part/views.py:1717
+#: part/views.py:1407
 msgid "Delete Internal Price Break"
 msgstr "Interne Preisspanne löschen"
 
@@ -7286,7 +7333,7 @@ msgid "InvenTree Version Information"
 msgstr "InvenTree-Versionsinformationen"
 
 #: templates/about.html:11 templates/about.html:105
-#: templates/js/translated/bom.js:407 templates/js/translated/modals.js:53
+#: templates/js/translated/bom.js:575 templates/js/translated/modals.js:53
 #: templates/js/translated/modals.js:584 templates/js/translated/modals.js:678
 #: templates/js/translated/modals.js:983 templates/modals.html:15
 #: templates/modals.html:27 templates/modals.html:39 templates/modals.html:50
@@ -7573,13 +7620,13 @@ msgid "The following parts are low on required stock"
 msgstr "Bei den folgenden Teilen gibt es wenige Lagerartikel"
 
 #: templates/email/build_order_required_stock.html:18
-#: templates/js/translated/bom.js:1122
+#: templates/js/translated/bom.js:1290
 msgid "Required Quantity"
 msgstr "Benötigte Menge"
 
 #: templates/email/build_order_required_stock.html:19
 #: templates/email/low_stock_notification.html:18
-#: templates/js/translated/bom.js:591 templates/js/translated/build.js:1190
+#: templates/js/translated/bom.js:759 templates/js/translated/build.js:1190
 #: templates/js/translated/build.js:1811
 #: templates/js/translated/table_filters.js:178
 msgid "Available"
@@ -7816,159 +7863,165 @@ msgstr "In Lagerorten buchen"
 msgid "Barcode does not match a valid location"
 msgstr "Barcode entspricht keinem Lagerort"
 
-#: templates/js/translated/bom.js:36
+#: templates/js/translated/bom.js:75
+#, fuzzy
+#| msgid "Display as list"
+msgid "Display row data"
+msgstr "Listenansicht"
+
+#: templates/js/translated/bom.js:204
 #, fuzzy
 #| msgid "Download Image"
 msgid "Download BOM Template"
 msgstr "Bild herunterladen"
 
-#: templates/js/translated/bom.js:39 templates/js/translated/bom.js:73
+#: templates/js/translated/bom.js:207 templates/js/translated/bom.js:241
 #: templates/js/translated/order.js:369 templates/js/translated/stock.js:518
 msgid "Format"
 msgstr "Format"
 
-#: templates/js/translated/bom.js:40 templates/js/translated/bom.js:74
+#: templates/js/translated/bom.js:208 templates/js/translated/bom.js:242
 #: templates/js/translated/order.js:370 templates/js/translated/stock.js:519
 msgid "Select file format"
 msgstr "Dateiformat auswählen"
 
-#: templates/js/translated/bom.js:81
+#: templates/js/translated/bom.js:249
 msgid "Cascading"
 msgstr "Kaskadierend"
 
-#: templates/js/translated/bom.js:82
+#: templates/js/translated/bom.js:250
 msgid "Download cascading / multi-level BOM"
 msgstr "Kaskadierende Stückliste herunterladen"
 
-#: templates/js/translated/bom.js:87
+#: templates/js/translated/bom.js:255
 msgid "Levels"
 msgstr "Ebenen"
 
-#: templates/js/translated/bom.js:88
+#: templates/js/translated/bom.js:256
 msgid "Select maximum number of BOM levels to export (0 = all levels)"
 msgstr "Maximale Anzahl an Ebenen für Stückliste-Export auswählen (0 = alle Ebenen)"
 
-#: templates/js/translated/bom.js:94
+#: templates/js/translated/bom.js:262
 msgid "Include Parameter Data"
 msgstr "Parameter-Daten einschließen"
 
-#: templates/js/translated/bom.js:95
+#: templates/js/translated/bom.js:263
 #, fuzzy
 #| msgid "Include part parameters data in exported BOM"
 msgid "Include part  parameter data in exported BOM"
 msgstr "Teil-Parameter in Stückliste-Export einschließen"
 
-#: templates/js/translated/bom.js:100
+#: templates/js/translated/bom.js:268
 msgid "Include Stock Data"
 msgstr "Bestand einschließen"
 
-#: templates/js/translated/bom.js:101
+#: templates/js/translated/bom.js:269
 msgid "Include part stock data in exported BOM"
 msgstr "Teil-Bestand in Stückliste-Export einschließen"
 
-#: templates/js/translated/bom.js:106
+#: templates/js/translated/bom.js:274
 msgid "Include Manufacturer Data"
 msgstr "Herstellerdaten einschließen"
 
-#: templates/js/translated/bom.js:107
+#: templates/js/translated/bom.js:275
 msgid "Include part manufacturer data in exported BOM"
 msgstr "Teil-Herstellerdaten in Stückliste-Export einschließen"
 
-#: templates/js/translated/bom.js:112
+#: templates/js/translated/bom.js:280
 msgid "Include Supplier Data"
 msgstr "Zulieferer einschließen"
 
-#: templates/js/translated/bom.js:113
+#: templates/js/translated/bom.js:281
 msgid "Include part supplier data in exported BOM"
 msgstr "Zulieferer-Daten in Stückliste-Export einschließen"
 
-#: templates/js/translated/bom.js:296
+#: templates/js/translated/bom.js:464
 msgid "Remove substitute part"
 msgstr "Ersatzteil entfernen"
 
-#: templates/js/translated/bom.js:352
+#: templates/js/translated/bom.js:520
 #, fuzzy
 #| msgid "Select and add a new variant item using the input below"
 msgid "Select and add a new substitute part using the input below"
 msgstr "Wählen Sie eine neue Variante aus und fügen Sie sie mit den folgenden Eingaben hinzu"
 
-#: templates/js/translated/bom.js:363
+#: templates/js/translated/bom.js:531
 msgid "Are you sure you wish to remove this substitute part link?"
 msgstr "Sind Sie sicher, dass Sie dieses Ersatzteil entfernen möchten?"
 
-#: templates/js/translated/bom.js:369
+#: templates/js/translated/bom.js:537
 msgid "Remove Substitute Part"
 msgstr "Ersatzteil entfernen"
 
-#: templates/js/translated/bom.js:408
+#: templates/js/translated/bom.js:576
 msgid "Add Substitute"
 msgstr "Ersatzteil hinzufügen"
 
-#: templates/js/translated/bom.js:409
+#: templates/js/translated/bom.js:577
 msgid "Edit BOM Item Substitutes"
 msgstr "Stücklisten Ersatzteile bearbeiten"
 
-#: templates/js/translated/bom.js:528
+#: templates/js/translated/bom.js:696
 msgid "Substitutes Available"
 msgstr "Ersatzteile verfügbar"
 
-#: templates/js/translated/bom.js:532 templates/js/translated/build.js:1172
+#: templates/js/translated/bom.js:700 templates/js/translated/build.js:1172
 msgid "Variant stock allowed"
 msgstr "Varianten erlaubt"
 
-#: templates/js/translated/bom.js:537
+#: templates/js/translated/bom.js:705
 msgid "Open subassembly"
 msgstr "Unterbaugruppe öffnen"
 
-#: templates/js/translated/bom.js:609
+#: templates/js/translated/bom.js:777
 msgid "Substitutes"
 msgstr "Ersatzteile"
 
-#: templates/js/translated/bom.js:624
+#: templates/js/translated/bom.js:792
 msgid "Purchase Price Range"
 msgstr "Kaufpreisspanne"
 
-#: templates/js/translated/bom.js:631
+#: templates/js/translated/bom.js:799
 msgid "Purchase Price Average"
 msgstr "Durchschnittlicher Kaufpreis"
 
-#: templates/js/translated/bom.js:680 templates/js/translated/bom.js:769
+#: templates/js/translated/bom.js:848 templates/js/translated/bom.js:937
 msgid "View BOM"
 msgstr "Stückliste anzeigen"
 
-#: templates/js/translated/bom.js:740
+#: templates/js/translated/bom.js:908
 msgid "Validate BOM Item"
 msgstr "Stücklisten-Position kontrollieren"
 
-#: templates/js/translated/bom.js:742
+#: templates/js/translated/bom.js:910
 msgid "This line has been validated"
 msgstr "Diese Position wurde kontrolliert"
 
-#: templates/js/translated/bom.js:744
+#: templates/js/translated/bom.js:912
 msgid "Edit substitute parts"
 msgstr "Ersatzteile bearbeiten"
 
-#: templates/js/translated/bom.js:746 templates/js/translated/bom.js:925
+#: templates/js/translated/bom.js:914 templates/js/translated/bom.js:1093
 msgid "Edit BOM Item"
 msgstr "Stücklisten-Position bearbeiten"
 
-#: templates/js/translated/bom.js:748 templates/js/translated/bom.js:908
+#: templates/js/translated/bom.js:916 templates/js/translated/bom.js:1076
 msgid "Delete BOM Item"
 msgstr "Stücklisten-Position löschen"
 
-#: templates/js/translated/bom.js:847 templates/js/translated/build.js:916
+#: templates/js/translated/bom.js:1015 templates/js/translated/build.js:916
 msgid "No BOM items found"
 msgstr "Keine Stücklisten-Position(en) gefunden"
 
-#: templates/js/translated/bom.js:903
+#: templates/js/translated/bom.js:1071
 msgid "Are you sure you want to delete this BOM item?"
 msgstr "Sind Sie sicher, dass Sie diese Stücklisten-Position löschen wollen?"
 
-#: templates/js/translated/bom.js:1105 templates/js/translated/build.js:1156
+#: templates/js/translated/bom.js:1273 templates/js/translated/build.js:1156
 msgid "Required Part"
 msgstr "benötigtes Teil"
 
-#: templates/js/translated/bom.js:1127
+#: templates/js/translated/bom.js:1295
 msgid "Inherited from parent BOM"
 msgstr "Geerbt von übergeordneter Stückliste"
 
@@ -8299,20 +8352,20 @@ msgstr "Anzeigevorgang nicht erlaubt"
 msgid "Enter a valid number"
 msgstr "Gib eine gültige Nummer ein"
 
-#: templates/js/translated/forms.js:1082 templates/modals.html:19
+#: templates/js/translated/forms.js:1128 templates/modals.html:19
 #: templates/modals.html:43
 msgid "Form errors exist"
 msgstr "Fehler in Formular"
 
-#: templates/js/translated/forms.js:1487
+#: templates/js/translated/forms.js:1557
 msgid "No results found"
 msgstr "Keine Ergebnisse gefunden"
 
-#: templates/js/translated/forms.js:1691
+#: templates/js/translated/forms.js:1761
 msgid "Searching"
 msgstr "Suche"
 
-#: templates/js/translated/forms.js:1930
+#: templates/js/translated/forms.js:2000
 msgid "Clear input"
 msgstr "Eingabe leeren"
 
@@ -9899,6 +9952,18 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:212
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
+#~ msgid "Overage must be an integer value or a percentage"
+#~ msgstr "Überschuss muss eine Ganzzahl oder ein Prozentwert sein"
+
+#~ msgid "Select Part"
+#~ msgstr "Teil auswählen"
+
+#~ msgid "Match Parts"
+#~ msgstr "Teile zuordnen"
+
+#~ msgid "Export Bill of Materials"
+#~ msgstr "Stückliste exportieren"
 
 #~ msgid "Quantity must be an integer"
 #~ msgstr "Anzahl muss eine Ganzzahl sein"
