@@ -246,7 +246,7 @@ class RuleSet(models.Model):
         # Print message instead of throwing an error
         name = getattr(user, 'name', user.pk)
 
-        print(f"User '{name}' failed permission check for {table}.{permission}")
+        logger.info(f"User '{name}' failed permission check for {table}.{permission}")
 
         return False
 
