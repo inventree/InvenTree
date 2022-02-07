@@ -48,7 +48,7 @@
         {% endif %}
     </ul>
 </div>
-{% if order.status == PurchaseOrderStatus.PENDING and order.lines.count > 0 %}
+{% if order.status == PurchaseOrderStatus.PENDING %}
 <button type='button' class='btn btn-outline-secondary' id='place-order' title='{% trans "Place order" %}'>
     <span class='fas fa-shopping-cart icon-blue'></span>
 </button>
