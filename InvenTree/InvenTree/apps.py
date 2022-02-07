@@ -115,12 +115,7 @@ class InvenTreeConfig(AppConfig):
 
             last_update = backend.last_update
 
-            if last_update is not None:
-                delta = datetime.now().date() - last_update.date()
-                if delta > timedelta(days=1):
-                    logger.info(f"Last update was {last_update}")
-                    update = True
-            else:
+            if last_update is None:
                 # Never been updated
                 logger.info("Exchange backend has never been updated")
                 update = True
