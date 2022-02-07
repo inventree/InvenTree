@@ -176,8 +176,9 @@ class RuleSet(models.Model):
         'django_q_success',
     ]
 
-    RULESET_CHANGE_DELETE = [
-        ('part', 'bomitem')
+    RULESET_CHANGE_INHERIT = [
+        ('part', 'partparameter'),
+        ('part', 'bomitem'),
     ]
 
     RULE_OPTIONS = [
@@ -229,10 +230,18 @@ class RuleSet(models.Model):
         for role in cls.RULESET_NAMES:
             if table in cls.RULESET_MODELS[role]:
 
-                print(f'{user} | {role} | {permission}')
-
                 if check_user_role(user, role, permission):
                     return True
+
+            # Check for children models which inherits from parent role
+            for child in cls.RULESET_CHANGE_INHERIT:
+                # Get child model name
+                child_name = f'{child[0]}_{child[1]}'
+
+                if child_name == table:
+                    # Check if parent role has change permission
+                    if check_user_role(user, role, 'change'):
+                        return True
 
         # Print message instead of throwing an error
         name = getattr(user, 'name', user.pk)
@@ -459,31 +468,27 @@ def update_group_roles(group, debug=False):
         if debug:
             print(f"Removing permission {perm} from group {group.name}")
 
-    print(group_permissions)
+    # Enable all action permissions for certain children models
+    # if parent model has 'change' permission
+    for (parent, child) in RuleSet.RULESET_CHANGE_INHERIT:
+        parent_change_perm = f'{parent}.change_{parent}'
+        parent_child_string = f'{parent}_{child}'
 
-    # Automatically enable delete permission for children models if parent model has change permission
-    for change_delete in RuleSet.RULESET_CHANGE_DELETE:
-        perm_change = f'{change_delete[0]}.change_{change_delete[0]}'
-        perm_delete = f'{change_delete[0]}.delete_{change_delete[1]}'
+        # Check if parent change permission exists
+        if parent_change_perm in group_permissions:
+            # Add child model permissions
+            for action in ['add', 'change', 'delete']:
+                child_perm = f'{parent}.{action}_{child}'
 
-        print(perm_change)
-        # Check if permission is in the group
-        if perm_change in group_permissions:
-            if perm_delete not in group_permissions:
-                # Create delete permission object
-                add_model(f'{change_delete[0]}_{change_delete[1]}', 'delete', ruleset.can_delete)
-
-                # Add to group
-                permission = get_permission_object(perm_delete)
-                print(permission)
-
-                if permission:
-                    group.permissions.add(permission)
-                    print(f"Added permission {perm_delete} to group {group.name}")
-            else:
-                print(f'{perm_delete} already exists for group {group.name}')
-        else:
-            print(f'{perm_change} disabled')
+                # Check if child permission not already in group
+                if child_perm not in group_permissions:
+                    # Create permission object
+                    add_model(parent_child_string, action, ruleset.can_delete)
+                    # Add to group
+                    permission = get_permission_object(child_perm)
+                    if permission:
+                        group.permissions.add(permission)
+                        print(f"Adding permission {child_perm} to group {group.name}")
 
 
 @receiver(post_save, sender=Group, dispatch_uid='create_missing_rule_sets')
