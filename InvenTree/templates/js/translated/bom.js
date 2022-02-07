@@ -172,36 +172,22 @@ function submitBomTable(part_id, options={}) {
     getApiEndpointOptions(url, function(response) {
         var fields = response.actions.POST;
 
-        constructForm(url, {
+        inventreePut(url, data, {
             method: 'POST',
-            fields: {
-                clear_existing: {},
-            },  
-            title: '{% trans "Submit BOM Data" %}',
-            onSubmit: function(fields, opts) {
-
-                data.clear_existing = getFormFieldValue('clear_existing', {}, opts);
-
-                $(opts.modal).modal('hide');
-
-                inventreePut(url, data, {
-                    method: 'POST',
-                    success: function(response) {
-                        // TODO: Return to the "bom" page
-                    },
-                    error: function(xhr) {
-                        switch (xhr.status) {
-                        case 400:
-                            handleFormErrors(xhr.responseJSON, fields, options);
-                            break;
-                        default:
-                            showApiError(xhr, url);
-                            break;
-                        }
-                    }
-                });
+            success: function(response) {
+                window.location.href = `/part/${part_id}/?display=bom`;
+            },
+            error: function(xhr) {
+                switch (xhr.status) {
+                case 400:
+                    handleFormErrors(xhr.responseJSON, fields, options);
+                    break;
+                default:
+                    showApiError(xhr, url);
+                    break;
+                }
             }
-        });      
+        });
     });
 }
 
