@@ -499,7 +499,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
         part = data['part']
         sub_part = data['sub_part']
 
-        if BomItem.objects.get(part=part, sub_part=sub_part).exists():
+        if BomItem.objects.filter(part=part, sub_part=sub_part).exists():
             raise serializers.ValidationError({
                 'part': _("Duplicate BOM item already exists"),
                 'sub_part': _("Duplicate BOM items already exists"),
