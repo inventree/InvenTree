@@ -1056,6 +1056,7 @@ function handleNestedErrors(errors, field_name, options={}) {
         
         // Here, error_item is a map of field names to error messages
         for (sub_field_name in error_item) {
+
             var errors = error_item[sub_field_name];
 
             // Find the target (nested) field
@@ -1919,12 +1920,12 @@ function constructField(name, parameters, options) {
         options.current_group = group;
     }
 
-    var form_classes = 'form-group';
+    var form_classes = options.form_classes || 'form-group';
 
     if (parameters.errors) {
         form_classes += ' form-field-error';
     }
-    
+
     // Optional content to render before the field
     if (parameters.before) {
         html += parameters.before;

@@ -43,6 +43,7 @@ function constructBomUploadTable(data, options={}) {
         var field_options = {
             hideLabels: true,
             hideClearButton: true,
+            form_classes: 'bom-form-group',
         };
 
         function constructRowField(field_name) {
@@ -77,7 +78,7 @@ function constructBomUploadTable(data, options={}) {
         buttons += `</div>`;
 
         var html = `
-        <tr id='bom_import_row_${idx}' class='bom-import-row' idx='${idx}'>
+        <tr id='items_${idx}' class='bom-import-row' idx='${idx}'>
             <td id='col_sub_part_${idx}'>${sub_part}</td>
             <td id='col_quantity_${idx}'>${quantity}</td>
             <td id='col_reference_${idx}'>${reference}</td>

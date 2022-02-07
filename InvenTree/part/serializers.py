@@ -493,6 +493,22 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     purchase_price_range = serializers.SerializerMethodField()
 
+    def validate(self, data):
+
+        # Check for duplicate BOM items
+        part = data['part']
+        sub_part = data['sub_part']
+
+        if BomItem.objects.get(part=part, sub_part=sub_part).exists():
+            raise serializers.ValidationError({
+                'part': _("Duplicate BOM item already exists"),
+                'sub_part': _("Duplicate BOM items already exists"),
+            })
+
+        data = super().validate(data)
+
+        return data
+
     def __init__(self, *args, **kwargs):
         # part_detail and sub_part_detail serializers are only included if requested.
         # This saves a bunch of database requests
@@ -962,8 +978,20 @@ class BomUploadSerializer(serializers.Serializer):
 
         items = data['items']
 
-        with transaction.atomic():
+        try:
+            with transaction.atomic():
 
-            for item in items:
-                print(item)
-        
+                for item in items:
+
+                    part = item['part']
+                    sub_part = item['sub_part']
+
+                    # Ignore duplicate BOM items
+                    if BomItem.objects.filter(part=part, sub_part=sub_part).exists():
+                        continue
+
+                    # Create a new BomItem object
+                    BomItem.objects.create(**item)
+            
+        except Exception as e:
+            raise serializers.ValidationError(detail=serializers.as_serializer_error(e))
