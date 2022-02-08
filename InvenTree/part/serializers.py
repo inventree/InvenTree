@@ -818,13 +818,22 @@ class BomExtractSerializer(serializers.Serializer):
             raise serializers.ValidationError(_("File is too large"))
 
         # Read file data into memory (bytes object)
-        data = bom_file.read()
+        try:
+            data = bom_file.read()
+        except Exception as e:
+            raise serializers.ValidationError(str(e))
 
         if ext in ['csv', 'tsv', 'xml']:
-            data = data.decode()
+            try:
+                data = data.decode()
+            except Exception as e:
+                raise serializers.ValidationError(str(e))
 
         # Convert to a tablib dataset (we expect headers)
-        self.dataset = tablib.Dataset().load(data, ext, headers=True)
+        try:
+            self.dataset = tablib.Dataset().load(data, ext, headers=True)
+        except Exception as e:
+            raise serializers.ValidationError(str(e))
 
         for header in self.REQUIRED_COLUMNS:
 
