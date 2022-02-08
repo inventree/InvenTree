@@ -3,6 +3,10 @@
 
 # InvenTree
 
+<p><a href="https://twitter.com/intent/follow?screen_name=inventreedb">
+        <img src="https://img.shields.io/twitter/follow/inventreedb?style=social&logo=twitter"
+            alt="follow on Twitter"></a></p>
+            
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Coverage Status](https://coveralls.io/repos/github/inventree/InvenTree/badge.svg)](https://coveralls.io/github/inventree/InvenTree)
 [![Crowdin](https://badges.crowdin.net/inventree/localized.svg)](https://crowdin.com/project/inventree)
