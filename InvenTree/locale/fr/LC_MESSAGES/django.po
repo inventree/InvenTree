@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-09 20:48+0000\n"
-"PO-Revision-Date: 2022-02-09 21:54\n"
+"PO-Revision-Date: 2022-02-09 22:53\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -868,15 +868,15 @@ msgstr "Notes de construction supplémentaires"
 
 #: build/models.py:720
 msgid "No build output specified"
-msgstr ""
+msgstr "Pas d'ordre de production défini"
 
 #: build/models.py:723
 msgid "Build output is already completed"
-msgstr ""
+msgstr "L'ordre de production a déjà été réalisé"
 
 #: build/models.py:726
 msgid "Build output does not match Build Order"
-msgstr ""
+msgstr "L'ordre de production de correspond pas à l'ordre de commande"
 
 #: build/models.py:1118
 msgid "Build item must specify a build output, as master part is marked as trackable"
@@ -930,7 +930,7 @@ msgstr "Article en stock"
 
 #: build/models.py:1284
 msgid "Source stock item"
-msgstr ""
+msgstr "Stock d'origine de l'article"
 
 #: build/models.py:1297
 msgid "Stock quantity to allocate to build"
@@ -942,7 +942,7 @@ msgstr "Installer dans"
 
 #: build/models.py:1306
 msgid "Destination stock item"
-msgstr ""
+msgstr "Stock de destination de l'article"
 
 #: build/serializers.py:137 build/serializers.py:467
 msgid "Build Output"
@@ -950,7 +950,7 @@ msgstr "Sortie d'assemblage"
 
 #: build/serializers.py:149
 msgid "Build output does not match the parent build"
-msgstr ""
+msgstr "L'ordre de production ne correspond pas à l'ordre parent"
 
 #: build/serializers.py:153
 msgid "Output part does not match BuildOrder part"
@@ -958,15 +958,15 @@ msgstr ""
 
 #: build/serializers.py:157
 msgid "This build output has already been completed"
-msgstr ""
+msgstr "Cet ordre de production a déjà été produit"
 
 #: build/serializers.py:163
 msgid "This build output is not fully allocated"
-msgstr ""
+msgstr "Cet ordre de production n'est pas complètement attribué"
 
 #: build/serializers.py:195 build/serializers.py:260
 msgid "A list of build outputs must be provided"
-msgstr ""
+msgstr "Une liste d'ordre de production doit être fourni"
 
 #: build/serializers.py:237 order/serializers.py:226 order/serializers.py:294
 #: stock/forms.py:222 stock/serializers.py:325 stock/serializers.py:731
@@ -984,7 +984,7 @@ msgstr "Emplacement"
 
 #: build/serializers.py:238
 msgid "Location for completed build outputs"
-msgstr ""
+msgstr "Emplacement des ordres de production achevés"
 
 #: build/serializers.py:244 build/templates/build/build_base.html:142
 #: build/templates/build/detail.html:63 order/models.py:557
@@ -998,31 +998,31 @@ msgstr "État"
 
 #: build/serializers.py:296
 msgid "Accept Unallocated"
-msgstr ""
+msgstr "Accepter les non-alloués"
 
 #: build/serializers.py:297
 msgid "Accept that stock items have not been fully allocated to this build order"
-msgstr ""
+msgstr "Accepter les articles de stock qui n'ont pas été complètement alloués à cette ordre de production"
 
 #: build/serializers.py:307 templates/js/translated/build.js:149
 msgid "Required stock has not been fully allocated"
-msgstr ""
+msgstr "Le stock requis n'a pas encore été totalement alloué"
 
 #: build/serializers.py:312
 msgid "Accept Incomplete"
-msgstr ""
+msgstr "Accepter les incomplèts"
 
 #: build/serializers.py:313
 msgid "Accept that the required number of build outputs have not been completed"
-msgstr ""
+msgstr "Accepter que tous les ordres de production n'aient pas encore été achevés"
 
 #: build/serializers.py:323 templates/js/translated/build.js:153
 msgid "Required build quantity has not been completed"
-msgstr ""
+msgstr "La quantité nécessaire n'a pas encore été complétée"
 
 #: build/serializers.py:332
 msgid "Build order has incomplete outputs"
-msgstr ""
+msgstr "L'ordre de production a des sorties incomplètes"
 
 #: build/serializers.py:335 build/templates/build/build_base.html:95
 msgid "No build outputs have been created for this build order"
@@ -1190,7 +1190,7 @@ msgstr "Émis par"
 
 #: build/templates/build/build_base.html:228
 msgid "Incomplete Outputs"
-msgstr ""
+msgstr "Sorties incomplètes"
 
 #: build/templates/build/build_base.html:229
 msgid "Build Order cannot be completed as incomplete build outputs remain"
@@ -1226,11 +1226,11 @@ msgstr "Détails de la construction"
 
 #: build/templates/build/detail.html:39
 msgid "Stock Source"
-msgstr ""
+msgstr "Stock d'origine"
 
 #: build/templates/build/detail.html:44
 msgid "Stock can be taken from any available location."
-msgstr ""
+msgstr "Le stock peut être pris à partir de n'importe quel endroit disponible."
 
 #: build/templates/build/detail.html:50 order/models.py:898 stock/forms.py:136
 #: templates/js/translated/order.js:592 templates/js/translated/order.js:1138
@@ -1239,7 +1239,7 @@ msgstr "Destination"
 
 #: build/templates/build/detail.html:57
 msgid "Destination location not specified"
-msgstr ""
+msgstr "Stockage de destination non défini"
 
 #: build/templates/build/detail.html:74 templates/js/translated/build.js:849
 msgid "Allocated Parts"
