@@ -35,6 +35,7 @@ class BomUploadTest(InvenTreeAPITestCase):
         for i in range(10):
             Part.objects.create(
                 name=f"Component {i}",
+                IPN=f"CMP_{i}",
                 description="A subcomponent that can be used in a BOM",
                 component=True,
                 assembly=False,
@@ -213,3 +214,85 @@ class BomUploadTest(InvenTreeAPITestCase):
 
         for idx, row in enumerate(response.data['rows'][:-1]):
             self.assertEqual(str(row['part']), str(components[idx].pk))
+
+    def test_part_guess(self):
+        """
+        Test part 'guessing' when PK values are not supplied
+        """
+
+        dataset = tablib.Dataset()
+
+        # Should be able to 'guess' the part from the name
+        dataset.headers = ['part_name', 'quantity']
+
+        components = Part.objects.filter(component=True)
+
+        for idx, cmp in enumerate(components):
+            dataset.append([
+                f"Component {idx}",
+                10,
+            ])
+
+        response = self.post_bom(
+            'test.csv',
+            bytes(dataset.csv, 'utf8'),
+            expected_code=201,
+        )
+
+        rows = response.data['rows']
+
+        self.assertEqual(len(rows), 10)
+
+        for idx in range(10):
+            self.assertEqual(rows[idx]['part'], components[idx].pk)
+
+        # Should also be able to 'guess' part by the IPN value
+        dataset = tablib.Dataset()
+
+        dataset.headers = ['part_ipn', 'quantity']
+
+        for idx, cmp in enumerate(components):
+            dataset.append([
+                f"CMP_{idx}",
+                10,
+            ])
+
+        response = self.post_bom(
+            'test.csv',
+            bytes(dataset.csv, 'utf8'),
+            expected_code=201,
+        )
+
+        rows = response.data['rows']
+
+        self.assertEqual(len(rows), 10)
+
+        for idx in range(10):
+            self.assertEqual(rows[idx]['part'], components[idx].pk)
+
+    def test_levels(self):
+        """
+        Test that multi-level BOMs are correctly handled during upload
+        """
+
+        dataset = tablib.Dataset()
+
+        dataset.headers = ['level', 'part', 'quantity']
+
+        components = Part.objects.filter(component=True)
+
+        for idx, cmp in enumerate(components):
+            dataset.append([
+                idx % 3,
+                cmp.pk,
+                2,
+            ])
+
+        response = self.post_bom(
+            'test.csv',
+            bytes(dataset.csv, 'utf8'),
+            expected_code=201,
+        )
+
+        # Only parts at index 1, 4, 7 should have been returned
+        self.assertEqual(len(response.data['rows']), 3)
