@@ -497,9 +497,9 @@ function deleteBuildOutputs(build_id, outputs, options={}) {
         afterRender: function(fields, opts) {
             // Setup callbacks to remove outputs
             $(opts.modal).find('.button-row-remove').click(function() {
-            var pk = $(this).attr('pk');
+                var pk = $(this).attr('pk');
 
-            $(opts.modal).find(`#output_row_${pk}`).remove();
+                $(opts.modal).find(`#output_row_${pk}`).remove();
             }); 
         },
         onSubmit: function(fields, opts) {
@@ -550,7 +550,7 @@ function deleteBuildOutputs(build_id, outputs, options={}) {
                         }
                     }
                 }
-            )
+            );
         }
     });
 }
