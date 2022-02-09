@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-09 20:48+0000\n"
-"PO-Revision-Date: 2022-02-09 20:56\n"
+"PO-Revision-Date: 2022-02-09 21:54\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -255,7 +255,7 @@ msgstr "Nom du fichier"
 
 #: InvenTree/serializers.py:334
 msgid "Invalid value"
-msgstr ""
+msgstr "Valeur non valide"
 
 #: InvenTree/settings.py:655
 msgid "German"
