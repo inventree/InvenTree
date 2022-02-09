@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-09 20:48+0000\n"
-"PO-Revision-Date: 2022-02-09 20:56\n"
+"PO-Revision-Date: 2022-02-09 22:54\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -255,7 +255,7 @@ msgstr "Dateiname"
 
 #: InvenTree/serializers.py:334
 msgid "Invalid value"
-msgstr ""
+msgstr "Ungültiger Wert"
 
 #: InvenTree/settings.py:655
 msgid "German"
@@ -522,7 +522,7 @@ msgstr "Überschuss darf 100% nicht überschreiten"
 
 #: InvenTree/validators.py:162
 msgid "Invalid value for overage"
-msgstr ""
+msgstr "Ungültiger Wert für Ausschuss"
 
 #: InvenTree/views.py:538
 msgid "Delete Item"
@@ -1002,7 +1002,7 @@ msgstr ""
 
 #: build/serializers.py:297
 msgid "Accept that stock items have not been fully allocated to this build order"
-msgstr ""
+msgstr "Akzeptieren, dass Lagerartikel diesem Bauauftrag nicht vollständig zugewiesen wurden"
 
 #: build/serializers.py:307 templates/js/translated/build.js:149
 msgid "Required stock has not been fully allocated"
@@ -1014,7 +1014,7 @@ msgstr ""
 
 #: build/serializers.py:313
 msgid "Accept that the required number of build outputs have not been completed"
-msgstr ""
+msgstr "Akzeptieren, dass die erforderliche Anzahl der Bauaufträge nicht abgeschlossen ist"
 
 #: build/serializers.py:323 templates/js/translated/build.js:153
 msgid "Required build quantity has not been completed"
@@ -1022,7 +1022,7 @@ msgstr "Benötigte Teil-Anzahl wurde noch nicht fertiggestellt"
 
 #: build/serializers.py:332
 msgid "Build order has incomplete outputs"
-msgstr ""
+msgstr "Bauauftrag hat unvollständige Aufbauten"
 
 #: build/serializers.py:335 build/templates/build/build_base.html:95
 msgid "No build outputs have been created for this build order"
@@ -1435,7 +1435,7 @@ msgstr "Maximale Endproduktmenge ist "
 
 #: build/views.py:112
 msgid "Output quantity must be greater than zero"
-msgstr ""
+msgstr "Menge muss größer als Null sein"
 
 #: build/views.py:128 stock/serializers.py:363 stock/views.py:1257
 msgid "Serial numbers already exist"
@@ -1727,11 +1727,11 @@ msgstr "Preisinformationen in Stücklisten Tabellen einbeziehen"
 
 #: common/models.py:785
 msgid "Show Price History"
-msgstr ""
+msgstr "Preisverlauf anzeigen"
 
 #: common/models.py:786
 msgid "Display historical pricing for Part"
-msgstr ""
+msgstr "Historische Preise für Teil anzeigen"
 
 #: common/models.py:792
 msgid "Show related parts"
@@ -1959,7 +1959,7 @@ msgstr "URL-Integration aktivieren"
 
 #: common/models.py:977
 msgid "Enable plugins to add URL routes"
-msgstr ""
+msgstr "Plugins zum Hinzufügen von URL-Routen aktivieren"
 
 #: common/models.py:983
 msgid "Enable navigation integration"
@@ -1967,19 +1967,19 @@ msgstr ""
 
 #: common/models.py:984
 msgid "Enable plugins to integrate into navigation"
-msgstr ""
+msgstr "Plugins zur Integration in die Navigation aktivieren"
 
 #: common/models.py:990
 msgid "Enable app integration"
-msgstr ""
+msgstr "App-Integration aktivieren"
 
 #: common/models.py:991
 msgid "Enable plugins to add apps"
-msgstr ""
+msgstr "Plugins zum Hinzufügen von Apps aktivieren"
 
 #: common/models.py:997
 msgid "Enable schedule integration"
-msgstr ""
+msgstr "Terminplan-Integration aktivieren"
 
 #: common/models.py:998
 msgid "Enable plugins to run scheduled tasks"
@@ -2253,15 +2253,15 @@ msgstr "Token für Zugang"
 
 #: common/models.py:1479
 msgid "Secret"
-msgstr ""
+msgstr "Secret"
 
 #: common/models.py:1480
 msgid "Shared secret for HMAC"
-msgstr ""
+msgstr "Shared Secret für HMAC"
 
 #: common/models.py:1547
 msgid "Message ID"
-msgstr ""
+msgstr "Nachrichten-ID"
 
 #: common/models.py:1548
 msgid "Unique identifier for this message"
@@ -2301,7 +2301,7 @@ msgstr ""
 
 #: common/models.py:1587
 msgid "Was the work on this message finished?"
-msgstr ""
+msgstr "Wurde die Arbeit an dieser Nachricht abgeschlossen?"
 
 #: common/views.py:93 order/templates/order/order_wizard/po_upload.html:49
 #: order/templates/order/purchase_order_detail.html:24 order/views.py:243
@@ -3251,7 +3251,7 @@ msgstr "Position - Notizen"
 
 #: order/models.py:842
 msgid "Supplier part must match supplier"
-msgstr ""
+msgstr "Lieferantenteil muss mit Lieferant übereinstimmen"
 
 #: order/models.py:855 order/models.py:946 order/models.py:1042
 #: templates/js/translated/order.js:1820 templates/js/translated/stock.js:2271
@@ -3883,11 +3883,11 @@ msgstr "{part} Stückpreis auf {price} und Menge auf {qty} aktualisiert"
 
 #: part/api.py:499
 msgid "Valid"
-msgstr ""
+msgstr "Gültig"
 
 #: part/api.py:500
 msgid "Validate entire Bill of Materials"
-msgstr ""
+msgstr "Gesamte Stückliste validieren"
 
 #: part/api.py:505
 msgid "This option must be selected"
@@ -4358,7 +4358,7 @@ msgstr "Fehler bei Verwandschaft: Ist das Teil mit sich selbst verwandt oder ist
 
 #: part/serializers.py:667
 msgid "Select part to copy BOM from"
-msgstr ""
+msgstr "Bauteil auswählen, von dem Stückliste kopiert wird"
 
 #: part/serializers.py:678
 msgid "Remove Existing Data"
@@ -4366,7 +4366,7 @@ msgstr "Bestehende Daten entfernen"
 
 #: part/serializers.py:679
 msgid "Remove existing BOM items before copying"
-msgstr ""
+msgstr "Bestehende Stücklistenelemente vor dem Kopieren entfernen"
 
 #: part/serializers.py:684
 msgid "Include Inherited"
@@ -4386,63 +4386,63 @@ msgstr "Aktiviere diese Option, um ungültige Zeilen zu überspringen"
 
 #: part/serializers.py:787
 msgid "BOM File"
-msgstr ""
+msgstr "Stücklisten-Datei"
 
 #: part/serializers.py:788
 msgid "Select Bill of Materials file"
-msgstr ""
+msgstr "Stücklistendatei auswählen"
 
 #: part/serializers.py:812
 msgid "Unsupported file type"
-msgstr ""
+msgstr "Nicht unterstütztes Dateiformat"
 
 #: part/serializers.py:818
 msgid "File is too large"
-msgstr ""
+msgstr "Datei ist zu groß"
 
 #: part/serializers.py:843
 msgid "Missing required column"
-msgstr ""
+msgstr "Erforderliche Spalte fehlt"
 
 #: part/serializers.py:858
 msgid "No part column found"
-msgstr ""
+msgstr "Keine Teile-Spalte gefunden"
 
 #: part/serializers.py:861
 msgid "No data rows found"
-msgstr ""
+msgstr "Keine Datenzeilen vorhanden"
 
 #: part/serializers.py:942
 msgid "Multiple matching parts found"
-msgstr ""
+msgstr "Mehrere übereinstimmende Teile gefunden"
 
 #: part/serializers.py:946
 msgid "No matching part found"
-msgstr ""
+msgstr "Keine passenden Teile gefunden"
 
 #: part/serializers.py:949
 msgid "Duplicate part selected"
-msgstr ""
+msgstr "Ausgewähltes Teil kopieren"
 
 #: part/serializers.py:952
 msgid "Part is not designated as a component"
-msgstr ""
+msgstr "Teil ist nicht als Komponente angelegt"
 
 #: part/serializers.py:964
 msgid "Quantity not provided"
-msgstr ""
+msgstr "Menge nicht angegeben"
 
 #: part/serializers.py:972
 msgid "Invalid quantity"
-msgstr ""
+msgstr "Ungültige Menge"
 
 #: part/serializers.py:992
 msgid "Clear Existing BOM"
-msgstr ""
+msgstr "Bestehende Stückliste löschen"
 
 #: part/serializers.py:993
 msgid "Delete existing BOM data first"
-msgstr ""
+msgstr "Bestehende Stücklistendaten zuerst löschen"
 
 #: part/serializers.py:1023
 msgid "At least one BOM item is required"
