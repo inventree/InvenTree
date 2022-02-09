@@ -924,13 +924,13 @@ class BomExtractSerializer(serializers.Serializer):
 
             if part is None:
 
-                if part_name is not None or part_ipn is not None:
+                if part_name or part_ipn:
                     queryset = Part.objects.all()
 
-                    if part_name is not None:
+                    if part_name:
                         queryset = queryset.filter(name=part_name)
 
-                    if part_ipn is not None:
+                    if part_ipn:
                         queryset = queryset.filter(IPN=part_ipn)
 
                     # Only if we have a single direct match
