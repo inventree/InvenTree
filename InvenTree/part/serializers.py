@@ -868,12 +868,15 @@ class BomExtractSerializer(serializers.Serializer):
         """
 
         rows = []
+        errors = []
 
         headers = self.dataset.headers
 
         level_column = self.find_matching_column('level', headers)
 
         for row in self.dataset.dict:
+
+            error = {}
 
             """
             If the "level" column is specified, and this is not a top-level BOM item, ignore the row!
@@ -929,8 +932,15 @@ class BomExtractSerializer(serializers.Serializer):
                         queryset = queryset.filter(IPN=part_ipn)
 
                     # Only if we have a single direct match
-                    if queryset.exists() and queryset.count() == 1:
-                        part = queryset.first()
+                    if queryset.exists():
+                        if queryset.count() == 1:
+                            part = queryset.first()
+                        else:
+                            # Multiple matches!
+                            error['part'] = _('Multiple matching parts found')
+                    
+            if part is None and 'part' not in error:
+                error['part'] = _('No matching part found')
 
             row['part'] = part.pk if part is not None else None
 
@@ -940,9 +950,11 @@ class BomExtractSerializer(serializers.Serializer):
                     row[field_name] = self.find_matching_data(row, field_name, self.dataset.headers)
     
             rows.append(row)
+            errors.append(error)
 
         return {
             'rows': rows,
+            'errors': errors,
             'headers': headers,
             'filename': self.filename,
         }
