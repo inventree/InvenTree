@@ -210,6 +210,10 @@ function submitBomTable(part_id, options={}) {
     getApiEndpointOptions(url, function(response) {
         var fields = response.actions.POST;
 
+        // Disable the "Submit BOM" button
+        $('#bom-submit').prop('disabled', true);
+        $('#bom-submit-icon').show();
+
         inventreePut(url, data, {
             method: 'POST',
             success: function(response) {
@@ -224,6 +228,10 @@ function submitBomTable(part_id, options={}) {
                     showApiError(xhr, url);
                     break;
                 }
+
+                // Re-enable the submit button
+                $('#bom-submit').prop('disabled', false);
+                $('#bom-submit-icon').hide();
             }
         });
     });
