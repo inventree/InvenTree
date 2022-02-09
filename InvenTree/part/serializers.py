@@ -938,7 +938,7 @@ class BomExtractSerializer(serializers.Serializer):
                         else:
                             # Multiple matches!
                             error['part'] = _('Multiple matching parts found')
-                    
+
             if part is None and 'part' not in error:
                 error['part'] = _('No matching part found')
 
@@ -948,7 +948,7 @@ class BomExtractSerializer(serializers.Serializer):
             for field_name in self.OPTIONAL_COLUMNS:
                 if field_name not in row:
                     row[field_name] = self.find_matching_data(row, field_name, self.dataset.headers)
-    
+
             rows.append(row)
             errors.append(error)
 
