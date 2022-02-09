@@ -29,7 +29,16 @@ class BomUploadTest(InvenTreeAPITestCase):
             name='Assembly',
             description='An assembled part',
             assembly=True,
+            component=False,
         )
+
+        for i in range(10):
+            Part.objects.create(
+                name=f"Component {i}",
+                description="A subcomponent that can be used in a BOM",
+                component=True,
+                assembly=False,
+            )
 
         self.url = reverse('api-bom-extract')
 
@@ -164,3 +173,43 @@ class BomUploadTest(InvenTreeAPITestCase):
         )
 
         self.assertIn('No data rows found', str(response.data))
+
+    def test_invalid_data(self):
+        """
+        Upload data which contains errors
+        """
+
+        dataset = tablib.Dataset()
+
+        # Only these headers are strictly necessary
+        dataset.headers = ['part_id', 'quantity']
+
+        components = Part.objects.filter(component=True)
+
+        for idx, cmp in enumerate(components):
+
+            if idx == 5:
+                cmp.component = False
+                cmp.save()
+
+            dataset.append([cmp.pk, idx])
+
+        # Add a duplicate part too
+        dataset.append([components.first().pk, 'invalid'])
+
+        response = self.post_bom(
+            'test.csv',
+            bytes(dataset.csv, 'utf8'),
+            content_type='text/csv',
+            expected_code=201
+        )
+
+        errors = response.data['errors']
+
+        self.assertIn('Quantity must be greater than zero', str(errors[0]))
+        self.assertIn('Part is not designated as a component', str(errors[5]))
+        self.assertIn('Duplicate part selected', str(errors[-1]))
+        self.assertIn('Invalid quantity', str(errors[-1]))
+
+        for idx, row in enumerate(response.data['rows'][:-1]):
+            self.assertEqual(str(row['part']), str(components[idx].pk))
