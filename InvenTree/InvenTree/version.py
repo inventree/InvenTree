@@ -12,10 +12,13 @@ import common.models
 INVENTREE_SW_VERSION = "0.6.0 dev"
 
 # InvenTree API version
-INVENTREE_API_VERSION = 23
+INVENTREE_API_VERSION = 24
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v24 -> 2022-02-10
+    - Adds API endpoint for deleting (cancelling) build order outputs
 
 v23 -> 2022-02-02
     - Adds API endpoints for managing plugin classes

@@ -708,7 +708,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
             self.save()
 
     @transaction.atomic
-    def deleteBuildOutput(self, output):
+    def delete_output(self, output):
         """
         Remove a build output from the database:
 
