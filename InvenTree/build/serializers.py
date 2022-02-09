@@ -208,9 +208,7 @@ class BuildOutputDeleteSerializer(serializers.Serializer):
 
         with transaction.atomic():
             for item in outputs:
-
                 output = item['output']
-
                 build.delete_output(output)
 
 
