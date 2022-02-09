@@ -40,6 +40,12 @@ function constructBomUploadTable(data, options={}) {
     function constructRow(row, idx, fields) {
         // Construct an individual row from the provided data
 
+        var errors = {};
+
+        if (data.errors && data.errors.length > idx) {
+            errors = data.errors[idx];
+        }
+
         var field_options = {
             hideLabels: true,
             hideClearButton: true,
@@ -91,6 +97,15 @@ function constructBomUploadTable(data, options={}) {
         </tr>`;
 
         $('#bom-import-table tbody').append(html);
+
+        // Handle any errors raised by initial data import
+        if (errors.part) {
+            addFieldErrorMessage(`items_sub_part_${idx}`, errors.part);   
+        }
+
+        if (errors.quantity) {
+            addFieldErrorMessage(`items_quantity_${idx}`, errors.quantity);
+        }
 
         // Initialize the "part" selector for this row
         initializeRelatedField(
