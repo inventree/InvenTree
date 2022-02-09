@@ -40,6 +40,12 @@ function constructBomUploadTable(data, options={}) {
     function constructRow(row, idx, fields) {
         // Construct an individual row from the provided data
 
+        var errors = {};
+
+        if (data.errors && data.errors.length > idx) {
+            errors = data.errors[idx];
+        }
+
         var field_options = {
             hideLabels: true,
             hideClearButton: true,
@@ -72,7 +78,7 @@ function constructBomUploadTable(data, options={}) {
 
         var buttons = `<div class='btn-group float-right' role='group'>`;
 
-        // buttons += makeIconButton('fa-file-alt', 'button-row-data', idx, '{% trans "Display row data" %}');
+        buttons += makeIconButton('fa-info-circle', 'button-row-data', idx, '{% trans "Display row data" %}');
         buttons += makeIconButton('fa-times icon-red', 'button-row-remove', idx, '{% trans "Remove row" %}');
 
         buttons += `</div>`;
@@ -91,6 +97,15 @@ function constructBomUploadTable(data, options={}) {
         </tr>`;
 
         $('#bom-import-table tbody').append(html);
+
+        // Handle any errors raised by initial data import
+        if (errors.part) {
+            addFieldErrorMessage(`items_sub_part_${idx}`, errors.part);   
+        }
+
+        if (errors.quantity) {
+            addFieldErrorMessage(`items_quantity_${idx}`, errors.quantity);
+        }
 
         // Initialize the "part" selector for this row
         initializeRelatedField(
@@ -113,6 +128,29 @@ function constructBomUploadTable(data, options={}) {
         // Add callback for "remove row" button
         $(`#button-row-remove-${idx}`).click(function() {
             $(`#items_${idx}`).remove();
+        });
+
+        // Add callback for "show data" button
+        $(`#button-row-data-${idx}`).click(function() {
+
+            var modal = createNewModal({
+                title: '{% trans "Row Data" %}',
+                cancelText: '{% trans "Close" %}',
+                hideSubmitButton: true
+            });
+
+            // Prettify the original import data
+            var pretty = JSON.stringify(row, undefined, 4);
+
+            var html = `
+            <div class='alert alert-block'>
+            <pre><code>${pretty}</code></pre>
+            </div>`;
+
+            modalSetContent(modal, html);
+
+            $(modal).modal('show');
+
         });
     }
 
@@ -172,6 +210,10 @@ function submitBomTable(part_id, options={}) {
     getApiEndpointOptions(url, function(response) {
         var fields = response.actions.POST;
 
+        // Disable the "Submit BOM" button
+        $('#bom-submit').prop('disabled', true);
+        $('#bom-submit-icon').show();
+
         inventreePut(url, data, {
             method: 'POST',
             success: function(response) {
@@ -186,6 +228,10 @@ function submitBomTable(part_id, options={}) {
                     showApiError(xhr, url);
                     break;
                 }
+
+                // Re-enable the submit button
+                $('#bom-submit').prop('disabled', false);
+                $('#bom-submit-icon').hide();
             }
         });
     });

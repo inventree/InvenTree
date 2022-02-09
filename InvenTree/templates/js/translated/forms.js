@@ -1196,13 +1196,13 @@ function handleFormErrors(errors, fields={}, options={}) {
 /*
  * Add a rendered error message to the provided field
  */
-function addFieldErrorMessage(name, error_text, error_idx, options={}) {
+function addFieldErrorMessage(name, error_text, error_idx=0, options={}) {
 
     field_name = getFieldName(name, options);
 
     var field_dom = null;
 
-    if (options.modal) {
+    if (options && options.modal) {
         $(options.modal).find(`#div_id_${field_name}`).addClass('form-field-error');
         field_dom = $(options.modal).find(`#errors-${field_name}`);
     } else {
@@ -1210,7 +1210,7 @@ function addFieldErrorMessage(name, error_text, error_idx, options={}) {
         field_dom = $(`#errors-${field_name}`);
     }
 
-    if (field_dom) {
+    if (field_dom.exists()) {
 
         var error_html = `
         <span id='error_${error_idx}_id_${field_name}' class='help-block form-error-message'>
@@ -1953,7 +1953,13 @@ function constructField(name, parameters, options) {
         html += parameters.before;
     }
     
-    html += `<div id='div_id_${field_name}' class='${form_classes}'>`;
+    var hover_title = '';
+
+    if (parameters.help_text) {
+        hover_title = ` title='${parameters.help_text}'`;
+    }
+
+    html += `<div id='div_id_${field_name}' class='${form_classes}' ${hover_title}>`;
 
     // Add a label
     if (!options.hideLabels) {

@@ -818,13 +818,22 @@ class BomExtractSerializer(serializers.Serializer):
             raise serializers.ValidationError(_("File is too large"))
 
         # Read file data into memory (bytes object)
-        data = bom_file.read()
+        try:
+            data = bom_file.read()
+        except Exception as e:
+            raise serializers.ValidationError(str(e))
 
         if ext in ['csv', 'tsv', 'xml']:
-            data = data.decode()
+            try:
+                data = data.decode()
+            except Exception as e:
+                raise serializers.ValidationError(str(e))
 
         # Convert to a tablib dataset (we expect headers)
-        self.dataset = tablib.Dataset().load(data, ext, headers=True)
+        try:
+            self.dataset = tablib.Dataset().load(data, ext, headers=True)
+        except Exception as e:
+            raise serializers.ValidationError(str(e))
 
         for header in self.REQUIRED_COLUMNS:
 
@@ -848,6 +857,9 @@ class BomExtractSerializer(serializers.Serializer):
         if not part_match:
             raise serializers.ValidationError(_("No part column found"))
 
+        if len(self.dataset) == 0:
+            raise serializers.ValidationError(_("No data rows found"))
+
         return bom_file
 
     def extract_data(self):
@@ -856,12 +868,17 @@ class BomExtractSerializer(serializers.Serializer):
         """
 
         rows = []
+        errors = []
+
+        found_parts = set()
 
         headers = self.dataset.headers
 
         level_column = self.find_matching_column('level', headers)
 
         for row in self.dataset.dict:
+
+            row_error = {}
 
             """
             If the "level" column is specified, and this is not a top-level BOM item, ignore the row!
@@ -907,25 +924,64 @@ class BomExtractSerializer(serializers.Serializer):
 
             if part is None:
 
-                if part_name is not None or part_ipn is not None:
+                if part_name or part_ipn:
                     queryset = Part.objects.all()
 
-                    if part_name is not None:
+                    if part_name:
                         queryset = queryset.filter(name=part_name)
 
-                    if part_ipn is not None:
+                    if part_ipn:
                         queryset = queryset.filter(IPN=part_ipn)
 
                     # Only if we have a single direct match
-                    if queryset.exists() and queryset.count() == 1:
-                        part = queryset.first()
+                    if queryset.exists():
+                        if queryset.count() == 1:
+                            part = queryset.first()
+                        else:
+                            # Multiple matches!
+                            row_error['part'] = _('Multiple matching parts found')
+
+            if part is None:
+                if 'part' not in row_error:
+                    row_error['part'] = _('No matching part found')
+            else:
+                if part.pk in found_parts:
+                    row_error['part'] = _("Duplicate part selected")
+
+                elif not part.component:
+                    row_error['part'] = _('Part is not designated as a component')
+
+                found_parts.add(part.pk)
 
             row['part'] = part.pk if part is not None else None
 
+            """
+            Read out the 'quantity' column - check that it is valid
+            """
+            quantity = self.find_matching_data(row, 'quantity', self.dataset.headers)
+
+            if quantity is None:
+                row_error['quantity'] = _('Quantity not provided')
+            else:
+                try:
+                    quantity = Decimal(quantity)
+
+                    if quantity <= 0:
+                        row_error['quantity'] = _('Quantity must be greater than zero')
+                except:
+                    row_error['quantity'] = _('Invalid quantity')
+
+            # For each "optional" column, ensure the column names are allocated correctly
+            for field_name in self.OPTIONAL_COLUMNS:
+                if field_name not in row:
+                    row[field_name] = self.find_matching_data(row, field_name, self.dataset.headers)
+
             rows.append(row)
+            errors.append(row_error)
 
         return {
             'rows': rows,
+            'errors': errors,
             'headers': headers,
             'filename': self.filename,
         }
