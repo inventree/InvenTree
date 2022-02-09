@@ -78,7 +78,7 @@ function constructBomUploadTable(data, options={}) {
 
         var buttons = `<div class='btn-group float-right' role='group'>`;
 
-        // buttons += makeIconButton('fa-file-alt', 'button-row-data', idx, '{% trans "Display row data" %}');
+        buttons += makeIconButton('fa-info-circle', 'button-row-data', idx, '{% trans "Display row data" %}');
         buttons += makeIconButton('fa-times icon-red', 'button-row-remove', idx, '{% trans "Remove row" %}');
 
         buttons += `</div>`;
@@ -128,6 +128,29 @@ function constructBomUploadTable(data, options={}) {
         // Add callback for "remove row" button
         $(`#button-row-remove-${idx}`).click(function() {
             $(`#items_${idx}`).remove();
+        });
+
+        // Add callback for "show data" button
+        $(`#button-row-data-${idx}`).click(function() {
+
+            var modal = createNewModal({
+                title: '{% trans "Row Data" %}',
+                cancelText: '{% trans "Close" %}',
+                hideSubmitButton: true
+            });
+
+            // Prettify the original import data
+            var pretty = JSON.stringify(row, undefined, 4);
+
+            var html = `
+            <div class='alert alert-block'>
+            <pre><code>${pretty}</code></pre>
+            </div>`;
+
+            modalSetContent(modal, html);
+
+            $(modal).modal('show');
+
         });
     }
 

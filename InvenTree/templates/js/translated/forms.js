@@ -1953,7 +1953,13 @@ function constructField(name, parameters, options) {
         html += parameters.before;
     }
     
-    html += `<div id='div_id_${field_name}' class='${form_classes}'>`;
+    var hover_title = '';
+
+    if (parameters.help_text) {
+        hover_title = ` title='${parameters.help_text}'`;
+    }
+
+    html += `<div id='div_id_${field_name}' class='${form_classes}' ${hover_title}>`;
 
     // Add a label
     if (!options.hideLabels) {
