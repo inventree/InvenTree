@@ -122,14 +122,11 @@ class BomUploadTest(InvenTreeAPITestCase):
             'banana',
         ]
 
-        dataset.append(['test', 'test'])
-        dataset.append(['hello', 'world'])
-
         response = self.post_bom(
             'test.csv',
             bytes(dataset.csv, 'utf8'),
-            expected_code=400,
             content_type='text/csv',
+            expected_code=400,
         )
 
         self.assertIn("Missing required column: 'quantity'", str(response.data))
@@ -143,3 +140,27 @@ class BomUploadTest(InvenTreeAPITestCase):
         )
 
         self.assertIn("Missing required column: 'quantity'", str(response.data))
+
+        # Add the quantity field (or close enough)
+        dataset.headers.append('quAntiTy  ')
+
+        response = self.post_bom(
+            'test.csv',
+            bytes(dataset.csv, 'utf8'),
+            content_type='text/csv',
+            expected_code=400,
+        )
+
+        self.assertIn('No part column found', str(response.data))
+
+        dataset.headers.append('part_id')
+        dataset.headers.append('part_name')
+
+        response = self.post_bom(
+            'test.csv',
+            bytes(dataset.csv, 'utf8'),
+            content_type='text/csv',
+            expected_code=400,
+        )
+
+        self.assertIn('No data rows found', str(response.data))

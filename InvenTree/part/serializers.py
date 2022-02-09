@@ -857,6 +857,9 @@ class BomExtractSerializer(serializers.Serializer):
         if not part_match:
             raise serializers.ValidationError(_("No part column found"))
 
+        if len(self.dataset) == 0:
+            raise serializers.ValidationError(_("No data rows found"))
+
         return bom_file
 
     def extract_data(self):
@@ -931,6 +934,11 @@ class BomExtractSerializer(serializers.Serializer):
 
             row['part'] = part.pk if part is not None else None
 
+            # For each "optional" column, ensure the column names are allocated correctly
+            for field_name in self.OPTIONAL_COLUMNS:
+                if field_name not in row:
+                    row[field_name] = self.find_matching_data(row, field_name, self.dataset.headers)
+    
             rows.append(row)
 
         return {
