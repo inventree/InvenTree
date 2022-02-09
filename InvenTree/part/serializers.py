@@ -870,6 +870,8 @@ class BomExtractSerializer(serializers.Serializer):
         rows = []
         errors = []
 
+        found_parts = set()
+
         headers = self.dataset.headers
 
         level_column = self.find_matching_column('level', headers)
@@ -939,8 +941,14 @@ class BomExtractSerializer(serializers.Serializer):
                             # Multiple matches!
                             error['part'] = _('Multiple matching parts found')
 
-            if part is None and 'part' not in error:
-                error['part'] = _('No matching part found')
+            if part is None:
+                if 'part' not in error:
+                    error['part'] = _('No matching part found')
+            else:
+                if part.pk in found_parts:
+                    error['part'] = _('Duplicate part selected')
+                else:
+                    found_parts.add(part.pk)
 
             row['part'] = part.pk if part is not None else None
 
