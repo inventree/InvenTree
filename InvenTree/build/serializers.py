@@ -157,7 +157,7 @@ class BuildOutputSerializer(serializers.Serializer):
             raise ValidationError(_("This build output has already been completed"))
 
         if to_complete:
-    
+
             # The build output must have all tracked parts allocated
             if not build.isFullyAllocated(output):
                 raise ValidationError(_("This build output is not fully allocated"))

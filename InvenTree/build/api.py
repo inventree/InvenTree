@@ -277,7 +277,6 @@ class BuildOutputDelete(generics.CreateAPIView):
         return ctx
 
 
-
 class BuildFinish(generics.CreateAPIView):
     """
     API endpoint for marking a build as finished (completed)
