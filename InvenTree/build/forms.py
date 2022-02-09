@@ -59,30 +59,6 @@ class BuildOutputCreateForm(HelperForm):
         ]
 
 
-class BuildOutputDeleteForm(HelperForm):
-    """
-    Form for deleting a build output.
-    """
-
-    confirm = forms.BooleanField(
-        required=False,
-        label=_('Confirm'),
-        help_text=_('Confirm deletion of build output')
-    )
-
-    output_id = forms.IntegerField(
-        required=True,
-        widget=forms.HiddenInput()
-    )
-
-    class Meta:
-        model = Build
-        fields = [
-            'confirm',
-            'output_id',
-        ]
-
-
 class CancelBuildForm(HelperForm):
     """ Form for cancelling a build """
 
