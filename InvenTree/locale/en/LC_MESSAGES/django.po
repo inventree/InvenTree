@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-10 02:48+0000\n"
+"POT-Creation-Date: 2022-02-10 07:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2838,7 +2838,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part.html:254
 #: part/templates/part/detail.html:367 part/templates/part/detail.html:396
 #: templates/js/translated/company.js:426 templates/js/translated/helpers.js:31
-#: users/models.py:212
+#: users/models.py:217
 msgid "Delete"
 msgstr ""
 
@@ -8898,7 +8898,7 @@ msgstr ""
 msgid "Add Stock"
 msgstr ""
 
-#: templates/js/translated/stock.js:918 users/models.py:208
+#: templates/js/translated/stock.js:918 users/models.py:213
 msgid "Add"
 msgstr ""
 
@@ -9555,34 +9555,34 @@ msgstr ""
 msgid "Important dates"
 msgstr ""
 
-#: users/models.py:195
+#: users/models.py:200
 msgid "Permission set"
 msgstr ""
 
-#: users/models.py:203
+#: users/models.py:208
 msgid "Group"
 msgstr ""
 
-#: users/models.py:206
+#: users/models.py:211
 msgid "View"
 msgstr ""
 
-#: users/models.py:206
+#: users/models.py:211
 msgid "Permission to view items"
 msgstr ""
 
-#: users/models.py:208
+#: users/models.py:213
 msgid "Permission to add items"
 msgstr ""
 
-#: users/models.py:210
+#: users/models.py:215
 msgid "Change"
 msgstr ""
 
-#: users/models.py:210
+#: users/models.py:215
 msgid "Permissions to edit items"
 msgstr ""
 
-#: users/models.py:212
+#: users/models.py:217
 msgid "Permission to delete items"
 msgstr ""

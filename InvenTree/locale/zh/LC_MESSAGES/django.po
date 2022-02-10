@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-10 02:48+0000\n"
+"POT-Creation-Date: 2022-02-10 07:09+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -2879,7 +2879,7 @@ msgstr "删除供应商商品"
 #: company/templates/company/manufacturer_part.html:254
 #: part/templates/part/detail.html:367 part/templates/part/detail.html:396
 #: templates/js/translated/company.js:426 templates/js/translated/helpers.js:31
-#: users/models.py:212
+#: users/models.py:217
 msgid "Delete"
 msgstr "删除"
 
@@ -9171,7 +9171,7 @@ msgstr ""
 msgid "Add Stock"
 msgstr ""
 
-#: templates/js/translated/stock.js:918 users/models.py:208
+#: templates/js/translated/stock.js:918 users/models.py:213
 msgid "Add"
 msgstr "添加"
 
@@ -9842,35 +9842,35 @@ msgstr "权限"
 msgid "Important dates"
 msgstr "重要日期"
 
-#: users/models.py:195
+#: users/models.py:200
 msgid "Permission set"
 msgstr "权限设置"
 
-#: users/models.py:203
+#: users/models.py:208
 msgid "Group"
 msgstr "群组"
 
-#: users/models.py:206
+#: users/models.py:211
 msgid "View"
 msgstr "视图"
 
-#: users/models.py:206
+#: users/models.py:211
 msgid "Permission to view items"
 msgstr "查看项目权限"
 
-#: users/models.py:208
+#: users/models.py:213
 msgid "Permission to add items"
 msgstr "添加项目权限"
 
-#: users/models.py:210
+#: users/models.py:215
 msgid "Change"
 msgstr "更改"
 
-#: users/models.py:210
+#: users/models.py:215
 msgid "Permissions to edit items"
 msgstr "编辑项目权限"
 
-#: users/models.py:212
+#: users/models.py:217
 msgid "Permission to delete items"
 msgstr "删除项目权限"
 
