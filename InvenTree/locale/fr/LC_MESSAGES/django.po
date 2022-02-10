@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-09 20:48+0000\n"
-"PO-Revision-Date: 2022-02-09 22:53\n"
+"POT-Creation-Date: 2022-02-10 07:09+0000\n"
+"PO-Revision-Date: 2022-02-10 07:18\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -2837,7 +2837,7 @@ msgstr "Supprimer les pièces du fournisseur"
 #: company/templates/company/manufacturer_part.html:254
 #: part/templates/part/detail.html:367 part/templates/part/detail.html:396
 #: templates/js/translated/company.js:426 templates/js/translated/helpers.js:31
-#: users/models.py:212
+#: users/models.py:217
 msgid "Delete"
 msgstr "Supprimer"
 
@@ -8894,7 +8894,7 @@ msgstr "Supprimer"
 msgid "Add Stock"
 msgstr "Ajouter du stock"
 
-#: templates/js/translated/stock.js:918 users/models.py:208
+#: templates/js/translated/stock.js:918 users/models.py:213
 msgid "Add"
 msgstr "Ajouter"
 
@@ -9551,35 +9551,35 @@ msgstr "Droits"
 msgid "Important dates"
 msgstr "Dates importantes"
 
-#: users/models.py:195
+#: users/models.py:200
 msgid "Permission set"
 msgstr "Droit défini"
 
-#: users/models.py:203
+#: users/models.py:208
 msgid "Group"
 msgstr "Groupe"
 
-#: users/models.py:206
+#: users/models.py:211
 msgid "View"
 msgstr "Vue"
 
-#: users/models.py:206
+#: users/models.py:211
 msgid "Permission to view items"
 msgstr "Droit de voir des éléments"
 
-#: users/models.py:208
+#: users/models.py:213
 msgid "Permission to add items"
 msgstr "Droit d'ajouter des éléments"
 
-#: users/models.py:210
+#: users/models.py:215
 msgid "Change"
 msgstr "Modifier"
 
-#: users/models.py:210
+#: users/models.py:215
 msgid "Permissions to edit items"
 msgstr "Droit de modifier des élément"
 
-#: users/models.py:212
+#: users/models.py:217
 msgid "Permission to delete items"
 msgstr "Droit de supprimer des éléments"
 
