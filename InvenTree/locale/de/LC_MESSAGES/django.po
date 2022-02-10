@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-09 20:48+0000\n"
-"PO-Revision-Date: 2022-02-09 22:54\n"
+"PO-Revision-Date: 2022-02-10 00:00\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1959,7 +1959,7 @@ msgstr "URL-Integration aktivieren"
 
 #: common/models.py:977
 msgid "Enable plugins to add URL routes"
-msgstr "Plugins zum Hinzufügen von URL-Routen aktivieren"
+msgstr "Plugins zum Hinzufügen von URLs aktivieren"
 
 #: common/models.py:983
 msgid "Enable navigation integration"
@@ -4366,7 +4366,7 @@ msgstr "Bestehende Daten entfernen"
 
 #: part/serializers.py:679
 msgid "Remove existing BOM items before copying"
-msgstr "Bestehende Stücklistenelemente vor dem Kopieren entfernen"
+msgstr "Bestehende Stücklisten-Positionen vor dem Kopieren entfernen"
 
 #: part/serializers.py:684
 msgid "Include Inherited"
@@ -4442,7 +4442,7 @@ msgstr "Bestehende Stückliste löschen"
 
 #: part/serializers.py:993
 msgid "Delete existing BOM data first"
-msgstr "Bestehende Stücklistendaten zuerst löschen"
+msgstr "Bestehende Stückliste zuerst löschen"
 
 #: part/serializers.py:1023
 msgid "At least one BOM item is required"
