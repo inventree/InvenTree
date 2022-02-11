@@ -123,16 +123,22 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
 
         stock_headers = [
             _('Default Location'),
+            _('Total Stock'),
             _('Available Stock'),
+            _('On Order'),
         ]
 
         stock_cols = {}
 
         for b_idx, bom_item in enumerate(bom_items):
+
             stock_data = []
+
+            sub_part = bom_item.sub_part
+
             # Get part default location
             try:
-                loc = bom_item.sub_part.get_default_location()
+                loc = sub_part.get_default_location()
 
                 if loc is not None:
                     stock_data.append(str(loc.name))
@@ -141,8 +147,20 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
             except AttributeError:
                 stock_data.append('')
 
-            # Get part current stock
-            stock_data.append(str(normalize(bom_item.sub_part.available_stock)))
+            # Total "in stock" quantity for this part
+            stock_data.append(
+                str(normalize(sub_part.total_stock))
+            )
+
+            # Total "available stock" quantity for this part
+            stock_data.append(
+                str(normalize(sub_part.available_stock))
+            )
+
+            # Total "on order" quantity for this part
+            stock_data.append(
+                str(normalize(sub_part.on_order))
+            )
 
             for s_idx, header in enumerate(stock_headers):
                 try:
@@ -205,7 +223,7 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
 
                             supplier_parts_used.add(sp_part)
 
-                            if sp_part.supplier and sp_part.supplier:
+                            if sp_part.supplier:
                                 supplier_name = sp_part.supplier.name
                             else:
                                 supplier_name = ''

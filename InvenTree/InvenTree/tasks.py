@@ -269,10 +269,13 @@ def update_exchange_rates():
 
     logger.info(f"Using base currency '{base}'")
 
-    backend.update_rates(base_currency=base)
+    try:
+        backend.update_rates(base_currency=base)
 
-    # Remove any exchange rates which are not in the provided currencies
-    Rate.objects.filter(backend="InvenTreeExchange").exclude(currency__in=currency_codes()).delete()
+        # Remove any exchange rates which are not in the provided currencies
+        Rate.objects.filter(backend="InvenTreeExchange").exclude(currency__in=currency_codes()).delete()
+    except Exception as e:
+        logger.error(f"Error updating exchange rates: {e}")
 
 
 def send_email(subject, body, recipients, from_email=None, html_message=None):

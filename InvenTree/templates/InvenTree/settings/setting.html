@@ -17,9 +17,12 @@
     </td>
     <td><strong>{{ setting.name }}</strong></td>
     <td>
+        {{ setting.description }}
+    </td>
+    <td>
         {% if setting.is_bool %}
         <div class='form-check form-switch'>
-            <input class='form-check-input' fieldname='{{ setting.key.upper }}' id='setting-value-{{ setting.key.upper }}' type='checkbox' disabled='' {% if setting.as_bool %}checked=''{% endif %}>
+            <input class='form-check-input boolean-setting' fieldname='{{ setting.key.upper }}' pk='{{ setting.pk }}' setting='{{ setting.key.upper }}' id='setting-value-{{ setting.key.upper }}' type='checkbox' {% if setting.as_bool %}checked=''{% endif %} {% if plugin %}plugin='{{ plugin.pk }}'{% endif %}{% if user_setting %}user='{{request.user.id}}'{% endif %}>
         </div>
         {% else %}
         <div id='setting-{{ setting.pk }}'>
@@ -31,16 +34,12 @@
                 {% endif %}
             </span>
             {{ setting.units }}
+            <div class='btn-group float-right'>
+                <button class='btn btn-outline-secondary btn-small btn-edit-setting' pk='{{ setting.pk }}' setting='{{ setting.key.upper }}' title='{% trans "Edit setting" %}' {% if plugin %}plugin='{{ plugin.pk }}'{% endif %}{% if user_setting %}user='{{request.user.id}}'{% endif %}>
+                    <span class='fas fa-edit icon-green'></span>
+                </button>
+            </div>
         </div>
         {% endif %}
-    <td>
-        {{ setting.description }}
-    </td>
-    <td>
-        <div class='btn-group float-right'>
-            <button class='btn btn-outline-secondary btn-small btn-edit-setting' pk='{{ setting.pk }}' setting='{{ setting.key.upper }}' title='{% trans "Edit setting" %}' {% if plugin %}plugin='{{ plugin.pk }}'{% endif %}{% if user_setting %}user='{{request.user.id}}'{% endif %}>
-                <span class='fas fa-edit icon-green'></span>
-            </button>
-        </div>
     </td>
 </tr>

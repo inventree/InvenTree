@@ -161,7 +161,7 @@ function renderPart(name, data, parameters, options) {
     html += ` <span>${data.full_name || data.name}</span>`;
 
     if (data.description) {
-        html += ` - <i>${data.description}</i>`;
+        html += ` - <i><small>${data.description}</small></i>`;
     }
 
     var extra = '';
@@ -221,20 +221,54 @@ function renderOwner(name, data, parameters, options) {
 }
 
 
-// Renderer for "SalesOrder" model
+// Renderer for "PurchaseOrder" model
 // eslint-disable-next-line no-unused-vars
-function renderSalesOrder(name, data, parameters, options) {
-    var html = `<span>${data.reference}</span>`;
+function renderPurchaseOrder(name, data, parameters, options) {
+    var html = '';
+
+    var prefix = global_settings.PURCHASEORDER_REFERENCE_PREFIX;
+    
+    var thumbnail = null;
+    
+    html += `<span>${prefix}${data.reference}</span>`;
+
+    if (data.supplier_detail) {
+        thumbnail = data.supplier_detail.thumbnail || data.supplier_detail.image;
+
+        html += ' - ' + select2Thumbnail(thumbnail);
+        html += `<span>${data.supplier_detail.name}</span>`;
+    }
 
     if (data.description) {
-        html += ` - <i>${data.description}</i>`;
+        html += ` - <em>${data.description}</em>`;
     }
 
     html += `
     <span class='float-right'>
         <small>
             {% trans "Order ID" %}: ${data.pk}
-            </small>
+        </small>
+    </span>
+    `;
+
+    return html;
+}
+
+
+// Renderer for "SalesOrder" model
+// eslint-disable-next-line no-unused-vars
+function renderSalesOrder(name, data, parameters, options) {
+    var html = `<span>${data.reference}</span>`;
+
+    if (data.description) {
+        html += ` - <em>${data.description}</em>`;
+    }
+
+    html += `
+    <span class='float-right'>
+        <small>
+            {% trans "Order ID" %}: ${data.pk}
+        </small>
     </span>`;
 
     return html;
