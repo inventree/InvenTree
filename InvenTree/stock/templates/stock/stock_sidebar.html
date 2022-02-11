@@ -4,6 +4,10 @@
 
 {% trans "Stock Tracking" as text %}
 {% include "sidebar_item.html" with label='history' text=text icon="fa-history" %}
+{% if item.part.salable or item.part.component %}
+{% trans "Allocations" as text %}
+{% include "sidebar_item.html" with label="allocations" text=text icon="fa-bookmark" %}
+{% endif %}
 {% if item.part.trackable %}
 {% trans "Test Data" as text %}
 {% include "sidebar_item.html" with label='test-data' text=text icon="fa-vial" %}

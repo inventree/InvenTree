@@ -13,6 +13,7 @@ from common.models import NotificationEntry
 
 import InvenTree.helpers
 import InvenTree.tasks
+from InvenTree.ready import isImportingData
 
 import part.models
 
@@ -23,6 +24,10 @@ def notify_low_stock(part: part.models.Part):
     """
     Notify users who have starred a part when its stock quantity falls below the minimum threshold
     """
+
+    # Do not notify if we are importing data
+    if isImportingData():
+        return
 
     # Check if we have notified recently...
     delta = timedelta(days=1)

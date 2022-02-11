@@ -65,7 +65,6 @@ class AuthRequiredMiddleware(object):
 
                     except Token.DoesNotExist:
                         logger.warning(f"Access denied for unknown token {token_key}")
-                        pass
 
             # No authorization was found for the request
             if not authorized:

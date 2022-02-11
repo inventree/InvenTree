@@ -1,5 +1,9 @@
+import certifi
+import ssl
+from urllib.request import urlopen
+
 from common.settings import currency_code_default, currency_codes
-from urllib.error import HTTPError, URLError
+from urllib.error import URLError
 
 from djmoney.contrib.exchange.backends.base import SimpleExchangeBackend
 from django.db.utils import OperationalError
@@ -24,6 +28,22 @@ class InvenTreeExchange(SimpleExchangeBackend):
         return {
         }
 
+    def get_response(self, **kwargs):
+        """
+        Custom code to get response from server.
+        Note: Adds a 5-second timeout
+        """
+
+        url = self.get_url(**kwargs)
+
+        try:
+            context = ssl.create_default_context(cafile=certifi.where())
+            response = urlopen(url, timeout=5, context=context)
+            return response.read()
+        except:
+            # Returning None here will raise an error upstream
+            return None
+
     def update_rates(self, base_currency=currency_code_default()):
 
         symbols = ','.join(currency_codes())
@@ -31,7 +51,7 @@ class InvenTreeExchange(SimpleExchangeBackend):
         try:
             super().update_rates(base=base_currency, symbols=symbols)
         # catch connection errors
-        except (HTTPError, URLError):
+        except URLError:
             print('Encountered connection error while updating')
         except OperationalError as e:
             if 'SerializationFailure' in e.__cause__.__class__.__name__:

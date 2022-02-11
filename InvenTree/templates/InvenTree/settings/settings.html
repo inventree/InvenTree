@@ -62,6 +62,43 @@
 {% block js_ready %}
 {{ block.super }}
 
+// Callback for when boolean settings are edited
+$('table').find('.boolean-setting').change(function() {
+
+    var setting = $(this).attr('setting');
+    var pk = $(this).attr('pk');
+    var plugin = $(this).attr('plugin');
+    var user = $(this).attr('user');
+
+    var checked = this.checked;
+
+    // Global setting by default
+    var url = `/api/settings/global/${pk}/`;
+
+    if (plugin) {
+        url = `/api/plugin/settings/${pk}/`;
+    } else if (user) {
+        url = `/api/settings/user/${pk}/`;
+    }
+
+    inventreePut(
+        url,
+        {
+            value: checked.toString(),
+        },
+        {
+            method: 'PATCH',
+            onSuccess: function(data) {
+            },
+            error: function(xhr) {
+                showApiError(xhr, url);
+            }
+        }
+    );
+    
+});
+
+// Callback for when non-boolean settings are edited
 $('table').find('.btn-edit-setting').click(function() {
     var setting = $(this).attr('setting');
     var pk = $(this).attr('pk');

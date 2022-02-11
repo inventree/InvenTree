@@ -328,4 +328,7 @@ class InvenTreeDecimalField(serializers.FloatField):
     def to_internal_value(self, data):
 
         # Convert the value to a string, and then a decimal
-        return Decimal(str(data))
+        try:
+            return Decimal(str(data))
+        except:
+            raise serializers.ValidationError(_("Invalid value"))

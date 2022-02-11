@@ -90,6 +90,11 @@ src="{% static 'img/blank_image.png' %}"
 </table>
 
 <div class='info-messages'>
+    {% if not build.has_build_outputs %}
+    <div class='alert alert-block alert-danger'>
+        {% trans "No build outputs have been created for this build order" %}<br>
+    </div>
+    {% endif %}
     {% if build.sales_order %}
     <div class='alert alert-block alert-info'>
         {% object_link 'so-detail' build.sales_order.id build.sales_order as link %}
