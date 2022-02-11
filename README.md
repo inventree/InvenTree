@@ -3,6 +3,10 @@
 
 # InvenTree
 
+<p><a href="https://twitter.com/intent/follow?screen_name=inventreedb">
+        <img src="https://img.shields.io/twitter/follow/inventreedb?style=social&logo=twitter"
+            alt="follow on Twitter"></a></p>
+            
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Coverage Status](https://coveralls.io/repos/github/inventree/InvenTree/badge.svg)](https://coveralls.io/github/inventree/InvenTree)
 [![Crowdin](https://badges.crowdin.net/inventree/localized.svg)](https://crowdin.com/project/inventree)
@@ -33,12 +37,6 @@ InvenTree is supported by a [companion mobile app](https://inventree.readthedocs
 
 - [**Download InvenTree from the Apple App Store**](https://apps.apple.com/au/app/inventree/id1581731101#?platform=iphone)
 
-# Translation
-
-Native language translation of the InvenTree web application is [community contributed via crowdin](https://crowdin.com/project/inventree). **Contributions are welcomed and encouraged**.
-
-To contribute to the translation effort, navigate to the [InvenTree crowdin project](https://crowdin.com/project/inventree), create a free account, and start making translations suggestions for your language of choice!
-
 # Documentation
 
 For InvenTree documentation, refer to the [InvenTree documentation website](https://inventree.readthedocs.io/en/latest/).
@@ -63,6 +61,12 @@ InvenTree is designed to be extensible, and provides multiple options for integr
 # Contributing
 
 Contributions are welcomed and encouraged. Please help to make this project even better! Refer to the [contribution page](https://inventree.readthedocs.io/en/latest/contribute/).
+
+# Translation
+
+Native language translation of the InvenTree web application is [community contributed via crowdin](https://crowdin.com/project/inventree). **Contributions are welcomed and encouraged**.
+
+To contribute to the translation effort, navigate to the [InvenTree crowdin project](https://crowdin.com/project/inventree), create a free account, and start making translations suggestions for your language of choice!
 
 # Donate
 

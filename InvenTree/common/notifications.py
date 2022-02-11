@@ -6,6 +6,7 @@ from django.template.loader import render_to_string
 from allauth.account.models import EmailAddress
 
 from InvenTree.helpers import inheritors
+from InvenTree.ready import isImportingData
 from common.models import NotificationEntry, NotificationMessage
 import InvenTree.tasks
 
@@ -144,6 +145,10 @@ def trigger_notifaction(obj, category=None, obj_ref='pk', targets=None, target_f
     """
     Send out an notification
     """
+    # check if data is importet currently
+    if isImportingData():
+        return
+
     # Resolve objekt reference
     obj_ref_value = getattr(obj, obj_ref)
     # Try with some defaults

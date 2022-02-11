@@ -28,20 +28,17 @@ import requests
 import os
 import io
 
-from rapidfuzz import fuzz
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal
 
 from .models import PartCategory, Part
 from .models import PartParameterTemplate
 from .models import PartCategoryParameterTemplate
-from .models import BomItem
 from .models import PartSellPriceBreak, PartInternalPriceBreak
 
 from common.models import InvenTreeSetting
 from company.models import SupplierPart
 from common.files import FileManager
 from common.views import FileManagementFormView, FileManagementAjaxView
-from common.forms import UploadFileForm, MatchFieldForm
 
 from stock.models import StockItem, StockLocation
 
@@ -395,10 +392,11 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
         context.update(**ctx)
 
         # Pricing information
-        ctx = self.get_pricing(self.get_quantity())
-        ctx['form'] = self.form_class(initial=self.get_initials())
+        if InvenTreeSetting.get_setting('PART_SHOW_PRICE_HISTORY', False):
+            ctx = self.get_pricing(self.get_quantity())
+            ctx['form'] = self.form_class(initial=self.get_initials())
 
-        context.update(ctx)
+            context.update(ctx)
 
         return context
 
@@ -703,270 +701,12 @@ class PartImageSelect(AjaxUpdateView):
         return self.renderJsonResponse(request, form, data)
 
 
-class BomUpload(InvenTreeRoleMixin, FileManagementFormView):
-    """ View for uploading a BOM file, and handling BOM data importing.
+class BomUpload(InvenTreeRoleMixin, DetailView):
+    """ View for uploading a BOM file, and handling BOM data importing. """
 
-    The BOM upload process is as follows:
-
-    1. (Client) Select and upload BOM file
-    2. (Server) Verify that supplied file is a file compatible with tablib library
-    3. (Server) Introspect data file, try to find sensible columns / values / etc
-    4. (Server) Send suggestions back to the client
-    5. (Client) Makes choices based on suggestions:
-        - Accept automatic matching to parts found in database
-        - Accept suggestions for 'partial' or 'fuzzy' matches
-        - Create new parts in case of parts not being available
-    6. (Client) Sends updated dataset back to server
-    7. (Server) Check POST data for validity, sanity checking, etc.
-    8. (Server) Respond to POST request
-        - If data are valid, proceed to 9.
-        - If data not valid, return to 4.
-    9. (Server) Send confirmation form to user
-        - Display the actions which will occur
-        - Provide final "CONFIRM" button
-    10. (Client) Confirm final changes
-    11. (Server) Apply changes to database, update BOM items.
-
-    During these steps, data are passed between the server/client as JSON objects.
-    """
-
-    role_required = ('part.change', 'part.add')
-
-    class BomFileManager(FileManager):
-        # Fields which are absolutely necessary for valid upload
-        REQUIRED_HEADERS = [
-            'Quantity'
-        ]
-
-        # Fields which are used for part matching (only one of them is needed)
-        ITEM_MATCH_HEADERS = [
-            'Part_Name',
-            'Part_IPN',
-            'Part_ID',
-        ]
-
-        # Fields which would be helpful but are not required
-        OPTIONAL_HEADERS = [
-            'Reference',
-            'Note',
-            'Overage',
-        ]
-
-        EDITABLE_HEADERS = [
-            'Reference',
-            'Note',
-            'Overage'
-        ]
-
-    name = 'order'
-    form_list = [
-        ('upload', UploadFileForm),
-        ('fields', MatchFieldForm),
-        ('items', part_forms.BomMatchItemForm),
-    ]
-    form_steps_template = [
-        'part/bom_upload/upload_file.html',
-        'part/bom_upload/match_fields.html',
-        'part/bom_upload/match_parts.html',
-    ]
-    form_steps_description = [
-        _("Upload File"),
-        _("Match Fields"),
-        _("Match Parts"),
-    ]
-    form_field_map = {
-        'item_select': 'part',
-        'quantity': 'quantity',
-        'overage': 'overage',
-        'reference': 'reference',
-        'note': 'note',
-    }
-    file_manager_class = BomFileManager
-
-    def get_part(self):
-        """ Get part or return 404 """
-
-        return get_object_or_404(Part, pk=self.kwargs['pk'])
-
-    def get_context_data(self, form, **kwargs):
-        """ Handle context data for order """
-
-        context = super().get_context_data(form=form, **kwargs)
-
-        part = self.get_part()
-
-        context.update({'part': part})
-
-        return context
-
-    def get_allowed_parts(self):
-        """ Return a queryset of parts which are allowed to be added to this BOM.
-        """
-
-        return self.get_part().get_allowed_bom_items()
-
-    def get_field_selection(self):
-        """ Once data columns have been selected, attempt to pre-select the proper data from the database.
-        This function is called once the field selection has been validated.
-        The pre-fill data are then passed through to the part selection form.
-        """
-
-        self.allowed_items = self.get_allowed_parts()
-
-        # Fields prefixed with "Part_" can be used to do "smart matching" against Part objects in the database
-        k_idx = self.get_column_index('Part_ID')
-        p_idx = self.get_column_index('Part_Name')
-        i_idx = self.get_column_index('Part_IPN')
-
-        q_idx = self.get_column_index('Quantity')
-        r_idx = self.get_column_index('Reference')
-        o_idx = self.get_column_index('Overage')
-        n_idx = self.get_column_index('Note')
-
-        for row in self.rows:
-            """
-            Iterate through each row in the uploaded data,
-            and see if we can match the row to a "Part" object in the database.
-            There are three potential ways to match, based on the uploaded data:
-            a) Use the PK (primary key) field for the part, uploaded in the "Part_ID" field
-            b) Use the IPN (internal part number) field for the part, uploaded in the "Part_IPN" field
-            c) Use the name of the part, uploaded in the "Part_Name" field
-            Notes:
-            - If using the Part_ID field, we can do an exact match against the PK field
-            - If using the Part_IPN field, we can do an exact match against the IPN field
-            - If using the Part_Name field, we can use fuzzy string matching to match "close" values
-            We also extract other information from the row, for the other non-matched fields:
-            - Quantity
-            - Reference
-            - Overage
-            - Note
-            """
-
-            # Initially use a quantity of zero
-            quantity = Decimal(0)
-
-            # Initially we do not have a part to reference
-            exact_match_part = None
-
-            # A list of potential Part matches
-            part_options = self.allowed_items
-
-            # Check if there is a column corresponding to "quantity"
-            if q_idx >= 0:
-                q_val = row['data'][q_idx]['cell']
-
-                if q_val:
-                    # Delete commas
-                    q_val = q_val.replace(',', '')
-
-                    try:
-                        # Attempt to extract a valid quantity from the field
-                        quantity = Decimal(q_val)
-                        # Store the 'quantity' value
-                        row['quantity'] = quantity
-                    except (ValueError, InvalidOperation):
-                        pass
-
-            # Check if there is a column corresponding to "PK"
-            if k_idx >= 0:
-                pk = row['data'][k_idx]['cell']
-
-                if pk:
-                    try:
-                        # Attempt Part lookup based on PK value
-                        exact_match_part = self.allowed_items.get(pk=pk)
-                    except (ValueError, Part.DoesNotExist):
-                        exact_match_part = None
-
-            # Check if there is a column corresponding to "Part IPN" and no exact match found yet
-            if i_idx >= 0 and not exact_match_part:
-                part_ipn = row['data'][i_idx]['cell']
-
-                if part_ipn:
-                    part_matches = [part for part in self.allowed_items if part.IPN and part_ipn.lower() == str(part.IPN.lower())]
-
-                    # Check for single match
-                    if len(part_matches) == 1:
-                        exact_match_part = part_matches[0]
-
-            # Check if there is a column corresponding to "Part Name" and no exact match found yet
-            if p_idx >= 0 and not exact_match_part:
-                part_name = row['data'][p_idx]['cell']
-
-                row['part_name'] = part_name
-
-                matches = []
-
-                for part in self.allowed_items:
-                    ratio = fuzz.partial_ratio(part.name + part.description, part_name)
-                    matches.append({'part': part, 'match': ratio})
-
-                # Sort matches by the 'strength' of the match ratio
-                if len(matches) > 0:
-                    matches = sorted(matches, key=lambda item: item['match'], reverse=True)
-
-                    part_options = [m['part'] for m in matches]
-
-            # Supply list of part options for each row, sorted by how closely they match the part name
-            row['item_options'] = part_options
-
-            # Unless found, the 'item_match' is blank
-            row['item_match'] = None
-
-            if exact_match_part:
-                # If there is an exact match based on PK or IPN, use that
-                row['item_match'] = exact_match_part
-
-            # Check if there is a column corresponding to "Overage" field
-            if o_idx >= 0:
-                row['overage'] = row['data'][o_idx]['cell']
-
-            # Check if there is a column corresponding to "Reference" field
-            if r_idx >= 0:
-                row['reference'] = row['data'][r_idx]['cell']
-
-            # Check if there is a column corresponding to "Note" field
-            if n_idx >= 0:
-                row['note'] = row['data'][n_idx]['cell']
-
-    def done(self, form_list, **kwargs):
-        """ Once all the data is in, process it to add BomItem instances to the part """
-
-        self.part = self.get_part()
-        items = self.get_clean_items()
-
-        # Clear BOM
-        self.part.clear_bom()
-
-        # Generate new BOM items
-        for bom_item in items.values():
-            try:
-                part = Part.objects.get(pk=int(bom_item.get('part')))
-            except (ValueError, Part.DoesNotExist):
-                continue
-
-            quantity = bom_item.get('quantity')
-            overage = bom_item.get('overage', '')
-            reference = bom_item.get('reference', '')
-            note = bom_item.get('note', '')
-
-            # Create a new BOM item
-            item = BomItem(
-                part=self.part,
-                sub_part=part,
-                quantity=quantity,
-                overage=overage,
-                reference=reference,
-                note=note,
-            )
-
-            try:
-                item.save()
-            except IntegrityError:
-                # BomItem already exists
-                pass
-
-        return HttpResponseRedirect(reverse('part-detail', kwargs={'pk': self.kwargs['pk']}))
+    context_object_name = 'part'
+    queryset = Part.objects.all()
+    template_name = 'part/upload_bom.html'
 
 
 class PartExport(AjaxView):
@@ -1059,7 +799,7 @@ class BomDownload(AjaxView):
 
         part = get_object_or_404(Part, pk=self.kwargs['pk'])
 
-        export_format = request.GET.get('file_format', 'csv')
+        export_format = request.GET.get('format', 'csv')
 
         cascade = str2bool(request.GET.get('cascade', False))
 
@@ -1100,55 +840,6 @@ class BomDownload(AjaxView):
         return {
             'info': 'Exported BOM'
         }
-
-
-class BomExport(AjaxView):
-    """ Provide a simple form to allow the user to select BOM download options.
-    """
-
-    model = Part
-    ajax_form_title = _("Export Bill of Materials")
-
-    role_required = 'part.view'
-
-    def post(self, request, *args, **kwargs):
-
-        # Extract POSTed form data
-        fmt = request.POST.get('file_format', 'csv').lower()
-        cascade = str2bool(request.POST.get('cascading', False))
-        levels = request.POST.get('levels', None)
-        parameter_data = str2bool(request.POST.get('parameter_data', False))
-        stock_data = str2bool(request.POST.get('stock_data', False))
-        supplier_data = str2bool(request.POST.get('supplier_data', False))
-        manufacturer_data = str2bool(request.POST.get('manufacturer_data', False))
-
-        try:
-            part = Part.objects.get(pk=self.kwargs['pk'])
-        except:
-            part = None
-
-        # Format a URL to redirect to
-        if part:
-            url = reverse('bom-download', kwargs={'pk': part.pk})
-        else:
-            url = ''
-
-        url += '?file_format=' + fmt
-        url += '&cascade=' + str(cascade)
-        url += '&parameter_data=' + str(parameter_data)
-        url += '&stock_data=' + str(stock_data)
-        url += '&supplier_data=' + str(supplier_data)
-        url += '&manufacturer_data=' + str(manufacturer_data)
-
-        if levels:
-            url += '&levels=' + str(levels)
-
-        data = {
-            'form_valid': part is not None,
-            'url': url,
-        }
-
-        return self.renderJsonResponse(request, self.form_class(), data=data)
 
 
 class PartDelete(AjaxDeleteView):

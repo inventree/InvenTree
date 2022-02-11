@@ -27,6 +27,7 @@ from stock import models as stock_models
 from company.models import Company, SupplierPart
 from plugin.events import trigger_event
 
+import InvenTree.helpers
 from InvenTree.fields import InvenTreeModelMoneyField, RoundingDecimalField
 from InvenTree.helpers import decimal2string, increment, getSetting
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus, StockHistoryCode
@@ -414,16 +415,12 @@ class PurchaseOrder(Order):
             )
 
         try:
-            if not (quantity % 1 == 0):
-                raise ValidationError({
-                    "quantity": _("Quantity must be an integer")
-                })
             if quantity < 0:
                 raise ValidationError({
                     "quantity": _("Quantity must be a positive number")
                 })
-            quantity = int(quantity)
-        except (ValueError, TypeError):
+            quantity = InvenTree.helpers.clean_decimal(quantity)
+        except TypeError:
             raise ValidationError({
                 "quantity": _("Invalid quantity provided")
             })
@@ -825,14 +822,25 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     """
 
-    @staticmethod
-    def get_api_url():
-        return reverse('api-po-line-list')
-
     class Meta:
         unique_together = (
             ('order', 'part', 'quantity', 'purchase_price')
         )
+
+    @staticmethod
+    def get_api_url():
+        return reverse('api-po-line-list')
+
+    def clean(self):
+
+        super().clean()
+
+        if self.order.supplier and self.part:
+            # Supplier part *must* point to the same supplier!
+            if self.part.supplier != self.order.supplier:
+                raise ValidationError({
+                    'part': _('Supplier part must match supplier')
+                })
 
     def __str__(self):
         return "{n} x {part} from {supplier} (for {po})".format(

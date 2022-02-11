@@ -43,7 +43,7 @@ def extract_purchase_price(apps, schema_editor):
         if lines.exists():
 
             for line in lines:
-                if line.purchase_price is not None:
+                if getattr(line, 'purchase_price', None) is not None:
 
                     # Copy pricing information across
                     item.purchase_price = line.purchase_price

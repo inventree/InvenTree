@@ -5,6 +5,7 @@ JSON API for the Stock app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from collections import OrderedDict
 from datetime import datetime, timedelta
 
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -463,13 +464,10 @@ class StockList(generics.ListCreateAPIView):
         """
 
         user = request.user
-        data = request.data
 
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-
-        # Check if a set of serial numbers was provided
-        serial_numbers = data.get('serial_numbers', '')
+        # Copy the request data, to side-step "mutability" issues
+        data = OrderedDict()
+        data.update(request.data)
 
         quantity = data.get('quantity', None)
 
@@ -478,77 +476,84 @@ class StockList(generics.ListCreateAPIView):
                 'quantity': _('Quantity is required'),
             })
 
-        notes = data.get('notes', '')
+        try:
+            part = Part.objects.get(pk=data.get('part', None))
+        except (ValueError, Part.DoesNotExist):
+            raise ValidationError({
+                'part': _('Valid part must be supplied'),
+            })
+
+        # Set default location (if not provided)
+        if 'location' not in data:
+            location = part.get_default_location()
+
+            if location:
+                data['location'] = location.pk
+
+        # An expiry date was *not* specified - try to infer it!
+        if 'expiry_date' not in data:
+
+            if part.default_expiry > 0:
+                data['expiry_date'] = datetime.now().date() + timedelta(days=part.default_expiry)
+
+        # Attempt to extract serial numbers from submitted data
+        serials = None
+
+        # Check if a set of serial numbers was provided
+        serial_numbers = data.get('serial_numbers', '')
+
+        # Assign serial numbers for a trackable part
+        if serial_numbers and part.trackable:
+
+            # If serial numbers are specified, check that they match!
+            try:
+                serials = extract_serial_numbers(serial_numbers, quantity, part.getLatestSerialNumberInt())
+            except DjangoValidationError as e:
+                raise ValidationError({
+                    'quantity': e.messages,
+                    'serial_numbers': e.messages,
+                })
+
+        if serials is not None:
+            """
+            If the stock item is going to be serialized, set the quantity to 1
+            """
+            data['quantity'] = 1
+
+        # De-serialize the provided data
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
 
         with transaction.atomic():
 
-            # Create an initial stock item
+            # Create an initial StockItem object
             item = serializer.save()
 
-            # A location was *not* specified - try to infer it
-            if 'location' not in data:
-                item.location = item.part.get_default_location()
+            if serials:
+                # Assign the first serial number to the "master" item
+                item.serial = serials[0]
 
-            # An expiry date was *not* specified - try to infer it!
-            if 'expiry_date' not in data:
-
-                if item.part.default_expiry > 0:
-                    item.expiry_date = datetime.now().date() + timedelta(days=item.part.default_expiry)
-
-            # fetch serial numbers
-            serials = None
-
-            if serial_numbers:
-                # If serial numbers are specified, check that they match!
-                try:
-                    serials = extract_serial_numbers(serial_numbers, quantity, item.part.getLatestSerialNumberInt())
-                except DjangoValidationError as e:
-                    raise ValidationError({
-                        'quantity': e.messages,
-                        'serial_numbers': e.messages,
-                    })
-
-            # Finally, save the item (with user information)
+            # Save the item (with user information)
             item.save(user=user)
 
             if serials:
-                """
-                Serialize the stock, if required
+                for serial in serials[1:]:
 
-                - Note that the "original" stock item needs to be created first, so it can be serialized
-                - It is then immediately deleted
-                """
+                    # Create a duplicate stock item with the next serial number
+                    item.pk = None
+                    item.serial = serial
 
-                try:
-                    item.serializeStock(
-                        quantity,
-                        serials,
-                        user,
-                        notes=notes,
-                        location=item.location,
-                    )
+                    item.save(user=user)
 
-                    headers = self.get_success_headers(serializer.data)
+                response_data = {
+                    'quantity': quantity,
+                    'serial_numbers': serials,
+                }
 
-                    # Delete the original item
-                    item.delete()
+            else:
+                response_data = serializer.data
 
-                    response_data = {
-                        'quantity': quantity,
-                        'serial_numbers': serials,
-                    }
-
-                    return Response(response_data, status=status.HTTP_201_CREATED, headers=headers)
-
-                except DjangoValidationError as e:
-                    raise ValidationError({
-                        'quantity': e.messages,
-                        'serial_numbers': e.messages,
-                    })
-
-            # Return a response
-            headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            return Response(response_data, status=status.HTTP_201_CREATED, headers=self.get_success_headers(serializer.data))
 
     def list(self, request, *args, **kwargs):
         """

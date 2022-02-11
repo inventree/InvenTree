@@ -1,5 +1,5 @@
 # Please keep this list sorted
-Django==3.2.10                   # Django package
+Django==3.2.12                   # Django package
 certifi                         # Certifi is (most likely) installed through one of the requirements above
 coreapi==2.3.0                  # API documentation
 coverage==5.3                   # Unit test coverage
@@ -35,7 +35,7 @@ importlib_metadata              # Backport for importlib.metadata
 inventree                       # Install the latest version of the InvenTree API python library
 markdown==3.3.4                 # Force particular version of markdown
 pep8-naming==0.11.1             # PEP naming convention extension
-pillow==8.3.2                   # Image manipulation
+pillow==9.0.0                   # Image manipulation
 py-moneyed==0.8.0               # Specific version requirement for py-moneyed
 pygments==2.7.4                 # Syntax highlighting
 python-barcode[images]==0.13.1  # Barcode generator

@@ -293,7 +293,7 @@ def progress_bar(val, max, *args, **kwargs):
     Render a progress bar element
     """
 
-    id = kwargs.get('id', 'progress-bar')
+    item_id = kwargs.get('id', 'progress-bar')
 
     if val > max:
         style = 'progress-bar-over'
@@ -317,7 +317,7 @@ def progress_bar(val, max, *args, **kwargs):
         style_tags.append(f'max-width: {max_width};')
 
     html = f"""
-    <div id='{id}' class='progress' style='{" ".join(style_tags)}'>
+    <div id='{item_id}' class='progress' style='{" ".join(style_tags)}'>
         <div class='progress-bar {style}' role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width:{percent}%'></div>
         <div class='progress-value'>{val} / {max}</div>
     </div>
@@ -451,8 +451,17 @@ class I18nStaticNode(StaticNode):
     replaces a variable named *lng* in the path with the current language
     """
     def render(self, context):
-        self.path.var = self.path.var.format(lng=context.request.LANGUAGE_CODE)
+
+        self.original = getattr(self, 'original', None)
+
+        if not self.original:
+            # Store the original (un-rendered) path template, as it gets overwritten below
+            self.original = self.path.var
+
+        self.path.var = self.original.format(lng=context.request.LANGUAGE_CODE)
+
         ret = super().render(context)
+
         return ret
 
 
@@ -480,4 +489,5 @@ else:
         # change path to called ressource
         bits[1] = f"'{loc_name}/{{lng}}.{bits[1][1:-1]}'"
         token.contents = ' '.join(bits)
+
         return I18nStaticNode.handle_token(parser, token)

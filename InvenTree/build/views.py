@@ -12,7 +12,6 @@ from django.forms import HiddenInput
 
 from .models import Build
 from . import forms
-from stock.models import StockItem
 
 from InvenTree.views import AjaxUpdateView, AjaxDeleteView
 from InvenTree.views import InvenTreeRoleMixin
@@ -95,15 +94,22 @@ class BuildOutputCreate(AjaxUpdateView):
         quantity = form.cleaned_data.get('output_quantity', None)
         serials = form.cleaned_data.get('serial_numbers', None)
 
-        if quantity:
+        if quantity is not None:
             build = self.get_object()
 
             # Check that requested output don't exceed build remaining quantity
             maximum_output = int(build.remaining - build.incomplete_count)
+
             if quantity > maximum_output:
                 form.add_error(
                     'output_quantity',
                     _('Maximum output quantity is ') + str(maximum_output),
+                )
+
+            elif quantity <= 0:
+                form.add_error(
+                    'output_quantity',
+                    _('Output quantity must be greater than zero'),
                 )
 
         # Check that the serial numbers are valid
@@ -183,67 +189,6 @@ class BuildOutputCreate(AjaxUpdateView):
             form.fields['serial_numbers'].widget = HiddenInput()
 
         return form
-
-
-class BuildOutputDelete(AjaxUpdateView):
-    """
-    Delete a build output (StockItem) for a given build.
-
-    Form is a simple confirmation dialog
-    """
-
-    model = Build
-    form_class = forms.BuildOutputDeleteForm
-    ajax_form_title = _('Delete Build Output')
-
-    role_required = 'build.delete'
-
-    def get_initial(self):
-
-        initials = super().get_initial()
-
-        output = self.get_param('output')
-
-        initials['output_id'] = output
-
-        return initials
-
-    def validate(self, build, form, **kwargs):
-
-        data = form.cleaned_data
-
-        confirm = data.get('confirm', False)
-
-        if not confirm:
-            form.add_error('confirm', _('Confirm unallocation of build stock'))
-            form.add_error(None, _('Check the confirmation box'))
-
-        output_id = data.get('output_id', None)
-        output = None
-
-        try:
-            output = StockItem.objects.get(pk=output_id)
-        except (ValueError, StockItem.DoesNotExist):
-            pass
-
-        if output:
-            if not output.build == build:
-                form.add_error(None, _('Build output does not match build'))
-        else:
-            form.add_error(None, _('Build output must be specified'))
-
-    def save(self, build, form, **kwargs):
-
-        output_id = form.cleaned_data.get('output_id')
-
-        output = StockItem.objects.get(pk=output_id)
-
-        build.deleteBuildOutput(output)
-
-    def get_data(self):
-        return {
-            'danger': _('Build output deleted'),
-        }
 
 
 class BuildDetail(InvenTreeRoleMixin, DetailView):

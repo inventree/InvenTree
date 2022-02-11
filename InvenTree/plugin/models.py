@@ -94,10 +94,8 @@ class PluginConfig(models.Model):
         ret = super().save(force_insert, force_update, *args, **kwargs)
 
         if not reload:
-            if self.active is False and self.__org_active is True:
-                registry.reload_plugins()
-
-            elif self.active is True and self.__org_active is False:
+            if (self.active is False and self.__org_active is True) or \
+               (self.active is True and self.__org_active is False):
                 registry.reload_plugins()
 
         return ret
@@ -123,6 +121,12 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
     We override the following class methods,
     so that we can pass the plugin instance
     """
+
+    def is_bool(self, **kwargs):
+
+        kwargs['plugin'] = self.plugin
+
+        return super().is_bool(**kwargs)
 
     @property
     def name(self):

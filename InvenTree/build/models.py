@@ -437,6 +437,9 @@ class Build(MPTTModel, ReferenceIndexingMixin):
     def output_count(self):
         return self.build_outputs.count()
 
+    def has_build_outputs(self):
+        return self.output_count > 0
+
     def get_build_outputs(self, **kwargs):
         """
         Return a list of build outputs.
@@ -705,7 +708,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
             self.save()
 
     @transaction.atomic
-    def deleteBuildOutput(self, output):
+    def delete_output(self, output):
         """
         Remove a build output from the database:
 

@@ -1530,15 +1530,15 @@ class Part(MPTTModel):
         returns a string representation of a hash object which can be compared with a stored value
         """
 
-        hash = hashlib.md5(str(self.id).encode())
+        result_hash = hashlib.md5(str(self.id).encode())
 
         # List *all* BOM items (including inherited ones!)
         bom_items = self.get_bom_items().all().prefetch_related('sub_part')
 
         for item in bom_items:
-            hash.update(str(item.get_item_hash()).encode())
+            result_hash.update(str(item.get_item_hash()).encode())
 
-        return str(hash.digest())
+        return str(result_hash.digest())
 
     def is_bom_valid(self):
         """ Check if the BOM is 'valid' - if the calculated checksum matches the stored value
@@ -2188,9 +2188,7 @@ def after_save_part(sender, instance: Part, created, **kwargs):
     Function to be executed after a Part is saved
     """
 
-    if created:
-        pass
-    else:
+    if not created:
         # Check part stock only if we are *updating* the part (not creating it)
 
         # Run this check in the background
@@ -2678,18 +2676,18 @@ class BomItem(models.Model):
         """
 
         # Seed the hash with the ID of this BOM item
-        hash = hashlib.md5(str(self.id).encode())
+        result_hash = hashlib.md5(str(self.id).encode())
 
         # Update the hash based on line information
-        hash.update(str(self.sub_part.id).encode())
-        hash.update(str(self.sub_part.full_name).encode())
-        hash.update(str(self.quantity).encode())
-        hash.update(str(self.note).encode())
-        hash.update(str(self.reference).encode())
-        hash.update(str(self.optional).encode())
-        hash.update(str(self.inherited).encode())
+        result_hash.update(str(self.sub_part.id).encode())
+        result_hash.update(str(self.sub_part.full_name).encode())
+        result_hash.update(str(self.quantity).encode())
+        result_hash.update(str(self.note).encode())
+        result_hash.update(str(self.reference).encode())
+        result_hash.update(str(self.optional).encode())
+        result_hash.update(str(self.inherited).encode())
 
-        return str(hash.digest())
+        return str(result_hash.digest())
 
     def validate_hash(self, valid=True):
         """ Mark this item as 'valid' (store the checksum hash).

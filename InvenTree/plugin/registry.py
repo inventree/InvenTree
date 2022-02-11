@@ -59,6 +59,22 @@ class PluginsRegistry:
         # mixins
         self.mixins_settings = {}
 
+    def call_plugin_function(self, slug, func, *args, **kwargs):
+        """
+        Call a member function (named by 'func') of the plugin named by 'slug'.
+
+        As this is intended to be run by the background worker,
+        we do not perform any try/except here.
+
+        Instead, any error messages are returned to the worker.
+        """
+
+        plugin = self.plugins[slug]
+
+        plugin_func = getattr(plugin, func)
+
+        return plugin_func(*args, **kwargs)
+
     # region public functions
     # region loading / unloading
     def load_plugins(self):
@@ -374,6 +390,10 @@ class PluginsRegistry:
             logger.warning("activate_integration_schedule failed, database not ready")
 
     def deactivate_integration_schedule(self):
+        """
+        Deactivate ScheduleMixin
+        currently nothing is done
+        """
         pass
 
     def activate_integration_app(self, plugins, force_reload=False):
@@ -557,3 +577,8 @@ class PluginsRegistry:
 
 
 registry = PluginsRegistry()
+
+
+def call_function(plugin_name, function_name, *args, **kwargs):
+    """ Global helper function to call a specific member function of a plugin """
+    return registry.call_plugin_function(plugin_name, function_name, *args, **kwargs)
