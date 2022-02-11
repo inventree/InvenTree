@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-10 07:09+0000\n"
-"PO-Revision-Date: 2022-02-11 17:02\n"
+"PO-Revision-Date: 2022-02-11 18:21\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -5795,15 +5795,15 @@ msgstr "Duplicar artículos de stock"
 
 #: stock/models.py:1218
 msgid "Stock items must refer to the same part"
-msgstr ""
+msgstr "Los artículos de stock deben referirse a la misma parte"
 
 #: stock/models.py:1222
 msgid "Stock items must refer to the same supplier part"
-msgstr ""
+msgstr "Los artículos de stock deben referirse a la misma parte del proveedor"
 
 #: stock/models.py:1226
 msgid "Stock status codes must match"
-msgstr ""
+msgstr "Los códigos de estado del stock deben coincidir"
 
 #: stock/models.py:1397
 msgid "StockItem cannot be moved as it is not in stock"
@@ -5864,7 +5864,7 @@ msgstr "Introduzca números de serie para nuevos elementos"
 
 #: stock/serializers.py:326 stock/serializers.py:732 stock/serializers.py:973
 msgid "Destination stock location"
-msgstr ""
+msgstr "Ubicación de stock de destino"
 
 #: stock/serializers.py:333
 msgid "Optional note field"
@@ -5888,7 +5888,7 @@ msgstr ""
 
 #: stock/serializers.py:627
 msgid "Customer to assign stock items"
-msgstr ""
+msgstr "Cliente para asignar elementos de stock"
 
 #: stock/serializers.py:633
 msgid "Selected company is not a customer"
@@ -5896,7 +5896,7 @@ msgstr ""
 
 #: stock/serializers.py:641
 msgid "Stock assignment notes"
-msgstr ""
+msgstr "Notas de asignación de stock"
 
 #: stock/serializers.py:651 stock/serializers.py:881
 msgid "A list of stock items must be provided"
@@ -5904,7 +5904,7 @@ msgstr "Debe proporcionarse una lista de artículos de stock"
 
 #: stock/serializers.py:739
 msgid "Stock merging notes"
-msgstr ""
+msgstr "Notas de fusión de stock"
 
 #: stock/serializers.py:744
 msgid "Allow mismatched suppliers"
@@ -5920,23 +5920,23 @@ msgstr ""
 
 #: stock/serializers.py:751
 msgid "Allow stock items with different status codes to be merged"
-msgstr ""
+msgstr "Permitir fusionar elementos de stock con diferentes códigos de estado"
 
 #: stock/serializers.py:761
 msgid "At least two stock items must be provided"
-msgstr ""
+msgstr "Debe proporcionar al menos dos artículos de stock"
 
 #: stock/serializers.py:843
 msgid "StockItem primary key value"
-msgstr ""
+msgstr "Valor de clave primaria de Stock"
 
 #: stock/serializers.py:871
 msgid "Stock transaction notes"
-msgstr ""
+msgstr "Notas de transacción de stock"
 
 #: stock/templates/stock/item.html:18
 msgid "Stock Tracking Information"
-msgstr ""
+msgstr "Información de Seguimiento de Stock"
 
 #: stock/templates/stock/item.html:29
 msgid "New Entry"
@@ -5944,7 +5944,7 @@ msgstr ""
 
 #: stock/templates/stock/item.html:48
 msgid "Stock Item Allocations"
-msgstr ""
+msgstr "Asignaciones de Artículos de Stock"
 
 #: stock/templates/stock/item.html:64
 msgid "Child Stock Items"
