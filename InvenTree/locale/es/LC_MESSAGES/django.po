@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-10 07:09+0000\n"
-"PO-Revision-Date: 2022-02-11 14:01\n"
+"PO-Revision-Date: 2022-02-11 15:04\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -4386,19 +4386,19 @@ msgstr "Activar esta opción para omitir filas inválidas"
 
 #: part/serializers.py:787
 msgid "BOM File"
-msgstr ""
+msgstr "Archivo BOM"
 
 #: part/serializers.py:788
 msgid "Select Bill of Materials file"
-msgstr ""
+msgstr "Seleccionar archivo de Lista de Materiales"
 
 #: part/serializers.py:812
 msgid "Unsupported file type"
-msgstr ""
+msgstr "Tipo de archivo no soportado"
 
 #: part/serializers.py:818
 msgid "File is too large"
-msgstr ""
+msgstr "El archivo es demasiado grande"
 
 #: part/serializers.py:843
 msgid "Missing required column"
@@ -4973,7 +4973,7 @@ msgstr ""
 
 #: part/templates/part/part_pricing.html:22 part/templates/part/prices.html:21
 msgid "Supplier Pricing"
-msgstr ""
+msgstr "Precios del Proveedor"
 
 #: part/templates/part/part_pricing.html:26
 #: part/templates/part/part_pricing.html:52
@@ -4982,7 +4982,7 @@ msgstr ""
 #: part/templates/part/prices.html:52 part/templates/part/prices.html:103
 #: part/templates/part/prices.html:120
 msgid "Unit Cost"
-msgstr ""
+msgstr "Coste Unitario"
 
 #: part/templates/part/part_pricing.html:32
 #: part/templates/part/part_pricing.html:58
@@ -4991,12 +4991,12 @@ msgstr ""
 #: part/templates/part/prices.html:59 part/templates/part/prices.html:108
 #: part/templates/part/prices.html:125
 msgid "Total Cost"
-msgstr ""
+msgstr "Costo Total"
 
 #: part/templates/part/part_pricing.html:40 part/templates/part/prices.html:40
 #: templates/js/translated/bom.js:858
 msgid "No supplier pricing available"
-msgstr ""
+msgstr "Ningún precio de proveedor disponible"
 
 #: part/templates/part/part_pricing.html:48 part/templates/part/prices.html:49
 #: part/templates/part/prices.html:243
@@ -5183,7 +5183,7 @@ msgstr ""
 #: part/templates/part/upload_bom.html:23
 #: part/templates/part/upload_bom.html:90
 msgid "Upload BOM File"
-msgstr ""
+msgstr "Subir archivo BOM"
 
 #: part/templates/part/upload_bom.html:29
 msgid "Submit BOM Data"
@@ -5414,7 +5414,7 @@ msgstr ""
 #: report/api.py:234 report/api.py:278
 #, python-brace-format
 msgid "Template file '{filename}' is missing or does not exist"
-msgstr ""
+msgstr "Falta el archivo de plantilla '{filename}' o no existe"
 
 #: report/models.py:182
 msgid "Template name"
@@ -5422,7 +5422,7 @@ msgstr ""
 
 #: report/models.py:188
 msgid "Report template file"
-msgstr ""
+msgstr "Plantilla de informe"
 
 #: report/models.py:195
 msgid "Report template description"
@@ -5434,7 +5434,7 @@ msgstr ""
 
 #: report/models.py:292
 msgid "Pattern for generating report filenames"
-msgstr ""
+msgstr "Patrón para generar nombres de archivo"
 
 #: report/models.py:299
 msgid "Report template is enabled"
@@ -5478,15 +5478,15 @@ msgstr ""
 
 #: report/models.py:548
 msgid "Snippet"
-msgstr ""
+msgstr "Fragmento"
 
 #: report/models.py:549
 msgid "Report snippet file"
-msgstr ""
+msgstr "Archivo de reporte snippet"
 
 #: report/models.py:553
 msgid "Snippet file description"
-msgstr ""
+msgstr "Descripción de archivo de fragmento"
 
 #: report/models.py:588
 msgid "Asset"
