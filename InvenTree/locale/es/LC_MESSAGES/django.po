@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-10 07:09+0000\n"
-"PO-Revision-Date: 2022-02-11 11:56\n"
+"PO-Revision-Date: 2022-02-11 14:01\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -255,7 +255,7 @@ msgstr "Nombre de Archivo"
 
 #: InvenTree/serializers.py:334
 msgid "Invalid value"
-msgstr ""
+msgstr "Valor inválido"
 
 #: InvenTree/settings.py:655
 msgid "German"
@@ -522,7 +522,7 @@ msgstr "El excedente no debe superar el 100%"
 
 #: InvenTree/validators.py:162
 msgid "Invalid value for overage"
-msgstr ""
+msgstr "Valor no válido para sobrecarga"
 
 #: InvenTree/views.py:538
 msgid "Delete Item"
@@ -1026,7 +1026,7 @@ msgstr "El orden de construcción tiene salidas incompletas"
 
 #: build/serializers.py:335 build/templates/build/build_base.html:95
 msgid "No build outputs have been created for this build order"
-msgstr ""
+msgstr "No se han creado salidas para esta orden de construcción"
 
 #: build/serializers.py:363 build/serializers.py:412 part/models.py:2760
 #: part/models.py:2919
@@ -1337,7 +1337,7 @@ msgstr "Acciones de salida"
 
 #: build/templates/build/detail.html:250
 msgid "Complete selected build outputs"
-msgstr ""
+msgstr "Completa las salidas seleccionadas"
 
 #: build/templates/build/detail.html:251
 msgid "Complete outputs"
@@ -1345,11 +1345,11 @@ msgstr "Completar salidas"
 
 #: build/templates/build/detail.html:253
 msgid "Delete selected build outputs"
-msgstr ""
+msgstr "Eliminar salidas seleccionadas"
 
 #: build/templates/build/detail.html:254
 msgid "Delete outputs"
-msgstr ""
+msgstr "Eliminar salidas"
 
 #: build/templates/build/detail.html:270
 msgid "Completed Build Outputs"
@@ -1435,7 +1435,7 @@ msgstr "Cantidad máxima de salida es "
 
 #: build/views.py:112
 msgid "Output quantity must be greater than zero"
-msgstr ""
+msgstr "Cantidad de salida debe ser mayor que cero"
 
 #: build/views.py:128 stock/serializers.py:363 stock/views.py:1257
 msgid "Serial numbers already exist"
@@ -1727,7 +1727,7 @@ msgstr "Incluye información de precios en tablas BOM"
 
 #: common/models.py:785
 msgid "Show Price History"
-msgstr ""
+msgstr "Mostrar Historial de Precios"
 
 #: common/models.py:786
 msgid "Display historical pricing for Part"
@@ -4374,7 +4374,7 @@ msgstr ""
 
 #: part/serializers.py:685
 msgid "Include BOM items which are inherited from templated parts"
-msgstr ""
+msgstr "Incluye elementos BOM que son heredados de partes con plantillas"
 
 #: part/serializers.py:690
 msgid "Skip Invalid Rows"
@@ -4414,7 +4414,7 @@ msgstr ""
 
 #: part/serializers.py:942
 msgid "Multiple matching parts found"
-msgstr ""
+msgstr "Varios resultados encontrados"
 
 #: part/serializers.py:946
 msgid "No matching part found"
@@ -4961,7 +4961,7 @@ msgstr ""
 
 #: part/templates/part/part_base.html:449 part/templates/part/prices.html:144
 msgid "Calculate"
-msgstr ""
+msgstr "Calcular"
 
 #: part/templates/part/part_base.html:492
 msgid "No matching images found"
@@ -5301,15 +5301,15 @@ msgstr ""
 
 #: part/views.py:1323
 msgid "Added new price break"
-msgstr ""
+msgstr "Nuevo diferencial de precio añadido"
 
 #: part/views.py:1399
 msgid "Edit Internal Price Break"
-msgstr ""
+msgstr "Editar Diferencial de Precio Interno"
 
 #: part/views.py:1407
 msgid "Delete Internal Price Break"
-msgstr ""
+msgstr "Eliminar Diferencial de Precio Interno"
 
 #: plugin/integration.py:138
 msgid "No author found"
@@ -5843,7 +5843,7 @@ msgstr ""
 
 #: stock/serializers.py:173
 msgid "Purchase price of this stock item"
-msgstr ""
+msgstr "Precio de compra de este artículo de stock"
 
 #: stock/serializers.py:180
 msgid "Purchase currency of this stock item"
@@ -5912,7 +5912,7 @@ msgstr ""
 
 #: stock/serializers.py:745
 msgid "Allow stock items with different supplier parts to be merged"
-msgstr ""
+msgstr "Permitir fusionar artículos de stock con diferentes piezas de proveedor"
 
 #: stock/serializers.py:750
 msgid "Allow mismatched status"
@@ -6458,7 +6458,7 @@ msgstr ""
 
 #: templates/InvenTree/index.html:88
 msgid "Subscribed Parts"
-msgstr ""
+msgstr "Partes Suscritas"
 
 #: templates/InvenTree/index.html:98
 msgid "Subscribed Categories"
@@ -6466,7 +6466,7 @@ msgstr ""
 
 #: templates/InvenTree/index.html:108
 msgid "Latest Parts"
-msgstr ""
+msgstr "Últimas Partes"
 
 #: templates/InvenTree/index.html:119
 msgid "BOM Waiting Validation"
@@ -7360,15 +7360,15 @@ msgstr "Versión de InvenTree"
 #: templates/email/low_stock_notification.html:7
 #, python-format
 msgid " The available stock for %(part)s has fallen below the configured minimum level"
-msgstr ""
+msgstr " El stock disponible para %(part)s ha caído por debajo del nivel mínimo configurado"
 
 #: templates/email/low_stock_notification.html:9
 msgid "Click on the following link to view this part"
-msgstr ""
+msgstr "Haga clic en el siguiente enlace para ver esta pieza"
 
 #: templates/email/low_stock_notification.html:19
 msgid "Minimum Quantity"
-msgstr ""
+msgstr "Cantidad Mínima"
 
 #: templates/image_download.html:8
 msgid "Specify URL for downloading image"
@@ -7689,11 +7689,11 @@ msgstr ""
 
 #: templates/js/translated/bom.js:838
 msgid "Purchase Price Range"
-msgstr ""
+msgstr "Rango de Precio de Compra"
 
 #: templates/js/translated/bom.js:845
 msgid "Purchase Price Average"
-msgstr ""
+msgstr "Precio Promedio de Compra"
 
 #: templates/js/translated/bom.js:894 templates/js/translated/bom.js:983
 msgid "View BOM"
@@ -7709,7 +7709,7 @@ msgstr ""
 
 #: templates/js/translated/bom.js:958
 msgid "Edit substitute parts"
-msgstr ""
+msgstr "Editar partes sustitutas"
 
 #: templates/js/translated/bom.js:960 templates/js/translated/bom.js:1139
 msgid "Edit BOM Item"
@@ -7797,7 +7797,7 @@ msgstr "Completar salidas de trabajo"
 
 #: templates/js/translated/build.js:496
 msgid "Delete Build Outputs"
-msgstr ""
+msgstr "Eliminar Salidas"
 
 #: templates/js/translated/build.js:585
 msgid "No build order allocations found"
@@ -7951,11 +7951,11 @@ msgstr ""
 
 #: templates/js/translated/company.js:363
 msgid "Parts Supplied"
-msgstr ""
+msgstr "Partes Suministradas"
 
 #: templates/js/translated/company.js:372
 msgid "Parts Manufactured"
-msgstr ""
+msgstr "Partes Fabricadas"
 
 #: templates/js/translated/company.js:387
 msgid "No company information found"
@@ -7963,15 +7963,15 @@ msgstr ""
 
 #: templates/js/translated/company.js:406
 msgid "The following manufacturer parts will be deleted"
-msgstr ""
+msgstr "Se eliminarán las siguientes partes del fabricante"
 
 #: templates/js/translated/company.js:423
 msgid "Delete Manufacturer Parts"
-msgstr ""
+msgstr "Eliminar Partes del Fabricante"
 
 #: templates/js/translated/company.js:480
 msgid "No manufacturer parts found"
-msgstr ""
+msgstr "No se encontraron partes del fabricante"
 
 #: templates/js/translated/company.js:500
 #: templates/js/translated/company.js:757 templates/js/translated/part.js:517
@@ -8007,7 +8007,7 @@ msgstr ""
 
 #: templates/js/translated/company.js:737
 msgid "No supplier parts found"
-msgstr ""
+msgstr "No se encontraron piezas de proveedor"
 
 #: templates/js/translated/filters.js:178
 #: templates/js/translated/filters.js:429
@@ -8334,11 +8334,11 @@ msgstr ""
 #: templates/js/translated/order.js:1068 templates/js/translated/order.js:2163
 #: templates/js/translated/part.js:1841 templates/js/translated/part.js:2052
 msgid "Unit Price"
-msgstr ""
+msgstr "Precio Unitario"
 
 #: templates/js/translated/order.js:1083 templates/js/translated/order.js:2179
 msgid "Total Price"
-msgstr ""
+msgstr "Precio Total"
 
 #: templates/js/translated/order.js:1161 templates/js/translated/order.js:2313
 msgid "Edit line item"
@@ -8435,7 +8435,7 @@ msgstr ""
 
 #: templates/js/translated/order.js:2310 templates/js/translated/order.js:2476
 msgid "Calculate price"
-msgstr ""
+msgstr "Calcular precio"
 
 #: templates/js/translated/order.js:2321
 msgid "Cannot be deleted as items have been shipped"
@@ -8451,7 +8451,7 @@ msgstr ""
 
 #: templates/js/translated/order.js:2484
 msgid "Update Unit Price"
-msgstr ""
+msgstr "Actualizar Precio Unitario"
 
 #: templates/js/translated/order.js:2498
 msgid "No matching line items"
@@ -9282,7 +9282,7 @@ msgstr "Pendiente"
 
 #: templates/js/translated/table_filters.js:408
 msgid "Include parts in subcategories"
-msgstr ""
+msgstr "Incluye partes en subcategorías"
 
 #: templates/js/translated/table_filters.js:412
 msgid "Has IPN"
@@ -9294,7 +9294,7 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:418
 msgid "Show active parts"
-msgstr ""
+msgstr "Mostrar partes activas"
 
 #: templates/js/translated/table_filters.js:426
 msgid "Stock available"
