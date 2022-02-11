@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-10 07:09+0000\n"
-"PO-Revision-Date: 2022-02-11 15:04\n"
+"PO-Revision-Date: 2022-02-11 16:04\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -4406,11 +4406,11 @@ msgstr ""
 
 #: part/serializers.py:858
 msgid "No part column found"
-msgstr ""
+msgstr "No se encontró columna de parte"
 
 #: part/serializers.py:861
 msgid "No data rows found"
-msgstr ""
+msgstr "No se han encontrado filas"
 
 #: part/serializers.py:942
 msgid "Multiple matching parts found"
@@ -4418,7 +4418,7 @@ msgstr "Varios resultados encontrados"
 
 #: part/serializers.py:946
 msgid "No matching part found"
-msgstr ""
+msgstr "No se encontraron partes coincidentes"
 
 #: part/serializers.py:949
 msgid "Duplicate part selected"
@@ -4430,11 +4430,11 @@ msgstr ""
 
 #: part/serializers.py:964
 msgid "Quantity not provided"
-msgstr ""
+msgstr "Cantidad no proporcionada"
 
 #: part/serializers.py:972
 msgid "Invalid quantity"
-msgstr ""
+msgstr "Cantidad no válida"
 
 #: part/serializers.py:992
 msgid "Clear Existing BOM"
@@ -4965,7 +4965,7 @@ msgstr "Calcular"
 
 #: part/templates/part/part_base.html:492
 msgid "No matching images found"
-msgstr ""
+msgstr "No se encontraron imágenes coincidentes"
 
 #: part/templates/part/part_base.html:573
 msgid "Hide Part Details"
@@ -5313,11 +5313,11 @@ msgstr "Eliminar Diferencial de Precio Interno"
 
 #: plugin/integration.py:138
 msgid "No author found"
-msgstr ""
+msgstr "No se encontró autor"
 
 #: plugin/integration.py:152
 msgid "No date found"
-msgstr ""
+msgstr "No se encontró fecha"
 
 #: plugin/models.py:26
 msgid "Plugin Configuration"
@@ -5560,7 +5560,7 @@ msgstr ""
 
 #: stock/api.py:476
 msgid "Quantity is required"
-msgstr ""
+msgstr "Cantidad requerida"
 
 #: stock/api.py:483
 msgid "Valid part must be supplied"
@@ -5574,7 +5574,7 @@ msgstr ""
 
 #: stock/forms.py:78 stock/forms.py:252
 msgid "Expiration date for this stock item"
-msgstr ""
+msgstr "Fecha de caducidad para este artículo de stock"
 
 #: stock/forms.py:81
 msgid "Enter unique serial numbers (or leave blank)"
@@ -5767,27 +5767,27 @@ msgstr "Los números de serie ya existen: {exists}"
 
 #: stock/models.py:1192
 msgid "Stock item has been assigned to a sales order"
-msgstr ""
+msgstr "Artículo de stock ha sido asignado a un pedido de venta"
 
 #: stock/models.py:1195
 msgid "Stock item is installed in another item"
-msgstr ""
+msgstr "Artículo de stock está instalado en otro artículo"
 
 #: stock/models.py:1198
 msgid "Stock item contains other items"
-msgstr ""
+msgstr "Artículo de stock contiene otros artículos"
 
 #: stock/models.py:1201
 msgid "Stock item has been assigned to a customer"
-msgstr ""
+msgstr "Artículo de stock ha sido asignado a un cliente"
 
 #: stock/models.py:1204
 msgid "Stock item is currently in production"
-msgstr ""
+msgstr "El artículo de stock está en producción"
 
 #: stock/models.py:1207
 msgid "Serialized stock cannot be merged"
-msgstr ""
+msgstr "Stock serializado no puede ser combinado"
 
 #: stock/models.py:1214 stock/serializers.py:775
 msgid "Duplicate stock items"
@@ -5856,7 +5856,7 @@ msgstr "Introduzca el número de elementos de stock para serializar"
 #: stock/serializers.py:309
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({q})"
-msgstr ""
+msgstr "La cantidad no debe exceder la cantidad disponible de stock ({q})"
 
 #: stock/serializers.py:315
 msgid "Enter serial numbers for new items"
@@ -6426,7 +6426,7 @@ msgstr ""
 
 #: templates/404.html:5 templates/404.html:11
 msgid "Page Not Found"
-msgstr ""
+msgstr "Página No Encontrada"
 
 #: templates/404.html:14
 msgid "The requested page does not exist"
@@ -6682,7 +6682,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:88
 msgid "This plugin was found in a local InvenTree path"
-msgstr ""
+msgstr "Este plugin fue encontrado en una ruta local de InvenTree"
 
 #: templates/InvenTree/settings/plugin_settings.html:94
 msgid "Installation path"
@@ -6745,7 +6745,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/settings.html:208
 msgid "No category parameter templates found"
-msgstr ""
+msgstr "No hay plantillas de parámetros de categoría"
 
 #: templates/InvenTree/settings/settings.html:230
 #: templates/InvenTree/settings/settings.html:329
@@ -6759,7 +6759,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/settings.html:309
 msgid "No part parameter templates found"
-msgstr ""
+msgstr "No se encontraron plantillas de parámetros de parte"
 
 #: templates/InvenTree/settings/settings.html:313
 msgid "ID"
@@ -7959,7 +7959,7 @@ msgstr "Partes Fabricadas"
 
 #: templates/js/translated/company.js:387
 msgid "No company information found"
-msgstr ""
+msgstr "No se encontró información de la empresa"
 
 #: templates/js/translated/company.js:406
 msgid "The following manufacturer parts will be deleted"
@@ -7987,7 +7987,7 @@ msgstr ""
 
 #: templates/js/translated/company.js:631 templates/js/translated/part.js:696
 msgid "No parameters found"
-msgstr ""
+msgstr "No se encontraron parámetros"
 
 #: templates/js/translated/company.js:668 templates/js/translated/part.js:738
 msgid "Edit parameter"
@@ -8309,7 +8309,7 @@ msgstr "Recibir artículos de orden de compra"
 
 #: templates/js/translated/order.js:790 templates/js/translated/part.js:809
 msgid "No purchase orders found"
-msgstr ""
+msgstr "No se encontraron órdenes de compra"
 
 #: templates/js/translated/order.js:815 templates/js/translated/order.js:1230
 msgid "Order is overdue"
@@ -8354,7 +8354,7 @@ msgstr ""
 
 #: templates/js/translated/order.js:1206
 msgid "No sales orders found"
-msgstr ""
+msgstr "No se encontraron ventas"
 
 #: templates/js/translated/order.js:1244
 msgid "Invalid Customer"
@@ -8382,7 +8382,7 @@ msgstr ""
 
 #: templates/js/translated/order.js:1401
 msgid "No matching shipments found"
-msgstr ""
+msgstr "No se encontraron envíos coincidentes"
 
 #: templates/js/translated/order.js:1411
 msgid "Shipment Reference"
@@ -8402,7 +8402,7 @@ msgstr ""
 
 #: templates/js/translated/order.js:1809
 msgid "No sales order allocations found"
-msgstr ""
+msgstr "No se encontraron asignaciones de órdenes"
 
 #: templates/js/translated/order.js:1898
 msgid "Edit Stock Allocation"
@@ -8487,11 +8487,11 @@ msgstr ""
 
 #: templates/js/translated/part.js:172
 msgid "Initial Stock Quantity"
-msgstr ""
+msgstr "Cantidad Inicial de Stock"
 
 #: templates/js/translated/part.js:173
 msgid "Specify initial stock quantity for this part"
-msgstr ""
+msgstr "Especifique la cantidad inicial de stock para esta parte"
 
 #: templates/js/translated/part.js:180
 msgid "Select destination stock location"
@@ -8790,7 +8790,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:233
 msgid "Enter initial quantity for this stock item"
-msgstr ""
+msgstr "Introduzca la cantidad inicial para este artículo de stock"
 
 #: templates/js/translated/stock.js:239
 msgid "Enter serial numbers for new stock (or leave blank)"
@@ -8822,7 +8822,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:470
 msgid "More than one matching result found"
-msgstr ""
+msgstr "Más de un resultado encontrado"
 
 #: templates/js/translated/stock.js:515
 msgid "Export Stock"
@@ -8906,11 +8906,11 @@ msgstr ""
 
 #: templates/js/translated/stock.js:1011
 msgid "Quantity cannot be adjusted for serialized stock"
-msgstr ""
+msgstr "La cantidad no se puede ajustar para el stock serializado"
 
 #: templates/js/translated/stock.js:1011
 msgid "Specify stock quantity"
-msgstr ""
+msgstr "Especificar cantidad de stock"
 
 #: templates/js/translated/stock.js:1051
 msgid "You must select at least one available stock item"
@@ -8934,7 +8934,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:1264
 msgid "No test results found"
-msgstr ""
+msgstr "No se encontraron resultados de prueba"
 
 #: templates/js/translated/stock.js:1321
 msgid "Test Date"
@@ -9051,7 +9051,7 @@ msgstr "Debe seleccionar el código de estado"
 
 #: templates/js/translated/stock.js:2340
 msgid "Allocated Quantity"
-msgstr ""
+msgstr "Cantidad Asignada"
 
 #: templates/js/translated/stock.js:2535
 msgid "Invalid date"
