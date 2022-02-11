@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-10 07:09+0000\n"
-"PO-Revision-Date: 2022-02-11 16:04\n"
+"PO-Revision-Date: 2022-02-11 17:02\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -5791,7 +5791,7 @@ msgstr "Stock serializado no puede ser combinado"
 
 #: stock/models.py:1214 stock/serializers.py:775
 msgid "Duplicate stock items"
-msgstr ""
+msgstr "Duplicar artículos de stock"
 
 #: stock/models.py:1218
 msgid "Stock items must refer to the same part"
