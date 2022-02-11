@@ -245,6 +245,29 @@ class BuildOutputComplete(generics.CreateAPIView):
         ctx = super().get_serializer_context()
 
         ctx['request'] = self.request
+        ctx['to_complete'] = True
+
+        try:
+            ctx['build'] = Build.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
+        return ctx
+
+
+class BuildOutputDelete(generics.CreateAPIView):
+    """
+    API endpoint for deleting multiple build outputs
+    """
+
+    queryset = Build.objects.none()
+
+    serializer_class = build.serializers.BuildOutputDeleteSerializer
+
+    def get_serializer_context(self):
+        ctx = super().get_serializer_context()
+
+        ctx['request'] = self.request
 
         try:
             ctx['build'] = Build.objects.get(pk=self.kwargs.get('pk', None))
@@ -432,6 +455,7 @@ build_api_urls = [
     url(r'^(?P<pk>\d+)/', include([
         url(r'^allocate/', BuildAllocate.as_view(), name='api-build-allocate'),
         url(r'^complete/', BuildOutputComplete.as_view(), name='api-build-output-complete'),
+        url(r'^delete-outputs/', BuildOutputDelete.as_view(), name='api-build-output-delete'),
         url(r'^finish/', BuildFinish.as_view(), name='api-build-finish'),
         url(r'^unallocate/', BuildUnallocate.as_view(), name='api-build-unallocate'),
         url(r'^.*$', BuildDetail.as_view(), name='api-build-detail'),

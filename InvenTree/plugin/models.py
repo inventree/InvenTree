@@ -94,10 +94,8 @@ class PluginConfig(models.Model):
         ret = super().save(force_insert, force_update, *args, **kwargs)
 
         if not reload:
-            if self.active is False and self.__org_active is True:
-                registry.reload_plugins()
-
-            elif self.active is True and self.__org_active is False:
+            if (self.active is False and self.__org_active is True) or \
+               (self.active is True and self.__org_active is False):
                 registry.reload_plugins()
 
         return ret

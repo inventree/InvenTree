@@ -141,6 +141,9 @@ class BuildOutputSerializer(serializers.Serializer):
 
         build = self.context['build']
 
+        # As this serializer can be used in multiple contexts, we need to work out why we are here
+        to_complete = self.context.get('to_complete', False)
+
         # The stock item must point to the build
         if output.build != build:
             raise ValidationError(_("Build output does not match the parent build"))
@@ -153,9 +156,11 @@ class BuildOutputSerializer(serializers.Serializer):
         if not output.is_building:
             raise ValidationError(_("This build output has already been completed"))
 
-        # The build output must have all tracked parts allocated
-        if not build.isFullyAllocated(output):
-            raise ValidationError(_("This build output is not fully allocated"))
+        if to_complete:
+
+            # The build output must have all tracked parts allocated
+            if not build.isFullyAllocated(output):
+                raise ValidationError(_("This build output is not fully allocated"))
 
         return output
 
@@ -163,6 +168,48 @@ class BuildOutputSerializer(serializers.Serializer):
         fields = [
             'output',
         ]
+
+
+class BuildOutputDeleteSerializer(serializers.Serializer):
+    """
+    DRF serializer for deleting (cancelling) one or more build outputs
+    """
+
+    class Meta:
+        fields = [
+            'outputs',
+        ]
+
+    outputs = BuildOutputSerializer(
+        many=True,
+        required=True,
+    )
+
+    def validate(self, data):
+
+        data = super().validate(data)
+
+        outputs = data.get('outputs', [])
+
+        if len(outputs) == 0:
+            raise ValidationError(_("A list of build outputs must be provided"))
+
+        return data
+
+    def save(self):
+        """
+        'save' the serializer to delete the build outputs
+        """
+
+        data = self.validated_data
+        outputs = data.get('outputs', [])
+
+        build = self.context['build']
+
+        with transaction.atomic():
+            for item in outputs:
+                output = item['output']
+                build.delete_output(output)
 
 
 class BuildOutputCompleteSerializer(serializers.Serializer):
@@ -283,6 +330,9 @@ class BuildCompleteSerializer(serializers.Serializer):
 
         if build.incomplete_count > 0:
             raise ValidationError(_("Build order has incomplete outputs"))
+
+        if not build.has_build_outputs():
+            raise ValidationError(_("No build outputs have been created for this build order"))
 
         return data
 
