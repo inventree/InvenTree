@@ -62,15 +62,16 @@ function imageHoverIcon(url) {
  * @param {String} url is the image URL 
  * @returns html <img> tag
  */
-function thumbnailImage(url) {
+function thumbnailImage(url, options={}) {
 
     if (!url) {
         url = blankImage();
     }
 
     // TODO: Support insertion of custom classes
+    var title = options.title || '';
 
-    var html = `<img class='hover-img-thumb' src='${url}'>`;
+    var html = `<img class='hover-img-thumb' src='${url}' title='${title}'>`;
 
     return html;
 

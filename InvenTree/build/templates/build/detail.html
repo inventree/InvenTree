@@ -243,15 +243,19 @@
 
                     <!-- Build output actions -->
                     <div class='btn-group'>
-                        <button id='output-options' class='btn btn-primary dropdown-toiggle' type='button' data-bs-toggle='dropdown' title='{% trans "Output Actions" %}'>
+                        <button id='output-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle='dropdown' title='{% trans "Output Actions" %}'>
                             <span class='fas fa-tools'></span> <span class='caret'></span>
                         </button>
                         <ul class='dropdown-menu'>
-                            <li><a class='dropdown-item' href='#' id='multi-output-complete' title='{% trans "Complete selected items" %}'>
+                            <li><a class='dropdown-item' href='#' id='multi-output-complete' title='{% trans "Complete selected build outputs" %}'>
                                 <span class='fas fa-check-circle icon-green'></span> {% trans "Complete outputs" %}
+                            </a></li>
+                            <li><a class='dropdown-item' href='#' id='multi-output-delete' title='{% trans "Delete selected build outputs" %}'>
+                                <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete outputs" %}
                             </a></li>
                         </ul>
                     </div>
+                    {% include "filter_list.html" with id='incompletebuilditems' %}
                 </div>
                 {% endif %}
             </div>
@@ -371,6 +375,7 @@ inventreeGet(
                 [
                     '#output-options',
                     '#multi-output-complete',
+                    '#multi-output-delete',
                 ]
             );
 
@@ -390,6 +395,24 @@ inventreeGet(
                         }
                     }
                 );
+            });
+
+            $('#multi-output-delete').click(function() {
+                var outputs = $('#build-output-table').bootstrapTable('getSelections');
+
+                deleteBuildOutputs(
+                    build_info.pk,
+                    outputs,
+                    {
+                        success: function() {
+                            // Reload the "in progress" table
+                            $('#build-output-table').bootstrapTable('refresh');
+
+                            // Reload the "completed" table
+                            $('#build-stock-table').bootstrapTable('refresh');
+                        }
+                    }
+                )
             });
 
             {% endif %}

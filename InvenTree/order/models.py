@@ -822,14 +822,25 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     """
 
-    @staticmethod
-    def get_api_url():
-        return reverse('api-po-line-list')
-
     class Meta:
         unique_together = (
             ('order', 'part', 'quantity', 'purchase_price')
         )
+
+    @staticmethod
+    def get_api_url():
+        return reverse('api-po-line-list')
+
+    def clean(self):
+
+        super().clean()
+
+        if self.order.supplier and self.part:
+            # Supplier part *must* point to the same supplier!
+            if self.part.supplier != self.order.supplier:
+                raise ValidationError({
+                    'part': _('Supplier part must match supplier')
+                })
 
     def __str__(self):
         return "{n} x {part} from {supplier} (for {po})".format(

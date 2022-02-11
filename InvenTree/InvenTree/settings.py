@@ -172,12 +172,6 @@ if MEDIA_ROOT is None:
     print("ERROR: INVENTREE_MEDIA_ROOT directory is not defined")
     sys.exit(1)
 
-# Options for django-maintenance-mode : https://pypi.org/project/django-maintenance-mode/
-MAINTENANCE_MODE_STATE_FILE_PATH = os.path.join(
-    config_dir,
-    'maintenance_mode_state.txt',
-)
-
 # List of allowed hosts (default = allow all)
 ALLOWED_HOSTS = CONFIG.get('allowed_hosts', ['*'])
 
@@ -870,6 +864,7 @@ MARKDOWNIFY_BLEACH = False
 
 # Maintenance mode
 MAINTENANCE_MODE_RETRY_AFTER = 60
+MAINTENANCE_MODE_STATE_BACKEND = 'maintenance_mode.backends.DefaultStorageBackend'
 
 # Are plugins enabled?
 PLUGINS_ENABLED = _is_true(get_setting(

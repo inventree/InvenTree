@@ -342,7 +342,7 @@ class StockItemTest(StockAPITestCase):
             }
         )
 
-        self.assertContains(response, 'This field is required', status_code=status.HTTP_400_BAD_REQUEST)
+        self.assertContains(response, 'Valid part must be supplied', status_code=status.HTTP_400_BAD_REQUEST)
 
         # POST with an invalid part reference
 
@@ -355,7 +355,7 @@ class StockItemTest(StockAPITestCase):
             }
         )
 
-        self.assertContains(response, 'does not exist', status_code=status.HTTP_400_BAD_REQUEST)
+        self.assertContains(response, 'Valid part must be supplied', status_code=status.HTTP_400_BAD_REQUEST)
 
         # POST without quantity
         response = self.post(
@@ -379,6 +379,67 @@ class StockItemTest(StockAPITestCase):
             },
             expected_code=201
         )
+
+    def test_creation_with_serials(self):
+        """
+        Test that serialized stock items can be created via the API,
+        """
+
+        trackable_part = part.models.Part.objects.create(
+            name='My part',
+            description='A trackable part',
+            trackable=True,
+            default_location=StockLocation.objects.get(pk=1),
+        )
+
+        self.assertEqual(trackable_part.stock_entries().count(), 0)
+        self.assertEqual(trackable_part.get_stock_count(), 0)
+
+        # This should fail, incorrect serial number count
+        response = self.post(
+            self.list_url,
+            data={
+                'part': trackable_part.pk,
+                'quantity': 10,
+                'serial_numbers': '1-20',
+            },
+            expected_code=400,
+        )
+
+        response = self.post(
+            self.list_url,
+            data={
+                'part': trackable_part.pk,
+                'quantity': 10,
+                'serial_numbers': '1-10',
+            },
+            expected_code=201,
+        )
+
+        data = response.data
+
+        self.assertEqual(data['quantity'], 10)
+        sn = data['serial_numbers']
+
+        # Check that each serial number was created
+        for i in range(1, 11):
+            self.assertTrue(i in sn)
+
+            # Check the unique stock item has been created
+
+            item = StockItem.objects.get(
+                part=trackable_part,
+                serial=str(i),
+            )
+
+            # Item location should have been set automatically
+            self.assertIsNotNone(item.location)
+
+            self.assertEqual(str(i), item.serial)
+
+        # There now should be 10 unique stock entries for this part
+        self.assertEqual(trackable_part.stock_entries().count(), 10)
+        self.assertEqual(trackable_part.get_stock_count(), 10)
 
     def test_default_expiry(self):
         """

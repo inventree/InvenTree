@@ -33,7 +33,6 @@ part_parameter_urls = [
 
 part_detail_urls = [
     url(r'^delete/?', views.PartDelete.as_view(), name='part-delete'),
-    url(r'^bom-export/?', views.BomExport.as_view(), name='bom-export'),
     url(r'^bom-download/?', views.BomDownload.as_view(), name='bom-download'),
 
     url(r'^pricing/', views.PartPricing.as_view(), name='part-pricing'),

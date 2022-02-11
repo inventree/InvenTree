@@ -43,9 +43,26 @@
     </div>
 </div>
 
+<div class='panel panel-hidden' id='panel-allocations'>
+    <div class='panel-heading'>
+        <h4>{% trans "Stock Item Allocations" %}</h4>
+        {% include "spacer.html" %}
+    </div>
+    <div class='panel-content'>
+        <div id='allocations-button-toolbar'>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id="allocations" %}
+            </div>
+        </div>
+        <table class='table table-striped table-condensed' data-toolbar='#allocatoins-button-toolbar' id='stock-allocation-table'></table>
+    </div>
+
+</div>
+
 <div class='panel panel-hidden' id='panel-children'>
     <div class='panel-heading'>
         <h4>{% trans "Child Stock Items" %}</h4>
+        {% include "spacer.html" %}
     </div>
     <div class='panel-content'>
         {% if item.child_count > 0 %}
@@ -150,6 +167,19 @@
 
 {% block js_ready %}
 {{ block.super }}
+
+    // Load the "allocations" tab
+    onPanelLoad('allocations', function() {
+
+        loadStockAllocationTable(
+            $("#stock-allocation-table"),
+            {
+                params: { 
+                    stock_item: {{ item.pk }},
+                },
+            }
+        );
+    });
 
     $('#stock-item-install').click(function() {
 

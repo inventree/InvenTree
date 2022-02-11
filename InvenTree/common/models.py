@@ -349,7 +349,7 @@ class BaseInvenTreeSetting(models.Model):
         setting.value = str(value)
         setting.save()
 
-    key = models.CharField(max_length=50, blank=False, unique=False, help_text=_('Settings key (must be unique - case insensitive'))
+    key = models.CharField(max_length=50, blank=False, unique=False, help_text=_('Settings key (must be unique - case insensitive)'))
 
     value = models.CharField(max_length=200, blank=True, unique=False, help_text=_('Settings value'))
 
@@ -773,6 +773,18 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Show Price in BOM'),
             'description': _('Include pricing information in BOM tables'),
             'default': True,
+            'validator': bool,
+        },
+
+        # 2022-02-03
+        # This setting exists as an interim solution for extremely slow part page load times when the part has a complex BOM
+        # In an upcoming release, pricing history (and BOM pricing) will be cached,
+        # rather than having to be re-calculated every time the page is loaded!
+        # For now, we will simply hide part pricing by default
+        'PART_SHOW_PRICE_HISTORY': {
+            'name': _('Show Price History'),
+            'description': _('Display historical pricing for Part'),
+            'default': False,
             'validator': bool,
         },
 
