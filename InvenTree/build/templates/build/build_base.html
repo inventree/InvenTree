@@ -209,19 +209,19 @@ src='{% static "img/blank_image.png" %}'
 
 {% block js_ready %}
 
-    $("#build-edit").click(function () {
+    $('#build-edit').click(function () {
         editBuildOrder({{ build.pk }});
     });
 
-    $("#build-cancel").click(function() {
-        launchModalForm("{% url 'build-cancel' build.id %}",
+    $('#build-cancel').click(function() {
+        launchModalForm('{% url "build-cancel" build.id %}',
                         {
                             reload: true,
                             submit_text: '{% trans "Cancel Build" %}',
                         });
     });
 
-    $("#build-complete").on('click', function() {
+    $('#build-complete').on('click', function() {
 
         {% if build.incomplete_count > 0 %}
         showAlertDialog(
@@ -246,11 +246,11 @@ src='{% static "img/blank_image.png" %}'
     });
     {% endif %}
 
-    $("#build-delete").on('click', function() {
+    $('#build-delete').on('click', function() {
         launchModalForm(
-            "{% url 'build-delete' build.id %}",
+            '{% url "build-delete" build.id %}',
             {
-                redirect: "{% url 'build-index' %}",
+                redirect: '{% url "build-index" %}',
             }
         );
     });

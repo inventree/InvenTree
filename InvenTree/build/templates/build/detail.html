@@ -328,7 +328,7 @@ $('#btn-create-output').click(function() {
     );
 });
 
-loadStockTable($("#build-stock-table"), {
+loadStockTable($('#build-stock-table'), {
     params: {
         location_detail: true,
         part_detail: true,
@@ -339,7 +339,7 @@ loadStockTable($("#build-stock-table"), {
     buttons: [
         '#stock-options',
     ],
-    url: "{% url 'api-stock-list' %}",    
+    url: '{% url "api-stock-list" %}',
 });
 
 
@@ -387,10 +387,10 @@ inventreeGet(
                     outputs,
                     {
                         success: function() {
-                            // Reload the "in progress" table
+                            // Reload the 'in progress' table
                             $('#build-output-table').bootstrapTable('refresh');
 
-                            // Reload the "completed" table
+                            // Reload the 'completed' table
                             $('#build-stock-table').bootstrapTable('refresh');
                         }
                     }
@@ -405,10 +405,10 @@ inventreeGet(
                     outputs,
                     {
                         success: function() {
-                            // Reload the "in progress" table
+                            // Reload the 'in progress' table
                             $('#build-output-table').bootstrapTable('refresh');
 
-                            // Reload the "completed" table
+                            // Reload the 'completed' table
                             $('#build-stock-table').bootstrapTable('refresh');
                         }
                     }
@@ -433,7 +433,7 @@ inventreeGet(
 
 loadBuildTable($('#sub-build-table'), {
     url: '{% url "api-build-list" %}',
-    filterTarget: "#filter-list-sub-build",
+    filterTarget: '#filter-list-sub-build',
     params: {
         ancestor: {{ build.pk }},
     }
@@ -483,9 +483,9 @@ function reloadTable() {
 }
 
 {% if build.active %}
-$("#btn-auto-allocate").on('click', function() {
+$('#btn-auto-allocate').on('click', function() {
 
-    var bom_items = $("#allocation-table-untracked").bootstrapTable("getData");
+    var bom_items = $('#allocation-table-untracked').bootstrapTable('getData');
 
     var incomplete_bom_items = [];
 
@@ -526,10 +526,10 @@ $('#btn-unallocate').on('click', function() {
 
 $('#allocate-selected-items').click(function() {
 
-    var bom_items = $("#allocation-table-untracked").bootstrapTable("getSelections");
+    var bom_items = $('#allocation-table-untracked').bootstrapTable('getSelections');
 
     if (bom_items.length == 0) {
-        bom_items = $("#allocation-table-untracked").bootstrapTable('getData');
+        bom_items = $('#allocation-table-untracked').bootstrapTable('getData');
     }
 
     allocateStockToBuild(
@@ -547,8 +547,8 @@ $('#allocate-selected-items').click(function() {
     );
 });
 
-$("#btn-order-parts").click(function() {
-    launchModalForm("/order/purchase-order/order-parts/", {
+$('#btn-order-parts').click(function() {
+    launchModalForm('/order/purchase-order/order-parts/', {
         data: {
             build: {{ build.id }},
         },
