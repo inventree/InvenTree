@@ -136,7 +136,7 @@
         }
     });
 
-    loadStockTable($("#stock-table"), {
+    loadStockTable($('#stock-table'), {
         params: {
             purchase_order: {{ order.id }},
             part_detail: true,
@@ -146,7 +146,7 @@
         buttons: [
             '#stock-options',
         ],
-        filterkey: "postock"
+        filterkey: 'postock'
     });
 
 {% if order.status == PurchaseOrderStatus.PENDING %}
@@ -188,10 +188,10 @@ $('#new-po-line').click(function() {
 {% elif order.status == PurchaseOrderStatus.PLACED %}
 
     $('#receive-selected-items').click(function() {
-        var items = $("#po-line-table").bootstrapTable('getSelections');
+        var items = $('#po-line-table').bootstrapTable('getSelections');
 
         if (items.length == 0) {
-            items = $("#po-line-table").bootstrapTable('getData');
+            items = $('#po-line-table').bootstrapTable('getData');
         }
 
         receivePurchaseOrderItems(
@@ -199,7 +199,7 @@ $('#new-po-line').click(function() {
             items,
             {
                 success: function() {
-                    $("#po-line-table").bootstrapTable('refresh');
+                    $('#po-line-table').bootstrapTable('refresh');
                 }
             }
         );
