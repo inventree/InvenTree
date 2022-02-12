@@ -72,7 +72,7 @@ content: "{% trans 'Stock Item Test Report' %}";
         <p><em>Stock Item ID: {{ stock_item.pk }}</em></p>
     </div>
     <div class='img-right'>
-        <img class='part-img' src="{% part_image part %}">
+        <img class='part-img' src='{% part_image part %}'>
         <hr>
         <h4>
             {% if stock_item.is_serialized %}

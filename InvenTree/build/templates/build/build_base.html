@@ -17,10 +17,10 @@
 {% block thumbnail %}
 <img class="part-thumb"
 {% if build.part.image %}
-src="{{ build.part.image.url }}"
+src='{{ build.part.image.url }}'
 {% else %}
-src="{% static 'img/blank_image.png' %}"
-{% endif %}/>            
+src='{% static "img/blank_image.png" %}'
+{% endif %}/>
 {% endblock thumbnail %}
 
 {% block heading %}

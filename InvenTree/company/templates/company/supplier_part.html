@@ -50,7 +50,7 @@
 {% if part.part.image %}
 src='{{ part.part.image.url }}'
 {% else %}
-src="{% static 'img/blank_image.png' %}"
+src='{% static "img/blank_image.png" %}'
 {% endif %}/>
 {% endblock %}
 

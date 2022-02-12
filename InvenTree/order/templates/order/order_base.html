@@ -68,9 +68,9 @@
 {% block thumbnail %}
 <img class='part-thumb'
 {% if order.supplier.image %}
-src="{{ order.supplier.image.url }}"
+src='{{ order.supplier.image.url }}'
 {% else %}
-src="{% static 'img/blank_image.png' %}"
+src='{% static "img/blank_image.png" %}'
 {% endif %}
 />
 {% endblock %}
