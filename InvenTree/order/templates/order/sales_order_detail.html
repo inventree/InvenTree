@@ -144,7 +144,7 @@
 {% block js_ready %}
 {{ block.super }}
 
-    // Callback when the "shipments" panel is first loaded
+    // Callback when the 'shipments' panel is first loaded
     onPanelLoad('order-shipments', function() {
 
         {% if order.is_pending %}
@@ -214,18 +214,18 @@
         }
     });
 
-    loadBuildTable($("#builds-table"), {
-        url: "{% url 'api-build-list' %}",
+    loadBuildTable($('#builds-table'), {
+        url: '{% url "api-build-list" %}',
         params: {
             sales_order: {{ order.id }},
         },
     });
 
     function reloadTable() {
-        $("#so-lines-table").bootstrapTable("refresh");
+        $('#so-lines-table').bootstrapTable('refresh');
     }
 
-    $("#new-so-line").click(function() {
+    $('#new-so-line').click(function() {
 
         constructForm('{% url "api-so-line-list" %}', {
             fields: {

@@ -28,7 +28,7 @@
         {% block form_alert %}
         {% endblock form_alert %}
 
-        <form action="" method="post" class='js-modal-form' enctype="multipart/form-data">
+        <form action='' method='post' class='js-modal-form' enctype='multipart/form-data'>
         {% csrf_token %}
         {% load crispy_forms_tags %}
 
@@ -44,9 +44,9 @@
 
         {% block form_buttons_bottom %}
         {% if wizard.steps.prev %}
-        <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="save btn btn-outline-secondary">{% trans "Previous Step" %}</button>
+        <button name='wizard_goto_step' type='submit' value='{{ wizard.steps.prev }}' class='save btn btn-outline-secondary'>{% trans "Previous Step" %}</button>
         {% endif %}
-        <button type="submit" class="save btn btn-outline-secondary">{% trans "Upload File" %}</button>
+        <button type='submit' class='save btn btn-outline-secondary'>{% trans "Upload File" %}</button>
         </form>
         {% endblock form_buttons_bottom %}
 
