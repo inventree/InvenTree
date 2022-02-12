@@ -14,7 +14,7 @@
 
 {% block actions %}
 {% if roles.build.add %}
-<button type='button' class="btn btn-success" id='new-build'>
+<button type='button' class='btn btn-success' id='new-build'>
     <span class='fas fa-tools'></span> {% trans "New Build Order" %}
 </button>
 {% endif %}
@@ -149,43 +149,43 @@ $('#view-list').hide();
 
 $('#view-calendar').click(function() {
     // Hide the list view, show the calendar view
-    $("#build-table").hide();
-    $("#view-calendar").hide();
-    $(".fixed-table-pagination").hide();
-    $(".columns-right").hide();
-    $(".search").hide();
+    $('#build-table').hide();
+    $('#view-calendar').hide();
+    $('.fixed-table-pagination').hide();
+    $('.columns-right').hide();
+    $('.search').hide();
 
-    $("#build-order-calendar").show();
-    $("#view-list").show();
+    $('#build-order-calendar').show();
+    $('#view-list').show();
 
     calendar.render();
 });
 
-$("#view-list").click(function() {
+$('#view-list').click(function() {
     // Hide the calendar view, show the list view
-    $("#build-order-calendar").hide();
-    $("#view-list").hide();
+    $('#build-order-calendar').hide();
+    $('#view-list').hide();
 
-    $(".fixed-table-pagination").show();
-    $(".columns-right").show();
-    $(".search").show();
-    $("#build-table").show();
-    $("#view-calendar").show();
+    $('.fixed-table-pagination').show();
+    $('.columns-right').show();
+    $('.search').show();
+    $('#build-table').show();
+    $('#view-calendar').show();
 });
 
-$("#collapse-item-active").collapse().show();
+$('#collapse-item-active').collapse().show();
 
-$("#new-build").click(function() {
+$('#new-build').click(function() {
     newBuildOrder();
 });
 
-loadBuildTable($("#build-table"), {
-    url: "{% url 'api-build-list' %}",
+loadBuildTable($('#build-table'), {
+    url: '{% url "api-build-list" %}',
 });
 
 {% if report_enabled %}
 $('#multi-build-print').click(function() {
-    var rows = $("#build-table").bootstrapTable('getSelections');
+    var rows = $('#build-table').bootstrapTable('getSelections');
 
     var build_ids = [];
 
