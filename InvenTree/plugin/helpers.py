@@ -55,7 +55,7 @@ def log_error(error, reference: str = 'general'):
     registry.errors[reference].append(error)
 
 
-def handle_error(error, do_raise: bool = True, do_log: bool = True, do_return: bool = False, log_name: str = ''):
+def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: str = ''):
     """
     Handles an error and casts it as an IntegrationPluginError
     """
@@ -88,9 +88,6 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, do_return: b
 
     if do_raise:
         raise IntegrationPluginError(package_name, str(error))
-
-    if do_return:
-        return new_error
 # endregion
 
 
