@@ -52,21 +52,19 @@ class SettingsTest(TestCase):
         - Ensure that every global setting has a description.
         """
 
-        settings_dict = InvenTreeSetting.SETTINGS
+        for key in InvenTreeSetting.SETTINGS.keys():
 
-        for key in settings_dict.keys():
-
-            setting = settings_dict[key]
+            setting = InvenTreeSetting.SETTINGS[key]
 
             name = setting.get('name', None)
 
             if name is None:
-                raise ValueError(f'Missing GLOBAL_SETTING name for {key}')
+                raise ValueError(f'Missing GLOBAL_SETTING name for {key}')  # pragma: no cover
 
             description = setting.get('description', None)
 
             if description is None:
-                raise ValueError(f'Missing GLOBAL_SETTING description for {key}')
+                raise ValueError(f'Missing GLOBAL_SETTING description for {key}')  # pragma: no cover
 
             if not key == key.upper():
                 raise ValueError(f"SETTINGS key '{key}' is not uppercase")  # pragma: no cover
@@ -89,10 +87,10 @@ class SettingsTest(TestCase):
 
             if setting.is_bool():
                 if setting.default_value in ['', None]:
-                    raise ValueError(f'Default value for boolean setting {key} not provided')
+                    raise ValueError(f'Default value for boolean setting {key} not provided')  # pragma: no cover
 
                 if setting.default_value not in [True, False]:
-                    raise ValueError(f'Non-boolean default value specified for {key}')
+                    raise ValueError(f'Non-boolean default value specified for {key}')  # pragma: no cover
 
 
 class WebhookMessageTests(TestCase):
