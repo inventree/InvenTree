@@ -36,7 +36,7 @@ class LabelConfig(AppConfig):
         """
 
         if canAppAccessDatabase():
-            self.create_labels()
+            self.create_labels()  # pragma: no cover
 
     def create_labels(self):
         """
@@ -105,7 +105,7 @@ class LabelConfig(AppConfig):
                 # File already exists - let's see if it is the "same",
                 # or if we need to overwrite it with a newer copy!
 
-                if not hashFile(dst_file) == hashFile(src_file):
+                if not hashFile(dst_file) == hashFile(src_file):  # pragma: no cover
                     logger.info(f"Hash differs for '{filename}'")
                     to_copy = True
 
@@ -119,7 +119,7 @@ class LabelConfig(AppConfig):
 
             # Check if a label matching the template already exists
             if StockItemLabel.objects.filter(label=filename).exists():
-                continue
+                continue  # pragma: no cover
 
             logger.info(f"Creating entry for StockItemLabel '{label['name']}'")
 
@@ -199,7 +199,7 @@ class LabelConfig(AppConfig):
                 # File already exists - let's see if it is the "same",
                 # or if we need to overwrite it with a newer copy!
 
-                if not hashFile(dst_file) == hashFile(src_file):
+                if not hashFile(dst_file) == hashFile(src_file):  # pragma: no cover
                     logger.info(f"Hash differs for '{filename}'")
                     to_copy = True
 
@@ -213,7 +213,7 @@ class LabelConfig(AppConfig):
 
             # Check if a label matching the template already exists
             if StockLocationLabel.objects.filter(label=filename).exists():
-                continue
+                continue  # pragma: no cover
 
             logger.info(f"Creating entry for StockLocationLabel '{label['name']}'")
 
@@ -284,7 +284,7 @@ class LabelConfig(AppConfig):
             if os.path.exists(dst_file):
                 # File already exists - let's see if it is the "same"
 
-                if not hashFile(dst_file) == hashFile(src_file):
+                if not hashFile(dst_file) == hashFile(src_file):  # pragma: no cover
                     logger.info(f"Hash differs for '{filename}'")
                     to_copy = True
 
@@ -298,7 +298,7 @@ class LabelConfig(AppConfig):
 
             # Check if a label matching the template already exists
             if PartLabel.objects.filter(label=filename).exists():
-                continue
+                continue  # pragma: no cover
 
             logger.info(f"Creating entry for PartLabel '{label['name']}'")
 
