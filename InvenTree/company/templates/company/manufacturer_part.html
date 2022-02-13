@@ -131,7 +131,6 @@ src='{% static "img/blank_image.png" %}'
                 </div>
             </div>
         </div>
-        
         <table class='table table-striped table-condensed' id='supplier-table' data-toolbar='#supplier-button-toolbar'>
         </table>
     </div>
@@ -218,10 +217,10 @@ $('#supplier-part-delete').click(function() {
             accept: function() {
                 selections.forEach(function(part) {
                     var url = `/api/company/part/${part.pk}/`;
-        
+
                     requests.push(inventreeDelete(url));
                 });
-        
+
                 $.when.apply($, requests).done(function() {
                     reloadSupplierPartTable();
                 });
@@ -246,7 +245,7 @@ $('#multi-parameter-delete').click(function() {
     text += `
         </ul>
     </div>`;
-    
+
     showQuestionDialog(
         '{% trans "Delete Parameters" %}',
         text,
