@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-10 07:09+0000\n"
-"PO-Revision-Date: 2022-02-10 07:18\n"
+"POT-Creation-Date: 2022-02-13 09:38+0000\n"
+"PO-Revision-Date: 2022-02-13 10:39\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -2306,13 +2306,14 @@ msgstr "Wurde die Arbeit an dieser Nachricht abgeschlossen?"
 #: common/views.py:93 order/templates/order/order_wizard/po_upload.html:49
 #: order/templates/order/purchase_order_detail.html:24 order/views.py:243
 #: part/templates/part/import_wizard/part_upload.html:47 part/views.py:210
+#: templates/patterns/wizard/upload.html:35
 msgid "Upload File"
 msgstr "Datei hochgeladen"
 
-#: common/views.py:94 order/templates/order/order_wizard/match_fields.html:52
-#: order/views.py:244
+#: common/views.py:94 order/views.py:244
 #: part/templates/part/import_wizard/ajax_match_fields.html:45
 #: part/templates/part/import_wizard/match_fields.html:52 part/views.py:211
+#: templates/patterns/wizard/match_fields.html:51
 msgid "Match Fields"
 msgstr "Übereinstimmende Felder"
 
@@ -2328,12 +2329,13 @@ msgstr "Felder zuteilen fehlgeschlagen"
 msgid "Parts imported"
 msgstr "Teile importiert"
 
-#: common/views.py:517 order/templates/order/order_wizard/match_fields.html:27
-#: order/templates/order/order_wizard/match_parts.html:19
+#: common/views.py:517 order/templates/order/order_wizard/match_parts.html:19
 #: order/templates/order/order_wizard/po_upload.html:47
 #: part/templates/part/import_wizard/match_fields.html:27
 #: part/templates/part/import_wizard/match_references.html:19
 #: part/templates/part/import_wizard/part_upload.html:45
+#: templates/patterns/wizard/match_fields.html:26
+#: templates/patterns/wizard/upload.html:33
 msgid "Previous Step"
 msgstr "Vorheriger Schritt"
 
@@ -3572,61 +3574,18 @@ msgstr "Fertigstellen dieser Bestellung bedeutet, dass sie und ihre Positionen n
 msgid "After placing this purchase order, line items will no longer be editable."
 msgstr "Nachdem diese Bestellung plaziert ist können die Positionen nicht länger bearbeitbar ist."
 
-#: order/templates/order/order_wizard/match_fields.html:9
-#: part/templates/part/import_wizard/ajax_match_fields.html:9
-#: part/templates/part/import_wizard/match_fields.html:9
-msgid "Missing selections for the following required columns"
-msgstr "Es fehlt eine Auswahl für die folgende benötigte Spalte"
-
-#: order/templates/order/order_wizard/match_fields.html:20
-#: part/templates/part/import_wizard/ajax_match_fields.html:20
-#: part/templates/part/import_wizard/match_fields.html:20
-msgid "Duplicate selections found, see below. Fix them then retry submitting."
-msgstr "Doppelte Auswahlen gefunden, siehe unten. Reparieren und erneut versuchen."
-
-#: order/templates/order/order_wizard/match_fields.html:29
-#: order/templates/order/order_wizard/match_parts.html:21
-#: part/templates/part/import_wizard/match_fields.html:29
-#: part/templates/part/import_wizard/match_references.html:21
-msgid "Submit Selections"
-msgstr "Auswahl übertragen"
-
-#: order/templates/order/order_wizard/match_fields.html:35
-#: part/templates/part/import_wizard/ajax_match_fields.html:28
-#: part/templates/part/import_wizard/match_fields.html:35
-msgid "File Fields"
-msgstr "Datei-Felder"
-
-#: order/templates/order/order_wizard/match_fields.html:42
-#: part/templates/part/import_wizard/ajax_match_fields.html:35
-#: part/templates/part/import_wizard/match_fields.html:42
-msgid "Remove column"
-msgstr "Spalte entfernen"
-
-#: order/templates/order/order_wizard/match_fields.html:60
-#: part/templates/part/import_wizard/ajax_match_fields.html:53
-#: part/templates/part/import_wizard/match_fields.html:60
-msgid "Duplicate selection"
-msgstr "Auswahl duplizieren"
-
-#: order/templates/order/order_wizard/match_fields.html:71
-#: order/templates/order/order_wizard/match_parts.html:52
-#: part/templates/part/import_wizard/ajax_match_fields.html:64
-#: part/templates/part/import_wizard/ajax_match_references.html:42
-#: part/templates/part/import_wizard/match_fields.html:71
-#: part/templates/part/import_wizard/match_references.html:49
-#: templates/js/translated/bom.js:82 templates/js/translated/build.js:300
-#: templates/js/translated/build.js:448 templates/js/translated/build.js:1453
-#: templates/js/translated/order.js:537 templates/js/translated/order.js:1488
-#: templates/js/translated/stock.js:601 templates/js/translated/stock.js:769
-msgid "Remove row"
-msgstr "Zeile entfernen"
-
 #: order/templates/order/order_wizard/match_parts.html:12
 #: part/templates/part/import_wizard/ajax_match_references.html:12
 #: part/templates/part/import_wizard/match_references.html:12
 msgid "Errors exist in the submitted data"
 msgstr "Fehler in den übermittelten Daten"
+
+#: order/templates/order/order_wizard/match_parts.html:21
+#: part/templates/part/import_wizard/match_fields.html:29
+#: part/templates/part/import_wizard/match_references.html:21
+#: templates/patterns/wizard/match_fields.html:28
+msgid "Submit Selections"
+msgstr "Auswahl übertragen"
 
 #: order/templates/order/order_wizard/match_parts.html:28
 #: part/templates/part/import_wizard/ajax_match_references.html:21
@@ -3637,6 +3596,19 @@ msgstr "Zeile"
 #: order/templates/order/order_wizard/match_parts.html:29
 msgid "Select Supplier Part"
 msgstr "Zulieferer-Teil auswählen"
+
+#: order/templates/order/order_wizard/match_parts.html:52
+#: part/templates/part/import_wizard/ajax_match_fields.html:64
+#: part/templates/part/import_wizard/ajax_match_references.html:42
+#: part/templates/part/import_wizard/match_fields.html:71
+#: part/templates/part/import_wizard/match_references.html:49
+#: templates/js/translated/bom.js:82 templates/js/translated/build.js:300
+#: templates/js/translated/build.js:448 templates/js/translated/build.js:1453
+#: templates/js/translated/order.js:537 templates/js/translated/order.js:1488
+#: templates/js/translated/stock.js:601 templates/js/translated/stock.js:769
+#: templates/patterns/wizard/match_fields.html:70
+msgid "Remove row"
+msgstr "Zeile entfernen"
 
 #: order/templates/order/order_wizard/po_upload.html:8
 msgid "Return to Orders"
@@ -3649,6 +3621,7 @@ msgstr "Datei zur Bestellung hochladen"
 #: order/templates/order/order_wizard/po_upload.html:25
 #: part/templates/part/import_wizard/ajax_part_upload.html:10
 #: part/templates/part/import_wizard/part_upload.html:23
+#: templates/patterns/wizard/upload.html:11
 #, python-format
 msgid "Step %(step)s of %(count)s"
 msgstr "Schritt %(step)s von %(count)s"
@@ -4795,6 +4768,36 @@ msgstr "Stückpreis Zulieferer - %(currency)s"
 #, python-format
 msgid "Unit Price - %(currency)s"
 msgstr "Stückpreis - %(currency)s"
+
+#: part/templates/part/import_wizard/ajax_match_fields.html:9
+#: part/templates/part/import_wizard/match_fields.html:9
+#: templates/patterns/wizard/match_fields.html:8
+msgid "Missing selections for the following required columns"
+msgstr "Es fehlt eine Auswahl für die folgende benötigte Spalte"
+
+#: part/templates/part/import_wizard/ajax_match_fields.html:20
+#: part/templates/part/import_wizard/match_fields.html:20
+#: templates/patterns/wizard/match_fields.html:19
+msgid "Duplicate selections found, see below. Fix them then retry submitting."
+msgstr "Doppelte Auswahlen gefunden, siehe unten. Reparieren und erneut versuchen."
+
+#: part/templates/part/import_wizard/ajax_match_fields.html:28
+#: part/templates/part/import_wizard/match_fields.html:35
+#: templates/patterns/wizard/match_fields.html:34
+msgid "File Fields"
+msgstr "Datei-Felder"
+
+#: part/templates/part/import_wizard/ajax_match_fields.html:35
+#: part/templates/part/import_wizard/match_fields.html:42
+#: templates/patterns/wizard/match_fields.html:41
+msgid "Remove column"
+msgstr "Spalte entfernen"
+
+#: part/templates/part/import_wizard/ajax_match_fields.html:53
+#: part/templates/part/import_wizard/match_fields.html:60
+#: templates/patterns/wizard/match_fields.html:59
+msgid "Duplicate selection"
+msgstr "Auswahl duplizieren"
 
 #: part/templates/part/import_wizard/ajax_part_upload.html:29
 #: part/templates/part/import_wizard/part_upload.html:53
