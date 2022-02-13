@@ -270,13 +270,13 @@
         {% trans "This stock item is allocated to Build Order" %} {{ link }} {% if qty < item.quantity %}({% trans "Quantity" %}: {{ qty }}){% endif %}
     </div>
     {% endfor %}
-    
+
     {% if item.serialized %}
     <div class='alert alert-block alert-warning'>
         {% trans "This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted." %}
     </div>
     {% endif %}
-    
+
 </div>
 {% endblock details %}
 
@@ -477,7 +477,7 @@ $('#print-label').click(function() {
 
 {% if roles.stock.change %}
 $('#stock-duplicate').click(function() {
-    // Duplicate a stock item 
+    // Duplicate a stock item
     duplicateStockItem({{ item.pk }}, {
         follow: true,
     });
