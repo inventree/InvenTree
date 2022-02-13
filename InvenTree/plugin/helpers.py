@@ -69,7 +69,7 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: st
         path_parts = [*path_obj.parts]
         path_parts[-1] = path_parts[-1].replace(path_obj.suffix, '')  # remove suffix
 
-        # remove path preixes
+        # remove path prefixes
         if path_parts[0] == 'plugin':
             path_parts.remove('plugin')
             path_parts.pop(0)
