@@ -1,8 +1,7 @@
 """
 Pull rendered copies of the templated
-only used for testing the js files!
+only used for testing the js files! - This file is omited from coverage
 """
-# pragma: no cover
 
 from django.test import TestCase
 from django.contrib.auth import get_user_model
@@ -11,7 +10,7 @@ import os
 import pathlib
 
 
-class RenderJavascriptFiles(TestCase):  # pragma: no cover
+class RenderJavascriptFiles(TestCase):
     """
     A unit test to "render" javascript files.
 
