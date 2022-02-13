@@ -127,7 +127,7 @@ class CategoryTest(TestCase):
 
         with self.assertRaises(ValidationError) as err:
             cat.full_clean()
-            cat.save()
+            cat.save()  # pragma: no cover
 
         self.assertIn('Illegal character in name', str(err.exception.error_dict.get('name')))
 

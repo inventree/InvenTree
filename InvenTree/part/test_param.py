@@ -44,7 +44,7 @@ class TestParams(TestCase):
         with self.assertRaises(django_exceptions.ValidationError):
             t3 = PartParameterTemplate(name='aBcde', units='dd')
             t3.full_clean()
-            t3.save()
+            t3.save()  # pragma: no cover
 
 
 class TestCategoryTemplates(TransactionTestCase):
