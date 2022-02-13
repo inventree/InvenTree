@@ -399,7 +399,8 @@ class TestStatus(TestCase):
     """
 
     def test_check_system_healt(self):
-        self.assertTrue(status.check_system_health())
+        """test that the system health check is false in testing -> background worker not running"""
+        self.assertEqual(status.check_system_health(), False)
 
     def test_TestMode(self):
         self.assertTrue(ready.isInTestMode())
