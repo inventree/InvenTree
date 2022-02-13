@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 
-from common.models import InvenTreeSetting
+# from common.models import InvenTreeSetting
 
 
 class StockViewTestCase(TestCase):
