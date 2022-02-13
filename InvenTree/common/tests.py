@@ -74,6 +74,22 @@ class SettingsTest(TestCase):
         Populate the settings with default values
         """
 
+        # Add wrong settings
+        InvenTreeSetting.SETTINGS.update({
+            'WRONG_BOOL_EMPTY': {
+                'name': 'Barcode Support',
+                'description': 'Enable barcode scanner support',
+                'default': '',
+                'validator': bool,
+            },
+            'WRONG_BOOL_DEFAULT': {
+                'name': 'Barcode Support',
+                'description': 'Enable barcode scanner support',
+                'default': 12,
+                'validator': bool,
+            }
+        })
+
         for key in InvenTreeSetting.SETTINGS.keys():
 
             value = InvenTreeSetting.get_setting_default(key)
