@@ -1,5 +1,6 @@
 """
 Pull rendered copies of the templated
+only used for testing the js files!
 """
 
 from django.test import TestCase
