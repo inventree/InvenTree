@@ -267,7 +267,7 @@ class RuleSet(models.Model):
 
     def __str__(self, debug=False):
         """ Ruleset string representation """
-        if debug:
+        if debug:  # pragma: no cover
             # Makes debugging easier
             return f'{str(self.group).ljust(15)}: {self.name.title().ljust(15)} | ' \
                    f'v: {str(self.can_view).ljust(5)} | a: {str(self.can_add).ljust(5)} | ' \
@@ -450,7 +450,7 @@ def update_group_roles(group, debug=False):
         if permission:
             group.permissions.add(permission)
 
-        if debug:
+        if debug:  # pragma: no cover
             print(f"Adding permission {perm} to group {group.name}")
 
     # Remove any extra permissions from the group
@@ -465,7 +465,7 @@ def update_group_roles(group, debug=False):
         if permission:
             group.permissions.remove(permission)
 
-        if debug:
+        if debug:  # pragma: no cover
             print(f"Removing permission {perm} from group {group.name}")
 
     # Enable all action permissions for certain children models
