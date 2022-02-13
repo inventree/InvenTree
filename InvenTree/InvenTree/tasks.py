@@ -47,7 +47,7 @@ def schedule_task(taskname, **kwargs):
                 func=taskname,
                 **kwargs
             )
-    except (OperationalError, ProgrammingError):
+    except (OperationalError, ProgrammingError):  # pragma: no cover
         # Required if the DB is not ready yet
         pass
 
@@ -111,7 +111,7 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
     except AppRegistryNotReady:  # pragma: no cover
         logger.warning(f"Could not offload task '{taskname}' - app registry not ready")
         return
-    except (OperationalError, ProgrammingError):
+    except (OperationalError, ProgrammingError):  # pragma: no cover
         logger.warning(f"Could not offload task '{taskname}' - database not ready")
 
 
