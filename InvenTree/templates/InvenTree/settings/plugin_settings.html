@@ -45,7 +45,7 @@
                     {% if plugin.version %}
                         {{ plugin.version }}{% include "clip.html" %}
                     {% else %}
-                        {% trans 'no version information supplied' %}
+                        {% trans "no version information supplied" %}
                     {% endif %}
                 </td>
             </tr>
@@ -68,7 +68,7 @@
 
         {% if plugin.is_package == False %}
         <div class='alert alert-block alert-info'>
-            {% trans 'The code information is pulled from the latest git commit for this plugin. It might not reflect official version numbers or information but the actual code running.' %}
+            {% trans "The code information is pulled from the latest git commit for this plugin. It might not reflect official version numbers or information but the actual code running." %}
         </div>
             
         {% endif %}

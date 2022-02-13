@@ -7,7 +7,7 @@
 {% block content %}
 <h1>{% trans "Sign Out" %}</h1>
 
-<p>{% trans 'Are you sure you want to sign out?' %}</p>
+<p>{% trans "Are you sure you want to sign out?" %}</p>
 
 <form method='post' action='{% url "account_logout" %}'>
   {% csrf_token %}
@@ -17,7 +17,7 @@
   <hr>
   <div class='btn-group float-right' role='group'>
     <a type='button' class='btn btn-secondary' href='{% url "index" %}'><span class='fas fa-undo-alt'></span> {% trans "Back to Site" %}</a>
-    <button type='submit' class='btn btn-danger btn-block'>{% trans 'Sign Out' %}</button>
+    <button type='submit' class='btn btn-danger btn-block'>{% trans "Sign Out" %}</button>
   </div>
 </form>
 

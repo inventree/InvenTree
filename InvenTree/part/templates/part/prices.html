@@ -18,18 +18,18 @@
             {% if part.supplier_count > 0 %}
                 {% if min_total_buy_price %}
                     <tr>
-                        <td><strong>{% trans 'Supplier Pricing' %}</strong>
+                        <td><strong>{% trans "Supplier Pricing" %}</strong>
                             <a href='#supplier-cost' title='{% trans "Show supplier cost" %}'><span class='fas fa-search-dollar'></span></a>
                             <a href='#purchase-price' title='{% trans "Show purchase price" %}'><span class='fas fa-chart-bar'></span></a>
                         </td>
-                        <td>{% trans 'Unit Cost' %}</td>
+                        <td>{% trans "Unit Cost" %}</td>
                         <td>Min: {% include "price.html" with price=min_unit_buy_price %}</td>
                         <td>Max: {% include "price.html" with price=max_unit_buy_price %}</td>
                     </tr>
                     {% if quantity > 1 %}
                     <tr>
                         <td></td>
-                        <td>{% trans 'Total Cost' %}</td>
+                        <td>{% trans "Total Cost" %}</td>
                         <td>Min: {% include "price.html" with price=min_total_buy_price %}</td>
                         <td>Max: {% include "price.html" with price=max_total_buy_price %}</td>
                     </tr>
@@ -37,7 +37,7 @@
                 {% else %}
                     <tr>
                         <td colspan='4'>
-                            <span class='warning-msg'><em>{% trans 'No supplier pricing available' %}</em></span>
+                            <span class='warning-msg'><em>{% trans "No supplier pricing available" %}</em></span>
                         </td>
                     </tr>
                 {% endif %}
@@ -46,17 +46,17 @@
             {% if part.bom_count > 0 %}
                 {% if min_total_bom_price %}
                     <tr>
-                        <td><strong>{% trans 'BOM Pricing' %}</strong>
+                        <td><strong>{% trans "BOM Pricing" %}</strong>
                             <a href='#bom-cost' title='{% trans "Show BOM cost" %}'><span class='fas fa-search-dollar'></span></a>
                         </td>
-                        <td>{% trans 'Unit Cost' %}</td>
+                        <td>{% trans "Unit Cost" %}</td>
                         <td>Min: {% include "price.html" with price=min_unit_bom_price %}</td>
                         <td>Max: {% include "price.html" with price=max_unit_bom_price %}</td>
                     </tr>
                     {% if quantity > 1 %}
                         <tr>
                             <td></td>
-                            <td>{% trans 'Total Cost' %}</td>
+                            <td>{% trans "Total Cost" %}</td>
                             <td>Min: {% include "price.html" with price=min_total_bom_price %}</td>
                             <td>Max: {% include "price.html" with price=max_total_bom_price %}</td>
                         </tr>
@@ -66,14 +66,14 @@
                     {% if min_total_bom_purchase_price %}
                     <tr>
                         <td></td>
-                        <td>{% trans 'Unit Purchase Price' %}</td>
+                        <td>{% trans "Unit Purchase Price" %}</td>
                         <td>Min: {% include "price.html" with price=min_unit_bom_purchase_price %}</td>
                         <td>Max: {% include "price.html" with price=max_unit_bom_purchase_price %}</td>
                     </tr>
                     {% if quantity > 1 %}
                     <tr>
                         <td></td>
-                        <td>{% trans 'Total Purchase Price' %}</td>
+                        <td>{% trans "Total Purchase Price" %}</td>
                         <td>Min: {% include "price.html" with price=min_total_bom_purchase_price %}</td>
                         <td>Max: {% include "price.html" with price=max_total_bom_purchase_price %}</td>
                     </tr>
@@ -83,14 +83,14 @@
                     {% if part.has_complete_bom_pricing == False %}
                         <tr>
                             <td colspan='4'>
-                                <span class='warning-msg'><em>{% trans 'Note: BOM pricing is incomplete for this part' %}</em></span>
+                                <span class='warning-msg'><em>{% trans "Note: BOM pricing is incomplete for this part" %}</em></span>
                             </td>
                         </tr>
                     {% endif %}
                 {% else %}
                     <tr>
                         <td colspan='4'>
-                            <span class='warning-msg'><em>{% trans 'No BOM pricing available' %}</em></span>
+                            <span class='warning-msg'><em>{% trans "No BOM pricing available" %}</em></span>
                         </td>
                     </tr>
                 {% endif %}
@@ -99,13 +99,13 @@
             {% if show_internal_price and roles.sales_order.view %}
             {% if total_internal_part_price %}
                 <tr>
-                    <td><strong>{% trans 'Internal Price' %}</strong></td>
-                    <td>{% trans 'Unit Cost' %}</td>
+                    <td><strong>{% trans "Internal Price" %}</strong></td>
+                    <td>{% trans "Unit Cost" %}</td>
                     <td colspan='2'>{% include "price.html" with price=unit_internal_part_price %}</td>
                 </tr>
                 <tr>
                     <td></td>
-                    <td>{% trans 'Total Cost' %}</td>
+                    <td>{% trans "Total Cost" %}</td>
                     <td colspan='2'>{% include "price.html" with price=total_internal_part_price %}</td>
                 </tr>
             {% endif %}
@@ -113,16 +113,16 @@
         
             {% if total_part_price %}
                 <tr>
-                    <td><strong>{% trans 'Sale Price' %}</strong>
+                    <td><strong>{% trans "Sale Price" %}</strong>
                         <a href='#sale-cost' title='{% trans "Show sale cost" %}'><span class='fas fa-search-dollar'></span></a>
                         <a href='#sale-price' title='{% trans "Show sale price" %}'><span class='fas fa-chart-bar'></span></a>
                     </td>
-                    <td>{% trans 'Unit Cost' %}</td>
+                    <td>{% trans "Unit Cost" %}</td>
                     <td colspan='2'>{% include "price.html" with price=unit_part_price %}</td>
                 </tr>
                 <tr>
                     <td></td>
-                    <td>{% trans 'Total Cost' %}</td>
+                    <td>{% trans "Total Cost" %}</td>
                     <td colspan='2'>{% include "price.html" with price=total_part_price %}</td>
                 </tr>
             {% endif %}
@@ -131,7 +131,7 @@
             {% if min_unit_buy_price or min_unit_bom_price %}
             {% else %}
                 <div class='alert alert-danger alert-block'>
-                    {% trans 'No pricing information is available for this part.' %}
+                    {% trans "No pricing information is available for this part." %}
                 </div>
             {% endif %}
         </div>
@@ -178,7 +178,7 @@
     </h4>
 </div>
 <div class='panel-content'>
-    <h4>{% trans 'Stock Pricing' %}
+    <h4>{% trans "Stock Pricing" %}
         <em class='fas fa-info-circle' title='Shows the purchase prices of stock for this part.&#10;The Supplier Unit Cost is the current purchase price for that supplier part.'></em>
     </h4>
         {% if price_history|length > 0 %}
@@ -187,7 +187,7 @@
             </div>
         {% else %}
             <div class='alert alert-danger alert-block'>
-                {% trans 'No stock pricing history is available for this part.' %}
+                {% trans "No stock pricing history is available for this part." %}
             </div>
         {% endif %}
     </div>
@@ -240,7 +240,7 @@
 
         {% if part.bom_count > 0 %}
         <div class='col col-md-6'>
-            <h4>{% trans 'BOM Pricing' %}</h4>
+            <h4>{% trans "BOM Pricing" %}</h4>
             <div style='max-width: 99%;'>
                 <canvas id='BomChart'></canvas>
             </div>
@@ -293,7 +293,7 @@
         </div>
     {% else %}
         <div class='alert alert-danger alert-block'>
-            {% trans 'No sale pice history available for this part.' %}
+            {% trans "No sale pice history available for this part." %}
         </div>
     {% endif %}
 </div>

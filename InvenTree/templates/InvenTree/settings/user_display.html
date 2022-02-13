@@ -78,7 +78,7 @@
                             {% if lang_translated %}
                                 {% blocktrans %}{{ lang_translated }}% translated{% endblocktrans %}
                             {% else %}
-                                {% if lang_code == 'en' %}-{% else %}{% trans 'No translations available' %}{% endif %}
+                                {% if lang_code == 'en' %}-{% else %}{% trans "No translations available" %}{% endif %}
                             {% endif %}
                         </option>
                         {% endif %}

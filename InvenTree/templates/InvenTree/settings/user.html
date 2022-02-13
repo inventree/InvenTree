@@ -51,7 +51,7 @@
 
     <div class='col-sm-6'>
     {% if user.emailaddress_set.all %}
-    <p>{% trans 'The following email addresses are associated with your account:' %}</p>
+    <p>{% trans "The following email addresses are associated with your account:" %}</p>
 
     <form action='{% url "account_email" %}' class='email_list' method='post'>
         {% csrf_token %}
@@ -82,9 +82,9 @@
             {% endfor %}
 
             <div class='buttonHolder'>
-                <button class='btn btn-primary secondaryAction' type='submit' name='action_primary'>{% trans 'Make Primary' %}</button>
-                <button class='btn btn-primary secondaryAction' type='submit' name='action_send' {% if not mail_conf %}disabled{% endif %}>{% trans 'Re-send Verification' %}</button>
-                <button class='btn btn-primary primaryAction' type='submit' name='action_remove'>{% trans 'Remove' %}</button>
+                <button class='btn btn-primary secondaryAction' type='submit' name='action_primary'>{% trans "Make Primary" %}</button>
+                <button class='btn btn-primary secondaryAction' type='submit' name='action_send' {% if not mail_conf %}disabled{% endif %}>{% trans "Re-send Verification" %}</button>
+                <button class='btn btn-primary primaryAction' type='submit' name='action_remove'>{% trans "Remove" %}</button>
             </div>
 
         </fieldset>
@@ -92,7 +92,7 @@
 
     {% else %}
     <div class='alert alert-block alert-danger'>
-        <strong>{% trans 'Warning:'%}</strong>
+        <strong>{% trans "Warning:"%}</strong>
         {% trans "You currently do not have any email address set up. You should really add an email address so you can receive notifications, reset your password, etc." %}
     </div>
 
@@ -146,7 +146,7 @@
                 {% endfor %}
 
                 <div>
-                    <button class='btn btn-primary' type='submit'>{% trans 'Remove' %}</button>
+                    <button class='btn btn-primary' type='submit'>{% trans "Remove" %}</button>
                 </div>
 
             </fieldset>
@@ -154,12 +154,12 @@
         </form>
 
         {% else %}
-        <p>{% trans 'You currently have no social network accounts connected to this account.' %}</p>
+        <p>{% trans "You currently have no social network accounts connected to this account." %}</p>
         {% endif %}
     </div>
 
     <div class='col-md-6'>
-        <h5>{% trans 'Add a 3rd Party Account' %}</h5>
+        <h5>{% trans "Add a 3rd Party Account" %}</h5>
         <div>
             {% include "socialaccount/snippets/provider_list.html" with process="connect" %}
         </div>
@@ -174,7 +174,7 @@
 
     <div class='col-md-6'>
     {% if user.staticdevice_set.all or user.totpdevice_set.all %}
-    <p>{% trans 'You have these factors available:' %}</p>
+    <p>{% trans "You have these factors available:" %}</p>
 
     <table class='table table-striped'>
         <thead>
@@ -184,13 +184,13 @@
         <tbody>
         {% for token in user.totpdevice_set.all %}
         <tr>
-            <td>{% trans 'TOTP' %}</td>
+            <td>{% trans "TOTP" %}</td>
             <td>{{ token.name }}</td>
         </tr>
         {% endfor %}
         {% for token in user.staticdevice_set.all %}
         <tr>
-            <td>{% trans 'Static' %}</td>
+            <td>{% trans "Static" %}</td>
             <td>{{ token.name }}</td>
         </tr>
         {% endfor %}
@@ -198,7 +198,7 @@
     </table>
 
     {% else %}
-    <p><strong>{% trans 'Warning:' %}</strong>
+    <p><strong>{% trans "Warning:" %}</strong>
         {% trans "You currently do not have any factors set up." %}
     </p>
 
@@ -263,7 +263,7 @@
 
 {% block js_ready %}
 (function() {
-var message = "{% trans 'Do you really want to remove the selected email address?' %}";
+var message = "{% trans "Do you really want to remove the selected email address?" %}";
 var actions = document.getElementsByName('action_remove');
 if (actions.length) {
 actions[0].addEventListener('click', function(e) {
