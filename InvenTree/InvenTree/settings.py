@@ -144,7 +144,7 @@ else:
 
     try:
         SECRET_KEY = open(key_file, "r").read().strip()
-    except Exception:
+    except Exception:  # pragma: no cover
         logger.exception(f"Couldn't load keyfile {key_file}")
         sys.exit(-1)
 
@@ -156,7 +156,7 @@ STATIC_ROOT = os.path.abspath(
     )
 )
 
-if STATIC_ROOT is None:
+if STATIC_ROOT is None:  # pragma: no cover
     print("ERROR: INVENTREE_STATIC_ROOT directory not defined")
     sys.exit(1)
 
@@ -168,7 +168,7 @@ MEDIA_ROOT = os.path.abspath(
     )
 )
 
-if MEDIA_ROOT is None:
+if MEDIA_ROOT is None:  # pragma: no cover
     print("ERROR: INVENTREE_MEDIA_ROOT directory is not defined")
     sys.exit(1)
 
@@ -396,7 +396,7 @@ for key in db_keys:
 reqiured_keys = ['ENGINE', 'NAME']
 
 for key in reqiured_keys:
-    if key not in db_config:
+    if key not in db_config:  # pragma: no cover
         error_msg = f'Missing required database configuration value {key}'
         logger.error(error_msg)
 
@@ -703,7 +703,7 @@ CURRENCIES = CONFIG.get(
 
 # Check that each provided currency is supported
 for currency in CURRENCIES:
-    if currency not in moneyed.CURRENCIES:
+    if currency not in moneyed.CURRENCIES:  # pragma: no cover
         print(f"Currency code '{currency}' is not supported")
         sys.exit(1)
 
