@@ -35,9 +35,15 @@ class LabelConfig(AppConfig):
         """
 
         if canAppAccessDatabase():
-            self.create_stock_item_labels()
-            self.create_stock_location_labels()
-            self.create_part_labels()
+            self.create_labels()
+
+    def create_labels(self):
+        """
+        Create all default templates
+        """
+        self.create_stock_item_labels()
+        self.create_stock_location_labels()
+        self.create_part_labels()
 
     def create_stock_item_labels(self):
         """
