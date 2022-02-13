@@ -403,3 +403,6 @@ class TestStatus(TestCase):
 
     def test_TestMode(self):
         self.assertTrue(ready.isInTestMode())
+
+    def test_Importing(self):
+        self.assertEqual(ready.isImportingData(), False)
