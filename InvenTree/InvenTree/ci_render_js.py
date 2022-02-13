@@ -9,7 +9,7 @@ import os
 import pathlib
 
 
-class RenderJavascriptFiles(TestCase):
+class RenderJavascriptFiles(TestCase):  # pragma: no cover
     """
     A unit test to "render" javascript files.
 
