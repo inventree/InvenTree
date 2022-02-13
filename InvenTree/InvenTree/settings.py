@@ -82,7 +82,7 @@ logging.basicConfig(
 )
 
 if log_level not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
-    log_level = 'WARNING'
+    log_level = 'WARNING'  # pragma: no cover
 
 LOGGING = {
     'version': 1,
@@ -187,7 +187,7 @@ if cors_opt:
     CORS_ORIGIN_ALLOW_ALL = cors_opt.get('allow_all', False)
 
     if not CORS_ORIGIN_ALLOW_ALL:
-        CORS_ORIGIN_WHITELIST = cors_opt.get('whitelist', [])
+        CORS_ORIGIN_WHITELIST = cors_opt.get('whitelist', [])  # pragma: no cover
 
 # Web URL endpoint for served static files
 STATIC_URL = '/static/'
@@ -215,7 +215,7 @@ if DEBUG:
     logger.info("InvenTree running with DEBUG enabled")
 
 if DEMO_MODE:
-    logger.warning("InvenTree running in DEMO mode")
+    logger.warning("InvenTree running in DEMO mode")  # pragma: no cover
 
 logger.debug(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
 logger.debug(f"STATIC_ROOT: '{STATIC_ROOT}'")
@@ -591,7 +591,7 @@ else:
 try:
     # 4 background workers seems like a sensible default
     background_workers = int(os.environ.get('INVENTREE_BACKGROUND_WORKERS', 4))
-except ValueError:
+except ValueError:  # pragma: no cover
     background_workers = 4
 
 # django-q configuration
@@ -606,7 +606,7 @@ Q_CLUSTER = {
     'sync': False,
 }
 
-if _cache_host:
+if _cache_host:  # pragma: no cover
     # If using external redis cache, make the cache the broker for Django Q
     # as well
     Q_CLUSTER["django_redis"] = "worker"
@@ -641,7 +641,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 EXTRA_URL_SCHEMES = CONFIG.get('extra_url_schemes', [])
 
-if not type(EXTRA_URL_SCHEMES) in [list]:
+if not type(EXTRA_URL_SCHEMES) in [list]:  # pragma: no cover
     logger.warning("extra_url_schemes not correctly formatted")
     EXTRA_URL_SCHEMES = []
 
