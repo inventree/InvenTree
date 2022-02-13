@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from pydoc import resolve
 
 from django.test import TestCase
 from django.apps import apps
@@ -178,8 +177,8 @@ class OwnerModelTest(TestCase):
         self.group = Group.objects.create(name='new_group')
         self.user.groups.add(self.group)
 
-    def do_request(self, endpoint, filters, status_code = 200):
-        response =  self.client.get(endpoint, filters, format='json')
+    def do_request(self, endpoint, filters, status_code=200):
+        response = self.client.get(endpoint, filters, format='json')
         self.assertEqual(response.status_code, status_code)
         return response.data
 
@@ -214,14 +213,13 @@ class OwnerModelTest(TestCase):
         """
         # not authed
         self.do_request(reverse('api-owner-list'), {}, 401)
-        self.do_request(reverse('api-owner-detail', kwargs ={'pk': self.user.id}), {}, 401)
+        self.do_request(reverse('api-owner-detail', kwargs={'pk': self.user.id}), {}, 401)
 
         self.client.login(username='username', password='password')
         # user list
         self.do_request(reverse('api-owner-list'), {})
         # user detail
-        self.do_request(reverse('api-owner-detail', kwargs ={'pk': self.user.id}), {})
-
+        self.do_request(reverse('api-owner-detail', kwargs={'pk': self.user.id}), {})
 
     def test_token(self):
         """
