@@ -11,7 +11,7 @@ if __name__ == "__main__":
         # issue is really that Django is missing to avoid masking other
         # exceptions on Python 2.
         try:  # pragma: no cover
-            import django  # pragma: no cover
+            import django  # pragma: no cover  # noqa: F401
         except ImportError:  # pragma: no cover
             raise ImportError(
                 "Couldn't import Django. Are you sure it's installed and "
