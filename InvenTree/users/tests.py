@@ -22,7 +22,7 @@ class RuleSetModelTest(TestCase):
 
         missing = [name for name in RuleSet.RULESET_NAMES if name not in keys]
 
-        if len(missing) > 0:
+        if len(missing) > 0:  # pragma: no cover
             print("The following rulesets do not have models assigned:")
             for m in missing:
                 print("-", m)
@@ -30,7 +30,7 @@ class RuleSetModelTest(TestCase):
         # Check if models have been defined for a ruleset which is incorrect
         extra = [name for name in keys if name not in RuleSet.RULESET_NAMES]
 
-        if len(extra) > 0:
+        if len(extra) > 0:  # pragma: no cover
             print("The following rulesets have been improperly added to RULESET_MODELS:")
             for e in extra:
                 print("-", e)
@@ -38,7 +38,7 @@ class RuleSetModelTest(TestCase):
         # Check that each ruleset has models assigned
         empty = [key for key in keys if len(RuleSet.RULESET_MODELS[key]) == 0]
 
-        if len(empty) > 0:
+        if len(empty) > 0:  # pragma: no cover
             print("The following rulesets have empty entries in RULESET_MODELS:")
             for e in empty:
                 print("-", e)
@@ -77,10 +77,10 @@ class RuleSetModelTest(TestCase):
         missing_models = set()
 
         for model in available_tables:
-            if model not in assigned_models and model not in RuleSet.RULESET_IGNORE:
+            if model not in assigned_models and model not in RuleSet.RULESET_IGNORE:  # pragma: no cover
                 missing_models.add(model)
 
-        if len(missing_models) > 0:
+        if len(missing_models) > 0:  # pragma: no cover
             print("The following database models are not covered by the defined RuleSet permissions:")
             for m in missing_models:
                 print("-", m)
@@ -95,11 +95,11 @@ class RuleSetModelTest(TestCase):
         for model in RuleSet.RULESET_IGNORE:
             defined_models.add(model)
 
-        for model in defined_models:
+        for model in defined_models:  # pragma: no cover
             if model not in available_tables:
                 extra_models.add(model)
 
-        if len(extra_models) > 0:
+        if len(extra_models) > 0:  # pragma: no cover
             print("The following RuleSet permissions do not match a database model:")
             for m in extra_models:
                 print("-", m)
