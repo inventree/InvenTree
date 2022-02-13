@@ -340,7 +340,7 @@ def update_group_roles(group, debug=False):
     """
 
     if not canAppAccessDatabase(allow_test=True):
-        return
+        return  # pragma: no cover
 
     # List of permissions already associated with this group
     group_permissions = set()
@@ -432,7 +432,7 @@ def update_group_roles(group, debug=False):
         try:
             content_type = ContentType.objects.get(app_label=app, model=model)
             permission = Permission.objects.get(content_type=content_type, codename=perm)
-        except ContentType.DoesNotExist:
+        except ContentType.DoesNotExist:  # pragma: no cover
             logger.warning(f"Error: Could not find permission matching '{permission_string}'")
             permission = None
 
@@ -617,7 +617,7 @@ class Owner(models.Model):
             # Create new owner
             try:
                 return cls.objects.create(owner=obj)
-            except IntegrityError:
+            except IntegrityError:  # pragma: no cover
                 return None
 
         return existing_owner
