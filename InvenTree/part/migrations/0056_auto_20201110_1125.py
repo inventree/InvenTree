@@ -33,7 +33,7 @@ def migrate_currencies(apps, schema_editor):
 
     remap = {}
 
-    for index, row in enumerate(results):
+    for index, row in enumerate(results):  # pragma: no cover
         pk, suffix, description = row
 
         suffix = suffix.strip().upper()
@@ -57,7 +57,7 @@ def migrate_currencies(apps, schema_editor):
 
     count = 0
 
-    for index, row in enumerate(results):
+    for index, row in enumerate(results):  # pragma: no cover
         pk, cost, currency_id, price, price_currency = row
 
         # Copy the 'cost' field across to the 'price' field
@@ -71,10 +71,10 @@ def migrate_currencies(apps, schema_editor):
 
         count += 1
 
-    if count > 0:
+    if count > 0:  # pragma: no cover
         print(f"Updated {count} SupplierPriceBreak rows")
 
-def reverse_currencies(apps, schema_editor):
+def reverse_currencies(apps, schema_editor):  # pragma: no cover
     """
     Reverse the "update" process.
 
