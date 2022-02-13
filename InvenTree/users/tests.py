@@ -239,3 +239,7 @@ class OwnerModelTest(TestCase):
         response = self.client.delete(reverse('api-token'), {}, format='json')
         self.assertEqual(response.status_code, 202)
         self.assertEqual(len(token), 0)
+
+        # token second delete
+        response = self.client.delete(reverse('api-token'), {}, format='json')
+        self.assertEqual(response.status_code, 400)
