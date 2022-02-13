@@ -53,23 +53,6 @@ class SettingsTest(TestCase):
         """
 
         settings_dict = InvenTreeSetting.SETTINGS
-        # Add wrong setting
-        settings_dict.update({
-            'WRONG_SETTING_NAME': {
-                'name': None,
-                'validator': bool,
-            },
-            'WRONG_SETTING_DESC': {
-                'name': 'Wrong',
-                'description': None,
-                'validator': bool,
-            },
-            'wrong_SETTING_UPPER': {
-                'name': 'Wrong',
-                'description': 'Wrong',
-                'validator': bool,
-            }
-        })
 
         for key in settings_dict.keys():
 
@@ -92,22 +75,6 @@ class SettingsTest(TestCase):
         """
         Populate the settings with default values
         """
-
-        # Add wrong settings
-        InvenTreeSetting.SETTINGS.update({
-            'WRONG_BOOL_EMPTY': {
-                'name': 'Barcode Support',
-                'description': 'Enable barcode scanner support',
-                'default': '',
-                'validator': bool,
-            },
-            'WRONG_BOOL_DEFAULT': {
-                'name': 'Barcode Support',
-                'description': 'Enable barcode scanner support',
-                'default': 12,
-                'validator': bool,
-            }
-        })
 
         for key in InvenTreeSetting.SETTINGS.keys():
 
