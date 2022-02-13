@@ -52,9 +52,28 @@ class SettingsTest(TestCase):
         - Ensure that every global setting has a description.
         """
 
-        for key in InvenTreeSetting.SETTINGS.keys():
+        settings_dict = InvenTreeSetting.SETTINGS
+        # Add wrong setting
+        settings_dict.update({
+            'WRONG_SETTING_NAME': {
+                'name': None,
+                'validator': bool,
+            },
+            'WRONG_SETTING_DESC': {
+                'name': 'Wrong',
+                'description': None,
+                'validator': bool,
+            },
+            'wrong_SETTING_UPPER': {
+                'name': 'Wrong',
+                'description': 'Wrong',
+                'validator': bool,
+            }
+        })
 
-            setting = InvenTreeSetting.SETTINGS[key]
+        for key in settings_dict.keys():
+
+            setting = settings_dict[key]
 
             name = setting.get('name', None)
 
@@ -67,7 +86,7 @@ class SettingsTest(TestCase):
                 raise ValueError(f'Missing GLOBAL_SETTING description for {key}')
 
             if not key == key.upper():
-                raise ValueError(f"SETTINGS key '{key}' is not uppercase")
+                raise ValueError(f"SETTINGS key '{key}' is not uppercase")  # pragma: no cover
 
     def test_defaults(self):
         """
