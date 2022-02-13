@@ -2,6 +2,7 @@
 Pull rendered copies of the templated
 only used for testing the js files!
 """
+# pragma: no cover
 
 from django.test import TestCase
 from django.contrib.auth import get_user_model
