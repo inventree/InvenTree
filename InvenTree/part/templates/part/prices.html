@@ -136,7 +136,7 @@
             {% endif %}
         </div>
 
-        <div class="col col-md-6">
+        <div class='col col-md-6'>
             <h4>{% trans "Calculation parameters" %}</h4>
             <form method='post'>
                 {% csrf_token %}
@@ -174,7 +174,7 @@
 <a class='anchor' id='purchase-price'></a>
 <div class='panel-heading'>
     <h4>{% trans "Purchase Price" %}  
-        <a href="#overview" title='{% trans "Jump to overview" %}'><span class="fas fa-level-up-alt"></span></a>
+        <a href='#overview' title='{% trans "Jump to overview" %}'><span class='fas fa-level-up-alt'></span></a>
     </h4>
 </div>
 <div class='panel-content'>
@@ -203,13 +203,13 @@
 </div>
         
 <div class='panel-content'>
-    <div class="row full-height">
-        <div class="col col-md-8">
-            <div style="max-width: 99%; height: 100%;">
-                <canvas id="InternalPriceBreakChart"></canvas>
+    <div class='row full-height'>
+        <div class='col col-md-8'>
+            <div style='max-width: 99%; height: 100%;'>
+                <canvas id='InternalPriceBreakChart'></canvas>
             </div>
         </div>
-        <div class="col col-md-4">
+        <div class='col col-md-4'>
             <div id='internal-price-break-toolbar' class='btn-group'>
                 <button class='btn btn-success' id='new-internal-price-break' type='button'>
                     <span class='fas fa-plus-circle'></span> {% trans "Add Internal Price Break" %}
@@ -217,7 +217,7 @@
             </div>
             
             <table class='table table-striped table-condensed' id='internal-price-break-table' data-toolbar='#internal-price-break-toolbar'
-                data-sort-name="quantity" data-sort-order="asc">
+                data-sort-name='quantity' data-sort-order='asc'>
             </table>
         </div>
     </div>
@@ -225,24 +225,24 @@
 {% endif %}
 
 {% if part.has_bom and roles.sales_order.view %}
-<a class="anchor" id="bom-cost"></a>
+<a class='anchor' id='bom-cost'></a>
 <div class='panel-heading'>
     <h4>{% trans "BOM Cost" %}  
-        <a href="#overview" title='{% trans "Jump to overview" %}'><span class="fas fa-level-up-alt"></span></a>
+        <a href='#overview' title='{% trans "Jump to overview" %}'><span class='fas fa-level-up-alt'></span></a>
     </h4>
 </div>
     
 <div class='panel-content'>
-    <div class="row">
-        <div class="col col-md-6">
-            <table class='table table-bom table-condensed' data-toolbar="#button-toolbar" id='bom-pricing-table'></table>
+    <div class='row'>
+        <div class='col col-md-6'>
+            <table class='table table-bom table-condensed' data-toolbar='#button-toolbar' id='bom-pricing-table'></table>
         </div>
 
         {% if part.bom_count > 0 %}
-        <div class="col col-md-6">
+        <div class='col col-md-6'>
             <h4>{% trans 'BOM Pricing' %}</h4>
-            <div style="max-width: 99%;">
-                <canvas id="BomChart"></canvas>
+            <div style='max-width: 99%;'>
+                <canvas id='BomChart'></canvas>
             </div>
         </div>
         {% endif %}
@@ -251,21 +251,21 @@
 {% endif %}
 
 {% if part.salable and roles.sales_order.view %}
-<a class="anchor" id="sale-cost"></a>
+<a class='anchor' id='sale-cost'></a>
 <div class='panel-heading'>
     <h4>{% trans "Sale Cost" %}  
-        <a href="#overview" title='{% trans "Jump to overview" %}'><span class="fas fa-level-up-alt"></span></a>
+        <a href='#overview' title='{% trans "Jump to overview" %}'><span class='fas fa-level-up-alt'></span></a>
     </h4>
 </div>
         
 <div class='panel-content'>
-    <div class="row full-height">
-        <div class="col col-md-8">
-            <div style="max-width: 99%; height: 100%;">
-                <canvas id="SalePriceBreakChart"></canvas>
+    <div class='row full-height'>
+        <div class='col col-md-8'>
+            <div style='max-width: 99%; height: 100%;'>
+                <canvas id='SalePriceBreakChart'></canvas>
             </div>
         </div>
-        <div class="col col-md-4">
+        <div class='col col-md-4'>
             <div id='price-break-toolbar' class='btn-group'>
                 <button class='btn btn-success' id='new-price-break' type='button'>
                     <span class='fas fa-plus-circle'></span> {% trans "Add Price Break" %}
@@ -273,23 +273,23 @@
             </div>
             
             <table class='table table-striped table-condensed' id='price-break-table' data-toolbar='#price-break-toolbar'
-            data-sort-name="quantity" data-sort-order="asc">
+            data-sort-name='quantity' data-sort-order='asc'>
             </table>
         </div>
     </div>
 </div>
 
-<a class="anchor" id="sale-price"></a>
+<a class='anchor' id='sale-price'></a>
 <div class='panel-heading'>
     <h4>{% trans "Sale Price" %}  
-        <a href="#overview" title='{% trans "Jump to overview" %}'><span class="fas fa-level-up-alt"></span></a>
+        <a href='#overview' title='{% trans "Jump to overview" %}'><span class='fas fa-level-up-alt'></span></a>
     </h4>
 </div>
         
 <div class='panel-content'>
     {% if sale_history|length > 0 %}
-        <div style="max-width: 99%; min-height: 300px">
-            <canvas id="SalePriceChart"></canvas>
+        <div style='max-width: 99%; min-height: 300px'>
+            <canvas id='SalePriceChart'></canvas>
         </div>
     {% else %}
         <div class='alert alert-danger alert-block'>
