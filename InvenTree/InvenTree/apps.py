@@ -38,7 +38,7 @@ class InvenTreeConfig(AppConfig):
 
         try:
             from django_q.models import Schedule
-        except (AppRegistryNotReady):
+        except AppRegistryNotReady:  # pragma: no cover
             return
 
         # Remove any existing obsolete tasks
@@ -48,7 +48,7 @@ class InvenTreeConfig(AppConfig):
 
         try:
             from django_q.models import Schedule
-        except (AppRegistryNotReady):
+        except AppRegistryNotReady:  # pragma: no cover
             return
 
         logger.info("Starting background tasks...")

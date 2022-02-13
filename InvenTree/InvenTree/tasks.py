@@ -28,7 +28,7 @@ def schedule_task(taskname, **kwargs):
 
     try:
         from django_q.models import Schedule
-    except (AppRegistryNotReady):
+    except AppRegistryNotReady:  # pragma: no cover
         logger.info("Could not start background tasks - App registry not ready")
         return
 
@@ -108,7 +108,7 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
             # Workers are not running: run it as synchronous task
             _func(*args, **kwargs)
 
-    except (AppRegistryNotReady):
+    except AppRegistryNotReady:  # pragma: no cover
         logger.warning(f"Could not offload task '{taskname}' - app registry not ready")
         return
     except (OperationalError, ProgrammingError):
