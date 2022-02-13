@@ -415,7 +415,7 @@ db_engine = db_config['ENGINE'].lower()
 
 # Correct common misspelling
 if db_engine == 'sqlite':
-    db_engine = 'sqlite3'
+    db_engine = 'sqlite3'  # pragma: no cover
 
 if db_engine in ['sqlite3', 'postgresql', 'mysql']:
     # Prepend the required python module string
@@ -443,7 +443,7 @@ Ref: https://docs.djangoproject.com/en/3.2/ref/settings/#std:setting-OPTIONS
 db_options = db_config.get("OPTIONS", db_config.get("options", {}))
 
 # Specific options for postgres backend
-if "postgres" in db_engine:
+if "postgres" in db_engine:  # pragma: no cover
     from psycopg2.extensions import (
         ISOLATION_LEVEL_READ_COMMITTED,
         ISOLATION_LEVEL_SERIALIZABLE,
@@ -505,7 +505,7 @@ if "postgres" in db_engine:
         )
 
 # Specific options for MySql / MariaDB backend
-if "mysql" in db_engine:
+if "mysql" in db_engine:  # pragma: no cover
     # TODO TCP time outs and keepalives
 
     # MariaDB's default isolation level is Repeatable Read which is
@@ -546,7 +546,7 @@ _cache_port = _cache_config.get(
     "port", os.getenv("INVENTREE_CACHE_PORT", "6379")
 )
 
-if _cache_host:
+if _cache_host:  # pragma: no cover
     # We are going to rely upon a possibly non-localhost for our cache,
     # so don't wait too long for the cache as nothing in the cache should be
     # irreplacable.
