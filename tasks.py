@@ -274,7 +274,7 @@ def test(c, database=None):
     manage(c, 'check')
 
     # Run coverage tests
-    manage(c, 'test', pty=True)
+    manage(c, 'test --parallel', pty=True)
 
 
 @task
