@@ -304,7 +304,7 @@ AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
 ])
 
 # If the debug toolbar is enabled, add the modules
-if DEBUG and CONFIG.get('debug_toolbar', False):
+if DEBUG and CONFIG.get('debug_toolbar', False):  # pragma: no cover
     logger.info("Running with DEBUG_TOOLBAR enabled")
     INSTALLED_APPS.append('debug_toolbar')
     MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
@@ -675,7 +675,7 @@ LANGUAGES = [
 ]
 
 # Testing interface translations
-if get_setting('TEST_TRANSLATIONS', False):
+if get_setting('TEST_TRANSLATIONS', False):  # pragma: no cover
     # Set default language
     LANGUAGE_CODE = 'xx'
 
@@ -777,7 +777,7 @@ USE_L10N = True
 # Do not use native timezone support in "test" mode
 # It generates a *lot* of cruft in the logs
 if not TESTING:
-    USE_TZ = True
+    USE_TZ = True  # pragma: no cover
 
 DATE_INPUT_FORMATS = [
     "%Y-%m-%d",
@@ -805,7 +805,7 @@ SITE_ID = 1
 # Load the allauth social backends
 SOCIAL_BACKENDS = CONFIG.get('social_backends', [])
 for app in SOCIAL_BACKENDS:
-    INSTALLED_APPS.append(app)
+    INSTALLED_APPS.append(app)  # pragma: no cover
 
 SOCIALACCOUNT_PROVIDERS = CONFIG.get('social_providers', [])
 
@@ -879,7 +879,7 @@ PLUGIN_DIRS = ['plugin.builtin', 'barcodes.plugins', ]
 
 if not TESTING:
     # load local deploy directory in prod
-    PLUGIN_DIRS.append('plugins')
+    PLUGIN_DIRS.append('plugins')  # pragma: no cover
 
 if DEBUG or TESTING:
     # load samples in debug mode
