@@ -218,6 +218,8 @@ class OwnerModelTest(TestCase):
         self.client.login(username='username', password='password')
         # user list
         self.do_request(reverse('api-owner-list'), {})
+        # user list with search
+        self.do_request(reverse('api-owner-list'), {'search': 'user'})
         # user detail
         self.do_request(reverse('api-owner-detail', kwargs={'pk': self.user.id}), {})
 
