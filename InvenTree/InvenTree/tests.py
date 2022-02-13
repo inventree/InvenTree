@@ -13,6 +13,7 @@ from .validators import validate_overage, validate_part_name
 from . import helpers
 from . import version
 from . import status
+from . import ready
 
 from decimal import Decimal
 
@@ -399,3 +400,6 @@ class TestStatus(TestCase):
 
     def test_check_system_healt(self):
         self.assertTrue(status.check_system_health())
+
+    def test_TestMode(self):
+        self.assertTrue(ready.isInTestMode())
