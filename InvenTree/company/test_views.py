@@ -49,28 +49,6 @@ class CompanyViewTestBase(TestCase):
 
         self.client.login(username='username', password='password')
 
-    def post(self, url, data, valid=None):
-        """
-        POST against this form and return the response (as a JSON object)
-        """
-
-        response = self.client.post(url, data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-
-        self.assertEqual(response.status_code, 200)
-
-        json_data = json.loads(response.content)
-
-        # If a particular status code is required
-        if valid is not None:
-            if valid:
-                self.assertEqual(json_data['form_valid'], True)
-            else:
-                self.assertEqual(json_data['form_valid'], False)
-
-        form_errors = json.loads(json_data['form_errors'])
-
-        return json_data, form_errors
-
 
 class CompanyViewTest(CompanyViewTestBase):
     """
