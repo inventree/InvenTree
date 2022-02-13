@@ -30,7 +30,7 @@ src='{% static "img/blank_image.png" %}'
 {% block actions %}
 <!-- Admin Display -->
 {% if user.is_staff and roles.build.change %}
-{% url 'admin:build_build_change' build.pk as url %}
+{% url "admin:build_build_change" build.pk as url %}
 {% include "admin_button.html" with url=url %}
 {% endif %}
 <!-- Printing options -->

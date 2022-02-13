@@ -20,7 +20,7 @@
 
 {% block actions %}
 {% if user.is_staff and roles.purchase_order.change %}
-{% url 'admin:order_purchaseorder_change' order.pk as url %}
+{% url "admin:order_purchaseorder_change" order.pk as url %}
 {% include "admin_button.html" with url=url %}
 {% endif %}
 <!-- Printing options -->

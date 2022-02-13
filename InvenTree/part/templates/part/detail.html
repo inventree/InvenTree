@@ -1037,9 +1037,9 @@
                 part_id: {{part.id}},
                 pb_human_name: 'internal price break',
                 pb_url_slug: 'internal-price',
-                pb_url: '{% url 'api-part-internal-price-list' %}',
+                pb_url: '{% url "api-part-internal-price-list" %}',
                 pb_new_btn: $('#new-internal-price-break'),
-                pb_new_url: '{% url 'internal-price-break-create' %}',
+                pb_new_url: '{% url "internal-price-break-create" %}',
                 linkedGraph: $('#InternalPriceBreakChart'),
             },
         );
@@ -1055,7 +1055,7 @@
                 pb_url_slug: 'sale-price',
                 pb_url: '{% url "api-part-sale-price-list" %}',
                 pb_new_btn: $('#new-price-break'),
-                pb_new_url: '{% url 'sale-price-break-create' %}',
+                pb_new_url: '{% url "sale-price-break-create" %}',
                 linkedGraph: $('#SalePriceBreakChart'),
             },
         );

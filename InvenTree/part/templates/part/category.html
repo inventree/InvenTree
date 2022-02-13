@@ -20,7 +20,7 @@
 
 {% block actions %}
 {% if user.is_staff and roles.part_category.change %}
-{% url 'admin:part_partcategory_change' category.pk as url %}
+{% url "admin:part_partcategory_change" category.pk as url %}
 {% include "admin_button.html" with url=url %}
 {% endif %}
 {% if category %}

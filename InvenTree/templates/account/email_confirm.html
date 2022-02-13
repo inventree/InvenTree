@@ -22,7 +22,7 @@
 
 {% else %}
 
-{% url 'account_email' as email_url %}
+{% url "account_email" as email_url %}
 
 <p>{% blocktrans %}This email confirmation link expired or is invalid. Please <a href='{{ email_url }}'>issue a new email confirmation request</a>.{% endblocktrans %}</p>
 

@@ -19,7 +19,7 @@
 {% block actions %}
 <!-- Admin View -->
 {% if user.is_staff and roles.part.change %}
-{% url 'admin:part_part_change' part.pk as url %}
+{% url "admin:part_part_change" part.pk as url %}
 {% include "admin_button.html" with url=url %}
 {% endif %}
 
@@ -414,7 +414,7 @@
 
     function adjustPartStock(action) {
         inventreeGet(
-            '{% url 'api-stock-list' %}',
+            '{% url "api-stock-list" %}',
             {
                 part: {{ part.id }},
                 in_stock: true,
