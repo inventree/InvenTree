@@ -125,7 +125,7 @@
             <div class='col-sm-6'>
                 <div class='btn-group float-right'>
                     <button type='button' id='edit-notes' title='{% trans "Edit Notes" %}' class='btn outline-secondary'>
-                        <span class='fas fa-edit'>      
+                        <span class='fas fa-edit'>
                         </span>
                     </button>
                 </div>
@@ -167,7 +167,7 @@
         {% endif %}
 
     });
-    
+
     onPanelLoad('order-shipments-complete', function() {
         loadSalesOrderShipmentTable('#completed-shipments-table', {
             order: {{ order.pk }},
@@ -255,5 +255,5 @@
     );
 
     enableSidebar('salesorder');
-    
+
 {% endblock %}
