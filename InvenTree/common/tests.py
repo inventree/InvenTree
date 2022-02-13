@@ -74,7 +74,7 @@ class SettingsTest(TestCase):
     def test_defaults(self):
         """
         Populate the settings with default values
-        """        
+        """
 
         for key in InvenTreeSetting.SETTINGS.keys():
 
