@@ -226,7 +226,7 @@ class IntegrationPluginBase(MixinBase, plugin_base.InvenTreePluginBase):
         """
         Get package metadata for plugin
         """
-        return {}
+        return {}  # pragma: no cover  # TODO add usage for package metadata
 
     def define_package(self):
         """
