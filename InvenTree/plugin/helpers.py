@@ -84,8 +84,6 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: st
             log_kwargs['reference'] = log_name
         log_error({package_name: str(error)}, **log_kwargs)
 
-    new_error = IntegrationPluginError(package_name, str(error))
-
     if do_raise:
         raise IntegrationPluginError(package_name, str(error))
 # endregion
