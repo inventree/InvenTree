@@ -67,9 +67,10 @@ class TestReportTests(InvenTreeAPITestCase):
             }
         )
 
+
 class TestLabels(InvenTreeAPITestCase):
     """
-    Tests for the StockItem TestReport templates
+    Tests for the label APIs
     """
 
     fixtures = [
