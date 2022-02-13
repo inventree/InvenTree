@@ -153,7 +153,7 @@ def get_modules(pkg):
                 if not k.startswith('_') and (pkg_names is None or k in pkg_names):
                     context[k] = v
             context[name] = module
-        except AppRegistryNotReady:
+        except AppRegistryNotReady:  # pragma: no cover
             pass
         except Exception as error:
             # this 'protects' against malformed plugin modules by more or less silently failing

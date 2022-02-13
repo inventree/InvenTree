@@ -103,7 +103,7 @@ class InvenTreeConfig(AppConfig):
 
             from InvenTree.tasks import update_exchange_rates
             from common.settings import currency_code_default
-        except AppRegistryNotReady:
+        except AppRegistryNotReady:  # pragma: no cover
             pass
 
         base_currency = currency_code_default()

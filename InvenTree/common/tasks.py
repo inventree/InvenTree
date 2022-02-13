@@ -19,7 +19,7 @@ def delete_old_notifications():
 
     try:
         from common.models import NotificationEntry
-    except AppRegistryNotReady:
+    except AppRegistryNotReady:  # pragma: no cover
         logger.info("Could not perform 'delete_old_notifications' - App registry not ready")
         return
 
