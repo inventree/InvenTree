@@ -21,13 +21,13 @@
 {% endif %}
 
 <br>
-<form method="post">
+<form method='post'>
   {% csrf_token %}
-  <button type="submit" class="btn btn-primary w-100">
+  <button type='submit' class='btn btn-primary w-100'>
     {% trans 'Generate backup tokens' %}
   </button>
 </form>
 <br>
-<a href="{% url 'settings' %}" class="btn btn-secondary w-100 btn-sm">{% trans "back to settings" %}</a>
+<a href='{% url "settings" %}' class='btn btn-secondary w-100 btn-sm'>{% trans "back to settings" %}</a>
 
 {% endblock %}

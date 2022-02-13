@@ -6,7 +6,7 @@
 
     {% block header %}
     <tr style='background: #eef3f7; height: 4rem; text-align: center;'>
-        <th colspan="100%" style="padding-bottom: 1rem; color: #68686a;">
+        <th colspan='100%' style='padding-bottom: 1rem; color: #68686a;'>
             {% block header_row %}
             <p style='font-size: 1.25rem;'>{% block title %}<!-- email title goes here -->{% endblock %}</p>
             {% block subtitle %}
@@ -19,7 +19,7 @@
     {% endblock %}
 
     {% block body %}
-    <tr style="height: 3rem; border-bottom: 1px solid #68686a;">
+    <tr style='height: 3rem; border-bottom: 1px solid #68686a;'>
         {% block body_row %}
         <!-- email body goes here -->
         {% endblock %}
@@ -28,7 +28,7 @@
 
     {% block footer %}
     <tr style='background: #eef3f7; height: 2rem;'>
-        <td colspan="100%" style="padding-top:1rem; text-align: center">
+        <td colspan='100%' style='padding-top:1rem; text-align: center'>
             {% block footer_prefix %}
             <!-- Custom footer information goes here -->
             {% endblock %}
