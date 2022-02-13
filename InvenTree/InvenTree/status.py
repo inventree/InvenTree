@@ -89,15 +89,15 @@ def check_system_health(**kwargs):
 
     result = True
 
-    if not is_worker_running(**kwargs):
+    if not is_worker_running(**kwargs):  # pragma: no cover
         result = False
         logger.warning(_("Background worker check failed"))
 
-    if not is_email_configured():
+    if not is_email_configured():  # pragma: no cover
         result = False
         logger.warning(_("Email backend not configured"))
 
-    if not result:
+    if not result:  # pragma: no cover
         logger.warning(_("InvenTree system health checks failed"))
 
     return result
