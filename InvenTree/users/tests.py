@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from pydoc import resolve
 
 from django.test import TestCase
 from django.apps import apps
+from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+
+from rest_framework.authtoken.models import Token
 
 from users.models import RuleSet, Owner
 
@@ -169,15 +173,15 @@ class OwnerModelTest(TestCase):
         """ Add users and groups """
 
         # Create a new user
-        self.user = get_user_model().objects.create_user(
-            username='john',
-            email='john@email.com',
-            password='custom123',
-        )
-
+        self.user = get_user_model().objects.create_user('username', 'user@email.com', 'password')
         # Put the user into a new group
         self.group = Group.objects.create(name='new_group')
         self.user.groups.add(self.group)
+
+    def do_request(self, endpoint, filters, status_code = 200):
+        response =  self.client.get(endpoint, filters, format='json')
+        self.assertEqual(response.status_code, status_code)
+        return response.data
 
     def test_owner(self):
 
@@ -203,3 +207,37 @@ class OwnerModelTest(TestCase):
         self.group.delete()
         group_as_owner = Owner.get_owner(self.group)
         self.assertEqual(group_as_owner, None)
+
+    def test_api(self):
+        """
+        Test user APIs
+        """
+        # not authed
+        self.do_request(reverse('api-owner-list'), {}, 401)
+        self.do_request(reverse('api-owner-detail', kwargs ={'pk': self.user.id}), {}, 401)
+
+        self.client.login(username='username', password='password')
+        # user list
+        self.do_request(reverse('api-owner-list'), {})
+        # user detail
+        self.do_request(reverse('api-owner-detail', kwargs ={'pk': self.user.id}), {})
+
+
+    def test_token(self):
+        """
+        Test token mechanisms
+        """
+        token = Token.objects.filter(user=self.user)
+
+        # not authed
+        self.do_request(reverse('api-token'), {}, 401)
+
+        self.client.login(username='username', password='password')
+        # token get
+        response = self.do_request(reverse('api-token'), {})
+        self.assertEqual(response['token'], token.first().key)
+
+        # token delete
+        response = self.client.delete(reverse('api-token'), {}, format='json')
+        self.assertEqual(response.status_code, 202)
+        self.assertEqual(len(token), 0)
