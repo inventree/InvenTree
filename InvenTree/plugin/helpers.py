@@ -23,7 +23,7 @@ class IntegrationPluginError(Exception):
         self.message = message
 
     def __str__(self):
-        return self.message
+        return self.message  # pragma: no cover
 
 
 class MixinImplementationError(ValueError):
