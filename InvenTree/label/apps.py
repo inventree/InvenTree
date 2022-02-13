@@ -5,6 +5,7 @@ import hashlib
 
 from django.apps import AppConfig
 from django.conf import settings
+from django.core.exceptions import AppRegistryNotReady
 
 from InvenTree.ready import canAppAccessDatabase
 
@@ -53,7 +54,7 @@ class LabelConfig(AppConfig):
 
         try:
             from .models import StockItemLabel
-        except:
+        except AppRegistryNotReady:  # pragma: no cover
             # Database might not by ready yet
             return
 
@@ -140,7 +141,7 @@ class LabelConfig(AppConfig):
 
         try:
             from .models import StockLocationLabel
-        except:
+        except AppRegistryNotReady:  # pragma: no cover
             # Database might not yet be ready
             return
 
@@ -234,7 +235,7 @@ class LabelConfig(AppConfig):
 
         try:
             from .models import PartLabel
-        except:
+        except AppRegistryNotReady:  # pragma: no cover
             # Database might not yet be ready
             return
 
