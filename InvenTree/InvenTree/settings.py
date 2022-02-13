@@ -119,20 +119,20 @@ d) Create "secret_key.txt" if it does not exist
 
 if os.getenv("INVENTREE_SECRET_KEY"):
     # Secret key passed in directly
-    SECRET_KEY = os.getenv("INVENTREE_SECRET_KEY").strip()
-    logger.info("SECRET_KEY loaded by INVENTREE_SECRET_KEY")
+    SECRET_KEY = os.getenv("INVENTREE_SECRET_KEY").strip()  # pragma: no cover
+    logger.info("SECRET_KEY loaded by INVENTREE_SECRET_KEY")  # pragma: no cover
 else:
     # Secret key passed in by file location
     key_file = os.getenv("INVENTREE_SECRET_KEY_FILE")
 
     if key_file:
-        key_file = os.path.abspath(key_file)
+        key_file = os.path.abspath(key_file)  # pragma: no cover
     else:
         # default secret key location
         key_file = os.path.join(BASE_DIR, "secret_key.txt")
         key_file = os.path.abspath(key_file)
 
-    if not os.path.exists(key_file):
+    if not os.path.exists(key_file):  # pragma: no cover
         logger.info(f"Generating random key file at '{key_file}'")
         # Create a random key file
         with open(key_file, 'w') as f:
