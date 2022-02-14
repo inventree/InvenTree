@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-14 08:48+0000\n"
-"PO-Revision-Date: 2022-02-14 18:46\n"
+"POT-Creation-Date: 2022-02-14 21:23+0000\n"
+"PO-Revision-Date: 2022-02-14 21:24\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -205,7 +205,7 @@ msgstr "Selección no válida"
 #: templates/InvenTree/settings/plugin.html:48
 #: templates/InvenTree/settings/plugin.html:125
 #: templates/InvenTree/settings/plugin_settings.html:23
-#: templates/InvenTree/settings/settings.html:318
+#: templates/InvenTree/settings/settings.html:319
 #: templates/js/translated/company.js:641 templates/js/translated/part.js:567
 #: templates/js/translated/part.js:706 templates/js/translated/part.js:1631
 #: templates/js/translated/stock.js:2485
@@ -2508,7 +2508,7 @@ msgstr "Valor del parámetro"
 
 #: company/models.py:429 part/models.py:915 part/models.py:2457
 #: part/templates/part/part_base.html:288
-#: templates/InvenTree/settings/settings.html:323
+#: templates/InvenTree/settings/settings.html:324
 #: templates/js/translated/company.js:653 templates/js/translated/part.js:721
 msgid "Units"
 msgstr "Unidades"
@@ -2686,7 +2686,7 @@ msgstr "Nueva Parte de Proveedor"
 #: company/templates/company/detail.html:32
 #: company/templates/company/detail.html:79
 #: company/templates/company/manufacturer_part.html:127
-#: company/templates/company/manufacturer_part.html:155
+#: company/templates/company/manufacturer_part.html:156
 #: part/templates/part/category.html:171 part/templates/part/detail.html:365
 #: part/templates/part/detail.html:394
 msgid "Options"
@@ -2779,13 +2779,13 @@ msgid "Company Notes"
 msgstr "Notas de la empresa"
 
 #: company/templates/company/detail.html:384
-#: company/templates/company/manufacturer_part.html:214
+#: company/templates/company/manufacturer_part.html:215
 #: part/templates/part/detail.html:438
 msgid "Delete Supplier Parts?"
 msgstr "¿Eliminar piezas de proveedor?"
 
 #: company/templates/company/detail.html:385
-#: company/templates/company/manufacturer_part.html:215
+#: company/templates/company/manufacturer_part.html:216
 #: part/templates/part/detail.html:439
 msgid "All selected supplier parts will be deleted"
 msgstr "Se eliminarán todas las partes del proveedor seleccionadas"
@@ -2835,42 +2835,42 @@ msgid "Delete supplier parts"
 msgstr "Eliminar partes del proveedor"
 
 #: company/templates/company/manufacturer_part.html:129
-#: company/templates/company/manufacturer_part.html:157
-#: company/templates/company/manufacturer_part.html:253
+#: company/templates/company/manufacturer_part.html:158
+#: company/templates/company/manufacturer_part.html:254
 #: part/templates/part/detail.html:367 part/templates/part/detail.html:396
 #: templates/js/translated/company.js:426 templates/js/translated/helpers.js:31
 #: users/models.py:217
 msgid "Delete"
 msgstr "Eliminar"
 
-#: company/templates/company/manufacturer_part.html:142
+#: company/templates/company/manufacturer_part.html:143
 #: company/templates/company/manufacturer_part_sidebar.html:5
 #: part/templates/part/category_sidebar.html:17
 #: part/templates/part/detail.html:190 part/templates/part/part_sidebar.html:9
 msgid "Parameters"
 msgstr "Parámetros"
 
-#: company/templates/company/manufacturer_part.html:146
+#: company/templates/company/manufacturer_part.html:147
 #: part/templates/part/detail.html:195
 #: templates/InvenTree/settings/category.html:12
 #: templates/InvenTree/settings/part.html:66
 msgid "New Parameter"
 msgstr "Nuevo parámetro"
 
-#: company/templates/company/manufacturer_part.html:157
+#: company/templates/company/manufacturer_part.html:158
 msgid "Delete parameters"
 msgstr "Eliminar parámetro"
 
-#: company/templates/company/manufacturer_part.html:190
+#: company/templates/company/manufacturer_part.html:191
 #: part/templates/part/detail.html:895
 msgid "Add Parameter"
 msgstr "Añadir parámetro"
 
-#: company/templates/company/manufacturer_part.html:238
+#: company/templates/company/manufacturer_part.html:239
 msgid "Selected parameters will be deleted"
 msgstr "Los parámetros seleccionados serán eliminados"
 
-#: company/templates/company/manufacturer_part.html:250
+#: company/templates/company/manufacturer_part.html:251
 msgid "Delete Parameters"
 msgstr "Eliminar parámetros"
 
@@ -4011,7 +4011,7 @@ msgstr "Palabras clave para mejorar la visibilidad en los resultados de búsqued
 #: part/models.py:811 part/models.py:2283 part/models.py:2532
 #: part/templates/part/part_base.html:265
 #: part/templates/part/set_category.html:15
-#: templates/InvenTree/settings/settings.html:222
+#: templates/InvenTree/settings/settings.html:223
 #: templates/js/translated/part.js:1268
 msgid "Category"
 msgstr "Categoría"
@@ -4199,7 +4199,7 @@ msgid "Parent Part"
 msgstr "Parte principal"
 
 #: part/models.py:2489 part/models.py:2538 part/models.py:2539
-#: templates/InvenTree/settings/settings.html:217
+#: templates/InvenTree/settings/settings.html:218
 msgid "Parameter Template"
 msgstr "Plantilla de parámetro"
 
@@ -4211,7 +4211,7 @@ msgstr "Data"
 msgid "Parameter Value"
 msgstr "Valor del parámetro"
 
-#: part/models.py:2543 templates/InvenTree/settings/settings.html:226
+#: part/models.py:2543 templates/InvenTree/settings/settings.html:227
 msgid "Default Value"
 msgstr "Valor predeterminado"
 
@@ -6447,11 +6447,11 @@ msgstr "El servidor de InvenTree ha generado un error interno"
 msgid "Refer to the error log in the admin interface for further details"
 msgstr "Consulte el registro de errores en la interfaz de administración para más detalles"
 
-#: templates/503.html:8 templates/503.html:9
+#: templates/503.html:10 templates/503.html:35
 msgid "Site is in Maintenance"
 msgstr "El Sitio está en Mantenimiento"
 
-#: templates/503.html:12
+#: templates/503.html:41
 msgid "The site is currently in maintenance and should be up again soon!"
 msgstr "El sitio está actualmente en mantenimiento y debería estar listo pronto!"
 
@@ -6579,8 +6579,8 @@ msgstr "Direcciones URL"
 
 #: templates/InvenTree/settings/mixins/urls.html:8
 #, python-format
-msgid "The Base-URL for this plugin is <a href='/%(base)s' target='_blank'><strong>%(base)s</strong></a>."
-msgstr "La URL base para este plugin es <a href='/%(base)s' target='_blank'><strong>%(base)s</strong></a>."
+msgid "The Base-URL for this plugin is <a href=\"/%(base)s\" target=\"_blank\"><strong>%(base)s</strong></a>."
+msgstr ""
 
 #: templates/InvenTree/settings/mixins/urls.html:23
 msgid "Open in new tab"
@@ -6671,49 +6671,49 @@ msgstr "Licencia"
 msgid "The code information is pulled from the latest git commit for this plugin. It might not reflect official version numbers or information but the actual code running."
 msgstr "La información del código es extraída del último git commit para este plugin. Puede que no refleje los números de versión oficiales o la información, pero sí el código actual en ejecución."
 
-#: templates/InvenTree/settings/plugin_settings.html:76
+#: templates/InvenTree/settings/plugin_settings.html:77
 msgid "Package information"
 msgstr "Información del paquete"
 
-#: templates/InvenTree/settings/plugin_settings.html:82
+#: templates/InvenTree/settings/plugin_settings.html:83
 msgid "Installation method"
 msgstr "Método de instalación"
 
-#: templates/InvenTree/settings/plugin_settings.html:85
+#: templates/InvenTree/settings/plugin_settings.html:86
 msgid "This plugin was installed as a package"
 msgstr "Este plugin fue instalado como un paquete"
 
-#: templates/InvenTree/settings/plugin_settings.html:87
+#: templates/InvenTree/settings/plugin_settings.html:88
 msgid "This plugin was found in a local InvenTree path"
 msgstr "Este plugin fue encontrado en una ruta local de InvenTree"
 
-#: templates/InvenTree/settings/plugin_settings.html:93
+#: templates/InvenTree/settings/plugin_settings.html:94
 msgid "Installation path"
 msgstr "Ruta de instalación"
 
-#: templates/InvenTree/settings/plugin_settings.html:99
+#: templates/InvenTree/settings/plugin_settings.html:100
 msgid "Commit Author"
 msgstr "Autor del Commit"
 
-#: templates/InvenTree/settings/plugin_settings.html:103
+#: templates/InvenTree/settings/plugin_settings.html:104
 #: templates/about.html:47
 msgid "Commit Date"
 msgstr "Fecha del Commit"
 
-#: templates/InvenTree/settings/plugin_settings.html:107
+#: templates/InvenTree/settings/plugin_settings.html:108
 #: templates/about.html:40
 msgid "Commit Hash"
 msgstr "Hash de Commit"
 
-#: templates/InvenTree/settings/plugin_settings.html:111
+#: templates/InvenTree/settings/plugin_settings.html:112
 msgid "Commit Message"
 msgstr "Mensaje de Commit"
 
-#: templates/InvenTree/settings/plugin_settings.html:116
+#: templates/InvenTree/settings/plugin_settings.html:117
 msgid "Sign Status"
 msgstr "Estado de Firma"
 
-#: templates/InvenTree/settings/plugin_settings.html:121
+#: templates/InvenTree/settings/plugin_settings.html:122
 msgid "Sign Key"
 msgstr "Firma de clave"
 
@@ -6734,37 +6734,37 @@ msgstr "Ningún valor establecido"
 msgid "Edit setting"
 msgstr "Editar ajustes"
 
-#: templates/InvenTree/settings/settings.html:114
+#: templates/InvenTree/settings/settings.html:115
 msgid "Edit Plugin Setting"
 msgstr "Editar Configuración del Plugin"
 
-#: templates/InvenTree/settings/settings.html:116
+#: templates/InvenTree/settings/settings.html:117
 msgid "Edit Global Setting"
 msgstr "Editar Configuración Global"
 
-#: templates/InvenTree/settings/settings.html:118
+#: templates/InvenTree/settings/settings.html:119
 msgid "Edit User Setting"
 msgstr "Editar Configuración de Usuario"
 
-#: templates/InvenTree/settings/settings.html:207
+#: templates/InvenTree/settings/settings.html:208
 msgid "No category parameter templates found"
 msgstr "No hay plantillas de parámetros de categoría"
 
-#: templates/InvenTree/settings/settings.html:229
-#: templates/InvenTree/settings/settings.html:328
+#: templates/InvenTree/settings/settings.html:230
+#: templates/InvenTree/settings/settings.html:329
 msgid "Edit Template"
 msgstr "Editar Plantilla"
 
-#: templates/InvenTree/settings/settings.html:230
-#: templates/InvenTree/settings/settings.html:329
+#: templates/InvenTree/settings/settings.html:231
+#: templates/InvenTree/settings/settings.html:330
 msgid "Delete Template"
 msgstr "Eliminar Plantilla"
 
-#: templates/InvenTree/settings/settings.html:308
+#: templates/InvenTree/settings/settings.html:309
 msgid "No part parameter templates found"
 msgstr "No se encontraron plantillas de parámetros de parte"
 
-#: templates/InvenTree/settings/settings.html:312
+#: templates/InvenTree/settings/settings.html:313
 msgid "ID"
 msgstr "Identificación"
 
@@ -7043,8 +7043,8 @@ msgstr "¡Ayuda a los esfuerzos de traducción!"
 
 #: templates/InvenTree/settings/user_display.html:102
 #, python-format
-msgid "Native language translation of the InvenTree web application is <a href='%(link)s'>community contributed via crowdin</a>. Contributions are welcomed and encouraged."
-msgstr "La traducción nativa de la aplicación web de InvenTree es <a href=\"%(link)s\"> un aporte de la comunidad a través de crowdin</a>. Las contribuciones son bienvenidas y animadas."
+msgid "Native language translation of the InvenTree web application is <a href=\"%(link)s\">community contributed via crowdin</a>. Contributions are welcomed and encouraged."
+msgstr ""
 
 #: templates/InvenTree/settings/user_homepage.html:9
 msgid "Home Page Settings"
@@ -7130,13 +7130,13 @@ msgstr "Confirmar Email"
 
 #: templates/account/email_confirm.html:16
 #, python-format
-msgid "Please confirm that <a href='mailto:%(email)s'>%(email)s</a> is an email address for user %(user_display)s."
-msgstr "Por favor confirme que <a href=\"mailto:%(email)s\">%(email)s</a> es una dirección de correo electrónico del usuario %(user_display)s."
+msgid "Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an email address for user %(user_display)s."
+msgstr ""
 
 #: templates/account/email_confirm.html:27
 #, python-format
-msgid "This email confirmation link expired or is invalid. Please <a href='%(email_url)s'>issue a new email confirmation request</a>."
-msgstr "Este enlace de confirmación de correo electrónico ha caducado o no es válido. Por favor, <a href=\"%(email_url)s\">emite un nuevo correo de solicitud de confirmación</a>."
+msgid "This email confirmation link expired or is invalid. Please <a href=\"%(email_url)s\">issue a new email confirmation request</a>."
+msgstr ""
 
 #: templates/account/login.html:6 templates/account/login.html:16
 #: templates/account/login.html:39
@@ -7146,17 +7146,15 @@ msgstr "Ingresar"
 #: templates/account/login.html:21
 #, python-format
 msgid "Please sign in with one\n"
-"of your existing third party accounts or  <a class='btn btn-primary btn-small' href='%(signup_url)s'>sign up</a>\n"
+"of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
-msgstr "Por favor, inicia sesión con una\n"
-"de tus cuentas de terceros existentes o  <a class='btn btn-primary btn-small' href='%(signup_url)s'>regístrate</a>\n"
-"para una cuenta e inicia sesión a continuación:"
+msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
 msgid "If you have not created an account yet, then please\n"
-"<a href='%(signup_url)s'>sign up</a> first."
-msgstr "Si no has creado una cuenta todavía, entonces <a href=\"%(signup_url)s\">regístrese</a> primero, por favor."
+"<a href=\"%(signup_url)s\">sign up</a> first."
+msgstr ""
 
 #: templates/account/login.html:42
 msgid "Forgot Password?"
@@ -7210,8 +7208,8 @@ msgstr "Token Incorrecto"
 
 #: templates/account/password_reset_from_key.html:11
 #, python-format
-msgid "The password reset link was invalid, possibly because it has already been used.  Please request a <a href='%(passwd_reset_url)s'>new password reset</a>."
-msgstr "El link para restablecer la contraseña era inválido, posiblemente porque ya fue usado. Por favor solicite un <a href=\"%(passwd_reset_url)s\">nuevo restablecimiento de contraseña</a>."
+msgid "The password reset link was invalid, possibly because it has already been used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</a>."
+msgstr ""
 
 #: templates/account/password_reset_from_key.html:18
 msgid "Change password"
@@ -7227,8 +7225,8 @@ msgstr "Registrarse"
 
 #: templates/account/signup.html:13
 #, python-format
-msgid "Already have an account? Then please <a href='%(login_url)s'>sign in</a>."
-msgstr "¿Ya tiene una cuenta? entonces <a href=\"%(login_url)s\">ingrese</a> por favor."
+msgid "Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
+msgstr ""
 
 #: templates/account/signup.html:27
 msgid "Or use a SSO-provider for signup"
@@ -7311,15 +7309,15 @@ msgstr "Agregar Enlace"
 msgid "Add Attachment"
 msgstr "Añadir archivo adjunto"
 
-#: templates/base.html:58
+#: templates/base.html:97
 msgid "Server Restart Required"
 msgstr "Reinicio del Servidor Requerido"
 
-#: templates/base.html:61
+#: templates/base.html:100
 msgid "A configuration option has been changed which requires a server restart"
 msgstr "Se ha cambiado una opción de configuración que requiere reiniciar el servidor"
 
-#: templates/base.html:61
+#: templates/base.html:100
 msgid "Contact your system administrator for further information"
 msgstr "Póngase en contacto con su administrador para más información"
 
