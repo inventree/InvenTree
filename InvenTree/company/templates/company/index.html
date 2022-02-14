@@ -5,7 +5,7 @@
 {% load inventree_extras %}
 
 {% block page_title %}
-{% inventree_title %} | {% trans "Supplier List" %} 
+{% inventree_title %} | {% trans "Supplier List" %}
 {% endblock %}
 
 {% block heading %}
@@ -14,7 +14,7 @@
 
 {% block actions %}
 {% if pagetype == 'manufacturers' and roles.purchase_order.add or pagetype == 'suppliers' and roles.purchase_order.add or pagetype == 'customers' and roles.sales_order.add %}
-<button type='button' class="btn btn-success" id='new-company'>
+<button type='button' class='btn btn-success' id='new-company'>
     <span class='fas fa-plus-circle'></span> {{ button_text }}
 </button>
 {% endif %}
@@ -23,11 +23,10 @@
 {% block page_info %}
 
 <div class='panel-content'>
-    
     <div id='button-toolbar'>
         {% include "filter_list.html" with id='company' %}
     </div>
-    
+
     <table class='table table-striped table-condensed' id='company-table' data-toolbar='#button-toolbar'>
     </table>
 </div>
@@ -50,11 +49,11 @@
         });
     });
 
-    loadCompanyTable("#company-table", "{% url 'api-company-list' %}",
+    loadCompanyTable('#company-table', '{% url "api-company-list" %}',
         {
             pagetype: '{{ pagetype }}',
             params: {
-                {% for key,value in filters.items %}{{ key }}: "{{ value }}",{% endfor %}
+                {% for key,value in filters.items %}{{ key }}: '{{ value }}',{% endfor %}
             }
         }
     );

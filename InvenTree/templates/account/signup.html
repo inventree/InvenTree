@@ -10,21 +10,21 @@
 
 <h1>{% trans "Sign Up" %}</h1>
 
-<p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
+<p>{% blocktrans %}Already have an account? Then please <a href='{{ login_url }}'>sign in</a>.{% endblocktrans %}</p>
 
 {% if enable_reg %}
-<form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+<form class='signup' id='signup_form' method='post' action='{% url "account_signup" %}'>
   {% csrf_token %}
   {{ form|crispy }}
   {% if redirect_field_value %}
-  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+  <input type='hidden' name='{{ redirect_field_name }}' value='{{ redirect_field_value }}' />
   {% endif %}
-  <button type="submit" class="btn btn-primary btn-block">{% trans "Sign Up" %}</button>
+  <button type='submit' class='btn btn-primary btn-block'>{% trans "Sign Up" %}</button>
 </form>
 
 {% if enable_sso %}
 <br>
-<h4>{% trans 'Or use a SSO-provider for signup' %}</h4>
+<h4>{% trans "Or use a SSO-provider for signup" %}</h4>
 <div>
     {% include "socialaccount/snippets/provider_list.html" with process="login" %}
 </div>

@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block breadcrumb_tree %}
-<div id="breadcrumb-tree"></div>
+<div id='breadcrumb-tree'></div>
 {% endblock breadcrumb_tree %}
 
 {% block heading %}
@@ -20,7 +20,7 @@
 
 {% block actions %}
 {% if user.is_staff and roles.part_category.change %}
-{% url 'admin:part_partcategory_change' category.pk as url %}
+{% url "admin:part_partcategory_change" category.pk as url %}
 {% include "admin_button.html" with url=url %}
 {% endif %}
 {% if category %}
@@ -106,7 +106,7 @@
     <tr>
         <td><span class='fas fa-map-marker-alt'></span></td>
         <td>{% trans "Default Location" %}</td>
-        <td><a href="{% url 'stock-location-detail' category.default_location.pk %}">{{ category.default_location.pathstring }}</a></td>
+        <td><a href='{% url "stock-location-detail" category.default_location.pk %}'>{{ category.default_location.pathstring }}</a></td>
     </tr>
     {% endif %}
     <tr>
@@ -167,7 +167,7 @@
     <div id='part-button-toolbar'>
         <div class='btn-group' role='group'>
             <div class='btn-group' role='group'>
-                <button id='part-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle="dropdown">
+                <button id='part-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
                     {% trans "Options" %}
                 </button>
                 <ul class='dropdown-menu'>
@@ -186,7 +186,7 @@
     </div>
     <div class='panel-content'>
         <table class='table table-striped table-condensed' data-toolbar='#part-button-toolbar' id='part-table'>
-        </table> 
+        </table>
     </div>
 </div>
 
@@ -210,9 +210,9 @@
                 {% include "filter_list.html" with id="category" %}
             </div>
         </div>
-    
+
         <table class='table table-striped table-condensed' id='subcategory-table' data-toolbar='#subcategory-button-toolbar'></table>
-    
+
     </div>
 </div>
 
@@ -227,14 +227,14 @@
 
     {% if category %}
     loadParametricPartTable(
-        "#parametric-part-table",
-        { 
+        '#parametric-part-table',
+        {
             headers: {{ headers|safe }},
             data: {{ parameters|safe }},
         }
     );
 
-    $("#toggle-starred").click(function() {
+    $('#toggle-starred').click(function() {
         toggleStar({
             url: '{% url "api-part-category-detail" category.pk %}',
             button: '#category-star-icon'
@@ -274,7 +274,7 @@
         }
     );
 
-    $("#cat-create").click(function() {
+    $('#cat-create').click(function() {
 
         var fields = categoryFields();
 
@@ -290,15 +290,15 @@
         });
     });
 
-    $("#part-export").click(function() {
+    $('#part-export').click(function() {
 
-        var url = "{% url 'part-export' %}?category={{ category.id }}";
+        var url = '{% url "part-export" %}?category={{ category.id }}';
 
         location.href = url;
     });
 
     {% if roles.part.add %}
-    $("#part-create").click(function() {
+    $('#part-create').click(function() {
 
         var fields = partFields({
             create: true,
@@ -318,25 +318,24 @@
                 location.href = `/part/${data.pk}/`;
             },
         });
-        
     });
     {% endif %}
 
     {% if category %}
-    $("#cat-edit").click(function () {
+    $('#cat-edit').click(function () {
 
         editCategory({{ category.pk }});
     });
 
     {% if category.parent %}
-    var redirect = "{% url 'category-detail' category.parent.id %}";
+    var redirect = '{% url "category-detail" category.parent.id %}';
     {% else %}
-    var redirect = "{% url 'part-index' %}";
+    var redirect = '{% url "part-index" %}';
     {% endif %}
 
     $('#cat-delete').click(function() {
         launchModalForm(
-            "{% url 'category-delete' category.id %}",
+            '{% url "category-delete" category.id %}',
             {
                 redirect: redirect
             }
@@ -346,12 +345,12 @@
     {% endif %}
 
     loadPartTable(
-        "#part-table",
-        "{% url 'api-part-list' %}",
+        '#part-table',
+        '{% url "api-part-list" %}',
         {
             params: {
                 {% if category %}category: {{ category.id }},
-                {% else %}category: "null",
+                {% else %}category: 'null',
                 {% endif %}
             },
             buttons: ['#part-options'],

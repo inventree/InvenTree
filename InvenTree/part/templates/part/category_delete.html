@@ -2,15 +2,15 @@
 {% load i18n %}
 
 {% block pre_form_content %}
-{% trans 'Are you sure you want to delete category' %} <strong>{{ category.name }}</strong>?
+{% trans "Are you sure you want to delete category" %} <strong>{{ category.name }}</strong>?
 
 {% if category.children.all|length > 0 %}
 <p>{% blocktrans with count=category.children.all|length%}This category contains {{count}} child categories{% endblocktrans %}.<br>
-{% trans 'If this category is deleted, these child categories will be moved to the' %}
+{% trans "If this category is deleted, these child categories will be moved to the" %}
 {% if category.parent %}
- <strong>{{ category.parent.name }}</strong> {% trans 'category' %}.
+ <strong>{{ category.parent.name }}</strong> {% trans "category" %}.
 {% else %}
- {% trans 'top level Parts category' %}.
+ {% trans "top level Parts category" %}.
 {% endif %}
 </p>
 
@@ -26,7 +26,7 @@
     {% if category.parent %}
     {% blocktrans with path=category.parent.pathstring %}If this category is deleted, these parts will be moved to the parent category {{path}}{% endblocktrans %}
     {% else %}
-    {% trans 'If this category is deleted, these parts will be moved to the top-level category Teile' %}
+    {% trans "If this category is deleted, these parts will be moved to the top-level category Teile" %}
     {% endif %}
 </p>
 <ul class='list-group'>
