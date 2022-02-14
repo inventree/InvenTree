@@ -33,7 +33,7 @@ def add_shipment(apps, schema_editor):
             line__order=order
         )
 
-        if allocations.count() == 0 and order.status != SalesOrderStatus.PENDING:
+        if allocations.count() == 0 and order.status != SalesOrderStatus.PENDING:  # pragma: no cover
             continue
 
         # Create a new Shipment instance against this order
@@ -41,13 +41,13 @@ def add_shipment(apps, schema_editor):
             order=order,
         )
 
-        if order.status == SalesOrderStatus.SHIPPED:
+        if order.status == SalesOrderStatus.SHIPPED:  # pragma: no cover
             shipment.shipment_date = order.shipment_date
 
         shipment.save()
 
         # Iterate through each allocation associated with this order
-        for allocation in allocations:
+        for allocation in allocations:  # pragma: no cover
             allocation.shipment = shipment
             allocation.save()
 
@@ -57,7 +57,7 @@ def add_shipment(apps, schema_editor):
         print(f"\nCreated SalesOrderShipment for {n} SalesOrder instances")
 
 
-def reverse_add_shipment(apps, schema_editor):
+def reverse_add_shipment(apps, schema_editor):  # pragma: no cover
     """
     Reverse the migration, delete and SalesOrderShipment instances
     """

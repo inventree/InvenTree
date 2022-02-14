@@ -110,7 +110,7 @@ class PartTest(TestCase):
 
         try:
             part.save()
-            self.assertTrue(False)
+            self.assertTrue(False)  # pragma: no cover
         except:
             pass
 

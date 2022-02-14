@@ -29,7 +29,7 @@ def delete_scheduled(apps, schema_editor):
     Task.objects.filter(func='stock.tasks.delete_old_stock_items').delete()
 
 
-def reverse(apps, schema_editor):
+def reverse(apps, schema_editor):  # pragma: no cover
     pass
 
 

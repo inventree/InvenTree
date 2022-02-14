@@ -90,7 +90,7 @@ class ReportConfig(AppConfig):
 
         try:
             from .models import TestReport
-        except:
+        except:  # pragma: no cover
             # Database is not ready yet
             return
 
@@ -113,7 +113,7 @@ class ReportConfig(AppConfig):
 
         try:
             from .models import BuildReport
-        except:
+        except:  # pragma: no cover
             # Database is not ready yet
             return
 

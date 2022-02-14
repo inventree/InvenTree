@@ -14,11 +14,11 @@ So a simplified version of the migration is implemented.
 TESTING = 'test' in sys.argv
 
 def clear():
-    if not TESTING:
+    if not TESTING:  # pragma: no cover
         os.system('cls' if os.name == 'nt' else 'clear')
 
 
-def reverse_association(apps, schema_editor):
+def reverse_association(apps, schema_editor):  # pragma: no cover
     """
     This is the 'reverse' operation of the manufacturer reversal.
     This operation is easier:
@@ -108,7 +108,7 @@ def associate_manufacturers(apps, schema_editor):
 
         if len(row) > 0:
             return row[0]
-        return ''
+        return ''  # pragma: no cover
 
     cursor = connection.cursor()
 
@@ -139,7 +139,7 @@ def associate_manufacturers(apps, schema_editor):
         """ Attempt to link Part to an existing Company """
 
         # Matches a company name directly
-        if name in companies.keys():
+        if name in companies.keys():  # pragma: no cover
             print(" - Part[{pk}]: '{n}' maps to existing manufacturer".format(pk=part_id, n=name))
 
             manufacturer_id = companies[name]
@@ -150,7 +150,7 @@ def associate_manufacturers(apps, schema_editor):
             return True
 
         # Have we already mapped this 
-        if name in links.keys():
+        if name in links.keys():  # pragma: no cover
             print(" - Part[{pk}]: Mapped '{n}' - manufacturer <{c}>".format(pk=part_id, n=name, c=links[name]))
 
             manufacturer_id = links[name]
@@ -196,10 +196,10 @@ def associate_manufacturers(apps, schema_editor):
             # Case-insensitive matching
             ratio = fuzz.partial_ratio(name.lower(), text.lower())
 
-            if ratio > threshold:
+            if ratio > threshold:  # pragma: no cover
                 matches.append({'name': name, 'match': ratio})
 
-        if len(matches) > 0:
+        if len(matches) > 0:  # pragma: no cover
             return [match['name'] for match in sorted(matches, key=lambda item: item['match'], reverse=True)]
         else:
             return []
@@ -212,12 +212,12 @@ def associate_manufacturers(apps, schema_editor):
         name = get_manufacturer_name(part_id)
 
         # Skip empty names
-        if not name or len(name) == 0:
+        if not name or len(name) == 0:  # pragma: no cover
             print(" - Part[{pk}]: No manufacturer_name provided, skipping".format(pk=part_id))
             return
 
         # Can be linked to an existing manufacturer
-        if link_part(part_id, name):
+        if link_part(part_id, name):  # pragma: no cover
             return
 
         # Find a list of potential matches
@@ -226,12 +226,12 @@ def associate_manufacturers(apps, schema_editor):
         clear()
 
         # Present a list of options
-        if not TESTING:
+        if not TESTING:  # pragma: no cover
             print("----------------------------------")
     
         print("Checking part [{pk}] ({idx} of {total})".format(pk=part_id, idx=idx+1, total=total))
     
-        if not TESTING:
+        if not TESTING:  # pragma: no cover
             print("Manufacturer name: '{n}'".format(n=name))
             print("----------------------------------")
             print("Select an option from the list below:")
@@ -249,7 +249,7 @@ def associate_manufacturers(apps, schema_editor):
             if TESTING:
                 # When running unit tests, simply select the name of the part
                 response = '0'
-            else:
+            else:  # pragma: no cover
                 response = str(input("> ")).strip()
 
             # Attempt to parse user response as an integer
@@ -263,7 +263,7 @@ def associate_manufacturers(apps, schema_editor):
                     return
 
                 # Options 1) - n) select an existing manufacturer
-                else:
+                else:  # pragma: no cover
                     n = n - 1
 
                     if n < len(matches):
@@ -287,7 +287,7 @@ def associate_manufacturers(apps, schema_editor):
                     else:
                         print("Please select a valid option")
 
-            except ValueError:
+            except ValueError:  # pragma: no cover
                 # User has typed in a custom name!
 
                 if not response or len(response) == 0:
@@ -312,7 +312,7 @@ def associate_manufacturers(apps, schema_editor):
     print("")
     clear()
 
-    if not TESTING:
+    if not TESTING:  # pragma: no cover
         print("---------------------------------------")
         print("The SupplierPart model needs to be migrated,")
         print("as the new 'manufacturer' field maps to a 'Company' reference.")
@@ -339,7 +339,7 @@ def associate_manufacturers(apps, schema_editor):
     for index, row in enumerate(results):
         pk, MPN, SKU, manufacturer_id, manufacturer_name = row
 
-        if manufacturer_id is not None:
+        if manufacturer_id is not None:  # pragma: no cover
             print(f" - SupplierPart <{pk}> already has a manufacturer associated (skipping)")
             continue
 
