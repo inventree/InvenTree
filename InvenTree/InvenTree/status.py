@@ -60,21 +60,21 @@ def is_email_configured():
         configured = False
 
         # Display warning unless in test mode
-        if not settings.TESTING:
+        if not settings.TESTING:  # pragma: no cover
             logger.debug("EMAIL_HOST is not configured")
 
     if not settings.EMAIL_HOST_USER:
         configured = False
 
         # Display warning unless in test mode
-        if not settings.TESTING:
+        if not settings.TESTING:  # pragma: no cover
             logger.debug("EMAIL_HOST_USER is not configured")
 
     if not settings.EMAIL_HOST_PASSWORD:
         configured = False
 
         # Display warning unless in test mode
-        if not settings.TESTING:
+        if not settings.TESTING:  # pragma: no cover
             logger.debug("EMAIL_HOST_PASSWORD is not configured")
 
     return configured
@@ -89,15 +89,15 @@ def check_system_health(**kwargs):
 
     result = True
 
-    if not is_worker_running(**kwargs):
+    if not is_worker_running(**kwargs):  # pragma: no cover
         result = False
         logger.warning(_("Background worker check failed"))
 
-    if not is_email_configured():
+    if not is_email_configured():  # pragma: no cover
         result = False
         logger.warning(_("Email backend not configured"))
 
-    if not result:
+    if not result:  # pragma: no cover
         logger.warning(_("InvenTree system health checks failed"))
 
     return result

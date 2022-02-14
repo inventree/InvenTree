@@ -21,7 +21,7 @@
 </div>
 {% endif %}
 
-<form method="post" action='' class='js-modal-form' enctype="multipart/form-data">
+<form method='post' action='' class='js-modal-form' enctype='multipart/form-data'>
     {% csrf_token %}
     {% load crispy_forms_tags %}
 
@@ -48,13 +48,13 @@
             <td>
                 <div class='control-group'>
                     <div class='controls'>
-                        <select class='select' id='id_supplier_part_{{ part.id }}' name="part-supplier-{{ part.id }}">
+                        <select class='select' id='id_supplier_part_{{ part.id }}' name='part-supplier-{{ part.id }}'>
                             <option value=''>---------</option>
                             {% for supplier in part.supplier_parts.all %}
-                            <option value="{{ supplier.id }}"{% if part.order_supplier == supplier.id %} selected="selected"{% endif %}>
+                            <option value='{{ supplier.id }}'{% if part.order_supplier == supplier.id %} selected='selected'{% endif %}>
                                 {% if show_price %}
                                     {% call_method supplier 'get_price' part.order_quantity as price %}
-                                    {% if price != None %}{% include "price.html" with price=price %}{% else %}{% trans 'No price' %}{% endif %} - 
+                                    {% if price != None %}{% include "price.html" with price=price %}{% else %}{% trans "No price" %}{% endif %} - 
                                 {% endif %}
                                 {{ supplier }}
                             </option>

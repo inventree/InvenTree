@@ -83,9 +83,6 @@ class BuildTest(TestCase):
 
         ref = get_next_build_number()
 
-        if ref is None:
-            ref = "0001"
-
         # Create a "Build" object to make 10x objects
         self.build = Build.objects.create(
             reference=ref,

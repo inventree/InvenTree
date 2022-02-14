@@ -11,16 +11,16 @@
 
 {% block breadcrumbs %}
 <li class='breadcrumb-item'><a href='{% url "build-index" %}'>{% trans "Build Orders" %}</a></li>
-<li class="breadcrumb-item active" aria-current="page"><a href='{% url "build-detail" build.id %}'>{{ build }}</a></li>
+<li class='breadcrumb-item active' aria-current='page'><a href='{% url "build-detail" build.id %}'>{{ build }}</a></li>
 {% endblock breadcrumbs %}
 
 {% block thumbnail %}
-<img class="part-thumb"
+<img class='part-thumb'
 {% if build.part.image %}
-src="{{ build.part.image.url }}"
+src='{{ build.part.image.url }}'
 {% else %}
-src="{% static 'img/blank_image.png' %}"
-{% endif %}/>            
+src='{% static "img/blank_image.png" %}'
+{% endif %}/>
 {% endblock thumbnail %}
 
 {% block heading %}
@@ -30,7 +30,7 @@ src="{% static 'img/blank_image.png' %}"
 {% block actions %}
 <!-- Admin Display -->
 {% if user.is_staff and roles.build.change %}
-{% url 'admin:build_build_change' build.pk as url %}
+{% url "admin:build_build_change" build.pk as url %}
 {% include "admin_button.html" with url=url %}
 {% endif %}
 <!-- Printing options -->
@@ -75,7 +75,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-shapes'></span></td>
         <td>{% trans "Part" %}</td>
-        <td><a href="{% url 'part-detail' build.part.id %}?display=build-orders">{{ build.part.full_name }}</a></td>
+        <td><a href='{% url "part-detail" build.part.id %}?display=build-orders'>{{ build.part.full_name }}</a></td>
     </tr>
     <tr>
         <td></td>
@@ -167,14 +167,14 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-sitemap'></span></td>
         <td>{% trans "Parent Build" %}</td>
-        <td><a href="{% url 'build-detail' build.parent.id %}">{{ build.parent }}</a></td>
+        <td><a href='{% url "build-detail" build.parent.id %}'>{{ build.parent }}</a></td>
     </tr>
     {% endif %}
     {% if build.sales_order %}
     <tr>
         <td><span class='fas fa-dolly'></span></td>
         <td>{% trans "Sales Order" %}</td>
-        <td><a href="{% url 'so-detail' build.sales_order.id %}">{{ build.sales_order }}</a></td>
+        <td><a href='{% url "so-detail" build.sales_order.id %}'>{{ build.sales_order }}</a></td>
     </tr>
     {% endif %}
     {% if build.issued_by %}
@@ -209,19 +209,19 @@ src="{% static 'img/blank_image.png' %}"
 
 {% block js_ready %}
 
-    $("#build-edit").click(function () {
+    $('#build-edit').click(function () {
         editBuildOrder({{ build.pk }});
     });
 
-    $("#build-cancel").click(function() {
-        launchModalForm("{% url 'build-cancel' build.id %}",
+    $('#build-cancel').click(function() {
+        launchModalForm('{% url "build-cancel" build.id %}',
                         {
                             reload: true,
                             submit_text: '{% trans "Cancel Build" %}',
                         });
     });
 
-    $("#build-complete").on('click', function() {
+    $('#build-complete').on('click', function() {
 
         {% if build.incomplete_count > 0 %}
         showAlertDialog(
@@ -246,13 +246,13 @@ src="{% static 'img/blank_image.png' %}"
     });
     {% endif %}
 
-    $("#build-delete").on('click', function() {
+    $('#build-delete').on('click', function() {
         launchModalForm(
-            "{% url 'build-delete' build.id %}",
+            '{% url "build-delete" build.id %}',
             {
-                redirect: "{% url 'build-index' %}",
+                redirect: '{% url "build-index" %}',
             }
         );
     });
-    
+
 {% endblock %}

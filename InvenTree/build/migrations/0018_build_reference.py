@@ -23,7 +23,7 @@ def add_default_reference(apps, schema_editor):
         print(f"\nUpdated build reference for {count} existing BuildOrder objects")
 
 
-def reverse_default_reference(apps, schema_editor):
+def reverse_default_reference(apps, schema_editor):  # pragma: no cover
     """
     Do nothing! But we need to have a function here so the whole process is reversible.
     """

@@ -6,7 +6,7 @@
 {{ block.super }}
 
 <div class='alert alert-info alert-block'>
-    <strong>{% trans 'Duplicate Part' %}</strong><br>
+    <strong>{% trans "Duplicate Part" %}</strong><br>
     {% blocktrans with full_name=part.full_name %}Make a copy of part '{{full_name}}'.{% endblocktrans %}
 </div>
 

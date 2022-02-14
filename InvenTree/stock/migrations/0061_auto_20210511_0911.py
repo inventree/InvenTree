@@ -21,7 +21,7 @@ def update_history(apps, schema_editor):
 
     locations = StockLocation.objects.all()
 
-    for location in locations:
+    for location in locations:  # pragma: no cover
         # Pre-calculate pathstring
         # Note we cannot use the 'pathstring' function here as we don't have access to model functions!
 
@@ -35,7 +35,7 @@ def update_history(apps, schema_editor):
 
         location._path = '/'.join(path)
 
-    for item in StockItem.objects.all():
+    for item in StockItem.objects.all():  # pragma: no cover
 
         history = StockItemTracking.objects.filter(item=item).order_by('date')
 
@@ -200,13 +200,13 @@ def update_history(apps, schema_editor):
 
 
     if update_count > 0:
-        print(f"\n==========================\nUpdated {update_count} StockItemHistory entries")
+        print(f"\n==========================\nUpdated {update_count} StockItemHistory entries")  # pragma: no cover
 
 
 def reverse_update(apps, schema_editor):
     """
     """
-    pass
+    pass  # pragma: no cover
 
 
 class Migration(migrations.Migration):

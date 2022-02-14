@@ -23,7 +23,7 @@
     <span class='fas fa-file-upload'></span> {% trans "Upload BOM File" %}
 </button>
 <button type='button' class='btn btn-success' disabled='true' id='bom-submit-icon' style='display: none;'>
-    <span class="fas fa-spin fa-circle-notch"></span>
+    <span class='fas fa-spin fa-circle-notch'></span>
 </button>
 <button type='button' class='btn btn-success' id='bom-submit' style='display: none;'>
     <span class='fas fa-sign-in-alt' id='bom-submit-icon'></span> {% trans "Submit BOM Data" %}
@@ -89,8 +89,11 @@ $('#bom-upload').click(function() {
         },
         title: '{% trans "Upload BOM File" %}',
         onSuccess: function(response) {
-            $('#bom-upload').hide();
 
+            // Clear existing entries from the table
+            $('.bom-import-row').remove();
+
+            // Disable the "submit" button
             $('#bom-submit').show();
 
             constructBomUploadTable(response);

@@ -11,7 +11,7 @@ import InvenTree.validators
 import part.models
 
 
-def attach_file(instance, filename):
+def attach_file(instance, filename):  # pragma: no cover
     """
     Generate a filename for the uploaded attachment.
 

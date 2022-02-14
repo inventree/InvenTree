@@ -28,7 +28,7 @@ def schedule_task(taskname, **kwargs):
 
     try:
         from django_q.models import Schedule
-    except (AppRegistryNotReady):
+    except AppRegistryNotReady:  # pragma: no cover
         logger.info("Could not start background tasks - App registry not ready")
         return
 
@@ -47,7 +47,7 @@ def schedule_task(taskname, **kwargs):
                 func=taskname,
                 **kwargs
             )
-    except (OperationalError, ProgrammingError):
+    except (OperationalError, ProgrammingError):  # pragma: no cover
         # Required if the DB is not ready yet
         pass
 
@@ -108,10 +108,10 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
             # Workers are not running: run it as synchronous task
             _func(*args, **kwargs)
 
-    except (AppRegistryNotReady):
+    except AppRegistryNotReady:  # pragma: no cover
         logger.warning(f"Could not offload task '{taskname}' - app registry not ready")
         return
-    except (OperationalError, ProgrammingError):
+    except (OperationalError, ProgrammingError):  # pragma: no cover
         logger.warning(f"Could not offload task '{taskname}' - database not ready")
 
 
@@ -127,7 +127,7 @@ def heartbeat():
     try:
         from django_q.models import Success
         logger.info("Could not perform heartbeat task - App registry not ready")
-    except AppRegistryNotReady:
+    except AppRegistryNotReady:  # pragma: no cover
         return
 
     threshold = timezone.now() - timedelta(minutes=30)
@@ -150,7 +150,7 @@ def delete_successful_tasks():
 
     try:
         from django_q.models import Success
-    except AppRegistryNotReady:
+    except AppRegistryNotReady:  # pragma: no cover
         logger.info("Could not perform 'delete_successful_tasks' - App registry not ready")
         return
 
@@ -184,7 +184,7 @@ def delete_old_error_logs():
             logger.info(f"Deleting {errors.count()} old error logs")
             errors.delete()
 
-    except AppRegistryNotReady:
+    except AppRegistryNotReady:  # pragma: no cover
         # Apps not yet loaded
         logger.info("Could not perform 'delete_old_error_logs' - App registry not ready")
         return
@@ -197,7 +197,7 @@ def check_for_updates():
 
     try:
         import common.models
-    except AppRegistryNotReady:
+    except AppRegistryNotReady:  # pragma: no cover
         # Apps not yet loaded!
         logger.info("Could not perform 'check_for_updates' - App registry not ready")
         return
@@ -244,7 +244,7 @@ def update_exchange_rates():
         from InvenTree.exchange import InvenTreeExchange
         from djmoney.contrib.exchange.models import ExchangeBackend, Rate
         from common.settings import currency_code_default, currency_codes
-    except AppRegistryNotReady:
+    except AppRegistryNotReady:  # pragma: no cover
         # Apps not yet loaded!
         logger.info("Could not perform 'update_exchange_rates' - App registry not ready")
         return

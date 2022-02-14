@@ -269,9 +269,6 @@ class StockItemTest(StockAPITestCase):
 
     list_url = reverse('api-stock-list')
 
-    def detail_url(self, pk):
-        return reverse('api-stock-detail', kwargs={'pk': pk})
-
     def setUp(self):
         super().setUp()
         # Create some stock locations

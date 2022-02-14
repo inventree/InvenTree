@@ -20,7 +20,7 @@ def build_refs(apps, schema_editor):
         if result and len(result.groups()) == 1:
             try:
                 ref = int(result.groups()[0])
-            except:
+            except:  # pragma: no cover
                 ref = 0
 
         order.reference_int = ref
@@ -37,14 +37,14 @@ def build_refs(apps, schema_editor):
         if result and len(result.groups()) == 1:
             try:
                 ref = int(result.groups()[0])
-            except:
+            except:  # pragma: no cover
                 ref = 0
 
         order.reference_int = ref
         order.save()
 
 
-def unbuild_refs(apps, schema_editor):
+def unbuild_refs(apps, schema_editor):  # pragma: no cover
     """
     Provided only for reverse migration compatibility
     """

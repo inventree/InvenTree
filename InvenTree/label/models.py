@@ -30,7 +30,7 @@ import part.models
 
 try:
     from django_weasyprint import WeasyTemplateResponseMixin
-except OSError as err:
+except OSError as err:  # pragma: no cover
     print("OSError: {e}".format(e=err))
     print("You may require some further system packages to be installed.")
     sys.exit(1)

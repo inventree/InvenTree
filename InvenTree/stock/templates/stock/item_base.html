@@ -10,12 +10,12 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-<a href='#' id='breadcrumb-tree-toggle' class="breadcrumb-item"><i class="fas fa-bars"></i></a>
+<a href='#' id='breadcrumb-tree-toggle' class='breadcrumb-item'><span class='fas fa-bars'></span></a>
 {% include 'stock/loc_link.html' with location=item.location %}
 {% endblock %}
 
 {% block breadcrumb_tree %}
-<div id="breadcrumb-tree"></div>
+<div id='breadcrumb-tree'></div>
 {% endblock breadcrumb_tree %}
 
 
@@ -26,7 +26,7 @@
 {% block actions %}
 
 {% if user.is_staff and roles.stock.change %}
-{% url 'admin:stock_stockitem_change' item.pk as url %}
+{% url "admin:stock_stockitem_change" item.pk as url %}
 {% include "admin_button.html" with url=url %}
 {% endif %}
 {% if barcodes %}
@@ -130,7 +130,7 @@
 {% endblock actions %}
 
 {% block thumbnail %}
-<img class='part-thumb' {% if item.part.image %}src="{{ item.part.image.url }}"{% else %}src="{% static 'img/blank_image.png' %}"{% endif %}/>
+<img class='part-thumb' {% if item.part.image %}src='{{ item.part.image.url }}'{% else %}src='{% static "img/blank_image.png" %}'{% endif %}/>
 {% endblock thumbnail %}
 
 {% block details %}
@@ -142,7 +142,7 @@
         <td>{% trans "Base Part" %}</td>
         <td>
             {% if roles.part.view %}
-            <a href="{% url 'part-detail' item.part.id %}">
+            <a href='{% url "part-detail" item.part.id %}'>
             {% endif %}
             {{ item.part.full_name }}
             {% if roles.part.view %}
@@ -158,7 +158,7 @@
             {{ item.serial }}
             <div class='btn-group float-right' role='group'>
                 {% if previous %}
-                <a class="btn btn-small btn-outline-secondary" aria-label="{% trans 'previous page' %}" href="{% url request.resolver_match.url_name previous.id %}" title='{% trans "Navigate to previous serial number" %}'>
+                <a class='btn btn-small btn-outline-secondary' aria-label='{% trans "previous page" %}' href='{% url request.resolver_match.url_name previous.id %}' title='{% trans "Navigate to previous serial number" %}'>
                     <span class='fas fa-angle-left'></span>
                     <small>{{ previous.serial }}</small>
                 </a>
@@ -167,7 +167,7 @@
                     <span class='fas fa-search'></span>
                 </a>
                 {% if next %}
-                <a class="btn btn-small btn-outline-secondary text-sm" aria-label="{% trans 'next page' %}" href="{% url request.resolver_match.url_name next.id %}" title='{% trans "Navigate to next serial number" %}'>
+                <a class='btn btn-small btn-outline-secondary text-sm' aria-label='{% trans "next page" %}' href='{% url request.resolver_match.url_name next.id %}' title='{% trans "Navigate to next serial number" %}'>
                     <small>{{ next.serial }}</small>
                     <span class='fas fa-angle-right'></span>
                 </a>
@@ -241,7 +241,7 @@
         {% trans "Edit the stock item from the build view." %}<br>
 
         {% if item.build %}
-        <a href="{% url 'build-detail' item.build.id %}">
+        <a href='{% url "build-detail" item.build.id %}'>
             <strong>{{ item.build }}</strong>
         </a>
         {% endif %}
@@ -270,25 +270,25 @@
         {% trans "This stock item is allocated to Build Order" %} {{ link }} {% if qty < item.quantity %}({% trans "Quantity" %}: {{ qty }}){% endif %}
     </div>
     {% endfor %}
-    
+
     {% if item.serialized %}
     <div class='alert alert-block alert-warning'>
         {% trans "This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted." %}
     </div>
     {% endif %}
-    
+
 </div>
 {% endblock details %}
 
 {% block details_right %}
-<table class="table table-striped table-condensed">
+<table class='table table-striped table-condensed'>
     <col width='25'>
 
     {% if item.customer %}
     <tr>
         <td><span class='fas fa-user-tie'></span></td>
         <td>{% trans "Customer" %}</td>
-        <td><a href="{% url 'company-detail' item.customer.id %}?display=assigned-stock">{{ item.customer.name }}</a></td>
+        <td><a href='{% url "company-detail" item.customer.id %}?display=assigned-stock'>{{ item.customer.name }}</a></td>
     </tr>
     {% endif %}
     {% if item.belongs_to %}
@@ -298,21 +298,21 @@
             {% trans "Installed In" %}
         </td>
         <td>
-            <a href="{% url 'stock-item-detail' item.belongs_to.id %}">{{ item.belongs_to }}</a>
+            <a href='{% url "stock-item-detail" item.belongs_to.id %}'>{{ item.belongs_to }}</a>
         </td>
     </tr>
     {% elif item.sales_order %}
     <tr>
         <td><span class='fas fa-user-tie'></span></td>
         <td>{% trans "Sales Order" %}</td>
-        <td><a href="{% url 'so-detail' item.sales_order.id %}">{{ item.sales_order.reference }}</a> - <a href="{% url 'company-detail' item.sales_order.customer.id %}">{{ item.sales_order.customer.name }}</a></td>
+        <td><a href='{% url "so-detail" item.sales_order.id %}'>{{ item.sales_order.reference }}</a> - <a href='{% url "company-detail" item.sales_order.customer.id %}'>{{ item.sales_order.customer.name }}</a></td>
     </tr>
     {% else %}
     <tr>
         <td><span class='fas fa-map-marker-alt'></span></td>
         <td>{% trans "Location" %}</td>
         {% if item.location %}
-        <td><a href="{% url 'stock-location-detail' item.location.id %}">{{ item.location.name }}</a></td>
+        <td><a href='{% url "stock-location-detail" item.location.id %}'>{{ item.location.name }}</a></td>
         {% else %}
         <td><em>{% trans "No location set" %}</em></td>
         {% endif %}
@@ -343,14 +343,14 @@
     <tr>
         <td><span class='fas fa-tools'></span></td>
         <td>{% trans "Build" %}</td>
-        <td><a href="{% url 'build-detail' item.build.id %}">{{ item.build }}</a></td>
+        <td><a href='{% url "build-detail" item.build.id %}'>{{ item.build }}</a></td>
     </tr>
     {% endif %}
     {% if item.purchase_order %}
     <tr>
         <td><span class='fas fa-shopping-cart'></span></td>
         <td>{% trans "Purchase Order" %}</td>
-        <td><a href="{% url 'po-detail' item.purchase_order.id %}">{{ item.purchase_order }}</a></td>
+        <td><a href='{% url "po-detail" item.purchase_order.id %}'>{{ item.purchase_order }}</a></td>
     </tr>
     {% endif %}
     {% if item.purchase_price != None %}
@@ -364,14 +364,14 @@
     <tr>
         <td><span class='fas fa-sitemap'></span></td>
         <td>{% trans "Parent Item" %}</td>
-        <td><a href="{% url 'stock-item-detail' item.parent.id %}">{% trans "Stock Item" %} #{{ item.parent.id }}</a></td>
+        <td><a href='{% url "stock-item-detail" item.parent.id %}'>{% trans "Stock Item" %} #{{ item.parent.id }}</a></td>
     </tr>
     {% endif %}
     {% if item.link %}
     <tr>
         <td><span class='fas fa-link'></span>
         <td>{% trans "External Link" %}</td>
-        <td><a href="{{ item.link }}">{{ item.link }}</a></td>
+        <td><a href='{{ item.link }}'>{{ item.link }}</a></td>
     </tr>
     {% endif %}
     {% if item.supplier_part.manufacturer_part %}
@@ -379,7 +379,7 @@
         <td><span class='fas fa-industry'></span></td>
         <td>{% trans "Manufacturer" %}</td>
         {% if item.supplier_part.manufacturer_part.manufacturer %}
-            <td><a href="{% url 'company-detail' item.supplier_part.manufacturer_part.manufacturer.id %}">{{ item.supplier_part.manufacturer_part.manufacturer.name }}</a></td>
+            <td><a href='{% url "company-detail" item.supplier_part.manufacturer_part.manufacturer.id %}'>{{ item.supplier_part.manufacturer_part.manufacturer.name }}</a></td>
         {% else %}
             <td><em>{% trans "No manufacturer set" %}</em></td>
         {% endif %}
@@ -388,19 +388,19 @@
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
         <td>{% trans "Manufacturer Part" %}</td>
-        <td><a href="{% url 'manufacturer-part-detail' item.supplier_part.manufacturer_part.id %}">{{ item.supplier_part.manufacturer_part.MPN }}</a></td>
+        <td><a href='{% url "manufacturer-part-detail" item.supplier_part.manufacturer_part.id %}'>{{ item.supplier_part.manufacturer_part.MPN }}</a></td>
     </tr>
     {% endif %}
     {% if item.supplier_part %}
     <tr>
         <td><span class='fas fa-building'></span></td>
         <td>{% trans "Supplier" %}</td>
-        <td><a href="{% url 'company-detail' item.supplier_part.supplier.id %}">{{ item.supplier_part.supplier.name }}</a></td>
+        <td><a href='{% url "company-detail" item.supplier_part.supplier.id %}'>{{ item.supplier_part.supplier.name }}</a></td>
     </tr>
     <tr>
         <td><span class='fas fa-shapes'></span></td>
         <td>{% trans "Supplier Part" %}</td>
-        <td><a href="{% url 'supplier-part-detail' item.supplier_part.id %}">{{ item.supplier_part.SKU }}</a></td>
+        <td><a href='{% url "supplier-part-detail" item.supplier_part.id %}'>{{ item.supplier_part.SKU }}</a></td>
     </tr>
     {% endif %}
     {% if item.hasRequiredTests %}
@@ -424,7 +424,7 @@
 {% block js_ready %}
 {{ block.super }}
 
-$("#stock-serialize").click(function() {
+$('#stock-serialize').click(function() {
 
     serializeStockItem({{ item.pk }}, {
         part: {{ item.part.pk }},
@@ -443,7 +443,7 @@ $("#stock-serialize").click(function() {
 $('#stock-install-in').click(function() {
 
     launchModalForm(
-        "{% url 'stock-item-install' item.pk %}",
+        '{% url "stock-item-install" item.pk %}',
         {
             data: {
                 'part': {{ item.part.pk }},
@@ -457,7 +457,7 @@ $('#stock-install-in').click(function() {
 $('#stock-uninstall').click(function() {
 
     launchModalForm(
-        "{% url 'stock-item-uninstall' %}",
+        '{% url "stock-item-uninstall" %}',
         {
             data: {
                 'items[]': [{{ item.pk }}],
@@ -467,17 +467,17 @@ $('#stock-uninstall').click(function() {
     );
 });
 
-$("#stock-test-report").click(function() {
+$('#stock-test-report').click(function() {
     printTestReports([{{ item.pk }}]);
 });
 
-$("#print-label").click(function() {
+$('#print-label').click(function() {
     printStockItemLabels([{{ item.pk }}]);
 });
 
 {% if roles.stock.change %}
-$("#stock-duplicate").click(function() {
-    // Duplicate a stock item 
+$('#stock-duplicate').click(function() {
+    // Duplicate a stock item
     duplicateStockItem({{ item.pk }}, {
         follow: true,
     });
@@ -502,22 +502,22 @@ $('#stock-edit-status').click(function () {
 
 {% endif %}
 
-$("#show-qr-code").click(function() {
-    launchModalForm("{% url 'stock-item-qr' item.id %}",
+$('#show-qr-code').click(function() {
+    launchModalForm('{% url "stock-item-qr" item.id %}',
     {
         no_post: true,
     });
 });
 
-$("#barcode-link").click(function() {
+$('#barcode-link').click(function() {
     linkBarcodeDialog({{ item.id }});
 });
 
-$("#barcode-unlink").click(function() {
+$('#barcode-unlink').click(function() {
     unlinkBarcode({{ item.id }});
 });
 
-$("#barcode-scan-into-location").click(function() {
+$('#barcode-scan-into-location').click(function() {
     scanItemsIntoLocation([{{ item.id }}]);
 });
 
@@ -545,18 +545,18 @@ $('#stock-add').click(function() {
     itemAdjust('add');
 });
 
-$("#stock-delete").click(function () {
+$('#stock-delete').click(function () {
     launchModalForm(
-        "{% url 'stock-item-delete' item.id %}",
+        '{% url "stock-item-delete" item.id %}',
         {
-            redirect: "{% url 'part-detail' item.part.id %}"
+            redirect: '{% url "part-detail" item.part.id %}'
         }
     );
 });
 
 {% if item.part.can_convert %}
-$("#stock-convert").click(function() {
-    launchModalForm("{% url 'stock-item-convert' item.id %}",
+$('#stock-convert').click(function() {
+    launchModalForm('{% url "stock-item-convert" item.id %}',
         {
             reload: true,
         }
@@ -566,7 +566,7 @@ $("#stock-convert").click(function() {
 
 
 {% if item.in_stock %}
-$("#stock-assign-to-customer").click(function() {
+$('#stock-assign-to-customer').click(function() {
 
     inventreeGet('{% url "api-stock-detail" item.pk %}', {}, {
         success: function(response) {
@@ -582,11 +582,11 @@ $("#stock-assign-to-customer").click(function() {
     });
 });
 
-$("#stock-move").click(function() {
-    itemAdjust("move");
+$('#stock-move').click(function() {
+    itemAdjust('move');
 });
 
-$("#stock-count").click(function() {
+$('#stock-count').click(function() {
     itemAdjust('count');
 });
 
@@ -596,8 +596,8 @@ $('#stock-remove').click(function() {
 
 {% else %}
 
-$("#stock-return-from-customer").click(function() {
-    launchModalForm("{% url 'stock-item-return' item.id %}",
+$('#stock-return-from-customer').click(function() {
+    launchModalForm('{% url "stock-item-return" item.id %}',
         {
             reload: true,
         }
