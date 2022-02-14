@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-14 08:48+0000\n"
-"PO-Revision-Date: 2022-02-14 11:31\n"
+"PO-Revision-Date: 2022-02-14 12:52\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -4303,7 +4303,7 @@ msgstr ""
 
 #: part/models.py:2908
 msgid "Substitute part cannot be the same as the master part"
-msgstr ""
+msgstr "La parte sustituta no puede ser la misma que la parte principal"
 
 #: part/models.py:2920
 msgid "Parent BOM item"
@@ -4311,15 +4311,15 @@ msgstr ""
 
 #: part/models.py:2928
 msgid "Substitute part"
-msgstr ""
+msgstr "Sustituir parte"
 
 #: part/models.py:2939
 msgid "Part 1"
-msgstr ""
+msgstr "Parte 1"
 
 #: part/models.py:2943
 msgid "Part 2"
-msgstr ""
+msgstr "Parte 2"
 
 #: part/models.py:2943
 msgid "Select Related Part"
@@ -4327,11 +4327,11 @@ msgstr "Seleccionar parte relacionada"
 
 #: part/models.py:2975
 msgid "Error creating relationship: check that the part is not related to itself and that the relationship is unique"
-msgstr ""
+msgstr "Error al crear relación: compruebe que la parte no está relacionada con sí misma y que la relación es única"
 
 #: part/serializers.py:667
 msgid "Select part to copy BOM from"
-msgstr ""
+msgstr "Seleccionar parte de la que copiar BOM"
 
 #: part/serializers.py:678
 msgid "Remove Existing Data"
@@ -4395,11 +4395,11 @@ msgstr "No se encontraron partes coincidentes"
 
 #: part/serializers.py:949
 msgid "Duplicate part selected"
-msgstr ""
+msgstr "Parte duplicada seleccionada"
 
 #: part/serializers.py:952
 msgid "Part is not designated as a component"
-msgstr ""
+msgstr "La parte no está designada como componente"
 
 #: part/serializers.py:964
 msgid "Quantity not provided"
@@ -4623,7 +4623,7 @@ msgstr "Mostrando stock para todas las variantes de <em>%(full_name)s</em>"
 
 #: part/templates/part/detail.html:43
 msgid "Part Stock Allocations"
-msgstr ""
+msgstr "Asignaciones de Stock de Parte"
 
 #: part/templates/part/detail.html:60
 msgid "Part Test Templates"
@@ -4916,12 +4916,12 @@ msgstr "Inactivo"
 #: part/templates/part/part_base.html:156
 #: part/templates/part/part_base.html:579
 msgid "Show Part Details"
-msgstr ""
+msgstr "Mostrar Detalles de Parte"
 
 #: part/templates/part/part_base.html:173
 #, python-format
 msgid "This part is a variant of %(link)s"
-msgstr ""
+msgstr "Esta parte es una variante de %(link)s"
 
 #: part/templates/part/part_base.html:190 templates/js/translated/order.js:2217
 #: templates/js/translated/table_filters.js:193
@@ -4972,7 +4972,7 @@ msgstr "No se encontraron imágenes coincidentes"
 
 #: part/templates/part/part_base.html:573
 msgid "Hide Part Details"
-msgstr ""
+msgstr "Ocultar Detalles de la Parte"
 
 #: part/templates/part/part_pricing.html:22 part/templates/part/prices.html:21
 msgid "Supplier Pricing"
@@ -5256,11 +5256,11 @@ msgstr "Imagen de parte no encontrada"
 
 #: part/views.py:850
 msgid "Confirm Part Deletion"
-msgstr ""
+msgstr "Confirmar Eliminación de Parte"
 
 #: part/views.py:857
 msgid "Part was deleted"
-msgstr ""
+msgstr "Parte fue eliminada"
 
 #: part/views.py:866
 msgid "Part Pricing"
@@ -5268,27 +5268,27 @@ msgstr "Precio de parte"
 
 #: part/views.py:1015
 msgid "Create Part Parameter Template"
-msgstr ""
+msgstr "Crear plantilla Parámetro de Parte"
 
 #: part/views.py:1025
 msgid "Edit Part Parameter Template"
-msgstr ""
+msgstr "Crear plantilla Parámetro de Parte"
 
 #: part/views.py:1032
 msgid "Delete Part Parameter Template"
-msgstr ""
+msgstr "Eliminar Plantilla de Parámetros de Parte"
 
 #: part/views.py:1091 templates/js/translated/part.js:315
 msgid "Edit Part Category"
-msgstr ""
+msgstr "Editar Categoría de Parte"
 
 #: part/views.py:1129
 msgid "Delete Part Category"
-msgstr ""
+msgstr "Eliminar Categoría de Parte"
 
 #: part/views.py:1135
 msgid "Part category was deleted"
-msgstr ""
+msgstr "Categoría de parte eliminada"
 
 #: part/views.py:1144
 msgid "Create Category Parameter Template"
@@ -6006,11 +6006,11 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:46 templates/stock_table.html:24
 msgid "Scan to Location"
-msgstr ""
+msgstr "Escanear a la ubicación"
 
 #: stock/templates/stock/item_base.html:53
 msgid "Printing actions"
-msgstr ""
+msgstr "Acciones de impresión"
 
 #: stock/templates/stock/item_base.html:72
 msgid "Stock adjustment actions"
@@ -6040,7 +6040,7 @@ msgstr "Transferir stock"
 
 #: stock/templates/stock/item_base.html:92 templates/stock_table.html:54
 msgid "Assign to customer"
-msgstr ""
+msgstr "Asignar a cliente"
 
 #: stock/templates/stock/item_base.html:95
 msgid "Return to stock"
@@ -6052,7 +6052,7 @@ msgstr "Desinstalar artículo de stock"
 
 #: stock/templates/stock/item_base.html:98
 msgid "Uninstall"
-msgstr ""
+msgstr "Desinstalar"
 
 #: stock/templates/stock/item_base.html:101
 msgid "Install stock item"
@@ -6060,11 +6060,11 @@ msgstr "Instalar elemento de stock"
 
 #: stock/templates/stock/item_base.html:101
 msgid "Install"
-msgstr ""
+msgstr "Instalar"
 
 #: stock/templates/stock/item_base.html:115
 msgid "Convert to variant"
-msgstr ""
+msgstr "Convertir a variante"
 
 #: stock/templates/stock/item_base.html:118
 msgid "Duplicate stock item"
@@ -6080,19 +6080,19 @@ msgstr "Eliminar elemento de stock"
 
 #: stock/templates/stock/item_base.html:161
 msgid "previous page"
-msgstr ""
+msgstr "página anterior"
 
 #: stock/templates/stock/item_base.html:161
 msgid "Navigate to previous serial number"
-msgstr ""
+msgstr "Navegar al número de serie anterior"
 
 #: stock/templates/stock/item_base.html:170
 msgid "next page"
-msgstr ""
+msgstr "página siguiente"
 
 #: stock/templates/stock/item_base.html:170
 msgid "Navigate to next serial number"
-msgstr ""
+msgstr "Navegar al siguiente número de serie"
 
 #: stock/templates/stock/item_base.html:197
 #, python-format
@@ -6102,7 +6102,7 @@ msgstr "Este ítem expiró el %(item.expiry_date)s"
 #: stock/templates/stock/item_base.html:197
 #: templates/js/translated/table_filters.js:252
 msgid "Expired"
-msgstr ""
+msgstr "Expirado"
 
 #: stock/templates/stock/item_base.html:199
 #, python-format
@@ -6112,12 +6112,12 @@ msgstr "Este ítem expira el %(item.expiry_date)s"
 #: stock/templates/stock/item_base.html:199
 #: templates/js/translated/table_filters.js:258
 msgid "Stale"
-msgstr ""
+msgstr "Desactualizado"
 
 #: stock/templates/stock/item_base.html:206
 #: templates/js/translated/stock.js:1722
 msgid "Last Updated"
-msgstr ""
+msgstr "Última actualización"
 
 #: stock/templates/stock/item_base.html:211
 msgid "Last Stocktake"
@@ -6162,7 +6162,7 @@ msgstr "Ubicación no establecida"
 
 #: stock/templates/stock/item_base.html:324
 msgid "Barcode Identifier"
-msgstr ""
+msgstr "Identificador de Código de Barras"
 
 #: stock/templates/stock/item_base.html:366
 msgid "Parent Item"
@@ -6170,11 +6170,11 @@ msgstr "Elemento padre"
 
 #: stock/templates/stock/item_base.html:384
 msgid "No manufacturer set"
-msgstr ""
+msgstr "Ningún fabricante establecido"
 
 #: stock/templates/stock/item_base.html:409
 msgid "Tests"
-msgstr ""
+msgstr "Pruebas"
 
 #: stock/templates/stock/item_base.html:499
 msgid "Edit Stock Status"
@@ -6257,7 +6257,7 @@ msgstr "Nueva Ubicación"
 #: stock/templates/stock/location.html:99
 #: stock/templates/stock/location.html:105
 msgid "Location Path"
-msgstr ""
+msgstr "Ruta de Ubicación"
 
 #: stock/templates/stock/location.html:106
 msgid "Top level stock location"
@@ -6588,15 +6588,15 @@ msgstr ""
 
 #: templates/InvenTree/settings/part.html:7
 msgid "Part Settings"
-msgstr ""
+msgstr "Ajustes de Parte"
 
 #: templates/InvenTree/settings/part.html:44
 msgid "Part Import"
-msgstr ""
+msgstr "Importar Parte"
 
 #: templates/InvenTree/settings/part.html:48
 msgid "Import Part"
-msgstr ""
+msgstr "Importar Parte"
 
 #: templates/InvenTree/settings/part.html:62
 msgid "Part Parameter Templates"
@@ -8422,7 +8422,7 @@ msgstr ""
 #: templates/js/translated/order.js:1959 templates/js/translated/order.js:2048
 #: templates/js/translated/stock.js:1436
 msgid "Shipped to customer"
-msgstr ""
+msgstr "Enviado al cliente"
 
 #: templates/js/translated/order.js:1967 templates/js/translated/order.js:2057
 msgid "Stock location not specified"
@@ -8789,7 +8789,7 @@ msgstr "Nueva Ubicación de Stock"
 
 #: templates/js/translated/stock.js:194
 msgid "This part cannot be serialized"
-msgstr ""
+msgstr "Esta parte no se puede serializar"
 
 #: templates/js/translated/stock.js:233
 msgid "Enter initial quantity for this stock item"
@@ -8809,19 +8809,19 @@ msgstr "Creados varios artículos de stock"
 
 #: templates/js/translated/stock.js:420
 msgid "Find Serial Number"
-msgstr ""
+msgstr "Encontrar número serial"
 
 #: templates/js/translated/stock.js:424 templates/js/translated/stock.js:425
 msgid "Enter serial number"
-msgstr ""
+msgstr "Introducir número de serie"
 
 #: templates/js/translated/stock.js:441
 msgid "Enter a serial number"
-msgstr ""
+msgstr "Introducir un número de serie"
 
 #: templates/js/translated/stock.js:461
 msgid "No matching serial number"
-msgstr ""
+msgstr "Ningún número de serie coincidente"
 
 #: templates/js/translated/stock.js:470
 msgid "More than one matching result found"
@@ -8833,7 +8833,7 @@ msgstr "Exportar Stock"
 
 #: templates/js/translated/stock.js:526
 msgid "Include Sublocations"
-msgstr ""
+msgstr "Incluir sub-ubicación"
 
 #: templates/js/translated/stock.js:527
 msgid "Include stock items in sublocations"
@@ -8849,7 +8849,7 @@ msgstr "Asignar Stock al Cliente"
 
 #: templates/js/translated/stock.js:714
 msgid "Warning: Merge operation cannot be reversed"
-msgstr ""
+msgstr "Advertencia: La operación de fusión no puede ser revertida"
 
 #: templates/js/translated/stock.js:715
 msgid "Some information will be lost when merging stock items"
@@ -8861,7 +8861,7 @@ msgstr "Se eliminará el historial de transacciones de stock para elementos fusi
 
 #: templates/js/translated/stock.js:718
 msgid "Supplier part information will be deleted for merged items"
-msgstr ""
+msgstr "La información de la pieza del proveedor se eliminará para los artículos fusionados"
 
 #: templates/js/translated/stock.js:804
 msgid "Confirm stock item merge"
@@ -8877,7 +8877,7 @@ msgstr "Transferir Stock"
 
 #: templates/js/translated/stock.js:901
 msgid "Move"
-msgstr ""
+msgstr "Mover"
 
 #: templates/js/translated/stock.js:907
 msgid "Count Stock"
@@ -8885,27 +8885,27 @@ msgstr "Contar Stock"
 
 #: templates/js/translated/stock.js:908
 msgid "Count"
-msgstr ""
+msgstr "Contar"
 
 #: templates/js/translated/stock.js:912
 msgid "Remove Stock"
-msgstr ""
+msgstr "Eliminar Stock"
 
 #: templates/js/translated/stock.js:913
 msgid "Take"
-msgstr ""
+msgstr "Tomar"
 
 #: templates/js/translated/stock.js:917
 msgid "Add Stock"
-msgstr ""
+msgstr "Añadir Stock"
 
 #: templates/js/translated/stock.js:918 users/models.py:213
 msgid "Add"
-msgstr ""
+msgstr "Añadir"
 
 #: templates/js/translated/stock.js:922 templates/stock_table.html:58
 msgid "Delete Stock"
-msgstr ""
+msgstr "Eliminar Stock"
 
 #: templates/js/translated/stock.js:1011
 msgid "Quantity cannot be adjusted for serialized stock"
@@ -8917,23 +8917,23 @@ msgstr "Especificar cantidad de stock"
 
 #: templates/js/translated/stock.js:1051
 msgid "You must select at least one available stock item"
-msgstr ""
+msgstr "Debe seleccionar al menos un artículo de stock disponible"
 
 #: templates/js/translated/stock.js:1209
 msgid "PASS"
-msgstr ""
+msgstr "PASA"
 
 #: templates/js/translated/stock.js:1211
 msgid "FAIL"
-msgstr ""
+msgstr "FALLO"
 
 #: templates/js/translated/stock.js:1216
 msgid "NO RESULT"
-msgstr ""
+msgstr "SIN RESULTADO"
 
 #: templates/js/translated/stock.js:1238
 msgid "Add test result"
-msgstr ""
+msgstr "Añadir resultado de prueba"
 
 #: templates/js/translated/stock.js:1264
 msgid "No test results found"
@@ -8941,84 +8941,84 @@ msgstr "No se encontraron resultados de prueba"
 
 #: templates/js/translated/stock.js:1321
 msgid "Test Date"
-msgstr ""
+msgstr "Fecha de Prueba"
 
 #: templates/js/translated/stock.js:1428
 msgid "In production"
-msgstr ""
+msgstr "En producción"
 
 #: templates/js/translated/stock.js:1432
 msgid "Installed in Stock Item"
-msgstr ""
+msgstr "Instalado en el artículo de stock"
 
 #: templates/js/translated/stock.js:1440
 msgid "Assigned to Sales Order"
-msgstr ""
+msgstr "Asignado a la Orden de Venta"
 
 #: templates/js/translated/stock.js:1446
 msgid "No stock location set"
-msgstr ""
+msgstr "Ninguna ubicación de stock establecida"
 
 #: templates/js/translated/stock.js:1604
 msgid "Stock item is in production"
-msgstr ""
+msgstr "El artículo de stock está en producción"
 
 #: templates/js/translated/stock.js:1609
 msgid "Stock item assigned to sales order"
-msgstr ""
+msgstr "Artículo de stock asignado al pedido de venta"
 
 #: templates/js/translated/stock.js:1612
 msgid "Stock item assigned to customer"
-msgstr ""
+msgstr "Artículo de stock asignado al cliente"
 
 #: templates/js/translated/stock.js:1616
 msgid "Stock item has expired"
-msgstr ""
+msgstr "Artículo de stock ha caducado"
 
 #: templates/js/translated/stock.js:1618
 msgid "Stock item will expire soon"
-msgstr ""
+msgstr "El artículo de stock caducará pronto"
 
 #: templates/js/translated/stock.js:1624
 msgid "Serialized stock item has been allocated"
-msgstr ""
+msgstr "Se ha asignado un artículo de stock serializado"
 
 #: templates/js/translated/stock.js:1626
 msgid "Stock item has been fully allocated"
-msgstr ""
+msgstr "Artículo de stock ha sido completamente asignado"
 
 #: templates/js/translated/stock.js:1628
 msgid "Stock item has been partially allocated"
-msgstr ""
+msgstr "Artículo de stock ha sido asignado parcialmente"
 
 #: templates/js/translated/stock.js:1633
 msgid "Stock item has been installed in another item"
-msgstr ""
+msgstr "Artículo de stock ha sido instalado en otro artículo"
 
 #: templates/js/translated/stock.js:1640
 msgid "Stock item has been rejected"
-msgstr ""
+msgstr "Artículo de stock ha sido rechazado"
 
 #: templates/js/translated/stock.js:1642
 msgid "Stock item is lost"
-msgstr ""
+msgstr "Artículo de stock perdido"
 
 #: templates/js/translated/stock.js:1644
 msgid "Stock item is destroyed"
-msgstr ""
+msgstr "Artículo de stock destruido"
 
 #: templates/js/translated/stock.js:1648
 #: templates/js/translated/table_filters.js:188
 msgid "Depleted"
-msgstr ""
+msgstr "Agotado"
 
 #: templates/js/translated/stock.js:1698
 msgid "Stocktake"
-msgstr ""
+msgstr "Inventario"
 
 #: templates/js/translated/stock.js:1771
 msgid "Supplier part not specified"
-msgstr ""
+msgstr "Parte del proveedor no especificada"
 
 #: templates/js/translated/stock.js:1809
 msgid "No stock items matching query"
@@ -9030,19 +9030,19 @@ msgstr "elementos"
 
 #: templates/js/translated/stock.js:1918
 msgid "batches"
-msgstr ""
+msgstr "lotes"
 
 #: templates/js/translated/stock.js:1945
 msgid "locations"
-msgstr ""
+msgstr "ubicaciones"
 
 #: templates/js/translated/stock.js:1947
 msgid "Undefined location"
-msgstr ""
+msgstr "Ubicación indefinida"
 
 #: templates/js/translated/stock.js:2146
 msgid "Set Stock Status"
-msgstr ""
+msgstr "Establecer estado de stock"
 
 #: templates/js/translated/stock.js:2160
 msgid "Select Status Code"
@@ -9317,11 +9317,11 @@ msgstr ""
 
 #: templates/js/translated/tables.js:376
 msgid "Showing all rows"
-msgstr ""
+msgstr "Mostrar todas las filas"
 
 #: templates/js/translated/tables.js:378
 msgid "Showing"
-msgstr ""
+msgstr "Mostrando"
 
 #: templates/js/translated/tables.js:378
 msgid "to"
@@ -9346,7 +9346,7 @@ msgstr ""
 
 #: templates/js/translated/tables.js:388
 msgid "Hide/Show pagination"
-msgstr ""
+msgstr "Ocultar/Mostrar paginación"
 
 #: templates/js/translated/tables.js:391
 msgid "Refresh"
@@ -9502,7 +9502,7 @@ msgstr "Mover stock"
 
 #: templates/stock_table.html:52
 msgid "Merge selected stock items"
-msgstr ""
+msgstr "Combinar artículos de stock seleccionados"
 
 #: templates/stock_table.html:52
 msgid "Merge stock"
