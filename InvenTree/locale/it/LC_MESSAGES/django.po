@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-14 21:23+0000\n"
-"PO-Revision-Date: 2022-02-14 21:25\n"
+"POT-Creation-Date: 2022-02-14 22:38+0000\n"
+"PO-Revision-Date: 2022-02-14 23:27\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -1050,7 +1050,7 @@ msgid "Item must be in stock"
 msgstr "L'articolo deve essere disponibile"
 
 #: build/serializers.py:458 order/models.py:280 order/serializers.py:240
-#: part/serializers.py:471 part/serializers.py:970 stock/models.py:367
+#: part/serializers.py:471 part/serializers.py:973 stock/models.py:367
 #: stock/models.py:1105 stock/serializers.py:305
 msgid "Quantity must be greater than zero"
 msgstr "La quantità deve essere maggiore di zero"
@@ -4401,23 +4401,23 @@ msgstr ""
 msgid "Part is not designated as a component"
 msgstr ""
 
-#: part/serializers.py:964
+#: part/serializers.py:967
 msgid "Quantity not provided"
 msgstr ""
 
-#: part/serializers.py:972
+#: part/serializers.py:975
 msgid "Invalid quantity"
 msgstr ""
 
-#: part/serializers.py:992
+#: part/serializers.py:995
 msgid "Clear Existing BOM"
 msgstr ""
 
-#: part/serializers.py:993
+#: part/serializers.py:996
 msgid "Delete existing BOM data first"
 msgstr ""
 
-#: part/serializers.py:1023
+#: part/serializers.py:1026
 msgid "At least one BOM item is required"
 msgstr ""
 
