@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-14 08:48+0000\n"
-"PO-Revision-Date: 2022-02-14 15:09\n"
+"PO-Revision-Date: 2022-02-14 16:12\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -1731,7 +1731,7 @@ msgstr "Mostrar Historial de Precios"
 
 #: common/models.py:786
 msgid "Display historical pricing for Part"
-msgstr ""
+msgstr "Mostrar el precio histórico de la parte"
 
 #: common/models.py:792
 msgid "Show related parts"
@@ -4247,7 +4247,7 @@ msgstr "Este elemento BOM es opcional"
 
 #: part/models.py:2641 part/templates/part/upload_bom.html:55
 msgid "Overage"
-msgstr ""
+msgstr "Exceso"
 
 #: part/models.py:2642
 msgid "Estimated build wastage quantity (absolute or percentage)"
@@ -4299,7 +4299,7 @@ msgstr "Debe especificar la subparte"
 
 #: part/models.py:2886
 msgid "BOM Item Substitute"
-msgstr ""
+msgstr "Ítem de BOM sustituto"
 
 #: part/models.py:2908
 msgid "Substitute part cannot be the same as the master part"
@@ -4307,7 +4307,7 @@ msgstr "La parte sustituta no puede ser la misma que la parte principal"
 
 #: part/models.py:2920
 msgid "Parent BOM item"
-msgstr ""
+msgstr "Artículo BOM superior"
 
 #: part/models.py:2928
 msgid "Substitute part"
@@ -4335,15 +4335,15 @@ msgstr "Seleccionar parte de la que copiar BOM"
 
 #: part/serializers.py:678
 msgid "Remove Existing Data"
-msgstr ""
+msgstr "Eliminar Datos Existentes"
 
 #: part/serializers.py:679
 msgid "Remove existing BOM items before copying"
-msgstr ""
+msgstr "Eliminar elementos BOM existentes antes de copiar"
 
 #: part/serializers.py:684
 msgid "Include Inherited"
-msgstr ""
+msgstr "Incluye Heredado"
 
 #: part/serializers.py:685
 msgid "Include BOM items which are inherited from templated parts"
@@ -4375,7 +4375,7 @@ msgstr "El archivo es demasiado grande"
 
 #: part/serializers.py:843
 msgid "Missing required column"
-msgstr ""
+msgstr "Falta la columna requerida"
 
 #: part/serializers.py:858
 msgid "No part column found"
@@ -4411,15 +4411,15 @@ msgstr "Cantidad no válida"
 
 #: part/serializers.py:992
 msgid "Clear Existing BOM"
-msgstr ""
+msgstr "Limpiar BOM Existente"
 
 #: part/serializers.py:993
 msgid "Delete existing BOM data first"
-msgstr ""
+msgstr "Eliminar datos BOM existentes primero"
 
 #: part/serializers.py:1023
 msgid "At least one BOM item is required"
-msgstr ""
+msgstr "Se requiere al menos un elemento BOM"
 
 #: part/tasks.py:58
 msgid "Low stock notification"
@@ -4926,7 +4926,7 @@ msgstr "Esta parte es una variante de %(link)s"
 #: part/templates/part/part_base.html:190 templates/js/translated/order.js:2217
 #: templates/js/translated/table_filters.js:193
 msgid "In Stock"
-msgstr ""
+msgstr "En Stock"
 
 #: part/templates/part/part_base.html:210 templates/InvenTree/index.html:178
 msgid "Required for Build Orders"
@@ -4934,11 +4934,11 @@ msgstr "Requerido para construir pedidos"
 
 #: part/templates/part/part_base.html:217
 msgid "Required for Sales Orders"
-msgstr ""
+msgstr "Requerido para Pedidos de Venta"
 
 #: part/templates/part/part_base.html:224
 msgid "Allocated to Orders"
-msgstr ""
+msgstr "Asignado a Pedidos"
 
 #: part/templates/part/part_base.html:239 templates/js/translated/bom.js:904
 msgid "Can Build"
@@ -4960,7 +4960,7 @@ msgstr "Último Número Serial"
 #: part/templates/part/part_base.html:328
 #: stock/templates/stock/item_base.html:166
 msgid "Search for serial number"
-msgstr ""
+msgstr "Buscar número de serie"
 
 #: part/templates/part/part_base.html:449 part/templates/part/prices.html:144
 msgid "Calculate"
@@ -5042,7 +5042,7 @@ msgstr "Usado en"
 #: part/templates/part/part_sidebar.html:34
 #: stock/templates/stock/stock_sidebar.html:8
 msgid "Allocations"
-msgstr ""
+msgstr "Asignaciones"
 
 #: part/templates/part/part_sidebar.html:48
 msgid "Test Templates"
@@ -5181,7 +5181,7 @@ msgstr "Cargar Lista de Materiales"
 
 #: part/templates/part/upload_bom.html:19
 msgid "BOM upload requirements"
-msgstr ""
+msgstr "Requisitos de subida BOM"
 
 #: part/templates/part/upload_bom.html:23
 #: part/templates/part/upload_bom.html:90
@@ -5190,7 +5190,7 @@ msgstr "Subir archivo BOM"
 
 #: part/templates/part/upload_bom.html:29
 msgid "Submit BOM Data"
-msgstr ""
+msgstr "Enviar datos BOM"
 
 #: part/templates/part/upload_bom.html:37
 msgid "Requirements for BOM upload"
@@ -5292,15 +5292,15 @@ msgstr "Categoría de parte eliminada"
 
 #: part/views.py:1144
 msgid "Create Category Parameter Template"
-msgstr ""
+msgstr "Crear plantilla de parámetro de categoría"
 
 #: part/views.py:1245
 msgid "Edit Category Parameter Template"
-msgstr ""
+msgstr "Editar plantilla de parámetro de categoría"
 
 #: part/views.py:1301
 msgid "Delete Category Parameter Template"
-msgstr ""
+msgstr "Eliminar plantilla de parámetro de categoría"
 
 #: part/views.py:1323
 msgid "Added new price break"
@@ -5352,7 +5352,7 @@ msgstr ""
 
 #: plugin/samples/integration/sample.py:42
 msgid "Enable PO"
-msgstr ""
+msgstr "Habilitar PO"
 
 #: plugin/samples/integration/sample.py:43
 msgid "Enable PO functionality in InvenTree interface"
@@ -5441,11 +5441,11 @@ msgstr "Patrón para generar nombres de archivo"
 
 #: report/models.py:299
 msgid "Report template is enabled"
-msgstr ""
+msgstr "Plantilla de informe está habilitada"
 
 #: report/models.py:323
 msgid "StockItem query filters (comma-separated list of key=value pairs)"
-msgstr ""
+msgstr "Filtros de consulta de Stock (lista separada por comas de pares clave=valor)"
 
 #: report/models.py:331
 msgid "Include Installed Tests"
@@ -5465,11 +5465,11 @@ msgstr "Crear filtros de consulta (lista separada por comas de pares clave=valor
 
 #: report/models.py:425
 msgid "Part Filters"
-msgstr ""
+msgstr "Filtros de partes"
 
 #: report/models.py:426
 msgid "Part query filters (comma-separated list of key=value pairs"
-msgstr ""
+msgstr "Filtros de búsqueda de partes (lista separada por comas de pares clave=valor"
 
 #: report/models.py:460
 msgid "Purchase order query filters"
@@ -5509,7 +5509,7 @@ msgstr "Requerido para"
 
 #: report/templates/report/inventree_test_report_base.html:21
 msgid "Stock Item Test Report"
-msgstr ""
+msgstr "Artículo Stock Informe de prueba"
 
 #: report/templates/report/inventree_test_report_base.html:79
 #: stock/models.py:519 stock/templates/stock/item_base.html:156
@@ -5567,7 +5567,7 @@ msgstr "Cantidad requerida"
 
 #: stock/api.py:483
 msgid "Valid part must be supplied"
-msgstr ""
+msgstr "Debe suministrarse una pieza válida"
 
 #: stock/forms.py:77 stock/forms.py:251 stock/models.py:576
 #: stock/templates/stock/item_base.html:193
@@ -5875,19 +5875,19 @@ msgstr ""
 
 #: stock/serializers.py:346
 msgid "Serial numbers cannot be assigned to this part"
-msgstr ""
+msgstr "Los números de serie no se pueden asignar a esta parte"
 
 #: stock/serializers.py:589
 msgid "Part must be salable"
-msgstr ""
+msgstr "La parte debe ser vendible"
 
 #: stock/serializers.py:593
 msgid "Item is allocated to a sales order"
-msgstr ""
+msgstr "El artículo está asignado a una orden de venta"
 
 #: stock/serializers.py:597
 msgid "Item is allocated to a build order"
-msgstr ""
+msgstr "El artículo está asignado a una orden de creación"
 
 #: stock/serializers.py:627
 msgid "Customer to assign stock items"
@@ -7148,7 +7148,9 @@ msgstr ""
 msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class='btn btn-primary btn-small' href='%(signup_url)s'>sign up</a>\n"
 "for a account and sign in below:"
-msgstr ""
+msgstr "Por favor, inicia sesión con una\n"
+"de tus cuentas de terceros existentes o  <a class='btn btn-primary btn-small' href='%(signup_url)s'>regístrate</a>\n"
+"para una cuenta e inicia sesión a continuación:"
 
 #: templates/account/login.html:25
 #, python-format
@@ -7624,7 +7626,7 @@ msgstr ""
 
 #: templates/js/translated/bom.js:309
 msgid "Include part  parameter data in exported BOM"
-msgstr ""
+msgstr "Incluye los datos del parámetro de la pieza en BOM exportado"
 
 #: templates/js/translated/bom.js:314
 msgid "Include Stock Data"
@@ -7632,7 +7634,7 @@ msgstr ""
 
 #: templates/js/translated/bom.js:315
 msgid "Include part stock data in exported BOM"
-msgstr ""
+msgstr "Incluye datos de stock de piezas en BOM exportado"
 
 #: templates/js/translated/bom.js:320
 msgid "Include Manufacturer Data"
@@ -7640,7 +7642,7 @@ msgstr ""
 
 #: templates/js/translated/bom.js:321
 msgid "Include part manufacturer data in exported BOM"
-msgstr ""
+msgstr "Incluye datos del fabricante de piezas en BOM exportado"
 
 #: templates/js/translated/bom.js:326
 msgid "Include Supplier Data"
@@ -7648,7 +7650,7 @@ msgstr ""
 
 #: templates/js/translated/bom.js:327
 msgid "Include part supplier data in exported BOM"
-msgstr ""
+msgstr "Incluye datos del proveedor de piezas en BOM exportado"
 
 #: templates/js/translated/bom.js:510
 msgid "Remove substitute part"
@@ -7656,7 +7658,7 @@ msgstr "Eliminar parte sustituta"
 
 #: templates/js/translated/bom.js:566
 msgid "Select and add a new substitute part using the input below"
-msgstr ""
+msgstr "Seleccione y añada una nueva parte sustituta usando la siguiente entrada"
 
 #: templates/js/translated/bom.js:577
 msgid "Are you sure you wish to remove this substitute part link?"
@@ -7672,7 +7674,7 @@ msgstr "Añadir sustituto"
 
 #: templates/js/translated/bom.js:623
 msgid "Edit BOM Item Substitutes"
-msgstr ""
+msgstr "Editar sustitutos de elementos BOM"
 
 #: templates/js/translated/bom.js:742
 msgid "Substitutes Available"
@@ -7704,7 +7706,7 @@ msgstr ""
 
 #: templates/js/translated/bom.js:954
 msgid "Validate BOM Item"
-msgstr ""
+msgstr "Validar Artículo para el BOM"
 
 #: templates/js/translated/bom.js:956
 msgid "This line has been validated"
@@ -7922,15 +7924,15 @@ msgstr ""
 
 #: templates/js/translated/company.js:78 templates/js/translated/company.js:177
 msgid "Add Manufacturer Part"
-msgstr ""
+msgstr "Añadir Parte del fabricante"
 
 #: templates/js/translated/company.js:99
 msgid "Edit Manufacturer Part"
-msgstr ""
+msgstr "Editar Parte del Fabricante"
 
 #: templates/js/translated/company.js:108
 msgid "Delete Manufacturer Part"
-msgstr ""
+msgstr "Eliminar Parte del Fabricante"
 
 #: templates/js/translated/company.js:165 templates/js/translated/order.js:248
 msgid "Add Supplier"
@@ -7938,15 +7940,15 @@ msgstr ""
 
 #: templates/js/translated/company.js:193
 msgid "Add Supplier Part"
-msgstr ""
+msgstr "Añadir Parte de Proveedor"
 
 #: templates/js/translated/company.js:208
 msgid "Edit Supplier Part"
-msgstr ""
+msgstr "Editar Parte del Proveedor"
 
 #: templates/js/translated/company.js:218
 msgid "Delete Supplier Part"
-msgstr ""
+msgstr "Eliminar Parte de Proveedor"
 
 #: templates/js/translated/company.js:286
 msgid "Add new Company"
@@ -7994,19 +7996,19 @@ msgstr "No se encontraron parámetros"
 
 #: templates/js/translated/company.js:668 templates/js/translated/part.js:738
 msgid "Edit parameter"
-msgstr ""
+msgstr "Editar parámetro"
 
 #: templates/js/translated/company.js:669 templates/js/translated/part.js:739
 msgid "Delete parameter"
-msgstr ""
+msgstr "Eliminar parámetro"
 
 #: templates/js/translated/company.js:688 templates/js/translated/part.js:756
 msgid "Edit Parameter"
-msgstr ""
+msgstr "Editar parámetro"
 
 #: templates/js/translated/company.js:699 templates/js/translated/part.js:768
 msgid "Delete Parameter"
-msgstr ""
+msgstr "Eliminar parámetro"
 
 #: templates/js/translated/company.js:737
 msgid "No supplier parts found"
@@ -8353,7 +8355,7 @@ msgstr ""
 
 #: templates/js/translated/order.js:1166 templates/js/translated/part.js:942
 msgid "Receive line item"
-msgstr ""
+msgstr "Recibir ítem de línea"
 
 #: templates/js/translated/order.js:1206
 msgid "No sales orders found"
@@ -8466,27 +8468,27 @@ msgstr "Atributos de Parte"
 
 #: templates/js/translated/part.js:58
 msgid "Part Creation Options"
-msgstr ""
+msgstr "Opciones de Creación de Parte"
 
 #: templates/js/translated/part.js:62
 msgid "Part Duplication Options"
-msgstr ""
+msgstr "Opciones de Duplicación de Parte"
 
 #: templates/js/translated/part.js:66
 msgid "Supplier Options"
-msgstr ""
+msgstr "Opciones de Proveedor"
 
 #: templates/js/translated/part.js:80
 msgid "Add Part Category"
-msgstr ""
+msgstr "Añadir Categoría de Parte"
 
 #: templates/js/translated/part.js:164
 msgid "Create Initial Stock"
-msgstr ""
+msgstr "Crear Stock Inicial"
 
 #: templates/js/translated/part.js:165
 msgid "Create an initial stock item for this part"
-msgstr ""
+msgstr "Crear un elemento inicial de stock para esta parte"
 
 #: templates/js/translated/part.js:172
 msgid "Initial Stock Quantity"
@@ -8498,47 +8500,47 @@ msgstr "Especifique la cantidad inicial de stock para esta parte"
 
 #: templates/js/translated/part.js:180
 msgid "Select destination stock location"
-msgstr ""
+msgstr "Seleccionar ubicación de stock de destino"
 
 #: templates/js/translated/part.js:198
 msgid "Copy Category Parameters"
-msgstr ""
+msgstr "Copiar Parámetros de Categoría"
 
 #: templates/js/translated/part.js:199
 msgid "Copy parameter templates from selected part category"
-msgstr ""
+msgstr "Copiar plantillas de parámetro de la categoría de partes seleccionada"
 
 #: templates/js/translated/part.js:207
 msgid "Add Supplier Data"
-msgstr ""
+msgstr "Añadir Datos de Proveedor"
 
 #: templates/js/translated/part.js:208
 msgid "Create initial supplier data for this part"
-msgstr ""
+msgstr "Crear datos iniciales del proveedor para esta parte"
 
 #: templates/js/translated/part.js:264
 msgid "Copy Image"
-msgstr ""
+msgstr "Copiar Imagen"
 
 #: templates/js/translated/part.js:265
 msgid "Copy image from original part"
-msgstr ""
+msgstr "Copiar imagen desde la parte original"
 
 #: templates/js/translated/part.js:273
 msgid "Copy bill of materials from original part"
-msgstr ""
+msgstr "Copiar la factura de materiales de la parte original"
 
 #: templates/js/translated/part.js:280
 msgid "Copy Parameters"
-msgstr ""
+msgstr "Copiar Parámetros"
 
 #: templates/js/translated/part.js:281
 msgid "Copy parameter data from original part"
-msgstr ""
+msgstr "Copiar datos del parámetro de la parte original"
 
 #: templates/js/translated/part.js:294
 msgid "Parent part category"
-msgstr ""
+msgstr "Categoría superior de parte"
 
 #: templates/js/translated/part.js:338
 msgid "Edit Part"
@@ -8550,7 +8552,7 @@ msgstr "Parte editada"
 
 #: templates/js/translated/part.js:351
 msgid "Create Part Variant"
-msgstr ""
+msgstr "Crear Variante de Parte"
 
 #: templates/js/translated/part.js:418
 msgid "You are subscribed to notifications for this item"
@@ -8570,11 +8572,11 @@ msgstr "Has cancelado la suscripción a las notificaciones de este elemento"
 
 #: templates/js/translated/part.js:444
 msgid "Validating the BOM will mark each line item as valid"
-msgstr ""
+msgstr "Validar el BOM marcará cada elemento de línea como válido"
 
 #: templates/js/translated/part.js:454
 msgid "Validate Bill of Materials"
-msgstr ""
+msgstr "Validar la Factura de Materiales"
 
 #: templates/js/translated/part.js:457
 msgid "Validated Bill of Materials"
@@ -8582,7 +8584,7 @@ msgstr "Validación de Lista de Materiales"
 
 #: templates/js/translated/part.js:481
 msgid "Copy Bill of Materials"
-msgstr ""
+msgstr "Copiar Factura de Materiales"
 
 #: templates/js/translated/part.js:509 templates/js/translated/part.js:594
 msgid "Trackable part"
@@ -9293,7 +9295,7 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:413
 msgid "Part has internal part number"
-msgstr ""
+msgstr "La parte tiene número de pieza interno"
 
 #: templates/js/translated/table_filters.js:418
 msgid "Show active parts"
@@ -9430,7 +9432,7 @@ msgstr ""
 
 #: templates/stats.html:43
 msgid "Plugin support enabled"
-msgstr ""
+msgstr "Soporte de plugins habilitado"
 
 #: templates/stats.html:45
 msgid "Plugin support disabled"
