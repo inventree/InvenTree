@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-14 08:48+0000\n"
-"PO-Revision-Date: 2022-02-14 17:24\n"
+"PO-Revision-Date: 2022-02-14 18:46\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -6445,19 +6445,19 @@ msgstr "El servidor de InvenTree ha generado un error interno"
 
 #: templates/500.html:15
 msgid "Refer to the error log in the admin interface for further details"
-msgstr ""
+msgstr "Consulte el registro de errores en la interfaz de administración para más detalles"
 
 #: templates/503.html:8 templates/503.html:9
 msgid "Site is in Maintenance"
-msgstr ""
+msgstr "El Sitio está en Mantenimiento"
 
 #: templates/503.html:12
 msgid "The site is currently in maintenance and should be up again soon!"
-msgstr ""
+msgstr "El sitio está actualmente en mantenimiento y debería estar listo pronto!"
 
 #: templates/InvenTree/index.html:7
 msgid "Index"
-msgstr ""
+msgstr "Índice"
 
 #: templates/InvenTree/index.html:88
 msgid "Subscribed Parts"
@@ -6465,7 +6465,7 @@ msgstr "Partes Suscritas"
 
 #: templates/InvenTree/index.html:98
 msgid "Subscribed Categories"
-msgstr ""
+msgstr "Categorías Suscritas"
 
 #: templates/InvenTree/index.html:108
 msgid "Latest Parts"
@@ -6473,23 +6473,23 @@ msgstr "Últimas Partes"
 
 #: templates/InvenTree/index.html:119
 msgid "BOM Waiting Validation"
-msgstr ""
+msgstr "Validación de BOM en espera"
 
 #: templates/InvenTree/index.html:145
 msgid "Recently Updated"
-msgstr ""
+msgstr "Actualizado Recientemente"
 
 #: templates/InvenTree/index.html:168
 msgid "Depleted Stock"
-msgstr ""
+msgstr "Stock Agotado"
 
 #: templates/InvenTree/index.html:191
 msgid "Expired Stock"
-msgstr ""
+msgstr "Stock Caducado"
 
 #: templates/InvenTree/index.html:202
 msgid "Stale Stock"
-msgstr ""
+msgstr "Stock Obsoleto"
 
 #: templates/InvenTree/index.html:224
 msgid "Build Orders In Progress"
@@ -6501,27 +6501,27 @@ msgstr "Órdenes de construcción atrasadas"
 
 #: templates/InvenTree/index.html:255
 msgid "Outstanding Purchase Orders"
-msgstr ""
+msgstr "Órdenes de Compra Pendientes"
 
 #: templates/InvenTree/index.html:266
 msgid "Overdue Purchase Orders"
-msgstr ""
+msgstr "Pedidos de Compra Atrasados"
 
 #: templates/InvenTree/index.html:286
 msgid "Outstanding Sales Orders"
-msgstr ""
+msgstr "Pedidos de Venta Pendientes"
 
 #: templates/InvenTree/index.html:297
 msgid "Overdue Sales Orders"
-msgstr ""
+msgstr "Pedidos de Venta Atrasados"
 
 #: templates/InvenTree/search.html:8
 msgid "Search Results"
-msgstr ""
+msgstr "Resultados de Búsqueda"
 
 #: templates/InvenTree/settings/barcode.html:8
 msgid "Barcode Settings"
-msgstr ""
+msgstr "Ajustes de Código de Barras"
 
 #: templates/InvenTree/settings/build.html:8
 msgid "Build Order Settings"
@@ -6529,7 +6529,7 @@ msgstr "Configuración de Pedido de Trabajo"
 
 #: templates/InvenTree/settings/category.html:7
 msgid "Category Settings"
-msgstr ""
+msgstr "Ajustes de Categoría"
 
 #: templates/InvenTree/settings/currencies.html:8
 msgid "Currency Settings"
@@ -6541,50 +6541,50 @@ msgstr "Moneda Base"
 
 #: templates/InvenTree/settings/currencies.html:24
 msgid "Exchange Rates"
-msgstr ""
+msgstr "Tipos de Cambio"
 
 #: templates/InvenTree/settings/currencies.html:38
 msgid "Last Update"
-msgstr ""
+msgstr "Última Actualización"
 
 #: templates/InvenTree/settings/currencies.html:44
 msgid "Never"
-msgstr ""
+msgstr "Nunca"
 
 #: templates/InvenTree/settings/currencies.html:49
 msgid "Update Now"
-msgstr ""
+msgstr "Actualizar Ahora"
 
 #: templates/InvenTree/settings/global.html:9
 msgid "Server Settings"
-msgstr ""
+msgstr "Configuración del Servidor"
 
 #: templates/InvenTree/settings/login.html:9
 #: templates/InvenTree/settings/sidebar.html:29
 msgid "Login Settings"
-msgstr ""
+msgstr "Configuración de Inicio de Sesión"
 
 #: templates/InvenTree/settings/login.html:21 templates/account/signup.html:5
 msgid "Signup"
-msgstr ""
+msgstr "Registrarse"
 
 #: templates/InvenTree/settings/mixins/settings.html:5
 #: templates/InvenTree/settings/settings.html:12 templates/navbar.html:113
 msgid "Settings"
-msgstr ""
+msgstr "Ajustes"
 
 #: templates/InvenTree/settings/mixins/urls.html:5
 msgid "URLs"
-msgstr ""
+msgstr "Direcciones URL"
 
 #: templates/InvenTree/settings/mixins/urls.html:8
 #, python-format
 msgid "The Base-URL for this plugin is <a href='/%(base)s' target='_blank'><strong>%(base)s</strong></a>."
-msgstr ""
+msgstr "La URL base para este plugin es <a href='/%(base)s' target='_blank'><strong>%(base)s</strong></a>."
 
 #: templates/InvenTree/settings/mixins/urls.html:23
 msgid "Open in new tab"
-msgstr ""
+msgstr "Abrir en una pestaña nueva"
 
 #: templates/InvenTree/settings/part.html:7
 msgid "Part Settings"
@@ -6604,84 +6604,84 @@ msgstr "Plantillas de Parámetros de Partes"
 
 #: templates/InvenTree/settings/plugin.html:10
 msgid "Plugin Settings"
-msgstr ""
+msgstr "Ajustes del Plugin"
 
 #: templates/InvenTree/settings/plugin.html:16
 msgid "Changing the settings below require you to immediatly restart InvenTree. Do not change this while under active usage."
-msgstr ""
+msgstr "Cambiar la configuración de abajo requiere reiniciar inmediatamente InvenTree. No lo cambie mientras esté en uso activo."
 
 #: templates/InvenTree/settings/plugin.html:33
 msgid "Plugins"
-msgstr ""
+msgstr "Plugins"
 
 #: templates/InvenTree/settings/plugin.html:38
 #: templates/js/translated/plugin.js:15
 msgid "Install Plugin"
-msgstr ""
+msgstr "Instalar Plugin"
 
 #: templates/InvenTree/settings/plugin.html:47 templates/navbar.html:111
 #: users/models.py:39
 msgid "Admin"
-msgstr ""
+msgstr "Admin"
 
 #: templates/InvenTree/settings/plugin.html:49
 #: templates/InvenTree/settings/plugin_settings.html:28
 msgid "Author"
-msgstr ""
+msgstr "Autor"
 
 #: templates/InvenTree/settings/plugin.html:51
 #: templates/InvenTree/settings/plugin_settings.html:43
 msgid "Version"
-msgstr ""
+msgstr "Versión"
 
 #: templates/InvenTree/settings/plugin.html:92
 msgid "Inactive plugins"
-msgstr ""
+msgstr "Plugins inactivos"
 
 #: templates/InvenTree/settings/plugin.html:115
 msgid "Plugin Error Stack"
-msgstr ""
+msgstr "Pila de Error de Plugin"
 
 #: templates/InvenTree/settings/plugin.html:124
 msgid "Stage"
-msgstr ""
+msgstr "Etapa"
 
 #: templates/InvenTree/settings/plugin.html:126
 msgid "Message"
-msgstr ""
+msgstr "Mensaje"
 
 #: templates/InvenTree/settings/plugin_settings.html:10
 #, python-format
 msgid "Plugin details for %(name)s"
-msgstr ""
+msgstr "Detalles del plugin para %(name)s"
 
 #: templates/InvenTree/settings/plugin_settings.html:17
 msgid "Plugin information"
-msgstr ""
+msgstr "Información de Plugin"
 
 #: templates/InvenTree/settings/plugin_settings.html:48
 msgid "no version information supplied"
-msgstr ""
+msgstr "no se proporcionó información de versión"
 
 #: templates/InvenTree/settings/plugin_settings.html:62
 msgid "License"
-msgstr ""
+msgstr "Licencia"
 
 #: templates/InvenTree/settings/plugin_settings.html:71
 msgid "The code information is pulled from the latest git commit for this plugin. It might not reflect official version numbers or information but the actual code running."
-msgstr ""
+msgstr "La información del código es extraída del último git commit para este plugin. Puede que no refleje los números de versión oficiales o la información, pero sí el código actual en ejecución."
 
 #: templates/InvenTree/settings/plugin_settings.html:76
 msgid "Package information"
-msgstr ""
+msgstr "Información del paquete"
 
 #: templates/InvenTree/settings/plugin_settings.html:82
 msgid "Installation method"
-msgstr ""
+msgstr "Método de instalación"
 
 #: templates/InvenTree/settings/plugin_settings.html:85
 msgid "This plugin was installed as a package"
-msgstr ""
+msgstr "Este plugin fue instalado como un paquete"
 
 #: templates/InvenTree/settings/plugin_settings.html:87
 msgid "This plugin was found in a local InvenTree path"
@@ -6689,16 +6689,16 @@ msgstr "Este plugin fue encontrado en una ruta local de InvenTree"
 
 #: templates/InvenTree/settings/plugin_settings.html:93
 msgid "Installation path"
-msgstr ""
+msgstr "Ruta de instalación"
 
 #: templates/InvenTree/settings/plugin_settings.html:99
 msgid "Commit Author"
-msgstr ""
+msgstr "Autor del Commit"
 
 #: templates/InvenTree/settings/plugin_settings.html:103
 #: templates/about.html:47
 msgid "Commit Date"
-msgstr ""
+msgstr "Fecha del Commit"
 
 #: templates/InvenTree/settings/plugin_settings.html:107
 #: templates/about.html:40
@@ -6920,69 +6920,69 @@ msgstr "Tienes estos factores disponibles:"
 
 #: templates/InvenTree/settings/user.html:187
 msgid "TOTP"
-msgstr ""
+msgstr "TOTP"
 
 #: templates/InvenTree/settings/user.html:193
 msgid "Static"
-msgstr ""
+msgstr "Estático"
 
 #: templates/InvenTree/settings/user.html:202
 msgid "You currently do not have any factors set up."
-msgstr ""
+msgstr "Actualmente no tienes ningún factor configurado."
 
 #: templates/InvenTree/settings/user.html:209
 msgid "Change factors"
-msgstr ""
+msgstr "Cambiar factores"
 
 #: templates/InvenTree/settings/user.html:210
 msgid "Setup multifactor"
-msgstr ""
+msgstr "Configurar factor múltiple"
 
 #: templates/InvenTree/settings/user.html:212
 msgid "Remove multifactor"
-msgstr ""
+msgstr "Remover factor múltiple"
 
 #: templates/InvenTree/settings/user.html:220
 msgid "Active Sessions"
-msgstr ""
+msgstr "Sesiones Activas"
 
 #: templates/InvenTree/settings/user.html:226
 msgid "Log out active sessions (except this one)"
-msgstr ""
+msgstr "Cerrar sesiones activas (excepto esta)"
 
 #: templates/InvenTree/settings/user.html:227
 msgid "Log Out Active Sessions"
-msgstr ""
+msgstr "Cerrar Sesiones Activas"
 
 #: templates/InvenTree/settings/user.html:236
 msgid "<em>unknown on unknown</em>"
-msgstr ""
+msgstr "<em>desconocido en desconocido</em>"
 
 #: templates/InvenTree/settings/user.html:237
 msgid "<em>unknown</em>"
-msgstr ""
+msgstr "<em>desconocido</em>"
 
 #: templates/InvenTree/settings/user.html:241
 msgid "IP Address"
-msgstr ""
+msgstr "Dirección IP"
 
 #: templates/InvenTree/settings/user.html:242
 msgid "Device"
-msgstr ""
+msgstr "Dispositivo"
 
 #: templates/InvenTree/settings/user.html:243
 msgid "Last Activity"
-msgstr ""
+msgstr "Última Actividad"
 
 #: templates/InvenTree/settings/user.html:252
 #, python-format
 msgid "%(time)s ago (this session)"
-msgstr ""
+msgstr "%(time)s atrás (esta sesión)"
 
 #: templates/InvenTree/settings/user.html:254
 #, python-format
 msgid "%(time)s ago"
-msgstr ""
+msgstr "%(time)s atrás"
 
 #: templates/InvenTree/settings/user.html:266
 msgid "Do you really want to remove the selected email address?"
@@ -7044,7 +7044,7 @@ msgstr "¡Ayuda a los esfuerzos de traducción!"
 #: templates/InvenTree/settings/user_display.html:102
 #, python-format
 msgid "Native language translation of the InvenTree web application is <a href='%(link)s'>community contributed via crowdin</a>. Contributions are welcomed and encouraged."
-msgstr ""
+msgstr "La traducción nativa de la aplicación web de InvenTree es <a href=\"%(link)s\"> un aporte de la comunidad a través de crowdin</a>. Las contribuciones son bienvenidas y animadas."
 
 #: templates/InvenTree/settings/user_homepage.html:9
 msgid "Home Page Settings"
@@ -7077,51 +7077,51 @@ msgstr "Versión de Desarrollo"
 
 #: templates/about.html:28
 msgid "Up to Date"
-msgstr ""
+msgstr "Actualizado"
 
 #: templates/about.html:30
 msgid "Update Available"
-msgstr ""
+msgstr "Actualización Disponible"
 
 #: templates/about.html:53
 msgid "InvenTree Documentation"
-msgstr ""
+msgstr "Documentación de InvenTree"
 
 #: templates/about.html:58
 msgid "API Version"
-msgstr ""
+msgstr "Versión API"
 
 #: templates/about.html:63
 msgid "Python Version"
-msgstr ""
+msgstr "Versión de Python"
 
 #: templates/about.html:68
 msgid "Django Version"
-msgstr ""
+msgstr "Versión de Django"
 
 #: templates/about.html:73
 msgid "View Code on GitHub"
-msgstr ""
+msgstr "Ver código en GitHub"
 
 #: templates/about.html:78
 msgid "Credits"
-msgstr ""
+msgstr "Créditos"
 
 #: templates/about.html:83
 msgid "Mobile App"
-msgstr ""
+msgstr "Aplicación Móvil"
 
 #: templates/about.html:88
 msgid "Submit Bug Report"
-msgstr ""
+msgstr "Enviar Informe de Error"
 
 #: templates/about.html:95 templates/clip.html:4
 msgid "copy to clipboard"
-msgstr ""
+msgstr "copiar al portapapeles"
 
 #: templates/about.html:95
 msgid "copy version information"
-msgstr ""
+msgstr "copiar información de versión"
 
 #: templates/account/email_confirm.html:6
 #: templates/account/email_confirm.html:10
@@ -7131,17 +7131,17 @@ msgstr "Confirmar Email"
 #: templates/account/email_confirm.html:16
 #, python-format
 msgid "Please confirm that <a href='mailto:%(email)s'>%(email)s</a> is an email address for user %(user_display)s."
-msgstr ""
+msgstr "Por favor confirme que <a href=\"mailto:%(email)s\">%(email)s</a> es una dirección de correo electrónico del usuario %(user_display)s."
 
 #: templates/account/email_confirm.html:27
 #, python-format
 msgid "This email confirmation link expired or is invalid. Please <a href='%(email_url)s'>issue a new email confirmation request</a>."
-msgstr ""
+msgstr "Este enlace de confirmación de correo electrónico ha caducado o no es válido. Por favor, <a href=\"%(email_url)s\">emite un nuevo correo de solicitud de confirmación</a>."
 
 #: templates/account/login.html:6 templates/account/login.html:16
 #: templates/account/login.html:39
 msgid "Sign In"
-msgstr ""
+msgstr "Ingresar"
 
 #: templates/account/login.html:21
 #, python-format
@@ -7156,41 +7156,41 @@ msgstr "Por favor, inicia sesión con una\n"
 #, python-format
 msgid "If you have not created an account yet, then please\n"
 "<a href='%(signup_url)s'>sign up</a> first."
-msgstr ""
+msgstr "Si no has creado una cuenta todavía, entonces <a href=\"%(signup_url)s\">regístrese</a> primero, por favor."
 
 #: templates/account/login.html:42
 msgid "Forgot Password?"
-msgstr ""
+msgstr "¿Ha olvidado la contraseña?"
 
 #: templates/account/login.html:47
 msgid "InvenTree demo instance"
-msgstr ""
+msgstr "Instancia demo de InvenTree"
 
 #: templates/account/login.html:47
 msgid "Click here for login details"
-msgstr ""
+msgstr "Haga clic aquí para ver los detalles de acceso"
 
 #: templates/account/login.html:55
 msgid "or use SSO"
-msgstr ""
+msgstr "o usar SSO"
 
 #: templates/account/logout.html:5 templates/account/logout.html:8
 #: templates/account/logout.html:20
 msgid "Sign Out"
-msgstr ""
+msgstr "Cerrar Sesión"
 
 #: templates/account/logout.html:10
 msgid "Are you sure you want to sign out?"
-msgstr ""
+msgstr "¿Está seguro de que desea salir?"
 
 #: templates/account/logout.html:19
 msgid "Back to Site"
-msgstr ""
+msgstr "Volver al Sitio"
 
 #: templates/account/password_reset.html:5
 #: templates/account/password_reset.html:12
 msgid "Password Reset"
-msgstr ""
+msgstr "Restablecer Contraseña"
 
 #: templates/account/password_reset.html:18
 msgid "Forgotten your password? Enter your email address below, and we'll send you an email allowing you to reset it."
@@ -7198,114 +7198,114 @@ msgstr "¿Olvidó su contraseña? Introduzca su dirección de correo electrónic
 
 #: templates/account/password_reset.html:23
 msgid "Reset My Password"
-msgstr ""
+msgstr "Reestablecer mi Contraseña"
 
 #: templates/account/password_reset.html:27 templates/account/signup.html:36
 msgid "This function is currently disabled. Please contact an administrator."
-msgstr ""
+msgstr "Esta función está actualmente deshabilitada. Por favor, póngase en contacto con un administrador."
 
 #: templates/account/password_reset_from_key.html:7
 msgid "Bad Token"
-msgstr ""
+msgstr "Token Incorrecto"
 
 #: templates/account/password_reset_from_key.html:11
 #, python-format
 msgid "The password reset link was invalid, possibly because it has already been used.  Please request a <a href='%(passwd_reset_url)s'>new password reset</a>."
-msgstr ""
+msgstr "El link para restablecer la contraseña era inválido, posiblemente porque ya fue usado. Por favor solicite un <a href=\"%(passwd_reset_url)s\">nuevo restablecimiento de contraseña</a>."
 
 #: templates/account/password_reset_from_key.html:18
 msgid "Change password"
-msgstr ""
+msgstr "Cambiar contraseña"
 
 #: templates/account/password_reset_from_key.html:22
 msgid "Your password is now changed."
-msgstr ""
+msgstr "Se ha cambiado la contraseña."
 
 #: templates/account/signup.html:11 templates/account/signup.html:22
 msgid "Sign Up"
-msgstr ""
+msgstr "Registrarse"
 
 #: templates/account/signup.html:13
 #, python-format
 msgid "Already have an account? Then please <a href='%(login_url)s'>sign in</a>."
-msgstr ""
+msgstr "¿Ya tiene una cuenta? entonces <a href=\"%(login_url)s\">ingrese</a> por favor."
 
 #: templates/account/signup.html:27
 msgid "Or use a SSO-provider for signup"
-msgstr ""
+msgstr "O utilice un proveedor de SSO para registrarse"
 
 #: templates/admin_button.html:2
 msgid "View in administration panel"
-msgstr ""
+msgstr "Ver en el panel de administración"
 
 #: templates/allauth_2fa/authenticate.html:5
 msgid "Two-Factor Authentication"
-msgstr ""
+msgstr "Autenticación de dos factores"
 
 #: templates/allauth_2fa/authenticate.html:12
 msgid "Authenticate"
-msgstr ""
+msgstr "Autenticar"
 
 #: templates/allauth_2fa/backup_tokens.html:6
 msgid "Two-Factor Authentication Backup Tokens"
-msgstr ""
+msgstr "Tokens de autenticación de doble factor"
 
 #: templates/allauth_2fa/backup_tokens.html:17
 msgid "Backup tokens have been generated, but are not revealed here for security reasons. Press the button below to generate new ones."
-msgstr ""
+msgstr "Se han generado tokens de copia de seguridad, pero no se revelan aquí por razones de seguridad. Pulse el botón de abajo para generar nuevos."
 
 #: templates/allauth_2fa/backup_tokens.html:20
 msgid "No tokens. Press the button below to generate some."
-msgstr ""
+msgstr "No hay tokens. Pulse el botón de abajo para generar algunos."
 
 #: templates/allauth_2fa/backup_tokens.html:27
 msgid "Generate backup tokens"
-msgstr ""
+msgstr "Crear token de copias de seguridad"
 
 #: templates/allauth_2fa/backup_tokens.html:31
 #: templates/allauth_2fa/setup.html:40
 msgid "back to settings"
-msgstr ""
+msgstr "volver a ajustes"
 
 #: templates/allauth_2fa/remove.html:6
 msgid "Disable Two-Factor Authentication"
-msgstr ""
+msgstr "Deshabilitar autenticación de dos factores"
 
 #: templates/allauth_2fa/remove.html:9
 msgid "Are you sure?"
-msgstr ""
+msgstr "¿Está seguro?"
 
 #: templates/allauth_2fa/remove.html:14
 msgid "Disable Two-Factor"
-msgstr ""
+msgstr "Deshabilitar dos factores"
 
 #: templates/allauth_2fa/setup.html:6
 msgid "Setup Two-Factor Authentication"
-msgstr ""
+msgstr "Configurar Autenticación de Dos Factores"
 
 #: templates/allauth_2fa/setup.html:10
 msgid "Step 1"
-msgstr ""
+msgstr "Paso 1"
 
 #: templates/allauth_2fa/setup.html:14
 msgid "Scan the QR code below with a token generator of your choice (for instance Google Authenticator)."
-msgstr ""
+msgstr "Escanea el código QR de abajo con un generador de tokens de tu elección (por ejemplo Google Authenticator)."
 
 #: templates/allauth_2fa/setup.html:23
 msgid "Step 2"
-msgstr ""
+msgstr "Paso 2"
 
 #: templates/allauth_2fa/setup.html:27
 msgid "Input a token generated by the app:"
-msgstr ""
+msgstr "Ingrese un token generado por la aplicación:"
 
 #: templates/allauth_2fa/setup.html:35
 msgid "Verify"
-msgstr ""
+msgstr "Verificar"
 
 #: templates/attachment_button.html:4 templates/js/translated/attachment.js:54
 msgid "Add Link"
-msgstr ""
+msgstr "Agregar Enlace"
 
 #: templates/attachment_button.html:7 templates/js/translated/attachment.js:36
 msgid "Add Attachment"
@@ -7313,15 +7313,15 @@ msgstr "Añadir archivo adjunto"
 
 #: templates/base.html:58
 msgid "Server Restart Required"
-msgstr ""
+msgstr "Reinicio del Servidor Requerido"
 
 #: templates/base.html:61
 msgid "A configuration option has been changed which requires a server restart"
-msgstr ""
+msgstr "Se ha cambiado una opción de configuración que requiere reiniciar el servidor"
 
 #: templates/base.html:61
 msgid "Contact your system administrator for further information"
-msgstr ""
+msgstr "Póngase en contacto con su administrador para más información"
 
 #: templates/email/build_order_required_stock.html:7
 msgid "Stock is required for the following build order"
@@ -7377,11 +7377,11 @@ msgstr "Cantidad Mínima"
 
 #: templates/image_download.html:8
 msgid "Specify URL for downloading image"
-msgstr ""
+msgstr "Especificar URL para descargar la imagen"
 
 #: templates/image_download.html:11
 msgid "Must be a valid image URL"
-msgstr ""
+msgstr "Debe ser una URL de imagen válida"
 
 #: templates/image_download.html:12
 msgid "Remote server must be accessible"
@@ -7433,11 +7433,11 @@ msgstr "El recurso solicitado no se pudo encontrar en el servidor"
 
 #: templates/js/translated/api.js:212
 msgid "Error 405: Method Not Allowed"
-msgstr ""
+msgstr "Error 405: Método no Permitido"
 
 #: templates/js/translated/api.js:213
 msgid "HTTP method not allowed at URL"
-msgstr ""
+msgstr "Método HTTP no permitido en URL"
 
 #: templates/js/translated/api.js:217 templates/js/translated/modals.js:1078
 msgid "Error 408: Timeout"
@@ -7584,15 +7584,15 @@ msgstr "El código de barras no coincide con una ubicación válida"
 
 #: templates/js/translated/bom.js:81
 msgid "Display row data"
-msgstr ""
+msgstr "Mostrar datos de fila"
 
 #: templates/js/translated/bom.js:137
 msgid "Row Data"
-msgstr ""
+msgstr "Datos de Fila"
 
 #: templates/js/translated/bom.js:250
 msgid "Download BOM Template"
-msgstr ""
+msgstr "Descargar plantilla BOM"
 
 #: templates/js/translated/bom.js:253 templates/js/translated/bom.js:287
 #: templates/js/translated/order.js:369 templates/js/translated/stock.js:518
@@ -7606,23 +7606,23 @@ msgstr "Seleccionar formato de archivo"
 
 #: templates/js/translated/bom.js:295
 msgid "Cascading"
-msgstr ""
+msgstr "Cascada"
 
 #: templates/js/translated/bom.js:296
 msgid "Download cascading / multi-level BOM"
-msgstr ""
+msgstr "Descargar BOM en cascada / multi-nivel"
 
 #: templates/js/translated/bom.js:301
 msgid "Levels"
-msgstr ""
+msgstr "Niveles"
 
 #: templates/js/translated/bom.js:302
 msgid "Select maximum number of BOM levels to export (0 = all levels)"
-msgstr ""
+msgstr "Seleccione el número máximo de niveles BOM a exportar (0 = todos los niveles)"
 
 #: templates/js/translated/bom.js:308
 msgid "Include Parameter Data"
-msgstr ""
+msgstr "Incluye Parámetros de Datos"
 
 #: templates/js/translated/bom.js:309
 msgid "Include part  parameter data in exported BOM"
@@ -7630,7 +7630,7 @@ msgstr "Incluye los datos del parámetro de la pieza en BOM exportado"
 
 #: templates/js/translated/bom.js:314
 msgid "Include Stock Data"
-msgstr ""
+msgstr "Incluye Datos de Stock"
 
 #: templates/js/translated/bom.js:315
 msgid "Include part stock data in exported BOM"
@@ -7638,7 +7638,7 @@ msgstr "Incluye datos de stock de piezas en BOM exportado"
 
 #: templates/js/translated/bom.js:320
 msgid "Include Manufacturer Data"
-msgstr ""
+msgstr "Incluir Datos del fabricante"
 
 #: templates/js/translated/bom.js:321
 msgid "Include part manufacturer data in exported BOM"
@@ -7646,7 +7646,7 @@ msgstr "Incluye datos del fabricante de piezas en BOM exportado"
 
 #: templates/js/translated/bom.js:326
 msgid "Include Supplier Data"
-msgstr ""
+msgstr "Incluir Datos del Proveedor"
 
 #: templates/js/translated/bom.js:327
 msgid "Include part supplier data in exported BOM"
@@ -7678,7 +7678,7 @@ msgstr "Editar sustitutos de elementos BOM"
 
 #: templates/js/translated/bom.js:742
 msgid "Substitutes Available"
-msgstr ""
+msgstr "Sustitutos Disponibles"
 
 #: templates/js/translated/bom.js:746 templates/js/translated/build.js:1313
 msgid "Variant stock allowed"
@@ -7686,11 +7686,11 @@ msgstr "Stock de variante permitido"
 
 #: templates/js/translated/bom.js:751
 msgid "Open subassembly"
-msgstr ""
+msgstr "Abrir sub-ensamblaje"
 
 #: templates/js/translated/bom.js:823
 msgid "Substitutes"
-msgstr ""
+msgstr "Sustitutos"
 
 #: templates/js/translated/bom.js:838
 msgid "Purchase Price Range"
@@ -7702,7 +7702,7 @@ msgstr "Precio Promedio de Compra"
 
 #: templates/js/translated/bom.js:894 templates/js/translated/bom.js:983
 msgid "View BOM"
-msgstr ""
+msgstr "Ver BOM"
 
 #: templates/js/translated/bom.js:954
 msgid "Validate BOM Item"
@@ -7710,7 +7710,7 @@ msgstr "Validar Artículo para el BOM"
 
 #: templates/js/translated/bom.js:956
 msgid "This line has been validated"
-msgstr ""
+msgstr "Esta línea ha sido validada"
 
 #: templates/js/translated/bom.js:958
 msgid "Edit substitute parts"
@@ -7738,7 +7738,7 @@ msgstr "Parte requerida"
 
 #: templates/js/translated/bom.js:1341
 msgid "Inherited from parent BOM"
-msgstr ""
+msgstr "Heredado de BOM superior"
 
 #: templates/js/translated/build.js:84
 msgid "Edit Build Order"
@@ -7750,7 +7750,7 @@ msgstr "Crear Orden de Trabajo"
 
 #: templates/js/translated/build.js:139
 msgid "Build order is ready to be completed"
-msgstr ""
+msgstr "El pedido de construcción está listo para ser completado"
 
 #: templates/js/translated/build.js:144
 msgid "Build Order is incomplete"
@@ -7920,7 +7920,7 @@ msgstr "No se asignaron partes para"
 
 #: templates/js/translated/company.js:65
 msgid "Add Manufacturer"
-msgstr ""
+msgstr "Agregar Fabricante"
 
 #: templates/js/translated/company.js:78 templates/js/translated/company.js:177
 msgid "Add Manufacturer Part"
@@ -7936,7 +7936,7 @@ msgstr "Eliminar Parte del Fabricante"
 
 #: templates/js/translated/company.js:165 templates/js/translated/order.js:248
 msgid "Add Supplier"
-msgstr ""
+msgstr "Añadir Proveedor"
 
 #: templates/js/translated/company.js:193
 msgid "Add Supplier Part"
@@ -7952,7 +7952,7 @@ msgstr "Eliminar Parte de Proveedor"
 
 #: templates/js/translated/company.js:286
 msgid "Add new Company"
-msgstr ""
+msgstr "Añadir nueva Empresa"
 
 #: templates/js/translated/company.js:363
 msgid "Parts Supplied"
@@ -8017,53 +8017,53 @@ msgstr "No se encontraron piezas de proveedor"
 #: templates/js/translated/filters.js:178
 #: templates/js/translated/filters.js:429
 msgid "true"
-msgstr ""
+msgstr "verdadero"
 
 #: templates/js/translated/filters.js:182
 #: templates/js/translated/filters.js:430
 msgid "false"
-msgstr ""
+msgstr "falso"
 
 #: templates/js/translated/filters.js:204
 msgid "Select filter"
-msgstr ""
+msgstr "Seleccionar filtro"
 
 #: templates/js/translated/filters.js:286
 msgid "Reload data"
-msgstr ""
+msgstr "Recargar datos"
 
 #: templates/js/translated/filters.js:290
 msgid "Add new filter"
-msgstr ""
+msgstr "Añadir un nuevo filtro"
 
 #: templates/js/translated/filters.js:293
 msgid "Clear all filters"
-msgstr ""
+msgstr "Limpiar todos los filtros"
 
 #: templates/js/translated/filters.js:338
 msgid "Create filter"
-msgstr ""
+msgstr "Crear filtro"
 
 #: templates/js/translated/forms.js:350 templates/js/translated/forms.js:365
 #: templates/js/translated/forms.js:379 templates/js/translated/forms.js:393
 msgid "Action Prohibited"
-msgstr ""
+msgstr "Acción Prohibida"
 
 #: templates/js/translated/forms.js:352
 msgid "Create operation not allowed"
-msgstr ""
+msgstr "Operación de creación no permitida"
 
 #: templates/js/translated/forms.js:367
 msgid "Update operation not allowed"
-msgstr ""
+msgstr "Operación de actualización no permitida"
 
 #: templates/js/translated/forms.js:381
 msgid "Delete operation not allowed"
-msgstr ""
+msgstr "Operación de eliminación no permitida"
 
 #: templates/js/translated/forms.js:395
 msgid "View operation not allowed"
-msgstr ""
+msgstr "Operación de visualización no permitida"
 
 #: templates/js/translated/forms.js:680
 msgid "Enter a valid number"
@@ -8230,7 +8230,7 @@ msgstr "ID del Pedido"
 
 #: templates/js/translated/model_renderers.js:287
 msgid "Shipment ID"
-msgstr ""
+msgstr "ID de envío"
 
 #: templates/js/translated/model_renderers.js:307
 msgid "Category ID"
@@ -8254,15 +8254,15 @@ msgstr "Los siguientes artículos de stock serán enviados"
 
 #: templates/js/translated/order.js:120
 msgid "Complete Shipment"
-msgstr ""
+msgstr "Completar Envío"
 
 #: templates/js/translated/order.js:126
 msgid "Confirm Shipment"
-msgstr ""
+msgstr "Confirmar Envío"
 
 #: templates/js/translated/order.js:181
 msgid "Create New Shipment"
-msgstr ""
+msgstr "Crear Nuevo Envío"
 
 #: templates/js/translated/order.js:206
 msgid "Add Customer"
@@ -8294,15 +8294,15 @@ msgstr "Estado del Stock"
 
 #: templates/js/translated/order.js:587
 msgid "Order Code"
-msgstr ""
+msgstr "Código de Pedido"
 
 #: templates/js/translated/order.js:588
 msgid "Ordered"
-msgstr ""
+msgstr "Pedido"
 
 #: templates/js/translated/order.js:590
 msgid "Receive"
-msgstr ""
+msgstr "Recibir"
 
 #: templates/js/translated/order.js:609
 msgid "Confirm receipt of items"
@@ -8318,7 +8318,7 @@ msgstr "No se encontraron órdenes de compra"
 
 #: templates/js/translated/order.js:815 templates/js/translated/order.js:1230
 msgid "Order is overdue"
-msgstr ""
+msgstr "El pedido está vencido"
 
 #: templates/js/translated/order.js:936 templates/js/translated/order.js:2356
 msgid "Edit Line Item"
@@ -8334,7 +8334,7 @@ msgstr "No hay elementos de línea"
 
 #: templates/js/translated/order.js:1014 templates/js/translated/order.js:2138
 msgid "Total"
-msgstr ""
+msgstr "Total"
 
 #: templates/js/translated/order.js:1068 templates/js/translated/order.js:2163
 #: templates/js/translated/part.js:1841 templates/js/translated/part.js:2052
@@ -8363,27 +8363,27 @@ msgstr "No se encontraron ventas"
 
 #: templates/js/translated/order.js:1244
 msgid "Invalid Customer"
-msgstr ""
+msgstr "Cliente Inválido"
 
 #: templates/js/translated/order.js:1322
 msgid "Edit shipment"
-msgstr ""
+msgstr "Editar envío"
 
 #: templates/js/translated/order.js:1325
 msgid "Complete shipment"
-msgstr ""
+msgstr "Completar envío"
 
 #: templates/js/translated/order.js:1330
 msgid "Delete shipment"
-msgstr ""
+msgstr "Eliminar envío"
 
 #: templates/js/translated/order.js:1350
 msgid "Edit Shipment"
-msgstr ""
+msgstr "Editar envío"
 
 #: templates/js/translated/order.js:1367
 msgid "Delete Shipment"
-msgstr ""
+msgstr "Eliminar Envío"
 
 #: templates/js/translated/order.js:1401
 msgid "No matching shipments found"
@@ -8391,15 +8391,15 @@ msgstr "No se encontraron envíos coincidentes"
 
 #: templates/js/translated/order.js:1411
 msgid "Shipment Reference"
-msgstr ""
+msgstr "Referencia de Envío"
 
 #: templates/js/translated/order.js:1435
 msgid "Not shipped"
-msgstr ""
+msgstr "No enviado"
 
 #: templates/js/translated/order.js:1441
 msgid "Tracking"
-msgstr ""
+msgstr "Seguimiento"
 
 #: templates/js/translated/order.js:1601
 msgid "Allocate Stock Items to Sales Order"
@@ -8411,7 +8411,7 @@ msgstr "No se encontraron asignaciones de órdenes"
 
 #: templates/js/translated/order.js:1898
 msgid "Edit Stock Allocation"
-msgstr ""
+msgstr "Editar Asignación de Stock"
 
 #: templates/js/translated/order.js:1915
 msgid "Confirm Delete Operation"
@@ -8419,7 +8419,7 @@ msgstr "Confirmar Operación de Eliminar"
 
 #: templates/js/translated/order.js:1916
 msgid "Delete Stock Allocation"
-msgstr ""
+msgstr "Eliminar Adjudicación de Stock"
 
 #: templates/js/translated/order.js:1959 templates/js/translated/order.js:2048
 #: templates/js/translated/stock.js:1436
@@ -8428,15 +8428,15 @@ msgstr "Enviado al cliente"
 
 #: templates/js/translated/order.js:1967 templates/js/translated/order.js:2057
 msgid "Stock location not specified"
-msgstr ""
+msgstr "Ubicación de stock no especificada"
 
 #: templates/js/translated/order.js:2297
 msgid "Allocate serial numbers"
-msgstr ""
+msgstr "Asignar números de serie"
 
 #: templates/js/translated/order.js:2303
 msgid "Purchase stock"
-msgstr ""
+msgstr "Comprar stock"
 
 #: templates/js/translated/order.js:2310 templates/js/translated/order.js:2476
 msgid "Calculate price"
@@ -8452,7 +8452,7 @@ msgstr "No se puede eliminar ya que los elementos han sido asignados"
 
 #: templates/js/translated/order.js:2382
 msgid "Allocate Serial Numbers"
-msgstr ""
+msgstr "Asignar Números de Serie"
 
 #: templates/js/translated/order.js:2484
 msgid "Update Unit Price"
@@ -8697,7 +8697,7 @@ msgstr "Diferencia de Precio Único"
 
 #: templates/js/translated/plugin.js:22
 msgid "The Plugin was installed"
-msgstr ""
+msgstr "El Plugin fue Instalado"
 
 #: templates/js/translated/report.js:67
 msgid "items selected"
@@ -9202,7 +9202,7 @@ msgstr "El artículo ha sido asignado"
 
 #: templates/js/translated/table_filters.js:179
 msgid "Stock is available for use"
-msgstr ""
+msgstr "Stock disponible para uso"
 
 #: templates/js/translated/table_filters.js:184
 msgid "Include stock in sublocations"
@@ -9272,7 +9272,7 @@ msgstr "Estado de la construcción"
 #: templates/js/translated/table_filters.js:303
 #: templates/js/translated/table_filters.js:344
 msgid "Assigned to me"
-msgstr ""
+msgstr "Asignado a mí"
 
 #: templates/js/translated/table_filters.js:320
 #: templates/js/translated/table_filters.js:331
@@ -9291,7 +9291,7 @@ msgstr "Incluye partes en subcategorías"
 
 #: templates/js/translated/table_filters.js:412
 msgid "Has IPN"
-msgstr ""
+msgstr "Tiene IPN"
 
 #: templates/js/translated/table_filters.js:413
 msgid "Part has internal part number"
@@ -9303,19 +9303,19 @@ msgstr "Mostrar partes activas"
 
 #: templates/js/translated/table_filters.js:426
 msgid "Stock available"
-msgstr ""
+msgstr "Stock disponible"
 
 #: templates/js/translated/table_filters.js:454
 msgid "Purchasable"
-msgstr ""
+msgstr "Comprable"
 
 #: templates/js/translated/tables.js:368
 msgid "Loading data"
-msgstr ""
+msgstr "Cargando datos"
 
 #: templates/js/translated/tables.js:371
 msgid "rows per page"
-msgstr ""
+msgstr "filas por página"
 
 #: templates/js/translated/tables.js:376
 msgid "Showing all rows"
@@ -9327,24 +9327,24 @@ msgstr "Mostrando"
 
 #: templates/js/translated/tables.js:378
 msgid "to"
-msgstr ""
+msgstr "para"
 
 #: templates/js/translated/tables.js:378
 msgid "of"
-msgstr ""
+msgstr "de"
 
 #: templates/js/translated/tables.js:378
 msgid "rows"
-msgstr ""
+msgstr "filas"
 
 #: templates/js/translated/tables.js:382 templates/search_form.html:6
 #: templates/search_form.html:7
 msgid "Search"
-msgstr ""
+msgstr "Buscar"
 
 #: templates/js/translated/tables.js:385
 msgid "No matching results"
-msgstr ""
+msgstr "No se encontraron resultados"
 
 #: templates/js/translated/tables.js:388
 msgid "Hide/Show pagination"
@@ -9352,83 +9352,83 @@ msgstr "Ocultar/Mostrar paginación"
 
 #: templates/js/translated/tables.js:391
 msgid "Refresh"
-msgstr ""
+msgstr "Actualizar"
 
 #: templates/js/translated/tables.js:394
 msgid "Toggle"
-msgstr ""
+msgstr "Alternar"
 
 #: templates/js/translated/tables.js:397
 msgid "Columns"
-msgstr ""
+msgstr "Columnas"
 
 #: templates/js/translated/tables.js:400
 msgid "All"
-msgstr ""
+msgstr "Todo"
 
 #: templates/navbar.html:42
 msgid "Buy"
-msgstr ""
+msgstr "Comprar"
 
 #: templates/navbar.html:54
 msgid "Sell"
-msgstr ""
+msgstr "Vender"
 
 #: templates/navbar.html:114
 msgid "Logout"
-msgstr ""
+msgstr "Cerrar sesión"
 
 #: templates/navbar.html:116
 msgid "Login"
-msgstr ""
+msgstr "Iniciar sesión"
 
 #: templates/navbar.html:136
 msgid "About InvenTree"
-msgstr ""
+msgstr "Acerca de InvenTree"
 
 #: templates/navbar_demo.html:5
 msgid "InvenTree demo mode"
-msgstr ""
+msgstr "Modo demo de InvenTree"
 
 #: templates/qr_code.html:11
 msgid "QR data not provided"
-msgstr ""
+msgstr "Datos QR no proporcionados"
 
 #: templates/registration/logged_out.html:6
 msgid "You were logged out successfully."
-msgstr ""
+msgstr "Se ha cerrado la sesión correctamente."
 
 #: templates/registration/logged_out.html:8
 msgid "Log in again"
-msgstr ""
+msgstr "Volver a ingresar"
 
 #: templates/stats.html:9
 msgid "Server"
-msgstr ""
+msgstr "Servidor"
 
 #: templates/stats.html:13
 msgid "Instance Name"
-msgstr ""
+msgstr "Nombre de Instancia"
 
 #: templates/stats.html:18
 msgid "Database"
-msgstr ""
+msgstr "Base de datos"
 
 #: templates/stats.html:26
 msgid "Server is running in debug mode"
-msgstr ""
+msgstr "El servidor se está ejecutando en modo depuración"
 
 #: templates/stats.html:33
 msgid "Docker Mode"
-msgstr ""
+msgstr "Modo Docker"
 
 #: templates/stats.html:34
 msgid "Server is deployed using docker"
-msgstr ""
+msgstr "El servidor está desplegado usando docker"
 
 #: templates/stats.html:39
 msgid "Plugin Support"
-msgstr ""
+msgstr "Soporte para Plugins"
 
 #: templates/stats.html:43
 msgid "Plugin support enabled"
@@ -9436,27 +9436,27 @@ msgstr "Soporte de plugins habilitado"
 
 #: templates/stats.html:45
 msgid "Plugin support disabled"
-msgstr ""
+msgstr "Soporte de plugins desactivado"
 
 #: templates/stats.html:52
 msgid "Server status"
-msgstr ""
+msgstr "Estado del servidor"
 
 #: templates/stats.html:55
 msgid "Healthy"
-msgstr ""
+msgstr "Healthy"
 
 #: templates/stats.html:57
 msgid "Issues detected"
-msgstr ""
+msgstr "Problemas detectados"
 
 #: templates/stats.html:64
 msgid "Background Worker"
-msgstr ""
+msgstr "Trabajador en segundo plano"
 
 #: templates/stats.html:67
 msgid "Background worker not running"
-msgstr ""
+msgstr "Trabajador en segundo plano no ejecutado"
 
 #: templates/stats.html:75
 msgid "Email Settings"
@@ -9508,7 +9508,7 @@ msgstr "Combinar artículos de stock seleccionados"
 
 #: templates/stock_table.html:52
 msgid "Merge stock"
-msgstr ""
+msgstr "Fusionar stock"
 
 #: templates/stock_table.html:53
 msgid "Order selected items"
