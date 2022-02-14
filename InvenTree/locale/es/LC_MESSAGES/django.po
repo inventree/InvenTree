@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-14 08:48+0000\n"
-"PO-Revision-Date: 2022-02-14 12:52\n"
+"PO-Revision-Date: 2022-02-14 15:09\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -6600,7 +6600,7 @@ msgstr "Importar Parte"
 
 #: templates/InvenTree/settings/part.html:62
 msgid "Part Parameter Templates"
-msgstr ""
+msgstr "Plantillas de Parámetros de Partes"
 
 #: templates/InvenTree/settings/plugin.html:10
 msgid "Plugin Settings"
@@ -7980,13 +7980,13 @@ msgstr "No se encontraron partes del fabricante"
 #: templates/js/translated/company.js:757 templates/js/translated/part.js:517
 #: templates/js/translated/part.js:602
 msgid "Template part"
-msgstr ""
+msgstr "Plantilla de parte"
 
 #: templates/js/translated/company.js:504
 #: templates/js/translated/company.js:761 templates/js/translated/part.js:521
 #: templates/js/translated/part.js:606
 msgid "Assembled part"
-msgstr ""
+msgstr "Parte ensamblada"
 
 #: templates/js/translated/company.js:631 templates/js/translated/part.js:696
 msgid "No parameters found"
@@ -8462,7 +8462,7 @@ msgstr "No hay elementos de línea coincidentes"
 
 #: templates/js/translated/part.js:54
 msgid "Part Attributes"
-msgstr ""
+msgstr "Atributos de Parte"
 
 #: templates/js/translated/part.js:58
 msgid "Part Creation Options"
