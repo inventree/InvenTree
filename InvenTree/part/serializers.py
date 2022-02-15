@@ -960,6 +960,9 @@ class BomExtractSerializer(serializers.Serializer):
             """
             quantity = self.find_matching_data(row, 'quantity', self.dataset.headers)
 
+            # Ensure quantity field is provided
+            row['quantity'] = quantity
+
             if quantity is None:
                 row_error['quantity'] = _('Quantity not provided')
             else:
