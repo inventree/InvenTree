@@ -695,11 +695,11 @@ class Build(MPTTModel, ReferenceIndexingMixin):
                 )
 
                 if auto_allocate and serial is not None:
-                    
+
                     # Get a list of BomItem objects which point to "trackable" parts
 
                     for bom_item in self.part.get_trackable_parts():
-                        
+
                         parts = bom_item.get_valid_parts_for_allocation()
 
                         for part in parts:
@@ -724,7 +724,6 @@ class Build(MPTTModel, ReferenceIndexingMixin):
                                     quantity=quantity,
                                     install_into=output,
                                 )
-
 
         else:
             """

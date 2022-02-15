@@ -6,16 +6,14 @@ Django views for interacting with Build objects
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
-from django.core.exceptions import ValidationError
 from django.views.generic import DetailView, ListView
-from django.forms import HiddenInput
 
 from .models import Build
 from . import forms
 
 from InvenTree.views import AjaxUpdateView, AjaxDeleteView
 from InvenTree.views import InvenTreeRoleMixin
-from InvenTree.helpers import str2bool, extract_serial_numbers
+from InvenTree.helpers import str2bool
 from InvenTree.status_codes import BuildStatus
 
 

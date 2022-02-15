@@ -285,9 +285,9 @@ class BuildOutputCreateSerializer(serializers.Serializer):
         """
         Generate the new build output(s)
         """
-        
+
         data = self.validated_data
-        
+
         quantity = data['quantity']
         batch_code = data.get('batch_code', '')
         auto_allocate = data.get('auto_allocate', False)
