@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 
-from common.models import InvenTreeSetting
+# from common.models import InvenTreeSetting
 
 
 class StockViewTestCase(TestCase):
@@ -64,6 +64,9 @@ class StockOwnershipTest(StockViewTestCase):
     def setUp(self):
         """ Add another user for ownership tests """
 
+    """
+    TODO: Refactor this following test to use the new API form
+
         super().setUp()
 
         # Promote existing user with staff, admin and superuser statuses
@@ -100,8 +103,6 @@ class StockOwnershipTest(StockViewTestCase):
         InvenTreeSetting.set_setting('STOCK_OWNERSHIP_CONTROL', True, self.user)
         self.assertEqual(True, InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL'))
 
-    """
-    TODO: Refactor this following test to use the new API form
     def test_owner_control(self):
         # Test stock location and item ownership
         from .models import StockLocation

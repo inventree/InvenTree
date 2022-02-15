@@ -21,7 +21,7 @@ class PluginAppConfig(AppConfig):
     def ready(self):
         if settings.PLUGINS_ENABLED:
 
-            if isImportingData():
+            if isImportingData():  # pragma: no cover
                 logger.info('Skipping plugin loading for data import')
             else:
                 logger.info('Loading InvenTree plugins')

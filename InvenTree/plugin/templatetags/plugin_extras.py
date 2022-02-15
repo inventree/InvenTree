@@ -52,7 +52,7 @@ def navigation_enabled(*args, **kwargs):
     """
     if djangosettings.PLUGIN_TESTING:
         return True
-    return InvenTreeSetting.get_setting('ENABLE_PLUGINS_NAVIGATION')
+    return InvenTreeSetting.get_setting('ENABLE_PLUGINS_NAVIGATION')  # pragma: no cover
 
 
 @register.simple_tag()

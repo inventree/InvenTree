@@ -38,7 +38,7 @@ class InvenTreeConfig(AppConfig):
 
         try:
             from django_q.models import Schedule
-        except (AppRegistryNotReady):
+        except AppRegistryNotReady:  # pragma: no cover
             return
 
         # Remove any existing obsolete tasks
@@ -48,7 +48,7 @@ class InvenTreeConfig(AppConfig):
 
         try:
             from django_q.models import Schedule
-        except (AppRegistryNotReady):
+        except AppRegistryNotReady:  # pragma: no cover
             return
 
         logger.info("Starting background tasks...")
@@ -103,7 +103,7 @@ class InvenTreeConfig(AppConfig):
 
             from InvenTree.tasks import update_exchange_rates
             from common.settings import currency_code_default
-        except AppRegistryNotReady:
+        except AppRegistryNotReady:  # pragma: no cover
             pass
 
         base_currency = currency_code_default()

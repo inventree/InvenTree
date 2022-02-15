@@ -12,7 +12,7 @@ def update_serials(apps, schema_editor):
 
     StockItem = apps.get_model('stock', 'stockitem')
 
-    for item in StockItem.objects.all():
+    for item in StockItem.objects.all():  # pragma: no cover
 
         if item.serial is None:
             # Skip items without existing serial numbers
@@ -33,7 +33,7 @@ def update_serials(apps, schema_editor):
         item.save()
 
 
-def nupdate_serials(apps, schema_editor):
+def nupdate_serials(apps, schema_editor):  # pragma: no cover
     """
     Provided only for reverse migration compatibility
     """

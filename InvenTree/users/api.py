@@ -162,11 +162,6 @@ class GetAuthToken(APIView):
                 'token': token.key,
             })
 
-        else:
-            return Response({
-                'error': 'User not authenticated',
-            })
-
     def logout(self, request):
         try:
             request.user.auth_token.delete()

@@ -55,7 +55,7 @@ class BomItemTest(TestCase):
         with self.assertRaises(django_exceptions.ValidationError):
             # A validation error should be raised here
             item = BomItem.objects.create(part=self.bob, sub_part=self.bob, quantity=7)
-            item.clean()
+            item.clean()  # pragma: no cover
 
     def test_integer_quantity(self):
         """

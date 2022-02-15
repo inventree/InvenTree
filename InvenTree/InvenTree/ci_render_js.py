@@ -1,5 +1,6 @@
 """
 Pull rendered copies of the templated
+only used for testing the js files! - This file is omited from coverage
 """
 
 from django.test import TestCase
