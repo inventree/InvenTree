@@ -285,7 +285,21 @@ class BuildOutputCreateSerializer(serializers.Serializer):
         """
         Generate the new build output(s)
         """
-        ...
+        
+        data = self.validated_data
+        
+        quantity = data['quantity']
+        batch_code = data.get('batch_code', '')
+        auto_allocate = data.get('auto_allocate', False)
+
+        build = self.get_build()
+
+        build.create_build_output(
+            quantity,
+            serials=self.serials,
+            batch=batch_code,
+            auto_allocate=auto_allocate,
+        )
 
 
 class BuildOutputDeleteSerializer(serializers.Serializer):
