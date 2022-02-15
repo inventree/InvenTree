@@ -1515,7 +1515,21 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
     // ID of the associated "build output" (or null)
     var output_id = options.output || null;
 
+    var auto_fill_filters = {};
+
     var source_location = options.source_location;
+
+    if (output_id) {
+        // Request information on the particular build output (stock item)
+        inventreeGet(`/api/stock/${output_id}/`, {}, {
+            success: function(output) {
+                if (output.quantity == 1 && output.serial != null) {
+                    auto_fill_filters.serial = output.serial;
+                }
+            },
+            async: false,
+        });
+    }
 
     function renderBomItemRow(bom_item, quantity) {
 
@@ -1703,7 +1717,9 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
                         required: true,
                         render_part_detail: true,
                         render_location_detail: true,
+                        render_stock_id: false,
                         auto_fill: true,
+                        auto_fill_filters: auto_fill_filters,
                         onSelect: function(data, field, opts) {
                             // Adjust the 'quantity' field based on availability
 
