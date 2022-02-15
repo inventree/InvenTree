@@ -328,13 +328,6 @@ $('#btn-create-output').click(function() {
             trackable_parts: {% if build.part.has_trackable_parts %}true{% else %}false{% endif%},
         }
     );
-
-    return;
-    launchModalForm('{% url "build-output-create" build.id %}',
-        {
-            reload: true,
-        }
-    );
 });
 
 loadStockTable($("#build-stock-table"), {
