@@ -232,6 +232,29 @@ class BuildUnallocate(generics.CreateAPIView):
         return ctx
 
 
+class BuildOutputCreate(generics.CreateAPIView):
+    """
+    API endpoint for creating new build output(s)
+    """
+
+    queryset = Build.objects.none()
+
+    serializer_class = build.serializers.BuildOutputCreateSerializer
+
+    def get_serializer_context(self):
+        ctx = super().get_serializer_context()
+
+        ctx['request'] = self.request
+        ctx['to_complete'] = True
+
+        try:
+            ctx['build'] = Build.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
+        return ctx
+
+
 class BuildOutputComplete(generics.CreateAPIView):
     """
     API endpoint for completing build outputs
@@ -455,6 +478,7 @@ build_api_urls = [
     url(r'^(?P<pk>\d+)/', include([
         url(r'^allocate/', BuildAllocate.as_view(), name='api-build-allocate'),
         url(r'^complete/', BuildOutputComplete.as_view(), name='api-build-output-complete'),
+        url(r'^create-output/', BuildOutputCreate.as_view(), name='api-build-output-create'),
         url(r'^delete-outputs/', BuildOutputDelete.as_view(), name='api-build-output-delete'),
         url(r'^finish/', BuildFinish.as_view(), name='api-build-finish'),
         url(r'^unallocate/', BuildUnallocate.as_view(), name='api-build-unallocate'),
