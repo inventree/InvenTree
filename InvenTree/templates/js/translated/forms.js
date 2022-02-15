@@ -2014,14 +2014,13 @@ function constructField(name, parameters, options) {
     if (parameters.help_text && !options.hideLabels) {
 
         // Boolean values are handled differently!
-        if (parameters.type != 'boolean') {
+        if (parameters.type != 'boolean' && !parameters.hidden) {
             html += constructHelpText(name, parameters, options);
         }
     }
 
     // Div for error messages
     html += `<div id='errors-${field_name}'></div>`;
-
 
     html += `</div>`; // controls
     html += `</div>`; // form-group
@@ -2211,6 +2210,10 @@ function constructInputOptions(name, classes, type, parameters, options={}) {
     if (parameters.multiline) {
         return `<textarea ${opts.join(' ')}></textarea>`;
     } else if (parameters.type == 'boolean') {
+
+        if (parameters.hidden) {
+            return '';
+        }
 
         var help_text = '';
 

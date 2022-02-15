@@ -202,7 +202,9 @@ function createBuildOutput(build_id, options) {
                         required: options.trackable_parts || trackable,
                     },
                     batch_code: {},
-                    auto_allocate: {},
+                    auto_allocate: {
+                        hidden: !trackable,
+                    },
                 };
 
                 // Work out the next available serial numbers
