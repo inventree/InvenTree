@@ -205,6 +205,18 @@ function createBuildOutput(build_id, options) {
                     auto_allocate: {},
                 };
 
+                // Work out the next available serial numbers
+                inventreeGet(`/api/part/${build.part}/serial-numbers/`, {}, {
+                    success: function(data) {
+                        if (data.next) {
+                            fields.serial_numbers.placeholder = `{% trans "Next available serial number" %}: ${data.next}`;
+                        } else {
+                            fields.serial_numbers.placeholder = `{% trans "Latest serial number" %}: ${data.latest}`;
+                        }
+                    },
+                    async: false,
+                });
+
                 if (options.trackable_parts) {
                     html += `
                     <div class='alert alert-block alert-info'>
@@ -229,6 +241,9 @@ function createBuildOutput(build_id, options) {
                     confirm: true,
                     fields: fields,
                     preFormContent: html,
+                    onSuccess: function(response) {
+                        location.reload();
+                    },
                 });
 
             }

@@ -245,9 +245,10 @@ class BuildOutputCreateSerializer(serializers.Serializer):
         Perform form validation
         """
 
-        build = self.get_build()
         part = self.get_part()
-        serials = None
+
+        # Cache a list of serial numbers (to be used in the "save" method)
+        self.serials = None
 
         quantity = data['quantity']
         serial_numbers = data.get('serial_numbers', '')
@@ -255,7 +256,7 @@ class BuildOutputCreateSerializer(serializers.Serializer):
         if serial_numbers:
 
             try:
-                serials = extract_serial_numbers(serial_numbers, quantity, part.getLatestSerialNumberInt())
+                self.serials = extract_serial_numbers(serial_numbers, quantity, part.getLatestSerialNumberInt())
             except DjangoValidationError as e:
                 raise ValidationError({
                     'serial_numbers': e.messages,
@@ -264,7 +265,7 @@ class BuildOutputCreateSerializer(serializers.Serializer):
             # Check for conflicting serial numbesr
             existing = []
 
-            for serial in serials:
+            for serial in self.serials:
                 if part.checkIfSerialNumberExists(serial):
                     existing.append(serial)
 
