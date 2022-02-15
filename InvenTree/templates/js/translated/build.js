@@ -21,6 +21,7 @@
 /* exported
     allocateStockToBuild,
     completeBuildOrder,
+    createBuildOutput,
     editBuildOrder,
     loadAllocationTable,
     loadBuildOrderAllocationTable,
@@ -172,6 +173,85 @@ function completeBuildOrder(build_id, options={}) {
         title: '{% trans "Complete Build Order" %}',
         preFormContent: html,
     });
+}
+
+
+/*
+ * Construct a new build output against the provided build
+ */
+function createBuildOutput(build_id, options) {
+
+    // Request build order information from the server
+    inventreeGet(
+        `/api/build/${build_id}/`,
+        {},
+        {
+            success: function(build) {
+
+                var html = '';
+
+                var trackable = build.part_detail.trackable;
+                var remaining = Math.max(0, build.quantity - build.completed);
+
+                var fields = {
+                    quantity: {
+                        value: remaining,
+                    },
+                    serial_numbers: {
+                        hidden: !trackable,
+                        required: options.trackable_parts || trackable,
+                    },
+                    batch_code: {},
+                    auto_allocate: {
+                        hidden: !trackable,
+                    },
+                };
+
+                // Work out the next available serial numbers
+                inventreeGet(`/api/part/${build.part}/serial-numbers/`, {}, {
+                    success: function(data) {
+                        if (data.next) {
+                            fields.serial_numbers.placeholder = `{% trans "Next available serial number" %}: ${data.next}`;
+                        } else {
+                            fields.serial_numbers.placeholder = `{% trans "Latest serial number" %}: ${data.latest}`;
+                        }
+                    },
+                    async: false,
+                });
+
+                if (options.trackable_parts) {
+                    html += `
+                    <div class='alert alert-block alert-info'>
+                        {% trans "The Bill of Materials contains trackable parts" %}.<br>
+                        {% trans "Build outputs must be generated individually" %}.
+                    </div>
+                    `;
+                }
+
+                if (trackable) {
+                    html += `
+                    <div class='alert alert-block alert-info'>
+                        {% trans "Trackable parts can have serial numbers specified" %}<br>
+                        {% trans "Enter serial numbers to generate multiple single build outputs" %}
+                    </div>
+                    `;
+                }
+
+                constructForm(`/api/build/${build_id}/create-output/`, {
+                    method: 'POST',
+                    title: '{% trans "Create Build Output" %}',
+                    confirm: true,
+                    fields: fields,
+                    preFormContent: html,
+                    onSuccess: function(response) {
+                        location.reload();
+                    },
+                });
+
+            }
+        }
+    );
+
 }
 
 

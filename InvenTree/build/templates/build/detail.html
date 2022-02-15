@@ -321,9 +321,11 @@
 {{ block.super }}
 
 $('#btn-create-output').click(function() {
-    launchModalForm('{% url "build-output-create" build.id %}',
+
+    createBuildOutput(
+        {{ build.pk }},
         {
-            reload: true,
+            trackable_parts: {% if build.part.has_trackable_parts %}true{% else %}false{% endif%},
         }
     );
 });

@@ -9,7 +9,6 @@ from . import views
 build_detail_urls = [
     url(r'^cancel/', views.BuildCancel.as_view(), name='build-cancel'),
     url(r'^delete/', views.BuildDelete.as_view(), name='build-delete'),
-    url(r'^create-output/', views.BuildOutputCreate.as_view(), name='build-output-create'),
 
     url(r'^.*$', views.BuildDetail.as_view(), name='build-detail'),
 ]
