@@ -2573,12 +2573,12 @@ class BomItem(models.Model, DataImportMixin):
         'quantity': {
             'required': True
         },
-        'optional': {},
         'reference': {},
         'overage': {},
-        'note': {},
-        'inherited': {},
         'allow_variants': {},
+        'inherited': {},
+        'optional': {},
+        'note': {},
         'part': {
             'label': _('Part'),
             'help_text': _('Part ID or part name'),
@@ -2594,6 +2594,10 @@ class BomItem(models.Model, DataImportMixin):
         'part_ipn': {
             'label': _('Part IPN'),
             'help_text': _('Part IPN value'),
+        },
+        'level': {
+            'label': _('Level'),
+            'help_text': _('BOM level'),
         }
     }
 

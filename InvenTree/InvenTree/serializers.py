@@ -411,7 +411,7 @@ class DataFileUploadSerializer(serializers.Serializer):
 
         return data_file
 
-    def match_column(self, column_name, field_names):
+    def match_column(self, column_name, field_names, exact=False):
         """
         Attempt to match a column name (from the file) to a field (defined in the model)
 
@@ -432,11 +432,14 @@ class DataFileUploadSerializer(serializers.Serializer):
             if field_name.lower() == column_name_lower:
                 return field_name
 
-        # TODO: Fuzzy pattern matching
+        if exact:
+            # Finished available 'exact' matches
+            return None
+
+        # TODO: Fuzzy pattern matching for column names
 
         # No matches found
         return None
-
 
     def extract_data(self):
         """
@@ -465,7 +468,7 @@ class DataFileUploadSerializer(serializers.Serializer):
             column = {}
 
             # Attempt to "match" file columns to model fields
-            match = self.match_column(header, model_field_names)
+            match = self.match_column(header, model_field_names, exact=True)
 
             if match is not None and match not in matched_columns:
                 matched_columns.add(match)
@@ -482,13 +485,16 @@ class DataFileUploadSerializer(serializers.Serializer):
             'filename': self.filename,
         }
 
+    def save(self):
+        ...
+
 
 class DataFileExtractSerializer(serializers.Serializer):
     """
     Generic serializer for extracting data from an imported dataset.
 
     - User provides an array of matched headers
-    - User provides an array of raw data rows 
+    - User provides an array of raw data rows
     """
 
     # Implementing class should register a target model (database model) to be used for import
@@ -500,7 +506,7 @@ class DataFileExtractSerializer(serializers.Serializer):
             'rows',
         ]
 
-    # Mapping of columns 
+    # Mapping of columns
     columns = serializers.ListField(
         child=serializers.CharField(
             allow_blank=True,
@@ -530,15 +536,68 @@ class DataFileExtractSerializer(serializers.Serializer):
 
         self.validate_extracted_columns()
 
-        return self.extract_data(data)
-
-    def extract_data(self, data):
-        """
-        Extract row data based on the provided fields.
-        Returns an array of mapped column:value values
-        """
-
         return data
+
+    @property
+    def data(self):
+
+        if self.TARGET_MODEL:
+            try:
+                model_fields = self.TARGET_MODEL.get_import_fields()
+            except:
+                model_fields = {}
+
+        rows = []
+
+        for row in self.rows:
+            """
+            Optionally pre-process each row, before sending back to the client
+            """
+
+            processed_row = self.process_row(self.row_to_dict(row))
+
+            if processed_row:
+                rows.append({
+                    "original": row,
+                    "data": processed_row,
+                })
+
+        return {
+            'fields': model_fields,
+            'columns': self.columns,
+            'rows': rows,
+        }
+
+    def process_row(self, row):
+        """
+        Process a 'row' of data, which is a mapped column:value dict
+
+        Returns either a mapped column:value dict, or None.
+
+        If the function returns None, the column is ignored!
+        """
+
+        # Default implementation simply returns the original row data
+        return row
+
+    def row_to_dict(self, row):
+        """
+        Convert a "row" to a named data dict
+        """
+
+        row_dict = {
+            'errors': {},
+        }
+
+        for idx, value in enumerate(row):
+
+            if idx < len(self.columns):
+                col = self.columns[idx]
+
+                if col:
+                    row_dict[col] = value
+
+        return row_dict
 
     def validate_extracted_columns(self):
         """
@@ -561,7 +620,7 @@ class DataFileExtractSerializer(serializers.Serializer):
             if required:
                 if name not in self.columns:
                     raise serializers.ValidationError(_("Missing required column") + f": '{name}'")
-        
+
         for col in self.columns:
 
             if not col:

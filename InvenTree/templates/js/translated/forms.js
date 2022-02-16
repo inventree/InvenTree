@@ -1219,7 +1219,7 @@ function addFieldErrorMessage(name, error_text, error_idx=0, options={}) {
 
         field_dom.append(error_html);
     } else {
-        console.log(`WARNING: addFieldErrorMessage could not locate field '${field_name}`);
+        console.log(`WARNING: addFieldErrorMessage could not locate field '${field_name}'`);
     }
 }
 

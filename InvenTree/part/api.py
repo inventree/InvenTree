@@ -1533,16 +1533,7 @@ class BomList(generics.ListCreateAPIView):
     ]
 
 
-class BomExtract(generics.CreateAPIView):
-    """
-    API endpoint for extracting BOM data from a BOM file.
-    """
-
-    queryset = Part.objects.none()
-    serializer_class = part_serializers.BomFileExtractSerializer
-
-
-class BomUpload(generics.CreateAPIView):
+class BomImportUpload(generics.CreateAPIView):
     """
     API endpoint for uploading a complete Bill of Materials.
 
@@ -1550,7 +1541,7 @@ class BomUpload(generics.CreateAPIView):
     """
 
     queryset = Part.objects.all()
-    serializer_class = part_serializers.BomFileUploadSerializer
+    serializer_class = part_serializers.BomImportUploadSerializer
 
     def create(self, request, *args, **kwargs):
         """
@@ -1566,6 +1557,23 @@ class BomUpload(generics.CreateAPIView):
 
         return Response(data, status=status.HTTP_201_CREATED, headers=headers)
 
+
+class BomImportExtract(generics.CreateAPIView):
+    """
+    API endpoint for extracting BOM data from a BOM file.
+    """
+
+    queryset = Part.objects.none()
+    serializer_class = part_serializers.BomImportExtractSerializer
+
+
+class BomImportSubmit(generics.CreateAPIView):
+    """
+    API endpoint for submitting BOM data from a BOM file
+    """
+
+    queryset = BomItem.objects.none()
+    serializer_class = part_serializers.BomImportSubmitSerializer
 
 
 class BomDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -1720,9 +1728,10 @@ bom_api_urls = [
         url(r'^.*$', BomDetail.as_view(), name='api-bom-item-detail'),
     ])),
 
-    url(r'^upload/', BomUpload.as_view(), name='api-bom-upload'),
-    url(r'^extract/', BomExtract.as_view(), name='api-bom-extract'),
-
+    # API endpoint URLs for importing BOM data
+    url(r'^import/upload/', BomImportUpload.as_view(), name='api-bom-import-upload'),
+    url(r'^import/extract/', BomImportExtract.as_view(), name='api-bom-import-extract'),
+    url(r'^import/submit/', BomImportSubmit.as_view(), name='api-bom-import-submit'),
 
     # Catch-all
     url(r'^.*$', BomList.as_view(), name='api-bom-list'),

@@ -59,7 +59,7 @@ class DataImportMixin(object):
     def get_import_fields(cls):
         """
         Return all available import fields
-        
+
         Where information on a particular field is not explicitly provided,
         introspect the base model to (attempt to) find that information.
 
@@ -67,7 +67,7 @@ class DataImportMixin(object):
         fields = cls.IMPORT_FIELDS
 
         for name, field in fields.items():
-            
+
             # Attempt to extract base field information from the model
             base_field = None
 
@@ -79,7 +79,7 @@ class DataImportMixin(object):
             if base_field:
                 if 'label' not in field:
                     field['label'] = base_field.verbose_name
-                
+
                 if 'help_text' not in field:
                     field['help_text'] = base_field.help_text
 
