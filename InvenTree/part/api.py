@@ -1539,7 +1539,18 @@ class BomExtract(generics.CreateAPIView):
     """
 
     queryset = Part.objects.none()
-    serializer_class = part_serializers.BomExtractSerializer
+    serializer_class = part_serializers.BomFileExtractSerializer
+
+
+class BomUpload(generics.CreateAPIView):
+    """
+    API endpoint for uploading a complete Bill of Materials.
+
+    It is assumed that the BOM has been extracted from a file using the BomExtract endpoint.
+    """
+
+    queryset = Part.objects.all()
+    serializer_class = part_serializers.BomFileUploadSerializer
 
     def create(self, request, *args, **kwargs):
         """
@@ -1555,16 +1566,6 @@ class BomExtract(generics.CreateAPIView):
 
         return Response(data, status=status.HTTP_201_CREATED, headers=headers)
 
-
-class BomUpload(generics.CreateAPIView):
-    """
-    API endpoint for uploading a complete Bill of Materials.
-
-    It is assumed that the BOM has been extracted from a file using the BomExtract endpoint.
-    """
-
-    queryset = Part.objects.all()
-    serializer_class = part_serializers.BomUploadSerializer
 
 
 class BomDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -1719,9 +1720,9 @@ bom_api_urls = [
         url(r'^.*$', BomDetail.as_view(), name='api-bom-item-detail'),
     ])),
 
+    url(r'^upload/', BomUpload.as_view(), name='api-bom-upload'),
     url(r'^extract/', BomExtract.as_view(), name='api-bom-extract'),
 
-    url(r'^upload/', BomUpload.as_view(), name='api-bom-upload'),
 
     # Catch-all
     url(r'^.*$', BomList.as_view(), name='api-bom-list'),

@@ -343,6 +343,9 @@ class DataFileUploadSerializer(serializers.Serializer):
     - Extracts data rows
     """
 
+    # Implementing class should register a target model (database model) to be used for import
+    TARGET_MODEL = None
+
     class Meta:
         fields = [
             'bom_file',
@@ -400,18 +403,81 @@ class DataFileUploadSerializer(serializers.Serializer):
         except Exception as e:
             raise serializers.ValidationError(str(e))
 
+        if len(self.dataset.headers) == 0:
+            raise serializers.ValidationError(_("No columns found in file"))
+
         if len(self.dataset) == 0:
             raise serializers.ValidationError(_("No data rows found in file"))
 
         return data_file
+
+    def match_column(self, column_name, field_names):
+        """
+        Attempt to match a column name (from the file) to a field (defined in the model)
+
+        Order of matching is:
+        - Direct match
+        - Case insensitive match
+        - Fuzzy match
+        """
+
+        column_name = column_name.strip()
+
+        column_name_lower = column_name.lower()
+
+        if column_name in field_names:
+            return column_name
+
+        for field_name in field_names:
+            if field_name.lower() == column_name_lower:
+                return field_name
+
+        # TODO: Fuzzy pattern matching
+
+        # No matches found
+        return None
+
 
     def extract_data(self):
         """
         Returns dataset extracted from the file
         """
 
+        # Provide a dict of available import fields for the model
+        model_fields = {}
+
+        # Keep track of columns we have already extracted
+        matched_columns = set()
+
+        if self.TARGET_MODEL:
+            try:
+                model_fields = self.TARGET_MODEL.get_import_fields()
+            except:
+                pass
+
+        # Extract a list of valid model field names
+        model_field_names = [key for key in model_fields.keys()]
+
+        # Provide a dict of available columns from the dataset
+        file_columns = {}
+
+        for header in self.dataset.headers:
+            column = {}
+
+            # Attempt to "match" file columns to model fields
+            match = self.match_column(header, model_field_names)
+
+            if match is not None and match not in matched_columns:
+                matched_columns.add(match)
+                column['value'] = match
+            else:
+                column['value'] = None
+
+            file_columns[header] = column
+
         return {
-            'headers': self.dataset.headers,
+            'file_fields': file_columns,
+            'model_fields': model_fields,
             'rows': [row.values() for row in self.dataset.dict],
             'filename': self.filename,
         }
@@ -425,25 +491,20 @@ class DataFileExtractSerializer(serializers.Serializer):
     - User provides an array of raw data rows 
     """
 
-    # Provide a dict of expected columns for this importer
-    EXPECTED_COLUMNS = {}
-
-    # Provide a list of required columns for this importer
-    REQUIRED_COLUMNS = []
+    # Implementing class should register a target model (database model) to be used for import
+    TARGET_MODEL = None
 
     class Meta:
         fields = [
-            'raw_headers',
-            'mapped_headers',
+            'columns',
             'rows',
         ]
 
-    raw_headers = serializers.ListField(
-        child=serializers.CharField(),
-    )
-
-    mapped_headers = serializers.ListField(
-        child=serializers.CharField(),
+    # Mapping of columns 
+    columns = serializers.ListField(
+        child=serializers.CharField(
+            allow_blank=True,
+        ),
     )
 
     rows = serializers.ListField(
@@ -458,23 +519,16 @@ class DataFileExtractSerializer(serializers.Serializer):
 
         data = super().validate(data)
 
-        self.raw_headers = data.get('raw_headers', [])
-        self.mapped_headers = data.get('mapped_headers', [])
+        self.columns = data.get('columns', [])
         self.rows = data.get('rows', [])
 
         if len(self.rows) == 0:
             raise serializers.ValidationError(_("No data rows provided"))
 
-        if len(self.raw_headers) == 0:
-            raise serializers.ValidationError(_("File headers not supplied"))
+        if len(self.columns) == 0:
+            raise serializers.ValidationError(_("No data columns supplied"))
 
-        if len(self.mapped_headers) == 0:
-            raise serializers.ValidationError(_("Mapped headers not supplied"))
-
-        if len(self.raw_headers) != len(self.mapped_headers):
-            raise serializers.ValidationError(_("Supplied header list has incorrect length"))
-
-        self.validate_headers()
+        self.validate_extracted_columns()
 
         return self.extract_data(data)
 
@@ -486,18 +540,38 @@ class DataFileExtractSerializer(serializers.Serializer):
 
         return data
 
-    def validate_headers(self):
+    def validate_extracted_columns(self):
         """
         Perform custom validation of header mapping.
         """
 
-        print("validate_headers()")
-        
-        for col in self.REQUIRED_COLUMNS:
-            print("checking col:", col)
-            if col not in self.mapped_headers:
-                raise serializers.ValidationError(_("Missing required column") + f": {col}")
+        if self.TARGET_MODEL:
+            try:
+                model_fields = self.TARGET_MODEL.get_import_fields()
+            except:
+                model_fields = {}
 
+        cols_seen = set()
+
+        for name, field in model_fields.items():
+
+            required = field.get('required', False)
+
+            # Check for missing required columns
+            if required:
+                if name not in self.columns:
+                    raise serializers.ValidationError(_("Missing required column") + f": '{name}'")
+        
+        for col in self.columns:
+
+            if not col:
+                continue
+
+            # Check for duplicated columns
+            if col in cols_seen:
+                raise serializers.ValidationError(_("Duplicate column") + f": '{col}'")
+
+            cols_seen.add(col)
 
     def save(self):
         """

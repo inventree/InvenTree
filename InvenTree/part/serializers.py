@@ -17,7 +17,9 @@ from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
 from djmoney.contrib.django_rest_framework import MoneyField
 
-from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
+from InvenTree.serializers import (DataFileUploadSerializer,
+                                   DataFileExtractSerializer,
+                                   InvenTreeAttachmentSerializerField,
                                    InvenTreeDecimalField,
                                    InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer,
@@ -709,7 +711,7 @@ class PartCopyBOMSerializer(serializers.Serializer):
         )
 
 
-class BomExtractSerializer(serializers.Serializer):
+class BomFileUploadSerializer(DataFileUploadSerializer):
     """
     Serializer for uploading a file and extracting data from it.
 
@@ -729,50 +731,7 @@ class BomExtractSerializer(serializers.Serializer):
 
     """
 
-    class Meta:
-        fields = [
-            'bom_file',
-            'part',
-            'clear_existing',
-        ]
-
-    # These columns must be present
-    REQUIRED_COLUMNS = [
-        'quantity',
-    ]
-
-    # We need at least one column to specify a "part"
-    PART_COLUMNS = [
-        'part',
-        'part_id',
-        'part_name',
-        'part_ipn',
-    ]
-
-    # These columns are "optional"
-    OPTIONAL_COLUMNS = [
-        'allow_variants',
-        'inherited',
-        'optional',
-        'overage',
-        'note',
-        'reference',
-    ]
-
-    def find_matching_column(self, col_name, columns):
-
-        # Direct match
-        if col_name in columns:
-            return col_name
-
-        col_name = col_name.lower().strip()
-
-        for col in columns:
-            if col.lower().strip() == col_name:
-                return col
-
-        # No match
-        return None
+    TARGET_MODEL = BomItem
 
     def find_matching_data(self, row, col_name, columns):
         """
@@ -783,58 +742,7 @@ class BomExtractSerializer(serializers.Serializer):
 
         return row.get(col_name, None)
 
-    bom_file = serializers.FileField(
-        label=_("BOM File"),
-        help_text=_("Select Bill of Materials file"),
-        required=True,
-        allow_empty_file=False,
-    )
-
-    def validate_bom_file(self, bom_file):
-        """
-        Perform validation checks on the uploaded BOM file
-        """
-
-        self.filename = bom_file.name
-
-        name, ext = os.path.splitext(bom_file.name)
-
-        # Remove the leading . from the extension
-        ext = ext[1:]
-
-        accepted_file_types = [
-            'xls', 'xlsx',
-            'csv', 'tsv',
-            'xml',
-        ]
-
-        if ext not in accepted_file_types:
-            raise serializers.ValidationError(_("Unsupported file type"))
-
-        # Impose a 50MB limit on uploaded BOM files
-        max_upload_file_size = 50 * 1024 * 1024
-
-        if bom_file.size > max_upload_file_size:
-            raise serializers.ValidationError(_("File is too large"))
-
-        # Read file data into memory (bytes object)
-        try:
-            data = bom_file.read()
-        except Exception as e:
-            raise serializers.ValidationError(str(e))
-
-        if ext in ['csv', 'tsv', 'xml']:
-            try:
-                data = data.decode()
-            except Exception as e:
-                raise serializers.ValidationError(str(e))
-
-        # Convert to a tablib dataset (we expect headers)
-        try:
-            self.dataset = tablib.Dataset().load(data, ext, headers=True)
-        except Exception as e:
-            raise serializers.ValidationError(str(e))
-
+    """
         for header in self.REQUIRED_COLUMNS:
 
             match = self.find_matching_column(header, self.dataset.headers)
@@ -861,11 +769,9 @@ class BomExtractSerializer(serializers.Serializer):
             raise serializers.ValidationError(_("No data rows found"))
 
         return bom_file
+    """
 
-    def extract_data(self):
-        """
-        Read individual rows out of the BOM file
-        """
+    def dextract_data(self):
 
         rows = []
         errors = []
@@ -880,9 +786,9 @@ class BomExtractSerializer(serializers.Serializer):
 
             row_error = {}
 
-            """
-            If the "level" column is specified, and this is not a top-level BOM item, ignore the row!
-            """
+            
+            # If the "level" column is specified, and this is not a top-level BOM item, ignore the row!
+            
             if level_column is not None:
                 level = row.get('level', None)
 
@@ -989,15 +895,19 @@ class BomExtractSerializer(serializers.Serializer):
             'filename': self.filename,
         }
 
+    """
     part = serializers.PrimaryKeyRelatedField(queryset=Part.objects.filter(assembly=True), required=True)
 
     clear_existing = serializers.BooleanField(
         label=_("Clear Existing BOM"),
         help_text=_("Delete existing BOM data first"),
     )
+    """
 
     def save(self):
 
+        ...
+        """
         data = self.validated_data
 
         master_part = data['part']
@@ -1006,7 +916,15 @@ class BomExtractSerializer(serializers.Serializer):
         if clear_existing:
 
             # Remove all existing BOM items
-            master_part.bom_items.all().delete()
+            $ master_part.bom_items.all().delete()
+        """
+
+
+class BomFileExtractSerializer(DataFileExtractSerializer):
+    """
+    """
+
+    TARGET_MODEL = BomItem
 
 
 class BomUploadSerializer(serializers.Serializer):
