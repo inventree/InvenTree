@@ -88,96 +88,24 @@ $('#bom-upload').click(function() {
             // Clear existing entries from the table
             $('.bom-import-row').remove();
 
-            // Disable the "submit" button
-            $('#bom-submit').show();
+            selectImportFields(
+                '{% url "api-bom-import-extract" %}',
+                response,
+                {
+                    success: function(response) {
+                        constructBomUploadTable(response);
 
-            var fields = {};
+                        // Show the "submit" button
+                        $('#bom-submit').show();
 
-            var choices = [];
-
-            // Add an "empty" value
-            choices.push({
-                value: '',
-                display_name: '-----',
-            });
-
-            for (const [name, field] of Object.entries(response.model_fields)) {
-                choices.push({
-                    value: name,
-                    display_name: field.label || name,
-                });
-            }
-
-            var field_names = Object.keys(response.file_fields);
-
-            for (var idx = 0; idx < field_names.length; idx++) {
-
-                var field_name = field_names[idx];
-
-                // Construct a new field
-                fields[`column_${idx}`] = {
-                    type: 'choice',
-                    label: field_name,
-                    value: response.file_fields[field_name].value,
-                    choices: choices,
-                    inline: true,
-                };
-            }
-
-            constructForm('{% url "api-bom-import-extract" %}', {
-                method: 'POST',
-                title: '{% trans "Select BOM Columns" %}',
-                fields: fields,
-                onSubmit: function(fields, opts) {
-                    var columns = [];
-
-                    for (var idx = 0; idx < field_names.length; idx++) {
-                        columns.push(
-                            getFormFieldValue(`column_${idx}`, {}, {})
-                        );
+                        $('#bom-submit').click(function() {
+                            submitBomTable({{ part.pk }}, {
+                                bom_data: response,
+                            });
+                        });
                     }
-
-                    $(opts.modal).find('#modal-progress-spinner').show();
-
-                    inventreePut(
-                        opts.url,
-                        {
-                            columns: columns,
-                            rows: response.rows,
-                        },
-                        {
-                            method: 'POST',
-                            success: function(r) {
-                                handleFormSuccess(r, opts);
-
-                                constructBomUploadTable(r);
-
-                                $('#bom-submit').click(function() {
-                                    submitBomTable({{ part.pk }}, {
-                                        bom_data: response,
-                                    });
-                                });
-                            },
-                            error: function(xhr) {
-                
-                                $(opts.modal).find('#modal-progress-spinner').hide();
-                
-                                switch (xhr.status) {
-                                case 400:
-                                    handleFormErrors(xhr.responseJSON, fields, opts);
-                                    break;
-                                default:
-                                    $(opts.modal).modal('hide');
-                
-                                    console.log(`upload error at ${opts.url}`);
-                                    showApiError(xhr, opts.url);
-                                    break;
-                                }
-                            }
-                        }
-                    );
-                },
-            });
+                }
+            );
         }
     });
 
