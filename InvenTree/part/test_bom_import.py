@@ -41,8 +41,6 @@ class BomUploadTest(InvenTreeAPITestCase):
                 assembly=False,
             )
 
-        self.url = reverse('api-bom-extract')
-
     def post_bom(self, filename, file_data, part=None, clear_existing=None, expected_code=None, content_type='text/plain'):
 
         bom_file = SimpleUploadedFile(
@@ -58,11 +56,9 @@ class BomUploadTest(InvenTreeAPITestCase):
             clear_existing = False
 
         response = self.post(
-            self.url,
+            reverse('api-bom-import-upload'),
             data={
-                'bom_file': bom_file,
-                'part': part,
-                'clear_existing': clear_existing,
+                'data_file': bom_file,
             },
             expected_code=expected_code,
             format='multipart',
@@ -76,14 +72,12 @@ class BomUploadTest(InvenTreeAPITestCase):
         """
 
         response = self.post(
-            self.url,
+            reverse('api-bom-import-upload'),
             data={},
             expected_code=400
         )
 
-        self.assertIn('No file was submitted', str(response.data['bom_file']))
-        self.assertIn('This field is required', str(response.data['part']))
-        self.assertIn('This field is required', str(response.data['clear_existing']))
+        self.assertIn('No file was submitted', str(response.data['data_file']))
 
     def test_unsupported_file(self):
         """
@@ -96,7 +90,7 @@ class BomUploadTest(InvenTreeAPITestCase):
             expected_code=400,
         )
 
-        self.assertIn('Unsupported file type', str(response.data['bom_file']))
+        self.assertIn('Unsupported file type', str(response.data['data_file']))
 
     def test_broken_file(self):
         """
@@ -109,7 +103,7 @@ class BomUploadTest(InvenTreeAPITestCase):
             expected_code=400,
         )
 
-        self.assertIn('The submitted file is empty', str(response.data['bom_file']))
+        self.assertIn('The submitted file is empty', str(response.data['data_file']))
 
         response = self.post_bom(
             'test.xls',
@@ -118,11 +112,11 @@ class BomUploadTest(InvenTreeAPITestCase):
             content_type='application/xls',
         )
 
-        self.assertIn('Unsupported format, or corrupt file', str(response.data['bom_file']))
+        self.assertIn('Unsupported format, or corrupt file', str(response.data['data_file']))
 
-    def test_invalid_upload(self):
+    def test_missing_rows(self):
         """
-        Test upload of an invalid file
+        Test upload of an invalid file (without data rows)
         """
 
         dataset = tablib.Dataset()
@@ -139,7 +133,7 @@ class BomUploadTest(InvenTreeAPITestCase):
             expected_code=400,
         )
 
-        self.assertIn("Missing required column: 'quantity'", str(response.data))
+        self.assertIn('No data rows found in file', str(response.data))
 
         # Try again, with an .xlsx file
         response = self.post_bom(
@@ -149,7 +143,9 @@ class BomUploadTest(InvenTreeAPITestCase):
             expected_code=400,
         )
 
-        self.assertIn("Missing required column: 'quantity'", str(response.data))
+        self.assertIn('No data rows found in file', str(response.data))
+
+    def test_something(self):
 
         # Add the quantity field (or close enough)
         dataset.headers.append('quAntiTy  ')
