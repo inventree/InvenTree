@@ -19,6 +19,7 @@ from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentS
 from InvenTree.serializers import UserSerializerBrief, ReferenceIndexingSerializerMixin
 
 import InvenTree.helpers
+from InvenTree.helpers import extract_serial_numbers
 from InvenTree.serializers import InvenTreeDecimalField
 from InvenTree.status_codes import StockStatus
 
@@ -168,6 +169,137 @@ class BuildOutputSerializer(serializers.Serializer):
         fields = [
             'output',
         ]
+
+
+class BuildOutputCreateSerializer(serializers.Serializer):
+    """
+    Serializer for creating a new BuildOutput against a BuildOrder.
+
+    URL pattern is "/api/build/<pk>/create-output/", where <pk> is the PK of a Build.
+
+    The Build object is provided to the serializer context.
+    """
+
+    quantity = serializers.DecimalField(
+        max_digits=15,
+        decimal_places=5,
+        min_value=0,
+        required=True,
+        label=_('Quantity'),
+        help_text=_('Enter quantity for build output'),
+    )
+
+    def get_build(self):
+        return self.context["build"]
+
+    def get_part(self):
+        return self.get_build().part
+
+    def validate_quantity(self, quantity):
+
+        if quantity < 0:
+            raise ValidationError(_("Quantity must be greater than zero"))
+
+        part = self.get_part()
+
+        if int(quantity) != quantity:
+            # Quantity must be an integer value if the part being built is trackable
+            if part.trackable:
+                raise ValidationError(_("Integer quantity required for trackable parts"))
+
+            if part.has_trackable_parts():
+                raise ValidationError(_("Integer quantity required, as the bill of materials contains tracakble parts"))
+
+        return quantity
+
+    batch_code = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        label=_('Batch Code'),
+        help_text=_('Batch code for this build output'),
+    )
+
+    serial_numbers = serializers.CharField(
+        allow_blank=True,
+        required=False,
+        label=_('Serial Numbers'),
+        help_text=_('Enter serial numbers for build outputs'),
+    )
+
+    def validate_serial_numbers(self, serial_numbers):
+
+        serial_numbers = serial_numbers.strip()
+
+        # TODO: Field level validation necessary here?
+        return serial_numbers
+
+    auto_allocate = serializers.BooleanField(
+        required=False,
+        default=False,
+        label=_('Auto Allocate Serial Numbers'),
+        help_text=_('Automatically allocate required items with matching serial numbers'),
+    )
+
+    def validate(self, data):
+        """
+        Perform form validation
+        """
+
+        part = self.get_part()
+
+        # Cache a list of serial numbers (to be used in the "save" method)
+        self.serials = None
+
+        quantity = data['quantity']
+        serial_numbers = data.get('serial_numbers', '')
+
+        if serial_numbers:
+
+            try:
+                self.serials = extract_serial_numbers(serial_numbers, quantity, part.getLatestSerialNumberInt())
+            except DjangoValidationError as e:
+                raise ValidationError({
+                    'serial_numbers': e.messages,
+                })
+
+            # Check for conflicting serial numbesr
+            existing = []
+
+            for serial in self.serials:
+                if part.checkIfSerialNumberExists(serial):
+                    existing.append(serial)
+
+            if len(existing) > 0:
+
+                msg = _("The following serial numbers already exist")
+                msg += " : "
+                msg += ",".join([str(e) for e in existing])
+
+                raise ValidationError({
+                    'serial_numbers': msg,
+                })
+
+        return data
+
+    def save(self):
+        """
+        Generate the new build output(s)
+        """
+
+        data = self.validated_data
+
+        quantity = data['quantity']
+        batch_code = data.get('batch_code', '')
+        auto_allocate = data.get('auto_allocate', False)
+
+        build = self.get_build()
+
+        build.create_build_output(
+            quantity,
+            serials=self.serials,
+            batch=batch_code,
+            auto_allocate=auto_allocate,
+        )
 
 
 class BuildOutputDeleteSerializer(serializers.Serializer):

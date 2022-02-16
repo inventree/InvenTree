@@ -1498,6 +1498,16 @@ class Part(MPTTModel):
     def has_bom(self):
         return self.get_bom_items().count() > 0
 
+    def get_trackable_parts(self):
+        """
+        Return a queryset of all trackable parts in the BOM for this part
+        """
+
+        queryset = self.get_bom_items()
+        queryset = queryset.filter(sub_part__trackable=True)
+
+        return queryset
+
     @property
     def has_trackable_parts(self):
         """
@@ -1505,11 +1515,7 @@ class Part(MPTTModel):
         This is important when building the part.
         """
 
-        for bom_item in self.get_bom_items().all():
-            if bom_item.sub_part.trackable:
-                return True
-
-        return False
+        return self.get_trackable_parts().count() > 0
 
     @property
     def bom_count(self):
