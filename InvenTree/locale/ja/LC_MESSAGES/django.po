@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-16 21:16+0000\n"
+"POT-Creation-Date: 2022-02-16 21:46+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
@@ -965,7 +965,7 @@ msgid "Integer quantity required for trackable parts"
 msgstr ""
 
 #: build/serializers.py:211
-msgid "Integer quantity required, as the bill of materials contains tracakble parts"
+msgid "Integer quantity required, as the bill of materials contains trackable parts"
 msgstr ""
 
 #: build/serializers.py:225 order/serializers.py:820 stock/forms.py:81
