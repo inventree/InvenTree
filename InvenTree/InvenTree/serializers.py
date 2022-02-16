@@ -5,8 +5,8 @@ Serializers used in various InvenTree apps
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-
 import os
+import tablib
 
 from decimal import Decimal
 
@@ -332,3 +332,175 @@ class InvenTreeDecimalField(serializers.FloatField):
             return Decimal(str(data))
         except:
             raise serializers.ValidationError(_("Invalid value"))
+
+
+class DataFileUploadSerializer(serializers.Serializer):
+    """
+    Generic serializer for uploading a data file, and extracting a dataset.
+
+    - Validates uploaded file
+    - Extracts column names
+    - Extracts data rows
+    """
+
+    class Meta:
+        fields = [
+            'bom_file',
+        ]
+
+    data_file = serializers.FileField(
+        label=_("Data File"),
+        help_text=_("Select data file for upload"),
+        required=True,
+        allow_empty_file=False,
+    )
+
+    def validate_data_file(self, data_file):
+        """
+        Perform validation checks on the uploaded data file.
+        """
+
+        self.filename = data_file.name
+
+        name, ext = os.path.splitext(data_file.name)
+
+        # Remove the leading . from the extension
+        ext = ext[1:]
+
+        accepted_file_types = [
+            'xls', 'xlsx',
+            'csv', 'tsv',
+            'xml',
+        ]
+
+        if ext not in accepted_file_types:
+            raise serializers.ValidationError(_("Unsupported file type"))
+
+        # Impose a 50MB limit on uploaded BOM files
+        max_upload_file_size = 50 * 1024 * 1024
+
+        if data_file.size > max_upload_file_size:
+            raise serializers.ValidationError(_("File is too large"))
+
+        # Read file data into memory (bytes object)
+        try:
+            data = data_file.read()
+        except Exception as e:
+            raise serializers.ValidationError(str(e))
+
+        if ext in ['csv', 'tsv', 'xml']:
+            try:
+                data = data.decode()
+            except Exception as e:
+                raise serializers.ValidationError(str(e))
+
+        # Convert to a tablib dataset (we expect headers)
+        try:
+            self.dataset = tablib.Dataset().load(data, ext, headers=True)
+        except Exception as e:
+            raise serializers.ValidationError(str(e))
+
+        if len(self.dataset) == 0:
+            raise serializers.ValidationError(_("No data rows found in file"))
+
+        return data_file
+
+    def extract_data(self):
+        """
+        Returns dataset extracted from the file
+        """
+
+        return {
+            'headers': self.dataset.headers,
+            'rows': [row.values() for row in self.dataset.dict],
+            'filename': self.filename,
+        }
+
+
+class DataFileExtractSerializer(serializers.Serializer):
+    """
+    Generic serializer for extracting data from an imported dataset.
+
+    - User provides an array of matched headers
+    - User provides an array of raw data rows 
+    """
+
+    # Provide a dict of expected columns for this importer
+    EXPECTED_COLUMNS = {}
+
+    # Provide a list of required columns for this importer
+    REQUIRED_COLUMNS = []
+
+    class Meta:
+        fields = [
+            'raw_headers',
+            'mapped_headers',
+            'rows',
+        ]
+
+    raw_headers = serializers.ListField(
+        child=serializers.CharField(),
+    )
+
+    mapped_headers = serializers.ListField(
+        child=serializers.CharField(),
+    )
+
+    rows = serializers.ListField(
+        child=serializers.ListField(
+            child=serializers.CharField(
+                allow_blank=True,
+            ),
+        )
+    )
+
+    def validate(self, data):
+
+        data = super().validate(data)
+
+        self.raw_headers = data.get('raw_headers', [])
+        self.mapped_headers = data.get('mapped_headers', [])
+        self.rows = data.get('rows', [])
+
+        if len(self.rows) == 0:
+            raise serializers.ValidationError(_("No data rows provided"))
+
+        if len(self.raw_headers) == 0:
+            raise serializers.ValidationError(_("File headers not supplied"))
+
+        if len(self.mapped_headers) == 0:
+            raise serializers.ValidationError(_("Mapped headers not supplied"))
+
+        if len(self.raw_headers) != len(self.mapped_headers):
+            raise serializers.ValidationError(_("Supplied header list has incorrect length"))
+
+        self.validate_headers()
+
+        return self.extract_data(data)
+
+    def extract_data(self, data):
+        """
+        Extract row data based on the provided fields.
+        Returns an array of mapped column:value values
+        """
+
+        return data
+
+    def validate_headers(self):
+        """
+        Perform custom validation of header mapping.
+        """
+
+        print("validate_headers()")
+        
+        for col in self.REQUIRED_COLUMNS:
+            print("checking col:", col)
+            if col not in self.mapped_headers:
+                raise serializers.ValidationError(_("Missing required column") + f": {col}")
+
+
+    def save(self):
+        """
+        No "save" action for this serializer
+        """
+        ...
