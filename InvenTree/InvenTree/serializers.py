@@ -348,7 +348,7 @@ class DataFileUploadSerializer(serializers.Serializer):
 
     class Meta:
         fields = [
-            'bom_file',
+            'data_file',
         ]
 
     data_file = serializers.FileField(
