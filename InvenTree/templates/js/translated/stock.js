@@ -1235,6 +1235,11 @@ function loadStockTestResultsTable(table, options) {
     function makeButtons(row, grouped) {
         var html = `<div class='btn-group float-right' role='group'>`;
 
+        if (row.requires_attachment == false && row.requires_value == false && !row.result) {
+            // Enable a "quick tick" option for this test result
+            html += makeIconButton('fa-check-circle icon-green', 'button-test-tick', row.test_name, '{% trans "Pass test" %}');
+        }
+
         html += makeIconButton('fa-plus icon-green', 'button-test-add', row.test_name, '{% trans "Add test result" %}');
 
         if (!grouped && row.result != null) {

@@ -311,6 +311,27 @@
         });
     });
 
+    $('#test-result-table').on('click', '.button-test-tick', function() {
+        var button = $(this);
+
+        var test_name = button.attr('pk');
+
+        inventreePut(
+            '{% url "api-stock-test-result-list" %}',
+            {
+                test: test_name,
+                result: true,
+                stock_item: {{ item.pk }},
+            },
+            {
+                method: 'POST',
+                success: function(response) {
+                    reloadTable();
+                }
+            }
+        );
+    })
+
     $("#test-result-table").on('click', '.button-test-add', function() {
         var button = $(this);
 
