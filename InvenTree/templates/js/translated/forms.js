@@ -2431,12 +2431,12 @@ function constructHelpText(name, parameters) {
 function selectImportFields(url, data={}, options={}) {
 
     if (!data.model_fields) {
-        console.log("WARNING: selectImportFields is missing 'model_fields'");
+        console.log(`WARNING: selectImportFields is missing 'model_fields'`);
         return;
     }
 
     if (!data.file_fields) {
-        console.log("WARNING: selectImportFields is missing 'file_fields'");
+        console.log(`WARNING: selectImportFields is missing 'file_fields'`);
         return;
     }
 
@@ -2533,7 +2533,7 @@ function selectImportFields(url, data={}, options={}) {
                         }
                     }
                 }
-            )
+            );
         },
     });
 }
