@@ -1696,13 +1696,19 @@ function initializeRelatedField(field, fields, options={}) {
     } else if (field.auto_fill) {
         // Attempt to auto-fill the field
 
-        var filters = field.filters || {};
+        var filters = {};
+
+        // Update with nominal field fields
+        Object.assign(filters, field.filters || {});
+
+        // Update with filters only used for initial filtering
+        Object.assign(filters, field.auto_fill_filters || {});
 
         // Enforce pagination, limit to a single return (for fast query)
         filters.limit = 1;
         filters.offset = 0;
 
-        inventreeGet(field.api_url, field.filters || {}, {
+        inventreeGet(field.api_url, filters || {}, {
             success: function(data) {
 
                 // Only a single result is available, given the provided filters
@@ -2014,14 +2020,13 @@ function constructField(name, parameters, options) {
     if (parameters.help_text && !options.hideLabels) {
 
         // Boolean values are handled differently!
-        if (parameters.type != 'boolean') {
+        if (parameters.type != 'boolean' && !parameters.hidden) {
             html += constructHelpText(name, parameters, options);
         }
     }
 
     // Div for error messages
     html += `<div id='errors-${field_name}'></div>`;
-
 
     html += `</div>`; // controls
     html += `</div>`; // form-group
@@ -2211,6 +2216,10 @@ function constructInputOptions(name, classes, type, parameters, options={}) {
     if (parameters.multiline) {
         return `<textarea ${opts.join(' ')}></textarea>`;
     } else if (parameters.type == 'boolean') {
+
+        if (parameters.hidden) {
+            return '';
+        }
 
         var help_text = '';
 
