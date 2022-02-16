@@ -618,7 +618,7 @@ enableBreadcrumbTree({
     {% endif %}
     processNode: function(node) {
         node.text = node.name;
-        node.href = `/stock/item/${node.pk}/`;
+        node.href = `/stock/location/${node.pk}/`;
 
         return node;
     }
