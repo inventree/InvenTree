@@ -51,7 +51,7 @@ class SettingsMixin:
 
         try:
             plugin, _ = PluginConfig.objects.get_or_create(key=self.plugin_slug(), name=self.plugin_name())
-        except (OperationalError, ProgrammingError):
+        except (OperationalError, ProgrammingError):  # pragma: no cover
             plugin = None
 
         if not plugin:

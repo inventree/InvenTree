@@ -117,7 +117,7 @@ class PluginConfigInstallSerializer(serializers.Serializer):
             ret['result'] = str(result, 'utf-8')
             ret['success'] = True
             success = True
-        except subprocess.CalledProcessError as error:
+        except subprocess.CalledProcessError as error:  # pragma: no cover
             ret['result'] = str(error.output, 'utf-8')
             ret['error'] = True
 

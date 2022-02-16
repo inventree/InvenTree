@@ -14,51 +14,6 @@ from InvenTree.forms import HelperForm
 from .models import Build
 
 
-class BuildOutputCreateForm(HelperForm):
-    """
-    Form for creating a new build output.
-    """
-
-    def __init__(self, *args, **kwargs):
-
-        build = kwargs.pop('build', None)
-
-        if build:
-            self.field_placeholder['serial_numbers'] = build.part.getSerialNumberString()
-
-        super().__init__(*args, **kwargs)
-
-    field_prefix = {
-        'serial_numbers': 'fa-hashtag',
-    }
-
-    output_quantity = forms.IntegerField(
-        label=_('Quantity'),
-        help_text=_('Enter quantity for build output'),
-    )
-
-    serial_numbers = forms.CharField(
-        label=_('Serial Numbers'),
-        required=False,
-        help_text=_('Enter serial numbers for build outputs'),
-    )
-
-    confirm = forms.BooleanField(
-        required=True,
-        label=_('Confirm'),
-        help_text=_('Confirm creation of build output'),
-    )
-
-    class Meta:
-        model = Build
-        fields = [
-            'output_quantity',
-            'batch',
-            'serial_numbers',
-            'confirm',
-        ]
-
-
 class CancelBuildForm(HelperForm):
     """ Form for cancelling a build """
 

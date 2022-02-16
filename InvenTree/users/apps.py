@@ -32,7 +32,7 @@ class UsersConfig(AppConfig):
 
         # First, delete any rule_set objects which have become outdated!
         for rule in RuleSet.objects.all():
-            if rule.name not in RuleSet.RULESET_NAMES:
+            if rule.name not in RuleSet.RULESET_NAMES:  # pragma: no cover  # can not change ORM without the app beeing loaded
                 print("need to delete:", rule.name)
                 rule.delete()
 

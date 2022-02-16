@@ -646,11 +646,13 @@ class Build(MPTTModel, ReferenceIndexingMixin):
             batch: Override batch code
             serials: Serial numbers
             location: Override location
+            auto_allocate: Automatically allocate stock with matching serial numbers
         """
 
         batch = kwargs.get('batch', self.batch)
         location = kwargs.get('location', self.destination)
         serials = kwargs.get('serials', None)
+        auto_allocate = kwargs.get('auto_allocate', False)
 
         """
         Determine if we can create a single output (with quantity > 0),
@@ -672,6 +674,9 @@ class Build(MPTTModel, ReferenceIndexingMixin):
             Create multiple build outputs with a single quantity of 1
             """
 
+            # Quantity *must* be an integer at this point!
+            quantity = int(quantity)
+
             for ii in range(quantity):
 
                 if serials:
@@ -679,7 +684,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
                 else:
                     serial = None
 
-                StockModels.StockItem.objects.create(
+                output = StockModels.StockItem.objects.create(
                     quantity=1,
                     location=location,
                     part=self.part,
@@ -688,6 +693,37 @@ class Build(MPTTModel, ReferenceIndexingMixin):
                     serial=serial,
                     is_building=True,
                 )
+
+                if auto_allocate and serial is not None:
+
+                    # Get a list of BomItem objects which point to "trackable" parts
+
+                    for bom_item in self.part.get_trackable_parts():
+
+                        parts = bom_item.get_valid_parts_for_allocation()
+
+                        for part in parts:
+
+                            items = StockModels.StockItem.objects.filter(
+                                part=part,
+                                serial=str(serial),
+                                quantity=1,
+                            ).filter(StockModels.StockItem.IN_STOCK_FILTER)
+
+                            """
+                            Test if there is a matching serial number!
+                            """
+                            if items.exists() and items.count() == 1:
+                                stock_item = items[0]
+
+                                # Allocate the stock item
+                                BuildItem.objects.create(
+                                    build=self,
+                                    bom_item=bom_item,
+                                    stock_item=stock_item,
+                                    quantity=quantity,
+                                    install_into=output,
+                                )
 
         else:
             """
