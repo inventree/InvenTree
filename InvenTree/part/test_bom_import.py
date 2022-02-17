@@ -218,25 +218,31 @@ class BomUploadTest(InvenTreeAPITestCase):
 
             dataset.append([cmp.pk, idx])
 
-        # Add a duplicate part too
-        dataset.append([components.first().pk, 'invalid'])
+        url = reverse('api-bom-import-extract')
 
-        response = self.post_bom(
-            'test.csv',
-            bytes(dataset.csv, 'utf8'),
-            content_type='text/csv',
-            expected_code=201
+        response = self.post(
+            url,
+            {
+                'columns': dataset.headers,
+                'rows': [row for row in dataset],
+            },
         )
 
-        errors = response.data['errors']
+        rows = response.data['rows']
 
-        self.assertIn('Quantity must be greater than zero', str(errors[0]))
-        self.assertIn('Part is not designated as a component', str(errors[5]))
-        self.assertIn('Duplicate part selected', str(errors[-1]))
-        self.assertIn('Invalid quantity', str(errors[-1]))
+        # Returned data must be the same as the original dataset
+        self.assertEqual(len(rows), len(dataset))
 
-        for idx, row in enumerate(response.data['rows'][:-1]):
-            self.assertEqual(str(row['part']), str(components[idx].pk))
+        for idx, row in enumerate(rows):
+            data = row['data']
+            cmp = components[idx]
+
+            # Should have guessed the correct part
+            data['part'] = cmp.pk
+
+        # Check some specific error messages
+        self.assertEqual(rows[0]['data']['errors']['quantity'], 'Quantity must be greater than zero')
+        self.assertEqual(rows[5]['data']['errors']['part'], 'Part is not designated as a component')
 
     def test_part_guess(self):
         """
