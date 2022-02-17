@@ -151,7 +151,7 @@ class BomUploadTest(InvenTreeAPITestCase):
         """
 
         url = reverse('api-bom-import-extract')
-        
+
         rows = [
             ['1', 'test'],
             ['2', 'test'],
@@ -262,9 +262,14 @@ class BomUploadTest(InvenTreeAPITestCase):
                 10,
             ])
 
-        response = self.post_bom(
-            'test.csv',
-            bytes(dataset.csv, 'utf8'),
+        url = reverse('api-bom-import-extract')
+
+        response = self.post(
+            url,
+            {
+                'columns': dataset.headers,
+                'rows': [row for row in dataset],
+            },
             expected_code=201,
         )
 
@@ -273,7 +278,7 @@ class BomUploadTest(InvenTreeAPITestCase):
         self.assertEqual(len(rows), 10)
 
         for idx in range(10):
-            self.assertEqual(rows[idx]['part'], components[idx].pk)
+            self.assertEqual(rows[idx]['data']['part'], components[idx].pk)
 
         # Should also be able to 'guess' part by the IPN value
         dataset = tablib.Dataset()
@@ -286,9 +291,12 @@ class BomUploadTest(InvenTreeAPITestCase):
                 10,
             ])
 
-        response = self.post_bom(
-            'test.csv',
-            bytes(dataset.csv, 'utf8'),
+        response = self.post(
+            url,
+            {
+                'columns': dataset.headers,
+                'rows': [row for row in dataset],
+            },
             expected_code=201,
         )
 
@@ -297,12 +305,14 @@ class BomUploadTest(InvenTreeAPITestCase):
         self.assertEqual(len(rows), 10)
 
         for idx in range(10):
-            self.assertEqual(rows[idx]['part'], components[idx].pk)
+            self.assertEqual(rows[idx]['data']['part'], components[idx].pk)
 
     def test_levels(self):
         """
         Test that multi-level BOMs are correctly handled during upload
         """
+
+        url = reverse('api-bom-import-extract')
 
         dataset = tablib.Dataset()
 
@@ -317,11 +327,20 @@ class BomUploadTest(InvenTreeAPITestCase):
                 2,
             ])
 
-        response = self.post_bom(
-            'test.csv',
-            bytes(dataset.csv, 'utf8'),
+        response = self.post(
+            url,
+            {
+                'rows': [row for row in dataset],
+                'columns': dataset.headers,
+            },
             expected_code=201,
         )
 
+        rows = response.data['rows']
+
         # Only parts at index 1, 4, 7 should have been returned
         self.assertEqual(len(response.data['rows']), 3)
+
+        self.assertEqual(rows[0]['data']['part'], 3)
+        self.assertEqual(rows[1]['data']['part'], 6)
+        self.assertEqual(rows[2]['data']['part'], 9)
