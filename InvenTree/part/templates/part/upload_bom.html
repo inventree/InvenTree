@@ -77,15 +77,15 @@ $('#bom-template-download').click(function() {
 
 $('#bom-upload').click(function() {
 
-    constructForm('{% url "api-bom-extract" %}', {
+    constructForm('{% url "api-bom-import-upload" %}', {
         method: 'POST',
         fields: {
-            bom_file: {},
+            data_file: {},
             part: {
                 value: {{ part.pk }},
                 hidden: true,
             },
-            clear_existing: {},
+            clear_existing_bom: {},
         },
         title: '{% trans "Upload BOM File" %}',
         onSuccess: function(response) {
@@ -93,16 +93,24 @@ $('#bom-upload').click(function() {
             // Clear existing entries from the table
             $('.bom-import-row').remove();
 
-            // Disable the "submit" button
-            $('#bom-submit').show();
+            selectImportFields(
+                '{% url "api-bom-import-extract" %}',
+                response,
+                {
+                    success: function(response) {
+                        constructBomUploadTable(response);
 
-            constructBomUploadTable(response);
+                        // Show the "submit" button
+                        $('#bom-submit').show();
 
-            $('#bom-submit').click(function() {
-                submitBomTable({{ part.pk }}, {
-                    bom_data: response,
-                });
-            });
+                        $('#bom-submit').click(function() {
+                            submitBomTable({{ part.pk }}, {
+                                bom_data: response,
+                            });
+                        });
+                    }
+                }
+            );
         }
     });
 

@@ -31,6 +31,7 @@
     setFormInputPlaceholder,
     setFormGroupVisibility,
     showFormInput,
+    selectImportFields,
 */
 
 /**
@@ -895,8 +896,8 @@ function getFormFieldValue(name, field={}, options={}) {
     // Find the HTML element
     var el = getFormFieldElement(name, options);
 
-    if (!el) {
-        console.log(`ERROR: getFormFieldValue could not locate field '{name}'`);
+    if (!el.exists()) {
+        console.log(`ERROR: getFormFieldValue could not locate field '${name}'`);
         return null;
     }
 
@@ -1219,7 +1220,7 @@ function addFieldErrorMessage(name, error_text, error_idx=0, options={}) {
 
         field_dom.append(error_html);
     } else {
-        console.log(`WARNING: addFieldErrorMessage could not locate field '${field_name}`);
+        console.log(`WARNING: addFieldErrorMessage could not locate field '${field_name}'`);
     }
 }
 
@@ -2080,7 +2081,7 @@ function constructLabel(name, parameters) {
  * - parameters: Field parameters returned by the OPTIONS method
  * 
  */
-function constructInput(name, parameters, options) {
+function constructInput(name, parameters, options={}) {
 
     var html = '';
 
@@ -2421,4 +2422,118 @@ function constructHelpText(name, parameters) {
     var html = `<div id='hint_id_${name}' class='help-block'><i>${parameters.help_text}</i></div>`;
 
     return html;
+}
+
+
+/*
+ * Construct a dialog to select import fields
+ */
+function selectImportFields(url, data={}, options={}) {
+
+    if (!data.model_fields) {
+        console.log(`WARNING: selectImportFields is missing 'model_fields'`);
+        return;
+    }
+
+    if (!data.file_fields) {
+        console.log(`WARNING: selectImportFields is missing 'file_fields'`);
+        return;
+    }
+
+    var choices = [];
+
+    // Add an "empty" value
+    choices.push({
+        value: '',
+        display_name: '-----',
+    });
+
+    for (const [name, field] of Object.entries(data.model_fields)) {
+        choices.push({
+            value: name,
+            display_name: field.label || name,
+        });
+    }
+
+    var rows = '';
+
+    var field_names = Object.keys(data.file_fields);
+
+    for (var idx = 0; idx < field_names.length; idx++) {
+
+        var field_name = field_names[idx];
+
+        var choice_input = constructInput(
+            `column_${idx}`,
+            {
+                type: 'choice',
+                label: field_name,
+                value: data.file_fields[field_name].value,
+                choices: choices,
+            }
+        );
+
+        rows += `<tr><td><em>${field_name}</em></td><td>${choice_input}</td></tr>`;
+    }
+
+    var headers = `<tr><th>{% trans "File Column" %}</th><th>{% trans "Field Name" %}</th></tr>`;
+
+    var html = '';
+    
+    if (options.preamble) {
+        html += options.preamble;
+    }
+
+    html += `<table class='table table-condensed'>${headers}${rows}</table>`;
+
+    constructForm(url, {
+        method: 'POST',
+        title: '{% trans "Select Columns" %}',
+        fields: {},
+        preFormContent: html,
+        onSubmit: function(fields, opts) {
+            
+            var columns = [];
+
+            for (var idx = 0; idx < field_names.length; idx++) {
+                columns.push(getFormFieldValue(`column_${idx}`, {}, opts));
+            }
+
+            $(opts.modal).find('#modal-progress-spinner').show();
+
+            inventreePut(
+                opts.url,
+                {
+                    columns: columns,
+                    rows: data.rows,
+                },
+                {
+                    method: 'POST',
+                    success: function(response) {
+                        handleFormSuccess(response, opts);
+
+                        if (options.success) {
+                            options.success(response);
+                        }
+                    },
+                    error: function(xhr) {
+                
+                        $(opts.modal).find('#modal-progress-spinner').hide();
+        
+                        switch (xhr.status) {
+                        case 400:
+                            handleFormErrors(xhr.responseJSON, fields, opts);
+                            break;
+                        default:
+                            $(opts.modal).modal('hide');
+        
+                            console.log(`upload error at ${opts.url}`);
+                            showApiError(xhr, opts.url);
+                            break;
+                        }
+                    }
+                }
+            );
+        },
+    });
 }

@@ -4,8 +4,6 @@ JSON serializers for Part app
 
 import imghdr
 from decimal import Decimal
-import os
-import tablib
 
 from django.urls import reverse_lazy
 from django.db import models, transaction
@@ -17,7 +15,9 @@ from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
 from djmoney.contrib.django_rest_framework import MoneyField
 
-from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
+from InvenTree.serializers import (DataFileUploadSerializer,
+                                   DataFileExtractSerializer,
+                                   InvenTreeAttachmentSerializerField,
                                    InvenTreeDecimalField,
                                    InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer,
@@ -709,307 +709,129 @@ class PartCopyBOMSerializer(serializers.Serializer):
         )
 
 
-class BomExtractSerializer(serializers.Serializer):
+class BomImportUploadSerializer(DataFileUploadSerializer):
     """
     Serializer for uploading a file and extracting data from it.
-
-    Note: 2022-02-04 - This needs a *serious* refactor in future, probably
-
-    When parsing the file, the following things happen:
-
-    a) Check file format and validity
-    b) Look for "required" fields
-    c) Look for "part" fields - used to "infer" part
-
-    Once the file itself has been validated, we iterate through each data row:
-
-    - If the "level" column is provided, ignore anything below level 1
-    - Try to "guess" the part based on part_id / part_name / part_ipn
-    - Extract other fields as required
-
     """
+
+    TARGET_MODEL = BomItem
 
     class Meta:
         fields = [
-            'bom_file',
+            'data_file',
             'part',
-            'clear_existing',
+            'clear_existing_bom',
         ]
 
-    # These columns must be present
-    REQUIRED_COLUMNS = [
-        'quantity',
-    ]
-
-    # We need at least one column to specify a "part"
-    PART_COLUMNS = [
-        'part',
-        'part_id',
-        'part_name',
-        'part_ipn',
-    ]
-
-    # These columns are "optional"
-    OPTIONAL_COLUMNS = [
-        'allow_variants',
-        'inherited',
-        'optional',
-        'overage',
-        'note',
-        'reference',
-    ]
-
-    def find_matching_column(self, col_name, columns):
-
-        # Direct match
-        if col_name in columns:
-            return col_name
-
-        col_name = col_name.lower().strip()
-
-        for col in columns:
-            if col.lower().strip() == col_name:
-                return col
-
-        # No match
-        return None
-
-    def find_matching_data(self, row, col_name, columns):
-        """
-        Extract data from the row, based on the "expected" column name
-        """
-
-        col_name = self.find_matching_column(col_name, columns)
-
-        return row.get(col_name, None)
-
-    bom_file = serializers.FileField(
-        label=_("BOM File"),
-        help_text=_("Select Bill of Materials file"),
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=Part.objects.all(),
         required=True,
-        allow_empty_file=False,
+        allow_null=False,
+        many=False,
     )
 
-    def validate_bom_file(self, bom_file):
-        """
-        Perform validation checks on the uploaded BOM file
-        """
-
-        self.filename = bom_file.name
-
-        name, ext = os.path.splitext(bom_file.name)
-
-        # Remove the leading . from the extension
-        ext = ext[1:]
-
-        accepted_file_types = [
-            'xls', 'xlsx',
-            'csv', 'tsv',
-            'xml',
-        ]
-
-        if ext not in accepted_file_types:
-            raise serializers.ValidationError(_("Unsupported file type"))
-
-        # Impose a 50MB limit on uploaded BOM files
-        max_upload_file_size = 50 * 1024 * 1024
-
-        if bom_file.size > max_upload_file_size:
-            raise serializers.ValidationError(_("File is too large"))
-
-        # Read file data into memory (bytes object)
-        try:
-            data = bom_file.read()
-        except Exception as e:
-            raise serializers.ValidationError(str(e))
-
-        if ext in ['csv', 'tsv', 'xml']:
-            try:
-                data = data.decode()
-            except Exception as e:
-                raise serializers.ValidationError(str(e))
-
-        # Convert to a tablib dataset (we expect headers)
-        try:
-            self.dataset = tablib.Dataset().load(data, ext, headers=True)
-        except Exception as e:
-            raise serializers.ValidationError(str(e))
-
-        for header in self.REQUIRED_COLUMNS:
-
-            match = self.find_matching_column(header, self.dataset.headers)
-
-            if match is None:
-                raise serializers.ValidationError(_("Missing required column") + f": '{header}'")
-
-        part_column_matches = {}
-
-        part_match = False
-
-        for col in self.PART_COLUMNS:
-            col_match = self.find_matching_column(col, self.dataset.headers)
-
-            part_column_matches[col] = col_match
-
-            if col_match is not None:
-                part_match = True
-
-        if not part_match:
-            raise serializers.ValidationError(_("No part column found"))
-
-        if len(self.dataset) == 0:
-            raise serializers.ValidationError(_("No data rows found"))
-
-        return bom_file
-
-    def extract_data(self):
-        """
-        Read individual rows out of the BOM file
-        """
-
-        rows = []
-        errors = []
-
-        found_parts = set()
-
-        headers = self.dataset.headers
-
-        level_column = self.find_matching_column('level', headers)
-
-        for row in self.dataset.dict:
-
-            row_error = {}
-
-            """
-            If the "level" column is specified, and this is not a top-level BOM item, ignore the row!
-            """
-            if level_column is not None:
-                level = row.get('level', None)
-
-                if level is not None:
-                    try:
-                        level = int(level)
-                        if level != 1:
-                            continue
-                    except:
-                        pass
-
-            """
-            Next, we try to "guess" the part, based on the provided data.
-
-            A) If the part_id is supplied, use that!
-            B) If the part name and/or part_ipn are supplied, maybe we can use those?
-            """
-            part_id = self.find_matching_data(row, 'part_id', headers)
-            part_name = self.find_matching_data(row, 'part_name', headers)
-            part_ipn = self.find_matching_data(row, 'part_ipn', headers)
-
-            part = None
-
-            if part_id is not None:
-                try:
-                    part = Part.objects.get(pk=part_id)
-                except (ValueError, Part.DoesNotExist):
-                    pass
-
-            # Optionally, specify using field "part"
-            if part is None:
-                pk = self.find_matching_data(row, 'part', headers)
-
-                if pk is not None:
-                    try:
-                        part = Part.objects.get(pk=pk)
-                    except (ValueError, Part.DoesNotExist):
-                        pass
-
-            if part is None:
-
-                if part_name or part_ipn:
-                    queryset = Part.objects.all()
-
-                    if part_name:
-                        queryset = queryset.filter(name=part_name)
-
-                    if part_ipn:
-                        queryset = queryset.filter(IPN=part_ipn)
-
-                    # Only if we have a single direct match
-                    if queryset.exists():
-                        if queryset.count() == 1:
-                            part = queryset.first()
-                        else:
-                            # Multiple matches!
-                            row_error['part'] = _('Multiple matching parts found')
-
-            if part is None:
-                if 'part' not in row_error:
-                    row_error['part'] = _('No matching part found')
-            else:
-                if part.pk in found_parts:
-                    row_error['part'] = _("Duplicate part selected")
-
-                elif not part.component:
-                    row_error['part'] = _('Part is not designated as a component')
-
-                found_parts.add(part.pk)
-
-            row['part'] = part.pk if part is not None else None
-
-            """
-            Read out the 'quantity' column - check that it is valid
-            """
-            quantity = self.find_matching_data(row, 'quantity', self.dataset.headers)
-
-            # Ensure quantity field is provided
-            row['quantity'] = quantity
-
-            if quantity is None:
-                row_error['quantity'] = _('Quantity not provided')
-            else:
-                try:
-                    quantity = Decimal(quantity)
-
-                    if quantity <= 0:
-                        row_error['quantity'] = _('Quantity must be greater than zero')
-                except:
-                    row_error['quantity'] = _('Invalid quantity')
-
-            # For each "optional" column, ensure the column names are allocated correctly
-            for field_name in self.OPTIONAL_COLUMNS:
-                if field_name not in row:
-                    row[field_name] = self.find_matching_data(row, field_name, self.dataset.headers)
-
-            rows.append(row)
-            errors.append(row_error)
-
-        return {
-            'rows': rows,
-            'errors': errors,
-            'headers': headers,
-            'filename': self.filename,
-        }
-
-    part = serializers.PrimaryKeyRelatedField(queryset=Part.objects.filter(assembly=True), required=True)
-
-    clear_existing = serializers.BooleanField(
-        label=_("Clear Existing BOM"),
-        help_text=_("Delete existing BOM data first"),
+    clear_existing_bom = serializers.BooleanField(
+        label=_('Clear Existing BOM'),
+        help_text=_('Delete existing BOM items before uploading')
     )
 
     def save(self):
 
         data = self.validated_data
 
-        master_part = data['part']
-        clear_existing = data['clear_existing']
+        if data.get('clear_existing_bom', False):
+            part = data['part']
 
-        if clear_existing:
-
-            # Remove all existing BOM items
-            master_part.bom_items.all().delete()
+            with transaction.atomic():
+                part.bom_items.all().delete()
 
 
-class BomUploadSerializer(serializers.Serializer):
+class BomImportExtractSerializer(DataFileExtractSerializer):
+    """
+    """
+
+    TARGET_MODEL = BomItem
+
+    def validate_extracted_columns(self):
+        super().validate_extracted_columns()
+
+        part_columns = ['part', 'part_name', 'part_ipn', 'part_id']
+
+        if not any([col in self.columns for col in part_columns]):
+            # At least one part column is required!
+            raise serializers.ValidationError(_("No part column specified"))
+
+    def process_row(self, row):
+
+        # Skip any rows which are at a lower "level"
+        level = row.get('level', None)
+
+        if level is not None:
+            try:
+                level = int(level)
+                if level != 1:
+                    # Skip this row
+                    return None
+            except:
+                pass
+
+        # Attempt to extract a valid part based on the provided data
+        part_id = row.get('part_id', row.get('part', None))
+        part_name = row.get('part_name', row.get('part', None))
+        part_ipn = row.get('part_ipn', None)
+
+        part = None
+
+        if part_id is not None:
+            try:
+                part = Part.objects.get(pk=part_id)
+            except (ValueError, Part.DoesNotExist):
+                pass
+
+        # No direct match, where else can we look?
+        if part is None:
+            if part_name or part_ipn:
+                queryset = Part.objects.all()
+
+                if part_name:
+                    queryset = queryset.filter(name=part_name)
+
+                if part_ipn:
+                    queryset = queryset.filter(IPN=part_ipn)
+
+                if queryset.exists():
+                    if queryset.count() == 1:
+                        part = queryset.first()
+                    else:
+                        row['errors']['part'] = _('Multiple matching parts found')
+
+        if part is None:
+            row['errors']['part'] = _('No matching part found')
+        else:
+            if not part.component:
+                row['errors']['part'] = _('Part is not designated as a component')
+
+        # Update the 'part' value in the row
+        row['part'] = part.pk if part is not None else None
+
+        # Check the provided 'quantity' value
+        quantity = row.get('quantity', None)
+
+        if quantity is None:
+            row['errors']['quantity'] = _('Quantity not provided')
+        else:
+            try:
+                quantity = Decimal(quantity)
+
+                if quantity <= 0:
+                    row['errors']['quantity'] = _('Quantity must be greater than zero')
+            except:
+                row['errors']['quantity'] = _('Invalid quantity')
+
+        return row
+
+
+class BomImportSubmitSerializer(serializers.Serializer):
     """
     Serializer for uploading a BOM against a specified part.
 

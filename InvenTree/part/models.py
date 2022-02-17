@@ -46,7 +46,7 @@ from common.models import InvenTreeSetting
 
 from InvenTree import helpers
 from InvenTree import validators
-from InvenTree.models import InvenTreeTree, InvenTreeAttachment
+from InvenTree.models import InvenTreeTree, InvenTreeAttachment, DataImportMixin
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2string, normalize, decimal2money
 import InvenTree.tasks
@@ -2580,7 +2580,7 @@ class PartCategoryParameterTemplate(models.Model):
                                      help_text=_('Default Parameter Value'))
 
 
-class BomItem(models.Model):
+class BomItem(models.Model, DataImportMixin):
     """ A BomItem links a part to its component items.
     A part can have a BOM (bill of materials) which defines
     which parts are required (and in what quantity) to make it.
@@ -2597,6 +2597,39 @@ class BomItem(models.Model):
         inherited: This BomItem can be inherited by the BOMs of variant parts
         allow_variants: Stock for part variants can be substituted for this BomItem
     """
+
+    # Fields available for bulk import
+    IMPORT_FIELDS = {
+        'quantity': {
+            'required': True
+        },
+        'reference': {},
+        'overage': {},
+        'allow_variants': {},
+        'inherited': {},
+        'optional': {},
+        'note': {},
+        'part': {
+            'label': _('Part'),
+            'help_text': _('Part ID or part name'),
+        },
+        'part_id': {
+            'label': _('Part ID'),
+            'help_text': _('Unique part ID value')
+        },
+        'part_name': {
+            'label': _('Part Name'),
+            'help_text': _('Part name'),
+        },
+        'part_ipn': {
+            'label': _('Part IPN'),
+            'help_text': _('Part IPN value'),
+        },
+        'level': {
+            'label': _('Level'),
+            'help_text': _('BOM level'),
+        }
+    }
 
     @staticmethod
     def get_api_url():

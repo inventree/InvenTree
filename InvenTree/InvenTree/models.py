@@ -45,6 +45,62 @@ def rename_attachment(instance, filename):
     return os.path.join(instance.getSubdir(), filename)
 
 
+class DataImportMixin(object):
+    """
+    Model mixin class which provides support for 'data import' functionality.
+
+    Models which implement this mixin should provide information on the fields available for import
+    """
+
+    # Define a map of fields avaialble for import
+    IMPORT_FIELDS = {}
+
+    @classmethod
+    def get_import_fields(cls):
+        """
+        Return all available import fields
+
+        Where information on a particular field is not explicitly provided,
+        introspect the base model to (attempt to) find that information.
+
+        """
+        fields = cls.IMPORT_FIELDS
+
+        for name, field in fields.items():
+
+            # Attempt to extract base field information from the model
+            base_field = None
+
+            for f in cls._meta.fields:
+                if f.name == name:
+                    base_field = f
+                    break
+
+            if base_field:
+                if 'label' not in field:
+                    field['label'] = base_field.verbose_name
+
+                if 'help_text' not in field:
+                    field['help_text'] = base_field.help_text
+
+            fields[name] = field
+
+        return fields
+
+    @classmethod
+    def get_required_import_fields(cls):
+        """ Return all *required* import fields """
+        fields = {}
+
+        for name, field in cls.get_import_fields().items():
+            required = field.get('required', False)
+
+            if required:
+                fields[name] = field
+
+        return fields
+
+
 class ReferenceIndexingMixin(models.Model):
     """
     A mixin for keeping track of numerical copies of the "reference" field.

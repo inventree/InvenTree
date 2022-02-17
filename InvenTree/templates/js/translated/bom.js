@@ -40,12 +40,6 @@ function constructBomUploadTable(data, options={}) {
     function constructRow(row, idx, fields) {
         // Construct an individual row from the provided data
 
-        var errors = {};
-
-        if (data.errors && data.errors.length > idx) {
-            errors = data.errors[idx];
-        }
-
         var field_options = {
             hideLabels: true,
             hideClearButton: true,
@@ -60,7 +54,7 @@ function constructBomUploadTable(data, options={}) {
                 return `Cannot render field '${field_name}`;
             }
 
-            field.value = row[field_name];
+            field.value = row.data[field_name];
 
             return constructField(`items_${field_name}_${idx}`, field, field_options);
 
@@ -99,19 +93,19 @@ function constructBomUploadTable(data, options={}) {
         $('#bom-import-table tbody').append(html);
 
         // Handle any errors raised by initial data import
-        if (errors.part) {
-            addFieldErrorMessage(`items_sub_part_${idx}`, errors.part);   
+        if (row.data.errors.part) {
+            addFieldErrorMessage(`items_sub_part_${idx}`, row.data.errors.part);   
         }
 
-        if (errors.quantity) {
-            addFieldErrorMessage(`items_quantity_${idx}`, errors.quantity);
+        if (row.data.errors.quantity) {
+            addFieldErrorMessage(`items_quantity_${idx}`, row.data.errors.quantity);
         }
 
         // Initialize the "part" selector for this row
         initializeRelatedField(
             {
                 name: `items_sub_part_${idx}`,
-                value: row.part,
+                value: row.data.part,
                 api_url: '{% url "api-part-list" %}',
                 filters: {
                     component: true,
@@ -140,7 +134,12 @@ function constructBomUploadTable(data, options={}) {
             });
 
             // Prettify the original import data
-            var pretty = JSON.stringify(row, undefined, 4);
+            var pretty = JSON.stringify(
+                {
+                    columns: data.columns,
+                    row: row.original,
+                }, undefined, 4
+            );
 
             var html = `
             <div class='alert alert-block'>
@@ -176,7 +175,7 @@ function submitBomTable(part_id, options={}) {
 
     var idx_values = [];
 
-    var url = '{% url "api-bom-upload" %}';
+    var url = '{% url "api-bom-import-submit" %}';
 
     $('.bom-import-row').each(function() {
         var idx = $(this).attr('idx');
