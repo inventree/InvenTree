@@ -36,7 +36,6 @@ import InvenTree.helpers
 import InvenTree.serializers
 from InvenTree.serializers import InvenTreeDecimalField, extract_int
 
-import part.models as part_models
 from part.serializers import PartBriefSerializer
 
 
@@ -432,7 +431,7 @@ class InstallStockItemSerializer(serializers.Serializer):
 
     def save(self):
         """ Install the selected stock item into this one """
-        
+
         data = self.validated_data
 
         stock_item = data['stock_item']

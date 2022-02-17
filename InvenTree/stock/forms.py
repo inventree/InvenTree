@@ -8,15 +8,12 @@ from __future__ import unicode_literals
 from django import forms
 from django.forms.utils import ErrorDict
 from django.utils.translation import ugettext_lazy as _
-from django.core.exceptions import ValidationError
 
 from mptt.fields import TreeNodeChoiceField
 
 from InvenTree.forms import HelperForm
 from InvenTree.fields import RoundingDecimalFormField
 from InvenTree.fields import DatePickerFormField
-
-from part.models import Part
 
 from .models import StockLocation, StockItem, StockItemTracking
 

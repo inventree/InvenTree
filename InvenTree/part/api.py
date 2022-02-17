@@ -1002,7 +1002,6 @@ class PartList(generics.ListCreateAPIView):
             try:
                 in_bom_for = Part.objects.get(pk=in_bom_for)
 
-
                 # Extract a list of parts within the BOM
                 bom_parts = in_bom_for.get_parts_in_bom()
                 print("bom_parts:", bom_parts)
