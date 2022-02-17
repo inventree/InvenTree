@@ -226,11 +226,10 @@ class ReportPrintMixin:
                 else:
                     outputs.append(report.render(request))
             except TemplateDoesNotExist as e:
-                
                 template = str(e)
                 if not template:
                     template = report.template
-                    
+
                 return Response(
                     {
                         'error': _(f"Template file '{template}' is missing or does not exist"),

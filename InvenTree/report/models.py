@@ -14,12 +14,12 @@ import datetime
 from django.urls import reverse
 from django.db import models
 from django.conf import settings
+from django.core.cache import cache
 from django.core.exceptions import ValidationError, FieldError
 
 from django.template.loader import render_to_string
 from django.template import Template, Context
 
-from django.core.files.storage import FileSystemStorage
 from django.core.validators import FileExtensionValidator
 
 import build.models
@@ -137,16 +137,19 @@ class ReportBase(models.Model):
 
         path = os.path.join('report', 'report_template', self.getSubdir(), filename)
 
+        fullpath = os.path.join(settings.MEDIA_ROOT, path)
+        fullpath = os.path.abspath(fullpath)
+
         # If the report file is the *same* filename as the one being uploaded,
         # remove the original one from the media directory
         if str(filename) == str(self.template):
 
-            fullpath = os.path.join(settings.MEDIA_ROOT, path)
-            fullpath = os.path.abspath(fullpath)
-
             if os.path.exists(fullpath):
                 logger.info(f"Deleting existing report template: '{filename}'")
                 os.remove(fullpath)
+
+        # Ensure that the cache is cleared for this template!
+        cache.delete(fullpath)
 
         return path
 
@@ -515,15 +518,19 @@ def rename_snippet(instance, filename):
 
     path = os.path.join('report', 'snippets', filename)
 
+    fullpath = os.path.join(settings.MEDIA_ROOT, path)
+    fullpath = os.path.abspath(fullpath)
+
     # If the snippet file is the *same* filename as the one being uploaded,
     # delete the original one from the media directory
     if str(filename) == str(instance.snippet):
-        fullpath = os.path.join(settings.MEDIA_ROOT, path)
-        fullpath = os.path.abspath(fullpath)
 
         if os.path.exists(fullpath):
             logger.info(f"Deleting existing snippet file: '{filename}'")
             os.remove(fullpath)
+
+    # Ensure that the cache is deleted for this snippet
+    cache.delete(fullpath)
 
     return path
 
