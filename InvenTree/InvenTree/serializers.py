@@ -517,6 +517,7 @@ class DataFileExtractSerializer(serializers.Serializer):
         child=serializers.ListField(
             child=serializers.CharField(
                 allow_blank=True,
+                allow_null=True,
             ),
         )
     )
