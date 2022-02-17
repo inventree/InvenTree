@@ -341,6 +341,7 @@ class BomUploadTest(InvenTreeAPITestCase):
         # Only parts at index 1, 4, 7 should have been returned
         self.assertEqual(len(response.data['rows']), 3)
 
-        self.assertEqual(rows[0]['data']['part'], 3)
-        self.assertEqual(rows[1]['data']['part'], 6)
-        self.assertEqual(rows[2]['data']['part'], 9)
+        # Check the returned PK values
+        self.assertEqual(rows[0]['data']['part'], components[1].pk)
+        self.assertEqual(rows[1]['data']['part'], components[4].pk)
+        self.assertEqual(rows[2]['data']['part'], components[7].pk)
