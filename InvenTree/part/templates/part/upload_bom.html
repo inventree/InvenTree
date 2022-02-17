@@ -81,6 +81,11 @@ $('#bom-upload').click(function() {
         method: 'POST',
         fields: {
             data_file: {},
+            part: {
+                value: {{ part.pk }},
+                hidden: true,
+            },
+            clear_existing_bom: {},
         },
         title: '{% trans "Upload BOM File" %}',
         onSuccess: function(response) {

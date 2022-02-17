@@ -716,6 +716,35 @@ class BomImportUploadSerializer(DataFileUploadSerializer):
 
     TARGET_MODEL = BomItem
 
+    class Meta:
+        fields = [
+            'data_file',
+            'part',
+            'clear_existing_bom',
+        ]
+
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=Part.objects.all(),
+        required=True,
+        allow_null=False,
+        many=False,
+    )
+
+    clear_existing_bom = serializers.BooleanField(
+        label=_('Clear Existing BOM'),
+        help_text=_('Delete existing BOM items before uploading')
+    )
+
+    def save(self):
+
+        data = self.validated_data
+
+        if data.get('clear_existing_bom', False):
+            part = data['part']
+
+            with transaction.atomic():
+                part.bom_items.all().delete()
+
 
 class BomImportExtractSerializer(DataFileExtractSerializer):
     """
