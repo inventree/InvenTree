@@ -46,6 +46,7 @@
     editStockLocation,
     exportStock,
     findStockItemBySerialNumber,
+    installStockItem,
     loadInstalledInTable,
     loadStockAllocationTable,
     loadStockLocationTable,
@@ -2959,4 +2960,68 @@ function loadInstalledInTable(table, options) {
             });
         }
     });
+}
+
+
+/*
+ * Launch a dialog to install a stock item into another stock item
+ */
+function installStockItem(stock_item_id, part_id, options={}) {
+
+    var html = `
+    <div class='alert alert-block alert-info'>
+        <strong>{% trans "Install another stock item into this item" %}</strong><br>
+        {% trans "Stock items can only be installed if they meet the following criteria" %}:<br>
+        <ul>
+            <li>{% trans "The Stock Item links to a Part which is the BOM for this Stock Item" %}</li>
+            <li>{% trans "The Stock Item is currently available in stock" %}</li>
+            <li>{% trans "The Stock Item is serialized and does not belong to another item" %}</li>
+        </ul>
+    </div>`;
+
+    constructForm(
+        `/api/stock/${stock_item_id}/install/`,
+        {
+            method: 'POST',
+            fields: {
+                part: {
+                    type: 'related field',
+                    required: 'true',
+                    label: '{% trans "Part" %}',
+                    help_text: '{% trans "Select part to install" %}',
+                    model: 'part',
+                    api_url: '{% url "api-part-list" %}',
+                    auto_fill: true,
+                    filters: {
+                        trackable: true,
+                        in_bom_for: part_id,
+                    }
+                },
+                stock_item: {
+                    filters: {
+                        part_detail: true,
+                        in_stock: true,
+                        serialized: true,
+                    },
+                    adjustFilters: function(filters, opts) {
+                        var part = getFormFieldValue('part', {}, opts);
+
+                        if (part) {
+                            filters.part = part;
+                        }
+
+                        return filters;
+                    }
+                }
+            },
+            confirm: true,
+            title: '{% trans "Install Stock Item" %}',
+            preFormContent: html,
+            onSuccess: function(response) {
+                if (options.onSuccess) {
+                    options.onSuccess(response);
+                }
+            }
+        }
+    );
 }

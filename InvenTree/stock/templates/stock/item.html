@@ -183,16 +183,11 @@
 
     $('#stock-item-install').click(function() {
 
-        launchModalForm(
-            "{% url 'stock-item-install' item.pk %}",
-            {
-                data: {
-                    'part': {{ item.part.pk }},
-                    'install_item': true,
-                },
-                reload: true,
+        installStockItem({{ item.pk }}, {{ item.part.pk }}, {
+            onSuccess: function(response) {
+                $("#installed-table").bootstrapTable('refresh');
             }
-        );
+        });
     });
 
     loadInstalledInTable(

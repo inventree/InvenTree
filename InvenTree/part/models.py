@@ -483,6 +483,36 @@ class Part(MPTTModel):
     def __str__(self):
         return f"{self.full_name} - {self.description}"
 
+    def get_parts_in_bom(self):
+        """
+        Return a list of all parts in the BOM for this part.
+        Takes into account substitutes, variant parts, and inherited BOM items
+        """
+
+        parts = set()
+
+        for bom_item in self.get_bom_items():
+            for part in bom_item.get_valid_parts_for_allocation():
+                parts.add(part)
+
+        return parts
+
+    def check_if_part_in_bom(self, other_part):
+        """
+        Check if the other_part is in the BOM for this part.
+
+        Note:
+            - Accounts for substitute parts
+            - Accounts for variant BOMs
+        """
+
+        for bom_item in self.get_bom_items():
+            if other_part in bom_item.get_valid_parts_for_allocation():
+                return True
+
+        # No matches found
+        return False
+
     def check_add_to_bom(self, parent, raise_error=False, recursive=True):
         """
         Check if this Part can be added to the BOM of another part.
