@@ -145,31 +145,58 @@ class BomUploadTest(InvenTreeAPITestCase):
 
         self.assertIn('No data rows found in file', str(response.data))
 
-    def test_something(self):
+    def test_missing_columns(self):
+        """
+        Upload extracted data, but with missing columns
+        """
 
-        # Add the quantity field (or close enough)
-        dataset.headers.append('quAntiTy  ')
+        url = reverse('api-bom-import-extract')
+        
+        rows = [
+            ['1', 'test'],
+            ['2', 'test'],
+        ]
 
-        response = self.post_bom(
-            'test.csv',
-            bytes(dataset.csv, 'utf8'),
-            content_type='text/csv',
+        # Post without columns
+        response = self.post(
+            url,
+            {},
             expected_code=400,
         )
 
-        self.assertIn('No part column found', str(response.data))
+        self.assertIn('This field is required', str(response.data['rows']))
+        self.assertIn('This field is required', str(response.data['columns']))
 
-        dataset.headers.append('part_id')
-        dataset.headers.append('part_name')
+        response = self.post(
+            url,
+            {
+                'rows': rows,
+                'columns': ['part', 'reference'],
+            },
+            expected_code=400
+        )
 
-        response = self.post_bom(
-            'test.csv',
-            bytes(dataset.csv, 'utf8'),
-            content_type='text/csv',
+        self.assertIn("Missing required column: 'quantity'", str(response.data))
+
+        response = self.post(
+            url,
+            {
+                'rows': rows,
+                'columns': ['quantity', 'reference'],
+            },
             expected_code=400,
         )
 
-        self.assertIn('No data rows found', str(response.data))
+        self.assertIn('No part column specified', str(response.data))
+
+        response = self.post(
+            url,
+            {
+                'rows': rows,
+                'columns': ['quantity', 'part'],
+            },
+            expected_code=201,
+        )
 
     def test_invalid_data(self):
         """
