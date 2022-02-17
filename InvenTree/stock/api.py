@@ -528,11 +528,34 @@ class StockList(generics.ListCreateAPIView):
         serial_numbers = data.get('serial_numbers', '')
 
         # Assign serial numbers for a trackable part
-        if serial_numbers and part.trackable:
+        if serial_numbers:
+
+            if not part.trackable:
+                raise ValidationError({
+                    'serial_numbers': [_("Serial numbers cannot be supplied for a non-trackable part")]
+                })
 
             # If serial numbers are specified, check that they match!
             try:
                 serials = extract_serial_numbers(serial_numbers, quantity, part.getLatestSerialNumberInt())
+
+                # Determine if any of the specified serial numbers already exist!
+                existing = []
+
+                for serial in serials:
+                    if part.checkIfSerialNumberExists(serial):
+                        existing.append(serial)
+
+                if len(existing) > 0:
+
+                    msg = _("The following serial numbers already exist")
+                    msg += " : "
+                    msg += ",".join([str(e) for e in existing])
+
+                    raise ValidationError({
+                        'serial_numbers': [msg],
+                    })
+
             except DjangoValidationError as e:
                 raise ValidationError({
                     'quantity': e.messages,
