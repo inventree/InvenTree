@@ -14,12 +14,12 @@ import datetime
 from django.urls import reverse
 from django.db import models
 from django.conf import settings
+from django.core.cache import cache
 from django.core.exceptions import ValidationError, FieldError
 
 from django.template.loader import render_to_string
 from django.template import Template, Context
 
-from django.core.files.storage import FileSystemStorage
 from django.core.validators import FileExtensionValidator
 
 import build.models
@@ -43,32 +43,12 @@ except OSError as err:  # pragma: no cover
 logger = logging.getLogger("inventree")
 
 
-class ReportFileUpload(FileSystemStorage):
-    """
-    Custom implementation of FileSystemStorage class.
-
-    When uploading a report (or a snippet / asset / etc),
-    it is often important to ensure the filename is not arbitrarily *changed*,
-    if the name of the uploaded file is identical to the currently stored file.
-
-    For example, a snippet or asset file is referenced in a template by filename,
-    and we do not want that filename to change when we upload a new *version*
-    of the snippet or asset file.
-
-    This uploader class performs the following pseudo-code function:
-
-    - If the model is *new*, proceed as normal
-    - If the model is being updated:
-        a) If the new filename is *different* from the existing filename, proceed as normal
-        b) If the new filename is *identical* to the existing filename, we want to overwrite the existing file
-    """
-
-    def get_available_name(self, name, max_length=None):
-
-        return super().get_available_name(name, max_length)
-
-
 def rename_template(instance, filename):
+    """
+    Helper function for 'renaming' uploaded report files.
+    Pass responsibility back to the calling class,
+    to ensure that files are uploaded to the correct directory.
+    """
 
     return instance.rename_file(filename)
 
@@ -155,7 +135,23 @@ class ReportBase(models.Model):
 
         filename = os.path.basename(filename)
 
-        return os.path.join('report', 'report_template', self.getSubdir(), filename)
+        path = os.path.join('report', 'report_template', self.getSubdir(), filename)
+
+        fullpath = os.path.join(settings.MEDIA_ROOT, path)
+        fullpath = os.path.abspath(fullpath)
+
+        # If the report file is the *same* filename as the one being uploaded,
+        # remove the original one from the media directory
+        if str(filename) == str(self.template):
+
+            if os.path.exists(fullpath):
+                logger.info(f"Deleting existing report template: '{filename}'")
+                os.remove(fullpath)
+
+        # Ensure that the cache is cleared for this template!
+        cache.delete(fullpath)
+
+        return path
 
     @property
     def extension(self):
@@ -522,15 +518,19 @@ def rename_snippet(instance, filename):
 
     path = os.path.join('report', 'snippets', filename)
 
+    fullpath = os.path.join(settings.MEDIA_ROOT, path)
+    fullpath = os.path.abspath(fullpath)
+
     # If the snippet file is the *same* filename as the one being uploaded,
     # delete the original one from the media directory
     if str(filename) == str(instance.snippet):
-        fullpath = os.path.join(settings.MEDIA_ROOT, path)
-        fullpath = os.path.abspath(fullpath)
 
         if os.path.exists(fullpath):
             logger.info(f"Deleting existing snippet file: '{filename}'")
             os.remove(fullpath)
+
+    # Ensure that the cache is deleted for this snippet
+    cache.delete(fullpath)
 
     return path
 

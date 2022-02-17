@@ -225,13 +225,14 @@ class ReportPrintMixin:
                     outputs.append(report.render_as_string(request))
                 else:
                     outputs.append(report.render(request))
-            except TemplateDoesNotExist:
-
-                filename = report.template
+            except TemplateDoesNotExist as e:
+                template = str(e)
+                if not template:
+                    template = report.template
 
                 return Response(
                     {
-                        'error': _(f"Template file '{filename}' is missing or does not exist"),
+                        'error': _(f"Template file '{template}' is missing or does not exist"),
                     },
                     status=400,
                 )
@@ -269,13 +270,16 @@ class ReportPrintMixin:
                 else:
                     pdf = outputs[0].get_document().write_pdf()
 
-            except TemplateDoesNotExist:
+            except TemplateDoesNotExist as e:
 
-                filename = report.template
+                template = str(e)
+
+                if not template:
+                    template = report.template
 
                 return Response(
                     {
-                        'error': _(f"Template file '{filename}' is missing or does not exist"),
+                        'error': _(f"Template file '{template}' is missing or does not exist"),
                     },
                     status=400,
                 )
