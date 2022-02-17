@@ -1227,10 +1227,10 @@ function formatDate(row) {
     return html;
 }
 
+/*
+ * Load StockItemTestResult table
+ */
 function loadStockTestResultsTable(table, options) {
-    /*
-     * Load StockItemTestResult table
-     */
 
     function makeButtons(row, grouped) {
         var html = `<div class='btn-group float-right' role='group'>`;
@@ -1263,7 +1263,7 @@ function loadStockTestResultsTable(table, options) {
         rootParentId: parent_node,
         parentIdField: 'parent',
         idField: 'pk',
-        uniqueId: 'key',
+        uniqueId: 'pk',
         treeShowField: 'test_name',
         formatNoMatches: function() {
             return '{% trans "No test results found" %}';
@@ -1405,6 +1405,102 @@ function loadStockTestResultsTable(table, options) {
                 }
             );
         }
+    });
+
+    /* Register button callbacks */
+
+    function reloadTestTable(response) {
+        $(table).bootstrapTable('refresh');
+    }
+
+    // "tick" a test result
+    $(table).on('click', '.button-test-tick', function() {
+        var button = $(this);
+
+        var test_name = button.attr('pk');
+
+        inventreePut(
+            '{% url "api-stock-test-result-list" %}',
+            {
+                test: test_name,
+                result: true,
+                stock_item: options.stock_item,
+            },
+            {
+                method: 'POST',
+                success: reloadTestTable,
+            }
+        );
+    });
+
+    // Add a test result
+    $(table).on('click', '.button-test-add', function() {
+        var button = $(this);
+
+        var test_name = button.attr('pk');
+
+        constructForm('{% url "api-stock-test-result-list" %}', {
+            method: 'POST',
+            fields: {
+                test: {
+                    value: test_name,
+                },
+                result: {},
+                value: {},
+                attachment: {},
+                notes: {},
+                stock_item: {
+                    value: options.stock_item,
+                    hidden: true,
+                }
+            },
+            title: '{% trans "Add Test Result" %}',
+            onSuccess: reloadTestTable,
+        });
+    });
+
+    // Edit a test result
+    $(table).on('click', '.button-test-edit', function() {
+        var button = $(this);
+
+        var pk = button.attr('pk');
+
+        var url = `/api/stock/test/${pk}/`;
+
+        constructForm(url, {
+            fields: {
+                test: {},
+                result: {},
+                value: {},
+                attachment: {},
+                notes: {},
+            },
+            title: '{% trans "Edit Test Result" %}',
+            onSuccess: reloadTestTable,
+        });
+    });
+
+    // Delete a test result
+    $(table).on('click', '.button-test-delete', function() {
+        var button = $(this);
+
+        var pk = button.attr('pk');
+
+        var url = `/api/stock/test/${pk}/`;
+
+        var row = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+        var html = `
+        <div class='alert alert-block alert-danger'>
+        <strong>{% trans "Delete test result" %}:</strong> ${row.test_name || row.test || row.key}
+        </div>`;
+
+        constructForm(url, {
+            method: 'DELETE',
+            title: '{% trans "Delete Test Result" %}',
+            onSuccess: reloadTestTable,
+            preFormContent: html,
+        });
     });
 }
 
