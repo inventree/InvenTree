@@ -1232,7 +1232,30 @@ function formatDate(row) {
  */
 function loadStockTestResultsTable(table, options) {
 
+    // Setup filters for the table
+    var filterTarget = options.filterTarget || '#filter-list-stocktests';
+
+    var filterKey = options.filterKey || options.name || 'stocktests';
+
+    var filters = loadTableFilters(filterKey);
+
+    var params = {
+        part: options.part,
+    };
+
+    var original = {};
+
+    for (var k in params) {
+        original[k] = params[k];
+        filters[k] = params[k];
+    }
+
+    setupFilterList(filterKey, table, filterTarget);
+
     function makeButtons(row, grouped) {
+
+        // Helper function for rendering buttons
+
         var html = `<div class='btn-group float-right' role='group'>`;
 
         if (row.requires_attachment == false && row.requires_value == false && !row.result) {
@@ -1268,9 +1291,8 @@ function loadStockTestResultsTable(table, options) {
         formatNoMatches: function() {
             return '{% trans "No test results found" %}';
         },
-        queryParams: {
-            part: options.part,
-        },
+        queryParams: filters,
+        original: original,
         onPostBody: function() {
             table.treegrid({
                 treeColumn: 0,
