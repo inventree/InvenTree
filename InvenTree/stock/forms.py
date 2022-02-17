@@ -162,56 +162,6 @@ class SerializeStockForm(HelperForm):
         ]
 
 
-class InstallStockForm(HelperForm):
-    """
-    Form for manually installing a stock item into another stock item
-
-    TODO: Migrate this form to the modern API forms interface
-    """
-
-    part = forms.ModelChoiceField(
-        queryset=Part.objects.all(),
-        widget=forms.HiddenInput()
-    )
-
-    stock_item = forms.ModelChoiceField(
-        required=True,
-        queryset=StockItem.objects.filter(StockItem.IN_STOCK_FILTER),
-        help_text=_('Stock item to install')
-    )
-
-    to_install = forms.BooleanField(
-        widget=forms.HiddenInput(),
-        required=False,
-    )
-
-    notes = forms.CharField(
-        required=False,
-        help_text=_('Notes')
-    )
-
-    class Meta:
-        model = StockItem
-        fields = [
-            'part',
-            'stock_item',
-            # 'quantity_to_install',
-            'notes',
-        ]
-
-    def clean(self):
-
-        data = super().clean()
-
-        stock_item = data.get('stock_item', None)
-        quantity = data.get('quantity_to_install', None)
-
-        if stock_item and quantity and quantity > stock_item.quantity:
-            raise ValidationError({'quantity_to_install': _('Must not exceed available quantity')})
-
-        return data
-
-
 class UninstallStockForm(forms.ModelForm):
     """
     Form for uninstalling a stock item which is installed in another item.

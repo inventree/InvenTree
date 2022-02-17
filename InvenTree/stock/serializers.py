@@ -36,6 +36,7 @@ import InvenTree.helpers
 import InvenTree.serializers
 from InvenTree.serializers import InvenTreeDecimalField, extract_int
 
+import part.models as part_models
 from part.serializers import PartBriefSerializer
 
 
@@ -388,6 +389,63 @@ class SerializeStockItemSerializer(serializers.Serializer):
             user,
             notes=data.get('notes', ''),
             location=data['destination'],
+        )
+
+
+class InstallStockItemSerializer(serializers.Serializer):
+    """
+    Serializer for installing a stock item into a given part
+    """
+
+    stock_item = serializers.PrimaryKeyRelatedField(
+        queryset=StockItem.objects.all(),
+        many=False,
+        required=True,
+        allow_null=False,
+        label=_('Stock Item'),
+        help_text=_('Select stock item to install'),
+    )
+
+    note = serializers.CharField(
+        label=_('Note'),
+        required=False,
+        allow_blank=True,
+    )
+
+    def validate_stock_item(self, stock_item):
+        """
+        Validate the selected stock item
+        """
+
+        if not stock_item.in_stock:
+            # StockItem must be in stock to be "installed"
+            raise ValidationError(_("Stock item is unavailable"))
+
+        # Extract the "parent" item - the item into which the stock item will be installed
+        parent_item = self.context['item']
+        parent_part = parent_item.part
+
+        if not parent_part.check_if_part_in_bom(stock_item.part):
+            raise ValidationError(_("Selected part is not in the Bill of Materials"))
+
+        return stock_item
+
+    def save(self):
+        """ Install the selected stock item into this one """
+        
+        data = self.validated_data
+
+        stock_item = data['stock_item']
+        note = data.get('note', '')
+
+        parent_item = self.context['item']
+        request = self.context['request']
+
+        parent_item.installStockItem(
+            stock_item,
+            stock_item.quantity,
+            request.user,
+            note,
         )
 
 

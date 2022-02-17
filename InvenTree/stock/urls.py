@@ -24,7 +24,6 @@ stock_item_detail_urls = [
     url(r'^qr_code/', views.StockItemQRCode.as_view(), name='stock-item-qr'),
     url(r'^delete_test_data/', views.StockItemDeleteTestData.as_view(), name='stock-item-delete-test-data'),
     url(r'^return/', views.StockItemReturnToStock.as_view(), name='stock-item-return'),
-    url(r'^install/', views.StockItemInstall.as_view(), name='stock-item-install'),
 
     url(r'^add_tracking/', views.StockItemTrackingCreate.as_view(), name='stock-tracking-create'),
 
