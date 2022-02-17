@@ -183,16 +183,11 @@
 
     $('#stock-item-install').click(function() {
 
-        launchModalForm(
-            "{% url 'stock-item-install' item.pk %}",
-            {
-                data: {
-                    'part': {{ item.part.pk }},
-                    'install_item': true,
-                },
-                reload: true,
+        installStockItem({{ item.pk }}, {{ item.part.pk }}, {
+            onSuccess: function(response) {
+                $("#installed-table").bootstrapTable('refresh');
             }
-        );
+        });
     });
 
     loadInstalledInTable(
@@ -307,65 +302,6 @@
                 }
             },
             title: '{% trans "Add Test Result" %}',
-            onSuccess: reloadTable,
-        });
-    });
-
-    $("#test-result-table").on('click', '.button-test-add', function() {
-        var button = $(this);
-
-        var test_name = button.attr('pk');
-
-        constructForm('{% url "api-stock-test-result-list" %}', {
-            method: 'POST',
-            fields: {
-                test: {
-                    value: test_name,
-                },
-                result: {},
-                value: {},
-                attachment: {},
-                notes: {},
-                stock_item: {
-                    value: {{ item.pk }},
-                    hidden: true,
-                }
-            },
-            title: '{% trans "Add Test Result" %}',
-            onSuccess: reloadTable,
-        });
-    });
-
-    $("#test-result-table").on('click', '.button-test-edit', function() {
-        var button = $(this);
-
-        var pk = button.attr('pk');
-
-        var url = `/api/stock/test/${pk}/`;
-
-        constructForm(url, {
-            fields: {
-                test: {},
-                result: {},
-                value: {},
-                attachment: {},
-                notes: {},
-            },
-            title: '{% trans "Edit Test Result" %}',
-            onSuccess: reloadTable,
-        });
-    });
-
-    $("#test-result-table").on('click', '.button-test-delete', function() {
-        var button = $(this);
-
-        var pk = button.attr('pk');
-
-        var url = `/api/stock/test/${pk}/`;
-
-        constructForm(url, {
-            method: 'DELETE',
-            title: '{% trans "Delete Test Result" %}',
             onSuccess: reloadTable,
         });
     });
