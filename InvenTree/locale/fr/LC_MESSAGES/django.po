@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-17 21:55+0000\n"
-"PO-Revision-Date: 2022-02-17 21:59\n"
+"POT-Creation-Date: 2022-02-18 20:36+0000\n"
+"PO-Revision-Date: 2022-02-18 20:38\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -7050,7 +7050,7 @@ msgstr ""
 #: templates/about.html:11 templates/about.html:105
 #: templates/js/translated/bom.js:132 templates/js/translated/bom.js:620
 #: templates/js/translated/modals.js:53 templates/js/translated/modals.js:584
-#: templates/js/translated/modals.js:678 templates/js/translated/modals.js:983
+#: templates/js/translated/modals.js:678 templates/js/translated/modals.js:986
 #: templates/modals.html:15 templates/modals.html:27 templates/modals.html:39
 #: templates/modals.html:50
 msgid "Close"
@@ -7378,11 +7378,11 @@ msgstr "Le serveur distant doit être accessible"
 msgid "Remote image must not exceed maximum allowable file size"
 msgstr "L'image distante ne doit pas excéder la taille maximale autorisée de fichier"
 
-#: templates/js/translated/api.js:185 templates/js/translated/modals.js:1053
+#: templates/js/translated/api.js:185 templates/js/translated/modals.js:1056
 msgid "No Response"
 msgstr "Aucune réponse"
 
-#: templates/js/translated/api.js:186 templates/js/translated/modals.js:1054
+#: templates/js/translated/api.js:186 templates/js/translated/modals.js:1057
 msgid "No response from the InvenTree server"
 msgstr "Aucune réponse du serveur InvenTree"
 
@@ -7394,27 +7394,27 @@ msgstr "Erreur 400: Mauvaise requête"
 msgid "API request returned error code 400"
 msgstr "La requête de l'API a retourné le code d'erreur 400"
 
-#: templates/js/translated/api.js:197 templates/js/translated/modals.js:1063
+#: templates/js/translated/api.js:197 templates/js/translated/modals.js:1066
 msgid "Error 401: Not Authenticated"
 msgstr "Erreur 401: non authentifié"
 
-#: templates/js/translated/api.js:198 templates/js/translated/modals.js:1064
+#: templates/js/translated/api.js:198 templates/js/translated/modals.js:1067
 msgid "Authentication credentials not supplied"
 msgstr "Informations d’authentification non fournies"
 
-#: templates/js/translated/api.js:202 templates/js/translated/modals.js:1068
+#: templates/js/translated/api.js:202 templates/js/translated/modals.js:1071
 msgid "Error 403: Permission Denied"
 msgstr "Erreur 403: Permission refusée"
 
-#: templates/js/translated/api.js:203 templates/js/translated/modals.js:1069
+#: templates/js/translated/api.js:203 templates/js/translated/modals.js:1072
 msgid "You do not have the required permissions to access this function"
 msgstr "Vous n'avez pas les autorisations requises pour accéder à cette fonction"
 
-#: templates/js/translated/api.js:207 templates/js/translated/modals.js:1073
+#: templates/js/translated/api.js:207 templates/js/translated/modals.js:1076
 msgid "Error 404: Resource Not Found"
 msgstr "Erreur 404: Ressource introuvable"
 
-#: templates/js/translated/api.js:208 templates/js/translated/modals.js:1074
+#: templates/js/translated/api.js:208 templates/js/translated/modals.js:1077
 msgid "The requested resource could not be located on the server"
 msgstr "La ressource demandée n'a pas pu être trouvée sur le serveur"
 
@@ -7426,11 +7426,11 @@ msgstr "Erreur 405: Méthode non autorisée"
 msgid "HTTP method not allowed at URL"
 msgstr "Méthode HTTP non autorisée à l'adresse URL"
 
-#: templates/js/translated/api.js:217 templates/js/translated/modals.js:1078
+#: templates/js/translated/api.js:217 templates/js/translated/modals.js:1081
 msgid "Error 408: Timeout"
 msgstr "Erreur 408: Délai dépassé"
 
-#: templates/js/translated/api.js:218 templates/js/translated/modals.js:1079
+#: templates/js/translated/api.js:218 templates/js/translated/modals.js:1082
 msgid "Connection timeout while requesting data from server"
 msgstr "Délai de connexion dépassé lors de la demande de données depuis le serveur"
 
@@ -7499,7 +7499,7 @@ msgid "Unknown response from server"
 msgstr "Réponse inconnue du serveur"
 
 #: templates/js/translated/barcode.js:140
-#: templates/js/translated/modals.js:1043
+#: templates/js/translated/modals.js:1046
 msgid "Invalid server response"
 msgstr "Réponse du serveur invalide"
 
@@ -8179,7 +8179,7 @@ msgid "Cancel"
 msgstr "Annuler"
 
 #: templates/js/translated/modals.js:77 templates/js/translated/modals.js:119
-#: templates/js/translated/modals.js:677 templates/js/translated/modals.js:982
+#: templates/js/translated/modals.js:677 templates/js/translated/modals.js:985
 #: templates/modals.html:28 templates/modals.html:51
 msgid "Submit"
 msgstr ""
@@ -8204,31 +8204,31 @@ msgstr ""
 msgid "Loading Data"
 msgstr ""
 
-#: templates/js/translated/modals.js:934
+#: templates/js/translated/modals.js:937
 msgid "Invalid response from server"
 msgstr ""
 
-#: templates/js/translated/modals.js:934
+#: templates/js/translated/modals.js:937
 msgid "Form data missing from server response"
 msgstr ""
 
-#: templates/js/translated/modals.js:946
+#: templates/js/translated/modals.js:949
 msgid "Error posting form data"
 msgstr ""
 
-#: templates/js/translated/modals.js:1043
+#: templates/js/translated/modals.js:1046
 msgid "JSON response missing form data"
 msgstr ""
 
-#: templates/js/translated/modals.js:1058
+#: templates/js/translated/modals.js:1061
 msgid "Error 400: Bad Request"
 msgstr ""
 
-#: templates/js/translated/modals.js:1059
+#: templates/js/translated/modals.js:1062
 msgid "Server returned error code 400"
 msgstr ""
 
-#: templates/js/translated/modals.js:1082
+#: templates/js/translated/modals.js:1085
 msgid "Error requesting form data"
 msgstr ""
 
