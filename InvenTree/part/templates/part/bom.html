@@ -23,7 +23,7 @@
 {% endif %}
 
 <div id='bom-button-toolbar'>
-    <div class="btn-group" role="group" aria-label="...">
+    <div class='btn-group' role='group' aria-label='...'>
         {% if roles.part.change %}
         <!-- Action menu -->
         <div class='btn-group'>
@@ -34,10 +34,10 @@
                 <li><a class='dropdown-item' href='#' id='bom-item-delete'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete Items" %}</a></li>
             </ul>
         </div>
-        {% endif %}   
+        {% endif %}
         {% include "filter_list.html" with id="bom" %}
     </div>
 </div>
 
-<table class='table table-bom table-condensed' data-toolbar="#bom-button-toolbar" id='bom-table'>
+<table class='table table-bom table-condensed' data-toolbar='#bom-button-toolbar' id='bom-table'>
 </table>

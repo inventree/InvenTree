@@ -12,11 +12,11 @@ margin-top: 4cm;
 {% endblock %}
 
 {% block bottom_left %}
-content: "v{{report_revision}} - {{ date.isoformat }}";
+content: 'v{{report_revision}} - {{ date.isoformat }}';
 {% endblock %}
 
 {% block bottom_center %}
-content: "InvenTree v{% inventree_version %}";
+content: 'InvenTree v{% inventree_version %}';
 {% endblock %}
 
 {% block style %}
@@ -71,7 +71,7 @@ table td.expand {
 
 {% block header_content %}
 
-    <img class='logo' src='{% company_image customer %}' alt="{{ customer }}" width='150'>
+    <img class='logo' src='{% company_image customer %}' alt='{{ customer }}' width='150'>
 
     <div class='header-right'>
         <h3>{% trans "Sales Order" %} {{ prefix }}{{ reference }}</h3>

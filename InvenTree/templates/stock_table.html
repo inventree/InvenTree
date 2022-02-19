@@ -27,7 +27,7 @@
             {% endif %}
             <!-- Printing actions menu -->
             <div class='btn-group'>
-                <button id='stock-print-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle="dropdown" title='{% trans "Printing Actions" %}'>
+                <button id='stock-print-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle='dropdown' title='{% trans "Printing Actions" %}'>
                     <span class='fas fa-print'></span> <span class='caret'></span>
                 </button>
                 <ul class='dropdown-menu'>
@@ -39,15 +39,15 @@
             </div>
             {% if not read_only %}
             {% if roles.stock.change or roles.stock.delete %}
-            <div class="btn-group" role="group">
-                <button id='stock-options' class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" title='{% trans "Stock Options" %}'>
-                    <span class='fas fa-boxes'></span> <span class="caret"></span>
+            <div class='btn-group' role='group'>
+                <button id='stock-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle='dropdown' title='{% trans "Stock Options" %}'>
+                    <span class='fas fa-boxes'></span> <span class='caret'></span>
                 </button>
-                <ul class="dropdown-menu">
+                <ul class='dropdown-menu'>
                     {% if roles.stock.change %}
-                    <li><a class='dropdown-item' href="#" id='multi-item-add' title='{% trans "Add to selected stock items" %}'><span class='fas fa-plus-circle icon-green'></span> {% trans "Add stock" %}</a></li>
-                    <li><a class='dropdown-item' href="#" id='multi-item-remove' title='{% trans "Remove from selected stock items" %}'><span class='fas fa-minus-circle'></span> {% trans "Remove stock" %}</a></li>
-                    <li><a class='dropdown-item' href="#" id='multi-item-stocktake' title='{% trans "Stocktake selected stock items" %}'><span class='fas fa-check-circle'></span> {% trans "Count stock" %}</a></li>
+                    <li><a class='dropdown-item' href='#' id='multi-item-add' title='{% trans "Add to selected stock items" %}'><span class='fas fa-plus-circle icon-green'></span> {% trans "Add stock" %}</a></li>
+                    <li><a class='dropdown-item' href='#' id='multi-item-remove' title='{% trans "Remove from selected stock items" %}'><span class='fas fa-minus-circle'></span> {% trans "Remove stock" %}</a></li>
+                    <li><a class='dropdown-item' href='#' id='multi-item-stocktake' title='{% trans "Stocktake selected stock items" %}'><span class='fas fa-check-circle'></span> {% trans "Count stock" %}</a></li>
                     <li><a class='dropdown-item' href='#' id='multi-item-move' title='{% trans "Move selected stock items" %}'><span class='fas fa-exchange-alt'></span> {% trans "Move stock" %}</a></li>
                     <li><a class='dropdown-item' href='#' id='multi-item-merge' title='{% trans "Merge selected stock items" %}'><span class='fas fa-object-group'></span> {% trans "Merge stock" %}</a></li>
                     <li><a class='dropdown-item' href='#' id='multi-item-order' title='{% trans "Order selected items" %}'><span class='fas fa-shopping-cart'></span> {% trans "Order stock" %}</a></li>
