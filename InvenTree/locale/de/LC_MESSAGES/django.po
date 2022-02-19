@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-18 20:36+0000\n"
-"PO-Revision-Date: 2022-02-19 13:48\n"
+"PO-Revision-Date: 2022-02-19 14:45\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -5376,15 +5376,15 @@ msgstr "Bestellungen aktivieren"
 
 #: plugin/samples/integration/sample.py:43
 msgid "Enable PO functionality in InvenTree interface"
-msgstr ""
+msgstr "Kauf-Funktionalität in InvenTree aktivieren"
 
 #: plugin/samples/integration/sample.py:48
 msgid "API Key"
-msgstr ""
+msgstr "API-Schlüssel"
 
 #: plugin/samples/integration/sample.py:49
 msgid "Key required for accessing external API"
-msgstr ""
+msgstr "Schlüssel für den Zugriff auf das externe API"
 
 #: plugin/samples/integration/sample.py:52
 msgid "Numerical"
@@ -6618,7 +6618,7 @@ msgstr "Admin"
 #: templates/InvenTree/settings/plugin.html:49
 #: templates/InvenTree/settings/plugin_settings.html:28
 msgid "Author"
-msgstr ""
+msgstr "Autor"
 
 #: templates/InvenTree/settings/plugin.html:51
 #: templates/InvenTree/settings/plugin_settings.html:43
@@ -6631,15 +6631,15 @@ msgstr "Inaktive Plugins"
 
 #: templates/InvenTree/settings/plugin.html:115
 msgid "Plugin Error Stack"
-msgstr ""
+msgstr "Plugin-Fehlerstapel"
 
 #: templates/InvenTree/settings/plugin.html:124
 msgid "Stage"
-msgstr ""
+msgstr "Stufe"
 
 #: templates/InvenTree/settings/plugin.html:126
 msgid "Message"
-msgstr ""
+msgstr "Meldung"
 
 #: templates/InvenTree/settings/plugin_settings.html:10
 #, python-format
@@ -6660,11 +6660,11 @@ msgstr "Lizenz"
 
 #: templates/InvenTree/settings/plugin_settings.html:71
 msgid "The code information is pulled from the latest git commit for this plugin. It might not reflect official version numbers or information but the actual code running."
-msgstr ""
+msgstr "Die Code-Informationen werden vom neuesten Git Commit für dieses Plugin eingelesen. Es spiegelt möglicherweise nicht die offiziellen Versionsnummern oder Informationen wider, sondern den tatsächlich laufenden Code."
 
 #: templates/InvenTree/settings/plugin_settings.html:77
 msgid "Package information"
-msgstr ""
+msgstr "Paketinformationen"
 
 #: templates/InvenTree/settings/plugin_settings.html:83
 msgid "Installation method"
@@ -6702,11 +6702,11 @@ msgstr "Commit-Nachricht"
 
 #: templates/InvenTree/settings/plugin_settings.html:117
 msgid "Sign Status"
-msgstr ""
+msgstr "Signaturstatus"
 
 #: templates/InvenTree/settings/plugin_settings.html:122
 msgid "Sign Key"
-msgstr ""
+msgstr "Signatur Schlüssel"
 
 #: templates/InvenTree/settings/po.html:7
 msgid "Purchase Order Settings"
@@ -6727,7 +6727,7 @@ msgstr "Einstellungen ändern"
 
 #: templates/InvenTree/settings/settings.html:115
 msgid "Edit Plugin Setting"
-msgstr ""
+msgstr "Plugin-Einstellungen bearbeiten"
 
 #: templates/InvenTree/settings/settings.html:117
 msgid "Edit Global Setting"
@@ -6895,7 +6895,7 @@ msgstr "Sie können sich mit einem der folgenden Drittanbieterkonten bei Ihrem K
 
 #: templates/InvenTree/settings/user.html:157
 msgid "You currently have no social network accounts connected to this account."
-msgstr ""
+msgstr "Du hast zurzeit keine sozialen Netzwerke mit diesem Konto verbunden."
 
 #: templates/InvenTree/settings/user.html:162
 msgid "Add a 3rd Party Account"
@@ -6903,35 +6903,35 @@ msgstr "Drittanbieter-Konto hinzufügen"
 
 #: templates/InvenTree/settings/user.html:172
 msgid "Multifactor"
-msgstr ""
+msgstr "Multifaktor"
 
 #: templates/InvenTree/settings/user.html:177
 msgid "You have these factors available:"
-msgstr ""
+msgstr "Sie haben folgende Faktoren zur Verfügung:"
 
 #: templates/InvenTree/settings/user.html:187
 msgid "TOTP"
-msgstr ""
+msgstr "TOTP"
 
 #: templates/InvenTree/settings/user.html:193
 msgid "Static"
-msgstr ""
+msgstr "Statisch"
 
 #: templates/InvenTree/settings/user.html:202
 msgid "You currently do not have any factors set up."
-msgstr ""
+msgstr "Sie haben derzeit keine Faktoren eingerichtet."
 
 #: templates/InvenTree/settings/user.html:209
 msgid "Change factors"
-msgstr ""
+msgstr "Faktoren ändern"
 
 #: templates/InvenTree/settings/user.html:210
 msgid "Setup multifactor"
-msgstr ""
+msgstr "Multifaktor einrichten"
 
 #: templates/InvenTree/settings/user.html:212
 msgid "Remove multifactor"
-msgstr ""
+msgstr "Multifaktor entfernen"
 
 #: templates/InvenTree/settings/user.html:220
 msgid "Active Sessions"
@@ -7229,11 +7229,11 @@ msgstr "Im Administrationsbereich anzeigen"
 
 #: templates/allauth_2fa/authenticate.html:5
 msgid "Two-Factor Authentication"
-msgstr ""
+msgstr "Zwei-Faktor-Authentifizierung"
 
 #: templates/allauth_2fa/authenticate.html:12
 msgid "Authenticate"
-msgstr ""
+msgstr "Authentifizieren"
 
 #: templates/allauth_2fa/backup_tokens.html:6
 msgid "Two-Factor Authentication Backup Tokens"
