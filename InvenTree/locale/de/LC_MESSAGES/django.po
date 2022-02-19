@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-18 20:36+0000\n"
-"PO-Revision-Date: 2022-02-18 20:38\n"
+"PO-Revision-Date: 2022-02-19 13:48\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -259,11 +259,11 @@ msgstr "Ungültiger Wert"
 
 #: InvenTree/serializers.py:355
 msgid "Data File"
-msgstr ""
+msgstr "Datendatei"
 
 #: InvenTree/serializers.py:356
 msgid "Select data file for upload"
-msgstr ""
+msgstr "Neue Datei zum Hochladen auswählen"
 
 #: InvenTree/serializers.py:380
 msgid "Unsupported file type"
@@ -275,19 +275,19 @@ msgstr "Datei ist zu groß"
 
 #: InvenTree/serializers.py:407
 msgid "No columns found in file"
-msgstr ""
+msgstr "Keine Spalten in der Datei gefunden"
 
 #: InvenTree/serializers.py:410
 msgid "No data rows found in file"
-msgstr ""
+msgstr "Keine Datensätze in der Datei gefunden"
 
 #: InvenTree/serializers.py:533
 msgid "No data rows provided"
-msgstr ""
+msgstr "Keine Zeilen ausgewählt"
 
 #: InvenTree/serializers.py:536
 msgid "No data columns supplied"
-msgstr ""
+msgstr "Keine Spalten angegeben"
 
 #: InvenTree/serializers.py:623
 msgid "Missing required column"
@@ -295,7 +295,7 @@ msgstr "Erforderliche Spalte fehlt"
 
 #: InvenTree/serializers.py:632
 msgid "Duplicate column"
-msgstr ""
+msgstr "Doppelte Spalte"
 
 #: InvenTree/settings.py:655
 msgid "German"
@@ -2313,7 +2313,7 @@ msgstr "Endpunkt, über den diese Nachricht empfangen wurde"
 
 #: common/models.py:1586
 msgid "Worked on"
-msgstr ""
+msgstr "Bearbeitet"
 
 #: common/models.py:1587
 msgid "Was the work on this message finished?"
@@ -4237,7 +4237,7 @@ msgstr "Standard Parameter Wert"
 
 #: part/models.py:2614
 msgid "Part ID or part name"
-msgstr ""
+msgstr "Teilnummer oder Teilname"
 
 #: part/models.py:2617 templates/js/translated/model_renderers.js:182
 msgid "Part ID"
@@ -4245,27 +4245,27 @@ msgstr "Teil-ID"
 
 #: part/models.py:2618
 msgid "Unique part ID value"
-msgstr ""
+msgstr "Eindeutige Teil-ID"
 
 #: part/models.py:2621
 msgid "Part Name"
-msgstr ""
+msgstr "Name des Teils"
 
 #: part/models.py:2625
 msgid "Part IPN"
-msgstr ""
+msgstr "Teil-ID"
 
 #: part/models.py:2626
 msgid "Part IPN value"
-msgstr ""
+msgstr "IPN-Wert des Teils"
 
 #: part/models.py:2629
 msgid "Level"
-msgstr ""
+msgstr "Stufe"
 
 #: part/models.py:2630
 msgid "BOM level"
-msgstr ""
+msgstr "Stücklistenebene"
 
 #: part/models.py:2690
 msgid "Select parent part"
@@ -5364,15 +5364,15 @@ msgstr ""
 
 #: plugin/models.py:47
 msgid "Is the plugin active"
-msgstr ""
+msgstr "Ist das Plugin aktiv"
 
 #: plugin/models.py:199
 msgid "Plugin"
-msgstr ""
+msgstr "Plugin"
 
 #: plugin/samples/integration/sample.py:42
 msgid "Enable PO"
-msgstr ""
+msgstr "Bestellungen aktivieren"
 
 #: plugin/samples/integration/sample.py:43
 msgid "Enable PO functionality in InvenTree interface"
