@@ -72,12 +72,12 @@ class ViewTests(TestCase):
         """
 
         # Change this number as more javascript files are added to the index page
-        N_SCRIPT_FILES = 35
+        N_SCRIPT_FILES = 46
 
         content = self.get_index_page()
 
         # Extract all required javascript files from the index page content
-        script_files = re.findall("<script type='text\\/javascript' src=\"([^\"]*)\"><\\/script>", content)
+        script_files = re.findall("<script type='text\\/javascript' src='([^']*)'><\\/script>", content)
 
         self.assertEqual(len(script_files), N_SCRIPT_FILES)
 
