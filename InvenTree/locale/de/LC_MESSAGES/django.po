@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-20 20:28+0000\n"
+"POT-Creation-Date: 2022-02-20 22:01+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -308,15 +308,15 @@ msgid "No data columns supplied"
 msgstr "Keine Teile gefunden"
 
 #: InvenTree/serializers.py:623
-#, fuzzy
+#, fuzzy, python-brace-format
 #| msgid "Missing selections for the following required columns"
-msgid "Missing required column"
+msgid "Missing required column: '{name}'"
 msgstr "Es fehlt eine Auswahl für die folgende benötigte Spalte"
 
 #: InvenTree/serializers.py:632
-#, fuzzy
+#, fuzzy, python-brace-format
 #| msgid "Duplicate selection"
-msgid "Duplicate column"
+msgid "Duplicate column: '{col}'"
 msgstr "Auswahl duplizieren"
 
 #: InvenTree/settings.py:655
@@ -7621,7 +7621,7 @@ msgstr ""
 #: templates/allauth_2fa/setup.html:40
 #, fuzzy
 #| msgid "Part Settings"
-msgid "back to settings"
+msgid "Back to settings"
 msgstr "Teil-Einstellungen"
 
 #: templates/allauth_2fa/remove.html:6

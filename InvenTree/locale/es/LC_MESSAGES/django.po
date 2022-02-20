@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-20 20:28+0000\n"
+"POT-Creation-Date: 2022-02-20 22:01+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
@@ -304,13 +304,14 @@ msgid "No data columns supplied"
 msgstr "No se encontró ninguna acción coincidente"
 
 #: InvenTree/serializers.py:623
-msgid "Missing required column"
+#, python-brace-format
+msgid "Missing required column: '{name}'"
 msgstr ""
 
 #: InvenTree/serializers.py:632
-#, fuzzy
+#, fuzzy, python-brace-format
 #| msgid "Duplicate serial: {n}"
-msgid "Duplicate column"
+msgid "Duplicate column: '{col}'"
 msgstr "Duplicar serie: {n}"
 
 #: InvenTree/settings.py:655
@@ -7362,7 +7363,7 @@ msgstr ""
 
 #: templates/allauth_2fa/backup_tokens.html:31
 #: templates/allauth_2fa/setup.html:40
-msgid "back to settings"
+msgid "Back to settings"
 msgstr ""
 
 #: templates/allauth_2fa/remove.html:6
