@@ -208,7 +208,7 @@ class BuildOutputCreateSerializer(serializers.Serializer):
                 raise ValidationError(_("Integer quantity required for trackable parts"))
 
             if part.has_trackable_parts():
-                raise ValidationError(_("Integer quantity required, as the bill of materials contains tracakble parts"))
+                raise ValidationError(_("Integer quantity required, as the bill of materials contains trackable parts"))
 
         return quantity
 

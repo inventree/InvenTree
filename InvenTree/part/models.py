@@ -46,7 +46,7 @@ from common.models import InvenTreeSetting
 
 from InvenTree import helpers
 from InvenTree import validators
-from InvenTree.models import InvenTreeTree, InvenTreeAttachment
+from InvenTree.models import InvenTreeTree, InvenTreeAttachment, DataImportMixin
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2string, normalize, decimal2money
 import InvenTree.tasks
@@ -482,6 +482,36 @@ class Part(MPTTModel):
 
     def __str__(self):
         return f"{self.full_name} - {self.description}"
+
+    def get_parts_in_bom(self):
+        """
+        Return a list of all parts in the BOM for this part.
+        Takes into account substitutes, variant parts, and inherited BOM items
+        """
+
+        parts = set()
+
+        for bom_item in self.get_bom_items():
+            for part in bom_item.get_valid_parts_for_allocation():
+                parts.add(part)
+
+        return parts
+
+    def check_if_part_in_bom(self, other_part):
+        """
+        Check if the other_part is in the BOM for this part.
+
+        Note:
+            - Accounts for substitute parts
+            - Accounts for variant BOMs
+        """
+
+        for bom_item in self.get_bom_items():
+            if other_part in bom_item.get_valid_parts_for_allocation():
+                return True
+
+        # No matches found
+        return False
 
     def check_add_to_bom(self, parent, raise_error=False, recursive=True):
         """
@@ -2550,7 +2580,7 @@ class PartCategoryParameterTemplate(models.Model):
                                      help_text=_('Default Parameter Value'))
 
 
-class BomItem(models.Model):
+class BomItem(models.Model, DataImportMixin):
     """ A BomItem links a part to its component items.
     A part can have a BOM (bill of materials) which defines
     which parts are required (and in what quantity) to make it.
@@ -2567,6 +2597,39 @@ class BomItem(models.Model):
         inherited: This BomItem can be inherited by the BOMs of variant parts
         allow_variants: Stock for part variants can be substituted for this BomItem
     """
+
+    # Fields available for bulk import
+    IMPORT_FIELDS = {
+        'quantity': {
+            'required': True
+        },
+        'reference': {},
+        'overage': {},
+        'allow_variants': {},
+        'inherited': {},
+        'optional': {},
+        'note': {},
+        'part': {
+            'label': _('Part'),
+            'help_text': _('Part ID or part name'),
+        },
+        'part_id': {
+            'label': _('Part ID'),
+            'help_text': _('Unique part ID value')
+        },
+        'part_name': {
+            'label': _('Part Name'),
+            'help_text': _('Part name'),
+        },
+        'part_ipn': {
+            'label': _('Part IPN'),
+            'help_text': _('Part IPN value'),
+        },
+        'level': {
+            'label': _('Level'),
+            'help_text': _('BOM level'),
+        }
+    }
 
     @staticmethod
     def get_api_url():

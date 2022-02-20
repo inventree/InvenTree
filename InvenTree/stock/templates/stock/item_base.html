@@ -98,7 +98,9 @@
             <li><a class='dropdown-item' href='#' id='stock-uninstall' title='{% trans "Uninstall stock item" %}'><span class='fas fa-unlink'></span> {% trans "Uninstall" %}</a></li>
             {% else %}
             {% if item.part.get_used_in %}
-            <li><a class='dropdown-item' href='#' id='stock-install-in' title='{% trans "Install stock item" %}'><span class='fas fa-link'></span> {% trans "Install" %}</a></li>
+            <!--    
+                <li><a class='dropdown-item' href='#' id='stock-install-in' title='{% trans "Install stock item" %}'><span class='fas fa-link'></span> {% trans "Install" %}</a></li>
+            -->
             {% endif %}
             {% endif %}
         </ul>
@@ -442,16 +444,7 @@ $("#stock-serialize").click(function() {
 
 $('#stock-install-in').click(function() {
 
-    launchModalForm(
-        "{% url 'stock-item-install' item.pk %}",
-        {
-            data: {
-                'part': {{ item.part.pk }},
-                'install_in': true,
-            },
-            reload: true,
-        }
-    );
+    // TODO - Launch dialog to install this item *into* another stock item
 });
 
 $('#stock-uninstall').click(function() {
@@ -618,7 +611,7 @@ enableBreadcrumbTree({
     {% endif %}
     processNode: function(node) {
         node.text = node.name;
-        node.href = `/stock/item/${node.pk}/`;
+        node.href = `/stock/location/${node.pk}/`;
 
         return node;
     }

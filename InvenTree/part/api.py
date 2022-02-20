@@ -995,6 +995,23 @@ class PartList(generics.ListCreateAPIView):
             except (ValueError, Part.DoesNotExist):
                 pass
 
+        # Filter only parts which are in the "BOM" for a given part
+        in_bom_for = params.get('in_bom_for', None)
+
+        if in_bom_for is not None:
+            try:
+                in_bom_for = Part.objects.get(pk=in_bom_for)
+
+                # Extract a list of parts within the BOM
+                bom_parts = in_bom_for.get_parts_in_bom()
+                print("bom_parts:", bom_parts)
+                print([p.pk for p in bom_parts])
+
+                queryset = queryset.filter(pk__in=[p.pk for p in bom_parts])
+
+            except (ValueError, Part.DoesNotExist):
+                pass
+
         # Filter by whether the BOM has been validated (or not)
         bom_valid = params.get('bom_valid', None)
 
@@ -1533,13 +1550,15 @@ class BomList(generics.ListCreateAPIView):
     ]
 
 
-class BomExtract(generics.CreateAPIView):
+class BomImportUpload(generics.CreateAPIView):
     """
-    API endpoint for extracting BOM data from a BOM file.
+    API endpoint for uploading a complete Bill of Materials.
+
+    It is assumed that the BOM has been extracted from a file using the BomExtract endpoint.
     """
 
-    queryset = Part.objects.none()
-    serializer_class = part_serializers.BomExtractSerializer
+    queryset = Part.objects.all()
+    serializer_class = part_serializers.BomImportUploadSerializer
 
     def create(self, request, *args, **kwargs):
         """
@@ -1556,15 +1575,22 @@ class BomExtract(generics.CreateAPIView):
         return Response(data, status=status.HTTP_201_CREATED, headers=headers)
 
 
-class BomUpload(generics.CreateAPIView):
+class BomImportExtract(generics.CreateAPIView):
     """
-    API endpoint for uploading a complete Bill of Materials.
-
-    It is assumed that the BOM has been extracted from a file using the BomExtract endpoint.
+    API endpoint for extracting BOM data from a BOM file.
     """
 
-    queryset = Part.objects.all()
-    serializer_class = part_serializers.BomUploadSerializer
+    queryset = Part.objects.none()
+    serializer_class = part_serializers.BomImportExtractSerializer
+
+
+class BomImportSubmit(generics.CreateAPIView):
+    """
+    API endpoint for submitting BOM data from a BOM file
+    """
+
+    queryset = BomItem.objects.none()
+    serializer_class = part_serializers.BomImportSubmitSerializer
 
 
 class BomDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -1719,9 +1745,10 @@ bom_api_urls = [
         url(r'^.*$', BomDetail.as_view(), name='api-bom-item-detail'),
     ])),
 
-    url(r'^extract/', BomExtract.as_view(), name='api-bom-extract'),
-
-    url(r'^upload/', BomUpload.as_view(), name='api-bom-upload'),
+    # API endpoint URLs for importing BOM data
+    url(r'^import/upload/', BomImportUpload.as_view(), name='api-bom-import-upload'),
+    url(r'^import/extract/', BomImportExtract.as_view(), name='api-bom-import-extract'),
+    url(r'^import/submit/', BomImportSubmit.as_view(), name='api-bom-import-submit'),
 
     # Catch-all
     url(r'^.*$', BomList.as_view(), name='api-bom-list'),
