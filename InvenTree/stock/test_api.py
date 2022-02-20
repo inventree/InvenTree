@@ -393,7 +393,7 @@ class StockItemTest(StockAPITestCase):
         self.assertEqual(trackable_part.get_stock_count(), 0)
 
         # This should fail, incorrect serial number count
-        response = self.post(
+        self.post(
             self.list_url,
             data={
                 'part': trackable_part.pk,
