@@ -445,7 +445,7 @@ $('#stock-serialize').click(function() {
 $('#stock-install-in').click(function() {
 
     launchModalForm(
-        '{% url "stock-item-install" item.pk %}',
+        '{% url "api-stock-item-install" item.pk %}',
         {
             data: {
                 'part': {{ item.part.pk }},
