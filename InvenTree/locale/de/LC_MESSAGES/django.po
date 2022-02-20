@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-18 20:36+0000\n"
-"PO-Revision-Date: 2022-02-19 14:45\n"
+"PO-Revision-Date: 2022-02-20 18:33\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1385,7 +1385,7 @@ msgstr ""
 
 #: build/templates/build/detail.html:254
 msgid "Delete outputs"
-msgstr ""
+msgstr "Endprodukte löschen"
 
 #: build/templates/build/detail.html:270
 msgid "Completed Build Outputs"
@@ -1979,7 +1979,7 @@ msgstr "Plugins zum Hinzufügen von URLs aktivieren"
 
 #: common/models.py:983
 msgid "Enable navigation integration"
-msgstr ""
+msgstr "Navigations-Integration aktivieren"
 
 #: common/models.py:984
 msgid "Enable plugins to integrate into navigation"
@@ -1999,11 +1999,11 @@ msgstr "Terminplan-Integration aktivieren"
 
 #: common/models.py:998
 msgid "Enable plugins to run scheduled tasks"
-msgstr ""
+msgstr "Geplante Aufgaben aktivieren"
 
 #: common/models.py:1004
 msgid "Enable event integration"
-msgstr ""
+msgstr "Ereignis-Integration aktivieren"
 
 #: common/models.py:1005
 msgid "Enable plugins to respond to internal events"
@@ -4415,7 +4415,7 @@ msgstr ""
 
 #: part/serializers.py:762
 msgid "No part column specified"
-msgstr ""
+msgstr "Keine Bauteilspalte angegeben"
 
 #: part/serializers.py:806
 msgid "Multiple matching parts found"
@@ -4439,7 +4439,7 @@ msgstr "Ungültige Menge"
 
 #: part/serializers.py:848
 msgid "At least one BOM item is required"
-msgstr ""
+msgstr "Mindestens eine Stückliste-Position ist erforderlich"
 
 #: part/tasks.py:58
 msgid "Low stock notification"
@@ -5201,16 +5201,16 @@ msgstr "Stückliste hochladen"
 
 #: part/templates/part/upload_bom.html:19
 msgid "BOM upload requirements"
-msgstr ""
+msgstr "Anforderungen an Stückliste-Dateien"
 
 #: part/templates/part/upload_bom.html:23
 #: part/templates/part/upload_bom.html:90
 msgid "Upload BOM File"
-msgstr ""
+msgstr "Stückliste-Datei hochgeladen"
 
 #: part/templates/part/upload_bom.html:29
 msgid "Submit BOM Data"
-msgstr ""
+msgstr "Stückliste hochladen"
 
 #: part/templates/part/upload_bom.html:37
 msgid "Requirements for BOM upload"
@@ -5336,7 +5336,7 @@ msgstr "Interne Preisspanne löschen"
 
 #: plugin/integration.py:138
 msgid "No author found"
-msgstr ""
+msgstr "Kein Autor gefunden"
 
 #: plugin/integration.py:152
 msgid "No date found"
@@ -5352,15 +5352,15 @@ msgstr "Plugin-Konfigurationen"
 
 #: plugin/models.py:32
 msgid "Key"
-msgstr ""
+msgstr "Schlüssel"
 
 #: plugin/models.py:33
 msgid "Key of plugin"
-msgstr ""
+msgstr "Schlüssel des Plugins"
 
 #: plugin/models.py:41
 msgid "PluginName of the plugin"
-msgstr ""
+msgstr "Name des Plugins"
 
 #: plugin/models.py:47
 msgid "Is the plugin active"
@@ -5408,7 +5408,7 @@ msgstr "Quell-URL"
 
 #: plugin/serializers.py:51
 msgid "Source for the package - this can be a custom registry or a VCS path"
-msgstr ""
+msgstr "Quelle für das Paket - dies kann eine eigene Registry oder ein VCS-Pfad sein"
 
 #: plugin/serializers.py:56
 msgid "Package Name"
@@ -5416,7 +5416,7 @@ msgstr "Paket-Name"
 
 #: plugin/serializers.py:57
 msgid "Name for the Plugin Package - can also contain a version indicator"
-msgstr ""
+msgstr "Name für das Plugin-Paket - kann auch einen Versionstext enthalten"
 
 #: plugin/serializers.py:60
 msgid "Confirm plugin installation"
@@ -5424,15 +5424,15 @@ msgstr "Plugin-Installation bestätigen"
 
 #: plugin/serializers.py:61
 msgid "This will install this plugin now into the current instance. The instance will go into maintenance."
-msgstr ""
+msgstr "Dies wird dieses Plugin sofort in die aktuelle Instanz installieren. Die Instanz wird sofort in Wartung gehen."
 
 #: plugin/serializers.py:76
 msgid "Installation not confirmed"
-msgstr ""
+msgstr "Installation nicht bestätigt"
 
 #: plugin/serializers.py:78
 msgid "Either packagename of URL must be provided"
-msgstr ""
+msgstr "Entweder Paketname oder URL muss angegeben werden"
 
 #: report/api.py:234 report/api.py:278
 #, python-brace-format
@@ -5587,11 +5587,11 @@ msgstr "Menge ist erforderlich"
 
 #: stock/api.py:508
 msgid "Valid part must be supplied"
-msgstr ""
+msgstr "Gültiges Teil muss angegeben werden"
 
 #: stock/api.py:535
 msgid "Serial numbers cannot be supplied for a non-trackable part"
-msgstr ""
+msgstr "Seriennummern können für nicht verfolgbare Teile nicht angegeben werden"
 
 #: stock/forms.py:74 stock/forms.py:198 stock/models.py:576
 #: stock/templates/stock/item_base.html:195
@@ -5790,11 +5790,11 @@ msgstr "Artikel wurde einem Kundenauftrag zugewiesen"
 
 #: stock/models.py:1195
 msgid "Stock item is installed in another item"
-msgstr ""
+msgstr "Lagerartikel ist in anderem Element verbaut"
 
 #: stock/models.py:1198
 msgid "Stock item contains other items"
-msgstr ""
+msgstr "Lagerartikel enthält andere Artikel"
 
 #: stock/models.py:1201
 msgid "Stock item has been assigned to a customer"
@@ -7254,7 +7254,7 @@ msgstr ""
 #: templates/allauth_2fa/backup_tokens.html:31
 #: templates/allauth_2fa/setup.html:40
 msgid "back to settings"
-msgstr ""
+msgstr "Zurück zu den Einstellungen"
 
 #: templates/allauth_2fa/remove.html:6
 msgid "Disable Two-Factor Authentication"
@@ -7266,7 +7266,7 @@ msgstr "Bist du sicher?"
 
 #: templates/allauth_2fa/remove.html:14
 msgid "Disable Two-Factor"
-msgstr ""
+msgstr "Zwei-Faktor deaktivieren"
 
 #: templates/allauth_2fa/setup.html:6
 msgid "Setup Two-Factor Authentication"
@@ -7290,7 +7290,7 @@ msgstr "Geben Sie das von der App generierte Token ein:"
 
 #: templates/allauth_2fa/setup.html:35
 msgid "Verify"
-msgstr ""
+msgstr "Überprüfen"
 
 #: templates/attachment_button.html:4 templates/js/translated/attachment.js:54
 msgid "Add Link"
@@ -7426,7 +7426,7 @@ msgstr "Fehler 405: Methode nicht erlaubt"
 
 #: templates/js/translated/api.js:213
 msgid "HTTP method not allowed at URL"
-msgstr ""
+msgstr "HTTP-Methode für diese URL nicht erlaubt"
 
 #: templates/js/translated/api.js:217 templates/js/translated/modals.js:1081
 msgid "Error 408: Timeout"
@@ -7573,11 +7573,11 @@ msgstr "Barcode entspricht keinem Lagerort"
 
 #: templates/js/translated/bom.js:75
 msgid "Display row data"
-msgstr ""
+msgstr "Zeilendaten anzeigen"
 
 #: templates/js/translated/bom.js:131
 msgid "Row Data"
-msgstr ""
+msgstr "Zeilendaten"
 
 #: templates/js/translated/bom.js:249
 msgid "Download BOM Template"
@@ -8107,15 +8107,15 @@ msgstr "Eingabe leeren"
 
 #: templates/js/translated/forms.js:2479
 msgid "File Column"
-msgstr ""
+msgstr "Dateispalte"
 
 #: templates/js/translated/forms.js:2479
 msgid "Field Name"
-msgstr ""
+msgstr "Feldname"
 
 #: templates/js/translated/forms.js:2491
 msgid "Select Columns"
-msgstr ""
+msgstr "Spalten auswählen"
 
 #: templates/js/translated/helpers.js:19
 msgid "YES"
