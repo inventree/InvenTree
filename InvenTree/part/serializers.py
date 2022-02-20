@@ -789,21 +789,20 @@ class BomImportExtractSerializer(DataFileExtractSerializer):
                 pass
 
         # No direct match, where else can we look?
-        if part is None:
-            if part_name or part_ipn:
-                queryset = Part.objects.all()
+        if part is None and (part_name or part_ipn):
+            queryset = Part.objects.all()
 
-                if part_name:
-                    queryset = queryset.filter(name=part_name)
+            if part_name:
+                queryset = queryset.filter(name=part_name)
 
-                if part_ipn:
-                    queryset = queryset.filter(IPN=part_ipn)
+            if part_ipn:
+                queryset = queryset.filter(IPN=part_ipn)
 
-                if queryset.exists():
-                    if queryset.count() == 1:
-                        part = queryset.first()
-                    else:
-                        row['errors']['part'] = _('Multiple matching parts found')
+            if queryset.exists():
+                if queryset.count() == 1:
+                    part = queryset.first()
+                else:
+                    row['errors']['part'] = _('Multiple matching parts found')
 
         if part is None:
             row['errors']['part'] = _('No matching part found')
