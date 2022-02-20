@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-20 22:01+0000\n"
-"PO-Revision-Date: 2022-02-20 22:03\n"
+"PO-Revision-Date: 2022-02-20 23:03\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -292,12 +292,12 @@ msgstr "Keine Spalten angegeben"
 #: InvenTree/serializers.py:623
 #, python-brace-format
 msgid "Missing required column: '{name}'"
-msgstr ""
+msgstr "Erforderliche Spalte '{name}' fehlt"
 
 #: InvenTree/serializers.py:632
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
-msgstr ""
+msgstr "Doppelte Spalte: '{col}'"
 
 #: InvenTree/settings.py:655
 msgid "German"
@@ -7256,7 +7256,7 @@ msgstr "Backup-Codes generieren"
 #: templates/allauth_2fa/backup_tokens.html:31
 #: templates/allauth_2fa/setup.html:40
 msgid "Back to settings"
-msgstr ""
+msgstr "Zurück zu den Einstellungen"
 
 #: templates/allauth_2fa/remove.html:6
 msgid "Disable Two-Factor Authentication"
