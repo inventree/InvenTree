@@ -41,16 +41,13 @@ class BomUploadTest(InvenTreeAPITestCase):
                 assembly=False,
             )
 
-    def post_bom(self, filename, file_data, part=None, clear_existing=None, expected_code=None, content_type='text/plain'):
+    def post_bom(self, filename, file_data, clear_existing=None, expected_code=None, content_type='text/plain'):
 
         bom_file = SimpleUploadedFile(
             filename,
             file_data,
             content_type=content_type,
         )
-
-        if part is None:
-            part = self.part.pk
 
         if clear_existing is None:
             clear_existing = False
@@ -189,7 +186,7 @@ class BomUploadTest(InvenTreeAPITestCase):
 
         self.assertIn('No part column specified', str(response.data))
 
-        response = self.post(
+        self.post(
             url,
             {
                 'rows': rows,
