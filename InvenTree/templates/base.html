@@ -1,4 +1,3 @@
-{% extends "skeleton.html" %}
 {% load static %}
 {% load i18n %}
 {% load inventree_extras %}
@@ -9,7 +8,35 @@
 {% settings_value "SERVER_RESTART_REQUIRED" as server_restart_required %}
 {% inventree_demo_mode as demo_mode %}
 
-{% block head_css %}
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+
+<!-- Required meta tags -->
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'>
+
+<!-- Favicon -->
+<link rel='apple-touch-icon' sizes='57x57' href='{% static "img/favicon/apple-icon-57x57.png" %}'>
+<link rel='apple-touch-icon' sizes='60x60' href='{% static "img/favicon/apple-icon-60x60.png" %}'>
+<link rel='apple-touch-icon' sizes='72x72' href='{% static "img/favicon/apple-icon-72x72.png" %}'>
+<link rel='apple-touch-icon' sizes='76x76' href='{% static "img/favicon/apple-icon-76x76.png" %}'>
+<link rel='apple-touch-icon' sizes='114x114' href='{% static "img/favicon/apple-icon-114x114.png" %}'>
+<link rel='apple-touch-icon' sizes='120x120' href='{% static "img/favicon/apple-icon-120x120.png" %}'>
+<link rel='apple-touch-icon' sizes='144x144' href='{% static "img/favicon/apple-icon-144x144.png" %}'>
+<link rel='apple-touch-icon' sizes='152x152' href='{% static "img/favicon/apple-icon-152x152.png" %}'>
+<link rel='apple-touch-icon' sizes='180x180' href='{% static "img/favicon/apple-icon-180x180.png" %}'>
+<link rel='icon' type='image/png' sizes='192x192'  href='{% static "img/favicon/android-icon-192x192.png" %}'>
+<link rel='icon' type='image/png' sizes='32x32' href='{% static "img/favicon/favicon-32x32.png" %}'>
+<link rel='icon' type='image/png' sizes='96x96' href='{% static "img/favicon/favicon-96x96.png" %}'>
+<link rel='icon' type='image/png' sizes='16x16' href='{% static "img/favicon/favicon-16x16.png" %}'>
+<link rel='manifest' href='{% static "img/favicon/manifest.json" %}'>
+<meta name='msapplication-TileColor' content='#ffffff'>
+<meta name='msapplication-TileImage' content='{% static "img/favicon/ms-icon-144x144.png" %}'>
+<meta name='theme-color' content='#ffffff'>
+
+<!-- CSS -->
+<link rel='stylesheet' href='{% static "bootstrap/css/bootstrap.min.css" %}'>
 <link rel='stylesheet' href='{% static "bootstrap-table/bootstrap-table.css" %}'>
 <link rel='stylesheet' href='{% static "bootstrap-table/extensions/group-by-v2/bootstrap-table-group-by.css" %}'>
 <link rel='stylesheet' href='{% static "bootstrap-table/extensions/filter-control/bootstrap-table-filter-control.css" %}'>
@@ -18,18 +45,29 @@
 <link rel='stylesheet' href='{% static "fontawesome/css/solid.min.css" %}'>
 <link rel='stylesheet' href='{% static "select2/css/select2.css" %}'>
 <link rel='stylesheet' href='{% static "select2/css/select2-bootstrap-5-theme.css" %}'>
-
 <link rel='stylesheet' href='{% static "fullcalendar/main.css" %}'>
 <link rel='stylesheet' href='{% static "script/jquery-ui/jquery-ui.min.css" %}'>
+
+<link rel='stylesheet' href='{% static "css/inventree.css" %}'>
+
 <link rel='stylesheet' href='{% get_color_theme_css user.get_username %}'>
+
+<style>
+    {% block css %}
+    <!-- Custom CSS style goes here -->
+    {% endblock %}
+</style>
+{% block head %}
 {% endblock %}
 
+<title>
 {% block page_title %}
 {% inventree_title %}
 {% endblock %}
+</title>
+</head>
 
-
-{% block body %}
+<body>
 {% include "navbar.html" %}
 
 <div class='main body wrapper container-fluid inventree-body'>
@@ -90,10 +128,13 @@
     {% include 'modals.html' %}
     {% include 'about.html' %}
 </div>
-{% endblock %}
 
-{% block body_scripts_general %}
+<!-- Scripts -->
+<script type='text/javascript' src='{% static "script/jquery_3.3.1_jquery.min.js" %}'></script>
 <script type='text/javascript' src='{% static "script/jquery.form.min.js" %}'></script>
+<script type='text/javascript' src='{% static "script/jquery-ui/jquery-ui.min.js" %}'></script>
+
+<script type='text/javascript' src='{% static "bootstrap/js/bootstrap.bundle.min.js" %}'></script>
 <script type='text/javascript' src='{% static "script/bootstrap/bootstrap-treeview.js" %}'></script>
 <script type='text/javascript' src='{% static "bootstrap-table/bootstrap-table.js" %}'></script>
 
@@ -106,9 +147,20 @@
 <script type='text/javascript' src='{% static "bootstrap-table/extensions/filter-control/bootstrap-table-filter-control.js" %}'></script>
 <script type='text/javascript' src='{% static "bootstrap-table/extensions/treegrid/bootstrap-table-treegrid.js" %}'></script>
 <script type='text/javascript' src='{% static "bootstrap-table/extensions/custom-view/bootstrap-table-custom-view.js" %}'></script>
-{% endblock %}
 
-{% block body_scripts_inventree %}
+<!-- 3rd party general js -->
+<script type='text/javascript' src='{% static "fullcalendar/main.js" %}'></script>
+<script type='text/javascript' src='{% static "fullcalendar/locales-all.js" %}'></script>
+<script type='text/javascript' src='{% static "select2/js/select2.full.js" %}'></script>
+<script type='text/javascript' src='{% static "script/moment.js" %}'></script>
+<script type='text/javascript' src='{% static "script/chart.min.js" %}'></script>
+<script type='text/javascript' src='{% static "script/clipboard.min.js" %}'></script>
+<script type='text/javascript' src='{% static "script/randomColor.min.js" %}'></script>
+
+<!-- general InvenTree -->
+<script type='text/javascript' src='{% static "script/inventree/notification.js" %}'></script>
+<script type='text/javascript' src='{% static "script/inventree/inventree.js" %}'></script>
+
 <!-- dynamic javascript templates -->
 <script type='text/javascript' src='{% url "calendar.js" %}'></script>
 <script type='text/javascript' src='{% url "nav.js" %}'></script>
@@ -134,14 +186,15 @@
 <script type='text/javascript' src='{% i18n_static "plugin.js" %}'></script>
 <script type='text/javascript' src='{% i18n_static "tables.js" %}'></script>
 <script type='text/javascript' src='{% i18n_static "table_filters.js" %}'></script>
-{% endblock %}
+
+<script type='text/javascript' src='{% static "fontawesome/js/solid.min.js" %}'></script>
+<script type='text/javascript' src='{% static "fontawesome/js/brands.min.js" %}'></script>
+<script type='text/javascript' src='{% static "fontawesome/js/fontawesome.min.js" %}'></script>
 
 {% block js_load %}
 {% endblock %}
 
-{% block js_base %}
 <script type='text/javascript'>
-
 $(document).ready(function () {
 {% block js_ready %}
 {% endblock %}
@@ -169,4 +222,10 @@ $(document).ready(function () {
     {% endif %}
 });
 
+</script>
+
+{% block js %}
 {% endblock %}
+
+</body>
+</html> 
