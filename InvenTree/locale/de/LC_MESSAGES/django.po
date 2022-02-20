@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-18 20:36+0000\n"
-"PO-Revision-Date: 2022-02-20 19:52\n"
+"POT-Creation-Date: 2022-02-20 20:28+0000\n"
+"PO-Revision-Date: 2022-02-20 20:58\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -95,26 +95,26 @@ msgid "Empty serial number string"
 msgstr "Keine Seriennummer angegeben"
 
 #: InvenTree/helpers.py:471 InvenTree/helpers.py:474 InvenTree/helpers.py:477
-#: InvenTree/helpers.py:502
+#: InvenTree/helpers.py:501
 #, python-brace-format
 msgid "Invalid group: {g}"
 msgstr "Ungültige Gruppe: {g}"
 
-#: InvenTree/helpers.py:512
+#: InvenTree/helpers.py:510
 #, python-brace-format
 msgid "Invalid group {group}"
 msgstr "Ungültige Gruppe {group}"
 
-#: InvenTree/helpers.py:518
+#: InvenTree/helpers.py:516
 #, python-brace-format
 msgid "Invalid/no group {group}"
 msgstr "Ungültige/Keine Gruppe {group}"
 
-#: InvenTree/helpers.py:524
+#: InvenTree/helpers.py:522
 msgid "No serial numbers found"
 msgstr "Keine Seriennummern gefunden"
 
-#: InvenTree/helpers.py:528
+#: InvenTree/helpers.py:526
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
 msgstr "Anzahl der eindeutigen Seriennummern ({s}) muss mit der Anzahl ({q}) übereinstimmen"
@@ -991,7 +991,7 @@ msgid "Enter quantity for build output"
 msgstr "Menge der Endprodukte angeben"
 
 #: build/serializers.py:201 build/serializers.py:590 order/models.py:280
-#: order/serializers.py:240 part/serializers.py:471 part/serializers.py:827
+#: order/serializers.py:240 part/serializers.py:471 part/serializers.py:826
 #: stock/models.py:367 stock/models.py:1105 stock/serializers.py:305
 msgid "Quantity must be greater than zero"
 msgstr "Anzahl muss größer Null sein"
@@ -1020,9 +1020,9 @@ msgstr "Seriennummern automatisch zuweisen"
 
 #: build/serializers.py:240
 msgid "Automatically allocate required items with matching serial numbers"
-msgstr ""
+msgstr "Benötigte Lagerartikel automatisch mit passenden Seriennummern zuweisen"
 
-#: build/serializers.py:274 stock/api.py:551
+#: build/serializers.py:274 stock/api.py:549
 msgid "The following serial numbers already exist"
 msgstr "Folgende Seriennummern existieren bereits"
 
@@ -1088,7 +1088,7 @@ msgstr "Bauauftrag hat unvollständige Aufbauten"
 
 #: build/serializers.py:467 build/templates/build/build_base.html:95
 msgid "No build outputs have been created for this build order"
-msgstr ""
+msgstr "Es wurden keine Endprodukte für diesen Bauauftrag erstellt"
 
 #: build/serializers.py:495 build/serializers.py:544 part/models.py:2829
 #: part/models.py:2988
@@ -1373,7 +1373,7 @@ msgstr "Endproduktaktionen"
 
 #: build/templates/build/detail.html:250
 msgid "Complete selected build outputs"
-msgstr ""
+msgstr "Ausgewählte Endprodukt fertigstellen"
 
 #: build/templates/build/detail.html:251
 msgid "Complete outputs"
@@ -1381,7 +1381,7 @@ msgstr "Endprodukte fertigstellen"
 
 #: build/templates/build/detail.html:253
 msgid "Delete selected build outputs"
-msgstr ""
+msgstr "Ausgewählte Endprodukte löschen"
 
 #: build/templates/build/detail.html:254
 msgid "Delete outputs"
@@ -1504,7 +1504,7 @@ msgstr "{name} Datei zum Hochladen auswählen"
 
 #: common/models.py:352
 msgid "Settings key (must be unique - case insensitive)"
-msgstr ""
+msgstr "Einstellungs-Schlüssel (muss einzigartig sein, Groß-/ Kleinschreibung wird nicht beachtet)"
 
 #: common/models.py:354
 msgid "Settings value"
@@ -2007,7 +2007,7 @@ msgstr "Ereignis-Integration aktivieren"
 
 #: common/models.py:1005
 msgid "Enable plugins to respond to internal events"
-msgstr ""
+msgstr "Plugins ermöglichen auf interne Ereignisse zu reagieren"
 
 #: common/models.py:1020 common/models.py:1228
 msgid "Settings key (must be unique - case insensitive"
@@ -4395,7 +4395,7 @@ msgstr "Vererbtes einschließen"
 
 #: part/serializers.py:685
 msgid "Include BOM items which are inherited from templated parts"
-msgstr ""
+msgstr "Stücklisten-Positionen einbeziehen, die von Vorlage-Teilen geerbt werden"
 
 #: part/serializers.py:690
 msgid "Skip Invalid Rows"
@@ -4411,33 +4411,33 @@ msgstr "Bestehende Stückliste löschen"
 
 #: part/serializers.py:735
 msgid "Delete existing BOM items before uploading"
-msgstr ""
+msgstr "Bestehende Stücklisten-Positionen vor dem Importieren entfernen"
 
 #: part/serializers.py:762
 msgid "No part column specified"
 msgstr "Keine Bauteilspalte angegeben"
 
-#: part/serializers.py:806
+#: part/serializers.py:805
 msgid "Multiple matching parts found"
 msgstr "Mehrere übereinstimmende Teile gefunden"
 
-#: part/serializers.py:809
+#: part/serializers.py:808
 msgid "No matching part found"
 msgstr "Keine passenden Teile gefunden"
 
-#: part/serializers.py:812
+#: part/serializers.py:811
 msgid "Part is not designated as a component"
 msgstr "Teil ist nicht als Komponente angelegt"
 
-#: part/serializers.py:821
+#: part/serializers.py:820
 msgid "Quantity not provided"
 msgstr "Menge nicht angegeben"
 
-#: part/serializers.py:829
+#: part/serializers.py:828
 msgid "Invalid quantity"
 msgstr "Ungültige Menge"
 
-#: part/serializers.py:848
+#: part/serializers.py:847
 msgid "At least one BOM item is required"
 msgstr "Mindestens eine Stückliste-Position ist erforderlich"
 
@@ -5589,7 +5589,7 @@ msgstr "Menge ist erforderlich"
 msgid "Valid part must be supplied"
 msgstr "Gültiges Teil muss angegeben werden"
 
-#: stock/api.py:535
+#: stock/api.py:533
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr "Seriennummern können für nicht verfolgbare Teile nicht angegeben werden"
 
@@ -7615,7 +7615,7 @@ msgstr "Parameter-Daten einschließen"
 
 #: templates/js/translated/bom.js:308
 msgid "Include part  parameter data in exported BOM"
-msgstr ""
+msgstr "Teil-Parameter in Stückliste-Export einschließen"
 
 #: templates/js/translated/bom.js:313
 msgid "Include Stock Data"
@@ -7647,7 +7647,7 @@ msgstr "Ersatzteil entfernen"
 
 #: templates/js/translated/bom.js:565
 msgid "Select and add a new substitute part using the input below"
-msgstr ""
+msgstr "Wählen Sie ein neues Ersatzteil aus und fügen Sie sie mit den folgenden Eingaben hinzu"
 
 #: templates/js/translated/bom.js:576
 msgid "Are you sure you wish to remove this substitute part link?"
@@ -7739,7 +7739,7 @@ msgstr "Bauauftrag erstellen"
 
 #: templates/js/translated/build.js:140
 msgid "Build order is ready to be completed"
-msgstr ""
+msgstr "Bauauftrag ist bereit abgeschlossen zu werden"
 
 #: templates/js/translated/build.js:145
 msgid "Build Order is incomplete"
@@ -7765,7 +7765,7 @@ msgstr "Die Stückliste enthält verfolgbare Teile"
 
 #: templates/js/translated/build.js:226
 msgid "Build outputs must be generated individually"
-msgstr ""
+msgstr "Endprodukte müssen individuell angelegt werden"
 
 #: templates/js/translated/build.js:234
 msgid "Trackable parts can have serial numbers specified"
@@ -8879,11 +8879,11 @@ msgstr "Einige Informationen gehen verloren, wenn Artikel zusammengeführt werde
 
 #: templates/js/translated/stock.js:718
 msgid "Stock transaction history will be deleted for merged items"
-msgstr ""
+msgstr "Lagerartikelverlauf wird für zusammengeführte Lagerartikel gelöscht"
 
 #: templates/js/translated/stock.js:719
 msgid "Supplier part information will be deleted for merged items"
-msgstr ""
+msgstr "Lieferantenteil-Informationen werden für zusammengeführte Artikel gelöscht"
 
 #: templates/js/translated/stock.js:805
 msgid "Confirm stock item merge"
