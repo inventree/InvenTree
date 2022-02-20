@@ -186,7 +186,7 @@ class BomUploadTest(InvenTreeAPITestCase):
 
         self.assertIn('No part column specified', str(response.data))
 
-        response = self.post(
+        self.post(
             url,
             {
                 'rows': rows,
