@@ -11,11 +11,11 @@
 {% block content %}
 
 <table class='table table-striped table-condensed'>
-    {% include "InvenTree/settings/header.html" %}
     <tbody>
-        {% include "InvenTree/settings/setting.html" with key="REPORT_DEFAULT_PAGE_SIZE" %}
-        {% include "InvenTree/settings/setting.html" with key="REPORT_DEBUG_MODE" %}
-        {% include "InvenTree/settings/setting.html" with key="REPORT_ENABLE_TEST_REPORT" %}
+        {% include "InvenTree/settings/setting.html" with key="REPORT_ENABLE" icon="fa-file-pdf" %}
+        {% include "InvenTree/settings/setting.html" with key="REPORT_DEFAULT_PAGE_SIZE" icon="fa-print" %}
+        {% include "InvenTree/settings/setting.html" with key="REPORT_DEBUG_MODE" icon="fa-laptop-code" %}
+        {% include "InvenTree/settings/setting.html" with key="REPORT_ENABLE_TEST_REPORT" icon="fa-vial" %}
     </tbody>
 </table>
 

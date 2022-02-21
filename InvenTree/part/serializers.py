@@ -6,15 +6,19 @@ import imghdr
 from decimal import Decimal
 
 from django.urls import reverse_lazy
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Q
 from django.db.models.functions import Coalesce
+from django.utils.translation import ugettext_lazy as _
 
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
 from djmoney.contrib.django_rest_framework import MoneyField
 
-from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
+from InvenTree.serializers import (DataFileUploadSerializer,
+                                   DataFileExtractSerializer,
+                                   InvenTreeAttachmentSerializerField,
+                                   InvenTreeDecimalField,
                                    InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer,
                                    InvenTreeAttachmentSerializer,
@@ -23,7 +27,8 @@ from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
 from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus
 from stock.models import StockItem
 
-from .models import (BomItem, Part, PartAttachment, PartCategory,
+from .models import (BomItem, BomItemSubstitute,
+                     Part, PartAttachment, PartCategory, PartRelated,
                      PartParameter, PartParameterTemplate, PartSellPriceBreak,
                      PartStar, PartTestTemplate, PartCategoryParameterTemplate,
                      PartInternalPriceBreak)
@@ -32,11 +37,24 @@ from .models import (BomItem, Part, PartAttachment, PartCategory,
 class CategorySerializer(InvenTreeModelSerializer):
     """ Serializer for PartCategory """
 
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+
+    def get_starred(self, category):
+        """
+        Return True if the category is directly "starred" by the current user
+        """
+
+        return category in self.context.get('starred_categories', [])
+
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     parts = serializers.IntegerField(source='item_count', read_only=True)
 
     level = serializers.IntegerField(read_only=True)
+
+    starred = serializers.SerializerMethodField()
 
     class Meta:
         model = PartCategory
@@ -50,7 +68,22 @@ class CategorySerializer(InvenTreeModelSerializer):
             'parent',
             'parts',
             'pathstring',
+            'starred',
             'url',
+        ]
+
+
+class CategoryTree(InvenTreeModelSerializer):
+    """
+    Serializer for PartCategory tree
+    """
+
+    class Meta:
+        model = PartCategory
+        fields = [
+            'pk',
+            'name',
+            'parent',
         ]
 
 
@@ -58,8 +91,6 @@ class PartAttachmentSerializer(InvenTreeAttachmentSerializer):
     """
     Serializer for the PartAttachment class
     """
-
-    attachment = InvenTreeAttachmentSerializerField(required=True)
 
     class Meta:
         model = PartAttachment
@@ -69,6 +100,7 @@ class PartAttachmentSerializer(InvenTreeAttachmentSerializer):
             'part',
             'attachment',
             'filename',
+            'link',
             'comment',
             'upload_date',
         ]
@@ -105,7 +137,7 @@ class PartSalePriceSerializer(InvenTreeModelSerializer):
     Serializer for sale prices for Part model.
     """
 
-    quantity = serializers.FloatField()
+    quantity = InvenTreeDecimalField()
 
     price = InvenTreeMoneySerializer(
         allow_null=True
@@ -129,7 +161,7 @@ class PartInternalPriceSerializer(InvenTreeModelSerializer):
     Serializer for internal prices for Part model.
     """
 
-    quantity = serializers.FloatField()
+    quantity = InvenTreeDecimalField()
 
     price = InvenTreeMoneySerializer(
         allow_null=True
@@ -191,6 +223,7 @@ class PartBriefSerializer(InvenTreeModelSerializer):
         fields = [
             'pk',
             'IPN',
+            'default_location',
             'name',
             'revision',
             'full_name',
@@ -238,6 +271,9 @@ class PartSerializer(InvenTreeModelSerializer):
         performing database queries as efficiently as possible,
         to reduce database trips.
         """
+
+        # TODO: Update the "in_stock" annotation to include stock for variants of the part
+        # Ref: https://github.com/inventree/InvenTree/issues/2240
 
         # Annotate with the total 'in stock' quantity
         queryset = queryset.annotate(
@@ -368,6 +404,25 @@ class PartSerializer(InvenTreeModelSerializer):
         ]
 
 
+class PartRelationSerializer(InvenTreeModelSerializer):
+    """
+    Serializer for a PartRelated model
+    """
+
+    part_1_detail = PartSerializer(source='part_1', read_only=True, many=False)
+    part_2_detail = PartSerializer(source='part_2', read_only=True, many=False)
+
+    class Meta:
+        model = PartRelated
+        fields = [
+            'pk',
+            'part_1',
+            'part_1_detail',
+            'part_2',
+            'part_2_detail',
+        ]
+
+
 class PartStarSerializer(InvenTreeModelSerializer):
     """ Serializer for a PartStar object """
 
@@ -385,14 +440,41 @@ class PartStarSerializer(InvenTreeModelSerializer):
         ]
 
 
+class BomItemSubstituteSerializer(InvenTreeModelSerializer):
+    """
+    Serializer for the BomItemSubstitute class
+    """
+
+    part_detail = PartBriefSerializer(source='part', read_only=True, many=False)
+
+    class Meta:
+        model = BomItemSubstitute
+        fields = [
+            'pk',
+            'bom_item',
+            'part',
+            'part_detail',
+        ]
+
+
 class BomItemSerializer(InvenTreeModelSerializer):
-    """ Serializer for BomItem object """
+    """
+    Serializer for BomItem object
+    """
 
     price_range = serializers.CharField(read_only=True)
 
-    quantity = serializers.FloatField()
+    quantity = InvenTreeDecimalField(required=True)
+
+    def validate_quantity(self, quantity):
+        if quantity <= 0:
+            raise serializers.ValidationError(_("Quantity must be greater than zero"))
+
+        return quantity
 
     part = serializers.PrimaryKeyRelatedField(queryset=Part.objects.filter(assembly=True))
+
+    substitutes = BomItemSubstituteSerializer(many=True, read_only=True)
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
@@ -402,12 +484,12 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     validated = serializers.BooleanField(read_only=True, source='is_line_valid')
 
-    purchase_price_min = MoneyField(max_digits=10, decimal_places=6, read_only=True)
+    purchase_price_min = MoneyField(max_digits=19, decimal_places=4, read_only=True)
 
-    purchase_price_max = MoneyField(max_digits=10, decimal_places=6, read_only=True)
-    
+    purchase_price_max = MoneyField(max_digits=19, decimal_places=4, read_only=True)
+
     purchase_price_avg = serializers.SerializerMethodField()
-    
+
     purchase_price_range = serializers.SerializerMethodField()
 
     def __init__(self, *args, **kwargs):
@@ -479,7 +561,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     def get_purchase_price_avg(self, obj):
         """ Return purchase price average """
-        
+
         try:
             purchase_price_avg = obj.purchase_price_avg
         except AttributeError:
@@ -512,6 +594,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'reference',
             'sub_part',
             'sub_part_detail',
+            'substitutes',
             'price_range',
             'validated',
         ]
@@ -562,3 +645,231 @@ class CategoryParameterTemplateSerializer(InvenTreeModelSerializer):
             'parameter_template',
             'default_value',
         ]
+
+
+class PartCopyBOMSerializer(serializers.Serializer):
+    """
+    Serializer for copying a BOM from another part
+    """
+
+    class Meta:
+        fields = [
+            'part',
+            'remove_existing',
+        ]
+
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=Part.objects.all(),
+        many=False,
+        required=True,
+        allow_null=False,
+        label=_('Part'),
+        help_text=_('Select part to copy BOM from'),
+    )
+
+    def validate_part(self, part):
+        """
+        Check that a 'valid' part was selected
+        """
+
+        return part
+
+    remove_existing = serializers.BooleanField(
+        label=_('Remove Existing Data'),
+        help_text=_('Remove existing BOM items before copying'),
+        default=True,
+    )
+
+    include_inherited = serializers.BooleanField(
+        label=_('Include Inherited'),
+        help_text=_('Include BOM items which are inherited from templated parts'),
+        default=False,
+    )
+
+    skip_invalid = serializers.BooleanField(
+        label=_('Skip Invalid Rows'),
+        help_text=_('Enable this option to skip invalid rows'),
+        default=False,
+    )
+
+    def save(self):
+        """
+        Actually duplicate the BOM
+        """
+
+        base_part = self.context['part']
+
+        data = self.validated_data
+
+        base_part.copy_bom_from(
+            data['part'],
+            clear=data.get('remove_existing', True),
+            skip_invalid=data.get('skip_invalid', False),
+            include_inherited=data.get('include_inherited', False),
+        )
+
+
+class BomImportUploadSerializer(DataFileUploadSerializer):
+    """
+    Serializer for uploading a file and extracting data from it.
+    """
+
+    TARGET_MODEL = BomItem
+
+    class Meta:
+        fields = [
+            'data_file',
+            'part',
+            'clear_existing_bom',
+        ]
+
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=Part.objects.all(),
+        required=True,
+        allow_null=False,
+        many=False,
+    )
+
+    clear_existing_bom = serializers.BooleanField(
+        label=_('Clear Existing BOM'),
+        help_text=_('Delete existing BOM items before uploading')
+    )
+
+    def save(self):
+
+        data = self.validated_data
+
+        if data.get('clear_existing_bom', False):
+            part = data['part']
+
+            with transaction.atomic():
+                part.bom_items.all().delete()
+
+
+class BomImportExtractSerializer(DataFileExtractSerializer):
+    """
+    """
+
+    TARGET_MODEL = BomItem
+
+    def validate_extracted_columns(self):
+        super().validate_extracted_columns()
+
+        part_columns = ['part', 'part_name', 'part_ipn', 'part_id']
+
+        if not any([col in self.columns for col in part_columns]):
+            # At least one part column is required!
+            raise serializers.ValidationError(_("No part column specified"))
+
+    def process_row(self, row):
+
+        # Skip any rows which are at a lower "level"
+        level = row.get('level', None)
+
+        if level is not None:
+            try:
+                level = int(level)
+                if level != 1:
+                    # Skip this row
+                    return None
+            except:
+                pass
+
+        # Attempt to extract a valid part based on the provided data
+        part_id = row.get('part_id', row.get('part', None))
+        part_name = row.get('part_name', row.get('part', None))
+        part_ipn = row.get('part_ipn', None)
+
+        part = None
+
+        if part_id is not None:
+            try:
+                part = Part.objects.get(pk=part_id)
+            except (ValueError, Part.DoesNotExist):
+                pass
+
+        # No direct match, where else can we look?
+        if part is None and (part_name or part_ipn):
+            queryset = Part.objects.all()
+
+            if part_name:
+                queryset = queryset.filter(name=part_name)
+
+            if part_ipn:
+                queryset = queryset.filter(IPN=part_ipn)
+
+            if queryset.exists():
+                if queryset.count() == 1:
+                    part = queryset.first()
+                else:
+                    row['errors']['part'] = _('Multiple matching parts found')
+
+        if part is None:
+            row['errors']['part'] = _('No matching part found')
+        else:
+            if not part.component:
+                row['errors']['part'] = _('Part is not designated as a component')
+
+        # Update the 'part' value in the row
+        row['part'] = part.pk if part is not None else None
+
+        # Check the provided 'quantity' value
+        quantity = row.get('quantity', None)
+
+        if quantity is None:
+            row['errors']['quantity'] = _('Quantity not provided')
+        else:
+            try:
+                quantity = Decimal(quantity)
+
+                if quantity <= 0:
+                    row['errors']['quantity'] = _('Quantity must be greater than zero')
+            except:
+                row['errors']['quantity'] = _('Invalid quantity')
+
+        return row
+
+
+class BomImportSubmitSerializer(serializers.Serializer):
+    """
+    Serializer for uploading a BOM against a specified part.
+
+    A "BOM" is a set of BomItem objects which are to be validated together as a set
+    """
+
+    items = BomItemSerializer(many=True, required=True)
+
+    def validate(self, data):
+
+        items = data['items']
+
+        if len(items) == 0:
+            raise serializers.ValidationError(_("At least one BOM item is required"))
+
+        data = super().validate(data)
+
+        return data
+
+    def save(self):
+
+        data = self.validated_data
+
+        items = data['items']
+
+        try:
+            with transaction.atomic():
+
+                for item in items:
+
+                    part = item['part']
+                    sub_part = item['sub_part']
+
+                    # Ignore duplicate BOM items
+                    if BomItem.objects.filter(part=part, sub_part=sub_part).exists():
+                        continue
+
+                    # Create a new BomItem object
+                    BomItem.objects.create(**item)
+
+        except Exception as e:
+            raise serializers.ValidationError(detail=serializers.as_serializer_error(e))

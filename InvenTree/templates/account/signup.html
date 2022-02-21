@@ -1,0 +1,40 @@
+{% extends "account/base.html" %}
+
+{% load i18n crispy_forms_tags inventree_extras %}
+
+{% block head_title %}{% trans "Signup" %}{% endblock %}
+
+{% block content %}
+{% settings_value 'LOGIN_ENABLE_REG' as enable_reg %}
+{% settings_value 'LOGIN_ENABLE_SSO' as enable_sso %}
+
+<h1>{% trans "Sign Up" %}</h1>
+
+<p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
+
+{% if enable_reg %}
+<form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+  {% csrf_token %}
+  {{ form|crispy }}
+  {% if redirect_field_value %}
+  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+  {% endif %}
+  <button type="submit" class="btn btn-primary btn-block">{% trans "Sign Up" %}</button>
+</form>
+
+{% if enable_sso %}
+<br>
+<h4>{% trans 'Or use a SSO-provider for signup' %}</h4>
+<div>
+    {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+</div>
+{% include "socialaccount/snippets/login_extra.html" %}
+{% endif %}
+
+{% else %}
+<div class='alert alert-block alert-danger'>
+    <p>{% trans "This function is currently disabled. Please contact an administrator." %}</p>
+</div>
+{% endif %}
+
+{% endblock %}

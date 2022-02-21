@@ -31,7 +31,7 @@ class InvenTreeMetadata(SimpleMetadata):
     """
 
     def determine_metadata(self, request, view):
-        
+
         self.request = request
         self.view = view
 
@@ -72,7 +72,10 @@ class InvenTreeMetadata(SimpleMetadata):
 
                 # Remove any HTTP methods that the user does not have permission for
                 for method, permission in rolemap.items():
-                    if method in actions and not check(user, table, permission):
+
+                    result = check(user, table, permission)
+
+                    if method in actions and not result:
                         del actions[method]
 
                 # Add a 'DELETE' action if we are allowed to delete
@@ -105,20 +108,41 @@ class InvenTreeMetadata(SimpleMetadata):
 
             model_fields = model_meta.get_field_info(model_class)
 
+            model_default_func = getattr(model_class, 'api_defaults', None)
+
+            if model_default_func:
+                model_default_values = model_class.api_defaults(self.request)
+            else:
+                model_default_values = {}
+
             # Iterate through simple fields
             for name, field in model_fields.fields.items():
 
-                if field.has_default() and name in serializer_info.keys():
+                if name in serializer_info.keys():
 
-                    default = field.default
+                    if field.has_default():
 
-                    if callable(default):
-                        try:
-                            default = default()
-                        except:
-                            continue
+                        default = field.default
 
-                    serializer_info[name]['default'] = default
+                        if callable(default):
+                            try:
+                                default = default()
+                            except:
+                                continue
+
+                        serializer_info[name]['default'] = default
+
+                    elif name in model_default_values:
+                        serializer_info[name]['default'] = model_default_values[name]
+
+                    # Attributes to copy from the model to the field (if they don't exist)
+                    attributes = ['help_text']
+
+                    for attr in attributes:
+                        if attr not in serializer_info[name]:
+
+                            if hasattr(field, attr):
+                                serializer_info[name][attr] = getattr(field, attr)
 
             # Iterate through relations
             for name, relation in model_fields.relations.items():
@@ -138,6 +162,9 @@ class InvenTreeMetadata(SimpleMetadata):
                 if 'help_text' not in serializer_info[name] and hasattr(relation.model_field, 'help_text'):
                     serializer_info[name]['help_text'] = relation.model_field.help_text
 
+                if name in model_default_values:
+                    serializer_info[name]['default'] = model_default_values[name]
+
         except AttributeError:
             pass
 
@@ -147,7 +174,7 @@ class InvenTreeMetadata(SimpleMetadata):
         # Extract extra information if an instance is available
         if hasattr(serializer, 'instance'):
             instance = serializer.instance
-        
+
         if instance is None and model_class is not None:
             # Attempt to find the instance based on kwargs lookup
             kwargs = getattr(self.view, 'kwargs', None)
@@ -213,7 +240,7 @@ class InvenTreeMetadata(SimpleMetadata):
 
         # Introspect writable related fields
         if field_info['type'] == 'field' and not field_info['read_only']:
-            
+
             # If the field is a PrimaryKeyRelatedField, we can extract the model from the queryset
             if isinstance(field, serializers.PrimaryKeyRelatedField):
                 model = field.queryset.model

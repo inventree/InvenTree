@@ -28,7 +28,7 @@ def schedule_task(taskname, **kwargs):
 
     try:
         from django_q.models import Schedule
-    except (AppRegistryNotReady):
+    except AppRegistryNotReady:  # pragma: no cover
         logger.info("Could not start background tasks - App registry not ready")
         return
 
@@ -47,12 +47,12 @@ def schedule_task(taskname, **kwargs):
                 func=taskname,
                 **kwargs
             )
-    except (OperationalError, ProgrammingError):
+    except (OperationalError, ProgrammingError):  # pragma: no cover
         # Required if the DB is not ready yet
         pass
 
 
-def offload_task(taskname, force_sync=False, *args, **kwargs):
+def offload_task(taskname, *args, force_sync=False, **kwargs):
     """
         Create an AsyncTask if workers are running.
         This is different to a 'scheduled' task,
@@ -64,51 +64,55 @@ def offload_task(taskname, force_sync=False, *args, **kwargs):
 
     try:
         from django_q.tasks import AsyncTask
-    except (AppRegistryNotReady):
-        logger.warning("Could not offload task - app registry not ready")
+
+        import importlib
+        from InvenTree.status import is_worker_running
+
+        if is_worker_running() and not force_sync:
+            # Running as asynchronous task
+            try:
+                task = AsyncTask(taskname, *args, **kwargs)
+                task.run()
+            except ImportError:
+                logger.warning(f"WARNING: '{taskname}' not started - Function not found")
+        else:
+            # Split path
+            try:
+                app, mod, func = taskname.split('.')
+                app_mod = app + '.' + mod
+            except ValueError:
+                logger.warning(f"WARNING: '{taskname}' not started - Malformed function path")
+                return
+
+            # Import module from app
+            try:
+                _mod = importlib.import_module(app_mod)
+            except ModuleNotFoundError:
+                logger.warning(f"WARNING: '{taskname}' not started - No module named '{app_mod}'")
+                return
+
+            # Retrieve function
+            try:
+                _func = getattr(_mod, func)
+            except AttributeError:
+                # getattr does not work for local import
+                _func = None
+
+            try:
+                if not _func:
+                    _func = eval(func)
+            except NameError:
+                logger.warning(f"WARNING: '{taskname}' not started - No function named '{func}'")
+                return
+
+            # Workers are not running: run it as synchronous task
+            _func(*args, **kwargs)
+
+    except AppRegistryNotReady:  # pragma: no cover
+        logger.warning(f"Could not offload task '{taskname}' - app registry not ready")
         return
-    import importlib
-    from InvenTree.status import is_worker_running
-
-    if is_worker_running() and not force_sync:
-        # Running as asynchronous task
-        try:
-            task = AsyncTask(taskname, *args, **kwargs)
-            task.run()
-        except ImportError:
-            logger.warning(f"WARNING: '{taskname}' not started - Function not found")
-    else:
-        # Split path
-        try:
-            app, mod, func = taskname.split('.')
-            app_mod = app + '.' + mod
-        except ValueError:
-            logger.warning(f"WARNING: '{taskname}' not started - Malformed function path")
-            return
-
-        # Import module from app
-        try:
-            _mod = importlib.import_module(app_mod)
-        except ModuleNotFoundError:
-            logger.warning(f"WARNING: '{taskname}' not started - No module named '{app_mod}'")
-            return
-
-        # Retrieve function
-        try:
-            _func = getattr(_mod, func)
-        except AttributeError:
-            # getattr does not work for local import
-            _func = None
-
-        try:
-            if not _func:
-                _func = eval(func)
-        except NameError:
-            logger.warning(f"WARNING: '{taskname}' not started - No function named '{func}'")
-            return
-        
-        # Workers are not running: run it as synchronous task
-        _func()
+    except (OperationalError, ProgrammingError):  # pragma: no cover
+        logger.warning(f"Could not offload task '{taskname}' - database not ready")
 
 
 def heartbeat():
@@ -123,7 +127,7 @@ def heartbeat():
     try:
         from django_q.models import Success
         logger.info("Could not perform heartbeat task - App registry not ready")
-    except AppRegistryNotReady:
+    except AppRegistryNotReady:  # pragma: no cover
         return
 
     threshold = timezone.now() - timedelta(minutes=30)
@@ -146,7 +150,7 @@ def delete_successful_tasks():
 
     try:
         from django_q.models import Success
-    except AppRegistryNotReady:
+    except AppRegistryNotReady:  # pragma: no cover
         logger.info("Could not perform 'delete_successful_tasks' - App registry not ready")
         return
 
@@ -156,7 +160,34 @@ def delete_successful_tasks():
         started__lte=threshold
     )
 
-    results.delete()
+    if results.count() > 0:
+        logger.info(f"Deleting {results.count()} successful task records")
+        results.delete()
+
+
+def delete_old_error_logs():
+    """
+    Delete old error logs from the server
+    """
+
+    try:
+        from error_report.models import Error
+
+        # Delete any error logs more than 30 days old
+        threshold = timezone.now() - timedelta(days=30)
+
+        errors = Error.objects.filter(
+            when__lte=threshold,
+        )
+
+        if errors.count() > 0:
+            logger.info(f"Deleting {errors.count()} old error logs")
+            errors.delete()
+
+    except AppRegistryNotReady:  # pragma: no cover
+        # Apps not yet loaded
+        logger.info("Could not perform 'delete_old_error_logs' - App registry not ready")
+        return
 
 
 def check_for_updates():
@@ -166,7 +197,7 @@ def check_for_updates():
 
     try:
         import common.models
-    except AppRegistryNotReady:
+    except AppRegistryNotReady:  # pragma: no cover
         # Apps not yet loaded!
         logger.info("Could not perform 'check_for_updates' - App registry not ready")
         return
@@ -204,25 +235,6 @@ def check_for_updates():
     )
 
 
-def delete_expired_sessions():
-    """
-    Remove any expired user sessions from the database
-    """
-
-    try:
-        from django.contrib.sessions.models import Session
-
-        # Delete any sessions that expired more than a day ago
-        expired = Session.objects.filter(expire_date__lt=timezone.now() - timedelta(days=1))
-
-        if True or expired.count() > 0:
-            logger.info(f"Deleting {expired.count()} expired sessions.")
-            expired.delete()
-
-    except AppRegistryNotReady:
-        logger.info("Could not perform 'delete_expired_sessions' - App registry not ready")
-
-
 def update_exchange_rates():
     """
     Update currency exchange rates
@@ -232,7 +244,7 @@ def update_exchange_rates():
         from InvenTree.exchange import InvenTreeExchange
         from djmoney.contrib.exchange.models import ExchangeBackend, Rate
         from common.settings import currency_code_default, currency_codes
-    except AppRegistryNotReady:
+    except AppRegistryNotReady:  # pragma: no cover
         # Apps not yet loaded!
         logger.info("Could not perform 'update_exchange_rates' - App registry not ready")
         return
@@ -247,23 +259,26 @@ def update_exchange_rates():
         pass
     except:
         # Some other error
-        print("Database not ready")
+        logger.warning("update_exchange_rates: Database not ready")
         return
 
     backend = InvenTreeExchange()
-    print(f"Updating exchange rates from {backend.url}")
+    logger.info(f"Updating exchange rates from {backend.url}")
 
     base = currency_code_default()
 
-    print(f"Using base currency '{base}'")
+    logger.info(f"Using base currency '{base}'")
 
-    backend.update_rates(base_currency=base)
+    try:
+        backend.update_rates(base_currency=base)
 
-    # Remove any exchange rates which are not in the provided currencies
-    Rate.objects.filter(backend="InvenTreeExchange").exclude(currency__in=currency_codes()).delete()
+        # Remove any exchange rates which are not in the provided currencies
+        Rate.objects.filter(backend="InvenTreeExchange").exclude(currency__in=currency_codes()).delete()
+    except Exception as e:
+        logger.error(f"Error updating exchange rates: {e}")
 
 
-def send_email(subject, body, recipients, from_email=None):
+def send_email(subject, body, recipients, from_email=None, html_message=None):
     """
     Send an email with the specified subject and body,
     to the specified recipients list.
@@ -279,4 +294,5 @@ def send_email(subject, body, recipients, from_email=None):
         from_email,
         recipients,
         fail_silently=False,
+        html_message=html_message
     )

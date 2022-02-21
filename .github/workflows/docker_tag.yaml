@@ -1,4 +1,5 @@
-# Publish docker images to dockerhub
+# Publish docker images to dockerhub on a tagged release
+# Docker build will be uploaded to dockerhub with the 'invetree:<tag>' tag
 
 name: Docker Publish
 
@@ -32,7 +33,6 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
           target: production
-          build-args: |
-            tag=${{ github.event.release.tag_name }}
-          repository: inventree/inventree
+          build-args:
+            tag: ${{ github.event.release.tag_name }}
           tags: inventree/inventree:${{ github.event.release.tag_name }}

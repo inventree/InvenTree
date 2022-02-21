@@ -4,6 +4,7 @@ Part database model definitions
 
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import decimal
 
 import os
 import logging
@@ -19,12 +20,16 @@ from django.db.models.functions import Coalesce
 from django.core.validators import MinValueValidator
 
 from django.contrib.auth.models import User
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, post_save
 from django.dispatch import receiver
+
+from jinja2 import Template
 
 from markdownx.models import MarkdownxField
 
 from django_cleanup import cleanup
+
+from djmoney.contrib.exchange.exceptions import MissingRate
 
 from mptt.models import TreeForeignKey, MPTTModel
 from mptt.exceptions import InvalidMove
@@ -37,12 +42,14 @@ from datetime import datetime
 import hashlib
 from djmoney.contrib.exchange.models import convert_money
 from common.settings import currency_code_default
+from common.models import InvenTreeSetting
 
 from InvenTree import helpers
 from InvenTree import validators
-from InvenTree.models import InvenTreeTree, InvenTreeAttachment
+from InvenTree.models import InvenTreeTree, InvenTreeAttachment, DataImportMixin
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2string, normalize, decimal2money
+import InvenTree.tasks
 
 from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus, SalesOrderStatus
 
@@ -52,6 +59,7 @@ from company.models import SupplierPart
 from stock import models as StockModels
 
 import common.models
+
 import part.settings as part_settings
 
 
@@ -98,11 +106,11 @@ class PartCategory(InvenTreeTree):
 
         if cascade:
             """ Select any parts which exist in this category or any child categories """
-            query = Part.objects.filter(category__in=self.getUniqueChildren(include_self=True))
+            queryset = Part.objects.filter(category__in=self.getUniqueChildren(include_self=True))
         else:
-            query = Part.objects.filter(category=self.pk)
+            queryset = Part.objects.filter(category=self.pk)
 
-        return query
+        return queryset
 
     @property
     def item_count(self):
@@ -196,6 +204,60 @@ class PartCategory(InvenTreeTree):
         prefetch = PartCategoryParameterTemplate.objects.prefetch_related('category', 'parameter_template')
 
         return prefetch.filter(category=self.id)
+
+    def get_subscribers(self, include_parents=True):
+        """
+        Return a list of users who subscribe to this PartCategory
+        """
+
+        cats = self.get_ancestors(include_self=True)
+
+        subscribers = set()
+
+        if include_parents:
+            queryset = PartCategoryStar.objects.filter(
+                category__pk__in=[cat.pk for cat in cats]
+            )
+        else:
+            queryset = PartCategoryStar.objects.filter(
+                category=self,
+            )
+
+        for result in queryset:
+            subscribers.add(result.user)
+
+        return [s for s in subscribers]
+
+    def is_starred_by(self, user, **kwargs):
+        """
+        Returns True if the specified user subscribes to this category
+        """
+
+        return user in self.get_subscribers(**kwargs)
+
+    def set_starred(self, user, status):
+        """
+        Set the "subscription" status of this PartCategory against the specified user
+        """
+
+        if not user:
+            return
+
+        if self.is_starred_by(user) == status:
+            return
+
+        if status:
+            PartCategoryStar.objects.create(
+                category=self,
+                user=user
+            )
+        else:
+            # Note that this won't actually stop the user being subscribed,
+            # if the user is subscribed to a parent category
+            PartCategoryStar.objects.filter(
+                category=self,
+                user=user,
+            ).delete()
 
 
 @receiver(pre_delete, sender=PartCategory, dispatch_uid='partcategory_delete_log')
@@ -328,8 +390,15 @@ class Part(MPTTModel):
 
         context = {}
 
-        context['starred'] = self.isStarredBy(request.user)
         context['disabled'] = not self.active
+
+        # Subscription status
+        context['starred'] = self.is_starred_by(request.user)
+        context['starred_directly'] = context['starred'] and self.is_starred_by(
+            request.user,
+            include_variants=False,
+            include_categories=False
+        )
 
         # Pre-calculate complex queries so they only need to be performed once
         context['total_stock'] = self.total_stock
@@ -414,7 +483,37 @@ class Part(MPTTModel):
     def __str__(self):
         return f"{self.full_name} - {self.description}"
 
-    def checkAddToBOM(self, parent):
+    def get_parts_in_bom(self):
+        """
+        Return a list of all parts in the BOM for this part.
+        Takes into account substitutes, variant parts, and inherited BOM items
+        """
+
+        parts = set()
+
+        for bom_item in self.get_bom_items():
+            for part in bom_item.get_valid_parts_for_allocation():
+                parts.add(part)
+
+        return parts
+
+    def check_if_part_in_bom(self, other_part):
+        """
+        Check if the other_part is in the BOM for this part.
+
+        Note:
+            - Accounts for substitute parts
+            - Accounts for variant BOMs
+        """
+
+        for bom_item in self.get_bom_items():
+            if other_part in bom_item.get_valid_parts_for_allocation():
+                return True
+
+        # No matches found
+        return False
+
+    def check_add_to_bom(self, parent, raise_error=False, recursive=True):
         """
         Check if this Part can be added to the BOM of another part.
 
@@ -424,33 +523,44 @@ class Part(MPTTModel):
         b) The parent part is used in the BOM for *this* part
         c) The parent part is used in the BOM for any child parts under this one
 
-        Failing this check raises a ValidationError!
-
         """
 
-        if parent is None:
-            return
+        result = True
 
-        if self.pk == parent.pk:
-            raise ValidationError({'sub_part': _("Part '{p1}' is  used in BOM for '{p2}' (recursive)").format(
-                p1=str(self),
-                p2=str(parent)
-            )})
-
-        bom_items = self.get_bom_items()
-
-        # Ensure that the parent part does not appear under any child BOM item!
-        for item in bom_items.all():
-
-            # Check for simple match
-            if item.sub_part == parent:
+        try:
+            if self.pk == parent.pk:
                 raise ValidationError({'sub_part': _("Part '{p1}' is  used in BOM for '{p2}' (recursive)").format(
-                    p1=str(parent),
-                    p2=str(self)
+                    p1=str(self),
+                    p2=str(parent)
                 )})
 
-            # And recursively check too
-            item.sub_part.checkAddToBOM(parent)
+            bom_items = self.get_bom_items()
+
+            # Ensure that the parent part does not appear under any child BOM item!
+            for item in bom_items.all():
+
+                # Check for simple match
+                if item.sub_part == parent:
+                    raise ValidationError({'sub_part': _("Part '{p1}' is  used in BOM for '{p2}' (recursive)").format(
+                        p1=str(parent),
+                        p2=str(self)
+                    )})
+
+                # And recursively check too
+                if recursive:
+                    result = result and item.sub_part.check_add_to_bom(
+                        parent,
+                        recursive=True,
+                        raise_error=raise_error
+                    )
+
+        except ValidationError as e:
+            if raise_error:
+                raise e
+            else:
+                return False
+
+        return result
 
     def checkIfSerialNumberExists(self, sn, exclude_self=False):
         """
@@ -516,6 +626,26 @@ class Part(MPTTModel):
         # No serial numbers found
         return None
 
+    def getLatestSerialNumberInt(self):
+        """
+        Return the "latest" serial number for this Part as a integer.
+        If it is not an integer the result is 0
+        """
+
+        latest = self.getLatestSerialNumber()
+
+        # No serial number = > 0
+        if latest is None:
+            latest = 0
+
+        # Attempt to turn into an integer and return
+        try:
+            latest = int(latest)
+            return latest
+        except:
+            # not an integer so 0
+            return 0
+
     def getSerialNumberString(self, quantity=1):
         """
         Return a formatted string representing the next available serial numbers,
@@ -554,7 +684,9 @@ class Part(MPTTModel):
 
     @property
     def full_name(self):
-        """ Format a 'full name' for this Part.
+        """ Format a 'full name' for this Part based on the format PART_NAME_FORMAT defined in Inventree settings
+
+        As a failsafe option, the following is done
 
         - IPN (if not null)
         - Part name
@@ -563,17 +695,31 @@ class Part(MPTTModel):
         Elements are joined by the | character
         """
 
-        elements = []
+        full_name_pattern = InvenTreeSetting.get_setting('PART_NAME_FORMAT')
 
-        if self.IPN:
-            elements.append(self.IPN)
+        try:
+            context = {'part': self}
+            template_string = Template(full_name_pattern)
+            full_name = template_string.render(context)
 
-        elements.append(self.name)
+            return full_name
 
-        if self.revision:
-            elements.append(self.revision)
+        except AttributeError as attr_err:
 
-        return ' | '.join(elements)
+            logger.warning(f"exception while trying to create full name for part {self.name}", attr_err)
+
+            # Fallback to default format
+            elements = []
+
+            if self.IPN:
+                elements.append(self.IPN)
+
+            elements.append(self.name)
+
+            if self.revision:
+                elements.append(self.revision)
+
+            return ' | '.join(elements)
 
     def set_category(self, category):
 
@@ -1020,30 +1166,65 @@ class Part(MPTTModel):
 
         return self.total_stock - self.allocation_count() + self.on_order
 
-    def isStarredBy(self, user):
-        """ Return True if this part has been starred by a particular user """
-
-        try:
-            PartStar.objects.get(part=self, user=user)
-            return True
-        except PartStar.DoesNotExist:
-            return False
-
-    def setStarred(self, user, starred):
+    def get_subscribers(self, include_variants=True, include_categories=True):
         """
-        Set the "starred" status of this Part for the given user
+        Return a list of users who are 'subscribed' to this part.
+
+        A user may 'subscribe' to this part in the following ways:
+
+        a) Subscribing to the part instance directly
+        b) Subscribing to a template part "above" this part (if it is a variant)
+        c) Subscribing to the part category that this part belongs to
+        d) Subscribing to a parent category of the category in c)
+
+        """
+
+        subscribers = set()
+
+        # Start by looking at direct subscriptions to a Part model
+        queryset = PartStar.objects.all()
+
+        if include_variants:
+            queryset = queryset.filter(
+                part__pk__in=[part.pk for part in self.get_ancestors(include_self=True)]
+            )
+        else:
+            queryset = queryset.filter(part=self)
+
+        for star in queryset:
+            subscribers.add(star.user)
+
+        if include_categories and self.category:
+
+            for sub in self.category.get_subscribers():
+                subscribers.add(sub)
+
+        return [s for s in subscribers]
+
+    def is_starred_by(self, user, **kwargs):
+        """
+        Return True if the specified user subscribes to this part
+        """
+
+        return user in self.get_subscribers(**kwargs)
+
+    def set_starred(self, user, status):
+        """
+        Set the "subscription" status of this Part against the specified user
         """
 
         if not user:
             return
 
-        # Do not duplicate efforts
-        if self.isStarredBy(user) == starred:
+        # Already subscribed?
+        if self.is_starred_by(user) == status:
             return
 
-        if starred:
+        if status:
             PartStar.objects.create(part=self, user=user)
         else:
+            # Note that this won't actually stop the user being subscribed,
+            # if the user is subscribed to a parent part or category
             PartStar.objects.filter(part=self, user=user).delete()
 
     def need_to_restock(self):
@@ -1206,6 +1387,17 @@ class Part(MPTTModel):
 
         return query
 
+    def get_stock_count(self, include_variants=True):
+        """
+        Return the total "in stock" count for this part
+        """
+
+        entries = self.stock_entries(in_stock=True, include_variants=include_variants)
+
+        query = entries.aggregate(t=Coalesce(Sum('quantity'), Decimal(0)))
+
+        return query['t']
+
     @property
     def total_stock(self):
         """ Return the total stock quantity for this part.
@@ -1214,11 +1406,7 @@ class Part(MPTTModel):
         - If this part is a "template" (variants exist) then these are counted too
         """
 
-        entries = self.stock_entries(in_stock=True)
-
-        query = entries.aggregate(t=Coalesce(Sum('quantity'), Decimal(0)))
-
-        return query['t']
+        return self.get_stock_count()
 
     def get_bom_item_filter(self, include_inherited=True):
         """
@@ -1266,6 +1454,27 @@ class Part(MPTTModel):
         """
 
         return BomItem.objects.filter(self.get_bom_item_filter(include_inherited=include_inherited))
+
+    def get_installed_part_options(self, include_inherited=True, include_variants=True):
+        """
+        Return a set of all Parts which can be "installed" into this part, based on the BOM.
+
+        arguments:
+            include_inherited - If set, include BomItem entries defined for parent parts
+            include_variants - If set, include variant parts for BomItems which allow variants
+        """
+
+        parts = set()
+
+        for bom_item in self.get_bom_items(include_inherited=include_inherited):
+
+            if include_variants and bom_item.allow_variants:
+                for part in bom_item.sub_part.get_descendants(include_self=True):
+                    parts.add(part)
+            else:
+                parts.add(bom_item.sub_part)
+
+        return parts
 
     def get_used_in_filter(self, include_inherited=True):
         """
@@ -1319,6 +1528,16 @@ class Part(MPTTModel):
     def has_bom(self):
         return self.get_bom_items().count() > 0
 
+    def get_trackable_parts(self):
+        """
+        Return a queryset of all trackable parts in the BOM for this part
+        """
+
+        queryset = self.get_bom_items()
+        queryset = queryset.filter(sub_part__trackable=True)
+
+        return queryset
+
     @property
     def has_trackable_parts(self):
         """
@@ -1326,11 +1545,7 @@ class Part(MPTTModel):
         This is important when building the part.
         """
 
-        for bom_item in self.get_bom_items().all():
-            if bom_item.sub_part.trackable:
-                return True
-
-        return False
+        return self.get_trackable_parts().count() > 0
 
     @property
     def bom_count(self):
@@ -1351,15 +1566,15 @@ class Part(MPTTModel):
         returns a string representation of a hash object which can be compared with a stored value
         """
 
-        hash = hashlib.md5(str(self.id).encode())
+        result_hash = hashlib.md5(str(self.id).encode())
 
         # List *all* BOM items (including inherited ones!)
         bom_items = self.get_bom_items().all().prefetch_related('sub_part')
 
         for item in bom_items:
-            hash.update(str(item.get_item_hash()).encode())
+            result_hash.update(str(item.get_item_hash()).encode())
 
-        return str(hash.digest())
+        return str(result_hash.digest())
 
     def is_bom_valid(self):
         """ Check if the BOM is 'valid' - if the calculated checksum matches the stored value
@@ -1441,7 +1656,7 @@ class Part(MPTTModel):
         # Exclude any parts that this part is used *in* (to prevent recursive BOMs)
         used_in = self.get_used_in().all()
 
-        parts = parts.exclude(id__in=[item.part.id for item in used_in])
+        parts = parts.exclude(id__in=[part.id for part in used_in])
 
         return parts
 
@@ -1530,10 +1745,13 @@ class Part(MPTTModel):
         for item in self.get_bom_items().all().select_related('sub_part'):
 
             if item.sub_part.pk == self.pk:
-                print("Warning: Item contains itself in BOM")
+                logger.warning(f"WARNING: BomItem ID {item.pk} contains itself in BOM")
                 continue
 
-            prices = item.sub_part.get_price_range(quantity * item.quantity, internal=internal, purchase=purchase)
+            q = decimal.Decimal(quantity)
+            i = decimal.Decimal(item.quantity)
+
+            prices = item.sub_part.get_price_range(q * i, internal=internal, purchase=purchase)
 
             if prices is None:
                 continue
@@ -1652,9 +1870,14 @@ class Part(MPTTModel):
 
     def get_purchase_price(self, quantity):
         currency = currency_code_default()
-        prices = [convert_money(item.purchase_price, currency).amount for item in self.stock_items.all() if item.purchase_price]
+        try:
+            prices = [convert_money(item.purchase_price, currency).amount for item in self.stock_items.all() if item.purchase_price]
+        except MissingRate:
+            prices = None
+
         if prices:
             return min(prices) * quantity, max(prices) * quantity
+
         return None
 
     @transaction.atomic
@@ -1667,23 +1890,45 @@ class Part(MPTTModel):
             clear - Remove existing BOM items first (default=True)
         """
 
+        # Ignore if the other part is actually this part?
+        if other == self:
+            return
+
         if clear:
             # Remove existing BOM items
             # Note: Inherited BOM items are *not* deleted!
             self.bom_items.all().delete()
 
+        # List of "ancestor" parts above this one
+        my_ancestors = self.get_ancestors(include_self=False)
+
+        raise_error = not kwargs.get('skip_invalid', True)
+
+        include_inherited = kwargs.get('include_inherited', False)
+
         # Copy existing BOM items from another part
         # Note: Inherited BOM Items will *not* be duplicated!!
-        for bom_item in other.get_bom_items(include_inherited=False).all():
+        for bom_item in other.get_bom_items(include_inherited=include_inherited).all():
             # If this part already has a BomItem pointing to the same sub-part,
             # delete that BomItem from this part first!
 
-            try:
-                existing = BomItem.objects.get(part=self, sub_part=bom_item.sub_part)
-                existing.delete()
-            except (BomItem.DoesNotExist):
-                pass
+            # Ignore invalid BomItem objects
+            if not bom_item.part or not bom_item.sub_part:
+                continue
 
+            # Ignore ancestor parts which are inherited
+            if bom_item.part in my_ancestors and bom_item.inherited:
+                continue
+
+            # Skip if already exists
+            if BomItem.objects.filter(part=self, sub_part=bom_item.sub_part).exists():
+                continue
+
+            # Skip (or throw error) if BomItem is not valid
+            if not bom_item.sub_part.check_add_to_bom(self, raise_error=raise_error):
+                continue
+
+            # Construct a new BOM item
             bom_item.part = self
             bom_item.pk = None
 
@@ -1778,10 +2023,10 @@ class Part(MPTTModel):
 
     @property
     def attachment_count(self):
-        """ Count the number of attachments for this part.
+        """
+        Count the number of attachments for this part.
         If the part is a variant of a template part,
         include the number of attachments for the template part.
-
         """
 
         return self.part_attachments.count()
@@ -1922,10 +2167,10 @@ class Part(MPTTModel):
         if self.variant_of:
             parts.append(self.variant_of)
 
-        siblings = self.get_siblings(include_self=False)
+            siblings = self.get_siblings(include_self=False)
 
-        for sib in siblings:
-            parts.append(sib)
+            for sib in siblings:
+                parts.append(sib)
 
         filtered_parts = Part.objects.filter(pk__in=[part.pk for part in parts])
 
@@ -1965,19 +2210,25 @@ class Part(MPTTModel):
     def related_count(self):
         return len(self.get_related_parts())
 
+    def is_part_low_on_stock(self):
+        """
+        Returns True if the total stock for this part is less than the minimum stock level
+        """
 
-def attach_file(instance, filename):
-    """ Function for storing a file for a PartAttachment
+        return self.get_stock_count() < self.minimum_stock
 
-    Args:
-        instance: Instance of a PartAttachment object
-        filename: name of uploaded file
 
-    Returns:
-        path to store file, format: 'part_file_<pk>_filename'
+@receiver(post_save, sender=Part, dispatch_uid='part_post_save_log')
+def after_save_part(sender, instance: Part, created, **kwargs):
     """
-    # Construct a path to store a file attachment
-    return os.path.join('part_files', str(instance.part.id), filename)
+    Function to be executed after a Part is saved
+    """
+
+    if not created:
+        # Check part stock only if we are *updating* the part (not creating it)
+
+        # Run this check in the background
+        InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance)
 
 
 class PartAttachment(InvenTreeAttachment):
@@ -2000,7 +2251,7 @@ class PartSellPriceBreak(common.models.PriceBreak):
     """
     Represents a price break for selling this part
     """
-    
+
     @staticmethod
     def get_api_url():
         return reverse('api-part-sale-price-list')
@@ -2036,10 +2287,9 @@ class PartInternalPriceBreak(common.models.PriceBreak):
 
 
 class PartStar(models.Model):
-    """ A PartStar object creates a relationship between a User and a Part.
+    """ A PartStar object creates a subscription relationship between a User and a Part.
 
-    It is used to designate a Part as 'starred' (or favourited) for a given User,
-    so that the user can track a list of their favourite parts.
+    It is used to designate a Part as 'subscribed' for a given User.
 
     Attributes:
         part: Link to a Part object
@@ -2051,7 +2301,30 @@ class PartStar(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('User'), related_name='starred_parts')
 
     class Meta:
-        unique_together = ['part', 'user']
+        unique_together = [
+            'part',
+            'user'
+        ]
+
+
+class PartCategoryStar(models.Model):
+    """
+    A PartCategoryStar creates a subscription relationship between a User and a PartCategory.
+
+    Attributes:
+        category: Link to a PartCategory object
+        user: Link to a User object
+    """
+
+    category = models.ForeignKey(PartCategory, on_delete=models.CASCADE, verbose_name=_('Category'), related_name='starred_users')
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('User'), related_name='starred_categories')
+
+    class Meta:
+        unique_together = [
+            'category',
+            'user',
+        ]
 
 
 class PartTestTemplate(models.Model):
@@ -2307,7 +2580,7 @@ class PartCategoryParameterTemplate(models.Model):
                                      help_text=_('Default Parameter Value'))
 
 
-class BomItem(models.Model):
+class BomItem(models.Model, DataImportMixin):
     """ A BomItem links a part to its component items.
     A part can have a BOM (bill of materials) which defines
     which parts are required (and in what quantity) to make it.
@@ -2325,9 +2598,85 @@ class BomItem(models.Model):
         allow_variants: Stock for part variants can be substituted for this BomItem
     """
 
+    # Fields available for bulk import
+    IMPORT_FIELDS = {
+        'quantity': {
+            'required': True
+        },
+        'reference': {},
+        'overage': {},
+        'allow_variants': {},
+        'inherited': {},
+        'optional': {},
+        'note': {},
+        'part': {
+            'label': _('Part'),
+            'help_text': _('Part ID or part name'),
+        },
+        'part_id': {
+            'label': _('Part ID'),
+            'help_text': _('Unique part ID value')
+        },
+        'part_name': {
+            'label': _('Part Name'),
+            'help_text': _('Part name'),
+        },
+        'part_ipn': {
+            'label': _('Part IPN'),
+            'help_text': _('Part IPN value'),
+        },
+        'level': {
+            'label': _('Level'),
+            'help_text': _('BOM level'),
+        }
+    }
+
     @staticmethod
     def get_api_url():
         return reverse('api-bom-list')
+
+    def get_valid_parts_for_allocation(self):
+        """
+        Return a list of valid parts which can be allocated against this BomItem:
+
+        - Include the referenced sub_part
+        - Include any directly specvified substitute parts
+        - If allow_variants is True, allow all variants of sub_part
+        """
+
+        # Set of parts we will allow
+        parts = set()
+
+        parts.add(self.sub_part)
+
+        # Variant parts (if allowed)
+        if self.allow_variants:
+            for variant in self.sub_part.get_descendants(include_self=False):
+                parts.add(variant)
+
+        # Substitute parts
+        for sub in self.substitutes.all():
+            parts.add(sub.part)
+
+        return parts
+
+    def is_stock_item_valid(self, stock_item):
+        """
+        Check if the provided StockItem object is "valid" for assignment against this BomItem
+        """
+
+        return stock_item.part in self.get_valid_parts_for_allocation()
+
+    def get_stock_filter(self):
+        """
+        Return a queryset filter for selecting StockItems which match this BomItem
+
+        - Allow stock from all directly specified substitute parts
+        - If allow_variants is True, allow all part variants
+
+        """
+
+        return Q(part__in=[part.pk for part in self.get_valid_parts_for_allocation()])
 
     def save(self, *args, **kwargs):
 
@@ -2396,18 +2745,18 @@ class BomItem(models.Model):
         """
 
         # Seed the hash with the ID of this BOM item
-        hash = hashlib.md5(str(self.id).encode())
+        result_hash = hashlib.md5(str(self.id).encode())
 
         # Update the hash based on line information
-        hash.update(str(self.sub_part.id).encode())
-        hash.update(str(self.sub_part.full_name).encode())
-        hash.update(str(self.quantity).encode())
-        hash.update(str(self.note).encode())
-        hash.update(str(self.reference).encode())
-        hash.update(str(self.optional).encode())
-        hash.update(str(self.inherited).encode())
+        result_hash.update(str(self.sub_part.id).encode())
+        result_hash.update(str(self.sub_part.full_name).encode())
+        result_hash.update(str(self.quantity).encode())
+        result_hash.update(str(self.note).encode())
+        result_hash.update(str(self.reference).encode())
+        result_hash.update(str(self.optional).encode())
+        result_hash.update(str(self.inherited).encode())
 
-        return str(hash.digest())
+        return str(result_hash.digest())
 
     def validate_hash(self, valid=True):
         """ Mark this item as 'valid' (store the checksum hash).
@@ -2457,7 +2806,7 @@ class BomItem(models.Model):
         try:
             # Check for circular BOM references
             if self.sub_part:
-                self.sub_part.checkAddToBOM(self.part)
+                self.sub_part.check_add_to_bom(self.part, raise_error=True)
 
                 # If the sub_part is 'trackable' then the 'quantity' field must be an integer
                 if self.sub_part.trackable:
@@ -2590,6 +2939,66 @@ class BomItem(models.Model):
         pmax = decimal2money(pmax)
 
         return "{pmin} to {pmax}".format(pmin=pmin, pmax=pmax)
+
+
+class BomItemSubstitute(models.Model):
+    """
+    A BomItemSubstitute provides a specification for alternative parts,
+    which can be used in a bill of materials.
+
+    Attributes:
+        bom_item: Link to the parent BomItem instance
+        part: The part which can be used as a substitute
+    """
+
+    class Meta:
+        verbose_name = _("BOM Item Substitute")
+
+        # Prevent duplication of substitute parts
+        unique_together = ('part', 'bom_item')
+
+    def save(self, *args, **kwargs):
+
+        self.full_clean()
+
+        super().save(*args, **kwargs)
+
+    def validate_unique(self, exclude=None):
+        """
+        Ensure that this BomItemSubstitute is "unique":
+
+        - It cannot point to the same "part" as the "sub_part" of the parent "bom_item"
+        """
+
+        super().validate_unique(exclude=exclude)
+
+        if self.part == self.bom_item.sub_part:
+            raise ValidationError({
+                "part": _("Substitute part cannot be the same as the master part"),
+            })
+
+    @staticmethod
+    def get_api_url():
+        return reverse('api-bom-substitute-list')
+
+    bom_item = models.ForeignKey(
+        BomItem,
+        on_delete=models.CASCADE,
+        related_name='substitutes',
+        verbose_name=_('BOM Item'),
+        help_text=_('Parent BOM item'),
+    )
+
+    part = models.ForeignKey(
+        Part,
+        on_delete=models.CASCADE,
+        related_name='substitute_items',
+        verbose_name=_('Part'),
+        help_text=_('Substitute part'),
+        limit_choices_to={
+            'component': True,
+        }
+    )
 
 
 class PartRelated(models.Model):

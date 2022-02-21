@@ -2,8 +2,6 @@
 {% load inventree_extras %}
 
 /* globals
-    renderErrorMessage,
-    showAlertDialog,
 */
 
 /* exported
@@ -56,6 +54,7 @@ function inventreeGet(url, filters={}, options={}) {
         data: filters,
         dataType: 'json',
         contentType: 'application/json',
+        async: (options.async == false) ? false : true,
         success: function(response) {
             if (options.success) {
                 options.success(response);
@@ -63,11 +62,17 @@ function inventreeGet(url, filters={}, options={}) {
         },
         error: function(xhr, ajaxOptions, thrownError) {
             console.error('Error on GET at ' + url);
-            console.error(thrownError);
+
+            if (thrownError) {
+                console.error('Error: ' + thrownError);
+            }
+
             if (options.error) {
                 options.error({
                     error: thrownError
                 });
+            } else {
+                showApiError(xhr, url);
             }
         }
     });
@@ -104,6 +109,8 @@ function inventreeFormDataUpload(url, data, options={}) {
 
             if (options.error) {
                 options.error(xhr, status, error);
+            } else {
+                showApiError(xhr, url);
             }
         }
     });
@@ -139,6 +146,8 @@ function inventreePut(url, data={}, options={}) {
             } else {
                 console.error(`Error on ${method} to '${url}' - STATUS ${xhr.status}`);
                 console.error(thrownError);
+
+                showApiError(xhr, url);
             }
         },
         complete: function(xhr, status) {
@@ -162,13 +171,15 @@ function inventreeDelete(url, options={}) {
     return inventreePut(url, {}, options);
 }
 
-
-function showApiError(xhr) {
+/*
+ * Display a notification with error information
+ */
+function showApiError(xhr, url) {
 
     var title = null;
     var message = null;
 
-    switch (xhr.status) {
+    switch (xhr.status || 0) {
     // No response
     case 0:
         title = '{% trans "No Response" %}';
@@ -196,6 +207,11 @@ function showApiError(xhr) {
         title = '{% trans "Error 404: Resource Not Found" %}';
         message = '{% trans "The requested resource could not be located on the server" %}';
         break;
+    // Method not allowed
+    case 405:
+        title = '{% trans "Error 405: Method Not Allowed" %}';
+        message = '{% trans "HTTP method not allowed at URL" %}';
+        break;
     // Timeout
     case 408:
         title = '{% trans "Error 408: Timeout" %}';
@@ -207,8 +223,14 @@ function showApiError(xhr) {
         break;
     }
 
-    message += '<hr>';
-    message += renderErrorMessage(xhr);
+    if (url) {
+        message += '<hr>';
+        message += `URL: ${url}`;
+    }
 
-    showAlertDialog(title, message);
+    showMessage(title, {
+        style: 'danger',
+        icon: 'fas fa-server icon-red',
+        details: message,
+    });
 }

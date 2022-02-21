@@ -10,7 +10,7 @@ from import_export.fields import Field
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .models import SalesOrder, SalesOrderLineItem
-from .models import SalesOrderAllocation
+from .models import SalesOrderShipment, SalesOrderAllocation
 
 
 class PurchaseOrderLineItemInlineAdmin(admin.StackedInline):
@@ -19,6 +19,10 @@ class PurchaseOrderLineItemInlineAdmin(admin.StackedInline):
 
 
 class PurchaseOrderAdmin(ImportExportModelAdmin):
+
+    exclude = [
+        'reference_int',
+    ]
 
     list_display = (
         'reference',
@@ -38,8 +42,14 @@ class PurchaseOrderAdmin(ImportExportModelAdmin):
         PurchaseOrderLineItemInlineAdmin
     ]
 
+    autocomplete_fields = ('supplier',)
+
 
 class SalesOrderAdmin(ImportExportModelAdmin):
+
+    exclude = [
+        'reference_int',
+    ]
 
     list_display = (
         'reference',
@@ -54,6 +64,8 @@ class SalesOrderAdmin(ImportExportModelAdmin):
         'customer__name',
         'description',
     ]
+
+    autocomplete_fields = ('customer',)
 
 
 class POLineItemResource(ModelResource):
@@ -75,7 +87,28 @@ class POLineItemResource(ModelResource):
 
 
 class SOLineItemResource(ModelResource):
-    """ Class for managing import / export of SOLineItem data """
+    """
+    Class for managing import / export of SOLineItem data
+    """
+
+    part_name = Field(attribute='part__name', readonly=True)
+
+    IPN = Field(attribute='part__IPN', readonly=True)
+
+    description = Field(attribute='part__description', readonly=True)
+
+    fulfilled = Field(attribute='fulfilled_quantity', readonly=True)
+
+    def dehydrate_sale_price(self, item):
+        """
+        Return a string value of the 'sale_price' field, rather than the 'Money' object.
+        Ref: https://github.com/inventree/InvenTree/issues/2207
+        """
+
+        if item.sale_price:
+            return str(item.sale_price)
+        else:
+            return ''
 
     class Meta:
         model = SalesOrderLineItem
@@ -95,6 +128,10 @@ class PurchaseOrderLineItemAdmin(ImportExportModelAdmin):
         'reference'
     )
 
+    search_fields = ('reference',)
+
+    autocomplete_fields = ('order', 'part', 'destination',)
+
 
 class SalesOrderLineItemAdmin(ImportExportModelAdmin):
 
@@ -107,6 +144,32 @@ class SalesOrderLineItemAdmin(ImportExportModelAdmin):
         'reference'
     )
 
+    search_fields = [
+        'part__name',
+        'order__reference',
+        'order__customer__name',
+        'reference',
+    ]
+
+    autocomplete_fields = ('order', 'part',)
+
+
+class SalesOrderShipmentAdmin(ImportExportModelAdmin):
+
+    list_display = [
+        'order',
+        'shipment_date',
+        'reference',
+    ]
+
+    search_fields = [
+        'reference',
+        'order__reference',
+        'order__customer__name',
+    ]
+
+    autocomplete_fields = ('order',)
+
 
 class SalesOrderAllocationAdmin(ImportExportModelAdmin):
 
@@ -116,6 +179,8 @@ class SalesOrderAllocationAdmin(ImportExportModelAdmin):
         'quantity'
     )
 
+    autocomplete_fields = ('line', 'shipment', 'item',)
+
 
 admin.site.register(PurchaseOrder, PurchaseOrderAdmin)
 admin.site.register(PurchaseOrderLineItem, PurchaseOrderLineItemAdmin)
@@ -123,4 +188,5 @@ admin.site.register(PurchaseOrderLineItem, PurchaseOrderLineItemAdmin)
 admin.site.register(SalesOrder, SalesOrderAdmin)
 admin.site.register(SalesOrderLineItem, SalesOrderLineItemAdmin)
 
+admin.site.register(SalesOrderShipment, SalesOrderShipmentAdmin)
 admin.site.register(SalesOrderAllocation, SalesOrderAllocationAdmin)

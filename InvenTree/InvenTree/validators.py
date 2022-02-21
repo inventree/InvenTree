@@ -2,9 +2,12 @@
 Custom field validators for InvenTree
 """
 
+from decimal import Decimal, InvalidOperation
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import FieldDoesNotExist
 
 from moneyed import CURRENCIES
 
@@ -114,26 +117,28 @@ def validate_tree_name(value):
 
 
 def validate_overage(value):
-    """ Validate that a BOM overage string is properly formatted.
+    """
+    Validate that a BOM overage string is properly formatted.
 
     An overage string can look like:
 
     - An integer number ('1' / 3 / 4)
+    - A decimal number ('0.123')
     - A percentage ('5%' / '10 %')
     """
 
     value = str(value).lower().strip()
 
-    # First look for a simple integer value
+    # First look for a simple numerical value
     try:
-        i = int(value)
+        i = Decimal(value)
 
         if i < 0:
             raise ValidationError(_("Overage value must not be negative"))
 
-        # Looks like an integer!
+        # Looks like a number
         return True
-    except ValueError:
+    except (ValueError, InvalidOperation):
         pass
 
     # Now look for a percentage value
@@ -154,5 +159,35 @@ def validate_overage(value):
             pass
 
     raise ValidationError(
-        _("Overage must be an integer value or a percentage")
+        _("Invalid value for overage")
     )
+
+
+def validate_part_name_format(self):
+    """
+    Validate part name format.
+    Make sure that each template container has a field of Part Model
+    """
+
+    jinja_template_regex = re.compile('{{.*?}}')
+    field_name_regex = re.compile('(?<=part\\.)[A-z]+')
+    for jinja_template in jinja_template_regex.findall(str(self)):
+        # make sure at least one and only one field is present inside the parser
+        field_names = field_name_regex.findall(jinja_template)
+        if len(field_names) < 1:
+            raise ValidationError({
+                'value': 'At least one field must be present inside a jinja template container i.e {{}}'
+            })
+
+        # Make sure that the field_name exists in Part model
+        from part.models import Part
+
+        for field_name in field_names:
+            try:
+                Part._meta.get_field(field_name)
+            except FieldDoesNotExist:
+                raise ValidationError({
+                    'value': f'{field_name} does not exist in Part Model'
+                })
+
+    return True

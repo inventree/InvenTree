@@ -12,7 +12,8 @@ from rest_framework.views import APIView
 from stock.models import StockItem
 from stock.serializers import StockItemSerializer
 
-from barcodes.barcode import load_barcode_plugins, hash_barcode
+from barcodes.barcode import hash_barcode
+from plugin import registry
 
 
 class BarcodeScan(APIView):
@@ -52,18 +53,19 @@ class BarcodeScan(APIView):
         if 'barcode' not in data:
             raise ValidationError({'barcode': _('Must provide barcode_data parameter')})
 
-        plugins = load_barcode_plugins()
+        plugins = registry.with_mixin('barcode')
 
         barcode_data = data.get('barcode')
 
         # Look for a barcode plugin which knows how to deal with this barcode
         plugin = None
 
-        for plugin_class in plugins:
-            plugin_instance = plugin_class(barcode_data)
+        for current_plugin in plugins:
+            # TODO @matmair make simpler after InvenTree 0.7.0 release
+            current_plugin.init(barcode_data)
 
-            if plugin_instance.validate():
-                plugin = plugin_instance
+            if current_plugin.validate():
+                plugin = current_plugin
                 break
 
         match_found = False
@@ -107,14 +109,14 @@ class BarcodeScan(APIView):
         # No plugin is found!
         # However, the hash of the barcode may still be associated with a StockItem!
         else:
-            hash = hash_barcode(barcode_data)
+            result_hash = hash_barcode(barcode_data)
 
-            response['hash'] = hash
+            response['hash'] = result_hash
             response['plugin'] = None
 
             # Try to look for a matching StockItem
             try:
-                item = StockItem.objects.get(uid=hash)
+                item = StockItem.objects.get(uid=result_hash)
                 serializer = StockItemSerializer(item, part_detail=True, location_detail=True, supplier_part_detail=True)
                 response['stockitem'] = serializer.data
                 response['url'] = reverse('stock-item-detail', kwargs={'pk': item.id})
@@ -159,15 +161,16 @@ class BarcodeAssign(APIView):
         except (ValueError, StockItem.DoesNotExist):
             raise ValidationError({'stockitem': _('No matching stock item found')})
 
-        plugins = load_barcode_plugins()
+        plugins = registry.with_mixin('barcode')
 
         plugin = None
 
-        for plugin_class in plugins:
-            plugin_instance = plugin_class(barcode_data)
+        for current_plugin in plugins:
+            # TODO @matmair make simpler after InvenTree 0.7.0 release
+            current_plugin.init(barcode_data)
 
-            if plugin_instance.validate():
-                plugin = plugin_instance
+            if current_plugin.validate():
+                plugin = current_plugin
                 break
 
         match_found = False
@@ -179,47 +182,47 @@ class BarcodeAssign(APIView):
         # Matching plugin was found
         if plugin is not None:
 
-            hash = plugin.hash()
-            response['hash'] = hash
+            result_hash = plugin.hash()
+            response['hash'] = result_hash
             response['plugin'] = plugin.name
 
             # Ensure that the barcode does not already match a database entry
 
             if plugin.getStockItem() is not None:
                 match_found = True
-                response['error'] = _('Barcode already matches StockItem object')
+                response['error'] = _('Barcode already matches Stock Item')
 
             if plugin.getStockLocation() is not None:
                 match_found = True
-                response['error'] = _('Barcode already matches StockLocation object')
+                response['error'] = _('Barcode already matches Stock Location')
 
             if plugin.getPart() is not None:
                 match_found = True
-                response['error'] = _('Barcode already matches Part object')
+                response['error'] = _('Barcode already matches Part')
 
             if not match_found:
                 item = plugin.getStockItemByHash()
 
                 if item is not None:
-                    response['error'] = _('Barcode hash already matches StockItem object')
+                    response['error'] = _('Barcode hash already matches Stock Item')
                     match_found = True
 
         else:
-            hash = hash_barcode(barcode_data)
+            result_hash = hash_barcode(barcode_data)
 
-            response['hash'] = hash
+            response['hash'] = result_hash
             response['plugin'] = None
 
             # Lookup stock item by hash
             try:
-                item = StockItem.objects.get(uid=hash)
-                response['error'] = _('Barcode hash already matches StockItem object')
+                item = StockItem.objects.get(uid=result_hash)
+                response['error'] = _('Barcode hash already matches Stock Item')
                 match_found = True
             except StockItem.DoesNotExist:
                 pass
 
         if not match_found:
-            response['success'] = _('Barcode associated with StockItem')
+            response['success'] = _('Barcode associated with Stock Item')
 
             # Save the barcode hash
             item.uid = response['hash']

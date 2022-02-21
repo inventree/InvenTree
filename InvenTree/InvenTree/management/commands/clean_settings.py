@@ -2,7 +2,12 @@
 Custom management command to cleanup old settings that are not defined anymore
 """
 
+import logging
+
 from django.core.management.base import BaseCommand
+
+
+logger = logging.getLogger('inventree')
 
 
 class Command(BaseCommand):
@@ -12,27 +17,27 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
 
-        print("Collecting settings")
+        logger.info("Collecting settings")
         from common.models import InvenTreeSetting, InvenTreeUserSetting
 
         # general settings
         db_settings = InvenTreeSetting.objects.all()
-        model_settings = InvenTreeSetting.GLOBAL_SETTINGS
+        model_settings = InvenTreeSetting.SETTINGS
 
         # check if key exist and delete if not
         for setting in db_settings:
             if setting.key not in model_settings:
                 setting.delete()
-                print(f"deleted setting '{setting.key}'")
+                logger.info(f"deleted setting '{setting.key}'")
 
         # user settings
         db_settings = InvenTreeUserSetting.objects.all()
-        model_settings = InvenTreeUserSetting.GLOBAL_SETTINGS
+        model_settings = InvenTreeUserSetting.SETTINGS
 
         # check if key exist and delete if not
         for setting in db_settings:
             if setting.key not in model_settings:
                 setting.delete()
-                print(f"deleted user setting '{setting.key}'")
+                logger.info(f"deleted user setting '{setting.key}'")
 
-        print("checked all settings")
+        logger.info("checked all settings")

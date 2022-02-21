@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+
+<div class='panel'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>
+                {% block heading %}
+                <i>-- page header goes here --</i>
+                {% endblock %}
+            </h4>
+            {% include "spacer.html" %}
+            <div id='page-actions' class='btn-group' role='group'>
+                {% block actions %}
+                <i>-- actions go here --</i>
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+    
+    {% block page_info %}
+    <div class='panel-content'>
+        {% block details_above %}
+        {% endblock details_above %}
+        <div class='container' style='max-width: 100%; padding: 5px;'>
+            <div class='row'>
+                <div class='col' id='detail-panel-left'>
+                    <div class='card'>
+                        {% block details_left %}
+                        <div class='row'>
+                            <div class='col' style='max-width: 220px;'>
+                                {% block thumbnail %}
+                                {% endblock thumbnail %}
+                            </div>
+                            <div class='col'>
+                                {% block details %}
+                                {% endblock details %}
+                            </div>
+                        </div>
+                        {% endblock details_left %}
+                    </div>
+                </div>
+                <div class='col' id='detail-panel-right'>
+                    <div class='card'>
+                        {% block details_right %}
+                        block details_right
+                        {% endblock details_right %}
+                    </div>
+                </div>
+                {% block details_below %}
+                {% endblock details_below %}
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+    
+</div>
+
+{% block page_content %}
+{% endblock %}
+
+{% endblock %}

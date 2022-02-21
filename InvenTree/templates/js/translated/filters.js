@@ -273,23 +273,48 @@ function setupFilterList(tableKey, table, target) {
 
     var element = $(target);
 
+    if (!element || !element.exists()) {
+        console.log(`WARNING: setupFilterList could not find target '${target}'`);
+        return;
+    }
+
     // One blank slate, please
     element.empty();
 
-    element.append(`<button id='reload-${tableKey}' title='{% trans "Reload data" %}' class='btn btn-default filter-tag'><span class='fas fa-redo-alt'></span></button>`);
+    var buttons = '';
 
-    element.append(`<button id='${add}' title='{% trans "Add new filter" %}' class='btn btn-default filter-tag'><span class='fas fa-filter'></span></button>`);
+    buttons += `<button id='reload-${tableKey}' title='{% trans "Reload data" %}' class='btn btn-outline-secondary filter-button'><span class='fas fa-redo-alt'></span></button>`;
 
-    if (Object.keys(filters).length > 0) {
-        element.append(`<button id='${clear}' title='{% trans "Clear all filters" %}' class='btn btn-default filter-tag'><span class='fas fa-trash-alt'></span></button>`);
+    // If there are filters defined for this table, add more buttons
+    if (!jQuery.isEmptyObject(getAvailableTableFilters(tableKey))) {
+        buttons += `<button id='${add}' title='{% trans "Add new filter" %}' class='btn btn-outline-secondary filter-button'><span class='fas fa-filter'></span></button>`;
+
+        if (Object.keys(filters).length > 0) {
+            buttons += `<button id='${clear}' title='{% trans "Clear all filters" %}' class='btn btn-outline-secondary filter-button'><span class='fas fa-backspace icon-red'></span></button>`;
+        }
     }
+
+    element.html(`
+    <div class='btn-group' role='group'>
+        ${buttons}
+    </div>
+    `);
 
     for (var key in filters) {
         var value = getFilterOptionValue(tableKey, key, filters[key]);
         var title = getFilterTitle(tableKey, key);
         var description = getFilterDescription(tableKey, key);
 
-        element.append(`<div title='${description}' class='filter-tag'>${title} = ${value}<span ${tag}='${key}' class='close'>x</span></div>`);
+        var filter_tag = `
+        <div title='${description}' class='filter-tag'>
+            ${title} = ${value}
+            <span ${tag}='${key}' class='close' style='color: #F55;'>
+                <span aria-hidden='true'><strong>&times;</strong></span>
+            </span>
+        </div>
+        `;
+
+        element.append(filter_tag);
     }
 
     // Callback for reloading the table
@@ -306,10 +331,12 @@ function setupFilterList(tableKey, table, target) {
 
             var html = '';
 
+            html += `<div class='input-group'>`;
             html += generateAvailableFilterList(tableKey);
             html += generateFilterInput(tableKey);
 
-            html += `<button title='{% trans "Create filter" %}' class='btn btn-default filter-tag' id='${make}'><span class='fas fa-plus'></span></button>`;
+            html += `<button title='{% trans "Create filter" %}' class='btn btn-outline-secondary filter-button' id='${make}'><span class='fas fa-plus'></span></button>`;
+            html += `</div>`;
 
             element.append(html);
 

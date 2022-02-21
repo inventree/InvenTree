@@ -21,6 +21,7 @@
 */
 
 /* exported
+    duplicateBom,
     duplicatePart,
     editCategory,
     editPart,
@@ -29,13 +30,17 @@
     loadParametricPartTable,
     loadPartCategoryTable,
     loadPartParameterTable,
+    loadPartPurchaseOrderTable,
     loadPartTable,
     loadPartTestTemplateTable,
     loadPartVariantTable,
+    loadRelatedPartsTable,
     loadSellPricingChart,
     loadSimplePartTable,
     loadStockPricingChart,
+    partStockLabel,
     toggleStar,
+    validateBom,
 */
 
 /* Part API functions
@@ -151,12 +156,7 @@ function partFields(options={}) {
         delete fields['default_expiry'];
     }
 
-    // Additional fields when "creating" a new part
-    if (options.create) {
-
-        // No supplier parts available yet
-        delete fields['default_supplier'];
-
+    if (options.create || options.duplicate) {
         if (global_settings.PART_CREATE_INITIAL) {
 
             fields.initial_stock = {
@@ -185,6 +185,13 @@ function partFields(options={}) {
                 group: 'create',
             };
         }
+    }
+
+    // Additional fields when "creating" a new part
+    if (options.create) {
+
+        // No supplier parts available yet
+        delete fields['default_supplier'];
 
         fields.copy_category_parameters = {
             type: 'boolean',
@@ -330,12 +337,19 @@ function editPart(pk) {
         groups: groups,
         title: '{% trans "Edit Part" %}',
         reload: true,
+        successMessage: '{% trans "Part edited" %}',
     });
 }
 
 
 // Launch form to duplicate a part
 function duplicatePart(pk, options={}) {
+
+    var title = '{% trans "Duplicate Part" %}';
+
+    if (options.variant) {
+        title = '{% trans "Create Part Variant" %}';
+    }
 
     // First we need all the part information
     inventreeGet(`/api/part/${pk}/`, {}, {
@@ -345,6 +359,10 @@ function duplicatePart(pk, options={}) {
             var fields = partFields({
                 duplicate: pk,
             });
+
+            if (fields.initial_stock_location) {
+                fields.initial_stock_location.value = data.default_location;
+            }
 
             // Remove "default_supplier" field
             delete fields['default_supplier'];
@@ -360,7 +378,7 @@ function duplicatePart(pk, options={}) {
                 method: 'POST',
                 fields: fields,
                 groups: partGroups(),
-                title: '{% trans "Duplicate Part" %}',
+                title: title,
                 data: data,
                 onSuccess: function(data) {
                     // Follow the new part
@@ -372,24 +390,23 @@ function duplicatePart(pk, options={}) {
 }
 
 
+/* Toggle the 'starred' status of a part.
+ * Performs AJAX queries and updates the display on the button.
+ * 
+ * options:
+ * - button: ID of the button (default = '#part-star-icon')
+ * - URL: API url of the object
+ * - user: pk of the user
+ */
 function toggleStar(options) {
-    /* Toggle the 'starred' status of a part.
-     * Performs AJAX queries and updates the display on the button.
-     * 
-     * options:
-     * - button: ID of the button (default = '#part-star-icon')
-     * - part: pk of the part object
-     * - user: pk of the user
-     */
 
-    var url = `/api/part/${options.part}/`;
-
-    inventreeGet(url, {}, {
+    inventreeGet(options.url, {}, {
         success: function(response) {
+
             var starred = response.starred;
 
             inventreePut(
-                url,
+                options.url,
                 {
                     starred: !starred,
                 },
@@ -397,15 +414,88 @@ function toggleStar(options) {
                     method: 'PATCH',
                     success: function(response) {
                         if (response.starred) {
-                            $(options.button).addClass('icon-yellow');
+                            $(options.button).removeClass('fa fa-bell-slash').addClass('fas fa-bell icon-green');
+                            $(options.button).attr('title', '{% trans "You are subscribed to notifications for this item" %}');
+
+                            showMessage('{% trans "You have subscribed to notifications for this item" %}', {
+                                style: 'success',
+                            });
                         } else {
-                            $(options.button).removeClass('icon-yellow');
+                            $(options.button).removeClass('fas fa-bell icon-green').addClass('fa fa-bell-slash');
+                            $(options.button).attr('title', '{% trans "Subscribe to notifications for this item" %}');
+
+                            showMessage('{% trans "You have unsubscribed to notifications for this item" %}', {
+                                style: 'warning',
+                            });
                         }
                     }
                 }
             );
         }
     });
+}
+
+
+/* Validate a BOM */
+function validateBom(part_id, options={}) {
+
+    var html = `
+    <div class='alert alert-block alert-success'>
+    {% trans "Validating the BOM will mark each line item as valid" %}
+    </div>
+    `;
+
+    constructForm(`/api/part/${part_id}/bom-validate/`, {
+        method: 'PUT',
+        fields: {
+            valid: {},
+        },
+        preFormContent: html,
+        title: '{% trans "Validate Bill of Materials" %}',
+        reload: options.reload,
+        onSuccess: function(response) {
+            showMessage('{% trans "Validated Bill of Materials" %}');
+        }
+    });
+}
+
+
+/* Duplicate a BOM */
+function duplicateBom(part_id, options={}) {
+
+    constructForm(`/api/part/${part_id}/bom-copy/`, {
+        method: 'POST',
+        fields: {
+            part: {
+                icon: 'fa-shapes',
+                filters: {
+                    assembly: true,
+                    exclude_tree: part_id,
+                }
+            },
+            include_inherited: {},
+            remove_existing: {},
+            skip_invalid: {},
+        },
+        confirm: true,
+        title: '{% trans "Copy Bill of Materials" %}',
+        onSuccess: function(response) {
+            if (options.success) {
+                options.success(response);
+            }
+        },
+    });
+
+}
+
+
+function partStockLabel(part, options={}) {
+
+    if (part.in_stock) {
+        return `<span class='badge rounded-pill bg-success ${options.classes}'>{% trans "Stock" %}: ${part.in_stock}</span>`;
+    } else {
+        return `<span class='badge rounded-pill bg-danger ${options.classes}'>{% trans "No Stock" %}</span>`;
+    }
 }
 
 
@@ -432,7 +522,7 @@ function makePartIcons(part) {
     }
 
     if (part.starred) {
-        html += makeIconBadge('fa-star', '{% trans "Starred part" %}');
+        html += makeIconBadge('fa-bell icon-green', '{% trans "Subscribed part" %}');
     }
 
     if (part.salable) {
@@ -440,7 +530,7 @@ function makePartIcons(part) {
     }
 
     if (!part.active) {
-        html += `<span class='label label-warning label-right'>{% trans "Inactive" %}</span>`; 
+        html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span> `; 
     }
 
     return html;
@@ -517,7 +607,7 @@ function loadPartVariantTable(table, partId, options={}) {
                 }
 
                 if (!row.active) {
-                    html += `<span class='label label-warning label-right'>{% trans "Inactive" %}</span>`; 
+                    html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span>`; 
                 }
 
                 return html;
@@ -592,7 +682,9 @@ function loadPartParameterTable(table, url, options) {
         filters[key] = params[key];
     }
 
-    // setupFilterLsit("#part-parameters", $(table));
+    var filterTarget = options.filterTarget || '#filter-list-parameters';
+
+    setupFilterList('part-parameters', $(table), filterTarget);
 
     $(table).inventreeTable({
         url: url,
@@ -684,6 +776,274 @@ function loadPartParameterTable(table, url, options) {
 }
 
 
+/*
+ * Construct a table showing a list of purchase orders for a given part.
+ * 
+ * This requests API data from the PurchaseOrderLineItem endpoint
+ */
+function loadPartPurchaseOrderTable(table, part_id, options={}) {
+
+    options.params = options.params || {};
+
+    // Construct API filterset
+    options.params.base_part = part_id;
+    options.params.part_detail = true;
+    options.params.order_detail = true;
+    
+    var filters = loadTableFilters('purchaseorderlineitem');
+
+    for (var key in options.params) {
+        filters[key] = options.params[key];
+    }
+
+    setupFilterList('purchaseorderlineitem', $(table), '#filter-list-partpurchaseorders');
+
+    $(table).inventreeTable({
+        url: '{% url "api-po-line-list" %}',
+        queryParams: filters,
+        name: 'partpurchaseorders',
+        original: options.params,
+        showColumns: true,
+        uniqueId: 'pk',
+        formatNoMatches: function() {
+            return '{% trans "No purchase orders found" %}';
+        },
+        onPostBody: function() {
+            $(table).find('.button-line-receive').click(function() {
+                var pk = $(this).attr('pk');
+
+                var line_item = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+                if (!line_item) {
+                    console.log('WARNING: getRowByUniqueId returned null');
+                    return;
+                }
+
+                receivePurchaseOrderItems(
+                    line_item.order,
+                    [
+                        line_item,
+                    ],
+                    {
+                        success: function() {
+                            $(table).bootstrapTable('refresh');
+                        }
+                    }
+                );
+            });
+        },
+        columns: [
+            {
+                field: 'order',
+                title: '{% trans "Purchase Order" %}',
+                switchable: false,
+                formatter: function(value, row) {
+                    var order = row.order_detail;
+
+                    if (!order) {
+                        return '-';
+                    }
+
+                    var ref = global_settings.PURCHASEORDER_REFERENCE_PREFIX + order.reference;
+
+                    var html = renderLink(ref, `/order/purchase-order/${order.pk}/`);
+
+                    html += purchaseOrderStatusDisplay(
+                        order.status,
+                        {
+                            classes: 'float-right',
+                        }
+                    );
+
+                    return html;
+                },
+            },
+            {
+                field: 'supplier',
+                title: '{% trans "Supplier" %}',
+                switchable: true,
+                formatter: function(value, row) {
+
+                    if (row.supplier_part_detail && row.supplier_part_detail.supplier_detail) {
+                        var supp = row.supplier_part_detail.supplier_detail;
+                        var html = imageHoverIcon(supp.thumbnail || supp.image);
+
+                        html += ' ' + renderLink(supp.name, `/company/${supp.pk}/`);
+
+                        return html;
+                    } else {
+                        return '-';
+                    }
+                }
+            },
+            {
+                field: 'sku',
+                title: '{% trans "SKU" %}',
+                switchable: true,
+                formatter: function(value, row) {
+                    if (row.supplier_part_detail) {
+                        var supp = row.supplier_part_detail;
+
+                        return renderLink(supp.SKU, `/supplier-part/${supp.pk}/`);
+                    } else {
+                        return '-';
+                    }
+                },
+            },
+            {
+                field: 'mpn',
+                title: '{% trans "MPN" %}',
+                switchable: true,
+                formatter: function(value, row) {
+                    if (row.supplier_part_detail && row.supplier_part_detail.manufacturer_part_detail) {
+                        var manu = row.supplier_part_detail.manufacturer_part_detail;
+                        return renderLink(manu.MPN, `/manufacturer-part/${manu.pk}/`);
+                    }
+                }
+            },
+            {
+                field: 'quantity',
+                title: '{% trans "Quantity" %}',
+            },
+            {
+                field: 'received',
+                title: '{% trans "Received" %}',
+                switchable: true,
+            },
+            {
+                field: 'purchase_price',
+                title: '{% trans "Price" %}',
+                switchable: true,
+                formatter: function(value, row) {
+                    var formatter = new Intl.NumberFormat(
+                        'en-US',
+                        {
+                            style: 'currency',
+                            currency: row.purchase_price_currency,
+                        }
+                    );
+
+                    return formatter.format(row.purchase_price);
+                }
+            },
+            {
+                field: 'actions',
+                title: '',
+                switchable: false,
+                formatter: function(value, row) {
+                    
+                    if (row.received >= row.quantity) {
+                        // Already recevied
+                        return `<span class='badge bg-success rounded-pill'>{% trans "Received" %}</span>`;
+                    } else if (row.order_detail && row.order_detail.status == {{ PurchaseOrderStatus.PLACED }}) {
+                        var html = `<div class='btn-group' role='group'>`;
+                        var pk = row.pk;
+
+                        html += makeIconButton('fa-sign-in-alt', 'button-line-receive', pk, '{% trans "Receive line item" %}');
+
+                        html += `</div>`;
+                        return html;
+                    } else {
+                        return '';
+                    }
+                }
+            }
+        ],
+    });
+}
+
+
+function loadRelatedPartsTable(table, part_id, options={}) {
+    /*
+     * Load table of "related" parts
+     */
+
+    options.params = options.params || {};
+
+    options.params.part = part_id;
+
+    var filters = {};
+
+    for (var key in options.params) {
+        filters[key] = options.params[key];
+    }
+
+    setupFilterList('related', $(table), options.filterTarget);
+
+    function getPart(row) {
+        if (row.part_1 == part_id) {
+            return row.part_2_detail;
+        } else {
+            return row.part_1_detail;
+        }
+    }
+
+    var columns = [
+        {
+            field: 'name',
+            title: '{% trans "Part" %}',
+            switchable: false,
+            formatter: function(value, row) {
+
+                var part = getPart(row);
+
+                var html = imageHoverIcon(part.thumbnail) + renderLink(part.full_name, `/part/${part.pk}/`);
+
+                html += makePartIcons(part);
+
+                return html;
+            }
+        },
+        {
+            field: 'description',
+            title: '{% trans "Description" %}',
+            formatter: function(value, row) {
+                return getPart(row).description;
+            }
+        },
+        {
+            field: 'actions',
+            title: '',
+            switchable: false,
+            formatter: function(value, row) {
+                
+                var html = `<div class='btn-group float-right' role='group'>`;
+
+                html += makeIconButton('fa-trash-alt icon-red', 'button-related-delete', row.pk, '{% trans "Delete part relationship" %}');
+
+                html += '</div>';
+
+                return html;
+            }
+        }
+    ];
+
+    $(table).inventreeTable({
+        url: '{% url "api-part-related-list" %}',
+        groupBy: false,
+        name: 'related',
+        original: options.params,
+        queryParams: filters,
+        columns: columns,
+        showColumns: false,
+        search: true,
+        onPostBody: function() {
+            $(table).find('.button-related-delete').click(function() {
+                var pk = $(this).attr('pk');
+
+                constructForm(`/api/part/related/${pk}/`, {
+                    method: 'DELETE',
+                    title: '{% trans "Delete Part Relationship" %}',
+                    onSuccess: function() {
+                        $(table).bootstrapTable('refresh');
+                    }
+                });
+            });
+        },
+    });
+}
+
+
 function loadParametricPartTable(table, options={}) {
     /* Load parametric table for part parameters
      * 
@@ -756,14 +1116,10 @@ function partGridTile(part) {
     // Rows for table view
     var rows = '';
 
-    if (part.IPN) {
-        rows += `<tr><td><b>{% trans "IPN" %}</b></td><td>${part.IPN}</td></tr>`;
-    }
-
     var stock = `${part.in_stock}`;
 
     if (!part.in_stock) {
-        stock = `<span class='label label-red'>{% trans "No Stock" %}</label>`;
+        stock = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
     }
 
     rows += `<tr><td><b>{% trans "Stock" %}</b></td><td>${stock}</td></tr>`;
@@ -778,8 +1134,8 @@ function partGridTile(part) {
 
     var html = `
     
-    <div class='col-sm-3 card'>
-        <div class='panel panel-default panel-inventree product-card-panel'>
+    <div class='card product-card borderless'>
+        <div class='panel product-card-panel'>
             <div class='panel-heading'>
                 <a href='/part/${part.pk}/'>
                     <b>${part.full_name}</b>
@@ -819,6 +1175,7 @@ function loadPartTable(table, url, options={}) {
      *      query: extra query params for API request
      *      buttons: If provided, link buttons to selection status of this table
      *      disableFilters: If true, disable custom filters
+     *      actions: Provide a callback function to construct an "actions" column
      */
 
     // Ensure category detail is included
@@ -861,7 +1218,7 @@ function loadPartTable(table, url, options={}) {
 
     col = {
         field: 'IPN',
-        title: 'IPN',
+        title: '{% trans "IPN" %}',
     };
 
     if (!options.params.ordering) {
@@ -876,25 +1233,9 @@ function loadPartTable(table, url, options={}) {
         switchable: false,
         formatter: function(value, row) {
 
-            var name = '';
+            var name = row.full_name;
 
-            if (row.IPN) {
-                name += row.IPN;
-                name += ' | ';
-            }
-
-            name += value;
-
-            if (row.revision) {
-                name += ' | ';
-                name += row.revision;
-            }
-
-            if (row.is_template) {
-                name = '<i>' + name + '</i>';
-            }
-
-            var display = imageHoverIcon(row.thumbnail) + renderLink(name, '/part/' + row.pk + '/');
+            var display = imageHoverIcon(row.thumbnail) + renderLink(name, `/part/${row.pk}/`);
 
             display += makePartIcons(row);
 
@@ -952,20 +1293,20 @@ function loadPartTable(table, url, options={}) {
 
                 // Is stock "low" (below the 'minimum_stock' quantity)?
                 if (row.minimum_stock && row.minimum_stock > value) {
-                    value += `<span class='label label-right label-warning'>{% trans "Low stock" %}</span>`;
+                    value += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Low stock" %}</span>`;
                 }
 
             } else if (row.on_order) {
                 // There is no stock available, but stock is on order
-                value = `0<span class='label label-right label-primary'>{% trans "On Order" %}: ${row.on_order}</span>`;
+                value = `0<span class='badge badge-right rounded-pill bg-info'>{% trans "On Order" %}: ${row.on_order}</span>`;
                 link = '?display=purchase-orders';
             } else if (row.building) {
                 // There is no stock available, but stock is being built
-                value = `0<span class='label label-right label-info'>{% trans "Building" %}: ${row.building}</span>`;
+                value = `0<span class='badge badge-right rounded-pill bg-info'>{% trans "Building" %}: ${row.building}</span>`;
                 link = '?display=build-orders';
             } else {
                 // There is no stock available
-                value = `0<span class='label label-right label-danger'>{% trans "No Stock" %}</span>`;
+                value = `0<span class='badge badge-right rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
             }
 
             return renderLink(value, `/part/${row.pk}/${link}`);
@@ -992,6 +1333,23 @@ function loadPartTable(table, url, options={}) {
         }
     });
 
+    // Push an "actions" column
+    if (options.actions) {
+        columns.push({
+            field: 'actions',
+            title: '',
+            switchable: false,
+            visible: true,
+            searchable: false,
+            sortable: false,
+            formatter: function(value, row) {
+                return options.actions(value, row);
+            }
+        });
+    }
+
+    var grid_view = options.gridView && inventreeLoad('part-grid-view') == 1;
+
     $(table).inventreeTable({
         url: url,
         method: 'get',
@@ -1006,8 +1364,56 @@ function loadPartTable(table, url, options={}) {
         },
         columns: columns,
         showColumns: true,
-        showCustomView: false,
+        showCustomView: grid_view,
         showCustomViewButton: false,
+        onPostBody: function() {
+            grid_view = inventreeLoad('part-grid-view') == 1;
+            if (grid_view) {
+                $('#view-part-list').removeClass('btn-secondary').addClass('btn-outline-secondary');
+                $('#view-part-grid').removeClass('btn-outline-secondary').addClass('btn-secondary');
+            } else {
+                $('#view-part-grid').removeClass('btn-secondary').addClass('btn-outline-secondary');
+                $('#view-part-list').removeClass('btn-outline-secondary').addClass('btn-secondary');
+            }
+
+            if (options.onPostBody) {
+                options.onPostBody();
+            }
+        },
+        buttons: options.gridView ? [
+            {
+                icon: 'fas fa-bars',
+                attributes: {
+                    title: '{% trans "Display as list" %}',
+                    id: 'view-part-list',
+                },
+                event: () => {
+                    inventreeSave('part-grid-view', 0);
+                    $(table).bootstrapTable(
+                        'refreshOptions',
+                        {
+                            showCustomView: false,
+                        }
+                    );
+                }
+            },
+            {
+                icon: 'fas fa-th',
+                attributes: {
+                    title: '{% trans "Display as grid" %}',
+                    id: 'view-part-grid',
+                },
+                event: () => {
+                    inventreeSave('part-grid-view', 1);
+                    $(table).bootstrapTable(
+                        'refreshOptions',
+                        {
+                            showCustomView: true,
+                        }
+                    );
+                }
+            }
+        ] : [],
         customView: function(data) {
 
             var html = '';
@@ -1016,8 +1422,8 @@ function loadPartTable(table, url, options={}) {
 
             data.forEach(function(row, index) {
                 
-                // Force a new row every 4 columns, to prevent visual issues
-                if ((index > 0) && (index % 4 == 0) && (index < data.length)) {
+                // Force a new row every 5 columns
+                if ((index > 0) && (index % 5 == 0) && (index < data.length)) {
                     html += `</div><div class='row full-height'>`;
                 }
 
@@ -1096,8 +1502,10 @@ function loadPartTable(table, url, options={}) {
 }
 
 
+/*
+ * Display a table of part categories
+ */
 function loadPartCategoryTable(table, options) {
-    /* Display a table of part categories */
 
     var params = options.params || {};
 
@@ -1111,6 +1519,13 @@ function loadPartCategoryTable(table, options) {
         filters = loadTableFilters(filterKey);
     }
 
+    
+    var tree_view = options.allowTreeView && inventreeLoad('category-tree-view') == 1;
+
+    if (tree_view) {
+        params.cascade = true;   
+    }
+
     var original = {};
 
     for (var key in params) {
@@ -1121,13 +1536,88 @@ function loadPartCategoryTable(table, options) {
     setupFilterList(filterKey, table, filterListElement);
 
     table.inventreeTable({
+        treeEnable: tree_view,
+        rootParentId: tree_view ? options.params.parent : null,
+        uniqueId: 'pk',
+        idField: 'pk',
+        treeShowField: 'name',
+        parentIdField: tree_view ? 'parent' : null,
         method: 'get',
         url: options.url || '{% url "api-part-category-list" %}',
         queryParams: filters,
-        sidePagination: 'server',
+        disablePagination: tree_view,
+        sidePagination: tree_view ? 'client' : 'server',
+        serverSort: !tree_view, 
+        search: !tree_view,
         name: 'category',
         original: original,
         showColumns: true,
+        buttons: options.allowTreeView ? [
+            {
+                icon: 'fas fa-bars',
+                attributes: {
+                    title: '{% trans "Display as list" %}',
+                    id: 'view-category-list',
+                },
+                event: () => {
+                    inventreeSave('category-tree-view', 0);
+                    table.bootstrapTable(
+                        'refreshOptions',
+                        {
+                            treeEnable: false,
+                            serverSort: true,
+                            search: true,
+                            pagination: true,
+                        }
+                    );
+                }
+            },
+            {
+                icon: 'fas fa-sitemap',
+                attributes: {
+                    title: '{% trans "Display as tree" %}',
+                    id: 'view-category-tree',
+                },
+                event: () => {
+                    inventreeSave('category-tree-view', 1);
+                    table.bootstrapTable(
+                        'refreshOptions',
+                        {
+                            treeEnable: true,
+                            serverSort: false,
+                            search: false,
+                            pagination: false,
+                        }
+                    );
+                }
+            }
+        ] : [],
+        onPostBody: function() {
+
+            if (options.allowTreeView) {
+
+                tree_view = inventreeLoad('category-tree-view') == 1;
+
+                if (tree_view) {
+
+                    $('#view-category-list').removeClass('btn-secondary').addClass('btn-outline-secondary');
+                    $('#view-category-tree').removeClass('btn-outline-secondary').addClass('btn-secondary');
+                    
+                    table.treegrid({
+                        treeColumn: 0,
+                        onChange: function() {
+                            table.bootstrapTable('resetView');
+                        },
+                        onExpand: function() {
+                            
+                        }
+                    });
+                } else {
+                    $('#view-category-tree').removeClass('btn-secondary').addClass('btn-outline-secondary');
+                    $('#view-category-list').removeClass('btn-outline-secondary').addClass('btn-secondary');
+                }
+            }
+        },
         columns: [
             {
                 checkbox: true,
@@ -1142,10 +1632,17 @@ function loadPartCategoryTable(table, options) {
                 switchable: true,
                 sortable: true,
                 formatter: function(value, row) {
-                    return renderLink(
+
+                    var html = renderLink(
                         value,
                         `/part/category/${row.pk}/`
                     );
+
+                    if (row.starred) {
+                        html += makeIconBadge('fa-bell icon-green', '{% trans "Subscribed category" %}');
+                    }
+
+                    return html;
                 }
             },
             {
@@ -1157,7 +1654,8 @@ function loadPartCategoryTable(table, options) {
             {
                 field: 'pathstring',
                 title: '{% trans "Path" %}',
-                switchable: true,
+                switchable: !tree_view,
+                visible: !tree_view,
                 sortable: false,
             },
             {

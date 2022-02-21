@@ -2,37 +2,44 @@
 JSON serializers for Stock app
 """
 
-from rest_framework import serializers
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
+from decimal import Decimal
+from datetime import datetime, timedelta
+from django.db import transaction
+
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import ugettext_lazy as _
+from django.db.models.functions import Coalesce
+from django.db.models import Case, When, Value
+from django.db.models import BooleanField
+from django.db.models import Q
+
+from rest_framework import serializers
+from rest_framework.serializers import ValidationError
+
+from sql_util.utils import SubquerySum, SubqueryCount
 
 from .models import StockItem, StockLocation
 from .models import StockItemTracking
 from .models import StockItemAttachment
 from .models import StockItemTestResult
 
-from django.db.models.functions import Coalesce
-
-from django.db.models import Case, When, Value
-from django.db.models import BooleanField
-from django.db.models import Q
-
-from sql_util.utils import SubquerySum, SubqueryCount
-
-from decimal import Decimal
-
-from datetime import datetime, timedelta
-
 import common.models
 from common.settings import currency_code_default, currency_code_mappings
 
+import company.models
 from company.serializers import SupplierPartSerializer
+
+import InvenTree.helpers
+import InvenTree.serializers
+from InvenTree.serializers import InvenTreeDecimalField, extract_int
+
 from part.serializers import PartBriefSerializer
-from InvenTree.serializers import UserSerializerBrief, InvenTreeModelSerializer, InvenTreeMoneySerializer
-from InvenTree.serializers import InvenTreeAttachmentSerializer, InvenTreeAttachmentSerializerField
 
 
-class LocationBriefSerializer(InvenTreeModelSerializer):
+class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """
     Provides a brief serializer for a StockLocation object
     """
@@ -46,34 +53,49 @@ class LocationBriefSerializer(InvenTreeModelSerializer):
         ]
 
 
-class StockItemSerializerBrief(InvenTreeModelSerializer):
+class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
     """ Brief serializers for a StockItem """
 
     location_name = serializers.CharField(source='location', read_only=True)
     part_name = serializers.CharField(source='part.full_name', read_only=True)
-    quantity = serializers.FloatField()
+
+    quantity = InvenTreeDecimalField()
 
     class Meta:
         model = StockItem
         fields = [
-            'pk',
-            'uid',
             'part',
             'part_name',
-            'supplier_part',
+            'pk',
             'location',
             'location_name',
             'quantity',
             'serial',
+            'supplier_part',
+            'uid',
         ]
 
+    def validate_serial(self, value):
+        if extract_int(value) > 2147483647:
+            raise serializers.ValidationError('serial is to to big')
+        return value
 
-class StockItemSerializer(InvenTreeModelSerializer):
+
+class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """ Serializer for a StockItem:
 
     - Includes serialization for the linked part
     - Includes serialization for the item location
     """
+
+    def update(self, instance, validated_data):
+        """
+        Custom update method to pass the user information through to the instance
+        """
+
+        instance._user = self.context['user']
+
+        return super().update(instance, validated_data)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -132,7 +154,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
 
     tracking_items = serializers.IntegerField(source='tracking_info_count', read_only=True, required=False)
 
-    quantity = serializers.FloatField()
+    quantity = InvenTreeDecimalField()
 
     allocated = serializers.FloatField(source='allocation_count', required=False)
 
@@ -140,19 +162,22 @@ class StockItemSerializer(InvenTreeModelSerializer):
 
     stale = serializers.BooleanField(required=False, read_only=True)
 
-    serial = serializers.CharField(required=False)
+    # serial = serializers.CharField(required=False)
 
     required_tests = serializers.IntegerField(source='required_test_count', read_only=True, required=False)
 
-    purchase_price = InvenTreeMoneySerializer(
+    purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
         label=_('Purchase Price'),
-        allow_null=True
+        max_digits=19, decimal_places=4,
+        allow_null=True,
+        help_text=_('Purchase price of this stock item'),
     )
 
     purchase_price_currency = serializers.ChoiceField(
         choices=currency_code_mappings(),
         default=currency_code_default,
         label=_('Currency'),
+        help_text=_('Purchase currency of this stock item'),
     )
 
     purchase_price_string = serializers.SerializerMethodField()
@@ -194,6 +219,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'belongs_to',
             'build',
             'customer',
+            'delete_on_deplete',
             'expired',
             'expiry_date',
             'in_stock',
@@ -202,6 +228,7 @@ class StockItemSerializer(InvenTreeModelSerializer):
             'location',
             'location_detail',
             'notes',
+            'owner',
             'packaging',
             'part',
             'part_detail',
@@ -240,14 +267,202 @@ class StockItemSerializer(InvenTreeModelSerializer):
         ]
 
 
-class StockQuantitySerializer(InvenTreeModelSerializer):
+class SerializeStockItemSerializer(serializers.Serializer):
+    """
+    A DRF serializer for "serializing" a StockItem.
+
+    (Sorry for the confusing naming...)
+
+    Here, "serializing" means splitting out a single StockItem,
+    into multiple single-quantity items with an assigned serial number
+
+    Note: The base StockItem object is provided to the serializer context
+    """
 
     class Meta:
-        model = StockItem
-        fields = ('quantity',)
+        fields = [
+            'quantity',
+            'serial_numbers',
+            'destination',
+            'notes',
+        ]
+
+    quantity = serializers.IntegerField(
+        min_value=0,
+        required=True,
+        label=_('Quantity'),
+        help_text=_('Enter number of stock items to serialize'),
+    )
+
+    def validate_quantity(self, quantity):
+        """
+        Validate that the quantity value is correct
+        """
+
+        item = self.context['item']
+
+        if quantity < 0:
+            raise ValidationError(_("Quantity must be greater than zero"))
+
+        if quantity > item.quantity:
+            q = item.quantity
+            raise ValidationError(_(f"Quantity must not exceed available stock quantity ({q})"))
+
+        return quantity
+
+    serial_numbers = serializers.CharField(
+        label=_('Serial Numbers'),
+        help_text=_('Enter serial numbers for new items'),
+        allow_blank=False,
+        required=True,
+    )
+
+    destination = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        many=False,
+        required=True,
+        allow_null=False,
+        label=_('Location'),
+        help_text=_('Destination stock location'),
+    )
+
+    notes = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        label=_("Notes"),
+        help_text=_("Optional note field")
+    )
+
+    def validate(self, data):
+        """
+        Check that the supplied serial numbers are valid
+        """
+
+        data = super().validate(data)
+
+        item = self.context['item']
+
+        if not item.part.trackable:
+            raise ValidationError(_("Serial numbers cannot be assigned to this part"))
+
+        # Ensure the serial numbers are valid!
+        quantity = data['quantity']
+        serial_numbers = data['serial_numbers']
+
+        try:
+            serials = InvenTree.helpers.extract_serial_numbers(serial_numbers, quantity, item.part.getLatestSerialNumberInt())
+        except DjangoValidationError as e:
+            raise ValidationError({
+                'serial_numbers': e.messages,
+            })
+
+        existing = item.part.find_conflicting_serial_numbers(serials)
+
+        if len(existing) > 0:
+            exists = ','.join([str(x) for x in existing])
+            error = _('Serial numbers already exist') + ": " + exists
+
+            raise ValidationError({
+                'serial_numbers': error,
+            })
+
+        return data
+
+    def save(self):
+
+        item = self.context['item']
+        request = self.context['request']
+        user = request.user
+
+        data = self.validated_data
+
+        serials = InvenTree.helpers.extract_serial_numbers(
+            data['serial_numbers'],
+            data['quantity'],
+            item.part.getLatestSerialNumberInt()
+        )
+
+        item.serializeStock(
+            data['quantity'],
+            serials,
+            user,
+            notes=data.get('notes', ''),
+            location=data['destination'],
+        )
 
 
-class LocationSerializer(InvenTreeModelSerializer):
+class InstallStockItemSerializer(serializers.Serializer):
+    """
+    Serializer for installing a stock item into a given part
+    """
+
+    stock_item = serializers.PrimaryKeyRelatedField(
+        queryset=StockItem.objects.all(),
+        many=False,
+        required=True,
+        allow_null=False,
+        label=_('Stock Item'),
+        help_text=_('Select stock item to install'),
+    )
+
+    note = serializers.CharField(
+        label=_('Note'),
+        required=False,
+        allow_blank=True,
+    )
+
+    def validate_stock_item(self, stock_item):
+        """
+        Validate the selected stock item
+        """
+
+        if not stock_item.in_stock:
+            # StockItem must be in stock to be "installed"
+            raise ValidationError(_("Stock item is unavailable"))
+
+        # Extract the "parent" item - the item into which the stock item will be installed
+        parent_item = self.context['item']
+        parent_part = parent_item.part
+
+        if not parent_part.check_if_part_in_bom(stock_item.part):
+            raise ValidationError(_("Selected part is not in the Bill of Materials"))
+
+        return stock_item
+
+    def save(self):
+        """ Install the selected stock item into this one """
+
+        data = self.validated_data
+
+        stock_item = data['stock_item']
+        note = data.get('note', '')
+
+        parent_item = self.context['item']
+        request = self.context['request']
+
+        parent_item.installStockItem(
+            stock_item,
+            stock_item.quantity,
+            request.user,
+            note,
+        )
+
+
+class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+    """
+    Serializer for a simple tree view
+    """
+
+    class Meta:
+        model = StockLocation
+        fields = [
+            'pk',
+            'name',
+            'parent',
+        ]
+
+
+class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """ Detailed information about a stock location
     """
 
@@ -268,10 +483,11 @@ class LocationSerializer(InvenTreeModelSerializer):
             'parent',
             'pathstring',
             'items',
+            'owner',
         ]
 
 
-class StockItemAttachmentSerializer(InvenTreeAttachmentSerializer):
+class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSerializer):
     """ Serializer for StockItemAttachment model """
 
     def __init__(self, *args, **kwargs):
@@ -282,9 +498,7 @@ class StockItemAttachmentSerializer(InvenTreeAttachmentSerializer):
         if user_detail is not True:
             self.fields.pop('user_detail')
 
-    user_detail = UserSerializerBrief(source='user', read_only=True)
-
-    attachment = InvenTreeAttachmentSerializerField(required=True)
+    user_detail = InvenTree.serializers.UserSerializerBrief(source='user', read_only=True)
 
     # TODO: Record the uploading user when creating or updating an attachment!
 
@@ -296,6 +510,7 @@ class StockItemAttachmentSerializer(InvenTreeAttachmentSerializer):
             'stock_item',
             'attachment',
             'filename',
+            'link',
             'comment',
             'upload_date',
             'user',
@@ -309,14 +524,14 @@ class StockItemAttachmentSerializer(InvenTreeAttachmentSerializer):
         ]
 
 
-class StockItemTestResultSerializer(InvenTreeModelSerializer):
+class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """ Serializer for the StockItemTestResult model """
 
-    user_detail = UserSerializerBrief(source='user', read_only=True)
+    user_detail = InvenTree.serializers.UserSerializerBrief(source='user', read_only=True)
 
     key = serializers.CharField(read_only=True)
 
-    attachment = InvenTreeAttachmentSerializerField(required=False)
+    attachment = InvenTree.serializers.InvenTreeAttachmentSerializerField(required=False)
 
     def __init__(self, *args, **kwargs):
         user_detail = kwargs.pop('user_detail', False)
@@ -350,7 +565,7 @@ class StockItemTestResultSerializer(InvenTreeModelSerializer):
         ]
 
 
-class StockTrackingSerializer(InvenTreeModelSerializer):
+class StockTrackingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """ Serializer for StockItemTracking model """
 
     def __init__(self, *args, **kwargs):
@@ -370,7 +585,7 @@ class StockTrackingSerializer(InvenTreeModelSerializer):
 
     item_detail = StockItemSerializerBrief(source='item', many=False, read_only=True)
 
-    user_detail = UserSerializerBrief(source='user', many=False, read_only=True)
+    user_detail = InvenTree.serializers.UserSerializerBrief(source='user', many=False, read_only=True)
 
     deltas = serializers.JSONField(read_only=True)
 
@@ -395,3 +610,460 @@ class StockTrackingSerializer(InvenTreeModelSerializer):
             'label',
             'tracking_type',
         ]
+
+
+class StockAssignmentItemSerializer(serializers.Serializer):
+    """
+    Serializer for a single StockItem with in StockAssignment request.
+
+    Here, the particular StockItem is being assigned (manually) to a customer
+
+    Fields:
+        - item: StockItem object
+    """
+
+    class Meta:
+        fields = [
+            'item',
+        ]
+
+    item = serializers.PrimaryKeyRelatedField(
+        queryset=StockItem.objects.all(),
+        many=False,
+        allow_null=False,
+        required=True,
+        label=_('Stock Item'),
+    )
+
+    def validate_item(self, item):
+
+        # The item must currently be "in stock"
+        if not item.in_stock:
+            raise ValidationError(_("Item must be in stock"))
+
+        # The base part must be "salable"
+        if not item.part.salable:
+            raise ValidationError(_("Part must be salable"))
+
+        # The item must not be allocated to a sales order
+        if item.sales_order_allocations.count() > 0:
+            raise ValidationError(_("Item is allocated to a sales order"))
+
+        # The item must not be allocated to a build order
+        if item.allocations.count() > 0:
+            raise ValidationError(_("Item is allocated to a build order"))
+
+        return item
+
+
+class StockAssignmentSerializer(serializers.Serializer):
+    """
+    Serializer for assigning one (or more) stock items to a customer.
+
+    This is a manual assignment process, separate for (for example) a Sales Order
+    """
+
+    class Meta:
+        fields = [
+            'items',
+            'customer',
+            'notes',
+        ]
+
+    items = StockAssignmentItemSerializer(
+        many=True,
+        required=True,
+    )
+
+    customer = serializers.PrimaryKeyRelatedField(
+        queryset=company.models.Company.objects.all(),
+        many=False,
+        allow_null=False,
+        required=True,
+        label=_('Customer'),
+        help_text=_('Customer to assign stock items'),
+    )
+
+    def validate_customer(self, customer):
+
+        if customer and not customer.is_customer:
+            raise ValidationError(_('Selected company is not a customer'))
+
+        return customer
+
+    notes = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        label=_('Notes'),
+        help_text=_('Stock assignment notes'),
+    )
+
+    def validate(self, data):
+
+        data = super().validate(data)
+
+        items = data.get('items', [])
+
+        if len(items) == 0:
+            raise ValidationError(_("A list of stock items must be provided"))
+
+        return data
+
+    def save(self):
+
+        request = self.context['request']
+
+        user = getattr(request, 'user', None)
+
+        data = self.validated_data
+
+        items = data['items']
+        customer = data['customer']
+        notes = data.get('notes', '')
+
+        with transaction.atomic():
+            for item in items:
+
+                stock_item = item['item']
+
+                stock_item.allocateToCustomer(
+                    customer,
+                    user=user,
+                    notes=notes,
+                )
+
+
+class StockMergeItemSerializer(serializers.Serializer):
+    """
+    Serializer for a single StockItem within the StockMergeSerializer class.
+
+    Here, the individual StockItem is being checked for merge compatibility.
+    """
+
+    class Meta:
+        fields = [
+            'item',
+        ]
+
+    item = serializers.PrimaryKeyRelatedField(
+        queryset=StockItem.objects.all(),
+        many=False,
+        allow_null=False,
+        required=True,
+        label=_('Stock Item'),
+    )
+
+    def validate_item(self, item):
+
+        # Check that the stock item is able to be merged
+        item.can_merge(raise_error=True)
+
+        return item
+
+
+class StockMergeSerializer(serializers.Serializer):
+    """
+    Serializer for merging two (or more) stock items together
+    """
+
+    class Meta:
+        fields = [
+            'items',
+            'location',
+            'notes',
+            'allow_mismatched_suppliers',
+            'allow_mismatched_status',
+        ]
+
+    items = StockMergeItemSerializer(
+        many=True,
+        required=True,
+    )
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        many=False,
+        required=True,
+        allow_null=False,
+        label=_('Location'),
+        help_text=_('Destination stock location'),
+    )
+
+    notes = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        label=_('Notes'),
+        help_text=_('Stock merging notes'),
+    )
+
+    allow_mismatched_suppliers = serializers.BooleanField(
+        required=False,
+        label=_('Allow mismatched suppliers'),
+        help_text=_('Allow stock items with different supplier parts to be merged'),
+    )
+
+    allow_mismatched_status = serializers.BooleanField(
+        required=False,
+        label=_('Allow mismatched status'),
+        help_text=_('Allow stock items with different status codes to be merged'),
+    )
+
+    def validate(self, data):
+
+        data = super().validate(data)
+
+        items = data['items']
+
+        if len(items) < 2:
+            raise ValidationError(_('At least two stock items must be provided'))
+
+        unique_items = set()
+
+        # The "base item" is the first item
+        base_item = items[0]['item']
+
+        data['base_item'] = base_item
+
+        # Ensure stock items are unique!
+        for element in items:
+            item = element['item']
+
+            if item.pk in unique_items:
+                raise ValidationError(_('Duplicate stock items'))
+
+            unique_items.add(item.pk)
+
+            # Checks from here refer to the "base_item"
+            if item == base_item:
+                continue
+
+            # Check that this item can be merged with the base_item
+            item.can_merge(
+                raise_error=True,
+                other=base_item,
+                allow_mismatched_suppliers=data.get('allow_mismatched_suppliers', False),
+                allow_mismatched_status=data.get('allow_mismatched_status', False),
+            )
+
+        return data
+
+    def save(self):
+        """
+        Actually perform the stock merging action.
+        At this point we are confident that the merge can take place
+        """
+
+        data = self.validated_data
+
+        base_item = data['base_item']
+        items = data['items'][1:]
+
+        request = self.context['request']
+        user = getattr(request, 'user', None)
+
+        items = []
+
+        for item in data['items'][1:]:
+            items.append(item['item'])
+
+        base_item.merge_stock_items(
+            items,
+            allow_mismatched_suppliers=data.get('allow_mismatched_suppliers', False),
+            allow_mismatched_status=data.get('allow_mismatched_status', False),
+            user=user,
+            location=data['location'],
+            notes=data.get('notes', None)
+        )
+
+
+class StockAdjustmentItemSerializer(serializers.Serializer):
+    """
+    Serializer for a single StockItem within a stock adjument request.
+
+    Fields:
+        - item: StockItem object
+        - quantity: Numerical quantity
+    """
+
+    class Meta:
+        fields = [
+            'item',
+            'quantity'
+        ]
+
+    pk = serializers.PrimaryKeyRelatedField(
+        queryset=StockItem.objects.all(),
+        many=False,
+        allow_null=False,
+        required=True,
+        label='stock_item',
+        help_text=_('StockItem primary key value')
+    )
+
+    quantity = serializers.DecimalField(
+        max_digits=15,
+        decimal_places=5,
+        min_value=0,
+        required=True
+    )
+
+
+class StockAdjustmentSerializer(serializers.Serializer):
+    """
+    Base class for managing stock adjustment actions via the API
+    """
+
+    class Meta:
+        fields = [
+            'items',
+            'notes',
+        ]
+
+    items = StockAdjustmentItemSerializer(many=True)
+
+    notes = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        label=_("Notes"),
+        help_text=_("Stock transaction notes"),
+    )
+
+    def validate(self, data):
+
+        super().validate(data)
+
+        items = data.get('items', [])
+
+        if len(items) == 0:
+            raise ValidationError(_("A list of stock items must be provided"))
+
+        return data
+
+
+class StockCountSerializer(StockAdjustmentSerializer):
+    """
+    Serializer for counting stock items
+    """
+
+    def save(self):
+
+        request = self.context['request']
+
+        data = self.validated_data
+        items = data['items']
+        notes = data.get('notes', '')
+
+        with transaction.atomic():
+            for item in items:
+
+                stock_item = item['pk']
+                quantity = item['quantity']
+
+                stock_item.stocktake(
+                    quantity,
+                    request.user,
+                    notes=notes
+                )
+
+
+class StockAddSerializer(StockAdjustmentSerializer):
+    """
+    Serializer for adding stock to stock item(s)
+    """
+
+    def save(self):
+
+        request = self.context['request']
+
+        data = self.validated_data
+        notes = data.get('notes', '')
+
+        with transaction.atomic():
+            for item in data['items']:
+
+                stock_item = item['pk']
+                quantity = item['quantity']
+
+                stock_item.add_stock(
+                    quantity,
+                    request.user,
+                    notes=notes
+                )
+
+
+class StockRemoveSerializer(StockAdjustmentSerializer):
+    """
+    Serializer for removing stock from stock item(s)
+    """
+
+    def save(self):
+
+        request = self.context['request']
+
+        data = self.validated_data
+        notes = data.get('notes', '')
+
+        with transaction.atomic():
+            for item in data['items']:
+
+                stock_item = item['pk']
+                quantity = item['quantity']
+
+                stock_item.take_stock(
+                    quantity,
+                    request.user,
+                    notes=notes
+                )
+
+
+class StockTransferSerializer(StockAdjustmentSerializer):
+    """
+    Serializer for transferring (moving) stock item(s)
+    """
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        many=False,
+        required=True,
+        allow_null=False,
+        label=_('Location'),
+        help_text=_('Destination stock location'),
+    )
+
+    class Meta:
+        fields = [
+            'items',
+            'notes',
+            'location',
+        ]
+
+    def validate(self, data):
+
+        data = super().validate(data)
+
+        # TODO: Any specific validation of location field?
+
+        return data
+
+    def save(self):
+
+        request = self.context['request']
+
+        data = self.validated_data
+
+        items = data['items']
+        notes = data.get('notes', '')
+        location = data['location']
+
+        with transaction.atomic():
+            for item in items:
+
+                stock_item = item['pk']
+                quantity = item['quantity']
+
+                stock_item.move(
+                    location,
+                    notes,
+                    request.user,
+                    quantity=quantity
+                )

@@ -170,7 +170,7 @@ class ManufacturerPartParameterList(generics.ListCreateAPIView):
 
     queryset = ManufacturerPartParameter.objects.all()
     serializer_class = ManufacturerPartParameterSerializer
-    
+
     def get_serializer(self, *args, **kwargs):
 
         # Do we wish to include any extra detail?

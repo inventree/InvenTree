@@ -1,10 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from http import HTTPStatus
+import json
+from datetime import timedelta
 
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 
-from .models import InvenTreeSetting
+from .models import InvenTreeSetting, WebhookEndpoint, WebhookMessage, NotificationEntry
+from .api import WebhookView
+
+CONTENT_TYPE_JSON = 'application/json'
 
 
 class SettingsTest(TestCase):
@@ -46,29 +52,29 @@ class SettingsTest(TestCase):
         - Ensure that every global setting has a description.
         """
 
-        for key in InvenTreeSetting.GLOBAL_SETTINGS.keys():
+        for key in InvenTreeSetting.SETTINGS.keys():
 
-            setting = InvenTreeSetting.GLOBAL_SETTINGS[key]
+            setting = InvenTreeSetting.SETTINGS[key]
 
             name = setting.get('name', None)
 
             if name is None:
-                raise ValueError(f'Missing GLOBAL_SETTING name for {key}')
+                raise ValueError(f'Missing GLOBAL_SETTING name for {key}')  # pragma: no cover
 
             description = setting.get('description', None)
 
             if description is None:
-                raise ValueError(f'Missing GLOBAL_SETTING description for {key}')
+                raise ValueError(f'Missing GLOBAL_SETTING description for {key}')  # pragma: no cover
 
             if not key == key.upper():
-                raise ValueError(f"GLOBAL_SETTINGS key '{key}' is not uppercase")
+                raise ValueError(f"SETTINGS key '{key}' is not uppercase")  # pragma: no cover
 
     def test_defaults(self):
         """
         Populate the settings with default values
         """
 
-        for key in InvenTreeSetting.GLOBAL_SETTINGS.keys():
+        for key in InvenTreeSetting.SETTINGS.keys():
 
             value = InvenTreeSetting.get_setting_default(key)
 
@@ -81,7 +87,139 @@ class SettingsTest(TestCase):
 
             if setting.is_bool():
                 if setting.default_value in ['', None]:
-                    raise ValueError(f'Default value for boolean setting {key} not provided')
+                    raise ValueError(f'Default value for boolean setting {key} not provided')  # pragma: no cover
 
                 if setting.default_value not in [True, False]:
-                    raise ValueError(f'Non-boolean default value specified for {key}')
+                    raise ValueError(f'Non-boolean default value specified for {key}')  # pragma: no cover
+
+
+class WebhookMessageTests(TestCase):
+    def setUp(self):
+        self.endpoint_def = WebhookEndpoint.objects.create()
+        self.url = f'/api/webhook/{self.endpoint_def.endpoint_id}/'
+        self.client = Client(enforce_csrf_checks=True)
+
+    def test_bad_method(self):
+        response = self.client.get(self.url)
+
+        assert response.status_code == HTTPStatus.METHOD_NOT_ALLOWED
+
+    def test_missing_token(self):
+        response = self.client.post(
+            self.url,
+            content_type=CONTENT_TYPE_JSON,
+        )
+
+        assert response.status_code == HTTPStatus.FORBIDDEN
+        assert (
+            json.loads(response.content)['detail'] == WebhookView.model_class.MESSAGE_TOKEN_ERROR
+        )
+
+    def test_bad_token(self):
+        response = self.client.post(
+            self.url,
+            content_type=CONTENT_TYPE_JSON,
+            **{'HTTP_TOKEN': '1234567fghj'},
+        )
+
+        assert response.status_code == HTTPStatus.FORBIDDEN
+        assert (json.loads(response.content)['detail'] == WebhookView.model_class.MESSAGE_TOKEN_ERROR)
+
+    def test_bad_url(self):
+        response = self.client.post(
+            '/api/webhook/1234/',
+            content_type=CONTENT_TYPE_JSON,
+        )
+
+        assert response.status_code == HTTPStatus.NOT_FOUND
+
+    def test_bad_json(self):
+        response = self.client.post(
+            self.url,
+            data="{'this': 123}",
+            content_type=CONTENT_TYPE_JSON,
+            **{'HTTP_TOKEN': str(self.endpoint_def.token)},
+        )
+
+        assert response.status_code == HTTPStatus.NOT_ACCEPTABLE
+        assert (
+            json.loads(response.content)['detail'] == 'Expecting property name enclosed in double quotes'
+        )
+
+    def test_success_no_token_check(self):
+        # delete token
+        self.endpoint_def.token = ''
+        self.endpoint_def.save()
+
+        # check
+        response = self.client.post(
+            self.url,
+            content_type=CONTENT_TYPE_JSON,
+        )
+
+        assert response.status_code == HTTPStatus.OK
+        assert str(response.content, 'utf-8') == WebhookView.model_class.MESSAGE_OK
+
+    def test_bad_hmac(self):
+        # delete token
+        self.endpoint_def.token = ''
+        self.endpoint_def.secret = '123abc'
+        self.endpoint_def.save()
+
+        # check
+        response = self.client.post(
+            self.url,
+            content_type=CONTENT_TYPE_JSON,
+        )
+
+        assert response.status_code == HTTPStatus.FORBIDDEN
+        assert (json.loads(response.content)['detail'] == WebhookView.model_class.MESSAGE_TOKEN_ERROR)
+
+    def test_success_hmac(self):
+        # delete token
+        self.endpoint_def.token = ''
+        self.endpoint_def.secret = '123abc'
+        self.endpoint_def.save()
+
+        # check
+        response = self.client.post(
+            self.url,
+            content_type=CONTENT_TYPE_JSON,
+            **{'HTTP_TOKEN': str('68MXtc/OiXdA5e2Nq9hATEVrZFpLb3Zb0oau7n8s31I=')},
+        )
+
+        assert response.status_code == HTTPStatus.OK
+        assert str(response.content, 'utf-8') == WebhookView.model_class.MESSAGE_OK
+
+    def test_success(self):
+        response = self.client.post(
+            self.url,
+            data={"this": "is a message"},
+            content_type=CONTENT_TYPE_JSON,
+            **{'HTTP_TOKEN': str(self.endpoint_def.token)},
+        )
+
+        assert response.status_code == HTTPStatus.OK
+        assert str(response.content, 'utf-8') == WebhookView.model_class.MESSAGE_OK
+        message = WebhookMessage.objects.get()
+        assert message.body == {"this": "is a message"}
+
+
+class NotificationTest(TestCase):
+
+    def test_check_notification_entries(self):
+
+        # Create some notification entries
+
+        self.assertEqual(NotificationEntry.objects.count(), 0)
+
+        NotificationEntry.notify('test.notification', 1)
+
+        self.assertEqual(NotificationEntry.objects.count(), 1)
+
+        delta = timedelta(days=1)
+
+        self.assertFalse(NotificationEntry.check_recent('test.notification', 2, delta))
+        self.assertFalse(NotificationEntry.check_recent('test.notification2', 1, delta))
+
+        self.assertTrue(NotificationEntry.check_recent('test.notification', 1, delta))

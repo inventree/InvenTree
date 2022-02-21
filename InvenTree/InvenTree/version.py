@@ -8,13 +8,66 @@ import re
 
 import common.models
 
-INVENTREE_SW_VERSION = "0.5.4"
+# InvenTree software version
+INVENTREE_SW_VERSION = "0.6.0"
 
 # InvenTree API version
-INVENTREE_API_VERSION = 12
+INVENTREE_API_VERSION = 26
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v26 -> 2022-02-17
+    - Adds API endpoint for uploading a BOM file and extracting data
+
+v25 -> 2022-02-17
+    - Adds ability to filter "part" list endpoint by "in_bom_for" argument
+
+v24 -> 2022-02-10
+    - Adds API endpoint for deleting (cancelling) build order outputs
+
+v23 -> 2022-02-02
+    - Adds API endpoints for managing plugin classes
+    - Adds API endpoints for managing plugin settings
+
+v22 -> 2021-12-20
+    - Adds API endpoint to "merge" multiple stock items
+
+v21 -> 2021-12-04
+    - Adds support for multiple "Shipments" against a SalesOrder
+    - Refactors process for stock allocation against a SalesOrder
+
+v20 -> 2021-12-03
+    - Adds ability to filter POLineItem endpoint by "base_part"
+    - Adds optional "order_detail" to POLineItem list endpoint
+
+v19 -> 2021-12-02
+    - Adds the ability to filter the StockItem API by "part_tree"
+    - Returns only stock items which match a particular part.tree_id field
+
+v18 -> 2021-11-15
+    - Adds the ability to filter BomItem API by "uses" field
+    - This returns a list of all BomItems which "use" the specified part
+    - Includes inherited BomItem objects
+
+v17 -> 2021-11-09
+    - Adds API endpoints for GLOBAL and USER settings objects
+    - Ref: https://github.com/inventree/InvenTree/pull/2275
+
+v16 -> 2021-10-17
+    - Adds API endpoint for completing build order outputs
+
+v15 -> 2021-10-06
+    - Adds detail endpoint for SalesOrderAllocation model
+    - Allows use of the API forms interface for adjusting SalesOrderAllocation objects
+
+v14 -> 2021-10-05
+    - Stock adjustment actions API is improved, using native DRF serializer support
+    - However adjustment actions now only support 'pk' as a lookup field
+
+v13 -> 2021-10-05
+    - Adds API endpoint to allocate stock items against a BuildOrder
+    - Updates StockItem API with improved filtering against BomItem data
 
 v12 -> 2021-09-07
     - Adds API endpoint to receive stock items against a PurchaseOrder
@@ -95,10 +148,14 @@ def isInvenTreeDevelopmentVersion():
 def inventreeDocsVersion():
     """
     Return the version string matching the latest documentation.
-    
+
     Development -> "latest"
     Release -> "major.minor.sub" e.g. "0.5.2"
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> master
     """
 
     if isInvenTreeDevelopmentVersion():
