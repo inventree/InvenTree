@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-18 20:36+0000\n"
-"PO-Revision-Date: 2022-02-19 14:45\n"
+"POT-Creation-Date: 2022-02-20 22:01+0000\n"
+"PO-Revision-Date: 2022-02-20 23:03\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -95,26 +95,26 @@ msgid "Empty serial number string"
 msgstr "Keine Seriennummer angegeben"
 
 #: InvenTree/helpers.py:471 InvenTree/helpers.py:474 InvenTree/helpers.py:477
-#: InvenTree/helpers.py:502
+#: InvenTree/helpers.py:501
 #, python-brace-format
 msgid "Invalid group: {g}"
 msgstr "Ungültige Gruppe: {g}"
 
-#: InvenTree/helpers.py:512
+#: InvenTree/helpers.py:510
 #, python-brace-format
 msgid "Invalid group {group}"
 msgstr "Ungültige Gruppe {group}"
 
-#: InvenTree/helpers.py:518
+#: InvenTree/helpers.py:516
 #, python-brace-format
 msgid "Invalid/no group {group}"
 msgstr "Ungültige/Keine Gruppe {group}"
 
-#: InvenTree/helpers.py:524
+#: InvenTree/helpers.py:522
 msgid "No serial numbers found"
 msgstr "Keine Seriennummern gefunden"
 
-#: InvenTree/helpers.py:528
+#: InvenTree/helpers.py:526
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
 msgstr "Anzahl der eindeutigen Seriennummern ({s}) muss mit der Anzahl ({q}) übereinstimmen"
@@ -290,12 +290,14 @@ msgid "No data columns supplied"
 msgstr "Keine Spalten angegeben"
 
 #: InvenTree/serializers.py:623
-msgid "Missing required column"
-msgstr "Erforderliche Spalte fehlt"
+#, python-brace-format
+msgid "Missing required column: '{name}'"
+msgstr "Erforderliche Spalte '{name}' fehlt"
 
 #: InvenTree/serializers.py:632
-msgid "Duplicate column"
-msgstr "Doppelte Spalte"
+#, python-brace-format
+msgid "Duplicate column: '{col}'"
+msgstr "Doppelte Spalte: '{col}'"
 
 #: InvenTree/settings.py:655
 msgid "German"
@@ -991,18 +993,18 @@ msgid "Enter quantity for build output"
 msgstr "Menge der Endprodukte angeben"
 
 #: build/serializers.py:201 build/serializers.py:590 order/models.py:280
-#: order/serializers.py:240 part/serializers.py:471 part/serializers.py:827
+#: order/serializers.py:240 part/serializers.py:471 part/serializers.py:826
 #: stock/models.py:367 stock/models.py:1105 stock/serializers.py:305
 msgid "Quantity must be greater than zero"
 msgstr "Anzahl muss größer Null sein"
 
 #: build/serializers.py:208
 msgid "Integer quantity required for trackable parts"
-msgstr ""
+msgstr "Ganzzahl für verfolgbare Teile erforderlich"
 
 #: build/serializers.py:211
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
-msgstr ""
+msgstr "Ganzzahl erforderlich da die Stückliste nachverfolgbare Teile enthält"
 
 #: build/serializers.py:225 order/serializers.py:820 stock/forms.py:78
 #: stock/serializers.py:314 templates/js/translated/stock.js:239
@@ -1016,15 +1018,15 @@ msgstr "Seriennummer für dieses Endprodukt eingeben"
 
 #: build/serializers.py:239
 msgid "Auto Allocate Serial Numbers"
-msgstr ""
+msgstr "Seriennummern automatisch zuweisen"
 
 #: build/serializers.py:240
 msgid "Automatically allocate required items with matching serial numbers"
-msgstr ""
+msgstr "Benötigte Lagerartikel automatisch mit passenden Seriennummern zuweisen"
 
-#: build/serializers.py:274 stock/api.py:551
+#: build/serializers.py:274 stock/api.py:549
 msgid "The following serial numbers already exist"
-msgstr ""
+msgstr "Folgende Seriennummern existieren bereits"
 
 #: build/serializers.py:327 build/serializers.py:392
 msgid "A list of build outputs must be provided"
@@ -1060,7 +1062,7 @@ msgstr "Status"
 
 #: build/serializers.py:428
 msgid "Accept Unallocated"
-msgstr ""
+msgstr "Nicht zugewiesene akzeptieren"
 
 #: build/serializers.py:429
 msgid "Accept that stock items have not been fully allocated to this build order"
@@ -1072,7 +1074,7 @@ msgstr "Benötigter Bestand wurde nicht vollständig zugewiesen"
 
 #: build/serializers.py:444
 msgid "Accept Incomplete"
-msgstr ""
+msgstr "Unvollständig Zuweisung akzeptieren"
 
 #: build/serializers.py:445
 msgid "Accept that the required number of build outputs have not been completed"
@@ -1088,7 +1090,7 @@ msgstr "Bauauftrag hat unvollständige Aufbauten"
 
 #: build/serializers.py:467 build/templates/build/build_base.html:95
 msgid "No build outputs have been created for this build order"
-msgstr ""
+msgstr "Es wurden keine Endprodukte für diesen Bauauftrag erstellt"
 
 #: build/serializers.py:495 build/serializers.py:544 part/models.py:2829
 #: part/models.py:2988
@@ -1373,7 +1375,7 @@ msgstr "Endproduktaktionen"
 
 #: build/templates/build/detail.html:250
 msgid "Complete selected build outputs"
-msgstr ""
+msgstr "Ausgewählte Endprodukt fertigstellen"
 
 #: build/templates/build/detail.html:251
 msgid "Complete outputs"
@@ -1381,11 +1383,11 @@ msgstr "Endprodukte fertigstellen"
 
 #: build/templates/build/detail.html:253
 msgid "Delete selected build outputs"
-msgstr ""
+msgstr "Ausgewählte Endprodukte löschen"
 
 #: build/templates/build/detail.html:254
 msgid "Delete outputs"
-msgstr ""
+msgstr "Endprodukte löschen"
 
 #: build/templates/build/detail.html:270
 msgid "Completed Build Outputs"
@@ -1504,7 +1506,7 @@ msgstr "{name} Datei zum Hochladen auswählen"
 
 #: common/models.py:352
 msgid "Settings key (must be unique - case insensitive)"
-msgstr ""
+msgstr "Einstellungs-Schlüssel (muss einzigartig sein, Groß-/ Kleinschreibung wird nicht beachtet)"
 
 #: common/models.py:354
 msgid "Settings value"
@@ -1979,7 +1981,7 @@ msgstr "Plugins zum Hinzufügen von URLs aktivieren"
 
 #: common/models.py:983
 msgid "Enable navigation integration"
-msgstr ""
+msgstr "Navigations-Integration aktivieren"
 
 #: common/models.py:984
 msgid "Enable plugins to integrate into navigation"
@@ -1999,15 +2001,15 @@ msgstr "Terminplan-Integration aktivieren"
 
 #: common/models.py:998
 msgid "Enable plugins to run scheduled tasks"
-msgstr ""
+msgstr "Geplante Aufgaben aktivieren"
 
 #: common/models.py:1004
 msgid "Enable event integration"
-msgstr ""
+msgstr "Ereignis-Integration aktivieren"
 
 #: common/models.py:1005
 msgid "Enable plugins to respond to internal events"
-msgstr ""
+msgstr "Plugins ermöglichen auf interne Ereignisse zu reagieren"
 
 #: common/models.py:1020 common/models.py:1228
 msgid "Settings key (must be unique - case insensitive"
@@ -4395,7 +4397,7 @@ msgstr "Vererbtes einschließen"
 
 #: part/serializers.py:685
 msgid "Include BOM items which are inherited from templated parts"
-msgstr ""
+msgstr "Stücklisten-Positionen einbeziehen, die von Vorlage-Teilen geerbt werden"
 
 #: part/serializers.py:690
 msgid "Skip Invalid Rows"
@@ -4411,35 +4413,35 @@ msgstr "Bestehende Stückliste löschen"
 
 #: part/serializers.py:735
 msgid "Delete existing BOM items before uploading"
-msgstr ""
+msgstr "Bestehende Stücklisten-Positionen vor dem Importieren entfernen"
 
 #: part/serializers.py:762
 msgid "No part column specified"
-msgstr ""
+msgstr "Keine Bauteilspalte angegeben"
 
-#: part/serializers.py:806
+#: part/serializers.py:805
 msgid "Multiple matching parts found"
 msgstr "Mehrere übereinstimmende Teile gefunden"
 
-#: part/serializers.py:809
+#: part/serializers.py:808
 msgid "No matching part found"
 msgstr "Keine passenden Teile gefunden"
 
-#: part/serializers.py:812
+#: part/serializers.py:811
 msgid "Part is not designated as a component"
 msgstr "Teil ist nicht als Komponente angelegt"
 
-#: part/serializers.py:821
+#: part/serializers.py:820
 msgid "Quantity not provided"
 msgstr "Menge nicht angegeben"
 
-#: part/serializers.py:829
+#: part/serializers.py:828
 msgid "Invalid quantity"
 msgstr "Ungültige Menge"
 
-#: part/serializers.py:848
+#: part/serializers.py:847
 msgid "At least one BOM item is required"
-msgstr ""
+msgstr "Mindestens eine Stückliste-Position ist erforderlich"
 
 #: part/tasks.py:58
 msgid "Low stock notification"
@@ -4643,7 +4645,7 @@ msgstr "Bestand aller Varianten von <em>%(full_name)s</em>"
 
 #: part/templates/part/detail.html:43
 msgid "Part Stock Allocations"
-msgstr ""
+msgstr "Teil-Bestandszuordnungen"
 
 #: part/templates/part/detail.html:60
 msgid "Part Test Templates"
@@ -5062,7 +5064,7 @@ msgstr "Benutzt in"
 #: part/templates/part/part_sidebar.html:34
 #: stock/templates/stock/stock_sidebar.html:8
 msgid "Allocations"
-msgstr ""
+msgstr "Zuweisungen"
 
 #: part/templates/part/part_sidebar.html:48
 msgid "Test Templates"
@@ -5201,16 +5203,16 @@ msgstr "Stückliste hochladen"
 
 #: part/templates/part/upload_bom.html:19
 msgid "BOM upload requirements"
-msgstr ""
+msgstr "Anforderungen an Stückliste-Dateien"
 
 #: part/templates/part/upload_bom.html:23
 #: part/templates/part/upload_bom.html:90
 msgid "Upload BOM File"
-msgstr ""
+msgstr "Stückliste-Datei hochgeladen"
 
 #: part/templates/part/upload_bom.html:29
 msgid "Submit BOM Data"
-msgstr ""
+msgstr "Stückliste hochladen"
 
 #: part/templates/part/upload_bom.html:37
 msgid "Requirements for BOM upload"
@@ -5336,7 +5338,7 @@ msgstr "Interne Preisspanne löschen"
 
 #: plugin/integration.py:138
 msgid "No author found"
-msgstr ""
+msgstr "Kein Autor gefunden"
 
 #: plugin/integration.py:152
 msgid "No date found"
@@ -5352,15 +5354,15 @@ msgstr "Plugin-Konfigurationen"
 
 #: plugin/models.py:32
 msgid "Key"
-msgstr ""
+msgstr "Schlüssel"
 
 #: plugin/models.py:33
 msgid "Key of plugin"
-msgstr ""
+msgstr "Schlüssel des Plugins"
 
 #: plugin/models.py:41
 msgid "PluginName of the plugin"
-msgstr ""
+msgstr "Name des Plugins"
 
 #: plugin/models.py:47
 msgid "Is the plugin active"
@@ -5408,7 +5410,7 @@ msgstr "Quell-URL"
 
 #: plugin/serializers.py:51
 msgid "Source for the package - this can be a custom registry or a VCS path"
-msgstr ""
+msgstr "Quelle für das Paket - dies kann eine eigene Registry oder ein VCS-Pfad sein"
 
 #: plugin/serializers.py:56
 msgid "Package Name"
@@ -5416,7 +5418,7 @@ msgstr "Paket-Name"
 
 #: plugin/serializers.py:57
 msgid "Name for the Plugin Package - can also contain a version indicator"
-msgstr ""
+msgstr "Name für das Plugin-Paket - kann auch einen Versionstext enthalten"
 
 #: plugin/serializers.py:60
 msgid "Confirm plugin installation"
@@ -5424,15 +5426,15 @@ msgstr "Plugin-Installation bestätigen"
 
 #: plugin/serializers.py:61
 msgid "This will install this plugin now into the current instance. The instance will go into maintenance."
-msgstr ""
+msgstr "Dies wird dieses Plugin sofort in die aktuelle Instanz installieren. Die Instanz wird sofort in Wartung gehen."
 
 #: plugin/serializers.py:76
 msgid "Installation not confirmed"
-msgstr ""
+msgstr "Installation nicht bestätigt"
 
 #: plugin/serializers.py:78
 msgid "Either packagename of URL must be provided"
-msgstr ""
+msgstr "Entweder Paketname oder URL muss angegeben werden"
 
 #: report/api.py:234 report/api.py:278
 #, python-brace-format
@@ -5587,11 +5589,11 @@ msgstr "Menge ist erforderlich"
 
 #: stock/api.py:508
 msgid "Valid part must be supplied"
-msgstr ""
+msgstr "Gültiges Teil muss angegeben werden"
 
-#: stock/api.py:535
+#: stock/api.py:533
 msgid "Serial numbers cannot be supplied for a non-trackable part"
-msgstr ""
+msgstr "Seriennummern können für nicht verfolgbare Teile nicht angegeben werden"
 
 #: stock/forms.py:74 stock/forms.py:198 stock/models.py:576
 #: stock/templates/stock/item_base.html:195
@@ -5790,23 +5792,23 @@ msgstr "Artikel wurde einem Kundenauftrag zugewiesen"
 
 #: stock/models.py:1195
 msgid "Stock item is installed in another item"
-msgstr ""
+msgstr "Lagerartikel ist in anderem Element verbaut"
 
 #: stock/models.py:1198
 msgid "Stock item contains other items"
-msgstr ""
+msgstr "Lagerartikel enthält andere Artikel"
 
 #: stock/models.py:1201
 msgid "Stock item has been assigned to a customer"
-msgstr ""
+msgstr "Artikel wurde einem Kunden zugewiesen"
 
 #: stock/models.py:1204
 msgid "Stock item is currently in production"
-msgstr ""
+msgstr "Lagerartikel wird aktuell produziert"
 
 #: stock/models.py:1207
 msgid "Serialized stock cannot be merged"
-msgstr ""
+msgstr "Nachverfolgbare Lagerartikel können nicht zusammengeführt werden"
 
 #: stock/models.py:1214 stock/serializers.py:832
 msgid "Duplicate stock items"
@@ -5814,15 +5816,15 @@ msgstr "Artikel duplizeren"
 
 #: stock/models.py:1218
 msgid "Stock items must refer to the same part"
-msgstr ""
+msgstr "Lagerartikel müssen auf dasselbe Teil verweisen"
 
 #: stock/models.py:1222
 msgid "Stock items must refer to the same supplier part"
-msgstr ""
+msgstr "Lagerartikel müssen auf dasselbe Lieferantenteil verweisen"
 
 #: stock/models.py:1226
 msgid "Stock status codes must match"
-msgstr ""
+msgstr "Status-Codes müssen zusammenpassen"
 
 #: stock/models.py:1397
 msgid "StockItem cannot be moved as it is not in stock"
@@ -5899,19 +5901,19 @@ msgstr "Seriennummern existieren bereits"
 
 #: stock/serializers.py:405
 msgid "Select stock item to install"
-msgstr ""
+msgstr "Lagerartikel für Installation auswählen"
 
 #: stock/serializers.py:421
 msgid "Stock item is unavailable"
-msgstr ""
+msgstr "Lagerartikel ist nicht verfügbar"
 
 #: stock/serializers.py:428
 msgid "Selected part is not in the Bill of Materials"
-msgstr ""
+msgstr "Ausgewähltes Teil ist nicht in der Stückliste"
 
 #: stock/serializers.py:646
 msgid "Part must be salable"
-msgstr ""
+msgstr "Teil muss verkaufbar sein"
 
 #: stock/serializers.py:650
 msgid "Item is allocated to a sales order"
@@ -5923,7 +5925,7 @@ msgstr "Artikel ist einem Fertigungsauftrag zugeordnet"
 
 #: stock/serializers.py:684
 msgid "Customer to assign stock items"
-msgstr ""
+msgstr "Kunde zum Zuweisen von Lagerartikel"
 
 #: stock/serializers.py:690
 msgid "Selected company is not a customer"
@@ -5931,7 +5933,7 @@ msgstr "Ausgewählte Firma ist kein Kunde"
 
 #: stock/serializers.py:698
 msgid "Stock assignment notes"
-msgstr ""
+msgstr "Notizen zur Lagerzuordnung"
 
 #: stock/serializers.py:708 stock/serializers.py:938
 msgid "A list of stock items must be provided"
@@ -5939,27 +5941,27 @@ msgstr "Eine Liste der Lagerbestände muss angegeben werden"
 
 #: stock/serializers.py:796
 msgid "Stock merging notes"
-msgstr ""
+msgstr "Notizen zur Lagerartikelzusammenführung"
 
 #: stock/serializers.py:801
 msgid "Allow mismatched suppliers"
-msgstr ""
+msgstr "Unterschiedliche Lieferanten erlauben"
 
 #: stock/serializers.py:802
 msgid "Allow stock items with different supplier parts to be merged"
-msgstr ""
+msgstr "Zusammenführen von Lagerartikeln mit unterschiedlichen Lieferanten erlauben"
 
 #: stock/serializers.py:807
 msgid "Allow mismatched status"
-msgstr ""
+msgstr "Unterschiedliche Status erlauben"
 
 #: stock/serializers.py:808
 msgid "Allow stock items with different status codes to be merged"
-msgstr ""
+msgstr "Zusammenführen von Lagerartikeln mit unterschiedlichen Status-Codes erlauben"
 
 #: stock/serializers.py:818
 msgid "At least two stock items must be provided"
-msgstr ""
+msgstr "Mindestens zwei Lagerartikel müssen angegeben werden"
 
 #: stock/serializers.py:900
 msgid "StockItem primary key value"
@@ -5979,7 +5981,7 @@ msgstr "neuer Eintrag"
 
 #: stock/templates/stock/item.html:48
 msgid "Stock Item Allocations"
-msgstr ""
+msgstr "Lagerartikel Zuweisungen"
 
 #: stock/templates/stock/item.html:64
 msgid "Child Stock Items"
@@ -6169,11 +6171,11 @@ msgstr "Dieser Lagerartikel hat nicht alle Tests bestanden"
 
 #: stock/templates/stock/item_base.html:264
 msgid "This stock item is allocated to Sales Order"
-msgstr ""
+msgstr "Dieser Lagerartikel ist einem Auftrag zugewiesen"
 
 #: stock/templates/stock/item_base.html:272
 msgid "This stock item is allocated to Build Order"
-msgstr ""
+msgstr "Dieser Lagerartikel ist einem Bauauftrag zugewiesen"
 
 #: stock/templates/stock/item_base.html:278
 msgid "This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted."
@@ -6571,7 +6573,7 @@ msgstr "URLs"
 #: templates/InvenTree/settings/mixins/urls.html:8
 #, python-format
 msgid "The Base-URL for this plugin is <a href=\"/%(base)s\" target=\"_blank\"><strong>%(base)s</strong></a>."
-msgstr ""
+msgstr "Die Basis-URL für dieses Plugin ist <a href=\"/%(base)s\" target=\"_blank\"><strong>%(base)s</strong></a>."
 
 #: templates/InvenTree/settings/mixins/urls.html:23
 msgid "Open in new tab"
@@ -7035,7 +7037,7 @@ msgstr "Hilf bei der Übersetzung!"
 #: templates/InvenTree/settings/user_display.html:102
 #, python-format
 msgid "Native language translation of the InvenTree web application is <a href=\"%(link)s\">community contributed via crowdin</a>. Contributions are welcomed and encouraged."
-msgstr ""
+msgstr "Die Übersetzung von InvenTree wird <a href=\"%(link)s\">von Nutzern via Crowdin</a> betrieben. Wir ermutigen zur und freuen uns über jede Mithilfe."
 
 #: templates/InvenTree/settings/user_homepage.html:9
 msgid "Home Page Settings"
@@ -7122,12 +7124,12 @@ msgstr "E-Mail-Adresse bestätigen"
 #: templates/account/email_confirm.html:16
 #, python-format
 msgid "Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an email address for user %(user_display)s."
-msgstr ""
+msgstr "Bitte bestätigen Sie, dass <a href=\"mailto:%(email)s\">%(email)s</a> eine E-Mail-Adresse für den Benutzer %(user_display)s ist."
 
 #: templates/account/email_confirm.html:27
 #, python-format
 msgid "This email confirmation link expired or is invalid. Please <a href=\"%(email_url)s\">issue a new email confirmation request</a>."
-msgstr ""
+msgstr "Dieser E-Mail Bestätigungslink ist abgelaufen oder ungültig. Bitte <a href=\"%(email_url)s\">fordern Sie eine neue E-Mail Bestätigung an</a>."
 
 #: templates/account/login.html:6 templates/account/login.html:16
 #: templates/account/login.html:39
@@ -7139,13 +7141,13 @@ msgstr "Einloggen"
 msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
-msgstr ""
+msgstr "Bitte melden Sie sich mit einem Ihrer bestehenden Drittkonten an oder  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">registrieren Sie sich</a> für ein Konto und melden Sie sich unten an:"
 
 #: templates/account/login.html:25
 #, python-format
 msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
-msgstr ""
+msgstr "Wenn Sie noch kein Konto erstellt haben, dann bitte<a href=\"%(signup_url)s\">registrieren Sie sich</a> zuerst."
 
 #: templates/account/login.html:42
 msgid "Forgot Password?"
@@ -7200,7 +7202,7 @@ msgstr "Ungültiger Schlüssel"
 #: templates/account/password_reset_from_key.html:11
 #, python-format
 msgid "The password reset link was invalid, possibly because it has already been used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</a>."
-msgstr ""
+msgstr "Der Link zum Zurücksetzen des Kennworts war ungültig, da er bereits verwendet wurde.  Bitte fordern Sie eine <a href=\"%(passwd_reset_url)s\">neue Passwortwiederherstellung</a> an."
 
 #: templates/account/password_reset_from_key.html:18
 msgid "Change password"
@@ -7217,7 +7219,7 @@ msgstr "Anmelden"
 #: templates/account/signup.html:13
 #, python-format
 msgid "Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
-msgstr ""
+msgstr "Haben Sie bereits ein Konto? Dann melden Sie sich bitte <a href=\"%(login_url)s\">an</a>."
 
 #: templates/account/signup.html:27
 msgid "Or use a SSO-provider for signup"
@@ -7237,28 +7239,28 @@ msgstr "Authentifizieren"
 
 #: templates/allauth_2fa/backup_tokens.html:6
 msgid "Two-Factor Authentication Backup Tokens"
-msgstr ""
+msgstr "Zwei-Faktor-Authentifizierung Backup-Codes"
 
 #: templates/allauth_2fa/backup_tokens.html:17
 msgid "Backup tokens have been generated, but are not revealed here for security reasons. Press the button below to generate new ones."
-msgstr ""
+msgstr "Backup-Token wurden generiert, werden aber aus Sicherheitsgründen hier nicht angezeigt. Drücken Sie den Knopf unten um neue zu generieren."
 
 #: templates/allauth_2fa/backup_tokens.html:20
 msgid "No tokens. Press the button below to generate some."
-msgstr ""
+msgstr "Keine Token. Drücken Sie den Knopf um neue anzulegen."
 
 #: templates/allauth_2fa/backup_tokens.html:27
 msgid "Generate backup tokens"
-msgstr ""
+msgstr "Backup-Codes generieren"
 
 #: templates/allauth_2fa/backup_tokens.html:31
 #: templates/allauth_2fa/setup.html:40
-msgid "back to settings"
-msgstr ""
+msgid "Back to settings"
+msgstr "Zurück zu den Einstellungen"
 
 #: templates/allauth_2fa/remove.html:6
 msgid "Disable Two-Factor Authentication"
-msgstr ""
+msgstr "Zwei-Faktor-Authentifizierung deaktivieren"
 
 #: templates/allauth_2fa/remove.html:9
 msgid "Are you sure?"
@@ -7266,7 +7268,7 @@ msgstr "Bist du sicher?"
 
 #: templates/allauth_2fa/remove.html:14
 msgid "Disable Two-Factor"
-msgstr ""
+msgstr "Zwei-Faktor deaktivieren"
 
 #: templates/allauth_2fa/setup.html:6
 msgid "Setup Two-Factor Authentication"
@@ -7290,7 +7292,7 @@ msgstr "Geben Sie das von der App generierte Token ein:"
 
 #: templates/allauth_2fa/setup.html:35
 msgid "Verify"
-msgstr ""
+msgstr "Überprüfen"
 
 #: templates/attachment_button.html:4 templates/js/translated/attachment.js:54
 msgid "Add Link"
@@ -7426,7 +7428,7 @@ msgstr "Fehler 405: Methode nicht erlaubt"
 
 #: templates/js/translated/api.js:213
 msgid "HTTP method not allowed at URL"
-msgstr ""
+msgstr "HTTP-Methode für diese URL nicht erlaubt"
 
 #: templates/js/translated/api.js:217 templates/js/translated/modals.js:1081
 msgid "Error 408: Timeout"
@@ -7573,11 +7575,11 @@ msgstr "Barcode entspricht keinem Lagerort"
 
 #: templates/js/translated/bom.js:75
 msgid "Display row data"
-msgstr ""
+msgstr "Zeilendaten anzeigen"
 
 #: templates/js/translated/bom.js:131
 msgid "Row Data"
-msgstr ""
+msgstr "Zeilendaten"
 
 #: templates/js/translated/bom.js:249
 msgid "Download BOM Template"
@@ -7615,7 +7617,7 @@ msgstr "Parameter-Daten einschließen"
 
 #: templates/js/translated/bom.js:308
 msgid "Include part  parameter data in exported BOM"
-msgstr ""
+msgstr "Teil-Parameter in Stückliste-Export einschließen"
 
 #: templates/js/translated/bom.js:313
 msgid "Include Stock Data"
@@ -7647,7 +7649,7 @@ msgstr "Ersatzteil entfernen"
 
 #: templates/js/translated/bom.js:565
 msgid "Select and add a new substitute part using the input below"
-msgstr ""
+msgstr "Wählen Sie ein neues Ersatzteil aus und fügen Sie sie mit den folgenden Eingaben hinzu"
 
 #: templates/js/translated/bom.js:576
 msgid "Are you sure you wish to remove this substitute part link?"
@@ -7739,7 +7741,7 @@ msgstr "Bauauftrag erstellen"
 
 #: templates/js/translated/build.js:140
 msgid "Build order is ready to be completed"
-msgstr ""
+msgstr "Bauauftrag ist bereit abgeschlossen zu werden"
 
 #: templates/js/translated/build.js:145
 msgid "Build Order is incomplete"
@@ -7765,7 +7767,7 @@ msgstr "Die Stückliste enthält verfolgbare Teile"
 
 #: templates/js/translated/build.js:226
 msgid "Build outputs must be generated individually"
-msgstr ""
+msgstr "Endprodukte müssen individuell angelegt werden"
 
 #: templates/js/translated/build.js:234
 msgid "Trackable parts can have serial numbers specified"
@@ -7821,7 +7823,7 @@ msgstr "Endprodukte fertigstellen"
 
 #: templates/js/translated/build.js:576
 msgid "Delete Build Outputs"
-msgstr ""
+msgstr "Endprodukte entfernen"
 
 #: templates/js/translated/build.js:665
 msgid "No build order allocations found"
@@ -8107,15 +8109,15 @@ msgstr "Eingabe leeren"
 
 #: templates/js/translated/forms.js:2479
 msgid "File Column"
-msgstr ""
+msgstr "Dateispalte"
 
 #: templates/js/translated/forms.js:2479
 msgid "Field Name"
-msgstr ""
+msgstr "Feldname"
 
 #: templates/js/translated/forms.js:2491
 msgid "Select Columns"
-msgstr ""
+msgstr "Spalten auswählen"
 
 #: templates/js/translated/helpers.js:19
 msgid "YES"
@@ -8599,7 +8601,7 @@ msgstr "Sie haben Benachrichtigungen für dieses Teil abgemeldet"
 
 #: templates/js/translated/part.js:444
 msgid "Validating the BOM will mark each line item as valid"
-msgstr ""
+msgstr "Die Stückliste zu validieren markiert jede Zeile als gültig"
 
 #: templates/js/translated/part.js:454
 msgid "Validate Bill of Materials"
@@ -8863,11 +8865,11 @@ msgstr "Lagerartikel in untergeordneten Lagerorten einschließen"
 
 #: templates/js/translated/stock.js:637
 msgid "Confirm stock assignment"
-msgstr ""
+msgstr "Bestand Zuweisung bestätigen"
 
 #: templates/js/translated/stock.js:638
 msgid "Assign Stock to Customer"
-msgstr ""
+msgstr "Einem Kunden zuordnen"
 
 #: templates/js/translated/stock.js:715
 msgid "Warning: Merge operation cannot be reversed"
@@ -8879,11 +8881,11 @@ msgstr "Einige Informationen gehen verloren, wenn Artikel zusammengeführt werde
 
 #: templates/js/translated/stock.js:718
 msgid "Stock transaction history will be deleted for merged items"
-msgstr ""
+msgstr "Lagerartikelverlauf wird für zusammengeführte Lagerartikel gelöscht"
 
 #: templates/js/translated/stock.js:719
 msgid "Supplier part information will be deleted for merged items"
-msgstr ""
+msgstr "Lieferantenteil-Informationen werden für zusammengeführte Artikel gelöscht"
 
 #: templates/js/translated/stock.js:805
 msgid "Confirm stock item merge"
@@ -8955,7 +8957,7 @@ msgstr "KEIN ERGEBNIS"
 
 #: templates/js/translated/stock.js:1264
 msgid "Pass test"
-msgstr ""
+msgstr "Test bestanden"
 
 #: templates/js/translated/stock.js:1267
 msgid "Add test result"
@@ -9088,7 +9090,7 @@ msgstr "Status Code muss ausgewählt werden"
 
 #: templates/js/translated/stock.js:2464
 msgid "Allocated Quantity"
-msgstr ""
+msgstr "Zugewiesene Menge"
 
 #: templates/js/translated/stock.js:2659
 msgid "Invalid date"
@@ -9140,7 +9142,7 @@ msgstr "Lagerartikel entfernen"
 
 #: templates/js/translated/stock.js:2973
 msgid "Install another stock item into this item"
-msgstr ""
+msgstr "Einen weiteren Lagerartikel in dieses Teil installiert"
 
 #: templates/js/translated/stock.js:2974
 msgid "Stock items can only be installed if they meet the following criteria"
@@ -9148,11 +9150,11 @@ msgstr "Lagerartikel können nur installiert werden wenn folgende Kriterien erf�
 
 #: templates/js/translated/stock.js:2976
 msgid "The Stock Item links to a Part which is the BOM for this Stock Item"
-msgstr ""
+msgstr "Der Lagerartikel ist auf ein Teil verknüpft das in der Stückliste für diesen Lagerartikel ist"
 
 #: templates/js/translated/stock.js:2977
 msgid "The Stock Item is currently available in stock"
-msgstr ""
+msgstr "Dieser Lagerartikel ist aktuell vorhanden"
 
 #: templates/js/translated/stock.js:2978
 msgid "The Stock Item is serialized and does not belong to another item"
@@ -9160,7 +9162,7 @@ msgstr "Der Lagerartikel ist serialisiert und gehört nicht zu einem anderen Tei
 
 #: templates/js/translated/stock.js:2991
 msgid "Select part to install"
-msgstr ""
+msgstr "Teil zur Installation auswählen"
 
 #: templates/js/translated/table_filters.js:56
 msgid "Trackable Part"
