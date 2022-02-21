@@ -151,11 +151,6 @@ def inventreeDocsVersion():
 
     Development -> "latest"
     Release -> "major.minor.sub" e.g. "0.5.2"
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> master
     """
 
     if isInvenTreeDevelopmentVersion():
