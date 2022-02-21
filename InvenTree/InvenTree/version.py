@@ -9,7 +9,7 @@ import re
 import common.models
 
 # InvenTree software version
-INVENTREE_SW_VERSION = "0.6.0 dev"
+INVENTREE_SW_VERSION = "0.7.0 dev"
 
 # InvenTree API version
 INVENTREE_API_VERSION = 26
