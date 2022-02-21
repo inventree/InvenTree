@@ -4,6 +4,7 @@ Generic models which provide extra functionality over base Django model types.
 
 from __future__ import unicode_literals
 
+import re
 import os
 import logging
 
@@ -20,7 +21,8 @@ from django.dispatch import receiver
 from mptt.models import MPTTModel, TreeForeignKey
 from mptt.exceptions import InvalidMove
 
-from .validators import validate_tree_name
+from InvenTree.fields import InvenTreeURLField
+from InvenTree.validators import validate_tree_name
 
 
 logger = logging.getLogger('inventree')
@@ -43,8 +45,114 @@ def rename_attachment(instance, filename):
     return os.path.join(instance.getSubdir(), filename)
 
 
+class DataImportMixin(object):
+    """
+    Model mixin class which provides support for 'data import' functionality.
+
+    Models which implement this mixin should provide information on the fields available for import
+    """
+
+    # Define a map of fields avaialble for import
+    IMPORT_FIELDS = {}
+
+    @classmethod
+    def get_import_fields(cls):
+        """
+        Return all available import fields
+
+        Where information on a particular field is not explicitly provided,
+        introspect the base model to (attempt to) find that information.
+
+        """
+        fields = cls.IMPORT_FIELDS
+
+        for name, field in fields.items():
+
+            # Attempt to extract base field information from the model
+            base_field = None
+
+            for f in cls._meta.fields:
+                if f.name == name:
+                    base_field = f
+                    break
+
+            if base_field:
+                if 'label' not in field:
+                    field['label'] = base_field.verbose_name
+
+                if 'help_text' not in field:
+                    field['help_text'] = base_field.help_text
+
+            fields[name] = field
+
+        return fields
+
+    @classmethod
+    def get_required_import_fields(cls):
+        """ Return all *required* import fields """
+        fields = {}
+
+        for name, field in cls.get_import_fields().items():
+            required = field.get('required', False)
+
+            if required:
+                fields[name] = field
+
+        return fields
+
+
+class ReferenceIndexingMixin(models.Model):
+    """
+    A mixin for keeping track of numerical copies of the "reference" field.
+
+    !!DANGER!! always add `ReferenceIndexingSerializerMixin`to all your models serializers to
+    ensure the reference field is not too big
+
+    Here, we attempt to convert a "reference" field value (char) to an integer,
+    for performing fast natural sorting.
+
+    This requires extra database space (due to the extra table column),
+    but is required as not all supported database backends provide equivalent casting.
+
+    This mixin adds a field named 'reference_int'.
+
+    - If the 'reference' field can be cast to an integer, it is stored here
+    - If the 'reference' field *starts* with an integer, it is stored here
+    - Otherwise, we store zero
+    """
+
+    class Meta:
+        abstract = True
+
+    def rebuild_reference_field(self):
+
+        reference = getattr(self, 'reference', '')
+
+        self.reference_int = extract_int(reference)
+
+    reference_int = models.BigIntegerField(default=0)
+
+
+def extract_int(reference):
+    # Default value if we cannot convert to an integer
+    ref_int = 0
+
+    # Look at the start of the string - can it be "integerized"?
+    result = re.match(r"^(\d+)", reference)
+
+    if result and len(result.groups()) == 1:
+        ref = result.groups()[0]
+        try:
+            ref_int = int(ref)
+        except:
+            ref_int = 0
+    return ref_int
+
+
 class InvenTreeAttachment(models.Model):
     """ Provides an abstracted class for managing file attachments.
+
+    An attachment can be either an uploaded file, or an external URL
 
     Attributes:
         attachment: File
@@ -52,6 +160,7 @@ class InvenTreeAttachment(models.Model):
         user: User associated with file upload
         upload_date: Date the file was uploaded
     """
+
     def getSubdir(self):
         """
         Return the subdirectory under which attachments should be stored.
@@ -60,11 +169,32 @@ class InvenTreeAttachment(models.Model):
 
         return "attachments"
 
+    def save(self, *args, **kwargs):
+        # Either 'attachment' or 'link' must be specified!
+        if not self.attachment and not self.link:
+            raise ValidationError({
+                'attachment': _('Missing file'),
+                'link': _('Missing external link'),
+            })
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return os.path.basename(self.attachment.name)
+        if self.attachment is not None:
+            return os.path.basename(self.attachment.name)
+        else:
+            return str(self.link)
 
     attachment = models.FileField(upload_to=rename_attachment, verbose_name=_('Attachment'),
-                                  help_text=_('Select file to attach'))
+                                  help_text=_('Select file to attach'),
+                                  blank=True, null=True
+                                  )
+
+    link = InvenTreeURLField(
+        blank=True, null=True,
+        verbose_name=_('Link'),
+        help_text=_('Link to external URL')
+    )
 
     comment = models.CharField(blank=True, max_length=100, verbose_name=_('Comment'), help_text=_('File comment'))
 
@@ -80,7 +210,10 @@ class InvenTreeAttachment(models.Model):
 
     @property
     def basename(self):
-        return os.path.basename(self.attachment.name)
+        if self.attachment:
+            return os.path.basename(self.attachment.name)
+        else:
+            return None
 
     @basename.setter
     def basename(self, fn):

@@ -14,6 +14,8 @@ from stock.models import StockItem
 
 from common.models import InvenTreeSetting
 
+import InvenTree.helpers
+
 register = template.Library()
 
 
@@ -119,18 +121,10 @@ def internal_link(link, text):
 
     text = str(text)
 
-    base_url = InvenTreeSetting.get_setting('INVENTREE_BASE_URL')
+    url = InvenTree.helpers.construct_absolute_url(link)
 
     # If the base URL is not set, just return the text
-    if not base_url:
+    if not url:
         return text
-
-    if not base_url.endswith('/'):
-        base_url += '/'
-
-    if base_url.endswith('/') and link.startswith('/'):
-        link = link[1:]
-
-    url = f"{base_url}{link}"
 
     return mark_safe(f'<a href="{url}">{text}</a>')

@@ -1,12 +1,18 @@
 from django.shortcuts import HttpResponseRedirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, Resolver404
 from django.db import connection
 from django.shortcuts import redirect
+from django.conf.urls import include, url
 import logging
 import time
 import operator
 
 from rest_framework.authtoken.models import Token
+from allauth_2fa.middleware import BaseRequire2FAMiddleware, AllauthTwoFactorMiddleware
+
+from InvenTree.urls import frontendpatterns
+from common.models import InvenTreeSetting
+
 
 logger = logging.getLogger("inventree")
 
@@ -59,20 +65,19 @@ class AuthRequiredMiddleware(object):
 
                     except Token.DoesNotExist:
                         logger.warning(f"Access denied for unknown token {token_key}")
-                        pass
 
             # No authorization was found for the request
             if not authorized:
                 # A logout request will redirect the user to the login screen
-                if request.path_info == reverse_lazy('logout'):
-                    return HttpResponseRedirect(reverse_lazy('login'))
+                if request.path_info == reverse_lazy('account_logout'):
+                    return HttpResponseRedirect(reverse_lazy('account_login'))
 
                 path = request.path_info
 
                 # List of URL endpoints we *do not* want to redirect to
                 urls = [
-                    reverse_lazy('login'),
-                    reverse_lazy('logout'),
+                    reverse_lazy('account_login'),
+                    reverse_lazy('account_logout'),
                     reverse_lazy('admin:login'),
                     reverse_lazy('admin:logout'),
                 ]
@@ -80,7 +85,7 @@ class AuthRequiredMiddleware(object):
                 if path not in urls and not path.startswith('/api/'):
                     # Save the 'next' parameter to pass through to the login view
 
-                    return redirect('%s?next=%s' % (reverse_lazy('login'), request.path))
+                    return redirect('%s?next=%s' % (reverse_lazy('account_login'), request.path))
 
         response = self.get_response(request)
 
@@ -146,3 +151,28 @@ class QueryCountMiddleware(object):
                     print(x[0], ':', x[1])
 
         return response
+
+
+url_matcher = url('', include(frontendpatterns))
+
+
+class Check2FAMiddleware(BaseRequire2FAMiddleware):
+    """check if user is required to have MFA enabled"""
+    def require_2fa(self, request):
+        # Superusers are require to have 2FA.
+        try:
+            if url_matcher.resolve(request.path[1:]):
+                return InvenTreeSetting.get_setting('LOGIN_ENFORCE_MFA')
+        except Resolver404:
+            pass
+        return False
+
+
+class CustomAllauthTwoFactorMiddleware(AllauthTwoFactorMiddleware):
+    """This function ensures only frontend code triggers the MFA auth cycle"""
+    def process_request(self, request):
+        try:
+            if not url_matcher.resolve(request.path[1:]):
+                super().process_request(request)
+        except Resolver404:
+            pass

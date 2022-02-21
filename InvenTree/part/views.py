@@ -20,6 +20,7 @@ from django.contrib import messages
 
 from moneyed import CURRENCIES
 from djmoney.contrib.exchange.models import convert_money
+from djmoney.contrib.exchange.exceptions import MissingRate
 
 from PIL import Image
 
@@ -27,26 +28,24 @@ import requests
 import os
 import io
 
-from rapidfuzz import fuzz
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal
 
-from .models import PartCategory, Part, PartRelated
+from .models import PartCategory, Part
 from .models import PartParameterTemplate
 from .models import PartCategoryParameterTemplate
-from .models import BomItem
 from .models import PartSellPriceBreak, PartInternalPriceBreak
 
 from common.models import InvenTreeSetting
 from company.models import SupplierPart
 from common.files import FileManager
 from common.views import FileManagementFormView, FileManagementAjaxView
-from common.forms import UploadFileForm, MatchFieldForm
 
-from stock.models import StockLocation
+from stock.models import StockItem, StockLocation
 
 import common.settings as inventree_settings
 
 from . import forms as part_forms
+from . import settings as part_settings
 from .bom import MakeBomTemplate, ExportBom, IsValidBOMFormat
 from order.models import PurchaseOrderLineItem
 
@@ -82,75 +81,6 @@ class PartIndex(InvenTreeRoleMixin, ListView):
         context['part_count'] = Part.objects.count()
 
         return context
-
-
-class PartRelatedCreate(AjaxCreateView):
-    """ View for creating a new PartRelated object
-
-    - The view only makes sense if a Part object is passed to it
-    """
-    model = PartRelated
-    form_class = part_forms.CreatePartRelatedForm
-    ajax_form_title = _("Add Related Part")
-    ajax_template_name = "modal_form.html"
-
-    def get_initial(self):
-        """ Set parent part as part_1 field """
-
-        initials = {}
-
-        part_id = self.request.GET.get('part', None)
-
-        if part_id:
-            try:
-                initials['part_1'] = Part.objects.get(pk=part_id)
-            except (Part.DoesNotExist, ValueError):
-                pass
-
-        return initials
-
-    def get_form(self):
-        """ Create a form to upload a new PartRelated
-
-        - Hide the 'part_1' field (parent part)
-        - Display parts which are not yet related
-        """
-
-        form = super(AjaxCreateView, self).get_form()
-
-        form.fields['part_1'].widget = HiddenInput()
-
-        try:
-            # Get parent part
-            parent_part = self.get_initial()['part_1']
-            # Get existing related parts
-            related_parts = [related_part[1].pk for related_part in parent_part.get_related_parts()]
-
-            # Build updated choice list excluding
-            # - parts already related to parent part
-            # - the parent part itself
-            updated_choices = []
-            for choice in form.fields["part_2"].choices:
-                if (choice[0] not in related_parts) and (choice[0] != parent_part.pk):
-                    updated_choices.append(choice)
-
-            # Update choices for related part
-            form.fields['part_2'].choices = updated_choices
-        except KeyError:
-            pass
-
-        return form
-
-
-class PartRelatedDelete(AjaxDeleteView):
-    """ View for deleting a PartRelated object """
-
-    model = PartRelated
-    ajax_form_title = _("Delete Related Part")
-    context_object_name = "related"
-
-    # Explicit role requirement
-    role_required = 'part.change'
 
 
 class PartSetCategory(AjaxUpdateView):
@@ -245,6 +175,7 @@ class PartImport(FileManagementFormView):
             'Category',
             'default_location',
             'default_supplier',
+            'variant_of',
         ]
 
         OPTIONAL_HEADERS = [
@@ -256,6 +187,17 @@ class PartImport(FileManagementFormView):
             'minimum_stock',
             'Units',
             'Notes',
+            'Active',
+            'base_cost',
+            'Multiple',
+            'Assembly',
+            'Component',
+            'is_template',
+            'Purchaseable',
+            'Salable',
+            'Trackable',
+            'Virtual',
+            'Stock',
         ]
 
     name = 'part'
@@ -284,6 +226,18 @@ class PartImport(FileManagementFormView):
         'category': 'category',
         'default_location': 'default_location',
         'default_supplier': 'default_supplier',
+        'variant_of': 'variant_of',
+        'active': 'active',
+        'base_cost': 'base_cost',
+        'multiple': 'multiple',
+        'assembly': 'assembly',
+        'component': 'component',
+        'is_template': 'is_template',
+        'purchaseable': 'purchaseable',
+        'salable': 'salable',
+        'trackable': 'trackable',
+        'virtual': 'virtual',
+        'stock': 'stock',
     }
     file_manager_class = PartFileManager
 
@@ -299,6 +253,8 @@ class PartImport(FileManagementFormView):
         self.matches['default_location'] = ['name__contains']
         self.allowed_items['default_supplier'] = SupplierPart.objects.all()
         self.matches['default_supplier'] = ['SKU__contains']
+        self.allowed_items['variant_of'] = Part.objects.all()
+        self.matches['variant_of'] = ['name__contains']
 
         # setup
         self.file_manager.setup()
@@ -364,9 +320,29 @@ class PartImport(FileManagementFormView):
                 category=optional_matches['Category'],
                 default_location=optional_matches['default_location'],
                 default_supplier=optional_matches['default_supplier'],
+                variant_of=optional_matches['variant_of'],
+                active=str2bool(part_data.get('active', True)),
+                base_cost=part_data.get('base_cost', 0),
+                multiple=part_data.get('multiple', 1),
+                assembly=str2bool(part_data.get('assembly', part_settings.part_assembly_default())),
+                component=str2bool(part_data.get('component', part_settings.part_component_default())),
+                is_template=str2bool(part_data.get('is_template', part_settings.part_template_default())),
+                purchaseable=str2bool(part_data.get('purchaseable', part_settings.part_purchaseable_default())),
+                salable=str2bool(part_data.get('salable', part_settings.part_salable_default())),
+                trackable=str2bool(part_data.get('trackable', part_settings.part_trackable_default())),
+                virtual=str2bool(part_data.get('virtual', part_settings.part_virtual_default())),
             )
             try:
                 new_part.save()
+
+                # add stock item if set
+                if part_data.get('stock', None):
+                    stock = StockItem(
+                        part=new_part,
+                        location=new_part.default_location,
+                        quantity=int(part_data.get('stock', 1)),
+                    )
+                    stock.save()
                 import_done += 1
             except ValidationError as _e:
                 import_error.append(', '.join(set(_e.messages)))
@@ -404,28 +380,23 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
 
     # Add in some extra context information based on query params
     def get_context_data(self, **kwargs):
-        """ Provide extra context data to template
-
-        - If '?editing=True', set 'editing_enabled' context variable
+        """
+        Provide extra context data to template
         """
         context = super().get_context_data(**kwargs)
 
         part = self.get_object()
 
-        if str2bool(self.request.GET.get('edit', '')):
-            # Allow BOM editing if the part is active
-            context['editing_enabled'] = 1 if part.active else 0
-        else:
-            context['editing_enabled'] = 0
-
         ctx = part.get_context_data(self.request)
+
         context.update(**ctx)
 
         # Pricing information
-        ctx = self.get_pricing(self.get_quantity())
-        ctx['form'] = self.form_class(initial=self.get_initials())
+        if InvenTreeSetting.get_setting('PART_SHOW_PRICE_HISTORY', False):
+            ctx = self.get_pricing(self.get_quantity())
+            ctx['form'] = self.form_class(initial=self.get_initials())
 
-        context.update(ctx)
+            context.update(ctx)
 
         return context
 
@@ -453,7 +424,11 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
                     continue
 
                 # convert purchase price to current currency - only one currency in the graph
-                price = convert_money(stock_item.purchase_price, default_currency)
+                try:
+                    price = convert_money(stock_item.purchase_price, default_currency)
+                except MissingRate:
+                    continue
+
                 line = {
                     'price': price.amount,
                     'qty': stock_item.quantity
@@ -467,10 +442,14 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
                         line['price_part'] = stock_item.supplier_part.unit_pricing
 
                 # set date for graph labels
-                if stock_item.purchase_order:
+                if stock_item.purchase_order and stock_item.purchase_order.issue_date:
                     line['date'] = stock_item.purchase_order.issue_date.strftime('%d.%m.%Y')
-                else:
+                elif stock_item.tracking_info.count() > 0:
                     line['date'] = stock_item.tracking_info.first().date.strftime('%d.%m.%Y')
+                else:
+                    # Not enough information
+                    continue
+
                 price_history.append(line)
 
             ctx['price_history'] = price_history
@@ -511,7 +490,11 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
                 if None in [sale_item.purchase_price, sale_item.quantity]:
                     continue
 
-                price = convert_money(sale_item.purchase_price, default_currency)
+                try:
+                    price = convert_money(sale_item.purchase_price, default_currency)
+                except MissingRate:
+                    continue
+
                 line = {
                     'price': price.amount if price else 0,
                     'qty': sale_item.quantity,
@@ -718,364 +701,12 @@ class PartImageSelect(AjaxUpdateView):
         return self.renderJsonResponse(request, form, data)
 
 
-class BomDuplicate(AjaxUpdateView):
-    """
-    View for duplicating BOM from a parent item.
-    """
+class BomUpload(InvenTreeRoleMixin, DetailView):
+    """ View for uploading a BOM file, and handling BOM data importing. """
 
-    model = Part
     context_object_name = 'part'
-    ajax_form_title = _('Duplicate BOM')
-    ajax_template_name = 'part/bom_duplicate.html'
-    form_class = part_forms.BomDuplicateForm
-
-    def get_form(self):
-
-        form = super().get_form()
-
-        # Limit choices to parents of the current part
-        parents = self.get_object().get_ancestors()
-
-        form.fields['parent'].queryset = parents
-
-        return form
-
-    def get_initial(self):
-        initials = super().get_initial()
-
-        parents = self.get_object().get_ancestors()
-
-        if parents.count() == 1:
-            initials['parent'] = parents[0]
-
-        return initials
-
-    def validate(self, part, form):
-
-        confirm = str2bool(form.cleaned_data.get('confirm', False))
-
-        if not confirm:
-            form.add_error('confirm', _('Confirm duplication of BOM from parent'))
-
-    def save(self, part, form):
-        """
-        Duplicate BOM from the specified parent
-        """
-
-        parent = form.cleaned_data.get('parent', None)
-
-        clear = str2bool(form.cleaned_data.get('clear', True))
-
-        if parent:
-            part.copy_bom_from(parent, clear=clear)
-
-
-class BomValidate(AjaxUpdateView):
-    """
-    Modal form view for validating a part BOM
-    """
-
-    model = Part
-    ajax_form_title = _("Validate BOM")
-    ajax_template_name = 'part/bom_validate.html'
-    context_object_name = 'part'
-    form_class = part_forms.BomValidateForm
-
-    def get_context(self):
-        return {
-            'part': self.get_object(),
-        }
-
-    def get(self, request, *args, **kwargs):
-
-        form = self.get_form()
-
-        return self.renderJsonResponse(request, form, context=self.get_context())
-
-    def validate(self, part, form, **kwargs):
-
-        confirm = str2bool(form.cleaned_data.get('validate', False))
-
-        if not confirm:
-            form.add_error('validate', _('Confirm that the BOM is valid'))
-
-    def save(self, part, form, **kwargs):
-        """
-        Mark the BOM as validated
-        """
-
-        part.validate_bom(self.request.user)
-
-    def get_data(self):
-        return {
-            'success': _('Validated Bill of Materials')
-        }
-
-
-class BomUpload(InvenTreeRoleMixin, FileManagementFormView):
-    """ View for uploading a BOM file, and handling BOM data importing.
-
-    The BOM upload process is as follows:
-
-    1. (Client) Select and upload BOM file
-    2. (Server) Verify that supplied file is a file compatible with tablib library
-    3. (Server) Introspect data file, try to find sensible columns / values / etc
-    4. (Server) Send suggestions back to the client
-    5. (Client) Makes choices based on suggestions:
-        - Accept automatic matching to parts found in database
-        - Accept suggestions for 'partial' or 'fuzzy' matches
-        - Create new parts in case of parts not being available
-    6. (Client) Sends updated dataset back to server
-    7. (Server) Check POST data for validity, sanity checking, etc.
-    8. (Server) Respond to POST request
-        - If data are valid, proceed to 9.
-        - If data not valid, return to 4.
-    9. (Server) Send confirmation form to user
-        - Display the actions which will occur
-        - Provide final "CONFIRM" button
-    10. (Client) Confirm final changes
-    11. (Server) Apply changes to database, update BOM items.
-
-    During these steps, data are passed between the server/client as JSON objects.
-    """
-
-    role_required = ('part.change', 'part.add')
-
-    class BomFileManager(FileManager):
-        # Fields which are absolutely necessary for valid upload
-        REQUIRED_HEADERS = [
-            'Quantity'
-        ]
-
-        # Fields which are used for part matching (only one of them is needed)
-        ITEM_MATCH_HEADERS = [
-            'Part_Name',
-            'Part_IPN',
-            'Part_ID',
-        ]
-
-        # Fields which would be helpful but are not required
-        OPTIONAL_HEADERS = [
-            'Reference',
-            'Note',
-            'Overage',
-        ]
-
-        EDITABLE_HEADERS = [
-            'Reference',
-            'Note',
-            'Overage'
-        ]
-
-    name = 'order'
-    form_list = [
-        ('upload', UploadFileForm),
-        ('fields', MatchFieldForm),
-        ('items', part_forms.BomMatchItemForm),
-    ]
-    form_steps_template = [
-        'part/bom_upload/upload_file.html',
-        'part/bom_upload/match_fields.html',
-        'part/bom_upload/match_parts.html',
-    ]
-    form_steps_description = [
-        _("Upload File"),
-        _("Match Fields"),
-        _("Match Parts"),
-    ]
-    form_field_map = {
-        'item_select': 'part',
-        'quantity': 'quantity',
-        'overage': 'overage',
-        'reference': 'reference',
-        'note': 'note',
-    }
-    file_manager_class = BomFileManager
-
-    def get_part(self):
-        """ Get part or return 404 """
-
-        return get_object_or_404(Part, pk=self.kwargs['pk'])
-
-    def get_context_data(self, form, **kwargs):
-        """ Handle context data for order """
-
-        context = super().get_context_data(form=form, **kwargs)
-
-        part = self.get_part()
-
-        context.update({'part': part})
-
-        return context
-
-    def get_allowed_parts(self):
-        """ Return a queryset of parts which are allowed to be added to this BOM.
-        """
-
-        return self.get_part().get_allowed_bom_items()
-
-    def get_field_selection(self):
-        """ Once data columns have been selected, attempt to pre-select the proper data from the database.
-        This function is called once the field selection has been validated.
-        The pre-fill data are then passed through to the part selection form.
-        """
-
-        self.allowed_items = self.get_allowed_parts()
-
-        # Fields prefixed with "Part_" can be used to do "smart matching" against Part objects in the database
-        k_idx = self.get_column_index('Part_ID')
-        p_idx = self.get_column_index('Part_Name')
-        i_idx = self.get_column_index('Part_IPN')
-
-        q_idx = self.get_column_index('Quantity')
-        r_idx = self.get_column_index('Reference')
-        o_idx = self.get_column_index('Overage')
-        n_idx = self.get_column_index('Note')
-
-        for row in self.rows:
-            """
-            Iterate through each row in the uploaded data,
-            and see if we can match the row to a "Part" object in the database.
-            There are three potential ways to match, based on the uploaded data:
-            a) Use the PK (primary key) field for the part, uploaded in the "Part_ID" field
-            b) Use the IPN (internal part number) field for the part, uploaded in the "Part_IPN" field
-            c) Use the name of the part, uploaded in the "Part_Name" field
-            Notes:
-            - If using the Part_ID field, we can do an exact match against the PK field
-            - If using the Part_IPN field, we can do an exact match against the IPN field
-            - If using the Part_Name field, we can use fuzzy string matching to match "close" values
-            We also extract other information from the row, for the other non-matched fields:
-            - Quantity
-            - Reference
-            - Overage
-            - Note
-            """
-
-            # Initially use a quantity of zero
-            quantity = Decimal(0)
-
-            # Initially we do not have a part to reference
-            exact_match_part = None
-
-            # A list of potential Part matches
-            part_options = self.allowed_items
-
-            # Check if there is a column corresponding to "quantity"
-            if q_idx >= 0:
-                q_val = row['data'][q_idx]['cell']
-
-                if q_val:
-                    # Delete commas
-                    q_val = q_val.replace(',', '')
-
-                    try:
-                        # Attempt to extract a valid quantity from the field
-                        quantity = Decimal(q_val)
-                        # Store the 'quantity' value
-                        row['quantity'] = quantity
-                    except (ValueError, InvalidOperation):
-                        pass
-
-            # Check if there is a column corresponding to "PK"
-            if k_idx >= 0:
-                pk = row['data'][k_idx]['cell']
-
-                if pk:
-                    try:
-                        # Attempt Part lookup based on PK value
-                        exact_match_part = self.allowed_items.get(pk=pk)
-                    except (ValueError, Part.DoesNotExist):
-                        exact_match_part = None
-
-            # Check if there is a column corresponding to "Part IPN" and no exact match found yet
-            if i_idx >= 0 and not exact_match_part:
-                part_ipn = row['data'][i_idx]['cell']
-
-                if part_ipn:
-                    part_matches = [part for part in self.allowed_items if part.IPN and part_ipn.lower() == str(part.IPN.lower())]
-
-                    # Check for single match
-                    if len(part_matches) == 1:
-                        exact_match_part = part_matches[0]
-
-            # Check if there is a column corresponding to "Part Name" and no exact match found yet
-            if p_idx >= 0 and not exact_match_part:
-                part_name = row['data'][p_idx]['cell']
-
-                row['part_name'] = part_name
-
-                matches = []
-
-                for part in self.allowed_items:
-                    ratio = fuzz.partial_ratio(part.name + part.description, part_name)
-                    matches.append({'part': part, 'match': ratio})
-
-                # Sort matches by the 'strength' of the match ratio
-                if len(matches) > 0:
-                    matches = sorted(matches, key=lambda item: item['match'], reverse=True)
-
-                    part_options = [m['part'] for m in matches]
-            
-            # Supply list of part options for each row, sorted by how closely they match the part name
-            row['item_options'] = part_options
-
-            # Unless found, the 'item_match' is blank
-            row['item_match'] = None
-
-            if exact_match_part:
-                # If there is an exact match based on PK or IPN, use that
-                row['item_match'] = exact_match_part
-
-            # Check if there is a column corresponding to "Overage" field
-            if o_idx >= 0:
-                row['overage'] = row['data'][o_idx]['cell']
-
-            # Check if there is a column corresponding to "Reference" field
-            if r_idx >= 0:
-                row['reference'] = row['data'][r_idx]['cell']
-
-            # Check if there is a column corresponding to "Note" field
-            if n_idx >= 0:
-                row['note'] = row['data'][n_idx]['cell']
-
-    def done(self, form_list, **kwargs):
-        """ Once all the data is in, process it to add BomItem instances to the part """
-
-        self.part = self.get_part()
-        items = self.get_clean_items()
-
-        # Clear BOM
-        self.part.clear_bom()
-
-        # Generate new BOM items
-        for bom_item in items.values():
-            try:
-                part = Part.objects.get(pk=int(bom_item.get('part')))
-            except (ValueError, Part.DoesNotExist):
-                continue
-
-            quantity = bom_item.get('quantity')
-            overage = bom_item.get('overage', '')
-            reference = bom_item.get('reference', '')
-            note = bom_item.get('note', '')
-
-            # Create a new BOM item
-            item = BomItem(
-                part=self.part,
-                sub_part=part,
-                quantity=quantity,
-                overage=overage,
-                reference=reference,
-                note=note,
-            )
-
-            try:
-                item.save()
-            except IntegrityError:
-                # BomItem already exists
-                pass
-
-        return HttpResponseRedirect(reverse('part-detail', kwargs={'pk': self.kwargs['pk']}))
+    queryset = Part.objects.all()
+    template_name = 'part/upload_bom.html'
 
 
 class PartExport(AjaxView):
@@ -1168,7 +799,7 @@ class BomDownload(AjaxView):
 
         part = get_object_or_404(Part, pk=self.kwargs['pk'])
 
-        export_format = request.GET.get('file_format', 'csv')
+        export_format = request.GET.get('format', 'csv')
 
         cascade = str2bool(request.GET.get('cascade', False))
 
@@ -1209,59 +840,6 @@ class BomDownload(AjaxView):
         return {
             'info': 'Exported BOM'
         }
-
-
-class BomExport(AjaxView):
-    """ Provide a simple form to allow the user to select BOM download options.
-    """
-
-    model = Part
-    form_class = part_forms.BomExportForm
-    ajax_form_title = _("Export Bill of Materials")
-
-    role_required = 'part.view'
-
-    def get(self, request, *args, **kwargs):
-        return self.renderJsonResponse(request, self.form_class())
-
-    def post(self, request, *args, **kwargs):
-
-        # Extract POSTed form data
-        fmt = request.POST.get('file_format', 'csv').lower()
-        cascade = str2bool(request.POST.get('cascading', False))
-        levels = request.POST.get('levels', None)
-        parameter_data = str2bool(request.POST.get('parameter_data', False))
-        stock_data = str2bool(request.POST.get('stock_data', False))
-        supplier_data = str2bool(request.POST.get('supplier_data', False))
-        manufacturer_data = str2bool(request.POST.get('manufacturer_data', False))
-
-        try:
-            part = Part.objects.get(pk=self.kwargs['pk'])
-        except:
-            part = None
-
-        # Format a URL to redirect to
-        if part:
-            url = reverse('bom-download', kwargs={'pk': part.pk})
-        else:
-            url = ''
-
-        url += '?file_format=' + fmt
-        url += '&cascade=' + str(cascade)
-        url += '&parameter_data=' + str(parameter_data)
-        url += '&stock_data=' + str(stock_data)
-        url += '&supplier_data=' + str(supplier_data)
-        url += '&manufacturer_data=' + str(manufacturer_data)
-
-        if levels:
-            url += '&levels=' + str(levels)
-
-        data = {
-            'form_valid': part is not None,
-            'url': url,
-        }
-
-        return self.renderJsonResponse(request, self.form_class(), data=data)
 
 
 class PartDelete(AjaxDeleteView):
@@ -1476,17 +1054,28 @@ class CategoryDetail(InvenTreeRoleMixin, DetailView):
 
         if category:
             cascade = kwargs.get('cascade', True)
+
             # Prefetch parts parameters
             parts_parameters = category.prefetch_parts_parameters(cascade=cascade)
+
             # Get table headers (unique parameters names)
             context['headers'] = category.get_unique_parameters(cascade=cascade,
                                                                 prefetch=parts_parameters)
+
             # Insert part information
             context['headers'].insert(0, 'description')
             context['headers'].insert(0, 'part')
+
             # Get parameters data
             context['parameters'] = category.get_parts_parameters(cascade=cascade,
                                                                   prefetch=parts_parameters)
+
+            # Insert "starred" information
+            context['starred'] = category.is_starred_by(self.request.user)
+            context['starred_directly'] = context['starred'] and category.is_starred_by(
+                self.request.user,
+                include_parents=False,
+            )
 
         return context
 

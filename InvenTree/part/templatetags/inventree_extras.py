@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
-""" This module provides template tags for extra functionality
+"""
+This module provides template tags for extra functionality,
 over and above the built-in Django tags.
 """
 
 import os
 import sys
+
 from django.utils.html import format_html
 
 from django.utils.translation import ugettext_lazy as _
@@ -15,12 +17,15 @@ from django import template
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.templatetags.static import StaticNode
+
 from InvenTree import version, settings
 
 import InvenTree.helpers
 
 from common.models import InvenTreeSetting, ColorTheme, InvenTreeUserSetting
 from common.settings import currency_code_default
+
+from plugin.models import PluginSetting
 
 register = template.Library()
 
@@ -91,10 +96,24 @@ def inventree_in_debug_mode(*args, **kwargs):
 
 
 @register.simple_tag()
+def inventree_demo_mode(*args, **kwargs):
+    """ Return True if the server is running in DEMO mode """
+
+    return djangosettings.DEMO_MODE
+
+
+@register.simple_tag()
 def inventree_docker_mode(*args, **kwargs):
     """ Return True if the server is running as a Docker image """
 
     return djangosettings.DOCKER
+
+
+@register.simple_tag()
+def plugins_enabled(*args, **kwargs):
+    """ Return True if plugins are enabled for the server instance """
+
+    return djangosettings.PLUGINS_ENABLED
 
 
 @register.simple_tag()
@@ -120,6 +139,12 @@ def inventree_instance_name(*args, **kwargs):
 def inventree_title(*args, **kwargs):
     """ Return the title for the current instance - respecting the settings """
     return version.inventreeInstanceTitle()
+
+
+@register.simple_tag()
+def inventree_base_url(*args, **kwargs):
+    """ Return the INVENTREE_BASE_URL setting """
+    return InvenTreeSetting.get_setting('INVENTREE_BASE_URL')
 
 
 @register.simple_tag()
@@ -210,8 +235,16 @@ def setting_object(key, *args, **kwargs):
     if a user-setting was requested return that
     """
 
+    if 'plugin' in kwargs:
+        # Note, 'plugin' is an instance of an InvenTreePlugin class
+
+        plugin = kwargs['plugin']
+
+        return PluginSetting.get_setting_object(key, plugin=plugin)
+
     if 'user' in kwargs:
         return InvenTreeUserSetting.get_setting_object(key, user=kwargs['user'])
+
     return InvenTreeSetting.get_setting_object(key)
 
 
@@ -223,7 +256,7 @@ def settings_value(key, *args, **kwargs):
 
     if 'user' in kwargs:
         return InvenTreeUserSetting.get_setting(key, user=kwargs['user'])
-        
+
     return InvenTreeSetting.get_setting(key)
 
 
@@ -246,7 +279,68 @@ def global_settings(*args, **kwargs):
 
 
 @register.simple_tag()
+def visible_global_settings(*args, **kwargs):
+    """
+    Return any global settings which are not marked as 'hidden'
+    """
+
+    return InvenTreeSetting.allValues(exclude_hidden=True)
+
+
+@register.simple_tag()
+def progress_bar(val, max, *args, **kwargs):
+    """
+    Render a progress bar element
+    """
+
+    item_id = kwargs.get('id', 'progress-bar')
+
+    if val > max:
+        style = 'progress-bar-over'
+    elif val < max:
+        style = 'progress-bar-under'
+    else:
+        style = ''
+
+    percent = float(val / max) * 100
+
+    if percent > 100:
+        percent = 100
+    elif percent < 0:
+        percent = 0
+
+    style_tags = []
+
+    max_width = kwargs.get('max_width', None)
+
+    if max_width:
+        style_tags.append(f'max-width: {max_width};')
+
+    html = f"""
+    <div id='{item_id}' class='progress' style='{" ".join(style_tags)}'>
+        <div class='progress-bar {style}' role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width:{percent}%'></div>
+        <div class='progress-value'>{val} / {max}</div>
+    </div>
+    """
+
+    return mark_safe(html)
+
+
+@register.simple_tag()
 def get_color_theme_css(username):
+    user_theme_name = get_user_color_theme(username)
+    # Build path to CSS sheet
+    inventree_css_sheet = os.path.join('css', 'color-themes', user_theme_name + '.css')
+
+    # Build static URL
+    inventree_css_static_url = os.path.join(settings.STATIC_URL, inventree_css_sheet)
+
+    return inventree_css_static_url
+
+
+@register.simple_tag()
+def get_user_color_theme(username):
+    """ Get current user color theme """
     try:
         user_theme = ColorTheme.objects.filter(user=username).get()
         user_theme_name = user_theme.name
@@ -255,13 +349,7 @@ def get_color_theme_css(username):
     except ColorTheme.DoesNotExist:
         user_theme_name = 'default'
 
-    # Build path to CSS sheet
-    inventree_css_sheet = os.path.join('css', 'color-themes', user_theme_name + '.css')
-
-    # Build static URL
-    inventree_css_static_url = os.path.join(settings.STATIC_URL, inventree_css_sheet)
-
-    return inventree_css_static_url
+    return user_theme_name
 
 
 @register.simple_tag()
@@ -316,7 +404,7 @@ def keyvalue(dict, key):
 def call_method(obj, method_name, *args):
     """
     enables calling model methods / functions from templates with arguments
-    
+
     usage:
     {% call_method model_object 'fnc_name' argument1 %}
     """
@@ -351,14 +439,29 @@ def object_link(url_name, pk, ref):
     return mark_safe('<b><a href="{}">{}</a></b>'.format(ref_url, ref))
 
 
+@register.simple_tag()
+def mail_configured():
+    """ Return if mail is configured """
+    return bool(settings.EMAIL_HOST)
+
+
 class I18nStaticNode(StaticNode):
     """
     custom StaticNode
     replaces a variable named *lng* in the path with the current language
     """
     def render(self, context):
-        self.path.var = self.path.var.format(lng=context.request.LANGUAGE_CODE)
+
+        self.original = getattr(self, 'original', None)
+
+        if not self.original:
+            # Store the original (un-rendered) path template, as it gets overwritten below
+            self.original = self.path.var
+
+        self.path.var = self.original.format(lng=context.request.LANGUAGE_CODE)
+
         ret = super().render(context)
+
         return ret
 
 
@@ -386,4 +489,5 @@ else:
         # change path to called ressource
         bits[1] = f"'{loc_name}/{{lng}}.{bits[1][1:-1]}'"
         token.contents = ' '.join(bits)
+
         return I18nStaticNode.handle_token(parser, token)

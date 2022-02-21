@@ -43,18 +43,16 @@ function createNewModal(options={}) {
     });
 
     var html = `
-    <div class='modal fade modal-fixed-footer modal-primary inventree-modal' role='dialog' id='modal-form-${id}'>
+    <div class='modal fade modal-fixed-footer modal-primary inventree-modal' role='dialog' id='modal-form-${id}' tabindex='-1'>
         <div class='modal-dialog'>
             <div class='modal-content'>
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label='{% trans "Close" %}'>
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <h3 id='modal-title'>
+                    <h4 id='modal-title' class='modal-title'>
                         <!-- Form title to be injected here -->
-                    </h3>
+                    </h4>
+                    <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='{% trans "Close" %}'></button>
                 </div>
-                <div class='modal-form-content-wrapper'>
+                <div class='modal-body modal-form-content-wrapper'>
                     <div id='non-field-errors'>
                         <!-- Form error messages go here -->
                     </div>
@@ -73,7 +71,9 @@ function createNewModal(options={}) {
                     <div id='modal-footer-buttons'>
                         <!-- Extra buttons can be inserted here -->
                     </div>
-                    <button type='button' class='btn btn-default' id='modal-form-close' data-dismiss='modal'>{% trans "Cancel" %}</button>
+                    <span class='flex-item' style='flex-grow: 1;'></span>
+                    <h4><span id='modal-progress-spinner' class='fas fa-circle-notch fa-spin' style='display: none;'></span></h4>
+                    <button type='button' class='btn btn-secondary' id='modal-form-close' data-bs-dismiss='modal'>{% trans "Cancel" %}</button>
                     <button type='button' class='btn btn-primary' id='modal-form-submit'>{% trans "Submit" %}</button>
                 </div>
             </div>
@@ -111,7 +111,7 @@ function createNewModal(options={}) {
 
     $(modal_name).modal({
         backdrop: 'static',
-        keyboard: false,
+        keyboard: user_settings.FORMS_CLOSE_USING_ESCAPE,
     });
 
     // Set labels based on supplied options
@@ -126,6 +126,9 @@ function createNewModal(options={}) {
     if (options.hideCloseButton) {
         $(modal_name).find('#modal-form-cancel').hide();
     }
+
+    // Steal keyboard focus
+    $(modal_name).focus();
 
     // Return the "name" of the modal
     return modal_name;
@@ -355,22 +358,6 @@ function partialMatcher(params, data) {
 }
 
 
-function attachToggle(modal) {
-    /* Attach 'bootstrap-toggle' functionality to any checkbox in the modal.
-     * This is simple for visual improvement, 
-     * and also larger toggle style buttons are easier to press!
-     */
-
-    $(modal).find(`input[type='checkbox']`).each(function() {
-        $(this).bootstrapToggle({
-            size: 'small',
-            onstyle: 'success',
-            offstyle: 'warning',
-        });
-    });
-}
-
-
 function attachSelect(modal) {
     /* Attach 'select2' functionality to any drop-down list in the modal. 
      * Provides search filtering for dropdown items
@@ -385,6 +372,14 @@ function attachSelect(modal) {
 
     $(modal + ' .select2-container').addClass('select-full-width');
     $(modal + ' .select2-container').css('width', '100%');
+}
+
+
+function attachBootstrapCheckbox(modal) {
+    /* Attach 'switch' functionality to any checkboxes on the form */
+
+    $(modal + ' .checkboxinput').addClass('form-check-input');
+    $(modal + ' .checkboxinput').wrap(`<div class='form-check form-switch'></div>`);
 }
 
 
@@ -416,19 +411,19 @@ function afterForm(response, options) {
 
     // Display any messages
     if (response.success) {
-        showAlertOrCache('alert-success', response.success, cache);
+        showAlertOrCache(response.success, cache, {style: 'success'});
     }
 
     if (response.info) {
-        showAlertOrCache('alert-info', response.info, cache);
+        showAlertOrCache(response.info, cache, {style: 'info'});
     }
     
     if (response.warning) {
-        showAlertOrCache('alert-warning', response.warning, cache);
+        showAlertOrCache(response.warning, cache, {style: 'warning'});
     }
     
     if (response.danger) {
-        showAlertOrCache('alert-danger', response.danger, cache);
+        showAlertOrCache(response.danger, cache, {style: 'danger'});
     }
 
     // Was a callback provided?
@@ -550,14 +545,14 @@ function renderErrorMessage(xhr) {
 
     html += `
     <div class='panel-group'>
-        <div class='panel panel-default'>
+        <div class='panel'>
             <div class='panel panel-heading'>
                 <div class='panel-title'>
-                    <a data-toggle='collapse' href="#collapse-error-info">{% trans "Show Error Information" %}</a>
+                    <a data-bs-toggle='collapse' href="#collapse-error-info">{% trans "Show Error Information" %}</a>
                 </div>
             </div>
             <div class='panel-collapse collapse' id='collapse-error-info'>
-                <div class='panel-body'>`;
+                <div class='panel-content'>`;
 
     html += xhr.responseText;
 
@@ -571,12 +566,17 @@ function renderErrorMessage(xhr) {
 }
 
 
-function showAlertDialog(title, content) {
+function showAlertDialog(title, content, options={}) {
     /* Display a modal dialog message box.
      * 
      * title - Title text 
      * content - HTML content of the dialog window
      */
+
+    if (options.alert_style) {
+        // Wrap content in an alert block
+        content = `<div class='alert alert-block alert-${options.alert_style}'>${content}</div>`;
+    }
 
 
     var modal = createNewModal({
@@ -681,7 +681,7 @@ function openModal(options) {
 
     $(modal).modal({
         backdrop: 'static',
-        keyboard: false,
+        keyboard: user_settings.FORMS_CLOSE_USING_ESCAPE,
     });
 
     // Disable the form
@@ -697,8 +697,9 @@ function injectModalForm(modal, form_html) {
      * Updates the HTML of the form content, and then applies some other updates
      */
     $(modal).find('.modal-form-content').html(form_html);
+
     attachSelect(modal);
-    attachToggle(modal);
+    attachBootstrapCheckbox(modal);
 }
 
 
@@ -806,7 +807,7 @@ function insertActionButton(modal, options) {
     if (already_present == false) {
         var html = `
         <span style='float: right;'>
-            <button name='${options.name}' type='submit' class='btn btn-default modal-form-button' value='${options.name}'>
+            <button name='${options.name}' type='submit' class='btn btn-outline-secondary modal-form-button' value='${options.name}'>
                 ${options.title}
             </button>
         </span>`;
@@ -892,6 +893,9 @@ function handleModalForm(url, options) {
                 // Re-enable the modal
                 modalEnable(modal, true);
                 if ('form_valid' in response) {
+                    // Get visibility option of error message
+                    var hideErrorMessage = (options.hideErrorMessage === undefined) ? true : options.hideErrorMessage;
+
                     // Form data was validated correctly
                     if (response.form_valid) {
                         $(modal).modal('hide');
@@ -900,7 +904,7 @@ function handleModalForm(url, options) {
                         // Form was returned, invalid!
 
                         // Disable error message with option or response
-                        if (!options.hideErrorMessage && !response.hideErrorMessage) {
+                        if (!hideErrorMessage && !response.hideErrorMessage) {
                             var warningDiv = $(modal).find('#form-validation-warning');
                             warningDiv.css('display', 'block');
                         }

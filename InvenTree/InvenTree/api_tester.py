@@ -46,7 +46,7 @@ class InvenTreeAPITestCase(APITestCase):
             self.user.is_staff = True
 
         self.user.save()
-        
+
         for role in self.roles:
             self.assignRole(role)
 
@@ -106,12 +106,12 @@ class InvenTreeAPITestCase(APITestCase):
 
         return response
 
-    def post(self, url, data, expected_code=None):
+    def post(self, url, data, expected_code=None, format='json'):
         """
         Issue a POST request
         """
 
-        response = self.client.post(url, data=data, format='json')
+        response = self.client.post(url, data=data, format=format)
 
         if expected_code is not None:
             self.assertEqual(response.status_code, expected_code)
@@ -130,12 +130,24 @@ class InvenTreeAPITestCase(APITestCase):
 
         return response
 
-    def patch(self, url, data, files=None, expected_code=None):
+    def patch(self, url, data, expected_code=None, format='json'):
         """
         Issue a PATCH request
         """
 
-        response = self.client.patch(url, data=data, files=files, format='json')
+        response = self.client.patch(url, data=data, format=format)
+
+        if expected_code is not None:
+            self.assertEqual(response.status_code, expected_code)
+
+        return response
+
+    def options(self, url, expected_code=None):
+        """
+        Issue an OPTIONS request
+        """
+
+        response = self.client.options(url, format='json')
 
         if expected_code is not None:
             self.assertEqual(response.status_code, expected_code)

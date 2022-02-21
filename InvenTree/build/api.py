@@ -7,18 +7,19 @@ from __future__ import unicode_literals
 
 from django.conf.urls import url, include
 
-from rest_framework import filters
-from rest_framework import generics
+from rest_framework import filters, generics
 
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as rest_filters
 
 from InvenTree.api import AttachmentMixin
 from InvenTree.helpers import str2bool, isNull
+from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.status_codes import BuildStatus
 
 from .models import Build, BuildItem, BuildOrderAttachment
-from .serializers import BuildAttachmentSerializer, BuildSerializer, BuildItemSerializer
+import build.serializers
+from users.models import Owner
 
 
 class BuildFilter(rest_filters.FilterSet):
@@ -50,6 +51,25 @@ class BuildFilter(rest_filters.FilterSet):
 
         return queryset
 
+    assigned_to_me = rest_filters.BooleanFilter(label='assigned_to_me', method='filter_assigned_to_me')
+
+    def filter_assigned_to_me(self, queryset, name, value):
+        """
+        Filter by orders which are assigned to the current user
+        """
+
+        value = str2bool(value)
+
+        # Work out who "me" is!
+        owners = Owner.get_owners_matching_user(self.request.user)
+
+        if value:
+            queryset = queryset.filter(responsible__in=owners)
+        else:
+            queryset = queryset.exclude(responsible__in=owners)
+
+        return queryset
+
 
 class BuildList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of Build objects.
@@ -59,13 +79,13 @@ class BuildList(generics.ListCreateAPIView):
     """
 
     queryset = Build.objects.all()
-    serializer_class = BuildSerializer
+    serializer_class = build.serializers.BuildSerializer
     filterset_class = BuildFilter
 
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
-        filters.OrderingFilter,
+        InvenTreeOrderingFilter,
     ]
 
     ordering_fields = [
@@ -80,6 +100,10 @@ class BuildList(generics.ListCreateAPIView):
         'responsible',
     ]
 
+    ordering_field_aliases = {
+        'reference': ['reference_int', 'reference'],
+    }
+
     search_fields = [
         'reference',
         'part__name',
@@ -92,9 +116,9 @@ class BuildList(generics.ListCreateAPIView):
         as some of the fields don't natively play nicely with DRF
         """
 
-        queryset = super().get_queryset().prefetch_related('part')
+        queryset = super().get_queryset().select_related('part')
 
-        queryset = BuildSerializer.annotate_queryset(queryset)
+        queryset = build.serializers.BuildSerializer.annotate_queryset(queryset)
 
         return queryset
 
@@ -178,7 +202,166 @@ class BuildDetail(generics.RetrieveUpdateAPIView):
     """ API endpoint for detail view of a Build object """
 
     queryset = Build.objects.all()
-    serializer_class = BuildSerializer
+    serializer_class = build.serializers.BuildSerializer
+
+
+class BuildUnallocate(generics.CreateAPIView):
+    """
+    API endpoint for unallocating stock items from a build order
+
+    - The BuildOrder object is specified by the URL
+    - "output" (StockItem) can optionally be specified
+    - "bom_item" can optionally be specified
+    """
+
+    queryset = Build.objects.none()
+
+    serializer_class = build.serializers.BuildUnallocationSerializer
+
+    def get_serializer_context(self):
+
+        ctx = super().get_serializer_context()
+
+        try:
+            ctx['build'] = Build.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
+        ctx['request'] = self.request
+
+        return ctx
+
+
+class BuildOutputCreate(generics.CreateAPIView):
+    """
+    API endpoint for creating new build output(s)
+    """
+
+    queryset = Build.objects.none()
+
+    serializer_class = build.serializers.BuildOutputCreateSerializer
+
+    def get_serializer_context(self):
+        ctx = super().get_serializer_context()
+
+        ctx['request'] = self.request
+        ctx['to_complete'] = True
+
+        try:
+            ctx['build'] = Build.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
+        return ctx
+
+
+class BuildOutputComplete(generics.CreateAPIView):
+    """
+    API endpoint for completing build outputs
+    """
+
+    queryset = Build.objects.none()
+
+    serializer_class = build.serializers.BuildOutputCompleteSerializer
+
+    def get_serializer_context(self):
+        ctx = super().get_serializer_context()
+
+        ctx['request'] = self.request
+        ctx['to_complete'] = True
+
+        try:
+            ctx['build'] = Build.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
+        return ctx
+
+
+class BuildOutputDelete(generics.CreateAPIView):
+    """
+    API endpoint for deleting multiple build outputs
+    """
+
+    queryset = Build.objects.none()
+
+    serializer_class = build.serializers.BuildOutputDeleteSerializer
+
+    def get_serializer_context(self):
+        ctx = super().get_serializer_context()
+
+        ctx['request'] = self.request
+
+        try:
+            ctx['build'] = Build.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
+        return ctx
+
+
+class BuildFinish(generics.CreateAPIView):
+    """
+    API endpoint for marking a build as finished (completed)
+    """
+
+    queryset = Build.objects.none()
+
+    serializer_class = build.serializers.BuildCompleteSerializer
+
+    def get_serializer_context(self):
+        ctx = super().get_serializer_context()
+
+        ctx['request'] = self.request
+
+        try:
+            ctx['build'] = Build.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
+        return ctx
+
+
+class BuildAllocate(generics.CreateAPIView):
+    """
+    API endpoint to allocate stock items to a build order
+
+    - The BuildOrder object is specified by the URL
+    - Items to allocate are specified as a list called "items" with the following options:
+        - bom_item: pk value of a given BomItem object (must match the part associated with this build)
+        - stock_item: pk value of a given StockItem object
+        - quantity: quantity to allocate
+        - output: StockItem (build order output) to allocate stock against (optional)
+    """
+
+    queryset = Build.objects.none()
+
+    serializer_class = build.serializers.BuildAllocationSerializer
+
+    def get_serializer_context(self):
+        """
+        Provide the Build object to the serializer context
+        """
+
+        context = super().get_serializer_context()
+
+        try:
+            context['build'] = Build.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
+        context['request'] = self.request
+
+        return context
+
+
+class BuildItemDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for detail view of a BuildItem object
+    """
+
+    queryset = BuildItem.objects.all()
+    serializer_class = build.serializers.BuildItemSerializer
 
 
 class BuildItemList(generics.ListCreateAPIView):
@@ -188,7 +371,7 @@ class BuildItemList(generics.ListCreateAPIView):
     - POST: Create a new BuildItem object
     """
 
-    serializer_class = BuildItemSerializer
+    serializer_class = build.serializers.BuildItemSerializer
 
     def get_serializer(self, *args, **kwargs):
 
@@ -200,7 +383,7 @@ class BuildItemList(generics.ListCreateAPIView):
             kwargs['location_detail'] = str2bool(params.get('location_detail', False))
         except AttributeError:
             pass
-        
+
         return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self):
@@ -210,9 +393,9 @@ class BuildItemList(generics.ListCreateAPIView):
 
         query = BuildItem.objects.all()
 
-        query = query.select_related('stock_item')
-        query = query.prefetch_related('stock_item__part')
-        query = query.prefetch_related('stock_item__part__category')
+        query = query.select_related('stock_item__location')
+        query = query.select_related('stock_item__part')
+        query = query.select_related('stock_item__part__category')
 
         return query
 
@@ -257,7 +440,7 @@ class BuildAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     """
 
     queryset = BuildOrderAttachment.objects.all()
-    serializer_class = BuildAttachmentSerializer
+    serializer_class = build.serializers.BuildAttachmentSerializer
 
     filter_backends = [
         DjangoFilterBackend,
@@ -274,7 +457,7 @@ class BuildAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMix
     """
 
     queryset = BuildOrderAttachment.objects.all()
-    serializer_class = BuildAttachmentSerializer
+    serializer_class = build.serializers.BuildAttachmentSerializer
 
 
 build_api_urls = [
@@ -282,16 +465,25 @@ build_api_urls = [
     # Attachments
     url(r'^attachment/', include([
         url(r'^(?P<pk>\d+)/', BuildAttachmentDetail.as_view(), name='api-build-attachment-detail'),
-        url('^.*$', BuildAttachmentList.as_view(), name='api-build-attachment-list'),
+        url(r'^.*$', BuildAttachmentList.as_view(), name='api-build-attachment-list'),
     ])),
 
     # Build Items
     url(r'^item/', include([
-        url('^.*$', BuildItemList.as_view(), name='api-build-item-list')
+        url(r'^(?P<pk>\d+)/', BuildItemDetail.as_view(), name='api-build-item-detail'),
+        url(r'^.*$', BuildItemList.as_view(), name='api-build-item-list'),
     ])),
 
     # Build Detail
-    url(r'^(?P<pk>\d+)/', BuildDetail.as_view(), name='api-build-detail'),
+    url(r'^(?P<pk>\d+)/', include([
+        url(r'^allocate/', BuildAllocate.as_view(), name='api-build-allocate'),
+        url(r'^complete/', BuildOutputComplete.as_view(), name='api-build-output-complete'),
+        url(r'^create-output/', BuildOutputCreate.as_view(), name='api-build-output-create'),
+        url(r'^delete-outputs/', BuildOutputDelete.as_view(), name='api-build-output-delete'),
+        url(r'^finish/', BuildFinish.as_view(), name='api-build-finish'),
+        url(r'^unallocate/', BuildUnallocate.as_view(), name='api-build-unallocate'),
+        url(r'^.*$', BuildDetail.as_view(), name='api-build-detail'),
+    ])),
 
     # Build List
     url(r'^.*$', BuildList.as_view(), name='api-build-list'),

@@ -5,8 +5,8 @@ Serializers used in various InvenTree apps
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-
 import os
+import tablib
 
 from decimal import Decimal
 
@@ -16,6 +16,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import ugettext_lazy as _
+from django.db import models
 
 from djmoney.contrib.django_rest_framework.fields import MoneyField
 from djmoney.money import Money
@@ -26,6 +27,8 @@ from rest_framework.utils import model_meta
 from rest_framework.fields import empty
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import DecimalField
+
+from .models import extract_int
 
 
 class InvenTreeMoneySerializer(MoneyField):
@@ -66,7 +69,7 @@ class InvenTreeMoneySerializer(MoneyField):
 
         if currency and amount is not None and not isinstance(amount, MONEY_CLASSES) and amount is not empty:
             return Money(amount, currency)
-        
+
         return amount
 
 
@@ -239,20 +242,15 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
         return data
 
 
-class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):
+class ReferenceIndexingSerializerMixin():
     """
-    Special case of an InvenTreeModelSerializer, which handles an "attachment" model.
-
-    The only real addition here is that we support "renaming" of the attachment file.
+    This serializer mixin ensures the the reference is not to big / small
+    for the BigIntegerField
     """
-
-    # The 'filename' field must be present in the serializer
-    filename = serializers.CharField(
-        label=_('Filename'),
-        required=False,
-        source='basename',
-        allow_blank=False,
-    )
+    def validate_reference(self, value):
+        if extract_int(value) > models.BigIntegerField.MAX_BIGINT:
+            raise serializers.ValidationError('reference is to to big')
+        return value
 
 
 class InvenTreeAttachmentSerializerField(serializers.FileField):
@@ -284,6 +282,27 @@ class InvenTreeAttachmentSerializerField(serializers.FileField):
         return os.path.join(str(settings.MEDIA_URL), str(value))
 
 
+class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):
+    """
+    Special case of an InvenTreeModelSerializer, which handles an "attachment" model.
+
+    The only real addition here is that we support "renaming" of the attachment file.
+    """
+
+    attachment = InvenTreeAttachmentSerializerField(
+        required=False,
+        allow_null=False,
+    )
+
+    # The 'filename' field must be present in the serializer
+    filename = serializers.CharField(
+        label=_('Filename'),
+        required=False,
+        source='basename',
+        allow_blank=False,
+    )
+
+
 class InvenTreeImageSerializerField(serializers.ImageField):
     """
     Custom image serializer.
@@ -296,3 +315,326 @@ class InvenTreeImageSerializerField(serializers.ImageField):
             return None
 
         return os.path.join(str(settings.MEDIA_URL), str(value))
+
+
+class InvenTreeDecimalField(serializers.FloatField):
+    """
+    Custom serializer for decimal fields. Solves the following issues:
+
+    - The normal DRF DecimalField renders values with trailing zeros
+    - Using a FloatField can result in rounding issues: https://code.djangoproject.com/ticket/30290
+    """
+
+    def to_internal_value(self, data):
+
+        # Convert the value to a string, and then a decimal
+        try:
+            return Decimal(str(data))
+        except:
+            raise serializers.ValidationError(_("Invalid value"))
+
+
+class DataFileUploadSerializer(serializers.Serializer):
+    """
+    Generic serializer for uploading a data file, and extracting a dataset.
+
+    - Validates uploaded file
+    - Extracts column names
+    - Extracts data rows
+    """
+
+    # Implementing class should register a target model (database model) to be used for import
+    TARGET_MODEL = None
+
+    class Meta:
+        fields = [
+            'data_file',
+        ]
+
+    data_file = serializers.FileField(
+        label=_("Data File"),
+        help_text=_("Select data file for upload"),
+        required=True,
+        allow_empty_file=False,
+    )
+
+    def validate_data_file(self, data_file):
+        """
+        Perform validation checks on the uploaded data file.
+        """
+
+        self.filename = data_file.name
+
+        name, ext = os.path.splitext(data_file.name)
+
+        # Remove the leading . from the extension
+        ext = ext[1:]
+
+        accepted_file_types = [
+            'xls', 'xlsx',
+            'csv', 'tsv',
+            'xml',
+        ]
+
+        if ext not in accepted_file_types:
+            raise serializers.ValidationError(_("Unsupported file type"))
+
+        # Impose a 50MB limit on uploaded BOM files
+        max_upload_file_size = 50 * 1024 * 1024
+
+        if data_file.size > max_upload_file_size:
+            raise serializers.ValidationError(_("File is too large"))
+
+        # Read file data into memory (bytes object)
+        try:
+            data = data_file.read()
+        except Exception as e:
+            raise serializers.ValidationError(str(e))
+
+        if ext in ['csv', 'tsv', 'xml']:
+            try:
+                data = data.decode()
+            except Exception as e:
+                raise serializers.ValidationError(str(e))
+
+        # Convert to a tablib dataset (we expect headers)
+        try:
+            self.dataset = tablib.Dataset().load(data, ext, headers=True)
+        except Exception as e:
+            raise serializers.ValidationError(str(e))
+
+        if len(self.dataset.headers) == 0:
+            raise serializers.ValidationError(_("No columns found in file"))
+
+        if len(self.dataset) == 0:
+            raise serializers.ValidationError(_("No data rows found in file"))
+
+        return data_file
+
+    def match_column(self, column_name, field_names, exact=False):
+        """
+        Attempt to match a column name (from the file) to a field (defined in the model)
+
+        Order of matching is:
+        - Direct match
+        - Case insensitive match
+        - Fuzzy match
+        """
+
+        column_name = column_name.strip()
+
+        column_name_lower = column_name.lower()
+
+        if column_name in field_names:
+            return column_name
+
+        for field_name in field_names:
+            if field_name.lower() == column_name_lower:
+                return field_name
+
+        if exact:
+            # Finished available 'exact' matches
+            return None
+
+        # TODO: Fuzzy pattern matching for column names
+
+        # No matches found
+        return None
+
+    def extract_data(self):
+        """
+        Returns dataset extracted from the file
+        """
+
+        # Provide a dict of available import fields for the model
+        model_fields = {}
+
+        # Keep track of columns we have already extracted
+        matched_columns = set()
+
+        if self.TARGET_MODEL:
+            try:
+                model_fields = self.TARGET_MODEL.get_import_fields()
+            except:
+                pass
+
+        # Extract a list of valid model field names
+        model_field_names = [key for key in model_fields.keys()]
+
+        # Provide a dict of available columns from the dataset
+        file_columns = {}
+
+        for header in self.dataset.headers:
+            column = {}
+
+            # Attempt to "match" file columns to model fields
+            match = self.match_column(header, model_field_names, exact=True)
+
+            if match is not None and match not in matched_columns:
+                matched_columns.add(match)
+                column['value'] = match
+            else:
+                column['value'] = None
+
+            file_columns[header] = column
+
+        return {
+            'file_fields': file_columns,
+            'model_fields': model_fields,
+            'rows': [row.values() for row in self.dataset.dict],
+            'filename': self.filename,
+        }
+
+    def save(self):
+        ...
+
+
+class DataFileExtractSerializer(serializers.Serializer):
+    """
+    Generic serializer for extracting data from an imported dataset.
+
+    - User provides an array of matched headers
+    - User provides an array of raw data rows
+    """
+
+    # Implementing class should register a target model (database model) to be used for import
+    TARGET_MODEL = None
+
+    class Meta:
+        fields = [
+            'columns',
+            'rows',
+        ]
+
+    # Mapping of columns
+    columns = serializers.ListField(
+        child=serializers.CharField(
+            allow_blank=True,
+        ),
+    )
+
+    rows = serializers.ListField(
+        child=serializers.ListField(
+            child=serializers.CharField(
+                allow_blank=True,
+                allow_null=True,
+            ),
+        )
+    )
+
+    def validate(self, data):
+
+        data = super().validate(data)
+
+        self.columns = data.get('columns', [])
+        self.rows = data.get('rows', [])
+
+        if len(self.rows) == 0:
+            raise serializers.ValidationError(_("No data rows provided"))
+
+        if len(self.columns) == 0:
+            raise serializers.ValidationError(_("No data columns supplied"))
+
+        self.validate_extracted_columns()
+
+        return data
+
+    @property
+    def data(self):
+
+        if self.TARGET_MODEL:
+            try:
+                model_fields = self.TARGET_MODEL.get_import_fields()
+            except:
+                model_fields = {}
+
+        rows = []
+
+        for row in self.rows:
+            """
+            Optionally pre-process each row, before sending back to the client
+            """
+
+            processed_row = self.process_row(self.row_to_dict(row))
+
+            if processed_row:
+                rows.append({
+                    "original": row,
+                    "data": processed_row,
+                })
+
+        return {
+            'fields': model_fields,
+            'columns': self.columns,
+            'rows': rows,
+        }
+
+    def process_row(self, row):
+        """
+        Process a 'row' of data, which is a mapped column:value dict
+
+        Returns either a mapped column:value dict, or None.
+
+        If the function returns None, the column is ignored!
+        """
+
+        # Default implementation simply returns the original row data
+        return row
+
+    def row_to_dict(self, row):
+        """
+        Convert a "row" to a named data dict
+        """
+
+        row_dict = {
+            'errors': {},
+        }
+
+        for idx, value in enumerate(row):
+
+            if idx < len(self.columns):
+                col = self.columns[idx]
+
+                if col:
+                    row_dict[col] = value
+
+        return row_dict
+
+    def validate_extracted_columns(self):
+        """
+        Perform custom validation of header mapping.
+        """
+
+        if self.TARGET_MODEL:
+            try:
+                model_fields = self.TARGET_MODEL.get_import_fields()
+            except:
+                model_fields = {}
+
+        cols_seen = set()
+
+        for name, field in model_fields.items():
+
+            required = field.get('required', False)
+
+            # Check for missing required columns
+            if required:
+                if name not in self.columns:
+                    raise serializers.ValidationError(_(f"Missing required column: '{name}'"))
+
+        for col in self.columns:
+
+            if not col:
+                continue
+
+            # Check for duplicated columns
+            if col in cols_seen:
+                raise serializers.ValidationError(_(f"Duplicate column: '{col}'"))
+
+            cols_seen.add(col)
+
+    def save(self):
+        """
+        No "save" action for this serializer
+        """
+        ...

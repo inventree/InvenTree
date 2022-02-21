@@ -1,9 +1,9 @@
 """
-Pull rendered copies of the templated 
+Pull rendered copies of the templated
+only used for testing the js files! - This file is omited from coverage
 """
 
-from django.http import response
-from django.test import TestCase, testcases
+from django.test import TestCase
 from django.contrib.auth import get_user_model
 
 import os

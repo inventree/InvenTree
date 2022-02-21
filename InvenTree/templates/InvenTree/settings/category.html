@@ -7,6 +7,12 @@
 {% trans "Category Settings" %}
 {% endblock %}
 
+{% block actions %}
+<button class='btn btn-success' id='new-cat-param' disabled=''>
+    <div class='fas fa-plus-circle'></div> {% trans "New Parameter" %}
+</button>
+{% endblock %}
+
 {% block content %}
 
 <div class='row'>
@@ -19,12 +25,6 @@
             </div></div>
         </div>
     </form>
-</div>
-
-<div id='cat-param-buttons'>
-    <button class='btn btn-success' id='new-cat-param' disabled=''>
-        <div class='fas fa-plus-circle'></div> {% trans "New Parameter" %}
-    </button>
 </div>
 
 <table class='table table-striped table-condensed' id='cat-param-table' data-toolbar='#cat-param-buttons'>

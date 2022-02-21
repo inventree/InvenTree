@@ -8,21 +8,15 @@ from __future__ import unicode_literals
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from mptt.fields import TreeNodeChoiceField
-
 from InvenTree.forms import HelperForm
-from InvenTree.fields import InvenTreeMoneyField, RoundingDecimalFormField
+from InvenTree.fields import InvenTreeMoneyField
 
 from InvenTree.helpers import clean_decimal
 
 from common.forms import MatchItemForm
 
-import part.models
-
-from stock.models import StockLocation
 from .models import PurchaseOrder
-from .models import SalesOrder, SalesOrderLineItem
-from .models import SalesOrderAllocation
+from .models import SalesOrder
 
 
 class IssuePurchaseOrderForm(HelperForm):
@@ -69,104 +63,6 @@ class CancelSalesOrderForm(HelperForm):
         ]
 
 
-class ShipSalesOrderForm(HelperForm):
-
-    confirm = forms.BooleanField(required=True, label=_('Confirm'), help_text=_('Ship order'))
-
-    class Meta:
-        model = SalesOrder
-        fields = [
-            'confirm',
-        ]
-
-
-class ReceivePurchaseOrderForm(HelperForm):
-
-    location = TreeNodeChoiceField(
-        queryset=StockLocation.objects.all(),
-        required=False,
-        label=_("Destination"),
-        help_text=_("Set all received parts listed above to this location (if left blank, use \"Destination\" column value in above table)"),
-    )
-
-    class Meta:
-        model = PurchaseOrder
-        fields = [
-            "location",
-        ]
-
-
-class AllocateSerialsToSalesOrderForm(forms.Form):
-    """
-    Form for assigning stock to a sales order,
-    by serial number lookup
-    """
-
-    line = forms.ModelChoiceField(
-        queryset=SalesOrderLineItem.objects.all(),
-    )
-
-    part = forms.ModelChoiceField(
-        queryset=part.models.Part.objects.all(),
-    )
-
-    serials = forms.CharField(
-        label=_("Serial Numbers"),
-        required=True,
-        help_text=_('Enter stock item serial numbers'),
-    )
-
-    quantity = forms.IntegerField(
-        label=_('Quantity'),
-        required=True,
-        help_text=_('Enter quantity of stock items'),
-        initial=1,
-        min_value=1
-    )
-
-    class Meta:
-
-        fields = [
-            'line',
-            'part',
-            'serials',
-            'quantity',
-        ]
-
-
-class CreateSalesOrderAllocationForm(HelperForm):
-    """
-    Form for creating a SalesOrderAllocation item.
-    """
-
-    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
-
-    class Meta:
-        model = SalesOrderAllocation
-
-        fields = [
-            'line',
-            'item',
-            'quantity',
-        ]
-
-
-class EditSalesOrderAllocationForm(HelperForm):
-    """
-    Form for editing a SalesOrderAllocation item
-    """
-
-    quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
-
-    class Meta:
-        model = SalesOrderAllocation
-
-        fields = [
-            'line',
-            'item',
-            'quantity']
-
-
 class OrderMatchItemForm(MatchItemForm):
     """ Override MatchItemForm fields """
 
@@ -196,5 +92,4 @@ class OrderMatchItemForm(MatchItemForm):
                 default_amount=clean_decimal(row.get('purchase_price', '')),
             )
 
-        # return default
         return super().get_special_field(col_guess, row, file_manager)

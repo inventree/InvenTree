@@ -67,15 +67,27 @@ class RuleSet(models.Model):
             'report_billofmaterialsreport',
             'report_purchaseorderreport',
             'report_salesorderreport',
-
+            'account_emailaddress',
+            'account_emailconfirmation',
+            'sites_site',
+            'socialaccount_socialaccount',
+            'socialaccount_socialapp',
+            'socialaccount_socialtoken',
+            'otp_totp_totpdevice',
+            'otp_static_statictoken',
+            'otp_static_staticdevice',
+            'plugin_pluginconfig',
+            'plugin_pluginsetting',
         ],
         'part_category': [
             'part_partcategory',
             'part_partcategoryparametertemplate',
+            'part_partcategorystar',
         ],
         'part': [
             'part_part',
             'part_bomitem',
+            'part_bomitemsubstitute',
             'part_partattachment',
             'part_partsellpricebreak',
             'part_partinternalpricebreak',
@@ -84,6 +96,7 @@ class RuleSet(models.Model):
             'part_partparameter',
             'part_partrelated',
             'part_partstar',
+            'part_partcategorystar',
             'company_supplierpart',
             'company_manufacturerpart',
             'company_manufacturerpartparameter',
@@ -105,6 +118,7 @@ class RuleSet(models.Model):
             'part_part',
             'part_partcategory',
             'part_bomitem',
+            'part_bomitemsubstitute',
             'build_build',
             'build_builditem',
             'build_buildorderattachment',
@@ -125,9 +139,10 @@ class RuleSet(models.Model):
         'sales_order': [
             'company_company',
             'order_salesorder',
+            'order_salesorderallocation',
             'order_salesorderattachment',
             'order_salesorderlineitem',
-            'order_salesorderallocation',
+            'order_salesordershipment',
         ]
     }
 
@@ -136,12 +151,14 @@ class RuleSet(models.Model):
         # Core django models (not user configurable)
         'admin_logentry',
         'contenttypes_contenttype',
-        'sessions_session',
 
         # Models which currently do not require permissions
         'common_colortheme',
         'common_inventreesetting',
         'common_inventreeusersetting',
+        'common_webhookendpoint',
+        'common_webhookmessage',
+        'common_notificationentry',
         'company_contact',
         'users_owner',
 
@@ -149,6 +166,7 @@ class RuleSet(models.Model):
         'error_report_error',
         'exchange_rate',
         'exchange_exchangebackend',
+        'user_sessions_session',
 
         # Django-q
         'django_q_ormq',
@@ -156,6 +174,11 @@ class RuleSet(models.Model):
         'django_q_task',
         'django_q_schedule',
         'django_q_success',
+    ]
+
+    RULESET_CHANGE_INHERIT = [
+        ('part', 'partparameter'),
+        ('part', 'bomitem'),
     ]
 
     RULE_OPTIONS = [
@@ -210,8 +233,21 @@ class RuleSet(models.Model):
                 if check_user_role(user, role, permission):
                     return True
 
+        # Check for children models which inherits from parent role
+        for (parent, child) in cls.RULESET_CHANGE_INHERIT:
+            # Get child model name
+            parent_child_string = f'{parent}_{child}'
+
+            if parent_child_string == table:
+                # Check if parent role has change permission
+                if check_user_role(user, parent, 'change'):
+                    return True
+
         # Print message instead of throwing an error
-        logger.info(f"User '{user.name}' failed permission check for {table}.{permission}")
+        name = getattr(user, 'name', user.pk)
+
+        logger.info(f"User '{name}' failed permission check for {table}.{permission}")
+
         return False
 
     @staticmethod
@@ -221,7 +257,7 @@ class RuleSet(models.Model):
         given the app_model name, and the permission type.
         """
 
-        app, model = model.split('_')
+        model, app = split_model(model)
 
         return "{app}.{perm}_{model}".format(
             app=app,
@@ -231,7 +267,7 @@ class RuleSet(models.Model):
 
     def __str__(self, debug=False):
         """ Ruleset string representation """
-        if debug:
+        if debug:  # pragma: no cover
             # Makes debugging easier
             return f'{str(self.group).ljust(15)}: {self.name.title().ljust(15)} | ' \
                    f'v: {str(self.can_view).ljust(5)} | a: {str(self.can_add).ljust(5)} | ' \
@@ -264,6 +300,30 @@ class RuleSet(models.Model):
         return self.RULESET_MODELS.get(self.name, [])
 
 
+def split_model(model):
+    """get modelname and app from modelstring"""
+    *app, model = model.split('_')
+
+    # handle models that have
+    if len(app) > 1:
+        app = '_'.join(app)
+    else:
+        app = app[0]
+
+    return model, app
+
+
+def split_permission(app, perm):
+    """split permission string into permission and model"""
+    permission_name, *model = perm.split('_')
+    # handle models that have underscores
+    if len(model) > 1:
+        app += '_' + '_'.join(model[:-1])
+        perm = permission_name + '_' + model[-1:][0]
+    model = model[-1:][0]
+    return perm, model
+
+
 def update_group_roles(group, debug=False):
     """
 
@@ -280,7 +340,7 @@ def update_group_roles(group, debug=False):
     """
 
     if not canAppAccessDatabase(allow_test=True):
-        return
+        return  # pragma: no cover
 
     # List of permissions already associated with this group
     group_permissions = set()
@@ -367,12 +427,12 @@ def update_group_roles(group, debug=False):
 
         (app, perm) = permission_string.split('.')
 
-        (permission_name, model) = perm.split('_')
+        perm, model = split_permission(app, perm)
 
         try:
             content_type = ContentType.objects.get(app_label=app, model=model)
             permission = Permission.objects.get(content_type=content_type, codename=perm)
-        except ContentType.DoesNotExist:
+        except ContentType.DoesNotExist:  # pragma: no cover
             logger.warning(f"Error: Could not find permission matching '{permission_string}'")
             permission = None
 
@@ -390,7 +450,7 @@ def update_group_roles(group, debug=False):
         if permission:
             group.permissions.add(permission)
 
-        if debug:
+        if debug:  # pragma: no cover
             print(f"Adding permission {perm} to group {group.name}")
 
     # Remove any extra permissions from the group
@@ -405,8 +465,30 @@ def update_group_roles(group, debug=False):
         if permission:
             group.permissions.remove(permission)
 
-        if debug:
+        if debug:  # pragma: no cover
             print(f"Removing permission {perm} from group {group.name}")
+
+    # Enable all action permissions for certain children models
+    # if parent model has 'change' permission
+    for (parent, child) in RuleSet.RULESET_CHANGE_INHERIT:
+        parent_change_perm = f'{parent}.change_{parent}'
+        parent_child_string = f'{parent}_{child}'
+
+        # Check if parent change permission exists
+        if parent_change_perm in group_permissions:
+            # Add child model permissions
+            for action in ['add', 'change', 'delete']:
+                child_perm = f'{parent}.{action}_{child}'
+
+                # Check if child permission not already in group
+                if child_perm not in group_permissions:
+                    # Create permission object
+                    add_model(parent_child_string, action, ruleset.can_delete)
+                    # Add to group
+                    permission = get_permission_object(child_perm)
+                    if permission:
+                        group.permissions.add(permission)
+                        print(f"Adding permission {child_perm} to group {group.name}")
 
 
 @receiver(post_save, sender=Group, dispatch_uid='create_missing_rule_sets')
@@ -463,6 +545,34 @@ class Owner(models.Model):
     owner: Returns the Group or User instance combining the owner_type and owner_id fields
     """
 
+    @classmethod
+    def get_owners_matching_user(cls, user):
+        """
+        Return all "owner" objects matching the provided user:
+
+        A) An exact match for the user
+        B) Any groups that the user is a part of
+        """
+
+        user_type = ContentType.objects.get(app_label='auth', model='user')
+        group_type = ContentType.objects.get(app_label='auth', model='group')
+
+        owners = []
+
+        try:
+            owners.append(cls.objects.get(owner_id=user.pk, owner_type=user_type))
+        except:
+            pass
+
+        for group in user.groups.all():
+            try:
+                owner = cls.objects.get(owner_id=group.pk, owner_type=group_type)
+                owners.append(owner)
+            except:
+                pass
+
+        return owners
+
     @staticmethod
     def get_api_url():
         return reverse('api-owner-list')
@@ -507,7 +617,7 @@ class Owner(models.Model):
             # Create new owner
             try:
                 return cls.objects.create(owner=obj)
-            except IntegrityError:
+            except IntegrityError:  # pragma: no cover
                 return None
 
         return existing_owner

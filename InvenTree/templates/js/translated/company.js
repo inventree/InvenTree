@@ -124,6 +124,7 @@ function supplierPartFields() {
                 part_detail: true,
                 manufacturer_detail: true,
             },
+            auto_fill: true,
         },
         description: {},
         link: {
@@ -325,15 +326,15 @@ function loadCompanyTable(table, url, options={}) {
                 var html = imageHoverIcon(row.image) + renderLink(value, row.url);
 
                 if (row.is_customer) {
-                    html += `<span title='{% trans "Customer" %}' class='fas fa-user-tie label-right'></span>`;
+                    html += `<span title='{% trans "Customer" %}' class='fas fa-user-tie float-right'></span>`;
                 }
 
                 if (row.is_manufacturer) {
-                    html += `<span title='{% trans "Manufacturer" %}' class='fas fa-industry label-right'></span>`;
+                    html += `<span title='{% trans "Manufacturer" %}' class='fas fa-industry float-right'></span>`;
                 }
 
                 if (row.is_supplier) {
-                    html += `<span title='{% trans "Supplier" %}' class='fas fa-building label-right'></span>`;
+                    html += `<span title='{% trans "Supplier" %}' class='fas fa-building float-right'></span>`;
                 }
 
                 return html;
@@ -379,6 +380,7 @@ function loadCompanyTable(table, url, options={}) {
         url: url,
         method: 'get',
         queryParams: filters,
+        original: params,
         groupBy: false,
         sidePagination: 'server',
         formatNoMatches: function() {
@@ -462,7 +464,9 @@ function loadManufacturerPartTable(table, url, options) {
         filters[key] = params[key];
     }
 
-    setupFilterList('manufacturer-part', $(table));
+    var filterTarget = options.filterTarget || '#filter-list-manufacturer-part';
+
+    setupFilterList('manufacturer-part', $(table), filterTarget);
 
     $(table).inventreeTable({
         url: url,
@@ -493,15 +497,15 @@ function loadManufacturerPartTable(table, url, options) {
                     var html = imageHoverIcon(row.part_detail.thumbnail) + renderLink(value, url);
 
                     if (row.part_detail.is_template) {
-                        html += `<span class='fas fa-clone label-right' title='{% trans "Template part" %}'></span>`;
+                        html += `<span class='fas fa-clone float-right' title='{% trans "Template part" %}'></span>`;
                     }
 
                     if (row.part_detail.assembly) {
-                        html += `<span class='fas fa-tools label-right' title='{% trans "Assembled part" %}'></span>`;
+                        html += `<span class='fas fa-tools float-right' title='{% trans "Assembled part" %}'></span>`;
                     }
 
                     if (!row.part_detail.active) {
-                        html += `<span class='label label-warning label-right'>{% trans "Inactive" %}</span>`;
+                        html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span>`;
                     }
 
                     return html;
@@ -750,15 +754,15 @@ function loadSupplierPartTable(table, url, options) {
                     var html = imageHoverIcon(row.part_detail.thumbnail) + renderLink(value, url);
 
                     if (row.part_detail.is_template) {
-                        html += `<span class='fas fa-clone label-right' title='{% trans "Template part" %}'></span>`;
+                        html += `<span class='fas fa-clone float-right' title='{% trans "Template part" %}'></span>`;
                     }
 
                     if (row.part_detail.assembly) {
-                        html += `<span class='fas fa-tools label-right' title='{% trans "Assembled part" %}'></span>`;
+                        html += `<span class='fas fa-tools float-right' title='{% trans "Assembled part" %}'></span>`;
                     }
 
                     if (!row.part_detail.active) {
-                        html += `<span class='label label-warning label-right'>{% trans "Inactive" %}</span>`;
+                        html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span>`;
                     }
 
                     return html;

@@ -2,7 +2,6 @@
 {% load inventree_extras %}
 
 /* globals
-    attachToggle,
     createNewModal,
     inventreeFormDataUpload,
     inventreeGet,
@@ -20,13 +19,19 @@
     renderStockLocation,
     renderSupplierPart,
     renderUser,
-    showAlertDialog,
     showAlertOrCache,
     showApiError,
 */
 
 /* exported
-    setFormGroupVisibility
+    clearFormInput,
+    disableFormInput,
+    enableFormInput,
+    hideFormInput,
+    setFormInputPlaceholder,
+    setFormGroupVisibility,
+    showFormInput,
+    selectImportFields,
 */
 
 /**
@@ -48,6 +53,9 @@
  * - min_value / max_value
  *
  */
+
+// Set global default theme for select2
+$.fn.select2.defaults.set('theme', 'bootstrap-5');
 
 /*
  * Return true if the OPTIONS specify that the user
@@ -111,6 +119,10 @@ function canDelete(OPTIONS) {
  */
 function getApiEndpointOptions(url, callback) {
 
+    if (!url) {
+        return;
+    }
+
     // Return the ajax request object
     $.ajax({
         url: url,
@@ -121,9 +133,10 @@ function getApiEndpointOptions(url, callback) {
             json: 'application/json',
         },
         success: callback,
-        error: function() {
+        error: function(xhr) {
             // TODO: Handle error
             console.log(`ERROR in getApiEndpointOptions at '${url}'`);
+            showApiError(xhr, url);
         }
     });
 }
@@ -179,6 +192,7 @@ function constructChangeForm(fields, options) {
     // Request existing data from the API endpoint
     $.ajax({
         url: options.url,
+        data: options.params || {},
         type: 'GET',
         contentType: 'application/json',
         dataType: 'json',
@@ -186,6 +200,17 @@ function constructChangeForm(fields, options) {
             json: 'application/json',
         },
         success: function(data) {
+            
+            // An optional function can be provided to process the returned results,
+            // before they are rendered to the form
+            if (options.processResults) {
+                var processed = options.processResults(data, fields, options);
+                
+                // If the processResults function returns data, it will be stored
+                if (processed) {
+                    data = processed;
+                }
+            }
 
             // Push existing 'value' to each field
             for (const field in data) {
@@ -197,12 +222,14 @@ function constructChangeForm(fields, options) {
 
             // Store the entire data object
             options.instance = data;
-
+            
             constructFormBody(fields, options);
         },
-        error: function() {
+        error: function(xhr) {
             // TODO: Handle error here
             console.log(`ERROR in constructChangeForm at '${options.url}'`);
+
+            showApiError(xhr, options.url);
         }
     });
 }
@@ -239,9 +266,11 @@ function constructDeleteForm(fields, options) {
 
             constructFormBody(fields, options);
         },
-        error: function() {
+        error: function(xhr) {
             // TODO: Handle error here
             console.log(`ERROR in constructDeleteForm at '${options.url}`);
+
+            showApiError(xhr, options.url);
         }
     });
 }
@@ -319,10 +348,12 @@ function constructForm(url, options) {
                 constructCreateForm(OPTIONS.actions.POST, options);
             } else {
                 // User does not have permission to POST to the endpoint
-                showAlertDialog(
-                    '{% trans "Action Prohibited" %}',
-                    '{% trans "Create operation not allowed" %}'
-                );
+                showMessage('{% trans "Action Prohibited" %}', {
+                    style: 'danger',
+                    details: '{% trans "Create operation not allowed" %}',
+                    icon: 'fas fa-user-times',
+                });
+            
                 console.log(`'POST action unavailable at ${url}`);
             }
             break;
@@ -332,10 +363,12 @@ function constructForm(url, options) {
                 constructChangeForm(OPTIONS.actions.PUT, options);
             } else {
                 // User does not have permission to PUT/PATCH to the endpoint
-                showAlertDialog(
-                    '{% trans "Action Prohibited" %}',
-                    '{% trans "Update operation not allowed" %}'
-                );
+                showMessage('{% trans "Action Prohibited" %}', {
+                    style: 'danger',
+                    details: '{% trans "Update operation not allowed" %}',
+                    icon: 'fas fa-user-times',
+                });
+            
                 console.log(`${options.method} action unavailable at ${url}`);
             }
             break;
@@ -344,10 +377,12 @@ function constructForm(url, options) {
                 constructDeleteForm(OPTIONS.actions.DELETE, options);
             } else {
                 // User does not have permission to DELETE to the endpoint
-                showAlertDialog(
-                    '{% trans "Action Prohibited" %}',
-                    '{% trans "Delete operation not allowed" %}'
-                );
+                showMessage('{% trans "Action Prohibited" %}', {
+                    style: 'danger',
+                    details: '{% trans "Delete operation not allowed" %}',
+                    icon: 'fas fa-user-times',
+                });
+            
                 console.log(`DELETE action unavailable at ${url}`);
             }
             break;
@@ -356,10 +391,12 @@ function constructForm(url, options) {
                 // TODO?
             } else {
                 // User does not have permission to GET to the endpoint
-                showAlertDialog(
-                    '{% trans "Action Prohibited" %}',
-                    '{% trans "View operation not allowed" %}'
-                );
+                showMessage('{% trans "Action Prohibited" %}', {
+                    style: 'danger',
+                    details: '{% trans "View operation not allowed" %}',
+                    icon: 'fas fa-user-times',
+                });
+            
                 console.log(`GET action unavailable at ${url}`);
             }
             break;
@@ -519,11 +556,6 @@ function constructFormBody(fields, options) {
     // Attach clear callbacks (if required)
     addClearCallbacks(fields, options);
 
-    attachToggle(modal);
-
-    $(modal + ' .select2-container').addClass('select-full-width');
-    $(modal + ' .select2-container').css('width', '100%');
-
     modalShowSubmitButton(modal, true);
 
     $(modal).on('click', '#modal-form-submit', function() {
@@ -563,13 +595,14 @@ function insertConfirmButton(options) {
 
     var message = options.confirmMessage || '{% trans "Confirm" %}';
 
-    var confirm = `
-    <span style='float: left;'>
-        ${message}
-        <input id='modal-confirm' name='confirm' type='checkbox'>
-    </span>`;
+    var html = `
+    <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="modal-confirm">
+        <label class="form-check-label" for="modal-confirm">${message}</label>
+    </div>
+    `;
 
-    $(options.modal).find('#modal-footer-buttons').append(confirm);
+    $(options.modal).find('#modal-footer-buttons').append(html);
 
     // Disable the 'submit' button
     $(options.modal).find('#modal-form-submit').prop('disabled', true);
@@ -693,6 +726,14 @@ function submitFormData(fields, options) {
         data = form_data;
     }
 
+    // Optionally pre-process the data before uploading to the server
+    if (options.processBeforeUpload) {
+        data = options.processBeforeUpload(data);
+    }
+
+    // Show the progress spinner
+    $(options.modal).find('#modal-progress-spinner').show();
+
     // Submit data
     upload_func(
         options.url,
@@ -700,17 +741,22 @@ function submitFormData(fields, options) {
         {
             method: options.method,
             success: function(response) {
+                $(options.modal).find('#modal-progress-spinner').hide();
                 handleFormSuccess(response, options);
             },
             error: function(xhr) {
                 
+                $(options.modal).find('#modal-progress-spinner').hide();
+
                 switch (xhr.status) {
                 case 400:
                     handleFormErrors(xhr.responseJSON, fields, options);
                     break;
                 default:
                     $(options.modal).modal('hide');
-                    showApiError(xhr);
+
+                    console.log(`upload error at ${options.url}`);
+                    showApiError(xhr, options.url);
                     break;
                 }
             }
@@ -752,14 +798,23 @@ function updateFieldValues(fields, options) {
     }
 }
 
-
+/*
+ * Update the value of a named field
+ */
 function updateFieldValue(name, value, field, options) {
 
     var el = getFormFieldElement(name, options);
 
+    if (!el) {
+        console.log(`WARNING: updateFieldValue could not find field '${name}'`);
+        return;
+    }
+
     switch (field.type) {
     case 'boolean':
-        el.prop('checked', value);
+        if (value == true || value.toString().toLowerCase() == 'true') {
+            el.prop('checked');
+        }
         break;
     case 'related field':
         // Clear?
@@ -781,7 +836,17 @@ function updateFieldValue(name, value, field, options) {
 // Find the named field element in the modal DOM
 function getFormFieldElement(name, options) {
 
-    var el = $(options.modal).find(`#id_${name}`);
+    var field_name = getFieldName(name, options);
+
+    var el = null;
+
+    if (options && options.modal) {
+        // Field element is associated with a model?
+        el = $(options.modal).find(`#id_${field_name}`);
+    } else {
+        // Field element is top-level
+        el = $(`#id_${field_name}`);
+    }
 
     if (!el.exists) {
         console.log(`ERROR: Could not find form element for field '${name}'`);
@@ -826,12 +891,13 @@ function validateFormField(name, options) {
  * - field: The field specification provided from the OPTIONS request
  * - options: The original options object provided by the client
  */
-function getFormFieldValue(name, field, options) {
+function getFormFieldValue(name, field={}, options={}) {
 
     // Find the HTML element
     var el = getFormFieldElement(name, options);
 
-    if (!el) {
+    if (!el.exists()) {
+        console.log(`ERROR: getFormFieldValue could not locate field '${name}'`);
         return null;
     }
 
@@ -879,20 +945,20 @@ function handleFormSuccess(response, options) {
     var cache = (options.follow && response.url) || options.redirect || options.reload;
 
     // Display any messages
-    if (response && response.success) {
-        showAlertOrCache('alert-success', response.success, cache);
+    if (response && (response.success || options.successMessage)) {
+        showAlertOrCache(response.success || options.successMessage, cache, {style: 'success'});
     }
     
     if (response && response.info) {
-        showAlertOrCache('alert-info', response.info, cache);
+        showAlertOrCache(response.info, cache, {style: 'info'});
     }
 
     if (response && response.warning) {
-        showAlertOrCache('alert-warning', response.warning, cache);
+        showAlertOrCache(response.warning, cache, {style: 'warning'});
     }
 
     if (response && response.danger) {
-        showAlertOrCache('alert-danger', response.danger, cache);
+        showAlertOrCache(response.danger, cache, {style: 'danger'});
     }
 
     if (options.onSuccess) {
@@ -917,17 +983,118 @@ function handleFormSuccess(response, options) {
 /*
  * Remove all error text items from the form
  */
-function clearFormErrors(options) {
+function clearFormErrors(options={}) {
 
-    // Remove the individual error messages
-    $(options.modal).find('.form-error-message').remove();
+    if (options && options.modal) {
+        // Remove the individual error messages
+        $(options.modal).find('.form-error-message').remove();
 
-    // Remove the "has error" class
-    $(options.modal).find('.has-error').removeClass('has-error');
+        // Remove the "has error" class
+        $(options.modal).find('.form-field-error').removeClass('form-field-error');
 
-    // Hide the 'non field errors'
-    $(options.modal).find('#non-field-errors').html('');
+        // Hide the 'non field errors'
+        $(options.modal).find('#non-field-errors').html('');
+    } else {
+        $('.form-error-message').remove();
+        $('.form-field-errors').removeClass('form-field-error');
+        $('#non-field-errors').html('');
+    }
 }
+
+/*
+ * Display form error messages as returned from the server,
+ * specifically for errors returned in an array.
+ *
+ * We need to know the unique ID of each item in the array,
+ * and the array length must equal the length of the array returned from the server
+ * 
+ * arguments:
+ * - response: The JSON error response from the server
+ * - parent: The name of the parent field e.g. "items"
+ * - options: The global options struct
+ * 
+ * options:
+ * - nested: A map of nested ID values for the "parent" field
+ *           e.g.
+ *           {
+ *               "items": [
+ *                  1,
+ *                  2,
+ *                  12
+ *               ]
+ *           }
+ * 
+ */
+
+function handleNestedErrors(errors, field_name, options={}) {
+
+    var error_list = errors[field_name];
+
+    // Ignore null or empty list
+    if (!error_list) {
+        return;
+    }
+
+    var nest_list = nest_list = options['nested'][field_name];
+    
+    // Nest list must be provided!
+    if (!nest_list) {
+        console.log(`WARNING: handleNestedErrors missing nesting options for field '${fieldName}'`);
+        return;
+    }
+
+    for (var idx = 0; idx < error_list.length; idx++) {
+        
+        var error_item = error_list[idx];
+        
+        if (idx >= nest_list.length) {
+            console.log(`WARNING: handleNestedErrors returned greater number of errors (${error_list.length}) than could be handled (${nest_list.length})`);
+            break;
+        }
+
+        // Extract the particular ID of the nested item
+        var nest_id = nest_list[idx];
+        
+        // Here, error_item is a map of field names to error messages
+        for (sub_field_name in error_item) {
+
+            var errors = error_item[sub_field_name];
+
+            if (sub_field_name == 'non_field_errors') {
+
+                var row = null;
+
+                if (options.modal) {
+                    row = $(options.modal).find(`#items_${nest_id}`);
+                } else {
+                    row = $(`#items_${nest_id}`);
+                }
+
+                for (var ii = errors.length - 1; ii >= 0; ii--) {
+
+                    var html = `
+                    <div id='error_${ii}_non_field_error' class='help-block form-field-error form-error-message'>
+                        <strong>${errors[ii]}</strong>
+                    </div>`;
+
+                    row.after(html);
+                }
+                
+            }
+
+            // Find the target (nested) field
+            var target = `${field_name}_${sub_field_name}_${nest_id}`;
+
+            for (var ii = errors.length-1; ii >= 0; ii--) {
+
+                var error_text = errors[ii];
+
+                addFieldErrorMessage(target, error_text, ii, options);
+            }
+        }
+    }
+}
+
 
 
 /*
@@ -938,15 +1105,23 @@ function clearFormErrors(options) {
  * - fields: The form data object
  * - options: Form options provided by the client
  */
-function handleFormErrors(errors, fields, options) {
+function handleFormErrors(errors, fields={}, options={}) {
 
     // Reset the status of the "submit" button
-    $(options.modal).find('#modal-form-submit').prop('disabled', false);
+    if (options.modal) {
+        $(options.modal).find('#modal-form-submit').prop('disabled', false);
+    }
 
     // Remove any existing error messages from the form
     clearFormErrors(options);
 
-    var non_field_errors = $(options.modal).find('#non-field-errors');
+    var non_field_errors = null;
+    
+    if (options.modal) {
+        non_field_errors = $(options.modal).find('#non-field-errors');
+    } else {
+        non_field_errors = $('#non-field-errors');
+    }
 
     // TODO: Display the JSON error text when hovering over the "info" icon
     non_field_errors.append(
@@ -978,28 +1153,30 @@ function handleFormErrors(errors, fields, options) {
 
     for (var field_name in errors) {
 
-        // Add the 'has-error' class
-        $(options.modal).find(`#div_id_${field_name}`).addClass('has-error');
+        if (field_name in fields) {
 
-        var field_dom = $(options.modal).find(`#errors-${field_name}`); // $(options.modal).find(`#id_${field_name}`);
+            var field = fields[field_name];
 
-        var field_errors = errors[field_name];
+            if ((field.type == 'field') && ('child' in field)) {
+                // This is a "nested" field
+                handleNestedErrors(errors, field_name, options);
+            } else {
+                // This is a "simple" field
 
-        if (field_errors && !first_error_field && isFieldVisible(field_name, options)) {
-            first_error_field = field_name;
-        }
+                var field_errors = errors[field_name];
 
-        // Add an entry for each returned error message
-        for (var ii = field_errors.length-1; ii >= 0; ii--) {
+                if (field_errors && !first_error_field && isFieldVisible(field_name, options)) {
+                    first_error_field = field_name;
+                }
 
-            var error_text = field_errors[ii];
+                // Add an entry for each returned error message
+                for (var ii = field_errors.length-1; ii >= 0; ii--) {
 
-            var error_html = `
-            <span id='error_${ii+1}_id_${field_name}' class='help-block form-error-message'>
-                <strong>${error_text}</strong>
-            </span>`;
+                    var error_text = field_errors[ii];
 
-            field_dom.append(error_html);
+                    addFieldErrorMessage(field_name, error_text, ii, options);
+                }
+            }
         }
     }
 
@@ -1014,6 +1191,37 @@ function handleFormErrors(errors, fields, options) {
     }
 
     $(options.modal).find('.modal-content').addClass('modal-error');
+}
+
+
+/*
+ * Add a rendered error message to the provided field
+ */
+function addFieldErrorMessage(name, error_text, error_idx=0, options={}) {
+
+    field_name = getFieldName(name, options);
+
+    var field_dom = null;
+
+    if (options && options.modal) {
+        $(options.modal).find(`#div_id_${field_name}`).addClass('form-field-error');
+        field_dom = $(options.modal).find(`#errors-${field_name}`);
+    } else {
+        $(`#div_id_${field_name}`).addClass('form-field-error');
+        field_dom = $(`#errors-${field_name}`);
+    }
+
+    if (field_dom.exists()) {
+
+        var error_html = `
+        <span id='error_${error_idx}_id_${field_name}' class='help-block form-error-message'>
+            <strong>${error_text}</strong>
+        </span>`;
+
+        field_dom.append(error_html);
+    } else {
+        console.log(`WARNING: addFieldErrorMessage could not locate field '${field_name}'`);
+    }
 }
 
 
@@ -1072,9 +1280,24 @@ function addClearCallbacks(fields, options) {
 }
 
 
-function addClearCallback(name, field, options) {
+function addClearCallback(name, field, options={}) {
 
-    $(options.modal).find(`#clear_${name}`).click(function() {
+    var field_name = getFieldName(name, options);
+
+    var el = null;
+
+    if (options && options.modal) {
+        el = $(options.modal).find(`#clear_${field_name}`);
+    } else {
+        el = $(`#clear_${field_name}`);
+    }
+
+    if (!el) {
+        console.log(`WARNING: addClearCallback could not find field '${name}'`);
+        return;
+    }
+
+    el.click(function() {
         updateFieldValue(name, null, field, options);
     });
 }
@@ -1126,15 +1349,51 @@ function initializeGroups(fields, options) {
     }
 }
 
+// Set the placeholder value for a field
+function setFormInputPlaceholder(name, placeholder, options) {
+    $(options.modal).find(`#id_${name}`).attr('placeholder', placeholder);
+}
+
+// Clear a form input
+function clearFormInput(name, options) {
+    updateFieldValue(name, null, {}, options);
+}
+
+// Disable a form input
+function disableFormInput(name, options) {
+    $(options.modal).find(`#id_${name}`).prop('disabled', true);
+}
+
+
+// Enable a form input
+function enableFormInput(name, options) {
+    $(options.modal).find(`#id_${name}`).prop('disabled', false);
+}
+
+
+// Hide a form input
+function hideFormInput(name, options) {
+    $(options.modal).find(`#div_id_${name}`).hide();
+}
+
+
+// Show a form input
+function showFormInput(name, options) {
+    $(options.modal).find(`#div_id_${name}`).show();
+}
+
+
 // Hide a form group
 function hideFormGroup(group, options) {
     $(options.modal).find(`#form-panel-${group}`).hide();
 }
 
+
 // Show a form group
 function showFormGroup(group, options) {
     $(options.modal).find(`#form-panel-${group}`).show();
 }
+
 
 function setFormGroupVisibility(group, vis, options) {
     if (vis) {
@@ -1145,7 +1404,7 @@ function setFormGroupVisibility(group, vis, options) {
 }
 
 
-function initializeRelatedFields(fields, options) {
+function initializeRelatedFields(fields, options={}) {
 
     var field_names = options.field_names;
 
@@ -1181,21 +1440,23 @@ function initializeRelatedFields(fields, options) {
  */
 function addSecondaryModal(field, fields, options) {
 
-    var name = field.name;
+    var field_name = getFieldName(field.name, options);
 
-    var secondary = field.secondary;
+    var depth = options.depth || 0;
 
     var html = `
     <span style='float: right;'>
-        <div type='button' class='btn btn-primary btn-secondary' title='${secondary.title || secondary.label}' id='btn-new-${name}'>
-            ${secondary.label || secondary.title}
+        <div type='button' class='btn btn-primary btn-secondary btn-form-secondary' title='${field.secondary.title || field.secondary.label}' id='btn-new-${field_name}'>
+            ${field.secondary.label || field.secondary.title}
         </div>
     </span>`;
 
-    $(options.modal).find(`label[for="id_${name}"]`).append(html);
+    $(options.modal).find(`label[for="id_${field_name}"]`).append(html);
 
     // Callback function when the secondary button is pressed
-    $(options.modal).find(`#btn-new-${name}`).click(function() {
+    $(options.modal).find(`#btn-new-${field_name}`).click(function() {
+
+        var secondary = field.secondary;
 
         // Determine the API query URL
         var url = secondary.api_url || field.api_url;
@@ -1216,15 +1477,23 @@ function addSecondaryModal(field, fields, options) {
                 // Force refresh from the API, to get full detail
                 inventreeGet(`${url}${data.pk}/`, {}, {
                     success: function(responseData) {
-
-                        setRelatedFieldData(name, responseData, options);
+                        setRelatedFieldData(field.name, responseData, options);
                     }
                 });
             };
         }
 
+        // Relinquish keyboard focus for this modal
+        $(options.modal).modal({
+            keyboard: false,
+        });
+
         // Method should be "POST" for creation
         secondary.method = secondary.method || 'POST';
+
+        secondary.modal = null;
+
+        secondary.depth = depth + 1;
 
         constructForm(
             url,
@@ -1235,7 +1504,7 @@ function addSecondaryModal(field, fields, options) {
 
 
 /*
- * Initializea single related-field
+ * Initialize a single related-field
  * 
  * argument:
  * - modal: DOM identifier for the modal window
@@ -1243,13 +1512,12 @@ function addSecondaryModal(field, fields, options) {
  * - field: Field definition from the OPTIONS request
  * - options: Original options object provided by the client
  */
-function initializeRelatedField(field, fields, options) {
+function initializeRelatedField(field, fields, options={}) {
 
     var name = field.name;
 
     if (!field.api_url) {
-        // TODO: Provide manual api_url option?
-        console.log(`Related field '${name}' missing 'api_url' parameter.`);
+        console.log(`WARNING: Related field '${name}' missing 'api_url' parameter.`);
         return;
     }
 
@@ -1266,10 +1534,31 @@ function initializeRelatedField(field, fields, options) {
     // limit size for AJAX requests
     var pageSize = options.pageSize || 25;
 
+    var parent = null;
+    var auto_width = false;
+    var width = '100%';
+
+    // Special considerations if the select2 input is a child of a modal
+    if (options && options.modal) {
+        parent = $(options.modal);
+        auto_width = true;
+        width = null;
+    }
+
     select.select2({
         placeholder: '',
-        dropdownParent: $(options.modal),
-        dropdownAutoWidth: false,
+        dropdownParent: parent,
+        dropdownAutoWidth: auto_width,
+        width: width,
+        language: {
+            noResults: function(query) {
+                if (field.noResults) {
+                    return field.noResults(query);
+                } else {
+                    return '{% trans "No results found" %}';
+                }
+            }
+        },
         ajax: {
             url: field.api_url,
             dataType: 'json',
@@ -1292,6 +1581,11 @@ function initializeRelatedField(field, fields, options) {
                 query.search = params.term;
                 query.offset = offset;
                 query.limit = pageSize;
+                
+                // Allow custom run-time filter augmentation
+                if ('adjustFilters' in field) {
+                    query = field.adjustFilters(query, options);
+                }
 
                 return query;
             },
@@ -1367,6 +1661,11 @@ function initializeRelatedField(field, fields, options) {
                 data = item.element.instance;
             }
 
+            // Run optional callback function
+            if (field.onSelect && data) {
+                field.onSelect(data, field, options);
+            }
+
             if (!data.pk) {
                 return field.placeholder || '';
             }
@@ -1386,12 +1685,37 @@ function initializeRelatedField(field, fields, options) {
 
     // If a 'value' is already defined, grab the model info from the server
     if (field.value) {
+        
         var pk = field.value;
         var url = `${field.api_url}/${pk}/`.replace('//', '/');
 
         inventreeGet(url, field.filters || {}, {
             success: function(data) {
                 setRelatedFieldData(name, data, options);
+            }
+        });
+    } else if (field.auto_fill) {
+        // Attempt to auto-fill the field
+
+        var filters = {};
+
+        // Update with nominal field fields
+        Object.assign(filters, field.filters || {});
+
+        // Update with filters only used for initial filtering
+        Object.assign(filters, field.auto_fill_filters || {});
+
+        // Enforce pagination, limit to a single return (for fast query)
+        filters.limit = 1;
+        filters.offset = 0;
+
+        inventreeGet(field.api_url, filters || {}, {
+            success: function(data) {
+
+                // Only a single result is available, given the provided filters
+                if (data.count == 1) {
+                    setRelatedFieldData(name, data.results[0], options);
+                }
             }
         });
     }
@@ -1407,7 +1731,7 @@ function initializeRelatedField(field, fields, options) {
  * - data: JSON data representing the model instance
  * - options: The modal form specifications
  */
-function setRelatedFieldData(name, data, options) {
+function setRelatedFieldData(name, data, options={}) {
 
     var select = getFormFieldElement(name, options);
 
@@ -1487,6 +1811,15 @@ function renderModelData(name, model, data, parameters, options) {
     case 'partparametertemplate':
         renderer = renderPartParameterTemplate;
         break;
+    case 'purchaseorder':
+        renderer = renderPurchaseOrder;
+        break;
+    case 'salesorder':
+        renderer = renderSalesOrder;
+        break;
+    case 'salesordershipment':
+        renderer = renderSalesOrderShipment;
+        break;
     case 'manufacturerpart':
         renderer = renderManufacturerPart;
         break;
@@ -1521,6 +1854,20 @@ function renderModelData(name, model, data, parameters, options) {
 
 
 /*
+ * Construct a field name for the given field
+ */
+function getFieldName(name, options={}) {
+    var field_name = name;
+
+    if (options && options.depth) {
+        field_name += `_${options.depth}`;
+    }
+
+    return field_name;
+}
+
+
+/*
  * Construct a single form 'field' for rendering in a form.
  * 
  * arguments:
@@ -1546,7 +1893,7 @@ function constructField(name, parameters, options) {
         return constructCandyInput(name, parameters, options);
     }
 
-    var field_name = `id_${name}`;
+    var field_name = getFieldName(name, options);
 
     // Hidden inputs are rendered without label / help text / etc
     if (parameters.hidden) {
@@ -1566,6 +1913,8 @@ function constructField(name, parameters, options) {
 
         var group = parameters.group;
 
+        var group_id = getFieldName(group, options);
+
         var group_options = options.groups[group] || {};
 
         // Are we starting a new group?
@@ -1573,12 +1922,12 @@ function constructField(name, parameters, options) {
         if (parameters.group != options.current_group) {
 
             html += `
-            <div class='panel form-panel' id='form-panel-${group}' group='${group}'>
-                <div class='panel-heading form-panel-heading' id='form-panel-heading-${group}'>`;
+            <div class='panel form-panel' id='form-panel-${group_id}' group='${group}'>
+                <div class='panel-heading form-panel-heading' id='form-panel-heading-${group_id}'>`;
             if (group_options.collapsible) {
                 html += `
-                <div data-toggle='collapse' data-target='#form-panel-content-${group}'>
-                    <a href='#'><span id='group-icon-${group}' class='fas fa-angle-up'></span> 
+                <div data-bs-toggle='collapse' data-bs-target='#form-panel-content-${group_id}'>
+                    <a href='#'><span id='group-icon-${group_id}' class='fas fa-angle-up'></span> 
                 `;
             } else {
                 html += `<div>`;
@@ -1592,7 +1941,7 @@ function constructField(name, parameters, options) {
 
             html += `
                 </div></div>
-                <div class='panel-content form-panel-content' id='form-panel-content-${group}'>
+                <div class='panel-content form-panel-content' id='form-panel-content-${group_id}'>
             `;
         }
 
@@ -1600,18 +1949,24 @@ function constructField(name, parameters, options) {
         options.current_group = group;
     }
 
-    var form_classes = 'form-group';
+    var form_classes = options.form_classes || 'form-group';
 
     if (parameters.errors) {
-        form_classes += ' has-error';
+        form_classes += ' form-field-error';
     }
-    
+
     // Optional content to render before the field
     if (parameters.before) {
         html += parameters.before;
     }
     
-    html += `<div id='div_${field_name}' class='${form_classes}'>`;
+    var hover_title = '';
+
+    if (parameters.help_text) {
+        hover_title = ` title='${parameters.help_text}'`;
+    }
+
+    html += `<div id='div_id_${field_name}' class='${form_classes}' ${hover_title}>`;
 
     // Add a label
     if (!options.hideLabels) {
@@ -1645,17 +2000,17 @@ function constructField(name, parameters, options) {
         html += `<div class='input-group'>`;
     
         if (parameters.prefix) {
-            html += `<span class='input-group-addon'>${parameters.prefix}</span>`;
+            html += `<span class='input-group-text'>${parameters.prefix}</span>`;
         }
     }
 
-    html += constructInput(name, parameters, options);
+    html += constructInput(field_name, parameters, options);
 
     if (extra) {
 
-        if (!parameters.required) {
+        if (!parameters.required && !options.hideClearButton) {
             html += `
-            <span class='input-group-addon form-clear' id='clear_${name}' title='{% trans "Clear input" %}'>
+            <span class='input-group-text form-clear' id='clear_${field_name}' title='{% trans "Clear input" %}'>
                 <span class='icon-red fas fa-backspace'></span>
             </span>`;
         }
@@ -1664,12 +2019,15 @@ function constructField(name, parameters, options) {
     }
 
     if (parameters.help_text && !options.hideLabels) {
-        html += constructHelpText(name, parameters, options);
+
+        // Boolean values are handled differently!
+        if (parameters.type != 'boolean' && !parameters.hidden) {
+            html += constructHelpText(name, parameters, options);
+        }
     }
 
     // Div for error messages
-    html += `<div id='errors-${name}'></div>`;
-
+    html += `<div id='errors-${field_name}'></div>`;
 
     html += `</div>`; // controls
     html += `</div>`; // form-group
@@ -1723,7 +2081,7 @@ function constructLabel(name, parameters) {
  * - parameters: Field parameters returned by the OPTIONS method
  * 
  */
-function constructInput(name, parameters, options) {
+function constructInput(name, parameters, options={}) {
 
     var html = '';
 
@@ -1759,6 +2117,8 @@ function constructInput(name, parameters, options) {
     case 'candy':
         func = constructCandyInput;
         break;
+    case 'raw':
+        func = constructRawInput;
     default:
         // Unsupported field type!
         break;
@@ -1775,7 +2135,7 @@ function constructInput(name, parameters, options) {
 
 
 // Construct a set of default input options which apply to all input types
-function constructInputOptions(name, classes, type, parameters) {
+function constructInputOptions(name, classes, type, parameters, options={}) {
 
     var opts = [];
 
@@ -1793,8 +2153,15 @@ function constructInputOptions(name, classes, type, parameters) {
     }
 
     if (parameters.value != null) {
-        // Existing value?
-        opts.push(`value='${parameters.value}'`);
+        if (parameters.type == 'boolean') {
+            // Special consideration of a boolean (checkbox) value
+            if (parameters.value == true || parameters.value.toString().toLowerCase() == 'true') {
+                opts.push('checked');
+            }
+        } else {
+            // Existing value?
+            opts.push(`value='${parameters.value}'`);
+        }
     } else if (parameters.default != null) {
         // Otherwise, a defualt value?
         opts.push(`value='${parameters.default}'`);
@@ -1837,7 +2204,6 @@ function constructInputOptions(name, classes, type, parameters) {
 
     switch (parameters.type) {
     case 'boolean':
-        opts.push(`style='display: inline-block; width: 20px; margin-right: 20px;'`);
         break;
     case 'integer':
     case 'float':
@@ -1850,6 +2216,26 @@ function constructInputOptions(name, classes, type, parameters) {
 
     if (parameters.multiline) {
         return `<textarea ${opts.join(' ')}></textarea>`;
+    } else if (parameters.type == 'boolean') {
+
+        if (parameters.hidden) {
+            return '';
+        }
+
+        var help_text = '';
+
+        if (!options.hideLabels && parameters.help_text) {
+            help_text = `<em><small>${parameters.help_text}</small></em>`;
+        }
+
+        return `
+        <div class='form-check form-switch'>
+            <input ${opts.join(' ')}>
+            <label class='form-check-label' for=''>
+                ${help_text}
+            </label>
+        </div>
+        `;
     } else {
         return `<input ${opts.join(' ')}>`;
     }
@@ -1869,13 +2255,14 @@ function constructHiddenInput(name, parameters) {
 
 
 // Construct a "checkbox" input
-function constructCheckboxInput(name, parameters) {
+function constructCheckboxInput(name, parameters, options={}) {
 
     return constructInputOptions(
         name,
-        'checkboxinput',
+        'form-check-input',
         'checkbox',
-        parameters
+        parameters,
+        options
     );
 }
 
@@ -2012,6 +2399,17 @@ function constructCandyInput(name, parameters) {
 
 
 /*
+ * Construct a "raw" field input
+ * No actual field data!
+ */
+function constructRawInput(name, parameters) {
+
+    return parameters.html;
+
+}
+
+
+/*
  * Construct a 'help text' div based on the field parameters
  * 
  * arguments:
@@ -2021,13 +2419,121 @@ function constructCandyInput(name, parameters) {
  */
 function constructHelpText(name, parameters) {
     
-    var style = '';
-
-    if (parameters.type == 'boolean') {
-        style = `style='display: inline-block; margin-left: 25px' `;
-    }
-
-    var html = `<div id='hint_id_${name}' ${style}class='help-block'><i>${parameters.help_text}</i></div>`;
+    var html = `<div id='hint_id_${name}' class='help-block'><i>${parameters.help_text}</i></div>`;
 
     return html;
+}
+
+
+/*
+ * Construct a dialog to select import fields
+ */
+function selectImportFields(url, data={}, options={}) {
+
+    if (!data.model_fields) {
+        console.log(`WARNING: selectImportFields is missing 'model_fields'`);
+        return;
+    }
+
+    if (!data.file_fields) {
+        console.log(`WARNING: selectImportFields is missing 'file_fields'`);
+        return;
+    }
+
+    var choices = [];
+
+    // Add an "empty" value
+    choices.push({
+        value: '',
+        display_name: '-----',
+    });
+
+    for (const [name, field] of Object.entries(data.model_fields)) {
+        choices.push({
+            value: name,
+            display_name: field.label || name,
+        });
+    }
+
+    var rows = '';
+
+    var field_names = Object.keys(data.file_fields);
+
+    for (var idx = 0; idx < field_names.length; idx++) {
+
+        var field_name = field_names[idx];
+
+        var choice_input = constructInput(
+            `column_${idx}`,
+            {
+                type: 'choice',
+                label: field_name,
+                value: data.file_fields[field_name].value,
+                choices: choices,
+            }
+        );
+
+        rows += `<tr><td><em>${field_name}</em></td><td>${choice_input}</td></tr>`;
+    }
+
+    var headers = `<tr><th>{% trans "File Column" %}</th><th>{% trans "Field Name" %}</th></tr>`;
+
+    var html = '';
+    
+    if (options.preamble) {
+        html += options.preamble;
+    }
+
+    html += `<table class='table table-condensed'>${headers}${rows}</table>`;
+
+    constructForm(url, {
+        method: 'POST',
+        title: '{% trans "Select Columns" %}',
+        fields: {},
+        preFormContent: html,
+        onSubmit: function(fields, opts) {
+            
+            var columns = [];
+
+            for (var idx = 0; idx < field_names.length; idx++) {
+                columns.push(getFormFieldValue(`column_${idx}`, {}, opts));
+            }
+
+            $(opts.modal).find('#modal-progress-spinner').show();
+
+            inventreePut(
+                opts.url,
+                {
+                    columns: columns,
+                    rows: data.rows,
+                },
+                {
+                    method: 'POST',
+                    success: function(response) {
+                        handleFormSuccess(response, opts);
+
+                        if (options.success) {
+                            options.success(response);
+                        }
+                    },
+                    error: function(xhr) {
+                
+                        $(opts.modal).find('#modal-progress-spinner').hide();
+        
+                        switch (xhr.status) {
+                        case 400:
+                            handleFormErrors(xhr.responseJSON, fields, opts);
+                            break;
+                        default:
+                            $(opts.modal).modal('hide');
+        
+                            console.log(`upload error at ${opts.url}`);
+                            showApiError(xhr, opts.url);
+                            break;
+                        }
+                    }
+                }
+            );
+        },
+    });
 }

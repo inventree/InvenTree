@@ -18,16 +18,37 @@ class InvenTreeConfig(AppConfig):
     def ready(self):
 
         if canAppAccessDatabase():
+
+            self.remove_obsolete_tasks()
+
             self.start_background_tasks()
 
             if not isInTestMode():
                 self.update_exchange_rates()
 
+    def remove_obsolete_tasks(self):
+        """
+        Delete any obsolete scheduled tasks in the database
+        """
+
+        obsolete = [
+            'InvenTree.tasks.delete_expired_sessions',
+            'stock.tasks.delete_old_stock_items',
+        ]
+
+        try:
+            from django_q.models import Schedule
+        except AppRegistryNotReady:  # pragma: no cover
+            return
+
+        # Remove any existing obsolete tasks
+        Schedule.objects.filter(func__in=obsolete).delete()
+
     def start_background_tasks(self):
 
         try:
             from django_q.models import Schedule
-        except (AppRegistryNotReady):
+        except AppRegistryNotReady:  # pragma: no cover
             return
 
         logger.info("Starting background tasks...")
@@ -57,17 +78,16 @@ class InvenTreeConfig(AppConfig):
             schedule_type=Schedule.DAILY,
         )
 
-        # Remove expired sessions
+        # Delete old error messages
         InvenTree.tasks.schedule_task(
-            'InvenTree.tasks.delete_expired_sessions',
+            'InvenTree.tasks.delete_old_error_logs',
             schedule_type=Schedule.DAILY,
         )
 
-        # Delete "old" stock items
+        # Delete old notification records
         InvenTree.tasks.schedule_task(
-            'stock.tasks.delete_old_stock_items',
-            schedule_type=Schedule.MINUTES,
-            minutes=30,
+            'common.tasks.delete_old_notifications',
+            schedule_type=Schedule.DAILY,
         )
 
     def update_exchange_rates(self):
@@ -80,10 +100,10 @@ class InvenTreeConfig(AppConfig):
 
         try:
             from djmoney.contrib.exchange.models import ExchangeBackend
-            from datetime import datetime, timedelta
+
             from InvenTree.tasks import update_exchange_rates
             from common.settings import currency_code_default
-        except AppRegistryNotReady:
+        except AppRegistryNotReady:  # pragma: no cover
             pass
 
         base_currency = currency_code_default()
@@ -95,23 +115,18 @@ class InvenTreeConfig(AppConfig):
 
             last_update = backend.last_update
 
-            if last_update is not None:
-                delta = datetime.now().date() - last_update.date()
-                if delta > timedelta(days=1):
-                    print(f"Last update was {last_update}")
-                    update = True
-            else:
+            if last_update is None:
                 # Never been updated
-                print("Exchange backend has never been updated")
+                logger.info("Exchange backend has never been updated")
                 update = True
 
             # Backend currency has changed?
             if not base_currency == backend.base_currency:
-                print(f"Base currency changed from {backend.base_currency} to {base_currency}")
+                logger.info(f"Base currency changed from {backend.base_currency} to {base_currency}")
                 update = True
 
         except (ExchangeBackend.DoesNotExist):
-            print("Exchange backend not found - updating")
+            logger.info("Exchange backend not found - updating")
             update = True
 
         except:
@@ -119,4 +134,7 @@ class InvenTreeConfig(AppConfig):
             return
 
         if update:
-            update_exchange_rates()
+            try:
+                update_exchange_rates()
+            except Exception as e:
+                logger.error(f"Error updating exchange rates: {e}")

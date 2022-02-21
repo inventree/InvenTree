@@ -6,7 +6,6 @@ Provides a JSON API for the Part app
 from __future__ import unicode_literals
 
 from django.conf.urls import url, include
-from django.urls import reverse
 from django.http import JsonResponse
 from django.db.models import Q, F, Count, Min, Max, Avg
 from django.db import transaction
@@ -27,7 +26,8 @@ from djmoney.contrib.exchange.exceptions import MissingRate
 
 from decimal import Decimal, InvalidOperation
 
-from .models import Part, PartCategory, BomItem
+from .models import Part, PartCategory, PartRelated
+from .models import BomItem, BomItemSubstitute
 from .models import PartParameter, PartParameterTemplate
 from .models import PartAttachment, PartTestTemplate
 from .models import PartSellPriceBreak, PartInternalPriceBreak
@@ -42,26 +42,10 @@ from build.models import Build
 
 from . import serializers as part_serializers
 
-from InvenTree.views import TreeSerializer
-from InvenTree.helpers import str2bool, isNull
+from InvenTree.helpers import str2bool, isNull, increment
 from InvenTree.api import AttachmentMixin
 
 from InvenTree.status_codes import BuildStatus
-
-
-class PartCategoryTree(TreeSerializer):
-
-    title = _("Parts")
-    model = PartCategory
-
-    queryset = PartCategory.objects.all()
-
-    @property
-    def root_url(self):
-        return reverse('part-index')
-
-    def get_items(self):
-        return PartCategory.objects.all().prefetch_related('parts', 'children')
 
 
 class CategoryList(generics.ListCreateAPIView):
@@ -73,6 +57,18 @@ class CategoryList(generics.ListCreateAPIView):
 
     queryset = PartCategory.objects.all()
     serializer_class = part_serializers.CategorySerializer
+
+    def get_serializer_context(self):
+
+        ctx = super().get_serializer_context()
+
+        try:
+            ctx['starred_categories'] = [star.category for star in self.request.user.starred_categories.all()]
+        except AttributeError:
+            # Error is thrown if the view does not have an associated request
+            ctx['starred_categories'] = []
+
+        return ctx
 
     def filter_queryset(self, queryset):
         """
@@ -126,6 +122,18 @@ class CategoryList(generics.ListCreateAPIView):
             except (ValueError, PartCategory.DoesNotExist):
                 pass
 
+        # Filter by "starred" status
+        starred = params.get('starred', None)
+
+        if starred is not None:
+            starred = str2bool(starred)
+            starred_categories = [star.category.pk for star in self.request.user.starred_categories.all()]
+
+            if starred:
+                queryset = queryset.filter(pk__in=starred_categories)
+            else:
+                queryset = queryset.exclude(pk__in=starred_categories)
+
         return queryset
 
     filter_backends = [
@@ -161,9 +169,32 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     API endpoint for detail view of a single PartCategory object
     """
-    
+
     serializer_class = part_serializers.CategorySerializer
     queryset = PartCategory.objects.all()
+
+    def get_serializer_context(self):
+
+        ctx = super().get_serializer_context()
+
+        try:
+            ctx['starred_categories'] = [star.category for star in self.request.user.starred_categories.all()]
+        except AttributeError:
+            # Error is thrown if the view does not have an associated request
+            ctx['starred_categories'] = []
+
+        return ctx
+
+    def update(self, request, *args, **kwargs):
+
+        if 'starred' in request.data:
+            starred = str2bool(request.data.get('starred', False))
+
+            self.get_object().set_starred(request.user, starred)
+
+        response = super().update(request, *args, **kwargs)
+
+        return response
 
 
 class CategoryParameterList(generics.ListAPIView):
@@ -191,7 +222,7 @@ class CategoryParameterList(generics.ListAPIView):
 
         if category is not None:
             try:
-                
+
                 category = PartCategory.objects.get(pk=category)
 
                 fetch_parent = str2bool(params.get('fetch_parent', True))
@@ -206,6 +237,23 @@ class CategoryParameterList(generics.ListAPIView):
                 pass
 
         return queryset
+
+
+class CategoryTree(generics.ListAPIView):
+    """
+    API endpoint for accessing a list of PartCategory objects ready for rendering a tree.
+    """
+
+    queryset = PartCategory.objects.all()
+    serializer_class = part_serializers.CategoryTree
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+    ]
+
+    # Order by tree level (top levels first) and then name
+    ordering = ['level', 'name']
 
 
 class PartSalePriceList(generics.ListCreateAPIView):
@@ -379,6 +427,103 @@ class PartThumbsUpdate(generics.RetrieveUpdateAPIView):
     ]
 
 
+class PartSerialNumberDetail(generics.RetrieveAPIView):
+    """
+    API endpoint for returning extra serial number information about a particular part
+    """
+
+    queryset = Part.objects.all()
+
+    def retrieve(self, request, *args, **kwargs):
+
+        part = self.get_object()
+
+        # Calculate the "latest" serial number
+        latest = part.getLatestSerialNumber()
+
+        data = {
+            'latest': latest,
+        }
+
+        if latest is not None:
+            next_serial = increment(latest)
+
+            if next_serial != increment:
+                data['next'] = next_serial
+
+        return Response(data)
+
+
+class PartCopyBOM(generics.CreateAPIView):
+    """
+    API endpoint for duplicating a BOM
+    """
+
+    queryset = Part.objects.all()
+    serializer_class = part_serializers.PartCopyBOMSerializer
+
+    def get_serializer_context(self):
+
+        ctx = super().get_serializer_context()
+
+        try:
+            ctx['part'] = Part.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
+        return ctx
+
+
+class PartValidateBOM(generics.RetrieveUpdateAPIView):
+    """
+    API endpoint for 'validating' the BOM for a given Part
+    """
+
+    class BOMValidateSerializer(serializers.ModelSerializer):
+
+        class Meta:
+            model = Part
+            fields = [
+                'checksum',
+                'valid',
+            ]
+
+        checksum = serializers.CharField(
+            read_only=True,
+            source='bom_checksum',
+        )
+
+        valid = serializers.BooleanField(
+            write_only=True,
+            default=False,
+            label=_('Valid'),
+            help_text=_('Validate entire Bill of Materials'),
+        )
+
+        def validate_valid(self, valid):
+            if not valid:
+                raise ValidationError(_('This option must be selected'))
+
+    queryset = Part.objects.all()
+
+    serializer_class = BOMValidateSerializer
+
+    def update(self, request, *args, **kwargs):
+
+        part = self.get_object()
+
+        partial = kwargs.pop('partial', False)
+
+        serializer = self.get_serializer(part, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+
+        part.validate_bom(request.user)
+
+        return Response({
+            'checksum': part.bom_checksum,
+        })
+
+
 class PartDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a single Part object """
 
@@ -405,7 +550,7 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
         # Ensure the request context is passed through
         kwargs['context'] = self.get_serializer_context()
 
-        # Pass a list of "starred" parts fo the current user to the serializer
+        # Pass a list of "starred" parts of the current user to the serializer
         # We do this to reduce the number of database queries required!
         if self.starred_parts is None and self.request is not None:
             self.starred_parts = [star.part for star in self.request.user.starred_parts.all()]
@@ -434,9 +579,9 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
         """
 
         if 'starred' in request.data:
-            starred = str2bool(request.data.get('starred', None))
+            starred = str2bool(request.data.get('starred', False))
 
-            self.get_object().setStarred(request.user, starred)
+            self.get_object().set_starred(request.user, starred)
 
         response = super().update(request, *args, **kwargs)
 
@@ -524,6 +669,8 @@ class PartFilter(rest_filters.FilterSet):
     salable = rest_filters.BooleanFilter()
 
     active = rest_filters.BooleanFilter()
+
+    virtual = rest_filters.BooleanFilter()
 
 
 class PartList(generics.ListCreateAPIView):
@@ -703,7 +850,7 @@ class PartList(generics.ListCreateAPIView):
                 raise ValidationError({
                     'initial_stock_quantity': [_('Must be a valid quantity')],
                 })
-            
+
             initial_stock_location = request.data.get('initial_stock_location', None)
 
             try:
@@ -801,17 +948,26 @@ class PartList(generics.ListCreateAPIView):
 
         queryset = super().filter_queryset(queryset)
 
-        # Filter by "uses" query - Limit to parts which use the provided part
-        uses = params.get('uses', None)
+        # Exclude specific part ID values?
+        exclude_id = []
 
-        if uses:
-            try:
-                uses = Part.objects.get(pk=uses)
+        for key in ['exclude_id', 'exclude_id[]']:
+            if key in params:
+                exclude_id += params.getlist(key, [])
 
-                queryset = queryset.filter(uses.get_used_in_filter())
+        if exclude_id:
 
-            except (ValueError, Part.DoesNotExist):
-                pass
+            id_values = []
+
+            for val in exclude_id:
+                try:
+                    # pk values must be integer castable
+                    val = int(val)
+                    id_values.append(val)
+                except ValueError:
+                    pass
+
+            queryset = queryset.exclude(pk__in=id_values)
 
         # Exclude part variant tree?
         exclude_tree = params.get('exclude_tree', None)
@@ -839,6 +995,23 @@ class PartList(generics.ListCreateAPIView):
             except (ValueError, Part.DoesNotExist):
                 pass
 
+        # Filter only parts which are in the "BOM" for a given part
+        in_bom_for = params.get('in_bom_for', None)
+
+        if in_bom_for is not None:
+            try:
+                in_bom_for = Part.objects.get(pk=in_bom_for)
+
+                # Extract a list of parts within the BOM
+                bom_parts = in_bom_for.get_parts_in_bom()
+                print("bom_parts:", bom_parts)
+                print([p.pk for p in bom_parts])
+
+                queryset = queryset.filter(pk__in=[p.pk for p in bom_parts])
+
+            except (ValueError, Part.DoesNotExist):
+                pass
+
         # Filter by whether the BOM has been validated (or not)
         bom_valid = params.get('bom_valid', None)
 
@@ -860,6 +1033,40 @@ class PartList(generics.ListCreateAPIView):
                     pks.append(part.pk)
 
             queryset = queryset.filter(pk__in=pks)
+
+        # Filter by 'related' parts?
+        related = params.get('related', None)
+        exclude_related = params.get('exclude_related', None)
+
+        if related is not None or exclude_related is not None:
+            try:
+                pk = related if related is not None else exclude_related
+                pk = int(pk)
+
+                related_part = Part.objects.get(pk=pk)
+
+                part_ids = set()
+
+                # Return any relationship which points to the part in question
+                relation_filter = Q(part_1=related_part) | Q(part_2=related_part)
+
+                for relation in PartRelated.objects.filter(relation_filter):
+
+                    if relation.part_1.pk != pk:
+                        part_ids.add(relation.part_1.pk)
+
+                    if relation.part_2.pk != pk:
+                        part_ids.add(relation.part_2.pk)
+
+                if related is not None:
+                    # Only return related results
+                    queryset = queryset.filter(pk__in=[pk for pk in part_ids])
+                elif exclude_related is not None:
+                    # Exclude related results
+                    queryset = queryset.exclude(pk__in=[pk for pk in part_ids])
+
+            except (ValueError, Part.DoesNotExist):
+                pass
 
         # Filter by 'starred' parts?
         starred = params.get('starred', None)
@@ -974,7 +1181,46 @@ class PartList(generics.ListCreateAPIView):
         'revision',
         'keywords',
         'category__name',
+        'manufacturer_parts__MPN',
     ]
+
+
+class PartRelatedList(generics.ListCreateAPIView):
+    """
+    API endpoint for accessing a list of PartRelated objects
+    """
+
+    queryset = PartRelated.objects.all()
+    serializer_class = part_serializers.PartRelationSerializer
+
+    def filter_queryset(self, queryset):
+
+        queryset = super().filter_queryset(queryset)
+
+        params = self.request.query_params
+
+        # Add a filter for "part" - we can filter either part_1 or part_2
+        part = params.get('part', None)
+
+        if part is not None:
+            try:
+                part = Part.objects.get(pk=part)
+
+                queryset = queryset.filter(Q(part_1=part) | Q(part_2=part))
+
+            except (ValueError, Part.DoesNotExist):
+                pass
+
+        return queryset
+
+
+class PartRelatedDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for accessing detail view of a PartRelated object
+    """
+
+    queryset = PartRelated.objects.all()
+    serializer_class = part_serializers.PartRelationSerializer
 
 
 class PartParameterTemplateList(generics.ListCreateAPIView):
@@ -988,10 +1234,16 @@ class PartParameterTemplateList(generics.ListCreateAPIView):
     serializer_class = part_serializers.PartParameterTemplateSerializer
 
     filter_backends = [
+        DjangoFilterBackend,
         filters.OrderingFilter,
+        filters.SearchFilter,
     ]
 
     filter_fields = [
+        'name',
+    ]
+
+    search_fields = [
         'name',
     ]
 
@@ -1035,24 +1287,6 @@ class BomFilter(rest_filters.FilterSet):
     inherited = rest_filters.BooleanFilter(label='BOM line is inherited')
     allow_variants = rest_filters.BooleanFilter(label='Variants are allowed')
 
-    validated = rest_filters.BooleanFilter(label='BOM line has been validated', method='filter_validated')
-
-    def filter_validated(self, queryset, name, value):
-
-        # Work out which lines have actually been validated
-        pks = []
-
-        for bom_item in queryset.all():
-            if bom_item.is_line_valid():
-                pks.append(bom_item.pk)
-
-        if str2bool(value):
-            queryset = queryset.filter(pk__in=pks)
-        else:
-            queryset = queryset.exclude(pk__in=pks)
-    
-        return queryset
-
     # Filters for linked 'part'
     part_active = rest_filters.BooleanFilter(label='Master part is active', field_name='part__active')
     part_trackable = rest_filters.BooleanFilter(label='Master part is trackable', field_name='part__trackable')
@@ -1060,6 +1294,30 @@ class BomFilter(rest_filters.FilterSet):
     # Filters for linked 'sub_part'
     sub_part_trackable = rest_filters.BooleanFilter(label='Sub part is trackable', field_name='sub_part__trackable')
     sub_part_assembly = rest_filters.BooleanFilter(label='Sub part is an assembly', field_name='sub_part__assembly')
+
+    validated = rest_filters.BooleanFilter(label='BOM line has been validated', method='filter_validated')
+
+    def filter_validated(self, queryset, name, value):
+
+        # Work out which lines have actually been validated
+        pks = []
+
+        value = str2bool(value)
+
+        # Shortcut for quicker filtering - BomItem with empty 'checksum' values are not validated
+        if value:
+            queryset = queryset.exclude(checksum=None).exclude(checksum='')
+
+        for bom_item in queryset.all():
+            if bom_item.is_line_valid:
+                pks.append(bom_item.pk)
+
+        if value:
+            queryset = queryset.filter(pk__in=pks)
+        else:
+            queryset = queryset.exclude(pk__in=pks)
+
+        return queryset
 
 
 class BomList(generics.ListCreateAPIView):
@@ -1078,11 +1336,23 @@ class BomList(generics.ListCreateAPIView):
 
         queryset = self.filter_queryset(self.get_queryset())
 
-        serializer = self.get_serializer(queryset, many=True)
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+        else:
+            serializer = self.get_serializer(queryset, many=True)
 
         data = serializer.data
 
-        if request.is_ajax():
+        """
+        Determine the response type based on the request.
+        a) For HTTP requests (e.g. via the browseable API) return a DRF response
+        b) For AJAX requests, simply return a JSON rendered response.
+        """
+        if page is not None:
+            return self.get_paginated_response(data)
+        elif request.is_ajax():
             return JsonResponse(data, safe=False)
         else:
             return Response(data)
@@ -1102,7 +1372,7 @@ class BomList(generics.ListCreateAPIView):
 
         try:
             # Include or exclude pricing information in the serialized data
-            kwargs['include_pricing'] = str2bool(self.request.GET.get('include_pricing', True))
+            kwargs['include_pricing'] = self.include_pricing()
         except AttributeError:
             pass
 
@@ -1147,13 +1417,67 @@ class BomList(generics.ListCreateAPIView):
             except (ValueError, Part.DoesNotExist):
                 pass
 
-        include_pricing = str2bool(params.get('include_pricing', True))
+        """
+        Filter by 'uses'?
 
-        if include_pricing:
+        Here we pass a part ID and return BOM items for any assemblies which "use" (or "require") that part.
+
+        There are multiple ways that an assembly can "use" a sub-part:
+
+        A) Directly specifying the sub_part in a BomItem field
+        B) Specifing a "template" part with inherited=True
+        C) Allowing variant parts to be substituted
+        D) Allowing direct substitute parts to be specified
+
+        - BOM items which are "inherited" by parts which are variants of the master BomItem
+        """
+        uses = params.get('uses', None)
+
+        if uses is not None:
+
+            try:
+                # Extract the part we are interested in
+                uses_part = Part.objects.get(pk=uses)
+
+                # Construct the database query in multiple parts
+
+                # A) Direct specification of sub_part
+                q_A = Q(sub_part=uses_part)
+
+                # B) BomItem is inherited and points to a "parent" of this part
+                parents = uses_part.get_ancestors(include_self=False)
+
+                q_B = Q(
+                    inherited=True,
+                    sub_part__in=parents
+                )
+
+                # C) Substitution of variant parts
+                # TODO
+
+                # D) Specification of individual substitutes
+                # TODO
+
+                q = q_A | q_B
+
+                queryset = queryset.filter(q)
+
+            except (ValueError, Part.DoesNotExist):
+                pass
+
+        if self.include_pricing():
             queryset = self.annotate_pricing(queryset)
 
         return queryset
-    
+
+    def include_pricing(self):
+        """
+        Determine if pricing information should be included in the response
+        """
+        pricing_default = InvenTreeSetting.get_setting('PART_SHOW_PRICE_IN_BOM')
+
+        return str2bool(self.request.query_params.get('include_pricing', pricing_default))
+
     def annotate_pricing(self, queryset):
         """
         Add part pricing information to the queryset
@@ -1179,7 +1503,7 @@ class BomList(generics.ListCreateAPIView):
 
             # Get default currency from settings
             default_currency = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
-            
+
             if price:
                 if currency and default_currency:
                     try:
@@ -1226,6 +1550,49 @@ class BomList(generics.ListCreateAPIView):
     ]
 
 
+class BomImportUpload(generics.CreateAPIView):
+    """
+    API endpoint for uploading a complete Bill of Materials.
+
+    It is assumed that the BOM has been extracted from a file using the BomExtract endpoint.
+    """
+
+    queryset = Part.objects.all()
+    serializer_class = part_serializers.BomImportUploadSerializer
+
+    def create(self, request, *args, **kwargs):
+        """
+        Custom create function to return the extracted data
+        """
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+
+        data = serializer.extract_data()
+
+        return Response(data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+class BomImportExtract(generics.CreateAPIView):
+    """
+    API endpoint for extracting BOM data from a BOM file.
+    """
+
+    queryset = Part.objects.none()
+    serializer_class = part_serializers.BomImportExtractSerializer
+
+
+class BomImportSubmit(generics.CreateAPIView):
+    """
+    API endpoint for submitting BOM data from a BOM file
+    """
+
+    queryset = BomItem.objects.none()
+    serializer_class = part_serializers.BomImportSubmitSerializer
+
+
 class BomDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a single BomItem object """
 
@@ -1262,11 +1629,40 @@ class BomItemValidate(generics.UpdateAPIView):
         return Response(serializer.data)
 
 
+class BomItemSubstituteList(generics.ListCreateAPIView):
+    """
+    API endpoint for accessing a list of BomItemSubstitute objects
+    """
+
+    serializer_class = part_serializers.BomItemSubstituteSerializer
+    queryset = BomItemSubstitute.objects.all()
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+
+    filter_fields = [
+        'part',
+        'bom_item',
+    ]
+
+
+class BomItemSubstituteDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API endpoint for detail view of a single BomItemSubstitute object
+    """
+
+    queryset = BomItemSubstitute.objects.all()
+    serializer_class = part_serializers.BomItemSubstituteSerializer
+
+
 part_api_urls = [
-    url(r'^tree/?', PartCategoryTree.as_view(), name='api-part-tree'),
 
     # Base URL for PartCategory API endpoints
     url(r'^category/', include([
+        url(r'^tree/', CategoryTree.as_view(), name='api-part-category-tree'),
         url(r'^parameters/', CategoryParameterList.as_view(), name='api-part-category-parameter-list'),
 
         url(r'^(?P<pk>\d+)/?', CategoryDetail.as_view(), name='api-part-category-detail'),
@@ -1295,6 +1691,12 @@ part_api_urls = [
         url(r'^.*$', PartInternalPriceList.as_view(), name='api-part-internal-price-list'),
     ])),
 
+    # Base URL for PartRelated API endpoints
+    url(r'^related/', include([
+        url(r'^(?P<pk>\d+)/', PartRelatedDetail.as_view(), name='api-part-related-detail'),
+        url(r'^.*$', PartRelatedList.as_view(), name='api-part-related-list'),
+    ])),
+
     # Base URL for PartParameter API endpoints
     url(r'^parameter/', include([
         url(r'^template/$', PartParameterTemplateList.as_view(), name='api-part-parameter-template-list'),
@@ -1308,17 +1710,45 @@ part_api_urls = [
         url(r'^(?P<pk>\d+)/?', PartThumbsUpdate.as_view(), name='api-part-thumbs-update'),
     ])),
 
-    url(r'^(?P<pk>\d+)/', PartDetail.as_view(), name='api-part-detail'),
+    url(r'^(?P<pk>\d+)/', include([
+
+        # Endpoint for extra serial number information
+        url(r'^serial-numbers/', PartSerialNumberDetail.as_view(), name='api-part-serial-number-detail'),
+
+        # Endpoint for duplicating a BOM for the specific Part
+        url(r'^bom-copy/', PartCopyBOM.as_view(), name='api-part-bom-copy'),
+
+        # Endpoint for validating a BOM for the specific Part
+        url(r'^bom-validate/', PartValidateBOM.as_view(), name='api-part-bom-validate'),
+
+        # Part detail endpoint
+        url(r'^.*$', PartDetail.as_view(), name='api-part-detail'),
+    ])),
 
     url(r'^.*$', PartList.as_view(), name='api-part-list'),
 ]
 
 bom_api_urls = [
+
+    url(r'^substitute/', include([
+
+        # Detail view
+        url(r'^(?P<pk>\d+)/', BomItemSubstituteDetail.as_view(), name='api-bom-substitute-detail'),
+
+        # Catch all
+        url(r'^.*$', BomItemSubstituteList.as_view(), name='api-bom-substitute-list'),
+    ])),
+
     # BOM Item Detail
     url(r'^(?P<pk>\d+)/', include([
         url(r'^validate/?', BomItemValidate.as_view(), name='api-bom-item-validate'),
         url(r'^.*$', BomDetail.as_view(), name='api-bom-item-detail'),
     ])),
+
+    # API endpoint URLs for importing BOM data
+    url(r'^import/upload/', BomImportUpload.as_view(), name='api-bom-import-upload'),
+    url(r'^import/extract/', BomImportExtract.as_view(), name='api-bom-import-extract'),
+    url(r'^import/submit/', BomImportSubmit.as_view(), name='api-bom-import-submit'),
 
     # Catch-all
     url(r'^.*$', BomList.as_view(), name='api-bom-list'),

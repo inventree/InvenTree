@@ -1,0 +1,26 @@
+{% load i18n %}
+{% load static %}
+{% load inventree_extras %}
+
+{% if company.is_manufacturer %}
+{% trans "Manufactured Parts" as text %}
+{% include "sidebar_item.html" with label='manufacturer-parts' text=text icon="fa-industry" %}
+{% endif %}
+{% if company.is_supplier %}
+{% trans "Supplied Parts" as text %}
+{% include "sidebar_item.html" with label='supplier-parts' text=text icon="fa-building" %}
+{% trans "Purchase Orders" as text %}
+{% include "sidebar_item.html" with label='purchase-orders' text=text icon="fa-shopping-cart" %}
+{% endif %}
+{% if company.is_manufacturer or company.is_supplier %}
+{% trans "Supplied Stock Items" as text %}
+{% include "sidebar_item.html" with label='company-stock' text=text icon="fa-boxes" %}
+{% endif %}
+{% if company.is_customer %}
+{% trans "Sales Orders" as text %}
+{% include "sidebar_item.html" with label='sales-orders' text=text icon="fa-truck" %}
+{% trans "Assigned Stock Items" as text %}
+{% include "sidebar_item.html" with label='assigned-stock' text=text icon="fa-sign-out-alt" %}
+{% endif %}
+{% trans "Notes" as text %}
+{% include "sidebar_item.html" with label='company-notes' text=text icon="fa-clipboard" %}

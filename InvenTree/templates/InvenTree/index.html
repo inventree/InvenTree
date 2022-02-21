@@ -7,22 +7,16 @@
 {% inventree_title %} | {% trans "Index" %}
 {% endblock %}
 
-{% block content %}
-<h3>{% inventree_title %} </h3>
-<hr>
+{% block breadcrumb_list %}
+{% endblock %}
 
-<div class='col-sm-3' id='item-panel'>
-    <ul class='list-group' id='action-item-list'>
-    </ul>
-</div>
-<div class='col-sm-9' id='details-panel'>
-    <ul class='list-group' id='detail-item-list'>
-        <li class='list-group-item'>
-            <div class='container'>
-                <img class='index-bg' src='{% static "img/inventree.png" %}'>
-            </div>
-        </li>
-    </ul>
+{% block sidebar %}
+<!-- Sidebar data is filled dynamically for the index page-->
+{% endblock %}
+
+{% block content %}
+
+<div id='detail-panels'>
 </div>
 
 {% endblock %}
@@ -32,68 +26,57 @@
 {{ block.super }}
 
 function addHeaderTitle(title) {
-    // Add a header block to the action list
-    $("#action-item-list").append(
-        `<li class='list-group-item'><strong>${title}</strong></li>`
-    );
+
+    addSidebarHeader({
+        text: title,
+    });
 }
 
 function addHeaderAction(label, title, icon, options) {
-    // Add an action block to the action list
-    $("#action-item-list").append(
-        `<li class='list-group-item' id='action-${label}'>
-            <a href='#'>
-                <span class='fas ${icon}'></span>
-                ${title}
-            </a>
-            <span class='badge' id='badge-${label}'>
-                <span class='fas fa-spin fa-spinner'></span>
-            </span>
-        </li>`
-    );
+
+    // Construct a "badge" to add to the sidebar item
+    var badge = `
+    <span id='sidebar-badge-${label}' class='sidebar-item-badge badge rounded-pill badge-right bg-dark'>
+        <span class='fas fa-spin fa-spinner'></span>
+    </span>
+    `;
+
+    addSidebarItem({
+        label: label,
+        text: title,
+        icon: icon,
+        content_after: badge
+    });
 
     // Add a detail item to the detail item-panel
-    $("#detail-item-list").append(
-        `<li class='list-group-item' id='detail-${label}'>
-            <h4>${title}</h4>
-            <table class='table table-condensed table-striped' id='table-${label}'></table>
-        </li>`
+    $("#detail-panels").append(
+        `<div class='panel panel-inventree panel-hidden' id='panel-${label}'>
+            <div class='panel-heading'>
+                <h4>${title}</h4>
+            </div>
+            <div class='panel-content'>
+                <table class='table table-condensed table-striped' id='table-${label}'></table>
+            </div>
+        </div>`
     );
-
-    $(`#detail-${label}`).hide();
-
-    $(`#action-${label}`).click(function() {
-
-        // Hide all child elements
-        $('#detail-item-list').children('li').each(function() {
-            $(this).hide();
-        });
-
-        // Show the one we want
-        $(`#detail-${label}`).fadeIn();
-
-        // Remove css class from all action items
-        $("#action-item-list").children('li').each(function() {
-            $(this).removeClass('index-action-selected');
-        });
-
-        // Add css class to the action we are interested in
-        $(`#action-${label}`).addClass('index-action-selected');
-    });
 
     // Connect a callback to the table
     $(`#table-${label}`).on('load-success.bs.table', function() {
         var count = $(`#table-${label}`).bootstrapTable('getData').length;
 
-        $(`#badge-${label}`).html(count);
+        var badge = $(`#sidebar-badge-${label}`);
+
+        badge.html(count);
 
         if (count > 0) {
-            $(`#badge-${label}`).addClass('badge-orange');
+            badge.removeClass('bg-dark');
+            badge.addClass('bg-primary');
         }
     });
 }
 
 {% settings_value 'HOMEPAGE_PART_STARRED' user=request.user as setting_part_starred %}
+{% settings_value 'HOMEPAGE_CATEGORY_STARRED' user=request.user as setting_category_starred %}
 {% settings_value 'HOMEPAGE_PART_LATEST' user=request.user as setting_part_latest %}
 {% settings_value 'HOMEPAGE_BOM_VALIDATION' user=request.user as setting_bom_validation %}
 {% to_list setting_part_starred setting_part_latest setting_bom_validation as settings_list_part %}
@@ -102,12 +85,22 @@ function addHeaderAction(label, title, icon, options) {
 addHeaderTitle('{% trans "Parts" %}');
 
 {% if setting_part_starred %}
-addHeaderAction('starred-parts', '{% trans "Starred Parts" %}', 'fa-star');
+addHeaderAction('starred-parts', '{% trans "Subscribed Parts" %}', 'fa-bell');
 loadSimplePartTable("#table-starred-parts", "{% url 'api-part-list' %}", {
     params: {
-        "starred": true,
+        starred: true,
     },
     name: 'starred_parts',
+});
+{% endif %}
+
+{% if setting_category_starred %}
+addHeaderAction('starred-categories', '{% trans "Subscribed Categories" %}', 'fa-bell');
+loadPartCategoryTable($('#table-starred-categories'), {
+    params: {
+        starred: true,
+    },
+    name: 'starred_categories'
 });
 {% endif %}
 
@@ -146,8 +139,7 @@ loadSimplePartTable("#table-bom-validation", "{% url 'api-part-list' %}", {
 {% to_list setting_stock_recent setting_stock_low setting_stock_depleted setting_stock_needed as settings_list_stock %}
 {% endif %}
 
-{% if roles.stock.view and True in settings_list_stock %}
-addHeaderTitle('{% trans "Stock" %}');
+{% if roles.stock.view %}
 
 {% if setting_stock_recent %}
 addHeaderAction('recently-updated-stock', '{% trans "Recently Updated" %}', 'fa-clock');
@@ -163,7 +155,7 @@ loadStockTable($('#table-recently-updated-stock'), {
 {% endif %}
 
 {% if setting_stock_low %}
-addHeaderAction('low-stock', '{% trans "Low Stock" %}', 'fa-shopping-cart');
+addHeaderAction('low-stock', '{% trans "Low Stock" %}', 'fa-flag');
 loadSimplePartTable("#table-low-stock", "{% url 'api-part-list' %}", {
     params: {
         low_stock: true,
@@ -313,5 +305,12 @@ loadSalesOrderTable("#table-so-overdue", {
 {% endif %}
 
 {% endif %}
+
+enableSidebar(
+    'index',
+    {
+        hide_toggle: true,
+    }
+);
 
 {% endblock %}

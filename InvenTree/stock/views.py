@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 from django.core.exceptions import ValidationError
 from django.views.generic.edit import FormMixin
-from django.views.generic import DetailView, ListView, UpdateView
+from django.views.generic import DetailView, ListView
 from django.forms.models import model_to_dict
 from django.forms import HiddenInput
 from django.urls import reverse
@@ -145,33 +145,14 @@ class StockItemDetail(InvenTreeRoleMixin, DetailView):
         return super().get(request, *args, **kwargs)
 
 
-class StockItemNotes(InvenTreeRoleMixin, UpdateView):
-    """ View for editing the 'notes' field of a StockItem object """
-
-    context_object_name = 'item'
-    template_name = 'stock/item_notes.html'
-    model = StockItem
-
-    role_required = 'stock.view'
-
-    fields = ['notes']
-
-    def get_success_url(self):
-        return reverse('stock-item-notes', kwargs={'pk': self.get_object().id})
-
-    def get_context_data(self, **kwargs):
-
-        ctx = super().get_context_data(**kwargs)
-
-        ctx['editing'] = str2bool(self.request.GET.get('edit', ''))
-
-        return ctx
-
-
 class StockLocationEdit(AjaxUpdateView):
     """
     View for editing details of a StockLocation.
     This view is used with the EditStockLocationForm to deliver a modal form to the web view
+
+    TODO: Remove this code as location editing has been migrated to the API forms
+          - Have to still validate that all form functionality (as below) as been ported
+
     """
 
     model = StockLocation
@@ -311,39 +292,6 @@ class StockLocationQRCode(QRCodeView):
             return loc.format_barcode()
         except StockLocation.DoesNotExist:
             return None
-
-
-class StockItemAssignToCustomer(AjaxUpdateView):
-    """
-    View for manually assigning a StockItem to a Customer
-    """
-
-    model = StockItem
-    ajax_form_title = _("Assign to Customer")
-    context_object_name = "item"
-    form_class = StockForms.AssignStockItemToCustomerForm
-
-    def validate(self, item, form, **kwargs):
-
-        customer = form.cleaned_data.get('customer', None)
-
-        if not customer:
-            form.add_error('customer', _('Customer must be specified'))
-
-    def save(self, item, form, **kwargs):
-        """
-        Assign the stock item to the customer.
-        """
-
-        customer = form.cleaned_data.get('customer', None)
-
-        if customer:
-            item = item.allocateToCustomer(
-                customer,
-                user=self.request.user
-            )
-
-            item.clearAllocations()
 
 
 class StockItemReturnToStock(AjaxUpdateView):
@@ -515,156 +463,6 @@ class StockItemQRCode(QRCodeView):
             return item.format_barcode()
         except StockItem.DoesNotExist:
             return None
-
-
-class StockItemInstall(AjaxUpdateView):
-    """
-    View for manually installing stock items into
-    a particular stock item.
-
-    In contrast to the StockItemUninstall view,
-    only a single stock item can be installed at once.
-
-    The "part" to be installed must be provided in the GET query parameters.
-
-    """
-
-    model = StockItem
-    form_class = StockForms.InstallStockForm
-    ajax_form_title = _('Install Stock Item')
-    ajax_template_name = "stock/item_install.html"
-
-    part = None
-
-    def get_params(self):
-        """ Retrieve GET parameters """
-
-        # Look at GET params
-        self.part_id = self.request.GET.get('part', None)
-        self.install_in = self.request.GET.get('install_in', False)
-        self.install_item = self.request.GET.get('install_item', False)
-
-        if self.part_id is None:
-            # Look at POST params
-            self.part_id = self.request.POST.get('part', None)
-
-        try:
-            self.part = Part.objects.get(pk=self.part_id)
-        except (ValueError, Part.DoesNotExist):
-            self.part = None
-
-    def get_stock_items(self):
-        """
-        Return a list of stock items suitable for displaying to the user.
-
-        Requirements:
-        - Items must be in stock
-        - Items must be in BOM of stock item
-        - Items must be serialized
-        """
-        
-        # Filter items in stock
-        items = StockItem.objects.filter(StockItem.IN_STOCK_FILTER)
-
-        # Filter serialized stock items
-        items = items.exclude(serial__isnull=True).exclude(serial__exact='')
-
-        if self.part:
-            # Filter for parts to install this item in
-            if self.install_in:
-                # Get parts using this part
-                allowed_parts = self.part.get_used_in()
-                # Filter
-                items = items.filter(part__in=allowed_parts)
-
-            # Filter for parts to install in this item
-            if self.install_item:
-                # Get parts used in this part's BOM
-                bom_items = self.part.get_bom_items()
-                allowed_parts = [item.sub_part for item in bom_items]
-                # Filter
-                items = items.filter(part__in=allowed_parts)
-
-        return items
-
-    def get_context_data(self, **kwargs):
-        """ Retrieve parameters and update context """
-
-        ctx = super().get_context_data(**kwargs)
-
-        # Get request parameters
-        self.get_params()
-
-        ctx.update({
-            'part': self.part,
-            'install_in': self.install_in,
-            'install_item': self.install_item,
-        })
-
-        return ctx
-
-    def get_initial(self):
-
-        initials = super().get_initial()
-
-        items = self.get_stock_items()
-
-        # If there is a single stock item available, we can use it!
-        if items.count() == 1:
-            item = items.first()
-            initials['stock_item'] = item.pk
-
-        if self.part:
-            initials['part'] = self.part
-
-        try:
-            # Is this stock item being installed in the other stock item?
-            initials['to_install'] = self.install_in or not self.install_item
-        except AttributeError:
-            pass
-
-        return initials
-
-    def get_form(self):
-
-        form = super().get_form()
-
-        form.fields['stock_item'].queryset = self.get_stock_items()
-
-        return form
-
-    def post(self, request, *args, **kwargs):
-
-        self.get_params()
-
-        form = self.get_form()
-
-        valid = form.is_valid()
-
-        if valid:
-            # We assume by this point that we have a valid stock_item and quantity values
-            data = form.cleaned_data
-
-            other_stock_item = data['stock_item']
-            # Quantity will always be 1 for serialized item
-            quantity = 1
-            notes = data['notes']
-
-            # Get stock item
-            this_stock_item = self.get_object()
-
-            if data['to_install']:
-                # Install this stock item into the other stock item
-                other_stock_item.installStockItem(this_stock_item, quantity, request.user, notes)
-            else:
-                # Install the other stock item into this one
-                this_stock_item.installStockItem(other_stock_item, quantity, request.user, notes)
-
-        data = {
-            'form_valid': valid,
-        }
-
-        return self.renderJsonResponse(request, form, data=data)
 
 
 class StockItemUninstall(AjaxView, FormMixin):
@@ -920,7 +718,7 @@ class StockItemEdit(AjaxUpdateView):
         item.save(user=self.request.user)
 
         return item
-        
+
 
 class StockItemConvert(AjaxUpdateView):
     """
@@ -950,6 +748,10 @@ class StockLocationCreate(AjaxCreateView):
     """
     View for creating a new StockLocation
     A parent location (another StockLocation object) can be passed as a query parameter
+
+    TODO: Remove this class entirely, as it has been migrated to the API forms
+          - Still need to check that all the functionality (as below) has been implemented
+
     """
 
     model = StockLocation
@@ -1040,89 +842,6 @@ class StockLocationCreate(AjaxCreateView):
                 except AttributeError:
                     # No parent
                     pass
-
-
-class StockItemSerialize(AjaxUpdateView):
-    """ View for manually serializing a StockItem """
-
-    model = StockItem
-    ajax_template_name = 'stock/item_serialize.html'
-    ajax_form_title = _('Serialize Stock')
-    form_class = StockForms.SerializeStockForm
-
-    def get_form(self):
-
-        context = self.get_form_kwargs()
-
-        # Pass the StockItem object through to the form
-        context['item'] = self.get_object()
-
-        form = StockForms.SerializeStockForm(**context)
-
-        return form
-
-    def get_initial(self):
-
-        initials = super().get_initial().copy()
-
-        item = self.get_object()
-
-        initials['quantity'] = item.quantity
-        initials['serial_numbers'] = item.part.getSerialNumberString(item.quantity)
-        if item.location is not None:
-            initials['destination'] = item.location.pk
-
-        return initials
-
-    def get(self, request, *args, **kwargs):
-
-        return super().get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-
-        form = self.get_form()
-
-        item = self.get_object()
-
-        quantity = request.POST.get('quantity', 0)
-        serials = request.POST.get('serial_numbers', '')
-        dest_id = request.POST.get('destination', None)
-        notes = request.POST.get('note', '')
-        user = request.user
-
-        valid = True
-
-        try:
-            destination = StockLocation.objects.get(pk=dest_id)
-        except (ValueError, StockLocation.DoesNotExist):
-            destination = None
-
-        try:
-            numbers = extract_serial_numbers(serials, quantity)
-        except ValidationError as e:
-            form.add_error('serial_numbers', e.messages)
-            valid = False
-            numbers = []
-
-        if valid:
-            try:
-                item.serializeStock(quantity, numbers, user, notes=notes, location=destination)
-            except ValidationError as e:
-                messages = e.message_dict
-
-                for k in messages.keys():
-                    if k in ['quantity', 'destination', 'serial_numbers']:
-                        form.add_error(k, messages[k])
-                    else:
-                        form.add_error(None, messages[k])
-
-                valid = False
-
-        data = {
-            'form_valid': valid,
-        }
-
-        return self.renderJsonResponse(request, form, data=data)
 
 
 class StockItemCreate(AjaxCreateView):
@@ -1373,7 +1092,7 @@ class StockItemCreate(AjaxCreateView):
 
             if len(sn) > 0:
                 try:
-                    serials = extract_serial_numbers(sn, quantity)
+                    serials = extract_serial_numbers(sn, quantity, part.getLatestSerialNumberInt())
                 except ValidationError as e:
                     serials = None
                     form.add_error('serial_numbers', e.messages)
@@ -1415,7 +1134,7 @@ class StockItemCreate(AjaxCreateView):
 
             # Create a single stock item for each provided serial number
             if len(sn) > 0:
-                serials = extract_serial_numbers(sn, quantity)
+                serials = extract_serial_numbers(sn, quantity, part.getLatestSerialNumberInt())
 
                 for serial in serials:
                     item = StockItem(

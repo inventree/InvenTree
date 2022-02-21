@@ -27,7 +27,7 @@ fi
 if [[ -n "$INVENTREE_PY_ENV" ]]; then
     echo "Using Python virtual environment: ${INVENTREE_PY_ENV}"
     # Setup a virtual environment (within the "dev" directory)
-    python3 -m venv ${INVENTREE_PY_ENV}
+    python3 -m venv ${INVENTREE_PY_ENV} --system-site-packages
 
     # Activate the virtual environment
     source ${INVENTREE_PY_ENV}/bin/activate
@@ -37,6 +37,9 @@ if [[ -n "$INVENTREE_PY_ENV" ]]; then
 fi
 
 cd ${INVENTREE_HOME}
+
+# Collect translation file stats
+invoke translate-stats
 
 # Launch the CMD *after* the ENTRYPOINT completes
 exec "$@"

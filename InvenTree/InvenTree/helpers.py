@@ -69,6 +69,35 @@ def getStaticUrl(filename):
     return os.path.join(STATIC_URL, str(filename))
 
 
+def construct_absolute_url(*arg):
+    """
+    Construct (or attempt to construct) an absolute URL from a relative URL.
+
+    This is useful when (for example) sending an email to a user with a link
+    to something in the InvenTree web framework.
+
+    This requires the BASE_URL configuration option to be set!
+    """
+
+    base = str(InvenTreeSetting.get_setting('INVENTREE_BASE_URL'))
+
+    url = '/'.join(arg)
+
+    if not base:
+        return url
+
+    # Strip trailing slash from base url
+    if base.endswith('/'):
+        base = base[:-1]
+
+    if url.startswith('/'):
+        url = url[1:]
+
+    url = f"{base}/{url}"
+
+    return url
+
+
 def getBlankImage():
     """
     Return the qualified path for the 'blank image' placeholder.
@@ -286,7 +315,7 @@ def WrapWithQuotes(text, quote='"'):
     return text
 
 
-def MakeBarcode(object_name, object_pk, object_data={}, **kwargs):
+def MakeBarcode(object_name, object_pk, object_data=None, **kwargs):
     """ Generate a string for a barcode. Adds some global InvenTree parameters.
 
     Args:
@@ -298,6 +327,8 @@ def MakeBarcode(object_name, object_pk, object_data={}, **kwargs):
     Returns:
         json string of the supplied data plus some other data
     """
+    if object_data is None:
+        object_data = {}
 
     url = kwargs.get('url', False)
     brief = kwargs.get('brief', True)
@@ -375,20 +406,27 @@ def DownloadFile(data, filename, content_type='application/text', inline=False):
     return response
 
 
-def extract_serial_numbers(serials, expected_quantity):
+def extract_serial_numbers(serials, expected_quantity, next_number: int):
     """ Attempt to extract serial numbers from an input string.
     - Serial numbers must be integer values
     - Serial numbers must be positive
     - Serial numbers can be split by whitespace / newline / commma chars
     - Serial numbers can be supplied as an inclusive range using hyphen char e.g. 10-20
+    - Serial numbers can be defined as ~ for getting the next available serial number
     - Serial numbers can be supplied as <start>+ for getting all expecteded numbers starting from <start>
     - Serial numbers can be supplied as <start>+<length> for getting <length> numbers starting from <start>
 
     Args:
+        serials: input string with patterns
         expected_quantity: The number of (unique) serial numbers we expect
+        next_number(int): the next possible serial number
     """
 
     serials = serials.strip()
+
+    # fill in the next serial number into the serial
+    if '~' in serials:
+        serials = serials.replace('~', str(next_number))
 
     groups = re.split("[\s,]+", serials)
 
@@ -437,7 +475,6 @@ def extract_serial_numbers(serials, expected_quantity):
                     continue
             else:
                 errors.append(_("Invalid group: {g}").format(g=group))
-                continue
 
         # plus signals either
         # 1:  'start+':  expected number of serials, starting at start
@@ -462,13 +499,21 @@ def extract_serial_numbers(serials, expected_quantity):
             # no case
             else:
                 errors.append(_("Invalid group: {g}").format(g=group))
-                continue
 
+        # Group should be a number
+        elif group:
+            # try conversion
+            try:
+                number = int(group)
+            except:
+                # seem like it is not a number
+                raise ValidationError(_(f"Invalid group {group}"))
+
+            number_add(number)
+
+        # No valid input group detected
         else:
-            if group in numbers:
-                errors.append(_("Duplicate serial: {g}".format(g=group)))
-            else:
-                numbers.append(group)
+            raise ValidationError(_(f"Invalid/no group {group}"))
 
     if len(errors) > 0:
         raise ValidationError(errors)
@@ -667,3 +712,18 @@ def clean_decimal(number):
         return Decimal(0)
 
     return clean_number.quantize(Decimal(1)) if clean_number == clean_number.to_integral() else clean_number.normalize()
+
+
+def inheritors(cls):
+    """
+    Return all classes that are subclasses from the supplied cls
+    """
+    subcls = set()
+    work = [cls]
+    while work:
+        parent = work.pop()
+        for child in parent.__subclasses__():
+            if child not in subcls:
+                subcls.add(child)
+                work.append(child)
+    return subcls

@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from shutil import copyfile
 import os
 import json
 import sys
+import pathlib
+import re
 
 try:
     from invoke import ctask as task
@@ -70,16 +71,31 @@ def manage(c, cmd, pty=False):
         cmd=cmd
     ), pty=pty)
 
-
 @task
+def plugins(c):
+    """
+    Installs all plugins as specified in 'plugins.txt'
+    """
+
+    from InvenTree.InvenTree.config import get_plugin_file
+
+    plugin_file = get_plugin_file()
+
+    print(f"Installing plugin packages from '{plugin_file}'")
+
+    # Install the plugins
+    c.run(f"pip3 install -U -r '{plugin_file}'")
+
+@task(post=[plugins])
 def install(c):
     """
     Installs required python packages
     """
 
+    print("Installing required python packages from 'requirements.txt'")
+
     # Install required Python packages with PIP
     c.run('pip3 install -U -r requirements.txt')
-
 
 @task
 def shell(c):
@@ -127,12 +143,21 @@ def worker(c):
 
 
 @task
-def rebuild(c):
+def rebuild_models(c):
     """
     Rebuild database models with MPTT structures
     """
 
-    manage(c, "rebuild_models")
+    manage(c, "rebuild_models", pty=True)
+
+
+@task
+def rebuild_thumbnails(c):
+    """
+    Rebuild missing image thumbnails
+    """
+
+    manage(c, "rebuild_thumbnails", pty=True)
 
 
 @task
@@ -143,7 +168,20 @@ def clean_settings(c):
 
     manage(c, "clean_settings")
 
-@task(post=[rebuild])
+
+@task(help={'mail': 'mail of the user whos MFA should be disabled'})
+def remove_mfa(c, mail=''):
+    """
+    Remove MFA for a user
+    """
+
+    if not mail:
+        print('You must provide a users mail')
+
+    manage(c, f"remove_mfa {mail}")
+
+
+@task(post=[rebuild_models, rebuild_thumbnails])
 def migrate(c):
     """
     Performs database migrations.
@@ -268,7 +306,6 @@ def content_excludes():
 
     excludes = [
         "contenttypes",
-        "sessions.session",
         "auth.permission",
         "authtoken.token",
         "error_report.error",
@@ -279,6 +316,8 @@ def content_excludes():
         "users.owner",
         "exchange.rate",
         "exchange.exchangebackend",
+        "common.notificationentry",
+        "user_sessions.session",
     ]
 
     output = ""
@@ -298,7 +337,7 @@ def export_records(c, filename='data.json'):
     # Get an absolute path to the file
     if not os.path.isabs(filename):
         filename = os.path.join(localDir(), filename)
-        filename = os.path.abspath(filename) 
+        filename = os.path.abspath(filename)
 
     print(f"Exporting database records to file '{filename}'")
 
@@ -341,7 +380,7 @@ def export_records(c, filename='data.json'):
     print("Data export completed")
 
 
-@task(help={'filename': 'Input filename'}, post=[rebuild])
+@task(help={'filename': 'Input filename'}, post=[rebuild_models, rebuild_thumbnails])
 def import_records(c, filename='data.json'):
     """
     Import database records from a file
@@ -399,7 +438,7 @@ def delete_data(c, force=False):
         manage(c, 'flush')
 
 
-@task(post=[rebuild])
+@task(post=[rebuild_models, rebuild_thumbnails])
 def import_fixtures(c):
     """
     Import fixture data into the database.
@@ -457,6 +496,75 @@ def server(c, address="127.0.0.1:8000"):
     """
 
     manage(c, "runserver {address}".format(address=address), pty=True)
+
+
+@task(post=[translate_stats, static, server])
+def test_translations(c):
+    """
+    Add a fictional language to test if each component is ready for translations
+    """
+    import django
+    from django.conf import settings
+
+    # setup django
+    base_path = os.getcwd()
+    new_base_path = pathlib.Path('InvenTree').absolute()
+    sys.path.append(str(new_base_path))
+    os.chdir(new_base_path)
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'InvenTree.settings')
+    django.setup()
+
+    # Add language
+    print("Add dummy language...")
+    print("========================================")
+    manage(c, "makemessages -e py,html,js --no-wrap -l xx")
+
+    # change translation
+    print("Fill in dummy translations...")
+    print("========================================")
+
+    file_path = pathlib.Path(settings.LOCALE_PATHS[0], 'xx', 'LC_MESSAGES', 'django.po')
+    new_file_path = str(file_path) + '_new'
+
+    # complie regex
+    reg = re.compile(
+        r"[a-zA-Z0-9]{1}"+  # match any single letter and number
+        r"(?![^{\(\<]*[}\)\>])"+  # that is not inside curly brackets, brackets or a tag
+        r"(?<![^\%][^\(][)][a-z])"+  # that is not a specially formatted variable with singles
+        r"(?![^\\][\n])"  # that is not a newline
+    )
+    last_string = ''
+
+    # loop through input file lines
+    with open(file_path, "rt") as file_org:
+        with open(new_file_path, "wt") as file_new:
+            for line in file_org:
+                if line.startswith('msgstr "'):
+                    # write output -> replace regex matches with x in the read in (multi)string
+                    file_new.write(f'msgstr "{reg.sub("x", last_string[7:-2])}"\n')
+                    last_string = ""  # reset (multi)string
+                elif line.startswith('msgid "'):
+                    last_string = last_string + line  # a new translatable string starts -> start append
+                    file_new.write(line)
+                else:
+                    if last_string:
+                        last_string = last_string + line  # a string is beeing read in -> continue appending
+                    file_new.write(line)
+
+    # change out translation files
+    os.rename(file_path, str(file_path) + '_old')
+    os.rename(new_file_path, file_path)
+
+    # compile languages
+    print("Compile languages ...")
+    print("========================================")
+    manage(c, "compilemessages")
+
+    # reset cwd
+    os.chdir(base_path)
+
+    # set env flag
+    os.environ['TEST_TRANSLATIONS'] = 'True'
 
 
 @task

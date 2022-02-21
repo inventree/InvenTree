@@ -20,12 +20,9 @@ class StatusCode:
             return key
 
         value = cls.options.get(key, key)
-        color = cls.colors.get(key, 'grey')
+        color = cls.colors.get(key, 'secondary')
 
-        if large:
-            span_class = 'label label-large label-large-{c}'.format(c=color)
-        else:
-            span_class = 'label label-{c}'.format(c=color)
+        span_class = f'badge rounded-pill bg-{color}'
 
         return "<span class='{cl}'>{value}</span>".format(
             cl=span_class,
@@ -110,12 +107,12 @@ class PurchaseOrderStatus(StatusCode):
     }
 
     colors = {
-        PENDING: 'blue',
-        PLACED: 'blue',
-        COMPLETE: 'green',
-        CANCELLED: 'red',
-        LOST: 'yellow',
-        RETURNED: 'yellow',
+        PENDING: 'secondary',
+        PLACED: 'primary',
+        COMPLETE: 'success',
+        CANCELLED: 'danger',
+        LOST: 'warning',
+        RETURNED: 'warning',
     }
 
     # Open orders
@@ -150,11 +147,11 @@ class SalesOrderStatus(StatusCode):
     }
 
     colors = {
-        PENDING: 'blue',
-        SHIPPED: 'green',
-        CANCELLED: 'red',
-        LOST: 'yellow',
-        RETURNED: 'yellow',
+        PENDING: 'secondary',
+        SHIPPED: 'success',
+        CANCELLED: 'danger',
+        LOST: 'warning',
+        RETURNED: 'warning',
     }
 
     # Open orders
@@ -193,12 +190,12 @@ class StockStatus(StatusCode):
     }
 
     colors = {
-        OK: 'green',
-        ATTENTION: 'yellow',
-        DAMAGED: 'red',
-        DESTROYED: 'red',
-        LOST: 'grey',
-        REJECTED: 'red',
+        OK: 'success',
+        ATTENTION: 'warning',
+        DAMAGED: 'danger',
+        DESTROYED: 'danger',
+        LOST: 'dark',
+        REJECTED: 'danger',
     }
 
     # The following codes correspond to parts that are 'available' or 'in stock'
@@ -255,6 +252,9 @@ class StockHistoryCode(StatusCode):
     SPLIT_FROM_PARENT = 40
     SPLIT_CHILD_ITEM = 42
 
+    # Stock merging operations
+    MERGED_STOCK_ITEMS = 45
+
     # Build order codes
     BUILD_OUTPUT_CREATED = 50
     BUILD_OUTPUT_COMPLETED = 55
@@ -291,6 +291,8 @@ class StockHistoryCode(StatusCode):
         SPLIT_FROM_PARENT: _('Split from parent item'),
         SPLIT_CHILD_ITEM: _('Split child item'),
 
+        MERGED_STOCK_ITEMS: _('Merged stock items'),
+
         SENT_TO_CUSTOMER: _('Sent to customer'),
         RETURNED_FROM_CUSTOMER: _('Returned from customer'),
 
@@ -318,10 +320,10 @@ class BuildStatus(StatusCode):
     }
 
     colors = {
-        PENDING: 'blue',
-        PRODUCTION: 'blue',
-        COMPLETE: 'green',
-        CANCELLED: 'red',
+        PENDING: 'secondary',
+        PRODUCTION: 'primary',
+        COMPLETE: 'success',
+        CANCELLED: 'danger',
     }
 
     ACTIVE_CODES = [

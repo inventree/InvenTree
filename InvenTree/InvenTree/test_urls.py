@@ -92,7 +92,7 @@ class URLTest(TestCase):
                     result[0].strip(),
                     result[1].strip()
                 ])
-            elif len(result) == 1:
+            elif len(result) == 1:  # pragma: no cover
                 urls.append([
                     result[0].strip(),
                     ''
@@ -107,8 +107,16 @@ class URLTest(TestCase):
 
         url, pk = url_pair
 
+        # Ignore "renaming"
+        if pk.startswith('as '):
+            pk = None
+
         # TODO: Handle reverse lookup of admin URLs!
         if url.startswith("admin:"):
+            return
+
+        # TODO can this be more elegant?
+        if url.startswith("account_"):
             return
 
         if pk:

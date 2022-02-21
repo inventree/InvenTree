@@ -3,13 +3,17 @@
 {% load i18n %}
 {% load static %}
 {% load inventree_extras %}
+{% load plugin_extras %}
+
+{% block breadcrumb_list %}
+{% endblock %}
 
 {% block page_title %}
 {% inventree_title %} | {% trans "Settings" %}
 {% endblock %}
 
-{% block menubar %}
-{% include "InvenTree/settings/navbar.html" %}
+{% block sidebar %}
+{% include "InvenTree/settings/sidebar.html" %}
 {% endblock %}
 
 {% block content %}
@@ -20,10 +24,12 @@
 {% include "InvenTree/settings/user_search.html" %}
 {% include "InvenTree/settings/user_labels.html" %}
 {% include "InvenTree/settings/user_reports.html" %}
+{% include "InvenTree/settings/user_display.html" %}
 
 {% if user.is_staff %}
 
 {% include "InvenTree/settings/global.html" %}
+{% include "InvenTree/settings/login.html" %}
 {% include "InvenTree/settings/barcode.html" %}
 {% include "InvenTree/settings/currencies.html" %}
 {% include "InvenTree/settings/report.html" %}
@@ -33,6 +39,17 @@
 {% include "InvenTree/settings/build.html" %}
 {% include "InvenTree/settings/po.html" %}
 {% include "InvenTree/settings/so.html" %}
+
+{% plugins_enabled as plug %}
+{% if plug %}
+{% include "InvenTree/settings/plugin.html" %}
+{% plugin_list as pl_list %}
+{% for plugin_key, plugin in pl_list.items %}
+    {% if plugin.registered_mixins %}
+        {% include "InvenTree/settings/plugin_settings.html" %}
+    {% endif %}
+{% endfor %}
+{% endif %}
 
 {% endif %}
 
@@ -45,29 +62,68 @@
 {% block js_ready %}
 {{ block.super }}
 
-$('table').find('.btn-edit-setting').click(function() {
+// Callback for when boolean settings are edited
+$('table').find('.boolean-setting').change(function() {
+
     var setting = $(this).attr('setting');
     var pk = $(this).attr('pk');
-    var url = `/settings/${pk}/edit/`;
+    var plugin = $(this).attr('plugin');
+    var user = $(this).attr('user');
 
-    if ($(this).attr('user')){
-        url += `user/`;
+    var checked = this.checked;
+
+    // Global setting by default
+    var url = `/api/settings/global/${pk}/`;
+
+    if (plugin) {
+        url = `/api/plugin/settings/${pk}/`;
+    } else if (user) {
+        url = `/api/settings/user/${pk}/`;
     }
 
-    launchModalForm(
+    inventreePut(
         url,
         {
-            success: function(response) {
-
-                if (response.is_bool) {
-                    var enabled = response.value.toLowerCase() == 'true';
-                    $(`#setting-value-${setting}`).prop('checked', enabled);
-                } else {
-                    $(`#setting-value-${setting}`).html(response.value);
-                }
+            value: checked.toString(),
+        },
+        {
+            method: 'PATCH',
+            onSuccess: function(data) {
+            },
+            error: function(xhr) {
+                showApiError(xhr, url);
             }
         }
     );
+    
+});
+
+// Callback for when non-boolean settings are edited
+$('table').find('.btn-edit-setting').click(function() {
+    var setting = $(this).attr('setting');
+    var pk = $(this).attr('pk');
+    var plugin = $(this).attr('plugin');
+    var is_global = true;
+
+    if ($(this).attr('user')){
+        is_global = false;
+    }
+
+    var title = '';
+
+    if (plugin != null) {
+        title = '{% trans "Edit Plugin Setting" %}';
+    } else if (is_global) {
+        title = '{% trans "Edit Global Setting" %}';
+    } else {
+        title = '{% trans "Edit User Setting" %}';
+    }
+
+    editSetting(pk, {
+        plugin: plugin,
+        global: is_global,
+        title: title,
+    });
 });
 
 $("#edit-user").on('click', function() {
@@ -171,8 +227,8 @@ $('#cat-param-table').inventreeTable({
             title: '{% trans "Default Value" %}',
             sortable: 'true',
             formatter: function(value, row, index, field) {
-                var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='fas fa-edit'></span></button>";
-                var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
+                var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-edit'></span></button>";
+                var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
 
                 var html = value
                 html += "<div class='btn-group float-right' role='group'>" + bEdit + bDel + "</div>";
@@ -254,24 +310,24 @@ $("#param-table").inventreeTable({
     columns: [
         {
             field: 'pk',
-            title: 'ID',
+            title: '{% trans "ID" %}',
             visible: false,
             switchable: false,
         },
         {
             field: 'name',
-            title: 'Name',
+            title: '{% trans "Name" %}',
             sortable: 'true',
         },
         {
             field: 'units',
-            title: 'Units',
+            title: '{% trans "Units" %}',
             sortable: 'true',
         },
         {
             formatter: function(value, row, index, field) {
-                var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='fas fa-edit'></span></button>";
-                var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-default btn-glyph' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
+                var bEdit = "<button title='{% trans "Edit Template" %}' class='template-edit btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-edit'></span></button>";
+                var bDel = "<button title='{% trans "Delete Template" %}' class='template-delete btn btn-outline-secondary' type='button' pk='" + row.pk + "'><span class='fas fa-trash-alt icon-red'></span></button>";
 
                 var html = "<div class='btn-group float-right' role='group'>" + bEdit + bDel + "</div>";
 
@@ -317,15 +373,13 @@ $("#import-part").click(function() {
     launchModalForm("{% url 'api-part-import' %}?reset", {});
 });
 
-
-enableNavbar({
-    label: 'settings',
-    toggleId: '#item-menu-toggle',
+{% plugins_enabled as plug %}
+{% if plug %}
+$("#install-plugin").click(function() {
+    installPlugin();
 });
+{% endif %}
 
-attachNavCallbacks({
-    name: 'settings',
-    default: 'account'
-});
+enableSidebar('settings');
 
 {% endblock %}
