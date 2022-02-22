@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-22 01:07+0000\n"
-"PO-Revision-Date: 2022-02-22 10:29\n"
+"PO-Revision-Date: 2022-02-22 11:36\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1231,7 +1231,7 @@ msgstr "Megkésett"
 #: templates/js/translated/build.js:1940
 #: templates/js/translated/table_filters.js:365
 msgid "Completed"
-msgstr ""
+msgstr "Kész"
 
 #: build/templates/build/build_base.html:176
 #: build/templates/build/detail.html:95 order/models.py:947
