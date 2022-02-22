@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-22 01:07+0000\n"
-"PO-Revision-Date: 2022-02-22 20:08\n"
+"PO-Revision-Date: 2022-02-22 21:06\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -2877,7 +2877,7 @@ msgstr ""
 #: templates/InvenTree/settings/category.html:12
 #: templates/InvenTree/settings/part.html:66
 msgid "New Parameter"
-msgstr ""
+msgstr "Új paraméter"
 
 #: company/templates/company/manufacturer_part.html:158
 msgid "Delete parameters"
@@ -3928,11 +3928,11 @@ msgstr ""
 
 #: part/forms.py:121
 msgid "Add parameter template to same level categories"
-msgstr ""
+msgstr "Paraméter sablon hozzáadása az azonos szintű kategóriákhoz"
 
 #: part/forms.py:125
 msgid "Add parameter template to all categories"
-msgstr ""
+msgstr "Paraméter sablon hozzáadása az összes kategóriához"
 
 #: part/forms.py:145
 msgid "Input quantity for price calculation"
@@ -3959,7 +3959,7 @@ msgstr "Alkatrész kategória"
 #: templates/InvenTree/search.html:95 templates/stats.html:96
 #: users/models.py:40
 msgid "Part Categories"
-msgstr ""
+msgstr "Alkatrész kategóriák"
 
 #: part/models.py:360 part/templates/part/cat_link.html:3
 #: part/templates/part/category.html:17 part/templates/part/category.html:133
@@ -4508,11 +4508,11 @@ msgstr ""
 
 #: part/templates/part/category.html:61
 msgid "Create new part category"
-msgstr ""
+msgstr "Alkatrész kategória létrehozása"
 
 #: part/templates/part/category.html:62
 msgid "New Category"
-msgstr ""
+msgstr "Új kategória"
 
 #: part/templates/part/category.html:80 part/templates/part/category.html:93
 msgid "Category Path"
@@ -4541,11 +4541,11 @@ msgstr ""
 
 #: part/templates/part/category.html:160
 msgid "Create new part"
-msgstr ""
+msgstr "Alkatrész létrehozása"
 
 #: part/templates/part/category.html:161 templates/js/translated/bom.js:365
 msgid "New Part"
-msgstr ""
+msgstr "Új alkatrész"
 
 #: part/templates/part/category.html:175
 msgid "Set category"
@@ -4582,11 +4582,11 @@ msgstr ""
 #: part/templates/part/category_delete.html:8
 #, python-format
 msgid "This category contains %(count)s child categories"
-msgstr ""
+msgstr "Ez a kategória %(count)s alkategóriát tartalmaz"
 
 #: part/templates/part/category_delete.html:9
 msgid "If this category is deleted, these child categories will be moved to the"
-msgstr ""
+msgstr "Ha törlöd ezt a kategóriát az alkategóriák át lesznek mozgatva a"
 
 #: part/templates/part/category_delete.html:11
 msgid "category"
