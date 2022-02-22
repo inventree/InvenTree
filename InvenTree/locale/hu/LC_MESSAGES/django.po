@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-22 01:07+0000\n"
-"PO-Revision-Date: 2022-02-22 19:12\n"
+"PO-Revision-Date: 2022-02-22 20:08\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -492,11 +492,11 @@ msgstr "Szerelvényből eltávolítva"
 
 #: InvenTree/status_codes.py:288
 msgid "Installed component item"
-msgstr "Beépült összetevő elem"
+msgstr "Beépült összetevő tétel"
 
 #: InvenTree/status_codes.py:289
 msgid "Removed component item"
-msgstr "Eltávolított összetevő elem"
+msgstr "Eltávolított összetevő tétel"
 
 #: InvenTree/status_codes.py:291
 msgid "Split from parent item"
@@ -504,7 +504,7 @@ msgstr "Szülő tételből szétválasztva"
 
 #: InvenTree/status_codes.py:292
 msgid "Split child item"
-msgstr "Szétválasztott gyermek elem"
+msgstr "Szétválasztott gyermek tétel"
 
 #: InvenTree/status_codes.py:294 templates/js/translated/stock.js:2196
 msgid "Merged stock items"
@@ -616,7 +616,7 @@ msgstr "Nincs egyező készlet"
 
 #: barcodes/api.py:193
 msgid "Barcode already matches Stock Item"
-msgstr "Vonalkód már egyezik a készlet elemmel"
+msgstr "Vonalkód már egyezik a készlet tétellel"
 
 #: barcodes/api.py:197
 msgid "Barcode already matches Stock Location"
@@ -628,7 +628,7 @@ msgstr "Vonalkód már egyezik az alkatrésszel"
 
 #: barcodes/api.py:207 barcodes/api.py:219
 msgid "Barcode hash already matches Stock Item"
-msgstr "Vonalkód hash már egyezik a készlet elemmel"
+msgstr "Vonalkód hash már egyezik a készlet tétellel"
 
 #: barcodes/api.py:225
 msgid "Barcode associated with Stock Item"
@@ -761,11 +761,11 @@ msgstr "Gyártandó raktári tételek száma"
 
 #: build/models.py:273
 msgid "Completed items"
-msgstr "Kész elemek"
+msgstr "Kész tételek"
 
 #: build/models.py:275
 msgid "Number of stock items which have been completed"
-msgstr "Elkészült készlet elemek száma"
+msgstr "Elkészült készlet tételek száma"
 
 #: build/models.py:279 part/templates/part/part_base.html:234
 msgid "Build Status"
@@ -1026,7 +1026,7 @@ msgstr "Sorozatszámok automatikus hozzárendelése"
 
 #: build/serializers.py:240
 msgid "Automatically allocate required items with matching serial numbers"
-msgstr "Szükséges elemek automatikus hozzárendelése megfelelő sorozatszámokkal"
+msgstr "Szükséges tételek automatikus hozzárendelése a megfelelő sorozatszámokkal"
 
 #: build/serializers.py:274 stock/api.py:549
 msgid "The following serial numbers already exist"
@@ -1099,7 +1099,7 @@ msgstr ""
 #: build/serializers.py:495 build/serializers.py:544 part/models.py:2829
 #: part/models.py:2988
 msgid "BOM Item"
-msgstr "BOM elem"
+msgstr "BOM tétel"
 
 #: build/serializers.py:505
 msgid "Build output"
@@ -1115,12 +1115,12 @@ msgstr ""
 
 #: build/serializers.py:576 stock/serializers.py:642
 msgid "Item must be in stock"
-msgstr ""
+msgstr "A tételnek kell legyen készlete"
 
 #: build/serializers.py:632 order/serializers.py:747
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
-msgstr ""
+msgstr "Rendelkezésre álló mennyiség ({q}) túllépve"
 
 #: build/serializers.py:638
 msgid "Build output must be specified for allocation of tracked parts"
@@ -1136,7 +1136,7 @@ msgstr "A lefoglalandó tételeket meg kell adni"
 
 #: build/tasks.py:98
 msgid "Stock required for build order"
-msgstr ""
+msgstr "A gyártási utasításhoz készlet szükséges"
 
 #: build/templates/build/build_base.html:39
 #: order/templates/order/order_base.html:28
@@ -1146,7 +1146,7 @@ msgstr "Nyomtatási műveletek"
 
 #: build/templates/build/build_base.html:43
 msgid "Print build order report"
-msgstr ""
+msgstr "Gyártási riport nyomtatása"
 
 #: build/templates/build/build_base.html:50
 msgid "Build actions"
@@ -1168,7 +1168,7 @@ msgstr "Gyártás törlése"
 #: build/templates/build/build_base.html:64
 #: build/templates/build/build_base.html:65
 msgid "Complete Build"
-msgstr ""
+msgstr "Gyártás befejezése"
 
 #: build/templates/build/build_base.html:87
 msgid "Build Description"
@@ -1177,16 +1177,16 @@ msgstr "Gyártás leírása"
 #: build/templates/build/build_base.html:101
 #, python-format
 msgid "This Build Order is allocated to Sales Order %(link)s"
-msgstr ""
+msgstr "Ez a gyártási utasítás hozzátendelve a %(link)s vevői rendeléshez"
 
 #: build/templates/build/build_base.html:108
 #, python-format
 msgid "This Build Order is a child of Build Order %(link)s"
-msgstr ""
+msgstr "Ez gyártási utasítás a %(link)s gyártási utasítás gyermeke"
 
 #: build/templates/build/build_base.html:115
 msgid "Build Order is ready to mark as completed"
-msgstr ""
+msgstr "Gyártási utasítás elkészültnek jelölhető"
 
 #: build/templates/build/build_base.html:120
 msgid "Build Order cannot be completed as outstanding outputs remain"
@@ -1256,7 +1256,7 @@ msgstr "Befejezetlen kimenetek"
 
 #: build/templates/build/build_base.html:229
 msgid "Build Order cannot be completed as incomplete build outputs remain"
-msgstr ""
+msgstr "Gyártási utasítás nem teljesíthető mivel befejezetlen kimenetek maradnak"
 
 #: build/templates/build/cancel.html:5
 msgid "Are you sure you wish to cancel this build?"
@@ -1320,15 +1320,15 @@ msgstr "Készlet foglalása gyártáshoz"
 
 #: build/templates/build/detail.html:177 templates/js/translated/build.js:1484
 msgid "Unallocate stock"
-msgstr ""
+msgstr "Készlet felszabadítása"
 
 #: build/templates/build/detail.html:178
 msgid "Unallocate Stock"
-msgstr ""
+msgstr "Készlet felszabadítása"
 
 #: build/templates/build/detail.html:180
 msgid "Allocate stock to build"
-msgstr ""
+msgstr "Készlet foglalása gyártáshoz"
 
 #: build/templates/build/detail.html:181 build/templates/build/sidebar.html:8
 msgid "Allocate Stock"
@@ -1347,55 +1347,55 @@ msgstr "Alkatrész rendelés"
 
 #: build/templates/build/detail.html:197
 msgid "Untracked stock has been fully allocated for this Build Order"
-msgstr ""
+msgstr "Nem követett készlet teljesen lefoglalva ehhez a gyártási utasításhoz"
 
 #: build/templates/build/detail.html:201
 msgid "Untracked stock has not been fully allocated for this Build Order"
-msgstr ""
+msgstr "Nem követett készlet nincs teljesen lefoglalva ehhez a gyártási utasításhoz"
 
 #: build/templates/build/detail.html:208
 msgid "Allocate selected items"
-msgstr ""
+msgstr "Kiválasztott tételek lefoglalása"
 
 #: build/templates/build/detail.html:218
 msgid "This Build Order does not have any associated untracked BOM items"
-msgstr ""
+msgstr "Ez a gyártási utasítás egyáltalán nem tartalmaz nem követett BOM tételt"
 
 #: build/templates/build/detail.html:227
 msgid "Incomplete Build Outputs"
-msgstr ""
+msgstr "Befejezetlen gyártási kimenetek"
 
 #: build/templates/build/detail.html:231
 msgid "Create new build output"
-msgstr ""
+msgstr "Új gyártási kimenet létrehozása"
 
 #: build/templates/build/detail.html:232
 msgid "New Build Output"
-msgstr ""
+msgstr "Új gyártási kimenet"
 
 #: build/templates/build/detail.html:246
 msgid "Output Actions"
-msgstr ""
+msgstr "Kimeneti műveletek"
 
 #: build/templates/build/detail.html:250
 msgid "Complete selected build outputs"
-msgstr ""
+msgstr "Kiválasztott gyártási kimenetek befejezése"
 
 #: build/templates/build/detail.html:251
 msgid "Complete outputs"
-msgstr ""
+msgstr "Befejezett kimenetek"
 
 #: build/templates/build/detail.html:253
 msgid "Delete selected build outputs"
-msgstr ""
+msgstr "Kiválasztott gyártási kimenetek törlése"
 
 #: build/templates/build/detail.html:254
 msgid "Delete outputs"
-msgstr ""
+msgstr "Kimenetek törlése"
 
 #: build/templates/build/detail.html:270
 msgid "Completed Build Outputs"
-msgstr ""
+msgstr "Befejezett gyártási kimenetek"
 
 #: build/templates/build/detail.html:282 build/templates/build/sidebar.html:19
 #: order/templates/order/po_sidebar.html:9
@@ -1405,11 +1405,11 @@ msgstr ""
 #: part/templates/part/part_sidebar.html:55 stock/templates/stock/item.html:112
 #: stock/templates/stock/stock_sidebar.html:23
 msgid "Attachments"
-msgstr ""
+msgstr "Mellékletek"
 
 #: build/templates/build/detail.html:298
 msgid "Build Notes"
-msgstr ""
+msgstr "Gyártási megjegyzések"
 
 #: build/templates/build/detail.html:302 build/templates/build/detail.html:478
 #: company/templates/company/detail.html:188
@@ -1421,7 +1421,7 @@ msgstr ""
 #: part/templates/part/detail.html:144 stock/templates/stock/item.html:132
 #: stock/templates/stock/item.html:230
 msgid "Edit Notes"
-msgstr ""
+msgstr "Megjegyzések szerkesztése"
 
 #: build/templates/build/detail.html:502
 msgid "Allocation Complete"
@@ -1429,75 +1429,75 @@ msgstr "Lefoglalás kész"
 
 #: build/templates/build/detail.html:503
 msgid "All untracked stock items have been allocated"
-msgstr ""
+msgstr "Az összes nem követett készlet lefoglalásra került"
 
 #: build/templates/build/index.html:18 part/templates/part/detail.html:323
 msgid "New Build Order"
-msgstr ""
+msgstr "Új gyártási utasítás"
 
 #: build/templates/build/index.html:37 build/templates/build/index.html:38
 msgid "Print Build Orders"
-msgstr ""
+msgstr "Gyártási utasítások nyomtatása"
 
 #: build/templates/build/index.html:44
 #: order/templates/order/purchase_orders.html:34
 #: order/templates/order/sales_orders.html:37
 msgid "Display calendar view"
-msgstr ""
+msgstr "Naptár nézet megjelenítése"
 
 #: build/templates/build/index.html:47
 #: order/templates/order/purchase_orders.html:37
 #: order/templates/order/sales_orders.html:40
 msgid "Display list view"
-msgstr ""
+msgstr "Lista nézet megjenítése"
 
 #: build/templates/build/sidebar.html:5
 msgid "Build Order Details"
-msgstr ""
+msgstr "Gyártási utasítás részletei"
 
 #: build/templates/build/sidebar.html:12
 msgid "Pending Items"
-msgstr ""
+msgstr "Függőben lévő tételek"
 
 #: build/templates/build/sidebar.html:15
 msgid "Completed Items"
-msgstr ""
+msgstr "Kész tételek"
 
 #: build/views.py:73
 msgid "Build was cancelled"
-msgstr ""
+msgstr "Gyártás megszakítva"
 
 #: build/views.py:114
 msgid "Delete Build Order"
-msgstr ""
+msgstr "Gyártási utasítás törlése"
 
 #: common/files.py:65
 msgid "Unsupported file format: {ext.upper()}"
-msgstr ""
+msgstr "Nem támogatott fájl formátum: {ext.upper()}"
 
 #: common/files.py:67
 msgid "Error reading file (invalid encoding)"
-msgstr ""
+msgstr "Fájl beolvasási hiba (hibás encoding)"
 
 #: common/files.py:72
 msgid "Error reading file (invalid format)"
-msgstr ""
+msgstr "Fájl beolvasási hiba (hibás formátum)"
 
 #: common/files.py:74
 msgid "Error reading file (incorrect dimension)"
-msgstr ""
+msgstr "Fájl beolvasási hiba (hibás dimenzió)"
 
 #: common/files.py:76
 msgid "Error reading file (data could be corrupted)"
-msgstr ""
+msgstr "Fájl beolvasási hiba (sérült lehet)"
 
 #: common/forms.py:34
 msgid "File"
-msgstr ""
+msgstr "Fájl"
 
 #: common/forms.py:35
 msgid "Select file to upload"
-msgstr ""
+msgstr "Feltöltendő fájl kiválasztása"
 
 #: common/forms.py:50
 msgid "{name.title()} File"
@@ -1506,39 +1506,39 @@ msgstr ""
 #: common/forms.py:51
 #, python-brace-format
 msgid "Select {name} file to upload"
-msgstr ""
+msgstr "{name} fájl kiválasztása feltöltéshez"
 
 #: common/models.py:352
 msgid "Settings key (must be unique - case insensitive)"
-msgstr ""
+msgstr "Beállítások kulcs (egyedinek kell lennie, nem kis- nagybetű érzékeny)"
 
 #: common/models.py:354
 msgid "Settings value"
-msgstr ""
+msgstr "Beállítás értéke"
 
 #: common/models.py:388
 msgid "Chosen value is not a valid option"
-msgstr ""
+msgstr "A kiválasztott érték nem egy érvényes lehetőség"
 
 #: common/models.py:408
 msgid "Value must be a boolean value"
-msgstr ""
+msgstr "Az érték bináris kell legyen"
 
 #: common/models.py:419
 msgid "Value must be an integer value"
-msgstr ""
+msgstr "Az érték egész szám kell legyen"
 
 #: common/models.py:442
 msgid "Key string must be unique"
-msgstr ""
+msgstr "Kulcs string egyedi kell legyen"
 
 #: common/models.py:561
 msgid "No group"
-msgstr ""
+msgstr "Nincs csoport"
 
 #: common/models.py:603
 msgid "Restart required"
-msgstr ""
+msgstr "Újraindítás szükséges"
 
 #: common/models.py:604
 msgid "A setting has been changed which requires a server restart"
