@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-18 20:36+0000\n"
-"PO-Revision-Date: 2022-02-18 20:38\n"
+"POT-Creation-Date: 2022-02-20 22:01+0000\n"
+"PO-Revision-Date: 2022-02-20 22:02\n"
 "Last-Translator: \n"
 "Language-Team: Hebrew\n"
 "Language: he_IL\n"
@@ -95,26 +95,26 @@ msgid "Empty serial number string"
 msgstr ""
 
 #: InvenTree/helpers.py:471 InvenTree/helpers.py:474 InvenTree/helpers.py:477
-#: InvenTree/helpers.py:502
+#: InvenTree/helpers.py:501
 #, python-brace-format
 msgid "Invalid group: {g}"
 msgstr "קבוצה שגויה: {g}"
 
-#: InvenTree/helpers.py:512
+#: InvenTree/helpers.py:510
 #, python-brace-format
 msgid "Invalid group {group}"
 msgstr "קבוצה שגויה {group}"
 
-#: InvenTree/helpers.py:518
+#: InvenTree/helpers.py:516
 #, python-brace-format
 msgid "Invalid/no group {group}"
 msgstr "קבוצה שגויה / לא נמצאה {group}"
 
-#: InvenTree/helpers.py:524
+#: InvenTree/helpers.py:522
 msgid "No serial numbers found"
 msgstr "מספרים סידוריים לא נמצאו"
 
-#: InvenTree/helpers.py:528
+#: InvenTree/helpers.py:526
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
 msgstr "כמות המספרים הסידוריים ({s}) מוכרים להיות תואמים לכמות ({q})"
@@ -290,11 +290,13 @@ msgid "No data columns supplied"
 msgstr ""
 
 #: InvenTree/serializers.py:623
-msgid "Missing required column"
+#, python-brace-format
+msgid "Missing required column: '{name}'"
 msgstr ""
 
 #: InvenTree/serializers.py:632
-msgid "Duplicate column"
+#, python-brace-format
+msgid "Duplicate column: '{col}'"
 msgstr ""
 
 #: InvenTree/settings.py:655
@@ -991,7 +993,7 @@ msgid "Enter quantity for build output"
 msgstr ""
 
 #: build/serializers.py:201 build/serializers.py:590 order/models.py:280
-#: order/serializers.py:240 part/serializers.py:471 part/serializers.py:827
+#: order/serializers.py:240 part/serializers.py:471 part/serializers.py:826
 #: stock/models.py:367 stock/models.py:1105 stock/serializers.py:305
 msgid "Quantity must be greater than zero"
 msgstr ""
@@ -1022,7 +1024,7 @@ msgstr ""
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr ""
 
-#: build/serializers.py:274 stock/api.py:551
+#: build/serializers.py:274 stock/api.py:549
 msgid "The following serial numbers already exist"
 msgstr ""
 
@@ -4417,27 +4419,27 @@ msgstr ""
 msgid "No part column specified"
 msgstr ""
 
-#: part/serializers.py:806
+#: part/serializers.py:805
 msgid "Multiple matching parts found"
 msgstr ""
 
-#: part/serializers.py:809
+#: part/serializers.py:808
 msgid "No matching part found"
 msgstr ""
 
-#: part/serializers.py:812
+#: part/serializers.py:811
 msgid "Part is not designated as a component"
 msgstr ""
 
-#: part/serializers.py:821
+#: part/serializers.py:820
 msgid "Quantity not provided"
 msgstr ""
 
-#: part/serializers.py:829
+#: part/serializers.py:828
 msgid "Invalid quantity"
 msgstr ""
 
-#: part/serializers.py:848
+#: part/serializers.py:847
 msgid "At least one BOM item is required"
 msgstr ""
 
@@ -5587,7 +5589,7 @@ msgstr ""
 msgid "Valid part must be supplied"
 msgstr ""
 
-#: stock/api.py:535
+#: stock/api.py:533
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr ""
 
@@ -7251,7 +7253,7 @@ msgstr ""
 
 #: templates/allauth_2fa/backup_tokens.html:31
 #: templates/allauth_2fa/setup.html:40
-msgid "back to settings"
+msgid "Back to settings"
 msgstr ""
 
 #: templates/allauth_2fa/remove.html:6
