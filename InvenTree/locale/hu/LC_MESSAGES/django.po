@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-22 01:07+0000\n"
-"PO-Revision-Date: 2022-02-22 01:18\n"
+"PO-Revision-Date: 2022-02-22 07:56\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -20,11 +20,11 @@ msgstr ""
 
 #: InvenTree/api.py:55
 msgid "API endpoint not found"
-msgstr ""
+msgstr "API funkciót nem találom"
 
 #: InvenTree/api.py:101
 msgid "No action specified"
-msgstr ""
+msgstr "Nincs megadva művelet"
 
 #: InvenTree/api.py:116
 msgid "No matching action found"
@@ -70,29 +70,29 @@ msgstr ""
 
 #: InvenTree/forms.py:236
 msgid "Email (again)"
-msgstr ""
+msgstr "Email (újra)"
 
 #: InvenTree/forms.py:240
 msgid "Email address confirmation"
-msgstr ""
+msgstr "Email cím megerősítés"
 
 #: InvenTree/forms.py:260
 msgid "You must type the same email each time."
-msgstr ""
+msgstr "Mindig ugyanazt az email címet kell beírni."
 
 #: InvenTree/helpers.py:439
 #, python-brace-format
 msgid "Duplicate serial: {n}"
-msgstr ""
+msgstr "Duplikált szériaszám: {n}"
 
 #: InvenTree/helpers.py:446 order/models.py:282 order/models.py:425
 #: stock/views.py:1082
 msgid "Invalid quantity provided"
-msgstr ""
+msgstr "Nem megfelelő mennyiség"
 
 #: InvenTree/helpers.py:449
 msgid "Empty serial number string"
-msgstr ""
+msgstr "Üres szériaszám"
 
 #: InvenTree/helpers.py:471 InvenTree/helpers.py:474 InvenTree/helpers.py:477
 #: InvenTree/helpers.py:501
