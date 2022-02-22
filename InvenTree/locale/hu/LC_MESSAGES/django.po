@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-22 01:07+0000\n"
-"PO-Revision-Date: 2022-02-22 22:02\n"
+"PO-Revision-Date: 2022-02-22 23:18\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1004,7 +1004,7 @@ msgstr "Mennyiségnek nullánál többnek kell lennie"
 
 #: build/serializers.py:208
 msgid "Integer quantity required for trackable parts"
-msgstr "Egész számú mennyiség szükséges az egyedi követésre kötelezett alketrészeknél"
+msgstr "Egész számú mennyiség szükséges az egyedi követésre kötelezett alkatrészeknél"
 
 #: build/serializers.py:211
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
@@ -1594,7 +1594,7 @@ msgstr ""
 
 #: common/models.py:651 templates/InvenTree/settings/sidebar.html:31
 msgid "Barcode Support"
-msgstr ""
+msgstr "Vonalkód támogatás"
 
 #: common/models.py:652
 msgid "Enable barcode scanner support"
@@ -1670,7 +1670,7 @@ msgstr "Alkatrészek alapból sablon alkatrészek legyenek"
 #: templates/js/translated/table_filters.js:168
 #: templates/js/translated/table_filters.js:429
 msgid "Assembly"
-msgstr ""
+msgstr "Szerelvény"
 
 #: common/models.py:713
 msgid "Parts can be assembled from other components by default"
@@ -2017,7 +2017,7 @@ msgstr ""
 
 #: common/models.py:1020 common/models.py:1228
 msgid "Settings key (must be unique - case insensitive"
-msgstr ""
+msgstr "Beállítások kulcs (egyedinek kell lennie, nem kis- nagybetű érzékeny"
 
 #: common/models.py:1051
 msgid "Show subscribed parts"
@@ -2085,7 +2085,7 @@ msgstr "Alacsony készletek megjelenítése a főoldalon"
 
 #: common/models.py:1100
 msgid "Show depleted stock"
-msgstr ""
+msgstr "Kimerült készlet megjelenítése"
 
 #: common/models.py:1101
 msgid "Show depleted stock items on the homepage"
@@ -2364,7 +2364,7 @@ msgstr ""
 #: company/forms.py:24 part/forms.py:46
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: company/forms.py:25 part/forms.py:47
 msgid "Image URL"
@@ -2382,7 +2382,7 @@ msgstr ""
 #: templates/InvenTree/settings/plugin_settings.html:55
 #: templates/js/translated/company.js:349
 msgid "Website"
-msgstr ""
+msgstr "Weboldal"
 
 #: company/models.py:113
 msgid "Company website URL"
@@ -2673,7 +2673,7 @@ msgstr "Kép letöltése URL-ről"
 #: templates/js/translated/stock.js:2734
 #: templates/js/translated/table_filters.js:392
 msgid "Customer"
-msgstr ""
+msgstr "Vevő"
 
 #: company/templates/company/company_base.html:108
 msgid "Uses default currency"
@@ -3034,11 +3034,11 @@ msgstr ""
 #: company/views.py:61 templates/InvenTree/search.html:208
 #: templates/navbar.html:57
 msgid "Customers"
-msgstr ""
+msgstr "Vevők"
 
 #: company/views.py:62
 msgid "New Customer"
-msgstr ""
+msgstr "Új vevő"
 
 #: company/views.py:69
 msgid "Companies"
@@ -3194,15 +3194,15 @@ msgstr ""
 
 #: order/models.py:243
 msgid "Issue Date"
-msgstr ""
+msgstr "Kiállítás dátuma"
 
 #: order/models.py:244
 msgid "Date order was issued"
-msgstr ""
+msgstr "Kiállítás dátuma"
 
 #: order/models.py:249
 msgid "Target Delivery Date"
-msgstr ""
+msgstr "Cél kézbesítési dátum"
 
 #: order/models.py:250
 msgid "Expected date for order delivery. Order will be overdue after this date."
@@ -3210,7 +3210,7 @@ msgstr ""
 
 #: order/models.py:256
 msgid "Date order was completed"
-msgstr ""
+msgstr "Rendelés teljesítési dátuma"
 
 #: order/models.py:285
 msgid "Part supplier must match PO supplier"
@@ -3226,11 +3226,11 @@ msgstr ""
 
 #: order/models.py:559
 msgid "Customer Reference "
-msgstr ""
+msgstr "Vevő azonosító "
 
 #: order/models.py:559
 msgid "Customer order reference code"
-msgstr ""
+msgstr "Vevő megrendelés azonosító kód"
 
 #: order/models.py:564
 msgid "Target date for order completion. Order will be overdue after this date."
@@ -3239,7 +3239,7 @@ msgstr ""
 #: order/models.py:567 order/models.py:1048
 #: templates/js/translated/order.js:1281 templates/js/translated/order.js:1429
 msgid "Shipment Date"
-msgstr ""
+msgstr "Kiszállítás dátuma"
 
 #: order/models.py:574
 msgid "shipped by"
@@ -3335,7 +3335,7 @@ msgstr ""
 
 #: order/models.py:1049
 msgid "Date of shipment"
-msgstr ""
+msgstr "Szállítás dátuma"
 
 #: order/models.py:1056
 msgid "Checked By"
@@ -3770,7 +3770,7 @@ msgstr ""
 #: order/templates/order/sales_order_base.html:122
 #: templates/js/translated/order.js:1253
 msgid "Customer Reference"
-msgstr ""
+msgstr "Vevő azonosító"
 
 #: order/templates/order/sales_order_base.html:140
 #: order/templates/order/sales_order_detail.html:78
@@ -3915,7 +3915,7 @@ msgstr ""
 
 #: part/bom.py:127 part/templates/part/part_base.html:185
 msgid "Available Stock"
-msgstr "Szabad készlet"
+msgstr "Elérhető készlet"
 
 #: part/bom.py:128 part/templates/part/part_base.html:203
 #: templates/js/translated/part.js:1301
@@ -3995,7 +3995,7 @@ msgstr ""
 
 #: part/models.py:778
 msgid "Duplicate IPN not allowed in part settings"
-msgstr ""
+msgstr "Azonos IPN nem engedélyezett az alkatrész beállításokban"
 
 #: part/models.py:803 part/models.py:2622
 msgid "Part name"
@@ -4223,7 +4223,7 @@ msgstr ""
 #: part/models.py:2525 part/models.py:2574 part/models.py:2575
 #: templates/InvenTree/settings/settings.html:218
 msgid "Parameter Template"
-msgstr ""
+msgstr "Paraméter sablon"
 
 #: part/models.py:2527
 msgid "Data"
@@ -4235,7 +4235,7 @@ msgstr ""
 
 #: part/models.py:2579 templates/InvenTree/settings/settings.html:227
 msgid "Default Value"
-msgstr ""
+msgstr "Alapértelmezett érték"
 
 #: part/models.py:2580
 msgid "Default Parameter Value"
@@ -4612,7 +4612,7 @@ msgstr "Ha ez a kategória törölve lesz, ezek az alkatrészek a legfelső kate
 
 #: part/templates/part/category_sidebar.html:13
 msgid "Import Parts"
-msgstr "Alketrészek importálása"
+msgstr "Alkatrészek importálása"
 
 #: part/templates/part/copy_part.html:9 templates/js/translated/part.js:348
 msgid "Duplicate Part"
@@ -4952,7 +4952,7 @@ msgstr "Ez az alkatrész egy változata a %(link)s alkatrésznek"
 #: part/templates/part/part_base.html:190 templates/js/translated/order.js:2217
 #: templates/js/translated/table_filters.js:193
 msgid "In Stock"
-msgstr ""
+msgstr "Készleten"
 
 #: part/templates/part/part_base.html:210 templates/InvenTree/index.html:178
 msgid "Required for Build Orders"
@@ -5564,7 +5564,7 @@ msgstr ""
 #: templates/InvenTree/settings/plugin_settings.html:38
 #: templates/js/translated/order.js:849 templates/js/translated/stock.js:2649
 msgid "Date"
-msgstr ""
+msgstr "Dátum"
 
 #: report/templates/report/inventree_test_report_base.html:108
 msgid "Pass"
@@ -5595,13 +5595,13 @@ msgstr ""
 
 #: stock/api.py:533
 msgid "Serial numbers cannot be supplied for a non-trackable part"
-msgstr ""
+msgstr "Sorozatszámot nem lehet megadni nem követésre kötelezett alkatrész esetén"
 
 #: stock/forms.py:74 stock/forms.py:198 stock/models.py:576
 #: stock/templates/stock/item_base.html:195
 #: templates/js/translated/stock.js:1833
 msgid "Expiry Date"
-msgstr ""
+msgstr "Lejárati dátum"
 
 #: stock/forms.py:75 stock/forms.py:199
 msgid "Expiration date for this stock item"
@@ -5752,7 +5752,7 @@ msgstr ""
 
 #: stock/models.py:590
 msgid "Delete this Stock Item when stock is depleted"
-msgstr ""
+msgstr "Készlet tétel törlése ha kimerül"
 
 #: stock/models.py:600 stock/templates/stock/item.html:128
 msgid "Stock Item Notes"
@@ -5764,7 +5764,7 @@ msgstr ""
 
 #: stock/models.py:1096
 msgid "Part is not set as trackable"
-msgstr ""
+msgstr "Az alkatrész nem követésre kötelezett"
 
 #: stock/models.py:1102
 msgid "Quantity must be integer"
@@ -5806,7 +5806,7 @@ msgstr ""
 
 #: stock/models.py:1204
 msgid "Stock item is currently in production"
-msgstr ""
+msgstr "Készlet tétel gyártás alatt"
 
 #: stock/models.py:1207
 msgid "Serialized stock cannot be merged"
@@ -5830,7 +5830,7 @@ msgstr ""
 
 #: stock/models.py:1397
 msgid "StockItem cannot be moved as it is not in stock"
-msgstr ""
+msgstr "Készlet tétel nem mozgatható mivel nincs készleten"
 
 #: stock/models.py:1896
 msgid "Entry notes"
@@ -5919,15 +5919,15 @@ msgstr ""
 
 #: stock/serializers.py:650
 msgid "Item is allocated to a sales order"
-msgstr ""
+msgstr "A tétel egy vevő rendeléshez foglalt"
 
 #: stock/serializers.py:654
 msgid "Item is allocated to a build order"
-msgstr ""
+msgstr "A tétel egy gyártási utasításhoz foglalt"
 
 #: stock/serializers.py:684
 msgid "Customer to assign stock items"
-msgstr ""
+msgstr "Vevő akihez rendeljük a készlet tételeket"
 
 #: stock/serializers.py:690
 msgid "Selected company is not a customer"
@@ -5979,7 +5979,7 @@ msgstr "Készlettörténeti információk"
 
 #: stock/templates/stock/item.html:29
 msgid "New Entry"
-msgstr ""
+msgstr "Új bejegyzés"
 
 #: stock/templates/stock/item.html:48
 msgid "Stock Item Allocations"
@@ -6145,15 +6145,15 @@ msgstr ""
 #: stock/templates/stock/item_base.html:208
 #: templates/js/translated/stock.js:1846
 msgid "Last Updated"
-msgstr ""
+msgstr "Utoljára módosítva"
 
 #: stock/templates/stock/item_base.html:213
 msgid "Last Stocktake"
-msgstr ""
+msgstr "Utolsó leltár"
 
 #: stock/templates/stock/item_base.html:217
 msgid "No stocktake performed"
-msgstr ""
+msgstr "Még nem volt leltározva"
 
 #: stock/templates/stock/item_base.html:235
 msgid "You are not in the list of owners of this item. This stock item cannot be edited."
@@ -6161,7 +6161,7 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:242
 msgid "This stock item is in production and cannot be edited."
-msgstr ""
+msgstr "Ez a készlet tétel éppen gyártás alatt van és nem szerkeszthető."
 
 #: stock/templates/stock/item_base.html:243
 msgid "Edit the stock item from the build view."
@@ -6173,11 +6173,11 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:264
 msgid "This stock item is allocated to Sales Order"
-msgstr ""
+msgstr "Ez a készlet elem egy vevői rendeléshez foglalt"
 
 #: stock/templates/stock/item_base.html:272
 msgid "This stock item is allocated to Build Order"
-msgstr ""
+msgstr "Ez a készlet elem egy gyártási utasításhoz foglalt"
 
 #: stock/templates/stock/item_base.html:278
 msgid "This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted."
@@ -6404,15 +6404,15 @@ msgstr ""
 
 #: stock/views.py:1210
 msgid "Delete Stock Tracking Entry"
-msgstr ""
+msgstr "Készlettörténet bejegyzés törlése"
 
 #: stock/views.py:1217
 msgid "Edit Stock Tracking Entry"
-msgstr ""
+msgstr "Készlettörténet bejegyzés szerkesztése"
 
 #: stock/views.py:1226
 msgid "Add Stock Tracking Entry"
-msgstr ""
+msgstr "Készlettörténet bejegyzés hozzáadása"
 
 #: templates/403.html:5 templates/403.html:11
 msgid "Permission Denied"
@@ -6476,7 +6476,7 @@ msgstr ""
 
 #: templates/InvenTree/index.html:168
 msgid "Depleted Stock"
-msgstr ""
+msgstr "Kimerült készlet"
 
 #: templates/InvenTree/index.html:191
 msgid "Expired Stock"
@@ -6520,35 +6520,35 @@ msgstr "Vonalkód beállítások"
 
 #: templates/InvenTree/settings/build.html:8
 msgid "Build Order Settings"
-msgstr ""
+msgstr "Gyártási utasítás bellításai"
 
 #: templates/InvenTree/settings/category.html:7
 msgid "Category Settings"
-msgstr ""
+msgstr "Kategória beállítások"
 
 #: templates/InvenTree/settings/currencies.html:8
 msgid "Currency Settings"
-msgstr ""
+msgstr "Pénznem beállítások"
 
 #: templates/InvenTree/settings/currencies.html:19
 msgid "Base Currency"
-msgstr ""
+msgstr "Alapértelmezett pénznem"
 
 #: templates/InvenTree/settings/currencies.html:24
 msgid "Exchange Rates"
-msgstr ""
+msgstr "Árfolyamok"
 
 #: templates/InvenTree/settings/currencies.html:38
 msgid "Last Update"
-msgstr ""
+msgstr "Utolsó frissítés"
 
 #: templates/InvenTree/settings/currencies.html:44
 msgid "Never"
-msgstr ""
+msgstr "Soha"
 
 #: templates/InvenTree/settings/currencies.html:49
 msgid "Update Now"
-msgstr ""
+msgstr "Frissítés most"
 
 #: templates/InvenTree/settings/global.html:9
 msgid "Server Settings"
@@ -6557,41 +6557,41 @@ msgstr "Kiszolgáló beállítások"
 #: templates/InvenTree/settings/login.html:9
 #: templates/InvenTree/settings/sidebar.html:29
 msgid "Login Settings"
-msgstr ""
+msgstr "Belépési beállítások"
 
 #: templates/InvenTree/settings/login.html:21 templates/account/signup.html:5
 msgid "Signup"
-msgstr ""
+msgstr "Regisztráció"
 
 #: templates/InvenTree/settings/mixins/settings.html:5
 #: templates/InvenTree/settings/settings.html:12 templates/navbar.html:113
 msgid "Settings"
-msgstr ""
+msgstr "Beállítások"
 
 #: templates/InvenTree/settings/mixins/urls.html:5
 msgid "URLs"
-msgstr ""
+msgstr "URL-ek"
 
 #: templates/InvenTree/settings/mixins/urls.html:8
 #, python-format
 msgid "The Base-URL for this plugin is <a href=\"/%(base)s\" target=\"_blank\"><strong>%(base)s</strong></a>."
-msgstr ""
+msgstr "Az alap URL-je ennek a pluginnak <a href=\"/%(base)s\" target=\"_blank\"><strong>%(base)s</strong></a>."
 
 #: templates/InvenTree/settings/mixins/urls.html:23
 msgid "Open in new tab"
-msgstr ""
+msgstr "Megnyitás új fülön"
 
 #: templates/InvenTree/settings/part.html:7
 msgid "Part Settings"
-msgstr ""
+msgstr "Alkatrész beállítások"
 
 #: templates/InvenTree/settings/part.html:44
 msgid "Part Import"
-msgstr ""
+msgstr "Alkatrész importálás"
 
 #: templates/InvenTree/settings/part.html:48
 msgid "Import Part"
-msgstr ""
+msgstr "Alkatrész importálása"
 
 #: templates/InvenTree/settings/part.html:62
 msgid "Part Parameter Templates"
@@ -6599,39 +6599,39 @@ msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:10
 msgid "Plugin Settings"
-msgstr ""
+msgstr "Plugin beállítások"
 
 #: templates/InvenTree/settings/plugin.html:16
 msgid "Changing the settings below require you to immediatly restart InvenTree. Do not change this while under active usage."
-msgstr ""
+msgstr "Az alábbi beállítások módosításához az InvenTree azonnali újraindítása szükséges. Aktív használat közben ne változtass ezeken."
 
 #: templates/InvenTree/settings/plugin.html:33
 msgid "Plugins"
-msgstr ""
+msgstr "Pluginok"
 
 #: templates/InvenTree/settings/plugin.html:38
 #: templates/js/translated/plugin.js:15
 msgid "Install Plugin"
-msgstr ""
+msgstr "Plugin Telepítése"
 
 #: templates/InvenTree/settings/plugin.html:47 templates/navbar.html:111
 #: users/models.py:39
 msgid "Admin"
-msgstr ""
+msgstr "Admin"
 
 #: templates/InvenTree/settings/plugin.html:49
 #: templates/InvenTree/settings/plugin_settings.html:28
 msgid "Author"
-msgstr ""
+msgstr "Szerző"
 
 #: templates/InvenTree/settings/plugin.html:51
 #: templates/InvenTree/settings/plugin_settings.html:43
 msgid "Version"
-msgstr ""
+msgstr "Verzió"
 
 #: templates/InvenTree/settings/plugin.html:92
 msgid "Inactive plugins"
-msgstr ""
+msgstr "Inaktív pluginok"
 
 #: templates/InvenTree/settings/plugin.html:115
 msgid "Plugin Error Stack"
@@ -6643,7 +6643,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:126
 msgid "Message"
-msgstr ""
+msgstr "Üzenet"
 
 #: templates/InvenTree/settings/plugin_settings.html:10
 #, python-format
@@ -6652,7 +6652,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:17
 msgid "Plugin information"
-msgstr ""
+msgstr "Plugin információ"
 
 #: templates/InvenTree/settings/plugin_settings.html:48
 msgid "no version information supplied"
@@ -6660,7 +6660,7 @@ msgstr "nincs megadva verzió információ"
 
 #: templates/InvenTree/settings/plugin_settings.html:62
 msgid "License"
-msgstr ""
+msgstr "Licenc"
 
 #: templates/InvenTree/settings/plugin_settings.html:71
 msgid "The code information is pulled from the latest git commit for this plugin. It might not reflect official version numbers or information but the actual code running."
@@ -6668,15 +6668,15 @@ msgstr "A kódinformáció a plugin legújabb git commitból származik. Előfor
 
 #: templates/InvenTree/settings/plugin_settings.html:77
 msgid "Package information"
-msgstr ""
+msgstr "Csomag információ"
 
 #: templates/InvenTree/settings/plugin_settings.html:83
 msgid "Installation method"
-msgstr ""
+msgstr "Telepítési mód"
 
 #: templates/InvenTree/settings/plugin_settings.html:86
 msgid "This plugin was installed as a package"
-msgstr ""
+msgstr "Ez a plugin csomagként lett telepítve"
 
 #: templates/InvenTree/settings/plugin_settings.html:88
 msgid "This plugin was found in a local InvenTree path"
@@ -6688,95 +6688,95 @@ msgstr "Telepítési útvonal"
 
 #: templates/InvenTree/settings/plugin_settings.html:100
 msgid "Commit Author"
-msgstr ""
+msgstr "Commit szerzője"
 
 #: templates/InvenTree/settings/plugin_settings.html:104
 #: templates/about.html:47
 msgid "Commit Date"
-msgstr ""
+msgstr "Commit dátuma"
 
 #: templates/InvenTree/settings/plugin_settings.html:108
 #: templates/about.html:40
 msgid "Commit Hash"
-msgstr ""
+msgstr "Commit hash"
 
 #: templates/InvenTree/settings/plugin_settings.html:112
 msgid "Commit Message"
-msgstr ""
+msgstr "Commit üzenet"
 
 #: templates/InvenTree/settings/plugin_settings.html:117
 msgid "Sign Status"
-msgstr ""
+msgstr "Aláírás státusza"
 
 #: templates/InvenTree/settings/plugin_settings.html:122
 msgid "Sign Key"
-msgstr ""
+msgstr "Aláíró kulcs"
 
 #: templates/InvenTree/settings/po.html:7
 msgid "Purchase Order Settings"
-msgstr ""
+msgstr "Beszerzési rendelés beállításai"
 
 #: templates/InvenTree/settings/report.html:8
 #: templates/InvenTree/settings/user_reports.html:9
 msgid "Report Settings"
-msgstr ""
+msgstr "Riport beállítások"
 
 #: templates/InvenTree/settings/setting.html:33
 msgid "No value set"
-msgstr ""
+msgstr "Nincsenek értékek"
 
 #: templates/InvenTree/settings/setting.html:38
 msgid "Edit setting"
-msgstr ""
+msgstr "Beállítások módosítása"
 
 #: templates/InvenTree/settings/settings.html:115
 msgid "Edit Plugin Setting"
-msgstr ""
+msgstr "Plugin beállítások módosítása"
 
 #: templates/InvenTree/settings/settings.html:117
 msgid "Edit Global Setting"
-msgstr ""
+msgstr "Általános beállítások szerkesztése"
 
 #: templates/InvenTree/settings/settings.html:119
 msgid "Edit User Setting"
-msgstr ""
+msgstr "Felhasználói beállítások szerkesztése"
 
 #: templates/InvenTree/settings/settings.html:208
 msgid "No category parameter templates found"
-msgstr ""
+msgstr "Nincs kategória paraméter sablon"
 
 #: templates/InvenTree/settings/settings.html:230
 #: templates/InvenTree/settings/settings.html:329
 msgid "Edit Template"
-msgstr ""
+msgstr "Sablon szerkesztése"
 
 #: templates/InvenTree/settings/settings.html:231
 #: templates/InvenTree/settings/settings.html:330
 msgid "Delete Template"
-msgstr ""
+msgstr "Sablon törlése"
 
 #: templates/InvenTree/settings/settings.html:309
 msgid "No part parameter templates found"
-msgstr ""
+msgstr "Nincs alkatrész paraméter sablon"
 
 #: templates/InvenTree/settings/settings.html:313
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: templates/InvenTree/settings/sidebar.html:6
 #: templates/InvenTree/settings/user_settings.html:9
 msgid "User Settings"
-msgstr ""
+msgstr "Felhasználói beállítások"
 
 #: templates/InvenTree/settings/sidebar.html:9
 #: templates/InvenTree/settings/user.html:12
 msgid "Account Settings"
-msgstr ""
+msgstr "Fiókbeállítások"
 
 #: templates/InvenTree/settings/sidebar.html:11
 #: templates/InvenTree/settings/user_display.html:9
 msgid "Display Settings"
-msgstr ""
+msgstr "Megjelenítési beállítások"
 
 #: templates/InvenTree/settings/sidebar.html:13
 msgid "Home Page"
@@ -6785,7 +6785,7 @@ msgstr ""
 #: templates/InvenTree/settings/sidebar.html:15
 #: templates/InvenTree/settings/user_search.html:9
 msgid "Search Settings"
-msgstr ""
+msgstr "Keresési beállítások"
 
 #: templates/InvenTree/settings/sidebar.html:17
 msgid "Label Printing"
@@ -6798,7 +6798,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:24
 msgid "Global Settings"
-msgstr ""
+msgstr "Általános beállítások"
 
 #: templates/InvenTree/settings/sidebar.html:27
 msgid "Server Configuration"
@@ -6814,11 +6814,11 @@ msgstr ""
 
 #: templates/InvenTree/settings/so.html:7
 msgid "Sales Order Settings"
-msgstr ""
+msgstr "Vevő rendelés beállításai"
 
 #: templates/InvenTree/settings/stock.html:7
 msgid "Stock Settings"
-msgstr ""
+msgstr "Készlet beállítások"
 
 #: templates/InvenTree/settings/user.html:18
 #: templates/account/password_reset_from_key.html:4
@@ -6985,7 +6985,7 @@ msgstr "Biztosan törölni szeretnéd a kiválasztott email címet?"
 
 #: templates/InvenTree/settings/user_display.html:25
 msgid "Theme Settings"
-msgstr ""
+msgstr "Téma beállítások"
 
 #: templates/InvenTree/settings/user_display.html:35
 msgid "Select theme"
@@ -6997,7 +6997,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user_display.html:54
 msgid "Language Settings"
-msgstr ""
+msgstr "Nyelvi beállítások"
 
 #: templates/InvenTree/settings/user_display.html:63
 msgid "Select language"
@@ -7022,24 +7022,24 @@ msgstr ""
 
 #: templates/InvenTree/settings/user_display.html:93
 msgid "Show only sufficent"
-msgstr ""
+msgstr "Csak a szükséges megjelenítése"
 
 #: templates/InvenTree/settings/user_display.html:95
 msgid "and hidden."
-msgstr ""
+msgstr "és rejtett."
 
 #: templates/InvenTree/settings/user_display.html:95
 msgid "Show them too"
-msgstr ""
+msgstr "Mutasd őket is"
 
 #: templates/InvenTree/settings/user_display.html:101
 msgid "Help the translation efforts!"
-msgstr ""
+msgstr "Segítsd a fordítási munkát!"
 
 #: templates/InvenTree/settings/user_display.html:102
 #, python-format
 msgid "Native language translation of the InvenTree web application is <a href=\"%(link)s\">community contributed via crowdin</a>. Contributions are welcomed and encouraged."
-msgstr ""
+msgstr "A nyelvi fordításai az InvenTree web alkalmazásnak <a href=\"%(link)s\">közösségiek a crowdin-en</a>. A közreműködéseket szívesen fogadjuk és bátorítjuk."
 
 #: templates/InvenTree/settings/user_homepage.html:9
 msgid "Home Page Settings"
@@ -7047,7 +7047,7 @@ msgstr "Főoldal beállításai"
 
 #: templates/InvenTree/settings/user_labels.html:9
 msgid "Label Settings"
-msgstr ""
+msgstr "Címke beállítások"
 
 #: templates/about.html:10
 msgid "InvenTree Version Information"
@@ -7072,7 +7072,7 @@ msgstr "Fejlesztői verzió"
 
 #: templates/about.html:28
 msgid "Up to Date"
-msgstr ""
+msgstr "Naprakész"
 
 #: templates/about.html:30
 msgid "Update Available"
@@ -7170,15 +7170,15 @@ msgstr ""
 #: templates/account/logout.html:5 templates/account/logout.html:8
 #: templates/account/logout.html:20
 msgid "Sign Out"
-msgstr ""
+msgstr "Kijelentkezés"
 
 #: templates/account/logout.html:10
 msgid "Are you sure you want to sign out?"
-msgstr ""
+msgstr "Biztosan ki akarsz jelentkezni?"
 
 #: templates/account/logout.html:19
 msgid "Back to Site"
-msgstr ""
+msgstr "Vissza a webhelyre"
 
 #: templates/account/password_reset.html:5
 #: templates/account/password_reset.html:12
@@ -7258,7 +7258,7 @@ msgstr ""
 #: templates/allauth_2fa/backup_tokens.html:31
 #: templates/allauth_2fa/setup.html:40
 msgid "Back to settings"
-msgstr ""
+msgstr "Vissza a beállításokhoz"
 
 #: templates/allauth_2fa/remove.html:6
 msgid "Disable Two-Factor Authentication"
@@ -7344,7 +7344,7 @@ msgstr ""
 #: templates/js/translated/build.js:2048
 #: templates/js/translated/table_filters.js:178
 msgid "Available"
-msgstr ""
+msgstr "Elérhető"
 
 #: templates/email/build_order_required_stock.html:38
 #: templates/email/low_stock_notification.html:31
@@ -7466,7 +7466,7 @@ msgstr ""
 
 #: templates/js/translated/attachment.js:167
 msgid "Upload Date"
-msgstr ""
+msgstr "Feltöltés dátuma"
 
 #: templates/js/translated/attachment.js:180
 msgid "Edit attachment"
@@ -7679,7 +7679,7 @@ msgstr ""
 
 #: templates/js/translated/bom.js:750
 msgid "Open subassembly"
-msgstr ""
+msgstr "Alszerelvény megnyitása"
 
 #: templates/js/translated/bom.js:822
 msgid "Substitutes"
@@ -8297,7 +8297,7 @@ msgstr ""
 
 #: templates/js/translated/order.js:206
 msgid "Add Customer"
-msgstr ""
+msgstr "Vevő hozzáadása"
 
 #: templates/js/translated/order.js:231
 msgid "Create Sales Order"
@@ -8394,7 +8394,7 @@ msgstr ""
 
 #: templates/js/translated/order.js:1244
 msgid "Invalid Customer"
-msgstr ""
+msgstr "Érvénytelen vevő"
 
 #: templates/js/translated/order.js:1322
 msgid "Edit shipment"
@@ -8871,7 +8871,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:638
 msgid "Assign Stock to Customer"
-msgstr ""
+msgstr "Készlet vevőhöz rendelése"
 
 #: templates/js/translated/stock.js:715
 msgid "Warning: Merge operation cannot be reversed"
@@ -8971,7 +8971,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:1349
 msgid "Test Date"
-msgstr ""
+msgstr "Teszt dátuma"
 
 #: templates/js/translated/stock.js:1501
 msgid "Edit Test Result"
@@ -8983,11 +8983,11 @@ msgstr ""
 
 #: templates/js/translated/stock.js:1552
 msgid "In production"
-msgstr ""
+msgstr "Gyártásban"
 
 #: templates/js/translated/stock.js:1556
 msgid "Installed in Stock Item"
-msgstr ""
+msgstr "Beépítve készlet tételbe"
 
 #: templates/js/translated/stock.js:1564
 msgid "Assigned to Sales Order"
@@ -8999,7 +8999,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:1728
 msgid "Stock item is in production"
-msgstr ""
+msgstr "Készlet tétel gyártás alatt"
 
 #: templates/js/translated/stock.js:1733
 msgid "Stock item assigned to sales order"
@@ -9048,11 +9048,11 @@ msgstr ""
 #: templates/js/translated/stock.js:1772
 #: templates/js/translated/table_filters.js:188
 msgid "Depleted"
-msgstr ""
+msgstr "Kimerült"
 
 #: templates/js/translated/stock.js:1822
 msgid "Stocktake"
-msgstr ""
+msgstr "Leltár"
 
 #: templates/js/translated/stock.js:1895
 msgid "Supplier part not specified"
@@ -9100,7 +9100,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:2681
 msgid "Details"
-msgstr ""
+msgstr "Részletek"
 
 #: templates/js/translated/stock.js:2706
 msgid "Location no longer exists"
@@ -9112,7 +9112,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:2744
 msgid "Customer no longer exists"
-msgstr ""
+msgstr "Vevő már nem létezik"
 
 #: templates/js/translated/stock.js:2762
 msgid "Stock item no longer exists"
@@ -9128,11 +9128,11 @@ msgstr ""
 
 #: templates/js/translated/stock.js:2834
 msgid "Edit tracking entry"
-msgstr ""
+msgstr "Készlettörténet bejegyzés szerkesztése"
 
 #: templates/js/translated/stock.js:2835
 msgid "Delete tracking entry"
-msgstr ""
+msgstr "Készlettörténet bejegyzés törlése"
 
 #: templates/js/translated/stock.js:2886
 msgid "No installed items"
@@ -9156,7 +9156,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:2977
 msgid "The Stock Item is currently available in stock"
-msgstr ""
+msgstr "A készlet tétel jelenleg elérhető készleten"
 
 #: templates/js/translated/stock.js:2978
 msgid "The Stock Item is serialized and does not belong to another item"
@@ -9250,11 +9250,11 @@ msgstr "Aktív alkatrészek készletének megjelenítése"
 
 #: templates/js/translated/table_filters.js:169
 msgid "Part is an assembly"
-msgstr ""
+msgstr "Az alkatrész egy szerelvény"
 
 #: templates/js/translated/table_filters.js:173
 msgid "Is allocated"
-msgstr ""
+msgstr "Lefoglalt"
 
 #: templates/js/translated/table_filters.js:174
 msgid "Item has been allocated"
@@ -9270,23 +9270,23 @@ msgstr "Alhelyeken lévő készlettel együtt"
 
 #: templates/js/translated/table_filters.js:189
 msgid "Show stock items which are depleted"
-msgstr ""
+msgstr "Kimerült készlet tételek megjelenítése"
 
 #: templates/js/translated/table_filters.js:194
 msgid "Show items which are in stock"
-msgstr ""
+msgstr "Készleten lévő tételek megjelenítése"
 
 #: templates/js/translated/table_filters.js:198
 msgid "In Production"
-msgstr ""
+msgstr "Gyártásban"
 
 #: templates/js/translated/table_filters.js:199
 msgid "Show items which are in production"
-msgstr ""
+msgstr "Gyártásban lévő tételek megjelenítése"
 
 #: templates/js/translated/table_filters.js:203
 msgid "Include Variants"
-msgstr ""
+msgstr "Változatokkal együtt"
 
 #: templates/js/translated/table_filters.js:204
 msgid "Include stock items for variant parts"
@@ -9436,7 +9436,7 @@ msgstr ""
 
 #: templates/navbar.html:114
 msgid "Logout"
-msgstr ""
+msgstr "Kijelentkezés"
 
 #: templates/navbar.html:116
 msgid "Login"
@@ -9552,7 +9552,7 @@ msgstr ""
 
 #: templates/stock_table.html:50
 msgid "Stocktake selected stock items"
-msgstr ""
+msgstr "Kiválsztott készlet tételek leltározása"
 
 #: templates/stock_table.html:51
 msgid "Move selected stock items"
