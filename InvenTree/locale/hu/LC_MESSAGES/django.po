@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-22 01:07+0000\n"
-"PO-Revision-Date: 2022-02-22 17:54\n"
+"PO-Revision-Date: 2022-02-22 19:12\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1142,7 +1142,7 @@ msgstr ""
 #: order/templates/order/order_base.html:28
 #: order/templates/order/sales_order_base.html:38
 msgid "Print actions"
-msgstr ""
+msgstr "Nyomtatási műveletek"
 
 #: build/templates/build/build_base.html:43
 msgid "Print build order report"
@@ -1150,7 +1150,7 @@ msgstr ""
 
 #: build/templates/build/build_base.html:50
 msgid "Build actions"
-msgstr ""
+msgstr "Gyártási műveletek"
 
 #: build/templates/build/build_base.html:54
 msgid "Edit Build"
@@ -1159,7 +1159,7 @@ msgstr "Gyártás szerkesztése"
 #: build/templates/build/build_base.html:56
 #: build/templates/build/build_base.html:220 build/views.py:53
 msgid "Cancel Build"
-msgstr ""
+msgstr "Gyártás megszakítása"
 
 #: build/templates/build/build_base.html:59
 msgid "Delete Build"
@@ -1172,7 +1172,7 @@ msgstr ""
 
 #: build/templates/build/build_base.html:87
 msgid "Build Description"
-msgstr ""
+msgstr "Gyártás leírása"
 
 #: build/templates/build/build_base.html:101
 #, python-format
@@ -1252,7 +1252,7 @@ msgstr "Kiállította"
 
 #: build/templates/build/build_base.html:228
 msgid "Incomplete Outputs"
-msgstr ""
+msgstr "Befejezetlen kimenetek"
 
 #: build/templates/build/build_base.html:229
 msgid "Build Order cannot be completed as incomplete build outputs remain"
@@ -1260,19 +1260,19 @@ msgstr ""
 
 #: build/templates/build/cancel.html:5
 msgid "Are you sure you wish to cancel this build?"
-msgstr ""
+msgstr "Biztosan meg szeretnéd szakítani ezt a gyártást?"
 
 #: build/templates/build/detail.html:16
 msgid "Build Details"
-msgstr ""
+msgstr "Gyártás részletei"
 
 #: build/templates/build/detail.html:39
 msgid "Stock Source"
-msgstr ""
+msgstr "Készlet forrás"
 
 #: build/templates/build/detail.html:44
 msgid "Stock can be taken from any available location."
-msgstr ""
+msgstr "Készlet bármely rendelkezésre álló helyről felhasználható."
 
 #: build/templates/build/detail.html:50 order/models.py:898 stock/forms.py:133
 #: templates/js/translated/order.js:592 templates/js/translated/order.js:1138
@@ -1281,7 +1281,7 @@ msgstr "Cél"
 
 #: build/templates/build/detail.html:57
 msgid "Destination location not specified"
-msgstr ""
+msgstr "A cél hely nincs megadva"
 
 #: build/templates/build/detail.html:74 templates/js/translated/build.js:929
 msgid "Allocated Parts"
@@ -1304,19 +1304,19 @@ msgstr "Létrehozva"
 
 #: build/templates/build/detail.html:138
 msgid "No target date set"
-msgstr ""
+msgstr "Nincs céldátum beállítva"
 
 #: build/templates/build/detail.html:147
 msgid "Build not complete"
-msgstr ""
+msgstr "Gyártás nincs kész"
 
 #: build/templates/build/detail.html:158 build/templates/build/sidebar.html:17
 msgid "Child Build Orders"
-msgstr ""
+msgstr "Alárendelt gyártások"
 
 #: build/templates/build/detail.html:173
 msgid "Allocate Stock to Build"
-msgstr ""
+msgstr "Készlet foglalása gyártáshoz"
 
 #: build/templates/build/detail.html:177 templates/js/translated/build.js:1484
 msgid "Unallocate stock"
@@ -1332,7 +1332,7 @@ msgstr ""
 
 #: build/templates/build/detail.html:181 build/templates/build/sidebar.html:8
 msgid "Allocate Stock"
-msgstr ""
+msgstr "Készlet foglalása"
 
 #: build/templates/build/detail.html:184
 msgid "Order required parts"
