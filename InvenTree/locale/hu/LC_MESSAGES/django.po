@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-22 01:07+0000\n"
-"PO-Revision-Date: 2022-02-22 07:56\n"
+"PO-Revision-Date: 2022-02-22 09:24\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -28,45 +28,45 @@ msgstr "Nincs megadva művelet"
 
 #: InvenTree/api.py:116
 msgid "No matching action found"
-msgstr ""
+msgstr "Nincs egyező művelet"
 
 #: InvenTree/fields.py:100
 msgid "Enter date"
-msgstr ""
+msgstr "Dátum megadása"
 
 #: InvenTree/forms.py:126 order/forms.py:24 order/forms.py:35 order/forms.py:46
 #: order/forms.py:57 templates/account/email_confirm.html:20
 #: templates/js/translated/forms.js:596
 msgid "Confirm"
-msgstr ""
+msgstr "Megerősítés"
 
 #: InvenTree/forms.py:142
 msgid "Confirm delete"
-msgstr ""
+msgstr "Törlés megerősítése"
 
 #: InvenTree/forms.py:143
 msgid "Confirm item deletion"
-msgstr ""
+msgstr "Tétel törlés megerősítése"
 
 #: InvenTree/forms.py:174
 msgid "Enter password"
-msgstr ""
+msgstr "Jelszó megadása"
 
 #: InvenTree/forms.py:175
 msgid "Enter new password"
-msgstr ""
+msgstr "Új jelszó megadása"
 
 #: InvenTree/forms.py:182
 msgid "Confirm password"
-msgstr ""
+msgstr "Jelszó megerősítése"
 
 #: InvenTree/forms.py:183
 msgid "Confirm new password"
-msgstr ""
+msgstr "Új jelszó megerősítése"
 
 #: InvenTree/forms.py:215
 msgid "Select Category"
-msgstr ""
+msgstr "Válassz kategóriát"
 
 #: InvenTree/forms.py:236
 msgid "Email (again)"
@@ -98,43 +98,43 @@ msgstr "Üres szériaszám"
 #: InvenTree/helpers.py:501
 #, python-brace-format
 msgid "Invalid group: {g}"
-msgstr ""
+msgstr "Érvénytelen csoport: {g}"
 
 #: InvenTree/helpers.py:510
 #, python-brace-format
 msgid "Invalid group {group}"
-msgstr ""
+msgstr "Érvénytelen csoport {group}"
 
 #: InvenTree/helpers.py:516
 #, python-brace-format
 msgid "Invalid/no group {group}"
-msgstr ""
+msgstr "Érvénytelen vagy nemlétező csoport {group}"
 
 #: InvenTree/helpers.py:522
 msgid "No serial numbers found"
-msgstr ""
+msgstr "Nem található szériaszám"
 
 #: InvenTree/helpers.py:526
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
-msgstr ""
+msgstr "Az egyedi szériaszámok száma ({s}) meg kell egyezzen a mennyiséggel ({q})"
 
 #: InvenTree/models.py:176
 msgid "Missing file"
-msgstr ""
+msgstr "Hiányzó fájl"
 
 #: InvenTree/models.py:177
 msgid "Missing external link"
-msgstr ""
+msgstr "Hiányzó külső link"
 
 #: InvenTree/models.py:188 stock/models.py:1995
 #: templates/js/translated/attachment.js:119
 msgid "Attachment"
-msgstr ""
+msgstr "Melléklet"
 
 #: InvenTree/models.py:189
 msgid "Select file to attach"
-msgstr ""
+msgstr "Válaszd ki a mellekelni kívánt fájlt"
 
 #: InvenTree/models.py:195 company/models.py:131 company/models.py:348
 #: company/models.py:564 order/models.py:127 part/models.py:860
@@ -142,20 +142,20 @@ msgstr ""
 #: templates/js/translated/company.js:540
 #: templates/js/translated/company.js:829 templates/js/translated/part.js:1324
 msgid "Link"
-msgstr ""
+msgstr "Link"
 
 #: InvenTree/models.py:196 build/models.py:332 part/models.py:861
 #: stock/models.py:529
 msgid "Link to external URL"
-msgstr ""
+msgstr "Link külső URL-re"
 
 #: InvenTree/models.py:199 templates/js/translated/attachment.js:163
 msgid "Comment"
-msgstr ""
+msgstr "Megjegyzés"
 
 #: InvenTree/models.py:199
 msgid "File comment"
-msgstr ""
+msgstr "Fájl megjegyzés"
 
 #: InvenTree/models.py:205 InvenTree/models.py:206 common/models.py:1235
 #: common/models.py:1236 common/models.py:1464 common/models.py:1465
@@ -163,40 +163,40 @@ msgstr ""
 #: report/templates/report/inventree_test_report_base.html:96
 #: templates/js/translated/stock.js:2816
 msgid "User"
-msgstr ""
+msgstr "Felhasználó"
 
 #: InvenTree/models.py:209
 msgid "upload date"
-msgstr ""
+msgstr "feltöltés dátuma"
 
 #: InvenTree/models.py:232
 msgid "Filename must not be empty"
-msgstr ""
+msgstr "A fájlnév nem lehet üres"
 
 #: InvenTree/models.py:255
 msgid "Invalid attachment directory"
-msgstr ""
+msgstr "Érvénytelen melléklet mappa"
 
 #: InvenTree/models.py:265
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr ""
+msgstr "Fájlnévben érvénytelen karakter van '{c}'"
 
 #: InvenTree/models.py:268
 msgid "Filename missing extension"
-msgstr ""
+msgstr "Fájlnév kiterjesztése hiányzik"
 
 #: InvenTree/models.py:275
 msgid "Attachment with this filename already exists"
-msgstr ""
+msgstr "Ilyen fájlnévvel már létezik melléklet"
 
 #: InvenTree/models.py:282
 msgid "Error renaming file"
-msgstr ""
+msgstr "Hiba a fájl átnevezésekor"
 
 #: InvenTree/models.py:317
 msgid "Invalid choice"
-msgstr ""
+msgstr "Érvénytelen választás"
 
 #: InvenTree/models.py:333 InvenTree/models.py:334 common/models.py:1450
 #: company/models.py:415 label/models.py:112 part/models.py:804
@@ -210,7 +210,7 @@ msgstr ""
 #: templates/js/translated/part.js:706 templates/js/translated/part.js:1631
 #: templates/js/translated/stock.js:2609
 msgid "Name"
-msgstr ""
+msgstr "Név"
 
 #: InvenTree/models.py:340 build/models.py:209
 #: build/templates/build/detail.html:25 company/models.py:354
@@ -235,423 +235,423 @@ msgstr ""
 #: templates/js/translated/stock.js:1701 templates/js/translated/stock.js:2438
 #: templates/js/translated/stock.js:2621 templates/js/translated/stock.js:2666
 msgid "Description"
-msgstr ""
+msgstr "Leírás"
 
 #: InvenTree/models.py:341
 msgid "Description (optional)"
-msgstr ""
+msgstr "Leírás (opcionális)"
 
 #: InvenTree/models.py:349
 msgid "parent"
-msgstr ""
+msgstr "szülő"
 
 #: InvenTree/serializers.py:65 part/models.py:2803
 msgid "Must be a valid number"
-msgstr ""
+msgstr "Érvényes számnak kell lennie"
 
 #: InvenTree/serializers.py:299
 msgid "Filename"
-msgstr ""
+msgstr "Fájlnév"
 
 #: InvenTree/serializers.py:334
 msgid "Invalid value"
-msgstr ""
+msgstr "Érvénytelen érték"
 
 #: InvenTree/serializers.py:355
 msgid "Data File"
-msgstr ""
+msgstr "Adat fájl"
 
 #: InvenTree/serializers.py:356
 msgid "Select data file for upload"
-msgstr ""
+msgstr "Fájl kiválasztása feltöltéshez"
 
 #: InvenTree/serializers.py:380
 msgid "Unsupported file type"
-msgstr ""
+msgstr "Nem támogatott fájltípus"
 
 #: InvenTree/serializers.py:386
 msgid "File is too large"
-msgstr ""
+msgstr "Fájl túl nagy"
 
 #: InvenTree/serializers.py:407
 msgid "No columns found in file"
-msgstr ""
+msgstr "Nem találhatók oszlopok a fájlban"
 
 #: InvenTree/serializers.py:410
 msgid "No data rows found in file"
-msgstr ""
+msgstr "Nincsenek adatsorok a fájlban"
 
 #: InvenTree/serializers.py:533
 msgid "No data rows provided"
-msgstr ""
+msgstr "Nincs adatsor megadva"
 
 #: InvenTree/serializers.py:536
 msgid "No data columns supplied"
-msgstr ""
+msgstr "Nincs adat oszlop megadva"
 
 #: InvenTree/serializers.py:623
 #, python-brace-format
 msgid "Missing required column: '{name}'"
-msgstr ""
+msgstr "Szükséges oszlop hiányzik: '{name}'"
 
 #: InvenTree/serializers.py:632
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
-msgstr ""
+msgstr "Duplikált oszlop: '{col}'"
 
 #: InvenTree/settings.py:655
 msgid "German"
-msgstr ""
+msgstr "Német"
 
 #: InvenTree/settings.py:656
 msgid "Greek"
-msgstr ""
+msgstr "Görög"
 
 #: InvenTree/settings.py:657
 msgid "English"
-msgstr ""
+msgstr "Angol"
 
 #: InvenTree/settings.py:658
 msgid "Spanish"
-msgstr ""
+msgstr "Spanyol"
 
 #: InvenTree/settings.py:659
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "Spanyol (Mexikói)"
 
 #: InvenTree/settings.py:660
 msgid "French"
-msgstr ""
+msgstr "Francia"
 
 #: InvenTree/settings.py:661
 msgid "Hebrew"
-msgstr ""
+msgstr "Héber"
 
 #: InvenTree/settings.py:662
 msgid "Hungarian"
-msgstr ""
+msgstr "Magyar"
 
 #: InvenTree/settings.py:663
 msgid "Italian"
-msgstr ""
+msgstr "Olasz"
 
 #: InvenTree/settings.py:664
 msgid "Japanese"
-msgstr ""
+msgstr "Japán"
 
 #: InvenTree/settings.py:665
 msgid "Korean"
-msgstr ""
+msgstr "Koreai"
 
 #: InvenTree/settings.py:666
 msgid "Dutch"
-msgstr ""
+msgstr "Holland"
 
 #: InvenTree/settings.py:667
 msgid "Norwegian"
-msgstr ""
+msgstr "Norvég"
 
 #: InvenTree/settings.py:668
 msgid "Polish"
-msgstr ""
+msgstr "Lengyel"
 
 #: InvenTree/settings.py:669
 msgid "Portugese"
-msgstr ""
+msgstr "Portugál"
 
 #: InvenTree/settings.py:670
 msgid "Russian"
-msgstr ""
+msgstr "Orosz"
 
 #: InvenTree/settings.py:671
 msgid "Swedish"
-msgstr ""
+msgstr "Svéd"
 
 #: InvenTree/settings.py:672
 msgid "Thai"
-msgstr ""
+msgstr "Tháj"
 
 #: InvenTree/settings.py:673
 msgid "Turkish"
-msgstr ""
+msgstr "Török"
 
 #: InvenTree/settings.py:674
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnámi"
 
 #: InvenTree/settings.py:675
 msgid "Chinese"
-msgstr ""
+msgstr "Kínai"
 
 #: InvenTree/status.py:94
 msgid "Background worker check failed"
-msgstr ""
+msgstr "Háttér folyamat ellenőrzés sikertelen"
 
 #: InvenTree/status.py:98
 msgid "Email backend not configured"
-msgstr ""
+msgstr "Email backend nincs beállítva"
 
 #: InvenTree/status.py:101
 msgid "InvenTree system health checks failed"
-msgstr ""
+msgstr "InvenTree rendszer állapotának ellenőrzése sikertelen"
 
 #: InvenTree/status_codes.py:101 InvenTree/status_codes.py:142
 #: InvenTree/status_codes.py:316 templates/js/translated/table_filters.js:308
 msgid "Pending"
-msgstr ""
+msgstr "Függőben"
 
 #: InvenTree/status_codes.py:102
 msgid "Placed"
-msgstr ""
+msgstr "Kiküldve"
 
 #: InvenTree/status_codes.py:103 InvenTree/status_codes.py:319
 #: order/templates/order/order_base.html:128
 #: order/templates/order/sales_order_base.html:132
 msgid "Complete"
-msgstr ""
+msgstr "Kész"
 
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:144
 #: InvenTree/status_codes.py:318
 msgid "Cancelled"
-msgstr ""
+msgstr "Törölve"
 
 #: InvenTree/status_codes.py:105 InvenTree/status_codes.py:145
 #: InvenTree/status_codes.py:187
 msgid "Lost"
-msgstr ""
+msgstr "Elveszett"
 
 #: InvenTree/status_codes.py:106 InvenTree/status_codes.py:146
 #: InvenTree/status_codes.py:189
 msgid "Returned"
-msgstr ""
+msgstr "Visszaküldve"
 
 #: InvenTree/status_codes.py:143 order/models.py:961
 #: templates/js/translated/order.js:1980 templates/js/translated/order.js:2255
 msgid "Shipped"
-msgstr ""
+msgstr "Kiszállítva"
 
 #: InvenTree/status_codes.py:183
 msgid "OK"
-msgstr ""
+msgstr "Rendben"
 
 #: InvenTree/status_codes.py:184
 msgid "Attention needed"
-msgstr ""
+msgstr "Ellenőrizendő"
 
 #: InvenTree/status_codes.py:185
 msgid "Damaged"
-msgstr ""
+msgstr "Sérült"
 
 #: InvenTree/status_codes.py:186
 msgid "Destroyed"
-msgstr ""
+msgstr "Megsemmisült"
 
 #: InvenTree/status_codes.py:188
 msgid "Rejected"
-msgstr ""
+msgstr "Elutasított"
 
 #: InvenTree/status_codes.py:272
 msgid "Legacy stock tracking entry"
-msgstr ""
+msgstr "Örökölt készlet követési bejegyzés"
 
 #: InvenTree/status_codes.py:274
 msgid "Stock item created"
-msgstr ""
+msgstr "Készlet tétel létrehozva"
 
 #: InvenTree/status_codes.py:276
 msgid "Edited stock item"
-msgstr ""
+msgstr "Szerkeszett készlet tétel"
 
 #: InvenTree/status_codes.py:277
 msgid "Assigned serial number"
-msgstr ""
+msgstr "Hozzárendelt szériaszám"
 
 #: InvenTree/status_codes.py:279
 msgid "Stock counted"
-msgstr ""
+msgstr "Készlet megszámolva"
 
 #: InvenTree/status_codes.py:280
 msgid "Stock manually added"
-msgstr ""
+msgstr "Készlet manuálisan hozzáadva"
 
 #: InvenTree/status_codes.py:281
 msgid "Stock manually removed"
-msgstr ""
+msgstr "Készlet manuálisan elvéve"
 
 #: InvenTree/status_codes.py:283
 msgid "Location changed"
-msgstr ""
+msgstr "Hely megváltozott"
 
 #: InvenTree/status_codes.py:285
 msgid "Installed into assembly"
-msgstr ""
+msgstr "Szerelvénybe beépült"
 
 #: InvenTree/status_codes.py:286
 msgid "Removed from assembly"
-msgstr ""
+msgstr "Szerelvényből eltávolítva"
 
 #: InvenTree/status_codes.py:288
 msgid "Installed component item"
-msgstr ""
+msgstr "Beépült összetevő elem"
 
 #: InvenTree/status_codes.py:289
 msgid "Removed component item"
-msgstr ""
+msgstr "Eltávolított összetevő elem"
 
 #: InvenTree/status_codes.py:291
 msgid "Split from parent item"
-msgstr ""
+msgstr "Szülő tételből szétválasztva"
 
 #: InvenTree/status_codes.py:292
 msgid "Split child item"
-msgstr ""
+msgstr "Szétválasztott gyermek elem"
 
 #: InvenTree/status_codes.py:294 templates/js/translated/stock.js:2196
 msgid "Merged stock items"
-msgstr ""
+msgstr "Összevont készlet tétel"
 
 #: InvenTree/status_codes.py:296 templates/js/translated/table_filters.js:213
 msgid "Sent to customer"
-msgstr ""
+msgstr "Vevőnek elküldve"
 
 #: InvenTree/status_codes.py:297
 msgid "Returned from customer"
-msgstr ""
+msgstr "Vevőtől visszaérkezett"
 
 #: InvenTree/status_codes.py:299
 msgid "Build order output created"
-msgstr ""
+msgstr "Gyártási rendelés kimenete elkészült"
 
 #: InvenTree/status_codes.py:300
 msgid "Build order output completed"
-msgstr ""
+msgstr "Gyártási rendelés kimenete kész"
 
 #: InvenTree/status_codes.py:302
 msgid "Received against purchase order"
-msgstr ""
+msgstr "Megrendelésre érkezett"
 
 #: InvenTree/status_codes.py:317
 msgid "Production"
-msgstr ""
+msgstr "Termelés"
 
 #: InvenTree/validators.py:25
 msgid "Not a valid currency code"
-msgstr ""
+msgstr "Érvénytelen pénznem kód"
 
 #: InvenTree/validators.py:53
 msgid "Invalid character in part name"
-msgstr ""
+msgstr "Érvénytelen karakter az alkatrész névben"
 
 #: InvenTree/validators.py:66
 #, python-brace-format
 msgid "IPN must match regex pattern {pat}"
-msgstr ""
+msgstr "IPN mezőnek egyeznie kell a '{pat}' mintával"
 
 #: InvenTree/validators.py:80 InvenTree/validators.py:94
 #: InvenTree/validators.py:108
 #, python-brace-format
 msgid "Reference must match pattern {pattern}"
-msgstr ""
+msgstr "Referenciának egyeznie kell a '{pattern}' mintával"
 
 #: InvenTree/validators.py:116
 #, python-brace-format
 msgid "Illegal character in name ({x})"
-msgstr ""
+msgstr "Érvénytelen karakter ({x}) a névben"
 
 #: InvenTree/validators.py:137 InvenTree/validators.py:153
 msgid "Overage value must not be negative"
-msgstr ""
+msgstr "Túlszállítás nem lehet negatív"
 
 #: InvenTree/validators.py:155
 msgid "Overage must not exceed 100%"
-msgstr ""
+msgstr "Túlszállítás nem lehet több mint 100%"
 
 #: InvenTree/validators.py:162
 msgid "Invalid value for overage"
-msgstr ""
+msgstr "Érvénytelen érték a túlszállításra"
 
 #: InvenTree/views.py:538
 msgid "Delete Item"
-msgstr ""
+msgstr "Tétel törlése"
 
 #: InvenTree/views.py:587
 msgid "Check box to confirm item deletion"
-msgstr ""
+msgstr "Jelöld a törlés megerősítéséhez"
 
 #: InvenTree/views.py:602 templates/InvenTree/settings/user.html:21
 msgid "Edit User Information"
-msgstr ""
+msgstr "Felhasználói információ módosítása"
 
 #: InvenTree/views.py:613 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
-msgstr ""
+msgstr "Jelszó beállítása"
 
 #: InvenTree/views.py:632
 msgid "Password fields must match"
-msgstr ""
+msgstr "A jelszavaknak egyeznie kell"
 
 #: InvenTree/views.py:883 templates/navbar.html:126
 msgid "System Information"
-msgstr ""
+msgstr "Rendszerinformáció"
 
 #: barcodes/api.py:54 barcodes/api.py:152
 msgid "Must provide barcode_data parameter"
-msgstr ""
+msgstr "Meg kell adni a barcode_data paramétert"
 
 #: barcodes/api.py:128
 msgid "No match found for barcode data"
-msgstr ""
+msgstr "Nincs egyező vonalkód"
 
 #: barcodes/api.py:130
 msgid "Match found for barcode data"
-msgstr ""
+msgstr "Egyezés vonalkódra"
 
 #: barcodes/api.py:155
 msgid "Must provide stockitem parameter"
-msgstr ""
+msgstr "Meg kell adni a stockitem paramétert"
 
 #: barcodes/api.py:162
 msgid "No matching stock item found"
-msgstr ""
+msgstr "Nincs egyező készlet"
 
 #: barcodes/api.py:193
 msgid "Barcode already matches Stock Item"
-msgstr ""
+msgstr "Vonalkód már egyezik a készlet elemmel"
 
 #: barcodes/api.py:197
 msgid "Barcode already matches Stock Location"
-msgstr ""
+msgstr "Vonalkód már egyezik a készlet hellyel"
 
 #: barcodes/api.py:201
 msgid "Barcode already matches Part"
-msgstr ""
+msgstr "Vonalkód már egyezik az alkatrésszel"
 
 #: barcodes/api.py:207 barcodes/api.py:219
 msgid "Barcode hash already matches Stock Item"
-msgstr ""
+msgstr "Vonalkód hash már egyezik a készlet elemmel"
 
 #: barcodes/api.py:225
 msgid "Barcode associated with Stock Item"
-msgstr ""
+msgstr "Készlet tételhez tartozó vonalkód"
 
 #: build/forms.py:20
 msgid "Confirm cancel"
-msgstr ""
+msgstr "Megszakítás megerősítése"
 
 #: build/forms.py:20 build/views.py:62
 msgid "Confirm build cancellation"
-msgstr ""
+msgstr "Gyártás megszakításának megerősítése"
 
 #: build/models.py:135
 msgid "Invalid choice for parent build"
-msgstr ""
+msgstr "Hibás választás a szülő gyártásra"
 
 #: build/models.py:139 build/templates/build/build_base.html:9
 #: build/templates/build/build_base.html:27
 #: report/templates/report/inventree_build_order_base.html:106
 #: templates/js/translated/build.js:676 templates/js/translated/stock.js:2414
 msgid "Build Order"
-msgstr ""
+msgstr "Gyártási utasítás"
 
 #: build/models.py:140 build/templates/build/build_base.html:13
 #: build/templates/build/index.html:8 build/templates/build/index.html:12
@@ -661,11 +661,11 @@ msgstr ""
 #: templates/InvenTree/search.html:139
 #: templates/InvenTree/settings/sidebar.html:43 users/models.py:44
 msgid "Build Orders"
-msgstr ""
+msgstr "Gyártási utasítások"
 
 #: build/models.py:200
 msgid "Build Order Reference"
-msgstr ""
+msgstr "Gyártási utasítás azonosító"
 
 #: build/models.py:201 order/models.py:213 order/models.py:541
 #: order/models.py:812 part/models.py:2714
@@ -675,20 +675,20 @@ msgstr ""
 #: templates/js/translated/bom.js:772 templates/js/translated/build.js:1401
 #: templates/js/translated/order.js:1050 templates/js/translated/order.js:2144
 msgid "Reference"
-msgstr ""
+msgstr "Azonosító"
 
 #: build/models.py:212
 msgid "Brief description of the build"
-msgstr ""
+msgstr "Gyártás rövid leírása"
 
 #: build/models.py:221 build/templates/build/build_base.html:169
 #: build/templates/build/detail.html:88
 msgid "Parent Build"
-msgstr ""
+msgstr "Szülő gyártás"
 
 #: build/models.py:222
 msgid "BuildOrder to which this build is allocated"
-msgstr ""
+msgstr "Gyártás, amihez ez a gyártás hozzá van rendelve"
 
 #: build/models.py:227 build/templates/build/build_base.html:77
 #: build/templates/build/detail.html:30 company/models.py:705
@@ -720,98 +720,98 @@ msgstr ""
 #: templates/js/translated/stock.js:935 templates/js/translated/stock.js:1658
 #: templates/js/translated/stock.js:2891 templates/js/translated/stock.js:2990
 msgid "Part"
-msgstr ""
+msgstr "Alkatrész"
 
 #: build/models.py:235
 msgid "Select part to build"
-msgstr ""
+msgstr "Válassz alkatrészt a gyártáshoz"
 
 #: build/models.py:240
 msgid "Sales Order Reference"
-msgstr ""
+msgstr "Értékesítés azonosító"
 
 #: build/models.py:244
 msgid "SalesOrder to which this build is allocated"
-msgstr ""
+msgstr "Értékesítés amihez ez a gyártás hozzá van rendelve"
 
 #: build/models.py:249 templates/js/translated/build.js:1643
 #: templates/js/translated/order.js:1564
 msgid "Source Location"
-msgstr ""
+msgstr "Forrás hely"
 
 #: build/models.py:253
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
-msgstr ""
+msgstr "Válassz helyet ahonnan készletet vegyünk el ehhez a gyártáshoz (hagyd üresen ha bárhonnan)"
 
 #: build/models.py:258
 msgid "Destination Location"
-msgstr ""
+msgstr "Cél hely"
 
 #: build/models.py:262
 msgid "Select location where the completed items will be stored"
-msgstr ""
+msgstr "Válassz helyet ahol a kész tételek tárolva lesznek"
 
 #: build/models.py:266
 msgid "Build Quantity"
-msgstr ""
+msgstr "Gyártási mennyiség"
 
 #: build/models.py:269
 msgid "Number of stock items to build"
-msgstr ""
+msgstr "Gyártandó raktári tételek száma"
 
 #: build/models.py:273
 msgid "Completed items"
-msgstr ""
+msgstr "Kész elemek"
 
 #: build/models.py:275
 msgid "Number of stock items which have been completed"
-msgstr ""
+msgstr "Elkészült készlet elemek száma"
 
 #: build/models.py:279 part/templates/part/part_base.html:234
 msgid "Build Status"
-msgstr ""
+msgstr "Gyártási állapot"
 
 #: build/models.py:283
 msgid "Build status code"
-msgstr ""
+msgstr "Gyártás státusz kód"
 
 #: build/models.py:287 build/serializers.py:218 stock/models.py:533
 msgid "Batch Code"
-msgstr ""
+msgstr "Batch kód"
 
 #: build/models.py:291 build/serializers.py:219
 msgid "Batch code for this build output"
-msgstr ""
+msgstr "Batch kód a gyártás kimenetéhez"
 
 #: build/models.py:294 order/models.py:129 part/models.py:999
 #: part/templates/part/part_base.html:313 templates/js/translated/order.js:1271
 msgid "Creation Date"
-msgstr ""
+msgstr "Létrehozás dátuma"
 
 #: build/models.py:298 order/models.py:563
 msgid "Target completion date"
-msgstr ""
+msgstr "Befejezés cél dátuma"
 
 #: build/models.py:299
 msgid "Target date for build completion. Build will be overdue after this date."
-msgstr ""
+msgstr "Cél dátum a gyártás befejezéséhez. Ez után késettnek számít majd."
 
 #: build/models.py:302 order/models.py:255
 #: templates/js/translated/build.js:1996
 msgid "Completion Date"
-msgstr ""
+msgstr "Elkészítés dátuma"
 
 #: build/models.py:308
 msgid "completed by"
-msgstr ""
+msgstr "elkészítette"
 
 #: build/models.py:316 templates/js/translated/build.js:1967
 msgid "Issued by"
-msgstr ""
+msgstr "Kiállította"
 
 #: build/models.py:317
 msgid "User who issued this build order"
-msgstr ""
+msgstr "Felhasználó aki ezt a gyártási utasítást kiállította"
 
 #: build/models.py:325 build/templates/build/build_base.html:190
 #: build/templates/build/detail.html:116 order/models.py:143
@@ -820,11 +820,11 @@ msgstr ""
 #: report/templates/report/inventree_build_order_base.html:159
 #: templates/js/translated/build.js:1979 templates/js/translated/order.js:864
 msgid "Responsible"
-msgstr ""
+msgstr "Felelős"
 
 #: build/models.py:326
 msgid "User responsible for this build order"
-msgstr ""
+msgstr "Felhasználó aki felelős ezért a gyártási utasításért"
 
 #: build/models.py:331 build/templates/build/detail.html:102
 #: company/templates/company/manufacturer_part.html:102
@@ -832,7 +832,7 @@ msgstr ""
 #: part/templates/part/part_base.html:354 stock/models.py:527
 #: stock/templates/stock/item_base.html:375
 msgid "External Link"
-msgstr ""
+msgstr "Külső link"
 
 #: build/models.py:336 build/serializers.py:380
 #: build/templates/build/sidebar.html:21 company/models.py:142
@@ -851,27 +851,27 @@ msgstr ""
 #: templates/js/translated/order.js:1445 templates/js/translated/order.js:2280
 #: templates/js/translated/stock.js:1345 templates/js/translated/stock.js:1927
 msgid "Notes"
-msgstr ""
+msgstr "Megjegyzések"
 
 #: build/models.py:337
 msgid "Extra build notes"
-msgstr ""
+msgstr "Extra gyártási megjegyzések"
 
 #: build/models.py:756
 msgid "No build output specified"
-msgstr ""
+msgstr "Nincs gyártási kimenet megadva"
 
 #: build/models.py:759
 msgid "Build output is already completed"
-msgstr ""
+msgstr "Gyártási kimenet már kész"
 
 #: build/models.py:762
 msgid "Build output does not match Build Order"
-msgstr ""
+msgstr "Gyártási kimenet nem egyezik a gyártási utasítással"
 
 #: build/models.py:1154
 msgid "Build item must specify a build output, as master part is marked as trackable"
-msgstr ""
+msgstr "Gyártási tételnek meg kell adnia a gyártási kimenetet, mivel a fő darab egyedi követésre kötelezett"
 
 #: build/models.py:1163
 #, python-brace-format
