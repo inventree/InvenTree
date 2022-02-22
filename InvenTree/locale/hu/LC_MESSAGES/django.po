@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-22 01:07+0000\n"
-"PO-Revision-Date: 2022-02-22 11:36\n"
+"PO-Revision-Date: 2022-02-22 15:57\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1124,11 +1124,11 @@ msgstr ""
 
 #: build/serializers.py:638
 msgid "Build output must be specified for allocation of tracked parts"
-msgstr ""
+msgstr "Gyártási kimenetet meg kell adni a követésre kötelezett alkatrészek lefoglalásához"
 
 #: build/serializers.py:645
 msgid "Build output cannot be specified for allocation of untracked parts"
-msgstr ""
+msgstr "Gyártási kimenetet nem lehet megadni a követésre kötelezett alkatrészek lefoglalásához"
 
 #: build/serializers.py:673 order/serializers.py:990
 msgid "Allocation items must be provided"
@@ -1285,7 +1285,7 @@ msgstr ""
 
 #: build/templates/build/detail.html:74 templates/js/translated/build.js:929
 msgid "Allocated Parts"
-msgstr ""
+msgstr "Lefoglalt alkatrészek"
 
 #: build/templates/build/detail.html:81
 #: stock/templates/stock/item_base.html:333
@@ -1336,14 +1336,14 @@ msgstr ""
 
 #: build/templates/build/detail.html:184
 msgid "Order required parts"
-msgstr ""
+msgstr "Szükséges alkatrészek rendelése"
 
 #: build/templates/build/detail.html:185
 #: company/templates/company/detail.html:38
 #: company/templates/company/detail.html:85 order/views.py:463
 #: part/templates/part/category.html:177
 msgid "Order Parts"
-msgstr ""
+msgstr "Alkatrész rendelés"
 
 #: build/templates/build/detail.html:197
 msgid "Untracked stock has been fully allocated for this Build Order"
@@ -1614,7 +1614,7 @@ msgstr ""
 
 #: common/models.py:664
 msgid "Allow multiple parts to share the same IPN"
-msgstr ""
+msgstr "Azonos IPN használható legyen több alkatrész esetén is"
 
 #: common/models.py:670
 msgid "Allow Editing IPN"
@@ -1664,7 +1664,7 @@ msgstr ""
 
 #: common/models.py:706
 msgid "Parts are templates by default"
-msgstr ""
+msgstr "Alkatrészek alapból sablon alkatrészek legyenek"
 
 #: common/models.py:712 part/models.py:951 templates/js/translated/bom.js:1300
 #: templates/js/translated/table_filters.js:168
@@ -1674,7 +1674,7 @@ msgstr ""
 
 #: common/models.py:713
 msgid "Parts can be assembled from other components by default"
-msgstr ""
+msgstr "Alkatrészeket alapból lehessen gyártani másik alkatrészekből"
 
 #: common/models.py:719 part/models.py:957
 #: templates/js/translated/table_filters.js:433
@@ -1683,7 +1683,7 @@ msgstr ""
 
 #: common/models.py:720
 msgid "Parts can be used as sub-components by default"
-msgstr ""
+msgstr "Alaktrészek alapból használhatók összetevőként más alkatrészekhez"
 
 #: common/models.py:726 part/models.py:968
 msgid "Purchaseable"
@@ -1691,7 +1691,7 @@ msgstr ""
 
 #: common/models.py:727
 msgid "Parts are purchaseable by default"
-msgstr ""
+msgstr "Alkatrészek alapból beszerezhetők legyenek"
 
 #: common/models.py:733 part/models.py:973
 #: templates/js/translated/table_filters.js:441
@@ -1700,7 +1700,7 @@ msgstr ""
 
 #: common/models.py:734
 msgid "Parts are salable by default"
-msgstr ""
+msgstr "Alkatrészek alapból eladhatók legyenek"
 
 #: common/models.py:740 part/models.py:963
 #: templates/js/translated/table_filters.js:46
@@ -1711,7 +1711,7 @@ msgstr ""
 
 #: common/models.py:741
 msgid "Parts are trackable by default"
-msgstr ""
+msgstr "Alkatrészek alapból követésre kötelezettek legyenek"
 
 #: common/models.py:747 part/models.py:983
 #: part/templates/part/part_base.html:147
@@ -1721,7 +1721,7 @@ msgstr ""
 
 #: common/models.py:748
 msgid "Parts are virtual by default"
-msgstr ""
+msgstr "Alkatrészek alapból virtuálisak legyenek"
 
 #: common/models.py:754
 msgid "Show Import in Views"
@@ -1757,11 +1757,11 @@ msgstr ""
 
 #: common/models.py:792
 msgid "Show related parts"
-msgstr ""
+msgstr "Kapcsolódó alkatrészek megjelenítése"
 
 #: common/models.py:793
 msgid "Display related parts for a part"
-msgstr ""
+msgstr "Alkatrész kapcsolódó alkatrészeinek megjelenítése"
 
 #: common/models.py:799
 msgid "Create initial stock"
@@ -1777,7 +1777,7 @@ msgstr ""
 
 #: common/models.py:807
 msgid "Enable internal prices for parts"
-msgstr ""
+msgstr "Alkatrészekhez belső ár engedélyezése"
 
 #: common/models.py:813
 msgid "Internal Price as BOM-Price"
@@ -2037,7 +2037,7 @@ msgstr "Alkatrész kategória értesítések megjelenítése a főoldalon"
 
 #: common/models.py:1063
 msgid "Show latest parts"
-msgstr ""
+msgstr "Legújabb alkatrészek megjelenítése"
 
 #: common/models.py:1064
 msgid "Show latest parts on the homepage"
@@ -2049,7 +2049,7 @@ msgstr ""
 
 #: common/models.py:1070
 msgid "Number of recent parts to display on index page"
-msgstr ""
+msgstr "Főoldalon megjelenítendő legújabb alkatrészek"
 
 #: common/models.py:1076
 msgid "Show unvalidated BOMs"
@@ -2197,11 +2197,11 @@ msgstr ""
 
 #: common/models.py:1189
 msgid "Hide Inactive Parts"
-msgstr ""
+msgstr "Inaktív alkatrészek elrejtése"
 
 #: common/models.py:1190
 msgid "Hide inactive parts in search preview window"
-msgstr ""
+msgstr "Inaktív alkatrészek elrejtése a kereső előnézeti ablakban"
 
 #: common/models.py:1196
 msgid "Show Quantity in Forms"
@@ -2349,7 +2349,7 @@ msgstr ""
 
 #: common/views.py:495
 msgid "Parts imported"
-msgstr ""
+msgstr "Importált alkatrészek"
 
 #: common/views.py:517 order/templates/order/order_wizard/match_parts.html:19
 #: order/templates/order/order_wizard/po_upload.html:47
@@ -2451,7 +2451,7 @@ msgstr ""
 
 #: company/models.py:148
 msgid "Does this company manufacture parts?"
-msgstr ""
+msgstr "Gyárt ez a cég alkatrészeket?"
 
 #: company/models.py:152 company/serializers.py:270
 #: company/templates/company/company_base.html:103 stock/serializers.py:179
@@ -2692,7 +2692,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part_sidebar.html:7
 #: templates/InvenTree/search.html:118
 msgid "Supplier Parts"
-msgstr ""
+msgstr "Beszállítói alkatrészek"
 
 #: company/templates/company/detail.html:19
 #: order/templates/order/order_wizard/select_parts.html:44
@@ -2718,21 +2718,21 @@ msgstr ""
 #: company/templates/company/detail.html:84
 #: part/templates/part/category.html:177
 msgid "Order parts"
-msgstr ""
+msgstr "Alkatrész rendelés"
 
 #: company/templates/company/detail.html:42
 #: company/templates/company/detail.html:89
 msgid "Delete parts"
-msgstr ""
+msgstr "Alkatrész törlés"
 
 #: company/templates/company/detail.html:43
 #: company/templates/company/detail.html:90
 msgid "Delete Parts"
-msgstr ""
+msgstr "Alkatrész törlés"
 
 #: company/templates/company/detail.html:62 templates/InvenTree/search.html:103
 msgid "Manufacturer Parts"
-msgstr ""
+msgstr "Gyártói alkatrészek"
 
 #: company/templates/company/detail.html:66
 msgid "Create new manufacturer part"
@@ -2804,13 +2804,13 @@ msgstr ""
 #: company/templates/company/manufacturer_part.html:215
 #: part/templates/part/detail.html:438
 msgid "Delete Supplier Parts?"
-msgstr ""
+msgstr "Töröljük a beszállítói alkatrészeket?"
 
 #: company/templates/company/detail.html:385
 #: company/templates/company/manufacturer_part.html:216
 #: part/templates/part/detail.html:439
 msgid "All selected supplier parts will be deleted"
-msgstr ""
+msgstr "Az összes kiválasztott beszállítói alkatrész törölve lesz"
 
 #: company/templates/company/index.html:8
 msgid "Supplier List"
@@ -2854,7 +2854,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part.html:129
 #: part/templates/part/detail.html:367
 msgid "Delete supplier parts"
-msgstr ""
+msgstr "Beszállítói alkatrész törlése"
 
 #: company/templates/company/manufacturer_part.html:129
 #: company/templates/company/manufacturer_part.html:158
@@ -2898,11 +2898,11 @@ msgstr ""
 
 #: company/templates/company/sidebar.html:6
 msgid "Manufactured Parts"
-msgstr ""
+msgstr "Gyártott alkatrészek"
 
 #: company/templates/company/sidebar.html:10
 msgid "Supplied Parts"
-msgstr ""
+msgstr "Szállított alkatrészek"
 
 #: company/templates/company/sidebar.html:16
 msgid "Supplied Stock Items"
@@ -3247,7 +3247,7 @@ msgstr ""
 
 #: order/models.py:640
 msgid "Order cannot be completed as no parts have been assigned"
-msgstr ""
+msgstr "A rendelés nem teljesíthető mivel nincs hozzárendelve alkatrész"
 
 #: order/models.py:644
 msgid "Only a pending order can be marked as complete"
@@ -3662,7 +3662,7 @@ msgstr ""
 
 #: order/templates/order/order_wizard/select_parts.html:20
 msgid "No purchaseable parts selected"
-msgstr ""
+msgstr "Nincs kiválasztva beszerezhető alkatrész"
 
 #: order/templates/order/order_wizard/select_parts.html:33
 msgid "Select Supplier"
@@ -3847,7 +3847,7 @@ msgstr ""
 
 #: order/views.py:245
 msgid "Match Supplier Parts"
-msgstr ""
+msgstr "Beszállítói alkatrészek egyeztetése"
 
 #: order/views.py:489
 msgid "Update prices"
@@ -3856,7 +3856,7 @@ msgstr ""
 #: order/views.py:747
 #, python-brace-format
 msgid "Ordered {n} parts"
-msgstr ""
+msgstr "{n} alkatrész megrendelve"
 
 #: order/views.py:858
 msgid "Sales order not found"
@@ -3970,7 +3970,7 @@ msgstr ""
 #: templates/js/translated/part.js:1663 templates/navbar.html:21
 #: templates/stats.html:92 templates/stats.html:101 users/models.py:41
 msgid "Parts"
-msgstr ""
+msgstr "Alkatrészek"
 
 #: part/models.py:452
 msgid "Invalid choice for parent part"
