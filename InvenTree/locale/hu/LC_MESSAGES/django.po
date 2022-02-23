@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-22 01:07+0000\n"
-"PO-Revision-Date: 2022-02-23 22:15\n"
+"PO-Revision-Date: 2022-02-23 23:19\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1821,11 +1821,11 @@ msgstr ""
 
 #: common/models.py:853
 msgid "Test Reports"
-msgstr ""
+msgstr "Teszt riportok"
 
 #: common/models.py:854
 msgid "Enable generation of test reports"
-msgstr ""
+msgstr "Teszt riportok előállításának engedélyezése"
 
 #: common/models.py:860
 msgid "Stock Expiry"
@@ -3153,7 +3153,7 @@ msgstr "Rendelés leírása"
 
 #: order/models.py:127
 msgid "Link to external page"
-msgstr ""
+msgstr "Link külső weboldalra"
 
 #: order/models.py:135
 msgid "Created By"
@@ -4557,7 +4557,7 @@ msgstr "Kategória beállítása"
 
 #: part/templates/part/category.html:179
 msgid "Print Labels"
-msgstr ""
+msgstr "Címkék nyomtatása"
 
 #: part/templates/part/category.html:181
 msgid "Export Data"
@@ -4860,13 +4860,13 @@ msgstr "Vonalkód műveletek"
 #: stock/templates/stock/item_base.html:39
 #: stock/templates/stock/location.html:35 templates/qr_button.html:1
 msgid "Show QR Code"
-msgstr ""
+msgstr "QR kód megjelenítése"
 
 #: part/templates/part/part_base.html:46
 #: stock/templates/stock/item_base.html:55
 #: stock/templates/stock/location.html:36
 msgid "Print Label"
-msgstr ""
+msgstr "Címke nyomtatása"
 
 #: part/templates/part/part_base.html:51
 msgid "Show pricing information"
@@ -5098,7 +5098,7 @@ msgstr "Ez a alkatrész %(count)s másik alkatrész BOM-jában szerepel. Ha tör
 #: part/templates/part/partial_delete.html:32
 #, python-format
 msgid "There are %(count)s stock entries defined for this part. If you delete this part, the following stock entries will also be deleted:"
-msgstr ""
+msgstr "Ennek az alkatrésznek %(count)s készlet tétele van. Ha törlöd a következő készlet tételek is törölve lesznek:"
 
 #: part/templates/part/partial_delete.html:43
 #, python-format
@@ -5533,7 +5533,7 @@ msgstr "Szükséges ehhez"
 
 #: report/templates/report/inventree_test_report_base.html:21
 msgid "Stock Item Test Report"
-msgstr ""
+msgstr "Készlet tétel teszt riport"
 
 #: report/templates/report/inventree_test_report_base.html:79
 #: stock/models.py:519 stock/templates/stock/item_base.html:158
@@ -5547,17 +5547,17 @@ msgstr "Sorozatszám"
 
 #: report/templates/report/inventree_test_report_base.html:88
 msgid "Test Results"
-msgstr ""
+msgstr "Teszt eredmények"
 
 #: report/templates/report/inventree_test_report_base.html:93
 #: stock/models.py:1976
 msgid "Test"
-msgstr ""
+msgstr "Teszt"
 
 #: report/templates/report/inventree_test_report_base.html:94
 #: stock/models.py:1982
 msgid "Result"
-msgstr ""
+msgstr "Eredmény"
 
 #: report/templates/report/inventree_test_report_base.html:97
 #: templates/InvenTree/settings/plugin.html:50
@@ -5568,11 +5568,11 @@ msgstr "Dátum"
 
 #: report/templates/report/inventree_test_report_base.html:108
 msgid "Pass"
-msgstr ""
+msgstr "Sikeres"
 
 #: report/templates/report/inventree_test_report_base.html:110
 msgid "Fail"
-msgstr ""
+msgstr "Sikertelen"
 
 #: report/templates/report/inventree_test_report_base.html:123
 #: stock/templates/stock/stock_sidebar.html:16
@@ -5583,7 +5583,7 @@ msgstr "Beépített tételek"
 #: templates/js/translated/stock.js:587 templates/js/translated/stock.js:757
 #: templates/js/translated/stock.js:2909
 msgid "Serial"
-msgstr ""
+msgstr "Sorozatszám"
 
 #: stock/api.py:501
 msgid "Quantity is required"
@@ -5748,7 +5748,7 @@ msgstr "Készlet tétel lejárati dátuma. A készlet lejártnak tekinthető ezu
 
 #: stock/models.py:590
 msgid "Delete on deplete"
-msgstr ""
+msgstr "Törlés ha kimerül"
 
 #: stock/models.py:590
 msgid "Delete this Stock Item when stock is depleted"
@@ -6000,11 +6000,11 @@ msgstr ""
 
 #: stock/templates/stock/item.html:85 stock/templates/stock/item_base.html:57
 msgid "Test Report"
-msgstr ""
+msgstr "Teszt riport"
 
 #: stock/templates/stock/item.html:89
 msgid "Delete Test Data"
-msgstr ""
+msgstr "Teszt adatok törlése"
 
 #: stock/templates/stock/item.html:93
 msgid "Add Test Data"
@@ -6100,11 +6100,11 @@ msgstr "Készlet tétel másolása"
 
 #: stock/templates/stock/item_base.html:122
 msgid "Edit stock item"
-msgstr ""
+msgstr "Készlet tétel szerkesztése"
 
 #: stock/templates/stock/item_base.html:125
 msgid "Delete stock item"
-msgstr ""
+msgstr "Készlet tétel törlése"
 
 #: stock/templates/stock/item_base.html:163
 msgid "previous page"
@@ -6157,7 +6157,7 @@ msgstr "Még nem volt leltározva"
 
 #: stock/templates/stock/item_base.html:235
 msgid "You are not in the list of owners of this item. This stock item cannot be edited."
-msgstr ""
+msgstr "Úgytűnik nem vagy ennek a tételnek a tulajdonosa. Ezt így nem tudod módosítani."
 
 #: stock/templates/stock/item_base.html:242
 msgid "This stock item is in production and cannot be edited."
@@ -6165,7 +6165,7 @@ msgstr "Ez a készlet tétel éppen gyártás alatt van és nem szerkeszthető."
 
 #: stock/templates/stock/item_base.html:243
 msgid "Edit the stock item from the build view."
-msgstr ""
+msgstr "Készlet tétel szerkesztése a gyártási nézetből."
 
 #: stock/templates/stock/item_base.html:256
 msgid "This stock item has not passed all required tests"
@@ -6206,16 +6206,16 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:492
 msgid "Edit Stock Status"
-msgstr ""
+msgstr "Készlet állapot szerkesztése"
 
 #: stock/templates/stock/item_delete.html:9
 msgid "Are you sure you want to delete this stock item?"
-msgstr ""
+msgstr "Biztosan törölni szeretnéd ezt a készlet tételt?"
 
 #: stock/templates/stock/item_delete.html:12
 #, python-format
 msgid "This will remove <strong>%(qty)s</strong> units of <strong>%(full_name)s</strong> from stock."
-msgstr ""
+msgstr "Ez levesz <strong>%(qty)s</strong> egység <strong>%(full_name)s</strong> alkatrészt a készletről."
 
 #: stock/templates/stock/item_serialize.html:5
 msgid "Create serialized items from this stock item."
@@ -6235,11 +6235,11 @@ msgstr ""
 
 #: stock/templates/stock/location.html:67
 msgid "Edit location"
-msgstr ""
+msgstr "Hely szerkesztése"
 
 #: stock/templates/stock/location.html:69
 msgid "Delete location"
-msgstr ""
+msgstr "Hely törlése"
 
 #: stock/templates/stock/location.html:79
 msgid "Create new stock location"
@@ -6260,7 +6260,7 @@ msgstr "Legfelső szintű készlet hely"
 
 #: stock/templates/stock/location.html:119
 msgid "You are not in the list of owners of this location. This stock location cannot be edited."
-msgstr ""
+msgstr "Úgytűnik nem vagy ennek a készlethelynek a tulajdonosa. Ezt így nem tudod módosítani."
 
 #: stock/templates/stock/location.html:132
 #: stock/templates/stock/location.html:179
@@ -6283,7 +6283,7 @@ msgstr "Címke nyomtatása"
 
 #: stock/templates/stock/location_delete.html:7
 msgid "Are you sure you want to delete this stock location?"
-msgstr ""
+msgstr "Biztosan törölni szeretnéd ezt a készlet helyet?"
 
 #: stock/templates/stock/stock_app_base.html:16
 msgid "Loading..."
@@ -6324,7 +6324,7 @@ msgstr "Biztosan törölni akarod ezt a készlettörténeti bejegyzést?"
 
 #: stock/views.py:162 templates/js/translated/stock.js:140
 msgid "Edit Stock Location"
-msgstr ""
+msgstr "Készlet hely szerkesztése"
 
 #: stock/views.py:269 stock/views.py:709 stock/views.py:835 stock/views.py:1117
 msgid "Owner is required (ownership control is enabled)"
@@ -6348,7 +6348,7 @@ msgstr ""
 
 #: stock/views.py:334
 msgid "Delete All Test Data"
-msgstr ""
+msgstr "Minden teszt adat törlése"
 
 #: stock/views.py:351
 msgid "Confirm test data deletion"
@@ -6376,7 +6376,7 @@ msgstr "Kiszedett készlet tételek"
 
 #: stock/views.py:611 templates/js/translated/stock.js:333
 msgid "Edit Stock Item"
-msgstr ""
+msgstr "Készlet tétel szerkesztése"
 
 #: stock/views.py:761
 msgid "Create new Stock Location"
@@ -6396,11 +6396,11 @@ msgstr "A mennyiség nem lehet negatív"
 
 #: stock/views.py:1186
 msgid "Delete Stock Location"
-msgstr ""
+msgstr "Készlethely törlése"
 
 #: stock/views.py:1199
 msgid "Delete Stock Item"
-msgstr ""
+msgstr "Készlet tétel törlése"
 
 #: stock/views.py:1210
 msgid "Delete Stock Tracking Entry"
@@ -6789,7 +6789,7 @@ msgstr "Keresési beállítások"
 
 #: templates/InvenTree/settings/sidebar.html:17
 msgid "Label Printing"
-msgstr ""
+msgstr "Címke nyomtatás"
 
 #: templates/InvenTree/settings/sidebar.html:19
 #: templates/InvenTree/settings/sidebar.html:35
@@ -7298,7 +7298,7 @@ msgstr ""
 
 #: templates/attachment_button.html:4 templates/js/translated/attachment.js:54
 msgid "Add Link"
-msgstr ""
+msgstr "Link hozzáadása"
 
 #: templates/attachment_button.html:7 templates/js/translated/attachment.js:36
 msgid "Add Attachment"
@@ -7362,7 +7362,7 @@ msgstr ""
 
 #: templates/email/low_stock_notification.html:9
 msgid "Click on the following link to view this part"
-msgstr ""
+msgstr "Klikk a következő linkre az alkatrész megjelenítéséhez"
 
 #: templates/email/low_stock_notification.html:19
 msgid "Minimum Quantity"
@@ -8136,7 +8136,7 @@ msgstr ""
 
 #: templates/js/translated/label.js:30
 msgid "Stock item(s) must be selected before printing labels"
-msgstr ""
+msgstr "Készlet tétel(eke)t ki kell választani a címkenyomtatás előtt"
 
 #: templates/js/translated/label.js:48 templates/js/translated/label.js:98
 #: templates/js/translated/label.js:153
@@ -8153,7 +8153,7 @@ msgstr "Készlethely kiválasztása"
 
 #: templates/js/translated/label.js:81
 msgid "Stock location(s) must be selected before printing labels"
-msgstr ""
+msgstr "Készlet hely(eke)t ki kell választani a címkenyomtatás előtt"
 
 #: templates/js/translated/label.js:99
 msgid "No labels found which match selected stock location(s)"
@@ -8161,7 +8161,7 @@ msgstr ""
 
 #: templates/js/translated/label.js:135
 msgid "Part(s) must be selected before printing labels"
-msgstr ""
+msgstr "Alkatrész(eke)t ki kell választani a címkenyomtatás előtt"
 
 #: templates/js/translated/label.js:154
 msgid "No labels found which match the selected part(s)"
@@ -8479,7 +8479,7 @@ msgstr ""
 
 #: templates/js/translated/order.js:2324
 msgid "Cannot be deleted as items have been allocated"
-msgstr ""
+msgstr "Nem törölhető mivel tételek vannak lefoglalva"
 
 #: templates/js/translated/order.js:2382
 msgid "Allocate Serial Numbers"
@@ -8685,12 +8685,12 @@ msgstr ""
 
 #: templates/js/translated/part.js:1751 templates/js/translated/stock.js:1271
 msgid "Edit test result"
-msgstr ""
+msgstr "Teszt eredmény szerkesztése"
 
 #: templates/js/translated/part.js:1752 templates/js/translated/stock.js:1272
 #: templates/js/translated/stock.js:1518
 msgid "Delete test result"
-msgstr ""
+msgstr "Teszt eredmény törlése"
 
 #: templates/js/translated/part.js:1758
 msgid "This test is defined for a parent part"
@@ -8741,7 +8741,7 @@ msgstr ""
 
 #: templates/js/translated/report.js:90
 msgid "Select Test Report Template"
-msgstr ""
+msgstr "Teszt riport sablon kiválasztása"
 
 #: templates/js/translated/report.js:119
 msgid "Stock item(s) must be selected before printing reports"
@@ -8975,11 +8975,11 @@ msgstr "Teszt dátuma"
 
 #: templates/js/translated/stock.js:1501
 msgid "Edit Test Result"
-msgstr ""
+msgstr "Teszt eredmény szerkesztése"
 
 #: templates/js/translated/stock.js:1523
 msgid "Delete Test Result"
-msgstr ""
+msgstr "Teszt eredmény törlése"
 
 #: templates/js/translated/stock.js:1552
 msgid "In production"
@@ -9311,7 +9311,7 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:243
 msgid "Has purchase price"
-msgstr "Van beszrzési ára"
+msgstr "Van beszerzési ára"
 
 #: templates/js/translated/table_filters.js:244
 msgid "Show stock items which have a purchase price set"
