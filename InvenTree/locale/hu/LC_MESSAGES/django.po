@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-22 01:07+0000\n"
-"PO-Revision-Date: 2022-02-23 16:50\n"
+"PO-Revision-Date: 2022-02-23 17:47\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -2639,12 +2639,12 @@ msgstr ""
 
 #: company/templates/company/company_base.html:31
 msgid "Edit company information"
-msgstr ""
+msgstr "Cég adatainak szerkesztése"
 
 #: company/templates/company/company_base.html:32
 #: templates/js/translated/company.js:265
 msgid "Edit Company"
-msgstr ""
+msgstr "Cég szerkesztése"
 
 #: company/templates/company/company_base.html:36
 msgid "Delete company"
@@ -2922,7 +2922,7 @@ msgstr "Beszállítói alkatrész"
 #: company/templates/company/supplier_part.html:38
 #: templates/js/translated/company.js:863
 msgid "Edit supplier part"
-msgstr ""
+msgstr "Beszállítói alkatrész szerkesztése"
 
 #: company/templates/company/supplier_part.html:42
 #: templates/js/translated/company.js:864
@@ -2976,11 +2976,11 @@ msgstr ""
 
 #: company/templates/company/supplier_part.html:238 part/views.py:1367
 msgid "Edit Price Break"
-msgstr ""
+msgstr "Ár bontás szerkesztése"
 
 #: company/templates/company/supplier_part.html:263
 msgid "Edit price break"
-msgstr ""
+msgstr "Ár bontás szerkesztése"
 
 #: company/templates/company/supplier_part.html:264
 msgid "Delete price break"
@@ -3202,7 +3202,7 @@ msgstr "Kiállítás dátuma"
 
 #: order/models.py:249
 msgid "Target Delivery Date"
-msgstr "Cél kézbesítési dátum"
+msgstr "Várható beérkezés"
 
 #: order/models.py:250
 msgid "Expected date for order delivery. Order will be overdue after this date."
@@ -6034,7 +6034,7 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:46 templates/stock_table.html:24
 msgid "Scan to Location"
-msgstr ""
+msgstr "Beolvasás a helyre"
 
 #: stock/templates/stock/item_base.html:53
 msgid "Printing actions"
@@ -7967,7 +7967,7 @@ msgstr "Beszállítói alkatrész hozzáadása"
 
 #: templates/js/translated/company.js:208
 msgid "Edit Supplier Part"
-msgstr ""
+msgstr "Beszállítói alkatrész szerkesztése"
 
 #: templates/js/translated/company.js:218
 msgid "Delete Supplier Part"
@@ -8019,7 +8019,7 @@ msgstr ""
 
 #: templates/js/translated/company.js:668 templates/js/translated/part.js:738
 msgid "Edit parameter"
-msgstr ""
+msgstr "Paraméter szerkesztése"
 
 #: templates/js/translated/company.js:669 templates/js/translated/part.js:739
 msgid "Delete parameter"
@@ -8027,7 +8027,7 @@ msgstr ""
 
 #: templates/js/translated/company.js:688 templates/js/translated/part.js:756
 msgid "Edit Parameter"
-msgstr ""
+msgstr "Paraméter szerkesztése"
 
 #: templates/js/translated/company.js:699 templates/js/translated/part.js:768
 msgid "Delete Parameter"
@@ -9584,7 +9584,7 @@ msgstr "Készlet állapot módosítása"
 
 #: templates/stock_table.html:58
 msgid "Delete selected items"
-msgstr ""
+msgstr "Kiválasztott tételek törlése"
 
 #: templates/yesnolabel.html:4
 msgid "Yes"
