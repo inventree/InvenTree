@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-22 01:07+0000\n"
-"PO-Revision-Date: 2022-02-22 23:18\n"
+"PO-Revision-Date: 2022-02-23 08:52\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -4892,7 +4892,7 @@ msgstr "Készlet műveletek"
 
 #: part/templates/part/part_base.html:87
 msgid "Duplicate part"
-msgstr "Kettőzött alkatrész"
+msgstr "Alkatrész másolása"
 
 #: part/templates/part/part_base.html:90
 msgid "Edit part"
