@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-22 01:07+0000\n"
-"PO-Revision-Date: 2022-02-23 15:50\n"
+"PO-Revision-Date: 2022-02-23 16:50\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1070,11 +1070,11 @@ msgstr ""
 
 #: build/serializers.py:429
 msgid "Accept that stock items have not been fully allocated to this build order"
-msgstr ""
+msgstr "Fogadd el hogy a készlet tételek nincsenek teljesen lefoglalva ehhez a gyártási utastáshoz"
 
 #: build/serializers.py:439 templates/js/translated/build.js:150
 msgid "Required stock has not been fully allocated"
-msgstr ""
+msgstr "A szükséges készlet nem lett teljesen lefoglalva"
 
 #: build/serializers.py:444
 msgid "Accept Incomplete"
@@ -1198,7 +1198,7 @@ msgstr ""
 
 #: build/templates/build/build_base.html:130
 msgid "Stock has not been fully allocated to this Build Order"
-msgstr ""
+msgstr "A készlet nem lett teljesen lefoglalva ehhez a gyártási utasításhoz"
 
 #: build/templates/build/build_base.html:151
 #: build/templates/build/detail.html:132
@@ -1687,7 +1687,7 @@ msgstr "Alkatrészek alapból használhatók összetevőként más alkatrészekh
 
 #: common/models.py:726 part/models.py:968
 msgid "Purchaseable"
-msgstr ""
+msgstr "Beszerezhető"
 
 #: common/models.py:727
 msgid "Parts are purchaseable by default"
@@ -1765,7 +1765,7 @@ msgstr "Alkatrész kapcsolódó alkatrészeinek megjelenítése"
 
 #: common/models.py:799
 msgid "Create initial stock"
-msgstr ""
+msgstr "Kezdeti készlet létrehozása"
 
 #: common/models.py:800
 msgid "Create initial stock on part creation"
@@ -1829,11 +1829,11 @@ msgstr ""
 
 #: common/models.py:860
 msgid "Stock Expiry"
-msgstr ""
+msgstr "Készlet lejárata"
 
 #: common/models.py:861
 msgid "Enable stock expiry functionality"
-msgstr ""
+msgstr "Készlet lejárat kezelésének engedélyezése"
 
 #: common/models.py:867
 msgid "Sell Expired Stock"
@@ -1841,15 +1841,15 @@ msgstr "Lejárt készlet értékesítése"
 
 #: common/models.py:868
 msgid "Allow sale of expired stock"
-msgstr ""
+msgstr "Lejárt készlet értékesítésének engedélyezése"
 
 #: common/models.py:874
 msgid "Stock Stale Time"
-msgstr ""
+msgstr "Álló készlet ideje"
 
 #: common/models.py:875
 msgid "Number of days stock items are considered stale before expiring"
-msgstr ""
+msgstr "Napok száma amennyivel a lejárat előtt a készlet tételeket állottnak vesszük"
 
 #: common/models.py:877
 msgid "days"
@@ -1857,7 +1857,7 @@ msgstr ""
 
 #: common/models.py:882
 msgid "Build Expired Stock"
-msgstr ""
+msgstr "Lejárt készlet gyártása"
 
 #: common/models.py:883
 msgid "Allow building with expired stock"
@@ -2616,7 +2616,7 @@ msgstr ""
 
 #: company/serializers.py:70
 msgid "Default currency used for this supplier"
-msgstr ""
+msgstr "Beszállító által használt alapértelmezett pénznem"
 
 #: company/serializers.py:71
 msgid "Currency Code"
@@ -3911,7 +3911,7 @@ msgstr "Alapértelmezett hely"
 
 #: part/bom.py:126 templates/email/low_stock_notification.html:17
 msgid "Total Stock"
-msgstr ""
+msgstr "Teljes készlet"
 
 #: part/bom.py:127 part/templates/part/part_base.html:185
 msgid "Available Stock"
@@ -4071,7 +4071,7 @@ msgstr "Alapértelmezett beszállító"
 
 #: part/models.py:925
 msgid "Default supplier part"
-msgstr ""
+msgstr "Alapértelmezett beszállítói alkatrész"
 
 #: part/models.py:932
 msgid "Default Expiry"
@@ -4488,7 +4488,7 @@ msgstr "Értesítések kérése erre a kategóriára"
 
 #: part/templates/part/category.html:42
 msgid "Category Actions"
-msgstr ""
+msgstr "Kategória műveletek"
 
 #: part/templates/part/category.html:47
 msgid "Edit category"
@@ -4553,7 +4553,7 @@ msgstr ""
 
 #: part/templates/part/category.html:175
 msgid "Set Category"
-msgstr ""
+msgstr "Kategória beállítása"
 
 #: part/templates/part/category.html:179
 msgid "Print Labels"
@@ -4876,7 +4876,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:112
 #: stock/templates/stock/location.html:44
 msgid "Stock actions"
-msgstr ""
+msgstr "Készlet műveletek"
 
 #: part/templates/part/part_base.html:63
 msgid "Count part stock"
@@ -5247,7 +5247,7 @@ msgstr "Ismeretlen adatbázis"
 
 #: part/views.py:90
 msgid "Set Part Category"
-msgstr ""
+msgstr "Alkatrész kategória beállítása"
 
 #: part/views.py:140
 #, python-brace-format
@@ -5304,11 +5304,11 @@ msgstr ""
 
 #: part/views.py:1091 templates/js/translated/part.js:315
 msgid "Edit Part Category"
-msgstr ""
+msgstr "Alkatrész kategória szerkesztése"
 
 #: part/views.py:1129
 msgid "Delete Part Category"
-msgstr ""
+msgstr "Alkatrész kategória törlése"
 
 #: part/views.py:1135
 msgid "Part category was deleted"
@@ -5320,11 +5320,11 @@ msgstr "Kategória paraméter sablon létrehozása"
 
 #: part/views.py:1245
 msgid "Edit Category Parameter Template"
-msgstr ""
+msgstr "Kategória paraméter sablon szerkesztése"
 
 #: part/views.py:1301
 msgid "Delete Category Parameter Template"
-msgstr ""
+msgstr "Kategória paraméter sablon törlése"
 
 #: part/views.py:1323
 msgid "Added new price break"
@@ -5605,7 +5605,7 @@ msgstr "Lejárati dátum"
 
 #: stock/forms.py:75 stock/forms.py:199
 msgid "Expiration date for this stock item"
-msgstr ""
+msgstr "Készlet tétel lejárati dátuma"
 
 #: stock/forms.py:78
 msgid "Enter unique serial numbers (or leave blank)"
@@ -5613,7 +5613,7 @@ msgstr ""
 
 #: stock/forms.py:133
 msgid "Destination for serialized stock (by default, will remain in current location)"
-msgstr ""
+msgstr "Követésre kötelezett alkatrész cél helye (alapban a mostani helyén marad)"
 
 #: stock/forms.py:135
 msgid "Serial numbers"
@@ -5637,7 +5637,7 @@ msgstr ""
 
 #: stock/forms.py:173
 msgid "Confirm removal of installed stock items"
-msgstr ""
+msgstr "Beépített készlet tételek eltávolításának megerősítése"
 
 #: stock/models.py:62 stock/models.py:613
 #: stock/templates/stock/item_base.html:418
@@ -5650,7 +5650,7 @@ msgstr ""
 
 #: stock/models.py:338
 msgid "StockItem with this serial number already exists"
-msgstr ""
+msgstr "Létezik már készlet tétel ilyen a sorozatszámmal"
 
 #: stock/models.py:374
 #, python-brace-format
@@ -5679,7 +5679,7 @@ msgstr ""
 
 #: stock/models.py:463
 msgid "Parent Stock Item"
-msgstr ""
+msgstr "Szülő készlet tétel"
 
 #: stock/models.py:472
 msgid "Base part"
@@ -5692,7 +5692,7 @@ msgstr "Válassz egy egyező beszállítói alkatrészt ehhez a készlet tételh
 #: stock/models.py:486 stock/templates/stock/location.html:16
 #: stock/templates/stock/stock_app_base.html:8
 msgid "Stock Location"
-msgstr ""
+msgstr "Készlet hely"
 
 #: stock/models.py:489
 msgid "Where is this stock item located?"
@@ -5700,7 +5700,7 @@ msgstr "Hol található ez az alkatrész?"
 
 #: stock/models.py:496
 msgid "Packaging this stock item is stored in"
-msgstr ""
+msgstr "A csomagolása ennek a készlet tételnek itt van tárolva"
 
 #: stock/models.py:502 stock/templates/stock/item_base.html:300
 msgid "Installed In"
@@ -5716,11 +5716,11 @@ msgstr ""
 
 #: stock/models.py:535
 msgid "Batch code for this stock item"
-msgstr ""
+msgstr "Batch kód ehhez a készlet tételhez"
 
 #: stock/models.py:539
 msgid "Stock Quantity"
-msgstr ""
+msgstr "Készlet mennyiség"
 
 #: stock/models.py:548
 msgid "Source Build"
@@ -5728,7 +5728,7 @@ msgstr ""
 
 #: stock/models.py:550
 msgid "Build for this stock item"
-msgstr ""
+msgstr "Gyártás ehhez a készlet tételhez"
 
 #: stock/models.py:561
 msgid "Source Purchase Order"
@@ -5736,7 +5736,7 @@ msgstr ""
 
 #: stock/models.py:564
 msgid "Purchase order for this stock item"
-msgstr ""
+msgstr "Beszerzés ehhez a készlet tételhez"
 
 #: stock/models.py:570
 msgid "Destination Sales Order"
@@ -5744,7 +5744,7 @@ msgstr ""
 
 #: stock/models.py:577
 msgid "Expiry date for stock item. Stock will be considered expired after this date"
-msgstr ""
+msgstr "Készlet tétel lejárati dátuma. A készlet lejártnak tekinthető ezután a dátum után"
 
 #: stock/models.py:590
 msgid "Delete on deplete"
@@ -5756,7 +5756,7 @@ msgstr "Készlet tétel törlése ha kimerül"
 
 #: stock/models.py:600 stock/templates/stock/item.html:128
 msgid "Stock Item Notes"
-msgstr ""
+msgstr "Készlet tétel megjegyzések"
 
 #: stock/models.py:609
 msgid "Single unit purchase price at time of purchase"
@@ -5773,7 +5773,7 @@ msgstr ""
 #: stock/models.py:1108
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({n})"
-msgstr ""
+msgstr "A mennyiség nem lépheti túl a készletet ({n})"
 
 #: stock/models.py:1111
 msgid "Serial numbers must be a list of integers"
@@ -5794,11 +5794,11 @@ msgstr "Készlet tétel hozzárendelve egy vevői rendeléshez"
 
 #: stock/models.py:1195
 msgid "Stock item is installed in another item"
-msgstr ""
+msgstr "Készlet tétel beépül egy másikba"
 
 #: stock/models.py:1198
 msgid "Stock item contains other items"
-msgstr ""
+msgstr "A készlet tétel más tételeket tartalmaz"
 
 #: stock/models.py:1201
 msgid "Stock item has been assigned to a customer"
@@ -5810,15 +5810,15 @@ msgstr "Készlet tétel gyártás alatt"
 
 #: stock/models.py:1207
 msgid "Serialized stock cannot be merged"
-msgstr ""
+msgstr "Követésre kötelezett készlet nem vonható össze"
 
 #: stock/models.py:1214 stock/serializers.py:832
 msgid "Duplicate stock items"
-msgstr ""
+msgstr "Duplikált készlet tételek vannak"
 
 #: stock/models.py:1218
 msgid "Stock items must refer to the same part"
-msgstr ""
+msgstr "A készlet tétel ugyanarra az alkatrészre kell vonatkozzon"
 
 #: stock/models.py:1222
 msgid "Stock items must refer to the same supplier part"
@@ -5826,7 +5826,7 @@ msgstr "A készlet tétel ugyanarra a beszállítói alkatrészre kell vonatkozz
 
 #: stock/models.py:1226
 msgid "Stock status codes must match"
-msgstr ""
+msgstr "Készlet tételek állapotainak egyeznie kell"
 
 #: stock/models.py:1397
 msgid "StockItem cannot be moved as it is not in stock"
@@ -5866,20 +5866,20 @@ msgstr ""
 
 #: stock/serializers.py:173
 msgid "Purchase price of this stock item"
-msgstr ""
+msgstr "Beszerzési ára ennek a készlet tételnek"
 
 #: stock/serializers.py:180
 msgid "Purchase currency of this stock item"
-msgstr ""
+msgstr "Beszerzési pénzneme ennek a készlet tételnek"
 
 #: stock/serializers.py:294
 msgid "Enter number of stock items to serialize"
-msgstr ""
+msgstr "Add meg hány készlet tételt lássunk el sorozatszámmal"
 
 #: stock/serializers.py:309
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({q})"
-msgstr ""
+msgstr "A mennyiség nem lépheti túl a rendelkezésre álló készletet ({q})"
 
 #: stock/serializers.py:315
 msgid "Enter serial numbers for new items"
@@ -5887,7 +5887,7 @@ msgstr ""
 
 #: stock/serializers.py:326 stock/serializers.py:789 stock/serializers.py:1030
 msgid "Destination stock location"
-msgstr ""
+msgstr "Cél készlet hely"
 
 #: stock/serializers.py:333
 msgid "Optional note field"
@@ -5903,11 +5903,11 @@ msgstr ""
 
 #: stock/serializers.py:405
 msgid "Select stock item to install"
-msgstr ""
+msgstr "Válaszd ki a beépítésre szánt készlet tételt"
 
 #: stock/serializers.py:421
 msgid "Stock item is unavailable"
-msgstr ""
+msgstr "Készlet tétel nem elérhető"
 
 #: stock/serializers.py:428
 msgid "Selected part is not in the Bill of Materials"
@@ -5935,15 +5935,15 @@ msgstr ""
 
 #: stock/serializers.py:698
 msgid "Stock assignment notes"
-msgstr ""
+msgstr "Készlet hozzárendelés megjegyzései"
 
 #: stock/serializers.py:708 stock/serializers.py:938
 msgid "A list of stock items must be provided"
-msgstr ""
+msgstr "A készlet tételek listáját meg kell adni"
 
 #: stock/serializers.py:796
 msgid "Stock merging notes"
-msgstr ""
+msgstr "Készlet összevonás megjegyzései"
 
 #: stock/serializers.py:801
 msgid "Allow mismatched suppliers"
@@ -5959,19 +5959,19 @@ msgstr ""
 
 #: stock/serializers.py:808
 msgid "Allow stock items with different status codes to be merged"
-msgstr ""
+msgstr "Különböző állapotú készletek összevonásának engedélyezése"
 
 #: stock/serializers.py:818
 msgid "At least two stock items must be provided"
-msgstr ""
+msgstr "Legalább két készlet tételt meg kell adni"
 
 #: stock/serializers.py:900
 msgid "StockItem primary key value"
-msgstr ""
+msgstr "Készlet tétel elsődleges kulcs értéke"
 
 #: stock/serializers.py:928
 msgid "Stock transaction notes"
-msgstr ""
+msgstr "Készlet tranzakció megjegyzései"
 
 #: stock/templates/stock/item.html:18
 msgid "Stock Tracking Information"
@@ -5987,11 +5987,11 @@ msgstr "Készlet foglalások"
 
 #: stock/templates/stock/item.html:64
 msgid "Child Stock Items"
-msgstr ""
+msgstr "Al-készlet tételek"
 
 #: stock/templates/stock/item.html:72
 msgid "This stock item does not have any child items"
-msgstr ""
+msgstr "Ez a készlet tétel nem tartalmaz egy altételt sem"
 
 #: stock/templates/stock/item.html:81
 #: stock/templates/stock/stock_sidebar.html:12
@@ -6012,11 +6012,11 @@ msgstr ""
 
 #: stock/templates/stock/item.html:150
 msgid "Installed Stock Items"
-msgstr ""
+msgstr "Beépített készlet tételek"
 
 #: stock/templates/stock/item.html:154 templates/js/translated/stock.js:3018
 msgid "Install Stock Item"
-msgstr ""
+msgstr "Készlet tétel beépítése"
 
 #: stock/templates/stock/item.html:304 templates/js/translated/stock.js:1480
 msgid "Add Test Result"
@@ -6042,20 +6042,20 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:72
 msgid "Stock adjustment actions"
-msgstr ""
+msgstr "Készlet módosítási műveletek"
 
 #: stock/templates/stock/item_base.html:76
 #: stock/templates/stock/location.html:51 templates/stock_table.html:50
 msgid "Count stock"
-msgstr ""
+msgstr "Leltározás"
 
 #: stock/templates/stock/item_base.html:79 templates/stock_table.html:48
 msgid "Add stock"
-msgstr ""
+msgstr "Készlet növelése"
 
 #: stock/templates/stock/item_base.html:82 templates/stock_table.html:49
 msgid "Remove stock"
-msgstr ""
+msgstr "Készlet csökkentése"
 
 #: stock/templates/stock/item_base.html:85
 msgid "Serialize stock"
@@ -6064,15 +6064,15 @@ msgstr ""
 #: stock/templates/stock/item_base.html:89
 #: stock/templates/stock/location.html:57
 msgid "Transfer stock"
-msgstr ""
+msgstr "Készlet áthelyezése"
 
 #: stock/templates/stock/item_base.html:92 templates/stock_table.html:54
 msgid "Assign to customer"
-msgstr ""
+msgstr "Vevőhöz rendelése"
 
 #: stock/templates/stock/item_base.html:95
 msgid "Return to stock"
-msgstr ""
+msgstr "Visszavétel készletre"
 
 #: stock/templates/stock/item_base.html:98
 msgid "Uninstall stock item"
@@ -6084,7 +6084,7 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:102
 msgid "Install stock item"
-msgstr ""
+msgstr "Készlet tétel beépítése"
 
 #: stock/templates/stock/item_base.html:102
 msgid "Install"
@@ -6096,7 +6096,7 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:120
 msgid "Duplicate stock item"
-msgstr ""
+msgstr "Készlet tétel másolása"
 
 #: stock/templates/stock/item_base.html:122
 msgid "Edit stock item"
@@ -6275,11 +6275,11 @@ msgstr "Készlethelyek"
 
 #: stock/templates/stock/location.html:186 templates/stock_table.html:30
 msgid "Printing Actions"
-msgstr ""
+msgstr "Nyomtatási műveletek"
 
 #: stock/templates/stock/location.html:190 templates/stock_table.html:34
 msgid "Print labels"
-msgstr ""
+msgstr "Címke nyomtatása"
 
 #: stock/templates/stock/location_delete.html:7
 msgid "Are you sure you want to delete this stock location?"
@@ -7876,7 +7876,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:1476 templates/stock_table.html:53
 msgid "Order stock"
-msgstr ""
+msgstr "Készlet rendelés"
 
 #: templates/js/translated/build.js:1479 templates/js/translated/order.js:2300
 msgid "Allocate stock"
@@ -8265,7 +8265,7 @@ msgstr ""
 
 #: templates/js/translated/model_renderers.js:307
 msgid "Category ID"
-msgstr ""
+msgstr "Kategória azonosító"
 
 #: templates/js/translated/model_renderers.js:344
 msgid "Manufacturer Part ID"
@@ -8511,7 +8511,7 @@ msgstr "Beszállítói opciók"
 
 #: templates/js/translated/part.js:80
 msgid "Add Part Category"
-msgstr ""
+msgstr "Alkatrész kategória hozzáadása"
 
 #: templates/js/translated/part.js:164
 msgid "Create Initial Stock"
@@ -8855,7 +8855,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:516
 msgid "Export Stock"
-msgstr ""
+msgstr "Készlet esportálása"
 
 #: templates/js/translated/stock.js:527
 msgid "Include Sublocations"
@@ -8867,7 +8867,7 @@ msgstr "Alhelyeken lévő készlettel együtt"
 
 #: templates/js/translated/stock.js:637
 msgid "Confirm stock assignment"
-msgstr ""
+msgstr "Készlet hozzárendelés jóváhagyása"
 
 #: templates/js/translated/stock.js:638
 msgid "Assign Stock to Customer"
@@ -8879,11 +8879,11 @@ msgstr ""
 
 #: templates/js/translated/stock.js:716
 msgid "Some information will be lost when merging stock items"
-msgstr ""
+msgstr "Némi információ elveszik a készlet összevonás során"
 
 #: templates/js/translated/stock.js:718
 msgid "Stock transaction history will be deleted for merged items"
-msgstr ""
+msgstr "A készlettörténet törölve lesz az összevont tételeknél"
 
 #: templates/js/translated/stock.js:719
 msgid "Supplier part information will be deleted for merged items"
@@ -8891,15 +8891,15 @@ msgstr "A beszállítói alkatrész információk törlődnek az összevont tét
 
 #: templates/js/translated/stock.js:805
 msgid "Confirm stock item merge"
-msgstr ""
+msgstr "Készlet összevonás megerősítése"
 
 #: templates/js/translated/stock.js:806
 msgid "Merge Stock Items"
-msgstr ""
+msgstr "Készlet tételek összevonása"
 
 #: templates/js/translated/stock.js:901
 msgid "Transfer Stock"
-msgstr ""
+msgstr "Készlet áthelyezése"
 
 #: templates/js/translated/stock.js:902
 msgid "Move"
@@ -8907,7 +8907,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:908
 msgid "Count Stock"
-msgstr ""
+msgstr "Leltározás"
 
 #: templates/js/translated/stock.js:909
 msgid "Count"
@@ -8915,7 +8915,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:913
 msgid "Remove Stock"
-msgstr ""
+msgstr "Készlet csökkentése"
 
 #: templates/js/translated/stock.js:914
 msgid "Take"
@@ -8923,7 +8923,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:918
 msgid "Add Stock"
-msgstr ""
+msgstr "Készlet növelése"
 
 #: templates/js/translated/stock.js:919 users/models.py:213
 msgid "Add"
@@ -8931,19 +8931,19 @@ msgstr ""
 
 #: templates/js/translated/stock.js:923 templates/stock_table.html:58
 msgid "Delete Stock"
-msgstr ""
+msgstr "Készlet törlése"
 
 #: templates/js/translated/stock.js:1012
 msgid "Quantity cannot be adjusted for serialized stock"
-msgstr ""
+msgstr "Egyedi követésre kötelezett tételeknél a menyiség nem módosítható"
 
 #: templates/js/translated/stock.js:1012
 msgid "Specify stock quantity"
-msgstr ""
+msgstr "Készlet mennyiség megadása"
 
 #: templates/js/translated/stock.js:1052
 msgid "You must select at least one available stock item"
-msgstr ""
+msgstr "Ki kell választanod legalább egy rendelkezésre álló készlet tételt"
 
 #: templates/js/translated/stock.js:1210
 msgid "PASS"
@@ -8995,7 +8995,7 @@ msgstr "Vevő rendeléshez hozzárendelve"
 
 #: templates/js/translated/stock.js:1570
 msgid "No stock location set"
-msgstr ""
+msgstr "Nincs kiválasztott készlet hely"
 
 #: templates/js/translated/stock.js:1728
 msgid "Stock item is in production"
@@ -9011,39 +9011,39 @@ msgstr "Készlet tétel hozzárendelve egy vevőhöz"
 
 #: templates/js/translated/stock.js:1740
 msgid "Stock item has expired"
-msgstr ""
+msgstr "Készlet tétel lejárt"
 
 #: templates/js/translated/stock.js:1742
 msgid "Stock item will expire soon"
-msgstr ""
+msgstr "Készlet tétel hamarosan lejár"
 
 #: templates/js/translated/stock.js:1748
 msgid "Serialized stock item has been allocated"
-msgstr ""
+msgstr "Egydi követésre kötelezett készlet tétel lefoglalva"
 
 #: templates/js/translated/stock.js:1750
 msgid "Stock item has been fully allocated"
-msgstr ""
+msgstr "Készlet tétel teljes egészében lefoglalva"
 
 #: templates/js/translated/stock.js:1752
 msgid "Stock item has been partially allocated"
-msgstr ""
+msgstr "Készlet tétel részben lefoglalva"
 
 #: templates/js/translated/stock.js:1757
 msgid "Stock item has been installed in another item"
-msgstr ""
+msgstr "Kászlet tétel beépítve egy másikba"
 
 #: templates/js/translated/stock.js:1764
 msgid "Stock item has been rejected"
-msgstr ""
+msgstr "Készlet tétel elutasítva"
 
 #: templates/js/translated/stock.js:1766
 msgid "Stock item is lost"
-msgstr ""
+msgstr "Készlet tétel elveszett"
 
 #: templates/js/translated/stock.js:1768
 msgid "Stock item is destroyed"
-msgstr ""
+msgstr "Készlet tétel megsemmisült"
 
 #: templates/js/translated/stock.js:1772
 #: templates/js/translated/table_filters.js:188
@@ -9060,7 +9060,7 @@ msgstr "Beszállítói alkatrész nincs megadva"
 
 #: templates/js/translated/stock.js:1933
 msgid "No stock items matching query"
-msgstr ""
+msgstr "Nincs a lekérdezésnek megfelelő készlet tétel"
 
 #: templates/js/translated/stock.js:1954 templates/js/translated/stock.js:2002
 msgid "items"
@@ -9080,7 +9080,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:2270
 msgid "Set Stock Status"
-msgstr ""
+msgstr "Készlet állapot beállítása"
 
 #: templates/js/translated/stock.js:2284
 msgid "Select Status Code"
@@ -9116,7 +9116,7 @@ msgstr "Vevő már nem létezik"
 
 #: templates/js/translated/stock.js:2762
 msgid "Stock item no longer exists"
-msgstr ""
+msgstr "A készlet tétel már nem létezik"
 
 #: templates/js/translated/stock.js:2785
 msgid "Added"
@@ -9144,11 +9144,11 @@ msgstr ""
 
 #: templates/js/translated/stock.js:2973
 msgid "Install another stock item into this item"
-msgstr ""
+msgstr "Másik tétel beépítése ebbe a készlet tételbe"
 
 #: templates/js/translated/stock.js:2974
 msgid "Stock items can only be installed if they meet the following criteria"
-msgstr ""
+msgstr "Készlet tételek csak akkor építhetők be ha teljesítik a következő kritériumokat"
 
 #: templates/js/translated/stock.js:2976
 msgid "The Stock Item links to a Part which is the BOM for this Stock Item"
@@ -9160,7 +9160,7 @@ msgstr "A készlet tétel jelenleg elérhető készleten"
 
 #: templates/js/translated/stock.js:2978
 msgid "The Stock Item is serialized and does not belong to another item"
-msgstr ""
+msgstr "A készlet tétel egyedi követésre kötelezett és nem tartozik másik tételhez"
 
 #: templates/js/translated/stock.js:2991
 msgid "Select part to install"
@@ -9528,15 +9528,15 @@ msgstr "Email beállítások hiányoznak"
 
 #: templates/stock_table.html:14
 msgid "Export Stock Information"
-msgstr ""
+msgstr "Készlet adatok exportálása"
 
 #: templates/stock_table.html:20
 msgid "Barcode Actions"
-msgstr ""
+msgstr "Vonalkód műveletek"
 
 #: templates/stock_table.html:36
 msgid "Print test reports"
-msgstr ""
+msgstr "Teszt riportok nyomtatása"
 
 #: templates/stock_table.html:43
 msgid "Stock Options"
@@ -9544,43 +9544,43 @@ msgstr "Készlet opciók"
 
 #: templates/stock_table.html:48
 msgid "Add to selected stock items"
-msgstr ""
+msgstr "Kiválasztott tételek mennyiségének növelése"
 
 #: templates/stock_table.html:49
 msgid "Remove from selected stock items"
-msgstr ""
+msgstr "Kiválasztott tételek mennyiségének csökkentése"
 
 #: templates/stock_table.html:50
 msgid "Stocktake selected stock items"
-msgstr "Kiválsztott készlet tételek leltározása"
+msgstr "Kiválasztott készlet tételek leltározása"
 
 #: templates/stock_table.html:51
 msgid "Move selected stock items"
-msgstr ""
+msgstr "Kiválasztott tételek áthelyezése"
 
 #: templates/stock_table.html:51
 msgid "Move stock"
-msgstr ""
+msgstr "Készlet áthelyezése"
 
 #: templates/stock_table.html:52
 msgid "Merge selected stock items"
-msgstr ""
+msgstr "Kiválasztott tételek összevonása"
 
 #: templates/stock_table.html:52
 msgid "Merge stock"
-msgstr ""
+msgstr "Készlet összevonása"
 
 #: templates/stock_table.html:53
 msgid "Order selected items"
-msgstr ""
+msgstr "Kiválasztott tételek megrendelése"
 
 #: templates/stock_table.html:55
 msgid "Change status"
-msgstr ""
+msgstr "Állapot módosítása"
 
 #: templates/stock_table.html:55
 msgid "Change stock status"
-msgstr ""
+msgstr "Készlet állapot módosítása"
 
 #: templates/stock_table.html:58
 msgid "Delete selected items"
