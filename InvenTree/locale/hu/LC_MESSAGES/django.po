@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-22 01:07+0000\n"
-"PO-Revision-Date: 2022-02-23 11:09\n"
+"PO-Revision-Date: 2022-02-23 12:40\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1683,7 +1683,7 @@ msgstr "Összetevő"
 
 #: common/models.py:720
 msgid "Parts can be used as sub-components by default"
-msgstr "Alaktrészek alapból használhatók összetevőként más alkatrészekhez"
+msgstr "Alkatrészek alapból használhatók összetevőként más alkatrészekhez"
 
 #: common/models.py:726 part/models.py:968
 msgid "Purchaseable"
@@ -4520,7 +4520,7 @@ msgstr "Kategória elérési út"
 
 #: part/templates/part/category.html:94
 msgid "Top level part category"
-msgstr "Legfelső szintű alaktrész kategória"
+msgstr "Legfelső szintű alkatrész kategória"
 
 #: part/templates/part/category.html:114 part/templates/part/category.html:205
 #: part/templates/part/category_sidebar.html:7
@@ -4594,7 +4594,7 @@ msgstr ""
 
 #: part/templates/part/category_delete.html:13
 msgid "top level Parts category"
-msgstr "legfelső szintű alaktrész kategória"
+msgstr "legfelső szintű alkatrész kategória"
 
 #: part/templates/part/category_delete.html:25
 #, python-format
@@ -5093,7 +5093,7 @@ msgstr ""
 #: part/templates/part/partial_delete.html:22
 #, python-format
 msgid "This part is used in BOMs for %(count)s other parts. If you delete this part, the BOMs for the following parts will be updated"
-msgstr "Ez a alkatrész %(count)s másik alkatrész BOM-jában szerepel. Ha törlöd a következő alaktrészek módosítva lesznek"
+msgstr "Ez a alkatrész %(count)s másik alkatrész BOM-jában szerepel. Ha törlöd a következő alkatrészek módosítva lesznek"
 
 #: part/templates/part/partial_delete.html:32
 #, python-format
