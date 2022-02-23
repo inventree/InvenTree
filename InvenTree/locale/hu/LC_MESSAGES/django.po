@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-22 01:07+0000\n"
-"PO-Revision-Date: 2022-02-23 21:16\n"
+"PO-Revision-Date: 2022-02-23 22:15\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1090,11 +1090,11 @@ msgstr "Szükséges gyártási mennyiség nem lett elérve"
 
 #: build/serializers.py:464
 msgid "Build order has incomplete outputs"
-msgstr ""
+msgstr "A gyártási utasítás befejezetlen kimeneteket tartalmaz"
 
 #: build/serializers.py:467 build/templates/build/build_base.html:95
 msgid "No build outputs have been created for this build order"
-msgstr ""
+msgstr "Ehhez a gyártási utasításhoz nem készült kimenet"
 
 #: build/serializers.py:495 build/serializers.py:544 part/models.py:2829
 #: part/models.py:2988
@@ -1111,7 +1111,7 @@ msgstr ""
 
 #: build/serializers.py:561
 msgid "bom_item.part must point to the same part as the build order"
-msgstr ""
+msgstr "bom_item.part ugyanarra az alkatrészre kell mutasson mint a gyártási utasítás"
 
 #: build/serializers.py:576 stock/serializers.py:642
 msgid "Item must be in stock"
@@ -1873,19 +1873,19 @@ msgstr ""
 
 #: common/models.py:896
 msgid "Build Order Reference Prefix"
-msgstr ""
+msgstr "Gyártási utasítás azonosító előtag"
 
 #: common/models.py:897
 msgid "Prefix value for build order reference"
-msgstr ""
+msgstr "Előtag értéke a gyártási utasítás azonosítóhoz"
 
 #: common/models.py:902
 msgid "Build Order Reference Regex"
-msgstr ""
+msgstr "Gyártási utasítás azonosító reguláris kifejezés"
 
 #: common/models.py:903
 msgid "Regular expression pattern for matching build order reference"
-msgstr ""
+msgstr "Gyártási utasítás azonosítóra illeszkedő reguláris kifejezés"
 
 #: common/models.py:907
 msgid "Sales Order Reference Prefix"
@@ -3136,11 +3136,11 @@ msgstr "Alkatrész lekérdezés szűrők (vesszővel elválasztott kulcs=érték
 
 #: order/forms.py:24 order/templates/order/order_base.html:52
 msgid "Place order"
-msgstr ""
+msgstr "Rendelés leadása"
 
 #: order/forms.py:35 order/templates/order/order_base.html:60
 msgid "Mark order as complete"
-msgstr ""
+msgstr "Rendelés teljesítettnek jelölése"
 
 #: order/forms.py:46 order/forms.py:57 order/templates/order/order_base.html:47
 #: order/templates/order/sales_order_base.html:60
@@ -3149,7 +3149,7 @@ msgstr "Rendelés törlése"
 
 #: order/models.py:125
 msgid "Order description"
-msgstr ""
+msgstr "Rendelés leírása"
 
 #: order/models.py:127
 msgid "Link to external page"
@@ -3161,15 +3161,15 @@ msgstr ""
 
 #: order/models.py:142
 msgid "User or group responsible for this order"
-msgstr ""
+msgstr "Felhasználó vagy csoport aki felelőse ennek a rendelésnek"
 
 #: order/models.py:147
 msgid "Order notes"
-msgstr ""
+msgstr "Rendelés jegyzetek"
 
 #: order/models.py:214 order/models.py:542
 msgid "Order reference"
-msgstr ""
+msgstr "Rendelés azonosító"
 
 #: order/models.py:219 order/models.py:557
 msgid "Purchase order status"
@@ -3206,7 +3206,7 @@ msgstr "Várható beérkezés"
 
 #: order/models.py:250
 msgid "Expected date for order delivery. Order will be overdue after this date."
-msgstr ""
+msgstr "Várt teljesítési dátuma a megrendelésnek. Ezután számít majd megkésettnek."
 
 #: order/models.py:256
 msgid "Date order was completed"
@@ -3234,7 +3234,7 @@ msgstr "Vevő megrendelés azonosító kód"
 
 #: order/models.py:564
 msgid "Target date for order completion. Order will be overdue after this date."
-msgstr ""
+msgstr "Cél dátum a rendelés teljesítéséhez. Ez után számít majd késettnek."
 
 #: order/models.py:567 order/models.py:1048
 #: templates/js/translated/order.js:1281 templates/js/translated/order.js:1429
@@ -3251,15 +3251,15 @@ msgstr "A rendelés nem teljesíthető mivel nincs hozzárendelve alkatrész"
 
 #: order/models.py:644
 msgid "Only a pending order can be marked as complete"
-msgstr ""
+msgstr "Csak függő rendelés jelölhető késznek"
 
 #: order/models.py:647
 msgid "Order cannot be completed as there are incomplete shipments"
-msgstr ""
+msgstr "A rendelés nem jelölhető késznek mivel nem teljesített szállítások vannak"
 
 #: order/models.py:650
 msgid "Order cannot be completed as there are incomplete line items"
-msgstr ""
+msgstr "A rendelés nem jelölhető késznek mivel nem teljesített sortételek vannak"
 
 #: order/models.py:806
 msgid "Item quantity"
@@ -3267,11 +3267,11 @@ msgstr "Tétel mennyiség"
 
 #: order/models.py:812
 msgid "Line item reference"
-msgstr ""
+msgstr "Sortétel azonosító"
 
 #: order/models.py:814
 msgid "Line item notes"
-msgstr ""
+msgstr "Sortétel megjegyzései"
 
 #: order/models.py:842
 msgid "Supplier part must match supplier"
@@ -3280,7 +3280,7 @@ msgstr ""
 #: order/models.py:855 order/models.py:946 order/models.py:1042
 #: templates/js/translated/order.js:1820 templates/js/translated/stock.js:2395
 msgid "Order"
-msgstr ""
+msgstr "Rendelés"
 
 #: order/models.py:856 order/templates/order/order_base.html:9
 #: order/templates/order/order_base.html:18
@@ -3343,15 +3343,15 @@ msgstr ""
 
 #: order/models.py:1057
 msgid "User who checked this shipment"
-msgstr ""
+msgstr "Felhasználó aki ellenőrizte ezt a szállítmányt"
 
 #: order/models.py:1065
 msgid "Shipment number"
-msgstr ""
+msgstr "Szállítmány száma"
 
 #: order/models.py:1072
 msgid "Shipment notes"
-msgstr ""
+msgstr "Szállítás megjegyzései"
 
 #: order/models.py:1079
 msgid "Tracking Number"
@@ -3359,15 +3359,15 @@ msgstr ""
 
 #: order/models.py:1080
 msgid "Shipment tracking information"
-msgstr ""
+msgstr "Szállítmány nyomkövetési információ"
 
 #: order/models.py:1090
 msgid "Shipment has already been sent"
-msgstr ""
+msgstr "Szállítmány már elküldve"
 
 #: order/models.py:1093
 msgid "Shipment has no allocated stock items"
-msgstr ""
+msgstr "Szállítmány nem tartalmaz foglalt készlet tételeket"
 
 #: order/models.py:1171 order/models.py:1173
 msgid "Stock item has not been assigned"
@@ -3375,7 +3375,7 @@ msgstr "Készlet tétel nincs hozzárendelve"
 
 #: order/models.py:1177
 msgid "Cannot allocate stock item to a line with a different part"
-msgstr ""
+msgstr "Nem foglalható készlet egy másik fajta alkatrész sortételéhez"
 
 #: order/models.py:1179
 msgid "Cannot allocate stock to a line without a part"
@@ -3395,11 +3395,11 @@ msgstr "Egyedi követésre kötelezett tételeknél a menyiség 1 kell legyen"
 
 #: order/models.py:1195
 msgid "Sales order does not match shipment"
-msgstr ""
+msgstr "Vevői rendelés nem egyezik a szállítással"
 
 #: order/models.py:1196
 msgid "Shipment does not match sales order"
-msgstr ""
+msgstr "Szállítás nem egyezik a vevői rendeléssel"
 
 #: order/models.py:1204
 msgid "Line"
@@ -3408,11 +3408,11 @@ msgstr ""
 #: order/models.py:1212 order/serializers.py:831 order/serializers.py:959
 #: templates/js/translated/model_renderers.js:285
 msgid "Shipment"
-msgstr ""
+msgstr "Szállítmány"
 
 #: order/models.py:1213
 msgid "Sales order shipment reference"
-msgstr ""
+msgstr "Vevői rendelés szállítás azonosító"
 
 #: order/models.py:1225
 msgid "Item"
@@ -3432,15 +3432,15 @@ msgstr "Beszérzési ár pénzneme"
 
 #: order/serializers.py:211 order/serializers.py:796
 msgid "Line Item"
-msgstr ""
+msgstr "Sortétel"
 
 #: order/serializers.py:217
 msgid "Line item does not match purchase order"
-msgstr ""
+msgstr "Sortétel nem egyezik a beszerzési megrendeléssel"
 
 #: order/serializers.py:227 order/serializers.py:295
 msgid "Select destination location for received items"
-msgstr ""
+msgstr "Válassz cél helyet a beérkezett tételeknek"
 
 #: order/serializers.py:251
 msgid "Barcode Hash"
@@ -3456,7 +3456,7 @@ msgstr "Ez a vonalkód már használva van"
 
 #: order/serializers.py:307
 msgid "Line items must be provided"
-msgstr ""
+msgstr "Sortételt meg kell adni"
 
 #: order/serializers.py:324
 msgid "Destination location must be specified"
@@ -3472,11 +3472,11 @@ msgstr "Eladási ár pénzneme"
 
 #: order/serializers.py:655
 msgid "No shipment details provided"
-msgstr ""
+msgstr "Nincsenek szállítmány részletek megadva"
 
 #: order/serializers.py:705 order/serializers.py:808
 msgid "Line item is not associated with this order"
-msgstr ""
+msgstr "Sortétel nincs hozzárendelve ehhez a rendeléshez"
 
 #: order/serializers.py:727
 msgid "Quantity must be positive"
@@ -3484,71 +3484,71 @@ msgstr "Mennyiség pozitív kell legyen"
 
 #: order/serializers.py:821
 msgid "Enter serial numbers to allocate"
-msgstr ""
+msgstr "Írd be a sorozatszámokat a kiosztáshoz"
 
 #: order/serializers.py:845 order/serializers.py:970
 msgid "Shipment has already been shipped"
-msgstr ""
+msgstr "Szállítmány kiszállítva"
 
 #: order/serializers.py:848 order/serializers.py:973
 msgid "Shipment is not associated with this order"
-msgstr ""
+msgstr "Szállítás nincs hozzárendelve ehhez a rendeléshez"
 
 #: order/serializers.py:900
 msgid "No match found for the following serial numbers"
-msgstr ""
+msgstr "Nincs találat a következő sorozatszámokra"
 
 #: order/serializers.py:910
 msgid "The following serial numbers are already allocated"
-msgstr ""
+msgstr "A következő sorozatszámok már ki lettek osztva"
 
 #: order/templates/order/delete_attachment.html:5
 #: stock/templates/stock/attachment_delete.html:5
 msgid "Are you sure you want to delete this attachment?"
-msgstr ""
+msgstr "Biztos törölni akarod ezt a mellékletet?"
 
 #: order/templates/order/order_base.html:33
 msgid "Print purchase order report"
-msgstr ""
+msgstr "Beszerzési rendelés nyomtatása"
 
 #: order/templates/order/order_base.html:35
 #: order/templates/order/sales_order_base.html:45
 msgid "Export order to file"
-msgstr ""
+msgstr "Rendelés exportálása fájlba"
 
 #: order/templates/order/order_base.html:41
 #: order/templates/order/sales_order_base.html:54
 msgid "Order actions"
-msgstr ""
+msgstr "Rendelés műveletek"
 
 #: order/templates/order/order_base.html:45
 #: order/templates/order/sales_order_base.html:58
 msgid "Edit order"
-msgstr ""
+msgstr "Rendelés szerkesztése"
 
 #: order/templates/order/order_base.html:56
 msgid "Receive items"
-msgstr ""
+msgstr "Érkezett tételek bevételezése"
 
 #: order/templates/order/order_base.html:58
 #: order/templates/order/purchase_order_detail.html:31
 msgid "Receive Items"
-msgstr ""
+msgstr "Bevételezés"
 
 #: order/templates/order/order_base.html:62
 #: order/templates/order/sales_order_base.html:67 order/views.py:181
 msgid "Complete Order"
-msgstr ""
+msgstr "Rendelés kész"
 
 #: order/templates/order/order_base.html:84
 #: order/templates/order/sales_order_base.html:79
 msgid "Order Reference"
-msgstr ""
+msgstr "Rendelési azonosító"
 
 #: order/templates/order/order_base.html:89
 #: order/templates/order/sales_order_base.html:84
 msgid "Order Description"
-msgstr ""
+msgstr "Rendelés leírása"
 
 #: order/templates/order/order_base.html:94
 #: order/templates/order/sales_order_base.html:89
@@ -3559,61 +3559,61 @@ msgstr "Rendelés állapota"
 #: order/templates/order/order_base.html:124
 #: order/templates/order/sales_order_base.html:128
 msgid "Completed Line Items"
-msgstr ""
+msgstr "Kész sortételek"
 
 #: order/templates/order/order_base.html:130
 #: order/templates/order/sales_order_base.html:134
 #: order/templates/order/sales_order_base.html:144
 msgid "Incomplete"
-msgstr ""
+msgstr "Hiányos"
 
 #: order/templates/order/order_base.html:149
 #: report/templates/report/inventree_build_order_base.html:122
 msgid "Issued"
-msgstr ""
+msgstr "Kiküldve"
 
 #: order/templates/order/order_base.html:219
 msgid "Edit Purchase Order"
-msgstr ""
+msgstr "Beszerzési rendelés szerkesztése"
 
 #: order/templates/order/order_cancel.html:8
 msgid "Cancelling this order means that the order and line items will no longer be editable."
-msgstr "A rendelés törlésével annak adatai és tételei a továbbiakban már nem lesznek szerkeszthetők."
+msgstr "A rendelés törlésével annak adatai és sortételei a továbbiakban már nem lesznek szerkeszthetők."
 
 #: order/templates/order/order_complete.html:7
 msgid "Mark this order as complete?"
-msgstr ""
+msgstr "Rendelés késznek jelölése?"
 
 #: order/templates/order/order_complete.html:10
 msgid "This order has line items which have not been marked as received."
-msgstr ""
+msgstr "Ez a rendelés olyan sortételeket tartalmaz amik még nem érkeztek be."
 
 #: order/templates/order/order_complete.html:11
 msgid "Completing this order means that the order and line items will no longer be editable."
-msgstr ""
+msgstr "A rendelés készre jelölésével annak adatai és sortételei a továbbiakban már nem lesznek szerkeszthetők."
 
 #: order/templates/order/order_issue.html:8
 msgid "After placing this purchase order, line items will no longer be editable."
-msgstr ""
+msgstr "A beszerzési rendelés kiküldése után annak sortételei a továbbiakban már nem lesznek szerkeszthetők."
 
 #: order/templates/order/order_wizard/match_parts.html:12
 #: part/templates/part/import_wizard/ajax_match_references.html:12
 #: part/templates/part/import_wizard/match_references.html:12
 msgid "Errors exist in the submitted data"
-msgstr ""
+msgstr "Hibák vannak a küldött adatokban"
 
 #: order/templates/order/order_wizard/match_parts.html:21
 #: part/templates/part/import_wizard/match_fields.html:29
 #: part/templates/part/import_wizard/match_references.html:21
 #: templates/patterns/wizard/match_fields.html:28
 msgid "Submit Selections"
-msgstr ""
+msgstr "Kiválasztás küldése"
 
 #: order/templates/order/order_wizard/match_parts.html:28
 #: part/templates/part/import_wizard/ajax_match_references.html:21
 #: part/templates/part/import_wizard/match_references.html:28
 msgid "Row"
-msgstr ""
+msgstr "Sor"
 
 #: order/templates/order/order_wizard/match_parts.html:29
 msgid "Select Supplier Part"
@@ -3630,15 +3630,15 @@ msgstr "Beszállítói alkatrész kiválasztása"
 #: templates/js/translated/stock.js:602 templates/js/translated/stock.js:770
 #: templates/patterns/wizard/match_fields.html:70
 msgid "Remove row"
-msgstr ""
+msgstr "Sor törlése"
 
 #: order/templates/order/order_wizard/po_upload.html:8
 msgid "Return to Orders"
-msgstr ""
+msgstr "Vissza a rendelésekhez"
 
 #: order/templates/order/order_wizard/po_upload.html:17
 msgid "Upload File for Purchase Order"
-msgstr ""
+msgstr "Fájl feltöltése a beszerzési megrendeléshez"
 
 #: order/templates/order/order_wizard/po_upload.html:25
 #: part/templates/part/import_wizard/ajax_part_upload.html:10
@@ -3646,11 +3646,11 @@ msgstr ""
 #: templates/patterns/wizard/upload.html:11
 #, python-format
 msgid "Step %(step)s of %(count)s"
-msgstr ""
+msgstr "%(step)s/%(count)s. lépés"
 
 #: order/templates/order/order_wizard/po_upload.html:55
 msgid "Order is already processed. Files cannot be uploaded."
-msgstr ""
+msgstr "A rendelést már feldolgozták. Így már nem lehet fájlokat feltölteni."
 
 #: order/templates/order/order_wizard/select_parts.html:11
 msgid "Step 1 of 2 - Select Part Suppliers"
@@ -3680,11 +3680,11 @@ msgstr "Beszállító kiválasztása <em>%(name)s</em>-hez"
 #: order/templates/order/order_wizard/select_parts.html:77
 #: part/templates/part/set_category.html:32
 msgid "Remove part"
-msgstr ""
+msgstr "Alkatrész eltávolítása"
 
 #: order/templates/order/order_wizard/select_pos.html:8
 msgid "Step 2 of 2 - Select Purchase Orders"
-msgstr ""
+msgstr "Lépés 2/2 - Beszerzési rendelések kiválasztása"
 
 #: order/templates/order/order_wizard/select_pos.html:12
 msgid "Select existing purchase orders, or create new orders."
@@ -3698,7 +3698,7 @@ msgstr "Tételek"
 
 #: order/templates/order/order_wizard/select_pos.html:32
 msgid "Select Purchase Order"
-msgstr ""
+msgstr "Beszerzési rendelés kiválasztása"
 
 #: order/templates/order/order_wizard/select_pos.html:45
 #, python-format
@@ -3708,64 +3708,64 @@ msgstr "Új beszerzési rendelés létrehozása %(name)s-hez"
 #: order/templates/order/order_wizard/select_pos.html:68
 #, python-format
 msgid "Select a purchase order for %(name)s"
-msgstr ""
+msgstr "Beszerzési rendelés kiválasztása %(name)s-hez"
 
 #: order/templates/order/po_sidebar.html:5
 #: order/templates/order/so_sidebar.html:5
 #: report/templates/report/inventree_po_report.html:85
 #: report/templates/report/inventree_so_report.html:85
 msgid "Line Items"
-msgstr ""
+msgstr "Sortételek"
 
 #: order/templates/order/po_sidebar.html:7
 msgid "Received Stock"
-msgstr ""
+msgstr "Beérkezett készlet"
 
 #: order/templates/order/purchase_order_detail.html:18
 msgid "Purchase Order Items"
-msgstr ""
+msgstr "Beszerzési rendelés tételei"
 
 #: order/templates/order/purchase_order_detail.html:27
 #: order/templates/order/purchase_order_detail.html:181
 #: order/templates/order/sales_order_detail.html:23
 #: order/templates/order/sales_order_detail.html:244
 msgid "Add Line Item"
-msgstr ""
+msgstr "Sortétel hozzáadása"
 
 #: order/templates/order/purchase_order_detail.html:30
 msgid "Receive selected items"
-msgstr ""
+msgstr "Kiválasztott tételek bevételezése"
 
 #: order/templates/order/purchase_order_detail.html:50
 msgid "Received Items"
-msgstr ""
+msgstr "Érkezett tételek"
 
 #: order/templates/order/purchase_order_detail.html:76
 #: order/templates/order/sales_order_detail.html:123
 msgid "Order Notes"
-msgstr ""
+msgstr "Rendelés megjegyzések"
 
 #: order/templates/order/purchase_orders.html:30
 #: order/templates/order/sales_orders.html:33
 msgid "Print Order Reports"
-msgstr ""
+msgstr "Rendelés riportok nyomtatása"
 
 #: order/templates/order/sales_order_base.html:43
 msgid "Print sales order report"
-msgstr ""
+msgstr "Vevői rendelés nyomtatása"
 
 #: order/templates/order/sales_order_base.html:47
 msgid "Print packing list"
-msgstr ""
+msgstr "Csomagolási lista nyomtatása"
 
 #: order/templates/order/sales_order_base.html:66
 #: order/templates/order/sales_order_base.html:229
 msgid "Complete Sales Order"
-msgstr ""
+msgstr "Vevői rendelés kész"
 
 #: order/templates/order/sales_order_base.html:102
 msgid "This Sales Order has not been fully allocated"
-msgstr ""
+msgstr "Ez a vevő rendelés nincs teljesen lefoglalva"
 
 #: order/templates/order/sales_order_base.html:122
 #: templates/js/translated/order.js:1253
@@ -3776,11 +3776,11 @@ msgstr "Vevő azonosító"
 #: order/templates/order/sales_order_detail.html:78
 #: order/templates/order/so_sidebar.html:11
 msgid "Completed Shipments"
-msgstr ""
+msgstr "Kész szállítások"
 
 #: order/templates/order/sales_order_base.html:215
 msgid "Edit Sales Order"
-msgstr ""
+msgstr "Vevői rendelés szerkesztése"
 
 #: order/templates/order/sales_order_cancel.html:8
 #: stock/templates/stock/stockitem_convert.html:13
@@ -3793,21 +3793,21 @@ msgstr "A rendelés törlésével annak adatai a továbbiakban már nem lesznek 
 
 #: order/templates/order/sales_order_detail.html:18
 msgid "Sales Order Items"
-msgstr ""
+msgstr "Vevői rendelés tételek"
 
 #: order/templates/order/sales_order_detail.html:44
 #: order/templates/order/so_sidebar.html:8
 msgid "Pending Shipments"
-msgstr ""
+msgstr "Függő szállítmányok"
 
 #: order/templates/order/sales_order_detail.html:48
 #: templates/js/translated/bom.js:945 templates/js/translated/build.js:1465
 msgid "Actions"
-msgstr ""
+msgstr "Műveletek"
 
 #: order/templates/order/sales_order_detail.html:57
 msgid "New Shipment"
-msgstr ""
+msgstr "Új szállítmány"
 
 #: order/views.py:99
 msgid "Cancel Order"
@@ -3827,23 +3827,23 @@ msgstr "Vevő megrendelés törlése"
 
 #: order/views.py:151
 msgid "Issue Order"
-msgstr ""
+msgstr "Rendelés kiadása"
 
 #: order/views.py:160
 msgid "Confirm order placement"
-msgstr ""
+msgstr "Rendelés kiadás megerősítése"
 
 #: order/views.py:170
 msgid "Purchase order issued"
-msgstr ""
+msgstr "Beszerzési rendelés kiadva"
 
 #: order/views.py:197
 msgid "Confirm order completion"
-msgstr ""
+msgstr "Rendelés teljesítésének megerősítése"
 
 #: order/views.py:208
 msgid "Purchase order completed"
-msgstr ""
+msgstr "Beszerzési rendelés kész"
 
 #: order/views.py:245
 msgid "Match Supplier Parts"
@@ -3860,7 +3860,7 @@ msgstr "{n} alkatrész megrendelve"
 
 #: order/views.py:858
 msgid "Sales order not found"
-msgstr ""
+msgstr "Vevő rendelés nem találhtó"
 
 #: order/views.py:864
 msgid "Price not found"
@@ -4123,7 +4123,7 @@ msgstr "Ez egy virtuális nem megfogható alkatrész, pl. szoftver vagy licenc?"
 
 #: part/models.py:989
 msgid "Part notes - supports Markdown formatting"
-msgstr ""
+msgstr "Alkatrész megjegyzései - támogatja a Markdown formázást"
 
 #: part/models.py:992
 msgid "BOM checksum"
@@ -4313,7 +4313,7 @@ msgstr ""
 
 #: part/models.py:2717
 msgid "BOM item notes"
-msgstr ""
+msgstr "BOM tétel megjegyzései"
 
 #: part/models.py:2719
 msgid "Checksum"
@@ -4773,7 +4773,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:845
 msgid "Edit Part Notes"
-msgstr ""
+msgstr "Alkatrész megjegyzések szerkesztése"
 
 #: part/templates/part/detail.html:958
 #, python-format
@@ -5529,7 +5529,7 @@ msgstr ""
 
 #: report/templates/report/inventree_build_order_base.html:147
 msgid "Required For"
-msgstr ""
+msgstr "Szükséges ehhez"
 
 #: report/templates/report/inventree_test_report_base.html:21
 msgid "Stock Item Test Report"
@@ -5543,7 +5543,7 @@ msgstr ""
 #: templates/js/translated/order.js:99 templates/js/translated/order.js:1945
 #: templates/js/translated/order.js:2034 templates/js/translated/stock.js:424
 msgid "Serial Number"
-msgstr ""
+msgstr "Sorozatszám"
 
 #: report/templates/report/inventree_test_report_base.html:88
 msgid "Test Results"
@@ -5834,7 +5834,7 @@ msgstr "Készlet tétel nem mozgatható mivel nincs készleten"
 
 #: stock/models.py:1896
 msgid "Entry notes"
-msgstr ""
+msgstr "Bejegyzés megjegyzései"
 
 #: stock/models.py:1953
 msgid "Value must be provided for this test"
@@ -5862,7 +5862,7 @@ msgstr ""
 
 #: stock/models.py:2002
 msgid "Test notes"
-msgstr ""
+msgstr "Tesztek megjegyzései"
 
 #: stock/serializers.py:173
 msgid "Purchase price of this stock item"
@@ -7318,7 +7318,7 @@ msgstr ""
 
 #: templates/email/build_order_required_stock.html:7
 msgid "Stock is required for the following build order"
-msgstr ""
+msgstr "Készlet szükséges a következő gyártási utasításhoz"
 
 #: templates/email/build_order_required_stock.html:8
 #, python-format
@@ -7327,7 +7327,7 @@ msgstr "%(build)s gyártási utasítás - %(quantity)s x %(part)s alkatrész gy�
 
 #: templates/email/build_order_required_stock.html:10
 msgid "Click on the following link to view this build order"
-msgstr ""
+msgstr "Klikk a következő linkre a gyártási utasítás megjelenítéséhez"
 
 #: templates/email/build_order_required_stock.html:14
 msgid "The following parts are low on required stock"
@@ -7590,12 +7590,12 @@ msgstr ""
 #: templates/js/translated/bom.js:252 templates/js/translated/bom.js:286
 #: templates/js/translated/order.js:369 templates/js/translated/stock.js:519
 msgid "Format"
-msgstr ""
+msgstr "Formátum"
 
 #: templates/js/translated/bom.js:253 templates/js/translated/bom.js:287
 #: templates/js/translated/order.js:370 templates/js/translated/stock.js:520
 msgid "Select file format"
-msgstr ""
+msgstr "Fájlfomátum kiválasztása"
 
 #: templates/js/translated/bom.js:294
 msgid "Cascading"
@@ -7833,7 +7833,7 @@ msgstr "Nincs gyártási utasításhoz történő foglalás"
 
 #: templates/js/translated/build.js:703 templates/js/translated/order.js:1848
 msgid "Location not specified"
-msgstr ""
+msgstr "Hely nincs megadva"
 
 #: templates/js/translated/build.js:885
 msgid "No active build outputs found"
@@ -7868,11 +7868,11 @@ msgstr "Mennyiség per"
 #: templates/js/translated/build.js:1416 templates/js/translated/build.js:1656
 #: templates/js/translated/build.js:2055 templates/js/translated/order.js:2227
 msgid "Allocated"
-msgstr ""
+msgstr "Lefoglalva"
 
 #: templates/js/translated/build.js:1472 templates/js/translated/order.js:2307
 msgid "Build stock"
-msgstr ""
+msgstr "Gyártási készlet"
 
 #: templates/js/translated/build.js:1476 templates/stock_table.html:53
 msgid "Order stock"
@@ -7880,7 +7880,7 @@ msgstr "Készlet rendelés"
 
 #: templates/js/translated/build.js:1479 templates/js/translated/order.js:2300
 msgid "Allocate stock"
-msgstr ""
+msgstr "Lefoglalt készlet"
 
 #: templates/js/translated/build.js:1558 templates/js/translated/order.js:1499
 msgid "Specify stock allocation quantity"
@@ -7893,7 +7893,7 @@ msgstr "Kiválasztott alkatrészek"
 
 #: templates/js/translated/build.js:1630 templates/js/translated/order.js:1551
 msgid "You must select at least one part to allocate"
-msgstr ""
+msgstr "Legalább egy alkatrész választása szükséges a foglaláshoz"
 
 #: templates/js/translated/build.js:1644 templates/js/translated/order.js:1565
 msgid "Select source location (leave blank to take from all locations)"
@@ -7913,7 +7913,7 @@ msgstr "Nincs egyező készlethely"
 
 #: templates/js/translated/build.js:1757 templates/js/translated/order.js:1690
 msgid "No matching stock items"
-msgstr ""
+msgstr "Nincs egyező készlet"
 
 #: templates/js/translated/build.js:1875
 msgid "No builds matching query"
@@ -8261,7 +8261,7 @@ msgstr ""
 
 #: templates/js/translated/model_renderers.js:287
 msgid "Shipment ID"
-msgstr ""
+msgstr "Szállítmány azonosító"
 
 #: templates/js/translated/model_renderers.js:307
 msgid "Category ID"
@@ -8277,23 +8277,23 @@ msgstr ""
 
 #: templates/js/translated/order.js:75
 msgid "No stock items have been allocated to this shipment"
-msgstr ""
+msgstr "Ehhez a szállítmányhoz nincs készlet hozzárendelve"
 
 #: templates/js/translated/order.js:80
 msgid "The following stock items will be shipped"
-msgstr ""
+msgstr "A következő készlet tételek ki lesznek szállítva"
 
 #: templates/js/translated/order.js:120
 msgid "Complete Shipment"
-msgstr ""
+msgstr "Szállítmány kész"
 
 #: templates/js/translated/order.js:126
 msgid "Confirm Shipment"
-msgstr ""
+msgstr "Szállítmány megerősítése"
 
 #: templates/js/translated/order.js:181
 msgid "Create New Shipment"
-msgstr ""
+msgstr "Szállítmány létrehozása"
 
 #: templates/js/translated/order.js:206
 msgid "Add Customer"
@@ -8301,19 +8301,19 @@ msgstr "Vevő hozzáadása"
 
 #: templates/js/translated/order.js:231
 msgid "Create Sales Order"
-msgstr ""
+msgstr "Vevői rendelés létrehozása"
 
 #: templates/js/translated/order.js:366
 msgid "Export Order"
-msgstr ""
+msgstr "Rendelés exportálása"
 
 #: templates/js/translated/order.js:460
 msgid "Select Line Items"
-msgstr ""
+msgstr "Sortételek kiválasztása"
 
 #: templates/js/translated/order.js:461
 msgid "At least one line item must be selected"
-msgstr ""
+msgstr "Legalább egy sortételt ki kell választani"
 
 #: templates/js/translated/order.js:486
 msgid "Quantity to receive"
@@ -8325,27 +8325,27 @@ msgstr "Készlet állapota"
 
 #: templates/js/translated/order.js:587
 msgid "Order Code"
-msgstr ""
+msgstr "Rendelési kód"
 
 #: templates/js/translated/order.js:588
 msgid "Ordered"
-msgstr ""
+msgstr "Megrendelve"
 
 #: templates/js/translated/order.js:590
 msgid "Receive"
-msgstr ""
+msgstr "Most érkezett"
 
 #: templates/js/translated/order.js:609
 msgid "Confirm receipt of items"
-msgstr ""
+msgstr "Bevételezés megerősítése"
 
 #: templates/js/translated/order.js:610
 msgid "Receive Purchase Order Items"
-msgstr ""
+msgstr "Beszerzési rendelés tételeinek bevételezése"
 
 #: templates/js/translated/order.js:790 templates/js/translated/part.js:809
 msgid "No purchase orders found"
-msgstr ""
+msgstr "Nem található beszerzési rendelés"
 
 #: templates/js/translated/order.js:815 templates/js/translated/order.js:1230
 msgid "Order is overdue"
@@ -8353,19 +8353,19 @@ msgstr "Rendelés megkésett"
 
 #: templates/js/translated/order.js:936 templates/js/translated/order.js:2356
 msgid "Edit Line Item"
-msgstr ""
+msgstr "Sortétel szerkesztése"
 
 #: templates/js/translated/order.js:948 templates/js/translated/order.js:2367
 msgid "Delete Line Item"
-msgstr ""
+msgstr "Sortétel törlése"
 
 #: templates/js/translated/order.js:987
 msgid "No line items found"
-msgstr ""
+msgstr "Nem találhatók sortételek"
 
 #: templates/js/translated/order.js:1014 templates/js/translated/order.js:2138
 msgid "Total"
-msgstr ""
+msgstr "Összesen"
 
 #: templates/js/translated/order.js:1068 templates/js/translated/order.js:2163
 #: templates/js/translated/part.js:1841 templates/js/translated/part.js:2052
@@ -8378,19 +8378,19 @@ msgstr "Teljes ár"
 
 #: templates/js/translated/order.js:1161 templates/js/translated/order.js:2313
 msgid "Edit line item"
-msgstr ""
+msgstr "Sortétel szerkesztése"
 
 #: templates/js/translated/order.js:1162 templates/js/translated/order.js:2317
 msgid "Delete line item"
-msgstr ""
+msgstr "Sortétel törlése"
 
 #: templates/js/translated/order.js:1166 templates/js/translated/part.js:942
 msgid "Receive line item"
-msgstr ""
+msgstr "Sorétel bevételezése"
 
 #: templates/js/translated/order.js:1206
 msgid "No sales orders found"
-msgstr ""
+msgstr "Nem található vevői rendelés"
 
 #: templates/js/translated/order.js:1244
 msgid "Invalid Customer"
@@ -8398,43 +8398,43 @@ msgstr "Érvénytelen vevő"
 
 #: templates/js/translated/order.js:1322
 msgid "Edit shipment"
-msgstr ""
+msgstr "Szállítmány szerkesztése"
 
 #: templates/js/translated/order.js:1325
 msgid "Complete shipment"
-msgstr ""
+msgstr "Szállítmány kész"
 
 #: templates/js/translated/order.js:1330
 msgid "Delete shipment"
-msgstr ""
+msgstr "Szállítmány törlése"
 
 #: templates/js/translated/order.js:1350
 msgid "Edit Shipment"
-msgstr ""
+msgstr "Szállítmány szerkesztése"
 
 #: templates/js/translated/order.js:1367
 msgid "Delete Shipment"
-msgstr ""
+msgstr "Szállítmány törlése"
 
 #: templates/js/translated/order.js:1401
 msgid "No matching shipments found"
-msgstr ""
+msgstr "Nincs egyező szállímány"
 
 #: templates/js/translated/order.js:1411
 msgid "Shipment Reference"
-msgstr ""
+msgstr "Szállítmány azonosító"
 
 #: templates/js/translated/order.js:1435
 msgid "Not shipped"
-msgstr ""
+msgstr "Nincs szállítva"
 
 #: templates/js/translated/order.js:1441
 msgid "Tracking"
-msgstr ""
+msgstr "Követés"
 
 #: templates/js/translated/order.js:1601
 msgid "Allocate Stock Items to Sales Order"
-msgstr ""
+msgstr "Készlet foglalása a vevői rendeléshez"
 
 #: templates/js/translated/order.js:1809
 msgid "No sales order allocations found"
@@ -8446,7 +8446,7 @@ msgstr "Készlet foglalások szerkesztése"
 
 #: templates/js/translated/order.js:1915
 msgid "Confirm Delete Operation"
-msgstr ""
+msgstr "Törlési művelet megerősítése"
 
 #: templates/js/translated/order.js:1916
 msgid "Delete Stock Allocation"
@@ -8455,15 +8455,15 @@ msgstr "Készlet foglalások törlése"
 #: templates/js/translated/order.js:1959 templates/js/translated/order.js:2048
 #: templates/js/translated/stock.js:1560
 msgid "Shipped to customer"
-msgstr ""
+msgstr "Vevőnek kiszállítva"
 
 #: templates/js/translated/order.js:1967 templates/js/translated/order.js:2057
 msgid "Stock location not specified"
-msgstr ""
+msgstr "Készlethely nincs megadva"
 
 #: templates/js/translated/order.js:2297
 msgid "Allocate serial numbers"
-msgstr ""
+msgstr "Sorozatszámok kiosztása"
 
 #: templates/js/translated/order.js:2303
 msgid "Purchase stock"
@@ -8491,7 +8491,7 @@ msgstr "Egységár módosítása"
 
 #: templates/js/translated/order.js:2498
 msgid "No matching line items"
-msgstr ""
+msgstr "Nincs egyező sortétel"
 
 #: templates/js/translated/part.js:54
 msgid "Part Attributes"
@@ -8531,7 +8531,7 @@ msgstr "Add meg a kezdeti készlet mennyiségét ennek az alkatrésznek"
 
 #: templates/js/translated/part.js:180
 msgid "Select destination stock location"
-msgstr ""
+msgstr "Válassz cél készlet helyet"
 
 #: templates/js/translated/part.js:198
 msgid "Copy Category Parameters"
@@ -8603,7 +8603,7 @@ msgstr "Értesítések letiltva erre a tételre"
 
 #: templates/js/translated/part.js:444
 msgid "Validating the BOM will mark each line item as valid"
-msgstr ""
+msgstr "A BOM érvényesítése minden sortételt érvényesnek jelöl"
 
 #: templates/js/translated/part.js:454
 msgid "Validate Bill of Materials"
