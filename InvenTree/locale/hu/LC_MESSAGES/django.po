@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-22 01:07+0000\n"
-"PO-Revision-Date: 2022-02-23 20:06\n"
+"PO-Revision-Date: 2022-02-23 21:16\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -540,7 +540,7 @@ msgstr "Érvénytelen pénznem kód"
 
 #: InvenTree/validators.py:53
 msgid "Invalid character in part name"
-msgstr "Érvénytelen karakter az alkatrész névben"
+msgstr "Érvénytelen karakter a termék névben"
 
 #: InvenTree/validators.py:66
 #, python-brace-format
@@ -720,11 +720,11 @@ msgstr "Gyártás, amihez ez a gyártás hozzá van rendelve"
 #: templates/js/translated/stock.js:935 templates/js/translated/stock.js:1658
 #: templates/js/translated/stock.js:2891 templates/js/translated/stock.js:2990
 msgid "Part"
-msgstr "Alkatrész"
+msgstr "Termék"
 
 #: build/models.py:235
 msgid "Select part to build"
-msgstr "Válassz alkatrészt a gyártáshoz"
+msgstr "Válassz terméket a gyártáshoz"
 
 #: build/models.py:240
 msgid "Sales Order Reference"
@@ -982,7 +982,7 @@ msgstr "Gyártási kimenet nem egyezik a szülő gyártással"
 
 #: build/serializers.py:154
 msgid "Output part does not match BuildOrder part"
-msgstr "Kimeneti alkatrész nem egyezik a gyártási utasítás alkatrésszel"
+msgstr "Kimeneti termék nem egyezik a gyártási utasításban lévő termékkel"
 
 #: build/serializers.py:158
 msgid "This build output has already been completed"
@@ -1004,11 +1004,11 @@ msgstr "Mennyiségnek nullánál többnek kell lennie"
 
 #: build/serializers.py:208
 msgid "Integer quantity required for trackable parts"
-msgstr "Egész számú mennyiség szükséges az egyedi követésre kötelezett alkatrészeknél"
+msgstr "Egész számú mennyiség szükséges az egyedi követésre kötelezett termékeknél"
 
 #: build/serializers.py:211
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
-msgstr "Egész számú mennyiség szükséges, mivel a BOM egyedi követésre kötelezett alkatrészeket tartalmaz"
+msgstr "Egész számú mennyiség szükséges, mivel a BOM egyedi követésre kötelezett termékeket tartalmaz"
 
 #: build/serializers.py:225 order/serializers.py:820 stock/forms.py:78
 #: stock/serializers.py:314 templates/js/translated/stock.js:239
@@ -1124,7 +1124,7 @@ msgstr "Rendelkezésre álló mennyiség ({q}) túllépve"
 
 #: build/serializers.py:638
 msgid "Build output must be specified for allocation of tracked parts"
-msgstr "Gyártási kimenetet meg kell adni a követésre kötelezett alkatrészek lefoglalásához"
+msgstr "Gyártási kimenetet meg kell adni a követésre kötelezett termékek lefoglalásához"
 
 #: build/serializers.py:645
 msgid "Build output cannot be specified for allocation of untracked parts"
@@ -1562,11 +1562,11 @@ msgstr "Példány név használata a címsorban"
 
 #: common/models.py:624 company/models.py:100 company/models.py:101
 msgid "Company name"
-msgstr ""
+msgstr "Cég neve"
 
 #: common/models.py:625
 msgid "Internal company name"
-msgstr ""
+msgstr "Belső cégnév"
 
 #: common/models.py:630
 msgid "Base URL"
@@ -1578,11 +1578,11 @@ msgstr "Alap URL a kiszolgáló példányhoz"
 
 #: common/models.py:637
 msgid "Default Currency"
-msgstr ""
+msgstr "Alapértelmezett pénznem"
 
 #: common/models.py:638
 msgid "Default currency"
-msgstr ""
+msgstr "Alapértelmezett pénznem"
 
 #: common/models.py:644
 msgid "Download from URL"
@@ -1733,15 +1733,15 @@ msgstr ""
 
 #: common/models.py:761
 msgid "Show Price in Forms"
-msgstr ""
+msgstr "Ár megjelenítése a formokon"
 
 #: common/models.py:762
 msgid "Display part price in some forms"
-msgstr ""
+msgstr "Alkatrész árak megjelenítése néhány formon"
 
 #: common/models.py:773
 msgid "Show Price in BOM"
-msgstr ""
+msgstr "Ár megjelenítése a BOM-ban"
 
 #: common/models.py:774
 msgid "Include pricing information in BOM tables"
@@ -1749,7 +1749,7 @@ msgstr ""
 
 #: common/models.py:785
 msgid "Show Price History"
-msgstr ""
+msgstr "Ártörténet megjelenítése"
 
 #: common/models.py:786
 msgid "Display historical pricing for Part"
@@ -1773,7 +1773,7 @@ msgstr "Kezdeti készlet megadása az alkatrész létrehozásakor"
 
 #: common/models.py:806
 msgid "Internal Prices"
-msgstr ""
+msgstr "Belső árak"
 
 #: common/models.py:807
 msgid "Enable internal prices for parts"
@@ -1781,11 +1781,11 @@ msgstr "Alkatrészekhez belső ár engedélyezése"
 
 #: common/models.py:813
 msgid "Internal Price as BOM-Price"
-msgstr ""
+msgstr "Belső ár BOM árként"
 
 #: common/models.py:814
 msgid "Use the internal price (if set) in BOM-price calculations"
-msgstr ""
+msgstr "Belső ár használata (ha van) a BOM árszámításban"
 
 #: common/models.py:820
 msgid "Part Name Display Format"
@@ -2235,7 +2235,7 @@ msgstr "Árlépcső mennyiség"
 #: company/templates/company/supplier_part.html:256
 #: templates/js/translated/part.js:915 templates/js/translated/part.js:1867
 msgid "Price"
-msgstr ""
+msgstr "Ár"
 
 #: common/models.py:1284
 msgid "Unit price at specified quantity"
@@ -2247,7 +2247,7 @@ msgstr ""
 
 #: common/models.py:1442
 msgid "Endpoint at which this webhook is received"
-msgstr ""
+msgstr "Végpont ahol ez a webhook érkezik"
 
 #: common/models.py:1451
 msgid "Name for this webhook"
@@ -2295,7 +2295,7 @@ msgstr ""
 
 #: common/models.py:1557
 msgid "Host from which this message was received"
-msgstr ""
+msgstr "Host ahonnan ez az üzenet érkezett"
 
 #: common/models.py:1564
 msgid "Header"
@@ -2315,7 +2315,7 @@ msgstr ""
 
 #: common/models.py:1581
 msgid "Endpoint on which this message was received"
-msgstr ""
+msgstr "Végpont amin ez az üzenet érkezett"
 
 #: common/models.py:1586
 msgid "Worked on"
@@ -2368,15 +2368,15 @@ msgstr "URL"
 
 #: company/forms.py:25 part/forms.py:47
 msgid "Image URL"
-msgstr ""
+msgstr "Kép URL"
 
 #: company/models.py:105
 msgid "Company description"
-msgstr ""
+msgstr "Cég leírása"
 
 #: company/models.py:106
 msgid "Description of the company"
-msgstr ""
+msgstr "A cég leírása"
 
 #: company/models.py:112 company/templates/company/company_base.html:97
 #: templates/InvenTree/settings/plugin_settings.html:55
@@ -2386,23 +2386,23 @@ msgstr "Weboldal"
 
 #: company/models.py:113
 msgid "Company website URL"
-msgstr ""
+msgstr "Cég weboldala"
 
 #: company/models.py:117 company/templates/company/company_base.html:115
 msgid "Address"
-msgstr ""
+msgstr "Cím"
 
 #: company/models.py:118
 msgid "Company address"
-msgstr ""
+msgstr "Cég címe"
 
 #: company/models.py:121
 msgid "Phone number"
-msgstr ""
+msgstr "Telefonszám"
 
 #: company/models.py:122
 msgid "Contact phone number"
-msgstr ""
+msgstr "Kapcsolattartó telefonszáma"
 
 #: company/models.py:125 company/templates/company/company_base.html:129
 #: templates/InvenTree/settings/user.html:48
@@ -2411,27 +2411,27 @@ msgstr "Email"
 
 #: company/models.py:125
 msgid "Contact email address"
-msgstr ""
+msgstr "Kapcsolattartó email címe"
 
 #: company/models.py:128 company/templates/company/company_base.html:136
 msgid "Contact"
-msgstr ""
+msgstr "Kapcsolattartó"
 
 #: company/models.py:129
 msgid "Point of contact"
-msgstr ""
+msgstr "Kapcsolattartó"
 
 #: company/models.py:131
 msgid "Link to external company information"
-msgstr ""
+msgstr "Link a külső céginformációhoz"
 
 #: company/models.py:139 part/models.py:870
 msgid "Image"
-msgstr ""
+msgstr "Kép"
 
 #: company/models.py:144
 msgid "is customer"
-msgstr ""
+msgstr "vevő-e"
 
 #: company/models.py:144
 msgid "Do you sell items to this company?"
@@ -2439,15 +2439,15 @@ msgstr "Értékesítesz alkatrészeket ennek a cégnek?"
 
 #: company/models.py:146
 msgid "is supplier"
-msgstr ""
+msgstr "beszállító-e"
 
 #: company/models.py:146
 msgid "Do you purchase items from this company?"
-msgstr ""
+msgstr "Vásárolsz alkatrészeket ettől a cégtől?"
 
 #: company/models.py:148
 msgid "is manufacturer"
-msgstr ""
+msgstr "gyártó-e"
 
 #: company/models.py:148
 msgid "Does this company manufacture parts?"
@@ -2456,11 +2456,11 @@ msgstr "Gyárt ez a cég alkatrészeket?"
 #: company/models.py:152 company/serializers.py:270
 #: company/templates/company/company_base.html:103 stock/serializers.py:179
 msgid "Currency"
-msgstr ""
+msgstr "Pénznem"
 
 #: company/models.py:155
 msgid "Default currency used for this company"
-msgstr ""
+msgstr "Cég által használt alapértelmezett pénznem"
 
 #: company/models.py:320 company/models.py:535 stock/models.py:471
 #: stock/templates/stock/item_base.html:144 templates/js/translated/bom.js:541
@@ -2469,7 +2469,7 @@ msgstr "Alap alkatrész"
 
 #: company/models.py:324 company/models.py:539
 msgid "Select part"
-msgstr ""
+msgstr "Válassz alkatrészt"
 
 #: company/models.py:335 company/templates/company/company_base.html:73
 #: company/templates/company/manufacturer_part.html:91
@@ -2515,7 +2515,7 @@ msgstr "Gyártói alkatrész"
 
 #: company/models.py:416
 msgid "Parameter name"
-msgstr ""
+msgstr "Paraméter neve"
 
 #: company/models.py:422
 #: report/templates/report/inventree_test_report_base.html:95
@@ -2526,7 +2526,7 @@ msgstr "Érték"
 
 #: company/models.py:423
 msgid "Parameter value"
-msgstr ""
+msgstr "Paraméter értéke"
 
 #: company/models.py:429 part/models.py:945 part/models.py:2493
 #: part/templates/part/part_base.html:288
@@ -2537,7 +2537,7 @@ msgstr "Mértékegységek"
 
 #: company/models.py:430
 msgid "Parameter units"
-msgstr ""
+msgstr "Paraméter mértékegység"
 
 #: company/models.py:502
 msgid "Linked manufacturer part must reference the same base part"
@@ -2567,7 +2567,7 @@ msgstr "SKU"
 
 #: company/models.py:552 templates/js/translated/part.js:227
 msgid "Supplier stock keeping unit"
-msgstr "Beszállító SKU"
+msgstr "Beszállítói alkatrész azonosító"
 
 #: company/models.py:559
 msgid "Select manufacturer part"
@@ -2575,7 +2575,7 @@ msgstr "Gyártói alkatrész kiválasztása"
 
 #: company/models.py:565
 msgid "URL for external supplier part link"
-msgstr ""
+msgstr "URL link a beszállítói alkatrészhez"
 
 #: company/models.py:571
 msgid "Supplier part description"
@@ -2594,7 +2594,7 @@ msgstr "alap költség"
 
 #: company/models.py:580 part/models.py:1817
 msgid "Minimum charge (e.g. stocking fee)"
-msgstr ""
+msgstr "Minimális díj (pl. tárolási díj)"
 
 #: company/models.py:582 company/templates/company/supplier_part.html:112
 #: stock/models.py:495 stock/templates/stock/item_base.html:340
@@ -2604,15 +2604,15 @@ msgstr "Csomagolás"
 
 #: company/models.py:582
 msgid "Part packaging"
-msgstr ""
+msgstr "Alkatrész csomagolás"
 
 #: company/models.py:584 part/models.py:1819
 msgid "multiple"
-msgstr ""
+msgstr "többszörös"
 
 #: company/models.py:584
 msgid "Order multiple"
-msgstr ""
+msgstr "Többszörös rendelés"
 
 #: company/serializers.py:70
 msgid "Default currency used for this supplier"
@@ -2620,22 +2620,22 @@ msgstr "Beszállító által használt alapértelmezett pénznem"
 
 #: company/serializers.py:71
 msgid "Currency Code"
-msgstr ""
+msgstr "Pénznem kódja"
 
 #: company/templates/company/company_base.html:8
 #: company/templates/company/company_base.html:12
 #: templates/InvenTree/search.html:176 templates/js/translated/company.js:322
 msgid "Company"
-msgstr ""
+msgstr "Cég"
 
 #: company/templates/company/company_base.html:22
 #: templates/js/translated/order.js:279
 msgid "Create Purchase Order"
-msgstr ""
+msgstr "Beszerzési rendelés létrehozása"
 
 #: company/templates/company/company_base.html:26
 msgid "Company actions"
-msgstr ""
+msgstr "Cég műveletek"
 
 #: company/templates/company/company_base.html:31
 msgid "Edit company information"
@@ -2648,12 +2648,12 @@ msgstr "Cég szerkesztése"
 
 #: company/templates/company/company_base.html:36
 msgid "Delete company"
-msgstr ""
+msgstr "Cég törlése"
 
 #: company/templates/company/company_base.html:37
 #: company/templates/company/company_base.html:159
 msgid "Delete Company"
-msgstr ""
+msgstr "Cég törlése"
 
 #: company/templates/company/company_base.html:53
 #: part/templates/part/part_thumb.html:12
@@ -2677,11 +2677,11 @@ msgstr "Vevő"
 
 #: company/templates/company/company_base.html:108
 msgid "Uses default currency"
-msgstr ""
+msgstr "Alapértelmezett pénznemet használja"
 
 #: company/templates/company/company_base.html:122
 msgid "Phone"
-msgstr ""
+msgstr "Telefonszám"
 
 #: company/templates/company/company_base.html:205
 #: part/templates/part/part_base.html:471
@@ -2784,12 +2784,12 @@ msgstr "Vevői rendelések"
 #: company/templates/company/detail.html:147
 #: order/templates/order/sales_orders.html:20
 msgid "Create new sales order"
-msgstr ""
+msgstr "Vevői rendelés létrehozása"
 
 #: company/templates/company/detail.html:148
 #: order/templates/order/sales_orders.html:21
 msgid "New Sales Order"
-msgstr ""
+msgstr "Új vevői rendelés"
 
 #: company/templates/company/detail.html:168
 #: templates/js/translated/build.js:1281
@@ -2798,7 +2798,7 @@ msgstr "Hozzárendelt készlet"
 
 #: company/templates/company/detail.html:184
 msgid "Company Notes"
-msgstr ""
+msgstr "Cég megjegyzések"
 
 #: company/templates/company/detail.html:384
 #: company/templates/company/manufacturer_part.html:215
@@ -2814,7 +2814,7 @@ msgstr "Az összes kiválasztott beszállítói alkatrész törölve lesz"
 
 #: company/templates/company/index.html:8
 msgid "Supplier List"
-msgstr ""
+msgstr "Beszállítók listája"
 
 #: company/templates/company/manufacturer_part.html:14 company/views.py:55
 #: part/templates/part/prices.html:167 templates/InvenTree/search.html:178
@@ -2906,7 +2906,7 @@ msgstr "Szállított alkatrészek"
 
 #: company/templates/company/sidebar.html:16
 msgid "Supplied Stock Items"
-msgstr ""
+msgstr "Szállított készlet tételek"
 
 #: company/templates/company/sidebar.html:22
 msgid "Assigned Stock Items"
@@ -2927,7 +2927,7 @@ msgstr "Beszállítói alkatrész szerkesztése"
 #: company/templates/company/supplier_part.html:42
 #: templates/js/translated/company.js:864
 msgid "Delete supplier part"
-msgstr ""
+msgstr "Beszállítói alkatrész törlése"
 
 #: company/templates/company/supplier_part.html:138
 #: company/templates/company/supplier_part_navbar.html:12
@@ -2948,17 +2948,17 @@ msgstr "Új készlet tétel"
 #: company/templates/company/supplier_part.html:155
 #: company/templates/company/supplier_part_navbar.html:19
 msgid "Supplier Part Orders"
-msgstr ""
+msgstr "Beszállítói alkatrész rendelések"
 
 #: company/templates/company/supplier_part.html:160
 #: part/templates/part/detail.html:89
 msgid "Order Part"
-msgstr ""
+msgstr "Alkatrész rendelése"
 
 #: company/templates/company/supplier_part.html:179
 #: part/templates/part/prices.html:7
 msgid "Pricing Information"
-msgstr ""
+msgstr "Árinformációk"
 
 #: company/templates/company/supplier_part.html:184
 #: company/templates/company/supplier_part.html:290
@@ -3001,17 +3001,17 @@ msgstr "Készlet"
 
 #: company/templates/company/supplier_part_navbar.html:22
 msgid "Orders"
-msgstr ""
+msgstr "Rendelések"
 
 #: company/templates/company/supplier_part_navbar.html:26
 #: company/templates/company/supplier_part_sidebar.html:9
 msgid "Supplier Part Pricing"
-msgstr ""
+msgstr "Beszállító alkatrész árazás"
 
 #: company/templates/company/supplier_part_navbar.html:29
 #: part/templates/part/part_sidebar.html:30
 msgid "Pricing"
-msgstr ""
+msgstr "Árazás"
 
 #: company/templates/company/supplier_part_sidebar.html:5
 #: stock/templates/stock/location.html:137
@@ -3042,28 +3042,28 @@ msgstr "Új vevő"
 
 #: company/views.py:69
 msgid "Companies"
-msgstr ""
+msgstr "Cégek"
 
 #: company/views.py:70
 msgid "New Company"
-msgstr ""
+msgstr "Új cég"
 
 #: company/views.py:129 part/views.py:591
 msgid "Download Image"
-msgstr ""
+msgstr "Kép letöltése"
 
 #: company/views.py:158 part/views.py:623
 msgid "Image size exceeds maximum allowable size for download"
-msgstr ""
+msgstr "A kép mérete meghaladja a maximum megengedett letöltés méretét"
 
 #: company/views.py:165 part/views.py:630
 #, python-brace-format
 msgid "Invalid response: {code}"
-msgstr ""
+msgstr "Érvénytelen válasz: {code}"
 
 #: company/views.py:174 part/views.py:639
 msgid "Supplied URL is not a valid image file"
-msgstr ""
+msgstr "A megadott URL nem egy érvényes kép fájl"
 
 #: label/api.py:57 report/api.py:203
 msgid "No valid objects provided to template"
@@ -3177,7 +3177,7 @@ msgstr "Beszerzési rendelés állapota"
 
 #: order/models.py:228
 msgid "Company from which the items are being ordered"
-msgstr ""
+msgstr "Cég akitől a tételek beszerzésre kerülnek"
 
 #: order/models.py:231 order/templates/order/order_base.html:118
 #: templates/js/translated/order.js:832
@@ -3190,7 +3190,7 @@ msgstr "Beszállítói rendelés azonosító kód"
 
 #: order/models.py:238
 msgid "received by"
-msgstr ""
+msgstr "érkeztette"
 
 #: order/models.py:243
 msgid "Issue Date"
@@ -3304,7 +3304,7 @@ msgstr "Beérkezett"
 
 #: order/models.py:885
 msgid "Number of items received"
-msgstr ""
+msgstr "Érkezett tételek száma"
 
 #: order/models.py:892 part/templates/part/prices.html:176 stock/models.py:608
 #: stock/serializers.py:170 stock/templates/stock/item_base.html:361
@@ -3314,7 +3314,7 @@ msgstr "Beszerzési ár"
 
 #: order/models.py:893
 msgid "Unit purchase price"
-msgstr ""
+msgstr "Beszerzési egységár"
 
 #: order/models.py:901
 msgid "Where does the Purchaser want this item to be stored?"
@@ -3323,11 +3323,11 @@ msgstr "Mit szeretne a vevő hol tároljuk ezt az alkatrészt?"
 #: order/models.py:956 part/templates/part/part_pricing.html:112
 #: part/templates/part/prices.html:116 part/templates/part/prices.html:284
 msgid "Sale Price"
-msgstr ""
+msgstr "Eladási ár"
 
 #: order/models.py:957
 msgid "Unit sale price"
-msgstr ""
+msgstr "Eladási egységár"
 
 #: order/models.py:962
 msgid "Shipped quantity"
@@ -3428,7 +3428,7 @@ msgstr "Készlet foglalási mennyiség megadása"
 
 #: order/serializers.py:173
 msgid "Purchase price currency"
-msgstr ""
+msgstr "Beszérzési ár pénzneme"
 
 #: order/serializers.py:211 order/serializers.py:796
 msgid "Line Item"
@@ -3468,7 +3468,7 @@ msgstr "Megadott vonalkódoknak egyedieknek kel lenniük"
 
 #: order/serializers.py:587
 msgid "Sale price currency"
-msgstr ""
+msgstr "Eladási ár pénzneme"
 
 #: order/serializers.py:655
 msgid "No shipment details provided"
@@ -3670,7 +3670,7 @@ msgstr "Beszállító kiválasztása"
 
 #: order/templates/order/order_wizard/select_parts.html:57
 msgid "No price"
-msgstr ""
+msgstr "Nincs ár"
 
 #: order/templates/order/order_wizard/select_parts.html:65
 #, python-format
@@ -3851,7 +3851,7 @@ msgstr "Beszállítói alkatrészek egyeztetése"
 
 #: order/views.py:489
 msgid "Update prices"
-msgstr ""
+msgstr "Árak frissítése"
 
 #: order/views.py:747
 #, python-brace-format
@@ -3864,12 +3864,12 @@ msgstr ""
 
 #: order/views.py:864
 msgid "Price not found"
-msgstr ""
+msgstr "Nem található ár"
 
 #: order/views.py:867
 #, python-brace-format
 msgid "Updated {part} unit-price to {price}"
-msgstr ""
+msgstr "A {part} egységára {price}-ra módosítva"
 
 #: order/views.py:872
 #, python-brace-format
@@ -4778,22 +4778,22 @@ msgstr ""
 #: part/templates/part/detail.html:958
 #, python-format
 msgid "Purchase Unit Price - %(currency)s"
-msgstr ""
+msgstr "Beszerzési egységár - %(currency)s"
 
 #: part/templates/part/detail.html:970
 #, python-format
 msgid "Unit Price-Cost Difference - %(currency)s"
-msgstr ""
+msgstr "Egységár-önköltség különbség - %(currency)s"
 
 #: part/templates/part/detail.html:982
 #, python-format
 msgid "Supplier Unit Cost - %(currency)s"
-msgstr ""
+msgstr "Beszállítói egység költség - %(currency)s"
 
 #: part/templates/part/detail.html:1071
 #, python-format
 msgid "Unit Price - %(currency)s"
-msgstr ""
+msgstr "Egységár - %(currency)s"
 
 #: part/templates/part/import_wizard/ajax_match_fields.html:9
 #: part/templates/part/import_wizard/match_fields.html:9
@@ -4990,7 +4990,7 @@ msgstr ""
 
 #: part/templates/part/part_base.html:449 part/templates/part/prices.html:144
 msgid "Calculate"
-msgstr ""
+msgstr "Számítás"
 
 #: part/templates/part/part_base.html:492
 msgid "No matching images found"
@@ -5002,7 +5002,7 @@ msgstr "Részletek elrejtése"
 
 #: part/templates/part/part_pricing.html:22 part/templates/part/prices.html:21
 msgid "Supplier Pricing"
-msgstr ""
+msgstr "Beszállító árazás"
 
 #: part/templates/part/part_pricing.html:26
 #: part/templates/part/part_pricing.html:52
@@ -5011,7 +5011,7 @@ msgstr ""
 #: part/templates/part/prices.html:52 part/templates/part/prices.html:103
 #: part/templates/part/prices.html:120
 msgid "Unit Cost"
-msgstr ""
+msgstr "Egység költség"
 
 #: part/templates/part/part_pricing.html:32
 #: part/templates/part/part_pricing.html:58
@@ -5020,42 +5020,42 @@ msgstr ""
 #: part/templates/part/prices.html:59 part/templates/part/prices.html:108
 #: part/templates/part/prices.html:125
 msgid "Total Cost"
-msgstr ""
+msgstr "Teljes költség"
 
 #: part/templates/part/part_pricing.html:40 part/templates/part/prices.html:40
 #: templates/js/translated/bom.js:857
 msgid "No supplier pricing available"
-msgstr ""
+msgstr "Nincs beszállítói árinfomáció"
 
 #: part/templates/part/part_pricing.html:48 part/templates/part/prices.html:49
 #: part/templates/part/prices.html:243
 msgid "BOM Pricing"
-msgstr ""
+msgstr "BOM árazás"
 
 #: part/templates/part/part_pricing.html:65 part/templates/part/prices.html:69
 msgid "Unit Purchase Price"
-msgstr ""
+msgstr "Beszerzési egységár"
 
 #: part/templates/part/part_pricing.html:71 part/templates/part/prices.html:76
 msgid "Total Purchase Price"
-msgstr ""
+msgstr "Teljes beszerzési ár"
 
 #: part/templates/part/part_pricing.html:81 part/templates/part/prices.html:86
 msgid "Note: BOM pricing is incomplete for this part"
-msgstr ""
+msgstr "Megjegyzés: ennek az alkatrésznek a BOM árazása nem teljes"
 
 #: part/templates/part/part_pricing.html:88 part/templates/part/prices.html:93
 msgid "No BOM pricing available"
-msgstr ""
+msgstr "Nincs BOM árinfomáció"
 
 #: part/templates/part/part_pricing.html:97 part/templates/part/prices.html:102
 msgid "Internal Price"
-msgstr ""
+msgstr "Belső ár"
 
 #: part/templates/part/part_pricing.html:128
 #: part/templates/part/prices.html:134
 msgid "No pricing information is available for this part."
-msgstr ""
+msgstr "A termékhez nem áll rendelkezésre árinformáció."
 
 #: part/templates/part/part_sidebar.html:12
 msgid "Variants"
@@ -5117,27 +5117,27 @@ msgstr "Összesen %(count)s követésre kötelezett '%(full_name)s' alkatrész v
 
 #: part/templates/part/prices.html:16
 msgid "Pricing ranges"
-msgstr ""
+msgstr "Ártartományok"
 
 #: part/templates/part/prices.html:22
 msgid "Show supplier cost"
-msgstr ""
+msgstr "Beszállítói költség megjelenítése"
 
 #: part/templates/part/prices.html:23
 msgid "Show purchase price"
-msgstr ""
+msgstr "Beszerzési ár megjelenítése"
 
 #: part/templates/part/prices.html:50
 msgid "Show BOM cost"
-msgstr ""
+msgstr "BOM költség megjelenítése"
 
 #: part/templates/part/prices.html:117
 msgid "Show sale cost"
-msgstr ""
+msgstr "Értékesítési költség megjelenítése"
 
 #: part/templates/part/prices.html:118
 msgid "Show sale price"
-msgstr ""
+msgstr "Eladási ár megjelenítése"
 
 #: part/templates/part/prices.html:140
 msgid "Calculation parameters"
@@ -5145,7 +5145,7 @@ msgstr ""
 
 #: part/templates/part/prices.html:155 templates/js/translated/bom.js:851
 msgid "Supplier Cost"
-msgstr ""
+msgstr "Beszállítói költség"
 
 #: part/templates/part/prices.html:156 part/templates/part/prices.html:177
 #: part/templates/part/prices.html:201 part/templates/part/prices.html:231
@@ -5163,7 +5163,7 @@ msgstr ""
 
 #: part/templates/part/prices.html:200
 msgid "Internal Cost"
-msgstr ""
+msgstr "Belső költség"
 
 #: part/templates/part/prices.html:215 part/views.py:1390
 msgid "Add Internal Price Break"
@@ -5171,11 +5171,11 @@ msgstr "Belső árlépcső hozzáadása"
 
 #: part/templates/part/prices.html:230
 msgid "BOM Cost"
-msgstr ""
+msgstr "BOM költség"
 
 #: part/templates/part/prices.html:256
 msgid "Sale Cost"
-msgstr ""
+msgstr "Eladási költség"
 
 #: part/templates/part/prices.html:296
 msgid "No sale pice history available for this part."
@@ -5760,7 +5760,7 @@ msgstr "Készlet tétel megjegyzések"
 
 #: stock/models.py:609
 msgid "Single unit purchase price at time of purchase"
-msgstr ""
+msgstr "Egy egység beszerzési ára a beszerzés időpontjában"
 
 #: stock/models.py:1096
 msgid "Part is not set as trackable"
@@ -5931,7 +5931,7 @@ msgstr "Vevő akihez rendeljük a készlet tételeket"
 
 #: stock/serializers.py:690
 msgid "Selected company is not a customer"
-msgstr ""
+msgstr "A kiválasztott cég nem egy vevő"
 
 #: stock/serializers.py:698
 msgid "Stock assignment notes"
@@ -6806,7 +6806,7 @@ msgstr "Kiszolgáló konfiguráció"
 
 #: templates/InvenTree/settings/sidebar.html:33
 msgid "Currencies"
-msgstr ""
+msgstr "Pénznemek"
 
 #: templates/InvenTree/settings/sidebar.html:39
 msgid "Categories"
@@ -6959,7 +6959,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:241
 msgid "IP Address"
-msgstr ""
+msgstr "IP cím"
 
 #: templates/InvenTree/settings/user.html:242
 msgid "Device"
@@ -7121,7 +7121,7 @@ msgstr "verzió információk másolása"
 #: templates/account/email_confirm.html:6
 #: templates/account/email_confirm.html:10
 msgid "Confirm Email Address"
-msgstr ""
+msgstr "Email cím megerősítése"
 
 #: templates/account/email_confirm.html:16
 #, python-format
@@ -7687,11 +7687,11 @@ msgstr ""
 
 #: templates/js/translated/bom.js:837
 msgid "Purchase Price Range"
-msgstr ""
+msgstr "Beszerzési ártartomány"
 
 #: templates/js/translated/bom.js:844
 msgid "Purchase Price Average"
-msgstr ""
+msgstr "Beszerzési átlagár"
 
 #: templates/js/translated/bom.js:893 templates/js/translated/bom.js:982
 msgid "View BOM"
@@ -7943,7 +7943,7 @@ msgstr "Nincs lefoglalt alkatrész ehhez"
 
 #: templates/js/translated/company.js:65
 msgid "Add Manufacturer"
-msgstr ""
+msgstr "Gyártó hozzáadása"
 
 #: templates/js/translated/company.js:78 templates/js/translated/company.js:177
 msgid "Add Manufacturer Part"
@@ -7971,11 +7971,11 @@ msgstr "Beszállítói alkatrész szerkesztése"
 
 #: templates/js/translated/company.js:218
 msgid "Delete Supplier Part"
-msgstr ""
+msgstr "Beszállítói alkatrész törlése"
 
 #: templates/js/translated/company.js:286
 msgid "Add new Company"
-msgstr ""
+msgstr "Új cég hozzáadása"
 
 #: templates/js/translated/company.js:363
 msgid "Parts Supplied"
@@ -7987,7 +7987,7 @@ msgstr "Gyártott alkatrészek"
 
 #: templates/js/translated/company.js:387
 msgid "No company information found"
-msgstr ""
+msgstr "Nem található céginformáció"
 
 #: templates/js/translated/company.js:406
 msgid "The following manufacturer parts will be deleted"
@@ -8005,17 +8005,17 @@ msgstr "Nincs gyártói alkatrész"
 #: templates/js/translated/company.js:757 templates/js/translated/part.js:517
 #: templates/js/translated/part.js:602
 msgid "Template part"
-msgstr ""
+msgstr "Sablon alkatrész"
 
 #: templates/js/translated/company.js:504
 #: templates/js/translated/company.js:761 templates/js/translated/part.js:521
 #: templates/js/translated/part.js:606
 msgid "Assembled part"
-msgstr ""
+msgstr "Szerelvény alkatrész"
 
 #: templates/js/translated/company.js:631 templates/js/translated/part.js:696
 msgid "No parameters found"
-msgstr ""
+msgstr "Nem található paraméter"
 
 #: templates/js/translated/company.js:668 templates/js/translated/part.js:738
 msgid "Edit parameter"
@@ -8023,7 +8023,7 @@ msgstr "Paraméter szerkesztése"
 
 #: templates/js/translated/company.js:669 templates/js/translated/part.js:739
 msgid "Delete parameter"
-msgstr ""
+msgstr "Paraméter törlése"
 
 #: templates/js/translated/company.js:688 templates/js/translated/part.js:756
 msgid "Edit Parameter"
@@ -8031,7 +8031,7 @@ msgstr "Paraméter szerkesztése"
 
 #: templates/js/translated/company.js:699 templates/js/translated/part.js:768
 msgid "Delete Parameter"
-msgstr ""
+msgstr "Paraméter törlése"
 
 #: templates/js/translated/company.js:737
 msgid "No supplier parts found"
@@ -8240,7 +8240,7 @@ msgstr ""
 
 #: templates/js/translated/model_renderers.js:40
 msgid "Company ID"
-msgstr ""
+msgstr "Cég azonosító"
 
 #: templates/js/translated/model_renderers.js:77
 msgid "Stock ID"
@@ -8370,11 +8370,11 @@ msgstr ""
 #: templates/js/translated/order.js:1068 templates/js/translated/order.js:2163
 #: templates/js/translated/part.js:1841 templates/js/translated/part.js:2052
 msgid "Unit Price"
-msgstr ""
+msgstr "Egységár"
 
 #: templates/js/translated/order.js:1083 templates/js/translated/order.js:2179
 msgid "Total Price"
-msgstr ""
+msgstr "Teljes ár"
 
 #: templates/js/translated/order.js:1161 templates/js/translated/order.js:2313
 msgid "Edit line item"
@@ -8471,7 +8471,7 @@ msgstr ""
 
 #: templates/js/translated/order.js:2310 templates/js/translated/order.js:2476
 msgid "Calculate price"
-msgstr ""
+msgstr "Árszámítás"
 
 #: templates/js/translated/order.js:2321
 msgid "Cannot be deleted as items have been shipped"
@@ -8487,7 +8487,7 @@ msgstr ""
 
 #: templates/js/translated/order.js:2484
 msgid "Update Unit Price"
-msgstr ""
+msgstr "Egységár módosítása"
 
 #: templates/js/translated/order.js:2498
 msgid "No matching line items"
@@ -8721,11 +8721,11 @@ msgstr ""
 
 #: templates/js/translated/part.js:1976
 msgid "Single Price"
-msgstr ""
+msgstr "Egységes ár"
 
 #: templates/js/translated/part.js:1995
 msgid "Single Price Difference"
-msgstr ""
+msgstr "Egységes ár különbség"
 
 #: templates/js/translated/plugin.js:22
 msgid "The Plugin was installed"
@@ -9311,11 +9311,11 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:243
 msgid "Has purchase price"
-msgstr ""
+msgstr "Van beszrzési ára"
 
 #: templates/js/translated/table_filters.js:244
 msgid "Show stock items which have a purchase price set"
-msgstr ""
+msgstr "Beszerzési árral rendelkező készlet tételek megjelenítése"
 
 #: templates/js/translated/table_filters.js:253
 msgid "Show stock items which have expired"
