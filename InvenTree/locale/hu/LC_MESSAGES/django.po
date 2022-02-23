@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-22 01:07+0000\n"
-"PO-Revision-Date: 2022-02-23 08:52\n"
+"PO-Revision-Date: 2022-02-23 09:49\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1190,7 +1190,7 @@ msgstr "Gyártási utasítás elkészültnek jelölhető"
 
 #: build/templates/build/build_base.html:120
 msgid "Build Order cannot be completed as outstanding outputs remain"
-msgstr ""
+msgstr "Gyártási utasítás nem teljesíthető mivel kintlévő kimenetek maradnak"
 
 #: build/templates/build/build_base.html:125
 msgid "Required build quantity has not yet been completed"
@@ -1769,7 +1769,7 @@ msgstr ""
 
 #: common/models.py:800
 msgid "Create initial stock on part creation"
-msgstr ""
+msgstr "Kezdeti készlet megadása az alkatrész létrehozásakor"
 
 #: common/models.py:806
 msgid "Internal Prices"
@@ -1837,7 +1837,7 @@ msgstr ""
 
 #: common/models.py:867
 msgid "Sell Expired Stock"
-msgstr ""
+msgstr "Lejárt készlet értékesítése"
 
 #: common/models.py:868
 msgid "Allow sale of expired stock"
@@ -2077,7 +2077,7 @@ msgstr ""
 
 #: common/models.py:1094
 msgid "Show low stock"
-msgstr ""
+msgstr "Alacsony készlet megjelenítése"
 
 #: common/models.py:1095
 msgid "Show low stock items on the homepage"
@@ -2133,11 +2133,11 @@ msgstr "Megkésett gyártások megjelenítése a főoldalon"
 
 #: common/models.py:1136
 msgid "Show outstanding POs"
-msgstr ""
+msgstr "Kintlévő beszerzési rendelések"
 
 #: common/models.py:1137
 msgid "Show outstanding POs on the homepage"
-msgstr "Kintlévő megrendelések megjelenítése a főoldalon"
+msgstr "Kintlévő beszerzési rendelések megjelenítése a főoldalon"
 
 #: common/models.py:1142
 msgid "Show overdue POs"
@@ -2149,7 +2149,7 @@ msgstr "Megkésett megrendelések megjelenítése a főoldalon"
 
 #: common/models.py:1148
 msgid "Show outstanding SOs"
-msgstr ""
+msgstr "Függő vevői rendelések megjelenítése"
 
 #: common/models.py:1149
 msgid "Show outstanding SOs on the homepage"
@@ -2435,7 +2435,7 @@ msgstr ""
 
 #: company/models.py:144
 msgid "Do you sell items to this company?"
-msgstr ""
+msgstr "Értékesítesz alkatrészeket ennek a cégnek?"
 
 #: company/models.py:146
 msgid "is supplier"
@@ -2504,7 +2504,7 @@ msgstr ""
 
 #: company/models.py:355
 msgid "Manufacturer part description"
-msgstr ""
+msgstr "Gyártói alkatrész leírása"
 
 #: company/models.py:409 company/models.py:558
 #: company/templates/company/manufacturer_part.html:6
@@ -2579,7 +2579,7 @@ msgstr ""
 
 #: company/models.py:571
 msgid "Supplier part description"
-msgstr ""
+msgstr "Beszállítói alkatrész leírása"
 
 #: company/models.py:576 company/templates/company/supplier_part.html:119
 #: part/models.py:2717 part/templates/part/upload_bom.html:59
@@ -2697,13 +2697,13 @@ msgstr "Beszállítói alkatrészek"
 #: company/templates/company/detail.html:19
 #: order/templates/order/order_wizard/select_parts.html:44
 msgid "Create new supplier part"
-msgstr ""
+msgstr "Új beszállítói alkatrész létrehozása"
 
 #: company/templates/company/detail.html:20
 #: company/templates/company/manufacturer_part.html:118
 #: part/templates/part/detail.html:356
 msgid "New Supplier Part"
-msgstr ""
+msgstr "Új beszállítói alkatrész"
 
 #: company/templates/company/detail.html:32
 #: company/templates/company/detail.html:79
@@ -2712,7 +2712,7 @@ msgstr ""
 #: part/templates/part/category.html:171 part/templates/part/detail.html:365
 #: part/templates/part/detail.html:394
 msgid "Options"
-msgstr ""
+msgstr "Opciók"
 
 #: company/templates/company/detail.html:37
 #: company/templates/company/detail.html:84
@@ -2736,11 +2736,11 @@ msgstr "Gyártói alkatrészek"
 
 #: company/templates/company/detail.html:66
 msgid "Create new manufacturer part"
-msgstr ""
+msgstr "Új gyártói alkatrész létrehozása"
 
 #: company/templates/company/detail.html:67 part/templates/part/detail.html:384
 msgid "New Manufacturer Part"
-msgstr ""
+msgstr "Új gyártói alkatrész"
 
 #: company/templates/company/detail.html:107
 msgid "Supplier Stock"
@@ -2820,7 +2820,7 @@ msgstr ""
 #: part/templates/part/prices.html:167 templates/InvenTree/search.html:178
 #: templates/navbar.html:46
 msgid "Manufacturers"
-msgstr ""
+msgstr "Gyártók"
 
 #: company/templates/company/manufacturer_part.html:35
 #: company/templates/company/supplier_part.html:34
@@ -2849,7 +2849,7 @@ msgstr ""
 #: part/templates/part/part_sidebar.html:38 part/templates/part/prices.html:163
 #: templates/InvenTree/search.html:188 templates/navbar.html:45
 msgid "Suppliers"
-msgstr ""
+msgstr "Beszállítók"
 
 #: company/templates/company/manufacturer_part.html:129
 #: part/templates/part/detail.html:367
@@ -2937,13 +2937,13 @@ msgstr ""
 #: company/templates/company/supplier_part.html:141
 #: part/templates/part/detail.html:24 stock/templates/stock/location.html:166
 msgid "Create new stock item"
-msgstr ""
+msgstr "Új készlet tétel létrehozása"
 
 #: company/templates/company/supplier_part.html:142
 #: part/templates/part/detail.html:25 stock/templates/stock/location.html:167
 #: templates/js/translated/stock.js:369
 msgid "New Stock Item"
-msgstr ""
+msgstr "Új készlet tétel"
 
 #: company/templates/company/supplier_part.html:155
 #: company/templates/company/supplier_part_navbar.html:19
@@ -3025,11 +3025,11 @@ msgstr "Készlet tételek"
 
 #: company/views.py:50
 msgid "New Supplier"
-msgstr ""
+msgstr "Új beszállító"
 
 #: company/views.py:56
 msgid "New Manufacturer"
-msgstr ""
+msgstr "Új gyártó"
 
 #: company/views.py:61 templates/InvenTree/search.html:208
 #: templates/navbar.html:57
@@ -3173,7 +3173,7 @@ msgstr ""
 
 #: order/models.py:219 order/models.py:557
 msgid "Purchase order status"
-msgstr ""
+msgstr "Beszerzési rendelés állapota"
 
 #: order/models.py:228
 msgid "Company from which the items are being ordered"
@@ -3182,11 +3182,11 @@ msgstr ""
 #: order/models.py:231 order/templates/order/order_base.html:118
 #: templates/js/translated/order.js:832
 msgid "Supplier Reference"
-msgstr ""
+msgstr "Beszállítói azonosító"
 
 #: order/models.py:231
 msgid "Supplier order reference code"
-msgstr ""
+msgstr "Beszállítói rendelés azonosító kód"
 
 #: order/models.py:238
 msgid "received by"
@@ -3554,7 +3554,7 @@ msgstr ""
 #: order/templates/order/sales_order_base.html:89
 #: templates/js/translated/stock.js:2451
 msgid "Order Status"
-msgstr ""
+msgstr "Rendelés állapota"
 
 #: order/templates/order/order_base.html:124
 #: order/templates/order/sales_order_base.html:128
@@ -3654,11 +3654,11 @@ msgstr ""
 
 #: order/templates/order/order_wizard/select_parts.html:11
 msgid "Step 1 of 2 - Select Part Suppliers"
-msgstr ""
+msgstr "Lépés 1/2 - Alkatrész beszállítók kiválasztása"
 
 #: order/templates/order/order_wizard/select_parts.html:16
 msgid "Select suppliers"
-msgstr ""
+msgstr "Beszállítók kiválasztása"
 
 #: order/templates/order/order_wizard/select_parts.html:20
 msgid "No purchaseable parts selected"
@@ -3999,7 +3999,7 @@ msgstr "Azonos IPN nem engedélyezett az alkatrész beállításokban"
 
 #: part/models.py:803 part/models.py:2622
 msgid "Part name"
-msgstr ""
+msgstr "Alkatrész neve"
 
 #: part/models.py:810
 msgid "Is Template"
@@ -4011,15 +4011,15 @@ msgstr ""
 
 #: part/models.py:821
 msgid "Is this part a variant of another part?"
-msgstr ""
+msgstr "Ez az alkatrész egy másik változata?"
 
 #: part/models.py:822
 msgid "Variant Of"
-msgstr ""
+msgstr "Változata ennek"
 
 #: part/models.py:828
 msgid "Part description"
-msgstr ""
+msgstr "Alkatrész leírása"
 
 #: part/models.py:833 part/templates/part/category.html:86
 #: part/templates/part/part_base.html:302
@@ -4050,7 +4050,7 @@ msgstr "IPN"
 
 #: part/models.py:848
 msgid "Internal Part Number"
-msgstr ""
+msgstr "Belső alkatrész azonosító"
 
 #: part/models.py:854
 msgid "Part revision or version number"
@@ -4107,7 +4107,7 @@ msgstr ""
 
 #: part/models.py:969
 msgid "Can this part be purchased from external suppliers?"
-msgstr ""
+msgstr "Rendelhető-e ez az alkatrész egy külső beszállítótól?"
 
 #: part/models.py:974
 msgid "Can this part be sold to customers?"
@@ -4147,7 +4147,7 @@ msgstr ""
 
 #: part/models.py:1819
 msgid "Sell multiple"
-msgstr ""
+msgstr "Több értékesítése"
 
 #: part/models.py:2369
 msgid "Test templates can only be created for trackable parts"
@@ -4168,11 +4168,11 @@ msgstr ""
 
 #: part/models.py:2412
 msgid "Test Description"
-msgstr ""
+msgstr "Teszt leírása"
 
 #: part/models.py:2413
 msgid "Enter description for this test"
-msgstr ""
+msgstr "Adj hozzá egy leírást ehhez a teszthez"
 
 #: part/models.py:2418 templates/js/translated/part.js:1723
 #: templates/js/translated/table_filters.js:276
@@ -4243,7 +4243,7 @@ msgstr ""
 
 #: part/models.py:2614
 msgid "Part ID or part name"
-msgstr ""
+msgstr "Alkatrész azonosító vagy alkatrész név"
 
 #: part/models.py:2617 templates/js/translated/model_renderers.js:182
 msgid "Part ID"
@@ -4255,7 +4255,7 @@ msgstr ""
 
 #: part/models.py:2621
 msgid "Part Name"
-msgstr ""
+msgstr "Alkatrész neve"
 
 #: part/models.py:2625
 msgid "Part IPN"
@@ -4449,7 +4449,7 @@ msgstr ""
 
 #: part/tasks.py:58
 msgid "Low stock notification"
-msgstr ""
+msgstr "Alacsony készlet értesítés"
 
 #: part/templates/part/bom.html:6
 msgid "You do not have permission to edit the BOM."
@@ -4569,11 +4569,11 @@ msgstr "Alkatrész paraméterek"
 
 #: part/templates/part/category.html:288
 msgid "Create Part Category"
-msgstr ""
+msgstr "Alkatrész kategória létrehozása"
 
 #: part/templates/part/category.html:315
 msgid "Create Part"
-msgstr ""
+msgstr "Alkatrész létrehozása"
 
 #: part/templates/part/category_delete.html:5
 msgid "Are you sure you want to delete category"
@@ -4636,7 +4636,7 @@ msgstr "Az új alkatrész lehet hogy másodpéldánya ezeknek a létezőknek"
 #: part/templates/part/create_part.html:17
 #, python-format
 msgid "%(full_name)s - <em>%(desc)s</em> (%(match_per)s%% match)"
-msgstr ""
+msgstr "%(full_name)s - <em>%(desc)s</em> (%(match_per)s%% egyezik)"
 
 #: part/templates/part/detail.html:21
 msgid "Part Stock"
@@ -4669,7 +4669,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:166
 msgid "Create new variant"
-msgstr ""
+msgstr "Új változat létrehozása"
 
 #: part/templates/part/detail.html:167
 msgid "New Variant"
@@ -4737,11 +4737,11 @@ msgstr "Gyártáshoz foglalások"
 
 #: part/templates/part/detail.html:352
 msgid "Part Suppliers"
-msgstr ""
+msgstr "Alkatrész beszállítók"
 
 #: part/templates/part/detail.html:380
 msgid "Part Manufacturers"
-msgstr ""
+msgstr "Alkatrész gyártók"
 
 #: part/templates/part/detail.html:396
 msgid "Delete manufacturer parts"
@@ -4757,7 +4757,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:628
 msgid "Create BOM Item"
-msgstr ""
+msgstr "BOM tétel létrehozása"
 
 #: part/templates/part/detail.html:685
 msgid "Related Part"
@@ -4956,7 +4956,7 @@ msgstr "Készleten"
 
 #: part/templates/part/part_base.html:210 templates/InvenTree/index.html:178
 msgid "Required for Build Orders"
-msgstr ""
+msgstr "Gyártáshoz szükséges"
 
 #: part/templates/part/part_base.html:217
 msgid "Required for Sales Orders"
@@ -5063,7 +5063,7 @@ msgstr ""
 
 #: part/templates/part/part_sidebar.html:26
 msgid "Used In"
-msgstr ""
+msgstr "Felhasználva ebben"
 
 #: part/templates/part/part_sidebar.html:34
 #: stock/templates/stock/stock_sidebar.html:8
@@ -5072,7 +5072,7 @@ msgstr "Foglalások"
 
 #: part/templates/part/part_sidebar.html:48
 msgid "Test Templates"
-msgstr ""
+msgstr "Teszt sablonok"
 
 #: part/templates/part/part_thumb.html:11
 msgid "Select from existing images"
@@ -5189,11 +5189,11 @@ msgstr "Állítsd be a következő alkatrészek kategóriáját"
 #: templates/js/translated/part.js:497 templates/js/translated/part.js:1122
 #: templates/js/translated/part.js:1309
 msgid "No Stock"
-msgstr ""
+msgstr "Nincs készlet"
 
 #: part/templates/part/stock_count.html:9 templates/InvenTree/index.html:158
 msgid "Low Stock"
-msgstr ""
+msgstr "Alacsony készlet"
 
 #: part/templates/part/upload_bom.html:8
 msgid "Return to BOM"
@@ -5234,12 +5234,12 @@ msgstr "Minden egyes alkatrésznek léteznie kell már az adatbázisban"
 
 #: part/templates/part/variant_part.html:9
 msgid "Create new part variant"
-msgstr ""
+msgstr "Alkatrész változat létrehozása"
 
 #: part/templates/part/variant_part.html:10
 #, python-format
 msgid "Create a new variant of template <em>'%(full_name)s'</em>."
-msgstr ""
+msgstr "Új változat létrehozása a <em>'%(full_name)s'</em> sablonból."
 
 #: part/templatetags/inventree_extras.py:125
 msgid "Unknown database"
@@ -5292,7 +5292,7 @@ msgstr ""
 
 #: part/views.py:1015
 msgid "Create Part Parameter Template"
-msgstr ""
+msgstr "Alkatrész paraméter sablon létrehozása"
 
 #: part/views.py:1025
 msgid "Edit Part Parameter Template"
@@ -5316,7 +5316,7 @@ msgstr ""
 
 #: part/views.py:1144
 msgid "Create Category Parameter Template"
-msgstr ""
+msgstr "Kategória paraméter sablon létrehozása"
 
 #: part/views.py:1245
 msgid "Edit Category Parameter Template"
@@ -5822,7 +5822,7 @@ msgstr ""
 
 #: stock/models.py:1222
 msgid "Stock items must refer to the same supplier part"
-msgstr ""
+msgstr "A készlet tétel ugyanarra a beszállítói alkatrészre kell vonatkozzon"
 
 #: stock/models.py:1226
 msgid "Stock status codes must match"
@@ -6468,11 +6468,11 @@ msgstr "Legújabb alkatrészek"
 
 #: templates/InvenTree/index.html:119
 msgid "BOM Waiting Validation"
-msgstr ""
+msgstr "Jóváhagyásra váró BOM"
 
 #: templates/InvenTree/index.html:145
 msgid "Recently Updated"
-msgstr ""
+msgstr "Nemrég frissítve"
 
 #: templates/InvenTree/index.html:168
 msgid "Depleted Stock"
@@ -6488,7 +6488,7 @@ msgstr ""
 
 #: templates/InvenTree/index.html:224
 msgid "Build Orders In Progress"
-msgstr ""
+msgstr "Folyamatban lévő gyártások"
 
 #: templates/InvenTree/index.html:235
 msgid "Overdue Build Orders"
@@ -6496,7 +6496,7 @@ msgstr "Megkésett gyártások"
 
 #: templates/InvenTree/index.html:255
 msgid "Outstanding Purchase Orders"
-msgstr ""
+msgstr "Kintlévő beszerzési rendelések"
 
 #: templates/InvenTree/index.html:266
 msgid "Overdue Purchase Orders"
@@ -6504,7 +6504,7 @@ msgstr "Megkésett megrendelések"
 
 #: templates/InvenTree/index.html:286
 msgid "Outstanding Sales Orders"
-msgstr ""
+msgstr "Függő vevői rendelések"
 
 #: templates/InvenTree/index.html:297
 msgid "Overdue Sales Orders"
@@ -8321,7 +8321,7 @@ msgstr ""
 
 #: templates/js/translated/order.js:520 templates/js/translated/stock.js:2255
 msgid "Stock Status"
-msgstr ""
+msgstr "Készlet állapota"
 
 #: templates/js/translated/order.js:587
 msgid "Order Code"
@@ -8499,15 +8499,15 @@ msgstr ""
 
 #: templates/js/translated/part.js:58
 msgid "Part Creation Options"
-msgstr ""
+msgstr "Alkatrész létrehozási opciók"
 
 #: templates/js/translated/part.js:62
 msgid "Part Duplication Options"
-msgstr ""
+msgstr "Alkatrész másolási opciók"
 
 #: templates/js/translated/part.js:66
 msgid "Supplier Options"
-msgstr ""
+msgstr "Beszállítói opciók"
 
 #: templates/js/translated/part.js:80
 msgid "Add Part Category"
@@ -8515,11 +8515,11 @@ msgstr ""
 
 #: templates/js/translated/part.js:164
 msgid "Create Initial Stock"
-msgstr ""
+msgstr "Kezdeti készlet létrehozása"
 
 #: templates/js/translated/part.js:165
 msgid "Create an initial stock item for this part"
-msgstr ""
+msgstr "Kezdeti készlet tétel létrehozása ehhez az alkatrészhez"
 
 #: templates/js/translated/part.js:172
 msgid "Initial Stock Quantity"
@@ -8547,7 +8547,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:208
 msgid "Create initial supplier data for this part"
-msgstr ""
+msgstr "Kezdeti beszállítói adatok létrehozása ehhez az alkatrészhez"
 
 #: templates/js/translated/part.js:264
 msgid "Copy Image"
@@ -8583,7 +8583,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:351
 msgid "Create Part Variant"
-msgstr ""
+msgstr "Alkatrész változat létrehozása"
 
 #: templates/js/translated/part.js:418
 msgid "You are subscribed to notifications for this item"
@@ -8656,7 +8656,7 @@ msgstr ""
 #: templates/js/translated/part.js:1296
 #: templates/js/translated/table_filters.js:425
 msgid "Low stock"
-msgstr ""
+msgstr "Alacsony készlet"
 
 #: templates/js/translated/part.js:1387 templates/js/translated/part.js:1559
 #: templates/js/translated/stock.js:2564
@@ -9338,12 +9338,12 @@ msgstr ""
 #: templates/js/translated/table_filters.js:326
 #: templates/js/translated/table_filters.js:347
 msgid "Order status"
-msgstr ""
+msgstr "Rendelés állapota"
 
 #: templates/js/translated/table_filters.js:331
 #: templates/js/translated/table_filters.js:352
 msgid "Outstanding"
-msgstr ""
+msgstr "Kintlévő"
 
 #: templates/js/translated/table_filters.js:403
 msgid "Include parts in subcategories"
@@ -9428,11 +9428,11 @@ msgstr ""
 
 #: templates/navbar.html:42
 msgid "Buy"
-msgstr ""
+msgstr "Beszerzés"
 
 #: templates/navbar.html:54
 msgid "Sell"
-msgstr ""
+msgstr "Értékesítés"
 
 #: templates/navbar.html:114
 msgid "Logout"
@@ -9540,7 +9540,7 @@ msgstr ""
 
 #: templates/stock_table.html:43
 msgid "Stock Options"
-msgstr ""
+msgstr "Készlet opciók"
 
 #: templates/stock_table.html:48
 msgid "Add to selected stock items"
