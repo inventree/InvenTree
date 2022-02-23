@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-22 01:07+0000\n"
-"PO-Revision-Date: 2022-02-23 19:10\n"
+"PO-Revision-Date: 2022-02-23 20:06\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -2229,7 +2229,7 @@ msgstr ""
 
 #: common/models.py:1276 company/forms.py:43
 msgid "Price break quantity"
-msgstr ""
+msgstr "Árlépcső mennyiség"
 
 #: common/models.py:1283 company/serializers.py:264
 #: company/templates/company/supplier_part.html:256
@@ -2964,27 +2964,27 @@ msgstr ""
 #: company/templates/company/supplier_part.html:290
 #: part/templates/part/prices.html:271 part/views.py:1319
 msgid "Add Price Break"
-msgstr "Ár bontás hozzáadása"
+msgstr "Árlépcső hozzáadása"
 
 #: company/templates/company/supplier_part.html:210
 msgid "No price break information found"
-msgstr ""
+msgstr "Nincs árlépcső információ"
 
 #: company/templates/company/supplier_part.html:224 part/views.py:1381
 msgid "Delete Price Break"
-msgstr ""
+msgstr "Árlépcső törlése"
 
 #: company/templates/company/supplier_part.html:238 part/views.py:1367
 msgid "Edit Price Break"
-msgstr "Ár bontás szerkesztése"
+msgstr "Árlépcső szerkesztése"
 
 #: company/templates/company/supplier_part.html:263
 msgid "Edit price break"
-msgstr "Ár bontás szerkesztése"
+msgstr "Árlépcső szerkesztése"
 
 #: company/templates/company/supplier_part.html:264
 msgid "Delete price break"
-msgstr ""
+msgstr "Árlépcső törlése"
 
 #: company/templates/company/supplier_part_navbar.html:15
 #: part/templates/part/part_sidebar.html:15
@@ -4305,7 +4305,7 @@ msgstr ""
 
 #: part/models.py:2711
 msgid "Estimated build wastage quantity (absolute or percentage)"
-msgstr ""
+msgstr "Becsült gyártási veszteség (abszolút vagy százalékos)"
 
 #: part/models.py:2714
 msgid "BOM item reference"
@@ -4437,11 +4437,11 @@ msgstr "Az alkatrész nem lett összetevőként jelölve"
 
 #: part/serializers.py:820
 msgid "Quantity not provided"
-msgstr ""
+msgstr "Mennyiség nincs megadva"
 
 #: part/serializers.py:828
 msgid "Invalid quantity"
-msgstr ""
+msgstr "Érvénytelen mennyiség"
 
 #: part/serializers.py:847
 msgid "At least one BOM item is required"
@@ -5167,7 +5167,7 @@ msgstr ""
 
 #: part/templates/part/prices.html:215 part/views.py:1390
 msgid "Add Internal Price Break"
-msgstr ""
+msgstr "Belső árlépcső hozzáadása"
 
 #: part/templates/part/prices.html:230
 msgid "BOM Cost"
@@ -5328,15 +5328,15 @@ msgstr "Kategória paraméter sablon törlése"
 
 #: part/views.py:1323
 msgid "Added new price break"
-msgstr ""
+msgstr "Új árlépcső hozzáadva"
 
 #: part/views.py:1399
 msgid "Edit Internal Price Break"
-msgstr ""
+msgstr "Belső árlépcső szerkesztése"
 
 #: part/views.py:1407
 msgid "Delete Internal Price Break"
-msgstr ""
+msgstr "Belső árlépcső törlése"
 
 #: plugin/integration.py:138
 msgid "No author found"
@@ -5587,7 +5587,7 @@ msgstr ""
 
 #: stock/api.py:501
 msgid "Quantity is required"
-msgstr ""
+msgstr "Mennyiség megadása kötelező"
 
 #: stock/api.py:508
 msgid "Valid part must be supplied"
@@ -5621,7 +5621,7 @@ msgstr ""
 
 #: stock/forms.py:135
 msgid "Unique serial numbers (must match quantity)"
-msgstr ""
+msgstr "Az egyedi sorozatszámok (számuk meg kell egyezzen a mennyiséggel)"
 
 #: stock/forms.py:137 stock/forms.py:171
 msgid "Add transaction note (optional)"
@@ -5659,11 +5659,11 @@ msgstr ""
 
 #: stock/models.py:384 stock/models.py:393
 msgid "Quantity must be 1 for item with a serial number"
-msgstr ""
+msgstr "Mennyiség 1 kell legyen a sorozatszámmal rendelkező tételnél"
 
 #: stock/models.py:385
 msgid "Serial number cannot be set if quantity greater than 1"
-msgstr ""
+msgstr "Nem lehet sorozatszámot megadni ha a mennyiség több mint egy"
 
 #: stock/models.py:407
 msgid "Item cannot belong to itself"
@@ -5768,7 +5768,7 @@ msgstr "Az alkatrész nem követésre kötelezett"
 
 #: stock/models.py:1102
 msgid "Quantity must be integer"
-msgstr ""
+msgstr "Mennyiség egész szám kell legyen"
 
 #: stock/models.py:1108
 #, python-brace-format
@@ -5781,7 +5781,7 @@ msgstr ""
 
 #: stock/models.py:1114
 msgid "Quantity does not match serial numbers"
-msgstr ""
+msgstr "A mennyiség nem egyezik a megadott sorozatszámok számával"
 
 #: stock/models.py:1121
 #, python-brace-format
@@ -6181,7 +6181,7 @@ msgstr "Ez a készlet elem egy gyártási utasításhoz foglalt"
 
 #: stock/templates/stock/item_base.html:278
 msgid "This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted."
-msgstr ""
+msgstr "Ez a készlet tétel egyedi követésre kötelezett - egyedi sorozatszámmal rendelkezik így a mennyiség nem módosítható."
 
 #: stock/templates/stock/item_base.html:319
 #: templates/js/translated/build.js:1317
@@ -6223,7 +6223,7 @@ msgstr ""
 
 #: stock/templates/stock/item_serialize.html:7
 msgid "Select quantity to serialize, and unique serial numbers."
-msgstr ""
+msgstr "Válaszz mennyiséget és egyedi sorozatszámokat a sorozatszámozáshoz."
 
 #: stock/templates/stock/location.html:37
 msgid "Check-in Items"
@@ -6392,7 +6392,7 @@ msgstr ""
 
 #: stock/views.py:1086
 msgid "Quantity cannot be negative"
-msgstr ""
+msgstr "A mennyiség nem lehet negatív"
 
 #: stock/views.py:1186
 msgid "Delete Stock Location"
@@ -7323,7 +7323,7 @@ msgstr ""
 #: templates/email/build_order_required_stock.html:8
 #, python-format
 msgid "Build order %(build)s - building %(quantity)s x %(part)s"
-msgstr ""
+msgstr "%(build)s gyártási utasítás - %(quantity)s x %(part)s alkatrész gyártása"
 
 #: templates/email/build_order_required_stock.html:10
 msgid "Click on the following link to view this build order"
@@ -7336,7 +7336,7 @@ msgstr "A következő alkatrészek szükséges készlete alacsony"
 #: templates/email/build_order_required_stock.html:18
 #: templates/js/translated/bom.js:1335
 msgid "Required Quantity"
-msgstr ""
+msgstr "Szükséges mennyiség"
 
 #: templates/email/build_order_required_stock.html:19
 #: templates/email/low_stock_notification.html:18
@@ -7366,7 +7366,7 @@ msgstr ""
 
 #: templates/email/low_stock_notification.html:19
 msgid "Minimum Quantity"
-msgstr ""
+msgstr "Minimum mennyiség"
 
 #: templates/image_download.html:8
 msgid "Specify URL for downloading image"
@@ -7863,7 +7863,7 @@ msgstr "Vannak helyettesítő alkatrészek"
 
 #: templates/js/translated/build.js:1406
 msgid "Quantity Per"
-msgstr ""
+msgstr "Mennyiség per"
 
 #: templates/js/translated/build.js:1416 templates/js/translated/build.js:1656
 #: templates/js/translated/build.js:2055 templates/js/translated/order.js:2227
@@ -8317,7 +8317,7 @@ msgstr ""
 
 #: templates/js/translated/order.js:486
 msgid "Quantity to receive"
-msgstr ""
+msgstr "Érkező mennyiség"
 
 #: templates/js/translated/order.js:520 templates/js/translated/stock.js:2255
 msgid "Stock Status"
@@ -8523,11 +8523,11 @@ msgstr "Kezdeti készlet tétel létrehozása ehhez az alkatrészhez"
 
 #: templates/js/translated/part.js:172
 msgid "Initial Stock Quantity"
-msgstr ""
+msgstr "Kezdeti készlet mennyiség"
 
 #: templates/js/translated/part.js:173
 msgid "Specify initial stock quantity for this part"
-msgstr ""
+msgstr "Add meg a kezdeti készlet mennyiségét ennek az alkatrésznek"
 
 #: templates/js/translated/part.js:180
 msgid "Select destination stock location"
@@ -8819,7 +8819,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:234
 msgid "Enter initial quantity for this stock item"
-msgstr ""
+msgstr "Add meg a kezdeti mennyiséget ehhez a készlet tételhez"
 
 #: templates/js/translated/stock.js:240
 msgid "Enter serial numbers for new stock (or leave blank)"
@@ -9092,7 +9092,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:2464
 msgid "Allocated Quantity"
-msgstr ""
+msgstr "Lefoglalt mennyiség"
 
 #: templates/js/translated/stock.js:2659
 msgid "Invalid date"
