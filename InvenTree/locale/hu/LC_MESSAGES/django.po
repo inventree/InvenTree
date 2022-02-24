@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-22 01:07+0000\n"
-"PO-Revision-Date: 2022-02-24 20:24\n"
+"PO-Revision-Date: 2022-02-24 21:20\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -892,7 +892,7 @@ msgstr "Egyedi követésre kötelezett tételeknél a menyiség 1 kell legyen"
 
 #: build/models.py:1242
 msgid "Selected stock item not found in BOM"
-msgstr "Kiválasztott készlet tétel nem található a BOM-ban"
+msgstr "Kiválasztott készlet tétel nem található az alkatrészjegyzékben"
 
 #: build/models.py:1302 stock/templates/stock/item_base.html:347
 #: templates/InvenTree/search.html:137 templates/js/translated/build.js:1898
@@ -1008,7 +1008,7 @@ msgstr "Egész számú mennyiség szükséges az egyedi követésre kötelezett 
 
 #: build/serializers.py:211
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
-msgstr "Egész számú mennyiség szükséges, mivel a BOM egyedi követésre kötelezett termékeket tartalmaz"
+msgstr "Egész számú mennyiség szükséges, mivel az alkatrészjegyzék egyedi követésre kötelezett termékeket tartalmaz"
 
 #: build/serializers.py:225 order/serializers.py:820 stock/forms.py:78
 #: stock/serializers.py:314 templates/js/translated/stock.js:239
@@ -1099,7 +1099,7 @@ msgstr "Ehhez a gyártási utasításhoz nem készült kimenet"
 #: build/serializers.py:495 build/serializers.py:544 part/models.py:2829
 #: part/models.py:2988
 msgid "BOM Item"
-msgstr "BOM tétel"
+msgstr "Alkatrészjegyzék tétel"
 
 #: build/serializers.py:505
 msgid "Build output"
@@ -1359,7 +1359,7 @@ msgstr "Kiválasztott tételek lefoglalása"
 
 #: build/templates/build/detail.html:218
 msgid "This Build Order does not have any associated untracked BOM items"
-msgstr "Ez a gyártási utasítás egyáltalán nem tartalmaz nem követett BOM tételt"
+msgstr "Ez a gyártási utasítás egyáltalán nem tartalmaz hozzárendelt nem követett alkatrészjegyzék tételt"
 
 #: build/templates/build/detail.html:227
 msgid "Incomplete Build Outputs"
@@ -1626,11 +1626,11 @@ msgstr "IPN megváltoztatásánsak engedélyezése az alkatrész szerkesztése k
 
 #: common/models.py:677
 msgid "Copy Part BOM Data"
-msgstr "Alkatrész BOM adatok másolása"
+msgstr "Alkatrészjegyzék adatok másolása"
 
 #: common/models.py:678
 msgid "Copy BOM data by default when duplicating a part"
-msgstr "Alkatrész másoláskor a BOM adatokat is másoljuk alapból"
+msgstr "Alkatrész másoláskor az alkatrészjegyzék adatokat is másoljuk alapból"
 
 #: common/models.py:684
 msgid "Copy Part Parameter Data"
@@ -1741,11 +1741,11 @@ msgstr "Alkatrész árak megjelenítése néhány formon"
 
 #: common/models.py:773
 msgid "Show Price in BOM"
-msgstr "Ár megjelenítése a BOM-ban"
+msgstr "Ár megjelenítése az alkatrészjegyzékben"
 
 #: common/models.py:774
 msgid "Include pricing information in BOM tables"
-msgstr "Árinformációk megjelenítése a BOM táblákban"
+msgstr "Árinformációk megjelenítése az alkatrészjegyzék táblákban"
 
 #: common/models.py:785
 msgid "Show Price History"
@@ -1781,11 +1781,11 @@ msgstr "Alkatrészekhez belső ár engedélyezése"
 
 #: common/models.py:813
 msgid "Internal Price as BOM-Price"
-msgstr "Belső ár BOM árként"
+msgstr "Belső ár alkatrészjegyzék árként"
 
 #: common/models.py:814
 msgid "Use the internal price (if set) in BOM-price calculations"
-msgstr "Belső ár használata (ha van) a BOM árszámításban"
+msgstr "Belső ár használata (ha van) az alkatrészjegyzék árszámításában"
 
 #: common/models.py:820
 msgid "Part Name Display Format"
@@ -2057,7 +2057,7 @@ msgstr ""
 
 #: common/models.py:1077
 msgid "Show BOMs that await validation on the homepage"
-msgstr "Érvényesítésre váró BOM-ok megjelenítése a főoldalon"
+msgstr "Érvényesítésre váró alkatrészjegyzékek megjelenítése a főoldalon"
 
 #: common/models.py:1082
 msgid "Show recent stock changes"
@@ -3379,7 +3379,7 @@ msgstr "Nem foglalható készlet egy másik fajta alkatrész sortételéhez"
 
 #: order/models.py:1179
 msgid "Cannot allocate stock to a line without a part"
-msgstr ""
+msgstr "Nem foglalható készlet egy olyan sorhoz amiben nincs alkatrész"
 
 #: order/models.py:1182
 msgid "Allocation quantity cannot exceed stock quantity"
@@ -3387,7 +3387,7 @@ msgstr "A lefoglalandó mennyiség nem haladhatja meg a készlet mennyiségét"
 
 #: order/models.py:1186
 msgid "StockItem is over-allocated"
-msgstr ""
+msgstr "Készlet tétel túlfoglalva"
 
 #: order/models.py:1192 order/serializers.py:740
 msgid "Quantity must be 1 for serialized stock item"
@@ -3403,7 +3403,7 @@ msgstr "Szállítás nem egyezik a vevői rendeléssel"
 
 #: order/models.py:1204
 msgid "Line"
-msgstr ""
+msgstr "Sor"
 
 #: order/models.py:1212 order/serializers.py:831 order/serializers.py:959
 #: templates/js/translated/model_renderers.js:285
@@ -3416,11 +3416,11 @@ msgstr "Vevői rendelés szállítás azonosító"
 
 #: order/models.py:1225
 msgid "Item"
-msgstr ""
+msgstr "Tétel"
 
 #: order/models.py:1226
 msgid "Select stock item to allocate"
-msgstr ""
+msgstr "Válaszd ki a foglalásra szánt készlet tételt"
 
 #: order/models.py:1229
 msgid "Enter stock allocation quantity"
@@ -3448,7 +3448,7 @@ msgstr "Vonalkód hash"
 
 #: order/serializers.py:252
 msgid "Unique identifier field"
-msgstr ""
+msgstr "Egyedi azonosító mező"
 
 #: order/serializers.py:269
 msgid "Barcode is already in use"
@@ -3460,7 +3460,7 @@ msgstr "Sortételt meg kell adni"
 
 #: order/serializers.py:324
 msgid "Destination location must be specified"
-msgstr ""
+msgstr "A cél helyet kötelező megadni"
 
 #: order/serializers.py:335
 msgid "Supplied barcode values must be unique"
@@ -3878,19 +3878,19 @@ msgstr "A {part} alkatrész módosított egységára {price} mennyisége pedig {
 
 #: part/api.py:499
 msgid "Valid"
-msgstr ""
+msgstr "Érvényes"
 
 #: part/api.py:500
 msgid "Validate entire Bill of Materials"
-msgstr ""
+msgstr "Teljes alkatrészjegyzék érvényesítése"
 
 #: part/api.py:505
 msgid "This option must be selected"
-msgstr ""
+msgstr "Ennek az opciónak ki kll lennie választva"
 
 #: part/api.py:847
 msgid "Must be greater than zero"
-msgstr ""
+msgstr "Nullánál nagyobb kell legyen"
 
 #: part/api.py:851
 msgid "Must be a valid quantity"
@@ -3898,11 +3898,11 @@ msgstr "Érvényes mennyiségnek kell lennie"
 
 #: part/api.py:866
 msgid "Specify location for initial part stock"
-msgstr ""
+msgstr "Hely megadása a kezdeti alkarész készlethez"
 
 #: part/api.py:897 part/api.py:901 part/api.py:916 part/api.py:920
 msgid "This field is required"
-msgstr ""
+msgstr "Ez a mező kötelező"
 
 #: part/bom.py:125 part/models.py:83 part/models.py:879
 #: part/templates/part/category.html:108 part/templates/part/part_base.html:338
@@ -3924,7 +3924,7 @@ msgstr "Beszállítás alatt"
 
 #: part/forms.py:84
 msgid "Select part category"
-msgstr ""
+msgstr "Alkatrész kategória kiválasztása"
 
 #: part/forms.py:121
 msgid "Add parameter template to same level categories"
@@ -3979,19 +3979,19 @@ msgstr "Hibás választás a szülő alkatrészre"
 #: part/models.py:532 part/models.py:544
 #, python-brace-format
 msgid "Part '{p1}' is  used in BOM for '{p2}' (recursive)"
-msgstr ""
+msgstr "A '{p1}' alkatrész a '{p2}' alkatrészjegyzékében már szerepel (rekurzív)"
 
 #: part/models.py:674
 msgid "Next available serial numbers are"
-msgstr ""
+msgstr "A következő szabad sorozatszámok"
 
 #: part/models.py:678
 msgid "Next available serial number is"
-msgstr ""
+msgstr "A következő szabad sorozatszám"
 
 #: part/models.py:683
 msgid "Most recent serial number is"
-msgstr ""
+msgstr "A legutóbbi sorozatszám"
 
 #: part/models.py:778
 msgid "Duplicate IPN not allowed in part settings"
@@ -4040,7 +4040,7 @@ msgstr "Kategória"
 
 #: part/models.py:842
 msgid "Part category"
-msgstr ""
+msgstr "Alkatrész kategória"
 
 #: part/models.py:847 part/templates/part/part_base.html:274
 #: templates/js/translated/part.js:618 templates/js/translated/part.js:1221
@@ -4075,11 +4075,11 @@ msgstr "Alapértelmezett beszállítói alkatrész"
 
 #: part/models.py:932
 msgid "Default Expiry"
-msgstr ""
+msgstr "Alapértelmezett lejárat"
 
 #: part/models.py:933
 msgid "Expiry time (in days) for stock items of this part"
-msgstr ""
+msgstr "Lejárati idő (napban) ennek az alkatrésznek a készleteire"
 
 #: part/models.py:938 part/templates/part/part_base.html:196
 msgid "Minimum Stock"
@@ -4127,7 +4127,7 @@ msgstr "Alkatrész megjegyzései - támogatja a Markdown formázást"
 
 #: part/models.py:992
 msgid "BOM checksum"
-msgstr ""
+msgstr "Alkatrészjegyzék ellenőrző összeg"
 
 #: part/models.py:992
 msgid "Stored BOM checksum"
@@ -4287,7 +4287,7 @@ msgstr ""
 
 #: part/models.py:2705
 msgid "BOM quantity for this BOM item"
-msgstr "BOM mennyiség ehhez a BOM tételhez"
+msgstr "Alkatrészjegyzék mennyiség ehhez az alkatrészjegyzék tételhez"
 
 #: part/models.py:2707 part/templates/part/upload_bom.html:58
 #: templates/js/translated/bom.js:791 templates/js/translated/bom.js:865
@@ -4313,7 +4313,7 @@ msgstr ""
 
 #: part/models.py:2717
 msgid "BOM item notes"
-msgstr "BOM tétel megjegyzései"
+msgstr "Alkatrészjegyzék tétel megjegyzései"
 
 #: part/models.py:2719
 msgid "Checksum"
@@ -4332,7 +4332,7 @@ msgstr ""
 
 #: part/models.py:2724
 msgid "This BOM item is inherited by BOMs for variant parts"
-msgstr "Ezt a BOM tételt az alkatrész változatok BOM-jai is öröklik"
+msgstr "Ezt az alkatrészjegyzék tételt az alkatrész változatok alkatrészjegyzékei is öröklik"
 
 #: part/models.py:2729 part/templates/part/upload_bom.html:56
 #: templates/js/translated/bom.js:874
@@ -4341,7 +4341,7 @@ msgstr ""
 
 #: part/models.py:2730
 msgid "Stock items for variant parts can be used for this BOM item"
-msgstr "Alkatrészváltozatok készlet tételei használhatók ehhez a BOM tételhez"
+msgstr "Alkatrészváltozatok készlet tételei használhatók ehhez az alkatrészjegyzék tételhez"
 
 #: part/models.py:2815 stock/models.py:357
 msgid "Quantity must be integer value for trackable parts"
@@ -4361,7 +4361,7 @@ msgstr ""
 
 #: part/models.py:2989
 msgid "Parent BOM item"
-msgstr "Szülő BOM tétel"
+msgstr "Szülő alkatrészjegyzék tétel"
 
 #: part/models.py:2997
 msgid "Substitute part"
@@ -4385,7 +4385,7 @@ msgstr ""
 
 #: part/serializers.py:667
 msgid "Select part to copy BOM from"
-msgstr "Válassz alkatrészt ahonnan BOM-ot másoljunk"
+msgstr "Válassz alkatrészt ahonnan az alkatrészjegyzéket másoljuk"
 
 #: part/serializers.py:678
 msgid "Remove Existing Data"
@@ -4401,7 +4401,7 @@ msgstr ""
 
 #: part/serializers.py:685
 msgid "Include BOM items which are inherited from templated parts"
-msgstr "Sablon alkatrészektől örökölt BOM tételek használata"
+msgstr "Sablon alkatrészektől örökölt alkatrészjegyzék tételek használata"
 
 #: part/serializers.py:690
 msgid "Skip Invalid Rows"
@@ -4413,15 +4413,15 @@ msgstr "Engedély a hibás sorok kihagyására"
 
 #: part/serializers.py:734
 msgid "Clear Existing BOM"
-msgstr ""
+msgstr "Meglévő alkatrészjegyzék törlése"
 
 #: part/serializers.py:735
 msgid "Delete existing BOM items before uploading"
-msgstr ""
+msgstr "Meglévő alkatrészjegyzék tételek törlése a feltöltés előtt"
 
 #: part/serializers.py:762
 msgid "No part column specified"
-msgstr ""
+msgstr "Nincs megadva alkatrész oszlop"
 
 #: part/serializers.py:805
 msgid "Multiple matching parts found"
@@ -4429,7 +4429,7 @@ msgstr "Több egyező alkatrész is található"
 
 #: part/serializers.py:808
 msgid "No matching part found"
-msgstr ""
+msgstr "Nincs egyező alkatrész"
 
 #: part/serializers.py:811
 msgid "Part is not designated as a component"
@@ -4445,7 +4445,7 @@ msgstr "Érvénytelen mennyiség"
 
 #: part/serializers.py:847
 msgid "At least one BOM item is required"
-msgstr ""
+msgstr "Legalább egy BOM tétel szükséges"
 
 #: part/tasks.py:58
 msgid "Low stock notification"
@@ -4453,30 +4453,30 @@ msgstr "Alacsony készlet értesítés"
 
 #: part/templates/part/bom.html:6
 msgid "You do not have permission to edit the BOM."
-msgstr ""
+msgstr "Nincs jogosultságod a BOM szerkesztéséhez."
 
 #: part/templates/part/bom.html:15
 #, python-format
 msgid "The BOM for <em>%(part)s</em> has changed, and must be validated.<br>"
-msgstr ""
+msgstr "A <em>%(part)s</em> alkatrészhez tartozó BOM megváltozott és érvényesíteni kell.<br>"
 
 #: part/templates/part/bom.html:17
 #, python-format
 msgid "The BOM for <em>%(part)s</em> was last checked by %(checker)s on %(check_date)s"
-msgstr ""
+msgstr "A <em>%(part)s</em> alkatrészhez tartozó BOM-ot utoljára %(checker)s ellenőrizte %(check_date)s-n"
 
 #: part/templates/part/bom.html:21
 #, python-format
 msgid "The BOM for <em>%(part)s</em> has not been validated."
-msgstr ""
+msgstr "A <em>%(part)s</em> alkatrészhez tartozó BOM még nincs érvényesítve."
 
 #: part/templates/part/bom.html:30 part/templates/part/detail.html:273
 msgid "BOM actions"
-msgstr ""
+msgstr "BOM műveletek"
 
 #: part/templates/part/bom.html:34
 msgid "Delete Items"
-msgstr ""
+msgstr "Tételek törlése"
 
 #: part/templates/part/category.html:28 part/templates/part/category.html:32
 msgid "You are subscribed to notifications for this category"
@@ -4533,11 +4533,11 @@ msgstr "Alkatrészek száma (alkategóriákkal együtt)"
 
 #: part/templates/part/category.html:156
 msgid "Export Part Data"
-msgstr ""
+msgstr "Alkatrész adatok exportálása"
 
 #: part/templates/part/category.html:157 part/templates/part/category.html:181
 msgid "Export"
-msgstr ""
+msgstr "Exportálás"
 
 #: part/templates/part/category.html:160
 msgid "Create new part"
@@ -4549,7 +4549,7 @@ msgstr "Új alkatrész"
 
 #: part/templates/part/category.html:175
 msgid "Set category"
-msgstr ""
+msgstr "Kategória beállítása"
 
 #: part/templates/part/category.html:175
 msgid "Set Category"
@@ -4561,7 +4561,7 @@ msgstr "Címkék nyomtatása"
 
 #: part/templates/part/category.html:181
 msgid "Export Data"
-msgstr ""
+msgstr "Adatok exportálása"
 
 #: part/templates/part/category.html:195
 msgid "Part Parameters"
@@ -4577,7 +4577,7 @@ msgstr "Alkatrész létrehozása"
 
 #: part/templates/part/category_delete.html:5
 msgid "Are you sure you want to delete category"
-msgstr ""
+msgstr "Biztos hogy törölni szeretnél kategóriát"
 
 #: part/templates/part/category_delete.html:8
 #, python-format
@@ -4590,7 +4590,7 @@ msgstr "Ha törlöd ezt a kategóriát az alkategóriák át lesznek mozgatva a"
 
 #: part/templates/part/category_delete.html:11
 msgid "category"
-msgstr ""
+msgstr "kategória"
 
 #: part/templates/part/category_delete.html:13
 msgid "top level Parts category"
@@ -4616,12 +4616,12 @@ msgstr "Alkatrészek importálása"
 
 #: part/templates/part/copy_part.html:9 templates/js/translated/part.js:348
 msgid "Duplicate Part"
-msgstr ""
+msgstr "Alkatrész másolása"
 
 #: part/templates/part/copy_part.html:10
 #, python-format
 msgid "Make a copy of part '%(full_name)s'."
-msgstr ""
+msgstr "Másolat készítése a '%(full_name)s' alkatrészről."
 
 #: part/templates/part/copy_part.html:14
 #: part/templates/part/create_part.html:11
@@ -4640,7 +4640,7 @@ msgstr "%(full_name)s - <em>%(desc)s</em> (%(match_per)s%% egyezik)"
 
 #: part/templates/part/detail.html:21
 msgid "Part Stock"
-msgstr ""
+msgstr "Alkatrész készlet"
 
 #: part/templates/part/detail.html:33
 #, python-format
@@ -4653,11 +4653,11 @@ msgstr "Alkatrész készlet foglalások"
 
 #: part/templates/part/detail.html:60
 msgid "Part Test Templates"
-msgstr ""
+msgstr "Alkatrész teszt sablonok"
 
 #: part/templates/part/detail.html:65
 msgid "Add Test Template"
-msgstr ""
+msgstr "Teszt sablon hozzáadása"
 
 #: part/templates/part/detail.html:122
 msgid "Sales Order Allocations"
@@ -4665,7 +4665,7 @@ msgstr "Vevői rendeléshez foglalások"
 
 #: part/templates/part/detail.html:162
 msgid "Part Variants"
-msgstr ""
+msgstr "Alkatrész változatok"
 
 #: part/templates/part/detail.html:166
 msgid "Create new variant"
@@ -4673,11 +4673,11 @@ msgstr "Új változat létrehozása"
 
 #: part/templates/part/detail.html:167
 msgid "New Variant"
-msgstr ""
+msgstr "Új változat"
 
 #: part/templates/part/detail.html:194
 msgid "Add new parameter"
-msgstr ""
+msgstr "Paraméter hozzáadása"
 
 #: part/templates/part/detail.html:231 part/templates/part/part_sidebar.html:52
 msgid "Related Parts"
@@ -4685,11 +4685,11 @@ msgstr "Kapcsolódó alkatrészek"
 
 #: part/templates/part/detail.html:235 part/templates/part/detail.html:236
 msgid "Add Related"
-msgstr ""
+msgstr "Kapcsolódó hozzáadása"
 
 #: part/templates/part/detail.html:256 part/templates/part/part_sidebar.html:18
 msgid "Bill of Materials"
-msgstr ""
+msgstr "Alkatrészlista"
 
 #: part/templates/part/detail.html:261
 msgid "Export actions"
