@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-22 01:07+0000\n"
-"PO-Revision-Date: 2022-02-24 22:22\n"
+"PO-Revision-Date: 2022-02-24 23:20\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1809,7 +1809,7 @@ msgstr "Debug mód"
 
 #: common/models.py:836
 msgid "Generate reports in debug mode (HTML output)"
-msgstr "Riportok generálása HTML formátumban (hibakereséshez)"
+msgstr "Riportok előállítása HTML formátumban (hibakereséshez)"
 
 #: common/models.py:842
 msgid "Page Size"
@@ -3115,7 +3115,7 @@ msgstr "Fájlnév minta"
 
 #: label/models.py:155
 msgid "Pattern for generating label filenames"
-msgstr "Minta a címke fájlnevek generálásához"
+msgstr "Minta a címke fájlnevek előállításához"
 
 #: label/models.py:258
 msgid "Query filters (comma-separated list of key=value pairs),"
@@ -5461,7 +5461,7 @@ msgstr "Riport verziószáma (automatikusan nő)"
 
 #: report/models.py:292
 msgid "Pattern for generating report filenames"
-msgstr "Minta a riport fájlnevek generálásához"
+msgstr "Minta a riport fájlnevek előállításához"
 
 #: report/models.py:299
 msgid "Report template is enabled"
@@ -6059,7 +6059,7 @@ msgstr "Készlet csökkentése"
 
 #: stock/templates/stock/item_base.html:85
 msgid "Serialize stock"
-msgstr "Sorozatszám generálás"
+msgstr "Sorozatszámok előállítása"
 
 #: stock/templates/stock/item_base.html:89
 #: stock/templates/stock/location.html:57
@@ -7769,7 +7769,7 @@ msgstr "Az alkatrészjegyzék követésre kötelezett alkatrészeket tartalmaz"
 
 #: templates/js/translated/build.js:226
 msgid "Build outputs must be generated individually"
-msgstr "A gyártási kimeneteket egyesével kell generálni"
+msgstr "A gyártási kimeneteket egyesével kell előállítani"
 
 #: templates/js/translated/build.js:234
 msgid "Trackable parts can have serial numbers specified"
@@ -7801,31 +7801,31 @@ msgstr "Gyártási kimenet törlése"
 
 #: templates/js/translated/build.js:324
 msgid "Are you sure you wish to unallocate stock items from this build?"
-msgstr ""
+msgstr "Biztosan szeretnéd a készlet tételeket felszabadítani ebből a gyártási utasításból?"
 
 #: templates/js/translated/build.js:342
 msgid "Unallocate Stock Items"
-msgstr ""
+msgstr "Készlet tételek felszabadítása"
 
 #: templates/js/translated/build.js:360 templates/js/translated/build.js:508
 msgid "Select Build Outputs"
-msgstr ""
+msgstr "Gyártási kimenetek kiválasztása"
 
 #: templates/js/translated/build.js:361 templates/js/translated/build.js:509
 msgid "At least one build output must be selected"
-msgstr ""
+msgstr "Legalább egy gyártási kimenetet ki kell választani"
 
 #: templates/js/translated/build.js:415 templates/js/translated/build.js:563
 msgid "Output"
-msgstr ""
+msgstr "Kimenet"
 
 #: templates/js/translated/build.js:431
 msgid "Complete Build Outputs"
-msgstr ""
+msgstr "Gyártási kimenetek befejezése"
 
 #: templates/js/translated/build.js:576
 msgid "Delete Build Outputs"
-msgstr ""
+msgstr "Gyártási kimenetek törlése"
 
 #: templates/js/translated/build.js:665
 msgid "No build order allocations found"
@@ -7905,7 +7905,7 @@ msgstr "Készlet foglalás megerősítése"
 
 #: templates/js/translated/build.js:1674
 msgid "Allocate Stock Items to Build Order"
-msgstr ""
+msgstr "Készlet foglalása a gyártási utasításhoz"
 
 #: templates/js/translated/build.js:1685 templates/js/translated/order.js:1613
 msgid "No matching stock locations"
@@ -7917,13 +7917,13 @@ msgstr "Nincs egyező készlet"
 
 #: templates/js/translated/build.js:1875
 msgid "No builds matching query"
-msgstr ""
+msgstr "Nincs a lekérdezéssel egyező gyártási utasítás"
 
 #: templates/js/translated/build.js:1892 templates/js/translated/part.js:1213
 #: templates/js/translated/part.js:1624 templates/js/translated/stock.js:1644
 #: templates/js/translated/stock.js:2603
 msgid "Select"
-msgstr ""
+msgstr "Kiválaszt"
 
 #: templates/js/translated/build.js:1912
 msgid "Build order is overdue"
@@ -7931,11 +7931,11 @@ msgstr "Gyártási utasítás megkésett"
 
 #: templates/js/translated/build.js:1973 templates/js/translated/stock.js:2822
 msgid "No user information"
-msgstr ""
+msgstr "Nincs felhasználói információ"
 
 #: templates/js/translated/build.js:1985
 msgid "No information"
-msgstr ""
+msgstr "Nincs információ"
 
 #: templates/js/translated/build.js:2036
 msgid "No parts allocated for"
@@ -8040,12 +8040,12 @@ msgstr "Nincs beszállítói alkatrész"
 #: templates/js/translated/filters.js:178
 #: templates/js/translated/filters.js:429
 msgid "true"
-msgstr ""
+msgstr "igaz"
 
 #: templates/js/translated/filters.js:182
 #: templates/js/translated/filters.js:430
 msgid "false"
-msgstr ""
+msgstr "hamis"
 
 #: templates/js/translated/filters.js:204
 msgid "Select filter"
@@ -8651,7 +8651,7 @@ msgstr "Nincs alkatrész"
 
 #: templates/js/translated/part.js:1273
 msgid "No category"
-msgstr ""
+msgstr "Nincs kategória"
 
 #: templates/js/translated/part.js:1296
 #: templates/js/translated/table_filters.js:425
