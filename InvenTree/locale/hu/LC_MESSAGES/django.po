@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-22 01:07+0000\n"
-"PO-Revision-Date: 2022-02-24 19:27\n"
+"PO-Revision-Date: 2022-02-24 20:24\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1626,11 +1626,11 @@ msgstr "IPN megváltoztatásánsak engedélyezése az alkatrész szerkesztése k
 
 #: common/models.py:677
 msgid "Copy Part BOM Data"
-msgstr ""
+msgstr "Alkatrész BOM adatok másolása"
 
 #: common/models.py:678
 msgid "Copy BOM data by default when duplicating a part"
-msgstr ""
+msgstr "Alkatrész másoláskor a BOM adatokat is másoljuk alapból"
 
 #: common/models.py:684
 msgid "Copy Part Parameter Data"
@@ -1642,11 +1642,11 @@ msgstr "Alkatrész másoláskor a paramétereket is másoljuk alapból"
 
 #: common/models.py:691
 msgid "Copy Part Test Data"
-msgstr ""
+msgstr "Alkatrész teszt adatok másolása"
 
 #: common/models.py:692
 msgid "Copy test data by default when duplicating a part"
-msgstr ""
+msgstr "Alkatrész másoláskor a tesztek adatait is másoljuk alapból"
 
 #: common/models.py:698
 msgid "Copy Category Parameter Templates"
@@ -1660,7 +1660,7 @@ msgstr "Kategória paraméter sablonok másolása alkatrész létrehozásakor"
 #: templates/js/translated/table_filters.js:38
 #: templates/js/translated/table_filters.js:417
 msgid "Template"
-msgstr ""
+msgstr "Sablon"
 
 #: common/models.py:706
 msgid "Parts are templates by default"
@@ -1725,11 +1725,11 @@ msgstr "Alkatrészek alapból virtuálisak legyenek"
 
 #: common/models.py:754
 msgid "Show Import in Views"
-msgstr ""
+msgstr "Importálás megjelenítése a nézetekben"
 
 #: common/models.py:755
 msgid "Display the import wizard in some part views"
-msgstr ""
+msgstr "Import segéd megjelenítése néhány alkatrész nézetben"
 
 #: common/models.py:761
 msgid "Show Price in Forms"
@@ -1745,7 +1745,7 @@ msgstr "Ár megjelenítése a BOM-ban"
 
 #: common/models.py:774
 msgid "Include pricing information in BOM tables"
-msgstr ""
+msgstr "Árinformációk megjelenítése a BOM táblákban"
 
 #: common/models.py:785
 msgid "Show Price History"
@@ -1753,7 +1753,7 @@ msgstr "Ártörténet megjelenítése"
 
 #: common/models.py:786
 msgid "Display historical pricing for Part"
-msgstr ""
+msgstr "Alkatrész ártörténet megjelenítése"
 
 #: common/models.py:792
 msgid "Show related parts"
@@ -1789,35 +1789,35 @@ msgstr "Belső ár használata (ha van) a BOM árszámításban"
 
 #: common/models.py:820
 msgid "Part Name Display Format"
-msgstr ""
+msgstr "Alkatrész név megjelenítés formátuma"
 
 #: common/models.py:821
 msgid "Format to display the part name"
-msgstr ""
+msgstr "Formátum az alkatrész név megjelenítéséhez"
 
 #: common/models.py:828
 msgid "Enable Reports"
-msgstr ""
+msgstr "Riportok engedélyezése"
 
 #: common/models.py:829
 msgid "Enable generation of reports"
-msgstr ""
+msgstr "Riportok előállításának engedélyezése"
 
 #: common/models.py:835 templates/stats.html:25
 msgid "Debug Mode"
-msgstr ""
+msgstr "Debug mód"
 
 #: common/models.py:836
 msgid "Generate reports in debug mode (HTML output)"
-msgstr ""
+msgstr "Riportok generálása HTML formátumban (hibakereséshez)"
 
 #: common/models.py:842
 msgid "Page Size"
-msgstr ""
+msgstr "Lapméret"
 
 #: common/models.py:843
 msgid "Default page size for PDF reports"
-msgstr ""
+msgstr "Alapértelmezett lapméret a PDF riportokhoz"
 
 #: common/models.py:853
 msgid "Test Reports"
@@ -1853,7 +1853,7 @@ msgstr "Napok száma amennyivel a lejárat előtt a készlet tételeket állottn
 
 #: common/models.py:877
 msgid "days"
-msgstr ""
+msgstr "nap"
 
 #: common/models.py:882
 msgid "Build Expired Stock"
@@ -1861,19 +1861,19 @@ msgstr "Lejárt készlet gyártása"
 
 #: common/models.py:883
 msgid "Allow building with expired stock"
-msgstr ""
+msgstr "Gyártás engedélyezése lejárt készletből"
 
 #: common/models.py:889
 msgid "Stock Ownership Control"
-msgstr ""
+msgstr "Készlet tulajdonosok kezelése"
 
 #: common/models.py:890
 msgid "Enable ownership control over stock locations and items"
-msgstr ""
+msgstr "Tuajdonosok kezelésének engedélyezése a készlet helyekre és tételekre"
 
 #: common/models.py:896
 msgid "Build Order Reference Prefix"
-msgstr "Gyártási utasítás azonosító előtag"
+msgstr "Gyártási utasítás azonosító előtagja"
 
 #: common/models.py:897
 msgid "Prefix value for build order reference"
@@ -1889,55 +1889,55 @@ msgstr "Gyártási utasítás azonosítóra illeszkedő reguláris kifejezés"
 
 #: common/models.py:907
 msgid "Sales Order Reference Prefix"
-msgstr ""
+msgstr "Vevői rendelés azonosító előtagja"
 
 #: common/models.py:908
 msgid "Prefix value for sales order reference"
-msgstr ""
+msgstr "Előtag értéke a vevői rendelés azonosítóhoz"
 
 #: common/models.py:913
 msgid "Purchase Order Reference Prefix"
-msgstr ""
+msgstr "Beszerzési rendelés azonosító előtagja"
 
 #: common/models.py:914
 msgid "Prefix value for purchase order reference"
-msgstr ""
+msgstr "Előtag értéke a beszerzési rendelés azonosítóhoz"
 
 #: common/models.py:920
 msgid "Enable password forgot"
-msgstr ""
+msgstr "Elfelejtett jelszó engedélyezése"
 
 #: common/models.py:921
 msgid "Enable password forgot function on the login pages"
-msgstr ""
+msgstr "Elfelejtett jelszó funkció engedélyezése a bejentkező oldalon"
 
 #: common/models.py:926
 msgid "Enable registration"
-msgstr ""
+msgstr "Regisztráció engedélyezése"
 
 #: common/models.py:927
 msgid "Enable self-registration for users on the login pages"
-msgstr ""
+msgstr "Felhaszálók önkéntes regisztrációjának engedélyezése a bejelentkező oldalon"
 
 #: common/models.py:932
 msgid "Enable SSO"
-msgstr ""
+msgstr "SSO engedélyezése"
 
 #: common/models.py:933
 msgid "Enable SSO on the login pages"
-msgstr ""
+msgstr "SSO engedélyezése a bejelentkező oldalon"
 
 #: common/models.py:938
 msgid "Email required"
-msgstr ""
+msgstr "Email szükséges"
 
 #: common/models.py:939
 msgid "Require user to supply mail on signup"
-msgstr ""
+msgstr "Kötelező email megadás regisztrációkor"
 
 #: common/models.py:944
 msgid "Auto-fill SSO users"
-msgstr ""
+msgstr "SSO felhasználók automatikus kitöltése"
 
 #: common/models.py:945
 msgid "Automatically fill out user-details from SSO account-data"
@@ -2311,7 +2311,7 @@ msgstr ""
 
 #: common/models.py:1572
 msgid "Body of this message"
-msgstr ""
+msgstr "Üzenet törzse"
 
 #: common/models.py:1581
 msgid "Endpoint on which this message was received"
@@ -2319,18 +2319,18 @@ msgstr "Végpont amin ez az üzenet érkezett"
 
 #: common/models.py:1586
 msgid "Worked on"
-msgstr ""
+msgstr "Dolgozott rajta"
 
 #: common/models.py:1587
 msgid "Was the work on this message finished?"
-msgstr ""
+msgstr "Befejeződött a munka ezzel az üzenettel?"
 
 #: common/views.py:93 order/templates/order/order_wizard/po_upload.html:49
 #: order/templates/order/purchase_order_detail.html:24 order/views.py:243
 #: part/templates/part/import_wizard/part_upload.html:47 part/views.py:210
 #: templates/patterns/wizard/upload.html:35
 msgid "Upload File"
-msgstr ""
+msgstr "Fájl feltöltése"
 
 #: common/views.py:94 order/views.py:244
 #: part/templates/part/import_wizard/ajax_match_fields.html:45
@@ -2359,7 +2359,7 @@ msgstr "Importált alkatrészek"
 #: templates/patterns/wizard/match_fields.html:26
 #: templates/patterns/wizard/upload.html:33
 msgid "Previous Step"
-msgstr ""
+msgstr "Előző lépés"
 
 #: company/forms.py:24 part/forms.py:46
 #: templates/InvenTree/settings/mixins/urls.html:14
@@ -3067,55 +3067,55 @@ msgstr "A megadott URL nem egy érvényes kép fájl"
 
 #: label/api.py:57 report/api.py:203
 msgid "No valid objects provided to template"
-msgstr ""
+msgstr "Nincs érvényes objektum megadva a sablonhoz"
 
 #: label/models.py:113
 msgid "Label name"
-msgstr ""
+msgstr "Címke neve"
 
 #: label/models.py:120
 msgid "Label description"
-msgstr ""
+msgstr "Címke leírása"
 
 #: label/models.py:127
 msgid "Label"
-msgstr ""
+msgstr "Címke"
 
 #: label/models.py:128
 msgid "Label template file"
-msgstr ""
+msgstr "Címke sablon fájl"
 
 #: label/models.py:134 report/models.py:298
 msgid "Enabled"
-msgstr ""
+msgstr "Engedélyezve"
 
 #: label/models.py:135
 msgid "Label template is enabled"
-msgstr ""
+msgstr "Címke sablon engedélyezve"
 
 #: label/models.py:140
 msgid "Width [mm]"
-msgstr ""
+msgstr "Szélesség [mm]"
 
 #: label/models.py:141
 msgid "Label width, specified in mm"
-msgstr ""
+msgstr "Címke szélessége, mm-ben"
 
 #: label/models.py:147
 msgid "Height [mm]"
-msgstr ""
+msgstr "Magasság [mm]"
 
 #: label/models.py:148
 msgid "Label height, specified in mm"
-msgstr ""
+msgstr "Címke magassága, mm-ben"
 
 #: label/models.py:154 report/models.py:291
 msgid "Filename Pattern"
-msgstr ""
+msgstr "Fájlnév minta"
 
 #: label/models.py:155
 msgid "Pattern for generating label filenames"
-msgstr ""
+msgstr "Minta a címke fájlnevek generálásához"
 
 #: label/models.py:258
 msgid "Query filters (comma-separated list of key=value pairs),"
@@ -3157,7 +3157,7 @@ msgstr "Link külső weboldalra"
 
 #: order/models.py:135
 msgid "Created By"
-msgstr ""
+msgstr "Készítette"
 
 #: order/models.py:142
 msgid "User or group responsible for this order"
@@ -3214,7 +3214,7 @@ msgstr "Rendelés teljesítési dátuma"
 
 #: order/models.py:285
 msgid "Part supplier must match PO supplier"
-msgstr ""
+msgstr "Az alkatrész beszállítója meg kell egyezzen a beszerzési rendelés beszállítójával"
 
 #: order/models.py:420
 msgid "Quantity must be a positive number"
@@ -3243,7 +3243,7 @@ msgstr "Kiszállítás dátuma"
 
 #: order/models.py:574
 msgid "shipped by"
-msgstr ""
+msgstr "szállította"
 
 #: order/models.py:640
 msgid "Order cannot be completed as no parts have been assigned"
@@ -3275,7 +3275,7 @@ msgstr "Sortétel megjegyzései"
 
 #: order/models.py:842
 msgid "Supplier part must match supplier"
-msgstr ""
+msgstr "Beszállítói alkatrésznek egyeznie kell a beszállítóval"
 
 #: order/models.py:855 order/models.py:946 order/models.py:1042
 #: templates/js/translated/order.js:1820 templates/js/translated/stock.js:2395
@@ -3293,7 +3293,7 @@ msgstr "Beszerzési rendelés"
 
 #: order/models.py:877
 msgid "Supplier part"
-msgstr ""
+msgstr "Beszállítói alkatrész"
 
 #: order/models.py:884 order/templates/order/order_base.html:163
 #: templates/js/translated/order.js:589 templates/js/translated/order.js:1118
@@ -3339,7 +3339,7 @@ msgstr "Szállítás dátuma"
 
 #: order/models.py:1056
 msgid "Checked By"
-msgstr ""
+msgstr "Ellenőrizte"
 
 #: order/models.py:1057
 msgid "User who checked this shipment"
@@ -3355,7 +3355,7 @@ msgstr "Szállítás megjegyzései"
 
 #: order/models.py:1079
 msgid "Tracking Number"
-msgstr ""
+msgstr "Nyomkövetési szám"
 
 #: order/models.py:1080
 msgid "Shipment tracking information"
