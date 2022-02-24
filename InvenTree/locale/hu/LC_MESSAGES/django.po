@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-22 01:07+0000\n"
-"PO-Revision-Date: 2022-02-23 23:19\n"
+"PO-Revision-Date: 2022-02-24 19:27\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1034,7 +1034,7 @@ msgstr "A következő sorozatszámok már léteznek"
 
 #: build/serializers.py:327 build/serializers.py:392
 msgid "A list of build outputs must be provided"
-msgstr ""
+msgstr "A gyártási kimenetek listáját meg kell adni"
 
 #: build/serializers.py:369 order/serializers.py:226 order/serializers.py:294
 #: stock/forms.py:169 stock/serializers.py:325 stock/serializers.py:788
@@ -1052,7 +1052,7 @@ msgstr "Hely"
 
 #: build/serializers.py:370
 msgid "Location for completed build outputs"
-msgstr ""
+msgstr "A kész gyártási kimenetek helye"
 
 #: build/serializers.py:376 build/templates/build/build_base.html:142
 #: build/templates/build/detail.html:63 order/models.py:557
@@ -1066,7 +1066,7 @@ msgstr "Állapot"
 
 #: build/serializers.py:428
 msgid "Accept Unallocated"
-msgstr ""
+msgstr "Kiosztatlanok elfogadása"
 
 #: build/serializers.py:429
 msgid "Accept that stock items have not been fully allocated to this build order"
@@ -1078,11 +1078,11 @@ msgstr "A szükséges készlet nem lett teljesen lefoglalva"
 
 #: build/serializers.py:444
 msgid "Accept Incomplete"
-msgstr ""
+msgstr "Befejezetlenek elfogadása"
 
 #: build/serializers.py:445
 msgid "Accept that the required number of build outputs have not been completed"
-msgstr ""
+msgstr "Fogadd el hogy a szükséges számú gyártási kimenet nem lett elérve"
 
 #: build/serializers.py:455 templates/js/translated/build.js:154
 msgid "Required build quantity has not been completed"
@@ -1213,7 +1213,7 @@ msgstr "Cél dátum"
 #: build/templates/build/build_base.html:156
 #, python-format
 msgid "This build was due on %(target)s"
-msgstr ""
+msgstr "Ez a gyártás %(target)s-n volt esedékes"
 
 #: build/templates/build/build_base.html:156
 #: build/templates/build/build_base.html:201
@@ -1501,7 +1501,7 @@ msgstr "Feltöltendő fájl kiválasztása"
 
 #: common/forms.py:50
 msgid "{name.title()} File"
-msgstr ""
+msgstr "{name.title()} Fájl"
 
 #: common/forms.py:51
 #, python-brace-format
@@ -1570,11 +1570,11 @@ msgstr "Belső cégnév"
 
 #: common/models.py:630
 msgid "Base URL"
-msgstr ""
+msgstr "Kiindulási URL"
 
 #: common/models.py:631
 msgid "Base URL for server instance"
-msgstr "Alap URL a kiszolgáló példányhoz"
+msgstr "Kiindulási URL a kiszolgáló példányhoz"
 
 #: common/models.py:637
 msgid "Default Currency"
@@ -1586,11 +1586,11 @@ msgstr "Alapértelmezett pénznem"
 
 #: common/models.py:644
 msgid "Download from URL"
-msgstr ""
+msgstr "Letöltés URL-ről"
 
 #: common/models.py:645
 msgid "Allow download of remote images and files from external URL"
-msgstr ""
+msgstr "Képek és fájlok letöltésének engedélyezése külső URL-ről"
 
 #: common/models.py:651 templates/InvenTree/settings/sidebar.html:31
 msgid "Barcode Support"
@@ -1602,15 +1602,15 @@ msgstr "Vonalkód olvasó engedélyezése"
 
 #: common/models.py:658
 msgid "IPN Regex"
-msgstr ""
+msgstr "IPN reguláris kifejezés"
 
 #: common/models.py:659
 msgid "Regular expression pattern for matching Part IPN"
-msgstr ""
+msgstr "Reguláris kifejezés ami illeszkedik az alkatrész IPN-re"
 
 #: common/models.py:663
 msgid "Allow Duplicate IPN"
-msgstr ""
+msgstr "Többször is előforduló IPN engedélyezése"
 
 #: common/models.py:664
 msgid "Allow multiple parts to share the same IPN"
@@ -1618,11 +1618,11 @@ msgstr "Azonos IPN használható legyen több alkatrész esetén is"
 
 #: common/models.py:670
 msgid "Allow Editing IPN"
-msgstr ""
+msgstr "IPN szerkesztésének engedélyezése"
 
 #: common/models.py:671
 msgid "Allow changing the IPN value while editing a part"
-msgstr ""
+msgstr "IPN megváltoztatásánsak engedélyezése az alkatrész szerkesztése közben"
 
 #: common/models.py:677
 msgid "Copy Part BOM Data"
@@ -2465,7 +2465,7 @@ msgstr "Cég által használt alapértelmezett pénznem"
 #: company/models.py:320 company/models.py:535 stock/models.py:471
 #: stock/templates/stock/item_base.html:144 templates/js/translated/bom.js:541
 msgid "Base Part"
-msgstr "Alap alkatrész"
+msgstr "Kiindulási alkatrész"
 
 #: company/models.py:324 company/models.py:539
 msgid "Select part"
@@ -2541,7 +2541,7 @@ msgstr "Paraméter mértékegység"
 
 #: company/models.py:502
 msgid "Linked manufacturer part must reference the same base part"
-msgstr "Kapcsolódó gyártói alkatrésznek ugyanarra az alap alkatrészre kell hivatkoznia"
+msgstr "Kapcsolódó gyártói alkatrésznek ugyanarra a kiindulási alkatrészre kell hivatkoznia"
 
 #: company/models.py:545 company/templates/company/company_base.html:78
 #: company/templates/company/supplier_part.html:87 order/models.py:227
@@ -5683,7 +5683,7 @@ msgstr "Szülő készlet tétel"
 
 #: stock/models.py:472
 msgid "Base part"
-msgstr "Alap alkatrész"
+msgstr "Kiindulási alkatrész"
 
 #: stock/models.py:480
 msgid "Select a matching supplier part for this stock item"
