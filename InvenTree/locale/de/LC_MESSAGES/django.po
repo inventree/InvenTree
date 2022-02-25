@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-25 06:48+0000\n"
-"PO-Revision-Date: 2022-02-25 06:54\n"
+"PO-Revision-Date: 2022-02-25 23:07\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -528,7 +528,7 @@ msgstr "Endprodukt fertiggestellt"
 
 #: InvenTree/status_codes.py:302
 msgid "Consumed by build order"
-msgstr ""
+msgstr "Durch Bauauftrag verbraucht"
 
 #: InvenTree/status_codes.py:304
 msgid "Received against purchase order"
