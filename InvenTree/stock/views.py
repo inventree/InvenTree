@@ -82,7 +82,7 @@ class StockLocationDetail(InvenTreeRoleMixin, DetailView):
     model = StockLocation
 
     def get_context_data(self, **kwargs):
-        
+
         context = super().get_context_data(**kwargs)
 
         context['ownership_enabled'] = common.models.InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')

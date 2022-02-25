@@ -74,8 +74,8 @@ class StockLocation(InvenTreeTree):
             if loc.owner is not None:
                 return loc.owner
 
-        return None        
-    
+        return None
+
     def check_ownership(self, user):
         """
         Check if the user "owns" (is one of the owners of) the location.
@@ -97,7 +97,7 @@ class StockLocation(InvenTreeTree):
             # No owner set, for this location or any location above
             # So, no ownership checks to perform!
             return True
-    
+
         return user in owner.get_related_owners(include_group=True)
 
     def get_absolute_url(self):
