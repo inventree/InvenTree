@@ -31,7 +31,6 @@ from datetime import datetime, timedelta
 from InvenTree import helpers
 import InvenTree.tasks
 
-import common.models
 import report.models
 import label.models
 
@@ -1311,6 +1310,7 @@ class StockItem(MPTTModel):
         """
 
         notes = kwargs.get('notes', '')
+        code = kwargs.get('code', StockHistoryCode.SPLIT_FROM_PARENT)
 
         # Do not split a serialized part
         if self.serialized:
@@ -1352,7 +1352,7 @@ class StockItem(MPTTModel):
 
         # Add a new tracking item for the new stock item
         new_stock.add_tracking_entry(
-            StockHistoryCode.SPLIT_FROM_PARENT,
+            code,
             user,
             notes=notes,
             deltas={
