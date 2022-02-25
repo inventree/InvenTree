@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-22 01:07+0000\n"
-"PO-Revision-Date: 2022-02-22 01:18\n"
+"POT-Creation-Date: 2022-02-25 03:31+0000\n"
+"PO-Revision-Date: 2022-02-25 03:36\n"
 "Last-Translator: \n"
 "Language-Team: Hebrew\n"
 "Language: he_IL\n"
@@ -834,7 +834,7 @@ msgstr ""
 msgid "External Link"
 msgstr ""
 
-#: build/models.py:336 build/serializers.py:380
+#: build/models.py:336 build/serializers.py:381
 #: build/templates/build/sidebar.html:21 company/models.py:142
 #: company/models.py:577 company/templates/company/sidebar.html:25
 #: order/models.py:147 order/models.py:814 order/models.py:1071
@@ -904,7 +904,7 @@ msgstr ""
 msgid "Build to allocate parts"
 msgstr ""
 
-#: build/models.py:1319 build/serializers.py:570 order/serializers.py:696
+#: build/models.py:1319 build/serializers.py:571 order/serializers.py:696
 #: order/serializers.py:714 stock/serializers.py:404 stock/serializers.py:635
 #: stock/serializers.py:753 stock/templates/stock/item_base.html:9
 #: stock/templates/stock/item_base.html:23
@@ -972,7 +972,7 @@ msgstr ""
 msgid "Destination stock item"
 msgstr ""
 
-#: build/serializers.py:138 build/serializers.py:599
+#: build/serializers.py:138 build/serializers.py:600
 msgid "Build Output"
 msgstr ""
 
@@ -996,7 +996,7 @@ msgstr ""
 msgid "Enter quantity for build output"
 msgstr ""
 
-#: build/serializers.py:201 build/serializers.py:590 order/models.py:280
+#: build/serializers.py:201 build/serializers.py:591 order/models.py:280
 #: order/serializers.py:240 part/serializers.py:471 part/serializers.py:826
 #: stock/models.py:367 stock/models.py:1105 stock/serializers.py:305
 msgid "Quantity must be greater than zero"
@@ -1020,23 +1020,23 @@ msgstr "מספרים סידוריים"
 msgid "Enter serial numbers for build outputs"
 msgstr ""
 
-#: build/serializers.py:239
+#: build/serializers.py:240
 msgid "Auto Allocate Serial Numbers"
 msgstr ""
 
-#: build/serializers.py:240
+#: build/serializers.py:241
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr ""
 
-#: build/serializers.py:274 stock/api.py:549
+#: build/serializers.py:275 stock/api.py:549
 msgid "The following serial numbers already exist"
 msgstr ""
 
-#: build/serializers.py:327 build/serializers.py:392
+#: build/serializers.py:328 build/serializers.py:393
 msgid "A list of build outputs must be provided"
 msgstr ""
 
-#: build/serializers.py:369 order/serializers.py:226 order/serializers.py:294
+#: build/serializers.py:370 order/serializers.py:226 order/serializers.py:294
 #: stock/forms.py:169 stock/serializers.py:325 stock/serializers.py:788
 #: stock/serializers.py:1029 stock/templates/stock/item_base.html:315
 #: templates/js/translated/barcode.js:384
@@ -1050,11 +1050,11 @@ msgstr ""
 msgid "Location"
 msgstr ""
 
-#: build/serializers.py:370
+#: build/serializers.py:371
 msgid "Location for completed build outputs"
 msgstr ""
 
-#: build/serializers.py:376 build/templates/build/build_base.html:142
+#: build/serializers.py:377 build/templates/build/build_base.html:142
 #: build/templates/build/detail.html:63 order/models.py:557
 #: order/serializers.py:247 stock/templates/stock/item_base.html:189
 #: templates/js/translated/barcode.js:140 templates/js/translated/build.js:1954
@@ -1064,73 +1064,73 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: build/serializers.py:428
+#: build/serializers.py:429
 msgid "Accept Unallocated"
 msgstr ""
 
-#: build/serializers.py:429
+#: build/serializers.py:430
 msgid "Accept that stock items have not been fully allocated to this build order"
 msgstr ""
 
-#: build/serializers.py:439 templates/js/translated/build.js:150
+#: build/serializers.py:440 templates/js/translated/build.js:150
 msgid "Required stock has not been fully allocated"
 msgstr ""
 
-#: build/serializers.py:444
+#: build/serializers.py:445
 msgid "Accept Incomplete"
 msgstr ""
 
-#: build/serializers.py:445
+#: build/serializers.py:446
 msgid "Accept that the required number of build outputs have not been completed"
 msgstr ""
 
-#: build/serializers.py:455 templates/js/translated/build.js:154
+#: build/serializers.py:456 templates/js/translated/build.js:154
 msgid "Required build quantity has not been completed"
 msgstr ""
 
-#: build/serializers.py:464
+#: build/serializers.py:465
 msgid "Build order has incomplete outputs"
 msgstr ""
 
-#: build/serializers.py:467 build/templates/build/build_base.html:95
+#: build/serializers.py:468 build/templates/build/build_base.html:95
 msgid "No build outputs have been created for this build order"
 msgstr ""
 
-#: build/serializers.py:495 build/serializers.py:544 part/models.py:2829
+#: build/serializers.py:496 build/serializers.py:545 part/models.py:2829
 #: part/models.py:2988
 msgid "BOM Item"
 msgstr ""
 
-#: build/serializers.py:505
+#: build/serializers.py:506
 msgid "Build output"
 msgstr ""
 
-#: build/serializers.py:514
+#: build/serializers.py:515
 msgid "Build output must point to the same build"
 msgstr ""
 
-#: build/serializers.py:561
+#: build/serializers.py:562
 msgid "bom_item.part must point to the same part as the build order"
 msgstr ""
 
-#: build/serializers.py:576 stock/serializers.py:642
+#: build/serializers.py:577 stock/serializers.py:642
 msgid "Item must be in stock"
 msgstr ""
 
-#: build/serializers.py:632 order/serializers.py:747
+#: build/serializers.py:633 order/serializers.py:747
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr ""
 
-#: build/serializers.py:638
+#: build/serializers.py:639
 msgid "Build output must be specified for allocation of tracked parts"
 msgstr ""
 
-#: build/serializers.py:645
+#: build/serializers.py:646
 msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr ""
 
-#: build/serializers.py:673 order/serializers.py:990
+#: build/serializers.py:674 order/serializers.py:990
 msgid "Allocation items must be provided"
 msgstr ""
 
