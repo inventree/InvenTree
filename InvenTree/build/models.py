@@ -839,7 +839,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         quantity = bom_item.quantity
 
         if output:
-            quantity *= output.quantity 
+            quantity *= output.quantity
         else:
             quantity *= self.quantity
 
