@@ -247,7 +247,7 @@ class BuildTest(TestCase):
             }
         )
 
-        self.assertFalse(self.build.is_fully_allocated(None, verbose=True))
+        self.assertFalse(self.build.is_fully_allocated(None))
 
         unallocated = self.build.unallocated_bom_items(None)
 
@@ -260,7 +260,7 @@ class BuildTest(TestCase):
             }
         )
 
-        self.assertFalse(self.build.is_fully_allocated(None, verbose=True))
+        self.assertFalse(self.build.is_fully_allocated(None))
 
         unallocated = self.build.unallocated_bom_items(None)
 
@@ -331,7 +331,7 @@ class BuildTest(TestCase):
             }
         )
 
-        self.assertTrue(self.build.is_fully_allocated(None, verbose=True))
+        self.assertTrue(self.build.is_fully_allocated(None))
         self.assertTrue(self.build.is_fully_allocated(self.output_1))
         self.assertTrue(self.build.is_fully_allocated(self.output_2))
 
