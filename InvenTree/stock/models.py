@@ -1311,6 +1311,7 @@ class StockItem(MPTTModel):
         """
 
         notes = kwargs.get('notes', '')
+        code = kwargs.get('code', StockHistoryCode.SPLIT_FROM_PARENT)
 
         # Do not split a serialized part
         if self.serialized:
@@ -1352,7 +1353,7 @@ class StockItem(MPTTModel):
 
         # Add a new tracking item for the new stock item
         new_stock.add_tracking_entry(
-            StockHistoryCode.SPLIT_FROM_PARENT,
+            code,
             user,
             notes=notes,
             deltas={
@@ -1530,7 +1531,7 @@ class StockItem(MPTTModel):
         return True
 
     @transaction.atomic
-    def take_stock(self, quantity, user, notes=''):
+    def take_stock(self, quantity, user, notes='', code=StockHistoryCode.STOCK_REMOVE):
         """
         Remove items from stock
         """
@@ -1550,7 +1551,7 @@ class StockItem(MPTTModel):
         if self.updateQuantity(self.quantity - quantity):
 
             self.add_tracking_entry(
-                StockHistoryCode.STOCK_REMOVE,
+                code,
                 user,
                 notes=notes,
                 deltas={

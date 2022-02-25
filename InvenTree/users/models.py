@@ -451,7 +451,7 @@ def update_group_roles(group, debug=False):
             group.permissions.add(permission)
 
         if debug:  # pragma: no cover
-            print(f"Adding permission {perm} to group {group.name}")
+            logger.info(f"Adding permission {perm} to group {group.name}")
 
     # Remove any extra permissions from the group
     for perm in permissions_to_delete:
@@ -466,7 +466,7 @@ def update_group_roles(group, debug=False):
             group.permissions.remove(permission)
 
         if debug:  # pragma: no cover
-            print(f"Removing permission {perm} from group {group.name}")
+            logger.info(f"Removing permission {perm} from group {group.name}")
 
     # Enable all action permissions for certain children models
     # if parent model has 'change' permission
@@ -488,7 +488,7 @@ def update_group_roles(group, debug=False):
                     permission = get_permission_object(child_perm)
                     if permission:
                         group.permissions.add(permission)
-                        print(f"Adding permission {child_perm} to group {group.name}")
+                        logger.info(f"Adding permission {child_perm} to group {group.name}")
 
 
 @receiver(post_save, sender=Group, dispatch_uid='create_missing_rule_sets')
