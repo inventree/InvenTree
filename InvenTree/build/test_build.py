@@ -62,20 +62,20 @@ class BuildTest(TestCase):
         )
 
         # Create BOM item links for the parts
-        BomItem.objects.create(
+        self.bom_item_1 = BomItem.objects.create(
             part=self.assembly,
             sub_part=self.sub_part_1,
             quantity=5
         )
 
-        BomItem.objects.create(
+        self.bom_item_2 = BomItem.objects.create(
             part=self.assembly,
             sub_part=self.sub_part_2,
             quantity=3
         )
 
         # sub_part_3 is trackable!
-        BomItem.objects.create(
+        self.bom_item_3 = BomItem.objects.create(
             part=self.assembly,
             sub_part=self.sub_part_3,
             quantity=2
@@ -149,13 +149,13 @@ class BuildTest(TestCase):
         for output in self.build.get_build_outputs().all():
             self.assertFalse(self.build.is_fully_allocated(output))
 
-        self.assertFalse(self.build.is_bom_item_allocated(self.sub_part_1, self.output_1))
-        self.assertFalse(self.build.is_bom_item_allocated(self.sub_part_2, self.output_2))
+        self.assertFalse(self.build.is_bom_item_allocated(self.bom_item_1, self.output_1))
+        self.assertFalse(self.build.is_bom_item_allocated(self.bom_item_2, self.output_2))
 
-        self.assertEqual(self.build.unallocated_quantity(self.sub_part_1, self.output_1), 15)
-        self.assertEqual(self.build.unallocated_quantity(self.sub_part_1, self.output_2), 35)
-        self.assertEqual(self.build.unallocated_quantity(self.sub_part_2, self.output_1), 9)
-        self.assertEqual(self.build.unallocated_quantity(self.sub_part_2, self.output_2), 21)
+        self.assertEqual(self.build.unallocated_quantity(self.bom_item_1, self.output_1), 15)
+        self.assertEqual(self.build.unallocated_quantity(self.bom_item_1, self.output_2), 35)
+        self.assertEqual(self.build.unallocated_quantity(self.bom_item_2, self.output_1), 9)
+        self.assertEqual(self.build.unallocated_quantity(self.bom_item_2, self.output_2), 21)
 
         self.assertFalse(self.build.is_complete)
 
