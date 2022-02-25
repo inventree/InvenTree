@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-25 06:48+0000\n"
-"PO-Revision-Date: 2022-02-25 07:58\n"
+"PO-Revision-Date: 2022-02-25 08:53\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -5145,7 +5145,7 @@ msgstr "Eladási ár megjelenítése"
 
 #: part/templates/part/prices.html:140
 msgid "Calculation parameters"
-msgstr ""
+msgstr "Számítási paraméterek"
 
 #: part/templates/part/prices.html:155 templates/js/translated/bom.js:851
 msgid "Supplier Cost"
@@ -5155,15 +5155,15 @@ msgstr "Beszállítói költség"
 #: part/templates/part/prices.html:201 part/templates/part/prices.html:231
 #: part/templates/part/prices.html:257 part/templates/part/prices.html:285
 msgid "Jump to overview"
-msgstr ""
+msgstr "Ugrás az áttekintéshez"
 
 #: part/templates/part/prices.html:181
 msgid "Stock Pricing"
-msgstr ""
+msgstr "Készlet árazás"
 
 #: part/templates/part/prices.html:190
 msgid "No stock pricing history is available for this part."
-msgstr ""
+msgstr "A termékhez nem áll rendelkezésre ártörténet."
 
 #: part/templates/part/prices.html:200
 msgid "Internal Cost"
@@ -5183,7 +5183,7 @@ msgstr "Eladási költség"
 
 #: part/templates/part/prices.html:296
 msgid "No sale pice history available for this part."
-msgstr ""
+msgstr "A termékhez nem áll rendelkezésre eladási ártörténet."
 
 #: part/templates/part/set_category.html:9
 msgid "Set category for the following parts"
@@ -5201,36 +5201,36 @@ msgstr "Alacsony készlet"
 
 #: part/templates/part/upload_bom.html:8
 msgid "Return to BOM"
-msgstr ""
+msgstr "Vissza az alkarészjegyzékhez"
 
 #: part/templates/part/upload_bom.html:13
 msgid "Upload Bill of Materials"
-msgstr ""
+msgstr "Alkatrészjegyzék feltöltése"
 
 #: part/templates/part/upload_bom.html:19
 msgid "BOM upload requirements"
-msgstr ""
+msgstr "Alkatrészjegyzék feltöltési követelmények"
 
 #: part/templates/part/upload_bom.html:23
 #: part/templates/part/upload_bom.html:90
 msgid "Upload BOM File"
-msgstr ""
+msgstr "Alkatrészjegyzék fájl feltöltése"
 
 #: part/templates/part/upload_bom.html:29
 msgid "Submit BOM Data"
-msgstr ""
+msgstr "Alkatrészjegyzék adatok küldése"
 
 #: part/templates/part/upload_bom.html:37
 msgid "Requirements for BOM upload"
-msgstr ""
+msgstr "Követelmények az alkatrészjegyzék feltöltéséhez"
 
 #: part/templates/part/upload_bom.html:39
 msgid "The BOM file must contain the required named columns as provided in the "
-msgstr ""
+msgstr "Az alkatrészjegyzék fájlnak tartalmaznia kell a szükséges elnevezéssel ellátott oszlopokat ahogy ebben van "
 
 #: part/templates/part/upload_bom.html:39
 msgid "BOM Upload Template"
-msgstr ""
+msgstr "Alkatrészjegyzék feltöltési sablon"
 
 #: part/templates/part/upload_bom.html:40
 msgid "Each part must already exist in the database"
@@ -5260,39 +5260,39 @@ msgstr "Állítsd be {n} alkatrész kategóriáját"
 
 #: part/views.py:212
 msgid "Match References"
-msgstr ""
+msgstr "Azonosítók egyeztetése"
 
 #: part/views.py:509
 msgid "None"
-msgstr ""
+msgstr "Egyik sem"
 
 #: part/views.py:568
 msgid "Part QR Code"
-msgstr ""
+msgstr "Alkatrész QR kódja"
 
 #: part/views.py:670
 msgid "Select Part Image"
-msgstr ""
+msgstr "Válassz képet az alkatrészhez"
 
 #: part/views.py:696
 msgid "Updated part image"
-msgstr ""
+msgstr "Alkatrész képe frissítve"
 
 #: part/views.py:699
 msgid "Part image not found"
-msgstr ""
+msgstr "Az alkatrész képe nem található"
 
 #: part/views.py:850
 msgid "Confirm Part Deletion"
-msgstr ""
+msgstr "Alkatrész törlés megerősítése"
 
 #: part/views.py:857
 msgid "Part was deleted"
-msgstr ""
+msgstr "Alkatrész törölve"
 
 #: part/views.py:866
 msgid "Part Pricing"
-msgstr ""
+msgstr "Alkatrész árak"
 
 #: part/views.py:1015
 msgid "Create Part Parameter Template"
@@ -5300,11 +5300,11 @@ msgstr "Alkatrész paraméter sablon létrehozása"
 
 #: part/views.py:1025
 msgid "Edit Part Parameter Template"
-msgstr ""
+msgstr "Alkatrész paraméter sablon módosítása"
 
 #: part/views.py:1032
 msgid "Delete Part Parameter Template"
-msgstr ""
+msgstr "Alkatrész paraméter sablon törlése"
 
 #: part/views.py:1091 templates/js/translated/part.js:315
 msgid "Edit Part Category"
@@ -5316,7 +5316,7 @@ msgstr "Alkatrész kategória törlése"
 
 #: part/views.py:1135
 msgid "Part category was deleted"
-msgstr ""
+msgstr "Alkatrész kategória törölve"
 
 #: part/views.py:1144
 msgid "Create Category Parameter Template"
@@ -5344,31 +5344,31 @@ msgstr "Belső árlépcső törlése"
 
 #: plugin/integration.py:138
 msgid "No author found"
-msgstr ""
+msgstr "Nincs szerző"
 
 #: plugin/integration.py:152
 msgid "No date found"
-msgstr ""
+msgstr "Nincs dátum"
 
 #: plugin/models.py:26
 msgid "Plugin Configuration"
-msgstr ""
+msgstr "Plugin beállítás"
 
 #: plugin/models.py:27
 msgid "Plugin Configurations"
-msgstr ""
+msgstr "Plugin beállítások"
 
 #: plugin/models.py:32
 msgid "Key"
-msgstr ""
+msgstr "Kulcs"
 
 #: plugin/models.py:33
 msgid "Key of plugin"
-msgstr ""
+msgstr "Plugin kulcsa"
 
 #: plugin/models.py:41
 msgid "PluginName of the plugin"
-msgstr ""
+msgstr "PluginNeve a pluginnak"
 
 #: plugin/models.py:47
 msgid "Is the plugin active"
@@ -5376,19 +5376,19 @@ msgstr "Aktív-e a plugin"
 
 #: plugin/models.py:199
 msgid "Plugin"
-msgstr ""
+msgstr "Plugin"
 
 #: plugin/samples/integration/sample.py:42
 msgid "Enable PO"
-msgstr ""
+msgstr "Beszerzési rendelések engedélyezése"
 
 #: plugin/samples/integration/sample.py:43
 msgid "Enable PO functionality in InvenTree interface"
-msgstr ""
+msgstr "Beszerzési rendelések funkcióinak engedélyezése az InvenTree felületén"
 
 #: plugin/samples/integration/sample.py:48
 msgid "API Key"
-msgstr ""
+msgstr "API kulcs"
 
 #: plugin/samples/integration/sample.py:49
 msgid "Key required for accessing external API"
