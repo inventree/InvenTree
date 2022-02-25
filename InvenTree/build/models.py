@@ -899,7 +899,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
         return self.unallocated_quantity(bom_item, output) == 0
 
-    def is_fully_allocated(self, output, verbose=False):
+    def is_fully_allocated(self, output):
         """
         Returns True if the particular build output is fully allocated.
         """
@@ -968,57 +968,6 @@ class Build(MPTTModel, ReferenceIndexingMixin):
                 parts.append(bom_item.sub_part)
 
         return parts
-
-    def availableStockItems(self, part, output):
-        """
-        Returns stock items which are available for allocation to this build.
-
-        Args:
-            part - Part object
-            output - The particular build output
-        """
-
-        # Grab initial query for items which are "in stock" and match the part
-        items = StockModels.StockItem.objects.filter(
-            StockModels.StockItem.IN_STOCK_FILTER
-        )
-
-        # Check if variants are allowed for this part
-        try:
-            bom_item = PartModels.BomItem.objects.get(part=self.part, sub_part=part)
-            allow_part_variants = bom_item.allow_variants
-        except PartModels.BomItem.DoesNotExist:
-            allow_part_variants = False
-
-        if allow_part_variants:
-            parts = part.get_descendants(include_self=True)
-            items = items.filter(part__pk__in=[p.pk for p in parts])
-
-        else:
-            items = items.filter(part=part)
-
-        # Exclude any items which have already been allocated
-        allocated = BuildItem.objects.filter(
-            build=self,
-            stock_item__part=part,
-            install_into=output,
-        )
-
-        items = items.exclude(
-            id__in=[item.stock_item.id for item in allocated.all()]
-        )
-
-        # Limit query to stock items which are "downstream" of the source location
-        if self.take_from is not None:
-            items = items.filter(
-                location__in=[loc for loc in self.take_from.getUniqueChildren()]
-            )
-
-        # Exclude expired stock items
-        if not common.models.InvenTreeSetting.get_setting('STOCK_ALLOW_EXPIRED_BUILD'):
-            items = items.exclude(StockModels.StockItem.EXPIRED_FILTER)
-
-        return items
 
     @property
     def is_active(self):
