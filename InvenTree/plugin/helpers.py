@@ -23,7 +23,7 @@ class IntegrationPluginError(Exception):
         self.message = message
 
     def __str__(self):
-        return self.message
+        return self.message  # pragma: no cover
 
 
 class MixinImplementationError(ValueError):
@@ -55,7 +55,7 @@ def log_error(error, reference: str = 'general'):
     registry.errors[reference].append(error)
 
 
-def handle_error(error, do_raise: bool = True, do_log: bool = True, do_return: bool = False, log_name: str = ''):
+def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: str = ''):
     """
     Handles an error and casts it as an IntegrationPluginError
     """
@@ -69,7 +69,7 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, do_return: b
         path_parts = [*path_obj.parts]
         path_parts[-1] = path_parts[-1].replace(path_obj.suffix, '')  # remove suffix
 
-        # remove path preixes
+        # remove path prefixes
         if path_parts[0] == 'plugin':
             path_parts.remove('plugin')
             path_parts.pop(0)
@@ -84,13 +84,8 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, do_return: b
             log_kwargs['reference'] = log_name
         log_error({package_name: str(error)}, **log_kwargs)
 
-    new_error = IntegrationPluginError(package_name, str(error))
-
     if do_raise:
         raise IntegrationPluginError(package_name, str(error))
-
-    if do_return:
-        return new_error
 # endregion
 
 
@@ -101,14 +96,16 @@ def get_git_log(path):
     """
     path = path.replace(os.path.dirname(settings.BASE_DIR), '')[1:]
     command = ['git', 'log', '-n', '1', "--pretty=format:'%H%n%aN%n%aE%n%aI%n%f%n%G?%n%GK'", '--follow', '--', path]
+    output = None
     try:
         output = str(subprocess.check_output(command, cwd=os.path.dirname(settings.BASE_DIR)), 'utf-8')[1:-1]
         if output:
             output = output.split('\n')
-        else:
-            output = 7 * ['']
-    except subprocess.CalledProcessError:
-        output = 7 * ['']
+    except subprocess.CalledProcessError:  # pragma: no cover
+        pass
+
+    if not output:
+        output = 7 * ['']  # pragma: no cover
     return {'hash': output[0], 'author': output[1], 'mail': output[2], 'date': output[3], 'message': output[4], 'verified': output[5], 'key': output[6]}
 
 
@@ -153,7 +150,7 @@ def get_modules(pkg):
                 if not k.startswith('_') and (pkg_names is None or k in pkg_names):
                     context[k] = v
             context[name] = module
-        except AppRegistryNotReady:
+        except AppRegistryNotReady:  # pragma: no cover
             pass
         except Exception as error:
             # this 'protects' against malformed plugin modules by more or less silently failing

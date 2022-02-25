@@ -269,9 +269,6 @@ class StockItemTest(StockAPITestCase):
 
     list_url = reverse('api-stock-list')
 
-    def detail_url(self, pk):
-        return reverse('api-stock-detail', kwargs={'pk': pk})
-
     def setUp(self):
         super().setUp()
         # Create some stock locations
@@ -396,7 +393,7 @@ class StockItemTest(StockAPITestCase):
         self.assertEqual(trackable_part.get_stock_count(), 0)
 
         # This should fail, incorrect serial number count
-        response = self.post(
+        self.post(
             self.list_url,
             data={
                 'part': trackable_part.pk,

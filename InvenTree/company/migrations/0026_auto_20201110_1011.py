@@ -42,7 +42,7 @@ def migrate_currencies(apps, schema_editor):
 
         suffix = suffix.strip().upper()
 
-        if suffix not in currency_codes:
+        if suffix not in currency_codes:  # pragma: no cover
             logger.warning(f"Missing suffix: '{suffix}'")
 
             while suffix not in currency_codes:
@@ -78,7 +78,7 @@ def migrate_currencies(apps, schema_editor):
     if count > 0:
         logger.info(f"Updated {count} SupplierPriceBreak rows")
 
-def reverse_currencies(apps, schema_editor):
+def reverse_currencies(apps, schema_editor):  # pragma: no cover
     """
     Reverse the "update" process.
 

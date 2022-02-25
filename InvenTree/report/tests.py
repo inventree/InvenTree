@@ -60,13 +60,13 @@ class ReportTest(InvenTreeAPITestCase):
             template_dir
         )
 
-        if not os.path.exists(dst_dir):
+        if not os.path.exists(dst_dir):  # pragma: no cover
             os.makedirs(dst_dir, exist_ok=True)
 
         src_file = os.path.join(src_dir, filename)
         dst_file = os.path.join(dst_dir, filename)
 
-        if not os.path.exists(dst_file):
+        if not os.path.exists(dst_file):  # pragma: no cover
             shutil.copyfile(src_file, dst_file)
 
         # Convert to an "internal" filename

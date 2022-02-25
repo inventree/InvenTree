@@ -107,7 +107,7 @@ class BomExportTest(TestCase):
         """
 
         params = {
-            'file_format': 'csv',
+            'format': 'csv',
             'cascade': True,
             'parameter_data': True,
             'stock_data': True,
@@ -171,7 +171,7 @@ class BomExportTest(TestCase):
         """
 
         params = {
-            'file_format': 'xls',
+            'format': 'xls',
             'cascade': True,
             'parameter_data': True,
             'stock_data': True,
@@ -192,7 +192,7 @@ class BomExportTest(TestCase):
         """
 
         params = {
-            'file_format': 'xlsx',
+            'format': 'xlsx',
             'cascade': True,
             'parameter_data': True,
             'stock_data': True,
@@ -210,7 +210,7 @@ class BomExportTest(TestCase):
         """
 
         params = {
-            'file_format': 'json',
+            'format': 'json',
             'cascade': True,
             'parameter_data': True,
             'stock_data': True,

@@ -109,6 +109,31 @@ class StockItemSerialize(generics.CreateAPIView):
         return context
 
 
+class StockItemInstall(generics.CreateAPIView):
+    """
+    API endpoint for installing a particular stock item into this stock item.
+
+    - stock_item.part must be in the BOM for this part
+    - stock_item must currently be "in stock"
+    - stock_item must be serialized (and not belong to another item)
+    """
+
+    queryset = StockItem.objects.none()
+    serializer_class = StockSerializers.InstallStockItemSerializer
+
+    def get_serializer_context(self):
+
+        context = super().get_serializer_context()
+        context['request'] = self.request
+
+        try:
+            context['item'] = StockItem.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
+        return context
+
+
 class StockAdjustView(generics.CreateAPIView):
     """
     A generic class for handling stocktake actions.
@@ -491,10 +516,8 @@ class StockList(generics.ListCreateAPIView):
                 data['location'] = location.pk
 
         # An expiry date was *not* specified - try to infer it!
-        if 'expiry_date' not in data:
-
-            if part.default_expiry > 0:
-                data['expiry_date'] = datetime.now().date() + timedelta(days=part.default_expiry)
+        if 'expiry_date' not in data and part.default_expiry > 0:
+            data['expiry_date'] = datetime.now().date() + timedelta(days=part.default_expiry)
 
         # Attempt to extract serial numbers from submitted data
         serials = None
@@ -503,11 +526,34 @@ class StockList(generics.ListCreateAPIView):
         serial_numbers = data.get('serial_numbers', '')
 
         # Assign serial numbers for a trackable part
-        if serial_numbers and part.trackable:
+        if serial_numbers:
+
+            if not part.trackable:
+                raise ValidationError({
+                    'serial_numbers': [_("Serial numbers cannot be supplied for a non-trackable part")]
+                })
 
             # If serial numbers are specified, check that they match!
             try:
                 serials = extract_serial_numbers(serial_numbers, quantity, part.getLatestSerialNumberInt())
+
+                # Determine if any of the specified serial numbers already exist!
+                existing = []
+
+                for serial in serials:
+                    if part.checkIfSerialNumberExists(serial):
+                        existing.append(serial)
+
+                if len(existing) > 0:
+
+                    msg = _("The following serial numbers already exist")
+                    msg += " : "
+                    msg += ",".join([str(e) for e in existing])
+
+                    raise ValidationError({
+                        'serial_numbers': [msg],
+                    })
+
             except DjangoValidationError as e:
                 raise ValidationError({
                     'quantity': e.messages,
@@ -1256,6 +1302,7 @@ stock_api_urls = [
     # Detail views for a single stock item
     url(r'^(?P<pk>\d+)/', include([
         url(r'^serialize/', StockItemSerialize.as_view(), name='api-stock-item-serialize'),
+        url(r'^install/', StockItemInstall.as_view(), name='api-stock-item-install'),
         url(r'^.*$', StockDetail.as_view(), name='api-stock-detail'),
     ])),
 

@@ -125,7 +125,7 @@ src="{% static 'img/blank_image.png' %}"
         {% trans "Required build quantity has not yet been completed" %}
     </div>
     {% endif %}
-    {% if not build.areUntrackedPartsFullyAllocated %}
+    {% if not build.are_untracked_parts_allocated %}
     <div class='alert alert-block alert-warning'>
         {% trans "Stock has not been fully allocated to this Build Order" %}
     </div>
@@ -234,7 +234,7 @@ src="{% static 'img/blank_image.png' %}"
         {% else %}
 
         completeBuildOrder({{ build.pk }}, {
-            allocated: {% if build.areUntrackedPartsFullyAllocated %}true{% else %}false{% endif %},
+            allocated: {% if build.are_untracked_parts_allocated %}true{% else %}false{% endif %},
             completed: {% if build.remaining == 0 %}true{% else %}false{% endif %},
         });
         {% endif %}

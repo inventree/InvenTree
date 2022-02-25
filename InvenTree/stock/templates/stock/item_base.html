@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-<a href='#' id='breadcrumb-tree-toggle' class="breadcrumb-item"><i class="fas fa-bars"></i></a>
+<a href='#' id='breadcrumb-tree-toggle' class="breadcrumb-item"><span class="fas fa-bars"></span></a>
 {% include 'stock/loc_link.html' with location=item.location %}
 {% endblock %}
 
@@ -98,7 +98,9 @@
             <li><a class='dropdown-item' href='#' id='stock-uninstall' title='{% trans "Uninstall stock item" %}'><span class='fas fa-unlink'></span> {% trans "Uninstall" %}</a></li>
             {% else %}
             {% if item.part.get_used_in %}
-            <li><a class='dropdown-item' href='#' id='stock-install-in' title='{% trans "Install stock item" %}'><span class='fas fa-link'></span> {% trans "Install" %}</a></li>
+            <!--    
+                <li><a class='dropdown-item' href='#' id='stock-install-in' title='{% trans "Install stock item" %}'><span class='fas fa-link'></span> {% trans "Install" %}</a></li>
+            -->
             {% endif %}
             {% endif %}
         </ul>
@@ -407,7 +409,14 @@
     <tr>
         <td><span class='fas fa-vial'></span></td>
         <td>{% trans "Tests" %}</td>
-        <td>{{ item.requiredTestStatus.passed }} / {{ item.requiredTestStatus.total }}</td>
+        <td>
+            {{ item.requiredTestStatus.passed }} / {{ item.requiredTestStatus.total }}
+            {% if item.passedAllRequiredTests %}
+            <span class='fas fa-check-circle float-right icon-green'></span>
+            {% else %}
+            <span class='fas fa-times-circle float-right icon-red'></span>
+            {% endif %}
+        </td>
     </tr>
     {% endif %}
     {% if item.owner %}
@@ -442,16 +451,7 @@ $("#stock-serialize").click(function() {
 
 $('#stock-install-in').click(function() {
 
-    launchModalForm(
-        "{% url 'stock-item-install' item.pk %}",
-        {
-            data: {
-                'part': {{ item.part.pk }},
-                'install_in': true,
-            },
-            reload: true,
-        }
-    );
+    // TODO - Launch dialog to install this item *into* another stock item
 });
 
 $('#stock-uninstall').click(function() {
@@ -618,7 +618,7 @@ enableBreadcrumbTree({
     {% endif %}
     processNode: function(node) {
         node.text = node.name;
-        node.href = `/stock/item/${node.pk}/`;
+        node.href = `/stock/location/${node.pk}/`;
 
         return node;
     }

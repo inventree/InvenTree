@@ -9,13 +9,22 @@ import re
 import common.models
 
 # InvenTree software version
-INVENTREE_SW_VERSION = "0.6.0 dev"
+INVENTREE_SW_VERSION = "0.7.0 dev"
 
 # InvenTree API version
-INVENTREE_API_VERSION = 23
+INVENTREE_API_VERSION = 26
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v26 -> 2022-02-17
+    - Adds API endpoint for uploading a BOM file and extracting data
+
+v25 -> 2022-02-17
+    - Adds ability to filter "part" list endpoint by "in_bom_for" argument
+
+v24 -> 2022-02-10
+    - Adds API endpoint for deleting (cancelling) build order outputs
 
 v23 -> 2022-02-02
     - Adds API endpoints for managing plugin classes

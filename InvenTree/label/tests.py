@@ -7,6 +7,7 @@ import os
 
 from django.test import TestCase
 from django.conf import settings
+from django.apps import apps
 from django.core.exceptions import ValidationError
 
 from InvenTree.helpers import validateFilterString
@@ -17,8 +18,11 @@ from stock.models import StockItem
 
 class LabelTest(TestCase):
 
-    # TODO - Implement this test properly. Looks like apps.py is not run first
-    def _test_default_labels(self):
+    def setUp(self) -> None:
+        # ensure the labels were created
+        apps.get_app_config('label').create_labels()
+
+    def test_default_labels(self):
         """
         Test that the default label templates are copied across
         """
@@ -31,8 +35,7 @@ class LabelTest(TestCase):
 
         self.assertTrue(labels.count() > 0)
 
-    # TODO - Implement this test properly. Looks like apps.py is not run first
-    def _test_default_files(self):
+    def test_default_files(self):
         """
         Test that label files exist in the MEDIA directory
         """

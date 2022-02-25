@@ -6,7 +6,7 @@ import imghdr
 from decimal import Decimal
 
 from django.urls import reverse_lazy
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Q
 from django.db.models.functions import Coalesce
 from django.utils.translation import ugettext_lazy as _
@@ -15,7 +15,9 @@ from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
 from djmoney.contrib.django_rest_framework import MoneyField
 
-from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
+from InvenTree.serializers import (DataFileUploadSerializer,
+                                   DataFileExtractSerializer,
+                                   InvenTreeAttachmentSerializerField,
                                    InvenTreeDecimalField,
                                    InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer,
@@ -462,7 +464,13 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     price_range = serializers.CharField(read_only=True)
 
-    quantity = InvenTreeDecimalField()
+    quantity = InvenTreeDecimalField(required=True)
+
+    def validate_quantity(self, quantity):
+        if quantity <= 0:
+            raise serializers.ValidationError(_("Quantity must be greater than zero"))
+
+        return quantity
 
     part = serializers.PrimaryKeyRelatedField(queryset=Part.objects.filter(assembly=True))
 
@@ -699,3 +707,169 @@ class PartCopyBOMSerializer(serializers.Serializer):
             skip_invalid=data.get('skip_invalid', False),
             include_inherited=data.get('include_inherited', False),
         )
+
+
+class BomImportUploadSerializer(DataFileUploadSerializer):
+    """
+    Serializer for uploading a file and extracting data from it.
+    """
+
+    TARGET_MODEL = BomItem
+
+    class Meta:
+        fields = [
+            'data_file',
+            'part',
+            'clear_existing_bom',
+        ]
+
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=Part.objects.all(),
+        required=True,
+        allow_null=False,
+        many=False,
+    )
+
+    clear_existing_bom = serializers.BooleanField(
+        label=_('Clear Existing BOM'),
+        help_text=_('Delete existing BOM items before uploading')
+    )
+
+    def save(self):
+
+        data = self.validated_data
+
+        if data.get('clear_existing_bom', False):
+            part = data['part']
+
+            with transaction.atomic():
+                part.bom_items.all().delete()
+
+
+class BomImportExtractSerializer(DataFileExtractSerializer):
+    """
+    """
+
+    TARGET_MODEL = BomItem
+
+    def validate_extracted_columns(self):
+        super().validate_extracted_columns()
+
+        part_columns = ['part', 'part_name', 'part_ipn', 'part_id']
+
+        if not any([col in self.columns for col in part_columns]):
+            # At least one part column is required!
+            raise serializers.ValidationError(_("No part column specified"))
+
+    def process_row(self, row):
+
+        # Skip any rows which are at a lower "level"
+        level = row.get('level', None)
+
+        if level is not None:
+            try:
+                level = int(level)
+                if level != 1:
+                    # Skip this row
+                    return None
+            except:
+                pass
+
+        # Attempt to extract a valid part based on the provided data
+        part_id = row.get('part_id', row.get('part', None))
+        part_name = row.get('part_name', row.get('part', None))
+        part_ipn = row.get('part_ipn', None)
+
+        part = None
+
+        if part_id is not None:
+            try:
+                part = Part.objects.get(pk=part_id)
+            except (ValueError, Part.DoesNotExist):
+                pass
+
+        # No direct match, where else can we look?
+        if part is None and (part_name or part_ipn):
+            queryset = Part.objects.all()
+
+            if part_name:
+                queryset = queryset.filter(name=part_name)
+
+            if part_ipn:
+                queryset = queryset.filter(IPN=part_ipn)
+
+            if queryset.exists():
+                if queryset.count() == 1:
+                    part = queryset.first()
+                else:
+                    row['errors']['part'] = _('Multiple matching parts found')
+
+        if part is None:
+            row['errors']['part'] = _('No matching part found')
+        else:
+            if not part.component:
+                row['errors']['part'] = _('Part is not designated as a component')
+
+        # Update the 'part' value in the row
+        row['part'] = part.pk if part is not None else None
+
+        # Check the provided 'quantity' value
+        quantity = row.get('quantity', None)
+
+        if quantity is None:
+            row['errors']['quantity'] = _('Quantity not provided')
+        else:
+            try:
+                quantity = Decimal(quantity)
+
+                if quantity <= 0:
+                    row['errors']['quantity'] = _('Quantity must be greater than zero')
+            except:
+                row['errors']['quantity'] = _('Invalid quantity')
+
+        return row
+
+
+class BomImportSubmitSerializer(serializers.Serializer):
+    """
+    Serializer for uploading a BOM against a specified part.
+
+    A "BOM" is a set of BomItem objects which are to be validated together as a set
+    """
+
+    items = BomItemSerializer(many=True, required=True)
+
+    def validate(self, data):
+
+        items = data['items']
+
+        if len(items) == 0:
+            raise serializers.ValidationError(_("At least one BOM item is required"))
+
+        data = super().validate(data)
+
+        return data
+
+    def save(self):
+
+        data = self.validated_data
+
+        items = data['items']
+
+        try:
+            with transaction.atomic():
+
+                for item in items:
+
+                    part = item['part']
+                    sub_part = item['sub_part']
+
+                    # Ignore duplicate BOM items
+                    if BomItem.objects.filter(part=part, sub_part=sub_part).exists():
+                        continue
+
+                    # Create a new BomItem object
+                    BomItem.objects.create(**item)
+
+        except Exception as e:
+            raise serializers.ValidationError(detail=serializers.as_serializer_error(e))

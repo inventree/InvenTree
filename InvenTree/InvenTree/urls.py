@@ -204,7 +204,7 @@ if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
     # Debug toolbar access (only allowed in DEBUG mode)
-    if 'debug_toolbar' in settings.INSTALLED_APPS:
+    if 'debug_toolbar' in settings.INSTALLED_APPS:  # pragma: no cover
         import debug_toolbar
         urlpatterns = [
             path('__debug/', include(debug_toolbar.urls)),

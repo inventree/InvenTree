@@ -135,7 +135,7 @@ class IntegrationPluginBase(MixinBase, plugin_base.InvenTreePluginBase):
         if not author:
             author = self.package.get('author')
         if not author:
-            author = _('No author found')
+            author = _('No author found')  # pragma: no cover
         return author
 
     @property
@@ -149,7 +149,7 @@ class IntegrationPluginBase(MixinBase, plugin_base.InvenTreePluginBase):
         else:
             pub_date = datetime.fromisoformat(str(pub_date))
         if not pub_date:
-            pub_date = _('No date found')
+            pub_date = _('No date found')  # pragma: no cover
         return pub_date
 
     @property
@@ -226,7 +226,7 @@ class IntegrationPluginBase(MixinBase, plugin_base.InvenTreePluginBase):
         """
         Get package metadata for plugin
         """
-        return {}
+        return {}  # pragma: no cover  # TODO add usage for package metadata
 
     def define_package(self):
         """
@@ -241,11 +241,11 @@ class IntegrationPluginBase(MixinBase, plugin_base.InvenTreePluginBase):
         # process sign state
         sign_state = getattr(GitStatus, str(package.get('verified')), GitStatus.N)
         if sign_state.status == 0:
-            self.sign_color = 'success'
+            self.sign_color = 'success'  # pragma: no cover
         elif sign_state.status == 1:
             self.sign_color = 'warning'
         else:
-            self.sign_color = 'danger'
+            self.sign_color = 'danger'  # pragma: no cover
 
         # set variables
         self.package = package

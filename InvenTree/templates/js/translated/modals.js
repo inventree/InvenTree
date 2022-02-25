@@ -893,6 +893,9 @@ function handleModalForm(url, options) {
                 // Re-enable the modal
                 modalEnable(modal, true);
                 if ('form_valid' in response) {
+                    // Get visibility option of error message
+                    var hideErrorMessage = (options.hideErrorMessage === undefined) ? true : options.hideErrorMessage;
+
                     // Form data was validated correctly
                     if (response.form_valid) {
                         $(modal).modal('hide');
@@ -901,7 +904,7 @@ function handleModalForm(url, options) {
                         // Form was returned, invalid!
 
                         // Disable error message with option or response
-                        if (!options.hideErrorMessage && !response.hideErrorMessage) {
+                        if (!hideErrorMessage && !response.hideErrorMessage) {
                             var warningDiv = $(modal).find('#form-validation-warning');
                             warningDiv.css('display', 'block');
                         }
