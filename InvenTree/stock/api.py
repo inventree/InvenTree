@@ -516,10 +516,8 @@ class StockList(generics.ListCreateAPIView):
                 data['location'] = location.pk
 
         # An expiry date was *not* specified - try to infer it!
-        if 'expiry_date' not in data:
-
-            if part.default_expiry > 0:
-                data['expiry_date'] = datetime.now().date() + timedelta(days=part.default_expiry)
+        if 'expiry_date' not in data and part.default_expiry > 0:
+            data['expiry_date'] = datetime.now().date() + timedelta(days=part.default_expiry)
 
         # Attempt to extract serial numbers from submitted data
         serials = None

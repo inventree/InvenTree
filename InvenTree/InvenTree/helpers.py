@@ -475,7 +475,6 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
                     continue
             else:
                 errors.append(_("Invalid group: {g}").format(g=group))
-                continue
 
         # plus signals either
         # 1:  'start+':  expected number of serials, starting at start
@@ -500,7 +499,6 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
             # no case
             else:
                 errors.append(_("Invalid group: {g}").format(g=group))
-                continue
 
         # Group should be a number
         elif group:

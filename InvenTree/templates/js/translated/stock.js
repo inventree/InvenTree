@@ -1554,11 +1554,11 @@ function locationDetail(row, showLink=true) {
     } else if (row.belongs_to) {
         // StockItem is installed inside a different StockItem
         text = `{% trans "Installed in Stock Item" %} ${row.belongs_to}`;
-        url = `/stock/item/${row.belongs_to}/installed/`;
+        url = `/stock/item/${row.belongs_to}/?display=installed-items`;
     } else if (row.customer) {
         // StockItem has been assigned to a customer
         text = '{% trans "Shipped to customer" %}';
-        url = `/company/${row.customer}/assigned-stock/`;
+        url = `/company/${row.customer}/?display=assigned-stock`;
     } else if (row.sales_order) {
         // StockItem has been assigned to a sales order
         text = '{% trans "Assigned to Sales Order" %}';
