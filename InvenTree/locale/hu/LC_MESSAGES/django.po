@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-25 06:48+0000\n"
-"PO-Revision-Date: 2022-02-25 12:48\n"
+"PO-Revision-Date: 2022-02-25 14:06\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1363,7 +1363,7 @@ msgstr "Kiválasztott tételek lefoglalása"
 
 #: build/templates/build/detail.html:218
 msgid "This Build Order does not have any associated untracked BOM items"
-msgstr "Ez a gyártási utasítás egyáltalán nem tartalmaz hozzárendelt nem követett alkatrészjegyzék tételt"
+msgstr "Ez a gyártási utasítás egyáltalán nem tartalmaz nem követett alkatrészjegyzék tételt"
 
 #: build/templates/build/detail.html:227
 msgid "Incomplete Build Outputs"
@@ -4968,7 +4968,7 @@ msgstr "Vevői rendelésekhez szükséges"
 
 #: part/templates/part/part_base.html:224
 msgid "Allocated to Orders"
-msgstr "Lefoglalva rendeléshez"
+msgstr "Lefoglalva összesen"
 
 #: part/templates/part/part_base.html:239 templates/js/translated/bom.js:903
 msgid "Can Build"
@@ -8999,7 +8999,7 @@ msgstr "Vevő rendeléshez hozzárendelve"
 
 #: templates/js/translated/stock.js:1570
 msgid "No stock location set"
-msgstr "Nincs kiválasztott készlet hely"
+msgstr "Nincs hely megadva"
 
 #: templates/js/translated/stock.js:1728
 msgid "Stock item is in production"
