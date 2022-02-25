@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-25 06:48+0000\n"
-"PO-Revision-Date: 2022-02-25 11:04\n"
+"PO-Revision-Date: 2022-02-25 12:01\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -2311,7 +2311,7 @@ msgstr "Üzenet fejléce"
 
 #: common/models.py:1571
 msgid "Body"
-msgstr ""
+msgstr "Törzs"
 
 #: common/models.py:1572
 msgid "Body of this message"
@@ -2341,15 +2341,15 @@ msgstr "Fájl feltöltése"
 #: part/templates/part/import_wizard/match_fields.html:52 part/views.py:211
 #: templates/patterns/wizard/match_fields.html:51
 msgid "Match Fields"
-msgstr ""
+msgstr "Mezők egyeztetése"
 
 #: common/views.py:95
 msgid "Match Items"
-msgstr ""
+msgstr "Tételek egyeztetése"
 
 #: common/views.py:440
 msgid "Fields matching failed"
-msgstr ""
+msgstr "Mezők egyeztetése sikertelen"
 
 #: common/views.py:495
 msgid "Parts imported"
@@ -4135,19 +4135,19 @@ msgstr "Alkatrészjegyzék ellenőrző összeg"
 
 #: part/models.py:992
 msgid "Stored BOM checksum"
-msgstr ""
+msgstr "Tárolt alkatrészjegyzék ellenőrző összeg"
 
 #: part/models.py:995
 msgid "BOM checked by"
-msgstr ""
+msgstr "Alkatrészjegyzéket ellenőrizte"
 
 #: part/models.py:997
 msgid "BOM checked date"
-msgstr ""
+msgstr "Alkatrészjegyzék ellenőrzési dátuma"
 
 #: part/models.py:1001
 msgid "Creation User"
-msgstr ""
+msgstr "Létrehozó"
 
 #: part/models.py:1819
 msgid "Sell multiple"
@@ -4159,16 +4159,16 @@ msgstr "Teszt sablont csak követésre kötelezett alkatrészhez lehet csinálni
 
 #: part/models.py:2386
 msgid "Test with this name already exists for this part"
-msgstr ""
+msgstr "Erre az alkatrészre már létezik teszt ilyen névvel"
 
 #: part/models.py:2406 templates/js/translated/part.js:1714
 #: templates/js/translated/stock.js:1312
 msgid "Test Name"
-msgstr ""
+msgstr "Teszt név"
 
 #: part/models.py:2407
 msgid "Enter a name for the test"
-msgstr ""
+msgstr "Add meg a teszt nevét"
 
 #: part/models.py:2412
 msgid "Test Description"
@@ -4181,44 +4181,44 @@ msgstr "Adj hozzá egy leírást ehhez a teszthez"
 #: part/models.py:2418 templates/js/translated/part.js:1723
 #: templates/js/translated/table_filters.js:276
 msgid "Required"
-msgstr ""
+msgstr "Kötelező"
 
 #: part/models.py:2419
 msgid "Is this test required to pass?"
-msgstr ""
+msgstr "Szükséges-e hogy ez a teszt sikeres legyen?"
 
 #: part/models.py:2424 templates/js/translated/part.js:1731
 msgid "Requires Value"
-msgstr ""
+msgstr "Kötelező érték"
 
 #: part/models.py:2425
 msgid "Does this test require a value when adding a test result?"
-msgstr ""
+msgstr "Szükséges-e hogy ennek a tesztnek az eredményéhez kötelezően érték legyen rendelve?"
 
 #: part/models.py:2430 templates/js/translated/part.js:1738
 msgid "Requires Attachment"
-msgstr ""
+msgstr "Kötelező melléklet"
 
 #: part/models.py:2431
 msgid "Does this test require a file attachment when adding a test result?"
-msgstr ""
+msgstr "Szükséges-e hogy ennek a tesztnek az eredményéhez kötelezően fájl melléklet legyen rendelve?"
 
 #: part/models.py:2442
 #, python-brace-format
 msgid "Illegal character in template name ({c})"
-msgstr ""
+msgstr "Érvénytelen karakter ({c}) a sablon nevében"
 
 #: part/models.py:2478
 msgid "Parameter template name must be unique"
-msgstr ""
+msgstr "A paraméter sablon nevének egyedinek kell lennie"
 
 #: part/models.py:2486
 msgid "Parameter Name"
-msgstr ""
+msgstr "Paraméter neve"
 
 #: part/models.py:2493
 msgid "Parameter Units"
-msgstr ""
+msgstr "Paraméter mértékegysége"
 
 #: part/models.py:2523
 msgid "Parent Part"
@@ -4231,11 +4231,11 @@ msgstr "Paraméter sablon"
 
 #: part/models.py:2527
 msgid "Data"
-msgstr ""
+msgstr "Adat"
 
 #: part/models.py:2527
 msgid "Parameter Value"
-msgstr ""
+msgstr "Paraméter értéke"
 
 #: part/models.py:2579 templates/InvenTree/settings/settings.html:227
 msgid "Default Value"
@@ -4243,7 +4243,7 @@ msgstr "Alapértelmezett érték"
 
 #: part/models.py:2580
 msgid "Default Parameter Value"
-msgstr ""
+msgstr "Alapértelmezett paraméter érték"
 
 #: part/models.py:2614
 msgid "Part ID or part name"
@@ -4251,11 +4251,11 @@ msgstr "Alkatrész azonosító vagy alkatrész név"
 
 #: part/models.py:2617 templates/js/translated/model_renderers.js:182
 msgid "Part ID"
-msgstr ""
+msgstr "Alkatrész azonosító"
 
 #: part/models.py:2618
 msgid "Unique part ID value"
-msgstr ""
+msgstr "Egyedi alkatrész azonosító érték"
 
 #: part/models.py:2621
 msgid "Part Name"
@@ -4263,19 +4263,19 @@ msgstr "Alkatrész neve"
 
 #: part/models.py:2625
 msgid "Part IPN"
-msgstr ""
+msgstr "Alkatrész IPN"
 
 #: part/models.py:2626
 msgid "Part IPN value"
-msgstr ""
+msgstr "Alkatrész IPN érték"
 
 #: part/models.py:2629
 msgid "Level"
-msgstr ""
+msgstr "Szint"
 
 #: part/models.py:2630
 msgid "BOM level"
-msgstr ""
+msgstr "Alkatrészjegyzék szint"
 
 #: part/models.py:2690
 msgid "Select parent part"
@@ -4283,11 +4283,11 @@ msgstr "Szülő alkatrész kiválasztása"
 
 #: part/models.py:2698
 msgid "Sub part"
-msgstr ""
+msgstr "Al alkatrész"
 
 #: part/models.py:2699
 msgid "Select part to be used in BOM"
-msgstr ""
+msgstr "Válaszd ki az alkatrészjegyzékben használandó alkatrészt"
 
 #: part/models.py:2705
 msgid "BOM quantity for this BOM item"
@@ -4297,15 +4297,15 @@ msgstr "Alkatrészjegyzék mennyiség ehhez az alkatrészjegyzék tételhez"
 #: templates/js/translated/bom.js:791 templates/js/translated/bom.js:865
 #: templates/js/translated/table_filters.js:92
 msgid "Optional"
-msgstr ""
+msgstr "Opcionális"
 
 #: part/models.py:2707
 msgid "This BOM item is optional"
-msgstr ""
+msgstr "Ez az alkatrészjegyzék tétel opcionális"
 
 #: part/models.py:2710 part/templates/part/upload_bom.html:55
 msgid "Overage"
-msgstr ""
+msgstr "Többlet"
 
 #: part/models.py:2711
 msgid "Estimated build wastage quantity (absolute or percentage)"
@@ -4313,7 +4313,7 @@ msgstr "Becsült gyártási veszteség (abszolút vagy százalékos)"
 
 #: part/models.py:2714
 msgid "BOM item reference"
-msgstr ""
+msgstr "Alkatrészjegyzék tétel azonosító"
 
 #: part/models.py:2717
 msgid "BOM item notes"
@@ -4321,18 +4321,18 @@ msgstr "Alkatrészjegyzék tétel megjegyzései"
 
 #: part/models.py:2719
 msgid "Checksum"
-msgstr ""
+msgstr "Ellenőrző összeg"
 
 #: part/models.py:2719
 msgid "BOM line checksum"
-msgstr ""
+msgstr "Alkatrészjegyzék sor ellenőrző összeg"
 
 #: part/models.py:2723 part/templates/part/upload_bom.html:57
 #: templates/js/translated/bom.js:882
 #: templates/js/translated/table_filters.js:68
 #: templates/js/translated/table_filters.js:88
 msgid "Inherited"
-msgstr ""
+msgstr "Örökölt"
 
 #: part/models.py:2724
 msgid "This BOM item is inherited by BOMs for variant parts"
@@ -4341,7 +4341,7 @@ msgstr "Ezt az alkatrészjegyzék tételt az alkatrész változatok alkatrészje
 #: part/models.py:2729 part/templates/part/upload_bom.html:56
 #: templates/js/translated/bom.js:874
 msgid "Allow Variants"
-msgstr ""
+msgstr "Változatok engedélyezése"
 
 #: part/models.py:2730
 msgid "Stock items for variant parts can be used for this BOM item"
@@ -4353,15 +4353,15 @@ msgstr "A mennyiség egész szám kell legyen a követésre kötelezett alkatré
 
 #: part/models.py:2824 part/models.py:2826
 msgid "Sub part must be specified"
-msgstr ""
+msgstr "Al alkatrészt kötelező megadni"
 
 #: part/models.py:2955
 msgid "BOM Item Substitute"
-msgstr ""
+msgstr "Alkatrészjegyzék tétel helyettesítő"
 
 #: part/models.py:2977
 msgid "Substitute part cannot be the same as the master part"
-msgstr ""
+msgstr "A helyettesítő alkatrész nem lehet ugyanaz mint a fő alkatrész"
 
 #: part/models.py:2989
 msgid "Parent BOM item"
@@ -4369,23 +4369,23 @@ msgstr "Szülő alkatrészjegyzék tétel"
 
 #: part/models.py:2997
 msgid "Substitute part"
-msgstr ""
+msgstr "Helyettesítő alkatrész"
 
 #: part/models.py:3008
 msgid "Part 1"
-msgstr ""
+msgstr "1.rész"
 
 #: part/models.py:3012
 msgid "Part 2"
-msgstr ""
+msgstr "2.rész"
 
 #: part/models.py:3012
 msgid "Select Related Part"
-msgstr ""
+msgstr "Válassz kapcsolódó alkatrészt"
 
 #: part/models.py:3044
 msgid "Error creating relationship: check that the part is not related to itself and that the relationship is unique"
-msgstr ""
+msgstr "Hiba a kapcsolat létrehozása közben: ellenőrizd hogy az alkatrész nem kapcsolódik-e saját magához és azt hogy a kapcsolat egyedi"
 
 #: part/serializers.py:667
 msgid "Select part to copy BOM from"
@@ -4393,11 +4393,11 @@ msgstr "Válassz alkatrészt ahonnan az alkatrészjegyzéket másoljuk"
 
 #: part/serializers.py:678
 msgid "Remove Existing Data"
-msgstr ""
+msgstr "Létező adat törlése"
 
 #: part/serializers.py:679
 msgid "Remove existing BOM items before copying"
-msgstr ""
+msgstr "Meglévő alkatrészjegyzék tételek törlése a másolás előtt"
 
 #: part/serializers.py:684
 msgid "Include Inherited"
@@ -7623,7 +7623,7 @@ msgstr "Paraméter adattal együtt"
 
 #: templates/js/translated/bom.js:308
 msgid "Include part  parameter data in exported BOM"
-msgstr ""
+msgstr "Alkatrész paraméter adatok megjelenítése az exportált alkatrészjegyzékben"
 
 #: templates/js/translated/bom.js:313
 msgid "Include Stock Data"
@@ -8074,7 +8074,7 @@ msgstr "Szűrő létrehozása"
 #: templates/js/translated/forms.js:351 templates/js/translated/forms.js:366
 #: templates/js/translated/forms.js:380 templates/js/translated/forms.js:394
 msgid "Action Prohibited"
-msgstr ""
+msgstr "Művelet tiltva"
 
 #: templates/js/translated/forms.js:353
 msgid "Create operation not allowed"
@@ -8879,7 +8879,7 @@ msgstr "Készlet vevőhöz rendelése"
 
 #: templates/js/translated/stock.js:715
 msgid "Warning: Merge operation cannot be reversed"
-msgstr ""
+msgstr "Figyelem: az összevonási művelet nem vonható vissza"
 
 #: templates/js/translated/stock.js:716
 msgid "Some information will be lost when merging stock items"
@@ -8907,7 +8907,7 @@ msgstr "Készlet áthelyezése"
 
 #: templates/js/translated/stock.js:902
 msgid "Move"
-msgstr ""
+msgstr "Áthelyezés"
 
 #: templates/js/translated/stock.js:908
 msgid "Count Stock"
@@ -8915,7 +8915,7 @@ msgstr "Leltározás"
 
 #: templates/js/translated/stock.js:909
 msgid "Count"
-msgstr ""
+msgstr "Mennyiség"
 
 #: templates/js/translated/stock.js:913
 msgid "Remove Stock"
@@ -8923,7 +8923,7 @@ msgstr "Készlet csökkentése"
 
 #: templates/js/translated/stock.js:914
 msgid "Take"
-msgstr ""
+msgstr "Kivesz"
 
 #: templates/js/translated/stock.js:918
 msgid "Add Stock"
@@ -8931,7 +8931,7 @@ msgstr "Készlet növelése"
 
 #: templates/js/translated/stock.js:919 users/models.py:213
 msgid "Add"
-msgstr ""
+msgstr "Hozzáad"
 
 #: templates/js/translated/stock.js:923 templates/stock_table.html:58
 msgid "Delete Stock"
@@ -8951,27 +8951,27 @@ msgstr "Ki kell választanod legalább egy rendelkezésre álló készlet tétel
 
 #: templates/js/translated/stock.js:1210
 msgid "PASS"
-msgstr ""
+msgstr "SIKER"
 
 #: templates/js/translated/stock.js:1212
 msgid "FAIL"
-msgstr ""
+msgstr "SIKERTELEN"
 
 #: templates/js/translated/stock.js:1217
 msgid "NO RESULT"
-msgstr ""
+msgstr "NINCS EREDMÉNY"
 
 #: templates/js/translated/stock.js:1264
 msgid "Pass test"
-msgstr ""
+msgstr "Teszt sikeres"
 
 #: templates/js/translated/stock.js:1267
 msgid "Add test result"
-msgstr ""
+msgstr "Teszt eredmény hozzáadása"
 
 #: templates/js/translated/stock.js:1293
 msgid "No test results found"
-msgstr ""
+msgstr "Nincs teszt eredmény"
 
 #: templates/js/translated/stock.js:1349
 msgid "Test Date"
@@ -9068,11 +9068,11 @@ msgstr "Nincs a lekérdezésnek megfelelő készlet tétel"
 
 #: templates/js/translated/stock.js:1954 templates/js/translated/stock.js:2002
 msgid "items"
-msgstr ""
+msgstr "tételek"
 
 #: templates/js/translated/stock.js:2042
 msgid "batches"
-msgstr ""
+msgstr "batch-ek"
 
 #: templates/js/translated/stock.js:2069
 msgid "locations"
@@ -9080,7 +9080,7 @@ msgstr "helyek"
 
 #: templates/js/translated/stock.js:2071
 msgid "Undefined location"
-msgstr ""
+msgstr "Ismeretlen hely"
 
 #: templates/js/translated/stock.js:2270
 msgid "Set Stock Status"
@@ -9088,11 +9088,11 @@ msgstr "Készlet állapot beállítása"
 
 #: templates/js/translated/stock.js:2284
 msgid "Select Status Code"
-msgstr ""
+msgstr "Státuszkód kiválasztása"
 
 #: templates/js/translated/stock.js:2285
 msgid "Status code must be selected"
-msgstr ""
+msgstr "Státuszkódot ki kell választani"
 
 #: templates/js/translated/stock.js:2464
 msgid "Allocated Quantity"
@@ -9100,7 +9100,7 @@ msgstr "Lefoglalt mennyiség"
 
 #: templates/js/translated/stock.js:2659
 msgid "Invalid date"
-msgstr ""
+msgstr "Érvénytelen dátum"
 
 #: templates/js/translated/stock.js:2681
 msgid "Details"
@@ -9108,11 +9108,11 @@ msgstr "Részletek"
 
 #: templates/js/translated/stock.js:2706
 msgid "Location no longer exists"
-msgstr ""
+msgstr "A hely már nem létezik"
 
 #: templates/js/translated/stock.js:2725
 msgid "Purchase order no longer exists"
-msgstr ""
+msgstr "Beszerzési megrendelés már nem létezik"
 
 #: templates/js/translated/stock.js:2744
 msgid "Customer no longer exists"
@@ -9648,9 +9648,9 @@ msgstr ""
 
 #: users/models.py:215
 msgid "Permissions to edit items"
-msgstr ""
+msgstr "Jogosultság tételek szerkesztéséhez"
 
 #: users/models.py:217
 msgid "Permission to delete items"
-msgstr ""
+msgstr "Jogosultság tételek törléséhez"
 
