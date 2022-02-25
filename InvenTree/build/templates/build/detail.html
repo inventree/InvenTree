@@ -192,7 +192,7 @@
     <div class='panel-content'>
         {% if build.has_untracked_bom_items %}
         {% if build.active %}
-        {% if build.areUntrackedPartsFullyAllocated %}
+        {% if build.are_untracked_parts_allocated %}
         <div class='alert alert-block alert-success'>
             {% trans "Untracked stock has been fully allocated for this Build Order" %}
         </div>
