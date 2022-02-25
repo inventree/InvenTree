@@ -63,6 +63,43 @@ class StockLocation(InvenTreeTree):
                               help_text=_('Select Owner'),
                               related_name='stock_locations')
 
+    def get_location_owner(self):
+        """
+        Get the closest "owner" for this location.
+
+        Start at this location, and traverse "up" the location tree until we find an owner
+        """
+
+        for loc in self.get_ancestors(include_self=True, ascending=True):
+            if loc.owner is not None:
+                return loc.owner
+
+        return None        
+    
+    def check_ownership(self, user):
+        """
+        Check if the user "owns" (is one of the owners of) the location.
+        """
+
+        # Superuser accounts automatically "own" everything
+        if user.is_superuser:
+            return True
+
+        ownership_enabled = common.models.InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+
+        if not ownership_enabled:
+            # Location ownership function is not enabled, so return True
+            return True
+
+        owner = self.get_location_owner()
+
+        if owner is None:
+            # No owner set, for this location or any location above
+            # So, no ownership checks to perform!
+            return True
+    
+        return user in owner.get_related_owners(include_group=True)
+
     def get_absolute_url(self):
         return reverse('stock-location-detail', kwargs={'pk': self.id})
 

@@ -63,6 +63,11 @@ class StockIndex(InvenTreeRoleMixin, ListView):
         context['loc_count'] = StockLocation.objects.count()
         context['stock_count'] = StockItem.objects.count()
 
+        # No 'ownership' checks are necessary for the top-level StockLocation view
+        context['user_owns_location'] = True
+        context['location_owner'] = None
+        context['ownership_enabled'] = common.models.InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+
         return context
 
 
@@ -75,6 +80,16 @@ class StockLocationDetail(InvenTreeRoleMixin, DetailView):
     template_name = 'stock/location.html'
     queryset = StockLocation.objects.all()
     model = StockLocation
+
+    def get_context_data(self, **kwargs):
+        
+        context = super().get_context_data(**kwargs)
+
+        context['ownership_enabled'] = common.models.InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+        context['location_owner'] = context['location'].get_location_owner()
+        context['user_owns_location'] = context['location'].check_ownership(self.request.user)
+
+        return context
 
 
 class StockItemDetail(InvenTreeRoleMixin, DetailView):
