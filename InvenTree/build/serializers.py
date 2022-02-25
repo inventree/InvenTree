@@ -404,6 +404,10 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
 
         data = self.validated_data
 
+        location = data['location']
+        status = data['status']
+        notes = data.get('notes', '')
+
         outputs = data.get('outputs', [])
 
         # Mark the specified build outputs as "complete"
@@ -415,8 +419,9 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
                 build.complete_build_output(
                     output,
                     request.user,
-                    status=data['status'],
-                    notes=data.get('notes', '')
+                    location=location,
+                    status=status,
+                    notes=notes,
                 )
 
 
