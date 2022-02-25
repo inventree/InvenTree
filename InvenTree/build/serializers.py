@@ -236,6 +236,7 @@ class BuildOutputCreateSerializer(serializers.Serializer):
     auto_allocate = serializers.BooleanField(
         required=False,
         default=False,
+        allow_null=True,
         label=_('Auto Allocate Serial Numbers'),
         help_text=_('Automatically allocate required items with matching serial numbers'),
     )
