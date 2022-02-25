@@ -141,6 +141,10 @@ class StockItemDetail(InvenTreeRoleMixin, DetailView):
                 # We only support integer serial number progression
                 pass
 
+        data['ownership_enabled'] = common.models.InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+        data['item_owner'] = self.object.get_item_owner()
+        data['user_owns_item'] = self.object.check_ownership(self.request.user)
+
         return data
 
     def get(self, request, *args, **kwargs):

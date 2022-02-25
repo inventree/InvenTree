@@ -651,6 +651,48 @@ class StockItem(MPTTModel):
                               help_text=_('Select Owner'),
                               related_name='stock_items')
 
+    def get_item_owner(self):
+        """
+        Return the closest "owner" for this StockItem.
+
+        - If the item has an owner set, return that
+        - If the item is "in stock", check the StockLocation
+        - Otherwise, return None
+        """
+
+        if self.owner is not None:
+            return self.owner
+
+        if self.in_stock and self.location is not None:
+            loc_owner = self.location.get_location_owner()
+
+            if loc_owner:
+                return loc_owner
+
+        return None
+
+    def check_ownership(self, user):
+        """
+        Check if the user "owns" (or is one of the owners of) the item
+        """
+
+        # Superuser accounts automatically "own" everything
+        if user.is_superuser:
+            return True
+
+        ownership_enabled = common.models.InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+
+        if not ownership_enabled:
+            # Location ownership function is not enabled, so return True
+            return True
+
+        owner = self.get_item_owner()
+
+        if owner is None:
+            return True
+
+        return user in owner.get_related_owners(include_group=True)
+
     def is_stale(self):
         """
         Returns True if this Stock item is "stale".
