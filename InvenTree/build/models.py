@@ -30,8 +30,6 @@ from InvenTree.helpers import increment, getSetting, normalize, MakeBarcode
 from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
 from InvenTree.validators import validate_build_order_reference
 
-import common.models
-
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.tasks

@@ -31,6 +31,7 @@ from datetime import datetime, timedelta
 from InvenTree import helpers
 import InvenTree.tasks
 
+import common.models
 import report.models
 import label.models
 
