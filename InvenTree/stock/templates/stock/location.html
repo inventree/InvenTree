@@ -20,6 +20,8 @@
 {% endblock %}
 
 {% block actions %}
+{% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
+
 <!-- Admin view -->
 {% if location and user.is_staff and roles.stock_location.change %}
 {% url 'admin:stock_stocklocation_change' location.pk as url %}
