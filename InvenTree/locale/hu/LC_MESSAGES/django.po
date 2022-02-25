@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-25 06:48+0000\n"
-"PO-Revision-Date: 2022-02-25 10:00\n"
+"PO-Revision-Date: 2022-02-25 11:04\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -7430,15 +7430,15 @@ msgstr "A kért erőforrás nem található a kiszolgálón"
 
 #: templates/js/translated/api.js:212
 msgid "Error 405: Method Not Allowed"
-msgstr ""
+msgstr "Error 405: Metódus nincs engedélyezve"
 
 #: templates/js/translated/api.js:213
 msgid "HTTP method not allowed at URL"
-msgstr ""
+msgstr "HTTP metódus nincs engedélyezve ezen az URL-n"
 
 #: templates/js/translated/api.js:217 templates/js/translated/modals.js:1081
 msgid "Error 408: Timeout"
-msgstr ""
+msgstr "Error 408: Időtúllépés"
 
 #: templates/js/translated/api.js:218 templates/js/translated/modals.js:1082
 msgid "Connection timeout while requesting data from server"
@@ -7446,27 +7446,27 @@ msgstr "Időtúllépés a kiszolgálótól való adatlekérés közben"
 
 #: templates/js/translated/api.js:221
 msgid "Unhandled Error Code"
-msgstr ""
+msgstr "Nem kezelt hibakód"
 
 #: templates/js/translated/api.js:222
 msgid "Error code"
-msgstr ""
+msgstr "Hiba kód"
 
 #: templates/js/translated/attachment.js:78
 msgid "No attachments found"
-msgstr ""
+msgstr "Nem találhatók mellékletek"
 
 #: templates/js/translated/attachment.js:100
 msgid "Edit Attachment"
-msgstr ""
+msgstr "Melléklet szerkesztése"
 
 #: templates/js/translated/attachment.js:110
 msgid "Confirm Delete"
-msgstr ""
+msgstr "Törlés megerősítése"
 
 #: templates/js/translated/attachment.js:111
 msgid "Delete Attachment"
-msgstr ""
+msgstr "Melléklet törlése"
 
 #: templates/js/translated/attachment.js:167
 msgid "Upload Date"
@@ -7474,11 +7474,11 @@ msgstr "Feltöltés dátuma"
 
 #: templates/js/translated/attachment.js:180
 msgid "Edit attachment"
-msgstr ""
+msgstr "Melléklet szerkesztése"
 
 #: templates/js/translated/attachment.js:187
 msgid "Delete attachment"
-msgstr ""
+msgstr "Melléklet törlése"
 
 #: templates/js/translated/barcode.js:29
 msgid "Scan barcode data here using wedge scanner"
@@ -7581,15 +7581,15 @@ msgstr "A vonalkód nem egyezik egy ismert hellyel sem"
 
 #: templates/js/translated/bom.js:75
 msgid "Display row data"
-msgstr ""
+msgstr "Sor adatok mutatása"
 
 #: templates/js/translated/bom.js:131
 msgid "Row Data"
-msgstr ""
+msgstr "Sor adat"
 
 #: templates/js/translated/bom.js:249
 msgid "Download BOM Template"
-msgstr ""
+msgstr "Alkarészjegyzék sablon letöltése"
 
 #: templates/js/translated/bom.js:252 templates/js/translated/bom.js:286
 #: templates/js/translated/order.js:369 templates/js/translated/stock.js:519
@@ -7603,23 +7603,23 @@ msgstr "Fájlfomátum kiválasztása"
 
 #: templates/js/translated/bom.js:294
 msgid "Cascading"
-msgstr ""
+msgstr "Többszíntű"
 
 #: templates/js/translated/bom.js:295
 msgid "Download cascading / multi-level BOM"
-msgstr ""
+msgstr "Többszintű alkatrészjegyzék letöltése"
 
 #: templates/js/translated/bom.js:300
 msgid "Levels"
-msgstr ""
+msgstr "Szintek"
 
 #: templates/js/translated/bom.js:301
 msgid "Select maximum number of BOM levels to export (0 = all levels)"
-msgstr ""
+msgstr "Válaszd ki a maximum alkatrészjegyzék szintet amit exportáljunk (0=összes szintet)"
 
 #: templates/js/translated/bom.js:307
 msgid "Include Parameter Data"
-msgstr ""
+msgstr "Paraméter adattal együtt"
 
 #: templates/js/translated/bom.js:308
 msgid "Include part  parameter data in exported BOM"
@@ -8647,7 +8647,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:1036
 msgid "Delete Part Relationship"
-msgstr ""
+msgstr "Alkatrész kapcsolatok törlése"
 
 #: templates/js/translated/part.js:1103 templates/js/translated/part.js:1363
 msgid "No parts found"
@@ -8685,7 +8685,7 @@ msgstr "Elérési út"
 
 #: templates/js/translated/part.js:1700
 msgid "No test templates matching query"
-msgstr ""
+msgstr "Nincs a lekérdezéssel egyező teszt sablon"
 
 #: templates/js/translated/part.js:1751 templates/js/translated/stock.js:1271
 msgid "Edit test result"
@@ -8702,26 +8702,26 @@ msgstr "Ez a teszt a szülő alkatrészhez lett felvéve"
 
 #: templates/js/translated/part.js:1780
 msgid "Edit Test Result Template"
-msgstr ""
+msgstr "Teszt eredmény sablon szerkesztése"
 
 #: templates/js/translated/part.js:1794
 msgid "Delete Test Result Template"
-msgstr ""
+msgstr "Teszt eredmény sablon törlése"
 
 #: templates/js/translated/part.js:1819
 #, python-brace-format
 msgid "No ${human_name} information found"
-msgstr ""
+msgstr "Nincs ${human_name} információ"
 
 #: templates/js/translated/part.js:1874
 #, python-brace-format
 msgid "Edit ${human_name}"
-msgstr ""
+msgstr "${human_name} szerkesztése"
 
 #: templates/js/translated/part.js:1875
 #, python-brace-format
 msgid "Delete ${human_name}"
-msgstr ""
+msgstr "${human_name} törlése"
 
 #: templates/js/translated/part.js:1976
 msgid "Single Price"
@@ -8737,11 +8737,11 @@ msgstr "A plugin telepítve lett"
 
 #: templates/js/translated/report.js:67
 msgid "items selected"
-msgstr ""
+msgstr "kiválasztott tételek"
 
 #: templates/js/translated/report.js:75
 msgid "Select Report Template"
-msgstr ""
+msgstr "Riport sablon kiválasztása"
 
 #: templates/js/translated/report.js:90
 msgid "Select Test Report Template"
@@ -8749,65 +8749,65 @@ msgstr "Teszt riport sablon kiválasztása"
 
 #: templates/js/translated/report.js:119
 msgid "Stock item(s) must be selected before printing reports"
-msgstr ""
+msgstr "Készlet tétel(eke)t ki kell választani a riport nyomtatás előtt"
 
 #: templates/js/translated/report.js:136 templates/js/translated/report.js:189
 #: templates/js/translated/report.js:243 templates/js/translated/report.js:297
 #: templates/js/translated/report.js:351
 msgid "No Reports Found"
-msgstr ""
+msgstr "Nem található riport"
 
 #: templates/js/translated/report.js:137
 msgid "No report templates found which match selected stock item(s)"
-msgstr ""
+msgstr "Nem található riport sablon a kiválasztott készlet tétel(ek)hez"
 
 #: templates/js/translated/report.js:172
 msgid "Select Builds"
-msgstr ""
+msgstr "Gyártások kiválasztása"
 
 #: templates/js/translated/report.js:173
 msgid "Build(s) must be selected before printing reports"
-msgstr ""
+msgstr "Gyártási utasítás(oka)t ki kell választani a riport nyomtatás előtt"
 
 #: templates/js/translated/report.js:190
 msgid "No report templates found which match selected build(s)"
-msgstr ""
+msgstr "Nem található riport sablon a kiválasztott gyártási utasítás(ok)hoz"
 
 #: templates/js/translated/report.js:226
 msgid "Part(s) must be selected before printing reports"
-msgstr ""
+msgstr "Alkatrész(eke)t ki kell választani a riport nyomtatás előtt"
 
 #: templates/js/translated/report.js:244
 msgid "No report templates found which match selected part(s)"
-msgstr ""
+msgstr "Nem található riport sablon a kiválasztott alkatrész(ek)hez"
 
 #: templates/js/translated/report.js:279
 msgid "Select Purchase Orders"
-msgstr ""
+msgstr "Beszerzési rendelések kiválasztása"
 
 #: templates/js/translated/report.js:280
 msgid "Purchase Order(s) must be selected before printing report"
-msgstr ""
+msgstr "Beszerzési megrendelés(eke)t ki kell választani a riport nyomtatás előtt"
 
 #: templates/js/translated/report.js:298 templates/js/translated/report.js:352
 msgid "No report templates found which match selected orders"
-msgstr ""
+msgstr "Nem található riport sablon a kiválasztott megrendelés(ek)hez"
 
 #: templates/js/translated/report.js:333
 msgid "Select Sales Orders"
-msgstr ""
+msgstr "Vevői rendelések kiválasztása"
 
 #: templates/js/translated/report.js:334
 msgid "Sales Order(s) must be selected before printing report"
-msgstr ""
+msgstr "Vevői rendelés(eke)t ki kell választani a riport nyomtatás előtt"
 
 #: templates/js/translated/stock.js:75
 msgid "Serialize Stock Item"
-msgstr ""
+msgstr "Készlet tétel sorszámozása"
 
 #: templates/js/translated/stock.js:103
 msgid "Confirm Stock Serialization"
-msgstr ""
+msgstr "Készlet sorozatszámozás megerősítése"
 
 #: templates/js/translated/stock.js:112
 msgid "Parent stock location"
@@ -8819,7 +8819,7 @@ msgstr "Új készlet hely"
 
 #: templates/js/translated/stock.js:195
 msgid "This part cannot be serialized"
-msgstr ""
+msgstr "Ezt az alkatrészt nem lehet sorozatszámozni"
 
 #: templates/js/translated/stock.js:234
 msgid "Enter initial quantity for this stock item"
@@ -8835,27 +8835,27 @@ msgstr "Készlet tétel létrehozva"
 
 #: templates/js/translated/stock.js:396
 msgid "Created multiple stock items"
-msgstr ""
+msgstr "Több készlet tétel létre lett hozva"
 
 #: templates/js/translated/stock.js:421
 msgid "Find Serial Number"
-msgstr ""
+msgstr "Sorozatszám keresése"
 
 #: templates/js/translated/stock.js:425 templates/js/translated/stock.js:426
 msgid "Enter serial number"
-msgstr ""
+msgstr "Sorozatszám megadása"
 
 #: templates/js/translated/stock.js:442
 msgid "Enter a serial number"
-msgstr ""
+msgstr "Adj meg egy sorozatszámot"
 
 #: templates/js/translated/stock.js:462
 msgid "No matching serial number"
-msgstr ""
+msgstr "Nincs egyező sorozatszám"
 
 #: templates/js/translated/stock.js:471
 msgid "More than one matching result found"
-msgstr ""
+msgstr "Több egyező eredmény is van"
 
 #: templates/js/translated/stock.js:516
 msgid "Export Stock"
