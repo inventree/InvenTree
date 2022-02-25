@@ -1167,7 +1167,12 @@ class BuildItem(models.Model):
         if item.part.trackable:
             # Split the allocated stock if there are more available than allocated
             if item.quantity > self.quantity:
-                item = item.splitStock(self.quantity, None, user)
+                item = item.splitStock(
+                    self.quantity,
+                    None,
+                    user,
+                    code=StockHistoryCode.BUILD_CONSUMED,
+                )
 
                 # Make sure we are pointing to the new item
                 self.stock_item = item
@@ -1178,7 +1183,11 @@ class BuildItem(models.Model):
             item.save()
         else:
             # Simply remove the items from stock
-            item.take_stock(self.quantity, user)
+            item.take_stock(
+                self.quantity,
+                user,
+                code=StockHistoryCode.BUILD_CONSUMED
+            )
 
     def getStockItemThumbnail(self):
         """
