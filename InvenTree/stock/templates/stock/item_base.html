@@ -409,7 +409,14 @@
     <tr>
         <td><span class='fas fa-vial'></span></td>
         <td>{% trans "Tests" %}</td>
-        <td>{{ item.requiredTestStatus.passed }} / {{ item.requiredTestStatus.total }}</td>
+        <td>
+            {{ item.requiredTestStatus.passed }} / {{ item.requiredTestStatus.total }}
+            {% if item.passedAllRequiredTests %}
+            <span class='fas fa-check-circle float-right icon-green'></span>
+            {% else %}
+            <span class='fas fa-times-circle float-right icon-red'></span>
+            {% endif %}
+        </td>
     </tr>
     {% endif %}
     {% if item.owner %}
