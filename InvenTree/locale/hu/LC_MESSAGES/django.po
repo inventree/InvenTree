@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-26 07:37+0000\n"
-"PO-Revision-Date: 2022-02-26 07:41\n"
+"PO-Revision-Date: 2022-02-26 13:06\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -6211,7 +6211,7 @@ msgstr "Úgytűnik nem vagy ennek a tételnek a tulajdonosa. Ezt így nem tudod 
 #: stock/templates/stock/item_base.html:407
 #: stock/templates/stock/location.html:116
 msgid "Read only"
-msgstr ""
+msgstr "Csak olvasható"
 
 #: stock/templates/stock/item_base.html:483
 msgid "Edit Stock Status"
@@ -6269,7 +6269,7 @@ msgstr "Legfelső szintű készlet hely"
 
 #: stock/templates/stock/location.html:111
 msgid "Location Owner"
-msgstr ""
+msgstr "Hely tulajdonosa"
 
 #: stock/templates/stock/location.html:115
 msgid "You are not in the list of owners of this location. This stock location cannot be edited."
