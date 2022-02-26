@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-26 07:37+0000\n"
-"PO-Revision-Date: 2022-02-26 07:41\n"
+"PO-Revision-Date: 2022-02-26 16:46\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -6213,7 +6213,7 @@ msgstr "Sie gehören nicht zu den Eigentümern dieses Objekts und können es nic
 #: stock/templates/stock/item_base.html:407
 #: stock/templates/stock/location.html:116
 msgid "Read only"
-msgstr ""
+msgstr "Nur Leserechte"
 
 #: stock/templates/stock/item_base.html:483
 msgid "Edit Stock Status"
@@ -6271,7 +6271,7 @@ msgstr "Oberster Lagerstandort"
 
 #: stock/templates/stock/location.html:111
 msgid "Location Owner"
-msgstr ""
+msgstr "Standortbesitzer"
 
 #: stock/templates/stock/location.html:115
 msgid "You are not in the list of owners of this location. This stock location cannot be edited."
