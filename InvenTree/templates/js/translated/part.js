@@ -1958,6 +1958,111 @@ function initPriceBreakSet(table, options) {
 }
 
 
+function loadPartSchedulingChart(canvas_id, part_id) {
+
+    var part_info = null;
+
+    // First, grab updated data for the particular part
+    inventreeGet(`/api/part/${part_id}/`, {}, {
+        async: false,
+        success: function(response) {
+            part_info = response;
+        }
+    });
+
+    var today = moment();
+
+    // Create an initial entry, using the available quantity
+    var stock_schedule = [
+        {
+            x: today.format("YYYY-MM-DD"),
+            y: part_info.in_stock,
+        }
+    ];
+
+    for (var idx = 0; idx < 10; idx++) {
+        stock_schedule.push({
+            x: today.clone().add(idx, "days").format("YYYY-MM-DD"),
+            y: part_info.in_stock + idx * 2,
+            label: `data at ${idx}`,
+        });
+    }
+
+    // Extract purchase order information from the server
+    inventreeGet(
+        `/api/order/po-line/`,
+        {
+            pending: true,
+            base_part: part_id,
+            order_detail: true,
+        },
+        {
+            success: function(orders) {
+                console.log("orders:");
+                console.log(orders);
+
+                orders.forEach(function(order) {
+                    var target_date = order.order_detail.target_date;
+
+                    if (target_date) {
+                        var td = moment(target_date);
+
+                        console.log("target date:", target_date);
+
+                        if (td >= today) {
+                            console.log("this is in the future!");
+                        } else {
+                            console.log("this is in the past");
+                        }
+                    }
+                });
+            }
+        }
+    );
+
+    var context = document.getElementById(canvas_id);
+
+    const data = {
+        datasets: [{
+          label: 'Scatter Dataset',
+          data: stock_schedule,
+          backgroundColor: 'rgb(255, 99, 132)'
+        }],
+    };
+
+    return new Chart(context, {
+        type: 'scatter',
+        data: data,
+        options: {
+            showLine: true,
+            stepped: true,
+            scales: {
+                x: {
+                    type: 'time',
+                    min: today.format(),
+                    position: 'bottom',
+                    time: {
+                        unit: 'day',
+                    },
+                },
+                y: {
+                    beginAtZero: true,
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(item) {
+                            return item.raw.label;
+                        }
+                    }
+                }
+            },
+        }
+    });
+}
+
+
 function loadStockPricingChart(context, data) {
     return new Chart(context, {
         type: 'bar',
