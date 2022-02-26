@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-26 07:37+0000\n"
-"PO-Revision-Date: 2022-02-26 14:04\n"
+"PO-Revision-Date: 2022-02-26 15:21\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -6173,11 +6173,11 @@ msgstr "Ez a készlet tétel nem felelt meg az összes szükséges teszten"
 
 #: stock/templates/stock/item_base.html:241
 msgid "This stock item is allocated to Sales Order"
-msgstr "Ez a készlet elem egy vevői rendeléshez foglalt"
+msgstr "Ez a készlet tétel ehhez a vevői rendeléshez van lefoglalva:"
 
 #: stock/templates/stock/item_base.html:249
 msgid "This stock item is allocated to Build Order"
-msgstr "Ez a készlet elem egy gyártási utasításhoz foglalt"
+msgstr "Ez a készlet tétel ehhez a gyártási utasításhoz van lefoglalva:"
 
 #: stock/templates/stock/item_base.html:255
 msgid "This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted."
