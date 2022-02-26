@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-26 07:37+0000\n"
-"PO-Revision-Date: 2022-02-26 13:06\n"
+"PO-Revision-Date: 2022-02-26 14:04\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -484,11 +484,11 @@ msgstr "Hely megváltozott"
 
 #: InvenTree/status_codes.py:286
 msgid "Installed into assembly"
-msgstr "Szerelvénybe beépült"
+msgstr "Gyártmányba beépült"
 
 #: InvenTree/status_codes.py:287
 msgid "Removed from assembly"
-msgstr "Szerelvényből eltávolítva"
+msgstr "Gyártmányból eltávolítva"
 
 #: InvenTree/status_codes.py:289
 msgid "Installed component item"
@@ -1674,7 +1674,7 @@ msgstr "Alkatrészek alapból sablon alkatrészek legyenek"
 #: templates/js/translated/table_filters.js:168
 #: templates/js/translated/table_filters.js:429
 msgid "Assembly"
-msgstr "Szerelvény"
+msgstr "Gyártmány"
 
 #: common/models.py:713
 msgid "Parts can be assembled from other components by default"
@@ -3769,7 +3769,7 @@ msgstr "Vevői rendelés kész"
 
 #: order/templates/order/sales_order_base.html:102
 msgid "This Sales Order has not been fully allocated"
-msgstr "Ez a vevő rendelés nincs teljesen lefoglalva"
+msgstr "Ehhez a vevői rendeléshez nincs minden alkatrész lefoglalva"
 
 #: order/templates/order/sales_order_base.html:122
 #: templates/js/translated/order.js:1253
@@ -4729,7 +4729,7 @@ msgstr "Alkatrészjegyzék tétel hozzáadása"
 
 #: part/templates/part/detail.html:300
 msgid "Assemblies"
-msgstr "Szerelvények"
+msgstr "Gyártmányok"
 
 #: part/templates/part/detail.html:317
 msgid "Part Builds"
@@ -5481,7 +5481,7 @@ msgstr "Beépített tesztekkel együtt"
 
 #: report/models.py:332
 msgid "Include test results for stock items installed inside assembled item"
-msgstr "Szerelvénybe beépített készlet tételek teszt eredményeivel együtt"
+msgstr "Gyártmányba beépített készlet tételek teszt eredményeivel együtt"
 
 #: report/models.py:382
 msgid "Build Filters"
@@ -7692,7 +7692,7 @@ msgstr "Készletváltozatok engedélyezve"
 
 #: templates/js/translated/bom.js:750
 msgid "Open subassembly"
-msgstr "Alszerelvény megnyitása"
+msgstr "Al-gyártmány megnyitása"
 
 #: templates/js/translated/bom.js:822
 msgid "Substitutes"
@@ -8024,7 +8024,7 @@ msgstr "Sablon alkatrész"
 #: templates/js/translated/company.js:761 templates/js/translated/part.js:521
 #: templates/js/translated/part.js:606
 msgid "Assembled part"
-msgstr "Szerelvény alkatrész"
+msgstr "Gyártmány alkatrész"
 
 #: templates/js/translated/company.js:631 templates/js/translated/part.js:696
 msgid "No parameters found"
@@ -9185,7 +9185,7 @@ msgstr "Követésre kötelezett"
 
 #: templates/js/translated/table_filters.js:60
 msgid "Assembled Part"
-msgstr "Szerelvény alkatrész"
+msgstr "Gyártmány alkatrész"
 
 #: templates/js/translated/table_filters.js:64
 msgid "Validated"
@@ -9263,7 +9263,7 @@ msgstr "Aktív alkatrészek készletének megjelenítése"
 
 #: templates/js/translated/table_filters.js:169
 msgid "Part is an assembly"
-msgstr "Az alkatrész egy szerelvény"
+msgstr "Az alkatrész egy gyártmány"
 
 #: templates/js/translated/table_filters.js:173
 msgid "Is allocated"
