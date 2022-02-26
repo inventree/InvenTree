@@ -59,14 +59,7 @@
     </ul>
 </div>
 <!-- Stock adjustment menu -->
-<!-- Check permissions and owner -->
-
-{% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
-{% if owner_control.value == "True" %}
-    {% authorized_owners item.owner as owners %}
-{% endif %}
-
-{% if owner_control.value == "False" or owner_control.value == "True" and user in owners or user.is_superuser %}
+{% if user_owns_item %}
     {% if roles.stock.change and not item.is_building %}
     <div class='btn-group'>
         <button id='stock-actions' title='{% trans "Stock adjustment actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'><span class='fas fa-boxes'></span> <span class='caret'></span></button>
@@ -219,23 +212,7 @@
     </tr>
 </table>
 
-{% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
-{% if owner_control.value == "True" %}
-    {% authorized_owners item.owner as owners %}
-{% endif %}
-
 <div class='info-messages'>
-
-    {% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
-    {% if owner_control.value == "True" %}
-        {% authorized_owners item.owner as owners %}
-
-        {% if not user in owners and not user.is_superuser %}
-        <div class='alert alert-block alert-info'>
-            {% trans "You are not in the list of owners of this item. This stock item cannot be edited." %}<br>
-        </div>
-        {% endif %}
-    {% endif %}
 
     {% if item.is_building %}
     <div class='alert alert-block alert-info'>
@@ -419,11 +396,18 @@
         </td>
     </tr>
     {% endif %}
-    {% if item.owner %}
+    {% if ownership_enabled and item_owner %}
     <tr>
         <td><span class='fas fa-users'></span></td>
         <td>{% trans "Owner" %}</td>
-        <td>{{ item.owner }}</td>
+        <td>
+            {{ item_owner }}
+            {% if not user_owns_item %}
+            <span class='badge rounded-pill bg-warning badge-right' title='{% trans "You are not in the list of owners of this item. This stock item cannot be edited." %}'>
+                {% trans "Read only" %}
+            </span>
+            {% endif %}
+        </td>
     </tr>
     {% endif %}
 </table>
