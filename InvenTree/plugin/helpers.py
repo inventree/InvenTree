@@ -94,15 +94,18 @@ def get_git_log(path):
     """
     Get dict with info of the last commit to file named in path
     """
-    path = path.replace(os.path.dirname(settings.BASE_DIR), '')[1:]
-    command = ['git', 'log', '-n', '1', "--pretty=format:'%H%n%aN%n%aE%n%aI%n%f%n%G?%n%GK'", '--follow', '--', path]
+    from plugin import registry
+
     output = None
-    try:
-        output = str(subprocess.check_output(command, cwd=os.path.dirname(settings.BASE_DIR)), 'utf-8')[1:-1]
-        if output:
-            output = output.split('\n')
-    except subprocess.CalledProcessError:  # pragma: no cover
-        pass
+    if registry.git_is_modern:    
+        path = path.replace(os.path.dirname(settings.BASE_DIR), '')[1:]
+        command = ['git', 'log', '-n', '1', "--pretty=format:'%H%n%aN%n%aE%n%aI%n%f%n%G?%n%GK'", '--follow', '--', path]
+        try:
+            output = str(subprocess.check_output(command, cwd=os.path.dirname(settings.BASE_DIR)), 'utf-8')[1:-1]
+            if output:
+                output = output.split('\n')
+        except subprocess.CalledProcessError:  # pragma: no cover
+            pass
 
     if not output:
         output = 7 * ['']  # pragma: no cover
