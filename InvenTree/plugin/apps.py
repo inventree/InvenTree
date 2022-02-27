@@ -10,6 +10,7 @@ from maintenance_mode.core import set_maintenance_mode
 
 from InvenTree.ready import isImportingData
 from plugin import registry
+from plugin.helpers import check_git_version
 
 
 logger = logging.getLogger('inventree')
@@ -34,3 +35,6 @@ class PluginAppConfig(AppConfig):
                     # drop out of maintenance
                     # makes sure we did not have an error in reloading and maintenance is still active
                     set_maintenance_mode(False)
+
+            # check git version
+            registry.git_is_modern = check_git_version()

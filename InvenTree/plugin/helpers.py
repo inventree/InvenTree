@@ -108,6 +108,26 @@ def get_git_log(path):
         output = 7 * ['']  # pragma: no cover
     return {'hash': output[0], 'author': output[1], 'mail': output[2], 'date': output[3], 'message': output[4], 'verified': output[5], 'key': output[6]}
 
+def check_git_version():
+    """returns if the current git version supports modern features"""
+    
+    # get version string
+    try:
+        output = str(subprocess.check_output(['git', '--version'], cwd=os.path.dirname(settings.BASE_DIR)), 'utf-8')
+    except subprocess.CalledProcessError:  # pragma: no cover
+        return False
+
+    # process version string
+    try:
+        version = output[12:-1].split(".")
+        if len(version) > 1 and version[0] == '2':
+            if len(version) > 2 and int(version[1]) >= 22:
+                return True
+    except ValueError:
+        pass
+
+    return False
+
 
 class GitStatus:
     """
