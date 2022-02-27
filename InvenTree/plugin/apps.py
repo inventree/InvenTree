@@ -39,5 +39,5 @@ class PluginAppConfig(AppConfig):
 
             # check git version
             registry.git_is_modern = check_git_version()
-            if not registry.git_is_modern:
+            if not registry.git_is_modern:  # pragma: no cover  # simulating old git seems not worth it for coverage
                 log_error(_('Your enviroment has an outdated git version. This prevents InvenTree from loading plugin details.'), 'load')
