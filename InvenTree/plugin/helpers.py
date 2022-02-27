@@ -109,6 +109,7 @@ def get_git_log(path):
 
     if not output:
         output = 7 * ['']  # pragma: no cover
+
     return {'hash': output[0], 'author': output[1], 'mail': output[2], 'date': output[3], 'message': output[4], 'verified': output[5], 'key': output[6]}
 
 def check_git_version():
