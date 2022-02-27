@@ -123,7 +123,7 @@ def check_git_version():
         if len(version) > 1 and version[0] == '2':
             if len(version) > 2 and int(version[1]) >= 22:
                 return True
-    except ValueError:
+    except ValueError:  # pragma: no cover
         pass
 
     return False
