@@ -10,7 +10,7 @@ from maintenance_mode.core import set_maintenance_mode
 
 from InvenTree.ready import isImportingData
 from plugin import registry
-from plugin.helpers import check_git_version
+from plugin.helpers import check_git_version, log_error
 
 
 logger = logging.getLogger('inventree')
@@ -38,3 +38,5 @@ class PluginAppConfig(AppConfig):
 
             # check git version
             registry.git_is_modern = check_git_version()
+            if not registry.git_is_modern:
+                log_error('Your enviroment has an outdated git version. This prevents InvenTree from loading plugin details.', 'load')
