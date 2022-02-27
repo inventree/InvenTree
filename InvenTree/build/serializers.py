@@ -160,7 +160,7 @@ class BuildOutputSerializer(serializers.Serializer):
         if to_complete:
 
             # The build output must have all tracked parts allocated
-            if not build.isFullyAllocated(output):
+            if not build.is_fully_allocated(output):
                 raise ValidationError(_("This build output is not fully allocated"))
 
         return output
@@ -236,6 +236,7 @@ class BuildOutputCreateSerializer(serializers.Serializer):
     auto_allocate = serializers.BooleanField(
         required=False,
         default=False,
+        allow_null=True,
         label=_('Auto Allocate Serial Numbers'),
         help_text=_('Automatically allocate required items with matching serial numbers'),
     )
@@ -403,6 +404,10 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
 
         data = self.validated_data
 
+        location = data['location']
+        status = data['status']
+        notes = data.get('notes', '')
+
         outputs = data.get('outputs', [])
 
         # Mark the specified build outputs as "complete"
@@ -414,8 +419,9 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
                 build.complete_build_output(
                     output,
                     request.user,
-                    status=data['status'],
-                    notes=data.get('notes', '')
+                    location=location,
+                    status=status,
+                    notes=notes,
                 )
 
 
@@ -435,7 +441,7 @@ class BuildCompleteSerializer(serializers.Serializer):
 
         build = self.context['build']
 
-        if not build.areUntrackedPartsFullyAllocated() and not value:
+        if not build.are_untracked_parts_allocated() and not value:
             raise ValidationError(_('Required stock has not been fully allocated'))
 
         return value

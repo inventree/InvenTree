@@ -63,6 +63,43 @@ class StockLocation(InvenTreeTree):
                               help_text=_('Select Owner'),
                               related_name='stock_locations')
 
+    def get_location_owner(self):
+        """
+        Get the closest "owner" for this location.
+
+        Start at this location, and traverse "up" the location tree until we find an owner
+        """
+
+        for loc in self.get_ancestors(include_self=True, ascending=True):
+            if loc.owner is not None:
+                return loc.owner
+
+        return None
+
+    def check_ownership(self, user):
+        """
+        Check if the user "owns" (is one of the owners of) the location.
+        """
+
+        # Superuser accounts automatically "own" everything
+        if user.is_superuser:
+            return True
+
+        ownership_enabled = common.models.InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+
+        if not ownership_enabled:
+            # Location ownership function is not enabled, so return True
+            return True
+
+        owner = self.get_location_owner()
+
+        if owner is None:
+            # No owner set, for this location or any location above
+            # So, no ownership checks to perform!
+            return True
+
+        return user in owner.get_related_owners(include_group=True)
+
     def get_absolute_url(self):
         return reverse('stock-location-detail', kwargs={'pk': self.id})
 
@@ -613,6 +650,48 @@ class StockItem(MPTTModel):
                               verbose_name=_('Owner'),
                               help_text=_('Select Owner'),
                               related_name='stock_items')
+
+    def get_item_owner(self):
+        """
+        Return the closest "owner" for this StockItem.
+
+        - If the item has an owner set, return that
+        - If the item is "in stock", check the StockLocation
+        - Otherwise, return None
+        """
+
+        if self.owner is not None:
+            return self.owner
+
+        if self.in_stock and self.location is not None:
+            loc_owner = self.location.get_location_owner()
+
+            if loc_owner:
+                return loc_owner
+
+        return None
+
+    def check_ownership(self, user):
+        """
+        Check if the user "owns" (or is one of the owners of) the item
+        """
+
+        # Superuser accounts automatically "own" everything
+        if user.is_superuser:
+            return True
+
+        ownership_enabled = common.models.InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+
+        if not ownership_enabled:
+            # Location ownership function is not enabled, so return True
+            return True
+
+        owner = self.get_item_owner()
+
+        if owner is None:
+            return True
+
+        return user in owner.get_related_owners(include_group=True)
 
     def is_stale(self):
         """
@@ -1311,6 +1390,7 @@ class StockItem(MPTTModel):
         """
 
         notes = kwargs.get('notes', '')
+        code = kwargs.get('code', StockHistoryCode.SPLIT_FROM_PARENT)
 
         # Do not split a serialized part
         if self.serialized:
@@ -1352,7 +1432,7 @@ class StockItem(MPTTModel):
 
         # Add a new tracking item for the new stock item
         new_stock.add_tracking_entry(
-            StockHistoryCode.SPLIT_FROM_PARENT,
+            code,
             user,
             notes=notes,
             deltas={
@@ -1530,7 +1610,7 @@ class StockItem(MPTTModel):
         return True
 
     @transaction.atomic
-    def take_stock(self, quantity, user, notes=''):
+    def take_stock(self, quantity, user, notes='', code=StockHistoryCode.STOCK_REMOVE):
         """
         Remove items from stock
         """
@@ -1550,7 +1630,7 @@ class StockItem(MPTTModel):
         if self.updateQuantity(self.quantity - quantity):
 
             self.add_tracking_entry(
-                StockHistoryCode.STOCK_REMOVE,
+                code,
                 user,
                 notes=notes,
                 deltas={

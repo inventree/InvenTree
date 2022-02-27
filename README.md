@@ -37,6 +37,9 @@ InvenTree is supported by a [companion mobile app](https://inventree.readthedocs
 
 - [**Download InvenTree from the Apple App Store**](https://apps.apple.com/au/app/inventree/id1581731101#?platform=iphone)
 
+# Deploy to DigitalOcean
+[![Deploy to DO](https://www.deploytodo.com/do-btn-blue-ghost.svg)](https://marketplace.digitalocean.com/apps/inventree?refcode=d6172576d014)
+
 # Documentation
 
 For InvenTree documentation, refer to the [InvenTree documentation website](https://inventree.readthedocs.io/en/latest/).

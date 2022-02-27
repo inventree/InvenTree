@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-20 22:01+0000\n"
-"PO-Revision-Date: 2022-02-20 23:03\n"
+"POT-Creation-Date: 2022-02-22 01:07+0000\n"
+"PO-Revision-Date: 2022-02-22 11:36\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -328,54 +328,58 @@ msgid "Hebrew"
 msgstr "Hebräisch"
 
 #: InvenTree/settings.py:662
+msgid "Hungarian"
+msgstr "Ungarisch"
+
+#: InvenTree/settings.py:663
 msgid "Italian"
 msgstr "Italienisch"
 
-#: InvenTree/settings.py:663
+#: InvenTree/settings.py:664
 msgid "Japanese"
 msgstr "Japanisch"
 
-#: InvenTree/settings.py:664
+#: InvenTree/settings.py:665
 msgid "Korean"
 msgstr "Koreanisch"
 
-#: InvenTree/settings.py:665
+#: InvenTree/settings.py:666
 msgid "Dutch"
 msgstr "Niederländisch"
 
-#: InvenTree/settings.py:666
+#: InvenTree/settings.py:667
 msgid "Norwegian"
 msgstr "Norwegisch"
 
-#: InvenTree/settings.py:667
+#: InvenTree/settings.py:668
 msgid "Polish"
 msgstr "Polnisch"
 
-#: InvenTree/settings.py:668
+#: InvenTree/settings.py:669
 msgid "Portugese"
 msgstr "Portugiesisch"
 
-#: InvenTree/settings.py:669
+#: InvenTree/settings.py:670
 msgid "Russian"
 msgstr "Russisch"
 
-#: InvenTree/settings.py:670
+#: InvenTree/settings.py:671
 msgid "Swedish"
 msgstr "Schwedisch"
 
-#: InvenTree/settings.py:671
+#: InvenTree/settings.py:672
 msgid "Thai"
 msgstr "Thailändisch"
 
-#: InvenTree/settings.py:672
+#: InvenTree/settings.py:673
 msgid "Turkish"
 msgstr "Türkisch"
 
-#: InvenTree/settings.py:673
+#: InvenTree/settings.py:674
 msgid "Vietnamese"
 msgstr "Vietnamesisch"
 
-#: InvenTree/settings.py:674
+#: InvenTree/settings.py:675
 msgid "Chinese"
 msgstr "Chinesisch"
 
