@@ -5,6 +5,7 @@ import logging
 
 from django.apps import AppConfig
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 from maintenance_mode.core import set_maintenance_mode
 
@@ -39,4 +40,4 @@ class PluginAppConfig(AppConfig):
             # check git version
             registry.git_is_modern = check_git_version()
             if not registry.git_is_modern:
-                log_error('Your enviroment has an outdated git version. This prevents InvenTree from loading plugin details.', 'load')
+                log_error(_('Your enviroment has an outdated git version. This prevents InvenTree from loading plugin details.'), 'load')
