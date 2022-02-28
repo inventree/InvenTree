@@ -4,7 +4,6 @@ Top-level URL lookup for InvenTree application.
 Passes URL lookup downstream to each app as required.
 """
 
-from django.conf import settings
 from django.conf.urls import url, include
 from django.urls import path
 from django.contrib import admin
