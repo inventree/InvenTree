@@ -2658,7 +2658,7 @@ function loadStockTrackingTable(table, options) {
         title: '{% trans "Date" %}',
         sortable: true,
         formatter: function(value) {
-            return renderDate(value);
+            return renderDate(value, {showTime: true});
         }
     });
 

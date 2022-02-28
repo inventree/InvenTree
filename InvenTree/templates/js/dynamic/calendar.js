@@ -42,13 +42,17 @@ function clearEvents(calendar) {
  * The user-configured setting DATE_DISPLAY_FORMAT determines how the date should be displayed.
  */
 
-function renderDate(date) {
+function renderDate(date, options={}) {
 
     if (!date) {
         return null;
     }
 
     var fmt = user_settings.DATE_DISPLAY_FORMAT || 'YYYY-MM-DD';
+
+    if (options.showTime) {
+        fmt += ' HH:mm';
+    }
 
     var m = moment(date);
 
