@@ -187,7 +187,7 @@
         <td><span class='fas fa-calendar-alt{% if item.is_expired %} icon-red{% endif %}'></span></td>
         <td>{% trans "Expiry Date" %}</td>
         <td>
-            {{ item.expiry_date }}
+            {% render_date item.expiry_date %}
             {% if item.is_expired %}
             <span title='{% blocktrans %}This StockItem expired on {{ item.expiry_date }}{% endblocktrans %}' class='badge rounded-pill bg-danger badge-right'>{% trans "Expired" %}</span>
             {% elif item.is_stale %}
@@ -205,7 +205,7 @@
         <td><span class='fas fa-calendar-alt'></span></td>
         <td>{% trans "Last Stocktake" %}</td>
         {% if item.stocktake_date %}
-        <td>{{ item.stocktake_date }} <span class='badge badge-right rounded-pill bg-dark'>{{ item.stocktake_user }}</span></td>
+        <td>{% render_date item.stocktake_date %} <span class='badge badge-right rounded-pill bg-dark'>{{ item.stocktake_user }}</span></td>
         {% else %}
         <td><em>{% trans "No stocktake performed" %}</em></td>
         {% endif %}

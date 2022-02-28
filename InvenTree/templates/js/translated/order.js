@@ -923,11 +923,17 @@ function loadPurchaseOrderTable(table, options) {
                 field: 'creation_date',
                 title: '{% trans "Date" %}',
                 sortable: true,
+                formatter: function(value) {
+                    return renderDate(value);
+                }
             },
             {
                 field: 'target_date',
                 title: '{% trans "Target Date" %}',
                 sortable: true,
+                formatter: function(value) {
+                    return renderDate(value);
+                }
             },
             {
                 field: 'line_items',
@@ -1198,7 +1204,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 title: '{% trans "Target Date" %}',
                 formatter: function(value, row) {
                     if (row.target_date) {
-                        var html = row.target_date;
+                        var html = renderDate(row.target_date);
 
                         if (row.overdue) {
                             html += `<span class='fas fa-calendar-alt icon-red float-right' title='{% trans "This line item is overdue" %}'></span>`;
@@ -1207,7 +1213,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                         return html;
 
                     } else if (row.order_detail && row.order_detail.target_date) {
-                        return `<em>${row.order_detail.target_date}</em>`;
+                        return `<em>${renderDate(row.order_detail.target_date)}</em>`;
                     } else {
                         return '-';
                     }
@@ -1371,16 +1377,25 @@ function loadSalesOrderTable(table, options) {
                 sortable: true,
                 field: 'creation_date',
                 title: '{% trans "Creation Date" %}',
+                formatter: function(value) {
+                    return renderDate(value);
+                }
             },
             {
                 sortable: true,
                 field: 'target_date',
                 title: '{% trans "Target Date" %}',
+                formatter: function(value) {
+                    return renderDate(value);
+                }
             },
             {
                 sortable: true,
                 field: 'shipment_date',
                 title: '{% trans "Shipment Date" %}',
+                formatter: function(value) {
+                    return renderDate(value);
+                }
             },
             {
                 sortable: true,
@@ -1532,9 +1547,9 @@ function loadSalesOrderShipmentTable(table, options={}) {
                 sortable: true,
                 formatter: function(value, row) {
                     if (value) {
-                        return value;
+                        return renderDate(value);
                     } else {
-                        return '{% trans "Not shipped" %}';
+                        return '<em>{% trans "Not shipped" %}</em>';
                     }
                 }
             },
@@ -2317,7 +2332,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
             switchable: true,
             formatter: function(value, row) {
                 if (row.target_date) {
-                    var html = row.target_date;
+                    var html = renderDate(row.target_date);
 
                     if (row.overdue) {
                         html += `<span class='fas fa-calendar-alt icon-red float-right' title='{% trans "This line item is overdue" %}'></span>`;
@@ -2326,7 +2341,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                     return html;
 
                 } else if (row.order_detail && row.order_detail.target_date) {
-                    return `<em>${row.order_detail.target_date}</em>`;
+                    return `<em>${renderDate(row.order_detail.target_date)}</em>`;
                 } else {
                     return '-';
                 } 

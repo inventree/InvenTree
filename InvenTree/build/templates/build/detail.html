@@ -18,7 +18,7 @@
     <div class='panel-content'>
         <div class='row'>
             <div class='col-sm-6'>
-                <table class='table table-striped'>
+                <table class='table table-striped table-condensed'>
                     <col width='25'>
                 <tr>
                     <td><span class='fas fa-info'></span></td>
@@ -120,19 +120,19 @@
                 </table>
             </div>
             <div class='col-sm-6'>
-                <table class='table table-striped'>
+                <table class='table table-striped table-condensed'>
                     <col width='25'>
                     <tr>
                         <td><span class='fas fa-calendar-alt'></span></td>
                         <td>{% trans "Created" %}</td>
-                        <td>{{ build.creation_date }}</td>
+                        <td>{% render_date build.creation_date %}</td>
                     </tr>
                     <tr>
                         <td><span class='fas fa-calendar-alt'></span></td>
                         <td>{% trans "Target Date" %}</td>
                         {% if build.target_date %}
                         <td>
-                            {{ build.target_date }}{% if build.is_overdue %} <span class='fas fa-calendar-times icon-red'></span>{% endif %}
+                            {% render_date build.target_date %}{% if build.is_overdue %} <span class='fas fa-calendar-times icon-red'></span>{% endif %}
                         </td>
                         {% else %}
                         <td><em>{% trans "No target date set" %}</em></td>
@@ -142,7 +142,7 @@
                         <td><span class='fas fa-calendar-alt'></span></td>
                         <td>{% trans "Completed" %}</td>
                         {% if build.completion_date %}
-                        <td>{{ build.completion_date }}{% if build.completed_by %}<span class='badge badge-right rounded-pill bg-dark'>{{ build.completed_by }}</span>{% endif %}</td>
+                        <td>{% render_date build.completion_date %}{% if build.completed_by %}<span class='badge badge-right rounded-pill bg-dark'>{{ build.completed_by }}</span>{% endif %}</td>
                         {% else %}
                         <td><em>{% trans "Build not complete" %}</em></td>
                         {% endif %}
