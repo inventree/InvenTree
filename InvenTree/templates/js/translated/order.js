@@ -848,11 +848,17 @@ function loadPurchaseOrderTable(table, options) {
                 field: 'creation_date',
                 title: '{% trans "Date" %}',
                 sortable: true,
+                formatter: function(value) {
+                    return renderDate(value);
+                }
             },
             {
                 field: 'target_date',
                 title: '{% trans "Target Date" %}',
                 sortable: true,
+                formatter: function(value) {
+                    return renderDate(value);
+                }
             },
             {
                 field: 'line_items',
@@ -1269,16 +1275,25 @@ function loadSalesOrderTable(table, options) {
                 sortable: true,
                 field: 'creation_date',
                 title: '{% trans "Creation Date" %}',
+                formatter: function(value) {
+                    return renderDate(value);
+                }
             },
             {
                 sortable: true,
                 field: 'target_date',
                 title: '{% trans "Target Date" %}',
+                formatter: function(value) {
+                    return renderDate(value);
+                }
             },
             {
                 sortable: true,
                 field: 'shipment_date',
                 title: '{% trans "Shipment Date" %}',
+                formatter: function(value) {
+                    return renderDate(value);
+                }
             },
             {
                 sortable: true,
@@ -1430,9 +1445,9 @@ function loadSalesOrderShipmentTable(table, options={}) {
                 sortable: true,
                 formatter: function(value, row) {
                     if (value) {
-                        return value;
+                        return renderDate(value);
                     } else {
-                        return '{% trans "Not shipped" %}';
+                        return '<em>{% trans "Not shipped" %}</em>';
                     }
                 }
             },
