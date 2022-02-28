@@ -440,8 +440,9 @@ class PurchaseOrder(Order):
 
             # Determine if we should individually serialize the items, or not
             if type(serials) is list and len(serials) > 0:
-                quantity = 1
+                serialize = True
             else:
+                serialize = False
                 serials = [None]
 
             for sn in serials:
@@ -450,7 +451,7 @@ class PurchaseOrder(Order):
                     part=line.part.part,
                     supplier_part=line.part,
                     location=location,
-                    quantity=quantity,
+                    quantity=1 if serialize else quantity,
                     purchase_order=self,
                     status=status,
                     batch=batch_code,

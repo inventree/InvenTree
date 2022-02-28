@@ -329,6 +329,7 @@ class POLineItemReceiveSerializer(serializers.Serializer):
 
         return data
 
+
 class POReceiveSerializer(serializers.Serializer):
     """
     Serializer for receiving items against a purchase order
