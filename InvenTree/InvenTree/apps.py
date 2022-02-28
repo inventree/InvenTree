@@ -4,8 +4,11 @@ import logging
 
 from django.apps import AppConfig
 from django.core.exceptions import AppRegistryNotReady
+from django.conf import settings
+from django.contrib.auth import get_user_model
 
 from InvenTree.ready import isInTestMode, canAppAccessDatabase
+from .config import get_setting
 import InvenTree.tasks
 
 
@@ -25,6 +28,8 @@ class InvenTreeConfig(AppConfig):
 
             if not isInTestMode():
                 self.update_exchange_rates()
+
+            self.add_user_on_startup()
 
     def remove_obsolete_tasks(self):
         """
@@ -138,3 +143,33 @@ class InvenTreeConfig(AppConfig):
                 update_exchange_rates()
             except Exception as e:
                 logger.error(f"Error updating exchange rates: {e}")
+
+    def add_user_on_startup(self):
+        """Add a user on startup"""
+
+        # get values
+        add_user = get_setting(
+            'INVENTREE_SET_USER',
+            settings.CONFIG.get('set_user', False)
+        )
+        add_email = get_setting(
+            'INVENTREE_SET_EMAIL',
+            settings.CONFIG.get('set_email', False)
+        )
+        add_password = get_setting(
+            'INVENTREE_SET_PASSWORD',
+            settings.CONFIG.get('set_password', False)
+        )
+
+        # check if all values are present
+        if not (add_user and add_email and add_password):
+            logger.warn('Not all required settings for adding a user on startup are present:\nINVENTREE_SET_USER, INVENTREE_SET_EMAIL, INVENTREE_SET_PASSWORD')
+            return
+
+        # create user
+        user = get_user_model()
+        try:
+            new_user = user.objects.create_user(add_user, add_email, add_password)
+            logger.info(f'User {str(new_user)} was created!')
+        except Exception as _e:
+            print(_e)
