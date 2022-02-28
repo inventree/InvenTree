@@ -942,9 +942,22 @@ function handleFormSuccess(response, options) {
         cache = false;
     }
 
+    var msg_target = null;
+
+    if (options.modal && options.reloadFormAfterSuccess) {
+        // If the modal is persistant, the target for any messages should be the modal!
+        msg_target = $(options.modal).find('#pre-form-content');
+    }
+
     // Display any messages
     if (response && (response.success || options.successMessage)) {
-        showAlertOrCache(response.success || options.successMessage, cache, {style: 'success'});
+        showAlertOrCache(
+            response.success || options.successMessage,
+            cache,
+            {
+                style: 'success',
+                target: msg_target,
+            });
     }
     
     if (response && response.info) {
