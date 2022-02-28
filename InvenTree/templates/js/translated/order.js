@@ -1005,6 +1005,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                         reference: {},
                         purchase_price: {},
                         purchase_price_currency: {},
+                        target_date: {},
                         destination: {},
                         notes: {},
                     },
@@ -1046,7 +1047,11 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                     ],
                     {
                         success: function() {
+                            // Reload the line item table
                             $(table).bootstrapTable('refresh');
+
+                            // Reload the "received stock" table
+                            $('#stock-table').bootstrapTable('refresh');
                         }
                     }
                 );
@@ -1187,6 +1192,28 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 }
             },
             {
+                sortable: true,
+                field: 'target_date',
+                switchable: true,
+                title: '{% trans "Target Date" %}',
+                formatter: function(value, row) {
+                    if (row.target_date) {
+                        var html = row.target_date;
+
+                        if (row.overdue) {
+                            html += `<span class='fas fa-calendar-alt icon-red float-right' title='{% trans "This line item is overdue" %}'></span>`;
+                        }
+
+                        return html;
+
+                    } else if (row.order_detail && row.order_detail.target_date) {
+                        return `<em>${row.order_detail.target_date}</em>`;
+                    } else {
+                        return '-';
+                    }
+                }
+            },
+            {
                 sortable: false,
                 field: 'received',
                 switchable: false,
@@ -1232,15 +1259,15 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
     
                     var pk = row.pk;
     
+                    if (options.allow_receive && row.received < row.quantity) {
+                        html += makeIconButton('fa-sign-in-alt icon-green', 'button-line-receive', pk, '{% trans "Receive line item" %}');
+                    }
+
                     if (options.allow_edit) {
                         html += makeIconButton('fa-edit icon-blue', 'button-line-edit', pk, '{% trans "Edit line item" %}');
                         html += makeIconButton('fa-trash-alt icon-red', 'button-line-delete', pk, '{% trans "Delete line item" %}');
                     }
 
-                    if (options.allow_receive && row.received < row.quantity) {
-                        html += makeIconButton('fa-sign-in-alt', 'button-line-receive', pk, '{% trans "Receive line item" %}');
-                    }
-        
                     html += `</div>`;
     
                     return html;
@@ -2283,6 +2310,28 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 return formatter.format(total);
             }
         },
+        {
+            field: 'target_date',
+            title: '{% trans "Target Date" %}',
+            sortable: true,
+            switchable: true,
+            formatter: function(value, row) {
+                if (row.target_date) {
+                    var html = row.target_date;
+
+                    if (row.overdue) {
+                        html += `<span class='fas fa-calendar-alt icon-red float-right' title='{% trans "This line item is overdue" %}'></span>`;
+                    }
+
+                    return html;
+
+                } else if (row.order_detail && row.order_detail.target_date) {
+                    return `<em>${row.order_detail.target_date}</em>`;
+                } else {
+                    return '-';
+                } 
+            }
+        }
     ];
 
     if (pending) {
@@ -2426,6 +2475,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                     reference: {},
                     sale_price: {},
                     sale_price_currency: {},
+                    target_date: {},
                     notes: {},
                 },
                 title: '{% trans "Edit Line Item" %}',

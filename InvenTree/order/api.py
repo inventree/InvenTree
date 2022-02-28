@@ -274,7 +274,7 @@ class POLineItemFilter(rest_filters.FilterSet):
         model = models.PurchaseOrderLineItem
         fields = [
             'order',
-            'part'
+            'part',
         ]
 
     pending = rest_filters.BooleanFilter(label='pending', method='filter_pending')
@@ -391,6 +391,7 @@ class POLineItemList(generics.ListCreateAPIView):
         'reference',
         'SKU',
         'total_price',
+        'target_date',
     ]
 
     search_fields = [
@@ -399,11 +400,6 @@ class POLineItemList(generics.ListCreateAPIView):
         'part__MPN',
         'part__SKU',
         'reference',
-    ]
-
-    filter_fields = [
-        'order',
-        'part'
     ]
 
 
@@ -703,6 +699,7 @@ class SOLineItemList(generics.ListCreateAPIView):
         'part__name',
         'quantity',
         'reference',
+        'target_date',
     ]
 
     search_fields = [
