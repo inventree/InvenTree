@@ -171,16 +171,18 @@ class InvenTreeConfig(AppConfig):
             if tested_var:
                 set_variables += 1
 
+        # no variable set -> do not try anything
         if set_variables == 0:
             settings.USER_ADDED = True
             return
 
+        # not all needed variables set
         if set_variables < 3:
             logger.warn('Not all required settings for adding a user on startup are present:\nINVENTREE_SET_USER, INVENTREE_SET_EMAIL, INVENTREE_SET_PASSWORD')
             settings.USER_ADDED = True
             return
 
-        # create user
+        # good to go -> create user
         user = get_user_model()
         try:
             new_user = user.objects.create_user(add_user, add_email, add_password)
