@@ -1204,7 +1204,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 title: '{% trans "Target Date" %}',
                 formatter: function(value, row) {
                     if (row.target_date) {
-                        var html = row.target_date;
+                        var html = renderDate(row.target_date);
 
                         if (row.overdue) {
                             html += `<span class='fas fa-calendar-alt icon-red float-right' title='{% trans "This line item is overdue" %}'></span>`;
@@ -1213,7 +1213,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                         return html;
 
                     } else if (row.order_detail && row.order_detail.target_date) {
-                        return `<em>${row.order_detail.target_date}</em>`;
+                        return `<em>${renderDate(row.order_detail.target_date)}</em>`;
                     } else {
                         return '-';
                     }
@@ -2332,7 +2332,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
             switchable: true,
             formatter: function(value, row) {
                 if (row.target_date) {
-                    var html = row.target_date;
+                    var html = renderDate(row.target_date);
 
                     if (row.overdue) {
                         html += `<span class='fas fa-calendar-alt icon-red float-right' title='{% trans "This line item is overdue" %}'></span>`;
@@ -2341,7 +2341,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                     return html;
 
                 } else if (row.order_detail && row.order_detail.target_date) {
-                    return `<em>${row.order_detail.target_date}</em>`;
+                    return `<em>${renderDate(row.order_detail.target_date)}</em>`;
                 } else {
                     return '-';
                 } 
