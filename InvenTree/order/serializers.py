@@ -194,6 +194,7 @@ class POLineItemSerializer(InvenTreeModelSerializer):
             'purchase_price_string',
             'destination',
             'destination_detail',
+            'target_date',
             'total_price',
         ]
 
@@ -605,6 +606,7 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
             'sale_price_currency',
             'sale_price_string',
             'shipped',
+            'target_date',
         ]
 
 

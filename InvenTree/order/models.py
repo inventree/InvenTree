@@ -794,8 +794,9 @@ class OrderLineItem(models.Model):
 
     Attributes:
         quantity: Number of items
+        reference: Reference text (e.g. customer reference) for this line item
         note: Annotation for the item
-
+        target_date: An (optional) date for expected shipment of this line item.
     """
 
     class Meta:
@@ -812,6 +813,12 @@ class OrderLineItem(models.Model):
     reference = models.CharField(max_length=100, blank=True, verbose_name=_('Reference'), help_text=_('Line item reference'))
 
     notes = models.CharField(max_length=500, blank=True, verbose_name=_('Notes'), help_text=_('Line item notes'))
+
+    target_date = models.DateField(
+        blank=True, null=True,
+        verbose_name=_('Target Date'),
+        help_text=_('Target shipping date for this line item'),
+    )
 
 
 class PurchaseOrderLineItem(OrderLineItem):
