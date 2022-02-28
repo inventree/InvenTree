@@ -839,7 +839,6 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     class Meta:
         unique_together = (
-            ('order', 'part', 'quantity', 'purchase_price')
         )
 
     @staticmethod
