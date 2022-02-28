@@ -94,19 +94,44 @@ def get_git_log(path):
     """
     Get dict with info of the last commit to file named in path
     """
-    path = path.replace(os.path.dirname(settings.BASE_DIR), '')[1:]
-    command = ['git', 'log', '-n', '1', "--pretty=format:'%H%n%aN%n%aE%n%aI%n%f%n%G?%n%GK'", '--follow', '--', path]
+    from plugin import registry
+
     output = None
-    try:
-        output = str(subprocess.check_output(command, cwd=os.path.dirname(settings.BASE_DIR)), 'utf-8')[1:-1]
-        if output:
-            output = output.split('\n')
-    except subprocess.CalledProcessError:  # pragma: no cover
-        pass
+    if registry.git_is_modern:
+        path = path.replace(os.path.dirname(settings.BASE_DIR), '')[1:]
+        command = ['git', 'log', '-n', '1', "--pretty=format:'%H%n%aN%n%aE%n%aI%n%f%n%G?%n%GK'", '--follow', '--', path]
+        try:
+            output = str(subprocess.check_output(command, cwd=os.path.dirname(settings.BASE_DIR)), 'utf-8')[1:-1]
+            if output:
+                output = output.split('\n')
+        except subprocess.CalledProcessError:  # pragma: no cover
+            pass
 
     if not output:
         output = 7 * ['']  # pragma: no cover
+
     return {'hash': output[0], 'author': output[1], 'mail': output[2], 'date': output[3], 'message': output[4], 'verified': output[5], 'key': output[6]}
+
+
+def check_git_version():
+    """returns if the current git version supports modern features"""
+
+    # get version string
+    try:
+        output = str(subprocess.check_output(['git', '--version'], cwd=os.path.dirname(settings.BASE_DIR)), 'utf-8')
+    except subprocess.CalledProcessError:  # pragma: no cover
+        return False
+
+    # process version string
+    try:
+        version = output[12:-1].split(".")
+        if len(version) > 1 and version[0] == '2':
+            if len(version) > 2 and int(version[1]) >= 22:
+                return True
+    except ValueError:  # pragma: no cover
+        pass
+
+    return False
 
 
 class GitStatus:

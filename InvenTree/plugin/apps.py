@@ -5,11 +5,13 @@ import logging
 
 from django.apps import AppConfig
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 from maintenance_mode.core import set_maintenance_mode
 
 from InvenTree.ready import isImportingData
 from plugin import registry
+from plugin.helpers import check_git_version, log_error
 
 
 logger = logging.getLogger('inventree')
@@ -34,3 +36,8 @@ class PluginAppConfig(AppConfig):
                     # drop out of maintenance
                     # makes sure we did not have an error in reloading and maintenance is still active
                     set_maintenance_mode(False)
+
+            # check git version
+            registry.git_is_modern = check_git_version()
+            if not registry.git_is_modern:  # pragma: no cover  # simulating old git seems not worth it for coverage
+                log_error(_('Your enviroment has an outdated git version. This prevents InvenTree from loading plugin details.'), 'load')
