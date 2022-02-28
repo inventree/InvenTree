@@ -14,6 +14,8 @@ from django_q.monitor import Stat
 
 from django.conf import settings
 
+import InvenTree.ready
+
 
 logger = logging.getLogger("inventree")
 
@@ -56,6 +58,12 @@ def is_email_configured():
 
     configured = True
 
+    if InvenTree.ready.isInTestMode():
+        return False
+
+    if InvenTree.ready.isImportingData():
+        return False
+
     if not settings.EMAIL_HOST:
         configured = False
 
@@ -88,6 +96,14 @@ def check_system_health(**kwargs):
     """
 
     result = True
+
+    if InvenTree.ready.isInTestMode():
+        # Do not perform further checks if we are running unit tests
+        return False
+
+    if InvenTree.ready.isImportingData():
+        # Do not perform further checks if we are importing data
+        return False
 
     if not is_worker_running(**kwargs):  # pragma: no cover
         result = False

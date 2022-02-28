@@ -12,10 +12,13 @@ import common.models
 INVENTREE_SW_VERSION = "0.7.0 dev"
 
 # InvenTree API version
-INVENTREE_API_VERSION = 26
+INVENTREE_API_VERSION = 27
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v27 -> 2022-02-28
+    - Adds target_date field to individual line items for purchase orders and sales orders
 
 v26 -> 2022-02-17
     - Adds API endpoint for uploading a BOM file and extracting data
