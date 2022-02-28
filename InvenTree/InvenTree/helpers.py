@@ -409,7 +409,7 @@ def DownloadFile(data, filename, content_type='application/text', inline=False):
 def extract_serial_numbers(serials, expected_quantity, next_number: int):
     """
     Attempt to extract serial numbers from an input string:
-    
+
     Requirements:
         - Serial numbers can be either strings, or integers
         - Serial numbers can be split by whitespace / newline / commma chars
