@@ -5,6 +5,8 @@ JSON serializers for the Order API
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from decimal import Decimal
+
 from django.utils.translation import ugettext_lazy as _
 
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -203,6 +205,17 @@ class POLineItemReceiveSerializer(serializers.Serializer):
     A serializer for receiving a single purchase order line item against a purchase order
     """
 
+    class Meta:
+        fields = [
+            'barcode',
+            'line_item',
+            'location',
+            'quantity',
+            'status',
+            'batch_code'
+            'serial_numbers',
+        ]
+
     line_item = serializers.PrimaryKeyRelatedField(
         queryset=order.models.PurchaseOrderLineItem.objects.all(),
         many=False,
@@ -241,6 +254,22 @@ class POLineItemReceiveSerializer(serializers.Serializer):
 
         return quantity
 
+    batch_code = serializers.CharField(
+        label=_('Batch Code'),
+        help_text=_('Enter batch code for incoming stock items'),
+        required=False,
+        default='',
+        allow_blank=True,
+    )
+
+    serial_numbers = serializers.CharField(
+        label=_('Serial Numbers'),
+        help_text=_('Enter serial numbers for incoming stock items'),
+        required=False,
+        default='',
+        allow_blank=True,
+    )
+
     status = serializers.ChoiceField(
         choices=list(StockStatus.items()),
         default=StockStatus.OK,
@@ -270,14 +299,35 @@ class POLineItemReceiveSerializer(serializers.Serializer):
 
         return barcode
 
-    class Meta:
-        fields = [
-            'barcode',
-            'line_item',
-            'location',
-            'quantity',
-            'status',
-        ]
+    def validate(self, data):
+
+        data = super().validate(data)
+
+        line_item = data['line_item']
+        quantity = data['quantity']
+        serial_numbers = data.get('serial_numbers', '').strip()
+
+        base_part = line_item.part.part
+
+        # Does the quantity need to be "integer" (for trackable parts?)
+        if base_part.trackable:
+
+            if Decimal(quantity) != int(quantity):
+                raise ValidationError({
+                    'quantity': _('An integer quantity must be provided for trackable parts'),
+                })
+
+        # If serial numbers are provided
+        if serial_numbers:
+            try:
+                # Pass the serial numbers through to the parent serializer once validated
+                data['serials'] = extract_serial_numbers(serial_numbers, quantity, base_part.getLatestSerialNumberInt())
+            except DjangoValidationError as e:
+                raise ValidationError({
+                    'serial_numbers': e.messages,
+                })
+
+        return data
 
 
 class POReceiveSerializer(serializers.Serializer):
@@ -366,6 +416,8 @@ class POReceiveSerializer(serializers.Serializer):
                         request.user,
                         status=item['status'],
                         barcode=item.get('barcode', ''),
+                        batch_code=item.get('batch_code', ''),
+                        serials=item.get('serials', None),
                     )
                 except (ValidationError, DjangoValidationError) as exc:
                     # Catch model errors and re-throw as DRF errors

@@ -476,6 +476,19 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             quantity = 0;
         }
 
+        // Prepend toggles to the quantity input
+        var toggle_batch = `
+            <span class='input-group-text' title='{% trans "Add batch code" %}' data-bs-toggle='collapse' href='#div-batch-${pk}'>
+                <span class='fas fa-layer-group'></span>
+            </span>
+        `; 
+
+        var toggle_serials = `
+            <span class='input-group-text' title='{% trans "Add serial numbers" %}' data-bs-toggle='collapse' href='#div-serials-${pk}'>
+                <span class='fas fa-hashtag'></span>
+            </span>
+        `;
+        
         // Quantity to Receive
         var quantity_input = constructField(
             `items_quantity_${pk}`,
@@ -490,6 +503,36 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                 hideLabels: true,
             }
         );
+
+        // Add in options for "batch code" and "serial numbers"
+        var batch_input = constructField(
+            `items_batch_code_${pk}`,
+            {
+                type: 'string',
+                required: false,
+                label: '{% trans "Batch Code" %}',
+                help_text: '{% trans "Enter batch code for incoming stock items" %}',
+                prefixRaw: toggle_batch,
+            }
+        );
+
+        var sn_input = constructField(
+            `items_serial_numbers_${pk}`,
+            {
+                type: 'string',
+                required: false,
+                label: '{% trans "Serial Numbers" %}',
+                help_text: '{% trans "Enter serial numbers for incoming stock items" %}',
+                prefixRaw: toggle_serials,
+            }
+        );
+
+        // Hidden inputs below the "quantity" field
+        var quantity_input_group = `${quantity_input}<div class='collapse' id='div-batch-${pk}'>${batch_input}</div>`;
+
+        if (line_item.part_detail.trackable) {
+            quantity_input_group += `<div class='collapse' id='div-serials-${pk}'>${sn_input}</div>`;
+        }
 
         // Construct list of StockItem status codes
         var choices = [];
@@ -528,16 +571,38 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
         );
 
         // Button to remove the row
-        var delete_button = `<div class='btn-group float-right' role='group'>`;
+        var buttons = `<div class='btn-group float-right' role='group'>`;
 
-        delete_button += makeIconButton(
+        buttons += makeIconButton(
+            'fa-layer-group',
+            'button-row-add-batch',
+            pk,
+            '{% trans "Add batch code" %}',
+            {
+                collapseTarget: `div-batch-${pk}`
+            }
+        );
+
+        if (line_item.part_detail.trackable) {
+            buttons += makeIconButton(
+                'fa-hashtag',
+                'button-row-add-serials',
+                pk,
+                '{% trans "Add serial numbers" %}',
+                {
+                    collapseTarget: `div-serials-${pk}`,
+                }
+            );
+        }
+
+        buttons += makeIconButton(
             'fa-times icon-red',
             'button-row-remove',
             pk,
             '{% trans "Remove row" %}',
         );
 
-        delete_button += '</div>';
+        buttons += '</div>';
 
         var html = `
         <tr id='receive_row_${pk}' class='stock-receive-row'>
@@ -554,7 +619,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                 ${line_item.received}
             </td>
             <td id='quantity_${pk}'>
-                ${quantity_input}
+                ${quantity_input_group}
             </td>
             <td id='status_${pk}'>
                 ${status_input}
@@ -563,7 +628,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                 ${destination_input}
             </td>
             <td id='actions_${pk}'>
-                ${delete_button}
+                ${buttons}
             </td>
         </tr>`;
 
@@ -587,7 +652,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                 <th>{% trans "Order Code" %}</th>
                 <th>{% trans "Ordered" %}</th>
                 <th>{% trans "Received" %}</th>
-                <th style='min-width: 50px;'>{% trans "Receive" %}</th>
+                <th style='min-width: 50px;'>{% trans "Quantity to Receive" %}</th>
                 <th style='min-width: 150px;'>{% trans "Status" %}</th>
                 <th style='min-width: 300px;'>{% trans "Destination" %}</th>
                 <th></th>
@@ -678,13 +743,23 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                 var location = getFormFieldValue(`items_location_${pk}`, {}, opts);
 
                 if (quantity != null) {
-                    data.items.push({
+
+                    var line = {
                         line_item: pk,
                         quantity: quantity,
                         status: status,
                         location: location,
-                    });
+                    };
 
+                    if (getFormFieldElement(`items_batch_code_${pk}`).exists()) {
+                        line.batch_code = getFormFieldValue(`items_batch_code_${pk}`);
+                    }
+
+                    if (getFormFieldElement(`items_serial_numbers_${pk}`).exists()) {
+                        line.serial_numbers = getFormFieldValue(`items_serial_numbers_${pk}`);
+                    }
+
+                    data.items.push(line);
                     item_pk_values.push(pk);
                 }
 
