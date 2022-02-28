@@ -7,7 +7,6 @@ import django.core.exceptions as django_exceptions
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.conf import settings
-from django.db.utils import IntegrityError
 
 from djmoney.money import Money
 from djmoney.contrib.exchange.models import Rate, convert_money
