@@ -25,7 +25,6 @@
     modalSetContent,
     modalSetTitle,
     modalSubmit,
-    moment,
     openModal,
     printStockItemLabels,
     printTestReports,
