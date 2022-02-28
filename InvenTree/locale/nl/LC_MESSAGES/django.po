@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-28 03:17+0000\n"
+"POT-Creation-Date: 2022-02-28 13:59+0000\n"
 "PO-Revision-Date: 2021-11-30 21:51\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
@@ -36,7 +36,7 @@ msgstr "Voer datum in"
 
 #: InvenTree/forms.py:126 order/forms.py:24 order/forms.py:35 order/forms.py:46
 #: order/forms.py:57 templates/account/email_confirm.html:20
-#: templates/js/translated/forms.js:596
+#: templates/js/translated/forms.js:601
 msgid "Confirm"
 msgstr "Bevestigen"
 
@@ -4692,6 +4692,14 @@ msgstr ""
 msgid "Create Part"
 msgstr ""
 
+#: part/templates/part/category.html:318
+msgid "Create another part after this one"
+msgstr ""
+
+#: part/templates/part/category.html:319
+msgid "Part created successfully"
+msgstr ""
+
 #: part/templates/part/category_delete.html:5
 msgid "Are you sure you want to delete category"
 msgstr ""
@@ -8307,38 +8315,42 @@ msgstr ""
 msgid "View operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:681
+#: templates/js/translated/forms.js:627
+msgid "Keep this form open"
+msgstr ""
+
+#: templates/js/translated/forms.js:702
 msgid "Enter a valid number"
 msgstr ""
 
-#: templates/js/translated/forms.js:1129 templates/modals.html:19
+#: templates/js/translated/forms.js:1194 templates/modals.html:19
 #: templates/modals.html:43
 msgid "Form errors exist"
 msgstr ""
 
-#: templates/js/translated/forms.js:1558
+#: templates/js/translated/forms.js:1623
 msgid "No results found"
 msgstr ""
 
-#: templates/js/translated/forms.js:1768
+#: templates/js/translated/forms.js:1833
 msgid "Searching"
 msgstr ""
 
-#: templates/js/translated/forms.js:2013
+#: templates/js/translated/forms.js:2078
 msgid "Clear input"
 msgstr ""
 
-#: templates/js/translated/forms.js:2479
+#: templates/js/translated/forms.js:2544
 #, fuzzy
 #| msgid "File comment"
 msgid "File Column"
 msgstr "Bijlage opmerking"
 
-#: templates/js/translated/forms.js:2479
+#: templates/js/translated/forms.js:2544
 msgid "Field Name"
 msgstr ""
 
-#: templates/js/translated/forms.js:2491
+#: templates/js/translated/forms.js:2556
 #, fuzzy
 #| msgid "Select Category"
 msgid "Select Columns"
