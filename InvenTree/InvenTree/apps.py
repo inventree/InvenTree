@@ -146,6 +146,9 @@ class InvenTreeConfig(AppConfig):
 
     def add_user_on_startup(self):
         """Add a user on startup"""
+        # stop if already created
+        if hasattr(settings, 'USER_ADDED') and settings.USER_ADDED:
+            return
 
         # get values
         add_user = get_setting(
@@ -171,5 +174,6 @@ class InvenTreeConfig(AppConfig):
         try:
             new_user = user.objects.create_user(add_user, add_email, add_password)
             logger.info(f'User {str(new_user)} was created!')
+            settings.USER_ADDED = True
         except Exception as _e:
             print(_e)
