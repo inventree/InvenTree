@@ -6,6 +6,7 @@ from django.apps import AppConfig
 from django.core.exceptions import AppRegistryNotReady
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.db import transaction
 from django.db.utils import IntegrityError
 
 from InvenTree.ready import isInTestMode, canAppAccessDatabase
@@ -186,7 +187,8 @@ class InvenTreeConfig(AppConfig):
         # good to go -> create user
         user = get_user_model()
         try:
-            new_user = user.objects.create_user(add_user, add_email, add_password)
+            with transaction.atomic():
+                new_user = user.objects.create_user(add_user, add_email, add_password)
             logger.info(f'User {str(new_user)} was created!')
         except IntegrityError as _e:
             logger.warning(f'The user "{add_user}" could not be created due to the following error:\n{str(_e)}')

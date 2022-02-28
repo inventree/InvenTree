@@ -453,6 +453,6 @@ class TestSettings(TestCase):
         self.env.set('INVENTREE_SET_USER', 'admin')  # set username
         self.env.set('INVENTREE_SET_EMAIL', 'info@example.com')  # set email
         self.env.set('INVENTREE_SET_PASSWORD', 'password123')  # set password
-        with self.assertRaises(IntegrityError, IntegrationPluginError):
+        with self.assertRaises(IntegrationPluginError):
             self.run_reload()
         self.assertEqual(user_count(), 1)
