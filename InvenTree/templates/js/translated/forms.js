@@ -1976,7 +1976,7 @@ function constructField(name, parameters, options) {
     html += `<div class='controls'>`;
 
     // Does this input deserve "extra" decorators?
-    var extra = parameters.prefix != null;
+    var extra = (parameters.icon != null) || (parameters.prefix != null) || (parameters.prefixRaw != null);
     
     // Some fields can have 'clear' inputs associated with them
     if (!parameters.required && !parameters.read_only) {
@@ -1998,9 +1998,13 @@ function constructField(name, parameters, options) {
     
     if (extra) {
         html += `<div class='input-group'>`;
-    
+ 
         if (parameters.prefix) {
             html += `<span class='input-group-text'>${parameters.prefix}</span>`;
+        } else if (parameters.prefixRaw) {
+            html += parameters.prefixRaw;
+        } else if (parameters.icon) {
+            html += `<span class='input-group-text'><span class='fas ${parameters.icon}'></span></span>`;
         }
     }
 
@@ -2147,6 +2151,10 @@ function constructInputOptions(name, classes, type, parameters, options={}) {
 
     opts.push(`type='${type}'`);
 
+    if (parameters.title || parameters.help_text) {
+        opts.push(`title='${parameters.title || parameters.help_text}'`);
+    }
+
     // Read only?
     if (parameters.read_only) {
         opts.push(`readonly=''`);
@@ -2190,11 +2198,6 @@ function constructInputOptions(name, classes, type, parameters, options={}) {
     // Field is required?
     if (parameters.required) {
         opts.push(`required=''`);
-    }
-
-    // Custom mouseover title?
-    if (parameters.title != null) {
-        opts.push(`title='${parameters.title}'`);
     }
 
     // Placeholder?
