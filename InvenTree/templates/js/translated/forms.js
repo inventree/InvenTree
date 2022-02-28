@@ -934,15 +934,13 @@ function getFormFieldValue(name, field={}, options={}) {
  */
 function handleFormSuccess(response, options) {
 
-    // Close the modal
-    if (!options.preventClose) {
-        // Note: The modal will be deleted automatically after closing
-        $(options.modal).modal('hide');
-    }
-
     // Display any required messages
     // Should we show alerts immediately or cache them?
     var cache = (options.follow && response.url) || options.redirect || options.reload;
+
+    if (options.reloadFormAfterSuccess) {
+        cache = false;
+    }
 
     // Display any messages
     if (response && (response.success || options.successMessage)) {
@@ -960,21 +958,42 @@ function handleFormSuccess(response, options) {
     if (response && response.danger) {
         showAlertOrCache(response.danger, cache, {style: 'danger'});
     }
-
+    
     if (options.onSuccess) {
         // Callback function
         options.onSuccess(response, options);
     }
 
-    if (options.follow && response.url) {
-        // Follow the returned URL
-        window.location.href = response.url;
-    } else if (options.reload) {
-        // Reload the current page
-        location.reload();
-    } else if (options.redirect) {
-        // Redirect to a specified URL
-        window.location.href = options.redirect;
+    if (options.reloadFormAfterSuccess) {
+        // Instead of closing the form and going somewhere else,
+        // reload (empty) the form so the user can input more data
+        
+        // Reset the status of the "submit" button
+        if (options.modal) {
+            $(options.modal).find('#modal-form-submit').prop('disabled', false);
+        }
+
+        // Remove any error flags from the form
+        clearFormErrors(options);
+
+    } else {
+
+        // Close the modal
+        if (!options.preventClose) {
+            // Note: The modal will be deleted automatically after closing
+            $(options.modal).modal('hide');
+        }
+
+        if (options.follow && response.url) {
+            // Follow the returned URL
+            window.location.href = response.url;
+        } else if (options.reload) {
+            // Reload the current page
+            location.reload();
+        } else if (options.redirect) {
+            // Redirect to a specified URL
+            window.location.href = options.redirect;
+        }
     }
 }
 
@@ -988,6 +1007,8 @@ function clearFormErrors(options={}) {
     if (options && options.modal) {
         // Remove the individual error messages
         $(options.modal).find('.form-error-message').remove();
+    
+        $(options.modal).find('.modal-content').removeClass('modal-error');
 
         // Remove the "has error" class
         $(options.modal).find('.form-field-error').removeClass('form-field-error');
