@@ -309,6 +309,14 @@ if DEBUG and CONFIG.get('debug_toolbar', False):  # pragma: no cover
     INSTALLED_APPS.append('debug_toolbar')
     MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
 
+# InvenTree URL configuration
+
+# Base URL for admin pages (default="admin")
+INVENTREE_ADMIN_URL = get_setting(
+    'INVENTREE_ADMIN_URL',
+    CONFIG.get('admin_url', 'admin'),
+)
+
 ROOT_URLCONF = 'InvenTree.urls'
 
 TEMPLATES = [
