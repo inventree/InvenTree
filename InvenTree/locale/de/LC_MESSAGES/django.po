@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-28 14:00+0000\n"
-"PO-Revision-Date: 2022-02-28 17:26\n"
+"PO-Revision-Date: 2022-02-28 18:56\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -3445,11 +3445,11 @@ msgstr "Zielort für empfangene Teile auswählen"
 
 #: order/serializers.py:259 templates/js/translated/order.js:514
 msgid "Enter batch code for incoming stock items"
-msgstr ""
+msgstr "Losnummer für eingehende Lagerartikel"
 
 #: order/serializers.py:267 templates/js/translated/order.js:525
 msgid "Enter serial numbers for incoming stock items"
-msgstr ""
+msgstr "Seriennummern für eingehende Lagerartikel"
 
 #: order/serializers.py:280
 msgid "Barcode Hash"
@@ -3465,7 +3465,7 @@ msgstr "Barcode ist bereits in Verwendung"
 
 #: order/serializers.py:317
 msgid "An integer quantity must be provided for trackable parts"
-msgstr ""
+msgstr "Ganzzahl für verfolgbare Teile erforderlich"
 
 #: order/serializers.py:357
 msgid "Line items must be provided"
@@ -8126,7 +8126,7 @@ msgstr "Anzeigevorgang nicht erlaubt"
 
 #: templates/js/translated/forms.js:627
 msgid "Keep this form open"
-msgstr ""
+msgstr "Dieses Formular offen lassen"
 
 #: templates/js/translated/forms.js:702
 msgid "Enter a valid number"
@@ -8357,11 +8357,11 @@ msgstr "Mindestens eine Position muss ausgewählt werden"
 
 #: templates/js/translated/order.js:481 templates/js/translated/order.js:580
 msgid "Add batch code"
-msgstr ""
+msgstr "Losnummer hinzufügen"
 
 #: templates/js/translated/order.js:487 templates/js/translated/order.js:591
 msgid "Add serial numbers"
-msgstr ""
+msgstr "Seriennummern hinzufügen"
 
 #: templates/js/translated/order.js:499
 msgid "Quantity to receive"
@@ -8381,7 +8381,7 @@ msgstr "Bestellt"
 
 #: templates/js/translated/order.js:655
 msgid "Quantity to Receive"
-msgstr ""
+msgstr "Zu erhaltende Menge"
 
 #: templates/js/translated/order.js:674
 msgid "Confirm receipt of items"
