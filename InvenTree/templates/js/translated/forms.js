@@ -1884,7 +1884,7 @@ function getFieldName(name, options={}) {
  * - Field description (help text)
  * - Field errors
  */
-function constructField(name, parameters, options) {
+function constructField(name, parameters, options={}) {
 
     var html = '';
 

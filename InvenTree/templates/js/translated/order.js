@@ -489,12 +489,6 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             </span>
         `;
         
-        var prefix_buttons = toggle_batch;
-
-        if (line_item.part_detail.trackable) {
-            prefix_buttons += toggle_serials;
-        }
-
         // Quantity to Receive
         var quantity_input = constructField(
             `items_quantity_${pk}`,
@@ -504,7 +498,6 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                 value: quantity,
                 title: '{% trans "Quantity to receive" %}',
                 required: true,
-                prefixRaw: prefix_buttons,
             },
             {
                 hideLabels: true,
@@ -516,13 +509,10 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             `items_batch_code_${pk}`,
             {
                 type: 'string',
-                required: true,
+                required: false,
                 label: '{% trans "Batch Code" %}',
                 help_text: '{% trans "Enter batch code for incoming stock items" %}',
                 prefixRaw: toggle_batch,
-            },
-            {
-                hideLabels: true,
             }
         );
 
@@ -530,13 +520,10 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             `items_serial_numbers_${pk}`,
             {
                 type: 'string',
-                required: true,
+                required: false,
                 label: '{% trans "Serial Numbers" %}',
                 help_text: '{% trans "Enter serial numbers for incoming stock items" %}',
                 prefixRaw: toggle_serials,
-            },
-            {
-                hideLabels: true
             }
         );
 
@@ -584,16 +571,38 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
         );
 
         // Button to remove the row
-        var delete_button = `<div class='btn-group float-right' role='group'>`;
+        var buttons = `<div class='btn-group float-right' role='group'>`;
 
-        delete_button += makeIconButton(
+        buttons += makeIconButton(
+            'fa-layer-group',
+            'button-row-add-batch',
+            pk,
+            '{% trans "Add batch code" %}',
+            {
+                collapseTarget: `div-batch-${pk}`
+            }
+        );
+
+        if (line_item.part_detail.trackable) {
+            buttons += makeIconButton(
+                'fa-hashtag',
+                'button-row-add-serials',
+                pk,
+                '{% trans "Add serial numbers" %}',
+                {
+                    collapseTarget: `div-serials-${pk}`,
+                }
+            );
+        }
+
+        buttons += makeIconButton(
             'fa-times icon-red',
             'button-row-remove',
             pk,
             '{% trans "Remove row" %}',
         );
 
-        delete_button += '</div>';
+        buttons += '</div>';
 
         var html = `
         <tr id='receive_row_${pk}' class='stock-receive-row'>
@@ -619,7 +628,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                 ${destination_input}
             </td>
             <td id='actions_${pk}'>
-                ${delete_button}
+                ${buttons}
             </td>
         </tr>`;
 
@@ -643,7 +652,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                 <th>{% trans "Order Code" %}</th>
                 <th>{% trans "Ordered" %}</th>
                 <th>{% trans "Received" %}</th>
-                <th style='min-width: 50px;'>{% trans "Receive" %}</th>
+                <th style='min-width: 50px;'>{% trans "Quantity to Receive" %}</th>
                 <th style='min-width: 150px;'>{% trans "Status" %}</th>
                 <th style='min-width: 300px;'>{% trans "Destination" %}</th>
                 <th></th>
