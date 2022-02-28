@@ -40,12 +40,15 @@ function editSetting(pk, options={}) {
         url = `/api/settings/user/${pk}/`;
     }
 
+    var reload_required = false;
+
     // First, read the settings object from the server
     inventreeGet(url, {}, {
         success: function(response) {
     
             if (response.choices && response.choices.length > 0) {
                 response.type = 'choice';
+                reload_required = true;
             }
 
             // Construct the field 
@@ -89,7 +92,9 @@ function editSetting(pk, options={}) {
 
                     var setting = response.key;
 
-                    if (response.type == 'boolean') {
+                    if (reload_required) {
+                        location.reload();
+                    } else if (response.type == 'boolean') {
                         var enabled = response.value.toString().toLowerCase() == 'true';
                         $(`#setting-value-${setting}`).prop('checked', enabled);
                     } else {
