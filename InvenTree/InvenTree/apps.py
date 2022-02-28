@@ -172,10 +172,12 @@ class InvenTreeConfig(AppConfig):
                 set_variables += 1
 
         if set_variables == 0:
+            settings.USER_ADDED = True
             return
 
         if set_variables < 3:
             logger.warn('Not all required settings for adding a user on startup are present:\nINVENTREE_SET_USER, INVENTREE_SET_EMAIL, INVENTREE_SET_PASSWORD')
+            settings.USER_ADDED = True
             return
 
         # create user
