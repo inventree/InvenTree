@@ -542,6 +542,11 @@ function constructFormBody(fields, options) {
         insertConfirmButton(options);
     }
 
+    // Insert "persist" button (if required)
+    if (options.persist) {
+        insertPersistButton(options);
+    }
+
     // Display the modal
     $(modal).modal('show');
 
@@ -613,6 +618,22 @@ function insertConfirmButton(options) {
 
         $(options.modal).find('#modal-form-submit').prop('disabled', !enabled);
     });
+}
+
+
+/* Add a checkbox to select if the modal will stay open after success */
+function insertPersistButton(options) {
+
+    var message = options.persistMessage || '{% trans "Keep this form open" %}';
+
+    var html = `
+    <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="modal-persist">
+        <label class="form-check-label" for="modal-persist">${message}</label>
+    </div>
+    `;
+
+    $(options.modal).find('#modal-footer-buttons').append(html);
 }
 
 
@@ -938,13 +959,23 @@ function handleFormSuccess(response, options) {
     // Should we show alerts immediately or cache them?
     var cache = (options.follow && response.url) || options.redirect || options.reload;
 
-    if (options.reloadFormAfterSuccess) {
+    // Should the form "persist"?
+    var persist = false;
+
+    if (options.persist && options.modal) {
+        // Determine if this form should "persist", or be dismissed?
+        var chk = $(options.modal).find('#modal-persist');
+
+        persist = chk.exists() && chk.prop('checked');
+    }
+
+    if (persist) {
         cache = false;
     }
 
     var msg_target = null;
 
-    if (options.modal && options.reloadFormAfterSuccess) {
+    if (persist) {
         // If the modal is persistant, the target for any messages should be the modal!
         msg_target = $(options.modal).find('#pre-form-content');
     }
@@ -971,13 +1002,8 @@ function handleFormSuccess(response, options) {
     if (response && response.danger) {
         showAlertOrCache(response.danger, cache, {style: 'danger'});
     }
-    
-    if (options.onSuccess) {
-        // Callback function
-        options.onSuccess(response, options);
-    }
 
-    if (options.reloadFormAfterSuccess) {
+    if (persist) {
         // Instead of closing the form and going somewhere else,
         // reload (empty) the form so the user can input more data
         
@@ -995,6 +1021,11 @@ function handleFormSuccess(response, options) {
         if (!options.preventClose) {
             // Note: The modal will be deleted automatically after closing
             $(options.modal).modal('hide');
+        }
+
+        if (options.onSuccess) {
+            // Callback function
+            options.onSuccess(response, options);
         }
 
         if (options.follow && response.url) {
