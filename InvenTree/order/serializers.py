@@ -168,7 +168,7 @@ class POLineItemSerializer(InvenTreeModelSerializer):
     quantity = serializers.FloatField(default=1)
     received = serializers.FloatField(default=0)
 
-    overdue = serializers.BooleanField()
+    overdue = serializers.BooleanField(required=False, read_only=True)
 
     total_price = serializers.FloatField(read_only=True)
 
