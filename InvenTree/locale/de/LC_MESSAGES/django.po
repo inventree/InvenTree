@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-26 07:37+0000\n"
-"PO-Revision-Date: 2022-02-26 16:46\n"
+"POT-Creation-Date: 2022-02-28 03:17+0000\n"
+"PO-Revision-Date: 2022-02-28 03:22\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -5343,6 +5343,10 @@ msgstr "Interne Preisspanne bearbeiten"
 #: part/views.py:1407
 msgid "Delete Internal Price Break"
 msgstr "Interne Preisspanne löschen"
+
+#: plugin/apps.py:43
+msgid "Your enviroment has an outdated git version. This prevents InvenTree from loading plugin details."
+msgstr ""
 
 #: plugin/integration.py:138
 msgid "No author found"
