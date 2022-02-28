@@ -2235,6 +2235,28 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 return formatter.format(total);
             }
         },
+        {
+            field: 'target_date',
+            title: '{% trans "Target Date" %}',
+            sortable: true,
+            switchable: true,
+            formatter: function(value, row) {
+                if (row.target_date) {
+                    var html = row.target_date;
+
+                    if (row.overdue) {
+                        html += `<span class='fas fa-calendar-alt icon-red float-right' title='{% trans "This line item is overdue" %}'></span>`;
+                    }
+
+                    return html;
+
+                } else if (row.order_detail && row.order_detail.target_date) {
+                    return `<em>${row.order_detail.target_date}</em>`;
+                } else {
+                    return '-';
+                } 
+            }
+        }
     ];
 
     if (pending) {
@@ -2378,6 +2400,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                     reference: {},
                     sale_price: {},
                     sale_price_currency: {},
+                    target_date: {},
                     notes: {},
                 },
                 title: '{% trans "Edit Line Item" %}',

@@ -5,8 +5,6 @@ JSON serializers for the Order API
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from datetime import datetime
-
 from django.utils.translation import ugettext_lazy as _
 
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -138,11 +136,10 @@ class POLineItemSerializer(InvenTreeModelSerializer):
             )
         )
 
-        # Add an annotated 'overdue' field
         queryset = queryset.annotate(
             overdue=Case(
-                When(Q(order__status__in=PurchaseOrderStatus.OPEN) & order.models.OrderLineItem.OVERDUE_FILTER,
-                    then=Value(True, output_field=BooleanField()),
+                When(
+                    Q(order__status__in=PurchaseOrderStatus.OPEN) & order.models.OrderLineItem.OVERDUE_FILTER, then=Value(True, output_field=BooleanField())
                 ),
                 default=Value(False, output_field=BooleanField()),
             )
@@ -566,6 +563,23 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
 class SOLineItemSerializer(InvenTreeModelSerializer):
     """ Serializer for a SalesOrderLineItem object """
 
+    @staticmethod
+    def annotate_queryset(queryset):
+        """
+        Add some extra annotations to this queryset:
+
+        - "Overdue" status (boolean field)
+        """
+
+        queryset = queryset.annotate(
+            overdue=Case(
+                When(
+                    Q(order__status__in=SalesOrderStatus.OPEN) & order.models.OrderLineItem.OVERDUE_FILTER, then=Value(True, output_field=BooleanField()),
+                ),
+                default=Value(False, output_field=BooleanField()),
+            )
+        )
+
     def __init__(self, *args, **kwargs):
 
         part_detail = kwargs.pop('part_detail', False)
@@ -586,6 +600,8 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
     order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     allocations = SalesOrderAllocationSerializer(many=True, read_only=True, location_detail=True)
+
+    overdue = serializers.BooleanField(required=False, read_only=True)
 
     quantity = InvenTreeDecimalField()
 
@@ -616,6 +632,7 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
             'notes',
             'order',
             'order_detail',
+            'overdue',
             'part',
             'part_detail',
             'sale_price',
