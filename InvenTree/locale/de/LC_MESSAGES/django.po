@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-28 14:00+0000\n"
-"PO-Revision-Date: 2022-02-28 14:01\n"
+"PO-Revision-Date: 2022-02-28 17:26\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -83,7 +83,7 @@ msgstr "E-Mail Adressen müssen übereinstimmen."
 #: InvenTree/helpers.py:442
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
-msgstr ""
+msgstr "Doppelte Seriennummer: {sn}"
 
 #: InvenTree/helpers.py:449 order/models.py:282 order/models.py:435
 #: stock/views.py:1101
@@ -4590,11 +4590,11 @@ msgstr "Teil hinzufügen"
 
 #: part/templates/part/category.html:318
 msgid "Create another part after this one"
-msgstr ""
+msgstr "Ein weiteres Teil anlegen"
 
 #: part/templates/part/category.html:319
 msgid "Part created successfully"
-msgstr ""
+msgstr "Teil erfolgreich angelegt"
 
 #: part/templates/part/category_delete.html:5
 msgid "Are you sure you want to delete category"
@@ -5363,7 +5363,7 @@ msgstr "Interne Preisspanne löschen"
 
 #: plugin/apps.py:43
 msgid "Your enviroment has an outdated git version. This prevents InvenTree from loading plugin details."
-msgstr ""
+msgstr "Ihre Umgebung verwendet eine veraltete Git-Version. Dies hindert InvenTree daran, Plugin-Details zu laden."
 
 #: plugin/integration.py:138
 msgid "No author found"
