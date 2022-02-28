@@ -467,8 +467,8 @@ class BaseInvenTreeSetting(models.Model):
         Check if this setting is a "choice" field
         """
 
-        return self.__class__.get_setting_choices(self.key, **kwargs) != None
-        
+        return self.__class__.get_setting_choices(self.key, **kwargs) is not None
+
     def as_choice(self, **kwargs):
         """
         Render this setting as the "display" value of a choice field,
@@ -486,9 +486,8 @@ class BaseInvenTreeSetting(models.Model):
         for value, display in choices:
             if value == self.value:
                 return display
-        
+
         return self.value
-            
 
     def is_bool(self, **kwargs):
         """
