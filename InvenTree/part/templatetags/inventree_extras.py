@@ -53,6 +53,9 @@ def render_date(context, date_object):
     which differs from the python formatting!
     """
 
+    if date_object is None:
+        return None
+
     if type(date_object) == str:
         # If a string is passed, first convert it to a datetime
         date_object = date.fromisoformat(date_object)
