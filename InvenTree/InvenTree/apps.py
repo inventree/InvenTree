@@ -192,8 +192,6 @@ class InvenTreeConfig(AppConfig):
             logger.warning(f'The user "{add_user}" could not be created due to the following error:\n{str(_e)}')
             if settings.TESTING:
                 raise _e
-        except Exception as _e:
-            raise _e
 
         # do not try again this round
         settings.USER_ADDED = True
