@@ -31,7 +31,7 @@ class InvenTreeConfig(AppConfig):
             if not isInTestMode():
                 self.update_exchange_rates()
 
-        if canAppAccessDatabase() or settings.TESTING:
+        if canAppAccessDatabase() or settings.TESTING_ENV:
             self.add_user_on_startup()
 
     def remove_obsolete_tasks(self):
@@ -192,7 +192,7 @@ class InvenTreeConfig(AppConfig):
             logger.info(f'User {str(new_user)} was created!')
         except IntegrityError as _e:
             logger.warning(f'The user "{add_user}" could not be created due to the following error:\n{str(_e)}')
-            if settings.TESTING:
+            if settings.TESTING_ENV:
                 raise _e
 
         # do not try again

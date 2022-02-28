@@ -432,6 +432,8 @@ class TestSettings(TestCase):
     def test_set_user_to_few(self):
         # add shortcut
         user_count = self.user_mdl.objects.count
+        # enable testing mode
+        settings.TESTING_ENV = True
 
         # nothing set
         self.assertEqual(user_count(), 0)
@@ -455,3 +457,6 @@ class TestSettings(TestCase):
         with self.assertRaises(IntegrationPluginError):
             self.run_reload()
         self.assertEqual(user_count(), 1)
+
+        # make sure to clean up
+        settings.TESTING_ENV = False

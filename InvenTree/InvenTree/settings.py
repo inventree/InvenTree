@@ -37,6 +37,7 @@ def _is_true(x):
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv
+TESTING_ENV = False
 
 # New requirement for django 3.2+
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
