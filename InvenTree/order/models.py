@@ -799,6 +799,14 @@ class OrderLineItem(models.Model):
         target_date: An (optional) date for expected shipment of this line item.
     """
 
+    """
+    Query filter for determining if an individual line item is "overdue":
+    - Amount received is less than the required quantity
+    - Target date is not None
+    - Target date is in the past
+    """
+    OVERDUE_FILTER = Q(received__lt=F('quantity')) & ~Q(target_date=None) & Q(target_date__lt=datetime.now().date())
+
     class Meta:
         abstract = True
 
