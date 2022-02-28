@@ -148,7 +148,7 @@ class InvenTreeConfig(AppConfig):
 
     def add_user_on_startup(self):
         """Add a user on startup"""
-        # stop if already created
+        # stop if checks were already created
         if hasattr(settings, 'USER_ADDED') and settings.USER_ADDED:
             return
 
@@ -193,5 +193,5 @@ class InvenTreeConfig(AppConfig):
             if settings.TESTING:
                 raise _e
 
-        # do not try again this round
+        # do not try again
         settings.USER_ADDED = True
