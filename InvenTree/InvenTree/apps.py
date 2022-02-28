@@ -166,7 +166,15 @@ class InvenTreeConfig(AppConfig):
         )
 
         # check if all values are present
-        if not (add_user and add_email and add_password):
+        set_variables = 0
+        for tested_var in [add_user, add_email, add_password]:
+            if tested_var:
+                set_variables += 1
+
+        if set_variables == 0:
+            return
+
+        if set_variables < 3:
             logger.warn('Not all required settings for adding a user on startup are present:\nINVENTREE_SET_USER, INVENTREE_SET_EMAIL, INVENTREE_SET_PASSWORD')
             return
 
