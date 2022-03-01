@@ -155,9 +155,9 @@ static_root: '/home/inventree/data/static'
 #login_attempts: 5
 
 # Add new user on first startup
-#set_user: admin
-#set_email: info@example.com
-#set_password: inventree
+#admin_user: admin
+#admin_email: info@example.com
+#admin_password: inventree
 
 # Permit custom authentication backends
 #authentication_backends:
