@@ -1997,17 +1997,45 @@ function loadPartSchedulingChart(canvas_id, part_id) {
     // Create an initial entry, using the available quantity
     var stock_schedule = [
         {
-            x: today.format("YYYY-MM-DD"),
-            y: part_info.in_stock,
+            date: today,
+            delta: 0,
         }
     ];
 
-    for (var idx = 0; idx < 10; idx++) {
-        stock_schedule.push({
-            x: today.clone().add(idx, "days").format("YYYY-MM-DD"),
-            y: part_info.in_stock + idx * 2,
-            label: `data at ${idx}`,
-        });
+    function addScheduleEntry(date, delta, label, url) {
+        // Adds a new entry to the schedule
+
+        // First, iterate through to find an insertion index (based on date)
+        var found = false;
+
+        console.log('addScheduleEntry:', date, delta, label);
+
+        for (var idx = 0; idx < stock_schedule.length; idx++) {
+            var entry = stock_schedule[idx];
+
+            if (date < entry.date) {
+                stock_schedule.splice(idx, 0, {
+                   date: date,
+                   delta: delta,
+                   label: label,
+                   url: url, 
+                });
+
+                console.log('found at idx:', idx);
+
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            stock_schedule.push({
+                date: date,
+                delta: delta,
+                label: label,
+                url: url,
+            });
+        }
     }
 
     // Extract purchase order information from the server
@@ -2019,28 +2047,51 @@ function loadPartSchedulingChart(canvas_id, part_id) {
             order_detail: true,
         },
         {
-            success: function(orders) {
-                console.log("orders:");
-                console.log(orders);
+            async: false,
+            success: function(line_items) {
 
-                orders.forEach(function(order) {
-                    var target_date = order.order_detail.target_date;
+                line_items.forEach(function(line_item) {
 
-                    if (target_date) {
+                    console.log('checking line:', line_item);
+
+                    // Extract target_date information from the response.
+                    // If the line_item does not have an individual target date, maybe the parent order does?
+                    var target_date = line_item.target_date || line_item.order_detail.target_date;
+
+                    // How many to receive?
+                    var delta = Math.max(line_item.quantity - line_item.received, 0);
+
+                    if (target_date && delta > 0) {
+
                         var td = moment(target_date);
 
                         console.log("target date:", target_date);
-
+                        
                         if (td >= today) {
-                            console.log("this is in the future!");
+                            // Attempt to insert the datapoint
+
+                            addScheduleEntry(td, delta, 'Purchase Order', '/index/');
+
                         } else {
-                            console.log("this is in the past");
+                            // Ignore any entries that are in the "past"
                         }
                     }
                 });
             }
         }
     );
+
+    // Iterate through future "events" to calculate expected quantity
+
+    var quantity = part_info.in_stock;
+
+    for (var idx = 0; idx < stock_schedule.length; idx++) {
+
+        quantity += stock_schedule[idx].delta;
+
+        stock_schedule[idx].x = stock_schedule[idx].date.format("YYYY-MM-DD");
+        stock_schedule[idx].y = quantity;
+    }
 
     var context = document.getElementById(canvas_id);
 
@@ -2075,7 +2126,7 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                 tooltip: {
                     callbacks: {
                         label: function(item) {
-                            return item.raw.label;
+                            return renderLink(item.raw.label, item.raw.url);
                         }
                     }
                 }
