@@ -923,11 +923,17 @@ function loadPurchaseOrderTable(table, options) {
                 field: 'creation_date',
                 title: '{% trans "Date" %}',
                 sortable: true,
+                formatter: function(value) {
+                    return renderDate(value);
+                }
             },
             {
                 field: 'target_date',
                 title: '{% trans "Target Date" %}',
                 sortable: true,
+                formatter: function(value) {
+                    return renderDate(value);
+                }
             },
             {
                 field: 'line_items',
@@ -1005,6 +1011,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                         reference: {},
                         purchase_price: {},
                         purchase_price_currency: {},
+                        target_date: {},
                         destination: {},
                         notes: {},
                     },
@@ -1046,7 +1053,11 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                     ],
                     {
                         success: function() {
+                            // Reload the line item table
                             $(table).bootstrapTable('refresh');
+
+                            // Reload the "received stock" table
+                            $('#stock-table').bootstrapTable('refresh');
                         }
                     }
                 );
@@ -1187,6 +1198,28 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 }
             },
             {
+                sortable: true,
+                field: 'target_date',
+                switchable: true,
+                title: '{% trans "Target Date" %}',
+                formatter: function(value, row) {
+                    if (row.target_date) {
+                        var html = renderDate(row.target_date);
+
+                        if (row.overdue) {
+                            html += `<span class='fas fa-calendar-alt icon-red float-right' title='{% trans "This line item is overdue" %}'></span>`;
+                        }
+
+                        return html;
+
+                    } else if (row.order_detail && row.order_detail.target_date) {
+                        return `<em>${renderDate(row.order_detail.target_date)}</em>`;
+                    } else {
+                        return '-';
+                    }
+                }
+            },
+            {
                 sortable: false,
                 field: 'received',
                 switchable: false,
@@ -1232,15 +1265,15 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
     
                     var pk = row.pk;
     
+                    if (options.allow_receive && row.received < row.quantity) {
+                        html += makeIconButton('fa-sign-in-alt icon-green', 'button-line-receive', pk, '{% trans "Receive line item" %}');
+                    }
+
                     if (options.allow_edit) {
                         html += makeIconButton('fa-edit icon-blue', 'button-line-edit', pk, '{% trans "Edit line item" %}');
                         html += makeIconButton('fa-trash-alt icon-red', 'button-line-delete', pk, '{% trans "Delete line item" %}');
                     }
 
-                    if (options.allow_receive && row.received < row.quantity) {
-                        html += makeIconButton('fa-sign-in-alt', 'button-line-receive', pk, '{% trans "Receive line item" %}');
-                    }
-        
                     html += `</div>`;
     
                     return html;
@@ -1344,16 +1377,25 @@ function loadSalesOrderTable(table, options) {
                 sortable: true,
                 field: 'creation_date',
                 title: '{% trans "Creation Date" %}',
+                formatter: function(value) {
+                    return renderDate(value);
+                }
             },
             {
                 sortable: true,
                 field: 'target_date',
                 title: '{% trans "Target Date" %}',
+                formatter: function(value) {
+                    return renderDate(value);
+                }
             },
             {
                 sortable: true,
                 field: 'shipment_date',
                 title: '{% trans "Shipment Date" %}',
+                formatter: function(value) {
+                    return renderDate(value);
+                }
             },
             {
                 sortable: true,
@@ -1505,9 +1547,9 @@ function loadSalesOrderShipmentTable(table, options={}) {
                 sortable: true,
                 formatter: function(value, row) {
                     if (value) {
-                        return value;
+                        return renderDate(value);
                     } else {
-                        return '{% trans "Not shipped" %}';
+                        return '<em>{% trans "Not shipped" %}</em>';
                     }
                 }
             },
@@ -2283,6 +2325,28 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 return formatter.format(total);
             }
         },
+        {
+            field: 'target_date',
+            title: '{% trans "Target Date" %}',
+            sortable: true,
+            switchable: true,
+            formatter: function(value, row) {
+                if (row.target_date) {
+                    var html = renderDate(row.target_date);
+
+                    if (row.overdue) {
+                        html += `<span class='fas fa-calendar-alt icon-red float-right' title='{% trans "This line item is overdue" %}'></span>`;
+                    }
+
+                    return html;
+
+                } else if (row.order_detail && row.order_detail.target_date) {
+                    return `<em>${renderDate(row.order_detail.target_date)}</em>`;
+                } else {
+                    return '-';
+                } 
+            }
+        }
     ];
 
     if (pending) {
@@ -2426,6 +2490,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                     reference: {},
                     sale_price: {},
                     sale_price_currency: {},
+                    target_date: {},
                     notes: {},
                 },
                 title: '{% trans "Edit Line Item" %}',

@@ -909,16 +909,12 @@ class StockItem(MPTTModel):
         """ Can this stock item be deleted? It can NOT be deleted under the following circumstances:
 
         - Has installed stock items
-        - Has a serial number and is tracked
         - Is installed inside another StockItem
         - It has been assigned to a SalesOrder
         - It has been assigned to a BuildOrder
         """
 
         if self.installed_item_count() > 0:
-            return False
-
-        if self.part.trackable and self.serial is not None:
             return False
 
         if self.sales_order is not None:

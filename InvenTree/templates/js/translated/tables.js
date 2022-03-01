@@ -278,7 +278,7 @@ $.fn.inventreeTable = function(options) {
                 }
             });
         } else {
-            console.log(`Could not get list of visible columns for column '${tableName}'`);
+            console.log(`Could not get list of visible columns for table '${tableName}'`);
         }
     }
 

@@ -383,9 +383,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         Returns the BOM items for the part referenced by this BuildOrder
         """
 
-        return self.part.bom_items.all().prefetch_related(
-            'sub_part'
-        )
+        return self.part.get_bom_items()
 
     @property
     def tracked_bom_items(self):

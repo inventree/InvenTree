@@ -36,7 +36,7 @@
             <tr>
                 <td><span class='fas fa-calendar-alt'></span></td>
                 <td>{% trans "Date" %}</td>
-                <td>{{ plugin.pub_date }}{% include "clip.html" %}</td>
+                <td>{% render_date plugin.pub_date %}{% include "clip.html" %}</td>
             </tr>
             <tr>
                 <td><span class='fas fa-hashtag'></span></td>
@@ -101,7 +101,7 @@
             </tr>
             <tr>
                 <td><span class='fas fa-calendar-alt'></span></td>
-                <td>{% trans "Commit Date" %}</td><td>{{ plugin.package.date }}{% include "clip.html" %}</td>
+                <td>{% trans "Commit Date" %}</td><td>{% render_date plugin.package.date %}{% include "clip.html" %}</td>
             </tr>
             <tr>
                 <td><span class='fas fa-code-branch'></span></td>

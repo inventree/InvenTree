@@ -12,7 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models, transaction
 from django.db.models import Case, When, Value
-from django.db.models import BooleanField, ExpressionWrapper, F
+from django.db.models import BooleanField, ExpressionWrapper, F, Q
 
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
@@ -28,7 +28,7 @@ from InvenTree.serializers import InvenTreeModelSerializer
 from InvenTree.serializers import InvenTreeDecimalField
 from InvenTree.serializers import InvenTreeMoneySerializer
 from InvenTree.serializers import ReferenceIndexingSerializerMixin
-from InvenTree.status_codes import StockStatus
+from InvenTree.status_codes import StockStatus, PurchaseOrderStatus, SalesOrderStatus
 
 import order.models
 
@@ -128,12 +128,22 @@ class POLineItemSerializer(InvenTreeModelSerializer):
         Add some extra annotations to this queryset:
 
         - Total price = purchase_price * quantity
+        - "Overdue" status (boolean field)
         """
 
         queryset = queryset.annotate(
             total_price=ExpressionWrapper(
                 F('purchase_price') * F('quantity'),
                 output_field=models.DecimalField()
+            )
+        )
+
+        queryset = queryset.annotate(
+            overdue=Case(
+                When(
+                    Q(order__status__in=PurchaseOrderStatus.OPEN) & order.models.OrderLineItem.OVERDUE_FILTER, then=Value(True, output_field=BooleanField())
+                ),
+                default=Value(False, output_field=BooleanField()),
             )
         )
 
@@ -156,6 +166,8 @@ class POLineItemSerializer(InvenTreeModelSerializer):
 
     quantity = serializers.FloatField(default=1)
     received = serializers.FloatField(default=0)
+
+    overdue = serializers.BooleanField(required=False, read_only=True)
 
     total_price = serializers.FloatField(read_only=True)
 
@@ -187,6 +199,7 @@ class POLineItemSerializer(InvenTreeModelSerializer):
             'notes',
             'order',
             'order_detail',
+            'overdue',
             'part',
             'part_detail',
             'supplier_part_detail',
@@ -196,6 +209,7 @@ class POLineItemSerializer(InvenTreeModelSerializer):
             'purchase_price_string',
             'destination',
             'destination_detail',
+            'target_date',
             'total_price',
         ]
 
@@ -601,6 +615,23 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
 class SOLineItemSerializer(InvenTreeModelSerializer):
     """ Serializer for a SalesOrderLineItem object """
 
+    @staticmethod
+    def annotate_queryset(queryset):
+        """
+        Add some extra annotations to this queryset:
+
+        - "Overdue" status (boolean field)
+        """
+
+        queryset = queryset.annotate(
+            overdue=Case(
+                When(
+                    Q(order__status__in=SalesOrderStatus.OPEN) & order.models.OrderLineItem.OVERDUE_FILTER, then=Value(True, output_field=BooleanField()),
+                ),
+                default=Value(False, output_field=BooleanField()),
+            )
+        )
+
     def __init__(self, *args, **kwargs):
 
         part_detail = kwargs.pop('part_detail', False)
@@ -621,6 +652,8 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
     order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     allocations = SalesOrderAllocationSerializer(many=True, read_only=True, location_detail=True)
+
+    overdue = serializers.BooleanField(required=False, read_only=True)
 
     quantity = InvenTreeDecimalField()
 
@@ -651,12 +684,14 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
             'notes',
             'order',
             'order_detail',
+            'overdue',
             'part',
             'part_detail',
             'sale_price',
             'sale_price_currency',
             'sale_price_string',
             'shipped',
+            'target_date',
         ]
 
 

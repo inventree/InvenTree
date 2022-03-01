@@ -28,7 +28,11 @@
         <div id='setting-{{ setting.pk }}'>
             <span id='setting-value-{{ setting.key.upper }}' fieldname='{{ setting.key.upper }}'>
                 {% if setting.value %}
+                {% if setting.is_choice %}
+                <strong>{{ setting.as_choice }}</strong>
+                {% else %}
                 <strong>{{ setting.value }}</strong>
+                {% endif %}
                 {% else %}
                 <em style='color: #855;'>{% trans "No value set" %}</em>
                 {% endif %}

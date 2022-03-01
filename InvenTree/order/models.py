@@ -816,9 +816,18 @@ class OrderLineItem(models.Model):
 
     Attributes:
         quantity: Number of items
+        reference: Reference text (e.g. customer reference) for this line item
         note: Annotation for the item
+        target_date: An (optional) date for expected shipment of this line item.
+    """
 
     """
+    Query filter for determining if an individual line item is "overdue":
+    - Amount received is less than the required quantity
+    - Target date is not None
+    - Target date is in the past
+    """
+    OVERDUE_FILTER = Q(received__lt=F('quantity')) & ~Q(target_date=None) & Q(target_date__lt=datetime.now().date())
 
     class Meta:
         abstract = True
@@ -835,6 +844,12 @@ class OrderLineItem(models.Model):
 
     notes = models.CharField(max_length=500, blank=True, verbose_name=_('Notes'), help_text=_('Line item notes'))
 
+    target_date = models.DateField(
+        blank=True, null=True,
+        verbose_name=_('Target Date'),
+        help_text=_('Target shipping date for this line item'),
+    )
+
 
 class PurchaseOrderLineItem(OrderLineItem):
     """ Model for a purchase order line item.
@@ -846,7 +861,6 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     class Meta:
         unique_together = (
-            ('order', 'part', 'quantity', 'purchase_price')
         )
 
     @staticmethod
