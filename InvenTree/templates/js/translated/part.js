@@ -2035,46 +2035,48 @@ function loadPartSchedulingChart(canvas_id, part_id) {
     }
 
     // Extract purchase order information from the server
-    inventreeGet(
-        `/api/order/po-line/`,
-        {
-            pending: true,
-            base_part: part_id,
-            order_detail: true,
-        },
-        {
-            async: false,
-            success: function(line_items) {
+    if (part_info.purchaseable) {
+        inventreeGet(
+            `/api/order/po-line/`,
+            {
+                pending: true,
+                base_part: part_id,
+                order_detail: true,
+            },
+            {
+                async: false,
+                success: function(line_items) {
 
-                line_items.forEach(function(line_item) {
+                    line_items.forEach(function(line_item) {
 
-                    // Extract target_date information from the response.
-                    // If the line_item does not have an individual target date, maybe the parent order does?
-                    var target_date = line_item.target_date || line_item.order_detail.target_date;
+                        // Extract target_date information from the response.
+                        // If the line_item does not have an individual target date, maybe the parent order does?
+                        var target_date = line_item.target_date || line_item.order_detail.target_date;
 
-                    // How many to receive?
-                    var delta = Math.max(line_item.quantity - line_item.received, 0);
+                        // How many to receive?
+                        var delta = Math.max(line_item.quantity - line_item.received, 0);
 
-                    // TODO: What do we do if there is no target_date set for a PO line item?
-                    // TODO: Do we just ignore it??
+                        // TODO: What do we do if there is no target_date set for a PO line item?
+                        // TODO: Do we just ignore it??
 
-                    if (target_date && delta > 0) {
+                        if (target_date && delta > 0) {
 
-                        var td = moment(target_date);
-                        
-                        if (td >= today) {
-                            // TODO: Improve labels for purchase order lines
-                            addScheduleEntry(td, delta, "Purchase Order", '/index/');
+                            var td = moment(target_date);
+                            
+                            if (td >= today) {
+                                // TODO: Improve labels for purchase order lines
+                                addScheduleEntry(td, delta, "Purchase Order", '/index/');
 
-                        } else {
-                            // Ignore any entries that are in the "past"
-                            // TODO: Can we better handle this case?
+                            } else {
+                                // Ignore any entries that are in the "past"
+                                // TODO: Can we better handle this case?
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
-        }
-    );
+        );
+    }
 
     // Extract sales order information from the server
     if (part_info.salable) {
@@ -2115,6 +2117,42 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                 }
             }
         );
+    }
+
+    // Request build orders for this part
+    if (part_info.assembly) {
+        inventreeGet(
+            `/api/build/`,
+            {
+                part: part_id,
+                active: true,
+            },
+            {
+                async: false,
+                success: function(build_orders) {
+
+                    build_orders.forEach(function(build_order) {
+
+                        var target_date = build_order.target_date;
+
+                        var delta = Math.max(build_order.quantity - build_order.completed, 0);
+
+                        // TODO: How do we handle the case where the build order does not have a target date??
+                        // TODO: Do we just ignore it?
+
+                        if (target_date && delta > 0) {
+                            var td = moment(target_date);
+
+                            if (td >= today) {
+                                addScheduleEntry(td, delta, "Build Order", "");
+                            } else {
+                                // TODO: Handle case where the build order is in the "past"
+                            }
+                        }
+                    });
+                }
+            }
+        )
     }
 
     // Iterate through future "events" to calculate expected quantity
