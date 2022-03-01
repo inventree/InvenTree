@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-01 13:34+0000\n"
-"PO-Revision-Date: 2022-03-01 14:09\n"
+"PO-Revision-Date: 2022-03-01 22:47\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -2231,11 +2231,11 @@ msgstr "Position der InvenTree Navigationsleiste am oberen Bildschirmrand fixier
 
 #: common/models.py:1244
 msgid "Date Format"
-msgstr ""
+msgstr "Datumsformat"
 
 #: common/models.py:1245
 msgid "Preferred format for displaying dates"
-msgstr ""
+msgstr "Bevorzugtes Format für die Anzeige von Daten"
 
 #: common/models.py:1318 company/forms.py:43
 msgid "Price break quantity"
@@ -3285,7 +3285,7 @@ msgstr "Position - Notizen"
 
 #: order/models.py:850
 msgid "Target shipping date for this line item"
-msgstr ""
+msgstr "Lieferdatum für diese Position"
 
 #: order/models.py:878
 msgid "Supplier part must match supplier"
@@ -8440,7 +8440,7 @@ msgstr "Gesamtpreis"
 #: templates/js/translated/order.js:1210 templates/js/translated/order.js:2338
 #: templates/js/translated/part.js:918
 msgid "This line item is overdue"
-msgstr ""
+msgstr "Diese Position ist überfällig"
 
 #: templates/js/translated/order.js:1269 templates/js/translated/part.js:964
 msgid "Receive line item"
@@ -9646,7 +9646,7 @@ msgstr "Ausgewählte Positionen löschen"
 
 #: templates/stock_table.html:58
 msgid "Delete stock"
-msgstr ""
+msgstr "Bestand löschen"
 
 #: templates/yesnolabel.html:4
 msgid "Yes"
