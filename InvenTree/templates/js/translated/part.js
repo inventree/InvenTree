@@ -1999,6 +1999,7 @@ function loadPartSchedulingChart(canvas_id, part_id) {
         {
             date: today,
             delta: 0,
+            label: '{% trans "Current Stock" %}',
         }
     ];
 
@@ -2016,6 +2017,7 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                     stock_schedule.push({
                         date: moment(entry.date),
                         delta: entry.quantity,
+                        title: entry.title,
                         label: entry.label,
                         url: entry.url,
                     })
@@ -2042,7 +2044,9 @@ function loadPartSchedulingChart(canvas_id, part_id) {
         datasets: [{
           label: '{% trans "Scheduled Stock Quantities" %}',
           data: stock_schedule,
-          backgroundColor: 'rgb(255, 99, 132)'
+          backgroundColor: 'rgb(220, 160, 80)',
+          borderWidth: 2,
+          borderColor: 'rgb(90, 130, 150)'
         }],
     };
 
@@ -2069,7 +2073,21 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                 tooltip: {
                     callbacks: {
                         label: function(item) {
-                            return renderLink(item.raw.label, item.raw.url);
+                            return item.raw.label;
+                        },
+                        beforeLabel: function(item) {
+                            return item.raw.title;
+                        },
+                        afterLabel: function(item) {
+                            var delta = item.raw.delta;
+
+                            if (delta == 0) {
+                                delta = '';
+                            } else {
+                                delta = ` (${item.raw.delta > 0 ? "+" : ""}${item.raw.delta})`;
+                            }
+
+                            return `{% trans "Quantity" %}: ${item.raw.y}${delta}`;
                         }
                     }
                 }

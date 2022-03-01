@@ -453,7 +453,7 @@ class PartScheduling(generics.RetrieveAPIView):
 
         schedule = []
 
-        def add_schedule_entry(date, quantity, label, url):
+        def add_schedule_entry(date, quantity, title, label, url):
             """
             Check if a scheduled entry should be added:
             - date must be non-null
@@ -465,8 +465,9 @@ class PartScheduling(generics.RetrieveAPIView):
                 schedule.append({
                     'date': date,
                     'quantity': quantity,
-                    'url': url,
+                    'title': title,
                     'label': label,
+                    'url': url,
                 })
 
         # Add purchase order (incoming stock) information
@@ -484,6 +485,7 @@ class PartScheduling(generics.RetrieveAPIView):
             add_schedule_entry(
                 target_date,
                 quantity,
+                _('Incoming Purchase Order'),
                 str(line.order),
                 line.order.get_absolute_url()
             )
@@ -503,6 +505,7 @@ class PartScheduling(generics.RetrieveAPIView):
             add_schedule_entry(
                 target_date,
                 -quantity,
+                _('Outgoing Sales Order'),
                 str(line.order),
                 line.order.get_absolute_url(),
             )
@@ -520,6 +523,7 @@ class PartScheduling(generics.RetrieveAPIView):
             add_schedule_entry(
                 build.target_date,
                 quantity,
+                _('Stock produced by Build Order'),
                 str(build),
                 build.get_absolute_url(),
             )
@@ -551,6 +555,7 @@ class PartScheduling(generics.RetrieveAPIView):
             add_schedule_entry(
                 allocation.build.target_date,
                 -allocation.quantity,
+                _('Stock required for Build Order'),
                 str(allocation.build),
                 allocation.build.get_absolute_url(),
             )
