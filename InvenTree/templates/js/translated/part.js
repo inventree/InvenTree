@@ -2008,8 +2008,6 @@ function loadPartSchedulingChart(canvas_id, part_id) {
         // First, iterate through to find an insertion index (based on date)
         var found = false;
 
-        console.log('addScheduleEntry:', date, delta, label);
-
         for (var idx = 0; idx < stock_schedule.length; idx++) {
             var entry = stock_schedule[idx];
 
@@ -2020,8 +2018,6 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                    label: label,
                    url: url, 
                 });
-
-                console.log('found at idx:', idx);
 
                 found = true;
                 break;
@@ -2052,8 +2048,6 @@ function loadPartSchedulingChart(canvas_id, part_id) {
 
                 line_items.forEach(function(line_item) {
 
-                    console.log('checking line:', line_item);
-
                     // Extract target_date information from the response.
                     // If the line_item does not have an individual target date, maybe the parent order does?
                     var target_date = line_item.target_date || line_item.order_detail.target_date;
@@ -2061,25 +2055,67 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                     // How many to receive?
                     var delta = Math.max(line_item.quantity - line_item.received, 0);
 
+                    // TODO: What do we do if there is no target_date set for a PO line item?
+                    // TODO: Do we just ignore it??
+
                     if (target_date && delta > 0) {
 
                         var td = moment(target_date);
-
-                        console.log("target date:", target_date);
                         
                         if (td >= today) {
-                            // Attempt to insert the datapoint
-
-                            addScheduleEntry(td, delta, 'Purchase Order', '/index/');
+                            // TODO: Improve labels for purchase order lines
+                            addScheduleEntry(td, delta, "Purchase Order", '/index/');
 
                         } else {
                             // Ignore any entries that are in the "past"
+                            // TODO: Can we better handle this case?
                         }
                     }
                 });
             }
         }
     );
+
+    // Extract sales order information from the server
+    if (part_info.salable) {
+        inventreeGet(
+            `/api/order/so-line/`,
+            {
+                part: part_id,
+                pending: true,
+                order_detail: true,
+            },
+            {
+                async: false,
+                success: function(line_items) {
+
+                    line_items.forEach(function(line_item) {
+
+                        // Extract target_date information from the response.
+                        // If the line_item does not have an individual target date, maybe the parent order does?
+                        var target_date = line_item.target_date || line_item.order_detail.target_date;
+
+                        var delta = Math.max(line_item.quantity - line_item.shipped, 0);
+
+                        // TODO: What do we do if there is no target_date set for a PO line item?
+                        // TODO: Do we just ignore it??
+
+                        if (target_date && delta > 0) {
+                            var td = moment(target_date);
+
+                            if (td >= today) {
+                                // TODO: Improve labels for sales order items
+                                addScheduleEntry(td, -delta, "Sales Order", '/index/');
+                            } else {
+                                // Ignore any entries that are in the "past"
+                                // TODO: Can we better handle this case?
+                            }
+                        }
+                    });
+                }
+            }
+        );
+    }
 
     // Iterate through future "events" to calculate expected quantity
 
@@ -2097,7 +2133,7 @@ function loadPartSchedulingChart(canvas_id, part_id) {
 
     const data = {
         datasets: [{
-          label: 'Scatter Dataset',
+          label: '{% trans "Scheduled Stock Quantities" %}',
           data: stock_schedule,
           backgroundColor: 'rgb(255, 99, 132)'
         }],
