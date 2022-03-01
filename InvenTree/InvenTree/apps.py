@@ -188,7 +188,7 @@ class InvenTreeConfig(AppConfig):
         user = get_user_model()
         try:
             with transaction.atomic():
-                new_user = user.objects.create_user(add_user, add_email, add_password)
+                new_user = user.objects.create_superuser(add_user, add_email, add_password)
             logger.info(f'User {str(new_user)} was created!')
         except IntegrityError as _e:
             logger.warning(f'The user "{add_user}" could not be created due to the following error:\n{str(_e)}')
