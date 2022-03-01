@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-<a href='#' id='breadcrumb-tree-toggle' class="breadcrumb-item"><i class="fas fa-bars"></i></a>
+<a href='#' id='breadcrumb-tree-toggle' class="breadcrumb-item"><span class="fas fa-bars"></span></a>
 {% include 'stock/loc_link.html' with location=item.location %}
 {% endblock %}
 
@@ -59,21 +59,14 @@
     </ul>
 </div>
 <!-- Stock adjustment menu -->
-<!-- Check permissions and owner -->
-
-{% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
-{% if owner_control.value == "True" %}
-    {% authorized_owners item.owner as owners %}
-{% endif %}
-
-{% if owner_control.value == "False" or owner_control.value == "True" and user in owners or user.is_superuser %}
+{% if user_owns_item %}
     {% if roles.stock.change and not item.is_building %}
     <div class='btn-group'>
         <button id='stock-actions' title='{% trans "Stock adjustment actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'><span class='fas fa-boxes'></span> <span class='caret'></span></button>
         <ul class='dropdown-menu' role='menu'>
             {% if not item.serialized %}
             {% if item.in_stock %}
-            <li><a class='dropdown-item' href='#' id='stock-count' title='{% trans "Count stock" %}'><span class='fas fa-clipboard-list'></span> {% trans "Count stock" %}</a></li>
+            <li><a class='dropdown-item' href='#' id='stock-count' title='{% trans "Count stock" %}'><span class='fas fa-check-circle icon-green'></span> {% trans "Count stock" %}</a></li>
             {% endif %}
             {% if not item.customer %}
             <li><a class='dropdown-item' href='#' id='stock-add' title='{% trans "Add stock" %}'><span class='fas fa-plus-circle icon-green'></span> {% trans "Add stock" %}</a></li>
@@ -98,7 +91,9 @@
             <li><a class='dropdown-item' href='#' id='stock-uninstall' title='{% trans "Uninstall stock item" %}'><span class='fas fa-unlink'></span> {% trans "Uninstall" %}</a></li>
             {% else %}
             {% if item.part.get_used_in %}
-            <li><a class='dropdown-item' href='#' id='stock-install-in' title='{% trans "Install stock item" %}'><span class='fas fa-link'></span> {% trans "Install" %}</a></li>
+            <!--    
+                <li><a class='dropdown-item' href='#' id='stock-install-in' title='{% trans "Install stock item" %}'><span class='fas fa-link'></span> {% trans "Install" %}</a></li>
+            -->
             {% endif %}
             {% endif %}
         </ul>
@@ -192,7 +187,7 @@
         <td><span class='fas fa-calendar-alt{% if item.is_expired %} icon-red{% endif %}'></span></td>
         <td>{% trans "Expiry Date" %}</td>
         <td>
-            {{ item.expiry_date }}
+            {% render_date item.expiry_date %}
             {% if item.is_expired %}
             <span title='{% blocktrans %}This StockItem expired on {{ item.expiry_date }}{% endblocktrans %}' class='badge rounded-pill bg-danger badge-right'>{% trans "Expired" %}</span>
             {% elif item.is_stale %}
@@ -210,30 +205,14 @@
         <td><span class='fas fa-calendar-alt'></span></td>
         <td>{% trans "Last Stocktake" %}</td>
         {% if item.stocktake_date %}
-        <td>{{ item.stocktake_date }} <span class='badge badge-right rounded-pill bg-dark'>{{ item.stocktake_user }}</span></td>
+        <td>{% render_date item.stocktake_date %} <span class='badge badge-right rounded-pill bg-dark'>{{ item.stocktake_user }}</span></td>
         {% else %}
         <td><em>{% trans "No stocktake performed" %}</em></td>
         {% endif %}
     </tr>
 </table>
 
-{% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
-{% if owner_control.value == "True" %}
-    {% authorized_owners item.owner as owners %}
-{% endif %}
-
 <div class='info-messages'>
-
-    {% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
-    {% if owner_control.value == "True" %}
-        {% authorized_owners item.owner as owners %}
-
-        {% if not user in owners and not user.is_superuser %}
-        <div class='alert alert-block alert-info'>
-            {% trans "You are not in the list of owners of this item. This stock item cannot be edited." %}<br>
-        </div>
-        {% endif %}
-    {% endif %}
 
     {% if item.is_building %}
     <div class='alert alert-block alert-info'>
@@ -407,14 +386,28 @@
     <tr>
         <td><span class='fas fa-vial'></span></td>
         <td>{% trans "Tests" %}</td>
-        <td>{{ item.requiredTestStatus.passed }} / {{ item.requiredTestStatus.total }}</td>
+        <td>
+            {{ item.requiredTestStatus.passed }} / {{ item.requiredTestStatus.total }}
+            {% if item.passedAllRequiredTests %}
+            <span class='fas fa-check-circle float-right icon-green'></span>
+            {% else %}
+            <span class='fas fa-times-circle float-right icon-red'></span>
+            {% endif %}
+        </td>
     </tr>
     {% endif %}
-    {% if item.owner %}
+    {% if ownership_enabled and item_owner %}
     <tr>
         <td><span class='fas fa-users'></span></td>
         <td>{% trans "Owner" %}</td>
-        <td>{{ item.owner }}</td>
+        <td>
+            {{ item_owner }}
+            {% if not user_owns_item %}
+            <span class='badge rounded-pill bg-warning badge-right' title='{% trans "You are not in the list of owners of this item. This stock item cannot be edited." %}'>
+                {% trans "Read only" %}
+            </span>
+            {% endif %}
+        </td>
     </tr>
     {% endif %}
 </table>
@@ -442,16 +435,7 @@ $("#stock-serialize").click(function() {
 
 $('#stock-install-in').click(function() {
 
-    launchModalForm(
-        "{% url 'stock-item-install' item.pk %}",
-        {
-            data: {
-                'part': {{ item.part.pk }},
-                'install_in': true,
-            },
-            reload: true,
-        }
-    );
+    // TODO - Launch dialog to install this item *into* another stock item
 });
 
 $('#stock-uninstall').click(function() {
@@ -618,7 +602,7 @@ enableBreadcrumbTree({
     {% endif %}
     processNode: function(node) {
         node.text = node.name;
-        node.href = `/stock/item/${node.pk}/`;
+        node.href = `/stock/location/${node.pk}/`;
 
         return node;
     }

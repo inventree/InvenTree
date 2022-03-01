@@ -22,6 +22,7 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
         self.MSG_NO_PKG = 'Either packagename of URL must be provided'
 
         self.PKG_NAME = 'minimal'
+        self.PKG_URL = 'git+https://github.com/geoffrey-a-reed/minimal'
         super().setUp()
 
     def test_plugin_install(self):
@@ -35,7 +36,13 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
             'confirm': True,
             'packagename': self.PKG_NAME
         }, expected_code=201).data
+        self.assertEqual(data['success'], True)
 
+        # valid - github url
+        data = self.post(url, {
+            'confirm': True,
+            'url': self.PKG_URL
+        }, expected_code=201).data
         self.assertEqual(data['success'], True)
 
         # invalid tries

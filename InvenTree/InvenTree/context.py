@@ -23,7 +23,7 @@ def health_status(request):
 
     if request.path.endswith('.js'):
         # Do not provide to script requests
-        return {}
+        return {}  # pragma: no cover
 
     if hasattr(request, '_inventree_health_status'):
         # Do not duplicate efforts

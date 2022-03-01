@@ -44,7 +44,7 @@
                             {% if commit_date %}
                             <tr>
                                 <td><span class='fas fa-calendar-alt'></span></td>
-                                <td>{% trans "Commit Date" %}</td><td>{{ commit_date }}{% include "clip.html" %}</td>
+                                <td>{% trans "Commit Date" %}</td><td>{% render_date commit_date %}{% include "clip.html" %}</td>
                             </tr>
                             {% endif %}
                             {% endif %}

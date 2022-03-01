@@ -407,14 +407,16 @@ def DownloadFile(data, filename, content_type='application/text', inline=False):
 
 
 def extract_serial_numbers(serials, expected_quantity, next_number: int):
-    """ Attempt to extract serial numbers from an input string.
-    - Serial numbers must be integer values
-    - Serial numbers must be positive
-    - Serial numbers can be split by whitespace / newline / commma chars
-    - Serial numbers can be supplied as an inclusive range using hyphen char e.g. 10-20
-    - Serial numbers can be defined as ~ for getting the next available serial number
-    - Serial numbers can be supplied as <start>+ for getting all expecteded numbers starting from <start>
-    - Serial numbers can be supplied as <start>+<length> for getting <length> numbers starting from <start>
+    """
+    Attempt to extract serial numbers from an input string:
+
+    Requirements:
+        - Serial numbers can be either strings, or integers
+        - Serial numbers can be split by whitespace / newline / commma chars
+        - Serial numbers can be supplied as an inclusive range using hyphen char e.g. 10-20
+        - Serial numbers can be defined as ~ for getting the next available serial number
+        - Serial numbers can be supplied as <start>+ for getting all expecteded numbers starting from <start>
+        - Serial numbers can be supplied as <start>+<length> for getting <length> numbers starting from <start>
 
     Args:
         serials: input string with patterns
@@ -428,17 +430,18 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
     if '~' in serials:
         serials = serials.replace('~', str(next_number))
 
+    # Split input string by whitespace or comma (,) characters
     groups = re.split("[\s,]+", serials)
 
     numbers = []
     errors = []
 
-    # helpers
-    def number_add(n):
-        if n in numbers:
-            errors.append(_('Duplicate serial: {n}').format(n=n))
+    # Helper function to check for duplicated numbers
+    def add_sn(sn):
+        if sn in numbers:
+            errors.append(_('Duplicate serial: {sn}').format(sn=sn))
         else:
-            numbers.append(n)
+            numbers.append(sn)
 
     try:
         expected_quantity = int(expected_quantity)
@@ -466,7 +469,7 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
 
                     if a < b:
                         for n in range(a, b + 1):
-                            number_add(n)
+                            add_sn(n)
                     else:
                         errors.append(_("Invalid group: {g}").format(g=group))
 
@@ -475,7 +478,6 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
                     continue
             else:
                 errors.append(_("Invalid group: {g}").format(g=group))
-                continue
 
         # plus signals either
         # 1:  'start+':  expected number of serials, starting at start
@@ -496,22 +498,20 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
                     end = start + expected_quantity
 
                 for n in range(start, end):
-                    number_add(n)
+                    add_sn(n)
             # no case
             else:
                 errors.append(_("Invalid group: {g}").format(g=group))
-                continue
 
-        # Group should be a number
+        # At this point, we assume that the "group" is just a single serial value
         elif group:
-            # try conversion
-            try:
-                number = int(group)
-            except:
-                # seem like it is not a number
-                raise ValidationError(_(f"Invalid group {group}"))
 
-            number_add(number)
+            try:
+                # First attempt to add as an integer value
+                add_sn(int(group))
+            except (ValueError):
+                # As a backup, add as a string value
+                add_sn(group)
 
         # No valid input group detected
         else:

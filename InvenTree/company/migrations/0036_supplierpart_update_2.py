@@ -15,12 +15,12 @@ def supplierpart_make_manufacturer_parts(apps, schema_editor):
         for supplier_part in supplier_parts:
             print(f'{supplier_part.supplier.name[:15].ljust(15)} | {supplier_part.SKU[:15].ljust(15)}\t', end='')
 
-            if supplier_part.manufacturer_part:
+            if supplier_part.manufacturer_part:  # pragma: no cover
                 print(f'[ERROR: MANUFACTURER PART ALREADY EXISTS]')
                 continue
 
             part = supplier_part.part
-            if not part:
+            if not part:  # pragma: no cover
                 print(f'[ERROR: SUPPLIER PART IS NOT CONNECTED TO PART]')
                 continue
             
@@ -67,7 +67,7 @@ def supplierpart_make_manufacturer_parts(apps, schema_editor):
 
         print(f'{"-"*10}\nDone\n')
 
-def supplierpart_populate_manufacturer_info(apps, schema_editor):
+def supplierpart_populate_manufacturer_info(apps, schema_editor):  # pragma: no cover
     Part = apps.get_model('part', 'Part')
     ManufacturerPart = apps.get_model('company', 'ManufacturerPart')
     SupplierPart = apps.get_model('company', 'SupplierPart')

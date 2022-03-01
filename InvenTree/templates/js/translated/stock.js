@@ -25,7 +25,6 @@
     modalSetContent,
     modalSetTitle,
     modalSubmit,
-    moment,
     openModal,
     printStockItemLabels,
     printTestReports,
@@ -46,6 +45,7 @@
     editStockLocation,
     exportStock,
     findStockItemBySerialNumber,
+    installStockItem,
     loadInstalledInTable,
     loadStockAllocationTable,
     loadStockLocationTable,
@@ -1227,13 +1227,41 @@ function formatDate(row) {
     return html;
 }
 
+/*
+ * Load StockItemTestResult table
+ */
 function loadStockTestResultsTable(table, options) {
-    /*
-     * Load StockItemTestResult table
-     */
+
+    // Setup filters for the table
+    var filterTarget = options.filterTarget || '#filter-list-stocktests';
+
+    var filterKey = options.filterKey || options.name || 'stocktests';
+
+    var filters = loadTableFilters(filterKey);
+
+    var params = {
+        part: options.part,
+    };
+
+    var original = {};
+
+    for (var k in params) {
+        original[k] = params[k];
+        filters[k] = params[k];
+    }
+
+    setupFilterList(filterKey, table, filterTarget);
 
     function makeButtons(row, grouped) {
+
+        // Helper function for rendering buttons
+
         var html = `<div class='btn-group float-right' role='group'>`;
+
+        if (row.requires_attachment == false && row.requires_value == false && !row.result) {
+            // Enable a "quick tick" option for this test result
+            html += makeIconButton('fa-check-circle icon-green', 'button-test-tick', row.test_name, '{% trans "Pass test" %}');
+        }
 
         html += makeIconButton('fa-plus icon-green', 'button-test-add', row.test_name, '{% trans "Add test result" %}');
 
@@ -1258,14 +1286,13 @@ function loadStockTestResultsTable(table, options) {
         rootParentId: parent_node,
         parentIdField: 'parent',
         idField: 'pk',
-        uniqueId: 'key',
+        uniqueId: 'pk',
         treeShowField: 'test_name',
         formatNoMatches: function() {
             return '{% trans "No test results found" %}';
         },
-        queryParams: {
-            part: options.part,
-        },
+        queryParams: filters,
+        original: original,
         onPostBody: function() {
             table.treegrid({
                 treeColumn: 0,
@@ -1401,6 +1428,102 @@ function loadStockTestResultsTable(table, options) {
             );
         }
     });
+
+    /* Register button callbacks */
+
+    function reloadTestTable(response) {
+        $(table).bootstrapTable('refresh');
+    }
+
+    // "tick" a test result
+    $(table).on('click', '.button-test-tick', function() {
+        var button = $(this);
+
+        var test_name = button.attr('pk');
+
+        inventreePut(
+            '{% url "api-stock-test-result-list" %}',
+            {
+                test: test_name,
+                result: true,
+                stock_item: options.stock_item,
+            },
+            {
+                method: 'POST',
+                success: reloadTestTable,
+            }
+        );
+    });
+
+    // Add a test result
+    $(table).on('click', '.button-test-add', function() {
+        var button = $(this);
+
+        var test_name = button.attr('pk');
+
+        constructForm('{% url "api-stock-test-result-list" %}', {
+            method: 'POST',
+            fields: {
+                test: {
+                    value: test_name,
+                },
+                result: {},
+                value: {},
+                attachment: {},
+                notes: {},
+                stock_item: {
+                    value: options.stock_item,
+                    hidden: true,
+                }
+            },
+            title: '{% trans "Add Test Result" %}',
+            onSuccess: reloadTestTable,
+        });
+    });
+
+    // Edit a test result
+    $(table).on('click', '.button-test-edit', function() {
+        var button = $(this);
+
+        var pk = button.attr('pk');
+
+        var url = `/api/stock/test/${pk}/`;
+
+        constructForm(url, {
+            fields: {
+                test: {},
+                result: {},
+                value: {},
+                attachment: {},
+                notes: {},
+            },
+            title: '{% trans "Edit Test Result" %}',
+            onSuccess: reloadTestTable,
+        });
+    });
+
+    // Delete a test result
+    $(table).on('click', '.button-test-delete', function() {
+        var button = $(this);
+
+        var pk = button.attr('pk');
+
+        var url = `/api/stock/test/${pk}/`;
+
+        var row = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+        var html = `
+        <div class='alert alert-block alert-danger'>
+        <strong>{% trans "Delete test result" %}:</strong> ${row.test_name || row.test || row.key}
+        </div>`;
+
+        constructForm(url, {
+            method: 'DELETE',
+            title: '{% trans "Delete Test Result" %}',
+            onSuccess: reloadTestTable,
+            preFormContent: html,
+        });
+    });
 }
 
 
@@ -1430,11 +1553,11 @@ function locationDetail(row, showLink=true) {
     } else if (row.belongs_to) {
         // StockItem is installed inside a different StockItem
         text = `{% trans "Installed in Stock Item" %} ${row.belongs_to}`;
-        url = `/stock/item/${row.belongs_to}/installed/`;
+        url = `/stock/item/${row.belongs_to}/?display=installed-items`;
     } else if (row.customer) {
         // StockItem has been assigned to a customer
         text = '{% trans "Shipped to customer" %}';
-        url = `/company/${row.customer}/assigned-stock/`;
+        url = `/company/${row.customer}/?display=assigned-stock`;
     } else if (row.sales_order) {
         // StockItem has been assigned to a sales order
         text = '{% trans "Assigned to Sales Order" %}';
@@ -1696,6 +1819,9 @@ function loadStockTable(table, options) {
     col = {
         field: 'stocktake_date',
         title: '{% trans "Stocktake" %}',
+        formatter: function(value) {
+            return renderDate(value);
+        }
     };
 
     if (!options.params.ordering) {
@@ -1709,6 +1835,9 @@ function loadStockTable(table, options) {
         title: '{% trans "Expiry Date" %}',
         visible: global_settings.STOCK_ENABLE_EXPIRY,
         switchable: global_settings.STOCK_ENABLE_EXPIRY,
+        formatter: function(value) {
+            return renderDate(value);
+        }
     };
 
     if (!options.params.ordering) {
@@ -1720,6 +1849,9 @@ function loadStockTable(table, options) {
     col = {
         field: 'updated',
         title: '{% trans "Last Updated" %}',
+        formatter: function(value) {
+            return renderDate(value);
+        }
     };
 
     if (!options.params.ordering) {
@@ -2525,14 +2657,7 @@ function loadStockTrackingTable(table, options) {
         title: '{% trans "Date" %}',
         sortable: true,
         formatter: function(value) {
-            var m = moment(value);
-
-            if (m.isValid()) {
-                var html = m.format('dddd MMMM Do YYYY'); // + '<br>' + m.format('h:mm a');
-                return html;
-            }
-
-            return '<i>{% trans "Invalid date" %}</i>';
+            return renderDate(value, {showTime: true});
         }
     });
 
@@ -2836,4 +2961,68 @@ function loadInstalledInTable(table, options) {
             });
         }
     });
+}
+
+
+/*
+ * Launch a dialog to install a stock item into another stock item
+ */
+function installStockItem(stock_item_id, part_id, options={}) {
+
+    var html = `
+    <div class='alert alert-block alert-info'>
+        <strong>{% trans "Install another stock item into this item" %}</strong><br>
+        {% trans "Stock items can only be installed if they meet the following criteria" %}:<br>
+        <ul>
+            <li>{% trans "The Stock Item links to a Part which is the BOM for this Stock Item" %}</li>
+            <li>{% trans "The Stock Item is currently available in stock" %}</li>
+            <li>{% trans "The Stock Item is serialized and does not belong to another item" %}</li>
+        </ul>
+    </div>`;
+
+    constructForm(
+        `/api/stock/${stock_item_id}/install/`,
+        {
+            method: 'POST',
+            fields: {
+                part: {
+                    type: 'related field',
+                    required: 'true',
+                    label: '{% trans "Part" %}',
+                    help_text: '{% trans "Select part to install" %}',
+                    model: 'part',
+                    api_url: '{% url "api-part-list" %}',
+                    auto_fill: true,
+                    filters: {
+                        trackable: true,
+                        in_bom_for: part_id,
+                    }
+                },
+                stock_item: {
+                    filters: {
+                        part_detail: true,
+                        in_stock: true,
+                        serialized: true,
+                    },
+                    adjustFilters: function(filters, opts) {
+                        var part = getFormFieldValue('part', {}, opts);
+
+                        if (part) {
+                            filters.part = part;
+                        }
+
+                        return filters;
+                    }
+                }
+            },
+            confirm: true,
+            title: '{% trans "Install Stock Item" %}',
+            preFormContent: html,
+            onSuccess: function(response) {
+                if (options.onSuccess) {
+                    options.onSuccess(response);
+                }
+            }
+        }
+    );
 }

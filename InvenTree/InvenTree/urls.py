@@ -4,7 +4,6 @@ Top-level URL lookup for InvenTree application.
 Passes URL lookup downstream to each app as required.
 """
 
-
 from django.conf.urls import url, include
 from django.urls import path
 from django.contrib import admin
@@ -169,9 +168,9 @@ frontendpatterns = [
     url(r'^stats/', DatabaseStatsView.as_view(), name='stats'),
 
     # admin sites
-    url(r'^admin/error_log/', include('error_report.urls')),
-    url(r'^admin/shell/', include('django_admin_shell.urls')),
-    url(r'^admin/', admin.site.urls, name='inventree-admin'),
+    url(f'^{settings.INVENTREE_ADMIN_URL}/error_log/', include('error_report.urls')),
+    url(f'^{settings.INVENTREE_ADMIN_URL}/shell/', include('django_admin_shell.urls')),
+    url(f'^{settings.INVENTREE_ADMIN_URL}/', admin.site.urls, name='inventree-admin'),
 
     # DB user sessions
     url(r'^accounts/sessions/other/delete/$', view=CustomSessionDeleteOtherView.as_view(), name='session_delete_other', ),
@@ -204,7 +203,7 @@ if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
     # Debug toolbar access (only allowed in DEBUG mode)
-    if 'debug_toolbar' in settings.INSTALLED_APPS:
+    if 'debug_toolbar' in settings.INSTALLED_APPS:  # pragma: no cover
         import debug_toolbar
         urlpatterns = [
             path('__debug/', include(debug_toolbar.urls)),

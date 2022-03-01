@@ -267,7 +267,7 @@ class RuleSet(models.Model):
 
     def __str__(self, debug=False):
         """ Ruleset string representation """
-        if debug:
+        if debug:  # pragma: no cover
             # Makes debugging easier
             return f'{str(self.group).ljust(15)}: {self.name.title().ljust(15)} | ' \
                    f'v: {str(self.can_view).ljust(5)} | a: {str(self.can_add).ljust(5)} | ' \
@@ -340,7 +340,7 @@ def update_group_roles(group, debug=False):
     """
 
     if not canAppAccessDatabase(allow_test=True):
-        return
+        return  # pragma: no cover
 
     # List of permissions already associated with this group
     group_permissions = set()
@@ -432,7 +432,7 @@ def update_group_roles(group, debug=False):
         try:
             content_type = ContentType.objects.get(app_label=app, model=model)
             permission = Permission.objects.get(content_type=content_type, codename=perm)
-        except ContentType.DoesNotExist:
+        except ContentType.DoesNotExist:  # pragma: no cover
             logger.warning(f"Error: Could not find permission matching '{permission_string}'")
             permission = None
 
@@ -450,8 +450,8 @@ def update_group_roles(group, debug=False):
         if permission:
             group.permissions.add(permission)
 
-        if debug:
-            print(f"Adding permission {perm} to group {group.name}")
+        if debug:  # pragma: no cover
+            logger.info(f"Adding permission {perm} to group {group.name}")
 
     # Remove any extra permissions from the group
     for perm in permissions_to_delete:
@@ -465,8 +465,8 @@ def update_group_roles(group, debug=False):
         if permission:
             group.permissions.remove(permission)
 
-        if debug:
-            print(f"Removing permission {perm} from group {group.name}")
+        if debug:  # pragma: no cover
+            logger.info(f"Removing permission {perm} from group {group.name}")
 
     # Enable all action permissions for certain children models
     # if parent model has 'change' permission
@@ -488,7 +488,7 @@ def update_group_roles(group, debug=False):
                     permission = get_permission_object(child_perm)
                     if permission:
                         group.permissions.add(permission)
-                        print(f"Adding permission {child_perm} to group {group.name}")
+                        logger.info(f"Adding permission {child_perm} to group {group.name}")
 
 
 @receiver(post_save, sender=Group, dispatch_uid='create_missing_rule_sets')
@@ -617,7 +617,7 @@ class Owner(models.Model):
             # Create new owner
             try:
                 return cls.objects.create(owner=obj)
-            except IntegrityError:
+            except IntegrityError:  # pragma: no cover
                 return None
 
         return existing_owner

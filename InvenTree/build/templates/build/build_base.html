@@ -125,7 +125,7 @@ src="{% static 'img/blank_image.png' %}"
         {% trans "Required build quantity has not yet been completed" %}
     </div>
     {% endif %}
-    {% if not build.areUntrackedPartsFullyAllocated %}
+    {% if not build.are_untracked_parts_allocated %}
     <div class='alert alert-block alert-warning'>
         {% trans "Stock has not been fully allocated to this Build Order" %}
     </div>
@@ -151,7 +151,7 @@ src="{% static 'img/blank_image.png' %}"
             {% trans "Target Date" %}
         </td>
         <td>
-            {{ build.target_date }}
+            {% render_date build.target_date %}
             {% if build.is_overdue %}
             <span title='{% blocktrans with target=build.target_date %}This build was due on {{target}}{% endblocktrans %}' class='badge badge-right rounded-pill bg-danger'>{% trans "Overdue" %}</span>
             {% endif %}
@@ -234,7 +234,7 @@ src="{% static 'img/blank_image.png' %}"
         {% else %}
 
         completeBuildOrder({{ build.pk }}, {
-            allocated: {% if build.areUntrackedPartsFullyAllocated %}true{% else %}false{% endif %},
+            allocated: {% if build.are_untracked_parts_allocated %}true{% else %}false{% endif %},
             completed: {% if build.remaining == 0 %}true{% else %}false{% endif %},
         });
         {% endif %}

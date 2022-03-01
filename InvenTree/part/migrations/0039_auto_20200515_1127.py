@@ -10,7 +10,7 @@ def update_tree(apps, schema_editor):
     Part.objects.rebuild()
 
 
-def nupdate_tree(apps, schema_editor):
+def nupdate_tree(apps, schema_editor):  # pragma: no cover
     pass
 
 

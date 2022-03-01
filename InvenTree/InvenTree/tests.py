@@ -12,6 +12,8 @@ from djmoney.contrib.exchange.exceptions import MissingRate
 from .validators import validate_overage, validate_part_name
 from . import helpers
 from . import version
+from . import status
+from . import ready
 
 from decimal import Decimal
 
@@ -389,3 +391,19 @@ class CurrencyTests(TestCase):
         # Convert to a symbol which is not covered
         with self.assertRaises(MissingRate):
             convert_money(Money(100, 'GBP'), 'ZWL')
+
+
+class TestStatus(TestCase):
+    """
+    Unit tests for status functions
+    """
+
+    def test_check_system_healt(self):
+        """test that the system health check is false in testing -> background worker not running"""
+        self.assertEqual(status.check_system_health(), False)
+
+    def test_TestMode(self):
+        self.assertTrue(ready.isInTestMode())
+
+    def test_Importing(self):
+        self.assertEqual(ready.isImportingData(), False)

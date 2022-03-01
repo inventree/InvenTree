@@ -31,6 +31,7 @@
     setFormInputPlaceholder,
     setFormGroupVisibility,
     showFormInput,
+    selectImportFields,
 */
 
 /**
@@ -541,6 +542,11 @@ function constructFormBody(fields, options) {
         insertConfirmButton(options);
     }
 
+    // Insert "persist" button (if required)
+    if (options.persist) {
+        insertPersistButton(options);
+    }
+
     // Display the modal
     $(modal).modal('show');
 
@@ -612,6 +618,22 @@ function insertConfirmButton(options) {
 
         $(options.modal).find('#modal-form-submit').prop('disabled', !enabled);
     });
+}
+
+
+/* Add a checkbox to select if the modal will stay open after success */
+function insertPersistButton(options) {
+
+    var message = options.persistMessage || '{% trans "Keep this form open" %}';
+
+    var html = `
+    <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="modal-persist">
+        <label class="form-check-label" for="modal-persist">${message}</label>
+    </div>
+    `;
+
+    $(options.modal).find('#modal-footer-buttons').append(html);
 }
 
 
@@ -895,8 +917,8 @@ function getFormFieldValue(name, field={}, options={}) {
     // Find the HTML element
     var el = getFormFieldElement(name, options);
 
-    if (!el) {
-        console.log(`ERROR: getFormFieldValue could not locate field '{name}'`);
+    if (!el.exists()) {
+        console.log(`ERROR: getFormFieldValue could not locate field '${name}'`);
         return null;
     }
 
@@ -933,19 +955,40 @@ function getFormFieldValue(name, field={}, options={}) {
  */
 function handleFormSuccess(response, options) {
 
-    // Close the modal
-    if (!options.preventClose) {
-        // Note: The modal will be deleted automatically after closing
-        $(options.modal).modal('hide');
-    }
-
     // Display any required messages
     // Should we show alerts immediately or cache them?
     var cache = (options.follow && response.url) || options.redirect || options.reload;
 
+    // Should the form "persist"?
+    var persist = false;
+
+    if (options.persist && options.modal) {
+        // Determine if this form should "persist", or be dismissed?
+        var chk = $(options.modal).find('#modal-persist');
+
+        persist = chk.exists() && chk.prop('checked');
+    }
+
+    if (persist) {
+        cache = false;
+    }
+
+    var msg_target = null;
+
+    if (persist) {
+        // If the modal is persistant, the target for any messages should be the modal!
+        msg_target = $(options.modal).find('#pre-form-content');
+    }
+
     // Display any messages
     if (response && (response.success || options.successMessage)) {
-        showAlertOrCache(response.success || options.successMessage, cache, {style: 'success'});
+        showAlertOrCache(
+            response.success || options.successMessage,
+            cache,
+            {
+                style: 'success',
+                target: msg_target,
+            });
     }
     
     if (response && response.info) {
@@ -960,20 +1003,41 @@ function handleFormSuccess(response, options) {
         showAlertOrCache(response.danger, cache, {style: 'danger'});
     }
 
-    if (options.onSuccess) {
-        // Callback function
-        options.onSuccess(response, options);
-    }
+    if (persist) {
+        // Instead of closing the form and going somewhere else,
+        // reload (empty) the form so the user can input more data
+        
+        // Reset the status of the "submit" button
+        if (options.modal) {
+            $(options.modal).find('#modal-form-submit').prop('disabled', false);
+        }
 
-    if (options.follow && response.url) {
-        // Follow the returned URL
-        window.location.href = response.url;
-    } else if (options.reload) {
-        // Reload the current page
-        location.reload();
-    } else if (options.redirect) {
-        // Redirect to a specified URL
-        window.location.href = options.redirect;
+        // Remove any error flags from the form
+        clearFormErrors(options);
+
+    } else {
+
+        // Close the modal
+        if (!options.preventClose) {
+            // Note: The modal will be deleted automatically after closing
+            $(options.modal).modal('hide');
+        }
+
+        if (options.onSuccess) {
+            // Callback function
+            options.onSuccess(response, options);
+        }
+
+        if (options.follow && response.url) {
+            // Follow the returned URL
+            window.location.href = response.url;
+        } else if (options.reload) {
+            // Reload the current page
+            location.reload();
+        } else if (options.redirect) {
+            // Redirect to a specified URL
+            window.location.href = options.redirect;
+        }
     }
 }
 
@@ -987,6 +1051,8 @@ function clearFormErrors(options={}) {
     if (options && options.modal) {
         // Remove the individual error messages
         $(options.modal).find('.form-error-message').remove();
+    
+        $(options.modal).find('.modal-content').removeClass('modal-error');
 
         // Remove the "has error" class
         $(options.modal).find('.form-field-error').removeClass('form-field-error');
@@ -1219,7 +1285,7 @@ function addFieldErrorMessage(name, error_text, error_idx=0, options={}) {
 
         field_dom.append(error_html);
     } else {
-        console.log(`WARNING: addFieldErrorMessage could not locate field '${field_name}`);
+        console.log(`WARNING: addFieldErrorMessage could not locate field '${field_name}'`);
     }
 }
 
@@ -1696,13 +1762,19 @@ function initializeRelatedField(field, fields, options={}) {
     } else if (field.auto_fill) {
         // Attempt to auto-fill the field
 
-        var filters = field.filters || {};
+        var filters = {};
+
+        // Update with nominal field fields
+        Object.assign(filters, field.filters || {});
+
+        // Update with filters only used for initial filtering
+        Object.assign(filters, field.auto_fill_filters || {});
 
         // Enforce pagination, limit to a single return (for fast query)
         filters.limit = 1;
         filters.offset = 0;
 
-        inventreeGet(field.api_url, field.filters || {}, {
+        inventreeGet(field.api_url, filters || {}, {
             success: function(data) {
 
                 // Only a single result is available, given the provided filters
@@ -1877,7 +1949,7 @@ function getFieldName(name, options={}) {
  * - Field description (help text)
  * - Field errors
  */
-function constructField(name, parameters, options) {
+function constructField(name, parameters, options={}) {
 
     var html = '';
 
@@ -1969,7 +2041,7 @@ function constructField(name, parameters, options) {
     html += `<div class='controls'>`;
 
     // Does this input deserve "extra" decorators?
-    var extra = parameters.prefix != null;
+    var extra = (parameters.icon != null) || (parameters.prefix != null) || (parameters.prefixRaw != null);
     
     // Some fields can have 'clear' inputs associated with them
     if (!parameters.required && !parameters.read_only) {
@@ -1991,9 +2063,13 @@ function constructField(name, parameters, options) {
     
     if (extra) {
         html += `<div class='input-group'>`;
-    
+ 
         if (parameters.prefix) {
             html += `<span class='input-group-text'>${parameters.prefix}</span>`;
+        } else if (parameters.prefixRaw) {
+            html += parameters.prefixRaw;
+        } else if (parameters.icon) {
+            html += `<span class='input-group-text'><span class='fas ${parameters.icon}'></span></span>`;
         }
     }
 
@@ -2014,14 +2090,13 @@ function constructField(name, parameters, options) {
     if (parameters.help_text && !options.hideLabels) {
 
         // Boolean values are handled differently!
-        if (parameters.type != 'boolean') {
+        if (parameters.type != 'boolean' && !parameters.hidden) {
             html += constructHelpText(name, parameters, options);
         }
     }
 
     // Div for error messages
     html += `<div id='errors-${field_name}'></div>`;
-
 
     html += `</div>`; // controls
     html += `</div>`; // form-group
@@ -2075,7 +2150,7 @@ function constructLabel(name, parameters) {
  * - parameters: Field parameters returned by the OPTIONS method
  * 
  */
-function constructInput(name, parameters, options) {
+function constructInput(name, parameters, options={}) {
 
     var html = '';
 
@@ -2141,6 +2216,10 @@ function constructInputOptions(name, classes, type, parameters, options={}) {
 
     opts.push(`type='${type}'`);
 
+    if (parameters.title || parameters.help_text) {
+        opts.push(`title='${parameters.title || parameters.help_text}'`);
+    }
+
     // Read only?
     if (parameters.read_only) {
         opts.push(`readonly=''`);
@@ -2186,11 +2265,6 @@ function constructInputOptions(name, classes, type, parameters, options={}) {
         opts.push(`required=''`);
     }
 
-    // Custom mouseover title?
-    if (parameters.title != null) {
-        opts.push(`title='${parameters.title}'`);
-    }
-
     // Placeholder?
     if (parameters.placeholder != null) {
         opts.push(`placeholder='${parameters.placeholder}'`);
@@ -2211,6 +2285,10 @@ function constructInputOptions(name, classes, type, parameters, options={}) {
     if (parameters.multiline) {
         return `<textarea ${opts.join(' ')}></textarea>`;
     } else if (parameters.type == 'boolean') {
+
+        if (parameters.hidden) {
+            return '';
+        }
 
         var help_text = '';
 
@@ -2412,4 +2490,118 @@ function constructHelpText(name, parameters) {
     var html = `<div id='hint_id_${name}' class='help-block'><i>${parameters.help_text}</i></div>`;
 
     return html;
+}
+
+
+/*
+ * Construct a dialog to select import fields
+ */
+function selectImportFields(url, data={}, options={}) {
+
+    if (!data.model_fields) {
+        console.log(`WARNING: selectImportFields is missing 'model_fields'`);
+        return;
+    }
+
+    if (!data.file_fields) {
+        console.log(`WARNING: selectImportFields is missing 'file_fields'`);
+        return;
+    }
+
+    var choices = [];
+
+    // Add an "empty" value
+    choices.push({
+        value: '',
+        display_name: '-----',
+    });
+
+    for (const [name, field] of Object.entries(data.model_fields)) {
+        choices.push({
+            value: name,
+            display_name: field.label || name,
+        });
+    }
+
+    var rows = '';
+
+    var field_names = Object.keys(data.file_fields);
+
+    for (var idx = 0; idx < field_names.length; idx++) {
+
+        var field_name = field_names[idx];
+
+        var choice_input = constructInput(
+            `column_${idx}`,
+            {
+                type: 'choice',
+                label: field_name,
+                value: data.file_fields[field_name].value,
+                choices: choices,
+            }
+        );
+
+        rows += `<tr><td><em>${field_name}</em></td><td>${choice_input}</td></tr>`;
+    }
+
+    var headers = `<tr><th>{% trans "File Column" %}</th><th>{% trans "Field Name" %}</th></tr>`;
+
+    var html = '';
+    
+    if (options.preamble) {
+        html += options.preamble;
+    }
+
+    html += `<table class='table table-condensed'>${headers}${rows}</table>`;
+
+    constructForm(url, {
+        method: 'POST',
+        title: '{% trans "Select Columns" %}',
+        fields: {},
+        preFormContent: html,
+        onSubmit: function(fields, opts) {
+            
+            var columns = [];
+
+            for (var idx = 0; idx < field_names.length; idx++) {
+                columns.push(getFormFieldValue(`column_${idx}`, {}, opts));
+            }
+
+            $(opts.modal).find('#modal-progress-spinner').show();
+
+            inventreePut(
+                opts.url,
+                {
+                    columns: columns,
+                    rows: data.rows,
+                },
+                {
+                    method: 'POST',
+                    success: function(response) {
+                        handleFormSuccess(response, opts);
+
+                        if (options.success) {
+                            options.success(response);
+                        }
+                    },
+                    error: function(xhr) {
+                
+                        $(opts.modal).find('#modal-progress-spinner').hide();
+        
+                        switch (xhr.status) {
+                        case 400:
+                            handleFormErrors(xhr.responseJSON, fields, opts);
+                            break;
+                        default:
+                            $(opts.modal).modal('hide');
+        
+                            console.log(`upload error at ${opts.url}`);
+                            showApiError(xhr, opts.url);
+                            break;
+                        }
+                    }
+                }
+            );
+        },
+    });
 }

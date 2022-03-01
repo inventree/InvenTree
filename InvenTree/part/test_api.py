@@ -855,7 +855,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
                 return part
 
         # We should never get here!
-        self.assertTrue(False)
+        self.assertTrue(False)  # pragma: no cover
 
     def test_stock_quantity(self):
         """

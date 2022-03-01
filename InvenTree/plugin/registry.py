@@ -52,6 +52,7 @@ class PluginsRegistry:
         # flags
         self.is_loading = False
         self.apps_loading = True        # Marks if apps were reloaded yet
+        self.git_is_modern = True       # Is a modern version of git available
 
         # integration specific
         self.installed_apps = []         # Holds all added plugin_paths
@@ -102,7 +103,7 @@ class PluginsRegistry:
                 self._init_plugins(blocked_plugin)
                 self._activate_plugins()
                 registered_successful = True
-            except (OperationalError, ProgrammingError):
+            except (OperationalError, ProgrammingError):  # pragma: no cover
                 # Exception if the database has not been migrated yet
                 logger.info('Database not accessible while loading plugins')
                 break

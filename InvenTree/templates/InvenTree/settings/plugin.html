@@ -77,11 +77,11 @@
                 {% endif %}
 
                 {% if plugin.website %}
-                <a href="{{ plugin.website }}"><i class="fas fa-globe"></i></a>
+                <a href="{{ plugin.website }}"><span class="fas fa-globe"></span></a>
                 {% endif %}
             </td>
             <td>{{ plugin.author }}</td>
-            <td>{{ plugin.pub_date }}</td>
+            <td>{% render_date plugin.pub_date %}</td>
             <td>{% if plugin.version %}{{ plugin.version }}{% endif %}</td>
         </tr>
         {% endfor %}

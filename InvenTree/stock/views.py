@@ -63,6 +63,11 @@ class StockIndex(InvenTreeRoleMixin, ListView):
         context['loc_count'] = StockLocation.objects.count()
         context['stock_count'] = StockItem.objects.count()
 
+        # No 'ownership' checks are necessary for the top-level StockLocation view
+        context['user_owns_location'] = True
+        context['location_owner'] = None
+        context['ownership_enabled'] = common.models.InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+
         return context
 
 
@@ -75,6 +80,16 @@ class StockLocationDetail(InvenTreeRoleMixin, DetailView):
     template_name = 'stock/location.html'
     queryset = StockLocation.objects.all()
     model = StockLocation
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+
+        context['ownership_enabled'] = common.models.InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+        context['location_owner'] = context['location'].get_location_owner()
+        context['user_owns_location'] = context['location'].check_ownership(self.request.user)
+
+        return context
 
 
 class StockItemDetail(InvenTreeRoleMixin, DetailView):
@@ -125,6 +140,10 @@ class StockItemDetail(InvenTreeRoleMixin, DetailView):
             except ValueError:
                 # We only support integer serial number progression
                 pass
+
+        data['ownership_enabled'] = common.models.InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+        data['item_owner'] = self.object.get_item_owner()
+        data['user_owns_item'] = self.object.check_ownership(self.request.user)
 
         return data
 
@@ -463,155 +482,6 @@ class StockItemQRCode(QRCodeView):
             return item.format_barcode()
         except StockItem.DoesNotExist:
             return None
-
-
-class StockItemInstall(AjaxUpdateView):
-    """
-    View for manually installing stock items into
-    a particular stock item.
-
-    In contrast to the StockItemUninstall view,
-    only a single stock item can be installed at once.
-
-    The "part" to be installed must be provided in the GET query parameters.
-
-    """
-
-    model = StockItem
-    form_class = StockForms.InstallStockForm
-    ajax_form_title = _('Install Stock Item')
-    ajax_template_name = "stock/item_install.html"
-
-    part = None
-
-    def get_params(self):
-        """ Retrieve GET parameters """
-
-        # Look at GET params
-        self.part_id = self.request.GET.get('part', None)
-        self.install_in = self.request.GET.get('install_in', False)
-        self.install_item = self.request.GET.get('install_item', False)
-
-        if self.part_id is None:
-            # Look at POST params
-            self.part_id = self.request.POST.get('part', None)
-
-        try:
-            self.part = Part.objects.get(pk=self.part_id)
-        except (ValueError, Part.DoesNotExist):
-            self.part = None
-
-    def get_stock_items(self):
-        """
-        Return a list of stock items suitable for displaying to the user.
-
-        Requirements:
-        - Items must be in stock
-        - Items must be in BOM of stock item
-        - Items must be serialized
-        """
-
-        # Filter items in stock
-        items = StockItem.objects.filter(StockItem.IN_STOCK_FILTER)
-
-        # Filter serialized stock items
-        items = items.exclude(serial__isnull=True).exclude(serial__exact='')
-
-        if self.part:
-            # Filter for parts to install this item in
-            if self.install_in:
-                # Get parts using this part
-                allowed_parts = self.part.get_used_in()
-                # Filter
-                items = items.filter(part__in=allowed_parts)
-
-            # Filter for parts to install in this item
-            if self.install_item:
-                # Get all parts which can be installed into this part
-                allowed_parts = self.part.get_installed_part_options()
-                # Filter
-                items = items.filter(part__in=allowed_parts)
-
-        return items
-
-    def get_context_data(self, **kwargs):
-        """ Retrieve parameters and update context """
-
-        ctx = super().get_context_data(**kwargs)
-
-        # Get request parameters
-        self.get_params()
-
-        ctx.update({
-            'part': self.part,
-            'install_in': self.install_in,
-            'install_item': self.install_item,
-        })
-
-        return ctx
-
-    def get_initial(self):
-
-        initials = super().get_initial()
-
-        items = self.get_stock_items()
-
-        # If there is a single stock item available, we can use it!
-        if items.count() == 1:
-            item = items.first()
-            initials['stock_item'] = item.pk
-
-        if self.part:
-            initials['part'] = self.part
-
-        try:
-            # Is this stock item being installed in the other stock item?
-            initials['to_install'] = self.install_in or not self.install_item
-        except AttributeError:
-            pass
-
-        return initials
-
-    def get_form(self):
-
-        form = super().get_form()
-
-        form.fields['stock_item'].queryset = self.get_stock_items()
-
-        return form
-
-    def post(self, request, *args, **kwargs):
-
-        self.get_params()
-
-        form = self.get_form()
-
-        valid = form.is_valid()
-
-        if valid:
-            # We assume by this point that we have a valid stock_item and quantity values
-            data = form.cleaned_data
-
-            other_stock_item = data['stock_item']
-            # Quantity will always be 1 for serialized item
-            quantity = 1
-            notes = data['notes']
-
-            # Get stock item
-            this_stock_item = self.get_object()
-
-            if data['to_install']:
-                # Install this stock item into the other stock item
-                other_stock_item.installStockItem(this_stock_item, quantity, request.user, notes)
-            else:
-                # Install the other stock item into this one
-                this_stock_item.installStockItem(other_stock_item, quantity, request.user, notes)
-
-        data = {
-            'form_valid': valid,
-        }
-
-        return self.renderJsonResponse(request, form, data=data)
 
 
 class StockItemUninstall(AjaxView, FormMixin):
