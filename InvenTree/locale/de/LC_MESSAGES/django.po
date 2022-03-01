@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-01 13:33+0000\n"
+"POT-Creation-Date: 2022-03-01 13:34+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -124,7 +124,7 @@ msgstr "Fehlende Datei"
 msgid "Missing external link"
 msgstr "Fehlender externer Link"
 
-#: InvenTree/models.py:188 stock/models.py:2075
+#: InvenTree/models.py:188 stock/models.py:2071
 #: templates/js/translated/attachment.js:119
 msgid "Attachment"
 msgstr "Anhang"
@@ -879,7 +879,7 @@ msgstr "Externer Link"
 #: part/templates/part/detail.html:146 part/templates/part/part_sidebar.html:57
 #: report/templates/report/inventree_build_order_base.html:173
 #: stock/forms.py:137 stock/forms.py:171 stock/models.py:636
-#: stock/models.py:1975 stock/models.py:2081 stock/serializers.py:332
+#: stock/models.py:1971 stock/models.py:2077 stock/serializers.py:332
 #: stock/serializers.py:697 stock/serializers.py:795 stock/serializers.py:927
 #: stock/templates/stock/stock_sidebar.html:25
 #: templates/js/translated/barcode.js:58 templates/js/translated/bom.js:936
@@ -1034,7 +1034,7 @@ msgstr "Menge der Endprodukte angeben"
 
 #: build/serializers.py:201 build/serializers.py:596 order/models.py:280
 #: order/serializers.py:267 part/serializers.py:471 part/serializers.py:826
-#: stock/models.py:404 stock/models.py:1184 stock/serializers.py:305
+#: stock/models.py:404 stock/models.py:1180 stock/serializers.py:305
 msgid "Quantity must be greater than zero"
 msgstr "Anzahl muss größer Null sein"
 
@@ -2619,7 +2619,7 @@ msgstr "Parametername"
 
 #: company/models.py:422
 #: report/templates/report/inventree_test_report_base.html:95
-#: stock/models.py:2068 templates/js/translated/company.js:647
+#: stock/models.py:2064 templates/js/translated/company.js:647
 #: templates/js/translated/part.js:715 templates/js/translated/stock.js:1331
 msgid "Value"
 msgstr "Wert"
@@ -5848,12 +5848,12 @@ msgid "Test Results"
 msgstr "Testergebnisse"
 
 #: report/templates/report/inventree_test_report_base.html:93
-#: stock/models.py:2056
+#: stock/models.py:2052
 msgid "Test"
 msgstr "Test"
 
 #: report/templates/report/inventree_test_report_base.html:94
-#: stock/models.py:2062
+#: stock/models.py:2058
 msgid "Result"
 msgstr "Ergebnis"
 
@@ -6064,125 +6064,125 @@ msgstr "Lagerartikel-Notizen"
 msgid "Single unit purchase price at time of purchase"
 msgstr "Preis für eine Einheit bei Einkauf"
 
-#: stock/models.py:1175
+#: stock/models.py:1171
 msgid "Part is not set as trackable"
 msgstr "Teil ist nicht verfolgbar"
 
-#: stock/models.py:1181
+#: stock/models.py:1177
 msgid "Quantity must be integer"
 msgstr "Anzahl muss eine Ganzzahl sein"
 
-#: stock/models.py:1187
+#: stock/models.py:1183
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({n})"
 msgstr "Anzahl darf nicht die verfügbare Anzahl überschreiten ({n})"
 
-#: stock/models.py:1190
+#: stock/models.py:1186
 msgid "Serial numbers must be a list of integers"
 msgstr "Seriennummern muss eine Liste von Ganzzahlen sein"
 
-#: stock/models.py:1193
+#: stock/models.py:1189
 msgid "Quantity does not match serial numbers"
 msgstr "Anzahl stimmt nicht mit den Seriennummern überein"
 
-#: stock/models.py:1200
+#: stock/models.py:1196
 #, python-brace-format
 msgid "Serial numbers already exist: {exists}"
 msgstr "Seriennummern {exists} existieren bereits"
 
-#: stock/models.py:1271
+#: stock/models.py:1267
 #, fuzzy
 #| msgid "Stock item assigned to sales order"
 msgid "Stock item has been assigned to a sales order"
 msgstr "Lagerartikel wurde Auftrag zugewiesen"
 
-#: stock/models.py:1274
+#: stock/models.py:1270
 #, fuzzy
 #| msgid "Stock item has been installed in another item"
 msgid "Stock item is installed in another item"
 msgstr "Lagerartikel in anderem Element verbaut"
 
-#: stock/models.py:1277
+#: stock/models.py:1273
 #, fuzzy
 #| msgid "Stock item has been installed in another item"
 msgid "Stock item contains other items"
 msgstr "Lagerartikel in anderem Element verbaut"
 
-#: stock/models.py:1280
+#: stock/models.py:1276
 #, fuzzy
 #| msgid "Stock item assigned to customer"
 msgid "Stock item has been assigned to a customer"
 msgstr "Lagerartikel wurde Kunden zugewiesen"
 
-#: stock/models.py:1283
+#: stock/models.py:1279
 #, fuzzy
 #| msgid "Stock item is in production"
 msgid "Stock item is currently in production"
 msgstr "Lagerartikel wird produziert"
 
-#: stock/models.py:1286
+#: stock/models.py:1282
 #, fuzzy
 #| msgid "Serialize Stock Item"
 msgid "Serialized stock cannot be merged"
 msgstr "Lagerartikel serialisieren"
 
-#: stock/models.py:1293 stock/serializers.py:832
+#: stock/models.py:1289 stock/serializers.py:832
 #, fuzzy
 #| msgid "Duplicate stock item"
 msgid "Duplicate stock items"
 msgstr "Lagerartikel duplizieren"
 
-#: stock/models.py:1297
+#: stock/models.py:1293
 #, fuzzy
 #| msgid "Stock item returned from customer"
 msgid "Stock items must refer to the same part"
 msgstr "Lagerartikel retoure vom Kunden"
 
-#: stock/models.py:1301
+#: stock/models.py:1297
 #, fuzzy
 #| msgid "Linked manufacturer part must reference the same base part"
 msgid "Stock items must refer to the same supplier part"
 msgstr "Verlinktes Herstellerteil muss dasselbe Basisteil referenzieren"
 
-#: stock/models.py:1305
+#: stock/models.py:1301
 #, fuzzy
 #| msgid "Status code must be selected"
 msgid "Stock status codes must match"
 msgstr "Status Code muss ausgewählt werden"
 
-#: stock/models.py:1477
+#: stock/models.py:1473
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr "Lagerartikel kann nicht bewegt werden, da kein Bestand vorhanden ist"
 
-#: stock/models.py:1976
+#: stock/models.py:1972
 msgid "Entry notes"
 msgstr "Eintrags-Notizen"
 
-#: stock/models.py:2033
+#: stock/models.py:2029
 msgid "Value must be provided for this test"
 msgstr "Wert muss für diesen Test angegeben werden"
 
-#: stock/models.py:2039
+#: stock/models.py:2035
 msgid "Attachment must be uploaded for this test"
 msgstr "Anhang muss für diesen Test hochgeladen werden"
 
-#: stock/models.py:2057
+#: stock/models.py:2053
 msgid "Test name"
 msgstr "Name des Tests"
 
-#: stock/models.py:2063
+#: stock/models.py:2059
 msgid "Test result"
 msgstr "Testergebnis"
 
-#: stock/models.py:2069
+#: stock/models.py:2065
 msgid "Test output value"
 msgstr "Test Ausgabe Wert"
 
-#: stock/models.py:2076
+#: stock/models.py:2072
 msgid "Test result attachment"
 msgstr "Test Ergebnis Anhang"
 
-#: stock/models.py:2082
+#: stock/models.py:2078
 msgid "Test notes"
 msgstr "Test Notizen"
 
@@ -6410,7 +6410,7 @@ msgid "Serialize stock"
 msgstr "Bestand serialisieren"
 
 #: stock/templates/stock/item_base.html:82
-#: stock/templates/stock/location.html:58
+#: stock/templates/stock/location.html:58 templates/stock_table.html:51
 msgid "Transfer stock"
 msgstr "Bestand verschieben"
 
@@ -9473,7 +9473,7 @@ msgstr "Bestand hinzufügen"
 msgid "Add"
 msgstr "Hinzufügen"
 
-#: templates/js/translated/stock.js:922 templates/stock_table.html:58
+#: templates/js/translated/stock.js:922
 msgid "Delete Stock"
 msgstr "Bestand löschen"
 
@@ -10124,10 +10124,6 @@ msgstr "Inventur für gewählte Lagerartikel"
 msgid "Move selected stock items"
 msgstr "Ausgewählte Lagerartikel verschieben"
 
-#: templates/stock_table.html:51
-msgid "Move stock"
-msgstr "Bestand verschieben"
-
 #: templates/stock_table.html:52
 #, fuzzy
 #| msgid "Move selected stock items"
@@ -10155,6 +10151,12 @@ msgstr "Status ändern"
 #: templates/stock_table.html:58
 msgid "Delete selected items"
 msgstr "Ausgewählte Positionen löschen"
+
+#: templates/stock_table.html:58
+#, fuzzy
+#| msgid "Delete Stock"
+msgid "Delete stock"
+msgstr "Bestand löschen"
 
 #: templates/yesnolabel.html:4
 msgid "Yes"
@@ -10219,6 +10221,9 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:217
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
+#~ msgid "Move stock"
+#~ msgstr "Bestand verschieben"
 
 #~ msgid "Invalid date"
 #~ msgstr "Ungültiges Datum"
