@@ -33,6 +33,7 @@
     loadPartPurchaseOrderTable,
     loadPartTable,
     loadPartTestTemplateTable,
+    loadPartSchedulingChart,
     loadPartVariantTable,
     loadRelatedPartsTable,
     loadSellPricingChart,
@@ -2020,7 +2021,7 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                         title: entry.title,
                         label: entry.label,
                         url: entry.url,
-                    })
+                    });
                 });
             }
         }
@@ -2034,7 +2035,7 @@ function loadPartSchedulingChart(canvas_id, part_id) {
 
         quantity += stock_schedule[idx].delta;
 
-        stock_schedule[idx].x = stock_schedule[idx].date.format("YYYY-MM-DD");
+        stock_schedule[idx].x = stock_schedule[idx].date.format('YYYY-MM-DD');
         stock_schedule[idx].y = quantity;
     }
 
@@ -2042,11 +2043,11 @@ function loadPartSchedulingChart(canvas_id, part_id) {
 
     const data = {
         datasets: [{
-          label: '{% trans "Scheduled Stock Quantities" %}',
-          data: stock_schedule,
-          backgroundColor: 'rgb(220, 160, 80)',
-          borderWidth: 2,
-          borderColor: 'rgb(90, 130, 150)'
+            label: '{% trans "Scheduled Stock Quantities" %}',
+            data: stock_schedule,
+            backgroundColor: 'rgb(220, 160, 80)',
+            borderWidth: 2,
+            borderColor: 'rgb(90, 130, 150)'
         }],
     };
 
@@ -2084,7 +2085,7 @@ function loadPartSchedulingChart(canvas_id, part_id) {
                             if (delta == 0) {
                                 delta = '';
                             } else {
-                                delta = ` (${item.raw.delta > 0 ? "+" : ""}${item.raw.delta})`;
+                                delta = ` (${item.raw.delta > 0 ? '+' : ''}${item.raw.delta})`;
                             }
 
                             return `{% trans "Quantity" %}: ${item.raw.y}${delta}`;
