@@ -969,7 +969,7 @@
     {% if price_history %}
         var purchasepricedata = {
                 labels: [
-                    {% for line in price_history %}'{{ line.date }}',{% endfor %}
+                    {% for line in price_history %}'{% render_date line.date %}',{% endfor %}
                 ],
                 datasets: [{
                     label: '{% blocktrans %}Purchase Unit Price - {{currency}}{% endblocktrans %}',
@@ -1082,7 +1082,7 @@
     {% if sale_history %}
             var salepricedata = {
                     labels: [
-                        {% for line in sale_history %}'{{ line.date }}',{% endfor %}
+                        {% for line in sale_history %}'{% render_date line.date %}',{% endfor %}
                     ],
                     datasets: [{
                         label: '{% blocktrans %}Unit Price - {{currency}}{% endblocktrans %}',

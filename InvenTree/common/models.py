@@ -443,12 +443,12 @@ class BaseInvenTreeSetting(models.Model):
         except self.DoesNotExist:
             pass
 
-    def choices(self):
+    def choices(self, **kwargs):
         """
         Return the available choices for this setting (or None if no choices are defined)
         """
 
-        return self.__class__.get_setting_choices(self.key)
+        return self.__class__.get_setting_choices(self.key, **kwargs)
 
     def valid_options(self):
         """
@@ -461,6 +461,33 @@ class BaseInvenTreeSetting(models.Model):
             return None
 
         return [opt[0] for opt in choices]
+
+    def is_choice(self, **kwargs):
+        """
+        Check if this setting is a "choice" field
+        """
+
+        return self.__class__.get_setting_choices(self.key, **kwargs) is not None
+
+    def as_choice(self, **kwargs):
+        """
+        Render this setting as the "display" value of a choice field,
+        e.g. if the choices are:
+        [('A4', 'A4 paper'), ('A3', 'A3 paper')],
+        and the value is 'A4',
+        then display 'A4 paper'
+        """
+
+        choices = self.get_setting_choices(self.key, **kwargs)
+
+        if not choices:
+            return self.value
+
+        for value, display in choices:
+            if value == self.value:
+                return display
+
+        return self.value
 
     def is_bool(self, **kwargs):
         """
@@ -1212,6 +1239,21 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+
+        'DATE_DISPLAY_FORMAT': {
+            'name': _('Date Format'),
+            'description': _('Preferred format for displaying dates'),
+            'default': 'YYYY-MM-DD',
+            'choices': [
+                ('YYYY-MM-DD', '2022-02-22'),
+                ('YYYY/MM/DD', '2022/22/22'),
+                ('DD-MM-YYYY', '22-02-2022'),
+                ('DD/MM/YYYY', '22/02/2022'),
+                ('MM-DD-YYYY', '02-22-2022'),
+                ('MM/DD/YYYY', '02/22/2022'),
+                ('MMM DD YYYY', 'Feb 22 2022'),
+            ]
+        }
     }
 
     class Meta:

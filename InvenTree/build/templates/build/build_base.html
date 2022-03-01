@@ -151,7 +151,7 @@ src="{% static 'img/blank_image.png' %}"
             {% trans "Target Date" %}
         </td>
         <td>
-            {{ build.target_date }}
+            {% render_date build.target_date %}
             {% if build.is_overdue %}
             <span title='{% blocktrans with target=build.target_date %}This build was due on {{target}}{% endblocktrans %}' class='badge badge-right rounded-pill bg-danger'>{% trans "Overdue" %}</span>
             {% endif %}

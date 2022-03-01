@@ -25,7 +25,6 @@
     modalSetContent,
     modalSetTitle,
     modalSubmit,
-    moment,
     openModal,
     printStockItemLabels,
     printTestReports,
@@ -1820,6 +1819,9 @@ function loadStockTable(table, options) {
     col = {
         field: 'stocktake_date',
         title: '{% trans "Stocktake" %}',
+        formatter: function(value) {
+            return renderDate(value);
+        }
     };
 
     if (!options.params.ordering) {
@@ -1833,6 +1835,9 @@ function loadStockTable(table, options) {
         title: '{% trans "Expiry Date" %}',
         visible: global_settings.STOCK_ENABLE_EXPIRY,
         switchable: global_settings.STOCK_ENABLE_EXPIRY,
+        formatter: function(value) {
+            return renderDate(value);
+        }
     };
 
     if (!options.params.ordering) {
@@ -1844,6 +1849,9 @@ function loadStockTable(table, options) {
     col = {
         field: 'updated',
         title: '{% trans "Last Updated" %}',
+        formatter: function(value) {
+            return renderDate(value);
+        }
     };
 
     if (!options.params.ordering) {
@@ -2649,14 +2657,7 @@ function loadStockTrackingTable(table, options) {
         title: '{% trans "Date" %}',
         sortable: true,
         formatter: function(value) {
-            var m = moment(value);
-
-            if (m.isValid()) {
-                var html = m.format('dddd MMMM Do YYYY'); // + '<br>' + m.format('h:mm a');
-                return html;
-            }
-
-            return '<i>{% trans "Invalid date" %}</i>';
+            return renderDate(value, {showTime: true});
         }
     });
 

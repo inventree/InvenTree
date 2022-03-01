@@ -18,17 +18,10 @@
             <h4>{% trans "Stock Tracking Information" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                {% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
-                {% if owner_control.value == "True" %}
-                    {% authorized_owners item.owner as owners %}
-                {% endif %}
-                <!-- Check permissions and owner -->
-                {% if owner_control.value == "False" or owner_control.value == "True" and user in owners %}
-                {% if roles.stock.change and not item.is_building %}
+                {% if user_owns_item and roles.stock.change and not item.is_building %}
                 <button class='btn btn-success' type='button' title='New tracking entry' id='new-entry'>
                     <span class='fas fa-plus-circle'></span> {% trans "New Entry" %}
                 </button>
-                {% endif %}
                 {% endif %}
             </div>
         </div>
