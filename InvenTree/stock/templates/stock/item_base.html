@@ -66,7 +66,7 @@
         <ul class='dropdown-menu' role='menu'>
             {% if not item.serialized %}
             {% if item.in_stock %}
-            <li><a class='dropdown-item' href='#' id='stock-count' title='{% trans "Count stock" %}'><span class='fas fa-clipboard-list'></span> {% trans "Count stock" %}</a></li>
+            <li><a class='dropdown-item' href='#' id='stock-count' title='{% trans "Count stock" %}'><span class='fas fa-check-circle icon-green'></span> {% trans "Count stock" %}</a></li>
             {% endif %}
             {% if not item.customer %}
             <li><a class='dropdown-item' href='#' id='stock-add' title='{% trans "Add stock" %}'><span class='fas fa-plus-circle icon-green'></span> {% trans "Add stock" %}</a></li>
