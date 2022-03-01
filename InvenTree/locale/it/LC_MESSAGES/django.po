@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-28 21:46+0000\n"
-"PO-Revision-Date: 2022-02-28 22:25\n"
+"PO-Revision-Date: 2022-03-01 10:04\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -250,7 +250,7 @@ msgstr "Nome del file"
 
 #: InvenTree/serializers.py:334
 msgid "Invalid value"
-msgstr ""
+msgstr "Valore non valido"
 
 #: InvenTree/serializers.py:355
 msgid "Data File"
@@ -262,11 +262,11 @@ msgstr ""
 
 #: InvenTree/serializers.py:380
 msgid "Unsupported file type"
-msgstr ""
+msgstr "Formato file non supportato"
 
 #: InvenTree/serializers.py:386
 msgid "File is too large"
-msgstr ""
+msgstr "File troppo grande"
 
 #: InvenTree/serializers.py:407
 msgid "No columns found in file"
@@ -324,7 +324,7 @@ msgstr "Ebraico"
 
 #: InvenTree/settings.py:670
 msgid "Hungarian"
-msgstr ""
+msgstr "Ungherese"
 
 #: InvenTree/settings.py:671
 msgid "Italian"
@@ -650,7 +650,7 @@ msgstr ""
 #: report/templates/report/inventree_build_order_base.html:106
 #: templates/js/translated/build.js:676 templates/js/translated/stock.js:2422
 msgid "Build Order"
-msgstr ""
+msgstr "Ordine di Produzione"
 
 #: build/models.py:138 build/templates/build/build_base.html:13
 #: build/templates/build/index.html:8 build/templates/build/index.html:12
@@ -660,7 +660,7 @@ msgstr ""
 #: templates/InvenTree/search.html:139
 #: templates/InvenTree/settings/sidebar.html:43 users/models.py:44
 msgid "Build Orders"
-msgstr ""
+msgstr "Ordini di Produzione"
 
 #: build/models.py:198
 msgid "Build Order Reference"
@@ -898,7 +898,7 @@ msgstr "Articolo in giacenza selezionato non trovato nel BOM"
 #: templates/InvenTree/search.html:137 templates/js/translated/build.js:1898
 #: templates/navbar.html:35
 msgid "Build"
-msgstr ""
+msgstr "Produzione"
 
 #: build/models.py:1220
 msgid "Build to allocate parts"
