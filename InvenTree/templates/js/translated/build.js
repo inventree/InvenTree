@@ -1961,6 +1961,9 @@ function loadBuildTable(table, options) {
                 field: 'creation_date',
                 title: '{% trans "Created" %}',
                 sortable: true,
+                formatter: function(value) {
+                    return renderDate(value);
+                }
             },
             {
                 field: 'issued_by',
@@ -1990,11 +1993,17 @@ function loadBuildTable(table, options) {
                 field: 'target_date',
                 title: '{% trans "Target Date" %}',
                 sortable: true,
+                formatter: function(value) {
+                    return renderDate(value);
+                }
             },
             {
                 field: 'completion_date',
                 title: '{% trans "Completion Date" %}',
                 sortable: true,
+                formatter: function(value) {
+                    return renderDate(value);
+                }
             },
         ],
     });

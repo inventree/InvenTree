@@ -155,13 +155,13 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-calendar-alt'></span></td>
         <td>{% trans "Created" %}</td>
-        <td>{{ order.creation_date }}<span class='badge badge-right rounded-pill bg-dark'>{{ order.created_by }}</span></td>
+        <td>{% render_date order.creation_date %}<span class='badge badge-right rounded-pill bg-dark'>{{ order.created_by }}</span></td>
     </tr>
     {% if order.target_date %}
     <tr>
         <td><span class='fas fa-calendar-alt'></span></td>
         <td>{% trans "Target Date" %}</td>
-        <td>{{ order.target_date }}</td>
+        <td>{% render_date order.target_date %}</td>
     </tr>
     {% endif %}
     {% if order.shipment_date %}
@@ -169,7 +169,7 @@ src="{% static 'img/blank_image.png' %}"
         <td><span class='fas fa-truck'></span></td>
         <td>{% trans "Completed" %}</td>
         <td>
-            {{ order.shipment_date }}
+            {% render_date order.shipment_date %}
             {% if order.shipped_by %}
             <span class='badge badge-right rounded-pill bg-dark'>{{ order.shipped_by }}</span>
             {% endif %}

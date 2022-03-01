@@ -5,6 +5,7 @@ This module provides template tags for extra functionality,
 over and above the built-in Django tags.
 """
 
+from datetime import date
 import os
 import sys
 
@@ -41,6 +42,52 @@ def define(value, *args, **kwargs):
     """
 
     return value
+
+
+@register.simple_tag(takes_context=True)
+def render_date(context, date_object):
+    """
+    Renders a date according to the preference of the provided user
+
+    Note that the user preference is stored using the formatting adopted by moment.js,
+    which differs from the python formatting!
+    """
+
+    if date_object is None:
+        return None
+
+    if type(date_object) == str:
+        # If a string is passed, first convert it to a datetime
+        date_object = date.fromisoformat(date_object)
+
+    # We may have already pre-cached the date format by calling this already!
+    user_date_format = context.get('user_date_format', None)
+
+    if user_date_format is None:
+
+        user = context.get('user', None)
+
+        if user:
+            # User is specified - look for their date display preference
+            user_date_format = InvenTreeUserSetting.get_setting('DATE_DISPLAY_FORMAT', user=user)
+        else:
+            user_date_format = 'YYYY-MM-DD'
+
+        # Convert the format string to Pythonic equivalent
+        replacements = [
+            ('YYYY', '%Y'),
+            ('MMM', '%b'),
+            ('MM', '%m'),
+            ('DD', '%d'),
+        ]
+
+        for o, n in replacements:
+            user_date_format = user_date_format.replace(o, n)
+
+        # Update the context cache
+        context['user_date_format'] = user_date_format
+
+    return date_object.strftime(user_date_format)
 
 
 @register.simple_tag()

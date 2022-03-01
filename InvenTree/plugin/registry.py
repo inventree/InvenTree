@@ -52,6 +52,7 @@ class PluginsRegistry:
         # flags
         self.is_loading = False
         self.apps_loading = True        # Marks if apps were reloaded yet
+        self.git_is_modern = True       # Is a modern version of git available
 
         # integration specific
         self.installed_apps = []         # Holds all added plugin_paths

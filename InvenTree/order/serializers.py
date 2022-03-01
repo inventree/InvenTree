@@ -5,12 +5,14 @@ JSON serializers for the Order API
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from decimal import Decimal
+
 from django.utils.translation import ugettext_lazy as _
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models, transaction
 from django.db.models import Case, When, Value
-from django.db.models import BooleanField, ExpressionWrapper, F
+from django.db.models import BooleanField, ExpressionWrapper, F, Q
 
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
@@ -26,7 +28,7 @@ from InvenTree.serializers import InvenTreeModelSerializer
 from InvenTree.serializers import InvenTreeDecimalField
 from InvenTree.serializers import InvenTreeMoneySerializer
 from InvenTree.serializers import ReferenceIndexingSerializerMixin
-from InvenTree.status_codes import StockStatus
+from InvenTree.status_codes import StockStatus, PurchaseOrderStatus, SalesOrderStatus
 
 import order.models
 
@@ -126,12 +128,22 @@ class POLineItemSerializer(InvenTreeModelSerializer):
         Add some extra annotations to this queryset:
 
         - Total price = purchase_price * quantity
+        - "Overdue" status (boolean field)
         """
 
         queryset = queryset.annotate(
             total_price=ExpressionWrapper(
                 F('purchase_price') * F('quantity'),
                 output_field=models.DecimalField()
+            )
+        )
+
+        queryset = queryset.annotate(
+            overdue=Case(
+                When(
+                    Q(order__status__in=PurchaseOrderStatus.OPEN) & order.models.OrderLineItem.OVERDUE_FILTER, then=Value(True, output_field=BooleanField())
+                ),
+                default=Value(False, output_field=BooleanField()),
             )
         )
 
@@ -154,6 +166,8 @@ class POLineItemSerializer(InvenTreeModelSerializer):
 
     quantity = serializers.FloatField(default=1)
     received = serializers.FloatField(default=0)
+
+    overdue = serializers.BooleanField(required=False, read_only=True)
 
     total_price = serializers.FloatField(read_only=True)
 
@@ -185,6 +199,7 @@ class POLineItemSerializer(InvenTreeModelSerializer):
             'notes',
             'order',
             'order_detail',
+            'overdue',
             'part',
             'part_detail',
             'supplier_part_detail',
@@ -194,6 +209,7 @@ class POLineItemSerializer(InvenTreeModelSerializer):
             'purchase_price_string',
             'destination',
             'destination_detail',
+            'target_date',
             'total_price',
         ]
 
@@ -202,6 +218,17 @@ class POLineItemReceiveSerializer(serializers.Serializer):
     """
     A serializer for receiving a single purchase order line item against a purchase order
     """
+
+    class Meta:
+        fields = [
+            'barcode',
+            'line_item',
+            'location',
+            'quantity',
+            'status',
+            'batch_code'
+            'serial_numbers',
+        ]
 
     line_item = serializers.PrimaryKeyRelatedField(
         queryset=order.models.PurchaseOrderLineItem.objects.all(),
@@ -241,6 +268,22 @@ class POLineItemReceiveSerializer(serializers.Serializer):
 
         return quantity
 
+    batch_code = serializers.CharField(
+        label=_('Batch Code'),
+        help_text=_('Enter batch code for incoming stock items'),
+        required=False,
+        default='',
+        allow_blank=True,
+    )
+
+    serial_numbers = serializers.CharField(
+        label=_('Serial Numbers'),
+        help_text=_('Enter serial numbers for incoming stock items'),
+        required=False,
+        default='',
+        allow_blank=True,
+    )
+
     status = serializers.ChoiceField(
         choices=list(StockStatus.items()),
         default=StockStatus.OK,
@@ -270,14 +313,35 @@ class POLineItemReceiveSerializer(serializers.Serializer):
 
         return barcode
 
-    class Meta:
-        fields = [
-            'barcode',
-            'line_item',
-            'location',
-            'quantity',
-            'status',
-        ]
+    def validate(self, data):
+
+        data = super().validate(data)
+
+        line_item = data['line_item']
+        quantity = data['quantity']
+        serial_numbers = data.get('serial_numbers', '').strip()
+
+        base_part = line_item.part.part
+
+        # Does the quantity need to be "integer" (for trackable parts?)
+        if base_part.trackable:
+
+            if Decimal(quantity) != int(quantity):
+                raise ValidationError({
+                    'quantity': _('An integer quantity must be provided for trackable parts'),
+                })
+
+        # If serial numbers are provided
+        if serial_numbers:
+            try:
+                # Pass the serial numbers through to the parent serializer once validated
+                data['serials'] = extract_serial_numbers(serial_numbers, quantity, base_part.getLatestSerialNumberInt())
+            except DjangoValidationError as e:
+                raise ValidationError({
+                    'serial_numbers': e.messages,
+                })
+
+        return data
 
 
 class POReceiveSerializer(serializers.Serializer):
@@ -366,6 +430,8 @@ class POReceiveSerializer(serializers.Serializer):
                         request.user,
                         status=item['status'],
                         barcode=item.get('barcode', ''),
+                        batch_code=item.get('batch_code', ''),
+                        serials=item.get('serials', None),
                     )
                 except (ValidationError, DjangoValidationError) as exc:
                     # Catch model errors and re-throw as DRF errors
@@ -549,6 +615,23 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
 class SOLineItemSerializer(InvenTreeModelSerializer):
     """ Serializer for a SalesOrderLineItem object """
 
+    @staticmethod
+    def annotate_queryset(queryset):
+        """
+        Add some extra annotations to this queryset:
+
+        - "Overdue" status (boolean field)
+        """
+
+        queryset = queryset.annotate(
+            overdue=Case(
+                When(
+                    Q(order__status__in=SalesOrderStatus.OPEN) & order.models.OrderLineItem.OVERDUE_FILTER, then=Value(True, output_field=BooleanField()),
+                ),
+                default=Value(False, output_field=BooleanField()),
+            )
+        )
+
     def __init__(self, *args, **kwargs):
 
         part_detail = kwargs.pop('part_detail', False)
@@ -569,6 +652,8 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
     order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     allocations = SalesOrderAllocationSerializer(many=True, read_only=True, location_detail=True)
+
+    overdue = serializers.BooleanField(required=False, read_only=True)
 
     quantity = InvenTreeDecimalField()
 
@@ -599,12 +684,14 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
             'notes',
             'order',
             'order_detail',
+            'overdue',
             'part',
             'part_detail',
             'sale_price',
             'sale_price_currency',
             'sale_price_string',
             'shipped',
+            'target_date',
         ]
 
 

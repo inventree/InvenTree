@@ -398,12 +398,22 @@ class PurchaseOrder(Order):
         return self.lines.count() > 0 and self.pending_line_items().count() == 0
 
     @transaction.atomic
-    def receive_line_item(self, line, location, quantity, user, status=StockStatus.OK, purchase_price=None, **kwargs):
-        """ Receive a line item (or partial line item) against this PO
+    def receive_line_item(self, line, location, quantity, user, status=StockStatus.OK, **kwargs):
+        """
+        Receive a line item (or partial line item) against this PO
         """
 
+        # Extract optional batch code for the new stock item
+        batch_code = kwargs.get('batch_code', '')
+
+        # Extract optional list of serial numbers
+        serials = kwargs.get('serials', None)
+
+        # Extract optional notes field
         notes = kwargs.get('notes', '')
-        barcode = kwargs.get('barcode', '')
+
+        # Extract optional barcode field
+        barcode = kwargs.get('barcode', None)
 
         # Prevent null values for barcode
         if barcode is None:
@@ -427,33 +437,45 @@ class PurchaseOrder(Order):
 
         # Create a new stock item
         if line.part and quantity > 0:
-            stock = stock_models.StockItem(
-                part=line.part.part,
-                supplier_part=line.part,
-                location=location,
-                quantity=quantity,
-                purchase_order=self,
-                status=status,
-                purchase_price=line.purchase_price,
-                uid=barcode
-            )
 
-            stock.save(add_note=False)
+            # Determine if we should individually serialize the items, or not
+            if type(serials) is list and len(serials) > 0:
+                serialize = True
+            else:
+                serialize = False
+                serials = [None]
 
-            tracking_info = {
-                'status': status,
-                'purchaseorder': self.pk,
-            }
+            for sn in serials:
 
-            stock.add_tracking_entry(
-                StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER,
-                user,
-                notes=notes,
-                deltas=tracking_info,
-                location=location,
-                purchaseorder=self,
-                quantity=quantity
-            )
+                stock = stock_models.StockItem(
+                    part=line.part.part,
+                    supplier_part=line.part,
+                    location=location,
+                    quantity=1 if serialize else quantity,
+                    purchase_order=self,
+                    status=status,
+                    batch=batch_code,
+                    serial=sn,
+                    purchase_price=line.purchase_price,
+                    uid=barcode
+                )
+
+                stock.save(add_note=False)
+
+                tracking_info = {
+                    'status': status,
+                    'purchaseorder': self.pk,
+                }
+
+                stock.add_tracking_entry(
+                    StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER,
+                    user,
+                    notes=notes,
+                    deltas=tracking_info,
+                    location=location,
+                    purchaseorder=self,
+                    quantity=quantity
+                )
 
         # Update the number of parts received against the particular line item
         line.received += quantity
@@ -794,9 +816,18 @@ class OrderLineItem(models.Model):
 
     Attributes:
         quantity: Number of items
+        reference: Reference text (e.g. customer reference) for this line item
         note: Annotation for the item
+        target_date: An (optional) date for expected shipment of this line item.
+    """
 
     """
+    Query filter for determining if an individual line item is "overdue":
+    - Amount received is less than the required quantity
+    - Target date is not None
+    - Target date is in the past
+    """
+    OVERDUE_FILTER = Q(received__lt=F('quantity')) & ~Q(target_date=None) & Q(target_date__lt=datetime.now().date())
 
     class Meta:
         abstract = True
@@ -813,6 +844,12 @@ class OrderLineItem(models.Model):
 
     notes = models.CharField(max_length=500, blank=True, verbose_name=_('Notes'), help_text=_('Line item notes'))
 
+    target_date = models.DateField(
+        blank=True, null=True,
+        verbose_name=_('Target Date'),
+        help_text=_('Target shipping date for this line item'),
+    )
+
 
 class PurchaseOrderLineItem(OrderLineItem):
     """ Model for a purchase order line item.
@@ -824,7 +861,6 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     class Meta:
         unique_together = (
-            ('order', 'part', 'quantity', 'purchase_price')
         )
 
     @staticmethod

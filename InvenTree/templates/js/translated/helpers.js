@@ -116,6 +116,10 @@ function makeIconButton(icon, cls, pk, title, options={}) {
         extraProps += `disabled='true' `;
     }
 
+    if (options.collapseTarget) {
+        extraProps += `data-bs-toggle='collapse' href='#${options.collapseTarget}'`;
+    }
+
     html += `<button pk='${pk}' id='${id}' class='${classes}' title='${title}' ${extraProps}>`;
     html += `<span class='fas ${icon}'></span>`;
     html += `</button>`;

@@ -120,13 +120,13 @@ content: "v{{report_revision}} - {{ date.isoformat }}";
             </tr>
             <tr>
                 <th>{% trans "Issued" %}</th>
-                <td>{{ build.creation_date }}</td>
+                <td>{% render_date build.creation_date %}</td>
             </tr>
             <tr>
                 <th>{% trans "Target Date" %}</th>
                 <td>
                     {% if build.target_date %}
-                    {{ build.target_date }}
+                    {% render_date build.target_date %}
                     {% else %}
                     <em>Not specified</em>
                     {% endif %}

@@ -529,6 +529,108 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertTrue(StockItem.objects.filter(uid='MY-UNIQUE-BARCODE-123').exists())
         self.assertTrue(StockItem.objects.filter(uid='MY-UNIQUE-BARCODE-456').exists())
 
+    def test_batch_code(self):
+        """
+        Test that we can supply a 'batch code' when receiving items
+        """
+
+        line_1 = models.PurchaseOrderLineItem.objects.get(pk=1)
+        line_2 = models.PurchaseOrderLineItem.objects.get(pk=2)
+
+        self.assertEqual(StockItem.objects.filter(supplier_part=line_1.part).count(), 0)
+        self.assertEqual(StockItem.objects.filter(supplier_part=line_2.part).count(), 0)
+
+        data = {
+            'items': [
+                {
+                    'line_item': 1,
+                    'quantity': 10,
+                    'batch_code': 'abc-123',
+                },
+                {
+                    'line_item': 2,
+                    'quantity': 10,
+                    'batch_code': 'xyz-789',
+                }
+            ],
+            'location': 1,
+        }
+
+        n = StockItem.objects.count()
+
+        self.post(
+            self.url,
+            data,
+            expected_code=201,
+        )
+
+        # Check that two new stock items have been created!
+        self.assertEqual(n + 2, StockItem.objects.count())
+
+        item_1 = StockItem.objects.filter(supplier_part=line_1.part).first()
+        item_2 = StockItem.objects.filter(supplier_part=line_2.part).first()
+
+        self.assertEqual(item_1.batch, 'abc-123')
+        self.assertEqual(item_2.batch, 'xyz-789')
+
+    def test_serial_numbers(self):
+        """
+        Test that we can supply a 'serial number' when receiving items
+        """
+
+        line_1 = models.PurchaseOrderLineItem.objects.get(pk=1)
+        line_2 = models.PurchaseOrderLineItem.objects.get(pk=2)
+
+        self.assertEqual(StockItem.objects.filter(supplier_part=line_1.part).count(), 0)
+        self.assertEqual(StockItem.objects.filter(supplier_part=line_2.part).count(), 0)
+
+        data = {
+            'items': [
+                {
+                    'line_item': 1,
+                    'quantity': 10,
+                    'batch_code': 'abc-123',
+                    'serial_numbers': '100+',
+                },
+                {
+                    'line_item': 2,
+                    'quantity': 10,
+                    'batch_code': 'xyz-789',
+                }
+            ],
+            'location': 1,
+        }
+
+        n = StockItem.objects.count()
+
+        self.post(
+            self.url,
+            data,
+            expected_code=201,
+        )
+
+        # Check that the expected number of stock items has been created
+        self.assertEqual(n + 11, StockItem.objects.count())
+
+        # 10 serialized stock items created for the first line item
+        self.assertEqual(StockItem.objects.filter(supplier_part=line_1.part).count(), 10)
+
+        # Check that the correct serial numbers have been allocated
+        for i in range(100, 110):
+            item = StockItem.objects.get(serial_int=i)
+            self.assertEqual(item.serial, str(i))
+            self.assertEqual(item.quantity, 1)
+            self.assertEqual(item.batch, 'abc-123')
+
+        # A single stock item (quantity 10) created for the second line item
+        items = StockItem.objects.filter(supplier_part=line_2.part)
+        self.assertEqual(items.count(), 1)
+
+        item = items.first()
+
+        self.assertEqual(item.quantity, 10)
+        self.assertEqual(item.batch, 'xyz-789')
+
 
 class SalesOrderTest(OrderTest):
     """

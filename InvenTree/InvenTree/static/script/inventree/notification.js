@@ -37,7 +37,6 @@ function showAlertOrCache(message, cache, options={}) {
     if (cache) {
         addCachedAlert(message, options);
     } else {
-
         showMessage(message, options);
     }
 }
@@ -82,6 +81,8 @@ function showMessage(message, options={}) {
 
     var timeout = options.timeout || 5000;
 
+    var target = options.target || $('#alerts');
+
     var details = '';
 
     if (options.details) {
@@ -111,7 +112,7 @@ function showMessage(message, options={}) {
     </div>
     `;
 
-    $('#alerts').append(html);
+    target.append(html);
 
     // Remove the alert automatically after a specified period of time
     $(`#alert-${id}`).delay(timeout).slideUp(200, function() {
