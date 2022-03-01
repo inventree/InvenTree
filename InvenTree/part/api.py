@@ -475,7 +475,7 @@ class PartScheduling(generics.RetrieveAPIView):
             part__part=part,
             order__status__in=PurchaseOrderStatus.OPEN,
         )
-        
+
         for line in po_lines:
 
             target_date = line.target_date or line.order.target_date
@@ -489,7 +489,7 @@ class PartScheduling(generics.RetrieveAPIView):
                 str(line.order),
                 line.order.get_absolute_url()
             )
-        
+
         # Add sales order (outgoing stock) information
         so_lines = order.models.SalesOrderLineItem.objects.filter(
             part=part,
