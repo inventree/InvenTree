@@ -35,7 +35,7 @@
 
     function addItem(label, title, icon, options) {
 
-        // Construct a "badge" to add to the sidebar item
+        // Construct a 'badge' to add to the sidebar item
         var badge = `
         <span id='sidebar-badge-${label}' class='sidebar-item-badge badge rounded-pill badge-right bg-dark'>
             <span class='fas fa-spin fa-spinner'></span>
@@ -81,11 +81,11 @@
 
     addItem('part', '{% trans "Parts" %}', 'fa-shapes');
 
-    loadPartTable("#table-part",
-        "{% url 'api-part-list' %}",
+    loadPartTable('#table-part',
+        '{% url "api-part-list" %}',
         {
             params: {
-                original_search: "{{ query }}",
+                original_search: '{{ query }}',
             },
             checkbox: false,
             disableFilters: true,
@@ -94,20 +94,20 @@
 
     addItem('category', '{% trans "Part Categories" %}', 'fa-sitemap');
 
-    loadPartCategoryTable($("#table-category"), {
+    loadPartCategoryTable($('#table-category'), {
         params: {
-            original_search: "{{ query }}",
+            original_search: '{{ query }}',
         }
     });
 
     addItem('manufacturer-part', '{% trans "Manufacturer Parts" %}', 'fa-toolbox');
 
     loadManufacturerPartTable(
-        "#table-manufacturer-part",
-        "{% url 'api-manufacturer-part-list' %}",
+        '#table-manufacturer-part',
+        '{% url "api-manufacturer-part-list" %}',
         {
             params: {
-                original_search: "{{ query }}",
+                original_search: '{{ query }}',
                 part_detail: true,
                 supplier_detail: true,
                 manufacturer_detail: true
@@ -118,11 +118,11 @@
     addItem('supplier-part', '{% trans "Supplier Parts" %}', 'fa-pallet');
 
     loadSupplierPartTable(
-        "#table-supplier-part",
-        "{% url 'api-supplier-part-list' %}",
+        '#table-supplier-part',
+        '{% url "api-supplier-part-list" %}',
         {
             params: {
-                original_search: "{{ query }}",
+                original_search: '{{ query }}',
                 part_detail: true,
                 supplier_detail: true,
                 manufacturer_detail: true
@@ -153,9 +153,9 @@
 
     loadStockTable($('#table-stock'), {
         filterKey: 'stocksearch',
-        url: "{% url 'api-stock-list' %}",
+        url: '{% url "api-stock-list" %}',
         params: {
-            original_search: "{{ query }}",
+            original_search: '{{ query }}',
             part_detail: true,
             location_detail: true
         }
@@ -163,10 +163,10 @@
 
     addItem('location', '{% trans "Stock Locations" %}', 'fa-map-marker-alt');
 
-    loadStockLocationTable($("#table-location"), {
+    loadStockLocationTable($('#table-location'), {
         filterKey: 'locationsearch',
         params: {
-            original_search: "{{ query }}",
+            original_search: '{{ query }}',
         },
     });
 
@@ -177,20 +177,20 @@
 
     addItem('manufacturer', '{% trans "Manufacturers" %}', 'fa-industry');
 
-    loadCompanyTable('#table-manufacturer', "{% url 'api-company-list' %}", {
+    loadCompanyTable('#table-manufacturer', '{% url "api-company-list" %}', {
         params: {
-            original_search: "{{ query }}",
-            is_manufacturer: "true",
+            original_search: '{{ query }}',
+            is_manufacturer: 'true',
         }
     });
 
     {% if roles.purchase_order.view %}
     addItem('supplier', '{% trans "Suppliers" %}', 'fa-building');
 
-    loadCompanyTable('#table-supplier', "{% url 'api-company-list' %}", {
+    loadCompanyTable('#table-supplier', '{% url "api-company-list" %}', {
         params: {
-            original_search: "{{ query }}",
-            is_supplier: "true",
+            original_search: '{{ query }}',
+            is_supplier: 'true',
         }
     });
 
@@ -207,10 +207,10 @@
     {% if roles.sales_order.view %}
     addItem('customer', '{% trans "Customers" %}', 'fa-user-tie');
 
-    loadCompanyTable('#table-customer', "{% url 'api-company-list' %}", {
+    loadCompanyTable('#table-customer', '{% url "api-company-list" %}', {
         params: {
-            original_search: "{{ query }}",
-            is_customer: "true",
+            original_search: '{{ query }}',
+            is_customer: 'true',
         }
     });
 
@@ -224,7 +224,7 @@
 
     {% endif %}
 
-    {% endif %}    
+    {% endif %}
 
     enableSidebar(
         'search',

@@ -11,7 +11,7 @@
 
 {% block breadcrumbs %}
 <li class='breadcrumb-item'><a href='{% url "po-index" %}'>{% trans "Purchase Orders" %}</a></li>
-<li class="breadcrumb-item active" aria-current="page"><a href='{% url "po-detail" order.id %}'>{{ order }}</a></li>
+<li class='breadcrumb-item active' aria-current='page'><a href='{% url "po-detail" order.id %}'>{{ order }}</a></li>
 {% endblock %}
 
 {% block heading %}
@@ -20,7 +20,7 @@
 
 {% block actions %}
 {% if user.is_staff and roles.purchase_order.change %}
-{% url 'admin:order_purchaseorder_change' order.pk as url %}
+{% url "admin:order_purchaseorder_change" order.pk as url %}
 {% include "admin_button.html" with url=url %}
 {% endif %}
 <!-- Printing options -->
@@ -68,9 +68,9 @@
 {% block thumbnail %}
 <img class='part-thumb'
 {% if order.supplier.image %}
-src="{{ order.supplier.image.url }}"
+src='{{ order.supplier.image.url }}'
 {% else %}
-src="{% static 'img/blank_image.png' %}"
+src='{% static "img/blank_image.png" %}'
 {% endif %}
 />
 {% endblock %}
@@ -110,7 +110,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-building'></span></td>
         <td>{% trans "Supplier" %}</td>
-        <td><a href="{% url 'company-detail' order.supplier.id %}">{{ order.supplier.name }}</a>{% include "clip.html"%}</td>
+        <td><a href='{% url "company-detail" order.supplier.id %}'>{{ order.supplier.name }}</a>{% include "clip.html"%}</td>
     </tr>
     {% if order.supplier_reference %}
     <tr>
@@ -135,7 +135,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-link'></span></td>
         <td>External Link</td>
-        <td><a href="{{ order.link }}">{{ order.link }}</a>{% include "clip.html"%}</td>
+        <td><a href='{{ order.link }}'>{{ order.link }}</a>{% include "clip.html"%}</td>
     </tr>
     {% endif %}
     <tr>
@@ -179,8 +179,8 @@ src="{% static 'img/blank_image.png' %}"
 
 
 {% if order.status == PurchaseOrderStatus.PENDING %}
-$("#place-order").click(function() {
-    launchModalForm("{% url 'po-issue' order.id %}",
+$('#place-order').click(function() {
+    launchModalForm('{% url "po-issue" order.id %}',
     {
         reload: true,
     });
@@ -193,7 +193,7 @@ $('#print-order-report').click(function() {
 });
 {% endif %}
 
-$("#edit-order").click(function() {
+$('#edit-order').click(function() {
 
     constructForm('{% url "api-po-detail" order.pk %}', {
         fields: {
@@ -221,10 +221,10 @@ $("#edit-order").click(function() {
     });
 });
 
-$("#receive-order").click(function() {
+$('#receive-order').click(function() {
 
     // Auto select items which have not been fully allocated
-    var items = $("#po-line-table").bootstrapTable('getData');
+    var items = $('#po-line-table').bootstrapTable('getData');
 
     var items_to_receive = [];
 
@@ -239,25 +239,25 @@ $("#receive-order").click(function() {
         items_to_receive,
         {
             success: function() {
-                $("#po-line-table").bootstrapTable('refresh');
+                $('#po-line-table').bootstrapTable('refresh');
             }
         }
     );
 });
 
-$("#complete-order").click(function() {
-    launchModalForm("{% url 'po-complete' order.id %}", {
+$('#complete-order').click(function() {
+    launchModalForm('{% url "po-complete" order.id %}', {
         reload: true,
     });
 });
 
-$("#cancel-order").click(function() {
-    launchModalForm("{% url 'po-cancel' order.id %}", {
+$('#cancel-order').click(function() {
+    launchModalForm('{% url "po-cancel" order.id %}', {
         reload: true,
     });
 });
 
-$("#export-order").click(function() {
+$('#export-order').click(function() {
     exportOrder('{% url "po-export" order.id %}');
 });
 

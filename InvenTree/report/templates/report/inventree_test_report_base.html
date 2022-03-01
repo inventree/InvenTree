@@ -10,15 +10,15 @@
 }
 
 {% block bottom_left %}
-content: "{{ date.isoformat }}";
+content: '{{ date.isoformat }}';
 {% endblock %}
 
 {% block bottom_center %}
-content: "InvenTree v{% inventree_version %}";
+content: 'InvenTree v{% inventree_version %}';
 {% endblock %}
 
 {% block top_center %}
-content: "{% trans 'Stock Item Test Report' %}";
+content: '{% trans "Stock Item Test Report" %}';
 {% endblock %}
 
 .test-row {
@@ -72,7 +72,7 @@ content: "{% trans 'Stock Item Test Report' %}";
         <p><em>Stock Item ID: {{ stock_item.pk }}</em></p>
     </div>
     <div class='img-right'>
-        <img class='part-img' src="{% part_image part %}">
+        <img class='part-img' src='{% part_image part %}'>
         <hr>
         <h4>
             {% if stock_item.is_serialized %}

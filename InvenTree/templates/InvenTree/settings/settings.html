@@ -95,7 +95,6 @@ $('table').find('.boolean-setting').change(function() {
             }
         }
     );
-    
 });
 
 // Callback for when non-boolean settings are edited
@@ -126,18 +125,18 @@ $('table').find('.btn-edit-setting').click(function() {
     });
 });
 
-$("#edit-user").on('click', function() {
+$('#edit-user').on('click', function() {
     launchModalForm(
-        "{% url 'edit-user' %}",
+        '{% url "edit-user" %}',
         {
             reload: true,
         }
     );
 });
 
-$("#edit-password").on('click', function() {
+$('#edit-password').on('click', function() {
     launchModalForm(
-        "{% url 'set-password' %}",
+        '{% url "set-password" %}',
         {
             reload: true,
         }
@@ -245,7 +244,7 @@ function loadTemplateTable(pk) {
     $('#new-cat-param').removeAttr('disabled');
 
     // Load the parameter table
-    $("#cat-param-table").bootstrapTable('refresh', {
+    $('#cat-param-table').bootstrapTable('refresh', {
         query: {
             category: pk,
         },
@@ -258,13 +257,13 @@ $('body').on('change', '#category-select', function() {
     loadTemplateTable(pk);
 });
 
-$("#new-cat-param").click(function() {
+$('#new-cat-param').click(function() {
 
     var pk = $('#category-select').val();
 
     launchModalForm(`/part/category/${pk}/parameters/new/`, {
         success: function() {
-            $("#cat-param-table").bootstrapTable('refresh', {
+            $('#cat-param-table').bootstrapTable('refresh', {
                 query: {
                     category: pk,
                 }
@@ -273,7 +272,7 @@ $("#new-cat-param").click(function() {
     });
 });
 
-$("#cat-param-table").on('click', '.template-edit', function() {
+$('#cat-param-table').on('click', '.template-edit', function() {
 
     var category = $('#category-select').val();
     var pk = $(this).attr('pk');
@@ -282,12 +281,12 @@ $("#cat-param-table").on('click', '.template-edit', function() {
 
     launchModalForm(url, {
         success: function() {
-            $("#cat-param-table").bootstrapTable('refresh');
+            $('#cat-param-table').bootstrapTable('refresh');
         }
     });
 });
 
-$("#cat-param-table").on('click', '.template-delete', function() {
+$('#cat-param-table').on('click', '.template-delete', function() {
 
     var category = $('#category-select').val();
     var pk = $(this).attr('pk');
@@ -296,13 +295,13 @@ $("#cat-param-table").on('click', '.template-delete', function() {
 
     launchModalForm(url, {
         success: function() {
-            $("#cat-param-table").bootstrapTable('refresh');
+            $('#cat-param-table').bootstrapTable('refresh');
         }
     });
 });
 
-$("#param-table").inventreeTable({
-    url: "{% url 'api-part-parameter-template-list' %}",
+$('#param-table').inventreeTable({
+    url: '{% url "api-part-parameter-template-list" %}',
     queryParams: {
         ordering: 'name',
     },
@@ -337,45 +336,45 @@ $("#param-table").inventreeTable({
     ]
 });
 
-$("#new-param").click(function() {
-    launchModalForm("{% url 'part-param-template-create' %}", {
+$('#new-param').click(function() {
+    launchModalForm('{% url "part-param-template-create" %}', {
         success: function() {
-            $("#param-table").bootstrapTable('refresh');
+            $('#param-table').bootstrapTable('refresh');
         },
     });
 });
 
-$("#param-table").on('click', '.template-edit', function() {
+$('#param-table').on('click', '.template-edit', function() {
     var button = $(this);
 
-    var url = "/part/parameter/template/" + button.attr('pk') + "/edit/";
+    var url = '/part/parameter/template/' + button.attr('pk') + '/edit/';
 
     launchModalForm(url, {
         success: function() {
-            $("#param-table").bootstrapTable('refresh');
+            $('#param-table').bootstrapTable('refresh');
         }
     });
 });
 
-$("#param-table").on('click', '.template-delete', function() {
+$('#param-table').on('click', '.template-delete', function() {
     var button = $(this);
 
-    var url = "/part/parameter/template/" + button.attr('pk') + "/delete/";
+    var url = '/part/parameter/template/' + button.attr('pk') + '/delete/';
 
     launchModalForm(url, {
         success: function() {
-            $("#param-table").bootstrapTable('refresh');
+            $('#param-table').bootstrapTable('refresh');
         }
     });
 });
 
-$("#import-part").click(function() {
-    launchModalForm("{% url 'api-part-import' %}?reset", {});
+$('#import-part').click(function() {
+    launchModalForm('{% url "api-part-import" %}?reset', {});
 });
 
 {% plugins_enabled as plug %}
 {% if plug %}
-$("#install-plugin").click(function() {
+$('#install-plugin').click(function() {
     installPlugin();
 });
 {% endif %}

@@ -20,7 +20,7 @@
 {% if part.used_in_count %}
 <hr>
 <p>{% blocktrans with count=part.used_in_count %}This part is used in BOMs for {{count}} other parts. If you delete this part, the BOMs for the following parts will be updated{% endblocktrans %}:
-<ul class="list-group">
+<ul class='list-group'>
     {% for child in part.used_in.all %}
     <li class='list-group-item'>{{ child.part.full_name }} - {{ child.part.description }}</li>
     {% endfor %}

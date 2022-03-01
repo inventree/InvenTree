@@ -19,7 +19,7 @@
 {% block actions %}
 <!-- Admin View -->
 {% if user.is_staff and roles.part.change %}
-{% url 'admin:part_part_change' part.pk as url %}
+{% url "admin:part_part_change" part.pk as url %}
 {% include "admin_button.html" with url=url %}
 {% endif %}
 
@@ -136,7 +136,7 @@
                         &ensp;
                         <div class='badge rounded-pill bg-danger'>
                             <span class='fas fa-skull-crossbones' title='{% trans "Part is virtual (not a physical part)" %}'></span>
-                            {% trans 'Inactive' %}
+                            {% trans "Inactive" %}
                         </div>
                         {% endif %}
                         <!-- Part virtual -->
@@ -144,12 +144,12 @@
                         &ensp;
                         <div class='badge rounded-pill bg-warning'>
                             <span class='fas fa-ghost' title='{% trans "Part is virtual (not a physical part)" %}'></span>
-                            {% trans 'Virtual' %}
+                            {% trans "Virtual" %}
                         </div>
                         {% endif %}
                         </h5>
                     </div>
-                    
+
                     {% include "spacer.html" %}
 
                     <button type='button' class='btn btn-outline-secondary' data-bs-toggle='collapse' href='#collapse-part-details' role='button' id='toggle-details-button'>
@@ -257,7 +257,7 @@
     <div class='row flex-wrap'>
         <div class='col-sm-6'>
                     <!-- Details Table -->
-        <table class="table table-striped table-condensed">
+        <table class='table table-striped table-condensed'>
             <col width='25'>
             {% if part.category %}
             <tr>
@@ -306,7 +306,7 @@
         </table>
         </div>
         <div class='col-sm-6'>
-            <table class="table table-striped table-condensed">
+            <table class='table table-striped table-condensed'>
                 <col width='25'>
                 <tr>
                     <td><span class='fas fa-calendar-alt'></span></td>
@@ -352,7 +352,7 @@
                 <tr>
                     <td><span class='fas fa-link'></span></td>
                     <td>{% trans "External Link" %}</td>
-                    <td><a href="{{ part.link }}">{{ part.link }}</a>{% include "clip.html"%}</td>
+                    <td><a href='{{ part.link }}'>{{ part.link }}</a>{% include "clip.html"%}</td>
                 </tr>
                 {% endif %}
             </table>
@@ -376,7 +376,7 @@
         if (data.image) {
             $('#part-image').attr('src', data.image);
 
-            // Reset the "modal image" view
+            // Reset the 'modal image' view
             $('#part-thumb').click(function() {
                 showModalImage(data.image);
             });
@@ -389,7 +389,7 @@
 
     enableDragAndDrop(
         '#part-thumb',
-        "{% url 'api-part-detail' part.id %}",
+        '{% url "api-part-detail" part.id %}',
         {
             label: 'image',
             method: 'PATCH',
@@ -399,9 +399,9 @@
         }
     );
 
-    $("#show-qr-code").click(function() {
+    $('#show-qr-code').click(function() {
         launchModalForm(
-            "{% url 'part-qr' part.id %}",
+            '{% url "part-qr" part.id %}',
             {
                 no_post: true,
             }
@@ -434,17 +434,17 @@
         );
     }
 
-    $("#part-move").click(function() {
+    $('#part-move').click(function() {
         adjustPartStock('move');
     });
 
-    $("#part-count").click(function() {
+    $('#part-count').click(function() {
         adjustPartStock('count');
     });
 
-    $("#price-button").click(function() {
+    $('#price-button').click(function() {
         launchModalForm(
-            "{% url 'part-pricing' part.id %}",
+            '{% url "part-pricing" part.id %}',
             {
                 submit_text: '{% trans "Calculate" %}',
                 hideErrorMessage: true,
@@ -452,14 +452,14 @@
         );
     });
 
-    $("#toggle-starred").click(function() {
+    $('#toggle-starred').click(function() {
         toggleStar({
             url: '{% url "api-part-detail" part.pk %}',
             button: '#part-star-icon',
         });
     });
 
-    $("#part-image-upload").click(function() {
+    $('#part-image-upload').click(function() {
 
         constructForm(
             '{% url "api-part-detail" part.pk %}',
@@ -481,8 +481,8 @@
         // Callback when the image-selection modal form is displayed
         // Populate the form with image data (requested via AJAX)
 
-        $("#modal-form").find("#image-select-table").inventreeTable({
-            url: "{% url 'api-part-thumbs' %}",
+        $('#modal-form').find('#image-select-table').inventreeTable({
+            url: '{% url "api-part-thumbs" %}',
             showHeader: false,
             showColumns: false,
             clickToSelect: true,
@@ -507,7 +507,7 @@
             onCheck: function(row, element) {
 
                 // Update the selected image in the form
-                var ipt = $("#modal-form").find("#image-input");
+                var ipt = $('#modal-form').find('#image-input');
                 ipt.val(row.image);
 
             }
@@ -517,7 +517,7 @@
     {% if roles.part.change %}
 
     if (global_settings.INVENTREE_DOWNLOAD_FROM_URL) {
-        $("#part-image-url").click(function() {
+        $('#part-image-url').click(function() {
             launchModalForm(
                 '{% url "part-image-download" part.id %}',
                 {
@@ -527,22 +527,22 @@
         });
     }
 
-    $("#part-image-select").click(function() {
-        launchModalForm("{% url 'part-image-select' part.id %}",
+    $('#part-image-select').click(function() {
+        launchModalForm('{% url "part-image-select" part.id %}',
                         {
                             reload: true,
                             after_render: onSelectImage
                         });
     });
 
-    $("#part-edit").click(function() {
+    $('#part-edit').click(function() {
 
         editPart({{ part.pk }});
     });
     {% endif %}
 
-    $("#part-order").click(function() {
-        launchModalForm("{% url 'order-parts' %}", {
+    $('#part-order').click(function() {
+        launchModalForm('{% url "order-parts" %}', {
             data: {
                 part: {{ part.id }},
             },
@@ -551,30 +551,30 @@
     });
 
     {% if roles.part.add %}
-    $("#part-duplicate").click(function() {
+    $('#part-duplicate').click(function() {
         duplicatePart({{ part.pk }});
     });
     {% endif %}
 
     {% if roles.part.delete %}
-    $("#part-delete").click(function() {
+    $('#part-delete').click(function() {
         launchModalForm(
-            "{% url 'part-delete' part.id %}",
+            '{% url "part-delete" part.id %}',
             {
-                redirect: {% if part.category %}"{% url 'category-detail' part.category.id %}"{% else %}"{% url 'part-index' %}"{% endif %},
+                redirect: '{% if part.category %}{% url "category-detail" part.category.id %}{% else %}{% url "part-index" %}{% endif %}',
                 no_post: {% if part.active %}true{% else %}false{% endif %},
             }
         );
     });
     {% endif %}
 
-    // Callback function when the "part details" panel is shown
+    // Callback function when the 'part details' panel is shown
     $('#collapse-part-details').on('show.bs.collapse', function() {
         $('#toggle-details-button').html('{% trans "Hide Part Details" %}');
         inventreeSave('show-part-details', true);
     });
-    
-    // Callback function when the "part details" panel is hidden
+
+    // Callback function when the 'part details' panel is hidden
     $('#collapse-part-details').on('hide.bs.collapse', function() {
         $('#toggle-details-button').html('{% trans "Show Part Details" %}');
         inventreeSave('show-part-details', false);
@@ -586,6 +586,6 @@
 
     $('#serial-number-search').click(function() {
         findStockItemBySerialNumber({{ part.pk }});
-    });    
+    });
 
 {% endblock %}

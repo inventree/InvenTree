@@ -15,7 +15,7 @@ InvenTree | {% trans "Manufacturer Part" %}
 {% if part.manufacturer %}
 <li class='breadcrumb-item'><a href='{% url "company-detail" part.manufacturer.id %}'>{{ part.manufacturer.name }}</a></li>
 {% endif %}
-<li class="breadcrumb-item active" aria-current="page"><a href='{% url "manufacturer-part-detail" part.id %}'>{{ part.MPN }}</a></li>
+<li class='breadcrumb-item active' aria-current='page'><a href='{% url "manufacturer-part-detail" part.id %}'>{{ part.MPN }}</a></li>
 {% endblock breadcrumbs %}
 
 {% block heading %}
@@ -26,7 +26,7 @@ InvenTree | {% trans "Manufacturer Part" %}
 
 {% block actions %}
 {% if user.is_staff and perms.company.change_company %}
-{% url 'admin:company_supplierpart_change' part.pk as url %}
+{% url "admin:company_supplierpart_change" part.pk as url %}
 {% include "admin_button.html" with url=url %}
 {% endif %}
 {% if roles.purchase_order.change %}
@@ -53,7 +53,7 @@ InvenTree | {% trans "Manufacturer Part" %}
 {% if part.part.image %}
 src='{{ part.part.image.url }}'
 {% else %}
-src="{% static 'img/blank_image.png' %}"
+src='{% static "img/blank_image.png" %}'
 {% endif %}/>
 {% endblock thumbnail %}
 
@@ -66,7 +66,7 @@ src="{% static 'img/blank_image.png' %}"
         <td>{% trans "Internal Part" %}</td>
         <td>
             {% if part.part %}
-            <a href="{% url 'part-detail' part.part.id %}?display=part-suppliers">{{ part.part.full_name }}</a>{% include "clip.html"%}
+            <a href='{% url "part-detail" part.part.id %}?display=part-suppliers'>{{ part.part.full_name }}</a>{% include "clip.html"%}
             {% endif %}
         </td>
     </tr>
@@ -83,13 +83,13 @@ src="{% static 'img/blank_image.png' %}"
 
 {% block details_right %}
 
-<table class="table table-striped table-condensed">
+<table class='table table-striped table-condensed'>
     <col width='25'>
 
     <tr>
         <td><span class='fas fa-industry'></span></td>
         <td>{% trans "Manufacturer" %}</td>
-        <td><a href="{% url 'company-detail' part.manufacturer.id %}">{{ part.manufacturer.name }}</a>{% include "clip.html"%}</td>
+        <td><a href='{% url "company-detail" part.manufacturer.id %}'>{{ part.manufacturer.name }}</a>{% include "clip.html"%}</td>
     </tr>
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
@@ -100,7 +100,7 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-link'></span></td>
         <td>{% trans "External Link" %}</td>
-        <td><a href="{{ part.link }}">{{ part.link }}</a>{% include "clip.html"%}</td>
+        <td><a href='{{ part.link }}'>{{ part.link }}</a>{% include "clip.html"%}</td>
     </tr>
     {% endif %}
 </table>
@@ -114,7 +114,7 @@ src="{% static 'img/blank_image.png' %}"
             <h4>{% trans "Suppliers" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                <button class="btn btn-success" id='supplier-create'>
+                <button class='btn btn-success' id='supplier-create'>
                     <span class='fas fa-plus-circle'></span> {% trans "New Supplier Part" %}
                 </button>
             </div>
@@ -123,16 +123,15 @@ src="{% static 'img/blank_image.png' %}"
     <div class='panel-content'>
         <div id='supplier-button-toolbar'>
             <div class='btn-group'>
-                <div id='opt-dropdown' class="btn-group">
-                    <button id='supplier-part-options' class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">{% trans "Options" %} <span class="caret"></span></button>
-                    <ul class="dropdown-menu">
+                <div id='opt-dropdown' class='btn-group'>
+                    <button id='supplier-part-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle='dropdown'>{% trans "Options" %} <span class='caret'></span></button>
+                    <ul class='dropdown-menu'>
                         <li><a class='dropdown-item' href='#' id='supplier-part-delete' title='{% trans "Delete supplier parts" %}'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete" %}</a></li>
                     </ul>
                 </div>
             </div>
         </div>
-        
-        <table class="table table-striped table-condensed" id='supplier-table' data-toolbar='#supplier-button-toolbar'>
+        <table class='table table-striped table-condensed' id='supplier-table' data-toolbar='#supplier-button-toolbar'>
         </table>
     </div>
 </div>
@@ -152,9 +151,9 @@ src="{% static 'img/blank_image.png' %}"
     <div class='panel-content'>
         <div id='parameter-toolbar'>
             <div class='btn-group'>
-                <div id='opt-dropdown' class="btn-group">
-                    <button id='parameter-options' class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">{% trans "Options" %} <span class="caret"></span></button>
-                    <ul class="dropdown-menu">
+                <div id='opt-dropdown' class='btn-group'>
+                    <button id='parameter-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle='dropdown'>{% trans "Options" %} <span class='caret'></span></button>
+                    <ul class='dropdown-menu'>
                         <li><a class='dropdown-item' href='#' id='multi-parameter-delete' title='{% trans "Delete parameters" %}'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete" %}</a></li>
                     </ul>
                 </div>
@@ -172,7 +171,7 @@ src="{% static 'img/blank_image.png' %}"
 {{ block.super }}
 
 function reloadParameters() {
-    $("#parameter-table").bootstrapTable("refresh");
+    $('#parameter-table').bootstrapTable('refresh');
 }
 
 $('#parameter-create').click(function() {
@@ -205,9 +204,9 @@ $('#supplier-create').click(function () {
     });
 });
 
-$("#supplier-part-delete").click(function() {
+$('#supplier-part-delete').click(function() {
 
-    var selections = $("#supplier-table").bootstrapTable("getSelections");
+    var selections = $('#supplier-table').bootstrapTable('getSelections');
 
     var requests = [];
 
@@ -218,10 +217,10 @@ $("#supplier-part-delete").click(function() {
             accept: function() {
                 selections.forEach(function(part) {
                     var url = `/api/company/part/${part.pk}/`;
-        
+
                     requests.push(inventreeDelete(url));
                 });
-        
+
                 $.when.apply($, requests).done(function() {
                     reloadSupplierPartTable();
                 });
@@ -230,9 +229,9 @@ $("#supplier-part-delete").click(function() {
     );
 });
 
-$("#multi-parameter-delete").click(function() {
+$('#multi-parameter-delete').click(function() {
 
-    var selections = $("#parameter-table").bootstrapTable("getSelections");
+    var selections = $('#parameter-table').bootstrapTable('getSelections');
 
     var text = `
     <div class ='alert alert-block alert-danger'>
@@ -246,7 +245,7 @@ $("#multi-parameter-delete").click(function() {
     text += `
         </ul>
     </div>`;
-    
+
     showQuestionDialog(
         '{% trans "Delete Parameters" %}',
         text,
@@ -271,8 +270,8 @@ $("#multi-parameter-delete").click(function() {
 });
 
 loadSupplierPartTable(
-    "#supplier-table",
-    "{% url 'api-supplier-part-list' %}",
+    '#supplier-table',
+    '{% url "api-supplier-part-list" %}',
     {
         params: {
             part: {{ part.part.id }},
@@ -285,8 +284,8 @@ loadSupplierPartTable(
 );
 
 loadManufacturerPartParameterTable(
-    "#parameter-table",
-    "{% url 'api-manufacturer-part-parameter-list' %}",
+    '#parameter-table',
+    '{% url "api-manufacturer-part-parameter-list" %}',
     {
         params: {
             manufacturer_part: {{ part.id }},
@@ -294,13 +293,13 @@ loadManufacturerPartParameterTable(
     }
 );
 
-linkButtonsToSelection($("#supplier-table"), ['#supplier-part-options']);
+linkButtonsToSelection($('#supplier-table'), ['#supplier-part-options']);
 
-linkButtonsToSelection($("#parameter-table"), ['#parameter-options']);
+linkButtonsToSelection($('#parameter-table'), ['#parameter-options']);
 
 $('#order-part, #order-part2').click(function() {
     launchModalForm(
-        "{% url 'order-parts' %}",
+        '{% url "order-parts" %}',
         {
             data: {
                 part: {{ part.part.id }},
@@ -323,7 +322,7 @@ $('#delete-part').click(function() {
 
     deleteManufacturerPart({{ part.pk }}, {
         onSuccess: function() {
-            window.location.href = "{% url 'company-detail' part.manufacturer.id %}";
+            window.location.href = '{% url "company-detail" part.manufacturer.id %}';
         }
     });
 });

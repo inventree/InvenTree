@@ -74,12 +74,12 @@ margin-top: 4cm;
 {% endblock %}
 
 {% block bottom_left %}
-content: "v{{report_revision}} - {{ date.isoformat }}";
+content: 'v{{report_revision}} - {{ date.isoformat }}';
 {% endblock %}
 
 {% block header_content %}
     <!-- TODO - Make the company logo asset generic -->
-    <img class='logo' src="{% asset 'company_logo.png' %}" alt="logo" width="150">
+    <img class='logo' src='{% asset "company_logo.png" %}' alt='logo' width='150'>
 
     <div class='header-right'>
         <h3>
@@ -96,7 +96,7 @@ content: "v{{report_revision}} - {{ date.isoformat }}";
 
 <div class='details'>
     <div class='details-image'>
-        <img class='part-image' src="{% part_image part %}">
+        <img class='part-image' src='{% part_image part %}'>
     </div>
 
     <div class='details-container'>
@@ -163,7 +163,7 @@ content: "v{{report_revision}} - {{ date.isoformat }}";
             {% if build.link %}
             <tr>
                 <th>{% trans "Link" %}</th>
-                <td><a href="{{ build.link }}">{{ build.link }}</a></td>
+                <td><a href='{{ build.link }}'>{{ build.link }}</a></td>
             </tr>
             {% endif %}
         </table>
