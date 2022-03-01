@@ -439,21 +439,21 @@ class TestSettings(TestCase):
         self.assertEqual(user_count(), 0)
 
         # not enough set
-        self.env.set('INVENTREE_SET_USER', 'admin')  # set username
+        self.env.set('INVENTREE_ADMIN_USER', 'admin')  # set username
         self.run_reload()
         self.assertEqual(user_count(), 0)
 
         # enough set
-        self.env.set('INVENTREE_SET_USER', 'admin')  # set username
-        self.env.set('INVENTREE_SET_EMAIL', 'info@example.com')  # set email
-        self.env.set('INVENTREE_SET_PASSWORD', 'password123')  # set password
+        self.env.set('INVENTREE_ADMIN_USER', 'admin')  # set username
+        self.env.set('INVENTREE_ADMIN_EMAIL', 'info@example.com')  # set email
+        self.env.set('INVENTREE_ADMIN_PASSWORD', 'password123')  # set password
         self.run_reload()
         self.assertEqual(user_count(), 1)
 
         # double adding should not work
-        self.env.set('INVENTREE_SET_USER', 'admin')  # set username
-        self.env.set('INVENTREE_SET_EMAIL', 'info@example.com')  # set email
-        self.env.set('INVENTREE_SET_PASSWORD', 'password123')  # set password
+        self.env.set('INVENTREE_ADMIN_USER', 'admin')  # set username
+        self.env.set('INVENTREE_ADMIN_EMAIL', 'info@example.com')  # set email
+        self.env.set('INVENTREE_ADMIN_PASSWORD', 'password123')  # set password
         with self.assertRaises(IntegrationPluginError):
             self.run_reload()
         self.assertEqual(user_count(), 1)
