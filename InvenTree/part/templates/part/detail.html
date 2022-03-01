@@ -37,6 +37,8 @@
     </div>
 </div>
 
+{% settings_value 'DISPLAY_SCHEDULE_TAB' user=request.user as show_scheduling %}
+{% if show_scheduling %}
 <div class='panel panel-hidden' id='panel-scheduling'>
     <div class='panel-heading'>
         <div class='d-flex flex-wrap'>
@@ -48,6 +50,7 @@
         {% include "part/part_scheduling.html" %}
     </div>
 </div>
+{% endif %}
 
 <div class='panel panel-hidden' id='panel-allocations'>
     <div class='panel-heading'>
