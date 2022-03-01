@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-02-28 21:46+0000\n"
-"PO-Revision-Date: 2022-03-01 10:04\n"
+"PO-Revision-Date: 2022-03-01 11:30\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -6511,7 +6511,7 @@ msgstr "Categoria sottoscritta"
 
 #: templates/InvenTree/index.html:108
 msgid "Latest Parts"
-msgstr ""
+msgstr "Articoli Recenti"
 
 #: templates/InvenTree/index.html:119
 msgid "BOM Waiting Validation"
@@ -6535,7 +6535,7 @@ msgstr ""
 
 #: templates/InvenTree/index.html:224
 msgid "Build Orders In Progress"
-msgstr ""
+msgstr "Ordini di Produzione Attivi"
 
 #: templates/InvenTree/index.html:235
 msgid "Overdue Build Orders"
