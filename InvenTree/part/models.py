@@ -1453,7 +1453,9 @@ class Part(MPTTModel):
         By default, will include inherited BOM items
         """
 
-        return BomItem.objects.filter(self.get_bom_item_filter(include_inherited=include_inherited))
+        queryset = BomItem.objects.filter(self.get_bom_item_filter(include_inherited=include_inherited))
+
+        return queryset.prefetch_related('sub_part')
 
     def get_installed_part_options(self, include_inherited=True, include_variants=True):
         """
