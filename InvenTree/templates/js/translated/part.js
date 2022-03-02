@@ -474,6 +474,7 @@ function duplicateBom(part_id, options={}) {
                 }
             },
             include_inherited: {},
+            copy_substitutes: {},
             remove_existing: {},
             skip_invalid: {},
         },
