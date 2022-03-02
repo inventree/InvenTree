@@ -1453,7 +1453,9 @@ class Part(MPTTModel):
         By default, will include inherited BOM items
         """
 
-        return BomItem.objects.filter(self.get_bom_item_filter(include_inherited=include_inherited))
+        queryset = BomItem.objects.filter(self.get_bom_item_filter(include_inherited=include_inherited))
+
+        return queryset.prefetch_related('sub_part')
 
     def get_installed_part_options(self, include_inherited=True, include_variants=True):
         """
@@ -1906,6 +1908,9 @@ class Part(MPTTModel):
 
         include_inherited = kwargs.get('include_inherited', False)
 
+        # Should substitute parts be duplicated?
+        copy_substitutes = kwargs.get('copy_substitutes', True)
+
         # Copy existing BOM items from another part
         # Note: Inherited BOM Items will *not* be duplicated!!
         for bom_item in other.get_bom_items(include_inherited=include_inherited).all():
@@ -1928,11 +1933,22 @@ class Part(MPTTModel):
             if not bom_item.sub_part.check_add_to_bom(self, raise_error=raise_error):
                 continue
 
+            # Obtain a list of direct substitute parts against this BomItem
+            substitutes = BomItemSubstitute.objects.filter(bom_item=bom_item)
+
             # Construct a new BOM item
             bom_item.part = self
             bom_item.pk = None
 
             bom_item.save()
+            bom_item.refresh_from_db()
+
+            if copy_substitutes:
+                for sub in substitutes:
+                    # Duplicate the substitute (and point to the *new* BomItem object)
+                    sub.pk = None
+                    sub.bom_item = bom_item
+                    sub.save()
 
     @transaction.atomic
     def copy_parameters_from(self, other, **kwargs):
