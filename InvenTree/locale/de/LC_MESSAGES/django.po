@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-02 10:51+0000\n"
-"PO-Revision-Date: 2022-03-02 11:16\n"
+"PO-Revision-Date: 2022-03-02 17:21\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -4439,11 +4439,11 @@ msgstr "Aktiviere diese Option, um ungültige Zeilen zu überspringen"
 
 #: part/serializers.py:699
 msgid "Copy Substitute Parts"
-msgstr ""
+msgstr "Ersatzteile kopieren"
 
 #: part/serializers.py:700
 msgid "Copy substitute parts when duplicate BOM items"
-msgstr ""
+msgstr "Ersatzteile beim Duplizieren von Stücklisten-Positionen kopieren"
 
 #: part/serializers.py:744
 msgid "Clear Existing BOM"
