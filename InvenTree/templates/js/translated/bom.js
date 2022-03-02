@@ -671,9 +671,7 @@ function loadBomTable(table, options={}) {
     // Do we show part pricing in the BOM table?
     var show_pricing = global_settings.PART_SHOW_PRICE_IN_BOM;
 
-    if (!show_pricing) {
-        params.include_pricing = false;
-    }
+    params.include_pricing = show_pricing == true;
 
     if (options.part_detail) {
         params.part_detail = true;
@@ -989,31 +987,39 @@ function loadBomTable(table, options={}) {
 
     // Function to request BOM data for sub-items
     // This function may be called recursively for multi-level BOMs
-    function requestSubItems(bom_pk, part_pk) {
+    function requestSubItems(bom_pk, part_pk, depth=0) {
 
-        // TODO: 2022-02-03 Currently, multi-level BOMs are not actually displayed.
+        // Prevent multi-level recursion
+        const MAX_BOM_DEPTH = 25;
 
-        // Re-enable this function once multi-level display has been re-deployed
-        return;
+        if (depth >= MAX_BOM_DEPTH) {
+            console.log(`Maximum BOM depth (${MAX_BOM_DEPTH}) reached!`);
+            return;
+        }
 
         inventreeGet(
             options.bom_url,
             {
                 part: part_pk,
                 sub_part_detail: true,
+                include_pricing: show_pricing == true,
             },
             {
                 success: function(response) {
+
+                    // Add the returned sub-items to the table
                     for (var idx = 0; idx < response.length; idx++) {
-
                         response[idx].parentId = bom_pk;
-
-                        if (response[idx].sub_part_detail.assembly) {
-                            requestSubItems(response[idx].pk, response[idx].sub_part);
-                        }
                     }
-
+                    
                     table.bootstrapTable('append', response);
+
+                    // Next, re-iterate and check if the new items also have sub items
+                    response.forEach(function(bom_item) {
+                        if (bom_item.sub_part_detail.assembly) {
+                            requestSubItems(bom_item.pk, bom_item.sub_part, depth + 1);
+                        }
+                    });
 
                     table.treegrid('collapseAll');
                 },
@@ -1026,7 +1032,7 @@ function loadBomTable(table, options={}) {
     }
 
     table.inventreeTable({
-        treeEnable: !options.editable,
+        treeEnable: true,
         rootParentId: parent_id,
         idField: 'pk',
         uniqueId: 'pk',
@@ -1066,38 +1072,37 @@ function loadBomTable(table, options={}) {
         url: options.bom_url,
         onPostBody: function() {
 
-            if (!options.editable) {
-                table.treegrid({
-                    treeColumn: 0,
-                    onExpand: function() {
-                    }
-                });
-            }
+            table.treegrid({
+                treeColumn: 1,
+                onExpand: function() {
+                }
+            });
+
+            table.treegrid('collapseAll');
         },
         onLoadSuccess: function() {
 
             if (options.editable) {
                 table.bootstrapTable('uncheckAll');
-            } else {
+            }
 
-                var data = table.bootstrapTable('getData');
+            var data = table.bootstrapTable('getData');
 
-                for (var idx = 0; idx < data.length; idx++) {
-                    var row = data[idx];
+            for (var idx = 0; idx < data.length; idx++) {
+                var row = data[idx];
 
-                    // If a row already has a parent ID set, it's already been updated!
-                    if (row.parentId) {
-                        continue;
-                    }
+                // If a row already has a parent ID set, it's already been updated!
+                if (row.parentId) {
+                    continue;
+                }
 
-                    // Set the parent ID of the top-level rows
-                    row.parentId = parent_id;
+                // Set the parent ID of the top-level rows
+                row.parentId = parent_id;
 
-                    table.bootstrapTable('updateRow', idx, row, true);
+                table.bootstrapTable('updateRow', idx, row, true);
 
-                    if (row.sub_part_detail.assembly) {
-                        requestSubItems(row.pk, row.sub_part);
-                    }
+                if (row.sub_part_detail.assembly) {
+                    requestSubItems(row.pk, row.sub_part);
                 }
             }
         },
