@@ -25,7 +25,6 @@ import InvenTree.tasks
 
 from stock.models import StockLocation
 from common.settings import currency_codes
-from plugin.helpers import IntegrationPluginError
 
 
 class ValidatorTest(TestCase):
