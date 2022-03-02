@@ -24,6 +24,7 @@ import InvenTree.tasks
 
 from stock.models import StockLocation
 from common.settings import currency_codes
+from plugin.helpers import IntegrationPluginError
 
 
 class ValidatorTest(TestCase):
@@ -442,6 +443,21 @@ class TestSettings(TestCase):
         self.env.set('INVENTREE_ADMIN_USER', 'admin')  # set username
         self.run_reload()
         self.assertEqual(user_count(), 0)
+
+        # enough set
+        self.env.set('INVENTREE_ADMIN_USER', 'admin')  # set username
+        self.env.set('INVENTREE_ADMIN_EMAIL', 'info@example.com')  # set email
+        self.env.set('INVENTREE_ADMIN_PASSWORD', 'password123')  # set password
+        self.run_reload()
+        self.assertEqual(user_count(), 1)
+
+        # double adding should not work
+        self.env.set('INVENTREE_ADMIN_USER', 'admin')  # set username
+        self.env.set('INVENTREE_ADMIN_EMAIL', 'info@example.com')  # set email
+        self.env.set('INVENTREE_ADMIN_PASSWORD', 'password123')  # set password
+        with self.assertRaises(IntegrationPluginError):
+            self.run_reload()
+        self.assertEqual(user_count(), 1)
 
         # make sure to clean up
         settings.TESTING_ENV = False
