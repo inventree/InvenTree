@@ -438,5 +438,10 @@ class TestSettings(TestCase):
         # nothing set
         self.assertEqual(user_count(), 0)
 
+        # not enough set
+        self.env.set('INVENTREE_ADMIN_USER', 'admin')  # set username
+        self.run_reload()
+        self.assertEqual(user_count(), 0)
+
         # make sure to clean up
         settings.TESTING_ENV = False
