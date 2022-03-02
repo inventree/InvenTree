@@ -436,6 +436,7 @@ class TestSettings(TestCase):
         settings.TESTING_ENV = True
 
         # nothing set
+        self.run_reload()
         self.assertEqual(user_count(), 0)
 
         # not enough set
