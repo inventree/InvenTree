@@ -1051,7 +1051,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
     
     var target = options.filter_target || '#filter-list-purchase-order-lines';
 
-    setupFilterList('purchaseorderlineitem', $(table), target);
+    setupFilterList('purchaseorderlineitem', $(table), target, {download: true});
 
     function setupCallbacks() {
         if (options.allow_edit) {
@@ -1078,7 +1078,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                         });
                     }
                 });
-            })
+            });
 
             // Callback for "edit" button
             $(table).find('.button-line-edit').click(function() {
@@ -2583,7 +2583,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                         fields: fields,
                         data: data,
                         title: '{% trans "Duplicate Line Item" %}',
-                        onSuccess: function(response)  {
+                        onSuccess: function(response) {
                             $(table).bootstrapTable('refresh');
                         }
                     });
