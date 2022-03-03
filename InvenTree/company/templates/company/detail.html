@@ -283,9 +283,7 @@
     });
 
     $("#stock-export").click(function() {
-        exportStock({
-            supplier: {{ company.id }}
-        });
+        downloadTableData($("#stock-table"));
     });
 
     {% if company.is_manufacturer %}

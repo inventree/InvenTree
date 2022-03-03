@@ -834,9 +834,7 @@
     
         $("#stock-export").click(function() {
     
-            exportStock({
-                part: {{ part.pk }}
-            });
+            downloadTableData($("#stock-table"));
         });
     
         $('#item-create').click(function () {

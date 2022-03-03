@@ -309,11 +309,7 @@ loadStockTable($("#stock-table"), {
 });
 
 $("#stock-export").click(function() {
-
-    exportStock({
-        supplier_part: {{ part.pk }},
-    });
-
+    downloadTableData($("#stock-table"));
 });
 
 $("#item-create").click(function() {
