@@ -164,9 +164,6 @@
     <div id='part-button-toolbar'>
         <div class='btn-group' role='group'>
             <div class='btn-group' role='group'>
-                <button id='part-export' class='btn btn-outline-secondary' type='button' title='{% trans "Export part data" %}'>
-                    <span class='fas fa-file-download'></span>
-                </button>
                 <button id='part-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle="dropdown">
                     {% trans "Options" %}
                 </button>
@@ -288,10 +285,6 @@
             title: '{% trans "Create Part Category" %}',
             follow: true,
         });
-    });
-
-    $("#part-export").click(function() {
-        downloadTableData($('#part-table'));
     });
 
     {% if roles.part.add %}

@@ -1571,7 +1571,7 @@ function loadStockTable(table, options) {
         original[k] = params[k];
     }
 
-    setupFilterList(filterKey, table, filterTarget);
+    setupFilterList(filterKey, table, filterTarget, {download: true});
 
     // Override the default values, or add new ones
     for (var key in params) {

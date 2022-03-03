@@ -170,9 +170,6 @@
     <div class='panel-content'>
         <div id='assigned-stock-button-toolbar'>
             <div class='btn-group' role='group'>
-                <button class='btn btn-outline-secondary filter-button' id='assigned-stock-export' title='{% trans "Export Stock Information" %}'>
-                    <span class='fas fa-download'></span>
-                </button>
                 {% include "filter_list.html" with id="customerstock" %}
             </div>
         </div>
@@ -233,10 +230,6 @@
         filterTarget: '#filter-list-customerstock',
     });
 
-    $('#assigned-stock-export').click(function() {
-        downloadTableData($('#assigned-stock-table'));
-    });
-
     {% if company.is_customer %}
     loadSalesOrderTable("#sales-order-table", {
         url: "{% url 'api-so-list' %}",
@@ -289,10 +282,6 @@
             '#stock-options',
         ],
         filterKey: "companystock",
-    });
-
-    $("#stock-export").click(function() {
-        downloadTableData($("#stock-table"));
     });
 
     {% if company.is_manufacturer %}

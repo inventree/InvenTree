@@ -308,10 +308,6 @@ loadStockTable($("#stock-table"), {
     url: "{% url 'api-stock-list' %}",
 });
 
-$("#stock-export").click(function() {
-    downloadTableData($("#stock-table"));
-});
-
 $("#item-create").click(function() {
     createNewStockItem({
         data: {
