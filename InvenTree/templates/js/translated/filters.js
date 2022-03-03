@@ -370,14 +370,14 @@ function setupFilterList(tableKey, table, target, options={}) {
                     reloadTableFilters(table, filters);
 
                     // Run this function again
-                    setupFilterList(tableKey, table, target);
+                    setupFilterList(tableKey, table, target, options);
                 }
 
             });
         } else {
             addClicked = false;
 
-            setupFilterList(tableKey, table, target);
+            setupFilterList(tableKey, table, target, options);
         }
 
     });
@@ -388,7 +388,7 @@ function setupFilterList(tableKey, table, target, options={}) {
 
         reloadTableFilters(table, filters);
 
-        setupFilterList(tableKey, table, target);
+        setupFilterList(tableKey, table, target, options);
     });
 
     // Add callback for deleting each filter
@@ -402,7 +402,7 @@ function setupFilterList(tableKey, table, target, options={}) {
         reloadTableFilters(table, filters);
 
         // Run this function again!
-        setupFilterList(tableKey, table, target);
+        setupFilterList(tableKey, table, target, options);
     });
 }
 
