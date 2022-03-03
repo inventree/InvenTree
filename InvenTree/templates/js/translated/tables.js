@@ -39,7 +39,7 @@ function downloadTableData(table, opts={}) {
     var url = table_options.url;
 
     if (!url) {
-        console.log("Error: downloadTableData could not find 'url' parameter");
+        console.log('Error: downloadTableData could not find "url" parameter.');
     }
 
     var query_params = table_options.query_params || {};
