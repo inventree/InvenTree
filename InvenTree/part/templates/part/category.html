@@ -153,9 +153,6 @@
             <h4>{% trans "Parts" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                <button type='button' class='btn btn-outline-secondary' id='part-export' title='{% trans "Export Part Data" %}'>
-                    <span class='fas fa-file-download'></span> {% trans "Export" %}
-                </button>
                 {% if roles.part.add %}
                 <button type='button' class='btn btn-success' id='part-create' title='{% trans "Create new part" %}'>
                     <span class='fas fa-plus-circle'></span> {% trans "New Part" %}
@@ -167,6 +164,9 @@
     <div id='part-button-toolbar'>
         <div class='btn-group' role='group'>
             <div class='btn-group' role='group'>
+                <button id='part-export' class='btn btn-outline-secondary' type='button' title='{% trans "Export part data" %}'>
+                    <span class='fas fa-file-download'></span>
+                </button>
                 <button id='part-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle="dropdown">
                     {% trans "Options" %}
                 </button>
@@ -291,10 +291,7 @@
     });
 
     $("#part-export").click(function() {
-
-        var url = "{% url 'part-export' %}?category={{ category.id }}";
-
-        location.href = url;
+        downloadTableData($('#part-table'));
     });
 
     {% if roles.part.add %}
