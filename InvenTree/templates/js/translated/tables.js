@@ -31,31 +31,51 @@ function reloadtable(table) {
  * - The table has been loaded using the inventreeTable() function, not bootstrapTable()
  *   (Refer to the "reloadTableFilters" function to see why!)
  */
-function downloadTableData(table) {
+function downloadTableData(table, opts={}) {
 
     // Extract table configuration options
-    var options = table.bootstrapTable('getOptions');
+    var table_options = table.bootstrapTable('getOptions');
 
-    var url = options.url;
+    var url = table_options.url;
 
     if (!url) {
         console.log("Error: downloadTableData could not find 'url' parameter");
     }
 
-    var query_params = options.query_params || {};
+    var query_params = table_options.query_params || {};
 
     url += '?';
 
-    for (const [key, value] of Object.entries(query_params)) {
-        url += `${key}=${value}&`;
-    }
+    constructFormBody({}, {
+        title: opts.title || '{% trans "Export Table Data" %}',
+        fields: {
+            format: {
+                label: '{% trans "Format" %}',
+                help_text: '{% trans "Select File Format" %}',
+                required: true,
+                type: 'choice',
+                value: 'csv',
+                choices: exportFormatOptions(),
+            }
+        },
+        onSubmit: function(fields, form_options) {
+            var format = getFormFieldValue('format', fields['format'], form_options);
+            
+            // Hide the modal
+            $(form_options.modal).modal('hide');
 
-    var format = 'csv';
-
-    url += `export=${format}`;
-
-    location.href = url;
+            for (const [key, value] of Object.entries(query_params)) {
+                url += `${key}=${value}&`;
+            }
+        
+            url += `export=${format}`;
+        
+            location.href = url;
+        }
+    });
 }
+
+
 
 
 /**
