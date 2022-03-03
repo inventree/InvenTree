@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-03 02:53+0000\n"
-"PO-Revision-Date: 2022-03-03 03:01\n"
+"POT-Creation-Date: 2022-03-03 13:28+0000\n"
+"PO-Revision-Date: 2022-03-03 13:58\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -86,7 +86,7 @@ msgid "Duplicate serial: {sn}"
 msgstr "Duplikált sorozatszám: {sn}"
 
 #: InvenTree/helpers.py:449 order/models.py:282 order/models.py:435
-#: stock/views.py:1101
+#: stock/views.py:1010
 msgid "Invalid quantity provided"
 msgstr "Nem megfelelő mennyiség"
 
@@ -156,7 +156,7 @@ msgstr "Fájl megjegyzés"
 #: common/models.py:1278 common/models.py:1506 common/models.py:1507
 #: part/models.py:2317 part/models.py:2337
 #: report/templates/report/inventree_test_report_base.html:96
-#: templates/js/translated/stock.js:2817
+#: templates/js/translated/stock.js:2773
 msgid "User"
 msgstr "Felhasználó"
 
@@ -203,7 +203,7 @@ msgstr "Érvénytelen választás"
 #: templates/InvenTree/settings/settings.html:319
 #: templates/js/translated/company.js:641 templates/js/translated/part.js:568
 #: templates/js/translated/part.js:707 templates/js/translated/part.js:1654
-#: templates/js/translated/stock.js:2617
+#: templates/js/translated/stock.js:2573
 msgid "Name"
 msgstr "Név"
 
@@ -227,8 +227,8 @@ msgstr "Név"
 #: templates/js/translated/part.js:627 templates/js/translated/part.js:1022
 #: templates/js/translated/part.js:1107 templates/js/translated/part.js:1277
 #: templates/js/translated/part.js:1673 templates/js/translated/part.js:1742
-#: templates/js/translated/stock.js:1700 templates/js/translated/stock.js:2446
-#: templates/js/translated/stock.js:2629 templates/js/translated/stock.js:2667
+#: templates/js/translated/stock.js:1656 templates/js/translated/stock.js:2402
+#: templates/js/translated/stock.js:2585 templates/js/translated/stock.js:2623
 msgid "Description"
 msgstr "Leírás"
 
@@ -501,7 +501,7 @@ msgstr "Szülő tételből szétválasztva"
 msgid "Split child item"
 msgstr "Szétválasztott gyermek tétel"
 
-#: InvenTree/status_codes.py:295 templates/js/translated/stock.js:2204
+#: InvenTree/status_codes.py:295 templates/js/translated/stock.js:2160
 msgid "Merged stock items"
 msgstr "Összevont készlet tétel"
 
@@ -648,7 +648,7 @@ msgstr "Hibás választás a szülő gyártásra"
 #: build/models.py:137 build/templates/build/build_base.html:9
 #: build/templates/build/build_base.html:27
 #: report/templates/report/inventree_build_order_base.html:106
-#: templates/js/translated/build.js:676 templates/js/translated/stock.js:2422
+#: templates/js/translated/build.js:676 templates/js/translated/stock.js:2378
 msgid "Build Order"
 msgstr "Gyártási utasítás"
 
@@ -715,9 +715,9 @@ msgstr "Gyártás, amihez ez a gyártás hozzá van rendelve"
 #: templates/js/translated/order.js:1693 templates/js/translated/order.js:2050
 #: templates/js/translated/order.js:2245 templates/js/translated/part.js:1007
 #: templates/js/translated/part.js:1088 templates/js/translated/part.js:1255
-#: templates/js/translated/stock.js:562 templates/js/translated/stock.js:727
-#: templates/js/translated/stock.js:934 templates/js/translated/stock.js:1657
-#: templates/js/translated/stock.js:2892 templates/js/translated/stock.js:2991
+#: templates/js/translated/stock.js:518 templates/js/translated/stock.js:683
+#: templates/js/translated/stock.js:890 templates/js/translated/stock.js:1613
+#: templates/js/translated/stock.js:2848 templates/js/translated/stock.js:2947
 msgid "Part"
 msgstr "Alkatrész"
 
@@ -840,7 +840,7 @@ msgstr "Külső link"
 #: order/models.py:147 order/models.py:845 order/models.py:1107
 #: order/templates/order/po_sidebar.html:11
 #: order/templates/order/so_sidebar.html:17 part/models.py:988
-#: part/templates/part/detail.html:146 part/templates/part/part_sidebar.html:57
+#: part/templates/part/detail.html:141 part/templates/part/part_sidebar.html:57
 #: report/templates/report/inventree_build_order_base.html:173
 #: stock/forms.py:137 stock/forms.py:171 stock/models.py:636
 #: stock/models.py:1971 stock/models.py:2077 stock/serializers.py:332
@@ -849,7 +849,7 @@ msgstr "Külső link"
 #: templates/js/translated/barcode.js:58 templates/js/translated/bom.js:934
 #: templates/js/translated/company.js:845 templates/js/translated/order.js:1257
 #: templates/js/translated/order.js:1562 templates/js/translated/order.js:2419
-#: templates/js/translated/stock.js:1344 templates/js/translated/stock.js:1935
+#: templates/js/translated/stock.js:1300 templates/js/translated/stock.js:1891
 msgid "Notes"
 msgstr "Megjegyzések"
 
@@ -914,8 +914,8 @@ msgstr "Gyártás amihez készletet foglaljunk"
 #: templates/js/translated/order.js:85 templates/js/translated/order.js:1694
 #: templates/js/translated/order.js:1949 templates/js/translated/order.js:1954
 #: templates/js/translated/order.js:2057 templates/js/translated/order.js:2147
-#: templates/js/translated/stock.js:563 templates/js/translated/stock.js:728
-#: templates/js/translated/stock.js:2753
+#: templates/js/translated/stock.js:519 templates/js/translated/stock.js:684
+#: templates/js/translated/stock.js:2709
 msgid "Stock Item"
 msgstr "Készlet tétel"
 
@@ -931,7 +931,7 @@ msgstr "Forrás készlet tétel"
 #: order/templates/order/order_wizard/match_parts.html:30
 #: order/templates/order/order_wizard/select_parts.html:34 part/forms.py:144
 #: part/forms.py:160 part/forms.py:176 part/models.py:2721
-#: part/templates/part/detail.html:1006 part/templates/part/detail.html:1092
+#: part/templates/part/detail.html:994 part/templates/part/detail.html:1080
 #: part/templates/part/part_pricing.html:16
 #: part/templates/part/upload_bom.html:53
 #: report/templates/report/inventree_build_order_base.html:114
@@ -954,9 +954,9 @@ msgstr "Forrás készlet tétel"
 #: templates/js/translated/order.js:2064 templates/js/translated/order.js:2153
 #: templates/js/translated/order.js:2267 templates/js/translated/part.js:907
 #: templates/js/translated/part.js:1885 templates/js/translated/part.js:2008
-#: templates/js/translated/part.js:2086 templates/js/translated/stock.js:391
-#: templates/js/translated/stock.js:588 templates/js/translated/stock.js:758
-#: templates/js/translated/stock.js:2802 templates/js/translated/stock.js:2904
+#: templates/js/translated/part.js:2086 templates/js/translated/stock.js:390
+#: templates/js/translated/stock.js:544 templates/js/translated/stock.js:714
+#: templates/js/translated/stock.js:2758 templates/js/translated/stock.js:2860
 msgid "Quantity"
 msgstr "Mennyiség"
 
@@ -1012,8 +1012,8 @@ msgstr "Egész számú mennyiség szükséges, mivel az alkatrészjegyzék egyed
 
 #: build/serializers.py:225 order/serializers.py:280 order/serializers.py:907
 #: stock/forms.py:78 stock/serializers.py:314
-#: templates/js/translated/order.js:524 templates/js/translated/stock.js:238
-#: templates/js/translated/stock.js:392
+#: templates/js/translated/order.js:524 templates/js/translated/stock.js:237
+#: templates/js/translated/stock.js:391
 msgid "Serial Numbers"
 msgstr "Sorozatszámok"
 
@@ -1029,7 +1029,7 @@ msgstr "Sorozatszámok automatikus hozzárendelése"
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Szükséges tételek automatikus hozzárendelése a megfelelő sorozatszámokkal"
 
-#: build/serializers.py:275 stock/api.py:549
+#: build/serializers.py:275 stock/api.py:551
 msgid "The following serial numbers already exist"
 msgstr "A következő sorozatszámok már léteznek"
 
@@ -1045,9 +1045,9 @@ msgstr "A gyártási kimenetek listáját meg kell adni"
 #: templates/js/translated/build.js:1309 templates/js/translated/order.js:551
 #: templates/js/translated/order.js:1961 templates/js/translated/order.js:2072
 #: templates/js/translated/order.js:2080 templates/js/translated/order.js:2161
-#: templates/js/translated/part.js:179 templates/js/translated/stock.js:564
-#: templates/js/translated/stock.js:729 templates/js/translated/stock.js:936
-#: templates/js/translated/stock.js:1807 templates/js/translated/stock.js:2694
+#: templates/js/translated/part.js:179 templates/js/translated/stock.js:520
+#: templates/js/translated/stock.js:685 templates/js/translated/stock.js:892
+#: templates/js/translated/stock.js:1763 templates/js/translated/stock.js:2650
 msgid "Location"
 msgstr "Hely"
 
@@ -1060,8 +1060,8 @@ msgstr "A kész gyártási kimenetek helye"
 #: order/serializers.py:290 stock/templates/stock/item_base.html:182
 #: templates/js/translated/barcode.js:140 templates/js/translated/build.js:1954
 #: templates/js/translated/order.js:656 templates/js/translated/order.js:915
-#: templates/js/translated/order.js:1371 templates/js/translated/stock.js:1782
-#: templates/js/translated/stock.js:2771 templates/js/translated/stock.js:2920
+#: templates/js/translated/order.js:1371 templates/js/translated/stock.js:1738
+#: templates/js/translated/stock.js:2727 templates/js/translated/stock.js:2876
 msgid "Status"
 msgstr "Állapot"
 
@@ -1242,7 +1242,7 @@ msgstr "Kész"
 #: report/templates/report/inventree_build_order_base.html:136
 #: report/templates/report/inventree_so_report.html:77
 #: stock/templates/stock/item_base.html:286
-#: templates/js/translated/order.js:1326 templates/js/translated/stock.js:2436
+#: templates/js/translated/order.js:1326 templates/js/translated/stock.js:2392
 msgid "Sales Order"
 msgstr "Vevői rendelés"
 
@@ -1291,7 +1291,7 @@ msgstr "Lefoglalt alkatrészek"
 
 #: build/templates/build/detail.html:81
 #: stock/templates/stock/item_base.html:310
-#: templates/js/translated/stock.js:1796 templates/js/translated/stock.js:2927
+#: templates/js/translated/stock.js:1752 templates/js/translated/stock.js:2883
 #: templates/js/translated/table_filters.js:151
 #: templates/js/translated/table_filters.js:238
 msgid "Batch"
@@ -1343,7 +1343,7 @@ msgstr "Szükséges alkatrészek rendelése"
 #: build/templates/build/detail.html:185
 #: company/templates/company/detail.html:38
 #: company/templates/company/detail.html:85 order/views.py:463
-#: part/templates/part/category.html:177
+#: part/templates/part/category.html:174
 msgid "Order Parts"
 msgstr "Alkatrész rendelés"
 
@@ -1403,7 +1403,7 @@ msgstr "Befejezett gyártási kimenetek"
 #: order/templates/order/po_sidebar.html:9
 #: order/templates/order/purchase_order_detail.html:60
 #: order/templates/order/sales_order_detail.html:107
-#: order/templates/order/so_sidebar.html:15 part/templates/part/detail.html:222
+#: order/templates/order/so_sidebar.html:15 part/templates/part/detail.html:217
 #: part/templates/part/part_sidebar.html:55 stock/templates/stock/item.html:105
 #: stock/templates/stock/stock_sidebar.html:23
 msgid "Attachments"
@@ -1414,13 +1414,13 @@ msgid "Build Notes"
 msgstr "Gyártási megjegyzések"
 
 #: build/templates/build/detail.html:302 build/templates/build/detail.html:478
-#: company/templates/company/detail.html:188
-#: company/templates/company/detail.html:215
+#: company/templates/company/detail.html:190
+#: company/templates/company/detail.html:217
 #: order/templates/order/purchase_order_detail.html:80
 #: order/templates/order/purchase_order_detail.html:108
 #: order/templates/order/sales_order_detail.html:127
 #: order/templates/order/sales_order_detail.html:186
-#: part/templates/part/detail.html:150 stock/templates/stock/item.html:125
+#: part/templates/part/detail.html:145 stock/templates/stock/item.html:125
 #: stock/templates/stock/item.html:223
 msgid "Edit Notes"
 msgstr "Megjegyzések szerkesztése"
@@ -1433,7 +1433,7 @@ msgstr "Lefoglalás kész"
 msgid "All untracked stock items have been allocated"
 msgstr "Az összes nem követett készlet lefoglalásra került"
 
-#: build/templates/build/index.html:18 part/templates/part/detail.html:327
+#: build/templates/build/index.html:18 part/templates/part/detail.html:322
 msgid "New Build Order"
 msgstr "Új gyártási utasítás"
 
@@ -2337,14 +2337,14 @@ msgstr "Befejeződött a munka ezzel az üzenettel?"
 
 #: common/views.py:93 order/templates/order/order_wizard/po_upload.html:49
 #: order/templates/order/purchase_order_detail.html:24 order/views.py:243
-#: part/templates/part/import_wizard/part_upload.html:47 part/views.py:210
+#: part/templates/part/import_wizard/part_upload.html:47 part/views.py:208
 #: templates/patterns/wizard/upload.html:35
 msgid "Upload File"
 msgstr "Fájl feltöltése"
 
 #: common/views.py:94 order/views.py:244
 #: part/templates/part/import_wizard/ajax_match_fields.html:45
-#: part/templates/part/import_wizard/match_fields.html:52 part/views.py:211
+#: part/templates/part/import_wizard/match_fields.html:52 part/views.py:209
 #: templates/patterns/wizard/match_fields.html:51
 msgid "Match Fields"
 msgstr "Mezők egyeztetése"
@@ -2530,7 +2530,7 @@ msgstr "Paraméter neve"
 #: company/models.py:422
 #: report/templates/report/inventree_test_report_base.html:95
 #: stock/models.py:2064 templates/js/translated/company.js:647
-#: templates/js/translated/part.js:716 templates/js/translated/stock.js:1331
+#: templates/js/translated/part.js:716 templates/js/translated/stock.js:1287
 msgid "Value"
 msgstr "Érték"
 
@@ -2608,7 +2608,7 @@ msgstr "Minimális díj (pl. tárolási díj)"
 
 #: company/models.py:582 company/templates/company/supplier_part.html:112
 #: stock/models.py:532 stock/templates/stock/item_base.html:317
-#: templates/js/translated/company.js:850 templates/js/translated/stock.js:1931
+#: templates/js/translated/company.js:850 templates/js/translated/stock.js:1887
 msgid "Packaging"
 msgstr "Csomagolás"
 
@@ -2680,7 +2680,7 @@ msgstr "Kép letöltése URL-ről"
 #: stock/models.py:552 stock/serializers.py:683
 #: stock/templates/stock/item_base.html:269
 #: templates/js/translated/company.js:329 templates/js/translated/order.js:1348
-#: templates/js/translated/stock.js:2735
+#: templates/js/translated/stock.js:2691
 #: templates/js/translated/table_filters.js:392
 msgid "Customer"
 msgstr "Vevő"
@@ -2711,7 +2711,7 @@ msgstr "Új beszállítói alkatrész létrehozása"
 
 #: company/templates/company/detail.html:20
 #: company/templates/company/manufacturer_part.html:118
-#: part/templates/part/detail.html:365
+#: part/templates/part/detail.html:360
 msgid "New Supplier Part"
 msgstr "Új beszállítói alkatrész"
 
@@ -2719,14 +2719,14 @@ msgstr "Új beszállítói alkatrész"
 #: company/templates/company/detail.html:79
 #: company/templates/company/manufacturer_part.html:127
 #: company/templates/company/manufacturer_part.html:156
-#: part/templates/part/category.html:171 part/templates/part/detail.html:374
-#: part/templates/part/detail.html:403
+#: part/templates/part/category.html:168 part/templates/part/detail.html:369
+#: part/templates/part/detail.html:398
 msgid "Options"
 msgstr "Opciók"
 
 #: company/templates/company/detail.html:37
 #: company/templates/company/detail.html:84
-#: part/templates/part/category.html:177
+#: part/templates/part/category.html:174
 msgid "Order parts"
 msgstr "Alkatrész rendelés"
 
@@ -2748,7 +2748,7 @@ msgstr "Gyártói alkatrészek"
 msgid "Create new manufacturer part"
 msgstr "Új gyártói alkatrész létrehozása"
 
-#: company/templates/company/detail.html:67 part/templates/part/detail.html:393
+#: company/templates/company/detail.html:67 part/templates/part/detail.html:388
 msgid "New Manufacturer Part"
 msgstr "Új gyártói alkatrész"
 
@@ -2762,7 +2762,7 @@ msgstr "Beszállítói készlet"
 #: order/templates/order/order_base.html:13
 #: order/templates/order/purchase_orders.html:8
 #: order/templates/order/purchase_orders.html:12
-#: part/templates/part/detail.html:85 part/templates/part/part_sidebar.html:40
+#: part/templates/part/detail.html:80 part/templates/part/part_sidebar.html:40
 #: templates/InvenTree/index.html:252 templates/InvenTree/search.html:197
 #: templates/InvenTree/settings/sidebar.html:45 templates/navbar.html:47
 #: users/models.py:45
@@ -2784,7 +2784,7 @@ msgstr "Új beszerzési rendelés"
 #: order/templates/order/sales_order_base.html:13
 #: order/templates/order/sales_orders.html:8
 #: order/templates/order/sales_orders.html:15
-#: part/templates/part/detail.html:108 part/templates/part/part_sidebar.html:44
+#: part/templates/part/detail.html:103 part/templates/part/part_sidebar.html:44
 #: templates/InvenTree/index.html:283 templates/InvenTree/search.html:217
 #: templates/InvenTree/settings/sidebar.html:47 templates/navbar.html:58
 #: users/models.py:46
@@ -2806,19 +2806,19 @@ msgstr "Új vevői rendelés"
 msgid "Assigned Stock"
 msgstr "Hozzárendelt készlet"
 
-#: company/templates/company/detail.html:184
+#: company/templates/company/detail.html:186
 msgid "Company Notes"
 msgstr "Cég megjegyzések"
 
-#: company/templates/company/detail.html:384
+#: company/templates/company/detail.html:380
 #: company/templates/company/manufacturer_part.html:215
-#: part/templates/part/detail.html:447
+#: part/templates/part/detail.html:442
 msgid "Delete Supplier Parts?"
 msgstr "Töröljük a beszállítói alkatrészeket?"
 
-#: company/templates/company/detail.html:385
+#: company/templates/company/detail.html:381
 #: company/templates/company/manufacturer_part.html:216
-#: part/templates/part/detail.html:448
+#: part/templates/part/detail.html:443
 msgid "All selected supplier parts will be deleted"
 msgstr "Az összes kiválasztott beszállítói alkatrész törölve lesz"
 
@@ -2835,7 +2835,7 @@ msgstr "Gyártók"
 #: company/templates/company/manufacturer_part.html:35
 #: company/templates/company/supplier_part.html:34
 #: company/templates/company/supplier_part.html:159
-#: part/templates/part/detail.html:88 part/templates/part/part_base.html:76
+#: part/templates/part/detail.html:83 part/templates/part/part_base.html:76
 msgid "Order part"
 msgstr "Alkatrész rendelés"
 
@@ -2862,14 +2862,14 @@ msgid "Suppliers"
 msgstr "Beszállítók"
 
 #: company/templates/company/manufacturer_part.html:129
-#: part/templates/part/detail.html:376
+#: part/templates/part/detail.html:371
 msgid "Delete supplier parts"
 msgstr "Beszállítói alkatrész törlése"
 
 #: company/templates/company/manufacturer_part.html:129
 #: company/templates/company/manufacturer_part.html:158
 #: company/templates/company/manufacturer_part.html:254
-#: part/templates/part/detail.html:376 part/templates/part/detail.html:405
+#: part/templates/part/detail.html:371 part/templates/part/detail.html:400
 #: templates/js/translated/company.js:426 templates/js/translated/helpers.js:31
 #: users/models.py:217
 msgid "Delete"
@@ -2878,12 +2878,12 @@ msgstr "Törlés"
 #: company/templates/company/manufacturer_part.html:143
 #: company/templates/company/manufacturer_part_sidebar.html:5
 #: part/templates/part/category_sidebar.html:17
-#: part/templates/part/detail.html:196 part/templates/part/part_sidebar.html:9
+#: part/templates/part/detail.html:191 part/templates/part/part_sidebar.html:9
 msgid "Parameters"
 msgstr "Paraméterek"
 
 #: company/templates/company/manufacturer_part.html:147
-#: part/templates/part/detail.html:201
+#: part/templates/part/detail.html:196
 #: templates/InvenTree/settings/category.html:12
 #: templates/InvenTree/settings/part.html:66
 msgid "New Parameter"
@@ -2894,7 +2894,7 @@ msgid "Delete parameters"
 msgstr "Paraméterek törlése"
 
 #: company/templates/company/manufacturer_part.html:191
-#: part/templates/part/detail.html:906
+#: part/templates/part/detail.html:894
 msgid "Add Parameter"
 msgstr "Paraméter hozzáadása"
 
@@ -2925,7 +2925,7 @@ msgstr "Hozzárendelt készlet tételek"
 #: company/templates/company/supplier_part.html:7
 #: company/templates/company/supplier_part.html:24 stock/models.py:516
 #: stock/templates/stock/item_base.html:381
-#: templates/js/translated/company.js:790 templates/js/translated/stock.js:1888
+#: templates/js/translated/company.js:790 templates/js/translated/stock.js:1844
 msgid "Supplier Part"
 msgstr "Beszállítói alkatrész"
 
@@ -2951,7 +2951,7 @@ msgstr "Új készlet tétel létrehozása"
 
 #: company/templates/company/supplier_part.html:142
 #: part/templates/part/detail.html:25 stock/templates/stock/location.html:166
-#: templates/js/translated/stock.js:368
+#: templates/js/translated/stock.js:367
 msgid "New Stock Item"
 msgstr "Új készlet tétel"
 
@@ -2961,7 +2961,7 @@ msgid "Supplier Part Orders"
 msgstr "Beszállítói alkatrész rendelések"
 
 #: company/templates/company/supplier_part.html:160
-#: part/templates/part/detail.html:89
+#: part/templates/part/detail.html:84
 msgid "Order Part"
 msgstr "Alkatrész rendelése"
 
@@ -2972,7 +2972,7 @@ msgstr "Árinformációk"
 
 #: company/templates/company/supplier_part.html:184
 #: company/templates/company/supplier_part.html:290
-#: part/templates/part/prices.html:271 part/views.py:1319
+#: part/templates/part/prices.html:271 part/views.py:1254
 msgid "Add Price Break"
 msgstr "Árlépcső hozzáadása"
 
@@ -2980,11 +2980,11 @@ msgstr "Árlépcső hozzáadása"
 msgid "No price break information found"
 msgstr "Nincs árlépcső információ"
 
-#: company/templates/company/supplier_part.html:224 part/views.py:1381
+#: company/templates/company/supplier_part.html:224 part/views.py:1316
 msgid "Delete Price Break"
 msgstr "Árlépcső törlése"
 
-#: company/templates/company/supplier_part.html:238 part/views.py:1367
+#: company/templates/company/supplier_part.html:238 part/views.py:1302
 msgid "Edit Price Break"
 msgstr "Árlépcső szerkesztése"
 
@@ -3004,8 +3004,8 @@ msgstr "Árlépcső törlése"
 #: templates/InvenTree/settings/sidebar.html:41
 #: templates/js/translated/bom.js:553 templates/js/translated/part.js:496
 #: templates/js/translated/part.js:631 templates/js/translated/part.js:1148
-#: templates/js/translated/part.js:1309 templates/js/translated/stock.js:935
-#: templates/js/translated/stock.js:1711 templates/navbar.html:28
+#: templates/js/translated/part.js:1309 templates/js/translated/stock.js:891
+#: templates/js/translated/stock.js:1667 templates/navbar.html:28
 msgid "Stock"
 msgstr "Készlet"
 
@@ -3028,7 +3028,7 @@ msgstr "Árazás"
 #: stock/templates/stock/location.html:150
 #: stock/templates/stock/location.html:162
 #: stock/templates/stock/location_sidebar.html:7
-#: templates/InvenTree/search.html:152 templates/js/translated/stock.js:2641
+#: templates/InvenTree/search.html:152 templates/js/translated/stock.js:2597
 #: templates/stats.html:105 templates/stats.html:114 users/models.py:43
 msgid "Stock Items"
 msgstr "Készlet tételek"
@@ -3058,20 +3058,20 @@ msgstr "Cégek"
 msgid "New Company"
 msgstr "Új cég"
 
-#: company/views.py:129 part/views.py:591
+#: company/views.py:129 part/views.py:589
 msgid "Download Image"
 msgstr "Kép letöltése"
 
-#: company/views.py:158 part/views.py:623
+#: company/views.py:158 part/views.py:621
 msgid "Image size exceeds maximum allowable size for download"
 msgstr "A kép mérete meghaladja a maximum megengedett letöltés méretét"
 
-#: company/views.py:165 part/views.py:630
+#: company/views.py:165 part/views.py:628
 #, python-brace-format
 msgid "Invalid response: {code}"
 msgstr "Érvénytelen válasz: {code}"
 
-#: company/views.py:174 part/views.py:639
+#: company/views.py:174 part/views.py:637
 msgid "Supplied URL is not a valid image file"
 msgstr "A megadott URL nem egy érvényes kép fájl"
 
@@ -3292,7 +3292,7 @@ msgid "Supplier part must match supplier"
 msgstr "Beszállítói alkatrésznek egyeznie kell a beszállítóval"
 
 #: order/models.py:891 order/models.py:982 order/models.py:1078
-#: templates/js/translated/order.js:1937 templates/js/translated/stock.js:2403
+#: templates/js/translated/order.js:1937 templates/js/translated/stock.js:2359
 msgid "Order"
 msgstr "Rendelés"
 
@@ -3301,7 +3301,7 @@ msgstr "Rendelés"
 #: report/templates/report/inventree_po_report.html:77
 #: stock/templates/stock/item_base.html:331
 #: templates/js/translated/order.js:876 templates/js/translated/part.js:839
-#: templates/js/translated/stock.js:1865 templates/js/translated/stock.js:2716
+#: templates/js/translated/stock.js:1821 templates/js/translated/stock.js:2672
 msgid "Purchase Order"
 msgstr "Beszerzési rendelés"
 
@@ -3322,7 +3322,7 @@ msgstr "Érkezett tételek száma"
 
 #: order/models.py:928 part/templates/part/prices.html:176 stock/models.py:645
 #: stock/serializers.py:170 stock/templates/stock/item_base.html:338
-#: templates/js/translated/stock.js:1919
+#: templates/js/translated/stock.js:1875
 msgid "Purchase Price"
 msgstr "Beszerzési ár"
 
@@ -3578,7 +3578,7 @@ msgstr "Rendelés leírása"
 
 #: order/templates/order/order_base.html:94
 #: order/templates/order/sales_order_base.html:89
-#: templates/js/translated/stock.js:2459
+#: templates/js/translated/stock.js:2415
 msgid "Order Status"
 msgstr "Rendelés állapota"
 
@@ -3653,7 +3653,7 @@ msgstr "Beszállítói alkatrész kiválasztása"
 #: templates/js/translated/bom.js:76 templates/js/translated/build.js:380
 #: templates/js/translated/build.js:528 templates/js/translated/build.js:1547
 #: templates/js/translated/order.js:602 templates/js/translated/order.js:1605
-#: templates/js/translated/stock.js:601 templates/js/translated/stock.js:769
+#: templates/js/translated/stock.js:557 templates/js/translated/stock.js:725
 #: templates/patterns/wizard/match_fields.html:70
 msgid "Remove row"
 msgstr "Sor törlése"
@@ -3902,31 +3902,31 @@ msgstr "A {part} egységára {price}-ra módosítva"
 msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr "A {part} alkatrész módosított egységára {price} mennyisége pedig {qty}"
 
-#: part/api.py:499
+#: part/api.py:502
 msgid "Valid"
 msgstr "Érvényes"
 
-#: part/api.py:500
+#: part/api.py:503
 msgid "Validate entire Bill of Materials"
 msgstr "Teljes alkatrészjegyzék jóváhagyása"
 
-#: part/api.py:505
+#: part/api.py:508
 msgid "This option must be selected"
 msgstr "Ennek az opciónak ki kll lennie választva"
 
-#: part/api.py:847
+#: part/api.py:866
 msgid "Must be greater than zero"
 msgstr "Nullánál nagyobb kell legyen"
 
-#: part/api.py:851
+#: part/api.py:870
 msgid "Must be a valid quantity"
 msgstr "Érvényes mennyiségnek kell lennie"
 
-#: part/api.py:866
+#: part/api.py:885
 msgid "Specify location for initial part stock"
 msgstr "Hely megadása a kezdeti alkarész készlethez"
 
-#: part/api.py:897 part/api.py:901 part/api.py:916 part/api.py:920
+#: part/api.py:916 part/api.py:920 part/api.py:935 part/api.py:939
 msgid "This field is required"
 msgstr "Ez a mező kötelező"
 
@@ -4070,7 +4070,7 @@ msgstr "Alkatrész kategória"
 
 #: part/models.py:847 part/templates/part/part_base.html:274
 #: templates/js/translated/part.js:619 templates/js/translated/part.js:1244
-#: templates/js/translated/stock.js:1683
+#: templates/js/translated/stock.js:1639
 msgid "IPN"
 msgstr "IPN"
 
@@ -4184,7 +4184,7 @@ msgid "Test with this name already exists for this part"
 msgstr "Erre az alkatrészre már létezik teszt ilyen névvel"
 
 #: part/models.py:2422 templates/js/translated/part.js:1737
-#: templates/js/translated/stock.js:1311
+#: templates/js/translated/stock.js:1267
 msgid "Test Name"
 msgstr "Teszt név"
 
@@ -4504,7 +4504,7 @@ msgstr "A <em>%(part)s</em> alkatrészhez tartozó alkatrészjegyzéket utoljár
 msgid "The BOM for <em>%(part)s</em> has not been validated."
 msgstr "A <em>%(part)s</em> alkatrészhez tartozó alkatrészjegyzék még nincs jóváhagyva."
 
-#: part/templates/part/bom.html:30 part/templates/part/detail.html:279
+#: part/templates/part/bom.html:30 part/templates/part/detail.html:274
 msgid "BOM actions"
 msgstr "Alkatrészjegyzék műveletek"
 
@@ -4556,7 +4556,7 @@ msgstr "Kategória elérési út"
 msgid "Top level part category"
 msgstr "Legfelső szintű alkatrész kategória"
 
-#: part/templates/part/category.html:114 part/templates/part/category.html:205
+#: part/templates/part/category.html:114 part/templates/part/category.html:202
 #: part/templates/part/category_sidebar.html:7
 msgid "Subcategories"
 msgstr "Alkategóriák"
@@ -4565,55 +4565,51 @@ msgstr "Alkategóriák"
 msgid "Parts (Including subcategories)"
 msgstr "Alkatrészek száma (alkategóriákkal együtt)"
 
-#: part/templates/part/category.html:156
-msgid "Export Part Data"
-msgstr "Alkatrész adatok exportálása"
-
-#: part/templates/part/category.html:157 part/templates/part/category.html:181
-msgid "Export"
-msgstr "Exportálás"
-
-#: part/templates/part/category.html:160
+#: part/templates/part/category.html:157
 msgid "Create new part"
 msgstr "Alkatrész létrehozása"
 
-#: part/templates/part/category.html:161 templates/js/translated/bom.js:365
+#: part/templates/part/category.html:158 templates/js/translated/bom.js:365
 msgid "New Part"
 msgstr "Új alkatrész"
 
-#: part/templates/part/category.html:175
+#: part/templates/part/category.html:172
 msgid "Set category"
 msgstr "Kategória beállítása"
 
-#: part/templates/part/category.html:175
+#: part/templates/part/category.html:172
 msgid "Set Category"
 msgstr "Kategória beállítása"
 
-#: part/templates/part/category.html:179
+#: part/templates/part/category.html:176
 msgid "Print Labels"
 msgstr "Címkék nyomtatása"
 
-#: part/templates/part/category.html:181
+#: part/templates/part/category.html:178
+msgid "Export"
+msgstr "Exportálás"
+
+#: part/templates/part/category.html:178
 msgid "Export Data"
 msgstr "Adatok exportálása"
 
-#: part/templates/part/category.html:195
+#: part/templates/part/category.html:192
 msgid "Part Parameters"
 msgstr "Alkatrész paraméterek"
 
-#: part/templates/part/category.html:288
+#: part/templates/part/category.html:285
 msgid "Create Part Category"
 msgstr "Alkatrész kategória létrehozása"
 
-#: part/templates/part/category.html:315
+#: part/templates/part/category.html:305
 msgid "Create Part"
 msgstr "Alkatrész létrehozása"
 
-#: part/templates/part/category.html:318
+#: part/templates/part/category.html:308
 msgid "Create another part after this one"
 msgstr "Új alkatrész létrehozása ez után"
 
-#: part/templates/part/category.html:319
+#: part/templates/part/category.html:309
 msgid "Part created successfully"
 msgstr "Alkatrész sikeresen létrehozva"
 
@@ -4684,155 +4680,150 @@ msgstr "%(full_name)s - <em>%(desc)s</em> (%(match_per)s%% egyezik)"
 msgid "Part Stock"
 msgstr "Alkatrész készlet"
 
-#: part/templates/part/detail.html:33
-#, python-format
-msgid "Showing stock for all variants of <em>%(full_name)s</em>"
-msgstr "A <em>%(full_name)s</em> összes változatának készlete"
-
-#: part/templates/part/detail.html:43
+#: part/templates/part/detail.html:38
 msgid "Part Stock Allocations"
 msgstr "Alkatrész készlet foglalások"
 
-#: part/templates/part/detail.html:60
+#: part/templates/part/detail.html:55
 msgid "Part Test Templates"
 msgstr "Alkatrész teszt sablonok"
 
-#: part/templates/part/detail.html:65
+#: part/templates/part/detail.html:60
 msgid "Add Test Template"
 msgstr "Teszt sablon hozzáadása"
 
-#: part/templates/part/detail.html:122
+#: part/templates/part/detail.html:117
 msgid "Sales Order Allocations"
 msgstr "Vevői rendeléshez foglalások"
 
-#: part/templates/part/detail.html:168
+#: part/templates/part/detail.html:163
 msgid "Part Variants"
 msgstr "Alkatrész változatok"
 
-#: part/templates/part/detail.html:172
+#: part/templates/part/detail.html:167
 msgid "Create new variant"
 msgstr "Új változat létrehozása"
 
-#: part/templates/part/detail.html:173
+#: part/templates/part/detail.html:168
 msgid "New Variant"
 msgstr "Új változat"
 
-#: part/templates/part/detail.html:200
+#: part/templates/part/detail.html:195
 msgid "Add new parameter"
 msgstr "Paraméter hozzáadása"
 
-#: part/templates/part/detail.html:237 part/templates/part/part_sidebar.html:52
+#: part/templates/part/detail.html:232 part/templates/part/part_sidebar.html:52
 msgid "Related Parts"
 msgstr "Kapcsolódó alkatrészek"
 
-#: part/templates/part/detail.html:241 part/templates/part/detail.html:242
+#: part/templates/part/detail.html:236 part/templates/part/detail.html:237
 msgid "Add Related"
 msgstr "Kapcsolódó hozzáadása"
 
-#: part/templates/part/detail.html:262 part/templates/part/part_sidebar.html:18
+#: part/templates/part/detail.html:257 part/templates/part/part_sidebar.html:18
 msgid "Bill of Materials"
 msgstr "Alkatrészjegyzék"
 
-#: part/templates/part/detail.html:267
+#: part/templates/part/detail.html:262
 msgid "Export actions"
 msgstr "Exportálási műveletek"
 
-#: part/templates/part/detail.html:271 templates/js/translated/bom.js:283
+#: part/templates/part/detail.html:266 templates/js/translated/bom.js:283
 msgid "Export BOM"
 msgstr "Alkatrészjegyzék exportálása"
 
-#: part/templates/part/detail.html:273
+#: part/templates/part/detail.html:268
 msgid "Print BOM Report"
 msgstr "Alkatrészjegyzék riport nyomtatása"
 
-#: part/templates/part/detail.html:283
+#: part/templates/part/detail.html:278
 msgid "Upload BOM"
 msgstr "Alkatrészjegyzék feltöltése"
 
-#: part/templates/part/detail.html:284 templates/js/translated/part.js:272
+#: part/templates/part/detail.html:279 templates/js/translated/part.js:272
 msgid "Copy BOM"
 msgstr "Alkatrészjegyzék másolása"
 
-#: part/templates/part/detail.html:285
+#: part/templates/part/detail.html:280
 msgid "Validate BOM"
 msgstr "Alkatrészjegyzék jóváhagyása"
 
-#: part/templates/part/detail.html:290
+#: part/templates/part/detail.html:285
 msgid "New BOM Item"
 msgstr "Új alkatrészjegyzék tétel"
 
-#: part/templates/part/detail.html:291
+#: part/templates/part/detail.html:286
 msgid "Add BOM Item"
 msgstr "Alkatrészjegyzék tétel hozzáadása"
 
-#: part/templates/part/detail.html:304
+#: part/templates/part/detail.html:299
 msgid "Assemblies"
 msgstr "Gyártmányok"
 
-#: part/templates/part/detail.html:321
+#: part/templates/part/detail.html:316
 msgid "Part Builds"
 msgstr "Alkatrész gyártások"
 
-#: part/templates/part/detail.html:346
+#: part/templates/part/detail.html:341
 msgid "Build Order Allocations"
 msgstr "Gyártáshoz foglalások"
 
-#: part/templates/part/detail.html:361
+#: part/templates/part/detail.html:356
 msgid "Part Suppliers"
 msgstr "Alkatrész beszállítók"
 
-#: part/templates/part/detail.html:389
+#: part/templates/part/detail.html:384
 msgid "Part Manufacturers"
 msgstr "Alkatrész gyártók"
 
-#: part/templates/part/detail.html:405
+#: part/templates/part/detail.html:400
 msgid "Delete manufacturer parts"
 msgstr "Gyártói alkatrészek törlése"
 
-#: part/templates/part/detail.html:587
+#: part/templates/part/detail.html:582
 msgid "Delete selected BOM items?"
 msgstr "Töröljük a kiválasztott alkatrészjegyzék tételeket?"
 
-#: part/templates/part/detail.html:588
+#: part/templates/part/detail.html:583
 msgid "All selected BOM items will be deleted"
 msgstr "Az összes kijelölt alkatrészjegyzék tétel törlésre kerül"
 
-#: part/templates/part/detail.html:637
+#: part/templates/part/detail.html:632
 msgid "Create BOM Item"
 msgstr "Alkatrészjegyzék tétel létrehozása"
 
-#: part/templates/part/detail.html:694
+#: part/templates/part/detail.html:689
 msgid "Related Part"
 msgstr "Kapcsolódó alkatrész"
 
-#: part/templates/part/detail.html:702
+#: part/templates/part/detail.html:697
 msgid "Add Related Part"
 msgstr "Kapcsolódó alkatrész hozzáadása"
 
-#: part/templates/part/detail.html:799
+#: part/templates/part/detail.html:794
 msgid "Add Test Result Template"
 msgstr "Teszt eredmény sablon hozzáadása"
 
-#: part/templates/part/detail.html:856
+#: part/templates/part/detail.html:844
 msgid "Edit Part Notes"
 msgstr "Alkatrész megjegyzések szerkesztése"
 
-#: part/templates/part/detail.html:969
+#: part/templates/part/detail.html:957
 #, python-format
 msgid "Purchase Unit Price - %(currency)s"
 msgstr "Beszerzési egységár - %(currency)s"
 
-#: part/templates/part/detail.html:981
+#: part/templates/part/detail.html:969
 #, python-format
 msgid "Unit Price-Cost Difference - %(currency)s"
 msgstr "Egységár-önköltség különbség - %(currency)s"
 
-#: part/templates/part/detail.html:993
+#: part/templates/part/detail.html:981
 #, python-format
 msgid "Supplier Unit Cost - %(currency)s"
 msgstr "Beszállítói egység költség - %(currency)s"
 
-#: part/templates/part/detail.html:1082
+#: part/templates/part/detail.html:1070
 #, python-format
 msgid "Unit Price - %(currency)s"
 msgstr "Egységár - %(currency)s"
@@ -5207,7 +5198,7 @@ msgstr "Az alkatrészhez nem áll rendelkezésre ártörténet."
 msgid "Internal Cost"
 msgstr "Belső költség"
 
-#: part/templates/part/prices.html:215 part/views.py:1390
+#: part/templates/part/prices.html:215 part/views.py:1325
 msgid "Add Internal Price Break"
 msgstr "Belső árlépcső hozzáadása"
 
@@ -5287,96 +5278,96 @@ msgstr "Új változat létrehozása a <em>'%(full_name)s'</em> sablonból."
 msgid "Unknown database"
 msgstr "Ismeretlen adatbázis"
 
-#: part/views.py:90
+#: part/views.py:88
 msgid "Set Part Category"
 msgstr "Alkatrész kategória beállítása"
 
-#: part/views.py:140
+#: part/views.py:138
 #, python-brace-format
 msgid "Set category for {n} parts"
 msgstr "Állítsd be {n} alkatrész kategóriáját"
 
-#: part/views.py:212
+#: part/views.py:210
 msgid "Match References"
 msgstr "Azonosítók egyeztetése"
 
-#: part/views.py:509
+#: part/views.py:507
 msgid "None"
 msgstr "Egyik sem"
 
-#: part/views.py:568
+#: part/views.py:566
 msgid "Part QR Code"
 msgstr "Alkatrész QR kódja"
 
-#: part/views.py:670
+#: part/views.py:668
 msgid "Select Part Image"
 msgstr "Válassz képet az alkatrészhez"
 
-#: part/views.py:696
+#: part/views.py:694
 msgid "Updated part image"
 msgstr "Alkatrész képe frissítve"
 
-#: part/views.py:699
+#: part/views.py:697
 msgid "Part image not found"
 msgstr "Az alkatrész képe nem található"
 
-#: part/views.py:850
+#: part/views.py:785
 msgid "Confirm Part Deletion"
 msgstr "Alkatrész törlés megerősítése"
 
-#: part/views.py:857
+#: part/views.py:792
 msgid "Part was deleted"
 msgstr "Alkatrész törölve"
 
-#: part/views.py:866
+#: part/views.py:801
 msgid "Part Pricing"
 msgstr "Alkatrész árak"
 
-#: part/views.py:1015
+#: part/views.py:950
 msgid "Create Part Parameter Template"
 msgstr "Alkatrész paraméter sablon létrehozása"
 
-#: part/views.py:1025
+#: part/views.py:960
 msgid "Edit Part Parameter Template"
 msgstr "Alkatrész paraméter sablon módosítása"
 
-#: part/views.py:1032
+#: part/views.py:967
 msgid "Delete Part Parameter Template"
 msgstr "Alkatrész paraméter sablon törlése"
 
-#: part/views.py:1091 templates/js/translated/part.js:315
+#: part/views.py:1026 templates/js/translated/part.js:315
 msgid "Edit Part Category"
 msgstr "Alkatrész kategória szerkesztése"
 
-#: part/views.py:1129
+#: part/views.py:1064
 msgid "Delete Part Category"
 msgstr "Alkatrész kategória törlése"
 
-#: part/views.py:1135
+#: part/views.py:1070
 msgid "Part category was deleted"
 msgstr "Alkatrész kategória törölve"
 
-#: part/views.py:1144
+#: part/views.py:1079
 msgid "Create Category Parameter Template"
 msgstr "Kategória paraméter sablon létrehozása"
 
-#: part/views.py:1245
+#: part/views.py:1180
 msgid "Edit Category Parameter Template"
 msgstr "Kategória paraméter sablon szerkesztése"
 
-#: part/views.py:1301
+#: part/views.py:1236
 msgid "Delete Category Parameter Template"
 msgstr "Kategória paraméter sablon törlése"
 
-#: part/views.py:1323
+#: part/views.py:1258
 msgid "Added new price break"
 msgstr "Új árlépcső hozzáadva"
 
-#: part/views.py:1399
+#: part/views.py:1334
 msgid "Edit Internal Price Break"
 msgstr "Belső árlépcső szerkesztése"
 
-#: part/views.py:1407
+#: part/views.py:1342
 msgid "Delete Internal Price Break"
 msgstr "Belső árlépcső törlése"
 
@@ -5587,7 +5578,7 @@ msgstr "Készlet tétel teszt riport"
 #: templates/js/translated/build.js:919 templates/js/translated/build.js:1295
 #: templates/js/translated/model_renderers.js:95
 #: templates/js/translated/order.js:99 templates/js/translated/order.js:2062
-#: templates/js/translated/order.js:2151 templates/js/translated/stock.js:423
+#: templates/js/translated/order.js:2151 templates/js/translated/stock.js:422
 msgid "Serial Number"
 msgstr "Sorozatszám"
 
@@ -5608,7 +5599,7 @@ msgstr "Eredmény"
 #: report/templates/report/inventree_test_report_base.html:97
 #: templates/InvenTree/settings/plugin.html:50
 #: templates/InvenTree/settings/plugin_settings.html:38
-#: templates/js/translated/order.js:924 templates/js/translated/stock.js:2657
+#: templates/js/translated/order.js:924 templates/js/translated/stock.js:2613
 msgid "Date"
 msgstr "Dátum"
 
@@ -5626,26 +5617,26 @@ msgid "Installed Items"
 msgstr "Beépített tételek"
 
 #: report/templates/report/inventree_test_report_base.html:137
-#: templates/js/translated/stock.js:586 templates/js/translated/stock.js:756
-#: templates/js/translated/stock.js:2910
+#: templates/js/translated/stock.js:542 templates/js/translated/stock.js:712
+#: templates/js/translated/stock.js:2866
 msgid "Serial"
 msgstr "Sorozatszám"
 
-#: stock/api.py:501
+#: stock/api.py:503
 msgid "Quantity is required"
 msgstr "Mennyiség megadása kötelező"
 
-#: stock/api.py:508
+#: stock/api.py:510
 msgid "Valid part must be supplied"
 msgstr "Egy érvényes alkatrészt meg kell adni"
 
-#: stock/api.py:533
+#: stock/api.py:535
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr "Sorozatszámot nem lehet megadni nem követésre kötelezett alkatrész esetén"
 
 #: stock/forms.py:74 stock/forms.py:198 stock/models.py:613
 #: stock/templates/stock/item_base.html:188
-#: templates/js/translated/stock.js:1835
+#: templates/js/translated/stock.js:1791
 msgid "Expiry Date"
 msgstr "Lejárati dátum"
 
@@ -5943,7 +5934,7 @@ msgstr "Opcionális megjegyzés mező"
 msgid "Serial numbers cannot be assigned to this part"
 msgstr "Sorozatszámokat nem lehet hozzárendelni ehhez az alkatrészhez"
 
-#: stock/serializers.py:363 stock/views.py:1127
+#: stock/serializers.py:363 stock/views.py:1036
 msgid "Serial numbers already exist"
 msgstr "A sorozatszámok már léteznek"
 
@@ -6060,11 +6051,11 @@ msgstr "Teszt adatok hozzáadása"
 msgid "Installed Stock Items"
 msgstr "Beépített készlet tételek"
 
-#: stock/templates/stock/item.html:147 templates/js/translated/stock.js:3019
+#: stock/templates/stock/item.html:147 templates/js/translated/stock.js:2975
 msgid "Install Stock Item"
 msgstr "Készlet tétel beépítése"
 
-#: stock/templates/stock/item.html:297 templates/js/translated/stock.js:1479
+#: stock/templates/stock/item.html:297 templates/js/translated/stock.js:1435
 msgid "Add Test Result"
 msgstr "Teszt eredmény hozzáadása"
 
@@ -6078,7 +6069,7 @@ msgstr "Vonalkód leválasztása"
 msgid "Link Barcode"
 msgstr "Vonalkód hozzárendelése"
 
-#: stock/templates/stock/item_base.html:46 templates/stock_table.html:24
+#: stock/templates/stock/item_base.html:46 templates/stock_table.html:21
 msgid "Scan to Location"
 msgstr "Beolvasás helyre"
 
@@ -6091,15 +6082,15 @@ msgid "Stock adjustment actions"
 msgstr "Készlet módosítási műveletek"
 
 #: stock/templates/stock/item_base.html:69
-#: stock/templates/stock/location.html:52 templates/stock_table.html:50
+#: stock/templates/stock/location.html:52 templates/stock_table.html:47
 msgid "Count stock"
 msgstr "Leltározás"
 
-#: stock/templates/stock/item_base.html:72 templates/stock_table.html:48
+#: stock/templates/stock/item_base.html:72 templates/stock_table.html:45
 msgid "Add stock"
 msgstr "Készlet növelése"
 
-#: stock/templates/stock/item_base.html:75 templates/stock_table.html:49
+#: stock/templates/stock/item_base.html:75 templates/stock_table.html:46
 msgid "Remove stock"
 msgstr "Készlet csökkentése"
 
@@ -6108,11 +6099,11 @@ msgid "Serialize stock"
 msgstr "Sorozatszámok előállítása"
 
 #: stock/templates/stock/item_base.html:82
-#: stock/templates/stock/location.html:58 templates/stock_table.html:51
+#: stock/templates/stock/location.html:58 templates/stock_table.html:48
 msgid "Transfer stock"
 msgstr "Készlet áthelyezése"
 
-#: stock/templates/stock/item_base.html:85 templates/stock_table.html:54
+#: stock/templates/stock/item_base.html:85 templates/stock_table.html:51
 msgid "Assign to customer"
 msgstr "Vevőhöz rendelése"
 
@@ -6189,7 +6180,7 @@ msgid "Stale"
 msgstr "Állott"
 
 #: stock/templates/stock/item_base.html:201
-#: templates/js/translated/stock.js:1851
+#: templates/js/translated/stock.js:1807
 msgid "Last Updated"
 msgstr "Utoljára módosítva"
 
@@ -6328,11 +6319,11 @@ msgstr "Alhelyek"
 msgid "Stock Locations"
 msgstr "Készlethelyek"
 
-#: stock/templates/stock/location.html:185 templates/stock_table.html:30
+#: stock/templates/stock/location.html:185 templates/stock_table.html:27
 msgid "Printing Actions"
 msgstr "Nyomtatási műveletek"
 
-#: stock/templates/stock/location.html:189 templates/stock_table.html:34
+#: stock/templates/stock/location.html:189 templates/stock_table.html:31
 msgid "Print labels"
 msgstr "Címke nyomtatása"
 
@@ -6356,7 +6347,7 @@ msgstr "Gyermek tételek"
 msgid "The following stock items will be uninstalled"
 msgstr "A következő készlet tételek ki lesznek szedve"
 
-#: stock/templates/stock/stockitem_convert.html:7 stock/views.py:749
+#: stock/templates/stock/stockitem_convert.html:7 stock/views.py:658
 msgid "Convert Stock Item"
 msgstr "Készlet tétel konvertálása"
 
@@ -6377,95 +6368,95 @@ msgstr "Ez a művelet nem vonható vissza könnyen"
 msgid "Are you sure you want to delete this stock tracking entry?"
 msgstr "Biztosan törölni akarod ezt a készlettörténeti bejegyzést?"
 
-#: stock/views.py:181 templates/js/translated/stock.js:139
+#: stock/views.py:179 templates/js/translated/stock.js:138
 msgid "Edit Stock Location"
 msgstr "Készlet hely szerkesztése"
 
-#: stock/views.py:288 stock/views.py:728 stock/views.py:854 stock/views.py:1136
+#: stock/views.py:286 stock/views.py:637 stock/views.py:763 stock/views.py:1045
 msgid "Owner is required (ownership control is enabled)"
 msgstr "Tulajdonos szükséges (tulajdonosok kezelése engedélyezve van)"
 
-#: stock/views.py:303
+#: stock/views.py:301
 msgid "Stock Location QR code"
 msgstr "Készlet hely QR kódja"
 
-#: stock/views.py:322
+#: stock/views.py:320
 msgid "Return to Stock"
 msgstr "Visszavétel készletre"
 
-#: stock/views.py:331
+#: stock/views.py:329
 msgid "Specify a valid location"
 msgstr "Adj meg egy érvényes helyet"
 
-#: stock/views.py:342
+#: stock/views.py:340
 msgid "Stock item returned from customer"
 msgstr "Készlet tétel vevőtől visszahozva"
 
-#: stock/views.py:353
+#: stock/views.py:351
 msgid "Delete All Test Data"
 msgstr "Minden teszt adat törlése"
 
-#: stock/views.py:370
+#: stock/views.py:368
 msgid "Confirm test data deletion"
 msgstr "Teszt adat törlésének megerősítése"
 
-#: stock/views.py:371
+#: stock/views.py:369
 msgid "Check the confirmation box"
 msgstr "Klikkeld be a megerősítő mezőt"
 
-#: stock/views.py:475
+#: stock/views.py:384
 msgid "Stock Item QR Code"
 msgstr "Készlet tétel QR kódja"
 
-#: stock/views.py:500
+#: stock/views.py:409
 msgid "Uninstall Stock Items"
 msgstr "Készlet tétel kiszedése"
 
-#: stock/views.py:597 templates/js/translated/stock.js:1074
+#: stock/views.py:506 templates/js/translated/stock.js:1030
 msgid "Confirm stock adjustment"
 msgstr "Készlet módosítás jóváhagyása"
 
-#: stock/views.py:608
+#: stock/views.py:517
 msgid "Uninstalled stock items"
 msgstr "Kiszedett készlet tételek"
 
-#: stock/views.py:630 templates/js/translated/stock.js:332
+#: stock/views.py:539 templates/js/translated/stock.js:331
 msgid "Edit Stock Item"
 msgstr "Készlet tétel szerkesztése"
 
-#: stock/views.py:780
+#: stock/views.py:689
 msgid "Create new Stock Location"
 msgstr "Új készlet hely létrehozása"
 
-#: stock/views.py:881
+#: stock/views.py:790
 msgid "Create new Stock Item"
 msgstr "Új készlet tétel létrehozása"
 
-#: stock/views.py:1023 templates/js/translated/stock.js:312
+#: stock/views.py:932 templates/js/translated/stock.js:311
 msgid "Duplicate Stock Item"
 msgstr "Készlet tétel másolása"
 
-#: stock/views.py:1105
+#: stock/views.py:1014
 msgid "Quantity cannot be negative"
 msgstr "A mennyiség nem lehet negatív"
 
-#: stock/views.py:1205
+#: stock/views.py:1114
 msgid "Delete Stock Location"
 msgstr "Készlethely törlése"
 
-#: stock/views.py:1218
+#: stock/views.py:1127
 msgid "Delete Stock Item"
 msgstr "Készlet tétel törlése"
 
-#: stock/views.py:1229
+#: stock/views.py:1138
 msgid "Delete Stock Tracking Entry"
 msgstr "Készlettörténet bejegyzés törlése"
 
-#: stock/views.py:1236
+#: stock/views.py:1145
 msgid "Edit Stock Tracking Entry"
 msgstr "Készlettörténet bejegyzés szerkesztése"
 
-#: stock/views.py:1245
+#: stock/views.py:1154
 msgid "Add Stock Tracking Entry"
 msgstr "Készlettörténet bejegyzés hozzáadása"
 
@@ -7588,7 +7579,7 @@ msgstr "Ez törli az összerendelést a készlet tétel és a vonalkód között
 msgid "Unlink"
 msgstr "Leválasztás"
 
-#: templates/js/translated/barcode.js:397 templates/js/translated/stock.js:1026
+#: templates/js/translated/barcode.js:397 templates/js/translated/stock.js:982
 msgid "Remove stock item"
 msgstr "Készlet tétel törlése"
 
@@ -7643,12 +7634,12 @@ msgid "Download BOM Template"
 msgstr "Alkarészjegyzék sablon letöltése"
 
 #: templates/js/translated/bom.js:252 templates/js/translated/bom.js:286
-#: templates/js/translated/order.js:369 templates/js/translated/stock.js:518
+#: templates/js/translated/order.js:369 templates/js/translated/tables.js:53
 msgid "Format"
 msgstr "Formátum"
 
 #: templates/js/translated/bom.js:253 templates/js/translated/bom.js:287
-#: templates/js/translated/order.js:370 templates/js/translated/stock.js:519
+#: templates/js/translated/order.js:370
 msgid "Select file format"
 msgstr "Fájlfomátum kiválasztása"
 
@@ -7808,13 +7799,13 @@ msgstr "Gyártási utasítás befejezetlen"
 msgid "Complete Build Order"
 msgstr "Gyártási utasítás befejezése"
 
-#: templates/js/translated/build.js:214 templates/js/translated/stock.js:92
-#: templates/js/translated/stock.js:181
+#: templates/js/translated/build.js:214 templates/js/translated/stock.js:91
+#: templates/js/translated/stock.js:180
 msgid "Next available serial number"
 msgstr "Következő szabad sorozatszám"
 
-#: templates/js/translated/build.js:216 templates/js/translated/stock.js:94
-#: templates/js/translated/stock.js:183
+#: templates/js/translated/build.js:216 templates/js/translated/stock.js:93
+#: templates/js/translated/stock.js:182
 msgid "Latest serial number"
 msgstr "Legutolsó sorozatszám"
 
@@ -7929,7 +7920,7 @@ msgstr "Lefoglalva"
 msgid "Build stock"
 msgstr "Gyártási készlet"
 
-#: templates/js/translated/build.js:1476 templates/stock_table.html:53
+#: templates/js/translated/build.js:1476 templates/stock_table.html:50
 msgid "Order stock"
 msgstr "Készlet rendelés"
 
@@ -7975,8 +7966,8 @@ msgid "No builds matching query"
 msgstr "Nincs a lekérdezéssel egyező gyártási utasítás"
 
 #: templates/js/translated/build.js:1892 templates/js/translated/part.js:1236
-#: templates/js/translated/part.js:1647 templates/js/translated/stock.js:1643
-#: templates/js/translated/stock.js:2611
+#: templates/js/translated/part.js:1647 templates/js/translated/stock.js:1599
+#: templates/js/translated/stock.js:2567
 msgid "Select"
 msgstr "Kiválaszt"
 
@@ -7984,7 +7975,7 @@ msgstr "Kiválaszt"
 msgid "Build order is overdue"
 msgstr "Gyártási utasítás megkésett"
 
-#: templates/js/translated/build.js:1976 templates/js/translated/stock.js:2823
+#: templates/js/translated/build.js:1976 templates/js/translated/stock.js:2779
 msgid "No user information"
 msgstr "Nincs felhasználói információ"
 
@@ -8093,12 +8084,12 @@ msgid "No supplier parts found"
 msgstr "Nincs beszállítói alkatrész"
 
 #: templates/js/translated/filters.js:178
-#: templates/js/translated/filters.js:429
+#: templates/js/translated/filters.js:441
 msgid "true"
 msgstr "igaz"
 
 #: templates/js/translated/filters.js:182
-#: templates/js/translated/filters.js:430
+#: templates/js/translated/filters.js:442
 msgid "false"
 msgstr "hamis"
 
@@ -8106,19 +8097,23 @@ msgstr "hamis"
 msgid "Select filter"
 msgstr "Szűrők kiválasztása"
 
-#: templates/js/translated/filters.js:286
+#: templates/js/translated/filters.js:288
+msgid "Download data"
+msgstr ""
+
+#: templates/js/translated/filters.js:291
 msgid "Reload data"
 msgstr "Adatok frissítése"
 
-#: templates/js/translated/filters.js:290
+#: templates/js/translated/filters.js:295
 msgid "Add new filter"
 msgstr "Új szűrő hozzáadása"
 
-#: templates/js/translated/filters.js:293
+#: templates/js/translated/filters.js:298
 msgid "Clear all filters"
 msgstr "Összes szűrő törlése"
 
-#: templates/js/translated/filters.js:338
+#: templates/js/translated/filters.js:350
 msgid "Create filter"
 msgstr "Szűrő létrehozása"
 
@@ -8189,7 +8184,7 @@ msgid "NO"
 msgstr "NEM"
 
 #: templates/js/translated/label.js:29 templates/js/translated/report.js:118
-#: templates/js/translated/stock.js:1050
+#: templates/js/translated/stock.js:1006
 msgid "Select Stock Items"
 msgstr "Készlet tételek kiválasztása"
 
@@ -8386,7 +8381,7 @@ msgstr "Sorozatszám hozzáadása"
 msgid "Quantity to receive"
 msgstr "Érkező mennyiség"
 
-#: templates/js/translated/order.js:563 templates/js/translated/stock.js:2263
+#: templates/js/translated/order.js:563 templates/js/translated/stock.js:2219
 msgid "Stock Status"
 msgstr "Készlet állapota"
 
@@ -8525,7 +8520,7 @@ msgid "Delete Stock Allocation"
 msgstr "Készlet foglalások törlése"
 
 #: templates/js/translated/order.js:2076 templates/js/translated/order.js:2165
-#: templates/js/translated/stock.js:1559
+#: templates/js/translated/stock.js:1515
 msgid "Shipped to customer"
 msgstr "Vevőnek kiszállítva"
 
@@ -8731,7 +8726,7 @@ msgid "Low stock"
 msgstr "Alacsony készlet"
 
 #: templates/js/translated/part.js:1410 templates/js/translated/part.js:1582
-#: templates/js/translated/stock.js:2572
+#: templates/js/translated/stock.js:2528
 msgid "Display as list"
 msgstr "Megjelenítés listaként"
 
@@ -8739,7 +8734,7 @@ msgstr "Megjelenítés listaként"
 msgid "Display as grid"
 msgstr "Megjelenítés rácsnézetként"
 
-#: templates/js/translated/part.js:1601 templates/js/translated/stock.js:2591
+#: templates/js/translated/part.js:1601 templates/js/translated/stock.js:2547
 msgid "Display as tree"
 msgstr "Megjelenítés fában"
 
@@ -8747,7 +8742,7 @@ msgstr "Megjelenítés fában"
 msgid "Subscribed category"
 msgstr "Értesítésre beállított kategória"
 
-#: templates/js/translated/part.js:1679 templates/js/translated/stock.js:2635
+#: templates/js/translated/part.js:1679 templates/js/translated/stock.js:2591
 msgid "Path"
 msgstr "Elérési út"
 
@@ -8755,12 +8750,12 @@ msgstr "Elérési út"
 msgid "No test templates matching query"
 msgstr "Nincs a lekérdezéssel egyező teszt sablon"
 
-#: templates/js/translated/part.js:1774 templates/js/translated/stock.js:1270
+#: templates/js/translated/part.js:1774 templates/js/translated/stock.js:1226
 msgid "Edit test result"
 msgstr "Teszt eredmény szerkesztése"
 
-#: templates/js/translated/part.js:1775 templates/js/translated/stock.js:1271
-#: templates/js/translated/stock.js:1517
+#: templates/js/translated/part.js:1775 templates/js/translated/stock.js:1227
+#: templates/js/translated/stock.js:1473
 msgid "Delete test result"
 msgstr "Teszt eredmény törlése"
 
@@ -8869,368 +8864,356 @@ msgstr "Vevői rendelések kiválasztása"
 msgid "Sales Order(s) must be selected before printing report"
 msgstr "Vevői rendelés(eke)t ki kell választani a riport nyomtatás előtt"
 
-#: templates/js/translated/stock.js:74
+#: templates/js/translated/stock.js:73
 msgid "Serialize Stock Item"
 msgstr "Készlet tétel sorszámozása"
 
-#: templates/js/translated/stock.js:102
+#: templates/js/translated/stock.js:101
 msgid "Confirm Stock Serialization"
 msgstr "Készlet sorozatszámozás megerősítése"
 
-#: templates/js/translated/stock.js:111
+#: templates/js/translated/stock.js:110
 msgid "Parent stock location"
 msgstr "Felsőbb szintű készlet hely"
 
-#: templates/js/translated/stock.js:154
+#: templates/js/translated/stock.js:153
 msgid "New Stock Location"
 msgstr "Új készlet hely"
 
-#: templates/js/translated/stock.js:194
+#: templates/js/translated/stock.js:193
 msgid "This part cannot be serialized"
 msgstr "Ezt az alkatrészt nem lehet sorozatszámozni"
 
-#: templates/js/translated/stock.js:233
+#: templates/js/translated/stock.js:232
 msgid "Enter initial quantity for this stock item"
 msgstr "Add meg a kezdeti mennyiséget ehhez a készlet tételhez"
 
-#: templates/js/translated/stock.js:239
+#: templates/js/translated/stock.js:238
 msgid "Enter serial numbers for new stock (or leave blank)"
 msgstr "Add meg az új készlet tételhez tartozó sorozatszámokat (vagy hagyd üresen)"
 
-#: templates/js/translated/stock.js:382
+#: templates/js/translated/stock.js:381
 msgid "Created new stock item"
 msgstr "Készlet tétel létrehozva"
 
-#: templates/js/translated/stock.js:395
+#: templates/js/translated/stock.js:394
 msgid "Created multiple stock items"
 msgstr "Több készlet tétel létre lett hozva"
 
-#: templates/js/translated/stock.js:420
+#: templates/js/translated/stock.js:419
 msgid "Find Serial Number"
 msgstr "Sorozatszám keresése"
 
-#: templates/js/translated/stock.js:424 templates/js/translated/stock.js:425
+#: templates/js/translated/stock.js:423 templates/js/translated/stock.js:424
 msgid "Enter serial number"
 msgstr "Sorozatszám megadása"
 
-#: templates/js/translated/stock.js:441
+#: templates/js/translated/stock.js:440
 msgid "Enter a serial number"
 msgstr "Adj meg egy sorozatszámot"
 
-#: templates/js/translated/stock.js:461
+#: templates/js/translated/stock.js:460
 msgid "No matching serial number"
 msgstr "Nincs egyező sorozatszám"
 
-#: templates/js/translated/stock.js:470
+#: templates/js/translated/stock.js:469
 msgid "More than one matching result found"
 msgstr "Több egyező eredmény is van"
 
-#: templates/js/translated/stock.js:515
-msgid "Export Stock"
-msgstr "Készlet exportálása"
-
-#: templates/js/translated/stock.js:526
-msgid "Include Sublocations"
-msgstr "Alhelyekkel együtt"
-
-#: templates/js/translated/stock.js:527
-msgid "Include stock items in sublocations"
-msgstr "Alhelyeken lévő készlettel együtt"
-
-#: templates/js/translated/stock.js:636
+#: templates/js/translated/stock.js:592
 msgid "Confirm stock assignment"
 msgstr "Készlet hozzárendelés jóváhagyása"
 
-#: templates/js/translated/stock.js:637
+#: templates/js/translated/stock.js:593
 msgid "Assign Stock to Customer"
 msgstr "Készlet vevőhöz rendelése"
 
-#: templates/js/translated/stock.js:714
+#: templates/js/translated/stock.js:670
 msgid "Warning: Merge operation cannot be reversed"
 msgstr "Figyelem: az összevonási művelet nem vonható vissza"
 
-#: templates/js/translated/stock.js:715
+#: templates/js/translated/stock.js:671
 msgid "Some information will be lost when merging stock items"
 msgstr "Némi információ elveszik a készlet összevonás során"
 
-#: templates/js/translated/stock.js:717
+#: templates/js/translated/stock.js:673
 msgid "Stock transaction history will be deleted for merged items"
 msgstr "A készlettörténet törölve lesz az összevont tételeknél"
 
-#: templates/js/translated/stock.js:718
+#: templates/js/translated/stock.js:674
 msgid "Supplier part information will be deleted for merged items"
 msgstr "A beszállítói alkatrész információk törlődnek az összevont tételeknél"
 
-#: templates/js/translated/stock.js:804
+#: templates/js/translated/stock.js:760
 msgid "Confirm stock item merge"
 msgstr "Készlet összevonás megerősítése"
 
-#: templates/js/translated/stock.js:805
+#: templates/js/translated/stock.js:761
 msgid "Merge Stock Items"
 msgstr "Készlet tételek összevonása"
 
-#: templates/js/translated/stock.js:900
+#: templates/js/translated/stock.js:856
 msgid "Transfer Stock"
 msgstr "Készlet áthelyezése"
 
-#: templates/js/translated/stock.js:901
+#: templates/js/translated/stock.js:857
 msgid "Move"
 msgstr "Áthelyezés"
 
-#: templates/js/translated/stock.js:907
+#: templates/js/translated/stock.js:863
 msgid "Count Stock"
 msgstr "Leltározás"
 
-#: templates/js/translated/stock.js:908
+#: templates/js/translated/stock.js:864
 msgid "Count"
 msgstr "Mennyiség"
 
-#: templates/js/translated/stock.js:912
+#: templates/js/translated/stock.js:868
 msgid "Remove Stock"
 msgstr "Készlet csökkentése"
 
-#: templates/js/translated/stock.js:913
+#: templates/js/translated/stock.js:869
 msgid "Take"
 msgstr "Kivesz"
 
-#: templates/js/translated/stock.js:917
+#: templates/js/translated/stock.js:873
 msgid "Add Stock"
 msgstr "Készlet növelése"
 
-#: templates/js/translated/stock.js:918 users/models.py:213
+#: templates/js/translated/stock.js:874 users/models.py:213
 msgid "Add"
 msgstr "Hozzáad"
 
-#: templates/js/translated/stock.js:922
+#: templates/js/translated/stock.js:878
 msgid "Delete Stock"
 msgstr "Készlet törlése"
 
-#: templates/js/translated/stock.js:1011
+#: templates/js/translated/stock.js:967
 msgid "Quantity cannot be adjusted for serialized stock"
 msgstr "Egyedi követésre kötelezett tételeknél a menyiség nem módosítható"
 
-#: templates/js/translated/stock.js:1011
+#: templates/js/translated/stock.js:967
 msgid "Specify stock quantity"
 msgstr "Készlet mennyiség megadása"
 
-#: templates/js/translated/stock.js:1051
+#: templates/js/translated/stock.js:1007
 msgid "You must select at least one available stock item"
 msgstr "Ki kell választanod legalább egy rendelkezésre álló készlet tételt"
 
-#: templates/js/translated/stock.js:1209
+#: templates/js/translated/stock.js:1165
 msgid "PASS"
 msgstr "SIKER"
 
-#: templates/js/translated/stock.js:1211
+#: templates/js/translated/stock.js:1167
 msgid "FAIL"
 msgstr "SIKERTELEN"
 
-#: templates/js/translated/stock.js:1216
+#: templates/js/translated/stock.js:1172
 msgid "NO RESULT"
 msgstr "NINCS EREDMÉNY"
 
-#: templates/js/translated/stock.js:1263
+#: templates/js/translated/stock.js:1219
 msgid "Pass test"
 msgstr "Teszt sikeres"
 
-#: templates/js/translated/stock.js:1266
+#: templates/js/translated/stock.js:1222
 msgid "Add test result"
 msgstr "Teszt eredmény hozzáadása"
 
-#: templates/js/translated/stock.js:1292
+#: templates/js/translated/stock.js:1248
 msgid "No test results found"
 msgstr "Nincs teszt eredmény"
 
-#: templates/js/translated/stock.js:1348
+#: templates/js/translated/stock.js:1304
 msgid "Test Date"
 msgstr "Teszt dátuma"
 
-#: templates/js/translated/stock.js:1500
+#: templates/js/translated/stock.js:1456
 msgid "Edit Test Result"
 msgstr "Teszt eredmény szerkesztése"
 
-#: templates/js/translated/stock.js:1522
+#: templates/js/translated/stock.js:1478
 msgid "Delete Test Result"
 msgstr "Teszt eredmény törlése"
 
-#: templates/js/translated/stock.js:1551
+#: templates/js/translated/stock.js:1507
 msgid "In production"
 msgstr "Gyártásban"
 
-#: templates/js/translated/stock.js:1555
+#: templates/js/translated/stock.js:1511
 msgid "Installed in Stock Item"
 msgstr "Beépítve készlet tételbe"
 
-#: templates/js/translated/stock.js:1563
+#: templates/js/translated/stock.js:1519
 msgid "Assigned to Sales Order"
 msgstr "Vevő rendeléshez hozzárendelve"
 
-#: templates/js/translated/stock.js:1569
+#: templates/js/translated/stock.js:1525
 msgid "No stock location set"
 msgstr "Nincs hely megadva"
 
-#: templates/js/translated/stock.js:1727
+#: templates/js/translated/stock.js:1683
 msgid "Stock item is in production"
 msgstr "Készlet tétel gyártás alatt"
 
-#: templates/js/translated/stock.js:1732
+#: templates/js/translated/stock.js:1688
 msgid "Stock item assigned to sales order"
 msgstr "Készlet tétel hozzárendelve egy vevői rendeléshez"
 
-#: templates/js/translated/stock.js:1735
+#: templates/js/translated/stock.js:1691
 msgid "Stock item assigned to customer"
 msgstr "Készlet tétel hozzárendelve egy vevőhöz"
 
-#: templates/js/translated/stock.js:1739
+#: templates/js/translated/stock.js:1695
 msgid "Stock item has expired"
 msgstr "Készlet tétel lejárt"
 
-#: templates/js/translated/stock.js:1741
+#: templates/js/translated/stock.js:1697
 msgid "Stock item will expire soon"
 msgstr "Készlet tétel hamarosan lejár"
 
-#: templates/js/translated/stock.js:1747
+#: templates/js/translated/stock.js:1703
 msgid "Serialized stock item has been allocated"
 msgstr "Egydi követésre kötelezett készlet tétel lefoglalva"
 
-#: templates/js/translated/stock.js:1749
+#: templates/js/translated/stock.js:1705
 msgid "Stock item has been fully allocated"
 msgstr "Készlet tétel teljes egészében lefoglalva"
 
-#: templates/js/translated/stock.js:1751
+#: templates/js/translated/stock.js:1707
 msgid "Stock item has been partially allocated"
 msgstr "Készlet tétel részben lefoglalva"
 
-#: templates/js/translated/stock.js:1756
+#: templates/js/translated/stock.js:1712
 msgid "Stock item has been installed in another item"
 msgstr "Készlet tétel beépítve egy másikba"
 
-#: templates/js/translated/stock.js:1763
+#: templates/js/translated/stock.js:1719
 msgid "Stock item has been rejected"
 msgstr "Készlet tétel elutasítva"
 
-#: templates/js/translated/stock.js:1765
+#: templates/js/translated/stock.js:1721
 msgid "Stock item is lost"
 msgstr "Készlet tétel elveszett"
 
-#: templates/js/translated/stock.js:1767
+#: templates/js/translated/stock.js:1723
 msgid "Stock item is destroyed"
 msgstr "Készlet tétel megsemmisült"
 
-#: templates/js/translated/stock.js:1771
+#: templates/js/translated/stock.js:1727
 #: templates/js/translated/table_filters.js:188
 msgid "Depleted"
 msgstr "Kimerült"
 
-#: templates/js/translated/stock.js:1821
+#: templates/js/translated/stock.js:1777
 msgid "Stocktake"
 msgstr "Leltár"
 
-#: templates/js/translated/stock.js:1903
+#: templates/js/translated/stock.js:1859
 msgid "Supplier part not specified"
 msgstr "Beszállítói alkatrész nincs megadva"
 
-#: templates/js/translated/stock.js:1941
+#: templates/js/translated/stock.js:1897
 msgid "No stock items matching query"
 msgstr "Nincs a lekérdezésnek megfelelő készlet tétel"
 
-#: templates/js/translated/stock.js:1962 templates/js/translated/stock.js:2010
+#: templates/js/translated/stock.js:1918 templates/js/translated/stock.js:1966
 msgid "items"
 msgstr "tételek"
 
-#: templates/js/translated/stock.js:2050
+#: templates/js/translated/stock.js:2006
 msgid "batches"
 msgstr "batch-ek"
 
-#: templates/js/translated/stock.js:2077
+#: templates/js/translated/stock.js:2033
 msgid "locations"
 msgstr "helyek"
 
-#: templates/js/translated/stock.js:2079
+#: templates/js/translated/stock.js:2035
 msgid "Undefined location"
 msgstr "Ismeretlen hely"
 
-#: templates/js/translated/stock.js:2278
+#: templates/js/translated/stock.js:2234
 msgid "Set Stock Status"
 msgstr "Készlet állapot beállítása"
 
-#: templates/js/translated/stock.js:2292
+#: templates/js/translated/stock.js:2248
 msgid "Select Status Code"
 msgstr "Státuszkód kiválasztása"
 
-#: templates/js/translated/stock.js:2293
+#: templates/js/translated/stock.js:2249
 msgid "Status code must be selected"
 msgstr "Státuszkódot ki kell választani"
 
-#: templates/js/translated/stock.js:2472
+#: templates/js/translated/stock.js:2428
 msgid "Allocated Quantity"
 msgstr "Lefoglalt mennyiség"
 
-#: templates/js/translated/stock.js:2682
+#: templates/js/translated/stock.js:2638
 msgid "Details"
 msgstr "Részletek"
 
-#: templates/js/translated/stock.js:2707
+#: templates/js/translated/stock.js:2663
 msgid "Location no longer exists"
 msgstr "A hely már nem létezik"
 
-#: templates/js/translated/stock.js:2726
+#: templates/js/translated/stock.js:2682
 msgid "Purchase order no longer exists"
 msgstr "Beszerzési megrendelés már nem létezik"
 
-#: templates/js/translated/stock.js:2745
+#: templates/js/translated/stock.js:2701
 msgid "Customer no longer exists"
 msgstr "Vevő már nem létezik"
 
-#: templates/js/translated/stock.js:2763
+#: templates/js/translated/stock.js:2719
 msgid "Stock item no longer exists"
 msgstr "A készlet tétel már nem létezik"
 
-#: templates/js/translated/stock.js:2786
+#: templates/js/translated/stock.js:2742
 msgid "Added"
 msgstr "Hozzáadva"
 
-#: templates/js/translated/stock.js:2794
+#: templates/js/translated/stock.js:2750
 msgid "Removed"
 msgstr "Eltávolítva"
 
-#: templates/js/translated/stock.js:2835
+#: templates/js/translated/stock.js:2791
 msgid "Edit tracking entry"
 msgstr "Készlettörténet bejegyzés szerkesztése"
 
-#: templates/js/translated/stock.js:2836
+#: templates/js/translated/stock.js:2792
 msgid "Delete tracking entry"
 msgstr "Készlettörténet bejegyzés törlése"
 
-#: templates/js/translated/stock.js:2887
+#: templates/js/translated/stock.js:2843
 msgid "No installed items"
 msgstr "Nincsenek beépített tételek"
 
-#: templates/js/translated/stock.js:2938
+#: templates/js/translated/stock.js:2894
 msgid "Uninstall Stock Item"
 msgstr "Készlet tétel kiszedése"
 
-#: templates/js/translated/stock.js:2974
+#: templates/js/translated/stock.js:2930
 msgid "Install another stock item into this item"
 msgstr "Másik tétel beépítése ebbe a készlet tételbe"
 
-#: templates/js/translated/stock.js:2975
+#: templates/js/translated/stock.js:2931
 msgid "Stock items can only be installed if they meet the following criteria"
 msgstr "Készlet tételek csak akkor építhetők be ha teljesítik a következő kritériumokat"
 
-#: templates/js/translated/stock.js:2977
+#: templates/js/translated/stock.js:2933
 msgid "The Stock Item links to a Part which is the BOM for this Stock Item"
 msgstr "A készlet tétel egy olyan alkatrészre mutat ami alkatrészjegyzéke ennek a készlet tételnek"
 
-#: templates/js/translated/stock.js:2978
+#: templates/js/translated/stock.js:2934
 msgid "The Stock Item is currently available in stock"
 msgstr "A készlet tétel jelenleg elérhető készleten"
 
-#: templates/js/translated/stock.js:2979
+#: templates/js/translated/stock.js:2935
 msgid "The Stock Item is serialized and does not belong to another item"
 msgstr "A készlet tétel egyedi követésre kötelezett és nem tartozik másik tételhez"
 
-#: templates/js/translated/stock.js:2992
+#: templates/js/translated/stock.js:2948
 msgid "Select part to install"
 msgstr "Válaszd ki a beépítendő alkatrészt"
 
@@ -9437,60 +9420,68 @@ msgstr "Felhasználható készlet"
 msgid "Purchasable"
 msgstr "Beszerezhető"
 
-#: templates/js/translated/tables.js:368
+#: templates/js/translated/tables.js:50
+msgid "Export Table Data"
+msgstr ""
+
+#: templates/js/translated/tables.js:54
+msgid "Select File Format"
+msgstr ""
+
+#: templates/js/translated/tables.js:433
 msgid "Loading data"
 msgstr "Adatok betöltése"
 
-#: templates/js/translated/tables.js:371
+#: templates/js/translated/tables.js:436
 msgid "rows per page"
 msgstr "sor oldalanként"
 
-#: templates/js/translated/tables.js:376
+#: templates/js/translated/tables.js:441
 msgid "Showing all rows"
 msgstr "Összes sor mutatása"
 
-#: templates/js/translated/tables.js:378
+#: templates/js/translated/tables.js:443
 msgid "Showing"
 msgstr "Látható"
 
-#: templates/js/translated/tables.js:378
+#: templates/js/translated/tables.js:443
 msgid "to"
 msgstr "-"
 
-#: templates/js/translated/tables.js:378
+#: templates/js/translated/tables.js:443
 msgid "of"
 msgstr "a"
 
-#: templates/js/translated/tables.js:378
+#: templates/js/translated/tables.js:443
 msgid "rows"
 msgstr "sorból,"
 
-#: templates/js/translated/tables.js:382 templates/search_form.html:6
+#: templates/js/translated/tables.js:447 templates/search_form.html:6
 #: templates/search_form.html:7
 msgid "Search"
 msgstr "Keresés"
 
-#: templates/js/translated/tables.js:385
+#: templates/js/translated/tables.js:450
 msgid "No matching results"
 msgstr "Nincs egyező eredmény"
 
-#: templates/js/translated/tables.js:388
+#: templates/js/translated/tables.js:453
 msgid "Hide/Show pagination"
 msgstr "Lapozó elrejtése/megjelenítése"
 
-#: templates/js/translated/tables.js:391
+#: templates/js/translated/tables.js:456
 msgid "Refresh"
 msgstr "Frissítés"
 
-#: templates/js/translated/tables.js:394
+#: templates/js/translated/tables.js:459
 msgid "Toggle"
 msgstr "Átváltás"
 
-#: templates/js/translated/tables.js:397
+#: templates/js/translated/tables.js:462
 msgid "Columns"
 msgstr "Oszlopok"
 
-#: templates/js/translated/tables.js:400
+#: templates/js/translated/tables.js:465
 msgid "All"
 msgstr "Összes"
 
@@ -9594,63 +9585,59 @@ msgstr "Email beállítások"
 msgid "Email settings not configured"
 msgstr "Email beállítások hiányoznak"
 
-#: templates/stock_table.html:14
-msgid "Export Stock Information"
-msgstr "Készlet adatok exportálása"
-
-#: templates/stock_table.html:20
+#: templates/stock_table.html:17
 msgid "Barcode Actions"
 msgstr "Vonalkód műveletek"
 
-#: templates/stock_table.html:36
+#: templates/stock_table.html:33
 msgid "Print test reports"
 msgstr "Teszt riportok nyomtatása"
 
-#: templates/stock_table.html:43
+#: templates/stock_table.html:40
 msgid "Stock Options"
 msgstr "Készlet opciók"
 
-#: templates/stock_table.html:48
+#: templates/stock_table.html:45
 msgid "Add to selected stock items"
 msgstr "Kiválasztott tételek mennyiségének növelése"
 
-#: templates/stock_table.html:49
+#: templates/stock_table.html:46
 msgid "Remove from selected stock items"
 msgstr "Kiválasztott tételek mennyiségének csökkentése"
 
-#: templates/stock_table.html:50
+#: templates/stock_table.html:47
 msgid "Stocktake selected stock items"
 msgstr "Kiválasztott készlet tételek leltározása"
 
-#: templates/stock_table.html:51
+#: templates/stock_table.html:48
 msgid "Move selected stock items"
 msgstr "Kiválasztott tételek áthelyezése"
 
-#: templates/stock_table.html:52
+#: templates/stock_table.html:49
 msgid "Merge selected stock items"
 msgstr "Kiválasztott tételek összevonása"
 
-#: templates/stock_table.html:52
+#: templates/stock_table.html:49
 msgid "Merge stock"
 msgstr "Készlet összevonása"
 
-#: templates/stock_table.html:53
+#: templates/stock_table.html:50
 msgid "Order selected items"
 msgstr "Kiválasztott tételek megrendelése"
 
-#: templates/stock_table.html:55
+#: templates/stock_table.html:52
 msgid "Change status"
 msgstr "Állapot módosítása"
 
-#: templates/stock_table.html:55
+#: templates/stock_table.html:52
 msgid "Change stock status"
 msgstr "Készlet állapot módosítása"
 
-#: templates/stock_table.html:58
+#: templates/stock_table.html:55
 msgid "Delete selected items"
 msgstr "Kiválasztott tételek törlése"
 
-#: templates/stock_table.html:58
+#: templates/stock_table.html:55
 msgid "Delete stock"
 msgstr ""
 
