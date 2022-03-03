@@ -154,6 +154,11 @@ static_root: '/home/inventree/data/static'
 # Use environment variable INVENTREE_LOGIN_ATTEMPTS
 #login_attempts: 5
 
+# Add new user on first startup
+#admin_user: admin
+#admin_email: info@example.com
+#admin_password: inventree
+
 # Permit custom authentication backends
 #authentication_backends:
 #  - 'django.contrib.auth.backends.ModelBackend'
