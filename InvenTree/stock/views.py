@@ -25,21 +25,19 @@ from InvenTree.views import QRCodeView
 from InvenTree.views import InvenTreeRoleMixin
 from InvenTree.forms import ConfirmForm
 
-from InvenTree.helpers import str2bool, DownloadFile, GetExportFormats
+from InvenTree.helpers import str2bool
 from InvenTree.helpers import extract_serial_numbers
 
 from decimal import Decimal, InvalidOperation
 from datetime import datetime, timedelta
 
-from company.models import Company, SupplierPart
+from company.models import SupplierPart
 from part.models import Part
 from .models import StockItem, StockLocation, StockItemTracking
 
 import common.settings
 from common.models import InvenTreeSetting
 from users.models import Owner
-
-from .admin import StockItemResource
 
 from . import forms as StockForms
 

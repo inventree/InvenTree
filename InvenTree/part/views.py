@@ -49,13 +49,11 @@ from . import settings as part_settings
 from .bom import MakeBomTemplate, ExportBom, IsValidBOMFormat
 from order.models import PurchaseOrderLineItem
 
-from .admin import PartResource
-
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.views import QRCodeView
 from InvenTree.views import InvenTreeRoleMixin
 
-from InvenTree.helpers import DownloadFile, str2bool
+from InvenTree.helpers import str2bool
 
 
 class PartIndex(InvenTreeRoleMixin, ListView):

@@ -626,7 +626,7 @@ class StockList(generics.ListCreateAPIView):
                 dataset = StockItemResource().export(queryset=queryset)
 
                 filedata = dataset.export(export_format)
-                
+
                 filename = 'InvenTree_Stocktake_{date}.{fmt}'.format(
                     date=datetime.now().strftime("%d-%b-%Y"),
                     fmt=export_format
