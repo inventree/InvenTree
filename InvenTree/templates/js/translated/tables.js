@@ -7,6 +7,7 @@
 
 /* exported
     customGroupSorter,
+    downloadTableData,
     reloadtable,
     renderLink,
     reloadTableFilters,
@@ -18,6 +19,42 @@
  */
 function reloadtable(table) {
     $(table).bootstrapTable('refresh');
+}
+
+
+/**
+ * Download data from a table, via the API.
+ * This requires a number of conditions to be met:
+ * 
+ * - The API endpoint supports data download (on the server side)
+ * - The table is "flat" (does not support multi-level loading, etc)
+ * - The table has been loaded using the inventreeTable() function, not bootstrapTable()
+ *   (Refer to the "reloadTableFilters" function to see why!)
+ */
+function downloadTableData(table) {
+
+    // Extract table configuration options
+    var options = table.bootstrapTable('getOptions');
+
+    var url = options.url;
+
+    if (!url) {
+        console.log("Error: downloadTableData could not find 'url' parameter");
+    }
+
+    var query_params = options.query_params || {};
+
+    url += '?';
+
+    for (const [key, value] of Object.entries(query_params)) {
+        url += `${key}=${value}&`;
+    }
+
+    var format = 'csv';
+
+    url += `export=${format}`;
+
+    location.href = url;
 }
 
 
@@ -113,6 +150,10 @@ function reloadTableFilters(table, filters) {
             params[key] = options.original[key];
         }
     }
+
+    // Store the total set of query params
+    // This is necessary for the "downloadTableData" function to work
+    options.query_params = params;
 
     options.queryParams = function(tableParams) {
         return convertQueryParameters(tableParams, params);
@@ -221,7 +262,11 @@ $.fn.inventreeTable = function(options) {
     // Extract query params
     var filters = options.queryParams || options.filters || {};
 
+    // Store the total set of query params
+    options.query_params = filters;
+
     options.queryParams = function(params) {
+        // Update the query parameters callback with the *new* filters
         return convertQueryParameters(params, filters);
     };
 

@@ -240,12 +240,7 @@
     {% endif %}
 
     $("#stock-export").click(function() {
-
-        exportStock({
-            {% if location %}
-            location: {{ location.pk }}
-            {% endif %}
-        });
+        downloadTableData($('#stock-table'));
     });
 
     $('#location-create').click(function () {
