@@ -239,15 +239,6 @@
     });
     {% endif %}
 
-    $('#stock-export').click(function() {
-
-        exportStock({
-            {% if location %}
-            location: {{ location.pk }}
-            {% endif %}
-        });
-    });
-
     $('#location-create').click(function () {
 
         createStockLocation({

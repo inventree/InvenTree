@@ -26,6 +26,8 @@ from djmoney.contrib.exchange.exceptions import MissingRate
 
 from decimal import Decimal, InvalidOperation
 
+from part.admin import PartResource
+
 from .models import Part, PartCategory, PartRelated
 from .models import BomItem, BomItemSubstitute
 from .models import PartParameter, PartParameterTemplate
@@ -43,6 +45,7 @@ from build.models import Build
 from . import serializers as part_serializers
 
 from InvenTree.helpers import str2bool, isNull, increment
+from InvenTree.helpers import DownloadFile
 from InvenTree.api import AttachmentMixin
 
 from InvenTree.status_codes import BuildStatus
@@ -725,6 +728,22 @@ class PartList(generics.ListCreateAPIView):
         """
 
         queryset = self.filter_queryset(self.get_queryset())
+
+        # Check if we wish to export the queried data to a file.
+        # If so, skip pagination!
+        export_format = request.query_params.get('export', None)
+
+        if export_format:
+            export_format = str(export_format).strip().lower()
+
+            if export_format in ['csv', 'tsv', 'xls', 'xlsx']:
+                dataset = PartResource().export(queryset=queryset)
+
+                filedata = dataset.export(export_format)
+
+                filename = f"InvenTree_Parts.{export_format}"
+
+                return DownloadFile(filedata, filename)
 
         page = self.paginate_queryset(queryset)
 

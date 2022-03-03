@@ -221,29 +221,19 @@
         },
     });
 
-    function reloadTable() {
-        $('#so-lines-table').bootstrapTable('refresh');
-    }
+    $("#new-so-line").click(function() {
 
-    $('#new-so-line').click(function() {
+        var fields = soLineItemFields({
+            order: {{ order.pk }},
+        });
 
         constructForm('{% url "api-so-line-list" %}', {
-            fields: {
-                order: {
-                    value: {{ order.pk }},
-                    hidden: true,
-                },
-                part: {},
-                quantity: {},
-                reference: {},
-                sale_price: {},
-                sale_price_currency: {},
-                target_date: {},
-                notes: {},
-            },
+            fields: fields,
             method: 'POST',
             title: '{% trans "Add Line Item" %}',
-            onSuccess: reloadTable,
+            onSuccess: function() {
+                $("#so-lines-table").bootstrapTable("refresh");
+            },
         });
     });
 

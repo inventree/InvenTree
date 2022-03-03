@@ -80,9 +80,6 @@ part_urls = [
     # Download a BOM upload template
     url(r'^bom_template/?', views.BomUploadTemplate.as_view(), name='bom-upload-template'),
 
-    # Export data for multiple parts
-    url(r'^export/', views.PartExport.as_view(), name='part-export'),
-
     # Individual part using pk
     url(r'^(?P<pk>\d+)/', include(part_detail_urls)),
 

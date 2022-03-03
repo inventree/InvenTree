@@ -153,9 +153,6 @@
             <h4>{% trans "Parts" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                <button type='button' class='btn btn-outline-secondary' id='part-export' title='{% trans "Export Part Data" %}'>
-                    <span class='fas fa-file-download'></span> {% trans "Export" %}
-                </button>
                 {% if roles.part.add %}
                 <button type='button' class='btn btn-success' id='part-create' title='{% trans "Create new part" %}'>
                     <span class='fas fa-plus-circle'></span> {% trans "New Part" %}
@@ -288,13 +285,6 @@
             title: '{% trans "Create Part Category" %}',
             follow: true,
         });
-    });
-
-    $('#part-export').click(function() {
-
-        var url = '{% url "part-export" %}?category={{ category.id }}';
-
-        location.href = url;
     });
 
     {% if roles.part.add %}
