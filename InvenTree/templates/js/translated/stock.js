@@ -43,7 +43,6 @@
     duplicateStockItem,
     editStockItem,
     editStockLocation,
-    exportStock,
     findStockItemBySerialNumber,
     installStockItem,
     loadInstalledInTable,
@@ -503,49 +502,6 @@ function stockStatusCodes() {
         },
         {% endfor %}
     ];
-}
-
-
-/*
- * Export stock table
- */
-function exportStock(params={}) {
-
-    constructFormBody({}, {
-        title: '{% trans "Export Stock" %}',
-        fields: {
-            format: {
-                label: '{% trans "Format" %}',
-                help_text: '{% trans "Select file format" %}',
-                required: true,
-                type: 'choice',
-                value: 'csv',
-                choices: exportFormatOptions(),
-            },
-            sublocations: {
-                label: '{% trans "Include Sublocations" %}',
-                help_text: '{% trans "Include stock items in sublocations" %}',
-                type: 'boolean',
-                value: 'true',
-            }
-        },
-        onSubmit: function(fields, form_options) {
-
-            var format = getFormFieldValue('format', fields['format'], form_options);
-            var cascade = getFormFieldValue('sublocations', fields['sublocations'], form_options);
-
-            // Hide the modal
-            $(form_options.modal).modal('hide');
-
-            var url = `{% url "stock-export" %}?format=${format}&cascade=${cascade}`;
-
-            for (var key in params) {
-                url += `&${key}=${params[key]}`;
-            }
-
-            location.href = url;
-        }
-    });
 }
 
 
@@ -1615,7 +1571,7 @@ function loadStockTable(table, options) {
         original[k] = params[k];
     }
 
-    setupFilterList(filterKey, table, filterTarget);
+    setupFilterList(filterKey, table, filterTarget, {download: true});
 
     // Override the default values, or add new ones
     for (var key in params) {

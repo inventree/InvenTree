@@ -28,11 +28,6 @@
         </div>
     </div>
     <div class='panel-content'>
-        {% if part.is_template %}
-        <div class='alert alert-info alert-block'>
-            {% blocktrans with full_name=part.full_name%}Showing stock for all variants of <em>{{full_name}}</em>{% endblocktrans %}
-        </div>
-        {% endif %}
         {% include "stock_table.html" %}
     </div>
 </div>
@@ -829,14 +824,7 @@
             ],
             url: "{% url 'api-stock-list' %}",
         });
-    
-        $("#stock-export").click(function() {
-    
-            exportStock({
-                part: {{ part.pk }}
-            });
-        });
-    
+
         $('#item-create').click(function () {
             createNewStockItem({
                 data: {

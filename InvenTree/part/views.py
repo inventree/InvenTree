@@ -49,13 +49,11 @@ from . import settings as part_settings
 from .bom import MakeBomTemplate, ExportBom, IsValidBOMFormat
 from order.models import PurchaseOrderLineItem
 
-from .admin import PartResource
-
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.views import QRCodeView
 from InvenTree.views import InvenTreeRoleMixin
 
-from InvenTree.helpers import DownloadFile, str2bool
+from InvenTree.helpers import str2bool
 
 
 class PartIndex(InvenTreeRoleMixin, ListView):
@@ -707,69 +705,6 @@ class BomUpload(InvenTreeRoleMixin, DetailView):
     context_object_name = 'part'
     queryset = Part.objects.all()
     template_name = 'part/upload_bom.html'
-
-
-class PartExport(AjaxView):
-    """ Export a CSV file containing information on multiple parts """
-
-    role_required = 'part.view'
-
-    def get_parts(self, request):
-        """ Extract part list from the POST parameters.
-        Parts can be supplied as:
-
-        - Part category
-        - List of part PK values
-        """
-
-        # Filter by part category
-        cat_id = request.GET.get('category', None)
-
-        part_list = None
-
-        if cat_id is not None:
-            try:
-                category = PartCategory.objects.get(pk=cat_id)
-                part_list = category.get_parts()
-            except (ValueError, PartCategory.DoesNotExist):
-                pass
-
-        # Backup - All parts
-        if part_list is None:
-            part_list = Part.objects.all()
-
-        # Also optionally filter by explicit list of part IDs
-        part_ids = request.GET.get('parts', '')
-        parts = []
-
-        for pk in part_ids.split(','):
-            try:
-                parts.append(int(pk))
-            except ValueError:
-                pass
-
-        if len(parts) > 0:
-            part_list = part_list.filter(pk__in=parts)
-
-        # Prefetch related fields to reduce DB hits
-        part_list = part_list.prefetch_related(
-            'category',
-            'used_in',
-            'builds',
-            'supplier_parts__purchase_order_line_items',
-            'stock_items__allocations',
-        )
-
-        return part_list
-
-    def get(self, request, *args, **kwargs):
-
-        parts = self.get_parts(request)
-
-        dataset = PartResource().export(queryset=parts)
-
-        csv = dataset.export('csv')
-        return DownloadFile(csv, 'InvenTree_Parts.csv')
 
 
 class BomUploadTemplate(AjaxView):
