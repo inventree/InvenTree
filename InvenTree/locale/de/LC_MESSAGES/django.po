@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-03 13:28+0000\n"
-"PO-Revision-Date: 2022-03-03 13:58\n"
+"PO-Revision-Date: 2022-03-03 15:06\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -8101,7 +8101,7 @@ msgstr "Filter auswählen"
 
 #: templates/js/translated/filters.js:288
 msgid "Download data"
-msgstr ""
+msgstr "Daten herunterladen"
 
 #: templates/js/translated/filters.js:291
 msgid "Reload data"
@@ -9424,11 +9424,11 @@ msgstr "Käuflich"
 
 #: templates/js/translated/tables.js:50
 msgid "Export Table Data"
-msgstr ""
+msgstr "Tabellendaten exportieren"
 
 #: templates/js/translated/tables.js:54
 msgid "Select File Format"
-msgstr ""
+msgstr "Dateiformat wählen"
 
 #: templates/js/translated/tables.js:433
 msgid "Loading data"
