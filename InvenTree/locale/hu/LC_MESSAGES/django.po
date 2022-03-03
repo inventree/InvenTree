@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-03 01:46+0000\n"
-"PO-Revision-Date: 2022-03-03 01:48\n"
+"POT-Creation-Date: 2022-03-03 02:53+0000\n"
+"PO-Revision-Date: 2022-03-03 03:01\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -931,7 +931,7 @@ msgstr "Forrás készlet tétel"
 #: order/templates/order/order_wizard/match_parts.html:30
 #: order/templates/order/order_wizard/select_parts.html:34 part/forms.py:144
 #: part/forms.py:160 part/forms.py:176 part/models.py:2721
-#: part/templates/part/detail.html:1008 part/templates/part/detail.html:1094
+#: part/templates/part/detail.html:1006 part/templates/part/detail.html:1092
 #: part/templates/part/part_pricing.html:16
 #: part/templates/part/upload_bom.html:53
 #: report/templates/report/inventree_build_order_base.html:114
@@ -1433,7 +1433,7 @@ msgstr "Lefoglalás kész"
 msgid "All untracked stock items have been allocated"
 msgstr "Az összes nem követett készlet lefoglalásra került"
 
-#: build/templates/build/index.html:18 part/templates/part/detail.html:329
+#: build/templates/build/index.html:18 part/templates/part/detail.html:327
 msgid "New Build Order"
 msgstr "Új gyártási utasítás"
 
@@ -2711,7 +2711,7 @@ msgstr "Új beszállítói alkatrész létrehozása"
 
 #: company/templates/company/detail.html:20
 #: company/templates/company/manufacturer_part.html:118
-#: part/templates/part/detail.html:367
+#: part/templates/part/detail.html:365
 msgid "New Supplier Part"
 msgstr "Új beszállítói alkatrész"
 
@@ -2719,8 +2719,8 @@ msgstr "Új beszállítói alkatrész"
 #: company/templates/company/detail.html:79
 #: company/templates/company/manufacturer_part.html:127
 #: company/templates/company/manufacturer_part.html:156
-#: part/templates/part/category.html:171 part/templates/part/detail.html:376
-#: part/templates/part/detail.html:405
+#: part/templates/part/category.html:171 part/templates/part/detail.html:374
+#: part/templates/part/detail.html:403
 msgid "Options"
 msgstr "Opciók"
 
@@ -2748,7 +2748,7 @@ msgstr "Gyártói alkatrészek"
 msgid "Create new manufacturer part"
 msgstr "Új gyártói alkatrész létrehozása"
 
-#: company/templates/company/detail.html:67 part/templates/part/detail.html:395
+#: company/templates/company/detail.html:67 part/templates/part/detail.html:393
 msgid "New Manufacturer Part"
 msgstr "Új gyártói alkatrész"
 
@@ -2812,13 +2812,13 @@ msgstr "Cég megjegyzések"
 
 #: company/templates/company/detail.html:384
 #: company/templates/company/manufacturer_part.html:215
-#: part/templates/part/detail.html:449
+#: part/templates/part/detail.html:447
 msgid "Delete Supplier Parts?"
 msgstr "Töröljük a beszállítói alkatrészeket?"
 
 #: company/templates/company/detail.html:385
 #: company/templates/company/manufacturer_part.html:216
-#: part/templates/part/detail.html:450
+#: part/templates/part/detail.html:448
 msgid "All selected supplier parts will be deleted"
 msgstr "Az összes kiválasztott beszállítói alkatrész törölve lesz"
 
@@ -2862,14 +2862,14 @@ msgid "Suppliers"
 msgstr "Beszállítók"
 
 #: company/templates/company/manufacturer_part.html:129
-#: part/templates/part/detail.html:378
+#: part/templates/part/detail.html:376
 msgid "Delete supplier parts"
 msgstr "Beszállítói alkatrész törlése"
 
 #: company/templates/company/manufacturer_part.html:129
 #: company/templates/company/manufacturer_part.html:158
 #: company/templates/company/manufacturer_part.html:254
-#: part/templates/part/detail.html:378 part/templates/part/detail.html:407
+#: part/templates/part/detail.html:376 part/templates/part/detail.html:405
 #: templates/js/translated/company.js:426 templates/js/translated/helpers.js:31
 #: users/models.py:217
 msgid "Delete"
@@ -2894,7 +2894,7 @@ msgid "Delete parameters"
 msgstr "Paraméterek törlése"
 
 #: company/templates/company/manufacturer_part.html:191
-#: part/templates/part/detail.html:908
+#: part/templates/part/detail.html:906
 msgid "Add Parameter"
 msgstr "Paraméter hozzáadása"
 
@@ -4749,90 +4749,90 @@ msgstr "Alkatrészjegyzék riport nyomtatása"
 msgid "Upload BOM"
 msgstr "Alkatrészjegyzék feltöltése"
 
-#: part/templates/part/detail.html:285 templates/js/translated/part.js:272
+#: part/templates/part/detail.html:284 templates/js/translated/part.js:272
 msgid "Copy BOM"
 msgstr "Alkatrészjegyzék másolása"
 
-#: part/templates/part/detail.html:287
+#: part/templates/part/detail.html:285
 msgid "Validate BOM"
 msgstr "Alkatrészjegyzék jóváhagyása"
 
-#: part/templates/part/detail.html:292
+#: part/templates/part/detail.html:290
 msgid "New BOM Item"
 msgstr "Új alkatrészjegyzék tétel"
 
-#: part/templates/part/detail.html:293
+#: part/templates/part/detail.html:291
 msgid "Add BOM Item"
 msgstr "Alkatrészjegyzék tétel hozzáadása"
 
-#: part/templates/part/detail.html:306
+#: part/templates/part/detail.html:304
 msgid "Assemblies"
 msgstr "Gyártmányok"
 
-#: part/templates/part/detail.html:323
+#: part/templates/part/detail.html:321
 msgid "Part Builds"
 msgstr "Alkatrész gyártások"
 
-#: part/templates/part/detail.html:348
+#: part/templates/part/detail.html:346
 msgid "Build Order Allocations"
 msgstr "Gyártáshoz foglalások"
 
-#: part/templates/part/detail.html:363
+#: part/templates/part/detail.html:361
 msgid "Part Suppliers"
 msgstr "Alkatrész beszállítók"
 
-#: part/templates/part/detail.html:391
+#: part/templates/part/detail.html:389
 msgid "Part Manufacturers"
 msgstr "Alkatrész gyártók"
 
-#: part/templates/part/detail.html:407
+#: part/templates/part/detail.html:405
 msgid "Delete manufacturer parts"
 msgstr "Gyártói alkatrészek törlése"
 
-#: part/templates/part/detail.html:589
+#: part/templates/part/detail.html:587
 msgid "Delete selected BOM items?"
 msgstr "Töröljük a kiválasztott alkatrészjegyzék tételeket?"
 
-#: part/templates/part/detail.html:590
+#: part/templates/part/detail.html:588
 msgid "All selected BOM items will be deleted"
 msgstr "Az összes kijelölt alkatrészjegyzék tétel törlésre kerül"
 
-#: part/templates/part/detail.html:639
+#: part/templates/part/detail.html:637
 msgid "Create BOM Item"
 msgstr "Alkatrészjegyzék tétel létrehozása"
 
-#: part/templates/part/detail.html:696
+#: part/templates/part/detail.html:694
 msgid "Related Part"
 msgstr "Kapcsolódó alkatrész"
 
-#: part/templates/part/detail.html:704
+#: part/templates/part/detail.html:702
 msgid "Add Related Part"
 msgstr "Kapcsolódó alkatrész hozzáadása"
 
-#: part/templates/part/detail.html:801
+#: part/templates/part/detail.html:799
 msgid "Add Test Result Template"
 msgstr "Teszt eredmény sablon hozzáadása"
 
-#: part/templates/part/detail.html:858
+#: part/templates/part/detail.html:856
 msgid "Edit Part Notes"
 msgstr "Alkatrész megjegyzések szerkesztése"
 
-#: part/templates/part/detail.html:971
+#: part/templates/part/detail.html:969
 #, python-format
 msgid "Purchase Unit Price - %(currency)s"
 msgstr "Beszerzési egységár - %(currency)s"
 
-#: part/templates/part/detail.html:983
+#: part/templates/part/detail.html:981
 #, python-format
 msgid "Unit Price-Cost Difference - %(currency)s"
 msgstr "Egységár-önköltség különbség - %(currency)s"
 
-#: part/templates/part/detail.html:995
+#: part/templates/part/detail.html:993
 #, python-format
 msgid "Supplier Unit Cost - %(currency)s"
 msgstr "Beszállítói egység költség - %(currency)s"
 
-#: part/templates/part/detail.html:1084
+#: part/templates/part/detail.html:1082
 #, python-format
 msgid "Unit Price - %(currency)s"
 msgstr "Egységár - %(currency)s"
