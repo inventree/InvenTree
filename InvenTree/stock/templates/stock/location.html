@@ -20,6 +20,7 @@
 {% endblock %}
 
 {% block actions %}
+
 <!-- Admin view -->
 {% if location and user.is_staff and roles.stock_location.change %}
 {% url 'admin:stock_stocklocation_change' location.pk as url %}
@@ -38,7 +39,7 @@
     </ul>
 </div>
 <!-- Check permissions and owner -->
-{% if owner_control.value == "False" or owner_control.value == "True" and user in owners or user.is_superuser %}
+{% if user_owns_location %}
 {% if roles.stock.change %}
 <div class='btn-group' role='group'>
     <button id='stock-actions' title='{% trans "Stock actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
@@ -74,12 +75,10 @@
 {% endif %}
 {% endif %}
 {% endif %}
-{% if owner_control.value == "False" or owner_control.value == "True" and user in owners or user.is_superuser or not location %}
-{% if roles.stock_location.add %}
+{% if user_owns_location and roles.stock_location.add %}
 <button class='btn btn-success' id='location-create' type='button' title='{% trans "Create new stock location" %}'>
     <span class='fas fa-plus-circle'></span> {% trans "New Location" %}
 </button>
-{% endif %}
 {% endif %}
 {% endblock %}
 
@@ -106,22 +105,22 @@
         <td><em>{% trans "Top level stock location" %}</em></td>
     </tr>
     {% endif %}
+    {% if ownership_enabled and location_owner %}
+    <tr>
+        <td><span class='fas fa-users'></span></td>
+        <td>{% trans "Location Owner" %}</td>
+        <td>
+            {{ location_owner }}
+            {% if not user_owns_location %}
+            <span class='badge rounded-pill bg-warning badge-right' title='{% trans "You are not in the list of owners of this location. This stock location cannot be edited." %}'>
+                {% trans "Read only" %}
+            </span>
+            {% endif %}
+        </td>
+    </tr>
+    {% endif %}
 </table>
 {% endblock details_left %}
-
-{% block details_below %}
-{% setting_object 'STOCK_OWNERSHIP_CONTROL' as owner_control %}
-{% if owner_control.value == "True" %}
-    {% authorized_owners location.owner as owners %}
-
-    {% if location and not user in owners and not user.is_superuser %}
-    <div class='alert alert-block alert-info'>
-        {% trans "You are not in the list of owners of this location. This stock location cannot be edited." %}<br>
-    </div>
-    {% endif %}
-{% endif %}
-
-{% endblock details_below %}
 
 {% block details_right %}
 {% if location %}
