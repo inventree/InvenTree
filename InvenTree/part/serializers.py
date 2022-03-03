@@ -656,6 +656,9 @@ class PartCopyBOMSerializer(serializers.Serializer):
         fields = [
             'part',
             'remove_existing',
+            'copy_substitutes',
+            'include_inherited',
+            'skip_invalid',
         ]
 
     part = serializers.PrimaryKeyRelatedField(
@@ -692,6 +695,12 @@ class PartCopyBOMSerializer(serializers.Serializer):
         default=False,
     )
 
+    copy_substitutes = serializers.BooleanField(
+        label=_('Copy Substitute Parts'),
+        help_text=_('Copy substitute parts when duplicate BOM items'),
+        default=True,
+    )
+
     def save(self):
         """
         Actually duplicate the BOM
@@ -706,6 +715,7 @@ class PartCopyBOMSerializer(serializers.Serializer):
             clear=data.get('remove_existing', True),
             skip_invalid=data.get('skip_invalid', False),
             include_inherited=data.get('include_inherited', False),
+            copy_substitutes=data.get('copy_substitutes', True),
         )
 
 

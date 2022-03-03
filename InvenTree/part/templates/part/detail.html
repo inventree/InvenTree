@@ -28,11 +28,6 @@
         </div>
     </div>
     <div class='panel-content'>
-        {% if part.is_template %}
-        <div class='alert alert-info alert-block'>
-            {% blocktrans with full_name=part.full_name%}Showing stock for all variants of <em>{{full_name}}</em>{% endblocktrans %}
-        </div>
-        {% endif %}
         {% include "stock_table.html" %}
     </div>
 </div>
@@ -281,9 +276,7 @@
                     </button>
                     <ul class='dropdown-menu' role='menu'>
                         <li><a class='dropdown-item' href='#' id='bom-upload'><span class='fas fa-file-upload'></span> {% trans "Upload BOM" %}</a></li>
-                        {% if part.variant_of %}
                         <li><a class='dropdown-item' href='#' id='bom-duplicate'><span class='fas fa-clone'></span> {% trans "Copy BOM" %}</a></li>
-                        {% endif %}
                         <li><a class='dropdown-item' href='#' id='validate-bom'><span class='fas fa-clipboard-check icon-green'></span> {% trans "Validate BOM" %}</a></li>
                     </ul>
                 </div>
@@ -831,14 +824,7 @@
             ],
             url: "{% url 'api-stock-list' %}",
         });
-    
-        $("#stock-export").click(function() {
-    
-            exportStock({
-                part: {{ part.pk }}
-            });
-        });
-    
+
         $('#item-create').click(function () {
             createNewStockItem({
                 data: {

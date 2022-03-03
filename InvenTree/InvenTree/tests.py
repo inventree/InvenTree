@@ -1,9 +1,12 @@
 
 import json
+from test.support import EnvironmentVarGuard
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 import django.core.exceptions as django_exceptions
 from django.core.exceptions import ValidationError
+from django.contrib.auth import get_user_model
+from django.conf import settings
 
 from djmoney.money import Money
 from djmoney.contrib.exchange.models import Rate, convert_money
@@ -407,3 +410,46 @@ class TestStatus(TestCase):
 
     def test_Importing(self):
         self.assertEqual(ready.isImportingData(), False)
+
+
+class TestSettings(TestCase):
+    """
+    Unit tests for settings
+    """
+
+    def setUp(self) -> None:
+        self.user_mdl = get_user_model()
+        self.env = EnvironmentVarGuard()
+
+    def run_reload(self):
+        from plugin import registry
+
+        with self.env:
+            settings.USER_ADDED = False
+            registry.reload_plugins()
+
+    @override_settings(TESTING_ENV=True)
+    def test_set_user_to_few(self):
+        # add shortcut
+        user_count = self.user_mdl.objects.count
+        # enable testing mode
+        settings.TESTING_ENV = True
+
+        # nothing set
+        self.run_reload()
+        self.assertEqual(user_count(), 0)
+
+        # not enough set
+        self.env.set('INVENTREE_ADMIN_USER', 'admin')  # set username
+        self.run_reload()
+        self.assertEqual(user_count(), 0)
+
+        # enough set
+        self.env.set('INVENTREE_ADMIN_USER', 'admin')  # set username
+        self.env.set('INVENTREE_ADMIN_EMAIL', 'info@example.com')  # set email
+        self.env.set('INVENTREE_ADMIN_PASSWORD', 'password123')  # set password
+        self.run_reload()
+        self.assertEqual(user_count(), 1)
+
+        # make sure to clean up
+        settings.TESTING_ENV = False

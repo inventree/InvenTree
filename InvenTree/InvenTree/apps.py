@@ -4,8 +4,13 @@ import logging
 
 from django.apps import AppConfig
 from django.core.exceptions import AppRegistryNotReady
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.db import transaction
+from django.db.utils import IntegrityError
 
 from InvenTree.ready import isInTestMode, canAppAccessDatabase
+from .config import get_setting
 import InvenTree.tasks
 
 
@@ -25,6 +30,9 @@ class InvenTreeConfig(AppConfig):
 
             if not isInTestMode():
                 self.update_exchange_rates()
+
+        if canAppAccessDatabase() or settings.TESTING_ENV:
+            self.add_user_on_startup()
 
     def remove_obsolete_tasks(self):
         """
@@ -138,3 +146,54 @@ class InvenTreeConfig(AppConfig):
                 update_exchange_rates()
             except Exception as e:
                 logger.error(f"Error updating exchange rates: {e}")
+
+    def add_user_on_startup(self):
+        """Add a user on startup"""
+        # stop if checks were already created
+        if hasattr(settings, 'USER_ADDED') and settings.USER_ADDED:
+            return
+
+        # get values
+        add_user = get_setting(
+            'INVENTREE_ADMIN_USER',
+            settings.CONFIG.get('admin_user', False)
+        )
+        add_email = get_setting(
+            'INVENTREE_ADMIN_EMAIL',
+            settings.CONFIG.get('admin_email', False)
+        )
+        add_password = get_setting(
+            'INVENTREE_ADMIN_PASSWORD',
+            settings.CONFIG.get('admin_password', False)
+        )
+
+        # check if all values are present
+        set_variables = 0
+        for tested_var in [add_user, add_email, add_password]:
+            if tested_var:
+                set_variables += 1
+
+        # no variable set -> do not try anything
+        if set_variables == 0:
+            settings.USER_ADDED = True
+            return
+
+        # not all needed variables set
+        if set_variables < 3:
+            logger.warn('Not all required settings for adding a user on startup are present:\nINVENTREE_SET_USER, INVENTREE_SET_EMAIL, INVENTREE_SET_PASSWORD')
+            settings.USER_ADDED = True
+            return
+
+        # good to go -> create user
+        user = get_user_model()
+        try:
+            with transaction.atomic():
+                new_user = user.objects.create_superuser(add_user, add_email, add_password)
+            logger.info(f'User {str(new_user)} was created!')
+        except IntegrityError as _e:
+            logger.warning(f'The user "{add_user}" could not be created due to the following error:\n{str(_e)}')
+            if settings.TESTING_ENV:
+                raise _e
+
+        # do not try again
+        settings.USER_ADDED = True

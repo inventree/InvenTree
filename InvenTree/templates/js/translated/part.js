@@ -474,6 +474,7 @@ function duplicateBom(part_id, options={}) {
                 }
             },
             include_inherited: {},
+            copy_substitutes: {},
             remove_existing: {},
             skip_invalid: {},
         },
@@ -1217,7 +1218,7 @@ function loadPartTable(table, url, options={}) {
         filters[key] = params[key];
     }
 
-    setupFilterList('parts', $(table), options.filterTarget || null);
+    setupFilterList('parts', $(table), options.filterTarget, {download: true});
 
     var columns = [
         {
