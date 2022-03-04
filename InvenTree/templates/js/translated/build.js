@@ -1513,6 +1513,16 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
  */
 function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
 
+    if (bom_items.length == 0) {
+
+        showAlertDialog(
+            '{% trans "Select Parts" %}',
+            '{% trans "You must select at least one part to allocate" %}',
+        );
+
+        return;
+    }
+
     // ID of the associated "build output" (or null)
     var output_id = options.output || null;
 
@@ -1627,8 +1637,8 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
     if (table_entries.length == 0) {
 
         showAlertDialog(
-            '{% trans "Select Parts" %}',
-            '{% trans "You must select at least one part to allocate" %}',
+            '{% trans "All Parts Allocated" %}',
+            '{% trans "All selected parts have been fully allocated" %}',
         );
 
         return;
