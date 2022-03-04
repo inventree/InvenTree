@@ -826,7 +826,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         self.save()
 
     @transaction.atomic
-    def auto_allocate_stock(self, user, **kwargs):
+    def auto_allocate_stock(self, **kwargs):
         """
         Automatically allocate stock items against this build order,
         following a number of 'guidelines':
@@ -847,9 +847,8 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
         # Get a list of all 'untracked' BOM items
         for bom_item in self.untracked_bom_items:
-            
+
             variant_parts = bom_item.sub_part.get_descendants(include_self=False)
-            substitute_parts = [p for p in bom_item.substitutes.all()]
 
             unallocated_quantity = self.unallocated_quantity(bom_item)
 
@@ -891,7 +890,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
                     return 2
                 else:
                     return 3
-                
+
             available_stock = sorted(available_stock, key=stock_sort)
 
             if len(available_stock) == 0:

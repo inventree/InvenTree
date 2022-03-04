@@ -746,11 +746,9 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
 
         data = self.validated_data
 
-        request = self.context['request']
         build = self.context['build']
 
         build.auto_allocate_stock(
-            request.user,
             location=data.get('location', None),
             interchangeable=data['interchangeable'],
             substitutes=data['substitutes'],
