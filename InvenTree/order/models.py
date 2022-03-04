@@ -5,6 +5,7 @@ Order model definitions
 # -*- coding: utf-8 -*-
 
 import os
+import hashlib
 from datetime import datetime
 from decimal import Decimal
 
@@ -20,6 +21,10 @@ from django.utils.translation import ugettext_lazy as _
 
 from markdownx.models import MarkdownxField
 from mptt.models import TreeForeignKey
+
+from djmoney.contrib.exchange.models import convert_money
+from djmoney.money import Money
+from common.settings import currency_code_default
 
 from users import models as UserModels
 from part import models as PartModels
@@ -609,6 +614,75 @@ class SalesOrder(Order):
 
         return query.exists()
 
+    checksum = models.CharField(max_length=128, blank=True, verbose_name=_('order checksum'), help_text=_('Stored order checksum'))
+
+    sell_price = InvenTreeModelMoneyField(
+        max_digits=19,
+        decimal_places=4,
+        blank=True, null=True,
+        verbose_name=_('Sell Price'),
+        help_text=_('Price for this sale order'),
+    )
+
+    def get_hash(self):
+        """ Return a checksum hash for this sale order. """
+
+        hash = hashlib.md5(str(self.id).encode())
+
+        # hash own values
+        hash.update(str(self.customer.id).encode())
+        hash.update(str(self.customer_reference).encode())
+        hash.update(str(self.target_date).encode())
+        hash.update(str(self.reference).encode())
+        hash.update(str(self.link).encode())
+        hash.update(str(self.notes).encode())
+        hash.update(str(self.sell_price).encode())
+        hash.update(str(self.sell_price_currency).encode())
+
+        # List *all* items
+        items = self.lines.all()
+        for item in items:
+            hash.update(str(item.get_item_hash()).encode())
+
+        return str(hash.digest())
+
+    def is_valid(self):
+        """ Check if the sale order is 'valid' - if the calculated checksum matches the stored value
+        """
+        return self.get_hash() == self.checksum or not self.sell_price
+
+    @transaction.atomic
+    def validate(self, user):
+        """ Validate the sale order
+        - Calculates and stores the hash for the sale order
+        """
+        self.checksum = self.get_hash()
+        self.save()
+
+    def get_total_price(self):
+        """
+        Calculates the total price of all order lines
+        """
+        target_currency = self.sell_price_currency if self.sell_price else currency_code_default()
+        total = Money(0, target_currency)
+
+        # order items
+        total += sum([a.quantity * convert_money(a.sale_price, target_currency) for a in self.lines.all() if a.sale_price])
+
+        # additional lines
+        total += sum([a.quantity * convert_money(a.sale_price, target_currency) for a in self.additional_lines.all() if a.sale_price])
+
+        # set decimal-places
+        total.decimal_places = 4
+        return total
+
+    @property
+    def is_price_total(self):
+        """
+        Returns true if the set sale price and the calculated total price are equal
+        """
+        return self.get_total_price() == self.sell_price
+
     @property
     def is_pending(self):
         return self.status == SalesOrderStatus.PENDING
@@ -1161,6 +1235,38 @@ class SalesOrderShipment(models.Model):
         self.save()
 
         trigger_event('salesordershipment.completed', id=self.pk)
+
+
+class SalesOrderAdditionalLineItem(OrderLineItem):
+    """
+    Model for a single AdditionalLineItem in a SalesOrder
+    Attributes:
+        order: Link to the SalesOrder that this line item belongs to
+        title: titile of line item
+        sale_price: The unit sale price for this OrderLineItem
+    """
+
+    order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='additional_lines', verbose_name=_('Order'), help_text=_('Sales Order'))
+
+    title = models.CharField(verbose_name=_('title'), help_text=_('titel of the additional line'), max_length=250)
+
+    sale_price = InvenTreeModelMoneyField(
+        max_digits=19,
+        decimal_places=4,
+        null=True, blank=True,
+        verbose_name=_('Sale Price'),
+        help_text=_('Unit sale price'),
+    )
+
+    def sale_price_converted(self):
+        return convert_money(self.sale_price, currency_code_default())
+
+    def sale_price_converted_currency(self):
+        return currency_code_default()
+
+    class Meta:
+        unique_together = [
+        ]
 
 
 class SalesOrderAllocation(models.Model):
