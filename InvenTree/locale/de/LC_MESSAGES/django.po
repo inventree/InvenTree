@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-03 20:46+0000\n"
-"PO-Revision-Date: 2022-03-03 20:51\n"
+"PO-Revision-Date: 2022-03-04 17:15\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -8417,7 +8417,7 @@ msgstr "Bestellung überfällig"
 
 #: templates/js/translated/order.js:1074 templates/js/translated/order.js:2585
 msgid "Duplicate Line Item"
-msgstr ""
+msgstr "Position duplizieren"
 
 #: templates/js/translated/order.js:1104 templates/js/translated/order.js:2607
 msgid "Edit Line Item"
@@ -8455,7 +8455,7 @@ msgstr "Position empfangen"
 
 #: templates/js/translated/order.js:1360 templates/js/translated/order.js:2540
 msgid "Duplicate line item"
-msgstr ""
+msgstr "Position duplizieren"
 
 #: templates/js/translated/order.js:1361 templates/js/translated/order.js:2541
 msgid "Edit line item"
