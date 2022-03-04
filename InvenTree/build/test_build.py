@@ -144,7 +144,7 @@ class BuildTest(BuildTestBase):
     def test_init(self):
         # Perform some basic tests before we start the ball rolling
 
-        self.assertEqual(StockItem.objects.count(), 6)
+        self.assertEqual(StockItem.objects.count(), 10)
 
         # Build is PENDING
         self.assertEqual(self.build.status, status.BuildStatus.PENDING)
@@ -190,7 +190,7 @@ class BuildTest(BuildTestBase):
             b.clean()
 
         # Ok, what about we make one that does *not* fail?
-        b = BuildItem(stock_item=self.stock_1_1, build=self.build, install_into=self.output_1, quantity=10)
+        b = BuildItem(stock_item=self.stock_1_2, build=self.build, install_into=self.output_1, quantity=10)
         b.save()
 
     def test_duplicate_bom_line(self):
@@ -281,11 +281,14 @@ class BuildTest(BuildTestBase):
 
         self.assertFalse(self.build.are_untracked_parts_allocated())
 
+        self.stock_2_1.quantity = 500
+        self.stock_2_1.save()
+
         # Now we "fully" allocate the untracked untracked items
         self.allocate_stock(
             None,
             {
-                self.stock_1_1: 50,
+                self.stock_1_2: 50,
                 self.stock_2_1: 50,
             }
         )
@@ -311,6 +314,12 @@ class BuildTest(BuildTestBase):
         """
         Test completion of a build output
         """
+
+        self.stock_1_1.quantity = 1000
+        self.stock_1_1.save()
+
+        self.stock_2_1.quantity = 30
+        self.stock_2_1.save()
 
         # Allocate non-tracked parts
         self.allocate_stock(
@@ -358,16 +367,15 @@ class BuildTest(BuildTestBase):
         self.assertEqual(BuildItem.objects.count(), 0)
 
         # New stock items should have been created!
-        self.assertEqual(StockItem.objects.count(), 7)
+        self.assertEqual(StockItem.objects.count(), 10)
 
         # This stock item has been depleted!
         with self.assertRaises(StockItem.DoesNotExist):
             StockItem.objects.get(pk=self.stock_1_1.pk)
 
-        # This stock item has *not* been depleted
-        x = StockItem.objects.get(pk=self.stock_2_1.pk)
-
-        self.assertEqual(x.quantity, 4970)
+        # This stock item has also been depleted
+        with self.assertRaises(StockItem.DoesNotExist):
+            StockItem.objects.get(pk=self.stock_2_1.pk)
 
         # And 10 new stock items created for the build output
         outputs = StockItem.objects.filter(build=self.build)
