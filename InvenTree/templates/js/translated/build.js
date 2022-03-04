@@ -755,7 +755,7 @@ function loadBuildOutputTable(build_info, options={}) {
         filters[key] = params[key];
     }
 
-    // TODO: Initialize filter list
+    setupFilterList('builditems', $(table), options.filterTarget || '#filter-list-incompletebuilditems');
 
     function setupBuildOutputButtonCallbacks() {
         
@@ -1000,7 +1000,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         filters[key] = params[key];
     }
 
-    setupFilterList('builditems', $(table), options.filterTarget || null);
+    setupFilterList('builditems', $(table), options.filterTarget);
 
     // If an "output" is specified, then only "trackable" parts are allocated
     // Otherwise, only "untrackable" parts are allowed
