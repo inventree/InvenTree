@@ -20,6 +20,7 @@
 
 /* exported
     allocateStockToBuild,
+    autoAllocateStockToBuild,
     completeBuildOrder,
     createBuildOutput,
     editBuildOrder,
@@ -1840,6 +1841,34 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
                 }
             );
         },
+    });
+}
+
+
+/**
+ * Automatically allocate stock items to a build
+ */
+function autoAllocateStockToBuild(build_id, bom_items=[], options={}) {
+
+    var html = '';
+
+    var fields = {
+        location: {
+            value: options.location,
+        },
+        interchangeable: {},
+        substitutes: {},
+    }
+
+    constructForm(`/api/build/${build_id}/auto-allocate/`, {
+        method: 'POST',
+        fields: fields,
+        title: '{% trans "Allocate Stock Items" %}',
+        confirm: true,
+        preFormContent: html,
+        onSuccess: function(response) {
+            // TODO - Reload the allocation table
+        }
     });
 }
 
