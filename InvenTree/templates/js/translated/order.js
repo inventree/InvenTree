@@ -959,7 +959,7 @@ function loadPurchaseOrderTable(table, options) {
                 sortable: true,
                 sortName: 'supplier__name',
                 formatter: function(value, row) {
-                    return imageHoverIcon(row.supplier_detail.image) + renderLink(row.supplier_detail.name, `/company/${row.supplier}/purchase-orders/`);
+                    return imageHoverIcon(row.supplier_detail.image) + renderLink(row.supplier_detail.name, `/company/${row.supplier}/?display=purchase-orders`);
                 }
             },
             {
