@@ -848,6 +848,9 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         # Get a list of all 'untracked' BOM items
         for bom_item in self.untracked_bom_items:
             
+            variant_parts = bom_item.sub_part.get_descendants(include_self=False)
+            substitute_parts = [p for p in bom_item.substitutes.all()]
+
             unallocated_quantity = self.unallocated_quantity(bom_item)
 
             if unallocated_quantity <= 0:
@@ -873,10 +876,28 @@ class Build(MPTTModel, ReferenceIndexingMixin):
                 sublocations = location.get_descendants(include_self=True)
                 available_stock = available_stock.filter(location__in=[loc for loc in sublocations])
 
-            if available_stock.count() == 0:
+            """
+            Next, we sort the available stock items with the following priority:
+            1. Direct part matches (+1)
+            2. Variant part matches (+2)
+            3. Substitute part matches (+3)
+
+            This ensures that allocation priority is first given to "direct" parts
+            """
+            def stock_sort(item):
+                if item.part == bom_item.sub_part:
+                    return 1
+                elif item.part in variant_parts:
+                    return 2
+                else:
+                    return 3
+                
+            available_stock = sorted(available_stock, key=stock_sort)
+
+            if len(available_stock) == 0:
                 # No stock items are available
                 continue
-            elif available_stock.count() == 1 or interchangeable:
+            elif len(available_stock) == 1 or interchangeable:
                 # Either there is only a single stock item available,
                 # or all items are "interchangeable" and we don't care where we take stock from
 

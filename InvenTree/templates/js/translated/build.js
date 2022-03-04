@@ -1850,14 +1850,28 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
  */
 function autoAllocateStockToBuild(build_id, bom_items=[], options={}) {
 
-    var html = '';
+    var html = `
+    <div class='alert alert-block alert-info'>
+    <strong>{% trans "Automatic Stock Allocation" %}</strong><br>
+    {% trans "Stock items will be automatically allocated to this build order, according to the provided guidelines" %}:
+    <ul>
+        <li>{% trans "If a location is specifed, stock will only be allocated from that location" %}</li>
+        <li>{% trans "If stock is considered interchangeable, it will be allocated from the first location it is found" %}</li>
+        <li>{% trans "If substitute stock is allowed, it will be used where stock of the primary part cannot be found" %}</li>
+    </ul>
+    </div>
+    `;
 
     var fields = {
         location: {
             value: options.location,
         },
-        interchangeable: {},
-        substitutes: {},
+        interchangeable: {
+            value: true,
+        },
+        substitutes: {
+            value: true,
+        },
     }
 
     constructForm(`/api/build/${build_id}/auto-allocate/`, {
@@ -1867,7 +1881,7 @@ function autoAllocateStockToBuild(build_id, bom_items=[], options={}) {
         confirm: true,
         preFormContent: html,
         onSuccess: function(response) {
-            // TODO - Reload the allocation table
+            $('#allocation-table-untracked').bootstrapTable('refresh');
         }
     });
 }
