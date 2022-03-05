@@ -142,6 +142,7 @@ class RuleSet(models.Model):
             'order_salesorderallocation',
             'order_salesorderattachment',
             'order_salesorderlineitem',
+            'order_salesorderadditionallineitem',
             'order_salesordershipment',
         ]
     }

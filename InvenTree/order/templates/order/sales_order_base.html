@@ -183,16 +183,6 @@ src="{% static 'img/blank_image.png' %}"
         <td>{{ order.responsible }}</td>
     </tr>
     {% endif %}
-
-    {% if order.sell_price %}
-    <tr>
-        <td><span class='fas fa-users'></span></td>
-        <td>{% trans "Sell Price" %}</td>
-        <td id='sales-order-sell-price'>
-            {% trans "Loading..." %}
-        </td>
-    </tr>
-    {% endif %}
 </table>
 {% endblock %}
 
@@ -212,8 +202,6 @@ $("#edit-order").click(function() {
             {% endif %}
             customer_reference: {},
             description: {},
-            sell_price: {},
-            sell_price_currency: {},
             target_date: {
                 icon: 'fa-calendar-alt',
             },

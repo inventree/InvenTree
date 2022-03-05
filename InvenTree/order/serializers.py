@@ -515,21 +515,6 @@ class SalesOrderSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSeria
 
     reference = serializers.CharField(required=True)
 
-    sell_price = InvenTreeMoneySerializer(
-        max_digits=19,
-        decimal_places=4,
-        allow_null=True
-    )
-
-    sell_price_string = serializers.CharField(source='sell_price', read_only=True)
-
-    sell_price_currency = serializers.ChoiceField(
-        choices=currency_code_mappings(),
-        help_text=_('Sell price currency'),
-    )
-
-    total_price_string = serializers.CharField(source='get_total_price', read_only=True)
-
     class Meta:
         model = order.models.SalesOrder
 
@@ -550,11 +535,6 @@ class SalesOrderSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSeria
             'status_text',
             'shipment_date',
             'target_date',
-            'sell_price',
-            'sell_price_string',
-            'sell_price_currency',
-            'total_price_string',
-            'is_valid',
         ]
 
         read_only_fields = [
@@ -692,16 +672,6 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
         help_text=_('Sale price currency'),
     )
 
-    sale_price_converted = InvenTreeMoneySerializer(
-        max_digits=19,
-        decimal_places=4,
-        allow_null=True
-    )
-
-    sale_price_converted_string = serializers.CharField(source='sale_price_converted', read_only=True)
-
-    sale_price_converted_currency = serializers.CharField(read_only=True)
-
     class Meta:
         model = order.models.SalesOrderLineItem
 
@@ -723,67 +693,6 @@ class SOLineItemSerializer(InvenTreeModelSerializer):
             'shipped',
             'target_date',
         ]
-
-    line_item = serializers.PrimaryKeyRelatedField(
-        queryset=order.models.SalesOrderLineItem.objects.all(),
-        many=False,
-        allow_null=False,
-        required=True,
-        label=_('Stock Item'),
-    )
-
-    def validate_line_item(self, line_item):
-
-        order = self.context['order']
-
-        # Ensure that the line item points to the correct order
-        if line_item.order != order:
-            raise ValidationError(_("Line item is not associated with this order"))
-
-        return line_item
-
-    stock_item = serializers.PrimaryKeyRelatedField(
-        queryset=stock.models.StockItem.objects.all(),
-        many=False,
-        allow_null=False,
-        required=True,
-        label=_('Stock Item'),
-    )
-
-    quantity = serializers.DecimalField(
-        max_digits=15,
-        decimal_places=5,
-        min_value=0,
-        required=True
-    )
-
-    def validate_quantity(self, quantity):
-
-        if quantity <= 0:
-            raise ValidationError(_("Quantity must be positive"))
-
-        return quantity
-
-    def validate(self, data):
-
-        data = super().validate(data)
-
-        stock_item = data['stock_item']
-        quantity = data['quantity']
-
-        if stock_item.serialized and quantity != 1:
-            raise ValidationError({
-                'quantity': _("Quantity must be 1 for serialized stock item"),
-            })
-
-        q = normalize(stock_item.unallocated_quantity())
-
-        if quantity > q:
-            raise ValidationError({
-                'quantity': _(f"Available quantity ({q}) exceeded")
-            })
-
-        return data
 
 
 class SalesOrderShipmentSerializer(InvenTreeModelSerializer):
@@ -1206,8 +1115,6 @@ class SOAdditionalLineItemSerializer(InvenTreeModelSerializer):
     quantity = serializers.FloatField()
 
     sale_price = InvenTreeMoneySerializer(
-        max_digits=19,
-        decimal_places=4,
         allow_null=True
     )
 
@@ -1218,15 +1125,6 @@ class SOAdditionalLineItemSerializer(InvenTreeModelSerializer):
         help_text=_('Sale price currency'),
     )
 
-    sale_price_converted = InvenTreeMoneySerializer(
-        max_digits=19,
-        decimal_places=4,
-        allow_null=True
-    )
-
-    sale_price_converted_string = serializers.CharField(source='sale_price_converted', read_only=True)
-
-    sale_price_converted_currency = serializers.CharField(read_only=True)
 
     class Meta:
         model = order.models.SalesOrderAdditionalLineItem
@@ -1242,9 +1140,6 @@ class SOAdditionalLineItemSerializer(InvenTreeModelSerializer):
             'sale_price',
             'sale_price_currency',
             'sale_price_string',
-            'sale_price_converted',
-            'sale_price_converted_currency',
-            'sale_price_converted_string',
         ]
 
 
