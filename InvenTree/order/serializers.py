@@ -1125,7 +1125,6 @@ class SOAdditionalLineItemSerializer(InvenTreeModelSerializer):
         help_text=_('Sale price currency'),
     )
 
-
     class Meta:
         model = order.models.SalesOrderAdditionalLineItem
 

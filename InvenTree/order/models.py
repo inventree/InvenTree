@@ -23,7 +23,6 @@ from markdownx.models import MarkdownxField
 from mptt.models import TreeForeignKey
 
 from djmoney.contrib.exchange.models import convert_money
-from djmoney.money import Money
 from common.settings import currency_code_default
 
 from users import models as UserModels
