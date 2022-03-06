@@ -346,6 +346,40 @@ class StockTest(TestCase):
         with self.assertRaises(StockItem.DoesNotExist):
             w2 = StockItem.objects.get(pk=101)
 
+    def test_serials(self):
+        """
+        Tests for stock serialization
+        """
+
+        p = Part.objects.create(
+            name='trackable part',
+            description='trackable part',
+            trackable=True,
+        )
+
+        item = StockItem.objects.create(
+            part=p,
+            quantity=1,
+        )
+
+        self.assertFalse(item.serialized)
+
+        item.serial = None
+        item.save()
+        self.assertFalse(item.serialized)
+
+        item.serial = '    '
+        item.save()
+        self.assertFalse(item.serialized)
+
+        item.serial = ''
+        item.save()
+        self.assertFalse(item.serialized)
+
+        item.serial = '1'
+        item.save()
+        self.assertTrue(item.serialized)
+
     def test_serialize_stock_invalid(self):
         """
         Test manual serialization of parts.

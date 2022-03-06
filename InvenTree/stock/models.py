@@ -350,7 +350,7 @@ class StockItem(MPTTModel):
     @property
     def serialized(self):
         """ Return True if this StockItem is serialized """
-        return self.serial is not None and self.quantity == 1
+        return self.serial is not None and len(str(self.serial).strip()) > 0 and self.quantity == 1
 
     def validate_unique(self, exclude=None):
         """
