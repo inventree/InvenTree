@@ -1175,6 +1175,9 @@ class SalesOrderAdditionalLineItem(OrderLineItem):
         title: titile of line item
         sale_price: The unit sale price for this OrderLineItem
     """
+    @staticmethod
+    def get_api_url():
+        return reverse('api-so-additional-line-list')
 
     order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='additional_lines', verbose_name=_('Order'), help_text=_('Sales Order'))
 

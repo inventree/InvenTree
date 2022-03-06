@@ -798,6 +798,13 @@ class SOAdditionalLineItemList(generics.ListCreateAPIView):
     ]
 
 
+class SOAdditionalLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
+    """ API endpoint for detail view of a SalesOrderAdditionalLineItem object """
+
+    queryset = models.SalesOrderAdditionalLineItem.objects.all()
+    serializer_class = serializers.SOAdditionalLineItemSerializer
+
+
 class SOLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a SalesOrderLineItem object """
 
@@ -1114,6 +1121,12 @@ order_api_urls = [
     url(r'^so-line/', include([
         url(r'^(?P<pk>\d+)/$', SOLineItemDetail.as_view(), name='api-so-line-detail'),
         url(r'^$', SOLineItemList.as_view(), name='api-so-line-list'),
+    ])),
+
+    # API endpoints for sales order additional line items
+    url(r'^so-additional-line/', include([
+        url(r'^(?P<pk>\d+)/$', SOAdditionalLineItemDetail.as_view(), name='api-so-additional-line-detail'),
+        url(r'^$', SOAdditionalLineItemList.as_view(), name='api-so-additional-line-list'),
     ])),
 
     # API endpoints for sales order allocations
