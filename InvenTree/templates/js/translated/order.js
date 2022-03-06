@@ -36,6 +36,7 @@
     newSupplierPartFromOrderWizard,
     removeOrderRowFromOrderWizard,
     removePurchaseOrderLineItem,
+    loadOrderTotal,
 */
 
 
@@ -2290,20 +2291,20 @@ function showFulfilledSubTable(index, row, element, options) {
     });
 }
 
-var soTotalPriceRef = ''  // safes reference to total price
-var soTotalPriceOptions = {}  // options to reload the price
+var soTotalPriceRef = ''; // reference to total price field
+var soTotalPriceOptions = {}; // options to reload the price
 
 function loadOrderTotal(reference, options={}) {
     soTotalPriceRef = reference;
     soTotalPriceOptions = options;
 }
 
-function reloadTotal(){
+function reloadTotal() {
     inventreeGet(
         soTotalPriceOptions.url,
         {},
-        {success: function(data){
-                $(soTotalPriceRef).html(data.total_price_string);
+        { success: function(data){
+            $(soTotalPriceRef).html(data.total_price_string);
         }}
     );
 };
