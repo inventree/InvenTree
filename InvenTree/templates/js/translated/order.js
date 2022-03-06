@@ -2997,7 +2997,6 @@ function loadSalesOrderAdditionalLineItemTable(table, options={}) {
                     reference: {},
                     sale_price: {},
                     sale_price_currency: {},
-                    target_date: {},
                     notes: {},
                 },
                 title: '{% trans "Edit Line Item" %}',
