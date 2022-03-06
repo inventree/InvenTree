@@ -23,6 +23,7 @@ from markdownx.models import MarkdownxField
 from mptt.models import TreeForeignKey
 
 from djmoney.contrib.exchange.models import convert_money
+from djmoney.money import Money
 from common.settings import currency_code_default
 
 from users import models as UserModels
@@ -599,6 +600,23 @@ class SalesOrder(Order):
         related_name='+',
         verbose_name=_('shipped by')
     )
+
+    def get_total_price(self):
+        """
+        Calculates the total price of all order lines
+        """
+        target_currency = currency_code_default()
+        total = Money(0, target_currency)
+
+        # order items
+        total += sum([a.quantity * convert_money(a.sale_price, target_currency) for a in self.lines.all() if a.sale_price])
+
+        # additional lines
+        total += sum([a.quantity * convert_money(a.sale_price, target_currency) for a in self.additional_lines.all() if a.sale_price])
+
+        # set decimal-places
+        total.decimal_places = 4
+        return total
 
     @property
     def is_overdue(self):

@@ -2290,6 +2290,24 @@ function showFulfilledSubTable(index, row, element, options) {
     });
 }
 
+var soTotalPriceRef = ''  // safes reference to total price
+var soTotalPriceOptions = {}  // options to reload the price
+
+function loadOrderTotal(reference, options={}) {
+    soTotalPriceRef = reference;
+    soTotalPriceOptions = options;
+}
+
+function reloadTotal(){
+    inventreeGet(
+        soTotalPriceOptions.url,
+        {},
+        {success: function(data){
+                $(soTotalPriceRef).html(data.total_price_string);
+        }}
+    );
+};
+
 
 /**
  * Load a table displaying line items for a particular SalesOrder
@@ -2587,6 +2605,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
     function reloadTable() {
         $(table).bootstrapTable('refresh');
+        reloadTotal();
     }
 
     // Configure callback functions once the table is loaded
@@ -2954,6 +2973,7 @@ function loadSalesOrderAdditionalLineItemTable(table, options={}) {
 
     function reloadTable() {
         $(table).bootstrapTable('refresh');
+        reloadTotal();
     }
 
     // Configure callback functions once the table is loaded

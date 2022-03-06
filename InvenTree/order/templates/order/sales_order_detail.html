@@ -292,6 +292,13 @@
         }
     );
 
+    loadOrderTotal(
+        '#soTotalPrice',
+        {
+            url: '{% url "api-so-detail" order.pk %}',
+        }
+    );
+
     enableSidebar('salesorder');
     
 {% endblock %}

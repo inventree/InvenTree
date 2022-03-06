@@ -515,6 +515,8 @@ class SalesOrderSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSeria
 
     reference = serializers.CharField(required=True)
 
+    total_price_string = serializers.CharField(source='get_total_price', read_only=True)
+
     class Meta:
         model = order.models.SalesOrder
 
@@ -535,6 +537,7 @@ class SalesOrderSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSeria
             'status_text',
             'shipment_date',
             'target_date',
+            'total_price_string',
         ]
 
         read_only_fields = [
