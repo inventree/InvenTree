@@ -2806,7 +2806,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
  *      - order {integer} : pk of the SalesOrder
  *      - status: {integer} : status code for the order
  */
- function loadSalesOrderAdditionalLineItemTable(table, options={}) {
+function loadSalesOrderAdditionalLineItemTable(table, options={}) {
 
     options.table = table;
 
