@@ -177,7 +177,10 @@
                 <button class='btn btn-danger' type='button' id='btn-unallocate' title='{% trans "Unallocate stock" %}'>
                     <span class='fas fa-minus-circle'></span> {% trans "Unallocate Stock" %}
                 </button>
-                <button class='btn btn-success' type='button' id='btn-auto-allocate' title='{% trans "Allocate stock to build" %}'>
+                <button class='btn btn-primary' type='button' id='btn-auto-allocate' title='{% trans "Automatically allocate stock to build" %}'>
+                    <span class='fas fa-magic'></span> {% trans "Auto Allocate" %}
+                </button>
+                <button class='btn btn-success' type='button' id='btn-allocate' title='{% trans "Manually allocate stock to build" %}'>
                     <span class='fas fa-sign-in-alt'></span> {% trans "Allocate Stock" %}
                 </button>
                 <!--
@@ -485,9 +488,23 @@ function reloadTable() {
 }
 
 {% if build.active %}
-$('#btn-auto-allocate').on('click', function() {
 
-    var bom_items = $('#allocation-table-untracked').bootstrapTable('getData');
+$("#btn-auto-allocate").on('click', function() {
+
+    autoAllocateStockToBuild(
+        {{ build.pk }},
+        [],
+        {
+            {% if build.take_from %}
+            location: {{ build.take_from.pk }},
+            {% endif %}
+        }
+    );
+});
+
+$("#btn-allocate").on('click', function() {
+
+    var bom_items = $("#allocation-table-untracked").bootstrapTable("getData");
 
     var incomplete_bom_items = [];
 

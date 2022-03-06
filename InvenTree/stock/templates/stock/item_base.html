@@ -244,7 +244,7 @@
 
     {% for allocation in item.allocations.all %}
     <div class='alert alert-block alert-info'>
-        {% object_link 'build-detail' allocation.build.id allocation.build %}
+        {% object_link 'build-detail' allocation.build.id allocation.build as link %}
         {% decimal allocation.quantity as qty %}
         {% trans "This stock item is allocated to Build Order" %} {{ link }} {% if qty < item.quantity %}({% trans "Quantity" %}: {{ qty }}){% endif %}
     </div>

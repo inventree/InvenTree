@@ -2658,7 +2658,7 @@ class BomItem(models.Model, DataImportMixin):
     def get_api_url():
         return reverse('api-bom-list')
 
-    def get_valid_parts_for_allocation(self):
+    def get_valid_parts_for_allocation(self, allow_variants=True, allow_substitutes=True):
         """
         Return a list of valid parts which can be allocated against this BomItem:
 
@@ -2673,13 +2673,14 @@ class BomItem(models.Model, DataImportMixin):
         parts.add(self.sub_part)
 
         # Variant parts (if allowed)
-        if self.allow_variants:
+        if allow_variants and self.allow_variants:
             for variant in self.sub_part.get_descendants(include_self=False):
                 parts.add(variant)
 
         # Substitute parts
-        for sub in self.substitutes.all():
-            parts.add(sub.part)
+        if allow_substitutes:
+            for sub in self.substitutes.all():
+                parts.add(sub.part)
 
         return parts
 
