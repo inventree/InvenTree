@@ -2304,7 +2304,7 @@ function reloadTotal() {
         soTotalPriceOptions.url,
         {},
         {
-            success: function(data){
+            success: function(data) {
                 $(soTotalPriceRef).html(data.total_price_string);
             }
         }
