@@ -2843,10 +2843,6 @@ function loadSalesOrderAdditionalLineItemTable(table, options={}) {
 
     // Has the order shipped?
     var shipped = options.status == {{ SalesOrderStatus.SHIPPED }};
-
-    // Show detail view if the PurchaseOrder is PENDING or SHIPPED
-    var show_detail = pending || shipped;
-
     // Table columns to display
     var columns = [
         /*
@@ -3028,7 +3024,6 @@ function loadSalesOrderAdditionalLineItemTable(table, options={}) {
         url: options.url,
         showFooter: true,
         uniqueId: 'pk',
-        detailView: show_detail,
         detailViewByClick: false,
         columns: columns,
     });
