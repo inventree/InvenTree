@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-03 20:46+0000\n"
-"PO-Revision-Date: 2022-03-03 20:51\n"
+"PO-Revision-Date: 2022-03-06 13:47\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -4439,11 +4439,11 @@ msgstr "Engedély a hibás sorok kihagyására"
 
 #: part/serializers.py:699
 msgid "Copy Substitute Parts"
-msgstr ""
+msgstr "Helyettesítő alkatrészek másolása"
 
 #: part/serializers.py:700
 msgid "Copy substitute parts when duplicate BOM items"
-msgstr ""
+msgstr "Helyettesítő alkatrészek másolása az alkatrészjegyzék tételek másolásakor"
 
 #: part/serializers.py:744
 msgid "Clear Existing BOM"
@@ -8099,7 +8099,7 @@ msgstr "Szűrők kiválasztása"
 
 #: templates/js/translated/filters.js:288
 msgid "Download data"
-msgstr ""
+msgstr "Adatok letöltése"
 
 #: templates/js/translated/filters.js:291
 msgid "Reload data"
@@ -8415,7 +8415,7 @@ msgstr "Rendelés megkésett"
 
 #: templates/js/translated/order.js:1074 templates/js/translated/order.js:2585
 msgid "Duplicate Line Item"
-msgstr ""
+msgstr "Sortétel másolása"
 
 #: templates/js/translated/order.js:1104 templates/js/translated/order.js:2607
 msgid "Edit Line Item"
@@ -8453,7 +8453,7 @@ msgstr "Sorétel bevételezése"
 
 #: templates/js/translated/order.js:1360 templates/js/translated/order.js:2540
 msgid "Duplicate line item"
-msgstr ""
+msgstr "Sortétel másolása"
 
 #: templates/js/translated/order.js:1361 templates/js/translated/order.js:2541
 msgid "Edit line item"
@@ -9430,11 +9430,11 @@ msgstr "Beszerezhető"
 
 #: templates/js/translated/tables.js:50
 msgid "Export Table Data"
-msgstr ""
+msgstr "Táblázat exportálása"
 
 #: templates/js/translated/tables.js:54
 msgid "Select File Format"
-msgstr ""
+msgstr "Fájlfomátum kiválasztása"
 
 #: templates/js/translated/tables.js:433
 msgid "Loading data"
@@ -9647,7 +9647,7 @@ msgstr "Kiválasztott tételek törlése"
 
 #: templates/stock_table.html:55
 msgid "Delete stock"
-msgstr ""
+msgstr "Készlet törlése"
 
 #: templates/yesnolabel.html:4
 msgid "Yes"
