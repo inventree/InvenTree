@@ -2303,9 +2303,11 @@ function reloadTotal() {
     inventreeGet(
         soTotalPriceOptions.url,
         {},
-        { success: function(data){
-            $(soTotalPriceRef).html(data.total_price_string);
-        }}
+        {
+            success: function(data){
+                $(soTotalPriceRef).html(data.total_price_string);
+            }
+        }
     );
 };
 
