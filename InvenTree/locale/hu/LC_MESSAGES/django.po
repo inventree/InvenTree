@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-03 20:46+0000\n"
-"PO-Revision-Date: 2022-03-06 13:47\n"
+"PO-Revision-Date: 2022-03-06 21:40\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -9082,7 +9082,7 @@ msgstr "Készlet tétel hamarosan lejár"
 
 #: templates/js/translated/stock.js:1703
 msgid "Serialized stock item has been allocated"
-msgstr "Egydi követésre kötelezett készlet tétel lefoglalva"
+msgstr "Egyedi követésre kötelezett készlet tétel lefoglalva"
 
 #: templates/js/translated/stock.js:1705
 msgid "Stock item has been fully allocated"
