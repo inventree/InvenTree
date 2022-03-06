@@ -709,6 +709,52 @@ class BuildAllocationSerializer(serializers.Serializer):
                     raise ValidationError(detail=serializers.as_serializer_error(exc))
 
 
+class BuildAutoAllocationSerializer(serializers.Serializer):
+    """
+    DRF serializer for auto allocating stock items against a build order
+    """
+
+    class Meta:
+        fields = [
+            'location',
+            'interchangeable',
+            'substitutes',
+        ]
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        many=False,
+        allow_null=True,
+        required=False,
+        label=_('Source Location'),
+        help_text=_('Stock location where parts are to be sourced (leave blank to take from any location)'),
+    )
+
+    interchangeable = serializers.BooleanField(
+        default=False,
+        label=_('Interchangeable Stock'),
+        help_text=_('Stock items in multiple locations can be used interchangeably'),
+    )
+
+    substitutes = serializers.BooleanField(
+        default=True,
+        label=_('Substitute Stock'),
+        help_text=_('Allow allocation of substitute parts'),
+    )
+
+    def save(self):
+
+        data = self.validated_data
+
+        build = self.context['build']
+
+        build.auto_allocate_stock(
+            location=data.get('location', None),
+            interchangeable=data['interchangeable'],
+            substitutes=data['substitutes'],
+        )
+
+
 class BuildItemSerializer(InvenTreeModelSerializer):
     """ Serializes a BuildItem object """
 

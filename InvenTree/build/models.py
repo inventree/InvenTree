@@ -25,6 +25,8 @@ from markdownx.models import MarkdownxField
 from mptt.models import MPTTModel, TreeForeignKey
 from mptt.exceptions import InvalidMove
 
+from rest_framework import serializers
+
 from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode
 from InvenTree.helpers import increment, getSetting, normalize, MakeBarcode
 from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
@@ -822,6 +824,106 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         self.completed += output.quantity
 
         self.save()
+
+    @transaction.atomic
+    def auto_allocate_stock(self, **kwargs):
+        """
+        Automatically allocate stock items against this build order,
+        following a number of 'guidelines':
+
+        - Only "untracked" BOM items are considered (tracked BOM items must be manually allocated)
+        - If a particular BOM item is already fully allocated, it is skipped
+        - Extract all available stock items for the BOM part
+            - If variant stock is allowed, extract stock for those too
+            - If substitute parts are available, extract stock for those also
+        - If a single stock item is found, we can allocate that and move on!
+        - If multiple stock items are found, we *may* be able to allocate:
+            - If the calling function has specified that items are interchangeable
+        """
+
+        location = kwargs.get('location', None)
+        interchangeable = kwargs.get('interchangeable', False)
+        substitutes = kwargs.get('substitutes', True)
+
+        # Get a list of all 'untracked' BOM items
+        for bom_item in self.untracked_bom_items:
+
+            variant_parts = bom_item.sub_part.get_descendants(include_self=False)
+
+            unallocated_quantity = self.unallocated_quantity(bom_item)
+
+            if unallocated_quantity <= 0:
+                # This BomItem is fully allocated, we can continue
+                continue
+
+            # Check which parts we can "use" (may include variants and substitutes)
+            available_parts = bom_item.get_valid_parts_for_allocation(
+                allow_variants=True,
+                allow_substitutes=substitutes,
+            )
+
+            # Look for available stock items
+            available_stock = StockModels.StockItem.objects.filter(StockModels.StockItem.IN_STOCK_FILTER)
+
+            # Filter by list of available parts
+            available_stock = available_stock.filter(
+                part__in=[p for p in available_parts],
+            )
+
+            if location:
+                # Filter only stock items located "below" the specified location
+                sublocations = location.get_descendants(include_self=True)
+                available_stock = available_stock.filter(location__in=[loc for loc in sublocations])
+
+            """
+            Next, we sort the available stock items with the following priority:
+            1. Direct part matches (+1)
+            2. Variant part matches (+2)
+            3. Substitute part matches (+3)
+
+            This ensures that allocation priority is first given to "direct" parts
+            """
+            def stock_sort(item):
+                if item.part == bom_item.sub_part:
+                    return 1
+                elif item.part in variant_parts:
+                    return 2
+                else:
+                    return 3
+
+            available_stock = sorted(available_stock, key=stock_sort)
+
+            if len(available_stock) == 0:
+                # No stock items are available
+                continue
+            elif len(available_stock) == 1 or interchangeable:
+                # Either there is only a single stock item available,
+                # or all items are "interchangeable" and we don't care where we take stock from
+
+                for stock_item in available_stock:
+                    # How much of the stock item is "available" for allocation?
+                    quantity = min(unallocated_quantity, stock_item.unallocated_quantity())
+
+                    if quantity > 0:
+
+                        try:
+                            BuildItem.objects.create(
+                                build=self,
+                                bom_item=bom_item,
+                                stock_item=stock_item,
+                                quantity=quantity,
+                            )
+
+                            # Subtract the required quantity
+                            unallocated_quantity -= quantity
+
+                        except (ValidationError, serializers.ValidationError) as exc:
+                            # Catch model errors and re-throw as DRF errors
+                            raise ValidationError(detail=serializers.as_serializer_error(exc))
+
+                    if unallocated_quantity <= 0:
+                        # We have now fully-allocated this BomItem - no need to continue!
+                        break
 
     def required_quantity(self, bom_item, output=None):
         """
