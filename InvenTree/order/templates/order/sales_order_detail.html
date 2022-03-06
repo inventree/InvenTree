@@ -35,6 +35,29 @@
         <table class='table table-striped table-condensed' id='so-lines-table' data-toolbar='#order-toolbar-buttons'>
         </table>
     </div>
+
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Sales Order Lines" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% if roles.sales_order.change and order.is_pending %}
+                <button type='button' class='btn btn-success' id='new-so-additional-line'>
+                    <span class='fas fa-plus-circle'></span> {% trans "Add Order Line" %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        <div id='order-additional-toolbar-buttons' class='btn-group' style='float: right;'>
+            <div class='btn-group'>
+                {% include "filter_list.html" with id="sales-order-additional-lines" %}
+            </div>
+        </div>
+        <table class='table table-striped table-condensed' id='so-additional-lines-table' data-toolbar='#order-additional-toolbar-buttons'>
+        </table>
+    </div>
 </div>
 
 {% if order.is_pending %}
@@ -239,6 +262,30 @@
 
     loadSalesOrderLineItemTable(
         '#so-lines-table',
+        {
+            order: {{ order.pk }},
+            status: {{ order.status }},
+        }
+    );
+
+    $("#new-so-additional-line").click(function() {
+
+        var fields = soAdditionalLineItemFields({
+            order: {{ order.pk }},
+        });
+
+        constructForm('{% url "api-so-additional-line-list" %}', {
+            fields: fields,
+            method: 'POST',
+            title: '{% trans "Add Order Line" %}',
+            onSuccess: function() {
+                $("#so-additional-lines-table").bootstrapTable("refresh");
+            },
+        });
+    });
+
+    loadSalesOrderAdditionalLineItemTable(
+        '#so-additional-lines-table',
         {
             order: {{ order.pk }},
             status: {{ order.status }},
