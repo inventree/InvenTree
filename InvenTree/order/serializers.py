@@ -517,7 +517,8 @@ class SalesOrderSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSeria
 
     total_price = InvenTreeMoneySerializer(
         source='get_total_price',
-        allow_null=True
+        allow_null=True,
+        read_only=True,
     )
 
     total_price_string = serializers.CharField(source='get_total_price', read_only=True)
