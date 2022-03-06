@@ -515,6 +515,11 @@ class SalesOrderSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSeria
 
     reference = serializers.CharField(required=True)
 
+    total_price = InvenTreeMoneySerializer(
+        source='get_total_price',
+        allow_null=True
+    )
+
     total_price_string = serializers.CharField(source='get_total_price', read_only=True)
 
     class Meta:
@@ -537,6 +542,7 @@ class SalesOrderSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSeria
             'status_text',
             'shipment_date',
             'target_date',
+            'total_price',
             'total_price_string',
         ]
 
