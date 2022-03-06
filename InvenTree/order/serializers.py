@@ -1135,7 +1135,6 @@ class SOAdditionalLineItemSerializer(InvenTreeModelSerializer):
             'notes',
             'order',
             'order_detail',
-            'title',
             'sale_price',
             'sale_price_currency',
             'sale_price_string',

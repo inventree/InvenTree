@@ -1178,8 +1178,6 @@ class SalesOrderAdditionalLineItem(OrderLineItem):
 
     order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='additional_lines', verbose_name=_('Order'), help_text=_('Sales Order'))
 
-    title = models.CharField(verbose_name=_('title'), help_text=_('titel of the additional line'), max_length=250)
-
     sale_price = InvenTreeModelMoneyField(
         max_digits=19,
         decimal_places=4,

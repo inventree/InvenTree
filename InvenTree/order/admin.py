@@ -170,7 +170,6 @@ class SalesOrderAdditionalLineItemAdmin(ImportExportModelAdmin):
 
     list_display = (
         'order',
-        'title',
         'quantity',
         'reference'
     )
