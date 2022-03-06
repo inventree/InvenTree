@@ -2841,8 +2841,6 @@ function loadSalesOrderAdditionalLineItemTable(table, options={}) {
     // Is the order pending?
     var pending = options.status == {{ SalesOrderStatus.PENDING }};
 
-    // Has the order shipped?
-    var shipped = options.status == {{ SalesOrderStatus.SHIPPED }};
     // Table columns to display
     var columns = [
         /*
