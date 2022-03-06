@@ -322,6 +322,37 @@ class BuildFinish(generics.CreateAPIView):
         return ctx
 
 
+class BuildAutoAllocate(generics.CreateAPIView):
+    """
+    API endpoint for 'automatically' allocating stock against a build order.
+
+    - Only looks at 'untracked' parts
+    - If stock exists in a single location, easy!
+    - If user decides that stock items are "fungible", allocate against multiple stock items
+    - If the user wants to, allocate substite parts if the primary parts are not available.
+    """
+
+    queryset = Build.objects.none()
+
+    serializer_class = build.serializers.BuildAutoAllocationSerializer
+
+    def get_serializer_context(self):
+        """
+        Provide the Build object to the serializer context
+        """
+
+        context = super().get_serializer_context()
+
+        try:
+            context['build'] = Build.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
+        context['request'] = self.request
+
+        return context
+
+
 class BuildAllocate(generics.CreateAPIView):
     """
     API endpoint to allocate stock items to a build order
@@ -477,6 +508,7 @@ build_api_urls = [
     # Build Detail
     url(r'^(?P<pk>\d+)/', include([
         url(r'^allocate/', BuildAllocate.as_view(), name='api-build-allocate'),
+        url(r'^auto-allocate/', BuildAutoAllocate.as_view(), name='api-build-auto-allocate'),
         url(r'^complete/', BuildOutputComplete.as_view(), name='api-build-output-complete'),
         url(r'^create-output/', BuildOutputCreate.as_view(), name='api-build-output-create'),
         url(r'^delete-outputs/', BuildOutputDelete.as_view(), name='api-build-output-delete'),
