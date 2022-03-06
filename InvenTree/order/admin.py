@@ -174,6 +174,12 @@ class SalesOrderAdditionalLineItemAdmin(ImportExportModelAdmin):
         'reference'
     )
 
+    search_fields = [
+        'order__reference',
+        'order__customer__name',
+        'reference',
+    ]
+
     autocomplete_fields = ('order', )
 
 
