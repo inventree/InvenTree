@@ -405,6 +405,12 @@ class StockTest(TestCase):
         item.serial = "-123"
         item.save()
 
+        # Test a very very large value
+        item.serial = '99999999999999999999999999999999999999999999999999999'
+        item.save()
+
+        self.assertEqual(item.serial_int, 0x7fffffff)
+
         # Negative number should map to zero
         self.assertEqual(item.serial_int, 0)
 
