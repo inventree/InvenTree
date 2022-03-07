@@ -5,7 +5,7 @@ This module provides template tags for extra functionality,
 over and above the built-in Django tags.
 """
 
-from datetime import date
+from datetime import date, datetime
 import os
 import sys
 
@@ -87,7 +87,9 @@ def render_date(context, date_object):
         # Update the context cache
         context['user_date_format'] = user_date_format
 
-    return date_object.strftime(user_date_format)
+    if isinstance(date_object, (datetime, date)):
+        return date_object.strftime(user_date_format)
+    return date_object
 
 
 @register.simple_tag()
