@@ -152,8 +152,8 @@ def extract_int(reference, clip=0x7fffffff):
     if clip is not None:
         if ref_int > clip:
             ref_int = clip
-        elif ref_int < clip:
-            ref_int = clip
+        elif ref_int < -clip:
+            ref_int = -clip
 
     return ref_int
 

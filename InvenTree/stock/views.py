@@ -109,8 +109,8 @@ class StockItemDetail(InvenTreeRoleMixin, DetailView):
         data = super().get_context_data(**kwargs)
 
         if self.object.serialized:
-            data['previous'] = self.object.get_next_serial_number(reverse=True)
-            data['next'] = self.object.get_next_serial_number()
+            data['previous'] = self.object.get_next_serialized_item(reverse=True)
+            data['next'] = self.object.get_next_serialized_item()
 
         data['ownership_enabled'] = common.models.InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
         data['item_owner'] = self.object.get_item_owner()

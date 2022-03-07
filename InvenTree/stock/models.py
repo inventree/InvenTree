@@ -269,11 +269,14 @@ class StockItem(MPTTModel):
         serial_int = 0
 
         if serial is not None:
+
+            serial = str(serial).strip()
+
             serial_int = extract_int(str(serial))
 
         self.serial_int = serial_int
 
-    def get_next_serial_number(self, include_variants=True, reverse=False):
+    def get_next_serialized_item(self, include_variants=True, reverse=False):
         """
         Get the "next" serial number for the part this stock item references.
 
