@@ -112,17 +112,16 @@ class PurchaseOrderTest(OrderTest):
         self.assignRole('purchase_order.add')
 
         url = reverse('api-po-list')
-        huge_numer = 9223372036854775808
+        huge_number = 9223372036854775808
 
-        # too big
         self.post(
             url,
             {
                 'supplier': 1,
-                'reference': huge_numer,
+                'reference': huge_number,
                 'description': 'PO not created via the API',
             },
-            expected_code=400
+            expected_code=201,
         )
 
     def test_po_attachments(self):
