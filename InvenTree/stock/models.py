@@ -269,9 +269,61 @@ class StockItem(MPTTModel):
         serial_int = 0
 
         if serial is not None:
-            serial_int = extract_int(str(serial))
+
+            serial = str(serial).strip()
+
+            serial_int = extract_int(serial)
 
         self.serial_int = serial_int
+
+    def get_next_serialized_item(self, include_variants=True, reverse=False):
+        """
+        Get the "next" serial number for the part this stock item references.
+
+        e.g. if this stock item has a serial number 100, we may return the stock item with serial number 101
+
+        Note that this only works for "serialized" stock items with integer values
+
+        Args:
+            include_variants: True if we wish to include stock for variant parts
+            reverse: True if we want to return the "previous" (lower) serial number
+
+        Returns:
+            A StockItem object matching the requirements, or None
+
+        """
+
+        if not self.serialized:
+            return None
+
+        # Find only serialized stock items
+        items = StockItem.objects.exclude(serial=None).exclude(serial='')
+
+        if include_variants:
+            # Match against any part within the variant tree
+            items = items.filter(part__tree_id=self.part.tree_id)
+        else:
+            # Match only against the specific part
+            items = items.filter(part=self.part)
+
+        serial = self.serial_int
+
+        if reverse:
+            # Select only stock items with lower serial numbers, in decreasing order
+            items = items.filter(serial_int__lt=serial)
+            items = items.order_by('-serial_int')
+        else:
+            # Select only stock items with higher serial numbers, in increasing order
+            items = items.filter(serial_int__gt=serial)
+            items = items.order_by('serial_int')
+
+        if items.count() > 0:
+            item = items.first()
+
+            if item.serialized:
+                return item
+
+        return None
 
     def save(self, *args, **kwargs):
         """
