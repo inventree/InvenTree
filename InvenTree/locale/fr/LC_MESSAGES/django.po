@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-07 00:14+0000\n"
+"POT-Creation-Date: 2022-03-07 01:27+0000\n"
 "PO-Revision-Date: 2021-11-30 21:51\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
@@ -614,51 +614,51 @@ msgstr "Les mots de passe doivent correspondre"
 msgid "System Information"
 msgstr "Informations système"
 
-#: barcodes/api.py:54 barcodes/api.py:152
+#: barcodes/api.py:55 barcodes/api.py:156
 msgid "Must provide barcode_data parameter"
 msgstr "Le paramètre barcode_data doit être fourni"
 
-#: barcodes/api.py:128
+#: barcodes/api.py:132
 msgid "No match found for barcode data"
 msgstr "Aucune correspondance trouvée pour les données du code-barres"
 
-#: barcodes/api.py:130
+#: barcodes/api.py:134
 msgid "Match found for barcode data"
 msgstr "Correspondance trouvée pour les données du code-barres"
 
-#: barcodes/api.py:155
+#: barcodes/api.py:159
 msgid "Must provide stockitem parameter"
 msgstr "Vous devez fournir le paramètre stockitem"
 
-#: barcodes/api.py:162
+#: barcodes/api.py:166
 msgid "No matching stock item found"
 msgstr "Aucun article d'inventaire correspondant trouvé"
 
-#: barcodes/api.py:193
+#: barcodes/api.py:197
 #, fuzzy
 #| msgid "Barcode already matches Part object"
 msgid "Barcode already matches Stock Item"
 msgstr "Le code-barres correspond déjà à une Pièce"
 
-#: barcodes/api.py:197
+#: barcodes/api.py:201
 #, fuzzy
 #| msgid "Barcode already matches Part object"
 msgid "Barcode already matches Stock Location"
 msgstr "Le code-barres correspond déjà à une Pièce"
 
-#: barcodes/api.py:201
+#: barcodes/api.py:205
 #, fuzzy
 #| msgid "Barcode already matches Part object"
 msgid "Barcode already matches Part"
 msgstr "Le code-barres correspond déjà à une Pièce"
 
-#: barcodes/api.py:207 barcodes/api.py:219
+#: barcodes/api.py:211 barcodes/api.py:223
 #, fuzzy
 #| msgid "Barcode already matches Part object"
 msgid "Barcode hash already matches Stock Item"
 msgstr "Le code-barres correspond déjà à une Pièce"
 
-#: barcodes/api.py:225
+#: barcodes/api.py:229
 msgid "Barcode associated with Stock Item"
 msgstr ""
 
