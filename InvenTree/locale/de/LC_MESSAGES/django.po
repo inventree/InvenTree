@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-07 00:14+0000\n"
-"PO-Revision-Date: 2022-03-07 00:17\n"
+"POT-Creation-Date: 2022-03-07 01:27+0000\n"
+"PO-Revision-Date: 2022-03-07 01:49\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -593,43 +593,43 @@ msgstr "Passwörter stimmen nicht überein"
 msgid "System Information"
 msgstr "Systeminformationen"
 
-#: barcodes/api.py:54 barcodes/api.py:152
+#: barcodes/api.py:55 barcodes/api.py:156
 msgid "Must provide barcode_data parameter"
 msgstr "barcode_data Parameter angeben"
 
-#: barcodes/api.py:128
+#: barcodes/api.py:132
 msgid "No match found for barcode data"
 msgstr "Keine Treffer für Barcode"
 
-#: barcodes/api.py:130
+#: barcodes/api.py:134
 msgid "Match found for barcode data"
 msgstr "Treffer für Barcode gefunden"
 
-#: barcodes/api.py:155
+#: barcodes/api.py:159
 msgid "Must provide stockitem parameter"
 msgstr "Lagerartikel-Parameter muss angegeben werden"
 
-#: barcodes/api.py:162
+#: barcodes/api.py:166
 msgid "No matching stock item found"
 msgstr "Keine passende Lagerartikel gefunden"
 
-#: barcodes/api.py:193
+#: barcodes/api.py:197
 msgid "Barcode already matches Stock Item"
 msgstr "Barcode entspricht bereits einem Lagerartikel"
 
-#: barcodes/api.py:197
+#: barcodes/api.py:201
 msgid "Barcode already matches Stock Location"
 msgstr "Barcode entspricht bereits Lagerort"
 
-#: barcodes/api.py:201
+#: barcodes/api.py:205
 msgid "Barcode already matches Part"
 msgstr "Barcode entspricht bereits Teil"
 
-#: barcodes/api.py:207 barcodes/api.py:219
+#: barcodes/api.py:211 barcodes/api.py:223
 msgid "Barcode hash already matches Stock Item"
 msgstr "Barcode-Hash entspricht bereits einem Lagerartikel"
 
-#: barcodes/api.py:225
+#: barcodes/api.py:229
 msgid "Barcode associated with Stock Item"
 msgstr "Barcode Lagerartikel zugeordnet"
 
