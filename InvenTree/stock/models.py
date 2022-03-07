@@ -272,7 +272,7 @@ class StockItem(MPTTModel):
 
             serial = str(serial).strip()
 
-            serial_int = extract_int(str(serial))
+            serial_int = extract_int(serial)
 
         self.serial_int = serial_int
 
