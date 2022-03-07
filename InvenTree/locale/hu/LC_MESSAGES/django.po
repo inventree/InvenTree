@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-07 04:31+0000\n"
-"PO-Revision-Date: 2022-03-07 10:45\n"
+"PO-Revision-Date: 2022-03-07 13:02\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1137,23 +1137,23 @@ msgstr "A lefoglalandó tételeket meg kell adni"
 
 #: build/serializers.py:730
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
-msgstr ""
+msgstr "Készlet hely ahonnan az alkatrészek származnak (hagyd üresen ha bárhonnan)"
 
 #: build/serializers.py:735
 msgid "Interchangeable Stock"
-msgstr ""
+msgstr "Felcserélhető készlet"
 
 #: build/serializers.py:736
 msgid "Stock items in multiple locations can be used interchangeably"
-msgstr ""
+msgstr "A különböző helyeken lévő készlet egyenrangúan felhasználható"
 
 #: build/serializers.py:741
 msgid "Substitute Stock"
-msgstr ""
+msgstr "Készlet helyettesítés"
 
 #: build/serializers.py:742
 msgid "Allow allocation of substitute parts"
-msgstr ""
+msgstr "Helyettesítő alkatrészek foglalásának engedélyezése"
 
 #: build/tasks.py:98
 msgid "Stock required for build order"
@@ -1350,15 +1350,15 @@ msgstr "Készlet felszabadítása"
 
 #: build/templates/build/detail.html:180
 msgid "Automatically allocate stock to build"
-msgstr ""
+msgstr "Automatikus készlet foglalás a gyártáshoz"
 
 #: build/templates/build/detail.html:181
 msgid "Auto Allocate"
-msgstr ""
+msgstr "Automata foglalás"
 
 #: build/templates/build/detail.html:183
 msgid "Manually allocate stock to build"
-msgstr ""
+msgstr "Manuális készlet foglalás a gyártáshoz"
 
 #: build/templates/build/detail.html:184 build/templates/build/sidebar.html:8
 msgid "Allocate Stock"
@@ -7971,11 +7971,11 @@ msgstr "Készlet foglalási mennyiség megadása"
 
 #: templates/js/translated/build.js:1640
 msgid "All Parts Allocated"
-msgstr ""
+msgstr "Minden alkatrész lefoglalva"
 
 #: templates/js/translated/build.js:1641
 msgid "All selected parts have been fully allocated"
-msgstr ""
+msgstr "Minden kiválasztott alkatrész teljesen lefoglalva"
 
 #: templates/js/translated/build.js:1655 templates/js/translated/order.js:1770
 msgid "Select source location (leave blank to take from all locations)"
@@ -7999,27 +7999,27 @@ msgstr "Nincs egyező készlet"
 
 #: templates/js/translated/build.js:1865
 msgid "Automatic Stock Allocation"
-msgstr ""
+msgstr "Automatikus készlet foglalás"
 
 #: templates/js/translated/build.js:1866
 msgid "Stock items will be automatically allocated to this build order, according to the provided guidelines"
-msgstr ""
+msgstr "A készlet automatikusan lefoglalásra került ehhez a gyártási utasításhoz, a megadott feltételek szerint"
 
 #: templates/js/translated/build.js:1868
 msgid "If a location is specifed, stock will only be allocated from that location"
-msgstr ""
+msgstr "Ha egy készlet hely meg van adva, akkor készlet csak arról a helyről lesz foglalva"
 
 #: templates/js/translated/build.js:1869
 msgid "If stock is considered interchangeable, it will be allocated from the first location it is found"
-msgstr ""
+msgstr "Ha a készlet helyettesíthetőnek minősül, akkor az első rendelkezésre álló helyről lesz lefoglalva"
 
 #: templates/js/translated/build.js:1870
 msgid "If substitute stock is allowed, it will be used where stock of the primary part cannot be found"
-msgstr ""
+msgstr "Ha a helyettesítő készlet engedélyezve van, akkor ott az lesz használva ha az elsődleges alkatrésznek nincs készlete"
 
 #: templates/js/translated/build.js:1890
 msgid "Allocate Stock Items"
-msgstr ""
+msgstr "Készlet tételek foglalása"
 
 #: templates/js/translated/build.js:1928
 msgid "No builds matching query"
