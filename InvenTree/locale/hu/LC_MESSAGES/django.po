@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-07 04:31+0000\n"
-"PO-Revision-Date: 2022-03-07 04:47\n"
+"PO-Revision-Date: 2022-03-07 10:45\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -8509,7 +8509,7 @@ msgstr "Ez a sortétel megkésett"
 
 #: templates/js/translated/order.js:1356 templates/js/translated/part.js:965
 msgid "Receive line item"
-msgstr "Sorétel bevételezése"
+msgstr "Sortétel bevételezése"
 
 #: templates/js/translated/order.js:1360 templates/js/translated/order.js:2540
 msgid "Duplicate line item"
