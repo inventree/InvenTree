@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-07 01:27+0000\n"
-"PO-Revision-Date: 2022-03-07 01:49\n"
+"POT-Creation-Date: 2022-03-07 04:31+0000\n"
+"PO-Revision-Date: 2022-03-07 04:47\n"
 "Last-Translator: \n"
 "Language-Team: Hebrew\n"
 "Language: he_IL\n"
@@ -86,7 +86,7 @@ msgid "Duplicate serial: {sn}"
 msgstr ""
 
 #: InvenTree/helpers.py:449 order/models.py:282 order/models.py:435
-#: stock/views.py:1010
+#: stock/views.py:983
 msgid "Invalid quantity provided"
 msgstr ""
 
@@ -114,24 +114,24 @@ msgstr "מספרים סידוריים לא נמצאו"
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
 msgstr "כמות המספרים הסידוריים ({s}) מוכרים להיות תואמים לכמות ({q})"
 
-#: InvenTree/models.py:176
+#: InvenTree/models.py:185
 msgid "Missing file"
 msgstr "קובץ חסר"
 
-#: InvenTree/models.py:177
+#: InvenTree/models.py:186
 msgid "Missing external link"
 msgstr "חסר קישור חיצוני"
 
-#: InvenTree/models.py:188 stock/models.py:2071
+#: InvenTree/models.py:197 stock/models.py:2123
 #: templates/js/translated/attachment.js:119
 msgid "Attachment"
 msgstr "קובץ מצורף"
 
-#: InvenTree/models.py:189
+#: InvenTree/models.py:198
 msgid "Select file to attach"
 msgstr "בחר קובץ לצירוף"
 
-#: InvenTree/models.py:195 company/models.py:131 company/models.py:348
+#: InvenTree/models.py:204 company/models.py:131 company/models.py:348
 #: company/models.py:564 order/models.py:127 part/models.py:860
 #: report/templates/report/inventree_build_order_base.html:165
 #: templates/js/translated/company.js:540
@@ -139,20 +139,20 @@ msgstr "בחר קובץ לצירוף"
 msgid "Link"
 msgstr "קישור"
 
-#: InvenTree/models.py:196 build/models.py:332 part/models.py:861
-#: stock/models.py:566
+#: InvenTree/models.py:205 build/models.py:332 part/models.py:861
+#: stock/models.py:618
 msgid "Link to external URL"
 msgstr "קישור חיצוני"
 
-#: InvenTree/models.py:199 templates/js/translated/attachment.js:163
+#: InvenTree/models.py:208 templates/js/translated/attachment.js:163
 msgid "Comment"
 msgstr "הערה"
 
-#: InvenTree/models.py:199
+#: InvenTree/models.py:208
 msgid "File comment"
 msgstr "הערת קובץ"
 
-#: InvenTree/models.py:205 InvenTree/models.py:206 common/models.py:1277
+#: InvenTree/models.py:214 InvenTree/models.py:215 common/models.py:1277
 #: common/models.py:1278 common/models.py:1506 common/models.py:1507
 #: part/models.py:2317 part/models.py:2337
 #: report/templates/report/inventree_test_report_base.html:96
@@ -160,40 +160,40 @@ msgstr "הערת קובץ"
 msgid "User"
 msgstr "משתמש"
 
-#: InvenTree/models.py:209
+#: InvenTree/models.py:218
 msgid "upload date"
 msgstr "תאריך העלאה"
 
-#: InvenTree/models.py:232
+#: InvenTree/models.py:241
 msgid "Filename must not be empty"
 msgstr "חובה למלא שם קובץ"
 
-#: InvenTree/models.py:255
+#: InvenTree/models.py:264
 msgid "Invalid attachment directory"
 msgstr "תיקיית קובץ שגויה"
 
-#: InvenTree/models.py:265
+#: InvenTree/models.py:274
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
 msgstr "שם הקובץ מכיל תו '{c}' שאינו חוקי"
 
-#: InvenTree/models.py:268
+#: InvenTree/models.py:277
 msgid "Filename missing extension"
 msgstr ""
 
-#: InvenTree/models.py:275
+#: InvenTree/models.py:284
 msgid "Attachment with this filename already exists"
 msgstr ""
 
-#: InvenTree/models.py:282
+#: InvenTree/models.py:291
 msgid "Error renaming file"
 msgstr "שגיאה בשינוי שם פריט"
 
-#: InvenTree/models.py:317
+#: InvenTree/models.py:326
 msgid "Invalid choice"
 msgstr "בחירה שגויה"
 
-#: InvenTree/models.py:333 InvenTree/models.py:334 common/models.py:1492
+#: InvenTree/models.py:342 InvenTree/models.py:343 common/models.py:1492
 #: company/models.py:415 label/models.py:112 part/models.py:804
 #: part/models.py:2501 plugin/models.py:40 report/models.py:181
 #: templates/InvenTree/settings/mixins/urls.html:13
@@ -207,7 +207,7 @@ msgstr "בחירה שגויה"
 msgid "Name"
 msgstr "שם"
 
-#: InvenTree/models.py:340 build/models.py:209
+#: InvenTree/models.py:349 build/models.py:209
 #: build/templates/build/detail.html:25 company/models.py:354
 #: company/models.py:570 company/templates/company/company_base.html:68
 #: company/templates/company/manufacturer_part.html:76
@@ -232,11 +232,11 @@ msgstr "שם"
 msgid "Description"
 msgstr "תיאור"
 
-#: InvenTree/models.py:341
+#: InvenTree/models.py:350
 msgid "Description (optional)"
 msgstr "תיאור (לא חובה)"
 
-#: InvenTree/models.py:349
+#: InvenTree/models.py:358
 msgid "parent"
 msgstr "מקור"
 
@@ -775,7 +775,7 @@ msgid "Build status code"
 msgstr ""
 
 #: build/models.py:287 build/serializers.py:218 order/serializers.py:272
-#: stock/models.py:570 templates/js/translated/order.js:573
+#: stock/models.py:622 templates/js/translated/order.js:573
 msgid "Batch Code"
 msgstr ""
 
@@ -829,7 +829,7 @@ msgstr ""
 #: build/models.py:331 build/templates/build/detail.html:102
 #: company/templates/company/manufacturer_part.html:102
 #: company/templates/company/supplier_part.html:126
-#: part/templates/part/part_base.html:354 stock/models.py:564
+#: part/templates/part/part_base.html:354 stock/models.py:616
 #: stock/templates/stock/item_base.html:352
 msgid "External Link"
 msgstr ""
@@ -842,8 +842,8 @@ msgstr ""
 #: order/templates/order/so_sidebar.html:17 part/models.py:988
 #: part/templates/part/detail.html:141 part/templates/part/part_sidebar.html:57
 #: report/templates/report/inventree_build_order_base.html:173
-#: stock/forms.py:137 stock/forms.py:171 stock/models.py:636
-#: stock/models.py:1971 stock/models.py:2077 stock/serializers.py:332
+#: stock/forms.py:137 stock/forms.py:171 stock/models.py:688
+#: stock/models.py:2023 stock/models.py:2129 stock/serializers.py:332
 #: stock/serializers.py:697 stock/serializers.py:795 stock/serializers.py:927
 #: stock/templates/stock/stock_sidebar.html:25
 #: templates/js/translated/barcode.js:58 templates/js/translated/bom.js:934
@@ -998,7 +998,7 @@ msgstr ""
 
 #: build/serializers.py:201 build/serializers.py:596 order/models.py:280
 #: order/serializers.py:267 part/serializers.py:471 part/serializers.py:836
-#: stock/models.py:404 stock/models.py:1180 stock/serializers.py:305
+#: stock/models.py:456 stock/models.py:1232 stock/serializers.py:305
 msgid "Quantity must be greater than zero"
 msgstr ""
 
@@ -2500,7 +2500,7 @@ msgstr ""
 msgid "Default currency used for this company"
 msgstr ""
 
-#: company/models.py:320 company/models.py:535 stock/models.py:508
+#: company/models.py:320 company/models.py:535 stock/models.py:560
 #: stock/templates/stock/item_base.html:137 templates/js/translated/bom.js:541
 msgid "Base Part"
 msgstr ""
@@ -2557,7 +2557,7 @@ msgstr ""
 
 #: company/models.py:422
 #: report/templates/report/inventree_test_report_base.html:95
-#: stock/models.py:2064 templates/js/translated/company.js:647
+#: stock/models.py:2116 templates/js/translated/company.js:647
 #: templates/js/translated/part.js:716 templates/js/translated/stock.js:1287
 msgid "Value"
 msgstr ""
@@ -2635,7 +2635,7 @@ msgid "Minimum charge (e.g. stocking fee)"
 msgstr ""
 
 #: company/models.py:582 company/templates/company/supplier_part.html:112
-#: stock/models.py:532 stock/templates/stock/item_base.html:317
+#: stock/models.py:584 stock/templates/stock/item_base.html:317
 #: templates/js/translated/company.js:850 templates/js/translated/stock.js:1887
 msgid "Packaging"
 msgstr ""
@@ -2704,8 +2704,8 @@ msgid "Download image from URL"
 msgstr ""
 
 #: company/templates/company/company_base.html:83 order/models.py:574
-#: order/templates/order/sales_order_base.html:115 stock/models.py:551
-#: stock/models.py:552 stock/serializers.py:683
+#: order/templates/order/sales_order_base.html:115 stock/models.py:603
+#: stock/models.py:604 stock/serializers.py:683
 #: stock/templates/stock/item_base.html:269
 #: templates/js/translated/company.js:329 templates/js/translated/order.js:1436
 #: templates/js/translated/stock.js:2691
@@ -2951,7 +2951,7 @@ msgid "Assigned Stock Items"
 msgstr ""
 
 #: company/templates/company/supplier_part.html:7
-#: company/templates/company/supplier_part.html:24 stock/models.py:516
+#: company/templates/company/supplier_part.html:24 stock/models.py:568
 #: stock/templates/stock/item_base.html:381
 #: templates/js/translated/company.js:790 templates/js/translated/stock.js:1844
 msgid "Supplier Part"
@@ -3348,7 +3348,7 @@ msgstr ""
 msgid "Number of items received"
 msgstr ""
 
-#: order/models.py:928 part/templates/part/prices.html:176 stock/models.py:645
+#: order/models.py:928 part/templates/part/prices.html:176 stock/models.py:697
 #: stock/serializers.py:170 stock/templates/stock/item_base.html:338
 #: templates/js/translated/stock.js:1875
 msgid "Purchase Price"
@@ -4397,7 +4397,7 @@ msgstr ""
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr ""
 
-#: part/models.py:2832 stock/models.py:394
+#: part/models.py:2832 stock/models.py:446
 msgid "Quantity must be integer value for trackable parts"
 msgstr ""
 
@@ -5601,7 +5601,7 @@ msgid "Stock Item Test Report"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:79
-#: stock/models.py:556 stock/templates/stock/item_base.html:151
+#: stock/models.py:608 stock/templates/stock/item_base.html:151
 #: templates/js/translated/build.js:374 templates/js/translated/build.js:522
 #: templates/js/translated/build.js:920 templates/js/translated/build.js:1296
 #: templates/js/translated/model_renderers.js:95
@@ -5615,12 +5615,12 @@ msgid "Test Results"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:93
-#: stock/models.py:2052
+#: stock/models.py:2104
 msgid "Test"
 msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:94
-#: stock/models.py:2058
+#: stock/models.py:2110
 msgid "Result"
 msgstr ""
 
@@ -5662,7 +5662,7 @@ msgstr ""
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr ""
 
-#: stock/forms.py:74 stock/forms.py:198 stock/models.py:613
+#: stock/forms.py:74 stock/forms.py:198 stock/models.py:665
 #: stock/templates/stock/item_base.html:188
 #: templates/js/translated/stock.js:1791
 msgid "Expiry Date"
@@ -5704,228 +5704,228 @@ msgstr ""
 msgid "Confirm removal of installed stock items"
 msgstr ""
 
-#: stock/models.py:62 stock/models.py:650
+#: stock/models.py:62 stock/models.py:702
 #: stock/templates/stock/item_base.html:402
 msgid "Owner"
 msgstr ""
 
-#: stock/models.py:63 stock/models.py:651
+#: stock/models.py:63 stock/models.py:703
 msgid "Select Owner"
 msgstr ""
 
-#: stock/models.py:375
+#: stock/models.py:427
 msgid "StockItem with this serial number already exists"
 msgstr ""
 
-#: stock/models.py:411
+#: stock/models.py:463
 #, python-brace-format
 msgid "Part type ('{pf}') must be {pe}"
 msgstr ""
 
-#: stock/models.py:421 stock/models.py:430
+#: stock/models.py:473 stock/models.py:482
 msgid "Quantity must be 1 for item with a serial number"
 msgstr ""
 
-#: stock/models.py:422
+#: stock/models.py:474
 msgid "Serial number cannot be set if quantity greater than 1"
 msgstr ""
 
-#: stock/models.py:444
+#: stock/models.py:496
 msgid "Item cannot belong to itself"
 msgstr ""
 
-#: stock/models.py:450
+#: stock/models.py:502
 msgid "Item must have a build reference if is_building=True"
 msgstr ""
 
-#: stock/models.py:457
+#: stock/models.py:509
 msgid "Build reference does not point to the same part object"
 msgstr ""
 
-#: stock/models.py:500
+#: stock/models.py:552
 msgid "Parent Stock Item"
 msgstr ""
 
-#: stock/models.py:509
+#: stock/models.py:561
 msgid "Base part"
 msgstr ""
 
-#: stock/models.py:517
+#: stock/models.py:569
 msgid "Select a matching supplier part for this stock item"
 msgstr ""
 
-#: stock/models.py:523 stock/templates/stock/location.html:16
+#: stock/models.py:575 stock/templates/stock/location.html:16
 #: stock/templates/stock/stock_app_base.html:8
 msgid "Stock Location"
 msgstr ""
 
-#: stock/models.py:526
+#: stock/models.py:578
 msgid "Where is this stock item located?"
 msgstr ""
 
-#: stock/models.py:533
+#: stock/models.py:585
 msgid "Packaging this stock item is stored in"
 msgstr ""
 
-#: stock/models.py:539 stock/templates/stock/item_base.html:277
+#: stock/models.py:591 stock/templates/stock/item_base.html:277
 msgid "Installed In"
 msgstr ""
 
-#: stock/models.py:542
+#: stock/models.py:594
 msgid "Is this item installed in another item?"
 msgstr ""
 
-#: stock/models.py:558
+#: stock/models.py:610
 msgid "Serial number for this item"
 msgstr ""
 
-#: stock/models.py:572
+#: stock/models.py:624
 msgid "Batch code for this stock item"
 msgstr ""
 
-#: stock/models.py:576
+#: stock/models.py:628
 msgid "Stock Quantity"
 msgstr ""
 
-#: stock/models.py:585
+#: stock/models.py:637
 msgid "Source Build"
 msgstr ""
 
-#: stock/models.py:587
+#: stock/models.py:639
 msgid "Build for this stock item"
 msgstr ""
 
-#: stock/models.py:598
+#: stock/models.py:650
 msgid "Source Purchase Order"
 msgstr ""
 
-#: stock/models.py:601
+#: stock/models.py:653
 msgid "Purchase order for this stock item"
 msgstr ""
 
-#: stock/models.py:607
+#: stock/models.py:659
 msgid "Destination Sales Order"
 msgstr ""
 
-#: stock/models.py:614
+#: stock/models.py:666
 msgid "Expiry date for stock item. Stock will be considered expired after this date"
 msgstr ""
 
-#: stock/models.py:627
+#: stock/models.py:679
 msgid "Delete on deplete"
 msgstr ""
 
-#: stock/models.py:627
+#: stock/models.py:679
 msgid "Delete this Stock Item when stock is depleted"
 msgstr ""
 
-#: stock/models.py:637 stock/templates/stock/item.html:121
+#: stock/models.py:689 stock/templates/stock/item.html:121
 msgid "Stock Item Notes"
 msgstr ""
 
-#: stock/models.py:646
+#: stock/models.py:698
 msgid "Single unit purchase price at time of purchase"
 msgstr ""
 
-#: stock/models.py:1171
+#: stock/models.py:1223
 msgid "Part is not set as trackable"
 msgstr ""
 
-#: stock/models.py:1177
+#: stock/models.py:1229
 msgid "Quantity must be integer"
 msgstr ""
 
-#: stock/models.py:1183
+#: stock/models.py:1235
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({n})"
 msgstr ""
 
-#: stock/models.py:1186
+#: stock/models.py:1238
 msgid "Serial numbers must be a list of integers"
 msgstr ""
 
-#: stock/models.py:1189
+#: stock/models.py:1241
 msgid "Quantity does not match serial numbers"
 msgstr ""
 
-#: stock/models.py:1196
+#: stock/models.py:1248
 #, python-brace-format
 msgid "Serial numbers already exist: {exists}"
 msgstr ""
 
-#: stock/models.py:1267
+#: stock/models.py:1319
 msgid "Stock item has been assigned to a sales order"
 msgstr ""
 
-#: stock/models.py:1270
+#: stock/models.py:1322
 msgid "Stock item is installed in another item"
 msgstr ""
 
-#: stock/models.py:1273
+#: stock/models.py:1325
 msgid "Stock item contains other items"
 msgstr ""
 
-#: stock/models.py:1276
+#: stock/models.py:1328
 msgid "Stock item has been assigned to a customer"
 msgstr ""
 
-#: stock/models.py:1279
+#: stock/models.py:1331
 msgid "Stock item is currently in production"
 msgstr ""
 
-#: stock/models.py:1282
+#: stock/models.py:1334
 msgid "Serialized stock cannot be merged"
 msgstr ""
 
-#: stock/models.py:1289 stock/serializers.py:832
+#: stock/models.py:1341 stock/serializers.py:832
 msgid "Duplicate stock items"
 msgstr ""
 
-#: stock/models.py:1293
+#: stock/models.py:1345
 msgid "Stock items must refer to the same part"
 msgstr ""
 
-#: stock/models.py:1297
+#: stock/models.py:1349
 msgid "Stock items must refer to the same supplier part"
 msgstr ""
 
-#: stock/models.py:1301
+#: stock/models.py:1353
 msgid "Stock status codes must match"
 msgstr ""
 
-#: stock/models.py:1473
+#: stock/models.py:1525
 msgid "StockItem cannot be moved as it is not in stock"
 msgstr ""
 
-#: stock/models.py:1972
+#: stock/models.py:2024
 msgid "Entry notes"
 msgstr ""
 
-#: stock/models.py:2029
+#: stock/models.py:2081
 msgid "Value must be provided for this test"
 msgstr ""
 
-#: stock/models.py:2035
+#: stock/models.py:2087
 msgid "Attachment must be uploaded for this test"
 msgstr ""
 
-#: stock/models.py:2053
+#: stock/models.py:2105
 msgid "Test name"
 msgstr ""
 
-#: stock/models.py:2059
+#: stock/models.py:2111
 msgid "Test result"
 msgstr ""
 
-#: stock/models.py:2065
+#: stock/models.py:2117
 msgid "Test output value"
 msgstr ""
 
-#: stock/models.py:2072
+#: stock/models.py:2124
 msgid "Test result attachment"
 msgstr ""
 
-#: stock/models.py:2078
+#: stock/models.py:2130
 msgid "Test notes"
 msgstr ""
 
@@ -5962,7 +5962,7 @@ msgstr ""
 msgid "Serial numbers cannot be assigned to this part"
 msgstr ""
 
-#: stock/serializers.py:363 stock/views.py:1036
+#: stock/serializers.py:363 stock/views.py:1009
 msgid "Serial numbers already exist"
 msgstr ""
 
@@ -6375,7 +6375,7 @@ msgstr ""
 msgid "The following stock items will be uninstalled"
 msgstr ""
 
-#: stock/templates/stock/stockitem_convert.html:7 stock/views.py:658
+#: stock/templates/stock/stockitem_convert.html:7 stock/views.py:631
 msgid "Convert Stock Item"
 msgstr ""
 
@@ -6396,95 +6396,95 @@ msgstr ""
 msgid "Are you sure you want to delete this stock tracking entry?"
 msgstr ""
 
-#: stock/views.py:179 templates/js/translated/stock.js:138
+#: stock/views.py:152 templates/js/translated/stock.js:138
 msgid "Edit Stock Location"
 msgstr ""
 
-#: stock/views.py:286 stock/views.py:637 stock/views.py:763 stock/views.py:1045
+#: stock/views.py:259 stock/views.py:610 stock/views.py:736 stock/views.py:1018
 msgid "Owner is required (ownership control is enabled)"
 msgstr ""
 
-#: stock/views.py:301
+#: stock/views.py:274
 msgid "Stock Location QR code"
 msgstr ""
 
-#: stock/views.py:320
+#: stock/views.py:293
 msgid "Return to Stock"
 msgstr ""
 
-#: stock/views.py:329
+#: stock/views.py:302
 msgid "Specify a valid location"
 msgstr ""
 
-#: stock/views.py:340
+#: stock/views.py:313
 msgid "Stock item returned from customer"
 msgstr ""
 
-#: stock/views.py:351
+#: stock/views.py:324
 msgid "Delete All Test Data"
 msgstr ""
 
-#: stock/views.py:368
+#: stock/views.py:341
 msgid "Confirm test data deletion"
 msgstr ""
 
-#: stock/views.py:369
+#: stock/views.py:342
 msgid "Check the confirmation box"
 msgstr ""
 
-#: stock/views.py:384
+#: stock/views.py:357
 msgid "Stock Item QR Code"
 msgstr ""
 
-#: stock/views.py:409
+#: stock/views.py:382
 msgid "Uninstall Stock Items"
 msgstr ""
 
-#: stock/views.py:506 templates/js/translated/stock.js:1030
+#: stock/views.py:479 templates/js/translated/stock.js:1030
 msgid "Confirm stock adjustment"
 msgstr ""
 
-#: stock/views.py:517
+#: stock/views.py:490
 msgid "Uninstalled stock items"
 msgstr ""
 
-#: stock/views.py:539 templates/js/translated/stock.js:331
+#: stock/views.py:512 templates/js/translated/stock.js:331
 msgid "Edit Stock Item"
 msgstr ""
 
-#: stock/views.py:689
+#: stock/views.py:662
 msgid "Create new Stock Location"
 msgstr ""
 
-#: stock/views.py:790
+#: stock/views.py:763
 msgid "Create new Stock Item"
 msgstr ""
 
-#: stock/views.py:932 templates/js/translated/stock.js:311
+#: stock/views.py:905 templates/js/translated/stock.js:311
 msgid "Duplicate Stock Item"
 msgstr ""
 
-#: stock/views.py:1014
+#: stock/views.py:987
 msgid "Quantity cannot be negative"
 msgstr ""
 
-#: stock/views.py:1114
+#: stock/views.py:1087
 msgid "Delete Stock Location"
 msgstr ""
 
-#: stock/views.py:1127
+#: stock/views.py:1100
 msgid "Delete Stock Item"
 msgstr ""
 
-#: stock/views.py:1138
+#: stock/views.py:1111
 msgid "Delete Stock Tracking Entry"
 msgstr ""
 
-#: stock/views.py:1145
+#: stock/views.py:1118
 msgid "Edit Stock Tracking Entry"
 msgstr ""
 
-#: stock/views.py:1154
+#: stock/views.py:1127
 msgid "Add Stock Tracking Entry"
 msgstr ""
 
