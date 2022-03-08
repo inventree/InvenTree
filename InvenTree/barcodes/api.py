@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 from stock.models import StockItem
 from stock.serializers import StockItemSerializer
 
+from barcodes.plugins.inventree_barcode import InvenTreeBarcodePlugin
 from barcodes.barcode import hash_barcode
 from plugin import registry
 
@@ -56,6 +57,9 @@ class BarcodeScan(APIView):
         plugins = registry.with_mixin('barcode')
 
         barcode_data = data.get('barcode')
+
+        # Ensure that the default barcode handler is installed
+        plugins.append(InvenTreeBarcodePlugin())
 
         # Look for a barcode plugin which knows how to deal with this barcode
         plugin = None
