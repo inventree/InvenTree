@@ -505,6 +505,7 @@ class SalesOrderReport(ReportTemplateBase):
             'customer': order.customer,
             'description': order.description,
             'lines': order.lines,
+            'additional_lines': order.additional_lines,
             'order': order,
             'prefix': common.models.InvenTreeSetting.get_setting('SALESORDER_REFERENCE_PREFIX'),
             'reference': order.reference,
