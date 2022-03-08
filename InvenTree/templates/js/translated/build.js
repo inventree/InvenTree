@@ -20,6 +20,7 @@
 
 /* exported
     allocateStockToBuild,
+    autoAllocateStockToBuild,
     completeBuildOrder,
     createBuildOutput,
     editBuildOrder,
@@ -754,7 +755,7 @@ function loadBuildOutputTable(build_info, options={}) {
         filters[key] = params[key];
     }
 
-    // TODO: Initialize filter list
+    setupFilterList('builditems', $(table), options.filterTarget || '#filter-list-incompletebuilditems');
 
     function setupBuildOutputButtonCallbacks() {
         
@@ -999,7 +1000,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         filters[key] = params[key];
     }
 
-    setupFilterList('builditems', $(table), options.filterTarget || null);
+    setupFilterList('builditems', $(table), options.filterTarget);
 
     // If an "output" is specified, then only "trackable" parts are allocated
     // Otherwise, only "untrackable" parts are allowed
@@ -1512,6 +1513,16 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
  */
 function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
 
+    if (bom_items.length == 0) {
+
+        showAlertDialog(
+            '{% trans "Select Parts" %}',
+            '{% trans "You must select at least one part to allocate" %}',
+        );
+
+        return;
+    }
+
     // ID of the associated "build output" (or null)
     var output_id = options.output || null;
 
@@ -1626,8 +1637,8 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
     if (table_entries.length == 0) {
 
         showAlertDialog(
-            '{% trans "Select Parts" %}',
-            '{% trans "You must select at least one part to allocate" %}',
+            '{% trans "All Parts Allocated" %}',
+            '{% trans "All selected parts have been fully allocated" %}',
         );
 
         return;
@@ -1840,6 +1851,48 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
                 }
             );
         },
+    });
+}
+
+
+/**
+ * Automatically allocate stock items to a build
+ */
+function autoAllocateStockToBuild(build_id, bom_items=[], options={}) {
+
+    var html = `
+    <div class='alert alert-block alert-info'>
+    <strong>{% trans "Automatic Stock Allocation" %}</strong><br>
+    {% trans "Stock items will be automatically allocated to this build order, according to the provided guidelines" %}:
+    <ul>
+        <li>{% trans "If a location is specifed, stock will only be allocated from that location" %}</li>
+        <li>{% trans "If stock is considered interchangeable, it will be allocated from the first location it is found" %}</li>
+        <li>{% trans "If substitute stock is allowed, it will be used where stock of the primary part cannot be found" %}</li>
+    </ul>
+    </div>
+    `;
+
+    var fields = {
+        location: {
+            value: options.location,
+        },
+        interchangeable: {
+            value: true,
+        },
+        substitutes: {
+            value: true,
+        },
+    };
+
+    constructForm(`/api/build/${build_id}/auto-allocate/`, {
+        method: 'POST',
+        fields: fields,
+        title: '{% trans "Allocate Stock Items" %}',
+        confirm: true,
+        preFormContent: html,
+        onSuccess: function(response) {
+            $('#allocation-table-untracked').bootstrapTable('refresh');
+        }
     });
 }
 

@@ -16,10 +16,11 @@ from rest_framework.response import Response
 from company.models import SupplierPart
 
 from InvenTree.filters import InvenTreeOrderingFilter
-from InvenTree.helpers import str2bool
+from InvenTree.helpers import str2bool, DownloadFile
 from InvenTree.api import AttachmentMixin
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
 
+from order.admin import POLineItemResource
 import order.models as models
 import order.serializers as serializers
 from part.models import Part
@@ -369,6 +370,34 @@ class POLineItemList(generics.ListCreateAPIView):
                 pass
 
         return queryset
+
+    def list(self, request, *args, **kwargs):
+
+        queryset = self.filter_queryset(self.get_queryset())
+
+        # Check if we wish to export the queried data to a file
+        export_format = request.query_params.get('export', None)
+
+        if export_format:
+            export_format = str(export_format).strip().lower()
+
+            if export_format in ['csv', 'tsv', 'xls', 'xlsx']:
+                dataset = POLineItemResource().export(queryset=queryset)
+
+                filedata = dataset.export(export_format)
+
+                filename = f"InvenTree_PurchaseOrderData.{export_format}"
+
+                return DownloadFile(filedata, filename)
+
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
     filter_backends = [
         rest_filters.DjangoFilterBackend,

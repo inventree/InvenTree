@@ -25,21 +25,19 @@ from InvenTree.views import QRCodeView
 from InvenTree.views import InvenTreeRoleMixin
 from InvenTree.forms import ConfirmForm
 
-from InvenTree.helpers import str2bool, DownloadFile, GetExportFormats
+from InvenTree.helpers import str2bool
 from InvenTree.helpers import extract_serial_numbers
 
 from decimal import Decimal, InvalidOperation
 from datetime import datetime, timedelta
 
-from company.models import Company, SupplierPart
+from company.models import SupplierPart
 from part.models import Part
 from .models import StockItem, StockLocation, StockItemTracking
 
 import common.settings
 from common.models import InvenTreeSetting
 from users.models import Owner
-
-from .admin import StockItemResource
 
 from . import forms as StockForms
 
@@ -103,43 +101,16 @@ class StockItemDetail(InvenTreeRoleMixin, DetailView):
     model = StockItem
 
     def get_context_data(self, **kwargs):
-        """ add previous and next item """
+        """
+        Add information on the "next" and "previous" StockItem objects,
+        based on the serial numbers.
+        """
+
         data = super().get_context_data(**kwargs)
 
         if self.object.serialized:
-
-            serial_elem = {}
-
-            try:
-                current = int(self.object.serial)
-
-                for item in self.object.part.stock_items.all():
-
-                    if item.serialized:
-                        try:
-                            sn = int(item.serial)
-                            serial_elem[sn] = item
-                        except ValueError:
-                            # We only support integer serial number progression
-                            pass
-
-                serials = serial_elem.keys()
-
-                # previous
-                for nbr in range(current - 1, min(serials), -1):
-                    if nbr in serials:
-                        data['previous'] = serial_elem.get(nbr, None)
-                        break
-
-                # next
-                for nbr in range(current + 1, max(serials) + 1):
-                    if nbr in serials:
-                        data['next'] = serial_elem.get(nbr, None)
-                        break
-
-            except ValueError:
-                # We only support integer serial number progression
-                pass
+            data['previous'] = self.object.get_next_serialized_item(reverse=True)
+            data['next'] = self.object.get_next_serialized_item()
 
         data['ownership_enabled'] = common.models.InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
         data['item_owner'] = self.object.get_item_owner()
@@ -378,95 +349,6 @@ class StockItemDeleteTestData(AjaxUpdateView):
         }
 
         return self.renderJsonResponse(request, form, data)
-
-
-class StockExport(AjaxView):
-    """ Export stock data from a particular location.
-    Returns a file containing stock information for that location.
-    """
-
-    model = StockItem
-    role_required = 'stock.view'
-
-    def get(self, request, *args, **kwargs):
-
-        export_format = request.GET.get('format', 'csv').lower()
-
-        # Check if a particular location was specified
-        loc_id = request.GET.get('location', None)
-        location = None
-
-        if loc_id:
-            try:
-                location = StockLocation.objects.get(pk=loc_id)
-            except (ValueError, StockLocation.DoesNotExist):
-                pass
-
-        # Check if a particular supplier was specified
-        sup_id = request.GET.get('supplier', None)
-        supplier = None
-
-        if sup_id:
-            try:
-                supplier = Company.objects.get(pk=sup_id)
-            except (ValueError, Company.DoesNotExist):
-                pass
-
-        # Check if a particular supplier_part was specified
-        sup_part_id = request.GET.get('supplier_part', None)
-        supplier_part = None
-
-        if sup_part_id:
-            try:
-                supplier_part = SupplierPart.objects.get(pk=sup_part_id)
-            except (ValueError, SupplierPart.DoesNotExist):
-                pass
-
-        # Check if a particular part was specified
-        part_id = request.GET.get('part', None)
-        part = None
-
-        if part_id:
-            try:
-                part = Part.objects.get(pk=part_id)
-            except (ValueError, Part.DoesNotExist):
-                pass
-
-        if export_format not in GetExportFormats():
-            export_format = 'csv'
-
-        filename = 'InvenTree_Stocktake_{date}.{fmt}'.format(
-            date=datetime.now().strftime("%d-%b-%Y"),
-            fmt=export_format
-        )
-
-        if location:
-            # Check if locations should be cascading
-            cascade = str2bool(request.GET.get('cascade', True))
-            stock_items = location.get_stock_items(cascade)
-        else:
-            stock_items = StockItem.objects.all()
-
-        if part:
-            stock_items = stock_items.filter(part=part)
-
-        if supplier:
-            stock_items = stock_items.filter(supplier_part__supplier=supplier)
-
-        if supplier_part:
-            stock_items = stock_items.filter(supplier_part=supplier_part)
-
-        # Filter out stock items that are not 'in stock'
-        stock_items = stock_items.filter(StockItem.IN_STOCK_FILTER)
-
-        # Pre-fetch related fields to reduce DB queries
-        stock_items = stock_items.prefetch_related('part', 'supplier_part__supplier', 'location', 'purchase_order', 'build')
-
-        dataset = StockItemResource().export(queryset=stock_items)
-
-        filedata = dataset.export(export_format)
-
-        return DownloadFile(filedata, filename)
 
 
 class StockItemQRCode(QRCodeView):

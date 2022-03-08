@@ -6,9 +6,12 @@ Unit testing for the Stock API
 from __future__ import unicode_literals
 
 import os
+import io
+import tablib
 
 from datetime import datetime, timedelta
 
+import django.http
 from django.urls import reverse
 from rest_framework import status
 
@@ -260,6 +263,56 @@ class StockItemListTest(StockAPITestCase):
             self.assertIn('results', response)
 
             self.assertEqual(len(response['results']), n)
+
+    def export_data(self, filters=None):
+
+        if not filters:
+            filters = {}
+
+        filters['export'] = 'csv'
+
+        response = self.client.get(self.list_url, data=filters)
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertTrue(isinstance(response, django.http.response.StreamingHttpResponse))
+
+        file_object = io.StringIO(response.getvalue().decode('utf-8'))
+
+        dataset = tablib.Dataset().load(file_object, 'csv', headers=True)
+
+        return dataset
+
+    def test_export(self):
+        """
+        Test exporting of Stock data via the API
+        """
+
+        dataset = self.export_data({})
+
+        self.assertEqual(len(dataset), 20)
+
+        # Expected headers
+        headers = [
+            'part',
+            'customer',
+            'location',
+            'parent',
+            'quantity',
+            'status',
+        ]
+
+        for h in headers:
+            self.assertIn(h, dataset.headers)
+
+        # Now, add a filter to the results
+        dataset = self.export_data({'location': 1})
+
+        self.assertEqual(len(dataset), 2)
+
+        dataset = self.export_data({'part': 25})
+
+        self.assertEqual(len(dataset), 8)
 
 
 class StockItemTest(StockAPITestCase):

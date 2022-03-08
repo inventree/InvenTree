@@ -308,14 +308,6 @@ loadStockTable($("#stock-table"), {
     url: "{% url 'api-stock-list' %}",
 });
 
-$("#stock-export").click(function() {
-
-    exportStock({
-        supplier_part: {{ part.pk }},
-    });
-
-});
-
 $("#item-create").click(function() {
     createNewStockItem({
         data: {

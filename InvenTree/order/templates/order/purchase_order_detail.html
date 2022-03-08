@@ -152,32 +152,16 @@
 {% if order.status == PurchaseOrderStatus.PENDING %}
 $('#new-po-line').click(function() {
 
+    var fields = poLineItemFields({
+        order: {{ order.pk }},
+        supplier: {{ order.supplier.pk }},
+        {% if order.supplier.currency %}
+        currency: '{{ order.supplier.currency }}',
+        {% endif %}
+    });
 
     constructForm('{% url "api-po-line-list" %}', {
-        fields: {
-            order: {
-                value: {{ order.pk }},
-                hidden: true,
-            },
-            part: {
-                filters: {
-                    part_detail: true,
-                    supplier_detail: true,
-                    supplier: {{ order.supplier.pk }},
-                },
-            },
-            quantity: {},
-            reference: {},
-            purchase_price: {},
-            purchase_price_currency: {
-                {% if order.supplier.currency %}
-                value: '{{ order.supplier.currency }}',
-                {% endif %}
-            },
-            target_date: {},
-            destination: {},
-            notes: {},
-        },
+        fields: fields,
         method: 'POST',
         title: '{% trans "Add Line Item" %}',
         onSuccess: function() {

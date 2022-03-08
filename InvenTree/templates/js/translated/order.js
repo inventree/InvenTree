@@ -281,6 +281,65 @@ function createPurchaseOrder(options={}) {
 }
 
 
+/* Construct a set of fields for the SalesOrderLineItem form */
+function soLineItemFields(options={}) {
+
+    var fields = {
+        order: {
+            hidden: true,
+        },
+        part: {},
+        quantity: {},
+        reference: {},
+        sale_price: {},
+        sale_price_currency: {},
+        target_date: {},
+        notes: {},
+    };
+
+    if (options.order) {
+        fields.order.value = options.order;
+    }
+
+    return fields;
+}
+
+
+/* Construct a set of fields for the PurchaseOrderLineItem form */
+function poLineItemFields(options={}) {
+
+    var fields = {
+        order: {
+            hidden: true,
+        },
+        part: {
+            filters: {
+                part_detail: true,
+                supplier_detail: true,
+                supplier: options.supplier,
+            }
+        },
+        quantity: {},
+        reference: {},
+        purchase_price: {},
+        purchase_price_currency: {},
+        target_date: {},
+        destination: {},
+        notes: {},
+    };
+
+    if (options.order) {
+        fields.order.value = options.order;
+    }
+
+    if (options.currency) {
+        fields.purchase_price_currency.value = options.currency;
+    }
+
+    return fields;
+}
+
+
 function removeOrderRowFromOrderWizard(e) {
     /* Remove a part selection from an order form. */
 
@@ -292,6 +351,7 @@ function removeOrderRowFromOrderWizard(e) {
 
     $('#' + row).remove();
 }
+
 
 function newSupplierPartFromOrderWizard(e) {
     /* Create a new supplier part directly from an order form.
@@ -899,7 +959,7 @@ function loadPurchaseOrderTable(table, options) {
                 sortable: true,
                 sortName: 'supplier__name',
                 formatter: function(value, row) {
-                    return imageHoverIcon(row.supplier_detail.image) + renderLink(row.supplier_detail.name, `/company/${row.supplier}/purchase-orders/`);
+                    return imageHoverIcon(row.supplier_detail.image) + renderLink(row.supplier_detail.name, `/company/${row.supplier}/?display=purchase-orders`);
                 }
             },
             {
@@ -991,10 +1051,36 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
     
     var target = options.filter_target || '#filter-list-purchase-order-lines';
 
-    setupFilterList('purchaseorderlineitem', $(table), target);
+    setupFilterList('purchaseorderlineitem', $(table), target, {download: true});
 
     function setupCallbacks() {
         if (options.allow_edit) {
+
+            // Callback for "duplicate" button
+            $(table).find('.button-line-duplicate').click(function() {
+                var pk = $(this).attr('pk');
+
+                inventreeGet(`/api/order/po-line/${pk}/`, {}, {
+                    success: function(data) {
+
+                        var fields = poLineItemFields({
+                            supplier: options.supplier,
+                        });
+
+                        constructForm('{% url "api-po-line-list" %}', {
+                            method: 'POST',
+                            fields: fields,
+                            data: data,
+                            title: '{% trans "Duplicate Line Item" %}',
+                            onSuccess: function(response) {
+                                $(table).bootstrapTable('refresh');
+                            }
+                        });
+                    }
+                });
+            });
+
+            // Callback for "edit" button
             $(table).find('.button-line-edit').click(function() {
                 var pk = $(this).attr('pk');
 
@@ -1022,6 +1108,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 });
             });
 
+            // Callback for "delete" button
             $(table).find('.button-line-delete').click(function() {
                 var pk = $(this).attr('pk');
 
@@ -1270,6 +1357,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                     }
 
                     if (options.allow_edit) {
+                        html += makeIconButton('fa-clone', 'button-line-duplicate', pk, '{% trans "Duplicate line item" %}');
                         html += makeIconButton('fa-edit icon-blue', 'button-line-edit', pk, '{% trans "Edit line item" %}');
                         html += makeIconButton('fa-trash-alt icon-red', 'button-line-delete', pk, '{% trans "Delete line item" %}');
                     }
@@ -2449,6 +2537,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                     html += makeIconButton('fa-dollar-sign icon-green', 'button-price', pk, '{% trans "Calculate price" %}');
                 }
 
+                html += makeIconButton('fa-clone', 'button-duplicate', pk, '{% trans "Duplicate line item" %}');
                 html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line item" %}');
 
                 var delete_disabled = false;
@@ -2479,6 +2568,28 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
     // Configure callback functions once the table is loaded
     function setupCallbacks() {
+
+        // Callback for duplicating line items
+        $(table).find('.button-duplicate').click(function() {
+            var pk = $(this).attr('pk');
+
+            inventreeGet(`/api/order/so-line/${pk}/`, {}, {
+                success: function(data) {
+
+                    var fields = soLineItemFields();
+
+                    constructForm('{% url "api-so-line-list" %}', {
+                        method: 'POST',
+                        fields: fields,
+                        data: data,
+                        title: '{% trans "Duplicate Line Item" %}',
+                        onSuccess: function(response) {
+                            $(table).bootstrapTable('refresh');
+                        }
+                    });
+                }
+            });
+        });
 
         // Callback for editing line items
         $(table).find('.button-edit').click(function() {

@@ -133,7 +133,7 @@ class ReferenceIndexingMixin(models.Model):
     reference_int = models.BigIntegerField(default=0)
 
 
-def extract_int(reference):
+def extract_int(reference, clip=0x7fffffff):
     # Default value if we cannot convert to an integer
     ref_int = 0
 
@@ -146,6 +146,15 @@ def extract_int(reference):
             ref_int = int(ref)
         except:
             ref_int = 0
+
+    # Ensure that the returned values are within the range that can be stored in an IntegerField
+    # Note: This will result in large values being "clipped"
+    if clip is not None:
+        if ref_int > clip:
+            ref_int = clip
+        elif ref_int < -clip:
+            ref_int = -clip
+
     return ref_int
 
 
