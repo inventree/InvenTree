@@ -301,7 +301,7 @@ function duplicateStockItem(pk, options) {
             showAlertOrCache('{% trans "Stock item duplicated" %}', true, {style: 'success'});
 
             window.location.href = `/stock/item/${response.pk}/`;
-        }
+        };
     }
 
     // First, we need the StockItem information
