@@ -52,7 +52,7 @@ class InvenTreeBarcodePlugin(BarcodePlugin):
         # If any of the following keys are in the JSON data,
         # let's go ahead and assume that the code is a valid InvenTree one...
 
-        for key in ['tool', 'version', 'InvenTree', 'stockitem', 'location', 'part']:
+        for key in ['tool', 'version', 'InvenTree', 'stockitem', 'stocklocation', 'part']:
             if key in self.data.keys():
                 return True
 
