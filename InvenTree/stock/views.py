@@ -101,43 +101,16 @@ class StockItemDetail(InvenTreeRoleMixin, DetailView):
     model = StockItem
 
     def get_context_data(self, **kwargs):
-        """ add previous and next item """
+        """
+        Add information on the "next" and "previous" StockItem objects,
+        based on the serial numbers.
+        """
+
         data = super().get_context_data(**kwargs)
 
         if self.object.serialized:
-
-            serial_elem = {}
-
-            try:
-                current = int(self.object.serial)
-
-                for item in self.object.part.stock_items.all():
-
-                    if item.serialized:
-                        try:
-                            sn = int(item.serial)
-                            serial_elem[sn] = item
-                        except ValueError:
-                            # We only support integer serial number progression
-                            pass
-
-                serials = serial_elem.keys()
-
-                # previous
-                for nbr in range(current - 1, min(serials), -1):
-                    if nbr in serials:
-                        data['previous'] = serial_elem.get(nbr, None)
-                        break
-
-                # next
-                for nbr in range(current + 1, max(serials) + 1):
-                    if nbr in serials:
-                        data['next'] = serial_elem.get(nbr, None)
-                        break
-
-            except ValueError:
-                # We only support integer serial number progression
-                pass
+            data['previous'] = self.object.get_next_serialized_item(reverse=True)
+            data['next'] = self.object.get_next_serialized_item()
 
         data['ownership_enabled'] = common.models.InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
         data['item_owner'] = self.object.get_item_owner()

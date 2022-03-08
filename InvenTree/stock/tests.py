@@ -380,6 +380,84 @@ class StockTest(TestCase):
         item.save()
         self.assertTrue(item.serialized)
 
+    def test_big_serials(self):
+        """
+        Unit tests for "large" serial numbers which exceed integer encoding
+        """
+
+        p = Part.objects.create(
+            name='trackable part',
+            description='trackable part',
+            trackable=True,
+        )
+
+        item = StockItem.objects.create(
+            part=p,
+            quantity=1,
+        )
+
+        for sn in [12345, '12345', ' 12345 ']:
+            item.serial = sn
+            item.save()
+
+            self.assertEqual(item.serial_int, 12345)
+
+        item.serial = "-123"
+        item.save()
+
+        # Negative number should map to zero
+        self.assertEqual(item.serial_int, 0)
+
+        # Test a very very large value
+        item.serial = '99999999999999999999999999999999999999999999999999999'
+        item.save()
+
+        self.assertEqual(item.serial_int, 0x7fffffff)
+
+        # Non-numeric values should encode to zero
+        for sn in ['apple', 'banana', 'carrot']:
+            item.serial = sn
+            item.save()
+
+            self.assertEqual(item.serial_int, 0)
+
+        # Next, test for incremenet / decrement functionality
+        item.serial = 100
+        item.save()
+
+        item_next = StockItem.objects.create(
+            part=p,
+            serial=150,
+            quantity=1
+        )
+
+        self.assertEqual(item.get_next_serialized_item(), item_next)
+
+        item_prev = StockItem.objects.create(
+            part=p,
+            serial=' 57',
+            quantity=1,
+        )
+
+        self.assertEqual(item.get_next_serialized_item(reverse=True), item_prev)
+
+        # Create a number of serialized stock items around the current item
+        for i in range(75, 125):
+            try:
+                StockItem.objects.create(
+                    part=p,
+                    serial=i,
+                    quantity=1,
+                )
+            except:
+                pass
+
+        item_next = item.get_next_serialized_item()
+        item_prev = item.get_next_serialized_item(reverse=True)
+
+        self.assertEqual(item_next.serial_int, 101)
+        self.assertEqual(item_prev.serial_int, 99)
+
     def test_serialize_stock_invalid(self):
         """
         Test manual serialization of parts.

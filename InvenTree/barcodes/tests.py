@@ -56,6 +56,66 @@ class BarcodeAPITest(APITestCase):
         self.assertIn('plugin', data)
         self.assertIsNone(data['plugin'])
 
+    def test_find_part(self):
+        """
+        Test that we can lookup a part based on ID
+        """
+
+        response = self.client.post(
+            self.scan_url,
+            {
+                'barcode': {
+                    'part': 1,
+                },
+            },
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('part', response.data)
+        self.assertIn('barcode_data', response.data)
+        self.assertEqual(response.data['part']['pk'], 1)
+
+    def test_find_stock_item(self):
+        """
+        Test that we can lookup a stock item based on ID
+        """
+
+        response = self.client.post(
+            self.scan_url,
+            {
+                'barcode': {
+                    'stockitem': 1,
+                }
+            },
+            format='json',
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('stockitem', response.data)
+        self.assertIn('barcode_data', response.data)
+        self.assertEqual(response.data['stockitem']['pk'], 1)
+
+    def test_find_location(self):
+        """
+        Test that we can lookup a stock location based on ID
+        """
+
+        response = self.client.post(
+            self.scan_url,
+            {
+                'barcode': {
+                    'stocklocation': 1,
+                },
+            },
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('stocklocation', response.data)
+        self.assertIn('barcode_data', response.data)
+        self.assertEqual(response.data['stocklocation']['pk'], 1)
+
     def test_integer_barcode(self):
 
         response = self.postBarcode(self.scan_url, '123456789')
