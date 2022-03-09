@@ -462,9 +462,7 @@ $("#print-label").click(function() {
 {% if roles.stock.change %}
 $("#stock-duplicate").click(function() {
     // Duplicate a stock item 
-    duplicateStockItem({{ item.pk }}, {
-        follow: true,
-    });
+    duplicateStockItem({{ item.pk }}, {});
 });
 
 $('#stock-edit').click(function() {

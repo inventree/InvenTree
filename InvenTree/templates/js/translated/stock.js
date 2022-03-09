@@ -294,7 +294,17 @@ function stockItemGroups(options={}) {
  */
 function duplicateStockItem(pk, options) {
 
-    // First, we need the StockItem informatino
+    // If no "success" function provided, add a default
+    if (!options.onSuccess) {
+        options.onSuccess = function(response) {
+
+            showAlertOrCache('{% trans "Stock item duplicated" %}', true, {style: 'success'});
+
+            window.location.href = `/stock/item/${response.pk}/`;
+        };
+    }
+
+    // First, we need the StockItem information
     inventreeGet(`/api/stock/${pk}/`, {}, {
         success: function(data) {
 
