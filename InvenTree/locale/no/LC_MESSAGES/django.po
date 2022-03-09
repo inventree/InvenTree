@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-09 04:53+0000\n"
-"PO-Revision-Date: 2022-03-09 05:08\n"
+"POT-Creation-Date: 2022-03-09 05:54+0000\n"
+"PO-Revision-Date: 2022-03-09 06:19\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -1282,6 +1282,7 @@ msgid "Issued By"
 msgstr "Utstedt av"
 
 #: build/templates/build/build_base.html:228
+#: build/templates/build/sidebar.html:12
 msgid "Incomplete Outputs"
 msgstr ""
 
@@ -1494,13 +1495,9 @@ msgstr "Vis liste"
 msgid "Build Order Details"
 msgstr ""
 
-#: build/templates/build/sidebar.html:12
-msgid "Pending Items"
-msgstr "Ventende elementer"
-
 #: build/templates/build/sidebar.html:15
-msgid "Completed Items"
-msgstr "Fullført elementer"
+msgid "Completed Outputs"
+msgstr ""
 
 #: build/views.py:73
 msgid "Build was cancelled"
