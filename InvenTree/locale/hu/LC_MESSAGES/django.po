@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-09 05:54+0000\n"
-"PO-Revision-Date: 2022-03-09 15:05\n"
+"PO-Revision-Date: 2022-03-09 21:11\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -3278,11 +3278,11 @@ msgstr "Cég akinek a tételek értékesítésre kerülnek"
 
 #: order/models.py:581
 msgid "Customer Reference "
-msgstr "Vevő azonosító "
+msgstr "Vevői azonosító "
 
 #: order/models.py:581
 msgid "Customer order reference code"
-msgstr "Vevő megrendelés azonosító kód"
+msgstr "Megrendelés azonosító kódja a vevőnél"
 
 #: order/models.py:586
 msgid "Target date for order completion. Order will be overdue after this date."
