@@ -1253,7 +1253,14 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
                 ('MM/DD/YYYY', '02/22/2022'),
                 ('MMM DD YYYY', 'Feb 22 2022'),
             ]
-        }
+        },
+
+        'DISPLAY_SCHEDULE_TAB': {
+            'name': _('Part Scheduling'),
+            'description': _('Display part scheduling information'),
+            'default': True,
+            'validator': bool,
+        },
     }
 
     class Meta:

@@ -12,10 +12,13 @@ import common.models
 INVENTREE_SW_VERSION = "0.7.0 dev"
 
 # InvenTree API version
-INVENTREE_API_VERSION = 28
+INVENTREE_API_VERSION = 29
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v29 -> 2022-03-08
+    - Adds "scheduling" endpoint for predicted stock scheduling information
 
 v28 -> 2022-03-04
     - Adds an API endpoint for auto allocation of stock items against a build order
