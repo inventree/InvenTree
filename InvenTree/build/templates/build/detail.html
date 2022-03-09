@@ -323,163 +323,72 @@
 {% block js_ready %}
 {{ block.super }}
 
-$('#btn-create-output').click(function() {
+onPanelLoad('completed', function() {
+    loadStockTable($("#build-stock-table"), {
+        params: {
+            location_detail: true,
+            part_detail: true,
+            build: {{ build.id }},
+            is_building: false,
+        },
+        groupByField: 'location',
+        buttons: [
+            '#stock-options',
+        ],
+        url: "{% url 'api-stock-list' %}",    
+    });
+});
 
-    createBuildOutput(
-        {{ build.pk }},
+onPanelLoad('children', function() {
+    loadBuildTable($('#sub-build-table'), {
+        url: '{% url "api-build-list" %}',
+        filterTarget: "#filter-list-sub-build",
+        params: {
+            ancestor: {{ build.pk }},
+        }
+    });
+});
+
+onPanelLoad('attachments', function() {
+
+    enableDragAndDrop(
+        '#attachment-dropzone',
+        '{% url "api-build-attachment-list" %}',
         {
-            trackable_parts: {% if build.part.has_trackable_parts %}true{% else %}false{% endif%},
+            data: {
+                build: {{ build.id }},
+            },
+            label: 'attachment',
+            success: function(data, status, xhr) {
+                location.reload();
+            }
         }
     );
-});
 
-loadStockTable($("#build-stock-table"), {
-    params: {
-        location_detail: true,
-        part_detail: true,
-        build: {{ build.id }},
-        is_building: false,
-    },
-    groupByField: 'location',
-    buttons: [
-        '#stock-options',
-    ],
-    url: "{% url 'api-stock-list' %}",    
-});
-
-
-// Get the list of BOM items required for this build
-inventreeGet(
-    '{% url "api-bom-list" %}',
-    {
-        part: {{ build.part.pk }},
-        sub_part_detail: true,
-    },
-    {
-        success: function(response) {
-
-            var build_info = {
-                pk: {{ build.pk }},
-                part: {{ build.part.pk }},
-                quantity: {{ build.quantity }},
-                bom_items: response,
-                {% if build.take_from %}
-                source_location: {{ build.take_from.pk }},
-                {% endif %}
-                {% if build.has_tracked_bom_items %}
-                tracked_parts: true,
-                {% else %}
-                tracked_parts: false,
-                {% endif %}
-            };
-
-            {% if build.active %}
-            loadBuildOutputTable(build_info);
-            linkButtonsToSelection(
-                '#build-output-table',
-                [
-                    '#output-options',
-                    '#multi-output-complete',
-                    '#multi-output-delete',
-                ]
-            );
-
-            $('#multi-output-complete').click(function() {
-                var outputs = $('#build-output-table').bootstrapTable('getSelections');
-
-                completeBuildOutputs(
-                    build_info.pk,
-                    outputs,
-                    {
-                        success: function() {
-                            // Reload the "in progress" table
-                            $('#build-output-table').bootstrapTable('refresh');
-
-                            // Reload the "completed" table
-                            $('#build-stock-table').bootstrapTable('refresh');
-                        }
-                    }
-                );
-            });
-
-            $('#multi-output-delete').click(function() {
-                var outputs = $('#build-output-table').bootstrapTable('getSelections');
-
-                deleteBuildOutputs(
-                    build_info.pk,
-                    outputs,
-                    {
-                        success: function() {
-                            // Reload the "in progress" table
-                            $('#build-output-table').bootstrapTable('refresh');
-
-                            // Reload the "completed" table
-                            $('#build-stock-table').bootstrapTable('refresh');
-                        }
-                    }
-                )
-            });
-
-            {% endif %}
-        
-            {% if build.active and build.has_untracked_bom_items %}
-            // Load allocation table for un-tracked parts
-            loadBuildOutputAllocationTable(
-                build_info,
-                null,
-                {
-                    search: true,
-                }
-            );
-            {% endif %}
-        }
-    }
-);
-
-loadBuildTable($('#sub-build-table'), {
-    url: '{% url "api-build-list" %}',
-    filterTarget: "#filter-list-sub-build",
-    params: {
-        ancestor: {{ build.pk }},
-    }
-});
-
-
-enableDragAndDrop(
-    '#attachment-dropzone',
-    '{% url "api-build-attachment-list" %}',
-    {
-        data: {
-            build: {{ build.id }},
+    loadAttachmentTable('{% url "api-build-attachment-list" %}', {
+        filters: {
+            build: {{ build.pk }},
         },
-        label: 'attachment',
-        success: function(data, status, xhr) {
-            location.reload();
-        }
-    }
-);
-
-loadAttachmentTable('{% url "api-build-attachment-list" %}', {
-    filters: {
-        build: {{ build.pk }},
-    },
-    fields: {
-        build: {
-            value: {{ build.pk }},
-            hidden: true,
-        }
-    }
-});
-
-$('#edit-notes').click(function() {
-    constructForm('{% url "api-build-detail" build.pk %}', {
         fields: {
-            notes: {
-                multiline: true,
+            build: {
+                value: {{ build.pk }},
+                hidden: true,
             }
-        },
-        title: '{% trans "Edit Notes" %}',
-        reload: true,
+        }
+    });
+});
+
+onPanelLoad('notes', function() {
+    $('#edit-notes').click(function() {
+        constructForm('{% url "api-build-detail" build.pk %}', {
+            fields: {
+                notes: {
+                    multiline: true,
+                }
+            },
+            title: '{% trans "Edit Notes" %}',
+            reload: true,
+        });
     });
 });
 
@@ -487,44 +396,174 @@ function reloadTable() {
     $('#allocation-table-untracked').bootstrapTable('refresh');
 }
 
-{% if build.active %}
+onPanelLoad('allocate', function() {
 
-$("#btn-auto-allocate").on('click', function() {
-
-    autoAllocateStockToBuild(
-        {{ build.pk }},
-        [],
+    // Get the list of BOM items required for this build
+    inventreeGet(
+        '{% url "api-bom-list" %}',
         {
-            {% if build.take_from %}
-            location: {{ build.take_from.pk }},
-            {% endif %}
+            part: {{ build.part.pk }},
+            sub_part_detail: true,
+        },
+        {
+            success: function(response) {
+    
+                var build_info = {
+                    pk: {{ build.pk }},
+                    part: {{ build.part.pk }},
+                    quantity: {{ build.quantity }},
+                    bom_items: response,
+                    {% if build.take_from %}
+                    source_location: {{ build.take_from.pk }},
+                    {% endif %}
+                    {% if build.has_tracked_bom_items %}
+                    tracked_parts: true,
+                    {% else %}
+                    tracked_parts: false,
+                    {% endif %}
+                };
+    
+                {% if build.active %}
+                loadBuildOutputTable(build_info);
+                linkButtonsToSelection(
+                    '#build-output-table',
+                    [
+                        '#output-options',
+                        '#multi-output-complete',
+                        '#multi-output-delete',
+                    ]
+                );
+    
+                $('#multi-output-complete').click(function() {
+                    var outputs = $('#build-output-table').bootstrapTable('getSelections');
+    
+                    completeBuildOutputs(
+                        build_info.pk,
+                        outputs,
+                        {
+                            success: function() {
+                                // Reload the "in progress" table
+                                $('#build-output-table').bootstrapTable('refresh');
+    
+                                // Reload the "completed" table
+                                $('#build-stock-table').bootstrapTable('refresh');
+                            }
+                        }
+                    );
+                });
+    
+                $('#multi-output-delete').click(function() {
+                    var outputs = $('#build-output-table').bootstrapTable('getSelections');
+    
+                    deleteBuildOutputs(
+                        build_info.pk,
+                        outputs,
+                        {
+                            success: function() {
+                                // Reload the "in progress" table
+                                $('#build-output-table').bootstrapTable('refresh');
+    
+                                // Reload the "completed" table
+                                $('#build-stock-table').bootstrapTable('refresh');
+                            }
+                        }
+                    )
+                });
+    
+                {% endif %}
+            
+                {% if build.active and build.has_untracked_bom_items %}
+                // Load allocation table for un-tracked parts
+                loadBuildOutputAllocationTable(
+                    build_info,
+                    null,
+                    {
+                        search: true,
+                    }
+                );
+                {% endif %}
+            }
         }
     );
-});
 
-$("#btn-allocate").on('click', function() {
+    $('#btn-create-output').click(function() {
 
-    var bom_items = $("#allocation-table-untracked").bootstrapTable("getData");
+        createBuildOutput(
+            {{ build.pk }},
+            {
+                trackable_parts: {% if build.part.has_trackable_parts %}true{% else %}false{% endif%},
+            }
+        );
+    });
 
-    var incomplete_bom_items = [];
+    {% if build.active %}
 
-    bom_items.forEach(function(bom_item) {
-        if (bom_item.required > bom_item.allocated) {
-            incomplete_bom_items.push(bom_item);
+    $("#btn-auto-allocate").on('click', function() {
+
+        autoAllocateStockToBuild(
+            {{ build.pk }},
+            [],
+            {
+                {% if build.take_from %}
+                location: {{ build.take_from.pk }},
+                {% endif %}
+            }
+        );
+    });
+
+    $("#btn-allocate").on('click', function() {
+
+        var bom_items = $("#allocation-table-untracked").bootstrapTable("getData");
+
+        var incomplete_bom_items = [];
+
+        bom_items.forEach(function(bom_item) {
+            if (bom_item.required > bom_item.allocated) {
+                incomplete_bom_items.push(bom_item);
+            }
+        });
+
+        if (incomplete_bom_items.length == 0) {
+            showAlertDialog(
+                '{% trans "Allocation Complete" %}',
+                '{% trans "All untracked stock items have been allocated" %}',
+            );
+        } else {
+
+            allocateStockToBuild(
+                {{ build.pk }},
+                {{ build.part.pk }},
+                incomplete_bom_items,
+                {
+                    {% if build.take_from %}
+                    source_location: {{ build.take_from.pk }},
+                    {% endif %}
+                    success: function(data) {
+                        $('#allocation-table-untracked').bootstrapTable('refresh');
+                    }
+                }
+            );
         }
     });
 
-    if (incomplete_bom_items.length == 0) {
-        showAlertDialog(
-            '{% trans "Allocation Complete" %}',
-            '{% trans "All untracked stock items have been allocated" %}',
-        );
-    } else {
+    $('#btn-unallocate').on('click', function() {
+        unallocateStock({{ build.id }}, {
+            table: '#allocation-table-untracked',
+        });
+    });
+
+    $('#allocate-selected-items').click(function() {
+
+        var bom_items = $("#allocation-table-untracked").bootstrapTable("getSelections");
+
+        if (bom_items.length == 0) {
+            bom_items = $("#allocation-table-untracked").bootstrapTable('getData');
+        }
 
         allocateStockToBuild(
             {{ build.pk }},
             {{ build.part.pk }},
-            incomplete_bom_items,
+            bom_items,
             {
                 {% if build.take_from %}
                 source_location: {{ build.take_from.pk }},
@@ -534,49 +573,19 @@ $("#btn-allocate").on('click', function() {
                 }
             }
         );
-    }
-});
-
-$('#btn-unallocate').on('click', function() {
-    unallocateStock({{ build.id }}, {
-        table: '#allocation-table-untracked',
     });
-});
 
-$('#allocate-selected-items').click(function() {
-
-    var bom_items = $("#allocation-table-untracked").bootstrapTable("getSelections");
-
-    if (bom_items.length == 0) {
-        bom_items = $("#allocation-table-untracked").bootstrapTable('getData');
-    }
-
-    allocateStockToBuild(
-        {{ build.pk }},
-        {{ build.part.pk }},
-        bom_items,
-        {
-            {% if build.take_from %}
-            source_location: {{ build.take_from.pk }},
-            {% endif %}
-            success: function(data) {
-                $('#allocation-table-untracked').bootstrapTable('refresh');
-            }
-        }
-    );
-});
-
-$("#btn-order-parts").click(function() {
-    launchModalForm("/order/purchase-order/order-parts/", {
-        data: {
-            build: {{ build.id }},
-        },
+    $("#btn-order-parts").click(function() {
+        launchModalForm("/order/purchase-order/order-parts/", {
+            data: {
+                build: {{ build.id }},
+            },
+        });
     });
-});
 
-{% endif %}
+    {% endif %}
+});
 
 enableSidebar('buildorder');
-
 
 {% endblock %}
