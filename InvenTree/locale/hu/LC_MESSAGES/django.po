@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-09 05:54+0000\n"
-"PO-Revision-Date: 2022-03-09 09:54\n"
+"PO-Revision-Date: 2022-03-09 10:54\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1142,11 +1142,11 @@ msgstr "Készlet hely ahonnan az alkatrészek származnak (hagyd üresen ha bár
 
 #: build/serializers.py:739
 msgid "Exclude Location"
-msgstr ""
+msgstr "Hely kizárása"
 
 #: build/serializers.py:740
 msgid "Exclude stock items from this selected location"
-msgstr ""
+msgstr "Készlet tételek kizárása erről a kiválasztott helyről"
 
 #: build/serializers.py:745
 msgid "Interchangeable Stock"
@@ -1497,7 +1497,7 @@ msgstr "Gyártási utasítás részletei"
 
 #: build/templates/build/sidebar.html:15
 msgid "Completed Outputs"
-msgstr ""
+msgstr "Befejezett kimenetek"
 
 #: build/views.py:73
 msgid "Build was cancelled"
@@ -2273,11 +2273,11 @@ msgstr "Preferált dátum formátum a dátumok kijelzésekor"
 
 #: common/models.py:1263 part/templates/part/detail.html:40
 msgid "Part Scheduling"
-msgstr ""
+msgstr "Alkatrész ütemezés"
 
 #: common/models.py:1264
 msgid "Display part scheduling information"
-msgstr ""
+msgstr "Alkatrész ütemezési információk megjelenítése"
 
 #: common/models.py:1329 company/forms.py:43
 msgid "Price break quantity"
@@ -3946,19 +3946,19 @@ msgstr "A {part} alkatrész módosított egységára {price} mennyisége pedig {
 
 #: part/api.py:491
 msgid "Incoming Purchase Order"
-msgstr ""
+msgstr "Beérkező beszerzési rendelés"
 
 #: part/api.py:511
 msgid "Outgoing Sales Order"
-msgstr ""
+msgstr "Kimenő vevői rendelés"
 
 #: part/api.py:529
 msgid "Stock produced by Build Order"
-msgstr ""
+msgstr "Gyártással előállított készlet"
 
 #: part/api.py:561
 msgid "Stock required for Build Order"
-msgstr ""
+msgstr "A gyártási utasításhoz szükséges készlet"
 
 #: part/api.py:641
 msgid "Valid"
@@ -5163,7 +5163,7 @@ msgstr "Foglalások"
 
 #: part/templates/part/part_sidebar.html:49
 msgid "Scheduling"
-msgstr ""
+msgstr "Ütemezés"
 
 #: part/templates/part/part_sidebar.html:53
 msgid "Test Templates"
@@ -8894,11 +8894,11 @@ msgstr "${human_name} törlése"
 
 #: templates/js/translated/part.js:2004
 msgid "Current Stock"
-msgstr ""
+msgstr "Aktuális készlet"
 
 #: templates/js/translated/part.js:2047
 msgid "Scheduled Stock Quantities"
-msgstr ""
+msgstr "Ütemezett készlet mennyiség"
 
 #: templates/js/translated/part.js:2117
 msgid "Single Price"
@@ -9008,7 +9008,7 @@ msgstr "Add meg az új készlet tételhez tartozó sorozatszámokat (vagy hagyd 
 
 #: templates/js/translated/stock.js:301
 msgid "Stock item duplicated"
-msgstr ""
+msgstr "Készlet tétel lemásolva"
 
 #: templates/js/translated/stock.js:391
 msgid "Created new stock item"
