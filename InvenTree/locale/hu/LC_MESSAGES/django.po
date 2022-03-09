@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-09 05:54+0000\n"
-"PO-Revision-Date: 2022-03-09 21:11\n"
+"PO-Revision-Date: 2022-03-09 22:08\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -3838,7 +3838,7 @@ msgstr "Ehhez a vevői rendeléshez nincs minden alkatrész lefoglalva"
 #: order/templates/order/sales_order_base.html:122
 #: templates/js/translated/order.js:1449
 msgid "Customer Reference"
-msgstr "Vevő azonosító"
+msgstr "Vevői azonosító"
 
 #: order/templates/order/sales_order_base.html:140
 #: order/templates/order/sales_order_detail.html:78
