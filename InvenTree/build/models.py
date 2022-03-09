@@ -715,7 +715,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
                                     build=self,
                                     bom_item=bom_item,
                                     stock_item=stock_item,
-                                    quantity=quantity,
+                                    quantity=1,
                                     install_into=output,
                                 )
 
