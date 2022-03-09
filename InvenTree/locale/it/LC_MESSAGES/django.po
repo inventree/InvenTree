@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-09 02:48+0000\n"
+"POT-Creation-Date: 2022-03-09 03:43+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
@@ -1521,11 +1521,11 @@ msgstr "Genera Note"
 msgid "Edit Notes"
 msgstr "Modifica Note"
 
-#: build/templates/build/detail.html:528
+#: build/templates/build/detail.html:526
 msgid "Allocation Complete"
 msgstr "Assegnazione Completa"
 
-#: build/templates/build/detail.html:529
+#: build/templates/build/detail.html:527
 msgid "All untracked stock items have been allocated"
 msgstr "Tutte le giacenze non tracciate sono state assegnate"
 
