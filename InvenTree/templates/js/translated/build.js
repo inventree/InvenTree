@@ -1876,6 +1876,7 @@ function autoAllocateStockToBuild(build_id, bom_items=[], options={}) {
         location: {
             value: options.location,
         },
+        exclude_location: {},
         interchangeable: {
             value: true,
         },

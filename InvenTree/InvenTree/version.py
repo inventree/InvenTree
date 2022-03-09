@@ -12,10 +12,13 @@ import common.models
 INVENTREE_SW_VERSION = "0.7.0 dev"
 
 # InvenTree API version
-INVENTREE_API_VERSION = 29
+INVENTREE_API_VERSION = 30
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v30 -> 2022-03-09
+    - Adds "exclude_location" field to BuildAutoAllocation API endpoint
 
 v29 -> 2022-03-08
     - Adds "scheduling" endpoint for predicted stock scheduling information

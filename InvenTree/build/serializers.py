@@ -717,6 +717,7 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
     class Meta:
         fields = [
             'location',
+            'exclude_location',
             'interchangeable',
             'substitutes',
         ]
@@ -728,6 +729,15 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
         required=False,
         label=_('Source Location'),
         help_text=_('Stock location where parts are to be sourced (leave blank to take from any location)'),
+    )
+
+    exclude_location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        many=False,
+        allow_null=True,
+        required=False,
+        label=_('Exclude Location'),
+        help_text=_('Exclude stock items from this selected location'),
     )
 
     interchangeable = serializers.BooleanField(
@@ -750,6 +760,7 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
 
         build.auto_allocate_stock(
             location=data.get('location', None),
+            exclude_location=data.get('exclude_location', None),
             interchangeable=data['interchangeable'],
             substitutes=data['substitutes'],
         )

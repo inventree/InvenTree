@@ -842,6 +842,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         """
 
         location = kwargs.get('location', None)
+        exclude_location = kwargs.get('exclude_location', None)
         interchangeable = kwargs.get('interchangeable', False)
         substitutes = kwargs.get('substitutes', True)
 
@@ -874,6 +875,11 @@ class Build(MPTTModel, ReferenceIndexingMixin):
                 # Filter only stock items located "below" the specified location
                 sublocations = location.get_descendants(include_self=True)
                 available_stock = available_stock.filter(location__in=[loc for loc in sublocations])
+
+            if exclude_location:
+                # Exclude any stock items from the provided location
+                sublocations = exclude_location.get_descendants(include_self=True)
+                available_stock = available_stock.exclude(location__in=[loc for loc in sublocations])
 
             """
             Next, we sort the available stock items with the following priority:
