@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-09 04:53+0000\n"
+"POT-Creation-Date: 2022-03-09 05:54+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
@@ -1309,6 +1309,7 @@ msgid "Issued By"
 msgstr ""
 
 #: build/templates/build/build_base.html:228
+#: build/templates/build/sidebar.html:12
 msgid "Incomplete Outputs"
 msgstr ""
 
@@ -1527,13 +1528,11 @@ msgstr ""
 msgid "Build Order Details"
 msgstr ""
 
-#: build/templates/build/sidebar.html:12
-msgid "Pending Items"
-msgstr "Artículos Pendientes"
-
 #: build/templates/build/sidebar.html:15
-msgid "Completed Items"
-msgstr "Artículos Completados"
+#, fuzzy
+#| msgid "Completed items"
+msgid "Completed Outputs"
+msgstr "Elementos completados"
 
 #: build/views.py:73
 msgid "Build was cancelled"
@@ -10019,6 +10018,12 @@ msgstr "Permisos para editar artículos"
 #: users/models.py:217
 msgid "Permission to delete items"
 msgstr "Permiso para eliminar artículos"
+
+#~ msgid "Pending Items"
+#~ msgstr "Artículos Pendientes"
+
+#~ msgid "Completed Items"
+#~ msgstr "Artículos Completados"
 
 #, fuzzy
 #~| msgid "Invalid group: {g}"

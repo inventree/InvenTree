@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-09 04:53+0000\n"
+"POT-Creation-Date: 2022-03-09 05:54+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -1354,6 +1354,7 @@ msgid "Issued By"
 msgstr "Aufgegeben von"
 
 #: build/templates/build/build_base.html:228
+#: build/templates/build/sidebar.html:12
 msgid "Incomplete Outputs"
 msgstr "Unfertige Endprodukte"
 
@@ -1578,13 +1579,11 @@ msgstr "Listen-Ansicht"
 msgid "Build Order Details"
 msgstr "Bauauftragdetails"
 
-#: build/templates/build/sidebar.html:12
-msgid "Pending Items"
-msgstr "Ausstehende Einträge"
-
 #: build/templates/build/sidebar.html:15
-msgid "Completed Items"
-msgstr "Abgeschlossene Elemente"
+#, fuzzy
+#| msgid "Complete outputs"
+msgid "Completed Outputs"
+msgstr "Endprodukte fertigstellen"
 
 #: build/views.py:73
 msgid "Build was cancelled"
@@ -10395,6 +10394,12 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:217
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
+#~ msgid "Pending Items"
+#~ msgstr "Ausstehende Einträge"
+
+#~ msgid "Completed Items"
+#~ msgstr "Abgeschlossene Elemente"
 
 #~ msgid "Showing stock for all variants of <em>%(full_name)s</em>"
 #~ msgstr "Bestand aller Varianten von <em>%(full_name)s</em>"

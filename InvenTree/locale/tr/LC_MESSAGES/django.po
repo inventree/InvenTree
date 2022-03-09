@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-09 04:53+0000\n"
+"POT-Creation-Date: 2022-03-09 05:54+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
@@ -1346,6 +1346,7 @@ msgid "Issued By"
 msgstr "Veren"
 
 #: build/templates/build/build_base.html:228
+#: build/templates/build/sidebar.html:12
 msgid "Incomplete Outputs"
 msgstr "Tamamlanmamış Çıktılar"
 
@@ -1570,13 +1571,11 @@ msgstr "Liste görünümünü görüntüle"
 msgid "Build Order Details"
 msgstr ""
 
-#: build/templates/build/sidebar.html:12
-msgid "Pending Items"
-msgstr ""
-
 #: build/templates/build/sidebar.html:15
-msgid "Completed Items"
-msgstr ""
+#, fuzzy
+#| msgid "Incomplete Outputs"
+msgid "Completed Outputs"
+msgstr "Tamamlanmamış Çıktılar"
 
 #: build/views.py:73
 msgid "Build was cancelled"
