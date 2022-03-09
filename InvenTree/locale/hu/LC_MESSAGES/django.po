@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-09 05:54+0000\n"
-"PO-Revision-Date: 2022-03-09 10:54\n"
+"PO-Revision-Date: 2022-03-09 15:05\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -4099,7 +4099,7 @@ msgstr "Ez az alkatrész egy másik változata?"
 
 #: part/models.py:822
 msgid "Variant Of"
-msgstr "Változata ennek"
+msgstr "Ebből a sablonból"
 
 #: part/models.py:828
 msgid "Part description"
@@ -4138,7 +4138,7 @@ msgstr "Belső alkatrész azonosító"
 
 #: part/models.py:854
 msgid "Part revision or version number"
-msgstr "Alkatrész változat vagy verziószám"
+msgstr "Alkatrész változat vagy verziószám (pl. szín, hossz, revízió, stb.)"
 
 #: part/models.py:855 part/templates/part/part_base.html:281
 #: report/models.py:200 templates/js/translated/part.js:624
