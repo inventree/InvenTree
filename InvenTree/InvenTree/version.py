@@ -19,6 +19,7 @@ Increment this API version number whenever there is a significant change to the 
 
 v30 -> 2022-03-09
     - Adds "exclude_location" field to BuildAutoAllocation API endpoint
+    - Allows BuildItem API endpoint to be filtered by BomItem relation
 
 v29 -> 2022-03-08
     - Adds "scheduling" endpoint for predicted stock scheduling information
