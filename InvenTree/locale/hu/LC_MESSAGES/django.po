@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-09 05:54+0000\n"
-"PO-Revision-Date: 2022-03-09 06:19\n"
+"PO-Revision-Date: 2022-03-09 09:54\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -7980,7 +7980,7 @@ msgstr "Lefoglalva"
 
 #: templates/js/translated/build.js:1443
 msgid "loading"
-msgstr ""
+msgstr "betöltés"
 
 #: templates/js/translated/build.js:1487 templates/js/translated/order.js:2534
 msgid "Build stock"
