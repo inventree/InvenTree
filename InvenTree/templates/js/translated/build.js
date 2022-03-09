@@ -1440,7 +1440,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
                         return makeProgressBar(allocated, required);
                     } else {
-                        return `<em>{% trans "Loading" %}</em>`;
+                        return `<em>{% trans "loading" %}...</em><span class='fas fa-spinner fa-spin float-right'></span>`;
                     }
                 },
                 sorter: function(valA, valB, rowA, rowB) {
