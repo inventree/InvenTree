@@ -307,8 +307,8 @@ function soLineItemFields(options={}) {
 }
 
 
-/* Construct a set of fields for the SalesOrderAdditionalLineItem form */
-function soAdditionalLineItemFields(options={}) {
+/* Construct a set of fields for a OrderAdditionalLineItem form */
+function AdditionalLineItemFields(options={}) {
 
     var fields = {
         order: {
@@ -2989,7 +2989,7 @@ function loadSalesOrderAdditionalLineItemTable(table, options={}) {
             inventreeGet(`/api/order/so-additional-line/${pk}/`, {}, {
                 success: function(data) {
 
-                    var fields = soAdditionalLineItemFields();
+                    var fields = AdditionalLineItemFields();
 
                     constructForm('{% url "api-so-additional-line-list" %}', {
                         method: 'POST',
