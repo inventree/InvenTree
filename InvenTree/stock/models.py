@@ -54,6 +54,35 @@ class StockLocation(InvenTreeTree):
     Stock locations can be heirarchical as required
     """
 
+    def delete(self, *args, **kwargs):
+        """
+        Custom model deletion routine, which updates any child locations or items.
+        This must be handled within a transaction.atomic(), otherwise the tree structure is damaged
+        """
+
+        with transaction.atomic():
+
+            parent = self.parent
+            tree_id = self.tree_id
+
+            # Update each stock item in the stock location
+            for item in self.stock_items.all():
+                item.location = self.parent
+                item.save()
+
+            # Update each child category
+            for child in self.children.all():
+                child.parent = self.parent
+                child.save()
+
+            super().delete(*args, **kwargs)
+
+            if parent is not None:
+                # Partially rebuild the tree (cheaper than a complete rebuild)
+                StockLocation.objects.partial_rebuild(tree_id)
+            else:
+                StockLocation.objects.rebuild()
+
     @staticmethod
     def get_api_url():
         return reverse('api-location-list')
@@ -157,20 +186,6 @@ class StockLocation(InvenTreeTree):
         Required for tree view serializer.
         """
         return self.stock_item_count()
-
-
-@receiver(pre_delete, sender=StockLocation, dispatch_uid='stocklocation_delete_log')
-def before_delete_stock_location(sender, instance, using, **kwargs):
-
-    # Update each part in the stock location
-    for item in instance.stock_items.all():
-        item.location = instance.parent
-        item.save()
-
-    # Update each child category
-    for child in instance.children.all():
-        child.parent = instance.parent
-        child.save()
 
 
 class StockItemManager(TreeManager):
