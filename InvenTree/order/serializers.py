@@ -272,6 +272,15 @@ class POLineItemSerializer(InvenTreeModelSerializer):
         ]
 
 
+class POAdditionalLineItemSerializer(AbstractAdditionalLineItemSerializer, InvenTreeModelSerializer):
+    """ Serializer for a PurchaseOrderAdditionalLineItem object """
+
+    order_detail = POSerializer(source='order', many=False, read_only=True)
+
+    class Meta(AbstractAdditionalLineItemMeta):
+        model = order.models.PurchaseOrderAdditionalLineItem
+
+
 class POLineItemReceiveSerializer(serializers.Serializer):
     """
     A serializer for receiving a single purchase order line item against a purchase order
