@@ -40,7 +40,19 @@ import stock.serializers
 from users.serializers import OwnerSerializer
 
 
-class POSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSerializer):
+class AbstractOrderSerializer:
+    """
+    Abstract field definitions for OrderSerializers
+    """
+    total_price = InvenTreeMoneySerializer(
+        source='get_total_price',
+        allow_null=True,
+        read_only=True,
+    )
+
+    total_price_string = serializers.CharField(source='get_total_price', read_only=True)
+
+
     """ Serializer for a PurchaseOrder object """
 
     def __init__(self, *args, **kwargs):
@@ -467,7 +479,7 @@ class POAttachmentSerializer(InvenTreeAttachmentSerializer):
         ]
 
 
-class SalesOrderSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSerializer):
+class SalesOrderSerializer(AbstractOrderSerializer, ReferenceIndexingSerializerMixin, InvenTreeModelSerializer):
     """
     Serializers for the SalesOrder object
     """
@@ -514,14 +526,6 @@ class SalesOrderSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSeria
     overdue = serializers.BooleanField(required=False, read_only=True)
 
     reference = serializers.CharField(required=True)
-
-    total_price = InvenTreeMoneySerializer(
-        source='get_total_price',
-        allow_null=True,
-        read_only=True,
-    )
-
-    total_price_string = serializers.CharField(source='get_total_price', read_only=True)
 
     class Meta:
         model = order.models.SalesOrder
