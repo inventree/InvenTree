@@ -501,6 +501,22 @@ class POLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
         return queryset
 
 
+class POAdditionalLineItemList(GeneralAdditionalLineItemList, generics.ListCreateAPIView):
+    """
+    API endpoint for accessing a list of PurchaseOrderAdditionalLineItem objects.
+    """
+
+    queryset = models.PurchaseOrderAdditionalLineItem.objects.all()
+    serializer_class = serializers.POAdditionalLineItemSerializer
+
+
+class POAdditionalLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
+    """ API endpoint for detail view of a PurchaseOrderAdditionalLineItem object """
+
+    queryset = models.PurchaseOrderAdditionalLineItem.objects.all()
+    serializer_class = serializers.POAdditionalLineItemSerializer
+
+
 class SOAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     """
     API endpoint for listing (and creating) a SalesOrderAttachment (file upload)
@@ -1094,6 +1110,12 @@ order_api_urls = [
     url(r'^po-line/', include([
         url(r'^(?P<pk>\d+)/$', POLineItemDetail.as_view(), name='api-po-line-detail'),
         url(r'^.*$', POLineItemList.as_view(), name='api-po-line-list'),
+    ])),
+
+    # API endpoints for purchase order additional line items
+    url(r'^po-additional-line/', include([
+        url(r'^(?P<pk>\d+)/$', POAdditionalLineItemDetail.as_view(), name='api-po-additional-line-detail'),
+        url(r'^$', POAdditionalLineItemList.as_view(), name='api-po-additional-line-list'),
     ])),
 
     # API endpoints for sales ordesr
