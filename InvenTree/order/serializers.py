@@ -53,6 +53,49 @@ class AbstractOrderSerializer:
     total_price_string = serializers.CharField(source='get_total_price', read_only=True)
 
 
+class AbstractAdditionalLineItemSerializer:
+    """ Abstract Serializer for a AdditionalLineItem object """
+    def __init__(self, *args, **kwargs):
+
+        order_detail = kwargs.pop('order_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if order_detail is not True:
+            self.fields.pop('order_detail')
+
+    quantity = serializers.FloatField()
+
+    sale_price = InvenTreeMoneySerializer(
+        allow_null=True
+    )
+
+    sale_price_string = serializers.CharField(source='sale_price', read_only=True)
+
+    sale_price_currency = serializers.ChoiceField(
+        choices=currency_code_mappings(),
+        help_text=_('Sale price currency'),
+    )
+
+
+class AbstractAdditionalLineItemMeta:
+    """
+    Abstract Meta for LineItem
+    """
+
+    fields = [
+        'pk',
+        'quantity',
+        'reference',
+        'notes',
+        'order',
+        'order_detail',
+        'sale_price',
+        'sale_price_currency',
+        'sale_price_string',
+    ]
+
+
 class POSerializer(AbstractOrderSerializer, ReferenceIndexingSerializerMixin, InvenTreeModelSerializer):
     """ Serializer for a PurchaseOrder object """
 
@@ -1116,46 +1159,13 @@ class SOShipmentAllocationSerializer(serializers.Serializer):
                 )
 
 
-class SOAdditionalLineItemSerializer(InvenTreeModelSerializer):
+class SOAdditionalLineItemSerializer(AbstractAdditionalLineItemSerializer, InvenTreeModelSerializer):
     """ Serializer for a SalesOrderAdditionalLineItem object """
-    def __init__(self, *args, **kwargs):
-
-        order_detail = kwargs.pop('order_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if order_detail is not True:
-            self.fields.pop('order_detail')
 
     order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
 
-    quantity = serializers.FloatField()
-
-    sale_price = InvenTreeMoneySerializer(
-        allow_null=True
-    )
-
-    sale_price_string = serializers.CharField(source='sale_price', read_only=True)
-
-    sale_price_currency = serializers.ChoiceField(
-        choices=currency_code_mappings(),
-        help_text=_('Sale price currency'),
-    )
-
-    class Meta:
+    class Meta(AbstractAdditionalLineItemMeta):
         model = order.models.SalesOrderAdditionalLineItem
-
-        fields = [
-            'pk',
-            'quantity',
-            'reference',
-            'notes',
-            'order',
-            'order_detail',
-            'sale_price',
-            'sale_price_currency',
-            'sale_price_string',
-        ]
 
 
 class SOAttachmentSerializer(InvenTreeAttachmentSerializer):
