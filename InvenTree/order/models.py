@@ -1011,6 +1011,21 @@ class PurchaseOrderLineItem(OrderLineItem):
         return max(r, 0)
 
 
+class PurchaseOrderAdditionalLineItem(OrderAdditionalLineItem):
+    """
+    Model for a single AdditionalLineItem in a PurchaseOrder
+    Attributes:
+        order: Link to the PurchaseOrder that this line item belongs to
+        title: title of line item
+        sale_price: The unit sale price for this OrderLineItem
+    """
+    @staticmethod
+    def get_api_url():
+        return reverse('api-po-additional-line-list')
+
+    order = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, related_name='additional_lines', verbose_name=_('Order'), help_text=_('Purchase Order'))
+
+
 class SalesOrderLineItem(OrderLineItem):
     """
     Model for a single LineItem in a SalesOrder
