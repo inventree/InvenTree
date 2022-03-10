@@ -53,6 +53,7 @@ class AbstractOrderSerializer:
     total_price_string = serializers.CharField(source='get_total_price', read_only=True)
 
 
+class POSerializer(AbstractOrderSerializer, ReferenceIndexingSerializerMixin, InvenTreeModelSerializer):
     """ Serializer for a PurchaseOrder object """
 
     def __init__(self, *args, **kwargs):
@@ -122,6 +123,8 @@ class AbstractOrderSerializer:
             'status_text',
             'target_date',
             'notes',
+            'total_price',
+            'total_price_string',
         ]
 
         read_only_fields = [
