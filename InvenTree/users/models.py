@@ -132,6 +132,7 @@ class RuleSet(models.Model):
             'order_purchaseorder',
             'order_purchaseorderattachment',
             'order_purchaseorderlineitem',
+            'order_purchaseorderadditionallineitem',
             'company_supplierpart',
             'company_manufacturerpart',
             'company_manufacturerpartparameter',
