@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-09 05:54+0000\n"
-"PO-Revision-Date: 2022-03-09 06:19\n"
+"POT-Creation-Date: 2022-03-10 02:21+0000\n"
+"PO-Revision-Date: 2022-03-10 02:31\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -4671,39 +4671,36 @@ msgstr ""
 msgid "Part created successfully"
 msgstr ""
 
-#: part/templates/part/category_delete.html:5
-msgid "Are you sure you want to delete category"
+#: part/templates/part/category_delete.html:7
+msgid "Are you sure you want to delete this part category?"
 msgstr ""
 
-#: part/templates/part/category_delete.html:8
+#: part/templates/part/category_delete.html:12
 #, python-format
-msgid "This category contains %(count)s child categories"
+msgid "This category contains %(n)s child categories"
 msgstr ""
 
-#: part/templates/part/category_delete.html:9
-msgid "If this category is deleted, these child categories will be moved to the"
+#: part/templates/part/category_delete.html:14
+#, python-format
+msgid "If this category is deleted, these child categories will be moved to %(category)s"
 msgstr ""
 
-#: part/templates/part/category_delete.html:11
-msgid "category"
+#: part/templates/part/category_delete.html:16
+msgid "If this category is deleted, these child categories will be moved to the top level part category"
 msgstr ""
 
-#: part/templates/part/category_delete.html:13
-msgid "top level Parts category"
+#: part/templates/part/category_delete.html:23
+#, python-format
+msgid "This category contains %(n)s parts"
 msgstr ""
 
 #: part/templates/part/category_delete.html:25
 #, python-format
-msgid "This category contains %(count)s parts"
+msgid "If this category is deleted, these parts will be moved to %(category)s"
 msgstr ""
 
 #: part/templates/part/category_delete.html:27
-#, python-format
-msgid "If this category is deleted, these parts will be moved to the parent category %(path)s"
-msgstr ""
-
-#: part/templates/part/category_delete.html:29
-msgid "If this category is deleted, these parts will be moved to the top-level category Teile"
+msgid "If this category is deleted, these parts will be moved to the top level part category"
 msgstr ""
 
 #: part/templates/part/category_sidebar.html:13
@@ -6389,8 +6386,36 @@ msgstr ""
 msgid "Print labels"
 msgstr ""
 
-#: stock/templates/stock/location_delete.html:7
+#: stock/templates/stock/location_delete.html:8
 msgid "Are you sure you want to delete this stock location?"
+msgstr ""
+
+#: stock/templates/stock/location_delete.html:13
+#, python-format
+msgid "This location contains %(n)s child locations"
+msgstr ""
+
+#: stock/templates/stock/location_delete.html:15
+#, python-format
+msgid "If this location is deleted, these child locations will be moved to %(location)s"
+msgstr ""
+
+#: stock/templates/stock/location_delete.html:17
+msgid "If this location is deleted, these child locations will be moved to the top level stock location"
+msgstr ""
+
+#: stock/templates/stock/location_delete.html:25
+#, python-format
+msgid "This location contains %(n)s stock items"
+msgstr ""
+
+#: stock/templates/stock/location_delete.html:27
+#, python-format
+msgid "If this location is deleted, these stock items will be moved to %(location)s"
+msgstr ""
+
+#: stock/templates/stock/location_delete.html:29
+msgid "If this location is deleted, these stock items will be moved to the top level stock location"
 msgstr ""
 
 #: stock/templates/stock/stock_app_base.html:16
