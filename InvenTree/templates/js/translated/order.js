@@ -29,8 +29,8 @@
     loadPurchaseOrderTable,
     loadSalesOrderAllocationTable,
     loadSalesOrderLineItemTable,
-    loadSalesOrderShipmentTable,
     loadSalesOrderAdditionalLineItemTable
+    loadSalesOrderShipmentTable,
     loadSalesOrderTable,
     newPurchaseOrderFromOrderWizard,
     newSupplierPartFromOrderWizard,
