@@ -688,7 +688,6 @@ class StockTest(TestCase):
         self.assertEqual(C22.parent, B2)
 
         ancestors = C21.get_ancestors()
-        print("C21 ancestors:", ancestors)
 
         self.assertEqual(C21.get_ancestors().count(), 1)
         self.assertEqual(C22.get_ancestors().count(), 1)
