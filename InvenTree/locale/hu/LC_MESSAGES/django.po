@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-10 05:08+0000\n"
-"PO-Revision-Date: 2022-03-10 07:27\n"
+"PO-Revision-Date: 2022-03-10 08:44\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -6393,16 +6393,16 @@ msgstr "Biztosan törölni szeretnéd ezt a készlet helyet?"
 #: stock/templates/stock/location_delete.html:13
 #, python-format
 msgid "This location contains %(n)s child locations"
-msgstr "Ez a készlet hely %(n)s al-helyet tartalmaz"
+msgstr "Ez a készlet hely %(n)s alhelyet tartalmaz"
 
 #: stock/templates/stock/location_delete.html:15
 #, python-format
 msgid "If this location is deleted, these child locations will be moved to %(location)s"
-msgstr "Ha törlöd ezt a készlet helyet, az al-helyek a(z) %(location)s készlethelyre lesznek mozgatva"
+msgstr "Ha törlöd ezt a készlet helyet, az alhelyek a(z) %(location)s készlethelyre lesznek mozgatva"
 
 #: stock/templates/stock/location_delete.html:17
 msgid "If this location is deleted, these child locations will be moved to the top level stock location"
-msgstr "Ha törlöd ezt a készlet helyet, az al-helyek a legfelső szintű készlethelyre lesznek mozgatva"
+msgstr "Ha törlöd ezt a készlet helyet, az alhelyek a legfelső szintű készlethelyre lesznek mozgatva"
 
 #: stock/templates/stock/location_delete.html:25
 #, python-format
