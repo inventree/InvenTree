@@ -2865,13 +2865,6 @@ function loadSalesOrderAdditionalLineItemTable(table, options={}) {
 
     // Table columns to display
     var columns = [
-        /*
-        {
-            checkbox: true,
-            visible: true,
-            switchable: false,
-        },
-        */
         {
             sortable: true,
             field: 'reference',
