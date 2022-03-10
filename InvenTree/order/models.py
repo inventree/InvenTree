@@ -873,6 +873,35 @@ class OrderLineItem(models.Model):
     )
 
 
+class OrderAdditionalLineItem(OrderLineItem):
+    """
+    Abstract Model for a single AdditionalLineItem in a Order
+    Attributes:
+        sale_price: The unit sale price for this OrderLineItem
+    """
+
+    class Meta:
+        abstract = True
+
+    sale_price = InvenTreeModelMoneyField(
+        max_digits=19,
+        decimal_places=4,
+        null=True, blank=True,
+        verbose_name=_('Sale Price'),
+        help_text=_('Unit sale price'),
+    )
+
+    def sale_price_converted(self):
+        return convert_money(self.sale_price, currency_code_default())
+
+    def sale_price_converted_currency(self):
+        return currency_code_default()
+
+    class Meta:
+        unique_together = [
+        ]
+
+
 class PurchaseOrderLineItem(OrderLineItem):
     """ Model for a purchase order line item.
 
@@ -1185,7 +1214,7 @@ class SalesOrderShipment(models.Model):
         trigger_event('salesordershipment.completed', id=self.pk)
 
 
-class SalesOrderAdditionalLineItem(OrderLineItem):
+class SalesOrderAdditionalLineItem(OrderAdditionalLineItem):
     """
     Model for a single AdditionalLineItem in a SalesOrder
     Attributes:
@@ -1199,23 +1228,6 @@ class SalesOrderAdditionalLineItem(OrderLineItem):
 
     order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='additional_lines', verbose_name=_('Order'), help_text=_('Sales Order'))
 
-    sale_price = InvenTreeModelMoneyField(
-        max_digits=19,
-        decimal_places=4,
-        null=True, blank=True,
-        verbose_name=_('Sale Price'),
-        help_text=_('Unit sale price'),
-    )
-
-    def sale_price_converted(self):
-        return convert_money(self.sale_price, currency_code_default())
-
-    def sale_price_converted_currency(self):
-        return currency_code_default()
-
-    class Meta:
-        unique_together = [
-        ]
 
 
 class SalesOrderAllocation(models.Model):
