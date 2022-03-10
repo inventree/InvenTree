@@ -2291,21 +2291,21 @@ function showFulfilledSubTable(index, row, element, options) {
     });
 }
 
-var soTotalPriceRef = ''; // reference to total price field
-var soTotalPriceOptions = {}; // options to reload the price
+var TotalPriceRef = ''; // reference to total price field
+var TotalPriceOptions = {}; // options to reload the price
 
 function loadOrderTotal(reference, options={}) {
-    soTotalPriceRef = reference;
-    soTotalPriceOptions = options;
+    TotalPriceRef = reference;
+    TotalPriceOptions = options;
 }
 
 function reloadTotal() {
     inventreeGet(
-        soTotalPriceOptions.url,
+        TotalPriceOptions.url,
         {},
         {
             success: function(data) {
-                $(soTotalPriceRef).html(data.total_price_string);
+                $(TotalPriceRef).html(data.total_price_string);
             }
         }
     );
