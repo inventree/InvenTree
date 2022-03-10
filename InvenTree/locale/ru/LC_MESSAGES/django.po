@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-10 05:08+0000\n"
-"PO-Revision-Date: 2022-03-10 12:55\n"
+"PO-Revision-Date: 2022-03-10 13:52\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -83,7 +83,7 @@ msgstr "Вы должны вводить один и тот же адрес эл
 #: InvenTree/helpers.py:442
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
-msgstr ""
+msgstr "Повторяющийся серийный номер: {sn}"
 
 #: InvenTree/helpers.py:449 order/models.py:282 order/models.py:435
 #: stock/views.py:983
@@ -266,15 +266,15 @@ msgstr "Неподдерживаемый тип файла"
 
 #: InvenTree/serializers.py:386
 msgid "File is too large"
-msgstr ""
+msgstr "Файл слишком большой"
 
 #: InvenTree/serializers.py:407
 msgid "No columns found in file"
-msgstr ""
+msgstr "Столбцы в файле не найдены"
 
 #: InvenTree/serializers.py:410
 msgid "No data rows found in file"
-msgstr ""
+msgstr "Строки данных в файле не найдены"
 
 #: InvenTree/serializers.py:533
 msgid "No data rows provided"
@@ -324,7 +324,7 @@ msgstr "Иврит"
 
 #: InvenTree/settings.py:672
 msgid "Hungarian"
-msgstr ""
+msgstr "Венгерский"
 
 #: InvenTree/settings.py:673
 msgid "Italian"
