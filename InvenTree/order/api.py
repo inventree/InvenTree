@@ -27,6 +27,58 @@ from part.models import Part
 from users.models import Owner
 
 
+class GeneralAdditionalLineItemList:
+    """
+    General template for AdditionalLineItem API classes
+    """
+
+    def get_serializer(self, *args, **kwargs):
+        try:
+            params = self.request.query_params
+
+            kwargs['order_detail'] = str2bool(params.get('order_detail', False))
+        except AttributeError:
+            pass
+
+        kwargs['context'] = self.get_serializer_context()
+
+        return self.serializer_class(*args, **kwargs)
+
+    def get_queryset(self, *args, **kwargs):
+
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = queryset.prefetch_related(
+            'order',
+        )
+
+        return queryset
+
+    filter_backends = [
+        rest_filters.DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter
+    ]
+
+    ordering_fields = [
+        'title',
+        'quantity',
+        'note',
+        'reference',
+    ]
+
+    search_fields = [
+        'title',
+        'quantity',
+        'note',
+        'reference'
+    ]
+
+    filter_fields = [
+        'order',
+    ]
+
+
 class POFilter(rest_filters.FilterSet):
     """
     Custom API filters for the POList endpoint
@@ -743,59 +795,13 @@ class SOLineItemList(generics.ListCreateAPIView):
     ]
 
 
-class SOAdditionalLineItemList(generics.ListCreateAPIView):
+class SOAdditionalLineItemList(GeneralAdditionalLineItemList, generics.ListCreateAPIView):
     """
     API endpoint for accessing a list of SalesOrderAdditionalLineItem objects.
     """
 
     queryset = models.SalesOrderAdditionalLineItem.objects.all()
     serializer_class = serializers.SOAdditionalLineItemSerializer
-
-    def get_serializer(self, *args, **kwargs):
-        try:
-            params = self.request.query_params
-
-            kwargs['order_detail'] = str2bool(params.get('order_detail', False))
-        except AttributeError:
-            pass
-
-        kwargs['context'] = self.get_serializer_context()
-
-        return self.serializer_class(*args, **kwargs)
-
-    def get_queryset(self, *args, **kwargs):
-
-        queryset = super().get_queryset(*args, **kwargs)
-
-        queryset = queryset.prefetch_related(
-            'order',
-        )
-
-        return queryset
-
-    filter_backends = [
-        rest_filters.DjangoFilterBackend,
-        filters.SearchFilter,
-        filters.OrderingFilter
-    ]
-
-    ordering_fields = [
-        'title',
-        'quantity',
-        'note',
-        'reference',
-    ]
-
-    search_fields = [
-        'title',
-        'quantity',
-        'note',
-        'reference'
-    ]
-
-    filter_fields = [
-        'order',
-    ]
 
 
 class SOAdditionalLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
