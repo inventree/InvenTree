@@ -268,20 +268,24 @@ class BaseInvenTreeSetting(models.Model):
         # Setting does not exist! (Try to create it)
         if not setting:
 
-            # Attempt to create a new settings object
-            setting = cls(
-                key=key,
-                value=cls.get_setting_default(key, **kwargs),
-                **kwargs
-            )
+            # Unless otherwise specified, attempt to create the setting
+            create = kwargs.get('create', True)
 
-            try:
-                # Wrap this statement in "atomic", so it can be rolled back if it fails
-                with transaction.atomic():
-                    setting.save()
-            except (IntegrityError, OperationalError):
-                # It might be the case that the database isn't created yet
-                pass
+            if create:
+                # Attempt to create a new settings object
+                setting = cls(
+                    key=key,
+                    value=cls.get_setting_default(key, **kwargs),
+                    **kwargs
+                )
+
+                try:
+                    # Wrap this statement in "atomic", so it can be rolled back if it fails
+                    with transaction.atomic():
+                        setting.save()
+                except (IntegrityError, OperationalError):
+                    # It might be the case that the database isn't created yet
+                    pass
 
         return setting
 
@@ -1253,7 +1257,14 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
                 ('MM/DD/YYYY', '02/22/2022'),
                 ('MMM DD YYYY', 'Feb 22 2022'),
             ]
-        }
+        },
+
+        'DISPLAY_SCHEDULE_TAB': {
+            'name': _('Part Scheduling'),
+            'description': _('Display part scheduling information'),
+            'default': True,
+            'validator': bool,
+        },
     }
 
     class Meta:

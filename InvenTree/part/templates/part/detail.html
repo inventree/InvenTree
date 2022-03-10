@@ -32,6 +32,21 @@
     </div>
 </div>
 
+{% settings_value 'DISPLAY_SCHEDULE_TAB' user=request.user as show_scheduling %}
+{% if show_scheduling %}
+<div class='panel panel-hidden' id='panel-scheduling'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Part Scheduling" %}</h4>
+            {% include "spacer.html" %}
+        </div>
+    </div>
+    <div class='panel-content'>
+        {% include "part/part_scheduling.html" %}
+    </div>
+</div>
+{% endif %}
+
 <div class='panel panel-hidden' id='panel-allocations'>
     <div class='panel-heading'>
         <div class='d-flex flex-wrap'>
@@ -416,6 +431,11 @@
 
 {% block js_ready %}
     {{ block.super }}
+
+    // Load the "scheduling" tab
+    onPanelLoad('scheduling', function() {
+        loadPartSchedulingChart('part-schedule-chart', {{ part.pk }});
+    });
 
     // Load the "suppliers" tab
     onPanelLoad('suppliers', function() {

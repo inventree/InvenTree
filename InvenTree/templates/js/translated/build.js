@@ -1219,6 +1219,18 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                             $(table).bootstrapTable('updateByUniqueId', key, tableRow, true);
                         }
 
+                        // Update any rows which we did not receive allocation information for
+                        var td = $(table).bootstrapTable('getData');
+
+                        td.forEach(function(tableRow) {
+                            if (tableRow.allocations == null) {
+
+                                tableRow.allocations = [];
+
+                                $(table).bootstrapTable('updateByUniqueId', tableRow.pk, tableRow, true);
+                            }
+                        });
+
                         // Update the progress bar for this build output
                         var build_progress = $(`#output-progress-${outputId}`);
 
@@ -1419,15 +1431,17 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 formatter: function(value, row) {
                     var allocated = 0;
 
-                    if (row.allocations) {
+                    if (row.allocations != null) {
                         row.allocations.forEach(function(item) {
                             allocated += item.quantity;
                         });
+
+                        var required = requiredQuantity(row);
+
+                        return makeProgressBar(allocated, required);
+                    } else {
+                        return `<em>{% trans "loading" %}...</em><span class='fas fa-spinner fa-spin float-right'></span>`;
                     }
-
-                    var required = requiredQuantity(row);
-
-                    return makeProgressBar(allocated, required);
                 },
                 sorter: function(valA, valB, rowA, rowB) {
                     // Custom sorting function for progress bars
@@ -1876,6 +1890,7 @@ function autoAllocateStockToBuild(build_id, bom_items=[], options={}) {
         location: {
             value: options.location,
         },
+        exclude_location: {},
         interchangeable: {
             value: true,
         },

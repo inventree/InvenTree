@@ -2,38 +2,31 @@
 {% load i18n %}
 
 {% block pre_form_content %}
-{% trans 'Are you sure you want to delete category' %} <strong>{{ category.name }}</strong>?
+
+<div class='alert alert-block alert-danger'>
+    {% trans "Are you sure you want to delete this part category?" %}
+</div>
 
 {% if category.children.all|length > 0 %}
-<p>{% blocktrans with count=category.children.all|length%}This category contains {{count}} child categories{% endblocktrans %}.<br>
-{% trans 'If this category is deleted, these child categories will be moved to the' %}
-{% if category.parent %}
- <strong>{{ category.parent.name }}</strong> {% trans 'category' %}.
-{% else %}
- {% trans 'top level Parts category' %}.
-{% endif %}
-</p>
-
-<ul class='list-group'>
-{% for cat in category.children.all %}
-    <li class='list-group-item'><strong>{{ cat.name }}</strong> - <em>{{ cat.description }}</em></li>
-{% endfor %}
-</ul>
+<div class='alert alert-block alert-warning'>
+    {% blocktrans with n=category.children.all|length %}This category contains {{ n }} child categories{% endblocktrans %}.<br>
+    {% if category.parent %}
+    {% blocktrans with category=category.parent.name %}If this category is deleted, these child categories will be moved to {{ category }}{% endblocktrans %}.
+    {% else %}
+    {% trans "If this category is deleted, these child categories will be moved to the top level part category" %}.
+    {% endif %}
+</div>
 {% endif %}
 
 {% if category.parts.all|length > 0 %}
-<p>{% blocktrans with count=category.parts.all|length %}This category contains {{count}} parts{% endblocktrans %}.<br>
+<div class='alert alert-block alert-warning'>
+    {% blocktrans with n=category.parts.all|length %}This category contains {{ n }} parts{% endblocktrans %}.<br>
     {% if category.parent %}
-    {% blocktrans with path=category.parent.pathstring %}If this category is deleted, these parts will be moved to the parent category {{path}}{% endblocktrans %}
+    {% blocktrans with category=category.parent.name %}If this category is deleted, these parts will be moved to {{ category }}{% endblocktrans %}.
     {% else %}
-    {% trans 'If this category is deleted, these parts will be moved to the top-level category Teile' %}
+    {% trans "If this category is deleted, these parts will be moved to the top level part category" %}.
     {% endif %}
-</p>
-<ul class='list-group'>
-{% for part in category.parts.all %}
-    <li class='list-group-item'><strong>{{ part.full_name }}</strong> - <em>{{ part.description }}</em></li>
-{% endfor %}
-</ul>
+</div>
 {% endif %}
 
 {% endblock %}

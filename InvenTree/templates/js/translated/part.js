@@ -33,6 +33,7 @@
     loadPartPurchaseOrderTable,
     loadPartTable,
     loadPartTestTemplateTable,
+    loadPartSchedulingChart,
     loadPartVariantTable,
     loadRelatedPartsTable,
     loadSellPricingChart,
@@ -1977,6 +1978,123 @@ function initPriceBreakSet(table, options) {
                 success: reloadPriceBreakTable
             }
         );
+    });
+}
+
+
+function loadPartSchedulingChart(canvas_id, part_id) {
+
+    var part_info = null;
+
+    // First, grab updated data for the particular part
+    inventreeGet(`/api/part/${part_id}/`, {}, {
+        async: false,
+        success: function(response) {
+            part_info = response;
+        }
+    });
+
+    var today = moment();
+
+    // Create an initial entry, using the available quantity
+    var stock_schedule = [
+        {
+            date: today,
+            delta: 0,
+            label: '{% trans "Current Stock" %}',
+        }
+    ];
+
+    /* Request scheduling information for the part.
+     * Note that this information has already been 'curated' by the server,
+     * and arranged in increasing chronological order
+     */
+    inventreeGet(
+        `/api/part/${part_id}/scheduling/`,
+        {},
+        {
+            async: false,
+            success: function(response) {
+                response.forEach(function(entry) {
+                    stock_schedule.push({
+                        date: moment(entry.date),
+                        delta: entry.quantity,
+                        title: entry.title,
+                        label: entry.label,
+                        url: entry.url,
+                    });
+                });
+            }
+        }
+    );
+
+    // Iterate through future "events" to calculate expected quantity
+
+    var quantity = part_info.in_stock;
+
+    for (var idx = 0; idx < stock_schedule.length; idx++) {
+
+        quantity += stock_schedule[idx].delta;
+
+        stock_schedule[idx].x = stock_schedule[idx].date.format('YYYY-MM-DD');
+        stock_schedule[idx].y = quantity;
+    }
+
+    var context = document.getElementById(canvas_id);
+
+    const data = {
+        datasets: [{
+            label: '{% trans "Scheduled Stock Quantities" %}',
+            data: stock_schedule,
+            backgroundColor: 'rgb(220, 160, 80)',
+            borderWidth: 2,
+            borderColor: 'rgb(90, 130, 150)'
+        }],
+    };
+
+    return new Chart(context, {
+        type: 'scatter',
+        data: data,
+        options: {
+            showLine: true,
+            stepped: true,
+            scales: {
+                x: {
+                    type: 'time',
+                    min: today.format(),
+                    position: 'bottom',
+                    time: {
+                        unit: 'day',
+                    },
+                },
+                y: {
+                    beginAtZero: true,
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(item) {
+                            return item.raw.label;
+                        },
+                        beforeLabel: function(item) {
+                            return item.raw.title;
+                        },
+                        afterLabel: function(item) {
+                            var delta = item.raw.delta;
+
+                            if (delta == 0) {
+                                delta = '';
+                            } else {
+                                delta = ` (${item.raw.delta > 0 ? '+' : ''}${item.raw.delta})`;
+                            }
+
+                            return `{% trans "Quantity" %}: ${item.raw.y}${delta}`;
+                        }
+                    }
+                }
+            },
+        }
     });
 }
 
