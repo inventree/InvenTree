@@ -466,6 +466,7 @@ class PurchaseOrderReport(ReportTemplateBase):
         return {
             'description': order.description,
             'lines': order.lines,
+            'additional_lines': order.additional_lines,
             'order': order,
             'reference': order.reference,
             'supplier': order.supplier,
