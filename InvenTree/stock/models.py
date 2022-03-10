@@ -65,7 +65,7 @@ class StockLocation(InvenTreeTree):
             parent = self.parent
             tree_id = self.tree_id
 
-            # Update each part in the stock location
+            # Update each stock item in the stock location
             for item in self.stock_items.all():
                 item.location = self.parent
                 item.save()
