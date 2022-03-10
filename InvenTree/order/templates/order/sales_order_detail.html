@@ -38,12 +38,12 @@
 
     <div class='panel-heading'>
         <div class='d-flex flex-wrap'>
-            <h4>{% trans "Sales Order Lines" %}</h4>
+            <h4>{% trans "Additional Order Items" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
                 {% if roles.sales_order.change and order.is_pending %}
                 <button type='button' class='btn btn-success' id='new-so-additional-line'>
-                    <span class='fas fa-plus-circle'></span> {% trans "Add Order Line" %}
+                    <span class='fas fa-plus-circle'></span> {% trans "Add Additional Order Items" %}
                 </button>
                 {% endif %}
             </div>
