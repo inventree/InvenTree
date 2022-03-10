@@ -1219,7 +1219,7 @@ class SalesOrderAdditionalLineItem(OrderAdditionalLineItem):
     Model for a single AdditionalLineItem in a SalesOrder
     Attributes:
         order: Link to the SalesOrder that this line item belongs to
-        title: titile of line item
+        title: title of line item
         sale_price: The unit sale price for this OrderLineItem
     """
     @staticmethod
