@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-10 05:08+0000\n"
-"PO-Revision-Date: 2022-03-10 05:25\n"
+"PO-Revision-Date: 2022-03-10 07:27\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -4673,35 +4673,35 @@ msgstr "Alkatrész sikeresen létrehozva"
 
 #: part/templates/part/category_delete.html:7
 msgid "Are you sure you want to delete this part category?"
-msgstr ""
+msgstr "Biztos hogy törölni szeretnéd ezt az alkatrész kategóriát?"
 
 #: part/templates/part/category_delete.html:12
 #, python-format
 msgid "This category contains %(n)s child categories"
-msgstr ""
+msgstr "Ez a kategória %(n)s alkategóriát tartalmaz"
 
 #: part/templates/part/category_delete.html:14
 #, python-format
 msgid "If this category is deleted, these child categories will be moved to %(category)s"
-msgstr ""
+msgstr "Ha törlöd ezt a kategóriát az alkategóriák a(z) %(category)s kategóriába át lesznek mozgatva"
 
 #: part/templates/part/category_delete.html:16
 msgid "If this category is deleted, these child categories will be moved to the top level part category"
-msgstr ""
+msgstr "Ha törlöd ezt a kategóriát az alkategóriák át lesznek mozgatva a legfelső szintű kategóriába"
 
 #: part/templates/part/category_delete.html:23
 #, python-format
 msgid "This category contains %(n)s parts"
-msgstr ""
+msgstr "Ez a kategória %(n)s alkatrészt tartalmaz"
 
 #: part/templates/part/category_delete.html:25
 #, python-format
 msgid "If this category is deleted, these parts will be moved to %(category)s"
-msgstr ""
+msgstr "Ha ez a kategória törölve lesz, ezek az alkatrészek a(z) %(category)s kategóriába mozognak"
 
 #: part/templates/part/category_delete.html:27
 msgid "If this category is deleted, these parts will be moved to the top level part category"
-msgstr ""
+msgstr "Ha ez a kategória törölve lesz, ezek az alkatrészek a legfelső kategóriába mozognak"
 
 #: part/templates/part/category_sidebar.html:13
 msgid "Import Parts"
@@ -6393,30 +6393,30 @@ msgstr "Biztosan törölni szeretnéd ezt a készlet helyet?"
 #: stock/templates/stock/location_delete.html:13
 #, python-format
 msgid "This location contains %(n)s child locations"
-msgstr ""
+msgstr "Ez a készlet hely %(n)s al-helyet tartalmaz"
 
 #: stock/templates/stock/location_delete.html:15
 #, python-format
 msgid "If this location is deleted, these child locations will be moved to %(location)s"
-msgstr ""
+msgstr "Ha törlöd ezt a készlet helyet, az al-helyek a(z) %(location)s készlethelyre lesznek mozgatva"
 
 #: stock/templates/stock/location_delete.html:17
 msgid "If this location is deleted, these child locations will be moved to the top level stock location"
-msgstr ""
+msgstr "Ha törlöd ezt a készlet helyet, az al-helyek a legfelső szintű készlethelyre lesznek mozgatva"
 
 #: stock/templates/stock/location_delete.html:25
 #, python-format
 msgid "This location contains %(n)s stock items"
-msgstr ""
+msgstr "Ez a készlet hely %(n)s készlet tételt tartalmaz"
 
 #: stock/templates/stock/location_delete.html:27
 #, python-format
 msgid "If this location is deleted, these stock items will be moved to %(location)s"
-msgstr ""
+msgstr "Ha törlöd ezt a készlet helyet, a készlet tételek a(z) %(location)s készlethelyre lesznek mozgatva"
 
 #: stock/templates/stock/location_delete.html:29
 msgid "If this location is deleted, these stock items will be moved to the top level stock location"
-msgstr ""
+msgstr "Ha törlöd ezt a készlet helyet, a készlet tételek a legfelső szintű készlethelyre lesznek mozgatva"
 
 #: stock/templates/stock/stock_app_base.html:16
 msgid "Loading..."
