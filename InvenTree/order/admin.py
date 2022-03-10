@@ -13,6 +13,30 @@ from .models import SalesOrder, SalesOrderLineItem, SalesOrderAdditionalLineItem
 from .models import SalesOrderShipment, SalesOrderAllocation
 
 
+# region general classes
+class GeneralAdditionalLineItemAdmin:
+    list_display = (
+        'order',
+        'quantity',
+        'reference'
+    )
+
+    search_fields = [
+        'order__reference',
+        'order__customer__name',
+        'reference',
+    ]
+
+    autocomplete_fields = ('order', )
+
+
+class GeneralAdditionalLineMeta:
+    skip_unchanged = True
+    report_skipped = False
+    clean_model_instances = True
+# endregion
+
+
 class PurchaseOrderLineItemInlineAdmin(admin.StackedInline):
     model = PurchaseOrderLineItem
     extra = 0
@@ -89,11 +113,8 @@ class POLineItemResource(ModelResource):
 class POAdditionalLineItemResource(ModelResource):
     """ Class for managing import / export of POAdditionalLineItem data """
 
-    class Meta:
+    class Meta(GeneralAdditionalLineMeta):
         model = PurchaseOrderAdditionalLineItem
-        skip_unchanged = True
-        report_skipped = False
-        clean_model_instances = True
 
 
 class SOLineItemResource(ModelResource):
@@ -130,11 +151,8 @@ class SOLineItemResource(ModelResource):
 class SOAdditionalLineItemResource(ModelResource):
     """ Class for managing import / export of SOAdditionalLineItem data """
 
-    class Meta:
+    class Meta(GeneralAdditionalLineMeta):
         model = SalesOrderAdditionalLineItem
-        skip_unchanged = True
-        report_skipped = False
-        clean_model_instances = True
 
 
 class PurchaseOrderLineItemAdmin(ImportExportModelAdmin):
@@ -153,23 +171,9 @@ class PurchaseOrderLineItemAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('order', 'part', 'destination',)
 
 
-class PurchaseOrderAdditionalLineItemAdmin(ImportExportModelAdmin):
+class PurchaseOrderAdditionalLineItemAdmin(GeneralAdditionalLineItemAdmin, ImportExportModelAdmin):
 
     resource_class = POAdditionalLineItemResource
-
-    list_display = (
-        'order',
-        'quantity',
-        'reference'
-    )
-
-    search_fields = [
-        'order__reference',
-        'order__customer__name',
-        'reference',
-    ]
-
-    autocomplete_fields = ('order', )
 
 
 class SalesOrderLineItemAdmin(ImportExportModelAdmin):
@@ -193,23 +197,9 @@ class SalesOrderLineItemAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('order', 'part',)
 
 
-class SalesOrderAdditionalLineItemAdmin(ImportExportModelAdmin):
+class SalesOrderAdditionalLineItemAdmin(GeneralAdditionalLineItemAdmin, ImportExportModelAdmin):
 
     resource_class = SOAdditionalLineItemResource
-
-    list_display = (
-        'order',
-        'quantity',
-        'reference'
-    )
-
-    search_fields = [
-        'order__reference',
-        'order__customer__name',
-        'reference',
-    ]
-
-    autocomplete_fields = ('order', )
 
 
 class SalesOrderShipmentAdmin(ImportExportModelAdmin):
