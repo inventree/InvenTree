@@ -54,6 +54,35 @@ class StockLocation(InvenTreeTree):
     Stock locations can be heirarchical as required
     """
 
+    def delete(self, *args, **kwargs):
+        """
+        Custom model deletion routine, which updates any child locations or items.
+        This must be handled within a transaction.atomic(), otherwise the tree structure is damaged
+        """
+
+        with transaction.atomic():
+
+            parent = self.parent
+            tree_id = self.tree_id
+
+            # Update each stock item in the stock location
+            for item in self.stock_items.all():
+                item.location = self.parent
+                item.save()
+
+            # Update each child category
+            for child in self.children.all():
+                child.parent = self.parent
+                child.save()
+
+            super().delete(*args, **kwargs)
+
+            if parent is not None:
+                # Partially rebuild the tree (cheaper than a complete rebuild)
+                StockLocation.objects.partial_rebuild(tree_id)
+            else:
+                StockLocation.objects.rebuild()
+
     @staticmethod
     def get_api_url():
         return reverse('api-location-list')
@@ -159,20 +188,6 @@ class StockLocation(InvenTreeTree):
         return self.stock_item_count()
 
 
-@receiver(pre_delete, sender=StockLocation, dispatch_uid='stocklocation_delete_log')
-def before_delete_stock_location(sender, instance, using, **kwargs):
-
-    # Update each part in the stock location
-    for item in instance.stock_items.all():
-        item.location = instance.parent
-        item.save()
-
-    # Update each child category
-    for child in instance.children.all():
-        child.parent = instance.parent
-        child.save()
-
-
 class StockItemManager(TreeManager):
     """
     Custom database manager for the StockItem class.
@@ -269,9 +284,61 @@ class StockItem(MPTTModel):
         serial_int = 0
 
         if serial is not None:
-            serial_int = extract_int(str(serial))
+
+            serial = str(serial).strip()
+
+            serial_int = extract_int(serial)
 
         self.serial_int = serial_int
+
+    def get_next_serialized_item(self, include_variants=True, reverse=False):
+        """
+        Get the "next" serial number for the part this stock item references.
+
+        e.g. if this stock item has a serial number 100, we may return the stock item with serial number 101
+
+        Note that this only works for "serialized" stock items with integer values
+
+        Args:
+            include_variants: True if we wish to include stock for variant parts
+            reverse: True if we want to return the "previous" (lower) serial number
+
+        Returns:
+            A StockItem object matching the requirements, or None
+
+        """
+
+        if not self.serialized:
+            return None
+
+        # Find only serialized stock items
+        items = StockItem.objects.exclude(serial=None).exclude(serial='')
+
+        if include_variants:
+            # Match against any part within the variant tree
+            items = items.filter(part__tree_id=self.part.tree_id)
+        else:
+            # Match only against the specific part
+            items = items.filter(part=self.part)
+
+        serial = self.serial_int
+
+        if reverse:
+            # Select only stock items with lower serial numbers, in decreasing order
+            items = items.filter(serial_int__lt=serial)
+            items = items.order_by('-serial_int')
+        else:
+            # Select only stock items with higher serial numbers, in increasing order
+            items = items.filter(serial_int__gt=serial)
+            items = items.order_by('serial_int')
+
+        if items.count() > 0:
+            item = items.first()
+
+            if item.serialized:
+                return item
+
+        return None
 
     def save(self, *args, **kwargs):
         """
@@ -350,7 +417,7 @@ class StockItem(MPTTModel):
     @property
     def serialized(self):
         """ Return True if this StockItem is serialized """
-        return self.serial is not None and self.quantity == 1
+        return self.serial is not None and len(str(self.serial).strip()) > 0 and self.quantity == 1
 
     def validate_unique(self, exclude=None):
         """
