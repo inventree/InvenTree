@@ -40,7 +40,7 @@ import stock.serializers
 from users.serializers import OwnerSerializer
 
 
-class AbstractOrderSerializer:
+class AbstractOrderSerializer(serializers.Serializer):
     """
     Abstract field definitions for OrderSerializers
     """
