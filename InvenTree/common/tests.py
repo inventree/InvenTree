@@ -223,3 +223,26 @@ class NotificationTest(TestCase):
         self.assertFalse(NotificationEntry.check_recent('test.notification2', 1, delta))
 
         self.assertTrue(NotificationEntry.check_recent('test.notification', 1, delta))
+
+
+class LoadingTest(TestCase):
+    """
+    Tests for the common config
+    """
+
+    def test_restart_flag(self):
+        """
+        Test that the restart flag is reset on start
+        """
+
+        import common.models
+        from plugin import registry
+
+        # set flag true
+        common.models.InvenTreeSetting.set_setting('SERVER_RESTART_REQUIRED', False, None)
+
+        # reload the app
+        registry.reload_plugins()
+
+        # now it should be false again
+        self.assertFalse(common.models.InvenTreeSetting.get_setting('SERVER_RESTART_REQUIRED'))
