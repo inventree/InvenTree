@@ -882,6 +882,8 @@ class OrderAdditionalLineItem(OrderLineItem):
 
     class Meta:
         abstract = True
+        unique_together = [
+        ]
 
     sale_price = InvenTreeModelMoneyField(
         max_digits=19,
@@ -896,10 +898,6 @@ class OrderAdditionalLineItem(OrderLineItem):
 
     def sale_price_converted_currency(self):
         return currency_code_default()
-
-    class Meta:
-        unique_together = [
-        ]
 
 
 class PurchaseOrderLineItem(OrderLineItem):
