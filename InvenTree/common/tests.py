@@ -314,7 +314,7 @@ class ColorThemeTest(TestCase):
     def test_valid_choice(self):
         # check wrong reference
         self.assertFalse(ColorTheme.is_valid_choice('abcdd'))
-        
+
         # create themes
         aa = ColorTheme.objects.create(user='aa', name='testname')
         ab = ColorTheme.objects.create(user='ab', name='darker')
