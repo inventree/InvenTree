@@ -232,7 +232,7 @@ loadPurchaseOrderLineItemTable('#po-line-table', {
 
 $("#new-po-additional-line").click(function() {
 
-    var fields = poAdditionalLineItemFields({
+    var fields = additionalLineItemFields({
         order: {{ order.pk }},
     });
 
