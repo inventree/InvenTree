@@ -46,6 +46,19 @@ class SettingsTest(TestCase):
         # Check object lookup (case insensitive)
         self.assertEqual(InvenTreeSetting.get_setting_object('iNvEnTrEE_inSTanCE').pk, 1)
 
+    def test_allValues(self):
+        """
+        Make sure that the allValues functions returns correctly
+        """
+        # define testing settings
+
+        # check a few keys
+        result = InvenTreeSetting.allValues()
+        self.assertIn('INVENTREE_INSTANCE', result)
+        self.assertIn('PART_COPY_TESTS', result)
+        self.assertIn('STOCK_OWNERSHIP_CONTROL', result)
+        self.assertIn('SIGNUP_GROUP', result)
+
     def test_required_values(self):
         """
         - Ensure that every global setting has a name.
