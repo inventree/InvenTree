@@ -53,7 +53,7 @@ class AbstractOrderSerializer(serializers.Serializer):
     total_price_string = serializers.CharField(source='get_total_price', read_only=True)
 
 
-class AbstractAdditionalLineItemSerializer:
+class AbstractAdditionalLineItemSerializer(serializers.Serializer):
     """ Abstract Serializer for a AdditionalLineItem object """
     def __init__(self, *args, **kwargs):
 
