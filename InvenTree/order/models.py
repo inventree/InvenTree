@@ -1242,7 +1242,6 @@ class SalesOrderAdditionalLineItem(OrderAdditionalLineItem):
     order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='additional_lines', verbose_name=_('Order'), help_text=_('Sales Order'))
 
 
-
 class SalesOrderAllocation(models.Model):
     """
     This model is used to 'allocate' stock items to a SalesOrder.
