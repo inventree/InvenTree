@@ -46,6 +46,46 @@ class SettingsTest(TestCase):
         # Check object lookup (case insensitive)
         self.assertEqual(InvenTreeSetting.get_setting_object('iNvEnTrEE_inSTanCE').pk, 1)
 
+    def test_settings_functions(self):
+        """
+        Test settings functions and properties
+        """
+        # define settings to check
+        instance_ref = 'INVENTREE_INSTANCE'
+        instance_obj = InvenTreeSetting.get_setting_object(instance_ref)
+
+        stale_ref = 'STOCK_STALE_DAYS'
+        stale_days = InvenTreeSetting.get_setting_object(stale_ref)
+
+        report_size_obj = InvenTreeSetting.get_setting_object('REPORT_DEFAULT_PAGE_SIZE')
+        report_test_obj = InvenTreeSetting.get_setting_object('REPORT_ENABLE_TEST_REPORT')
+
+        # check settings base fields
+        self.assertEqual(instance_obj.name, 'InvenTree Instance Name')
+        self.assertEqual(instance_obj.get_setting_name(instance_ref), 'InvenTree Instance Name')
+        self.assertEqual(instance_obj.description, 'String descriptor for the server instance')
+        self.assertEqual(instance_obj.get_setting_description(instance_ref), 'String descriptor for the server instance')
+
+        # check units
+        self.assertEqual(instance_obj.units, '')
+        self.assertEqual(instance_obj.get_setting_units(instance_ref), '')
+        self.assertEqual(instance_obj.get_setting_units(stale_ref), 'days')
+
+        # check is_choice
+        self.assertEqual(instance_obj.is_choice(), False)
+        self.assertEqual(report_size_obj.is_choice(), True)
+
+        # check setting_type
+        self.assertEqual(instance_obj.setting_type(), 'string')
+        self.assertEqual(report_test_obj.setting_type(), 'boolean')
+        self.assertEqual(stale_days.setting_type(), 'integer')
+
+        # check as_int
+        self.assertEqual(stale_days.as_int(), 0)
+
+        # check to_native_value
+        self.assertEqual(stale_days.to_native_value(), 0)
+
     def test_allValues(self):
         """
         Make sure that the allValues functions returns correctly
