@@ -161,7 +161,7 @@ class Order(ReferenceIndexingMixin):
         # gather name reference
         price_ref = 'sale_price' if isinstance(self, SalesOrder) else 'purchase_price'
         # order items
-        total += sum([a.quantity * convert_money(getattr(a, price_ref), target_currency) for a in self.lines.all() if hasattr(a, price_ref)])
+        total += sum([a.quantity * convert_money(getattr(a, price_ref), target_currency) for a in self.lines.all() if getattr(a, price_ref)])
 
         # additional lines
         total += sum([a.quantity * convert_money(a.sale_price, target_currency) for a in self.additional_lines.all() if a.sale_price])
