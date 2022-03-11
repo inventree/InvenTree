@@ -309,7 +309,7 @@ function soLineItemFields(options={}) {
 
 
 /* Construct a set of fields for a OrderAdditionalLineItem form */
-function AdditionalLineItemFields(options={}) {
+function additionalLineItemFields(options={}) {
 
     var fields = {
         order: {
@@ -1406,7 +1406,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
  *      - order {integer} : pk of the PurchaseOrder
  *      - status: {integer} : status code for the order
  */
- function loadPurchaseOrderAdditionalLineItemTable(table, options={}) {
+function loadPurchaseOrderAdditionalLineItemTable(table, options={}) {
 
     options.table = table;
 
@@ -1560,7 +1560,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
             inventreeGet(`/api/order/po-additional-line/${pk}/`, {}, {
                 success: function(data) {
 
-                    var fields = AdditionalLineItemFields();
+                    var fields = additionalLineItemFields();
 
                     constructForm('{% url "api-po-additional-line-list" %}', {
                         method: 'POST',
@@ -3207,7 +3207,7 @@ function loadSalesOrderAdditionalLineItemTable(table, options={}) {
             inventreeGet(`/api/order/so-additional-line/${pk}/`, {}, {
                 success: function(data) {
 
-                    var fields = AdditionalLineItemFields();
+                    var fields = additionalLineItemFields();
 
                     constructForm('{% url "api-so-additional-line-list" %}', {
                         method: 'POST',
