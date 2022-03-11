@@ -49,7 +49,7 @@
             <h4>{% trans "Additional Order Items" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                {% if roles.purchase_order.change and order.is_pending %}
+                {% if roles.purchase_order.change and order.status == PurchaseOrderStatus.PENDING %}
                 <button type='button' class='btn btn-success' id='new-po-additional-line'>
                     <span class='fas fa-plus-circle'></span> {% trans "Add Additional Order Items" %}
                 </button>
