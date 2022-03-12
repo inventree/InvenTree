@@ -6,7 +6,9 @@ from datetime import timedelta
 
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 
+from InvenTree.api_tester import InvenTreeAPITestCase
 from .models import InvenTreeSetting, WebhookEndpoint, WebhookMessage, NotificationEntry, ColorTheme
 from .api import WebhookView
 
@@ -144,6 +146,14 @@ class SettingsTest(TestCase):
 
                 if setting.default_value not in [True, False]:
                     raise ValueError(f'Non-boolean default value specified for {key}')  # pragma: no cover
+
+
+class SettingsApiTest(InvenTreeAPITestCase):
+
+    def test_settings_api(self):
+        # test setting with choice
+        url = reverse('api-user-setting-list')
+        self.get(url, expected_code=200)
 
 
 class WebhookMessageTests(TestCase):
