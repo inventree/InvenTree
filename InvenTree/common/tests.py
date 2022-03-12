@@ -89,6 +89,9 @@ class SettingsTest(TestCase):
         # check as_int
         self.assertEqual(stale_days.as_int(), 0)
 
+        # check as_bool
+        self.assertEqual(report_test_obj.as_bool(), True)
+
         # check to_native_value
         self.assertEqual(stale_days.to_native_value(), 0)
 
