@@ -38,8 +38,18 @@ class BarcodeAPITest(APITestCase):
 
     def test_invalid(self):
 
+        # test scan url
         response = self.client.post(self.scan_url, format='json', data={})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+        # test wrong assign urls
+        response = self.client.post(self.assign_url, format='json', data={})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        response = self.client.post(self.assign_url, format='json', data={'barcode': '123'})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        response = self.client.post(self.assign_url, format='json', data={'barcode': '123', 'stockitem': '123'})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_empty(self):
