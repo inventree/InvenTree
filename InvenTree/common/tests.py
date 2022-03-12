@@ -73,6 +73,10 @@ class SettingsTest(TestCase):
         self.assertEqual(instance_obj.get_setting_units(instance_ref), '')
         self.assertEqual(instance_obj.get_setting_units(stale_ref), 'days')
 
+        # check as_choice
+        self.assertEqual(instance_obj.as_choice(), 'My very first InvenTree Instance')
+        self.assertEqual(report_size_obj.as_choice(), 'A4')
+
         # check is_choice
         self.assertEqual(instance_obj.is_choice(), False)
         self.assertEqual(report_size_obj.is_choice(), True)
