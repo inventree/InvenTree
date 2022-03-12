@@ -78,7 +78,7 @@ class InvenTreeGroupAdminForm(forms.ModelForm):
         return instance
 
 
-class RoleGroupAdmin(admin.ModelAdmin):
+class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
     """
     Custom admin interface for the Group model
     """
