@@ -570,7 +570,7 @@ class BaseInvenTreeSetting(models.Model):
         try:
             value = int(self.value)
         except (ValueError, TypeError):
-            value = self.default_value()
+            value = self.default_value
 
         return value
 

@@ -88,6 +88,7 @@ class SettingsTest(TestCase):
 
         # check as_int
         self.assertEqual(stale_days.as_int(), 0)
+        self.assertEqual(instance_obj.as_int(), 'InvenTree server')  # not an int -> return default
 
         # check as_bool
         self.assertEqual(report_test_obj.as_bool(), True)
