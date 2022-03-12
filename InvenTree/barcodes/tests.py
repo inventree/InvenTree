@@ -242,14 +242,14 @@ class TestInvenTreeBarcode(APITestCase):
                 reverse('api-barcode-link'), format='json',
                 data={
                     'barcode': barcode_data,
-                    'stockitem': 522
+                    'stockitem': 521
                 }
             )
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             self.assertIn('error', response.data)
 
         # test with already existing stock
-        test_assert_error('{"stockitem": 522}')
+        test_assert_error('{"stockitem": 521}')
 
         # test with already existing stock location
         test_assert_error('{"stocklocation": 7}')
