@@ -17,6 +17,7 @@ from . import helpers
 from . import version
 from . import status
 from . import ready
+from .config import get_config_file
 
 from decimal import Decimal
 
@@ -453,3 +454,12 @@ class TestSettings(TestCase):
 
         # make sure to clean up
         settings.TESTING_ENV = False
+
+    def test_helpers_cfg_file(self):
+        # normal run - not configured
+        self.assertIn('InvenTree/InvenTree/config.yaml', get_config_file())
+
+        # with env set
+        with self.env:
+            self.env.set('INVENTREE_CONFIG_FILE', 'my_special_conf.yaml')
+            self.assertIn('InvenTree/InvenTree/my_special_conf.yaml', get_config_file())
