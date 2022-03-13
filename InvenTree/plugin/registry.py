@@ -21,7 +21,7 @@ from django.utils.text import slugify
 
 try:
     from importlib import metadata
-except:
+except:  # pragma: no cover
     import importlib_metadata as metadata
     # TODO remove when python minimum is 3.8
 
