@@ -373,7 +373,7 @@ def update_group_roles(group, debug=False):
             allowed - Whether or not the action is allowed
         """
 
-        if action not in ['view', 'add', 'change', 'delete']:
+        if action not in ['view', 'add', 'change', 'delete']:  # pragma: no cover
             raise ValueError("Action {a} is invalid".format(a=action))
 
         permission_string = RuleSet.get_model_permission_string(model, action)
