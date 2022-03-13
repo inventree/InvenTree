@@ -18,7 +18,7 @@ from . import helpers
 from . import version
 from . import status
 from . import ready
-from .config import get_config_file, get_plugin_file, get_setting
+from . import config
 
 from decimal import Decimal
 
@@ -459,31 +459,31 @@ class TestSettings(TestCase):
 
     def test_helpers_cfg_file(self):
         # normal run - not configured
-        self.assertIn('InvenTree/InvenTree/config.yaml', get_config_file())
+        self.assertIn('InvenTree/InvenTree/config.yaml', config.get_config_file())
 
         # with env set
         with self.env:
             self.env.set('INVENTREE_CONFIG_FILE', 'my_special_conf.yaml')
-            self.assertIn('InvenTree/InvenTree/my_special_conf.yaml', get_config_file())
+            self.assertIn('InvenTree/InvenTree/my_special_conf.yaml', config.get_config_file())
 
     def test_helpers_plugin_file(self):
         # normal run - not configured
-        self.assertIn('InvenTree/InvenTree/plugins.txt', get_plugin_file())
+        self.assertIn('InvenTree/InvenTree/plugins.txt', config.get_plugin_file())
 
         # with env set
         with self.env:
             self.env.set('INVENTREE_PLUGIN_FILE', 'my_special_plugins.txt')
-            self.assertIn('my_special_plugins.txt', get_plugin_file())
+            self.assertIn('my_special_plugins.txt', config.get_plugin_file())
 
     def test_helpers_setting(self):
         TEST_ENV_NAME = '123TEST'
         # check that default gets returned if not present
-        self.assertEqual(get_setting(TEST_ENV_NAME, None, '123!'), '123!')
+        self.assertEqual(config.get_setting(TEST_ENV_NAME, None, '123!'), '123!')
 
         # with env set
         with self.env:
             self.env.set(TEST_ENV_NAME, '321')
-            self.assertEqual(get_setting(TEST_ENV_NAME, None), '321')
+            self.assertEqual(config.get_setting(TEST_ENV_NAME, None), '321')
 
 class TestInstanceName(TestCase):
     """
