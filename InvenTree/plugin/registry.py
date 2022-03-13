@@ -170,7 +170,7 @@ class PluginsRegistry:
 
         # Do not reload whe currently loading
         if self.is_loading:
-            return
+            return  # pragma: no cover
 
         logger.info('Start reloading plugins')
 
