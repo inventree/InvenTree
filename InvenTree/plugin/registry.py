@@ -120,7 +120,7 @@ class PluginsRegistry:
                 # We do not want to end in an endless loop
                 retry_counter -= 1
 
-                if retry_counter <= 0:
+                if retry_counter <= 0:  # pragma: no cover
                     if settings.PLUGIN_TESTING:
                         print('[PLUGIN] Max retries, breaking loading')
                     # TODO error for server status
