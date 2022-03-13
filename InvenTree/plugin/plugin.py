@@ -88,6 +88,6 @@ class InvenTreePlugin(InvenTreePluginBase):
     """
     This is here for leagcy reasons and will be removed in the next major release
     """
-    def __init__(self):
+    def __init__(self):  # pragma: no cover
         warnings.warn("Using the InvenTreePlugin is depreceated", DeprecationWarning)
         super().__init__()
