@@ -28,7 +28,7 @@ class InvenTreeConfig(AppConfig):
 
             self.start_background_tasks()
 
-            if not isInTestMode():
+            if not isInTestMode():  # pragma: no cover
                 self.update_exchange_rates()
 
         if canAppAccessDatabase() or settings.TESTING_ENV:
