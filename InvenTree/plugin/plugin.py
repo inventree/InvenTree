@@ -65,7 +65,7 @@ class InvenTreePluginBase():
                 key=self.plugin_slug(),
                 name=self.plugin_name(),
             )
-        except (OperationalError, ProgrammingError) as error:
+        except (OperationalError, ProgrammingError):
             cfg = None
 
         return cfg
