@@ -95,7 +95,7 @@ def user_roles(request):
     }
 
     if user.is_superuser:
-        for ruleset in RuleSet.RULESET_MODELS.keys():
+        for ruleset in RuleSet.RULESET_MODELS.keys():  # pragma: no cover
             roles[ruleset] = {
                 'view': True,
                 'add': True,
