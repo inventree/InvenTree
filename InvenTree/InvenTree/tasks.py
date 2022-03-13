@@ -68,7 +68,7 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
         import importlib
         from InvenTree.status import is_worker_running
 
-        if is_worker_running() and not force_sync:
+        if is_worker_running() and not force_sync:  # pragma: no cover
             # Running as asynchronous task
             try:
                 task = AsyncTask(taskname, *args, **kwargs)
