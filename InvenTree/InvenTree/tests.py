@@ -17,7 +17,7 @@ from . import helpers
 from . import version
 from . import status
 from . import ready
-from .config import get_config_file, get_plugin_file
+from .config import get_config_file, get_plugin_file, get_setting
 
 from decimal import Decimal
 
@@ -473,4 +473,12 @@ class TestSettings(TestCase):
             self.env.set('INVENTREE_PLUGIN_FILE', 'my_special_plugins.txt')
             self.assertIn('my_special_plugins.txt', get_plugin_file())
 
-            self.assertIn('InvenTree/InvenTree/plugins.txt', get_plugin_file())
+    def test_helpers_setting(self):
+        TEST_ENV_NAME = '123TEST'
+        # check that default gets returned if not present
+        self.assertEqual(get_setting(TEST_ENV_NAME, None, '123!'), '123!')
+
+        # with env set
+        with self.env:
+            self.env.set(TEST_ENV_NAME, '321')
+            self.assertEqual(get_setting(TEST_ENV_NAME, None), '321')
