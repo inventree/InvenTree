@@ -1,5 +1,4 @@
 
-import imp
 import json
 from test.support import EnvironmentVarGuard
 
@@ -484,6 +483,7 @@ class TestSettings(TestCase):
         with self.env:
             self.env.set(TEST_ENV_NAME, '321')
             self.assertEqual(config.get_setting(TEST_ENV_NAME, None), '321')
+
 
 class TestInstanceName(TestCase):
     """
