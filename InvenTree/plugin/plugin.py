@@ -53,7 +53,7 @@ class InvenTreePluginBase():
         else:
             return self.plugin_name()
 
-    def plugin_config(self, raise_error=False):
+    def plugin_config(self):
         """
         Return the PluginConfig object associated with this plugin
         """
@@ -67,9 +67,6 @@ class InvenTreePluginBase():
             )
         except (OperationalError, ProgrammingError) as error:
             cfg = None
-
-            if raise_error:
-                raise error
 
         return cfg
 
