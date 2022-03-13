@@ -222,6 +222,7 @@
     lft: 0
     rght: 0
     expiry_date: "1990-10-10"
+    uid: 9e5ae7fc20568ed4814c10967bba8b65
 
 - model: stock.stockitem
   pk: 521

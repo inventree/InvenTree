@@ -259,3 +259,12 @@ class TestInvenTreeBarcode(APITestCase):
 
         # test with hash
         test_assert_error('{"blbla": 10004}')
+
+    def test_scan(self):
+        """
+        Test that a barcode can be scanned
+        """
+
+        response = self.client.post(reverse('api-barcode-scan'), format='json', data={'barcode': 'blbla=10004',})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('success', response.data)
