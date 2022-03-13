@@ -94,13 +94,13 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
             # Retrieve function
             try:
                 _func = getattr(_mod, func)
-            except AttributeError:
+            except AttributeError:  # pragma: no cover
                 # getattr does not work for local import
                 _func = None
 
             try:
                 if not _func:
-                    _func = eval(func)
+                    _func = eval(func)  # pragma: no cover
             except NameError:
                 logger.warning(f"WARNING: '{taskname}' not started - No function named '{func}'")
                 return
