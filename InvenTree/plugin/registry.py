@@ -150,7 +150,7 @@ class PluginsRegistry:
         # Set maintanace mode
         _maintenance = bool(get_maintenance_mode())
         if not _maintenance:
-            set_maintenance_mode(True)
+            set_maintenance_mode(True)  # pragma: no cover
 
         # remove all plugins from registry
         self._clean_registry()
@@ -160,7 +160,7 @@ class PluginsRegistry:
 
         # remove maintenance
         if not _maintenance:
-            set_maintenance_mode(False)
+            set_maintenance_mode(False)  # pragma: no cover
         logger.info('Finished unloading plugins')
 
     def reload_plugins(self):
