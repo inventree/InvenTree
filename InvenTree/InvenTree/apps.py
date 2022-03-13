@@ -98,7 +98,7 @@ class InvenTreeConfig(AppConfig):
             schedule_type=Schedule.DAILY,
         )
 
-    def update_exchange_rates(self):
+    def update_exchange_rates(self):  # pragma: no cover
         """
         Update exchange rates each time the server is started, *if*:
 
