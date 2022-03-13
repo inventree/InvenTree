@@ -234,7 +234,7 @@ class TestInvenTreeBarcode(APITestCase):
 
     def test_errors(self):
         """
-        Test that a barcode can be associated with a StockItem
+        Test all possible error cases for assigment action
         """
 
         def test_assert_error(barcode_data):
