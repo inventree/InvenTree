@@ -317,7 +317,7 @@ def split_permission(app, perm):
     """split permission string into permission and model"""
     permission_name, *model = perm.split('_')
     # handle models that have underscores
-    if len(model) > 1:
+    if len(model) > 1:  # pragma: no cover
         app += '_' + '_'.join(model[:-1])
         perm = permission_name + '_' + model[-1:][0]
     model = model[-1:][0]
