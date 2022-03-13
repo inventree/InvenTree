@@ -84,7 +84,7 @@ class PluginsRegistry:
         """
         if not settings.PLUGINS_ENABLED:
             # Plugins not enabled, do nothing
-            return
+            return  # pragma: no cover
 
         logger.info('Start loading plugins')
 
@@ -143,7 +143,7 @@ class PluginsRegistry:
 
         if not settings.PLUGINS_ENABLED:
             # Plugins not enabled, do nothing
-            return
+            return  # pragma: no cover
 
         logger.info('Start unloading plugins')
 
@@ -187,7 +187,7 @@ class PluginsRegistry:
 
         if not settings.PLUGINS_ENABLED:
             # Plugins not enabled, do nothing
-            return
+            return  # pragma: no cover
 
         self.plugin_modules = []  # clear
 
@@ -200,7 +200,7 @@ class PluginsRegistry:
         # Check if not running in testing mode and apps should be loaded from hooks
         if (not settings.PLUGIN_TESTING) or (settings.PLUGIN_TESTING and settings.PLUGIN_TESTING_SETUP):
             # Collect plugins from setup entry points
-            for entry in metadata.entry_points().get('inventree_plugins', []):
+            for entry in metadata.entry_points().get('inventree_plugins', []):  # pragma: no cover
                 try:
                     plugin = entry.load()
                     plugin.is_package = True
@@ -257,7 +257,7 @@ class PluginsRegistry:
             except (OperationalError, ProgrammingError) as error:
                 # Exception if the database has not been migrated yet - check if test are running - raise if not
                 if not settings.PLUGIN_TESTING:
-                    raise error
+                    raise error  # pragma: no cover
                 plugin_db_setting = None
 
             # Always activate if testing
@@ -267,7 +267,7 @@ class PluginsRegistry:
                     # option1: package, option2: file-based
                     if (plugin.__name__ == disabled) or (plugin.__module__ == disabled):
                         # Errors are bad so disable the plugin in the database
-                        if not settings.PLUGIN_TESTING:
+                        if not settings.PLUGIN_TESTING:  # pragma: no cover
                             plugin_db_setting.active = False
                             # TODO save the error to the plugin
                             plugin_db_setting.save(no_reload=True)
