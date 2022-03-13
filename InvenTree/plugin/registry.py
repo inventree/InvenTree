@@ -445,7 +445,7 @@ class PluginsRegistry:
             try:
                 app_name = plugin_path.split('.')[-1]
                 app_config = apps.get_app_config(app_name)
-            except LookupError:
+            except LookupError:  # pragma: no cover
                 # the plugin was never loaded correctly
                 logger.debug(f'{app_name} App was not found during deregistering')
                 break
@@ -499,7 +499,7 @@ class PluginsRegistry:
                     # remove model from admin site
                     admin.site.unregister(model)
                     models += [model._meta.model_name]
-            except LookupError:
+            except LookupError:  # pragma: no cover
                 # if an error occurs the app was never loaded right -> so nothing to do anymore
                 logger.debug(f'{app_name} App was not found during deregistering')
                 break
@@ -572,7 +572,7 @@ class PluginsRegistry:
         try:
             cmd(*args, **kwargs)
             return True, []
-        except Exception as error:
+        except Exception as error:  # pragma: no cover
             handle_error(error)
     # endregion
 
