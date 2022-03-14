@@ -50,7 +50,7 @@
 </div>
 {% if order.status == PurchaseOrderStatus.PENDING %}
 <button type='button' class='btn btn-outline-secondary' id='place-order' title='{% trans "Place order" %}'>
-    <span class='fas fa-shopping-cart icon-blue'></span>
+    <span class='fas fa-paper-plane icon-blue'></span>
 </button>
 {% elif order.status == PurchaseOrderStatus.PLACED %}
 <button type='button' class='btn btn-primary' id='receive-order' title='{% trans "Receive items" %}'>

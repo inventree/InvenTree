@@ -323,30 +323,78 @@
 {% block js_ready %}
 {{ block.super }}
 
-$('#btn-create-output').click(function() {
+onPanelLoad('completed', function() {
+    loadStockTable($("#build-stock-table"), {
+        params: {
+            location_detail: true,
+            part_detail: true,
+            build: {{ build.id }},
+            is_building: false,
+        },
+        groupByField: 'location',
+        buttons: [
+            '#stock-options',
+        ],
+        url: "{% url 'api-stock-list' %}",    
+    });
+});
 
-    createBuildOutput(
-        {{ build.pk }},
+onPanelLoad('children', function() {
+    loadBuildTable($('#sub-build-table'), {
+        url: '{% url "api-build-list" %}',
+        filterTarget: "#filter-list-sub-build",
+        params: {
+            ancestor: {{ build.pk }},
+        }
+    });
+});
+
+onPanelLoad('attachments', function() {
+
+    enableDragAndDrop(
+        '#attachment-dropzone',
+        '{% url "api-build-attachment-list" %}',
         {
-            trackable_parts: {% if build.part.has_trackable_parts %}true{% else %}false{% endif%},
+            data: {
+                build: {{ build.id }},
+            },
+            label: 'attachment',
+            success: function(data, status, xhr) {
+                location.reload();
+            }
         }
     );
+
+    loadAttachmentTable('{% url "api-build-attachment-list" %}', {
+        filters: {
+            build: {{ build.pk }},
+        },
+        fields: {
+            build: {
+                value: {{ build.pk }},
+                hidden: true,
+            }
+        }
+    });
 });
 
-loadStockTable($("#build-stock-table"), {
-    params: {
-        location_detail: true,
-        part_detail: true,
-        build: {{ build.id }},
-        is_building: false,
-    },
-    groupByField: 'location',
-    buttons: [
-        '#stock-options',
-    ],
-    url: "{% url 'api-stock-list' %}",    
+onPanelLoad('notes', function() {
+    $('#edit-notes').click(function() {
+        constructForm('{% url "api-build-detail" build.pk %}', {
+            fields: {
+                notes: {
+                    multiline: true,
+                }
+            },
+            title: '{% trans "Edit Notes" %}',
+            reload: true,
+        });
+    });
 });
 
+function reloadTable() {
+    $('#allocation-table-untracked').bootstrapTable('refresh');
+}
 
 // Get the list of BOM items required for this build
 inventreeGet(
@@ -436,56 +484,15 @@ inventreeGet(
     }
 );
 
-loadBuildTable($('#sub-build-table'), {
-    url: '{% url "api-build-list" %}',
-    filterTarget: "#filter-list-sub-build",
-    params: {
-        ancestor: {{ build.pk }},
-    }
-});
+$('#btn-create-output').click(function() {
 
-
-enableDragAndDrop(
-    '#attachment-dropzone',
-    '{% url "api-build-attachment-list" %}',
-    {
-        data: {
-            build: {{ build.id }},
-        },
-        label: 'attachment',
-        success: function(data, status, xhr) {
-            location.reload();
+    createBuildOutput(
+        {{ build.pk }},
+        {
+            trackable_parts: {% if build.part.has_trackable_parts %}true{% else %}false{% endif%},
         }
-    }
-);
-
-loadAttachmentTable('{% url "api-build-attachment-list" %}', {
-    filters: {
-        build: {{ build.pk }},
-    },
-    fields: {
-        build: {
-            value: {{ build.pk }},
-            hidden: true,
-        }
-    }
+    );
 });
-
-$('#edit-notes').click(function() {
-    constructForm('{% url "api-build-detail" build.pk %}', {
-        fields: {
-            notes: {
-                multiline: true,
-            }
-        },
-        title: '{% trans "Edit Notes" %}',
-        reload: true,
-    });
-});
-
-function reloadTable() {
-    $('#allocation-table-untracked').bootstrapTable('refresh');
-}
 
 {% if build.active %}
 
@@ -577,6 +584,5 @@ $("#btn-order-parts").click(function() {
 {% endif %}
 
 enableSidebar('buildorder');
-
 
 {% endblock %}

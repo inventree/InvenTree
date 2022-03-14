@@ -461,6 +461,7 @@ class BuildItemList(generics.ListCreateAPIView):
     filter_fields = [
         'build',
         'stock_item',
+        'bom_item',
         'install_into',
     ]
 

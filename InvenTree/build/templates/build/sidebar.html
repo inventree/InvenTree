@@ -9,10 +9,10 @@
 {% include "sidebar_item.html" with label='allocate' text=text icon="fa-tasks" %}
 {% endif %}
 {% if not build.is_complete %}
-{% trans "Pending Items" as text %}
+{% trans "Incomplete Outputs" as text %}
 {% include "sidebar_item.html" with label='outputs' text=text icon="fa-tools" %}
 {% endif %}
-{% trans "Completed Items" as text %}
+{% trans "Completed Outputs" as text %}
 {% include "sidebar_item.html" with label='completed' text=text icon="fa-boxes" %}
 {% trans "Child Build Orders" as text %}
 {% include "sidebar_item.html" with label='children' text=text icon="fa-sitemap" %}
