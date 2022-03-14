@@ -12,10 +12,13 @@ import common.models
 INVENTREE_SW_VERSION = "0.7.0 dev"
 
 # InvenTree API version
-INVENTREE_API_VERSION = 30
+INVENTREE_API_VERSION = 31
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v31 -> 2022-03-14
+    - Adds "updated" field to SupplierPriceBreakList and SupplierPriceBreakDetail API endpoints
 
 v30 -> 2022-03-09
     - Adds "exclude_location" field to BuildAutoAllocation API endpoint
