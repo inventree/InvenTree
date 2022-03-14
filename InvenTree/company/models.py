@@ -693,6 +693,7 @@ class   SupplierPriceBreak(common.models.PriceBreak):
 
     Attributes:
         part: Link to a SupplierPart object that this price break applies to
+        updated: Automatic DateTime field that shows last time the price break was updated
         quantity: Quantity required for price break
         cost: Cost at specified quantity
         currency: Reference to the currency of this pricebreak (leave empty for base currency)
