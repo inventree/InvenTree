@@ -686,7 +686,7 @@ class SupplierPart(models.Model):
         return s
 
 
-class   SupplierPriceBreak(common.models.PriceBreak):
+class SupplierPriceBreak(common.models.PriceBreak):
     """ Represents a quantity price break for a SupplierPart.
     - Suppliers can offer discounts at larger quantities
     - SupplierPart(s) may have zero-or-more associated SupplierPriceBreak(s)
