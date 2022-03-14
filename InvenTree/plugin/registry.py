@@ -10,6 +10,7 @@ import pathlib
 import logging
 from typing import OrderedDict
 from importlib import reload
+import pkg_resources
 
 from django.apps import apps
 from django.conf import settings
@@ -30,6 +31,7 @@ from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
 
 from .integration import IntegrationPluginBase
 from .helpers import handle_error, log_error, get_plugins, IntegrationPluginError
+from InvenTree.config import get_plugin_file
 
 
 logger = logging.getLogger('inventree')
@@ -211,6 +213,23 @@ class PluginsRegistry:
         # Log collected plugins
         logger.info(f'Collected {len(self.plugin_modules)} plugins!')
         logger.info(", ".join([a.__module__ for a in self.plugin_modules]))
+
+    def check_plugin_file(self):
+        """
+        Check if all plugins are installed in the current enviroment
+        """
+        # many thanks to Asclepius
+        # https://stackoverflow.com/questions/16294819/check-if-my-python-has-all-required-packages/45474387#45474387
+
+        plugin_file = pathlib.Path(get_plugin_file())
+        requirements = pkg_resources.parse_requirements(plugin_file.open())
+    
+        for requirement in requirements:
+            try:
+                pkg_resources.require(str(requirement))
+            except Exception as error:
+                handle_error(error, log_name='init', do_raise=False)
+
     # endregion
 
     # region registry functions
