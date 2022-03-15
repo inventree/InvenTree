@@ -30,7 +30,11 @@ class PluginAppConfig(AppConfig):
 
                 if not registry.is_loading:
                     # this is the first startup
+
+                    # make sure all plugins are installed
                     registry.install_plugin_file()
+
+                    # get plugins and init them
                     registry.collect_plugins()
                     registry.load_plugins()
 
