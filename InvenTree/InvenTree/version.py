@@ -171,7 +171,7 @@ def inventreeDocsVersion():
     if isInvenTreeDevelopmentVersion():
         return "latest"
     else:
-        return INVENTREE_SW_VERSION
+        return INVENTREE_SW_VERSION  # pragma: no cover
 
 
 def isInvenTreeUpToDate():
@@ -189,10 +189,10 @@ def isInvenTreeUpToDate():
         return True
 
     # Extract "tuple" version (Python can directly compare version tuples)
-    latest_version = inventreeVersionTuple(latest)
-    inventree_version = inventreeVersionTuple()
+    latest_version = inventreeVersionTuple(latest)  # pragma: no cover
+    inventree_version = inventreeVersionTuple()  # pragma: no cover
 
-    return inventree_version >= latest_version
+    return inventree_version >= latest_version  # pragma: no cover
 
 
 def inventreeApiVersion():
@@ -209,7 +209,7 @@ def inventreeCommitHash():
 
     try:
         return str(subprocess.check_output('git rev-parse --short HEAD'.split()), 'utf-8').strip()
-    except:
+    except:  # pragma: no cover
         return None
 
 
@@ -219,5 +219,5 @@ def inventreeCommitDate():
     try:
         d = str(subprocess.check_output('git show -s --format=%ci'.split()), 'utf-8').strip()
         return d.split(' ')[0]
-    except:
+    except:  # pragma: no cover
         return None

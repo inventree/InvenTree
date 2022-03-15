@@ -265,9 +265,9 @@ class RuleSet(models.Model):
             model=model
         )
 
-    def __str__(self, debug=False):
+    def __str__(self, debug=False):  # pragma: no cover
         """ Ruleset string representation """
-        if debug:  # pragma: no cover
+        if debug:
             # Makes debugging easier
             return f'{str(self.group).ljust(15)}: {self.name.title().ljust(15)} | ' \
                    f'v: {str(self.can_view).ljust(5)} | a: {str(self.can_add).ljust(5)} | ' \
@@ -317,7 +317,7 @@ def split_permission(app, perm):
     """split permission string into permission and model"""
     permission_name, *model = perm.split('_')
     # handle models that have underscores
-    if len(model) > 1:
+    if len(model) > 1:  # pragma: no cover
         app += '_' + '_'.join(model[:-1])
         perm = permission_name + '_' + model[-1:][0]
     model = model[-1:][0]
@@ -373,7 +373,7 @@ def update_group_roles(group, debug=False):
             allowed - Whether or not the action is allowed
         """
 
-        if action not in ['view', 'add', 'change', 'delete']:
+        if action not in ['view', 'add', 'change', 'delete']:  # pragma: no cover
             raise ValueError("Action {a} is invalid".format(a=action))
 
         permission_string = RuleSet.get_model_permission_string(model, action)
@@ -574,7 +574,7 @@ class Owner(models.Model):
         return owners
 
     @staticmethod
-    def get_api_url():
+    def get_api_url():  # pragma: no cover
         return reverse('api-owner-list')
 
     class Meta:
