@@ -8,9 +8,10 @@ Registry for loading and managing multiple plugins at run-time
 import importlib
 import pathlib
 import logging
+import os
+import subprocess
 from typing import OrderedDict
 from importlib import reload
-import pkg_resources
 
 from django.apps import apps
 from django.conf import settings
@@ -214,21 +215,26 @@ class PluginsRegistry:
         logger.info(f'Collected {len(self.plugin_modules)} plugins!')
         logger.info(", ".join([a.__module__ for a in self.plugin_modules]))
 
-    def check_plugin_file(self):
+    def install_plugin_file(self):
         """
-        Check if all plugins are installed in the current enviroment
+        Make sure all plugins are installed in the current enviroment
         """
-        # many thanks to Asclepius
-        # https://stackoverflow.com/questions/16294819/check-if-my-python-has-all-required-packages/45474387#45474387
+
+        if settings.PLUGIN_FILE_CHECKED:
+            logger.info('Plugin file was already checked')
+            return
 
         plugin_file = pathlib.Path(get_plugin_file())
-        requirements = pkg_resources.parse_requirements(plugin_file.open())
-    
-        for requirement in requirements:
-            try:
-                pkg_resources.require(str(requirement))
-            except Exception as error:
-                handle_error(error, log_name='init', do_raise=False)
+        try:
+            output = str(subprocess.check_output(['pip', 'install', '-r', str(plugin_file.absolute())], cwd=os.path.dirname(settings.BASE_DIR)), 'utf-8')
+        except subprocess.CalledProcessError as error:  # pragma: no cover
+            logger.error(f'Ran into error while trying to install plugins!\n{str(error)}')
+            return False
+
+        logger.info(f'plugin requirements were run\n{output}')
+
+        # do not run again
+        settings.PLUGIN_FILE_CHECKED = True
 
     # endregion
 
