@@ -20,7 +20,7 @@ from decimal import Decimal, InvalidOperation
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .models import SalesOrder, SalesOrderLineItem
-from .admin import POLineItemResource, SOLineItemResource
+from .admin import PurchaseOrderLineItemResource, SalesOrderLineItemResource
 from build.models import Build
 from company.models import Company, SupplierPart  # ManufacturerPart
 from stock.models import StockItem
@@ -410,7 +410,7 @@ class SalesOrderExport(AjaxView):
 
         filename = f"{str(order)} - {order.customer.name}.{export_format}"
 
-        dataset = SOLineItemResource().export(queryset=order.lines.all())
+        dataset = SalesOrderLineItemResource().export(queryset=order.lines.all())
 
         filedata = dataset.export(format=export_format)
 
@@ -441,7 +441,7 @@ class PurchaseOrderExport(AjaxView):
             fmt=export_format
         )
 
-        dataset = POLineItemResource().export(queryset=order.lines.all())
+        dataset = PurchaseOrderLineItemResource().export(queryset=order.lines.all())
 
         filedata = dataset.export(format=export_format)
 

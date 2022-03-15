@@ -96,7 +96,7 @@ class AbstractAdditionalLineItemMeta:
     ]
 
 
-class POSerializer(AbstractOrderSerializer, ReferenceIndexingSerializerMixin, InvenTreeModelSerializer):
+class PurchaseOrderSerializer(AbstractOrderSerializer, ReferenceIndexingSerializerMixin, InvenTreeModelSerializer):
     """ Serializer for a PurchaseOrder object """
 
     def __init__(self, *args, **kwargs):
@@ -178,7 +178,7 @@ class POSerializer(AbstractOrderSerializer, ReferenceIndexingSerializerMixin, In
         ]
 
 
-class POLineItemSerializer(InvenTreeModelSerializer):
+class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -245,7 +245,7 @@ class POLineItemSerializer(InvenTreeModelSerializer):
         help_text=_('Purchase price currency'),
     )
 
-    order_detail = POSerializer(source='order', read_only=True, many=False)
+    order_detail = PurchaseOrderSerializer(source='order', read_only=True, many=False)
 
     class Meta:
         model = order.models.PurchaseOrderLineItem
@@ -272,16 +272,16 @@ class POLineItemSerializer(InvenTreeModelSerializer):
         ]
 
 
-class POAdditionalLineItemSerializer(AbstractAdditionalLineItemSerializer, InvenTreeModelSerializer):
+class PurchaseOrderAdditionalLineItemSerializer(AbstractAdditionalLineItemSerializer, InvenTreeModelSerializer):
     """ Serializer for a PurchaseOrderAdditionalLineItem object """
 
-    order_detail = POSerializer(source='order', many=False, read_only=True)
+    order_detail = PurchaseOrderSerializer(source='order', many=False, read_only=True)
 
     class Meta(AbstractAdditionalLineItemMeta):
         model = order.models.PurchaseOrderAdditionalLineItem
 
 
-class POLineItemReceiveSerializer(serializers.Serializer):
+class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
     """
     A serializer for receiving a single purchase order line item against a purchase order
     """
@@ -411,12 +411,12 @@ class POLineItemReceiveSerializer(serializers.Serializer):
         return data
 
 
-class POReceiveSerializer(serializers.Serializer):
+class PurchaseOrderReceiveSerializer(serializers.Serializer):
     """
     Serializer for receiving items against a purchase order
     """
 
-    items = POLineItemReceiveSerializer(many=True)
+    items = PurchaseOrderLineItemReceiveSerializer(many=True)
 
     location = serializers.PrimaryKeyRelatedField(
         queryset=stock.models.StockLocation.objects.all(),
@@ -511,7 +511,7 @@ class POReceiveSerializer(serializers.Serializer):
         ]
 
 
-class POAttachmentSerializer(InvenTreeAttachmentSerializer):
+class PurchaseOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
     """
     Serializers for the PurchaseOrderAttachment model
     """
@@ -681,7 +681,7 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
         ]
 
 
-class SOLineItemSerializer(InvenTreeModelSerializer):
+class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
     """ Serializer for a SalesOrderLineItem object """
 
     @staticmethod
@@ -832,7 +832,7 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
         shipment.complete_shipment(user, tracking_number=tracking_number)
 
 
-class SOShipmentAllocationItemSerializer(serializers.Serializer):
+class SalesOrderShipmentAllocationItemSerializer(serializers.Serializer):
     """
     A serializer for allocating a single stock-item against a SalesOrder shipment
     """
@@ -931,7 +931,7 @@ class SalesOrderCompleteSerializer(serializers.Serializer):
         order.complete_order(user)
 
 
-class SOSerialAllocationSerializer(serializers.Serializer):
+class SalesOrderSerialAllocationSerializer(serializers.Serializer):
     """
     DRF serializer for allocation of serial numbers against a sales order / shipment
     """
@@ -1094,7 +1094,7 @@ class SOSerialAllocationSerializer(serializers.Serializer):
                 )
 
 
-class SOShipmentAllocationSerializer(serializers.Serializer):
+class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
     """
     DRF serializer for allocation of stock items against a sales order / shipment
     """
@@ -1105,7 +1105,7 @@ class SOShipmentAllocationSerializer(serializers.Serializer):
             'shipment',
         ]
 
-    items = SOShipmentAllocationItemSerializer(many=True)
+    items = SalesOrderShipmentAllocationItemSerializer(many=True)
 
     shipment = serializers.PrimaryKeyRelatedField(
         queryset=order.models.SalesOrderShipment.objects.all(),
@@ -1168,7 +1168,7 @@ class SOShipmentAllocationSerializer(serializers.Serializer):
                 )
 
 
-class SOAdditionalLineItemSerializer(AbstractAdditionalLineItemSerializer, InvenTreeModelSerializer):
+class SalesOrderAdditionalLineItemSerializer(AbstractAdditionalLineItemSerializer, InvenTreeModelSerializer):
     """ Serializer for a SalesOrderAdditionalLineItem object """
 
     order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
@@ -1177,7 +1177,7 @@ class SOAdditionalLineItemSerializer(AbstractAdditionalLineItemSerializer, Inven
         model = order.models.SalesOrderAdditionalLineItem
 
 
-class SOAttachmentSerializer(InvenTreeAttachmentSerializer):
+class SalesOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
     """
     Serializers for the SalesOrderAttachment model
     """

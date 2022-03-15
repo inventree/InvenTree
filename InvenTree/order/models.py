@@ -309,7 +309,7 @@ class PurchaseOrder(Order):
             raise ValidationError({'supplier': _("Part supplier must match PO supplier")})
 
         if group:
-            # Check if there is already a matching line item (for this PO)
+            # Check if there is already a matching line item (for this PurchaseOrder)
             matches = self.lines.filter(part=supplier_part)
 
             if matches.count() > 0:
@@ -424,7 +424,7 @@ class PurchaseOrder(Order):
     @transaction.atomic
     def receive_line_item(self, line, location, quantity, user, status=StockStatus.OK, **kwargs):
         """
-        Receive a line item (or partial line item) against this PO
+        Receive a line item (or partial line item) against this PurchaseOrder
         """
 
         # Extract optional batch code for the new stock item

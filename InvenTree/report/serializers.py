@@ -58,7 +58,7 @@ class BOMReportSerializer(InvenTreeModelSerializer):
         ]
 
 
-class POReportSerializer(InvenTreeModelSerializer):
+class PurchaseOrderReportSerializer(InvenTreeModelSerializer):
 
     template = InvenTreeAttachmentSerializerField(required=True)
 
@@ -74,7 +74,7 @@ class POReportSerializer(InvenTreeModelSerializer):
         ]
 
 
-class SOReportSerializer(InvenTreeModelSerializer):
+class SalesOrderReportSerializer(InvenTreeModelSerializer):
 
     template = InvenTreeAttachmentSerializerField(required=True)
 

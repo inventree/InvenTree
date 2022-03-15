@@ -59,7 +59,7 @@ class OrderListTest(OrderViewTestCase):
         self.assertEqual(response.status_code, 200)
 
 
-class POTests(OrderViewTestCase):
+class PurchaseOrderTests(OrderViewTestCase):
     """ Tests for PurchaseOrder views """
 
     def test_detail_view(self):

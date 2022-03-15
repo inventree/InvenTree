@@ -227,7 +227,7 @@ class BOMReportTest(ReportTest):
     print_url = 'api-bom-report-print'
 
 
-class POReportTest(ReportTest):
+class PurchaseOrderReportTest(ReportTest):
 
     model = report_models.PurchaseOrderReport
 
@@ -236,7 +236,7 @@ class POReportTest(ReportTest):
     print_url = 'api-po-report-print'
 
 
-class SOReportTest(ReportTest):
+class SalesOrderReportTest(ReportTest):
 
     model = report_models.SalesOrderReport
 
