@@ -16,7 +16,6 @@ from django.utils import timezone
 from rest_framework import serializers
 
 from plugin.models import PluginConfig, PluginSetting
-from InvenTree.config import get_plugin_file
 from common.serializers import SettingsSerializer
 
 
@@ -123,7 +122,7 @@ class PluginConfigInstallSerializer(serializers.Serializer):
 
         # save plugin to plugin_file if installed successfull
         if success:
-            with open(get_plugin_file(), "a") as plugin_file:
+            with open(settings.PLUGIN_FILE, "a") as plugin_file:
                 plugin_file.write(f'{" ".join(install_name)}  # Installed {timezone.now()} by {str(self.context["request"].user)}\n')
 
         return ret

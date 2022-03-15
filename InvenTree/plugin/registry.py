@@ -32,7 +32,6 @@ from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
 
 from .integration import IntegrationPluginBase
 from .helpers import handle_error, log_error, get_plugins, IntegrationPluginError
-from InvenTree.config import get_plugin_file
 
 
 logger = logging.getLogger('inventree')
@@ -224,9 +223,8 @@ class PluginsRegistry:
             logger.info('Plugin file was already checked')
             return
 
-        plugin_file = pathlib.Path(get_plugin_file())
         try:
-            output = str(subprocess.check_output(['pip', 'install', '-r', str(plugin_file.absolute())], cwd=os.path.dirname(settings.BASE_DIR)), 'utf-8')
+            output = str(subprocess.check_output(['pip', 'install', '-r', settings.PLUGIN_FILE], cwd=os.path.dirname(settings.BASE_DIR)), 'utf-8')
         except subprocess.CalledProcessError as error:  # pragma: no cover
             logger.error(f'Ran into error while trying to install plugins!\n{str(error)}')
             return False
