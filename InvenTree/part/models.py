@@ -417,7 +417,7 @@ class Part(MPTTModel):
         context['allocated_build_order_quantity'] = self.build_order_allocation_count()
 
         context['required_sales_order_quantity'] = self.required_sales_order_quantity()
-        context['allocated_sales_order_quantity'] = self.sales_order_allocation_count()
+        context['allocated_sales_order_quantity'] = self.sales_order_allocation_count(pending=True)
 
         context['available'] = self.available_stock
         context['on_order'] = self.on_order
@@ -1118,7 +1118,9 @@ class Part(MPTTModel):
         quantity = 0
 
         for line in open_lines:
-            quantity += line.quantity
+            # Determine the quantity "remaining" to be shipped out
+            remaining = max(line.quantity - line.shipped, 0)
+            quantity += remaining
 
         return quantity
 
@@ -1336,19 +1338,30 @@ class Part(MPTTModel):
 
         return query['total']
 
-    def sales_order_allocations(self):
+    def sales_order_allocations(self, **kwargs):
         """
         Return all sales-order-allocation objects which allocate this part to a SalesOrder
         """
 
-        return OrderModels.SalesOrderAllocation.objects.filter(item__part__id=self.id)
+        queryset = OrderModels.SalesOrderAllocation.objects.filter(item__part__id=self.id)
 
-    def sales_order_allocation_count(self):
+        pending = kwargs.get('pending', None)
+
+        if pending is True:
+            # Look only for 'open' orders which have not shipped
+            queryset = queryset.filter(
+                line__order__status__in=SalesOrderStatus.OPEN,
+                shipment__shipment_date=None,
+            )
+        
+        return queryset
+
+    def sales_order_allocation_count(self, **kwargs):
         """
-        Return the tutal quantity of this part allocated to sales orders
+        Return the total quantity of this part allocated to sales orders
         """
 
-        query = self.sales_order_allocations().aggregate(
+        query = self.sales_order_allocations(**kwargs).aggregate(
             total=Coalesce(
                 Sum(
                     'quantity',
