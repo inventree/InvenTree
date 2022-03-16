@@ -309,6 +309,7 @@
 </div>
 
 <div class='panel panel-hidden' id='panel-build-orders'>
+    {% if part.assembly %}
     <div class='panel-heading'>
         <div class='d-flex flex-wrap'>
             <h4>{% trans "Part Builds" %}</h4>
@@ -334,7 +335,9 @@
         <table class='table table-striped table-condensed' data-toolbar='#build-button-toolbar' id='build-table'>
         </table>
     </div>
+    {% endif %}
 
+    {% if part.component %}
     <div class='panel-heading'>
         <h4>{% trans "Build Order Allocations" %}</h4>
     </div>
@@ -346,6 +349,7 @@
         </div>
         <table class='table table-striped table-condensed' id='build-order-allocation-table' data-toolbar='#build-allocation-button-toolbar'></table>
     </div>
+    {% endif %}
 </div>
 
 <div class='panel panel-hidden' id='panel-suppliers'>
@@ -514,6 +518,7 @@
     // Load the "builds" tab
     onPanelLoad("build-orders", function() {
 
+        {% if part.assembly %}
         $("#start-build").click(function() {
             newBuildOrder({
                 part: {{ part.pk }},
@@ -526,12 +531,15 @@
                 part: {{ part.id }},
             }
         });
+        {% endif %}
 
+        {% if part.component %}
         loadBuildOrderAllocationTable("#build-order-allocation-table", {
             params: {
                 part: {{ part.id }},
             }
         });
+        {% endif %}
     
     });
 
