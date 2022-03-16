@@ -1353,7 +1353,7 @@ class Part(MPTTModel):
                 line__order__status__in=SalesOrderStatus.OPEN,
                 shipment__shipment_date=None,
             )
-        
+
         return queryset
 
     def sales_order_allocation_count(self, **kwargs):
