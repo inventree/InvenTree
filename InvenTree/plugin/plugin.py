@@ -53,7 +53,7 @@ class InvenTreePluginBase():
         else:
             return self.plugin_name()
 
-    def plugin_config(self, raise_error=False):
+    def plugin_config(self):
         """
         Return the PluginConfig object associated with this plugin
         """
@@ -65,11 +65,8 @@ class InvenTreePluginBase():
                 key=self.plugin_slug(),
                 name=self.plugin_name(),
             )
-        except (OperationalError, ProgrammingError) as error:
+        except (OperationalError, ProgrammingError):
             cfg = None
-
-            if raise_error:
-                raise error
 
         return cfg
 
@@ -91,6 +88,6 @@ class InvenTreePlugin(InvenTreePluginBase):
     """
     This is here for leagcy reasons and will be removed in the next major release
     """
-    def __init__(self):
+    def __init__(self):  # pragma: no cover
         warnings.warn("Using the InvenTreePlugin is depreceated", DeprecationWarning)
         super().__init__()

@@ -6,7 +6,9 @@ from datetime import timedelta
 
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 
+from InvenTree.api_tester import InvenTreeAPITestCase
 from .models import InvenTreeSetting, WebhookEndpoint, WebhookMessage, NotificationEntry
 from .api import WebhookView
 
@@ -45,6 +47,67 @@ class SettingsTest(TestCase):
 
         # Check object lookup (case insensitive)
         self.assertEqual(InvenTreeSetting.get_setting_object('iNvEnTrEE_inSTanCE').pk, 1)
+
+    def test_settings_functions(self):
+        """
+        Test settings functions and properties
+        """
+        # define settings to check
+        instance_ref = 'INVENTREE_INSTANCE'
+        instance_obj = InvenTreeSetting.get_setting_object(instance_ref)
+
+        stale_ref = 'STOCK_STALE_DAYS'
+        stale_days = InvenTreeSetting.get_setting_object(stale_ref)
+
+        report_size_obj = InvenTreeSetting.get_setting_object('REPORT_DEFAULT_PAGE_SIZE')
+        report_test_obj = InvenTreeSetting.get_setting_object('REPORT_ENABLE_TEST_REPORT')
+
+        # check settings base fields
+        self.assertEqual(instance_obj.name, 'InvenTree Instance Name')
+        self.assertEqual(instance_obj.get_setting_name(instance_ref), 'InvenTree Instance Name')
+        self.assertEqual(instance_obj.description, 'String descriptor for the server instance')
+        self.assertEqual(instance_obj.get_setting_description(instance_ref), 'String descriptor for the server instance')
+
+        # check units
+        self.assertEqual(instance_obj.units, '')
+        self.assertEqual(instance_obj.get_setting_units(instance_ref), '')
+        self.assertEqual(instance_obj.get_setting_units(stale_ref), 'days')
+
+        # check as_choice
+        self.assertEqual(instance_obj.as_choice(), 'My very first InvenTree Instance')
+        self.assertEqual(report_size_obj.as_choice(), 'A4')
+
+        # check is_choice
+        self.assertEqual(instance_obj.is_choice(), False)
+        self.assertEqual(report_size_obj.is_choice(), True)
+
+        # check setting_type
+        self.assertEqual(instance_obj.setting_type(), 'string')
+        self.assertEqual(report_test_obj.setting_type(), 'boolean')
+        self.assertEqual(stale_days.setting_type(), 'integer')
+
+        # check as_int
+        self.assertEqual(stale_days.as_int(), 0)
+        self.assertEqual(instance_obj.as_int(), 'InvenTree server')  # not an int -> return default
+
+        # check as_bool
+        self.assertEqual(report_test_obj.as_bool(), True)
+
+        # check to_native_value
+        self.assertEqual(stale_days.to_native_value(), 0)
+
+    def test_allValues(self):
+        """
+        Make sure that the allValues functions returns correctly
+        """
+        # define testing settings
+
+        # check a few keys
+        result = InvenTreeSetting.allValues()
+        self.assertIn('INVENTREE_INSTANCE', result)
+        self.assertIn('PART_COPY_TESTS', result)
+        self.assertIn('STOCK_OWNERSHIP_CONTROL', result)
+        self.assertIn('SIGNUP_GROUP', result)
 
     def test_required_values(self):
         """
@@ -91,6 +154,14 @@ class SettingsTest(TestCase):
 
                 if setting.default_value not in [True, False]:
                     raise ValueError(f'Non-boolean default value specified for {key}')  # pragma: no cover
+
+
+class SettingsApiTest(InvenTreeAPITestCase):
+
+    def test_settings_api(self):
+        # test setting with choice
+        url = reverse('api-user-setting-list')
+        self.get(url, expected_code=200)
 
 
 class WebhookMessageTests(TestCase):
@@ -223,3 +294,26 @@ class NotificationTest(TestCase):
         self.assertFalse(NotificationEntry.check_recent('test.notification2', 1, delta))
 
         self.assertTrue(NotificationEntry.check_recent('test.notification', 1, delta))
+
+
+class LoadingTest(TestCase):
+    """
+    Tests for the common config
+    """
+
+    def test_restart_flag(self):
+        """
+        Test that the restart flag is reset on start
+        """
+
+        import common.models
+        from plugin import registry
+
+        # set flag true
+        common.models.InvenTreeSetting.set_setting('SERVER_RESTART_REQUIRED', False, None)
+
+        # reload the app
+        registry.reload_plugins()
+
+        # now it should be false again
+        self.assertFalse(common.models.InvenTreeSetting.get_setting('SERVER_RESTART_REQUIRED'))

@@ -278,4 +278,5 @@ class SupplierPriceBreakSerializer(InvenTreeModelSerializer):
             'quantity',
             'price',
             'price_currency',
+            'updated',
         ]

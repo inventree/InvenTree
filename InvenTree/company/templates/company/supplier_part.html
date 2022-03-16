@@ -268,6 +268,14 @@ $('#price-break-table').inventreeTable({
                 return html;
             }
         },
+        {
+            field: 'updated',
+            title: '{% trans "Last updated" %}',
+            sortable: true,
+            formatter: function(value) {
+                return renderDate(value);
+            }
+        },
     ]
 });
 

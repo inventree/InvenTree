@@ -3,14 +3,14 @@ Pull rendered copies of the templated
 only used for testing the js files! - This file is omited from coverage
 """
 
-from django.test import TestCase
-from django.contrib.auth import get_user_model
+from django.test import TestCase  # pragma: no cover
+from django.contrib.auth import get_user_model  # pragma: no cover
 
-import os
-import pathlib
+import os  # pragma: no cover
+import pathlib  # pragma: no cover
 
 
-class RenderJavascriptFiles(TestCase):
+class RenderJavascriptFiles(TestCase):  # pragma: no cover
     """
     A unit test to "render" javascript files.
 

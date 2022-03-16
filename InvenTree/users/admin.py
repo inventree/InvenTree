@@ -49,7 +49,7 @@ class InvenTreeGroupAdminForm(forms.ModelForm):
             'users',
         ]
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):  # pragma: no cover
         super().__init__(*args, **kwargs)
 
         if self.instance.pk:
@@ -65,12 +65,12 @@ class InvenTreeGroupAdminForm(forms.ModelForm):
         help_text=_('Select which users are assigned to this group')
     )
 
-    def save_m2m(self):
+    def save_m2m(self):  # pragma: no cover
         # Add the users to the Group.
 
         self.instance.user_set.set(self.cleaned_data['users'])
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs):  # pragma: no cover
         # Default save
         instance = super().save()
         # Save many-to-many data
@@ -78,7 +78,7 @@ class InvenTreeGroupAdminForm(forms.ModelForm):
         return instance
 
 
-class RoleGroupAdmin(admin.ModelAdmin):
+class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
     """
     Custom admin interface for the Group model
     """
