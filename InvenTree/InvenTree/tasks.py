@@ -68,7 +68,7 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
         import importlib
         from InvenTree.status import is_worker_running
 
-        if is_worker_running() and not force_sync:
+        if is_worker_running() and not force_sync:  # pragma: no cover
             # Running as asynchronous task
             try:
                 task = AsyncTask(taskname, *args, **kwargs)
@@ -94,13 +94,13 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
             # Retrieve function
             try:
                 _func = getattr(_mod, func)
-            except AttributeError:
+            except AttributeError:  # pragma: no cover
                 # getattr does not work for local import
                 _func = None
 
             try:
                 if not _func:
-                    _func = eval(func)
+                    _func = eval(func)  # pragma: no cover
             except NameError:
                 logger.warning(f"WARNING: '{taskname}' not started - No function named '{func}'")
                 return
@@ -248,7 +248,7 @@ def update_exchange_rates():
         # Apps not yet loaded!
         logger.info("Could not perform 'update_exchange_rates' - App registry not ready")
         return
-    except:
+    except:  # pragma: no cover
         # Other error?
         return
 
@@ -257,7 +257,7 @@ def update_exchange_rates():
         backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
     except ExchangeBackend.DoesNotExist:
         pass
-    except:
+    except:  # pragma: no cover
         # Some other error
         logger.warning("update_exchange_rates: Database not ready")
         return
@@ -274,7 +274,7 @@ def update_exchange_rates():
 
         # Remove any exchange rates which are not in the provided currencies
         Rate.objects.filter(backend="InvenTreeExchange").exclude(currency__in=currency_codes()).delete()
-    except Exception as e:
+    except Exception as e:  # pragma: no cover
         logger.error(f"Error updating exchange rates: {e}")
 
 

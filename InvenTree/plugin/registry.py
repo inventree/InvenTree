@@ -23,7 +23,7 @@ from django.utils.text import slugify
 
 try:
     from importlib import metadata
-except:
+except:  # pragma: no cover
     import importlib_metadata as metadata
     # TODO remove when python minimum is 3.8
 
@@ -86,7 +86,7 @@ class PluginsRegistry:
         """
         if not settings.PLUGINS_ENABLED:
             # Plugins not enabled, do nothing
-            return
+            return  # pragma: no cover
 
         logger.info('Start loading plugins')
 
@@ -122,7 +122,7 @@ class PluginsRegistry:
                 # We do not want to end in an endless loop
                 retry_counter -= 1
 
-                if retry_counter <= 0:
+                if retry_counter <= 0:  # pragma: no cover
                     if settings.PLUGIN_TESTING:
                         print('[PLUGIN] Max retries, breaking loading')
                     # TODO error for server status
@@ -145,14 +145,14 @@ class PluginsRegistry:
 
         if not settings.PLUGINS_ENABLED:
             # Plugins not enabled, do nothing
-            return
+            return  # pragma: no cover
 
         logger.info('Start unloading plugins')
 
         # Set maintanace mode
         _maintenance = bool(get_maintenance_mode())
         if not _maintenance:
-            set_maintenance_mode(True)
+            set_maintenance_mode(True)  # pragma: no cover
 
         # remove all plugins from registry
         self._clean_registry()
@@ -162,7 +162,7 @@ class PluginsRegistry:
 
         # remove maintenance
         if not _maintenance:
-            set_maintenance_mode(False)
+            set_maintenance_mode(False)  # pragma: no cover
         logger.info('Finished unloading plugins')
 
     def reload_plugins(self):
@@ -172,7 +172,7 @@ class PluginsRegistry:
 
         # Do not reload whe currently loading
         if self.is_loading:
-            return
+            return  # pragma: no cover
 
         logger.info('Start reloading plugins')
 
@@ -189,7 +189,7 @@ class PluginsRegistry:
 
         if not settings.PLUGINS_ENABLED:
             # Plugins not enabled, do nothing
-            return
+            return  # pragma: no cover
 
         self.plugin_modules = []  # clear
 
@@ -202,7 +202,7 @@ class PluginsRegistry:
         # Check if not running in testing mode and apps should be loaded from hooks
         if (not settings.PLUGIN_TESTING) or (settings.PLUGIN_TESTING and settings.PLUGIN_TESTING_SETUP):
             # Collect plugins from setup entry points
-            for entry in metadata.entry_points().get('inventree_plugins', []):
+            for entry in metadata.entry_points().get('inventree_plugins', []):  # pragma: no cover
                 try:
                     plugin = entry.load()
                     plugin.is_package = True
@@ -280,7 +280,7 @@ class PluginsRegistry:
             except (OperationalError, ProgrammingError) as error:
                 # Exception if the database has not been migrated yet - check if test are running - raise if not
                 if not settings.PLUGIN_TESTING:
-                    raise error
+                    raise error  # pragma: no cover
                 plugin_db_setting = None
 
             # Always activate if testing
@@ -290,7 +290,7 @@ class PluginsRegistry:
                     # option1: package, option2: file-based
                     if (plugin.__name__ == disabled) or (plugin.__module__ == disabled):
                         # Errors are bad so disable the plugin in the database
-                        if not settings.PLUGIN_TESTING:
+                        if not settings.PLUGIN_TESTING:  # pragma: no cover
                             plugin_db_setting.active = False
                             # TODO save the error to the plugin
                             plugin_db_setting.save(no_reload=True)
@@ -468,7 +468,7 @@ class PluginsRegistry:
             try:
                 app_name = plugin_path.split('.')[-1]
                 app_config = apps.get_app_config(app_name)
-            except LookupError:
+            except LookupError:  # pragma: no cover
                 # the plugin was never loaded correctly
                 logger.debug(f'{app_name} App was not found during deregistering')
                 break
@@ -522,7 +522,7 @@ class PluginsRegistry:
                     # remove model from admin site
                     admin.site.unregister(model)
                     models += [model._meta.model_name]
-            except LookupError:
+            except LookupError:  # pragma: no cover
                 # if an error occurs the app was never loaded right -> so nothing to do anymore
                 logger.debug(f'{app_name} App was not found during deregistering')
                 break
@@ -595,7 +595,7 @@ class PluginsRegistry:
         try:
             cmd(*args, **kwargs)
             return True, []
-        except Exception as error:
+        except Exception as error:  # pragma: no cover
             handle_error(error)
     # endregion
 

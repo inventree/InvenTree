@@ -47,7 +47,7 @@ class InvenTreeBarcodePlugin(BarcodePlugin):
             except json.JSONDecodeError:
                 return False
         else:
-            return False
+            return False  # pragma: no cover
 
         # If any of the following keys are in the JSON data,
         # let's go ahead and assume that the code is a valid InvenTree one...
@@ -70,10 +70,10 @@ class InvenTreeBarcodePlugin(BarcodePlugin):
                 # Initially try casting to an integer
                 try:
                     pk = int(data)
-                except (TypeError, ValueError):
+                except (TypeError, ValueError):  # pragma: no cover
                     pk = None
 
-                if pk is None:
+                if pk is None:  # pragma: no cover
                     try:
                         pk = self.data[k]['id']
                     except (AttributeError, KeyError):
@@ -82,7 +82,7 @@ class InvenTreeBarcodePlugin(BarcodePlugin):
                 try:
                     item = StockItem.objects.get(pk=pk)
                     return item
-                except (ValueError, StockItem.DoesNotExist):
+                except (ValueError, StockItem.DoesNotExist):  # pragma: no cover
                     raise ValidationError({k, "Stock item does not exist"})
 
         return None
@@ -97,10 +97,10 @@ class InvenTreeBarcodePlugin(BarcodePlugin):
                 # First try simple integer lookup
                 try:
                     pk = int(self.data[k])
-                except (TypeError, ValueError):
+                except (TypeError, ValueError):  # pragma: no cover
                     pk = None
 
-                if pk is None:
+                if pk is None:  # pragma: no cover
                     # Lookup by 'id' field
                     try:
                         pk = self.data[k]['id']
@@ -110,7 +110,7 @@ class InvenTreeBarcodePlugin(BarcodePlugin):
                 try:
                     loc = StockLocation.objects.get(pk=pk)
                     return loc
-                except (ValueError, StockLocation.DoesNotExist):
+                except (ValueError, StockLocation.DoesNotExist):  # pragma: no cover
                     raise ValidationError({k, "Stock location does not exist"})
 
         return None
@@ -125,10 +125,10 @@ class InvenTreeBarcodePlugin(BarcodePlugin):
                 # Try integer lookup first
                 try:
                     pk = int(self.data[k])
-                except (TypeError, ValueError):
+                except (TypeError, ValueError):  # pragma: no cover
                     pk = None
 
-                if pk is None:
+                if pk is None:  # pragma: no cover
                     try:
                         pk = self.data[k]['id']
                     except (AttributeError, KeyError):
@@ -137,7 +137,7 @@ class InvenTreeBarcodePlugin(BarcodePlugin):
                 try:
                     part = Part.objects.get(pk=pk)
                     return part
-                except (ValueError, Part.DoesNotExist):
+                except (ValueError, Part.DoesNotExist):  # pragma: no cover
                     raise ValidationError({k, 'Part does not exist'})
 
         return None
