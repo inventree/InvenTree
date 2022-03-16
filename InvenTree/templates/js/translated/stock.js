@@ -2353,6 +2353,10 @@ function loadStockAllocationTable(table, options={}) {
             query_params.customer_detail = true;
             query_params.order_detail = true;
 
+            // Note: SalesOrderAllocations do not get deleted,
+            // so we must filter by "outstanding" status
+            query_params.outstanding = true;
+
             delete query_params.build_detail;
 
             // Load sales order allocation data
