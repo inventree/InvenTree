@@ -341,6 +341,15 @@ function getAvailableTableFilters(tableKey) {
         };
     }
 
+    if (tableKey == 'salesorderallocation') {
+        return {
+            outstanding: {
+                type: 'bool',
+                title: '{% trans "Outstanding" %}',
+            }
+        };
+    }
+
     if (tableKey == 'salesorder') {
         return {
             status: {
