@@ -1353,6 +1353,12 @@ class Part(MPTTModel):
                 line__order__status__in=SalesOrderStatus.OPEN,
                 shipment__shipment_date=None,
             )
+        elif pending is False:
+            # Look only for 'closed' orders or orders which have shipped
+            queryset = queryset.exclude(
+                line__order__status__in=SalesOrderStatus.OPEN,
+                shipment__shipment_date=None,
+            )
 
         return queryset
 
