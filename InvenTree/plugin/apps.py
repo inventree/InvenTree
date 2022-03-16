@@ -30,11 +30,13 @@ class PluginAppConfig(AppConfig):
 
                 if not registry.is_loading:
                     # this is the first startup
-                    from common.models import InvenTreeSetting
-
-                    if InvenTreeSetting.get_setting('PLUGIN_ON_STARTUP'):
-                        # make sure all plugins are installed
-                        registry.install_plugin_file()
+                    try:
+                        from common.models import InvenTreeSetting
+                        if InvenTreeSetting.get_setting('PLUGIN_ON_STARTUP'):
+                            # make sure all plugins are installed
+                            registry.install_plugin_file()
+                    except:
+                        pass
 
                     # get plugins and init them
                     registry.collect_plugins()
