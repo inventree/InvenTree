@@ -28,7 +28,7 @@ class InvenTreeConfig(AppConfig):
 
             self.start_background_tasks()
 
-            if not isInTestMode():
+            if not isInTestMode():  # pragma: no cover
                 self.update_exchange_rates()
 
         if canAppAccessDatabase() or settings.TESTING_ENV:
@@ -98,7 +98,7 @@ class InvenTreeConfig(AppConfig):
             schedule_type=Schedule.DAILY,
         )
 
-    def update_exchange_rates(self):
+    def update_exchange_rates(self):  # pragma: no cover
         """
         Update exchange rates each time the server is started, *if*:
 
