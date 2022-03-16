@@ -893,8 +893,10 @@ class SOAllocationList(generics.ListAPIView):
                     shipment__shipment_date=None,
                 )
             else:
-                queryset = queryset.exclude(line__order__status__in=SalesOrderStatus.OPEN)
-                queryset = queryset.exclude(shipment__shipment_date=None)
+                queryset = queryset.exclude(
+                    line__order__status__in=SalesOrderStatus.OPEN,
+                    shipment__shipment_date=None
+                )
 
         return queryset
 
