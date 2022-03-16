@@ -17,6 +17,7 @@ from . import helpers
 from . import version
 from . import status
 from . import ready
+from . import config
 
 from decimal import Decimal
 
@@ -24,6 +25,7 @@ import InvenTree.tasks
 
 from stock.models import StockLocation
 from common.settings import currency_codes
+from common.models import InvenTreeSetting
 
 
 class ValidatorTest(TestCase):
@@ -453,3 +455,55 @@ class TestSettings(TestCase):
 
         # make sure to clean up
         settings.TESTING_ENV = False
+
+    def test_helpers_cfg_file(self):
+        # normal run - not configured
+        self.assertIn('InvenTree/InvenTree/config.yaml', config.get_config_file())
+
+        # with env set
+        with self.env:
+            self.env.set('INVENTREE_CONFIG_FILE', 'my_special_conf.yaml')
+            self.assertIn('InvenTree/InvenTree/my_special_conf.yaml', config.get_config_file())
+
+    def test_helpers_plugin_file(self):
+        # normal run - not configured
+        self.assertIn('InvenTree/InvenTree/plugins.txt', config.get_plugin_file())
+
+        # with env set
+        with self.env:
+            self.env.set('INVENTREE_PLUGIN_FILE', 'my_special_plugins.txt')
+            self.assertIn('my_special_plugins.txt', config.get_plugin_file())
+
+    def test_helpers_setting(self):
+        TEST_ENV_NAME = '123TEST'
+        # check that default gets returned if not present
+        self.assertEqual(config.get_setting(TEST_ENV_NAME, None, '123!'), '123!')
+
+        # with env set
+        with self.env:
+            self.env.set(TEST_ENV_NAME, '321')
+            self.assertEqual(config.get_setting(TEST_ENV_NAME, None), '321')
+
+
+class TestInstanceName(TestCase):
+    """
+    Unit tests for instance name
+    """
+
+    def setUp(self):
+        # Create a user for auth
+        user = get_user_model()
+        self.user = user.objects.create_superuser('testuser', 'test@testing.com', 'password')
+
+        self.client.login(username='testuser', password='password')
+
+    def test_instance_name(self):
+
+        # default setting
+        self.assertEqual(version.inventreeInstanceTitle(), 'InvenTree')
+
+        # set up required setting
+        InvenTreeSetting.set_setting("INVENTREE_INSTANCE_TITLE", True, self.user)
+        InvenTreeSetting.set_setting("INVENTREE_INSTANCE", "Testing title", self.user)
+
+        self.assertEqual(version.inventreeInstanceTitle(), 'Testing title')

@@ -100,7 +100,7 @@ class RoleDetails(APIView):
             if len(permissions) > 0:
                 roles[role] = permissions
             else:
-                roles[role] = None
+                roles[role] = None  # pragma: no cover
 
         data = {
             'user': user.pk,
