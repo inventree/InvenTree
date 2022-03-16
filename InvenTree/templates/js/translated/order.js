@@ -2048,15 +2048,7 @@ function loadSalesOrderAllocationTable(table, options={}) {
                 field: 'location',
                 title: '{% trans "Location" %}',
                 formatter: function(value, row) {
-
-                    if (!value) {
-                        return '{% trans "Location not specified" %}';
-                    }
-                    
-                    var link = `/stock/location/${value}`;
-                    var text = row.location_detail.description;
-
-                    return renderLink(text, link);
+                    return locationDetail(row.item_detail, true);
                 }
             },
             {
