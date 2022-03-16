@@ -1034,7 +1034,7 @@ order_api_urls = [
         url(r'^.*$', POLineItemList.as_view(), name='api-po-line-list'),
     ])),
 
-    # API endpoints for sales ordesr
+    # API endpoints for sales orders
     url(r'^so/', include([
         url(r'attachment/', include([
             url(r'^(?P<pk>\d+)/$', SOAttachmentDetail.as_view(), name='api-so-attachment-detail'),
