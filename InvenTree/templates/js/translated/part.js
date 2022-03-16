@@ -2028,6 +2028,22 @@ function loadPartSchedulingChart(canvas_id, part_id) {
         }
     );
 
+    // If no scheduling information is available for the part,
+    // remove the chart and display a message instead
+    if (stock_schedule.length <= 1) {
+
+        var message = `
+        <div class='alert alert-block alert-info'>
+            {% trans "No scheduling information available for this part" %}.<br>
+        </div>`;
+
+        var canvas_element = $('#part-schedule-chart');
+
+        canvas_element.closest('div').html(message);
+
+        return;
+    }
+
     // Iterate through future "events" to calculate expected quantity
 
     var quantity = part_info.in_stock;
