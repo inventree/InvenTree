@@ -18,12 +18,12 @@ def currency_code_default():
 
     try:
         code = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
-    except ProgrammingError:
+    except ProgrammingError:  # pragma: no cover
         # database is not initialized yet
         code = ''
 
     if code not in CURRENCIES:
-        code = 'USD'
+        code = 'USD'  # pragma: no cover
 
     return code
 
