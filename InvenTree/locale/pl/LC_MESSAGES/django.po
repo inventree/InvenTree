@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-15 12:07+0000\n"
+"POT-Creation-Date: 2022-03-16 22:10+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
@@ -721,7 +721,7 @@ msgid "BuildOrder to which this build is allocated"
 msgstr "Zamówienie budowy, do którego budowa jest przypisana"
 
 #: build/models.py:227 build/templates/build/build_base.html:77
-#: build/templates/build/detail.html:30 company/models.py:705
+#: build/templates/build/detail.html:30 company/models.py:706
 #: order/models.py:912 order/models.py:986
 #: order/templates/order/order_wizard/select_parts.html:32 part/models.py:367
 #: part/models.py:2271 part/models.py:2287 part/models.py:2306
@@ -984,8 +984,8 @@ msgstr "Lokalizacja magazynowania przedmiotu"
 #: templates/js/translated/order.js:1783 templates/js/translated/order.js:2064
 #: templates/js/translated/order.js:2152 templates/js/translated/order.js:2241
 #: templates/js/translated/order.js:2355 templates/js/translated/part.js:908
-#: templates/js/translated/part.js:1886 templates/js/translated/part.js:2092
-#: templates/js/translated/part.js:2126 templates/js/translated/part.js:2204
+#: templates/js/translated/part.js:1886 templates/js/translated/part.js:2108
+#: templates/js/translated/part.js:2142 templates/js/translated/part.js:2220
 #: templates/js/translated/stock.js:400 templates/js/translated/stock.js:554
 #: templates/js/translated/stock.js:724 templates/js/translated/stock.js:2768
 #: templates/js/translated/stock.js:2870
@@ -2741,6 +2741,12 @@ msgstr "wielokrotność"
 msgid "Order multiple"
 msgstr ""
 
+#: company/models.py:708
+#, fuzzy
+#| msgid "Last Updated"
+msgid "last updated"
+msgstr "Ostatnia aktualizacja"
+
 #: company/serializers.py:70
 msgid "Default currency used for this supplier"
 msgstr ""
@@ -3092,7 +3098,7 @@ msgid "Pricing Information"
 msgstr "Informacja cenowa"
 
 #: company/templates/company/supplier_part.html:184
-#: company/templates/company/supplier_part.html:290
+#: company/templates/company/supplier_part.html:298
 #: part/templates/part/prices.html:271 part/views.py:1254
 msgid "Add Price Break"
 msgstr ""
@@ -3116,6 +3122,12 @@ msgstr "Edytuj przedział cenowy"
 #: company/templates/company/supplier_part.html:264
 msgid "Delete price break"
 msgstr ""
+
+#: company/templates/company/supplier_part.html:273
+#, fuzzy
+#| msgid "Last Updated"
+msgid "Last updated"
+msgstr "Ostatnia aktualizacja"
 
 #: company/templates/company/supplier_part_navbar.html:15
 #: part/templates/part/part_sidebar.html:15
@@ -8859,7 +8871,7 @@ msgid "Total"
 msgstr ""
 
 #: templates/js/translated/order.js:1241 templates/js/translated/order.js:2368
-#: templates/js/translated/part.js:1865 templates/js/translated/part.js:2193
+#: templates/js/translated/part.js:1865 templates/js/translated/part.js:2209
 msgid "Unit Price"
 msgstr "Cena jednostkowa"
 
@@ -9251,17 +9263,21 @@ msgstr ""
 msgid "Current Stock"
 msgstr "Zapasy części"
 
-#: templates/js/translated/part.js:2047
+#: templates/js/translated/part.js:2037
+msgid "No scheduling information available for this part"
+msgstr ""
+
+#: templates/js/translated/part.js:2063
 #, fuzzy
 #| msgid "Stock Quantity"
 msgid "Scheduled Stock Quantities"
 msgstr "Ilość w magazynie"
 
-#: templates/js/translated/part.js:2117
+#: templates/js/translated/part.js:2133
 msgid "Single Price"
 msgstr "Cena jednostkowa"
 
-#: templates/js/translated/part.js:2136
+#: templates/js/translated/part.js:2152
 msgid "Single Price Difference"
 msgstr ""
 
