@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-16 22:11+0000\n"
-"PO-Revision-Date: 2022-03-16 22:14\n"
+"PO-Revision-Date: 2022-03-17 22:16\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -2668,7 +2668,7 @@ msgstr "Többszörös rendelés"
 
 #: company/models.py:708
 msgid "last updated"
-msgstr ""
+msgstr "utoljára módosítva"
 
 #: company/serializers.py:70
 msgid "Default currency used for this supplier"
@@ -3044,7 +3044,7 @@ msgstr "Árlépcső törlése"
 
 #: company/templates/company/supplier_part.html:273
 msgid "Last updated"
-msgstr ""
+msgstr "Utoljára módosítva"
 
 #: company/templates/company/supplier_part_navbar.html:15
 #: part/templates/part/part_sidebar.html:15
@@ -5051,17 +5051,17 @@ msgstr "Gyártáshoz szükséges"
 
 #: part/templates/part/part_base.html:216
 msgid "Allocated to Build Orders"
-msgstr ""
+msgstr "Gyártáshoz lefoglalva"
 
 #: part/templates/part/part_base.html:220
 #: part/templates/part/part_base.html:243
 msgid "Required quantity has not been allocated"
-msgstr ""
+msgstr "A szükséges mennyiség nem lett lefoglalva"
 
 #: part/templates/part/part_base.html:222
 #: part/templates/part/part_base.html:245
 msgid "Required quantity has been allocated"
-msgstr ""
+msgstr "A szükséges mennyiség lefoglalva"
 
 #: part/templates/part/part_base.html:232
 msgid "Required for Sales Orders"
@@ -5069,7 +5069,7 @@ msgstr "Vevői rendelésekhez szükséges"
 
 #: part/templates/part/part_base.html:239
 msgid "Allocated to Sales Orders"
-msgstr ""
+msgstr "Vevő rendeléshez lefoglalva"
 
 #: part/templates/part/part_base.html:255 templates/js/translated/bom.js:901
 msgid "Can Build"
@@ -8935,7 +8935,7 @@ msgstr "Aktuális készlet"
 
 #: templates/js/translated/part.js:2037
 msgid "No scheduling information available for this part"
-msgstr ""
+msgstr "Az alkatrészhez nem áll rendelkezésre ütemezési információ"
 
 #: templates/js/translated/part.js:2063
 msgid "Scheduled Stock Quantities"
