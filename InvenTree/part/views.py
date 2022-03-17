@@ -443,7 +443,7 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
                 if stock_item.purchase_order and stock_item.purchase_order.issue_date:
                     line['date'] = stock_item.purchase_order.issue_date.isoformat()
                 elif stock_item.tracking_info.count() > 0:
-                    line['date'] = stock_item.tracking_info.first().date.isoformat()
+                    line['date'] = stock_item.tracking_info.first().date.date().isoformat()
                 else:
                     # Not enough information
                     continue
