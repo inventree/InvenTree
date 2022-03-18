@@ -223,13 +223,15 @@
 {{ block.super }}
 
     {% if category %}
-    loadParametricPartTable(
-        "#parametric-part-table",
-        { 
-            headers: {{ headers|safe }},
-            data: {{ parameters|safe }},
-        }
-    );
+    onPanelLoad('parameters', function() {
+        loadParametricPartTable(
+            "#parametric-part-table",
+            { 
+                headers: {{ headers|safe }},
+                data: {{ parameters|safe }},
+            }
+        );
+    });
 
     $("#toggle-starred").click(function() {
         toggleStar({
