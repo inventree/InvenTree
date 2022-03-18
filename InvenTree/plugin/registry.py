@@ -258,6 +258,8 @@ class PluginsRegistry:
                 # Exception if the database has not been migrated yet - check if test are running - raise if not
                 if not settings.PLUGIN_TESTING:
                     raise error  # pragma: no cover
+                else:
+                    print('[PLUGIN-load] can not create config')
                 plugin_db_setting = None
 
             # Always activate if testing
