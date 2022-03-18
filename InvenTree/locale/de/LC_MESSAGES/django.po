@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-16 22:11+0000\n"
-"PO-Revision-Date: 2022-03-16 22:14\n"
+"PO-Revision-Date: 2022-03-18 00:00\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1138,19 +1138,19 @@ msgstr "Zuweisungen müssen angegeben werden"
 
 #: build/serializers.py:731
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
-msgstr ""
+msgstr "Lagerort, von dem Teile bezogen werden sollen (leer lassen, um sie von jedem Lagerort zu nehmen)"
 
 #: build/serializers.py:739
 msgid "Exclude Location"
-msgstr ""
+msgstr "Lagerort ausschließen"
 
 #: build/serializers.py:740
 msgid "Exclude stock items from this selected location"
-msgstr ""
+msgstr "Lagerartikel vom ausgewählten Ort ausschließen"
 
 #: build/serializers.py:745
 msgid "Interchangeable Stock"
-msgstr ""
+msgstr "Wechselbares Lagerbestand"
 
 #: build/serializers.py:746
 msgid "Stock items in multiple locations can be used interchangeably"
@@ -1158,11 +1158,11 @@ msgstr ""
 
 #: build/serializers.py:751
 msgid "Substitute Stock"
-msgstr ""
+msgstr "Lagerartikel auswechseln"
 
 #: build/serializers.py:752
 msgid "Allow allocation of substitute parts"
-msgstr ""
+msgstr "Zuordnung von Ersatzteilen erlauben"
 
 #: build/tasks.py:98
 msgid "Stock required for build order"
@@ -1360,15 +1360,15 @@ msgstr "Bestandszuordnung aufheben"
 
 #: build/templates/build/detail.html:180
 msgid "Automatically allocate stock to build"
-msgstr ""
+msgstr "Lagerartikel automatisch zuweisen"
 
 #: build/templates/build/detail.html:181
 msgid "Auto Allocate"
-msgstr ""
+msgstr "Automatisch zuweisen"
 
 #: build/templates/build/detail.html:183
 msgid "Manually allocate stock to build"
-msgstr ""
+msgstr "Lagerartikel manuell dem Bauauftrag zuweisen"
 
 #: build/templates/build/detail.html:184 build/templates/build/sidebar.html:8
 msgid "Allocate Stock"
@@ -1497,7 +1497,7 @@ msgstr "Bauauftragdetails"
 
 #: build/templates/build/sidebar.html:15
 msgid "Completed Outputs"
-msgstr ""
+msgstr "Fertiggestellte Endprodukte"
 
 #: build/views.py:73
 msgid "Build was cancelled"
@@ -2273,11 +2273,11 @@ msgstr "Bevorzugtes Format für die Anzeige von Daten"
 
 #: common/models.py:1263 part/templates/part/detail.html:40
 msgid "Part Scheduling"
-msgstr ""
+msgstr "Teilzeitplanung"
 
 #: common/models.py:1264
 msgid "Display part scheduling information"
-msgstr ""
+msgstr "Zeige Zeitplanung für Teile"
 
 #: common/models.py:1329 company/forms.py:43
 msgid "Price break quantity"
@@ -2668,7 +2668,7 @@ msgstr "Mehrere bestellen"
 
 #: company/models.py:708
 msgid "last updated"
-msgstr ""
+msgstr "Letzte Aktualisierung"
 
 #: company/serializers.py:70
 msgid "Default currency used for this supplier"
@@ -3044,7 +3044,7 @@ msgstr "Preisstaffel löschen"
 
 #: company/templates/company/supplier_part.html:273
 msgid "Last updated"
-msgstr ""
+msgstr "Zuletzt aktualisiert"
 
 #: company/templates/company/supplier_part_navbar.html:15
 #: part/templates/part/part_sidebar.html:15
@@ -3957,15 +3957,15 @@ msgstr ""
 
 #: part/api.py:511
 msgid "Outgoing Sales Order"
-msgstr ""
+msgstr "Ausgehender Auftrag"
 
 #: part/api.py:529
 msgid "Stock produced by Build Order"
-msgstr ""
+msgstr "Lagerartikel produziert von Bauauftrag"
 
 #: part/api.py:561
 msgid "Stock required for Build Order"
-msgstr ""
+msgstr "Lagerartikel für Bauauftrag benötigt"
 
 #: part/api.py:641
 msgid "Valid"
@@ -4680,35 +4680,35 @@ msgstr "Teil erfolgreich angelegt"
 
 #: part/templates/part/category_delete.html:7
 msgid "Are you sure you want to delete this part category?"
-msgstr ""
+msgstr "Möchten Sie diese Kategorie wirklich löschen?"
 
 #: part/templates/part/category_delete.html:12
 #, python-format
 msgid "This category contains %(n)s child categories"
-msgstr ""
+msgstr "Diese Kategorie enthält %(n)s Unter-Kategorien"
 
 #: part/templates/part/category_delete.html:14
 #, python-format
 msgid "If this category is deleted, these child categories will be moved to %(category)s"
-msgstr ""
+msgstr "Wenn diese Kat. gelöscht wird, werden diese Unter-Kat. nach %(category)s verschoben"
 
 #: part/templates/part/category_delete.html:16
 msgid "If this category is deleted, these child categories will be moved to the top level part category"
-msgstr ""
+msgstr "Wenn diese Kat. gelöscht wird, werden die Unter-Kat. in die übergeordnete Kat. verschoben"
 
 #: part/templates/part/category_delete.html:23
 #, python-format
 msgid "This category contains %(n)s parts"
-msgstr ""
+msgstr "Diese Kategorie enthält %(n)s Teile"
 
 #: part/templates/part/category_delete.html:25
 #, python-format
 msgid "If this category is deleted, these parts will be moved to %(category)s"
-msgstr ""
+msgstr "Wenn diese Kat. gelöscht wird, werden diese Teile nach %(category)s verschoben"
 
 #: part/templates/part/category_delete.html:27
 msgid "If this category is deleted, these parts will be moved to the top level part category"
-msgstr ""
+msgstr "Wenn diese Kat. gelöscht wird, werden diese Teile in die übergeordnete Kat. verschoben"
 
 #: part/templates/part/category_sidebar.html:13
 msgid "Import Parts"
@@ -5051,17 +5051,17 @@ msgstr "Für Bauaufträge benötigt"
 
 #: part/templates/part/part_base.html:216
 msgid "Allocated to Build Orders"
-msgstr ""
+msgstr "Zu Bauaufträgen zugeordnet"
 
 #: part/templates/part/part_base.html:220
 #: part/templates/part/part_base.html:243
 msgid "Required quantity has not been allocated"
-msgstr ""
+msgstr "Benötigte Menge wurde nicht zugewiesen"
 
 #: part/templates/part/part_base.html:222
 #: part/templates/part/part_base.html:245
 msgid "Required quantity has been allocated"
-msgstr ""
+msgstr "Erforderliche Menge wurde zugewiesen"
 
 #: part/templates/part/part_base.html:232
 msgid "Required for Sales Orders"
@@ -5069,7 +5069,7 @@ msgstr "Benötigt für Aufträge"
 
 #: part/templates/part/part_base.html:239
 msgid "Allocated to Sales Orders"
-msgstr ""
+msgstr "Zur Bestellung zugeordnet"
 
 #: part/templates/part/part_base.html:255 templates/js/translated/bom.js:901
 msgid "Can Build"
@@ -5172,7 +5172,7 @@ msgstr "Benutzt in"
 
 #: part/templates/part/part_sidebar.html:47
 msgid "Scheduling"
-msgstr ""
+msgstr "Zeitplan"
 
 #: part/templates/part/part_sidebar.html:51
 msgid "Test Templates"
@@ -6403,7 +6403,7 @@ msgstr "Sind Sie sicher, dass Sie diesen Lagerort löschen wollen?"
 #: stock/templates/stock/location_delete.html:13
 #, python-format
 msgid "This location contains %(n)s child locations"
-msgstr ""
+msgstr "Dieser Ort enthält %(n)s untergeordnete Orte"
 
 #: stock/templates/stock/location_delete.html:15
 #, python-format
@@ -6417,7 +6417,7 @@ msgstr ""
 #: stock/templates/stock/location_delete.html:25
 #, python-format
 msgid "This location contains %(n)s stock items"
-msgstr ""
+msgstr "Dieser Lagerort enthält %(n)s Lagerartikel"
 
 #: stock/templates/stock/location_delete.html:27
 #, python-format
@@ -8019,7 +8019,7 @@ msgstr "Zugeordnet"
 
 #: templates/js/translated/build.js:1443
 msgid "loading"
-msgstr ""
+msgstr "lädt"
 
 #: templates/js/translated/build.js:1487 templates/js/translated/order.js:2526
 msgid "Build stock"
@@ -8048,11 +8048,11 @@ msgstr "Anzahl für Bestandszuordnung eingeben"
 
 #: templates/js/translated/build.js:1654
 msgid "All Parts Allocated"
-msgstr ""
+msgstr "Alle Teile zugeordnet"
 
 #: templates/js/translated/build.js:1655
 msgid "All selected parts have been fully allocated"
-msgstr ""
+msgstr "Alle ausgewählten Teile wurden vollständig zugeordnet"
 
 #: templates/js/translated/build.js:1669 templates/js/translated/order.js:1770
 msgid "Select source location (leave blank to take from all locations)"
@@ -8076,7 +8076,7 @@ msgstr "Keine passenden Lagerbestände"
 
 #: templates/js/translated/build.js:1879
 msgid "Automatic Stock Allocation"
-msgstr ""
+msgstr "Automatische Lagerzuordnung"
 
 #: templates/js/translated/build.js:1880
 msgid "Stock items will be automatically allocated to this build order, according to the provided guidelines"
@@ -8096,7 +8096,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:1905
 msgid "Allocate Stock Items"
-msgstr ""
+msgstr "Lagerartikel zuordnen"
 
 #: templates/js/translated/build.js:1943
 msgid "No builds matching query"
@@ -8933,15 +8933,15 @@ msgstr "${human_name} löschen"
 
 #: templates/js/translated/part.js:2004
 msgid "Current Stock"
-msgstr ""
+msgstr "Aktueller Lagerbestand"
 
 #: templates/js/translated/part.js:2037
 msgid "No scheduling information available for this part"
-msgstr ""
+msgstr "Keine Zeitplanung für dieses Teil vorhanden"
 
 #: templates/js/translated/part.js:2063
 msgid "Scheduled Stock Quantities"
-msgstr ""
+msgstr "Geplante Lagermengen"
 
 #: templates/js/translated/part.js:2133
 msgid "Single Price"
@@ -9051,7 +9051,7 @@ msgstr "Seriennummern für neue Lagerartikel eingeben (oder leer lassen)"
 
 #: templates/js/translated/stock.js:300
 msgid "Stock item duplicated"
-msgstr ""
+msgstr "Lagerartikel dupliziert"
 
 #: templates/js/translated/stock.js:390
 msgid "Created new stock item"
