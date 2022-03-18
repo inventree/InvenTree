@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-16 22:11+0000\n"
-"PO-Revision-Date: 2022-03-16 22:14\n"
+"PO-Revision-Date: 2022-03-18 22:46\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -83,7 +83,7 @@ msgstr "Należy ponownie wpisać ten sam adres e-mail."
 #: InvenTree/helpers.py:442
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
-msgstr ""
+msgstr "Powtórzony numer seryjny: {sn}"
 
 #: InvenTree/helpers.py:449 order/models.py:282 order/models.py:435
 #: stock/views.py:983
@@ -250,11 +250,11 @@ msgstr "Nazwa pliku"
 
 #: InvenTree/serializers.py:334
 msgid "Invalid value"
-msgstr ""
+msgstr "Nieprawidłowa wartość"
 
 #: InvenTree/serializers.py:355
 msgid "Data File"
-msgstr ""
+msgstr "Plik danych"
 
 #: InvenTree/serializers.py:356
 msgid "Select data file for upload"
@@ -266,7 +266,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:386
 msgid "File is too large"
-msgstr ""
+msgstr "Plik jest zbyt duży"
 
 #: InvenTree/serializers.py:407
 msgid "No columns found in file"
@@ -324,7 +324,7 @@ msgstr "Hebrajski"
 
 #: InvenTree/settings.py:672
 msgid "Hungarian"
-msgstr ""
+msgstr "Węgierski"
 
 #: InvenTree/settings.py:673
 msgid "Italian"
@@ -455,7 +455,7 @@ msgstr "Utworzono element magazynowy"
 
 #: InvenTree/status_codes.py:277
 msgid "Edited stock item"
-msgstr ""
+msgstr "Edytuj pozycję magazynową"
 
 #: InvenTree/status_codes.py:278
 msgid "Assigned serial number"
@@ -1461,7 +1461,7 @@ msgstr "Notatki tworzenia"
 #: part/templates/part/detail.html:143 stock/templates/stock/item.html:142
 #: stock/templates/stock/item.html:247
 msgid "Edit Notes"
-msgstr ""
+msgstr "Edytuj Notatki"
 
 #: build/templates/build/detail.html:526
 msgid "Allocation Complete"
@@ -1529,7 +1529,7 @@ msgstr ""
 
 #: common/forms.py:34
 msgid "File"
-msgstr ""
+msgstr "Plik"
 
 #: common/forms.py:35
 msgid "Select file to upload"
@@ -1570,11 +1570,11 @@ msgstr ""
 
 #: common/models.py:592
 msgid "No group"
-msgstr ""
+msgstr "Brak grupy"
 
 #: common/models.py:634
 msgid "Restart required"
-msgstr ""
+msgstr "Wymagane ponowne uruchomienie"
 
 #: common/models.py:635
 msgid "A setting has been changed which requires a server restart"
@@ -1602,7 +1602,7 @@ msgstr "Nazwa firmy"
 
 #: common/models.py:656
 msgid "Internal company name"
-msgstr ""
+msgstr "Wewnętrzna nazwa firmy"
 
 #: common/models.py:661
 msgid "Base URL"
@@ -1614,11 +1614,11 @@ msgstr "Bazowy adres URL dla instancji serwera"
 
 #: common/models.py:668
 msgid "Default Currency"
-msgstr ""
+msgstr "Domyślna waluta"
 
 #: common/models.py:669
 msgid "Default currency"
-msgstr ""
+msgstr "Domyślna waluta"
 
 #: common/models.py:675
 msgid "Download from URL"
@@ -1809,7 +1809,7 @@ msgstr ""
 
 #: common/models.py:837
 msgid "Internal Prices"
-msgstr ""
+msgstr "Ceny wewnętrzne"
 
 #: common/models.py:838
 msgid "Enable internal prices for parts"
@@ -1833,7 +1833,7 @@ msgstr ""
 
 #: common/models.py:859
 msgid "Enable Reports"
-msgstr ""
+msgstr "Włącz raporty"
 
 #: common/models.py:860
 msgid "Enable generation of reports"
@@ -1941,31 +1941,31 @@ msgstr ""
 
 #: common/models.py:951
 msgid "Enable password forgot"
-msgstr ""
+msgstr "Włącz opcję zapomnianego hasła"
 
 #: common/models.py:952
 msgid "Enable password forgot function on the login pages"
-msgstr ""
+msgstr "Włącz funkcję zapomnianego hasła na stronach logowania"
 
 #: common/models.py:957
 msgid "Enable registration"
-msgstr ""
+msgstr "Włącz rejestrację"
 
 #: common/models.py:958
 msgid "Enable self-registration for users on the login pages"
-msgstr ""
+msgstr "Włącz samodzielną rejestrację dla użytkowników na stronach logowania"
 
 #: common/models.py:963
 msgid "Enable SSO"
-msgstr ""
+msgstr "Włącz SSO"
 
 #: common/models.py:964
 msgid "Enable SSO on the login pages"
-msgstr ""
+msgstr "Włącz SSO na stronach logowania"
 
 #: common/models.py:969
 msgid "Email required"
-msgstr ""
+msgstr "Adres e-mail jest wymagany"
 
 #: common/models.py:970
 msgid "Require user to supply mail on signup"
@@ -9783,7 +9783,7 @@ msgstr ""
 
 #: templates/stock_table.html:52
 msgid "Change status"
-msgstr ""
+msgstr "Zmień status"
 
 #: templates/stock_table.html:52
 msgid "Change stock status"
@@ -9799,15 +9799,15 @@ msgstr ""
 
 #: templates/yesnolabel.html:4
 msgid "Yes"
-msgstr ""
+msgstr "Tak"
 
 #: templates/yesnolabel.html:6
 msgid "No"
-msgstr ""
+msgstr "Nie"
 
 #: users/admin.py:64
 msgid "Users"
-msgstr ""
+msgstr "Użytkownicy"
 
 #: users/admin.py:65
 msgid "Select which users are assigned to this group"
@@ -9835,11 +9835,11 @@ msgstr "Uprawnienia nadane"
 
 #: users/models.py:208
 msgid "Group"
-msgstr ""
+msgstr "Grupa"
 
 #: users/models.py:211
 msgid "View"
-msgstr ""
+msgstr "Widok"
 
 #: users/models.py:211
 msgid "Permission to view items"
@@ -9851,7 +9851,7 @@ msgstr "Uprawnienie do dodawania przedmiotów"
 
 #: users/models.py:215
 msgid "Change"
-msgstr ""
+msgstr "Zmień"
 
 #: users/models.py:215
 msgid "Permissions to edit items"
