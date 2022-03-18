@@ -441,9 +441,9 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
 
                 # set date for graph labels
                 if stock_item.purchase_order and stock_item.purchase_order.issue_date:
-                    line['date'] = stock_item.purchase_order.issue_date.strftime('%d.%m.%Y')
+                    line['date'] = stock_item.purchase_order.issue_date.isoformat()
                 elif stock_item.tracking_info.count() > 0:
-                    line['date'] = stock_item.tracking_info.first().date.strftime('%d.%m.%Y')
+                    line['date'] = stock_item.tracking_info.first().date.date().isoformat()
                 else:
                     # Not enough information
                     continue
@@ -500,9 +500,9 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
 
                 # set date for graph labels
                 if sale_item.order.issue_date:
-                    line['date'] = sale_item.order.issue_date.strftime('%d.%m.%Y')
+                    line['date'] = sale_item.order.issue_date.isoformat()
                 elif sale_item.order.creation_date:
-                    line['date'] = sale_item.order.creation_date.strftime('%d.%m.%Y')
+                    line['date'] = sale_item.order.creation_date.isoformat()
                 else:
                     line['date'] = _('None')
 
