@@ -456,10 +456,10 @@ class TestSettings(TestCase):
 
         # enough set - duplicate entry
         # with self.assertRaises(IntegrityError):
-        #     self.env.set('INVENTREE_ADMIN_USER', 'admin')  # set username
-        #     self.env.set('INVENTREE_ADMIN_EMAIL', 'info@example.com')  # set email
-        #     self.env.set('INVENTREE_ADMIN_PASSWORD', 'password123')  # set password
-        #     self.run_reload()
+        self.env.set('INVENTREE_ADMIN_USER', 'admin')  # set username
+        self.env.set('INVENTREE_ADMIN_EMAIL', 'info@example.com')  # set email
+        self.env.set('INVENTREE_ADMIN_PASSWORD', 'password123')  # set password
+        self.run_reload()
         self.assertEqual(user_count(), 1)
 
         # make sure to clean up
