@@ -86,8 +86,8 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: st
 
     if do_raise:
         # do a straight raise if we are playing with enviroment variables at execution time, ignore the broken sample
-        # if settings.TESTING_ENV and package_name != 'integration.broken_sample':
-        #     raise error
+        if settings.TESTING_ENV and package_name != 'integration.broken_sample':
+            raise error
         raise IntegrationPluginError(package_name, str(error))
 # endregion
 
