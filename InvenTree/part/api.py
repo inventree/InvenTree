@@ -1405,6 +1405,44 @@ class PartParameterTemplateList(generics.ListCreateAPIView):
         'name',
     ]
 
+    def filter_queryset(self, queryset):
+        """
+        Custom filtering for the PartParameterTemplate API
+        """
+
+        queryset = super().filter_queryset(queryset)
+
+        params = self.request.query_params
+
+        # Filtering against a "Part" - return only parameter templates which are referenced by a part
+        part = params.get('part', None)
+
+        if part is not None:
+
+            try:
+                part = Part.objects.get(pk=part)
+                parameters = PartParameter.objects.filter(part=part)
+                template_ids = parameters.values_list('template').distinct()
+                queryset = queryset.filter(pk__in=[el[0] for el in template_ids])
+            except (ValueError, Part.DoesNotExist):
+                pass
+        
+        # Filtering against a "PartCategory" - return only parameter templates which are referenced by parts in this category
+        category = params.get('category', None)
+
+        if category is not None:
+            
+            try:
+                category = PartCategory.objects.get(pk=category)
+                cats = category.get_descendants(include_self=True)
+                parameters = PartParameter.objects.filter(part__category__in=cats)
+                template_ids = parameters.values_list('template').distinct()
+                queryset = queryset.filter(pk__in=[el[0] for el in template_ids])
+            except (ValueError, PartCategory.DoesNotExist):
+                pass
+
+        return queryset
+
 
 class PartParameterList(generics.ListCreateAPIView):
     """ API endpoint for accessing a list of PartParameter objects
