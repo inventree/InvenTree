@@ -1,3 +1,6 @@
+{% load i18n %}
+{% load inventree_extras %}
+
 /*
  * Add a cached alert message to sesion storage
  */
