@@ -1434,12 +1434,12 @@ class PartParameterTemplateList(generics.ListCreateAPIView):
                 queryset = queryset.filter(pk__in=[el[0] for el in template_ids])
             except (ValueError, Part.DoesNotExist):
                 pass
-        
+
         # Filtering against a "PartCategory" - return only parameter templates which are referenced by parts in this category
         category = params.get('category', None)
 
         if category is not None:
-            
+
             try:
                 category = PartCategory.objects.get(pk=category)
                 cats = category.get_descendants(include_self=True)
