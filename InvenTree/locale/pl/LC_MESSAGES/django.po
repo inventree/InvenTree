@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-16 22:11+0000\n"
-"PO-Revision-Date: 2022-03-19 00:55\n"
+"PO-Revision-Date: 2022-03-19 01:54\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -7290,101 +7290,104 @@ msgstr "Zaloguj się"
 msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
-msgstr ""
+msgstr "Zaloguj się za pomocą jednego\n"
+"istniejących kont stron trzecich lub  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">zarejestruj się</a>\n"
+"w celu założenia konta i zaloguj się poniżej:"
 
 #: templates/account/login.html:25
 #, python-format
 msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
-msgstr ""
+msgstr "Jeżeli jeszcze nie utworzyłeś konta, to proszę najpierw\n"
+"<a href=\"%(signup_url)s\">zarejstruj się</a>."
 
 #: templates/account/login.html:42
 msgid "Forgot Password?"
-msgstr ""
+msgstr "Zapomniałeś hasła?"
 
 #: templates/account/login.html:47
 msgid "InvenTree demo instance"
-msgstr ""
+msgstr "Instancja demonstracyjna InvenTree"
 
 #: templates/account/login.html:47
 msgid "Click here for login details"
-msgstr ""
+msgstr "Kliknij tutaj, aby zobaczyć szczegóły logowania"
 
 #: templates/account/login.html:55
 msgid "or use SSO"
-msgstr ""
+msgstr "lub użyj SSO"
 
 #: templates/account/logout.html:5 templates/account/logout.html:8
 #: templates/account/logout.html:20
 msgid "Sign Out"
-msgstr ""
+msgstr "Wyloguj się"
 
 #: templates/account/logout.html:10
 msgid "Are you sure you want to sign out?"
-msgstr ""
+msgstr "Jesteś pewien, że chcesz się wylogować?"
 
 #: templates/account/logout.html:19
 msgid "Back to Site"
-msgstr ""
+msgstr "Powrót do witryny"
 
 #: templates/account/password_reset.html:5
 #: templates/account/password_reset.html:12
 msgid "Password Reset"
-msgstr ""
+msgstr "Resetowanie hasła"
 
 #: templates/account/password_reset.html:18
 msgid "Forgotten your password? Enter your email address below, and we'll send you an email allowing you to reset it."
-msgstr ""
+msgstr "Zapomniałeś/-aś swojego hasła? Wpisz poniżej swój adres e-mail, a my wyślemy do Ciebie e-mail umożliwiający zresetowanie hasła."
 
 #: templates/account/password_reset.html:23
 msgid "Reset My Password"
-msgstr ""
+msgstr "Zresetuj moje hasło"
 
 #: templates/account/password_reset.html:27 templates/account/signup.html:36
 msgid "This function is currently disabled. Please contact an administrator."
-msgstr ""
+msgstr "Ta funkcja jest obecnie wyłączona. Skontaktuj się z administratorem."
 
 #: templates/account/password_reset_from_key.html:7
 msgid "Bad Token"
-msgstr ""
+msgstr "Zły token"
 
 #: templates/account/password_reset_from_key.html:11
 #, python-format
 msgid "The password reset link was invalid, possibly because it has already been used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</a>."
-msgstr ""
+msgstr "Link resetu hasła jest nieprawidłowy, prawdopodobnie z powodu wcześniejszego użycia. Zażądaj <a href=\"%(passwd_reset_url)s\">nowego resetu hasła</a>, proszę."
 
 #: templates/account/password_reset_from_key.html:18
 msgid "Change password"
-msgstr ""
+msgstr "Zmień hasło"
 
 #: templates/account/password_reset_from_key.html:22
 msgid "Your password is now changed."
-msgstr ""
+msgstr "Twoje hasło zostało zmienione."
 
 #: templates/account/signup.html:11 templates/account/signup.html:22
 msgid "Sign Up"
-msgstr ""
+msgstr "Zarejestruj się"
 
 #: templates/account/signup.html:13
 #, python-format
 msgid "Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
-msgstr ""
+msgstr "Masz już konto? Jeżeli tak, to <a href=\"%(login_url)s\">zaloguj się</a>."
 
 #: templates/account/signup.html:27
 msgid "Or use a SSO-provider for signup"
-msgstr ""
+msgstr "Lub użyj dostawcy SSO w celu rejestracji"
 
 #: templates/admin_button.html:2
 msgid "View in administration panel"
-msgstr ""
+msgstr "Zobacz w panelu administracyjnym"
 
 #: templates/allauth_2fa/authenticate.html:5
 msgid "Two-Factor Authentication"
-msgstr ""
+msgstr "Uwierzytelnianie dwuskładnikowe"
 
 #: templates/allauth_2fa/authenticate.html:12
 msgid "Authenticate"
-msgstr ""
+msgstr "Uwierzytelnij"
 
 #: templates/allauth_2fa/backup_tokens.html:6
 msgid "Two-Factor Authentication Backup Tokens"
@@ -7405,47 +7408,47 @@ msgstr ""
 #: templates/allauth_2fa/backup_tokens.html:31
 #: templates/allauth_2fa/setup.html:40
 msgid "Back to settings"
-msgstr ""
+msgstr "Powrót do ustawień"
 
 #: templates/allauth_2fa/remove.html:6
 msgid "Disable Two-Factor Authentication"
-msgstr ""
+msgstr "Wyłącz uwierzytelnianie dwuskładnikowe"
 
 #: templates/allauth_2fa/remove.html:9
 msgid "Are you sure?"
-msgstr ""
+msgstr "Jesteś pewny?"
 
 #: templates/allauth_2fa/remove.html:14
 msgid "Disable Two-Factor"
-msgstr ""
+msgstr "Wyłącz dwuskładnikowe"
 
 #: templates/allauth_2fa/setup.html:6
 msgid "Setup Two-Factor Authentication"
-msgstr ""
+msgstr "Skonfiguruj uwierzytelnianie dwuskładnikowe"
 
 #: templates/allauth_2fa/setup.html:10
 msgid "Step 1"
-msgstr ""
+msgstr "Krok 1"
 
 #: templates/allauth_2fa/setup.html:14
 msgid "Scan the QR code below with a token generator of your choice (for instance Google Authenticator)."
-msgstr ""
+msgstr "Zeskanuj poniższy kod QR za pomocą wybranego przez Ciebie generatora tokenów (np. Google Authenticator)."
 
 #: templates/allauth_2fa/setup.html:23
 msgid "Step 2"
-msgstr ""
+msgstr "Krok 2"
 
 #: templates/allauth_2fa/setup.html:27
 msgid "Input a token generated by the app:"
-msgstr ""
+msgstr "Wprowadź token wygenerowany przez aplikację:"
 
 #: templates/allauth_2fa/setup.html:35
 msgid "Verify"
-msgstr ""
+msgstr "Zweryfikuj"
 
 #: templates/attachment_button.html:4 templates/js/translated/attachment.js:54
 msgid "Add Link"
-msgstr ""
+msgstr "Dodaj link"
 
 #: templates/attachment_button.html:7 templates/js/translated/attachment.js:36
 msgid "Add Attachment"
@@ -8373,65 +8376,65 @@ msgstr "Wybierz szablon etykiety"
 #: templates/js/translated/modals.js:76 templates/js/translated/modals.js:120
 #: templates/js/translated/modals.js:610
 msgid "Cancel"
-msgstr ""
+msgstr "Anuluj"
 
 #: templates/js/translated/modals.js:77 templates/js/translated/modals.js:119
 #: templates/js/translated/modals.js:677 templates/js/translated/modals.js:985
 #: templates/modals.html:28 templates/modals.html:51
 msgid "Submit"
-msgstr ""
+msgstr "Zatwierdź"
 
 #: templates/js/translated/modals.js:118
 msgid "Form Title"
-msgstr ""
+msgstr "Tytuł formularza"
 
 #: templates/js/translated/modals.js:392
 msgid "Waiting for server..."
-msgstr ""
+msgstr "Oczekiwanie na serwer..."
 
 #: templates/js/translated/modals.js:551
 msgid "Show Error Information"
-msgstr ""
+msgstr "Pokaż informacje o błędzie"
 
 #: templates/js/translated/modals.js:609
 msgid "Accept"
-msgstr ""
+msgstr "Zaakceptuj"
 
 #: templates/js/translated/modals.js:666
 msgid "Loading Data"
-msgstr ""
+msgstr "Wczytywanie danych"
 
 #: templates/js/translated/modals.js:937
 msgid "Invalid response from server"
-msgstr ""
+msgstr "Niepoprawna odpowiedź serwera"
 
 #: templates/js/translated/modals.js:937
 msgid "Form data missing from server response"
-msgstr ""
+msgstr "Brak danych formularza z odpowiedzi serwera"
 
 #: templates/js/translated/modals.js:949
 msgid "Error posting form data"
-msgstr ""
+msgstr "Błąd podczas wysyłania danych formularza"
 
 #: templates/js/translated/modals.js:1046
 msgid "JSON response missing form data"
-msgstr ""
+msgstr "Brak danych w formularzu odpowiedzi JSON"
 
 #: templates/js/translated/modals.js:1061
 msgid "Error 400: Bad Request"
-msgstr ""
+msgstr "400: Nieprawidłowe zapytanie"
 
 #: templates/js/translated/modals.js:1062
 msgid "Server returned error code 400"
-msgstr ""
+msgstr "Serwer zwrócił kod błędu 400"
 
 #: templates/js/translated/modals.js:1085
 msgid "Error requesting form data"
-msgstr ""
+msgstr "Błąd podczas żądania danych formularza"
 
 #: templates/js/translated/model_renderers.js:40
 msgid "Company ID"
-msgstr ""
+msgstr "ID firmy"
 
 #: templates/js/translated/model_renderers.js:77
 msgid "Stock ID"
@@ -8439,7 +8442,7 @@ msgstr ""
 
 #: templates/js/translated/model_renderers.js:130
 msgid "Location ID"
-msgstr ""
+msgstr "ID lokalizacji"
 
 #: templates/js/translated/model_renderers.js:147
 msgid "Build ID"
@@ -8448,15 +8451,15 @@ msgstr ""
 #: templates/js/translated/model_renderers.js:249
 #: templates/js/translated/model_renderers.js:270
 msgid "Order ID"
-msgstr ""
+msgstr "ID zamówienia"
 
 #: templates/js/translated/model_renderers.js:287
 msgid "Shipment ID"
-msgstr ""
+msgstr "ID wysyłki"
 
 #: templates/js/translated/model_renderers.js:307
 msgid "Category ID"
-msgstr ""
+msgstr "ID kategorii"
 
 #: templates/js/translated/model_renderers.js:344
 msgid "Manufacturer Part ID"
@@ -8464,7 +8467,7 @@ msgstr ""
 
 #: templates/js/translated/model_renderers.js:373
 msgid "Supplier Part ID"
-msgstr ""
+msgstr "ID części dostawcy"
 
 #: templates/js/translated/order.js:75
 msgid "No stock items have been allocated to this shipment"
@@ -8602,43 +8605,43 @@ msgstr ""
 
 #: templates/js/translated/order.js:1402
 msgid "No sales orders found"
-msgstr ""
+msgstr "Nie znaleziono zamówień sprzedaży"
 
 #: templates/js/translated/order.js:1440
 msgid "Invalid Customer"
-msgstr ""
+msgstr "Nieprawidłowy klient"
 
 #: templates/js/translated/order.js:1527
 msgid "Edit shipment"
-msgstr ""
+msgstr "Edytuj wysyłkę"
 
 #: templates/js/translated/order.js:1530
 msgid "Complete shipment"
-msgstr ""
+msgstr "Kompletna wysyłka"
 
 #: templates/js/translated/order.js:1535
 msgid "Delete shipment"
-msgstr ""
+msgstr "Usuń wysyłkę"
 
 #: templates/js/translated/order.js:1555
 msgid "Edit Shipment"
-msgstr ""
+msgstr "Edytuj wysyłkę"
 
 #: templates/js/translated/order.js:1572
 msgid "Delete Shipment"
-msgstr ""
+msgstr "Usuń wysyłkę"
 
 #: templates/js/translated/order.js:1606
 msgid "No matching shipments found"
-msgstr ""
+msgstr "Nie odnaleziono pasujących przesyłek"
 
 #: templates/js/translated/order.js:1616
 msgid "Shipment Reference"
-msgstr ""
+msgstr "Numer referencyjny przesyłki"
 
 #: templates/js/translated/order.js:1640
 msgid "Not shipped"
-msgstr ""
+msgstr "Nie wysłano"
 
 #: templates/js/translated/order.js:1646
 msgid "Tracking"
@@ -8707,7 +8710,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:55
 msgid "Part Attributes"
-msgstr ""
+msgstr "Atrybuty części"
 
 #: templates/js/translated/part.js:59
 msgid "Part Creation Options"
