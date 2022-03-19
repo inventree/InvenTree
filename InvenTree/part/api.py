@@ -855,6 +855,14 @@ class PartList(generics.ListCreateAPIView):
 
         kwargs['starred_parts'] = self.starred_parts
 
+        try:
+            params = self.request.query_params
+
+            kwargs['parameters'] = str2bool(params.get('parameters', None))
+
+        except AttributeError:
+            pass
+
         return self.serializer_class(*args, **kwargs)
 
     def list(self, request, *args, **kwargs):
