@@ -211,6 +211,34 @@ class PartThumbSerializerUpdate(InvenTreeModelSerializer):
         ]
 
 
+class PartParameterTemplateSerializer(InvenTreeModelSerializer):
+    """ JSON serializer for the PartParameterTemplate model """
+
+    class Meta:
+        model = PartParameterTemplate
+        fields = [
+            'pk',
+            'name',
+            'units',
+        ]
+
+
+class PartParameterSerializer(InvenTreeModelSerializer):
+    """ JSON serializers for the PartParameter model """
+
+    template_detail = PartParameterTemplateSerializer(source='template', many=False, read_only=True)
+
+    class Meta:
+        model = PartParameter
+        fields = [
+            'pk',
+            'part',
+            'template',
+            'template_detail',
+            'data'
+        ]
+
+
 class PartBriefSerializer(InvenTreeModelSerializer):
     """ Serializer for Part (brief detail) """
 
@@ -259,10 +287,15 @@ class PartSerializer(InvenTreeModelSerializer):
 
         category_detail = kwargs.pop('category_detail', False)
 
+        parameters = kwargs.pop('parameters', False)
+
         super().__init__(*args, **kwargs)
 
         if category_detail is not True:
             self.fields.pop('category_detail')
+
+        if parameters is not True:
+            self.fields.pop('parameters')
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -356,19 +389,18 @@ class PartSerializer(InvenTreeModelSerializer):
     # PrimaryKeyRelated fields (Note: enforcing field type here results in much faster queries, somehow...)
     category = serializers.PrimaryKeyRelatedField(queryset=PartCategory.objects.all())
 
-    # TODO - Include annotation for the following fields:
-    # allocated_stock = serializers.FloatField(source='allocation_count', read_only=True)
-    # bom_items = serializers.IntegerField(source='bom_count', read_only=True)
-    # used_in = serializers.IntegerField(source='used_in_count', read_only=True)
+    parameters = PartParameterSerializer(
+        many=True,
+        read_only=True,
+    )
 
     class Meta:
         model = Part
         partial = True
         fields = [
             'active',
-            # 'allocated_stock',
+
             'assembly',
-            # 'bom_items',
             'category',
             'category_detail',
             'component',
@@ -388,6 +420,7 @@ class PartSerializer(InvenTreeModelSerializer):
             'minimum_stock',
             'name',
             'notes',
+            'parameters',
             'pk',
             'purchaseable',
             'revision',
@@ -398,7 +431,6 @@ class PartSerializer(InvenTreeModelSerializer):
             'thumbnail',
             'trackable',
             'units',
-            # 'used_in',
             'variant_of',
             'virtual',
         ]
@@ -597,34 +629,6 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'substitutes',
             'price_range',
             'validated',
-        ]
-
-
-class PartParameterTemplateSerializer(InvenTreeModelSerializer):
-    """ JSON serializer for the PartParameterTemplate model """
-
-    class Meta:
-        model = PartParameterTemplate
-        fields = [
-            'pk',
-            'name',
-            'units',
-        ]
-
-
-class PartParameterSerializer(InvenTreeModelSerializer):
-    """ JSON serializers for the PartParameter model """
-
-    template_detail = PartParameterTemplateSerializer(source='template', many=False, read_only=True)
-
-    class Meta:
-        model = PartParameter
-        fields = [
-            'pk',
-            'part',
-            'template',
-            'template_detail',
-            'data'
         ]
 
 
