@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-19 11:50+0000\n"
-"PO-Revision-Date: 2022-03-19 13:57\n"
+"PO-Revision-Date: 2022-03-19 15:04\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -5222,7 +5222,7 @@ msgstr ""
 
 #: part/templates/part/prices.html:16
 msgid "Pricing ranges"
-msgstr "Zakres cen"
+msgstr "Przedziały cenowe"
 
 #: part/templates/part/prices.html:22
 msgid "Show supplier cost"
@@ -8116,7 +8116,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:2044 templates/js/translated/stock.js:2637
 msgid "No user information"
-msgstr "Brak informacji o użytkownika"
+msgstr "Brak informacji o użytkowniku"
 
 #: templates/js/translated/build.js:2056
 msgid "No information"
