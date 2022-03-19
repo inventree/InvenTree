@@ -886,9 +886,17 @@ class SOAllocationList(generics.ListAPIView):
             outstanding = str2bool(outstanding)
 
             if outstanding:
-                queryset = queryset.filter(line__order__status__in=SalesOrderStatus.OPEN)
+                # Filter only "open" orders
+                # Filter only allocations which have *not* shipped
+                queryset = queryset.filter(
+                    line__order__status__in=SalesOrderStatus.OPEN,
+                    shipment__shipment_date=None,
+                )
             else:
-                queryset = queryset.exclude(line__order__status__in=SalesOrderStatus.OPEN)
+                queryset = queryset.exclude(
+                    line__order__status__in=SalesOrderStatus.OPEN,
+                    shipment__shipment_date=None
+                )
 
         return queryset
 
@@ -1028,7 +1036,7 @@ order_api_urls = [
         url(r'^.*$', POLineItemList.as_view(), name='api-po-line-list'),
     ])),
 
-    # API endpoints for sales ordesr
+    # API endpoints for sales orders
     url(r'^so/', include([
         url(r'attachment/', include([
             url(r'^(?P<pk>\d+)/$', SOAttachmentDetail.as_view(), name='api-so-attachment-detail'),

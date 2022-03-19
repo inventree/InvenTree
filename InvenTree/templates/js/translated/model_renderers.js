@@ -312,7 +312,13 @@ function renderPartCategory(name, data, parameters, options) {
 // eslint-disable-next-line no-unused-vars
 function renderPartParameterTemplate(name, data, parameters, options) {
 
-    var html = `<span>${data.name} - [${data.units}]</span>`;
+    var units = '';
+
+    if (data.units) {
+        units = ` [${data.units}]`;
+    }
+    
+    var html = `<span>${data.name}${units}</span>`;
 
     return html;
 }
