@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-19 11:50+0000\n"
-"PO-Revision-Date: 2022-03-19 12:32\n"
+"PO-Revision-Date: 2022-03-19 13:57\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -257,7 +257,7 @@ msgstr "Plik danych"
 
 #: InvenTree/serializers.py:356
 msgid "Select data file for upload"
-msgstr "Wybierz plik do przesłania"
+msgstr "Wybierz plik danych do przesłania"
 
 #: InvenTree/serializers.py:380
 msgid "Unsupported file type"
