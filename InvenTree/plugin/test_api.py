@@ -77,9 +77,11 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
         fixtures = PluginConfig.objects.all()
 
         # check if plugins were registered -> in some test setups the startup has no db access
+        print(f'[PLUGIN-TEST] currently {len(fixtures)} plugin entries found')
         if not fixtures:
             registry.reload_plugins()
             fixtures = PluginConfig.objects.all()
+            print(f'Reloaded plugins - now {len(fixtures)} entries found')
 
         print([str(a) for a in fixtures])
         fixtures = fixtures[0:1]
