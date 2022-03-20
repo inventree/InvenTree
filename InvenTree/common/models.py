@@ -1200,6 +1200,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'NOTIFICATION_SEND_EMAILS': {
+            'name': _('Enable email notifications'),
+            'description': _('Allow sending of emails for event notifications'),
+            'default': True,
+            'validator': bool,
+        },
+
         "LABEL_INLINE": {
             'name': _('Inline label display'),
             'description': _('Display PDF labels in the browser, instead of downloading as a file'),
