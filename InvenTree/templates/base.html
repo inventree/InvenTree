@@ -128,6 +128,7 @@
     </div>
     {% include 'modals.html' %}
     {% include 'about.html' %}
+    {% include "notifications.html" %}
 </div>
 
 <!-- Scripts -->
@@ -161,7 +162,6 @@
 <script type='text/javascript' src="{% static 'script/randomColor.min.js' %}"></script>
 
 <!-- general InvenTree -->
-<script type='text/javascript' src="{% static 'script/inventree/notification.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/inventree/inventree.js' %}"></script>
 
 <!-- dynamic javascript templates -->
@@ -189,8 +189,10 @@
 <script type='text/javascript' src="{% i18n_static 'plugin.js' %}"></script>
 <script type='text/javascript' src="{% i18n_static 'tables.js' %}"></script>
 <script type='text/javascript' src="{% i18n_static 'table_filters.js' %}"></script>
+<script type='text/javascript' src="{% i18n_static 'notification.js' %}"></script>
 
 <script type='text/javascript' src="{% static 'fontawesome/js/solid.min.js' %}"></script>
+<script type='text/javascript' src="{% static 'fontawesome/js/regular.min.js' %}"></script>
 <script type='text/javascript' src="{% static 'fontawesome/js/brands.min.js' %}"></script>
 <script type='text/javascript' src="{% static 'fontawesome/js/fontawesome.min.js' %}"></script>
 

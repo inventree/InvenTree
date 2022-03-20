@@ -904,3 +904,10 @@ class DatabaseStatsView(AjaxView):
         """
 
         return ctx
+
+
+class NotificationsView(TemplateView):
+    """ View for showing notifications
+    """
+
+    template_name = "InvenTree/notifications/notifications.html"

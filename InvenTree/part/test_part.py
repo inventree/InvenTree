@@ -3,6 +3,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
+from allauth.account.models import EmailAddress
 
 from django.contrib.auth import get_user_model
 
@@ -17,7 +18,7 @@ from .templatetags import inventree_extras
 
 import part.settings
 
-from common.models import InvenTreeSetting
+from common.models import InvenTreeSetting, NotificationEntry, NotificationMessage
 
 
 class TemplateTagTest(TestCase):
@@ -464,3 +465,64 @@ class PartSubscriptionTests(TestCase):
 
         # Check part
         self.assertTrue(self.part.is_starred_by(self.user))
+
+
+class BaseNotificationIntegrationTest(TestCase):
+    """ Integration test for notifications """
+
+    fixtures = [
+        'location',
+        'category',
+        'part',
+        'stock'
+    ]
+
+    def setUp(self):
+        # Create a user for auth
+        user = get_user_model()
+
+        self.user = user.objects.create_user(
+            username='testuser',
+            email='test@testing.com',
+            password='password',
+            is_staff=True
+        )
+        # Add Mailadress
+        EmailAddress.objects.create(user=self.user, email='test@testing.com')
+
+        # Define part that will be tested
+        self.part = Part.objects.get(name='R_2K2_0805')
+
+    def _notification_run(self):
+        # There  should be no notification runs
+        self.assertEqual(NotificationEntry.objects.all().count(), 0)
+
+        # Test that notifications run through without errors
+        self.part.minimum_stock = self.part.get_stock_count() + 1  # make sure minimum is one higher than current count
+        self.part.save()
+
+        # There should be no notification as no-one is subscribed
+        self.assertEqual(NotificationEntry.objects.all().count(), 0)
+
+        # Subscribe and run again
+        self.part.set_starred(self.user, True)
+        self.part.save()
+
+        # There should be 1 notification
+        self.assertEqual(NotificationEntry.objects.all().count(), 1)
+
+
+class PartNotificationTest(BaseNotificationIntegrationTest):
+    """ Integration test for part notifications """
+
+    def test_notification(self):
+        self._notification_run()
+
+        # There should be 1 notification message right now
+        self.assertEqual(NotificationMessage.objects.all().count(), 1)
+
+        # Try again -> cover the already send line
+        self.part.save()
+
+        # There should not be more messages
+        self.assertEqual(NotificationMessage.objects.all().count(), 1)
