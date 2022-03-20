@@ -182,28 +182,28 @@ function updateNotificationReadState(btn, panel_caller=false) {
     var url = `/api/notifications/${btn.attr('pk')}/${btn.attr('target')}/`;
 
     inventreePut(url, {}, {
-    method: 'POST',
-    success: function() {
-        // update the notification tables if they were declared
-        if (window.updateNotifications) {
-            window.updateNotifications();
-        }
+        method: 'POST',
+        success: function() {
+            // update the notification tables if they were declared
+            if (window.updateNotifications) {
+                window.updateNotifications();
+            }
 
-        // update current notification count
-        var count = parseInt($("#notification-counter").html());
-        if (btn.attr('target') == 'read') {
-            count = count - 1;
-        } else {
-            count = count + 1;
-        }
-        // update notification indicator now
-        updateNotificationIndicator(count);
+            // update current notification count
+            var count = parseInt($('#notification-counter').html());
+            if (btn.attr('target') == 'read') {
+                count = count - 1;
+            } else {
+                count = count + 1;
+            }
+            // update notification indicator now
+            updateNotificationIndicator(count);
 
-        // remove notification if called from notification panel
-        if (panel_caller) {
-            btn.parent().parent().remove()
+            // remove notification if called from notification panel
+            if (panel_caller) {
+                btn.parent().parent().remove();
+            }
         }
-    }
     });
 };
 
@@ -259,16 +259,16 @@ function openNotificationPanel() {
                             if (item.target.link) {
                                 link_text = `<a href='${item.target.link}'>${link_text}</a>`;
                             }
-                            html += link_text
+                            html += link_text;
                         }
                         html += '<div>';
                         html += `<span class="text-muted">${item.age_human}</span>`;
                         html += getReadEditButton(item.pk, item.read, true);
-                        html += "</div></li>";
+                        html += '</div></li>';
                     });
 
                     // package up
-                    html = `<ul class="list-group">${html}</ul>`
+                    html = `<ul class="list-group">${html}</ul>`;
                 }
 
                 // set html
@@ -297,9 +297,9 @@ function updateNotificationIndicator(count) {
     notificationUpdateTic = 0;
 
     if (count == 0) {
-        $("#notification-alert").addClass("d-none");
+        $('#notification-alert').addClass('d-none');
     } else {
-        $("#notification-alert").removeClass("d-none");
+        $('#notification-alert').removeClass('d-none');
     }
-    $("#notification-counter").html(count);
+    $('#notification-counter').html(count);
 }
