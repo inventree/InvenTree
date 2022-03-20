@@ -223,13 +223,14 @@
 {{ block.super }}
 
     {% if category %}
-    loadParametricPartTable(
-        "#parametric-part-table",
-        { 
-            headers: {{ headers|safe }},
-            data: {{ parameters|safe }},
-        }
-    );
+    onPanelLoad('parameters', function() {
+        loadParametricPartTable(
+            "#parametric-part-table",
+            { 
+                category: {{ category.pk }},
+            }
+        );
+    });
 
     $("#toggle-starred").click(function() {
         toggleStar({
@@ -239,9 +240,6 @@
     });
 
     {% endif %}
-
-    // Enable left-hand navigation sidebar
-    enableSidebar('category');
 
     // Enable breadcrumb tree view
     enableBreadcrumbTree({
@@ -258,18 +256,20 @@
         }
     });
 
-    loadPartCategoryTable(
-        $('#subcategory-table'), {
-            params: {
-                {% if category %}
-                parent: {{ category.pk }},
-                {% else %}
-                parent: null,
-                {% endif %}
-            },
-            allowTreeView: true,
-        }
-    );
+    onPanelLoad('subcategories', function() {
+        loadPartCategoryTable(
+            $('#subcategory-table'), {
+                params: {
+                    {% if category %}
+                    parent: {{ category.pk }},
+                    {% else %}
+                    parent: null,
+                    {% endif %}
+                },
+                allowTreeView: true,
+            }
+        );
+    });
 
     $("#cat-create").click(function() {
 
@@ -339,19 +339,24 @@
 
     {% endif %}
 
-    loadPartTable(
-        "#part-table",
-        "{% url 'api-part-list' %}",
-        {
-            params: {
-                {% if category %}category: {{ category.id }},
-                {% else %}category: "null",
-                {% endif %}
+    onPanelLoad('parts', function() {
+        loadPartTable(
+            "#part-table",
+            "{% url 'api-part-list' %}",
+            {
+                params: {
+                    {% if category %}category: {{ category.id }},
+                    {% else %}category: "null",
+                    {% endif %}
+                },
+                buttons: ['#part-options'],
+                checkbox: true,
+                gridView: true,
             },
-            buttons: ['#part-options'],
-            checkbox: true,
-            gridView: true,
-        },
-    );
+        );
+    });
+
+    // Enable left-hand navigation sidebar
+    enableSidebar('category');
 
 {% endblock %}
