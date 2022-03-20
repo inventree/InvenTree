@@ -1,5 +1,13 @@
 {% load i18n %}
-{% load inventree_extras %}
+
+/* exported
+    showAlertOrCache,
+    showCachedAlerts,
+    startNotificationWatcher,
+    stopNotificationWatcher,
+    openNotificationPanel,
+    closeNotificationPanel,
+*/
 
 /*
  * Add a cached alert message to sesion storage
@@ -123,7 +131,7 @@ function showMessage(message, options={}) {
     });
 }
 
-var notificationWatcher = null;  // reference for the notificationWatcher
+var notificationWatcher = null; // reference for the notificationWatcher
 /**
  * start the regular notification checks
  **/
