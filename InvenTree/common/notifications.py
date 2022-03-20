@@ -129,7 +129,7 @@ class EmailNotification(BulkNotificationMethod):
 
     def send_bulk(self):
         html_message = render_to_string(self.context['template']['html'], self.context)
-        targets = self.get_targets()
+        targets = self.get_targets().values_list('email', flat=True)
 
         InvenTree.tasks.send_email(self.context['template']['subject'], '', targets, html_message=html_message)
 
