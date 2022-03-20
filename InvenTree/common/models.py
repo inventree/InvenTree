@@ -19,8 +19,13 @@ from datetime import datetime, timedelta
 
 from django.db import models, transaction
 from django.contrib.auth.models import User, Group
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.db.utils import IntegrityError, OperationalError
 from django.conf import settings
+from django.urls import reverse
+from django.utils.timezone import now
+from django.contrib.humanize.templatetags.humanize import naturaltime
 
 from djmoney.settings import CURRENCY_CHOICES
 from djmoney.contrib.exchange.models import convert_money
@@ -1002,6 +1007,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'PLUGIN_ON_STARTUP': {
+            'name': _('Check plugins on startup'),
+            'description': _('Check that all plugins are installed on startup - enable in container enviroments'),
+            'default': False,
+            'validator': bool,
+            'requires_restart': True,
+        },
         # Settings for plugin mixin features
         'ENABLE_PLUGINS_URL': {
             'name': _('Enable URL integration'),
@@ -1699,3 +1711,90 @@ class NotificationEntry(models.Model):
         )
 
         entry.save()
+
+
+class NotificationMessage(models.Model):
+    """
+    A NotificationEntry records the last time a particular notifaction was sent out.
+
+    It is recorded to ensure that notifications are not sent out "too often" to users.
+
+    Attributes:
+    - key: A text entry describing the notification e.g. 'part.notify_low_stock'
+    - uid: An (optional) numerical ID for a particular instance
+    - date: The last time this notification was sent
+    """
+
+    # generic link to target
+    target_content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        related_name='notification_target',
+    )
+
+    target_object_id = models.PositiveIntegerField()
+
+    target_object = GenericForeignKey('target_content_type', 'target_object_id')
+
+    # generic link to source
+    source_content_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.SET_NULL,
+        related_name='notification_source',
+        null=True,
+        blank=True,
+    )
+
+    source_object_id = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+    )
+
+    source_object = GenericForeignKey('source_content_type', 'source_object_id')
+
+    # user that receives the notification
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name=_('User'),
+        help_text=_('User'),
+        null=True,
+        blank=True,
+    )
+
+    category = models.CharField(
+        max_length=250,
+        blank=False,
+    )
+
+    name = models.CharField(
+        max_length=250,
+        blank=False,
+    )
+
+    message = models.CharField(
+        max_length=250,
+        blank=True,
+        null=True,
+    )
+
+    creation = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    read = models.BooleanField(
+        default=False,
+    )
+
+    @staticmethod
+    def get_api_url():
+        return reverse('api-notifications-list')
+
+    def age(self):
+        """age of the message in seconds"""
+        delta = now() - self.creation
+        return delta.seconds
+
+    def age_human(self):
+        """humanized age"""
+        return naturaltime(self.creation)

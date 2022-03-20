@@ -20,7 +20,7 @@ from order.urls import order_urls
 from plugin.urls import get_plugin_urls
 
 from barcodes.api import barcode_api_urls
-from common.api import common_api_urls
+from common.api import common_api_urls, settings_api_urls
 from part.api import part_api_urls, bom_api_urls
 from company.api import company_api_urls
 from stock.api import stock_api_urls
@@ -43,6 +43,7 @@ from .views import CustomSessionDeleteView, CustomSessionDeleteOtherView
 from .views import CurrencyRefreshView
 from .views import AppearanceSelectView, SettingCategorySelectView
 from .views import DynamicJsView
+from .views import NotificationsView
 
 from .api import InfoView, NotFoundView
 from .api import ActionPluginView
@@ -60,7 +61,7 @@ if settings.PLUGINS_ENABLED:
 
 apipatterns += [
     url(r'^barcode/', include(barcode_api_urls)),
-    url(r'^settings/', include(common_api_urls)),
+    url(r'^settings/', include(settings_api_urls)),
     url(r'^part/', include(part_api_urls)),
     url(r'^bom/', include(bom_api_urls)),
     url(r'^company/', include(company_api_urls)),
@@ -99,6 +100,12 @@ settings_urls = [
     url(r'^.*$', SettingsView.as_view(template_name='InvenTree/settings/settings.html'), name='settings'),
 ]
 
+notifications_urls = [
+
+    # Catch any other urls
+    url(r'^.*$', NotificationsView.as_view(), name='notifications'),
+]
+
 # These javascript files are served "dynamically" - i.e. rendered on demand
 dynamic_javascript_urls = [
     url(r'^calendar.js', DynamicJsView.as_view(template_name='js/dynamic/calendar.js'), name='calendar.js'),
@@ -127,6 +134,7 @@ translated_javascript_urls = [
     url(r'^plugin.js', DynamicJsView.as_view(template_name='js/translated/plugin.js'), name='plugin.js'),
     url(r'^tables.js', DynamicJsView.as_view(template_name='js/translated/tables.js'), name='tables.js'),
     url(r'^table_filters.js', DynamicJsView.as_view(template_name='js/translated/table_filters.js'), name='table_filters.js'),
+    url(r'^notification.js', DynamicJsView.as_view(template_name='js/translated/notification.js'), name='notification.js'),
 ]
 
 backendpatterns = [
@@ -159,6 +167,8 @@ frontendpatterns = [
     url(r'^build/', include(build_urls)),
 
     url(r'^settings/', include(settings_urls)),
+
+    url(r'^notifications/', include(notifications_urls)),
 
     url(r'^edit-user/', EditUserView.as_view(), name='edit-user'),
     url(r'^set-password/', SetPasswordView.as_view(), name='set-password'),

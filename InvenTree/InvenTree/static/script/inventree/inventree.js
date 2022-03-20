@@ -1,6 +1,7 @@
 /* globals
     ClipboardJS,
     inventreeFormDataUpload,
+    inventreeGet,
     launchModalForm,
     user_settings,
 */
@@ -216,7 +217,24 @@ function inventreeDocReady() {
 
     // Display any cached alert messages
     showCachedAlerts();
+
+    // start watcher
+    startNotificationWatcher();
+
+    // always refresh when the focus returns
+    $(document).focus(function(){
+        startNotificationWatcher();
+    });
+
+    // kill notification watcher if focus is lost -> respect your users cycles
+    $(document).blur(function(){
+        stopNotificationWatcher();
+    });
+
+    $('#offcanvasRight').on('show.bs.offcanvas', openNotificationPanel);  // listener for opening the notification panel
+    $('#offcanvasRight').on('hidden.bs.offcanvas', closeNotificationPanel);  // listener for closing the notification panel
 }
+
 
 function isFileTransfer(transfer) {
     /* Determine if a transfer (e.g. drag-and-drop) is a file transfer 

@@ -161,6 +161,7 @@ class RuleSet(models.Model):
         'common_webhookendpoint',
         'common_webhookmessage',
         'common_notificationentry',
+        'common_notificationmessage',
         'company_contact',
         'users_owner',
 
