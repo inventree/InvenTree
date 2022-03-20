@@ -6,10 +6,11 @@ JSON serializers for common components
 from __future__ import unicode_literals
 
 from InvenTree.serializers import InvenTreeModelSerializer
+from InvenTree.helpers import get_objectreference
 
 from rest_framework import serializers
 
-from common.models import InvenTreeSetting, InvenTreeUserSetting
+from common.models import InvenTreeSetting, InvenTreeUserSetting, NotificationMessage
 
 
 class SettingsSerializer(InvenTreeModelSerializer):
@@ -95,3 +96,59 @@ class UserSettingsSerializer(SettingsSerializer):
             'type',
             'choices',
         ]
+
+
+class NotificationMessageSerializer(InvenTreeModelSerializer):
+    """
+    Serializer for the InvenTreeUserSetting model
+    """
+
+    target = serializers.SerializerMethodField(read_only=True)
+
+    source = serializers.SerializerMethodField(read_only=True)
+
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    category = serializers.CharField(read_only=True)
+
+    name = serializers.CharField(read_only=True)
+
+    message = serializers.CharField(read_only=True)
+
+    creation = serializers.CharField(read_only=True)
+
+    age = serializers.IntegerField(read_only=True)
+
+    age_human = serializers.CharField(read_only=True)
+
+    read = serializers.BooleanField(read_only=True)
+
+    def get_target(self, obj):
+        return get_objectreference(obj, 'target_content_type', 'target_object_id')
+
+    def get_source(self, obj):
+        return get_objectreference(obj, 'source_content_type', 'source_object_id')
+
+    class Meta:
+        model = NotificationMessage
+        fields = [
+            'pk',
+            'target',
+            'source',
+            'user',
+            'category',
+            'name',
+            'message',
+            'creation',
+            'age',
+            'age_human',
+            'read',
+        ]
+
+
+class NotificationReadSerializer(NotificationMessageSerializer):
+
+    def is_valid(self, raise_exception=False):
+        self.instance = self.context['instance']  # set instance that should be returned
+        self._validated_data = True
+        return True

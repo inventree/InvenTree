@@ -202,15 +202,17 @@
 {% block js_ready %}
 {{ block.super }}
 
-    loadStockLocationTable($('#sublocation-table'), {
-        params: {
-            {% if location %}
-            parent: {{ location.pk }},
-            {% else %}
-            parent: 'null',
-            {% endif %}
-        },
-        allowTreeView: true,
+    onPanelLoad('sublocations', function() {
+        loadStockLocationTable($('#sublocation-table'), {
+            params: {
+                {% if location %}
+                parent: {{ location.pk }},
+                {% else %}
+                parent: 'null',
+                {% endif %}
+            },
+            allowTreeView: true,
+        });
     });
     
     linkButtonsToSelection(
@@ -325,19 +327,21 @@
         });
     });
 
-    loadStockTable($("#stock-table"), {
-        buttons: [
-            '#stock-options',
-        ],
-        params: {
-            {% if location %}
-            location: {{ location.pk }},
-            {% endif %}
-            part_detail: true,
-            location_detail: true,
-            supplier_part_detail: true,
-        },
-        url: "{% url 'api-stock-list' %}",
+    onPanelLoad('stock', function() {
+        loadStockTable($("#stock-table"), {
+            buttons: [
+                '#stock-options',
+            ],
+            params: {
+                {% if location %}
+                location: {{ location.pk }},
+                {% endif %}
+                part_detail: true,
+                location_detail: true,
+                supplier_part_detail: true,
+            },
+            url: "{% url 'api-stock-list' %}",
+        });
     });
 
     enableSidebar('stocklocation');

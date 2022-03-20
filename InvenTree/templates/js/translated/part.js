@@ -1068,68 +1068,84 @@ function loadRelatedPartsTable(table, part_id, options={}) {
 }
 
 
+/* Load parametric table for part parameters
+ */
 function loadParametricPartTable(table, options={}) {
-    /* Load parametric table for part parameters
-     * 
-     * Args:
-     *  - table: HTML reference to the table
-     *  - table_headers: Unique parameters found in category
-     *  - table_data: Parameters data
-     */
 
-    var table_headers = options.headers;
-    var table_data = options.data;
+    var columns = [
+        {
+            field: 'name',
+            title: '{% trans "Part" %}',
+            switchable: false,
+            sortable: true,
+            formatter: function(value, row) {
+                var name = row.full_name;
 
-    var columns = [];
+                var display = imageHoverIcon(row.thumbnail) + renderLink(name, `/part/${row.pk}/`);
 
-    for (var header of table_headers) {
-        if (header === 'part') {
-            columns.push({
-                field: header,
-                title: '{% trans "Part" %}',
-                sortable: true,
-                sortName: 'name',
-                formatter: function(value, row) {
-
-                    var name = '';
-
-                    if (row.IPN) {
-                        name += row.IPN + ' | ' + row.name;
-                    } else {
-                        name += row.name;
-                    }
-
-                    return renderLink(name, '/part/' + row.pk + '/'); 
-                }
-            });
-        } else if (header === 'description') {
-            columns.push({
-                field: header,
-                title: '{% trans "Description" %}',
-                sortable: true,
-            });
-        } else {
-            columns.push({
-                field: header,
-                title: header,
-                sortable: true,
-                filterControl: 'input',
-            });
+                return display;
+            }
         }
-    }
+    ];
+
+    // Request a list of parameters we are interested in for this category
+    inventreeGet(
+        '{% url "api-part-parameter-template-list" %}',
+        {
+            category: options.category,
+        },
+        {
+            async: false,
+            success: function(response) {
+                for (var template of response) {
+                    columns.push({
+                        field: `parameter_${template.pk}`,
+                        title: template.name,
+                        switchable: true,
+                        sortable: true,
+                        filterControl: 'input',
+                    });
+                }
+            }
+        }
+    );
+
+    // TODO: Re-enable filter control for parameter values
 
     $(table).inventreeTable({
-        sortName: 'part',
-        queryParams: table_headers,
+        url: '{% url "api-part-list" %}',
+        queryParams: {
+            category: options.category,
+            cascade: true,
+            parameters: true,
+        },
         groupBy: false,
-        name: options.name || 'parametric',
+        name: options.name || 'part-parameters',
         formatNoMatches: function() {
             return '{% trans "No parts found" %}';
         },
         columns: columns,
         showColumns: true,
-        data: table_data,
-        filterControl: true,
+        // filterControl: true,
+        sidePagination: 'server',
+        idField: 'pk',
+        uniqueId: 'pk',
+        onLoadSuccess: function() {
+
+            var data = $(table).bootstrapTable('getData');
+
+            for (var idx = 0; idx < data.length; idx++) {
+                var row = data[idx];
+                var pk = row.pk;
+
+                // Make each parameter accessible, based on the "template" columns
+                row.parameters.forEach(function(parameter) {
+                    row[`parameter_${parameter.template}`] = parameter.data;
+                });
+
+                $(table).bootstrapTable('updateRow', pk, row);
+            }
+        }
     });
 }
 
@@ -2027,6 +2043,22 @@ function loadPartSchedulingChart(canvas_id, part_id) {
             }
         }
     );
+
+    // If no scheduling information is available for the part,
+    // remove the chart and display a message instead
+    if (stock_schedule.length <= 1) {
+
+        var message = `
+        <div class='alert alert-block alert-info'>
+            {% trans "No scheduling information available for this part" %}.<br>
+        </div>`;
+
+        var canvas_element = $('#part-schedule-chart');
+
+        canvas_element.closest('div').html(message);
+
+        return;
+    }
 
     // Iterate through future "events" to calculate expected quantity
 
