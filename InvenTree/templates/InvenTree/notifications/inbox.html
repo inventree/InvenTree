@@ -10,11 +10,11 @@
 {% endblock %}
 
 {% block actions %}
+<div class='btn btn-secondary' type='button' id='mark-all' title='{% trans "Mark all as read" %}'>
+    <span class='fa fa-bookmark'></span> {% trans "Mark all as read" %}
+</div>
 <div class='btn btn-secondary' type='button' id='inbox-refresh' title='{% trans "Refresh Pending Notifications" %}'>
     <span class='fa fa-sync'></span> {% trans "Refresh Pending Notifications" %}
-</div>
-<div class='btn btn-secondary' type='button' id='mark-all' title='{% trans "Mark all as read" %}'>
-    <span class='fa fa-sync'></span> {% trans "Mark all as read" %}
 </div>
 {% endblock %}
 
