@@ -1007,6 +1007,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'PLUGIN_ON_STARTUP': {
+            'name': _('Check plugins on startup'),
+            'description': _('Check that all plugins are installed on startup - enable in container enviroments'),
+            'default': False,
+            'validator': bool,
+            'requires_restart': True,
+        },
         # Settings for plugin mixin features
         'ENABLE_PLUGINS_URL': {
             'name': _('Enable URL integration'),

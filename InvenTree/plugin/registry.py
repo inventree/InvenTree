@@ -8,6 +8,8 @@ Registry for loading and managing multiple plugins at run-time
 import importlib
 import pathlib
 import logging
+import os
+import subprocess
 from typing import OrderedDict
 from importlib import reload
 
@@ -211,6 +213,27 @@ class PluginsRegistry:
         # Log collected plugins
         logger.info(f'Collected {len(self.plugin_modules)} plugins!')
         logger.info(", ".join([a.__module__ for a in self.plugin_modules]))
+
+    def install_plugin_file(self):
+        """
+        Make sure all plugins are installed in the current enviroment
+        """
+
+        if settings.PLUGIN_FILE_CHECKED:
+            logger.info('Plugin file was already checked')
+            return
+
+        try:
+            output = str(subprocess.check_output(['pip', 'install', '-U', '-r', settings.PLUGIN_FILE], cwd=os.path.dirname(settings.BASE_DIR)), 'utf-8')
+        except subprocess.CalledProcessError as error:  # pragma: no cover
+            logger.error(f'Ran into error while trying to install plugins!\n{str(error)}')
+            return False
+
+        logger.info(f'plugin requirements were run\n{output}')
+
+        # do not run again
+        settings.PLUGIN_FILE_CHECKED = True
+
     # endregion
 
     # region registry functions
