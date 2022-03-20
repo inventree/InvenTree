@@ -120,6 +120,15 @@ $("#inbox-refresh").on('click', function() {
     $("#inbox-table").bootstrapTable('refresh');
 });
 
+$("#mark-all").on('click', function() {
+    inventreeGet(
+        '{% url "api-notifications-readall" %}',
+        {
+            read: false,
+        },
+    );
+    updateNotificationTables();
+});
 
 loadNotificationTable("#history-table", {
     name: 'history',

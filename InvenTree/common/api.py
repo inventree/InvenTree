@@ -14,6 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.conf.urls import url, include
 
 from rest_framework.views import APIView
+from rest_framework.response import Response
 from rest_framework.exceptions import NotAcceptable, NotFound
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, generics, permissions
@@ -314,6 +315,25 @@ class NotificationUnread(NotificationReadEdit):
     target = False
 
 
+class NotificationReadAll(generics.RetrieveAPIView):
+    """
+    API endpoint to mark all notifications as read.
+    """
+
+    queryset = common.models.NotificationMessage.objects.all()
+
+    permission_classes = [
+        UserSettingsPermissions,
+    ]
+
+    def get(self, request, *args, **kwargs):
+        try:
+            self.queryset.filter(user=request.user, read=False).update(read=True)
+            return Response({'status': 'ok'})
+        except Exception as exc:
+            raise serializers.ValidationError(detail=serializers.as_serializer_error(exc))
+
+
 settings_api_urls = [
     # User settings
     url(r'^user/', include([
@@ -346,6 +366,8 @@ common_api_urls = [
             url(r'^unread/', NotificationUnread.as_view(), name='api-notifications-unread'),
             url(r'.*$', NotificationDetail.as_view(), name='api-notifications-detail'),
         ])),
+        # Read all
+        url(r'^readall/', NotificationReadAll.as_view(), name='api-notifications-readall'),
 
         # Notification messages list
         url(r'^.*$', NotificationList.as_view(), name='api-notifications-list'),
