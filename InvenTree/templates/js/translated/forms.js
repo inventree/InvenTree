@@ -584,6 +584,8 @@ function constructFormBody(fields, options) {
 
     initializeGroups(fields, options);
 
+    initializeMDE();
+
     if (options.afterRender) {
         // Custom callback function after form rendering
         options.afterRender(fields, options);
@@ -1414,6 +1416,15 @@ function initializeGroups(fields, options) {
     }
 }
 
+// Initialize markdown editor
+function initializeMDE() {
+    elem = $('.mde-editor');
+    new EasyMDE({
+        autoDownloadFontAwesome: false,
+        element: elem[0],
+    });
+}
+
 // Set the placeholder value for a field
 function setFormInputPlaceholder(name, placeholder, options) {
     $(options.modal).find(`#id_${name}`).attr('placeholder', placeholder);
@@ -2210,8 +2221,6 @@ function constructInputOptions(name, classes, type, parameters, options={}) {
 
     opts.push(`id='id_${name}'`);
 
-    opts.push(`class='${classes}'`);
-
     opts.push(`name='${name}'`);
 
     opts.push(`type='${type}'`);
@@ -2269,6 +2278,14 @@ function constructInputOptions(name, classes, type, parameters, options={}) {
     if (parameters.placeholder != null) {
         opts.push(`placeholder='${parameters.placeholder}'`);
     }
+
+    // Markdown editor?
+    if (parameters.mde != null) {
+        classes += ' mde-editor';
+    }
+
+    // add classes
+    opts.push(`class='${classes}'`);
 
     switch (parameters.type) {
     case 'boolean':
