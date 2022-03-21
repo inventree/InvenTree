@@ -164,8 +164,23 @@ class POLineItemSerializer(InvenTreeModelSerializer):
         if order_detail is not True:
             self.fields.pop('order_detail')
 
-    quantity = serializers.FloatField(default=1)
-    received = serializers.FloatField(default=0)
+    quantity = serializers.FloatField(min_value=0, required=True)
+
+    def validate_quantity(self, quantity):
+
+        if quantity <= 0:
+            raise ValidationError(_("Quantity must be greater than zero"))
+
+        return quantity
+
+    def validate_purchase_order(self, purchase_order):
+
+        if purchase_order.status not in PurchaseOrderStatus.OPEN:
+            raise ValidationError(_('Order is not open'))
+
+        return purchase_order
+
+    received = serializers.FloatField(default=0, read_only=True)
 
     overdue = serializers.BooleanField(required=False, read_only=True)
 
@@ -188,6 +203,22 @@ class POLineItemSerializer(InvenTreeModelSerializer):
     )
 
     order_detail = POSerializer(source='order', read_only=True, many=False)
+
+    def validate(self, data):
+
+        data = super().validate(data)
+
+        supplier_part = data['part']
+        purchase_order = data['order']
+
+        # Check that the supplier part and purchase order match
+        if supplier_part is not None and supplier_part.supplier != purchase_order.supplier:
+            raise ValidationError({
+                'part': _('Supplier must match purchase order'),
+                'order': _('Purchase order must match supplier'),
+            })
+
+        return data
 
     class Meta:
         model = order.models.PurchaseOrderLineItem
@@ -349,7 +380,7 @@ class POReceiveSerializer(serializers.Serializer):
     Serializer for receiving items against a purchase order
     """
 
-    items = POLineItemReceiveSerializer(many=True)
+    items = POLineItemReceiveSerializer(many=True, required=True)
 
     location = serializers.PrimaryKeyRelatedField(
         queryset=stock.models.StockLocation.objects.all(),
