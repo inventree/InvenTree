@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-20 22:31+0000\n"
-"PO-Revision-Date: 2022-03-21 20:37\n"
+"PO-Revision-Date: 2022-03-21 21:48\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -4446,7 +4446,7 @@ msgstr "Ezt az alkatrészjegyzék tételt az alkatrész változatok alkatrészje
 #: part/models.py:2773 part/templates/part/upload_bom.html:56
 #: templates/js/translated/bom.js:872
 msgid "Allow Variants"
-msgstr "Változatok engedélyezése"
+msgstr "Változatok"
 
 #: part/models.py:2774
 msgid "Stock items for variant parts can be used for this BOM item"
@@ -6728,19 +6728,19 @@ msgstr "Értesítés törlése"
 
 #: templates/InvenTree/notifications/notifications.html:116
 msgid "No unread notifications found"
-msgstr ""
+msgstr "Nem találhatók olvasatlan értesítések"
 
 #: templates/InvenTree/notifications/notifications.html:140
 msgid "No notification history found"
-msgstr ""
+msgstr "Nem található régebbi értesítés"
 
 #: templates/InvenTree/notifications/sidebar.html:8
 msgid "Inbox"
-msgstr ""
+msgstr "Olvasatlan"
 
 #: templates/InvenTree/notifications/sidebar.html:10
 msgid "History"
-msgstr ""
+msgstr "Előzmények"
 
 #: templates/InvenTree/search.html:8
 msgid "Search Results"
@@ -7275,7 +7275,7 @@ msgstr "Címke beállítások"
 
 #: templates/InvenTree/settings/user_notifications.html:8
 msgid "Notification Settings"
-msgstr ""
+msgstr "Értesítési beállítások"
 
 #: templates/about.html:10
 msgid "InvenTree Version Information"
@@ -8544,19 +8544,19 @@ msgstr "Beszállítói alkatrész azonosító"
 
 #: templates/js/translated/notification.js:228
 msgid "Mark as unread"
-msgstr ""
+msgstr "Megjelölés olvasatlanként"
 
 #: templates/js/translated/notification.js:232
 msgid "Mark as read"
-msgstr ""
+msgstr "Megjelölés olvasottként"
 
 #: templates/js/translated/notification.js:256
 msgid "No unread notifications"
-msgstr ""
+msgstr "Nincs olvasatlan értesítés"
 
 #: templates/js/translated/notification.js:297 templates/notifications.html:9
 msgid "Notifications will load here"
-msgstr ""
+msgstr "Az értesítések itt fognak megjelenni"
 
 #: templates/js/translated/order.js:75
 msgid "No stock items have been allocated to this shipment"
@@ -9745,11 +9745,11 @@ msgstr "Értékesítés"
 
 #: templates/navbar.html:101
 msgid "Show Notifications"
-msgstr ""
+msgstr "Értesítések megjelenítése"
 
 #: templates/navbar.html:104
 msgid "New Notifications"
-msgstr ""
+msgstr "Új értesítések"
 
 #: templates/navbar.html:125
 msgid "Logout"
@@ -9769,7 +9769,7 @@ msgstr "Inventree demo mód"
 
 #: templates/notifications.html:12
 msgid "Show all notifications and history"
-msgstr ""
+msgstr "Összes értesítés és előzmény megjelenítése"
 
 #: templates/qr_code.html:11
 msgid "QR data not provided"
