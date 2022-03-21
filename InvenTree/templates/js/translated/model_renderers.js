@@ -371,10 +371,16 @@ function renderSupplierPart(name, data, parameters, options) {
     var html = '';
     
     html += select2Thumbnail(supplier_image);
-    html += select2Thumbnail(part_image);
+    
+    if (data.part_detail) {
+        html += select2Thumbnail(part_image);
+    }
     
     html += ` <span><b>${data.supplier_detail.name}</b> - ${data.SKU}</span>`;
-    html += ` - <i>${data.part_detail.full_name}</i>`;
+
+    if (data.part_detail) {
+        html += ` - <i>${data.part_detail.full_name}</i>`;
+    }
 
     html += `<span class='float-right'><small>{% trans "Supplier Part ID" %}: ${data.pk}</small></span>`;
 

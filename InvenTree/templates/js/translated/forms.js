@@ -1780,6 +1780,11 @@ function initializeRelatedField(field, fields, options={}) {
                 // Only a single result is available, given the provided filters
                 if (data.count == 1) {
                     setRelatedFieldData(name, data.results[0], options);
+
+                    // Run "callback" function (if supplied)
+                    if (field.onEdit) {
+                        field.onEdit(data.results[0], name, field, options);
+                    }
                 }
             }
         });
