@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-20 22:31+0000\n"
-"PO-Revision-Date: 2022-03-21 21:48\n"
+"PO-Revision-Date: 2022-03-21 22:47\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -409,7 +409,7 @@ msgstr "Kész"
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:144
 #: InvenTree/status_codes.py:320
 msgid "Cancelled"
-msgstr "Törölve"
+msgstr "Megszakítva"
 
 #: InvenTree/status_codes.py:105 InvenTree/status_codes.py:145
 #: InvenTree/status_codes.py:187
@@ -532,7 +532,7 @@ msgstr "Megrendelésre érkezett"
 
 #: InvenTree/status_codes.py:319
 msgid "Production"
-msgstr "Termelés"
+msgstr "Folyamatban"
 
 #: InvenTree/validators.py:25
 msgid "Not a valid currency code"
@@ -8086,7 +8086,7 @@ msgstr "Vannak helyettesítő alkatrészek"
 
 #: templates/js/translated/build.js:1419
 msgid "Quantity Per"
-msgstr "Mennyiség per"
+msgstr "Szükséges/db"
 
 #: templates/js/translated/build.js:1429 templates/js/translated/build.js:1681
 #: templates/js/translated/build.js:2132 templates/js/translated/order.js:2446
