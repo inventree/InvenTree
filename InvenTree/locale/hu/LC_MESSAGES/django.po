@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-20 22:31+0000\n"
-"PO-Revision-Date: 2022-03-20 22:41\n"
+"PO-Revision-Date: 2022-03-21 20:37\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -2014,11 +2014,11 @@ msgstr "A felhasználóknak többfaktoros hitelesítést kell használniuk."
 
 #: common/models.py:1011
 msgid "Check plugins on startup"
-msgstr ""
+msgstr "Pluginok ellenőrzése indításkor"
 
 #: common/models.py:1012
 msgid "Check that all plugins are installed on startup - enable in container enviroments"
-msgstr ""
+msgstr "Ellenőrizze induláskor hogy minden plugin telepítve van - engedélyezd konténer környezetben (docker)"
 
 #: common/models.py:1019
 msgid "Enable URL integration"
@@ -2210,11 +2210,11 @@ msgstr "Megkésett vevői rendelések megjelenítése a főoldalon"
 
 #: common/models.py:1204
 msgid "Enable email notifications"
-msgstr ""
+msgstr "Email értesítések engedélyezése"
 
 #: common/models.py:1205
 msgid "Allow sending of emails for event notifications"
-msgstr ""
+msgstr "Email küldés engedélyezése esemény értesítésekre"
 
 #: common/models.py:1211
 msgid "Inline label display"
@@ -4571,7 +4571,7 @@ msgstr "Alacsony készlet értesítés"
 #: part/tasks.py:20
 #, python-brace-format
 msgid "The available stock for {part.name} has fallen below the configured minimum level"
-msgstr ""
+msgstr "A {part.name} alkatrész rendelkezésre álló készlete a megadott minimum alá csökkent"
 
 #: part/templates/part/bom.html:6
 msgid "You do not have permission to edit the BOM."
@@ -6680,32 +6680,32 @@ msgstr "Megkésett vevői rendelések"
 
 #: templates/InvenTree/notifications/history.html:9
 msgid "Notification History"
-msgstr ""
+msgstr "Értesítések előzményei"
 
 #: templates/InvenTree/notifications/history.html:13
 #: templates/InvenTree/notifications/history.html:14
 msgid "Refresh Notification History"
-msgstr ""
+msgstr "Előzmények frissítése"
 
 #: templates/InvenTree/notifications/inbox.html:9
 msgid "Pending Notifications"
-msgstr ""
+msgstr "Függő értesítések"
 
 #: templates/InvenTree/notifications/inbox.html:13
 #: templates/InvenTree/notifications/inbox.html:14
 msgid "Mark all as read"
-msgstr ""
+msgstr "Mind megjelölése olvasottként"
 
 #: templates/InvenTree/notifications/inbox.html:16
 #: templates/InvenTree/notifications/inbox.html:17
 msgid "Refresh Pending Notifications"
-msgstr ""
+msgstr "Függő értesítések frissítése"
 
 #: templates/InvenTree/notifications/notifications.html:10
 #: templates/InvenTree/notifications/sidebar.html:5
 #: templates/InvenTree/settings/sidebar.html:17 templates/notifications.html:4
 msgid "Notifications"
-msgstr ""
+msgstr "Értesítések"
 
 #: templates/InvenTree/notifications/notifications.html:51
 #: templates/InvenTree/settings/settings.html:314
@@ -6714,7 +6714,7 @@ msgstr "Azonosító"
 
 #: templates/InvenTree/notifications/notifications.html:57
 msgid "Age"
-msgstr ""
+msgstr "Életkor"
 
 #: templates/InvenTree/notifications/notifications.html:88
 #: templates/InvenTree/settings/plugin.html:126
@@ -6724,7 +6724,7 @@ msgstr "Üzenet"
 #: templates/InvenTree/notifications/notifications.html:94
 #: templates/InvenTree/notifications/notifications.html:150
 msgid "Delete Notification"
-msgstr ""
+msgstr "Értesítés törlése"
 
 #: templates/InvenTree/notifications/notifications.html:116
 msgid "No unread notifications found"
