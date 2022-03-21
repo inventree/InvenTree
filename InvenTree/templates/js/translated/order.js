@@ -655,12 +655,14 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             );
         }
 
-        buttons += makeIconButton(
-            'fa-times icon-red',
-            'button-row-remove',
-            pk,
-            '{% trans "Remove row" %}',
-        );
+        if (line_items.length > 1) {
+            buttons += makeIconButton(
+                'fa-times icon-red',
+                'button-row-remove',
+                pk,
+                '{% trans "Remove row" %}',
+            );
+        }
 
         buttons += '</div>';
 
