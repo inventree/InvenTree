@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-20 22:31+0000\n"
-"PO-Revision-Date: 2022-03-20 22:41\n"
+"PO-Revision-Date: 2022-03-22 14:08\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -279,7 +279,7 @@ msgstr "Строки данных в файле не найдены"
 
 #: InvenTree/serializers.py:533
 msgid "No data rows provided"
-msgstr ""
+msgstr "Строки данных в файле не найдены"
 
 #: InvenTree/serializers.py:536
 msgid "No data columns supplied"
