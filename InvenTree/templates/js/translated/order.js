@@ -33,6 +33,7 @@
     loadSalesOrderTable,
     newPurchaseOrderFromOrderWizard,
     newSupplierPartFromOrderWizard,
+    orderParts,
     removeOrderRowFromOrderWizard,
     removePurchaseOrderLineItem,
 */
@@ -448,6 +449,217 @@ function exportOrder(redirect_url, options={}) {
             location.href = `${redirect_url}?format=${format}`;
         }
     });
+}
+
+
+/*
+ * Create a new form to order parts based on the list of provided parts.
+ */
+function orderParts(parts_list, options={}) {
+
+    var parts = [];
+
+    parts_list.forEach(function(part) {
+        if (part.purchaseable) {
+            parts.push(part);
+        }
+    });
+
+    if (parts.length == 0) {
+        showAlertDialog(
+            '{% trans "Select Parts" %}',
+            '{% trans "At least one purchaseable part must be selected" %}',
+        );
+        return;
+    }
+
+    // Render a single part within the dialog
+    function renderPart(part, opts={}) {
+
+        var pk = part.pk;
+
+        var thumb = thumbnailImage(part.thumbnail || part.image);
+
+        // The "quantity" field should have been provided for each part
+        var quantity = part.quantity || 0;
+
+        if (quantity < 0) {
+            quantity = 0;
+        }
+
+        var quantity_input = constructField(
+            `items_quantity_${pk}`,
+            {
+                type: 'decimal',
+                min_value: 0,
+                value: quantity,
+                title: '{% trans "Quantity to order" %}',
+                required: true,
+            },
+            {
+                hideLabels: true,
+            }
+        )
+
+        var supplier_part_prefix = `
+            <span class='input-group-text' title='{% trans "New supplier part" %}'>
+                <span class='fas fa-plus-circle icon-green'></span>
+            </span>
+        `;
+
+        var supplier_part_input = constructField(
+            `supplier_part_${pk}`,
+            {
+                type: 'related field',
+                required: true,
+                prefixRaw: supplier_part_prefix,
+            },
+            {
+                hideLabels: true,
+            }
+        );
+
+        var purchase_order_prefix  = `
+            <span class='input-group-text' title='{% trans "New purchase order" %}'>
+                <span class='fas fa-plus-circle icon-green'></span>
+            </span>
+        `;
+
+        var purchase_order_input = constructField(
+            `purchase_order_${pk}`,
+            {
+                type: 'related field',
+                required: true,
+                prefixRaw: purchase_order_prefix,
+            },
+            {
+                hideLabels: 'true',
+            }
+        );
+
+        var buttons = `<div class='btn-group float-right' role='group'>`;
+
+        buttons += makeIconButton(
+            'fa-check-circle icon-green',
+            'button-row-complete',
+            pk,
+            '{% trans "Add to order" %}',
+        );
+
+        if (parts.length > 1) {
+            buttons += makeIconButton(
+                'fa-times icon-red',
+                'button-row-remove',
+                pk,
+                '{% trans "Remove row" %}',
+            );
+        }
+
+        buttons += `</div>`;
+
+        var html = `
+        <tr id='order_row_${pk}' class='part-order-row'>
+            <td id='part_${pk}'>${thumb} ${part.full_name}</td>
+            <td id='supplier_part_${pk}'>${supplier_part_input}</td>
+            <td id='purchase_order_${pk}'>${purchase_order_input}</td>
+            <td id='quantity_${pk}'>${quantity_input}</td>
+            <td id='actions_${pk}'>${buttons}</td>
+        </tr>
+        `;
+
+        return html;
+    }
+
+    var table_entries = '';
+
+    parts.forEach(function(part) {
+        table_entries += renderPart(part);
+    });
+
+    var html = '';
+
+    // Add table
+    html += `
+    <table class='table table-striped table-condensed' id='order-parts-table'>
+        <thead>
+            <tr>
+                <th>{% trans "Part" %}</th>
+                <th style='min-width: 300px;'>{% trans "Supplier Part" %}</th>
+                <th style='min-width: 300px;'>{% trans "Purchase Order" %}</th>
+                <th style='min-width: 50px;'>{% trans "Quantity" %}</th>
+                <th><!-- Actions --></th>
+            </tr>
+        </thead>
+        <tbody>
+            ${table_entries}
+        </tbody>
+    </table>
+    `;
+
+    constructFormBody({}, {
+        preFormContent: html,
+        title: '{% trans "Order Parts" %}',
+        hideSubmitButton: true,
+        afterRender: function(fields, opts) {
+            // TODO
+            parts.forEach(function(part) {
+                // Configure the "supplier part" field
+                initializeRelatedField({
+                    name: `supplier_part_${part.pk}`,
+                    model: 'supplierpart',
+                    api_url: '{% url "api-supplier-part-list" %}',
+                    required: true,
+                    type: 'related field',
+                    auto_fill: true,
+                    filters: {
+                        part: part.pk,
+                        supplier_detail: true,
+                        part_detail: false,
+                    },
+                    noResults: function(query) {
+                        return '{% trans "No matching supplier parts" %}';
+                    }                    
+                }, null, opts);
+
+                // Configure the "purchase order" field
+                initializeRelatedField({
+                    name: `purchase_order_${part.pk}`,
+                    model: 'purchaseorder',
+                    api_url: '{% url "api-po-list" %}',
+                    required: true,
+                    type: 'related field',
+                    auto_fill: false,
+                    filters: {
+                        status: {{ PurchaseOrderStatus.PENDING }},
+                    },
+                    adjustFilters: function(query, opts) {
+
+                        // Whenever we open the drop-down to select an order,
+                        // ensure we are only displaying orders which match the selected supplier part
+                        var supplier_part_pk = getFormFieldValue(`supplier_part_${part.pk}`, opts);
+
+                        inventreeGet(
+                            `/api/company/part/${supplier_part_pk}/`,
+                            {},
+                            {
+                                async: false,
+                                success: function(data) {
+                                    query.supplier = data.supplier;
+                                }
+                            }
+                        );
+
+                        return query;
+                    },
+                    noResults: function(query) {
+                        return '{% trans "No matching purchase orders" %}';
+                    }
+                }, null, opts);
+
+            });
+        }
+    });
+
 }
 
 function newPurchaseOrderFromOrderWizard(e) {

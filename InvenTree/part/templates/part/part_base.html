@@ -558,6 +558,22 @@
     {% endif %}
 
     $("#part-order").click(function() {
+
+        inventreeGet(
+            '{% url "api-part-detail" part.pk %}',
+            {},
+            {
+                success: function(part) {
+                    orderParts(
+                        [part],
+                        {}
+                    );
+                }
+            }
+        );
+
+        return;
+
         launchModalForm("{% url 'order-parts' %}", {
             data: {
                 part: {{ part.id }},
