@@ -213,7 +213,7 @@ function createBuildOutput(build_id, options) {
                     success: function(data) {
                         if (data.next) {
                             fields.serial_numbers.placeholder = `{% trans "Next available serial number" %}: ${data.next}`;
-                        } else {
+                        } else if (data.latest) {
                             fields.serial_numbers.placeholder = `{% trans "Latest serial number" %}: ${data.latest}`;
                         }
                     },
