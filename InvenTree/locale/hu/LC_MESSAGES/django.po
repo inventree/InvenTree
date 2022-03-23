@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-20 22:31+0000\n"
-"PO-Revision-Date: 2022-03-21 22:47\n"
+"PO-Revision-Date: 2022-03-23 17:19\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -6355,7 +6355,7 @@ msgstr "Sorszámozott készletek létrehozása ebből a készlet tételből."
 
 #: stock/templates/stock/item_serialize.html:7
 msgid "Select quantity to serialize, and unique serial numbers."
-msgstr "Válaszz mennyiséget és egyedi sorozatszámokat a sorozatszámozáshoz."
+msgstr "Válassz mennyiséget és egyedi sorozatszámokat a sorozatszámozáshoz."
 
 #: stock/templates/stock/location.html:38
 msgid "Check-in Items"
@@ -7874,7 +7874,7 @@ msgstr "Helyettesítő alkatrész törlése"
 
 #: templates/js/translated/bom.js:565
 msgid "Select and add a new substitute part using the input below"
-msgstr "Válaszz és adj hozzá új helyettesítő alkatrészt a lenti mezőben"
+msgstr "Válassz és adj hozzá új helyettesítő alkatrészt a lenti mezőben"
 
 #: templates/js/translated/bom.js:576
 msgid "Are you sure you wish to remove this substitute part link?"
