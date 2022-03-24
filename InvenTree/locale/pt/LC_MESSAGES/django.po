@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-20 22:31+0000\n"
-"PO-Revision-Date: 2022-03-20 22:41\n"
+"POT-Creation-Date: 2022-03-24 01:51+0000\n"
+"PO-Revision-Date: 2022-03-24 02:02\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -5368,7 +5368,7 @@ msgstr ""
 msgid "Create a new variant of template <em>'%(full_name)s'</em>."
 msgstr ""
 
-#: part/templatetags/inventree_extras.py:174
+#: part/templatetags/inventree_extras.py:189
 msgid "Unknown database"
 msgstr ""
 
