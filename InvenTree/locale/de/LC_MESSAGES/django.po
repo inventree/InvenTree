@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-24 01:51+0000\n"
+"POT-Creation-Date: 2022-03-24 06:09+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -1518,11 +1518,21 @@ msgstr "Endprodukt entfernen"
 msgid "Delete outputs"
 msgstr "Endprodukte fertigstellen"
 
-#: build/templates/build/detail.html:273
+#: build/templates/build/detail.html:264
+#: stock/templates/stock/location.html:185 templates/stock_table.html:27
+msgid "Printing Actions"
+msgstr "Druck Aktionen"
+
+#: build/templates/build/detail.html:268 build/templates/build/detail.html:269
+#: stock/templates/stock/location.html:189 templates/stock_table.html:31
+msgid "Print labels"
+msgstr "Label drucken"
+
+#: build/templates/build/detail.html:286
 msgid "Completed Build Outputs"
 msgstr "Fertiggestellte Endprodukte"
 
-#: build/templates/build/detail.html:285 build/templates/build/sidebar.html:19
+#: build/templates/build/detail.html:298 build/templates/build/sidebar.html:19
 #: order/templates/order/po_sidebar.html:9
 #: order/templates/order/purchase_order_detail.html:60
 #: order/templates/order/sales_order_detail.html:107
@@ -1532,11 +1542,11 @@ msgstr "Fertiggestellte Endprodukte"
 msgid "Attachments"
 msgstr "Anhänge"
 
-#: build/templates/build/detail.html:301
+#: build/templates/build/detail.html:314
 msgid "Build Notes"
 msgstr "Bauauftrags-Notizen"
 
-#: build/templates/build/detail.html:305 build/templates/build/detail.html:389
+#: build/templates/build/detail.html:318 build/templates/build/detail.html:402
 #: company/templates/company/detail.html:190
 #: company/templates/company/detail.html:217
 #: order/templates/order/purchase_order_detail.html:80
@@ -1548,11 +1558,11 @@ msgstr "Bauauftrags-Notizen"
 msgid "Edit Notes"
 msgstr "Anmerkungen bearbeiten"
 
-#: build/templates/build/detail.html:526
+#: build/templates/build/detail.html:556
 msgid "Allocation Complete"
 msgstr "Zuordnung abgeschlossen"
 
-#: build/templates/build/detail.html:527
+#: build/templates/build/detail.html:557
 msgid "All untracked stock items have been allocated"
 msgstr "Alle nicht verfolgten Lagerartikel wurden zugewiesen"
 
@@ -3266,7 +3276,7 @@ msgstr "Ungültige Antwort {code}"
 msgid "Supplied URL is not a valid image file"
 msgstr "Angegebene URL ist kein gültiges Bild"
 
-#: label/api.py:57 report/api.py:203
+#: label/api.py:97 report/api.py:203
 msgid "No valid objects provided to template"
 msgstr "Keine korrekten Objekte für Vorlage gegeben"
 
@@ -6784,14 +6794,6 @@ msgstr "Unter-Lagerorte"
 msgid "Stock Locations"
 msgstr "Bestand-Lagerorte"
 
-#: stock/templates/stock/location.html:185 templates/stock_table.html:27
-msgid "Printing Actions"
-msgstr "Druck Aktionen"
-
-#: stock/templates/stock/location.html:189 templates/stock_table.html:31
-msgid "Print labels"
-msgstr "Label drucken"
-
 #: stock/templates/stock/location_delete.html:8
 msgid "Are you sure you want to delete this stock location?"
 msgstr "Sind Sie sicher, dass Sie diesen Lagerort löschen wollen?"
@@ -8596,7 +8598,7 @@ msgstr "Bestand bestellen"
 msgid "Allocate stock"
 msgstr "Bestand zuweisen"
 
-#: templates/js/translated/build.js:1533 templates/js/translated/label.js:134
+#: templates/js/translated/build.js:1533 templates/js/translated/label.js:171
 #: templates/js/translated/order.js:1755 templates/js/translated/report.js:225
 msgid "Select Parts"
 msgstr "Teile auswählen"
@@ -8899,53 +8901,67 @@ msgstr "JA"
 msgid "NO"
 msgstr "NEIN"
 
-#: templates/js/translated/label.js:29 templates/js/translated/report.js:118
+#: templates/js/translated/label.js:38
+#, fuzzy
+#| msgid "Label Settings"
+msgid "Labels sent to printer"
+msgstr "Labeleinstellungen"
+
+#: templates/js/translated/label.js:59 templates/js/translated/report.js:118
 #: templates/js/translated/stock.js:1015
 msgid "Select Stock Items"
 msgstr "Lagerartikel auswählen"
 
-#: templates/js/translated/label.js:30
+#: templates/js/translated/label.js:60
 msgid "Stock item(s) must be selected before printing labels"
 msgstr "Lagerartikel müssen ausgewählt sein bevor Labels gedruckt werden können"
 
-#: templates/js/translated/label.js:48 templates/js/translated/label.js:98
-#: templates/js/translated/label.js:153
+#: templates/js/translated/label.js:78 templates/js/translated/label.js:132
+#: templates/js/translated/label.js:190
 msgid "No Labels Found"
 msgstr "Keine Labels gefunden"
 
-#: templates/js/translated/label.js:49
+#: templates/js/translated/label.js:79
 msgid "No labels found which match selected stock item(s)"
 msgstr "Keine Labels die zu Lagerartikel passen gefunden"
 
-#: templates/js/translated/label.js:80
+#: templates/js/translated/label.js:114
 msgid "Select Stock Locations"
 msgstr "Bestands-Lagerort auswählen"
 
-#: templates/js/translated/label.js:81
+#: templates/js/translated/label.js:115
 msgid "Stock location(s) must be selected before printing labels"
 msgstr "Bestands-Lagerort(e) müssen ausgewählt sein um Labels zu drucken"
 
-#: templates/js/translated/label.js:99
+#: templates/js/translated/label.js:133
 msgid "No labels found which match selected stock location(s)"
 msgstr "Keine Labels für die ausgewählten Bestands-Lagerort(e) gefunden"
 
-#: templates/js/translated/label.js:135
+#: templates/js/translated/label.js:172
 msgid "Part(s) must be selected before printing labels"
 msgstr "Teile(e) müssen ausgewählt sein bevor Labels gedruckt werden können"
 
-#: templates/js/translated/label.js:154
+#: templates/js/translated/label.js:191
 msgid "No labels found which match the selected part(s)"
 msgstr "Keine Labels zu den ausgewählten Teilen gefunden"
 
-#: templates/js/translated/label.js:228
+#: templates/js/translated/label.js:258
+#, fuzzy
+#| msgid "Select filter"
+msgid "Select Printer"
+msgstr "Filter auswählen"
+
+#: templates/js/translated/label.js:262
+#, fuzzy
+#| msgid "Export Stock"
+msgid "Export to PDF"
+msgstr "Bestand exportieren"
+
+#: templates/js/translated/label.js:301
 msgid "stock items selected"
 msgstr "Lagerartikel ausgewählt"
 
-#: templates/js/translated/label.js:236
-msgid "Select Label"
-msgstr "Label auswählen"
-
-#: templates/js/translated/label.js:251
+#: templates/js/translated/label.js:309 templates/js/translated/label.js:325
 msgid "Select Label Template"
 msgstr "Label-Vorlage auswählen"
 
@@ -10592,6 +10608,9 @@ msgstr "Berechtigungen Einträge zu ändern"
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
 
+#~ msgid "Select Label"
+#~ msgstr "Label auswählen"
+
 #, fuzzy
 #~| msgid "Edit Stock Allocation"
 #~ msgid "Part Stock Allocations"
@@ -10621,9 +10640,6 @@ msgstr "Berechtigung Einträge zu löschen"
 
 #~ msgid "Showing stock for all variants of <em>%(full_name)s</em>"
 #~ msgstr "Bestand aller Varianten von <em>%(full_name)s</em>"
-
-#~ msgid "Export Stock"
-#~ msgstr "Bestand exportieren"
 
 #~ msgid "Include Sublocations"
 #~ msgstr "Einschließlich Unterstandorte"

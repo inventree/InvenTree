@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-24 01:51+0000\n"
+"POT-Creation-Date: 2022-03-24 06:09+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -1505,11 +1505,21 @@ msgstr "删除生产产出"
 msgid "Delete outputs"
 msgstr "删除商品"
 
-#: build/templates/build/detail.html:273
+#: build/templates/build/detail.html:264
+#: stock/templates/stock/location.html:185 templates/stock_table.html:27
+msgid "Printing Actions"
+msgstr "打印操作"
+
+#: build/templates/build/detail.html:268 build/templates/build/detail.html:269
+#: stock/templates/stock/location.html:189 templates/stock_table.html:31
+msgid "Print labels"
+msgstr "打印标签"
+
+#: build/templates/build/detail.html:286
 msgid "Completed Build Outputs"
 msgstr ""
 
-#: build/templates/build/detail.html:285 build/templates/build/sidebar.html:19
+#: build/templates/build/detail.html:298 build/templates/build/sidebar.html:19
 #: order/templates/order/po_sidebar.html:9
 #: order/templates/order/purchase_order_detail.html:60
 #: order/templates/order/sales_order_detail.html:107
@@ -1519,11 +1529,11 @@ msgstr ""
 msgid "Attachments"
 msgstr "附件"
 
-#: build/templates/build/detail.html:301
+#: build/templates/build/detail.html:314
 msgid "Build Notes"
 msgstr "生产备注"
 
-#: build/templates/build/detail.html:305 build/templates/build/detail.html:389
+#: build/templates/build/detail.html:318 build/templates/build/detail.html:402
 #: company/templates/company/detail.html:190
 #: company/templates/company/detail.html:217
 #: order/templates/order/purchase_order_detail.html:80
@@ -1535,11 +1545,11 @@ msgstr "生产备注"
 msgid "Edit Notes"
 msgstr "编辑备注"
 
-#: build/templates/build/detail.html:526
+#: build/templates/build/detail.html:556
 msgid "Allocation Complete"
 msgstr ""
 
-#: build/templates/build/detail.html:527
+#: build/templates/build/detail.html:557
 msgid "All untracked stock items have been allocated"
 msgstr ""
 
@@ -3233,7 +3243,7 @@ msgstr "无效响应: {code}"
 msgid "Supplied URL is not a valid image file"
 msgstr "提供的 URL 不是一个有效的图片文件"
 
-#: label/api.py:57 report/api.py:203
+#: label/api.py:97 report/api.py:203
 msgid "No valid objects provided to template"
 msgstr "没有为模板提供有效对象"
 
@@ -6675,14 +6685,6 @@ msgstr ""
 msgid "Stock Locations"
 msgstr "仓储地点"
 
-#: stock/templates/stock/location.html:185 templates/stock_table.html:27
-msgid "Printing Actions"
-msgstr "打印操作"
-
-#: stock/templates/stock/location.html:189 templates/stock_table.html:31
-msgid "Print labels"
-msgstr "打印标签"
-
 #: stock/templates/stock/location_delete.html:8
 msgid "Are you sure you want to delete this stock location?"
 msgstr "确实要删除此仓储地点吗?"
@@ -8452,7 +8454,7 @@ msgstr ""
 msgid "Allocate stock"
 msgstr ""
 
-#: templates/js/translated/build.js:1533 templates/js/translated/label.js:134
+#: templates/js/translated/build.js:1533 templates/js/translated/label.js:171
 #: templates/js/translated/order.js:1755 templates/js/translated/report.js:225
 msgid "Select Parts"
 msgstr "选择商品"
@@ -8755,53 +8757,67 @@ msgstr ""
 msgid "NO"
 msgstr ""
 
-#: templates/js/translated/label.js:29 templates/js/translated/report.js:118
+#: templates/js/translated/label.js:38
+#, fuzzy
+#| msgid "Label Settings"
+msgid "Labels sent to printer"
+msgstr "标签设置"
+
+#: templates/js/translated/label.js:59 templates/js/translated/report.js:118
 #: templates/js/translated/stock.js:1015
 msgid "Select Stock Items"
 msgstr "选择库存项"
 
-#: templates/js/translated/label.js:30
+#: templates/js/translated/label.js:60
 msgid "Stock item(s) must be selected before printing labels"
 msgstr "打印标签前必须选择库存项目"
 
-#: templates/js/translated/label.js:48 templates/js/translated/label.js:98
-#: templates/js/translated/label.js:153
+#: templates/js/translated/label.js:78 templates/js/translated/label.js:132
+#: templates/js/translated/label.js:190
 msgid "No Labels Found"
 msgstr "未找到标签"
 
-#: templates/js/translated/label.js:49
+#: templates/js/translated/label.js:79
 msgid "No labels found which match selected stock item(s)"
 msgstr "没有找到与选定的库存项匹配的标签"
 
-#: templates/js/translated/label.js:80
+#: templates/js/translated/label.js:114
 msgid "Select Stock Locations"
 msgstr "选择仓储地点"
 
-#: templates/js/translated/label.js:81
+#: templates/js/translated/label.js:115
 msgid "Stock location(s) must be selected before printing labels"
 msgstr "打印标签前必须选择仓储地点"
 
-#: templates/js/translated/label.js:99
+#: templates/js/translated/label.js:133
 msgid "No labels found which match selected stock location(s)"
 msgstr "没有找到匹配选定库存地点的标签"
 
-#: templates/js/translated/label.js:135
+#: templates/js/translated/label.js:172
 msgid "Part(s) must be selected before printing labels"
 msgstr "打印标签前必须选择商品"
 
-#: templates/js/translated/label.js:154
+#: templates/js/translated/label.js:191
 msgid "No labels found which match the selected part(s)"
 msgstr "没有找到与所选商品相匹配的标签"
 
-#: templates/js/translated/label.js:228
+#: templates/js/translated/label.js:258
+#, fuzzy
+#| msgid "Select filter"
+msgid "Select Printer"
+msgstr "选择筛选项"
+
+#: templates/js/translated/label.js:262
+#, fuzzy
+#| msgid "Export Data"
+msgid "Export to PDF"
+msgstr "导出数据"
+
+#: templates/js/translated/label.js:301
 msgid "stock items selected"
 msgstr "已选择库存项"
 
-#: templates/js/translated/label.js:236
-msgid "Select Label"
-msgstr "选择标签"
-
-#: templates/js/translated/label.js:251
+#: templates/js/translated/label.js:309 templates/js/translated/label.js:325
 msgid "Select Label Template"
 msgstr "选择标签模板"
 
@@ -10419,6 +10435,9 @@ msgstr "编辑项目权限"
 #: users/models.py:218
 msgid "Permission to delete items"
 msgstr "删除项目权限"
+
+#~ msgid "Select Label"
+#~ msgstr "选择标签"
 
 #, fuzzy
 #~| msgid "Stock Locations"

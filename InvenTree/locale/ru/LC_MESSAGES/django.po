@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-24 01:51+0000\n"
+"POT-Creation-Date: 2022-03-24 06:09+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -1487,11 +1487,21 @@ msgstr "Введите серийные номера для результато
 msgid "Delete outputs"
 msgstr "Удалить элемент"
 
-#: build/templates/build/detail.html:273
+#: build/templates/build/detail.html:264
+#: stock/templates/stock/location.html:185 templates/stock_table.html:27
+msgid "Printing Actions"
+msgstr ""
+
+#: build/templates/build/detail.html:268 build/templates/build/detail.html:269
+#: stock/templates/stock/location.html:189 templates/stock_table.html:31
+msgid "Print labels"
+msgstr ""
+
+#: build/templates/build/detail.html:286
 msgid "Completed Build Outputs"
 msgstr ""
 
-#: build/templates/build/detail.html:285 build/templates/build/sidebar.html:19
+#: build/templates/build/detail.html:298 build/templates/build/sidebar.html:19
 #: order/templates/order/po_sidebar.html:9
 #: order/templates/order/purchase_order_detail.html:60
 #: order/templates/order/sales_order_detail.html:107
@@ -1501,11 +1511,11 @@ msgstr ""
 msgid "Attachments"
 msgstr "Приложения"
 
-#: build/templates/build/detail.html:301
+#: build/templates/build/detail.html:314
 msgid "Build Notes"
 msgstr "Заметки сборки"
 
-#: build/templates/build/detail.html:305 build/templates/build/detail.html:389
+#: build/templates/build/detail.html:318 build/templates/build/detail.html:402
 #: company/templates/company/detail.html:190
 #: company/templates/company/detail.html:217
 #: order/templates/order/purchase_order_detail.html:80
@@ -1517,11 +1527,11 @@ msgstr "Заметки сборки"
 msgid "Edit Notes"
 msgstr ""
 
-#: build/templates/build/detail.html:526
+#: build/templates/build/detail.html:556
 msgid "Allocation Complete"
 msgstr ""
 
-#: build/templates/build/detail.html:527
+#: build/templates/build/detail.html:557
 msgid "All untracked stock items have been allocated"
 msgstr ""
 
@@ -3205,7 +3215,7 @@ msgstr ""
 msgid "Supplied URL is not a valid image file"
 msgstr ""
 
-#: label/api.py:57 report/api.py:203
+#: label/api.py:97 report/api.py:203
 msgid "No valid objects provided to template"
 msgstr ""
 
@@ -6555,14 +6565,6 @@ msgstr ""
 msgid "Stock Locations"
 msgstr ""
 
-#: stock/templates/stock/location.html:185 templates/stock_table.html:27
-msgid "Printing Actions"
-msgstr ""
-
-#: stock/templates/stock/location.html:189 templates/stock_table.html:31
-msgid "Print labels"
-msgstr ""
-
 #: stock/templates/stock/location_delete.html:8
 msgid "Are you sure you want to delete this stock location?"
 msgstr ""
@@ -8281,7 +8283,7 @@ msgstr ""
 msgid "Allocate stock"
 msgstr ""
 
-#: templates/js/translated/build.js:1533 templates/js/translated/label.js:134
+#: templates/js/translated/build.js:1533 templates/js/translated/label.js:171
 #: templates/js/translated/order.js:1755 templates/js/translated/report.js:225
 msgid "Select Parts"
 msgstr ""
@@ -8580,53 +8582,63 @@ msgstr ""
 msgid "NO"
 msgstr ""
 
-#: templates/js/translated/label.js:29 templates/js/translated/report.js:118
+#: templates/js/translated/label.js:38
+msgid "Labels sent to printer"
+msgstr ""
+
+#: templates/js/translated/label.js:59 templates/js/translated/report.js:118
 #: templates/js/translated/stock.js:1015
 msgid "Select Stock Items"
 msgstr ""
 
-#: templates/js/translated/label.js:30
+#: templates/js/translated/label.js:60
 msgid "Stock item(s) must be selected before printing labels"
 msgstr ""
 
-#: templates/js/translated/label.js:48 templates/js/translated/label.js:98
-#: templates/js/translated/label.js:153
+#: templates/js/translated/label.js:78 templates/js/translated/label.js:132
+#: templates/js/translated/label.js:190
 msgid "No Labels Found"
 msgstr ""
 
-#: templates/js/translated/label.js:49
+#: templates/js/translated/label.js:79
 msgid "No labels found which match selected stock item(s)"
 msgstr ""
 
-#: templates/js/translated/label.js:80
+#: templates/js/translated/label.js:114
 msgid "Select Stock Locations"
 msgstr ""
 
-#: templates/js/translated/label.js:81
+#: templates/js/translated/label.js:115
 msgid "Stock location(s) must be selected before printing labels"
 msgstr ""
 
-#: templates/js/translated/label.js:99
+#: templates/js/translated/label.js:133
 msgid "No labels found which match selected stock location(s)"
 msgstr ""
 
-#: templates/js/translated/label.js:135
+#: templates/js/translated/label.js:172
 msgid "Part(s) must be selected before printing labels"
 msgstr ""
 
-#: templates/js/translated/label.js:154
+#: templates/js/translated/label.js:191
 msgid "No labels found which match the selected part(s)"
 msgstr ""
 
-#: templates/js/translated/label.js:228
+#: templates/js/translated/label.js:258
+#, fuzzy
+#| msgid "Select Category"
+msgid "Select Printer"
+msgstr "Выбрать категорию"
+
+#: templates/js/translated/label.js:262
+msgid "Export to PDF"
+msgstr ""
+
+#: templates/js/translated/label.js:301
 msgid "stock items selected"
 msgstr ""
 
-#: templates/js/translated/label.js:236
-msgid "Select Label"
-msgstr ""
-
-#: templates/js/translated/label.js:251
+#: templates/js/translated/label.js:309 templates/js/translated/label.js:325
 msgid "Select Label Template"
 msgstr ""
 
