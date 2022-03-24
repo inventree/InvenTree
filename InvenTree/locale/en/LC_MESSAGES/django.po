@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-23 01:42+0000\n"
+"POT-Creation-Date: 2022-03-24 01:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -5370,7 +5370,7 @@ msgstr ""
 msgid "Create a new variant of template <em>'%(full_name)s'</em>."
 msgstr ""
 
-#: part/templatetags/inventree_extras.py:174
+#: part/templatetags/inventree_extras.py:189
 msgid "Unknown database"
 msgstr ""
 
