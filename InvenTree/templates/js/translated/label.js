@@ -222,7 +222,8 @@ function selectLabel(labels, items, options={}) {
             async: false,
             success: function(response) {
                 response.forEach(function(plugin) {
-                    if (plugin.mixins && plugin.mixins.labels) {
+                    // Look for active plugins which implement the 'labels' mixin class
+                    if (plugin.active && plugin.mixins && plugin.mixins.labels) {
                         // This plugin supports label printing
                         plugins.push(plugin);
                     }

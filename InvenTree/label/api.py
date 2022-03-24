@@ -2,6 +2,8 @@
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
+
+from django.conf import settings
 from django.conf.urls import url, include
 from django.core.exceptions import ValidationError, FieldError
 from django.http import HttpResponse
@@ -13,6 +15,8 @@ from rest_framework.response import Response
 
 import InvenTree.helpers
 import common.models
+
+from plugin.registry import registry
 
 from stock.models import StockItem, StockLocation
 from part.models import Part
@@ -46,11 +50,43 @@ class LabelPrintMixin:
     Mixin for printing labels
     """
 
+    def get_plugin(self, request):
+        """
+        Return the label printing plugin associated with this request.
+        This is provided in the url, e.g. ?plugin=myprinter
+
+        Requires:
+        - settings.PLUGINS_ENABLED is True
+        - matching plugin can be found
+        - matching plugin implements the 'labels' mixin
+        - matching plugin is enabled
+        """
+
+        if not settings.PLUGINS_ENABLED:
+            return None
+
+        plugin_key = request.query_params.get('plugin', None)
+
+        for slug, plugin in registry.plugins.items():
+
+            if slug == plugin_key and plugin.mixin_enabled('labels'):
+
+                config = plugin.plugin_config()
+
+                if config and config.active:
+                    # Only return the plugin if it is enabled!
+                    return plugin
+
+        # No matches found
+        return None
+
     def print(self, request, items_to_print):
         """
         Print this label template against a number of pre-validated items
         """
 
+        # Check the request to determine if the user has selected a label printing plugin
+        plugin = self.get_plugin(request)
         if len(items_to_print) == 0:
             # No valid items provided, return an error message
             data = {
