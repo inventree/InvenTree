@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-20 22:31+0000\n"
-"PO-Revision-Date: 2022-03-23 17:19\n"
+"POT-Creation-Date: 2022-03-24 01:51+0000\n"
+"PO-Revision-Date: 2022-03-24 02:03\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -5368,7 +5368,7 @@ msgstr "Alkatrész változat létrehozása"
 msgid "Create a new variant of template <em>'%(full_name)s'</em>."
 msgstr "Új változat létrehozása a <em>'%(full_name)s'</em> sablonból."
 
-#: part/templatetags/inventree_extras.py:174
+#: part/templatetags/inventree_extras.py:189
 msgid "Unknown database"
 msgstr "Ismeretlen adatbázis"
 
