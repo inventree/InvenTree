@@ -6,6 +6,7 @@ Main JSON interface views
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 from django.http import JsonResponse
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -37,6 +38,7 @@ class InfoView(AjaxView):
             'instance': inventreeInstanceName(),
             'apiVersion': inventreeApiVersion(),
             'worker_running': is_worker_running(),
+            'plugins_enabled': settings.PLUGINS_ENABLED,
         }
 
         return JsonResponse(data)
