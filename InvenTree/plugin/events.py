@@ -96,7 +96,7 @@ def process_event(plugin_slug, event, *args, **kwargs):
     logger.info(f"Plugin '{plugin_slug}' is processing triggered event '{event}'")
 
     plugin = registry.plugins.get(plugin_slug, None)
-    
+
     if plugin is None:
         logger.error(f"Could not find matching plugin for '{plugin_slug}'")
         return
@@ -206,7 +206,7 @@ def print_label(plugin_slug, label_image, **kwargs):
     logger.info(f"Plugin '{plugin_slug}' is printing a label")
 
     plugin = registry.plugins.get(plugin_slug, None)
-    
+
     if plugin is None:
         logger.error(f"Could not find matching plugin for '{plugin_slug}'")
         return

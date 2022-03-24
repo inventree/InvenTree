@@ -131,11 +131,11 @@ class LabelPrintMixin:
             rather than being exported to PDF.
 
             In this case, we do the following:
-            
+
             - Individually generate each label, exporting as an image file
             - Pass all the images through to the label printing plugin
             - Return a JSON response indicating that the printing has been offloaded
-            
+
             """
 
             for output in outputs:
