@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-24 06:09+0000\n"
+"POT-Creation-Date: 2022-03-24 09:49+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -18,15 +18,15 @@ msgstr ""
 "X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 138\n"
 
-#: InvenTree/api.py:55
+#: InvenTree/api.py:57
 msgid "API endpoint not found"
 msgstr "API-Endpunkt nicht gefunden"
 
-#: InvenTree/api.py:101
+#: InvenTree/api.py:103
 msgid "No action specified"
 msgstr "Keine Aktion angegeben"
 
-#: InvenTree/api.py:116
+#: InvenTree/api.py:118
 msgid "No matching action found"
 msgstr "Keine passende Aktion gefunden"
 

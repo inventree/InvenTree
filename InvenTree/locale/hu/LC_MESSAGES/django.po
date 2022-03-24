@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-24 06:09+0000\n"
+"POT-Creation-Date: 2022-03-24 09:49+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,15 +19,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: InvenTree/api.py:55
+#: InvenTree/api.py:57
 msgid "API endpoint not found"
 msgstr ""
 
-#: InvenTree/api.py:101
+#: InvenTree/api.py:103
 msgid "No action specified"
 msgstr ""
 
-#: InvenTree/api.py:116
+#: InvenTree/api.py:118
 msgid "No matching action found"
 msgstr ""
 
