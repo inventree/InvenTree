@@ -10,12 +10,13 @@ import pathlib
 import logging
 import os
 import subprocess
+
 from typing import OrderedDict
 from importlib import reload
 
 from django.apps import apps
 from django.conf import settings
-from django.db.utils import OperationalError, ProgrammingError
+from django.db.utils import OperationalError, ProgrammingError, IntegrityError
 from django.conf.urls import url, include
 from django.urls import clear_url_caches
 from django.contrib import admin
@@ -282,6 +283,8 @@ class PluginsRegistry:
                 if not settings.PLUGIN_TESTING:
                     raise error  # pragma: no cover
                 plugin_db_setting = None
+            except (IntegrityError) as error:
+                logger.error(f"Error initializing plugin: {error}")
 
             # Always activate if testing
             if settings.PLUGIN_TESTING or (plugin_db_setting and plugin_db_setting.active):
