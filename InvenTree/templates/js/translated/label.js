@@ -233,7 +233,7 @@ function selectLabel(labels, items, options={}) {
 
     // Request a list of available label printing plugins from the server
     inventreeGet(
-        `/api/plugins/`,
+        `/api/plugin/`,
         {},
         {
             async: false,
