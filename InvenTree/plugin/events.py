@@ -59,12 +59,8 @@ def register_event(event, *args, **kwargs):
 
     logger.debug(f"Registering triggered event: '{event}'")
 
-    print("register_event")
-
     # Determine if there are any plugins which are interested in responding
     if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_EVENTS'):
-
-        print("checking plugins")
 
         with transaction.atomic():
 
