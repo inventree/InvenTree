@@ -397,8 +397,9 @@ class LabelPrintingMixin:
     """
     Mixin which enables direct printing of stock labels.
 
-    Each plugin should provide a PRINTER_NAME attribute,
-    and also implement the print_label() function
+    Each plugin must provide a PLUGIN_NAME attribute, which is used to uniquely identify the printer.
+
+    The plugin must also implement the print_label() function
     """
 
     class MixinMeta:
@@ -409,17 +410,7 @@ class LabelPrintingMixin:
 
     def __init__(self):
         super().__init__()
-        self.add_mixin('labels', 'has_label_printing', __class__)
-
-    @property
-    def has_label_printing(self):
-
-        if not bool(self.PRINTER_NAME):
-            raise ValueError("PRINTER_NAME must be defined")
-        
-        return True
-
-    PRINTER_NAME = "LabelPrinter"
+        self.add_mixin('labels', True, __class__)
 
     def get_printer_name(self):
         return self.PRINTER_NAME
