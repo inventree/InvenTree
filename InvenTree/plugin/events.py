@@ -70,12 +70,7 @@ def register_event(event, *args, **kwargs):
 
             for slug, plugin in registry.plugins.items():
 
-                print("slug:", slug)
-                print("plugin:", plugin)
-
                 if plugin.mixin_enabled('events'):
-
-                    print("events are enabled for this plugin!")
 
                     config = plugin.plugin_config()
 
