@@ -393,6 +393,59 @@ class AppMixin:
         return True
 
 
+class LabelPrintingMixin:
+    """
+    Mixin which enables direct printing of stock labels.
+
+    Each plugin should provide a PRINTER_NAME attribute,
+    and also implement the print_label() function
+    """
+
+    class MixinMeta:
+        """
+        Meta options for this mixin
+        """
+        MIXIN_NAME = 'Label printing'
+
+    def __init__(self):
+        super().__init__()
+        self.add_mixin('labels', 'has_label_printing', __class__)
+
+    @property
+    def has_label_printing(self):
+
+        if not bool(self.PRINTER_NAME):
+            raise ValueError("PRINTER_NAME must be defined")
+        
+        return True
+
+    PRINTER_NAME = "LabelPrinter"
+
+    def get_printer_name(self):
+        return self.PRINTER_NAME
+
+    def print_labels(self, labels, **kwargs):
+        """
+        Print multiple labels.
+        Default implementation is to call print_label() for each label,
+        but it can be overridden if desired.
+        """
+        for label in labels:
+            self.print_label(label, **kwargs)
+
+    def print_label(self, label, **kwargs):
+        """
+        Callback to print a single label
+
+        Arguments:
+            label: A black-and-white pillow Image object
+
+        """
+
+        # Unimplemented (to be implemented by the particular plugin class)
+        ...
+
+
 class APICallMixin:
     """
     Mixin that enables easier API calls for a plugin
