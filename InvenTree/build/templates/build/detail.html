@@ -258,6 +258,19 @@
                             </a></li>
                         </ul>
                     </div>
+
+                    <!-- Label Printing Actions -->
+                    <div class='btn-group'>
+                        <button id='output-print-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle='dropdown' title='{% trans "Printing Actions" %}'>
+                            <span class='fas fa-print'></span> <span class='caret'></span>
+                        </button>
+                        <ul class='dropdown-menu'>
+                            <li><a class='dropdown-item' href='#' id='incomplete-output-print-label' title='{% trans "Print labels" %}'>
+                                <span class='fas fa-tags'></span> {% trans "Print labels" %}
+                            </a></li>
+                        </ul>
+                    </div>
+
                     {% include "filter_list.html" with id='incompletebuilditems' %}
                 </div>
                 {% endif %}
@@ -466,6 +479,23 @@ inventreeGet(
                         }
                     }
                 )
+            });
+
+            $('#incomplete-output-print-label').click(function() {
+                var outputs = $('#build-output-table').bootstrapTable('getSelections');
+
+                if  (outputs.length == 0) {
+                    outputs = $('#build-output-table').bootstrapTable('getData');
+                }
+
+                var stock_id_values = [];
+
+                outputs.forEach(function(output) {
+                    stock_id_values.push(output.pk);
+                });
+
+                printStockItemLabels(stock_id_values);
+
             });
 
             {% endif %}
