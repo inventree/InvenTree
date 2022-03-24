@@ -57,6 +57,13 @@ def render_date(context, date_object):
         return None
 
     if type(date_object) == str:
+
+        date_object = date_object.strip()
+
+        # Check for empty string
+        if len(date_object) == 0:
+            return None
+
         # If a string is passed, first convert it to a datetime
         date_object = date.fromisoformat(date_object)
 
