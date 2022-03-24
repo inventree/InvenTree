@@ -12,10 +12,13 @@ import common.models
 INVENTREE_SW_VERSION = "0.7.0 dev"
 
 # InvenTree API version
-INVENTREE_API_VERSION = 32
+INVENTREE_API_VERSION = 33
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v33 -> 2022-03-24
+    - Adds "plugins_enabled" information to root API endpoint
 
 v32 -> 2022-03-19
     - Adds "parameters" detail to Part API endpoint (use &parameters=true)
