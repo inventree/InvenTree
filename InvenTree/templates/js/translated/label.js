@@ -57,12 +57,19 @@ function printStockItemLabels(items) {
                     response,
                     items,
                     {
-                        success: function(pk) {
+                        success: function(data) {
+
+                            var pk = data.label;
+
                             var href = `/api/label/stock/${pk}/print/?`;
 
                             items.forEach(function(item) {
                                 href += `items[]=${item}&`;
                             });
+
+                            if (data.plugin) {
+                                href += `plugin=${data.plugin}`;
+                            }
 
                             window.location.href = href;
                         }
@@ -107,12 +114,19 @@ function printStockLocationLabels(locations) {
                     response,
                     locations,
                     {
-                        success: function(pk) {
+                        success: function(data) {
+
+                            var pk = data.label;
+
                             var href = `/api/label/location/${pk}/print/?`;
 
                             locations.forEach(function(location) {
                                 href += `locations[]=${location}&`;
                             });
+
+                            if (data.plugin) {
+                                href += `plugin=${data.plugin}`;
+                            }
 
                             window.location.href = href;
                         }
@@ -162,12 +176,19 @@ function printPartLabels(parts) {
                     response,
                     parts,
                     {
-                        success: function(pk) {
+                        success: function(data) {
+
+                            var pk = data.label;
+
                             var url = `/api/label/part/${pk}/print/?`;
 
                             parts.forEach(function(part) {
                                 url += `parts[]=${part}&`;
                             });
+
+                            if (data.plugin) {
+                                href += `plugin=${data.plugin}`;
+                            }
 
                             window.location.href = url;
                         }
@@ -188,17 +209,52 @@ function selectLabel(labels, items, options={}) {
      * (via AJAX) from the server.
      */
 
-    // If only a single label template is provided,
-    // just run with that!
+    // Array of available plugins for label printing
+    var plugins = [];
 
-    if (labels.length == 1) {
-        if (options.success) {
-            options.success(labels[0].pk);
+    // Request a list of available label printing plugins from the server
+    inventreeGet(
+        '{% url "api-plugin-list" %}',
+        {
+
+        },
+        {
+            async: false,
+            success: function(response) {
+                response.forEach(function(plugin) {
+                    if (plugin.mixins && plugin.mixins.labels) {
+                        // This plugin supports label printing
+                        plugins.push(plugin);
+                    }
+                });
+            }
         }
+    );
 
-        return;
+    var plugin_selection = '';
+    
+    
+    if (plugins.length > 0) {
+        plugin_selection =`
+        <div class='form-group'>
+            <label class='control-label requiredField' for='id_plugin'>
+            {% trans "Select Printer" %}
+            </label>
+            <div class='controls'>
+                <select id='id_plugin' class='select form-control' name='plugin'>
+                    <option value='' title='{% trans "Export to PDF" %}'>{% trans "Export to PDF" %}</option>
+        `;
+
+        plugins.forEach(function(plugin) {
+            plugin_selection += `<option value='${plugin.key}' title='${plugin.meta.human_name}'>${plugin.meta.description} - <small>${plugin.meta.human_name}</small></option>`;
+        });
+
+        plugin_selection += `
+                    </select>
+                </div>
+            </div>
+        `;
     }
-
 
     var modal = options.modal || '#modal-form';
 
@@ -233,14 +289,15 @@ function selectLabel(labels, items, options={}) {
     <form method='post' action='' class='js-modal-form' enctype='multipart/form-data'>
         <div class='form-group'>
             <label class='control-label requiredField' for='id_label'>
-            {% trans "Select Label" %}
+            {% trans "Select Label Template" %}
             </label>
             <div class='controls'>
-                <select id='id_label' class='select form-control name='label'>
+                <select id='id_label' class='select form-control' name='label'>
                     ${label_list}
                 </select>
             </div>
         </div>
+        ${plugin_selection}
     </form>`;
 
     openModal({
@@ -255,14 +312,17 @@ function selectLabel(labels, items, options={}) {
 
     modalSubmit(modal, function() {
 
-        var label = $(modal).find('#id_label');
-
-        var pk = label.val();
+        var label = $(modal).find('#id_label').val();
+        var plugin = $(modal).find('#id_plugin').val();
 
         closeModal(modal);
 
         if (options.success) {
-            options.success(pk);
+            options.success({
+                // Return the selected label template and plugin
+                label: label,
+                plugin: plugin,
+            });
         }
     });
 }
