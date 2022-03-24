@@ -412,9 +412,6 @@ class LabelPrintingMixin:
         super().__init__()
         self.add_mixin('labels', True, __class__)
 
-    def get_printer_name(self):
-        return self.PRINTER_NAME
-
     def print_label(self, label, **kwargs):
         """
         Callback to print a single label
