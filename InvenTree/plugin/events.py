@@ -95,7 +95,11 @@ def process_event(plugin_slug, event, *args, **kwargs):
 
     logger.info(f"Plugin '{plugin_slug}' is processing triggered event '{event}'")
 
-    plugin = registry.plugins[plugin_slug]
+    plugin = registry.plugins.get(plugin_slug, None)
+    
+    if plugin is None:
+        logger.error(f"Could not find matching plugin for '{plugin_slug}'")
+        return
 
     plugin.process_event(event, *args, **kwargs)
 
@@ -186,3 +190,25 @@ def after_delete(sender, instance, **kwargs):
         model=sender.__name__,
         table=table,
     )
+
+
+def print_label(plugin_slug, label_image, **kwargs):
+    """
+    Print label with the provided plugin.
+
+    This task is nominally handled by the background worker.
+
+    Arguments:
+        plugin_slug: The unique slug (key) of the plugin
+        label_image: A PIL.Image image object to be printed
+    """
+
+    logger.info(f"Plugin '{plugin_slug}' is printing a label")
+
+    plugin = registry.plugins.get(plugin_slug, None)
+    
+    if plugin is None:
+        logger.error(f"Could not find matching plugin for '{plugin_slug}'")
+        return
+
+    plugin.print_label(label_image)

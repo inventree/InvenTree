@@ -415,15 +415,6 @@ class LabelPrintingMixin:
     def get_printer_name(self):
         return self.PRINTER_NAME
 
-    def print_labels(self, labels, **kwargs):
-        """
-        Print multiple labels.
-        Default implementation is to call print_label() for each label,
-        but it can be overridden if desired.
-        """
-        for label in labels:
-            self.print_label(label, **kwargs)
-
     def print_label(self, label, **kwargs):
         """
         Callback to print a single label

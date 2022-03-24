@@ -14,10 +14,40 @@
 */
 
 /* exported
+    printLabels,
     printPartLabels,
     printStockItemLabels,
     printStockLocationLabels,
 */
+
+
+/*
+ * Perform the "print" action.
+ */
+function printLabels(url, plugin=null) {
+
+    if (plugin) {
+        // If a plugin is provided, do not redirect the browser.
+        // Instead, perform an API request and display a message
+
+        url = url + `plugin=${plugin}`;
+
+        inventreeGet(url, {}, {
+            success: function(response) {
+                showMessage(
+                    '{% trans "Labels sent to printer" %}',
+                    {
+                        style: 'success',
+                    }
+                );
+            }
+        });
+    } else {
+        window.location.href = url;
+    }
+
+}
+
 
 function printStockItemLabels(items) {
     /**
@@ -67,11 +97,7 @@ function printStockItemLabels(items) {
                                 href += `items[]=${item}&`;
                             });
 
-                            if (data.plugin) {
-                                href += `plugin=${data.plugin}`;
-                            }
-
-                            window.location.href = href;
+                            printLabels(href, data.plugin);
                         }
                     }
                 );
@@ -79,6 +105,7 @@ function printStockItemLabels(items) {
         }
     );
 }
+
 
 function printStockLocationLabels(locations) {
 
@@ -124,11 +151,7 @@ function printStockLocationLabels(locations) {
                                 href += `locations[]=${location}&`;
                             });
 
-                            if (data.plugin) {
-                                href += `plugin=${data.plugin}`;
-                            }
-
-                            window.location.href = href;
+                            printLabels(href, data.plugin);
                         }
                     }
                 );
@@ -186,11 +209,7 @@ function printPartLabels(parts) {
                                 url += `parts[]=${part}&`;
                             });
 
-                            if (data.plugin) {
-                                href += `plugin=${data.plugin}`;
-                            }
-
-                            window.location.href = url;
+                            printLabels(href, data.plugin);
                         }
                     }
                 );
@@ -233,7 +252,6 @@ function selectLabel(labels, items, options={}) {
     );
 
     var plugin_selection = '';
-    
     
     if (plugins.length > 0) {
         plugin_selection =`
