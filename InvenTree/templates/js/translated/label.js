@@ -203,10 +203,10 @@ function printPartLabels(parts) {
 
                             var pk = data.label;
 
-                            var url = `/api/label/part/${pk}/print/?`;
+                            var href = `/api/label/part/${pk}/print/?`;
 
                             parts.forEach(function(part) {
-                                url += `parts[]=${part}&`;
+                                href += `parts[]=${part}&`;
                             });
 
                             printLabels(href, data.plugin);
