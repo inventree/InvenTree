@@ -228,8 +228,9 @@ def print_label(plugin_slug, label_image, label_instance=None, user=None):
 
         logger.error(f"Label printing failed: Sending notification to user '{user}'")
 
+        # Throw an error against the plugin instance
         common.notifications.trigger_notifaction(
-            label_instance,
+            plugin.plugin_config(),
             'label.printing_failed',
             targets=[user],
             context=ctx,
