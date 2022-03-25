@@ -353,7 +353,7 @@ class BaseInvenTreeSetting(models.Model):
 
         if user is not None:
             filters['user'] = user
-        
+
         if plugin is not None:
             from plugin import InvenTreePluginBase
 
@@ -462,7 +462,7 @@ class BaseInvenTreeSetting(models.Model):
         Ensure that the key:value pair is unique.
         In addition to the base validators, this ensures that the 'key'
         is unique, using a case-insensitive comparison.
-        
+
         Note that sub-classes (UserSetting, PluginSetting) use other filters
         to determine if the setting is 'unique' or not
         """
