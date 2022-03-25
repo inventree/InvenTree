@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-25 03:54+0000\n"
-"PO-Revision-Date: 2022-03-25 03:56\n"
+"POT-Creation-Date: 2022-03-25 05:23+0000\n"
+"PO-Revision-Date: 2022-03-25 05:34\n"
 "Last-Translator: \n"
 "Language-Team: Thai\n"
 "Language: th_TH\n"
@@ -4574,11 +4574,11 @@ msgstr ""
 msgid "At least one BOM item is required"
 msgstr ""
 
-#: part/tasks.py:19
+#: part/tasks.py:18
 msgid "Low stock notification"
 msgstr ""
 
-#: part/tasks.py:20
+#: part/tasks.py:19
 #, python-brace-format
 msgid "The available stock for {part.name} has fallen below the configured minimum level"
 msgstr ""
@@ -5477,6 +5477,10 @@ msgstr ""
 
 #: plugin/apps.py:52
 msgid "Your enviroment has an outdated git version. This prevents InvenTree from loading plugin details."
+msgstr ""
+
+#: plugin/events.py:225
+msgid "Label printing failed"
 msgstr ""
 
 #: plugin/integration.py:138
