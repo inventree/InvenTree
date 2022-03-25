@@ -79,7 +79,7 @@ class BaseInvenTreeSetting(models.Model):
         self.key = str(self.key).upper()
 
         self.clean(**kwargs)
-        self.validate_unique()
+        self.validate_unique(**kwargs)
 
         super().save()
 
@@ -253,13 +253,6 @@ class BaseInvenTreeSetting(models.Model):
         if user is not None:
             settings = settings.filter(user=user)
 
-        try:
-            setting = settings.filter(**cls.get_filters(key, **kwargs)).first()
-        except (ValueError, cls.DoesNotExist):
-            setting = None
-        except (IntegrityError, OperationalError):
-            setting = None
-
         plugin = kwargs.pop('plugin', None)
 
         if plugin:
@@ -269,6 +262,15 @@ class BaseInvenTreeSetting(models.Model):
                 plugin = plugin.plugin_config()
 
             kwargs['plugin'] = plugin
+
+            settings = settings.filter(plugin=plugin)
+
+        try:
+            setting = settings.filter(**cls.get_filters(key, **kwargs)).first()
+        except (ValueError, cls.DoesNotExist):
+            setting = None
+        except (IntegrityError, OperationalError):
+            setting = None
 
         # Setting does not exist! (Try to create it)
         if not setting:
@@ -287,7 +289,7 @@ class BaseInvenTreeSetting(models.Model):
                 try:
                     # Wrap this statement in "atomic", so it can be rolled back if it fails
                     with transaction.atomic():
-                        setting.save()
+                        setting.save(**kwargs)
                 except (IntegrityError, OperationalError):
                     # It might be the case that the database isn't created yet
                     pass
@@ -438,17 +440,37 @@ class BaseInvenTreeSetting(models.Model):
             validator(self.value)
 
     def validate_unique(self, exclude=None, **kwargs):
-        """ Ensure that the key:value pair is unique.
+        """
+        Ensure that the key:value pair is unique.
         In addition to the base validators, this ensures that the 'key'
         is unique, using a case-insensitive comparison.
+        
+        Note that sub-classes (UserSetting, PluginSetting) use other filters
+        to determine if the setting is 'unique' or not
         """
 
         super().validate_unique(exclude)
 
+        filters = {
+            'key': self.key,
+        }
+
+        user = getattr(self, 'user', None)
+        plugin = getattr(self, 'plugin', None)
+
+        if user is not None:
+            filters['user'] = user
+
+        if plugin is not None:
+            filters['plugin'] = plugin
+
         try:
-            setting = self.__class__.objects.exclude(id=self.id).filter(**self.get_filters(self.key, **kwargs))
+            # Check if a duplicate setting already exists
+            setting = self.__class__.objects.filter(**filters).exclude(id=self.id)
+
             if setting.exists():
                 raise ValidationError({'key': _('Key string must be unique')})
+
         except self.DoesNotExist:
             pass
 
@@ -1312,7 +1334,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
     def get_setting_object(cls, key, user):
         return super().get_setting_object(key, user=user)
 
-    def validate_unique(self, exclude=None):
+    def validate_unique(self, exclude=None, **kwargs):
         return super().validate_unique(exclude=exclude, user=self.user)
 
     @classmethod
