@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-25 05:23+0000\n"
-"PO-Revision-Date: 2022-03-25 15:15\n"
+"PO-Revision-Date: 2022-03-25 16:14\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1221,7 +1221,7 @@ msgstr "Gyártási utasítás elkészültnek jelölhető"
 
 #: build/templates/build/build_base.html:120
 msgid "Build Order cannot be completed as outstanding outputs remain"
-msgstr "Gyártási utasítás nem teljesíthető mivel kintlévő kimenetek maradnak"
+msgstr "Gyártási utasítás nem teljesíthető mivel befejezetlen kimenetek vannak"
 
 #: build/templates/build/build_base.html:125
 msgid "Required build quantity has not yet been completed"
