@@ -138,6 +138,9 @@ class LabelPrintMixin:
 
             """
 
+            # Label instance
+            label_instance = self.get_object()
+
             for output in outputs:
                 """
                 For each output, we generate a temporary image file,
@@ -156,7 +159,9 @@ class LabelPrintMixin:
                 offload_task(
                     'plugin.events.print_label',
                     plugin.plugin_slug(),
-                    image
+                    image,
+                    label_instance=label_instance,
+                    user=request.user,
                 )
 
             return JsonResponse({
