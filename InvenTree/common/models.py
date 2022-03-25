@@ -231,10 +231,6 @@ class BaseInvenTreeSetting(models.Model):
         return choices
 
     @classmethod
-    def get_filters(cls, key, **kwargs):
-        return {'key__iexact': key}
-
-    @classmethod
     def get_setting_object(cls, key, **kwargs):
         """
         Return an InvenTreeSetting object matching the given key.
@@ -247,26 +243,30 @@ class BaseInvenTreeSetting(models.Model):
 
         settings = cls.objects.all()
 
+        filters = {
+            'key__iexact': key,
+        }
+
         # Filter by user
         user = kwargs.get('user', None)
 
         if user is not None:
-            settings = settings.filter(user=user)
+            filters['user'] = user
 
-        plugin = kwargs.pop('plugin', None)
+        # Filter by plugin
+        plugin = kwargs.get('plugin', None)
 
-        if plugin:
+        if plugin is not None:
             from plugin import InvenTreePluginBase
 
             if issubclass(plugin.__class__, InvenTreePluginBase):
                 plugin = plugin.plugin_config()
 
+            filters['plugin'] = plugin
             kwargs['plugin'] = plugin
 
-            settings = settings.filter(plugin=plugin)
-
         try:
-            setting = settings.filter(**cls.get_filters(key, **kwargs)).first()
+            setting = settings.filter(**filters).first()
         except (ValueError, cls.DoesNotExist):
             setting = None
         except (IntegrityError, OperationalError):
@@ -344,8 +344,26 @@ class BaseInvenTreeSetting(models.Model):
         if change_user is not None and not change_user.is_staff:
             return
 
+        filters = {
+            'key__iexact': key,
+        }
+
+        user = kwargs.get('user', None)
+        plugin = kwargs.get('plugin', None)
+
+        if user is not None:
+            filters['user'] = user
+        
+        if plugin is not None:
+            from plugin import InvenTreePluginBase
+
+            if issubclass(plugin.__class__, InvenTreePluginBase):
+                filters['plugin'] = plugin.plugin_config()
+            else:
+                filters['plugin'] = plugin
+
         try:
-            setting = cls.objects.get(**cls.get_filters(key, **kwargs))
+            setting = cls.objects.get(**filters)
         except cls.DoesNotExist:
 
             if create:
@@ -452,7 +470,7 @@ class BaseInvenTreeSetting(models.Model):
         super().validate_unique(exclude)
 
         filters = {
-            'key': self.key,
+            'key__iexact': self.key,
         }
 
         user = getattr(self, 'user', None)
@@ -1336,13 +1354,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
 
     def validate_unique(self, exclude=None, **kwargs):
         return super().validate_unique(exclude=exclude, user=self.user)
-
-    @classmethod
-    def get_filters(cls, key, **kwargs):
-        return {
-            'key__iexact': key,
-            'user__id': kwargs['user'].id
-        }
 
     def to_native_value(self):
         """
