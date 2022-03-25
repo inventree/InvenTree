@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-25 05:23+0000\n"
-"PO-Revision-Date: 2022-03-25 05:35\n"
+"PO-Revision-Date: 2022-03-25 06:31\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -150,7 +150,7 @@ msgstr "Megjegyzés"
 
 #: InvenTree/models.py:208
 msgid "File comment"
-msgstr "Fájl megjegyzés"
+msgstr "Leírás, bővebb infó"
 
 #: InvenTree/models.py:214 InvenTree/models.py:215 common/models.py:1347
 #: common/models.py:1348 common/models.py:1569 common/models.py:1570
@@ -5481,7 +5481,7 @@ msgstr "A környezeted egy elavult git verziót használ. Ez megakadályozza hog
 
 #: plugin/events.py:225
 msgid "Label printing failed"
-msgstr ""
+msgstr "Címkenyomtatás sikertelen"
 
 #: plugin/integration.py:138
 msgid "No author found"
@@ -8404,7 +8404,7 @@ msgstr "NEM"
 
 #: templates/js/translated/label.js:38
 msgid "Labels sent to printer"
-msgstr ""
+msgstr "Címkék nyomtatónak elküldve"
 
 #: templates/js/translated/label.js:59 templates/js/translated/report.js:118
 #: templates/js/translated/stock.js:1015
@@ -8446,11 +8446,11 @@ msgstr "Nem található címke a kiválasztott alkatrész(ek)hez"
 
 #: templates/js/translated/label.js:258
 msgid "Select Printer"
-msgstr ""
+msgstr "Nyomtató kiválasztása"
 
 #: templates/js/translated/label.js:262
 msgid "Export to PDF"
-msgstr ""
+msgstr "Exportálás PDF-be"
 
 #: templates/js/translated/label.js:301
 msgid "stock items selected"
