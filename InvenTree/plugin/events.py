@@ -233,4 +233,5 @@ def print_label(plugin_slug, label_image, label_instance=None, user=None):
             'label.printing_failed',
             targets=[user],
             context=ctx,
+            delivery_methods=[common.notifications.UIMessageNotification]
         )
