@@ -7,12 +7,15 @@ from __future__ import unicode_literals
 
 import logging
 
+from django.utils.translation import ugettext_lazy as _
+
 from django.conf import settings
 from django.db import transaction
 from django.db.models.signals import post_save, post_delete
 from django.dispatch.dispatcher import receiver
 
 from common.models import InvenTreeSetting
+import common.notifications
 
 from InvenTree.ready import canAppAccessDatabase
 from InvenTree.tasks import offload_task
@@ -192,11 +195,13 @@ def after_delete(sender, instance, **kwargs):
     )
 
 
-def print_label(plugin_slug, label_image, **kwargs):
+def print_label(plugin_slug, label_image, label_instance=None, user=None):
     """
     Print label with the provided plugin.
 
     This task is nominally handled by the background worker.
+
+    If the printing fails (throws an exception) then the user is notified.
 
     Arguments:
         plugin_slug: The unique slug (key) of the plugin
@@ -211,4 +216,21 @@ def print_label(plugin_slug, label_image, **kwargs):
         logger.error(f"Could not find matching plugin for '{plugin_slug}'")
         return
 
-    plugin.print_label(label_image)
+    try:
+        plugin.print_label(label_image)
+    except Exception as e:
+        # Plugin threw an error - notify the user who attempted to print
+
+        ctx = {
+            'name': _('Label printing failed'),
+            'message': str(e),
+        }
+
+        logger.error(f"Label printing failed: Sending notification to user '{user}'")
+
+        common.notifications.trigger_notifaction(
+            label_instance,
+            'label.printing_failed',
+            targets=[user],
+            context=ctx,
+        )
