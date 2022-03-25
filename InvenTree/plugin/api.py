@@ -25,7 +25,7 @@ class PluginList(generics.ListAPIView):
 
     # Allow any logged in user to read this endpoint
     # This is necessary to allow certain functionality,
-    # e.g. determining which label printing plugins are available 
+    # e.g. determining which label printing plugins are available
     permission_classes = [permissions.IsAuthenticated]
 
     serializer_class = PluginSerializers.PluginConfigSerializer
