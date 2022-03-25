@@ -263,7 +263,7 @@ function selectLabel(labels, items, options={}) {
         `;
 
         plugins.forEach(function(plugin) {
-            plugin_selection += `<option value='${plugin.key}' title='${plugin.meta.human_name}'>${plugin.meta.description} - <small>${plugin.meta.human_name}</small></option>`;
+            plugin_selection += `<option value='${plugin.key}' title='${plugin.meta.human_name}'>${plugin.name} - <small>${plugin.meta.human_name}</small></option>`;
         });
 
         plugin_selection += `
