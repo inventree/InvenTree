@@ -217,7 +217,7 @@ def print_label(plugin_slug, label_image, label_instance=None, user=None):
         return
 
     try:
-        plugin.print_label(label_image)
+        plugin.print_label(label_image, width=label_instance.width, height=label_instance.height)
     except Exception as e:
         # Plugin threw an error - notify the user who attempted to print
 
