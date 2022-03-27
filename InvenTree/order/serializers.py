@@ -88,6 +88,7 @@ class AbstractExtraLineMeta:
         'quantity',
         'reference',
         'notes',
+        'context',
         'order',
         'order_detail',
         'price',

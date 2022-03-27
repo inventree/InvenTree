@@ -887,6 +887,12 @@ class OrderExtraLine(OrderLineItem):
         unique_together = [
         ]
 
+    context = models.JSONField(
+        blank=True, null=True,
+        verbose_name=_('Context'),
+        help_text=_('Additional context for this line'),
+    )
+
     price = InvenTreeModelMoneyField(
         max_digits=19,
         decimal_places=4,
