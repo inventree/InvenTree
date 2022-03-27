@@ -8,15 +8,19 @@ from allauth.account.models import EmailAddress
 from InvenTree.helpers import inheritors
 from InvenTree.ready import isImportingData
 from common.models import NotificationEntry, NotificationMessage
+from common.models import InvenTreeUserSetting
+
 import InvenTree.tasks
 
 
 logger = logging.getLogger('inventree')
 
 
-# region notification classes
-# region base classes
 class NotificationMethod:
+    """
+    Base class for notification methods
+    """
+
     METHOD_NAME = ''
     CONTEXT_BUILTIN = ['name', 'message', ]
     CONTEXT_EXTRA = []
@@ -95,10 +99,8 @@ class SingleNotificationMethod(NotificationMethod):
 class BulkNotificationMethod(NotificationMethod):
     def send_bulk(self):
         raise NotImplementedError('The `send` method must be overriden!')
-# endregion
 
 
-# region implementations
 class EmailNotification(BulkNotificationMethod):
     METHOD_NAME = 'mail'
     CONTEXT_EXTRA = [
@@ -108,13 +110,26 @@ class EmailNotification(BulkNotificationMethod):
     ]
 
     def get_targets(self):
+        """
+        Return a list of target email addresses,
+        only for users which allow email notifications
+        """
+
+        allowed_users = []
+
+        for user in self.targets:
+            allows_emails = InvenTreeUserSetting.get_setting('NOTIFICATION_SEND_EMAILS', user=user)
+
+            if allows_emails:
+                allowed_users.append(user)
+
         return EmailAddress.objects.filter(
-            user__in=self.targets,
+            user__in=allowed_users,
         )
 
     def send_bulk(self):
         html_message = render_to_string(self.context['template']['html'], self.context)
-        targets = self.targets.values_list('email', flat=True)
+        targets = self.get_targets().values_list('email', flat=True)
 
         InvenTree.tasks.send_email(self.context['template']['subject'], '', targets, html_message=html_message)
 
@@ -137,20 +152,27 @@ class UIMessageNotification(SingleNotificationMethod):
             message=self.context['message'],
         )
         return True
-# endregion
-# endregion
 
 
-def trigger_notifaction(obj, category=None, obj_ref='pk', targets=None, target_fnc=None, target_args=[], target_kwargs={}, context={}):
+def trigger_notifaction(obj, category=None, obj_ref='pk', **kwargs):
     """
-    Send out an notification
+    Send out a notification
     """
-    # check if data is importet currently
+
+    targets = kwargs.get('targets', None)
+    target_fnc = kwargs.get('target_fnc', None)
+    target_args = kwargs.get('target_args', [])
+    target_kwargs = kwargs.get('target_kwargs', {})
+    context = kwargs.get('context', {})
+    delivery_methods = kwargs.get('delivery_methods', None)
+
+    # Check if data is importing currently
     if isImportingData():
         return
 
     # Resolve objekt reference
     obj_ref_value = getattr(obj, obj_ref)
+
     # Try with some defaults
     if not obj_ref_value:
         obj_ref_value = getattr(obj, 'pk')
@@ -175,7 +197,8 @@ def trigger_notifaction(obj, category=None, obj_ref='pk', targets=None, target_f
         logger.info(f"Sending notification '{category}' for '{str(obj)}'")
 
         # Collect possible methods
-        delivery_methods = inheritors(NotificationMethod)
+        if delivery_methods is None:
+            delivery_methods = inheritors(NotificationMethod)
 
         for method in [a for a in delivery_methods if a not in [SingleNotificationMethod, BulkNotificationMethod]]:
             logger.info(f"Triggering method '{method.METHOD_NAME}'")

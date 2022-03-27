@@ -213,7 +213,7 @@ function createBuildOutput(build_id, options) {
                     success: function(data) {
                         if (data.next) {
                             fields.serial_numbers.placeholder = `{% trans "Next available serial number" %}: ${data.next}`;
-                        } else {
+                        } else if (data.latest) {
                             fields.serial_numbers.placeholder = `{% trans "Latest serial number" %}: ${data.latest}`;
                         }
                     },
@@ -1025,9 +1025,10 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         }
 
         // Store the required quantity in the row data
-        row.required = quantity;
+        // Prevent weird rounding issues
+        row.required = parseFloat(quantity.toFixed(15));
 
-        return quantity;
+        return row.required;
     }
 
     function sumAllocations(row) {
@@ -1043,9 +1044,9 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             quantity += item.quantity;
         });
 
-        row.allocated = quantity;
+        row.allocated = parseFloat(quantity.toFixed(15));
 
-        return quantity;
+        return row.allocated;
     }
 
     function setupCallbacks() {
@@ -1641,6 +1642,9 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
         if (remaining < 0) {
             remaining = 0;
         }
+
+        // Ensure the quantity sent to the form field is correctly formatted
+        remaining = parseFloat(remaining.toFixed(15));
 
         // We only care about entries which are not yet fully allocated
         if (remaining > 0) {

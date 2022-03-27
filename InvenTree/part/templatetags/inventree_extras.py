@@ -8,6 +8,7 @@ over and above the built-in Django tags.
 from datetime import date, datetime
 import os
 import sys
+import logging
 
 from django.utils.html import format_html
 
@@ -29,6 +30,9 @@ from common.settings import currency_code_default
 from plugin.models import PluginSetting
 
 register = template.Library()
+
+
+logger = logging.getLogger('inventree')
 
 
 @register.simple_tag()
@@ -57,8 +61,19 @@ def render_date(context, date_object):
         return None
 
     if type(date_object) == str:
+
+        date_object = date_object.strip()
+
+        # Check for empty string
+        if len(date_object) == 0:
+            return None
+
         # If a string is passed, first convert it to a datetime
-        date_object = date.fromisoformat(date_object)
+        try:
+            date_object = date.fromisoformat(date_object)
+        except ValueError:
+            logger.warning(f"Tried to convert invalid date string: {date_object}")
+            return None
 
     # We may have already pre-cached the date format by calling this already!
     user_date_format = context.get('user_date_format', None)

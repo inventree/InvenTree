@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from io import BytesIO
+from PIL import Image
+
 from django.utils.translation import ugettext_lazy as _
+
+from django.conf import settings
 from django.conf.urls import url, include
 from django.core.exceptions import ValidationError, FieldError
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -12,7 +17,10 @@ from rest_framework import generics, filters
 from rest_framework.response import Response
 
 import InvenTree.helpers
+from InvenTree.tasks import offload_task
 import common.models
+
+from plugin.registry import registry
 
 from stock.models import StockItem, StockLocation
 from part.models import Part
@@ -46,11 +54,43 @@ class LabelPrintMixin:
     Mixin for printing labels
     """
 
+    def get_plugin(self, request):
+        """
+        Return the label printing plugin associated with this request.
+        This is provided in the url, e.g. ?plugin=myprinter
+
+        Requires:
+        - settings.PLUGINS_ENABLED is True
+        - matching plugin can be found
+        - matching plugin implements the 'labels' mixin
+        - matching plugin is enabled
+        """
+
+        if not settings.PLUGINS_ENABLED:
+            return None
+
+        plugin_key = request.query_params.get('plugin', None)
+
+        for slug, plugin in registry.plugins.items():
+
+            if slug == plugin_key and plugin.mixin_enabled('labels'):
+
+                config = plugin.plugin_config()
+
+                if config and config.active:
+                    # Only return the plugin if it is enabled!
+                    return plugin
+
+        # No matches found
+        return None
+
     def print(self, request, items_to_print):
         """
         Print this label template against a number of pre-validated items
         """
 
+        # Check the request to determine if the user has selected a label printing plugin
+        plugin = self.get_plugin(request)
         if len(items_to_print) == 0:
             # No valid items provided, return an error message
             data = {
@@ -66,12 +106,16 @@ class LabelPrintMixin:
 
         label_name = "label.pdf"
 
+        label_names = []
+
         # Merge one or more PDF files into a single download
         for item in items_to_print:
             label = self.get_object()
             label.object_to_print = item
 
             label_name = label.generate_filename(request)
+
+            label_names.append(label_name)
 
             if debug_mode:
                 outputs.append(label.render_as_string(request))
@@ -81,7 +125,51 @@ class LabelPrintMixin:
         if not label_name.endswith(".pdf"):
             label_name += ".pdf"
 
-        if debug_mode:
+        if plugin is not None:
+            """
+            Label printing is to be handled by a plugin,
+            rather than being exported to PDF.
+
+            In this case, we do the following:
+
+            - Individually generate each label, exporting as an image file
+            - Pass all the images through to the label printing plugin
+            - Return a JSON response indicating that the printing has been offloaded
+
+            """
+
+            # Label instance
+            label_instance = self.get_object()
+
+            for output in outputs:
+                """
+                For each output, we generate a temporary image file,
+                which will then get sent to the printer
+                """
+
+                # Generate a png image at 300dpi
+                (img_data, w, h) = output.get_document().write_png(resolution=300)
+
+                # Construct a BytesIO object, which can be read by pillow
+                img_bytes = BytesIO(img_data)
+
+                image = Image.open(img_bytes)
+
+                # Offload a background task to print the provided label
+                offload_task(
+                    'plugin.events.print_label',
+                    plugin.plugin_slug(),
+                    image,
+                    label_instance=label_instance,
+                    user=request.user,
+                )
+
+            return JsonResponse({
+                'plugin': plugin.plugin_slug(),
+                'labels': label_names,
+            })
+
+        elif debug_mode:
             """
             Contatenate all rendered templates into a single HTML string,
             and return the string as a HTML response.
@@ -90,6 +178,7 @@ class LabelPrintMixin:
             html = "\n".join(outputs)
 
             return HttpResponse(html)
+
         else:
             """
             Concatenate all rendered pages into a single PDF object,
