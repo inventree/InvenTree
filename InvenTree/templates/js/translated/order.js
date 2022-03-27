@@ -1533,11 +1533,7 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
 
                 html += makeIconButton('fa-clone', 'button-duplicate', pk, '{% trans "Duplicate line" %}');
                 html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line" %}');
-
-                var title = '{% trans "Delete line" %}';
-
-                // Prevent deletion of the line if items have been allocated or shipped!
-                html += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, title, );
+                html += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, '{% trans "Delete line" %}', );
 
                 html += `</div>`;
 
@@ -3172,11 +3168,7 @@ function loadSalesOrderExtraLineTable(table, options={}) {
 
                 html += makeIconButton('fa-clone', 'button-duplicate', pk, '{% trans "Duplicate line" %}');
                 html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line" %}');
-
-                var title = '{% trans "Delete line" %}';
-
-                // Prevent deletion of the lines if items have been allocated or shipped!
-                html += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, title, );
+                html += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, '{% trans "Delete line" %}', );
 
                 html += `</div>`;
 
