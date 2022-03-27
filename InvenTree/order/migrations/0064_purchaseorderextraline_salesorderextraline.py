@@ -2,10 +2,60 @@
 
 import InvenTree.fields
 import django.core.validators
+from django.core import serializers
 from django.db import migrations, models
 import django.db.models.deletion
 import djmoney.models.fields
 import djmoney.models.validators
+
+
+def _convert_model(apps, line_item_ref, extra_line_ref, price_ref):
+    """Convert the OrderLineItem instances if applicable to new ExtraLine instances"""
+    OrderLineItem = apps.get_model('order', line_item_ref)
+    OrderExtraLine = apps.get_model('order', extra_line_ref)
+
+    items_to_change = OrderLineItem.objects.filter(part=None)
+
+    print(f'\nFound {items_to_change.count()} old {line_item_ref} instance(s)')
+    print(f'Starting to convert - currently at {OrderExtraLine.objects.all().count()} {extra_line_ref} / {OrderLineItem.objects.all().count()} {line_item_ref} instance(s)')
+    for lineItem in items_to_change:
+        newitem = OrderExtraLine(
+            order=lineItem.order,
+            notes=lineItem.notes,
+            price=getattr(lineItem, price_ref),
+            quantity=lineItem.quantity,
+            reference=lineItem.reference,
+        )
+        newitem.context = serializers.serialize('json', [lineItem, ])
+        newitem.save()
+
+        lineItem.delete()
+    print(f'Done converting line items - now at {OrderExtraLine.objects.all().count()} {extra_line_ref} / {OrderLineItem.objects.all().count()} {line_item_ref} instance(s)')
+
+
+def _reconvert_model(apps, line_item_ref, extra_line_ref):
+    """Convert ExtraLine instances back to OrderLineItem instances"""
+    OrderLineItem = apps.get_model('order', line_item_ref)
+    OrderExtraLine = apps.get_model('order', extra_line_ref)
+
+    print(f'\nStarting to convert - currently at {OrderExtraLine.objects.all().count()} {extra_line_ref} / {OrderLineItem.objects.all().count()} {line_item_ref} instance(s)')
+    for extra_line in OrderExtraLine.objects.all():
+        # regenreate item
+        [item.save() for item in serializers.deserialize('json', extra_line.context)]
+        extra_line.delete()
+    print(f'Done converting line items - now at {OrderExtraLine.objects.all().count()} {extra_line_ref} / {OrderLineItem.objects.all().count()} {line_item_ref} instance(s)')
+
+
+def convert_line_items(apps, schema_editor):
+    """convert line items"""
+    _convert_model(apps, 'PurchaseOrderLineItem', 'PurchaseOrderExtraLine', 'purchase_price')
+    _convert_model(apps, 'SalesOrderLineItem', 'SalesOrderExtraLine', 'sale_price')
+
+
+def nunconvert_line_items(apps, schema_editor):
+    """reconvert line items"""
+    _reconvert_model(apps, 'PurchaseOrderLineItem', 'PurchaseOrderExtraLine')
+    _reconvert_model(apps, 'SalesOrderLineItem', 'SalesOrderExtraLine')
 
 
 class Migration(migrations.Migration):
@@ -49,4 +99,5 @@ class Migration(migrations.Migration):
                 'abstract': False,
             },
         ),
+        migrations.RunPython(convert_line_items, reverse_code=nunconvert_line_items),
     ]
