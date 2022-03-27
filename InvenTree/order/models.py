@@ -913,7 +913,6 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     Attributes:
         order: Reference to a PurchaseOrder object
-
     """
 
     class Meta:
