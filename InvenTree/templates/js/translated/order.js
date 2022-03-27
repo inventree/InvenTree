@@ -276,7 +276,7 @@ function createPurchaseOrder(options={}) {
             if (options.onSuccess) {
                 options.onSuccess(data);
             } else {
-                // Default action is to redirect browser to the new PO
+                // Default action is to redirect browser to the new PurchaseOrder
                 location.href = `/order/purchase-order/${data.pk}/`;
             }
         },
@@ -528,7 +528,7 @@ function newPurchaseOrderFromOrderWizard(e) {
 
 /**
  * Receive stock items against a PurchaseOrder
- * Uses the POReceive API endpoint
+ * Uses the PurchaseOrderReceive API endpoint
  * 
  * arguments:
  * - order_id, ID / PK for the PurchaseOrder instance

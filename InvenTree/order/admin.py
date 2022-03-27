@@ -92,8 +92,8 @@ class SalesOrderAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('customer',)
 
 
-class POLineItemResource(ModelResource):
-    """ Class for managing import / export of POLineItem data """
+class PurchaseOrderLineItemResource(ModelResource):
+    """ Class for managing import / export of PurchaseOrderLineItem data """
 
     part_name = Field(attribute='part__part__name', readonly=True)
 
@@ -110,16 +110,16 @@ class POLineItemResource(ModelResource):
         clean_model_instances = True
 
 
-class POExtraLineResource(ModelResource):
-    """ Class for managing import / export of POExtraLine data """
+class PurchaseOrderExtraLineResource(ModelResource):
+    """ Class for managing import / export of PurchaseOrderExtraLine data """
 
     class Meta(GeneralExtraLineMeta):
         model = PurchaseOrderExtraLine
 
 
-class SOLineItemResource(ModelResource):
+class SalesOrderLineItemResource(ModelResource):
     """
-    Class for managing import / export of SOLineItem data
+    Class for managing import / export of SalesOrderLineItem data
     """
 
     part_name = Field(attribute='part__name', readonly=True)
@@ -148,8 +148,8 @@ class SOLineItemResource(ModelResource):
         clean_model_instances = True
 
 
-class SOExtraLineResource(ModelResource):
-    """ Class for managing import / export of SOExtraLine data """
+class SalesOrderExtraLineResource(ModelResource):
+    """ Class for managing import / export of SalesOrderExtraLine data """
 
     class Meta(GeneralExtraLineMeta):
         model = SalesOrderExtraLine
@@ -157,7 +157,7 @@ class SOExtraLineResource(ModelResource):
 
 class PurchaseOrderLineItemAdmin(ImportExportModelAdmin):
 
-    resource_class = POLineItemResource
+    resource_class = PurchaseOrderLineItemResource
 
     list_display = (
         'order',
@@ -173,12 +173,12 @@ class PurchaseOrderLineItemAdmin(ImportExportModelAdmin):
 
 class PurchaseOrderExtraLineAdmin(GeneralExtraLineAdmin, ImportExportModelAdmin):
 
-    resource_class = POExtraLineResource
+    resource_class = PurchaseOrderExtraLineResource
 
 
 class SalesOrderLineItemAdmin(ImportExportModelAdmin):
 
-    resource_class = SOLineItemResource
+    resource_class = SalesOrderLineItemResource
 
     list_display = (
         'order',
@@ -199,7 +199,7 @@ class SalesOrderLineItemAdmin(ImportExportModelAdmin):
 
 class SalesOrderExtraLineAdmin(GeneralExtraLineAdmin, ImportExportModelAdmin):
 
-    resource_class = SOExtraLineResource
+    resource_class = SalesOrderExtraLineResource
 
 
 class SalesOrderShipmentAdmin(ImportExportModelAdmin):
