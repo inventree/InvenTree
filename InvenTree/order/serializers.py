@@ -53,8 +53,8 @@ class AbstractOrderSerializer(serializers.Serializer):
     total_price_string = serializers.CharField(source='get_total_price', read_only=True)
 
 
-class AbstractAdditionalLineItemSerializer(serializers.Serializer):
-    """ Abstract Serializer for a AdditionalLineItem object """
+class AbstractExtraLineSerializer(serializers.Serializer):
+    """ Abstract Serializer for a ExtraLine object """
     def __init__(self, *args, **kwargs):
 
         order_detail = kwargs.pop('order_detail', False)
@@ -66,21 +66,21 @@ class AbstractAdditionalLineItemSerializer(serializers.Serializer):
 
     quantity = serializers.FloatField()
 
-    sale_price = InvenTreeMoneySerializer(
+    price = InvenTreeMoneySerializer(
         allow_null=True
     )
 
-    sale_price_string = serializers.CharField(source='sale_price', read_only=True)
+    price_string = serializers.CharField(source='price', read_only=True)
 
-    sale_price_currency = serializers.ChoiceField(
+    price_currency = serializers.ChoiceField(
         choices=currency_code_mappings(),
-        help_text=_('Sale price currency'),
+        help_text=_('Price currency'),
     )
 
 
-class AbstractAdditionalLineItemMeta:
+class AbstractExtraLineMeta:
     """
-    Abstract Meta for LineItem
+    Abstract Meta for ExtraLine
     """
 
     fields = [
@@ -90,9 +90,9 @@ class AbstractAdditionalLineItemMeta:
         'notes',
         'order',
         'order_detail',
-        'sale_price',
-        'sale_price_currency',
-        'sale_price_string',
+        'price',
+        'price_currency',
+        'price_string',
     ]
 
 
@@ -272,13 +272,13 @@ class POLineItemSerializer(InvenTreeModelSerializer):
         ]
 
 
-class POAdditionalLineItemSerializer(AbstractAdditionalLineItemSerializer, InvenTreeModelSerializer):
-    """ Serializer for a PurchaseOrderAdditionalLineItem object """
+class POExtraLineSerializer(AbstractExtraLineSerializer, InvenTreeModelSerializer):
+    """ Serializer for a PurchaseOrderExtraLine object """
 
     order_detail = POSerializer(source='order', many=False, read_only=True)
 
-    class Meta(AbstractAdditionalLineItemMeta):
-        model = order.models.PurchaseOrderAdditionalLineItem
+    class Meta(AbstractExtraLineMeta):
+        model = order.models.PurchaseOrderExtraLine
 
 
 class POLineItemReceiveSerializer(serializers.Serializer):
@@ -1168,13 +1168,13 @@ class SOShipmentAllocationSerializer(serializers.Serializer):
                 )
 
 
-class SOAdditionalLineItemSerializer(AbstractAdditionalLineItemSerializer, InvenTreeModelSerializer):
-    """ Serializer for a SalesOrderAdditionalLineItem object """
+class SOExtraLineSerializer(AbstractExtraLineSerializer, InvenTreeModelSerializer):
+    """ Serializer for a SalesOrderExtraLine object """
 
     order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
 
-    class Meta(AbstractAdditionalLineItemMeta):
-        model = order.models.SalesOrderAdditionalLineItem
+    class Meta(AbstractExtraLineMeta):
+        model = order.models.SalesOrderExtraLine
 
 
 class SOAttachmentSerializer(InvenTreeAttachmentSerializer):

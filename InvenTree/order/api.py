@@ -27,9 +27,9 @@ from part.models import Part
 from users.models import Owner
 
 
-class GeneralAdditionalLineItemList:
+class GeneralExtraLineList:
     """
-    General template for AdditionalLineItem API classes
+    General template for ExtraLine API classes
     """
 
     def get_serializer(self, *args, **kwargs):
@@ -501,20 +501,20 @@ class POLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
         return queryset
 
 
-class POAdditionalLineItemList(GeneralAdditionalLineItemList, generics.ListCreateAPIView):
+class POExtraLineList(GeneralExtraLineList, generics.ListCreateAPIView):
     """
-    API endpoint for accessing a list of PurchaseOrderAdditionalLineItem objects.
+    API endpoint for accessing a list of PurchaseOrderExtraLine objects.
     """
 
-    queryset = models.PurchaseOrderAdditionalLineItem.objects.all()
-    serializer_class = serializers.POAdditionalLineItemSerializer
+    queryset = models.PurchaseOrderExtraLine.objects.all()
+    serializer_class = serializers.POExtraLineSerializer
 
 
-class POAdditionalLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ API endpoint for detail view of a PurchaseOrderAdditionalLineItem object """
+class POExtraLineDetail(generics.RetrieveUpdateDestroyAPIView):
+    """ API endpoint for detail view of a PurchaseOrderExtraLine object """
 
-    queryset = models.PurchaseOrderAdditionalLineItem.objects.all()
-    serializer_class = serializers.POAdditionalLineItemSerializer
+    queryset = models.PurchaseOrderExtraLine.objects.all()
+    serializer_class = serializers.POExtraLineSerializer
 
 
 class SOAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
@@ -811,20 +811,20 @@ class SOLineItemList(generics.ListCreateAPIView):
     ]
 
 
-class SOAdditionalLineItemList(GeneralAdditionalLineItemList, generics.ListCreateAPIView):
+class SOExtraLineList(GeneralExtraLineList, generics.ListCreateAPIView):
     """
-    API endpoint for accessing a list of SalesOrderAdditionalLineItem objects.
+    API endpoint for accessing a list of SalesOrderExtraLine objects.
     """
 
-    queryset = models.SalesOrderAdditionalLineItem.objects.all()
-    serializer_class = serializers.SOAdditionalLineItemSerializer
+    queryset = models.SalesOrderExtraLine.objects.all()
+    serializer_class = serializers.SOExtraLineSerializer
 
 
-class SOAdditionalLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ API endpoint for detail view of a SalesOrderAdditionalLineItem object """
+class SOExtraLineDetail(generics.RetrieveUpdateDestroyAPIView):
+    """ API endpoint for detail view of a SalesOrderExtraLine object """
 
-    queryset = models.SalesOrderAdditionalLineItem.objects.all()
-    serializer_class = serializers.SOAdditionalLineItemSerializer
+    queryset = models.SalesOrderExtraLine.objects.all()
+    serializer_class = serializers.SOExtraLineSerializer
 
 
 class SOLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -1120,10 +1120,10 @@ order_api_urls = [
         url(r'^.*$', POLineItemList.as_view(), name='api-po-line-list'),
     ])),
 
-    # API endpoints for purchase order additional line items
-    url(r'^po-additional-line/', include([
-        url(r'^(?P<pk>\d+)/$', POAdditionalLineItemDetail.as_view(), name='api-po-additional-line-detail'),
-        url(r'^$', POAdditionalLineItemList.as_view(), name='api-po-additional-line-list'),
+    # API endpoints for purchase order extra line
+    url(r'^po-extra-line/', include([
+        url(r'^(?P<pk>\d+)/$', POExtraLineDetail.as_view(), name='api-po-extra-line-detail'),
+        url(r'^$', POExtraLineList.as_view(), name='api-po-extra-line-list'),
     ])),
 
     # API endpoints for sales ordesr
@@ -1159,10 +1159,10 @@ order_api_urls = [
         url(r'^$', SOLineItemList.as_view(), name='api-so-line-list'),
     ])),
 
-    # API endpoints for sales order additional line items
-    url(r'^so-additional-line/', include([
-        url(r'^(?P<pk>\d+)/$', SOAdditionalLineItemDetail.as_view(), name='api-so-additional-line-detail'),
-        url(r'^$', SOAdditionalLineItemList.as_view(), name='api-so-additional-line-list'),
+    # API endpoints for sales order extra line
+    url(r'^so-extra-line/', include([
+        url(r'^(?P<pk>\d+)/$', SOExtraLineDetail.as_view(), name='api-so-extra-line-detail'),
+        url(r'^$', SOExtraLineList.as_view(), name='api-so-extra-line-list'),
     ])),
 
     # API endpoints for sales order allocations

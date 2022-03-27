@@ -46,24 +46,24 @@
 
     <div class='panel-heading'>
         <div class='d-flex flex-wrap'>
-            <h4>{% trans "Additional Order Items" %}</h4>
+            <h4>{% trans "Extra Lines" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
                 {% if roles.purchase_order.change and order.status == PurchaseOrderStatus.PENDING %}
-                <button type='button' class='btn btn-success' id='new-po-additional-line'>
-                    <span class='fas fa-plus-circle'></span> {% trans "Add Additional Order Items" %}
+                <button type='button' class='btn btn-success' id='new-po-extra-line'>
+                    <span class='fas fa-plus-circle'></span> {% trans "Add Extra Line" %}
                 </button>
                 {% endif %}
             </div>
         </div>
     </div>
     <div class='panel-content'>
-        <div id='order-additional-toolbar-buttons' class='btn-group' style='float: right;'>
+        <div id='order-extra-toolbar-buttons' class='btn-group' style='float: right;'>
             <div class='btn-group'>
-                {% include "filter_list.html" with id="purchase-order-additional-lines" %}
+                {% include "filter_list.html" with id="purchase-order-extra-lines" %}
             </div>
         </div>
-        <table class='table table-striped table-condensed' id='po-additional-lines-table' data-toolbar='#order-additional-toolbar-buttons'>
+        <table class='table table-striped table-condensed' id='po-extra-lines-table' data-toolbar='#order-extra-toolbar-buttons'>
         </table>
     </div>
 </div>
@@ -230,24 +230,24 @@ loadPurchaseOrderLineItemTable('#po-line-table', {
     {% endif %}
 });
 
-$("#new-po-additional-line").click(function() {
+$("#new-po-extra-line").click(function() {
 
-    var fields = additionalLineItemFields({
+    var fields = extraLineFields({
         order: {{ order.pk }},
     });
 
-    constructForm('{% url "api-po-additional-line-list" %}', {
+    constructForm('{% url "api-po-extra-line-list" %}', {
         fields: fields,
         method: 'POST',
         title: '{% trans "Add Order Line" %}',
         onSuccess: function() {
-            $("#po-additional-lines-table").bootstrapTable("refresh");
+            $("#po-extra-lines-table").bootstrapTable("refresh");
         },
     });
 });
 
-loadPurchaseOrderAdditionalLineItemTable(
-    '#po-additional-lines-table',
+loadPurchaseOrderExtraLineTable(
+    '#po-extra-lines-table',
     {
         order: {{ order.pk }},
         status: {{ order.status }},

@@ -26,11 +26,11 @@
     editPurchaseOrderLineItem,
     exportOrder,
     loadPurchaseOrderLineItemTable,
-    loadPurchaseOrderAdditionalLineItemTable
+    loadPurchaseOrderExtraLineTable
     loadPurchaseOrderTable,
     loadSalesOrderAllocationTable,
     loadSalesOrderLineItemTable,
-    loadSalesOrderAdditionalLineItemTable
+    loadSalesOrderExtraLineTable
     loadSalesOrderShipmentTable,
     loadSalesOrderTable,
     newPurchaseOrderFromOrderWizard,
@@ -38,7 +38,7 @@
     removeOrderRowFromOrderWizard,
     removePurchaseOrderLineItem,
     loadOrderTotal,
-    additionalLineItemFields,
+    ExtraLineFields,
 */
 
 
@@ -309,8 +309,8 @@ function soLineItemFields(options={}) {
 }
 
 
-/* Construct a set of fields for a OrderAdditionalLineItem form */
-function additionalLineItemFields(options={}) {
+/* Construct a set of fields for a OrderExtraLine form */
+function extraLineFields(options={}) {
 
     var fields = {
         order: {
@@ -318,8 +318,8 @@ function additionalLineItemFields(options={}) {
         },
         quantity: {},
         reference: {},
-        sale_price: {},
-        sale_price_currency: {},
+        price: {},
+        price_currency: {},
         notes: {},
     };
 
@@ -1400,14 +1400,14 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
 
 
 /**
- * Load a table displaying line items for a particular PurchaseOrder
+ * Load a table displaying lines for a particular PurchaseOrder
  * 
  * @param {String} table : HTML ID tag e.g. '#table'
  * @param {Object} options : object which contains:
  *      - order {integer} : pk of the PurchaseOrder
  *      - status: {integer} : status code for the order
  */
-function loadPurchaseOrderAdditionalLineItemTable(table, options={}) {
+function loadPurchaseOrderExtraLineTable(table, options={}) {
 
     options.table = table;
 
@@ -1427,17 +1427,17 @@ function loadPurchaseOrderAdditionalLineItemTable(table, options={}) {
     options.params.part_detail = true;
     options.params.allocations = true;
     
-    var filters = loadTableFilters('purchaseorderadditionallineitem');
+    var filters = loadTableFilters('purchaseorderextraline');
 
     for (var key in options.params) {
         filters[key] = options.params[key];
     }
 
-    options.url = options.url || '{% url "api-po-additional-line-list" %}';
+    options.url = options.url || '{% url "api-po-extra-line-list" %}';
 
-    var filter_target = options.filter_target || '#filter-list-purchase-order-additional-lines';
+    var filter_target = options.filter_target || '#filter-list-purchase-order-extra-lines';
 
-    setupFilterList('purchaseorderadditionallineitem', $(table), filter_target);
+    setupFilterList('purchaseorderextraline', $(table), filter_target);
 
     // Is the order pending?
     var pending = options.status == {{ SalesOrderStatus.PENDING }};
@@ -1465,18 +1465,18 @@ function loadPurchaseOrderAdditionalLineItemTable(table, options={}) {
         },
         {
             sortable: true,
-            field: 'sale_price',
+            field: 'price',
             title: '{% trans "Unit Price" %}',
             formatter: function(value, row) {
                 var formatter = new Intl.NumberFormat(
                     'en-US',
                     {
                         style: 'currency',
-                        currency: row.sale_price_currency
+                        currency: row.price_currency
                     }
                 );
 
-                return formatter.format(row.sale_price);
+                return formatter.format(row.price);
             }
         },
         {
@@ -1488,20 +1488,20 @@ function loadPurchaseOrderAdditionalLineItemTable(table, options={}) {
                     'en-US',
                     {
                         style: 'currency',
-                        currency: row.sale_price_currency
+                        currency: row.price_currency
                     }
                 );
 
-                return formatter.format(row.sale_price * row.quantity);
+                return formatter.format(row.price * row.quantity);
             },
             footerFormatter: function(data) {
                 var total = data.map(function(row) {
-                    return +row['sale_price'] * row['quantity'];
+                    return +row['price'] * row['quantity'];
                 }).reduce(function(sum, i) {
                     return sum + i;
                 }, 0);
 
-                var currency = (data.slice(-1)[0] && data.slice(-1)[0].sale_price_currency) || 'USD';
+                var currency = (data.slice(-1)[0] && data.slice(-1)[0].price_currency) || 'USD';
                 
                 var formatter = new Intl.NumberFormat(
                     'en-US',
@@ -1531,12 +1531,12 @@ function loadPurchaseOrderAdditionalLineItemTable(table, options={}) {
 
                 var pk = row.pk;
 
-                html += makeIconButton('fa-clone', 'button-duplicate', pk, '{% trans "Duplicate line item" %}');
-                html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line item" %}');
+                html += makeIconButton('fa-clone', 'button-duplicate', pk, '{% trans "Duplicate line" %}');
+                html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line" %}');
 
-                var title = '{% trans "Delete line item" %}';
+                var title = '{% trans "Delete line" %}';
 
-                // Prevent deletion of the line item if items have been allocated or shipped!
+                // Prevent deletion of the line if items have been allocated or shipped!
                 html += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, title, );
 
                 html += `</div>`;
@@ -1554,20 +1554,20 @@ function loadPurchaseOrderAdditionalLineItemTable(table, options={}) {
     // Configure callback functions once the table is loaded
     function setupCallbacks() {
 
-        // Callback for duplicating line items
+        // Callback for duplicating lines
         $(table).find('.button-duplicate').click(function() {
             var pk = $(this).attr('pk');
 
-            inventreeGet(`/api/order/po-additional-line/${pk}/`, {}, {
+            inventreeGet(`/api/order/po-extra-line/${pk}/`, {}, {
                 success: function(data) {
 
-                    var fields = additionalLineItemFields();
+                    var fields = extraLineFields();
 
-                    constructForm('{% url "api-po-additional-line-list" %}', {
+                    constructForm('{% url "api-po-extra-line-list" %}', {
                         method: 'POST',
                         fields: fields,
                         data: data,
-                        title: '{% trans "Duplicate Line Item" %}',
+                        title: '{% trans "Duplicate Line" %}',
                         onSuccess: function(response) {
                             $(table).bootstrapTable('refresh');
                         }
@@ -1576,30 +1576,30 @@ function loadPurchaseOrderAdditionalLineItemTable(table, options={}) {
             });
         });
 
-        // Callback for editing line items
+        // Callback for editing lines
         $(table).find('.button-edit').click(function() {
             var pk = $(this).attr('pk');
 
-            constructForm(`/api/order/po-additional-line/${pk}/`, {
+            constructForm(`/api/order/po-extra-line/${pk}/`, {
                 fields: {
                     quantity: {},
                     reference: {},
-                    sale_price: {},
-                    sale_price_currency: {},
+                    price: {},
+                    price_currency: {},
                     notes: {},
                 },
-                title: '{% trans "Edit Line Item" %}',
+                title: '{% trans "Edit Line" %}',
                 onSuccess: reloadTable,
             });
         });
 
-        // Callback for deleting line items
+        // Callback for deleting lines
         $(table).find('.button-delete').click(function() {
             var pk = $(this).attr('pk');
 
-            constructForm(`/api/order/po-additional-line/${pk}/`, {
+            constructForm(`/api/order/po-extra-line/${pk}/`, {
                 method: 'DELETE',
-                title: '{% trans "Delete Line Item" %}',
+                title: '{% trans "Delete Line" %}',
                 onSuccess: reloadTable,
             });
         });
@@ -1607,10 +1607,10 @@ function loadPurchaseOrderAdditionalLineItemTable(table, options={}) {
 
     $(table).inventreeTable({
         onPostBody: setupCallbacks,
-        name: 'purchaseorderadditionallineitems',
+        name: 'purchaseorderextraline',
         sidePagination: 'client',
         formatNoMatches: function() {
-            return '{% trans "No matching line items" %}';
+            return '{% trans "No matching line" %}';
         },
         queryParams: filters,
         original: options.params,
@@ -3039,14 +3039,14 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
 
 /**
- * Load a table displaying line items for a particular SalesOrder
+ * Load a table displaying lines for a particular SalesOrder
  * 
  * @param {String} table : HTML ID tag e.g. '#table'
  * @param {Object} options : object which contains:
  *      - order {integer} : pk of the SalesOrder
  *      - status: {integer} : status code for the order
  */
-function loadSalesOrderAdditionalLineItemTable(table, options={}) {
+function loadSalesOrderExtraLineTable(table, options={}) {
 
     options.table = table;
 
@@ -3066,17 +3066,17 @@ function loadSalesOrderAdditionalLineItemTable(table, options={}) {
     options.params.part_detail = true;
     options.params.allocations = true;
     
-    var filters = loadTableFilters('salesorderadditionallineitem');
+    var filters = loadTableFilters('salesorderextraline');
 
     for (var key in options.params) {
         filters[key] = options.params[key];
     }
 
-    options.url = options.url || '{% url "api-so-additional-line-list" %}';
+    options.url = options.url || '{% url "api-so-extra-line-list" %}';
 
-    var filter_target = options.filter_target || '#filter-list-sales-order-additional-lines';
+    var filter_target = options.filter_target || '#filter-list-sales-order-extra-lines';
 
-    setupFilterList('salesorderadditionallineitem', $(table), filter_target);
+    setupFilterList('salesorderextraline', $(table), filter_target);
 
     // Is the order pending?
     var pending = options.status == {{ SalesOrderStatus.PENDING }};
@@ -3104,18 +3104,18 @@ function loadSalesOrderAdditionalLineItemTable(table, options={}) {
         },
         {
             sortable: true,
-            field: 'sale_price',
+            field: 'price',
             title: '{% trans "Unit Price" %}',
             formatter: function(value, row) {
                 var formatter = new Intl.NumberFormat(
                     'en-US',
                     {
                         style: 'currency',
-                        currency: row.sale_price_currency
+                        currency: row.price_currency
                     }
                 );
 
-                return formatter.format(row.sale_price);
+                return formatter.format(row.price);
             }
         },
         {
@@ -3127,20 +3127,20 @@ function loadSalesOrderAdditionalLineItemTable(table, options={}) {
                     'en-US',
                     {
                         style: 'currency',
-                        currency: row.sale_price_currency
+                        currency: row.price_currency
                     }
                 );
 
-                return formatter.format(row.sale_price * row.quantity);
+                return formatter.format(row.price * row.quantity);
             },
             footerFormatter: function(data) {
                 var total = data.map(function(row) {
-                    return +row['sale_price'] * row['quantity'];
+                    return +row['price'] * row['quantity'];
                 }).reduce(function(sum, i) {
                     return sum + i;
                 }, 0);
 
-                var currency = (data.slice(-1)[0] && data.slice(-1)[0].sale_price_currency) || 'USD';
+                var currency = (data.slice(-1)[0] && data.slice(-1)[0].price_currency) || 'USD';
                 
                 var formatter = new Intl.NumberFormat(
                     'en-US',
@@ -3170,12 +3170,12 @@ function loadSalesOrderAdditionalLineItemTable(table, options={}) {
 
                 var pk = row.pk;
 
-                html += makeIconButton('fa-clone', 'button-duplicate', pk, '{% trans "Duplicate line item" %}');
-                html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line item" %}');
+                html += makeIconButton('fa-clone', 'button-duplicate', pk, '{% trans "Duplicate line" %}');
+                html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line" %}');
 
-                var title = '{% trans "Delete line item" %}';
+                var title = '{% trans "Delete line" %}';
 
-                // Prevent deletion of the line item if items have been allocated or shipped!
+                // Prevent deletion of the lines if items have been allocated or shipped!
                 html += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, title, );
 
                 html += `</div>`;
@@ -3193,20 +3193,20 @@ function loadSalesOrderAdditionalLineItemTable(table, options={}) {
     // Configure callback functions once the table is loaded
     function setupCallbacks() {
 
-        // Callback for duplicating line items
+        // Callback for duplicating lines
         $(table).find('.button-duplicate').click(function() {
             var pk = $(this).attr('pk');
 
-            inventreeGet(`/api/order/so-additional-line/${pk}/`, {}, {
+            inventreeGet(`/api/order/so-extra-line/${pk}/`, {}, {
                 success: function(data) {
 
-                    var fields = additionalLineItemFields();
+                    var fields = extraLineFields();
 
-                    constructForm('{% url "api-so-additional-line-list" %}', {
+                    constructForm('{% url "api-so-extra-line-list" %}', {
                         method: 'POST',
                         fields: fields,
                         data: data,
-                        title: '{% trans "Duplicate Line Item" %}',
+                        title: '{% trans "Duplicate Line" %}',
                         onSuccess: function(response) {
                             $(table).bootstrapTable('refresh');
                         }
@@ -3215,30 +3215,30 @@ function loadSalesOrderAdditionalLineItemTable(table, options={}) {
             });
         });
 
-        // Callback for editing line items
+        // Callback for editing lines
         $(table).find('.button-edit').click(function() {
             var pk = $(this).attr('pk');
 
-            constructForm(`/api/order/so-additional-line/${pk}/`, {
+            constructForm(`/api/order/so-extra-line/${pk}/`, {
                 fields: {
                     quantity: {},
                     reference: {},
-                    sale_price: {},
-                    sale_price_currency: {},
+                    price: {},
+                    price_currency: {},
                     notes: {},
                 },
-                title: '{% trans "Edit Line Item" %}',
+                title: '{% trans "Edit Line" %}',
                 onSuccess: reloadTable,
             });
         });
 
-        // Callback for deleting line items
+        // Callback for deleting lines
         $(table).find('.button-delete').click(function() {
             var pk = $(this).attr('pk');
 
-            constructForm(`/api/order/so-additional-line/${pk}/`, {
+            constructForm(`/api/order/so-extra-line/${pk}/`, {
                 method: 'DELETE',
-                title: '{% trans "Delete Line Item" %}',
+                title: '{% trans "Delete Line" %}',
                 onSuccess: reloadTable,
             });
         });
@@ -3246,10 +3246,10 @@ function loadSalesOrderAdditionalLineItemTable(table, options={}) {
 
     $(table).inventreeTable({
         onPostBody: setupCallbacks,
-        name: 'salesorderadditionallineitems',
+        name: 'salesorderextraline',
         sidePagination: 'client',
         formatNoMatches: function() {
-            return '{% trans "No matching line items" %}';
+            return '{% trans "No matching lines" %}';
         },
         queryParams: filters,
         original: options.params,

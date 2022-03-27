@@ -8,13 +8,13 @@ from import_export.admin import ImportExportModelAdmin
 from import_export.resources import ModelResource
 from import_export.fields import Field
 
-from .models import PurchaseOrder, PurchaseOrderLineItem, PurchaseOrderAdditionalLineItem
-from .models import SalesOrder, SalesOrderLineItem, SalesOrderAdditionalLineItem
+from .models import PurchaseOrder, PurchaseOrderLineItem, PurchaseOrderExtraLine
+from .models import SalesOrder, SalesOrderLineItem, SalesOrderExtraLine
 from .models import SalesOrderShipment, SalesOrderAllocation
 
 
 # region general classes
-class GeneralAdditionalLineItemAdmin:
+class GeneralExtraLineAdmin:
     list_display = (
         'order',
         'quantity',
@@ -30,7 +30,7 @@ class GeneralAdditionalLineItemAdmin:
     autocomplete_fields = ('order', )
 
 
-class GeneralAdditionalLineMeta:
+class GeneralExtraLineMeta:
     skip_unchanged = True
     report_skipped = False
     clean_model_instances = True
@@ -110,11 +110,11 @@ class POLineItemResource(ModelResource):
         clean_model_instances = True
 
 
-class POAdditionalLineItemResource(ModelResource):
-    """ Class for managing import / export of POAdditionalLineItem data """
+class POExtraLineResource(ModelResource):
+    """ Class for managing import / export of POExtraLine data """
 
-    class Meta(GeneralAdditionalLineMeta):
-        model = PurchaseOrderAdditionalLineItem
+    class Meta(GeneralExtraLineMeta):
+        model = PurchaseOrderExtraLine
 
 
 class SOLineItemResource(ModelResource):
@@ -148,11 +148,11 @@ class SOLineItemResource(ModelResource):
         clean_model_instances = True
 
 
-class SOAdditionalLineItemResource(ModelResource):
-    """ Class for managing import / export of SOAdditionalLineItem data """
+class SOExtraLineResource(ModelResource):
+    """ Class for managing import / export of SOExtraLine data """
 
-    class Meta(GeneralAdditionalLineMeta):
-        model = SalesOrderAdditionalLineItem
+    class Meta(GeneralExtraLineMeta):
+        model = SalesOrderExtraLine
 
 
 class PurchaseOrderLineItemAdmin(ImportExportModelAdmin):
@@ -171,9 +171,9 @@ class PurchaseOrderLineItemAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('order', 'part', 'destination',)
 
 
-class PurchaseOrderAdditionalLineItemAdmin(GeneralAdditionalLineItemAdmin, ImportExportModelAdmin):
+class PurchaseOrderExtraLineAdmin(GeneralExtraLineAdmin, ImportExportModelAdmin):
 
-    resource_class = POAdditionalLineItemResource
+    resource_class = POExtraLineResource
 
 
 class SalesOrderLineItemAdmin(ImportExportModelAdmin):
@@ -197,9 +197,9 @@ class SalesOrderLineItemAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('order', 'part',)
 
 
-class SalesOrderAdditionalLineItemAdmin(GeneralAdditionalLineItemAdmin, ImportExportModelAdmin):
+class SalesOrderExtraLineAdmin(GeneralExtraLineAdmin, ImportExportModelAdmin):
 
-    resource_class = SOAdditionalLineItemResource
+    resource_class = SOExtraLineResource
 
 
 class SalesOrderShipmentAdmin(ImportExportModelAdmin):
@@ -232,11 +232,11 @@ class SalesOrderAllocationAdmin(ImportExportModelAdmin):
 
 admin.site.register(PurchaseOrder, PurchaseOrderAdmin)
 admin.site.register(PurchaseOrderLineItem, PurchaseOrderLineItemAdmin)
-admin.site.register(PurchaseOrderAdditionalLineItem, PurchaseOrderAdditionalLineItemAdmin)
+admin.site.register(PurchaseOrderExtraLine, PurchaseOrderExtraLineAdmin)
 
 admin.site.register(SalesOrder, SalesOrderAdmin)
 admin.site.register(SalesOrderLineItem, SalesOrderLineItemAdmin)
-admin.site.register(SalesOrderAdditionalLineItem, SalesOrderAdditionalLineItemAdmin)
+admin.site.register(SalesOrderExtraLine, SalesOrderExtraLineAdmin)
 
 admin.site.register(SalesOrderShipment, SalesOrderShipmentAdmin)
 admin.site.register(SalesOrderAllocation, SalesOrderAllocationAdmin)

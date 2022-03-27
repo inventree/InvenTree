@@ -163,8 +163,8 @@ class Order(ReferenceIndexingMixin):
         # order items
         total += sum([a.quantity * convert_money(getattr(a, price_ref), target_currency) for a in self.lines.all() if getattr(a, price_ref)])
 
-        # additional lines
-        total += sum([a.quantity * convert_money(a.sale_price, target_currency) for a in self.additional_lines.all() if a.sale_price])
+        # extra lines
+        total += sum([a.quantity * convert_money(a.price, target_currency) for a in self.extra_lines.all() if a.price])
 
         # set decimal-places
         total.decimal_places = 4
@@ -875,11 +875,11 @@ class OrderLineItem(models.Model):
     )
 
 
-class OrderAdditionalLineItem(OrderLineItem):
+class OrderExtraLine(OrderLineItem):
     """
-    Abstract Model for a single AdditionalLineItem in a Order
+    Abstract Model for a single ExtraLine in a Order
     Attributes:
-        sale_price: The unit sale price for this OrderLineItem
+        price: The unit sale price for this OrderLineItem
     """
 
     class Meta:
@@ -887,18 +887,18 @@ class OrderAdditionalLineItem(OrderLineItem):
         unique_together = [
         ]
 
-    sale_price = InvenTreeModelMoneyField(
+    price = InvenTreeModelMoneyField(
         max_digits=19,
         decimal_places=4,
         null=True, blank=True,
-        verbose_name=_('Sale Price'),
-        help_text=_('Unit sale price'),
+        verbose_name=_('Price'),
+        help_text=_('Unit price'),
     )
 
-    def sale_price_converted(self):
-        return convert_money(self.sale_price, currency_code_default())
+    def price_converted(self):
+        return convert_money(self.price, currency_code_default())
 
-    def sale_price_converted_currency(self):
+    def price_converted_currency(self):
         return currency_code_default()
 
 
@@ -1011,19 +1011,19 @@ class PurchaseOrderLineItem(OrderLineItem):
         return max(r, 0)
 
 
-class PurchaseOrderAdditionalLineItem(OrderAdditionalLineItem):
+class PurchaseOrderExtraLine(OrderExtraLine):
     """
-    Model for a single AdditionalLineItem in a PurchaseOrder
+    Model for a single ExtraLine in a PurchaseOrder
     Attributes:
-        order: Link to the PurchaseOrder that this line item belongs to
-        title: title of line item
-        sale_price: The unit sale price for this OrderLineItem
+        order: Link to the PurchaseOrder that this line belongs to
+        title: title of line
+        price: The unit price for this OrderLine
     """
     @staticmethod
     def get_api_url():
-        return reverse('api-po-additional-line-list')
+        return reverse('api-po-extra-line-list')
 
-    order = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, related_name='additional_lines', verbose_name=_('Order'), help_text=_('Purchase Order'))
+    order = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, related_name='extra_lines', verbose_name=_('Order'), help_text=_('Purchase Order'))
 
 
 class SalesOrderLineItem(OrderLineItem):
@@ -1229,19 +1229,19 @@ class SalesOrderShipment(models.Model):
         trigger_event('salesordershipment.completed', id=self.pk)
 
 
-class SalesOrderAdditionalLineItem(OrderAdditionalLineItem):
+class SalesOrderExtraLine(OrderExtraLine):
     """
-    Model for a single AdditionalLineItem in a SalesOrder
+    Model for a single ExtraLine in a SalesOrder
     Attributes:
-        order: Link to the SalesOrder that this line item belongs to
-        title: title of line item
-        sale_price: The unit sale price for this OrderLineItem
+        order: Link to the SalesOrder that this line belongs to
+        title: title of line
+        price: The unit price for this OrderLine
     """
     @staticmethod
     def get_api_url():
-        return reverse('api-so-additional-line-list')
+        return reverse('api-so-extra-line-list')
 
-    order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='additional_lines', verbose_name=_('Order'), help_text=_('Sales Order'))
+    order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='extra_lines', verbose_name=_('Order'), help_text=_('Sales Order'))
 
 
 class SalesOrderAllocation(models.Model):
