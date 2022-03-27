@@ -231,8 +231,8 @@ function inventreeDocReady() {
         stopNotificationWatcher();
     });
 
-    $('#offcanvasRight').on('show.bs.offcanvas', openNotificationPanel);  // listener for opening the notification panel
-    $('#offcanvasRight').on('hidden.bs.offcanvas', closeNotificationPanel);  // listener for closing the notification panel
+    $('#offcanvas-notification').on('show.bs.offcanvas', openNotificationPanel);  // listener for opening the notification panel
+    $('#offcanvas-notification').on('hidden.bs.offcanvas', closeNotificationPanel);  // listener for closing the notification panel
 }
 
 

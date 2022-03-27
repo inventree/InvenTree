@@ -1,7 +1,8 @@
 {% load i18n %}
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" data-bs-scroll="true" aria-labelledby="offcanvasRightLabel">
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas-notification" data-bs-scroll="true" aria-labelledby="offcanvas-notification-label">
     <div class="offcanvas-header">
-      <h5 id="offcanvasRightLabel">{% trans "Notifications" %}</h5>
+      <h5 id="offcanvas-notification-label">{% trans "Notifications" %}</h5>
       <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
@@ -11,4 +12,21 @@
       <hr>
       <a href="{% url 'notifications' %}">{% trans "Show all notifications and history" %}</a>
     </div>
+</div>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas-search" data-bs-scroll="true" aria-labelledby="offcanvas-search-label">
+  <div class="offcanvas-header">
+    <div class='input-group'>
+      <input type="text" name='search' class="form-control" aria-label='{% trans "Search" %}' id="search-bar" placeholder="{% trans 'Search' %}"{% if query_text %} value="{{ query }}"{% endif %}>
+      <button type="submit" id='search-submit' class="btn btn-secondary" title='{% trans "Search" %}'>
+          <span class='fas fa-search'></span>
+      </button>
+    </div>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div id="search-center">
+      <p id='serach-no-results' class='text-muted'><em>{% trans "No results" %}</em></p>
+    </div>
+  </div>
 </div>
