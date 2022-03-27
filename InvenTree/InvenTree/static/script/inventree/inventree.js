@@ -231,6 +231,11 @@ function inventreeDocReady() {
         stopNotificationWatcher();
     });
 
+    // Calbacks for search panel
+    $('#offcanvas-search').on('show.bs.offcanvas', openSearchPanel);
+    $('#offcanvas-search').on('hidden.bs.offcanvas', closeSearchPanel);
+
+    // Callbacks for notifications panel
     $('#offcanvas-notification').on('show.bs.offcanvas', openNotificationPanel);  // listener for opening the notification panel
     $('#offcanvas-notification').on('hidden.bs.offcanvas', closeNotificationPanel);  // listener for closing the notification panel
 }

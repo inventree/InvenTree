@@ -3,7 +3,7 @@
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas-search" data-bs-scroll="true" aria-labelledby="offcanvas-search-label">
     <div class="offcanvas-header">
       <div class='input-group'>
-        <input type="text" name='search' class="form-control" aria-label='{% trans "Search" %}' id="search-bar" placeholder="{% trans 'Search' %}"{% if query_text %} value="{{ query }}"{% endif %}>
+        <input type="text" name='search-input' class="form-control" aria-label='{% trans "Search" %}' id="search-input" placeholder="{% trans 'Search' %}"{% if query_text %} value="{{ query }}"{% endif %}>
         <button type="submit" id='search-submit' class="btn btn-secondary" title='{% trans "Search" %}'>
             <span class='fas fa-search'></span>
         </button>
@@ -12,7 +12,7 @@
     </div>
     <div class="offcanvas-body">
       <div id="search-center">
-        <p id='serach-no-results' class='text-muted'>
+        <p id='search-no-results' class='text-muted'>
           <em>{% trans "No search results" %}</em>
         </p>
       </div>
