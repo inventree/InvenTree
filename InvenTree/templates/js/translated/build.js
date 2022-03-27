@@ -1643,6 +1643,9 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
             remaining = 0;
         }
 
+        // Ensure the quantity sent to the form field is correctly formatted
+        remaining = parseFloat(remaining.toFixed(15));
+
         // We only care about entries which are not yet fully allocated
         if (remaining > 0) {
             table_entries += renderBomItemRow(bom_item, remaining);
