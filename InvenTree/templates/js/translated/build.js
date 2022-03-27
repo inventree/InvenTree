@@ -1025,9 +1025,10 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         }
 
         // Store the required quantity in the row data
-        row.required = quantity;
+        // Prevent weird rounding issues
+        row.required = parseFloat(quantity.toFixed(15));
 
-        return quantity;
+        return row.required;
     }
 
     function sumAllocations(row) {
@@ -1043,9 +1044,9 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             quantity += item.quantity;
         });
 
-        row.allocated = quantity;
+        row.allocated = parseFloat(quantity.toFixed(15));
 
-        return quantity;
+        return row.allocated;
     }
 
     function setupCallbacks() {
