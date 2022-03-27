@@ -26,7 +26,7 @@ def _convert_model(apps, line_item_ref, extra_line_ref, price_ref):
             quantity=lineItem.quantity,
             reference=lineItem.reference,
         )
-        newitem.context = serializers.serialize('json', [lineItem, ])
+        newitem.context = {'migration': serializers.serialize('json', [lineItem, ])}
         newitem.save()
 
         lineItem.delete()
@@ -41,7 +41,11 @@ def _reconvert_model(apps, line_item_ref, extra_line_ref):
     print(f'\nStarting to convert - currently at {OrderExtraLine.objects.all().count()} {extra_line_ref} / {OrderLineItem.objects.all().count()} {line_item_ref} instance(s)')
     for extra_line in OrderExtraLine.objects.all():
         # regenreate item
-        [item.save() for item in serializers.deserialize('json', extra_line.context)]
+        if extra_line.context:
+            context_string = getattr(extra_line.context, 'migration')
+            if not context_string:
+                continue
+            [item.save() for item in serializers.deserialize('json', context_string)]
         extra_line.delete()
     print(f'Done converting line items - now at {OrderExtraLine.objects.all().count()} {extra_line_ref} / {OrderLineItem.objects.all().count()} {line_item_ref} instance(s)')
 
