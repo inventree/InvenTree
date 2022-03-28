@@ -184,10 +184,9 @@ class TestAdditionalLineMigration(MigratorTestCase):
                 received=1
             )
 
-
-    def test_ref_field(self):
+    def test_po_migration(self):
         """
-        Test that the 'reference_int' field has been created and is filled out correctly
+        Test that the the PO lines where converted correctly
         """
 
         PurchaseOrder = self.new_state.apps.get_model('order', 'purchaseorder')
@@ -196,7 +195,5 @@ class TestAdditionalLineMigration(MigratorTestCase):
 
             po = PurchaseOrder.objects.get(reference=f"{ii}-abcde")
 
-            # The integer reference field must have been correctly updated
             self.assertEqual(po.extra_lines.count(), 1)
             self.assertEqual(po.lines.count(), 1)
-
