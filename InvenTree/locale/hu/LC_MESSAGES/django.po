@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-28 10:50+0000\n"
-"PO-Revision-Date: 2022-03-28 11:34\n"
+"PO-Revision-Date: 2022-03-28 18:16\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -2228,11 +2228,11 @@ msgstr "Email küldés engedélyezése esemény értesítésekre"
 
 #: common/models.py:1251
 msgid "Enable label printing"
-msgstr ""
+msgstr "Címke nyomtatás engedélyezése"
 
 #: common/models.py:1252
 msgid "Enable label printing from the web interface"
-msgstr ""
+msgstr "Címke nyomtatás engedélyezése a web felületről"
 
 #: common/models.py:1258
 msgid "Inline label display"
