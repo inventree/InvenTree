@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-28 10:50+0000\n"
-"PO-Revision-Date: 2022-03-28 11:34\n"
+"PO-Revision-Date: 2022-03-28 12:49\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -293,7 +293,7 @@ msgstr ""
 #: InvenTree/serializers.py:632
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
-msgstr ""
+msgstr "Повторяющийся столбец: '{col}'"
 
 #: InvenTree/settings.py:665
 msgid "German"
@@ -1657,7 +1657,7 @@ msgstr ""
 
 #: common/models.py:739
 msgid "Allow Duplicate IPN"
-msgstr ""
+msgstr "Разрешить повторяющиеся IPN"
 
 #: common/models.py:740
 msgid "Allow multiple parts to share the same IPN"
@@ -2494,11 +2494,11 @@ msgstr "Контактный телефон"
 #: company/models.py:125 company/templates/company/company_base.html:129
 #: templates/InvenTree/settings/user.html:48
 msgid "Email"
-msgstr "E-Mail"
+msgstr "EMail"
 
 #: company/models.py:125
 msgid "Contact email address"
-msgstr "Контактный E-Mail"
+msgstr "Контактный EMail"
 
 #: company/models.py:128 company/templates/company/company_base.html:136
 msgid "Contact"
