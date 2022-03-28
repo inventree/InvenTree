@@ -4,6 +4,7 @@
     editSetting,
     user_settings,
     global_settings,
+    plugins_enabled,
 */
 
 {% user_settings request.user as USER_SETTINGS %}
