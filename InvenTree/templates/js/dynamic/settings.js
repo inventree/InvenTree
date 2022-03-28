@@ -20,7 +20,8 @@ const global_settings = {
     {% endfor %}
 };
 
-{% if plugins_enabled %}
+{% plugins_enabled as p_en %}
+{% if p_en %}
 const plugins_enabled = true;
 {% else %}
 const plugins_enabled = false;
