@@ -56,7 +56,7 @@ def convert_line_items(apps, schema_editor):
     _convert_model(apps, 'SalesOrderLineItem', 'SalesOrderExtraLine', 'sale_price')
 
 
-def nunconvert_line_items(apps, schema_editor):
+def nunconvert_line_items(apps, schema_editor):  # pragma: no cover
     """reconvert line items"""
     _reconvert_model(apps, 'PurchaseOrderLineItem', 'PurchaseOrderExtraLine')
     _reconvert_model(apps, 'SalesOrderLineItem', 'SalesOrderExtraLine')
