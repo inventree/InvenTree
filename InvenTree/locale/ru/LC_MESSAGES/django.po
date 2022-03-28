@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-27 10:59+0000\n"
-"PO-Revision-Date: 2022-03-28 08:43\n"
+"PO-Revision-Date: 2022-03-28 09:41\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -1472,7 +1472,7 @@ msgstr "Заметки сборки"
 #: part/templates/part/detail.html:143 stock/templates/stock/item.html:142
 #: stock/templates/stock/item.html:247
 msgid "Edit Notes"
-msgstr ""
+msgstr "Редактировать заметки"
 
 #: build/templates/build/detail.html:556
 msgid "Allocation Complete"
@@ -2314,7 +2314,7 @@ msgstr ""
 #: company/templates/company/supplier_part.html:256
 #: templates/js/translated/part.js:939 templates/js/translated/part.js:1907
 msgid "Price"
-msgstr ""
+msgstr "Цена"
 
 #: common/models.py:1389
 msgid "Unit price at specified quantity"
@@ -2443,11 +2443,11 @@ msgstr ""
 #: company/forms.py:24 part/forms.py:46
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
-msgstr ""
+msgstr "Ссылка"
 
 #: company/forms.py:25 part/forms.py:47
 msgid "Image URL"
-msgstr ""
+msgstr "Ссылка на изображение (URL)"
 
 #: company/models.py:105
 msgid "Company description"
@@ -2461,7 +2461,7 @@ msgstr "Описание компании"
 #: templates/InvenTree/settings/plugin_settings.html:55
 #: templates/js/translated/company.js:349
 msgid "Website"
-msgstr ""
+msgstr "Сайт"
 
 #: company/models.py:113
 msgid "Company website URL"
@@ -2469,7 +2469,7 @@ msgstr "Сайт компании"
 
 #: company/models.py:117 company/templates/company/company_base.html:115
 msgid "Address"
-msgstr ""
+msgstr "Адрес"
 
 #: company/models.py:118
 msgid "Company address"
@@ -2477,56 +2477,56 @@ msgstr "Адрес компании"
 
 #: company/models.py:121
 msgid "Phone number"
-msgstr ""
+msgstr "Телефон"
 
 #: company/models.py:122
 msgid "Contact phone number"
-msgstr ""
+msgstr "Контактный телефон"
 
 #: company/models.py:125 company/templates/company/company_base.html:129
 #: templates/InvenTree/settings/user.html:48
 msgid "Email"
-msgstr ""
+msgstr "E-Mail"
 
 #: company/models.py:125
 msgid "Contact email address"
-msgstr ""
+msgstr "Контактный E-Mail"
 
 #: company/models.py:128 company/templates/company/company_base.html:136
 msgid "Contact"
-msgstr ""
+msgstr "Контакт"
 
 #: company/models.py:129
 msgid "Point of contact"
-msgstr ""
+msgstr "Контактное лицо"
 
 #: company/models.py:131
 msgid "Link to external company information"
-msgstr ""
+msgstr "Ссылка на описание компании"
 
 #: company/models.py:139 part/models.py:878
 msgid "Image"
-msgstr ""
+msgstr "Изображение"
 
 #: company/models.py:144
 msgid "is customer"
-msgstr ""
+msgstr "покупатель"
 
 #: company/models.py:144
 msgid "Do you sell items to this company?"
-msgstr ""
+msgstr "Вы продаёте детали этой компании?"
 
 #: company/models.py:146
 msgid "is supplier"
-msgstr ""
+msgstr "поставщик"
 
 #: company/models.py:146
 msgid "Do you purchase items from this company?"
-msgstr ""
+msgstr "Вы покупаете детали у этой компании?"
 
 #: company/models.py:148
 msgid "is manufacturer"
-msgstr ""
+msgstr "производитель"
 
 #: company/models.py:148
 msgid "Does this company manufacture parts?"
@@ -2535,20 +2535,20 @@ msgstr "Является ли компания производителем де
 #: company/models.py:152 company/serializers.py:270
 #: company/templates/company/company_base.html:103 stock/serializers.py:179
 msgid "Currency"
-msgstr ""
+msgstr "Валюта"
 
 #: company/models.py:155
 msgid "Default currency used for this company"
-msgstr ""
+msgstr "Для этой компании используется валюта по умолчанию"
 
 #: company/models.py:320 company/models.py:535 stock/models.py:575
 #: stock/templates/stock/item_base.html:137 templates/js/translated/bom.js:541
 msgid "Base Part"
-msgstr ""
+msgstr "Базовая деталь"
 
 #: company/models.py:324 company/models.py:539
 msgid "Select part"
-msgstr ""
+msgstr "Выберите деталь"
 
 #: company/models.py:335 company/templates/company/company_base.html:73
 #: company/templates/company/manufacturer_part.html:91
@@ -2559,11 +2559,11 @@ msgstr ""
 #: templates/js/translated/company.js:800 templates/js/translated/part.js:235
 #: templates/js/translated/table_filters.js:393
 msgid "Manufacturer"
-msgstr ""
+msgstr "Производитель"
 
 #: company/models.py:336 templates/js/translated/part.js:236
 msgid "Select manufacturer"
-msgstr ""
+msgstr "Выберите производителя"
 
 #: company/models.py:342 company/templates/company/manufacturer_part.html:96
 #: company/templates/company/supplier_part.html:105
@@ -2575,11 +2575,11 @@ msgstr ""
 
 #: company/models.py:343 templates/js/translated/part.js:247
 msgid "Manufacturer Part Number"
-msgstr ""
+msgstr "Код производителя"
 
 #: company/models.py:349
 msgid "URL for external manufacturer part link"
-msgstr ""
+msgstr "Ссылка на сайт производителя"
 
 #: company/models.py:355
 msgid "Manufacturer part description"
@@ -2594,29 +2594,29 @@ msgstr ""
 
 #: company/models.py:416
 msgid "Parameter name"
-msgstr ""
+msgstr "Наименование параметра"
 
 #: company/models.py:422
 #: report/templates/report/inventree_test_report_base.html:95
 #: stock/models.py:2131 templates/js/translated/company.js:647
 #: templates/js/translated/part.js:717 templates/js/translated/stock.js:1296
 msgid "Value"
-msgstr ""
+msgstr "Значение"
 
 #: company/models.py:423
 msgid "Parameter value"
-msgstr ""
+msgstr "Значение параметра"
 
 #: company/models.py:429 part/models.py:953 part/models.py:2536
 #: part/templates/part/part_base.html:304
 #: templates/InvenTree/settings/settings.html:325
 #: templates/js/translated/company.js:653 templates/js/translated/part.js:723
 msgid "Units"
-msgstr ""
+msgstr "Ед.изм."
 
 #: company/models.py:430
 msgid "Parameter units"
-msgstr ""
+msgstr "Единицы измерения"
 
 #: company/models.py:502
 msgid "Linked manufacturer part must reference the same base part"
@@ -2632,11 +2632,11 @@ msgstr ""
 #: templates/js/translated/part.js:216 templates/js/translated/part.js:865
 #: templates/js/translated/table_filters.js:397
 msgid "Supplier"
-msgstr ""
+msgstr "Поставщик"
 
 #: company/models.py:546 templates/js/translated/part.js:217
 msgid "Select supplier"
-msgstr ""
+msgstr "Выберите поставщика"
 
 #: company/models.py:551 company/templates/company/supplier_part.html:91
 #: part/bom.py:238 part/bom.py:266 templates/js/translated/order.js:1198
@@ -2646,7 +2646,7 @@ msgstr ""
 
 #: company/models.py:552 templates/js/translated/part.js:228
 msgid "Supplier stock keeping unit"
-msgstr ""
+msgstr "Код поставщика"
 
 #: company/models.py:559
 msgid "Select manufacturer part"
@@ -2665,7 +2665,7 @@ msgstr ""
 #: report/templates/report/inventree_po_report.html:93
 #: report/templates/report/inventree_so_report.html:93 stock/serializers.py:409
 msgid "Note"
-msgstr ""
+msgstr "Заметка"
 
 #: company/models.py:580 part/models.py:1846
 msgid "base cost"
@@ -2703,7 +2703,7 @@ msgstr ""
 
 #: company/serializers.py:71
 msgid "Currency Code"
-msgstr ""
+msgstr "Код валюты"
 
 #: company/templates/company/company_base.html:8
 #: company/templates/company/company_base.html:12
@@ -2718,7 +2718,7 @@ msgstr ""
 
 #: company/templates/company/company_base.html:26
 msgid "Company actions"
-msgstr ""
+msgstr "Операции с компанией"
 
 #: company/templates/company/company_base.html:31
 msgid "Edit company information"
@@ -2741,12 +2741,12 @@ msgstr "Удалить компанию"
 #: company/templates/company/company_base.html:53
 #: part/templates/part/part_thumb.html:12
 msgid "Upload new image"
-msgstr ""
+msgstr "Загрузить новое изображение"
 
 #: company/templates/company/company_base.html:56
 #: part/templates/part/part_thumb.html:14
 msgid "Download image from URL"
-msgstr ""
+msgstr "Скачать изображение по ссылке"
 
 #: company/templates/company/company_base.html:83 order/models.py:574
 #: order/templates/order/sales_order_base.html:115 stock/models.py:618
@@ -2756,20 +2756,20 @@ msgstr ""
 #: templates/js/translated/stock.js:2385
 #: templates/js/translated/table_filters.js:401
 msgid "Customer"
-msgstr ""
+msgstr "Покупатель"
 
 #: company/templates/company/company_base.html:108
 msgid "Uses default currency"
-msgstr ""
+msgstr "Использовать валюту по умолчанию"
 
 #: company/templates/company/company_base.html:122
 msgid "Phone"
-msgstr ""
+msgstr "Телефон"
 
 #: company/templates/company/company_base.html:205
 #: part/templates/part/part_base.html:487
 msgid "Upload Image"
-msgstr ""
+msgstr "Загрузить изображение"
 
 #: company/templates/company/detail.html:15
 #: company/templates/company/manufacturer_part_sidebar.html:7
@@ -2780,13 +2780,13 @@ msgstr "Детали поставщиков"
 #: company/templates/company/detail.html:19
 #: order/templates/order/order_wizard/select_parts.html:44
 msgid "Create new supplier part"
-msgstr ""
+msgstr "Создать новую деталь поставщика"
 
 #: company/templates/company/detail.html:20
 #: company/templates/company/manufacturer_part.html:118
 #: part/templates/part/detail.html:362
 msgid "New Supplier Part"
-msgstr ""
+msgstr "Новая деталь поставщика"
 
 #: company/templates/company/detail.html:32
 #: company/templates/company/detail.html:79
@@ -2795,7 +2795,7 @@ msgstr ""
 #: part/templates/part/category.html:168 part/templates/part/detail.html:371
 #: part/templates/part/detail.html:400
 msgid "Options"
-msgstr ""
+msgstr "Настройки"
 
 #: company/templates/company/detail.html:37
 #: company/templates/company/detail.html:84
@@ -2819,11 +2819,11 @@ msgstr "Детали производителей"
 
 #: company/templates/company/detail.html:66
 msgid "Create new manufacturer part"
-msgstr ""
+msgstr "Создать новую деталь производителя"
 
 #: company/templates/company/detail.html:67 part/templates/part/detail.html:390
 msgid "New Manufacturer Part"
-msgstr ""
+msgstr "Новая деталь производителя"
 
 #: company/templates/company/detail.html:107
 msgid "Supplier Stock"
@@ -2897,13 +2897,13 @@ msgstr ""
 
 #: company/templates/company/index.html:8
 msgid "Supplier List"
-msgstr ""
+msgstr "Список поставщиков"
 
 #: company/templates/company/manufacturer_part.html:14 company/views.py:55
 #: part/templates/part/prices.html:167 templates/InvenTree/search.html:178
 #: templates/navbar.html:46
 msgid "Manufacturers"
-msgstr ""
+msgstr "Производители"
 
 #: company/templates/company/manufacturer_part.html:35
 #: company/templates/company/supplier_part.html:34
@@ -2932,7 +2932,7 @@ msgstr ""
 #: part/templates/part/part_sidebar.html:36 part/templates/part/prices.html:163
 #: templates/InvenTree/search.html:188 templates/navbar.html:45
 msgid "Suppliers"
-msgstr ""
+msgstr "Поставщики"
 
 #: company/templates/company/manufacturer_part.html:129
 #: part/templates/part/detail.html:373
@@ -2946,30 +2946,30 @@ msgstr "Удалить деталь поставщика"
 #: templates/js/translated/company.js:426 templates/js/translated/helpers.js:31
 #: users/models.py:218
 msgid "Delete"
-msgstr ""
+msgstr "Удалить"
 
 #: company/templates/company/manufacturer_part.html:143
 #: company/templates/company/manufacturer_part_sidebar.html:5
 #: part/templates/part/category_sidebar.html:17
 #: part/templates/part/detail.html:189 part/templates/part/part_sidebar.html:9
 msgid "Parameters"
-msgstr ""
+msgstr "Параметры"
 
 #: company/templates/company/manufacturer_part.html:147
 #: part/templates/part/detail.html:194
 #: templates/InvenTree/settings/category.html:12
 #: templates/InvenTree/settings/part.html:66
 msgid "New Parameter"
-msgstr ""
+msgstr "Новый параметр"
 
 #: company/templates/company/manufacturer_part.html:158
 msgid "Delete parameters"
-msgstr ""
+msgstr "Удалить параметры"
 
 #: company/templates/company/manufacturer_part.html:191
 #: part/templates/part/detail.html:892
 msgid "Add Parameter"
-msgstr ""
+msgstr "Добавить параметр"
 
 #: company/templates/company/manufacturer_part.html:239
 msgid "Selected parameters will be deleted"
@@ -2977,7 +2977,7 @@ msgstr ""
 
 #: company/templates/company/manufacturer_part.html:251
 msgid "Delete Parameters"
-msgstr ""
+msgstr "Удалить параметры"
 
 #: company/templates/company/sidebar.html:6
 msgid "Manufactured Parts"
@@ -3121,11 +3121,11 @@ msgstr ""
 #: company/views.py:61 templates/InvenTree/search.html:208
 #: templates/navbar.html:57
 msgid "Customers"
-msgstr ""
+msgstr "Покупатели"
 
 #: company/views.py:62
 msgid "New Customer"
-msgstr ""
+msgstr "Новый покупатель"
 
 #: company/views.py:69
 msgid "Companies"
@@ -3264,7 +3264,7 @@ msgstr ""
 
 #: order/models.py:228
 msgid "Company from which the items are being ordered"
-msgstr ""
+msgstr "Компания, в которой детали заказываются"
 
 #: order/models.py:231 order/templates/order/order_base.html:118
 #: templates/js/translated/order.js:967
@@ -3309,7 +3309,7 @@ msgstr ""
 
 #: order/models.py:575
 msgid "Company to which the items are being sold"
-msgstr ""
+msgstr "Компания, которой детали продаются"
 
 #: order/models.py:581
 msgid "Customer Reference "
@@ -6076,7 +6076,7 @@ msgstr ""
 
 #: stock/serializers.py:690
 msgid "Selected company is not a customer"
-msgstr ""
+msgstr "Выбранная компания не является покупателем"
 
 #: stock/serializers.py:698
 msgid "Stock assignment notes"
@@ -6716,7 +6716,7 @@ msgstr ""
 #: templates/InvenTree/notifications/notifications.html:51
 #: templates/InvenTree/settings/settings.html:314
 msgid "ID"
-msgstr ""
+msgstr "Идентификатор"
 
 #: templates/InvenTree/notifications/notifications.html:57
 msgid "Age"
@@ -8521,11 +8521,11 @@ msgstr ""
 
 #: templates/js/translated/model_renderers.js:40
 msgid "Company ID"
-msgstr "Идентификатор компании"
+msgstr "Код компании"
 
 #: templates/js/translated/model_renderers.js:77
 msgid "Stock ID"
-msgstr ""
+msgstr "Код склада"
 
 #: templates/js/translated/model_renderers.js:130
 msgid "Location ID"
