@@ -959,11 +959,9 @@ class PurchaseOrderLineItem(OrderLineItem):
         else:
             return self.part.part
 
-    # TODO - Function callback for when the SupplierPart is deleted?
-
     part = models.ForeignKey(
         SupplierPart, on_delete=models.SET_NULL,
-        blank=True, null=True,
+        blank=False, null=True,
         related_name='purchase_order_line_items',
         verbose_name=_('Part'),
         help_text=_("Supplier part"),
