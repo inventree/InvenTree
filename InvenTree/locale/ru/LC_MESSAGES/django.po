@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-27 10:59+0000\n"
-"PO-Revision-Date: 2022-03-27 11:00\n"
+"PO-Revision-Date: 2022-03-28 08:43\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -1609,11 +1609,11 @@ msgstr ""
 
 #: common/models.py:700 company/models.py:100 company/models.py:101
 msgid "Company name"
-msgstr ""
+msgstr "Наименование компании"
 
 #: common/models.py:701
 msgid "Internal company name"
-msgstr ""
+msgstr "Внутреннее название компании"
 
 #: common/models.py:706
 msgid "Base URL"
@@ -2428,7 +2428,7 @@ msgstr ""
 
 #: common/views.py:495
 msgid "Parts imported"
-msgstr ""
+msgstr "Детали импортированы"
 
 #: common/views.py:517 order/templates/order/order_wizard/match_parts.html:19
 #: order/templates/order/order_wizard/po_upload.html:47
@@ -2451,11 +2451,11 @@ msgstr ""
 
 #: company/models.py:105
 msgid "Company description"
-msgstr ""
+msgstr "Описание компании"
 
 #: company/models.py:106
 msgid "Description of the company"
-msgstr ""
+msgstr "Описание компании"
 
 #: company/models.py:112 company/templates/company/company_base.html:97
 #: templates/InvenTree/settings/plugin_settings.html:55
@@ -2465,7 +2465,7 @@ msgstr ""
 
 #: company/models.py:113
 msgid "Company website URL"
-msgstr ""
+msgstr "Сайт компании"
 
 #: company/models.py:117 company/templates/company/company_base.html:115
 msgid "Address"
@@ -2473,7 +2473,7 @@ msgstr ""
 
 #: company/models.py:118
 msgid "Company address"
-msgstr ""
+msgstr "Адрес компании"
 
 #: company/models.py:121
 msgid "Phone number"
@@ -2530,7 +2530,7 @@ msgstr ""
 
 #: company/models.py:148
 msgid "Does this company manufacture parts?"
-msgstr ""
+msgstr "Является ли компания производителем деталей?"
 
 #: company/models.py:152 company/serializers.py:270
 #: company/templates/company/company_base.html:103 stock/serializers.py:179
@@ -2709,7 +2709,7 @@ msgstr ""
 #: company/templates/company/company_base.html:12
 #: templates/InvenTree/search.html:176 templates/js/translated/company.js:322
 msgid "Company"
-msgstr ""
+msgstr "Компания"
 
 #: company/templates/company/company_base.html:22
 #: templates/js/translated/order.js:279
@@ -2722,21 +2722,21 @@ msgstr ""
 
 #: company/templates/company/company_base.html:31
 msgid "Edit company information"
-msgstr ""
+msgstr "Редактировать информацию о компании"
 
 #: company/templates/company/company_base.html:32
 #: templates/js/translated/company.js:265
 msgid "Edit Company"
-msgstr ""
+msgstr "Редактировать компанию"
 
 #: company/templates/company/company_base.html:36
 msgid "Delete company"
-msgstr ""
+msgstr "Удалить компанию"
 
 #: company/templates/company/company_base.html:37
 #: company/templates/company/company_base.html:159
 msgid "Delete Company"
-msgstr ""
+msgstr "Удалить компанию"
 
 #: company/templates/company/company_base.html:53
 #: part/templates/part/part_thumb.html:12
@@ -2775,7 +2775,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part_sidebar.html:7
 #: templates/InvenTree/search.html:118
 msgid "Supplier Parts"
-msgstr ""
+msgstr "Детали поставщиков"
 
 #: company/templates/company/detail.html:19
 #: order/templates/order/order_wizard/select_parts.html:44
@@ -2801,21 +2801,21 @@ msgstr ""
 #: company/templates/company/detail.html:84
 #: part/templates/part/category.html:174
 msgid "Order parts"
-msgstr ""
+msgstr "Заказать детали"
 
 #: company/templates/company/detail.html:42
 #: company/templates/company/detail.html:89
 msgid "Delete parts"
-msgstr ""
+msgstr "Удалить детали"
 
 #: company/templates/company/detail.html:43
 #: company/templates/company/detail.html:90
 msgid "Delete Parts"
-msgstr ""
+msgstr "Удалить детали"
 
 #: company/templates/company/detail.html:62 templates/InvenTree/search.html:103
 msgid "Manufacturer Parts"
-msgstr ""
+msgstr "Детали производителей"
 
 #: company/templates/company/detail.html:66
 msgid "Create new manufacturer part"
@@ -2881,13 +2881,13 @@ msgstr ""
 
 #: company/templates/company/detail.html:186
 msgid "Company Notes"
-msgstr ""
+msgstr "Заметки о компании"
 
 #: company/templates/company/detail.html:380
 #: company/templates/company/manufacturer_part.html:215
 #: part/templates/part/detail.html:449
 msgid "Delete Supplier Parts?"
-msgstr ""
+msgstr "Удалить деталь поставщика?"
 
 #: company/templates/company/detail.html:381
 #: company/templates/company/manufacturer_part.html:216
@@ -2937,7 +2937,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part.html:129
 #: part/templates/part/detail.html:373
 msgid "Delete supplier parts"
-msgstr ""
+msgstr "Удалить деталь поставщика"
 
 #: company/templates/company/manufacturer_part.html:129
 #: company/templates/company/manufacturer_part.html:158
@@ -2981,11 +2981,11 @@ msgstr ""
 
 #: company/templates/company/sidebar.html:6
 msgid "Manufactured Parts"
-msgstr ""
+msgstr "Произведенные детали"
 
 #: company/templates/company/sidebar.html:10
 msgid "Supplied Parts"
-msgstr ""
+msgstr "Поставленные детали"
 
 #: company/templates/company/sidebar.html:16
 msgid "Supplied Stock Items"
@@ -3133,7 +3133,7 @@ msgstr ""
 
 #: company/views.py:70
 msgid "New Company"
-msgstr ""
+msgstr "Новая компания"
 
 #: company/views.py:129 part/views.py:589
 msgid "Download Image"
@@ -3958,7 +3958,7 @@ msgstr ""
 #: order/views.py:747
 #, python-brace-format
 msgid "Ordered {n} parts"
-msgstr ""
+msgstr "Заказано {n} деталей"
 
 #: order/views.py:858
 msgid "Sales order not found"
@@ -4088,7 +4088,7 @@ msgstr ""
 #: templates/js/translated/part.js:1703 templates/navbar.html:21
 #: templates/stats.html:92 templates/stats.html:101 users/models.py:41
 msgid "Parts"
-msgstr ""
+msgstr "Детали"
 
 #: part/models.py:460
 msgid "Invalid choice for parent part"
@@ -4362,11 +4362,11 @@ msgstr ""
 
 #: part/models.py:2657
 msgid "Part ID or part name"
-msgstr ""
+msgstr "Артикул или наименование детали"
 
 #: part/models.py:2660 templates/js/translated/model_renderers.js:182
 msgid "Part ID"
-msgstr ""
+msgstr "Артикул"
 
 #: part/models.py:2661
 msgid "Unique part ID value"
@@ -8240,7 +8240,7 @@ msgstr ""
 
 #: templates/js/translated/company.js:286
 msgid "Add new Company"
-msgstr ""
+msgstr "Добавить новую компанию"
 
 #: templates/js/translated/company.js:363
 msgid "Parts Supplied"
@@ -8252,7 +8252,7 @@ msgstr ""
 
 #: templates/js/translated/company.js:387
 msgid "No company information found"
-msgstr ""
+msgstr "Информация о компании не найдена"
 
 #: templates/js/translated/company.js:406
 msgid "The following manufacturer parts will be deleted"
@@ -8521,7 +8521,7 @@ msgstr ""
 
 #: templates/js/translated/model_renderers.js:40
 msgid "Company ID"
-msgstr ""
+msgstr "Идентификатор компании"
 
 #: templates/js/translated/model_renderers.js:77
 msgid "Stock ID"
