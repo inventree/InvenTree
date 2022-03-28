@@ -196,7 +196,7 @@ def isInvenTreeUpToDate():
     and stores it to the database as INVENTREE_LATEST_VERSION
     """
 
-    latest = common.models.InvenTreeSetting.get_setting('INVENTREE_LATEST_VERSION', None)
+    latest = common.models.InvenTreeSetting.get_setting('INVENTREE_LATEST_VERSION', backup_value=None, create=False)
 
     # No record for "latest" version - we must assume we are up to date!
     if not latest:

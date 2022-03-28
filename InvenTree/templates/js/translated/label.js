@@ -10,6 +10,7 @@
     modalSetTitle,
     modalSubmit,
     openModal,
+    plugins_enabled,
     showAlertDialog,
 */
 
@@ -232,26 +233,28 @@ function selectLabel(labels, items, options={}) {
     var plugins = [];
 
     // Request a list of available label printing plugins from the server
-    inventreeGet(
-        `/api/plugin/`,
-        {},
-        {
-            async: false,
-            success: function(response) {
-                response.forEach(function(plugin) {
-                    // Look for active plugins which implement the 'labels' mixin class
-                    if (plugin.active && plugin.mixins && plugin.mixins.labels) {
-                        // This plugin supports label printing
-                        plugins.push(plugin);
-                    }
-                });
+    if (plugins_enabled) {
+        inventreeGet(
+            `/api/plugin/`,
+            {},
+            {
+                async: false,
+                success: function(response) {
+                    response.forEach(function(plugin) {
+                        // Look for active plugins which implement the 'labels' mixin class
+                        if (plugin.active && plugin.mixins && plugin.mixins.labels) {
+                            // This plugin supports label printing
+                            plugins.push(plugin);
+                        }
+                    });
+                }
             }
-        }
-    );
+        );
+    }
 
     var plugin_selection = '';
     
-    if (plugins.length > 0) {
+    if (plugins_enabled && plugins.length > 0) {
         plugin_selection =`
         <div class='form-group'>
             <label class='control-label requiredField' for='id_plugin'>

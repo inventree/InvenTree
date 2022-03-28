@@ -37,13 +37,17 @@
 </button>
 {% endif %}
 
-{% if barcodes %}
+{% if barcodes or labels_enabled %}
 <!-- Barcode actions menu -->
 <div class='btn-group'>
     <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'><span class='fas fa-qrcode'></span> <span class='caret'></span></button>
     <ul class='dropdown-menu'>
+        {% if barcodes %}
         <li><a class='dropdown-item' href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
+        {% endif %}
+        {% if labels_enabled %}
         <li><a class='dropdown-item' href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
+        {% endif %}
     </ul>
 </div>
 {% endif %}
@@ -424,9 +428,11 @@
         );
     });
 
+    {% if labels_enabled %}
     $('#print-label').click(function() {
         printPartLabels([{{ part.pk }}]);
     });
+    {% endif %}
 
     function adjustPartStock(action) {
         inventreeGet(
