@@ -49,15 +49,20 @@
 </div>
 {% endif %}
 <!-- Document / label menu -->
+{% if test_report_enabled or labels_enabled %}
 <div class='btn-group' role='group'>
     <button id='document-options' title='{% trans "Printing actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'><span class='fas fa-print'></span> <span class='caret'></span></button>
     <ul class='dropdown-menu' role='menu'>
+        {% if labels_enabled %}
         <li><a class='dropdown-item' href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
+        {% endif %}
         {% if test_report_enabled %}
         <li><a class='dropdown-item' href='#' id='stock-test-report'><span class='fas fa-file-pdf'></span> {% trans "Test Report" %}</a></li>
         {% endif %}
     </ul>
 </div>
+{% endif %}
+
 <!-- Stock adjustment menu -->
 {% if user_owns_item %}
     {% if roles.stock.change and not item.is_building %}

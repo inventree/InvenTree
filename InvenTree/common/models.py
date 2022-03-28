@@ -1247,6 +1247,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'LABEL_ENABLE': {
+            'name': _('Enable label printing'),
+            'description': _('Enable label printing from the web interface'),
+            'default': True,
+            'validator': bool,
+        },
+
         "LABEL_INLINE": {
             'name': _('Inline label display'),
             'description': _('Display PDF labels in the browser, instead of downloading as a file'),
