@@ -122,3 +122,81 @@ class TestShipmentMigration(MigratorTestCase):
         # Check that the correct number of Shipments have been created
         self.assertEqual(SalesOrder.objects.count(), 5)
         self.assertEqual(Shipment.objects.count(), 5)
+
+
+class TestAdditionalLineMigration(MigratorTestCase):
+    """
+    Test entire schema migration
+    """
+
+    migrate_from = ('order', '0063_alter_purchaseorderlineitem_unique_together')
+    migrate_to = ('order', '0064_purchaseorderextraline_salesorderextraline')
+
+    def prepare(self):
+        """
+        Create initial data set
+        """
+
+        # Create a purchase order from a supplier
+        Company = self.old_state.apps.get_model('company', 'company')
+        PurchaseOrder = self.old_state.apps.get_model('order', 'purchaseorder')
+        Part = self.old_state.apps.get_model('part', 'part')
+        Supplierpart = self.old_state.apps.get_model('company', 'supplierpart')
+
+        supplier = Company.objects.create(
+            name='Supplier A',
+            description='A great supplier!',
+            is_supplier=True,
+            is_customer=True,
+        )
+
+        part = Part.objects.create(
+            name='Bob',
+            description='Can we build it?',
+            assembly=True,
+            salable=True,
+            purchaseable=False,
+            tree_id=0,
+            level=0,
+            lft=0,
+            rght=0,
+        )
+        supplierpart = Supplierpart.objects.create(
+            part=part,
+            supplier=supplier
+        )
+
+        # Create some orders
+        for ii in range(10):
+
+            order = PurchaseOrder.objects.create(
+                supplier=supplier,
+                reference=f"{ii}-abcde",
+                description="Just a test order"
+            )
+            order.lines.create(
+                part=supplierpart,
+                quantity=12,
+                received=1
+            )
+            order.lines.create(
+                quantity=12,
+                received=1
+            )
+
+
+    def test_ref_field(self):
+        """
+        Test that the 'reference_int' field has been created and is filled out correctly
+        """
+
+        PurchaseOrder = self.new_state.apps.get_model('order', 'purchaseorder')
+
+        for ii in range(10):
+
+            po = PurchaseOrder.objects.get(reference=f"{ii}-abcde")
+
+            # The integer reference field must have been correctly updated
+            self.assertEqual(po.extra_lines.count(), 1)
+            self.assertEqual(po.lines.count(), 1)
+
