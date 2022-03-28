@@ -20,6 +20,12 @@ const global_settings = {
     {% endfor %}
 };
 
+{% if plugins_enabled %}
+const plugins_enabled = true;
+{% else %}
+const plugins_enabled = false;
+{% endif %}
+
 /*
  * Edit a setting value
  */
