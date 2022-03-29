@@ -93,6 +93,9 @@ def get_next_so_number():
 
 
 def get_deleted_company():
+    """
+    Returns the deleted company object
+    """
     return Company.objects.get_or_create(name='deleted', email='deleted',is_deleted=True)[0]
 
 class Order(ReferenceIndexingMixin):
