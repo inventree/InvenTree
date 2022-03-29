@@ -27,12 +27,12 @@
     <span class='fas fa-tools'></span> <span class='caret'></span>
 </button>
 <ul class='dropdown-menu' role='menu'>
-    {% if perms.company.change_company %}
+    {% if perms.company.change_company and not company.is_deleted %}
     <li><a class='dropdown-item' href='#' id='company-edit' title='{% trans "Edit company information" %}'>
         <span class='fas fa-edit icon-green'></span> {% trans "Edit Company" %}
     </a></li>
     {% endif %}
-    {% if perms.company.delete_company %}
+    {% if perms.company.delete_company and not company.is_deleted %}
     <li><a class='dropdown-item' href='#' id='company-delete' title='{% trans "Delete company" %}'>
         <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete Company" %}
     </a></li>
