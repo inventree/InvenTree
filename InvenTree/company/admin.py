@@ -41,6 +41,7 @@ class CompanyAdmin(ImportExportModelAdmin):
     exclude = ('is_deleted',)
 
     def has_delete_permission(self, request, obj=None):
+        """Magic objects are not allowd to be deleted"""
         if obj and obj.is_deleted:
             return False
         return True
