@@ -27,15 +27,22 @@ function openSearchPanel() {
 
     clearSearchResults();
 
-    // Finally, grab keyboard focus in the search bar
-    panel.find('#search-input').focus();
-
     panel.find('#search-input').on('keyup change', searchTextChanged);
 
     // Callback for "clear search" button
-    panel.find('#search-clear').click(function() {
+    panel.find('#search-clear').click(function(event) {
+
+        // Prevent this button from actually submitting the form
+        event.preventDefault();
+        
         panel.find('#search-input').val('');
         clearSearchResults();
+    });
+    
+    // Callback for the "close search" button
+    panel.find('#search-close').click(function(event) {
+        // Prevent this button from actually submitting the form
+        event.preventDefault();
     });
 }
 
@@ -211,6 +218,9 @@ function clearSearchResults() {
     
     // Delete any existing search results
     panel.find('#search-results').empty();
+
+    // Finally, grab keyboard focus in the search bar
+    panel.find('#search-input').focus();
 }
 
 

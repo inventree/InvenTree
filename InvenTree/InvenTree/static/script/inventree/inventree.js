@@ -157,7 +157,7 @@ function inventreeDocReady() {
     });
 
     // Calbacks for search panel
-    $('#offcanvas-search').on('show.bs.offcanvas', openSearchPanel);
+    $('#offcanvas-search').on('shown.bs.offcanvas', openSearchPanel);
     $('#offcanvas-search').on('hidden.bs.offcanvas', closeSearchPanel);
 
     // Callbacks for notifications panel

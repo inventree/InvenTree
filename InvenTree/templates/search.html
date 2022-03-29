@@ -5,12 +5,12 @@
       <form action='{% url "search" %}' method='post' class='d-flex' style='width: 100%;'>
         {% csrf_token %}
         <div class='input-group'>
-          <input type="text" name='search' class="form-control" aria-label='{% trans "Search" %}' id="search-input" placeholder="{% trans 'Search' %}"{% if query_text %} value="{{ query }}"{% endif %}>
-          <button id='search-clear' class='btn btn-outline-secondary' title='{% trans "Clear search" %}'>
-            <span class='fas fa-backspace'></span>
-          </button>
+          <input type="text" name='search' class="form-control" aria-label='{% trans "Search" %}' id="search-input" placeholder="{% trans 'Search' %}" autofocus>
           <button type='submit' id='search-complete' class='btn btn-outline-secondary' title='{% trans "Show full search results" %}'>
             <span class='fas fa-search'></span>
+          </button>
+          <button id='search-clear' class='btn btn-outline-secondary' title='{% trans "Clear search" %}'>
+            <span class='fas fa-backspace'></span>
           </button>
           <!--
             <button id='search-filter' class="btn btn-outline-secondary" title='{% trans "Filter results" %}'>
