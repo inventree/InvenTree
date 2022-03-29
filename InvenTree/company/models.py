@@ -9,7 +9,7 @@ import os
 
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MinValueValidator
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, PermissionDenied
 
 from django.db import models
 from django.db.models import Sum, Q, UniqueConstraint
@@ -147,6 +147,8 @@ class Company(models.Model):
 
     is_manufacturer = models.BooleanField(default=False, verbose_name=_('is manufacturer'), help_text=_('Does this company manufacture parts?'))
 
+    is_deleted = models.BooleanField(default=False, verbose_name=_('is deleted'), help_text=_('Is this company a deleted placeholder?'))
+
     currency = models.CharField(
         max_length=3,
         verbose_name=_('Currency'),
@@ -265,6 +267,18 @@ class Company(models.Model):
         """ Return any purchase orders which were not successful """
 
         return self.purchase_orders.filter(status__in=PurchaseOrderStatus.FAILED)
+
+    def save(self, *args, **kwargs):
+        """Save the instance, unless it is the magic already deleted object"""
+        if self.pk and self.is_deleted:
+            raise PermissionDenied(_('This company is a placeholder and can not be updated'))
+        return super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        """Delete the instance, unless it is the magic already deleted object"""
+        if self.is_deleted:
+            raise PermissionDenied(_('This company is a placeholder and can not be deleted'))
+        return super().delete(*args, **kwargs)
 
 
 class Contact(models.Model):

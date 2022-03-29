@@ -92,6 +92,9 @@ def get_next_so_number():
     return reference
 
 
+def get_deleted_company():
+    return Company.objects.get_or_create(name='deleted', email='deleted',is_deleted=True)[0]
+
 class Order(ReferenceIndexingMixin):
     """ Abstract model for an order.
 
@@ -219,7 +222,7 @@ class PurchaseOrder(Order):
                                          help_text=_('Purchase order status'))
 
     supplier = models.ForeignKey(
-        Company, on_delete=models.CASCADE,
+        Company, on_delete=models.SET(get_deleted_company),
         limit_choices_to={
             'is_supplier': True,
         },
@@ -567,7 +570,7 @@ class SalesOrder(Order):
 
     customer = models.ForeignKey(
         Company,
-        on_delete=models.SET_NULL,
+        on_delete=models.SET(get_deleted_company),
         null=True,
         limit_choices_to={'is_customer': True},
         related_name='sales_orders',
