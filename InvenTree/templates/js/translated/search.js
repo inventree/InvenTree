@@ -92,6 +92,7 @@ function updateSearch() {
                     renderPart,
                     {
                         show_stock_data: false,
+                        url: '/part',
                     }
                 );
             }
@@ -116,6 +117,7 @@ function updateSearch() {
                     '{% trans "Stock Items" %}',
                     renderStockItem,
                     {
+                        url: '/stock/item',
                     }
                 );
             }
@@ -169,10 +171,17 @@ function addSearchResults(key, results, title, renderFunc, renderParams={}) {
     `);
 
     results.forEach(function(result) {
+
+        var pk = result.pk || result.id;
+
         var html = renderFunc(key, result, renderParams);
 
+        if (renderParams.url) {
+            html = `<a href='${renderParams.url}/${pk}/'>` + html + `</a>`;
+        }
+
         var result_html = `
-        <div class='search-result-entry' id='search-result-${key}-${result.pk || result.id}'>
+        <div class='search-result-entry' id='search-result-${key}-${pk}'>
             ${html}
         </div>
         `;
