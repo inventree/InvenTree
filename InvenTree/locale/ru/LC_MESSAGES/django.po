@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-28 10:50+0000\n"
-"PO-Revision-Date: 2022-03-29 17:12\n"
+"PO-Revision-Date: 2022-03-29 21:28\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -782,7 +782,7 @@ msgstr "Штрих код"
 
 #: build/models.py:291 build/serializers.py:219
 msgid "Batch code for this build output"
-msgstr "Штрих код для этого вывода сборки"
+msgstr "Код партии для этого вывода сборки"
 
 #: build/models.py:294 order/models.py:129 part/models.py:1007
 #: part/templates/part/part_base.html:333 templates/js/translated/order.js:1467
