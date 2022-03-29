@@ -21,6 +21,7 @@ class CompanyResource(ModelResource):
 
     class Meta:
         model = Company
+        exclude = ('is_deleted', )
         skip_unchanged = True
         report_skipped = False
         clean_model_instances = True
