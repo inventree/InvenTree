@@ -79,12 +79,19 @@ function updateSearch() {
     $('#offcanvas-search').find('#search-pending').show();
     
     if (user_settings.SEARCH_PREVIEW_SHOW_PARTS) {
+
+        var params = {};
+
+        if (user_settings.SEARCH_HIDE_INACTIVE_PARTS) {
+            params.active = false;
+        }
+
         // Search for matching parts
         addSearchQuery(
             'part',
             '{% trans "Parts" %}',
             '{% url "api-part-list" %}',
-            {},
+            params,
             renderPart,
             {
                 url: '/part',
@@ -147,6 +154,40 @@ function updateSearch() {
             renderCompany,
             {
                 url: '/company',
+            }
+        );
+    }
+
+    if (user_settings.SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS) {
+        // Search for matching purchase orders
+        addSearchQuery(
+            'purchaseorder',
+            '{% trans "Purchase Orders" %}',
+            '{% url "api-po-list" %}',
+            {
+                supplier_detail: true,
+                outstanding: true,
+            },
+            renderPurchaseOrder,
+            {
+                url: '/order/purchase-order',
+            }
+        );
+    }
+
+    if (user_settings.SEARCH_PREVIEW_SHOW_SALES_ORDERS) {
+        // Search for matching sales orders
+        addSearchQuery(
+            'salesorder',
+            '{% trans "Sales Orders" %}',
+            '{% url "api-so-list" %}',
+            {
+                customer_detail: true,
+                outstanding: true,
+            },
+            renderSalesOrder,
+            {
+                url: '/order/sales-order',
             }
         );
     }

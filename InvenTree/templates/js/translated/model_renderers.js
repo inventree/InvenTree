@@ -228,14 +228,12 @@ function renderOwner(name, data, parameters={}, options={}) {
 // Renderer for "PurchaseOrder" model
 // eslint-disable-next-line no-unused-vars
 function renderPurchaseOrder(name, data, parameters={}, options={}) {
-    var html = '';
 
     var prefix = global_settings.PURCHASEORDER_REFERENCE_PREFIX;
+    var html = `<span>${prefix}${data.reference}</span>`;
     
     var thumbnail = null;
     
-    html += `<span>${prefix}${data.reference}</span>`;
-
     if (data.supplier_detail) {
         thumbnail = data.supplier_detail.thumbnail || data.supplier_detail.image;
 
@@ -262,7 +260,18 @@ function renderPurchaseOrder(name, data, parameters={}, options={}) {
 // Renderer for "SalesOrder" model
 // eslint-disable-next-line no-unused-vars
 function renderSalesOrder(name, data, parameters={}, options={}) {
-    var html = `<span>${data.reference}</span>`;
+    
+    var prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
+    var html = `<span>${prefix}${data.reference}</span>`;
+    
+    var thumbnail = null;
+
+    if (data.customer_detail) {
+        thumbnail = data.customer_detail.thumbnail || data.customer_detail.image;
+
+        html += ' - ' + select2Thumbnail(thumbnail);
+        html += `<span>${data.customer_detail.name}</span>`;
+    }
 
     if (data.description) {
         html += ` - <em>${data.description}</em>`;
