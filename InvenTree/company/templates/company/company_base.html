@@ -18,7 +18,7 @@
 {% url 'admin:company_company_change' company.pk as url %}
 {% include "admin_button.html" with url=url %}
 {% endif %}
-{% if company.is_supplier and roles.purchase_order.add %}
+{% if company.is_supplier and roles.purchase_order.add and not company.is_deleted %}
 <button type='button' class='btn btn-outline-primary' id='company-order-2' title='{% trans "Create Purchase Order" %}'>
     <span class='fas fa-shopping-cart'/>
 </button>
