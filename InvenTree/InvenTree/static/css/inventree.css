@@ -1029,6 +1029,8 @@ a {
 
 .search-result-group {
     padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
     border: 1px solid var(--border-color);
     margin-bottom: 10px;
 }
