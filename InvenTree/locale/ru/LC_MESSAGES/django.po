@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-28 10:50+0000\n"
-"PO-Revision-Date: 2022-03-29 15:36\n"
+"PO-Revision-Date: 2022-03-29 17:12\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -1717,7 +1717,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:168
 #: templates/js/translated/table_filters.js:438
 msgid "Assembly"
-msgstr ""
+msgstr "Сборка"
 
 #: common/models.py:789
 msgid "Parts can be assembled from other components by default"
@@ -1726,7 +1726,7 @@ msgstr ""
 #: common/models.py:795 part/models.py:965
 #: templates/js/translated/table_filters.js:442
 msgid "Component"
-msgstr ""
+msgstr "Компонент"
 
 #: common/models.py:796
 msgid "Parts can be used as sub-components by default"
@@ -1754,7 +1754,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:100
 #: templates/js/translated/table_filters.js:454
 msgid "Trackable"
-msgstr ""
+msgstr "Отслеживание"
 
 #: common/models.py:817
 msgid "Parts are trackable by default"
@@ -4129,19 +4129,19 @@ msgstr "Наименование детали"
 
 #: part/models.py:818
 msgid "Is Template"
-msgstr ""
+msgstr "Шаблон"
 
 #: part/models.py:819
 msgid "Is this part a template part?"
-msgstr ""
+msgstr "Эта деталь является шаблоном для других деталей?"
 
 #: part/models.py:829
 msgid "Is this part a variant of another part?"
-msgstr ""
+msgstr "Эта деталь является разновидностью другой детали?"
 
 #: part/models.py:830
 msgid "Variant Of"
-msgstr ""
+msgstr "Разновидность"
 
 #: part/models.py:836
 msgid "Part description"
@@ -4190,7 +4190,7 @@ msgstr ""
 
 #: part/models.py:885
 msgid "Where is this item normally stored?"
-msgstr ""
+msgstr "Где обычно хранится эта деталь?"
 
 #: part/models.py:932 part/templates/part/part_base.html:367
 msgid "Default Supplier"
@@ -4210,11 +4210,11 @@ msgstr ""
 
 #: part/models.py:946 part/templates/part/part_base.html:200
 msgid "Minimum Stock"
-msgstr ""
+msgstr "Минимальный запас"
 
 #: part/models.py:947
 msgid "Minimum allowed stock level"
-msgstr ""
+msgstr "Минимально допустимый складской запас"
 
 #: part/models.py:954
 msgid "Stock keeping units for this part"
@@ -4230,7 +4230,7 @@ msgstr "Может ли эта деталь использоваться для 
 
 #: part/models.py:972
 msgid "Does this part have tracking for unique items?"
-msgstr ""
+msgstr "Является ли каждый экземпляр этой детали уникальным, обладающим серийным номером?"
 
 #: part/models.py:977
 msgid "Can this part be purchased from external suppliers?"
@@ -4242,11 +4242,11 @@ msgstr "Может ли эта деталь быть продана покупа
 
 #: part/models.py:987
 msgid "Is this part active?"
-msgstr ""
+msgstr "Эта деталь актуальна?"
 
 #: part/models.py:992
 msgid "Is this a virtual part, such as a software product or license?"
-msgstr ""
+msgstr "Эта деталь виртуальная, как программный продукт или лицензия?"
 
 #: part/models.py:997
 msgid "Part notes - supports Markdown formatting"
@@ -4464,7 +4464,7 @@ msgstr ""
 #: part/models.py:2773 part/templates/part/upload_bom.html:56
 #: templates/js/translated/bom.js:872
 msgid "Allow Variants"
-msgstr ""
+msgstr "Разрешить разновидности"
 
 #: part/models.py:2774
 msgid "Stock items for variant parts can be used for this BOM item"
@@ -4797,7 +4797,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:161
 msgid "Part Variants"
-msgstr ""
+msgstr "Разновидности детали"
 
 #: part/templates/part/detail.html:165
 msgid "Create new variant"
@@ -4805,7 +4805,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:166
 msgid "New Variant"
-msgstr ""
+msgstr "Новая разновидность"
 
 #: part/templates/part/detail.html:193
 msgid "Add new parameter"
@@ -5123,7 +5123,7 @@ msgstr ""
 
 #: part/templates/part/part_base.html:315
 msgid "Minimum stock level"
-msgstr ""
+msgstr "Минимальный складской запас"
 
 #: part/templates/part/part_base.html:344
 msgid "Latest Serial Number"
@@ -5205,7 +5205,7 @@ msgstr ""
 
 #: part/templates/part/part_sidebar.html:12
 msgid "Variants"
-msgstr ""
+msgstr "Разновидности"
 
 #: part/templates/part/part_sidebar.html:28
 msgid "Used In"
@@ -7603,7 +7603,7 @@ msgstr ""
 
 #: templates/email/low_stock_notification.html:19
 msgid "Minimum Quantity"
-msgstr ""
+msgstr "Минимальное количество"
 
 #: templates/image_download.html:8
 msgid "Specify URL for downloading image"
@@ -8821,7 +8821,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:55
 msgid "Part Attributes"
-msgstr ""
+msgstr "Атрибуты детали"
 
 #: templates/js/translated/part.js:59
 msgid "Part Creation Options"
@@ -8909,7 +8909,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:352
 msgid "Create Part Variant"
-msgstr ""
+msgstr "Создать разновидность детали"
 
 #: templates/js/translated/part.js:419
 msgid "You are subscribed to notifications for this item"
