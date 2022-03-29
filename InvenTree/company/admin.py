@@ -38,6 +38,8 @@ class CompanyAdmin(ImportExportModelAdmin):
         'description',
     ]
 
+    exclude = ('is_deleted',)
+
 
 class SupplierPartResource(ModelResource):
     """
