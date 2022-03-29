@@ -46,7 +46,6 @@ function openSearchPanel() {
     });
 }
 
-var searchRequests = [];
 var searchInputTimer = null;
 var searchText = null;
 var searchTextCurrent = null;
