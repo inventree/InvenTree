@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-28 10:50+0000\n"
-"PO-Revision-Date: 2022-03-29 12:39\n"
+"PO-Revision-Date: 2022-03-29 13:35\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -4857,7 +4857,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:297
 msgid "Assemblies"
-msgstr ""
+msgstr "Сборки"
 
 #: part/templates/part/detail.html:315
 msgid "Part Builds"
@@ -5040,11 +5040,11 @@ msgstr ""
 
 #: part/templates/part/part_base.html:120
 msgid "Part can be assembled from other parts"
-msgstr ""
+msgstr "Деталь может быть собрана из других деталей"
 
 #: part/templates/part/part_base.html:124
 msgid "Part can be used in assemblies"
-msgstr ""
+msgstr "Деталь может быть использована в сборках"
 
 #: part/templates/part/part_base.html:128
 msgid "Part stock is tracked by serial number"
@@ -5056,7 +5056,7 @@ msgstr ""
 
 #: part/templates/part/part_base.html:136
 msgid "Part can be sold to customers"
-msgstr ""
+msgstr "Деталь может быть продана покупателю"
 
 #: part/templates/part/part_base.html:142
 #: part/templates/part/part_base.html:150
@@ -5209,7 +5209,7 @@ msgstr ""
 
 #: part/templates/part/part_sidebar.html:28
 msgid "Used In"
-msgstr ""
+msgstr "Сборки"
 
 #: part/templates/part/part_sidebar.html:47
 msgid "Scheduling"
