@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-28 10:50+0000\n"
-"PO-Revision-Date: 2022-03-29 14:32\n"
+"PO-Revision-Date: 2022-03-29 15:36\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -720,7 +720,7 @@ msgstr ""
 #: templates/js/translated/stock.js:899 templates/js/translated/stock.js:1622
 #: templates/js/translated/stock.js:2542 templates/js/translated/stock.js:2641
 msgid "Part"
-msgstr "Деталь"
+msgstr "Наименование детали"
 
 #: build/models.py:235
 msgid "Select part to build"
