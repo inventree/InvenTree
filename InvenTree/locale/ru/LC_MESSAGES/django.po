@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-28 10:50+0000\n"
-"PO-Revision-Date: 2022-03-29 08:10\n"
+"PO-Revision-Date: 2022-03-29 10:29\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -2835,7 +2835,7 @@ msgstr "Новая деталь производителя"
 
 #: company/templates/company/detail.html:107
 msgid "Supplier Stock"
-msgstr ""
+msgstr "Склад поставщика"
 
 #: company/templates/company/detail.html:117
 #: company/templates/company/sidebar.html:12
@@ -3008,17 +3008,17 @@ msgstr ""
 #: stock/templates/stock/item_base.html:386
 #: templates/js/translated/company.js:790 templates/js/translated/stock.js:1854
 msgid "Supplier Part"
-msgstr ""
+msgstr "Деталь поставщика"
 
 #: company/templates/company/supplier_part.html:38
 #: templates/js/translated/company.js:863
 msgid "Edit supplier part"
-msgstr ""
+msgstr "Редактировать деталь поставщика"
 
 #: company/templates/company/supplier_part.html:42
 #: templates/js/translated/company.js:864
 msgid "Delete supplier part"
-msgstr ""
+msgstr "Удалить деталь поставщика"
 
 #: company/templates/company/supplier_part.html:138
 #: company/templates/company/supplier_part_navbar.html:12
@@ -9743,11 +9743,11 @@ msgstr ""
 
 #: templates/navbar.html:42
 msgid "Buy"
-msgstr ""
+msgstr "Закупки"
 
 #: templates/navbar.html:54
 msgid "Sell"
-msgstr ""
+msgstr "Продажи"
 
 #: templates/navbar.html:101
 msgid "Show Notifications"
