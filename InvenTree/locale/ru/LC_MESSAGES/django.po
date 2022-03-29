@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-28 10:50+0000\n"
-"PO-Revision-Date: 2022-03-29 13:35\n"
+"PO-Revision-Date: 2022-03-29 14:32\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -1203,7 +1203,7 @@ msgstr "Завершить сборку"
 
 #: build/templates/build/build_base.html:87
 msgid "Build Description"
-msgstr ""
+msgstr "Описание сборки"
 
 #: build/templates/build/build_base.html:101
 #, python-format
@@ -1341,7 +1341,7 @@ msgstr "Нет конечной даты"
 
 #: build/templates/build/detail.html:147
 msgid "Build not complete"
-msgstr ""
+msgstr "Сборка не завершена"
 
 #: build/templates/build/detail.html:158 build/templates/build/sidebar.html:17
 msgid "Child Build Orders"
@@ -2530,7 +2530,7 @@ msgstr "поставщик"
 
 #: company/models.py:146
 msgid "Do you purchase items from this company?"
-msgstr "Вы покупаете детали у этой компании?"
+msgstr "Вы закупаете детали у этой компании?"
 
 #: company/models.py:148
 msgid "is manufacturer"
@@ -2848,17 +2848,17 @@ msgstr "Склад поставщика"
 #: templates/InvenTree/settings/sidebar.html:47 templates/navbar.html:47
 #: users/models.py:45
 msgid "Purchase Orders"
-msgstr "Заказы на покупку"
+msgstr "Заказы на закупку"
 
 #: company/templates/company/detail.html:121
 #: order/templates/order/purchase_orders.html:17
 msgid "Create new purchase order"
-msgstr ""
+msgstr "Создать новый заказ на закупку"
 
 #: company/templates/company/detail.html:122
 #: order/templates/order/purchase_orders.html:18
 msgid "New Purchase Order"
-msgstr ""
+msgstr "Новый заказ на закупку"
 
 #: company/templates/company/detail.html:143
 #: company/templates/company/sidebar.html:20
@@ -2875,12 +2875,12 @@ msgstr "Заказы на продажу"
 #: company/templates/company/detail.html:147
 #: order/templates/order/sales_orders.html:20
 msgid "Create new sales order"
-msgstr ""
+msgstr "Создать новый заказ на продажу"
 
 #: company/templates/company/detail.html:148
 #: order/templates/order/sales_orders.html:21
 msgid "New Sales Order"
-msgstr ""
+msgstr "Новый заказ на продажу"
 
 #: company/templates/company/detail.html:168
 #: templates/js/translated/build.js:1295
@@ -3388,7 +3388,7 @@ msgstr ""
 #: templates/js/translated/order.js:936 templates/js/translated/part.js:840
 #: templates/js/translated/stock.js:1831 templates/js/translated/stock.js:2366
 msgid "Purchase Order"
-msgstr ""
+msgstr "Заказ на закупку"
 
 #: order/models.py:913
 msgid "Supplier part"
@@ -3409,7 +3409,7 @@ msgstr ""
 #: stock/serializers.py:170 stock/templates/stock/item_base.html:343
 #: templates/js/translated/stock.js:1885
 msgid "Purchase Price"
-msgstr ""
+msgstr "Закупочная цена"
 
 #: order/models.py:929
 msgid "Unit purchase price"
@@ -3543,7 +3543,7 @@ msgstr ""
 
 #: order/serializers.py:273 templates/js/translated/order.js:574
 msgid "Enter batch code for incoming stock items"
-msgstr ""
+msgstr "Введите код партии для поступающих единиц хранения"
 
 #: order/serializers.py:281 templates/js/translated/order.js:585
 msgid "Enter serial numbers for incoming stock items"
@@ -3684,7 +3684,7 @@ msgstr ""
 
 #: order/templates/order/order_base.html:219
 msgid "Edit Purchase Order"
-msgstr ""
+msgstr "Редактировать заказ на закупку"
 
 #: order/templates/order/order_cancel.html:8
 msgid "Cancelling this order means that the order and line items will no longer be editable."
@@ -3794,7 +3794,7 @@ msgstr "Удалить деталь"
 
 #: order/templates/order/order_wizard/select_pos.html:8
 msgid "Step 2 of 2 - Select Purchase Orders"
-msgstr "Шаг 2 из 2 - Выберите заказы на покупку"
+msgstr "Шаг 2 из 2 - Выберите заказы на закупку"
 
 #: order/templates/order/order_wizard/select_pos.html:12
 msgid "Select existing purchase orders, or create new orders."
@@ -3808,7 +3808,7 @@ msgstr ""
 
 #: order/templates/order/order_wizard/select_pos.html:32
 msgid "Select Purchase Order"
-msgstr ""
+msgstr "Выберите заказ на закупку"
 
 #: order/templates/order/order_wizard/select_pos.html:45
 #, python-format
@@ -4041,7 +4041,7 @@ msgstr ""
 
 #: part/bom.py:127 part/templates/part/part_base.html:189
 msgid "Available Stock"
-msgstr ""
+msgstr "Доступный запас"
 
 #: part/bom.py:128 part/templates/part/part_base.html:207
 #: templates/js/translated/part.js:1341
@@ -4234,11 +4234,11 @@ msgstr ""
 
 #: part/models.py:977
 msgid "Can this part be purchased from external suppliers?"
-msgstr ""
+msgstr "Может ли эта деталь быть закуплена у внешних поставщиков?"
 
 #: part/models.py:982
 msgid "Can this part be sold to customers?"
-msgstr ""
+msgstr "Может ли эта деталь быть продана покупателям?"
 
 #: part/models.py:987
 msgid "Is this part active?"
@@ -4869,7 +4869,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:358
 msgid "Part Suppliers"
-msgstr ""
+msgstr "Поставщики"
 
 #: part/templates/part/detail.html:386
 msgid "Part Manufacturers"
@@ -5056,7 +5056,7 @@ msgstr ""
 
 #: part/templates/part/part_base.html:136
 msgid "Part can be sold to customers"
-msgstr "Деталь может быть продана покупателю"
+msgstr "Деталь может быть продана покупателям"
 
 #: part/templates/part/part_base.html:142
 #: part/templates/part/part_base.html:150
@@ -5084,7 +5084,7 @@ msgstr ""
 #: part/templates/part/part_base.html:194 templates/js/translated/order.js:2436
 #: templates/js/translated/table_filters.js:193
 msgid "In Stock"
-msgstr ""
+msgstr "На складе"
 
 #: part/templates/part/part_base.html:215 templates/InvenTree/index.html:178
 msgid "Required for Build Orders"
@@ -5270,7 +5270,7 @@ msgstr ""
 
 #: part/templates/part/prices.html:23
 msgid "Show purchase price"
-msgstr ""
+msgstr "Показать закупочную цену"
 
 #: part/templates/part/prices.html:50
 msgid "Show BOM cost"
@@ -5869,7 +5869,7 @@ msgstr ""
 
 #: stock/models.py:639
 msgid "Batch code for this stock item"
-msgstr ""
+msgstr "Код партии для этой единицы хранения"
 
 #: stock/models.py:643
 msgid "Stock Quantity"
@@ -5877,7 +5877,7 @@ msgstr ""
 
 #: stock/models.py:652
 msgid "Source Build"
-msgstr ""
+msgstr "Исходная сборка"
 
 #: stock/models.py:654
 msgid "Build for this stock item"
@@ -6473,7 +6473,7 @@ msgstr ""
 
 #: stock/templates/stock/stock_sidebar.html:8
 msgid "Allocations"
-msgstr ""
+msgstr "Места хранения"
 
 #: stock/templates/stock/stock_sidebar.html:20
 msgid "Child Items"
@@ -6956,7 +6956,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/po.html:7
 msgid "Purchase Order Settings"
-msgstr ""
+msgstr "Настройки заказа на закупку"
 
 #: templates/InvenTree/settings/report.html:8
 #: templates/InvenTree/settings/user_reports.html:9
@@ -7056,7 +7056,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/stock.html:7
 msgid "Stock Settings"
-msgstr ""
+msgstr "Настройки склада"
 
 #: templates/InvenTree/settings/user.html:18
 #: templates/account/password_reset_from_key.html:4
@@ -7972,11 +7972,11 @@ msgstr ""
 
 #: templates/js/translated/build.js:86
 msgid "Edit Build Order"
-msgstr ""
+msgstr "Редактировать заказ на сборку"
 
 #: templates/js/translated/build.js:120
 msgid "Create Build Order"
-msgstr ""
+msgstr "Создать заказ на сборку"
 
 #: templates/js/translated/build.js:141
 msgid "Build order is ready to be completed"
@@ -8272,7 +8272,7 @@ msgstr ""
 
 #: templates/js/translated/company.js:480
 msgid "No manufacturer parts found"
-msgstr ""
+msgstr "Информация о производителе не найдена"
 
 #: templates/js/translated/company.js:500
 #: templates/js/translated/company.js:757 templates/js/translated/part.js:519
@@ -8288,7 +8288,7 @@ msgstr ""
 
 #: templates/js/translated/company.js:631 templates/js/translated/part.js:698
 msgid "No parameters found"
-msgstr ""
+msgstr "Параметры не найдены"
 
 #: templates/js/translated/company.js:668 templates/js/translated/part.js:740
 msgid "Edit parameter"
@@ -8380,7 +8380,7 @@ msgstr ""
 
 #: templates/js/translated/forms.js:1623
 msgid "No results found"
-msgstr ""
+msgstr "Не найдено"
 
 #: templates/js/translated/forms.js:1833
 msgid "Searching"
@@ -8426,7 +8426,7 @@ msgstr ""
 #: templates/js/translated/label.js:79 templates/js/translated/label.js:133
 #: templates/js/translated/label.js:191
 msgid "No Labels Found"
-msgstr ""
+msgstr "Метки не найдены"
 
 #: templates/js/translated/label.js:80
 msgid "No labels found which match selected stock item(s)"
@@ -8622,7 +8622,7 @@ msgstr ""
 
 #: templates/js/translated/order.js:541 templates/js/translated/order.js:640
 msgid "Add batch code"
-msgstr ""
+msgstr "Добавить код партии"
 
 #: templates/js/translated/order.js:547 templates/js/translated/order.js:651
 msgid "Add serial numbers"
@@ -8658,7 +8658,7 @@ msgstr ""
 
 #: templates/js/translated/order.js:925 templates/js/translated/part.js:811
 msgid "No purchase orders found"
-msgstr ""
+msgstr "Заказов на закупку не найдено"
 
 #: templates/js/translated/order.js:950 templates/js/translated/order.js:1426
 msgid "Order is overdue"
@@ -8716,7 +8716,7 @@ msgstr ""
 
 #: templates/js/translated/order.js:1402
 msgid "No sales orders found"
-msgstr ""
+msgstr "Заказы на продажу не найдены"
 
 #: templates/js/translated/order.js:1440
 msgid "Invalid Customer"
@@ -8973,7 +8973,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:1125 templates/js/translated/part.js:1403
 msgid "No parts found"
-msgstr ""
+msgstr "Детали не найдены"
 
 #: templates/js/translated/part.js:1313
 msgid "No category"
@@ -9129,7 +9129,7 @@ msgstr ""
 
 #: templates/js/translated/report.js:333
 msgid "Select Sales Orders"
-msgstr ""
+msgstr "Выберите заказ на продажу"
 
 #: templates/js/translated/report.js:334
 msgid "Sales Order(s) must be selected before printing report"
@@ -9543,7 +9543,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:152
 #: templates/js/translated/table_filters.js:239
 msgid "Batch code"
-msgstr ""
+msgstr "Код партии"
 
 #: templates/js/translated/table_filters.js:163
 #: templates/js/translated/table_filters.js:383
@@ -9633,7 +9633,7 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:285
 msgid "Build status"
-msgstr ""
+msgstr "Статус сборки"
 
 #: templates/js/translated/table_filters.js:298
 #: templates/js/translated/table_filters.js:339
@@ -9670,7 +9670,7 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:430
 msgid "Stock available"
-msgstr ""
+msgstr "Доступный запас"
 
 #: templates/js/translated/table_filters.js:458
 msgid "Purchasable"
