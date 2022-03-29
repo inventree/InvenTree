@@ -40,6 +40,11 @@ class CompanyAdmin(ImportExportModelAdmin):
 
     exclude = ('is_deleted',)
 
+    def has_delete_permission(self, request, obj=None):
+        if obj and obj.is_deleted:
+            return False
+        return True
+
 
 class SupplierPartResource(ModelResource):
     """
