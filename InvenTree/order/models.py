@@ -98,6 +98,7 @@ def get_deleted_company():
     """
     return Company.objects.get_or_create(name='deleted', email='deleted',is_deleted=True)[0]
 
+
 class Order(ReferenceIndexingMixin):
     """ Abstract model for an order.
 
