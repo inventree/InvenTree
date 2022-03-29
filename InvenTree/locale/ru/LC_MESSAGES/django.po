@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-28 10:50+0000\n"
-"PO-Revision-Date: 2022-03-28 12:49\n"
+"PO-Revision-Date: 2022-03-29 08:10\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -1609,7 +1609,7 @@ msgstr ""
 
 #: common/models.py:700 company/models.py:100 company/models.py:101
 msgid "Company name"
-msgstr "Наименование компании"
+msgstr "Название компании"
 
 #: common/models.py:701
 msgid "Internal company name"
