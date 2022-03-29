@@ -74,6 +74,9 @@ function updateSearch() {
     });
 
     searchQueries = [];
+
+    // Show the "searching" text
+    $('#offcanvas-search').find('#search-pending').show();
     
     // Search for matching parts
     searchQueries.push(inventreeGet(
@@ -123,6 +126,11 @@ function updateSearch() {
             }
         }
     ));
+
+    // Wait until all the pending queries are completed
+    $.when.apply($, searchQueries).done(function() {
+        $('#offcanvas-search').find('#search-pending').hide();
+    });
 }
 
 
@@ -132,6 +140,9 @@ function clearSearchResults() {
     
     // Ensure the 'no results found' element is visible
     panel.find('#search-no-results').show();
+
+    // Ensure that the 'searching' element is hidden
+    panel.find('#search-pending').hide();
     
     // Delete any existing search results
     panel.find('#search-results').empty();

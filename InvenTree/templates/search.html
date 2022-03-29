@@ -19,6 +19,12 @@
     </div>
     <div class="offcanvas-body">
       <div id="search-center">
+        <p id='search-pending' class='text-muted' display='none'>
+          <em>{% trans "Searching" %}...</em>
+          <span class='float-right'>
+            <span class='fas fa-spinner fa-spin'></span>
+          </span>
+        </p>
         <p id='search-no-results' class='text-muted'>
           <em>{% trans "No search results" %}</em>
         </p>
