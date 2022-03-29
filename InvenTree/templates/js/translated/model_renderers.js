@@ -10,7 +10,9 @@
     renderCompany,
     renderManufacturerPart,
     renderOwner,
+    renderPart,
     renderPartCategory,
+    renderStockItem,
     renderStockLocation,
     renderSupplierPart,
 */

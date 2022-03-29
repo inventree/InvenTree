@@ -1044,4 +1044,5 @@ a {
     border-top: 1px solid var(--border-color);
     padding: 3px;
     margin-top: 3px;
+    overflow: hidden;
 }

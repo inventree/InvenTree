@@ -78,32 +78,64 @@ function updateSearch() {
     // Show the "searching" text
     $('#offcanvas-search').find('#search-pending').show();
     
-    // Search for matching parts
-    addSearchQuery(
-        'part',
-        '{% trans "Parts" %}',
-        '{% url "api-part-list" %}',
-        {},
-        renderPart,
-        {
-            url: '/part',
-        }
-    );
+    if (user_settings.SEARCH_PREVIEW_SHOW_PARTS) {
+        // Search for matching parts
+        addSearchQuery(
+            'part',
+            '{% trans "Parts" %}',
+            '{% url "api-part-list" %}',
+            {},
+            renderPart,
+            {
+                url: '/part',
+            }
+        );
+    }
 
-    // Search for matching stock items
-    addSearchQuery(
-        'stock',
-        '{% trans "Stock Items" %}',
-        '{% url "api-stock-list" %}',
-        {
-            part_detail: true,
-            location_detail: true,
-        },
-        renderStockItem,
-        {
-            url: '/stock/item',
-        }
-    );
+    if (user_settings.SEARCH_PREVIEW_SHOW_CATEGORIES) {
+        // Search for matching part categories
+        addSearchQuery(
+            'category',
+            '{% trans "Part Categories" %}',
+            '{% url "api-part-category-list" %}',
+            {},
+            renderPartCategory,
+            {
+                url: '/part/category',
+            },
+        );
+    }
+
+    if (user_settings.SEARCH_PREVIEW_SHOW_STOCK) {
+        // Search for matching stock items
+        addSearchQuery(
+            'stock',
+            '{% trans "Stock Items" %}',
+            '{% url "api-stock-list" %}',
+            {
+                part_detail: true,
+                location_detail: true,
+            },
+            renderStockItem,
+            {
+                url: '/stock/item',
+            }
+        );
+    }
+
+    if (user_settings.SEARCH_PREVIEW_SHOW_LOCATIONS) {
+        // Search for matching stock locations
+        addSearchQuery(
+            'location',
+            '{% trans "Stock Locations" %}',
+            '{% url "api-location-list" %}',
+            {},
+            renderStockLocation,
+            {
+                url: '/stock/location',
+            }
+        );
+    }
     
     // Wait until all the pending queries are completed
     $.when.apply($, searchQueries).done(function() {
