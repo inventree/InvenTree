@@ -136,6 +136,20 @@ function updateSearch() {
             }
         );
     }
+
+    if (user_settings.SEARCH_PREVIEW_SHOW_COMPANIES) {
+        // Search for matching companies
+        addSearchQuery(
+            'company',
+            '{% trans "Companies" %}',
+            '{% url "api-company-list" %}',
+            {},
+            renderCompany,
+            {
+                url: '/company',
+            }
+        );
+    }
     
     // Wait until all the pending queries are completed
     $.when.apply($, searchQueries).done(function() {
