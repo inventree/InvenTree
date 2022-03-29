@@ -32,6 +32,11 @@ function openSearchPanel() {
 
     panel.find('#search-input').on('keyup change', searchTextChanged);
 
+    // Callback for "clear search" button
+    panel.find('#search-clear').click(function() {
+        panel.find('#search-input').val('');
+        clearSearchResults();
+    });
 }
 
 var searchRequests = [];
@@ -80,7 +85,15 @@ function updateSearch() {
         },
         {
             success: function(response) {
-                addSearchResults('part', response.results, '{% trans "Parts" %}');
+                addSearchResults(
+                    'part',
+                    response.results,
+                    '{% trans "Parts" %}',
+                    renderPart,
+                    {
+                        show_stock_data: false,
+                    }
+                );
             }
         }
     ));
@@ -92,10 +105,19 @@ function updateSearch() {
             search: searchText,
             limit: 10,
             offset: 0,
+            part_detail: true,
+            location_detail: true,
         },
         {
             success: function(response) {
-                addSearchResults('stock', response.results, '{% trans "Stock Items" %}');
+                addSearchResults(
+                    'stock',
+                    response.results,
+                    '{% trans "Stock Items" %}',
+                    renderStockItem,
+                    {
+                    }
+                );
             }
         }
     ));
@@ -115,7 +137,7 @@ function clearSearchResults() {
 
 
 // Add a group of results to the list
-function addSearchResults(key, results, title, formatter) {
+function addSearchResults(key, results, title, renderFunc, renderParams={}) {
     
     if (results.length == 0) {
         // Do not display this group, as there are no results
@@ -126,21 +148,48 @@ function addSearchResults(key, results, title, formatter) {
 
     // Ensure the 'no results found' element is hidden
     panel.find('#search-no-results').hide();
-
-    var results_element = panel.find('#search-results');
-    
-    var header = `search-results-${key}`;
     
     panel.find('#search-results').append(`
-        <div class='search-result-group' id='${header}'>
-            <h5>${title}</h5>
+        <div class='search-result-group' id='search-results-${key}'>
+            <div class='search-result-header' style='display: flex;'>
+                <h5>${title}</h5>
+                <span class='flex' style='flex-grow: 1;'></span>
+                <div class='search-result-group-buttons btn-group float-right' role='group'>
+                    <button class='btn btn-outline-secondary' id='hide-results-${key}' title='{% trans "Minimize results" %}'>
+                        <span class='fas fa-chevron-up'></span>
+                    </button>
+                    <button class='btn btn-outline-secondary' id='remove-results-${key}' title='{% trans "Remove results" %}'>
+                        <span class='fas fa-times icon-red'></span>
+                    </button>
+                </div>
+            </div>
+            <div class='collapse search-result-list' id='search-result-list-${key}'>
+            </div>
         </div>
     `);
 
     results.forEach(function(result) {
-        // results_html.append(formatter(result));
-        var result_html = `<div class='search-result-entry'>hello result</div>`;
+        var html = renderFunc(key, result, renderParams);
 
-        panel.find(`#${header}`).append(result_html);
+        var result_html = `
+        <div class='search-result-entry' id='search-result-${key}-${result.pk || result.id}'>
+            ${html}
+        </div>
+        `;
+
+        panel.find(`#search-result-list-${key}`).append(result_html);
+    });
+
+    // Expand results panel
+    panel.find(`#search-result-list-${key}`).toggle();
+
+    // Add callback for "toggle" button
+    panel.find(`#hide-results-${key}`).click(function() {
+        panel.find(`#search-result-list-${key}`).toggle();
+    });
+
+    // Add callback for "remove" button
+    panel.find(`#remove-results-${key}`).click(function() {
+        panel.find(`#search-results-${key}`).remove();
     });
 }
