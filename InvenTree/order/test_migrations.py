@@ -140,6 +140,7 @@ class TestAdditionalLineMigration(MigratorTestCase):
         # Create a purchase order from a supplier
         Company = self.old_state.apps.get_model('company', 'company')
         PurchaseOrder = self.old_state.apps.get_model('order', 'purchaseorder')
+        SalesOrder = self.old_state.apps.get_model('order', 'salesorder')
         Part = self.old_state.apps.get_model('part', 'part')
         Supplierpart = self.old_state.apps.get_model('company', 'supplierpart')
 
@@ -184,16 +185,31 @@ class TestAdditionalLineMigration(MigratorTestCase):
                 received=1
             )
 
+            sales_order = SalesOrder.objects.create(
+                customer=supplier,
+                reference=f"{ii}-xyz",
+                description="A test sales order",
+            )
+            sales_order.lines.create(
+                part=part,
+                quantity=12,
+                received=1
+            )
+
     def test_po_migration(self):
         """
         Test that the the PO lines where converted correctly
         """
 
         PurchaseOrder = self.new_state.apps.get_model('order', 'purchaseorder')
+        SalesOrder = self.new_state.apps.get_model('order', 'salesorder')
 
         for ii in range(10):
 
             po = PurchaseOrder.objects.get(reference=f"{ii}-abcde")
+            so = SalesOrder.objects.get(reference=f"{ii}-xyz")
 
             self.assertEqual(po.extra_lines.count(), 1)
             self.assertEqual(po.lines.count(), 1)
+            self.assertEqual(so.extra_lines, 1)
+            self.assertEqual(so.lines.count(), 1)
