@@ -42,7 +42,7 @@ function openSearchPanel() {
 var searchRequests = [];
 var searchInputTimer = null;
 var searchText = null;
-var searchTextPrevious = null;
+var searchTextCurrent = null;
 var searchQueries = [];
 
 function searchTextChanged(event) {
@@ -56,7 +56,7 @@ function searchTextChanged(event) {
 
 function updateSearch() {
 
-    if (searchText == searchTextPrevious) {
+    if (searchText == searchTextCurrent) {
         return;
     }
 
@@ -66,7 +66,7 @@ function updateSearch() {
         return;
     }
     
-    searchTextPrevious = searchText;
+    searchTextCurrent = searchText;
 
     // Cancel any previous AJAX requests
     searchQueries.forEach(function(query) {
@@ -79,54 +79,32 @@ function updateSearch() {
     $('#offcanvas-search').find('#search-pending').show();
     
     // Search for matching parts
-    searchQueries.push(inventreeGet(
-        `{% url "api-part-list" %}`,
+    addSearchQuery(
+        'part',
+        '{% trans "Parts" %}',
+        '{% url "api-part-list" %}',
+        {},
+        renderPart,
         {
-            search: searchText,
-            limit: 10,
-            offset: 0,
-        },
-        {
-            success: function(response) {
-                addSearchResults(
-                    'part',
-                    response.results,
-                    '{% trans "Parts" %}',
-                    renderPart,
-                    {
-                        show_stock_data: false,
-                        url: '/part',
-                    }
-                );
-            }
+            url: '/part',
         }
-    ));
+    );
 
     // Search for matching stock items
-    searchQueries.push(inventreeGet(
+    addSearchQuery(
+        'stock',
+        '{% trans "Stock Items" %}',
         '{% url "api-stock-list" %}',
         {
-            search: searchText,
-            limit: 10,
-            offset: 0,
             part_detail: true,
             location_detail: true,
         },
+        renderStockItem,
         {
-            success: function(response) {
-                addSearchResults(
-                    'stock',
-                    response.results,
-                    '{% trans "Stock Items" %}',
-                    renderStockItem,
-                    {
-                        url: '/stock/item',
-                    }
-                );
-            }
+            url: '/stock/item',
         }
-    ));
-
+    );
+    
     // Wait until all the pending queries are completed
     $.when.apply($, searchQueries).done(function() {
         $('#offcanvas-search').find('#search-pending').hide();
@@ -149,6 +127,42 @@ function clearSearchResults() {
 }
 
 
+function addSearchQuery(key, title, query_url, query_params, render_func, render_params={}) {
+
+    // Include current search term
+    query_params.search = searchTextCurrent;
+
+    // How many results to show in each group?
+    query_params.offset = 0;
+    query_params.limit = user_settings.SEARCH_PREVIEW_RESULTS;
+
+    // Add the result group to the panel
+    $('#offcanvas-search').find('#search-results').append(`
+    <div class='search-result-group-wrapper' id='search-results-wrapper-${key}'></div>
+    `);
+
+    var request = inventreeGet(
+        query_url,
+        query_params,
+        {
+            success: function(response) {
+                addSearchResults(
+                    key,
+                    response.results,
+                    title,
+                    render_func,
+                    render_params,
+                );
+            }
+        },
+    );
+
+    // Add the query to the stack
+    searchQueries.push(request);
+
+}
+
+
 // Add a group of results to the list
 function addSearchResults(key, results, title, renderFunc, renderParams={}) {
     
@@ -162,7 +176,7 @@ function addSearchResults(key, results, title, renderFunc, renderParams={}) {
     // Ensure the 'no results found' element is hidden
     panel.find('#search-no-results').hide();
     
-    panel.find('#search-results').append(`
+    panel.find(`#search-results-wrapper-${key}`).append(`
         <div class='search-result-group' id='search-results-${key}'>
             <div class='search-result-header' style='display: flex;'>
                 <h5>${title}</h5>
