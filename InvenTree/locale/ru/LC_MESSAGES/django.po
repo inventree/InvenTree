@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-28 10:50+0000\n"
-"PO-Revision-Date: 2022-03-29 21:28\n"
+"PO-Revision-Date: 2022-03-29 22:25\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -778,7 +778,7 @@ msgstr "Код статуса сборки"
 #: build/models.py:287 build/serializers.py:218 order/serializers.py:272
 #: stock/models.py:637 templates/js/translated/order.js:573
 msgid "Batch Code"
-msgstr "Штрих код"
+msgstr "Код партии"
 
 #: build/models.py:291 build/serializers.py:219
 msgid "Batch code for this build output"
@@ -825,7 +825,7 @@ msgstr "Ответственный"
 
 #: build/models.py:326
 msgid "User responsible for this build order"
-msgstr "Пользователь ответственный за этот заказ сборки"
+msgstr "Пользователь, ответственный за этот заказ сборки"
 
 #: build/models.py:331 build/templates/build/detail.html:102
 #: company/templates/company/manufacturer_part.html:102
@@ -2620,7 +2620,7 @@ msgstr "Значение параметра"
 #: templates/InvenTree/settings/settings.html:325
 #: templates/js/translated/company.js:653 templates/js/translated/part.js:723
 msgid "Units"
-msgstr "Ед.изм."
+msgstr "Ед.изм"
 
 #: company/models.py:430
 msgid "Parameter units"
