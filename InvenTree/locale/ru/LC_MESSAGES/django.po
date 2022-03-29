@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-28 10:50+0000\n"
-"PO-Revision-Date: 2022-03-29 11:39\n"
+"PO-Revision-Date: 2022-03-29 12:39\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -1173,7 +1173,7 @@ msgstr "Для заказа сборки необходим остаток"
 #: order/templates/order/order_base.html:28
 #: order/templates/order/sales_order_base.html:38
 msgid "Print actions"
-msgstr ""
+msgstr "Печать"
 
 #: build/templates/build/build_base.html:43
 msgid "Print build order report"
@@ -1181,7 +1181,7 @@ msgstr "Печать отчета о заказе сборки"
 
 #: build/templates/build/build_base.html:50
 msgid "Build actions"
-msgstr "Операции со сборкой"
+msgstr "Действия со сборкой"
 
 #: build/templates/build/build_base.html:54
 msgid "Edit Build"
@@ -1416,7 +1416,7 @@ msgstr ""
 
 #: build/templates/build/detail.html:249
 msgid "Output Actions"
-msgstr ""
+msgstr "Вывод"
 
 #: build/templates/build/detail.html:253
 msgid "Complete selected build outputs"
@@ -1780,7 +1780,7 @@ msgstr ""
 
 #: common/models.py:837
 msgid "Show Price in Forms"
-msgstr ""
+msgstr "Показывать цену в формах"
 
 #: common/models.py:838
 msgid "Display part price in some forms"
@@ -1796,7 +1796,7 @@ msgstr ""
 
 #: common/models.py:861
 msgid "Show Price History"
-msgstr ""
+msgstr "Показывать историю цены"
 
 #: common/models.py:862
 msgid "Display historical pricing for Part"
@@ -1804,7 +1804,7 @@ msgstr ""
 
 #: common/models.py:868
 msgid "Show related parts"
-msgstr ""
+msgstr "Показывать связанные детали"
 
 #: common/models.py:869
 msgid "Display related parts for a part"
@@ -2076,27 +2076,27 @@ msgstr ""
 
 #: common/models.py:1134
 msgid "Show subscribed parts"
-msgstr ""
+msgstr "Показывать детали, на которые включены уведомления"
 
 #: common/models.py:1135
 msgid "Show subscribed parts on the homepage"
-msgstr ""
+msgstr "Показывать детали, на которые включены уведомления, на главной странице"
 
 #: common/models.py:1140
 msgid "Show subscribed categories"
-msgstr ""
+msgstr "Показывать категории, на которые включены уведомления"
 
 #: common/models.py:1141
 msgid "Show subscribed part categories on the homepage"
-msgstr ""
+msgstr "Показывать категории, на которые включены уведомления, на главной странице"
 
 #: common/models.py:1146
 msgid "Show latest parts"
-msgstr ""
+msgstr "Показывать последние детали"
 
 #: common/models.py:1147
 msgid "Show latest parts on the homepage"
-msgstr ""
+msgstr "Показывать последние детали на главной странице"
 
 #: common/models.py:1152
 msgid "Recent Part Count"
@@ -2108,19 +2108,19 @@ msgstr ""
 
 #: common/models.py:1159
 msgid "Show unvalidated BOMs"
-msgstr ""
+msgstr "Показывать непроверенные BOMы"
 
 #: common/models.py:1160
 msgid "Show BOMs that await validation on the homepage"
-msgstr ""
+msgstr "Показывать BOMы, ожидающие проверки, на главной странице"
 
 #: common/models.py:1165
 msgid "Show recent stock changes"
-msgstr ""
+msgstr "Показывать изменившиеся складские запасы"
 
 #: common/models.py:1166
 msgid "Show recently changed stock items on the homepage"
-msgstr ""
+msgstr "Показывать единицы хранения с недавно изменившимися складскими запасами на главной странице"
 
 #: common/models.py:1171
 msgid "Recent Stock Count"
@@ -2132,59 +2132,59 @@ msgstr ""
 
 #: common/models.py:1177
 msgid "Show low stock"
-msgstr ""
+msgstr "Показывать низкие складские запасы"
 
 #: common/models.py:1178
 msgid "Show low stock items on the homepage"
-msgstr ""
+msgstr "Показывать единицы хранения с низкими складскими запасами на главной странице"
 
 #: common/models.py:1183
 msgid "Show depleted stock"
-msgstr ""
+msgstr "Показывать закончившиеся детали"
 
 #: common/models.py:1184
 msgid "Show depleted stock items on the homepage"
-msgstr ""
+msgstr "Показывать закончившиеся на складе единицы хранения на главной странице"
 
 #: common/models.py:1189
 msgid "Show needed stock"
-msgstr ""
+msgstr "Показывать требуемые детали"
 
 #: common/models.py:1190
 msgid "Show stock items needed for builds on the homepage"
-msgstr ""
+msgstr "Показывать требуемые для сборки единицы хранения на главной странице"
 
 #: common/models.py:1195
 msgid "Show expired stock"
-msgstr ""
+msgstr "Показывать просрочку"
 
 #: common/models.py:1196
 msgid "Show expired stock items on the homepage"
-msgstr ""
+msgstr "Показывать единицы хранения с истёкшим сроком годности на главной странице"
 
 #: common/models.py:1201
 msgid "Show stale stock"
-msgstr ""
+msgstr "Показывать залежалые"
 
 #: common/models.py:1202
 msgid "Show stale stock items on the homepage"
-msgstr ""
+msgstr "Показывать залежалые единицы хранения на главной странице"
 
 #: common/models.py:1207
 msgid "Show pending builds"
-msgstr ""
+msgstr "Показывать незавершённые сборки"
 
 #: common/models.py:1208
 msgid "Show pending builds on the homepage"
-msgstr ""
+msgstr "Показывать незавершённые сборки на главной странице"
 
 #: common/models.py:1213
 msgid "Show overdue builds"
-msgstr ""
+msgstr "Показывать просроченные сборки"
 
 #: common/models.py:1214
 msgid "Show overdue builds on the homepage"
-msgstr ""
+msgstr "Показывать просроченные сборки на главной странице"
 
 #: common/models.py:1219
 msgid "Show outstanding POs"
@@ -2726,7 +2726,7 @@ msgstr ""
 
 #: company/templates/company/company_base.html:26
 msgid "Company actions"
-msgstr "Операции с компанией"
+msgstr "Действия с компанией"
 
 #: company/templates/company/company_base.html:31
 msgid "Edit company information"
@@ -3630,7 +3630,7 @@ msgstr ""
 #: order/templates/order/order_base.html:41
 #: order/templates/order/sales_order_base.html:54
 msgid "Order actions"
-msgstr "Операции с заказом"
+msgstr "Действия с заказом"
 
 #: order/templates/order/order_base.html:45
 #: order/templates/order/sales_order_base.html:58
@@ -3913,7 +3913,7 @@ msgstr ""
 #: order/templates/order/sales_order_detail.html:48
 #: templates/js/translated/bom.js:943 templates/js/translated/build.js:1481
 msgid "Actions"
-msgstr ""
+msgstr "Действия"
 
 #: order/templates/order/sales_order_detail.html:57
 msgid "New Shipment"
@@ -4612,7 +4612,7 @@ msgstr ""
 
 #: part/templates/part/bom.html:30 part/templates/part/detail.html:272
 msgid "BOM actions"
-msgstr "Операции с BOM"
+msgstr "Действия с BOM"
 
 #: part/templates/part/bom.html:34
 msgid "Delete Items"
@@ -4628,7 +4628,7 @@ msgstr "Включить уведомления для данной катего
 
 #: part/templates/part/category.html:42
 msgid "Category Actions"
-msgstr "Операции с категорией"
+msgstr "Действия с категорией"
 
 #: part/templates/part/category.html:47
 msgid "Edit category"
@@ -4825,7 +4825,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:260
 msgid "Export actions"
-msgstr ""
+msgstr "Экспорт"
 
 #: part/templates/part/detail.html:264 templates/js/translated/bom.js:283
 msgid "Export BOM"
@@ -4986,7 +4986,7 @@ msgstr "Включить уведомления для данной детали
 #: stock/templates/stock/item_base.html:35
 #: stock/templates/stock/location.html:34
 msgid "Barcode actions"
-msgstr "Операции со штрих-кодом"
+msgstr "Действия со штрих-кодом"
 
 #: part/templates/part/part_base.html:46
 #: stock/templates/stock/item_base.html:39
@@ -5008,7 +5008,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:110
 #: stock/templates/stock/location.html:47
 msgid "Stock actions"
-msgstr "Операции со складом"
+msgstr "Действия со складом"
 
 #: part/templates/part/part_base.html:67
 msgid "Count part stock"
@@ -5020,7 +5020,7 @@ msgstr ""
 
 #: part/templates/part/part_base.html:88
 msgid "Part actions"
-msgstr "Операции с деталью"
+msgstr "Действия с деталью"
 
 #: part/templates/part/part_base.html:91
 msgid "Duplicate part"
@@ -6385,7 +6385,7 @@ msgstr ""
 
 #: stock/templates/stock/location.html:68
 msgid "Location actions"
-msgstr "Операции с местом хранения"
+msgstr "Действия с местом хранения"
 
 #: stock/templates/stock/location.html:70
 msgid "Edit location"
@@ -6646,11 +6646,11 @@ msgstr ""
 
 #: templates/InvenTree/index.html:108
 msgid "Latest Parts"
-msgstr ""
+msgstr "Последние детали"
 
 #: templates/InvenTree/index.html:119
 msgid "BOM Waiting Validation"
-msgstr ""
+msgstr "BOM для проверки"
 
 #: templates/InvenTree/index.html:145
 msgid "Recently Updated"
@@ -7281,7 +7281,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user_homepage.html:9
 msgid "Home Page Settings"
-msgstr ""
+msgstr "Настройки главной страницы"
 
 #: templates/InvenTree/settings/user_labels.html:9
 msgid "Label Settings"
@@ -9855,7 +9855,7 @@ msgstr ""
 
 #: templates/stock_table.html:17
 msgid "Barcode Actions"
-msgstr ""
+msgstr "Действия со штрих-кодом"
 
 #: templates/stock_table.html:33
 msgid "Print test reports"
