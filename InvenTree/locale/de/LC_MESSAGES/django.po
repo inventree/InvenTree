@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-28 22:57+0000\n"
+"POT-Creation-Date: 2022-03-30 02:38+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -154,9 +154,9 @@ msgstr "Kommentar"
 msgid "File comment"
 msgstr "Datei-Kommentar"
 
-#: InvenTree/models.py:214 InvenTree/models.py:215 common/models.py:1354
-#: common/models.py:1355 common/models.py:1576 common/models.py:1577
-#: common/models.py:1806 common/models.py:1807 part/models.py:2344
+#: InvenTree/models.py:214 InvenTree/models.py:215 common/models.py:1396
+#: common/models.py:1397 common/models.py:1618 common/models.py:1619
+#: common/models.py:1848 common/models.py:1849 part/models.py:2344
 #: part/models.py:2364
 #: report/templates/report/inventree_test_report_base.html:96
 #: templates/js/translated/stock.js:2467
@@ -196,7 +196,7 @@ msgstr "Fehler beim Umbenennen"
 msgid "Invalid choice"
 msgstr "Ungültige Auswahl"
 
-#: InvenTree/models.py:342 InvenTree/models.py:343 common/models.py:1562
+#: InvenTree/models.py:342 InvenTree/models.py:343 common/models.py:1604
 #: company/models.py:415 label/models.py:112 part/models.py:812
 #: part/models.py:2528 plugin/models.py:40 report/models.py:181
 #: templates/InvenTree/notifications/notifications.html:84
@@ -616,7 +616,7 @@ msgstr "Passwort eingeben"
 msgid "Password fields must match"
 msgstr "Passwörter stimmen nicht überein"
 
-#: InvenTree/views.py:883 templates/navbar.html:137
+#: InvenTree/views.py:883 templates/navbar.html:144
 msgid "System Information"
 msgstr "Systeminformationen"
 
@@ -962,7 +962,7 @@ msgstr "Quell-Lagerartikel"
 
 #: build/models.py:1355 build/serializers.py:188
 #: build/templates/build/build_base.html:82
-#: build/templates/build/detail.html:35 common/models.py:1387
+#: build/templates/build/detail.html:35 common/models.py:1429
 #: company/forms.py:42 company/templates/company/supplier_part.html:251
 #: order/models.py:836 order/models.py:1265 order/serializers.py:903
 #: order/templates/order/order_wizard/match_parts.html:30
@@ -985,7 +985,7 @@ msgstr "Quell-Lagerartikel"
 #: templates/js/translated/build.js:715 templates/js/translated/build.js:912
 #: templates/js/translated/build.js:922 templates/js/translated/build.js:1311
 #: templates/js/translated/build.js:1687
-#: templates/js/translated/model_renderers.js:99
+#: templates/js/translated/model_renderers.js:101
 #: templates/js/translated/order.js:101 templates/js/translated/order.js:1229
 #: templates/js/translated/order.js:1783 templates/js/translated/order.js:2056
 #: templates/js/translated/order.js:2144 templates/js/translated/order.js:2233
@@ -2172,7 +2172,7 @@ msgstr "Anmeldung erlauben"
 msgid "Enable plugins to respond to internal events"
 msgstr ""
 
-#: common/models.py:1103 common/models.py:1347
+#: common/models.py:1103 common/models.py:1389
 msgid "Settings key (must be unique - case insensitive"
 msgstr "Einstellungs-Schlüssel (muss einzigartig sein, Groß-/ Kleinschreibung wird nicht beachtet)"
 
@@ -2357,102 +2357,180 @@ msgid "Display PDF reports in the browser, instead of downloading as a file"
 msgstr "PDF-Berichte im Browser anzeigen, anstatt als Datei herunterzuladen"
 
 #: common/models.py:1272
-msgid "Search Preview Results"
-msgstr "Anzahl Suchergebnisse"
+#, fuzzy
+#| msgid "Match Parts"
+msgid "Search Parts"
+msgstr "Teile zuordnen"
 
 #: common/models.py:1273
-msgid "Number of results to show in search preview window"
-msgstr "Anzahl der Ergebnisse, die in der Vorschau angezeigt werden sollen"
+#, fuzzy
+#| msgid "Display stock levels in search preview window"
+msgid "Display parts in search preview window"
+msgstr "Bestand in Suchvorschau anzeigen"
 
 #: common/models.py:1279
-msgid "Search Show Stock"
-msgstr "Suche Bestand anzeigen"
+#, fuzzy
+#| msgid "Part Categories"
+msgid "Search Categories"
+msgstr "Teil-Kategorien"
 
 #: common/models.py:1280
-msgid "Display stock levels in search preview window"
+#, fuzzy
+#| msgid "Display stock levels in search preview window"
+msgid "Display part categories in search preview window"
 msgstr "Bestand in Suchvorschau anzeigen"
 
 #: common/models.py:1286
+#, fuzzy
+#| msgid "Search Show Stock"
+msgid "Search Stock"
+msgstr "Suche Bestand anzeigen"
+
+#: common/models.py:1287
+#, fuzzy
+#| msgid "Display stock levels in search preview window"
+msgid "Display stock items in search preview window"
+msgstr "Bestand in Suchvorschau anzeigen"
+
+#: common/models.py:1293
+#, fuzzy
+#| msgid "Stock Locations"
+msgid "Search Locations"
+msgstr "Bestand-Lagerorte"
+
+#: common/models.py:1294
+#, fuzzy
+#| msgid "Display stock levels in search preview window"
+msgid "Display stock locations in search preview window"
+msgstr "Bestand in Suchvorschau anzeigen"
+
+#: common/models.py:1300
+#, fuzzy
+#| msgid "Companies"
+msgid "Search Companies"
+msgstr "Firmen"
+
+#: common/models.py:1301
+#, fuzzy
+#| msgid "Display stock levels in search preview window"
+msgid "Display companies in search preview window"
+msgstr "Bestand in Suchvorschau anzeigen"
+
+#: common/models.py:1307
+#, fuzzy
+#| msgid "Select Purchase Orders"
+msgid "Search Purchase Orders"
+msgstr "Bestellungen auswählen"
+
+#: common/models.py:1308
+#, fuzzy
+#| msgid "Display stock levels in search preview window"
+msgid "Display purchase orders in search preview window"
+msgstr "Bestand in Suchvorschau anzeigen"
+
+#: common/models.py:1314
+#, fuzzy
+#| msgid "Select Sales Orders"
+msgid "Search Sales Orders"
+msgstr "Aufträge auswählen"
+
+#: common/models.py:1315
+#, fuzzy
+#| msgid "Display stock levels in search preview window"
+msgid "Display sales orders in search preview window"
+msgstr "Bestand in Suchvorschau anzeigen"
+
+#: common/models.py:1321
+msgid "Search Preview Results"
+msgstr "Anzahl Suchergebnisse"
+
+#: common/models.py:1322
+#, fuzzy
+#| msgid "Number of results to show in search preview window"
+msgid "Number of results to show in each section of the search preview window"
+msgstr "Anzahl der Ergebnisse, die in der Vorschau angezeigt werden sollen"
+
+#: common/models.py:1328
 msgid "Hide Inactive Parts"
 msgstr "Inaktive Teile ausblenden"
 
-#: common/models.py:1287
+#: common/models.py:1329
 msgid "Hide inactive parts in search preview window"
 msgstr "Inaktive Teile in der Suchvorschau ausblenden"
 
-#: common/models.py:1293
+#: common/models.py:1335
 msgid "Show Quantity in Forms"
 msgstr "zeige Bestand in Eingabemasken"
 
-#: common/models.py:1294
+#: common/models.py:1336
 msgid "Display available part quantity in some forms"
 msgstr "Zeige den verfügbaren Bestand in einigen Eingabemasken"
 
-#: common/models.py:1300
+#: common/models.py:1342
 msgid "Escape Key Closes Forms"
 msgstr "Esc-Taste schließt Formulare"
 
-#: common/models.py:1301
+#: common/models.py:1343
 msgid "Use the escape key to close modal forms"
 msgstr "Benutze die Esc-Taste, um Formulare zu schließen"
 
-#: common/models.py:1307
+#: common/models.py:1349
 msgid "Fixed Navbar"
 msgstr "Fixierter Navigationsleiste"
 
-#: common/models.py:1308
+#: common/models.py:1350
 msgid "InvenTree navbar position is fixed to the top of the screen"
 msgstr "Position der InvenTree Navigationsleiste am oberen Bildschirmrand fixieren"
 
-#: common/models.py:1314
+#: common/models.py:1356
 #, fuzzy
 #| msgid "File Format"
 msgid "Date Format"
 msgstr "Dateiformat"
 
-#: common/models.py:1315
+#: common/models.py:1357
 msgid "Preferred format for displaying dates"
 msgstr ""
 
-#: common/models.py:1329 part/templates/part/detail.html:40
+#: common/models.py:1371 part/templates/part/detail.html:40
 #, fuzzy
 #| msgid "Part Settings"
 msgid "Part Scheduling"
 msgstr "Teil-Einstellungen"
 
-#: common/models.py:1330
+#: common/models.py:1372
 #, fuzzy
 #| msgid "Display part price in some forms"
 msgid "Display part scheduling information"
 msgstr "Teilpreis in einigen Formularen anzeigen"
 
-#: common/models.py:1388 company/forms.py:43
+#: common/models.py:1430 company/forms.py:43
 msgid "Price break quantity"
 msgstr "Preisstaffelungs Anzahl"
 
-#: common/models.py:1395 company/serializers.py:264
+#: common/models.py:1437 company/serializers.py:264
 #: company/templates/company/supplier_part.html:256
 #: templates/js/translated/part.js:939 templates/js/translated/part.js:1907
 msgid "Price"
 msgstr "Preis"
 
-#: common/models.py:1396
+#: common/models.py:1438
 msgid "Unit price at specified quantity"
 msgstr "Stückpreis für die angegebene Anzahl"
 
-#: common/models.py:1553 common/models.py:1692
+#: common/models.py:1595 common/models.py:1734
 msgid "Endpoint"
 msgstr ""
 
-#: common/models.py:1554
+#: common/models.py:1596
 msgid "Endpoint at which this webhook is received"
 msgstr ""
 
-#: common/models.py:1563
+#: common/models.py:1605
 msgid "Name for this webhook"
 msgstr ""
 
-#: common/models.py:1568 part/models.py:986 plugin/models.py:46
+#: common/models.py:1610 part/models.py:986 plugin/models.py:46
 #: templates/js/translated/table_filters.js:34
 #: templates/js/translated/table_filters.js:96
 #: templates/js/translated/table_filters.js:290
@@ -2460,73 +2538,73 @@ msgstr ""
 msgid "Active"
 msgstr "Aktiv"
 
-#: common/models.py:1569
+#: common/models.py:1611
 #, fuzzy
 #| msgid "Is this part active?"
 msgid "Is this webhook active"
 msgstr "Ist dieses Teil aktiv?"
 
-#: common/models.py:1583
+#: common/models.py:1625
 #, fuzzy
 #| msgid "Bad Token"
 msgid "Token"
 msgstr "Ungültiger Schlüssel"
 
-#: common/models.py:1584
+#: common/models.py:1626
 msgid "Token for access"
 msgstr ""
 
-#: common/models.py:1591
+#: common/models.py:1633
 msgid "Secret"
 msgstr ""
 
-#: common/models.py:1592
+#: common/models.py:1634
 msgid "Shared secret for HMAC"
 msgstr ""
 
-#: common/models.py:1659
+#: common/models.py:1701
 msgid "Message ID"
 msgstr ""
 
-#: common/models.py:1660
+#: common/models.py:1702
 #, fuzzy
 #| msgid "Unique identifier field"
 msgid "Unique identifier for this message"
 msgstr "Einzigartiger Identifikator"
 
-#: common/models.py:1668
+#: common/models.py:1710
 msgid "Host"
 msgstr ""
 
-#: common/models.py:1669
+#: common/models.py:1711
 msgid "Host from which this message was received"
 msgstr ""
 
-#: common/models.py:1676
+#: common/models.py:1718
 msgid "Header"
 msgstr ""
 
-#: common/models.py:1677
+#: common/models.py:1719
 msgid "Header of this message"
 msgstr ""
 
-#: common/models.py:1683
+#: common/models.py:1725
 msgid "Body"
 msgstr ""
 
-#: common/models.py:1684
+#: common/models.py:1726
 msgid "Body of this message"
 msgstr ""
 
-#: common/models.py:1693
+#: common/models.py:1735
 msgid "Endpoint on which this message was received"
 msgstr ""
 
-#: common/models.py:1698
+#: common/models.py:1740
 msgid "Worked on"
 msgstr ""
 
-#: common/models.py:1699
+#: common/models.py:1741
 msgid "Was the work on this message finished?"
 msgstr ""
 
@@ -2969,7 +3047,8 @@ msgstr "Zulieferer-Bestand"
 #: order/templates/order/purchase_orders.html:12
 #: part/templates/part/detail.html:78 part/templates/part/part_sidebar.html:38
 #: templates/InvenTree/index.html:252 templates/InvenTree/search.html:197
-#: templates/InvenTree/settings/sidebar.html:47 templates/navbar.html:47
+#: templates/InvenTree/settings/sidebar.html:47
+#: templates/js/translated/search.js:171 templates/navbar.html:47
 #: users/models.py:45
 msgid "Purchase Orders"
 msgstr "Bestellungen"
@@ -2991,7 +3070,8 @@ msgstr "Neue Bestellung"
 #: order/templates/order/sales_orders.html:15
 #: part/templates/part/detail.html:101 part/templates/part/part_sidebar.html:42
 #: templates/InvenTree/index.html:283 templates/InvenTree/search.html:217
-#: templates/InvenTree/settings/sidebar.html:49 templates/navbar.html:58
+#: templates/InvenTree/settings/sidebar.html:49
+#: templates/js/translated/search.js:188 templates/navbar.html:58
 #: users/models.py:46
 msgid "Sales Orders"
 msgstr "Aufträge"
@@ -3239,8 +3319,9 @@ msgstr "Bepreisung"
 #: stock/templates/stock/location.html:152
 #: stock/templates/stock/location.html:164
 #: stock/templates/stock/location_sidebar.html:7
-#: templates/InvenTree/search.html:152 templates/js/translated/stock.js:2291
-#: templates/stats.html:105 templates/stats.html:114 users/models.py:43
+#: templates/InvenTree/search.html:152 templates/js/translated/search.js:126
+#: templates/js/translated/stock.js:2291 templates/stats.html:105
+#: templates/stats.html:114 users/models.py:43
 msgid "Stock Items"
 msgstr "Lagerartikel"
 
@@ -3261,7 +3342,7 @@ msgstr "Kunden"
 msgid "New Customer"
 msgstr "Neuer Kunde"
 
-#: company/views.py:69
+#: company/views.py:69 templates/js/translated/search.js:157
 msgid "Companies"
 msgstr "Firmen"
 
@@ -3665,7 +3746,7 @@ msgid "Line"
 msgstr "Position"
 
 #: order/models.py:1248 order/serializers.py:918 order/serializers.py:1046
-#: templates/js/translated/model_renderers.js:285
+#: templates/js/translated/model_renderers.js:298
 #, fuzzy
 #| msgid "Shipment Date"
 msgid "Shipment"
@@ -4292,8 +4373,8 @@ msgid "Part Category"
 msgstr "Teil-Kategorie"
 
 #: part/models.py:127 part/templates/part/category.html:128
-#: templates/InvenTree/search.html:95 templates/stats.html:96
-#: users/models.py:40
+#: templates/InvenTree/search.html:95 templates/js/translated/search.js:112
+#: templates/stats.html:96 users/models.py:40
 msgid "Part Categories"
 msgstr "Teil-Kategorien"
 
@@ -4303,8 +4384,9 @@ msgstr "Teil-Kategorien"
 #: part/templates/part/category_sidebar.html:9
 #: templates/InvenTree/index.html:85 templates/InvenTree/search.html:82
 #: templates/InvenTree/settings/sidebar.html:39
-#: templates/js/translated/part.js:1703 templates/navbar.html:21
-#: templates/stats.html:92 templates/stats.html:101 users/models.py:41
+#: templates/js/translated/part.js:1703 templates/js/translated/search.js:98
+#: templates/navbar.html:21 templates/stats.html:92 templates/stats.html:101
+#: users/models.py:41
 msgid "Parts"
 msgstr "Teile"
 
@@ -4584,7 +4666,7 @@ msgstr "Standard Parameter Wert"
 msgid "Part ID or part name"
 msgstr "Teil hat Interne Teilenummer"
 
-#: part/models.py:2660 templates/js/translated/model_renderers.js:182
+#: part/models.py:2660 templates/js/translated/model_renderers.js:186
 msgid "Part ID"
 msgstr "Teil-ID"
 
@@ -5331,7 +5413,7 @@ msgstr "Teil ist virtuell (kein physisches Teil)"
 #: part/templates/part/part_base.html:143
 #: templates/js/translated/company.js:508
 #: templates/js/translated/company.js:765
-#: templates/js/translated/model_renderers.js:175
+#: templates/js/translated/model_renderers.js:178
 #: templates/js/translated/part.js:535 templates/js/translated/part.js:612
 msgid "Inactive"
 msgstr "Inaktiv"
@@ -6011,7 +6093,7 @@ msgstr "Lagerartikel Test-Bericht"
 #: stock/models.py:623 stock/templates/stock/item_base.html:156
 #: templates/js/translated/build.js:374 templates/js/translated/build.js:522
 #: templates/js/translated/build.js:920 templates/js/translated/build.js:1309
-#: templates/js/translated/model_renderers.js:95
+#: templates/js/translated/model_renderers.js:97
 #: templates/js/translated/order.js:99 templates/js/translated/order.js:2142
 #: templates/js/translated/order.js:2231 templates/js/translated/stock.js:431
 msgid "Serial Number"
@@ -6806,7 +6888,8 @@ msgid "Sublocations"
 msgstr "Unter-Lagerorte"
 
 #: stock/templates/stock/location.html:147 templates/InvenTree/search.html:164
-#: templates/stats.html:109 users/models.py:42
+#: templates/js/translated/search.js:143 templates/stats.html:109
+#: users/models.py:42
 msgid "Stock Locations"
 msgstr "Bestand-Lagerorte"
 
@@ -7114,7 +7197,7 @@ msgstr "Verifikation erneut senden"
 
 #: templates/InvenTree/notifications/notifications.html:10
 #: templates/InvenTree/notifications/sidebar.html:5
-#: templates/InvenTree/settings/sidebar.html:17 templates/notifications.html:4
+#: templates/InvenTree/settings/sidebar.html:17 templates/notifications.html:5
 #, fuzzy
 #| msgid "locations"
 msgid "Notifications"
@@ -7215,7 +7298,7 @@ msgid "Signup"
 msgstr "Anmelden"
 
 #: templates/InvenTree/settings/mixins/settings.html:5
-#: templates/InvenTree/settings/settings.html:12 templates/navbar.html:124
+#: templates/InvenTree/settings/settings.html:12 templates/navbar.html:131
 msgid "Settings"
 msgstr "Einstellungen"
 
@@ -7271,7 +7354,7 @@ msgstr "Installiere in"
 msgid "Install Plugin"
 msgstr "Installiere in"
 
-#: templates/InvenTree/settings/plugin.html:47 templates/navbar.html:122
+#: templates/InvenTree/settings/plugin.html:47 templates/navbar.html:129
 #: users/models.py:39
 msgid "Admin"
 msgstr "Admin"
@@ -8223,7 +8306,7 @@ msgstr "Ungültige Antwort von Server"
 msgid "Scan barcode data below"
 msgstr "Barcode unterhalb scannen"
 
-#: templates/js/translated/barcode.js:280 templates/navbar.html:94
+#: templates/js/translated/barcode.js:280 templates/navbar.html:101
 msgid "Scan Barcode"
 msgstr "Barcode scannen"
 
@@ -8883,7 +8966,7 @@ msgstr "Fehler in Formular"
 msgid "No results found"
 msgstr "Keine Ergebnisse gefunden"
 
-#: templates/js/translated/forms.js:1833
+#: templates/js/translated/forms.js:1833 templates/search.html:29
 msgid "Searching"
 msgstr "Suche"
 
@@ -9040,42 +9123,42 @@ msgstr "Fehler 400 von Server erhalten"
 msgid "Error requesting form data"
 msgstr "Fehler bei Formulardaten-Anfrage"
 
-#: templates/js/translated/model_renderers.js:40
+#: templates/js/translated/model_renderers.js:42
 msgid "Company ID"
 msgstr "Firmen-ID"
 
-#: templates/js/translated/model_renderers.js:77
+#: templates/js/translated/model_renderers.js:79
 msgid "Stock ID"
 msgstr "Bestands-ID"
 
-#: templates/js/translated/model_renderers.js:130
+#: templates/js/translated/model_renderers.js:132
 msgid "Location ID"
 msgstr "Standort-ID"
 
-#: templates/js/translated/model_renderers.js:147
+#: templates/js/translated/model_renderers.js:149
 msgid "Build ID"
 msgstr "Bauauftrag-ID"
 
-#: templates/js/translated/model_renderers.js:249
-#: templates/js/translated/model_renderers.js:270
+#: templates/js/translated/model_renderers.js:251
+#: templates/js/translated/model_renderers.js:283
 msgid "Order ID"
 msgstr "Bestell-ID"
 
-#: templates/js/translated/model_renderers.js:287
+#: templates/js/translated/model_renderers.js:300
 #, fuzzy
 #| msgid "Shipment Date"
 msgid "Shipment ID"
 msgstr "Versanddatum"
 
-#: templates/js/translated/model_renderers.js:307
+#: templates/js/translated/model_renderers.js:320
 msgid "Category ID"
 msgstr "Kategorie-ID"
 
-#: templates/js/translated/model_renderers.js:350
+#: templates/js/translated/model_renderers.js:363
 msgid "Manufacturer Part ID"
 msgstr "Herstellerteil-ID"
 
-#: templates/js/translated/model_renderers.js:379
+#: templates/js/translated/model_renderers.js:392
 msgid "Supplier Part ID"
 msgstr "Zuliefererteil-ID"
 
@@ -9093,7 +9176,7 @@ msgstr ""
 msgid "No unread notifications"
 msgstr "Benachrichtigungen über geringen Bestand"
 
-#: templates/js/translated/notification.js:297 templates/notifications.html:9
+#: templates/js/translated/notification.js:297 templates/notifications.html:10
 msgid "Notifications will load here"
 msgstr ""
 
@@ -9707,6 +9790,16 @@ msgstr "Aufträge auswählen"
 #: templates/js/translated/report.js:334
 msgid "Sales Order(s) must be selected before printing report"
 msgstr "Auftrag muss vor dem Berichtsdruck ausgewählt werden"
+
+#: templates/js/translated/search.js:281
+msgid "Minimize results"
+msgstr ""
+
+#: templates/js/translated/search.js:284
+#, fuzzy
+#| msgid "Remove part"
+msgid "Remove results"
+msgstr "Teil entfernen"
 
 #: templates/js/translated/stock.js:72
 msgid "Serialize Stock Item"
@@ -10333,7 +10426,8 @@ msgstr "von"
 msgid "rows"
 msgstr "Zeilen"
 
-#: templates/js/translated/tables.js:447 templates/search_form.html:6
+#: templates/js/translated/tables.js:447 templates/navbar.html:94
+#: templates/search.html:8 templates/search_form.html:6
 #: templates/search_form.html:7
 msgid "Search"
 msgstr "Suche"
@@ -10370,27 +10464,27 @@ msgstr "Kaufen"
 msgid "Sell"
 msgstr "Verkaufen"
 
-#: templates/navbar.html:101
+#: templates/navbar.html:108
 #, fuzzy
 #| msgid "Low stock notification"
 msgid "Show Notifications"
 msgstr "Benachrichtigungen über geringen Bestand"
 
-#: templates/navbar.html:104
+#: templates/navbar.html:111
 #, fuzzy
 #| msgid "New Location"
 msgid "New Notifications"
 msgstr "Neuer Lagerort"
 
-#: templates/navbar.html:125
+#: templates/navbar.html:132
 msgid "Logout"
 msgstr "Ausloggen"
 
-#: templates/navbar.html:127
+#: templates/navbar.html:134
 msgid "Login"
 msgstr "Einloggen"
 
-#: templates/navbar.html:147
+#: templates/navbar.html:154
 msgid "About InvenTree"
 msgstr "Über InvenTree"
 
@@ -10398,7 +10492,7 @@ msgstr "Über InvenTree"
 msgid "InvenTree demo mode"
 msgstr "InvenTree Demo-Modus"
 
-#: templates/notifications.html:12
+#: templates/notifications.html:13
 #, fuzzy
 #| msgid "Subscribe to notifications for this category"
 msgid "Show all notifications and history"
@@ -10415,6 +10509,32 @@ msgstr "Sie wurden erfolgreich ausgeloggt."
 #: templates/registration/logged_out.html:8
 msgid "Log in again"
 msgstr "Erneut einloggen"
+
+#: templates/search.html:9
+#, fuzzy
+#| msgid "Search Results"
+msgid "Show full search results"
+msgstr "Suchergebnisse"
+
+#: templates/search.html:12
+msgid "Clear search"
+msgstr ""
+
+#: templates/search.html:16
+#, fuzzy
+#| msgid "Edit test result"
+msgid "Filter results"
+msgstr "Testergebnis bearbeiten"
+
+#: templates/search.html:20
+msgid "Close search menu"
+msgstr ""
+
+#: templates/search.html:35
+#, fuzzy
+#| msgid "No matching results"
+msgid "No search results"
+msgstr "Keine passenden Ergebnisse gefunden"
 
 #: templates/stats.html:9
 msgid "Server"
@@ -10740,9 +10860,6 @@ msgstr "Berechtigung Einträge zu löschen"
 
 #~ msgid "Select Part"
 #~ msgstr "Teil auswählen"
-
-#~ msgid "Match Parts"
-#~ msgstr "Teile zuordnen"
 
 #~ msgid "Export Bill of Materials"
 #~ msgstr "Stückliste exportieren"
