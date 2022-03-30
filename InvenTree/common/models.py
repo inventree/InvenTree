@@ -1319,7 +1319,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
 
         'SEARCH_PREVIEW_RESULTS': {
             'name': _('Search Preview Results'),
-            'description': _('Number of results to show in search preview window'),
+            'description': _('Number of results to show in each section of the search preview window'),
             'default': 10,
             'validator': [int, MinValueValidator(1)]
         },

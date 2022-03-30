@@ -10,10 +10,10 @@
 */
 
 
+/*
+ * Callback when the search panel is closed
+ */
 function closeSearchPanel() {
-
-    // TODO
-    
 }
 
 
