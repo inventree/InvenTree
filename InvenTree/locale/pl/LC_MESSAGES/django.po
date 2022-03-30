@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-30 02:38+0000\n"
-"PO-Revision-Date: 2022-03-30 02:45\n"
+"PO-Revision-Date: 2022-03-30 21:00\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -720,7 +720,7 @@ msgstr "Zamówienie budowy, do którego budowa jest przypisana"
 #: templates/js/translated/stock.js:899 templates/js/translated/stock.js:1622
 #: templates/js/translated/stock.js:2542 templates/js/translated/stock.js:2641
 msgid "Part"
-msgstr "Część"
+msgstr "Komponent"
 
 #: build/models.py:235
 msgid "Select part to build"
@@ -1384,7 +1384,7 @@ msgstr "Zamów wymagane komponenty"
 #: company/templates/company/detail.html:85 order/views.py:463
 #: part/templates/part/category.html:174
 msgid "Order Parts"
-msgstr "Zamów części"
+msgstr "Zamów komponent"
 
 #: build/templates/build/detail.html:200
 msgid "Untracked stock has been fully allocated for this Build Order"
