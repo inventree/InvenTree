@@ -72,7 +72,7 @@ class ViewTests(TestCase):
         """
 
         # Change this number as more javascript files are added to the index page
-        N_SCRIPT_FILES = 37
+        N_SCRIPT_FILES = 38
 
         content = self.get_index_page()
 

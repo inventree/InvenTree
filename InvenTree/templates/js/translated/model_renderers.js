@@ -10,7 +10,9 @@
     renderCompany,
     renderManufacturerPart,
     renderOwner,
+    renderPart,
     renderPartCategory,
+    renderStockItem,
     renderStockLocation,
     renderSupplierPart,
 */
@@ -31,7 +33,7 @@
 
 // Renderer for "Company" model
 // eslint-disable-next-line no-unused-vars
-function renderCompany(name, data, parameters, options) {
+function renderCompany(name, data, parameters={}, options={}) {
     
     var html = select2Thumbnail(data.image);
 
@@ -45,7 +47,7 @@ function renderCompany(name, data, parameters, options) {
 
 // Renderer for "StockItem" model
 // eslint-disable-next-line no-unused-vars
-function renderStockItem(name, data, parameters, options) {
+function renderStockItem(name, data, parameters={}, options={}) {
 
     var image = blankImage();
     
@@ -111,7 +113,7 @@ function renderStockItem(name, data, parameters, options) {
 
 // Renderer for "StockLocation" model
 // eslint-disable-next-line no-unused-vars
-function renderStockLocation(name, data, parameters, options) {
+function renderStockLocation(name, data, parameters={}, options={}) {
 
     var level = '- '.repeat(data.level);
 
@@ -133,7 +135,7 @@ function renderStockLocation(name, data, parameters, options) {
 }
 
 // eslint-disable-next-line no-unused-vars
-function renderBuild(name, data, parameters, options) {
+function renderBuild(name, data, parameters={}, options={}) {
     
     var image = null;
 
@@ -154,7 +156,7 @@ function renderBuild(name, data, parameters, options) {
 
 // Renderer for "Part" model
 // eslint-disable-next-line no-unused-vars
-function renderPart(name, data, parameters, options) {
+function renderPart(name, data, parameters={}, options={}) {
 
     var html = select2Thumbnail(data.image);
     
@@ -164,12 +166,13 @@ function renderPart(name, data, parameters, options) {
         html += ` - <i><small>${data.description}</small></i>`;
     }
 
-    var extra = '';
+    var stock_data = '';
 
-    // Display available part quantity
     if (user_settings.PART_SHOW_QUANTITY_IN_FORMS) {
-        extra += partStockLabel(data);
+        stock_data = partStockLabel(data);
     }
+
+    var extra = '';
 
     if (!data.active) {
         extra += `<span class='badge badge-right rounded-pill bg-danger'>{% trans "Inactive" %}</span>`;
@@ -178,6 +181,7 @@ function renderPart(name, data, parameters, options) {
     html += `
     <span class='float-right'>
         <small>
+            ${stock_data}
             ${extra}
             {% trans "Part ID" %}: ${data.pk}
             </small>
@@ -188,7 +192,7 @@ function renderPart(name, data, parameters, options) {
 
 // Renderer for "User" model
 // eslint-disable-next-line no-unused-vars
-function renderUser(name, data, parameters, options) {
+function renderUser(name, data, parameters={}, options={}) {
 
     var html = `<span>${data.username}</span>`;
 
@@ -202,7 +206,7 @@ function renderUser(name, data, parameters, options) {
 
 // Renderer for "Owner" model
 // eslint-disable-next-line no-unused-vars
-function renderOwner(name, data, parameters, options) {
+function renderOwner(name, data, parameters={}, options={}) {
 
     var html = `<span>${data.name}</span>`;
 
@@ -223,15 +227,13 @@ function renderOwner(name, data, parameters, options) {
 
 // Renderer for "PurchaseOrder" model
 // eslint-disable-next-line no-unused-vars
-function renderPurchaseOrder(name, data, parameters, options) {
-    var html = '';
+function renderPurchaseOrder(name, data, parameters={}, options={}) {
 
     var prefix = global_settings.PURCHASEORDER_REFERENCE_PREFIX;
+    var html = `<span>${prefix}${data.reference}</span>`;
     
     var thumbnail = null;
     
-    html += `<span>${prefix}${data.reference}</span>`;
-
     if (data.supplier_detail) {
         thumbnail = data.supplier_detail.thumbnail || data.supplier_detail.image;
 
@@ -257,8 +259,19 @@ function renderPurchaseOrder(name, data, parameters, options) {
 
 // Renderer for "SalesOrder" model
 // eslint-disable-next-line no-unused-vars
-function renderSalesOrder(name, data, parameters, options) {
-    var html = `<span>${data.reference}</span>`;
+function renderSalesOrder(name, data, parameters={}, options={}) {
+    
+    var prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
+    var html = `<span>${prefix}${data.reference}</span>`;
+    
+    var thumbnail = null;
+
+    if (data.customer_detail) {
+        thumbnail = data.customer_detail.thumbnail || data.customer_detail.image;
+
+        html += ' - ' + select2Thumbnail(thumbnail);
+        html += `<span>${data.customer_detail.name}</span>`;
+    }
 
     if (data.description) {
         html += ` - <em>${data.description}</em>`;
@@ -277,7 +290,7 @@ function renderSalesOrder(name, data, parameters, options) {
 
 // Renderer for "SalesOrderShipment" model
 // eslint-disable-next-line no-unused-vars
-function renderSalesOrderShipment(name, data, parameters, options) {
+function renderSalesOrderShipment(name, data, parameters={}, options={}) {
 
     var so_prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
 
@@ -294,7 +307,7 @@ function renderSalesOrderShipment(name, data, parameters, options) {
 
 // Renderer for "PartCategory" model
 // eslint-disable-next-line no-unused-vars
-function renderPartCategory(name, data, parameters, options) {
+function renderPartCategory(name, data, parameters={}, options={}) {
 
     var level = '- '.repeat(data.level);
 
@@ -310,7 +323,7 @@ function renderPartCategory(name, data, parameters, options) {
 }
 
 // eslint-disable-next-line no-unused-vars
-function renderPartParameterTemplate(name, data, parameters, options) {
+function renderPartParameterTemplate(name, data, parameters={}, options={}) {
 
     var units = '';
 
@@ -326,7 +339,7 @@ function renderPartParameterTemplate(name, data, parameters, options) {
 
 // Renderer for "ManufacturerPart" model
 // eslint-disable-next-line no-unused-vars
-function renderManufacturerPart(name, data, parameters, options) {
+function renderManufacturerPart(name, data, parameters={}, options={}) {
 
     var manufacturer_image = null;
     var part_image = null;
@@ -355,7 +368,7 @@ function renderManufacturerPart(name, data, parameters, options) {
 
 // Renderer for "SupplierPart" model
 // eslint-disable-next-line no-unused-vars
-function renderSupplierPart(name, data, parameters, options) {
+function renderSupplierPart(name, data, parameters={}, options={}) {
 
     var supplier_image = null;
     var part_image = null;
