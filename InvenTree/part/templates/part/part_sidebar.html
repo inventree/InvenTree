@@ -17,7 +17,9 @@
 {% if part.assembly %}
 {% trans "Bill of Materials" as text %}
 {% include "sidebar_item.html" with label="bom" text=text icon="fa-list" %}
+{% endif %}
 {% if roles.build.view %}
+{% if part.assembly or part.component %}
 {% trans "Build Orders" as text %}
 {% include "sidebar_item.html" with label="build-orders" text=text icon="fa-tools" %}
 {% endif %}
@@ -29,10 +31,6 @@
 {% if show_price_history %}
 {% trans "Pricing" as text %}
 {% include "sidebar_item.html" with label="pricing" text=text icon="fa-dollar-sign" %}
-{% endif %}
-{% if part.salable or part.component %}
-{% trans "Allocations" as text %}
-{% include "sidebar_item.html" with label="allocations" text=text icon="fa-bookmark" %}
 {% endif %}
 {% if part.purchaseable and roles.purchase_order.view %}
 {% trans "Suppliers" as text %}
