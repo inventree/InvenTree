@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-30 02:38+0000\n"
-"PO-Revision-Date: 2022-03-30 21:00\n"
+"PO-Revision-Date: 2022-03-30 22:13\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -2857,7 +2857,7 @@ msgstr "Opcje"
 #: company/templates/company/detail.html:84
 #: part/templates/part/category.html:174
 msgid "Order parts"
-msgstr "Zamów części"
+msgstr "Zamów komponenty"
 
 #: company/templates/company/detail.html:42
 #: company/templates/company/detail.html:89
@@ -2968,7 +2968,7 @@ msgstr "Producenci"
 #: company/templates/company/supplier_part.html:159
 #: part/templates/part/detail.html:81 part/templates/part/part_base.html:80
 msgid "Order part"
-msgstr "Zamów część"
+msgstr "Zamów komponent"
 
 #: company/templates/company/manufacturer_part.html:40
 #: templates/js/translated/company.js:565
@@ -3094,7 +3094,7 @@ msgstr ""
 #: company/templates/company/supplier_part.html:160
 #: part/templates/part/detail.html:82
 msgid "Order Part"
-msgstr ""
+msgstr "Zamów komponent"
 
 #: company/templates/company/supplier_part.html:179
 #: part/templates/part/prices.html:7
@@ -4117,7 +4117,7 @@ msgstr ""
 
 #: part/models.py:113
 msgid "Default location for parts in this category"
-msgstr ""
+msgstr "Domyślna lokalizacja dla komponentów w tej kategorii"
 
 #: part/models.py:116
 msgid "Default keywords"
@@ -4274,7 +4274,7 @@ msgstr ""
 
 #: part/models.py:960
 msgid "Can this part be built from other parts?"
-msgstr "Czy ta część może być zbudowana z innych części?"
+msgstr "Czy ten komponent może być zbudowany z innych komponentów?"
 
 #: part/models.py:966
 msgid "Can this part be used to build other parts?"
@@ -4426,19 +4426,19 @@ msgstr ""
 
 #: part/models.py:2660 templates/js/translated/model_renderers.js:186
 msgid "Part ID"
-msgstr "Numer części"
+msgstr "ID komponentu"
 
 #: part/models.py:2661
 msgid "Unique part ID value"
-msgstr ""
+msgstr "Unikalny wartość ID komponentu"
 
 #: part/models.py:2664
 msgid "Part Name"
-msgstr "Nazwa części"
+msgstr "Nazwa komponentu"
 
 #: part/models.py:2668
 msgid "Part IPN"
-msgstr "IPN części"
+msgstr "IPN komponentu"
 
 #: part/models.py:2669
 msgid "Part IPN value"
