@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-30 02:38+0000\n"
-"PO-Revision-Date: 2022-03-30 02:45\n"
+"PO-Revision-Date: 2022-03-31 18:28\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -83,7 +83,7 @@ msgstr "Vous devez taper le même e-mail à chaque fois."
 #: InvenTree/helpers.py:442
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
-msgstr ""
+msgstr "Dupliquer le numéro : {sn}"
 
 #: InvenTree/helpers.py:449 order/models.py:282 order/models.py:435
 #: stock/views.py:983
@@ -255,45 +255,45 @@ msgstr "Valeur non valide"
 
 #: InvenTree/serializers.py:355
 msgid "Data File"
-msgstr ""
+msgstr "Fichier de données"
 
 #: InvenTree/serializers.py:356
 msgid "Select data file for upload"
-msgstr ""
+msgstr "Sélectionnez le fichier de données à envoyer"
 
 #: InvenTree/serializers.py:380
 msgid "Unsupported file type"
-msgstr ""
+msgstr "Format de fichier non supporté"
 
 #: InvenTree/serializers.py:386
 msgid "File is too large"
-msgstr ""
+msgstr "Fichier trop volumineux"
 
 #: InvenTree/serializers.py:407
 msgid "No columns found in file"
-msgstr ""
+msgstr "Pas de colonnes trouvées dans le fichier"
 
 #: InvenTree/serializers.py:410
 msgid "No data rows found in file"
-msgstr ""
+msgstr "Par de lignes de données trouvées dans le fichier"
 
 #: InvenTree/serializers.py:533
 msgid "No data rows provided"
-msgstr ""
+msgstr "Pas de lignes de données fournies"
 
 #: InvenTree/serializers.py:536
 msgid "No data columns supplied"
-msgstr ""
+msgstr "Pas de colonne de données fournie"
 
 #: InvenTree/serializers.py:623
 #, python-brace-format
 msgid "Missing required column: '{name}'"
-msgstr ""
+msgstr "Colonne requise manquante : {name}"
 
 #: InvenTree/serializers.py:632
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
-msgstr ""
+msgstr "Colonne duliquée : '{col}'"
 
 #: InvenTree/settings.py:665
 msgid "German"
@@ -325,7 +325,7 @@ msgstr "Hebrew"
 
 #: InvenTree/settings.py:672
 msgid "Hungarian"
-msgstr ""
+msgstr "Hongrois"
 
 #: InvenTree/settings.py:673
 msgid "Italian"
@@ -524,7 +524,7 @@ msgstr "Sortie de l'ordre de construction terminée"
 
 #: InvenTree/status_codes.py:302
 msgid "Consumed by build order"
-msgstr ""
+msgstr "Consommé par ordre de construction"
 
 #: InvenTree/status_codes.py:304
 msgid "Received against purchase order"
