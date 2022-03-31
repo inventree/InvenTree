@@ -246,6 +246,8 @@ class PartBriefSerializer(InvenTreeModelSerializer):
 
     stock = serializers.FloatField(source='total_stock')
 
+    available = serializers.FloatField(source='available_stock')
+
     class Meta:
         model = Part
         fields = [
@@ -263,6 +265,7 @@ class PartBriefSerializer(InvenTreeModelSerializer):
             'purchaseable',
             'salable',
             'stock',
+            'available',
             'trackable',
             'virtual',
             'units',

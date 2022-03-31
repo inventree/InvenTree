@@ -798,7 +798,7 @@ function loadBomTable(table, options={}) {
     });
 
     cols.push({
-        field: 'sub_part_detail.stock',
+        field: 'sub_part_detail.available',
         title: '{% trans "Available" %}',
         searchable: false,
         sortable: true,
@@ -808,7 +808,7 @@ function loadBomTable(table, options={}) {
             var text = value;
 
             if (value == null || value <= 0) {
-                text = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
+                text = `<span class='badge rounded-pill bg-danger'>{% trans "Not available" %}</span>`;
             }
 
             return renderLink(text, url);
@@ -903,7 +903,7 @@ function loadBomTable(table, options={}) {
                 var can_build = 0;
 
                 if (row.quantity > 0) {
-                    can_build = row.sub_part_detail.stock / row.quantity;
+                    can_build = row.sub_part_detail.available / row.quantity;
                 }
 
                 return +can_build.toFixed(2);
@@ -914,11 +914,11 @@ function loadBomTable(table, options={}) {
                 var cb_b = 0;
 
                 if (rowA.quantity > 0) {
-                    cb_a = rowA.sub_part_detail.stock / rowA.quantity;
+                    cb_a = rowA.sub_part_detail.available / rowA.quantity;
                 }
 
                 if (rowB.quantity > 0) {
-                    cb_b = rowB.sub_part_detail.stock / rowB.quantity;
+                    cb_b = rowB.sub_part_detail.available / rowB.quantity;
                 }
 
                 return (cb_a > cb_b) ? 1 : -1;
