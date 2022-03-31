@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-30 02:38+0000\n"
-"PO-Revision-Date: 2022-03-30 02:45\n"
+"PO-Revision-Date: 2022-03-31 11:36\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -2252,59 +2252,59 @@ msgstr "PDF riport megjelenítése a böngészőben letöltés helyett"
 
 #: common/models.py:1272
 msgid "Search Parts"
-msgstr ""
+msgstr "Alkatrészek keresése"
 
 #: common/models.py:1273
 msgid "Display parts in search preview window"
-msgstr ""
+msgstr "Alkatrészek megjelenítése a keresési előnézetben"
 
 #: common/models.py:1279
 msgid "Search Categories"
-msgstr ""
+msgstr "Kategóriák keresése"
 
 #: common/models.py:1280
 msgid "Display part categories in search preview window"
-msgstr ""
+msgstr "Alkatrész kategóriák megjelenítése a keresési előnézetben"
 
 #: common/models.py:1286
 msgid "Search Stock"
-msgstr ""
+msgstr "Készlet keresése"
 
 #: common/models.py:1287
 msgid "Display stock items in search preview window"
-msgstr ""
+msgstr "Készlet tételek megjelenítése a keresési előnézetben"
 
 #: common/models.py:1293
 msgid "Search Locations"
-msgstr ""
+msgstr "Helyek keresése"
 
 #: common/models.py:1294
 msgid "Display stock locations in search preview window"
-msgstr ""
+msgstr "Készlet helyek megjelenítése a keresési előnézetben"
 
 #: common/models.py:1300
 msgid "Search Companies"
-msgstr ""
+msgstr "Cégek keresése"
 
 #: common/models.py:1301
 msgid "Display companies in search preview window"
-msgstr ""
+msgstr "Cégek megjelenítése a keresési előnézetben"
 
 #: common/models.py:1307
 msgid "Search Purchase Orders"
-msgstr ""
+msgstr "Beszerzési rendelések keresése"
 
 #: common/models.py:1308
 msgid "Display purchase orders in search preview window"
-msgstr ""
+msgstr "Beszerzési rendelések megjelenítése a keresési előnézetben"
 
 #: common/models.py:1314
 msgid "Search Sales Orders"
-msgstr ""
+msgstr "Vevői rendelések keresése"
 
 #: common/models.py:1315
 msgid "Display sales orders in search preview window"
-msgstr ""
+msgstr "Vevői rendelések megjelenítése a keresési előnézetben"
 
 #: common/models.py:1321
 msgid "Search Preview Results"
@@ -2312,7 +2312,7 @@ msgstr "Keresési előnézet eredményei"
 
 #: common/models.py:1322
 msgid "Number of results to show in each section of the search preview window"
-msgstr ""
+msgstr "A keresési előnézetben megjelenítendő eredmények száma szekciónként"
 
 #: common/models.py:1328
 msgid "Hide Inactive Parts"
@@ -3700,7 +3700,7 @@ msgstr "Bevételezés"
 #: order/templates/order/order_base.html:62
 #: order/templates/order/sales_order_base.html:67 order/views.py:181
 msgid "Complete Order"
-msgstr "Rendelés kész"
+msgstr "Rendelés befejezése"
 
 #: order/templates/order/order_base.html:84
 #: order/templates/order/sales_order_base.html:79
@@ -3743,7 +3743,7 @@ msgstr "A rendelés törlésével annak adatai és sortételei a továbbiakban m
 
 #: order/templates/order/order_complete.html:7
 msgid "Mark this order as complete?"
-msgstr "Rendelés késznek jelölése?"
+msgstr "Rendelés befejezettnek jelölése?"
 
 #: order/templates/order/order_complete.html:10
 msgid "This order has line items which have not been marked as received."
@@ -3751,7 +3751,7 @@ msgstr "Ez a rendelés olyan sortételeket tartalmaz amik még nem érkeztek be.
 
 #: order/templates/order/order_complete.html:11
 msgid "Completing this order means that the order and line items will no longer be editable."
-msgstr "A rendelés készre jelölésével annak adatai és sortételei a továbbiakban már nem lesznek szerkeszthetők."
+msgstr "A rendelés befejezésével jelölésével annak adatai és sortételei a továbbiakban már nem lesznek szerkeszthetők."
 
 #: order/templates/order/order_issue.html:8
 msgid "After placing this purchase order, line items will no longer be editable."
@@ -3922,7 +3922,7 @@ msgstr "Csomagolási lista nyomtatása"
 #: order/templates/order/sales_order_base.html:66
 #: order/templates/order/sales_order_base.html:229
 msgid "Complete Sales Order"
-msgstr "Vevői rendelés kész"
+msgstr "Vevői rendelés befejezése, minden kiszállítva"
 
 #: order/templates/order/sales_order_base.html:102
 msgid "This Sales Order has not been fully allocated"
@@ -9190,11 +9190,11 @@ msgstr "Vevői rendelés(eke)t ki kell választani a riport nyomtatás előtt"
 
 #: templates/js/translated/search.js:281
 msgid "Minimize results"
-msgstr ""
+msgstr "Eredmények összezárása"
 
 #: templates/js/translated/search.js:284
 msgid "Remove results"
-msgstr ""
+msgstr "Eredmények eltávolítása"
 
 #: templates/js/translated/stock.js:72
 msgid "Serialize Stock Item"
@@ -9853,23 +9853,23 @@ msgstr "Jelentkezz be újra"
 
 #: templates/search.html:9
 msgid "Show full search results"
-msgstr ""
+msgstr "Teljes találatok megjelenítése"
 
 #: templates/search.html:12
 msgid "Clear search"
-msgstr ""
+msgstr "Keresőmező törlése"
 
 #: templates/search.html:16
 msgid "Filter results"
-msgstr ""
+msgstr "Eredmények szűrése"
 
 #: templates/search.html:20
 msgid "Close search menu"
-msgstr ""
+msgstr "Keresés menü bezárása"
 
 #: templates/search.html:35
 msgid "No search results"
-msgstr ""
+msgstr "Nincs találat"
 
 #: templates/stats.html:9
 msgid "Server"
