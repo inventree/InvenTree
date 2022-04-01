@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-01 06:34+0000\n"
-"PO-Revision-Date: 2022-04-01 19:12\n"
+"PO-Revision-Date: 2022-04-01 20:15\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1297,7 +1297,7 @@ msgstr "Sind Sie sicher, dass sie diesen Bauauftrag abbrechen möchten?"
 
 #: build/templates/build/delete_build.html:5
 msgid "Are you sure you want to delete this build?"
-msgstr ""
+msgstr "Möchten Sie diese Datei wirklich löschen?"
 
 #: build/templates/build/detail.html:16
 msgid "Build Details"
@@ -2224,7 +2224,7 @@ msgstr "Zeige überfällige SOs auf der Startseite"
 
 #: common/models.py:1244
 msgid "Enable email notifications"
-msgstr ""
+msgstr "E-Mail-Benachrichtigungen aktivieren"
 
 #: common/models.py:1245
 msgid "Allow sending of emails for event notifications"
@@ -2264,7 +2264,7 @@ msgstr ""
 
 #: common/models.py:1279
 msgid "Search Categories"
-msgstr ""
+msgstr "Kategorien durchsuchen"
 
 #: common/models.py:1280
 msgid "Display part categories in search preview window"
@@ -2296,7 +2296,7 @@ msgstr ""
 
 #: common/models.py:1307
 msgid "Search Purchase Orders"
-msgstr ""
+msgstr "Bestellungen durchsuchen"
 
 #: common/models.py:1308
 msgid "Display purchase orders in search preview window"
@@ -2304,7 +2304,7 @@ msgstr ""
 
 #: common/models.py:1314
 msgid "Search Sales Orders"
-msgstr ""
+msgstr "Aufträge durchsuchen"
 
 #: common/models.py:1315
 msgid "Display sales orders in search preview window"
@@ -6805,7 +6805,7 @@ msgstr "Keine ungelesenen Benachrichtigungen"
 
 #: templates/InvenTree/notifications/notifications.html:140
 msgid "No notification history found"
-msgstr ""
+msgstr "Keine Benachrichtigungshistorie"
 
 #: templates/InvenTree/notifications/sidebar.html:8
 msgid "Inbox"
@@ -7475,7 +7475,7 @@ msgstr "Ausloggen"
 
 #: templates/account/logout.html:10
 msgid "Are you sure you want to sign out?"
-msgstr "Möchtest Sie sich wirklich abmelden?"
+msgstr "Möchten Sie sich wirklich abmelden?"
 
 #: templates/account/logout.html:19
 msgid "Back to Site"
@@ -8513,11 +8513,11 @@ msgstr "Keine Labels zu den ausgewählten Teilen gefunden"
 
 #: templates/js/translated/label.js:261
 msgid "Select Printer"
-msgstr ""
+msgstr "Drucker auswählen"
 
 #: templates/js/translated/label.js:265
 msgid "Export to PDF"
-msgstr ""
+msgstr "Als PDF exportieren"
 
 #: templates/js/translated/label.js:304
 msgid "stock items selected"
@@ -8625,15 +8625,15 @@ msgstr "Zuliefererteil-ID"
 
 #: templates/js/translated/notification.js:228
 msgid "Mark as unread"
-msgstr ""
+msgstr "Als ungelesen markieren"
 
 #: templates/js/translated/notification.js:232
 msgid "Mark as read"
-msgstr ""
+msgstr "Als gelesen markieren"
 
 #: templates/js/translated/notification.js:256
 msgid "No unread notifications"
-msgstr ""
+msgstr "Keine ungelesenen Benachrichtigungen"
 
 #: templates/js/translated/notification.js:297 templates/notifications.html:10
 msgid "Notifications will load here"
@@ -9200,7 +9200,7 @@ msgstr ""
 
 #: templates/js/translated/search.js:284
 msgid "Remove results"
-msgstr ""
+msgstr "Ergebnisse entfernen"
 
 #: templates/js/translated/stock.js:72
 msgid "Serialize Stock Item"
@@ -9819,11 +9819,11 @@ msgstr "Verkaufen"
 
 #: templates/navbar.html:108
 msgid "Show Notifications"
-msgstr ""
+msgstr "Benachrichtigungen anzeigen"
 
 #: templates/navbar.html:111
 msgid "New Notifications"
-msgstr ""
+msgstr "Neue Benachrichtigungen"
 
 #: templates/navbar.html:132
 msgid "Logout"
@@ -9867,7 +9867,7 @@ msgstr ""
 
 #: templates/search.html:16
 msgid "Filter results"
-msgstr ""
+msgstr "Ergebnisse filtern"
 
 #: templates/search.html:20
 msgid "Close search menu"
