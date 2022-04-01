@@ -68,9 +68,9 @@ def get_deleted_company():
         name='deleted',
         email='deleted',
         is_deleted=True,
-        is_customer = True,
-        is_supplier = True,
-        is_manufacturer = True
+        is_customer=True,
+        is_supplier=True,
+        is_manufacturer=True
     )[0]
 
 
