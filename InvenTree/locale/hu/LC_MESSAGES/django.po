@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-01 06:34+0000\n"
-"PO-Revision-Date: 2022-04-01 08:22\n"
+"PO-Revision-Date: 2022-04-01 12:50\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1297,7 +1297,7 @@ msgstr "Biztosan meg szeretnéd szakítani ezt a gyártást?"
 
 #: build/templates/build/delete_build.html:5
 msgid "Are you sure you want to delete this build?"
-msgstr ""
+msgstr "Biztosan törölni szeretnéd ezt a gyártási utasítást?"
 
 #: build/templates/build/detail.html:16
 msgid "Build Details"
