@@ -386,6 +386,22 @@ class PartSerializer(InvenTreeModelSerializer):
             )
         )
 
+        """
+        Annotate with the number of stock items allocated to build orders.
+        This annotation is modeled on Part.build_order_allocations() method
+        """
+        bo_allocation_filter = Q(
+            build__status__in=BuildStatus.ACTIVE_CODES,
+        )
+
+        queryset = queryset.annotate(
+            allocated_to_build_orders=Coalesce(
+                SubquerySum('stock_items__allocations__quantity', filter=bo_allocation_filter),
+                Decimal(0),
+                output_field=models.DecimalField(),
+            )
+        )
+
         return queryset
 
     def get_starred(self, part):
@@ -399,6 +415,7 @@ class PartSerializer(InvenTreeModelSerializer):
     category_detail = CategorySerializer(source='category', many=False, read_only=True)
 
     # Calculated fields
+    allocated_to_build_orders = serializers.FloatField(read_only=True)
     allocated_to_sales_orders = serializers.FloatField(read_only=True)
     building = serializers.FloatField(read_only=True)
     in_stock = serializers.FloatField(read_only=True)
@@ -423,6 +440,7 @@ class PartSerializer(InvenTreeModelSerializer):
         partial = True
         fields = [
             'active',
+            'allocated_to_build_orders',
             'allocated_to_sales_orders',
             'assembly',
             'category',
