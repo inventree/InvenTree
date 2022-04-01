@@ -815,6 +815,10 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         'location',
         'bom',
         'test_templates',
+        'build',
+        'location',
+        'stock',
+        'sales_order',
     ]
 
     roles = [
@@ -879,6 +883,27 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
 
         self.assertEqual(data['in_stock'], 1100)
         self.assertEqual(data['stock_item_count'], 105)
+
+    def test_allocation_annotations(self):
+        """
+        Tests for query annotations which add allocation information.
+        Ref: https://github.com/inventree/InvenTree/pull/2797
+        """
+
+        # We are looking at Part ID 100 ("Bob")
+        url = reverse('api-part-detail', kwargs={'pk': 100})
+
+        response = self.get(url, expected_code=200)
+
+        # Check that the expected annotated fields exist in the data
+        data = response.data
+        self.assertEqual(data['allocated_to_build_orders'], 0)
+        self.assertEqual(data['allocated_to_sales_orders'], 0)
+
+        # The unallocated stock count should equal the 'in stock' coutn
+        in_stock = data['in_stock']
+        self.assertEqual(in_stock, 126)
+        self.assertEqual(data['unallocated_stock'], in_stock)
 
 
 class BomItemTest(InvenTreeAPITestCase):
