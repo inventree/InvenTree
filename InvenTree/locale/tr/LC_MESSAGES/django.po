@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-01 06:34+0000\n"
-"PO-Revision-Date: 2022-04-01 06:38\n"
+"PO-Revision-Date: 2022-04-01 10:44\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -70,20 +70,20 @@ msgstr "Kategori Seçin"
 
 #: InvenTree/forms.py:236
 msgid "Email (again)"
-msgstr ""
+msgstr "E-posta (tekrar)"
 
 #: InvenTree/forms.py:240
 msgid "Email address confirmation"
-msgstr ""
+msgstr "E-posta adresi onayı"
 
 #: InvenTree/forms.py:260
 msgid "You must type the same email each time."
-msgstr ""
+msgstr "Her seferind eaynı e-posta adresini yazmalısınız."
 
 #: InvenTree/helpers.py:442
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
-msgstr ""
+msgstr "Tekrarlanan seri no:{sn}"
 
 #: InvenTree/helpers.py:449 order/models.py:282 order/models.py:435
 #: stock/views.py:983
@@ -103,7 +103,7 @@ msgstr "Geçersiz grup: {g}"
 #: InvenTree/helpers.py:518
 #, python-brace-format
 msgid "Invalid/no group {group}"
-msgstr ""
+msgstr "Geçersiz grup: {group}"
 
 #: InvenTree/helpers.py:524
 msgid "No serial numbers found"
@@ -116,11 +116,11 @@ msgstr "Benzersiz seri numaralarının sayısı ({s}) girilen miktarla eşleşme
 
 #: InvenTree/models.py:185
 msgid "Missing file"
-msgstr ""
+msgstr "Eksik dosya"
 
 #: InvenTree/models.py:186
 msgid "Missing external link"
-msgstr ""
+msgstr "Bozuk dış bağlantı"
 
 #: InvenTree/models.py:197 stock/models.py:2138
 #: templates/js/translated/attachment.js:119
@@ -167,28 +167,28 @@ msgstr "yükleme tarihi"
 
 #: InvenTree/models.py:241
 msgid "Filename must not be empty"
-msgstr ""
+msgstr "Dosya adı boş olamaz"
 
 #: InvenTree/models.py:264
 msgid "Invalid attachment directory"
-msgstr ""
+msgstr "Ek dosya yolu geçersiz"
 
 #: InvenTree/models.py:274
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr ""
+msgstr "Dosya adı geçersiz karakterler içeriyor'{c}'"
 
 #: InvenTree/models.py:277
 msgid "Filename missing extension"
-msgstr ""
+msgstr "Dosya uzantısı yok"
 
 #: InvenTree/models.py:284
 msgid "Attachment with this filename already exists"
-msgstr ""
+msgstr "Aynı isimli başka bir dosya zaten var"
 
 #: InvenTree/models.py:291
 msgid "Error renaming file"
-msgstr ""
+msgstr "Dosya adı değiştirilirken hata"
 
 #: InvenTree/models.py:326
 msgid "Invalid choice"
@@ -247,53 +247,53 @@ msgstr "Geçerli bir numara olmalı"
 
 #: InvenTree/serializers.py:299
 msgid "Filename"
-msgstr ""
+msgstr "Dosya adı"
 
 #: InvenTree/serializers.py:334
 msgid "Invalid value"
-msgstr ""
+msgstr "Geçersiz değer"
 
 #: InvenTree/serializers.py:355
 msgid "Data File"
-msgstr ""
+msgstr "Veri Dosyası"
 
 #: InvenTree/serializers.py:356
 msgid "Select data file for upload"
-msgstr ""
+msgstr "Yüklemek istediğiniz dosyayı seçin"
 
 #: InvenTree/serializers.py:380
 msgid "Unsupported file type"
-msgstr ""
+msgstr "Desteklenmeyen dsoya tipi"
 
 #: InvenTree/serializers.py:386
 msgid "File is too large"
-msgstr ""
+msgstr "Dosya boyutu çok büyük"
 
 #: InvenTree/serializers.py:407
 msgid "No columns found in file"
-msgstr ""
+msgstr "Dosyada kolon bulunamadı"
 
 #: InvenTree/serializers.py:410
 msgid "No data rows found in file"
-msgstr ""
+msgstr "Dosyada satır bulunamadı"
 
 #: InvenTree/serializers.py:533
 msgid "No data rows provided"
-msgstr ""
+msgstr "Dosyada satır bulunamadı"
 
 #: InvenTree/serializers.py:536
 msgid "No data columns supplied"
-msgstr ""
+msgstr "Dosyada uygun kolon bulunamadı"
 
 #: InvenTree/serializers.py:623
 #, python-brace-format
 msgid "Missing required column: '{name}'"
-msgstr ""
+msgstr "Gerekli kolon ismi eksik:'{name}'"
 
 #: InvenTree/serializers.py:632
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
-msgstr ""
+msgstr "Tekrarlanan kolon ismi:'{col}'"
 
 #: InvenTree/settings.py:665
 msgid "German"
@@ -313,7 +313,7 @@ msgstr "İspanyolca"
 
 #: InvenTree/settings.py:669
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "İspanyolca(Meksika)"
 
 #: InvenTree/settings.py:670
 msgid "French"
@@ -325,7 +325,7 @@ msgstr "İbranice"
 
 #: InvenTree/settings.py:672
 msgid "Hungarian"
-msgstr ""
+msgstr "Macarca"
 
 #: InvenTree/settings.py:673
 msgid "Italian"
@@ -353,7 +353,7 @@ msgstr "Polonyaca"
 
 #: InvenTree/settings.py:679
 msgid "Portugese"
-msgstr ""
+msgstr "Portekizce"
 
 #: InvenTree/settings.py:680
 msgid "Russian"
@@ -373,7 +373,7 @@ msgstr "Türkçe"
 
 #: InvenTree/settings.py:684
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnamca"
 
 #: InvenTree/settings.py:685
 msgid "Chinese"
@@ -504,7 +504,7 @@ msgstr "Alt ögeyi ayır"
 
 #: InvenTree/status_codes.py:295 templates/js/translated/stock.js:2005
 msgid "Merged stock items"
-msgstr ""
+msgstr "Stok parçalarını birleştir"
 
 #: InvenTree/status_codes.py:297 templates/js/translated/table_filters.js:213
 msgid "Sent to customer"
