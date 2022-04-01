@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-01 06:34+0000\n"
-"PO-Revision-Date: 2022-04-01 06:38\n"
+"PO-Revision-Date: 2022-04-01 19:12\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -2256,7 +2256,7 @@ msgstr "PDF-Berichte im Browser anzeigen, anstatt als Datei herunterzuladen"
 
 #: common/models.py:1272
 msgid "Search Parts"
-msgstr ""
+msgstr "Teile suchen"
 
 #: common/models.py:1273
 msgid "Display parts in search preview window"
@@ -2272,7 +2272,7 @@ msgstr ""
 
 #: common/models.py:1286
 msgid "Search Stock"
-msgstr ""
+msgstr "Bestand durchsuchen"
 
 #: common/models.py:1287
 msgid "Display stock items in search preview window"
@@ -2280,7 +2280,7 @@ msgstr ""
 
 #: common/models.py:1293
 msgid "Search Locations"
-msgstr ""
+msgstr "Lagerorte durchsuchen"
 
 #: common/models.py:1294
 msgid "Display stock locations in search preview window"
@@ -2288,7 +2288,7 @@ msgstr ""
 
 #: common/models.py:1300
 msgid "Search Companies"
-msgstr ""
+msgstr "Firmen durchsuchen"
 
 #: common/models.py:1301
 msgid "Display companies in search preview window"
@@ -6753,7 +6753,7 @@ msgstr "überfällige Aufträge"
 
 #: templates/InvenTree/notifications/history.html:9
 msgid "Notification History"
-msgstr ""
+msgstr "Benachrichtigungsverlauf"
 
 #: templates/InvenTree/notifications/history.html:13
 #: templates/InvenTree/notifications/history.html:14
@@ -6767,7 +6767,7 @@ msgstr ""
 #: templates/InvenTree/notifications/inbox.html:13
 #: templates/InvenTree/notifications/inbox.html:14
 msgid "Mark all as read"
-msgstr ""
+msgstr "Alle als gelesen markieren"
 
 #: templates/InvenTree/notifications/inbox.html:16
 #: templates/InvenTree/notifications/inbox.html:17
@@ -6778,7 +6778,7 @@ msgstr ""
 #: templates/InvenTree/notifications/sidebar.html:5
 #: templates/InvenTree/settings/sidebar.html:17 templates/notifications.html:5
 msgid "Notifications"
-msgstr ""
+msgstr "Benachrichtigungen"
 
 #: templates/InvenTree/notifications/notifications.html:51
 #: templates/InvenTree/settings/settings.html:314
@@ -6787,7 +6787,7 @@ msgstr "ID"
 
 #: templates/InvenTree/notifications/notifications.html:57
 msgid "Age"
-msgstr ""
+msgstr "Alter"
 
 #: templates/InvenTree/notifications/notifications.html:88
 #: templates/InvenTree/settings/plugin.html:126
@@ -6797,11 +6797,11 @@ msgstr "Meldung"
 #: templates/InvenTree/notifications/notifications.html:94
 #: templates/InvenTree/notifications/notifications.html:150
 msgid "Delete Notification"
-msgstr ""
+msgstr "Benachrichtigung löschen"
 
 #: templates/InvenTree/notifications/notifications.html:116
 msgid "No unread notifications found"
-msgstr ""
+msgstr "Keine ungelesenen Benachrichtigungen"
 
 #: templates/InvenTree/notifications/notifications.html:140
 msgid "No notification history found"
@@ -6813,7 +6813,7 @@ msgstr ""
 
 #: templates/InvenTree/notifications/sidebar.html:10
 msgid "History"
-msgstr ""
+msgstr "Verlauf"
 
 #: templates/InvenTree/search.html:8
 msgid "Search Results"
@@ -7348,7 +7348,7 @@ msgstr "Labeleinstellungen"
 
 #: templates/InvenTree/settings/user_notifications.html:8
 msgid "Notification Settings"
-msgstr ""
+msgstr "Benachrichtigungs-Einstellungen"
 
 #: templates/about.html:10
 msgid "InvenTree Version Information"
@@ -9859,7 +9859,7 @@ msgstr "Erneut einloggen"
 
 #: templates/search.html:9
 msgid "Show full search results"
-msgstr ""
+msgstr "Suchergebnis anzeigen"
 
 #: templates/search.html:12
 msgid "Clear search"
@@ -9871,11 +9871,11 @@ msgstr ""
 
 #: templates/search.html:20
 msgid "Close search menu"
-msgstr ""
+msgstr "Suche abbrechen"
 
 #: templates/search.html:35
 msgid "No search results"
-msgstr ""
+msgstr "Keine Treffer gefunden"
 
 #: templates/stats.html:9
 msgid "Server"
