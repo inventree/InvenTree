@@ -96,7 +96,14 @@ def get_deleted_company():
     """
     Returns the deleted company object
     """
-    return Company.objects.get_or_create(name='deleted', email='deleted', is_deleted=True)[0]
+    return Company.objects.get_or_create(
+        name='deleted',
+        email='deleted',
+        is_deleted=True,
+        is_customer = True,
+        is_supplier = True,
+        is_manufacturer = True
+    )[0]
 
 
 class Order(ReferenceIndexingMixin):
