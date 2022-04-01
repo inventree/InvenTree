@@ -7,7 +7,7 @@ from decimal import Decimal
 
 from django.urls import reverse_lazy
 from django.db import models, transaction
-from django.db.models import Q
+from django.db.models import ExpressionWrapper, F, Q
 from django.db.models.functions import Coalesce
 from django.utils.translation import ugettext_lazy as _
 
@@ -375,7 +375,7 @@ class PartSerializer(InvenTreeModelSerializer):
         """
         so_allocation_filter = Q(
             line__order__status__in=SalesOrderStatus.OPEN,  # LineItem points to an OPEN order
-            shipment=None,  # Allocated item has *not* been shipped out
+            shipment__shipment_date=None,  # Allocated item has *not* been shipped out
         )
 
         queryset = queryset.annotate(
@@ -402,6 +402,15 @@ class PartSerializer(InvenTreeModelSerializer):
             )
         )
 
+        # Annotate with the total 'available stock' quantity
+        # This is the current stock, minus any allocations
+        queryset = queryset.annotate(
+            unallocated_stock=ExpressionWrapper(
+                F('in_stock') - F('allocated_to_sales_orders') - F('allocated_to_build_orders'),
+                output_field=models.DecimalField(),
+            )
+        )
+
         return queryset
 
     def get_starred(self, part):
@@ -417,6 +426,7 @@ class PartSerializer(InvenTreeModelSerializer):
     # Calculated fields
     allocated_to_build_orders = serializers.FloatField(read_only=True)
     allocated_to_sales_orders = serializers.FloatField(read_only=True)
+    unallocated_stock = serializers.FloatField(read_only=True)
     building = serializers.FloatField(read_only=True)
     in_stock = serializers.FloatField(read_only=True)
     ordering = serializers.FloatField(read_only=True)
@@ -472,6 +482,7 @@ class PartSerializer(InvenTreeModelSerializer):
             'suppliers',
             'thumbnail',
             'trackable',
+            'unallocated_stock',
             'units',
             'variant_of',
             'virtual',
