@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-30 02:38+0000\n"
-"PO-Revision-Date: 2022-03-30 02:45\n"
+"POT-Creation-Date: 2022-04-01 06:34+0000\n"
+"PO-Revision-Date: 2022-04-01 06:38\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -1293,6 +1293,10 @@ msgstr ""
 
 #: build/templates/build/cancel.html:5
 msgid "Are you sure you wish to cancel this build?"
+msgstr ""
+
+#: build/templates/build/delete_build.html:5
+msgid "Are you sure you want to delete this build?"
 msgstr ""
 
 #: build/templates/build/detail.html:16
