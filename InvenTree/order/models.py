@@ -24,7 +24,7 @@ from mptt.models import TreeForeignKey
 from users import models as UserModels
 from part import models as PartModels
 from stock import models as stock_models
-from company.models import Company, SupplierPart
+from company.models import Company, SupplierPart, get_deleted_company
 from plugin.events import trigger_event
 
 import InvenTree.helpers
@@ -90,20 +90,6 @@ def get_next_so_number():
             break
 
     return reference
-
-
-def get_deleted_company():
-    """
-    Returns the deleted company object
-    """
-    return Company.objects.get_or_create(
-        name='deleted',
-        email='deleted',
-        is_deleted=True,
-        is_customer = True,
-        is_supplier = True,
-        is_manufacturer = True
-    )[0]
 
 
 class Order(ReferenceIndexingMixin):

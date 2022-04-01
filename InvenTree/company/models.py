@@ -60,6 +60,20 @@ def rename_company_image(instance, filename):
     return os.path.join(base, fn)
 
 
+def get_deleted_company():
+    """
+    Returns the deleted company object
+    """
+    return Company.objects.get_or_create(
+        name='deleted',
+        email='deleted',
+        is_deleted=True,
+        is_customer = True,
+        is_supplier = True,
+        is_manufacturer = True
+    )[0]
+
+
 class Company(models.Model):
     """ A Company object represents an external company.
     It may be a supplier or a customer or a manufacturer (or a combination)
