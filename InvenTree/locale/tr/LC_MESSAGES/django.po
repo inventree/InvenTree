@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-01 06:34+0000\n"
-"PO-Revision-Date: 2022-04-01 10:44\n"
+"PO-Revision-Date: 2022-04-01 11:48\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -9034,7 +9034,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:1313
 msgid "No category"
-msgstr ""
+msgstr "Katagori Yok"
 
 #: templates/js/translated/part.js:1336
 #: templates/js/translated/table_filters.js:434
@@ -9763,181 +9763,181 @@ msgstr ""
 
 #: templates/js/translated/tables.js:443
 msgid "Showing"
-msgstr ""
+msgstr "Gösteriliyor"
 
 #: templates/js/translated/tables.js:443
 msgid "to"
-msgstr ""
+msgstr "için"
 
 #: templates/js/translated/tables.js:443
 msgid "of"
-msgstr ""
+msgstr "yüzünden"
 
 #: templates/js/translated/tables.js:443
 msgid "rows"
-msgstr ""
+msgstr "satırlar"
 
 #: templates/js/translated/tables.js:447 templates/navbar.html:94
 #: templates/search.html:8 templates/search_form.html:6
 #: templates/search_form.html:7
 msgid "Search"
-msgstr ""
+msgstr "Arama"
 
 #: templates/js/translated/tables.js:450
 msgid "No matching results"
-msgstr ""
+msgstr "Sonuç bulunamadı"
 
 #: templates/js/translated/tables.js:453
 msgid "Hide/Show pagination"
-msgstr ""
+msgstr "Sayfalandırmayı Göster"
 
 #: templates/js/translated/tables.js:456
 msgid "Refresh"
-msgstr ""
+msgstr "Yenile"
 
 #: templates/js/translated/tables.js:459
 msgid "Toggle"
-msgstr ""
+msgstr "Değiştir"
 
 #: templates/js/translated/tables.js:462
 msgid "Columns"
-msgstr ""
+msgstr "Sütunlar"
 
 #: templates/js/translated/tables.js:465
 msgid "All"
-msgstr ""
+msgstr "Tümü"
 
 #: templates/navbar.html:42
 msgid "Buy"
-msgstr ""
+msgstr "Al"
 
 #: templates/navbar.html:54
 msgid "Sell"
-msgstr ""
+msgstr "Sat"
 
 #: templates/navbar.html:108
 msgid "Show Notifications"
-msgstr ""
+msgstr "Bildirimleri Göster"
 
 #: templates/navbar.html:111
 msgid "New Notifications"
-msgstr ""
+msgstr "Yeni Bildirimler"
 
 #: templates/navbar.html:132
 msgid "Logout"
-msgstr ""
+msgstr "Çıkış"
 
 #: templates/navbar.html:134
 msgid "Login"
-msgstr ""
+msgstr "Giriş"
 
 #: templates/navbar.html:154
 msgid "About InvenTree"
-msgstr ""
+msgstr "InvenTree Hakkında"
 
 #: templates/navbar_demo.html:5
 msgid "InvenTree demo mode"
-msgstr ""
+msgstr "InvenTree Demo modu"
 
 #: templates/notifications.html:13
 msgid "Show all notifications and history"
-msgstr ""
+msgstr "Tüm bildirimleri ve içeriğini göster"
 
 #: templates/qr_code.html:11
 msgid "QR data not provided"
-msgstr ""
+msgstr "QR sağlanamadı"
 
 #: templates/registration/logged_out.html:6
 msgid "You were logged out successfully."
-msgstr ""
+msgstr "Başarıyla çıkış yapıldı."
 
 #: templates/registration/logged_out.html:8
 msgid "Log in again"
-msgstr ""
+msgstr "Tekrar giriş yap"
 
 #: templates/search.html:9
 msgid "Show full search results"
-msgstr ""
+msgstr "Arama sonuçlarının hepsini göster"
 
 #: templates/search.html:12
 msgid "Clear search"
-msgstr ""
+msgstr "Aramayı temizle"
 
 #: templates/search.html:16
 msgid "Filter results"
-msgstr ""
+msgstr "Sonuçları filtrele"
 
 #: templates/search.html:20
 msgid "Close search menu"
-msgstr ""
+msgstr "Arama menüsünü kapat"
 
 #: templates/search.html:35
 msgid "No search results"
-msgstr ""
+msgstr "Arama sonucu yok"
 
 #: templates/stats.html:9
 msgid "Server"
-msgstr ""
+msgstr "Sunucu"
 
 #: templates/stats.html:13
 msgid "Instance Name"
-msgstr ""
+msgstr "Sistem adı"
 
 #: templates/stats.html:18
 msgid "Database"
-msgstr ""
+msgstr "Veritabanı"
 
 #: templates/stats.html:26
 msgid "Server is running in debug mode"
-msgstr ""
+msgstr "Sunucu debug modunda çalışıyor"
 
 #: templates/stats.html:33
 msgid "Docker Mode"
-msgstr ""
+msgstr "Docker modu"
 
 #: templates/stats.html:34
 msgid "Server is deployed using docker"
-msgstr ""
+msgstr "Server docker ile yayınlandı"
 
 #: templates/stats.html:39
 msgid "Plugin Support"
-msgstr ""
+msgstr "Eklenti Desteği"
 
 #: templates/stats.html:43
 msgid "Plugin support enabled"
-msgstr ""
+msgstr "Eklenti desteği etkin"
 
 #: templates/stats.html:45
 msgid "Plugin support disabled"
-msgstr ""
+msgstr "Eklenti desteği devre dışı"
 
 #: templates/stats.html:52
 msgid "Server status"
-msgstr ""
+msgstr "Sunucu Durumu"
 
 #: templates/stats.html:55
 msgid "Healthy"
-msgstr ""
+msgstr "Sağlıklı"
 
 #: templates/stats.html:57
 msgid "Issues detected"
-msgstr ""
+msgstr "Sorun algılandı"
 
 #: templates/stats.html:64
 msgid "Background Worker"
-msgstr ""
+msgstr "Arkaplan işi"
 
 #: templates/stats.html:67
 msgid "Background worker not running"
-msgstr ""
+msgstr "Arkaplan işleri çalışmıyor"
 
 #: templates/stats.html:75
 msgid "Email Settings"
-msgstr ""
+msgstr "E-posta Ayarları"
 
 #: templates/stats.html:78
 msgid "Email settings not configured"
-msgstr ""
+msgstr "E-posta ayarları yapılandırılmadı"
 
 #: templates/stock_table.html:17
 msgid "Barcode Actions"
@@ -9945,117 +9945,117 @@ msgstr "Barkod İşlemleri"
 
 #: templates/stock_table.html:33
 msgid "Print test reports"
-msgstr ""
+msgstr "Test raporunu yazdır"
 
 #: templates/stock_table.html:40
 msgid "Stock Options"
-msgstr ""
+msgstr "Stok Seçenekleri"
 
 #: templates/stock_table.html:45
 msgid "Add to selected stock items"
-msgstr ""
+msgstr "Seçili stok parçalarını ekle"
 
 #: templates/stock_table.html:46
 msgid "Remove from selected stock items"
-msgstr ""
+msgstr "Seçili stok parçalarını kaldır"
 
 #: templates/stock_table.html:47
 msgid "Stocktake selected stock items"
-msgstr ""
+msgstr "Seçili stok parçalarını değerlendir"
 
 #: templates/stock_table.html:48
 msgid "Move selected stock items"
-msgstr ""
+msgstr "Stok parçalarını taşı"
 
 #: templates/stock_table.html:49
 msgid "Merge selected stock items"
-msgstr ""
+msgstr "Seçili stok parçalarını birleştir"
 
 #: templates/stock_table.html:49
 msgid "Merge stock"
-msgstr ""
+msgstr "Stok birlşetirme"
 
 #: templates/stock_table.html:50
 msgid "Order selected items"
-msgstr ""
+msgstr "Seçili parçaları sırala"
 
 #: templates/stock_table.html:52
 msgid "Change status"
-msgstr ""
+msgstr "Durumu Değiştir"
 
 #: templates/stock_table.html:52
 msgid "Change stock status"
-msgstr ""
+msgstr "Stok durumunu değiştir"
 
 #: templates/stock_table.html:55
 msgid "Delete selected items"
-msgstr ""
+msgstr "Seçili parçaları sil"
 
 #: templates/stock_table.html:55
 msgid "Delete stock"
-msgstr ""
+msgstr "Parça sil"
 
 #: templates/yesnolabel.html:4
 msgid "Yes"
-msgstr ""
+msgstr "Evet"
 
 #: templates/yesnolabel.html:6
 msgid "No"
-msgstr ""
+msgstr "Hayır"
 
 #: users/admin.py:64
 msgid "Users"
-msgstr ""
+msgstr "Kullanıcılar"
 
 #: users/admin.py:65
 msgid "Select which users are assigned to this group"
-msgstr ""
+msgstr "Bu gruba atanacak kullanıcıyı seçin"
 
 #: users/admin.py:187
 msgid "The following users are members of multiple groups:"
-msgstr ""
+msgstr "Aşağıdaki kullanıcılar birden çok grubun üyesi:"
 
 #: users/admin.py:210
 msgid "Personal info"
-msgstr ""
+msgstr "Kullanıcı bilgisi"
 
 #: users/admin.py:211
 msgid "Permissions"
-msgstr ""
+msgstr "Yetkiler"
 
 #: users/admin.py:214
 msgid "Important dates"
-msgstr ""
+msgstr "Önemli tarihler"
 
 #: users/models.py:201
 msgid "Permission set"
-msgstr ""
+msgstr "İzinleri ayarla"
 
 #: users/models.py:209
 msgid "Group"
-msgstr ""
+msgstr "Grup"
 
 #: users/models.py:212
 msgid "View"
-msgstr ""
+msgstr "Görünüm"
 
 #: users/models.py:212
 msgid "Permission to view items"
-msgstr ""
+msgstr "Parçayı görüntüleme izni"
 
 #: users/models.py:214
 msgid "Permission to add items"
-msgstr ""
+msgstr "Parça ekleme izni"
 
 #: users/models.py:216
 msgid "Change"
-msgstr ""
+msgstr "Değiştir"
 
 #: users/models.py:216
 msgid "Permissions to edit items"
-msgstr ""
+msgstr "Parçaları düzenleme izni"
 
 #: users/models.py:218
 msgid "Permission to delete items"
-msgstr ""
+msgstr "Parçaları silme izni"
 
