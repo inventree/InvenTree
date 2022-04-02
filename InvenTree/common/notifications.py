@@ -1,16 +1,9 @@
 import logging
 from datetime import timedelta
 
-from django.template.loader import render_to_string
-
-from allauth.account.models import EmailAddress
-
 from InvenTree.helpers import inheritors
 from InvenTree.ready import isImportingData
 from common.models import NotificationEntry, NotificationMessage
-from common.models import InvenTreeUserSetting
-
-import InvenTree.tasks
 
 
 logger = logging.getLogger('inventree')
@@ -99,41 +92,6 @@ class SingleNotificationMethod(NotificationMethod):
 class BulkNotificationMethod(NotificationMethod):
     def send_bulk(self):
         raise NotImplementedError('The `send` method must be overriden!')
-
-
-class EmailNotification(BulkNotificationMethod):
-    METHOD_NAME = 'mail'
-    CONTEXT_EXTRA = [
-        ('template', ),
-        ('template', 'html', ),
-        ('template', 'subject', ),
-    ]
-
-    def get_targets(self):
-        """
-        Return a list of target email addresses,
-        only for users which allow email notifications
-        """
-
-        allowed_users = []
-
-        for user in self.targets:
-            allows_emails = InvenTreeUserSetting.get_setting('NOTIFICATION_SEND_EMAILS', user=user)
-
-            if allows_emails:
-                allowed_users.append(user)
-
-        return EmailAddress.objects.filter(
-            user__in=allowed_users,
-        )
-
-    def send_bulk(self):
-        html_message = render_to_string(self.context['template']['html'], self.context)
-        targets = self.get_targets().values_list('email', flat=True)
-
-        InvenTree.tasks.send_email(self.context['template']['subject'], '', targets, html_message=html_message)
-
-        return True
 
 
 class UIMessageNotification(SingleNotificationMethod):
