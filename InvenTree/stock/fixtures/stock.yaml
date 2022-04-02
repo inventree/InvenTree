@@ -251,3 +251,104 @@
     rght: 0
     expiry_date: "1990-10-10"
     status: 70
+
+# Multiple stock items for "Bob" (PK 100)
+- model: stock.stockitem
+  pk: 1000
+  fields:
+    part: 100
+    location: 1
+    quantity: 10
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 1001
+  fields:
+    part: 100
+    location: 1
+    quantity: 11
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+  
+- model: stock.stockitem
+  pk: 1002
+  fields:
+    part: 100
+    location: 1
+    quantity: 12
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+  
+- model: stock.stockitem
+  pk: 1003
+  fields:
+    part: 100
+    location: 1
+    quantity: 13
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+
+- model: stock.stockitem
+  pk: 1004
+  fields:
+    part: 100
+    location: 1
+    quantity: 14
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+  
+- model: stock.stockitem
+  pk: 1005
+  fields:
+    part: 100
+    location: 1
+    quantity: 15
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+  
+- model: stock.stockitem
+  pk: 1006
+  fields:
+    part: 100
+    location: 1
+    quantity: 16
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+  
+- model: stock.stockitem
+  pk: 1007
+  fields:
+    part: 100
+    location: 7
+    quantity: 17
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+  
+- model: stock.stockitem
+  pk: 1008
+  fields:
+    part: 100
+    location: 7
+    quantity: 18
+    level: 0
+    tree_id: 0
+    lft: 0
+    rght: 0
+  
