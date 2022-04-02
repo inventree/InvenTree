@@ -91,6 +91,12 @@ class BulkNotificationMethod(NotificationMethod):
         raise NotImplementedError('The `send` method must be overriden!')
 
 
+IGNORED_NOTIFICATION_CLS = set([
+    SingleNotificationMethod,
+    BulkNotificationMethod,
+])
+
+
 class UIMessageNotification(SingleNotificationMethod):
     METHOD_NAME = 'ui_message'
 
@@ -155,11 +161,7 @@ def trigger_notifaction(obj, category=None, obj_ref='pk', **kwargs):
         if delivery_methods is None:
             delivery_methods = inheritors(NotificationMethod)
 
-        ignored_classes = set([
-            SingleNotificationMethod,
-            BulkNotificationMethod,
-        ])
-        for method in (delivery_methods - ignored_classes):
+        for method in (delivery_methods - IGNORED_NOTIFICATION_CLS):
             logger.info(f"Triggering method '{method.METHOD_NAME}'")
             try:
                 deliver_notification(method, obj, category, targets, context)
