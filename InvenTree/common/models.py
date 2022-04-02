@@ -1239,14 +1239,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
-
-        'NOTIFICATION_SEND_EMAILS': {
-            'name': _('Enable email notifications'),
-            'description': _('Allow sending of emails for event notifications'),
-            'default': True,
-            'validator': bool,
-        },
-
         'LABEL_ENABLE': {
             'name': _('Enable label printing'),
             'description': _('Enable label printing from the web interface'),

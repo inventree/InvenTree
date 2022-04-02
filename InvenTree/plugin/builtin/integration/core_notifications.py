@@ -6,12 +6,12 @@ from django.utils.translation import ugettext_lazy as _
 from allauth.account.models import EmailAddress
 
 from plugin import IntegrationPluginBase
-from plugin.mixins import BulkNotificationMethod
+from plugin.mixins import BulkNotificationMethod, SettingsMixin
 from common.models import InvenTreeUserSetting
 import InvenTree.tasks
 
 
-class CoreNotificationsPlugin(IntegrationPluginBase):
+class CoreNotificationsPlugin(SettingsMixin, IntegrationPluginBase):
     """
     Core notification methods for InvenTree
     """
@@ -19,6 +19,15 @@ class CoreNotificationsPlugin(IntegrationPluginBase):
     PLUGIN_NAME = "CoreNotificationsPlugin"
     AUTHOR = _('InvenTree contributors')
     DESCRIPTION = _('Integrated outgoing notificaton methods')
+
+    SETTINGS = {
+        'NOTIFICATION_SEND_EMAILS': {
+            'name': _('Enable email notifications'),
+            'description': _('Allow sending of emails for event notifications'),
+            'default': True,
+            'validator': bool,
+        },
+    }
 
     class EmailNotification(BulkNotificationMethod):
         METHOD_NAME = 'mail'
