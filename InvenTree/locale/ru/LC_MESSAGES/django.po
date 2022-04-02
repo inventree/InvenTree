@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-02 02:53+0000\n"
-"PO-Revision-Date: 2022-04-02 16:22\n"
+"PO-Revision-Date: 2022-04-02 17:33\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -1589,7 +1589,7 @@ msgstr ""
 
 #: common/models.py:679
 msgid "Restart required"
-msgstr ""
+msgstr "Требуется перезапуск"
 
 #: common/models.py:680
 msgid "A setting has been changed which requires a server restart"
@@ -1621,7 +1621,7 @@ msgstr "Внутреннее название компании"
 
 #: common/models.py:706
 msgid "Base URL"
-msgstr ""
+msgstr "Базовая ссылка"
 
 #: common/models.py:707
 msgid "Base URL for server instance"
@@ -1629,15 +1629,15 @@ msgstr ""
 
 #: common/models.py:713
 msgid "Default Currency"
-msgstr ""
+msgstr "Валюта по умолчанию"
 
 #: common/models.py:714
 msgid "Default currency"
-msgstr ""
+msgstr "Валюта по умолчанию"
 
 #: common/models.py:720
 msgid "Download from URL"
-msgstr ""
+msgstr "Скачать по ссылке"
 
 #: common/models.py:721
 msgid "Allow download of remote images and files from external URL"
@@ -2714,7 +2714,7 @@ msgstr ""
 
 #: company/models.py:565
 msgid "URL for external supplier part link"
-msgstr ""
+msgstr "Ссылка на сайт поставщика"
 
 #: company/models.py:571
 msgid "Supplier part description"
@@ -2759,7 +2759,7 @@ msgstr ""
 
 #: company/serializers.py:70
 msgid "Default currency used for this supplier"
-msgstr ""
+msgstr "Для этого поставщика используется валюта по умолчанию"
 
 #: company/serializers.py:71
 msgid "Currency Code"
@@ -3582,7 +3582,7 @@ msgstr ""
 
 #: order/serializers.py:187
 msgid "Purchase price currency"
-msgstr ""
+msgstr "Курс покупки валюты"
 
 #: order/serializers.py:238 order/serializers.py:883
 msgid "Line Item"
@@ -3634,7 +3634,7 @@ msgstr ""
 
 #: order/serializers.py:672
 msgid "Sale price currency"
-msgstr ""
+msgstr "Курс продажи валюты"
 
 #: order/serializers.py:742
 msgid "No shipment details provided"
@@ -3950,7 +3950,7 @@ msgstr ""
 #: order/templates/order/sales_order_cancel.html:8
 #: stock/templates/stock/stockitem_convert.html:13
 msgid "Warning"
-msgstr ""
+msgstr "Предупреждение"
 
 #: order/templates/order/sales_order_cancel.html:9
 msgid "Cancelling this order means that the order will no longer be editable."
@@ -5431,7 +5431,7 @@ msgstr ""
 
 #: part/templates/part/upload_bom.html:40
 msgid "Each part must already exist in the database"
-msgstr ""
+msgstr "Каждая деталь уже должна быть в базе данных"
 
 #: part/templates/part/variant_part.html:9
 msgid "Create new part variant"
@@ -5444,7 +5444,7 @@ msgstr ""
 
 #: part/templatetags/inventree_extras.py:189
 msgid "Unknown database"
-msgstr ""
+msgstr "Неизвестная база данных"
 
 #: part/views.py:88
 msgid "Set Part Category"
@@ -5617,7 +5617,7 @@ msgstr ""
 
 #: plugin/serializers.py:49
 msgid "Source URL"
-msgstr ""
+msgstr "Исходная ссылка"
 
 #: plugin/serializers.py:50
 msgid "Source for the package - this can be a custom registry or a VCS path"
@@ -5892,7 +5892,7 @@ msgstr ""
 
 #: stock/models.py:576
 msgid "Base part"
-msgstr ""
+msgstr "Базовая деталь"
 
 #: stock/models.py:584
 msgid "Select a matching supplier part for this stock item"
@@ -6079,7 +6079,7 @@ msgstr ""
 
 #: stock/serializers.py:180
 msgid "Purchase currency of this stock item"
-msgstr ""
+msgstr "Валюта покупки этой единицы хранения"
 
 #: stock/serializers.py:294
 msgid "Enter number of stock items to serialize"
@@ -6831,11 +6831,11 @@ msgstr "Настройки категории"
 
 #: templates/InvenTree/settings/currencies.html:8
 msgid "Currency Settings"
-msgstr ""
+msgstr "Настройки валюты"
 
 #: templates/InvenTree/settings/currencies.html:19
 msgid "Base Currency"
-msgstr ""
+msgstr "Базовая валюта"
 
 #: templates/InvenTree/settings/currencies.html:24
 msgid "Exchange Rates"
@@ -6873,7 +6873,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/mixins/urls.html:5
 msgid "URLs"
-msgstr ""
+msgstr "Ссылки"
 
 #: templates/InvenTree/settings/mixins/urls.html:8
 #, python-format
@@ -6882,7 +6882,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/mixins/urls.html:23
 msgid "Open in new tab"
-msgstr ""
+msgstr "Открыть в новой вкладке"
 
 #: templates/InvenTree/settings/part.html:7
 msgid "Part Settings"
@@ -7170,7 +7170,7 @@ msgstr ""
 #: templates/InvenTree/settings/user.html:95
 #: templates/InvenTree/settings/user.html:201
 msgid "Warning:"
-msgstr ""
+msgstr "Предупреждение:"
 
 #: templates/InvenTree/settings/user.html:96
 msgid "You currently do not have any email address set up. You should really add an email address so you can receive notifications, reset your password, etc."
@@ -7736,11 +7736,11 @@ msgstr ""
 
 #: templates/js/translated/api.js:221
 msgid "Unhandled Error Code"
-msgstr ""
+msgstr "Необработанный код ошибки"
 
 #: templates/js/translated/api.js:222
 msgid "Error code"
-msgstr ""
+msgstr "Код ошибки"
 
 #: templates/js/translated/attachment.js:78
 msgid "No attachments found"
@@ -7792,7 +7792,7 @@ msgstr ""
 
 #: templates/js/translated/barcode.js:92
 msgid "Server error"
-msgstr ""
+msgstr "Ошибка сервера"
 
 #: templates/js/translated/barcode.js:113
 msgid "Unknown response from server"
@@ -8433,7 +8433,7 @@ msgstr ""
 #: templates/js/translated/forms.js:1194 templates/modals.html:19
 #: templates/modals.html:43
 msgid "Form errors exist"
-msgstr ""
+msgstr "Форма содержит ошибки"
 
 #: templates/js/translated/forms.js:1623
 msgid "No results found"
@@ -8566,7 +8566,7 @@ msgstr ""
 
 #: templates/js/translated/modals.js:949
 msgid "Error posting form data"
-msgstr ""
+msgstr "Ошибка отправки данных формы"
 
 #: templates/js/translated/modals.js:1046
 msgid "JSON response missing form data"
@@ -8574,15 +8574,15 @@ msgstr ""
 
 #: templates/js/translated/modals.js:1061
 msgid "Error 400: Bad Request"
-msgstr ""
+msgstr "Ошибка 400: Некорректный запрос"
 
 #: templates/js/translated/modals.js:1062
 msgid "Server returned error code 400"
-msgstr ""
+msgstr "Сервер вернул код ошибки 400"
 
 #: templates/js/translated/modals.js:1085
 msgid "Error requesting form data"
-msgstr ""
+msgstr "Ошибка запроса данных формы"
 
 #: templates/js/translated/model_renderers.js:42
 msgid "Company ID"
@@ -9270,7 +9270,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:679
 msgid "Warning: Merge operation cannot be reversed"
-msgstr ""
+msgstr "Предупреждение: Операция объединения не может быть отменена"
 
 #: templates/js/translated/stock.js:680
 msgid "Some information will be lost when merging stock items"
@@ -9885,7 +9885,7 @@ msgstr ""
 
 #: templates/stats.html:18
 msgid "Database"
-msgstr ""
+msgstr "База данных"
 
 #: templates/stats.html:26
 msgid "Server is running in debug mode"
