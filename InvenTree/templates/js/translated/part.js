@@ -1160,12 +1160,14 @@ function partGridTile(part) {
 
     if (!part.in_stock) {
         stock = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
+    } else if (!part.unallocated_stock) {
+        stock = `<span class='badge rounded-pill bg-warning'>{% trans "Not available" %}</span>`;
     }
 
     rows += `<tr><td><b>{% trans "Stock" %}</b></td><td>${stock}</td></tr>`;
 
-    if (part.on_order) {
-        rows += `<tr><td><b>{$ trans "On Order" %}</b></td><td>${part.on_order}</td></tr>`;
+    if (part.ordering) {
+        rows += `<tr><td><b>{% trans "On Order" %}</b></td><td>${part.ordering}</td></tr>`;
     }
 
     if (part.building) {
@@ -1322,31 +1324,47 @@ function loadPartTable(table, url, options={}) {
     columns.push(col);
 
     col = {
-        field: 'in_stock',
-        title: '{% trans "Stock" %}',
+        field: 'unallocated_stock',
+        title: '{% trans "Available" %}',
         searchable: false,
         formatter: function(value, row) {            
             var link = '?display=part-stock';
 
-            if (value) {
+            if (row.in_stock) {
                 // There IS stock available for this part
 
                 // Is stock "low" (below the 'minimum_stock' quantity)?
-                if (row.minimum_stock && row.minimum_stock > value) {
+                if (row.minimum_stock && row.minimum_stock > row.in_stock) {
                     value += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Low stock" %}</span>`;
+                } else if (value == 0) {
+                    if (row.ordering) {
+                        // There is no available stock, but stock is on order
+                        value = `0<span class='badge badge-right rounded-pill bg-info'>{% trans "On Order" %}: ${row.ordering}</span>`;
+                        link = '?display=purchase-orders';
+                    } else if (row.building) {
+                        // There is no available stock, but stock is being built
+                        value = `0<span class='badge badge-right rounded-pill bg-info'>{% trans "Building" %}: ${row.building}</span>`;
+                        link = '?display=build-orders';
+                    } else {
+                        // There is no available stock
+                        value = `0<span class='badge badge-right rounded-pill bg-warning'>{% trans "Not available" %}</span>`;
+                    }
                 }
-
-            } else if (row.on_order) {
-                // There is no stock available, but stock is on order
-                value = `0<span class='badge badge-right rounded-pill bg-info'>{% trans "On Order" %}: ${row.on_order}</span>`;
-                link = '?display=purchase-orders';
-            } else if (row.building) {
-                // There is no stock available, but stock is being built
-                value = `0<span class='badge badge-right rounded-pill bg-info'>{% trans "Building" %}: ${row.building}</span>`;
-                link = '?display=build-orders';
             } else {
-                // There is no stock available
-                value = `0<span class='badge badge-right rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
+                // There IS NO stock available for this part
+
+                if (row.ordering) {
+                    // There is no stock, but stock is on order
+                    value = `0<span class='badge badge-right rounded-pill bg-info'>{% trans "On Order" %}: ${row.ordering}</span>`;
+                    link = '?display=purchase-orders';
+                } else if (row.building) {
+                    // There is no stock, but stock is being built
+                    value = `0<span class='badge badge-right rounded-pill bg-info'>{% trans "Building" %}: ${row.building}</span>`;
+                    link = '?display=build-orders';
+                } else {
+                    // There is no stock
+                    value = `0<span class='badge badge-right rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
+                }
             }
 
             return renderLink(value, `/part/${row.pk}/${link}`);
