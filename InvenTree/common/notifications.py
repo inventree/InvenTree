@@ -155,7 +155,11 @@ def trigger_notifaction(obj, category=None, obj_ref='pk', **kwargs):
         if delivery_methods is None:
             delivery_methods = inheritors(NotificationMethod)
 
-        for method in [a for a in delivery_methods if a not in [SingleNotificationMethod, BulkNotificationMethod]]:
+        ignored_classes = set([
+            SingleNotificationMethod,
+            BulkNotificationMethod,
+        ])
+        for method in (delivery_methods - ignored_classes):
             logger.info(f"Triggering method '{method.METHOD_NAME}'")
             try:
                 deliver_notification(method, obj, category, targets, context)
