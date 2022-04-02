@@ -494,7 +494,11 @@ function duplicateBom(part_id, options={}) {
 function partStockLabel(part, options={}) {
 
     if (part.in_stock) {
-        return `<span class='badge rounded-pill bg-success ${options.classes}'>{% trans "Stock" %}: ${part.in_stock}</span>`;
+        if (part.unallocated_stock) {
+            return `<span class='badge rounded-pill bg-success ${options.classes}'>{% trans "Available" %}: ${part.unallocated_stock}/${part.in_stock}</span>`;
+        } else {
+            return `<span class='badge rounded-pill bg-warning ${options.classes}'>{% trans "Available" %}: ${part.unallocated_stock}/${part.in_stock}</span>`;
+        }
     } else {
         return `<span class='badge rounded-pill bg-danger ${options.classes}'>{% trans "No Stock" %}</span>`;
     }
