@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-02 02:53+0000\n"
-"PO-Revision-Date: 2022-04-02 20:51\n"
+"PO-Revision-Date: 2022-04-02 21:53\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -1301,7 +1301,7 @@ msgstr ""
 
 #: build/templates/build/detail.html:16
 msgid "Build Details"
-msgstr ""
+msgstr "Подробности сборки"
 
 #: build/templates/build/detail.html:39
 msgid "Stock Source"
@@ -1314,7 +1314,7 @@ msgstr ""
 #: build/templates/build/detail.html:50 order/models.py:934 stock/forms.py:133
 #: templates/js/translated/order.js:717 templates/js/translated/order.js:1333
 msgid "Destination"
-msgstr ""
+msgstr "Назначение"
 
 #: build/templates/build/detail.html:57
 msgid "Destination location not specified"
@@ -1488,11 +1488,11 @@ msgstr ""
 
 #: build/templates/build/index.html:18 part/templates/part/detail.html:321
 msgid "New Build Order"
-msgstr ""
+msgstr "Новый заказ на сборку"
 
 #: build/templates/build/index.html:37 build/templates/build/index.html:38
 msgid "Print Build Orders"
-msgstr ""
+msgstr "Печатать заказ на сборку"
 
 #: build/templates/build/index.html:44
 #: order/templates/order/purchase_orders.html:34
@@ -1544,11 +1544,11 @@ msgstr "Ошибка чтения файла (данные могут быть �
 
 #: common/forms.py:34
 msgid "File"
-msgstr ""
+msgstr "Файл"
 
 #: common/forms.py:35
 msgid "Select file to upload"
-msgstr ""
+msgstr "Выберите файл для загрузки"
 
 #: common/forms.py:50
 msgid "{name.title()} File"
@@ -1557,7 +1557,7 @@ msgstr ""
 #: common/forms.py:51
 #, python-brace-format
 msgid "Select {name} file to upload"
-msgstr ""
+msgstr "Выберите {name} файл для загрузки"
 
 #: common/models.py:381
 msgid "Settings key (must be unique - case insensitive)"
@@ -1669,7 +1669,7 @@ msgstr ""
 
 #: common/models.py:746
 msgid "Allow Editing IPN"
-msgstr ""
+msgstr "Разрешить редактирование IPN"
 
 #: common/models.py:747
 msgid "Allow changing the IPN value while editing a part"
@@ -1711,11 +1711,11 @@ msgstr ""
 #: templates/js/translated/table_filters.js:38
 #: templates/js/translated/table_filters.js:426
 msgid "Template"
-msgstr ""
+msgstr "Шаблон"
 
 #: common/models.py:782
 msgid "Parts are templates by default"
-msgstr ""
+msgstr "По умолчанию детали являются шаблонами"
 
 #: common/models.py:788 part/models.py:959 templates/js/translated/bom.js:1305
 #: templates/js/translated/table_filters.js:168
@@ -1747,7 +1747,7 @@ msgstr ""
 #: common/models.py:809 part/models.py:981
 #: templates/js/translated/table_filters.js:450
 msgid "Salable"
-msgstr ""
+msgstr "Можно продавать"
 
 #: common/models.py:810
 msgid "Parts are salable by default"
@@ -1856,7 +1856,7 @@ msgstr ""
 
 #: common/models.py:911 templates/stats.html:25
 msgid "Debug Mode"
-msgstr ""
+msgstr "Режим отладки"
 
 #: common/models.py:912
 msgid "Generate reports in debug mode (HTML output)"
@@ -2469,7 +2469,7 @@ msgstr ""
 #: part/templates/part/import_wizard/part_upload.html:47 part/views.py:208
 #: templates/patterns/wizard/upload.html:35
 msgid "Upload File"
-msgstr ""
+msgstr "Загрузить файл"
 
 #: common/views.py:94 order/views.py:244
 #: part/templates/part/import_wizard/ajax_match_fields.html:45
@@ -2650,7 +2650,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part.html:23
 #: stock/templates/stock/item_base.html:374
 msgid "Manufacturer Part"
-msgstr ""
+msgstr "Деталь производителя"
 
 #: company/models.py:416
 msgid "Parameter name"
@@ -2739,7 +2739,7 @@ msgstr ""
 #: stock/models.py:599 stock/templates/stock/item_base.html:322
 #: templates/js/translated/company.js:850 templates/js/translated/stock.js:1897
 msgid "Packaging"
-msgstr ""
+msgstr "Упаковка"
 
 #: company/models.py:582
 msgid "Part packaging"
@@ -2774,7 +2774,7 @@ msgstr "Компания"
 #: company/templates/company/company_base.html:22
 #: templates/js/translated/order.js:279
 msgid "Create Purchase Order"
-msgstr ""
+msgstr "Создать заказ на закупку"
 
 #: company/templates/company/company_base.html:26
 msgid "Company actions"
@@ -3253,7 +3253,7 @@ msgstr ""
 
 #: label/models.py:147
 msgid "Height [mm]"
-msgstr ""
+msgstr "Высота [мм]"
 
 #: label/models.py:148
 msgid "Label height, specified in mm"
@@ -4025,11 +4025,11 @@ msgstr "Заказано {n} деталей"
 
 #: order/views.py:858
 msgid "Sales order not found"
-msgstr ""
+msgstr "Заказ на продажу не найден"
 
 #: order/views.py:864
 msgid "Price not found"
-msgstr ""
+msgstr "Цена не найдена"
 
 #: order/views.py:867
 #, python-brace-format
@@ -4406,7 +4406,7 @@ msgstr "Родительская деталь"
 #: part/models.py:2569 part/models.py:2618 part/models.py:2619
 #: templates/InvenTree/settings/settings.html:219
 msgid "Parameter Template"
-msgstr ""
+msgstr "Шаблон параметра"
 
 #: part/models.py:2571
 msgid "Data"
@@ -4620,7 +4620,7 @@ msgstr ""
 
 #: part/serializers.py:875
 msgid "No matching part found"
-msgstr ""
+msgstr "Подходящая деталь не найдена"
 
 #: part/serializers.py:878
 msgid "Part is not designated as a component"
@@ -4729,7 +4729,7 @@ msgstr "Детали (включая подкатегории)"
 
 #: part/templates/part/category.html:157
 msgid "Create new part"
-msgstr ""
+msgstr "Создать новую деталь"
 
 #: part/templates/part/category.html:158 templates/js/translated/bom.js:365
 msgid "New Part"
@@ -4769,7 +4769,7 @@ msgstr "Создать деталь"
 
 #: part/templates/part/category.html:308
 msgid "Create another part after this one"
-msgstr ""
+msgstr "Создать ещё одну деталь после этой"
 
 #: part/templates/part/category.html:309
 msgid "Part created successfully"
@@ -4857,7 +4857,7 @@ msgstr "Разновидности детали"
 
 #: part/templates/part/detail.html:165
 msgid "Create new variant"
-msgstr ""
+msgstr "Создать новую разновидность"
 
 #: part/templates/part/detail.html:166
 msgid "New Variant"
@@ -5092,7 +5092,7 @@ msgstr ""
 
 #: part/templates/part/part_base.html:116
 msgid "Part is a template part (variants can be made from this part)"
-msgstr ""
+msgstr "Деталь является шаблоном (из неё можно создавать разновидности)"
 
 #: part/templates/part/part_base.html:120
 msgid "Part can be assembled from other parts"
@@ -5135,7 +5135,7 @@ msgstr ""
 #: part/templates/part/part_base.html:177
 #, python-format
 msgid "This part is a variant of %(link)s"
-msgstr ""
+msgstr "Эта деталь является разновидностью %(link)s"
 
 #: part/templates/part/part_base.html:194 templates/js/translated/order.js:2436
 #: templates/js/translated/table_filters.js:193
@@ -5196,7 +5196,7 @@ msgstr ""
 
 #: part/templates/part/part_base.html:514
 msgid "No matching images found"
-msgstr ""
+msgstr "Подходящие изображения не найдены"
 
 #: part/templates/part/part_base.html:595
 msgid "Hide Part Details"
@@ -5435,12 +5435,12 @@ msgstr "Каждая деталь уже должна быть в базе да�
 
 #: part/templates/part/variant_part.html:9
 msgid "Create new part variant"
-msgstr ""
+msgstr "Создать новую разновидность детали"
 
 #: part/templates/part/variant_part.html:10
 #, python-format
 msgid "Create a new variant of template <em>'%(full_name)s'</em>."
-msgstr ""
+msgstr "Создать новую разновидность из шаблона <em>'%(full_name)s'</em>."
 
 #: part/templatetags/inventree_extras.py:189
 msgid "Unknown database"
@@ -5477,7 +5477,7 @@ msgstr ""
 
 #: part/views.py:697
 msgid "Part image not found"
-msgstr ""
+msgstr "Изображение детали не найдено"
 
 #: part/views.py:785
 msgid "Confirm Part Deletion"
@@ -5549,11 +5549,11 @@ msgstr ""
 
 #: plugin/integration.py:138
 msgid "No author found"
-msgstr ""
+msgstr "Автор не найден"
 
 #: plugin/integration.py:152
 msgid "No date found"
-msgstr ""
+msgstr "Дата не найдена"
 
 #: plugin/models.py:26
 msgid "Plugin Configuration"
@@ -5654,11 +5654,11 @@ msgstr ""
 
 #: report/models.py:182
 msgid "Template name"
-msgstr ""
+msgstr "Название шаблона"
 
 #: report/models.py:188
 msgid "Report template file"
-msgstr ""
+msgstr "Файл шаблона отчёта"
 
 #: report/models.py:195
 msgid "Report template description"
@@ -6297,7 +6297,7 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:115
 msgid "Convert to variant"
-msgstr ""
+msgstr "Преобразовать в разновидность"
 
 #: stock/templates/stock/item_base.html:118
 msgid "Duplicate stock item"
@@ -6663,7 +6663,7 @@ msgstr ""
 
 #: templates/404.html:5 templates/404.html:11
 msgid "Page Not Found"
-msgstr ""
+msgstr "Страница не найдена"
 
 #: templates/404.html:14
 msgid "The requested page does not exist"
@@ -6898,7 +6898,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/part.html:62
 msgid "Part Parameter Templates"
-msgstr ""
+msgstr "Шаблон параметра детали"
 
 #: templates/InvenTree/settings/plugin.html:10
 msgid "Plugin Settings"
@@ -6979,7 +6979,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:88
 msgid "This plugin was found in a local InvenTree path"
-msgstr ""
+msgstr "Этот плагин был найден в локальном пути InvenTree"
 
 #: templates/InvenTree/settings/plugin_settings.html:94
 msgid "Installation path"
@@ -7042,21 +7042,21 @@ msgstr ""
 
 #: templates/InvenTree/settings/settings.html:209
 msgid "No category parameter templates found"
-msgstr ""
+msgstr "Шаблоны параметров категории не найдены"
 
 #: templates/InvenTree/settings/settings.html:231
 #: templates/InvenTree/settings/settings.html:330
 msgid "Edit Template"
-msgstr ""
+msgstr "Редактировать шаблон"
 
 #: templates/InvenTree/settings/settings.html:232
 #: templates/InvenTree/settings/settings.html:331
 msgid "Delete Template"
-msgstr ""
+msgstr "Удалить шаблон"
 
 #: templates/InvenTree/settings/settings.html:310
 msgid "No part parameter templates found"
-msgstr ""
+msgstr "Шаблоны параметров детали не найдены"
 
 #: templates/InvenTree/settings/sidebar.html:6
 #: templates/InvenTree/settings/user_settings.html:9
@@ -7744,7 +7744,7 @@ msgstr "Код ошибки"
 
 #: templates/js/translated/attachment.js:78
 msgid "No attachments found"
-msgstr ""
+msgstr "Вложение не найдено"
 
 #: templates/js/translated/attachment.js:100
 msgid "Edit Attachment"
@@ -8329,13 +8329,13 @@ msgstr ""
 
 #: templates/js/translated/company.js:480
 msgid "No manufacturer parts found"
-msgstr "Информация о производителе не найдена"
+msgstr "Информация о детали производителя не найдена"
 
 #: templates/js/translated/company.js:500
 #: templates/js/translated/company.js:757 templates/js/translated/part.js:519
 #: templates/js/translated/part.js:604
 msgid "Template part"
-msgstr ""
+msgstr "Деталь-шаблон"
 
 #: templates/js/translated/company.js:504
 #: templates/js/translated/company.js:761 templates/js/translated/part.js:523
@@ -8365,7 +8365,7 @@ msgstr "Удалить параметр"
 
 #: templates/js/translated/company.js:737
 msgid "No supplier parts found"
-msgstr ""
+msgstr "Информация о детали поставщика не найдена"
 
 #: templates/js/translated/filters.js:178
 #: templates/js/translated/filters.js:441
@@ -9018,7 +9018,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:646
 msgid "No variants found"
-msgstr ""
+msgstr "Разновидности не найдены"
 
 #: templates/js/translated/part.js:1036
 msgid "Delete part relationship"
@@ -9132,7 +9132,7 @@ msgstr ""
 
 #: templates/js/translated/report.js:75
 msgid "Select Report Template"
-msgstr ""
+msgstr "Выберите шаблон отчёта"
 
 #: templates/js/translated/report.js:90
 msgid "Select Test Report Template"
@@ -9146,7 +9146,7 @@ msgstr ""
 #: templates/js/translated/report.js:243 templates/js/translated/report.js:297
 #: templates/js/translated/report.js:351
 msgid "No Reports Found"
-msgstr ""
+msgstr "Отчёты не найдены"
 
 #: templates/js/translated/report.js:137
 msgid "No report templates found which match selected stock item(s)"
