@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-02 02:53+0000\n"
-"PO-Revision-Date: 2022-04-02 03:11\n"
+"PO-Revision-Date: 2022-04-02 14:50\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -720,7 +720,7 @@ msgstr ""
 #: templates/js/translated/stock.js:899 templates/js/translated/stock.js:1622
 #: templates/js/translated/stock.js:2542 templates/js/translated/stock.js:2641
 msgid "Part"
-msgstr "Наименование детали"
+msgstr "Детали"
 
 #: build/models.py:235
 msgid "Select part to build"
@@ -893,7 +893,7 @@ msgstr "Количество должно быть 1 для сериализов
 
 #: build/models.py:1256
 msgid "Selected stock item not found in BOM"
-msgstr "Выбранный предмет со складом не найден в BOM"
+msgstr "Выбранная единица хранения не найдена в BOM"
 
 #: build/models.py:1325 stock/templates/stock/item_base.html:329
 #: templates/InvenTree/search.html:137 templates/js/translated/build.js:1970
