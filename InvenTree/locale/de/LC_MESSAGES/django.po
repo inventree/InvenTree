@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-02 02:53+0000\n"
-"PO-Revision-Date: 2022-04-02 03:11\n"
+"PO-Revision-Date: 2022-04-02 22:51\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1297,7 +1297,7 @@ msgstr "Sind Sie sicher, dass sie diesen Bauauftrag abbrechen möchten?"
 
 #: build/templates/build/delete_build.html:5
 msgid "Are you sure you want to delete this build?"
-msgstr "Möchten Sie diese Datei wirklich löschen?"
+msgstr "Möchten Sie diesen Bauauftrag wirklich löschen?"
 
 #: build/templates/build/detail.html:16
 msgid "Build Details"
@@ -2028,11 +2028,11 @@ msgstr "Benutzer müssen Multifaktor-Authentifizierung verwenden."
 
 #: common/models.py:1051
 msgid "Check plugins on startup"
-msgstr ""
+msgstr "Plugins beim Start prüfen"
 
 #: common/models.py:1052
 msgid "Check that all plugins are installed on startup - enable in container enviroments"
-msgstr ""
+msgstr "Beim Start überprüfen, ob alle Plugins installiert sind - Für Container aktivieren"
 
 #: common/models.py:1059
 msgid "Enable URL integration"
@@ -2228,15 +2228,15 @@ msgstr "E-Mail-Benachrichtigungen aktivieren"
 
 #: common/models.py:1245
 msgid "Allow sending of emails for event notifications"
-msgstr ""
+msgstr "Das Senden von Benachrichtigungen als E-Mails erlauben"
 
 #: common/models.py:1251
 msgid "Enable label printing"
-msgstr ""
+msgstr "Labeldruck aktivieren"
 
 #: common/models.py:1252
 msgid "Enable label printing from the web interface"
-msgstr ""
+msgstr "Labeldruck über die Website aktivieren"
 
 #: common/models.py:1258
 msgid "Inline label display"
@@ -2260,7 +2260,7 @@ msgstr "Teile suchen"
 
 #: common/models.py:1273
 msgid "Display parts in search preview window"
-msgstr ""
+msgstr "Teile in der Suchvorschau anzeigen"
 
 #: common/models.py:1279
 msgid "Search Categories"
@@ -5547,7 +5547,7 @@ msgstr "Ihre Umgebung verwendet eine veraltete Git-Version. Dies hindert InvenTr
 
 #: plugin/events.py:225
 msgid "Label printing failed"
-msgstr ""
+msgstr "Labeldruck fehlgeschlagen"
 
 #: plugin/integration.py:138
 msgid "No author found"
@@ -6758,11 +6758,11 @@ msgstr "Benachrichtigungsverlauf"
 #: templates/InvenTree/notifications/history.html:13
 #: templates/InvenTree/notifications/history.html:14
 msgid "Refresh Notification History"
-msgstr ""
+msgstr "Benachrichtigungsverlauf aktualisieren"
 
 #: templates/InvenTree/notifications/inbox.html:9
 msgid "Pending Notifications"
-msgstr ""
+msgstr "Ausstehende Benachrichtigungen"
 
 #: templates/InvenTree/notifications/inbox.html:13
 #: templates/InvenTree/notifications/inbox.html:14
@@ -6772,7 +6772,7 @@ msgstr "Alle als gelesen markieren"
 #: templates/InvenTree/notifications/inbox.html:16
 #: templates/InvenTree/notifications/inbox.html:17
 msgid "Refresh Pending Notifications"
-msgstr ""
+msgstr "Ausstehende Benachrichtigungen aktualisieren"
 
 #: templates/InvenTree/notifications/notifications.html:10
 #: templates/InvenTree/notifications/sidebar.html:5
@@ -6805,11 +6805,11 @@ msgstr "Keine ungelesenen Benachrichtigungen"
 
 #: templates/InvenTree/notifications/notifications.html:140
 msgid "No notification history found"
-msgstr "Keine Benachrichtigungshistorie"
+msgstr "Kein Benachrichtigungsverlauf"
 
 #: templates/InvenTree/notifications/sidebar.html:8
 msgid "Inbox"
-msgstr ""
+msgstr "Posteingang"
 
 #: templates/InvenTree/notifications/sidebar.html:10
 msgid "History"
@@ -8471,7 +8471,7 @@ msgstr "NEIN"
 
 #: templates/js/translated/label.js:39
 msgid "Labels sent to printer"
-msgstr ""
+msgstr "Label an den Drucker gesendet"
 
 #: templates/js/translated/label.js:60 templates/js/translated/report.js:118
 #: templates/js/translated/stock.js:1015
@@ -8637,7 +8637,7 @@ msgstr "Keine ungelesenen Benachrichtigungen"
 
 #: templates/js/translated/notification.js:297 templates/notifications.html:10
 msgid "Notifications will load here"
-msgstr ""
+msgstr "Benachrichtigungen erscheinen hier"
 
 #: templates/js/translated/order.js:75
 msgid "No stock items have been allocated to this shipment"
@@ -9196,7 +9196,7 @@ msgstr "Auftrag muss vor dem Berichtsdruck ausgewählt werden"
 
 #: templates/js/translated/search.js:281
 msgid "Minimize results"
-msgstr ""
+msgstr "Ergebnisse minimieren"
 
 #: templates/js/translated/search.js:284
 msgid "Remove results"
@@ -9843,7 +9843,7 @@ msgstr "InvenTree Demo-Modus"
 
 #: templates/notifications.html:13
 msgid "Show all notifications and history"
-msgstr ""
+msgstr "Zeige alle Benachrichtigungen und Verlauf"
 
 #: templates/qr_code.html:11
 msgid "QR data not provided"
@@ -9863,7 +9863,7 @@ msgstr "Suchergebnis anzeigen"
 
 #: templates/search.html:12
 msgid "Clear search"
-msgstr ""
+msgstr "Suche zurücksetzen"
 
 #: templates/search.html:16
 msgid "Filter results"
