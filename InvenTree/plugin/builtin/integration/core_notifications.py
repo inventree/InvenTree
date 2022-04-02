@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from allauth.account.models import EmailAddress
 
-from plugin import IntegrationPluginBase
+from plugin import IntegrationPluginBase, registry
 from plugin.mixins import BulkNotificationMethod, SettingsMixin
 from common.models import InvenTreeUserSetting
 import InvenTree.tasks
@@ -44,7 +44,8 @@ class CoreNotificationsPlugin(SettingsMixin, IntegrationPluginBase):
             """
 
             # Check if method globally enabled
-            if not self.get_setting('ENABLE_NOTIFICATION_EMAILS'):
+            plg = registry.plugins.get(CoreNotificationsPlugin.PLUGIN_NAME.lower())
+            if plg and not plg.get_setting('ENABLE_NOTIFICATION_EMAILS'):
                 return
 
             allowed_users = []
