@@ -11,6 +11,11 @@ from common.models import InvenTreeUserSetting
 import InvenTree.tasks
 
 
+class PlgMixin:
+    def get_plugin(self):
+        return CoreNotificationsPlugin
+
+
 class CoreNotificationsPlugin(SettingsMixin, IntegrationPluginBase):
     """
     Core notification methods for InvenTree
@@ -29,24 +34,21 @@ class CoreNotificationsPlugin(SettingsMixin, IntegrationPluginBase):
         },
     }
 
-    class EmailNotification(BulkNotificationMethod):
+    class EmailNotification(PlgMixin, BulkNotificationMethod):
         METHOD_NAME = 'mail'
         CONTEXT_EXTRA = [
             ('template', ),
             ('template', 'html', ),
             ('template', 'subject', ),
         ]
+        GLOBAL_SETTING = 'ENABLE_NOTIFICATION_EMAILS'
+        }
 
         def get_targets(self):
             """
             Return a list of target email addresses,
             only for users which allow email notifications
             """
-
-            # Check if method globally enabled
-            plg = registry.plugins.get(CoreNotificationsPlugin.PLUGIN_NAME.lower())
-            if plg and not plg.get_setting('ENABLE_NOTIFICATION_EMAILS'):
-                return
 
             allowed_users = []
 

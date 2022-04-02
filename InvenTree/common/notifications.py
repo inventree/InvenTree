@@ -4,6 +4,7 @@ from datetime import timedelta
 from InvenTree.helpers import inheritors
 from InvenTree.ready import isImportingData
 from common.models import NotificationEntry, NotificationMessage
+from plugin import registry
 
 
 logger = logging.getLogger('inventree')
@@ -17,6 +18,7 @@ class NotificationMethod:
     METHOD_NAME = ''
     CONTEXT_BUILTIN = ['name', 'message', ]
     CONTEXT_EXTRA = []
+    GLOBAL_SETTING = None
 
     def __init__(self, obj, category, targets, context) -> None:
         # Check if a sending fnc is defined
@@ -26,6 +28,11 @@ class NotificationMethod:
         # No method name is no good
         if self.METHOD_NAME in ('', None):
             raise NotImplementedError(f'The NotificationMethod {self.__class__} did not provide a METHOD_NAME')
+
+        # Check if plugin is disabled - if so do not gather targets etc.
+        if self.global_setting_disable():
+            self.targets = None
+            return
 
         # Define arguments
         self.obj = obj
@@ -80,6 +87,30 @@ class NotificationMethod:
     def cleanup(self):
         return True
 
+    # region plugins
+    def get_plugin(self):
+        """Returns plugin class"""
+        return False
+
+    def global_setting_disable(self):
+        """Check if the method is defined in a plugin and has a global setting"""
+        # Check if plugin has a setting
+        if not self.GLOBAL_SETTING:
+            return False
+
+        # Check if plugin is set
+        plg_cls = self.get_plugin()
+        if not plg_cls:
+            return False
+
+        # Check if method globally enabled
+        plg_instance = registry.plugins.get(plg_cls.PLUGIN_NAME.lower())
+        if plg_instance and not plg_instance.get_setting(self.GLOBAL_SETTING):
+            return True
+
+        # Lets go!
+        return False
+    # endregion
 
 class SingleNotificationMethod(NotificationMethod):
     def send(self, target):
