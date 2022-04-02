@@ -77,9 +77,6 @@ class NotificationMethod:
     def setup(self):
         return True
 
-    # def send(self, targets)
-    # def send_bulk(self)
-
     def cleanup(self):
         return True
 
