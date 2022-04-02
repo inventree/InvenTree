@@ -21,7 +21,7 @@ class CoreNotificationsPlugin(SettingsMixin, IntegrationPluginBase):
     DESCRIPTION = _('Integrated outgoing notificaton methods')
 
     SETTINGS = {
-        'NOTIFICATION_SEND_EMAILS': {
+        'ENABLE_NOTIFICATION_EMAILS': {
             'name': _('Enable email notifications'),
             'description': _('Allow sending of emails for event notifications'),
             'default': True,
@@ -42,6 +42,10 @@ class CoreNotificationsPlugin(SettingsMixin, IntegrationPluginBase):
             Return a list of target email addresses,
             only for users which allow email notifications
             """
+
+            # Check if method globally enabled
+            if not self.get_setting('ENABLE_NOTIFICATION_EMAILS'):
+                return
 
             allowed_users = []
 
