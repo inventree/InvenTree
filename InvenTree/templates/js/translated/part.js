@@ -494,14 +494,40 @@ function duplicateBom(part_id, options={}) {
 function partStockLabel(part, options={}) {
 
     if (part.in_stock) {
-        if (part.unallocated_stock) {
-            return `<span class='badge rounded-pill bg-success ${options.classes}'>{% trans "Available" %}: ${part.unallocated_stock}/${part.in_stock}</span>`;
+        // There IS stock available for this part
+
+        // Is stock "low" (below the 'minimum_stock' quantity)?
+        if (part.minimum_stock && part.minimum_stock > part.in_stock) {
+            return `<span class='badge rounded-pill bg-warning ${options.classes}'>{% trans "Low stock" %}: ${part.in_stock}${part.units}</span>`;
+        } else if (part.unallocated_stock == 0) {
+            if (part.ordering) {
+                // There is no available stock, but stock is on order
+                return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "On Order" %}: ${part.ordering}${part.units}</span>`;
+            } else if (part.building) {
+                // There is no available stock, but stock is being built
+                return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "Building" %}: ${part.building}${part.units}</span>`;
+            } else {
+                // There is no available stock
+                return `<span class='badge rounded-pill bg-warning ${options.classes}'>{% trans "Available" %}: 0/${part.in_stock}${part.units}</span>`;
+            }
         } else {
-            return `<span class='badge rounded-pill bg-warning ${options.classes}'>{% trans "Available" %}: ${part.unallocated_stock}/${part.in_stock}</span>`;
+            return `<span class='badge rounded-pill bg-success ${options.classes}'>{% trans "Available" %}: ${part.unallocated_stock}/${part.in_stock}${part.units}</span>`;
         }
     } else {
-        return `<span class='badge rounded-pill bg-danger ${options.classes}'>{% trans "No Stock" %}</span>`;
+        // There IS NO stock available for this part
+
+        if (part.ordering) {
+            // There is no stock, but stock is on order
+            return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "On Order" %}: ${part.ordering}${part.units}</span>`;
+        } else if (part.building) {
+            // There is no stock, but stock is being built
+            return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "Building" %}: ${part.building}${part.units}</span>`;
+        } else {
+            // There is no stock
+            return `<span class='badge rounded-pill bg-danger ${options.classes}'>{% trans "No Stock" %}</span>`;
+        }
     }
+
 }
 
 
