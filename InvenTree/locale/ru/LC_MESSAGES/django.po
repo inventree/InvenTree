@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-02 02:53+0000\n"
-"PO-Revision-Date: 2022-04-02 14:50\n"
+"PO-Revision-Date: 2022-04-02 16:22\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -1524,23 +1524,23 @@ msgstr ""
 
 #: common/files.py:65
 msgid "Unsupported file format: {ext.upper()}"
-msgstr ""
+msgstr "Неподдерживаемый формат файла: {ext.upper()}"
 
 #: common/files.py:67
 msgid "Error reading file (invalid encoding)"
-msgstr ""
+msgstr "Ошибка чтения файла (неверная кодировка)"
 
 #: common/files.py:72
 msgid "Error reading file (invalid format)"
-msgstr ""
+msgstr "Ошибка чтения файла (неверный формат)"
 
 #: common/files.py:74
 msgid "Error reading file (incorrect dimension)"
-msgstr ""
+msgstr "Ошибка чтения файла (неверный размер)"
 
 #: common/files.py:76
 msgid "Error reading file (data could be corrupted)"
-msgstr ""
+msgstr "Ошибка чтения файла (данные могут быть повреждены)"
 
 #: common/forms.py:34
 msgid "File"
@@ -3765,7 +3765,7 @@ msgstr ""
 #: part/templates/part/import_wizard/ajax_match_references.html:12
 #: part/templates/part/import_wizard/match_references.html:12
 msgid "Errors exist in the submitted data"
-msgstr ""
+msgstr "В представленных данных присутствуют ошибки"
 
 #: order/templates/order/order_wizard/match_parts.html:21
 #: part/templates/part/import_wizard/match_fields.html:29
@@ -6671,11 +6671,11 @@ msgstr ""
 
 #: templates/500.html:5 templates/500.html:11
 msgid "Internal Server Error"
-msgstr ""
+msgstr "Внутренняя ошибка сервера"
 
 #: templates/500.html:14
 msgid "The InvenTree server raised an internal error"
-msgstr ""
+msgstr "Сервер InvenTree вызвал внутреннюю ошибку"
 
 #: templates/500.html:15
 msgid "Refer to the error log in the admin interface for further details"
@@ -7688,15 +7688,15 @@ msgstr ""
 
 #: templates/js/translated/api.js:192
 msgid "Error 400: Bad request"
-msgstr ""
+msgstr "Ошибка 400: Некорректный запрос"
 
 #: templates/js/translated/api.js:193
 msgid "API request returned error code 400"
-msgstr ""
+msgstr "API-запрос вернул код ошибки 400"
 
 #: templates/js/translated/api.js:197 templates/js/translated/modals.js:1066
 msgid "Error 401: Not Authenticated"
-msgstr ""
+msgstr "Ошибка 401: Авторизация не выполнена"
 
 #: templates/js/translated/api.js:198 templates/js/translated/modals.js:1067
 msgid "Authentication credentials not supplied"
@@ -7704,7 +7704,7 @@ msgstr ""
 
 #: templates/js/translated/api.js:202 templates/js/translated/modals.js:1071
 msgid "Error 403: Permission Denied"
-msgstr ""
+msgstr "Ошибка 403: Доступ запрещён"
 
 #: templates/js/translated/api.js:203 templates/js/translated/modals.js:1072
 msgid "You do not have the required permissions to access this function"
@@ -7712,7 +7712,7 @@ msgstr ""
 
 #: templates/js/translated/api.js:207 templates/js/translated/modals.js:1076
 msgid "Error 404: Resource Not Found"
-msgstr ""
+msgstr "Ошибка 404: Ресурс не найден"
 
 #: templates/js/translated/api.js:208 templates/js/translated/modals.js:1077
 msgid "The requested resource could not be located on the server"
@@ -7720,7 +7720,7 @@ msgstr ""
 
 #: templates/js/translated/api.js:212
 msgid "Error 405: Method Not Allowed"
-msgstr ""
+msgstr "Ошибка 405: Метод не разрешён"
 
 #: templates/js/translated/api.js:213
 msgid "HTTP method not allowed at URL"
@@ -7728,7 +7728,7 @@ msgstr ""
 
 #: templates/js/translated/api.js:217 templates/js/translated/modals.js:1081
 msgid "Error 408: Timeout"
-msgstr ""
+msgstr "Ошибка 408: Таймаут"
 
 #: templates/js/translated/api.js:218 templates/js/translated/modals.js:1082
 msgid "Connection timeout while requesting data from server"
