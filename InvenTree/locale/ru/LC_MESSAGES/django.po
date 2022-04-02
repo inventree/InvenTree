@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-02 02:53+0000\n"
-"PO-Revision-Date: 2022-04-02 17:33\n"
+"PO-Revision-Date: 2022-04-02 20:51\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -2631,7 +2631,7 @@ msgstr "Выберите производителя"
 #: templates/js/translated/company.js:818 templates/js/translated/order.js:1211
 #: templates/js/translated/part.js:246 templates/js/translated/part.js:897
 msgid "MPN"
-msgstr ""
+msgstr "MPN"
 
 #: company/models.py:343 templates/js/translated/part.js:247
 msgid "Manufacturer Part Number"
@@ -2702,7 +2702,7 @@ msgstr "Выберите поставщика"
 #: part/bom.py:238 part/bom.py:266 templates/js/translated/order.js:1198
 #: templates/js/translated/part.js:227 templates/js/translated/part.js:883
 msgid "SKU"
-msgstr ""
+msgstr "SKU"
 
 #: company/models.py:552 templates/js/translated/part.js:228
 msgid "Supplier stock keeping unit"
@@ -3245,7 +3245,7 @@ msgstr ""
 
 #: label/models.py:140
 msgid "Width [mm]"
-msgstr ""
+msgstr "Ширина [мм]"
 
 #: label/models.py:141
 msgid "Label width, specified in mm"
@@ -3274,7 +3274,7 @@ msgstr ""
 #: label/models.py:259 label/models.py:319 label/models.py:366
 #: report/models.py:322 report/models.py:459 report/models.py:497
 msgid "Filters"
-msgstr ""
+msgstr "Фильтры"
 
 #: label/models.py:318
 msgid "Query filters (comma-separated list of key=value pairs"
