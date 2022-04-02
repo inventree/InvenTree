@@ -833,6 +833,9 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
 
         super().setUp()
 
+        # Ensure the part "variant" tree is correctly structured
+        Part.objects.rebuild()
+
         # Add a new part
         self.part = Part.objects.create(
             name='Banana',
@@ -914,7 +917,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         self.assertEqual(part.build_order_allocation_count(), 0)
         self.assertEqual(part.sales_order_allocation_count(), 0)
         self.assertEqual(part.total_stock, in_stock)
-        self.assertEqual(part.available_stock(), in_stock)
+        self.assertEqual(part.available_stock, in_stock)
 
         # Now, let's create a sales order, and allocate some stock
         so = order.models.SalesOrder.objects.create(
@@ -1010,7 +1013,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         self.assertEqual(part.build_order_allocation_count(), 10)
         self.assertEqual(part.sales_order_allocation_count(), 15)
         self.assertEqual(part.total_stock, 91)
-        self.assertEqual(part.available_stock(), 66)
+        self.assertEqual(part.available_stock, 66)
 
         # Allocate further stock against the build
         build.models.BuildItem.objects.create(
@@ -1032,7 +1035,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         self.assertEqual(part.build_order_allocation_count(), 20)
         self.assertEqual(part.sales_order_allocation_count(), 15)
         self.assertEqual(part.total_stock, 91)
-        self.assertEqual(part.available_stock(), 56)
+        self.assertEqual(part.available_stock, 56)
 
 
 class BomItemTest(InvenTreeAPITestCase):

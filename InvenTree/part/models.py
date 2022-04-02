@@ -1434,7 +1434,7 @@ class Part(MPTTModel):
         - If this part is a "template" (variants exist) then these are counted too
         """
 
-        return self.get_stock_count()
+        return self.get_stock_count(include_variants=True)
 
     def get_bom_item_filter(self, include_inherited=True):
         """
