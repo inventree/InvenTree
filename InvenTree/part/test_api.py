@@ -910,6 +910,12 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         self.assertEqual(in_stock, 126)
         self.assertEqual(data['unallocated_stock'], in_stock)
 
+        # Check that model functions return the same values
+        self.assertEqual(part.build_order_allocation_count(), 0)
+        self.assertEqual(part.sales_order_allocation_count(), 0)
+        self.assertEqual(part.total_stock, in_stock)
+        self.assertEqual(part.available_stock(), in_stock)
+
         # Now, let's create a sales order, and allocate some stock
         so = order.models.SalesOrder.objects.create(
             reference='001',
@@ -1000,6 +1006,12 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         self.assertEqual(data['in_stock'], 91)
         self.assertEqual(data['unallocated_stock'], 66)
 
+        # Again, check that the direct model functions return the same values
+        self.assertEqual(part.build_order_allocation_count(), 10)
+        self.assertEqual(part.sales_order_allocation_count(), 15)
+        self.assertEqual(part.total_stock, 91)
+        self.assertEqual(part.available_stock(), 66)
+
         # Allocate further stock against the build
         build.models.BuildItem.objects.create(
             build=bo,
@@ -1015,6 +1027,12 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         self.assertEqual(data['allocated_to_sales_orders'], 15)
         self.assertEqual(data['in_stock'], 91)
         self.assertEqual(data['unallocated_stock'], 56)
+
+        # Again, check that the direct model functions return the same values
+        self.assertEqual(part.build_order_allocation_count(), 20)
+        self.assertEqual(part.sales_order_allocation_count(), 15)
+        self.assertEqual(part.total_stock, 91)
+        self.assertEqual(part.available_stock(), 56)
 
 
 class BomItemTest(InvenTreeAPITestCase):

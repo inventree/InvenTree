@@ -142,7 +142,7 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(len(response), 9)
 
         response = self.get_stock(location=7)
-        self.assertEqual(len(response), 16)
+        self.assertEqual(len(response), 18)
 
     def test_filter_by_depleted(self):
         """
@@ -249,7 +249,7 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(len(response), 4)
 
         response = self.get_stock(expired=0)
-        self.assertEqual(len(response), 16)
+        self.assertEqual(len(response), 25)
 
     def test_paginate(self):
         """
@@ -313,7 +313,7 @@ class StockItemListTest(StockAPITestCase):
 
         dataset = self.export_data({'part': 25})
 
-        self.assertEqual(len(dataset), 8)
+        self.assertEqual(len(dataset), 17)
 
 
 class StockItemTest(StockAPITestCase):
