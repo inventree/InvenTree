@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-03 13:24+0000\n"
-"PO-Revision-Date: 2022-04-03 14:35\n"
+"PO-Revision-Date: 2022-04-03 15:32\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -2228,7 +2228,7 @@ msgstr "Включить уведомления по электронной по
 
 #: common/models.py:1245
 msgid "Allow sending of emails for event notifications"
-msgstr ""
+msgstr "Разрешить отправку уведомлений о событиях по электронной почте"
 
 #: common/models.py:1251
 msgid "Enable label printing"
@@ -7142,7 +7142,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:54
 msgid "The following email addresses are associated with your account:"
-msgstr ""
+msgstr "Следующие адреса электронной почты связаны с вашей учётной записью:"
 
 #: templates/InvenTree/settings/user.html:75
 msgid "Verified"
@@ -7176,7 +7176,7 @@ msgstr "Предупреждение:"
 
 #: templates/InvenTree/settings/user.html:96
 msgid "You currently do not have any email address set up. You should really add an email address so you can receive notifications, reset your password, etc."
-msgstr ""
+msgstr "Вы не указали ни одного адреса электронной почты. Вы должны добавить адрес электронной почты, чтобы получать уведомления, сбрасывать пароль и т.п."
 
 #: templates/InvenTree/settings/user.html:104
 msgid "Add Email Address"
@@ -7278,7 +7278,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:266
 msgid "Do you really want to remove the selected email address?"
-msgstr ""
+msgstr "Вы действительно хотите удалить выбранный адрес электронной почты?"
 
 #: templates/InvenTree/settings/user_display.html:27
 msgid "Theme Settings"
@@ -7488,7 +7488,7 @@ msgstr ""
 
 #: templates/account/password_reset.html:18
 msgid "Forgotten your password? Enter your email address below, and we'll send you an email allowing you to reset it."
-msgstr ""
+msgstr "Забыли пароль? Введите адрес электронной почты ниже, и мы отправим вам письмо для сброса пароля."
 
 #: templates/account/password_reset.html:23
 msgid "Reset My Password"
