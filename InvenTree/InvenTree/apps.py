@@ -31,6 +31,8 @@ class InvenTreeConfig(AppConfig):
             if not isInTestMode():  # pragma: no cover
                 self.update_exchange_rates()
 
+        self.collect_notification_methods()
+
         if canAppAccessDatabase() or settings.TESTING_ENV:
             self.add_user_on_startup()
 
@@ -197,3 +199,11 @@ class InvenTreeConfig(AppConfig):
 
         # do not try again
         settings.USER_ADDED = True
+
+    def collect_notification_methods(self):
+        """
+        Collect all notification methods
+        """
+        from common.notifications import storage
+
+        storage.collect()

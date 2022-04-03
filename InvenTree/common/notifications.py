@@ -122,10 +122,18 @@ class BulkNotificationMethod(NotificationMethod):
         raise NotImplementedError('The `send` method must be overriden!')
 
 
+class MethodStorageClass:
+    liste = None
+
+    def collect(self):
+        storage.liste = inheritors(NotificationMethod) - IGNORED_NOTIFICATION_CLS
+
+
 IGNORED_NOTIFICATION_CLS = set([
     SingleNotificationMethod,
     BulkNotificationMethod,
 ])
+storage = MethodStorageClass()
 
 
 class UIMessageNotification(SingleNotificationMethod):
@@ -190,9 +198,11 @@ def trigger_notifaction(obj, category=None, obj_ref='pk', **kwargs):
 
         # Collect possible methods
         if delivery_methods is None:
-            delivery_methods = inheritors(NotificationMethod)
+            delivery_methods = storage.liste
+        else:
+            delivery_methods = (delivery_methods - IGNORED_NOTIFICATION_CLS)
 
-        for method in (delivery_methods - IGNORED_NOTIFICATION_CLS):
+        for method in delivery_methods:
             logger.info(f"Triggering method '{method.METHOD_NAME}'")
             try:
                 deliver_notification(method, obj, category, targets, context)
