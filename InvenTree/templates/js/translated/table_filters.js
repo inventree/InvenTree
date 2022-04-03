@@ -427,11 +427,15 @@ function getAvailableTableFilters(tableKey) {
             },
             has_stock: {
                 type: 'bool',
-                title: '{% trans "Stock available" %}',
+                title: '{% trans "In stock" %}',
             },
             low_stock: {
                 type: 'bool',
                 title: '{% trans "Low stock" %}',
+            },
+            unallocated_stock: {
+                type: 'bool',
+                title: '{% trans "Available stock" %}',
             },
             assembly: {
                 type: 'bool',
