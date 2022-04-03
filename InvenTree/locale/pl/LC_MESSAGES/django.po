@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-02 02:53+0000\n"
-"PO-Revision-Date: 2022-04-02 03:11\n"
+"PO-Revision-Date: 2022-04-03 09:24\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -2360,7 +2360,7 @@ msgstr "Preferowany format wyświetlania dat"
 
 #: common/models.py:1371 part/templates/part/detail.html:40
 msgid "Part Scheduling"
-msgstr ""
+msgstr "Planowanie komponentów"
 
 #: common/models.py:1372
 msgid "Display part scheduling information"
@@ -2635,7 +2635,7 @@ msgstr "MPN"
 
 #: company/models.py:343 templates/js/translated/part.js:247
 msgid "Manufacturer Part Number"
-msgstr "Numer producenta"
+msgstr "Numer producenta komponentu"
 
 #: company/models.py:349
 msgid "URL for external manufacturer part link"
@@ -2650,7 +2650,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part.html:23
 #: stock/templates/stock/item_base.html:374
 msgid "Manufacturer Part"
-msgstr "Część producenta"
+msgstr "Komponent producenta"
 
 #: company/models.py:416
 msgid "Parameter name"
@@ -2949,13 +2949,13 @@ msgstr "Notatki firmy"
 #: company/templates/company/manufacturer_part.html:215
 #: part/templates/part/detail.html:449
 msgid "Delete Supplier Parts?"
-msgstr ""
+msgstr "Usunąć komponenty dostawcy?"
 
 #: company/templates/company/detail.html:381
 #: company/templates/company/manufacturer_part.html:216
 #: part/templates/part/detail.html:450
 msgid "All selected supplier parts will be deleted"
-msgstr ""
+msgstr "Wszystkie wybrane komponenty dostawcy zostaną usunięte"
 
 #: company/templates/company/index.html:8
 msgid "Supplier List"
@@ -2977,17 +2977,17 @@ msgstr "Zamów komponent"
 #: company/templates/company/manufacturer_part.html:40
 #: templates/js/translated/company.js:565
 msgid "Edit manufacturer part"
-msgstr "Edytuj część producenta"
+msgstr "Edytuj komponent producenta"
 
 #: company/templates/company/manufacturer_part.html:44
 #: templates/js/translated/company.js:566
 msgid "Delete manufacturer part"
-msgstr "Usuń cześć producenta"
+msgstr "Usuń komponent producenta"
 
 #: company/templates/company/manufacturer_part.html:66
 #: company/templates/company/supplier_part.html:63
 msgid "Internal Part"
-msgstr "Część wewnętrzna"
+msgstr "Komponent wewnętrzny"
 
 #: company/templates/company/manufacturer_part.html:114
 #: company/templates/company/supplier_part.html:15 company/views.py:49
@@ -4134,7 +4134,7 @@ msgstr ""
 #: part/models.py:126 part/models.py:2613 part/templates/part/category.html:15
 #: part/templates/part/part_app_base.html:10
 msgid "Part Category"
-msgstr "Kategoria części"
+msgstr "Kategoria komponentu"
 
 #: part/models.py:127 part/templates/part/category.html:128
 #: templates/InvenTree/search.html:95 templates/js/translated/search.js:112
@@ -4181,7 +4181,7 @@ msgstr ""
 
 #: part/models.py:811 part/models.py:2666
 msgid "Part name"
-msgstr "Nazwa części"
+msgstr "Nazwa komponentu"
 
 #: part/models.py:818
 msgid "Is Template"
@@ -4201,7 +4201,7 @@ msgstr "Wariant"
 
 #: part/models.py:836
 msgid "Part description"
-msgstr "Opis części"
+msgstr "Opis komponentu"
 
 #: part/models.py:841 part/templates/part/category.html:86
 #: part/templates/part/part_base.html:322
