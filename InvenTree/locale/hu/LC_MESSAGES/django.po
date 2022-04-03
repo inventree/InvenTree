@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-03 13:24+0000\n"
-"PO-Revision-Date: 2022-04-03 14:35\n"
+"PO-Revision-Date: 2022-04-03 15:31\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -2635,7 +2635,7 @@ msgstr "MPN"
 
 #: company/models.py:343 templates/js/translated/part.js:247
 msgid "Manufacturer Part Number"
-msgstr "Gyártói alkatrész azonosító"
+msgstr "Gyártói cikkszám"
 
 #: company/models.py:349
 msgid "URL for external manufacturer part link"
@@ -2706,7 +2706,7 @@ msgstr "SKU"
 
 #: company/models.py:552 templates/js/translated/part.js:228
 msgid "Supplier stock keeping unit"
-msgstr "Beszállítói alkatrész azonosító"
+msgstr "Beszállítói cikkszám"
 
 #: company/models.py:559
 msgid "Select manufacturer part"
@@ -4234,7 +4234,7 @@ msgstr "IPN"
 
 #: part/models.py:856
 msgid "Internal Part Number"
-msgstr "Belső alkatrész azonosító"
+msgstr "Belső cikkszám"
 
 #: part/models.py:862
 msgid "Part revision or version number"
@@ -4427,15 +4427,15 @@ msgstr "Alapértelmezett paraméter érték"
 
 #: part/models.py:2658
 msgid "Part ID or part name"
-msgstr "Alkatrész azonosító vagy alkatrész név"
+msgstr "Alkatrész ID vagy alkatrész név"
 
 #: part/models.py:2661 templates/js/translated/model_renderers.js:186
 msgid "Part ID"
-msgstr "Alkatrész azonosító"
+msgstr "Alkatrész ID"
 
 #: part/models.py:2662
 msgid "Unique part ID value"
-msgstr "Egyedi alkatrész azonosító érték"
+msgstr "Egyedi alkatrész ID értéke"
 
 #: part/models.py:2665
 msgid "Part Name"
@@ -8589,40 +8589,40 @@ msgstr "Form adat lekérése sikertelen"
 
 #: templates/js/translated/model_renderers.js:42
 msgid "Company ID"
-msgstr "Cég azonosító"
+msgstr "Cég ID"
 
 #: templates/js/translated/model_renderers.js:79
 msgid "Stock ID"
-msgstr "Készlet azonosító"
+msgstr "Készlet ID"
 
 #: templates/js/translated/model_renderers.js:132
 msgid "Location ID"
-msgstr "Hely azonosító"
+msgstr "Hely ID"
 
 #: templates/js/translated/model_renderers.js:149
 msgid "Build ID"
-msgstr "Gyártás azonosító"
+msgstr "Gyártás ID"
 
 #: templates/js/translated/model_renderers.js:251
 #: templates/js/translated/model_renderers.js:283
 msgid "Order ID"
-msgstr "Rendelés azonosító"
+msgstr "Rendelés ID"
 
 #: templates/js/translated/model_renderers.js:300
 msgid "Shipment ID"
-msgstr "Szállítmány azonosító"
+msgstr "Szállítmány ID"
 
 #: templates/js/translated/model_renderers.js:320
 msgid "Category ID"
-msgstr "Kategória azonosító"
+msgstr "Kategória ID"
 
 #: templates/js/translated/model_renderers.js:363
 msgid "Manufacturer Part ID"
-msgstr "Gyártói alkatrész azonosító"
+msgstr "Gyártói cikkszám"
 
 #: templates/js/translated/model_renderers.js:392
 msgid "Supplier Part ID"
-msgstr "Beszállítói alkatrész azonosító"
+msgstr "Beszállítói cikkszám"
 
 #: templates/js/translated/notification.js:228
 msgid "Mark as unread"
@@ -9734,7 +9734,7 @@ msgstr "Van IPN-je"
 
 #: templates/js/translated/table_filters.js:417
 msgid "Part has internal part number"
-msgstr "Van belső alkatrész azonosítója"
+msgstr "Van belső cikkszáma"
 
 #: templates/js/translated/table_filters.js:422
 msgid "Show active parts"
