@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-03 13:24+0000\n"
-"PO-Revision-Date: 2022-04-03 13:28\n"
+"PO-Revision-Date: 2022-04-03 14:35\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -1293,11 +1293,11 @@ msgstr ""
 
 #: build/templates/build/cancel.html:5
 msgid "Are you sure you wish to cancel this build?"
-msgstr ""
+msgstr "Вы уверены, что хотите отменить эту сборку?"
 
 #: build/templates/build/delete_build.html:5
 msgid "Are you sure you want to delete this build?"
-msgstr ""
+msgstr "Вы уверены, что хотите удалить эту сборку?"
 
 #: build/templates/build/detail.html:16
 msgid "Build Details"
@@ -1980,7 +1980,7 @@ msgstr ""
 
 #: common/models.py:1014
 msgid "Email required"
-msgstr ""
+msgstr "Необходимо указать EMail"
 
 #: common/models.py:1015
 msgid "Require user to supply mail on signup"
@@ -2224,7 +2224,7 @@ msgstr ""
 
 #: common/models.py:1244
 msgid "Enable email notifications"
-msgstr ""
+msgstr "Включить уведомления по электронной почте"
 
 #: common/models.py:1245
 msgid "Allow sending of emails for event notifications"
@@ -7180,11 +7180,11 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:104
 msgid "Add Email Address"
-msgstr ""
+msgstr "Добавить адрес электронной почты"
 
 #: templates/InvenTree/settings/user.html:109
 msgid "Add Email"
-msgstr ""
+msgstr "Добавить EMail"
 
 #: templates/InvenTree/settings/user.html:117
 msgid "Social Accounts"
@@ -7422,17 +7422,17 @@ msgstr ""
 #: templates/account/email_confirm.html:6
 #: templates/account/email_confirm.html:10
 msgid "Confirm Email Address"
-msgstr ""
+msgstr "Подтверждение адреса электронной почты"
 
 #: templates/account/email_confirm.html:16
 #, python-format
 msgid "Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an email address for user %(user_display)s."
-msgstr ""
+msgstr "Пожалуйста, подтвердите, что <a href=\"mailto:%(email)s\">%(email)s</a> является адресом электронной почты пользователя %(user_display)s."
 
 #: templates/account/email_confirm.html:27
 #, python-format
 msgid "This email confirmation link expired or is invalid. Please <a href=\"%(email_url)s\">issue a new email confirmation request</a>."
-msgstr ""
+msgstr "Эта ссылка для подтверждения электронной почты устарела или является недействительной. Пожалуйста, <a href=\"%(email_url)s\">отправьте новый запрос на подтверждение электронной почты</a>."
 
 #: templates/account/login.html:6 templates/account/login.html:16
 #: templates/account/login.html:39
@@ -9944,11 +9944,11 @@ msgstr ""
 
 #: templates/stats.html:75
 msgid "Email Settings"
-msgstr ""
+msgstr "Настройки электронной почты"
 
 #: templates/stats.html:78
 msgid "Email settings not configured"
-msgstr ""
+msgstr "Электронная почта не настроена"
 
 #: templates/stock_table.html:17
 msgid "Barcode Actions"
