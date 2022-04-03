@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-03 13:24+0000\n"
-"PO-Revision-Date: 2022-04-03 15:32\n"
+"PO-Revision-Date: 2022-04-03 16:40\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -1625,7 +1625,7 @@ msgstr "Базовая ссылка"
 
 #: common/models.py:707
 msgid "Base URL for server instance"
-msgstr ""
+msgstr "Базовая ссылка для экземпляра сервера"
 
 #: common/models.py:713
 msgid "Default Currency"
@@ -3476,7 +3476,7 @@ msgstr ""
 #: order/models.py:992 part/templates/part/part_pricing.html:112
 #: part/templates/part/prices.html:116 part/templates/part/prices.html:284
 msgid "Sale Price"
-msgstr ""
+msgstr "Цена продажи"
 
 #: order/models.py:993
 msgid "Unit sale price"
@@ -5254,7 +5254,7 @@ msgstr ""
 
 #: part/templates/part/part_pricing.html:97 part/templates/part/prices.html:102
 msgid "Internal Price"
-msgstr ""
+msgstr "Внутренняя цена"
 
 #: part/templates/part/part_pricing.html:128
 #: part/templates/part/prices.html:134
@@ -6821,11 +6821,11 @@ msgstr ""
 
 #: templates/InvenTree/settings/barcode.html:8
 msgid "Barcode Settings"
-msgstr ""
+msgstr "Настройки штрих-кода"
 
 #: templates/InvenTree/settings/build.html:8
 msgid "Build Order Settings"
-msgstr ""
+msgstr "Настройки заказа на сборку"
 
 #: templates/InvenTree/settings/category.html:7
 msgid "Category Settings"
@@ -6857,12 +6857,12 @@ msgstr ""
 
 #: templates/InvenTree/settings/global.html:9
 msgid "Server Settings"
-msgstr ""
+msgstr "Настройки сервера"
 
 #: templates/InvenTree/settings/login.html:9
 #: templates/InvenTree/settings/sidebar.html:31
 msgid "Login Settings"
-msgstr ""
+msgstr "Настройки входа"
 
 #: templates/InvenTree/settings/login.html:21 templates/account/signup.html:5
 msgid "Signup"
@@ -6871,7 +6871,7 @@ msgstr ""
 #: templates/InvenTree/settings/mixins/settings.html:5
 #: templates/InvenTree/settings/settings.html:12 templates/navbar.html:131
 msgid "Settings"
-msgstr ""
+msgstr "Настройки"
 
 #: templates/InvenTree/settings/mixins/urls.html:5
 msgid "URLs"
@@ -6888,7 +6888,7 @@ msgstr "Открыть в новой вкладке"
 
 #: templates/InvenTree/settings/part.html:7
 msgid "Part Settings"
-msgstr ""
+msgstr "Настройки деталей"
 
 #: templates/InvenTree/settings/part.html:44
 msgid "Part Import"
@@ -6904,11 +6904,11 @@ msgstr "Шаблон параметра детали"
 
 #: templates/InvenTree/settings/plugin.html:10
 msgid "Plugin Settings"
-msgstr ""
+msgstr "Настройки плагинов"
 
 #: templates/InvenTree/settings/plugin.html:16
 msgid "Changing the settings below require you to immediatly restart InvenTree. Do not change this while under active usage."
-msgstr ""
+msgstr "Изменение настроек ниже требует немедленного перезапуска InvenTree, не изменяйте их до завершения работы."
 
 #: templates/InvenTree/settings/plugin.html:33
 msgid "Plugins"
@@ -7020,7 +7020,7 @@ msgstr "Настройки заказа на закупку"
 #: templates/InvenTree/settings/report.html:8
 #: templates/InvenTree/settings/user_reports.html:9
 msgid "Report Settings"
-msgstr ""
+msgstr "Настройки отчётов"
 
 #: templates/InvenTree/settings/setting.html:37
 msgid "No value set"
@@ -7028,19 +7028,19 @@ msgstr ""
 
 #: templates/InvenTree/settings/setting.html:42
 msgid "Edit setting"
-msgstr ""
+msgstr "Изменить настройки"
 
 #: templates/InvenTree/settings/settings.html:116
 msgid "Edit Plugin Setting"
-msgstr ""
+msgstr "Изменить настройки плагинов"
 
 #: templates/InvenTree/settings/settings.html:118
 msgid "Edit Global Setting"
-msgstr ""
+msgstr "Изменить глобальные настройки"
 
 #: templates/InvenTree/settings/settings.html:120
 msgid "Edit User Setting"
-msgstr ""
+msgstr "Изменить настройки пользователя"
 
 #: templates/InvenTree/settings/settings.html:209
 msgid "No category parameter templates found"
@@ -7063,26 +7063,26 @@ msgstr "Шаблоны параметров детали не найдены"
 #: templates/InvenTree/settings/sidebar.html:6
 #: templates/InvenTree/settings/user_settings.html:9
 msgid "User Settings"
-msgstr ""
+msgstr "Настройки пользователя"
 
 #: templates/InvenTree/settings/sidebar.html:9
 #: templates/InvenTree/settings/user.html:12
 msgid "Account Settings"
-msgstr ""
+msgstr "Настройки учётной записи"
 
 #: templates/InvenTree/settings/sidebar.html:11
 #: templates/InvenTree/settings/user_display.html:9
 msgid "Display Settings"
-msgstr ""
+msgstr "Настройки отображения"
 
 #: templates/InvenTree/settings/sidebar.html:13
 msgid "Home Page"
-msgstr ""
+msgstr "Главная страница"
 
 #: templates/InvenTree/settings/sidebar.html:15
 #: templates/InvenTree/settings/user_search.html:9
 msgid "Search Settings"
-msgstr ""
+msgstr "Настройки поиска"
 
 #: templates/InvenTree/settings/sidebar.html:19
 msgid "Label Printing"
@@ -7095,7 +7095,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:26
 msgid "Global Settings"
-msgstr ""
+msgstr "Глобальные настройки"
 
 #: templates/InvenTree/settings/sidebar.html:29
 msgid "Server Configuration"
@@ -7111,7 +7111,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/so.html:7
 msgid "Sales Order Settings"
-msgstr ""
+msgstr "Настройки заказов на продажу"
 
 #: templates/InvenTree/settings/stock.html:7
 msgid "Stock Settings"
@@ -7282,7 +7282,7 @@ msgstr "Вы действительно хотите удалить выбран
 
 #: templates/InvenTree/settings/user_display.html:27
 msgid "Theme Settings"
-msgstr ""
+msgstr "Настройки темы"
 
 #: templates/InvenTree/settings/user_display.html:37
 msgid "Select theme"
@@ -7294,7 +7294,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user_display.html:56
 msgid "Language Settings"
-msgstr ""
+msgstr "Настройки языка"
 
 #: templates/InvenTree/settings/user_display.html:65
 msgid "Select language"
@@ -7344,11 +7344,11 @@ msgstr "Настройки главной страницы"
 
 #: templates/InvenTree/settings/user_labels.html:9
 msgid "Label Settings"
-msgstr ""
+msgstr "Настройки меток"
 
 #: templates/InvenTree/settings/user_notifications.html:8
 msgid "Notification Settings"
-msgstr ""
+msgstr "Настройки уведомлений"
 
 #: templates/about.html:10
 msgid "InvenTree Version Information"
@@ -7479,7 +7479,7 @@ msgstr ""
 
 #: templates/account/logout.html:19
 msgid "Back to Site"
-msgstr ""
+msgstr "Вернуться на сайт"
 
 #: templates/account/password_reset.html:5
 #: templates/account/password_reset.html:12
@@ -7559,7 +7559,7 @@ msgstr ""
 #: templates/allauth_2fa/backup_tokens.html:31
 #: templates/allauth_2fa/setup.html:40
 msgid "Back to settings"
-msgstr ""
+msgstr "Вернуться к настройкам"
 
 #: templates/allauth_2fa/remove.html:6
 msgid "Disable Two-Factor Authentication"
@@ -7655,7 +7655,7 @@ msgstr "Вы получили это письмо, потому что вы по
 
 #: templates/email/email.html:35
 msgid "InvenTree version"
-msgstr ""
+msgstr "Версия InvenTree"
 
 #: templates/email/low_stock_notification.html:9
 msgid "Click on the following link to view this part"
@@ -8751,7 +8751,7 @@ msgstr ""
 
 #: templates/js/translated/order.js:1256 templates/js/translated/order.js:2376
 msgid "Total Price"
-msgstr ""
+msgstr "Общая стоимость"
 
 #: templates/js/translated/order.js:1297 templates/js/translated/order.js:2418
 #: templates/js/translated/part.js:950
