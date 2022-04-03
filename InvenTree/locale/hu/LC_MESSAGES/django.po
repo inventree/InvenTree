@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-03 13:24+0000\n"
-"PO-Revision-Date: 2022-04-03 13:28\n"
+"PO-Revision-Date: 2022-04-03 14:35\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -4102,7 +4102,7 @@ msgstr "Elérhető készlet"
 #: templates/js/translated/part.js:1200 templates/js/translated/part.js:1372
 #: templates/js/translated/part.js:1388
 msgid "On Order"
-msgstr "Beszállítás alatt"
+msgstr "Rendelve"
 
 #: part/forms.py:84
 msgid "Select part category"
@@ -9042,7 +9042,7 @@ msgstr "Nincs alkatrész"
 
 #: templates/js/translated/part.js:1194 templates/js/translated/part.js:1380
 msgid "Not available"
-msgstr ""
+msgstr "Nincs szabad"
 
 #: templates/js/translated/part.js:1345
 msgid "No category"
@@ -9742,11 +9742,11 @@ msgstr "Aktív alkatrészek megjelenítése"
 
 #: templates/js/translated/table_filters.js:430
 msgid "In stock"
-msgstr ""
+msgstr "Készleten"
 
 #: templates/js/translated/table_filters.js:438
 msgid "Available stock"
-msgstr ""
+msgstr "Elérhető"
 
 #: templates/js/translated/table_filters.js:462
 msgid "Purchasable"
