@@ -10,6 +10,7 @@ from plugin import registry
 logger = logging.getLogger('inventree')
 
 
+# region methods
 class NotificationMethod:
     """
     Base class for notification methods
@@ -112,6 +113,7 @@ class NotificationMethod:
         return False
     # endregion
 
+
 class SingleNotificationMethod(NotificationMethod):
     def send(self, target):
         raise NotImplementedError('The `send` method must be overriden!')
@@ -120,6 +122,7 @@ class SingleNotificationMethod(NotificationMethod):
 class BulkNotificationMethod(NotificationMethod):
     def send_bulk(self):
         raise NotImplementedError('The `send` method must be overriden!')
+# endregion
 
 
 class MethodStorageClass:
