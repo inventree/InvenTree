@@ -74,6 +74,7 @@ def plugin_errors(*args, **kwargs):
     """
     return registry.errors
 
+
 @register.simple_tag(takes_context=True)
 def notification_settings_list(context, *args, **kwargs):
     """
