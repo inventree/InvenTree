@@ -131,8 +131,13 @@ class MethodStorageClass:
     liste = None
     user_settings = {}
 
-    def collect(self):
-        storage.liste = inheritors(NotificationMethod) - IGNORED_NOTIFICATION_CLS
+    def collect(self, selected_classes=None):
+        current_method = inheritors(NotificationMethod) - IGNORED_NOTIFICATION_CLS
+
+        # for testing selective loading is made available
+        if selected_classes:
+            current_method = [item for item in current_method if item is selected_classes]
+        storage.liste = current_method
 
     def get_usersettings(self, user):
         methods = []

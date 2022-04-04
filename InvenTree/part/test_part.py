@@ -494,9 +494,13 @@ class BaseNotificationIntegrationTest(TestCase):
         # Define part that will be tested
         self.part = Part.objects.get(name='R_2K2_0805')
 
-    def _notification_run(self):
+    def _notification_run(self, run_class=None):
+        """
+        Run a notification test suit through.
+        If you only want to test one class pass it to run_class
+        """
         # reload notification methods
-        storage.collect()
+        storage.collect(run_class)
 
         # There should be no notification runs
         self.assertEqual(NotificationEntry.objects.all().count(), 0)

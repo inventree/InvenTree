@@ -95,7 +95,7 @@ class BulkNotificationMethodTests(BaseNotificationIntegrationTest):
                 return [1, ]
 
         with self.assertRaises(NotImplementedError):
-            self._notification_run()
+            self._notification_run(WrongImplementation)
 
 
 class SingleNotificationMethodTests(BaseNotificationIntegrationTest):
@@ -113,6 +113,6 @@ class SingleNotificationMethodTests(BaseNotificationIntegrationTest):
                 return [1, ]
 
         with self.assertRaises(NotImplementedError):
-            self._notification_run()
+            self._notification_run(WrongImplementation)
 
 # A integration test for notifications is provided in test_part.PartNotificationTest
