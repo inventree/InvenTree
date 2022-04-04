@@ -31,6 +31,24 @@
  */
 
 
+// Should the ID be rendered for this string
+function renderId(title, pk, parameters={}) {
+
+    // Default = true
+    var render = true;
+
+    if ('render_pk' in parameters) {
+        render = parameters['render_pk'];
+    }
+    
+    if (render) {
+        return `<span class='float-right'><small>${title}: ${pk}</small></span>`;
+    } else {
+        return '';
+    }
+}
+
+
 // Renderer for "Company" model
 // eslint-disable-next-line no-unused-vars
 function renderCompany(name, data, parameters={}, options={}) {
@@ -39,7 +57,7 @@ function renderCompany(name, data, parameters={}, options={}) {
 
     html += `<span><b>${data.name}</b></span> - <i>${data.description}</i>`;
 
-    html += `<span class='float-right'><small>{% trans "Company ID" %}: ${data.pk}</small></span>`;
+    html += renderId('{% trans "Company ID" %}', data.pk, parameters);
 
     return html;
 }
@@ -67,18 +85,6 @@ function renderStockItem(name, data, parameters={}, options={}) {
         part_detail = `<img src='${image}' class='select2-thumbnail'><span>${data.part_detail.full_name}</span> - `;
     }
 
-    var render_stock_id = true;
-
-    if ('render_stock_id' in parameters) {
-        render_stock_id = parameters['render_stock_id'];
-    }
-
-    var stock_id = '';
-    
-    if (render_stock_id) {
-        stock_id = `<span class='float-right'><small>{% trans "Stock ID" %}: ${data.pk}</small></span>`;
-    }
-
     var render_location_detail = false;
 
     if ('render_location_detail' in parameters) {
@@ -88,7 +94,7 @@ function renderStockItem(name, data, parameters={}, options={}) {
     var location_detail = '';
 
     if (render_location_detail && data.location_detail) {
-        location_detail = ` - (<em>${data.location_detail.name}</em>)`;
+        location_detail = ` <small>- (<em>${data.location_detail.name}</em>)</small>`;
     }
 
     var stock_detail = '';
@@ -103,7 +109,10 @@ function renderStockItem(name, data, parameters={}, options={}) {
 
     var html = `
     <span>
-        ${part_detail}${stock_detail}${location_detail}${stock_id}
+        ${part_detail}
+        ${stock_detail}
+        ${location_detail}
+        ${renderId('{% trans "Stock ID" %}', data.pk, parameters)}
     </span>
     `;
 
@@ -183,7 +192,7 @@ function renderPart(name, data, parameters={}, options={}) {
         <small>
             ${stock_data}
             ${extra}
-            {% trans "Part ID" %}: ${data.pk}
+            ${renderId('{% trans "Part ID" $}', data.pk, parameters)}
             </small>
     </span>`;
 
@@ -245,13 +254,7 @@ function renderPurchaseOrder(name, data, parameters={}, options={}) {
         html += ` - <em>${data.description}</em>`;
     }
 
-    html += `
-    <span class='float-right'>
-        <small>
-            {% trans "Order ID" %}: ${data.pk}
-        </small>
-    </span>
-    `;
+    html += renderId('{% trans "Order ID" %}', data.pk, parameters);
 
     return html;
 }
@@ -277,12 +280,7 @@ function renderSalesOrder(name, data, parameters={}, options={}) {
         html += ` - <em>${data.description}</em>`;
     }
 
-    html += `
-    <span class='float-right'>
-        <small>
-            {% trans "Order ID" %}: ${data.pk}
-        </small>
-    </span>`;
+    html += renderId('{% trans "Order ID" %}', data.pk, parameters);
 
     return html;
 }
