@@ -29,7 +29,7 @@ class CoreNotificationsPlugin(SettingsMixin, IntegrationPluginBase):
         'ENABLE_NOTIFICATION_EMAILS': {
             'name': _('Enable email notifications'),
             'description': _('Allow sending of emails for event notifications'),
-            'default': True,
+            'default': False,
             'validator': bool,
         },
     }
