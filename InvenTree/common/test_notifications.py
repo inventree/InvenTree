@@ -77,7 +77,7 @@ class BaseNotificationTests(BaseNotificationIntegrationTest):
             def send(self, target):
                 raise KeyError('This could be any error')
 
-        self._notification_run()
+        self._notification_run(ErrorImplementation)
 
 
 class BulkNotificationMethodTests(BaseNotificationIntegrationTest):
