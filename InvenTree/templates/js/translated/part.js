@@ -1362,7 +1362,7 @@ function loadPartTable(table, url, options={}) {
 
     col = {
         field: 'unallocated_stock',
-        title: '{% trans "Available" %}',
+        title: '{% trans "Stock" %}',
         searchable: false,
         formatter: function(value, row) {            
             var link = '?display=part-stock';
