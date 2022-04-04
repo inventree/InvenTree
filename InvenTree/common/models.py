@@ -636,13 +636,13 @@ class BaseInvenTreeSetting(models.Model):
         return setting.get('protected', False)
 
 
-class GenericSettingClassMixin:
+class GenericReferencedSettingClass:
     """
     This mixin can be used to add reference keys to static properties
 
     Sample:
     ```python
-    class SampleSetting(GenericSettingClassMixin, common.models.BaseInvenTreeSetting):
+    class SampleSetting(GenericReferencedSettingClass, common.models.BaseInvenTreeSetting):
         class Meta:
             unique_together = [
                 ('sample', 'key'),

@@ -101,7 +101,7 @@ class PluginConfig(models.Model):
 
         return ret
 
-class PluginSetting(common.models.GenericSettingClassMixin, common.models.BaseInvenTreeSetting):
+class PluginSetting(common.models.GenericReferencedSettingClass, common.models.BaseInvenTreeSetting):
     """
     This model represents settings for individual plugins
     """
@@ -150,7 +150,7 @@ class PluginSetting(common.models.GenericSettingClassMixin, common.models.BaseIn
     )
 
 
-class NotificationUserSetting(common.models.GenericSettingClassMixin, common.models.BaseInvenTreeSetting):
+class NotificationUserSetting(common.models.GenericReferencedSettingClass, common.models.BaseInvenTreeSetting):
     """
     This model represents notification settings for a user
     """
