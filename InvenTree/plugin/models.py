@@ -112,6 +112,17 @@ class GenericSettingClassMixin:
             self.REFERENCE_NAME: getattr(self, self.REFERENCE_NAME)
         }
 
+    """
+    We override the following class methods,
+    so that we can pass the modified key instance as an additional argument
+    """
+
+    def clean(self, **kwargs):
+
+        kwargs[self.REFERENCE_NAME] = getattr(self, self.REFERENCE_NAME)
+
+        super().clean(**kwargs)
+
     def is_bool(self, **kwargs):
 
         kwargs[self.REFERENCE_NAME] = getattr(self, self.REFERENCE_NAME)
@@ -147,17 +158,6 @@ class PluginSetting(GenericSettingClassMixin, common.models.BaseInvenTreeSetting
         unique_together = [
             ('plugin', 'key'),
         ]
-
-    def clean(self, **kwargs):
-
-        kwargs['plugin'] = self.plugin
-
-        super().clean(**kwargs)
-
-    """
-    We override the following class methods,
-    so that we can pass the plugin instance
-    """
 
     REFERENCE_NAME = 'plugin'
 
@@ -207,17 +207,6 @@ class NotificationUserSetting(common.models.BaseInvenTreeSetting):
         unique_together = [
             ('method', 'user', 'key'),
         ]
-
-    def clean(self, **kwargs):
-
-        kwargs['method'] = self.method
-
-        super().clean(**kwargs)
-
-    """
-    We override the following class methods,
-    so that we can pass the method instance
-    """
 
     REFERENCE_NAME = 'method'
 
