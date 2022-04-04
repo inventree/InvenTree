@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from allauth.account.models import EmailAddress
 
-from plugin import IntegrationPluginBase, registry
+from plugin import IntegrationPluginBase
 from plugin.mixins import BulkNotificationMethod, SettingsMixin
 from common.models import InvenTreeUserSetting
 import InvenTree.tasks
