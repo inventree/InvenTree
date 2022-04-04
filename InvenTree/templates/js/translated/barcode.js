@@ -366,7 +366,6 @@ function barcodeCheckIn(location_id) {
     // List of items we are going to checkin
     var items = [];
 
-
     function reloadTable() {
 
         modalEnable(modal, false);
@@ -389,10 +388,17 @@ function barcodeCheckIn(location_id) {
             <tbody>`;
 
         items.forEach(function(item) {
+
+            var location_info = `${item.location}`;
+
+            if (item.location_detail) {
+                location_info = `${item.location_detail.name}`;
+            }
+
             html += `
             <tr pk='${item.pk}'>
                 <td>${imageHoverIcon(item.part_detail.thumbnail)} ${item.part_detail.name}</td>
-                <td>${item.location_detail.name}</td>
+                <td>${location_info}</td>
                 <td>${item.quantity}</td>
                 <td>${makeIconButton('fa-times-circle icon-red', 'button-item-remove', item.pk, '{% trans "Remove stock item" %}')}</td>
             </tr>`;
@@ -468,6 +474,12 @@ function barcodeCheckIn(location_id) {
                 });
 
                 data.items = entries;
+
+                // Prevent submission without any entries
+                if (entries.length == 0) {
+                    showBarcodeMessage(modal, '{% trans "No barcode provided" %}', 'warning');
+                    return;
+                }
 
                 inventreePut(
                     '{% url "api-stock-transfer" %}',
