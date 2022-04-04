@@ -265,6 +265,12 @@ class BaseInvenTreeSetting(models.Model):
             filters['plugin'] = plugin
             kwargs['plugin'] = plugin
 
+        # Filter by method
+        method = kwargs.get('method', None)
+
+        if method is not None:
+            filters['method'] = method
+
         try:
             setting = settings.filter(**filters).first()
         except (ValueError, cls.DoesNotExist):

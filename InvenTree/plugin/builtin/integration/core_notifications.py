@@ -42,6 +42,11 @@ class CoreNotificationsPlugin(SettingsMixin, IntegrationPluginBase):
             ('template', 'subject', ),
         ]
         GLOBAL_SETTING = 'ENABLE_NOTIFICATION_EMAILS'
+        USER_SETTING = {
+            'name': _('Enable email notifications'),
+            'description': _('Allow sending of emails for event notifications'),
+            'default': True,
+            'validator': bool,
         }
 
         def get_targets(self):

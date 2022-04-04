@@ -5,6 +5,7 @@ from InvenTree.helpers import inheritors
 from InvenTree.ready import isImportingData
 from common.models import NotificationEntry, NotificationMessage
 from plugin import registry
+from plugin.models import NotificationUserSetting
 
 
 logger = logging.getLogger('inventree')
@@ -20,6 +21,7 @@ class NotificationMethod:
     CONTEXT_BUILTIN = ['name', 'message', ]
     CONTEXT_EXTRA = []
     GLOBAL_SETTING = None
+    USER_SETTING = None
 
     def __init__(self, obj, category, targets, context) -> None:
         # Check if a sending fnc is defined
@@ -127,9 +129,32 @@ class BulkNotificationMethod(NotificationMethod):
 
 class MethodStorageClass:
     liste = None
+    user_settings = {}
 
     def collect(self):
         storage.liste = inheritors(NotificationMethod) - IGNORED_NOTIFICATION_CLS
+
+    def get_usersettings(self, user):
+        methods = []
+        for item in storage.liste:
+            if item.USER_SETTING:
+                new_key = f'NOTIFICATION_METHOD_{item.METHOD_NAME.upper()}'
+
+                # make sure the setting exists
+                self.user_settings[new_key] = item.USER_SETTING
+                NotificationUserSetting.get_setting(
+                    key=new_key,
+                    user=user,
+                    method=item.METHOD_NAME,
+                )
+
+                # save definition
+                methods.append({
+                    'key': new_key,
+                    'icon': 'envelope',
+                    'method': item.METHOD_NAME,
+                })
+        return methods
 
 
 IGNORED_NOTIFICATION_CLS = set([

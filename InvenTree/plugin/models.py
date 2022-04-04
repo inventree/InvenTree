@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import gettext_lazy as _
 from django.db import models
+from django.contrib.auth.models import User
 
 import common.models
 
@@ -181,4 +182,72 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
         null=False,
         verbose_name=_('Plugin'),
         on_delete=models.CASCADE,
+    )
+
+
+class NotificationUserSetting(common.models.BaseInvenTreeSetting):
+    """
+    This model represents notification settings for a user
+    """
+
+    class Meta:
+        unique_together = [
+            ('method', 'user', 'key'),
+        ]
+
+    def clean(self, **kwargs):
+
+        kwargs['method'] = self.method
+
+        super().clean(**kwargs)
+
+    """
+    We override the following class methods,
+    so that we can pass the method instance
+    """
+
+    def is_bool(self, **kwargs):
+
+        kwargs['method'] = self.method
+
+        return super().is_bool(**kwargs)
+
+    @property
+    def name(self):
+        return self.__class__.get_setting_name(self.key, method=self.method)
+
+    @property
+    def default_value(self):
+        return self.__class__.get_setting_default(self.key, method=self.method)
+
+    @property
+    def description(self):
+        return self.__class__.get_setting_description(self.key, method=self.method)
+
+    @property
+    def units(self):
+        return self.__class__.get_setting_units(self.key, method=self.method)
+
+    def choices(self):
+        return self.__class__.get_setting_choices(self.key, method=self.method)
+
+    @classmethod
+    def get_setting_definition(cls, key, method, **kwargs):
+        from common.notifications import storage
+
+        kwargs['settings'] = storage.user_settings
+
+        return super().get_setting_definition(key, **kwargs)
+
+    method = models.CharField(
+        max_length=255,
+        verbose_name=_('Method'),
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        blank=True, null=True,
+        verbose_name=_('User'),
+        help_text=_('User'),
     )
