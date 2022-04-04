@@ -19,6 +19,7 @@ from .templatetags import inventree_extras
 import part.settings
 
 from common.models import InvenTreeSetting, NotificationEntry, NotificationMessage
+from common.notifications import storage
 
 
 class TemplateTagTest(TestCase):
@@ -494,6 +495,9 @@ class BaseNotificationIntegrationTest(TestCase):
         self.part = Part.objects.get(name='R_2K2_0805')
 
     def _notification_run(self):
+        # reload notification methods
+        storage.collect()
+
         # There should be no notification runs
         self.assertEqual(NotificationEntry.objects.all().count(), 0)
 
