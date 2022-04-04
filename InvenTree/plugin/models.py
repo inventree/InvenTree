@@ -129,7 +129,6 @@ class GenericSettingClassMixin:
         )
     ```
     """
-    # region generic helpers
 
     REFERENCE_NAME = None
 
