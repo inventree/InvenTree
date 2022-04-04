@@ -101,6 +101,7 @@ class PluginConfig(models.Model):
 
         return ret
 
+
 class PluginSetting(common.models.GenericReferencedSettingClass, common.models.BaseInvenTreeSetting):
     """
     This model represents settings for individual plugins

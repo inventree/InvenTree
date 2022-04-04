@@ -717,7 +717,6 @@ class GenericReferencedSettingClass:
         return self.__class__.get_setting_choices(self.key, **self._get_reference())
 
 
-
 def settings_group_options():
     """
     Build up group tuple for settings based on your choices
