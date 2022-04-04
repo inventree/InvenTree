@@ -103,8 +103,34 @@ class PluginConfig(models.Model):
 
 
 class GenericSettingClassMixin:
+    """
+    This mixin can be used to add reference keys to static properties
 
+    Sample:
+    ```python
+    class SampleSetting(GenericSettingClassMixin, common.models.BaseInvenTreeSetting):
+        class Meta:
+            unique_together = [
+                ('sample', 'key'),
+            ]
+
+        REFERENCE_NAME = 'sample'
+
+        @classmethod
+        def get_setting_definition(cls, key, **kwargs):
+            # mysampledict contains the dict with all settings for this SettingClass - this could also be a dynamic lookup
+
+            kwargs['settings'] = mysampledict
+            return super().get_setting_definition(key, **kwargs)
+
+        sample = models.charKey(  # the name for this field is the additonal key and must be set in the Meta class an REFERENCE_NAME
+            max_length=256,
+            verbose_name=_('sample')
+        )
+    ```
+    """
     # region generic helpers
+
     REFERENCE_NAME = None
 
     def _get_reference(self):
