@@ -636,6 +636,88 @@ class BaseInvenTreeSetting(models.Model):
         return setting.get('protected', False)
 
 
+class GenericSettingClassMixin:
+    """
+    This mixin can be used to add reference keys to static properties
+
+    Sample:
+    ```python
+    class SampleSetting(GenericSettingClassMixin, common.models.BaseInvenTreeSetting):
+        class Meta:
+            unique_together = [
+                ('sample', 'key'),
+            ]
+
+        REFERENCE_NAME = 'sample'
+
+        @classmethod
+        def get_setting_definition(cls, key, **kwargs):
+            # mysampledict contains the dict with all settings for this SettingClass - this could also be a dynamic lookup
+
+            kwargs['settings'] = mysampledict
+            return super().get_setting_definition(key, **kwargs)
+
+        sample = models.charKey(  # the name for this field is the additonal key and must be set in the Meta class an REFERENCE_NAME
+            max_length=256,
+            verbose_name=_('sample')
+        )
+    ```
+    """
+
+    REFERENCE_NAME = None
+
+    def _get_reference(self):
+        """
+        Returns dict that can be used as an argument for kwargs calls.
+        Helps to make overriden calls generic for simple reuse.
+
+        Usage:
+        ```python
+        some_random_function(argument0, kwarg1=value1, **self._get_reference())
+        ```
+        """
+        return {
+            self.REFERENCE_NAME: getattr(self, self.REFERENCE_NAME)
+        }
+
+    """
+    We override the following class methods,
+    so that we can pass the modified key instance as an additional argument
+    """
+
+    def clean(self, **kwargs):
+
+        kwargs[self.REFERENCE_NAME] = getattr(self, self.REFERENCE_NAME)
+
+        super().clean(**kwargs)
+
+    def is_bool(self, **kwargs):
+
+        kwargs[self.REFERENCE_NAME] = getattr(self, self.REFERENCE_NAME)
+
+        return super().is_bool(**kwargs)
+
+    @property
+    def name(self):
+        return self.__class__.get_setting_name(self.key, **self._get_reference())
+
+    @property
+    def default_value(self):
+        return self.__class__.get_setting_default(self.key, **self._get_reference())
+
+    @property
+    def description(self):
+        return self.__class__.get_setting_description(self.key, **self._get_reference())
+
+    @property
+    def units(self):
+        return self.__class__.get_setting_units(self.key, **self._get_reference())
+
+    def choices(self):
+        return self.__class__.get_setting_choices(self.key, **self._get_reference())
+
+
+
 def settings_group_options():
     """
     Build up group tuple for settings based on your choices
