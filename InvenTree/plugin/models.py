@@ -108,6 +108,15 @@ class GenericSettingClassMixin:
     REFERENCE_NAME = None
 
     def _get_reference(self):
+        """
+        Returns dict that can be used as an argument for kwargs calls.
+        Helps to make overriden calls generic for simple reuse.
+
+        Usage:
+        ```python
+        some_random_function(argument0, kwarg1=value1, **self._get_reference())
+        ```
+        """
         return {
             self.REFERENCE_NAME: getattr(self, self.REFERENCE_NAME)
         }
