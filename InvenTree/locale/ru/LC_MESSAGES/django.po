@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-03 13:24+0000\n"
-"PO-Revision-Date: 2022-04-03 17:36\n"
+"PO-Revision-Date: 2022-04-04 09:47\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -9245,7 +9245,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:403
 msgid "Created multiple stock items"
-msgstr ""
+msgstr "Создано несколько единиц хранения"
 
 #: templates/js/translated/stock.js:428
 msgid "Find Serial Number"
