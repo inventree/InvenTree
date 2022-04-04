@@ -545,7 +545,7 @@ function barcodeCheckIn(location_id) {
 /*
  * Display dialog to check a single stock item into a stock location
  */
-function scanItemsIntoLocation(item_id_list, options={}) {
+function scanItemsIntoLocation(item_list, options={}) {
 
     var modal = options.modal || '#modal-form';
 
@@ -595,9 +595,10 @@ function scanItemsIntoLocation(item_id_list, options={}) {
 
                 var items = [];
 
-                item_id_list.forEach(function(pk) {
+                item_list.forEach(function(item) {
                     items.push({
-                        pk: pk,
+                        pk: item.pk || item.id,
+                        quantity: item.quantity, 
                     });
                 });
 
@@ -617,13 +618,10 @@ function scanItemsIntoLocation(item_id_list, options={}) {
                             // First hide the modal
                             $(modal).modal('hide');
 
-                            if (status == 'success' && 'success' in response) {
-                                addCachedAlert(response.success);
-                                location.reload();
+                            if (options.success) {
+                                options.success(response);
                             } else {
-                                showMessage('{% trans "Error transferring stock" %}', {
-                                    style: 'danger',
-                                });
+                                location.reload();
                             }
                         }
                     }
