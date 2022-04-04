@@ -83,7 +83,10 @@ class BaseNotificationTests(BaseNotificationIntegrationTest):
 class BulkNotificationMethodTests(BaseNotificationIntegrationTest):
 
     def test_BulkNotificationMethod(self):
-        """ensure the implementation requirements are tested"""
+        """
+        Ensure the implementation requirements are tested.
+        NotImplementedError needs to raise if the send_bulk() method is not set.
+        """
 
         class WrongImplementation(BulkNotificationMethod):
             METHOD_NAME = 'WrongImplementationBulk'
@@ -98,7 +101,10 @@ class BulkNotificationMethodTests(BaseNotificationIntegrationTest):
 class SingleNotificationMethodTests(BaseNotificationIntegrationTest):
 
     def test_SingleNotificationMethod(self):
-        """ensure the implementation requirements are tested"""
+        """
+        Ensure the implementation requirements are tested.
+        NotImplementedError needs to raise if the send() method is not set.
+        """
 
         class WrongImplementation(SingleNotificationMethod):
             METHOD_NAME = 'WrongImplementationSingle'
