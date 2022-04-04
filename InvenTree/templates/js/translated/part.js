@@ -1384,7 +1384,7 @@ function loadPartTable(table, url, options={}) {
                         link = '?display=build-orders';
                     } else {
                         // There is no available stock
-                        value = `0<span class='badge badge-right rounded-pill bg-warning'>{% trans "Not available" %}</span>`;
+                        value = `0<span class='badge badge-right rounded-pill bg-warning'>{% trans "No stock available" %}</span>`;
                     }
                 }
             } else {
