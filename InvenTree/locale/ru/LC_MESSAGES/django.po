@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-03 13:24+0000\n"
-"PO-Revision-Date: 2022-04-04 12:47\n"
+"PO-Revision-Date: 2022-04-04 14:53\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -1520,7 +1520,7 @@ msgstr "Сборка была отменена"
 
 #: build/views.py:114
 msgid "Delete Build Order"
-msgstr ""
+msgstr "Удалить заказ на сборку"
 
 #: common/files.py:65
 msgid "Unsupported file format: {ext.upper()}"
@@ -4673,7 +4673,7 @@ msgstr "Действия с BOM"
 
 #: part/templates/part/bom.html:34
 msgid "Delete Items"
-msgstr ""
+msgstr "Удалить элементы"
 
 #: part/templates/part/category.html:28 part/templates/part/category.html:32
 msgid "You are subscribed to notifications for this category"
@@ -5089,7 +5089,7 @@ msgstr ""
 
 #: part/templates/part/part_base.html:97
 msgid "Delete part"
-msgstr ""
+msgstr "Удалить деталь"
 
 #: part/templates/part/part_base.html:116
 msgid "Part is a template part (variants can be made from this part)"
@@ -5487,7 +5487,7 @@ msgstr ""
 
 #: part/views.py:792
 msgid "Part was deleted"
-msgstr ""
+msgstr "Деталь была удалена"
 
 #: part/views.py:801
 msgid "Part Pricing"
@@ -5959,11 +5959,11 @@ msgstr ""
 
 #: stock/models.py:694
 msgid "Delete on deplete"
-msgstr ""
+msgstr "Удалить при обнулении"
 
 #: stock/models.py:694
 msgid "Delete this Stock Item when stock is depleted"
-msgstr ""
+msgstr "Удалить эту единицу хранения при обнулении складского запаса"
 
 #: stock/models.py:704 stock/templates/stock/item.html:138
 msgid "Stock Item Notes"
