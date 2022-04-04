@@ -494,7 +494,7 @@ class BaseNotificationIntegrationTest(TestCase):
         self.part = Part.objects.get(name='R_2K2_0805')
 
     def _notification_run(self):
-        # There  should be no notification runs
+        # There should be no notification runs
         self.assertEqual(NotificationEntry.objects.all().count(), 0)
 
         # Test that notifications run through without errors
