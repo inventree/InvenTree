@@ -579,6 +579,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     # Annotated fields
     available_stock = serializers.FloatField(read_only=True)
+    substitute_stock = serializers.FloatField(read_only=True)
 
     def __init__(self, *args, **kwargs):
         # part_detail and sub_part_detail serializers are only included if requested.
@@ -637,9 +638,13 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
         # Calculate "total stock" for the referenced sub_part
         # Calculate the "build_order_allocations" for the sub_part
+        # Note that these fields are only aliased, not annotated
         queryset = queryset.alias(
             total_stock=Coalesce(
-                SubquerySum('sub_part__stock_items__quantity', filter=StockItem.IN_STOCK_FILTER),
+                SubquerySum(
+                    'sub_part__stock_items__quantity',
+                    filter=StockItem.IN_STOCK_FILTER
+                ),
                 Decimal(0),
                 output_field=models.DecimalField(),
             ),
@@ -670,6 +675,18 @@ class BomItemSerializer(InvenTreeModelSerializer):
         queryset = queryset.annotate(
             available_stock=ExpressionWrapper(
                 F('total_stock') - F('allocated_to_sales_orders') - F('allocated_to_build_orders'),
+                output_field=models.DecimalField(),
+            )
+        )
+
+        # Extract similar information for any 'substitute' parts
+        queryset = queryset.annotate(
+            substitute_stock=Coalesce(
+                SubquerySum(
+                    'substitutes__part__stock_items__quantity',
+                    filter=StockItem.IN_STOCK_FILTER,
+                ),
+                Decimal(0),
                 output_field=models.DecimalField(),
             )
         )
@@ -748,7 +765,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
             # Annotated fields describing available quantity
             'available_stock',
-
+            'substitute_stock',
         ]
 
 
