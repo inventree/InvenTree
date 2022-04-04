@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-03 13:24+0000\n"
-"PO-Revision-Date: 2022-04-04 09:47\n"
+"PO-Revision-Date: 2022-04-04 11:37\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -4243,7 +4243,7 @@ msgstr "Версия детали"
 #: part/models.py:863 part/templates/part/part_base.html:301
 #: report/models.py:200 templates/js/translated/part.js:654
 msgid "Revision"
-msgstr ""
+msgstr "Версия"
 
 #: part/models.py:885
 msgid "Where is this item normally stored?"
@@ -7739,7 +7739,7 @@ msgstr ""
 
 #: templates/js/translated/api.js:221
 msgid "Unhandled Error Code"
-msgstr "Необработанный код ошибки"
+msgstr "Необработанная ошибка"
 
 #: templates/js/translated/api.js:222
 msgid "Error code"
