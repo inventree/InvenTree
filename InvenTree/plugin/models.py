@@ -150,7 +150,7 @@ class PluginSetting(common.models.GenericSettingClassMixin, common.models.BaseIn
     )
 
 
-class NotificationUserSetting(common.models.BaseInvenTreeSetting):
+class NotificationUserSetting(common.models.GenericSettingClassMixin, common.models.BaseInvenTreeSetting):
     """
     This model represents notification settings for a user
     """
