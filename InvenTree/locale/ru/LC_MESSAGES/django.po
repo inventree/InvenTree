@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-03 13:24+0000\n"
-"PO-Revision-Date: 2022-04-04 14:53\n"
+"PO-Revision-Date: 2022-04-04 15:53\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -9281,15 +9281,15 @@ msgstr "Предупреждение: Операция объединения н
 
 #: templates/js/translated/stock.js:680
 msgid "Some information will be lost when merging stock items"
-msgstr ""
+msgstr "Следующие данные будут потеряны в процессе объединения"
 
 #: templates/js/translated/stock.js:682
 msgid "Stock transaction history will be deleted for merged items"
-msgstr ""
+msgstr "История складских перемещений будет удалена для объединённых элементов"
 
 #: templates/js/translated/stock.js:683
 msgid "Supplier part information will be deleted for merged items"
-msgstr ""
+msgstr "Информация о деталях поставщика будет удалена для объединённых элементов"
 
 #: templates/js/translated/stock.js:769
 msgid "Confirm stock item merge"
