@@ -19,7 +19,7 @@ from .templatetags import inventree_extras
 import part.settings
 
 from common.models import InvenTreeSetting, NotificationEntry, NotificationMessage
-from common.notifications import storage
+from common.notifications import storage, UIMessageNotification
 
 
 class TemplateTagTest(TestCase):
@@ -524,7 +524,7 @@ class PartNotificationTest(BaseNotificationIntegrationTest):
     """ Integration test for part notifications """
 
     def test_notification(self):
-        self._notification_run()
+        self._notification_run(UIMessageNotification)
 
         # There should be 1 notification message right now
         self.assertEqual(NotificationMessage.objects.all().count(), 1)
