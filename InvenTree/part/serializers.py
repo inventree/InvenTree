@@ -578,9 +578,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
     purchase_price_range = serializers.SerializerMethodField()
 
     # Annotated fields
-    total_stock = serializers.FloatField(read_only=True)
-    allocated_to_sales_orders = serializers.FloatField(read_only=True)
-    allocated_to_build_orders = serializers.FloatField(read_only=True)
+    available_stock = serializers.FloatField(read_only=True)
 
     def __init__(self, *args, **kwargs):
         # part_detail and sub_part_detail serializers are only included if requested.
@@ -614,7 +612,11 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
         queryset = queryset.prefetch_related('sub_part')
         queryset = queryset.prefetch_related('sub_part__category')
-        queryset = queryset.prefetch_related('sub_part__stock_items')
+        queryset = queryset.prefetch_related(
+            'sub_part__stock_items',
+            'sub_part__stock_items__allocations',
+            'sub_part__stock_items__sales_order_allocations',
+        )
         queryset = queryset.prefetch_related('sub_part__supplier_parts__pricebreaks')
         return queryset
 
@@ -635,7 +637,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
         # Calculate "total stock" for the referenced sub_part
         # Calculate the "build_order_allocations" for the sub_part
-        queryset = queryset.annotate(
+        queryset = queryset.alias(
             total_stock=Coalesce(
                 SubquerySum('sub_part__stock_items__quantity', filter=StockItem.IN_STOCK_FILTER),
                 Decimal(0),
@@ -661,13 +663,16 @@ class BomItemSerializer(InvenTreeModelSerializer):
                 ),
                 Decimal(0),
                 output_field=models.DecimalField(),
-            )
-            # build_order_allocations=Coalesce(
-            #     SubquerySum('sub_part__stock_items__allocations__quantity'), 
-            # )
+            ),
         )
 
-        # queryset = querty
+        # Calculate 'available_stock' based on previously annotated fields
+        queryset = queryset.annotate(
+            available_stock=ExpressionWrapper(
+                F('total_stock') - F('allocated_to_sales_orders') - F('allocated_to_build_orders'),
+                output_field=models.DecimalField(),
+            )
+        )
 
         return queryset
 
@@ -741,9 +746,8 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'price_range',
             'validated',
 
-            'total_stock',
-            'allocated_to_sales_orders',
-            'allocated_to_build_orders',
+            # Annotated fields describing available quantity
+            'available_stock',
 
         ]
 
