@@ -577,6 +577,11 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     purchase_price_range = serializers.SerializerMethodField()
 
+    # Annotated fields
+    total_stock = serializers.FloatField(read_only=True)
+    allocated_to_sales_orders = serializers.FloatField(read_only=True)
+    allocated_to_build_orders = serializers.FloatField(read_only=True)
+
     def __init__(self, *args, **kwargs):
         # part_detail and sub_part_detail serializers are only included if requested.
         # This saves a bunch of database requests
@@ -611,6 +616,59 @@ class BomItemSerializer(InvenTreeModelSerializer):
         queryset = queryset.prefetch_related('sub_part__category')
         queryset = queryset.prefetch_related('sub_part__stock_items')
         queryset = queryset.prefetch_related('sub_part__supplier_parts__pricebreaks')
+        return queryset
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """
+        Annotate the BomItem queryset with extra information:
+
+        Annotations:
+            available_stock: The amount of stock available for the sub_part Part object
+        """
+
+        """
+        Construct an "available stock" quantity:
+        
+        available_stock = total_stock - build_order_allocations - sales_order_allocations
+        """
+
+        # Calculate "total stock" for the referenced sub_part
+        # Calculate the "build_order_allocations" for the sub_part
+        queryset = queryset.annotate(
+            total_stock=Coalesce(
+                SubquerySum('sub_part__stock_items__quantity', filter=StockItem.IN_STOCK_FILTER),
+                Decimal(0),
+                output_field=models.DecimalField(),
+            ),
+            allocated_to_sales_orders=Coalesce(
+                SubquerySum(
+                    'sub_part__stock_items__sales_order_allocations__quantity',
+                    filter=Q(
+                        line__order__status__in=SalesOrderStatus.OPEN,
+                        shipment__shipment_date=None,
+                    )
+                ),
+                Decimal(0),
+                output_field=models.DecimalField(),
+            ),
+            allocated_to_build_orders=Coalesce(
+                SubquerySum(
+                    'sub_part__stock_items__allocations__quantity',
+                    filter=Q(
+                        build__status__in=BuildStatus.ACTIVE_CODES,
+                    ),
+                ),
+                Decimal(0),
+                output_field=models.DecimalField(),
+            )
+            # build_order_allocations=Coalesce(
+            #     SubquerySum('sub_part__stock_items__allocations__quantity'), 
+            # )
+        )
+
+        # queryset = querty
+
         return queryset
 
     def get_purchase_price_range(self, obj):
@@ -682,6 +740,11 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'substitutes',
             'price_range',
             'validated',
+
+            'total_stock',
+            'allocated_to_sales_orders',
+            'allocated_to_build_orders',
+
         ]
 
 
