@@ -359,7 +359,7 @@ function unlinkBarcode(stockitem) {
 /*
  * Display dialog to check multiple stock items in to a stock location.
  */
-function barcodeCheckIn(location_id) {
+function barcodeCheckIn(location_id, options={}) {
 
     var modal = '#modal-form';
 
@@ -489,15 +489,11 @@ function barcodeCheckIn(location_id) {
                         success: function(response, status) {
                             // Hide the modal
                             $(modal).modal('hide');
-                            if (status == 'success' && 'success' in response) {
 
-                                addCachedAlert(response.success);
-                                location.reload();
+                            if (options.success) {
+                                options.success(response);
                             } else {
-                                showMessage('{% trans "Error transferring stock" %}', {
-                                    style: 'danger',
-                                    icon: 'fas fa-times-circle',
-                                });
+                                location.reload();
                             }
                         }
                     }
