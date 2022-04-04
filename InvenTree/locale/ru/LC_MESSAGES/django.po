@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-03 13:24+0000\n"
-"PO-Revision-Date: 2022-04-04 11:37\n"
+"PO-Revision-Date: 2022-04-04 12:47\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -1516,7 +1516,7 @@ msgstr ""
 
 #: build/views.py:73
 msgid "Build was cancelled"
-msgstr ""
+msgstr "Сборка была отменена"
 
 #: build/views.py:114
 msgid "Delete Build Order"
@@ -3294,7 +3294,7 @@ msgstr ""
 #: order/forms.py:46 order/forms.py:57 order/templates/order/order_base.html:47
 #: order/templates/order/sales_order_base.html:60
 msgid "Cancel order"
-msgstr ""
+msgstr "Отменить заказ"
 
 #: order/models.py:125
 msgid "Order description"
@@ -3742,7 +3742,7 @@ msgstr "Редактировать заказ на закупку"
 
 #: order/templates/order/order_cancel.html:8
 msgid "Cancelling this order means that the order and line items will no longer be editable."
-msgstr ""
+msgstr "Отмена этого заказа означает, что заказ и его элементы нельзя будет редактировать."
 
 #: order/templates/order/order_complete.html:7
 msgid "Mark this order as complete?"
@@ -3953,7 +3953,7 @@ msgstr "Предупреждение"
 
 #: order/templates/order/sales_order_cancel.html:9
 msgid "Cancelling this order means that the order will no longer be editable."
-msgstr ""
+msgstr "Отмена этого заказа означает, что заказ нельзя будет редактировать."
 
 #: order/templates/order/sales_order_detail.html:18
 msgid "Sales Order Items"
@@ -3975,7 +3975,7 @@ msgstr ""
 
 #: order/views.py:99
 msgid "Cancel Order"
-msgstr ""
+msgstr "Отменить заказ"
 
 #: order/views.py:108 order/views.py:134
 msgid "Confirm order cancellation"
@@ -3987,7 +3987,7 @@ msgstr ""
 
 #: order/views.py:125
 msgid "Cancel sales order"
-msgstr ""
+msgstr "Отменить заказ на продажу"
 
 #: order/views.py:151
 msgid "Issue Order"
@@ -8531,13 +8531,13 @@ msgstr ""
 #: templates/js/translated/modals.js:76 templates/js/translated/modals.js:120
 #: templates/js/translated/modals.js:610
 msgid "Cancel"
-msgstr ""
+msgstr "Отменить"
 
 #: templates/js/translated/modals.js:77 templates/js/translated/modals.js:119
 #: templates/js/translated/modals.js:677 templates/js/translated/modals.js:985
 #: templates/modals.html:28 templates/modals.html:51
 msgid "Submit"
-msgstr ""
+msgstr "Подтвердить"
 
 #: templates/js/translated/modals.js:118
 msgid "Form Title"
@@ -8885,15 +8885,15 @@ msgstr "Атрибуты детали"
 
 #: templates/js/translated/part.js:59
 msgid "Part Creation Options"
-msgstr ""
+msgstr "Настройки создания детали"
 
 #: templates/js/translated/part.js:63
 msgid "Part Duplication Options"
-msgstr ""
+msgstr "Настройки дублирования детали"
 
 #: templates/js/translated/part.js:67
 msgid "Supplier Options"
-msgstr ""
+msgstr "Настройки поставщика"
 
 #: templates/js/translated/part.js:81
 msgid "Add Part Category"
@@ -8929,11 +8929,11 @@ msgstr ""
 
 #: templates/js/translated/part.js:208
 msgid "Add Supplier Data"
-msgstr ""
+msgstr "Добавить данные поставщика"
 
 #: templates/js/translated/part.js:209
 msgid "Create initial supplier data for this part"
-msgstr ""
+msgstr "Создать начальные данные поставщика для этой детали"
 
 #: templates/js/translated/part.js:265
 msgid "Copy Image"
@@ -9960,7 +9960,7 @@ msgstr ""
 
 #: templates/stock_table.html:40
 msgid "Stock Options"
-msgstr ""
+msgstr "Настройки склада"
 
 #: templates/stock_table.html:45
 msgid "Add to selected stock items"
