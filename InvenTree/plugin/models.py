@@ -102,7 +102,43 @@ class PluginConfig(models.Model):
         return ret
 
 
-class PluginSetting(common.models.BaseInvenTreeSetting):
+class GenericSettingClassMixin:
+
+    # region generic helpers
+    REFERENCE_NAME = None
+
+    def _get_reference(self):
+        return {
+            self.REFERENCE_NAME: getattr(self, self.REFERENCE_NAME)
+        }
+
+    def is_bool(self, **kwargs):
+
+        kwargs[self.REFERENCE_NAME] = getattr(self, self.REFERENCE_NAME)
+
+        return super().is_bool(**kwargs)
+
+    @property
+    def name(self):
+        return self.__class__.get_setting_name(self.key, **self._get_reference())
+
+    @property
+    def default_value(self):
+        return self.__class__.get_setting_default(self.key, **self._get_reference())
+
+    @property
+    def description(self):
+        return self.__class__.get_setting_description(self.key, **self._get_reference())
+
+    @property
+    def units(self):
+        return self.__class__.get_setting_units(self.key, **self._get_reference())
+
+    def choices(self):
+        return self.__class__.get_setting_choices(self.key, **self._get_reference())
+
+
+class PluginSetting(GenericSettingClassMixin, common.models.BaseInvenTreeSetting):
     """
     This model represents settings for individual plugins
     """
@@ -123,30 +159,7 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
     so that we can pass the plugin instance
     """
 
-    def is_bool(self, **kwargs):
-
-        kwargs['plugin'] = self.plugin
-
-        return super().is_bool(**kwargs)
-
-    @property
-    def name(self):
-        return self.__class__.get_setting_name(self.key, plugin=self.plugin)
-
-    @property
-    def default_value(self):
-        return self.__class__.get_setting_default(self.key, plugin=self.plugin)
-
-    @property
-    def description(self):
-        return self.__class__.get_setting_description(self.key, plugin=self.plugin)
-
-    @property
-    def units(self):
-        return self.__class__.get_setting_units(self.key, plugin=self.plugin)
-
-    def choices(self):
-        return self.__class__.get_setting_choices(self.key, plugin=self.plugin)
+    REFERENCE_NAME = 'plugin'
 
     @classmethod
     def get_setting_definition(cls, key, **kwargs):
@@ -206,33 +219,10 @@ class NotificationUserSetting(common.models.BaseInvenTreeSetting):
     so that we can pass the method instance
     """
 
-    def is_bool(self, **kwargs):
-
-        kwargs['method'] = self.method
-
-        return super().is_bool(**kwargs)
-
-    @property
-    def name(self):
-        return self.__class__.get_setting_name(self.key, method=self.method)
-
-    @property
-    def default_value(self):
-        return self.__class__.get_setting_default(self.key, method=self.method)
-
-    @property
-    def description(self):
-        return self.__class__.get_setting_description(self.key, method=self.method)
-
-    @property
-    def units(self):
-        return self.__class__.get_setting_units(self.key, method=self.method)
-
-    def choices(self):
-        return self.__class__.get_setting_choices(self.key, method=self.method)
+    REFERENCE_NAME = 'method'
 
     @classmethod
-    def get_setting_definition(cls, key, method, **kwargs):
+    def get_setting_definition(cls, key, **kwargs):
         from common.notifications import storage
 
         kwargs['settings'] = storage.user_settings
