@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-03 13:24+0000\n"
-"PO-Revision-Date: 2022-04-03 13:28\n"
+"PO-Revision-Date: 2022-04-04 20:39\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -2316,7 +2316,7 @@ msgstr "Anzahl Suchergebnisse"
 
 #: common/models.py:1322
 msgid "Number of results to show in each section of the search preview window"
-msgstr ""
+msgstr "Anzahl der Ergebnisse, die in der Vorschau pro Sektion angezeigt werden sollen"
 
 #: common/models.py:1328
 msgid "Hide Inactive Parts"
@@ -9044,7 +9044,7 @@ msgstr "Keine Teile gefunden"
 
 #: templates/js/translated/part.js:1194 templates/js/translated/part.js:1380
 msgid "Not available"
-msgstr ""
+msgstr "Nicht verfügbar"
 
 #: templates/js/translated/part.js:1345
 msgid "No category"
@@ -9744,11 +9744,11 @@ msgstr "Aktive Teile anzeigen"
 
 #: templates/js/translated/table_filters.js:430
 msgid "In stock"
-msgstr ""
+msgstr "Auf Lager"
 
 #: templates/js/translated/table_filters.js:438
 msgid "Available stock"
-msgstr ""
+msgstr "Verfügbarer Lagerbestand"
 
 #: templates/js/translated/table_filters.js:462
 msgid "Purchasable"
