@@ -36,6 +36,7 @@ class CoreNotificationsPlugin(SettingsMixin, IntegrationPluginBase):
 
     class EmailNotification(PlgMixin, BulkNotificationMethod):
         METHOD_NAME = 'mail'
+        METHOD_ICON = 'fa-envelope'
         CONTEXT_EXTRA = [
             ('template', ),
             ('template', 'html', ),

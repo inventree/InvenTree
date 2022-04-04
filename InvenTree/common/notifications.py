@@ -18,6 +18,7 @@ class NotificationMethod:
     """
 
     METHOD_NAME = ''
+    METHOD_ICON = None
     CONTEXT_BUILTIN = ['name', 'message', ]
     CONTEXT_EXTRA = []
     GLOBAL_SETTING = None
@@ -156,7 +157,7 @@ class MethodStorageClass:
                 # save definition
                 methods.append({
                     'key': new_key,
-                    'icon': 'envelope',
+                    'icon': getattr(item, 'METHOD_ICON', ''),
                     'method': item.METHOD_NAME,
                 })
         return methods
