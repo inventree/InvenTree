@@ -78,6 +78,7 @@ class RuleSet(models.Model):
             'otp_static_staticdevice',
             'plugin_pluginconfig',
             'plugin_pluginsetting',
+            'plugin_notificationusersetting',
         ],
         'part_category': [
             'part_partcategory',
