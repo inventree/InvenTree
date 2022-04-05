@@ -38,3 +38,11 @@
     part: 1
     sub_part: 5
     quantity: 3
+
+# Make "Assembly" from "Bob"
+- model: part.bomitem
+  pk: 6
+  fields:
+    part: 101
+    sub_part: 100
+    quantity: 10

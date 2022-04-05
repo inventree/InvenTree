@@ -12,10 +12,17 @@ import common.models
 INVENTREE_SW_VERSION = "0.7.0 dev"
 
 # InvenTree API version
-INVENTREE_API_VERSION = 34
+INVENTREE_API_VERSION = 36
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v36 -> 2022-04-03
+    - Adds ability to filter part list endpoint by unallocated_stock argument
+
+v35 -> 2022-04-01 : https://github.com/inventree/InvenTree/pull/2797
+    - Adds stock allocation information to the Part API
+    - Adds calculated field for "unallocated_quantity"
 
 v34 -> 2022-03-25
     - Change permissions for "plugin list" API endpoint (now allows any authenticated user)
