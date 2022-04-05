@@ -108,6 +108,18 @@
     lft: 0
     rght: 0
 
+- model: part.part
+  pk: 101
+  fields:
+    name: 'Assembly'
+    description: 'A high level assembly'
+    salable: true
+    active: True
+    tree_id: 0
+    level: 0
+    lft: 0
+    rght: 0
+
 # A 'template' part
 - model: part.part
   pk: 10000

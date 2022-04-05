@@ -7,7 +7,7 @@ from decimal import Decimal
 
 from django.urls import reverse_lazy
 from django.db import models, transaction
-from django.db.models import Q
+from django.db.models import ExpressionWrapper, F, Q
 from django.db.models.functions import Coalesce
 from django.utils.translation import ugettext_lazy as _
 
@@ -24,7 +24,10 @@ from InvenTree.serializers import (DataFileUploadSerializer,
                                    InvenTreeAttachmentSerializer,
                                    InvenTreeMoneySerializer)
 
-from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus
+from InvenTree.status_codes import (BuildStatus,
+                                    PurchaseOrderStatus,
+                                    SalesOrderStatus)
+
 from stock.models import StockItem
 
 from .models import (BomItem, BomItemSubstitute,
@@ -363,6 +366,51 @@ class PartSerializer(InvenTreeModelSerializer):
             ),
         )
 
+        """
+        Annotate with the number of stock items allocated to sales orders.
+        This annotation is modeled on Part.sales_order_allocations() method:
+
+        - Only look for "open" orders
+        - Stock items have not been "shipped"
+        """
+        so_allocation_filter = Q(
+            line__order__status__in=SalesOrderStatus.OPEN,  # LineItem points to an OPEN order
+            shipment__shipment_date=None,  # Allocated item has *not* been shipped out
+        )
+
+        queryset = queryset.annotate(
+            allocated_to_sales_orders=Coalesce(
+                SubquerySum('stock_items__sales_order_allocations__quantity', filter=so_allocation_filter),
+                Decimal(0),
+                output_field=models.DecimalField(),
+            )
+        )
+
+        """
+        Annotate with the number of stock items allocated to build orders.
+        This annotation is modeled on Part.build_order_allocations() method
+        """
+        bo_allocation_filter = Q(
+            build__status__in=BuildStatus.ACTIVE_CODES,
+        )
+
+        queryset = queryset.annotate(
+            allocated_to_build_orders=Coalesce(
+                SubquerySum('stock_items__allocations__quantity', filter=bo_allocation_filter),
+                Decimal(0),
+                output_field=models.DecimalField(),
+            )
+        )
+
+        # Annotate with the total 'available stock' quantity
+        # This is the current stock, minus any allocations
+        queryset = queryset.annotate(
+            unallocated_stock=ExpressionWrapper(
+                F('in_stock') - F('allocated_to_sales_orders') - F('allocated_to_build_orders'),
+                output_field=models.DecimalField(),
+            )
+        )
+
         return queryset
 
     def get_starred(self, part):
@@ -376,9 +424,12 @@ class PartSerializer(InvenTreeModelSerializer):
     category_detail = CategorySerializer(source='category', many=False, read_only=True)
 
     # Calculated fields
+    allocated_to_build_orders = serializers.FloatField(read_only=True)
+    allocated_to_sales_orders = serializers.FloatField(read_only=True)
+    unallocated_stock = serializers.FloatField(read_only=True)
+    building = serializers.FloatField(read_only=True)
     in_stock = serializers.FloatField(read_only=True)
     ordering = serializers.FloatField(read_only=True)
-    building = serializers.FloatField(read_only=True)
     stock_item_count = serializers.IntegerField(read_only=True)
     suppliers = serializers.IntegerField(read_only=True)
 
@@ -399,7 +450,8 @@ class PartSerializer(InvenTreeModelSerializer):
         partial = True
         fields = [
             'active',
-
+            'allocated_to_build_orders',
+            'allocated_to_sales_orders',
             'assembly',
             'category',
             'category_detail',
@@ -430,6 +482,7 @@ class PartSerializer(InvenTreeModelSerializer):
             'suppliers',
             'thumbnail',
             'trackable',
+            'unallocated_stock',
             'units',
             'variant_of',
             'virtual',

@@ -175,23 +175,6 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
 
         return super().get_setting_definition(key, **kwargs)
 
-    @classmethod
-    def get_filters(cls, key, **kwargs):
-        """
-        Override filters method to ensure settings are filtered by plugin id
-        """
-
-        filters = super().get_filters(key, **kwargs)
-
-        plugin = kwargs.get('plugin', None)
-
-        if plugin:
-            if issubclass(plugin.__class__, InvenTreePluginBase):
-                plugin = plugin.plugin_config()
-            filters['plugin'] = plugin
-
-        return filters
-
     plugin = models.ForeignKey(
         PluginConfig,
         related_name='settings',
