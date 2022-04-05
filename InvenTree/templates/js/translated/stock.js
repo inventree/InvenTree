@@ -1770,6 +1770,7 @@ function loadStockTable(table, options) {
     col = {
         field: 'location_detail.pathstring',
         title: '{% trans "Location" %}',
+        sortName: 'location',
         formatter: function(value, row) {
             return locationDetail(row);
         }
@@ -1912,171 +1913,7 @@ function loadStockTable(table, options) {
         original: original,
         showColumns: true,
         columns: columns,
-        {% if False %}
-        groupByField: options.groupByField || 'part',
-        groupBy: grouping,
-        groupByFormatter: function(field, id, data) {
-
-            var row = data[0];
-
-            if (field == 'part_detail.full_name') {
-
-                var html = imageHoverIcon(row.part_detail.thumbnail);
-
-                html += row.part_detail.full_name;
-                html += ` <i>(${data.length} {% trans "items" %})</i>`;
-
-                html += makePartIcons(row.part_detail);
-
-                return html;
-            } else if (field == 'part_detail.IPN') {
-                var ipn = row.part_detail.IPN;
-
-                if (ipn) {
-                    return ipn;
-                } else {
-                    return '-';
-                }
-            } else if (field == 'part_detail.description') {
-                return row.part_detail.description;
-            } else if (field == 'packaging') {
-                var packaging = [];
-
-                data.forEach(function(item) {
-                    var pkg = item.packaging;
-
-                    if (!pkg) {
-                        pkg = '-';
-                    }
-
-                    if (!packaging.includes(pkg)) {
-                        packaging.push(pkg);
-                    }
-                });
-
-                if (packaging.length > 1) {
-                    return "...";
-                } else if (packaging.length == 1) {
-                    return packaging[0];
-                } else {
-                    return "-";
-                }
-            } else if (field == 'quantity') {
-                var stock = 0;
-                var items = 0;
-
-                data.forEach(function(item) {
-                    stock += parseFloat(item.quantity); 
-                    items += 1;
-                });
-
-                stock = +stock.toFixed(5);
-
-                return `${stock} (${items} {% trans "items" %})`;
-            } else if (field == 'status') {
-                var statii = [];
-
-                data.forEach(function(item) {
-                    var status = String(item.status);
-
-                    if (!status || status == '') {
-                        status = '-';
-                    }
-
-                    if (!statii.includes(status)) {
-                        statii.push(status);
-                    }
-                });
-
-                // Multiple status codes
-                if (statii.length > 1) {
-                    return "...";
-                } else if (statii.length == 1) {
-                    return stockStatusDisplay(statii[0]);
-                } else {
-                    return "-";
-                }
-            } else if (field == 'batch') {
-                var batches = [];
-
-                data.forEach(function(item) {
-                    var batch = item.batch;
-
-                    if (!batch || batch == '') {
-                        batch = '-';
-                    }
-
-                    if (!batches.includes(batch)) {
-                        batches.push(batch); 
-                    }
-                });
-
-                if (batches.length > 1) {
-                    return "" + batches.length + " {% trans 'batches' %}";
-                } else if (batches.length == 1) {
-                    if (batches[0]) {
-                        return batches[0];
-                    } else {
-                        return '-';
-                    }
-                } else {
-                    return '-';
-                }
-            } else if (field == 'location_detail.pathstring') {
-                /* Determine how many locations */
-                var locations = [];
-
-                data.forEach(function(item) {
-
-                    var detail = locationDetail(item);
-
-                    if (!locations.includes(detail)) {
-                        locations.push(detail);
-                    }
-                });
-
-                if (locations.length == 1) {
-                    // Single location, easy!
-                    return locations[0];
-                } else if (locations.length > 1) {
-                    return "In " + locations.length + " {% trans 'locations' %}";
-                } else {
-                    return "<i>{% trans 'Undefined location' %}</i>";
-                }
-            } else if (field == 'notes') {
-                var notes = [];
-
-                data.forEach(function(item) {
-                    var note = item.notes;
-
-                    if (!note || note == '') {
-                        note = '-';
-                    }
-
-                    if (!notes.includes(note)) {
-                        notes.push(note);
-                    }
-                });
-
-                if (notes.length > 1) {
-                    return '...';
-                } else if (notes.length == 1) {
-                    return notes[0] || '-';
-                } else {
-                    return '-';
-                }
-            } else {
-                return '';
-            }
-        },
-        {% endif %}
     });
-
-    /*
-    if (options.buttons) {
-        linkButtonsToSelection(table, options.buttons);
-    }
-    */
 
     var buttons = [
         '#stock-print-options',
@@ -2091,7 +1928,6 @@ function loadStockTable(table, options) {
         table,
         buttons,
     );
-
 
     function stockAdjustment(action) {
         var items = $(table).bootstrapTable('getSelections');

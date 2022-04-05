@@ -253,7 +253,7 @@ function openNotificationPanel() {
         {
             success: function(response) {
                 if (response.length == 0) {
-                    html = `<p class='text-muted'>{% trans "No unread notifications" %}</p>`;
+                    html = `<p class='text-muted'><em>{% trans "No unread notifications" %}</em><span class='fas fa-check-circle icon-green float-right'></span></p>`;
                 } else {
                     // build up items
                     response.forEach(function(item, index) {

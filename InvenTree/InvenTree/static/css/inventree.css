@@ -1019,3 +1019,32 @@ a {
     text-decoration: none;
     background-color: transparent;
 }
+
+/* Quicksearch Panel */
+
+.search-result-panel {
+    max-width: 800px;
+    width: 75%
+}
+
+.search-result-group {
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 10px;
+}
+
+.search-result-group-buttons > button{
+    padding: 2px;
+    padding-left: 5px;
+    padding-right: 5px;
+    font-size: 80%;
+}
+
+.search-result-entry {
+    border-top: 1px solid var(--border-color);
+    padding: 3px;
+    margin-top: 3px;
+    overflow: hidden;
+}

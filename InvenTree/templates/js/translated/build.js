@@ -213,7 +213,7 @@ function createBuildOutput(build_id, options) {
                     success: function(data) {
                         if (data.next) {
                             fields.serial_numbers.placeholder = `{% trans "Next available serial number" %}: ${data.next}`;
-                        } else {
+                        } else if (data.latest) {
                             fields.serial_numbers.placeholder = `{% trans "Latest serial number" %}: ${data.latest}`;
                         }
                     },
@@ -1025,9 +1025,10 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         }
 
         // Store the required quantity in the row data
-        row.required = quantity;
+        // Prevent weird rounding issues
+        row.required = parseFloat(quantity.toFixed(15));
 
-        return quantity;
+        return row.required;
     }
 
     function sumAllocations(row) {
@@ -1043,9 +1044,9 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             quantity += item.quantity;
         });
 
-        row.allocated = quantity;
+        row.allocated = parseFloat(quantity.toFixed(15));
 
-        return quantity;
+        return row.allocated;
     }
 
     function setupCallbacks() {
@@ -1642,6 +1643,9 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
             remaining = 0;
         }
 
+        // Ensure the quantity sent to the form field is correctly formatted
+        remaining = parseFloat(remaining.toFixed(15));
+
         // We only care about entries which are not yet fully allocated
         if (remaining > 0) {
             table_entries += renderBomItemRow(bom_item, remaining);
@@ -1742,7 +1746,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
                         required: true,
                         render_part_detail: true,
                         render_location_detail: true,
-                        render_stock_id: false,
+                        render_pk: false,
                         auto_fill: true,
                         auto_fill_filters: auto_fill_filters,
                         onSelect: function(data, field, opts) {

@@ -12,10 +12,23 @@ import common.models
 INVENTREE_SW_VERSION = "0.7.0 dev"
 
 # InvenTree API version
-INVENTREE_API_VERSION = 32
+INVENTREE_API_VERSION = 36
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v36 -> 2022-04-03
+    - Adds ability to filter part list endpoint by unallocated_stock argument
+
+v35 -> 2022-04-01 : https://github.com/inventree/InvenTree/pull/2797
+    - Adds stock allocation information to the Part API
+    - Adds calculated field for "unallocated_quantity"
+
+v34 -> 2022-03-25
+    - Change permissions for "plugin list" API endpoint (now allows any authenticated user)
+
+v33 -> 2022-03-24
+    - Adds "plugins_enabled" information to root API endpoint
 
 v32 -> 2022-03-19
     - Adds "parameters" detail to Part API endpoint (use &parameters=true)
@@ -190,7 +203,7 @@ def isInvenTreeUpToDate():
     and stores it to the database as INVENTREE_LATEST_VERSION
     """
 
-    latest = common.models.InvenTreeSetting.get_setting('INVENTREE_LATEST_VERSION', None)
+    latest = common.models.InvenTreeSetting.get_setting('INVENTREE_LATEST_VERSION', backup_value=None, create=False)
 
     # No record for "latest" version - we must assume we are up to date!
     if not latest:
