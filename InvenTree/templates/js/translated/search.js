@@ -132,6 +132,7 @@ function updateSearch() {
             renderStockItem,
             {
                 url: '/stock/item',
+                render_location_detail: true,
             }
         );
     }
@@ -231,6 +232,9 @@ function addSearchQuery(key, title, query_url, query_params, render_func, render
     // How many results to show in each group?
     query_params.offset = 0;
     query_params.limit = user_settings.SEARCH_PREVIEW_RESULTS;
+
+    // Do not display "pk" value for search results
+    render_params.render_pk = false;
 
     // Add the result group to the panel
     $('#offcanvas-search').find('#search-results').append(`
