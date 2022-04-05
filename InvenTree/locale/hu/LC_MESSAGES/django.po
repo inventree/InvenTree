@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-04 22:21+0000\n"
-"PO-Revision-Date: 2022-04-04 22:27\n"
+"PO-Revision-Date: 2022-04-05 14:55\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -9011,7 +9011,7 @@ msgstr "Alacsony készlet"
 
 #: templates/js/translated/part.js:514 templates/js/translated/part.js:1387
 msgid "No stock available"
-msgstr ""
+msgstr "Nincs szabad"
 
 #: templates/js/translated/part.js:548 templates/js/translated/part.js:633
 msgid "Trackable part"
