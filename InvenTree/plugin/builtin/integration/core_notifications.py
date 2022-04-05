@@ -7,7 +7,7 @@ from allauth.account.models import EmailAddress
 
 from plugin import IntegrationPluginBase
 from plugin.mixins import BulkNotificationMethod, SettingsMixin
-from common.models import InvenTreeUserSetting
+from plugin.models import NotificationUserSetting
 import InvenTree.tasks
 
 
@@ -59,7 +59,7 @@ class CoreNotificationsPlugin(SettingsMixin, IntegrationPluginBase):
             allowed_users = []
 
             for user in self.targets:
-                allows_emails = InvenTreeUserSetting.get_setting('NOTIFICATION_SEND_EMAILS', user=user)
+                allows_emails = NotificationUserSetting.get_setting('NOTIFICATION_METHOD_MAIL', user=user, method=self.METHOD_NAME)
 
                 if allows_emails:
                     allowed_users.append(user)
