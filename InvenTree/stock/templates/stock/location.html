@@ -34,7 +34,9 @@
     <button id='barcode-options' title='{% trans "Barcode actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'><span class='fas fa-qrcode'></span> <span class='caret'></span></button>
     <ul class='dropdown-menu'>
         <li><a class='dropdown-item' href='#' id='show-qr-code'><span class='fas fa-qrcode'></span> {% trans "Show QR Code" %}</a></li>
+        {% if labels_enabled %}
         <li><a class='dropdown-item' href='#' id='print-label'><span class='fas fa-tag'></span> {% trans "Print Label" %}</a></li>
+        {% endif %}
         <li><a class='dropdown-item' href='#' id='barcode-check-in'><span class='fas fa-arrow-right'></span> {% trans "Check-in Items" %}</a></li>
     </ul>
 </div>
@@ -181,6 +183,7 @@
         <div id='sublocation-button-toolbar'>
             <div class='btn-group' role='group'>
                 <!-- Printing actions menu -->
+                {% if labels_enabled %}
                 <div class='btn-group' role='group'>
                     <button id='location-print-options' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle="dropdown" title='{% trans "Printing Actions" %}'>
                         <span class='fas fa-print'></span> <span class='caret'></span>
@@ -189,6 +192,7 @@
                         <li><a class='dropdown-item' href='#' id='multi-location-print-label' title='{% trans "Print labels" %}'><span class='fas fa-tags'></span> {% trans "Print labels" %}</a></li>
                     </ul>
                 </div>
+                {% endif %}
                 {% include "filter_list.html" with id="location" %}
             </div>
         </div>
@@ -222,6 +226,15 @@
         ]
     );
     
+    {% if labels_enabled %}
+    $('#print-label').click(function() {
+
+        var locs = [{{ location.pk }}];
+
+        printStockLocationLabels(locs);        
+
+    });
+    
     $('#multi-location-print-label').click(function() {
     
         var selections = $('#sublocation-table').bootstrapTable('getSelections');
@@ -234,6 +247,7 @@
     
         printStockLocationLabels(locations);
     });
+    {% endif %}
 
     {% if location %}
     $("#barcode-check-in").click(function() {
@@ -296,14 +310,6 @@
 
     $("#location-move").click(function() {
         adjustLocationStock('move');
-    });
-
-    $('#print-label').click(function() {
-
-        var locs = [{{ location.pk }}];
-
-        printStockLocationLabels(locs);        
-
     });
 
     {% endif %}

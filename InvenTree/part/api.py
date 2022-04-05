@@ -798,6 +798,20 @@ class PartFilter(rest_filters.FilterSet):
 
         return queryset
 
+    # unallocated_stock filter
+    unallocated_stock = rest_filters.BooleanFilter(label='Unallocated stock', method='filter_unallocated_stock')
+
+    def filter_unallocated_stock(self, queryset, name, value):
+
+        value = str2bool(value)
+
+        if value:
+            queryset = queryset.filter(Q(unallocated_stock__gt=0))
+        else:
+            queryset = queryset.filter(Q(unallocated_stock__lte=0))
+
+        return queryset
+
     is_template = rest_filters.BooleanFilter()
 
     assembly = rest_filters.BooleanFilter()
@@ -1334,6 +1348,7 @@ class PartList(generics.ListCreateAPIView):
         'creation_date',
         'IPN',
         'in_stock',
+        'unallocated_stock',
         'category',
     ]
 

@@ -126,8 +126,12 @@ $("#mark-all").on('click', function() {
         {
             read: false,
         },
+        {
+            success: function(response) {
+                updateNotificationTables();
+            }
+        }
     );
-    updateNotificationTables();
 });
 
 loadNotificationTable("#history-table", {

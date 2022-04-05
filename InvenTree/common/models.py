@@ -79,7 +79,7 @@ class BaseInvenTreeSetting(models.Model):
         self.key = str(self.key).upper()
 
         self.clean(**kwargs)
-        self.validate_unique()
+        self.validate_unique(**kwargs)
 
         super().save()
 
@@ -231,10 +231,6 @@ class BaseInvenTreeSetting(models.Model):
         return choices
 
     @classmethod
-    def get_filters(cls, key, **kwargs):
-        return {'key__iexact': key}
-
-    @classmethod
     def get_setting_object(cls, key, **kwargs):
         """
         Return an InvenTreeSetting object matching the given key.
@@ -247,28 +243,34 @@ class BaseInvenTreeSetting(models.Model):
 
         settings = cls.objects.all()
 
+        filters = {
+            'key__iexact': key,
+        }
+
         # Filter by user
         user = kwargs.get('user', None)
 
         if user is not None:
-            settings = settings.filter(user=user)
+            filters['user'] = user
 
-        try:
-            setting = settings.filter(**cls.get_filters(key, **kwargs)).first()
-        except (ValueError, cls.DoesNotExist):
-            setting = None
-        except (IntegrityError, OperationalError):
-            setting = None
+        # Filter by plugin
+        plugin = kwargs.get('plugin', None)
 
-        plugin = kwargs.pop('plugin', None)
-
-        if plugin:
+        if plugin is not None:
             from plugin import InvenTreePluginBase
 
             if issubclass(plugin.__class__, InvenTreePluginBase):
                 plugin = plugin.plugin_config()
 
+            filters['plugin'] = plugin
             kwargs['plugin'] = plugin
+
+        try:
+            setting = settings.filter(**filters).first()
+        except (ValueError, cls.DoesNotExist):
+            setting = None
+        except (IntegrityError, OperationalError):
+            setting = None
 
         # Setting does not exist! (Try to create it)
         if not setting:
@@ -287,7 +289,7 @@ class BaseInvenTreeSetting(models.Model):
                 try:
                     # Wrap this statement in "atomic", so it can be rolled back if it fails
                     with transaction.atomic():
-                        setting.save()
+                        setting.save(**kwargs)
                 except (IntegrityError, OperationalError):
                     # It might be the case that the database isn't created yet
                     pass
@@ -342,8 +344,26 @@ class BaseInvenTreeSetting(models.Model):
         if change_user is not None and not change_user.is_staff:
             return
 
+        filters = {
+            'key__iexact': key,
+        }
+
+        user = kwargs.get('user', None)
+        plugin = kwargs.get('plugin', None)
+
+        if user is not None:
+            filters['user'] = user
+
+        if plugin is not None:
+            from plugin import InvenTreePluginBase
+
+            if issubclass(plugin.__class__, InvenTreePluginBase):
+                filters['plugin'] = plugin.plugin_config()
+            else:
+                filters['plugin'] = plugin
+
         try:
-            setting = cls.objects.get(**cls.get_filters(key, **kwargs))
+            setting = cls.objects.get(**filters)
         except cls.DoesNotExist:
 
             if create:
@@ -438,17 +458,37 @@ class BaseInvenTreeSetting(models.Model):
             validator(self.value)
 
     def validate_unique(self, exclude=None, **kwargs):
-        """ Ensure that the key:value pair is unique.
+        """
+        Ensure that the key:value pair is unique.
         In addition to the base validators, this ensures that the 'key'
         is unique, using a case-insensitive comparison.
+
+        Note that sub-classes (UserSetting, PluginSetting) use other filters
+        to determine if the setting is 'unique' or not
         """
 
         super().validate_unique(exclude)
 
+        filters = {
+            'key__iexact': self.key,
+        }
+
+        user = getattr(self, 'user', None)
+        plugin = getattr(self, 'plugin', None)
+
+        if user is not None:
+            filters['user'] = user
+
+        if plugin is not None:
+            filters['plugin'] = plugin
+
         try:
-            setting = self.__class__.objects.exclude(id=self.id).filter(**self.get_filters(self.key, **kwargs))
+            # Check if a duplicate setting already exists
+            setting = self.__class__.objects.filter(**filters).exclude(id=self.id)
+
             if setting.exists():
                 raise ValidationError({'key': _('Key string must be unique')})
+
         except self.DoesNotExist:
             pass
 
@@ -1200,6 +1240,20 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'NOTIFICATION_SEND_EMAILS': {
+            'name': _('Enable email notifications'),
+            'description': _('Allow sending of emails for event notifications'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'LABEL_ENABLE': {
+            'name': _('Enable label printing'),
+            'description': _('Enable label printing from the web interface'),
+            'default': True,
+            'validator': bool,
+        },
+
         "LABEL_INLINE": {
             'name': _('Inline label display'),
             'description': _('Display PDF labels in the browser, instead of downloading as a file'),
@@ -1214,18 +1268,60 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        'SEARCH_PREVIEW_RESULTS': {
-            'name': _('Search Preview Results'),
-            'description': _('Number of results to show in search preview window'),
-            'default': 10,
-            'validator': [int, MinValueValidator(1)]
-        },
-
-        'SEARCH_SHOW_STOCK_LEVELS': {
-            'name': _('Search Show Stock'),
-            'description': _('Display stock levels in search preview window'),
+        'SEARCH_PREVIEW_SHOW_PARTS': {
+            'name': _('Search Parts'),
+            'description': _('Display parts in search preview window'),
             'default': True,
             'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_SHOW_CATEGORIES': {
+            'name': _('Search Categories'),
+            'description': _('Display part categories in search preview window'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_SHOW_STOCK': {
+            'name': _('Search Stock'),
+            'description': _('Display stock items in search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_SHOW_LOCATIONS': {
+            'name': _('Search Locations'),
+            'description': _('Display stock locations in search preview window'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_SHOW_COMPANIES': {
+            'name': _('Search Companies'),
+            'description': _('Display companies in search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS': {
+            'name': _('Search Purchase Orders'),
+            'description': _('Display purchase orders in search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_SHOW_SALES_ORDERS': {
+            'name': _('Search Sales Orders'),
+            'description': _('Display sales orders in search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_RESULTS': {
+            'name': _('Search Preview Results'),
+            'description': _('Number of results to show in each section of the search preview window'),
+            'default': 10,
+            'validator': [int, MinValueValidator(1)]
         },
 
         'SEARCH_HIDE_INACTIVE_PARTS': {
@@ -1305,15 +1401,8 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
     def get_setting_object(cls, key, user):
         return super().get_setting_object(key, user=user)
 
-    def validate_unique(self, exclude=None):
+    def validate_unique(self, exclude=None, **kwargs):
         return super().validate_unique(exclude=exclude, user=self.user)
-
-    @classmethod
-    def get_filters(cls, key, **kwargs):
-        return {
-            'key__iexact': key,
-            'user__id': kwargs['user'].id
-        }
 
     def to_native_value(self):
         """

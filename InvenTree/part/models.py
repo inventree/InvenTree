@@ -1345,7 +1345,8 @@ class Part(MPTTModel):
 
         queryset = OrderModels.SalesOrderAllocation.objects.filter(item__part__id=self.id)
 
-        pending = kwargs.get('pending', None)
+        # Default behaviour is to only return *pending* allocations
+        pending = kwargs.get('pending', True)
 
         if pending is True:
             # Look only for 'open' orders which have not shipped
@@ -1433,7 +1434,7 @@ class Part(MPTTModel):
         - If this part is a "template" (variants exist) then these are counted too
         """
 
-        return self.get_stock_count()
+        return self.get_stock_count(include_variants=True)
 
     def get_bom_item_filter(self, include_inherited=True):
         """

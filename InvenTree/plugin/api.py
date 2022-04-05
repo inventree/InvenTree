@@ -9,6 +9,7 @@ from django.conf.urls import url, include
 
 from rest_framework import generics
 from rest_framework import status
+from rest_framework import permissions
 from rest_framework.response import Response
 
 from common.api import GlobalSettingsPermissions
@@ -21,6 +22,11 @@ class PluginList(generics.ListAPIView):
 
     - GET: Return a list of all PluginConfig objects
     """
+
+    # Allow any logged in user to read this endpoint
+    # This is necessary to allow certain functionality,
+    # e.g. determining which label printing plugins are available
+    permission_classes = [permissions.IsAuthenticated]
 
     serializer_class = PluginSerializers.PluginConfigSerializer
     queryset = PluginConfig.objects.all()
