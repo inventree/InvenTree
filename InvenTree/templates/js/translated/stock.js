@@ -1972,7 +1972,7 @@ function loadStockTable(table, options) {
             var items = [];
 
             selections.forEach(function(item) {
-                items.push(item.pk);
+                items.push(item);
             });
 
             scanItemsIntoLocation(items);
