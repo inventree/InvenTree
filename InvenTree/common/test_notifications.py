@@ -112,13 +112,14 @@ class SingleNotificationMethodTests(BaseNotificationIntegrationTest):
 
 class NotificationUserSettingTests(BaseNotificationIntegrationTest):
     """ Tests for NotificationUserSetting """
-    
+
     def setUp(self):
         super().setUp()
         self.client.login(username=self.user.username, password='password')
 
     def test_setting_attributes(self):
         """check notification method plugin methods: usersettings and tags """
+
 
         class SampleImplementation(BulkNotificationMethod):
             METHOD_NAME = 'test'
