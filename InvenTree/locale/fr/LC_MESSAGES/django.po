@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-04 22:21+0000\n"
+"POT-Creation-Date: 2022-04-05 23:29+0000\n"
 "PO-Revision-Date: 2021-11-30 21:51\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
@@ -736,7 +736,7 @@ msgstr ""
 #: templates/InvenTree/search.html:80
 #: templates/email/build_order_required_stock.html:17
 #: templates/email/low_stock_notification.html:16
-#: templates/js/translated/barcode.js:383 templates/js/translated/bom.js:551
+#: templates/js/translated/barcode.js:382 templates/js/translated/bom.js:551
 #: templates/js/translated/bom.js:728 templates/js/translated/build.js:903
 #: templates/js/translated/build.js:1284 templates/js/translated/build.js:1684
 #: templates/js/translated/build.js:1997 templates/js/translated/company.js:492
@@ -973,7 +973,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:181
 #: stock/templates/stock/item_base.html:246
 #: stock/templates/stock/item_base.html:254
-#: templates/js/translated/barcode.js:385 templates/js/translated/bom.js:778
+#: templates/js/translated/barcode.js:384 templates/js/translated/bom.js:778
 #: templates/js/translated/build.js:376 templates/js/translated/build.js:524
 #: templates/js/translated/build.js:715 templates/js/translated/build.js:912
 #: templates/js/translated/build.js:922 templates/js/translated/build.js:1311
@@ -1077,8 +1077,8 @@ msgstr ""
 #: build/serializers.py:370 order/serializers.py:253 order/serializers.py:358
 #: stock/forms.py:169 stock/serializers.py:325 stock/serializers.py:788
 #: stock/serializers.py:1029 stock/templates/stock/item_base.html:297
-#: templates/js/translated/barcode.js:384
-#: templates/js/translated/barcode.js:557 templates/js/translated/build.js:700
+#: templates/js/translated/barcode.js:383
+#: templates/js/translated/barcode.js:565 templates/js/translated/build.js:700
 #: templates/js/translated/build.js:1323 templates/js/translated/order.js:611
 #: templates/js/translated/order.js:2049 templates/js/translated/order.js:2152
 #: templates/js/translated/order.js:2160 templates/js/translated/order.js:2241
@@ -8070,45 +8070,46 @@ msgstr ""
 msgid "Unlink"
 msgstr ""
 
-#: templates/js/translated/barcode.js:397 templates/js/translated/stock.js:991
+#: templates/js/translated/barcode.js:403 templates/js/translated/stock.js:991
 msgid "Remove stock item"
 msgstr ""
 
-#: templates/js/translated/barcode.js:439
+#: templates/js/translated/barcode.js:445
 msgid "Check Stock Items into Location"
 msgstr ""
 
-#: templates/js/translated/barcode.js:443
-#: templates/js/translated/barcode.js:573
+#: templates/js/translated/barcode.js:449
+#: templates/js/translated/barcode.js:581
 msgid "Check In"
 msgstr ""
 
-#: templates/js/translated/barcode.js:485
-#: templates/js/translated/barcode.js:612
-msgid "Error transferring stock"
-msgstr ""
+#: templates/js/translated/barcode.js:480
+#, fuzzy
+#| msgid "No serial numbers found"
+msgid "No barcode provided"
+msgstr "Aucun numéro de série trouvé"
 
-#: templates/js/translated/barcode.js:507
+#: templates/js/translated/barcode.js:515
 msgid "Stock Item already scanned"
 msgstr ""
 
-#: templates/js/translated/barcode.js:511
+#: templates/js/translated/barcode.js:519
 msgid "Stock Item already in this location"
 msgstr ""
 
-#: templates/js/translated/barcode.js:518
+#: templates/js/translated/barcode.js:526
 msgid "Added stock item"
 msgstr ""
 
-#: templates/js/translated/barcode.js:525
+#: templates/js/translated/barcode.js:533
 msgid "Barcode does not match Stock Item"
 msgstr ""
 
-#: templates/js/translated/barcode.js:568
+#: templates/js/translated/barcode.js:576
 msgid "Check Into Location"
 msgstr ""
 
-#: templates/js/translated/barcode.js:633
+#: templates/js/translated/barcode.js:639
 msgid "Barcode does not match a valid location"
 msgstr ""
 
