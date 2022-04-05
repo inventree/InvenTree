@@ -1819,6 +1819,15 @@ class BomDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = BomItem.objects.all()
     serializer_class = part_serializers.BomItemSerializer
 
+    def get_queryset(self, *args, **kwargs):
+
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = self.get_serializer_class().setup_eager_loading(queryset)
+        queryset = self.get_serializer_class().annotate_queryset(queryset)
+
+        return queryset
+
 
 class BomItemValidate(generics.UpdateAPIView):
     """ API endpoint for validating a BomItem """
