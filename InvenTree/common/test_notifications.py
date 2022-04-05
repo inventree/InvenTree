@@ -38,15 +38,6 @@ class BaseNotificationTests(BaseNotificationIntegrationTest):
             def send(self):
                 """a comment so we do not need a pass"""
 
-        class WrongDeliveryImplementation(SingleNotificationMethod):
-            METHOD_NAME = 'WrongDeliveryImplementation'
-
-            def get_targets(self):
-                return [1, ]
-
-            def send(self, target):
-                return False
-
         # no send / send bulk
         with self.assertRaises(NotImplementedError):
             FalseNotificationMethod('', '', '', '', )
