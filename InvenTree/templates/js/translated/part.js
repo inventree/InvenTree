@@ -491,13 +491,16 @@ function duplicateBom(part_id, options={}) {
 }
 
 
+/*
+ * Construct a "badge" label showing stock information for this particular part
+ */
 function partStockLabel(part, options={}) {
 
     if (part.in_stock) {
         // There IS stock available for this part
 
         // Is stock "low" (below the 'minimum_stock' quantity)?
-        if (part.minimum_stock && part.minimum_stock > part.in_stock) {
+        if ((part.minimum_stock > 0) && (part.minimum_stock > part.in_stock)) {
             return `<span class='badge rounded-pill bg-warning ${options.classes}'>{% trans "Low stock" %}: ${part.in_stock}${part.units}</span>`;
         } else if (part.unallocated_stock == 0) {
             if (part.ordering) {
@@ -507,11 +510,15 @@ function partStockLabel(part, options={}) {
                 // There is no available stock, but stock is being built
                 return `<span class='badge rounded-pill bg-info ${options.classes}'>{% trans "Building" %}: ${part.building}${part.units}</span>`;
             } else {
-                // There is no available stock
-                return `<span class='badge rounded-pill bg-warning ${options.classes}'>{% trans "Available" %}: 0/${part.in_stock}${part.units}</span>`;
+                // There is no available stock at all
+                return `<span class='badge rounded-pill bg-warning ${options.classes}'>{% trans "No stock available" %}</span>`;
             }
-        } else {
+        } else if (part.unallocated_stock < part.in_stock) {
+            // Unallocated quanttiy is less than total quantity
             return `<span class='badge rounded-pill bg-success ${options.classes}'>{% trans "Available" %}: ${part.unallocated_stock}/${part.in_stock}${part.units}</span>`;
+        } else {
+            // Stock is completely available
+            return `<span class='badge rounded-pill bg-success ${options.classes}'>{% trans "Available" %}: ${part.unallocated_stock}${part.units}</span>`;
         }
     } else {
         // There IS NO stock available for this part
@@ -1355,7 +1362,7 @@ function loadPartTable(table, url, options={}) {
 
     col = {
         field: 'unallocated_stock',
-        title: '{% trans "Available" %}',
+        title: '{% trans "Stock" %}',
         searchable: false,
         formatter: function(value, row) {            
             var link = '?display=part-stock';
@@ -1377,7 +1384,7 @@ function loadPartTable(table, url, options={}) {
                         link = '?display=build-orders';
                     } else {
                         // There is no available stock
-                        value = `0<span class='badge badge-right rounded-pill bg-warning'>{% trans "Not available" %}</span>`;
+                        value = `0<span class='badge badge-right rounded-pill bg-warning'>{% trans "No stock available" %}</span>`;
                     }
                 }
             } else {
