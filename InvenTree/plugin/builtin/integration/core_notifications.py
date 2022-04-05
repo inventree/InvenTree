@@ -3,6 +3,8 @@
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
+from allauth.account.models import EmailAddress
+
 from plugin import IntegrationPluginBase
 from plugin.mixins import BulkNotificationMethod, SettingsMixin
 from plugin.models import NotificationUserSetting
