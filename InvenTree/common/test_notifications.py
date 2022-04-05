@@ -110,6 +110,7 @@ class SingleNotificationMethodTests(BaseNotificationIntegrationTest):
 
 # A integration test for notifications is provided in test_part.PartNotificationTest
 
+
 class NotificationUserSettingTests(BaseNotificationIntegrationTest):
     """ Tests for NotificationUserSetting """
 
@@ -119,7 +120,6 @@ class NotificationUserSettingTests(BaseNotificationIntegrationTest):
 
     def test_setting_attributes(self):
         """check notification method plugin methods: usersettings and tags """
-
 
         class SampleImplementation(BulkNotificationMethod):
             METHOD_NAME = 'test'
