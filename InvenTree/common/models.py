@@ -1247,6 +1247,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'LABEL_ENABLE': {
+            'name': _('Enable label printing'),
+            'description': _('Enable label printing from the web interface'),
+            'default': True,
+            'validator': bool,
+        },
+
         "LABEL_INLINE": {
             'name': _('Inline label display'),
             'description': _('Display PDF labels in the browser, instead of downloading as a file'),
@@ -1261,18 +1268,60 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
-        'SEARCH_PREVIEW_RESULTS': {
-            'name': _('Search Preview Results'),
-            'description': _('Number of results to show in search preview window'),
-            'default': 10,
-            'validator': [int, MinValueValidator(1)]
-        },
-
-        'SEARCH_SHOW_STOCK_LEVELS': {
-            'name': _('Search Show Stock'),
-            'description': _('Display stock levels in search preview window'),
+        'SEARCH_PREVIEW_SHOW_PARTS': {
+            'name': _('Search Parts'),
+            'description': _('Display parts in search preview window'),
             'default': True,
             'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_SHOW_CATEGORIES': {
+            'name': _('Search Categories'),
+            'description': _('Display part categories in search preview window'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_SHOW_STOCK': {
+            'name': _('Search Stock'),
+            'description': _('Display stock items in search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_SHOW_LOCATIONS': {
+            'name': _('Search Locations'),
+            'description': _('Display stock locations in search preview window'),
+            'default': False,
+            'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_SHOW_COMPANIES': {
+            'name': _('Search Companies'),
+            'description': _('Display companies in search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS': {
+            'name': _('Search Purchase Orders'),
+            'description': _('Display purchase orders in search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_SHOW_SALES_ORDERS': {
+            'name': _('Search Sales Orders'),
+            'description': _('Display sales orders in search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_RESULTS': {
+            'name': _('Search Preview Results'),
+            'description': _('Number of results to show in each section of the search preview window'),
+            'default': 10,
+            'validator': [int, MinValueValidator(1)]
         },
 
         'SEARCH_HIDE_INACTIVE_PARTS': {

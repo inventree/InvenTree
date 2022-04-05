@@ -130,6 +130,7 @@ translated_javascript_urls = [
     url(r'^order.js', DynamicJsView.as_view(template_name='js/translated/order.js'), name='order.js'),
     url(r'^part.js', DynamicJsView.as_view(template_name='js/translated/part.js'), name='part.js'),
     url(r'^report.js', DynamicJsView.as_view(template_name='js/translated/report.js'), name='report.js'),
+    url(r'^search.js', DynamicJsView.as_view(template_name='js/translated/search.js'), name='search.js'),
     url(r'^stock.js', DynamicJsView.as_view(template_name='js/translated/stock.js'), name='stock.js'),
     url(r'^plugin.js', DynamicJsView.as_view(template_name='js/translated/plugin.js'), name='plugin.js'),
     url(r'^tables.js', DynamicJsView.as_view(template_name='js/translated/tables.js'), name='tables.js'),
