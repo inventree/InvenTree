@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-06 02:47+0000\n"
-"PO-Revision-Date: 2022-04-06 02:50\n"
+"PO-Revision-Date: 2022-04-06 20:05\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -1800,7 +1800,7 @@ msgstr "Inclure les informations de prix dans les tableaux de la BOM"
 
 #: common/models.py:861
 msgid "Show Price History"
-msgstr ""
+msgstr "Historique des prix"
 
 #: common/models.py:862
 msgid "Display historical pricing for Part"
