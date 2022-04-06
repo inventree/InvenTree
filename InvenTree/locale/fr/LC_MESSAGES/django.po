@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-05 23:29+0000\n"
-"PO-Revision-Date: 2022-04-05 23:31\n"
+"POT-Creation-Date: 2022-04-06 00:39+0000\n"
+"PO-Revision-Date: 2022-04-06 00:40\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -7682,67 +7682,67 @@ msgstr "Le serveur distant doit être accessible"
 msgid "Remote image must not exceed maximum allowable file size"
 msgstr "L'image distante ne doit pas excéder la taille maximale autorisée de fichier"
 
-#: templates/js/translated/api.js:185 templates/js/translated/modals.js:1056
+#: templates/js/translated/api.js:190 templates/js/translated/modals.js:1056
 msgid "No Response"
 msgstr "Aucune réponse"
 
-#: templates/js/translated/api.js:186 templates/js/translated/modals.js:1057
+#: templates/js/translated/api.js:191 templates/js/translated/modals.js:1057
 msgid "No response from the InvenTree server"
 msgstr "Aucune réponse du serveur InvenTree"
 
-#: templates/js/translated/api.js:192
+#: templates/js/translated/api.js:197
 msgid "Error 400: Bad request"
 msgstr "Erreur 400: Mauvaise requête"
 
-#: templates/js/translated/api.js:193
+#: templates/js/translated/api.js:198
 msgid "API request returned error code 400"
 msgstr "La requête de l'API a retourné le code d'erreur 400"
 
-#: templates/js/translated/api.js:197 templates/js/translated/modals.js:1066
+#: templates/js/translated/api.js:202 templates/js/translated/modals.js:1066
 msgid "Error 401: Not Authenticated"
 msgstr "Erreur 401: non authentifié"
 
-#: templates/js/translated/api.js:198 templates/js/translated/modals.js:1067
+#: templates/js/translated/api.js:203 templates/js/translated/modals.js:1067
 msgid "Authentication credentials not supplied"
 msgstr "Informations d’authentification non fournies"
 
-#: templates/js/translated/api.js:202 templates/js/translated/modals.js:1071
+#: templates/js/translated/api.js:207 templates/js/translated/modals.js:1071
 msgid "Error 403: Permission Denied"
 msgstr "Erreur 403: Permission refusée"
 
-#: templates/js/translated/api.js:203 templates/js/translated/modals.js:1072
+#: templates/js/translated/api.js:208 templates/js/translated/modals.js:1072
 msgid "You do not have the required permissions to access this function"
 msgstr "Vous n'avez pas les autorisations requises pour accéder à cette fonction"
 
-#: templates/js/translated/api.js:207 templates/js/translated/modals.js:1076
+#: templates/js/translated/api.js:212 templates/js/translated/modals.js:1076
 msgid "Error 404: Resource Not Found"
 msgstr "Erreur 404: Ressource introuvable"
 
-#: templates/js/translated/api.js:208 templates/js/translated/modals.js:1077
+#: templates/js/translated/api.js:213 templates/js/translated/modals.js:1077
 msgid "The requested resource could not be located on the server"
 msgstr "La ressource demandée n'a pas pu être trouvée sur le serveur"
 
-#: templates/js/translated/api.js:212
+#: templates/js/translated/api.js:217
 msgid "Error 405: Method Not Allowed"
 msgstr "Erreur 405: Méthode non autorisée"
 
-#: templates/js/translated/api.js:213
+#: templates/js/translated/api.js:218
 msgid "HTTP method not allowed at URL"
 msgstr "Méthode HTTP non autorisée à l'adresse URL"
 
-#: templates/js/translated/api.js:217 templates/js/translated/modals.js:1081
+#: templates/js/translated/api.js:222 templates/js/translated/modals.js:1081
 msgid "Error 408: Timeout"
 msgstr "Erreur 408: Délai dépassé"
 
-#: templates/js/translated/api.js:218 templates/js/translated/modals.js:1082
+#: templates/js/translated/api.js:223 templates/js/translated/modals.js:1082
 msgid "Connection timeout while requesting data from server"
 msgstr "Délai de connexion dépassé lors de la demande de données depuis le serveur"
 
-#: templates/js/translated/api.js:221
+#: templates/js/translated/api.js:226
 msgid "Unhandled Error Code"
 msgstr "Code d'erreur non géré"
 
-#: templates/js/translated/api.js:222
+#: templates/js/translated/api.js:227
 msgid "Error code"
 msgstr "Code d’erreur"
 
