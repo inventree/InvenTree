@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-06 00:39+0000\n"
+"POT-Creation-Date: 2022-04-06 02:47+0000\n"
 "PO-Revision-Date: 2021-11-30 21:51\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
@@ -2929,7 +2929,7 @@ msgstr ""
 #: part/templates/part/detail.html:78 part/templates/part/part_sidebar.html:38
 #: templates/InvenTree/index.html:252 templates/InvenTree/search.html:197
 #: templates/InvenTree/settings/sidebar.html:47
-#: templates/js/translated/search.js:172 templates/navbar.html:47
+#: templates/js/translated/search.js:173 templates/navbar.html:47
 #: users/models.py:45
 msgid "Purchase Orders"
 msgstr ""
@@ -2952,7 +2952,7 @@ msgstr ""
 #: part/templates/part/detail.html:101 part/templates/part/part_sidebar.html:42
 #: templates/InvenTree/index.html:283 templates/InvenTree/search.html:217
 #: templates/InvenTree/settings/sidebar.html:49
-#: templates/js/translated/search.js:189 templates/navbar.html:58
+#: templates/js/translated/search.js:190 templates/navbar.html:58
 #: users/models.py:46
 msgid "Sales Orders"
 msgstr ""
@@ -3198,7 +3198,7 @@ msgstr ""
 #: stock/templates/stock/location.html:152
 #: stock/templates/stock/location.html:164
 #: stock/templates/stock/location_sidebar.html:7
-#: templates/InvenTree/search.html:152 templates/js/translated/search.js:126
+#: templates/InvenTree/search.html:152 templates/js/translated/search.js:127
 #: templates/js/translated/stock.js:2291 templates/stats.html:105
 #: templates/stats.html:114 users/models.py:43
 msgid "Stock Items"
@@ -3221,7 +3221,7 @@ msgstr ""
 msgid "New Customer"
 msgstr ""
 
-#: company/views.py:69 templates/js/translated/search.js:158
+#: company/views.py:69 templates/js/translated/search.js:159
 msgid "Companies"
 msgstr ""
 
@@ -4178,7 +4178,7 @@ msgid "Part Category"
 msgstr ""
 
 #: part/models.py:127 part/templates/part/category.html:128
-#: templates/InvenTree/search.html:95 templates/js/translated/search.js:112
+#: templates/InvenTree/search.html:95 templates/js/translated/search.js:113
 #: templates/stats.html:96 users/models.py:40
 msgid "Part Categories"
 msgstr ""
@@ -4189,7 +4189,7 @@ msgstr ""
 #: part/templates/part/category_sidebar.html:9
 #: templates/InvenTree/index.html:85 templates/InvenTree/search.html:82
 #: templates/InvenTree/settings/sidebar.html:39
-#: templates/js/translated/part.js:1758 templates/js/translated/search.js:98
+#: templates/js/translated/part.js:1758 templates/js/translated/search.js:99
 #: templates/navbar.html:21 templates/stats.html:92 templates/stats.html:101
 #: users/models.py:41
 msgid "Parts"
@@ -6552,7 +6552,7 @@ msgid "Sublocations"
 msgstr ""
 
 #: stock/templates/stock/location.html:147 templates/InvenTree/search.html:164
-#: templates/js/translated/search.js:144 templates/stats.html:109
+#: templates/js/translated/search.js:145 templates/stats.html:109
 #: users/models.py:42
 msgid "Stock Locations"
 msgstr ""
@@ -9299,11 +9299,11 @@ msgstr ""
 msgid "Sales Order(s) must be selected before printing report"
 msgstr ""
 
-#: templates/js/translated/search.js:285
+#: templates/js/translated/search.js:286
 msgid "Minimize results"
 msgstr ""
 
-#: templates/js/translated/search.js:288
+#: templates/js/translated/search.js:289
 msgid "Remove results"
 msgstr ""
 
