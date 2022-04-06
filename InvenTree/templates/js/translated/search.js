@@ -89,7 +89,8 @@ function updateSearch() {
         var params = {};
 
         if (user_settings.SEARCH_HIDE_INACTIVE_PARTS) {
-            params.active = false;
+            // Return *only* active parts
+            params.active = true;
         }
 
         // Search for matching parts
