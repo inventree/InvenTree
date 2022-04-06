@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-06 02:47+0000\n"
-"PO-Revision-Date: 2022-04-06 02:50\n"
+"POT-Creation-Date: 2022-04-06 22:24+0000\n"
+"PO-Revision-Date: 2022-04-06 22:37\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -2467,7 +2467,7 @@ msgstr "Befejeződött a munka ezzel az üzenettel?"
 #: common/views.py:93 order/templates/order/order_wizard/po_upload.html:49
 #: order/templates/order/purchase_order_detail.html:24 order/views.py:243
 #: part/templates/part/import_wizard/part_upload.html:47 part/views.py:208
-#: templates/patterns/wizard/upload.html:35
+#: templates/patterns/wizard/upload.html:37
 msgid "Upload File"
 msgstr "Fájl feltöltése"
 
@@ -2496,7 +2496,7 @@ msgstr "Importált alkatrészek"
 #: part/templates/part/import_wizard/match_references.html:19
 #: part/templates/part/import_wizard/part_upload.html:45
 #: templates/patterns/wizard/match_fields.html:26
-#: templates/patterns/wizard/upload.html:33
+#: templates/patterns/wizard/upload.html:35
 msgid "Previous Step"
 msgstr "Előző lépés"
 
@@ -3808,7 +3808,7 @@ msgstr "Fájl feltöltése a beszerzési megrendeléshez"
 #: order/templates/order/order_wizard/po_upload.html:25
 #: part/templates/part/import_wizard/ajax_part_upload.html:10
 #: part/templates/part/import_wizard/part_upload.html:23
-#: templates/patterns/wizard/upload.html:11
+#: templates/patterns/wizard/upload.html:13
 #, python-format
 msgid "Step %(step)s of %(count)s"
 msgstr "%(step)s/%(count)s. lépés"
