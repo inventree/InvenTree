@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-06 02:47+0000\n"
-"PO-Revision-Date: 2022-04-06 20:05\n"
+"PO-Revision-Date: 2022-04-06 21:02\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -1441,7 +1441,7 @@ msgstr ""
 #: build/templates/build/detail.html:264
 #: stock/templates/stock/location.html:188 templates/stock_table.html:27
 msgid "Printing Actions"
-msgstr ""
+msgstr "Actions d'impression"
 
 #: build/templates/build/detail.html:268 build/templates/build/detail.html:269
 #: stock/templates/stock/location.html:192 templates/stock_table.html:31
@@ -1725,7 +1725,7 @@ msgstr ""
 
 #: common/models.py:789
 msgid "Parts can be assembled from other components by default"
-msgstr ""
+msgstr "Les composantes peuvent être assemblées à partir d'autres composants par défaut"
 
 #: common/models.py:795 part/models.py:965
 #: templates/js/translated/table_filters.js:446
@@ -1734,7 +1734,7 @@ msgstr "Composant"
 
 #: common/models.py:796
 msgid "Parts can be used as sub-components by default"
-msgstr ""
+msgstr "Les composantes peuvent être utilisées comme sous-composants par défaut"
 
 #: common/models.py:802 part/models.py:976
 msgid "Purchaseable"
@@ -1944,7 +1944,7 @@ msgstr ""
 
 #: common/models.py:984
 msgid "Prefix value for sales order reference"
-msgstr ""
+msgstr "Valeur préfixe référence commande client"
 
 #: common/models.py:989
 msgid "Purchase Order Reference Prefix"
@@ -1952,7 +1952,7 @@ msgstr "Préfixe des commandes d'achats"
 
 #: common/models.py:990
 msgid "Prefix value for purchase order reference"
-msgstr ""
+msgstr "Valeur préfixe référence bon de commande"
 
 #: common/models.py:996
 msgid "Enable password forgot"
@@ -2356,7 +2356,7 @@ msgstr ""
 
 #: common/models.py:1357
 msgid "Preferred format for displaying dates"
-msgstr ""
+msgstr "Format préféré pour l'affichage des dates"
 
 #: common/models.py:1371 part/templates/part/detail.html:40
 msgid "Part Scheduling"
@@ -2374,7 +2374,7 @@ msgstr ""
 #: company/templates/company/supplier_part.html:256
 #: templates/js/translated/part.js:976 templates/js/translated/part.js:1962
 msgid "Price"
-msgstr ""
+msgstr "Prix"
 
 #: common/models.py:1438
 msgid "Unit price at specified quantity"
@@ -2488,7 +2488,7 @@ msgstr ""
 
 #: common/views.py:495
 msgid "Parts imported"
-msgstr ""
+msgstr "Composantes importées"
 
 #: common/views.py:517 order/templates/order/order_wizard/match_parts.html:19
 #: order/templates/order/order_wizard/po_upload.html:47
@@ -2498,7 +2498,7 @@ msgstr ""
 #: templates/patterns/wizard/match_fields.html:26
 #: templates/patterns/wizard/upload.html:33
 msgid "Previous Step"
-msgstr ""
+msgstr "Étape précédente"
 
 #: company/forms.py:24 part/forms.py:46
 #: templates/InvenTree/settings/mixins/urls.html:14
@@ -2751,7 +2751,7 @@ msgstr ""
 
 #: company/models.py:584
 msgid "Order multiple"
-msgstr ""
+msgstr "Commande multiple"
 
 #: company/models.py:708
 msgid "last updated"
@@ -2861,7 +2861,7 @@ msgstr ""
 #: company/templates/company/detail.html:84
 #: part/templates/part/category.html:174
 msgid "Order parts"
-msgstr ""
+msgstr "Commander des composants"
 
 #: company/templates/company/detail.html:42
 #: company/templates/company/detail.html:89
@@ -3098,12 +3098,12 @@ msgstr ""
 #: company/templates/company/supplier_part.html:160
 #: part/templates/part/detail.html:82
 msgid "Order Part"
-msgstr ""
+msgstr "Commander un composant"
 
 #: company/templates/company/supplier_part.html:179
 #: part/templates/part/prices.html:7
 msgid "Pricing Information"
-msgstr ""
+msgstr "Information sur les prix"
 
 #: company/templates/company/supplier_part.html:184
 #: company/templates/company/supplier_part.html:298
@@ -3217,7 +3217,7 @@ msgstr ""
 
 #: label/api.py:97 report/api.py:203
 msgid "No valid objects provided to template"
-msgstr ""
+msgstr "Aucun objet valide n'a été fourni au modèle"
 
 #: label/models.py:113
 msgid "Label name"
@@ -3315,7 +3315,7 @@ msgstr ""
 
 #: order/models.py:147
 msgid "Order notes"
-msgstr ""
+msgstr "Notes de commande"
 
 #: order/models.py:214 order/models.py:564
 msgid "Order reference"
@@ -3709,12 +3709,12 @@ msgstr "Finaliser la commande"
 #: order/templates/order/order_base.html:84
 #: order/templates/order/sales_order_base.html:79
 msgid "Order Reference"
-msgstr ""
+msgstr "Référence de commande"
 
 #: order/templates/order/order_base.html:89
 #: order/templates/order/sales_order_base.html:84
 msgid "Order Description"
-msgstr ""
+msgstr "Description de la commande"
 
 #: order/templates/order/order_base.html:94
 #: order/templates/order/sales_order_base.html:89
@@ -3815,7 +3815,7 @@ msgstr ""
 
 #: order/templates/order/order_wizard/po_upload.html:55
 msgid "Order is already processed. Files cannot be uploaded."
-msgstr ""
+msgstr "Commande déjà traitée. Les fichiers ne peuvent pas être chargés."
 
 #: order/templates/order/order_wizard/select_parts.html:11
 msgid "Step 1 of 2 - Select Part Suppliers"
@@ -3908,7 +3908,7 @@ msgstr ""
 #: order/templates/order/purchase_order_detail.html:76
 #: order/templates/order/sales_order_detail.html:123
 msgid "Order Notes"
-msgstr ""
+msgstr "Notes de commande"
 
 #: order/templates/order/purchase_orders.html:30
 #: order/templates/order/sales_orders.html:33
@@ -3963,7 +3963,7 @@ msgstr ""
 #: order/templates/order/sales_order_detail.html:44
 #: order/templates/order/so_sidebar.html:8
 msgid "Pending Shipments"
-msgstr ""
+msgstr "Expéditions en attente"
 
 #: order/templates/order/sales_order_detail.html:48
 #: templates/js/translated/bom.js:943 templates/js/translated/build.js:1481
@@ -4103,7 +4103,7 @@ msgstr ""
 #: templates/js/translated/part.js:1207 templates/js/translated/part.js:1379
 #: templates/js/translated/part.js:1395
 msgid "On Order"
-msgstr ""
+msgstr "En Commande"
 
 #: part/forms.py:84
 msgid "Select part category"
@@ -4136,13 +4136,13 @@ msgstr ""
 #: part/models.py:126 part/models.py:2613 part/templates/part/category.html:15
 #: part/templates/part/part_app_base.html:10
 msgid "Part Category"
-msgstr ""
+msgstr "Catégorie de composant"
 
 #: part/models.py:127 part/templates/part/category.html:128
 #: templates/InvenTree/search.html:95 templates/js/translated/search.js:113
 #: templates/stats.html:96 users/models.py:40
 msgid "Part Categories"
-msgstr ""
+msgstr "Catégories de composants"
 
 #: part/models.py:368 part/templates/part/cat_link.html:3
 #: part/templates/part/category.html:17 part/templates/part/category.html:133
@@ -4154,7 +4154,7 @@ msgstr ""
 #: templates/navbar.html:21 templates/stats.html:92 templates/stats.html:101
 #: users/models.py:41
 msgid "Parts"
-msgstr ""
+msgstr "Composantes"
 
 #: part/models.py:460
 msgid "Invalid choice for parent part"
@@ -4203,7 +4203,7 @@ msgstr ""
 
 #: part/models.py:836
 msgid "Part description"
-msgstr ""
+msgstr "Description du composant"
 
 #: part/models.py:841 part/templates/part/category.html:86
 #: part/templates/part/part_base.html:322
@@ -4432,7 +4432,7 @@ msgstr ""
 
 #: part/models.py:2661
 msgid "Part ID"
-msgstr ""
+msgstr "ID de composant"
 
 #: part/models.py:2662
 msgid "Unique part ID value"
@@ -4486,7 +4486,7 @@ msgstr ""
 
 #: part/models.py:2755 part/templates/part/upload_bom.html:55
 msgid "Overage"
-msgstr ""
+msgstr "Surplus"
 
 #: part/models.py:2756
 msgid "Estimated build wastage quantity (absolute or percentage)"
@@ -4727,7 +4727,7 @@ msgstr ""
 
 #: part/templates/part/category.html:119
 msgid "Parts (Including subcategories)"
-msgstr ""
+msgstr "Composantes (incluant sous-catégories)"
 
 #: part/templates/part/category.html:157
 msgid "Create new part"
@@ -4775,7 +4775,7 @@ msgstr ""
 
 #: part/templates/part/category.html:309
 msgid "Part created successfully"
-msgstr ""
+msgstr "Composant créé avec succès"
 
 #: part/templates/part/category_delete.html:7
 msgid "Are you sure you want to delete this part category?"
@@ -4825,7 +4825,7 @@ msgstr ""
 #: part/templates/part/copy_part.html:14
 #: part/templates/part/create_part.html:11
 msgid "Possible Matching Parts"
-msgstr ""
+msgstr "Composantes correspondantes possibles"
 
 #: part/templates/part/copy_part.html:15
 #: part/templates/part/create_part.html:12
@@ -4931,7 +4931,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:386
 msgid "Part Manufacturers"
-msgstr ""
+msgstr "Fabricants de composants"
 
 #: part/templates/part/detail.html:402
 msgid "Delete manufacturer parts"
@@ -5030,7 +5030,7 @@ msgstr ""
 
 #: part/templates/part/part_app_base.html:12
 msgid "Part List"
-msgstr ""
+msgstr "Liste des composants"
 
 #: part/templates/part/part_base.html:27 part/templates/part/part_base.html:31
 msgid "You are subscribed to notifications for this part"
@@ -5056,7 +5056,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:57
 #: stock/templates/stock/location.html:38
 msgid "Print Label"
-msgstr ""
+msgstr "Impression étiquette"
 
 #: part/templates/part/part_base.html:55
 msgid "Show pricing information"
@@ -5321,7 +5321,7 @@ msgstr ""
 
 #: part/templates/part/prices.html:16
 msgid "Pricing ranges"
-msgstr ""
+msgstr "Gammes de prix"
 
 #: part/templates/part/prices.html:22
 msgid "Show supplier cost"
@@ -5464,7 +5464,7 @@ msgstr ""
 
 #: part/views.py:507
 msgid "None"
-msgstr ""
+msgstr "Aucun"
 
 #: part/views.py:566
 msgid "Part QR Code"
@@ -5576,7 +5576,7 @@ msgstr ""
 
 #: plugin/models.py:41
 msgid "PluginName of the plugin"
-msgstr ""
+msgstr "Non du Plugin"
 
 #: plugin/models.py:47
 msgid "Is the plugin active"
@@ -5604,7 +5604,7 @@ msgstr ""
 
 #: plugin/samples/integration/sample.py:52
 msgid "Numerical"
-msgstr ""
+msgstr "Numérique"
 
 #: plugin/samples/integration/sample.py:53
 msgid "A numerical setting"
@@ -5701,7 +5701,7 @@ msgstr ""
 
 #: report/models.py:425
 msgid "Part Filters"
-msgstr ""
+msgstr "Filtres de composants"
 
 #: report/models.py:426
 msgid "Part query filters (comma-separated list of key=value pairs"
@@ -5769,7 +5769,7 @@ msgstr ""
 #: report/templates/report/inventree_test_report_base.html:94
 #: stock/models.py:2125
 msgid "Result"
-msgstr ""
+msgstr "Résultat"
 
 #: report/templates/report/inventree_test_report_base.html:97
 #: templates/InvenTree/settings/plugin.html:50
@@ -6082,7 +6082,7 @@ msgstr ""
 
 #: stock/serializers.py:180
 msgid "Purchase currency of this stock item"
-msgstr ""
+msgstr "Devise d'achat de l'item"
 
 #: stock/serializers.py:294
 msgid "Enter number of stock items to serialize"
@@ -6316,7 +6316,7 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:161
 msgid "previous page"
-msgstr ""
+msgstr "page précédente"
 
 #: stock/templates/stock/item_base.html:161
 msgid "Navigate to previous serial number"
@@ -6570,7 +6570,7 @@ msgstr ""
 
 #: stock/views.py:259 stock/views.py:610 stock/views.py:736 stock/views.py:1018
 msgid "Owner is required (ownership control is enabled)"
-msgstr ""
+msgstr "Propriétaire requis (contrôle de propriété actif)"
 
 #: stock/views.py:274
 msgid "Stock Location QR code"
@@ -6658,7 +6658,7 @@ msgstr ""
 
 #: templates/403.html:5 templates/403.html:11
 msgid "Permission Denied"
-msgstr ""
+msgstr "Autorisation refusée"
 
 #: templates/403.html:14
 msgid "You do not have permission to view this page."
@@ -6763,7 +6763,7 @@ msgstr ""
 
 #: templates/InvenTree/notifications/inbox.html:9
 msgid "Pending Notifications"
-msgstr ""
+msgstr "Notifications en attente"
 
 #: templates/InvenTree/notifications/inbox.html:13
 #: templates/InvenTree/notifications/inbox.html:14
@@ -6802,7 +6802,7 @@ msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:116
 msgid "No unread notifications found"
-msgstr ""
+msgstr "Aucune notification non lue trouvée"
 
 #: templates/InvenTree/notifications/notifications.html:140
 msgid "No notification history found"
@@ -7025,7 +7025,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/setting.html:37
 msgid "No value set"
-msgstr ""
+msgstr "Aucune valeur définie"
 
 #: templates/InvenTree/settings/setting.html:42
 msgid "Edit setting"
@@ -7092,7 +7092,7 @@ msgstr ""
 #: templates/InvenTree/settings/sidebar.html:21
 #: templates/InvenTree/settings/sidebar.html:37
 msgid "Reporting"
-msgstr ""
+msgstr "Rapports"
 
 #: templates/InvenTree/settings/sidebar.html:26
 msgid "Global Settings"
@@ -7155,7 +7155,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:79
 msgid "Primary"
-msgstr ""
+msgstr "Principal"
 
 #: templates/InvenTree/settings/user.html:85
 msgid "Make Primary"
@@ -7287,7 +7287,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user_display.html:37
 msgid "Select theme"
-msgstr ""
+msgstr "Sélectionner un thème"
 
 #: templates/InvenTree/settings/user_display.html:48
 msgid "Set Theme"
@@ -7349,7 +7349,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user_notifications.html:8
 msgid "Notification Settings"
-msgstr ""
+msgstr "Paramètres de notification"
 
 #: templates/about.html:10
 msgid "InvenTree Version Information"
@@ -7638,7 +7638,7 @@ msgstr ""
 #: templates/email/build_order_required_stock.html:18
 #: templates/js/translated/bom.js:1340
 msgid "Required Quantity"
-msgstr ""
+msgstr "Quantité requise"
 
 #: templates/email/build_order_required_stock.html:19
 #: templates/email/low_stock_notification.html:18
@@ -7878,7 +7878,7 @@ msgstr ""
 
 #: templates/js/translated/bom.js:131
 msgid "Row Data"
-msgstr ""
+msgstr "Données de la rangée"
 
 #: templates/js/translated/bom.js:249
 msgid "Download BOM Template"
@@ -8177,7 +8177,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:1492 templates/stock_table.html:50
 msgid "Order stock"
-msgstr ""
+msgstr "Commander des stocks"
 
 #: templates/js/translated/build.js:1495 templates/js/translated/order.js:2519
 msgid "Allocate stock"
@@ -8264,7 +8264,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:2048 templates/js/translated/stock.js:2473
 msgid "No user information"
-msgstr ""
+msgstr "Pas d'informations sur l'utilisateur"
 
 #: templates/js/translated/build.js:2060
 msgid "No information"
@@ -8312,11 +8312,11 @@ msgstr ""
 
 #: templates/js/translated/company.js:363
 msgid "Parts Supplied"
-msgstr ""
+msgstr "Composantes fournies"
 
 #: templates/js/translated/company.js:372
 msgid "Parts Manufactured"
-msgstr ""
+msgstr "Composantes fabriquées"
 
 #: templates/js/translated/company.js:387
 msgid "No company information found"
@@ -8514,7 +8514,7 @@ msgstr ""
 
 #: templates/js/translated/label.js:261
 msgid "Select Printer"
-msgstr ""
+msgstr "Sélectionner imprimante"
 
 #: templates/js/translated/label.js:265
 msgid "Export to PDF"
@@ -8606,7 +8606,7 @@ msgstr ""
 #: templates/js/translated/model_renderers.js:257
 #: templates/js/translated/model_renderers.js:283
 msgid "Order ID"
-msgstr ""
+msgstr "ID de commande"
 
 #: templates/js/translated/model_renderers.js:298
 msgid "Shipment ID"
@@ -8698,11 +8698,11 @@ msgstr ""
 
 #: templates/js/translated/order.js:712
 msgid "Order Code"
-msgstr ""
+msgstr "Référence de commande"
 
 #: templates/js/translated/order.js:713
 msgid "Ordered"
-msgstr ""
+msgstr "Commandé"
 
 #: templates/js/translated/order.js:715
 msgid "Quantity to Receive"
@@ -8722,7 +8722,7 @@ msgstr ""
 
 #: templates/js/translated/order.js:950 templates/js/translated/order.js:1426
 msgid "Order is overdue"
-msgstr ""
+msgstr "Commande en retard"
 
 #: templates/js/translated/order.js:1074 templates/js/translated/order.js:2577
 msgid "Duplicate Line Item"
@@ -9030,7 +9030,7 @@ msgstr "Pièce vendable"
 
 #: templates/js/translated/part.js:683
 msgid "No variants found"
-msgstr ""
+msgstr "Aucune variante trouvée"
 
 #: templates/js/translated/part.js:1073
 msgid "Delete part relationship"
@@ -9960,7 +9960,7 @@ msgstr ""
 
 #: templates/stock_table.html:33
 msgid "Print test reports"
-msgstr ""
+msgstr "Imprimer un rapport de test"
 
 #: templates/stock_table.html:40
 msgid "Stock Options"
