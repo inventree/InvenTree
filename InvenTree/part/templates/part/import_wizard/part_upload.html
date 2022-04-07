@@ -11,9 +11,8 @@
 
 {% block content %}
     {% trans "Import Parts from File" as header_text %}
-    {% roles.part.change as upload_go_ahead %}
     {% trans "Unsuffitient privileges." as error_text %}
-    {% include "patterns/wizard/upload.html" with header_text=header_text upload_go_ahead=upload_go_ahead error_text=error_text %}
+    {% include "patterns/wizard/upload.html" with header_text=header_text upload_go_ahead=roles.part.change error_text=error_text %}
 {% endblock %}
 
 {% block js_ready %}
