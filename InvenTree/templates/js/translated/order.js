@@ -481,7 +481,7 @@ function orderParts(parts_list, options={}) {
         var thumb = thumbnailImage(part.thumbnail || part.image);
 
         // The "quantity" field should have been provided for each part
-        var quantity = part.quantity || 0;
+        var quantity = part.quantity || 1;
 
         if (quantity < 0) {
             quantity = 0;

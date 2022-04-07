@@ -1581,19 +1581,6 @@ function loadPartTable(table, url, options={}) {
 
         printPartLabels(items);
     });
-
-    $('#multi-part-export').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
-
-        var parts = '';
-
-        selections.forEach(function(item) {
-            parts += item.pk;
-            parts += ',';
-        });
-
-        location.href = '/part/export/?parts=' + parts;
-    });
 }
 
 
