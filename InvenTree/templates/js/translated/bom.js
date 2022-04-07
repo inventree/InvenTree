@@ -798,17 +798,26 @@ function loadBomTable(table, options={}) {
     });
 
     cols.push({
-        field: 'sub_part_detail.stock',
+        field: 'available_stock',
         title: '{% trans "Available" %}',
         searchable: false,
         sortable: true,
         formatter: function(value, row) {
 
             var url = `/part/${row.sub_part_detail.pk}/?display=part-stock`;
-            var text = value;
 
-            if (value == null || value <= 0) {
-                text = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
+            // Calculate total "available" (unallocated) quantity
+            var total = row.available_stock + row.available_substitute_stock;
+            // var text = row.available_substitute_stock + row.available_stock;
+
+            if (total <= 0) {
+                text = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
+            } else {
+                text = `${total}`;
+
+                if (row.available_substitute_stock > 0) {
+                    text += `<span title='{% trans "Includes substitute stock" %}' class='fas fa-info-circle float-right icon-blue'></span>`;
+                }
             }
 
             return renderLink(text, url);
