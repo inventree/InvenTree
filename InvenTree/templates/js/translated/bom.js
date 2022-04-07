@@ -808,13 +808,12 @@ function loadBomTable(table, options={}) {
 
             // Calculate total "available" (unallocated) quantity
             var total = row.available_stock + row.available_substitute_stock;
-            // var text = row.available_substitute_stock + row.available_stock;
+
+            var text = `${total}`;
 
             if (total <= 0) {
                 text = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
             } else {
-                text = `${total}`;
-
                 if (row.available_substitute_stock > 0) {
                     text += `<span title='{% trans "Includes substitute stock" %}' class='fas fa-info-circle float-right icon-blue'></span>`;
                 }
