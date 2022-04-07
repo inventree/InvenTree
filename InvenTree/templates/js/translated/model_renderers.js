@@ -34,8 +34,8 @@
 // Should the ID be rendered for this string
 function renderId(title, pk, parameters={}) {
 
-    // Default = true
-    var render = true;
+    // Default = do not render
+    var render = false;
 
     if ('render_pk' in parameters) {
         render = parameters['render_pk'];
@@ -138,7 +138,7 @@ function renderStockLocation(name, data, parameters={}, options={}) {
         html += ` - <i>${data.description}</i>`;
     }
 
-    html += `<span class='float-right'><small>{% trans "Location ID" %}: ${data.pk}</small></span>`;
+    html += renderId('{% trans "Location ID" %}', data.pk, parameters);
 
     return html;
 }
@@ -155,7 +155,8 @@ function renderBuild(name, data, parameters={}, options={}) {
     var html = select2Thumbnail(image);
 
     html += `<span><b>${data.reference}</b></span> - ${data.quantity} x ${data.part_detail.full_name}`;
-    html += `<span class='float-right'><small>{% trans "Build ID" %}: ${data.pk}</span></span>`;
+
+    html += renderId('{% trans "Build ID" %}', data.pk, parameters);
 
     html += `<p><i>${data.title}</i></p>`;
 
@@ -293,11 +294,12 @@ function renderSalesOrderShipment(name, data, parameters={}, options={}) {
     var so_prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
 
     var html = `
-    <span>${so_prefix}${data.order_detail.reference} - {% trans "Shipment" %} ${data.reference}</span>
-    <span class='float-right'>
-        <small>{% trans "Shipment ID" %}: ${data.pk}</small>
+    <span>
+        ${so_prefix}${data.order_detail.reference} - {% trans "Shipment" %} ${data.reference}
     </span>
     `;
+
+    html += renderId('{% trans "Shipment ID" %}', data.pk, parameters);
 
     return html;
 }
@@ -315,7 +317,7 @@ function renderPartCategory(name, data, parameters={}, options={}) {
         html += ` - <i>${data.description}</i>`;
     }
 
-    html += `<span class='float-right'><small>{% trans "Category ID" %}: ${data.pk}</small></span>`;
+    html += renderId('{% trans "Category ID" %}', data.pk, parameters);
 
     return html;
 }
@@ -358,7 +360,7 @@ function renderManufacturerPart(name, data, parameters={}, options={}) {
     html += ` <span><b>${data.manufacturer_detail.name}</b> - ${data.MPN}</span>`;
     html += ` - <i>${data.part_detail.full_name}</i>`;
 
-    html += `<span class='float-right'><small>{% trans "Manufacturer Part ID" %}: ${data.pk}</small></span>`;
+    html += renderId('{% trans "Manufacturer Part ID" %}', data.pk, parameters);
 
     return html;
 }
@@ -393,8 +395,7 @@ function renderSupplierPart(name, data, parameters={}, options={}) {
         html += ` - <i>${data.part_detail.full_name}</i>`;
     }
 
-    html += `<span class='float-right'><small>{% trans "Supplier Part ID" %}: ${data.pk}</small></span>`;
-
+    html += renderId('{% trans "Supplier Part ID" %}', data.pk, parameters);
 
     return html;
 
