@@ -226,7 +226,7 @@ def trigger_notifaction(obj, category=None, obj_ref='pk', **kwargs):
 
     if NotificationEntry.check_recent(category, obj_ref_value, delta):
         logger.info(f"Notification '{category}' has recently been sent for '{str(obj)}' - SKIPPING")
-        # return
+        return
 
     logger.info(f"Gathering users for notification '{category}'")
     # Collect possible targets
