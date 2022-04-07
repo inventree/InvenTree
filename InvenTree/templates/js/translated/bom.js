@@ -911,8 +911,10 @@ function loadBomTable(table, options={}) {
             formatter: function(value, row) {
                 var can_build = 0;
 
+                var available = row.available_stock + row.available_substitute_stock;
+
                 if (row.quantity > 0) {
-                    can_build = row.sub_part_detail.stock / row.quantity;
+                    can_build = available / row.quantity;
                 }
 
                 return +can_build.toFixed(2);
@@ -923,11 +925,11 @@ function loadBomTable(table, options={}) {
                 var cb_b = 0;
 
                 if (rowA.quantity > 0) {
-                    cb_a = rowA.sub_part_detail.stock / rowA.quantity;
+                    cb_a = (rowA.available_stock + rowA.available_substitute_stock) / rowA.quantity;
                 }
 
                 if (rowB.quantity > 0) {
-                    cb_b = rowB.sub_part_detail.stock / rowB.quantity;
+                    cb_b = (rowB.available_stock + rowB.available_substitute_stock) / rowB.quantity;
                 }
 
                 return (cb_a > cb_b) ? 1 : -1;
