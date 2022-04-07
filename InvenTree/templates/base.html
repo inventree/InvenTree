@@ -6,6 +6,7 @@
 {% settings_value 'REPORT_ENABLE_TEST_REPORT' as test_report_enabled %}
 {% settings_value "REPORT_ENABLE" as report_enabled %}
 {% settings_value "SERVER_RESTART_REQUIRED" as server_restart_required %}
+{% settings_value "LABEL_ENABLE" with user=user as labels_enabled %}
 {% inventree_demo_mode as demo_mode %}
 
 <!DOCTYPE html>
@@ -126,9 +127,11 @@
             {% endblock %}
         </main>
     </div>
+
     {% include 'modals.html' %}
     {% include 'about.html' %}
     {% include "notifications.html" %}
+    {% include "search.html" %}
 </div>
 
 <!-- Scripts -->
@@ -185,6 +188,7 @@
 <script type='text/javascript' src="{% i18n_static 'order.js' %}"></script>
 <script type='text/javascript' src="{% i18n_static 'part.js' %}"></script>
 <script type='text/javascript' src="{% i18n_static 'report.js' %}"></script>
+<script type='text/javascript' src="{% i18n_static 'search.js' %}"></script>
 <script type='text/javascript' src="{% i18n_static 'stock.js' %}"></script>
 <script type='text/javascript' src="{% i18n_static 'plugin.js' %}"></script>
 <script type='text/javascript' src="{% i18n_static 'tables.js' %}"></script>

@@ -10,6 +10,7 @@
     modalSetTitle,
     modalSubmit,
     openModal,
+    plugins_enabled,
     showAlertDialog,
 */
 
@@ -232,26 +233,28 @@ function selectLabel(labels, items, options={}) {
     var plugins = [];
 
     // Request a list of available label printing plugins from the server
-    inventreeGet(
-        `/api/plugin/`,
-        {},
-        {
-            async: false,
-            success: function(response) {
-                response.forEach(function(plugin) {
-                    // Look for active plugins which implement the 'labels' mixin class
-                    if (plugin.active && plugin.mixins && plugin.mixins.labels) {
-                        // This plugin supports label printing
-                        plugins.push(plugin);
-                    }
-                });
+    if (plugins_enabled) {
+        inventreeGet(
+            `/api/plugin/`,
+            {},
+            {
+                async: false,
+                success: function(response) {
+                    response.forEach(function(plugin) {
+                        // Look for active plugins which implement the 'labels' mixin class
+                        if (plugin.active && plugin.mixins && plugin.mixins.labels) {
+                            // This plugin supports label printing
+                            plugins.push(plugin);
+                        }
+                    });
+                }
             }
-        }
-    );
+        );
+    }
 
     var plugin_selection = '';
     
-    if (plugins.length > 0) {
+    if (plugins_enabled && plugins.length > 0) {
         plugin_selection =`
         <div class='form-group'>
             <label class='control-label requiredField' for='id_plugin'>
@@ -263,7 +266,7 @@ function selectLabel(labels, items, options={}) {
         `;
 
         plugins.forEach(function(plugin) {
-            plugin_selection += `<option value='${plugin.key}' title='${plugin.meta.human_name}'>${plugin.meta.description} - <small>${plugin.meta.human_name}</small></option>`;
+            plugin_selection += `<option value='${plugin.key}' title='${plugin.meta.human_name}'>${plugin.name} - <small>${plugin.meta.human_name}</small></option>`;
         });
 
         plugin_selection += `

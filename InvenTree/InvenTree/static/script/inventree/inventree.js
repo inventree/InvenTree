@@ -128,81 +128,6 @@ function inventreeDocReady() {
     attachClipboard('.clip-btn', 'modal-about');
     attachClipboard('.clip-btn-version', 'modal-about', 'about-copy-text');
 
-    // Add autocomplete to the search-bar
-    if ($('#search-bar').exists()) {
-        $('#search-bar').autocomplete({
-            source: function(request, response) {
-
-                var params = {
-                    search: request.term,
-                    limit: user_settings.SEARCH_PREVIEW_RESULTS,
-                    offset: 0,
-                };
-
-                if (user_settings.SEARCH_HIDE_INACTIVE_PARTS) {
-                    // Limit to active parts
-                    params.active = true;
-                }
-
-                $.ajax({
-                    url: '/api/part/',
-                    data: params,
-                    success: function(data) {
-
-                        var transformed = $.map(data.results, function(el) {
-                            return {
-                                label: el.full_name,
-                                id: el.pk,
-                                thumbnail: el.thumbnail,
-                                data: el,
-                            };
-                        });
-                        response(transformed);
-                    },
-                    error: function() {
-                        response([]);
-                    }
-                });
-            },
-            create: function() {
-                $(this).data('ui-autocomplete')._renderItem = function(ul, item) {
-
-                    var html = `
-                    <div class='search-autocomplete-item' title='${item.data.description}'>
-                        <a href='/part/${item.id}/'>
-                            <span style='padding-right: 10px;'><img class='hover-img-thumb' src='${item.thumbnail || "/static/img/blank_image.png"}'> ${item.label}</span>
-                        </a>
-                        <span class='flex' style='flex-grow: 1;'></span>
-                    `;
-                    
-                    if (user_settings.SEARCH_SHOW_STOCK_LEVELS) {
-                        html += partStockLabel(
-                            item.data,
-                            {
-                                classes: 'badge-right',
-                            }
-                        );
-                    }
-
-                    html += '</div>';
-
-                    return $('<li>').append(html).appendTo(ul);
-                };
-            },
-            select: function( event, ui ) {
-                window.location = '/part/' + ui.item.id + '/';
-            },
-            minLength: 2,
-            classes: {
-                'ui-autocomplete': 'dropdown-menu search-menu',
-            },
-            position: {
-                my : "right top",
-                at: "right bottom"
-            }
-        });
-    }
-
     // Generate brand-icons
     $('.brand-icon').each(function(i, obj) {
         loadBrandIcon($(this), $(this).attr('brand_name'));
@@ -231,8 +156,13 @@ function inventreeDocReady() {
         stopNotificationWatcher();
     });
 
-    $('#offcanvasRight').on('show.bs.offcanvas', openNotificationPanel);  // listener for opening the notification panel
-    $('#offcanvasRight').on('hidden.bs.offcanvas', closeNotificationPanel);  // listener for closing the notification panel
+    // Calbacks for search panel
+    $('#offcanvas-search').on('shown.bs.offcanvas', openSearchPanel);
+    $('#offcanvas-search').on('hidden.bs.offcanvas', closeSearchPanel);
+
+    // Callbacks for notifications panel
+    $('#offcanvas-notification').on('show.bs.offcanvas', openNotificationPanel);  // listener for opening the notification panel
+    $('#offcanvas-notification').on('hidden.bs.offcanvas', closeNotificationPanel);  // listener for closing the notification panel
 }
 
 

@@ -1,7 +1,7 @@
 # Base python requirements for docker containers
 
 # Basic package requirements
-setuptools>=57.4.0
+setuptools==60.0.5
 wheel>=0.37.0
 invoke>=1.4.0                   # Invoke build tool
 

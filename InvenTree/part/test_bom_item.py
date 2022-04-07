@@ -46,7 +46,7 @@ class BomItemTest(TestCase):
     # TODO: Tests for multi-level BOMs
 
     def test_used_in(self):
-        self.assertEqual(self.bob.used_in_count, 0)
+        self.assertEqual(self.bob.used_in_count, 1)
         self.assertEqual(self.orphan.used_in_count, 1)
 
     def test_self_reference(self):

@@ -87,18 +87,25 @@
     {% if demo %}
     {% include "navbar_demo.html" %}
     {% endif %}
-    {% include "search_form.html" %}
+    
     <ul class='navbar-nav flex-row'>
+      
+      <li class='nav-item me-2'>
+        <button data-bs-toggle='offcanvas' data-bs-target="#offcanvas-search" class='btn position-relative' title='{% trans "Search" %}'>
+          <span class='fas fa-search'></span>
+        </button>
+      </li>
+
       {% if barcodes %}
       <li class='nav-item' id='navbar-barcode-li'>
-        <button id='barcode-scan' class='btn btn-secondary' title='{% trans "Scan Barcode" %}'>
+        <button id='barcode-scan' class='btn position-relative' title='{% trans "Scan Barcode" %}'>
           <span class='fas fa-qrcode'></span>
         </button>
       </li>
       {% endif %}
 
       <li class='nav-item me-2'>
-        <button data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" class='btn position-relative' title='{% trans "Show Notifications" %}'>
+        <button data-bs-toggle="offcanvas" data-bs-target="#offcanvas-notification" class='btn position-relative' title='{% trans "Show Notifications" %}'>
           <span class='fas fa-bell'></span>
           <span class="position-absolute top-100 start-100 translate-middle badge rounded-pill bg-danger d-none" id="notification-alert">
             <span class="visually-hidden">{% trans "New Notifications" %}</span>

@@ -5,7 +5,6 @@ import logging
 
 from django.utils.translation import ugettext_lazy as _
 
-
 import InvenTree.helpers
 import InvenTree.tasks
 import common.notifications

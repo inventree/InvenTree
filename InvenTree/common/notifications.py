@@ -154,10 +154,17 @@ class UIMessageNotification(SingleNotificationMethod):
         return True
 
 
-def trigger_notifaction(obj, category=None, obj_ref='pk', targets=None, target_fnc=None, target_args=[], target_kwargs={}, context={}):
+def trigger_notifaction(obj, category=None, obj_ref='pk', **kwargs):
     """
     Send out a notification
     """
+
+    targets = kwargs.get('targets', None)
+    target_fnc = kwargs.get('target_fnc', None)
+    target_args = kwargs.get('target_args', [])
+    target_kwargs = kwargs.get('target_kwargs', {})
+    context = kwargs.get('context', {})
+    delivery_methods = kwargs.get('delivery_methods', None)
 
     # Check if data is importing currently
     if isImportingData():
@@ -190,7 +197,8 @@ def trigger_notifaction(obj, category=None, obj_ref='pk', targets=None, target_f
         logger.info(f"Sending notification '{category}' for '{str(obj)}'")
 
         # Collect possible methods
-        delivery_methods = inheritors(NotificationMethod)
+        if delivery_methods is None:
+            delivery_methods = inheritors(NotificationMethod)
 
         for method in [a for a in delivery_methods if a not in [SingleNotificationMethod, BulkNotificationMethod]]:
             logger.info(f"Triggering method '{method.METHOD_NAME}'")

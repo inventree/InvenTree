@@ -419,6 +419,10 @@ class LabelPrintingMixin:
         Arguments:
             label: A black-and-white pillow Image object
 
+        kwargs:
+            length: The length of the label (in mm)
+            width: The width of the label (in mm)
+
         """
 
         # Unimplemented (to be implemented by the particular plugin class)

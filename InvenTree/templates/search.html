@@ -1,0 +1,43 @@
+{% load i18n %}
+
+<div class="offcanvas offcanvas-end search-result-panel" tabindex="-1" id="offcanvas-search" data-bs-scroll="true" aria-labelledby="offcanvas-search-label">
+    <div class="offcanvas-header">
+      <form action='{% url "search" %}' method='post' class='d-flex' style='width: 100%;'>
+        {% csrf_token %}
+        <div class='input-group'>
+          <input type="text" name='search' class="form-control" aria-label='{% trans "Search" %}' id="search-input" placeholder="{% trans 'Search' %}" autofocus>
+          <button type='submit' id='search-complete' class='btn btn-outline-secondary' title='{% trans "Show full search results" %}'>
+            <span class='fas fa-search'></span>
+          </button>
+          <button id='search-clear' class='btn btn-outline-secondary' title='{% trans "Clear search" %}'>
+            <span class='fas fa-backspace'></span>
+          </button>
+          <!--
+            <button id='search-filter' class="btn btn-outline-secondary" title='{% trans "Filter results" %}'>
+              <span class='fas fa-filter'></span>
+            </button>
+          -->
+          <button id='search-close' class="btn btn-outline-secondary" data-bs-dismiss='offcanvas' title='{% trans "Close search menu" %}'>
+            <span class='fas fa-times icon-red'></span>
+          </button>
+        </div>
+      </form>
+    </div>
+    <div class="offcanvas-body">
+      <div id="search-center">
+        <p id='search-pending' class='text-muted' display='none'>
+          <em>{% trans "Searching" %}...</em>
+          <span class='float-right'>
+            <span class='fas fa-spinner fa-spin'></span>
+          </span>
+        </p>
+        <p id='search-no-results' class='text-muted'>
+          <em>{% trans "No search results" %}</em>
+        </p>
+        <div id='search-results'>
+          <!-- Search results go here -->
+        </div>
+      </div>
+    </div>
+</div>
+  
