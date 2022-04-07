@@ -632,7 +632,6 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
         """
         Construct an "available stock" quantity:
-        
         available_stock = total_stock - build_order_allocations - sales_order_allocations
         """
 
