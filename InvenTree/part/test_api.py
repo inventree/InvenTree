@@ -9,7 +9,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from InvenTree.api_tester import InvenTreeAPITestCase
-from InvenTree.status_codes import BuildStatus, StockStatus
+from InvenTree.status_codes import BuildStatus, StockStatus, PurchaseOrderStatus
 
 from part.models import Part, PartCategory
 from part.models import BomItem, BomItemSubstitute
@@ -578,7 +578,12 @@ class PartDetailTests(InvenTreeAPITestCase):
         'part',
         'location',
         'bom',
+        'company',
         'test_templates',
+        'manufacturer_part',
+        'supplier_part',
+        'order',
+        'stock',
     ]
 
     roles = [
@@ -804,6 +809,35 @@ class PartDetailTests(InvenTreeAPITestCase):
 
         # And now check that the image has been set
         p = Part.objects.get(pk=pk)
+
+    def test_details(self):
+        """
+        Test that the required details are available
+        """
+
+        url = reverse('api-part-detail', kwargs={'pk': 1})
+
+        data = self.get(url, expected_code=200).data
+
+        # How many parts are 'on order' for this part?
+        lines = order.models.PurchaseOrderLineItem.objects.filter(
+            part__part__pk=1,
+            order__status__in=PurchaseOrderStatus.OPEN,
+        )
+
+        on_order = 0
+
+        # Calculate the "on_order" quantity by hand,
+        # to check it matches the API value
+        for line in lines:
+            on_order += line.quantity
+            on_order -= line.received
+
+        self.assertEqual(on_order, data['ordering'])
+
+        # Some other checks
+        self.assertEqual(data['in_stock'], 9000)
+        self.assertEqual(data['unallocated_stock'], 9000)
 
 
 class PartAPIAggregationTest(InvenTreeAPITestCase):
