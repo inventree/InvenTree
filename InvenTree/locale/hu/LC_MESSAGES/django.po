@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-06 22:24+0000\n"
-"PO-Revision-Date: 2022-04-07 08:18\n"
+"PO-Revision-Date: 2022-04-09 07:39\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -9932,7 +9932,7 @@ msgstr "Kiszolgáló állapota"
 
 #: templates/stats.html:55
 msgid "Healthy"
-msgstr "Normális"
+msgstr "Rendben"
 
 #: templates/stats.html:57
 msgid "Issues detected"
