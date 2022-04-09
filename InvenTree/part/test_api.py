@@ -1382,6 +1382,21 @@ class BomItemTest(InvenTreeAPITestCase):
         response = self.get(url, expected_code=200)
         self.assertEqual(len(response.data), 5)
 
+        # The BomItem detail endpoint should now also reflect the substitute data
+        data = self.get(
+            reverse('api-bom-item-detail', kwargs={'pk': bom_item.pk}),
+            expected_code=200
+        ).data
+
+        # 5 substitute parts
+        self.assertEqual(len(data['substitutes']), 5)
+
+        # 5 x 1,000 stock quantity
+        self.assertEqual(data['available_substitute_stock'], 5000)
+
+        # 9,000 stock directly available
+        self.assertEqual(data['available_stock'], 9000)
+
     def test_bom_item_uses(self):
         """
         Tests for the 'uses' field
