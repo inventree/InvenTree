@@ -844,24 +844,6 @@
         });
     });
 
-    $(".slidey").change(function() {
-        var field = $(this).attr('fieldname');
-
-        var checked = $(this).prop('checked');
-
-        var data = {};
-
-        data[field] = checked;
-        // Update the particular field
-        inventreePut("{% url 'api-part-detail' part.id %}",
-            data,
-            {
-                method: 'PATCH',
-                reloadOnSuccess: true,
-            },
-        );
-    });
-
     onPanelLoad("part-parameters", function() {
         loadPartParameterTable(
             '#parameter-table', 
