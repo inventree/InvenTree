@@ -135,7 +135,7 @@
 <div class='panel panel-hidden' id='panel-part-notes'>
     <div class='panel-heading'>
         <div class='d-flex flex-wrap'>
-            <h4>{% trans "Notes" %}</h4>
+            <h4>{% trans "Part Notes" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
                 {% include "notes_buttons.html" %}
@@ -418,7 +418,7 @@
             'part-notes',
             '{% url "api-part-detail" part.pk %}',
             {
-                editable: true,
+                editable: {% if roles.part.change %}true{% else %}false{% endif %},
             }
         );
     });
