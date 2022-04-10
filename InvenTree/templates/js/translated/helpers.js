@@ -266,16 +266,31 @@ function setupNotesField(element, url, options={}) {
         shortcuts: [],
     });
 
-    mde.togglePreview();
-
+    
     if (!editable) {
+        // Set readonly
         mde.codemirror.setOption('readOnly', true);
-        $('#editor-toolbar').hide();        
-    }
+        
+        // Hide the toolbar
+        $(`#${element}`).next('.EasyMDEContainer').find('.editor-toolbar').hide();     
+        
+        // Hide the "edit" and "save" buttons
+        $('#edit-notes').hide();
+        $('#save-notes').hide();
+        
+    } else {
+        mde.togglePreview();
 
-    // Add callback for "save" button
-    if (options.save_button) {
-        $(options.save_button).click(function() {
+        // Add callback for "edit" button
+        $('#edit-notes').click(function() {
+            $('#edit-notes').hide();
+            $('#save-notes').show();
+
+            mde.togglePreview();
+        });
+
+        // Add callback for "save" button
+        $('#save-notes').click(function() {
 
             var data = {};
 

@@ -134,16 +134,11 @@
 
 <div class='panel panel-hidden' id='panel-part-notes'>
     <div class='panel-heading'>
-        <div class='row'>
-            <div class='col-sm-6'>
-                <h4>{% trans "Notes" %}</h4>
-            </div>
-            <div class='col-sm-6'>
-                <div class='btn-group float-right'>
-                    <button type='button' id='save-notes' title='{% trans "Save" %}' class='btn btn-success'>
-                        <span class='fas fa-save'></span> {% trans "Save Changes" %}
-                    </button>
-                </div>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Notes" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% include "notes_buttons.html" %}
             </div>
         </div>
     </div>
@@ -424,7 +419,6 @@
             '{% url "api-part-detail" part.pk %}',
             {
                 editable: true,
-                save_button: '#save-notes',
             }
         );
     });
