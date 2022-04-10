@@ -149,9 +149,6 @@
     </div>
     <div class='panel-content'>
         <textarea id='part-notes'></textarea>
-        {% if part.notes %}
-        {{ part.notes | markdownify }}
-        {% endif %}
     </div>
 </div>
 
@@ -424,6 +421,8 @@
 
         var notes = null;
 
+        var readOnly = false;
+
         inventreeGet(
             '{% url "api-part-detail" part.pk %}',
             {},
@@ -435,11 +434,37 @@
             }
         );
 
+        var toolbar_icons = ['preview'];
+
+        if (!readOnly) {
+
+            // Heading icons
+            toolbar_icons.push('heading-1', 'heading-2', 'heading-3', '|');
+            
+            // Font style
+            toolbar_icons.push('bold', 'italic', 'strikethrough', '|');
+            
+            // Text formatting
+            toolbar_icons.push('unordered-list', 'ordered-list', 'code', 'quote', '|');
+            
+            // Elements
+            toolbar_icons.push('table', 'link', 'image');
+        }
+        
         const mde = new EasyMDE({
             element: document.getElementById('part-notes'),
             initialValue: notes,
+            toolbar: toolbar_icons,
+            shortcuts: [],
         });
 
+        mde.togglePreview();
+        
+        if (readOnly) {
+            mde.codemirror.setOption('readOnly', true);
+            $('#editor-toolbar').hide();
+        }
+        
         $('#save-notes').click(function() {
             
             inventreePut(
