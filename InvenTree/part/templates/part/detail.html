@@ -140,15 +140,15 @@
             </div>
             <div class='col-sm-6'>
                 <div class='btn-group float-right'>
-                    <button type='button' id='edit-notes' title='{% trans "Edit Notes" %}' class='btn btn-outline-secondary'>
-                        <span class='fas fa-edit'>      
-                        </span>
+                    <button type='button' id='save-notes' title='{% trans "Save" %}' class='btn btn-success'>
+                        <span class='fas fa-save'></span> {% trans "Save Changes" %}
                     </button>
                 </div>
             </div>
         </div>
     </div>
     <div class='panel-content'>
+        <textarea id='part-notes'></textarea>
         {% if part.notes %}
         {{ part.notes | markdownify }}
         {% endif %}
@@ -418,6 +418,47 @@
 
 {% block js_ready %}
     {{ block.super }}
+
+    // Load the "notes" tab
+    onPanelLoad('part-notes', function() {
+
+        var notes = null;
+
+        inventreeGet(
+            '{% url "api-part-detail" part.pk %}',
+            {},
+            {
+                async: false,
+                success: function(response) {
+                    notes = response.notes;
+                },
+            }
+        );
+
+        const mde = new EasyMDE({
+            element: document.getElementById('part-notes'),
+            initialValue: notes,
+        });
+
+        $('#save-notes').click(function() {
+            
+            inventreePut(
+                '{% url "api-part-detail" part.pk %}',
+                {
+                    notes: mde.value(),
+                },
+                {
+                    method: 'PATCH',
+                    success: function(response) {
+                        showMessage('{% trans "Notes updated" %}', {style: 'success'});
+                    },
+                    error: function(xhr) {
+                        showApiError(xhr, url);
+                    }
+                }
+            )
+        });
+    });
 
     // Load the "scheduling" tab
     onPanelLoad('scheduling', function() {
@@ -829,18 +870,6 @@
                     part: {{ part.id }},
                 }
             });
-        });
-    });
-
-    $('#edit-notes').click(function() {
-        constructForm('{% url "api-part-detail" part.pk %}', {
-            fields: {
-                notes: {
-                    multiline: true,
-                }
-            },
-            title: '{% trans "Edit Part Notes" %}',
-            reload: true,
         });
     });
 
