@@ -10,6 +10,7 @@
     makeProgressBar,
     renderLink,
     select2Thumbnail,
+    setupNotesField,
     thumbnailImage
     yesNoLabel,
 */
@@ -221,3 +222,93 @@ function renderLink(text, url, options={}) {
 
     return `<a href="${url}">${text}</a>`;
 }
+
+
+function setupNotesField(element, url, options={}) {
+
+    var editable = options.editable || false;
+
+    // Read initial notes value from the URL
+    var initial = null;
+
+    inventreeGet(url, {}, {
+        async: false,
+        success: function(response) {
+            initial = response[options.notes_field || 'notes'];
+        },
+    });
+
+    var toolbar_icons = [
+        'preview', '|',
+    ];
+
+    if (editable) {
+        // Heading icons
+        toolbar_icons.push('heading-1', 'heading-2', 'heading-3', '|');
+            
+        // Font style
+        toolbar_icons.push('bold', 'italic', 'strikethrough', '|');
+        
+        // Text formatting
+        toolbar_icons.push('unordered-list', 'ordered-list', 'code', 'quote', '|');
+        
+        // Elements
+        toolbar_icons.push('table', 'link', 'image');
+    }
+
+    // Markdown syntax guide
+    toolbar_icons.push('|', 'guide');
+
+    const mde = new EasyMDE({
+        element: document.getElementById(element),
+        initialValue: initial,
+        toolbar: toolbar_icons,
+        shortcuts: [],
+    });
+
+
+    // Hide the toolbar
+    $(`#${element}`).next('.EasyMDEContainer').find('.editor-toolbar').hide();
+
+    if (!editable) {
+        // Set readonly
+        mde.codemirror.setOption('readOnly', true);
+            
+        // Hide the "edit" and "save" buttons
+        $('#edit-notes').hide();
+        $('#save-notes').hide();
+        
+    } else {
+        mde.togglePreview();
+
+        // Add callback for "edit" button
+        $('#edit-notes').click(function() {
+            $('#edit-notes').hide();
+            $('#save-notes').show();
+
+            // Show the toolbar
+            $(`#${element}`).next('.EasyMDEContainer').find('.editor-toolbar').show();     
+
+            mde.togglePreview();
+        });
+
+        // Add callback for "save" button
+        $('#save-notes').click(function() {
+
+            var data = {};
+
+            data[options.notes_field || 'notes'] = mde.value();
+
+            inventreePut(url, data, {
+                method: 'PATCH',
+                success: function(response) {
+                    showMessage('{% trans "Notes updated" %}', {style: 'success'});
+                },
+                error: function(xhr) {
+                    showApiError(xhr, url);
+                }
+            });
+        });
+    }
+}
+
