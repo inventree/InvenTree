@@ -239,7 +239,7 @@ function setupNotesField(element, url, options={}) {
     });
 
     var toolbar_icons = [
-        'preview',
+        'preview', '|',
     ];
 
     if (editable) {
@@ -266,14 +266,14 @@ function setupNotesField(element, url, options={}) {
         shortcuts: [],
     });
 
-    
+
+    // Hide the toolbar
+    $(`#${element}`).next('.EasyMDEContainer').find('.editor-toolbar').hide();
+
     if (!editable) {
         // Set readonly
         mde.codemirror.setOption('readOnly', true);
-        
-        // Hide the toolbar
-        $(`#${element}`).next('.EasyMDEContainer').find('.editor-toolbar').hide();     
-        
+            
         // Hide the "edit" and "save" buttons
         $('#edit-notes').hide();
         $('#save-notes').hide();
@@ -285,6 +285,9 @@ function setupNotesField(element, url, options={}) {
         $('#edit-notes').click(function() {
             $('#edit-notes').hide();
             $('#save-notes').show();
+
+            // Show the toolbar
+            $(`#${element}`).next('.EasyMDEContainer').find('.editor-toolbar').show();     
 
             mde.togglePreview();
         });
