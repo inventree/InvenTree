@@ -419,70 +419,14 @@
     // Load the "notes" tab
     onPanelLoad('part-notes', function() {
 
-        var notes = null;
-
-        var readOnly = false;
-
-        inventreeGet(
+        setupNotesField(
+            'part-notes',
             '{% url "api-part-detail" part.pk %}',
-            {},
             {
-                async: false,
-                success: function(response) {
-                    notes = response.notes;
-                },
+                editable: true,
+                save_button: '#save-notes',
             }
         );
-
-        var toolbar_icons = ['preview'];
-
-        if (!readOnly) {
-
-            // Heading icons
-            toolbar_icons.push('heading-1', 'heading-2', 'heading-3', '|');
-            
-            // Font style
-            toolbar_icons.push('bold', 'italic', 'strikethrough', '|');
-            
-            // Text formatting
-            toolbar_icons.push('unordered-list', 'ordered-list', 'code', 'quote', '|');
-            
-            // Elements
-            toolbar_icons.push('table', 'link', 'image');
-        }
-        
-        const mde = new EasyMDE({
-            element: document.getElementById('part-notes'),
-            initialValue: notes,
-            toolbar: toolbar_icons,
-            shortcuts: [],
-        });
-
-        mde.togglePreview();
-        
-        if (readOnly) {
-            mde.codemirror.setOption('readOnly', true);
-            $('#editor-toolbar').hide();
-        }
-        
-        $('#save-notes').click(function() {
-            
-            inventreePut(
-                '{% url "api-part-detail" part.pk %}',
-                {
-                    notes: mde.value(),
-                },
-                {
-                    method: 'PATCH',
-                    success: function(response) {
-                        showMessage('{% trans "Notes updated" %}', {style: 'success'});
-                    },
-                    error: function(xhr) {
-                        showApiError(xhr, url);
-                    }
-                }
-            )
-        });
     });
 
     // Load the "scheduling" tab
