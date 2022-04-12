@@ -12,10 +12,13 @@ import common.models
 INVENTREE_SW_VERSION = "0.7.0 dev"
 
 # InvenTree API version
-INVENTREE_API_VERSION = 36
+INVENTREE_API_VERSION = 37
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v37 -> 2022-04-07 : https://github.com/inventree/InvenTree/pull/2806
+    - Adds extra stock availability information to the BomItem serializer
 
 v36 -> 2022-04-03
     - Adds ability to filter part list endpoint by unallocated_stock argument

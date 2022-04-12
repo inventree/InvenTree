@@ -1421,9 +1421,24 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 sortable: true,
             },
             {
-                field: 'sub_part_detail.stock',
+                field: 'available_stock',
                 title: '{% trans "Available" %}',
                 sortable: true,
+                formatter: function(value, row) {
+                    var total = row.available_stock + row.available_substitute_stock;
+
+                    var text = `${total}`;
+
+                    if (total <= 0) {
+                        text = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
+                    } else {
+                        if (row.available_substitute_stock > 0) {
+                            text += `<span title='{% trans "Includes substitute stock" %}' class='fas fa-info-circle float-right icon-blue'></span>`;
+                        }
+                    }
+
+                    return text;
+                }
             },
             {
                 field: 'allocated',
