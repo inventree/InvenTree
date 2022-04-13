@@ -2882,23 +2882,6 @@ class BomItem(models.Model, DataImportMixin):
             child=self.sub_part.full_name,
             n=decimal2string(self.quantity))
 
-    def available_stock(self):
-        """
-        Return the available stock items for the referenced sub_part
-        """
-
-        query = self.sub_part.stock_items.all()
-
-        query = query.prefetch_related([
-            'sub_part__stock_items',
-        ])
-
-        query = query.filter(StockModels.StockItem.IN_STOCK_FILTER).aggregate(
-            available=Coalesce(Sum('quantity'), 0)
-        )
-
-        return query['available']
-
     def get_overage_quantity(self, quantity):
         """ Calculate overage quantity
         """
