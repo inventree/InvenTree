@@ -6,6 +6,7 @@ Functions for triggering and responding to server side events
 from __future__ import unicode_literals
 
 import logging
+import traceback
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -221,12 +222,15 @@ def print_label(plugin_slug, label_image, label_instance=None, user=None):
     except Exception as e:
         # Plugin threw an error - notify the user who attempted to print
 
+        msg = traceback.format_exception_only(e)
+
         ctx = {
             'name': _('Label printing failed'),
-            'message': str(e),
+            'message': msg
         }
 
-        logger.error(f"Label printing failed: Sending notification to user '{user}'")
+        logger.error(f"Label printing failed: Sending notification to user '{user}':")
+        logger.error(f"Error message: '{msg}'")
 
         # Throw an error against the plugin instance
         common.notifications.trigger_notifaction(
