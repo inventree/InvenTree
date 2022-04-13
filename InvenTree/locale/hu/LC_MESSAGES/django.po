@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-12 21:44+0000\n"
-"PO-Revision-Date: 2022-04-12 21:46\n"
+"PO-Revision-Date: 2022-04-13 18:47\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -4843,7 +4843,7 @@ msgstr "Vevői rendeléshez foglalások"
 
 #: part/templates/part/detail.html:137
 msgid "Part Notes"
-msgstr ""
+msgstr "Alkatrész megjegyzések"
 
 #: part/templates/part/detail.html:152
 msgid "Part Variants"
@@ -7968,11 +7968,11 @@ msgstr "Al-gyártmány megnyitása"
 
 #: templates/js/translated/bom.js:815 templates/js/translated/build.js:1433
 msgid "No Stock Available"
-msgstr ""
+msgstr "Nincs szabad"
 
 #: templates/js/translated/bom.js:818 templates/js/translated/build.js:1436
 msgid "Includes substitute stock"
-msgstr ""
+msgstr "Helyettesítőkkel együtt"
 
 #: templates/js/translated/bom.js:828
 msgid "Substitutes"
@@ -8468,7 +8468,7 @@ msgstr "NEM"
 
 #: templates/js/translated/helpers.js:305
 msgid "Notes updated"
-msgstr ""
+msgstr "Megjegyzések frissítve"
 
 #: templates/js/translated/label.js:39
 msgid "Labels sent to printer"
@@ -9856,7 +9856,7 @@ msgstr "Inventree demo mód"
 
 #: templates/notes_buttons.html:6 templates/notes_buttons.html:7
 msgid "Save"
-msgstr ""
+msgstr "Mentés"
 
 #: templates/notifications.html:13
 msgid "Show all notifications and history"
