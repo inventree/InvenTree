@@ -1137,7 +1137,7 @@ class StockItemTestResultList(generics.ListCreateAPIView):
                     installed_items = item.get_installed_items(cascade=True)
 
                     items += [it for it in installed_items]
-                
+
                 queryset = queryset.filter(stock_item__in=items)
 
             except (ValueError, StockItem.DoesNotExist):
