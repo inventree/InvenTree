@@ -1331,14 +1331,27 @@ function loadStockTestResultsTable(table, options) {
             });
 
             // Once the test template data are loaded, query for test results
+
+            var filters = loadTableFilters(filterKey);
+
+            var query_params = {
+                stock_item: options.stock_item,
+                user_detail: true,
+                attachment_detail: true,
+                ordering: '-date',
+            };
+
+            if ('result' in filters) {
+                query_params.result = filters.result;
+            }
+
+            if ('include_installed' in filters) {
+                query_params.include_installed = filters.include_installed;
+            }
+
             inventreeGet(
                 '{% url "api-stock-test-result-list" %}',
-                {
-                    stock_item: options.stock_item,
-                    user_detail: true,
-                    attachment_detail: true,
-                    ordering: '-date',
-                },
+                query_params,
                 {
                     success: function(data) {
                         // Iterate through the returned test data
