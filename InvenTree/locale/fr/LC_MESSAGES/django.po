@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-14 03:18+0000\n"
-"PO-Revision-Date: 2022-04-14 16:19\n"
+"PO-Revision-Date: 2022-04-14 17:14\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -1006,11 +1006,11 @@ msgstr "La quantité doit être supérieure à zéro"
 
 #: build/serializers.py:208
 msgid "Integer quantity required for trackable parts"
-msgstr ""
+msgstr "Quantité entière requise pour les pièces à suivre"
 
 #: build/serializers.py:211
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
-msgstr ""
+msgstr "Quantité entière requise, car la facture de matériaux contient des pièces à puce"
 
 #: build/serializers.py:225 order/serializers.py:280 order/serializers.py:907
 #: stock/forms.py:78 stock/serializers.py:314
@@ -1025,15 +1025,15 @@ msgstr "Entrer les numéros de séries pour la fabrication"
 
 #: build/serializers.py:240
 msgid "Auto Allocate Serial Numbers"
-msgstr ""
+msgstr "Allouer automatiquement les numéros de série"
 
 #: build/serializers.py:241
 msgid "Automatically allocate required items with matching serial numbers"
-msgstr ""
+msgstr "Affecter automatiquement les éléments requis avec les numéros de série correspondants"
 
 #: build/serializers.py:275 stock/api.py:551
 msgid "The following serial numbers already exist"
-msgstr ""
+msgstr "Le numéro de série suivant existe déjà"
 
 #: build/serializers.py:328 build/serializers.py:393
 msgid "A list of build outputs must be provided"
