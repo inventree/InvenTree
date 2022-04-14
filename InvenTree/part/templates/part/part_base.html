@@ -252,7 +252,6 @@
         </tr>
         {% endif %}
         {% endif %}
-        {% if not part.is_template %}
         {% if part.assembly %}
         <tr>
             <td><span class='fas fa-tools'></span></td>
@@ -265,7 +264,6 @@
             <td>{% trans "Building" %}</td>
             <td>{% decimal quantity_being_built %}</td>
         </tr>
-        {% endif %}
         {% endif %}
     {% endif %}
 </table>
