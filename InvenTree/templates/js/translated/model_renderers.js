@@ -192,7 +192,7 @@ function renderPart(name, data, parameters={}, options={}) {
         <small>
             ${stock_data}
             ${extra}
-            ${renderId('{% trans "Part ID" $}', data.pk, parameters)}
+            ${renderId('{% trans "Part ID" %}', data.pk, parameters)}
             </small>
     </span>`;
 
