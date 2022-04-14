@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-14 01:40+0000\n"
+"POT-Creation-Date: 2022-04-14 02:08+0000\n"
 "PO-Revision-Date: 2021-11-30 21:51\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
@@ -814,7 +814,7 @@ msgid "Batch code for this build output"
 msgstr ""
 
 #: build/models.py:294 order/models.py:129 part/models.py:1007
-#: part/templates/part/part_base.html:333 templates/js/translated/order.js:1467
+#: part/templates/part/part_base.html:331 templates/js/translated/order.js:1467
 msgid "Creation Date"
 msgstr "Date de création"
 
@@ -859,7 +859,7 @@ msgstr ""
 #: build/models.py:331 build/templates/build/detail.html:101
 #: company/templates/company/manufacturer_part.html:102
 #: company/templates/company/supplier_part.html:126
-#: part/templates/part/part_base.html:374 stock/models.py:631
+#: part/templates/part/part_base.html:372 stock/models.py:631
 #: stock/templates/stock/item_base.html:357
 msgid "External Link"
 msgstr "Lien Externe"
@@ -2743,7 +2743,7 @@ msgid "Parameter value"
 msgstr ""
 
 #: company/models.py:429 part/models.py:953 part/models.py:2537
-#: part/templates/part/part_base.html:308
+#: part/templates/part/part_base.html:306
 #: templates/InvenTree/settings/settings.html:325
 #: templates/js/translated/company.js:653 templates/js/translated/part.js:763
 msgid "Units"
@@ -2908,7 +2908,7 @@ msgid "Phone"
 msgstr ""
 
 #: company/templates/company/company_base.html:205
-#: part/templates/part/part_base.html:493
+#: part/templates/part/part_base.html:491
 msgid "Upload Image"
 msgstr ""
 
@@ -4203,7 +4203,7 @@ msgid "This field is required"
 msgstr ""
 
 #: part/bom.py:125 part/models.py:112 part/models.py:887
-#: part/templates/part/category.html:108 part/templates/part/part_base.html:358
+#: part/templates/part/category.html:108 part/templates/part/part_base.html:356
 msgid "Default Location"
 msgstr ""
 
@@ -4323,7 +4323,7 @@ msgid "Part description"
 msgstr ""
 
 #: part/models.py:841 part/templates/part/category.html:86
-#: part/templates/part/part_base.html:322
+#: part/templates/part/part_base.html:320
 msgid "Keywords"
 msgstr ""
 
@@ -4332,7 +4332,7 @@ msgid "Part keywords to improve visibility in search results"
 msgstr ""
 
 #: part/models.py:849 part/models.py:2363 part/models.py:2612
-#: part/templates/part/part_base.html:285
+#: part/templates/part/part_base.html:283
 #: part/templates/part/set_category.html:15
 #: templates/InvenTree/notifications/notifications.html:65
 #: templates/InvenTree/settings/settings.html:224
@@ -4344,7 +4344,7 @@ msgstr "Catégorie"
 msgid "Part category"
 msgstr "Catégorie de la pièce"
 
-#: part/models.py:855 part/templates/part/part_base.html:294
+#: part/models.py:855 part/templates/part/part_base.html:292
 #: templates/js/translated/part.js:660 templates/js/translated/part.js:1303
 #: templates/js/translated/stock.js:1648
 msgid "IPN"
@@ -4358,7 +4358,7 @@ msgstr ""
 msgid "Part revision or version number"
 msgstr ""
 
-#: part/models.py:863 part/templates/part/part_base.html:301
+#: part/models.py:863 part/templates/part/part_base.html:299
 #: report/models.py:200 templates/js/translated/part.js:664
 msgid "Revision"
 msgstr "Révision"
@@ -4367,7 +4367,7 @@ msgstr "Révision"
 msgid "Where is this item normally stored?"
 msgstr ""
 
-#: part/models.py:932 part/templates/part/part_base.html:367
+#: part/models.py:932 part/templates/part/part_base.html:365
 msgid "Default Supplier"
 msgstr ""
 
@@ -5270,7 +5270,7 @@ msgid "Inactive"
 msgstr ""
 
 #: part/templates/part/part_base.html:160
-#: part/templates/part/part_base.html:601
+#: part/templates/part/part_base.html:599
 #, fuzzy
 #| msgid "Show latest parts"
 msgid "Show Part Details"
@@ -5318,40 +5318,40 @@ msgstr ""
 msgid "Allocated to Sales Orders"
 msgstr "Finaliser la commande"
 
-#: part/templates/part/part_base.html:259 templates/js/translated/bom.js:909
+#: part/templates/part/part_base.html:258 templates/js/translated/bom.js:909
 msgid "Can Build"
 msgstr ""
 
-#: part/templates/part/part_base.html:265 templates/js/translated/part.js:514
+#: part/templates/part/part_base.html:264 templates/js/translated/part.js:514
 #: templates/js/translated/part.js:534 templates/js/translated/part.js:1214
 #: templates/js/translated/part.js:1386 templates/js/translated/part.js:1402
 msgid "Building"
 msgstr ""
 
-#: part/templates/part/part_base.html:315
+#: part/templates/part/part_base.html:313
 msgid "Minimum stock level"
 msgstr ""
 
-#: part/templates/part/part_base.html:344
+#: part/templates/part/part_base.html:342
 msgid "Latest Serial Number"
 msgstr ""
 
-#: part/templates/part/part_base.html:348
+#: part/templates/part/part_base.html:346
 #: stock/templates/stock/item_base.html:166
 #, fuzzy
 #| msgid "Assigned serial number"
 msgid "Search for serial number"
 msgstr "Numéro de série attribué"
 
-#: part/templates/part/part_base.html:471 part/templates/part/prices.html:144
+#: part/templates/part/part_base.html:469 part/templates/part/prices.html:144
 msgid "Calculate"
 msgstr "Calculer"
 
-#: part/templates/part/part_base.html:514
+#: part/templates/part/part_base.html:512
 msgid "No matching images found"
 msgstr ""
 
-#: part/templates/part/part_base.html:595
+#: part/templates/part/part_base.html:593
 msgid "Hide Part Details"
 msgstr ""
 
