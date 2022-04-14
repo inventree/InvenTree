@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-14 03:18+0000\n"
-"PO-Revision-Date: 2022-04-14 03:46\n"
+"PO-Revision-Date: 2022-04-14 16:19\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -568,7 +568,7 @@ msgstr "Le surplus ne doit pas dépasser 100%"
 
 #: InvenTree/validators.py:162
 msgid "Invalid value for overage"
-msgstr ""
+msgstr "Valeur invalide pour le dépassement"
 
 #: InvenTree/views.py:538
 msgid "Delete Item"
