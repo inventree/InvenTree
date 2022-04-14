@@ -373,6 +373,9 @@ function duplicatePart(pk, options={}) {
 
                 // Override the "variant_of" field
                 data.variant_of = pk;
+
+                // By default, disable "is_template" when making a variant *of* a template
+                data.is_template = false;
             }
             
             constructForm('{% url "api-part-list" %}', {
