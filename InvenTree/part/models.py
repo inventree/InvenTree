@@ -1313,19 +1313,31 @@ class Part(MPTTModel):
 
         return quantity
 
-    def build_order_allocations(self):
+    def build_order_allocations(self, **kwargs):
         """
         Return all 'BuildItem' objects which allocate this part to Build objects
         """
 
-        return BuildModels.BuildItem.objects.filter(stock_item__part__id=self.id)
+        include_variants = kwargs.get('include_variants', True)
 
-    def build_order_allocation_count(self):
+        queryset = BuildModels.BuildItem.objects.all()
+
+        if include_variants:
+            variants = self.get_descendants(include_self=True)
+            queryset = queryset.filter(
+                stock_item__part__in=variants,
+            )
+        else:
+            queryset = queryset.filter(stock_item__part=self)
+
+        return queryset
+
+    def build_order_allocation_count(self, **kwargs):
         """
         Return the total amount of this part allocated to build orders
         """
 
-        query = self.build_order_allocations().aggregate(
+        query = self.build_order_allocations(**kwargs).aggregate(
             total=Coalesce(
                 Sum(
                     'quantity',
@@ -1343,7 +1355,19 @@ class Part(MPTTModel):
         Return all sales-order-allocation objects which allocate this part to a SalesOrder
         """
 
-        queryset = OrderModels.SalesOrderAllocation.objects.filter(item__part__id=self.id)
+        include_variants = kwargs.get('include_variants', True)
+
+        queryset = OrderModels.SalesOrderAllocation.objects.all()
+
+        if include_variants:
+            # Include allocations for all variants
+            variants = self.get_descendants(include_self=True)
+            queryset = queryset.filter(
+                item__part__in=variants,
+            )
+        else:
+            # Only look at this part
+            queryset = queryset.filter(item__part=self)
 
         # Default behaviour is to only return *pending* allocations
         pending = kwargs.get('pending', True)
@@ -1381,7 +1405,7 @@ class Part(MPTTModel):
 
         return query['total']
 
-    def allocation_count(self):
+    def allocation_count(self, **kwargs):
         """
         Return the total quantity of stock allocated for this part,
         against both build orders and sales orders.
@@ -1389,8 +1413,8 @@ class Part(MPTTModel):
 
         return sum(
             [
-                self.build_order_allocation_count(),
-                self.sales_order_allocation_count(),
+                self.build_order_allocation_count(**kwargs),
+                self.sales_order_allocation_count(**kwargs),
             ],
         )
 
