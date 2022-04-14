@@ -12,10 +12,13 @@ import common.models
 INVENTREE_SW_VERSION = "0.7.0 dev"
 
 # InvenTree API version
-INVENTREE_API_VERSION = 37
+INVENTREE_API_VERSION = 38
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v38 -> 2022-04-14 : https://github.com/inventree/InvenTree/pull/2828
+    - Adds the ability to include stock test results for "installed items"
 
 v37 -> 2022-04-07 : https://github.com/inventree/InvenTree/pull/2806
     - Adds extra stock availability information to the BomItem serializer

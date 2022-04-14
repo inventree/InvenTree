@@ -265,7 +265,16 @@ function getAvailableTableFilters(tableKey) {
 
     // Filters for the 'stock test' table
     if (tableKey == 'stocktests') {
-        return {};
+        return {
+            result: {
+                type: 'bool',
+                title: '{% trans "Test Passed" %}',
+            },
+            include_installed: {
+                type: 'bool',
+                title: '{% trans "Include Installed Items" %}',
+            }
+        };
     }
 
     // Filters for the 'part test template' table

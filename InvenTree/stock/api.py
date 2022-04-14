@@ -1105,7 +1105,6 @@ class StockItemTestResultList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
-        'stock_item',
         'test',
         'user',
         'result',
@@ -1113,6 +1112,38 @@ class StockItemTestResultList(generics.ListCreateAPIView):
     ]
 
     ordering = 'date'
+
+    def filter_queryset(self, queryset):
+
+        params = self.request.query_params
+
+        queryset = super().filter_queryset(queryset)
+
+        # Filter by stock item
+        item = params.get('stock_item', None)
+
+        if item is not None:
+            try:
+                item = StockItem.objects.get(pk=item)
+
+                items = [item]
+
+                # Do we wish to also include test results for 'installed' items?
+                include_installed = str2bool(params.get('include_installed', False))
+
+                if include_installed:
+                    # Include items which are installed "underneath" this item
+                    # Note that this function is recursive!
+                    installed_items = item.get_installed_items(cascade=True)
+
+                    items += [it for it in installed_items]
+
+                queryset = queryset.filter(stock_item__in=items)
+
+            except (ValueError, StockItem.DoesNotExist):
+                pass
+
+        return queryset
 
     def get_serializer(self, *args, **kwargs):
         try:
