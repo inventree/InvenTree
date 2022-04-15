@@ -2716,7 +2716,7 @@ class BomItem(models.Model, DataImportMixin):
         # Variant stock is not allowed for this BOM item
         if not self.allow_variants:
             return 0
-        
+
         # Extract a flattened list of part variants
         variants = self.sub_part.get_descendants(include_self=False)
 
