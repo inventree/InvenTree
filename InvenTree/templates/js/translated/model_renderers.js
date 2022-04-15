@@ -34,8 +34,8 @@
 // Should the ID be rendered for this string
 function renderId(title, pk, parameters={}) {
 
-    // Default = true
-    var render = true;
+    // Default = do not display
+    var render = false;
 
     if ('render_pk' in parameters) {
         render = parameters['render_pk'];
@@ -192,7 +192,7 @@ function renderPart(name, data, parameters={}, options={}) {
         <small>
             ${stock_data}
             ${extra}
-            ${renderId('{% trans "Part ID" $}', data.pk, parameters)}
+            ${renderId('{% trans "Part ID" %}', data.pk, parameters)}
             </small>
     </span>`;
 
