@@ -807,15 +807,27 @@ function loadBomTable(table, options={}) {
             var url = `/part/${row.sub_part_detail.pk}/?display=part-stock`;
 
             // Calculate total "available" (unallocated) quantity
-            var total = row.available_stock + row.available_substitute_stock;
+            var total = row.available_stock;
+            
+            total += (row.available_substitute_stock || 0);
+            total += (row.available_variant_stock || 0);
 
             var text = `${total}`;
 
             if (total <= 0) {
                 text = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
             } else {
-                if (row.available_substitute_stock > 0) {
-                    text += `<span title='{% trans "Includes substitute stock" %}' class='fas fa-info-circle float-right icon-blue'></span>`;
+                var extra = '';
+                if (row.available_substitute_stock && row.available_variant_stock) {
+                    extra = '{% trans "Includes variant and substitute stock" %}';
+                } else if (row.available_variant_stock) {
+                    extra = '{% trans "Includes variant stock" %}';
+                } else if (row.available_substitute_stock) {
+                    extra = '{% trans "Includes substitute stock" %}';
+                }
+
+                if (extra) {
+                    text += `<span title='${extra}' class='fas fa-info-circle float-right icon-blue'></span>`;
                 }
             }
 
@@ -910,7 +922,7 @@ function loadBomTable(table, options={}) {
             formatter: function(value, row) {
                 var can_build = 0;
 
-                var available = row.available_stock + row.available_substitute_stock;
+                var available = row.available_stock + (row.available_substitute_stock || 0) + (row.available_variant_stock || 0);
 
                 if (row.quantity > 0) {
                     can_build = available / row.quantity;
