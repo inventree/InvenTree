@@ -107,6 +107,7 @@ function stockLocationFields(options={}) {
     var fields = {
         parent: {
             help_text: '{% trans "Parent stock location" %}',
+            required: false,
         },
         name: {},
         description: {},
