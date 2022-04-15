@@ -581,6 +581,12 @@ class BomItemSerializer(InvenTreeModelSerializer):
     available_stock = serializers.FloatField(read_only=True)
     available_substitute_stock = serializers.FloatField(read_only=True)
 
+    # Note: 2022-04-15
+    # The 'available_variant_stock' field is calculated per-object,
+    # which means it is very inefficient!
+    # TODO: This needs to be converted into a query annotation, if possible!
+    available_variant_stock = serializers.FloatField(read_only=True)
+
     def __init__(self, *args, **kwargs):
         # part_detail and sub_part_detail serializers are only included if requested.
         # This saves a bunch of database requests
@@ -790,6 +796,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
             # Annotated fields describing available quantity
             'available_stock',
             'available_substitute_stock',
+            'available_variant_stock',
         ]
 
 

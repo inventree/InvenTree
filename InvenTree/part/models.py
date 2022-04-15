@@ -2703,6 +2703,61 @@ class BomItem(models.Model, DataImportMixin):
     def get_api_url():
         return reverse('api-bom-list')
 
+    def available_variant_stock(self):
+        """
+        Returns the total quantity of variant stock available for this BomItem.
+
+        Notes:
+        - If "allow_variants" is False, this will return zero
+        - This is used for the API serializer, and is very inefficient
+        - This logic needs to be converted to a queryset annotation
+        """
+
+        # Variant stock is not allowed for this BOM item
+        if not self.allow_variants:
+            return 0
+        
+        # Extract a flattened list of part variants
+        variants = self.sub_part.get_descendants(include_self=False)
+
+        # Calculate 'in_stock' quantity - this is the total current stock count
+        query = StockModels.StockItem.objects.filter(StockModels.StockItem.IN_STOCK_FILTER)
+
+        query = query.filter(
+            part__in=variants,
+        )
+
+        query = query.aggregate(
+            in_stock=Coalesce(Sum('quantity'), Decimal(0))
+        )
+
+        in_stock = query['in_stock'] or 0
+
+        # Calculate the quantity allocated to sales orders
+        query = OrderModels.SalesOrderAllocation.objects.filter(
+            line__order__status__in=SalesOrderStatus.OPEN,
+            shipment__shipment_date=None,
+            item__part__in=variants,
+        ).aggregate(
+            allocated=Coalesce(Sum('quantity'), Decimal(0)),
+        )
+
+        sales_order_allocations = query['allocated'] or 0
+
+        # Calculate the quantity allocated to build orders
+        query = BuildModels.BuildItem.objects.filter(
+            build__status__in=BuildStatus.ACTIVE_CODES,
+            stock_item__part__in=variants,
+        ).aggregate(
+            allocated=Coalesce(Sum('quantity'), Decimal(0)),
+        )
+
+        build_order_allocations = query['allocated'] or 0
+
+        available = in_stock - sales_order_allocations - build_order_allocations
+
+        return max(available, 0)
+
     def get_valid_parts_for_allocation(self, allow_variants=True, allow_substitutes=True):
         """
         Return a list of valid parts which can be allocated against this BomItem:
