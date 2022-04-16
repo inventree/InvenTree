@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-15 12:34+0000\n"
-"PO-Revision-Date: 2022-04-15 12:36\n"
+"PO-Revision-Date: 2022-04-16 11:40\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -9709,11 +9709,11 @@ msgstr "Hamarosan lejáró készlet tételek megjelenítése"
 
 #: templates/js/translated/table_filters.js:271
 msgid "Test Passed"
-msgstr ""
+msgstr "Teszten megfelelt"
 
 #: templates/js/translated/table_filters.js:275
 msgid "Include Installed Items"
-msgstr ""
+msgstr "Beépített tételekkel együtt"
 
 #: templates/js/translated/table_filters.js:294
 msgid "Build status"
