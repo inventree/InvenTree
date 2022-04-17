@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-15 12:34+0000\n"
-"PO-Revision-Date: 2022-04-17 18:06\n"
+"PO-Revision-Date: 2022-04-17 19:20\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -70,11 +70,11 @@ msgstr "カテゴリの選択"
 
 #: InvenTree/forms.py:236
 msgid "Email (again)"
-msgstr ""
+msgstr "メールアドレス(確認用)"
 
 #: InvenTree/forms.py:240
 msgid "Email address confirmation"
-msgstr "メールアドレス確認"
+msgstr "メールアドレスの確認"
 
 #: InvenTree/forms.py:260
 msgid "You must type the same email each time."
@@ -251,7 +251,7 @@ msgstr "ファイル名"
 
 #: InvenTree/serializers.py:334
 msgid "Invalid value"
-msgstr ""
+msgstr "無効な値です。"
 
 #: InvenTree/serializers.py:355
 msgid "Data File"
@@ -259,7 +259,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:356
 msgid "Select data file for upload"
-msgstr ""
+msgstr "アップロードするファイルを選択"
 
 #: InvenTree/serializers.py:380
 msgid "Unsupported file type"
@@ -2410,7 +2410,7 @@ msgstr ""
 
 #: common/models.py:1701
 msgid "Message ID"
-msgstr ""
+msgstr "メッセージ ID："
 
 #: common/models.py:1702
 msgid "Unique identifier for this message"
@@ -2491,7 +2491,7 @@ msgstr ""
 #: company/forms.py:24 part/forms.py:46
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: company/forms.py:25 part/forms.py:47
 msgid "Image URL"
