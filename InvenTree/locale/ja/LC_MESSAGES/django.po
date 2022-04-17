@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-15 12:34+0000\n"
-"PO-Revision-Date: 2022-04-15 12:36\n"
+"PO-Revision-Date: 2022-04-17 18:06\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -74,7 +74,7 @@ msgstr ""
 
 #: InvenTree/forms.py:240
 msgid "Email address confirmation"
-msgstr ""
+msgstr "メールアドレス確認"
 
 #: InvenTree/forms.py:260
 msgid "You must type the same email each time."
@@ -137,7 +137,7 @@ msgstr "添付ファイルを選択"
 #: templates/js/translated/company.js:540
 #: templates/js/translated/company.js:829 templates/js/translated/part.js:1423
 msgid "Link"
-msgstr ""
+msgstr "リンク"
 
 #: InvenTree/models.py:205 build/models.py:332 part/models.py:869
 #: stock/models.py:633
@@ -247,7 +247,7 @@ msgstr "有効な数字でなければなりません"
 
 #: InvenTree/serializers.py:299
 msgid "Filename"
-msgstr ""
+msgstr "ファイル名"
 
 #: InvenTree/serializers.py:334
 msgid "Invalid value"
@@ -960,7 +960,7 @@ msgstr ""
 #: templates/js/translated/stock.js:724 templates/js/translated/stock.js:2466
 #: templates/js/translated/stock.js:2568
 msgid "Quantity"
-msgstr ""
+msgstr "数量"
 
 #: build/models.py:1356
 msgid "Stock quantity to allocate to build"
@@ -1065,7 +1065,7 @@ msgstr ""
 #: templates/js/translated/order.js:1459 templates/js/translated/stock.js:1761
 #: templates/js/translated/stock.js:2435 templates/js/translated/stock.js:2584
 msgid "Status"
-msgstr ""
+msgstr "ステータス"
 
 #: build/serializers.py:434
 msgid "Accept Unallocated"
@@ -1532,7 +1532,7 @@ msgstr ""
 
 #: common/forms.py:34
 msgid "File"
-msgstr ""
+msgstr "ファイル"
 
 #: common/forms.py:35
 msgid "Select file to upload"
@@ -1844,7 +1844,7 @@ msgstr ""
 
 #: common/models.py:911 templates/stats.html:25
 msgid "Debug Mode"
-msgstr ""
+msgstr "デバッグモード"
 
 #: common/models.py:912
 msgid "Generate reports in debug mode (HTML output)"
