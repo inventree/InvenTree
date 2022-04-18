@@ -421,7 +421,7 @@ class StockFilter(rest_filters.FilterSet):
             queryset = queryset.exclude(batch=None)
         else:
             queryset = queryset.filter(batch=None)
-        
+
         return queryset
 
     installed = rest_filters.BooleanFilter(label='Installed in other stock item', method='filter_installed')
