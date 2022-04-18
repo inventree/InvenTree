@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-15 12:34+0000\n"
-"PO-Revision-Date: 2022-04-15 12:36\n"
+"PO-Revision-Date: 2022-04-18 12:04\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -83,7 +83,7 @@ msgstr "Er moet hetzelfde e-mailadres ingevoerd worden."
 #: InvenTree/helpers.py:442
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
-msgstr ""
+msgstr "Duplicaat serienummer: {sn}"
 
 #: InvenTree/helpers.py:449 order/models.py:282 order/models.py:435
 #: stock/views.py:983
@@ -103,7 +103,7 @@ msgstr "Ongeldige groep: {g}"
 #: InvenTree/helpers.py:518
 #, python-brace-format
 msgid "Invalid/no group {group}"
-msgstr ""
+msgstr "Ongeldige/geen groep {group}"
 
 #: InvenTree/helpers.py:524
 msgid "No serial numbers found"
@@ -251,49 +251,49 @@ msgstr "Bestandsnaam"
 
 #: InvenTree/serializers.py:334
 msgid "Invalid value"
-msgstr ""
+msgstr "Ongeldige waarde"
 
 #: InvenTree/serializers.py:355
 msgid "Data File"
-msgstr ""
+msgstr "Data bestand"
 
 #: InvenTree/serializers.py:356
 msgid "Select data file for upload"
-msgstr ""
+msgstr "Selecteer een bestand om te uploaden"
 
 #: InvenTree/serializers.py:380
 msgid "Unsupported file type"
-msgstr ""
+msgstr "Niet ondersteund bestandstype"
 
 #: InvenTree/serializers.py:386
 msgid "File is too large"
-msgstr ""
+msgstr "Bestand is te groot"
 
 #: InvenTree/serializers.py:407
 msgid "No columns found in file"
-msgstr ""
+msgstr "Geen kolommen gevonden in het bestand"
 
 #: InvenTree/serializers.py:410
 msgid "No data rows found in file"
-msgstr ""
+msgstr "Geen data rijen gevonden in dit bestand"
 
 #: InvenTree/serializers.py:533
 msgid "No data rows provided"
-msgstr ""
+msgstr "Geen data rijen opgegeven"
 
 #: InvenTree/serializers.py:536
 msgid "No data columns supplied"
-msgstr ""
+msgstr "Geen gegevenskolommen opgegeven"
 
 #: InvenTree/serializers.py:623
 #, python-brace-format
 msgid "Missing required column: '{name}'"
-msgstr ""
+msgstr "Verplichte kolom ontbreekt: '{name}'"
 
 #: InvenTree/serializers.py:632
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
-msgstr ""
+msgstr "Dubbele kolom: '{col}'"
 
 #: InvenTree/settings.py:665
 msgid "German"
@@ -325,7 +325,7 @@ msgstr "Hebreeuws"
 
 #: InvenTree/settings.py:672
 msgid "Hungarian"
-msgstr ""
+msgstr "Hongaars"
 
 #: InvenTree/settings.py:673
 msgid "Italian"
@@ -504,7 +504,7 @@ msgstr "Splits onderliggende item"
 
 #: InvenTree/status_codes.py:295 templates/js/translated/stock.js:2019
 msgid "Merged stock items"
-msgstr ""
+msgstr "Samengevoegde stock items"
 
 #: InvenTree/status_codes.py:297 templates/js/translated/table_filters.js:213
 msgid "Sent to customer"
@@ -524,7 +524,7 @@ msgstr "Product voltooid"
 
 #: InvenTree/status_codes.py:302
 msgid "Consumed by build order"
-msgstr ""
+msgstr "Verbruikt door bouwopdracht"
 
 #: InvenTree/status_codes.py:304
 msgid "Received against purchase order"
@@ -881,7 +881,7 @@ msgstr ""
 
 #: build/models.py:1187
 msgid "Stock item is over-allocated"
-msgstr ""
+msgstr "Voorraad item is te veel toegewezen"
 
 #: build/models.py:1193 order/models.py:1225
 msgid "Allocation quantity must be greater than zero"
@@ -889,7 +889,7 @@ msgstr ""
 
 #: build/models.py:1199
 msgid "Quantity must be 1 for serialized stock"
-msgstr ""
+msgstr "Hoeveelheid moet 1 zijn voor geserialiseerde voorraad"
 
 #: build/models.py:1256
 msgid "Selected stock item not found in BOM"
