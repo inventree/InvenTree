@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-15 12:34+0000\n"
-"PO-Revision-Date: 2022-04-18 06:31\n"
+"PO-Revision-Date: 2022-04-18 12:04\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -556,7 +556,7 @@ msgstr ""
 #: InvenTree/validators.py:116
 #, python-brace-format
 msgid "Illegal character in name ({x})"
-msgstr ""
+msgstr "名前の一部に不正な文字が使用されています({x})"
 
 #: InvenTree/validators.py:137 InvenTree/validators.py:153
 msgid "Overage value must not be negative"
