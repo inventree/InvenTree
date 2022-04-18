@@ -234,6 +234,10 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Stock status" %}',
                 description: '{% trans "Stock status" %}',
             },
+            has_batch: {
+                title: '{% trans "Has batch code" %}',
+                type: 'bool',
+            },
             batch: {
                 title: '{% trans "Batch" %}',
                 description: '{% trans "Batch code" %}',

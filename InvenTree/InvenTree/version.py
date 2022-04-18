@@ -12,10 +12,13 @@ import common.models
 INVENTREE_SW_VERSION = "0.7.0 dev"
 
 # InvenTree API version
-INVENTREE_API_VERSION = 38
+INVENTREE_API_VERSION = 39
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v39 -> 2022-04-18
+    - Adds ability to filter StockItem list by "has_batch" parameter
 
 v38 -> 2022-04-14 : https://github.com/inventree/InvenTree/pull/2828
     - Adds the ability to include stock test results for "installed items"
