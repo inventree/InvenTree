@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-18 13:45+0000\n"
-"PO-Revision-Date: 2022-04-18 14:13\n"
+"PO-Revision-Date: 2022-04-18 20:39\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -787,7 +787,7 @@ msgstr ""
 #: build/models.py:294 order/models.py:129 part/models.py:1007
 #: part/templates/part/part_base.html:331 templates/js/translated/order.js:1467
 msgid "Creation Date"
-msgstr ""
+msgstr "作成日時"
 
 #: build/models.py:298 order/models.py:585
 msgid "Target completion date"
