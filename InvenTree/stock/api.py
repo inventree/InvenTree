@@ -410,6 +410,20 @@ class StockFilter(rest_filters.FilterSet):
 
         return queryset
 
+    has_batch = rest_filters.BooleanFilter(label='Has batch code', method='filter_has_batch')
+
+    def filter_has_batch(self, queryset, name, value):
+        """
+        Filter by whether the StockItem has a batch code (or not)
+        """
+
+        if str2bool(value):
+            queryset = queryset.exclude(batch=None)
+        else:
+            queryset = queryset.filter(batch=None)
+
+        return queryset
+
     installed = rest_filters.BooleanFilter(label='Installed in other stock item', method='filter_installed')
 
     def filter_installed(self, queryset, name, value):
