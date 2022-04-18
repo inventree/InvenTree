@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-15 12:34+0000\n"
-"PO-Revision-Date: 2022-04-18 12:04\n"
+"PO-Revision-Date: 2022-04-18 13:10\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -564,7 +564,7 @@ msgstr "Overschrijdingswaarde mag niet negatief zijn"
 
 #: InvenTree/validators.py:155
 msgid "Overage must not exceed 100%"
-msgstr ""
+msgstr "Dekking mag niet groter zijn dan 100%"
 
 #: InvenTree/validators.py:162
 msgid "Invalid value for overage"
@@ -620,11 +620,11 @@ msgstr ""
 
 #: barcodes/api.py:201
 msgid "Barcode already matches Stock Location"
-msgstr ""
+msgstr "Barcode komt al overeen met vooraad locatie"
 
 #: barcodes/api.py:205
 msgid "Barcode already matches Part"
-msgstr ""
+msgstr "Barcode komt al overeen met onderdeel"
 
 #: barcodes/api.py:211 barcodes/api.py:223
 msgid "Barcode hash already matches Stock Item"
@@ -808,7 +808,7 @@ msgstr "voltooid door"
 
 #: build/models.py:316 templates/js/translated/build.js:2057
 msgid "Issued by"
-msgstr ""
+msgstr "Uitgegeven door"
 
 #: build/models.py:317
 msgid "User who issued this build order"
@@ -877,7 +877,7 @@ msgstr ""
 #: build/models.py:1177
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not execed available stock quantity ({a})"
-msgstr ""
+msgstr "Toegewezen hoeveelheid ({q}) mag de beschikbare voorraad ({a}) niet overschrijden"
 
 #: build/models.py:1187
 msgid "Stock item is over-allocated"
@@ -885,7 +885,7 @@ msgstr "Voorraad item is te veel toegewezen"
 
 #: build/models.py:1193 order/models.py:1225
 msgid "Allocation quantity must be greater than zero"
-msgstr ""
+msgstr "Toewijzingsaantal moet groter zijn dan nul"
 
 #: build/models.py:1199
 msgid "Quantity must be 1 for serialized stock"
@@ -893,7 +893,7 @@ msgstr "Hoeveelheid moet 1 zijn voor geserialiseerde voorraad"
 
 #: build/models.py:1256
 msgid "Selected stock item not found in BOM"
-msgstr ""
+msgstr "Geselecteerd voorraadartikel niet gevonden in stuklijst"
 
 #: build/models.py:1325 stock/templates/stock/item_base.html:329
 #: templates/InvenTree/search.html:137 templates/js/translated/build.js:1985
@@ -1726,45 +1726,45 @@ msgstr ""
 
 #: common/models.py:802 part/models.py:976
 msgid "Purchaseable"
-msgstr ""
+msgstr "Koopbaar"
 
 #: common/models.py:803
 msgid "Parts are purchaseable by default"
-msgstr ""
+msgstr "Onderdelen kunnen standaard gekocht worden"
 
 #: common/models.py:809 part/models.py:981
 #: templates/js/translated/table_filters.js:463
 msgid "Salable"
-msgstr ""
+msgstr "Verkoopbaar"
 
 #: common/models.py:810
 msgid "Parts are salable by default"
-msgstr ""
+msgstr "Onderdelen kunnen standaard verkocht worden"
 
 #: common/models.py:816 part/models.py:971
 #: templates/js/translated/table_filters.js:46
 #: templates/js/translated/table_filters.js:100
 #: templates/js/translated/table_filters.js:467
 msgid "Trackable"
-msgstr ""
+msgstr "Volgbaar"
 
 #: common/models.py:817
 msgid "Parts are trackable by default"
-msgstr ""
+msgstr "Onderdelen kunnen standaard gevolgd worden"
 
 #: common/models.py:823 part/models.py:991
 #: part/templates/part/part_base.html:151
 #: templates/js/translated/table_filters.js:42
 msgid "Virtual"
-msgstr ""
+msgstr "Virtueel"
 
 #: common/models.py:824
 msgid "Parts are virtual by default"
-msgstr ""
+msgstr "Onderdelen zijn standaard virtueel"
 
 #: common/models.py:830
 msgid "Show Import in Views"
-msgstr ""
+msgstr "Toon Import in weergaven"
 
 #: common/models.py:831
 msgid "Display the import wizard in some part views"
@@ -1772,11 +1772,11 @@ msgstr ""
 
 #: common/models.py:837
 msgid "Show Price in Forms"
-msgstr ""
+msgstr "Toon Prijs in Formulieren"
 
 #: common/models.py:838
 msgid "Display part price in some forms"
-msgstr ""
+msgstr "Toon onderdeel prijs in sommige formulieren"
 
 #: common/models.py:849
 msgid "Show Price in BOM"
@@ -1788,27 +1788,27 @@ msgstr ""
 
 #: common/models.py:861
 msgid "Show Price History"
-msgstr ""
+msgstr "Toon prijsgeschiedenis"
 
 #: common/models.py:862
 msgid "Display historical pricing for Part"
-msgstr ""
+msgstr "Toon historische prijzen voor onderdeel"
 
 #: common/models.py:868
 msgid "Show related parts"
-msgstr ""
+msgstr "Verwante onderdelen tonen"
 
 #: common/models.py:869
 msgid "Display related parts for a part"
-msgstr ""
+msgstr "Verwante onderdelen voor een onderdeel tonen"
 
 #: common/models.py:875
 msgid "Create initial stock"
-msgstr ""
+msgstr "Eerste voorraad aanmaken"
 
 #: common/models.py:876
 msgid "Create initial stock on part creation"
-msgstr ""
+msgstr "Aanmaken eerste voorraad bij het maken van onderdeel"
 
 #: common/models.py:882
 msgid "Internal Prices"
@@ -1836,11 +1836,11 @@ msgstr ""
 
 #: common/models.py:904
 msgid "Enable Reports"
-msgstr ""
+msgstr "Activeer rapporteringen"
 
 #: common/models.py:905
 msgid "Enable generation of reports"
-msgstr ""
+msgstr "Activeer het genereren van rapporten"
 
 #: common/models.py:911 templates/stats.html:25
 msgid "Debug Mode"
@@ -1848,7 +1848,7 @@ msgstr "Foutopsporingsmodus"
 
 #: common/models.py:912
 msgid "Generate reports in debug mode (HTML output)"
-msgstr ""
+msgstr "Rapporten genereren in debug modus (HTML uitvoer)"
 
 #: common/models.py:918
 msgid "Page Size"
@@ -1856,7 +1856,7 @@ msgstr "Paginagrootte"
 
 #: common/models.py:919
 msgid "Default page size for PDF reports"
-msgstr ""
+msgstr "Standaard paginagrootte voor PDF rapporten"
 
 #: common/models.py:929
 msgid "Test Reports"
@@ -1864,7 +1864,7 @@ msgstr "Testrapport"
 
 #: common/models.py:930
 msgid "Enable generation of test reports"
-msgstr ""
+msgstr "Activeer het genereren van testrapporten"
 
 #: common/models.py:936
 msgid "Stock Expiry"
@@ -2534,15 +2534,15 @@ msgstr ""
 #: company/models.py:125 company/templates/company/company_base.html:129
 #: templates/InvenTree/settings/user.html:48
 msgid "Email"
-msgstr ""
+msgstr "Email"
 
 #: company/models.py:125
 msgid "Contact email address"
-msgstr ""
+msgstr "Contact e-mailadres"
 
 #: company/models.py:128 company/templates/company/company_base.html:136
 msgid "Contact"
-msgstr ""
+msgstr "Contact"
 
 #: company/models.py:129
 msgid "Point of contact"
@@ -2550,11 +2550,11 @@ msgstr ""
 
 #: company/models.py:131
 msgid "Link to external company information"
-msgstr ""
+msgstr "Link naar externe bedrijfsinformatie"
 
 #: company/models.py:139 part/models.py:878
 msgid "Image"
-msgstr ""
+msgstr "Afbeelding"
 
 #: company/models.py:144
 msgid "is customer"
@@ -2566,7 +2566,7 @@ msgstr ""
 
 #: company/models.py:146
 msgid "is supplier"
-msgstr ""
+msgstr "is leverancier"
 
 #: company/models.py:146
 msgid "Do you purchase items from this company?"
@@ -2649,18 +2649,18 @@ msgstr ""
 #: stock/models.py:2131 templates/js/translated/company.js:647
 #: templates/js/translated/part.js:758 templates/js/translated/stock.js:1297
 msgid "Value"
-msgstr ""
+msgstr "Waarde"
 
 #: company/models.py:423
 msgid "Parameter value"
-msgstr ""
+msgstr "Parameterwaarde"
 
 #: company/models.py:429 part/models.py:953 part/models.py:2561
 #: part/templates/part/part_base.html:306
 #: templates/InvenTree/settings/settings.html:325
 #: templates/js/translated/company.js:653 templates/js/translated/part.js:764
 msgid "Units"
-msgstr ""
+msgstr "Eenheden"
 
 #: company/models.py:430
 msgid "Parameter units"
@@ -2680,11 +2680,11 @@ msgstr "Gekoppeld fabrikant onderdeel moet verwijzen naar hetzelfde basis onderd
 #: templates/js/translated/part.js:216 templates/js/translated/part.js:906
 #: templates/js/translated/table_filters.js:406
 msgid "Supplier"
-msgstr ""
+msgstr "Leverancier"
 
 #: company/models.py:546 templates/js/translated/part.js:217
 msgid "Select supplier"
-msgstr ""
+msgstr "Leverancier selecteren"
 
 #: company/models.py:551 company/templates/company/supplier_part.html:91
 #: part/bom.py:238 part/bom.py:266 templates/js/translated/order.js:1198
@@ -2713,15 +2713,15 @@ msgstr ""
 #: report/templates/report/inventree_po_report.html:93
 #: report/templates/report/inventree_so_report.html:93 stock/serializers.py:409
 msgid "Note"
-msgstr ""
+msgstr "Opmerking"
 
 #: company/models.py:580 part/models.py:1871
 msgid "base cost"
-msgstr ""
+msgstr "basisprijs"
 
 #: company/models.py:580 part/models.py:1871
 msgid "Minimum charge (e.g. stocking fee)"
-msgstr ""
+msgstr "Minimale kosten (bijv. voorraadkosten)"
 
 #: company/models.py:582 company/templates/company/supplier_part.html:112
 #: stock/models.py:599 stock/templates/stock/item_base.html:322
