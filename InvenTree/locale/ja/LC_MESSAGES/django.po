@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-15 12:34+0000\n"
-"PO-Revision-Date: 2022-04-17 19:20\n"
+"PO-Revision-Date: 2022-04-18 06:31\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -78,12 +78,12 @@ msgstr "メールアドレスの確認"
 
 #: InvenTree/forms.py:260
 msgid "You must type the same email each time."
-msgstr ""
+msgstr "毎回同じメールアドレスを入力する必要があります。"
 
 #: InvenTree/helpers.py:442
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
-msgstr ""
+msgstr "重複したシリアル番号: {sn}"
 
 #: InvenTree/helpers.py:449 order/models.py:282 order/models.py:435
 #: stock/views.py:983
@@ -103,7 +103,7 @@ msgstr "無効なグループ： {g}"
 #: InvenTree/helpers.py:518
 #, python-brace-format
 msgid "Invalid/no group {group}"
-msgstr ""
+msgstr "{group} は無効なグループか、存在しません。"
 
 #: InvenTree/helpers.py:524
 msgid "No serial numbers found"
@@ -116,11 +116,11 @@ msgstr ""
 
 #: InvenTree/models.py:185
 msgid "Missing file"
-msgstr ""
+msgstr "ファイルがありません"
 
 #: InvenTree/models.py:186
 msgid "Missing external link"
-msgstr ""
+msgstr "外部リンクが見つかりません。"
 
 #: InvenTree/models.py:197 stock/models.py:2138
 #: templates/js/translated/attachment.js:119
@@ -142,7 +142,7 @@ msgstr "リンク"
 #: InvenTree/models.py:205 build/models.py:332 part/models.py:869
 #: stock/models.py:633
 msgid "Link to external URL"
-msgstr ""
+msgstr "外部 サイト へのリンク"
 
 #: InvenTree/models.py:208 templates/js/translated/attachment.js:163
 msgid "Comment"
@@ -180,15 +180,15 @@ msgstr ""
 
 #: InvenTree/models.py:277
 msgid "Filename missing extension"
-msgstr ""
+msgstr "ファイル名に拡張子がありません"
 
 #: InvenTree/models.py:284
 msgid "Attachment with this filename already exists"
-msgstr ""
+msgstr "この名前の貼付ファイルは既に存在します"
 
 #: InvenTree/models.py:291
 msgid "Error renaming file"
-msgstr ""
+msgstr "ファイル名の変更に失敗しました"
 
 #: InvenTree/models.py:326
 msgid "Invalid choice"
@@ -255,7 +255,7 @@ msgstr "無効な値です。"
 
 #: InvenTree/serializers.py:355
 msgid "Data File"
-msgstr ""
+msgstr "データファイル"
 
 #: InvenTree/serializers.py:356
 msgid "Select data file for upload"
@@ -263,19 +263,19 @@ msgstr "アップロードするファイルを選択"
 
 #: InvenTree/serializers.py:380
 msgid "Unsupported file type"
-msgstr ""
+msgstr "サポートされていないファイル形式"
 
 #: InvenTree/serializers.py:386
 msgid "File is too large"
-msgstr ""
+msgstr "ファイルサイズが大きすぎます"
 
 #: InvenTree/serializers.py:407
 msgid "No columns found in file"
-msgstr ""
+msgstr "ファイルに列が見つかりません"
 
 #: InvenTree/serializers.py:410
 msgid "No data rows found in file"
-msgstr ""
+msgstr "ファイルにデータ行がみつかりません"
 
 #: InvenTree/serializers.py:533
 msgid "No data rows provided"
@@ -288,12 +288,12 @@ msgstr ""
 #: InvenTree/serializers.py:623
 #, python-brace-format
 msgid "Missing required column: '{name}'"
-msgstr ""
+msgstr "必須の列がありません: {name}"
 
 #: InvenTree/serializers.py:632
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
-msgstr ""
+msgstr "{col} 列が重複しています。"
 
 #: InvenTree/settings.py:665
 msgid "German"
@@ -301,7 +301,7 @@ msgstr "ドイツ語"
 
 #: InvenTree/settings.py:666
 msgid "Greek"
-msgstr ""
+msgstr "ギリシャ語"
 
 #: InvenTree/settings.py:667
 msgid "English"
@@ -309,11 +309,11 @@ msgstr "英語"
 
 #: InvenTree/settings.py:668
 msgid "Spanish"
-msgstr ""
+msgstr "スペイン語"
 
 #: InvenTree/settings.py:669
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "スペイン語(メキシコ)"
 
 #: InvenTree/settings.py:670
 msgid "French"
@@ -321,31 +321,31 @@ msgstr "フランス語"
 
 #: InvenTree/settings.py:671
 msgid "Hebrew"
-msgstr ""
+msgstr "ヘブライ語"
 
 #: InvenTree/settings.py:672
 msgid "Hungarian"
-msgstr ""
+msgstr "ハンガリー語"
 
 #: InvenTree/settings.py:673
 msgid "Italian"
-msgstr ""
+msgstr "イタリア語"
 
 #: InvenTree/settings.py:674
 msgid "Japanese"
-msgstr ""
+msgstr "日本語"
 
 #: InvenTree/settings.py:675
 msgid "Korean"
-msgstr ""
+msgstr "韓国語"
 
 #: InvenTree/settings.py:676
 msgid "Dutch"
-msgstr ""
+msgstr "オランダ語"
 
 #: InvenTree/settings.py:677
 msgid "Norwegian"
-msgstr ""
+msgstr "ノルウェー語"
 
 #: InvenTree/settings.py:678
 msgid "Polish"
@@ -353,19 +353,19 @@ msgstr "ポーランド語"
 
 #: InvenTree/settings.py:679
 msgid "Portugese"
-msgstr ""
+msgstr "ポルトガル語"
 
 #: InvenTree/settings.py:680
 msgid "Russian"
-msgstr ""
+msgstr "ロシア語"
 
 #: InvenTree/settings.py:681
 msgid "Swedish"
-msgstr ""
+msgstr "スウェーデン語"
 
 #: InvenTree/settings.py:682
 msgid "Thai"
-msgstr ""
+msgstr "タイ語"
 
 #: InvenTree/settings.py:683
 msgid "Turkish"
@@ -373,11 +373,11 @@ msgstr "トルコ語"
 
 #: InvenTree/settings.py:684
 msgid "Vietnamese"
-msgstr ""
+msgstr "ベトナム語"
 
 #: InvenTree/settings.py:685
 msgid "Chinese"
-msgstr ""
+msgstr "中国語"
 
 #: InvenTree/status.py:110
 msgid "Background worker check failed"
@@ -440,7 +440,7 @@ msgstr "破損"
 
 #: InvenTree/status_codes.py:186
 msgid "Destroyed"
-msgstr ""
+msgstr "破壊されました"
 
 #: InvenTree/status_codes.py:188
 msgid "Rejected"
@@ -452,63 +452,63 @@ msgstr ""
 
 #: InvenTree/status_codes.py:275
 msgid "Stock item created"
-msgstr ""
+msgstr "在庫商品を作成しました"
 
 #: InvenTree/status_codes.py:277
 msgid "Edited stock item"
-msgstr ""
+msgstr "在庫商品編集済み"
 
 #: InvenTree/status_codes.py:278
 msgid "Assigned serial number"
-msgstr ""
+msgstr "割り当てられたシリアル番号"
 
 #: InvenTree/status_codes.py:280
 msgid "Stock counted"
-msgstr ""
+msgstr "在庫数"
 
 #: InvenTree/status_codes.py:281
 msgid "Stock manually added"
-msgstr ""
+msgstr "手動在庫追加が完了しました"
 
 #: InvenTree/status_codes.py:282
 msgid "Stock manually removed"
-msgstr ""
+msgstr "手動在庫削除が完了しました"
 
 #: InvenTree/status_codes.py:284
 msgid "Location changed"
-msgstr ""
+msgstr "ロケーションが変更されました"
 
 #: InvenTree/status_codes.py:286
 msgid "Installed into assembly"
-msgstr ""
+msgstr "アセンブリへインストールしました"
 
 #: InvenTree/status_codes.py:287
 msgid "Removed from assembly"
-msgstr ""
+msgstr "アセンブリから削除しました"
 
 #: InvenTree/status_codes.py:289
 msgid "Installed component item"
-msgstr ""
+msgstr "インストール済みのコンポーネント項目"
 
 #: InvenTree/status_codes.py:290
 msgid "Removed component item"
-msgstr ""
+msgstr "コンポーネント項目を削除しました"
 
 #: InvenTree/status_codes.py:292
 msgid "Split from parent item"
-msgstr ""
+msgstr "親アイテムから分割する"
 
 #: InvenTree/status_codes.py:293
 msgid "Split child item"
-msgstr ""
+msgstr "子項目を分割"
 
 #: InvenTree/status_codes.py:295 templates/js/translated/stock.js:2019
 msgid "Merged stock items"
-msgstr ""
+msgstr "商品在庫をマージしました"
 
 #: InvenTree/status_codes.py:297 templates/js/translated/table_filters.js:213
 msgid "Sent to customer"
-msgstr ""
+msgstr "顧客に送信されました"
 
 #: InvenTree/status_codes.py:298
 msgid "Returned from customer"
@@ -532,7 +532,7 @@ msgstr ""
 
 #: InvenTree/status_codes.py:319
 msgid "Production"
-msgstr ""
+msgstr "生産"
 
 #: InvenTree/validators.py:25
 msgid "Not a valid currency code"
@@ -572,7 +572,7 @@ msgstr ""
 
 #: InvenTree/views.py:538
 msgid "Delete Item"
-msgstr ""
+msgstr "項目を削除"
 
 #: InvenTree/views.py:587
 msgid "Check box to confirm item deletion"
@@ -580,11 +580,11 @@ msgstr ""
 
 #: InvenTree/views.py:602 templates/InvenTree/settings/user.html:21
 msgid "Edit User Information"
-msgstr ""
+msgstr "ユーザー情報を編集"
 
 #: InvenTree/views.py:613 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
-msgstr ""
+msgstr "パスワードを設定"
 
 #: InvenTree/views.py:632
 msgid "Password fields must match"
@@ -592,7 +592,7 @@ msgstr ""
 
 #: InvenTree/views.py:883 templates/navbar.html:144
 msgid "System Information"
-msgstr ""
+msgstr "システム情報"
 
 #: barcodes/api.py:55 barcodes/api.py:156
 msgid "Must provide barcode_data parameter"
@@ -852,7 +852,7 @@ msgstr ""
 #: templates/js/translated/order.js:1650 templates/js/translated/order.js:2499
 #: templates/js/translated/stock.js:1310 templates/js/translated/stock.js:1915
 msgid "Notes"
-msgstr ""
+msgstr "メモ"
 
 #: build/models.py:337
 msgid "Extra build notes"
