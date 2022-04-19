@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-19 11:17+0000\n"
-"PO-Revision-Date: 2022-04-19 13:05\n"
+"PO-Revision-Date: 2022-04-19 14:32\n"
 "Last-Translator: \n"
 "Language-Team: Persian\n"
 "Language: fa_IR\n"
@@ -24,7 +24,7 @@ msgstr "Address e API peida nashod"
 
 #: InvenTree/api.py:103
 msgid "No action specified"
-msgstr ""
+msgstr "هیچ عملیات کاربر-محوری، مشخص نشده است"
 
 #: InvenTree/api.py:118
 msgid "No matching action found"
@@ -38,11 +38,11 @@ msgstr ""
 #: order/forms.py:57 templates/account/email_confirm.html:20
 #: templates/js/translated/forms.js:601
 msgid "Confirm"
-msgstr ""
+msgstr "تایید"
 
 #: InvenTree/forms.py:142
 msgid "Confirm delete"
-msgstr ""
+msgstr "تائید حذف"
 
 #: InvenTree/forms.py:143
 msgid "Confirm item deletion"
