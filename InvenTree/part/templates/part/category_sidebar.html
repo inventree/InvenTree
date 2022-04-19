@@ -14,6 +14,8 @@
 {% include "sidebar_link.html" with url=url text=text icon="fa-file-upload" %}
 {% endif %}
 {% if category %}
+{% trans "Stock Items" as text %}
+{% include "sidebar_item.html" with label='stock' text=text icon='fa-boxes' %}
 {% trans "Parameters" as text %}
 {% include "sidebar_item.html" with label="parameters" text=text icon="fa-tasks" %}
 {% endif %}

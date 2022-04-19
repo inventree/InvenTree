@@ -11,10 +11,14 @@
 
 {% block page_content %}
     {% trans "Upload File for Purchase Order" as header_text %}
-    {% order.status == PurchaseOrderStatus.PENDING and roles.purchase_order.change as upload_go_ahead %}
     {% trans "Order is already processed. Files cannot be uploaded." as error_text %}
-    {% "panel-upload-file" as panel_id %}
-    {% include "patterns/wizard/upload.html" with header_text=header_text upload_go_ahead=upload_go_ahead error_text=error_text panel_id=panel_id %}
+    {% with "panel-upload-file" as panel_id %}
+    {% if order.status == PurchaseOrderStatus.PENDING and roles.purchase_order.change %}
+        {% include "patterns/wizard/upload.html" with header_text=header_text upload_go_ahead=True error_text=error_text panel_id=panel_id %}
+    {% else %}
+        {% include "patterns/wizard/upload.html" with header_text=header_text upload_go_ahead=False error_text=error_text panel_id=panel_id %}
+    {% endif %}
+    {% endwith %}
 {% endblock %}
 
 {% block js_ready %}

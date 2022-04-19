@@ -3,7 +3,6 @@
 {% load i18n %}
 {% load inventree_extras %}
 {% load crispy_forms_tags %}
-{% load markdownify %}
 
 {% block sidebar %}
 {% include 'part/part_sidebar.html' %}
@@ -134,24 +133,16 @@
 
 <div class='panel panel-hidden' id='panel-part-notes'>
     <div class='panel-heading'>
-        <div class='row'>
-            <div class='col-sm-6'>
-                <h4>{% trans "Notes" %}</h4>
-            </div>
-            <div class='col-sm-6'>
-                <div class='btn-group float-right'>
-                    <button type='button' id='edit-notes' title='{% trans "Edit Notes" %}' class='btn btn-outline-secondary'>
-                        <span class='fas fa-edit'>      
-                        </span>
-                    </button>
-                </div>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Part Notes" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% include "notes_buttons.html" %}
             </div>
         </div>
     </div>
     <div class='panel-content'>
-        {% if part.notes %}
-        {{ part.notes | markdownify }}
-        {% endif %}
+        <textarea id='part-notes'></textarea>
     </div>
 </div>
 
@@ -418,6 +409,18 @@
 
 {% block js_ready %}
     {{ block.super }}
+
+    // Load the "notes" tab
+    onPanelLoad('part-notes', function() {
+
+        setupNotesField(
+            'part-notes',
+            '{% url "api-part-detail" part.pk %}',
+            {
+                editable: {% if roles.part.change %}true{% else %}false{% endif %},
+            }
+        );
+    });
 
     // Load the "scheduling" tab
     onPanelLoad('scheduling', function() {
@@ -830,36 +833,6 @@
                 }
             });
         });
-    });
-
-    $('#edit-notes').click(function() {
-        constructForm('{% url "api-part-detail" part.pk %}', {
-            fields: {
-                notes: {
-                    multiline: true,
-                }
-            },
-            title: '{% trans "Edit Part Notes" %}',
-            reload: true,
-        });
-    });
-
-    $(".slidey").change(function() {
-        var field = $(this).attr('fieldname');
-
-        var checked = $(this).prop('checked');
-
-        var data = {};
-
-        data[field] = checked;
-        // Update the particular field
-        inventreePut("{% url 'api-part-detail' part.id %}",
-            data,
-            {
-                method: 'PATCH',
-                reloadOnSuccess: true,
-            },
-        );
     });
 
     onPanelLoad("part-parameters", function() {

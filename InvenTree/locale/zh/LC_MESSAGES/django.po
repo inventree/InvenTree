@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-30 02:38+0000\n"
-"PO-Revision-Date: 2022-03-30 02:45\n"
+"POT-Creation-Date: 2022-04-12 21:44+0000\n"
+"PO-Revision-Date: 2022-04-12 21:46\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -135,7 +135,7 @@ msgstr "选择附件"
 #: company/models.py:564 order/models.py:127 part/models.py:868
 #: report/templates/report/inventree_build_order_base.html:165
 #: templates/js/translated/company.js:540
-#: templates/js/translated/company.js:829 templates/js/translated/part.js:1364
+#: templates/js/translated/company.js:829 templates/js/translated/part.js:1419
 msgid "Link"
 msgstr "链接"
 
@@ -154,8 +154,8 @@ msgstr "文件注释"
 
 #: InvenTree/models.py:214 InvenTree/models.py:215 common/models.py:1396
 #: common/models.py:1397 common/models.py:1618 common/models.py:1619
-#: common/models.py:1848 common/models.py:1849 part/models.py:2344
-#: part/models.py:2364
+#: common/models.py:1848 common/models.py:1849 part/models.py:2345
+#: part/models.py:2365
 #: report/templates/report/inventree_test_report_base.html:96
 #: templates/js/translated/stock.js:2467
 msgid "User"
@@ -196,21 +196,21 @@ msgstr "选择无效"
 
 #: InvenTree/models.py:342 InvenTree/models.py:343 common/models.py:1604
 #: company/models.py:415 label/models.py:112 part/models.py:812
-#: part/models.py:2528 plugin/models.py:40 report/models.py:181
+#: part/models.py:2529 plugin/models.py:40 report/models.py:181
 #: templates/InvenTree/notifications/notifications.html:84
 #: templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/plugin.html:48
 #: templates/InvenTree/settings/plugin.html:125
 #: templates/InvenTree/settings/plugin_settings.html:23
 #: templates/InvenTree/settings/settings.html:320
-#: templates/js/translated/company.js:641 templates/js/translated/part.js:569
-#: templates/js/translated/part.js:708 templates/js/translated/part.js:1671
+#: templates/js/translated/company.js:641 templates/js/translated/part.js:606
+#: templates/js/translated/part.js:745 templates/js/translated/part.js:1726
 #: templates/js/translated/stock.js:2267
 msgid "Name"
 msgstr "名称"
 
 #: InvenTree/models.py:349 build/models.py:209
-#: build/templates/build/detail.html:25 company/models.py:354
+#: build/templates/build/detail.html:24 company/models.py:354
 #: company/models.py:570 company/templates/company/company_base.html:68
 #: company/templates/company/manufacturer_part.html:76
 #: company/templates/company/supplier_part.html:73 label/models.py:119
@@ -222,13 +222,13 @@ msgstr "名称"
 #: stock/templates/stock/location.html:94
 #: templates/InvenTree/settings/plugin_settings.html:33
 #: templates/js/translated/bom.js:552 templates/js/translated/bom.js:763
-#: templates/js/translated/build.js:1992 templates/js/translated/company.js:345
+#: templates/js/translated/build.js:2007 templates/js/translated/company.js:345
 #: templates/js/translated/company.js:551
 #: templates/js/translated/company.js:840 templates/js/translated/order.js:971
 #: templates/js/translated/order.js:1192 templates/js/translated/order.js:1454
-#: templates/js/translated/part.js:628 templates/js/translated/part.js:1023
-#: templates/js/translated/part.js:1294 templates/js/translated/part.js:1690
-#: templates/js/translated/part.js:1759 templates/js/translated/stock.js:1665
+#: templates/js/translated/part.js:665 templates/js/translated/part.js:1060
+#: templates/js/translated/part.js:1333 templates/js/translated/part.js:1745
+#: templates/js/translated/part.js:1814 templates/js/translated/stock.js:1665
 #: templates/js/translated/stock.js:2279 templates/js/translated/stock.js:2317
 msgid "Description"
 msgstr "描述信息"
@@ -241,7 +241,7 @@ msgstr "描述 (可选)"
 msgid "parent"
 msgstr "上级项"
 
-#: InvenTree/serializers.py:65 part/models.py:2847
+#: InvenTree/serializers.py:65 part/models.py:2848
 msgid "Must be a valid number"
 msgstr "必须是有效数字"
 
@@ -655,7 +655,7 @@ msgstr "生产订单"
 
 #: build/models.py:140 build/templates/build/build_base.html:13
 #: build/templates/build/index.html:8 build/templates/build/index.html:12
-#: order/templates/order/sales_order_detail.html:92
+#: order/templates/order/sales_order_detail.html:91
 #: order/templates/order/so_sidebar.html:13
 #: part/templates/part/part_sidebar.html:23 templates/InvenTree/index.html:221
 #: templates/InvenTree/search.html:139
@@ -668,7 +668,7 @@ msgid "Build Order Reference"
 msgstr "相关生产订单"
 
 #: build/models.py:201 order/models.py:213 order/models.py:563
-#: order/models.py:843 part/models.py:2758
+#: order/models.py:843 part/models.py:2759
 #: part/templates/part/upload_bom.html:54
 #: report/templates/report/inventree_po_report.html:92
 #: report/templates/report/inventree_so_report.html:92
@@ -682,7 +682,7 @@ msgid "Brief description of the build"
 msgstr "生产的简短描述."
 
 #: build/models.py:221 build/templates/build/build_base.html:169
-#: build/templates/build/detail.html:88
+#: build/templates/build/detail.html:87
 msgid "Parent Build"
 msgstr "上级生产"
 
@@ -691,13 +691,13 @@ msgid "BuildOrder to which this build is allocated"
 msgstr "此次生产匹配的订单"
 
 #: build/models.py:227 build/templates/build/build_base.html:77
-#: build/templates/build/detail.html:30 company/models.py:706
+#: build/templates/build/detail.html:29 company/models.py:706
 #: order/models.py:912 order/models.py:986
 #: order/templates/order/order_wizard/select_parts.html:32 part/models.py:367
-#: part/models.py:2290 part/models.py:2306 part/models.py:2325
-#: part/models.py:2342 part/models.py:2444 part/models.py:2566
-#: part/models.py:2656 part/models.py:2733 part/models.py:3040
-#: part/serializers.py:673 part/templates/part/part_app_base.html:8
+#: part/models.py:2291 part/models.py:2307 part/models.py:2326
+#: part/models.py:2343 part/models.py:2445 part/models.py:2567
+#: part/models.py:2657 part/models.py:2734 part/models.py:3024
+#: part/serializers.py:834 part/templates/part/part_app_base.html:8
 #: part/templates/part/part_pricing.html:12
 #: part/templates/part/set_category.html:13
 #: part/templates/part/upload_bom.html:52
@@ -707,15 +707,15 @@ msgstr "此次生产匹配的订单"
 #: templates/InvenTree/search.html:80
 #: templates/email/build_order_required_stock.html:17
 #: templates/email/low_stock_notification.html:16
-#: templates/js/translated/barcode.js:383 templates/js/translated/bom.js:551
+#: templates/js/translated/barcode.js:382 templates/js/translated/bom.js:551
 #: templates/js/translated/bom.js:728 templates/js/translated/build.js:903
-#: templates/js/translated/build.js:1284 templates/js/translated/build.js:1684
-#: templates/js/translated/build.js:1997 templates/js/translated/company.js:492
+#: templates/js/translated/build.js:1284 templates/js/translated/build.js:1699
+#: templates/js/translated/build.js:2012 templates/js/translated/company.js:492
 #: templates/js/translated/company.js:749 templates/js/translated/order.js:84
 #: templates/js/translated/order.js:711 templates/js/translated/order.js:1177
 #: templates/js/translated/order.js:1781 templates/js/translated/order.js:2130
-#: templates/js/translated/order.js:2325 templates/js/translated/part.js:1008
-#: templates/js/translated/part.js:1078 templates/js/translated/part.js:1272
+#: templates/js/translated/order.js:2325 templates/js/translated/part.js:1045
+#: templates/js/translated/part.js:1115 templates/js/translated/part.js:1311
 #: templates/js/translated/stock.js:527 templates/js/translated/stock.js:692
 #: templates/js/translated/stock.js:899 templates/js/translated/stock.js:1622
 #: templates/js/translated/stock.js:2542 templates/js/translated/stock.js:2641
@@ -735,7 +735,7 @@ msgid "SalesOrder to which this build is allocated"
 msgstr "此次生产匹配的销售订单"
 
 #: build/models.py:249 build/serializers.py:730
-#: templates/js/translated/build.js:1672 templates/js/translated/order.js:1769
+#: templates/js/translated/build.js:1687 templates/js/translated/order.js:1769
 msgid "Source Location"
 msgstr "来源地点"
 
@@ -798,7 +798,7 @@ msgid "Target date for build completion. Build will be overdue after this date."
 msgstr "生产完成的目标日期。生产将在此日期之后逾期。"
 
 #: build/models.py:302 order/models.py:255
-#: templates/js/translated/build.js:2074
+#: templates/js/translated/build.js:2089
 msgid "Completion Date"
 msgstr "完成日期："
 
@@ -806,7 +806,7 @@ msgstr "完成日期："
 msgid "completed by"
 msgstr "完成人"
 
-#: build/models.py:316 templates/js/translated/build.js:2042
+#: build/models.py:316 templates/js/translated/build.js:2057
 msgid "Issued by"
 msgstr "发布者"
 
@@ -815,11 +815,11 @@ msgid "User who issued this build order"
 msgstr "发布此生产订单的用户"
 
 #: build/models.py:325 build/templates/build/build_base.html:190
-#: build/templates/build/detail.html:116 order/models.py:143
+#: build/templates/build/detail.html:115 order/models.py:143
 #: order/templates/order/order_base.html:170
 #: order/templates/order/sales_order_base.html:182 part/models.py:1011
 #: report/templates/report/inventree_build_order_base.html:159
-#: templates/js/translated/build.js:2054 templates/js/translated/order.js:1005
+#: templates/js/translated/build.js:2069 templates/js/translated/order.js:1005
 msgid "Responsible"
 msgstr "责任人"
 
@@ -827,7 +827,7 @@ msgstr "责任人"
 msgid "User responsible for this build order"
 msgstr "负责此生产订单的用户"
 
-#: build/models.py:331 build/templates/build/detail.html:102
+#: build/models.py:331 build/templates/build/detail.html:101
 #: company/templates/company/manufacturer_part.html:102
 #: company/templates/company/supplier_part.html:126
 #: part/templates/part/part_base.html:374 stock/models.py:631
@@ -841,13 +841,13 @@ msgstr "外部链接"
 #: order/models.py:147 order/models.py:845 order/models.py:1107
 #: order/templates/order/po_sidebar.html:11
 #: order/templates/order/so_sidebar.html:17 part/models.py:996
-#: part/templates/part/detail.html:139 part/templates/part/part_sidebar.html:60
+#: part/templates/part/part_sidebar.html:60
 #: report/templates/report/inventree_build_order_base.html:173
 #: stock/forms.py:137 stock/forms.py:171 stock/models.py:703
 #: stock/models.py:2038 stock/models.py:2144 stock/serializers.py:332
 #: stock/serializers.py:697 stock/serializers.py:795 stock/serializers.py:927
 #: stock/templates/stock/stock_sidebar.html:25
-#: templates/js/translated/barcode.js:58 templates/js/translated/bom.js:934
+#: templates/js/translated/barcode.js:58 templates/js/translated/bom.js:944
 #: templates/js/translated/company.js:845 templates/js/translated/order.js:1344
 #: templates/js/translated/order.js:1650 templates/js/translated/order.js:2499
 #: templates/js/translated/stock.js:1309 templates/js/translated/stock.js:1901
@@ -896,7 +896,7 @@ msgid "Selected stock item not found in BOM"
 msgstr ""
 
 #: build/models.py:1325 stock/templates/stock/item_base.html:329
-#: templates/InvenTree/search.html:137 templates/js/translated/build.js:1970
+#: templates/InvenTree/search.html:137 templates/js/translated/build.js:1985
 #: templates/navbar.html:35
 msgid "Build"
 msgstr "生产"
@@ -911,7 +911,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:23
 #: stock/templates/stock/item_base.html:351
 #: templates/js/translated/build.js:688 templates/js/translated/build.js:693
-#: templates/js/translated/build.js:1686 templates/js/translated/build.js:2122
+#: templates/js/translated/build.js:1701 templates/js/translated/build.js:2137
 #: templates/js/translated/order.js:85 templates/js/translated/order.js:1782
 #: templates/js/translated/order.js:2037 templates/js/translated/order.js:2042
 #: templates/js/translated/order.js:2137 templates/js/translated/order.js:2227
@@ -926,13 +926,13 @@ msgstr "源库存项"
 
 #: build/models.py:1355 build/serializers.py:188
 #: build/templates/build/build_base.html:82
-#: build/templates/build/detail.html:35 common/models.py:1429
+#: build/templates/build/detail.html:34 common/models.py:1429
 #: company/forms.py:42 company/templates/company/supplier_part.html:251
 #: order/models.py:836 order/models.py:1265 order/serializers.py:903
 #: order/templates/order/order_wizard/match_parts.html:30
 #: order/templates/order/order_wizard/select_parts.html:34 part/forms.py:144
-#: part/forms.py:160 part/forms.py:176 part/models.py:2749
-#: part/templates/part/detail.html:992 part/templates/part/detail.html:1078
+#: part/forms.py:160 part/forms.py:176 part/models.py:2750
+#: part/templates/part/detail.html:965 part/templates/part/detail.html:1051
 #: part/templates/part/part_pricing.html:16
 #: part/templates/part/upload_bom.html:53
 #: report/templates/report/inventree_build_order_base.html:114
@@ -944,18 +944,18 @@ msgstr "源库存项"
 #: stock/templates/stock/item_base.html:181
 #: stock/templates/stock/item_base.html:246
 #: stock/templates/stock/item_base.html:254
-#: templates/js/translated/barcode.js:385 templates/js/translated/bom.js:778
+#: templates/js/translated/barcode.js:384 templates/js/translated/bom.js:778
 #: templates/js/translated/build.js:376 templates/js/translated/build.js:524
 #: templates/js/translated/build.js:715 templates/js/translated/build.js:912
 #: templates/js/translated/build.js:922 templates/js/translated/build.js:1311
-#: templates/js/translated/build.js:1687
-#: templates/js/translated/model_renderers.js:101
+#: templates/js/translated/build.js:1702
+#: templates/js/translated/model_renderers.js:107
 #: templates/js/translated/order.js:101 templates/js/translated/order.js:1229
 #: templates/js/translated/order.js:1783 templates/js/translated/order.js:2056
 #: templates/js/translated/order.js:2144 templates/js/translated/order.js:2233
-#: templates/js/translated/order.js:2347 templates/js/translated/part.js:908
-#: templates/js/translated/part.js:1902 templates/js/translated/part.js:2124
-#: templates/js/translated/part.js:2158 templates/js/translated/part.js:2236
+#: templates/js/translated/order.js:2347 templates/js/translated/part.js:945
+#: templates/js/translated/part.js:1957 templates/js/translated/part.js:2179
+#: templates/js/translated/part.js:2213 templates/js/translated/part.js:2291
 #: templates/js/translated/stock.js:399 templates/js/translated/stock.js:553
 #: templates/js/translated/stock.js:723 templates/js/translated/stock.js:2452
 #: templates/js/translated/stock.js:2554
@@ -999,7 +999,7 @@ msgid "Enter quantity for build output"
 msgstr "输入生产产出数量"
 
 #: build/serializers.py:201 build/serializers.py:596 order/models.py:280
-#: order/serializers.py:267 part/serializers.py:503 part/serializers.py:840
+#: order/serializers.py:267 part/serializers.py:556 part/serializers.py:1001
 #: stock/models.py:471 stock/models.py:1247 stock/serializers.py:305
 msgid "Quantity must be greater than zero"
 msgstr ""
@@ -1042,8 +1042,8 @@ msgstr ""
 #: build/serializers.py:370 order/serializers.py:253 order/serializers.py:358
 #: stock/forms.py:169 stock/serializers.py:325 stock/serializers.py:788
 #: stock/serializers.py:1029 stock/templates/stock/item_base.html:297
-#: templates/js/translated/barcode.js:384
-#: templates/js/translated/barcode.js:557 templates/js/translated/build.js:700
+#: templates/js/translated/barcode.js:383
+#: templates/js/translated/barcode.js:565 templates/js/translated/build.js:700
 #: templates/js/translated/build.js:1323 templates/js/translated/order.js:611
 #: templates/js/translated/order.js:2049 templates/js/translated/order.js:2152
 #: templates/js/translated/order.js:2160 templates/js/translated/order.js:2241
@@ -1058,9 +1058,9 @@ msgid "Location for completed build outputs"
 msgstr ""
 
 #: build/serializers.py:377 build/templates/build/build_base.html:142
-#: build/templates/build/detail.html:63 order/models.py:579
+#: build/templates/build/detail.html:62 order/models.py:579
 #: order/serializers.py:290 stock/templates/stock/item_base.html:187
-#: templates/js/translated/barcode.js:140 templates/js/translated/build.js:2026
+#: templates/js/translated/barcode.js:140 templates/js/translated/build.js:2041
 #: templates/js/translated/order.js:716 templates/js/translated/order.js:975
 #: templates/js/translated/order.js:1459 templates/js/translated/stock.js:1747
 #: templates/js/translated/stock.js:2421 templates/js/translated/stock.js:2570
@@ -1099,8 +1099,8 @@ msgstr ""
 msgid "No build outputs have been created for this build order"
 msgstr ""
 
-#: build/serializers.py:501 build/serializers.py:550 part/models.py:2873
-#: part/models.py:3032
+#: build/serializers.py:501 build/serializers.py:550 part/models.py:2874
+#: part/models.py:3016
 msgid "BOM Item"
 msgstr ""
 
@@ -1232,13 +1232,13 @@ msgid "Stock has not been fully allocated to this Build Order"
 msgstr ""
 
 #: build/templates/build/build_base.html:151
-#: build/templates/build/detail.html:132 order/models.py:849
+#: build/templates/build/detail.html:131 order/models.py:849
 #: order/templates/order/order_base.html:156
 #: order/templates/order/sales_order_base.html:163
 #: report/templates/report/inventree_build_order_base.html:126
-#: templates/js/translated/build.js:2066 templates/js/translated/order.js:992
+#: templates/js/translated/build.js:2081 templates/js/translated/order.js:992
 #: templates/js/translated/order.js:1291 templates/js/translated/order.js:1475
-#: templates/js/translated/order.js:2410 templates/js/translated/part.js:912
+#: templates/js/translated/order.js:2410 templates/js/translated/part.js:949
 msgid "Target Date"
 msgstr "预计日期"
 
@@ -1258,15 +1258,15 @@ msgid "Overdue"
 msgstr "逾期"
 
 #: build/templates/build/build_base.html:163
-#: build/templates/build/detail.html:68 build/templates/build/detail.html:143
+#: build/templates/build/detail.html:67 build/templates/build/detail.html:142
 #: order/templates/order/sales_order_base.html:170
-#: templates/js/translated/build.js:2012
+#: templates/js/translated/build.js:2027
 #: templates/js/translated/table_filters.js:374
 msgid "Completed"
 msgstr "已完成"
 
 #: build/templates/build/build_base.html:176
-#: build/templates/build/detail.html:95 order/models.py:983
+#: build/templates/build/detail.html:94 order/models.py:983
 #: order/models.py:1079 order/templates/order/sales_order_base.html:9
 #: order/templates/order/sales_order_base.html:28
 #: report/templates/report/inventree_build_order_base.html:136
@@ -1277,7 +1277,7 @@ msgid "Sales Order"
 msgstr "销售订单"
 
 #: build/templates/build/build_base.html:183
-#: build/templates/build/detail.html:109
+#: build/templates/build/detail.html:108
 #: report/templates/report/inventree_build_order_base.html:153
 msgid "Issued By"
 msgstr "发布者"
@@ -1295,32 +1295,36 @@ msgstr ""
 msgid "Are you sure you wish to cancel this build?"
 msgstr "是否确定取消生产？"
 
-#: build/templates/build/detail.html:16
+#: build/templates/build/delete_build.html:5
+msgid "Are you sure you want to delete this build?"
+msgstr ""
+
+#: build/templates/build/detail.html:15
 msgid "Build Details"
 msgstr "生产详情"
 
-#: build/templates/build/detail.html:39
+#: build/templates/build/detail.html:38
 msgid "Stock Source"
 msgstr ""
 
-#: build/templates/build/detail.html:44
+#: build/templates/build/detail.html:43
 msgid "Stock can be taken from any available location."
 msgstr ""
 
-#: build/templates/build/detail.html:50 order/models.py:934 stock/forms.py:133
+#: build/templates/build/detail.html:49 order/models.py:934 stock/forms.py:133
 #: templates/js/translated/order.js:717 templates/js/translated/order.js:1333
 msgid "Destination"
 msgstr ""
 
-#: build/templates/build/detail.html:57
+#: build/templates/build/detail.html:56
 msgid "Destination location not specified"
 msgstr ""
 
-#: build/templates/build/detail.html:74 templates/js/translated/build.js:930
+#: build/templates/build/detail.html:73 templates/js/translated/build.js:930
 msgid "Allocated Parts"
 msgstr ""
 
-#: build/templates/build/detail.html:81
+#: build/templates/build/detail.html:80
 #: stock/templates/stock/item_base.html:315
 #: templates/js/translated/stock.js:1761 templates/js/translated/stock.js:2577
 #: templates/js/translated/table_filters.js:151
@@ -1328,161 +1332,149 @@ msgstr ""
 msgid "Batch"
 msgstr ""
 
-#: build/templates/build/detail.html:127
+#: build/templates/build/detail.html:126
 #: order/templates/order/order_base.html:143
 #: order/templates/order/sales_order_base.html:157
-#: templates/js/translated/build.js:2034
+#: templates/js/translated/build.js:2049
 msgid "Created"
 msgstr "已创建"
 
-#: build/templates/build/detail.html:138
+#: build/templates/build/detail.html:137
 msgid "No target date set"
 msgstr "无预计日期"
 
-#: build/templates/build/detail.html:147
+#: build/templates/build/detail.html:146
 msgid "Build not complete"
 msgstr "生产未完成"
 
-#: build/templates/build/detail.html:158 build/templates/build/sidebar.html:17
+#: build/templates/build/detail.html:157 build/templates/build/sidebar.html:17
 msgid "Child Build Orders"
 msgstr "子生产订单"
 
-#: build/templates/build/detail.html:173
+#: build/templates/build/detail.html:172
 msgid "Allocate Stock to Build"
 msgstr "为生产分配库存"
 
-#: build/templates/build/detail.html:177 templates/js/translated/build.js:1500
+#: build/templates/build/detail.html:176 templates/js/translated/build.js:1515
 msgid "Unallocate stock"
 msgstr "未分配库存"
 
-#: build/templates/build/detail.html:178
+#: build/templates/build/detail.html:177
 msgid "Unallocate Stock"
 msgstr "未分配库存"
 
-#: build/templates/build/detail.html:180
+#: build/templates/build/detail.html:179
 msgid "Automatically allocate stock to build"
 msgstr ""
 
-#: build/templates/build/detail.html:181
+#: build/templates/build/detail.html:180
 msgid "Auto Allocate"
 msgstr ""
 
-#: build/templates/build/detail.html:183
+#: build/templates/build/detail.html:182
 msgid "Manually allocate stock to build"
 msgstr ""
 
-#: build/templates/build/detail.html:184 build/templates/build/sidebar.html:8
+#: build/templates/build/detail.html:183 build/templates/build/sidebar.html:8
 msgid "Allocate Stock"
 msgstr "分配库存"
 
-#: build/templates/build/detail.html:187
+#: build/templates/build/detail.html:186
 msgid "Order required parts"
 msgstr "订单所需部件"
 
-#: build/templates/build/detail.html:188
-#: company/templates/company/detail.html:38
-#: company/templates/company/detail.html:85 order/views.py:463
+#: build/templates/build/detail.html:187
+#: company/templates/company/detail.html:37
+#: company/templates/company/detail.html:84 order/views.py:463
 #: part/templates/part/category.html:174
 msgid "Order Parts"
 msgstr "订购商品"
 
-#: build/templates/build/detail.html:200
+#: build/templates/build/detail.html:199
 msgid "Untracked stock has been fully allocated for this Build Order"
 msgstr "未跟踪的库存已完全分配给此生产订单"
 
-#: build/templates/build/detail.html:204
+#: build/templates/build/detail.html:203
 msgid "Untracked stock has not been fully allocated for this Build Order"
 msgstr "未跟踪的库存尚未完全分配给此生产订单"
 
-#: build/templates/build/detail.html:211
+#: build/templates/build/detail.html:210
 msgid "Allocate selected items"
 msgstr ""
 
-#: build/templates/build/detail.html:221
+#: build/templates/build/detail.html:220
 msgid "This Build Order does not have any associated untracked BOM items"
 msgstr ""
 
-#: build/templates/build/detail.html:230
+#: build/templates/build/detail.html:229
 msgid "Incomplete Build Outputs"
 msgstr "未完成的生产产出"
 
-#: build/templates/build/detail.html:234
+#: build/templates/build/detail.html:233
 msgid "Create new build output"
 msgstr ""
 
-#: build/templates/build/detail.html:235
+#: build/templates/build/detail.html:234
 msgid "New Build Output"
 msgstr ""
 
-#: build/templates/build/detail.html:249
+#: build/templates/build/detail.html:248
 msgid "Output Actions"
 msgstr ""
 
-#: build/templates/build/detail.html:253
+#: build/templates/build/detail.html:252
 msgid "Complete selected build outputs"
 msgstr ""
 
-#: build/templates/build/detail.html:254
+#: build/templates/build/detail.html:253
 msgid "Complete outputs"
 msgstr ""
 
-#: build/templates/build/detail.html:256
+#: build/templates/build/detail.html:255
 msgid "Delete selected build outputs"
 msgstr ""
 
-#: build/templates/build/detail.html:257
+#: build/templates/build/detail.html:256
 msgid "Delete outputs"
 msgstr ""
 
-#: build/templates/build/detail.html:264
+#: build/templates/build/detail.html:263
 #: stock/templates/stock/location.html:188 templates/stock_table.html:27
 msgid "Printing Actions"
 msgstr "打印操作"
 
-#: build/templates/build/detail.html:268 build/templates/build/detail.html:269
+#: build/templates/build/detail.html:267 build/templates/build/detail.html:268
 #: stock/templates/stock/location.html:192 templates/stock_table.html:31
 msgid "Print labels"
 msgstr "打印标签"
 
-#: build/templates/build/detail.html:286
+#: build/templates/build/detail.html:285
 msgid "Completed Build Outputs"
 msgstr ""
 
-#: build/templates/build/detail.html:298 build/templates/build/sidebar.html:19
+#: build/templates/build/detail.html:297 build/templates/build/sidebar.html:19
 #: order/templates/order/po_sidebar.html:9
-#: order/templates/order/purchase_order_detail.html:60
-#: order/templates/order/sales_order_detail.html:107
-#: order/templates/order/so_sidebar.html:15 part/templates/part/detail.html:215
-#: part/templates/part/part_sidebar.html:58 stock/templates/stock/item.html:122
+#: order/templates/order/purchase_order_detail.html:59
+#: order/templates/order/sales_order_detail.html:106
+#: order/templates/order/so_sidebar.html:15 part/templates/part/detail.html:206
+#: part/templates/part/part_sidebar.html:58 stock/templates/stock/item.html:121
 #: stock/templates/stock/stock_sidebar.html:23
 msgid "Attachments"
 msgstr "附件"
 
-#: build/templates/build/detail.html:314
+#: build/templates/build/detail.html:312
 msgid "Build Notes"
 msgstr "生产备注"
 
-#: build/templates/build/detail.html:318 build/templates/build/detail.html:402
-#: company/templates/company/detail.html:190
-#: company/templates/company/detail.html:217
-#: order/templates/order/purchase_order_detail.html:80
-#: order/templates/order/purchase_order_detail.html:108
-#: order/templates/order/sales_order_detail.html:127
-#: order/templates/order/sales_order_detail.html:186
-#: part/templates/part/detail.html:143 stock/templates/stock/item.html:142
-#: stock/templates/stock/item.html:247
-msgid "Edit Notes"
-msgstr "编辑备注"
-
-#: build/templates/build/detail.html:556
+#: build/templates/build/detail.html:548
 msgid "Allocation Complete"
 msgstr ""
 
-#: build/templates/build/detail.html:557
+#: build/templates/build/detail.html:549
 msgid "All untracked stock items have been allocated"
 msgstr ""
 
-#: build/templates/build/index.html:18 part/templates/part/detail.html:321
+#: build/templates/build/index.html:18 part/templates/part/detail.html:312
 msgid "New Build Order"
 msgstr "新建生产订单"
 
@@ -1703,7 +1695,7 @@ msgstr ""
 msgid "Copy category parameter templates when creating a part"
 msgstr ""
 
-#: common/models.py:781 part/models.py:2568 report/models.py:187
+#: common/models.py:781 part/models.py:2569 report/models.py:187
 #: templates/js/translated/table_filters.js:38
 #: templates/js/translated/table_filters.js:426
 msgid "Template"
@@ -1713,9 +1705,9 @@ msgstr "模板"
 msgid "Parts are templates by default"
 msgstr ""
 
-#: common/models.py:788 part/models.py:959 templates/js/translated/bom.js:1305
+#: common/models.py:788 part/models.py:959 templates/js/translated/bom.js:1315
 #: templates/js/translated/table_filters.js:168
-#: templates/js/translated/table_filters.js:438
+#: templates/js/translated/table_filters.js:442
 msgid "Assembly"
 msgstr "组装"
 
@@ -1724,7 +1716,7 @@ msgid "Parts can be assembled from other components by default"
 msgstr ""
 
 #: common/models.py:795 part/models.py:965
-#: templates/js/translated/table_filters.js:442
+#: templates/js/translated/table_filters.js:446
 msgid "Component"
 msgstr "组件"
 
@@ -1741,7 +1733,7 @@ msgid "Parts are purchaseable by default"
 msgstr "商品默认可购买"
 
 #: common/models.py:809 part/models.py:981
-#: templates/js/translated/table_filters.js:450
+#: templates/js/translated/table_filters.js:454
 msgid "Salable"
 msgstr "可销售"
 
@@ -1752,7 +1744,7 @@ msgstr "商品默认可销售"
 #: common/models.py:816 part/models.py:971
 #: templates/js/translated/table_filters.js:46
 #: templates/js/translated/table_filters.js:100
-#: templates/js/translated/table_filters.js:454
+#: templates/js/translated/table_filters.js:458
 msgid "Trackable"
 msgstr "可追踪"
 
@@ -2354,7 +2346,7 @@ msgstr ""
 msgid "Preferred format for displaying dates"
 msgstr ""
 
-#: common/models.py:1371 part/templates/part/detail.html:40
+#: common/models.py:1371 part/templates/part/detail.html:39
 msgid "Part Scheduling"
 msgstr ""
 
@@ -2368,7 +2360,7 @@ msgstr ""
 
 #: common/models.py:1437 company/serializers.py:264
 #: company/templates/company/supplier_part.html:256
-#: templates/js/translated/part.js:939 templates/js/translated/part.js:1907
+#: templates/js/translated/part.js:976 templates/js/translated/part.js:1962
 msgid "Price"
 msgstr "价格"
 
@@ -2461,9 +2453,9 @@ msgid "Was the work on this message finished?"
 msgstr ""
 
 #: common/views.py:93 order/templates/order/order_wizard/po_upload.html:49
-#: order/templates/order/purchase_order_detail.html:24 order/views.py:243
+#: order/templates/order/purchase_order_detail.html:23 order/views.py:243
 #: part/templates/part/import_wizard/part_upload.html:47 part/views.py:208
-#: templates/patterns/wizard/upload.html:35
+#: templates/patterns/wizard/upload.html:37
 msgid "Upload File"
 msgstr "上传文件"
 
@@ -2492,7 +2484,7 @@ msgstr "已导入商品"
 #: part/templates/part/import_wizard/match_references.html:19
 #: part/templates/part/import_wizard/part_upload.html:45
 #: templates/patterns/wizard/match_fields.html:26
-#: templates/patterns/wizard/upload.html:33
+#: templates/patterns/wizard/upload.html:35
 msgid "Previous Step"
 msgstr ""
 
@@ -2625,7 +2617,7 @@ msgstr "选择制造商"
 #: company/templates/company/supplier_part.html:105
 #: templates/js/translated/company.js:533
 #: templates/js/translated/company.js:818 templates/js/translated/order.js:1211
-#: templates/js/translated/part.js:246 templates/js/translated/part.js:897
+#: templates/js/translated/part.js:246 templates/js/translated/part.js:934
 msgid "MPN"
 msgstr "MPN"
 
@@ -2655,7 +2647,7 @@ msgstr "参数名称"
 #: company/models.py:422
 #: report/templates/report/inventree_test_report_base.html:95
 #: stock/models.py:2131 templates/js/translated/company.js:647
-#: templates/js/translated/part.js:717 templates/js/translated/stock.js:1296
+#: templates/js/translated/part.js:754 templates/js/translated/stock.js:1296
 msgid "Value"
 msgstr "数值"
 
@@ -2663,10 +2655,10 @@ msgstr "数值"
 msgid "Parameter value"
 msgstr "参数值"
 
-#: company/models.py:429 part/models.py:953 part/models.py:2536
+#: company/models.py:429 part/models.py:953 part/models.py:2537
 #: part/templates/part/part_base.html:308
 #: templates/InvenTree/settings/settings.html:325
-#: templates/js/translated/company.js:653 templates/js/translated/part.js:723
+#: templates/js/translated/company.js:653 templates/js/translated/part.js:760
 msgid "Units"
 msgstr "单位"
 
@@ -2685,7 +2677,7 @@ msgstr ""
 #: part/bom.py:265 stock/templates/stock/item_base.html:381
 #: templates/js/translated/company.js:337
 #: templates/js/translated/company.js:774 templates/js/translated/order.js:958
-#: templates/js/translated/part.js:216 templates/js/translated/part.js:865
+#: templates/js/translated/part.js:216 templates/js/translated/part.js:902
 #: templates/js/translated/table_filters.js:397
 msgid "Supplier"
 msgstr "供应商"
@@ -2696,7 +2688,7 @@ msgstr "选择供应商"
 
 #: company/models.py:551 company/templates/company/supplier_part.html:91
 #: part/bom.py:238 part/bom.py:266 templates/js/translated/order.js:1198
-#: templates/js/translated/part.js:227 templates/js/translated/part.js:883
+#: templates/js/translated/part.js:227 templates/js/translated/part.js:920
 msgid "SKU"
 msgstr "SKU"
 
@@ -2717,17 +2709,17 @@ msgid "Supplier part description"
 msgstr "供应商商品描述"
 
 #: company/models.py:576 company/templates/company/supplier_part.html:119
-#: part/models.py:2761 part/templates/part/upload_bom.html:59
+#: part/models.py:2762 part/templates/part/upload_bom.html:59
 #: report/templates/report/inventree_po_report.html:93
 #: report/templates/report/inventree_so_report.html:93 stock/serializers.py:409
 msgid "Note"
 msgstr "备注"
 
-#: company/models.py:580 part/models.py:1846
+#: company/models.py:580 part/models.py:1847
 msgid "base cost"
 msgstr ""
 
-#: company/models.py:580 part/models.py:1846
+#: company/models.py:580 part/models.py:1847
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr "最低收费(例如库存费)"
 
@@ -2741,7 +2733,7 @@ msgstr "打包"
 msgid "Part packaging"
 msgstr "商品打包"
 
-#: company/models.py:584 part/models.py:1848
+#: company/models.py:584 part/models.py:1849
 msgid "multiple"
 msgstr ""
 
@@ -2827,129 +2819,129 @@ msgstr "电话"
 msgid "Upload Image"
 msgstr "上传图片"
 
-#: company/templates/company/detail.html:15
+#: company/templates/company/detail.html:14
 #: company/templates/company/manufacturer_part_sidebar.html:7
 #: templates/InvenTree/search.html:118
 msgid "Supplier Parts"
 msgstr "供应商商品"
 
-#: company/templates/company/detail.html:19
+#: company/templates/company/detail.html:18
 #: order/templates/order/order_wizard/select_parts.html:44
 msgid "Create new supplier part"
 msgstr "创建新的供应商商品"
 
-#: company/templates/company/detail.html:20
+#: company/templates/company/detail.html:19
 #: company/templates/company/manufacturer_part.html:118
-#: part/templates/part/detail.html:362
+#: part/templates/part/detail.html:353
 msgid "New Supplier Part"
 msgstr "新建供应商商品"
 
-#: company/templates/company/detail.html:32
-#: company/templates/company/detail.html:79
+#: company/templates/company/detail.html:31
+#: company/templates/company/detail.html:78
 #: company/templates/company/manufacturer_part.html:127
 #: company/templates/company/manufacturer_part.html:156
-#: part/templates/part/category.html:168 part/templates/part/detail.html:371
-#: part/templates/part/detail.html:400
+#: part/templates/part/category.html:168 part/templates/part/detail.html:362
+#: part/templates/part/detail.html:391
 msgid "Options"
 msgstr "选项"
 
-#: company/templates/company/detail.html:37
-#: company/templates/company/detail.html:84
+#: company/templates/company/detail.html:36
+#: company/templates/company/detail.html:83
 #: part/templates/part/category.html:174
 msgid "Order parts"
 msgstr "订购商品"
 
-#: company/templates/company/detail.html:42
-#: company/templates/company/detail.html:89
+#: company/templates/company/detail.html:41
+#: company/templates/company/detail.html:88
 msgid "Delete parts"
 msgstr "删除商品"
 
-#: company/templates/company/detail.html:43
-#: company/templates/company/detail.html:90
+#: company/templates/company/detail.html:42
+#: company/templates/company/detail.html:89
 msgid "Delete Parts"
 msgstr "删除商品"
 
-#: company/templates/company/detail.html:62 templates/InvenTree/search.html:103
+#: company/templates/company/detail.html:61 templates/InvenTree/search.html:103
 msgid "Manufacturer Parts"
 msgstr "制造商商品"
 
-#: company/templates/company/detail.html:66
+#: company/templates/company/detail.html:65
 msgid "Create new manufacturer part"
 msgstr "新建制造商商品"
 
-#: company/templates/company/detail.html:67 part/templates/part/detail.html:390
+#: company/templates/company/detail.html:66 part/templates/part/detail.html:381
 msgid "New Manufacturer Part"
 msgstr "新建制造商商品"
 
-#: company/templates/company/detail.html:107
+#: company/templates/company/detail.html:106
 msgid "Supplier Stock"
 msgstr "供货商库存"
 
-#: company/templates/company/detail.html:117
+#: company/templates/company/detail.html:116
 #: company/templates/company/sidebar.html:12
 #: company/templates/company/supplier_part_sidebar.html:7
 #: order/templates/order/order_base.html:13
 #: order/templates/order/purchase_orders.html:8
 #: order/templates/order/purchase_orders.html:12
-#: part/templates/part/detail.html:78 part/templates/part/part_sidebar.html:38
+#: part/templates/part/detail.html:77 part/templates/part/part_sidebar.html:38
 #: templates/InvenTree/index.html:252 templates/InvenTree/search.html:197
 #: templates/InvenTree/settings/sidebar.html:47
-#: templates/js/translated/search.js:171 templates/navbar.html:47
+#: templates/js/translated/search.js:173 templates/navbar.html:47
 #: users/models.py:45
 msgid "Purchase Orders"
 msgstr "采购订单"
 
-#: company/templates/company/detail.html:121
+#: company/templates/company/detail.html:120
 #: order/templates/order/purchase_orders.html:17
 msgid "Create new purchase order"
 msgstr "新建采购订单"
 
-#: company/templates/company/detail.html:122
+#: company/templates/company/detail.html:121
 #: order/templates/order/purchase_orders.html:18
 msgid "New Purchase Order"
 msgstr "新建采购订单"
 
-#: company/templates/company/detail.html:143
+#: company/templates/company/detail.html:142
 #: company/templates/company/sidebar.html:20
 #: order/templates/order/sales_order_base.html:13
 #: order/templates/order/sales_orders.html:8
 #: order/templates/order/sales_orders.html:15
-#: part/templates/part/detail.html:101 part/templates/part/part_sidebar.html:42
+#: part/templates/part/detail.html:100 part/templates/part/part_sidebar.html:42
 #: templates/InvenTree/index.html:283 templates/InvenTree/search.html:217
 #: templates/InvenTree/settings/sidebar.html:49
-#: templates/js/translated/search.js:188 templates/navbar.html:58
+#: templates/js/translated/search.js:190 templates/navbar.html:58
 #: users/models.py:46
 msgid "Sales Orders"
 msgstr "销售订单"
 
-#: company/templates/company/detail.html:147
+#: company/templates/company/detail.html:146
 #: order/templates/order/sales_orders.html:20
 msgid "Create new sales order"
 msgstr "新建销售订单"
 
-#: company/templates/company/detail.html:148
+#: company/templates/company/detail.html:147
 #: order/templates/order/sales_orders.html:21
 msgid "New Sales Order"
 msgstr "新建销售订单"
 
-#: company/templates/company/detail.html:168
+#: company/templates/company/detail.html:167
 #: templates/js/translated/build.js:1295
 msgid "Assigned Stock"
 msgstr ""
 
-#: company/templates/company/detail.html:186
+#: company/templates/company/detail.html:184
 msgid "Company Notes"
 msgstr "公司备注"
 
-#: company/templates/company/detail.html:380
+#: company/templates/company/detail.html:375
 #: company/templates/company/manufacturer_part.html:215
-#: part/templates/part/detail.html:449
+#: part/templates/part/detail.html:452
 msgid "Delete Supplier Parts?"
 msgstr "删除供应商商品？"
 
-#: company/templates/company/detail.html:381
+#: company/templates/company/detail.html:376
 #: company/templates/company/manufacturer_part.html:216
-#: part/templates/part/detail.html:450
+#: part/templates/part/detail.html:453
 msgid "All selected supplier parts will be deleted"
 msgstr "删除所有选定的供应商商品"
 
@@ -2966,7 +2958,7 @@ msgstr "制造商"
 #: company/templates/company/manufacturer_part.html:35
 #: company/templates/company/supplier_part.html:34
 #: company/templates/company/supplier_part.html:159
-#: part/templates/part/detail.html:81 part/templates/part/part_base.html:80
+#: part/templates/part/detail.html:80 part/templates/part/part_base.html:80
 msgid "Order part"
 msgstr "订购商品"
 
@@ -2993,15 +2985,15 @@ msgid "Suppliers"
 msgstr "供应商"
 
 #: company/templates/company/manufacturer_part.html:129
-#: part/templates/part/detail.html:373
+#: part/templates/part/detail.html:364
 msgid "Delete supplier parts"
 msgstr "删除供应商商品"
 
 #: company/templates/company/manufacturer_part.html:129
 #: company/templates/company/manufacturer_part.html:158
 #: company/templates/company/manufacturer_part.html:254
-#: part/templates/part/detail.html:373 part/templates/part/detail.html:402
-#: templates/js/translated/company.js:426 templates/js/translated/helpers.js:31
+#: part/templates/part/detail.html:364 part/templates/part/detail.html:393
+#: templates/js/translated/company.js:426 templates/js/translated/helpers.js:32
 #: users/models.py:218
 msgid "Delete"
 msgstr "删除"
@@ -3009,12 +3001,12 @@ msgstr "删除"
 #: company/templates/company/manufacturer_part.html:143
 #: company/templates/company/manufacturer_part_sidebar.html:5
 #: part/templates/part/category_sidebar.html:17
-#: part/templates/part/detail.html:189 part/templates/part/part_sidebar.html:9
+#: part/templates/part/detail.html:180 part/templates/part/part_sidebar.html:9
 msgid "Parameters"
 msgstr "参数"
 
 #: company/templates/company/manufacturer_part.html:147
-#: part/templates/part/detail.html:194
+#: part/templates/part/detail.html:185
 #: templates/InvenTree/settings/category.html:12
 #: templates/InvenTree/settings/part.html:66
 msgid "New Parameter"
@@ -3025,7 +3017,7 @@ msgid "Delete parameters"
 msgstr "删除参数"
 
 #: company/templates/company/manufacturer_part.html:191
-#: part/templates/part/detail.html:892
+#: part/templates/part/detail.html:865
 msgid "Add Parameter"
 msgstr "添加参数"
 
@@ -3076,12 +3068,12 @@ msgid "Supplier Part Stock"
 msgstr "供货商商品库存"
 
 #: company/templates/company/supplier_part.html:141
-#: part/templates/part/detail.html:24 stock/templates/stock/location.html:167
+#: part/templates/part/detail.html:23 stock/templates/stock/location.html:167
 msgid "Create new stock item"
 msgstr ""
 
 #: company/templates/company/supplier_part.html:142
-#: part/templates/part/detail.html:25 stock/templates/stock/location.html:168
+#: part/templates/part/detail.html:24 stock/templates/stock/location.html:168
 #: templates/js/translated/stock.js:376
 msgid "New Stock Item"
 msgstr ""
@@ -3092,7 +3084,7 @@ msgid "Supplier Part Orders"
 msgstr "供应商商品订单"
 
 #: company/templates/company/supplier_part.html:160
-#: part/templates/part/detail.html:82
+#: part/templates/part/detail.html:81
 msgid "Order Part"
 msgstr "订购商品"
 
@@ -3137,10 +3129,10 @@ msgstr ""
 #: stock/templates/stock/stock_app_base.html:10
 #: templates/InvenTree/search.html:150
 #: templates/InvenTree/settings/sidebar.html:43
-#: templates/js/translated/bom.js:553 templates/js/translated/part.js:497
-#: templates/js/translated/part.js:632 templates/js/translated/part.js:1165
-#: templates/js/translated/part.js:1326 templates/js/translated/stock.js:900
-#: templates/js/translated/stock.js:1676 templates/navbar.html:28
+#: templates/js/translated/bom.js:553 templates/js/translated/part.js:669
+#: templates/js/translated/part.js:1204 templates/js/translated/part.js:1365
+#: templates/js/translated/stock.js:900 templates/js/translated/stock.js:1676
+#: templates/navbar.html:28
 msgid "Stock"
 msgstr "库存"
 
@@ -3163,7 +3155,7 @@ msgstr "定价"
 #: stock/templates/stock/location.html:152
 #: stock/templates/stock/location.html:164
 #: stock/templates/stock/location_sidebar.html:7
-#: templates/InvenTree/search.html:152 templates/js/translated/search.js:126
+#: templates/InvenTree/search.html:152 templates/js/translated/search.js:127
 #: templates/js/translated/stock.js:2291 templates/stats.html:105
 #: templates/stats.html:114 users/models.py:43
 msgid "Stock Items"
@@ -3186,7 +3178,7 @@ msgstr "客户信息"
 msgid "New Customer"
 msgstr "新建客户"
 
-#: company/views.py:69 templates/js/translated/search.js:157
+#: company/views.py:69 templates/js/translated/search.js:159
 msgid "Companies"
 msgstr "公司"
 
@@ -3436,7 +3428,7 @@ msgstr ""
 #: order/templates/order/order_base.html:18
 #: report/templates/report/inventree_po_report.html:77
 #: stock/templates/stock/item_base.html:336
-#: templates/js/translated/order.js:936 templates/js/translated/part.js:840
+#: templates/js/translated/order.js:936 templates/js/translated/part.js:877
 #: templates/js/translated/stock.js:1831 templates/js/translated/stock.js:2366
 msgid "Purchase Order"
 msgstr ""
@@ -3447,7 +3439,7 @@ msgstr "供应商商品"
 
 #: order/models.py:920 order/templates/order/order_base.html:163
 #: templates/js/translated/order.js:714 templates/js/translated/order.js:1313
-#: templates/js/translated/part.js:934 templates/js/translated/part.js:961
+#: templates/js/translated/part.js:971 templates/js/translated/part.js:998
 #: templates/js/translated/table_filters.js:312
 msgid "Received"
 msgstr ""
@@ -3556,7 +3548,7 @@ msgid "Line"
 msgstr ""
 
 #: order/models.py:1248 order/serializers.py:918 order/serializers.py:1046
-#: templates/js/translated/model_renderers.js:298
+#: templates/js/translated/model_renderers.js:296
 msgid "Shipment"
 msgstr ""
 
@@ -3693,7 +3685,7 @@ msgid "Receive items"
 msgstr ""
 
 #: order/templates/order/order_base.html:58
-#: order/templates/order/purchase_order_detail.html:31
+#: order/templates/order/purchase_order_detail.html:30
 msgid "Receive Items"
 msgstr ""
 
@@ -3786,7 +3778,7 @@ msgstr "选择供应商商品"
 #: part/templates/part/import_wizard/match_fields.html:71
 #: part/templates/part/import_wizard/match_references.html:49
 #: templates/js/translated/bom.js:76 templates/js/translated/build.js:381
-#: templates/js/translated/build.js:529 templates/js/translated/build.js:1573
+#: templates/js/translated/build.js:529 templates/js/translated/build.js:1588
 #: templates/js/translated/order.js:662 templates/js/translated/order.js:1693
 #: templates/js/translated/stock.js:566 templates/js/translated/stock.js:734
 #: templates/patterns/wizard/match_fields.html:70
@@ -3804,7 +3796,7 @@ msgstr ""
 #: order/templates/order/order_wizard/po_upload.html:25
 #: part/templates/part/import_wizard/ajax_part_upload.html:10
 #: part/templates/part/import_wizard/part_upload.html:23
-#: templates/patterns/wizard/upload.html:11
+#: templates/patterns/wizard/upload.html:13
 #, python-format
 msgid "Step %(step)s of %(count)s"
 msgstr "步骤 %(step)s / %(count)s"
@@ -3882,27 +3874,27 @@ msgstr ""
 msgid "Received Stock"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:18
+#: order/templates/order/purchase_order_detail.html:17
 msgid "Purchase Order Items"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:27
-#: order/templates/order/purchase_order_detail.html:166
-#: order/templates/order/sales_order_detail.html:23
-#: order/templates/order/sales_order_detail.html:233
+#: order/templates/order/purchase_order_detail.html:26
+#: order/templates/order/purchase_order_detail.html:159
+#: order/templates/order/sales_order_detail.html:22
+#: order/templates/order/sales_order_detail.html:226
 msgid "Add Line Item"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:30
+#: order/templates/order/purchase_order_detail.html:29
 msgid "Receive selected items"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:50
+#: order/templates/order/purchase_order_detail.html:49
 msgid "Received Items"
 msgstr ""
 
-#: order/templates/order/purchase_order_detail.html:76
-#: order/templates/order/sales_order_detail.html:123
+#: order/templates/order/purchase_order_detail.html:74
+#: order/templates/order/sales_order_detail.html:121
 msgid "Order Notes"
 msgstr ""
 
@@ -3934,7 +3926,7 @@ msgid "Customer Reference"
 msgstr ""
 
 #: order/templates/order/sales_order_base.html:140
-#: order/templates/order/sales_order_detail.html:78
+#: order/templates/order/sales_order_detail.html:77
 #: order/templates/order/so_sidebar.html:11
 msgid "Completed Shipments"
 msgstr ""
@@ -3952,21 +3944,21 @@ msgstr "警告"
 msgid "Cancelling this order means that the order will no longer be editable."
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:18
+#: order/templates/order/sales_order_detail.html:17
 msgid "Sales Order Items"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:44
+#: order/templates/order/sales_order_detail.html:43
 #: order/templates/order/so_sidebar.html:8
 msgid "Pending Shipments"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:48
-#: templates/js/translated/bom.js:943 templates/js/translated/build.js:1481
+#: order/templates/order/sales_order_detail.html:47
+#: templates/js/translated/bom.js:953 templates/js/translated/build.js:1496
 msgid "Actions"
 msgstr ""
 
-#: order/templates/order/sales_order_detail.html:57
+#: order/templates/order/sales_order_detail.html:56
 msgid "New Shipment"
 msgstr ""
 
@@ -4065,19 +4057,19 @@ msgstr ""
 msgid "This option must be selected"
 msgstr ""
 
-#: part/api.py:1013
+#: part/api.py:1027
 msgid "Must be greater than zero"
 msgstr "必须大于0"
 
-#: part/api.py:1017
+#: part/api.py:1031
 msgid "Must be a valid quantity"
 msgstr "必须是有效的数量"
 
-#: part/api.py:1032
+#: part/api.py:1046
 msgid "Specify location for initial part stock"
 msgstr "指定初始初始商品仓储地点"
 
-#: part/api.py:1063 part/api.py:1067 part/api.py:1082 part/api.py:1086
+#: part/api.py:1077 part/api.py:1081 part/api.py:1096 part/api.py:1100
 msgid "This field is required"
 msgstr "此字段为必填"
 
@@ -4095,7 +4087,9 @@ msgid "Available Stock"
 msgstr "可用库存"
 
 #: part/bom.py:128 part/templates/part/part_base.html:207
-#: templates/js/translated/part.js:1341
+#: templates/js/translated/part.js:508 templates/js/translated/part.js:528
+#: templates/js/translated/part.js:1207 templates/js/translated/part.js:1379
+#: templates/js/translated/part.js:1395
 msgid "On Order"
 msgstr ""
 
@@ -4127,13 +4121,13 @@ msgstr ""
 msgid "Default keywords for parts in this category"
 msgstr "此类别商品的默认关键字"
 
-#: part/models.py:126 part/models.py:2612 part/templates/part/category.html:15
+#: part/models.py:126 part/models.py:2613 part/templates/part/category.html:15
 #: part/templates/part/part_app_base.html:10
 msgid "Part Category"
 msgstr "商品类别"
 
 #: part/models.py:127 part/templates/part/category.html:128
-#: templates/InvenTree/search.html:95 templates/js/translated/search.js:112
+#: templates/InvenTree/search.html:95 templates/js/translated/search.js:113
 #: templates/stats.html:96 users/models.py:40
 msgid "Part Categories"
 msgstr "商品类别"
@@ -4144,7 +4138,7 @@ msgstr "商品类别"
 #: part/templates/part/category_sidebar.html:9
 #: templates/InvenTree/index.html:85 templates/InvenTree/search.html:82
 #: templates/InvenTree/settings/sidebar.html:39
-#: templates/js/translated/part.js:1703 templates/js/translated/search.js:98
+#: templates/js/translated/part.js:1758 templates/js/translated/search.js:99
 #: templates/navbar.html:21 templates/stats.html:92 templates/stats.html:101
 #: users/models.py:41
 msgid "Parts"
@@ -4175,7 +4169,7 @@ msgstr ""
 msgid "Duplicate IPN not allowed in part settings"
 msgstr "在商品设置中不允许重复的IPN"
 
-#: part/models.py:811 part/models.py:2665
+#: part/models.py:811 part/models.py:2666
 msgid "Part name"
 msgstr "商品名称"
 
@@ -4208,12 +4202,12 @@ msgstr "关键词"
 msgid "Part keywords to improve visibility in search results"
 msgstr "提高搜索结果可见性的关键字"
 
-#: part/models.py:849 part/models.py:2362 part/models.py:2611
+#: part/models.py:849 part/models.py:2363 part/models.py:2612
 #: part/templates/part/part_base.html:285
 #: part/templates/part/set_category.html:15
 #: templates/InvenTree/notifications/notifications.html:65
 #: templates/InvenTree/settings/settings.html:224
-#: templates/js/translated/part.js:1308
+#: templates/js/translated/part.js:1347
 msgid "Category"
 msgstr "类别"
 
@@ -4222,7 +4216,7 @@ msgid "Part category"
 msgstr "商品类别"
 
 #: part/models.py:855 part/templates/part/part_base.html:294
-#: templates/js/translated/part.js:620 templates/js/translated/part.js:1261
+#: templates/js/translated/part.js:657 templates/js/translated/part.js:1300
 #: templates/js/translated/stock.js:1648
 msgid "IPN"
 msgstr ""
@@ -4236,7 +4230,7 @@ msgid "Part revision or version number"
 msgstr "商品版本号"
 
 #: part/models.py:863 part/templates/part/part_base.html:301
-#: report/models.py:200 templates/js/translated/part.js:624
+#: report/models.py:200 templates/js/translated/part.js:661
 msgid "Revision"
 msgstr ""
 
@@ -4324,313 +4318,313 @@ msgstr ""
 msgid "Creation User"
 msgstr "新建用户"
 
-#: part/models.py:1848
+#: part/models.py:1849
 msgid "Sell multiple"
 msgstr ""
 
-#: part/models.py:2412
+#: part/models.py:2413
 msgid "Test templates can only be created for trackable parts"
 msgstr ""
 
-#: part/models.py:2429
+#: part/models.py:2430
 msgid "Test with this name already exists for this part"
 msgstr ""
 
-#: part/models.py:2449 templates/js/translated/part.js:1754
+#: part/models.py:2450 templates/js/translated/part.js:1809
 #: templates/js/translated/stock.js:1276
 msgid "Test Name"
 msgstr ""
 
-#: part/models.py:2450
+#: part/models.py:2451
 msgid "Enter a name for the test"
 msgstr ""
 
-#: part/models.py:2455
+#: part/models.py:2456
 msgid "Test Description"
 msgstr ""
 
-#: part/models.py:2456
+#: part/models.py:2457
 msgid "Enter description for this test"
 msgstr ""
 
-#: part/models.py:2461 templates/js/translated/part.js:1763
+#: part/models.py:2462 templates/js/translated/part.js:1818
 #: templates/js/translated/table_filters.js:276
 msgid "Required"
 msgstr ""
 
-#: part/models.py:2462
+#: part/models.py:2463
 msgid "Is this test required to pass?"
 msgstr ""
 
-#: part/models.py:2467 templates/js/translated/part.js:1771
+#: part/models.py:2468 templates/js/translated/part.js:1826
 msgid "Requires Value"
 msgstr ""
 
-#: part/models.py:2468
+#: part/models.py:2469
 msgid "Does this test require a value when adding a test result?"
 msgstr ""
 
-#: part/models.py:2473 templates/js/translated/part.js:1778
+#: part/models.py:2474 templates/js/translated/part.js:1833
 msgid "Requires Attachment"
 msgstr ""
 
-#: part/models.py:2474
+#: part/models.py:2475
 msgid "Does this test require a file attachment when adding a test result?"
 msgstr ""
 
-#: part/models.py:2485
+#: part/models.py:2486
 #, python-brace-format
 msgid "Illegal character in template name ({c})"
 msgstr ""
 
-#: part/models.py:2521
+#: part/models.py:2522
 msgid "Parameter template name must be unique"
 msgstr ""
 
-#: part/models.py:2529
+#: part/models.py:2530
 msgid "Parameter Name"
 msgstr ""
 
-#: part/models.py:2536
+#: part/models.py:2537
 msgid "Parameter Units"
 msgstr ""
 
-#: part/models.py:2566
+#: part/models.py:2567
 msgid "Parent Part"
 msgstr ""
 
-#: part/models.py:2568 part/models.py:2617 part/models.py:2618
+#: part/models.py:2569 part/models.py:2618 part/models.py:2619
 #: templates/InvenTree/settings/settings.html:219
 msgid "Parameter Template"
 msgstr "参数模板"
 
-#: part/models.py:2570
+#: part/models.py:2571
 msgid "Data"
 msgstr ""
 
-#: part/models.py:2570
+#: part/models.py:2571
 msgid "Parameter Value"
 msgstr ""
 
-#: part/models.py:2622 templates/InvenTree/settings/settings.html:228
+#: part/models.py:2623 templates/InvenTree/settings/settings.html:228
 msgid "Default Value"
 msgstr "默认值"
 
-#: part/models.py:2623
+#: part/models.py:2624
 msgid "Default Parameter Value"
 msgstr ""
 
-#: part/models.py:2657
+#: part/models.py:2658
 msgid "Part ID or part name"
 msgstr ""
 
-#: part/models.py:2660 templates/js/translated/model_renderers.js:186
+#: part/models.py:2661
 msgid "Part ID"
 msgstr "商品ID"
 
-#: part/models.py:2661
+#: part/models.py:2662
 msgid "Unique part ID value"
 msgstr ""
 
-#: part/models.py:2664
+#: part/models.py:2665
 msgid "Part Name"
 msgstr ""
 
-#: part/models.py:2668
+#: part/models.py:2669
 msgid "Part IPN"
 msgstr ""
 
-#: part/models.py:2669
+#: part/models.py:2670
 msgid "Part IPN value"
 msgstr ""
 
-#: part/models.py:2672
+#: part/models.py:2673
 msgid "Level"
 msgstr ""
 
-#: part/models.py:2673
+#: part/models.py:2674
 msgid "BOM level"
 msgstr ""
 
-#: part/models.py:2734
+#: part/models.py:2735
 msgid "Select parent part"
 msgstr ""
 
-#: part/models.py:2742
+#: part/models.py:2743
 msgid "Sub part"
 msgstr ""
 
-#: part/models.py:2743
+#: part/models.py:2744
 msgid "Select part to be used in BOM"
 msgstr ""
 
-#: part/models.py:2749
+#: part/models.py:2750
 msgid "BOM quantity for this BOM item"
 msgstr ""
 
-#: part/models.py:2751 part/templates/part/upload_bom.html:58
-#: templates/js/translated/bom.js:789 templates/js/translated/bom.js:863
+#: part/models.py:2752 part/templates/part/upload_bom.html:58
+#: templates/js/translated/bom.js:789 templates/js/translated/bom.js:871
 #: templates/js/translated/table_filters.js:92
 msgid "Optional"
 msgstr "可选项"
 
-#: part/models.py:2751
+#: part/models.py:2752
 msgid "This BOM item is optional"
 msgstr ""
 
-#: part/models.py:2754 part/templates/part/upload_bom.html:55
+#: part/models.py:2755 part/templates/part/upload_bom.html:55
 msgid "Overage"
 msgstr ""
 
-#: part/models.py:2755
+#: part/models.py:2756
 msgid "Estimated build wastage quantity (absolute or percentage)"
 msgstr ""
 
-#: part/models.py:2758
+#: part/models.py:2759
 msgid "BOM item reference"
 msgstr ""
 
-#: part/models.py:2761
+#: part/models.py:2762
 msgid "BOM item notes"
 msgstr ""
 
-#: part/models.py:2763
+#: part/models.py:2764
 msgid "Checksum"
 msgstr ""
 
-#: part/models.py:2763
+#: part/models.py:2764
 msgid "BOM line checksum"
 msgstr ""
 
-#: part/models.py:2767 part/templates/part/upload_bom.html:57
-#: templates/js/translated/bom.js:880
+#: part/models.py:2768 part/templates/part/upload_bom.html:57
+#: templates/js/translated/bom.js:888
 #: templates/js/translated/table_filters.js:68
 #: templates/js/translated/table_filters.js:88
 msgid "Inherited"
 msgstr "继承项"
 
-#: part/models.py:2768
+#: part/models.py:2769
 msgid "This BOM item is inherited by BOMs for variant parts"
 msgstr ""
 
-#: part/models.py:2773 part/templates/part/upload_bom.html:56
-#: templates/js/translated/bom.js:872
+#: part/models.py:2774 part/templates/part/upload_bom.html:56
+#: templates/js/translated/bom.js:880
 msgid "Allow Variants"
 msgstr ""
 
-#: part/models.py:2774
+#: part/models.py:2775
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr ""
 
-#: part/models.py:2859 stock/models.py:461
+#: part/models.py:2860 stock/models.py:461
 msgid "Quantity must be integer value for trackable parts"
 msgstr ""
 
-#: part/models.py:2868 part/models.py:2870
+#: part/models.py:2869 part/models.py:2871
 msgid "Sub part must be specified"
 msgstr ""
 
-#: part/models.py:2999
+#: part/models.py:2983
 msgid "BOM Item Substitute"
 msgstr ""
 
-#: part/models.py:3021
+#: part/models.py:3005
 msgid "Substitute part cannot be the same as the master part"
 msgstr ""
 
-#: part/models.py:3033
+#: part/models.py:3017
 msgid "Parent BOM item"
 msgstr ""
 
-#: part/models.py:3041
+#: part/models.py:3025
 msgid "Substitute part"
 msgstr ""
 
-#: part/models.py:3052
+#: part/models.py:3036
 msgid "Part 1"
 msgstr ""
 
-#: part/models.py:3056
+#: part/models.py:3040
 msgid "Part 2"
 msgstr ""
 
-#: part/models.py:3056
+#: part/models.py:3040
 msgid "Select Related Part"
 msgstr ""
 
-#: part/models.py:3088
+#: part/models.py:3072
 msgid "Error creating relationship: check that the part is not related to itself and that the relationship is unique"
 msgstr ""
 
-#: part/serializers.py:674
+#: part/serializers.py:835
 msgid "Select part to copy BOM from"
 msgstr ""
 
-#: part/serializers.py:685
+#: part/serializers.py:846
 msgid "Remove Existing Data"
 msgstr ""
 
-#: part/serializers.py:686
+#: part/serializers.py:847
 msgid "Remove existing BOM items before copying"
 msgstr ""
 
-#: part/serializers.py:691
+#: part/serializers.py:852
 msgid "Include Inherited"
 msgstr ""
 
-#: part/serializers.py:692
+#: part/serializers.py:853
 msgid "Include BOM items which are inherited from templated parts"
 msgstr ""
 
-#: part/serializers.py:697
+#: part/serializers.py:858
 msgid "Skip Invalid Rows"
 msgstr ""
 
-#: part/serializers.py:698
+#: part/serializers.py:859
 msgid "Enable this option to skip invalid rows"
 msgstr ""
 
-#: part/serializers.py:703
+#: part/serializers.py:864
 msgid "Copy Substitute Parts"
 msgstr ""
 
-#: part/serializers.py:704
+#: part/serializers.py:865
 msgid "Copy substitute parts when duplicate BOM items"
 msgstr ""
 
-#: part/serializers.py:748
+#: part/serializers.py:909
 msgid "Clear Existing BOM"
 msgstr ""
 
-#: part/serializers.py:749
+#: part/serializers.py:910
 msgid "Delete existing BOM items before uploading"
 msgstr ""
 
-#: part/serializers.py:776
+#: part/serializers.py:937
 msgid "No part column specified"
 msgstr ""
 
-#: part/serializers.py:819
+#: part/serializers.py:980
 msgid "Multiple matching parts found"
 msgstr ""
 
-#: part/serializers.py:822
+#: part/serializers.py:983
 msgid "No matching part found"
 msgstr ""
 
-#: part/serializers.py:825
+#: part/serializers.py:986
 msgid "Part is not designated as a component"
 msgstr ""
 
-#: part/serializers.py:834
+#: part/serializers.py:995
 msgid "Quantity not provided"
 msgstr ""
 
-#: part/serializers.py:842
+#: part/serializers.py:1003
 msgid "Invalid quantity"
 msgstr ""
 
-#: part/serializers.py:861
+#: part/serializers.py:1022
 msgid "At least one BOM item is required"
 msgstr ""
 
@@ -4662,7 +4656,7 @@ msgstr ""
 msgid "The BOM for <em>%(part)s</em> has not been validated."
 msgstr ""
 
-#: part/templates/part/bom.html:30 part/templates/part/detail.html:272
+#: part/templates/part/bom.html:30 part/templates/part/detail.html:263
 msgid "BOM actions"
 msgstr ""
 
@@ -4831,150 +4825,150 @@ msgstr ""
 msgid "%(full_name)s - <em>%(desc)s</em> (%(match_per)s%% match)"
 msgstr ""
 
-#: part/templates/part/detail.html:21
+#: part/templates/part/detail.html:20
 msgid "Part Stock"
 msgstr "商品库存"
 
-#: part/templates/part/detail.html:53
+#: part/templates/part/detail.html:52
 msgid "Part Test Templates"
 msgstr ""
 
-#: part/templates/part/detail.html:58
+#: part/templates/part/detail.html:57
 msgid "Add Test Template"
 msgstr ""
 
-#: part/templates/part/detail.html:115 stock/templates/stock/item.html:58
+#: part/templates/part/detail.html:114 stock/templates/stock/item.html:57
 msgid "Sales Order Allocations"
 msgstr ""
 
-#: part/templates/part/detail.html:161
+#: part/templates/part/detail.html:137
+msgid "Part Notes"
+msgstr ""
+
+#: part/templates/part/detail.html:152
 msgid "Part Variants"
 msgstr ""
 
-#: part/templates/part/detail.html:165
+#: part/templates/part/detail.html:156
 msgid "Create new variant"
 msgstr ""
 
-#: part/templates/part/detail.html:166
+#: part/templates/part/detail.html:157
 msgid "New Variant"
 msgstr ""
 
-#: part/templates/part/detail.html:193
+#: part/templates/part/detail.html:184
 msgid "Add new parameter"
 msgstr ""
 
-#: part/templates/part/detail.html:230 part/templates/part/part_sidebar.html:55
+#: part/templates/part/detail.html:221 part/templates/part/part_sidebar.html:55
 msgid "Related Parts"
 msgstr ""
 
-#: part/templates/part/detail.html:234 part/templates/part/detail.html:235
+#: part/templates/part/detail.html:225 part/templates/part/detail.html:226
 msgid "Add Related"
 msgstr ""
 
-#: part/templates/part/detail.html:255 part/templates/part/part_sidebar.html:18
+#: part/templates/part/detail.html:246 part/templates/part/part_sidebar.html:18
 msgid "Bill of Materials"
 msgstr ""
 
-#: part/templates/part/detail.html:260
+#: part/templates/part/detail.html:251
 msgid "Export actions"
 msgstr ""
 
-#: part/templates/part/detail.html:264 templates/js/translated/bom.js:283
+#: part/templates/part/detail.html:255 templates/js/translated/bom.js:283
 msgid "Export BOM"
 msgstr ""
 
-#: part/templates/part/detail.html:266
+#: part/templates/part/detail.html:257
 msgid "Print BOM Report"
 msgstr ""
 
-#: part/templates/part/detail.html:276
+#: part/templates/part/detail.html:267
 msgid "Upload BOM"
 msgstr ""
 
-#: part/templates/part/detail.html:277 templates/js/translated/part.js:273
+#: part/templates/part/detail.html:268 templates/js/translated/part.js:273
 msgid "Copy BOM"
 msgstr ""
 
-#: part/templates/part/detail.html:278
+#: part/templates/part/detail.html:269
 msgid "Validate BOM"
 msgstr ""
 
-#: part/templates/part/detail.html:283
+#: part/templates/part/detail.html:274
 msgid "New BOM Item"
 msgstr ""
 
-#: part/templates/part/detail.html:284
+#: part/templates/part/detail.html:275
 msgid "Add BOM Item"
 msgstr ""
 
-#: part/templates/part/detail.html:297
+#: part/templates/part/detail.html:288
 msgid "Assemblies"
 msgstr ""
 
-#: part/templates/part/detail.html:315
+#: part/templates/part/detail.html:306
 msgid "Part Builds"
 msgstr ""
 
-#: part/templates/part/detail.html:342 stock/templates/stock/item.html:43
+#: part/templates/part/detail.html:333 stock/templates/stock/item.html:42
 msgid "Build Order Allocations"
 msgstr ""
 
-#: part/templates/part/detail.html:358
+#: part/templates/part/detail.html:349
 msgid "Part Suppliers"
 msgstr "商品供应商"
 
-#: part/templates/part/detail.html:386
+#: part/templates/part/detail.html:377
 msgid "Part Manufacturers"
 msgstr "商品制造商"
 
-#: part/templates/part/detail.html:402
+#: part/templates/part/detail.html:393
 msgid "Delete manufacturer parts"
 msgstr "删除制造商商品"
 
-#: part/templates/part/detail.html:593
+#: part/templates/part/detail.html:596
 msgid "Delete selected BOM items?"
 msgstr ""
 
-#: part/templates/part/detail.html:594
+#: part/templates/part/detail.html:597
 msgid "All selected BOM items will be deleted"
 msgstr ""
 
-#: part/templates/part/detail.html:643
+#: part/templates/part/detail.html:646
 msgid "Create BOM Item"
 msgstr ""
 
-#: part/templates/part/detail.html:687
+#: part/templates/part/detail.html:690
 msgid "Related Part"
 msgstr ""
 
-#: part/templates/part/detail.html:695
+#: part/templates/part/detail.html:698
 msgid "Add Related Part"
 msgstr ""
 
-#: part/templates/part/detail.html:792
+#: part/templates/part/detail.html:795
 msgid "Add Test Result Template"
 msgstr ""
 
-#: part/templates/part/detail.html:842
-msgid "Edit Part Notes"
-msgstr "编辑商品注释"
-
-#: part/templates/part/detail.html:955
+#: part/templates/part/detail.html:928
 #, python-format
 msgid "Purchase Unit Price - %(currency)s"
 msgstr ""
 
-#: part/templates/part/detail.html:967
+#: part/templates/part/detail.html:940
 #, python-format
 msgid "Unit Price-Cost Difference - %(currency)s"
 msgstr ""
 
-#: part/templates/part/detail.html:979
+#: part/templates/part/detail.html:952
 #, python-format
 msgid "Supplier Unit Cost - %(currency)s"
 msgstr ""
 
-#: part/templates/part/detail.html:1068
+#: part/templates/part/detail.html:1041
 #, python-format
 msgid "Unit Price - %(currency)s"
 msgstr ""
@@ -5118,8 +5112,8 @@ msgstr "商品是虚拟的(不是实体零件)"
 #: part/templates/part/part_base.html:143
 #: templates/js/translated/company.js:508
 #: templates/js/translated/company.js:765
-#: templates/js/translated/model_renderers.js:178
-#: templates/js/translated/part.js:535 templates/js/translated/part.js:612
+#: templates/js/translated/model_renderers.js:187
+#: templates/js/translated/part.js:572 templates/js/translated/part.js:649
 msgid "Inactive"
 msgstr ""
 
@@ -5164,12 +5158,13 @@ msgstr ""
 msgid "Allocated to Sales Orders"
 msgstr ""
 
-#: part/templates/part/part_base.html:259 templates/js/translated/bom.js:901
+#: part/templates/part/part_base.html:259 templates/js/translated/bom.js:909
 msgid "Can Build"
 msgstr ""
 
-#: part/templates/part/part_base.html:265 templates/js/translated/part.js:1172
-#: templates/js/translated/part.js:1345
+#: part/templates/part/part_base.html:265 templates/js/translated/part.js:511
+#: templates/js/translated/part.js:531 templates/js/translated/part.js:1211
+#: templates/js/translated/part.js:1383 templates/js/translated/part.js:1399
 msgid "Building"
 msgstr ""
 
@@ -5221,7 +5216,7 @@ msgid "Total Cost"
 msgstr ""
 
 #: part/templates/part/part_pricing.html:40 part/templates/part/prices.html:40
-#: templates/js/translated/bom.js:855
+#: templates/js/translated/bom.js:863
 msgid "No supplier pricing available"
 msgstr ""
 
@@ -5340,7 +5335,7 @@ msgstr ""
 msgid "Calculation parameters"
 msgstr ""
 
-#: part/templates/part/prices.html:155 templates/js/translated/bom.js:849
+#: part/templates/part/prices.html:155 templates/js/translated/bom.js:857
 msgid "Supplier Cost"
 msgstr ""
 
@@ -5382,9 +5377,8 @@ msgstr ""
 msgid "Set category for the following parts"
 msgstr "为以下商品设置类别"
 
-#: part/templates/part/stock_count.html:7 templates/js/translated/bom.js:811
-#: templates/js/translated/part.js:499 templates/js/translated/part.js:1162
-#: templates/js/translated/part.js:1349
+#: part/templates/part/stock_count.html:7 templates/js/translated/part.js:534
+#: templates/js/translated/part.js:1199 templates/js/translated/part.js:1403
 msgid "No Stock"
 msgstr ""
 
@@ -5744,7 +5738,7 @@ msgstr ""
 #: stock/models.py:623 stock/templates/stock/item_base.html:156
 #: templates/js/translated/build.js:374 templates/js/translated/build.js:522
 #: templates/js/translated/build.js:920 templates/js/translated/build.js:1309
-#: templates/js/translated/model_renderers.js:97
+#: templates/js/translated/model_renderers.js:103
 #: templates/js/translated/order.js:99 templates/js/translated/order.js:2142
 #: templates/js/translated/order.js:2231 templates/js/translated/stock.js:431
 msgid "Serial Number"
@@ -5959,7 +5953,7 @@ msgstr ""
 msgid "Delete this Stock Item when stock is depleted"
 msgstr ""
 
-#: stock/models.py:704 stock/templates/stock/item.html:138
+#: stock/models.py:704 stock/templates/stock/item.html:136
 msgid "Stock Item Notes"
 msgstr ""
 
@@ -6178,48 +6172,48 @@ msgstr ""
 msgid "Stock transaction notes"
 msgstr ""
 
-#: stock/templates/stock/item.html:18
+#: stock/templates/stock/item.html:17
 msgid "Stock Tracking Information"
 msgstr ""
 
-#: stock/templates/stock/item.html:23
+#: stock/templates/stock/item.html:22
 msgid "New Entry"
 msgstr ""
 
-#: stock/templates/stock/item.html:74
+#: stock/templates/stock/item.html:73
 msgid "Child Stock Items"
 msgstr ""
 
-#: stock/templates/stock/item.html:82
+#: stock/templates/stock/item.html:81
 msgid "This stock item does not have any child items"
 msgstr ""
 
-#: stock/templates/stock/item.html:91
+#: stock/templates/stock/item.html:90
 #: stock/templates/stock/stock_sidebar.html:12
 msgid "Test Data"
 msgstr ""
 
-#: stock/templates/stock/item.html:95 stock/templates/stock/item_base.html:60
+#: stock/templates/stock/item.html:94 stock/templates/stock/item_base.html:60
 msgid "Test Report"
 msgstr ""
 
-#: stock/templates/stock/item.html:99
+#: stock/templates/stock/item.html:98
 msgid "Delete Test Data"
 msgstr ""
 
-#: stock/templates/stock/item.html:103
+#: stock/templates/stock/item.html:102
 msgid "Add Test Data"
 msgstr ""
 
-#: stock/templates/stock/item.html:160
+#: stock/templates/stock/item.html:151
 msgid "Installed Stock Items"
 msgstr ""
 
-#: stock/templates/stock/item.html:164 templates/js/translated/stock.js:2669
+#: stock/templates/stock/item.html:155 templates/js/translated/stock.js:2669
 msgid "Install Stock Item"
 msgstr ""
 
-#: stock/templates/stock/item.html:321 templates/js/translated/stock.js:1444
+#: stock/templates/stock/item.html:315 templates/js/translated/stock.js:1444
 msgid "Add Test Result"
 msgstr ""
 
@@ -6479,7 +6473,7 @@ msgid "Sublocations"
 msgstr ""
 
 #: stock/templates/stock/location.html:147 templates/InvenTree/search.html:164
-#: templates/js/translated/search.js:143 templates/stats.html:109
+#: templates/js/translated/search.js:145 templates/stats.html:109
 #: users/models.py:42
 msgid "Stock Locations"
 msgstr "仓储地点"
@@ -7118,7 +7112,8 @@ msgid "Change Password"
 msgstr "更改密码"
 
 #: templates/InvenTree/settings/user.html:22
-#: templates/js/translated/helpers.js:26
+#: templates/js/translated/helpers.js:27 templates/notes_buttons.html:3
+#: templates/notes_buttons.html:4
 msgid "Edit"
 msgstr "编辑"
 
@@ -7599,15 +7594,15 @@ msgstr ""
 msgid "Add Attachment"
 msgstr "添加附件"
 
-#: templates/base.html:98
+#: templates/base.html:99
 msgid "Server Restart Required"
 msgstr ""
 
-#: templates/base.html:101
+#: templates/base.html:102
 msgid "A configuration option has been changed which requires a server restart"
 msgstr ""
 
-#: templates/base.html:101
+#: templates/base.html:102
 msgid "Contact your system administrator for further information"
 msgstr ""
 
@@ -7629,14 +7624,15 @@ msgid "The following parts are low on required stock"
 msgstr ""
 
 #: templates/email/build_order_required_stock.html:18
-#: templates/js/translated/bom.js:1340
+#: templates/js/translated/bom.js:1350
 msgid "Required Quantity"
 msgstr ""
 
 #: templates/email/build_order_required_stock.html:19
 #: templates/email/low_stock_notification.html:18
 #: templates/js/translated/bom.js:802 templates/js/translated/build.js:1425
-#: templates/js/translated/build.js:2129
+#: templates/js/translated/build.js:2144 templates/js/translated/part.js:518
+#: templates/js/translated/part.js:521
 #: templates/js/translated/table_filters.js:178
 msgid "Available"
 msgstr "空闲"
@@ -7674,67 +7670,67 @@ msgstr ""
 msgid "Remote image must not exceed maximum allowable file size"
 msgstr ""
 
-#: templates/js/translated/api.js:185 templates/js/translated/modals.js:1056
+#: templates/js/translated/api.js:190 templates/js/translated/modals.js:1056
 msgid "No Response"
 msgstr ""
 
-#: templates/js/translated/api.js:186 templates/js/translated/modals.js:1057
+#: templates/js/translated/api.js:191 templates/js/translated/modals.js:1057
 msgid "No response from the InvenTree server"
 msgstr ""
 
-#: templates/js/translated/api.js:192
+#: templates/js/translated/api.js:197
 msgid "Error 400: Bad request"
 msgstr ""
 
-#: templates/js/translated/api.js:193
+#: templates/js/translated/api.js:198
 msgid "API request returned error code 400"
 msgstr ""
 
-#: templates/js/translated/api.js:197 templates/js/translated/modals.js:1066
+#: templates/js/translated/api.js:202 templates/js/translated/modals.js:1066
 msgid "Error 401: Not Authenticated"
 msgstr ""
 
-#: templates/js/translated/api.js:198 templates/js/translated/modals.js:1067
+#: templates/js/translated/api.js:203 templates/js/translated/modals.js:1067
 msgid "Authentication credentials not supplied"
 msgstr ""
 
-#: templates/js/translated/api.js:202 templates/js/translated/modals.js:1071
+#: templates/js/translated/api.js:207 templates/js/translated/modals.js:1071
 msgid "Error 403: Permission Denied"
 msgstr ""
 
-#: templates/js/translated/api.js:203 templates/js/translated/modals.js:1072
+#: templates/js/translated/api.js:208 templates/js/translated/modals.js:1072
 msgid "You do not have the required permissions to access this function"
 msgstr ""
 
-#: templates/js/translated/api.js:207 templates/js/translated/modals.js:1076
+#: templates/js/translated/api.js:212 templates/js/translated/modals.js:1076
 msgid "Error 404: Resource Not Found"
 msgstr ""
 
-#: templates/js/translated/api.js:208 templates/js/translated/modals.js:1077
+#: templates/js/translated/api.js:213 templates/js/translated/modals.js:1077
 msgid "The requested resource could not be located on the server"
 msgstr ""
 
-#: templates/js/translated/api.js:212
+#: templates/js/translated/api.js:217
 msgid "Error 405: Method Not Allowed"
 msgstr ""
 
-#: templates/js/translated/api.js:213
+#: templates/js/translated/api.js:218
 msgid "HTTP method not allowed at URL"
 msgstr ""
 
-#: templates/js/translated/api.js:217 templates/js/translated/modals.js:1081
+#: templates/js/translated/api.js:222 templates/js/translated/modals.js:1081
 msgid "Error 408: Timeout"
 msgstr ""
 
-#: templates/js/translated/api.js:218 templates/js/translated/modals.js:1082
+#: templates/js/translated/api.js:223 templates/js/translated/modals.js:1082
 msgid "Connection timeout while requesting data from server"
 msgstr ""
 
-#: templates/js/translated/api.js:221
+#: templates/js/translated/api.js:226
 msgid "Unhandled Error Code"
 msgstr ""
 
-#: templates/js/translated/api.js:222
+#: templates/js/translated/api.js:227
 msgid "Error code"
 msgstr ""
 
@@ -7823,45 +7819,44 @@ msgstr ""
 msgid "Unlink"
 msgstr ""
 
-#: templates/js/translated/barcode.js:397 templates/js/translated/stock.js:991
+#: templates/js/translated/barcode.js:403 templates/js/translated/stock.js:991
 msgid "Remove stock item"
 msgstr ""
 
-#: templates/js/translated/barcode.js:439
+#: templates/js/translated/barcode.js:445
 msgid "Check Stock Items into Location"
 msgstr ""
 
-#: templates/js/translated/barcode.js:443
-#: templates/js/translated/barcode.js:573
+#: templates/js/translated/barcode.js:449
+#: templates/js/translated/barcode.js:581
 msgid "Check In"
 msgstr ""
 
-#: templates/js/translated/barcode.js:485
-#: templates/js/translated/barcode.js:612
-msgid "Error transferring stock"
+#: templates/js/translated/barcode.js:480
+msgid "No barcode provided"
 msgstr ""
 
-#: templates/js/translated/barcode.js:507
+#: templates/js/translated/barcode.js:515
 msgid "Stock Item already scanned"
 msgstr ""
 
-#: templates/js/translated/barcode.js:511
+#: templates/js/translated/barcode.js:519
 msgid "Stock Item already in this location"
 msgstr ""
 
-#: templates/js/translated/barcode.js:518
+#: templates/js/translated/barcode.js:526
 msgid "Added stock item"
 msgstr ""
 
-#: templates/js/translated/barcode.js:525
+#: templates/js/translated/barcode.js:533
 msgid "Barcode does not match Stock Item"
 msgstr ""
 
-#: templates/js/translated/barcode.js:568
+#: templates/js/translated/barcode.js:576
 msgid "Check Into Location"
 msgstr ""
 
-#: templates/js/translated/barcode.js:633
+#: templates/js/translated/barcode.js:639
 msgid "Barcode does not match a valid location"
 msgstr ""
 
@@ -7971,55 +7966,63 @@ msgstr ""
 msgid "Open subassembly"
 msgstr ""
 
-#: templates/js/translated/bom.js:820
+#: templates/js/translated/bom.js:815 templates/js/translated/build.js:1433
+msgid "No Stock Available"
+msgstr ""
+
+#: templates/js/translated/bom.js:818 templates/js/translated/build.js:1436
+msgid "Includes substitute stock"
+msgstr ""
+
+#: templates/js/translated/bom.js:828
 msgid "Substitutes"
 msgstr ""
 
-#: templates/js/translated/bom.js:835
+#: templates/js/translated/bom.js:843
 msgid "Purchase Price Range"
 msgstr ""
 
-#: templates/js/translated/bom.js:842
+#: templates/js/translated/bom.js:850
 msgid "Purchase Price Average"
 msgstr ""
 
-#: templates/js/translated/bom.js:891 templates/js/translated/bom.js:980
+#: templates/js/translated/bom.js:899 templates/js/translated/bom.js:990
 msgid "View BOM"
 msgstr ""
 
-#: templates/js/translated/bom.js:951
+#: templates/js/translated/bom.js:961
 msgid "Validate BOM Item"
 msgstr ""
 
-#: templates/js/translated/bom.js:953
+#: templates/js/translated/bom.js:963
 msgid "This line has been validated"
 msgstr ""
 
-#: templates/js/translated/bom.js:955
+#: templates/js/translated/bom.js:965
 msgid "Edit substitute parts"
 msgstr ""
 
-#: templates/js/translated/bom.js:957 templates/js/translated/bom.js:1143
+#: templates/js/translated/bom.js:967 templates/js/translated/bom.js:1153
 msgid "Edit BOM Item"
 msgstr ""
 
-#: templates/js/translated/bom.js:959 templates/js/translated/bom.js:1126
+#: templates/js/translated/bom.js:969 templates/js/translated/bom.js:1136
 msgid "Delete BOM Item"
 msgstr ""
 
-#: templates/js/translated/bom.js:1066 templates/js/translated/build.js:1139
+#: templates/js/translated/bom.js:1076 templates/js/translated/build.js:1139
 msgid "No BOM items found"
 msgstr ""
 
-#: templates/js/translated/bom.js:1121
+#: templates/js/translated/bom.js:1131
 msgid "Are you sure you want to delete this BOM item?"
 msgstr ""
 
-#: templates/js/translated/bom.js:1323 templates/js/translated/build.js:1391
+#: templates/js/translated/bom.js:1333 templates/js/translated/build.js:1391
 msgid "Required Part"
 msgstr ""
 
-#: templates/js/translated/bom.js:1345
+#: templates/js/translated/bom.js:1355
 msgid "Inherited from parent BOM"
 msgstr ""
 
@@ -8129,12 +8132,12 @@ msgstr "未指定仓储地点"
 msgid "No active build outputs found"
 msgstr ""
 
-#: templates/js/translated/build.js:1348 templates/js/translated/build.js:2140
+#: templates/js/translated/build.js:1348 templates/js/translated/build.js:2155
 #: templates/js/translated/order.js:2179
 msgid "Edit stock allocation"
 msgstr ""
 
-#: templates/js/translated/build.js:1350 templates/js/translated/build.js:2141
+#: templates/js/translated/build.js:1350 templates/js/translated/build.js:2156
 #: templates/js/translated/order.js:2180
 msgid "Delete stock allocation"
 msgstr ""
@@ -8155,115 +8158,115 @@ msgstr ""
 msgid "Quantity Per"
 msgstr ""
 
-#: templates/js/translated/build.js:1430 templates/js/translated/build.js:1685
-#: templates/js/translated/build.js:2136 templates/js/translated/order.js:2446
+#: templates/js/translated/build.js:1445 templates/js/translated/build.js:1700
+#: templates/js/translated/build.js:2151 templates/js/translated/order.js:2446
 msgid "Allocated"
 msgstr ""
 
-#: templates/js/translated/build.js:1444
+#: templates/js/translated/build.js:1459
 msgid "loading"
 msgstr ""
 
-#: templates/js/translated/build.js:1488 templates/js/translated/order.js:2526
+#: templates/js/translated/build.js:1503 templates/js/translated/order.js:2526
 msgid "Build stock"
 msgstr ""
 
-#: templates/js/translated/build.js:1492 templates/stock_table.html:50
+#: templates/js/translated/build.js:1507 templates/stock_table.html:50
 msgid "Order stock"
 msgstr ""
 
-#: templates/js/translated/build.js:1495 templates/js/translated/order.js:2519
+#: templates/js/translated/build.js:1510 templates/js/translated/order.js:2519
 msgid "Allocate stock"
 msgstr ""
 
-#: templates/js/translated/build.js:1534 templates/js/translated/label.js:172
+#: templates/js/translated/build.js:1549 templates/js/translated/label.js:172
 #: templates/js/translated/order.js:1755 templates/js/translated/report.js:225
 msgid "Select Parts"
 msgstr "选择商品"
 
-#: templates/js/translated/build.js:1535 templates/js/translated/order.js:1756
+#: templates/js/translated/build.js:1550 templates/js/translated/order.js:1756
 msgid "You must select at least one part to allocate"
 msgstr ""
 
-#: templates/js/translated/build.js:1584 templates/js/translated/order.js:1704
+#: templates/js/translated/build.js:1599 templates/js/translated/order.js:1704
 msgid "Specify stock allocation quantity"
 msgstr ""
 
-#: templates/js/translated/build.js:1658
+#: templates/js/translated/build.js:1673
 msgid "All Parts Allocated"
 msgstr ""
 
-#: templates/js/translated/build.js:1659
+#: templates/js/translated/build.js:1674
 msgid "All selected parts have been fully allocated"
 msgstr ""
 
-#: templates/js/translated/build.js:1673 templates/js/translated/order.js:1770
+#: templates/js/translated/build.js:1688 templates/js/translated/order.js:1770
 msgid "Select source location (leave blank to take from all locations)"
 msgstr ""
 
-#: templates/js/translated/build.js:1702 templates/js/translated/order.js:1805
+#: templates/js/translated/build.js:1717 templates/js/translated/order.js:1805
 msgid "Confirm stock allocation"
 msgstr "确认库存分配"
 
-#: templates/js/translated/build.js:1703
+#: templates/js/translated/build.js:1718
 msgid "Allocate Stock Items to Build Order"
 msgstr ""
 
-#: templates/js/translated/build.js:1714 templates/js/translated/order.js:1818
+#: templates/js/translated/build.js:1729 templates/js/translated/order.js:1818
 msgid "No matching stock locations"
 msgstr ""
 
-#: templates/js/translated/build.js:1786 templates/js/translated/order.js:1895
+#: templates/js/translated/build.js:1801 templates/js/translated/order.js:1895
 msgid "No matching stock items"
 msgstr ""
 
-#: templates/js/translated/build.js:1883
+#: templates/js/translated/build.js:1898
 msgid "Automatic Stock Allocation"
 msgstr ""
 
-#: templates/js/translated/build.js:1884
+#: templates/js/translated/build.js:1899
 msgid "Stock items will be automatically allocated to this build order, according to the provided guidelines"
 msgstr ""
 
-#: templates/js/translated/build.js:1886
+#: templates/js/translated/build.js:1901
 msgid "If a location is specifed, stock will only be allocated from that location"
 msgstr ""
 
-#: templates/js/translated/build.js:1887
+#: templates/js/translated/build.js:1902
 msgid "If stock is considered interchangeable, it will be allocated from the first location it is found"
 msgstr ""
 
-#: templates/js/translated/build.js:1888
+#: templates/js/translated/build.js:1903
 msgid "If substitute stock is allowed, it will be used where stock of the primary part cannot be found"
 msgstr ""
 
-#: templates/js/translated/build.js:1909
+#: templates/js/translated/build.js:1924
 msgid "Allocate Stock Items"
 msgstr ""
 
-#: templates/js/translated/build.js:1947
+#: templates/js/translated/build.js:1962
 msgid "No builds matching query"
 msgstr ""
 
-#: templates/js/translated/build.js:1964 templates/js/translated/part.js:1253
-#: templates/js/translated/part.js:1664 templates/js/translated/stock.js:1608
+#: templates/js/translated/build.js:1979 templates/js/translated/part.js:1292
+#: templates/js/translated/part.js:1719 templates/js/translated/stock.js:1608
 #: templates/js/translated/stock.js:2261
 msgid "Select"
 msgstr ""
 
-#: templates/js/translated/build.js:1984
+#: templates/js/translated/build.js:1999
 msgid "Build order is overdue"
 msgstr ""
 
-#: templates/js/translated/build.js:2048 templates/js/translated/stock.js:2473
+#: templates/js/translated/build.js:2063 templates/js/translated/stock.js:2473
 msgid "No user information"
 msgstr "没有用户信息"
 
-#: templates/js/translated/build.js:2060
+#: templates/js/translated/build.js:2075
 msgid "No information"
 msgstr ""
 
-#: templates/js/translated/build.js:2117
+#: templates/js/translated/build.js:2132
 msgid "No parts allocated for"
 msgstr ""
 
@@ -8328,34 +8331,34 @@ msgid "No manufacturer parts found"
 msgstr ""
 
 #: templates/js/translated/company.js:500
-#: templates/js/translated/company.js:757 templates/js/translated/part.js:519
-#: templates/js/translated/part.js:604
+#: templates/js/translated/company.js:757 templates/js/translated/part.js:556
+#: templates/js/translated/part.js:641
 msgid "Template part"
 msgstr ""
 
 #: templates/js/translated/company.js:504
-#: templates/js/translated/company.js:761 templates/js/translated/part.js:523
-#: templates/js/translated/part.js:608
+#: templates/js/translated/company.js:761 templates/js/translated/part.js:560
+#: templates/js/translated/part.js:645
 msgid "Assembled part"
 msgstr ""
 
-#: templates/js/translated/company.js:631 templates/js/translated/part.js:698
+#: templates/js/translated/company.js:631 templates/js/translated/part.js:735
 msgid "No parameters found"
 msgstr "无指定参数"
 
-#: templates/js/translated/company.js:668 templates/js/translated/part.js:740
+#: templates/js/translated/company.js:668 templates/js/translated/part.js:777
 msgid "Edit parameter"
 msgstr "编辑参数"
 
-#: templates/js/translated/company.js:669 templates/js/translated/part.js:741
+#: templates/js/translated/company.js:669 templates/js/translated/part.js:778
 msgid "Delete parameter"
 msgstr "删除参数"
 
-#: templates/js/translated/company.js:688 templates/js/translated/part.js:758
+#: templates/js/translated/company.js:688 templates/js/translated/part.js:795
 msgid "Edit Parameter"
 msgstr "编辑参数"
 
-#: templates/js/translated/company.js:699 templates/js/translated/part.js:770
+#: templates/js/translated/company.js:699 templates/js/translated/part.js:807
 msgid "Delete Parameter"
 msgstr "删除参数"
 
@@ -8455,12 +8458,16 @@ msgstr ""
 msgid "Select Columns"
 msgstr ""
 
-#: templates/js/translated/helpers.js:19
+#: templates/js/translated/helpers.js:20
 msgid "YES"
 msgstr ""
 
-#: templates/js/translated/helpers.js:21
+#: templates/js/translated/helpers.js:22
 msgid "NO"
+msgstr ""
+
+#: templates/js/translated/helpers.js:305
+msgid "Notes updated"
 msgstr ""
 
 #: templates/js/translated/label.js:39
@@ -8580,40 +8587,40 @@ msgstr ""
 msgid "Error requesting form data"
 msgstr ""
 
-#: templates/js/translated/model_renderers.js:42
+#: templates/js/translated/model_renderers.js:60
 msgid "Company ID"
 msgstr "公司ID"
 
-#: templates/js/translated/model_renderers.js:79
+#: templates/js/translated/model_renderers.js:115
 msgid "Stock ID"
 msgstr ""
 
-#: templates/js/translated/model_renderers.js:132
+#: templates/js/translated/model_renderers.js:141
 msgid "Location ID"
 msgstr ""
 
-#: templates/js/translated/model_renderers.js:149
+#: templates/js/translated/model_renderers.js:158
 msgid "Build ID"
 msgstr ""
 
-#: templates/js/translated/model_renderers.js:251
+#: templates/js/translated/model_renderers.js:257
 #: templates/js/translated/model_renderers.js:283
 msgid "Order ID"
 msgstr ""
 
-#: templates/js/translated/model_renderers.js:300
+#: templates/js/translated/model_renderers.js:298
 msgid "Shipment ID"
 msgstr ""
 
-#: templates/js/translated/model_renderers.js:320
+#: templates/js/translated/model_renderers.js:318
 msgid "Category ID"
 msgstr "类别 ID"
 
-#: templates/js/translated/model_renderers.js:363
+#: templates/js/translated/model_renderers.js:361
 msgid "Manufacturer Part ID"
 msgstr "制造商商品ID"
 
-#: templates/js/translated/model_renderers.js:392
+#: templates/js/translated/model_renderers.js:390
 msgid "Supplier Part ID"
 msgstr "供应商商品ID"
 
@@ -8709,7 +8716,7 @@ msgstr ""
 msgid "Receive Purchase Order Items"
 msgstr ""
 
-#: templates/js/translated/order.js:925 templates/js/translated/part.js:811
+#: templates/js/translated/order.js:925 templates/js/translated/part.js:848
 msgid "No purchase orders found"
 msgstr ""
 
@@ -8738,7 +8745,7 @@ msgid "Total"
 msgstr ""
 
 #: templates/js/translated/order.js:1241 templates/js/translated/order.js:2360
-#: templates/js/translated/part.js:1881 templates/js/translated/part.js:2225
+#: templates/js/translated/part.js:1936 templates/js/translated/part.js:2280
 msgid "Unit Price"
 msgstr "单价"
 
@@ -8747,11 +8754,11 @@ msgid "Total Price"
 msgstr ""
 
 #: templates/js/translated/order.js:1297 templates/js/translated/order.js:2418
-#: templates/js/translated/part.js:920
+#: templates/js/translated/part.js:957
 msgid "This line item is overdue"
 msgstr ""
 
-#: templates/js/translated/order.js:1356 templates/js/translated/part.js:966
+#: templates/js/translated/order.js:1356 templates/js/translated/part.js:1003
 msgid "Receive line item"
 msgstr ""
 
@@ -8996,125 +9003,133 @@ msgstr ""
 msgid "Copy Bill of Materials"
 msgstr ""
 
-#: templates/js/translated/part.js:511 templates/js/translated/part.js:596
-msgid "Trackable part"
-msgstr "可追溯商品"
-
-#: templates/js/translated/part.js:515 templates/js/translated/part.js:600
-msgid "Virtual part"
-msgstr "虚拟商品"
-
-#: templates/js/translated/part.js:527
-msgid "Subscribed part"
-msgstr ""
-
-#: templates/js/translated/part.js:531
-msgid "Salable part"
-msgstr "可销售商品"
-
-#: templates/js/translated/part.js:646
-msgid "No variants found"
-msgstr ""
-
-#: templates/js/translated/part.js:1036
-msgid "Delete part relationship"
-msgstr ""
-
-#: templates/js/translated/part.js:1060
-msgid "Delete Part Relationship"
-msgstr ""
-
-#: templates/js/translated/part.js:1125 templates/js/translated/part.js:1403
-msgid "No parts found"
-msgstr ""
-
-#: templates/js/translated/part.js:1313
-msgid "No category"
-msgstr "没有分类"
-
-#: templates/js/translated/part.js:1336
+#: templates/js/translated/part.js:504 templates/js/translated/part.js:1375
 #: templates/js/translated/table_filters.js:434
 msgid "Low stock"
 msgstr ""
 
-#: templates/js/translated/part.js:1427 templates/js/translated/part.js:1599
+#: templates/js/translated/part.js:514 templates/js/translated/part.js:1387
+msgid "No stock available"
+msgstr ""
+
+#: templates/js/translated/part.js:548 templates/js/translated/part.js:633
+msgid "Trackable part"
+msgstr "可追溯商品"
+
+#: templates/js/translated/part.js:552 templates/js/translated/part.js:637
+msgid "Virtual part"
+msgstr "虚拟商品"
+
+#: templates/js/translated/part.js:564
+msgid "Subscribed part"
+msgstr ""
+
+#: templates/js/translated/part.js:568
+msgid "Salable part"
+msgstr "可销售商品"
+
+#: templates/js/translated/part.js:683
+msgid "No variants found"
+msgstr ""
+
+#: templates/js/translated/part.js:1073
+msgid "Delete part relationship"
+msgstr ""
+
+#: templates/js/translated/part.js:1097
+msgid "Delete Part Relationship"
+msgstr ""
+
+#: templates/js/translated/part.js:1162 templates/js/translated/part.js:1458
+msgid "No parts found"
+msgstr ""
+
+#: templates/js/translated/part.js:1201
+msgid "Not available"
+msgstr ""
+
+#: templates/js/translated/part.js:1352
+msgid "No category"
+msgstr "没有分类"
+
+#: templates/js/translated/part.js:1482 templates/js/translated/part.js:1654
 #: templates/js/translated/stock.js:2222
 msgid "Display as list"
 msgstr ""
 
-#: templates/js/translated/part.js:1443
+#: templates/js/translated/part.js:1498
 msgid "Display as grid"
 msgstr ""
 
-#: templates/js/translated/part.js:1618 templates/js/translated/stock.js:2241
+#: templates/js/translated/part.js:1673 templates/js/translated/stock.js:2241
 msgid "Display as tree"
 msgstr ""
 
-#: templates/js/translated/part.js:1682
+#: templates/js/translated/part.js:1737
 msgid "Subscribed category"
 msgstr ""
 
-#: templates/js/translated/part.js:1696 templates/js/translated/stock.js:2285
+#: templates/js/translated/part.js:1751 templates/js/translated/stock.js:2285
 msgid "Path"
 msgstr ""
 
-#: templates/js/translated/part.js:1740
+#: templates/js/translated/part.js:1795
 msgid "No test templates matching query"
 msgstr ""
 
-#: templates/js/translated/part.js:1791 templates/js/translated/stock.js:1235
+#: templates/js/translated/part.js:1846 templates/js/translated/stock.js:1235
 msgid "Edit test result"
 msgstr ""
 
-#: templates/js/translated/part.js:1792 templates/js/translated/stock.js:1236
+#: templates/js/translated/part.js:1847 templates/js/translated/stock.js:1236
 #: templates/js/translated/stock.js:1482
 msgid "Delete test result"
 msgstr ""
 
-#: templates/js/translated/part.js:1798
+#: templates/js/translated/part.js:1853
 msgid "This test is defined for a parent part"
 msgstr ""
 
-#: templates/js/translated/part.js:1820
+#: templates/js/translated/part.js:1875
 msgid "Edit Test Result Template"
 msgstr ""
 
-#: templates/js/translated/part.js:1834
+#: templates/js/translated/part.js:1889
 msgid "Delete Test Result Template"
-msgstr ""
-
-#: templates/js/translated/part.js:1859
-#, python-brace-format
-msgid "No ${human_name} information found"
 msgstr ""
 
 #: templates/js/translated/part.js:1914
 #, python-brace-format
+msgid "No ${human_name} information found"
+msgstr ""
+
+#: templates/js/translated/part.js:1969
+#, python-brace-format
 msgid "Edit ${human_name}"
 msgstr ""
 
-#: templates/js/translated/part.js:1915
+#: templates/js/translated/part.js:1970
 #, python-brace-format
 msgid "Delete ${human_name}"
 msgstr ""
 
-#: templates/js/translated/part.js:2020
+#: templates/js/translated/part.js:2075
 msgid "Current Stock"
 msgstr ""
 
-#: templates/js/translated/part.js:2053
+#: templates/js/translated/part.js:2108
 msgid "No scheduling information available for this part"
 msgstr ""
 
-#: templates/js/translated/part.js:2079
+#: templates/js/translated/part.js:2134
 msgid "Scheduled Stock Quantities"
 msgstr ""
 
-#: templates/js/translated/part.js:2149
+#: templates/js/translated/part.js:2204
 msgid "Single Price"
 msgstr ""
 
-#: templates/js/translated/part.js:2168
+#: templates/js/translated/part.js:2223
 msgid "Single Price Difference"
 msgstr ""
 
@@ -9188,11 +9203,11 @@ msgstr ""
 msgid "Sales Order(s) must be selected before printing report"
 msgstr ""
 
-#: templates/js/translated/search.js:281
+#: templates/js/translated/search.js:286
 msgid "Minimize results"
 msgstr ""
 
-#: templates/js/translated/search.js:284
+#: templates/js/translated/search.js:289
 msgid "Remove results"
 msgstr ""
 
@@ -9565,7 +9580,7 @@ msgid "Include subcategories"
 msgstr ""
 
 #: templates/js/translated/table_filters.js:126
-#: templates/js/translated/table_filters.js:446
+#: templates/js/translated/table_filters.js:450
 msgid "Subscribed"
 msgstr ""
 
@@ -9730,10 +9745,14 @@ msgid "Show active parts"
 msgstr ""
 
 #: templates/js/translated/table_filters.js:430
-msgid "Stock available"
+msgid "In stock"
 msgstr ""
 
-#: templates/js/translated/table_filters.js:458
+#: templates/js/translated/table_filters.js:438
+msgid "Available stock"
+msgstr ""
+
+#: templates/js/translated/table_filters.js:462
 msgid "Purchasable"
 msgstr ""
 
@@ -9833,6 +9852,10 @@ msgstr ""
 
 #: templates/navbar_demo.html:5
 msgid "InvenTree demo mode"
+msgstr ""
+
+#: templates/notes_buttons.html:6 templates/notes_buttons.html:7
+msgid "Save"
 msgstr ""
 
 #: templates/notifications.html:13
