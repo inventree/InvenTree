@@ -577,6 +577,10 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     purchase_price_range = serializers.SerializerMethodField()
 
+    # Annotated fields
+    available_stock = serializers.FloatField(read_only=True)
+    available_substitute_stock = serializers.FloatField(read_only=True)
+
     def __init__(self, *args, **kwargs):
         # part_detail and sub_part_detail serializers are only included if requested.
         # This saves a bunch of database requests
@@ -609,8 +613,108 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
         queryset = queryset.prefetch_related('sub_part')
         queryset = queryset.prefetch_related('sub_part__category')
-        queryset = queryset.prefetch_related('sub_part__stock_items')
+        queryset = queryset.prefetch_related(
+            'sub_part__stock_items',
+            'sub_part__stock_items__allocations',
+            'sub_part__stock_items__sales_order_allocations',
+        )
         queryset = queryset.prefetch_related('sub_part__supplier_parts__pricebreaks')
+        return queryset
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """
+        Annotate the BomItem queryset with extra information:
+
+        Annotations:
+            available_stock: The amount of stock available for the sub_part Part object
+        """
+
+        """
+        Construct an "available stock" quantity:
+        available_stock = total_stock - build_order_allocations - sales_order_allocations
+        """
+
+        build_order_filter = Q(build__status__in=BuildStatus.ACTIVE_CODES)
+        sales_order_filter = Q(
+            line__order__status__in=SalesOrderStatus.OPEN,
+            shipment__shipment_date=None,
+        )
+
+        # Calculate "total stock" for the referenced sub_part
+        # Calculate the "build_order_allocations" for the sub_part
+        # Note that these fields are only aliased, not annotated
+        queryset = queryset.alias(
+            total_stock=Coalesce(
+                SubquerySum(
+                    'sub_part__stock_items__quantity',
+                    filter=StockItem.IN_STOCK_FILTER
+                ),
+                Decimal(0),
+                output_field=models.DecimalField(),
+            ),
+            allocated_to_sales_orders=Coalesce(
+                SubquerySum(
+                    'sub_part__stock_items__sales_order_allocations__quantity',
+                    filter=sales_order_filter,
+                ),
+                Decimal(0),
+                output_field=models.DecimalField(),
+            ),
+            allocated_to_build_orders=Coalesce(
+                SubquerySum(
+                    'sub_part__stock_items__allocations__quantity',
+                    filter=build_order_filter,
+                ),
+                Decimal(0),
+                output_field=models.DecimalField(),
+            ),
+        )
+
+        # Calculate 'available_stock' based on previously annotated fields
+        queryset = queryset.annotate(
+            available_stock=ExpressionWrapper(
+                F('total_stock') - F('allocated_to_sales_orders') - F('allocated_to_build_orders'),
+                output_field=models.DecimalField(),
+            )
+        )
+
+        # Extract similar information for any 'substitute' parts
+        queryset = queryset.alias(
+            substitute_stock=Coalesce(
+                SubquerySum(
+                    'substitutes__part__stock_items__quantity',
+                    filter=StockItem.IN_STOCK_FILTER,
+                ),
+                Decimal(0),
+                output_field=models.DecimalField(),
+            ),
+            substitute_build_allocations=Coalesce(
+                SubquerySum(
+                    'substitutes__part__stock_items__allocations__quantity',
+                    filter=build_order_filter,
+                ),
+                Decimal(0),
+                output_field=models.DecimalField(),
+            ),
+            substitute_sales_allocations=Coalesce(
+                SubquerySum(
+                    'substitutes__part__stock_items__sales_order_allocations__quantity',
+                    filter=sales_order_filter,
+                ),
+                Decimal(0),
+                output_field=models.DecimalField(),
+            ),
+        )
+
+        # Calculate 'available_variant_stock' field
+        queryset = queryset.annotate(
+            available_substitute_stock=ExpressionWrapper(
+                F('substitute_stock') - F('substitute_build_allocations') - F('substitute_sales_allocations'),
+                output_field=models.DecimalField(),
+            )
+        )
+
         return queryset
 
     def get_purchase_price_range(self, obj):
@@ -682,6 +786,10 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'substitutes',
             'price_range',
             'validated',
+
+            # Annotated fields describing available quantity
+            'available_stock',
+            'available_substitute_stock',
         ]
 
 

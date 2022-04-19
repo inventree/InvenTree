@@ -644,6 +644,16 @@ class StockItemConvert(AjaxUpdateView):
 
         return form
 
+    def save(self, obj, form):
+
+        stock_item = self.get_object()
+
+        variant = form.cleaned_data.get('part', None)
+
+        stock_item.convert_to_variant(variant, user=self.request.user)
+
+        return stock_item
+
 
 class StockLocationCreate(AjaxCreateView):
     """

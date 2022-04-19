@@ -359,13 +359,12 @@ function unlinkBarcode(stockitem) {
 /*
  * Display dialog to check multiple stock items in to a stock location.
  */
-function barcodeCheckIn(location_id) {
+function barcodeCheckIn(location_id, options={}) {
 
     var modal = '#modal-form';
 
     // List of items we are going to checkin
     var items = [];
-
 
     function reloadTable() {
 
@@ -389,10 +388,17 @@ function barcodeCheckIn(location_id) {
             <tbody>`;
 
         items.forEach(function(item) {
+
+            var location_info = `${item.location}`;
+
+            if (item.location_detail) {
+                location_info = `${item.location_detail.name}`;
+            }
+
             html += `
             <tr pk='${item.pk}'>
                 <td>${imageHoverIcon(item.part_detail.thumbnail)} ${item.part_detail.name}</td>
-                <td>${item.location_detail.name}</td>
+                <td>${location_info}</td>
                 <td>${item.quantity}</td>
                 <td>${makeIconButton('fa-times-circle icon-red', 'button-item-remove', item.pk, '{% trans "Remove stock item" %}')}</td>
             </tr>`;
@@ -469,6 +475,12 @@ function barcodeCheckIn(location_id) {
 
                 data.items = entries;
 
+                // Prevent submission without any entries
+                if (entries.length == 0) {
+                    showBarcodeMessage(modal, '{% trans "No barcode provided" %}', 'warning');
+                    return;
+                }
+
                 inventreePut(
                     '{% url "api-stock-transfer" %}',
                     data,
@@ -477,15 +489,11 @@ function barcodeCheckIn(location_id) {
                         success: function(response, status) {
                             // Hide the modal
                             $(modal).modal('hide');
-                            if (status == 'success' && 'success' in response) {
 
-                                addCachedAlert(response.success);
-                                location.reload();
+                            if (options.success) {
+                                options.success(response);
                             } else {
-                                showMessage('{% trans "Error transferring stock" %}', {
-                                    style: 'danger',
-                                    icon: 'fas fa-times-circle',
-                                });
+                                location.reload();
                             }
                         }
                     }
@@ -533,7 +541,7 @@ function barcodeCheckIn(location_id) {
 /*
  * Display dialog to check a single stock item into a stock location
  */
-function scanItemsIntoLocation(item_id_list, options={}) {
+function scanItemsIntoLocation(item_list, options={}) {
 
     var modal = options.modal || '#modal-form';
 
@@ -583,9 +591,10 @@ function scanItemsIntoLocation(item_id_list, options={}) {
 
                 var items = [];
 
-                item_id_list.forEach(function(pk) {
+                item_list.forEach(function(item) {
                     items.push({
-                        pk: pk,
+                        pk: item.pk || item.id,
+                        quantity: item.quantity, 
                     });
                 });
 
@@ -605,13 +614,10 @@ function scanItemsIntoLocation(item_id_list, options={}) {
                             // First hide the modal
                             $(modal).modal('hide');
 
-                            if (status == 'success' && 'success' in response) {
-                                addCachedAlert(response.success);
-                                location.reload();
+                            if (options.success) {
+                                options.success(response);
                             } else {
-                                showMessage('{% trans "Error transferring stock" %}', {
-                                    style: 'danger',
-                                });
+                                location.reload();
                             }
                         }
                     }

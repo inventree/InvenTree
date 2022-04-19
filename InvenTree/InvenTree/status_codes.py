@@ -255,6 +255,9 @@ class StockHistoryCode(StatusCode):
     # Stock merging operations
     MERGED_STOCK_ITEMS = 45
 
+    # Convert stock item to variant
+    CONVERTED_TO_VARIANT = 48
+
     # Build order codes
     BUILD_OUTPUT_CREATED = 50
     BUILD_OUTPUT_COMPLETED = 55
@@ -293,6 +296,8 @@ class StockHistoryCode(StatusCode):
         SPLIT_CHILD_ITEM: _('Split child item'),
 
         MERGED_STOCK_ITEMS: _('Merged stock items'),
+
+        CONVERTED_TO_VARIANT: _('Converted to variant'),
 
         SENT_TO_CUSTOMER: _('Sent to customer'),
         RETURNED_FROM_CUSTOMER: _('Returned from customer'),
