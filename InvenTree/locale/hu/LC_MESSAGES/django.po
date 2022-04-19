@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-19 11:17+0000\n"
-"PO-Revision-Date: 2022-04-19 12:06\n"
+"PO-Revision-Date: 2022-04-19 17:43\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -9555,11 +9555,11 @@ msgstr "A készlet tétel jelenleg elérhető készleten"
 
 #: templates/js/translated/stock.js:2662
 msgid "The Stock Item is not already installed in another item"
-msgstr ""
+msgstr "A készlet tétel még nem épült be egy másik tételbe"
 
 #: templates/js/translated/stock.js:2663
 msgid "The Stock Item is tracked by either a batch code or serial number"
-msgstr ""
+msgstr "A készlet tétel követett vagy sorozatszámmal vagy batch kóddal"
 
 #: templates/js/translated/stock.js:2676
 msgid "Select part to install"
@@ -9714,11 +9714,11 @@ msgstr "Van batch kódja"
 
 #: templates/js/translated/table_filters.js:246
 msgid "Tracked"
-msgstr ""
+msgstr "Követett"
 
 #: templates/js/translated/table_filters.js:247
 msgid "Stock item is tracked by either batch code or serial number"
-msgstr ""
+msgstr "Követett készlet tétel sorozatszámmal vagy batch kóddal"
 
 #: templates/js/translated/table_filters.js:252
 msgid "Has purchase price"
