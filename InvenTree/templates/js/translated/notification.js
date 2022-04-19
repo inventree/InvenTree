@@ -173,7 +173,7 @@ function notificationCheck(force = false) {
                     updateNotificationIndicator(response.length);
                 },
                 error: function(xhr) {
-                    console.warn("Could not access server: /api/notifications");
+                    console.warn('Could not access server: /api/notifications');
                 }
             }
         );
