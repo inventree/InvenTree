@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-19 07:15+0000\n"
-"PO-Revision-Date: 2022-04-19 10:07\n"
+"PO-Revision-Date: 2022-04-19 11:08\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -317,7 +317,7 @@ msgstr "Spanyol (Mexikói)"
 
 #: InvenTree/settings.py:670
 msgid "Farsi / Persian"
-msgstr ""
+msgstr "Fárszi/Perzsa"
 
 #: InvenTree/settings.py:671
 msgid "French"
@@ -512,7 +512,7 @@ msgstr "Összevont készlet tétel"
 
 #: InvenTree/status_codes.py:300
 msgid "Converted to variant"
-msgstr ""
+msgstr "Alkatrészváltozattá alakítva"
 
 #: InvenTree/status_codes.py:302 templates/js/translated/table_filters.js:213
 msgid "Sent to customer"
@@ -5974,7 +5974,7 @@ msgstr "Egy egység beszerzési ára a beszerzés időpontjában"
 
 #: stock/models.py:745
 msgid "Converted to part"
-msgstr ""
+msgstr "Alkatrésszé alakítva"
 
 #: stock/models.py:1265
 msgid "Part is not set as trackable"
@@ -9501,7 +9501,7 @@ msgstr "Részletek"
 
 #: templates/js/translated/stock.js:2383
 msgid "Part information unavailable"
-msgstr ""
+msgstr "Alkatrész információ nem áll rendelkezésre"
 
 #: templates/js/translated/stock.js:2405
 msgid "Location no longer exists"
