@@ -718,6 +718,30 @@ class StockItem(MPTTModel):
                               help_text=_('Select Owner'),
                               related_name='stock_items')
 
+    @transaction.atomic
+    def convert_to_variant(self, variant, user, notes=None):
+        """
+        Convert this StockItem instance to a "variant",
+        i.e. change the "part" reference field
+        """
+
+        if not variant:
+            # Ignore null values
+            return
+        
+        if variant == self.part:
+            # Variant is the same as the current part
+            return
+
+        self.part = variant
+        self.save()
+
+        self.add_tracking_entry(
+            StockHistoryCode.CONVERTED_TO_VARIANT,
+            user,
+            notes=notes
+        )
+
     def get_item_owner(self):
         """
         Return the closest "owner" for this StockItem.
