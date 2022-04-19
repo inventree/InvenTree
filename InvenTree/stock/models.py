@@ -739,7 +739,10 @@ class StockItem(MPTTModel):
         self.add_tracking_entry(
             StockHistoryCode.CONVERTED_TO_VARIANT,
             user,
-            notes=notes
+            deltas={
+                'part': variant.pk,
+            },
+            notes=_('Converted to part') + ': ' + variant.full_name,
         )
 
     def get_item_owner(self):
