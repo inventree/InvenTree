@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-19 07:15+0000\n"
-"PO-Revision-Date: 2022-04-19 08:11\n"
+"PO-Revision-Date: 2022-04-19 10:07\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1403,11 +1403,11 @@ msgstr "Alkatrész rendelés"
 
 #: build/templates/build/detail.html:199
 msgid "Untracked stock has been fully allocated for this Build Order"
-msgstr "Nem követett készlet teljesen lefoglalva ehhez a gyártási utasításhoz"
+msgstr "Minden szükséges nem követett készlet le lett foglalva ehhez a gyártási utasításhoz"
 
 #: build/templates/build/detail.html:203
 msgid "Untracked stock has not been fully allocated for this Build Order"
-msgstr "Nem követett készlet nincs teljesen lefoglalva ehhez a gyártási utasításhoz"
+msgstr "Nincs minden nem követett készlet lefoglalva ehhez a gyártási utasításhoz"
 
 #: build/templates/build/detail.html:210
 msgid "Allocate selected items"
