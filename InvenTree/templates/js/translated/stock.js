@@ -2373,6 +2373,19 @@ function loadStockTrackingTable(table, options) {
                 return html;
             }
 
+            // Part information
+            if (details.part) {
+                html += `<tr><th>{% trans "Part" %}</th><td>`;
+
+                if (details.part_detail) {
+                    html += renderLink(details.part_detail.full_name, `/part/${details.part}/`);
+                } else {
+                    html += `{% trans "Part information unavailable" %}`;
+                }
+
+                html += `</td></tr>`;
+            }
+
             // Location information
             if (details.location) {
 

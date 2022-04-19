@@ -1234,6 +1234,15 @@ class StockTrackingList(generics.ListAPIView):
             if not deltas:
                 deltas = {}
 
+            # Add part detail
+            if 'part' in deltas:
+                try:
+                    part = Part.objects.get(pk=deltas['part'])
+                    serializer = PartBriefSerializer(part)
+                    deltas['part_detail'] = serializer.data
+                except:
+                    pass
+
             # Add location detail
             if 'location' in deltas:
                 try:
