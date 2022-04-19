@@ -242,6 +242,11 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Batch" %}',
                 description: '{% trans "Batch code" %}',
             },
+            tracked: {
+                title: '{% trans "Tracked" %}',
+                description: '{% trans "Stock item is tracked by either batch code or serial number" %}',
+                type: 'bool',
+            },
             has_purchase_price: {
                 type: 'bool',
                 title: '{% trans "Has purchase price" %}',

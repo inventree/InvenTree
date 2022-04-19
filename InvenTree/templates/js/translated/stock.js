@@ -241,9 +241,11 @@ function stockItemFields(options={}) {
         serial: {
             icon: 'fa-hashtag',
         },
+        batch: {
+            icon: 'fa-layer-group',
+        },
         status: {},
         expiry_date: {},
-        batch: {},
         purchase_price: {
             icon: 'fa-dollar-sign',
         },
@@ -964,7 +966,7 @@ function adjustStock(action, items, options={}) {
             quantity = `#${item.serial}`;
         }
 
-        if (item.batch != null) {
+        if (item.batch) {
             quantity += ` - <small>{% trans "Batch" %}: ${item.batch}</small>`;
         }
 
@@ -2657,7 +2659,8 @@ function installStockItem(stock_item_id, part_id, options={}) {
         <ul>
             <li>{% trans "The Stock Item links to a Part which is the BOM for this Stock Item" %}</li>
             <li>{% trans "The Stock Item is currently available in stock" %}</li>
-            <li>{% trans "The Stock Item is serialized and does not belong to another item" %}</li>
+            <li>{% trans "The Stock Item is not already installed in another item" %}</li>
+            <li>{% trans "The Stock Item is tracked by either a batch code or serial number" %}</li>
         </ul>
     </div>`;
 
@@ -2683,7 +2686,7 @@ function installStockItem(stock_item_id, part_id, options={}) {
                     filters: {
                         part_detail: true,
                         in_stock: true,
-                        serialized: true,
+                        tracked: true,
                     },
                     adjustFilters: function(filters, opts) {
                         var part = getFormFieldValue('part', {}, opts);

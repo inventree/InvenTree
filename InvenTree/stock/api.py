@@ -402,11 +402,16 @@ class StockFilter(rest_filters.FilterSet):
     serialized = rest_filters.BooleanFilter(label='Has serial number', method='filter_serialized')
 
     def filter_serialized(self, queryset, name, value):
+        """
+        Filter by whether the StockItem has a serial number (or not)
+        """
+
+        q = Q(serial=None) | Q(serial='')
 
         if str2bool(value):
-            queryset = queryset.exclude(serial=None)
+            queryset = queryset.exclude(q)
         else:
-            queryset = queryset.filter(serial=None)
+            queryset = queryset.filter(q)
 
         return queryset
 
@@ -417,10 +422,31 @@ class StockFilter(rest_filters.FilterSet):
         Filter by whether the StockItem has a batch code (or not)
         """
 
+        q = Q(batch=None) | Q(batch='')
+
         if str2bool(value):
-            queryset = queryset.exclude(batch=None)
+            queryset = queryset.exclude(q)
         else:
-            queryset = queryset.filter(batch=None)
+            queryset = queryset.filter(q)
+
+        return queryset
+
+    tracked = rest_filters.BooleanFilter(label='Tracked', method='filter_tracked')
+
+    def filter_tracked(self, queryset, name, value):
+        """
+        Filter by whether this stock item is *tracked*, meaning either:
+        - It has a serial number
+        - It has a batch code
+        """
+
+        q_batch = Q(batch=None) | Q(batch='')
+        q_serial = Q(serial=None) | Q(serial='')
+
+        if str2bool(value):
+            queryset = queryset.exclude(q_batch & q_serial)
+        else:
+            queryset = queryset.filter(q_batch & q_serial)
 
         return queryset
 

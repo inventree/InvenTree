@@ -108,7 +108,7 @@ function renderStockItem(name, data, parameters={}, options={}) {
             stock_detail = `{% trans "Quantity" %}: ${data.quantity}`;
         }
 
-        if (data.batch != null) {
+        if (data.batch) {
             stock_detail += ` - <small>{% trans "Batch" %}: ${data.batch}</small>`;
         }
     }
