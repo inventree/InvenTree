@@ -7,9 +7,9 @@ version: "3.8"
 # - Serves media and static content directly from Django webserver
 
 # IMPORANT NOTE:
-# The InvenTree docker image does not clone source code from git.
-# Instead, you must specify *where* the source code is located,
-# (on your local machine).
+# The InvenTree development image does not clone source code from git.
+# Instead, you must specify *where* the source code is located, (on your local machine).
+# The default setup in this file should work straight out of the box, without modification
 # The django server will auto-detect any code changes and reload the server.
 
 services:
