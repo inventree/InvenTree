@@ -241,9 +241,11 @@ function stockItemFields(options={}) {
         serial: {
             icon: 'fa-hashtag',
         },
+        batch: {
+            icon: 'fa-layer-group',
+        },
         status: {},
         expiry_date: {},
-        batch: {},
         purchase_price: {
             icon: 'fa-dollar-sign',
         },
