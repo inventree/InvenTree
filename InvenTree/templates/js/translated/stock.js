@@ -107,6 +107,7 @@ function stockLocationFields(options={}) {
     var fields = {
         parent: {
             help_text: '{% trans "Parent stock location" %}',
+            required: false,
         },
         name: {},
         description: {},
@@ -240,9 +241,11 @@ function stockItemFields(options={}) {
         serial: {
             icon: 'fa-hashtag',
         },
+        batch: {
+            icon: 'fa-layer-group',
+        },
         status: {},
         expiry_date: {},
-        batch: {},
         purchase_price: {
             icon: 'fa-dollar-sign',
         },
@@ -963,6 +966,10 @@ function adjustStock(action, items, options={}) {
             quantity = `#${item.serial}`;
         }
 
+        if (item.batch) {
+            quantity += ` - <small>{% trans "Batch" %}: ${item.batch}</small>`;
+        }
+
         var actionInput = '';
 
         if (actionTitle != null) {
@@ -1331,14 +1338,27 @@ function loadStockTestResultsTable(table, options) {
             });
 
             // Once the test template data are loaded, query for test results
+
+            var filters = loadTableFilters(filterKey);
+
+            var query_params = {
+                stock_item: options.stock_item,
+                user_detail: true,
+                attachment_detail: true,
+                ordering: '-date',
+            };
+
+            if ('result' in filters) {
+                query_params.result = filters.result;
+            }
+
+            if ('include_installed' in filters) {
+                query_params.include_installed = filters.include_installed;
+            }
+
             inventreeGet(
                 '{% url "api-stock-test-result-list" %}',
-                {
-                    stock_item: options.stock_item,
-                    user_detail: true,
-                    attachment_detail: true,
-                    ordering: '-date',
-                },
+                query_params,
                 {
                     success: function(data) {
                         // Iterate through the returned test data
@@ -1972,7 +1992,7 @@ function loadStockTable(table, options) {
             var items = [];
 
             selections.forEach(function(item) {
-                items.push(item.pk);
+                items.push(item);
             });
 
             scanItemsIntoLocation(items);
@@ -2301,6 +2321,23 @@ function loadStockTrackingTable(table, options) {
 
     var cols = [];
 
+    var filterTarget = '#filter-list-stocktracking';
+
+    var filterKey = 'stocktracking';
+
+    var filters = loadTableFilters(filterKey);
+
+    var params = options.params;
+
+    var original = {};
+
+    for (var k in params) {
+        original[k] = params[k];
+        filters[k] = params[k];
+    }
+
+    setupFilterList(filterKey, table, filterTarget);
+
     // Date
     cols.push({
         field: 'date',
@@ -2336,6 +2373,19 @@ function loadStockTrackingTable(table, options) {
             if (!details) {
                 html += '</table>';
                 return html;
+            }
+
+            // Part information
+            if (details.part) {
+                html += `<tr><th>{% trans "Part" %}</th><td>`;
+
+                if (details.part_detail) {
+                    html += renderLink(details.part_detail.full_name, `/part/${details.part}/`);
+                } else {
+                    html += `{% trans "Part information unavailable" %}`;
+                }
+
+                html += `</td></tr>`;
             }
 
             // Location information
@@ -2475,27 +2525,10 @@ function loadStockTrackingTable(table, options) {
         }
     });
 
-    /*
-    // 2021-05-11 - Ability to edit or delete StockItemTracking entries is now removed
-    cols.push({
-        sortable: false,
-        formatter: function(value, row, index, field) {
-            // Manually created entries can be edited or deleted
-            if (false && !row.system) {
-                var bEdit = "<button title='{% trans 'Edit tracking entry' %}' class='btn btn-entry-edit btn-outline-secondary' type='button' url='/stock/track/" + row.pk + "/edit/'><span class='fas fa-edit'/></button>";
-                var bDel = "<button title='{% trans 'Delete tracking entry' %}' class='btn btn-entry-delete btn-outline-secondary' type='button' url='/stock/track/" + row.pk + "/delete/'><span class='fas fa-trash-alt icon-red'/></button>";
-
-                return "<div class='btn-group' role='group'>" + bEdit + bDel + "</div>";
-            } else {
-                return "";
-            }
-        }
-    });
-    */
-
     table.inventreeTable({
         method: 'get',
-        queryParams: options.params,
+        queryParams: filters,
+        original: original,
         columns: cols,
         url: options.url,
     });
@@ -2626,7 +2659,8 @@ function installStockItem(stock_item_id, part_id, options={}) {
         <ul>
             <li>{% trans "The Stock Item links to a Part which is the BOM for this Stock Item" %}</li>
             <li>{% trans "The Stock Item is currently available in stock" %}</li>
-            <li>{% trans "The Stock Item is serialized and does not belong to another item" %}</li>
+            <li>{% trans "The Stock Item is not already installed in another item" %}</li>
+            <li>{% trans "The Stock Item is tracked by either a batch code or serial number" %}</li>
         </ul>
     </div>`;
 
@@ -2652,7 +2686,7 @@ function installStockItem(stock_item_id, part_id, options={}) {
                     filters: {
                         part_detail: true,
                         in_stock: true,
-                        serialized: true,
+                        tracked: true,
                     },
                     adjustFilters: function(filters, opts) {
                         var part = getFormFieldValue('part', {}, opts);

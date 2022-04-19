@@ -505,7 +505,12 @@ $("#barcode-unlink").click(function() {
 });
 
 $("#barcode-scan-into-location").click(function() {
-    scanItemsIntoLocation([{{ item.id }}]);
+    
+    inventreeGet('{% url "api-stock-detail" item.pk %}', {}, {
+        success: function(item) {
+            scanItemsIntoLocation([item]);
+        }
+    });
 });
 
 function itemAdjust(action) {
