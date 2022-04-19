@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-19 11:17+0000\n"
-"PO-Revision-Date: 2022-04-19 12:07\n"
+"PO-Revision-Date: 2022-04-19 13:05\n"
 "Last-Translator: \n"
 "Language-Team: Persian\n"
 "Language: fa_IR\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #: InvenTree/api.py:57
 msgid "API endpoint not found"
-msgstr ""
+msgstr "Address e API peida nashod"
 
 #: InvenTree/api.py:103
 msgid "No action specified"
