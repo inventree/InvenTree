@@ -964,7 +964,7 @@ function adjustStock(action, items, options={}) {
             quantity = `#${item.serial}`;
         }
 
-        if (item.batch != null) {
+        if (item.batch) {
             quantity += ` - <small>{% trans "Batch" %}: ${item.batch}</small>`;
         }
 
