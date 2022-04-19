@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-19 21:04+0000\n"
+"POT-Creation-Date: 2022-04-19 23:22+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
@@ -202,7 +202,7 @@ msgstr "無効な選択です"
 #: templates/InvenTree/notifications/notifications.html:84
 #: templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/plugin.html:49
-#: templates/InvenTree/settings/plugin.html:126
+#: templates/InvenTree/settings/plugin.html:132
 #: templates/InvenTree/settings/plugin_settings.html:23
 #: templates/InvenTree/settings/settings.html:320
 #: templates/js/translated/company.js:641 templates/js/translated/part.js:610
@@ -5628,13 +5628,13 @@ msgstr ""
 msgid "Label printing failed"
 msgstr ""
 
-#: plugin/integration.py:138
+#: plugin/integration.py:146
 #, fuzzy
 #| msgid "No matching action found"
 msgid "No author found"
 msgstr "一致するアクションが見つかりませんでした"
 
-#: plugin/integration.py:152
+#: plugin/integration.py:160
 #, fuzzy
 #| msgid "No serial numbers found"
 msgid "No date found"
@@ -6891,7 +6891,7 @@ msgid "Age"
 msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:88
-#: templates/InvenTree/settings/plugin.html:127
+#: templates/InvenTree/settings/plugin.html:133
 msgid "Message"
 msgstr ""
 
@@ -7041,15 +7041,19 @@ msgstr ""
 msgid "Version"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:93
+#: templates/InvenTree/settings/plugin.html:82
+msgid "code sample"
+msgstr ""
+
+#: templates/InvenTree/settings/plugin.html:99
 msgid "Inactive plugins"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:116
+#: templates/InvenTree/settings/plugin.html:122
 msgid "Plugin Error Stack"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:125
+#: templates/InvenTree/settings/plugin.html:131
 msgid "Stage"
 msgstr ""
 
