@@ -282,6 +282,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = CONFIG.get('middleware', [
     'django.middleware.security.SecurityMiddleware',
+    'x_forwarded_for.middleware.XForwardedForMiddleware',
     'user_sessions.middleware.SessionMiddleware',                   # db user sessions
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
