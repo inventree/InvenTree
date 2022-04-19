@@ -728,7 +728,7 @@ class StockItem(MPTTModel):
         if not variant:
             # Ignore null values
             return
-        
+
         if variant == self.part:
             # Variant is the same as the current part
             return

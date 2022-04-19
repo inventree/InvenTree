@@ -643,7 +643,7 @@ class StockItemConvert(AjaxUpdateView):
         form.fields['part'].queryset = item.part.get_conversion_options()
 
         return form
-    
+
     def save(self, obj, form):
 
         stock_item = self.get_object()
