@@ -3,7 +3,6 @@
 {% load i18n %}
 {% load inventree_extras %}
 {% load status_codes %}
-{% load markdownify %}
 
 {% block sidebar %}
 {% include "build/sidebar.html" %}
@@ -309,24 +308,16 @@
 
 <div class='panel panel-hidden' id='panel-notes'>
     <div class='panel-heading'>
-        <div class='row'>
-            <div class='col-sm-6'>
-                <h4>{% trans "Build Notes" %}</h4>
-            </div>
-            <div class='col-sm-6'>
-                <div class='btn-group float-right'>
-                    <button type='button' id='edit-notes' title='{% trans "Edit Notes" %}' class='btn btn-small btn-outline-secondary'>
-                        <span class='fas fa-edit'>      
-                        </span>
-                    </button>
-                </div>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Build Notes" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% include "notes_buttons.html" %}
             </div>
         </div>
     </div>
     <div class='panel-content'>
-        {% if build.notes %}
-        {{ build.notes | markdownify }}
-        {% endif %}
+        <textarea id='build-notes'></textarea>
     </div>
 </div>
 
@@ -392,17 +383,18 @@ onPanelLoad('attachments', function() {
 });
 
 onPanelLoad('notes', function() {
-    $('#edit-notes').click(function() {
-        constructForm('{% url "api-build-detail" build.pk %}', {
-            fields: {
-                notes: {
-                    multiline: true,
-                }
-            },
-            title: '{% trans "Edit Notes" %}',
-            reload: true,
-        });
-    });
+
+    setupNotesField(
+        'build-notes',
+        '{% url "api-build-detail" build.pk %}',
+        {
+            {% if roles.build.change %}
+            editable: true,
+            {% else %}
+            editable: false,
+            {% endif %}
+        }
+    );
 });
 
 function reloadTable() {

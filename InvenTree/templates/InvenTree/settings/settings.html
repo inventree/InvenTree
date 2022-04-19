@@ -89,7 +89,7 @@ $('table').find('.boolean-setting').change(function() {
         },
         {
             method: 'PATCH',
-            onSuccess: function(data) {
+            success: function(data) {
             },
             error: function(xhr) {
                 showApiError(xhr, url);

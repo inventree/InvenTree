@@ -4,7 +4,6 @@
 {% load status_codes %}
 {% load i18n %}
 {% load static %}
-{% load markdownify %}
 
 {% block sidebar %}
 {% include "order/so_sidebar.html"  %}
@@ -118,24 +117,16 @@
 
 <div class='panel panel-hidden' id='panel-order-notes'>
     <div class='panel-heading'>
-        <div class='row'>
-            <div class='col-sm-6'>
-                <h4>{% trans "Order Notes" %}</h4>
-            </div>
-            <div class='col-sm-6'>
-                <div class='btn-group float-right'>
-                    <button type='button' id='edit-notes' title='{% trans "Edit Notes" %}' class='btn outline-secondary'>
-                        <span class='fas fa-edit'>      
-                        </span>
-                    </button>
-                </div>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Order Notes" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% include "notes_buttons.html" %}
             </div>
         </div>
     </div>
     <div class='panel-content'>
-        {% if order.notes %}
-        {{ order.notes | markdownify }}
-        {% endif %}
+        <textarea id='order-notes'></textarea>
     </div>
 </div>
 
@@ -176,16 +167,18 @@
         });
     });
 
-    $('#edit-notes').click(function() {
-        constructForm('{% url "api-so-detail" order.pk %}', {
-            fields: {
-                notes: {
-                    multiline: true,
-                }
-            },
-            title: '{% trans "Edit Notes" %}',
-            reload: true,
-        });
+    onPanelLoad('order-notes', function() {
+        setupNotesField(
+            'order-notes',
+            '{% url "api-so-detail" order.pk %}',
+            {
+                {% if roles.purchase_order.change %}
+                editable: true,
+                {% else %}
+                editable: false,
+                {% endif %}
+            }
+        );
     });
 
     enableDragAndDrop(
