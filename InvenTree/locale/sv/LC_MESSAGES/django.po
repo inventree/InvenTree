@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-19 21:04+0000\n"
-"PO-Revision-Date: 2022-04-19 21:19\n"
+"POT-Creation-Date: 2022-04-19 23:22+0000\n"
+"PO-Revision-Date: 2022-04-19 23:32\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -200,7 +200,7 @@ msgstr "Ogiltigt val"
 #: templates/InvenTree/notifications/notifications.html:84
 #: templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/plugin.html:49
-#: templates/InvenTree/settings/plugin.html:126
+#: templates/InvenTree/settings/plugin.html:132
 #: templates/InvenTree/settings/plugin_settings.html:23
 #: templates/InvenTree/settings/settings.html:320
 #: templates/js/translated/company.js:641 templates/js/translated/part.js:610
@@ -5550,11 +5550,11 @@ msgstr ""
 msgid "Label printing failed"
 msgstr ""
 
-#: plugin/integration.py:138
+#: plugin/integration.py:146
 msgid "No author found"
 msgstr ""
 
-#: plugin/integration.py:152
+#: plugin/integration.py:160
 msgid "No date found"
 msgstr ""
 
@@ -6795,7 +6795,7 @@ msgid "Age"
 msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:88
-#: templates/InvenTree/settings/plugin.html:127
+#: templates/InvenTree/settings/plugin.html:133
 msgid "Message"
 msgstr ""
 
@@ -6939,15 +6939,19 @@ msgstr ""
 msgid "Version"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:93
+#: templates/InvenTree/settings/plugin.html:82
+msgid "code sample"
+msgstr ""
+
+#: templates/InvenTree/settings/plugin.html:99
 msgid "Inactive plugins"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:116
+#: templates/InvenTree/settings/plugin.html:122
 msgid "Plugin Error Stack"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:125
+#: templates/InvenTree/settings/plugin.html:131
 msgid "Stage"
 msgstr ""
 
