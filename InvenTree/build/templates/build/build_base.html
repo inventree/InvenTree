@@ -90,6 +90,11 @@ src="{% static 'img/blank_image.png' %}"
 </table>
 
 <div class='info-messages'>
+    {% if not build.has_build_outputs %}
+    <div class='alert alert-block alert-danger'>
+        {% trans "No build outputs have been created for this build order" %}<br>
+    </div>
+    {% endif %}
     {% if build.sales_order %}
     <div class='alert alert-block alert-info'>
         {% object_link 'so-detail' build.sales_order.id build.sales_order as link %}
@@ -120,7 +125,7 @@ src="{% static 'img/blank_image.png' %}"
         {% trans "Required build quantity has not yet been completed" %}
     </div>
     {% endif %}
-    {% if not build.areUntrackedPartsFullyAllocated %}
+    {% if not build.are_untracked_parts_allocated %}
     <div class='alert alert-block alert-warning'>
         {% trans "Stock has not been fully allocated to this Build Order" %}
     </div>
@@ -146,7 +151,7 @@ src="{% static 'img/blank_image.png' %}"
             {% trans "Target Date" %}
         </td>
         <td>
-            {{ build.target_date }}
+            {% render_date build.target_date %}
             {% if build.is_overdue %}
             <span title='{% blocktrans with target=build.target_date %}This build was due on {{target}}{% endblocktrans %}' class='badge badge-right rounded-pill bg-danger'>{% trans "Overdue" %}</span>
             {% endif %}
@@ -221,16 +226,17 @@ src="{% static 'img/blank_image.png' %}"
         {% if build.incomplete_count > 0 %}
         showAlertDialog(
             '{% trans "Incomplete Outputs" %}',
-            '{% trans "Build Order cannot be completed as incomplete build outputs remain" %}'
-        );
-        {% else %}
-        launchModalForm(
-            "{% url 'build-complete' build.id %}",
+            '{% trans "Build Order cannot be completed as incomplete build outputs remain" %}',
             {
-                reload: true,
-                submit_text: '{% trans "Complete Build" %}',
+                alert_style: 'danger',
             }
         );
+        {% else %}
+
+        completeBuildOrder({{ build.pk }}, {
+            allocated: {% if build.are_untracked_parts_allocated %}true{% else %}false{% endif %},
+            completed: {% if build.remaining == 0 %}true{% else %}false{% endif %},
+        });
         {% endif %}
     });
 

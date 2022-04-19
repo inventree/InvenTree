@@ -4,8 +4,13 @@ import logging
 
 from django.apps import AppConfig
 from django.core.exceptions import AppRegistryNotReady
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.db import transaction
+from django.db.utils import IntegrityError
 
 from InvenTree.ready import isInTestMode, canAppAccessDatabase
+from .config import get_setting
 import InvenTree.tasks
 
 
@@ -23,8 +28,11 @@ class InvenTreeConfig(AppConfig):
 
             self.start_background_tasks()
 
-            if not isInTestMode():
+            if not isInTestMode():  # pragma: no cover
                 self.update_exchange_rates()
+
+        if canAppAccessDatabase() or settings.TESTING_ENV:
+            self.add_user_on_startup()
 
     def remove_obsolete_tasks(self):
         """
@@ -38,7 +46,7 @@ class InvenTreeConfig(AppConfig):
 
         try:
             from django_q.models import Schedule
-        except (AppRegistryNotReady):
+        except AppRegistryNotReady:  # pragma: no cover
             return
 
         # Remove any existing obsolete tasks
@@ -48,7 +56,7 @@ class InvenTreeConfig(AppConfig):
 
         try:
             from django_q.models import Schedule
-        except (AppRegistryNotReady):
+        except AppRegistryNotReady:  # pragma: no cover
             return
 
         logger.info("Starting background tasks...")
@@ -90,7 +98,7 @@ class InvenTreeConfig(AppConfig):
             schedule_type=Schedule.DAILY,
         )
 
-    def update_exchange_rates(self):
+    def update_exchange_rates(self):  # pragma: no cover
         """
         Update exchange rates each time the server is started, *if*:
 
@@ -100,10 +108,10 @@ class InvenTreeConfig(AppConfig):
 
         try:
             from djmoney.contrib.exchange.models import ExchangeBackend
-            from datetime import datetime, timedelta
+
             from InvenTree.tasks import update_exchange_rates
             from common.settings import currency_code_default
-        except AppRegistryNotReady:
+        except AppRegistryNotReady:  # pragma: no cover
             pass
 
         base_currency = currency_code_default()
@@ -115,23 +123,18 @@ class InvenTreeConfig(AppConfig):
 
             last_update = backend.last_update
 
-            if last_update is not None:
-                delta = datetime.now().date() - last_update.date()
-                if delta > timedelta(days=1):
-                    print(f"Last update was {last_update}")
-                    update = True
-            else:
+            if last_update is None:
                 # Never been updated
-                print("Exchange backend has never been updated")
+                logger.info("Exchange backend has never been updated")
                 update = True
 
             # Backend currency has changed?
             if not base_currency == backend.base_currency:
-                print(f"Base currency changed from {backend.base_currency} to {base_currency}")
+                logger.info(f"Base currency changed from {backend.base_currency} to {base_currency}")
                 update = True
 
         except (ExchangeBackend.DoesNotExist):
-            print("Exchange backend not found - updating")
+            logger.info("Exchange backend not found - updating")
             update = True
 
         except:
@@ -139,4 +142,58 @@ class InvenTreeConfig(AppConfig):
             return
 
         if update:
-            update_exchange_rates()
+            try:
+                update_exchange_rates()
+            except Exception as e:
+                logger.error(f"Error updating exchange rates: {e}")
+
+    def add_user_on_startup(self):
+        """Add a user on startup"""
+        # stop if checks were already created
+        if hasattr(settings, 'USER_ADDED') and settings.USER_ADDED:
+            return
+
+        # get values
+        add_user = get_setting(
+            'INVENTREE_ADMIN_USER',
+            settings.CONFIG.get('admin_user', False)
+        )
+        add_email = get_setting(
+            'INVENTREE_ADMIN_EMAIL',
+            settings.CONFIG.get('admin_email', False)
+        )
+        add_password = get_setting(
+            'INVENTREE_ADMIN_PASSWORD',
+            settings.CONFIG.get('admin_password', False)
+        )
+
+        # check if all values are present
+        set_variables = 0
+        for tested_var in [add_user, add_email, add_password]:
+            if tested_var:
+                set_variables += 1
+
+        # no variable set -> do not try anything
+        if set_variables == 0:
+            settings.USER_ADDED = True
+            return
+
+        # not all needed variables set
+        if set_variables < 3:
+            logger.warn('Not all required settings for adding a user on startup are present:\nINVENTREE_ADMIN_USER, INVENTREE_ADMIN_EMAIL, INVENTREE_ADMIN_PASSWORD')
+            settings.USER_ADDED = True
+            return
+
+        # good to go -> create user
+        user = get_user_model()
+        try:
+            with transaction.atomic():
+                new_user = user.objects.create_superuser(add_user, add_email, add_password)
+            logger.info(f'User {str(new_user)} was created!')
+        except IntegrityError as _e:
+            logger.warning(f'The user "{add_user}" could not be created due to the following error:\n{str(_e)}')
+            if settings.TESTING_ENV:
+                raise _e
+
+        # do not try again
+        settings.USER_ADDED = True

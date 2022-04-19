@@ -8,11 +8,11 @@ from django.db.utils import IntegrityError
 from InvenTree import status_codes as status
 
 from build.models import Build, BuildItem, get_next_build_number
-from part.models import Part, BomItem
+from part.models import Part, BomItem, BomItemSubstitute
 from stock.models import StockItem
 
 
-class BuildTest(TestCase):
+class BuildTestBase(TestCase):
     """
     Run some tests to ensure that the Build model is working properly.
     """
@@ -62,29 +62,26 @@ class BuildTest(TestCase):
         )
 
         # Create BOM item links for the parts
-        BomItem.objects.create(
+        self.bom_item_1 = BomItem.objects.create(
             part=self.assembly,
             sub_part=self.sub_part_1,
             quantity=5
         )
 
-        BomItem.objects.create(
+        self.bom_item_2 = BomItem.objects.create(
             part=self.assembly,
             sub_part=self.sub_part_2,
             quantity=3
         )
 
         # sub_part_3 is trackable!
-        BomItem.objects.create(
+        self.bom_item_3 = BomItem.objects.create(
             part=self.assembly,
             sub_part=self.sub_part_3,
             quantity=2
         )
 
         ref = get_next_build_number()
-
-        if ref is None:
-            ref = "0001"
 
         # Create a "Build" object to make 10x objects
         self.build = Build.objects.create(
@@ -110,12 +107,19 @@ class BuildTest(TestCase):
         )
 
         # Create some stock items to assign to the build
-        self.stock_1_1 = StockItem.objects.create(part=self.sub_part_1, quantity=1000)
+        self.stock_1_1 = StockItem.objects.create(part=self.sub_part_1, quantity=3)
         self.stock_1_2 = StockItem.objects.create(part=self.sub_part_1, quantity=100)
 
-        self.stock_2_1 = StockItem.objects.create(part=self.sub_part_2, quantity=5000)
+        self.stock_2_1 = StockItem.objects.create(part=self.sub_part_2, quantity=5)
+        self.stock_2_2 = StockItem.objects.create(part=self.sub_part_2, quantity=5)
+        self.stock_2_2 = StockItem.objects.create(part=self.sub_part_2, quantity=5)
+        self.stock_2_2 = StockItem.objects.create(part=self.sub_part_2, quantity=5)
+        self.stock_2_2 = StockItem.objects.create(part=self.sub_part_2, quantity=5)
 
         self.stock_3_1 = StockItem.objects.create(part=self.sub_part_3, quantity=1000)
+
+
+class BuildTest(BuildTestBase):
 
     def test_ref_int(self):
         """
@@ -140,7 +144,7 @@ class BuildTest(TestCase):
     def test_init(self):
         # Perform some basic tests before we start the ball rolling
 
-        self.assertEqual(StockItem.objects.count(), 6)
+        self.assertEqual(StockItem.objects.count(), 10)
 
         # Build is PENDING
         self.assertEqual(self.build.status, status.BuildStatus.PENDING)
@@ -150,15 +154,15 @@ class BuildTest(TestCase):
 
         # None of the build outputs have been completed
         for output in self.build.get_build_outputs().all():
-            self.assertFalse(self.build.isFullyAllocated(output))
+            self.assertFalse(self.build.is_fully_allocated(output))
 
-        self.assertFalse(self.build.isPartFullyAllocated(self.sub_part_1, self.output_1))
-        self.assertFalse(self.build.isPartFullyAllocated(self.sub_part_2, self.output_2))
+        self.assertFalse(self.build.is_bom_item_allocated(self.bom_item_1, self.output_1))
+        self.assertFalse(self.build.is_bom_item_allocated(self.bom_item_2, self.output_2))
 
-        self.assertEqual(self.build.unallocatedQuantity(self.sub_part_1, self.output_1), 15)
-        self.assertEqual(self.build.unallocatedQuantity(self.sub_part_1, self.output_2), 35)
-        self.assertEqual(self.build.unallocatedQuantity(self.sub_part_2, self.output_1), 9)
-        self.assertEqual(self.build.unallocatedQuantity(self.sub_part_2, self.output_2), 21)
+        self.assertEqual(self.build.unallocated_quantity(self.bom_item_1, self.output_1), 15)
+        self.assertEqual(self.build.unallocated_quantity(self.bom_item_1, self.output_2), 35)
+        self.assertEqual(self.build.unallocated_quantity(self.bom_item_2, self.output_1), 9)
+        self.assertEqual(self.build.unallocated_quantity(self.bom_item_2, self.output_2), 21)
 
         self.assertFalse(self.build.is_complete)
 
@@ -186,7 +190,7 @@ class BuildTest(TestCase):
             b.clean()
 
         # Ok, what about we make one that does *not* fail?
-        b = BuildItem(stock_item=self.stock_1_1, build=self.build, install_into=self.output_1, quantity=10)
+        b = BuildItem(stock_item=self.stock_1_2, build=self.build, install_into=self.output_1, quantity=10)
         b.save()
 
     def test_duplicate_bom_line(self):
@@ -229,7 +233,7 @@ class BuildTest(TestCase):
             }
         )
 
-        self.assertTrue(self.build.isFullyAllocated(self.output_1))
+        self.assertTrue(self.build.is_fully_allocated(self.output_1))
 
         # Partially allocate tracked stock against build output 2
         self.allocate_stock(
@@ -239,7 +243,7 @@ class BuildTest(TestCase):
             }
         )
 
-        self.assertFalse(self.build.isFullyAllocated(self.output_2))
+        self.assertFalse(self.build.is_fully_allocated(self.output_2))
 
         # Partially allocate untracked stock against build
         self.allocate_stock(
@@ -250,9 +254,9 @@ class BuildTest(TestCase):
             }
         )
 
-        self.assertFalse(self.build.isFullyAllocated(None, verbose=True))
+        self.assertFalse(self.build.is_fully_allocated(None))
 
-        unallocated = self.build.unallocatedParts(None)
+        unallocated = self.build.unallocated_bom_items(None)
 
         self.assertEqual(len(unallocated), 2)
 
@@ -263,30 +267,33 @@ class BuildTest(TestCase):
             }
         )
 
-        self.assertFalse(self.build.isFullyAllocated(None, verbose=True))
+        self.assertFalse(self.build.is_fully_allocated(None))
 
-        unallocated = self.build.unallocatedParts(None)
+        unallocated = self.build.unallocated_bom_items(None)
 
         self.assertEqual(len(unallocated), 1)
 
         self.build.unallocateStock()
 
-        unallocated = self.build.unallocatedParts(None)
+        unallocated = self.build.unallocated_bom_items(None)
 
         self.assertEqual(len(unallocated), 2)
 
-        self.assertFalse(self.build.areUntrackedPartsFullyAllocated())
+        self.assertFalse(self.build.are_untracked_parts_allocated())
+
+        self.stock_2_1.quantity = 500
+        self.stock_2_1.save()
 
         # Now we "fully" allocate the untracked untracked items
         self.allocate_stock(
             None,
             {
-                self.stock_1_1: 50,
+                self.stock_1_2: 50,
                 self.stock_2_1: 50,
             }
         )
 
-        self.assertTrue(self.build.areUntrackedPartsFullyAllocated())
+        self.assertTrue(self.build.are_untracked_parts_allocated())
 
     def test_cancel(self):
         """
@@ -307,6 +314,12 @@ class BuildTest(TestCase):
         """
         Test completion of a build output
         """
+
+        self.stock_1_1.quantity = 1000
+        self.stock_1_1.save()
+
+        self.stock_2_1.quantity = 30
+        self.stock_2_1.save()
 
         # Allocate non-tracked parts
         self.allocate_stock(
@@ -334,9 +347,9 @@ class BuildTest(TestCase):
             }
         )
 
-        self.assertTrue(self.build.isFullyAllocated(None, verbose=True))
-        self.assertTrue(self.build.isFullyAllocated(self.output_1))
-        self.assertTrue(self.build.isFullyAllocated(self.output_2))
+        self.assertTrue(self.build.is_fully_allocated(None))
+        self.assertTrue(self.build.is_fully_allocated(self.output_1))
+        self.assertTrue(self.build.is_fully_allocated(self.output_2))
 
         self.build.complete_build_output(self.output_1, None)
 
@@ -354,16 +367,15 @@ class BuildTest(TestCase):
         self.assertEqual(BuildItem.objects.count(), 0)
 
         # New stock items should have been created!
-        self.assertEqual(StockItem.objects.count(), 7)
+        self.assertEqual(StockItem.objects.count(), 10)
 
         # This stock item has been depleted!
         with self.assertRaises(StockItem.DoesNotExist):
             StockItem.objects.get(pk=self.stock_1_1.pk)
 
-        # This stock item has *not* been depleted
-        x = StockItem.objects.get(pk=self.stock_2_1.pk)
-
-        self.assertEqual(x.quantity, 4970)
+        # This stock item has also been depleted
+        with self.assertRaises(StockItem.DoesNotExist):
+            StockItem.objects.get(pk=self.stock_2_1.pk)
 
         # And 10 new stock items created for the build output
         outputs = StockItem.objects.filter(build=self.build)
@@ -372,3 +384,108 @@ class BuildTest(TestCase):
 
         for output in outputs:
             self.assertFalse(output.is_building)
+
+
+class AutoAllocationTests(BuildTestBase):
+    """
+    Tests for auto allocating stock against a build order
+    """
+
+    def setUp(self):
+
+        super().setUp()
+
+        # Add a "substitute" part for bom_item_2
+        alt_part = Part.objects.create(
+            name="alt part",
+            description="An alternative part!",
+            component=True,
+        )
+
+        BomItemSubstitute.objects.create(
+            bom_item=self.bom_item_2,
+            part=alt_part,
+        )
+
+        StockItem.objects.create(
+            part=alt_part,
+            quantity=500,
+        )
+
+    def test_auto_allocate(self):
+        """
+        Run the 'auto-allocate' function. What do we expect to happen?
+
+        There are two "untracked" parts:
+            - sub_part_1 (quantity 5 per BOM = 50 required total) / 103 in stock (2 items)
+            - sub_part_2 (quantity 3 per BOM = 30 required total) / 25 in stock (5 items)
+
+        A "fully auto" allocation should allocate *all* of these stock items to the build
+        """
+
+        # No build item allocations have been made against the build
+        self.assertEqual(self.build.allocated_stock.count(), 0)
+
+        self.assertFalse(self.build.are_untracked_parts_allocated())
+
+        # Stock is not interchangeable, nothing will happen
+        self.build.auto_allocate_stock(
+            interchangeable=False,
+            substitutes=False,
+        )
+
+        self.assertFalse(self.build.are_untracked_parts_allocated())
+
+        self.assertEqual(self.build.allocated_stock.count(), 0)
+
+        self.assertFalse(self.build.is_bom_item_allocated(self.bom_item_1))
+        self.assertFalse(self.build.is_bom_item_allocated(self.bom_item_2))
+
+        self.assertEqual(self.build.unallocated_quantity(self.bom_item_1), 50)
+        self.assertEqual(self.build.unallocated_quantity(self.bom_item_2), 30)
+
+        # This time we expect stock to be allocated!
+        self.build.auto_allocate_stock(
+            interchangeable=True,
+            substitutes=False,
+        )
+
+        self.assertFalse(self.build.are_untracked_parts_allocated())
+
+        self.assertEqual(self.build.allocated_stock.count(), 7)
+
+        self.assertTrue(self.build.is_bom_item_allocated(self.bom_item_1))
+        self.assertFalse(self.build.is_bom_item_allocated(self.bom_item_2))
+
+        self.assertEqual(self.build.unallocated_quantity(self.bom_item_1), 0)
+        self.assertEqual(self.build.unallocated_quantity(self.bom_item_2), 5)
+
+        # This time, allow substitue parts to be used!
+        self.build.auto_allocate_stock(
+            interchangeable=True,
+            substitutes=True,
+        )
+
+        # self.assertTrue(self.build.are_untracked_parts_allocated())
+
+        # self.assertEqual(self.build.allocated_stock.count(), 8)
+        self.assertEqual(self.build.unallocated_quantity(self.bom_item_1), 0)
+        self.assertEqual(self.build.unallocated_quantity(self.bom_item_2), 0)
+
+        self.assertTrue(self.build.is_bom_item_allocated(self.bom_item_1))
+        self.assertTrue(self.build.is_bom_item_allocated(self.bom_item_2))
+
+    def test_fully_auto(self):
+        """
+        We should be able to auto-allocate against a build in a single go
+        """
+
+        self.build.auto_allocate_stock(
+            interchangeable=True,
+            substitutes=True
+        )
+
+        self.assertTrue(self.build.are_untracked_parts_allocated())
+
+        self.assertEqual(self.build.unallocated_quantity(self.bom_item_1), 0)
+        self.assertEqual(self.build.unallocated_quantity(self.bom_item_2), 0)

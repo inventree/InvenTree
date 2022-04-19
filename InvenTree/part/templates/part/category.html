@@ -153,9 +153,6 @@
             <h4>{% trans "Parts" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                <button type='button' class='btn btn-outline-secondary' id='part-export' title='{% trans "Export Part Data" %}'>
-                    <span class='fas fa-file-download'></span> {% trans "Export" %}
-                </button>
                 {% if roles.part.add %}
                 <button type='button' class='btn btn-success' id='part-create' title='{% trans "Create new part" %}'>
                     <span class='fas fa-plus-circle'></span> {% trans "New Part" %}
@@ -187,6 +184,15 @@
     <div class='panel-content'>
         <table class='table table-striped table-condensed' data-toolbar='#part-button-toolbar' id='part-table'>
         </table> 
+    </div>
+</div>
+
+<div class='panel panel-hidden' id='panel-stock'>
+    <div class='panel-heading'>
+        <h4>{% trans "Stock Items" %}</h4>
+    </div>
+    <div class='panel-content'>
+        {% include "stock_table.html" %}
     </div>
 </div>
 
@@ -226,13 +232,29 @@
 {{ block.super }}
 
     {% if category %}
-    loadParametricPartTable(
-        "#parametric-part-table",
-        { 
-            headers: {{ headers|safe }},
-            data: {{ parameters|safe }},
-        }
-    );
+
+    onPanelLoad('stock', function() {
+        loadStockTable(
+            $('#stock-table'),
+            {
+                params: {
+                    category: {{ category.pk }},
+                    part_detail: true,
+                    location_detail: true,
+                    supplier_part_detail: true,
+                }
+            }
+        );
+    });
+
+    onPanelLoad('parameters', function() {
+        loadParametricPartTable(
+            "#parametric-part-table",
+            { 
+                category: {{ category.pk }},
+            }
+        );
+    });
 
     $("#toggle-starred").click(function() {
         toggleStar({
@@ -242,9 +264,6 @@
     });
 
     {% endif %}
-
-    // Enable left-hand navigation sidebar
-    enableSidebar('category');
 
     // Enable breadcrumb tree view
     enableBreadcrumbTree({
@@ -261,18 +280,20 @@
         }
     });
 
-    loadPartCategoryTable(
-        $('#subcategory-table'), {
-            params: {
-                {% if category %}
-                parent: {{ category.pk }},
-                {% else %}
-                parent: null,
-                {% endif %}
-            },
-            allowTreeView: true,
-        }
-    );
+    onPanelLoad('subcategories', function() {
+        loadPartCategoryTable(
+            $('#subcategory-table'), {
+                params: {
+                    {% if category %}
+                    parent: {{ category.pk }},
+                    {% else %}
+                    parent: null,
+                    {% endif %}
+                },
+                allowTreeView: true,
+            }
+        );
+    });
 
     $("#cat-create").click(function() {
 
@@ -288,13 +309,6 @@
             title: '{% trans "Create Part Category" %}',
             follow: true,
         });
-    });
-
-    $("#part-export").click(function() {
-
-        var url = "{% url 'part-export' %}?category={{ category.id }}";
-
-        location.href = url;
     });
 
     {% if roles.part.add %}
@@ -313,6 +327,10 @@
             fields: fields,
             groups: partGroups(),
             title: '{% trans "Create Part" %}',
+            reloadFormAfterSuccess: true,
+            persist: true,
+            persistMessage: '{% trans "Create another part after this one" %}',
+            successMessage: '{% trans "Part created successfully" %}',
             onSuccess: function(data) {
                 // Follow the new part
                 location.href = `/part/${data.pk}/`;
@@ -345,19 +363,24 @@
 
     {% endif %}
 
-    loadPartTable(
-        "#part-table",
-        "{% url 'api-part-list' %}",
-        {
-            params: {
-                {% if category %}category: {{ category.id }},
-                {% else %}category: "null",
-                {% endif %}
+    onPanelLoad('parts', function() {
+        loadPartTable(
+            "#part-table",
+            "{% url 'api-part-list' %}",
+            {
+                params: {
+                    {% if category %}category: {{ category.id }},
+                    {% else %}category: "null",
+                    {% endif %}
+                },
+                buttons: ['#part-options'],
+                checkbox: true,
+                gridView: true,
             },
-            buttons: ['#part-options'],
-            checkbox: true,
-            gridView: true,
-        },
-    );
+        );
+    });
+
+    // Enable left-hand navigation sidebar
+    enableSidebar('category');
 
 {% endblock %}

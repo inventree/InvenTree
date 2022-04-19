@@ -22,6 +22,7 @@
 {% include "InvenTree/settings/user_settings.html" %}
 {% include "InvenTree/settings/user_homepage.html" %}
 {% include "InvenTree/settings/user_search.html" %}
+{% include "InvenTree/settings/user_notifications.html" %}
 {% include "InvenTree/settings/user_labels.html" %}
 {% include "InvenTree/settings/user_reports.html" %}
 {% include "InvenTree/settings/user_display.html" %}
@@ -39,14 +40,17 @@
 {% include "InvenTree/settings/build.html" %}
 {% include "InvenTree/settings/po.html" %}
 {% include "InvenTree/settings/so.html" %}
-{% include "InvenTree/settings/plugin.html" %}
 
+{% plugins_enabled as plug %}
+{% if plug %}
+{% include "InvenTree/settings/plugin.html" %}
 {% plugin_list as pl_list %}
 {% for plugin_key, plugin in pl_list.items %}
     {% if plugin.registered_mixins %}
         {% include "InvenTree/settings/plugin_settings.html" %}
     {% endif %}
 {% endfor %}
+{% endif %}
 
 {% endif %}
 
@@ -59,19 +63,67 @@
 {% block js_ready %}
 {{ block.super }}
 
+// Callback for when boolean settings are edited
+$('table').find('.boolean-setting').change(function() {
+
+    var setting = $(this).attr('setting');
+    var pk = $(this).attr('pk');
+    var plugin = $(this).attr('plugin');
+    var user = $(this).attr('user');
+
+    var checked = this.checked;
+
+    // Global setting by default
+    var url = `/api/settings/global/${pk}/`;
+
+    if (plugin) {
+        url = `/api/plugin/settings/${pk}/`;
+    } else if (user) {
+        url = `/api/settings/user/${pk}/`;
+    }
+
+    inventreePut(
+        url,
+        {
+            value: checked.toString(),
+        },
+        {
+            method: 'PATCH',
+            success: function(data) {
+            },
+            error: function(xhr) {
+                showApiError(xhr, url);
+            }
+        }
+    );
+    
+});
+
+// Callback for when non-boolean settings are edited
 $('table').find('.btn-edit-setting').click(function() {
     var setting = $(this).attr('setting');
     var pk = $(this).attr('pk');
-
+    var plugin = $(this).attr('plugin');
     var is_global = true;
 
     if ($(this).attr('user')){
         is_global = false;
     }
 
+    var title = '';
+
+    if (plugin != null) {
+        title = '{% trans "Edit Plugin Setting" %}';
+    } else if (is_global) {
+        title = '{% trans "Edit Global Setting" %}';
+    } else {
+        title = '{% trans "Edit User Setting" %}';
+    }
+
     editSetting(pk, {
+        plugin: plugin,
         global: is_global,
-        title: is_global ? '{% trans "Edit Global Setting" %}' : '{% trans "Edit User Setting" %}',
+        title: title,
     });
 });
 
@@ -322,9 +374,12 @@ $("#import-part").click(function() {
     launchModalForm("{% url 'api-part-import' %}?reset", {});
 });
 
+{% plugins_enabled as plug %}
+{% if plug %}
 $("#install-plugin").click(function() {
     installPlugin();
 });
+{% endif %}
 
 enableSidebar('settings');
 

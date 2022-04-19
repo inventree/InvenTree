@@ -127,6 +127,9 @@ function createNewModal(options={}) {
         $(modal_name).find('#modal-form-cancel').hide();
     }
 
+    // Steal keyboard focus
+    $(modal_name).focus();
+
     // Return the "name" of the modal
     return modal_name;
 }
@@ -372,6 +375,14 @@ function attachSelect(modal) {
 }
 
 
+function attachBootstrapCheckbox(modal) {
+    /* Attach 'switch' functionality to any checkboxes on the form */
+
+    $(modal + ' .checkboxinput').addClass('form-check-input');
+    $(modal + ' .checkboxinput').wrap(`<div class='form-check form-switch'></div>`);
+}
+
+
 function loadingMessageContent() {
     /* Render a 'loading' message to display in a form 
      * when waiting for a response from the server
@@ -555,12 +566,17 @@ function renderErrorMessage(xhr) {
 }
 
 
-function showAlertDialog(title, content) {
+function showAlertDialog(title, content, options={}) {
     /* Display a modal dialog message box.
      * 
      * title - Title text 
      * content - HTML content of the dialog window
      */
+
+    if (options.alert_style) {
+        // Wrap content in an alert block
+        content = `<div class='alert alert-block alert-${options.alert_style}'>${content}</div>`;
+    }
 
 
     var modal = createNewModal({
@@ -681,7 +697,9 @@ function injectModalForm(modal, form_html) {
      * Updates the HTML of the form content, and then applies some other updates
      */
     $(modal).find('.modal-form-content').html(form_html);
+
     attachSelect(modal);
+    attachBootstrapCheckbox(modal);
 }
 
 
@@ -875,6 +893,9 @@ function handleModalForm(url, options) {
                 // Re-enable the modal
                 modalEnable(modal, true);
                 if ('form_valid' in response) {
+                    // Get visibility option of error message
+                    var hideErrorMessage = (options.hideErrorMessage === undefined) ? true : options.hideErrorMessage;
+
                     // Form data was validated correctly
                     if (response.form_valid) {
                         $(modal).modal('hide');
@@ -883,7 +904,7 @@ function handleModalForm(url, options) {
                         // Form was returned, invalid!
 
                         // Disable error message with option or response
-                        if (!options.hideErrorMessage && !response.hideErrorMessage) {
+                        if (!hideErrorMessage && !response.hideErrorMessage) {
                             var warningDiv = $(modal).find('#form-validation-warning');
                             warningDiv.css('display', 'block');
                         }

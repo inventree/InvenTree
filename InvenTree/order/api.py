@@ -16,10 +16,11 @@ from rest_framework.response import Response
 from company.models import SupplierPart
 
 from InvenTree.filters import InvenTreeOrderingFilter
-from InvenTree.helpers import str2bool
+from InvenTree.helpers import str2bool, DownloadFile
 from InvenTree.api import AttachmentMixin
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
 
+from order.admin import POLineItemResource
 import order.models as models
 import order.serializers as serializers
 from part.models import Part
@@ -274,7 +275,7 @@ class POLineItemFilter(rest_filters.FilterSet):
         model = models.PurchaseOrderLineItem
         fields = [
             'order',
-            'part'
+            'part',
         ]
 
     pending = rest_filters.BooleanFilter(label='pending', method='filter_pending')
@@ -370,6 +371,34 @@ class POLineItemList(generics.ListCreateAPIView):
 
         return queryset
 
+    def list(self, request, *args, **kwargs):
+
+        queryset = self.filter_queryset(self.get_queryset())
+
+        # Check if we wish to export the queried data to a file
+        export_format = request.query_params.get('export', None)
+
+        if export_format:
+            export_format = str(export_format).strip().lower()
+
+            if export_format in ['csv', 'tsv', 'xls', 'xlsx']:
+                dataset = POLineItemResource().export(queryset=queryset)
+
+                filedata = dataset.export(export_format)
+
+                filename = f"InvenTree_PurchaseOrderData.{export_format}"
+
+                return DownloadFile(filedata, filename)
+
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
     filter_backends = [
         rest_filters.DjangoFilterBackend,
         filters.SearchFilter,
@@ -391,6 +420,7 @@ class POLineItemList(generics.ListCreateAPIView):
         'reference',
         'SKU',
         'total_price',
+        'target_date',
     ]
 
     search_fields = [
@@ -399,11 +429,6 @@ class POLineItemList(generics.ListCreateAPIView):
         'part__MPN',
         'part__SKU',
         'reference',
-    ]
-
-    filter_fields = [
-        'order',
-        'part'
     ]
 
 
@@ -703,6 +728,7 @@ class SOLineItemList(generics.ListCreateAPIView):
         'part__name',
         'quantity',
         'reference',
+        'target_date',
     ]
 
     search_fields = [
@@ -822,6 +848,7 @@ class SOAllocationList(generics.ListAPIView):
             kwargs['item_detail'] = str2bool(params.get('item_detail', False))
             kwargs['order_detail'] = str2bool(params.get('order_detail', False))
             kwargs['location_detail'] = str2bool(params.get('location_detail', False))
+            kwargs['customer_detail'] = str2bool(params.get('customer_detail', False))
         except AttributeError:
             pass
 
@@ -846,6 +873,12 @@ class SOAllocationList(generics.ListAPIView):
         if order is not None:
             queryset = queryset.filter(line__order=order)
 
+        # Filter by "stock item"
+        item = params.get('item', params.get('stock_item', None))
+
+        if item is not None:
+            queryset = queryset.filter(item=item)
+
         # Filter by "outstanding" order status
         outstanding = params.get('outstanding', None)
 
@@ -853,9 +886,17 @@ class SOAllocationList(generics.ListAPIView):
             outstanding = str2bool(outstanding)
 
             if outstanding:
-                queryset = queryset.filter(line__order__status__in=SalesOrderStatus.OPEN)
+                # Filter only "open" orders
+                # Filter only allocations which have *not* shipped
+                queryset = queryset.filter(
+                    line__order__status__in=SalesOrderStatus.OPEN,
+                    shipment__shipment_date=None,
+                )
             else:
-                queryset = queryset.exclude(line__order__status__in=SalesOrderStatus.OPEN)
+                queryset = queryset.exclude(
+                    line__order__status__in=SalesOrderStatus.OPEN,
+                    shipment__shipment_date=None
+                )
 
         return queryset
 
@@ -865,7 +906,6 @@ class SOAllocationList(generics.ListAPIView):
 
     # Default filterable fields
     filter_fields = [
-        'item',
     ]
 
 
@@ -996,7 +1036,7 @@ order_api_urls = [
         url(r'^.*$', POLineItemList.as_view(), name='api-po-line-list'),
     ])),
 
-    # API endpoints for sales ordesr
+    # API endpoints for sales orders
     url(r'^so/', include([
         url(r'attachment/', include([
             url(r'^(?P<pk>\d+)/$', SOAttachmentDetail.as_view(), name='api-so-attachment-detail'),

@@ -350,7 +350,7 @@ class SerializeStockItemSerializer(serializers.Serializer):
         serial_numbers = data['serial_numbers']
 
         try:
-            serials = InvenTree.helpers.extract_serial_numbers(serial_numbers, quantity)
+            serials = InvenTree.helpers.extract_serial_numbers(serial_numbers, quantity, item.part.getLatestSerialNumberInt())
         except DjangoValidationError as e:
             raise ValidationError({
                 'serial_numbers': e.messages,
@@ -379,6 +379,7 @@ class SerializeStockItemSerializer(serializers.Serializer):
         serials = InvenTree.helpers.extract_serial_numbers(
             data['serial_numbers'],
             data['quantity'],
+            item.part.getLatestSerialNumberInt()
         )
 
         item.serializeStock(
@@ -387,6 +388,63 @@ class SerializeStockItemSerializer(serializers.Serializer):
             user,
             notes=data.get('notes', ''),
             location=data['destination'],
+        )
+
+
+class InstallStockItemSerializer(serializers.Serializer):
+    """
+    Serializer for installing a stock item into a given part
+    """
+
+    stock_item = serializers.PrimaryKeyRelatedField(
+        queryset=StockItem.objects.all(),
+        many=False,
+        required=True,
+        allow_null=False,
+        label=_('Stock Item'),
+        help_text=_('Select stock item to install'),
+    )
+
+    note = serializers.CharField(
+        label=_('Note'),
+        required=False,
+        allow_blank=True,
+    )
+
+    def validate_stock_item(self, stock_item):
+        """
+        Validate the selected stock item
+        """
+
+        if not stock_item.in_stock:
+            # StockItem must be in stock to be "installed"
+            raise ValidationError(_("Stock item is unavailable"))
+
+        # Extract the "parent" item - the item into which the stock item will be installed
+        parent_item = self.context['item']
+        parent_part = parent_item.part
+
+        if not parent_part.check_if_part_in_bom(stock_item.part):
+            raise ValidationError(_("Selected part is not in the Bill of Materials"))
+
+        return stock_item
+
+    def save(self):
+        """ Install the selected stock item into this one """
+
+        data = self.validated_data
+
+        stock_item = data['stock_item']
+        note = data.get('note', '')
+
+        parent_item = self.context['item']
+        request = self.context['request']
+
+        parent_item.installStockItem(
+            stock_item,
+            stock_item.quantity,
+            request.user,
+            note,
         )
 
 
@@ -425,6 +483,7 @@ class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'parent',
             'pathstring',
             'items',
+            'owner',
         ]
 
 
@@ -674,6 +733,149 @@ class StockAssignmentSerializer(serializers.Serializer):
                 )
 
 
+class StockMergeItemSerializer(serializers.Serializer):
+    """
+    Serializer for a single StockItem within the StockMergeSerializer class.
+
+    Here, the individual StockItem is being checked for merge compatibility.
+    """
+
+    class Meta:
+        fields = [
+            'item',
+        ]
+
+    item = serializers.PrimaryKeyRelatedField(
+        queryset=StockItem.objects.all(),
+        many=False,
+        allow_null=False,
+        required=True,
+        label=_('Stock Item'),
+    )
+
+    def validate_item(self, item):
+
+        # Check that the stock item is able to be merged
+        item.can_merge(raise_error=True)
+
+        return item
+
+
+class StockMergeSerializer(serializers.Serializer):
+    """
+    Serializer for merging two (or more) stock items together
+    """
+
+    class Meta:
+        fields = [
+            'items',
+            'location',
+            'notes',
+            'allow_mismatched_suppliers',
+            'allow_mismatched_status',
+        ]
+
+    items = StockMergeItemSerializer(
+        many=True,
+        required=True,
+    )
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        many=False,
+        required=True,
+        allow_null=False,
+        label=_('Location'),
+        help_text=_('Destination stock location'),
+    )
+
+    notes = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        label=_('Notes'),
+        help_text=_('Stock merging notes'),
+    )
+
+    allow_mismatched_suppliers = serializers.BooleanField(
+        required=False,
+        label=_('Allow mismatched suppliers'),
+        help_text=_('Allow stock items with different supplier parts to be merged'),
+    )
+
+    allow_mismatched_status = serializers.BooleanField(
+        required=False,
+        label=_('Allow mismatched status'),
+        help_text=_('Allow stock items with different status codes to be merged'),
+    )
+
+    def validate(self, data):
+
+        data = super().validate(data)
+
+        items = data['items']
+
+        if len(items) < 2:
+            raise ValidationError(_('At least two stock items must be provided'))
+
+        unique_items = set()
+
+        # The "base item" is the first item
+        base_item = items[0]['item']
+
+        data['base_item'] = base_item
+
+        # Ensure stock items are unique!
+        for element in items:
+            item = element['item']
+
+            if item.pk in unique_items:
+                raise ValidationError(_('Duplicate stock items'))
+
+            unique_items.add(item.pk)
+
+            # Checks from here refer to the "base_item"
+            if item == base_item:
+                continue
+
+            # Check that this item can be merged with the base_item
+            item.can_merge(
+                raise_error=True,
+                other=base_item,
+                allow_mismatched_suppliers=data.get('allow_mismatched_suppliers', False),
+                allow_mismatched_status=data.get('allow_mismatched_status', False),
+            )
+
+        return data
+
+    def save(self):
+        """
+        Actually perform the stock merging action.
+        At this point we are confident that the merge can take place
+        """
+
+        data = self.validated_data
+
+        base_item = data['base_item']
+        items = data['items'][1:]
+
+        request = self.context['request']
+        user = getattr(request, 'user', None)
+
+        items = []
+
+        for item in data['items'][1:]:
+            items.append(item['item'])
+
+        base_item.merge_stock_items(
+            items,
+            allow_mismatched_suppliers=data.get('allow_mismatched_suppliers', False),
+            allow_mismatched_status=data.get('allow_mismatched_status', False),
+            user=user,
+            location=data['location'],
+            notes=data.get('notes', None)
+        )
+
+
 class StockAdjustmentItemSerializer(serializers.Serializer):
     """
     Serializer for a single StockItem within a stock adjument request.
@@ -837,7 +1039,7 @@ class StockTransferSerializer(StockAdjustmentSerializer):
 
     def validate(self, data):
 
-        super().validate(data)
+        data = super().validate(data)
 
         # TODO: Any specific validation of location field?
 

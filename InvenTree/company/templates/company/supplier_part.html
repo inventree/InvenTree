@@ -268,6 +268,14 @@ $('#price-break-table').inventreeTable({
                 return html;
             }
         },
+        {
+            field: 'updated',
+            title: '{% trans "Last updated" %}',
+            sortable: true,
+            formatter: function(value) {
+                return renderDate(value);
+            }
+        },
     ]
 });
 
@@ -306,14 +314,6 @@ loadStockTable($("#stock-table"), {
     groupByField: 'location',
     buttons: ['#stock-options'],
     url: "{% url 'api-stock-list' %}",
-});
-
-$("#stock-export").click(function() {
-
-    exportStock({
-        supplier_part: {{ part.pk }},
-    });
-
 });
 
 $("#item-create").click(function() {

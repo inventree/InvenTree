@@ -4,6 +4,7 @@
 
 {% settings_value "PART_INTERNAL_PRICE" as show_internal_price %}
 {% settings_value 'PART_SHOW_RELATED' as show_related %}
+{% settings_value "PART_SHOW_PRICE_HISTORY" as show_price_history %}
 
 {% trans "Parameters" as text %}
 {% include "sidebar_item.html" with label="part-parameters" text=text icon="fa-th-list" %}
@@ -16,7 +17,9 @@
 {% if part.assembly %}
 {% trans "Bill of Materials" as text %}
 {% include "sidebar_item.html" with label="bom" text=text icon="fa-list" %}
+{% endif %}
 {% if roles.build.view %}
+{% if part.assembly or part.component %}
 {% trans "Build Orders" as text %}
 {% include "sidebar_item.html" with label="build-orders" text=text icon="fa-tools" %}
 {% endif %}
@@ -25,8 +28,10 @@
 {% trans "Used In" as text %}
 {% include "sidebar_item.html" with label="used-in" text=text icon="fa-layer-group" %}
 {% endif %}
+{% if show_price_history %}
 {% trans "Pricing" as text %}
 {% include "sidebar_item.html" with label="pricing" text=text icon="fa-dollar-sign" %}
+{% endif %}
 {% if part.purchaseable and roles.purchase_order.view %}
 {% trans "Suppliers" as text %}
 {% include "sidebar_item.html" with label="suppliers" text=text icon="fa-building" %}
@@ -36,6 +41,11 @@
 {% if part.salable and roles.sales_order.view %}
 {% trans "Sales Orders" as text %}
 {% include "sidebar_item.html" with label="sales-orders" text=text icon="fa-truck" %}
+{% endif %}
+{% settings_value 'DISPLAY_SCHEDULE_TAB' user=request.user as show_scheduling %}
+{% if show_scheduling %}
+{% trans "Scheduling" as text %}
+{% include "sidebar_item.html" with label="scheduling" text=text icon="fa-calendar-alt" %}
 {% endif %}
 {% if part.trackable %}
 {% trans "Test Templates" as text %}

@@ -33,14 +33,11 @@ part_parameter_urls = [
 
 part_detail_urls = [
     url(r'^delete/?', views.PartDelete.as_view(), name='part-delete'),
-    url(r'^bom-export/?', views.BomExport.as_view(), name='bom-export'),
     url(r'^bom-download/?', views.BomDownload.as_view(), name='bom-download'),
-    url(r'^validate-bom/', views.BomValidate.as_view(), name='bom-validate'),
 
     url(r'^pricing/', views.PartPricing.as_view(), name='part-pricing'),
 
     url(r'^bom-upload/?', views.BomUpload.as_view(), name='upload-bom'),
-    url(r'^bom-duplicate/?', views.BomDuplicate.as_view(), name='duplicate-bom'),
 
     url(r'^qr_code/?', views.PartQRCode.as_view(), name='part-qr'),
 
@@ -82,9 +79,6 @@ part_urls = [
 
     # Download a BOM upload template
     url(r'^bom_template/?', views.BomUploadTemplate.as_view(), name='bom-upload-template'),
-
-    # Export data for multiple parts
-    url(r'^export/', views.PartExport.as_view(), name='part-export'),
 
     # Individual part using pk
     url(r'^(?P<pk>\d+)/', include(part_detail_urls)),

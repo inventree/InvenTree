@@ -25,21 +25,19 @@ from InvenTree.views import QRCodeView
 from InvenTree.views import InvenTreeRoleMixin
 from InvenTree.forms import ConfirmForm
 
-from InvenTree.helpers import str2bool, DownloadFile, GetExportFormats
+from InvenTree.helpers import str2bool
 from InvenTree.helpers import extract_serial_numbers
 
 from decimal import Decimal, InvalidOperation
 from datetime import datetime, timedelta
 
-from company.models import Company, SupplierPart
+from company.models import SupplierPart
 from part.models import Part
 from .models import StockItem, StockLocation, StockItemTracking
 
 import common.settings
 from common.models import InvenTreeSetting
 from users.models import Owner
-
-from .admin import StockItemResource
 
 from . import forms as StockForms
 
@@ -63,6 +61,11 @@ class StockIndex(InvenTreeRoleMixin, ListView):
         context['loc_count'] = StockLocation.objects.count()
         context['stock_count'] = StockItem.objects.count()
 
+        # No 'ownership' checks are necessary for the top-level StockLocation view
+        context['user_owns_location'] = True
+        context['location_owner'] = None
+        context['ownership_enabled'] = common.models.InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+
         return context
 
 
@@ -76,6 +79,16 @@ class StockLocationDetail(InvenTreeRoleMixin, DetailView):
     queryset = StockLocation.objects.all()
     model = StockLocation
 
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+
+        context['ownership_enabled'] = common.models.InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+        context['location_owner'] = context['location'].get_location_owner()
+        context['user_owns_location'] = context['location'].check_ownership(self.request.user)
+
+        return context
+
 
 class StockItemDetail(InvenTreeRoleMixin, DetailView):
     """
@@ -88,43 +101,20 @@ class StockItemDetail(InvenTreeRoleMixin, DetailView):
     model = StockItem
 
     def get_context_data(self, **kwargs):
-        """ add previous and next item """
+        """
+        Add information on the "next" and "previous" StockItem objects,
+        based on the serial numbers.
+        """
+
         data = super().get_context_data(**kwargs)
 
         if self.object.serialized:
+            data['previous'] = self.object.get_next_serialized_item(reverse=True)
+            data['next'] = self.object.get_next_serialized_item()
 
-            serial_elem = {}
-
-            try:
-                current = int(self.object.serial)
-
-                for item in self.object.part.stock_items.all():
-
-                    if item.serialized:
-                        try:
-                            sn = int(item.serial)
-                            serial_elem[sn] = item
-                        except ValueError:
-                            # We only support integer serial number progression
-                            pass
-
-                serials = serial_elem.keys()
-
-                # previous
-                for nbr in range(current - 1, min(serials), -1):
-                    if nbr in serials:
-                        data['previous'] = serial_elem.get(nbr, None)
-                        break
-
-                # next
-                for nbr in range(current + 1, max(serials) + 1):
-                    if nbr in serials:
-                        data['next'] = serial_elem.get(nbr, None)
-                        break
-
-            except ValueError:
-                # We only support integer serial number progression
-                pass
+        data['ownership_enabled'] = common.models.InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
+        data['item_owner'] = self.object.get_item_owner()
+        data['user_owns_item'] = self.object.check_ownership(self.request.user)
 
         return data
 
@@ -361,95 +351,6 @@ class StockItemDeleteTestData(AjaxUpdateView):
         return self.renderJsonResponse(request, form, data)
 
 
-class StockExport(AjaxView):
-    """ Export stock data from a particular location.
-    Returns a file containing stock information for that location.
-    """
-
-    model = StockItem
-    role_required = 'stock.view'
-
-    def get(self, request, *args, **kwargs):
-
-        export_format = request.GET.get('format', 'csv').lower()
-
-        # Check if a particular location was specified
-        loc_id = request.GET.get('location', None)
-        location = None
-
-        if loc_id:
-            try:
-                location = StockLocation.objects.get(pk=loc_id)
-            except (ValueError, StockLocation.DoesNotExist):
-                pass
-
-        # Check if a particular supplier was specified
-        sup_id = request.GET.get('supplier', None)
-        supplier = None
-
-        if sup_id:
-            try:
-                supplier = Company.objects.get(pk=sup_id)
-            except (ValueError, Company.DoesNotExist):
-                pass
-
-        # Check if a particular supplier_part was specified
-        sup_part_id = request.GET.get('supplier_part', None)
-        supplier_part = None
-
-        if sup_part_id:
-            try:
-                supplier_part = SupplierPart.objects.get(pk=sup_part_id)
-            except (ValueError, SupplierPart.DoesNotExist):
-                pass
-
-        # Check if a particular part was specified
-        part_id = request.GET.get('part', None)
-        part = None
-
-        if part_id:
-            try:
-                part = Part.objects.get(pk=part_id)
-            except (ValueError, Part.DoesNotExist):
-                pass
-
-        if export_format not in GetExportFormats():
-            export_format = 'csv'
-
-        filename = 'InvenTree_Stocktake_{date}.{fmt}'.format(
-            date=datetime.now().strftime("%d-%b-%Y"),
-            fmt=export_format
-        )
-
-        if location:
-            # Check if locations should be cascading
-            cascade = str2bool(request.GET.get('cascade', True))
-            stock_items = location.get_stock_items(cascade)
-        else:
-            stock_items = StockItem.objects.all()
-
-        if part:
-            stock_items = stock_items.filter(part=part)
-
-        if supplier:
-            stock_items = stock_items.filter(supplier_part__supplier=supplier)
-
-        if supplier_part:
-            stock_items = stock_items.filter(supplier_part=supplier_part)
-
-        # Filter out stock items that are not 'in stock'
-        stock_items = stock_items.filter(StockItem.IN_STOCK_FILTER)
-
-        # Pre-fetch related fields to reduce DB queries
-        stock_items = stock_items.prefetch_related('part', 'supplier_part__supplier', 'location', 'purchase_order', 'build')
-
-        dataset = StockItemResource().export(queryset=stock_items)
-
-        filedata = dataset.export(export_format)
-
-        return DownloadFile(filedata, filename)
-
-
 class StockItemQRCode(QRCodeView):
     """ View for displaying a QR code for a StockItem object """
 
@@ -463,155 +364,6 @@ class StockItemQRCode(QRCodeView):
             return item.format_barcode()
         except StockItem.DoesNotExist:
             return None
-
-
-class StockItemInstall(AjaxUpdateView):
-    """
-    View for manually installing stock items into
-    a particular stock item.
-
-    In contrast to the StockItemUninstall view,
-    only a single stock item can be installed at once.
-
-    The "part" to be installed must be provided in the GET query parameters.
-
-    """
-
-    model = StockItem
-    form_class = StockForms.InstallStockForm
-    ajax_form_title = _('Install Stock Item')
-    ajax_template_name = "stock/item_install.html"
-
-    part = None
-
-    def get_params(self):
-        """ Retrieve GET parameters """
-
-        # Look at GET params
-        self.part_id = self.request.GET.get('part', None)
-        self.install_in = self.request.GET.get('install_in', False)
-        self.install_item = self.request.GET.get('install_item', False)
-
-        if self.part_id is None:
-            # Look at POST params
-            self.part_id = self.request.POST.get('part', None)
-
-        try:
-            self.part = Part.objects.get(pk=self.part_id)
-        except (ValueError, Part.DoesNotExist):
-            self.part = None
-
-    def get_stock_items(self):
-        """
-        Return a list of stock items suitable for displaying to the user.
-
-        Requirements:
-        - Items must be in stock
-        - Items must be in BOM of stock item
-        - Items must be serialized
-        """
-
-        # Filter items in stock
-        items = StockItem.objects.filter(StockItem.IN_STOCK_FILTER)
-
-        # Filter serialized stock items
-        items = items.exclude(serial__isnull=True).exclude(serial__exact='')
-
-        if self.part:
-            # Filter for parts to install this item in
-            if self.install_in:
-                # Get parts using this part
-                allowed_parts = self.part.get_used_in()
-                # Filter
-                items = items.filter(part__in=allowed_parts)
-
-            # Filter for parts to install in this item
-            if self.install_item:
-                # Get all parts which can be installed into this part
-                allowed_parts = self.part.get_installed_part_options()
-                # Filter
-                items = items.filter(part__in=allowed_parts)
-
-        return items
-
-    def get_context_data(self, **kwargs):
-        """ Retrieve parameters and update context """
-
-        ctx = super().get_context_data(**kwargs)
-
-        # Get request parameters
-        self.get_params()
-
-        ctx.update({
-            'part': self.part,
-            'install_in': self.install_in,
-            'install_item': self.install_item,
-        })
-
-        return ctx
-
-    def get_initial(self):
-
-        initials = super().get_initial()
-
-        items = self.get_stock_items()
-
-        # If there is a single stock item available, we can use it!
-        if items.count() == 1:
-            item = items.first()
-            initials['stock_item'] = item.pk
-
-        if self.part:
-            initials['part'] = self.part
-
-        try:
-            # Is this stock item being installed in the other stock item?
-            initials['to_install'] = self.install_in or not self.install_item
-        except AttributeError:
-            pass
-
-        return initials
-
-    def get_form(self):
-
-        form = super().get_form()
-
-        form.fields['stock_item'].queryset = self.get_stock_items()
-
-        return form
-
-    def post(self, request, *args, **kwargs):
-
-        self.get_params()
-
-        form = self.get_form()
-
-        valid = form.is_valid()
-
-        if valid:
-            # We assume by this point that we have a valid stock_item and quantity values
-            data = form.cleaned_data
-
-            other_stock_item = data['stock_item']
-            # Quantity will always be 1 for serialized item
-            quantity = 1
-            notes = data['notes']
-
-            # Get stock item
-            this_stock_item = self.get_object()
-
-            if data['to_install']:
-                # Install this stock item into the other stock item
-                other_stock_item.installStockItem(this_stock_item, quantity, request.user, notes)
-            else:
-                # Install the other stock item into this one
-                this_stock_item.installStockItem(other_stock_item, quantity, request.user, notes)
-
-        data = {
-            'form_valid': valid,
-        }
-
-        return self.renderJsonResponse(request, form, data=data)
 
 
 class StockItemUninstall(AjaxView, FormMixin):
@@ -891,6 +643,16 @@ class StockItemConvert(AjaxUpdateView):
         form.fields['part'].queryset = item.part.get_conversion_options()
 
         return form
+
+    def save(self, obj, form):
+
+        stock_item = self.get_object()
+
+        variant = form.cleaned_data.get('part', None)
+
+        stock_item.convert_to_variant(variant, user=self.request.user)
+
+        return stock_item
 
 
 class StockLocationCreate(AjaxCreateView):
@@ -1241,7 +1003,7 @@ class StockItemCreate(AjaxCreateView):
 
             if len(sn) > 0:
                 try:
-                    serials = extract_serial_numbers(sn, quantity)
+                    serials = extract_serial_numbers(sn, quantity, part.getLatestSerialNumberInt())
                 except ValidationError as e:
                     serials = None
                     form.add_error('serial_numbers', e.messages)
@@ -1283,7 +1045,7 @@ class StockItemCreate(AjaxCreateView):
 
             # Create a single stock item for each provided serial number
             if len(sn) > 0:
-                serials = extract_serial_numbers(sn, quantity)
+                serials = extract_serial_numbers(sn, quantity, part.getLatestSerialNumberInt())
 
                 for serial in serials:
                     item = StockItem(

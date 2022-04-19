@@ -6,9 +6,12 @@ Unit testing for the Stock API
 from __future__ import unicode_literals
 
 import os
+import io
+import tablib
 
 from datetime import datetime, timedelta
 
+import django.http
 from django.urls import reverse
 from rest_framework import status
 
@@ -101,7 +104,7 @@ class StockItemListTest(StockAPITestCase):
 
         response = self.get_stock()
 
-        self.assertEqual(len(response), 20)
+        self.assertEqual(len(response), 29)
 
     def test_filter_by_part(self):
         """
@@ -110,7 +113,7 @@ class StockItemListTest(StockAPITestCase):
 
         response = self.get_stock(part=25)
 
-        self.assertEqual(len(response), 8)
+        self.assertEqual(len(response), 17)
 
         response = self.get_stock(part=10004)
 
@@ -133,13 +136,13 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(len(response), 1)
 
         response = self.get_stock(location=1, cascade=0)
-        self.assertEqual(len(response), 0)
+        self.assertEqual(len(response), 7)
 
         response = self.get_stock(location=1, cascade=1)
-        self.assertEqual(len(response), 2)
+        self.assertEqual(len(response), 9)
 
         response = self.get_stock(location=7)
-        self.assertEqual(len(response), 16)
+        self.assertEqual(len(response), 18)
 
     def test_filter_by_depleted(self):
         """
@@ -150,7 +153,7 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(len(response), 1)
 
         response = self.get_stock(depleted=0)
-        self.assertEqual(len(response), 19)
+        self.assertEqual(len(response), 28)
 
     def test_filter_by_in_stock(self):
         """
@@ -158,7 +161,7 @@ class StockItemListTest(StockAPITestCase):
         """
 
         response = self.get_stock(in_stock=1)
-        self.assertEqual(len(response), 17)
+        self.assertEqual(len(response), 26)
 
         response = self.get_stock(in_stock=0)
         self.assertEqual(len(response), 3)
@@ -169,7 +172,7 @@ class StockItemListTest(StockAPITestCase):
         """
 
         codes = {
-            StockStatus.OK: 18,
+            StockStatus.OK: 27,
             StockStatus.DESTROYED: 1,
             StockStatus.LOST: 1,
             StockStatus.DAMAGED: 0,
@@ -202,10 +205,50 @@ class StockItemListTest(StockAPITestCase):
             self.assertIsNotNone(item['serial'])
 
         response = self.get_stock(serialized=0)
-        self.assertEqual(len(response), 8)
+        self.assertEqual(len(response), 17)
 
         for item in response:
             self.assertIsNone(item['serial'])
+
+    def test_filter_by_has_batch(self):
+        """
+        Test the 'has_batch' filter, which tests if the stock item has been assigned a batch code
+        """
+
+        with_batch = self.get_stock(has_batch=1)
+        without_batch = self.get_stock(has_batch=0)
+
+        n_stock_items = StockItem.objects.all().count()
+
+        # Total sum should equal the total count of stock items
+        self.assertEqual(n_stock_items, len(with_batch) + len(without_batch))
+
+        for item in with_batch:
+            self.assertFalse(item['batch'] in [None, ''])
+
+        for item in without_batch:
+            self.assertTrue(item['batch'] in [None, ''])
+
+    def test_filter_by_tracked(self):
+        """
+        Test the 'tracked' filter.
+        This checks if the stock item has either a batch code *or* a serial number
+        """
+
+        tracked = self.get_stock(tracked=True)
+        untracked = self.get_stock(tracked=False)
+
+        n_stock_items = StockItem.objects.all().count()
+
+        self.assertEqual(n_stock_items, len(tracked) + len(untracked))
+
+        blank = [None, '']
+
+        for item in tracked:
+            self.assertTrue(item['batch'] not in blank or item['serial'] not in blank)
+
+        for item in untracked:
+            self.assertTrue(item['batch'] in blank and item['serial'] in blank)
 
     def test_filter_by_expired(self):
         """
@@ -214,7 +257,7 @@ class StockItemListTest(StockAPITestCase):
 
         # First, we can assume that the 'stock expiry' feature is disabled
         response = self.get_stock(expired=1)
-        self.assertEqual(len(response), 20)
+        self.assertEqual(len(response), 29)
 
         self.user.is_staff = True
         self.user.save()
@@ -229,7 +272,7 @@ class StockItemListTest(StockAPITestCase):
             self.assertTrue(item['expired'])
 
         response = self.get_stock(expired=0)
-        self.assertEqual(len(response), 19)
+        self.assertEqual(len(response), 28)
 
         for item in response:
             self.assertFalse(item['expired'])
@@ -246,7 +289,7 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(len(response), 4)
 
         response = self.get_stock(expired=0)
-        self.assertEqual(len(response), 16)
+        self.assertEqual(len(response), 25)
 
     def test_paginate(self):
         """
@@ -261,6 +304,57 @@ class StockItemListTest(StockAPITestCase):
 
             self.assertEqual(len(response['results']), n)
 
+    def export_data(self, filters=None):
+
+        if not filters:
+            filters = {}
+
+        filters['export'] = 'csv'
+
+        response = self.client.get(self.list_url, data=filters)
+
+        self.assertEqual(response.status_code, 200)
+
+        self.assertTrue(isinstance(response, django.http.response.StreamingHttpResponse))
+
+        file_object = io.StringIO(response.getvalue().decode('utf-8'))
+
+        dataset = tablib.Dataset().load(file_object, 'csv', headers=True)
+
+        return dataset
+
+    def test_export(self):
+        """
+        Test exporting of Stock data via the API
+        """
+
+        dataset = self.export_data({})
+
+        # Check that *all* stock item objects have been exported
+        self.assertEqual(len(dataset), StockItem.objects.count())
+
+        # Expected headers
+        headers = [
+            'part',
+            'customer',
+            'location',
+            'parent',
+            'quantity',
+            'status',
+        ]
+
+        for h in headers:
+            self.assertIn(h, dataset.headers)
+
+        # Now, add a filter to the results
+        dataset = self.export_data({'location': 1})
+
+        self.assertEqual(len(dataset), 9)
+
+        dataset = self.export_data({'part': 25})
+
+        self.assertEqual(len(dataset), 17)
+
 
 class StockItemTest(StockAPITestCase):
     """
@@ -268,9 +362,6 @@ class StockItemTest(StockAPITestCase):
     """
 
     list_url = reverse('api-stock-list')
-
-    def detail_url(self, pk):
-        return reverse('api-stock-detail', kwargs={'pk': pk})
 
     def setUp(self):
         super().setUp()
@@ -342,7 +433,7 @@ class StockItemTest(StockAPITestCase):
             }
         )
 
-        self.assertContains(response, 'This field is required', status_code=status.HTTP_400_BAD_REQUEST)
+        self.assertContains(response, 'Valid part must be supplied', status_code=status.HTTP_400_BAD_REQUEST)
 
         # POST with an invalid part reference
 
@@ -355,7 +446,7 @@ class StockItemTest(StockAPITestCase):
             }
         )
 
-        self.assertContains(response, 'does not exist', status_code=status.HTTP_400_BAD_REQUEST)
+        self.assertContains(response, 'Valid part must be supplied', status_code=status.HTTP_400_BAD_REQUEST)
 
         # POST without quantity
         response = self.post(
@@ -379,6 +470,67 @@ class StockItemTest(StockAPITestCase):
             },
             expected_code=201
         )
+
+    def test_creation_with_serials(self):
+        """
+        Test that serialized stock items can be created via the API,
+        """
+
+        trackable_part = part.models.Part.objects.create(
+            name='My part',
+            description='A trackable part',
+            trackable=True,
+            default_location=StockLocation.objects.get(pk=1),
+        )
+
+        self.assertEqual(trackable_part.stock_entries().count(), 0)
+        self.assertEqual(trackable_part.get_stock_count(), 0)
+
+        # This should fail, incorrect serial number count
+        self.post(
+            self.list_url,
+            data={
+                'part': trackable_part.pk,
+                'quantity': 10,
+                'serial_numbers': '1-20',
+            },
+            expected_code=400,
+        )
+
+        response = self.post(
+            self.list_url,
+            data={
+                'part': trackable_part.pk,
+                'quantity': 10,
+                'serial_numbers': '1-10',
+            },
+            expected_code=201,
+        )
+
+        data = response.data
+
+        self.assertEqual(data['quantity'], 10)
+        sn = data['serial_numbers']
+
+        # Check that each serial number was created
+        for i in range(1, 11):
+            self.assertTrue(i in sn)
+
+            # Check the unique stock item has been created
+
+            item = StockItem.objects.get(
+                part=trackable_part,
+                serial=str(i),
+            )
+
+            # Item location should have been set automatically
+            self.assertIsNotNone(item.location)
+
+            self.assertEqual(str(i), item.serial)
+
+        # There now should be 10 unique stock entries for this part
+        self.assertEqual(trackable_part.stock_entries().count(), 10)
+        self.assertEqual(trackable_part.get_stock_count(), 10)
 
     def test_default_expiry(self):
         """
@@ -842,3 +994,189 @@ class StockAssignTest(StockAPITestCase):
 
         # 5 stock items should now have been assigned to this customer
         self.assertEqual(customer.assigned_stock.count(), 5)
+
+
+class StockMergeTest(StockAPITestCase):
+    """
+    Unit tests for merging stock items via the API
+    """
+
+    URL = reverse('api-stock-merge')
+
+    def setUp(self):
+
+        super().setUp()
+
+        self.part = part.models.Part.objects.get(pk=25)
+        self.loc = StockLocation.objects.get(pk=1)
+        self.sp_1 = company.models.SupplierPart.objects.get(pk=100)
+        self.sp_2 = company.models.SupplierPart.objects.get(pk=101)
+
+        self.item_1 = StockItem.objects.create(
+            part=self.part,
+            supplier_part=self.sp_1,
+            quantity=100,
+        )
+
+        self.item_2 = StockItem.objects.create(
+            part=self.part,
+            supplier_part=self.sp_2,
+            quantity=100,
+        )
+
+        self.item_3 = StockItem.objects.create(
+            part=self.part,
+            supplier_part=self.sp_2,
+            quantity=50,
+        )
+
+    def test_missing_data(self):
+        """
+        Test responses which are missing required data
+        """
+
+        # Post completely empty
+
+        data = self.post(
+            self.URL,
+            {},
+            expected_code=400
+        ).data
+
+        self.assertIn('This field is required', str(data['items']))
+        self.assertIn('This field is required', str(data['location']))
+
+        # Post with a location and empty items list
+        data = self.post(
+            self.URL,
+            {
+                'items': [],
+                'location': 1,
+            },
+            expected_code=400
+        ).data
+
+        self.assertIn('At least two stock items', str(data))
+
+    def test_invalid_data(self):
+        """
+        Test responses which have invalid data
+        """
+
+        # Serialized stock items should be rejected
+        data = self.post(
+            self.URL,
+            {
+                'items': [
+                    {
+                        'item': 501,
+                    },
+                    {
+                        'item': 502,
+                    }
+                ],
+                'location': 1,
+            },
+            expected_code=400,
+        ).data
+
+        self.assertIn('Serialized stock cannot be merged', str(data))
+
+        # Prevent item duplication
+
+        data = self.post(
+            self.URL,
+            {
+                'items': [
+                    {
+                        'item': 11,
+                    },
+                    {
+                        'item': 11,
+                    }
+                ],
+                'location': 1,
+            },
+            expected_code=400,
+        ).data
+
+        self.assertIn('Duplicate stock items', str(data))
+
+        # Check for mismatching stock items
+        data = self.post(
+            self.URL,
+            {
+                'items': [
+                    {
+                        'item': 1234,
+                    },
+                    {
+                        'item': 11,
+                    }
+                ],
+                'location': 1,
+            },
+            expected_code=400,
+        ).data
+
+        self.assertIn('Stock items must refer to the same part', str(data))
+
+        # Check for mismatching supplier parts
+        payload = {
+            'items': [
+                {
+                    'item': self.item_1.pk,
+                },
+                {
+                    'item': self.item_2.pk,
+                },
+            ],
+            'location': 1,
+        }
+
+        data = self.post(
+            self.URL,
+            payload,
+            expected_code=400,
+        ).data
+
+        self.assertIn('Stock items must refer to the same supplier part', str(data))
+
+    def test_valid_merge(self):
+        """
+        Test valid merging of stock items
+        """
+
+        # Check initial conditions
+        n = StockItem.objects.filter(part=self.part).count()
+        self.assertEqual(self.item_1.quantity, 100)
+
+        payload = {
+            'items': [
+                {
+                    'item': self.item_1.pk,
+                },
+                {
+                    'item': self.item_2.pk,
+                },
+                {
+                    'item': self.item_3.pk,
+                },
+            ],
+            'location': 1,
+            'allow_mismatched_suppliers': True,
+        }
+
+        self.post(
+            self.URL,
+            payload,
+            expected_code=201,
+        )
+
+        self.item_1.refresh_from_db()
+
+        # Stock quantity should have been increased!
+        self.assertEqual(self.item_1.quantity, 250)
+
+        # Total number of stock items has been reduced!
+        self.assertEqual(StockItem.objects.filter(part=self.part).count(), n - 2)

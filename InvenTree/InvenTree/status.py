@@ -14,6 +14,8 @@ from django_q.monitor import Stat
 
 from django.conf import settings
 
+import InvenTree.ready
+
 
 logger = logging.getLogger("inventree")
 
@@ -56,25 +58,31 @@ def is_email_configured():
 
     configured = True
 
+    if InvenTree.ready.isInTestMode():
+        return False
+
+    if InvenTree.ready.isImportingData():
+        return False
+
     if not settings.EMAIL_HOST:
         configured = False
 
         # Display warning unless in test mode
-        if not settings.TESTING:
+        if not settings.TESTING:  # pragma: no cover
             logger.debug("EMAIL_HOST is not configured")
 
     if not settings.EMAIL_HOST_USER:
         configured = False
 
         # Display warning unless in test mode
-        if not settings.TESTING:
+        if not settings.TESTING:  # pragma: no cover
             logger.debug("EMAIL_HOST_USER is not configured")
 
     if not settings.EMAIL_HOST_PASSWORD:
         configured = False
 
         # Display warning unless in test mode
-        if not settings.TESTING:
+        if not settings.TESTING:  # pragma: no cover
             logger.debug("EMAIL_HOST_PASSWORD is not configured")
 
     return configured
@@ -89,15 +97,23 @@ def check_system_health(**kwargs):
 
     result = True
 
-    if not is_worker_running(**kwargs):
+    if InvenTree.ready.isInTestMode():
+        # Do not perform further checks if we are running unit tests
+        return False
+
+    if InvenTree.ready.isImportingData():
+        # Do not perform further checks if we are importing data
+        return False
+
+    if not is_worker_running(**kwargs):  # pragma: no cover
         result = False
         logger.warning(_("Background worker check failed"))
 
-    if not is_email_configured():
+    if not is_email_configured():  # pragma: no cover
         result = False
         logger.warning(_("Email backend not configured"))
 
-    if not result:
+    if not result:  # pragma: no cover
         logger.warning(_("InvenTree system health checks failed"))
 
     return result

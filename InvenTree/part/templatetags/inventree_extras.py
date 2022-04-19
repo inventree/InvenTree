@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 
-""" This module provides template tags for extra functionality
+"""
+This module provides template tags for extra functionality,
 over and above the built-in Django tags.
 """
 
+from datetime import date, datetime
 import os
 import sys
+import logging
+
 from django.utils.html import format_html
 
 from django.utils.translation import ugettext_lazy as _
@@ -15,6 +19,7 @@ from django import template
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.templatetags.static import StaticNode
+
 from InvenTree import version, settings
 
 import InvenTree.helpers
@@ -22,7 +27,12 @@ import InvenTree.helpers
 from common.models import InvenTreeSetting, ColorTheme, InvenTreeUserSetting
 from common.settings import currency_code_default
 
+from plugin.models import PluginSetting
+
 register = template.Library()
+
+
+logger = logging.getLogger('inventree')
 
 
 @register.simple_tag()
@@ -36,6 +46,65 @@ def define(value, *args, **kwargs):
     """
 
     return value
+
+
+@register.simple_tag(takes_context=True)
+def render_date(context, date_object):
+    """
+    Renders a date according to the preference of the provided user
+
+    Note that the user preference is stored using the formatting adopted by moment.js,
+    which differs from the python formatting!
+    """
+
+    if date_object is None:
+        return None
+
+    if type(date_object) == str:
+
+        date_object = date_object.strip()
+
+        # Check for empty string
+        if len(date_object) == 0:
+            return None
+
+        # If a string is passed, first convert it to a datetime
+        try:
+            date_object = date.fromisoformat(date_object)
+        except ValueError:
+            logger.warning(f"Tried to convert invalid date string: {date_object}")
+            return None
+
+    # We may have already pre-cached the date format by calling this already!
+    user_date_format = context.get('user_date_format', None)
+
+    if user_date_format is None:
+
+        user = context.get('user', None)
+
+        if user:
+            # User is specified - look for their date display preference
+            user_date_format = InvenTreeUserSetting.get_setting('DATE_DISPLAY_FORMAT', user=user)
+        else:
+            user_date_format = 'YYYY-MM-DD'
+
+        # Convert the format string to Pythonic equivalent
+        replacements = [
+            ('YYYY', '%Y'),
+            ('MMM', '%b'),
+            ('MM', '%m'),
+            ('DD', '%d'),
+        ]
+
+        for o, n in replacements:
+            user_date_format = user_date_format.replace(o, n)
+
+        # Update the context cache
+        context['user_date_format'] = user_date_format
+
+    if isinstance(date_object, (datetime, date)):
+        return date_object.strftime(user_date_format)
+    return date_object
 
 
 @register.simple_tag()
@@ -102,6 +171,13 @@ def inventree_docker_mode(*args, **kwargs):
     """ Return True if the server is running as a Docker image """
 
     return djangosettings.DOCKER
+
+
+@register.simple_tag()
+def plugins_enabled(*args, **kwargs):
+    """ Return True if plugins are enabled for the server instance """
+
+    return djangosettings.PLUGINS_ENABLED
 
 
 @register.simple_tag()
@@ -223,8 +299,16 @@ def setting_object(key, *args, **kwargs):
     if a user-setting was requested return that
     """
 
+    if 'plugin' in kwargs:
+        # Note, 'plugin' is an instance of an InvenTreePlugin class
+
+        plugin = kwargs['plugin']
+
+        return PluginSetting.get_setting_object(key, plugin=plugin)
+
     if 'user' in kwargs:
         return InvenTreeUserSetting.get_setting_object(key, user=kwargs['user'])
+
     return InvenTreeSetting.get_setting_object(key)
 
 
@@ -273,7 +357,7 @@ def progress_bar(val, max, *args, **kwargs):
     Render a progress bar element
     """
 
-    id = kwargs.get('id', 'progress-bar')
+    item_id = kwargs.get('id', 'progress-bar')
 
     if val > max:
         style = 'progress-bar-over'
@@ -297,7 +381,7 @@ def progress_bar(val, max, *args, **kwargs):
         style_tags.append(f'max-width: {max_width};')
 
     html = f"""
-    <div id='{id}' class='progress' style='{" ".join(style_tags)}'>
+    <div id='{item_id}' class='progress' style='{" ".join(style_tags)}'>
         <div class='progress-bar {style}' role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width:{percent}%'></div>
         <div class='progress-value'>{val} / {max}</div>
     </div>
@@ -431,8 +515,17 @@ class I18nStaticNode(StaticNode):
     replaces a variable named *lng* in the path with the current language
     """
     def render(self, context):
-        self.path.var = self.path.var.format(lng=context.request.LANGUAGE_CODE)
+
+        self.original = getattr(self, 'original', None)
+
+        if not self.original:
+            # Store the original (un-rendered) path template, as it gets overwritten below
+            self.original = self.path.var
+
+        self.path.var = self.original.format(lng=context.request.LANGUAGE_CODE)
+
         ret = super().render(context)
+
         return ret
 
 
@@ -460,4 +553,5 @@ else:
         # change path to called ressource
         bits[1] = f"'{loc_name}/{{lng}}.{bits[1][1:-1]}'"
         token.contents = ' '.join(bits)
+
         return I18nStaticNode.handle_token(parser, token)

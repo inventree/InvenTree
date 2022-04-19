@@ -4,16 +4,18 @@
 {% load plugin_extras %}
 
 {% trans "User Settings" as text %}
-{% include "sidebar_header.html" with text=text icon='fa-user' %}
+{% include "sidebar_header.html" with text=text icon='fa-user-cog' %}
 
 {% trans "Account Settings" as text %}
-{% include "sidebar_item.html" with label='account' text=text icon="fa-cog" %}
+{% include "sidebar_item.html" with label='account' text=text icon="fa-sign-in-alt" %}
 {% trans "Display Settings" as text %}
 {% include "sidebar_item.html" with label='user-display' text=text icon="fa-desktop" %}
 {% trans "Home Page" as text %}
 {% include "sidebar_item.html" with label='user-home' text=text icon="fa-home" %}
 {% trans "Search Settings" as text %}
 {% include "sidebar_item.html" with label='user-search' text=text icon="fa-search" %}
+{% trans "Notifications" as text %}
+{% include "sidebar_item.html" with label='user-notifications' text=text icon="fa-bell" %}
 {% trans "Label Printing" as text %}
 {% include "sidebar_item.html" with label='user-labels' text=text icon="fa-tag" %}
 {% trans "Reporting" as text %}
@@ -47,15 +49,17 @@
 {% trans "Sales Orders" as text %}
 {% include "sidebar_item.html" with label='sales-order' text=text icon="fa-truck" %}
 
+{% plugins_enabled as plug %}
+{% if plug %}
 {% include "sidebar_header.html" with text="Plugin Settings" %}
-
-{% include "sidebar_item.html" with label='plugin' text="Plugin" icon="fa-plug" %}
+{% include "sidebar_item.html" with label='plugin' text="Plugins" icon="fa-plug" %}
 
 {% plugin_list as pl_list %}
 {% for plugin_key, plugin in pl_list.items %}
-    {% if plugin.registered_mixins %}
-        {% include "sidebar_item.html" with label='plugin-'|add:plugin_key text=plugin.human_name %}
-    {% endif %}
+{% if plugin.registered_mixins %}
+{% include "sidebar_item.html" with label='plugin-'|add:plugin_key text=plugin.human_name %}
+{% endif %}
 {% endfor %}
+{% endif %}
 
 {% endif %}

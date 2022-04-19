@@ -179,6 +179,11 @@ function showApiError(xhr, url) {
     var title = null;
     var message = null;
 
+    if (xhr.statusText == 'abort') {
+        // Don't show errors for requests which were intentionally aborted
+        return;
+    }
+
     switch (xhr.status || 0) {
     // No response
     case 0:
@@ -206,6 +211,11 @@ function showApiError(xhr, url) {
     case 404:
         title = '{% trans "Error 404: Resource Not Found" %}';
         message = '{% trans "The requested resource could not be located on the server" %}';
+        break;
+    // Method not allowed
+    case 405:
+        title = '{% trans "Error 405: Method Not Allowed" %}';
+        message = '{% trans "HTTP method not allowed at URL" %}';
         break;
     // Timeout
     case 408:

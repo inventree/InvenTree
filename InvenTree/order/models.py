@@ -11,6 +11,7 @@ from decimal import Decimal
 from django.db import models, transaction
 from django.db.models import Q, F, Sum
 from django.db.models.functions import Coalesce
+
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
@@ -24,7 +25,9 @@ from users import models as UserModels
 from part import models as PartModels
 from stock import models as stock_models
 from company.models import Company, SupplierPart
+from plugin.events import trigger_event
 
+import InvenTree.helpers
 from InvenTree.fields import InvenTreeModelMoneyField, RoundingDecimalField
 from InvenTree.helpers import decimal2string, increment, getSetting
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus, StockHistoryCode
@@ -317,6 +320,8 @@ class PurchaseOrder(Order):
             self.issue_date = datetime.now().date()
             self.save()
 
+            trigger_event('purchaseorder.placed', id=self.pk)
+
     @transaction.atomic
     def complete_order(self):
         """ Marks the PurchaseOrder as COMPLETE. Order must be currently PLACED. """
@@ -325,6 +330,8 @@ class PurchaseOrder(Order):
             self.status = PurchaseOrderStatus.COMPLETE
             self.complete_date = datetime.now().date()
             self.save()
+
+            trigger_event('purchaseorder.completed', id=self.pk)
 
     @property
     def is_overdue(self):
@@ -355,6 +362,8 @@ class PurchaseOrder(Order):
         if self.can_cancel():
             self.status = PurchaseOrderStatus.CANCELLED
             self.save()
+
+            trigger_event('purchaseorder.cancelled', id=self.pk)
 
     def pending_line_items(self):
         """ Return a list of pending line items for this order.
@@ -389,12 +398,22 @@ class PurchaseOrder(Order):
         return self.lines.count() > 0 and self.pending_line_items().count() == 0
 
     @transaction.atomic
-    def receive_line_item(self, line, location, quantity, user, status=StockStatus.OK, purchase_price=None, **kwargs):
-        """ Receive a line item (or partial line item) against this PO
+    def receive_line_item(self, line, location, quantity, user, status=StockStatus.OK, **kwargs):
+        """
+        Receive a line item (or partial line item) against this PO
         """
 
+        # Extract optional batch code for the new stock item
+        batch_code = kwargs.get('batch_code', '')
+
+        # Extract optional list of serial numbers
+        serials = kwargs.get('serials', None)
+
+        # Extract optional notes field
         notes = kwargs.get('notes', '')
-        barcode = kwargs.get('barcode', '')
+
+        # Extract optional barcode field
+        barcode = kwargs.get('barcode', None)
 
         # Prevent null values for barcode
         if barcode is None:
@@ -406,49 +425,57 @@ class PurchaseOrder(Order):
             )
 
         try:
-            if not (quantity % 1 == 0):
-                raise ValidationError({
-                    "quantity": _("Quantity must be an integer")
-                })
             if quantity < 0:
                 raise ValidationError({
                     "quantity": _("Quantity must be a positive number")
                 })
-            quantity = int(quantity)
-        except (ValueError, TypeError):
+            quantity = InvenTree.helpers.clean_decimal(quantity)
+        except TypeError:
             raise ValidationError({
                 "quantity": _("Invalid quantity provided")
             })
 
         # Create a new stock item
         if line.part and quantity > 0:
-            stock = stock_models.StockItem(
-                part=line.part.part,
-                supplier_part=line.part,
-                location=location,
-                quantity=quantity,
-                purchase_order=self,
-                status=status,
-                purchase_price=line.purchase_price,
-                uid=barcode
-            )
 
-            stock.save(add_note=False)
+            # Determine if we should individually serialize the items, or not
+            if type(serials) is list and len(serials) > 0:
+                serialize = True
+            else:
+                serialize = False
+                serials = [None]
 
-            tracking_info = {
-                'status': status,
-                'purchaseorder': self.pk,
-            }
+            for sn in serials:
 
-            stock.add_tracking_entry(
-                StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER,
-                user,
-                notes=notes,
-                deltas=tracking_info,
-                location=location,
-                purchaseorder=self,
-                quantity=quantity
-            )
+                stock = stock_models.StockItem(
+                    part=line.part.part,
+                    supplier_part=line.part,
+                    location=location,
+                    quantity=1 if serialize else quantity,
+                    purchase_order=self,
+                    status=status,
+                    batch=batch_code,
+                    serial=sn,
+                    purchase_price=line.purchase_price,
+                    uid=barcode
+                )
+
+                stock.save(add_note=False)
+
+                tracking_info = {
+                    'status': status,
+                    'purchaseorder': self.pk,
+                }
+
+                stock.add_tracking_entry(
+                    StockHistoryCode.RECEIVED_AGAINST_PURCHASE_ORDER,
+                    user,
+                    notes=notes,
+                    deltas=tracking_info,
+                    location=location,
+                    purchaseorder=self,
+                    quantity=quantity
+                )
 
         # Update the number of parts received against the particular line item
         line.received += quantity
@@ -628,28 +655,30 @@ class SalesOrder(Order):
         Throws a ValidationError if cannot be completed.
         """
 
-        # Order without line items cannot be completed
-        if self.lines.count() == 0:
-            if raise_error:
+        try:
+
+            # Order without line items cannot be completed
+            if self.lines.count() == 0:
                 raise ValidationError(_('Order cannot be completed as no parts have been assigned'))
 
-        # Only a PENDING order can be marked as SHIPPED
-        elif self.status != SalesOrderStatus.PENDING:
-            if raise_error:
+            # Only a PENDING order can be marked as SHIPPED
+            elif self.status != SalesOrderStatus.PENDING:
                 raise ValidationError(_('Only a pending order can be marked as complete'))
 
-        elif self.pending_shipment_count > 0:
-            if raise_error:
+            elif self.pending_shipment_count > 0:
                 raise ValidationError(_("Order cannot be completed as there are incomplete shipments"))
 
-        elif self.pending_line_count > 0:
-            if raise_error:
+            elif self.pending_line_count > 0:
                 raise ValidationError(_("Order cannot be completed as there are incomplete line items"))
 
-        else:
-            return True
+        except ValidationError as e:
 
-        return False
+            if raise_error:
+                raise e
+            else:
+                return False
+
+        return True
 
     def complete_order(self, user):
         """
@@ -664,6 +693,8 @@ class SalesOrder(Order):
         self.shipment_date = datetime.now()
 
         self.save()
+
+        trigger_event('salesorder.completed', id=self.pk)
 
         return True
 
@@ -695,6 +726,8 @@ class SalesOrder(Order):
         for line in self.lines.all():
             for allocation in line.allocations.all():
                 allocation.delete()
+
+        trigger_event('salesorder.cancelled', id=self.pk)
 
         return True
 
@@ -783,9 +816,18 @@ class OrderLineItem(models.Model):
 
     Attributes:
         quantity: Number of items
+        reference: Reference text (e.g. customer reference) for this line item
         note: Annotation for the item
+        target_date: An (optional) date for expected shipment of this line item.
+    """
 
     """
+    Query filter for determining if an individual line item is "overdue":
+    - Amount received is less than the required quantity
+    - Target date is not None
+    - Target date is in the past
+    """
+    OVERDUE_FILTER = Q(received__lt=F('quantity')) & ~Q(target_date=None) & Q(target_date__lt=datetime.now().date())
 
     class Meta:
         abstract = True
@@ -802,6 +844,12 @@ class OrderLineItem(models.Model):
 
     notes = models.CharField(max_length=500, blank=True, verbose_name=_('Notes'), help_text=_('Line item notes'))
 
+    target_date = models.DateField(
+        blank=True, null=True,
+        verbose_name=_('Target Date'),
+        help_text=_('Target shipping date for this line item'),
+    )
+
 
 class PurchaseOrderLineItem(OrderLineItem):
     """ Model for a purchase order line item.
@@ -811,14 +859,24 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     """
 
+    class Meta:
+        unique_together = (
+        )
+
     @staticmethod
     def get_api_url():
         return reverse('api-po-line-list')
 
-    class Meta:
-        unique_together = (
-            ('order', 'part', 'quantity', 'purchase_price')
-        )
+    def clean(self):
+
+        super().clean()
+
+        if self.order.supplier and self.part:
+            # Supplier part *must* point to the same supplier!
+            if self.part.supplier != self.order.supplier:
+                raise ValidationError({
+                    'part': _('Supplier part must match supplier')
+                })
 
     def __str__(self):
         return "{n} x {part} from {supplier} (for {po})".format(
@@ -1101,6 +1159,8 @@ class SalesOrderShipment(models.Model):
             self.tracking_number = tracking_number
 
         self.save()
+
+        trigger_event('salesordershipment.completed', id=self.pk)
 
 
 class SalesOrderAllocation(models.Model):

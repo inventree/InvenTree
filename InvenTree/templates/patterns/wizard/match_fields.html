@@ -1,4 +1,3 @@
-{% extends "part/bom_upload/upload_file.html" %}
 {% load inventree_extras %}
 {% load i18n %}
 {% load static %}
@@ -24,9 +23,9 @@
 
 {% block form_buttons_top %}
     {% if wizard.steps.prev %}
-    <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="save btn btn-outline-secondary">{% trans "Previous Step" %}</button>
+    <button name='wizard_goto_step' type='submit' value='{{ wizard.steps.prev }}' class='save btn btn-outline-secondary'>{% trans "Previous Step" %}</button>
     {% endif %}
-    <button type="submit" class="save btn btn-outline-secondary">{% trans "Submit Selections" %}</button>
+    <button type='submit' class='save btn btn-outline-secondary'>{% trans "Submit Selections" %}</button>
 {% endblock form_buttons_top %}
 
 {% block form_content %}

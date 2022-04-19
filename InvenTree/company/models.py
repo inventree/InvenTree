@@ -693,6 +693,7 @@ class SupplierPriceBreak(common.models.PriceBreak):
 
     Attributes:
         part: Link to a SupplierPart object that this price break applies to
+        updated: Automatic DateTime field that shows last time the price break was updated
         quantity: Quantity required for price break
         cost: Cost at specified quantity
         currency: Reference to the currency of this pricebreak (leave empty for base currency)
@@ -703,6 +704,8 @@ class SupplierPriceBreak(common.models.PriceBreak):
         return reverse('api-part-supplier-price-list')
 
     part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='pricebreaks', verbose_name=_('Part'),)
+
+    updated = models.DateTimeField(auto_now=True, null=True, verbose_name=_('last updated'))
 
     class Meta:
         unique_together = ("part", "quantity")

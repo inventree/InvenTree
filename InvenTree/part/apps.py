@@ -40,6 +40,6 @@ class PartConfig(AppConfig):
                 item.part.trackable = True
                 item.part.clean()
                 item.part.save()
-        except (OperationalError, ProgrammingError):
+        except (OperationalError, ProgrammingError):  # pragma: no cover
             # Exception if the database has not been migrated yet
             pass

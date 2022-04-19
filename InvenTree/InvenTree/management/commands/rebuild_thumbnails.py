@@ -43,13 +43,11 @@ class Command(BaseCommand):
             try:
                 model.image.render_variations(replace=False)
             except FileNotFoundError:
-                logger.error(f"ERROR: Image file '{img}' is missing")
+                logger.warning(f"Warning: Image file '{img}' is missing")
             except UnidentifiedImageError:
-                logger.error(f"ERROR: Image file '{img}' is not a valid image")
+                logger.warning(f"Warning: Image file '{img}' is not a valid image")
 
     def handle(self, *args, **kwargs):
-
-        logger.setLevel(logging.INFO)
 
         logger.info("Rebuilding Part thumbnails")
 

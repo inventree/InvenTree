@@ -256,7 +256,7 @@ function generateFilterInput(tableKey, filterKey) {
  * @param {*} table - bootstrapTable element to update
  * @param {*} target - name of target element on page
  */
-function setupFilterList(tableKey, table, target) {
+function setupFilterList(tableKey, table, target, options={}) {
 
     var addClicked = false;
 
@@ -283,6 +283,11 @@ function setupFilterList(tableKey, table, target) {
 
     var buttons = '';
 
+    // Add download button
+    if (options.download) {
+        buttons += `<button id='download-${tableKey}' title='{% trans "Download data" %}' class='btn btn-outline-secondary filter-button'><span class='fas fa-download'></span></button>`;
+    }
+
     buttons += `<button id='reload-${tableKey}' title='{% trans "Reload data" %}' class='btn btn-outline-secondary filter-button'><span class='fas fa-redo-alt'></span></button>`;
 
     // If there are filters defined for this table, add more buttons
@@ -295,7 +300,7 @@ function setupFilterList(tableKey, table, target) {
     }
 
     element.html(`
-    <div class='btn-group' role='group'>
+    <div class='btn-group filter-group' role='group'>
         ${buttons}
     </div>
     `);
@@ -305,13 +310,29 @@ function setupFilterList(tableKey, table, target) {
         var title = getFilterTitle(tableKey, key);
         var description = getFilterDescription(tableKey, key);
 
-        element.append(`<div title='${description}' class='filter-tag'>${title} = ${value}<span ${tag}='${key}' class='close'>x</span></div>`);
+        var filter_tag = `
+        <div title='${description}' class='filter-tag'>
+            ${title} = ${value}
+            <span ${tag}='${key}' class='close' style='color: #F55;'>
+                <span aria-hidden='true'><strong>&times;</strong></span>
+            </span>
+        </div>
+        `;
+
+        element.append(filter_tag);
     }
 
     // Callback for reloading the table
     element.find(`#reload-${tableKey}`).click(function() {
         $(table).bootstrapTable('refresh');
     });
+
+    // Add a callback for downloading table data
+    if (options.download) {
+        element.find(`#download-${tableKey}`).click(function() {
+            downloadTableData($(table));
+        });
+    }
 
     // Add a callback for adding a new filter
     element.find(`#${add}`).click(function clicked() {
@@ -349,14 +370,14 @@ function setupFilterList(tableKey, table, target) {
                     reloadTableFilters(table, filters);
 
                     // Run this function again
-                    setupFilterList(tableKey, table, target);
+                    setupFilterList(tableKey, table, target, options);
                 }
 
             });
         } else {
             addClicked = false;
 
-            setupFilterList(tableKey, table, target);
+            setupFilterList(tableKey, table, target, options);
         }
 
     });
@@ -367,7 +388,7 @@ function setupFilterList(tableKey, table, target) {
 
         reloadTableFilters(table, filters);
 
-        setupFilterList(tableKey, table, target);
+        setupFilterList(tableKey, table, target, options);
     });
 
     // Add callback for deleting each filter
@@ -381,7 +402,7 @@ function setupFilterList(tableKey, table, target) {
         reloadTableFilters(table, filters);
 
         // Run this function again!
-        setupFilterList(tableKey, table, target);
+        setupFilterList(tableKey, table, target, options);
     });
 }
 

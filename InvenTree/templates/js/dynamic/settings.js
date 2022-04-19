@@ -4,6 +4,7 @@
     editSetting,
     user_settings,
     global_settings,
+    plugins_enabled,
 */
 
 {% user_settings request.user as USER_SETTINGS %}
@@ -20,6 +21,13 @@ const global_settings = {
     {% endfor %}
 };
 
+{% plugins_enabled as p_en %}
+{% if p_en %}
+const plugins_enabled = true;
+{% else %}
+const plugins_enabled = false;
+{% endif %}
+
 /*
  * Edit a setting value
  */
@@ -28,13 +36,19 @@ function editSetting(pk, options={}) {
     // Is this a global setting or a user setting?
     var global = options.global || false;
 
+    var plugin = options.plugin;
+
     var url = '';
 
-    if (global) {
+    if (plugin) {
+        url = `/api/plugin/settings/${pk}/`;
+    } else if (global) {
         url = `/api/settings/global/${pk}/`;
     } else {
         url = `/api/settings/user/${pk}/`;
     }
+
+    var reload_required = false;
 
     // First, read the settings object from the server
     inventreeGet(url, {}, {
@@ -42,6 +56,7 @@ function editSetting(pk, options={}) {
     
             if (response.choices && response.choices.length > 0) {
                 response.type = 'choice';
+                reload_required = true;
             }
 
             // Construct the field 
@@ -85,7 +100,9 @@ function editSetting(pk, options={}) {
 
                     var setting = response.key;
 
-                    if (response.type == 'boolean') {
+                    if (reload_required) {
+                        location.reload();
+                    } else if (response.type == 'boolean') {
                         var enabled = response.value.toString().toLowerCase() == 'true';
                         $(`#setting-value-${setting}`).prop('checked', enabled);
                     } else {

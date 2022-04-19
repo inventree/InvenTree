@@ -5,6 +5,8 @@ Provides a JSON API for the Part app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import datetime
+
 from django.conf.urls import url, include
 from django.http import JsonResponse
 from django.db.models import Q, F, Count, Min, Max, Avg
@@ -26,6 +28,8 @@ from djmoney.contrib.exchange.exceptions import MissingRate
 
 from decimal import Decimal, InvalidOperation
 
+from part.admin import PartResource
+
 from .models import Part, PartCategory, PartRelated
 from .models import BomItem, BomItemSubstitute
 from .models import PartParameter, PartParameterTemplate
@@ -38,14 +42,16 @@ from company.models import Company, ManufacturerPart, SupplierPart
 from stock.models import StockItem, StockLocation
 
 from common.models import InvenTreeSetting
-from build.models import Build
+from build.models import Build, BuildItem
+import order.models
 
 from . import serializers as part_serializers
 
 from InvenTree.helpers import str2bool, isNull, increment
+from InvenTree.helpers import DownloadFile
 from InvenTree.api import AttachmentMixin
 
-from InvenTree.status_codes import BuildStatus
+from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus, SalesOrderStatus
 
 
 class CategoryList(generics.ListCreateAPIView):
@@ -427,6 +433,142 @@ class PartThumbsUpdate(generics.RetrieveUpdateAPIView):
     ]
 
 
+class PartScheduling(generics.RetrieveAPIView):
+    """
+    API endpoint for delivering "scheduling" information about a given part via the API.
+
+    Returns a chronologically ordered list about future "scheduled" events,
+    concerning stock levels for the part:
+
+    - Purchase Orders (incoming stock)
+    - Sales Orders (outgoing stock)
+    - Build Orders (incoming completed stock)
+    - Build Orders (outgoing allocated stock)
+    """
+
+    queryset = Part.objects.all()
+
+    def retrieve(self, request, *args, **kwargs):
+
+        today = datetime.datetime.now().date()
+
+        part = self.get_object()
+
+        schedule = []
+
+        def add_schedule_entry(date, quantity, title, label, url):
+            """
+            Check if a scheduled entry should be added:
+            - date must be non-null
+            - date cannot be in the "past"
+            - quantity must not be zero
+            """
+
+            if date and date >= today and quantity != 0:
+                schedule.append({
+                    'date': date,
+                    'quantity': quantity,
+                    'title': title,
+                    'label': label,
+                    'url': url,
+                })
+
+        # Add purchase order (incoming stock) information
+        po_lines = order.models.PurchaseOrderLineItem.objects.filter(
+            part__part=part,
+            order__status__in=PurchaseOrderStatus.OPEN,
+        )
+
+        for line in po_lines:
+
+            target_date = line.target_date or line.order.target_date
+
+            quantity = max(line.quantity - line.received, 0)
+
+            add_schedule_entry(
+                target_date,
+                quantity,
+                _('Incoming Purchase Order'),
+                str(line.order),
+                line.order.get_absolute_url()
+            )
+
+        # Add sales order (outgoing stock) information
+        so_lines = order.models.SalesOrderLineItem.objects.filter(
+            part=part,
+            order__status__in=SalesOrderStatus.OPEN,
+        )
+
+        for line in so_lines:
+
+            target_date = line.target_date or line.order.target_date
+
+            quantity = max(line.quantity - line.shipped, 0)
+
+            add_schedule_entry(
+                target_date,
+                -quantity,
+                _('Outgoing Sales Order'),
+                str(line.order),
+                line.order.get_absolute_url(),
+            )
+
+        # Add build orders (incoming stock) information
+        build_orders = Build.objects.filter(
+            part=part,
+            status__in=BuildStatus.ACTIVE_CODES
+        )
+
+        for build in build_orders:
+
+            quantity = max(build.quantity - build.completed, 0)
+
+            add_schedule_entry(
+                build.target_date,
+                quantity,
+                _('Stock produced by Build Order'),
+                str(build),
+                build.get_absolute_url(),
+            )
+
+        """
+        Add build order allocation (outgoing stock) information.
+
+        Here we need some careful consideration:
+
+        - 'Tracked' stock items are removed from stock when the individual Build Output is completed
+        - 'Untracked' stock items are removed from stock when the Build Order is completed
+
+        The 'simplest' approach here is to look at existing BuildItem allocations which reference this part,
+        and "schedule" them for removal at the time of build order completion.
+
+        This assumes that the user is responsible for correctly allocating parts.
+
+        However, it has the added benefit of side-stepping the various BOM substition options,
+        and just looking at what stock items the user has actually allocated against the Build.
+        """
+
+        build_allocations = BuildItem.objects.filter(
+            stock_item__part=part,
+            build__status__in=BuildStatus.ACTIVE_CODES,
+        )
+
+        for allocation in build_allocations:
+
+            add_schedule_entry(
+                allocation.build.target_date,
+                -allocation.quantity,
+                _('Stock required for Build Order'),
+                str(allocation.build),
+                allocation.build.get_absolute_url(),
+            )
+
+        # Sort by incrementing date values
+        schedule = sorted(schedule, key=lambda entry: entry['date'])
+
+        return Response(schedule)
+
+
 class PartSerialNumberDetail(generics.RetrieveAPIView):
     """
     API endpoint for returning extra serial number information about a particular part
@@ -446,12 +588,82 @@ class PartSerialNumberDetail(generics.RetrieveAPIView):
         }
 
         if latest is not None:
-            next = increment(latest)
+            next_serial = increment(latest)
 
-            if next != increment:
-                data['next'] = next
+            if next_serial != increment:
+                data['next'] = next_serial
 
         return Response(data)
+
+
+class PartCopyBOM(generics.CreateAPIView):
+    """
+    API endpoint for duplicating a BOM
+    """
+
+    queryset = Part.objects.all()
+    serializer_class = part_serializers.PartCopyBOMSerializer
+
+    def get_serializer_context(self):
+
+        ctx = super().get_serializer_context()
+
+        try:
+            ctx['part'] = Part.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
+        return ctx
+
+
+class PartValidateBOM(generics.RetrieveUpdateAPIView):
+    """
+    API endpoint for 'validating' the BOM for a given Part
+    """
+
+    class BOMValidateSerializer(serializers.ModelSerializer):
+
+        class Meta:
+            model = Part
+            fields = [
+                'checksum',
+                'valid',
+            ]
+
+        checksum = serializers.CharField(
+            read_only=True,
+            source='bom_checksum',
+        )
+
+        valid = serializers.BooleanField(
+            write_only=True,
+            default=False,
+            label=_('Valid'),
+            help_text=_('Validate entire Bill of Materials'),
+        )
+
+        def validate_valid(self, valid):
+            if not valid:
+                raise ValidationError(_('This option must be selected'))
+
+    queryset = Part.objects.all()
+
+    serializer_class = BOMValidateSerializer
+
+    def update(self, request, *args, **kwargs):
+
+        part = self.get_object()
+
+        partial = kwargs.pop('partial', False)
+
+        serializer = self.get_serializer(part, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+
+        part.validate_bom(request.user)
+
+        return Response({
+            'checksum': part.bom_checksum,
+        })
 
 
 class PartDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -586,6 +798,20 @@ class PartFilter(rest_filters.FilterSet):
 
         return queryset
 
+    # unallocated_stock filter
+    unallocated_stock = rest_filters.BooleanFilter(label='Unallocated stock', method='filter_unallocated_stock')
+
+    def filter_unallocated_stock(self, queryset, name, value):
+
+        value = str2bool(value)
+
+        if value:
+            queryset = queryset.filter(Q(unallocated_stock__gt=0))
+        else:
+            queryset = queryset.filter(Q(unallocated_stock__lte=0))
+
+        return queryset
+
     is_template = rest_filters.BooleanFilter()
 
     assembly = rest_filters.BooleanFilter()
@@ -643,6 +869,14 @@ class PartList(generics.ListCreateAPIView):
 
         kwargs['starred_parts'] = self.starred_parts
 
+        try:
+            params = self.request.query_params
+
+            kwargs['parameters'] = str2bool(params.get('parameters', None))
+
+        except AttributeError:
+            pass
+
         return self.serializer_class(*args, **kwargs)
 
     def list(self, request, *args, **kwargs):
@@ -655,6 +889,22 @@ class PartList(generics.ListCreateAPIView):
         """
 
         queryset = self.filter_queryset(self.get_queryset())
+
+        # Check if we wish to export the queried data to a file.
+        # If so, skip pagination!
+        export_format = request.query_params.get('export', None)
+
+        if export_format:
+            export_format = str(export_format).strip().lower()
+
+            if export_format in ['csv', 'tsv', 'xls', 'xlsx']:
+                dataset = PartResource().export(queryset=queryset)
+
+                filedata = dataset.export(export_format)
+
+                filename = f"InvenTree_Parts.{export_format}"
+
+                return DownloadFile(filedata, filename)
 
         page = self.paginate_queryset(queryset)
 
@@ -925,6 +1175,23 @@ class PartList(generics.ListCreateAPIView):
             except (ValueError, Part.DoesNotExist):
                 pass
 
+        # Filter only parts which are in the "BOM" for a given part
+        in_bom_for = params.get('in_bom_for', None)
+
+        if in_bom_for is not None:
+            try:
+                in_bom_for = Part.objects.get(pk=in_bom_for)
+
+                # Extract a list of parts within the BOM
+                bom_parts = in_bom_for.get_parts_in_bom()
+                print("bom_parts:", bom_parts)
+                print([p.pk for p in bom_parts])
+
+                queryset = queryset.filter(pk__in=[p.pk for p in bom_parts])
+
+            except (ValueError, Part.DoesNotExist):
+                pass
+
         # Filter by whether the BOM has been validated (or not)
         bom_valid = params.get('bom_valid', None)
 
@@ -1081,6 +1348,7 @@ class PartList(generics.ListCreateAPIView):
         'creation_date',
         'IPN',
         'in_stock',
+        'unallocated_stock',
         'category',
     ]
 
@@ -1159,6 +1427,44 @@ class PartParameterTemplateList(generics.ListCreateAPIView):
     search_fields = [
         'name',
     ]
+
+    def filter_queryset(self, queryset):
+        """
+        Custom filtering for the PartParameterTemplate API
+        """
+
+        queryset = super().filter_queryset(queryset)
+
+        params = self.request.query_params
+
+        # Filtering against a "Part" - return only parameter templates which are referenced by a part
+        part = params.get('part', None)
+
+        if part is not None:
+
+            try:
+                part = Part.objects.get(pk=part)
+                parameters = PartParameter.objects.filter(part=part)
+                template_ids = parameters.values_list('template').distinct()
+                queryset = queryset.filter(pk__in=[el[0] for el in template_ids])
+            except (ValueError, Part.DoesNotExist):
+                pass
+
+        # Filtering against a "PartCategory" - return only parameter templates which are referenced by parts in this category
+        category = params.get('category', None)
+
+        if category is not None:
+
+            try:
+                category = PartCategory.objects.get(pk=category)
+                cats = category.get_descendants(include_self=True)
+                parameters = PartParameter.objects.filter(part__category__in=cats)
+                template_ids = parameters.values_list('template').distinct()
+                queryset = queryset.filter(pk__in=[el[0] for el in template_ids])
+            except (ValueError, PartCategory.DoesNotExist):
+                pass
+
+        return queryset
 
 
 class PartParameterList(generics.ListCreateAPIView):
@@ -1296,9 +1602,10 @@ class BomList(generics.ListCreateAPIView):
 
     def get_queryset(self, *args, **kwargs):
 
-        queryset = BomItem.objects.all()
+        queryset = super().get_queryset(*args, **kwargs)
 
         queryset = self.get_serializer_class().setup_eager_loading(queryset)
+        queryset = self.get_serializer_class().annotate_queryset(queryset)
 
         return queryset
 
@@ -1463,11 +1770,63 @@ class BomList(generics.ListCreateAPIView):
     ]
 
 
+class BomImportUpload(generics.CreateAPIView):
+    """
+    API endpoint for uploading a complete Bill of Materials.
+
+    It is assumed that the BOM has been extracted from a file using the BomExtract endpoint.
+    """
+
+    queryset = Part.objects.all()
+    serializer_class = part_serializers.BomImportUploadSerializer
+
+    def create(self, request, *args, **kwargs):
+        """
+        Custom create function to return the extracted data
+        """
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+
+        data = serializer.extract_data()
+
+        return Response(data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+class BomImportExtract(generics.CreateAPIView):
+    """
+    API endpoint for extracting BOM data from a BOM file.
+    """
+
+    queryset = Part.objects.none()
+    serializer_class = part_serializers.BomImportExtractSerializer
+
+
+class BomImportSubmit(generics.CreateAPIView):
+    """
+    API endpoint for submitting BOM data from a BOM file
+    """
+
+    queryset = BomItem.objects.none()
+    serializer_class = part_serializers.BomImportSubmitSerializer
+
+
 class BomDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a single BomItem object """
 
     queryset = BomItem.objects.all()
     serializer_class = part_serializers.BomItemSerializer
+
+    def get_queryset(self, *args, **kwargs):
+
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = self.get_serializer_class().setup_eager_loading(queryset)
+        queryset = self.get_serializer_class().annotate_queryset(queryset)
+
+        return queryset
 
 
 class BomItemValidate(generics.UpdateAPIView):
@@ -1585,6 +1944,15 @@ part_api_urls = [
         # Endpoint for extra serial number information
         url(r'^serial-numbers/', PartSerialNumberDetail.as_view(), name='api-part-serial-number-detail'),
 
+        # Endpoint for future scheduling information
+        url(r'^scheduling/', PartScheduling.as_view(), name='api-part-scheduling'),
+
+        # Endpoint for duplicating a BOM for the specific Part
+        url(r'^bom-copy/', PartCopyBOM.as_view(), name='api-part-bom-copy'),
+
+        # Endpoint for validating a BOM for the specific Part
+        url(r'^bom-validate/', PartValidateBOM.as_view(), name='api-part-bom-validate'),
+
         # Part detail endpoint
         url(r'^.*$', PartDetail.as_view(), name='api-part-detail'),
     ])),
@@ -1608,6 +1976,11 @@ bom_api_urls = [
         url(r'^validate/?', BomItemValidate.as_view(), name='api-bom-item-validate'),
         url(r'^.*$', BomDetail.as_view(), name='api-bom-item-detail'),
     ])),
+
+    # API endpoint URLs for importing BOM data
+    url(r'^import/upload/', BomImportUpload.as_view(), name='api-bom-import-upload'),
+    url(r'^import/extract/', BomImportExtract.as_view(), name='api-bom-import-extract'),
+    url(r'^import/submit/', BomImportSubmit.as_view(), name='api-bom-import-submit'),
 
     # Catch-all
     url(r'^.*$', BomList.as_view(), name='api-bom-list'),

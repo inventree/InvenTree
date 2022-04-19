@@ -46,7 +46,7 @@ class BomItemTest(TestCase):
     # TODO: Tests for multi-level BOMs
 
     def test_used_in(self):
-        self.assertEqual(self.bob.used_in_count, 0)
+        self.assertEqual(self.bob.used_in_count, 1)
         self.assertEqual(self.orphan.used_in_count, 1)
 
     def test_self_reference(self):
@@ -55,7 +55,7 @@ class BomItemTest(TestCase):
         with self.assertRaises(django_exceptions.ValidationError):
             # A validation error should be raised here
             item = BomItem.objects.create(part=self.bob, sub_part=self.bob, quantity=7)
-            item.clean()
+            item.clean()  # pragma: no cover
 
     def test_integer_quantity(self):
         """

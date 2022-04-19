@@ -1,7 +1,9 @@
 {% load i18n %}
 {% load inventree_extras %}
 
-<h4>{% trans "URLs" %}</h4>
+<div class='panel-heading'>
+    <h4>{% trans "URLs" %}</h4>
+</div>
 {% define plugin.base_url as base %}
 <p>{% blocktrans %}The Base-URL for this plugin is <a href="/{{ base }}" target="_blank"><strong>{{ base }}</strong></a>.{% endblocktrans %}</p>
 
@@ -18,7 +20,7 @@
         <tr>
             <td>{{key}}</td>
             <td>{{entry.1}}</td>
-            <td><a class="btn btn-primary btn-small" href="/{{ base }}{{entry.1}}" target="_blank">{% trans 'open in new tab' %}</a></td>
+            <td><a class="btn btn-primary btn-small" href="/{{ base }}{{entry.1}}" target="_blank">{% trans 'Open in new tab' %}</a></td>
         </tr>
         {% endif %}{% endfor %}
     </tbody>

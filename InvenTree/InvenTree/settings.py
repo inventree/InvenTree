@@ -17,7 +17,6 @@ import os
 import random
 import socket
 import string
-import shutil
 import sys
 from datetime import datetime
 
@@ -28,60 +27,26 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.messages import constants as messages
 import django.conf.locale
 
+from .config import get_base_dir, get_config_file, get_plugin_file, get_setting
+
 
 def _is_true(x):
     # Shortcut function to determine if a value "looks" like a boolean
-    return str(x).lower() in ['1', 'y', 'yes', 't', 'true']
-
-
-def get_setting(environment_var, backup_val, default_value=None):
-    """
-    Helper function for retrieving a configuration setting value
-
-    - First preference is to look for the environment variable
-    - Second preference is to look for the value of the settings file
-    - Third preference is the default value
-    """
-
-    val = os.getenv(environment_var)
-
-    if val is not None:
-        return val
-
-    if backup_val is not None:
-        return backup_val
-
-    return default_value
+    return str(x).strip().lower() in ['1', 'y', 'yes', 't', 'true']
 
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv
+# Are enviroment variables manipulated by tests? Needs to be set by testing code
+TESTING_ENV = False
 
 # New requirement for django 3.2+
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = get_base_dir()
 
-# Specify where the "config file" is located.
-# By default, this is 'config.yaml'
-
-cfg_filename = os.getenv('INVENTREE_CONFIG_FILE')
-
-if cfg_filename:
-    cfg_filename = cfg_filename.strip()
-    cfg_filename = os.path.abspath(cfg_filename)
-
-else:
-    # Config file is *not* specified - use the default
-    cfg_filename = os.path.join(BASE_DIR, 'config.yaml')
-
-if not os.path.exists(cfg_filename):
-    print("InvenTree configuration file 'config.yaml' not found - creating default file")
-
-    cfg_template = os.path.join(BASE_DIR, "config_template.yaml")
-    shutil.copyfile(cfg_template, cfg_filename)
-    print(f"Created config file {cfg_filename}")
+cfg_filename = get_config_file()
 
 with open(cfg_filename, 'r') as cfg:
     CONFIG = yaml.safe_load(cfg)
@@ -119,7 +84,7 @@ logging.basicConfig(
 )
 
 if log_level not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
-    log_level = 'WARNING'
+    log_level = 'WARNING'  # pragma: no cover
 
 LOGGING = {
     'version': 1,
@@ -156,20 +121,20 @@ d) Create "secret_key.txt" if it does not exist
 
 if os.getenv("INVENTREE_SECRET_KEY"):
     # Secret key passed in directly
-    SECRET_KEY = os.getenv("INVENTREE_SECRET_KEY").strip()
-    logger.info("SECRET_KEY loaded by INVENTREE_SECRET_KEY")
+    SECRET_KEY = os.getenv("INVENTREE_SECRET_KEY").strip()  # pragma: no cover
+    logger.info("SECRET_KEY loaded by INVENTREE_SECRET_KEY")  # pragma: no cover
 else:
     # Secret key passed in by file location
     key_file = os.getenv("INVENTREE_SECRET_KEY_FILE")
 
     if key_file:
-        key_file = os.path.abspath(key_file)
+        key_file = os.path.abspath(key_file)  # pragma: no cover
     else:
         # default secret key location
         key_file = os.path.join(BASE_DIR, "secret_key.txt")
         key_file = os.path.abspath(key_file)
 
-    if not os.path.exists(key_file):
+    if not os.path.exists(key_file):  # pragma: no cover
         logger.info(f"Generating random key file at '{key_file}'")
         # Create a random key file
         with open(key_file, 'w') as f:
@@ -181,7 +146,7 @@ else:
 
     try:
         SECRET_KEY = open(key_file, "r").read().strip()
-    except Exception:
+    except Exception:  # pragma: no cover
         logger.exception(f"Couldn't load keyfile {key_file}")
         sys.exit(-1)
 
@@ -193,7 +158,7 @@ STATIC_ROOT = os.path.abspath(
     )
 )
 
-if STATIC_ROOT is None:
+if STATIC_ROOT is None:  # pragma: no cover
     print("ERROR: INVENTREE_STATIC_ROOT directory not defined")
     sys.exit(1)
 
@@ -205,15 +170,9 @@ MEDIA_ROOT = os.path.abspath(
     )
 )
 
-if MEDIA_ROOT is None:
+if MEDIA_ROOT is None:  # pragma: no cover
     print("ERROR: INVENTREE_MEDIA_ROOT directory is not defined")
     sys.exit(1)
-
-# Options for django-maintenance-mode : https://pypi.org/project/django-maintenance-mode/
-MAINTENANCE_MODE_STATE_FILE_PATH = os.path.join(
-    config_dir,
-    'maintenance_mode_state.txt',
-)
 
 # List of allowed hosts (default = allow all)
 ALLOWED_HOSTS = CONFIG.get('allowed_hosts', ['*'])
@@ -230,7 +189,7 @@ if cors_opt:
     CORS_ORIGIN_ALLOW_ALL = cors_opt.get('allow_all', False)
 
     if not CORS_ORIGIN_ALLOW_ALL:
-        CORS_ORIGIN_WHITELIST = cors_opt.get('whitelist', [])
+        CORS_ORIGIN_WHITELIST = cors_opt.get('whitelist', [])  # pragma: no cover
 
 # Web URL endpoint for served static files
 STATIC_URL = '/static/'
@@ -258,7 +217,7 @@ if DEBUG:
     logger.info("InvenTree running with DEBUG enabled")
 
 if DEMO_MODE:
-    logger.warning("InvenTree running in DEMO mode")
+    logger.warning("InvenTree running in DEMO mode")  # pragma: no cover
 
 logger.debug(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
 logger.debug(f"STATIC_ROOT: '{STATIC_ROOT}'")
@@ -323,6 +282,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = CONFIG.get('middleware', [
     'django.middleware.security.SecurityMiddleware',
+    'x_forwarded_for.middleware.XForwardedForMiddleware',
     'user_sessions.middleware.SessionMiddleware',                   # db user sessions
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -347,10 +307,18 @@ AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
 ])
 
 # If the debug toolbar is enabled, add the modules
-if DEBUG and CONFIG.get('debug_toolbar', False):
+if DEBUG and CONFIG.get('debug_toolbar', False):  # pragma: no cover
     logger.info("Running with DEBUG_TOOLBAR enabled")
     INSTALLED_APPS.append('debug_toolbar')
     MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+
+# InvenTree URL configuration
+
+# Base URL for admin pages (default="admin")
+INVENTREE_ADMIN_URL = get_setting(
+    'INVENTREE_ADMIN_URL',
+    CONFIG.get('admin_url', 'admin'),
+)
 
 ROOT_URLCONF = 'InvenTree.urls'
 
@@ -439,7 +407,7 @@ for key in db_keys:
 reqiured_keys = ['ENGINE', 'NAME']
 
 for key in reqiured_keys:
-    if key not in db_config:
+    if key not in db_config:  # pragma: no cover
         error_msg = f'Missing required database configuration value {key}'
         logger.error(error_msg)
 
@@ -458,7 +426,7 @@ db_engine = db_config['ENGINE'].lower()
 
 # Correct common misspelling
 if db_engine == 'sqlite':
-    db_engine = 'sqlite3'
+    db_engine = 'sqlite3'  # pragma: no cover
 
 if db_engine in ['sqlite3', 'postgresql', 'mysql']:
     # Prepend the required python module string
@@ -486,7 +454,7 @@ Ref: https://docs.djangoproject.com/en/3.2/ref/settings/#std:setting-OPTIONS
 db_options = db_config.get("OPTIONS", db_config.get("options", {}))
 
 # Specific options for postgres backend
-if "postgres" in db_engine:
+if "postgres" in db_engine:  # pragma: no cover
     from psycopg2.extensions import (
         ISOLATION_LEVEL_READ_COMMITTED,
         ISOLATION_LEVEL_SERIALIZABLE,
@@ -548,7 +516,7 @@ if "postgres" in db_engine:
         )
 
 # Specific options for MySql / MariaDB backend
-if "mysql" in db_engine:
+if "mysql" in db_engine:  # pragma: no cover
     # TODO TCP time outs and keepalives
 
     # MariaDB's default isolation level is Repeatable Read which is
@@ -589,7 +557,7 @@ _cache_port = _cache_config.get(
     "port", os.getenv("INVENTREE_CACHE_PORT", "6379")
 )
 
-if _cache_host:
+if _cache_host:  # pragma: no cover
     # We are going to rely upon a possibly non-localhost for our cache,
     # so don't wait too long for the cache as nothing in the cache should be
     # irreplacable.
@@ -634,7 +602,7 @@ else:
 try:
     # 4 background workers seems like a sensible default
     background_workers = int(os.environ.get('INVENTREE_BACKGROUND_WORKERS', 4))
-except ValueError:
+except ValueError:  # pragma: no cover
     background_workers = 4
 
 # django-q configuration
@@ -649,7 +617,7 @@ Q_CLUSTER = {
     'sync': False,
 }
 
-if _cache_host:
+if _cache_host:  # pragma: no cover
     # If using external redis cache, make the cache the broker for Django Q
     # as well
     Q_CLUSTER["django_redis"] = "worker"
@@ -684,7 +652,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 EXTRA_URL_SCHEMES = CONFIG.get('extra_url_schemes', [])
 
-if not type(EXTRA_URL_SCHEMES) in [list]:
+if not type(EXTRA_URL_SCHEMES) in [list]:  # pragma: no cover
     logger.warning("extra_url_schemes not correctly formatted")
     EXTRA_URL_SCHEMES = []
 
@@ -700,8 +668,10 @@ LANGUAGES = [
     ('en', _('English')),
     ('es', _('Spanish')),
     ('es-mx', _('Spanish (Mexican)')),
+    ('fa', _('Farsi / Persian')),
     ('fr', _('French')),
     ('he', _('Hebrew')),
+    ('hu', _('Hungarian')),
     ('it', _('Italian')),
     ('ja', _('Japanese')),
     ('ko', _('Korean')),
@@ -718,7 +688,7 @@ LANGUAGES = [
 ]
 
 # Testing interface translations
-if get_setting('TEST_TRANSLATIONS', False):
+if get_setting('TEST_TRANSLATIONS', False):  # pragma: no cover
     # Set default language
     LANGUAGE_CODE = 'xx'
 
@@ -746,7 +716,7 @@ CURRENCIES = CONFIG.get(
 
 # Check that each provided currency is supported
 for currency in CURRENCIES:
-    if currency not in moneyed.CURRENCIES:
+    if currency not in moneyed.CURRENCIES:  # pragma: no cover
         print(f"Currency code '{currency}' is not supported")
         sys.exit(1)
 
@@ -820,7 +790,7 @@ USE_L10N = True
 # Do not use native timezone support in "test" mode
 # It generates a *lot* of cruft in the logs
 if not TESTING:
-    USE_TZ = True
+    USE_TZ = True  # pragma: no cover
 
 DATE_INPUT_FORMATS = [
     "%Y-%m-%d",
@@ -848,7 +818,7 @@ SITE_ID = 1
 # Load the allauth social backends
 SOCIAL_BACKENDS = CONFIG.get('social_backends', [])
 for app in SOCIAL_BACKENDS:
-    INSTALLED_APPS.append(app)
+    INSTALLED_APPS.append(app)  # pragma: no cover
 
 SOCIALACCOUNT_PROVIDERS = CONFIG.get('social_providers', [])
 
@@ -907,14 +877,22 @@ MARKDOWNIFY_BLEACH = False
 
 # Maintenance mode
 MAINTENANCE_MODE_RETRY_AFTER = 60
+MAINTENANCE_MODE_STATE_BACKEND = 'maintenance_mode.backends.DefaultStorageBackend'
 
+# Are plugins enabled?
+PLUGINS_ENABLED = _is_true(get_setting(
+    'INVENTREE_PLUGINS_ENABLED',
+    CONFIG.get('plugins_enabled', False),
+))
 
-# Plugins
-PLUGIN_DIRS = ['plugin.builtin', ]
+PLUGIN_FILE = get_plugin_file()
+
+# Plugin Directories (local plugins will be loaded from these directories)
+PLUGIN_DIRS = ['plugin.builtin', 'barcodes.plugins', ]
 
 if not TESTING:
     # load local deploy directory in prod
-    PLUGIN_DIRS.append('plugins')
+    PLUGIN_DIRS.append('plugins')  # pragma: no cover
 
 if DEBUG or TESTING:
     # load samples in debug mode
@@ -924,3 +902,4 @@ if DEBUG or TESTING:
 PLUGIN_TESTING = get_setting('PLUGIN_TESTING', TESTING)  # are plugins beeing tested?
 PLUGIN_TESTING_SETUP = get_setting('PLUGIN_TESTING_SETUP', False)  # load plugins from setup hooks in testing?
 PLUGIN_RETRY = get_setting('PLUGIN_RETRY', 5)  # how often should plugin loading be tried?
+PLUGIN_FILE_CHECKED = False                    # Was the plugin file checked?

@@ -1,0 +1,119 @@
+{% extends "part/part_base.html" %}
+{% load inventree_extras %}
+{% load i18n %}
+{% load static %}
+
+{% block sidebar %}
+{% url "part-detail" part.id as url %}
+{% trans "Return to BOM" as text %}
+{% include "sidebar_link.html" with url=url text=text icon="fa-undo" %}
+{% endblock %}
+
+{% block heading %}
+{% trans "Upload Bill of Materials" %}
+{% endblock %}
+
+{% block actions %}
+<!--
+<button type='button' class='btn btn-outline-secondary' id='bom-info'>
+    <span class='fas fa-info-circle' title='{% trans "BOM upload requirements" %}'></span>
+</button>
+-->
+<button type='button' class='btn btn-primary' id='bom-upload'>
+    <span class='fas fa-file-upload'></span> {% trans "Upload BOM File" %}
+</button>
+<button type='button' class='btn btn-success' disabled='true' id='bom-submit-icon' style='display: none;'>
+    <span class="fas fa-spin fa-circle-notch"></span>
+</button>
+<button type='button' class='btn btn-success' id='bom-submit' style='display: none;'>
+    <span class='fas fa-sign-in-alt' id='bom-submit-icon'></span> {% trans "Submit BOM Data" %}
+</button>
+{% endblock %}
+
+{% block page_info %}
+<div class='panel-content'>
+
+    <div class='alert alert-info alert-block'>
+        <strong>{% trans "Requirements for BOM upload" %}:</strong>
+        <ul>
+            <li>{% trans "The BOM file must contain the required named columns as provided in the " %} <strong><a href='#' id='bom-template-download'>{% trans "BOM Upload Template" %}</a></strong></li>
+            <li>{% trans "Each part must already exist in the database" %}</li>
+        </ul>
+    </div>
+
+    <div id='non-field-errors'>
+        <!-- Upload error messages go here -->
+    </div>
+
+    <!-- This table is filled out after BOM file is uploaded and processed -->
+    <table class='table table-condensed' id='bom-import-table'>
+        <thead>
+            <tr>
+                <th style='max-width: 500px;'>{% trans "Part" %}</th>
+                <th>{% trans "Quantity" %}</th>
+                <th>{% trans "Reference" %}</th>
+                <th>{% trans "Overage" %}</th>
+                <th>{% trans "Allow Variants" %}</th>
+                <th>{% trans "Inherited" %}</th>
+                <th>{% trans "Optional" %}</th>
+                <th>{% trans "Note" %}</th>
+                <th><!-- Buttons Column --></th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+</div>
+{% endblock page_info %}
+
+{% block js_ready %}
+{{ block.super }}
+
+enableSidebar('bom-upload');
+
+$('#bom-template-download').click(function() {
+    downloadBomTemplate();
+});
+
+$('#bom-upload').click(function() {
+
+    constructForm('{% url "api-bom-import-upload" %}', {
+        method: 'POST',
+        fields: {
+            data_file: {},
+            part: {
+                value: {{ part.pk }},
+                hidden: true,
+            },
+            clear_existing_bom: {},
+        },
+        title: '{% trans "Upload BOM File" %}',
+        onSuccess: function(response) {
+
+            // Clear existing entries from the table
+            $('.bom-import-row').remove();
+
+            selectImportFields(
+                '{% url "api-bom-import-extract" %}',
+                response,
+                {
+                    success: function(response) {
+                        constructBomUploadTable(response);
+
+                        // Show the "submit" button
+                        $('#bom-submit').show();
+
+                        $('#bom-submit').click(function() {
+                            submitBomTable({{ part.pk }}, {
+                                bom_data: response,
+                            });
+                        });
+                    }
+                }
+            );
+        }
+    });
+
+});
+
+{% endblock js_ready %}

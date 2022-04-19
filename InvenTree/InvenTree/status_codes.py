@@ -252,9 +252,16 @@ class StockHistoryCode(StatusCode):
     SPLIT_FROM_PARENT = 40
     SPLIT_CHILD_ITEM = 42
 
+    # Stock merging operations
+    MERGED_STOCK_ITEMS = 45
+
+    # Convert stock item to variant
+    CONVERTED_TO_VARIANT = 48
+
     # Build order codes
     BUILD_OUTPUT_CREATED = 50
     BUILD_OUTPUT_COMPLETED = 55
+    BUILD_CONSUMED = 57
 
     # Sales order codes
 
@@ -288,11 +295,16 @@ class StockHistoryCode(StatusCode):
         SPLIT_FROM_PARENT: _('Split from parent item'),
         SPLIT_CHILD_ITEM: _('Split child item'),
 
+        MERGED_STOCK_ITEMS: _('Merged stock items'),
+
+        CONVERTED_TO_VARIANT: _('Converted to variant'),
+
         SENT_TO_CUSTOMER: _('Sent to customer'),
         RETURNED_FROM_CUSTOMER: _('Returned from customer'),
 
         BUILD_OUTPUT_CREATED: _('Build order output created'),
         BUILD_OUTPUT_COMPLETED: _('Build order output completed'),
+        BUILD_CONSUMED: _('Consumed by build order'),
 
         RECEIVED_AGAINST_PURCHASE_ORDER: _('Received against purchase order')
 

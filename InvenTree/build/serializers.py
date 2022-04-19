@@ -19,6 +19,7 @@ from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentS
 from InvenTree.serializers import UserSerializerBrief, ReferenceIndexingSerializerMixin
 
 import InvenTree.helpers
+from InvenTree.helpers import extract_serial_numbers
 from InvenTree.serializers import InvenTreeDecimalField
 from InvenTree.status_codes import StockStatus
 
@@ -141,6 +142,9 @@ class BuildOutputSerializer(serializers.Serializer):
 
         build = self.context['build']
 
+        # As this serializer can be used in multiple contexts, we need to work out why we are here
+        to_complete = self.context.get('to_complete', False)
+
         # The stock item must point to the build
         if output.build != build:
             raise ValidationError(_("Build output does not match the parent build"))
@@ -153,9 +157,11 @@ class BuildOutputSerializer(serializers.Serializer):
         if not output.is_building:
             raise ValidationError(_("This build output has already been completed"))
 
-        # The build output must have all tracked parts allocated
-        if not build.isFullyAllocated(output):
-            raise ValidationError(_("This build output is not fully allocated"))
+        if to_complete:
+
+            # The build output must have all tracked parts allocated
+            if not build.is_fully_allocated(output):
+                raise ValidationError(_("This build output is not fully allocated"))
 
         return output
 
@@ -165,7 +171,181 @@ class BuildOutputSerializer(serializers.Serializer):
         ]
 
 
-class BuildCompleteSerializer(serializers.Serializer):
+class BuildOutputCreateSerializer(serializers.Serializer):
+    """
+    Serializer for creating a new BuildOutput against a BuildOrder.
+
+    URL pattern is "/api/build/<pk>/create-output/", where <pk> is the PK of a Build.
+
+    The Build object is provided to the serializer context.
+    """
+
+    quantity = serializers.DecimalField(
+        max_digits=15,
+        decimal_places=5,
+        min_value=0,
+        required=True,
+        label=_('Quantity'),
+        help_text=_('Enter quantity for build output'),
+    )
+
+    def get_build(self):
+        return self.context["build"]
+
+    def get_part(self):
+        return self.get_build().part
+
+    def validate_quantity(self, quantity):
+
+        if quantity < 0:
+            raise ValidationError(_("Quantity must be greater than zero"))
+
+        part = self.get_part()
+
+        if int(quantity) != quantity:
+            # Quantity must be an integer value if the part being built is trackable
+            if part.trackable:
+                raise ValidationError(_("Integer quantity required for trackable parts"))
+
+            if part.has_trackable_parts():
+                raise ValidationError(_("Integer quantity required, as the bill of materials contains trackable parts"))
+
+        return quantity
+
+    batch_code = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        label=_('Batch Code'),
+        help_text=_('Batch code for this build output'),
+    )
+
+    serial_numbers = serializers.CharField(
+        allow_blank=True,
+        required=False,
+        label=_('Serial Numbers'),
+        help_text=_('Enter serial numbers for build outputs'),
+    )
+
+    def validate_serial_numbers(self, serial_numbers):
+
+        serial_numbers = serial_numbers.strip()
+
+        # TODO: Field level validation necessary here?
+        return serial_numbers
+
+    auto_allocate = serializers.BooleanField(
+        required=False,
+        default=False,
+        allow_null=True,
+        label=_('Auto Allocate Serial Numbers'),
+        help_text=_('Automatically allocate required items with matching serial numbers'),
+    )
+
+    def validate(self, data):
+        """
+        Perform form validation
+        """
+
+        part = self.get_part()
+
+        # Cache a list of serial numbers (to be used in the "save" method)
+        self.serials = None
+
+        quantity = data['quantity']
+        serial_numbers = data.get('serial_numbers', '')
+
+        if serial_numbers:
+
+            try:
+                self.serials = extract_serial_numbers(serial_numbers, quantity, part.getLatestSerialNumberInt())
+            except DjangoValidationError as e:
+                raise ValidationError({
+                    'serial_numbers': e.messages,
+                })
+
+            # Check for conflicting serial numbesr
+            existing = []
+
+            for serial in self.serials:
+                if part.checkIfSerialNumberExists(serial):
+                    existing.append(serial)
+
+            if len(existing) > 0:
+
+                msg = _("The following serial numbers already exist")
+                msg += " : "
+                msg += ",".join([str(e) for e in existing])
+
+                raise ValidationError({
+                    'serial_numbers': msg,
+                })
+
+        return data
+
+    def save(self):
+        """
+        Generate the new build output(s)
+        """
+
+        data = self.validated_data
+
+        quantity = data['quantity']
+        batch_code = data.get('batch_code', '')
+        auto_allocate = data.get('auto_allocate', False)
+
+        build = self.get_build()
+
+        build.create_build_output(
+            quantity,
+            serials=self.serials,
+            batch=batch_code,
+            auto_allocate=auto_allocate,
+        )
+
+
+class BuildOutputDeleteSerializer(serializers.Serializer):
+    """
+    DRF serializer for deleting (cancelling) one or more build outputs
+    """
+
+    class Meta:
+        fields = [
+            'outputs',
+        ]
+
+    outputs = BuildOutputSerializer(
+        many=True,
+        required=True,
+    )
+
+    def validate(self, data):
+
+        data = super().validate(data)
+
+        outputs = data.get('outputs', [])
+
+        if len(outputs) == 0:
+            raise ValidationError(_("A list of build outputs must be provided"))
+
+        return data
+
+    def save(self):
+        """
+        'save' the serializer to delete the build outputs
+        """
+
+        data = self.validated_data
+        outputs = data.get('outputs', [])
+
+        build = self.context['build']
+
+        with transaction.atomic():
+            for item in outputs:
+                output = item['output']
+                build.delete_output(output)
+
+
+class BuildOutputCompleteSerializer(serializers.Serializer):
     """
     DRF serializer for completing one or more build outputs
     """
@@ -224,6 +404,10 @@ class BuildCompleteSerializer(serializers.Serializer):
 
         data = self.validated_data
 
+        location = data['location']
+        status = data['status']
+        notes = data.get('notes', '')
+
         outputs = data.get('outputs', [])
 
         # Mark the specified build outputs as "complete"
@@ -235,9 +419,67 @@ class BuildCompleteSerializer(serializers.Serializer):
                 build.complete_build_output(
                     output,
                     request.user,
-                    status=data['status'],
-                    notes=data.get('notes', '')
+                    location=location,
+                    status=status,
+                    notes=notes,
                 )
+
+
+class BuildCompleteSerializer(serializers.Serializer):
+    """
+    DRF serializer for marking a BuildOrder as complete
+    """
+
+    accept_unallocated = serializers.BooleanField(
+        label=_('Accept Unallocated'),
+        help_text=_('Accept that stock items have not been fully allocated to this build order'),
+        required=False,
+        default=False,
+    )
+
+    def validate_accept_unallocated(self, value):
+
+        build = self.context['build']
+
+        if not build.are_untracked_parts_allocated() and not value:
+            raise ValidationError(_('Required stock has not been fully allocated'))
+
+        return value
+
+    accept_incomplete = serializers.BooleanField(
+        label=_('Accept Incomplete'),
+        help_text=_('Accept that the required number of build outputs have not been completed'),
+        required=False,
+        default=False,
+    )
+
+    def validate_accept_incomplete(self, value):
+
+        build = self.context['build']
+
+        if build.remaining > 0 and not value:
+            raise ValidationError(_('Required build quantity has not been completed'))
+
+        return value
+
+    def validate(self, data):
+
+        build = self.context['build']
+
+        if build.incomplete_count > 0:
+            raise ValidationError(_("Build order has incomplete outputs"))
+
+        if not build.has_build_outputs():
+            raise ValidationError(_("No build outputs have been created for this build order"))
+
+        return data
+
+    def save(self):
+
+        request = self.context['request']
+        build = self.context['build']
+
+        build.complete_build(request.user)
 
 
 class BuildUnallocationSerializer(serializers.Serializer):
@@ -465,6 +707,63 @@ class BuildAllocationSerializer(serializers.Serializer):
                 except (ValidationError, DjangoValidationError) as exc:
                     # Catch model errors and re-throw as DRF errors
                     raise ValidationError(detail=serializers.as_serializer_error(exc))
+
+
+class BuildAutoAllocationSerializer(serializers.Serializer):
+    """
+    DRF serializer for auto allocating stock items against a build order
+    """
+
+    class Meta:
+        fields = [
+            'location',
+            'exclude_location',
+            'interchangeable',
+            'substitutes',
+        ]
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        many=False,
+        allow_null=True,
+        required=False,
+        label=_('Source Location'),
+        help_text=_('Stock location where parts are to be sourced (leave blank to take from any location)'),
+    )
+
+    exclude_location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        many=False,
+        allow_null=True,
+        required=False,
+        label=_('Exclude Location'),
+        help_text=_('Exclude stock items from this selected location'),
+    )
+
+    interchangeable = serializers.BooleanField(
+        default=False,
+        label=_('Interchangeable Stock'),
+        help_text=_('Stock items in multiple locations can be used interchangeably'),
+    )
+
+    substitutes = serializers.BooleanField(
+        default=True,
+        label=_('Substitute Stock'),
+        help_text=_('Allow allocation of substitute parts'),
+    )
+
+    def save(self):
+
+        data = self.validated_data
+
+        build = self.context['build']
+
+        build.auto_allocate_stock(
+            location=data.get('location', None),
+            exclude_location=data.get('exclude_location', None),
+            interchangeable=data['interchangeable'],
+            substitutes=data['substitutes'],
+        )
 
 
 class BuildItemSerializer(InvenTreeModelSerializer):

@@ -3,7 +3,6 @@
 {% load i18n %}
 {% load inventree_extras %}
 {% load status_codes %}
-{% load markdownify %}
 
 {% block sidebar %}
 {% include "build/sidebar.html" %}
@@ -18,7 +17,7 @@
     <div class='panel-content'>
         <div class='row'>
             <div class='col-sm-6'>
-                <table class='table table-striped'>
+                <table class='table table-striped table-condensed'>
                     <col width='25'>
                 <tr>
                     <td><span class='fas fa-info'></span></td>
@@ -120,19 +119,19 @@
                 </table>
             </div>
             <div class='col-sm-6'>
-                <table class='table table-striped'>
+                <table class='table table-striped table-condensed'>
                     <col width='25'>
                     <tr>
                         <td><span class='fas fa-calendar-alt'></span></td>
                         <td>{% trans "Created" %}</td>
-                        <td>{{ build.creation_date }}</td>
+                        <td>{% render_date build.creation_date %}</td>
                     </tr>
                     <tr>
                         <td><span class='fas fa-calendar-alt'></span></td>
                         <td>{% trans "Target Date" %}</td>
                         {% if build.target_date %}
                         <td>
-                            {{ build.target_date }}{% if build.is_overdue %} <span class='fas fa-calendar-times icon-red'></span>{% endif %}
+                            {% render_date build.target_date %}{% if build.is_overdue %} <span class='fas fa-calendar-times icon-red'></span>{% endif %}
                         </td>
                         {% else %}
                         <td><em>{% trans "No target date set" %}</em></td>
@@ -142,7 +141,7 @@
                         <td><span class='fas fa-calendar-alt'></span></td>
                         <td>{% trans "Completed" %}</td>
                         {% if build.completion_date %}
-                        <td>{{ build.completion_date }}{% if build.completed_by %}<span class='badge badge-right rounded-pill bg-dark'>{{ build.completed_by }}</span>{% endif %}</td>
+                        <td>{% render_date build.completion_date %}{% if build.completed_by %}<span class='badge badge-right rounded-pill bg-dark'>{{ build.completed_by }}</span>{% endif %}</td>
                         {% else %}
                         <td><em>{% trans "Build not complete" %}</em></td>
                         {% endif %}
@@ -177,7 +176,10 @@
                 <button class='btn btn-danger' type='button' id='btn-unallocate' title='{% trans "Unallocate stock" %}'>
                     <span class='fas fa-minus-circle'></span> {% trans "Unallocate Stock" %}
                 </button>
-                <button class='btn btn-success' type='button' id='btn-auto-allocate' title='{% trans "Allocate stock to build" %}'>
+                <button class='btn btn-primary' type='button' id='btn-auto-allocate' title='{% trans "Automatically allocate stock to build" %}'>
+                    <span class='fas fa-magic'></span> {% trans "Auto Allocate" %}
+                </button>
+                <button class='btn btn-success' type='button' id='btn-allocate' title='{% trans "Manually allocate stock to build" %}'>
                     <span class='fas fa-sign-in-alt'></span> {% trans "Allocate Stock" %}
                 </button>
                 <!--
@@ -192,7 +194,7 @@
     <div class='panel-content'>
         {% if build.has_untracked_bom_items %}
         {% if build.active %}
-        {% if build.areUntrackedPartsFullyAllocated %}
+        {% if build.are_untracked_parts_allocated %}
         <div class='alert alert-block alert-success'>
             {% trans "Untracked stock has been fully allocated for this Build Order" %}
         </div>
@@ -243,15 +245,32 @@
 
                     <!-- Build output actions -->
                     <div class='btn-group'>
-                        <button id='output-options' class='btn btn-primary dropdown-toiggle' type='button' data-bs-toggle='dropdown' title='{% trans "Output Actions" %}'>
+                        <button id='output-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle='dropdown' title='{% trans "Output Actions" %}'>
                             <span class='fas fa-tools'></span> <span class='caret'></span>
                         </button>
                         <ul class='dropdown-menu'>
-                            <li><a class='dropdown-item' href='#' id='multi-output-complete' title='{% trans "Complete selected items" %}'>
+                            <li><a class='dropdown-item' href='#' id='multi-output-complete' title='{% trans "Complete selected build outputs" %}'>
                                 <span class='fas fa-check-circle icon-green'></span> {% trans "Complete outputs" %}
+                            </a></li>
+                            <li><a class='dropdown-item' href='#' id='multi-output-delete' title='{% trans "Delete selected build outputs" %}'>
+                                <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete outputs" %}
                             </a></li>
                         </ul>
                     </div>
+
+                    <!-- Label Printing Actions -->
+                    <div class='btn-group'>
+                        <button id='output-print-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle='dropdown' title='{% trans "Printing Actions" %}'>
+                            <span class='fas fa-print'></span> <span class='caret'></span>
+                        </button>
+                        <ul class='dropdown-menu'>
+                            <li><a class='dropdown-item' href='#' id='incomplete-output-print-label' title='{% trans "Print labels" %}'>
+                                <span class='fas fa-tags'></span> {% trans "Print labels" %}
+                            </a></li>
+                        </ul>
+                    </div>
+
+                    {% include "filter_list.html" with id='incompletebuilditems' %}
                 </div>
                 {% endif %}
             </div>
@@ -289,24 +308,16 @@
 
 <div class='panel panel-hidden' id='panel-notes'>
     <div class='panel-heading'>
-        <div class='row'>
-            <div class='col-sm-6'>
-                <h4>{% trans "Build Notes" %}</h4>
-            </div>
-            <div class='col-sm-6'>
-                <div class='btn-group float-right'>
-                    <button type='button' id='edit-notes' title='{% trans "Edit Notes" %}' class='btn btn-small btn-outline-secondary'>
-                        <span class='fas fa-edit'>      
-                        </span>
-                    </button>
-                </div>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Build Notes" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% include "notes_buttons.html" %}
             </div>
         </div>
     </div>
     <div class='panel-content'>
-        {% if build.notes %}
-        {{ build.notes | markdownify }}
-        {% endif %}
+        <textarea id='build-notes'></textarea>
     </div>
 </div>
 
@@ -316,28 +327,79 @@
 {% block js_ready %}
 {{ block.super }}
 
-$('#btn-create-output').click(function() {
-    launchModalForm('{% url "build-output-create" build.id %}',
+onPanelLoad('completed', function() {
+    loadStockTable($("#build-stock-table"), {
+        params: {
+            location_detail: true,
+            part_detail: true,
+            build: {{ build.id }},
+            is_building: false,
+        },
+        groupByField: 'location',
+        buttons: [
+            '#stock-options',
+        ],
+        url: "{% url 'api-stock-list' %}",    
+    });
+});
+
+onPanelLoad('children', function() {
+    loadBuildTable($('#sub-build-table'), {
+        url: '{% url "api-build-list" %}',
+        filterTarget: "#filter-list-sub-build",
+        params: {
+            ancestor: {{ build.pk }},
+        }
+    });
+});
+
+onPanelLoad('attachments', function() {
+
+    enableDragAndDrop(
+        '#attachment-dropzone',
+        '{% url "api-build-attachment-list" %}',
         {
-            reload: true,
+            data: {
+                build: {{ build.id }},
+            },
+            label: 'attachment',
+            success: function(data, status, xhr) {
+                location.reload();
+            }
+        }
+    );
+
+    loadAttachmentTable('{% url "api-build-attachment-list" %}', {
+        filters: {
+            build: {{ build.pk }},
+        },
+        fields: {
+            build: {
+                value: {{ build.pk }},
+                hidden: true,
+            }
+        }
+    });
+});
+
+onPanelLoad('notes', function() {
+
+    setupNotesField(
+        'build-notes',
+        '{% url "api-build-detail" build.pk %}',
+        {
+            {% if roles.build.change %}
+            editable: true,
+            {% else %}
+            editable: false,
+            {% endif %}
         }
     );
 });
 
-loadStockTable($("#build-stock-table"), {
-    params: {
-        location_detail: true,
-        part_detail: true,
-        build: {{ build.id }},
-        is_building: false,
-    },
-    groupByField: 'location',
-    buttons: [
-        '#stock-options',
-    ],
-    url: "{% url 'api-stock-list' %}",    
-});
-
+function reloadTable() {
+    $('#allocation-table-untracked').bootstrapTable('refresh');
+}
 
 // Get the list of BOM items required for this build
 inventreeGet(
@@ -371,6 +433,7 @@ inventreeGet(
                 [
                     '#output-options',
                     '#multi-output-complete',
+                    '#multi-output-delete',
                 ]
             );
 
@@ -392,6 +455,41 @@ inventreeGet(
                 );
             });
 
+            $('#multi-output-delete').click(function() {
+                var outputs = $('#build-output-table').bootstrapTable('getSelections');
+
+                deleteBuildOutputs(
+                    build_info.pk,
+                    outputs,
+                    {
+                        success: function() {
+                            // Reload the "in progress" table
+                            $('#build-output-table').bootstrapTable('refresh');
+
+                            // Reload the "completed" table
+                            $('#build-stock-table').bootstrapTable('refresh');
+                        }
+                    }
+                )
+            });
+
+            $('#incomplete-output-print-label').click(function() {
+                var outputs = $('#build-output-table').bootstrapTable('getSelections');
+
+                if  (outputs.length == 0) {
+                    outputs = $('#build-output-table').bootstrapTable('getData');
+                }
+
+                var stock_id_values = [];
+
+                outputs.forEach(function(output) {
+                    stock_id_values.push(output.pk);
+                });
+
+                printStockItemLabels(stock_id_values);
+
+            });
+
             {% endif %}
         
             {% if build.active and build.has_untracked_bom_items %}
@@ -408,59 +506,32 @@ inventreeGet(
     }
 );
 
-loadBuildTable($('#sub-build-table'), {
-    url: '{% url "api-build-list" %}',
-    filterTarget: "#filter-list-sub-build",
-    params: {
-        ancestor: {{ build.pk }},
-    }
-});
+$('#btn-create-output').click(function() {
 
-
-enableDragAndDrop(
-    '#attachment-dropzone',
-    '{% url "api-build-attachment-list" %}',
-    {
-        data: {
-            build: {{ build.id }},
-        },
-        label: 'attachment',
-        success: function(data, status, xhr) {
-            location.reload();
+    createBuildOutput(
+        {{ build.pk }},
+        {
+            trackable_parts: {% if build.part.has_trackable_parts %}true{% else %}false{% endif%},
         }
-    }
-);
-
-loadAttachmentTable('{% url "api-build-attachment-list" %}', {
-    filters: {
-        build: {{ build.pk }},
-    },
-    fields: {
-        build: {
-            value: {{ build.pk }},
-            hidden: true,
-        }
-    }
+    );
 });
-
-$('#edit-notes').click(function() {
-    constructForm('{% url "api-build-detail" build.pk %}', {
-        fields: {
-            notes: {
-                multiline: true,
-            }
-        },
-        title: '{% trans "Edit Notes" %}',
-        reload: true,
-    });
-});
-
-function reloadTable() {
-    $('#allocation-table-untracked').bootstrapTable('refresh');
-}
 
 {% if build.active %}
+
 $("#btn-auto-allocate").on('click', function() {
+
+    autoAllocateStockToBuild(
+        {{ build.pk }},
+        [],
+        {
+            {% if build.take_from %}
+            location: {{ build.take_from.pk }},
+            {% endif %}
+        }
+    );
+});
+
+$("#btn-allocate").on('click', function() {
 
     var bom_items = $("#allocation-table-untracked").bootstrapTable("getData");
 
@@ -535,6 +606,5 @@ $("#btn-order-parts").click(function() {
 {% endif %}
 
 enableSidebar('buildorder');
-
 
 {% endblock %}

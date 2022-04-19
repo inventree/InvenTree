@@ -315,7 +315,7 @@ def WrapWithQuotes(text, quote='"'):
     return text
 
 
-def MakeBarcode(object_name, object_pk, object_data={}, **kwargs):
+def MakeBarcode(object_name, object_pk, object_data=None, **kwargs):
     """ Generate a string for a barcode. Adds some global InvenTree parameters.
 
     Args:
@@ -327,6 +327,8 @@ def MakeBarcode(object_name, object_pk, object_data={}, **kwargs):
     Returns:
         json string of the supplied data plus some other data
     """
+    if object_data is None:
+        object_data = {}
 
     url = kwargs.get('url', False)
     brief = kwargs.get('brief', True)
@@ -404,32 +406,42 @@ def DownloadFile(data, filename, content_type='application/text', inline=False):
     return response
 
 
-def extract_serial_numbers(serials, expected_quantity):
-    """ Attempt to extract serial numbers from an input string.
-    - Serial numbers must be integer values
-    - Serial numbers must be positive
-    - Serial numbers can be split by whitespace / newline / commma chars
-    - Serial numbers can be supplied as an inclusive range using hyphen char e.g. 10-20
-    - Serial numbers can be supplied as <start>+ for getting all expecteded numbers starting from <start>
-    - Serial numbers can be supplied as <start>+<length> for getting <length> numbers starting from <start>
+def extract_serial_numbers(serials, expected_quantity, next_number: int):
+    """
+    Attempt to extract serial numbers from an input string:
+
+    Requirements:
+        - Serial numbers can be either strings, or integers
+        - Serial numbers can be split by whitespace / newline / commma chars
+        - Serial numbers can be supplied as an inclusive range using hyphen char e.g. 10-20
+        - Serial numbers can be defined as ~ for getting the next available serial number
+        - Serial numbers can be supplied as <start>+ for getting all expecteded numbers starting from <start>
+        - Serial numbers can be supplied as <start>+<length> for getting <length> numbers starting from <start>
 
     Args:
+        serials: input string with patterns
         expected_quantity: The number of (unique) serial numbers we expect
+        next_number(int): the next possible serial number
     """
 
     serials = serials.strip()
 
+    # fill in the next serial number into the serial
+    if '~' in serials:
+        serials = serials.replace('~', str(next_number))
+
+    # Split input string by whitespace or comma (,) characters
     groups = re.split("[\s,]+", serials)
 
     numbers = []
     errors = []
 
-    # helpers
-    def number_add(n):
-        if n in numbers:
-            errors.append(_('Duplicate serial: {n}').format(n=n))
+    # Helper function to check for duplicated numbers
+    def add_sn(sn):
+        if sn in numbers:
+            errors.append(_('Duplicate serial: {sn}').format(sn=sn))
         else:
-            numbers.append(n)
+            numbers.append(sn)
 
     try:
         expected_quantity = int(expected_quantity)
@@ -457,7 +469,7 @@ def extract_serial_numbers(serials, expected_quantity):
 
                     if a < b:
                         for n in range(a, b + 1):
-                            number_add(n)
+                            add_sn(n)
                     else:
                         errors.append(_("Invalid group: {g}").format(g=group))
 
@@ -466,7 +478,6 @@ def extract_serial_numbers(serials, expected_quantity):
                     continue
             else:
                 errors.append(_("Invalid group: {g}").format(g=group))
-                continue
 
         # plus signals either
         # 1:  'start+':  expected number of serials, starting at start
@@ -487,17 +498,24 @@ def extract_serial_numbers(serials, expected_quantity):
                     end = start + expected_quantity
 
                 for n in range(start, end):
-                    number_add(n)
+                    add_sn(n)
             # no case
             else:
                 errors.append(_("Invalid group: {g}").format(g=group))
-                continue
 
+        # At this point, we assume that the "group" is just a single serial value
+        elif group:
+
+            try:
+                # First attempt to add as an integer value
+                add_sn(int(group))
+            except (ValueError):
+                # As a backup, add as a string value
+                add_sn(group)
+
+        # No valid input group detected
         else:
-            if group in numbers:
-                errors.append(_("Duplicate serial: {g}".format(g=group)))
-            else:
-                numbers.append(group)
+            raise ValidationError(_(f"Invalid/no group {group}"))
 
     if len(errors) > 0:
         raise ValidationError(errors)
@@ -696,3 +714,58 @@ def clean_decimal(number):
         return Decimal(0)
 
     return clean_number.quantize(Decimal(1)) if clean_number == clean_number.to_integral() else clean_number.normalize()
+
+
+def get_objectreference(obj, type_ref: str = 'content_type', object_ref: str = 'object_id'):
+    """lookup method for the GenericForeignKey fields
+
+    Attributes:
+    - obj: object that will be resolved
+    - type_ref: field name for the contenttype field in the model
+    - object_ref: field name for the object id in the model
+
+    Example implementation in the serializer:
+    ```
+    target = serializers.SerializerMethodField()
+    def get_target(self, obj):
+        return get_objectreference(obj, 'target_content_type', 'target_object_id')
+    ```
+
+    The method name must always be the name of the field prefixed by 'get_'
+    """
+    model_cls = getattr(obj, type_ref)
+    obj_id = getattr(obj, object_ref)
+
+    # check if references are set -> return nothing if not
+    if model_cls is None or obj_id is None:
+        return None
+
+    # resolve referenced data into objects
+    model_cls = model_cls.model_class()
+    item = model_cls.objects.get(id=obj_id)
+    url_fnc = getattr(item, 'get_absolute_url', None)
+
+    # create output
+    ret = {}
+    if url_fnc:
+        ret['link'] = url_fnc()
+    return {
+        'name': str(item),
+        'model': str(model_cls._meta.verbose_name),
+        **ret
+    }
+
+
+def inheritors(cls):
+    """
+    Return all classes that are subclasses from the supplied cls
+    """
+    subcls = set()
+    work = [cls]
+    while work:
+        parent = work.pop()
+        for child in parent.__subclasses__():
+            if child not in subcls:
+                subcls.add(child)
+                work.append(child)
+    return subcls

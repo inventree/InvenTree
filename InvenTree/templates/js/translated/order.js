@@ -281,6 +281,65 @@ function createPurchaseOrder(options={}) {
 }
 
 
+/* Construct a set of fields for the SalesOrderLineItem form */
+function soLineItemFields(options={}) {
+
+    var fields = {
+        order: {
+            hidden: true,
+        },
+        part: {},
+        quantity: {},
+        reference: {},
+        sale_price: {},
+        sale_price_currency: {},
+        target_date: {},
+        notes: {},
+    };
+
+    if (options.order) {
+        fields.order.value = options.order;
+    }
+
+    return fields;
+}
+
+
+/* Construct a set of fields for the PurchaseOrderLineItem form */
+function poLineItemFields(options={}) {
+
+    var fields = {
+        order: {
+            hidden: true,
+        },
+        part: {
+            filters: {
+                part_detail: true,
+                supplier_detail: true,
+                supplier: options.supplier,
+            }
+        },
+        quantity: {},
+        reference: {},
+        purchase_price: {},
+        purchase_price_currency: {},
+        target_date: {},
+        destination: {},
+        notes: {},
+    };
+
+    if (options.order) {
+        fields.order.value = options.order;
+    }
+
+    if (options.currency) {
+        fields.purchase_price_currency.value = options.currency;
+    }
+
+    return fields;
+}
+
+
 function removeOrderRowFromOrderWizard(e) {
     /* Remove a part selection from an order form. */
 
@@ -292,6 +351,7 @@ function removeOrderRowFromOrderWizard(e) {
 
     $('#' + row).remove();
 }
+
 
 function newSupplierPartFromOrderWizard(e) {
     /* Create a new supplier part directly from an order form.
@@ -476,6 +536,19 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             quantity = 0;
         }
 
+        // Prepend toggles to the quantity input
+        var toggle_batch = `
+            <span class='input-group-text' title='{% trans "Add batch code" %}' data-bs-toggle='collapse' href='#div-batch-${pk}'>
+                <span class='fas fa-layer-group'></span>
+            </span>
+        `; 
+
+        var toggle_serials = `
+            <span class='input-group-text' title='{% trans "Add serial numbers" %}' data-bs-toggle='collapse' href='#div-serials-${pk}'>
+                <span class='fas fa-hashtag'></span>
+            </span>
+        `;
+        
         // Quantity to Receive
         var quantity_input = constructField(
             `items_quantity_${pk}`,
@@ -490,6 +563,36 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                 hideLabels: true,
             }
         );
+
+        // Add in options for "batch code" and "serial numbers"
+        var batch_input = constructField(
+            `items_batch_code_${pk}`,
+            {
+                type: 'string',
+                required: false,
+                label: '{% trans "Batch Code" %}',
+                help_text: '{% trans "Enter batch code for incoming stock items" %}',
+                prefixRaw: toggle_batch,
+            }
+        );
+
+        var sn_input = constructField(
+            `items_serial_numbers_${pk}`,
+            {
+                type: 'string',
+                required: false,
+                label: '{% trans "Serial Numbers" %}',
+                help_text: '{% trans "Enter serial numbers for incoming stock items" %}',
+                prefixRaw: toggle_serials,
+            }
+        );
+
+        // Hidden inputs below the "quantity" field
+        var quantity_input_group = `${quantity_input}<div class='collapse' id='div-batch-${pk}'>${batch_input}</div>`;
+
+        if (line_item.part_detail.trackable) {
+            quantity_input_group += `<div class='collapse' id='div-serials-${pk}'>${sn_input}</div>`;
+        }
 
         // Construct list of StockItem status codes
         var choices = [];
@@ -528,16 +631,38 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
         );
 
         // Button to remove the row
-        var delete_button = `<div class='btn-group float-right' role='group'>`;
+        var buttons = `<div class='btn-group float-right' role='group'>`;
 
-        delete_button += makeIconButton(
+        buttons += makeIconButton(
+            'fa-layer-group',
+            'button-row-add-batch',
+            pk,
+            '{% trans "Add batch code" %}',
+            {
+                collapseTarget: `div-batch-${pk}`
+            }
+        );
+
+        if (line_item.part_detail.trackable) {
+            buttons += makeIconButton(
+                'fa-hashtag',
+                'button-row-add-serials',
+                pk,
+                '{% trans "Add serial numbers" %}',
+                {
+                    collapseTarget: `div-serials-${pk}`,
+                }
+            );
+        }
+
+        buttons += makeIconButton(
             'fa-times icon-red',
             'button-row-remove',
             pk,
             '{% trans "Remove row" %}',
         );
 
-        delete_button += '</div>';
+        buttons += '</div>';
 
         var html = `
         <tr id='receive_row_${pk}' class='stock-receive-row'>
@@ -554,7 +679,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                 ${line_item.received}
             </td>
             <td id='quantity_${pk}'>
-                ${quantity_input}
+                ${quantity_input_group}
             </td>
             <td id='status_${pk}'>
                 ${status_input}
@@ -563,7 +688,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                 ${destination_input}
             </td>
             <td id='actions_${pk}'>
-                ${delete_button}
+                ${buttons}
             </td>
         </tr>`;
 
@@ -587,7 +712,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                 <th>{% trans "Order Code" %}</th>
                 <th>{% trans "Ordered" %}</th>
                 <th>{% trans "Received" %}</th>
-                <th style='min-width: 50px;'>{% trans "Receive" %}</th>
+                <th style='min-width: 50px;'>{% trans "Quantity to Receive" %}</th>
                 <th style='min-width: 150px;'>{% trans "Status" %}</th>
                 <th style='min-width: 300px;'>{% trans "Destination" %}</th>
                 <th></th>
@@ -678,13 +803,23 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                 var location = getFormFieldValue(`items_location_${pk}`, {}, opts);
 
                 if (quantity != null) {
-                    data.items.push({
+
+                    var line = {
                         line_item: pk,
                         quantity: quantity,
                         status: status,
                         location: location,
-                    });
+                    };
 
+                    if (getFormFieldElement(`items_batch_code_${pk}`).exists()) {
+                        line.batch_code = getFormFieldValue(`items_batch_code_${pk}`);
+                    }
+
+                    if (getFormFieldElement(`items_serial_numbers_${pk}`).exists()) {
+                        line.serial_numbers = getFormFieldValue(`items_serial_numbers_${pk}`);
+                    }
+
+                    data.items.push(line);
                     item_pk_values.push(pk);
                 }
 
@@ -824,7 +959,7 @@ function loadPurchaseOrderTable(table, options) {
                 sortable: true,
                 sortName: 'supplier__name',
                 formatter: function(value, row) {
-                    return imageHoverIcon(row.supplier_detail.image) + renderLink(row.supplier_detail.name, `/company/${row.supplier}/purchase-orders/`);
+                    return imageHoverIcon(row.supplier_detail.image) + renderLink(row.supplier_detail.name, `/company/${row.supplier}/?display=purchase-orders`);
                 }
             },
             {
@@ -848,11 +983,17 @@ function loadPurchaseOrderTable(table, options) {
                 field: 'creation_date',
                 title: '{% trans "Date" %}',
                 sortable: true,
+                formatter: function(value) {
+                    return renderDate(value);
+                }
             },
             {
                 field: 'target_date',
                 title: '{% trans "Target Date" %}',
                 sortable: true,
+                formatter: function(value) {
+                    return renderDate(value);
+                }
             },
             {
                 field: 'line_items',
@@ -910,10 +1051,36 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
     
     var target = options.filter_target || '#filter-list-purchase-order-lines';
 
-    setupFilterList('purchaseorderlineitem', $(table), target);
+    setupFilterList('purchaseorderlineitem', $(table), target, {download: true});
 
     function setupCallbacks() {
         if (options.allow_edit) {
+
+            // Callback for "duplicate" button
+            $(table).find('.button-line-duplicate').click(function() {
+                var pk = $(this).attr('pk');
+
+                inventreeGet(`/api/order/po-line/${pk}/`, {}, {
+                    success: function(data) {
+
+                        var fields = poLineItemFields({
+                            supplier: options.supplier,
+                        });
+
+                        constructForm('{% url "api-po-line-list" %}', {
+                            method: 'POST',
+                            fields: fields,
+                            data: data,
+                            title: '{% trans "Duplicate Line Item" %}',
+                            onSuccess: function(response) {
+                                $(table).bootstrapTable('refresh');
+                            }
+                        });
+                    }
+                });
+            });
+
+            // Callback for "edit" button
             $(table).find('.button-line-edit').click(function() {
                 var pk = $(this).attr('pk');
 
@@ -930,6 +1097,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                         reference: {},
                         purchase_price: {},
                         purchase_price_currency: {},
+                        target_date: {},
                         destination: {},
                         notes: {},
                     },
@@ -940,6 +1108,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 });
             });
 
+            // Callback for "delete" button
             $(table).find('.button-line-delete').click(function() {
                 var pk = $(this).attr('pk');
 
@@ -971,7 +1140,11 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                     ],
                     {
                         success: function() {
+                            // Reload the line item table
                             $(table).bootstrapTable('refresh');
+
+                            // Reload the "received stock" table
+                            $('#stock-table').bootstrapTable('refresh');
                         }
                     }
                 );
@@ -1112,6 +1285,28 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 }
             },
             {
+                sortable: true,
+                field: 'target_date',
+                switchable: true,
+                title: '{% trans "Target Date" %}',
+                formatter: function(value, row) {
+                    if (row.target_date) {
+                        var html = renderDate(row.target_date);
+
+                        if (row.overdue) {
+                            html += `<span class='fas fa-calendar-alt icon-red float-right' title='{% trans "This line item is overdue" %}'></span>`;
+                        }
+
+                        return html;
+
+                    } else if (row.order_detail && row.order_detail.target_date) {
+                        return `<em>${renderDate(row.order_detail.target_date)}</em>`;
+                    } else {
+                        return '-';
+                    }
+                }
+            },
+            {
                 sortable: false,
                 field: 'received',
                 switchable: false,
@@ -1157,15 +1352,16 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
     
                     var pk = row.pk;
     
+                    if (options.allow_receive && row.received < row.quantity) {
+                        html += makeIconButton('fa-sign-in-alt icon-green', 'button-line-receive', pk, '{% trans "Receive line item" %}');
+                    }
+
                     if (options.allow_edit) {
+                        html += makeIconButton('fa-clone', 'button-line-duplicate', pk, '{% trans "Duplicate line item" %}');
                         html += makeIconButton('fa-edit icon-blue', 'button-line-edit', pk, '{% trans "Edit line item" %}');
                         html += makeIconButton('fa-trash-alt icon-red', 'button-line-delete', pk, '{% trans "Delete line item" %}');
                     }
 
-                    if (options.allow_receive && row.received < row.quantity) {
-                        html += makeIconButton('fa-sign-in-alt', 'button-line-receive', pk, '{% trans "Receive line item" %}');
-                    }
-        
                     html += `</div>`;
     
                     return html;
@@ -1269,16 +1465,25 @@ function loadSalesOrderTable(table, options) {
                 sortable: true,
                 field: 'creation_date',
                 title: '{% trans "Creation Date" %}',
+                formatter: function(value) {
+                    return renderDate(value);
+                }
             },
             {
                 sortable: true,
                 field: 'target_date',
                 title: '{% trans "Target Date" %}',
+                formatter: function(value) {
+                    return renderDate(value);
+                }
             },
             {
                 sortable: true,
                 field: 'shipment_date',
                 title: '{% trans "Shipment Date" %}',
+                formatter: function(value) {
+                    return renderDate(value);
+                }
             },
             {
                 sortable: true,
@@ -1430,9 +1635,9 @@ function loadSalesOrderShipmentTable(table, options={}) {
                 sortable: true,
                 formatter: function(value, row) {
                     if (value) {
-                        return value;
+                        return renderDate(value);
                     } else {
-                        return '{% trans "Not shipped" %}';
+                        return '<em>{% trans "Not shipped" %}</em>';
                     }
                 }
             },
@@ -1843,15 +2048,7 @@ function loadSalesOrderAllocationTable(table, options={}) {
                 field: 'location',
                 title: '{% trans "Location" %}',
                 formatter: function(value, row) {
-
-                    if (!value) {
-                        return '{% trans "Location not specified" %}';
-                    }
-                    
-                    var link = `/stock/location/${value}`;
-                    var text = row.location_detail.description;
-
-                    return renderLink(text, link);
+                    return locationDetail(row.item_detail, true);
                 }
             },
             {
@@ -2208,6 +2405,28 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 return formatter.format(total);
             }
         },
+        {
+            field: 'target_date',
+            title: '{% trans "Target Date" %}',
+            sortable: true,
+            switchable: true,
+            formatter: function(value, row) {
+                if (row.target_date) {
+                    var html = renderDate(row.target_date);
+
+                    if (row.overdue) {
+                        html += `<span class='fas fa-calendar-alt icon-red float-right' title='{% trans "This line item is overdue" %}'></span>`;
+                    }
+
+                    return html;
+
+                } else if (row.order_detail && row.order_detail.target_date) {
+                    return `<em>${renderDate(row.order_detail.target_date)}</em>`;
+                } else {
+                    return '-';
+                } 
+            }
+        }
     ];
 
     if (pending) {
@@ -2310,6 +2529,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                     html += makeIconButton('fa-dollar-sign icon-green', 'button-price', pk, '{% trans "Calculate price" %}');
                 }
 
+                html += makeIconButton('fa-clone', 'button-duplicate', pk, '{% trans "Duplicate line item" %}');
                 html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line item" %}');
 
                 var delete_disabled = false;
@@ -2341,6 +2561,28 @@ function loadSalesOrderLineItemTable(table, options={}) {
     // Configure callback functions once the table is loaded
     function setupCallbacks() {
 
+        // Callback for duplicating line items
+        $(table).find('.button-duplicate').click(function() {
+            var pk = $(this).attr('pk');
+
+            inventreeGet(`/api/order/so-line/${pk}/`, {}, {
+                success: function(data) {
+
+                    var fields = soLineItemFields();
+
+                    constructForm('{% url "api-so-line-list" %}', {
+                        method: 'POST',
+                        fields: fields,
+                        data: data,
+                        title: '{% trans "Duplicate Line Item" %}',
+                        onSuccess: function(response) {
+                            $(table).bootstrapTable('refresh');
+                        }
+                    });
+                }
+            });
+        });
+
         // Callback for editing line items
         $(table).find('.button-edit').click(function() {
             var pk = $(this).attr('pk');
@@ -2351,6 +2593,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                     reference: {},
                     sale_price: {},
                     sale_price_currency: {},
+                    target_date: {},
                     notes: {},
                 },
                 title: '{% trans "Edit Line Item" %}',

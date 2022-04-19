@@ -9,13 +9,16 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from InvenTree.api_tester import InvenTreeAPITestCase
-from InvenTree.status_codes import StockStatus
+from InvenTree.status_codes import BuildStatus, StockStatus, PurchaseOrderStatus
 
 from part.models import Part, PartCategory
 from part.models import BomItem, BomItemSubstitute
 from stock.models import StockItem, StockLocation
 from company.models import Company
 from common.models import InvenTreeSetting
+
+import build.models
+import order.models
 
 
 class PartOptionsAPITest(InvenTreeAPITestCase):
@@ -247,7 +250,7 @@ class PartAPITest(InvenTreeAPITestCase):
         data = {'cascade': True}
         response = self.client.get(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 13)
+        self.assertEqual(len(response.data), Part.objects.count())
 
     def test_get_parts_by_cat(self):
         url = reverse('api-part-list')
@@ -575,7 +578,12 @@ class PartDetailTests(InvenTreeAPITestCase):
         'part',
         'location',
         'bom',
+        'company',
         'test_templates',
+        'manufacturer_part',
+        'supplier_part',
+        'order',
+        'stock',
     ]
 
     roles = [
@@ -802,6 +810,38 @@ class PartDetailTests(InvenTreeAPITestCase):
         # And now check that the image has been set
         p = Part.objects.get(pk=pk)
 
+    def test_details(self):
+        """
+        Test that the required details are available
+        """
+
+        p = Part.objects.get(pk=1)
+
+        url = reverse('api-part-detail', kwargs={'pk': 1})
+
+        data = self.get(url, expected_code=200).data
+
+        # How many parts are 'on order' for this part?
+        lines = order.models.PurchaseOrderLineItem.objects.filter(
+            part__part__pk=1,
+            order__status__in=PurchaseOrderStatus.OPEN,
+        )
+
+        on_order = 0
+
+        # Calculate the "on_order" quantity by hand,
+        # to check it matches the API value
+        for line in lines:
+            on_order += line.quantity
+            on_order -= line.received
+
+        self.assertEqual(on_order, data['ordering'])
+        self.assertEqual(on_order, p.on_order)
+
+        # Some other checks
+        self.assertEqual(data['in_stock'], 9000)
+        self.assertEqual(data['unallocated_stock'], 9000)
+
 
 class PartAPIAggregationTest(InvenTreeAPITestCase):
     """
@@ -815,6 +855,10 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         'location',
         'bom',
         'test_templates',
+        'build',
+        'location',
+        'stock',
+        'sales_order',
     ]
 
     roles = [
@@ -825,6 +869,9 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
     def setUp(self):
 
         super().setUp()
+
+        # Ensure the part "variant" tree is correctly structured
+        Part.objects.rebuild()
 
         # Add a new part
         self.part = Part.objects.create(
@@ -855,7 +902,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
                 return part
 
         # We should never get here!
-        self.assertTrue(False)
+        self.assertTrue(False)  # pragma: no cover
 
     def test_stock_quantity(self):
         """
@@ -879,6 +926,153 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
 
         self.assertEqual(data['in_stock'], 1100)
         self.assertEqual(data['stock_item_count'], 105)
+
+    def test_allocation_annotations(self):
+        """
+        Tests for query annotations which add allocation information.
+        Ref: https://github.com/inventree/InvenTree/pull/2797
+        """
+
+        # We are looking at Part ID 100 ("Bob")
+        url = reverse('api-part-detail', kwargs={'pk': 100})
+
+        part = Part.objects.get(pk=100)
+
+        response = self.get(url, expected_code=200)
+
+        # Check that the expected annotated fields exist in the data
+        data = response.data
+        self.assertEqual(data['allocated_to_build_orders'], 0)
+        self.assertEqual(data['allocated_to_sales_orders'], 0)
+
+        # The unallocated stock count should equal the 'in stock' coutn
+        in_stock = data['in_stock']
+        self.assertEqual(in_stock, 126)
+        self.assertEqual(data['unallocated_stock'], in_stock)
+
+        # Check that model functions return the same values
+        self.assertEqual(part.build_order_allocation_count(), 0)
+        self.assertEqual(part.sales_order_allocation_count(), 0)
+        self.assertEqual(part.total_stock, in_stock)
+        self.assertEqual(part.available_stock, in_stock)
+
+        # Now, let's create a sales order, and allocate some stock
+        so = order.models.SalesOrder.objects.create(
+            reference='001',
+            customer=Company.objects.get(pk=1),
+        )
+
+        # We wish to send 50 units of "Bob" against this sales order
+        line = order.models.SalesOrderLineItem.objects.create(
+            quantity=50,
+            order=so,
+            part=part,
+        )
+
+        # Create a shipment against the order
+        shipment_1 = order.models.SalesOrderShipment.objects.create(
+            order=so,
+            reference='001',
+        )
+
+        shipment_2 = order.models.SalesOrderShipment.objects.create(
+            order=so,
+            reference='002',
+        )
+
+        # Allocate stock items to this order, against multiple shipments
+        order.models.SalesOrderAllocation.objects.create(
+            line=line,
+            shipment=shipment_1,
+            item=StockItem.objects.get(pk=1007),
+            quantity=17
+        )
+
+        order.models.SalesOrderAllocation.objects.create(
+            line=line,
+            shipment=shipment_1,
+            item=StockItem.objects.get(pk=1008),
+            quantity=18
+        )
+
+        order.models.SalesOrderAllocation.objects.create(
+            line=line,
+            shipment=shipment_2,
+            item=StockItem.objects.get(pk=1006),
+            quantity=15,
+        )
+
+        # Submit the API request again - should show us the sales order allocation
+        data = self.get(url, expected_code=200).data
+
+        self.assertEqual(data['allocated_to_sales_orders'], 50)
+        self.assertEqual(data['in_stock'], 126)
+        self.assertEqual(data['unallocated_stock'], 76)
+
+        # Now, "ship" the first shipment (so the stock is not 'in stock' any more)
+        shipment_1.complete_shipment(None)
+
+        # Refresh the API data
+        data = self.get(url, expected_code=200).data
+
+        self.assertEqual(data['allocated_to_build_orders'], 0)
+        self.assertEqual(data['allocated_to_sales_orders'], 15)
+        self.assertEqual(data['in_stock'], 91)
+        self.assertEqual(data['unallocated_stock'], 76)
+
+        # Next, we create a build order and allocate stock against it
+        bo = build.models.Build.objects.create(
+            part=Part.objects.get(pk=101),
+            quantity=10,
+            title='Making some assemblies',
+            status=BuildStatus.PRODUCTION,
+        )
+
+        bom_item = BomItem.objects.get(pk=6)
+
+        # Allocate multiple stock items against this build order
+        build.models.BuildItem.objects.create(
+            build=bo,
+            bom_item=bom_item,
+            stock_item=StockItem.objects.get(pk=1000),
+            quantity=10,
+        )
+
+        # Request data once more
+        data = self.get(url, expected_code=200).data
+
+        self.assertEqual(data['allocated_to_build_orders'], 10)
+        self.assertEqual(data['allocated_to_sales_orders'], 15)
+        self.assertEqual(data['in_stock'], 91)
+        self.assertEqual(data['unallocated_stock'], 66)
+
+        # Again, check that the direct model functions return the same values
+        self.assertEqual(part.build_order_allocation_count(), 10)
+        self.assertEqual(part.sales_order_allocation_count(), 15)
+        self.assertEqual(part.total_stock, 91)
+        self.assertEqual(part.available_stock, 66)
+
+        # Allocate further stock against the build
+        build.models.BuildItem.objects.create(
+            build=bo,
+            bom_item=bom_item,
+            stock_item=StockItem.objects.get(pk=1001),
+            quantity=10,
+        )
+
+        # Request data once more
+        data = self.get(url, expected_code=200).data
+
+        self.assertEqual(data['allocated_to_build_orders'], 20)
+        self.assertEqual(data['allocated_to_sales_orders'], 15)
+        self.assertEqual(data['in_stock'], 91)
+        self.assertEqual(data['unallocated_stock'], 56)
+
+        # Again, check that the direct model functions return the same values
+        self.assertEqual(part.build_order_allocation_count(), 20)
+        self.assertEqual(part.sales_order_allocation_count(), 15)
+        self.assertEqual(part.total_stock, 91)
+        self.assertEqual(part.available_stock, 56)
 
 
 class BomItemTest(InvenTreeAPITestCase):
@@ -966,6 +1160,12 @@ class BomItemTest(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['pk'], bom_item.pk)
 
+        # Each item in response should contain expected keys
+        for el in response.data:
+
+            for key in ['available_stock', 'available_substitute_stock']:
+                self.assertTrue(key in el)
+
     def test_get_bom_detail(self):
         """
         Get the detail view for a single BomItem object
@@ -974,6 +1174,26 @@ class BomItemTest(InvenTreeAPITestCase):
         url = reverse('api-bom-item-detail', kwargs={'pk': 3})
 
         response = self.get(url, expected_code=200)
+
+        expected_values = [
+            'allow_variants',
+            'inherited',
+            'note',
+            'optional',
+            'overage',
+            'pk',
+            'part',
+            'quantity',
+            'reference',
+            'sub_part',
+            'substitutes',
+            'validated',
+            'available_stock',
+            'available_substitute_stock',
+        ]
+
+        for key in expected_values:
+            self.assertTrue(key in response.data)
 
         self.assertEqual(int(float(response.data['quantity'])), 25)
 
@@ -1161,6 +1381,21 @@ class BomItemTest(InvenTreeAPITestCase):
         # There should now be 5 substitute parts available in the database
         response = self.get(url, expected_code=200)
         self.assertEqual(len(response.data), 5)
+
+        # The BomItem detail endpoint should now also reflect the substitute data
+        data = self.get(
+            reverse('api-bom-item-detail', kwargs={'pk': bom_item.pk}),
+            expected_code=200
+        ).data
+
+        # 5 substitute parts
+        self.assertEqual(len(data['substitutes']), 5)
+
+        # 5 x 1,000 stock quantity
+        self.assertEqual(data['available_substitute_stock'], 5000)
+
+        # 9,000 stock directly available
+        self.assertEqual(data['available_stock'], 9000)
 
     def test_bom_item_uses(self):
         """

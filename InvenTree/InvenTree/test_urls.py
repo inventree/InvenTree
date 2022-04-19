@@ -92,7 +92,7 @@ class URLTest(TestCase):
                     result[0].strip(),
                     result[1].strip()
                 ])
-            elif len(result) == 1:
+            elif len(result) == 1:  # pragma: no cover
                 urls.append([
                     result[0].strip(),
                     ''

@@ -8,7 +8,7 @@ from InvenTree.api_tester import InvenTreeAPITestCase
 
 class PluginDetailAPITest(InvenTreeAPITestCase):
     """
-    Tests the plugin AP I endpoints
+    Tests the plugin API endpoints
     """
 
     roles = [
@@ -19,9 +19,10 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
     ]
 
     def setUp(self):
-        self.MSG_NO_PKG = 'Either packagenmae of url must be provided'
+        self.MSG_NO_PKG = 'Either packagename of URL must be provided'
 
         self.PKG_NAME = 'minimal'
+        self.PKG_URL = 'git+https://github.com/geoffrey-a-reed/minimal'
         super().setUp()
 
     def test_plugin_install(self):
@@ -35,7 +36,13 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
             'confirm': True,
             'packagename': self.PKG_NAME
         }, expected_code=201).data
+        self.assertEqual(data['success'], True)
 
+        # valid - github url
+        data = self.post(url, {
+            'confirm': True,
+            'url': self.PKG_URL
+        }, expected_code=201).data
         self.assertEqual(data['success'], True)
 
         # invalid tries
@@ -64,15 +71,17 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
         Test the PluginConfig action commands
         """
         from plugin.models import PluginConfig
-        from plugin import plugin_reg
+        from plugin import registry
 
         url = reverse('admin:plugin_pluginconfig_changelist')
         fixtures = PluginConfig.objects.all()
 
         # check if plugins were registered -> in some test setups the startup has no db access
+        print(f'[PLUGIN-TEST] currently {len(fixtures)} plugin entries found')
         if not fixtures:
-            plugin_reg.reload_plugins()
+            registry.reload_plugins()
             fixtures = PluginConfig.objects.all()
+            print(f'Reloaded plugins - now {len(fixtures)} entries found')
 
         print([str(a) for a in fixtures])
         fixtures = fixtures[0:1]

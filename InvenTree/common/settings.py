@@ -17,13 +17,13 @@ def currency_code_default():
     from common.models import InvenTreeSetting
 
     try:
-        code = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY')
-    except ProgrammingError:
+        code = InvenTreeSetting.get_setting('INVENTREE_DEFAULT_CURRENCY', create=False)
+    except ProgrammingError:  # pragma: no cover
         # database is not initialized yet
         code = ''
 
     if code not in CURRENCIES:
-        code = 'USD'
+        code = 'USD'  # pragma: no cover
 
     return code
 

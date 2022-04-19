@@ -234,9 +234,18 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Stock status" %}',
                 description: '{% trans "Stock status" %}',
             },
+            has_batch: {
+                title: '{% trans "Has batch code" %}',
+                type: 'bool',
+            },
             batch: {
                 title: '{% trans "Batch" %}',
                 description: '{% trans "Batch code" %}',
+            },
+            tracked: {
+                title: '{% trans "Tracked" %}',
+                description: '{% trans "Stock item is tracked by either batch code or serial number" %}',
+                type: 'bool',
             },
             has_purchase_price: {
                 type: 'bool',
@@ -268,8 +277,12 @@ function getAvailableTableFilters(tableKey) {
         return {
             result: {
                 type: 'bool',
-                title: '{% trans "Test result" %}',
+                title: '{% trans "Test Passed" %}',
             },
+            include_installed: {
+                type: 'bool',
+                title: '{% trans "Include Installed Items" %}',
+            }
         };
     }
 
@@ -346,6 +359,15 @@ function getAvailableTableFilters(tableKey) {
         };
     }
 
+    if (tableKey == 'salesorderallocation') {
+        return {
+            outstanding: {
+                type: 'bool',
+                title: '{% trans "Outstanding" %}',
+            }
+        };
+    }
+
     if (tableKey == 'salesorder') {
         return {
             status: {
@@ -381,6 +403,24 @@ function getAvailableTableFilters(tableKey) {
         };
     }
 
+    // Filters for "company" table
+    if (tableKey == 'company') {
+        return {
+            is_manufacturer: {
+                type: 'bool',
+                title: '{% trans "Manufacturer" %}',
+            },
+            is_supplier: {
+                type: 'bool',
+                title: '{% trans "Supplier" %}',
+            },
+            is_customer: {
+                type: 'bool',
+                title: '{% trans "Customer" %}',
+            },
+        };
+    }
+
     // Filters for the "Parts" table
     if (tableKey == 'parts') {
         return {
@@ -405,11 +445,15 @@ function getAvailableTableFilters(tableKey) {
             },
             has_stock: {
                 type: 'bool',
-                title: '{% trans "Stock available" %}',
+                title: '{% trans "In stock" %}',
             },
             low_stock: {
                 type: 'bool',
                 title: '{% trans "Low stock" %}',
+            },
+            unallocated_stock: {
+                type: 'bool',
+                title: '{% trans "Available stock" %}',
             },
             assembly: {
                 type: 'bool',

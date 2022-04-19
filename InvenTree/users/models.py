@@ -76,7 +76,8 @@ class RuleSet(models.Model):
             'otp_totp_totpdevice',
             'otp_static_statictoken',
             'otp_static_staticdevice',
-            'plugin_pluginconfig'
+            'plugin_pluginconfig',
+            'plugin_pluginsetting',
         ],
         'part_category': [
             'part_partcategory',
@@ -155,7 +156,10 @@ class RuleSet(models.Model):
         'common_colortheme',
         'common_inventreesetting',
         'common_inventreeusersetting',
+        'common_webhookendpoint',
+        'common_webhookmessage',
         'common_notificationentry',
+        'common_notificationmessage',
         'company_contact',
         'users_owner',
 
@@ -171,6 +175,11 @@ class RuleSet(models.Model):
         'django_q_task',
         'django_q_schedule',
         'django_q_success',
+    ]
+
+    RULESET_CHANGE_INHERIT = [
+        ('part', 'partparameter'),
+        ('part', 'bomitem'),
     ]
 
     RULE_OPTIONS = [
@@ -225,6 +234,16 @@ class RuleSet(models.Model):
                 if check_user_role(user, role, permission):
                     return True
 
+        # Check for children models which inherits from parent role
+        for (parent, child) in cls.RULESET_CHANGE_INHERIT:
+            # Get child model name
+            parent_child_string = f'{parent}_{child}'
+
+            if parent_child_string == table:
+                # Check if parent role has change permission
+                if check_user_role(user, parent, 'change'):
+                    return True
+
         # Print message instead of throwing an error
         name = getattr(user, 'name', user.pk)
 
@@ -247,7 +266,7 @@ class RuleSet(models.Model):
             model=model
         )
 
-    def __str__(self, debug=False):
+    def __str__(self, debug=False):  # pragma: no cover
         """ Ruleset string representation """
         if debug:
             # Makes debugging easier
@@ -299,7 +318,7 @@ def split_permission(app, perm):
     """split permission string into permission and model"""
     permission_name, *model = perm.split('_')
     # handle models that have underscores
-    if len(model) > 1:
+    if len(model) > 1:  # pragma: no cover
         app += '_' + '_'.join(model[:-1])
         perm = permission_name + '_' + model[-1:][0]
     model = model[-1:][0]
@@ -322,7 +341,7 @@ def update_group_roles(group, debug=False):
     """
 
     if not canAppAccessDatabase(allow_test=True):
-        return
+        return  # pragma: no cover
 
     # List of permissions already associated with this group
     group_permissions = set()
@@ -355,7 +374,7 @@ def update_group_roles(group, debug=False):
             allowed - Whether or not the action is allowed
         """
 
-        if action not in ['view', 'add', 'change', 'delete']:
+        if action not in ['view', 'add', 'change', 'delete']:  # pragma: no cover
             raise ValueError("Action {a} is invalid".format(a=action))
 
         permission_string = RuleSet.get_model_permission_string(model, action)
@@ -414,7 +433,7 @@ def update_group_roles(group, debug=False):
         try:
             content_type = ContentType.objects.get(app_label=app, model=model)
             permission = Permission.objects.get(content_type=content_type, codename=perm)
-        except ContentType.DoesNotExist:
+        except ContentType.DoesNotExist:  # pragma: no cover
             logger.warning(f"Error: Could not find permission matching '{permission_string}'")
             permission = None
 
@@ -432,8 +451,8 @@ def update_group_roles(group, debug=False):
         if permission:
             group.permissions.add(permission)
 
-        if debug:
-            print(f"Adding permission {perm} to group {group.name}")
+        if debug:  # pragma: no cover
+            logger.info(f"Adding permission {perm} to group {group.name}")
 
     # Remove any extra permissions from the group
     for perm in permissions_to_delete:
@@ -447,8 +466,30 @@ def update_group_roles(group, debug=False):
         if permission:
             group.permissions.remove(permission)
 
-        if debug:
-            print(f"Removing permission {perm} from group {group.name}")
+        if debug:  # pragma: no cover
+            logger.info(f"Removing permission {perm} from group {group.name}")
+
+    # Enable all action permissions for certain children models
+    # if parent model has 'change' permission
+    for (parent, child) in RuleSet.RULESET_CHANGE_INHERIT:
+        parent_change_perm = f'{parent}.change_{parent}'
+        parent_child_string = f'{parent}_{child}'
+
+        # Check if parent change permission exists
+        if parent_change_perm in group_permissions:
+            # Add child model permissions
+            for action in ['add', 'change', 'delete']:
+                child_perm = f'{parent}.{action}_{child}'
+
+                # Check if child permission not already in group
+                if child_perm not in group_permissions:
+                    # Create permission object
+                    add_model(parent_child_string, action, ruleset.can_delete)
+                    # Add to group
+                    permission = get_permission_object(child_perm)
+                    if permission:
+                        group.permissions.add(permission)
+                        logger.info(f"Adding permission {child_perm} to group {group.name}")
 
 
 @receiver(post_save, sender=Group, dispatch_uid='create_missing_rule_sets')
@@ -534,7 +575,7 @@ class Owner(models.Model):
         return owners
 
     @staticmethod
-    def get_api_url():
+    def get_api_url():  # pragma: no cover
         return reverse('api-owner-list')
 
     class Meta:
@@ -577,7 +618,7 @@ class Owner(models.Model):
             # Create new owner
             try:
                 return cls.objects.create(owner=obj)
-            except IntegrityError:
+            except IntegrityError:  # pragma: no cover
                 return None
 
         return existing_owner

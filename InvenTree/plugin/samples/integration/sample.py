@@ -1,15 +1,18 @@
-"""sample implementations for IntegrationPlugin"""
+"""
+Sample implementations for IntegrationPlugin
+"""
+
 from plugin import IntegrationPluginBase
-from plugin.mixins import AppMixin, GlobalSettingsMixin, UrlsMixin, NavigationMixin
+from plugin.mixins import AppMixin, SettingsMixin, UrlsMixin, NavigationMixin
 
 from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
 from django.conf.urls import url, include
 
 
-class SampleIntegrationPlugin(AppMixin, GlobalSettingsMixin, UrlsMixin, NavigationMixin, IntegrationPluginBase):
+class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixin, IntegrationPluginBase):
     """
-    An full integration plugin
+    A full integration plugin example
     """
 
     PLUGIN_NAME = "SampleIntegrationPlugin"
@@ -40,6 +43,27 @@ class SampleIntegrationPlugin(AppMixin, GlobalSettingsMixin, UrlsMixin, Navigati
             'description': _('Enable PO functionality in InvenTree interface'),
             'default': True,
             'validator': bool,
+        },
+        'API_KEY': {
+            'name': _('API Key'),
+            'description': _('Key required for accessing external API'),
+        },
+        'NUMERICAL_SETTING': {
+            'name': _('Numerical'),
+            'description': _('A numerical setting'),
+            'validator': int,
+            'default': 123,
+        },
+        'CHOICE_SETTING': {
+            'name': _("Choice Setting"),
+            'description': _('A setting with multiple choices'),
+            'choices': [
+                ('A', 'Anaconda'),
+                ('B', 'Bat'),
+                ('C', 'Cat'),
+                ('D', 'Dog'),
+            ],
+            'default': 'A',
         },
     }
 

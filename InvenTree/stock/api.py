@@ -5,6 +5,7 @@ JSON API for the Stock app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from collections import OrderedDict
 from datetime import datetime, timedelta
 
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -29,6 +30,7 @@ from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer, SupplierPartSerializer
 
 from InvenTree.helpers import str2bool, isNull, extract_serial_numbers
+from InvenTree.helpers import DownloadFile
 from InvenTree.api import AttachmentMixin
 from InvenTree.filters import InvenTreeOrderingFilter
 
@@ -39,6 +41,7 @@ from order.serializers import POSerializer
 from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
 
+from stock.admin import StockItemResource
 from stock.models import StockLocation, StockItem
 from stock.models import StockItemTracking
 from stock.models import StockItemAttachment
@@ -94,6 +97,31 @@ class StockItemSerialize(generics.CreateAPIView):
 
     queryset = StockItem.objects.none()
     serializer_class = StockSerializers.SerializeStockItemSerializer
+
+    def get_serializer_context(self):
+
+        context = super().get_serializer_context()
+        context['request'] = self.request
+
+        try:
+            context['item'] = StockItem.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
+        return context
+
+
+class StockItemInstall(generics.CreateAPIView):
+    """
+    API endpoint for installing a particular stock item into this stock item.
+
+    - stock_item.part must be in the BOM for this part
+    - stock_item must currently be "in stock"
+    - stock_item must be serialized (and not belong to another item)
+    """
+
+    queryset = StockItem.objects.none()
+    serializer_class = StockSerializers.InstallStockItemSerializer
 
     def get_serializer_context(self):
 
@@ -177,6 +205,20 @@ class StockAssign(generics.CreateAPIView):
 
         ctx['request'] = self.request
 
+        return ctx
+
+
+class StockMerge(generics.CreateAPIView):
+    """
+    API endpoint for merging multiple stock items
+    """
+
+    queryset = StockItem.objects.none()
+    serializer_class = StockSerializers.StockMergeSerializer
+
+    def get_serializer_context(self):
+        ctx = super().get_serializer_context()
+        ctx['request'] = self.request
         return ctx
 
 
@@ -360,11 +402,51 @@ class StockFilter(rest_filters.FilterSet):
     serialized = rest_filters.BooleanFilter(label='Has serial number', method='filter_serialized')
 
     def filter_serialized(self, queryset, name, value):
+        """
+        Filter by whether the StockItem has a serial number (or not)
+        """
+
+        q = Q(serial=None) | Q(serial='')
 
         if str2bool(value):
-            queryset = queryset.exclude(serial=None)
+            queryset = queryset.exclude(q)
         else:
-            queryset = queryset.filter(serial=None)
+            queryset = queryset.filter(q)
+
+        return queryset
+
+    has_batch = rest_filters.BooleanFilter(label='Has batch code', method='filter_has_batch')
+
+    def filter_has_batch(self, queryset, name, value):
+        """
+        Filter by whether the StockItem has a batch code (or not)
+        """
+
+        q = Q(batch=None) | Q(batch='')
+
+        if str2bool(value):
+            queryset = queryset.exclude(q)
+        else:
+            queryset = queryset.filter(q)
+
+        return queryset
+
+    tracked = rest_filters.BooleanFilter(label='Tracked', method='filter_tracked')
+
+    def filter_tracked(self, queryset, name, value):
+        """
+        Filter by whether this stock item is *tracked*, meaning either:
+        - It has a serial number
+        - It has a batch code
+        """
+
+        q_batch = Q(batch=None) | Q(batch='')
+        q_serial = Q(serial=None) | Q(serial='')
+
+        if str2bool(value):
+            queryset = queryset.exclude(q_batch & q_serial)
+        else:
+            queryset = queryset.filter(q_batch & q_serial)
 
         return queryset
 
@@ -449,13 +531,10 @@ class StockList(generics.ListCreateAPIView):
         """
 
         user = request.user
-        data = request.data
 
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-
-        # Check if a set of serial numbers was provided
-        serial_numbers = data.get('serial_numbers', '')
+        # Copy the request data, to side-step "mutability" issues
+        data = OrderedDict()
+        data.update(request.data)
 
         quantity = data.get('quantity', None)
 
@@ -464,76 +543,105 @@ class StockList(generics.ListCreateAPIView):
                 'quantity': _('Quantity is required'),
             })
 
-        notes = data.get('notes', '')
+        try:
+            part = Part.objects.get(pk=data.get('part', None))
+        except (ValueError, Part.DoesNotExist):
+            raise ValidationError({
+                'part': _('Valid part must be supplied'),
+            })
 
+        # Set default location (if not provided)
+        if 'location' not in data:
+            location = part.get_default_location()
+
+            if location:
+                data['location'] = location.pk
+
+        # An expiry date was *not* specified - try to infer it!
+        if 'expiry_date' not in data and part.default_expiry > 0:
+            data['expiry_date'] = datetime.now().date() + timedelta(days=part.default_expiry)
+
+        # Attempt to extract serial numbers from submitted data
         serials = None
 
+        # Check if a set of serial numbers was provided
+        serial_numbers = data.get('serial_numbers', '')
+
+        # Assign serial numbers for a trackable part
         if serial_numbers:
+
+            if not part.trackable:
+                raise ValidationError({
+                    'serial_numbers': [_("Serial numbers cannot be supplied for a non-trackable part")]
+                })
+
             # If serial numbers are specified, check that they match!
             try:
-                serials = extract_serial_numbers(serial_numbers, data['quantity'])
+                serials = extract_serial_numbers(serial_numbers, quantity, part.getLatestSerialNumberInt())
+
+                # Determine if any of the specified serial numbers already exist!
+                existing = []
+
+                for serial in serials:
+                    if part.checkIfSerialNumberExists(serial):
+                        existing.append(serial)
+
+                if len(existing) > 0:
+
+                    msg = _("The following serial numbers already exist")
+                    msg += " : "
+                    msg += ",".join([str(e) for e in existing])
+
+                    raise ValidationError({
+                        'serial_numbers': [msg],
+                    })
+
             except DjangoValidationError as e:
                 raise ValidationError({
                     'quantity': e.messages,
                     'serial_numbers': e.messages,
                 })
 
+        if serials is not None:
+            """
+            If the stock item is going to be serialized, set the quantity to 1
+            """
+            data['quantity'] = 1
+
+        # De-serialize the provided data
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+
         with transaction.atomic():
 
-            # Create an initial stock item
+            # Create an initial StockItem object
             item = serializer.save()
 
-            # A location was *not* specified - try to infer it
-            if 'location' not in data:
-                item.location = item.part.get_default_location()
+            if serials:
+                # Assign the first serial number to the "master" item
+                item.serial = serials[0]
 
-            # An expiry date was *not* specified - try to infer it!
-            if 'expiry_date' not in data:
-
-                if item.part.default_expiry > 0:
-                    item.expiry_date = datetime.now().date() + timedelta(days=item.part.default_expiry)
-
-            # Finally, save the item (with user information)
+            # Save the item (with user information)
             item.save(user=user)
 
             if serials:
-                """
-                Serialize the stock, if required
+                for serial in serials[1:]:
 
-                - Note that the "original" stock item needs to be created first, so it can be serialized
-                - It is then immediately deleted
-                """
+                    # Create a duplicate stock item with the next serial number
+                    item.pk = None
+                    item.serial = serial
 
-                try:
-                    item.serializeStock(
-                        quantity,
-                        serials,
-                        user,
-                        notes=notes,
-                        location=item.location,
-                    )
+                    item.save(user=user)
 
-                    headers = self.get_success_headers(serializer.data)
+                response_data = {
+                    'quantity': quantity,
+                    'serial_numbers': serials,
+                }
 
-                    # Delete the original item
-                    item.delete()
+            else:
+                response_data = serializer.data
 
-                    response_data = {
-                        'quantity': quantity,
-                        'serial_numbers': serials,
-                    }
-
-                    return Response(response_data, status=status.HTTP_201_CREATED, headers=headers)
-
-                except DjangoValidationError as e:
-                    raise ValidationError({
-                        'quantity': e.messages,
-                        'serial_numbers': e.messages,
-                    })
-
-            # Return a response
-            headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            return Response(response_data, status=status.HTTP_201_CREATED, headers=self.get_success_headers(serializer.data))
 
     def list(self, request, *args, **kwargs):
         """
@@ -544,6 +652,27 @@ class StockList(generics.ListCreateAPIView):
         """
 
         queryset = self.filter_queryset(self.get_queryset())
+
+        params = request.query_params
+
+        # Check if we wish to export the queried data to a file.
+        # If so, skip pagination!
+        export_format = params.get('export', None)
+
+        if export_format:
+            export_format = str(export_format).strip().lower()
+
+            if export_format in ['csv', 'tsv', 'xls', 'xlsx']:
+                dataset = StockItemResource().export(queryset=queryset)
+
+                filedata = dataset.export(export_format)
+
+                filename = 'InvenTree_Stocktake_{date}.{fmt}'.format(
+                    date=datetime.now().strftime("%d-%b-%Y"),
+                    fmt=export_format
+                )
+
+                return DownloadFile(filedata, filename)
 
         page = self.paginate_queryset(queryset)
 
@@ -575,7 +704,7 @@ class StockList(generics.ListCreateAPIView):
                 supplier_part_ids.add(sp)
 
         # Do we wish to include Part detail?
-        if str2bool(request.query_params.get('part_detail', False)):
+        if str2bool(params.get('part_detail', False)):
 
             # Fetch only the required Part objects from the database
             parts = Part.objects.filter(pk__in=part_ids).prefetch_related(
@@ -593,7 +722,7 @@ class StockList(generics.ListCreateAPIView):
                 stock_item['part_detail'] = part_map.get(part_id, None)
 
         # Do we wish to include SupplierPart detail?
-        if str2bool(request.query_params.get('supplier_part_detail', False)):
+        if str2bool(params.get('supplier_part_detail', False)):
 
             supplier_parts = SupplierPart.objects.filter(pk__in=supplier_part_ids)
 
@@ -607,7 +736,7 @@ class StockList(generics.ListCreateAPIView):
                 stock_item['supplier_part_detail'] = supplier_part_map.get(part_id, None)
 
         # Do we wish to include StockLocation detail?
-        if str2bool(request.query_params.get('location_detail', False)):
+        if str2bool(params.get('location_detail', False)):
 
             # Fetch only the required StockLocation objects from the database
             locations = StockLocation.objects.filter(pk__in=location_ids).prefetch_related(
@@ -1016,7 +1145,6 @@ class StockItemTestResultList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
-        'stock_item',
         'test',
         'user',
         'result',
@@ -1024,6 +1152,38 @@ class StockItemTestResultList(generics.ListCreateAPIView):
     ]
 
     ordering = 'date'
+
+    def filter_queryset(self, queryset):
+
+        params = self.request.query_params
+
+        queryset = super().filter_queryset(queryset)
+
+        # Filter by stock item
+        item = params.get('stock_item', None)
+
+        if item is not None:
+            try:
+                item = StockItem.objects.get(pk=item)
+
+                items = [item]
+
+                # Do we wish to also include test results for 'installed' items?
+                include_installed = str2bool(params.get('include_installed', False))
+
+                if include_installed:
+                    # Include items which are installed "underneath" this item
+                    # Note that this function is recursive!
+                    installed_items = item.get_installed_items(cascade=True)
+
+                    items += [it for it in installed_items]
+
+                queryset = queryset.filter(stock_item__in=items)
+
+            except (ValueError, StockItem.DoesNotExist):
+                pass
+
+        return queryset
 
     def get_serializer(self, *args, **kwargs):
         try:
@@ -1099,6 +1259,15 @@ class StockTrackingList(generics.ListAPIView):
 
             if not deltas:
                 deltas = {}
+
+            # Add part detail
+            if 'part' in deltas:
+                try:
+                    part = Part.objects.get(pk=deltas['part'])
+                    serializer = PartBriefSerializer(part)
+                    deltas['part_detail'] = serializer.data
+                except:
+                    pass
 
             # Add location detail
             if 'location' in deltas:
@@ -1213,6 +1382,7 @@ stock_api_urls = [
     url(r'^remove/', StockRemove.as_view(), name='api-stock-remove'),
     url(r'^transfer/', StockTransfer.as_view(), name='api-stock-transfer'),
     url(r'^assign/', StockAssign.as_view(), name='api-stock-assign'),
+    url(r'^merge/', StockMerge.as_view(), name='api-stock-merge'),
 
     # StockItemAttachment API endpoints
     url(r'^attachment/', include([
@@ -1235,6 +1405,7 @@ stock_api_urls = [
     # Detail views for a single stock item
     url(r'^(?P<pk>\d+)/', include([
         url(r'^serialize/', StockItemSerialize.as_view(), name='api-stock-item-serialize'),
+        url(r'^install/', StockItemInstall.as_view(), name='api-stock-item-install'),
         url(r'^.*$', StockDetail.as_view(), name='api-stock-detail'),
     ])),
 

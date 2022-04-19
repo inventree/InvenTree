@@ -100,7 +100,7 @@ class RoleDetails(APIView):
             if len(permissions) > 0:
                 roles[role] = permissions
             else:
-                roles[role] = None
+                roles[role] = None  # pragma: no cover
 
         data = {
             'user': user.pk,
@@ -160,11 +160,6 @@ class GetAuthToken(APIView):
             token, created = Token.objects.get_or_create(user=request.user)
             return Response({
                 'token': token.key,
-            })
-
-        else:
-            return Response({
-                'error': 'User not authenticated',
             })
 
     def logout(self, request):

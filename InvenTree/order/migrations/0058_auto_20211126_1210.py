@@ -22,7 +22,7 @@ def calculate_shipped_quantity(apps, schema_editor):
     StockItem = apps.get_model('stock', 'stockitem')
     SalesOrderLineItem = apps.get_model('order', 'salesorderlineitem')
 
-    for item in SalesOrderLineItem.objects.all():
+    for item in SalesOrderLineItem.objects.all():  # pragma: no cover
 
         if item.order.status == SalesOrderStatus.SHIPPED:
             item.shipped = item.quantity
@@ -40,7 +40,7 @@ def calculate_shipped_quantity(apps, schema_editor):
         item.save()
 
 
-def reverse_calculate_shipped_quantity(apps, schema_editor):
+def reverse_calculate_shipped_quantity(apps, schema_editor):  # pragma: no cover
     """
     Provided only for reverse migration compatibility.
     This function does nothing.

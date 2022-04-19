@@ -67,6 +67,8 @@ function loadAttachmentTable(url, options) {
 
     var table = options.table || '#attachment-table';
 
+    setupFilterList('attachments', $(table), '#filter-list-attachments');
+
     addAttachmentButtonCallbacks(url, options.fields || {});
 
     $(table).inventreeTable({
@@ -163,6 +165,9 @@ function loadAttachmentTable(url, options) {
             {
                 field: 'upload_date',
                 title: '{% trans "Upload Date" %}',
+                formatter: function(value) {
+                    return renderDate(value);
+                }
             },
             {
                 field: 'actions',

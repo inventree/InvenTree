@@ -1,9 +1,12 @@
 
 import json
+from test.support import EnvironmentVarGuard
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 import django.core.exceptions as django_exceptions
 from django.core.exceptions import ValidationError
+from django.contrib.auth import get_user_model
+from django.conf import settings
 
 from djmoney.money import Money
 from djmoney.contrib.exchange.models import Rate, convert_money
@@ -12,6 +15,9 @@ from djmoney.contrib.exchange.exceptions import MissingRate
 from .validators import validate_overage, validate_part_name
 from . import helpers
 from . import version
+from . import status
+from . import ready
+from . import config
 
 from decimal import Decimal
 
@@ -19,6 +25,7 @@ import InvenTree.tasks
 
 from stock.models import StockLocation
 from common.settings import currency_codes
+from common.models import InvenTreeSetting
 
 
 class ValidatorTest(TestCase):
@@ -237,25 +244,41 @@ class TestSerialNumberExtraction(TestCase):
 
         e = helpers.extract_serial_numbers
 
-        sn = e("1-5", 5)
-        self.assertEqual(len(sn), 5)
+        sn = e("1-5", 5, 1)
+        self.assertEqual(len(sn), 5, 1)
         for i in range(1, 6):
             self.assertIn(i, sn)
 
-        sn = e("1, 2, 3, 4, 5", 5)
+        sn = e("1, 2, 3, 4, 5", 5, 1)
         self.assertEqual(len(sn), 5)
 
-        sn = e("1-5, 10-15", 11)
+        sn = e("1-5, 10-15", 11, 1)
         self.assertIn(3, sn)
         self.assertIn(13, sn)
 
-        sn = e("1+", 10)
+        sn = e("1+", 10, 1)
         self.assertEqual(len(sn), 10)
         self.assertEqual(sn, [_ for _ in range(1, 11)])
 
-        sn = e("4, 1+2", 4)
+        sn = e("4, 1+2", 4, 1)
         self.assertEqual(len(sn), 4)
-        self.assertEqual(sn, ["4", 1, 2, 3])
+        self.assertEqual(sn, [4, 1, 2, 3])
+
+        sn = e("~", 1, 1)
+        self.assertEqual(len(sn), 1)
+        self.assertEqual(sn, [1])
+
+        sn = e("~", 1, 3)
+        self.assertEqual(len(sn), 1)
+        self.assertEqual(sn, [3])
+
+        sn = e("~+", 2, 5)
+        self.assertEqual(len(sn), 2)
+        self.assertEqual(sn, [5, 6])
+
+        sn = e("~+3", 4, 5)
+        self.assertEqual(len(sn), 4)
+        self.assertEqual(sn, [5, 6, 7, 8])
 
     def test_failures(self):
 
@@ -263,26 +286,45 @@ class TestSerialNumberExtraction(TestCase):
 
         # Test duplicates
         with self.assertRaises(ValidationError):
-            e("1,2,3,3,3", 5)
+            e("1,2,3,3,3", 5, 1)
 
         # Test invalid length
         with self.assertRaises(ValidationError):
-            e("1,2,3", 5)
+            e("1,2,3", 5, 1)
 
         # Test empty string
         with self.assertRaises(ValidationError):
-            e(", , ,", 0)
+            e(", , ,", 0, 1)
 
         # Test incorrect sign in group
         with self.assertRaises(ValidationError):
-            e("10-2", 8)
+            e("10-2", 8, 1)
 
         # Test invalid group
         with self.assertRaises(ValidationError):
-            e("1-5-10", 10)
+            e("1-5-10", 10, 1)
 
         with self.assertRaises(ValidationError):
-            e("10, a, 7-70j", 4)
+            e("10, a, 7-70j", 4, 1)
+
+    def test_combinations(self):
+        e = helpers.extract_serial_numbers
+
+        sn = e("1 3-5 9+2", 7, 1)
+        self.assertEqual(len(sn), 7)
+        self.assertEqual(sn, [1, 3, 4, 5, 9, 10, 11])
+
+        sn = e("1,3-5,9+2", 7, 1)
+        self.assertEqual(len(sn), 7)
+        self.assertEqual(sn, [1, 3, 4, 5, 9, 10, 11])
+
+        sn = e("~+2", 3, 14)
+        self.assertEqual(len(sn), 3)
+        self.assertEqual(sn, [14, 15, 16])
+
+        sn = e("~+", 2, 14)
+        self.assertEqual(len(sn), 2)
+        self.assertEqual(sn, [14, 15])
 
 
 class TestVersionNumber(TestCase):
@@ -354,3 +396,114 @@ class CurrencyTests(TestCase):
         # Convert to a symbol which is not covered
         with self.assertRaises(MissingRate):
             convert_money(Money(100, 'GBP'), 'ZWL')
+
+
+class TestStatus(TestCase):
+    """
+    Unit tests for status functions
+    """
+
+    def test_check_system_healt(self):
+        """test that the system health check is false in testing -> background worker not running"""
+        self.assertEqual(status.check_system_health(), False)
+
+    def test_TestMode(self):
+        self.assertTrue(ready.isInTestMode())
+
+    def test_Importing(self):
+        self.assertEqual(ready.isImportingData(), False)
+
+
+class TestSettings(TestCase):
+    """
+    Unit tests for settings
+    """
+
+    def setUp(self) -> None:
+        self.user_mdl = get_user_model()
+        self.env = EnvironmentVarGuard()
+
+    def run_reload(self):
+        from plugin import registry
+
+        with self.env:
+            settings.USER_ADDED = False
+            registry.reload_plugins()
+
+    @override_settings(TESTING_ENV=True)
+    def test_set_user_to_few(self):
+        # add shortcut
+        user_count = self.user_mdl.objects.count
+        # enable testing mode
+        settings.TESTING_ENV = True
+
+        # nothing set
+        self.run_reload()
+        self.assertEqual(user_count(), 0)
+
+        # not enough set
+        self.env.set('INVENTREE_ADMIN_USER', 'admin')  # set username
+        self.run_reload()
+        self.assertEqual(user_count(), 0)
+
+        # enough set
+        self.env.set('INVENTREE_ADMIN_USER', 'admin')  # set username
+        self.env.set('INVENTREE_ADMIN_EMAIL', 'info@example.com')  # set email
+        self.env.set('INVENTREE_ADMIN_PASSWORD', 'password123')  # set password
+        self.run_reload()
+        self.assertEqual(user_count(), 1)
+
+        # make sure to clean up
+        settings.TESTING_ENV = False
+
+    def test_helpers_cfg_file(self):
+        # normal run - not configured
+        self.assertIn('InvenTree/InvenTree/config.yaml', config.get_config_file())
+
+        # with env set
+        with self.env:
+            self.env.set('INVENTREE_CONFIG_FILE', 'my_special_conf.yaml')
+            self.assertIn('InvenTree/InvenTree/my_special_conf.yaml', config.get_config_file())
+
+    def test_helpers_plugin_file(self):
+        # normal run - not configured
+        self.assertIn('InvenTree/InvenTree/plugins.txt', config.get_plugin_file())
+
+        # with env set
+        with self.env:
+            self.env.set('INVENTREE_PLUGIN_FILE', 'my_special_plugins.txt')
+            self.assertIn('my_special_plugins.txt', config.get_plugin_file())
+
+    def test_helpers_setting(self):
+        TEST_ENV_NAME = '123TEST'
+        # check that default gets returned if not present
+        self.assertEqual(config.get_setting(TEST_ENV_NAME, None, '123!'), '123!')
+
+        # with env set
+        with self.env:
+            self.env.set(TEST_ENV_NAME, '321')
+            self.assertEqual(config.get_setting(TEST_ENV_NAME, None), '321')
+
+
+class TestInstanceName(TestCase):
+    """
+    Unit tests for instance name
+    """
+
+    def setUp(self):
+        # Create a user for auth
+        user = get_user_model()
+        self.user = user.objects.create_superuser('testuser', 'test@testing.com', 'password')
+
+        self.client.login(username='testuser', password='password')
+
+    def test_instance_name(self):
+
+        # default setting
+        self.assertEqual(version.inventreeInstanceTitle(), 'InvenTree')
+
+        # set up required setting
+        InvenTreeSetting.set_setting("INVENTREE_INSTANCE_TITLE", True, self.user)
+        InvenTreeSetting.set_setting("INVENTREE_INSTANCE", "Testing title", self.user)
+
+        self.assertEqual(version.inventreeInstanceTitle(), 'Testing title')

@@ -12,8 +12,9 @@ from rest_framework.views import APIView
 from stock.models import StockItem
 from stock.serializers import StockItemSerializer
 
+from barcodes.plugins.inventree_barcode import InvenTreeBarcodePlugin
 from barcodes.barcode import hash_barcode
-from plugin.plugins import load_barcode_plugins
+from plugin import registry
 
 
 class BarcodeScan(APIView):
@@ -53,18 +54,22 @@ class BarcodeScan(APIView):
         if 'barcode' not in data:
             raise ValidationError({'barcode': _('Must provide barcode_data parameter')})
 
-        plugins = load_barcode_plugins()
+        plugins = registry.with_mixin('barcode')
 
         barcode_data = data.get('barcode')
+
+        # Ensure that the default barcode handler is installed
+        plugins.append(InvenTreeBarcodePlugin())
 
         # Look for a barcode plugin which knows how to deal with this barcode
         plugin = None
 
-        for plugin_class in plugins:
-            plugin_instance = plugin_class(barcode_data)
+        for current_plugin in plugins:
+            # TODO @matmair make simpler after InvenTree 0.7.0 release
+            current_plugin.init(barcode_data)
 
-            if plugin_instance.validate():
-                plugin = plugin_instance
+            if current_plugin.validate():
+                plugin = current_plugin
                 break
 
         match_found = False
@@ -108,14 +113,14 @@ class BarcodeScan(APIView):
         # No plugin is found!
         # However, the hash of the barcode may still be associated with a StockItem!
         else:
-            hash = hash_barcode(barcode_data)
+            result_hash = hash_barcode(barcode_data)
 
-            response['hash'] = hash
+            response['hash'] = result_hash
             response['plugin'] = None
 
             # Try to look for a matching StockItem
             try:
-                item = StockItem.objects.get(uid=hash)
+                item = StockItem.objects.get(uid=result_hash)
                 serializer = StockItemSerializer(item, part_detail=True, location_detail=True, supplier_part_detail=True)
                 response['stockitem'] = serializer.data
                 response['url'] = reverse('stock-item-detail', kwargs={'pk': item.id})
@@ -160,15 +165,16 @@ class BarcodeAssign(APIView):
         except (ValueError, StockItem.DoesNotExist):
             raise ValidationError({'stockitem': _('No matching stock item found')})
 
-        plugins = load_barcode_plugins()
+        plugins = registry.with_mixin('barcode')
 
         plugin = None
 
-        for plugin_class in plugins:
-            plugin_instance = plugin_class(barcode_data)
+        for current_plugin in plugins:
+            # TODO @matmair make simpler after InvenTree 0.7.0 release
+            current_plugin.init(barcode_data)
 
-            if plugin_instance.validate():
-                plugin = plugin_instance
+            if current_plugin.validate():
+                plugin = current_plugin
                 break
 
         match_found = False
@@ -180,8 +186,8 @@ class BarcodeAssign(APIView):
         # Matching plugin was found
         if plugin is not None:
 
-            hash = plugin.hash()
-            response['hash'] = hash
+            result_hash = plugin.hash()
+            response['hash'] = result_hash
             response['plugin'] = plugin.name
 
             # Ensure that the barcode does not already match a database entry
@@ -206,14 +212,14 @@ class BarcodeAssign(APIView):
                     match_found = True
 
         else:
-            hash = hash_barcode(barcode_data)
+            result_hash = hash_barcode(barcode_data)
 
-            response['hash'] = hash
+            response['hash'] = result_hash
             response['plugin'] = None
 
             # Lookup stock item by hash
             try:
-                item = StockItem.objects.get(uid=hash)
+                item = StockItem.objects.get(uid=result_hash)
                 response['error'] = _('Barcode hash already matches Stock Item')
                 match_found = True
             except StockItem.DoesNotExist:
