@@ -453,6 +453,9 @@ class StockItem(MPTTModel):
 
         super().clean()
 
+        self.serial = self.serial.strip()
+        self.batch = self.batch.strip()
+
         try:
             if self.part.trackable:
                 # Trackable parts must have integer values for quantity field!
