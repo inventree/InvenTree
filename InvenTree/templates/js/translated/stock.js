@@ -107,6 +107,7 @@ function stockLocationFields(options={}) {
     var fields = {
         parent: {
             help_text: '{% trans "Parent stock location" %}',
+            required: false,
         },
         name: {},
         description: {},
@@ -961,6 +962,10 @@ function adjustStock(action, items, options={}) {
 
         if (item.serial != null) {
             quantity = `#${item.serial}`;
+        }
+
+        if (item.batch != null) {
+            quantity += ` - <small>{% trans "Batch" %}: ${item.batch}</small>`;
         }
 
         var actionInput = '';
@@ -2314,6 +2319,23 @@ function loadStockTrackingTable(table, options) {
 
     var cols = [];
 
+    var filterTarget = '#filter-list-stocktracking';
+
+    var filterKey = 'stocktracking';
+
+    var filters = loadTableFilters(filterKey);
+
+    var params = options.params;
+
+    var original = {};
+
+    for (var k in params) {
+        original[k] = params[k];
+        filters[k] = params[k];
+    }
+
+    setupFilterList(filterKey, table, filterTarget);
+
     // Date
     cols.push({
         field: 'date',
@@ -2349,6 +2371,19 @@ function loadStockTrackingTable(table, options) {
             if (!details) {
                 html += '</table>';
                 return html;
+            }
+
+            // Part information
+            if (details.part) {
+                html += `<tr><th>{% trans "Part" %}</th><td>`;
+
+                if (details.part_detail) {
+                    html += renderLink(details.part_detail.full_name, `/part/${details.part}/`);
+                } else {
+                    html += `{% trans "Part information unavailable" %}`;
+                }
+
+                html += `</td></tr>`;
             }
 
             // Location information
@@ -2488,27 +2523,10 @@ function loadStockTrackingTable(table, options) {
         }
     });
 
-    /*
-    // 2021-05-11 - Ability to edit or delete StockItemTracking entries is now removed
-    cols.push({
-        sortable: false,
-        formatter: function(value, row, index, field) {
-            // Manually created entries can be edited or deleted
-            if (false && !row.system) {
-                var bEdit = "<button title='{% trans 'Edit tracking entry' %}' class='btn btn-entry-edit btn-outline-secondary' type='button' url='/stock/track/" + row.pk + "/edit/'><span class='fas fa-edit'/></button>";
-                var bDel = "<button title='{% trans 'Delete tracking entry' %}' class='btn btn-entry-delete btn-outline-secondary' type='button' url='/stock/track/" + row.pk + "/delete/'><span class='fas fa-trash-alt icon-red'/></button>";
-
-                return "<div class='btn-group' role='group'>" + bEdit + bDel + "</div>";
-            } else {
-                return "";
-            }
-        }
-    });
-    */
-
     table.inventreeTable({
         method: 'get',
-        queryParams: options.params,
+        queryParams: filters,
+        original: original,
         columns: cols,
         url: options.url,
     });

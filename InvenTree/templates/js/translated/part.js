@@ -293,6 +293,7 @@ function categoryFields() {
     return {
         parent: {
             help_text: '{% trans "Parent part category" %}',
+            required: false,
         },
         name: {},
         description: {},

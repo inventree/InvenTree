@@ -26,11 +26,12 @@
         </div>
     </div>
     <div class='panel-content'>
-        <div id='table-toolbar'>  
+        <div id='tracking-table-toolbar'>  
             <div class='btn-group'>
+                {% include "filter_list.html" with id="stocktracking" %}
             </div>
         </div>
-        <table class='table table-condensed table-striped' id='track-table' data-toolbar='#table-toolbar'>
+        <table class='table table-condensed table-striped' id='track-table' data-toolbar='#tracking-table-toolbar'>
         </table>
     </div>
 </div>
@@ -341,7 +342,6 @@
             }
         );
     }); 
-
 
     loadStockTrackingTable($("#track-table"), {
         params: {
