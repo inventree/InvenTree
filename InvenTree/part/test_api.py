@@ -9,7 +9,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from InvenTree.api_tester import InvenTreeAPITestCase
-from InvenTree.status_codes import BuildStatus, StockStatus
+from InvenTree.status_codes import BuildStatus, StockStatus, PurchaseOrderStatus
 
 from part.models import Part, PartCategory
 from part.models import BomItem, BomItemSubstitute
@@ -578,7 +578,12 @@ class PartDetailTests(InvenTreeAPITestCase):
         'part',
         'location',
         'bom',
+        'company',
         'test_templates',
+        'manufacturer_part',
+        'supplier_part',
+        'order',
+        'stock',
     ]
 
     roles = [
@@ -804,6 +809,38 @@ class PartDetailTests(InvenTreeAPITestCase):
 
         # And now check that the image has been set
         p = Part.objects.get(pk=pk)
+
+    def test_details(self):
+        """
+        Test that the required details are available
+        """
+
+        p = Part.objects.get(pk=1)
+
+        url = reverse('api-part-detail', kwargs={'pk': 1})
+
+        data = self.get(url, expected_code=200).data
+
+        # How many parts are 'on order' for this part?
+        lines = order.models.PurchaseOrderLineItem.objects.filter(
+            part__part__pk=1,
+            order__status__in=PurchaseOrderStatus.OPEN,
+        )
+
+        on_order = 0
+
+        # Calculate the "on_order" quantity by hand,
+        # to check it matches the API value
+        for line in lines:
+            on_order += line.quantity
+            on_order -= line.received
+
+        self.assertEqual(on_order, data['ordering'])
+        self.assertEqual(on_order, p.on_order)
+
+        # Some other checks
+        self.assertEqual(data['in_stock'], 9000)
+        self.assertEqual(data['unallocated_stock'], 9000)
 
 
 class PartAPIAggregationTest(InvenTreeAPITestCase):
@@ -1123,6 +1160,12 @@ class BomItemTest(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['pk'], bom_item.pk)
 
+        # Each item in response should contain expected keys
+        for el in response.data:
+
+            for key in ['available_stock', 'available_substitute_stock']:
+                self.assertTrue(key in el)
+
     def test_get_bom_detail(self):
         """
         Get the detail view for a single BomItem object
@@ -1131,6 +1174,26 @@ class BomItemTest(InvenTreeAPITestCase):
         url = reverse('api-bom-item-detail', kwargs={'pk': 3})
 
         response = self.get(url, expected_code=200)
+
+        expected_values = [
+            'allow_variants',
+            'inherited',
+            'note',
+            'optional',
+            'overage',
+            'pk',
+            'part',
+            'quantity',
+            'reference',
+            'sub_part',
+            'substitutes',
+            'validated',
+            'available_stock',
+            'available_substitute_stock',
+        ]
+
+        for key in expected_values:
+            self.assertTrue(key in response.data)
 
         self.assertEqual(int(float(response.data['quantity'])), 25)
 
@@ -1318,6 +1381,21 @@ class BomItemTest(InvenTreeAPITestCase):
         # There should now be 5 substitute parts available in the database
         response = self.get(url, expected_code=200)
         self.assertEqual(len(response.data), 5)
+
+        # The BomItem detail endpoint should now also reflect the substitute data
+        data = self.get(
+            reverse('api-bom-item-detail', kwargs={'pk': bom_item.pk}),
+            expected_code=200
+        ).data
+
+        # 5 substitute parts
+        self.assertEqual(len(data['substitutes']), 5)
+
+        # 5 x 1,000 stock quantity
+        self.assertEqual(data['available_substitute_stock'], 5000)
+
+        # 9,000 stock directly available
+        self.assertEqual(data['available_stock'], 9000)
 
     def test_bom_item_uses(self):
         """

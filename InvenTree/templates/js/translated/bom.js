@@ -798,17 +798,25 @@ function loadBomTable(table, options={}) {
     });
 
     cols.push({
-        field: 'sub_part_detail.stock',
+        field: 'available_stock',
         title: '{% trans "Available" %}',
         searchable: false,
         sortable: true,
         formatter: function(value, row) {
 
             var url = `/part/${row.sub_part_detail.pk}/?display=part-stock`;
-            var text = value;
 
-            if (value == null || value <= 0) {
-                text = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
+            // Calculate total "available" (unallocated) quantity
+            var total = row.available_stock + row.available_substitute_stock;
+
+            var text = `${total}`;
+
+            if (total <= 0) {
+                text = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
+            } else {
+                if (row.available_substitute_stock > 0) {
+                    text += `<span title='{% trans "Includes substitute stock" %}' class='fas fa-info-circle float-right icon-blue'></span>`;
+                }
             }
 
             return renderLink(text, url);
@@ -902,8 +910,10 @@ function loadBomTable(table, options={}) {
             formatter: function(value, row) {
                 var can_build = 0;
 
+                var available = row.available_stock + row.available_substitute_stock;
+
                 if (row.quantity > 0) {
-                    can_build = row.sub_part_detail.stock / row.quantity;
+                    can_build = available / row.quantity;
                 }
 
                 return +can_build.toFixed(2);
@@ -914,11 +924,11 @@ function loadBomTable(table, options={}) {
                 var cb_b = 0;
 
                 if (rowA.quantity > 0) {
-                    cb_a = rowA.sub_part_detail.stock / rowA.quantity;
+                    cb_a = (rowA.available_stock + rowA.available_substitute_stock) / rowA.quantity;
                 }
 
                 if (rowB.quantity > 0) {
-                    cb_b = rowB.sub_part_detail.stock / rowB.quantity;
+                    cb_b = (rowB.available_stock + rowB.available_substitute_stock) / rowB.quantity;
                 }
 
                 return (cb_a > cb_b) ? 1 : -1;

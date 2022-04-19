@@ -402,11 +402,51 @@ class StockFilter(rest_filters.FilterSet):
     serialized = rest_filters.BooleanFilter(label='Has serial number', method='filter_serialized')
 
     def filter_serialized(self, queryset, name, value):
+        """
+        Filter by whether the StockItem has a serial number (or not)
+        """
+
+        q = Q(serial=None) | Q(serial='')
 
         if str2bool(value):
-            queryset = queryset.exclude(serial=None)
+            queryset = queryset.exclude(q)
         else:
-            queryset = queryset.filter(serial=None)
+            queryset = queryset.filter(q)
+
+        return queryset
+
+    has_batch = rest_filters.BooleanFilter(label='Has batch code', method='filter_has_batch')
+
+    def filter_has_batch(self, queryset, name, value):
+        """
+        Filter by whether the StockItem has a batch code (or not)
+        """
+
+        q = Q(batch=None) | Q(batch='')
+
+        if str2bool(value):
+            queryset = queryset.exclude(q)
+        else:
+            queryset = queryset.filter(q)
+
+        return queryset
+
+    tracked = rest_filters.BooleanFilter(label='Tracked', method='filter_tracked')
+
+    def filter_tracked(self, queryset, name, value):
+        """
+        Filter by whether this stock item is *tracked*, meaning either:
+        - It has a serial number
+        - It has a batch code
+        """
+
+        q_batch = Q(batch=None) | Q(batch='')
+        q_serial = Q(serial=None) | Q(serial='')
+
+        if str2bool(value):
+            queryset = queryset.exclude(q_batch & q_serial)
+        else:
+            queryset = queryset.filter(q_batch & q_serial)
 
         return queryset
 
@@ -1105,7 +1145,6 @@ class StockItemTestResultList(generics.ListCreateAPIView):
     ]
 
     filter_fields = [
-        'stock_item',
         'test',
         'user',
         'result',
@@ -1113,6 +1152,38 @@ class StockItemTestResultList(generics.ListCreateAPIView):
     ]
 
     ordering = 'date'
+
+    def filter_queryset(self, queryset):
+
+        params = self.request.query_params
+
+        queryset = super().filter_queryset(queryset)
+
+        # Filter by stock item
+        item = params.get('stock_item', None)
+
+        if item is not None:
+            try:
+                item = StockItem.objects.get(pk=item)
+
+                items = [item]
+
+                # Do we wish to also include test results for 'installed' items?
+                include_installed = str2bool(params.get('include_installed', False))
+
+                if include_installed:
+                    # Include items which are installed "underneath" this item
+                    # Note that this function is recursive!
+                    installed_items = item.get_installed_items(cascade=True)
+
+                    items += [it for it in installed_items]
+
+                queryset = queryset.filter(stock_item__in=items)
+
+            except (ValueError, StockItem.DoesNotExist):
+                pass
+
+        return queryset
 
     def get_serializer(self, *args, **kwargs):
         try:
@@ -1188,6 +1259,15 @@ class StockTrackingList(generics.ListAPIView):
 
             if not deltas:
                 deltas = {}
+
+            # Add part detail
+            if 'part' in deltas:
+                try:
+                    part = Part.objects.get(pk=deltas['part'])
+                    serializer = PartBriefSerializer(part)
+                    deltas['part_detail'] = serializer.data
+                except:
+                    pass
 
             # Add location detail
             if 'location' in deltas:
