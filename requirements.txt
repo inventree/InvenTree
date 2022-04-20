@@ -1,5 +1,6 @@
 # Please keep this list sorted
 Django==3.2.12                   # Django package
+bleach==4.1.0                   # HTML sanitization
 certifi                         # Certifi is (most likely) installed through one of the requirements above
 coreapi==2.3.0                  # API documentation
 coverage==5.3                   # Unit test coverage
