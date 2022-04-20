@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-19 23:22+0000\n"
-"PO-Revision-Date: 2022-04-20 08:38\n"
+"PO-Revision-Date: 2022-04-20 09:41\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -2283,7 +2283,7 @@ msgstr "Lagerorte durchsuchen"
 
 #: common/models.py:1294
 msgid "Display stock locations in search preview window"
-msgstr ""
+msgstr "Lagerorte in Suchvorschau anzeigen"
 
 #: common/models.py:1300
 msgid "Search Companies"
@@ -2291,7 +2291,7 @@ msgstr "Firmen durchsuchen"
 
 #: common/models.py:1301
 msgid "Display companies in search preview window"
-msgstr ""
+msgstr "Firmen in der Suchvorschau anzeigen"
 
 #: common/models.py:1307
 msgid "Search Purchase Orders"
@@ -2299,7 +2299,7 @@ msgstr "Bestellungen durchsuchen"
 
 #: common/models.py:1308
 msgid "Display purchase orders in search preview window"
-msgstr ""
+msgstr "Bestellungen in der Suchvorschau anzeigen"
 
 #: common/models.py:1314
 msgid "Search Sales Orders"
@@ -2307,7 +2307,7 @@ msgstr "Aufträge durchsuchen"
 
 #: common/models.py:1315
 msgid "Display sales orders in search preview window"
-msgstr ""
+msgstr "Aufträge in der Suchvorschau anzeigen"
 
 #: common/models.py:1321
 msgid "Search Preview Results"
@@ -4044,7 +4044,7 @@ msgstr "{part} Stückpreis auf {price} und Menge auf {qty} aktualisiert"
 
 #: part/api.py:491
 msgid "Incoming Purchase Order"
-msgstr ""
+msgstr "Eingehende Bestellung"
 
 #: part/api.py:511
 msgid "Outgoing Sales Order"
@@ -4648,7 +4648,7 @@ msgstr "Benachrichtigungen über geringen Bestand"
 #: part/tasks.py:19
 #, python-brace-format
 msgid "The available stock for {part.name} has fallen below the configured minimum level"
-msgstr ""
+msgstr "Der verfügbare Bestand für {part.name} ist unter das konfigurierte Mindestniveau gefallen"
 
 #: part/templates/part/bom.html:6
 msgid "You do not have permission to edit the BOM."
@@ -4856,7 +4856,7 @@ msgstr "Verkaufsauftragszuweisungen"
 
 #: part/templates/part/detail.html:137
 msgid "Part Notes"
-msgstr ""
+msgstr "Teile-Notizen"
 
 #: part/templates/part/detail.html:152
 msgid "Part Variants"
@@ -5978,7 +5978,7 @@ msgstr "Preis für eine Einheit bei Einkauf"
 
 #: stock/models.py:751
 msgid "Converted to part"
-msgstr ""
+msgstr "In Teil umgewandelt"
 
 #: stock/models.py:1271
 msgid "Part is not set as trackable"
@@ -6509,11 +6509,11 @@ msgstr "Dieser Ort enthält %(n)s untergeordnete Orte"
 #: stock/templates/stock/location_delete.html:15
 #, python-format
 msgid "If this location is deleted, these child locations will be moved to %(location)s"
-msgstr ""
+msgstr "Wenn dieser Standort gelöscht wird, werden diese untergeordneten Standorte nach %(location)s verschoben"
 
 #: stock/templates/stock/location_delete.html:17
 msgid "If this location is deleted, these child locations will be moved to the top level stock location"
-msgstr ""
+msgstr "Wenn dieser Standort gelöscht wird, werden diese untergeordneten Standorte an den Lagerstandort der obersten Ebene verschoben"
 
 #: stock/templates/stock/location_delete.html:25
 #, python-format
@@ -6523,11 +6523,11 @@ msgstr "Dieser Lagerort enthält %(n)s Lagerartikel"
 #: stock/templates/stock/location_delete.html:27
 #, python-format
 msgid "If this location is deleted, these stock items will be moved to %(location)s"
-msgstr ""
+msgstr "Wenn dieser Standort gelöscht wird, werden diese Lagerartikel nach %(location)s verschoben"
 
 #: stock/templates/stock/location_delete.html:29
 msgid "If this location is deleted, these stock items will be moved to the top level stock location"
-msgstr ""
+msgstr "Wenn dieser Standort gelöscht wird, werden diese Lagerartikel an den Lagerstandort der obersten Ebene verschoben"
 
 #: stock/templates/stock/stock_app_base.html:16
 msgid "Loading..."
@@ -6943,7 +6943,7 @@ msgstr "Version"
 
 #: templates/InvenTree/settings/plugin.html:82
 msgid "code sample"
-msgstr ""
+msgstr "Code Beispiel"
 
 #: templates/InvenTree/settings/plugin.html:99
 msgid "Inactive plugins"
@@ -7857,7 +7857,7 @@ msgstr "Einbuchen"
 
 #: templates/js/translated/barcode.js:480
 msgid "No barcode provided"
-msgstr ""
+msgstr "Kein Barcode vorhanden"
 
 #: templates/js/translated/barcode.js:515
 msgid "Stock Item already scanned"
@@ -7991,11 +7991,11 @@ msgstr "Unterbaugruppe öffnen"
 
 #: templates/js/translated/bom.js:815 templates/js/translated/build.js:1433
 msgid "No Stock Available"
-msgstr ""
+msgstr "Kein Lagerbestand verfügbar"
 
 #: templates/js/translated/bom.js:818 templates/js/translated/build.js:1436
 msgid "Includes substitute stock"
-msgstr ""
+msgstr "Enthält Ersatzbestand"
 
 #: templates/js/translated/bom.js:828
 msgid "Substitutes"
@@ -8249,19 +8249,19 @@ msgstr "Automatische Lagerzuordnung"
 
 #: templates/js/translated/build.js:1899
 msgid "Stock items will be automatically allocated to this build order, according to the provided guidelines"
-msgstr ""
+msgstr "Lagerartikel werden automatisch diesem Bauauftrag zugewiesen, entsprechend den angegebenen Richtlinien"
 
 #: templates/js/translated/build.js:1901
 msgid "If a location is specifed, stock will only be allocated from that location"
-msgstr ""
+msgstr "Wenn ein Standort angegeben ist, wird der Lagerbestand nur von diesem Ort zugewiesen"
 
 #: templates/js/translated/build.js:1902
 msgid "If stock is considered interchangeable, it will be allocated from the first location it is found"
-msgstr ""
+msgstr "Wenn der Lagerbestand als austauschbar gilt, wird er vom ersten Standort zugewiesen, an dem er gefunden wird"
 
 #: templates/js/translated/build.js:1903
 msgid "If substitute stock is allowed, it will be used where stock of the primary part cannot be found"
-msgstr ""
+msgstr "Wenn ein Ersatzbestand erlaubt ist, wird es dort verwendet, wo kein Vorrat des Primärteils gefunden werden kann"
 
 #: templates/js/translated/build.js:1924
 msgid "Allocate Stock Items"
@@ -8491,7 +8491,7 @@ msgstr "NEIN"
 
 #: templates/js/translated/helpers.js:305
 msgid "Notes updated"
-msgstr ""
+msgstr "Notiz aktualisiert"
 
 #: templates/js/translated/label.js:39
 msgid "Labels sent to printer"
@@ -9033,7 +9033,7 @@ msgstr "Bestand niedrig"
 
 #: templates/js/translated/part.js:518 templates/js/translated/part.js:1391
 msgid "No stock available"
-msgstr ""
+msgstr "Kein Lagerbestand verfügbar"
 
 #: templates/js/translated/part.js:552 templates/js/translated/part.js:637
 msgid "Trackable part"
@@ -9509,7 +9509,7 @@ msgstr "Details"
 
 #: templates/js/translated/stock.js:2385
 msgid "Part information unavailable"
-msgstr ""
+msgstr "Artikelinformationen nicht verfügbar"
 
 #: templates/js/translated/stock.js:2407
 msgid "Location no longer exists"
@@ -9565,7 +9565,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:2663
 msgid "The Stock Item is tracked by either a batch code or serial number"
-msgstr ""
+msgstr "Der Lagerbestand wird entweder mit einem Batch-Code oder mit Seriennummer verfolgt"
 
 #: templates/js/translated/stock.js:2676
 msgid "Select part to install"
@@ -9716,15 +9716,15 @@ msgstr "Status"
 
 #: templates/js/translated/table_filters.js:238
 msgid "Has batch code"
-msgstr ""
+msgstr "Hat Batch-Code"
 
 #: templates/js/translated/table_filters.js:246
 msgid "Tracked"
-msgstr ""
+msgstr "Nachverfolgt"
 
 #: templates/js/translated/table_filters.js:247
 msgid "Stock item is tracked by either batch code or serial number"
-msgstr ""
+msgstr "Lagerbestand wird entweder per Batch-Code oder Seriennummer verfolgt"
 
 #: templates/js/translated/table_filters.js:252
 msgid "Has purchase price"
@@ -9744,11 +9744,11 @@ msgstr "Bestand, der bald ablaufen, anzeigen"
 
 #: templates/js/translated/table_filters.js:280
 msgid "Test Passed"
-msgstr ""
+msgstr "Test bestanden"
 
 #: templates/js/translated/table_filters.js:284
 msgid "Include Installed Items"
-msgstr ""
+msgstr "Installierte Elemente einschließen"
 
 #: templates/js/translated/table_filters.js:303
 msgid "Build status"
@@ -9899,7 +9899,7 @@ msgstr "InvenTree Demo-Modus"
 
 #: templates/notes_buttons.html:6 templates/notes_buttons.html:7
 msgid "Save"
-msgstr ""
+msgstr "Speichern"
 
 #: templates/notifications.html:13
 msgid "Show all notifications and history"
