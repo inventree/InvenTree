@@ -40,9 +40,9 @@ services:
         environment:
             - PGDATA=/var/lib/postgresql/data/pgdb
             # The pguser and pgpassword values must be the same in the other containers
-            # Ensure that these are correctly configured in your prod-config.env file
-            - POSTGRES_USER=pguser
-            - POSTGRES_PASSWORD=pgpassword
+            # Ensure that these are correctly configured in your .env file
+            - POSTGRES_USER=${INVENTREE_DB_USER}
+            - POSTGRES_PASSWORD=${INVENTREE_DB_PASSWORD}
         volumes:
             # Map 'data' volume such that postgres database is stored externally
             - data:/var/lib/postgresql/data/
@@ -61,9 +61,6 @@ services:
         volumes:
             # Data volume must map to /home/inventree/data
             - data:/home/inventree/data
-        env_file:
-            # Environment variables required for the production server are configured in prod-config.env
-            - prod-config.env
         restart: unless-stopped
 
     # Background worker process handles long-running or periodic tasks
@@ -78,9 +75,6 @@ services:
         volumes:
             # Data volume must map to /home/inventree/data
             - data:/home/inventree/data
-        env_file:
-            # Environment variables required for the production server are configured in prod-config.env
-            - prod-config.env
         restart: unless-stopped
 
     # nginx acts as a reverse proxy
