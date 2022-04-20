@@ -8,9 +8,11 @@ version: "3.8"
 
 # IMPORANT NOTE:
 # The InvenTree development image does not clone source code from git.
-# Instead, you must specify *where* the source code is located, (on your local machine).
-# The default setup in this file should work straight out of the box, without modification
+# Instead, it runs from source code on your local machine.
 # The django server will auto-detect any code changes and reload the server.
+
+# If you have cloned the InvenTree git repo, and not made any changes to this file,
+# then the default setup in this file should work straight out of the box, without modification
 
 services:
 
@@ -21,16 +23,15 @@ services:
         container_name: inventree-dev-db
         image: postgres:13
         ports:
-            - 5432/tcp
+            - ${INVENTREE_DB_PORT:-5432}/tcp
         environment:
-          - PGDATA=/var/lib/postgresql/data/dev/pgdb
-          # The pguser and pgpassword values must be the same in the other containers
-          # Ensure that these are correctly configured in your dev-config.env file
-          - POSTGRES_USER=pguser
-          - POSTGRES_PASSWORD=pgpassword
+            - PGDATA=/var/lib/postgresql/data/dev/pgdb
+            - POSTGRES_USER=${INVENTREE_DB_USER:?You must provide the 'INVENTREE_DB_USER' variable in the .env file}
+            - POSTGRES_PASSWORD=${INVENTREE_DB_PASSWORD:?You must provide the 'INVENTREE_DB_PASSWORD' variable in the .env file}
+            - POSTGRES_DB=${INVENTREE_DB_NAME:?You must provide the 'INVENTREE_DB_NAME' variable in the .env file}
         volumes:
           # Map 'data' volume such that postgres database is stored externally
-          - src:/var/lib/postgresql/data
+          - inventree_src:/var/lib/postgresql/data
         restart: unless-stopped
 
     # InvenTree web server services
@@ -51,7 +52,7 @@ services:
         #    - 8000
         volumes:
             # Ensure you specify the location of the 'src' directory at the end of this file
-            - src:/home/inventree
+            - inventree_src:/home/inventree
         env_file:
             # Environment variables required for the dev server are configured in dev-config.env
             - dev-config.env
@@ -68,7 +69,7 @@ services:
             - inventree-dev-server
         volumes:
             # Ensure you specify the location of the 'src' directory at the end of this file
-            - src:/home/inventree
+            - inventree_src:/home/inventree
         env_file:
             # Environment variables required for the dev server are configured in dev-config.env
             - dev-config.env
@@ -86,21 +87,20 @@ services:
     #        # Change "8000" to the port that you want InvenTree web server to be available on
     #        - 8000:80
     #    volumes:
-    #        # Provide ./nginx.conf file to the container
+    #        # Provide ./nginx.dev.conf file to the container
     #        # Refer to the provided example file as a starting point
     #        - ./nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
     #        # nginx proxy needs access to static and media files
-    #        - src:/var/www
+    #        - inventree_src:/var/www
     #    restart: unless-stopped
 
 volumes:
-    # NOTE: Change "../" to a directory on your local machine, where the InvenTree source code is located
     # Persistent data, stored external to the container(s)
-    src:
+    inventree_src:
         driver: local
         driver_opts:
             type: none
             o: bind
             # This directory specified where InvenTree source code is stored "outside" the docker containers
             # By default, this directory is one level above the "docker" directory
-            device: ../
+            device: ${INVENTREE_EXT_VOLUME:-../}

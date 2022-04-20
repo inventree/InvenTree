@@ -1,6 +1,6 @@
 version: "3.8"
 
-# Docker compose recipe for InvenTree (production setup)
+# Docker compose recipe for InvenTree production server
 # - PostgreSQL as the database backend
 # - gunicorn as the InvenTree web server
 # - django-q as the InvenTree background worker process
