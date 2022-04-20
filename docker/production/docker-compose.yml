@@ -6,20 +6,23 @@ version: "3.8"
 # - django-q as the InvenTree background worker process
 # - nginx as a reverse proxy
 
-# ---------------------------------
+# ---------------------
+# READ BEFORE STARTING!
+# ---------------------
+
+# -----------------------------
 # Setting environment variables
-# ---------------------------------
+# -----------------------------
 # Shared environment variables should be stored in the .env file
 # Changes made to this file are reflected across all containers!
-
-# ---------------------------------
-# IMPORTANT - READ BEFORE STARTING!
-# ---------------------------------
-# Before running, ensure that you change the "/path/to/data" directory,
-# specified in the "volumes" section at the end of this file.
-# This path determines where the InvenTree data will be stored!
-# 
 #
+# IMPORTANT NOTE:
+# You should not have to change *anything* within the docker-compose.yml file!
+# Instead, make any changes in the .env file!
+# The only *mandatory* change is to set the INVENTREE_EXT_VOLUME variable,
+# which defines the directory (on your local machine) where persistent data are stored.
+
+# ------------------------
 # InvenTree Image Versions
 # ------------------------
 # By default, this docker-compose script targets the STABLE version of InvenTree,
@@ -42,17 +45,15 @@ services:
         container_name: inventree-db
         image: postgres:13
         ports:
-            - ${INVENTREE_DB_PORT}/tcp
+            - ${INVENTREE_DB_PORT:-5432}/tcp
         environment:
             - PGDATA=/var/lib/postgresql/data/pgdb
-            # The pguser and pgpassword values must be the same in the other containers
-            # Ensure that these are correctly configured in your .env file
-            - POSTGRES_USER=${INVENTREE_DB_USER}
-            - POSTGRES_PASSWORD=${INVENTREE_DB_PASSWORD}
-            - POSTGRES_DB=${INVENTREE_DB_NAME}
+            - POSTGRES_USER=${INVENTREE_DB_USER:?You must provide the 'INVENTREE_DB_USER' variable in the .env file}
+            - POSTGRES_PASSWORD=${INVENTREE_DB_PASSWORD:?You must provide the 'INVENTREE_DB_PASSWORD' variable in the .env file}
+            - POSTGRES_DB=${INVENTREE_DB_NAME:?You must provide the 'INVENTREE_DB_NAME' variable in the .env file}
         volumes:
             # Map 'data' volume such that postgres database is stored externally
-            - data:/var/lib/postgresql/data/
+            - inventree_data:/var/lib/postgresql/data/
         restart: unless-stopped
 
     # InvenTree web server services
@@ -69,7 +70,7 @@ services:
             - .env
         volumes:
             # Data volume must map to /home/inventree/data
-            - data:/home/inventree/data
+            - inventree_data:/home/inventree/data
         restart: unless-stopped
 
     # Background worker process handles long-running or periodic tasks
@@ -85,7 +86,7 @@ services:
             - .env
         volumes:
             # Data volume must map to /home/inventree/data
-            - data:/home/inventree/data
+            - inventree_data:/home/inventree/data
         restart: unless-stopped
 
     # nginx acts as a reverse proxy
@@ -101,24 +102,23 @@ services:
         env_file:
             - .env
         ports:
-            # Change "1337" to the port that you want InvenTree web server to be available on
-            - 1337:80
+            # Default web port is 1337 (can be changed in the .env file)
+            - ${INVENTREE_WEB_PORT:-1337}:80
         volumes:
             # Provide nginx configuration file to the container
             # Refer to the provided example file as a starting point
             - ./nginx.prod.conf:/etc/nginx/conf.d/default.conf:ro
             # nginx proxy needs access to static and media files
-            - data:/var/www
+            - inventree_data:/var/www
         restart: unless-stopped
 
 volumes:
     # NOTE: Change /path/to/data to a directory on your local machine
     # Persistent data, stored external to the container(s)
-    data:
+    inventree_data:
         driver: local
         driver_opts:
             type: none
             o: bind
             # This directory specified where InvenTree data are stored "outside" the docker containers
-            # Change this path to a local system path where you want InvenTree data stored
-            device: /path/to/data
+            device: ${INVENTREE_EXT_VOLUME:?You must specify the 'INVENTREE_EXT_VOLUME' variable in the .env file!}
