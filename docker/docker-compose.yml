@@ -43,6 +43,8 @@ services:
         build:
             context: .
             target: dev
+        # Cache the built image to be used by the inventree-dev-worker process
+        image: inventree-dev-image
         ports:
             # Expose web server on port 8000
             - 8000:8000
@@ -60,9 +62,7 @@ services:
     # Background worker process handles long-running or periodic tasks
     inventree-dev-worker:
         container_name: inventree-dev-worker
-        build:
-            context: .
-            target: dev
+        image: inventree-dev-image
         command: invoke worker
         depends_on:
             - inventree-dev-server
