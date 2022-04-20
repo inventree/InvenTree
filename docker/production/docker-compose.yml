@@ -7,6 +7,12 @@ version: "3.8"
 # - nginx as a reverse proxy
 
 # ---------------------------------
+# Setting environment variables
+# ---------------------------------
+# Shared environment variables should be stored in the .env file
+# Changes made to this file are reflected across all containers!
+
+# ---------------------------------
 # IMPORTANT - READ BEFORE STARTING!
 # ---------------------------------
 # Before running, ensure that you change the "/path/to/data" directory,
@@ -36,13 +42,14 @@ services:
         container_name: inventree-db
         image: postgres:13
         ports:
-            - 5432/tcp
+            - ${INVENTREE_DB_PORT}/tcp
         environment:
             - PGDATA=/var/lib/postgresql/data/pgdb
             # The pguser and pgpassword values must be the same in the other containers
             # Ensure that these are correctly configured in your .env file
             - POSTGRES_USER=${INVENTREE_DB_USER}
             - POSTGRES_PASSWORD=${INVENTREE_DB_PASSWORD}
+            - POSTGRES_DB=${INVENTREE_DB_NAME}
         volumes:
             # Map 'data' volume such that postgres database is stored externally
             - data:/var/lib/postgresql/data/
@@ -58,6 +65,8 @@ services:
             - 8000
         depends_on:
             - inventree-db
+        env_file:
+            - .env
         volumes:
             # Data volume must map to /home/inventree/data
             - data:/home/inventree/data
@@ -72,6 +81,8 @@ services:
         depends_on:
             - inventree-db
             - inventree-server
+        env_file:
+            - .env
         volumes:
             # Data volume must map to /home/inventree/data
             - data:/home/inventree/data
@@ -87,6 +98,8 @@ services:
         image: nginx:stable
         depends_on:
             - inventree-server
+        env_file:
+            - .env
         ports:
             # Change "1337" to the port that you want InvenTree web server to be available on
             - 1337:80
