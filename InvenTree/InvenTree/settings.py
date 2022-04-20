@@ -663,6 +663,7 @@ LANGUAGE_CODE = CONFIG.get('language', 'en-us')
 
 # If a new language translation is supported, it must be added here
 LANGUAGES = [
+    ('cz', _('Czech')),
     ('de', _('German')),
     ('el', _('Greek')),
     ('en', _('English')),
