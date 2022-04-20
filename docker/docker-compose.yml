@@ -54,8 +54,7 @@ services:
             # Ensure you specify the location of the 'src' directory at the end of this file
             - inventree_src:/home/inventree
         env_file:
-            # Environment variables required for the dev server are configured in dev-config.env
-            - dev-config.env
+            - .env
         restart: unless-stopped
 
     # Background worker process handles long-running or periodic tasks
@@ -71,8 +70,7 @@ services:
             # Ensure you specify the location of the 'src' directory at the end of this file
             - inventree_src:/home/inventree
         env_file:
-            # Environment variables required for the dev server are configured in dev-config.env
-            - dev-config.env
+            - .env
         restart: unless-stopped
 
     ### Optional: Serve static and media files using nginx
