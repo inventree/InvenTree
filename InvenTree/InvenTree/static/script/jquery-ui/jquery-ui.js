@@ -1,4 +1,4 @@
-/*! jQuery UI - v1.12.1 - 2021-07-18
+/*! jQuery UI - v1.13.0 - 2021-10-07
 * http://jqueryui.com
 * Includes: widget.js, position.js, disable-selection.js, keycode.js, unique-id.js, widgets/resizable.js, widgets/autocomplete.js, widgets/menu.js, widgets/mouse.js
 * Copyright jQuery Foundation and other contributors; Licensed MIT */
@@ -17,11 +17,11 @@
 
 $.ui = $.ui || {};
 
-var version = $.ui.version = "1.12.1";
+var version = $.ui.version = "1.13.1";
 
 
 /*!
- * jQuery UI Widget 1.12.1
+ * jQuery UI Widget 1.13.0
  * http://jqueryui.com
  *
  * Copyright jQuery Foundation and other contributors
@@ -744,7 +744,7 @@ var widget = $.widget;
 
 
 /*!
- * jQuery UI Position 1.12.1
+ * jQuery UI Position 1.13.1
  * http://jqueryui.com
  *
  * Copyright jQuery Foundation and other contributors
@@ -1232,7 +1232,7 @@ var position = $.ui.position;
 
 
 /*!
- * jQuery UI Disable Selection 1.12.1
+ * jQuery UI Disable Selection 1.13.0
  * http://jqueryui.com
  *
  * Copyright jQuery Foundation and other contributors
@@ -1268,7 +1268,7 @@ var disableSelection = $.fn.extend( {
 
 
 /*!
- * jQuery UI Keycode 1.12.1
+ * jQuery UI Keycode 1.13.0
  * http://jqueryui.com
  *
  * Copyright jQuery Foundation and other contributors
@@ -1303,7 +1303,7 @@ var keycode = $.ui.keyCode = {
 
 
 /*!
- * jQuery UI Unique ID 1.12.1
+ * jQuery UI Unique ID 1.13.0
  * http://jqueryui.com
  *
  * Copyright jQuery Foundation and other contributors
@@ -1347,7 +1347,7 @@ var uniqueId = $.fn.extend( {
 var ie = $.ui.ie = !!/msie [\w.]+/.exec( navigator.userAgent.toLowerCase() );
 
 /*!
- * jQuery UI Mouse 1.12.1
+ * jQuery UI Mouse 1.13.0
  * http://jqueryui.com
  *
  * Copyright jQuery Foundation and other contributors
@@ -1368,7 +1368,7 @@ $( document ).on( "mouseup", function() {
 } );
 
 var widgetsMouse = $.widget( "ui.mouse", {
-	version: "1.12.1",
+	version: "1.13.0",
 	options: {
 		cancel: "input, textarea, button, select, option",
 		distance: 1,
@@ -1592,7 +1592,7 @@ var plugin = $.ui.plugin = {
 
 
 /*!
- * jQuery UI Resizable 1.12.1
+ * jQuery UI Resizable 1.13.0
  * http://jqueryui.com
  *
  * Copyright jQuery Foundation and other contributors
@@ -1612,7 +1612,7 @@ var plugin = $.ui.plugin = {
 
 
 $.widget( "ui.resizable", $.ui.mouse, {
-	version: "1.12.1",
+	version: "1.13.0",
 	widgetEventPrefix: "resize",
 	options: {
 		alsoResize: false,
@@ -2806,7 +2806,7 @@ var safeActiveElement = $.ui.safeActiveElement = function( document ) {
 
 
 /*!
- * jQuery UI Menu 1.12.1
+ * jQuery UI Menu 1.13.0
  * http://jqueryui.com
  *
  * Copyright jQuery Foundation and other contributors
@@ -2826,7 +2826,7 @@ var safeActiveElement = $.ui.safeActiveElement = function( document ) {
 
 
 var widgetsMenu = $.widget( "ui.menu", {
-	version: "1.12.1",
+	version: "1.13.0",
 	defaultElement: "<ul>",
 	delay: 300,
 	options: {
@@ -3461,7 +3461,7 @@ var widgetsMenu = $.widget( "ui.menu", {
 
 
 /*!
- * jQuery UI Autocomplete 1.12.1
+ * jQuery UI Autocomplete 1.13.0
  * http://jqueryui.com
  *
  * Copyright jQuery Foundation and other contributors
@@ -3481,7 +3481,7 @@ var widgetsMenu = $.widget( "ui.menu", {
 
 
 $.widget( "ui.autocomplete", {
-	version: "1.12.1",
+	version: "1.13.0",
 	defaultElement: "<input>",
 	options: {
 		appendTo: null,
