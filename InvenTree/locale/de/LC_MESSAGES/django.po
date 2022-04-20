@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-19 23:22+0000\n"
-"PO-Revision-Date: 2022-04-19 23:32\n"
+"PO-Revision-Date: 2022-04-20 08:38\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -317,7 +317,7 @@ msgstr "Spanisch (Mexikanisch)"
 
 #: InvenTree/settings.py:671
 msgid "Farsi / Persian"
-msgstr ""
+msgstr "Persisch"
 
 #: InvenTree/settings.py:672
 msgid "French"
@@ -512,7 +512,7 @@ msgstr "Lagerartikel zusammengeführt"
 
 #: InvenTree/status_codes.py:300
 msgid "Converted to variant"
-msgstr ""
+msgstr "In Variante umgewandelt"
 
 #: InvenTree/status_codes.py:302 templates/js/translated/table_filters.js:213
 msgid "Sent to customer"
@@ -1164,7 +1164,7 @@ msgstr "Wechselbares Lagerbestand"
 
 #: build/serializers.py:746
 msgid "Stock items in multiple locations can be used interchangeably"
-msgstr ""
+msgstr "Lagerartikel an mehreren Standorten können austauschbar verwendet werden"
 
 #: build/serializers.py:751
 msgid "Substitute Stock"
@@ -2267,7 +2267,7 @@ msgstr "Kategorien durchsuchen"
 
 #: common/models.py:1280
 msgid "Display part categories in search preview window"
-msgstr ""
+msgstr "Teilekategorien in der Suchvorschau anzeigen"
 
 #: common/models.py:1286
 msgid "Search Stock"
@@ -2275,7 +2275,7 @@ msgstr "Bestand durchsuchen"
 
 #: common/models.py:1287
 msgid "Display stock items in search preview window"
-msgstr ""
+msgstr "Lagerartikel in Suchvorschau anzeigen"
 
 #: common/models.py:1293
 msgid "Search Locations"
