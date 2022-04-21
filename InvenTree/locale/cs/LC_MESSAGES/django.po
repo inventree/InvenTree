@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-20 14:52+0000\n"
-"PO-Revision-Date: 2022-04-21 05:34\n"
+"PO-Revision-Date: 2022-04-21 06:55\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -24,112 +24,112 @@ msgstr "API endpoint nebyl nalezen"
 
 #: InvenTree/api.py:103
 msgid "No action specified"
-msgstr ""
+msgstr "Činnost nebyla specifikována"
 
 #: InvenTree/api.py:118
 msgid "No matching action found"
-msgstr ""
+msgstr "Nebyla nalezena odpovídající činnost"
 
 #: InvenTree/fields.py:100
 msgid "Enter date"
-msgstr ""
+msgstr "Zadejte datum"
 
 #: InvenTree/forms.py:126 order/forms.py:24 order/forms.py:35 order/forms.py:46
 #: order/forms.py:57 templates/account/email_confirm.html:20
 #: templates/js/translated/forms.js:601
 msgid "Confirm"
-msgstr ""
+msgstr "Potvrdit"
 
 #: InvenTree/forms.py:142
 msgid "Confirm delete"
-msgstr ""
+msgstr "Potvrdit odstranění"
 
 #: InvenTree/forms.py:143
 msgid "Confirm item deletion"
-msgstr ""
+msgstr "Potvrdit odstranění položky"
 
 #: InvenTree/forms.py:174
 msgid "Enter password"
-msgstr ""
+msgstr "Zadejte heslo"
 
 #: InvenTree/forms.py:175
 msgid "Enter new password"
-msgstr ""
+msgstr "Zadejte nové heslo"
 
 #: InvenTree/forms.py:182
 msgid "Confirm password"
-msgstr ""
+msgstr "Potvrďte heslo"
 
 #: InvenTree/forms.py:183
 msgid "Confirm new password"
-msgstr ""
+msgstr "Potvrďte nové heslo"
 
 #: InvenTree/forms.py:215
 msgid "Select Category"
-msgstr ""
+msgstr "Vyberte kategorii"
 
 #: InvenTree/forms.py:236
 msgid "Email (again)"
-msgstr ""
+msgstr "Email (znovu)"
 
 #: InvenTree/forms.py:240
 msgid "Email address confirmation"
-msgstr ""
+msgstr "Potvrzení emailové adresy"
 
 #: InvenTree/forms.py:260
 msgid "You must type the same email each time."
-msgstr ""
+msgstr "Pokaždé musíte zadat stejný email."
 
 #: InvenTree/helpers.py:442
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
-msgstr ""
+msgstr "Duplicitní sériové číslo: {sn}"
 
 #: InvenTree/helpers.py:449 order/models.py:282 order/models.py:435
 #: stock/views.py:993
 msgid "Invalid quantity provided"
-msgstr ""
+msgstr "Vyplněno neplatné množství"
 
 #: InvenTree/helpers.py:452
 msgid "Empty serial number string"
-msgstr ""
+msgstr "Nevyplněno sériové číslo"
 
 #: InvenTree/helpers.py:474 InvenTree/helpers.py:477 InvenTree/helpers.py:480
 #: InvenTree/helpers.py:504
 #, python-brace-format
 msgid "Invalid group: {g}"
-msgstr ""
+msgstr "Neplatná skupina: {g}"
 
 #: InvenTree/helpers.py:518
 #, python-brace-format
 msgid "Invalid/no group {group}"
-msgstr ""
+msgstr "Neplatná/nevyplněná skupina {group}"
 
 #: InvenTree/helpers.py:524
 msgid "No serial numbers found"
-msgstr ""
+msgstr "Nenalezena žádná sériová čísla"
 
 #: InvenTree/helpers.py:528
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
-msgstr ""
+msgstr "Počet unikátních sériových čísel ({s}) musí odpovídat množství ({q})"
 
 #: InvenTree/models.py:185
 msgid "Missing file"
-msgstr ""
+msgstr "Chybějící soubor"
 
 #: InvenTree/models.py:186
 msgid "Missing external link"
-msgstr ""
+msgstr "Chybějící externí odkaz"
 
 #: InvenTree/models.py:197 stock/models.py:2171
 #: templates/js/translated/attachment.js:119
 msgid "Attachment"
-msgstr ""
+msgstr "Příloha"
 
 #: InvenTree/models.py:198
 msgid "Select file to attach"
-msgstr ""
+msgstr "Vyberte soubor k přiložení"
 
 #: InvenTree/models.py:204 company/models.py:131 company/models.py:348
 #: company/models.py:564 order/models.py:127 part/models.py:868
@@ -137,20 +137,20 @@ msgstr ""
 #: templates/js/translated/company.js:540
 #: templates/js/translated/company.js:829 templates/js/translated/part.js:1423
 msgid "Link"
-msgstr ""
+msgstr "Odkaz"
 
 #: InvenTree/models.py:205 build/models.py:332 part/models.py:869
 #: stock/models.py:639
 msgid "Link to external URL"
-msgstr ""
+msgstr "Odkaz na externí URL"
 
 #: InvenTree/models.py:208 templates/js/translated/attachment.js:163
 msgid "Comment"
-msgstr ""
+msgstr "Komentář"
 
 #: InvenTree/models.py:208
 msgid "File comment"
-msgstr ""
+msgstr "Komentář k souboru"
 
 #: InvenTree/models.py:214 InvenTree/models.py:215 common/models.py:1396
 #: common/models.py:1397 common/models.py:1618 common/models.py:1619
@@ -159,40 +159,40 @@ msgstr ""
 #: report/templates/report/inventree_test_report_base.html:96
 #: templates/js/translated/stock.js:2517
 msgid "User"
-msgstr ""
+msgstr "Uživatel"
 
 #: InvenTree/models.py:218
 msgid "upload date"
-msgstr ""
+msgstr "datum přidání"
 
 #: InvenTree/models.py:241
 msgid "Filename must not be empty"
-msgstr ""
+msgstr "Název souboru nesmí být prázdný"
 
 #: InvenTree/models.py:264
 msgid "Invalid attachment directory"
-msgstr ""
+msgstr "Neplatný adresář přílohy"
 
 #: InvenTree/models.py:274
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr ""
+msgstr "Název souboru obsahuje nepovolený znak '{c}'"
 
 #: InvenTree/models.py:277
 msgid "Filename missing extension"
-msgstr ""
+msgstr "Chybějící přípona souboru"
 
 #: InvenTree/models.py:284
 msgid "Attachment with this filename already exists"
-msgstr ""
+msgstr "Příloha s tímto názvem již existuje"
 
 #: InvenTree/models.py:291
 msgid "Error renaming file"
-msgstr ""
+msgstr "Chyba při přejmenování souboru"
 
 #: InvenTree/models.py:326
 msgid "Invalid choice"
-msgstr ""
+msgstr "Neplatný výběr"
 
 #: InvenTree/models.py:342 InvenTree/models.py:343 common/models.py:1604
 #: company/models.py:415 label/models.py:112 part/models.py:812
@@ -207,7 +207,7 @@ msgstr ""
 #: templates/js/translated/part.js:749 templates/js/translated/part.js:1730
 #: templates/js/translated/stock.js:2287
 msgid "Name"
-msgstr ""
+msgstr "Název"
 
 #: InvenTree/models.py:349 build/models.py:209
 #: build/templates/build/detail.html:24 company/models.py:354
@@ -231,43 +231,43 @@ msgstr ""
 #: templates/js/translated/part.js:1818 templates/js/translated/stock.js:1685
 #: templates/js/translated/stock.js:2299 templates/js/translated/stock.js:2354
 msgid "Description"
-msgstr ""
+msgstr "Popis"
 
 #: InvenTree/models.py:350
 msgid "Description (optional)"
-msgstr ""
+msgstr "Popis (volitelně)"
 
 #: InvenTree/models.py:358
 msgid "parent"
-msgstr ""
+msgstr "nadřazený"
 
 #: InvenTree/serializers.py:65 part/models.py:2872
 msgid "Must be a valid number"
-msgstr ""
+msgstr "Musí být platné číslo"
 
 #: InvenTree/serializers.py:299
 msgid "Filename"
-msgstr ""
+msgstr "Název souboru"
 
 #: InvenTree/serializers.py:334
 msgid "Invalid value"
-msgstr ""
+msgstr "Neplatná hodnota"
 
 #: InvenTree/serializers.py:355
 msgid "Data File"
-msgstr ""
+msgstr "Datový soubor"
 
 #: InvenTree/serializers.py:356
 msgid "Select data file for upload"
-msgstr ""
+msgstr "Vyberte datový soubor k nahrání"
 
 #: InvenTree/serializers.py:380
 msgid "Unsupported file type"
-msgstr ""
+msgstr "Nepodporovaný typ souboru"
 
 #: InvenTree/serializers.py:386
 msgid "File is too large"
-msgstr ""
+msgstr "Soubor je příliš velký"
 
 #: InvenTree/serializers.py:407
 msgid "No columns found in file"
