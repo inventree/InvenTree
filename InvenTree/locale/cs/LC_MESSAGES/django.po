@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-20 14:52+0000\n"
-"PO-Revision-Date: 2022-04-21 06:55\n"
+"PO-Revision-Date: 2022-04-21 07:50\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -83,7 +83,7 @@ msgstr "Pokaždé musíte zadat stejný email."
 #: InvenTree/helpers.py:442
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
-msgstr "Duplicitní sériové číslo: {sn}"
+msgstr "Duplicitní výrobní číslo: {sn}"
 
 #: InvenTree/helpers.py:449 order/models.py:282 order/models.py:435
 #: stock/views.py:993
@@ -92,7 +92,7 @@ msgstr "Vyplněno neplatné množství"
 
 #: InvenTree/helpers.py:452
 msgid "Empty serial number string"
-msgstr "Nevyplněno sériové číslo"
+msgstr "Nevyplněné výrobní číslo"
 
 #: InvenTree/helpers.py:474 InvenTree/helpers.py:477 InvenTree/helpers.py:480
 #: InvenTree/helpers.py:504
@@ -107,12 +107,12 @@ msgstr "Neplatná/nevyplněná skupina {group}"
 
 #: InvenTree/helpers.py:524
 msgid "No serial numbers found"
-msgstr "Nenalezena žádná sériová čísla"
+msgstr "Nenalezena žádná výrobní čísla"
 
 #: InvenTree/helpers.py:528
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
-msgstr "Počet unikátních sériových čísel ({s}) musí odpovídat množství ({q})"
+msgstr "Počet unikátních výrobních čísel ({s}) musí odpovídat množství ({q})"
 
 #: InvenTree/models.py:185
 msgid "Missing file"
@@ -271,220 +271,220 @@ msgstr "Soubor je příliš velký"
 
 #: InvenTree/serializers.py:407
 msgid "No columns found in file"
-msgstr ""
+msgstr "V souboru nebyly nalezeny žádné sloupce"
 
 #: InvenTree/serializers.py:410
 msgid "No data rows found in file"
-msgstr ""
+msgstr "V souboru nebyly nalezeny žádné řádky s daty"
 
 #: InvenTree/serializers.py:533
 msgid "No data rows provided"
-msgstr ""
+msgstr "Nebyly zadány žádné řádky s daty"
 
 #: InvenTree/serializers.py:536
 msgid "No data columns supplied"
-msgstr ""
+msgstr "Nebyly zadány žádné sloupce s daty"
 
 #: InvenTree/serializers.py:623
 #, python-brace-format
 msgid "Missing required column: '{name}'"
-msgstr ""
+msgstr "Chybí povinný sloupec: '{name}'"
 
 #: InvenTree/serializers.py:632
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
-msgstr ""
+msgstr "Duplicitní sloupec: '{col}'"
 
 #: InvenTree/settings.py:666
 msgid "Czech"
-msgstr ""
+msgstr "Čeština"
 
 #: InvenTree/settings.py:667
 msgid "German"
-msgstr ""
+msgstr "Němčina"
 
 #: InvenTree/settings.py:668
 msgid "Greek"
-msgstr ""
+msgstr "Řečtina"
 
 #: InvenTree/settings.py:669
 msgid "English"
-msgstr ""
+msgstr "Angličtina"
 
 #: InvenTree/settings.py:670
 msgid "Spanish"
-msgstr ""
+msgstr "Španělština"
 
 #: InvenTree/settings.py:671
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "Španělština (Mexiko)"
 
 #: InvenTree/settings.py:672
 msgid "Farsi / Persian"
-msgstr ""
+msgstr "Farsi / Perština"
 
 #: InvenTree/settings.py:673
 msgid "French"
-msgstr ""
+msgstr "Francouzština"
 
 #: InvenTree/settings.py:674
 msgid "Hebrew"
-msgstr ""
+msgstr "Hebrejština"
 
 #: InvenTree/settings.py:675
 msgid "Hungarian"
-msgstr ""
+msgstr "Maďarština"
 
 #: InvenTree/settings.py:676
 msgid "Italian"
-msgstr ""
+msgstr "Italština"
 
 #: InvenTree/settings.py:677
 msgid "Japanese"
-msgstr ""
+msgstr "Japonština"
 
 #: InvenTree/settings.py:678
 msgid "Korean"
-msgstr ""
+msgstr "Korejština"
 
 #: InvenTree/settings.py:679
 msgid "Dutch"
-msgstr ""
+msgstr "Nizozemština"
 
 #: InvenTree/settings.py:680
 msgid "Norwegian"
-msgstr ""
+msgstr "Norština"
 
 #: InvenTree/settings.py:681
 msgid "Polish"
-msgstr ""
+msgstr "Polština"
 
 #: InvenTree/settings.py:682
 msgid "Portugese"
-msgstr ""
+msgstr "Portugalština"
 
 #: InvenTree/settings.py:683
 msgid "Russian"
-msgstr ""
+msgstr "Ruština"
 
 #: InvenTree/settings.py:684
 msgid "Swedish"
-msgstr ""
+msgstr "Švédština"
 
 #: InvenTree/settings.py:685
 msgid "Thai"
-msgstr ""
+msgstr "Thajština"
 
 #: InvenTree/settings.py:686
 msgid "Turkish"
-msgstr ""
+msgstr "Turečtina"
 
 #: InvenTree/settings.py:687
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnamština"
 
 #: InvenTree/settings.py:688
 msgid "Chinese"
-msgstr ""
+msgstr "Čínština"
 
 #: InvenTree/status.py:110
 msgid "Background worker check failed"
-msgstr ""
+msgstr "Kontrola procesů na pozadí se nezdařila"
 
 #: InvenTree/status.py:114
 msgid "Email backend not configured"
-msgstr ""
+msgstr "Email backend není nakonfigurován"
 
 #: InvenTree/status.py:117
 msgid "InvenTree system health checks failed"
-msgstr ""
+msgstr "Kontroly zdraví systému InvenTree selhaly"
 
 #: InvenTree/status_codes.py:101 InvenTree/status_codes.py:142
 #: InvenTree/status_codes.py:323 templates/js/translated/table_filters.js:326
 msgid "Pending"
-msgstr ""
+msgstr "Nevyřízeno"
 
 #: InvenTree/status_codes.py:102
 msgid "Placed"
-msgstr ""
+msgstr "Umístěno"
 
 #: InvenTree/status_codes.py:103 InvenTree/status_codes.py:326
 #: order/templates/order/order_base.html:128
 #: order/templates/order/sales_order_base.html:132
 msgid "Complete"
-msgstr ""
+msgstr "Hotovo"
 
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:144
 #: InvenTree/status_codes.py:325
 msgid "Cancelled"
-msgstr ""
+msgstr "Zrušeno"
 
 #: InvenTree/status_codes.py:105 InvenTree/status_codes.py:145
 #: InvenTree/status_codes.py:187
 msgid "Lost"
-msgstr ""
+msgstr "Ztraceno"
 
 #: InvenTree/status_codes.py:106 InvenTree/status_codes.py:146
 #: InvenTree/status_codes.py:189
 msgid "Returned"
-msgstr ""
+msgstr "Vráceno"
 
 #: InvenTree/status_codes.py:143 order/models.py:997
 #: templates/js/translated/order.js:2177 templates/js/translated/order.js:2474
 msgid "Shipped"
-msgstr ""
+msgstr "Odesláno"
 
 #: InvenTree/status_codes.py:183
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: InvenTree/status_codes.py:184
 msgid "Attention needed"
-msgstr ""
+msgstr "Vyžaduje pozornost"
 
 #: InvenTree/status_codes.py:185
 msgid "Damaged"
-msgstr ""
+msgstr "Poškozeno"
 
 #: InvenTree/status_codes.py:186
 msgid "Destroyed"
-msgstr ""
+msgstr "Zničeno"
 
 #: InvenTree/status_codes.py:188
 msgid "Rejected"
-msgstr ""
+msgstr "Odmítnuto"
 
 #: InvenTree/status_codes.py:276
 msgid "Legacy stock tracking entry"
-msgstr ""
+msgstr "Původní položka sledování zásob"
 
 #: InvenTree/status_codes.py:278
 msgid "Stock item created"
-msgstr ""
+msgstr "Položka zásob vytvořena"
 
 #: InvenTree/status_codes.py:280
 msgid "Edited stock item"
-msgstr ""
+msgstr "Položka zásob upravena"
 
 #: InvenTree/status_codes.py:281
 msgid "Assigned serial number"
-msgstr ""
+msgstr "Přiřazeno výrobní číslo"
 
 #: InvenTree/status_codes.py:283
 msgid "Stock counted"
-msgstr ""
+msgstr "Stav zásob sečten"
 
 #: InvenTree/status_codes.py:284
 msgid "Stock manually added"
-msgstr ""
+msgstr "Zásoba přidána ručně"
 
 #: InvenTree/status_codes.py:285
 msgid "Stock manually removed"
-msgstr ""
+msgstr "Zásoba odebrána ručně"
 
 #: InvenTree/status_codes.py:287
 msgid "Location changed"
-msgstr ""
+msgstr "Umístění změněno"
 
 #: InvenTree/status_codes.py:289
 msgid "Installed into assembly"
