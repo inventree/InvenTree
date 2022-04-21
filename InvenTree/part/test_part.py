@@ -348,7 +348,7 @@ class PartSettingsTest(TestCase):
         with self.assertRaises(ValidationError):
             part = Part(name='Hello', description='A thing', IPN='IPN123', revision='C')
             part.full_clean()
-        
+
         # Any duplicate IPN should raise an error
         Part.objects.create(name='xyz', revision='1', description='A part', IPN='UNIQUE')
 
