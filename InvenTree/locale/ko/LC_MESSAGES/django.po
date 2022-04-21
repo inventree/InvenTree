@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-20 14:52+0000\n"
-"PO-Revision-Date: 2022-04-21 18:38\n"
+"PO-Revision-Date: 2022-04-21 19:47\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -297,7 +297,7 @@ msgstr ""
 
 #: InvenTree/settings.py:666
 msgid "Czech"
-msgstr ""
+msgstr "체코어"
 
 #: InvenTree/settings.py:667
 msgid "German"
@@ -321,7 +321,7 @@ msgstr "스페인어 (멕시코)"
 
 #: InvenTree/settings.py:672
 msgid "Farsi / Persian"
-msgstr ""
+msgstr "파르시어/페르시아어"
 
 #: InvenTree/settings.py:673
 msgid "French"
@@ -596,11 +596,11 @@ msgstr "사용자 정보 수정"
 
 #: InvenTree/views.py:613 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
-msgstr ""
+msgstr "비밀번호 설정"
 
 #: InvenTree/views.py:632
 msgid "Password fields must match"
-msgstr ""
+msgstr "비밀번호가 일치해야 합니다"
 
 #: InvenTree/views.py:883 templates/navbar.html:144
 msgid "System Information"
@@ -7134,7 +7134,7 @@ msgstr ""
 #: templates/account/password_reset_from_key.html:4
 #: templates/account/password_reset_from_key.html:7
 msgid "Change Password"
-msgstr ""
+msgstr "비밀번호 변경"
 
 #: templates/InvenTree/settings/user.html:22
 #: templates/js/translated/helpers.js:27 templates/notes_buttons.html:3
@@ -7510,7 +7510,7 @@ msgstr ""
 
 #: templates/account/password_reset.html:27 templates/account/signup.html:36
 msgid "This function is currently disabled. Please contact an administrator."
-msgstr ""
+msgstr "이 기능은 활성화되지 않았습니다. 관리자에게 연락하세요."
 
 #: templates/account/password_reset_from_key.html:7
 msgid "Bad Token"
