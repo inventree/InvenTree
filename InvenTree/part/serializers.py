@@ -7,7 +7,9 @@ from decimal import Decimal
 
 from django.urls import reverse_lazy
 from django.db import models, transaction
-from django.db.models import ExpressionWrapper, F, Q
+from django.db.models import ExpressionWrapper, F, Q, Func
+from django.db.models import Subquery, OuterRef, IntegerField, FloatField
+
 from django.db.models.functions import Coalesce
 from django.utils.translation import ugettext_lazy as _
 
@@ -577,14 +579,9 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
     purchase_price_range = serializers.SerializerMethodField()
 
-    # Annotated fields
+    # Annotated fields for available stock
     available_stock = serializers.FloatField(read_only=True)
     available_substitute_stock = serializers.FloatField(read_only=True)
-
-    # Note: 2022-04-15
-    # The 'available_variant_stock' field is calculated per-object,
-    # which means it is very inefficient!
-    # TODO: This needs to be converted into a query annotation, if possible!
     available_variant_stock = serializers.FloatField(read_only=True)
 
     def __init__(self, *args, **kwargs):
@@ -619,11 +616,18 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
         queryset = queryset.prefetch_related('sub_part')
         queryset = queryset.prefetch_related('sub_part__category')
+
         queryset = queryset.prefetch_related(
             'sub_part__stock_items',
             'sub_part__stock_items__allocations',
             'sub_part__stock_items__sales_order_allocations',
         )
+
+        queryset = queryset.prefetch_related(
+            'substitutes',
+            'substitutes__part__stock_items',
+        )
+
         queryset = queryset.prefetch_related('sub_part__supplier_parts__pricebreaks')
         return queryset
 
@@ -713,11 +717,52 @@ class BomItemSerializer(InvenTreeModelSerializer):
             ),
         )
 
-        # Calculate 'available_variant_stock' field
+        # Calculate 'available_substitute_stock' field
         queryset = queryset.annotate(
             available_substitute_stock=ExpressionWrapper(
                 F('substitute_stock') - F('substitute_build_allocations') - F('substitute_sales_allocations'),
                 output_field=models.DecimalField(),
+            )
+        )
+
+        # Annotate the queryset with 'available variant stock' information
+        variant_stock_query = StockItem.objects.filter(
+            part__tree_id=OuterRef('sub_part__tree_id'),
+            part__lft__gt=OuterRef('sub_part__lft'),
+            part__rght__lt=OuterRef('sub_part__rght'),
+        )
+
+        queryset = queryset.alias(
+            variant_stock_total=Coalesce(
+                Subquery(
+                    variant_stock_query.annotate(
+                        total=Func(F('quantity'), function='SUM', output_field=FloatField())
+                    ).values('total')),
+                0,
+                output_field=FloatField()
+            ),
+            variant_stock_build_order_allocations=Coalesce(
+                Subquery(
+                    variant_stock_query.annotate(
+                        total=Func(F('sales_order_allocations__quantity'), function='SUM', output_field=FloatField()),
+                    ).values('total')),
+                0,
+                output_field=FloatField(),
+            ),
+            variant_stock_sales_order_allocations=Coalesce(
+                Subquery(
+                    variant_stock_query.annotate(
+                        total=Func(F('allocations__quantity'), function='SUM', output_field=FloatField()),
+                    ).values('total')),
+                0,
+                output_field=FloatField(),
+            )
+        )
+
+        queryset = queryset.annotate(
+            available_variant_stock=ExpressionWrapper(
+                F('variant_stock_total') - F('variant_stock_build_order_allocations') - F('variant_stock_sales_order_allocations'),
+                output_field=FloatField(),
             )
         )
 
@@ -797,6 +842,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'available_stock',
             'available_substitute_stock',
             'available_variant_stock',
+
         ]
 
 
