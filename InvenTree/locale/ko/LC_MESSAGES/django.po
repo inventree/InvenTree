@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-20 14:52+0000\n"
-"PO-Revision-Date: 2022-04-20 15:54\n"
+"PO-Revision-Date: 2022-04-21 18:38\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -267,7 +267,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:386
 msgid "File is too large"
-msgstr ""
+msgstr "파일이 너무 큽니다"
 
 #: InvenTree/serializers.py:407
 msgid "No columns found in file"
@@ -333,7 +333,7 @@ msgstr "히브리어"
 
 #: InvenTree/settings.py:675
 msgid "Hungarian"
-msgstr ""
+msgstr "헝가리어"
 
 #: InvenTree/settings.py:676
 msgid "Italian"
