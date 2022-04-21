@@ -8,7 +8,7 @@ from decimal import Decimal
 from django.urls import reverse_lazy
 from django.db import models, transaction
 from django.db.models import ExpressionWrapper, F, Q, Func
-from django.db.models import Subquery, OuterRef, IntegerField, FloatField
+from django.db.models import Subquery, OuterRef, FloatField
 
 from django.db.models.functions import Coalesce
 from django.utils.translation import ugettext_lazy as _
@@ -310,9 +310,6 @@ class PartSerializer(InvenTreeModelSerializer):
         to reduce database trips.
         """
 
-        # TODO: Update the "in_stock" annotation to include stock for variants of the part
-        # Ref: https://github.com/inventree/InvenTree/issues/2240
-
         # Annotate with the total 'in stock' quantity
         queryset = queryset.annotate(
             in_stock=Coalesce(
@@ -325,6 +322,24 @@ class PartSerializer(InvenTreeModelSerializer):
         # Annotate with the total number of stock items
         queryset = queryset.annotate(
             stock_item_count=SubqueryCount('stock_items')
+        )
+
+        # Annotate with the total variant stock quantity
+        variant_query = StockItem.objects.filter(
+            part__tree_id=OuterRef('tree_id'),
+            part__lft__gt=OuterRef('lft'),
+            part__rght__lt=OuterRef('rght'),
+        ).filter(StockItem.IN_STOCK_FILTER)
+
+        queryset = queryset.annotate(
+            variant_stock=Coalesce(
+                Subquery(
+                    variant_query.annotate(
+                        total=Func(F('quantity'), function='SUM', output_field=FloatField())
+                    ).values('total')),
+                0,
+                output_field=FloatField(),
+            )
         )
 
         # Filter to limit builds to "active"
@@ -431,6 +446,7 @@ class PartSerializer(InvenTreeModelSerializer):
     unallocated_stock = serializers.FloatField(read_only=True)
     building = serializers.FloatField(read_only=True)
     in_stock = serializers.FloatField(read_only=True)
+    variant_stock = serializers.FloatField(read_only=True)
     ordering = serializers.FloatField(read_only=True)
     stock_item_count = serializers.IntegerField(read_only=True)
     suppliers = serializers.IntegerField(read_only=True)
@@ -465,6 +481,7 @@ class PartSerializer(InvenTreeModelSerializer):
             'full_name',
             'image',
             'in_stock',
+            'variant_stock',
             'ordering',
             'building',
             'IPN',
@@ -730,7 +747,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
             part__tree_id=OuterRef('sub_part__tree_id'),
             part__lft__gt=OuterRef('sub_part__lft'),
             part__rght__lt=OuterRef('sub_part__rght'),
-        )
+        ).filter(StockItem.IN_STOCK_FILTER)
 
         queryset = queryset.alias(
             variant_stock_total=Coalesce(
