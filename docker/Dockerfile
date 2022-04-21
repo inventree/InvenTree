@@ -110,7 +110,8 @@ RUN pip3 install --user --no-cache-dir --disable-pip-version-check -r ${INVENTRE
 WORKDIR ${INVENTREE_MNG_DIR}
 
 # Server init entrypoint
-ENTRYPOINT ["/bin/bash", "../docker/init.sh"]
+COPY init.sh ${INVENTREE_HOME}/init.sh
+ENTRYPOINT ["/bin/bash", "${INVENTREE_HOME}/init.sh"]
 
 # Launch the production server
 # TODO: Work out why environment variables cannot be interpolated in this command
@@ -136,7 +137,6 @@ ENV INVENTREE_PLUGIN_DIR="${INVENTREE_DEV_DIR}/plugins"
 ENV INVENTREE_CONFIG_FILE="${INVENTREE_DEV_DIR}/config.yaml"
 ENV INVENTREE_SECRET_KEY_FILE="${INVENTREE_DEV_DIR}/secret_key.txt"
 ENV INVENTREE_PLUGIN_FILE="${INVENTREE_DEV_DIR}/plugins.txt"
-
 
 WORKDIR ${INVENTREE_HOME}
 

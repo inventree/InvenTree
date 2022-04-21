@@ -99,13 +99,21 @@ function renderStockItem(name, data, parameters={}, options={}) {
 
     var stock_detail = '';
 
-    if (data.serial && data.quantity == 1) {
-        stock_detail = `{% trans "Serial Number" %}: ${data.serial}`;
-    } else if (data.quantity == 0) {
+    if (data.quantity == 0) {
         stock_detail = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock"% }</span>`;
     } else {
-        stock_detail = `{% trans "Quantity" %}: ${data.quantity}`;
+        if (data.serial && data.quantity == 1) {
+            stock_detail = `{% trans "Serial Number" %}: ${data.serial}`;
+        } else {
+            stock_detail = `{% trans "Quantity" %}: ${data.quantity}`;
+        }
+
+        if (data.batch) {
+            stock_detail += ` - <small>{% trans "Batch" %}: ${data.batch}</small>`;
+        }
     }
+
+
 
     var html = `
     <span>

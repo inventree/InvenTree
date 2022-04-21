@@ -187,6 +187,15 @@
     </div>
 </div>
 
+<div class='panel panel-hidden' id='panel-stock'>
+    <div class='panel-heading'>
+        <h4>{% trans "Stock Items" %}</h4>
+    </div>
+    <div class='panel-content'>
+        {% include "stock_table.html" %}
+    </div>
+</div>
+
 <div class='panel panel-hidden' id='panel-parameters'>
     <div class='panel-heading'>
         <h4>{% trans "Part Parameters" %}</h4>
@@ -223,6 +232,21 @@
 {{ block.super }}
 
     {% if category %}
+
+    onPanelLoad('stock', function() {
+        loadStockTable(
+            $('#stock-table'),
+            {
+                params: {
+                    category: {{ category.pk }},
+                    part_detail: true,
+                    location_detail: true,
+                    supplier_part_detail: true,
+                }
+            }
+        );
+    });
+
     onPanelLoad('parameters', function() {
         loadParametricPartTable(
             "#parametric-part-table",

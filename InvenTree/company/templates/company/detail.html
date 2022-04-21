@@ -238,7 +238,7 @@
     });
 
     {% if company.is_customer %}
-    onPanelLoad('panel-sales-orders', function() {
+    onPanelLoad('sales-orders', function() {
         loadSalesOrderTable("#sales-order-table", {
             url: "{% url 'api-so-list' %}",
             params: {

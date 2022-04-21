@@ -210,6 +210,46 @@ class StockItemListTest(StockAPITestCase):
         for item in response:
             self.assertIsNone(item['serial'])
 
+    def test_filter_by_has_batch(self):
+        """
+        Test the 'has_batch' filter, which tests if the stock item has been assigned a batch code
+        """
+
+        with_batch = self.get_stock(has_batch=1)
+        without_batch = self.get_stock(has_batch=0)
+
+        n_stock_items = StockItem.objects.all().count()
+
+        # Total sum should equal the total count of stock items
+        self.assertEqual(n_stock_items, len(with_batch) + len(without_batch))
+
+        for item in with_batch:
+            self.assertFalse(item['batch'] in [None, ''])
+
+        for item in without_batch:
+            self.assertTrue(item['batch'] in [None, ''])
+
+    def test_filter_by_tracked(self):
+        """
+        Test the 'tracked' filter.
+        This checks if the stock item has either a batch code *or* a serial number
+        """
+
+        tracked = self.get_stock(tracked=True)
+        untracked = self.get_stock(tracked=False)
+
+        n_stock_items = StockItem.objects.all().count()
+
+        self.assertEqual(n_stock_items, len(tracked) + len(untracked))
+
+        blank = [None, '']
+
+        for item in tracked:
+            self.assertTrue(item['batch'] not in blank or item['serial'] not in blank)
+
+        for item in untracked:
+            self.assertTrue(item['batch'] in blank and item['serial'] in blank)
+
     def test_filter_by_expired(self):
         """
         Filter StockItem by expiry status

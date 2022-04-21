@@ -282,6 +282,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = CONFIG.get('middleware', [
     'django.middleware.security.SecurityMiddleware',
+    'x_forwarded_for.middleware.XForwardedForMiddleware',
     'user_sessions.middleware.SessionMiddleware',                   # db user sessions
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -662,11 +663,13 @@ LANGUAGE_CODE = CONFIG.get('language', 'en-us')
 
 # If a new language translation is supported, it must be added here
 LANGUAGES = [
+    ('cs', _('Czech')),
     ('de', _('German')),
     ('el', _('Greek')),
     ('en', _('English')),
     ('es', _('Spanish')),
     ('es-mx', _('Spanish (Mexican)')),
+    ('fa', _('Farsi / Persian')),
     ('fr', _('French')),
     ('he', _('Hebrew')),
     ('hu', _('Hungarian')),
