@@ -779,7 +779,7 @@ class Part(MPTTModel):
 
         # Raise an error if an IPN is set, and it is a duplicate
         if self.IPN and not allow_duplicate_ipn:
-            parts = Part.objects.filter(IPN__iexact=self.IPN)
+            parts = Part.objects.filter(IPN=self.IPN)
             parts = parts.exclude(pk=self.pk)
 
             if parts.exists():

@@ -348,6 +348,26 @@ class PartSettingsTest(TestCase):
         with self.assertRaises(ValidationError):
             part = Part(name='Hello', description='A thing', IPN='IPN123', revision='C')
             part.full_clean()
+        
+        # Any duplicate IPN should raise an error
+        Part.objects.create(name='xyz', revision='1', description='A part', IPN='UNIQUE')
+
+        # Case sensitive, so other variations don't error out:
+        Part.objects.create(name='xyz', revision='2', description='A part', IPN='UNIQUe')
+        Part.objects.create(name='xyz', revision='3', description='A part', IPN='UNIQuE')
+        Part.objects.create(name='xyz', revision='4', description='A part', IPN='UNIqUE')
+
+        with self.assertRaises(ValidationError):
+            Part.objects.create(name='zyx', description='A part', IPN='UNIQUE')
+
+        # However, *blank* / empty IPN values should be allowed, even if duplicates are not
+        # Note that leading / trailling whitespace characters are trimmed, too
+        Part.objects.create(name='abc', revision='1', description='A part', IPN=None)
+        Part.objects.create(name='abc', revision='2', description='A part', IPN='')
+        Part.objects.create(name='abc', revision='3', description='A part', IPN=None)
+        Part.objects.create(name='abc', revision='4', description='A part', IPN='  ')
+        Part.objects.create(name='abc', revision='5', description='A part', IPN='  ')
+        Part.objects.create(name='abc', revision='6', description='A part', IPN=' ')
 
 
 class PartSubscriptionTests(TestCase):
