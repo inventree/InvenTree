@@ -800,7 +800,7 @@ class Part(MPTTModel):
         super().clean()
 
         # Strip IPN field
-        if self.IPN:
+        if type(self.IPN) is str:
             self.IPN = self.IPN.strip()
 
         if self.trackable:
