@@ -553,7 +553,8 @@ db_config['TEST'] = {
 
 # Set collation option for mysql test database
 if 'mysql' in db_engine:
-    db_config['TEST']['COLLATION'] = 'utf8mb4'
+    # Ref: https://docs.djangoproject.com/en/4.0/ref/databases/#collation-settings
+    db_config['TEST']['COLLATION'] = 'utf8_bin'
 
 DATABASES = {
     'default': db_config
