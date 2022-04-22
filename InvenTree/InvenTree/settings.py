@@ -549,13 +549,15 @@ db_config['OPTIONS'] = db_options
 # Set testing options for the database
 db_config['TEST'] = {
     'CHARSET': 'utf8',
-    'COLLATION': 'utf8_general_ci',
 }
+
+# Set collation option for mysql test database
+if 'mysql' in db_engine:
+    db_config['TEST']['COLLATION'] = 'utf8_general_ci'
 
 DATABASES = {
     'default': db_config
 }
-
 
 _cache_config = CONFIG.get("cache", {})
 _cache_host = _cache_config.get("host", os.getenv("INVENTREE_CACHE_HOST"))
