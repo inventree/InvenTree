@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-22 05:12+0000\n"
-"PO-Revision-Date: 2022-04-22 05:39\n"
+"PO-Revision-Date: 2022-04-22 07:38\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -297,7 +297,7 @@ msgstr "Duplikált oszlop: '{col}'"
 
 #: InvenTree/settings.py:674
 msgid "Czech"
-msgstr ""
+msgstr "Cseh"
 
 #: InvenTree/settings.py:675
 msgid "German"
@@ -1268,7 +1268,7 @@ msgstr "Ez a gyártás %(target)s-n volt esedékes"
 #: templates/js/translated/table_filters.js:353
 #: templates/js/translated/table_filters.js:383
 msgid "Overdue"
-msgstr "Megkésett"
+msgstr "Késésben"
 
 #: build/templates/build/build_base.html:163
 #: build/templates/build/detail.html:67 build/templates/build/detail.html:142
@@ -2187,11 +2187,11 @@ msgstr "Folyamatban lévő gyártások megjelenítése a főoldalon"
 
 #: common/models.py:1213
 msgid "Show overdue builds"
-msgstr "Megkésett gyártások megjelenítése"
+msgstr "Késésben lévő gyártások megjelenítése"
 
 #: common/models.py:1214
 msgid "Show overdue builds on the homepage"
-msgstr "Megkésett gyártások megjelenítése a főoldalon"
+msgstr "Késésben lévő gyártások megjelenítése a főoldalon"
 
 #: common/models.py:1219
 msgid "Show outstanding POs"
@@ -2203,11 +2203,11 @@ msgstr "Kintlévő beszerzési rendelések megjelenítése a főoldalon"
 
 #: common/models.py:1225
 msgid "Show overdue POs"
-msgstr "Megkésett megrendelések megjelenítése"
+msgstr "Késésben lévő megrendelések megjelenítése"
 
 #: common/models.py:1226
 msgid "Show overdue POs on the homepage"
-msgstr "Megkésett megrendelések megjelenítése a főoldalon"
+msgstr "Késésben lévő megrendelések megjelenítése a főoldalon"
 
 #: common/models.py:1231
 msgid "Show outstanding SOs"
@@ -2219,11 +2219,11 @@ msgstr "Kintlévő vevői rendelések megjelenítése a főoldalon"
 
 #: common/models.py:1237
 msgid "Show overdue SOs"
-msgstr "Megkésett vevői rendelések megjelenítése"
+msgstr "Késésben lévő vevői rendelések megjelenítése"
 
 #: common/models.py:1238
 msgid "Show overdue SOs on the homepage"
-msgstr "Megkésett vevői rendelések megjelenítése a főoldalon"
+msgstr "Késésben lévő vevői rendelések megjelenítése a főoldalon"
 
 #: common/models.py:1244
 msgid "Enable email notifications"
@@ -3361,7 +3361,7 @@ msgstr "Várható beérkezés"
 
 #: order/models.py:250
 msgid "Expected date for order delivery. Order will be overdue after this date."
-msgstr "Várt teljesítési dátuma a megrendelésnek. Ezután számít majd megkésettnek."
+msgstr "Várt teljesítési dátuma a megrendelésnek. Ezután már késésben lévőnek számít majd."
 
 #: order/models.py:256
 msgid "Date order was completed"
@@ -6742,7 +6742,7 @@ msgstr "Folyamatban lévő gyártások"
 
 #: templates/InvenTree/index.html:235
 msgid "Overdue Build Orders"
-msgstr "Megkésett gyártások"
+msgstr "Késésben lévő gyártások"
 
 #: templates/InvenTree/index.html:255
 msgid "Outstanding Purchase Orders"
@@ -6750,7 +6750,7 @@ msgstr "Kintlévő beszerzési rendelések"
 
 #: templates/InvenTree/index.html:266
 msgid "Overdue Purchase Orders"
-msgstr "Megkésett megrendelések"
+msgstr "Késésben lévő megrendelések"
 
 #: templates/InvenTree/index.html:286
 msgid "Outstanding Sales Orders"
@@ -6758,7 +6758,7 @@ msgstr "Függő vevői rendelések"
 
 #: templates/InvenTree/index.html:297
 msgid "Overdue Sales Orders"
-msgstr "Megkésett vevői rendelések"
+msgstr "Késésben lévő vevői rendelések"
 
 #: templates/InvenTree/notifications/history.html:9
 msgid "Notification History"
@@ -6945,7 +6945,7 @@ msgstr "Verzió"
 
 #: templates/InvenTree/settings/plugin.html:82
 msgid "code sample"
-msgstr ""
+msgstr "kód minta"
 
 #: templates/InvenTree/settings/plugin.html:99
 msgid "Inactive plugins"
@@ -8281,7 +8281,7 @@ msgstr "Kiválaszt"
 
 #: templates/js/translated/build.js:1999
 msgid "Build order is overdue"
-msgstr "Gyártási utasítás megkésett"
+msgstr "Gyártás késésben van"
 
 #: templates/js/translated/build.js:2063 templates/js/translated/stock.js:2523
 msgid "No user information"
@@ -8747,7 +8747,7 @@ msgstr "Nem található beszerzési rendelés"
 
 #: templates/js/translated/order.js:950 templates/js/translated/order.js:1426
 msgid "Order is overdue"
-msgstr "Rendelés megkésett"
+msgstr "Rendelés késésben"
 
 #: templates/js/translated/order.js:1074 templates/js/translated/order.js:2577
 msgid "Duplicate Line Item"
@@ -8781,7 +8781,7 @@ msgstr "Teljes ár"
 #: templates/js/translated/order.js:1297 templates/js/translated/order.js:2418
 #: templates/js/translated/part.js:961
 msgid "This line item is overdue"
-msgstr "Ez a sortétel megkésett"
+msgstr "Ez a sortétel késésben van"
 
 #: templates/js/translated/order.js:1356 templates/js/translated/part.js:1007
 msgid "Receive line item"
