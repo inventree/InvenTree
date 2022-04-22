@@ -352,10 +352,10 @@ class PartSettingsTest(TestCase):
         # Any duplicate IPN should raise an error
         Part.objects.create(name='xyz', revision='1', description='A part', IPN='UNIQUE')
 
-        # Case sensitive, so other variations don't error out:
-        Part.objects.create(name='xyz', revision='2', description='A part', IPN='UNIQUe')
-        Part.objects.create(name='xyz', revision='3', description='A part', IPN='UNIQuE')
-        Part.objects.create(name='xyz', revision='4', description='A part', IPN='UNIqUE')
+        # Case insensitive, so variations on spelling should throw an error
+        for ipn in ['UNiquE', 'uniQuE', 'unique']:
+            with self.assertRaises(ValidationError):
+                Part.objects.create(name='xyz', revision='2', description='A part', IPN=ipn)
 
         with self.assertRaises(ValidationError):
             Part.objects.create(name='zyx', description='A part', IPN='UNIQUE')
