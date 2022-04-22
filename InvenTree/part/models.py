@@ -777,7 +777,8 @@ class Part(MPTTModel):
         # User can decide whether duplicate IPN (Internal Part Number) values are allowed
         allow_duplicate_ipn = common.models.InvenTreeSetting.get_setting('PART_ALLOW_DUPLICATE_IPN')
 
-        if self.IPN is not None and not allow_duplicate_ipn:
+        # Raise an error if an IPN is set, and it is a duplicate
+        if self.IPN and not allow_duplicate_ipn:
             parts = Part.objects.filter(IPN__iexact=self.IPN)
             parts = parts.exclude(pk=self.pk)
 
@@ -797,6 +798,10 @@ class Part(MPTTModel):
         """
 
         super().clean()
+
+        # Strip IPN field
+        if type(self.IPN) is str:
+            self.IPN = self.IPN.strip()
 
         if self.trackable:
             for part in self.get_used_in().all():
