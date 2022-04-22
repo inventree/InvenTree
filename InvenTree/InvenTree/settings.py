@@ -553,7 +553,7 @@ db_config['TEST'] = {
 
 # Set collation option for mysql test database
 if 'mysql' in db_engine:
-    db_config['TEST']['COLLATION'] = 'utf8_general_ci'
+    db_config['TEST']['COLLATION'] = 'utf8'
 
 DATABASES = {
     'default': db_config
