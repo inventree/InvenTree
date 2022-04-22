@@ -453,6 +453,14 @@ class StockItem(MPTTModel):
 
         super().clean()
 
+        # Strip serial number field
+        if type(self.serial) is str:
+            self.serial = self.serial.strip()
+
+        # Strip batch code field
+        if type(self.batch) is str:
+            self.batch = self.batch.strip()
+
         try:
             if self.part.trackable:
                 # Trackable parts must have integer values for quantity field!
