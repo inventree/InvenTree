@@ -546,6 +546,12 @@ if "sqlite" in db_engine:
 # Provide OPTIONS dict back to the database configuration dict
 db_config['OPTIONS'] = db_options
 
+# Set testing options for the database
+db_config['TEST'] = {
+    'CHARSET': 'utf8',
+    'COLLATION': 'utf8_general_ci',
+}
+
 DATABASES = {
     'default': db_config
 }
