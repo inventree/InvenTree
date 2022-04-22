@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-22 05:12+0000\n"
-"PO-Revision-Date: 2022-04-22 05:40\n"
+"PO-Revision-Date: 2022-04-22 12:22\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -588,23 +588,23 @@ msgstr ""
 
 #: InvenTree/views.py:587
 msgid "Check box to confirm item deletion"
-msgstr ""
+msgstr "Zaškrtněte políčko pro potvrzení odstranění položky"
 
 #: InvenTree/views.py:602 templates/InvenTree/settings/user.html:21
 msgid "Edit User Information"
-msgstr ""
+msgstr "Upravit informace o uživateli"
 
 #: InvenTree/views.py:613 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
-msgstr ""
+msgstr "Nastavit heslo"
 
 #: InvenTree/views.py:632
 msgid "Password fields must match"
-msgstr ""
+msgstr "Hesla se musí shodovat"
 
 #: InvenTree/views.py:883 templates/navbar.html:144
 msgid "System Information"
-msgstr ""
+msgstr "Informace o systému"
 
 #: barcodes/api.py:55 barcodes/api.py:156
 msgid "Must provide barcode_data parameter"
@@ -612,11 +612,11 @@ msgstr ""
 
 #: barcodes/api.py:132
 msgid "No match found for barcode data"
-msgstr ""
+msgstr "Pro data čárového kódu nebyla nalezena shoda"
 
 #: barcodes/api.py:134
 msgid "Match found for barcode data"
-msgstr ""
+msgstr "Pro data čárového kódu byla nalezena shoda"
 
 #: barcodes/api.py:159
 msgid "Must provide stockitem parameter"
