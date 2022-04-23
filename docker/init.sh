@@ -33,7 +33,7 @@ if [[ -n "$INVENTREE_PY_ENV" ]]; then
     source ${INVENTREE_PY_ENV}/bin/activate
 
     # Note: Python packages will have to be installed on first run
-    # e.g docker-compose -f docker-compose.dev.yml run inventree-dev-server invoke install
+    # e.g docker-compose run inventree-dev-server invoke update
 fi
 
 cd ${INVENTREE_HOME}

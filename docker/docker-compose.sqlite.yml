@@ -21,32 +21,34 @@ services:
         build:
             context: .
             target: dev
+        # Cache the built image to be used by the inventree-dev-worker process
+        image: inventree-dev-image
         ports:
             # Expose web server on port 8000
             - 8000:8000
         volumes:
             # Ensure you specify the location of the 'src' directory at the end of this file
             - src:/home/inventree
-        env_file:
-            # Environment variables required for the dev server are configured in dev-config.env
-            - sqlite-config.env
+        environment:
+            - INVENTREE_DEBUG=True
+            - INVENTREE_DB_ENGINE=sqlite
+            - INVENTREE_DB_NAME=/home/inventree/db.sqlite3
         restart: unless-stopped
 
     # Background worker process handles long-running or periodic tasks
     inventree-dev-worker:
         container_name: inventree-dev-worker
-        build:
-            context: .
-            target: dev
+        image: inventree-dev-image
         command: invoke worker
         depends_on:
             - inventree-dev-server
         volumes:
             # Ensure you specify the location of the 'src' directory at the end of this file
             - src:/home/inventree
-        env_file:
-            # Environment variables required for the dev server are configured in dev-config.env
-            - sqlite-config.env
+        environment:
+            - INVENTREE_DEBUG=True
+            - INVENTREE_DB_ENGINE=sqlite
+            - INVENTREE_DB_NAME=/home/inventree/db.sqlite3
         restart: unless-stopped
 
 volumes:
@@ -59,4 +61,4 @@ volumes:
             o: bind
             # This directory specified where InvenTree source code is stored "outside" the docker containers
             # By default, this directory is one level above the "docker" directory
-            device: ../
+            device: ${INVENTREE_EXT_VOLUME:-../}

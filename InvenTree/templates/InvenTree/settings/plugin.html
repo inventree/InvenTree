@@ -77,6 +77,12 @@
                 {% endfor %}
                 {% endif %}
 
+                {% if plugin.is_sample %}
+                <a class='sidebar-selector' id='select-plugin-{{plugin_key}}' data-bs-parent="#sidebar">
+                    <span class='badge bg-info rounded-pill'>{% trans "code sample" %}</span>
+                </a>
+                {% endif %}
+
                 {% if plugin.website %}
                 <a href="{{ plugin.website }}"><span class="fas fa-globe"></span></a>
                 {% endif %}
