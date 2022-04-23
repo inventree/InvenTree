@@ -137,7 +137,6 @@ ENV INVENTREE_CONFIG_FILE="${INVENTREE_DEV_DIR}/config.yaml"
 ENV INVENTREE_SECRET_KEY_FILE="${INVENTREE_DEV_DIR}/secret_key.txt"
 ENV INVENTREE_PLUGIN_FILE="${INVENTREE_DEV_DIR}/plugins.txt"
 
-
 WORKDIR ${INVENTREE_HOME}
 
 # Entrypoint ensures that we are running in the python virtual environment
