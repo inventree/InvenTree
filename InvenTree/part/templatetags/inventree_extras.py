@@ -167,6 +167,14 @@ def inventree_demo_mode(*args, **kwargs):
 
 
 @register.simple_tag()
+def inventree_show_about(user, *args, **kwargs):
+    """ Return True if the about modal should be shown """
+    if InvenTreeSetting.get_setting('INVENTREE_RESTRICT_ABOUT') and not user.is_superuser:
+        return False
+    return True
+
+
+@register.simple_tag()
 def inventree_docker_mode(*args, **kwargs):
     """ Return True if the server is running as a Docker image """
 

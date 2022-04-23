@@ -696,6 +696,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
         },
 
+        'INVENTREE_RESTRICT_ABOUT': {
+            'name': _('Restrict showing `about`'),
+            'description': _('Show the `about` modal only to superusers'),
+            'validator': bool,
+            'default': False,
+        },
+
         'INVENTREE_COMPANY_NAME': {
             'name': _('Company name'),
             'description': _('Internal company name'),

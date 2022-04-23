@@ -7,6 +7,7 @@
 {% settings_value 'STICKY_HEADER' user=request.user as sticky %}
 {% navigation_enabled as plugin_nav %}
 {% inventree_demo_mode as demo %}
+{% inventree_show_about user as show_about %}
 
 <nav class="navbar {% if sticky %}fixed-top{% endif %} navbar-expand-lg navbar-light">
   <div class="container-fluid">
@@ -144,6 +145,7 @@
               {% trans "System Information" %}
             </a>
           </li>
+          {% if show_about %}
           <li id='launch-about'>
             <a class='dropdown-item' href='#'>
               {% if up_to_date %}
@@ -154,6 +156,7 @@
               {% trans "About InvenTree" %}
             </a>
           </li>
+          {% endif %}
         </ul>
       </li>
     </ul>
