@@ -220,8 +220,13 @@ def python_version(*args, **kwargs):
 
 
 @register.simple_tag()
-def inventree_version(*args, **kwargs):
+def inventree_version(shortstring=False, *args, **kwargs):
     """ Return InvenTree version string """
+    if shortstring:
+        return _("{title} v{version}".format(
+            title=version.inventreeInstanceTitle(),
+            version=version.inventreeVersion()
+        ))
     return version.inventreeVersion()
 
 
