@@ -453,10 +453,12 @@ class StockItem(MPTTModel):
 
         super().clean()
 
-        if self.serial is not None and type(self.serial) is str:
+        # Strip serial number field
+        if type(self.serial) is str:
             self.serial = self.serial.strip()
 
-        if self.batch is not None and type(self.batch) is str:
+        # Strip batch code field
+        if type(self.batch) is str:
             self.batch = self.batch.strip()
 
         try:
