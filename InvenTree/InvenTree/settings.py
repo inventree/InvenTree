@@ -282,6 +282,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = CONFIG.get('middleware', [
     'django.middleware.security.SecurityMiddleware',
+    'x_forwarded_for.middleware.XForwardedForMiddleware',
     'user_sessions.middleware.SessionMiddleware',                   # db user sessions
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -545,10 +546,18 @@ if "sqlite" in db_engine:
 # Provide OPTIONS dict back to the database configuration dict
 db_config['OPTIONS'] = db_options
 
+# Set testing options for the database
+db_config['TEST'] = {
+    'CHARSET': 'utf8',
+}
+
+# Set collation option for mysql test database
+if 'mysql' in db_engine:
+    db_config['TEST']['COLLATION'] = 'utf8_general_ci'
+
 DATABASES = {
     'default': db_config
 }
-
 
 _cache_config = CONFIG.get("cache", {})
 _cache_host = _cache_config.get("host", os.getenv("INVENTREE_CACHE_HOST"))
@@ -662,6 +671,7 @@ LANGUAGE_CODE = CONFIG.get('language', 'en-us')
 
 # If a new language translation is supported, it must be added here
 LANGUAGES = [
+    ('cs', _('Czech')),
     ('de', _('German')),
     ('el', _('Greek')),
     ('en', _('English')),
