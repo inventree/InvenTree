@@ -67,6 +67,13 @@ DEMO_MODE = _is_true(get_setting(
     CONFIG.get('demo', False)
 ))
 
+# user interface customization values
+CUSTOMIZE = get_setting(
+    'INVENTREE_CUSTOMIZE',
+    CONFIG.get('customize', {}),
+    {}
+)
+
 DOCKER = _is_true(get_setting(
     'INVENTREE_DOCKER',
     False

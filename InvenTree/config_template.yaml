@@ -186,3 +186,6 @@ static_root: '/home/inventree/data/static'
 #     KEYCLOAK_URL: 'https://keycloak.custom/auth'
 #     KEYCLOAK_REALM: 'master'
 
+# customize:
+#   login_message: |
+#     InvenTree demo instance - <a href='https://inventree.readthedocs.io/en/latest/demo/'> Click here for login details</a>

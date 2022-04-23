@@ -509,6 +509,13 @@ def mail_configured():
     return bool(settings.EMAIL_HOST)
 
 
+@register.simple_tag()
+def inventree_customize(reference, *args, **kwargs):
+    """ Return customization values for the user interface """
+
+    return djangosettings.CUSTOMIZE.get(reference, '')
+
+
 class I18nStaticNode(StaticNode):
     """
     custom StaticNode
