@@ -189,3 +189,5 @@ static_root: '/home/inventree/data/static'
 # customize:
 #   login_message: |
 #     InvenTree demo instance - <a href='https://inventree.readthedocs.io/en/latest/demo/'> Click here for login details</a>
+#   navbar_message: |
+#     InvenTree demo mode <a href='https://inventree.readthedocs.io/en/latest/demo/'><span class='fas fa-info-circle'></span></a>

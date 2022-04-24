@@ -8,6 +8,7 @@
 {% navigation_enabled as plugin_nav %}
 {% inventree_demo_mode as demo %}
 {% inventree_show_about user as show_about %}
+{% inventree_customize 'navbar_message' as navbar_message %}
 
 <nav class="navbar {% if sticky %}fixed-top{% endif %} navbar-expand-lg navbar-light">
   <div class="container-fluid">
@@ -85,8 +86,12 @@
 
       </ul>
     </div>
-    {% if demo %}
-    {% include "navbar_demo.html" %}
+    {% if navbar_message %}
+      {% include "spacer.html" %}
+      <div class='flex'>
+        {{ navbar_message|markdownify }}
+      </div>
+      {% include "spacer.html" %}
     {% endif %}
     
     <ul class='navbar-nav flex-row'>
