@@ -289,6 +289,7 @@ MIDDLEWARE = CONFIG.get('middleware', [
     'django.middleware.csrf.CsrfViewMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'InvenTree.middleware.InvenTreeRemoteUserMiddleware',       # Remote / proxy auth
     'django_otp.middleware.OTPMiddleware',                      # MFA support
     'InvenTree.middleware.CustomAllauthTwoFactorMiddleware',    # Flow control for allauth
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -302,6 +303,7 @@ MIDDLEWARE = CONFIG.get('middleware', [
 MIDDLEWARE.append('error_report.middleware.ExceptionProcessor')
 
 AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
+    'django.contrib.auth.backends.RemoteUserBackend',           # proxy login
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',      # SSO login via external providers
 ])
@@ -852,6 +854,10 @@ ACCOUNT_FORMS = {
 
 SOCIALACCOUNT_ADAPTER = 'InvenTree.forms.CustomSocialAccountAdapter'
 ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'
+
+# login settings
+REMOTE_LOGIN = get_setting('INVENTREE_REMOTE_LOGIN', CONFIG.get('remote_login', False))
+REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', CONFIG.get('remote_login_header', 'REMOTE_USER'))
 
 # Markdownx configuration
 # Ref: https://neutronx.github.io/django-markdownx/customization/
