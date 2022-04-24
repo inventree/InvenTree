@@ -1,11 +1,8 @@
 from django.shortcuts import HttpResponseRedirect
 from django.urls import reverse_lazy, Resolver404
-from django.db import connection
 from django.shortcuts import redirect
 from django.conf.urls import include, url
 import logging
-import time
-import operator
 
 from rest_framework.authtoken.models import Token
 from allauth_2fa.middleware import BaseRequire2FAMiddleware, AllauthTwoFactorMiddleware
