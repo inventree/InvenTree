@@ -7,6 +7,7 @@ as JSON objects and passing them to modal forms (using jQuery / bootstrap).
 
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from email.policy import default
 import os
 import json
 
@@ -17,6 +18,7 @@ from django.urls import reverse_lazy
 from django.utils.timezone import now
 from django.shortcuts import redirect
 from django.conf import settings
+from django.core.files.storage import default_storage
 
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
@@ -721,9 +723,8 @@ class SettingsView(TemplateView):
             ctx["rates_updated"] = None
 
         # load locale stats
-        STAT_FILE = os.path.abspath(os.path.join(settings.BASE_DIR, 'InvenTree/locale_stats.json'))
         try:
-            ctx["locale_stats"] = json.load(open(STAT_FILE, 'r'))
+            ctx["locale_stats"] = json.load(default_storage.open('locale_stats.json', 'r'))
         except:
             ctx["locale_stats"] = {}
 

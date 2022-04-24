@@ -25,6 +25,7 @@ import moneyed
 import yaml
 from django.utils.translation import gettext_lazy as _
 from django.contrib.messages import constants as messages
+from django.core.files.storage import default_storage
 import django.conf.locale
 
 from .config import get_base_dir, get_config_file, get_plugin_file, get_setting
@@ -48,7 +49,7 @@ BASE_DIR = get_base_dir()
 
 cfg_filename = get_config_file()
 
-with open(cfg_filename, 'r') as cfg:
+with default_storage.open(cfg_filename, 'r') as cfg:
     CONFIG = yaml.safe_load(cfg)
 
 # We will place any config files in the same directory as the config file

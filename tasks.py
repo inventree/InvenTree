@@ -218,8 +218,7 @@ def translate_stats(c):
     The file generated from this is needed for the UI.
     """
 
-    path = os.path.join('InvenTree', 'script', 'translation_stats.py')
-    c.run(f'python3 {path}')
+    manage(c, "translation_stats")
 
 
 @task(post=[translate_stats, static])

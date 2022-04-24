@@ -12,6 +12,7 @@ from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
+from django.core.files.storage import default_storage
 
 from rest_framework import serializers
 
@@ -122,7 +123,7 @@ class PluginConfigInstallSerializer(serializers.Serializer):
 
         # save plugin to plugin_file if installed successfull
         if success:
-            with open(settings.PLUGIN_FILE, "a") as plugin_file:
+            with default_storage.open(settings.PLUGIN_FILE, "a") as plugin_file:
                 plugin_file.write(f'{" ".join(install_name)}  # Installed {timezone.now()} by {str(self.context["request"].user)}\n')
 
         return ret
