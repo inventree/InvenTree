@@ -684,7 +684,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'INVENTREE_INSTANCE': {
-            'name': _('InvenTree Instance Name'),
+            'name': _('Server Instance Name'),
             'default': 'InvenTree server',
             'description': _('String descriptor for the server instance'),
         },
@@ -1354,7 +1354,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
 
         'STICKY_HEADER': {
             'name': _('Fixed Navbar'),
-            'description': _('InvenTree navbar position is fixed to the top of the screen'),
+            'description': _('The navbar position is fixed to the top of the screen'),
             'default': False,
             'validator': bool,
         },
