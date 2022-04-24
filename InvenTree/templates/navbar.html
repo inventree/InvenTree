@@ -2,6 +2,7 @@
 {% load inventree_extras %}
 {% load plugin_extras %}
 {% load i18n %}
+{% load markdownify %}
 
 {% settings_value 'BARCODE_ENABLE' as barcodes %}
 {% settings_value 'STICKY_HEADER' user=request.user as sticky %}
