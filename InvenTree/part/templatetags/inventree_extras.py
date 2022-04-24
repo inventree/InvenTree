@@ -18,7 +18,8 @@ from django.conf import settings as djangosettings
 from django import template
 from django.urls import reverse
 from django.utils.safestring import mark_safe
-from django.templatetags.static import StaticNode
+from django.templatetags.static import StaticNode, static
+from django.core.files.storage import default_storage
 
 from InvenTree import version, settings
 
@@ -527,6 +528,15 @@ def inventree_customize(reference, *args, **kwargs):
     """ Return customization values for the user interface """
 
     return djangosettings.CUSTOMIZE.get(reference, '')
+
+
+@register.simple_tag()
+def inventree_logo(*args, **kwargs):
+    """ Return the path to the logo-file """
+
+    if settings.CUSTOM_LOGO:
+        return default_storage.url(settings.CUSTOM_LOGO)
+    return static('img/inventree.png')
 
 
 class I18nStaticNode(StaticNode):

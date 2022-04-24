@@ -25,6 +25,7 @@ import moneyed
 import yaml
 from django.utils.translation import gettext_lazy as _
 from django.contrib.messages import constants as messages
+from django.core.files.storage import default_storage
 import django.conf.locale
 
 from .config import get_base_dir, get_config_file, get_plugin_file, get_setting
@@ -920,3 +921,13 @@ CUSTOMIZE = get_setting(
     {}
 )
 
+CUSTOM_LOGO = get_setting(
+    'INVENTREE_LOGO',
+    CONFIG.get('logo', False),
+    False
+)
+
+# check that the logo-file exsists in media
+if CUSTOM_LOGO and not default_storage.exists(CUSTOM_LOGO):
+    CUSTOM_LOGO = False
+    logger.warning("The custom logo file could not be found in the default media storage")
