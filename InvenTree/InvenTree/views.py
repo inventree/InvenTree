@@ -7,8 +7,6 @@ as JSON objects and passing them to modal forms (using jQuery / bootstrap).
 
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from email.policy import default
-import os
 import json
 
 from django.utils.translation import gettext_lazy as _
@@ -17,7 +15,6 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.utils.timezone import now
 from django.shortcuts import redirect
-from django.conf import settings
 from django.core.files.storage import default_storage
 
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
