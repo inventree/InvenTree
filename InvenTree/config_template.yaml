@@ -186,6 +186,9 @@ static_root: '/home/inventree/data/static'
 #     KEYCLOAK_URL: 'https://keycloak.custom/auth'
 #     KEYCLOAK_REALM: 'master'
 
+# Customization options
+# Add custom messages to the login page or main interface navbar or exchange the logo
+# Use environment variable INVENTREE_CUSTOMIZE or INVENTREE_LOGO
 # customize:
 #   login_message: |
 #     InvenTree demo instance - <a href='https://inventree.readthedocs.io/en/latest/demo/'> Click here for login details</a>
