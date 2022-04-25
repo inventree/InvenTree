@@ -194,6 +194,9 @@ frontendpatterns = [
     url(r"^accounts/password/reset/key/(?P<uidb36>[0-9A-Za-z]+)-(?P<key>.+)/$", CustomPasswordResetFromKeyView.as_view(), name="account_reset_password_from_key"),
     url(r'^accounts/', include('allauth_2fa.urls')),    # MFA support
     url(r'^accounts/', include('allauth.urls')),        # included urlpatterns
+
+    # Oauth provider urls
+    url(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 ]
 
 # Append custom plugin URLs (if plugin support is enabled)
