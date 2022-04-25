@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-22 05:12+0000\n"
-"PO-Revision-Date: 2022-04-22 05:40\n"
+"PO-Revision-Date: 2022-04-25 10:00\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -271,33 +271,33 @@ msgstr "El archivo es demasiado grande"
 
 #: InvenTree/serializers.py:407
 msgid "No columns found in file"
-msgstr ""
+msgstr "No hay columnas en el archivo"
 
 #: InvenTree/serializers.py:410
 msgid "No data rows found in file"
-msgstr ""
+msgstr "No hay filas de datos en el archivo"
 
 #: InvenTree/serializers.py:533
 msgid "No data rows provided"
-msgstr ""
+msgstr "No se proporcionaron filas de datos"
 
 #: InvenTree/serializers.py:536
 msgid "No data columns supplied"
-msgstr ""
+msgstr "No hay columnas de datos proporcionadas"
 
 #: InvenTree/serializers.py:623
 #, python-brace-format
 msgid "Missing required column: '{name}'"
-msgstr ""
+msgstr "Falta la columna requerida: '{name}'"
 
 #: InvenTree/serializers.py:632
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
-msgstr ""
+msgstr "Columna duplicada: '{col}'"
 
 #: InvenTree/settings.py:674
 msgid "Czech"
-msgstr ""
+msgstr "Checo"
 
 #: InvenTree/settings.py:675
 msgid "German"
@@ -333,7 +333,7 @@ msgstr "Hebreo"
 
 #: InvenTree/settings.py:683
 msgid "Hungarian"
-msgstr ""
+msgstr "Húngaro"
 
 #: InvenTree/settings.py:684
 msgid "Italian"
@@ -516,7 +516,7 @@ msgstr "Artículos de stock combinados"
 
 #: InvenTree/status_codes.py:300
 msgid "Converted to variant"
-msgstr ""
+msgstr "Convertir a variante"
 
 #: InvenTree/status_codes.py:302 templates/js/translated/table_filters.js:213
 msgid "Sent to customer"
@@ -536,7 +536,7 @@ msgstr "Construir orden de salida completado"
 
 #: InvenTree/status_codes.py:307
 msgid "Consumed by build order"
-msgstr ""
+msgstr "Consumido por orden de construcción"
 
 #: InvenTree/status_codes.py:309
 msgid "Received against purchase order"
@@ -1156,15 +1156,15 @@ msgstr ""
 
 #: build/serializers.py:739
 msgid "Exclude Location"
-msgstr ""
+msgstr "Excluir ubicación"
 
 #: build/serializers.py:740
 msgid "Exclude stock items from this selected location"
-msgstr ""
+msgstr "Excluir artículos de stock de esta ubicación seleccionada"
 
 #: build/serializers.py:745
 msgid "Interchangeable Stock"
-msgstr ""
+msgstr "Stock intercambiable"
 
 #: build/serializers.py:746
 msgid "Stock items in multiple locations can be used interchangeably"
