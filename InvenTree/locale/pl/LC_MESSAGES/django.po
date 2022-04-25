@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-22 05:12+0000\n"
-"PO-Revision-Date: 2022-04-22 05:40\n"
+"PO-Revision-Date: 2022-04-25 04:11\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -297,7 +297,7 @@ msgstr "Zduplikowana kolumna: '{col}'"
 
 #: InvenTree/settings.py:674
 msgid "Czech"
-msgstr ""
+msgstr "Czeski"
 
 #: InvenTree/settings.py:675
 msgid "German"
@@ -321,7 +321,7 @@ msgstr "Hiszpański (Meksyk)"
 
 #: InvenTree/settings.py:680
 msgid "Farsi / Persian"
-msgstr ""
+msgstr "Perski"
 
 #: InvenTree/settings.py:681
 msgid "French"
@@ -572,15 +572,15 @@ msgstr "Niedozwolony znak w nazwie ({x})"
 
 #: InvenTree/validators.py:137 InvenTree/validators.py:153
 msgid "Overage value must not be negative"
-msgstr ""
+msgstr "Wartość przedawnienia nie może być ujemna"
 
 #: InvenTree/validators.py:155
 msgid "Overage must not exceed 100%"
-msgstr ""
+msgstr "Przedawnienie nie może przekroczyć 100 %"
 
 #: InvenTree/validators.py:162
 msgid "Invalid value for overage"
-msgstr ""
+msgstr "Nieprawidłowa wartość przedawnienia"
 
 #: InvenTree/views.py:538
 msgid "Delete Item"
@@ -608,15 +608,15 @@ msgstr "Informacja systemowa"
 
 #: barcodes/api.py:55 barcodes/api.py:156
 msgid "Must provide barcode_data parameter"
-msgstr ""
+msgstr "Należy określić parametr barcode_data"
 
 #: barcodes/api.py:132
 msgid "No match found for barcode data"
-msgstr ""
+msgstr "Nie znaleziono wyników dla danych kodu kreskowego"
 
 #: barcodes/api.py:134
 msgid "Match found for barcode data"
-msgstr ""
+msgstr "Znaleziono wyniki dla danych kodu kreskowego"
 
 #: barcodes/api.py:159
 msgid "Must provide stockitem parameter"
@@ -9735,7 +9735,7 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:252
 msgid "Has purchase price"
-msgstr ""
+msgstr "Posiada cenę zakupu"
 
 #: templates/js/translated/table_filters.js:253
 msgid "Show stock items which have a purchase price set"
@@ -9751,7 +9751,7 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:280
 msgid "Test Passed"
-msgstr ""
+msgstr "Test pomyślny"
 
 #: templates/js/translated/table_filters.js:284
 msgid "Include Installed Items"
@@ -9764,13 +9764,13 @@ msgstr ""
 #: templates/js/translated/table_filters.js:316
 #: templates/js/translated/table_filters.js:357
 msgid "Assigned to me"
-msgstr ""
+msgstr "Przypisane do mnie"
 
 #: templates/js/translated/table_filters.js:333
 #: templates/js/translated/table_filters.js:344
 #: templates/js/translated/table_filters.js:374
 msgid "Order status"
-msgstr ""
+msgstr "Status zamówienia"
 
 #: templates/js/translated/table_filters.js:349
 #: templates/js/translated/table_filters.js:366
@@ -9882,11 +9882,11 @@ msgstr "Sprzedaj"
 
 #: templates/navbar.html:108
 msgid "Show Notifications"
-msgstr ""
+msgstr "Pokaż powiadomienia"
 
 #: templates/navbar.html:111
 msgid "New Notifications"
-msgstr ""
+msgstr "Nowe powiadomienia"
 
 #: templates/navbar.html:132
 msgid "Logout"
@@ -9906,11 +9906,11 @@ msgstr "Tryb demonstracyjny InvenTree"
 
 #: templates/notes_buttons.html:6 templates/notes_buttons.html:7
 msgid "Save"
-msgstr ""
+msgstr "Zapisz"
 
 #: templates/notifications.html:13
 msgid "Show all notifications and history"
-msgstr ""
+msgstr "Pokaż wszystkie powiadomienia i historię"
 
 #: templates/qr_code.html:11
 msgid "QR data not provided"
@@ -9926,23 +9926,23 @@ msgstr "Zaloguj się ponownie"
 
 #: templates/search.html:9
 msgid "Show full search results"
-msgstr ""
+msgstr "Pokaż pełne wyniki wyszukiwania"
 
 #: templates/search.html:12
 msgid "Clear search"
-msgstr ""
+msgstr "Wyczyść wyszukiwanie"
 
 #: templates/search.html:16
 msgid "Filter results"
-msgstr ""
+msgstr "Filtruj wyniki"
 
 #: templates/search.html:20
 msgid "Close search menu"
-msgstr ""
+msgstr "Zamknij menu wyszukiwania"
 
 #: templates/search.html:35
 msgid "No search results"
-msgstr ""
+msgstr "Brak wyników"
 
 #: templates/stats.html:9
 msgid "Server"
@@ -9994,11 +9994,11 @@ msgstr "Wykryto problemy"
 
 #: templates/stats.html:64
 msgid "Background Worker"
-msgstr ""
+msgstr "Proces w tle"
 
 #: templates/stats.html:67
 msgid "Background worker not running"
-msgstr ""
+msgstr "Proces w tle nie jest uruchomiony"
 
 #: templates/stats.html:75
 msgid "Email Settings"
