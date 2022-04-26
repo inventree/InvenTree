@@ -1351,10 +1351,6 @@ class PartList(generics.ListCreateAPIView):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
-        'variant_of',
-    ]
-
     ordering_fields = [
         'name',
         'creation_date',
