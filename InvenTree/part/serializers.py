@@ -17,6 +17,8 @@ from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
 from djmoney.contrib.django_rest_framework import MoneyField
 
+from common.settings import currency_code_default, currency_code_mappings
+
 from InvenTree.serializers import (DataFileUploadSerializer,
                                    DataFileExtractSerializer,
                                    InvenTreeAttachmentSerializerField,
@@ -148,6 +150,13 @@ class PartSalePriceSerializer(InvenTreeModelSerializer):
         allow_null=True
     )
 
+    price_currency = serializers.ChoiceField(
+        choices=currency_code_mappings(),
+        default=currency_code_default,
+        label=_('Currency'),
+        help_text=_('Purchase currency of this stock item'),
+    )
+
     price_string = serializers.CharField(source='price', read_only=True)
 
     class Meta:
@@ -157,6 +166,7 @@ class PartSalePriceSerializer(InvenTreeModelSerializer):
             'part',
             'quantity',
             'price',
+            'price_currency',
             'price_string',
         ]
 
@@ -172,6 +182,13 @@ class PartInternalPriceSerializer(InvenTreeModelSerializer):
         allow_null=True
     )
 
+    price_currency = serializers.ChoiceField(
+        choices=currency_code_mappings(),
+        default=currency_code_default,
+        label=_('Currency'),
+        help_text=_('Purchase currency of this stock item'),
+    )
+
     price_string = serializers.CharField(source='price', read_only=True)
 
     class Meta:
@@ -181,6 +198,7 @@ class PartInternalPriceSerializer(InvenTreeModelSerializer):
             'part',
             'quantity',
             'price',
+            'price_currency',
             'price_string',
         ]
 
