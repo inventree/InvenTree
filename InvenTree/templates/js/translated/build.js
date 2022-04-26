@@ -1453,10 +1453,20 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             
                     var required = requiredQuantity(row);
 
-                    var text = `${available_stock}`;
+                    var text = '';
+                    
+                    if (available_stock > 0) {
+                        text += `${available_stock}`;
+                    }
+                    
+                    if (available_stock < required) {
+                        text += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "Insufficient stock available" %}'></span>`;
+                    } else {
+                        text += `<span class='fas fa-check-circle icon-green float-right' title='{% trans "Sufficient stock available" %}'></span>`;
+                    }
 
                     if (available_stock <= 0) {
-                        text = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
+                        text += `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
                     } else {
                         var extra = '';
                         if ((substitute_stock > 0) && (variant_stock > 0)) {
@@ -1470,12 +1480,6 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         if (extra) {
                             text += `<span title='${extra}' class='fas fa-info-circle float-right icon-blue'></span>`;
                         }
-                    }
-
-                    if (available_stock < required) {
-                        text += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "Insufficient stock available" %}'></span>`;
-                    } else {
-                        text += `<span class='fas fa-check-circle icon-green float-right' title='{% trans "Sufficient stock available" %}'></span>`;
                     }
         
                     return renderLink(text, url);
