@@ -269,8 +269,6 @@ INSTALLED_APPS = [
     'django_q',
     'formtools',                            # Form wizard tools
 
-    'oauth2_provider',                      # Oauth provider
-
     'allauth',                              # Base app for SSO
     'allauth.account',                      # Extend user with accounts
     'allauth.socialaccount',                # Use 'social' providers
