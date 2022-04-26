@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-26 10:48+0000\n"
-"PO-Revision-Date: 2022-04-26 11:45\n"
+"PO-Revision-Date: 2022-04-26 12:56\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -83,7 +83,7 @@ msgstr "Du må angi samme e-post hver gang."
 #: InvenTree/helpers.py:442
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
-msgstr ""
+msgstr "Dupliser serie: {sn}"
 
 #: InvenTree/helpers.py:449 order/models.py:282 order/models.py:435
 #: stock/views.py:993
@@ -251,11 +251,11 @@ msgstr "Filnavn"
 
 #: InvenTree/serializers.py:334
 msgid "Invalid value"
-msgstr ""
+msgstr "Ugyldig verdi"
 
 #: InvenTree/serializers.py:355
 msgid "Data File"
-msgstr ""
+msgstr "Data fil"
 
 #: InvenTree/serializers.py:356
 msgid "Select data file for upload"
