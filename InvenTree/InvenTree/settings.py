@@ -688,6 +688,7 @@ LANGUAGES = [
     ('no', _('Norwegian')),
     ('pl', _('Polish')),
     ('pt', _('Portugese')),
+    ('pt-br', _('Portugese (Brazilian)')),
     ('ru', _('Russian')),
     ('sv', _('Swedish')),
     ('th', _('Thai')),
