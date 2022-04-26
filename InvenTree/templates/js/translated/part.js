@@ -1559,15 +1559,16 @@ function loadPartTable(table, url, options={}) {
 
         var parts = [];
 
-        selections.forEach(function(item) {
-            parts.push(item.pk);
+        selections.forEach(function(part) {
+            parts.push(part);
         });
 
-        launchModalForm('/order/purchase-order/order-parts/', {
-            data: {
-                parts: parts,
-            },
-        });
+        orderParts(
+            parts,
+            {
+
+            }
+        );
     });
 
     $('#multi-part-category').click(function() {

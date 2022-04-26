@@ -540,10 +540,13 @@ function orderParts(parts_list, options={}) {
         var buttons = `<div class='btn-group float-right' role='group'>`;
 
         buttons += makeIconButton(
-            'fa-check-circle icon-green',
-            'button-row-complete',
+            'fa-layer-group',
+            'button-row-expand',
             pk,
-            '{% trans "Add to order" %}',
+            '{% trans "Expand Row" %}',
+            {
+                collapseTarget: `order_row_expand_${pk}`,
+            }
         );
 
         if (parts.length > 1) {
@@ -564,8 +567,18 @@ function orderParts(parts_list, options={}) {
             <td id='purchase_order_${pk}'>${purchase_order_input}</td>
             <td id='quantity_${pk}'>${quantity_input}</td>
             <td id='actions_${pk}'>${buttons}</td>
-        </tr>
-        `;
+        </tr>`;
+
+        // Add a second row "underneath" the first one, but collapsed
+        // Allows extra data to be added if required, but hidden by default
+        html += `
+        <tr id='order_row_expand_${pk}' class='part-order-row collapse'>
+            <td></td>
+            <td>reference goes here</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>`;
 
         return html;
     }
@@ -656,6 +669,12 @@ function orderParts(parts_list, options={}) {
                     }
                 }, null, opts);
 
+                // Add callback for "remove row" button
+                $(opts.modal).find('.button-row-remove').click(function() {
+                    var pk = $(this).attr('pk');
+
+                    $(opts.modal).find(`#order_row_${pk}`).remove();
+                });
             });
         }
     });
