@@ -567,6 +567,97 @@ class PartAPITest(InvenTreeAPITestCase):
         self.assertEqual(response.data['name'], name)
         self.assertEqual(response.data['description'], description)
 
+    def test_template_filters(self):
+        """
+        Unit tests for API filters related to template parts:
+
+        - variant_of : Return children of specified part
+        - ancestor : Return descendants of specified part
+
+        Uses the 'chair template' part (pk=10000)
+        """
+
+        # Rebuild the MPTT structure before running these tests
+        Part.objects.rebuild()
+
+        url = reverse('api-part-list')
+
+        response = self.get(
+            url,
+            {
+                'variant_of': 10000,
+            },
+            expected_code=200
+        )
+
+        # 3 direct children of template part
+        self.assertEqual(len(response.data), 3)
+
+        response = self.get(
+            url,
+            {
+                'ancestor': 10000,
+            },
+            expected_code=200,
+        )
+
+        # 4 total descendants
+        self.assertEqual(len(response.data), 4)
+
+        # Use the 'green chair' as our reference
+        response = self.get(
+            url,
+            {
+                'variant_of': 10003,
+            },
+            expected_code=200,
+        )
+
+        self.assertEqual(len(response.data), 1)
+
+        response = self.get(
+            url,
+            {
+                'ancestor': 10003,
+            },
+            expected_code=200,
+        )
+
+        self.assertEqual(len(response.data), 1)
+
+        # Add some more variants
+
+        p = Part.objects.get(pk=10004)
+
+        for i in range(100):
+            Part.objects.create(
+                name=f'Chair variant {i}',
+                description='A new chair variant',
+                variant_of=p,
+            )
+
+        # There should still be only one direct variant
+        response = self.get(
+            url,
+            {
+                'variant_of': 10003,
+            },
+            expected_code=200,
+        )
+
+        self.assertEqual(len(response.data), 1)
+
+        # However, now should be 101 descendants
+        response = self.get(
+            url,
+            {
+                'ancestor': 10003,
+            },
+            expected_code=200,
+        )
+
+        self.assertEqual(len(response.data), 101)
+
 
 class PartDetailTests(InvenTreeAPITestCase):
     """
