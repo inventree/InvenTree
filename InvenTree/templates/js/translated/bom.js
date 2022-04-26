@@ -807,15 +807,28 @@ function loadBomTable(table, options={}) {
             var url = `/part/${row.sub_part_detail.pk}/?display=part-stock`;
 
             // Calculate total "available" (unallocated) quantity
-            var total = row.available_stock + row.available_substitute_stock;
+            var base_stock = row.available_stock;
+            var substitute_stock = row.available_substitute_stock || 0;
+            var variant_stock = row.allow_variants ? (row.available_variant_stock || 0) : 0;
 
-            var text = `${total}`;
+            var available_stock = base_stock + substitute_stock + variant_stock;
+            
+            var text = `${available_stock}`;
 
-            if (total <= 0) {
+            if (available_stock <= 0) {
                 text = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
             } else {
-                if (row.available_substitute_stock > 0) {
-                    text += `<span title='{% trans "Includes substitute stock" %}' class='fas fa-info-circle float-right icon-blue'></span>`;
+                var extra = '';
+                if ((substitute_stock > 0) && (variant_stock > 0)) {
+                    extra = '{% trans "Includes variant and substitute stock" %}';
+                } else if (variant_stock > 0) {
+                    extra = '{% trans "Includes variant stock" %}';
+                } else if (substitute_stock > 0) {
+                    extra = '{% trans "Includes substitute stock" %}';
+                }
+
+                if (extra) {
+                    text += `<span title='${extra}' class='fas fa-info-circle float-right icon-blue'></span>`;
                 }
             }
 
@@ -910,7 +923,7 @@ function loadBomTable(table, options={}) {
             formatter: function(value, row) {
                 var can_build = 0;
 
-                var available = row.available_stock + row.available_substitute_stock;
+                var available = row.available_stock + (row.available_substitute_stock || 0) + (row.available_variant_stock || 0);
 
                 if (row.quantity > 0) {
                     can_build = available / row.quantity;

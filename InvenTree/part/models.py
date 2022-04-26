@@ -2732,7 +2732,21 @@ class BomItem(models.Model, DataImportMixin):
             for sub in self.substitutes.all():
                 parts.add(sub.part)
 
-        return parts
+        valid_parts = []
+
+        for p in parts:
+
+            # Inactive parts cannot be 'auto allocated'
+            if not p.active:
+                continue
+
+            # Trackable parts cannot be 'auto allocated'
+            if p.trackable:
+                continue
+
+            valid_parts.append(p)
+
+        return valid_parts
 
     def is_stock_item_valid(self, stock_item):
         """

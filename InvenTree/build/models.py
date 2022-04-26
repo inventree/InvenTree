@@ -871,6 +871,9 @@ class Build(MPTTModel, ReferenceIndexingMixin):
                 part__in=[p for p in available_parts],
             )
 
+            # Filter out "serialized" stock items, these cannot be auto-allocated
+            available_stock = available_stock.filter(Q(serial=None) | Q(serial=''))
+
             if location:
                 # Filter only stock items located "below" the specified location
                 sublocations = location.get_descendants(include_self=True)
