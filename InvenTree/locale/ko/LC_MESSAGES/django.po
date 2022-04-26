@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-22 05:12+0000\n"
-"PO-Revision-Date: 2022-04-22 05:40\n"
+"POT-Creation-Date: 2022-04-26 01:42+0000\n"
+"PO-Revision-Date: 2022-04-26 02:11\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -360,30 +360,34 @@ msgid "Polish"
 msgstr "폴란드어"
 
 #: InvenTree/settings.py:690
-msgid "Portugese"
-msgstr "포르투갈어"
+msgid "Portuguese"
+msgstr ""
 
 #: InvenTree/settings.py:691
+msgid "Portuguese (Brazilian)"
+msgstr ""
+
+#: InvenTree/settings.py:692
 msgid "Russian"
 msgstr "러시아어"
 
-#: InvenTree/settings.py:692
+#: InvenTree/settings.py:693
 msgid "Swedish"
 msgstr "스웨덴어"
 
-#: InvenTree/settings.py:693
+#: InvenTree/settings.py:694
 msgid "Thai"
 msgstr "태국어"
 
-#: InvenTree/settings.py:694
+#: InvenTree/settings.py:695
 msgid "Turkish"
 msgstr "터키어"
 
-#: InvenTree/settings.py:695
+#: InvenTree/settings.py:696
 msgid "Vietnamese"
 msgstr "베트남어"
 
-#: InvenTree/settings.py:696
+#: InvenTree/settings.py:697
 msgid "Chinese"
 msgstr "중국어"
 
