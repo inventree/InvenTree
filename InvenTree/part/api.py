@@ -1175,6 +1175,18 @@ class PartList(generics.ListCreateAPIView):
             except (ValueError, Part.DoesNotExist):
                 pass
 
+        # Filter by 'variant_of'
+        # Note that this is subtly different from 'ancestor' filter (above)
+        variant_of = params.get('variant_of', None)
+
+        if variant_of is not None:
+            try:
+                template = Part.objects.get(pk=variant_of)
+                variants = template.get_children()
+                queryset = queryset.filter(pk__in=[v.pk for v in variants])
+            except (ValueError, Part.DoesNotExist):
+                pass
+
         # Filter only parts which are in the "BOM" for a given part
         in_bom_for = params.get('in_bom_for', None)
 
@@ -1337,10 +1349,6 @@ class PartList(generics.ListCreateAPIView):
         DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
-    ]
-
-    filter_fields = [
-        'variant_of',
     ]
 
     ordering_fields = [

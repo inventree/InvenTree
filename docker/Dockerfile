@@ -110,8 +110,7 @@ RUN pip3 install --user --no-cache-dir --disable-pip-version-check -r ${INVENTRE
 WORKDIR ${INVENTREE_MNG_DIR}
 
 # Server init entrypoint
-COPY init.sh ${INVENTREE_HOME}/init.sh
-ENTRYPOINT ["/bin/bash", "${INVENTREE_HOME}/init.sh"]
+ENTRYPOINT ["/bin/bash", "../docker/init.sh"]
 
 # Launch the production server
 # TODO: Work out why environment variables cannot be interpolated in this command
