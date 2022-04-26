@@ -243,7 +243,7 @@ msgstr "Omschrijving (optioneel)"
 msgid "parent"
 msgstr "overkoepelend"
 
-#: InvenTree/serializers.py:65 part/models.py:2877
+#: InvenTree/serializers.py:65 part/models.py:2891
 msgid "Must be a valid number"
 msgstr "Moet een geldig nummer zijn"
 
@@ -713,7 +713,7 @@ msgid "Build Order Reference"
 msgstr "Bouwopdracht referentie"
 
 #: build/models.py:201 order/models.py:213 order/models.py:563
-#: order/models.py:843 part/models.py:2788
+#: order/models.py:843 part/models.py:2802
 #: part/templates/part/upload_bom.html:54
 #: report/templates/report/inventree_po_report.html:92
 #: report/templates/report/inventree_so_report.html:92
@@ -741,7 +741,7 @@ msgstr "BuildOrder waaraan deze build is toegewezen"
 #: order/templates/order/order_wizard/select_parts.html:32 part/models.py:367
 #: part/models.py:2320 part/models.py:2336 part/models.py:2355
 #: part/models.py:2372 part/models.py:2474 part/models.py:2596
-#: part/models.py:2686 part/models.py:2763 part/models.py:3053
+#: part/models.py:2686 part/models.py:2777 part/models.py:3067
 #: part/serializers.py:904 part/templates/part/part_app_base.html:8
 #: part/templates/part/part_pricing.html:12
 #: part/templates/part/set_category.html:13
@@ -977,7 +977,7 @@ msgstr "Bron voorraadartikel"
 #: order/models.py:836 order/models.py:1265 order/serializers.py:903
 #: order/templates/order/order_wizard/match_parts.html:30
 #: order/templates/order/order_wizard/select_parts.html:34 part/forms.py:144
-#: part/forms.py:160 part/forms.py:176 part/models.py:2779
+#: part/forms.py:160 part/forms.py:176 part/models.py:2793
 #: part/templates/part/detail.html:965 part/templates/part/detail.html:1051
 #: part/templates/part/part_pricing.html:16
 #: part/templates/part/upload_bom.html:53
@@ -1163,8 +1163,8 @@ msgstr "Bouwopdracht is onvolledig"
 msgid "No build outputs have been created for this build order"
 msgstr "Voorraad is niet volledig toegewezen aan deze bouwopdracht"
 
-#: build/serializers.py:501 build/serializers.py:550 part/models.py:2903
-#: part/models.py:3045
+#: build/serializers.py:501 build/serializers.py:550 part/models.py:2917
+#: part/models.py:3059
 msgid "BOM Item"
 msgstr ""
 
@@ -2815,7 +2815,7 @@ msgid "Supplier part description"
 msgstr ""
 
 #: company/models.py:576 company/templates/company/supplier_part.html:119
-#: part/models.py:2791 part/templates/part/upload_bom.html:59
+#: part/models.py:2805 part/templates/part/upload_bom.html:59
 #: report/templates/report/inventree_po_report.html:93
 #: report/templates/report/inventree_so_report.html:93 stock/serializers.py:409
 msgid "Note"
@@ -4610,113 +4610,113 @@ msgstr ""
 msgid "BOM level"
 msgstr ""
 
-#: part/models.py:2764
+#: part/models.py:2778
 msgid "Select parent part"
 msgstr ""
 
-#: part/models.py:2772
+#: part/models.py:2786
 msgid "Sub part"
 msgstr ""
 
-#: part/models.py:2773
+#: part/models.py:2787
 msgid "Select part to be used in BOM"
 msgstr ""
 
-#: part/models.py:2779
+#: part/models.py:2793
 msgid "BOM quantity for this BOM item"
 msgstr ""
 
-#: part/models.py:2781 part/templates/part/upload_bom.html:58
+#: part/models.py:2795 part/templates/part/upload_bom.html:58
 #: templates/js/translated/bom.js:789 templates/js/translated/bom.js:884
 #: templates/js/translated/table_filters.js:92
 msgid "Optional"
 msgstr ""
 
-#: part/models.py:2781
+#: part/models.py:2795
 msgid "This BOM item is optional"
 msgstr ""
 
-#: part/models.py:2784 part/templates/part/upload_bom.html:55
+#: part/models.py:2798 part/templates/part/upload_bom.html:55
 msgid "Overage"
 msgstr ""
 
-#: part/models.py:2785
+#: part/models.py:2799
 msgid "Estimated build wastage quantity (absolute or percentage)"
 msgstr ""
 
-#: part/models.py:2788
+#: part/models.py:2802
 msgid "BOM item reference"
 msgstr ""
 
-#: part/models.py:2791
+#: part/models.py:2805
 msgid "BOM item notes"
 msgstr ""
 
-#: part/models.py:2793
+#: part/models.py:2807
 msgid "Checksum"
 msgstr ""
 
-#: part/models.py:2793
+#: part/models.py:2807
 msgid "BOM line checksum"
 msgstr ""
 
-#: part/models.py:2797 part/templates/part/upload_bom.html:57
+#: part/models.py:2811 part/templates/part/upload_bom.html:57
 #: templates/js/translated/bom.js:901
 #: templates/js/translated/table_filters.js:68
 #: templates/js/translated/table_filters.js:88
 msgid "Inherited"
 msgstr ""
 
-#: part/models.py:2798
+#: part/models.py:2812
 msgid "This BOM item is inherited by BOMs for variant parts"
 msgstr ""
 
-#: part/models.py:2803 part/templates/part/upload_bom.html:56
+#: part/models.py:2817 part/templates/part/upload_bom.html:56
 #: templates/js/translated/bom.js:893
 msgid "Allow Variants"
 msgstr ""
 
-#: part/models.py:2804
+#: part/models.py:2818
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr ""
 
-#: part/models.py:2889 stock/models.py:469
+#: part/models.py:2903 stock/models.py:469
 msgid "Quantity must be integer value for trackable parts"
 msgstr ""
 
-#: part/models.py:2898 part/models.py:2900
+#: part/models.py:2912 part/models.py:2914
 msgid "Sub part must be specified"
 msgstr ""
 
-#: part/models.py:3012
+#: part/models.py:3026
 msgid "BOM Item Substitute"
 msgstr ""
 
-#: part/models.py:3034
+#: part/models.py:3048
 msgid "Substitute part cannot be the same as the master part"
 msgstr ""
 
-#: part/models.py:3046
+#: part/models.py:3060
 msgid "Parent BOM item"
 msgstr ""
 
-#: part/models.py:3054
+#: part/models.py:3068
 msgid "Substitute part"
 msgstr ""
 
-#: part/models.py:3065
+#: part/models.py:3079
 msgid "Part 1"
 msgstr ""
 
-#: part/models.py:3069
+#: part/models.py:3083
 msgid "Part 2"
 msgstr ""
 
-#: part/models.py:3069
+#: part/models.py:3083
 msgid "Select Related Part"
 msgstr ""
 
-#: part/models.py:3101
+#: part/models.py:3115
 msgid "Error creating relationship: check that the part is not related to itself and that the relationship is unique"
 msgstr ""
 
