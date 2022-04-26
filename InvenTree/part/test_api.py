@@ -658,6 +658,94 @@ class PartAPITest(InvenTreeAPITestCase):
 
         self.assertEqual(len(response.data), 101)
 
+    def test_variant_stock(self):
+        """
+        Unit tests for the 'variant_stock' annotation,
+        which provides a stock count for *variant* parts
+        """
+
+        # Ensure the MPTT structure is in a known state before running tests
+        Part.objects.rebuild()
+
+        # Initially, there are no "chairs" in stock,
+        # so each 'chair' template should report variant_stock=0
+        url = reverse('api-part-list')
+
+        # Look at the "detail" URL for the master chair template
+        response = self.get('/api/part/10000/', {}, expected_code=200)
+
+        # This part should report 'zero' as variant stock
+        self.assertEqual(response.data['variant_stock'], 0)
+
+        # Grab a list of all variant chairs *under* the master template
+        response = self.get(
+            url,
+            {
+                'ancestor': 10000,
+            },
+            expected_code=200,
+        )
+
+        # 4 total descendants
+        self.assertEqual(len(response.data), 4)
+
+        for variant in response.data:
+            self.assertEqual(variant['variant_stock'], 0)
+
+        # Now, let's make some variant stock
+        for variant in Part.objects.get(pk=10000).get_descendants(include_self=False):
+            StockItem.objects.create(
+                part=variant,
+                quantity=100,
+            )
+        
+        response = self.get('/api/part/10000/', {}, expected_code=200)
+
+        self.assertEqual(response.data['in_stock'], 0)
+        self.assertEqual(response.data['variant_stock'], 400)
+
+        # Check that each variant reports the correct stock quantities
+        response = self.get(
+            url,
+            {
+                'ancestor': 10000,
+            },
+            expected_code=200,
+        )
+
+        expected_variant_stock = {
+            10001: 0,
+            10002: 0,
+            10003: 100,
+            10004: 0,
+        }
+
+        for variant in response.data:
+            self.assertEqual(variant['in_stock'], 100)
+            self.assertEqual(variant['variant_stock'], expected_variant_stock[variant['pk']])
+
+        # Add some 'sub variants' for the green chair variant
+        green_chair = Part.objects.get(pk=10004)
+
+        for i in range(10):
+            gcv = Part.objects.create(
+                name=f"GC Var {i}",
+                description="Green chair variant",
+                variant_of=green_chair,
+            )
+
+            StockItem.objects.create(
+                part=gcv,
+                quantity=50,
+            )
+
+        # Spot check of some values
+        response = self.get('/api/part/10000/', {})
+        self.assertEqual(response.data['variant_stock'], 900)
+
+        response = self.get('/api/part/10004/', {})
+        self.assertEqual(response.data['variant_stock'], 500)
+
 
 class PartDetailTests(InvenTreeAPITestCase):
     """
