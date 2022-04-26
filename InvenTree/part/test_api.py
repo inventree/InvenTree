@@ -698,7 +698,7 @@ class PartAPITest(InvenTreeAPITestCase):
                 part=variant,
                 quantity=100,
             )
-        
+
         response = self.get('/api/part/10000/', {}, expected_code=200)
 
         self.assertEqual(response.data['in_stock'], 0)
@@ -1628,6 +1628,44 @@ class BomItemTest(InvenTreeAPITestCase):
             )
 
             self.assertEqual(len(response.data), i)
+
+    def test_bom_variant_stock(self):
+        """
+        Test for 'available_variant_stock' annotation
+        """
+
+        Part.objects.rebuild()
+
+        # BOM item we are interested in
+        bom_item = BomItem.objects.get(pk=1)
+
+        response = self.get('/api/bom/1/', {}, expected_code=200)
+
+        # Initially, no variant stock available
+        self.assertEqual(response.data['available_variant_stock'], 0)
+
+        # Create some 'variants' of the referenced sub_part
+        bom_item.sub_part.is_template = True
+        bom_item.sub_part.save()
+
+        for i in range(10):
+            # Create a variant part
+            vp = Part.objects.create(
+                name=f"Var {i}",
+                description="Variant part",
+                variant_of=bom_item.sub_part,
+            )
+
+            # Create a stock item
+            StockItem.objects.create(
+                part=vp,
+                quantity=100,
+            )
+
+        # There should now be variant stock available
+        response = self.get('/api/bom/1/', {}, expected_code=200)
+
+        self.assertEqual(response.data['available_variant_stock'], 1000)
 
 
 class PartParameterTest(InvenTreeAPITestCase):
