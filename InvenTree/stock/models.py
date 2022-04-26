@@ -227,6 +227,8 @@ def generate_batch_code():
 
     now = datetime.now()
 
+    # Pass context data through to the template randering.
+    # The folowing context variables are availble for custom batch code generation
     context = {
         'date': now,
         'year': now.year,
