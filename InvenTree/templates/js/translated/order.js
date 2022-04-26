@@ -681,6 +681,12 @@ function orderParts(parts_list, options={}) {
                     var pk = $(this).attr('pk');
 
                     // Launch dialog to create new supplier part
+                    createSupplierPart({
+                        part: pk,
+                        onSuccess: function(response) {
+                            // TODO
+                        }
+                    });
                 });
 
                 // Add callback for "new purchase order" button
@@ -688,6 +694,11 @@ function orderParts(parts_list, options={}) {
                     var pk = $(this).attr('pk');
 
                     // Launch dialog to create new purchase order
+                    createPurchaseOrder({
+                        onSuccess: function(response) {
+                            // TODO
+                        }
+                    });
                 });
             });
         }
