@@ -777,7 +777,8 @@ class Part(MPTTModel):
         # User can decide whether duplicate IPN (Internal Part Number) values are allowed
         allow_duplicate_ipn = common.models.InvenTreeSetting.get_setting('PART_ALLOW_DUPLICATE_IPN')
 
-        if self.IPN is not None and not allow_duplicate_ipn:
+        # Raise an error if an IPN is set, and it is a duplicate
+        if self.IPN and not allow_duplicate_ipn:
             parts = Part.objects.filter(IPN__iexact=self.IPN)
             parts = parts.exclude(pk=self.pk)
 
@@ -797,6 +798,10 @@ class Part(MPTTModel):
         """
 
         super().clean()
+
+        # Strip IPN field
+        if type(self.IPN) is str:
+            self.IPN = self.IPN.strip()
 
         if self.trackable:
             for part in self.get_used_in().all():
@@ -1313,19 +1318,31 @@ class Part(MPTTModel):
 
         return quantity
 
-    def build_order_allocations(self):
+    def build_order_allocations(self, **kwargs):
         """
         Return all 'BuildItem' objects which allocate this part to Build objects
         """
 
-        return BuildModels.BuildItem.objects.filter(stock_item__part__id=self.id)
+        include_variants = kwargs.get('include_variants', True)
 
-    def build_order_allocation_count(self):
+        queryset = BuildModels.BuildItem.objects.all()
+
+        if include_variants:
+            variants = self.get_descendants(include_self=True)
+            queryset = queryset.filter(
+                stock_item__part__in=variants,
+            )
+        else:
+            queryset = queryset.filter(stock_item__part=self)
+
+        return queryset
+
+    def build_order_allocation_count(self, **kwargs):
         """
         Return the total amount of this part allocated to build orders
         """
 
-        query = self.build_order_allocations().aggregate(
+        query = self.build_order_allocations(**kwargs).aggregate(
             total=Coalesce(
                 Sum(
                     'quantity',
@@ -1343,7 +1360,19 @@ class Part(MPTTModel):
         Return all sales-order-allocation objects which allocate this part to a SalesOrder
         """
 
-        queryset = OrderModels.SalesOrderAllocation.objects.filter(item__part__id=self.id)
+        include_variants = kwargs.get('include_variants', True)
+
+        queryset = OrderModels.SalesOrderAllocation.objects.all()
+
+        if include_variants:
+            # Include allocations for all variants
+            variants = self.get_descendants(include_self=True)
+            queryset = queryset.filter(
+                item__part__in=variants,
+            )
+        else:
+            # Only look at this part
+            queryset = queryset.filter(item__part=self)
 
         # Default behaviour is to only return *pending* allocations
         pending = kwargs.get('pending', True)
@@ -1381,7 +1410,7 @@ class Part(MPTTModel):
 
         return query['total']
 
-    def allocation_count(self):
+    def allocation_count(self, **kwargs):
         """
         Return the total quantity of stock allocated for this part,
         against both build orders and sales orders.
@@ -1389,8 +1418,8 @@ class Part(MPTTModel):
 
         return sum(
             [
-                self.build_order_allocation_count(),
-                self.sales_order_allocation_count(),
+                self.build_order_allocation_count(**kwargs),
+                self.sales_order_allocation_count(**kwargs),
             ],
         )
 
@@ -2703,7 +2732,21 @@ class BomItem(models.Model, DataImportMixin):
             for sub in self.substitutes.all():
                 parts.add(sub.part)
 
-        return parts
+        valid_parts = []
+
+        for p in parts:
+
+            # Inactive parts cannot be 'auto allocated'
+            if not p.active:
+                continue
+
+            # Trackable parts cannot be 'auto allocated'
+            if p.trackable:
+                continue
+
+            valid_parts.append(p)
+
+        return valid_parts
 
     def is_stock_item_valid(self, stock_item):
         """
@@ -2881,23 +2924,6 @@ class BomItem(models.Model, DataImportMixin):
             parent=self.part.full_name,
             child=self.sub_part.full_name,
             n=decimal2string(self.quantity))
-
-    def available_stock(self):
-        """
-        Return the available stock items for the referenced sub_part
-        """
-
-        query = self.sub_part.stock_items.all()
-
-        query = query.prefetch_related([
-            'sub_part__stock_items',
-        ])
-
-        query = query.filter(StockModels.StockItem.IN_STOCK_FILTER).aggregate(
-            available=Coalesce(Sum('quantity'), 0)
-        )
-
-        return query['available']
 
     def get_overage_quantity(self, quantity):
         """ Calculate overage quantity
