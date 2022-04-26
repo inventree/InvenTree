@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-26 10:48+0000\n"
-"PO-Revision-Date: 2022-04-26 12:56\n"
+"PO-Revision-Date: 2022-04-26 14:14\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -259,45 +259,45 @@ msgstr "Data fil"
 
 #: InvenTree/serializers.py:356
 msgid "Select data file for upload"
-msgstr ""
+msgstr "Velg datafil for opplasting"
 
 #: InvenTree/serializers.py:380
 msgid "Unsupported file type"
-msgstr ""
+msgstr "Filtypen støttes ikke"
 
 #: InvenTree/serializers.py:386
 msgid "File is too large"
-msgstr ""
+msgstr "Filen er for stor"
 
 #: InvenTree/serializers.py:407
 msgid "No columns found in file"
-msgstr ""
+msgstr "Ingen kolonner funnet i filen"
 
 #: InvenTree/serializers.py:410
 msgid "No data rows found in file"
-msgstr ""
+msgstr "Ingen datalader funnet i fil"
 
 #: InvenTree/serializers.py:533
 msgid "No data rows provided"
-msgstr ""
+msgstr "Ingen datalader oppgitt"
 
 #: InvenTree/serializers.py:536
 msgid "No data columns supplied"
-msgstr ""
+msgstr "Ingen datakolonner angitt"
 
 #: InvenTree/serializers.py:623
 #, python-brace-format
 msgid "Missing required column: '{name}'"
-msgstr ""
+msgstr "Mangler påkrevd kolonne: '{name}'"
 
 #: InvenTree/serializers.py:632
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
-msgstr ""
+msgstr "Dupliser kolonne: '{col}'"
 
 #: InvenTree/settings.py:674
 msgid "Czech"
-msgstr ""
+msgstr "Tsjekkisk"
 
 #: InvenTree/settings.py:675
 msgid "German"
@@ -321,7 +321,7 @@ msgstr "Spansk (Meksikansk)"
 
 #: InvenTree/settings.py:680
 msgid "Farsi / Persian"
-msgstr ""
+msgstr "Farsi / Persisk"
 
 #: InvenTree/settings.py:681
 msgid "French"
@@ -333,7 +333,7 @@ msgstr "Hebraisk"
 
 #: InvenTree/settings.py:683
 msgid "Hungarian"
-msgstr ""
+msgstr "Ungarsk"
 
 #: InvenTree/settings.py:684
 msgid "Italian"
@@ -361,11 +361,11 @@ msgstr "Polsk"
 
 #: InvenTree/settings.py:690
 msgid "Portuguese"
-msgstr ""
+msgstr "Portugisisk"
 
 #: InvenTree/settings.py:691
 msgid "Portuguese (Brazilian)"
-msgstr ""
+msgstr "Portugisisk (Brasilian)"
 
 #: InvenTree/settings.py:692
 msgid "Russian"
@@ -520,7 +520,7 @@ msgstr "Sammenslått lagervare"
 
 #: InvenTree/status_codes.py:300
 msgid "Converted to variant"
-msgstr ""
+msgstr "Konvertert til variant"
 
 #: InvenTree/status_codes.py:302 templates/js/translated/table_filters.js:213
 msgid "Sent to customer"
