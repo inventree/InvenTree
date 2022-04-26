@@ -502,9 +502,9 @@ function orderParts(parts_list, options={}) {
         )
 
         var supplier_part_prefix = `
-            <span class='input-group-text' title='{% trans "New supplier part" %}'>
+            <button type='button' class='input-group-text button-row-new-sp' pk='${pk}' title='{% trans "New supplier part" %}'>
                 <span class='fas fa-plus-circle icon-green'></span>
-            </span>
+            </button>
         `;
 
         var supplier_part_input = constructField(
@@ -520,9 +520,9 @@ function orderParts(parts_list, options={}) {
         );
 
         var purchase_order_prefix  = `
-            <span class='input-group-text' title='{% trans "New purchase order" %}'>
+            <button type='button' class='input-group-text button-row-new-po' pk='${pk}' title='{% trans "New purchase order" %}'>
                 <span class='fas fa-plus-circle icon-green'></span>
-            </span>
+            </button>
         `;
 
         var purchase_order_input = constructField(
@@ -674,6 +674,20 @@ function orderParts(parts_list, options={}) {
                     var pk = $(this).attr('pk');
 
                     $(opts.modal).find(`#order_row_${pk}`).remove();
+                });
+
+                // Add callback for "new supplier part" button
+                $(opts.modal).find('.button-row-new-sp').click(function() {
+                    var pk = $(this).attr('pk');
+
+                    // Launch dialog to create new supplier part
+                });
+
+                // Add callback for "new purchase order" button
+                $(opts.modal).find('.button-row-new-po').click(function() {
+                    var pk = $(this).attr('pk');
+
+                    // Launch dialog to create new purchase order
                 });
             });
         }
