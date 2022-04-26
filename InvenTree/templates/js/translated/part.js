@@ -672,7 +672,20 @@ function loadPartVariantTable(table, partId, options={}) {
             field: 'in_stock',
             title: '{% trans "Stock" %}',
             formatter: function(value, row) {
-                return renderLink(value, `/part/${row.pk}/?display=part-stock`);
+
+                var base_stock = row.in_stock;
+                var variant_stock = row.variant_stock || 0;
+
+                var total = base_stock + variant_stock;
+
+                var text = `${total}`;
+
+                if (variant_stock > 0) {
+                    text = `<em>${text}</em>`;
+                    text += `<span title='{% trans "Includes variant stock" %}' class='fas fa-info-circle float-right icon-blue'></span>`;
+                }
+
+                return renderLink(text, `/part/${row.pk}/?display=part-stock`);
             }
         }
     ];

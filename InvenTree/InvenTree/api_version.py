@@ -4,10 +4,13 @@ InvenTree API version information
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 41
+INVENTREE_API_VERSION = 42
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v42 -> 2022-04-26 : https://github.com/inventree/InvenTree/pull/2833
+    - Adds variant stock information to the Part and BomItem serializers
 
 v41 -> 2022-04-26
     - Fixes 'variant_of' filter for Part list endpoint
