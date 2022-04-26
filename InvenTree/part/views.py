@@ -18,7 +18,6 @@ from django.forms import HiddenInput
 from django.conf import settings
 from django.contrib import messages
 
-from moneyed import CURRENCIES
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
 
@@ -33,7 +32,6 @@ from decimal import Decimal
 from .models import PartCategory, Part
 from .models import PartParameterTemplate
 from .models import PartCategoryParameterTemplate
-from .models import PartSellPriceBreak, PartInternalPriceBreak
 
 from common.models import InvenTreeSetting
 from company.models import SupplierPart
