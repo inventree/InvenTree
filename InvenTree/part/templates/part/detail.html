@@ -124,8 +124,7 @@
     </div>
 </div>
 
-{% settings_value "PART_SHOW_PRICE_HISTORY" as show_price_history %}
-{% if show_price_history %}
+{% if part.purchaseable or part.salable %}
 <div class='panel panel-hidden' id='panel-pricing'>
     {% include "part/prices.html" %}
 </div>

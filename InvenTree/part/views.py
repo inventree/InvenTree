@@ -389,8 +389,12 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
 
         context.update(**ctx)
 
+        show_price_history = InvenTreeSetting.get_setting('PART_SHOW_PRICE_HISTORY', False)
+
+        context['show_price_history'] = show_price_history
+
         # Pricing information
-        if InvenTreeSetting.get_setting('PART_SHOW_PRICE_HISTORY', False):
+        if show_price_history:
             ctx = self.get_pricing(self.get_quantity())
             ctx['form'] = self.form_class(initial=self.get_initials())
 
