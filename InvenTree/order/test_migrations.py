@@ -140,9 +140,10 @@ class TestAdditionalLineMigration(MigratorTestCase):
         # Create a purchase order from a supplier
         Company = self.old_state.apps.get_model('company', 'company')
         PurchaseOrder = self.old_state.apps.get_model('order', 'purchaseorder')
-        SalesOrder = self.old_state.apps.get_model('order', 'salesorder')
         Part = self.old_state.apps.get_model('part', 'part')
         Supplierpart = self.old_state.apps.get_model('company', 'supplierpart')
+        # TODO @matmair fix this test!!!
+        # SalesOrder = self.old_state.apps.get_model('order', 'salesorder')
 
         supplier = Company.objects.create(
             name='Supplier A',
