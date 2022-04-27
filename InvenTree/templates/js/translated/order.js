@@ -38,7 +38,7 @@
     removeOrderRowFromOrderWizard,
     removePurchaseOrderLineItem,
     loadOrderTotal,
-    ExtraLineFields,
+    extraLineFields,
 */
 
 
