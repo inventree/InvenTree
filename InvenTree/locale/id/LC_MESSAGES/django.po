@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-27 00:19+0000\n"
-"PO-Revision-Date: 2022-04-27 00:27\n"
+"POT-Creation-Date: 2022-04-27 06:03+0000\n"
+"PO-Revision-Date: 2022-04-27 06:14\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -802,7 +802,7 @@ msgid "Batch code for this build output"
 msgstr ""
 
 #: build/models.py:294 order/models.py:129 part/models.py:1012
-#: part/templates/part/part_base.html:331 templates/js/translated/order.js:1467
+#: part/templates/part/part_base.html:305 templates/js/translated/order.js:1467
 msgid "Creation Date"
 msgstr ""
 
@@ -847,7 +847,7 @@ msgstr ""
 #: build/models.py:331 build/templates/build/detail.html:101
 #: company/templates/company/manufacturer_part.html:102
 #: company/templates/company/supplier_part.html:126
-#: part/templates/part/part_base.html:372 stock/models.py:667
+#: part/templates/part/part_base.html:346 stock/models.py:667
 #: stock/templates/stock/item_base.html:357
 msgid "External Link"
 msgstr ""
@@ -2684,7 +2684,7 @@ msgid "Parameter value"
 msgstr ""
 
 #: company/models.py:429 part/models.py:958 part/models.py:2566
-#: part/templates/part/part_base.html:306
+#: part/templates/part/part_base.html:280
 #: templates/InvenTree/settings/settings.html:325
 #: templates/js/translated/company.js:653 templates/js/translated/part.js:777
 msgid "Units"
@@ -2843,7 +2843,7 @@ msgid "Phone"
 msgstr ""
 
 #: company/templates/company/company_base.html:205
-#: part/templates/part/part_base.html:491
+#: part/templates/part/part_base.html:465
 msgid "Upload Image"
 msgstr ""
 
@@ -4106,7 +4106,7 @@ msgid "This field is required"
 msgstr ""
 
 #: part/bom.py:125 part/models.py:112 part/models.py:892
-#: part/templates/part/category.html:108 part/templates/part/part_base.html:356
+#: part/templates/part/category.html:108 part/templates/part/part_base.html:330
 msgid "Default Location"
 msgstr ""
 
@@ -4226,7 +4226,7 @@ msgid "Part description"
 msgstr ""
 
 #: part/models.py:846 part/templates/part/category.html:86
-#: part/templates/part/part_base.html:320
+#: part/templates/part/part_base.html:294
 msgid "Keywords"
 msgstr ""
 
@@ -4235,7 +4235,7 @@ msgid "Part keywords to improve visibility in search results"
 msgstr ""
 
 #: part/models.py:854 part/models.py:2392 part/models.py:2641
-#: part/templates/part/part_base.html:283
+#: part/templates/part/part_base.html:257
 #: part/templates/part/set_category.html:15
 #: templates/InvenTree/notifications/notifications.html:65
 #: templates/InvenTree/settings/settings.html:224
@@ -4247,7 +4247,7 @@ msgstr ""
 msgid "Part category"
 msgstr ""
 
-#: part/models.py:860 part/templates/part/part_base.html:292
+#: part/models.py:860 part/templates/part/part_base.html:266
 #: templates/js/translated/part.js:661 templates/js/translated/part.js:1317
 #: templates/js/translated/stock.js:1668
 msgid "IPN"
@@ -4261,7 +4261,7 @@ msgstr ""
 msgid "Part revision or version number"
 msgstr ""
 
-#: part/models.py:868 part/templates/part/part_base.html:299
+#: part/models.py:868 part/templates/part/part_base.html:273
 #: report/models.py:200 templates/js/translated/part.js:665
 msgid "Revision"
 msgstr ""
@@ -4270,7 +4270,7 @@ msgstr ""
 msgid "Where is this item normally stored?"
 msgstr ""
 
-#: part/models.py:937 part/templates/part/part_base.html:365
+#: part/models.py:937 part/templates/part/part_base.html:339
 msgid "Default Supplier"
 msgstr ""
 
@@ -5154,7 +5154,7 @@ msgid "Inactive"
 msgstr ""
 
 #: part/templates/part/part_base.html:160
-#: part/templates/part/part_base.html:599
+#: part/templates/part/part_base.html:573
 msgid "Show Part Details"
 msgstr ""
 
@@ -5168,64 +5168,46 @@ msgstr ""
 msgid "In Stock"
 msgstr ""
 
-#: part/templates/part/part_base.html:215 templates/InvenTree/index.html:178
-msgid "Required for Build Orders"
-msgstr ""
-
-#: part/templates/part/part_base.html:220
+#: part/templates/part/part_base.html:215
 msgid "Allocated to Build Orders"
 msgstr ""
 
 #: part/templates/part/part_base.html:224
-#: part/templates/part/part_base.html:247
-msgid "Required quantity has not been allocated"
-msgstr ""
-
-#: part/templates/part/part_base.html:226
-#: part/templates/part/part_base.html:249
-msgid "Required quantity has been allocated"
-msgstr ""
-
-#: part/templates/part/part_base.html:236
-msgid "Required for Sales Orders"
-msgstr ""
-
-#: part/templates/part/part_base.html:243
 msgid "Allocated to Sales Orders"
 msgstr ""
 
-#: part/templates/part/part_base.html:258 templates/js/translated/bom.js:937
+#: part/templates/part/part_base.html:232 templates/js/translated/bom.js:937
 msgid "Can Build"
 msgstr ""
 
-#: part/templates/part/part_base.html:264 templates/js/translated/part.js:515
+#: part/templates/part/part_base.html:238 templates/js/translated/part.js:515
 #: templates/js/translated/part.js:535 templates/js/translated/part.js:1228
 #: templates/js/translated/part.js:1400 templates/js/translated/part.js:1416
 msgid "Building"
 msgstr ""
 
-#: part/templates/part/part_base.html:313
+#: part/templates/part/part_base.html:287
 msgid "Minimum stock level"
 msgstr ""
 
-#: part/templates/part/part_base.html:342
+#: part/templates/part/part_base.html:316
 msgid "Latest Serial Number"
 msgstr ""
 
-#: part/templates/part/part_base.html:346
+#: part/templates/part/part_base.html:320
 #: stock/templates/stock/item_base.html:166
 msgid "Search for serial number"
 msgstr ""
 
-#: part/templates/part/part_base.html:469 part/templates/part/prices.html:147
+#: part/templates/part/part_base.html:443 part/templates/part/prices.html:147
 msgid "Calculate"
 msgstr ""
 
-#: part/templates/part/part_base.html:512
+#: part/templates/part/part_base.html:486
 msgid "No matching images found"
 msgstr ""
 
-#: part/templates/part/part_base.html:593
+#: part/templates/part/part_base.html:567
 msgid "Hide Part Details"
 msgstr ""
 
@@ -6729,6 +6711,10 @@ msgstr ""
 
 #: templates/InvenTree/index.html:168
 msgid "Depleted Stock"
+msgstr ""
+
+#: templates/InvenTree/index.html:178
+msgid "Required for Build Orders"
 msgstr ""
 
 #: templates/InvenTree/index.html:191
