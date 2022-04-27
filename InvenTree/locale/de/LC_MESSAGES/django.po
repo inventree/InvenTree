@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-27 04:31+0000\n"
+"POT-Creation-Date: 2022-04-27 06:03+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -842,7 +842,7 @@ msgid "Batch code for this build output"
 msgstr "Losnummer für dieses Endprodukt"
 
 #: build/models.py:294 order/models.py:129 part/models.py:1012
-#: part/templates/part/part_base.html:331 templates/js/translated/order.js:1467
+#: part/templates/part/part_base.html:305 templates/js/translated/order.js:1467
 msgid "Creation Date"
 msgstr "Erstelldatum"
 
@@ -887,7 +887,7 @@ msgstr "Nutzer der für diesen Bauauftrag zuständig ist"
 #: build/models.py:331 build/templates/build/detail.html:101
 #: company/templates/company/manufacturer_part.html:102
 #: company/templates/company/supplier_part.html:126
-#: part/templates/part/part_base.html:372 stock/models.py:667
+#: part/templates/part/part_base.html:346 stock/models.py:667
 #: stock/templates/stock/item_base.html:357
 msgid "External Link"
 msgstr "Externer Link"
@@ -2842,7 +2842,7 @@ msgid "Parameter value"
 msgstr "Parameterwert"
 
 #: company/models.py:429 part/models.py:958 part/models.py:2566
-#: part/templates/part/part_base.html:306
+#: part/templates/part/part_base.html:280
 #: templates/InvenTree/settings/settings.html:325
 #: templates/js/translated/company.js:653 templates/js/translated/part.js:777
 msgid "Units"
@@ -3007,7 +3007,7 @@ msgid "Phone"
 msgstr "Telefon"
 
 #: company/templates/company/company_base.html:205
-#: part/templates/part/part_base.html:491
+#: part/templates/part/part_base.html:465
 msgid "Upload Image"
 msgstr "Bild hochladen"
 
@@ -4356,7 +4356,7 @@ msgid "This field is required"
 msgstr "Dieses Feld ist erforderlich"
 
 #: part/bom.py:125 part/models.py:112 part/models.py:892
-#: part/templates/part/category.html:108 part/templates/part/part_base.html:356
+#: part/templates/part/category.html:108 part/templates/part/part_base.html:330
 msgid "Default Location"
 msgstr "Standard-Lagerort"
 
@@ -4476,7 +4476,7 @@ msgid "Part description"
 msgstr "Beschreibung des Teils"
 
 #: part/models.py:846 part/templates/part/category.html:86
-#: part/templates/part/part_base.html:320
+#: part/templates/part/part_base.html:294
 msgid "Keywords"
 msgstr "Schlüsselwörter"
 
@@ -4485,7 +4485,7 @@ msgid "Part keywords to improve visibility in search results"
 msgstr "Schlüsselworte um die Sichtbarkeit in Suchergebnissen zu verbessern"
 
 #: part/models.py:854 part/models.py:2392 part/models.py:2641
-#: part/templates/part/part_base.html:283
+#: part/templates/part/part_base.html:257
 #: part/templates/part/set_category.html:15
 #: templates/InvenTree/notifications/notifications.html:65
 #: templates/InvenTree/settings/settings.html:224
@@ -4497,7 +4497,7 @@ msgstr "Kategorie"
 msgid "Part category"
 msgstr "Teile-Kategorie"
 
-#: part/models.py:860 part/templates/part/part_base.html:292
+#: part/models.py:860 part/templates/part/part_base.html:266
 #: templates/js/translated/part.js:661 templates/js/translated/part.js:1317
 #: templates/js/translated/stock.js:1668
 msgid "IPN"
@@ -4511,7 +4511,7 @@ msgstr "Interne Teilenummer"
 msgid "Part revision or version number"
 msgstr "Revisions- oder Versionsnummer"
 
-#: part/models.py:868 part/templates/part/part_base.html:299
+#: part/models.py:868 part/templates/part/part_base.html:273
 #: report/models.py:200 templates/js/translated/part.js:665
 msgid "Revision"
 msgstr "Revision"
@@ -4520,7 +4520,7 @@ msgstr "Revision"
 msgid "Where is this item normally stored?"
 msgstr "Wo wird dieses Teil normalerweise gelagert?"
 
-#: part/models.py:937 part/templates/part/part_base.html:365
+#: part/models.py:937 part/templates/part/part_base.html:339
 msgid "Default Supplier"
 msgstr "Standard Zulieferer"
 
@@ -5461,7 +5461,7 @@ msgid "Inactive"
 msgstr "Inaktiv"
 
 #: part/templates/part/part_base.html:160
-#: part/templates/part/part_base.html:599
+#: part/templates/part/part_base.html:573
 #, fuzzy
 #| msgid "Part Details"
 msgid "Show Part Details"
@@ -5477,74 +5477,52 @@ msgstr "Dieses Teil ist eine Variante von %(link)s"
 msgid "In Stock"
 msgstr "Auf Lager"
 
-#: part/templates/part/part_base.html:215 templates/InvenTree/index.html:178
-msgid "Required for Build Orders"
-msgstr "Für Bauaufträge benötigt"
-
-#: part/templates/part/part_base.html:220
+#: part/templates/part/part_base.html:215
 #, fuzzy
 #| msgid "Allocated to Orders"
 msgid "Allocated to Build Orders"
 msgstr "Zu Bauaufträgen zugeordnet"
 
 #: part/templates/part/part_base.html:224
-#: part/templates/part/part_base.html:247
-#, fuzzy
-#| msgid "Required build quantity has not been completed"
-msgid "Required quantity has not been allocated"
-msgstr "Benötigte Teil-Anzahl wurde noch nicht fertiggestellt"
-
-#: part/templates/part/part_base.html:226
-#: part/templates/part/part_base.html:249
-#, fuzzy
-#| msgid "Required build quantity has not been completed"
-msgid "Required quantity has been allocated"
-msgstr "Benötigte Teil-Anzahl wurde noch nicht fertiggestellt"
-
-#: part/templates/part/part_base.html:236
-msgid "Required for Sales Orders"
-msgstr "Benötigt für Aufträge"
-
-#: part/templates/part/part_base.html:243
 #, fuzzy
 #| msgid "Allocated to Orders"
 msgid "Allocated to Sales Orders"
 msgstr "Zu Bauaufträgen zugeordnet"
 
-#: part/templates/part/part_base.html:258 templates/js/translated/bom.js:937
+#: part/templates/part/part_base.html:232 templates/js/translated/bom.js:937
 msgid "Can Build"
 msgstr "Herstellbar"
 
-#: part/templates/part/part_base.html:264 templates/js/translated/part.js:515
+#: part/templates/part/part_base.html:238 templates/js/translated/part.js:515
 #: templates/js/translated/part.js:535 templates/js/translated/part.js:1228
 #: templates/js/translated/part.js:1400 templates/js/translated/part.js:1416
 msgid "Building"
 msgstr "Im Bau"
 
-#: part/templates/part/part_base.html:313
+#: part/templates/part/part_base.html:287
 msgid "Minimum stock level"
 msgstr "Minimaler Bestand"
 
-#: part/templates/part/part_base.html:342
+#: part/templates/part/part_base.html:316
 msgid "Latest Serial Number"
 msgstr "letzte Seriennummer"
 
-#: part/templates/part/part_base.html:346
+#: part/templates/part/part_base.html:320
 #: stock/templates/stock/item_base.html:166
 #, fuzzy
 #| msgid "Serial number"
 msgid "Search for serial number"
 msgstr "Seriennummer"
 
-#: part/templates/part/part_base.html:469 part/templates/part/prices.html:147
+#: part/templates/part/part_base.html:443 part/templates/part/prices.html:147
 msgid "Calculate"
 msgstr "Berechnen"
 
-#: part/templates/part/part_base.html:512
+#: part/templates/part/part_base.html:486
 msgid "No matching images found"
 msgstr "Keine passenden Bilder gefunden"
 
-#: part/templates/part/part_base.html:593
+#: part/templates/part/part_base.html:567
 #, fuzzy
 #| msgid "Part Details"
 msgid "Hide Part Details"
@@ -7165,6 +7143,10 @@ msgstr "kürzlich aktualisiert"
 #: templates/InvenTree/index.html:168
 msgid "Depleted Stock"
 msgstr "Verbrauchter Bestand"
+
+#: templates/InvenTree/index.html:178
+msgid "Required for Build Orders"
+msgstr "Für Bauaufträge benötigt"
 
 #: templates/InvenTree/index.html:191
 msgid "Expired Stock"
@@ -10869,6 +10851,19 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:218
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
+#, fuzzy
+#~| msgid "Required build quantity has not been completed"
+#~ msgid "Required quantity has not been allocated"
+#~ msgstr "Benötigte Teil-Anzahl wurde noch nicht fertiggestellt"
+
+#, fuzzy
+#~| msgid "Required build quantity has not been completed"
+#~ msgid "Required quantity has been allocated"
+#~ msgstr "Benötigte Teil-Anzahl wurde noch nicht fertiggestellt"
+
+#~ msgid "Required for Sales Orders"
+#~ msgstr "Benötigt für Aufträge"
 
 #~ msgid "Added new price break"
 #~ msgstr "neue Preisstaffel hinzufügt"
