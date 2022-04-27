@@ -915,7 +915,7 @@ PLUGIN_TESTING_SETUP = get_setting('PLUGIN_TESTING_SETUP', False)  # load plugin
 PLUGIN_RETRY = get_setting('PLUGIN_RETRY', 5)  # how often should plugin loading be tried?
 PLUGIN_FILE_CHECKED = False                    # Was the plugin file checked?
 
-# user interface customization values
+# User interface customization values
 CUSTOMIZE = get_setting(
     'INVENTREE_CUSTOMIZE',
     CONFIG.get('customize', {}),
