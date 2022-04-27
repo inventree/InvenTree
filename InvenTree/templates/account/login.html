@@ -1,7 +1,7 @@
 {% extends "account/base.html" %}
 
 {% load inventree_extras %}
-{% load i18n account socialaccount crispy_forms_tags inventree_extras markdownify %}
+{% load i18n account socialaccount crispy_forms_tags inventree_extras %}
 
 {% block head_title %}{% trans "Sign In" %}{% endblock %}
 
@@ -37,8 +37,7 @@ for a account and sign in below:{% endblocktrans %}</p>
 
   <hr>
   {% if login_message %}
-  {{ login_message|markdownify }}
-  <hr>
+  <div>{{ login_message }}<hr></div>
   {% endif %}
   <div class="btn-group float-right" role="group">
     <button class="btn btn-success" type="submit">{% trans "Sign In" %}</button>
