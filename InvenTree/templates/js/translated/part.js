@@ -672,7 +672,20 @@ function loadPartVariantTable(table, partId, options={}) {
             field: 'in_stock',
             title: '{% trans "Stock" %}',
             formatter: function(value, row) {
-                return renderLink(value, `/part/${row.pk}/?display=part-stock`);
+
+                var base_stock = row.in_stock;
+                var variant_stock = row.variant_stock || 0;
+
+                var total = base_stock + variant_stock;
+
+                var text = `${total}`;
+
+                if (variant_stock > 0) {
+                    text = `<em>${text}</em>`;
+                    text += `<span title='{% trans "Includes variant stock" %}' class='fas fa-info-circle float-right icon-blue'></span>`;
+                }
+
+                return renderLink(text, `/part/${row.pk}/?display=part-stock`);
             }
         }
     ];
@@ -1917,7 +1930,9 @@ function loadPriceBreakTable(table, options) {
         formatNoMatches: function() {
             return `{% trans "No ${human_name} information found" %}`;
         },
-        queryParams: {part: options.part},
+        queryParams: {
+            part: options.part
+        },
         url: options.url,
         onLoadSuccess: function(tableData) {
             if (linkedGraph) {
@@ -2023,36 +2038,45 @@ function initPriceBreakSet(table, options) {
     }
 
     pb_new_btn.click(function() {
-        launchModalForm(pb_new_url,
-            {
-                success: reloadPriceBreakTable,
-                data: {
-                    part: part_id,
-                }
-            }
-        );
+
+        constructForm(pb_new_url, {
+            fields: {
+                part: {
+                    hidden: true,
+                    value: part_id,
+                },
+                quantity: {},
+                price: {},
+                price_currency: {},
+            },
+            method: 'POST',
+            title: '{% trans "Add Price Break" %}',
+            onSuccess: reloadPriceBreakTable,
+        });
     });
 
     table.on('click', `.button-${pb_url_slug}-delete`, function() {
         var pk = $(this).attr('pk');
 
-        launchModalForm(
-            `/part/${pb_url_slug}/${pk}/delete/`,
-            {
-                success: reloadPriceBreakTable
-            }
-        );
+        constructForm(`${pb_url}${pk}/`, {
+            method: 'DELETE',
+            title: '{% trans "Delete Price Break" %}',
+            onSuccess: reloadPriceBreakTable,
+        });
     });
 
     table.on('click', `.button-${pb_url_slug}-edit`, function() {
         var pk = $(this).attr('pk');
 
-        launchModalForm(
-            `/part/${pb_url_slug}/${pk}/edit/`,
-            {
-                success: reloadPriceBreakTable
-            }
-        );
+        constructForm(`${pb_url}${pk}/`, {
+            fields: {
+                quantity: {},
+                price: {},
+                price_currency: {},
+            },
+            title: '{% trans "Edit Price Break" %}',
+            onSuccess: reloadPriceBreakTable,
+        });
     });
 }
 
