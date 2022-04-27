@@ -2,7 +2,6 @@
 {% load inventree_extras %}
 {% load plugin_extras %}
 {% load i18n %}
-{% load markdownify %}
 
 {% settings_value 'BARCODE_ENABLE' as barcodes %}
 {% settings_value 'STICKY_HEADER' user=request.user as sticky %}
@@ -89,8 +88,8 @@
     </div>
     {% if navbar_message %}
       {% include "spacer.html" %}
-      <div class='flex'>
-        {{ navbar_message|markdownify }}
+      <div class='flex justify-content-center'>
+        {{ navbar_message }}
       </div>
       {% include "spacer.html" %}
       {% include "spacer.html" %}
