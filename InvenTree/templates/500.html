@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load inventree_extras %}
 
 {% block page_title %}
-InvenTree | {% trans "Internal Server Error" %}
+{% inventree_title %} | {% trans "Internal Server Error" %}
 {% endblock %}
 
 {% block content %}
@@ -11,7 +12,7 @@ InvenTree | {% trans "Internal Server Error" %}
     <h3>{% trans "Internal Server Error" %}</h3>
 
     <div class='alert alert-danger alert-block'>
-        {% trans "The InvenTree server raised an internal error" %}<br>
+        {% blocktrans %}The {{ inventree_title }} server raised an internal error{% endblocktrans %}<br>
         {% trans "Refer to the error log in the admin interface for further details" %}
     </div>
 </div>

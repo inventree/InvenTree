@@ -3,6 +3,9 @@
 {% load crispy_forms_tags %}
 {% load inventree_extras %}
 
+{% settings_value "PART_INTERNAL_PRICE" as show_internal_price %}
+
+{% if show_price_history %}
 <div class='panel-heading'>
     <h4>{% trans "Pricing Information" %}</h4>
 </div>
@@ -43,7 +46,7 @@
                 {% endif %}
             {% endif %}
         
-            {% if part.bom_count > 0 %}
+            {% if part.assembly and part.bom_count > 0 %}
                 {% if min_total_bom_price %}
                     <tr>
                         <td><strong>{% trans 'BOM Pricing' %}</strong>
@@ -147,7 +150,7 @@
     </div>
 </div>
 
-{% settings_value "PART_INTERNAL_PRICE" as show_internal_price %}
+{% endif %}
 
 {% if part.purchaseable and roles.purchase_order.view %}
 <a class="anchor" id="supplier-cost"></a>
@@ -170,7 +173,7 @@
     </div>
 </div>
 
-{% if price_history %}
+{% if show_price_history %}
 <a class="anchor" id="purchase-price"></a>
 <div class='panel-heading'>
     <h4>{% trans "Purchase Price" %}  
@@ -279,6 +282,7 @@
     </div>
 </div>
 
+{% if show_price_history %}
 <a class="anchor" id="sale-price"></a>
 <div class='panel-heading'>
     <h4>{% trans "Sale Price" %}  
@@ -298,3 +302,5 @@
     {% endif %}
 </div>
 {% endif %}
+{% endif %}
+    

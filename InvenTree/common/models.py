@@ -684,7 +684,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'INVENTREE_INSTANCE': {
-            'name': _('InvenTree Instance Name'),
+            'name': _('Server Instance Name'),
             'default': 'InvenTree server',
             'description': _('String descriptor for the server instance'),
         },
@@ -692,6 +692,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'INVENTREE_INSTANCE_TITLE': {
             'name': _('Use instance name'),
             'description': _('Use the instance name in the title-bar'),
+            'validator': bool,
+            'default': False,
+        },
+
+        'INVENTREE_RESTRICT_ABOUT': {
+            'name': _('Restrict showing `about`'),
+            'description': _('Show the `about` modal only to superusers'),
             'validator': bool,
             'default': False,
         },
@@ -930,6 +937,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Enable generation of test reports'),
             'default': True,
             'validator': bool,
+        },
+
+        'STOCK_BATCH_CODE_TEMPLATE': {
+            'name': _('Batch Code Template'),
+            'description': _('Template for generating default batch codes for stock items'),
+            'default': '',
         },
 
         'STOCK_ENABLE_EXPIRY': {
@@ -1347,7 +1360,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
 
         'STICKY_HEADER': {
             'name': _('Fixed Navbar'),
-            'description': _('InvenTree navbar position is fixed to the top of the screen'),
+            'description': _('The navbar position is fixed to the top of the screen'),
             'default': False,
             'validator': bool,
         },
