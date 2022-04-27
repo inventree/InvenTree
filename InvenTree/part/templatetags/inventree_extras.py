@@ -352,21 +352,24 @@ def visible_global_settings(*args, **kwargs):
 
 
 @register.simple_tag()
-def progress_bar(val, max, *args, **kwargs):
+def progress_bar(val, max_val, *args, **kwargs):
     """
     Render a progress bar element
     """
 
     item_id = kwargs.get('id', 'progress-bar')
 
-    if val > max:
+    val = InvenTree.helpers.normalize(val)
+    max_val = InvenTree.helpers.normalize(max_val)
+
+    if val > max_val:
         style = 'progress-bar-over'
-    elif val < max:
+    elif val < max_val:
         style = 'progress-bar-under'
     else:
         style = ''
 
-    percent = float(val / max) * 100
+    percent = float(val / max_val) * 100
 
     if percent > 100:
         percent = 100
@@ -383,7 +386,7 @@ def progress_bar(val, max, *args, **kwargs):
     html = f"""
     <div id='{item_id}' class='progress' style='{" ".join(style_tags)}'>
         <div class='progress-bar {style}' role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width:{percent}%'></div>
-        <div class='progress-value'>{val} / {max}</div>
+        <div class='progress-value'>{val} / {max_val}</div>
     </div>
     """
 
