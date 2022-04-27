@@ -922,9 +922,8 @@ CUSTOMIZE = get_setting(
 )
 
 CUSTOM_LOGO = get_setting(
-    'INVENTREE_LOGO',
-    CONFIG.get('logo', False),
-    False
+    'INVENTREE_CUSTOM_LOGO',
+    CUSTOMIZE.get('logo', False)
 )
 
 # check that the logo-file exsists in media
