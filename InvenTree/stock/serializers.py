@@ -18,6 +18,7 @@ import common.models
 import company.models
 import InvenTree.helpers
 import InvenTree.serializers
+import InvenTree.status_codes
 import part.models as part_models
 import stock.filters
 from company.serializers import SupplierPartSerializer
@@ -481,6 +482,7 @@ class InstallStockItemSerializer(serializers.Serializer):
 
     note = serializers.CharField(
         label=_('Note'),
+        help_text=_('Add transaction note (optional)'),
         required=False,
         allow_blank=True,
     )
@@ -640,6 +642,66 @@ class ReturnStockItemSerializer(serializers.Serializer):
             notes=notes
         )
 
+
+class StockChangeStatusSerializer(serializers.Serializer):
+    """Serializer for changing status of multiple StockItem objects"""
+
+    class Meta:
+        """Metaclass options"""
+        fields = [
+            'items',
+            'status',
+            'note',
+        ]
+    
+    items = serializers.PrimaryKeyRelatedField(
+        queryset=StockItem.objects.all(),
+        many=True,
+        required=True,
+        allow_null=False,
+        label=_('Stock Items'),
+        help_text=_('Select stock items to change status'),
+    )
+
+    def validate_items(self, items):
+        """Validate the selected stock items"""
+
+        if len(items) == 0:
+            raise ValidationError(_("No stock items selected"))
+
+        return items
+
+    status = serializers.ChoiceField(
+        choices=InvenTree.status_codes.StockStatus.items(),
+        default=InvenTree.status_codes.StockStatus.OK.value,
+        label=_('Status'),
+    )
+
+    note = serializers.CharField(
+        label=_('Notes'),
+        help_text=_('Add transaction note (optional)'),
+        required=False, allow_blank=True,
+    )
+
+    def save(self):
+        """Save the serializer to change the status of the selected stock items"""
+
+        data = self.validated_data
+
+        items = data['items']
+        status = data['status']
+
+        request = self.context['request']
+        user = getattr(request, 'user', None)
+
+        note = data.get('note', '')
+
+        items_to_update = []
+        transaction_notes = []
+
+        for item in items:
+            print("item:", item)
+            
 
 class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for a simple tree view."""
