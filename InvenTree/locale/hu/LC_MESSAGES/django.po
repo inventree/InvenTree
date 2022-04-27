@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-27 06:03+0000\n"
-"PO-Revision-Date: 2022-04-27 06:14\n"
+"PO-Revision-Date: 2022-04-27 08:09\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -361,11 +361,11 @@ msgstr "Lengyel"
 
 #: InvenTree/settings.py:690
 msgid "Portuguese"
-msgstr ""
+msgstr "Portugál"
 
 #: InvenTree/settings.py:691
 msgid "Portuguese (Brazilian)"
-msgstr ""
+msgstr "Portugál (Brazíliai)"
 
 #: InvenTree/settings.py:692
 msgid "Russian"
@@ -1887,11 +1887,11 @@ msgstr "Teszt riportok előállításának engedélyezése"
 
 #: common/models.py:936
 msgid "Batch Code Template"
-msgstr ""
+msgstr "Batch kód sablon"
 
 #: common/models.py:937
 msgid "Template for generating default batch codes for stock items"
-msgstr ""
+msgstr "Sablon a készlet tételekhez alapértelmezett batch kódok előállításához"
 
 #: common/models.py:942
 msgid "Stock Expiry"
@@ -7986,12 +7986,12 @@ msgstr "Nincs szabad"
 
 #: templates/js/translated/bom.js:838 templates/js/translated/build.js:1473
 msgid "Includes variant and substitute stock"
-msgstr ""
+msgstr "Változatokkal és helyettesítőkkel együtt"
 
 #: templates/js/translated/bom.js:840 templates/js/translated/build.js:1475
 #: templates/js/translated/part.js:685
 msgid "Includes variant stock"
-msgstr ""
+msgstr "Változatokkal együtt"
 
 #: templates/js/translated/bom.js:842 templates/js/translated/build.js:1477
 msgid "Includes substitute stock"
@@ -8183,11 +8183,11 @@ msgstr "Szükséges/db"
 
 #: templates/js/translated/build.js:1463
 msgid "Insufficient stock available"
-msgstr ""
+msgstr "Nincs elegendő"
 
 #: templates/js/translated/build.js:1465
 msgid "Sufficient stock available"
-msgstr ""
+msgstr "Van elegendő"
 
 #: templates/js/translated/build.js:1494 templates/js/translated/build.js:1749
 #: templates/js/translated/build.js:2200 templates/js/translated/order.js:2446
