@@ -25,6 +25,7 @@ import moneyed
 import yaml
 from django.utils.translation import gettext_lazy as _
 from django.contrib.messages import constants as messages
+from django.core.files.storage import default_storage
 import django.conf.locale
 
 from .config import get_base_dir, get_config_file, get_plugin_file, get_setting
@@ -289,6 +290,7 @@ MIDDLEWARE = CONFIG.get('middleware', [
     'django.middleware.csrf.CsrfViewMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'InvenTree.middleware.InvenTreeRemoteUserMiddleware',       # Remote / proxy auth
     'django_otp.middleware.OTPMiddleware',                      # MFA support
     'InvenTree.middleware.CustomAllauthTwoFactorMiddleware',    # Flow control for allauth
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -302,6 +304,7 @@ MIDDLEWARE = CONFIG.get('middleware', [
 MIDDLEWARE.append('error_report.middleware.ExceptionProcessor')
 
 AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
+    'django.contrib.auth.backends.RemoteUserBackend',           # proxy login
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',      # SSO login via external providers
 ])
@@ -687,7 +690,8 @@ LANGUAGES = [
     ('nl', _('Dutch')),
     ('no', _('Norwegian')),
     ('pl', _('Polish')),
-    ('pt', _('Portugese')),
+    ('pt', _('Portuguese')),
+    ('pt-BR', _('Portuguese (Brazilian)')),
     ('ru', _('Russian')),
     ('sv', _('Swedish')),
     ('th', _('Thai')),
@@ -853,6 +857,10 @@ ACCOUNT_FORMS = {
 SOCIALACCOUNT_ADAPTER = 'InvenTree.forms.CustomSocialAccountAdapter'
 ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'
 
+# login settings
+REMOTE_LOGIN = get_setting('INVENTREE_REMOTE_LOGIN', CONFIG.get('remote_login', False))
+REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', CONFIG.get('remote_login_header', 'REMOTE_USER'))
+
 # Markdownx configuration
 # Ref: https://neutronx.github.io/django-markdownx/customization/
 MARKDOWNX_MEDIA_PATH = datetime.now().strftime('markdownx/%Y/%m/%d')
@@ -912,3 +920,20 @@ PLUGIN_TESTING = get_setting('PLUGIN_TESTING', TESTING)  # are plugins beeing te
 PLUGIN_TESTING_SETUP = get_setting('PLUGIN_TESTING_SETUP', False)  # load plugins from setup hooks in testing?
 PLUGIN_RETRY = get_setting('PLUGIN_RETRY', 5)  # how often should plugin loading be tried?
 PLUGIN_FILE_CHECKED = False                    # Was the plugin file checked?
+
+# user interface customization values
+CUSTOMIZE = get_setting(
+    'INVENTREE_CUSTOMIZE',
+    CONFIG.get('customize', {}),
+    {}
+)
+
+CUSTOM_LOGO = get_setting(
+    'INVENTREE_CUSTOM_LOGO',
+    CUSTOMIZE.get('logo', False)
+)
+
+# check that the logo-file exsists in media
+if CUSTOM_LOGO and not default_storage.exists(CUSTOM_LOGO):
+    CUSTOM_LOGO = False
+    logger.warning("The custom logo file could not be found in the default media storage")
