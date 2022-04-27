@@ -177,6 +177,7 @@
   fields:
     name: 'Green chair variant'
     variant_of: 10003
+    is_template: true
     category: 7
     trackable: true
     tree_id: 1

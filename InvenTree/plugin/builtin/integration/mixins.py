@@ -504,10 +504,10 @@ class APICallMixin:
 
     @property
     def api_headers(self):
-        return {
-            self.API_TOKEN: self.get_setting(self.API_TOKEN_SETTING),
-            'Content-Type': 'application/json'
-        }
+        headers = {'Content-Type': 'application/json'}
+        if getattr(self, 'API_TOKEN_SETTING'):
+            headers[self.API_TOKEN] = self.get_setting(self.API_TOKEN_SETTING)
+        return headers
 
     def api_build_url_args(self, arguments):
         groups = []
@@ -515,16 +515,21 @@ class APICallMixin:
             groups.append(f'{key}={",".join([str(a) for a in val])}')
         return f'?{"&".join(groups)}'
 
-    def api_call(self, endpoint, method: str = 'GET', url_args=None, data=None, headers=None, simple_response: bool = True):
+    def api_call(self, endpoint, method: str = 'GET', url_args=None, data=None, headers=None, simple_response: bool = True, endpoint_is_url: bool = False):
         if url_args:
             endpoint += self.api_build_url_args(url_args)
 
         if headers is None:
             headers = self.api_headers
 
+        if endpoint_is_url:
+            url = endpoint
+        else:
+            url = f'{self.api_url}/{endpoint}'
+
         # build kwargs for call
         kwargs = {
-            'url': f'{self.api_url}/{endpoint}',
+            'url': url,
             'headers': headers,
         }
         if data:

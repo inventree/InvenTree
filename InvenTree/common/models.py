@@ -939,6 +939,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'STOCK_BATCH_CODE_TEMPLATE': {
+            'name': _('Batch Code Template'),
+            'description': _('Template for generating default batch codes for stock items'),
+            'default': '',
+        },
+
         'STOCK_ENABLE_EXPIRY': {
             'name': _('Stock Expiry'),
             'description': _('Enable stock expiry functionality'),
