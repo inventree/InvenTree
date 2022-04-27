@@ -15,6 +15,8 @@ def _convert_model(apps, line_item_ref, extra_line_ref, price_ref):
     OrderExtraLine = apps.get_model('order', extra_line_ref)
 
     items_to_change = OrderLineItem.objects.filter(part=None)
+    if items_to_change.count() == 0:
+        return
 
     print(f'\nFound {items_to_change.count()} old {line_item_ref} instance(s)')
     print(f'Starting to convert - currently at {OrderExtraLine.objects.all().count()} {extra_line_ref} / {OrderLineItem.objects.all().count()} {line_item_ref} instance(s)')
