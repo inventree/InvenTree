@@ -3,24 +3,24 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-27 11:51+0000\n"
-"PO-Revision-Date: 2022-04-27 11:55\n"
+"POT-Creation-Date: 2022-04-27 13:25+0000\n"
+"PO-Revision-Date: 2022-04-27 13:33\n"
 "Last-Translator: \n"
-"Language-Team: Portuguese, Brazilian\n"
-"Language: pt_BR\n"
+"Language-Team: Portuguese\n"
+"Language: pt_PT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
-"X-Crowdin-Language: pt-BR\n"
+"X-Crowdin-Language: pt-PT\n"
 "X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 138\n"
 
 #: InvenTree/api.py:57
 msgid "API endpoint not found"
-msgstr "API endpoint não encontrado"
+msgstr "Endpoint da API não encontrado"
 
 #: InvenTree/api.py:103
 msgid "No action specified"
@@ -32,7 +32,7 @@ msgstr "Nenhuma ação correspondente encontrada"
 
 #: InvenTree/fields.py:100
 msgid "Enter date"
-msgstr "Insira uma Data"
+msgstr "Insira a data"
 
 #: InvenTree/forms.py:126 order/forms.py:24 order/forms.py:35 order/forms.py:46
 #: order/forms.py:57 templates/account/email_confirm.html:20
@@ -54,23 +54,23 @@ msgstr "Digite a senha"
 
 #: InvenTree/forms.py:175
 msgid "Enter new password"
-msgstr "Insira uma nova senha"
+msgstr "Digite uma nova senha"
 
 #: InvenTree/forms.py:182
 msgid "Confirm password"
-msgstr "Confirmar senha"
+msgstr "Confirme a senha"
 
 #: InvenTree/forms.py:183
 msgid "Confirm new password"
-msgstr "Confirmar nova senha"
+msgstr "Confirme a nova senha"
 
 #: InvenTree/forms.py:215
 msgid "Select Category"
-msgstr "Selecionar Categoria"
+msgstr "Selecione a Categoria"
 
 #: InvenTree/forms.py:236
 msgid "Email (again)"
-msgstr "E-mail (novamente)"
+msgstr "Email (novamente)"
 
 #: InvenTree/forms.py:240
 msgid "Email address confirmation"
@@ -78,58 +78,58 @@ msgstr "Confirmação do endereço de email"
 
 #: InvenTree/forms.py:260
 msgid "You must type the same email each time."
-msgstr ""
+msgstr "Você deve digitar o mesmo email cada vez."
 
 #: InvenTree/helpers.py:442
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
-msgstr ""
+msgstr "Número de série duplicado: {sn}"
 
 #: InvenTree/helpers.py:449 order/models.py:282 order/models.py:435
 #: stock/views.py:993
 msgid "Invalid quantity provided"
-msgstr ""
+msgstr "A quantidade fornecida é inválida"
 
 #: InvenTree/helpers.py:452
 msgid "Empty serial number string"
-msgstr ""
+msgstr "Número de série vazio"
 
 #: InvenTree/helpers.py:474 InvenTree/helpers.py:477 InvenTree/helpers.py:480
 #: InvenTree/helpers.py:504
 #, python-brace-format
 msgid "Invalid group: {g}"
-msgstr ""
+msgstr "Grupo inválido: {g}"
 
 #: InvenTree/helpers.py:518
 #, python-brace-format
 msgid "Invalid/no group {group}"
-msgstr ""
+msgstr "Inválido/sem grupo {group}"
 
 #: InvenTree/helpers.py:524
 msgid "No serial numbers found"
-msgstr ""
+msgstr "Número de série não encontrado"
 
 #: InvenTree/helpers.py:528
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
-msgstr ""
+msgstr "Quantidade de números de série únivocos ({s}) devem corresponder à quantidade ({q})"
 
 #: InvenTree/models.py:185
 msgid "Missing file"
-msgstr ""
+msgstr "Arquivo não informado"
 
 #: InvenTree/models.py:186
 msgid "Missing external link"
-msgstr ""
+msgstr "Link externo não informado"
 
 #: InvenTree/models.py:197 stock/models.py:2202
 #: templates/js/translated/attachment.js:119
 msgid "Attachment"
-msgstr ""
+msgstr "Anexo"
 
 #: InvenTree/models.py:198
 msgid "Select file to attach"
-msgstr ""
+msgstr "Selecione o arquivo para anexar"
 
 #: InvenTree/models.py:204 company/models.py:131 company/models.py:348
 #: company/models.py:564 order/models.py:127 part/models.py:873
@@ -137,20 +137,20 @@ msgstr ""
 #: templates/js/translated/company.js:540
 #: templates/js/translated/company.js:829 templates/js/translated/part.js:1436
 msgid "Link"
-msgstr ""
+msgstr "Link"
 
 #: InvenTree/models.py:205 build/models.py:332 part/models.py:874
 #: stock/models.py:669
 msgid "Link to external URL"
-msgstr ""
+msgstr "Link para URL externa"
 
 #: InvenTree/models.py:208 templates/js/translated/attachment.js:163
 msgid "Comment"
-msgstr ""
+msgstr "Comentário"
 
 #: InvenTree/models.py:208
 msgid "File comment"
-msgstr ""
+msgstr "Comentário do arquivo"
 
 #: InvenTree/models.py:214 InvenTree/models.py:215 common/models.py:1409
 #: common/models.py:1410 common/models.py:1631 common/models.py:1632
@@ -159,40 +159,40 @@ msgstr ""
 #: report/templates/report/inventree_test_report_base.html:96
 #: templates/js/translated/stock.js:2517
 msgid "User"
-msgstr ""
+msgstr "Usuário"
 
 #: InvenTree/models.py:218
 msgid "upload date"
-msgstr ""
+msgstr "data de upload"
 
 #: InvenTree/models.py:241
 msgid "Filename must not be empty"
-msgstr ""
+msgstr "O nome do arquivo não pode estar vazio"
 
 #: InvenTree/models.py:264
 msgid "Invalid attachment directory"
-msgstr ""
+msgstr "Pasta de anexos inválida"
 
 #: InvenTree/models.py:274
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr ""
+msgstr "O nome do arquivo contém caracteres inválidos '{c}'"
 
 #: InvenTree/models.py:277
 msgid "Filename missing extension"
-msgstr ""
+msgstr "O nome do arquivo não possui extensão"
 
 #: InvenTree/models.py:284
 msgid "Attachment with this filename already exists"
-msgstr ""
+msgstr "Anexo com este nome de arquivo já existe"
 
 #: InvenTree/models.py:291
 msgid "Error renaming file"
-msgstr ""
+msgstr "Erro ao renomear arquivo"
 
 #: InvenTree/models.py:326
 msgid "Invalid choice"
-msgstr ""
+msgstr "Escolha inválida"
 
 #: InvenTree/models.py:342 InvenTree/models.py:343 common/models.py:1617
 #: company/models.py:415 label/models.py:112 part/models.py:817
@@ -207,7 +207,7 @@ msgstr ""
 #: templates/js/translated/part.js:762 templates/js/translated/part.js:1743
 #: templates/js/translated/stock.js:2287
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #: InvenTree/models.py:349 build/models.py:209
 #: build/templates/build/detail.html:24 company/models.py:354
@@ -231,43 +231,43 @@ msgstr ""
 #: templates/js/translated/part.js:1831 templates/js/translated/stock.js:1685
 #: templates/js/translated/stock.js:2299 templates/js/translated/stock.js:2354
 msgid "Description"
-msgstr ""
+msgstr "Descrição"
 
 #: InvenTree/models.py:350
 msgid "Description (optional)"
-msgstr ""
+msgstr "Descrição (opcional)"
 
 #: InvenTree/models.py:358
 msgid "parent"
-msgstr ""
+msgstr "pai"
 
 #: InvenTree/serializers.py:65 part/models.py:2891
 msgid "Must be a valid number"
-msgstr ""
+msgstr "Deve ser um número válido"
 
 #: InvenTree/serializers.py:299
 msgid "Filename"
-msgstr ""
+msgstr "Nome do arquivo"
 
 #: InvenTree/serializers.py:334
 msgid "Invalid value"
-msgstr ""
+msgstr "Valor inválido"
 
 #: InvenTree/serializers.py:355
 msgid "Data File"
-msgstr ""
+msgstr "Arquivo de dados"
 
 #: InvenTree/serializers.py:356
 msgid "Select data file for upload"
-msgstr ""
+msgstr "Selecione o arquivo de dados para upload"
 
 #: InvenTree/serializers.py:380
 msgid "Unsupported file type"
-msgstr ""
+msgstr "Tipo do arquivo não suportado"
 
 #: InvenTree/serializers.py:386
 msgid "File is too large"
-msgstr ""
+msgstr "O arquivo é muito grande"
 
 #: InvenTree/serializers.py:407
 msgid "No columns found in file"
@@ -295,99 +295,99 @@ msgstr ""
 msgid "Duplicate column: '{col}'"
 msgstr ""
 
-#: InvenTree/settings.py:675
+#: InvenTree/settings.py:677
 msgid "Czech"
 msgstr ""
 
-#: InvenTree/settings.py:676
+#: InvenTree/settings.py:678
 msgid "German"
 msgstr ""
 
-#: InvenTree/settings.py:677
+#: InvenTree/settings.py:679
 msgid "Greek"
 msgstr ""
 
-#: InvenTree/settings.py:678
+#: InvenTree/settings.py:680
 msgid "English"
 msgstr ""
 
-#: InvenTree/settings.py:679
+#: InvenTree/settings.py:681
 msgid "Spanish"
 msgstr ""
 
-#: InvenTree/settings.py:680
+#: InvenTree/settings.py:682
 msgid "Spanish (Mexican)"
 msgstr ""
 
-#: InvenTree/settings.py:681
+#: InvenTree/settings.py:683
 msgid "Farsi / Persian"
 msgstr ""
 
-#: InvenTree/settings.py:682
+#: InvenTree/settings.py:684
 msgid "French"
 msgstr ""
 
-#: InvenTree/settings.py:683
+#: InvenTree/settings.py:685
 msgid "Hebrew"
 msgstr ""
 
-#: InvenTree/settings.py:684
+#: InvenTree/settings.py:686
 msgid "Hungarian"
 msgstr ""
 
-#: InvenTree/settings.py:685
+#: InvenTree/settings.py:687
 msgid "Italian"
 msgstr ""
 
-#: InvenTree/settings.py:686
+#: InvenTree/settings.py:688
 msgid "Japanese"
 msgstr ""
 
-#: InvenTree/settings.py:687
+#: InvenTree/settings.py:689
 msgid "Korean"
 msgstr ""
 
-#: InvenTree/settings.py:688
+#: InvenTree/settings.py:690
 msgid "Dutch"
 msgstr ""
 
-#: InvenTree/settings.py:689
+#: InvenTree/settings.py:691
 msgid "Norwegian"
 msgstr ""
 
-#: InvenTree/settings.py:690
+#: InvenTree/settings.py:692
 msgid "Polish"
 msgstr ""
 
-#: InvenTree/settings.py:691
+#: InvenTree/settings.py:693
 msgid "Portuguese"
 msgstr ""
 
-#: InvenTree/settings.py:692
+#: InvenTree/settings.py:694
 msgid "Portuguese (Brazilian)"
 msgstr ""
 
-#: InvenTree/settings.py:693
+#: InvenTree/settings.py:695
 msgid "Russian"
 msgstr ""
 
-#: InvenTree/settings.py:694
+#: InvenTree/settings.py:696
 msgid "Swedish"
 msgstr ""
 
-#: InvenTree/settings.py:695
+#: InvenTree/settings.py:697
 msgid "Thai"
 msgstr ""
 
-#: InvenTree/settings.py:696
+#: InvenTree/settings.py:698
 msgid "Turkish"
 msgstr ""
 
-#: InvenTree/settings.py:697
+#: InvenTree/settings.py:699
 msgid "Vietnamese"
 msgstr ""
 
-#: InvenTree/settings.py:698
+#: InvenTree/settings.py:700
 msgid "Chinese"
 msgstr ""
 
