@@ -262,6 +262,15 @@ class CategoryTree(generics.ListAPIView):
     ordering = ['level', 'name']
 
 
+class PartSalePriceDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Detail endpoint for PartSellPriceBreak model
+    """
+
+    queryset = PartSellPriceBreak.objects.all()
+    serializer_class = part_serializers.PartSalePriceSerializer
+
+
 class PartSalePriceList(generics.ListCreateAPIView):
     """
     API endpoint for list view of PartSalePriceBreak model
@@ -277,6 +286,15 @@ class PartSalePriceList(generics.ListCreateAPIView):
     filter_fields = [
         'part',
     ]
+
+
+class PartInternalPriceDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Detail endpoint for PartInternalPriceBreak model
+    """
+
+    queryset = PartInternalPriceBreak.objects.all()
+    serializer_class = part_serializers.PartInternalPriceSerializer
 
 
 class PartInternalPriceList(generics.ListCreateAPIView):
@@ -1175,6 +1193,18 @@ class PartList(generics.ListCreateAPIView):
             except (ValueError, Part.DoesNotExist):
                 pass
 
+        # Filter by 'variant_of'
+        # Note that this is subtly different from 'ancestor' filter (above)
+        variant_of = params.get('variant_of', None)
+
+        if variant_of is not None:
+            try:
+                template = Part.objects.get(pk=variant_of)
+                variants = template.get_children()
+                queryset = queryset.filter(pk__in=[v.pk for v in variants])
+            except (ValueError, Part.DoesNotExist):
+                pass
+
         # Filter only parts which are in the "BOM" for a given part
         in_bom_for = params.get('in_bom_for', None)
 
@@ -1337,10 +1367,6 @@ class PartList(generics.ListCreateAPIView):
         DjangoFilterBackend,
         filters.SearchFilter,
         filters.OrderingFilter,
-    ]
-
-    filter_fields = [
-        'variant_of',
     ]
 
     ordering_fields = [
@@ -1912,11 +1938,13 @@ part_api_urls = [
 
     # Base URL for part sale pricing
     url(r'^sale-price/', include([
+        url(r'^(?P<pk>\d+)/', PartSalePriceDetail.as_view(), name='api-part-sale-price-detail'),
         url(r'^.*$', PartSalePriceList.as_view(), name='api-part-sale-price-list'),
     ])),
 
     # Base URL for part internal pricing
     url(r'^internal-price/', include([
+        url(r'^(?P<pk>\d+)/', PartInternalPriceDetail.as_view(), name='api-part-internal-price-detail'),
         url(r'^.*$', PartInternalPriceList.as_view(), name='api-part-internal-price-list'),
     ])),
 

@@ -124,8 +124,7 @@
     </div>
 </div>
 
-{% settings_value "PART_SHOW_PRICE_HISTORY" as show_price_history %}
-{% if show_price_history %}
+{% if part.purchaseable or part.salable %}
 <div class='panel panel-hidden' id='panel-pricing'>
     {% include "part/prices.html" %}
 </div>
@@ -1009,7 +1008,7 @@
                 pb_url_slug: 'internal-price',
                 pb_url: '{% url 'api-part-internal-price-list' %}',
                 pb_new_btn: $('#new-internal-price-break'),
-                pb_new_url: '{% url 'internal-price-break-create' %}',
+                pb_new_url: '{% url 'api-part-internal-price-list' %}',
                 linkedGraph: $('#InternalPriceBreakChart'),
             },
         );
@@ -1025,7 +1024,7 @@
                 pb_url_slug: 'sale-price',
                 pb_url: "{% url 'api-part-sale-price-list' %}",
                 pb_new_btn: $('#new-price-break'),
-                pb_new_url: '{% url 'sale-price-break-create' %}',
+                pb_new_url: '{% url 'api-part-sale-price-list' %}',
                 linkedGraph: $('#SalePriceBreakChart'),
             },
         );
