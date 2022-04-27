@@ -1031,6 +1031,23 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         return row.required;
     }
 
+    function availableQuantity(row) {
+
+        // Base stock
+        var available = row.available_stock;
+
+        // Substitute stock
+        available += (row.available_substitute_stock || 0);
+
+        // Variant stock
+        if (row.allow_variants) {
+            available += (row.available_variant_stock || 0);
+        }
+
+        return available;
+
+    }
+
     function sumAllocations(row) {
         // Calculat total allocations for a given row
         if (!row.allocations) {
@@ -1425,20 +1442,52 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 title: '{% trans "Available" %}',
                 sortable: true,
                 formatter: function(value, row) {
-                    var total = row.available_stock + row.available_substitute_stock;
 
-                    var text = `${total}`;
+                    var url = `/part/${row.sub_part_detail.pk}/?display=part-stock`;
 
-                    if (total <= 0) {
-                        text = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
+                    // Calculate total "available" (unallocated) quantity
+                    var substitute_stock = row.available_substitute_stock || 0;
+                    var variant_stock = row.allow_variants ? (row.available_variant_stock || 0) : 0;
+
+                    var available_stock = availableQuantity(row);
+            
+                    var required = requiredQuantity(row);
+
+                    var text = '';
+                    
+                    if (available_stock > 0) {
+                        text += `${available_stock}`;
+                    }
+                    
+                    if (available_stock < required) {
+                        text += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "Insufficient stock available" %}'></span>`;
                     } else {
-                        if (row.available_substitute_stock > 0) {
-                            text += `<span title='{% trans "Includes substitute stock" %}' class='fas fa-info-circle float-right icon-blue'></span>`;
-                        }
+                        text += `<span class='fas fa-check-circle icon-green float-right' title='{% trans "Sufficient stock available" %}'></span>`;
                     }
 
-                    return text;
-                }
+                    if (available_stock <= 0) {
+                        text += `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
+                    } else {
+                        var extra = '';
+                        if ((substitute_stock > 0) && (variant_stock > 0)) {
+                            extra = '{% trans "Includes variant and substitute stock" %}';
+                        } else if (variant_stock > 0) {
+                            extra = '{% trans "Includes variant stock" %}';
+                        } else if (substitute_stock > 0) {
+                            extra = '{% trans "Includes substitute stock" %}';
+                        }
+        
+                        if (extra) {
+                            text += `<span title='${extra}' class='fas fa-info-circle float-right icon-blue'></span>`;
+                        }
+                    }
+        
+                    return renderLink(text, url);
+                },
+                sorter: function(valA, valB, rowA, rowB) {
+
+                    return availableQuantity(rowA) > availableQuantity(rowB) ? 1 : -1;
+                },
             },
             {
                 field: 'allocated',

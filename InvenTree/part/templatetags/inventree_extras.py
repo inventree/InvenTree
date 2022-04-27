@@ -18,7 +18,8 @@ from django.conf import settings as djangosettings
 from django import template
 from django.urls import reverse
 from django.utils.safestring import mark_safe
-from django.templatetags.static import StaticNode
+from django.templatetags.static import StaticNode, static
+from django.core.files.storage import default_storage
 
 from InvenTree import version, settings
 
@@ -167,6 +168,14 @@ def inventree_demo_mode(*args, **kwargs):
 
 
 @register.simple_tag()
+def inventree_show_about(user, *args, **kwargs):
+    """ Return True if the about modal should be shown """
+    if InvenTreeSetting.get_setting('INVENTREE_RESTRICT_ABOUT') and not user.is_superuser:
+        return False
+    return True
+
+
+@register.simple_tag()
 def inventree_docker_mode(*args, **kwargs):
     """ Return True if the server is running as a Docker image """
 
@@ -220,8 +229,13 @@ def python_version(*args, **kwargs):
 
 
 @register.simple_tag()
-def inventree_version(*args, **kwargs):
+def inventree_version(shortstring=False, *args, **kwargs):
     """ Return InvenTree version string """
+    if shortstring:
+        return _("{title} v{version}".format(
+            title=version.inventreeInstanceTitle(),
+            version=version.inventreeVersion()
+        ))
     return version.inventreeVersion()
 
 
@@ -352,21 +366,24 @@ def visible_global_settings(*args, **kwargs):
 
 
 @register.simple_tag()
-def progress_bar(val, max, *args, **kwargs):
+def progress_bar(val, max_val, *args, **kwargs):
     """
     Render a progress bar element
     """
 
     item_id = kwargs.get('id', 'progress-bar')
 
-    if val > max:
+    val = InvenTree.helpers.normalize(val)
+    max_val = InvenTree.helpers.normalize(max_val)
+
+    if val > max_val:
         style = 'progress-bar-over'
-    elif val < max:
+    elif val < max_val:
         style = 'progress-bar-under'
     else:
         style = ''
 
-    percent = float(val / max) * 100
+    percent = float(val / max_val) * 100
 
     if percent > 100:
         percent = 100
@@ -383,7 +400,7 @@ def progress_bar(val, max, *args, **kwargs):
     html = f"""
     <div id='{item_id}' class='progress' style='{" ".join(style_tags)}'>
         <div class='progress-bar {style}' role='progressbar' aria-valuemin='0' aria-valuemax='100' style='width:{percent}%'></div>
-        <div class='progress-value'>{val} / {max}</div>
+        <div class='progress-value'>{val} / {max_val}</div>
     </div>
     """
 
@@ -507,6 +524,22 @@ def object_link(url_name, pk, ref):
 def mail_configured():
     """ Return if mail is configured """
     return bool(settings.EMAIL_HOST)
+
+
+@register.simple_tag()
+def inventree_customize(reference, *args, **kwargs):
+    """ Return customization values for the user interface """
+
+    return djangosettings.CUSTOMIZE.get(reference, '')
+
+
+@register.simple_tag()
+def inventree_logo(*args, **kwargs):
+    """ Return the path to the logo-file """
+
+    if settings.CUSTOM_LOGO:
+        return default_storage.url(settings.CUSTOM_LOGO)
+    return static('img/inventree.png')
 
 
 class I18nStaticNode(StaticNode):

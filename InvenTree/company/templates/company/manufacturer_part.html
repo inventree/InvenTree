@@ -1,9 +1,10 @@
 {% extends "page_base.html" %}
 {% load static %}
 {% load i18n %}
+{% load inventree_extras %}
 
 {% block page_title %}
-InvenTree | {% trans "Manufacturer Part" %}
+{% inventree_title %} | {% trans "Manufacturer Part" %}
 {% endblock %}
 
 {% block sidebar %}
