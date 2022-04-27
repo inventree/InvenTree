@@ -691,8 +691,24 @@ function loadBomTable(table, options={}) {
 
     setupFilterList('bom', $(table));
 
-    // Construct the table columns
+    function availableQuantity(row) {
 
+        // Base stock
+        var available = row.available_stock;
+
+        // Substitute stock
+        available += (row.available_substitute_stock || 0);
+
+        // Variant stock
+        if (row.allow_variants) {
+            available += (row.available_variant_stock || 0);
+        }
+
+        return available;
+
+    }
+
+    // Construct the table columns
     var cols = [];
 
     if (options.editable) {
@@ -807,11 +823,10 @@ function loadBomTable(table, options={}) {
             var url = `/part/${row.sub_part_detail.pk}/?display=part-stock`;
 
             // Calculate total "available" (unallocated) quantity
-            var base_stock = row.available_stock;
             var substitute_stock = row.available_substitute_stock || 0;
             var variant_stock = row.allow_variants ? (row.available_variant_stock || 0) : 0;
 
-            var available_stock = base_stock + substitute_stock + variant_stock;
+            var available_stock = availableQuantity(row);
             
             var text = `${available_stock}`;
 
@@ -923,7 +938,7 @@ function loadBomTable(table, options={}) {
             formatter: function(value, row) {
                 var can_build = 0;
 
-                var available = row.available_stock + (row.available_substitute_stock || 0) + (row.available_variant_stock || 0);
+                var available = availableQuantity(row);
 
                 if (row.quantity > 0) {
                     can_build = available / row.quantity;
@@ -937,11 +952,11 @@ function loadBomTable(table, options={}) {
                 var cb_b = 0;
 
                 if (rowA.quantity > 0) {
-                    cb_a = (rowA.available_stock + rowA.available_substitute_stock) / rowA.quantity;
+                    cb_a = availableQuantity(rowA) / rowA.quantity;
                 }
 
                 if (rowB.quantity > 0) {
-                    cb_b = (rowB.available_stock + rowB.available_substitute_stock) / rowB.quantity;
+                    cb_b = availableQuantity(rowB) / rowB.quantity;
                 }
 
                 return (cb_a > cb_b) ? 1 : -1;

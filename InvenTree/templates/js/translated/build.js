@@ -1031,6 +1031,23 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         return row.required;
     }
 
+    function availableQuantity(row) {
+
+        // Base stock
+        var available = row.available_stock;
+
+        // Substitute stock
+        available += (row.available_substitute_stock || 0);
+
+        // Variant stock
+        if (row.allow_variants) {
+            available += (row.available_variant_stock || 0);
+        }
+
+        return available;
+
+    }
+
     function sumAllocations(row) {
         // Calculat total allocations for a given row
         if (!row.allocations) {
@@ -1429,16 +1446,27 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     var url = `/part/${row.sub_part_detail.pk}/?display=part-stock`;
 
                     // Calculate total "available" (unallocated) quantity
-                    var base_stock = row.available_stock;
                     var substitute_stock = row.available_substitute_stock || 0;
                     var variant_stock = row.allow_variants ? (row.available_variant_stock || 0) : 0;
 
-                    var available_stock = base_stock + substitute_stock + variant_stock;
+                    var available_stock = availableQuantity(row);
             
-                    var text = `${available_stock}`;
+                    var required = requiredQuantity(row);
+
+                    var text = '';
+                    
+                    if (available_stock > 0) {
+                        text += `${available_stock}`;
+                    }
+                    
+                    if (available_stock < required) {
+                        text += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "Insufficient stock available" %}'></span>`;
+                    } else {
+                        text += `<span class='fas fa-check-circle icon-green float-right' title='{% trans "Sufficient stock available" %}'></span>`;
+                    }
 
                     if (available_stock <= 0) {
-                        text = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
+                        text += `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
                     } else {
                         var extra = '';
                         if ((substitute_stock > 0) && (variant_stock > 0)) {
@@ -1455,7 +1483,11 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     }
         
                     return renderLink(text, url);
-                }
+                },
+                sorter: function(valA, valB, rowA, rowB) {
+
+                    return availableQuantity(rowA) > availableQuantity(rowB) ? 1 : -1;
+                },
             },
             {
                 field: 'allocated',
