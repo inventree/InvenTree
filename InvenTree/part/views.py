@@ -18,7 +18,6 @@ from django.forms import HiddenInput
 from django.conf import settings
 from django.contrib import messages
 
-from moneyed import CURRENCIES
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
 
@@ -33,7 +32,6 @@ from decimal import Decimal
 from .models import PartCategory, Part
 from .models import PartParameterTemplate
 from .models import PartCategoryParameterTemplate
-from .models import PartSellPriceBreak, PartInternalPriceBreak
 
 from common.models import InvenTreeSetting
 from company.models import SupplierPart
@@ -389,8 +387,12 @@ class PartDetail(InvenTreeRoleMixin, DetailView):
 
         context.update(**ctx)
 
+        show_price_history = InvenTreeSetting.get_setting('PART_SHOW_PRICE_HISTORY', False)
+
+        context['show_price_history'] = show_price_history
+
         # Pricing information
-        if InvenTreeSetting.get_setting('PART_SHOW_PRICE_HISTORY', False):
+        if show_price_history:
             ctx = self.get_pricing(self.get_quantity())
             ctx['form'] = self.form_class(initial=self.get_initials())
 
@@ -1226,102 +1228,3 @@ class CategoryParameterTemplateDelete(AjaxDeleteView):
             return None
 
         return self.object
-
-
-class PartSalePriceBreakCreate(AjaxCreateView):
-    """
-    View for creating a sale price break for a part
-    """
-
-    model = PartSellPriceBreak
-    form_class = part_forms.EditPartSalePriceBreakForm
-    ajax_form_title = _('Add Price Break')
-
-    def get_data(self):
-        return {
-            'success': _('Added new price break')
-        }
-
-    def get_part(self):
-        try:
-            part = Part.objects.get(id=self.request.GET.get('part'))
-        except (ValueError, Part.DoesNotExist):
-            part = None
-
-        if part is None:
-            try:
-                part = Part.objects.get(id=self.request.POST.get('part'))
-            except (ValueError, Part.DoesNotExist):
-                part = None
-
-        return part
-
-    def get_form(self):
-
-        form = super(AjaxCreateView, self).get_form()
-        form.fields['part'].widget = HiddenInput()
-
-        return form
-
-    def get_initial(self):
-
-        initials = super(AjaxCreateView, self).get_initial()
-
-        initials['part'] = self.get_part()
-
-        default_currency = inventree_settings.currency_code_default()
-        currency = CURRENCIES.get(default_currency, None)
-
-        if currency is not None:
-            initials['price'] = [1.0, currency]
-
-        return initials
-
-
-class PartSalePriceBreakEdit(AjaxUpdateView):
-    """ View for editing a sale price break """
-
-    model = PartSellPriceBreak
-    form_class = part_forms.EditPartSalePriceBreakForm
-    ajax_form_title = _('Edit Price Break')
-
-    def get_form(self):
-
-        form = super().get_form()
-        form.fields['part'].widget = HiddenInput()
-
-        return form
-
-
-class PartSalePriceBreakDelete(AjaxDeleteView):
-    """ View for deleting a sale price break """
-
-    model = PartSellPriceBreak
-    ajax_form_title = _("Delete Price Break")
-    ajax_template_name = "modal_delete_form.html"
-
-
-class PartInternalPriceBreakCreate(PartSalePriceBreakCreate):
-    """ View for creating a internal price break for a part """
-
-    model = PartInternalPriceBreak
-    form_class = part_forms.EditPartInternalPriceBreakForm
-    ajax_form_title = _('Add Internal Price Break')
-    permission_required = 'roles.sales_order.add'
-
-
-class PartInternalPriceBreakEdit(PartSalePriceBreakEdit):
-    """ View for editing a internal price break """
-
-    model = PartInternalPriceBreak
-    form_class = part_forms.EditPartInternalPriceBreakForm
-    ajax_form_title = _('Edit Internal Price Break')
-    permission_required = 'roles.sales_order.change'
-
-
-class PartInternalPriceBreakDelete(PartSalePriceBreakDelete):
-    """ View for deleting a internal price break """
-
-    model = PartInternalPriceBreak
-    ajax_form_title = _("Delete Internal Price Break")
-    permission_required = 'roles.sales_order.delete'

@@ -7,6 +7,7 @@
 {% settings_value "REPORT_ENABLE" as report_enabled %}
 {% settings_value "SERVER_RESTART_REQUIRED" as server_restart_required %}
 {% settings_value "LABEL_ENABLE" with user=user as labels_enabled %}
+{% inventree_show_about user as show_about %}
 {% inventree_demo_mode as demo_mode %}
 
 <!DOCTYPE html>
@@ -130,7 +131,7 @@
     </div>
 
     {% include 'modals.html' %}
-    {% include 'about.html' %}
+    {% if show_about %}{% include 'about.html' %}{% endif %}
     {% include "notifications.html" %}
     {% include "search.html" %}
 </div>
@@ -166,7 +167,7 @@
 <script type='text/javascript' src="{% static 'script/clipboard.min.js' %}"></script>
 <script type='text/javascript' src="{% static 'script/randomColor.min.js' %}"></script>
 
-<!-- general InvenTree -->
+<!-- general JS -->
 <script type='text/javascript' src="{% static 'script/inventree/inventree.js' %}"></script>
 
 <!-- dynamic javascript templates -->
