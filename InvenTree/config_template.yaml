@@ -194,3 +194,4 @@ static_root: '/home/inventree/data/static'
 #   navbar_message: <h6>InvenTree demo mode <a href='https://inventree.readthedocs.io/en/latest/demo/'><span class='fas fa-info-circle'></span></a></h6>
 #   logo: logo.png
 #   hide_admin_link: true
+#   hide_password_reset: true
