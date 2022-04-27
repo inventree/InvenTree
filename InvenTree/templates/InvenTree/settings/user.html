@@ -13,8 +13,8 @@
 {% endblock %}
 
 {% block actions %}
-{% inventree_demo_mode as demo %}
-{% if not demo %}
+{% inventree_customize 'hide_password_reset' as hide_password_reset %}
+{% if hide_password_reset %}
 <div class='btn btn-outline-primary' type='button' id='edit-password' title='{% trans "Change Password" %}'>
     <span class='fas fa-key'></span> {% trans "Set Password" %}
 </div>
