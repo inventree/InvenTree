@@ -1165,7 +1165,7 @@ class StockItemTestResultList(generics.ListCreateAPIView):
         build = params.get('build', None)
 
         if build is not None:
-            
+
             try:
                 build = Build.objects.get(pk=build)
 
@@ -1173,7 +1173,6 @@ class StockItemTestResultList(generics.ListCreateAPIView):
 
             except (ValueError, Build.DoesNotExist):
                 pass
-
 
         # Filter by stock item
         item = params.get('stock_item', None)

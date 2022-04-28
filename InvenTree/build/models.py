@@ -1292,7 +1292,7 @@ class BuildItem(models.Model):
                 user,
                 notes
             )
-            
+
         else:
             # Simply remove the items from stock
             item.take_stock(
