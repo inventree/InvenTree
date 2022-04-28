@@ -1060,6 +1060,21 @@ function loadBuildOutputTable(build_info, options={}) {
         return n;
     }
 
+    // Return the number of 'fully allocated' lines for a given row
+    function countAllocatedLines(row) {
+        var n_completed_lines = 0;
+
+        bom_items.forEach(function(bom_row) {
+            var required_quantity = bom_row.quantity * row.quantity;
+
+            if (sumAllocationsForBomRow(bom_row, row.allocations || []) >= required_quantity) {
+                n_completed_lines += 1;
+            }
+        });
+
+        return n_completed_lines;
+    }
+
     $(table).inventreeTable({
         url: '{% url "api-stock-list" %}',
         queryParams: filters,
@@ -1146,28 +1161,12 @@ function loadBuildOutputTable(build_info, options={}) {
                 title: '{% trans "Allocated Stock" %}',
                 visible: true,
                 switchable: false,
+                sortable: true,
                 formatter: function(value, row) {
 
-                    // Display a progress bar which shows how many BOM lines have been fully allocated
-                    var n_bom_lines = 1;
-                    var n_completed_lines = 0;
-                    
-                    // Work out how many lines have been allocated for this build output
-                    if (bom_items && row.allocations) {
-                        n_bom_lines = bom_items.length;
-
-                        bom_items.forEach(function(bom_row) {
-                            var required_quantity = row.quantity * bom_row.quantity;
-
-                            if (sumAllocationsForBomRow(bom_row, row.allocations) >= required_quantity) {
-                                n_completed_lines += 1;
-                            }
-                        })
-                    }
-
                     var progressBar = makeProgressBar(
-                        n_completed_lines,
-                        n_bom_lines,
+                        countAllocatedLines(row),
+                        bom_items.length,
                         {
                             max_width: '150px',
                         }
@@ -1176,8 +1175,10 @@ function loadBuildOutputTable(build_info, options={}) {
                     return `<div id='output-progress-${row.pk}'>${progressBar}</div>`;
                 },
                 sorter: function(value_a, value_b, row_a, row_b) {
-                    // TODO: Custom sorter for "allocated stock" column
-                    return 0;
+                    var q_a = countAllocatedLines(row_a);
+                    var q_b = countAllocatedLines(row_b);
+
+                    return q_a > q_b ? 1 : -1;
                 },
             },
             {
