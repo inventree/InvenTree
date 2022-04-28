@@ -466,7 +466,7 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
         if '-' in group:
             items = group.split('-')
 
-            if len(items) == 2:
+            if len(items) == 2 and all([i.isnumeric() for i in items]):
                 a = items[0].strip()
                 b = items[1].strip()
 
@@ -484,7 +484,8 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
                     errors.append(_("Invalid group: {g}").format(g=group))
                     continue
             else:
-                errors.append(_("Invalid group: {g}").format(g=group))
+                # More than 2 hyphens or non-numeric group so add without interpolating
+                add_sn(group)
 
         # plus signals either
         # 1:  'start+':  expected number of serials, starting at start

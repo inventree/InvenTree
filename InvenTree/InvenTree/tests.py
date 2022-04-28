@@ -257,6 +257,16 @@ class TestSerialNumberExtraction(TestCase):
         self.assertEqual(len(sn), 5)
         self.assertEqual(sn, [1, 2, 4, 5, 6])
 
+        # Test groups are not interpolated with more than one hyphen in a word
+        sn = e("1, 2, TG-4SR-92, 4+", 5, 1)
+        self.assertEqual(len(sn), 5)
+        self.assertEqual(sn, [1, 2, "TG-4SR-92", 4, 5])
+
+        # Test groups are not interpolated with alpha characters
+        sn = e("1, A-2, 3+", 5, 1)
+        self.assertEqual(len(sn), 5)
+        self.assertEqual(sn, [1, "A-2", 3, 4, 5])
+
         # Test multiple placeholders
         sn = e("1 2 ~ ~ ~", 5, 3)
         self.assertEqual(len(sn), 5)
@@ -316,6 +326,10 @@ class TestSerialNumberExtraction(TestCase):
 
         with self.assertRaises(ValidationError):
             e("10, a, 7-70j", 4, 1)
+
+        # Test groups are not interpolated with word characters
+        with self.assertRaises(ValidationError):
+            e("1, 2, 3, E-5", 5, 1)
 
     def test_combinations(self):
         e = helpers.extract_serial_numbers
