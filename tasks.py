@@ -380,8 +380,8 @@ def export_records(c, filename='data.json'):
     print("Data export completed")
 
 
-@task(help={'filename': 'Input filename'}, post=[rebuild_models, rebuild_thumbnails])
-def import_records(c, filename='data.json'):
+@task(help={'filename': 'Input filename', 'delete_first': 'Delete existing records first'}, post=[rebuild_models, rebuild_thumbnails])
+def import_records(c, filename='data.json', delete_first=False):
     """
     Import database records from a file
     """
@@ -393,6 +393,10 @@ def import_records(c, filename='data.json'):
     if not os.path.exists(filename):
         print(f"Error: File '{filename}' does not exist")
         sys.exit(1)
+    
+    if delete_first:
+        print("Deleting existing database records")
+        delete_data(c, force=True)
 
     print(f"Importing database records from '{filename}'")
 
