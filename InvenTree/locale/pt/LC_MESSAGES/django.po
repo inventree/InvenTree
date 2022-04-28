@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-28 12:05+0000\n"
-"PO-Revision-Date: 2022-04-28 12:14\n"
+"PO-Revision-Date: 2022-04-28 16:20\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Language: pt_BR\n"
@@ -78,21 +78,21 @@ msgstr "Confirmação do endereço de email"
 
 #: InvenTree/forms.py:260
 msgid "You must type the same email each time."
-msgstr ""
+msgstr "Você deve digitar o mesmo e-mail todas as vezes."
 
 #: InvenTree/helpers.py:449
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
-msgstr ""
+msgstr "Número de série duplicado: {sn}"
 
 #: InvenTree/helpers.py:456 order/models.py:282 order/models.py:435
 #: stock/views.py:993
 msgid "Invalid quantity provided"
-msgstr ""
+msgstr "Quantidade fornecida inválida"
 
 #: InvenTree/helpers.py:459
 msgid "Empty serial number string"
-msgstr ""
+msgstr "Linha de número de série vazia"
 
 #: InvenTree/helpers.py:491
 #, python-brace-format
