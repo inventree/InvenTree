@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-28 12:05+0000\n"
-"PO-Revision-Date: 2022-04-28 12:13\n"
+"PO-Revision-Date: 2022-04-28 19:48\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -97,7 +97,7 @@ msgstr "Üres sorozatszám"
 #: InvenTree/helpers.py:491
 #, python-brace-format
 msgid "Invalid group range: {g}"
-msgstr ""
+msgstr "Érvénytelen csoport tartomány: {g}"
 
 #: InvenTree/helpers.py:494
 #, python-brace-format
@@ -107,7 +107,7 @@ msgstr "Érvénytelen csoport: {g}"
 #: InvenTree/helpers.py:522
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
-msgstr ""
+msgstr "Érvénytelen csoport szekvencia: {g}"
 
 #: InvenTree/helpers.py:530
 #, python-brace-format
