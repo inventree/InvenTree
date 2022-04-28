@@ -726,6 +726,35 @@ function loadBuildOrderAllocationTable(table, options={}) {
 }
 
 
+/* Internal helper functions for performing calculations on BOM data */
+
+// Iterate through a list of allocations, returning *only* those which match a particular BOM row
+function getAllocationsForBomRow(bom_row, allocations) {
+    var part_id = bom_row.sub_part;
+
+    var matching_allocations = [];
+
+    allocations.forEach(function(allocation) {
+        if (allocation.bom_part == part_id) {
+            matching_allocations.push(allocation);
+        }
+    });
+
+    return matching_allocations;
+}
+
+// Sum the allocation quantity for a given BOM row
+function sumAllocationsForBomRow(bom_row, allocations) {
+    var quantity = 0;
+
+    getAllocationsForBomRow(bom_row, allocations).forEach(function(allocation) {
+        quantity += allocation.quantity;
+    });
+
+    return parseFloat(quantity).toFixed(15);
+}
+
+
 /*
  * Display a "build output" table for a particular build.
  *
@@ -919,6 +948,32 @@ function loadBuildOutputTable(build_info, options={}) {
                     rows.forEach(function(row) {
                         row.allocations = allocations[row.pk] || [];
                         $(table).bootstrapTable('updateByUniqueId', row.pk, row, true);
+
+                        var n_completed_lines = 0;
+
+                        // Check how many BOM lines have been completely allocated for this build output
+                        bom_items.forEach(function(bom_item) {
+                            
+                            var required_quantity = bom_item.quantity * row.quantity;
+
+                            if (sumAllocationsForBomRow(bom_item, row.allocations) >= required_quantity) {
+                                n_completed_lines += 1;
+                            }
+
+                            var output_progress_bar = $(`#output-progress-${row.pk}`);
+
+                            if  (output_progress_bar.exists()) {
+                                output_progress_bar.html(
+                                    makeProgressBar(
+                                        n_completed_lines,
+                                        bom_items.length,
+                                        {
+                                            max_width: '150px',
+                                        }
+                                    )
+                                );
+                            }
+                        });
                     });
                 }
             }
@@ -1092,14 +1147,33 @@ function loadBuildOutputTable(build_info, options={}) {
                 visible: true,
                 switchable: false,
                 formatter: function(value, row) {
-                    // Display a progress bar which shows how many rows have been allocated
-                    var n_bom_lines = 0;
+
+                    // Display a progress bar which shows how many BOM lines have been fully allocated
+                    var n_bom_lines = 1;
+                    var n_completed_lines = 0;
                     
-                    if (bom_items) {
+                    // Work out how many lines have been allocated for this build output
+                    if (bom_items && row.allocations) {
                         n_bom_lines = bom_items.length;
+
+                        bom_items.forEach(function(bom_row) {
+                            var required_quantity = row.quantity * bom_row.quantity;
+
+                            if (sumAllocationsForBomRow(bom_row, row.allocations) >= required_quantity) {
+                                n_completed_lines += 1;
+                            }
+                        })
                     }
-                    return `lines: ${n_bom_lines}`;
-                    return `<div id='output-progress-${row.pk}'><span class='fas fa-spin fa-spinner'></span></div>`;
+
+                    var progressBar = makeProgressBar(
+                        n_completed_lines,
+                        n_bom_lines,
+                        {
+                            max_width: '150px',
+                        }
+                    );
+
+                    return `<div id='output-progress-${row.pk}'>${progressBar}</div>`;
                 },
                 sorter: function(value_a, value_b, row_a, row_b) {
                     // TODO: Custom sorter for "allocated stock" column
@@ -1108,7 +1182,7 @@ function loadBuildOutputTable(build_info, options={}) {
             },
             {
                 field: 'tests',
-                title: '{% trans "Tests" %}',
+                title: '{% trans "Completed Tests" %}',
                 sortable: true,
                 switchable: true,
                 formatter: function(value, row) {
@@ -1186,6 +1260,26 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         outputId = 'untracked';
     }
 
+    var bom_items = buildInfo.bom_items || null;
+
+    // If BOM items have not been provided, load via the API
+    if (bom_items == null) {
+        inventreeGet(
+            '{% url "api-bom-list" %}',
+            {
+                part: partId,
+                sub_part_detail: true,
+                sub_part_trackable: trackable,
+            },
+            {
+                async: false,
+                success: function(results) {
+                    bom_items = results;
+                }
+            }
+        );
+    }
+
     var table = options.table;
 
     if (options.table == null) {
@@ -1209,6 +1303,42 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
     var allocated_items = output == null ? null : output.allocations;
 
+    function redrawAllocationData() {
+        // Force a refresh of each row in the table
+        // Note we cannot call 'refresh' because we are passing data from memory
+        // var rows = $(table).bootstrapTable('getData');
+
+        // How many rows are fully allocated?
+        var allocated_rows = 0;
+
+        bom_items.forEach(function(row) {
+            $(table).bootstrapTable('updateByUniqueId', row.pk, row, true);
+
+            if (isRowFullyAllocated(row)) {
+                allocated_rows += 1;
+            }
+        });
+
+        // Find the top-level progess bar for this build output
+        var output_progress_bar = $(`#output-progress-${outputId}`);
+
+        if (output_progress_bar.exists()) {
+            if (bom_items.length > 0) {
+                output_progress_bar.html(
+                    makeProgressBar(
+                        allocated_rows,
+                        bom_items.length,
+                        {
+                            max_width: '150px',
+                        }
+                    )
+                );
+            }
+        } else {
+            console.warn(`Could not find progress bar for output '${outputId}'`);
+        }
+    }
+
     function reloadAllocationData(async=true) {
         // Reload stock allocation data for this particular build output
 
@@ -1225,32 +1355,18 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 success: function(response) {
                     allocated_items = response;
 
-                    if (async) {
+                    redrawAllocationData();
 
-                        // Force a refresh of each row in the table
-                        // Note we cannot call 'refresh' because we are passing data from memory
-                        var rows = $(table).bootstrapTable('getData');
-
-                        // How many rows are fully allocated?
-                        var allocated_rows = 0;
-
-                        rows.forEach(function(row) {
-                            $(table).bootstrapTable('updateByUniqueId', row.pk, row, true);
-
-                            if (isRowFullyAllocated(row)) {
-                                allocated_rows += 1;
-                            }
-                        });
-                    }
                 }
             }
         );
     }
 
     if (allocated_items == null) {
-
         // No allocation data provided? Request from server (blocking)
         reloadAllocationData(false);
+    } else {
+        redrawAllocationData();
     }
 
     function reloadTable() {
@@ -1293,38 +1409,15 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         }
 
         return available;
-
     }
 
-    function getAllocationsForRow(row) {
-        var part_id = row.sub_part;
-
-        var allocations = [];
-
-        allocated_items.forEach(function(allocation) {
-            if (allocation.bom_part == part_id) {
-                allocations.push(allocation);
-            }
-        });
-
-        return allocations;
-    }
-
-    function sumAllocations(row) {
-        
-        var allocated_quantity = 0;
-
-        getAllocationsForRow(row).forEach(function(allocation) {
-            allocated_quantity += allocation.quantity;
-        });
-        
-        row.allocated = parseFloat(allocated_quantity.toFixed(15));
-
+    function allocatedQuantity(row) {
+        row.allocated = sumAllocationsForBomRow(row, allocated_items);
         return row.allocated;
     }
 
     function isRowFullyAllocated(row) {
-        return sumAllocations(row) >= requiredQuantity(row);
+        return allocatedQuantity(row) >= requiredQuantity(row);
     }
 
     function setupCallbacks() {
@@ -1386,7 +1479,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             newBuildOrder({
                 part: pk,
                 parent: buildId,
-                quantity: requiredQuantity(row) - sumAllocations(row),
+                quantity: requiredQuantity(row) - allocatedQuantity(row),
             });
         });
 
@@ -1408,26 +1501,6 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         });
     }
 
-    var bom_items = buildInfo.bom_items || null;
-
-    // If BOM items have not been provided, load via the API
-    if (bom_items == null) {
-        inventreeGet(
-            '{% url "api-bom-list" %}',
-            {
-                part: partId,
-                sub_part_detail: true,
-                sub_part_trackable: trackable,
-            },
-            {
-                async: false,
-                success: function(results) {
-                    bom_items = results;
-                }
-            }
-        );
-    }
-
     // Load table of BOM items
     $(table).inventreeTable({
         data: bom_items,
@@ -1446,7 +1519,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         showColumns: false,
         detailView: true,
         detailFilter: function(index, row) {
-            return sumAllocations(row) > 0;
+            return allocatedQuantity(row) > 0;
         },
         detailFormatter: function(index, row, element) {
             // Contruct an 'inner table' which shows which stock items have been allocated
@@ -1460,7 +1533,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             var subTable = $(`#${subTableId}`);
 
             subTable.bootstrapTable({
-                data: getAllocationsForRow(row),
+                data: getAllocationsForBomRow(row, allocated_items),
                 showHeader: true,
                 columns: [
                     {
@@ -1660,15 +1733,15 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 title: '{% trans "Allocated" %}',
                 sortable: true,
                 formatter: function(value, row) {
-                    var allocated = sumAllocations(row);
+                    var allocated = allocatedQuantity(row);
                     var required = requiredQuantity(row)
                     return makeProgressBar(allocated, required);
                 },
                 sorter: function(valA, valB, rowA, rowB) {
                     // Custom sorting function for progress bars
                     
-                    var aA = sumAllocations(rowA);
-                    var aB = sumAllocations(rowB);
+                    var aA = allocatedQuantity(rowA);
+                    var aB = allocatedQuantity(rowB);
 
                     var qA = requiredQuantity(rowA);
                     var qB = requiredQuantity(rowB);
@@ -1703,7 +1776,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     // Generate action buttons for this build output
                     var html = `<div class='btn-group float-right' role='group'>`;
 
-                    if (sumAllocations(row) < requiredQuantity(row)) {
+                    if (allocatedQuantity(row) < requiredQuantity(row)) {
                         if (row.sub_part_detail.assembly) {
                             html += makeIconButton('fa-tools icon-blue', 'button-build', row.sub_part, '{% trans "Build stock" %}');
                         }
@@ -1719,7 +1792,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         'fa-minus-circle icon-red', 'button-unallocate', row.sub_part,
                         '{% trans "Unallocate stock" %}',
                         {
-                            disabled: sumAllocations(row) == 0,
+                            disabled: allocatedQuantity(row) == 0,
                         }
                     );
 
