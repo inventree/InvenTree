@@ -630,6 +630,7 @@ class BuildAllocationItemSerializer(serializers.Serializer):
 
         super().validate(data)
 
+        build = self.context['build']
         bom_item = data['bom_item']
         stock_item = data['stock_item']
         quantity = data['quantity']
@@ -654,15 +655,19 @@ class BuildAllocationItemSerializer(serializers.Serializer):
         # Output *must* be set for trackable parts
         if output is None and bom_item.sub_part.trackable:
             raise ValidationError({
-                'output': _('Build output must be specified for allocation of tracked parts')
+                'output': _('Build output must be specified for allocation of tracked parts'),
             })
 
         # Output *cannot* be set for un-tracked parts
         if output is not None and not bom_item.sub_part.trackable:
 
             raise ValidationError({
-                'output': _('Build output cannot be specified for allocation of untracked parts')
+                'output': _('Build output cannot be specified for allocation of untracked parts'),
             })
+
+        # Check if this allocation would be unique
+        if BuildItem.objects.filter(build=build, stock_item=stock_item, install_into=output).exists():
+            raise ValidationError(_('This stock item has already been allocated to this build output'))
 
         return data
 

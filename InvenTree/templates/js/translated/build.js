@@ -1982,7 +1982,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
         // var stock_input = constructRelatedFieldInput(`items_stock_item_${pk}`);
 
         var html = `
-        <tr id='allocation_row_${pk}' class='part-allocation-row'>
+        <tr id='items_${pk}' class='part-allocation-row'>
             <td id='part_${pk}'>
                 ${thumb} ${sub_part.full_name}
             </td>
@@ -2167,7 +2167,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
             $(options.modal).find('.button-row-remove').click(function() {
                 var pk = $(this).attr('pk');
 
-                $(options.modal).find(`#allocation_row_${pk}`).remove();
+                $(options.modal).find(`#items_${pk}`).remove();
             });
         },
         onSubmit: function(fields, opts) {
