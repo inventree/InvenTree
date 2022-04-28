@@ -3,24 +3,24 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-28 00:14+0000\n"
-"PO-Revision-Date: 2022-04-28 00:33\n"
+"POT-Creation-Date: 2022-04-28 04:14+0000\n"
+"PO-Revision-Date: 2022-04-28 04:18\n"
 "Last-Translator: \n"
-"Language-Team: Portuguese, Brazilian\n"
-"Language: pt_BR\n"
+"Language-Team: Portuguese\n"
+"Language: pt_PT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
-"X-Crowdin-Language: pt-BR\n"
+"X-Crowdin-Language: pt-PT\n"
 "X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 138\n"
 
 #: InvenTree/api.py:57
 msgid "API endpoint not found"
-msgstr "API endpoint não encontrado"
+msgstr "Endpoint da API não encontrado"
 
 #: InvenTree/api.py:103
 msgid "No action specified"
@@ -32,7 +32,7 @@ msgstr "Nenhuma ação correspondente encontrada"
 
 #: InvenTree/fields.py:100
 msgid "Enter date"
-msgstr "Insira uma Data"
+msgstr "Insira a data"
 
 #: InvenTree/forms.py:126 order/forms.py:24 order/forms.py:35 order/forms.py:46
 #: order/forms.py:57 templates/account/email_confirm.html:20
@@ -54,23 +54,23 @@ msgstr "Digite a senha"
 
 #: InvenTree/forms.py:175
 msgid "Enter new password"
-msgstr "Insira uma nova senha"
+msgstr "Digite uma nova senha"
 
 #: InvenTree/forms.py:182
 msgid "Confirm password"
-msgstr "Confirmar senha"
+msgstr "Confirme a senha"
 
 #: InvenTree/forms.py:183
 msgid "Confirm new password"
-msgstr "Confirmar nova senha"
+msgstr "Confirme a nova senha"
 
 #: InvenTree/forms.py:215
 msgid "Select Category"
-msgstr "Selecionar Categoria"
+msgstr "Selecione a Categoria"
 
 #: InvenTree/forms.py:236
 msgid "Email (again)"
-msgstr "E-mail (novamente)"
+msgstr "Email (novamente)"
 
 #: InvenTree/forms.py:240
 msgid "Email address confirmation"
@@ -78,58 +78,58 @@ msgstr "Confirmação do endereço de email"
 
 #: InvenTree/forms.py:260
 msgid "You must type the same email each time."
-msgstr ""
+msgstr "Você deve digitar o mesmo email cada vez."
 
 #: InvenTree/helpers.py:442
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
-msgstr ""
+msgstr "Número de série duplicado: {sn}"
 
 #: InvenTree/helpers.py:449 order/models.py:282 order/models.py:435
 #: stock/views.py:993
 msgid "Invalid quantity provided"
-msgstr ""
+msgstr "A quantidade fornecida é inválida"
 
 #: InvenTree/helpers.py:452
 msgid "Empty serial number string"
-msgstr ""
+msgstr "Número de série vazio"
 
 #: InvenTree/helpers.py:474 InvenTree/helpers.py:477 InvenTree/helpers.py:480
 #: InvenTree/helpers.py:504
 #, python-brace-format
 msgid "Invalid group: {g}"
-msgstr ""
+msgstr "Grupo inválido: {g}"
 
 #: InvenTree/helpers.py:518
 #, python-brace-format
 msgid "Invalid/no group {group}"
-msgstr ""
+msgstr "Inválido/sem grupo {group}"
 
 #: InvenTree/helpers.py:524
 msgid "No serial numbers found"
-msgstr ""
+msgstr "Número de série não encontrado"
 
 #: InvenTree/helpers.py:528
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
-msgstr ""
+msgstr "Quantidade de números de série únivocos ({s}) devem corresponder à quantidade ({q})"
 
 #: InvenTree/models.py:185
 msgid "Missing file"
-msgstr ""
+msgstr "Arquivo não informado"
 
 #: InvenTree/models.py:186
 msgid "Missing external link"
-msgstr ""
+msgstr "Link externo não informado"
 
 #: InvenTree/models.py:197 stock/models.py:2202
 #: templates/js/translated/attachment.js:119
 msgid "Attachment"
-msgstr ""
+msgstr "Anexo"
 
 #: InvenTree/models.py:198
 msgid "Select file to attach"
-msgstr ""
+msgstr "Selecione o arquivo para anexar"
 
 #: InvenTree/models.py:204 company/models.py:131 company/models.py:348
 #: company/models.py:564 order/models.py:127 part/models.py:873
@@ -137,20 +137,20 @@ msgstr ""
 #: templates/js/translated/company.js:540
 #: templates/js/translated/company.js:829 templates/js/translated/part.js:1441
 msgid "Link"
-msgstr ""
+msgstr "Link"
 
 #: InvenTree/models.py:205 build/models.py:332 part/models.py:874
 #: stock/models.py:669
 msgid "Link to external URL"
-msgstr ""
+msgstr "Link para URL externa"
 
 #: InvenTree/models.py:208 templates/js/translated/attachment.js:163
 msgid "Comment"
-msgstr ""
+msgstr "Comentário"
 
 #: InvenTree/models.py:208
 msgid "File comment"
-msgstr ""
+msgstr "Comentário do arquivo"
 
 #: InvenTree/models.py:214 InvenTree/models.py:215 common/models.py:1409
 #: common/models.py:1410 common/models.py:1631 common/models.py:1632
@@ -159,40 +159,40 @@ msgstr ""
 #: report/templates/report/inventree_test_report_base.html:96
 #: templates/js/translated/stock.js:2517
 msgid "User"
-msgstr ""
+msgstr "Usuário"
 
 #: InvenTree/models.py:218
 msgid "upload date"
-msgstr ""
+msgstr "data de upload"
 
 #: InvenTree/models.py:241
 msgid "Filename must not be empty"
-msgstr ""
+msgstr "O nome do arquivo não pode estar vazio"
 
 #: InvenTree/models.py:264
 msgid "Invalid attachment directory"
-msgstr ""
+msgstr "Pasta de anexos inválida"
 
 #: InvenTree/models.py:274
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr ""
+msgstr "O nome do arquivo contém caracteres inválidos '{c}'"
 
 #: InvenTree/models.py:277
 msgid "Filename missing extension"
-msgstr ""
+msgstr "O nome do arquivo não possui extensão"
 
 #: InvenTree/models.py:284
 msgid "Attachment with this filename already exists"
-msgstr ""
+msgstr "Anexo com este nome de arquivo já existe"
 
 #: InvenTree/models.py:291
 msgid "Error renaming file"
-msgstr ""
+msgstr "Erro ao renomear arquivo"
 
 #: InvenTree/models.py:326
 msgid "Invalid choice"
-msgstr ""
+msgstr "Escolha inválida"
 
 #: InvenTree/models.py:342 InvenTree/models.py:343 common/models.py:1617
 #: company/models.py:415 label/models.py:112 part/models.py:817
@@ -207,7 +207,7 @@ msgstr ""
 #: templates/js/translated/part.js:767 templates/js/translated/part.js:1748
 #: templates/js/translated/stock.js:2287
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #: InvenTree/models.py:349 build/models.py:209
 #: build/templates/build/detail.html:24 company/models.py:354
@@ -231,43 +231,43 @@ msgstr ""
 #: templates/js/translated/part.js:1836 templates/js/translated/stock.js:1685
 #: templates/js/translated/stock.js:2299 templates/js/translated/stock.js:2354
 msgid "Description"
-msgstr ""
+msgstr "Descrição"
 
 #: InvenTree/models.py:350
 msgid "Description (optional)"
-msgstr ""
+msgstr "Descrição (opcional)"
 
 #: InvenTree/models.py:358
 msgid "parent"
-msgstr ""
+msgstr "pai"
 
 #: InvenTree/serializers.py:65 part/models.py:2891
 msgid "Must be a valid number"
-msgstr ""
+msgstr "Deve ser um número válido"
 
 #: InvenTree/serializers.py:299
 msgid "Filename"
-msgstr ""
+msgstr "Nome do arquivo"
 
 #: InvenTree/serializers.py:334
 msgid "Invalid value"
-msgstr ""
+msgstr "Valor inválido"
 
 #: InvenTree/serializers.py:355
 msgid "Data File"
-msgstr ""
+msgstr "Arquivo de dados"
 
 #: InvenTree/serializers.py:356
 msgid "Select data file for upload"
-msgstr ""
+msgstr "Selecione o arquivo de dados para upload"
 
 #: InvenTree/serializers.py:380
 msgid "Unsupported file type"
-msgstr ""
+msgstr "Tipo do arquivo não suportado"
 
 #: InvenTree/serializers.py:386
 msgid "File is too large"
-msgstr ""
+msgstr "O arquivo é muito grande"
 
 #: InvenTree/serializers.py:407
 msgid "No columns found in file"
@@ -295,99 +295,99 @@ msgstr ""
 msgid "Duplicate column: '{col}'"
 msgstr ""
 
-#: InvenTree/settings.py:677
+#: InvenTree/settings.py:668
 msgid "Czech"
 msgstr ""
 
-#: InvenTree/settings.py:678
+#: InvenTree/settings.py:669
 msgid "German"
 msgstr ""
 
-#: InvenTree/settings.py:679
+#: InvenTree/settings.py:670
 msgid "Greek"
 msgstr ""
 
-#: InvenTree/settings.py:680
+#: InvenTree/settings.py:671
 msgid "English"
 msgstr ""
 
-#: InvenTree/settings.py:681
+#: InvenTree/settings.py:672
 msgid "Spanish"
 msgstr ""
 
-#: InvenTree/settings.py:682
+#: InvenTree/settings.py:673
 msgid "Spanish (Mexican)"
 msgstr ""
 
-#: InvenTree/settings.py:683
+#: InvenTree/settings.py:674
 msgid "Farsi / Persian"
 msgstr ""
 
-#: InvenTree/settings.py:684
+#: InvenTree/settings.py:675
 msgid "French"
 msgstr ""
 
-#: InvenTree/settings.py:685
+#: InvenTree/settings.py:676
 msgid "Hebrew"
 msgstr ""
 
-#: InvenTree/settings.py:686
+#: InvenTree/settings.py:677
 msgid "Hungarian"
 msgstr ""
 
-#: InvenTree/settings.py:687
+#: InvenTree/settings.py:678
 msgid "Italian"
 msgstr ""
 
-#: InvenTree/settings.py:688
+#: InvenTree/settings.py:679
 msgid "Japanese"
 msgstr ""
 
-#: InvenTree/settings.py:689
+#: InvenTree/settings.py:680
 msgid "Korean"
 msgstr ""
 
-#: InvenTree/settings.py:690
+#: InvenTree/settings.py:681
 msgid "Dutch"
 msgstr ""
 
-#: InvenTree/settings.py:691
+#: InvenTree/settings.py:682
 msgid "Norwegian"
 msgstr ""
 
-#: InvenTree/settings.py:692
+#: InvenTree/settings.py:683
 msgid "Polish"
 msgstr ""
 
-#: InvenTree/settings.py:693
+#: InvenTree/settings.py:684
 msgid "Portuguese"
 msgstr ""
 
-#: InvenTree/settings.py:694
+#: InvenTree/settings.py:685
 msgid "Portuguese (Brazilian)"
 msgstr ""
 
-#: InvenTree/settings.py:695
+#: InvenTree/settings.py:686
 msgid "Russian"
 msgstr ""
 
-#: InvenTree/settings.py:696
+#: InvenTree/settings.py:687
 msgid "Swedish"
 msgstr ""
 
-#: InvenTree/settings.py:697
+#: InvenTree/settings.py:688
 msgid "Thai"
 msgstr ""
 
-#: InvenTree/settings.py:698
+#: InvenTree/settings.py:689
 msgid "Turkish"
 msgstr ""
 
-#: InvenTree/settings.py:699
+#: InvenTree/settings.py:690
 msgid "Vietnamese"
 msgstr ""
 
-#: InvenTree/settings.py:700
+#: InvenTree/settings.py:691
 msgid "Chinese"
 msgstr ""
 
@@ -586,27 +586,27 @@ msgstr ""
 msgid "Invalid value for overage"
 msgstr ""
 
-#: InvenTree/views.py:538
+#: InvenTree/views.py:537
 msgid "Delete Item"
 msgstr ""
 
-#: InvenTree/views.py:587
+#: InvenTree/views.py:586
 msgid "Check box to confirm item deletion"
 msgstr ""
 
-#: InvenTree/views.py:602 templates/InvenTree/settings/user.html:21
+#: InvenTree/views.py:601 templates/InvenTree/settings/user.html:22
 msgid "Edit User Information"
 msgstr ""
 
-#: InvenTree/views.py:613 templates/InvenTree/settings/user.html:19
+#: InvenTree/views.py:612 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
 msgstr ""
 
-#: InvenTree/views.py:632
+#: InvenTree/views.py:631
 msgid "Password fields must match"
 msgstr ""
 
-#: InvenTree/views.py:883 templates/navbar.html:151
+#: InvenTree/views.py:882 templates/navbar.html:152
 msgid "System Information"
 msgstr ""
 
@@ -914,7 +914,7 @@ msgstr ""
 
 #: build/models.py:1328 stock/templates/stock/item_base.html:329
 #: templates/InvenTree/search.html:137 templates/js/translated/build.js:2034
-#: templates/navbar.html:37
+#: templates/navbar.html:38
 msgid "Build"
 msgstr ""
 
@@ -2922,7 +2922,7 @@ msgstr ""
 #: part/templates/part/detail.html:77 part/templates/part/part_sidebar.html:37
 #: templates/InvenTree/index.html:252 templates/InvenTree/search.html:197
 #: templates/InvenTree/settings/sidebar.html:47
-#: templates/js/translated/search.js:173 templates/navbar.html:49
+#: templates/js/translated/search.js:173 templates/navbar.html:50
 #: users/models.py:45
 msgid "Purchase Orders"
 msgstr ""
@@ -2945,7 +2945,7 @@ msgstr ""
 #: part/templates/part/detail.html:100 part/templates/part/part_sidebar.html:41
 #: templates/InvenTree/index.html:283 templates/InvenTree/search.html:217
 #: templates/InvenTree/settings/sidebar.html:49
-#: templates/js/translated/search.js:190 templates/navbar.html:60
+#: templates/js/translated/search.js:190 templates/navbar.html:61
 #: users/models.py:46
 msgid "Sales Orders"
 msgstr ""
@@ -2987,7 +2987,7 @@ msgstr ""
 
 #: company/templates/company/manufacturer_part.html:15 company/views.py:55
 #: part/templates/part/prices.html:170 templates/InvenTree/search.html:178
-#: templates/navbar.html:48
+#: templates/navbar.html:49
 msgid "Manufacturers"
 msgstr ""
 
@@ -3016,7 +3016,7 @@ msgstr ""
 #: company/templates/company/manufacturer_part.html:115
 #: company/templates/company/supplier_part.html:15 company/views.py:49
 #: part/templates/part/part_sidebar.html:35 part/templates/part/prices.html:166
-#: templates/InvenTree/search.html:188 templates/navbar.html:47
+#: templates/InvenTree/search.html:188 templates/navbar.html:48
 msgid "Suppliers"
 msgstr ""
 
@@ -3170,7 +3170,7 @@ msgstr ""
 #: templates/js/translated/bom.js:553 templates/js/translated/part.js:678
 #: templates/js/translated/part.js:1226 templates/js/translated/part.js:1387
 #: templates/js/translated/stock.js:903 templates/js/translated/stock.js:1696
-#: templates/navbar.html:30
+#: templates/navbar.html:31
 msgid "Stock"
 msgstr ""
 
@@ -3196,8 +3196,7 @@ msgstr ""
 #: stock/templates/stock/location.html:164
 #: stock/templates/stock/location_sidebar.html:7
 #: templates/InvenTree/search.html:152 templates/js/translated/search.js:127
-#: templates/js/translated/stock.js:2311 templates/stats.html:105
-#: templates/stats.html:114 users/models.py:43
+#: templates/js/translated/stock.js:2311 users/models.py:43
 msgid "Stock Items"
 msgstr ""
 
@@ -3210,7 +3209,7 @@ msgid "New Manufacturer"
 msgstr ""
 
 #: company/views.py:61 templates/InvenTree/search.html:208
-#: templates/navbar.html:59
+#: templates/navbar.html:60
 msgid "Customers"
 msgstr ""
 
@@ -4168,7 +4167,7 @@ msgstr ""
 
 #: part/models.py:127 part/templates/part/category.html:128
 #: templates/InvenTree/search.html:95 templates/js/translated/search.js:113
-#: templates/stats.html:96 users/models.py:40
+#: users/models.py:40
 msgid "Part Categories"
 msgstr ""
 
@@ -4179,8 +4178,7 @@ msgstr ""
 #: templates/InvenTree/index.html:85 templates/InvenTree/search.html:82
 #: templates/InvenTree/settings/sidebar.html:39
 #: templates/js/translated/part.js:1780 templates/js/translated/search.js:99
-#: templates/navbar.html:23 templates/stats.html:92 templates/stats.html:101
-#: users/models.py:41
+#: templates/navbar.html:24 users/models.py:41
 msgid "Parts"
 msgstr ""
 
@@ -5458,11 +5456,11 @@ msgstr ""
 msgid "Create a new variant of template <em>'%(full_name)s'</em>."
 msgstr ""
 
-#: part/templatetags/inventree_extras.py:198
+#: part/templatetags/inventree_extras.py:191
 msgid "Unknown database"
 msgstr ""
 
-#: part/templatetags/inventree_extras.py:235
+#: part/templatetags/inventree_extras.py:228
 #, python-brace-format
 msgid "{title} v{version}"
 msgstr ""
@@ -6492,8 +6490,7 @@ msgid "Sublocations"
 msgstr ""
 
 #: stock/templates/stock/location.html:147 templates/InvenTree/search.html:164
-#: templates/js/translated/search.js:145 templates/stats.html:109
-#: users/models.py:42
+#: templates/js/translated/search.js:145 users/models.py:42
 msgid "Stock Locations"
 msgstr ""
 
@@ -6881,7 +6878,7 @@ msgid "Signup"
 msgstr ""
 
 #: templates/InvenTree/settings/mixins/settings.html:5
-#: templates/InvenTree/settings/settings.html:12 templates/navbar.html:138
+#: templates/InvenTree/settings/settings.html:12 templates/navbar.html:139
 msgid "Settings"
 msgstr ""
 
@@ -6931,7 +6928,7 @@ msgstr ""
 msgid "Install Plugin"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:48 templates/navbar.html:136
+#: templates/InvenTree/settings/plugin.html:48 templates/navbar.html:137
 #: users/models.py:39
 msgid "Admin"
 msgstr ""
@@ -7139,7 +7136,7 @@ msgstr ""
 msgid "Change Password"
 msgstr ""
 
-#: templates/InvenTree/settings/user.html:22
+#: templates/InvenTree/settings/user.html:23
 #: templates/js/translated/helpers.js:27 templates/notes_buttons.html:3
 #: templates/notes_buttons.html:4
 msgid "Edit"
@@ -7451,29 +7448,29 @@ msgstr ""
 msgid "This email confirmation link expired or is invalid. Please <a href=\"%(email_url)s\">issue a new email confirmation request</a>."
 msgstr ""
 
-#: templates/account/login.html:6 templates/account/login.html:17
-#: templates/account/login.html:43
+#: templates/account/login.html:6 templates/account/login.html:16
+#: templates/account/login.html:42
 msgid "Sign In"
 msgstr ""
 
-#: templates/account/login.html:22
+#: templates/account/login.html:21
 #, python-format
 msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
-#: templates/account/login.html:26
+#: templates/account/login.html:25
 #, python-format
 msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
-#: templates/account/login.html:46
+#: templates/account/login.html:45
 msgid "Forgot Password?"
 msgstr ""
 
-#: templates/account/login.html:52
+#: templates/account/login.html:51
 msgid "or use SSO"
 msgstr ""
 
@@ -7614,15 +7611,15 @@ msgstr ""
 msgid "Add Attachment"
 msgstr ""
 
-#: templates/base.html:100
+#: templates/base.html:99
 msgid "Server Restart Required"
 msgstr ""
 
-#: templates/base.html:103
+#: templates/base.html:102
 msgid "A configuration option has been changed which requires a server restart"
 msgstr ""
 
-#: templates/base.html:103
+#: templates/base.html:102
 msgid "Contact your system administrator for further information"
 msgstr ""
 
@@ -7815,7 +7812,7 @@ msgstr ""
 msgid "Scan barcode data below"
 msgstr ""
 
-#: templates/js/translated/barcode.js:280 templates/navbar.html:108
+#: templates/js/translated/barcode.js:280 templates/navbar.html:109
 msgid "Scan Barcode"
 msgstr ""
 
@@ -9845,7 +9842,7 @@ msgstr ""
 msgid "rows"
 msgstr ""
 
-#: templates/js/translated/tables.js:447 templates/navbar.html:101
+#: templates/js/translated/tables.js:447 templates/navbar.html:102
 #: templates/search.html:8 templates/search_form.html:6
 #: templates/search_form.html:7
 msgid "Search"
@@ -9875,31 +9872,31 @@ msgstr ""
 msgid "All"
 msgstr ""
 
-#: templates/navbar.html:44
+#: templates/navbar.html:45
 msgid "Buy"
 msgstr ""
 
-#: templates/navbar.html:56
+#: templates/navbar.html:57
 msgid "Sell"
 msgstr ""
 
-#: templates/navbar.html:115
+#: templates/navbar.html:116
 msgid "Show Notifications"
 msgstr ""
 
-#: templates/navbar.html:118
+#: templates/navbar.html:119
 msgid "New Notifications"
 msgstr ""
 
-#: templates/navbar.html:139
+#: templates/navbar.html:140
 msgid "Logout"
 msgstr ""
 
-#: templates/navbar.html:141
+#: templates/navbar.html:142
 msgid "Login"
 msgstr ""
 
-#: templates/navbar.html:162
+#: templates/navbar.html:163
 msgid "About InvenTree"
 msgstr ""
 
