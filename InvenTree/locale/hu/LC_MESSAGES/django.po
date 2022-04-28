@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-28 04:14+0000\n"
-"PO-Revision-Date: 2022-04-28 07:29\n"
+"PO-Revision-Date: 2022-04-28 08:27\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1620,11 +1620,11 @@ msgstr "Példány név használata a címsorban"
 
 #: common/models.py:700
 msgid "Restrict showing `about`"
-msgstr ""
+msgstr "Verzió infók megjelenítésének tiltása"
 
 #: common/models.py:701
 msgid "Show the `about` modal only to superusers"
-msgstr ""
+msgstr "Verzió infók megjelenítése csak admin felhasználóknak"
 
 #: common/models.py:707 company/models.py:100 company/models.py:101
 msgid "Company name"
@@ -2371,7 +2371,7 @@ msgstr "Rögzített menüsor"
 
 #: common/models.py:1363
 msgid "The navbar position is fixed to the top of the screen"
-msgstr ""
+msgstr "A menü pozíciója mindig rögzítve a lap tetején"
 
 #: common/models.py:1369
 msgid "Date Format"
@@ -5463,7 +5463,7 @@ msgstr "Ismeretlen adatbázis"
 #: part/templatetags/inventree_extras.py:228
 #, python-brace-format
 msgid "{title} v{version}"
-msgstr ""
+msgstr "{title} v{version}"
 
 #: part/views.py:86
 msgid "Set Part Category"
@@ -6682,7 +6682,7 @@ msgstr "Belső kiszolgáló hiba"
 #: templates/500.html:15
 #, python-format
 msgid "The %(inventree_title)s server raised an internal error"
-msgstr ""
+msgstr "A(z) %(inventree_title)s kiszolgáló belső hibát jelzett"
 
 #: templates/500.html:16
 msgid "Refer to the error log in the admin interface for further details"
@@ -6917,7 +6917,7 @@ msgstr "Plugin beállítások"
 
 #: templates/InvenTree/settings/plugin.html:16
 msgid "Changing the settings below require you to immediatly restart the server. Do not change this while under active usage."
-msgstr ""
+msgstr "Az alábbi beállítások módosításához a kiszolgáló azonnali újraindítása szükséges. Aktív használat közben ne változtass ezeken."
 
 #: templates/InvenTree/settings/plugin.html:34
 msgid "Plugins"
@@ -6994,7 +6994,7 @@ msgstr "Ez a plugin csomagként lett telepítve"
 
 #: templates/InvenTree/settings/plugin_settings.html:88
 msgid "This plugin was found in a local server path"
-msgstr ""
+msgstr "Ez a plugin a lokális kiszolgáló útvonalon található"
 
 #: templates/InvenTree/settings/plugin_settings.html:94
 msgid "Installation path"
@@ -7350,7 +7350,7 @@ msgstr "Segítsd a fordítási munkát!"
 #: templates/InvenTree/settings/user_display.html:104
 #, python-format
 msgid "Native language translation of the web application is <a href=\"%(link)s\">community contributed via crowdin</a>. Contributions are welcomed and encouraged."
-msgstr ""
+msgstr "A nyelvi fordításai a web alkalmazásnak <a href=\"%(link)s\">közösségiek a crowdin-en</a>. A közreműködéseket szívesen fogadjuk és bátorítjuk."
 
 #: templates/InvenTree/settings/user_homepage.html:9
 msgid "Home Page Settings"
