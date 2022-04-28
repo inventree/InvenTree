@@ -439,6 +439,12 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
 
     # Helper function to check for duplicated numbers
     def add_sn(sn):
+        # Attempt integer conversion first, so numerical strings are never stored
+        try:
+            sn = int(sn)
+        except ValueError:
+            pass
+
         if sn in numbers:
             errors.append(_('Duplicate serial: {sn}').format(sn=sn))
         else:
@@ -496,7 +502,7 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
 
                 # case 1
                 else:
-                    end = start + expected_quantity
+                    end = start + (expected_quantity - len(numbers))
 
                 for n in range(start, end):
                     add_sn(n)
@@ -506,13 +512,7 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
 
         # At this point, we assume that the "group" is just a single serial value
         elif group:
-
-            try:
-                # First attempt to add as an integer value
-                add_sn(int(group))
-            except (ValueError):
-                # As a backup, add as a string value
-                add_sn(group)
+            add_sn(group)
 
         # No valid input group detected
         else:
