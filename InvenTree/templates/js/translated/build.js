@@ -865,6 +865,87 @@ function loadBuildOutputTable(build_info, options={}) {
         );
     }
 
+    var part_tests = null;
+
+    function updateTestResultData(rows) {
+
+        console.log("updateTestResultData");
+
+        // Request test template data if it has not already been retrieved
+        if (part_tests == null) {
+            inventreeGet(
+                '{% url "api-part-test-template-list" %}',
+                {
+                    part: build_info.part,
+                    required: true,
+                },
+                {
+                    async: false,
+                    success: function(response) {
+                        // Save the list of part tests
+                        part_tests = response;
+
+                        updateTestResultData(rows);
+                    }
+                }
+            );;
+        }
+
+        rows.forEach(function(row) {
+
+            // Ignore if this row has already been updated (else, infinite loop!)
+            if (row.passed_tests) {
+                return;
+            }
+
+            // Request test result information for the particular build output
+            inventreeGet(
+                '{% url "api-stock-test-result-list" %}',
+                {
+                    stock_item: row.pk,
+                },
+                {
+                    success: function(results) {
+
+                        // A list of tests that this stock item has passed
+                        var passed_tests = {};
+
+                        // Keep a list of tests that this stock item has passed
+                        results.forEach(function(result) {
+                            if (result.result) {
+                                passed_tests[result.key] = true;
+                            }
+                        });
+
+                        row.passed_tests = passed_tests;
+
+                        $(table).bootstrapTable('updateByUniqueId', row.pk, row, true);
+                    }
+                }
+            )
+        });
+    }
+
+    // Return the number of 'passed' tests in a given row
+    function countPassedTests(row) {
+        if (part_tests == null) {
+            return 0;
+        }
+
+        var results = row.passed_tests || {};
+        var n = 0;
+
+        part_tests.forEach(function(test) {
+            if (results[test.key] || false) {
+                n += 1;
+            }
+        });
+
+        return n;
+    }
+
+    var table_loaded = false;
+
     $(table).inventreeTable({
         url: '{% url "api-stock-list" %}',
         queryParams: filters,
@@ -885,11 +966,21 @@ function loadBuildOutputTable(build_info, options={}) {
         formatNoMatches: function() {
             return '{% trans "No active build outputs found" %}';
         },
-        onPostBody: function() {
+        onPostBody: function(rows) {
+            console.log("onPostBody");
             // Add callbacks for the buttons
             setupBuildOutputButtonCallbacks();
+        },
+        onLoadSuccess: function(rows) {
 
-            $(table).bootstrapTable('expandAllRows');
+            console.log("onLoadSuccess");
+
+            updateTestResultData(rows);
+        },
+        onRefresh: function() {
+            console.log("onRefresh");
+            // var rows = $(table).bootstrapTable('getData');
+            // updateTestResultData(rows);
         },
         columns: [
             {
@@ -945,10 +1036,44 @@ function loadBuildOutputTable(build_info, options={}) {
             },
             {
                 field: 'allocated',
-                title: '{% trans "Allocated Parts" %}',
+                title: '{% trans "Allocated Stock" %}',
                 visible: has_tracked_items,
+                switchable: false,
                 formatter: function(value, row) {
                     return `<div id='output-progress-${row.pk}'><span class='fas fa-spin fa-spinner'></span></div>`;
+                },
+                sorter: function(value_a, value_b, row_a, row_b) {
+                    // TODO: Custom sorter for "allocated stock" column
+                    return 0;
+                },
+            },
+            {
+                field: 'tests',
+                title: '{% trans "Tests" %}',
+                sortable: false,
+                switchable: true,
+                formatter: function(value, row) {
+                    if (part_tests == null || part_tests.length == 0) {
+                        return `<em>{% trans "No tests found " %}</em>`;
+                    }
+
+                    var n_passed = countPassedTests(row);
+
+                    var progress = makeProgressBar(
+                        n_passed,
+                        part_tests.length,
+                        {
+                            max_width: '150px',
+                        }
+                    );
+
+                    return progress;
+                },
+                sorter: function(a, b, row_a, row_b) {
+                    var n_a = countPassedTests(row_a);
+                    var n_b = countPassedTests(row_b);
+
+                    return n_a > n_b ? 1 : -1;
                 }
             },
             {
