@@ -488,7 +488,7 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
                         for n in range(a, b + 1):
                             add_sn(n)
                     else:
-                        errors.append(_("Invalid group: {g}").format(g=group))
+                        errors.append(_("Invalid group range: {g}").format(g=group))
 
                 except ValueError:
                     errors.append(_("Invalid group: {g}").format(g=group))
@@ -519,7 +519,7 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
                     add_sn(n)
             # no case
             else:
-                errors.append(_("Invalid group: {g}").format(g=group))
+                errors.append(_("Invalid group sequence: {g}").format(g=group))
 
         # At this point, we assume that the "group" is just a single serial value
         elif group:
