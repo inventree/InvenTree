@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-28 04:14+0000\n"
-"PO-Revision-Date: 2022-04-28 04:18\n"
+"POT-Creation-Date: 2022-04-28 12:05+0000\n"
+"PO-Revision-Date: 2022-04-28 12:14\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -80,36 +80,45 @@ msgstr ""
 msgid "You must type the same email each time."
 msgstr ""
 
-#: InvenTree/helpers.py:442
+#: InvenTree/helpers.py:449
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
 msgstr ""
 
-#: InvenTree/helpers.py:449 order/models.py:282 order/models.py:435
+#: InvenTree/helpers.py:456 order/models.py:282 order/models.py:435
 #: stock/views.py:993
 msgid "Invalid quantity provided"
 msgstr "Ogiltigt antal angivet"
 
-#: InvenTree/helpers.py:452
+#: InvenTree/helpers.py:459
 msgid "Empty serial number string"
 msgstr "Tom serienummersträng"
 
-#: InvenTree/helpers.py:474 InvenTree/helpers.py:477 InvenTree/helpers.py:480
-#: InvenTree/helpers.py:504
+#: InvenTree/helpers.py:491
+#, python-brace-format
+msgid "Invalid group range: {g}"
+msgstr ""
+
+#: InvenTree/helpers.py:494
 #, python-brace-format
 msgid "Invalid group: {g}"
 msgstr "Ogiltig grupp: {g}"
 
-#: InvenTree/helpers.py:518
+#: InvenTree/helpers.py:522
+#, python-brace-format
+msgid "Invalid group sequence: {g}"
+msgstr ""
+
+#: InvenTree/helpers.py:530
 #, python-brace-format
 msgid "Invalid/no group {group}"
 msgstr ""
 
-#: InvenTree/helpers.py:524
+#: InvenTree/helpers.py:536
 msgid "No serial numbers found"
 msgstr "Inga serienummer hittades"
 
-#: InvenTree/helpers.py:528
+#: InvenTree/helpers.py:540
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
 msgstr ""
