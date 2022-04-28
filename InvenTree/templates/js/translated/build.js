@@ -841,6 +841,9 @@ function loadBuildOutputTable(build_info, options={}) {
         });
     }
 
+    // List of "tracked bom items" required for this build order
+    var bom_items = null;
+
     /*
      * Construct a "sub table" showing the required BOM items
      */
@@ -855,6 +858,9 @@ function loadBuildOutputTable(build_info, options={}) {
 
         element.html(html);
 
+        // Pass through the cached BOM items
+        build_info.bom_items = bom_items;
+
         loadBuildOutputAllocationTable(
             build_info,
             row,
@@ -865,13 +871,8 @@ function loadBuildOutputTable(build_info, options={}) {
         );
     }
 
-    // List of "tracked bom items" required for this build order
-    var bom_items = null;
-
     function updateAllocationData(rows) {
         // Update stock allocation information for the build outputs
-
-        console.log("updateAllocationData");
 
         // Request list of BOM data for this build order
         if (bom_items == null) {
@@ -896,15 +897,15 @@ function loadBuildOutputTable(build_info, options={}) {
             return;
         }
 
-        console.log("BOM ITEMS:", bom_items);
+        rows.forEach(function(row) {
+
+        })
     }
 
     var part_tests = null;
 
     function updateTestResultData(rows) {
         // Update test result information for the build outputs
-
-        console.log("updateTestResultData");
 
         // Request test template data if it has not already been retrieved
         if (part_tests == null) {
@@ -1002,19 +1003,13 @@ function loadBuildOutputTable(build_info, options={}) {
             return '{% trans "No active build outputs found" %}';
         },
         onPostBody: function(rows) {
-            console.log("onPostBody");
             // Add callbacks for the buttons
             setupBuildOutputButtonCallbacks();
         },
         onLoadSuccess: function(rows) {
 
-            console.log("onLoadSuccess");
-
             updateAllocationData(rows);
             updateTestResultData(rows);
-        },
-        onRefresh: function() {
-            console.log("onRefresh");
         },
         columns: [
             {
@@ -1320,14 +1315,29 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         });
     }
 
+    var bom_items = buildInfo.bom_items || null;
+
+    // If BOM items have not been provided, load via the API
+    if (bom_items == null) {
+        inventreeGet(
+            '{% url "api-bom-list" %}',
+            {
+                part: partId,
+                sub_part_detail: true,
+                sub_part_trackable: trackable,
+            },
+            {
+                async: false,
+                success: function(results) {
+                    bom_items = results;
+                }
+            }
+        );
+    }
+
     // Load table of BOM items
     $(table).inventreeTable({
-        url: '{% url "api-bom-list" %}',
-        queryParams: {
-            part: partId,
-            sub_part_detail: true,
-            sub_part_trackable: trackable,
-        },
+        data: bom_items,
         disablePagination: true,
         formatNoMatches: function() { 
             return '{% trans "No BOM items found" %}';
