@@ -867,7 +867,7 @@ function loadBuildOutputTable(build_info, options={}) {
     // List of "tracked bom items" required for this build order
     var bom_items = null;
 
-     // Request list of BOM data for this build order
+    // Request list of BOM data for this build order
     inventreeGet(
         '{% url "api-bom-list" %}',
         {
@@ -962,7 +962,7 @@ function loadBuildOutputTable(build_info, options={}) {
 
                             var output_progress_bar = $(`#output-progress-${row.pk}`);
 
-                            if  (output_progress_bar.exists()) {
+                            if (output_progress_bar.exists()) {
                                 output_progress_bar.html(
                                     makeProgressBar(
                                         n_completed_lines,
@@ -977,7 +977,7 @@ function loadBuildOutputTable(build_info, options={}) {
                     });
                 }
             }
-        )
+        );
     }
 
     var part_tests = null;
@@ -1283,14 +1283,14 @@ function loadBuildOutputTable(build_info, options={}) {
                     $('#build-stock-table').bootstrapTable('refresh');
                 }
             }
-        )
+        );
     });
 
     // Print stock item labels
     $('#incomplete-output-print-label').click(function() {
         var outputs = $(table).bootstrapTable('getSelections');
 
-        if  (outputs.length == 0) {
+        if (outputs.length == 0) {
             outputs = $(table).bootstrapTable('getData');
         }
 
@@ -1375,10 +1375,6 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
     setupFilterList('builditems', $(table), options.filterTarget);
 
-    // If an "output" is specified, then only "trackable" parts are allocated
-    // Otherwise, only "untrackable" parts are allowed
-    var trackable = ! !output;
-
     var allocated_items = output == null ? null : output.allocations;
 
     function redrawAllocationData() {
@@ -1445,11 +1441,6 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         reloadAllocationData(false);
     } else {
         redrawAllocationData();
-    }
-
-    function reloadTable() {
-        // Reload the entire build allocation table
-        $(table).bootstrapTable('refresh');
     }
 
     function requiredQuantity(row) {
@@ -1812,7 +1803,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 sortable: true,
                 formatter: function(value, row) {
                     var allocated = allocatedQuantity(row);
-                    var required = requiredQuantity(row)
+                    var required = requiredQuantity(row);
                     return makeProgressBar(allocated, required);
                 },
                 sorter: function(valA, valB, rowA, rowB) {
