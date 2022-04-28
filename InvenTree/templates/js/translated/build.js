@@ -1347,7 +1347,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             {
                 part: partId,
                 sub_part_detail: true,
-                sub_part_trackable: trackable,
+                sub_part_trackable: buildInfo.tracked_parts,
             },
             {
                 async: false,
