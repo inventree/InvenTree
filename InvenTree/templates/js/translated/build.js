@@ -897,9 +897,46 @@ function loadBuildOutputTable(build_info, options={}) {
             return;
         }
 
-        rows.forEach(function(row) {
+        // Request updated stock allocation data for this build order
+        inventreeGet(
+            '{% url "api-build-item-list" %}',
+            {
+                build: build_info.pk,
+                part_detail: true,
+                location_detail: true,
+                sub_part_trackable: true,
+                tracked: true,
+            },
+            {
+                success: function(response) {
 
-        })
+                    // Group allocation information by the "install_into" field
+                    var allocations = {};
+
+                    response.forEach(function(allocation) {
+                        var target = allocation.install_into;
+
+                        if (target != null) {
+                            if (!(target in allocations)) {
+                                allocations[target] = [];
+                            }
+
+                            allocations[target].push(allocation);
+                        }
+                    });
+
+                    // Now that the allocations have been grouped by stock item,
+                    // we can update each row in the table,
+                    // using the pk value of each row (stock item)
+                    rows.forEach(function(row) {
+                        row.allocations = allocations[row.pk] || [];
+                        $(table).bootstrapTable('updateByUniqueId', row.pk, row, true);
+
+                        console.log("Updating row for stock item", row.pk);
+                    });
+                }
+            }
+        )
     }
 
     var part_tests = null;
@@ -1145,7 +1182,6 @@ function loadBuildOutputTable(build_info, options={}) {
  */
 function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
     
-
     var buildId = buildInfo.pk;
     var partId = buildInfo.part;
 
@@ -1177,6 +1213,30 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
     // If an "output" is specified, then only "trackable" parts are allocated
     // Otherwise, only "untrackable" parts are allowed
     var trackable = ! !output;
+
+    var allocated_items = output == null ? null : output.allocations;
+
+    if (allocated_items == null) {
+
+        inventreeGet(
+            '{% url "api-build-item-list" %}',
+            {
+                build: buildId,
+                part_detail: true,
+                location_detail: true,
+                output: output == null ? null : output.pk,
+            },
+            {
+                async: false,
+                success: function(response) {
+                    allocated_items = response;
+                }
+            }
+        );
+    }
+
+    console.log("rendering table for output:", outputId);
+    console.log("allocations:", allocated_items);
 
     function reloadTable() {
         // Reload the entire build allocation table
@@ -1348,9 +1408,12 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         onPostBody: function(data) {
             // Setup button callbacks
             setupCallbacks();
-        },
-        onLoadSuccess: function(tableData) {
+        // },
+        // onLoadSuccess: function(tableData) {
             // Once the BOM data are loaded, request allocation data for this build output
+
+            console.log("old onLoadSuccess");
+            return;
 
             var params = {
                 build: buildId,
