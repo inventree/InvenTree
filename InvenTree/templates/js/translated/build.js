@@ -1025,9 +1025,27 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         }
 
         // Store the required quantity in the row data
-        row.required = quantity;
+        // Prevent weird rounding issues
+        row.required = parseFloat(quantity.toFixed(15));
 
-        return quantity;
+        return row.required;
+    }
+
+    function availableQuantity(row) {
+
+        // Base stock
+        var available = row.available_stock;
+
+        // Substitute stock
+        available += (row.available_substitute_stock || 0);
+
+        // Variant stock
+        if (row.allow_variants) {
+            available += (row.available_variant_stock || 0);
+        }
+
+        return available;
+
     }
 
     function sumAllocations(row) {
@@ -1043,9 +1061,9 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             quantity += item.quantity;
         });
 
-        row.allocated = quantity;
+        row.allocated = parseFloat(quantity.toFixed(15));
 
-        return quantity;
+        return row.allocated;
     }
 
     function setupCallbacks() {
@@ -1420,9 +1438,56 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 sortable: true,
             },
             {
-                field: 'sub_part_detail.stock',
+                field: 'available_stock',
                 title: '{% trans "Available" %}',
                 sortable: true,
+                formatter: function(value, row) {
+
+                    var url = `/part/${row.sub_part_detail.pk}/?display=part-stock`;
+
+                    // Calculate total "available" (unallocated) quantity
+                    var substitute_stock = row.available_substitute_stock || 0;
+                    var variant_stock = row.allow_variants ? (row.available_variant_stock || 0) : 0;
+
+                    var available_stock = availableQuantity(row);
+            
+                    var required = requiredQuantity(row);
+
+                    var text = '';
+                    
+                    if (available_stock > 0) {
+                        text += `${available_stock}`;
+                    }
+                    
+                    if (available_stock < required) {
+                        text += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "Insufficient stock available" %}'></span>`;
+                    } else {
+                        text += `<span class='fas fa-check-circle icon-green float-right' title='{% trans "Sufficient stock available" %}'></span>`;
+                    }
+
+                    if (available_stock <= 0) {
+                        text += `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
+                    } else {
+                        var extra = '';
+                        if ((substitute_stock > 0) && (variant_stock > 0)) {
+                            extra = '{% trans "Includes variant and substitute stock" %}';
+                        } else if (variant_stock > 0) {
+                            extra = '{% trans "Includes variant stock" %}';
+                        } else if (substitute_stock > 0) {
+                            extra = '{% trans "Includes substitute stock" %}';
+                        }
+        
+                        if (extra) {
+                            text += `<span title='${extra}' class='fas fa-info-circle float-right icon-blue'></span>`;
+                        }
+                    }
+        
+                    return renderLink(text, url);
+                },
+                sorter: function(valA, valB, rowA, rowB) {
+
+                    return availableQuantity(rowA) > availableQuantity(rowB) ? 1 : -1;
+                },
             },
             {
                 field: 'allocated',
@@ -1642,6 +1707,9 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
             remaining = 0;
         }
 
+        // Ensure the quantity sent to the form field is correctly formatted
+        remaining = parseFloat(remaining.toFixed(15));
+
         // We only care about entries which are not yet fully allocated
         if (remaining > 0) {
             table_entries += renderBomItemRow(bom_item, remaining);
@@ -1742,7 +1810,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
                         required: true,
                         render_part_detail: true,
                         render_location_detail: true,
-                        render_stock_id: false,
+                        render_pk: false,
                         auto_fill: true,
                         auto_fill_filters: auto_fill_filters,
                         onSelect: function(data, field, opts) {

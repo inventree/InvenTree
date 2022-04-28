@@ -65,8 +65,8 @@ RUN apk add --no-cache git make bash \
     libjpeg-turbo libjpeg-turbo-dev jpeg jpeg-dev \
     libffi libffi-dev \
     zlib zlib-dev \
-    # Cairo deps for WeasyPrint (these will be deprecated once WeasyPrint drops cairo requirement)
-    cairo cairo-dev pango pango-dev \
+    # Special deps for WeasyPrint (these will be deprecated once WeasyPrint drops cairo requirement)
+    cairo cairo-dev pango pango-dev gdk-pixbuf \
     # Fonts
     fontconfig ttf-droid ttf-liberation ttf-dejavu ttf-opensans ttf-ubuntu-font-family font-croscore font-noto \
     # Core python
@@ -136,7 +136,6 @@ ENV INVENTREE_PLUGIN_DIR="${INVENTREE_DEV_DIR}/plugins"
 ENV INVENTREE_CONFIG_FILE="${INVENTREE_DEV_DIR}/config.yaml"
 ENV INVENTREE_SECRET_KEY_FILE="${INVENTREE_DEV_DIR}/secret_key.txt"
 ENV INVENTREE_PLUGIN_FILE="${INVENTREE_DEV_DIR}/plugins.txt"
-
 
 WORKDIR ${INVENTREE_HOME}
 

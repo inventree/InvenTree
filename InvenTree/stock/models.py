@@ -8,6 +8,8 @@ from __future__ import unicode_literals
 
 import os
 
+from jinja2 import Template
+
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError, FieldError
 from django.urls import reverse
@@ -211,6 +213,32 @@ class StockItemManager(TreeManager):
             'part',
             'tracking_info'
         )
+
+
+def generate_batch_code():
+    """
+    Generate a default 'batch code' for a new StockItem.
+
+    This uses the value of the 'STOCK_BATCH_CODE_TEMPLATE' setting (if configured),
+    which can be passed through a simple template.
+    """
+
+    batch_template = common.models.InvenTreeSetting.get_setting('STOCK_BATCH_CODE_TEMPLATE', '')
+
+    now = datetime.now()
+
+    # Pass context data through to the template randering.
+    # The folowing context variables are availble for custom batch code generation
+    context = {
+        'date': now,
+        'year': now.year,
+        'month': now.month,
+        'day': now.day,
+        'hour': now.minute,
+        'minute': now.minute,
+    }
+
+    return Template(batch_template).render(context)
 
 
 class StockItem(MPTTModel):
@@ -453,6 +481,14 @@ class StockItem(MPTTModel):
 
         super().clean()
 
+        # Strip serial number field
+        if type(self.serial) is str:
+            self.serial = self.serial.strip()
+
+        # Strip batch code field
+        if type(self.batch) is str:
+            self.batch = self.batch.strip()
+
         try:
             if self.part.trackable:
                 # Trackable parts must have integer values for quantity field!
@@ -636,7 +672,8 @@ class StockItem(MPTTModel):
     batch = models.CharField(
         verbose_name=_('Batch Code'),
         max_length=100, blank=True, null=True,
-        help_text=_('Batch code for this stock item')
+        help_text=_('Batch code for this stock item'),
+        default=generate_batch_code,
     )
 
     quantity = models.DecimalField(
@@ -717,6 +754,33 @@ class StockItem(MPTTModel):
                               verbose_name=_('Owner'),
                               help_text=_('Select Owner'),
                               related_name='stock_items')
+
+    @transaction.atomic
+    def convert_to_variant(self, variant, user, notes=None):
+        """
+        Convert this StockItem instance to a "variant",
+        i.e. change the "part" reference field
+        """
+
+        if not variant:
+            # Ignore null values
+            return
+
+        if variant == self.part:
+            # Variant is the same as the current part
+            return
+
+        self.part = variant
+        self.save()
+
+        self.add_tracking_entry(
+            StockHistoryCode.CONVERTED_TO_VARIANT,
+            user,
+            deltas={
+                'part': variant.pk,
+            },
+            notes=_('Converted to part') + ': ' + variant.full_name,
+        )
 
     def get_item_owner(self):
         """

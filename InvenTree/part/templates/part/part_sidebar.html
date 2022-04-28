@@ -4,7 +4,6 @@
 
 {% settings_value "PART_INTERNAL_PRICE" as show_internal_price %}
 {% settings_value 'PART_SHOW_RELATED' as show_related %}
-{% settings_value "PART_SHOW_PRICE_HISTORY" as show_price_history %}
 
 {% trans "Parameters" as text %}
 {% include "sidebar_item.html" with label="part-parameters" text=text icon="fa-th-list" %}
@@ -28,7 +27,7 @@
 {% trans "Used In" as text %}
 {% include "sidebar_item.html" with label="used-in" text=text icon="fa-layer-group" %}
 {% endif %}
-{% if show_price_history %}
+{% if part.purchaseable or part.salable %}
 {% trans "Pricing" as text %}
 {% include "sidebar_item.html" with label="pricing" text=text icon="fa-dollar-sign" %}
 {% endif %}

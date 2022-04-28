@@ -94,6 +94,14 @@ class IntegrationPluginBase(MixinBase, plugin_base.InvenTreePluginBase):
         """
         return getattr(self, 'is_package', False)
 
+    @property
+    def is_sample(self):
+        """
+        Is this plugin part of the samples?
+        """
+        path = str(self.package_path)
+        return path.startswith('plugin/samples/')
+
     # region properties
     @property
     def slug(self):

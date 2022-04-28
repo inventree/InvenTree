@@ -234,9 +234,18 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Stock status" %}',
                 description: '{% trans "Stock status" %}',
             },
+            has_batch: {
+                title: '{% trans "Has batch code" %}',
+                type: 'bool',
+            },
             batch: {
                 title: '{% trans "Batch" %}',
                 description: '{% trans "Batch code" %}',
+            },
+            tracked: {
+                title: '{% trans "Tracked" %}',
+                description: '{% trans "Stock item is tracked by either batch code or serial number" %}',
+                type: 'bool',
             },
             has_purchase_price: {
                 type: 'bool',
@@ -265,7 +274,16 @@ function getAvailableTableFilters(tableKey) {
 
     // Filters for the 'stock test' table
     if (tableKey == 'stocktests') {
-        return {};
+        return {
+            result: {
+                type: 'bool',
+                title: '{% trans "Test Passed" %}',
+            },
+            include_installed: {
+                type: 'bool',
+                title: '{% trans "Include Installed Items" %}',
+            }
+        };
     }
 
     // Filters for the 'part test template' table
@@ -427,11 +445,15 @@ function getAvailableTableFilters(tableKey) {
             },
             has_stock: {
                 type: 'bool',
-                title: '{% trans "Stock available" %}',
+                title: '{% trans "In stock" %}',
             },
             low_stock: {
                 type: 'bool',
                 title: '{% trans "Low stock" %}',
+            },
+            unallocated_stock: {
+                type: 'bool',
+                title: '{% trans "Available stock" %}',
             },
             assembly: {
                 type: 'bool',

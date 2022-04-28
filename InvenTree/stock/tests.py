@@ -167,8 +167,8 @@ class StockTest(TestCase):
         self.assertFalse(self.drawer2.has_items())
 
         # Drawer 3 should have three stock items
-        self.assertEqual(self.drawer3.stock_items.count(), 16)
-        self.assertEqual(self.drawer3.item_count, 16)
+        self.assertEqual(self.drawer3.stock_items.count(), 18)
+        self.assertEqual(self.drawer3.item_count, 18)
 
     def test_stock_count(self):
         part = Part.objects.get(pk=1)
