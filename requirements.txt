@@ -46,4 +46,3 @@ qrcode[pil]==6.1                        # QR code generator
 rapidfuzz==0.7.6                        # Fuzzy string matching
 tablib[xls,xlsx,yaml]                   # Support for XLS and XLSX formats
 weasyprint==52.5                        # PDF generation library (Note: in the future need to update to 53)
-
