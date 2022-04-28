@@ -270,6 +270,16 @@
                         </ul>
                     </div>
 
+                    {% if build.has_tracked_bom_items %}
+                    <button id='outputs-expand' class='btn btn-outline-secondary' type='button' title='{% trans "Expand all build output rows" %}'>
+                        <span class='fas fa-expand'></span>
+                    </button>
+
+                    <button id='outputs-collapse' class='btn btn-outline-secondary' type='button' title='{% trans "Collapse all build output rows" %}'>
+                        <span class='fas fa-compress'></span>
+                    </button>
+                    {% endif %}
+
                     {% include "filter_list.html" with id='incompletebuilditems' %}
                 </div>
                 {% endif %}
@@ -415,68 +425,6 @@ onPanelLoad('outputs', function() {
     };
 
     loadBuildOutputTable(build_info);
-
-    linkButtonsToSelection(
-        '#build-output-table',
-        [
-            '#output-options',
-            '#multi-output-complete',
-            '#multi-output-delete',
-        ]
-    );
-
-    $('#multi-output-complete').click(function() {
-        var outputs = $('#build-output-table').bootstrapTable('getSelections');
-
-        completeBuildOutputs(
-            build_info.pk,
-            outputs,
-            {
-                success: function() {
-                    // Reload the "in progress" table
-                    $('#build-output-table').bootstrapTable('refresh');
-
-                    // Reload the "completed" table
-                    $('#build-stock-table').bootstrapTable('refresh');
-                }
-            }
-        );
-    });
-
-    $('#multi-output-delete').click(function() {
-        var outputs = $('#build-output-table').bootstrapTable('getSelections');
-
-        deleteBuildOutputs(
-            build_info.pk,
-            outputs,
-            {
-                success: function() {
-                    // Reload the "in progress" table
-                    $('#build-output-table').bootstrapTable('refresh');
-
-                    // Reload the "completed" table
-                    $('#build-stock-table').bootstrapTable('refresh');
-                }
-            }
-        )
-    });
-
-    $('#incomplete-output-print-label').click(function() {
-        var outputs = $('#build-output-table').bootstrapTable('getSelections');
-
-        if  (outputs.length == 0) {
-            outputs = $('#build-output-table').bootstrapTable('getData');
-        }
-
-        var stock_id_values = [];
-
-        outputs.forEach(function(output) {
-            stock_id_values.push(output.pk);
-        });
-
-        printStockItemLabels(stock_id_values);
-
-    });
 
     {% endif %}
 });

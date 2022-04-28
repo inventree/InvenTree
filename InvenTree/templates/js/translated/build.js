@@ -1233,6 +1233,79 @@ function loadBuildOutputTable(build_info, options={}) {
     $(table).on('collapse-row.bs.table', function(detail, index, row) {
         $(`#button-output-allocate-${row.pk}`).prop('disabled', true);
     });
+
+    // Add callbacks for the various table menubar buttons
+
+    // Complete multiple outputs
+    $('#multi-output-complete').click(function() {
+        var outputs = $(table).bootstrapTable('getSelections');
+
+        if (outputs.length == 0) {
+            outputs = $(table).bootstrapTable('getData');
+        }
+
+        completeBuildOutputs(
+            build_info.pk,
+            outputs,
+            {
+                success: function() {
+                    // Reload the "in progress" table
+                    $('#build-output-table').bootstrapTable('refresh');
+
+                    // Reload the "completed" table
+                    $('#build-stock-table').bootstrapTable('refresh');
+                }
+            }
+        );
+    });
+
+    // Delete multiple build outputs
+    $('#multi-output-delete').click(function() {
+        var outputs = $(table).bootstrapTable('getSelections');
+
+        if (outputs.length == 0) {
+            outputs = $(table).bootstrapTable('getData');
+        }
+
+        deleteBuildOutputs(
+            build_info.pk,
+            outputs,
+            {
+                success: function() {
+                    // Reload the "in progress" table
+                    $('#build-output-table').bootstrapTable('refresh');
+
+                    // Reload the "completed" table
+                    $('#build-stock-table').bootstrapTable('refresh');
+                }
+            }
+        )
+    });
+
+    // Print stock item labels
+    $('#incomplete-output-print-label').click(function() {
+        var outputs = $(table).bootstrapTable('getSelections');
+
+        if  (outputs.length == 0) {
+            outputs = $(table).bootstrapTable('getData');
+        }
+
+        var stock_id_values = [];
+
+        outputs.forEach(function(output) {
+            stock_id_values.push(output.pk);
+        });
+
+        printStockItemLabels(stock_id_values);
+    });
+
+    $('#outputs-expand').click(function() {
+        $(table).bootstrapTable('expandAllRows');
+    });
+
+    $('#outputs-collapse').click(function() {
+        $(table).bootstrapTable('collapseAllRows');
+    });
 }
 
 
