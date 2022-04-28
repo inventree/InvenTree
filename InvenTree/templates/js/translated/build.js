@@ -1050,7 +1050,7 @@ function loadBuildOutputTable(build_info, options={}) {
             {
                 field: 'tests',
                 title: '{% trans "Tests" %}',
-                sortable: false,
+                sortable: true,
                 switchable: true,
                 formatter: function(value, row) {
                     if (part_tests == null || part_tests.length == 0) {
