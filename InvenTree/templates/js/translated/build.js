@@ -342,7 +342,9 @@ function unallocateStock(build_id, options={}) {
         },
         title: '{% trans "Unallocate Stock Items" %}',
         onSuccess: function(response, opts) {
-            if (options.table) {
+            if (options.onSuccess) {
+                options.onSuccess(response, opts);
+            } else if (options.table) {
                 // Reload the parent table
                 $(options.table).bootstrapTable('refresh');
             }
@@ -1206,7 +1208,8 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
     var allocated_items = output == null ? null : output.allocations;
 
-    if (allocated_items == null) {
+    function reloadAllocationData(async=true) {
+        // Reload stock allocation data for this particular build output
 
         inventreeGet(
             '{% url "api-build-item-list" %}',
@@ -1217,16 +1220,37 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 output: output == null ? null : output.pk,
             },
             {
-                async: false,
+                async: async,
                 success: function(response) {
                     allocated_items = response;
+
+                    if (async) {
+
+                        // Force a refresh of each row in the table
+                        // Note we cannot call 'refresh' because we are passing data from memory
+                        var rows = $(table).bootstrapTable('getData');
+
+                        // How many rows are fully allocated?
+                        var allocated_rows = 0;
+
+                        rows.forEach(function(row) {
+                            $(table).bootstrapTable('updateByUniqueId', row.pk, row, true);
+
+                            if (isRowFullyAllocated(row)) {
+                                allocated_rows += 1;
+                            }
+                        });
+                    }
                 }
             }
         );
     }
 
-    console.log("rendering table for output:", outputId);
-    console.log("allocations:", allocated_items);
+    if (allocated_items == null) {
+
+        // No allocation data provided? Request from server (blocking)
+        reloadAllocationData(false);
+    }
 
     function reloadTable() {
         // Reload the entire build allocation table
@@ -1254,6 +1278,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
     }
 
     function availableQuantity(row) {
+        // Return the total available stock for a given row
 
         // Base stock
         var available = row.available_stock;
@@ -1327,7 +1352,8 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 {
                     source_location: buildInfo.source_location,
                     success: function(data) {
-                        $(table).bootstrapTable('refresh');
+                        // $(table).bootstrapTable('refresh');
+                        reloadAllocationData();
                     },
                     output: output == null ? null : output.pk,
                 }
@@ -1374,6 +1400,9 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 bom_item: row.pk,
                 output: outputId == 'untracked' ? null : outputId,
                 table: table,
+                onSuccess: function(response, opts) {
+                    reloadAllocationData();
+                }
             });
         });
     }
