@@ -913,6 +913,7 @@ function loadBuildOutputTable(build_info, options={}) {
                 title: '{% trans "Build Output" %}',
                 switchable: true,
                 sortable: true,
+                sortName: 'stock', // This will sort by quantity -> serial_int -> serial
                 formatter: function(value, row) {
 
                     var url = `/stock/item/${row.pk}/`;
@@ -926,7 +927,7 @@ function loadBuildOutputTable(build_info, options={}) {
                     }
 
                     return renderLink(text, url);
-                }
+                },
             },
             {
                 field: 'allocated',
