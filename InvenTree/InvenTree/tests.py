@@ -257,6 +257,11 @@ class TestSerialNumberExtraction(TestCase):
         self.assertEqual(len(sn), 5)
         self.assertEqual(sn, [1, 2, 4, 5, 6])
 
+        # Test groups are not interpolated if enough serials are supplied
+        sn = e("1, 2, 3, AF5-69H, 5", 5, 1)
+        self.assertEqual(len(sn), 5)
+        self.assertEqual(sn, [1, 2, 3, "AF5-69H", 5])
+
         # Test groups are not interpolated with more than one hyphen in a word
         sn = e("1, 2, TG-4SR-92, 4+", 5, 1)
         self.assertEqual(len(sn), 5)

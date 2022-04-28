@@ -458,8 +458,18 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
     if len(serials) == 0:
         raise ValidationError([_("Empty serial number string")])
 
-    for group in groups:
+    # If the user has supplied the correct number of serials, don't process them for groups
+    # just add them so any duplicates (or future validations) are checked
+    if len(groups) == expected_quantity:
+        for group in groups:
+            add_sn(group)
 
+        if len(errors) > 0:
+            raise ValidationError(errors)
+
+        return numbers
+
+    for group in groups:
         group = group.strip()
 
         # Hyphen indicates a range of numbers
