@@ -264,7 +264,7 @@ function makeBuildOutputButtons(output_id, build_info, options={}) {
     var html = `<div class='btn-group float-right' role='group'>`;
 
     // Tracked parts? Must be individually allocated
-    if (build_info.tracked_parts) {
+    if (options.has_bom_items) {
 
         // Add a button to allocate stock against this build output
         html += makeIconButton(
@@ -1085,9 +1085,9 @@ function loadBuildOutputTable(build_info, options={}) {
         sortable: true,
         search: false,
         sidePagination: 'client',
-        detailView: true,
+        detailView: bom_items.length > 0,
         detailFilter: function(index, row) {
-            return true;
+            return bom_items.length > 0;
         },
         detailFormatter: function(index, row, element) {
             constructBuildOutputSubTable(index, row, element);
@@ -1159,10 +1159,14 @@ function loadBuildOutputTable(build_info, options={}) {
             {
                 field: 'allocated',
                 title: '{% trans "Allocated Stock" %}',
-                visible: true,
+                visible: bom_items.length > 0,
                 switchable: false,
                 sortable: true,
                 formatter: function(value, row) {
+
+                    if (bom_items.length == 0) {
+                        return `<div id='output-progress-${row.pk}'><em><small>{% trans "No tracked BOM items for this build" %}</small></em></div>`;
+                    }
 
                     var progressBar = makeProgressBar(
                         countAllocatedLines(row),
@@ -1188,7 +1192,7 @@ function loadBuildOutputTable(build_info, options={}) {
                 switchable: true,
                 formatter: function(value, row) {
                     if (part_tests == null || part_tests.length == 0) {
-                        return `<em>{% trans "No tests found " %}</em>`;
+                        return `<em><small>{% trans "No required tests for this build" %}</small></em>`;
                     }
 
                     var n_passed = countPassedTests(row);
@@ -1218,6 +1222,9 @@ function loadBuildOutputTable(build_info, options={}) {
                     return makeBuildOutputButtons(
                         row.pk,
                         build_info,
+                        {
+                            has_bom_items: bom_items.length > 0,
+                        }
                     );
                 }
             }
