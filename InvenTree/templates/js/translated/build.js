@@ -838,6 +838,23 @@ function loadBuildOutputTable(build_info, options={}) {
     // List of "tracked bom items" required for this build order
     var bom_items = null;
 
+     // Request list of BOM data for this build order
+    inventreeGet(
+        '{% url "api-bom-list" %}',
+        {
+            part: build_info.part,
+            sub_part_detail: true,
+            sub_part_trackable: true,
+        },
+        {
+            async: false,
+            success: function(response) {
+                // Save the BOM items
+                bom_items = response;
+            }
+        }
+    );
+
     /*
      * Construct a "sub table" showing the required BOM items
      */
@@ -867,29 +884,6 @@ function loadBuildOutputTable(build_info, options={}) {
 
     function updateAllocationData(rows) {
         // Update stock allocation information for the build outputs
-
-        // Request list of BOM data for this build order
-        if (bom_items == null) {
-            inventreeGet(
-                '{% url "api-bom-list" %}',
-                {
-                    part: build_info.part,
-                    sub_part_detail: true,
-                    sub_part_trackable: true,
-                },
-                {
-                    success: function(response) {
-                        // Save the BOM items
-                        bom_items = response;
-
-                        // Callback to this function again
-                        updateAllocationData(rows);
-                    }
-                }
-            );
-
-            return;
-        }
 
         // Request updated stock allocation data for this build order
         inventreeGet(
@@ -1098,6 +1092,13 @@ function loadBuildOutputTable(build_info, options={}) {
                 visible: true,
                 switchable: false,
                 formatter: function(value, row) {
+                    // Display a progress bar which shows how many rows have been allocated
+                    var n_bom_lines = 0;
+                    
+                    if (bom_items) {
+                        n_bom_lines = bom_items.length;
+                    }
+                    return `lines: ${n_bom_lines}`;
                     return `<div id='output-progress-${row.pk}'><span class='fas fa-spin fa-spinner'></span></div>`;
                 },
                 sorter: function(value_a, value_b, row_a, row_b) {
@@ -1548,7 +1549,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         quantity: {},
                     },
                     title: '{% trans "Edit Allocation" %}',
-                    onSuccess: reloadTable,
+                    onSuccess: reloadAllocationData,
                 });
             });
 
@@ -1558,7 +1559,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 constructForm(`/api/build/item/${pk}/`, {
                     method: 'DELETE',
                     title: '{% trans "Remove Allocation" %}',
-                    onSuccess: reloadTable,
+                    onSuccess: reloadAllocationData,
                 });
             });
         },
@@ -1718,7 +1719,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         'fa-minus-circle icon-red', 'button-unallocate', row.sub_part,
                         '{% trans "Unallocate stock" %}',
                         {
-                            disabled: row.allocations == null
+                            disabled: sumAllocations(row) == 0,
                         }
                     );
 
