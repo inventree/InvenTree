@@ -161,7 +161,12 @@ class BuildOutputSerializer(serializers.Serializer):
 
             # The build output must have all tracked parts allocated
             if not build.is_fully_allocated(output):
-                raise ValidationError(_("This build output is not fully allocated"))
+
+                # Check if the user has specified that incomplete allocations are ok
+                accept_incomplete = InvenTree.helpers.str2bool(self.context['request'].data.get('accept_incomplete_allocation', False))
+
+                if not accept_incomplete:
+                    raise ValidationError(_("This build output is not fully allocated"))
 
         return output
 
@@ -355,6 +360,7 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
             'outputs',
             'location',
             'status',
+            'accept_incomplete_allocation',
             'notes',
         ]
 
@@ -375,6 +381,13 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         choices=list(StockStatus.items()),
         default=StockStatus.OK,
         label=_("Status"),
+    )
+
+    accept_incomplete_allocation = serializers.BooleanField(
+        default=False,
+        required=False,
+        label=_('Accept Incomplete Allocation'),
+        help_text=_('Complete ouputs if stock has not been fully allocated'),
     )
 
     notes = serializers.CharField(

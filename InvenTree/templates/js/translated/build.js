@@ -427,6 +427,8 @@ function completeBuildOutputs(build_id, outputs, options={}) {
         fields: {
             status: {},
             location: {},
+            notes: {},
+            accept_incomplete_allocation: {},
         },
         confirm: true,
         title: '{% trans "Complete Build Outputs" %}',
@@ -445,6 +447,8 @@ function completeBuildOutputs(build_id, outputs, options={}) {
                 outputs: [],
                 status: getFormFieldValue('status', {}, opts),
                 location: getFormFieldValue('location', {}, opts),
+                notes: getFormFieldValue('notes', {}, opts),
+                accept_incomplete_allocation: getFormFieldValue('accept_incomplete_allocation', {type: 'boolean'}, opts),
             };
 
             var output_pk_values = [];
@@ -1896,8 +1900,6 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
         method: 'POST',
         fields: {},
         preFormContent: html,
-        confirm: true,
-        confirmMessage: '{% trans "Confirm stock allocation" %}',
         title: '{% trans "Allocate Stock Items to Build Order" %}',
         afterRender: function(fields, options) {
 

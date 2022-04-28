@@ -452,7 +452,7 @@ class BuildItemList(generics.ListCreateAPIView):
             if tracked:
                 queryset = queryset.exclude(install_into=None)
             else:
-                queryset = queryest.filter(install_into=None)
+                queryset = queryset.filter(install_into=None)
 
         # Filter by output target
         output = params.get('output', None)
