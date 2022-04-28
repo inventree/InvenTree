@@ -1004,6 +1004,10 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         Test if the supplied BomItem has been fully allocated!
         """
 
+        if bom_item.consumable:
+            # Consumable BOM items do not need to be allocated
+            return True
+
         return self.unallocated_quantity(bom_item, output) == 0
 
     def is_fully_allocated(self, output):

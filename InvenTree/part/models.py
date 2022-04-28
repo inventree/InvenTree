@@ -2805,7 +2805,7 @@ class BomItem(models.Model, DataImportMixin):
         verbose_name=_('Consumable'),
         help_text=_("This BOM item is consumable (it is not tracked in build orders)")
     )
-    
+
     overage = models.CharField(max_length=24, blank=True, validators=[validators.validate_overage],
                                verbose_name=_('Overage'),
                                help_text=_('Estimated build wastage quantity (absolute or percentage)')
