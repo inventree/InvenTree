@@ -1007,39 +1007,36 @@ function loadBuildOutputTable(build_info, options={}) {
             return;
         }
 
-        rows.forEach(function(row) {
+        // Retrieve stock results for the entire build
+        inventreeGet(
+            '{% url "api-stock-test-result-list" %}',
+            {
+                build: build_info.pk,
+            },
+            {
+                success: function(results) {
 
-            // Ignore if this row has already been updated (else, infinite loop!)
-            if (row.passed_tests) {
-                return;
-            }
+                    // Iterate through each row and find matching test results
+                    rows.forEach(function(row) {
+                        var test_results = {};
 
-            // Request test result information for the particular build output
-            inventreeGet(
-                '{% url "api-stock-test-result-list" %}',
-                {
-                    stock_item: row.pk,
-                },
-                {
-                    success: function(results) {
-
-                        // A list of tests that this stock item has passed
-                        var passed_tests = {};
-
-                        // Keep a list of tests that this stock item has passed
                         results.forEach(function(result) {
-                            if (result.result) {
-                                passed_tests[result.key] = true;
+                            if (result.stock_item == row.pk) {
+                                // This test result matches the particular stock item
+
+                                if (!(result.key in test_results)) {
+                                    test_results[result.key] = result.result;
+                                }
                             }
                         });
 
-                        row.passed_tests = passed_tests;
+                        row.passed_tests = test_results;
 
                         $(table).bootstrapTable('updateByUniqueId', row.pk, row, true);
-                    }
+                    });
                 }
-            )
-        });
+            }
+        );
     }
 
     // Return the number of 'passed' tests in a given row
