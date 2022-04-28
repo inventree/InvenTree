@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-28 00:14+0000\n"
-"PO-Revision-Date: 2022-04-28 00:33\n"
+"POT-Creation-Date: 2022-04-28 04:14+0000\n"
+"PO-Revision-Date: 2022-04-28 04:18\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -295,99 +295,99 @@ msgstr "Szükséges oszlop hiányzik: '{name}'"
 msgid "Duplicate column: '{col}'"
 msgstr "Duplikált oszlop: '{col}'"
 
-#: InvenTree/settings.py:677
+#: InvenTree/settings.py:668
 msgid "Czech"
 msgstr "Cseh"
 
-#: InvenTree/settings.py:678
+#: InvenTree/settings.py:669
 msgid "German"
 msgstr "Német"
 
-#: InvenTree/settings.py:679
+#: InvenTree/settings.py:670
 msgid "Greek"
 msgstr "Görög"
 
-#: InvenTree/settings.py:680
+#: InvenTree/settings.py:671
 msgid "English"
 msgstr "Angol"
 
-#: InvenTree/settings.py:681
+#: InvenTree/settings.py:672
 msgid "Spanish"
 msgstr "Spanyol"
 
-#: InvenTree/settings.py:682
+#: InvenTree/settings.py:673
 msgid "Spanish (Mexican)"
 msgstr "Spanyol (Mexikói)"
 
-#: InvenTree/settings.py:683
+#: InvenTree/settings.py:674
 msgid "Farsi / Persian"
 msgstr "Fárszi/Perzsa"
 
-#: InvenTree/settings.py:684
+#: InvenTree/settings.py:675
 msgid "French"
 msgstr "Francia"
 
-#: InvenTree/settings.py:685
+#: InvenTree/settings.py:676
 msgid "Hebrew"
 msgstr "Héber"
 
-#: InvenTree/settings.py:686
+#: InvenTree/settings.py:677
 msgid "Hungarian"
 msgstr "Magyar"
 
-#: InvenTree/settings.py:687
+#: InvenTree/settings.py:678
 msgid "Italian"
 msgstr "Olasz"
 
-#: InvenTree/settings.py:688
+#: InvenTree/settings.py:679
 msgid "Japanese"
 msgstr "Japán"
 
-#: InvenTree/settings.py:689
+#: InvenTree/settings.py:680
 msgid "Korean"
 msgstr "Koreai"
 
-#: InvenTree/settings.py:690
+#: InvenTree/settings.py:681
 msgid "Dutch"
 msgstr "Holland"
 
-#: InvenTree/settings.py:691
+#: InvenTree/settings.py:682
 msgid "Norwegian"
 msgstr "Norvég"
 
-#: InvenTree/settings.py:692
+#: InvenTree/settings.py:683
 msgid "Polish"
 msgstr "Lengyel"
 
-#: InvenTree/settings.py:693
+#: InvenTree/settings.py:684
 msgid "Portuguese"
 msgstr "Portugál"
 
-#: InvenTree/settings.py:694
+#: InvenTree/settings.py:685
 msgid "Portuguese (Brazilian)"
 msgstr "Portugál (Brazíliai)"
 
-#: InvenTree/settings.py:695
+#: InvenTree/settings.py:686
 msgid "Russian"
 msgstr "Orosz"
 
-#: InvenTree/settings.py:696
+#: InvenTree/settings.py:687
 msgid "Swedish"
 msgstr "Svéd"
 
-#: InvenTree/settings.py:697
+#: InvenTree/settings.py:688
 msgid "Thai"
 msgstr "Tháj"
 
-#: InvenTree/settings.py:698
+#: InvenTree/settings.py:689
 msgid "Turkish"
 msgstr "Török"
 
-#: InvenTree/settings.py:699
+#: InvenTree/settings.py:690
 msgid "Vietnamese"
 msgstr "Vietnámi"
 
-#: InvenTree/settings.py:700
+#: InvenTree/settings.py:691
 msgid "Chinese"
 msgstr "Kínai"
 
@@ -586,27 +586,27 @@ msgstr "Túlszállítás nem lehet több mint 100%"
 msgid "Invalid value for overage"
 msgstr "Érvénytelen érték a túlszállításra"
 
-#: InvenTree/views.py:538
+#: InvenTree/views.py:537
 msgid "Delete Item"
 msgstr "Tétel törlése"
 
-#: InvenTree/views.py:587
+#: InvenTree/views.py:586
 msgid "Check box to confirm item deletion"
 msgstr "Jelöld a törlés megerősítéséhez"
 
-#: InvenTree/views.py:602 templates/InvenTree/settings/user.html:21
+#: InvenTree/views.py:601 templates/InvenTree/settings/user.html:22
 msgid "Edit User Information"
 msgstr "Felhasználói információ módosítása"
 
-#: InvenTree/views.py:613 templates/InvenTree/settings/user.html:19
+#: InvenTree/views.py:612 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
 msgstr "Jelszó beállítása"
 
-#: InvenTree/views.py:632
+#: InvenTree/views.py:631
 msgid "Password fields must match"
 msgstr "A jelszavaknak egyeznie kell"
 
-#: InvenTree/views.py:883 templates/navbar.html:151
+#: InvenTree/views.py:882 templates/navbar.html:152
 msgid "System Information"
 msgstr "Rendszerinformáció"
 
@@ -914,7 +914,7 @@ msgstr "Kiválasztott készlet tétel nem található az alkatrészjegyzékben"
 
 #: build/models.py:1328 stock/templates/stock/item_base.html:329
 #: templates/InvenTree/search.html:137 templates/js/translated/build.js:2034
-#: templates/navbar.html:37
+#: templates/navbar.html:38
 msgid "Build"
 msgstr "Gyártás"
 
@@ -2922,7 +2922,7 @@ msgstr "Beszállítói készlet"
 #: part/templates/part/detail.html:77 part/templates/part/part_sidebar.html:37
 #: templates/InvenTree/index.html:252 templates/InvenTree/search.html:197
 #: templates/InvenTree/settings/sidebar.html:47
-#: templates/js/translated/search.js:173 templates/navbar.html:49
+#: templates/js/translated/search.js:173 templates/navbar.html:50
 #: users/models.py:45
 msgid "Purchase Orders"
 msgstr "Beszerzési rendelések"
@@ -2945,7 +2945,7 @@ msgstr "Új beszerzési rendelés"
 #: part/templates/part/detail.html:100 part/templates/part/part_sidebar.html:41
 #: templates/InvenTree/index.html:283 templates/InvenTree/search.html:217
 #: templates/InvenTree/settings/sidebar.html:49
-#: templates/js/translated/search.js:190 templates/navbar.html:60
+#: templates/js/translated/search.js:190 templates/navbar.html:61
 #: users/models.py:46
 msgid "Sales Orders"
 msgstr "Vevői rendelések"
@@ -2987,7 +2987,7 @@ msgstr "Beszállítók listája"
 
 #: company/templates/company/manufacturer_part.html:15 company/views.py:55
 #: part/templates/part/prices.html:170 templates/InvenTree/search.html:178
-#: templates/navbar.html:48
+#: templates/navbar.html:49
 msgid "Manufacturers"
 msgstr "Gyártók"
 
@@ -3016,7 +3016,7 @@ msgstr "Belső alkatrész"
 #: company/templates/company/manufacturer_part.html:115
 #: company/templates/company/supplier_part.html:15 company/views.py:49
 #: part/templates/part/part_sidebar.html:35 part/templates/part/prices.html:166
-#: templates/InvenTree/search.html:188 templates/navbar.html:47
+#: templates/InvenTree/search.html:188 templates/navbar.html:48
 msgid "Suppliers"
 msgstr "Beszállítók"
 
@@ -3170,7 +3170,7 @@ msgstr "Utoljára módosítva"
 #: templates/js/translated/bom.js:553 templates/js/translated/part.js:678
 #: templates/js/translated/part.js:1226 templates/js/translated/part.js:1387
 #: templates/js/translated/stock.js:903 templates/js/translated/stock.js:1696
-#: templates/navbar.html:30
+#: templates/navbar.html:31
 msgid "Stock"
 msgstr "Készlet"
 
@@ -3196,8 +3196,7 @@ msgstr "Árazás"
 #: stock/templates/stock/location.html:164
 #: stock/templates/stock/location_sidebar.html:7
 #: templates/InvenTree/search.html:152 templates/js/translated/search.js:127
-#: templates/js/translated/stock.js:2311 templates/stats.html:105
-#: templates/stats.html:114 users/models.py:43
+#: templates/js/translated/stock.js:2311 users/models.py:43
 msgid "Stock Items"
 msgstr "Készlet tételek"
 
@@ -3210,7 +3209,7 @@ msgid "New Manufacturer"
 msgstr "Új gyártó"
 
 #: company/views.py:61 templates/InvenTree/search.html:208
-#: templates/navbar.html:59
+#: templates/navbar.html:60
 msgid "Customers"
 msgstr "Vevők"
 
@@ -4168,7 +4167,7 @@ msgstr "Alkatrész kategória"
 
 #: part/models.py:127 part/templates/part/category.html:128
 #: templates/InvenTree/search.html:95 templates/js/translated/search.js:113
-#: templates/stats.html:96 users/models.py:40
+#: users/models.py:40
 msgid "Part Categories"
 msgstr "Alkatrész kategóriák"
 
@@ -4179,8 +4178,7 @@ msgstr "Alkatrész kategóriák"
 #: templates/InvenTree/index.html:85 templates/InvenTree/search.html:82
 #: templates/InvenTree/settings/sidebar.html:39
 #: templates/js/translated/part.js:1780 templates/js/translated/search.js:99
-#: templates/navbar.html:23 templates/stats.html:92 templates/stats.html:101
-#: users/models.py:41
+#: templates/navbar.html:24 users/models.py:41
 msgid "Parts"
 msgstr "Alkatrészek"
 
@@ -5458,11 +5456,11 @@ msgstr "Alkatrész változat létrehozása"
 msgid "Create a new variant of template <em>'%(full_name)s'</em>."
 msgstr "Új változat létrehozása a <em>'%(full_name)s'</em> sablonból."
 
-#: part/templatetags/inventree_extras.py:198
+#: part/templatetags/inventree_extras.py:191
 msgid "Unknown database"
 msgstr "Ismeretlen adatbázis"
 
-#: part/templatetags/inventree_extras.py:235
+#: part/templatetags/inventree_extras.py:228
 #, python-brace-format
 msgid "{title} v{version}"
 msgstr ""
@@ -6492,8 +6490,7 @@ msgid "Sublocations"
 msgstr "Alhelyek"
 
 #: stock/templates/stock/location.html:147 templates/InvenTree/search.html:164
-#: templates/js/translated/search.js:145 templates/stats.html:109
-#: users/models.py:42
+#: templates/js/translated/search.js:145 users/models.py:42
 msgid "Stock Locations"
 msgstr "Készlethelyek"
 
@@ -6881,7 +6878,7 @@ msgid "Signup"
 msgstr "Regisztráció"
 
 #: templates/InvenTree/settings/mixins/settings.html:5
-#: templates/InvenTree/settings/settings.html:12 templates/navbar.html:138
+#: templates/InvenTree/settings/settings.html:12 templates/navbar.html:139
 msgid "Settings"
 msgstr "Beállítások"
 
@@ -6931,7 +6928,7 @@ msgstr "Pluginok"
 msgid "Install Plugin"
 msgstr "Plugin Telepítése"
 
-#: templates/InvenTree/settings/plugin.html:48 templates/navbar.html:136
+#: templates/InvenTree/settings/plugin.html:48 templates/navbar.html:137
 #: users/models.py:39
 msgid "Admin"
 msgstr "Admin"
@@ -7139,7 +7136,7 @@ msgstr "Készlet beállítások"
 msgid "Change Password"
 msgstr "Jelszó módosítása"
 
-#: templates/InvenTree/settings/user.html:22
+#: templates/InvenTree/settings/user.html:23
 #: templates/js/translated/helpers.js:27 templates/notes_buttons.html:3
 #: templates/notes_buttons.html:4
 msgid "Edit"
@@ -7451,29 +7448,29 @@ msgstr "Erősítsd meg hogy a <a href=\"mailto:%(email)s\">%(email)s</a> email a
 msgid "This email confirmation link expired or is invalid. Please <a href=\"%(email_url)s\">issue a new email confirmation request</a>."
 msgstr "Ez az email megerősítő link lejárt vagy hibás. <a href=\"%(email_url)s\">Klikk ide az új megerősítési kérelem elküldéséhez</a>."
 
-#: templates/account/login.html:6 templates/account/login.html:17
-#: templates/account/login.html:43
+#: templates/account/login.html:6 templates/account/login.html:16
+#: templates/account/login.html:42
 msgid "Sign In"
 msgstr "Bejelentkezés"
 
-#: templates/account/login.html:22
+#: templates/account/login.html:21
 #, python-format
 msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Kérlek jelentkezz be az egyik meglévő külső fiókkal vagy <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">Regisztrálj</a> fiókért és jelentkezz be lentebb:"
 
-#: templates/account/login.html:26
+#: templates/account/login.html:25
 #, python-format
 msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Ha még nem hoztál létre fiókot akkor előbb <a href=\"%(signup_url)s\">regisztrálj</a>."
 
-#: templates/account/login.html:46
+#: templates/account/login.html:45
 msgid "Forgot Password?"
 msgstr "Elfelejtett jelszó?"
 
-#: templates/account/login.html:52
+#: templates/account/login.html:51
 msgid "or use SSO"
 msgstr "vagy használj SSO-t"
 
@@ -7614,15 +7611,15 @@ msgstr "Link hozzáadása"
 msgid "Add Attachment"
 msgstr "Melléklet hozzáadása"
 
-#: templates/base.html:100
+#: templates/base.html:99
 msgid "Server Restart Required"
 msgstr "Kiszolgáló újraindítása szükséges"
 
-#: templates/base.html:103
+#: templates/base.html:102
 msgid "A configuration option has been changed which requires a server restart"
 msgstr "Egy olyan konfigurációs opció megváltozott ami a kiszolgáló újraindítását igényli"
 
-#: templates/base.html:103
+#: templates/base.html:102
 msgid "Contact your system administrator for further information"
 msgstr "Vedd fel a kapcsolatot a rendszergazdával további információkért"
 
@@ -7815,7 +7812,7 @@ msgstr "Érvénytelen válasz a szervertől"
 msgid "Scan barcode data below"
 msgstr "Olvasd be a vonalkódot lentebb"
 
-#: templates/js/translated/barcode.js:280 templates/navbar.html:108
+#: templates/js/translated/barcode.js:280 templates/navbar.html:109
 msgid "Scan Barcode"
 msgstr "Vonalkód beolvasása"
 
@@ -9845,7 +9842,7 @@ msgstr "a"
 msgid "rows"
 msgstr "sorból,"
 
-#: templates/js/translated/tables.js:447 templates/navbar.html:101
+#: templates/js/translated/tables.js:447 templates/navbar.html:102
 #: templates/search.html:8 templates/search_form.html:6
 #: templates/search_form.html:7
 msgid "Search"
@@ -9875,31 +9872,31 @@ msgstr "Oszlopok"
 msgid "All"
 msgstr "Összes"
 
-#: templates/navbar.html:44
+#: templates/navbar.html:45
 msgid "Buy"
 msgstr "Beszerzés"
 
-#: templates/navbar.html:56
+#: templates/navbar.html:57
 msgid "Sell"
 msgstr "Értékesítés"
 
-#: templates/navbar.html:115
+#: templates/navbar.html:116
 msgid "Show Notifications"
 msgstr "Értesítések megjelenítése"
 
-#: templates/navbar.html:118
+#: templates/navbar.html:119
 msgid "New Notifications"
 msgstr "Új értesítések"
 
-#: templates/navbar.html:139
+#: templates/navbar.html:140
 msgid "Logout"
 msgstr "Kijelentkezés"
 
-#: templates/navbar.html:141
+#: templates/navbar.html:142
 msgid "Login"
 msgstr "Bejelentkezés"
 
-#: templates/navbar.html:162
+#: templates/navbar.html:163
 msgid "About InvenTree"
 msgstr "Verzió információk"
 
