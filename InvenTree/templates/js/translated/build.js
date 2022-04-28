@@ -865,9 +865,44 @@ function loadBuildOutputTable(build_info, options={}) {
         );
     }
 
+    // List of "tracked bom items" required for this build order
+    var bom_items = null;
+
+    function updateAllocationData(rows) {
+        // Update stock allocation information for the build outputs
+
+        console.log("updateAllocationData");
+
+        // Request list of BOM data for this build order
+        if (bom_items == null) {
+            inventreeGet(
+                '{% url "api-bom-list" %}',
+                {
+                    part: build_info.part,
+                    sub_part_detail: true,
+                    sub_part_trackable: true,
+                },
+                {
+                    success: function(response) {
+                        // Save the BOM items
+                        bom_items = response;
+
+                        // Callback to this function again
+                        updateAllocationData(rows);
+                    }
+                }
+            );
+
+            return;
+        }
+
+        console.log("BOM ITEMS:", bom_items);
+    }
+
     var part_tests = null;
 
     function updateTestResultData(rows) {
+        // Update test result information for the build outputs
 
         console.log("updateTestResultData");
 
@@ -880,15 +915,17 @@ function loadBuildOutputTable(build_info, options={}) {
                     required: true,
                 },
                 {
-                    async: false,
                     success: function(response) {
                         // Save the list of part tests
                         part_tests = response;
 
+                        // Callback to this function again
                         updateTestResultData(rows);
                     }
                 }
-            );;
+            );
+
+            return;
         }
 
         rows.forEach(function(row) {
@@ -944,8 +981,6 @@ function loadBuildOutputTable(build_info, options={}) {
         return n;
     }
 
-    var table_loaded = false;
-
     $(table).inventreeTable({
         url: '{% url "api-stock-list" %}',
         queryParams: filters,
@@ -975,12 +1010,11 @@ function loadBuildOutputTable(build_info, options={}) {
 
             console.log("onLoadSuccess");
 
+            updateAllocationData(rows);
             updateTestResultData(rows);
         },
         onRefresh: function() {
             console.log("onRefresh");
-            // var rows = $(table).bootstrapTable('getData');
-            // updateTestResultData(rows);
         },
         columns: [
             {
