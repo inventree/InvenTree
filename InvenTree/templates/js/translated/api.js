@@ -179,6 +179,11 @@ function showApiError(xhr, url) {
     var title = null;
     var message = null;
 
+    if (xhr.statusText == 'abort') {
+        // Don't show errors for requests which were intentionally aborted
+        return;
+    }
+
     switch (xhr.status || 0) {
     // No response
     case 0:

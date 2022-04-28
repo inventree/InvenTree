@@ -4,6 +4,7 @@
     editSetting,
     user_settings,
     global_settings,
+    plugins_enabled,
 */
 
 {% user_settings request.user as USER_SETTINGS %}
@@ -19,6 +20,13 @@ const global_settings = {
     {{ key }}: {% primitive_to_javascript value %},
     {% endfor %}
 };
+
+{% plugins_enabled as p_en %}
+{% if p_en %}
+const plugins_enabled = true;
+{% else %}
+const plugins_enabled = false;
+{% endif %}
 
 /*
  * Edit a setting value

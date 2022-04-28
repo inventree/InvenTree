@@ -262,6 +262,15 @@ class CategoryTree(generics.ListAPIView):
     ordering = ['level', 'name']
 
 
+class PartSalePriceDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Detail endpoint for PartSellPriceBreak model
+    """
+
+    queryset = PartSellPriceBreak.objects.all()
+    serializer_class = part_serializers.PartSalePriceSerializer
+
+
 class PartSalePriceList(generics.ListCreateAPIView):
     """
     API endpoint for list view of PartSalePriceBreak model
@@ -277,6 +286,15 @@ class PartSalePriceList(generics.ListCreateAPIView):
     filter_fields = [
         'part',
     ]
+
+
+class PartInternalPriceDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Detail endpoint for PartInternalPriceBreak model
+    """
+
+    queryset = PartInternalPriceBreak.objects.all()
+    serializer_class = part_serializers.PartInternalPriceSerializer
 
 
 class PartInternalPriceList(generics.ListCreateAPIView):
@@ -798,6 +816,20 @@ class PartFilter(rest_filters.FilterSet):
 
         return queryset
 
+    # unallocated_stock filter
+    unallocated_stock = rest_filters.BooleanFilter(label='Unallocated stock', method='filter_unallocated_stock')
+
+    def filter_unallocated_stock(self, queryset, name, value):
+
+        value = str2bool(value)
+
+        if value:
+            queryset = queryset.filter(Q(unallocated_stock__gt=0))
+        else:
+            queryset = queryset.filter(Q(unallocated_stock__lte=0))
+
+        return queryset
+
     is_template = rest_filters.BooleanFilter()
 
     assembly = rest_filters.BooleanFilter()
@@ -1161,6 +1193,18 @@ class PartList(generics.ListCreateAPIView):
             except (ValueError, Part.DoesNotExist):
                 pass
 
+        # Filter by 'variant_of'
+        # Note that this is subtly different from 'ancestor' filter (above)
+        variant_of = params.get('variant_of', None)
+
+        if variant_of is not None:
+            try:
+                template = Part.objects.get(pk=variant_of)
+                variants = template.get_children()
+                queryset = queryset.filter(pk__in=[v.pk for v in variants])
+            except (ValueError, Part.DoesNotExist):
+                pass
+
         # Filter only parts which are in the "BOM" for a given part
         in_bom_for = params.get('in_bom_for', None)
 
@@ -1325,15 +1369,12 @@ class PartList(generics.ListCreateAPIView):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
-        'variant_of',
-    ]
-
     ordering_fields = [
         'name',
         'creation_date',
         'IPN',
         'in_stock',
+        'unallocated_stock',
         'category',
     ]
 
@@ -1587,9 +1628,10 @@ class BomList(generics.ListCreateAPIView):
 
     def get_queryset(self, *args, **kwargs):
 
-        queryset = BomItem.objects.all()
+        queryset = super().get_queryset(*args, **kwargs)
 
         queryset = self.get_serializer_class().setup_eager_loading(queryset)
+        queryset = self.get_serializer_class().annotate_queryset(queryset)
 
         return queryset
 
@@ -1803,6 +1845,15 @@ class BomDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = BomItem.objects.all()
     serializer_class = part_serializers.BomItemSerializer
 
+    def get_queryset(self, *args, **kwargs):
+
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = self.get_serializer_class().setup_eager_loading(queryset)
+        queryset = self.get_serializer_class().annotate_queryset(queryset)
+
+        return queryset
+
 
 class BomItemValidate(generics.UpdateAPIView):
     """ API endpoint for validating a BomItem """
@@ -1887,11 +1938,13 @@ part_api_urls = [
 
     # Base URL for part sale pricing
     url(r'^sale-price/', include([
+        url(r'^(?P<pk>\d+)/', PartSalePriceDetail.as_view(), name='api-part-sale-price-detail'),
         url(r'^.*$', PartSalePriceList.as_view(), name='api-part-sale-price-list'),
     ])),
 
     # Base URL for part internal pricing
     url(r'^internal-price/', include([
+        url(r'^(?P<pk>\d+)/', PartInternalPriceDetail.as_view(), name='api-part-internal-price-detail'),
         url(r'^.*$', PartInternalPriceList.as_view(), name='api-part-internal-price-list'),
     ])),
 

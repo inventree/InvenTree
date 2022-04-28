@@ -104,7 +104,7 @@ class StockItemListTest(StockAPITestCase):
 
         response = self.get_stock()
 
-        self.assertEqual(len(response), 20)
+        self.assertEqual(len(response), 29)
 
     def test_filter_by_part(self):
         """
@@ -113,7 +113,7 @@ class StockItemListTest(StockAPITestCase):
 
         response = self.get_stock(part=25)
 
-        self.assertEqual(len(response), 8)
+        self.assertEqual(len(response), 17)
 
         response = self.get_stock(part=10004)
 
@@ -136,13 +136,13 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(len(response), 1)
 
         response = self.get_stock(location=1, cascade=0)
-        self.assertEqual(len(response), 0)
+        self.assertEqual(len(response), 7)
 
         response = self.get_stock(location=1, cascade=1)
-        self.assertEqual(len(response), 2)
+        self.assertEqual(len(response), 9)
 
         response = self.get_stock(location=7)
-        self.assertEqual(len(response), 16)
+        self.assertEqual(len(response), 18)
 
     def test_filter_by_depleted(self):
         """
@@ -153,7 +153,7 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(len(response), 1)
 
         response = self.get_stock(depleted=0)
-        self.assertEqual(len(response), 19)
+        self.assertEqual(len(response), 28)
 
     def test_filter_by_in_stock(self):
         """
@@ -161,7 +161,7 @@ class StockItemListTest(StockAPITestCase):
         """
 
         response = self.get_stock(in_stock=1)
-        self.assertEqual(len(response), 17)
+        self.assertEqual(len(response), 26)
 
         response = self.get_stock(in_stock=0)
         self.assertEqual(len(response), 3)
@@ -172,7 +172,7 @@ class StockItemListTest(StockAPITestCase):
         """
 
         codes = {
-            StockStatus.OK: 18,
+            StockStatus.OK: 27,
             StockStatus.DESTROYED: 1,
             StockStatus.LOST: 1,
             StockStatus.DAMAGED: 0,
@@ -205,10 +205,50 @@ class StockItemListTest(StockAPITestCase):
             self.assertIsNotNone(item['serial'])
 
         response = self.get_stock(serialized=0)
-        self.assertEqual(len(response), 8)
+        self.assertEqual(len(response), 17)
 
         for item in response:
             self.assertIsNone(item['serial'])
+
+    def test_filter_by_has_batch(self):
+        """
+        Test the 'has_batch' filter, which tests if the stock item has been assigned a batch code
+        """
+
+        with_batch = self.get_stock(has_batch=1)
+        without_batch = self.get_stock(has_batch=0)
+
+        n_stock_items = StockItem.objects.all().count()
+
+        # Total sum should equal the total count of stock items
+        self.assertEqual(n_stock_items, len(with_batch) + len(without_batch))
+
+        for item in with_batch:
+            self.assertFalse(item['batch'] in [None, ''])
+
+        for item in without_batch:
+            self.assertTrue(item['batch'] in [None, ''])
+
+    def test_filter_by_tracked(self):
+        """
+        Test the 'tracked' filter.
+        This checks if the stock item has either a batch code *or* a serial number
+        """
+
+        tracked = self.get_stock(tracked=True)
+        untracked = self.get_stock(tracked=False)
+
+        n_stock_items = StockItem.objects.all().count()
+
+        self.assertEqual(n_stock_items, len(tracked) + len(untracked))
+
+        blank = [None, '']
+
+        for item in tracked:
+            self.assertTrue(item['batch'] not in blank or item['serial'] not in blank)
+
+        for item in untracked:
+            self.assertTrue(item['batch'] in blank and item['serial'] in blank)
 
     def test_filter_by_expired(self):
         """
@@ -217,7 +257,7 @@ class StockItemListTest(StockAPITestCase):
 
         # First, we can assume that the 'stock expiry' feature is disabled
         response = self.get_stock(expired=1)
-        self.assertEqual(len(response), 20)
+        self.assertEqual(len(response), 29)
 
         self.user.is_staff = True
         self.user.save()
@@ -232,7 +272,7 @@ class StockItemListTest(StockAPITestCase):
             self.assertTrue(item['expired'])
 
         response = self.get_stock(expired=0)
-        self.assertEqual(len(response), 19)
+        self.assertEqual(len(response), 28)
 
         for item in response:
             self.assertFalse(item['expired'])
@@ -249,7 +289,7 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(len(response), 4)
 
         response = self.get_stock(expired=0)
-        self.assertEqual(len(response), 16)
+        self.assertEqual(len(response), 25)
 
     def test_paginate(self):
         """
@@ -290,7 +330,8 @@ class StockItemListTest(StockAPITestCase):
 
         dataset = self.export_data({})
 
-        self.assertEqual(len(dataset), 20)
+        # Check that *all* stock item objects have been exported
+        self.assertEqual(len(dataset), StockItem.objects.count())
 
         # Expected headers
         headers = [
@@ -308,11 +349,11 @@ class StockItemListTest(StockAPITestCase):
         # Now, add a filter to the results
         dataset = self.export_data({'location': 1})
 
-        self.assertEqual(len(dataset), 2)
+        self.assertEqual(len(dataset), 9)
 
         dataset = self.export_data({'part': 25})
 
-        self.assertEqual(len(dataset), 8)
+        self.assertEqual(len(dataset), 17)
 
 
 class StockItemTest(StockAPITestCase):

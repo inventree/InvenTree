@@ -63,8 +63,8 @@ class SettingsTest(TestCase):
         report_test_obj = InvenTreeSetting.get_setting_object('REPORT_ENABLE_TEST_REPORT')
 
         # check settings base fields
-        self.assertEqual(instance_obj.name, 'InvenTree Instance Name')
-        self.assertEqual(instance_obj.get_setting_name(instance_ref), 'InvenTree Instance Name')
+        self.assertEqual(instance_obj.name, 'Server Instance Name')
+        self.assertEqual(instance_obj.get_setting_name(instance_ref), 'Server Instance Name')
         self.assertEqual(instance_obj.description, 'String descriptor for the server instance')
         self.assertEqual(instance_obj.get_setting_description(instance_ref), 'String descriptor for the server instance')
 

@@ -25,6 +25,7 @@ import moneyed
 import yaml
 from django.utils.translation import gettext_lazy as _
 from django.contrib.messages import constants as messages
+from django.core.files.storage import default_storage
 import django.conf.locale
 
 from .config import get_base_dir, get_config_file, get_plugin_file, get_setting
@@ -59,12 +60,6 @@ config_dir = os.path.dirname(cfg_filename)
 DEBUG = _is_true(get_setting(
     'INVENTREE_DEBUG',
     CONFIG.get('debug', True)
-))
-
-# Determine if we are running in "demo mode"
-DEMO_MODE = _is_true(get_setting(
-    'INVENTREE_DEMO',
-    CONFIG.get('demo', False)
 ))
 
 DOCKER = _is_true(get_setting(
@@ -216,9 +211,6 @@ MEDIA_URL = '/media/'
 if DEBUG:
     logger.info("InvenTree running with DEBUG enabled")
 
-if DEMO_MODE:
-    logger.warning("InvenTree running in DEMO mode")  # pragma: no cover
-
 logger.debug(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
 logger.debug(f"STATIC_ROOT: '{STATIC_ROOT}'")
 
@@ -282,12 +274,14 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = CONFIG.get('middleware', [
     'django.middleware.security.SecurityMiddleware',
+    'x_forwarded_for.middleware.XForwardedForMiddleware',
     'user_sessions.middleware.SessionMiddleware',                   # db user sessions
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'InvenTree.middleware.InvenTreeRemoteUserMiddleware',       # Remote / proxy auth
     'django_otp.middleware.OTPMiddleware',                      # MFA support
     'InvenTree.middleware.CustomAllauthTwoFactorMiddleware',    # Flow control for allauth
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -301,6 +295,7 @@ MIDDLEWARE = CONFIG.get('middleware', [
 MIDDLEWARE.append('error_report.middleware.ExceptionProcessor')
 
 AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
+    'django.contrib.auth.backends.RemoteUserBackend',           # proxy login
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',      # SSO login via external providers
 ])
@@ -549,10 +544,18 @@ if "sqlite" in db_engine:
 # Provide OPTIONS dict back to the database configuration dict
 db_config['OPTIONS'] = db_options
 
+# Set testing options for the database
+db_config['TEST'] = {
+    'CHARSET': 'utf8',
+}
+
+# Set collation option for mysql test database
+if 'mysql' in db_engine:
+    db_config['TEST']['COLLATION'] = 'utf8_general_ci'
+
 DATABASES = {
     'default': db_config
 }
-
 
 _cache_config = CONFIG.get("cache", {})
 _cache_host = _cache_config.get("host", os.getenv("INVENTREE_CACHE_HOST"))
@@ -666,11 +669,13 @@ LANGUAGE_CODE = CONFIG.get('language', 'en-us')
 
 # If a new language translation is supported, it must be added here
 LANGUAGES = [
+    ('cs', _('Czech')),
     ('de', _('German')),
     ('el', _('Greek')),
     ('en', _('English')),
     ('es', _('Spanish')),
     ('es-mx', _('Spanish (Mexican)')),
+    ('fa', _('Farsi / Persian')),
     ('fr', _('French')),
     ('he', _('Hebrew')),
     ('hu', _('Hungarian')),
@@ -680,7 +685,8 @@ LANGUAGES = [
     ('nl', _('Dutch')),
     ('no', _('Norwegian')),
     ('pl', _('Polish')),
-    ('pt', _('Portugese')),
+    ('pt', _('Portuguese')),
+    ('pt-BR', _('Portuguese (Brazilian)')),
     ('ru', _('Russian')),
     ('sv', _('Swedish')),
     ('th', _('Thai')),
@@ -846,6 +852,10 @@ ACCOUNT_FORMS = {
 SOCIALACCOUNT_ADAPTER = 'InvenTree.forms.CustomSocialAccountAdapter'
 ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'
 
+# login settings
+REMOTE_LOGIN = get_setting('INVENTREE_REMOTE_LOGIN', CONFIG.get('remote_login', False))
+REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', CONFIG.get('remote_login_header', 'REMOTE_USER'))
+
 # Markdownx configuration
 # Ref: https://neutronx.github.io/django-markdownx/customization/
 MARKDOWNX_MEDIA_PATH = datetime.now().strftime('markdownx/%Y/%m/%d')
@@ -905,3 +915,20 @@ PLUGIN_TESTING = get_setting('PLUGIN_TESTING', TESTING)  # are plugins beeing te
 PLUGIN_TESTING_SETUP = get_setting('PLUGIN_TESTING_SETUP', False)  # load plugins from setup hooks in testing?
 PLUGIN_RETRY = get_setting('PLUGIN_RETRY', 5)  # how often should plugin loading be tried?
 PLUGIN_FILE_CHECKED = False                    # Was the plugin file checked?
+
+# User interface customization values
+CUSTOMIZE = get_setting(
+    'INVENTREE_CUSTOMIZE',
+    CONFIG.get('customize', {}),
+    {}
+)
+
+CUSTOM_LOGO = get_setting(
+    'INVENTREE_CUSTOM_LOGO',
+    CUSTOMIZE.get('logo', False)
+)
+
+# check that the logo-file exsists in media
+if CUSTOM_LOGO and not default_storage.exists(CUSTOM_LOGO):
+    CUSTOM_LOGO = False
+    logger.warning("The custom logo file could not be found in the default media storage")

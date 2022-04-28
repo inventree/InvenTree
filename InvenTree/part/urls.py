@@ -13,18 +13,6 @@ from django.conf.urls import url, include
 from . import views
 
 
-sale_price_break_urls = [
-    url(r'^new/', views.PartSalePriceBreakCreate.as_view(), name='sale-price-break-create'),
-    url(r'^(?P<pk>\d+)/edit/', views.PartSalePriceBreakEdit.as_view(), name='sale-price-break-edit'),
-    url(r'^(?P<pk>\d+)/delete/', views.PartSalePriceBreakDelete.as_view(), name='sale-price-break-delete'),
-]
-
-internal_price_break_urls = [
-    url(r'^new/', views.PartInternalPriceBreakCreate.as_view(), name='internal-price-break-create'),
-    url(r'^(?P<pk>\d+)/edit/', views.PartInternalPriceBreakEdit.as_view(), name='internal-price-break-edit'),
-    url(r'^(?P<pk>\d+)/delete/', views.PartInternalPriceBreakDelete.as_view(), name='internal-price-break-delete'),
-]
-
 part_parameter_urls = [
     url(r'^template/new/', views.PartParameterTemplateCreate.as_view(), name='part-param-template-create'),
     url(r'^template/(?P<pk>\d+)/edit/', views.PartParameterTemplateEdit.as_view(), name='part-param-template-edit'),
@@ -85,12 +73,6 @@ part_urls = [
 
     # Part category
     url(r'^category/', include(category_urls)),
-
-    # Part price breaks
-    url(r'^sale-price/', include(sale_price_break_urls)),
-
-    # Part internal price breaks
-    url(r'^internal-price/', include(internal_price_break_urls)),
 
     # Part parameters
     url(r'^parameter/', include(part_parameter_urls)),

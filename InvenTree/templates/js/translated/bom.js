@@ -691,8 +691,24 @@ function loadBomTable(table, options={}) {
 
     setupFilterList('bom', $(table));
 
-    // Construct the table columns
+    function availableQuantity(row) {
 
+        // Base stock
+        var available = row.available_stock;
+
+        // Substitute stock
+        available += (row.available_substitute_stock || 0);
+
+        // Variant stock
+        if (row.allow_variants) {
+            available += (row.available_variant_stock || 0);
+        }
+
+        return available;
+
+    }
+
+    // Construct the table columns
     var cols = [];
 
     if (options.editable) {
@@ -798,17 +814,37 @@ function loadBomTable(table, options={}) {
     });
 
     cols.push({
-        field: 'sub_part_detail.stock',
+        field: 'available_stock',
         title: '{% trans "Available" %}',
         searchable: false,
         sortable: true,
         formatter: function(value, row) {
 
             var url = `/part/${row.sub_part_detail.pk}/?display=part-stock`;
-            var text = value;
 
-            if (value == null || value <= 0) {
-                text = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
+            // Calculate total "available" (unallocated) quantity
+            var substitute_stock = row.available_substitute_stock || 0;
+            var variant_stock = row.allow_variants ? (row.available_variant_stock || 0) : 0;
+
+            var available_stock = availableQuantity(row);
+            
+            var text = `${available_stock}`;
+
+            if (available_stock <= 0) {
+                text = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
+            } else {
+                var extra = '';
+                if ((substitute_stock > 0) && (variant_stock > 0)) {
+                    extra = '{% trans "Includes variant and substitute stock" %}';
+                } else if (variant_stock > 0) {
+                    extra = '{% trans "Includes variant stock" %}';
+                } else if (substitute_stock > 0) {
+                    extra = '{% trans "Includes substitute stock" %}';
+                }
+
+                if (extra) {
+                    text += `<span title='${extra}' class='fas fa-info-circle float-right icon-blue'></span>`;
+                }
             }
 
             return renderLink(text, url);
@@ -902,8 +938,10 @@ function loadBomTable(table, options={}) {
             formatter: function(value, row) {
                 var can_build = 0;
 
+                var available = availableQuantity(row);
+
                 if (row.quantity > 0) {
-                    can_build = row.sub_part_detail.stock / row.quantity;
+                    can_build = available / row.quantity;
                 }
 
                 return +can_build.toFixed(2);
@@ -914,11 +952,11 @@ function loadBomTable(table, options={}) {
                 var cb_b = 0;
 
                 if (rowA.quantity > 0) {
-                    cb_a = rowA.sub_part_detail.stock / rowA.quantity;
+                    cb_a = availableQuantity(rowA) / rowA.quantity;
                 }
 
                 if (rowB.quantity > 0) {
-                    cb_b = rowB.sub_part_detail.stock / rowB.quantity;
+                    cb_b = availableQuantity(rowB) / rowB.quantity;
                 }
 
                 return (cb_a > cb_b) ? 1 : -1;

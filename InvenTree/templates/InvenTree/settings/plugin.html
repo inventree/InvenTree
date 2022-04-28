@@ -13,7 +13,7 @@
 {% block content %}
 
 <div class='alert alert-block alert-danger'>
-    {% trans "Changing the settings below require you to immediatly restart InvenTree. Do not change this while under active usage." %}
+    {% trans "Changing the settings below require you to immediatly restart the server. Do not change this while under active usage." %}
 </div>
 
 <div class='table-responsive'>
@@ -24,6 +24,7 @@
         {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_URL" icon="fa-link" %}
         {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_NAVIGATION" icon="fa-sitemap" %}
         {% include "InvenTree/settings/setting.html" with key="ENABLE_PLUGINS_APP" icon="fa-rocket" %}
+        {% include "InvenTree/settings/setting.html" with key="PLUGIN_ON_STARTUP" %}
     </tbody>
 </table>
 </div>
@@ -74,6 +75,12 @@
                     <span class='badge bg-dark badge-right rounded-pill'>{{ mixin.human_name }}</span>
                 </a>
                 {% endfor %}
+                {% endif %}
+
+                {% if plugin.is_sample %}
+                <a class='sidebar-selector' id='select-plugin-{{plugin_key}}' data-bs-parent="#sidebar">
+                    <span class='badge bg-info rounded-pill'>{% trans "code sample" %}</span>
+                </a>
                 {% endif %}
 
                 {% if plugin.website %}
