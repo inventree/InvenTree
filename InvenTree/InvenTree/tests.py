@@ -252,6 +252,11 @@ class TestSerialNumberExtraction(TestCase):
         sn = e("1, 2, 3, 4, 5", 5, 1)
         self.assertEqual(len(sn), 5)
 
+        # Test multiple placeholders
+        sn = e("1 2 ~ ~ ~", 5, 3)
+        self.assertEqual(len(sn), 5)
+        self.assertEqual(sn, [1, 2, 3, 4, 5])
+
         sn = e("1-5, 10-15", 11, 1)
         self.assertIn(3, sn)
         self.assertIn(13, sn)

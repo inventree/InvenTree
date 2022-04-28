@@ -427,8 +427,9 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
     serials = serials.strip()
 
     # fill in the next serial number into the serial
-    if '~' in serials:
-        serials = serials.replace('~', str(next_number))
+    while '~' in serials:
+        serials = serials.replace('~', str(next_number), 1)
+        next_number += 1
 
     # Split input string by whitespace or comma (,) characters
     groups = re.split("[\s,]+", serials)
