@@ -2856,6 +2856,14 @@ class BomItem(models.Model, DataImportMixin):
         result_hash.update(str(self.optional).encode())
         result_hash.update(str(self.inherited).encode())
 
+        # Optionally encoded for backwards compatibility    
+        if self.consumable:
+            result_hash.update(str(self.consumable).encode())
+
+        # Optionally encoded for backwards compatibility    
+        if self.allow_variants:
+            result_hash.update(str(self.allow_variants).encode())
+
         return str(result_hash.digest())
 
     def validate_hash(self, valid=True):
