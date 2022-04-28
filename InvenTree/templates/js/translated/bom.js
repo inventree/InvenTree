@@ -380,6 +380,7 @@ function bomItemFields() {
         note: {},
         allow_variants: {},
         inherited: {},
+        consumable: {},
         optional: {},
     };
 
@@ -705,7 +706,22 @@ function loadBomTable(table, options={}) {
         }
 
         return available;
+    }
 
+    function canBuildQuantity(row) {
+        // Calculate how many of each row we can make, given current stock
+
+        if (row.consumable) {
+            // If the row is "consumable" we do not 'track' the quantity
+            return Infinity;
+        }
+
+        // Prevent div-by-zero or negative errors
+        if ((row.quantity || 0) <= 0) {
+            return 0;
+        }
+
+        return availableQuantity(row) / row.quantity;
     }
 
     // Construct the table columns
@@ -801,8 +817,12 @@ function loadBomTable(table, options={}) {
             // Let's make it a bit more pretty
             text = parseFloat(text);
 
+            if (row.consumable) {
+                text += ` <small>({% trans "Consumable" %})</small>`;
+            }
+
             if (row.optional) {
-                text += ' ({% trans "Optional" %})';    
+                text += ' <small>({% trans "Optional" %})</small>';
             }
 
             if (row.overage) {
@@ -904,6 +924,15 @@ function loadBomTable(table, options={}) {
     });
 
     cols.push({
+        field: 'consumable',
+        title: '{% trans "Consumable" %}',
+        searchable: false,
+        formatter: function(value) {
+            return yesNoLabel(value);
+        }
+    });
+
+    cols.push({
         field: 'allow_variants',
         title: '{% trans "Allow Variants" %}',
         formatter: function(value) {
@@ -936,28 +965,18 @@ function loadBomTable(table, options={}) {
             field: 'can_build',
             title: '{% trans "Can Build" %}',
             formatter: function(value, row) {
-                var can_build = 0;
 
-                var available = availableQuantity(row);
-
-                if (row.quantity > 0) {
-                    can_build = available / row.quantity;
+                if (row.consumable) {
+                    return `<em>{% trans "Consumable" %}</em>`;
                 }
 
+                var can_build = canBuildQuantity(row);
                 return +can_build.toFixed(2);
             },
             sorter: function(valA, valB, rowA, rowB) {
                 // Function to sort the "can build" quantity
-                var cb_a = 0;
-                var cb_b = 0;
-
-                if (rowA.quantity > 0) {
-                    cb_a = availableQuantity(rowA) / rowA.quantity;
-                }
-
-                if (rowB.quantity > 0) {
-                    cb_b = availableQuantity(rowB) / rowB.quantity;
-                }
+                var cb_a = canBuildQuantity(rowA);
+                var cb_b = canBuildQuantity(rowB);
 
                 return (cb_a > cb_b) ? 1 : -1;
             },
