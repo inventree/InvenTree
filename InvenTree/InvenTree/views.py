@@ -34,8 +34,7 @@ from user_sessions.views import SessionDeleteView, SessionDeleteOtherView
 
 from common.settings import currency_code_default, currency_codes
 
-from part.models import Part, PartCategory
-from stock.models import StockLocation, StockItem
+from part.models import PartCategory
 from common.models import InvenTreeSetting, ColorTheme
 from users.models import check_user_role, RuleSet
 
