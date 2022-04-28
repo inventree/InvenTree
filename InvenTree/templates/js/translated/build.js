@@ -741,18 +741,6 @@ function loadBuildOutputTable(build_info, options={}) {
     params.is_building = true;
     params.build = build_info.pk;
 
-    // Construct a list of "tracked" BOM items
-    var tracked_bom_items = [];
-
-    var has_tracked_items = false;
-
-    build_info.bom_items.forEach(function(bom_item) {
-        if (bom_item.sub_part_detail.trackable) {
-            tracked_bom_items.push(bom_item);
-            has_tracked_items = true;
-        };
-    });
-
     var filters = {};
 
     for (var key in params) {
@@ -1031,7 +1019,7 @@ function loadBuildOutputTable(build_info, options={}) {
         sortable: true,
         search: false,
         sidePagination: 'client',
-        detailView: has_tracked_items,
+        detailView: true,
         detailFilter: function(index, row) {
             return true;
         },
@@ -1105,7 +1093,7 @@ function loadBuildOutputTable(build_info, options={}) {
             {
                 field: 'allocated',
                 title: '{% trans "Allocated Stock" %}',
-                visible: has_tracked_items,
+                visible: true,
                 switchable: false,
                 formatter: function(value, row) {
                     return `<div id='output-progress-${row.pk}'><span class='fas fa-spin fa-spinner'></span></div>`;

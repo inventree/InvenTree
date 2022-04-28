@@ -401,110 +401,107 @@ function reloadTable() {
     $('#allocation-table-untracked').bootstrapTable('refresh');
 }
 
-// Get the list of BOM items required for this build
-inventreeGet(
-    '{% url "api-bom-list" %}',
-    {
+onPanelLoad('outputs', function() {
+    {% if build.active %}
+
+    var build_info = {
+        pk: {{ build.pk }},
         part: {{ build.part.pk }},
-        sub_part_detail: true,
-    },
-    {
-        success: function(response) {
+        quantity: {{ build.quantity }},
+        {% if build.take_from %}
+        source_location: {{ build.take_from.pk }},
+        {% endif %}
+        tracked_parts: true,
+    };
 
-            var build_info = {
-                pk: {{ build.pk }},
-                part: {{ build.part.pk }},
-                quantity: {{ build.quantity }},
-                bom_items: response,
-                {% if build.take_from %}
-                source_location: {{ build.take_from.pk }},
-                {% endif %}
-                {% if build.has_tracked_bom_items %}
-                tracked_parts: true,
-                {% else %}
-                tracked_parts: false,
-                {% endif %}
-            };
+    loadBuildOutputTable(build_info);
 
-            {% if build.active %}
-            loadBuildOutputTable(build_info);
-            linkButtonsToSelection(
-                '#build-output-table',
-                [
-                    '#output-options',
-                    '#multi-output-complete',
-                    '#multi-output-delete',
-                ]
-            );
+    linkButtonsToSelection(
+        '#build-output-table',
+        [
+            '#output-options',
+            '#multi-output-complete',
+            '#multi-output-delete',
+        ]
+    );
 
-            $('#multi-output-complete').click(function() {
-                var outputs = $('#build-output-table').bootstrapTable('getSelections');
+    $('#multi-output-complete').click(function() {
+        var outputs = $('#build-output-table').bootstrapTable('getSelections');
 
-                completeBuildOutputs(
-                    build_info.pk,
-                    outputs,
-                    {
-                        success: function() {
-                            // Reload the "in progress" table
-                            $('#build-output-table').bootstrapTable('refresh');
+        completeBuildOutputs(
+            build_info.pk,
+            outputs,
+            {
+                success: function() {
+                    // Reload the "in progress" table
+                    $('#build-output-table').bootstrapTable('refresh');
 
-                            // Reload the "completed" table
-                            $('#build-stock-table').bootstrapTable('refresh');
-                        }
-                    }
-                );
-            });
-
-            $('#multi-output-delete').click(function() {
-                var outputs = $('#build-output-table').bootstrapTable('getSelections');
-
-                deleteBuildOutputs(
-                    build_info.pk,
-                    outputs,
-                    {
-                        success: function() {
-                            // Reload the "in progress" table
-                            $('#build-output-table').bootstrapTable('refresh');
-
-                            // Reload the "completed" table
-                            $('#build-stock-table').bootstrapTable('refresh');
-                        }
-                    }
-                )
-            });
-
-            $('#incomplete-output-print-label').click(function() {
-                var outputs = $('#build-output-table').bootstrapTable('getSelections');
-
-                if  (outputs.length == 0) {
-                    outputs = $('#build-output-table').bootstrapTable('getData');
+                    // Reload the "completed" table
+                    $('#build-stock-table').bootstrapTable('refresh');
                 }
+            }
+        );
+    });
 
-                var stock_id_values = [];
+    $('#multi-output-delete').click(function() {
+        var outputs = $('#build-output-table').bootstrapTable('getSelections');
 
-                outputs.forEach(function(output) {
-                    stock_id_values.push(output.pk);
-                });
+        deleteBuildOutputs(
+            build_info.pk,
+            outputs,
+            {
+                success: function() {
+                    // Reload the "in progress" table
+                    $('#build-output-table').bootstrapTable('refresh');
 
-                printStockItemLabels(stock_id_values);
-
-            });
-
-            {% endif %}
-        
-            {% if build.active and build.has_untracked_bom_items %}
-            // Load allocation table for un-tracked parts
-            loadBuildOutputAllocationTable(
-                build_info,
-                null,
-                {
-                    search: true,
+                    // Reload the "completed" table
+                    $('#build-stock-table').bootstrapTable('refresh');
                 }
-            );
-            {% endif %}
+            }
+        )
+    });
+
+    $('#incomplete-output-print-label').click(function() {
+        var outputs = $('#build-output-table').bootstrapTable('getSelections');
+
+        if  (outputs.length == 0) {
+            outputs = $('#build-output-table').bootstrapTable('getData');
         }
+
+        var stock_id_values = [];
+
+        outputs.forEach(function(output) {
+            stock_id_values.push(output.pk);
+        });
+
+        printStockItemLabels(stock_id_values);
+
+    });
+
+    {% endif %}
+});
+
+{% if build.active and build.has_untracked_bom_items %}
+
+var build_info = {
+    pk: {{ build.pk }},
+    part: {{ build.part.pk }},
+    quantity: {{ build.quantity }},
+    {% if build.take_from %}
+    source_location: {{ build.take_from.pk }},
+    {% endif %}
+    tracked_parts: false,
+};
+
+// Load allocation table for un-tracked parts
+loadBuildOutputAllocationTable(
+    build_info,
+    null,
+    {
+        search: true,
     }
 );
+{% endif %}
 
 $('#btn-create-output').click(function() {
 
