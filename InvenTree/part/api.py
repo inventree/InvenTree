@@ -1528,8 +1528,9 @@ class BomFilter(rest_filters.FilterSet):
     """
 
     # Boolean filters for BOM item
-    optional = rest_filters.BooleanFilter(label='BOM line is optional')
-    inherited = rest_filters.BooleanFilter(label='BOM line is inherited')
+    optional = rest_filters.BooleanFilter(label='BOM item is optional')
+    consumable = rest_filters.BooleanFilter(label='BOM item is consumable')
+    inherited = rest_filters.BooleanFilter(label='BOM item is inherited')
     allow_variants = rest_filters.BooleanFilter(label='Variants are allowed')
 
     # Filters for linked 'part'

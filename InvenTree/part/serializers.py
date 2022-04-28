@@ -857,6 +857,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
             'inherited',
             'note',
             'optional',
+            'consumable',
             'overage',
             'pk',
             'part',
