@@ -931,8 +931,6 @@ function loadBuildOutputTable(build_info, options={}) {
                     rows.forEach(function(row) {
                         row.allocations = allocations[row.pk] || [];
                         $(table).bootstrapTable('updateByUniqueId', row.pk, row, true);
-
-                        console.log("Updating row for stock item", row.pk);
                     });
                 }
             }
@@ -1280,22 +1278,35 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
     }
 
-    function sumAllocations(row) {
-        // Calculat total allocations for a given row
-        if (!row.allocations) {
-            row.allocated = 0;
-            return 0;
-        }
+    function getAllocationsForRow(row) {
+        var part_id = row.sub_part;
 
-        var quantity = 0;
+        var allocations = [];
 
-        row.allocations.forEach(function(item) {
-            quantity += item.quantity;
+        allocated_items.forEach(function(allocation) {
+            if (allocation.bom_part == part_id) {
+                allocations.push(allocation);
+            }
         });
 
-        row.allocated = parseFloat(quantity.toFixed(15));
+        return allocations;
+    }
+
+    function sumAllocations(row) {
+        
+        var allocated_quantity = 0;
+
+        getAllocationsForRow(row).forEach(function(allocation) {
+            allocated_quantity += allocation.quantity;
+        });
+        
+        row.allocated = parseFloat(allocated_quantity.toFixed(15));
 
         return row.allocated;
+    }
+
+    function isRowFullyAllocated(row) {
+        return sumAllocations(row) >= requiredQuantity(row);
     }
 
     function setupCallbacks() {
@@ -1408,128 +1419,12 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
         onPostBody: function(data) {
             // Setup button callbacks
             setupCallbacks();
-        // },
-        // onLoadSuccess: function(tableData) {
-            // Once the BOM data are loaded, request allocation data for this build output
-
-            console.log("old onLoadSuccess");
-            return;
-
-            var params = {
-                build: buildId,
-                part_detail: true,
-                location_detail: true,
-            };
-
-            if (output) {
-                params.sub_part_trackable = true;
-                params.output = outputId;
-            } else {
-                params.sub_part_trackable = false;
-            }
-
-            inventreeGet('/api/build/item/',
-                params,
-                {
-                    success: function(data) {
-                        // Iterate through the returned data, and group by the part they point to
-                        var allocations = {};
-
-                        // Total number of line items
-                        var totalLines = tableData.length;
-
-                        // Total number of "completely allocated" lines
-                        var allocatedLines = 0;
-
-                        data.forEach(function(item) {
-
-                            // Group BuildItem objects by part
-                            var part = item.bom_part || item.part;
-                            var key = parseInt(part);
-
-                            if (!(key in allocations)) {
-                                allocations[key] = [];
-                            }
-
-                            allocations[key].push(item);
-                        });
-
-                        // Now update the allocations for each row in the table
-                        for (var key in allocations) {
-
-                            // Select the associated row in the table
-                            var tableRow = $(table).bootstrapTable('getRowByUniqueId', key);
-
-                            if (!tableRow) {
-                                continue;
-                            }
-
-                            // Set the allocation list for that row
-                            tableRow.allocations = allocations[key];
-
-                            // Calculate the total allocated quantity
-                            var allocatedQuantity = sumAllocations(tableRow);
-
-                            var requiredQuantity = 0;
-
-                            if (output) {
-                                requiredQuantity = tableRow.quantity * output.quantity;
-                            } else {
-                                requiredQuantity = tableRow.quantity * buildInfo.quantity;
-                            }
-
-                            // Is this line item fully allocated?
-                            if (allocatedQuantity >= requiredQuantity) {
-                                allocatedLines += 1;
-                            }
-
-                            // Push the updated row back into the main table
-                            $(table).bootstrapTable('updateByUniqueId', key, tableRow, true);
-                        }
-
-                        // Update any rows which we did not receive allocation information for
-                        var td = $(table).bootstrapTable('getData');
-
-                        td.forEach(function(tableRow) {
-                            if (tableRow.allocations == null) {
-
-                                tableRow.allocations = [];
-
-                                $(table).bootstrapTable('updateByUniqueId', tableRow.pk, tableRow, true);
-                            }
-                        });
-
-                        // Update the progress bar for this build output
-                        var build_progress = $(`#output-progress-${outputId}`);
-
-                        if (build_progress.exists()) {
-                            if (totalLines > 0) {
-
-                                var progress = makeProgressBar(
-                                    allocatedLines,
-                                    totalLines,
-                                    {
-                                        max_width: '150px',
-                                    }
-                                );
-    
-                                build_progress.html(progress);
-                            } else {
-                                build_progress.html('');
-                            }
-    
-                        } else {
-                            console.warn(`Could not find progress bar for output ${outputId}`);
-                        }
-                    }
-                }
-            );
         },
         sortable: true,
         showColumns: false,
         detailView: true,
         detailFilter: function(index, row) {
-            return row.allocations != null;
+            return sumAllocations(row) > 0;
         },
         detailFormatter: function(index, row, element) {
             // Contruct an 'inner table' which shows which stock items have been allocated
@@ -1543,7 +1438,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             var subTable = $(`#${subTableId}`);
 
             subTable.bootstrapTable({
-                data: row.allocations,
+                data: getAllocationsForRow(row),
                 showHeader: true,
                 columns: [
                     {
@@ -1564,7 +1459,6 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                             var text = '';
 
                             var url = '';
-
 
                             var serial = row.serial;
 
@@ -1744,19 +1638,9 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 title: '{% trans "Allocated" %}',
                 sortable: true,
                 formatter: function(value, row) {
-                    var allocated = 0;
-
-                    if (row.allocations != null) {
-                        row.allocations.forEach(function(item) {
-                            allocated += item.quantity;
-                        });
-
-                        var required = requiredQuantity(row);
-
-                        return makeProgressBar(allocated, required);
-                    } else {
-                        return `<em>{% trans "loading" %}...</em><span class='fas fa-spinner fa-spin float-right'></span>`;
-                    }
+                    var allocated = sumAllocations(row);
+                    var required = requiredQuantity(row)
+                    return makeProgressBar(allocated, required);
                 },
                 sorter: function(valA, valB, rowA, rowB) {
                     // Custom sorting function for progress bars
