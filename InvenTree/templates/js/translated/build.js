@@ -874,7 +874,7 @@ function loadBuildOutputTable(build_info, options={}) {
         name: 'build-outputs',
         sortable: true,
         search: false,
-        sidePagination: 'server',
+        sidePagination: 'client',
         detailView: has_tracked_items,
         detailFilter: function(index, row) {
             return true;
@@ -913,7 +913,6 @@ function loadBuildOutputTable(build_info, options={}) {
                 title: '{% trans "Build Output" %}',
                 switchable: true,
                 sortable: true,
-                sortName: 'stock', // This will sort by quantity -> serial_int -> serial
                 formatter: function(value, row) {
 
                     var url = `/stock/item/${row.pk}/`;
@@ -928,6 +927,21 @@ function loadBuildOutputTable(build_info, options={}) {
 
                     return renderLink(text, url);
                 },
+                sorter: function(a, b, row_a, row_b) {
+                    // Sort first by quantity, and then by serial number
+                    if ((row_a.quantity > 1) || (row_b.quantity > 1)) {
+                        return row_a.quantity > row_b.quantity ? 1 : -1;
+                    }
+
+                    if ((row_a.serial != null) && (row_b.serial != null)) {
+                        var sn_a = Number.parseInt(row_a.serial) || 0;
+                        var sn_b = Number.parseInt(row_b.serial) || 0;
+
+                        return sn_a > sn_b ? 1 : -1;
+                    }
+
+                    return 0;
+                }
             },
             {
                 field: 'allocated',
