@@ -786,7 +786,7 @@ function loadBuildOutputTable(build_info, options={}) {
                     }
                 );
             } else {
-                console.log(`WARNING: Could not locate sub-table for output ${pk}`);
+                console.warn(`Could not locate sub-table for output ${pk}`);
             }
         });
 
@@ -869,7 +869,7 @@ function loadBuildOutputTable(build_info, options={}) {
         url: '{% url "api-stock-list" %}',
         queryParams: filters,
         original: params,
-        showColumns: false,
+        showColumns: true,
         uniqueId: 'pk',
         name: 'build-outputs',
         sortable: true,
@@ -901,6 +901,7 @@ function loadBuildOutputTable(build_info, options={}) {
             {
                 field: 'part',
                 title: '{% trans "Part" %}',
+                switchable: true,
                 formatter: function(value, row) {
                     var thumb = row.part_detail.thumbnail;
 
@@ -909,7 +910,9 @@ function loadBuildOutputTable(build_info, options={}) {
             },
             {
                 field: 'quantity',
-                title: '{% trans "Quantity" %}',
+                title: '{% trans "Build Output" %}',
+                switchable: true,
+                sortable: true,
                 formatter: function(value, row) {
 
                     var url = `/stock/item/${row.pk}/`;
@@ -1079,7 +1082,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
             var row = $(table).bootstrapTable('getRowByUniqueId', pk);
 
             if (!row) {
-                console.log('WARNING: getRowByUniqueId returned null');
+                console.warn('getRowByUniqueId returned null');
                 return;
             }
 
@@ -1269,7 +1272,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                             }
     
                         } else {
-                            console.log(`WARNING: Could not find progress bar for output ${outputId}`);
+                            console.warn(`Could not find progress bar for output ${outputId}`);
                         }
                     }
                 }
