@@ -2663,6 +2663,7 @@ class BomItem(models.Model, DataImportMixin):
         sub_part: Link to the child part (the part that will be consumed)
         quantity: Number of 'sub_parts' consumed to produce one 'part'
         optional: Boolean field describing if this BomItem is optional
+        consumable: Boolean field describing if this BomItem is considered a 'consumable'
         reference: BOM reference field (e.g. part designators)
         overage: Estimated losses for a Build. Can be expressed as absolute value (e.g. '7') or a percentage (e.g. '2%')
         note: Note field for this BOM item
@@ -2681,6 +2682,7 @@ class BomItem(models.Model, DataImportMixin):
         'allow_variants': {},
         'inherited': {},
         'optional': {},
+        'consumable': {},
         'note': {},
         'part': {
             'label': _('Part'),
@@ -2792,8 +2794,18 @@ class BomItem(models.Model, DataImportMixin):
     # Quantity required
     quantity = models.DecimalField(default=1.0, max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], verbose_name=_('Quantity'), help_text=_('BOM quantity for this BOM item'))
 
-    optional = models.BooleanField(default=False, verbose_name=_('Optional'), help_text=_("This BOM item is optional"))
+    optional = models.BooleanField(
+        default=False,
+        verbose_name=_('Optional'),
+        help_text=_("This BOM item is optional")
+    )
 
+    consumable = models.BooleanField(
+        default=False,
+        verbose_name=_('Consumable'),
+        help_text=_("This BOM item is consumable (it is not tracked in build orders)")
+    )
+    
     overage = models.CharField(max_length=24, blank=True, validators=[validators.validate_overage],
                                verbose_name=_('Overage'),
                                help_text=_('Estimated build wastage quantity (absolute or percentage)')
