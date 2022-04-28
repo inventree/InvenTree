@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-28 05:22+0000\n"
+"POT-Creation-Date: 2022-04-28 12:05+0000\n"
 "PO-Revision-Date: 2021-11-30 21:52\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
@@ -80,38 +80,49 @@ msgstr "Confirmación de email"
 msgid "You must type the same email each time."
 msgstr "Debe escribir el mismo correo electrónico cada vez."
 
-#: InvenTree/helpers.py:442
+#: InvenTree/helpers.py:449
 #, fuzzy, python-brace-format
 #| msgid "Duplicate serial: {n}"
 msgid "Duplicate serial: {sn}"
 msgstr "Duplicar serie: {n}"
 
-#: InvenTree/helpers.py:449 order/models.py:282 order/models.py:435
+#: InvenTree/helpers.py:456 order/models.py:282 order/models.py:435
 #: stock/views.py:993
 msgid "Invalid quantity provided"
 msgstr "Cantidad proporcionada no válida"
 
-#: InvenTree/helpers.py:452
+#: InvenTree/helpers.py:459
 msgid "Empty serial number string"
 msgstr "Cadena de número de serie vacía"
 
-#: InvenTree/helpers.py:474 InvenTree/helpers.py:477 InvenTree/helpers.py:480
-#: InvenTree/helpers.py:504
+#: InvenTree/helpers.py:491
+#, fuzzy, python-brace-format
+#| msgid "Invalid group: {g}"
+msgid "Invalid group range: {g}"
+msgstr "Grupo inválido: {g}"
+
+#: InvenTree/helpers.py:494
 #, python-brace-format
 msgid "Invalid group: {g}"
 msgstr "Grupo inválido: {g}"
 
-#: InvenTree/helpers.py:518
+#: InvenTree/helpers.py:522
+#, fuzzy, python-brace-format
+#| msgid "Invalid group: {g}"
+msgid "Invalid group sequence: {g}"
+msgstr "Grupo inválido: {g}"
+
+#: InvenTree/helpers.py:530
 #, fuzzy, python-brace-format
 #| msgid "Invalid group: {g}"
 msgid "Invalid/no group {group}"
 msgstr "Grupo inválido: {g}"
 
-#: InvenTree/helpers.py:524
+#: InvenTree/helpers.py:536
 msgid "No serial numbers found"
 msgstr "No se encontraron números de serie"
 
-#: InvenTree/helpers.py:528
+#: InvenTree/helpers.py:540
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
 msgstr "Número único de número de serie ({s}) debe coincidir con la cantidad ({q})"

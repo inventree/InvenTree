@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-28 05:22+0000\n"
+"POT-Creation-Date: 2022-04-28 12:05+0000\n"
 "PO-Revision-Date: 2021-11-30 21:51\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
@@ -80,38 +80,49 @@ msgstr ""
 msgid "You must type the same email each time."
 msgstr ""
 
-#: InvenTree/helpers.py:442
+#: InvenTree/helpers.py:449
 #, fuzzy, python-brace-format
 #| msgid "Duplicate serial: {n}"
 msgid "Duplicate serial: {sn}"
 msgstr "Dubbel serienummer: {n}"
 
-#: InvenTree/helpers.py:449 order/models.py:282 order/models.py:435
+#: InvenTree/helpers.py:456 order/models.py:282 order/models.py:435
 #: stock/views.py:993
 msgid "Invalid quantity provided"
 msgstr "Ongeldige hoeveeldheid ingevoerd"
 
-#: InvenTree/helpers.py:452
+#: InvenTree/helpers.py:459
 msgid "Empty serial number string"
 msgstr "Leeg serienummer"
 
-#: InvenTree/helpers.py:474 InvenTree/helpers.py:477 InvenTree/helpers.py:480
-#: InvenTree/helpers.py:504
+#: InvenTree/helpers.py:491
+#, fuzzy, python-brace-format
+#| msgid "Invalid group: {g}"
+msgid "Invalid group range: {g}"
+msgstr "Ongeldige groep: {g}"
+
+#: InvenTree/helpers.py:494
 #, python-brace-format
 msgid "Invalid group: {g}"
 msgstr "Ongeldige groep: {g}"
 
-#: InvenTree/helpers.py:518
+#: InvenTree/helpers.py:522
+#, fuzzy, python-brace-format
+#| msgid "Invalid group: {g}"
+msgid "Invalid group sequence: {g}"
+msgstr "Ongeldige groep: {g}"
+
+#: InvenTree/helpers.py:530
 #, fuzzy, python-brace-format
 #| msgid "Invalid group: {g}"
 msgid "Invalid/no group {group}"
 msgstr "Ongeldige groep: {g}"
 
-#: InvenTree/helpers.py:524
+#: InvenTree/helpers.py:536
 msgid "No serial numbers found"
 msgstr "Geen serienummers gevonden"
 
-#: InvenTree/helpers.py:528
+#: InvenTree/helpers.py:540
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
 msgstr "Aantal unieke serienummer ({s}) moet overeenkomen met de hoeveelheid ({q})"
