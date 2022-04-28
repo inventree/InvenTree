@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-28 04:14+0000\n"
-"PO-Revision-Date: 2022-04-28 04:18\n"
+"PO-Revision-Date: 2022-04-28 07:29\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1604,7 +1604,7 @@ msgstr "Egy olyan beállítás megváltozott ami a kiszolgáló újraindításá
 
 #: common/models.py:687
 msgid "Server Instance Name"
-msgstr ""
+msgstr "Kiszolgáló példány neve"
 
 #: common/models.py:689
 msgid "String descriptor for the server instance"
