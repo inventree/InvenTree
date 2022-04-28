@@ -442,6 +442,18 @@ class BuildItemList(generics.ListCreateAPIView):
         if part_pk:
             queryset = queryset.filter(stock_item__part=part_pk)
 
+        # Filter by "tracked" status
+        # Tracked means that the item is "installed" into a build output (stock item)
+        tracked = params.get('tracked', None)
+
+        if tracked is not None:
+            tracked = str2bool(tracked)
+
+            if tracked:
+                queryset = queryset.exclude(install_into=None)
+            else:
+                queryset = queryest.filter(install_into=None)
+
         # Filter by output target
         output = params.get('output', None)
 
