@@ -1135,6 +1135,10 @@ function loadBuildOutputTable(build_info, options={}) {
                         text = `{% trans "Quantity" %}: ${row.quantity}`;
                     }
 
+                    if (row.batch) {
+                        text += ` <small>({% trans "Batch" %}: ${row.batch})</small>`;
+                    }
+
                     return renderLink(text, url);
                 },
                 sorter: function(a, b, row_a, row_b) {
