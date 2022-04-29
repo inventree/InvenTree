@@ -431,24 +431,32 @@ onPanelLoad('outputs', function() {
 
 {% if build.active and build.has_untracked_bom_items %}
 
-var build_info = {
-    pk: {{ build.pk }},
-    part: {{ build.part.pk }},
-    quantity: {{ build.quantity }},
-    {% if build.take_from %}
-    source_location: {{ build.take_from.pk }},
-    {% endif %}
-    tracked_parts: false,
-};
+function loadUntrackedStockTable() {
 
-// Load allocation table for un-tracked parts
-loadBuildOutputAllocationTable(
-    build_info,
-    null,
-    {
-        search: true,
-    }
-);
+    var build_info = {
+        pk: {{ build.pk }},
+        part: {{ build.part.pk }},
+        quantity: {{ build.quantity }},
+        {% if build.take_from %}
+        source_location: {{ build.take_from.pk }},
+        {% endif %}
+        tracked_parts: false,
+    };
+    
+    $('#allocation-table-untracked').bootstrapTable('destroy');
+
+    // Load allocation table for un-tracked parts
+    loadBuildOutputAllocationTable(
+        build_info,
+        null,
+        {
+            search: true,
+        }
+    );
+}
+
+loadUntrackedStockTable();
+
 {% endif %}
 
 $('#btn-create-output').click(function() {
@@ -472,6 +480,7 @@ $("#btn-auto-allocate").on('click', function() {
             {% if build.take_from %}
             location: {{ build.take_from.pk }},
             {% endif %}
+            onSuccess: loadUntrackedStockTable,
         }
     );
 });
@@ -503,9 +512,7 @@ $("#btn-allocate").on('click', function() {
                 {% if build.take_from %}
                 source_location: {{ build.take_from.pk }},
                 {% endif %}
-                success: function(data) {
-                    $('#allocation-table-untracked').bootstrapTable('refresh');
-                }
+                success: loadUntrackedStockTable,
             }
         );
     }
@@ -514,6 +521,7 @@ $("#btn-allocate").on('click', function() {
 $('#btn-unallocate').on('click', function() {
     unallocateStock({{ build.id }}, {
         table: '#allocation-table-untracked',
+        onSuccess: loadUntrackedStockTable,
     });
 });
 
@@ -533,9 +541,7 @@ $('#allocate-selected-items').click(function() {
             {% if build.take_from %}
             source_location: {{ build.take_from.pk }},
             {% endif %}
-            success: function(data) {
-                $('#allocation-table-untracked').bootstrapTable('refresh');
-            }
+            success: loadUntrackedStockTable,
         }
     );
 });

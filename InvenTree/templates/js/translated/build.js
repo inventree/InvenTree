@@ -2270,7 +2270,9 @@ function autoAllocateStockToBuild(build_id, bom_items=[], options={}) {
         confirm: true,
         preFormContent: html,
         onSuccess: function(response) {
-            $('#allocation-table-untracked').bootstrapTable('refresh');
+            if (options.onSuccess) {
+                options.onSuccess(response);
+            }
         }
     });
 }
