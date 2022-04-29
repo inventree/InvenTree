@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-29 07:59+0000\n"
-"PO-Revision-Date: 2022-04-29 08:13\n"
+"PO-Revision-Date: 2022-04-29 20:41\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -306,7 +306,7 @@ msgstr "Dubbele kolom: '{col}'"
 
 #: InvenTree/settings.py:668
 msgid "Czech"
-msgstr ""
+msgstr "Tsjechisch"
 
 #: InvenTree/settings.py:669
 msgid "German"
@@ -330,7 +330,7 @@ msgstr "Spaans (Mexicaans)"
 
 #: InvenTree/settings.py:674
 msgid "Farsi / Persian"
-msgstr ""
+msgstr "Farsi / Perzisch"
 
 #: InvenTree/settings.py:675
 msgid "French"
@@ -370,11 +370,11 @@ msgstr "Pools"
 
 #: InvenTree/settings.py:684
 msgid "Portuguese"
-msgstr ""
+msgstr "Portugees"
 
 #: InvenTree/settings.py:685
 msgid "Portuguese (Brazilian)"
-msgstr ""
+msgstr "Portugees (Braziliaans)"
 
 #: InvenTree/settings.py:686
 msgid "Russian"
@@ -529,7 +529,7 @@ msgstr "Samengevoegde stock items"
 
 #: InvenTree/status_codes.py:300
 msgid "Converted to variant"
-msgstr ""
+msgstr "Geconverteerd naar variant"
 
 #: InvenTree/status_codes.py:302 templates/js/translated/table_filters.js:213
 msgid "Sent to customer"
@@ -657,7 +657,7 @@ msgstr ""
 
 #: barcodes/api.py:229
 msgid "Barcode associated with Stock Item"
-msgstr ""
+msgstr "Barcode gekoppeld aan voorraadartikel"
 
 #: build/forms.py:20
 msgid "Confirm cancel"
@@ -804,7 +804,7 @@ msgstr "Bouwstatuscode"
 #: build/models.py:287 build/serializers.py:223 order/serializers.py:272
 #: stock/models.py:673 templates/js/translated/order.js:573
 msgid "Batch Code"
-msgstr ""
+msgstr "Batchcode"
 
 #: build/models.py:291 build/serializers.py:224
 msgid "Batch code for this build output"
@@ -1028,7 +1028,7 @@ msgstr "Voer hoeveelheid in voor build-output"
 #: order/serializers.py:267 part/serializers.py:593 part/serializers.py:1089
 #: stock/models.py:507 stock/models.py:1311 stock/serializers.py:305
 msgid "Quantity must be greater than zero"
-msgstr ""
+msgstr "Hoeveelheid moet groter zijn dan nul"
 
 #: build/serializers.py:213
 msgid "Integer quantity required for trackable parts"
@@ -1059,7 +1059,7 @@ msgstr ""
 
 #: build/serializers.py:280 stock/api.py:593
 msgid "The following serial numbers already exist"
-msgstr ""
+msgstr "De volgende serienummers bestaan al"
 
 #: build/serializers.py:333 build/serializers.py:406
 msgid "A list of build outputs must be provided"
@@ -1095,7 +1095,7 @@ msgstr "Status"
 
 #: build/serializers.py:389
 msgid "Accept Incomplete Allocation"
-msgstr ""
+msgstr "Incomplete toewijzing accepteren"
 
 #: build/serializers.py:390
 msgid "Complete ouputs if stock has not been fully allocated"
@@ -1103,7 +1103,7 @@ msgstr ""
 
 #: build/serializers.py:447
 msgid "Accept Unallocated"
-msgstr ""
+msgstr "Accepteer niet toegewezen"
 
 #: build/serializers.py:448
 msgid "Accept that stock items have not been fully allocated to this build order"
@@ -1409,7 +1409,7 @@ msgstr ""
 
 #: build/templates/build/detail.html:180
 msgid "Auto Allocate"
-msgstr ""
+msgstr "Automatisch toewijzen"
 
 #: build/templates/build/detail.html:182
 msgid "Manually allocate stock to build"
