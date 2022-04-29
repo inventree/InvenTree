@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-29 07:59+0000\n"
-"PO-Revision-Date: 2022-04-29 08:13\n"
+"PO-Revision-Date: 2022-04-29 09:58\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -8185,15 +8185,15 @@ msgstr "Nem található aktív gyártási kimenet"
 
 #: templates/js/translated/build.js:1162
 msgid "Allocated Stock"
-msgstr ""
+msgstr "Lefoglalt készlet"
 
 #: templates/js/translated/build.js:1169
 msgid "No tracked BOM items for this build"
-msgstr ""
+msgstr "Nincsenek követett BOM tételek ebben a gyártásban"
 
 #: templates/js/translated/build.js:1191
 msgid "Completed Tests"
-msgstr ""
+msgstr "Befejezett tesztek"
 
 #: templates/js/translated/build.js:1196
 msgid "No required tests for this build"
