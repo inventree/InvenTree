@@ -1116,8 +1116,8 @@ function loadBomTable(table, options={}) {
 
             table.treegrid('collapseAll');
 
-             // Callback for 'load sub assembly' button
-             $(table).find('.load-sub-assembly').click(function(event) {
+            // Callback for 'load sub assembly' button
+            $(table).find('.load-sub-assembly').click(function(event) {
 
                 event.preventDefault();
 
