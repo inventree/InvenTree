@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-29 05:07+0000\n"
-"PO-Revision-Date: 2021-11-30 21:52\n"
+"PO-Revision-Date: 2022-04-29 05:17\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -70,21 +70,20 @@ msgstr "Kategori Seçin"
 
 #: InvenTree/forms.py:236
 msgid "Email (again)"
-msgstr ""
+msgstr "E-posta (tekrar)"
 
 #: InvenTree/forms.py:240
 msgid "Email address confirmation"
-msgstr ""
+msgstr "E-posta adresi onayı"
 
 #: InvenTree/forms.py:260
 msgid "You must type the same email each time."
-msgstr ""
+msgstr "Her seferind eaynı e-posta adresini yazmalısınız."
 
 #: InvenTree/helpers.py:449
-#, fuzzy, python-brace-format
-#| msgid "Duplicate serial: {n}"
+#, python-brace-format
 msgid "Duplicate serial: {sn}"
-msgstr "Tekrarlanan seri {n}"
+msgstr "Tekrarlanan seri no:{sn}"
 
 #: InvenTree/helpers.py:456 order/models.py:282 order/models.py:435
 #: stock/views.py:993
@@ -96,10 +95,9 @@ msgid "Empty serial number string"
 msgstr "Boş seri numarası dizesi"
 
 #: InvenTree/helpers.py:491
-#, fuzzy, python-brace-format
-#| msgid "Invalid group: {g}"
+#, python-brace-format
 msgid "Invalid group range: {g}"
-msgstr "Geçersiz grup: {g}"
+msgstr ""
 
 #: InvenTree/helpers.py:494
 #, python-brace-format
@@ -107,16 +105,14 @@ msgid "Invalid group: {g}"
 msgstr "Geçersiz grup: {g}"
 
 #: InvenTree/helpers.py:522
-#, fuzzy, python-brace-format
-#| msgid "Invalid group: {g}"
+#, python-brace-format
 msgid "Invalid group sequence: {g}"
-msgstr "Geçersiz grup: {g}"
+msgstr ""
 
 #: InvenTree/helpers.py:530
-#, fuzzy, python-brace-format
-#| msgid "Invalid group: {g}"
+#, python-brace-format
 msgid "Invalid/no group {group}"
-msgstr "Geçersiz grup: {g}"
+msgstr "Geçersiz grup: {group}"
 
 #: InvenTree/helpers.py:536
 msgid "No serial numbers found"
@@ -129,11 +125,11 @@ msgstr "Benzersiz seri numaralarının sayısı ({s}) girilen miktarla eşleşme
 
 #: InvenTree/models.py:185
 msgid "Missing file"
-msgstr ""
+msgstr "Eksik dosya"
 
 #: InvenTree/models.py:186
 msgid "Missing external link"
-msgstr ""
+msgstr "Bozuk dış bağlantı"
 
 #: InvenTree/models.py:197 stock/models.py:2202
 #: templates/js/translated/attachment.js:119
@@ -180,28 +176,28 @@ msgstr "yükleme tarihi"
 
 #: InvenTree/models.py:241
 msgid "Filename must not be empty"
-msgstr ""
+msgstr "Dosya adı boş olamaz"
 
 #: InvenTree/models.py:264
 msgid "Invalid attachment directory"
-msgstr ""
+msgstr "Ek dosya yolu geçersiz"
 
 #: InvenTree/models.py:274
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr ""
+msgstr "Dosya adı geçersiz karakterler içeriyor'{c}'"
 
 #: InvenTree/models.py:277
 msgid "Filename missing extension"
-msgstr ""
+msgstr "Dosya uzantısı yok"
 
 #: InvenTree/models.py:284
 msgid "Attachment with this filename already exists"
-msgstr ""
+msgstr "Aynı isimli başka bir dosya zaten var"
 
 #: InvenTree/models.py:291
 msgid "Error renaming file"
-msgstr ""
+msgstr "Dosya adı değiştirilirken hata"
 
 #: InvenTree/models.py:326
 msgid "Invalid choice"
@@ -260,71 +256,53 @@ msgstr "Geçerli bir numara olmalı"
 
 #: InvenTree/serializers.py:299
 msgid "Filename"
-msgstr ""
+msgstr "Dosya adı"
 
 #: InvenTree/serializers.py:334
-#, fuzzy
-#| msgid "Invalid choice"
 msgid "Invalid value"
-msgstr "Geçersiz seçim"
+msgstr "Geçersiz değer"
 
 #: InvenTree/serializers.py:355
-#, fuzzy
-#| msgid "File"
 msgid "Data File"
-msgstr "Dosya"
+msgstr "Veri Dosyası"
 
 #: InvenTree/serializers.py:356
-#, fuzzy
-#| msgid "Select file to upload"
 msgid "Select data file for upload"
-msgstr "Yüklenecek dosyayı seç"
+msgstr "Yüklemek istediğiniz dosyayı seçin"
 
 #: InvenTree/serializers.py:380
-#, fuzzy
-#| msgid "Unsupported file format: {ext.upper()}"
 msgid "Unsupported file type"
-msgstr "Desteklenmeyen dosya formatı: {ext.upper()}"
+msgstr "Desteklenmeyen dsoya tipi"
 
 #: InvenTree/serializers.py:386
 msgid "File is too large"
-msgstr ""
+msgstr "Dosya boyutu çok büyük"
 
 #: InvenTree/serializers.py:407
-#, fuzzy
-#| msgid "No variants found"
 msgid "No columns found in file"
-msgstr "Çeşit bulunamadı"
+msgstr "Dosyada kolon bulunamadı"
 
 #: InvenTree/serializers.py:410
-#, fuzzy
-#| msgid "No variants found"
 msgid "No data rows found in file"
-msgstr "Çeşit bulunamadı"
+msgstr "Dosyada satır bulunamadı"
 
 #: InvenTree/serializers.py:533
-#, fuzzy
-#| msgid "No variants found"
 msgid "No data rows provided"
-msgstr "Çeşit bulunamadı"
+msgstr "Dosyada satır bulunamadı"
 
 #: InvenTree/serializers.py:536
-#, fuzzy
-#| msgid "No variants found"
 msgid "No data columns supplied"
-msgstr "Çeşit bulunamadı"
+msgstr "Dosyada uygun kolon bulunamadı"
 
 #: InvenTree/serializers.py:623
-#, fuzzy, python-brace-format
-#| msgid "Missing selections for the following required columns"
+#, python-brace-format
 msgid "Missing required column: '{name}'"
-msgstr "Aşağıdaki gerekli sütunlar için eksik seçimler"
+msgstr "Gerekli kolon ismi eksik:'{name}'"
 
 #: InvenTree/serializers.py:632
-#, fuzzy, python-brace-format
-#| msgid "Duplicate serial: {n}"
+#, python-brace-format
 msgid "Duplicate column: '{col}'"
-msgstr "Tekrarlanan seri {n}"
+msgstr "Tekrarlanan kolon ismi:'{col}'"
 
 #: InvenTree/settings.py:668
 msgid "Czech"
@@ -348,7 +326,7 @@ msgstr "İspanyolca"
 
 #: InvenTree/settings.py:673
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "İspanyolca(Meksika)"
 
 #: InvenTree/settings.py:674
 msgid "Farsi / Persian"
@@ -364,7 +342,7 @@ msgstr "İbranice"
 
 #: InvenTree/settings.py:677
 msgid "Hungarian"
-msgstr ""
+msgstr "Macarca"
 
 #: InvenTree/settings.py:678
 msgid "Italian"
@@ -416,7 +394,7 @@ msgstr "Türkçe"
 
 #: InvenTree/settings.py:690
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnamca"
 
 #: InvenTree/settings.py:691
 msgid "Chinese"
@@ -546,16 +524,12 @@ msgid "Split child item"
 msgstr "Alt ögeyi ayır"
 
 #: InvenTree/status_codes.py:298 templates/js/translated/stock.js:2025
-#, fuzzy
-#| msgid "Edited stock item"
 msgid "Merged stock items"
-msgstr "Düzenlenen stok kalemi"
+msgstr "Stok parçalarını birleştir"
 
 #: InvenTree/status_codes.py:300
-#, fuzzy
-#| msgid "Convert to variant"
 msgid "Converted to variant"
-msgstr "Çeşide çevir"
+msgstr ""
 
 #: InvenTree/status_codes.py:302 templates/js/translated/table_filters.js:213
 msgid "Sent to customer"
@@ -574,10 +548,8 @@ msgid "Build order output completed"
 msgstr "Yapım emri çıktısı tamamlandı"
 
 #: InvenTree/status_codes.py:307
-#, fuzzy
-#| msgid "Completed build order"
 msgid "Consumed by build order"
-msgstr "Tamamlanmış yapım işi emri"
+msgstr ""
 
 #: InvenTree/status_codes.py:309
 msgid "Received against purchase order"
@@ -668,34 +640,24 @@ msgid "No matching stock item found"
 msgstr "Eşleşen stok kalemi bulunamadı"
 
 #: barcodes/api.py:197
-#, fuzzy
-#| msgid "Barcode already matches StockItem object"
 msgid "Barcode already matches Stock Item"
-msgstr "Barkod başka bir stok kalemi nesnesi ile eşleşmektedir"
+msgstr ""
 
 #: barcodes/api.py:201
-#, fuzzy
-#| msgid "Barcode already matches StockLocation object"
 msgid "Barcode already matches Stock Location"
-msgstr "Barkod başka bir stok konumu nesnesi ile eşleşmektedir"
+msgstr ""
 
 #: barcodes/api.py:205
-#, fuzzy
-#| msgid "Barcode already matches Part object"
 msgid "Barcode already matches Part"
-msgstr "Barkod başka bir parça nesnesi ile eşleşmektedir"
+msgstr ""
 
 #: barcodes/api.py:211 barcodes/api.py:223
-#, fuzzy
-#| msgid "Barcode hash already matches StockItem object"
 msgid "Barcode hash already matches Stock Item"
-msgstr "Barkod karması (hash) zaten stok kalemi nesnesiyle eşleşiyor"
+msgstr ""
 
 #: barcodes/api.py:229
-#, fuzzy
-#| msgid "Barcode associated with StockItem"
 msgid "Barcode associated with Stock Item"
-msgstr "Barkod başka bir stok kalemiyle ilişkili"
+msgstr ""
 
 #: build/forms.py:20
 msgid "Confirm cancel"
@@ -1069,16 +1031,12 @@ msgid "Quantity must be greater than zero"
 msgstr ""
 
 #: build/serializers.py:213
-#, fuzzy
-#| msgid "Test templates can only be created for trackable parts"
 msgid "Integer quantity required for trackable parts"
-msgstr "Test şablonları sadece takip edilebilir paçalar için oluşturulabilir"
+msgstr ""
 
 #: build/serializers.py:216
-#, fuzzy
-#| msgid "The Bill of Materials contains trackable parts"
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
-msgstr "Bu Malzeme Listesi takip edilebilir parçalar içeriyor"
+msgstr ""
 
 #: build/serializers.py:230 order/serializers.py:280 order/serializers.py:907
 #: stock/forms.py:78 stock/serializers.py:314
@@ -1092,22 +1050,16 @@ msgid "Enter serial numbers for build outputs"
 msgstr "Yapım işi çıktısı için seri numaraları girin"
 
 #: build/serializers.py:245
-#, fuzzy
-#| msgid "Allocate Serial Numbers"
 msgid "Auto Allocate Serial Numbers"
-msgstr "Seri Numaralarını Tahsis Et"
+msgstr ""
 
 #: build/serializers.py:246
-#, fuzzy
-#| msgid "Quantity must be 1 for item with a serial number"
 msgid "Automatically allocate required items with matching serial numbers"
-msgstr "Seri numarası olan ögenin miktarı bir olmalı"
+msgstr ""
 
 #: build/serializers.py:280 stock/api.py:593
-#, fuzzy
-#| msgid "Serial numbers already exist"
 msgid "The following serial numbers already exist"
-msgstr "Seri numaraları zaten mevcut"
+msgstr ""
 
 #: build/serializers.py:333 build/serializers.py:406
 msgid "A list of build outputs must be provided"
@@ -1142,58 +1094,44 @@ msgid "Status"
 msgstr "Durum"
 
 #: build/serializers.py:389
-#, fuzzy
-#| msgid "Complete"
 msgid "Accept Incomplete Allocation"
-msgstr "Tamamlandı"
+msgstr ""
 
 #: build/serializers.py:390
-#, fuzzy
-#| msgid "Required stock has not been fully allocated"
 msgid "Complete ouputs if stock has not been fully allocated"
-msgstr "Gerekli stok tamamen tahsis edilemedi"
+msgstr ""
 
 #: build/serializers.py:447
 msgid "Accept Unallocated"
 msgstr ""
 
 #: build/serializers.py:448
-#, fuzzy
-#| msgid "Stock has not been fully allocated to this Build Order"
 msgid "Accept that stock items have not been fully allocated to this build order"
-msgstr "Stok, yapım işi emri için tamamen tahsis edilemedi"
+msgstr ""
 
 #: build/serializers.py:458 templates/js/translated/build.js:151
 msgid "Required stock has not been fully allocated"
 msgstr "Gerekli stok tamamen tahsis edilemedi"
 
 #: build/serializers.py:463
-#, fuzzy
-#| msgid "Complete"
 msgid "Accept Incomplete"
-msgstr "Tamamlandı"
+msgstr ""
 
 #: build/serializers.py:464
-#, fuzzy
-#| msgid "Required build quantity has not been completed"
 msgid "Accept that the required number of build outputs have not been completed"
-msgstr "Gerekli yapım işi miktarı tamamlanmadı"
+msgstr ""
 
 #: build/serializers.py:474 templates/js/translated/build.js:155
 msgid "Required build quantity has not been completed"
 msgstr "Gerekli yapım işi miktarı tamamlanmadı"
 
 #: build/serializers.py:483
-#, fuzzy
-#| msgid "Build Order is incomplete"
 msgid "Build order has incomplete outputs"
-msgstr "Yapım işi emri eksik"
+msgstr ""
 
 #: build/serializers.py:486 build/templates/build/build_base.html:95
-#, fuzzy
-#| msgid "Stock has not been fully allocated to this Build Order"
 msgid "No build outputs have been created for this build order"
-msgstr "Stok, yapım işi emri için tamamen tahsis edilemedi"
+msgstr ""
 
 #: build/serializers.py:514 build/serializers.py:563 part/models.py:2917
 #: part/models.py:3059
@@ -1230,32 +1168,24 @@ msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr ""
 
 #: build/serializers.py:670
-#, fuzzy
-#| msgid "Stock has not been fully allocated to this Build Order"
 msgid "This stock item has already been allocated to this build output"
-msgstr "Stok, yapım işi emri için tamamen tahsis edilemedi"
+msgstr ""
 
 #: build/serializers.py:697 order/serializers.py:1077
 msgid "Allocation items must be provided"
 msgstr ""
 
 #: build/serializers.py:749
-#, fuzzy
-#| msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
-msgstr "Bu yapım işi için stok alınacak konumu seçin (her hangi bir stok konumundan alınması için boş bırakın)"
+msgstr ""
 
 #: build/serializers.py:757
-#, fuzzy
-#| msgid "Include locations"
 msgid "Exclude Location"
-msgstr "Konumları dahil et"
+msgstr ""
 
 #: build/serializers.py:758
-#, fuzzy
-#| msgid "Include stock items for variant parts"
 msgid "Exclude stock items from this selected location"
-msgstr "Çeşit parçaların stok kalemlerini dahil et"
+msgstr ""
 
 #: build/serializers.py:763
 msgid "Interchangeable Stock"
@@ -1266,10 +1196,8 @@ msgid "Stock items in multiple locations can be used interchangeably"
 msgstr ""
 
 #: build/serializers.py:769
-#, fuzzy
-#| msgid "Supplier Stock"
 msgid "Substitute Stock"
-msgstr "Tedarikçi Stoku"
+msgstr ""
 
 #: build/serializers.py:770
 msgid "Allow allocation of substitute parts"
@@ -1312,10 +1240,8 @@ msgid "Complete Build"
 msgstr "Tamamlanmış Yapım İşi"
 
 #: build/templates/build/build_base.html:87
-#, fuzzy
-#| msgid "Description"
 msgid "Build Description"
-msgstr "Açıklama"
+msgstr ""
 
 #: build/templates/build/build_base.html:101
 #, python-format
@@ -1407,10 +1333,8 @@ msgid "Are you sure you wish to cancel this build?"
 msgstr ""
 
 #: build/templates/build/delete_build.html:5
-#, fuzzy
-#| msgid "Are you sure you want to delete this stock location?"
 msgid "Are you sure you want to delete this build?"
-msgstr "Bu stok konumunu silmek istediğinizden emin misiniz?"
+msgstr ""
 
 #: build/templates/build/detail.html:15
 msgid "Build Details"
@@ -1480,22 +1404,16 @@ msgid "Unallocate Stock"
 msgstr "Stok Tahsisini Kaldır"
 
 #: build/templates/build/detail.html:179
-#, fuzzy
-#| msgid "Allocate stock to build"
 msgid "Automatically allocate stock to build"
-msgstr "Yapım işi için stok tahsis et"
+msgstr ""
 
 #: build/templates/build/detail.html:180
-#, fuzzy
-#| msgid "Allocate Serial Numbers"
 msgid "Auto Allocate"
-msgstr "Seri Numaralarını Tahsis Et"
+msgstr ""
 
 #: build/templates/build/detail.html:182
-#, fuzzy
-#| msgid "Allocate stock to build"
 msgid "Manually allocate stock to build"
-msgstr "Yapım işi için stok tahsis et"
+msgstr ""
 
 #: build/templates/build/detail.html:183 build/templates/build/sidebar.html:8
 msgid "Allocate Stock"
@@ -1545,26 +1463,20 @@ msgid "Output Actions"
 msgstr ""
 
 #: build/templates/build/detail.html:252
-#, fuzzy
-#| msgid "Completed Build Outputs"
 msgid "Complete selected build outputs"
-msgstr "Tamamlanmış Yapım İşi Çıktıları"
+msgstr ""
 
 #: build/templates/build/detail.html:253
 msgid "Complete outputs"
 msgstr ""
 
 #: build/templates/build/detail.html:255
-#, fuzzy
-#| msgid "Delete Build Output"
 msgid "Delete selected build outputs"
-msgstr "Yapım İşi Çıktısı Sil"
+msgstr ""
 
 #: build/templates/build/detail.html:256
-#, fuzzy
-#| msgid "Delete parts"
 msgid "Delete outputs"
-msgstr "Parçaları sil"
+msgstr ""
 
 #: build/templates/build/detail.html:263
 #: stock/templates/stock/location.html:188 templates/stock_table.html:27
@@ -1581,10 +1493,8 @@ msgid "Expand all build output rows"
 msgstr ""
 
 #: build/templates/build/detail.html:278
-#, fuzzy
-#| msgid "Completed Build Outputs"
 msgid "Collapse all build output rows"
-msgstr "Tamamlanmış Yapım İşi Çıktıları"
+msgstr ""
 
 #: build/templates/build/detail.html:295
 msgid "Completed Build Outputs"
@@ -1637,10 +1547,8 @@ msgid "Build Order Details"
 msgstr ""
 
 #: build/templates/build/sidebar.html:15
-#, fuzzy
-#| msgid "Incomplete Outputs"
 msgid "Completed Outputs"
-msgstr "Tamamlanmamış Çıktılar"
+msgstr ""
 
 #: build/views.py:73
 msgid "Build was cancelled"
@@ -1935,10 +1843,8 @@ msgid "Include pricing information in BOM tables"
 msgstr ""
 
 #: common/models.py:868
-#, fuzzy
-#| msgid "Show Price in Forms"
 msgid "Show Price History"
-msgstr "Formlarda Fiyat Göster"
+msgstr ""
 
 #: common/models.py:869
 msgid "Display historical pricing for Part"
@@ -2017,16 +1923,12 @@ msgid "Enable generation of test reports"
 msgstr ""
 
 #: common/models.py:943
-#, fuzzy
-#| msgid "Batch Code"
 msgid "Batch Code Template"
-msgstr "Sıra numarası"
+msgstr ""
 
 #: common/models.py:944
-#, fuzzy
-#| msgid "Expiration date for this stock item"
 msgid "Template for generating default batch codes for stock items"
-msgstr "Bu stok kalemi için son kullanma tarihi"
+msgstr ""
 
 #: common/models.py:949
 msgid "Stock Expiry"
@@ -2373,20 +2275,16 @@ msgid "Show overdue SOs on the homepage"
 msgstr ""
 
 #: common/models.py:1257
-#, fuzzy
-#| msgid "Source Location"
 msgid "Enable email notifications"
-msgstr "Kaynak Konum"
+msgstr ""
 
 #: common/models.py:1258
 msgid "Allow sending of emails for event notifications"
 msgstr ""
 
 #: common/models.py:1264
-#, fuzzy
-#| msgid "Label template file"
 msgid "Enable label printing"
-msgstr "Etiket şablon listesi"
+msgstr ""
 
 #: common/models.py:1265
 msgid "Enable label printing from the web interface"
@@ -2409,74 +2307,56 @@ msgid "Display PDF reports in the browser, instead of downloading as a file"
 msgstr ""
 
 #: common/models.py:1285
-#, fuzzy
-#| msgid "Select Parts"
 msgid "Search Parts"
-msgstr "Parçaları Seçin"
+msgstr ""
 
 #: common/models.py:1286
-#, fuzzy
-#| msgid "copy version information"
 msgid "Display parts in search preview window"
-msgstr "sürüm bilgisini kopyala"
+msgstr ""
 
 #: common/models.py:1292
-#, fuzzy
-#| msgid "Part Categories"
 msgid "Search Categories"
-msgstr "Parça Kategorileri"
+msgstr ""
 
 #: common/models.py:1293
 msgid "Display part categories in search preview window"
 msgstr ""
 
 #: common/models.py:1299
-#, fuzzy
-#| msgid "Part Stock"
 msgid "Search Stock"
-msgstr "Parça Stoku"
+msgstr ""
 
 #: common/models.py:1300
 msgid "Display stock items in search preview window"
 msgstr ""
 
 #: common/models.py:1306
-#, fuzzy
-#| msgid "Stock Locations"
 msgid "Search Locations"
-msgstr "Stok Konumları"
+msgstr ""
 
 #: common/models.py:1307
 msgid "Display stock locations in search preview window"
 msgstr ""
 
 #: common/models.py:1313
-#, fuzzy
-#| msgid "Companies"
 msgid "Search Companies"
-msgstr "Şirketler"
+msgstr ""
 
 #: common/models.py:1314
-#, fuzzy
-#| msgid "Display calendar view"
 msgid "Display companies in search preview window"
-msgstr "Takvim görünümünü görüntüle"
+msgstr ""
 
 #: common/models.py:1320
-#, fuzzy
-#| msgid "Purchase Orders"
 msgid "Search Purchase Orders"
-msgstr "Satın Alma Emirleri"
+msgstr ""
 
 #: common/models.py:1321
 msgid "Display purchase orders in search preview window"
 msgstr ""
 
 #: common/models.py:1327
-#, fuzzy
-#| msgid "Sales Orders"
 msgid "Search Sales Orders"
-msgstr "Satış Emirleri"
+msgstr ""
 
 #: common/models.py:1328
 msgid "Display sales orders in search preview window"
@@ -2523,26 +2403,20 @@ msgid "The navbar position is fixed to the top of the screen"
 msgstr ""
 
 #: common/models.py:1369
-#, fuzzy
-#| msgid "File Format"
 msgid "Date Format"
-msgstr "Dosya Biçimi"
+msgstr ""
 
 #: common/models.py:1370
 msgid "Preferred format for displaying dates"
 msgstr ""
 
 #: common/models.py:1384 part/templates/part/detail.html:39
-#, fuzzy
-#| msgid "Part Suppliers"
 msgid "Part Scheduling"
-msgstr "Parça Tedarikçileri"
+msgstr ""
 
 #: common/models.py:1385
-#, fuzzy
-#| msgid "copy version information"
 msgid "Display part scheduling information"
-msgstr "sürüm bilgisini kopyala"
+msgstr ""
 
 #: common/models.py:1443 company/forms.py:43
 msgid "Price break quantity"
@@ -2579,10 +2453,8 @@ msgid "Active"
 msgstr "Aktif"
 
 #: common/models.py:1624
-#, fuzzy
-#| msgid "Is this part active?"
 msgid "Is this webhook active"
-msgstr "Bu parça aktif mi?"
+msgstr ""
 
 #: common/models.py:1638
 msgid "Token"
@@ -2935,10 +2807,8 @@ msgid "Order multiple"
 msgstr ""
 
 #: company/models.py:708
-#, fuzzy
-#| msgid "upload date"
 msgid "last updated"
-msgstr "yükleme tarihi"
+msgstr ""
 
 #: company/serializers.py:70
 msgid "Default currency used for this supplier"
@@ -2960,10 +2830,8 @@ msgid "Create Purchase Order"
 msgstr "Satın Alma Emri Oluştur"
 
 #: company/templates/company/company_base.html:26
-#, fuzzy
-#| msgid "Location actions"
 msgid "Company actions"
-msgstr "Konum işlemleri"
+msgstr ""
 
 #: company/templates/company/company_base.html:31
 msgid "Edit company information"
@@ -2975,10 +2843,8 @@ msgid "Edit Company"
 msgstr ""
 
 #: company/templates/company/company_base.html:36
-#, fuzzy
-#| msgid "Delete parts"
 msgid "Delete company"
-msgstr "Parçaları sil"
+msgstr ""
 
 #: company/templates/company/company_base.html:37
 #: company/templates/company/company_base.html:159
@@ -3586,28 +3452,20 @@ msgid "shipped by"
 msgstr ""
 
 #: order/models.py:662
-#, fuzzy
-#| msgid "Build Order cannot be completed as outstanding outputs remain"
 msgid "Order cannot be completed as no parts have been assigned"
-msgstr "Bekleyen çıktılar kaldığı için yapım işi emri tamamlanamıyor"
+msgstr ""
 
 #: order/models.py:666
-#, fuzzy
-#| msgid "Build Order is ready to mark as completed"
 msgid "Only a pending order can be marked as complete"
-msgstr "Yapım işi tamamlandı olarak işaretlenmeye hazır"
+msgstr ""
 
 #: order/models.py:669
-#, fuzzy
-#| msgid "Build Order cannot be completed as incomplete build outputs remain"
 msgid "Order cannot be completed as there are incomplete shipments"
-msgstr "Tamamlanmamış yapım işi çıktıları kaldığı için yapım işi emri tamamlanamıyor"
+msgstr ""
 
 #: order/models.py:672
-#, fuzzy
-#| msgid "Build Order cannot be completed as incomplete build outputs remain"
 msgid "Order cannot be completed as there are incomplete line items"
-msgstr "Tamamlanmamış yapım işi çıktıları kaldığı için yapım işi emri tamamlanamıyor"
+msgstr ""
 
 #: order/models.py:837
 msgid "Item quantity"
@@ -3622,10 +3480,8 @@ msgid "Line item notes"
 msgstr ""
 
 #: order/models.py:850
-#, fuzzy
-#| msgid "Expiration date for this stock item"
 msgid "Target shipping date for this line item"
-msgstr "Bu stok kalemi için son kullanma tarihi"
+msgstr ""
 
 #: order/models.py:878
 msgid "Supplier part must match supplier"
@@ -3684,58 +3540,44 @@ msgid "Unit sale price"
 msgstr ""
 
 #: order/models.py:998
-#, fuzzy
-#| msgid "Build Quantity"
 msgid "Shipped quantity"
-msgstr "Yapım İşi Miktarı"
+msgstr ""
 
 #: order/models.py:1085
 msgid "Date of shipment"
 msgstr ""
 
 #: order/models.py:1092
-#, fuzzy
-#| msgid "Created By"
 msgid "Checked By"
-msgstr "Oluşturan"
+msgstr ""
 
 #: order/models.py:1093
-#, fuzzy
-#| msgid "User who issued this build order"
 msgid "User who checked this shipment"
-msgstr "Bu yapım işi emrini veren kullanıcı"
+msgstr ""
 
 #: order/models.py:1101
-#, fuzzy
-#| msgid "Phone number"
 msgid "Shipment number"
-msgstr "Telefon numarası"
+msgstr ""
 
 #: order/models.py:1108
 msgid "Shipment notes"
 msgstr ""
 
 #: order/models.py:1115
-#, fuzzy
-#| msgid "Serial Number"
 msgid "Tracking Number"
-msgstr "Seri Numara"
+msgstr ""
 
 #: order/models.py:1116
-#, fuzzy
-#| msgid "Pricing Information"
 msgid "Shipment tracking information"
-msgstr "Fiyat Bilgisi"
+msgstr ""
 
 #: order/models.py:1126
 msgid "Shipment has already been sent"
 msgstr ""
 
 #: order/models.py:1129
-#, fuzzy
-#| msgid "Confirm removal of installed stock items"
 msgid "Shipment has no allocated stock items"
-msgstr "Kurulu stok kalemlerinin kaldırılmasını onayla"
+msgstr ""
 
 #: order/models.py:1207 order/models.py:1209
 msgid "Stock item has not been assigned"
@@ -3766,10 +3608,8 @@ msgid "Sales order does not match shipment"
 msgstr ""
 
 #: order/models.py:1232
-#, fuzzy
-#| msgid "Build output does not match Build Order"
 msgid "Shipment does not match sales order"
-msgstr "Yapım işi çıktısı, yapım işi emri ile eşleşmiyor"
+msgstr ""
 
 #: order/models.py:1240
 msgid "Line"
@@ -3777,16 +3617,12 @@ msgstr ""
 
 #: order/models.py:1248 order/serializers.py:918 order/serializers.py:1046
 #: templates/js/translated/model_renderers.js:300
-#, fuzzy
-#| msgid "Shipped"
 msgid "Shipment"
-msgstr "Sevk edildi"
+msgstr ""
 
 #: order/models.py:1249
-#, fuzzy
-#| msgid "Sales Order Reference"
 msgid "Sales order shipment reference"
-msgstr "Satış Emri Referansı"
+msgstr ""
 
 #: order/models.py:1261 templates/InvenTree/notifications/notifications.html:70
 msgid "Item"
@@ -3817,16 +3653,12 @@ msgid "Select destination location for received items"
 msgstr ""
 
 #: order/serializers.py:273 templates/js/translated/order.js:574
-#, fuzzy
-#| msgid "Expiration date for this stock item"
 msgid "Enter batch code for incoming stock items"
-msgstr "Bu stok kalemi için son kullanma tarihi"
+msgstr ""
 
 #: order/serializers.py:281 templates/js/translated/order.js:585
-#, fuzzy
-#| msgid "Enter serial numbers for build outputs"
 msgid "Enter serial numbers for incoming stock items"
-msgstr "Yapım işi çıktısı için seri numaraları girin"
+msgstr ""
 
 #: order/serializers.py:294
 msgid "Barcode Hash"
@@ -3841,10 +3673,8 @@ msgid "Barcode is already in use"
 msgstr ""
 
 #: order/serializers.py:331
-#, fuzzy
-#| msgid "Test templates can only be created for trackable parts"
 msgid "An integer quantity must be provided for trackable parts"
-msgstr "Test şablonları sadece takip edilebilir paçalar için oluşturulabilir"
+msgstr ""
 
 #: order/serializers.py:371
 msgid "Line items must be provided"
@@ -3871,16 +3701,12 @@ msgid "Line item is not associated with this order"
 msgstr ""
 
 #: order/serializers.py:814
-#, fuzzy
-#| msgid "Quantity must be 1 for serialized stock"
 msgid "Quantity must be positive"
-msgstr "Seri numaralı stok için miktar bir olmalı"
+msgstr ""
 
 #: order/serializers.py:908
-#, fuzzy
-#| msgid "Assigned serial number"
 msgid "Enter serial numbers to allocate"
-msgstr "Atanan seri numarası"
+msgstr ""
 
 #: order/serializers.py:932 order/serializers.py:1057
 msgid "Shipment has already been shipped"
@@ -3891,10 +3717,8 @@ msgid "Shipment is not associated with this order"
 msgstr ""
 
 #: order/serializers.py:987
-#, fuzzy
-#| msgid "Allocate serial numbers"
 msgid "No match found for the following serial numbers"
-msgstr "Seri numaralarını tahsis et"
+msgstr ""
 
 #: order/serializers.py:997
 msgid "The following serial numbers are already allocated"
@@ -3945,10 +3769,8 @@ msgstr ""
 
 #: order/templates/order/order_base.html:89
 #: order/templates/order/sales_order_base.html:84
-#, fuzzy
-#| msgid "Order description"
 msgid "Order Description"
-msgstr "Sipariş açıklaması"
+msgstr ""
 
 #: order/templates/order/order_base.html:94
 #: order/templates/order/sales_order_base.html:89
@@ -3957,18 +3779,14 @@ msgstr ""
 
 #: order/templates/order/order_base.html:124
 #: order/templates/order/sales_order_base.html:128
-#, fuzzy
-#| msgid "Completed items"
 msgid "Completed Line Items"
-msgstr "Tamamlanmış ögeler"
+msgstr ""
 
 #: order/templates/order/order_base.html:130
 #: order/templates/order/sales_order_base.html:134
 #: order/templates/order/sales_order_base.html:144
-#, fuzzy
-#| msgid "Complete"
 msgid "Incomplete"
-msgstr "Tamamlandı"
+msgstr ""
 
 #: order/templates/order/order_base.html:149
 #: report/templates/report/inventree_build_order_base.html:122
@@ -4163,10 +3981,8 @@ msgstr ""
 
 #: order/templates/order/sales_order_base.html:66
 #: order/templates/order/sales_order_base.html:229
-#, fuzzy
-#| msgid "Complete Build Order"
 msgid "Complete Sales Order"
-msgstr "Tamamlanmış Yapım İşi Emri"
+msgstr ""
 
 #: order/templates/order/sales_order_base.html:102
 msgid "This Sales Order has not been fully allocated"
@@ -4180,10 +3996,8 @@ msgstr ""
 #: order/templates/order/sales_order_base.html:140
 #: order/templates/order/sales_order_detail.html:77
 #: order/templates/order/so_sidebar.html:11
-#, fuzzy
-#| msgid "Completed items"
 msgid "Completed Shipments"
-msgstr "Tamamlanmış ögeler"
+msgstr ""
 
 #: order/templates/order/sales_order_base.html:215
 msgid "Edit Sales Order"
@@ -4213,10 +4027,8 @@ msgid "Actions"
 msgstr "İşlemler"
 
 #: order/templates/order/sales_order_detail.html:56
-#, fuzzy
-#| msgid "New Variant"
 msgid "New Shipment"
-msgstr "Yeni Çeşit"
+msgstr ""
 
 #: order/views.py:99
 msgid "Cancel Order"
@@ -4286,28 +4098,20 @@ msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr ""
 
 #: part/api.py:509
-#, fuzzy
-#| msgid "Purchase Orders"
 msgid "Incoming Purchase Order"
-msgstr "Satın Alma Emirleri"
+msgstr ""
 
 #: part/api.py:529
-#, fuzzy
-#| msgid "Sales Order"
 msgid "Outgoing Sales Order"
-msgstr "Sipariş Emri"
+msgstr ""
 
 #: part/api.py:547
-#, fuzzy
-#| msgid "Completed build order"
 msgid "Stock produced by Build Order"
-msgstr "Tamamlanmış yapım işi emri"
+msgstr ""
 
 #: part/api.py:579
-#, fuzzy
-#| msgid "Required for Build Orders"
 msgid "Stock required for Build Order"
-msgstr "Yapım İşi Emirleri için Gerekli"
+msgstr ""
 
 #: part/api.py:659
 msgid "Valid"
@@ -4318,10 +4122,8 @@ msgid "Validate entire Bill of Materials"
 msgstr ""
 
 #: part/api.py:665
-#, fuzzy
-#| msgid "Build output must be specified"
 msgid "This option must be selected"
-msgstr "Yapım işi çıktısı belirtilmeli"
+msgstr ""
 
 #: part/api.py:1045
 msgid "Must be greater than zero"
@@ -4680,10 +4482,8 @@ msgid "Default Parameter Value"
 msgstr ""
 
 #: part/models.py:2687
-#, fuzzy
-#| msgid "Part name"
 msgid "Part ID or part name"
-msgstr "Parça adı"
+msgstr ""
 
 #: part/models.py:2690 templates/js/translated/model_renderers.js:200
 msgid "Part ID"
@@ -4694,34 +4494,24 @@ msgid "Unique part ID value"
 msgstr ""
 
 #: part/models.py:2694
-#, fuzzy
-#| msgid "Part name"
 msgid "Part Name"
-msgstr "Parça adı"
+msgstr ""
 
 #: part/models.py:2698
-#, fuzzy
-#| msgid "Part"
 msgid "Part IPN"
-msgstr "Parça"
+msgstr ""
 
 #: part/models.py:2699
-#, fuzzy
-#| msgid "Parameter value"
 msgid "Part IPN value"
-msgstr "Parametre değeri"
+msgstr ""
 
 #: part/models.py:2702
-#, fuzzy
-#| msgid "Levels"
 msgid "Level"
-msgstr "Seviyeler"
+msgstr ""
 
 #: part/models.py:2703
-#, fuzzy
-#| msgid "File"
 msgid "BOM level"
-msgstr "Dosya"
+msgstr ""
 
 #: part/models.py:2778
 msgid "Select parent part"
@@ -4838,10 +4628,8 @@ msgid "Purchase currency of this stock item"
 msgstr ""
 
 #: part/serializers.py:923
-#, fuzzy
-#| msgid "Select part to build"
 msgid "Select part to copy BOM from"
-msgstr "Yapım işi için parça seçin"
+msgstr ""
 
 #: part/serializers.py:934
 msgid "Remove Existing Data"
@@ -4852,16 +4640,12 @@ msgid "Remove existing BOM items before copying"
 msgstr ""
 
 #: part/serializers.py:940
-#, fuzzy
-#| msgid "Include Variants"
 msgid "Include Inherited"
-msgstr "Çeşitleri Dahil Et"
+msgstr ""
 
 #: part/serializers.py:941
-#, fuzzy
-#| msgid "This BOM item is inherited by BOMs for variant parts"
 msgid "Include BOM items which are inherited from templated parts"
-msgstr "Bu malzeme listesi, çeşit parçalar listesini kalıtsalıdır"
+msgstr ""
 
 #: part/serializers.py:946
 msgid "Skip Invalid Rows"
@@ -4888,40 +4672,28 @@ msgid "Delete existing BOM items before uploading"
 msgstr ""
 
 #: part/serializers.py:1025
-#, fuzzy
-#| msgid "No action specified"
 msgid "No part column specified"
-msgstr "İşlem belirtilmedi"
+msgstr ""
 
 #: part/serializers.py:1068
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Multiple matching parts found"
-msgstr "Eşleşen eylem bulunamadı"
+msgstr ""
 
 #: part/serializers.py:1071
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No matching part found"
-msgstr "Eşleşen eylem bulunamadı"
+msgstr ""
 
 #: part/serializers.py:1074
-#, fuzzy
-#| msgid "Parts can be used as sub-components by default"
 msgid "Part is not designated as a component"
-msgstr "Parçalar varsayılan olarak alt bileşen olarak kullanılabilir"
+msgstr ""
 
 #: part/serializers.py:1083
-#, fuzzy
-#| msgid "Invalid quantity provided"
 msgid "Quantity not provided"
-msgstr "Geçersiz veri sağlandı"
+msgstr ""
 
 #: part/serializers.py:1091
-#, fuzzy
-#| msgid "Invalid quantity provided"
 msgid "Invalid quantity"
-msgstr "Geçersiz veri sağlandı"
+msgstr ""
 
 #: part/serializers.py:1110
 msgid "At least one BOM item is required"
@@ -5057,56 +4829,44 @@ msgid "Create Part"
 msgstr ""
 
 #: part/templates/part/category.html:332
-#, fuzzy
-#| msgid "Create new part variant"
 msgid "Create another part after this one"
-msgstr "Yeni parça çeşidi oluştur"
+msgstr ""
 
 #: part/templates/part/category.html:333
 msgid "Part created successfully"
 msgstr ""
 
 #: part/templates/part/category_delete.html:7
-#, fuzzy
-#| msgid "Are you sure you want to delete category"
 msgid "Are you sure you want to delete this part category?"
-msgstr "Bu kategoriyi silmek istediğinize emin misiniz"
+msgstr ""
 
 #: part/templates/part/category_delete.html:12
-#, fuzzy, python-format
-#| msgid "This category contains %(count)s child categories"
+#, python-format
 msgid "This category contains %(n)s child categories"
-msgstr "Bu kategori %(count)s alt kategori içermektedir"
+msgstr ""
 
 #: part/templates/part/category_delete.html:14
-#, fuzzy, python-format
-#| msgid "If this category is deleted, these child categories will be moved to the"
+#, python-format
 msgid "If this category is deleted, these child categories will be moved to %(category)s"
-msgstr "Bu kategori silinirse, alt kategoriler taşınacaktır"
+msgstr ""
 
 #: part/templates/part/category_delete.html:16
-#, fuzzy
-#| msgid "If this category is deleted, these child categories will be moved to the"
 msgid "If this category is deleted, these child categories will be moved to the top level part category"
-msgstr "Bu kategori silinirse, alt kategoriler taşınacaktır"
+msgstr ""
 
 #: part/templates/part/category_delete.html:23
-#, fuzzy, python-format
-#| msgid "This category contains %(count)s parts"
+#, python-format
 msgid "This category contains %(n)s parts"
-msgstr "Bu kategori %(count)s parça içermektedir"
+msgstr ""
 
 #: part/templates/part/category_delete.html:25
-#, fuzzy, python-format
-#| msgid "If this category is deleted, these child categories will be moved to the"
+#, python-format
 msgid "If this category is deleted, these parts will be moved to %(category)s"
-msgstr "Bu kategori silinirse, alt kategoriler taşınacaktır"
+msgstr ""
 
 #: part/templates/part/category_delete.html:27
-#, fuzzy
-#| msgid "If this category is deleted, these child categories will be moved to the"
 msgid "If this category is deleted, these parts will be moved to the top level part category"
-msgstr "Bu kategori silinirse, alt kategoriler taşınacaktır"
+msgstr ""
 
 #: part/templates/part/category_sidebar.html:13
 msgid "Import Parts"
@@ -5153,10 +4913,8 @@ msgid "Sales Order Allocations"
 msgstr ""
 
 #: part/templates/part/detail.html:136
-#, fuzzy
-#| msgid "Part name"
 msgid "Part Notes"
-msgstr "Parça adı"
+msgstr ""
 
 #: part/templates/part/detail.html:151
 msgid "Part Variants"
@@ -5446,16 +5204,12 @@ msgid "In Stock"
 msgstr ""
 
 #: part/templates/part/part_base.html:215
-#, fuzzy
-#| msgid "Stock has not been fully allocated to this Build Order"
 msgid "Allocated to Build Orders"
-msgstr "Stok, yapım işi emri için tamamen tahsis edilemedi"
+msgstr ""
 
 #: part/templates/part/part_base.html:224
-#, fuzzy
-#| msgid "Allocate stock items by serial number"
 msgid "Allocated to Sales Orders"
-msgstr "Seri numarası ile stok kalemlerini tahsis et"
+msgstr ""
 
 #: part/templates/part/part_base.html:232 templates/js/translated/bom.js:937
 msgid "Can Build"
@@ -5477,10 +5231,8 @@ msgstr "Son Seri Numarası"
 
 #: part/templates/part/part_base.html:320
 #: stock/templates/stock/item_base.html:166
-#, fuzzy
-#| msgid "Serial number"
 msgid "Search for serial number"
-msgstr "Seri numarası"
+msgstr ""
 
 #: part/templates/part/part_base.html:443 part/templates/part/prices.html:147
 msgid "Calculate"
@@ -5491,10 +5243,8 @@ msgid "No matching images found"
 msgstr ""
 
 #: part/templates/part/part_base.html:567
-#, fuzzy
-#| msgid "Build Details"
 msgid "Hide Part Details"
-msgstr "Yapım İşi Detayları"
+msgstr ""
 
 #: part/templates/part/part_pricing.html:22 part/templates/part/prices.html:24
 msgid "Supplier Pricing"
@@ -5575,8 +5325,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -5699,23 +5448,17 @@ msgid "Upload Bill of Materials"
 msgstr ""
 
 #: part/templates/part/upload_bom.html:19
-#, fuzzy
-#| msgid "BOM Upload Template"
 msgid "BOM upload requirements"
-msgstr "Malzeme Listesi Şablonu Yükle"
+msgstr ""
 
 #: part/templates/part/upload_bom.html:23
 #: part/templates/part/upload_bom.html:90
-#, fuzzy
-#| msgid "Upload File"
 msgid "Upload BOM File"
-msgstr "Dosya Yükle"
+msgstr ""
 
 #: part/templates/part/upload_bom.html:29
-#, fuzzy
-#| msgid "Submit Bug Report"
 msgid "Submit BOM Data"
-msgstr "Hata Raporu Gönder"
+msgstr ""
 
 #: part/templates/part/upload_bom.html:37
 msgid "Requirements for BOM upload"
@@ -5837,34 +5580,24 @@ msgid "Your enviroment has an outdated git version. This prevents InvenTree from
 msgstr ""
 
 #: plugin/events.py:225
-#, fuzzy
-#| msgid "Label template file"
 msgid "Label printing failed"
-msgstr "Etiket şablon listesi"
+msgstr ""
 
 #: plugin/integration.py:146
-#, fuzzy
-#| msgid "No variants found"
 msgid "No author found"
-msgstr "Çeşit bulunamadı"
+msgstr ""
 
 #: plugin/integration.py:160
-#, fuzzy
-#| msgid "No variants found"
 msgid "No date found"
-msgstr "Çeşit bulunamadı"
+msgstr ""
 
 #: plugin/models.py:26
-#, fuzzy
-#| msgid "Pricing Information"
 msgid "Plugin Configuration"
-msgstr "Fiyat Bilgisi"
+msgstr ""
 
 #: plugin/models.py:27
-#, fuzzy
-#| msgid "Pricing Information"
 msgid "Plugin Configurations"
-msgstr "Fiyat Bilgisi"
+msgstr ""
 
 #: plugin/models.py:32
 msgid "Key"
@@ -5879,22 +5612,16 @@ msgid "PluginName of the plugin"
 msgstr ""
 
 #: plugin/models.py:47
-#, fuzzy
-#| msgid "Is this part active?"
 msgid "Is the plugin active"
-msgstr "Bu parça aktif mi?"
+msgstr ""
 
 #: plugin/models.py:182
-#, fuzzy
-#| msgid "Install into"
 msgid "Plugin"
-msgstr "Kurulduğu yer"
+msgstr ""
 
 #: plugin/samples/integration/sample.py:42
-#, fuzzy
-#| msgid "Enabled"
 msgid "Enable PO"
-msgstr "Etkin"
+msgstr ""
 
 #: plugin/samples/integration/sample.py:43
 msgid "Enable PO functionality in InvenTree interface"
@@ -5917,20 +5644,16 @@ msgid "A numerical setting"
 msgstr ""
 
 #: plugin/samples/integration/sample.py:58
-#, fuzzy
-#| msgid "Theme Settings"
 msgid "Choice Setting"
-msgstr "Tema Ayarları"
+msgstr ""
 
 #: plugin/samples/integration/sample.py:59
 msgid "A setting with multiple choices"
 msgstr ""
 
 #: plugin/serializers.py:49
-#, fuzzy
-#| msgid "Source Location"
 msgid "Source URL"
-msgstr "Kaynak Konum"
+msgstr ""
 
 #: plugin/serializers.py:50
 msgid "Source for the package - this can be a custom registry or a VCS path"
@@ -5945,20 +5668,16 @@ msgid "Name for the Plugin Package - can also contain a version indicator"
 msgstr ""
 
 #: plugin/serializers.py:59
-#, fuzzy
-#| msgid "Confirm build cancellation"
 msgid "Confirm plugin installation"
-msgstr "Yapım işi iptalini onayla"
+msgstr ""
 
 #: plugin/serializers.py:60
 msgid "This will install this plugin now into the current instance. The instance will go into maintenance."
 msgstr ""
 
 #: plugin/serializers.py:75
-#, fuzzy
-#| msgid "Destination location not specified"
 msgid "Installation not confirmed"
-msgstr "Hedef konumu belirtilmedi"
+msgstr ""
 
 #: plugin/serializers.py:77
 msgid "Either packagename of URL must be provided"
@@ -6116,16 +5835,12 @@ msgid "Quantity is required"
 msgstr ""
 
 #: stock/api.py:552
-#, fuzzy
-#| msgid "Build output must be specified"
 msgid "Valid part must be supplied"
-msgstr "Yapım işi çıktısı belirtilmeli"
+msgstr ""
 
 #: stock/api.py:577
-#, fuzzy
-#| msgid "Serial numbers required for trackable build output"
 msgid "Serial numbers cannot be supplied for a non-trackable part"
-msgstr "Seri numaraları takip edilebilir yapım işi çıktıları için gerekli"
+msgstr ""
 
 #: stock/forms.py:74 stock/forms.py:198 stock/models.py:717
 #: stock/templates/stock/item_base.html:193
@@ -6293,10 +6008,8 @@ msgid "Single unit purchase price at time of purchase"
 msgstr ""
 
 #: stock/models.py:782
-#, fuzzy
-#| msgid "Convert to variant"
 msgid "Converted to part"
-msgstr "Çeşide çevir"
+msgstr ""
 
 #: stock/models.py:1302
 msgid "Part is not set as trackable"
@@ -6325,46 +6038,32 @@ msgid "Serial numbers already exist: {exists}"
 msgstr "Seri numaraları zaten mevcut: {exists}"
 
 #: stock/models.py:1398
-#, fuzzy
-#| msgid "Stock item is over-allocated"
 msgid "Stock item has been assigned to a sales order"
-msgstr "Stok kalemi fazladan tahsis edilmiş"
+msgstr ""
 
 #: stock/models.py:1401
-#, fuzzy
-#| msgid "Stock item to install"
 msgid "Stock item is installed in another item"
-msgstr "Kurulacak stok kalemi"
+msgstr ""
 
 #: stock/models.py:1404
-#, fuzzy
-#| msgid "Stock item is over-allocated"
 msgid "Stock item contains other items"
-msgstr "Stok kalemi fazladan tahsis edilmiş"
+msgstr ""
 
 #: stock/models.py:1407
-#, fuzzy
-#| msgid "Stock item is over-allocated"
 msgid "Stock item has been assigned to a customer"
-msgstr "Stok kalemi fazladan tahsis edilmiş"
+msgstr ""
 
 #: stock/models.py:1410
-#, fuzzy
-#| msgid "Stock Item already in this location"
 msgid "Stock item is currently in production"
-msgstr "Stok kalemi zaten bu konumda"
+msgstr ""
 
 #: stock/models.py:1413
-#, fuzzy
-#| msgid "Required stock has not been fully allocated"
 msgid "Serialized stock cannot be merged"
-msgstr "Gerekli stok tamamen tahsis edilemedi"
+msgstr ""
 
 #: stock/models.py:1420 stock/serializers.py:832
-#, fuzzy
-#| msgid "Source stock item"
 msgid "Duplicate stock items"
-msgstr "Kaynak stok kalemi"
+msgstr ""
 
 #: stock/models.py:1424
 msgid "Stock items must refer to the same part"
@@ -6375,10 +6074,8 @@ msgid "Stock items must refer to the same supplier part"
 msgstr ""
 
 #: stock/models.py:1432
-#, fuzzy
-#| msgid "Password fields must match"
 msgid "Stock status codes must match"
-msgstr "Parola alanları eşleşmelidir"
+msgstr ""
 
 #: stock/models.py:1604
 msgid "StockItem cannot be moved as it is not in stock"
@@ -6450,66 +6147,48 @@ msgid "Serial numbers already exist"
 msgstr "Seri numaraları zaten mevcut"
 
 #: stock/serializers.py:405
-#, fuzzy
-#| msgid "Stock item to install"
 msgid "Select stock item to install"
-msgstr "Kurulacak stok kalemi"
+msgstr ""
 
 #: stock/serializers.py:421
-#, fuzzy
-#| msgid "Stock item is over-allocated"
 msgid "Stock item is unavailable"
-msgstr "Stok kalemi fazladan tahsis edilmiş"
+msgstr ""
 
 #: stock/serializers.py:428
-#, fuzzy
-#| msgid "The Bill of Materials contains trackable parts"
 msgid "Selected part is not in the Bill of Materials"
-msgstr "Bu Malzeme Listesi takip edilebilir parçalar içeriyor"
+msgstr ""
 
 #: stock/serializers.py:646
-#, fuzzy
-#| msgid "Parts are salable by default"
 msgid "Part must be salable"
-msgstr "Parçalar varsayılan olarak satılabilir"
+msgstr ""
 
 #: stock/serializers.py:650
-#, fuzzy
-#| msgid "This Build Order is allocated to Sales Order %(link)s"
 msgid "Item is allocated to a sales order"
-msgstr "Bu yapım işi emri, %(link)s sipariş emrine tahsis edilmiştir"
+msgstr ""
 
 #: stock/serializers.py:654
-#, fuzzy
-#| msgid "Stock has not been fully allocated to this Build Order"
 msgid "Item is allocated to a build order"
-msgstr "Stok, yapım işi emri için tamamen tahsis edilemedi"
+msgstr ""
 
 #: stock/serializers.py:684
-#, fuzzy
-#| msgid "Destination stock item"
 msgid "Customer to assign stock items"
-msgstr "Hedef stok kalemi"
+msgstr ""
 
 #: stock/serializers.py:690
 msgid "Selected company is not a customer"
 msgstr ""
 
 #: stock/serializers.py:698
-#, fuzzy
-#| msgid "Stock adjustment actions"
 msgid "Stock assignment notes"
-msgstr "Stok ayarlama işlemleri"
+msgstr ""
 
 #: stock/serializers.py:708 stock/serializers.py:938
 msgid "A list of stock items must be provided"
 msgstr ""
 
 #: stock/serializers.py:796
-#, fuzzy
-#| msgid "Stock adjustment actions"
 msgid "Stock merging notes"
-msgstr "Stok ayarlama işlemleri"
+msgstr ""
 
 #: stock/serializers.py:801
 msgid "Allow mismatched suppliers"
@@ -6673,20 +6352,16 @@ msgid "previous page"
 msgstr ""
 
 #: stock/templates/stock/item_base.html:161
-#, fuzzy
-#| msgid "Allocate stock items by serial number"
 msgid "Navigate to previous serial number"
-msgstr "Seri numarası ile stok kalemlerini tahsis et"
+msgstr ""
 
 #: stock/templates/stock/item_base.html:170
 msgid "next page"
 msgstr ""
 
 #: stock/templates/stock/item_base.html:170
-#, fuzzy
-#| msgid "Assigned serial number"
 msgid "Navigate to next serial number"
-msgstr "Atanan seri numarası"
+msgstr ""
 
 #: stock/templates/stock/item_base.html:197
 #, python-format
@@ -6734,16 +6409,12 @@ msgid "This stock item has not passed all required tests"
 msgstr "Stok kalemi tüm gerekli testleri geçmedi"
 
 #: stock/templates/stock/item_base.html:246
-#, fuzzy
-#| msgid "This Build Order is allocated to Sales Order %(link)s"
 msgid "This stock item is allocated to Sales Order"
-msgstr "Bu yapım işi emri, %(link)s sipariş emrine tahsis edilmiştir"
+msgstr ""
 
 #: stock/templates/stock/item_base.html:254
-#, fuzzy
-#| msgid "Stock has not been fully allocated to this Build Order"
 msgid "This stock item is allocated to Build Order"
-msgstr "Stok, yapım işi emri için tamamen tahsis edilemedi"
+msgstr ""
 
 #: stock/templates/stock/item_base.html:260
 msgid "This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted."
@@ -6826,20 +6497,16 @@ msgstr "Yeni Konum"
 
 #: stock/templates/stock/location.html:100
 #: stock/templates/stock/location.html:106
-#, fuzzy
-#| msgid "Location"
 msgid "Location Path"
-msgstr "Konum"
+msgstr ""
 
 #: stock/templates/stock/location.html:107
 msgid "Top level stock location"
 msgstr ""
 
 #: stock/templates/stock/location.html:113
-#, fuzzy
-#| msgid "Location changed"
 msgid "Location Owner"
-msgstr "Konum değişti"
+msgstr ""
 
 #: stock/templates/stock/location.html:117
 msgid "You are not in the list of owners of this location. This stock location cannot be edited."
@@ -6861,40 +6528,32 @@ msgid "Are you sure you want to delete this stock location?"
 msgstr "Bu stok konumunu silmek istediğinizden emin misiniz?"
 
 #: stock/templates/stock/location_delete.html:13
-#, fuzzy, python-format
-#| msgid "This category contains %(count)s child categories"
+#, python-format
 msgid "This location contains %(n)s child locations"
-msgstr "Bu kategori %(count)s alt kategori içermektedir"
+msgstr ""
 
 #: stock/templates/stock/location_delete.html:15
-#, fuzzy, python-format
-#| msgid "If this category is deleted, these child categories will be moved to the"
+#, python-format
 msgid "If this location is deleted, these child locations will be moved to %(location)s"
-msgstr "Bu kategori silinirse, alt kategoriler taşınacaktır"
+msgstr ""
 
 #: stock/templates/stock/location_delete.html:17
-#, fuzzy
-#| msgid "If this category is deleted, these child categories will be moved to the"
 msgid "If this location is deleted, these child locations will be moved to the top level stock location"
-msgstr "Bu kategori silinirse, alt kategoriler taşınacaktır"
+msgstr ""
 
 #: stock/templates/stock/location_delete.html:25
-#, fuzzy, python-format
-#| msgid "This category contains %(count)s parts"
+#, python-format
 msgid "This location contains %(n)s stock items"
-msgstr "Bu kategori %(count)s parça içermektedir"
+msgstr ""
 
 #: stock/templates/stock/location_delete.html:27
-#, fuzzy, python-format
-#| msgid "If this category is deleted, these child categories will be moved to the"
+#, python-format
 msgid "If this location is deleted, these stock items will be moved to %(location)s"
-msgstr "Bu kategori silinirse, alt kategoriler taşınacaktır"
+msgstr ""
 
 #: stock/templates/stock/location_delete.html:29
-#, fuzzy
-#| msgid "If this category is deleted, these child categories will be moved to the"
 msgid "If this location is deleted, these stock items will be moved to the top level stock location"
-msgstr "Bu kategori silinirse, alt kategoriler taşınacaktır"
+msgstr ""
 
 #: stock/templates/stock/stock_app_base.html:16
 msgid "Loading..."
@@ -6905,10 +6564,8 @@ msgid "Stock Tracking"
 msgstr ""
 
 #: stock/templates/stock/stock_sidebar.html:8
-#, fuzzy
-#| msgid "locations"
 msgid "Allocations"
-msgstr "konumlar"
+msgstr ""
 
 #: stock/templates/stock/stock_sidebar.html:20
 msgid "Child Items"
@@ -7133,10 +6790,8 @@ msgid "Overdue Sales Orders"
 msgstr ""
 
 #: templates/InvenTree/notifications/history.html:9
-#, fuzzy
-#| msgid "No location set"
 msgid "Notification History"
-msgstr "Konum ayarlanmadı"
+msgstr ""
 
 #: templates/InvenTree/notifications/history.html:13
 #: templates/InvenTree/notifications/history.html:14
@@ -7144,10 +6799,8 @@ msgid "Refresh Notification History"
 msgstr ""
 
 #: templates/InvenTree/notifications/inbox.html:9
-#, fuzzy
-#| msgid "Printing actions"
 msgid "Pending Notifications"
-msgstr "Yazdırma işlemleri"
+msgstr ""
 
 #: templates/InvenTree/notifications/inbox.html:13
 #: templates/InvenTree/notifications/inbox.html:14
@@ -7162,10 +6815,8 @@ msgstr ""
 #: templates/InvenTree/notifications/notifications.html:10
 #: templates/InvenTree/notifications/sidebar.html:5
 #: templates/InvenTree/settings/sidebar.html:17 templates/notifications.html:5
-#, fuzzy
-#| msgid "locations"
 msgid "Notifications"
-msgstr "konumlar"
+msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:51
 #: templates/InvenTree/settings/settings.html:314
@@ -7183,22 +6834,16 @@ msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:94
 #: templates/InvenTree/notifications/notifications.html:150
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete Notification"
-msgstr "Konumu sil"
+msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:116
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No unread notifications found"
-msgstr "Eşleşen eylem bulunamadı"
+msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:140
-#, fuzzy
-#| msgid "No variants found"
 msgid "No notification history found"
-msgstr "Çeşit bulunamadı"
+msgstr ""
 
 #: templates/InvenTree/notifications/sidebar.html:8
 msgid "Inbox"
@@ -7296,27 +6941,21 @@ msgid "Part Parameter Templates"
 msgstr "Parça Parametre Şablonu"
 
 #: templates/InvenTree/settings/plugin.html:10
-#, fuzzy
-#| msgid "Language Settings"
 msgid "Plugin Settings"
-msgstr "Dil Ayarları"
+msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:16
 msgid "Changing the settings below require you to immediatly restart the server. Do not change this while under active usage."
 msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:34
-#, fuzzy
-#| msgid "Install into"
 msgid "Plugins"
-msgstr "Kurulduğu yer"
+msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:39
 #: templates/js/translated/plugin.js:15
-#, fuzzy
-#| msgid "Install into"
 msgid "Install Plugin"
-msgstr "Kurulduğu yer"
+msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:48 templates/navbar.html:137
 #: users/models.py:39
@@ -7330,20 +6969,16 @@ msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:52
 #: templates/InvenTree/settings/plugin_settings.html:43
-#, fuzzy
-#| msgid "API Version"
 msgid "Version"
-msgstr "API Sürümü"
+msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:82
 msgid "code sample"
 msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:99
-#, fuzzy
-#| msgid "Inactive"
 msgid "Inactive plugins"
-msgstr "Pasif"
+msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:122
 msgid "Plugin Error Stack"
@@ -7359,16 +6994,12 @@ msgid "Plugin details for %(name)s"
 msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:17
-#, fuzzy
-#| msgid "Pricing Information"
 msgid "Plugin information"
-msgstr "Fiyat Bilgisi"
+msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:48
-#, fuzzy
-#| msgid "copy version information"
 msgid "no version information supplied"
-msgstr "sürüm bilgisini kopyala"
+msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:62
 msgid "License"
@@ -7379,16 +7010,12 @@ msgid "The code information is pulled from the latest git commit for this plugin
 msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:77
-#, fuzzy
-#| msgid "Pricing Information"
 msgid "Package information"
-msgstr "Fiyat Bilgisi"
+msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:83
-#, fuzzy
-#| msgid "Install into"
 msgid "Installation method"
-msgstr "Kurulduğu yer"
+msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:86
 msgid "This plugin was installed as a package"
@@ -7399,16 +7026,12 @@ msgid "This plugin was found in a local server path"
 msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:94
-#, fuzzy
-#| msgid "Install into"
 msgid "Installation path"
-msgstr "Kurulduğu yer"
+msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:100
-#, fuzzy
-#| msgid "Commit Hash"
 msgid "Commit Author"
-msgstr "Commit Hash Değeri"
+msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:104
 #: templates/about.html:47
@@ -7421,16 +7044,12 @@ msgid "Commit Hash"
 msgstr "Commit Hash Değeri"
 
 #: templates/InvenTree/settings/plugin_settings.html:112
-#, fuzzy
-#| msgid "Commit Date"
 msgid "Commit Message"
-msgstr "Commit Tarihi"
+msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:117
-#, fuzzy
-#| msgid "Status"
 msgid "Sign Status"
-msgstr "Durum"
+msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:122
 msgid "Sign Key"
@@ -7454,10 +7073,8 @@ msgid "Edit setting"
 msgstr ""
 
 #: templates/InvenTree/settings/settings.html:116
-#, fuzzy
-#| msgid "Language Settings"
 msgid "Edit Plugin Setting"
-msgstr "Dil Ayarları"
+msgstr ""
 
 #: templates/InvenTree/settings/settings.html:118
 msgid "Edit Global Setting"
@@ -7629,10 +7246,8 @@ msgid "Add a 3rd Party Account"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:172
-#, fuzzy
-#| msgid "Manufacturer"
 msgid "Multifactor"
-msgstr "Üretici"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:177
 msgid "You have these factors available:"
@@ -7643,10 +7258,8 @@ msgid "TOTP"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:193
-#, fuzzy
-#| msgid "Status"
 msgid "Static"
-msgstr "Durum"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:202
 msgid "You currently do not have any factors set up."
@@ -7657,10 +7270,8 @@ msgid "Change factors"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:210
-#, fuzzy
-#| msgid "Select manufacturer"
 msgid "Setup multifactor"
-msgstr "Üretici seçin"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:212
 msgid "Remove multifactor"
@@ -7779,10 +7390,8 @@ msgid "Label Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/user_notifications.html:8
-#, fuzzy
-#| msgid "locations"
 msgid "Notification Settings"
-msgstr "konumlar"
+msgstr ""
 
 #: templates/about.html:10
 msgid "InvenTree Version Information"
@@ -7875,16 +7484,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -7986,10 +7593,8 @@ msgstr ""
 
 #: templates/allauth_2fa/backup_tokens.html:31
 #: templates/allauth_2fa/setup.html:40
-#, fuzzy
-#| msgid "Category Settings"
 msgid "Back to settings"
-msgstr "Kategori Ayarları"
+msgstr ""
 
 #: templates/allauth_2fa/remove.html:6
 msgid "Disable Two-Factor Authentication"
@@ -8270,10 +7875,8 @@ msgid "Check In"
 msgstr ""
 
 #: templates/js/translated/barcode.js:480
-#, fuzzy
-#| msgid "No variants found"
 msgid "No barcode provided"
-msgstr "Çeşit bulunamadı"
+msgstr ""
 
 #: templates/js/translated/barcode.js:515
 msgid "Stock Item already scanned"
@@ -8308,10 +7911,8 @@ msgid "Row Data"
 msgstr ""
 
 #: templates/js/translated/bom.js:249
-#, fuzzy
-#| msgid "Download Image"
 msgid "Download BOM Template"
-msgstr "Resmi İndirin"
+msgstr ""
 
 #: templates/js/translated/bom.js:252 templates/js/translated/bom.js:286
 #: templates/js/translated/order.js:429 templates/js/translated/tables.js:53
@@ -8344,10 +7945,8 @@ msgid "Include Parameter Data"
 msgstr ""
 
 #: templates/js/translated/bom.js:308
-#, fuzzy
-#| msgid "Include part supplier data in exported BOM"
 msgid "Include part  parameter data in exported BOM"
-msgstr "Dışa aktarılan malzeme listesine parça tedarikçisi verilerini dahil edin"
+msgstr ""
 
 #: templates/js/translated/bom.js:313
 msgid "Include Stock Data"
@@ -8410,29 +8009,21 @@ msgid "Open subassembly"
 msgstr ""
 
 #: templates/js/translated/bom.js:834 templates/js/translated/build.js:1781
-#, fuzzy
-#| msgid "Available"
 msgid "No Stock Available"
-msgstr "Mevcut"
+msgstr ""
 
 #: templates/js/translated/bom.js:838 templates/js/translated/build.js:1785
-#, fuzzy
-#| msgid "Supplier Stock"
 msgid "Includes variant and substitute stock"
-msgstr "Tedarikçi Stoku"
+msgstr ""
 
 #: templates/js/translated/bom.js:840 templates/js/translated/build.js:1787
 #: templates/js/translated/part.js:690
-#, fuzzy
-#| msgid "Include Variants"
 msgid "Includes variant stock"
-msgstr "Çeşitleri Dahil Et"
+msgstr ""
 
 #: templates/js/translated/bom.js:842 templates/js/translated/build.js:1789
-#, fuzzy
-#| msgid "Supplier Stock"
 msgid "Includes substitute stock"
-msgstr "Tedarikçi Stoku"
+msgstr ""
 
 #: templates/js/translated/bom.js:856
 msgid "Substitutes"
@@ -8495,10 +8086,8 @@ msgid "Create Build Order"
 msgstr ""
 
 #: templates/js/translated/build.js:141
-#, fuzzy
-#| msgid "Build Order is ready to mark as completed"
 msgid "Build order is ready to be completed"
-msgstr "Yapım işi tamamlandı olarak işaretlenmeye hazır"
+msgstr ""
 
 #: templates/js/translated/build.js:146
 msgid "Build Order is incomplete"
@@ -8523,10 +8112,8 @@ msgid "The Bill of Materials contains trackable parts"
 msgstr "Bu Malzeme Listesi takip edilebilir parçalar içeriyor"
 
 #: templates/js/translated/build.js:227
-#, fuzzy
-#| msgid "Build outputs must be generated individually."
 msgid "Build outputs must be generated individually"
-msgstr "Yapım işi çıktıları ayrı ayrı oluşturulmalıdır."
+msgstr ""
 
 #: templates/js/translated/build.js:235
 msgid "Trackable parts can have serial numbers specified"
@@ -8581,10 +8168,8 @@ msgid "Complete Build Outputs"
 msgstr ""
 
 #: templates/js/translated/build.js:583
-#, fuzzy
-#| msgid "Delete Build Output"
 msgid "Delete Build Outputs"
-msgstr "Yapım İşi Çıktısı Sil"
+msgstr ""
 
 #: templates/js/translated/build.js:672
 msgid "No build order allocations found"
@@ -8599,28 +8184,20 @@ msgid "No active build outputs found"
 msgstr ""
 
 #: templates/js/translated/build.js:1162
-#, fuzzy
-#| msgid "Allocate Stock"
 msgid "Allocated Stock"
-msgstr "Stok Tahsis Et"
+msgstr ""
 
 #: templates/js/translated/build.js:1169
-#, fuzzy
-#| msgid "Number of stock items to build"
 msgid "No tracked BOM items for this build"
-msgstr "Yapım işi stok kalemlerinin sayısı"
+msgstr ""
 
 #: templates/js/translated/build.js:1191
-#, fuzzy
-#| msgid "Completed items"
 msgid "Completed Tests"
-msgstr "Tamamlanmış ögeler"
+msgstr ""
 
 #: templates/js/translated/build.js:1196
-#, fuzzy
-#| msgid "Required for Build Orders"
 msgid "No required tests for this build"
-msgstr "Yapım İşi Emirleri için Gerekli"
+msgstr ""
 
 #: templates/js/translated/build.js:1677 templates/js/translated/build.js:2506
 #: templates/js/translated/order.js:2179
@@ -8649,16 +8226,12 @@ msgid "Quantity Per"
 msgstr ""
 
 #: templates/js/translated/build.js:1775
-#, fuzzy
-#| msgid "Available"
 msgid "Insufficient stock available"
-msgstr "Mevcut"
+msgstr ""
 
 #: templates/js/translated/build.js:1777
-#, fuzzy
-#| msgid "Available"
 msgid "Sufficient stock available"
-msgstr "Mevcut"
+msgstr ""
 
 #: templates/js/translated/build.js:1806 templates/js/translated/build.js:2051
 #: templates/js/translated/build.js:2502 templates/js/translated/order.js:2446
@@ -8695,10 +8268,8 @@ msgid "All Parts Allocated"
 msgstr ""
 
 #: templates/js/translated/build.js:2025
-#, fuzzy
-#| msgid "Required stock has not been fully allocated"
 msgid "All selected parts have been fully allocated"
-msgstr "Gerekli stok tamamen tahsis edilemedi"
+msgstr ""
 
 #: templates/js/translated/build.js:2039 templates/js/translated/order.js:1770
 msgid "Select source location (leave blank to take from all locations)"
@@ -8717,10 +8288,8 @@ msgid "No matching stock items"
 msgstr ""
 
 #: templates/js/translated/build.js:2247
-#, fuzzy
-#| msgid "Stock Locations"
 msgid "Automatic Stock Allocation"
-msgstr "Stok Konumları"
+msgstr ""
 
 #: templates/js/translated/build.js:2248
 msgid "Stock items will be automatically allocated to this build order, according to the provided guidelines"
@@ -8739,10 +8308,8 @@ msgid "If substitute stock is allowed, it will be used where stock of the primar
 msgstr ""
 
 #: templates/js/translated/build.js:2273
-#, fuzzy
-#| msgid "Allocate Stock"
 msgid "Allocate Stock Items"
-msgstr "Stok Tahsis Et"
+msgstr ""
 
 #: templates/js/translated/build.js:2313
 msgid "No builds matching query"
@@ -8885,10 +8452,8 @@ msgid "Select filter"
 msgstr ""
 
 #: templates/js/translated/filters.js:288
-#, fuzzy
-#| msgid "Download Image"
 msgid "Download data"
-msgstr "Resmi İndirin"
+msgstr ""
 
 #: templates/js/translated/filters.js:291
 msgid "Reload data"
@@ -8953,22 +8518,16 @@ msgid "Clear input"
 msgstr ""
 
 #: templates/js/translated/forms.js:2547
-#, fuzzy
-#| msgid "File comment"
 msgid "File Column"
-msgstr "Dosya yorumu"
+msgstr ""
 
 #: templates/js/translated/forms.js:2547
-#, fuzzy
-#| msgid "Test Name"
 msgid "Field Name"
-msgstr "Test Adı"
+msgstr ""
 
 #: templates/js/translated/forms.js:2559
-#, fuzzy
-#| msgid "Select Category"
 msgid "Select Columns"
-msgstr "Kategori Seçin"
+msgstr ""
 
 #: templates/js/translated/helpers.js:20
 msgid "YES"
@@ -8979,10 +8538,8 @@ msgid "NO"
 msgstr ""
 
 #: templates/js/translated/helpers.js:307
-#, fuzzy
-#| msgid "upload date"
 msgid "Notes updated"
-msgstr "yükleme tarihi"
+msgstr ""
 
 #: templates/js/translated/label.js:39
 msgid "Labels sent to printer"
@@ -9027,16 +8584,12 @@ msgid "No labels found which match the selected part(s)"
 msgstr ""
 
 #: templates/js/translated/label.js:261
-#, fuzzy
-#| msgid "Select Parts"
 msgid "Select Printer"
-msgstr "Parçaları Seçin"
+msgstr ""
 
 #: templates/js/translated/label.js:265
-#, fuzzy
-#| msgid "Export order to file"
 msgid "Export to PDF"
-msgstr "Emiri dosya çıkar"
+msgstr ""
 
 #: templates/js/translated/label.js:304
 msgid "stock items selected"
@@ -9151,42 +8704,32 @@ msgid "Mark as read"
 msgstr ""
 
 #: templates/js/translated/notification.js:259
-#, fuzzy
-#| msgid "Source Location"
 msgid "No unread notifications"
-msgstr "Kaynak Konum"
+msgstr ""
 
 #: templates/js/translated/notification.js:300 templates/notifications.html:10
 msgid "Notifications will load here"
 msgstr ""
 
 #: templates/js/translated/order.js:75
-#, fuzzy
-#| msgid "Stock has not been fully allocated to this Build Order"
 msgid "No stock items have been allocated to this shipment"
-msgstr "Stok, yapım işi emri için tamamen tahsis edilemedi"
+msgstr ""
 
 #: templates/js/translated/order.js:80
 msgid "The following stock items will be shipped"
 msgstr ""
 
 #: templates/js/translated/order.js:120
-#, fuzzy
-#| msgid "Completed items"
 msgid "Complete Shipment"
-msgstr "Tamamlanmış ögeler"
+msgstr ""
 
 #: templates/js/translated/order.js:126
-#, fuzzy
-#| msgid "Confirm delete"
 msgid "Confirm Shipment"
-msgstr "Silmeyi Onayla"
+msgstr ""
 
 #: templates/js/translated/order.js:181
-#, fuzzy
-#| msgid "Create new variant"
 msgid "Create New Shipment"
-msgstr "Yeni çeşit oluştur"
+msgstr ""
 
 #: templates/js/translated/order.js:206
 msgid "Add Customer"
@@ -9209,16 +8752,12 @@ msgid "At least one line item must be selected"
 msgstr ""
 
 #: templates/js/translated/order.js:541 templates/js/translated/order.js:640
-#, fuzzy
-#| msgid "Batch Code"
 msgid "Add batch code"
-msgstr "Sıra numarası"
+msgstr ""
 
 #: templates/js/translated/order.js:547 templates/js/translated/order.js:651
-#, fuzzy
-#| msgid "Serial numbers"
 msgid "Add serial numbers"
-msgstr "Seri numaraları"
+msgstr ""
 
 #: templates/js/translated/order.js:559
 msgid "Quantity to receive"
@@ -9237,10 +8776,8 @@ msgid "Ordered"
 msgstr ""
 
 #: templates/js/translated/order.js:715
-#, fuzzy
-#| msgid "Quantity must be 1 for serialized stock"
 msgid "Quantity to Receive"
-msgstr "Seri numaralı stok için miktar bir olmalı"
+msgstr ""
 
 #: templates/js/translated/order.js:734
 msgid "Confirm receipt of items"
@@ -9259,10 +8796,8 @@ msgid "Order is overdue"
 msgstr ""
 
 #: templates/js/translated/order.js:1074 templates/js/translated/order.js:2577
-#, fuzzy
-#| msgid "Completed items"
 msgid "Duplicate Line Item"
-msgstr "Tamamlanmış ögeler"
+msgstr ""
 
 #: templates/js/translated/order.js:1104 templates/js/translated/order.js:2599
 msgid "Edit Line Item"
@@ -9299,10 +8834,8 @@ msgid "Receive line item"
 msgstr ""
 
 #: templates/js/translated/order.js:1360 templates/js/translated/order.js:2532
-#, fuzzy
-#| msgid "Source stock item"
 msgid "Duplicate line item"
-msgstr "Kaynak stok kalemi"
+msgstr ""
 
 #: templates/js/translated/order.js:1361 templates/js/translated/order.js:2533
 msgid "Edit line item"
@@ -9321,52 +8854,36 @@ msgid "Invalid Customer"
 msgstr ""
 
 #: templates/js/translated/order.js:1527
-#, fuzzy
-#| msgid "Edit Attachment"
 msgid "Edit shipment"
-msgstr "Ek Düzenle"
+msgstr ""
 
 #: templates/js/translated/order.js:1530
-#, fuzzy
-#| msgid "Completed items"
 msgid "Complete shipment"
-msgstr "Tamamlanmış ögeler"
+msgstr ""
 
 #: templates/js/translated/order.js:1535
-#, fuzzy
-#| msgid "Delete Attachment"
 msgid "Delete shipment"
-msgstr "Eki Sil"
+msgstr ""
 
 #: templates/js/translated/order.js:1555
-#, fuzzy
-#| msgid "Edit Attachment"
 msgid "Edit Shipment"
-msgstr "Ek Düzenle"
+msgstr ""
 
 #: templates/js/translated/order.js:1572
-#, fuzzy
-#| msgid "Delete Attachment"
 msgid "Delete Shipment"
-msgstr "Eki Sil"
+msgstr ""
 
 #: templates/js/translated/order.js:1606
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No matching shipments found"
-msgstr "Eşleşen eylem bulunamadı"
+msgstr ""
 
 #: templates/js/translated/order.js:1616
-#, fuzzy
-#| msgid "Reference"
 msgid "Shipment Reference"
-msgstr "Referans"
+msgstr ""
 
 #: templates/js/translated/order.js:1640
-#, fuzzy
-#| msgid "Shipped"
 msgid "Not shipped"
-msgstr "Sevk edildi"
+msgstr ""
 
 #: templates/js/translated/order.js:1646
 msgid "Tracking"
@@ -9377,10 +8894,8 @@ msgid "Confirm stock allocation"
 msgstr "Stok tahsisini onayla"
 
 #: templates/js/translated/order.js:1806
-#, fuzzy
-#| msgid "Allocate stock items by serial number"
 msgid "Allocate Stock Items to Sales Order"
-msgstr "Seri numarası ile stok kalemlerini tahsis et"
+msgstr ""
 
 #: templates/js/translated/order.js:2014
 msgid "No sales order allocations found"
@@ -9528,10 +9043,8 @@ msgid "Part edited"
 msgstr ""
 
 #: templates/js/translated/part.js:353
-#, fuzzy
-#| msgid "Create new part variant"
 msgid "Create Part Variant"
-msgstr "Yeni parça çeşidi oluştur"
+msgstr ""
 
 #: templates/js/translated/part.js:423
 msgid "You are subscribed to notifications for this item"
@@ -9571,10 +9084,8 @@ msgid "Low stock"
 msgstr ""
 
 #: templates/js/translated/part.js:523 templates/js/translated/part.js:1409
-#, fuzzy
-#| msgid "Available"
 msgid "No stock available"
-msgstr "Mevcut"
+msgstr ""
 
 #: templates/js/translated/part.js:557 templates/js/translated/part.js:642
 msgid "Trackable part"
@@ -9609,14 +9120,12 @@ msgid "No parts found"
 msgstr ""
 
 #: templates/js/translated/part.js:1223
-#, fuzzy
-#| msgid "Available"
 msgid "Not available"
-msgstr "Mevcut"
+msgstr ""
 
 #: templates/js/translated/part.js:1374
 msgid "No category"
-msgstr ""
+msgstr "Katagori Yok"
 
 #: templates/js/translated/part.js:1504 templates/js/translated/part.js:1676
 #: templates/js/translated/stock.js:2242
@@ -9680,20 +9189,16 @@ msgid "Delete ${human_name}"
 msgstr ""
 
 #: templates/js/translated/part.js:2108
-#, fuzzy
-#| msgid "Part Stock"
 msgid "Current Stock"
-msgstr "Parça Stoku"
+msgstr ""
 
 #: templates/js/translated/part.js:2141
 msgid "No scheduling information available for this part"
 msgstr ""
 
 #: templates/js/translated/part.js:2167
-#, fuzzy
-#| msgid "Select Stock Locations"
 msgid "Scheduled Stock Quantities"
-msgstr "Stok Konumu Seç"
+msgstr ""
 
 #: templates/js/translated/part.js:2237
 msgid "Single Price"
@@ -9786,10 +9291,8 @@ msgid "Serialize Stock Item"
 msgstr ""
 
 #: templates/js/translated/stock.js:100
-#, fuzzy
-#| msgid "Confirm stock allocation"
 msgid "Confirm Stock Serialization"
-msgstr "Stok tahsisini onayla"
+msgstr ""
 
 #: templates/js/translated/stock.js:109
 msgid "Parent stock location"
@@ -9812,10 +9315,8 @@ msgid "Enter serial numbers for new stock (or leave blank)"
 msgstr ""
 
 #: templates/js/translated/stock.js:303
-#, fuzzy
-#| msgid "Stock item created"
 msgid "Stock item duplicated"
-msgstr "Stok kalemi oluşturuldu"
+msgstr ""
 
 #: templates/js/translated/stock.js:393
 msgid "Created new stock item"
@@ -9826,46 +9327,32 @@ msgid "Created multiple stock items"
 msgstr ""
 
 #: templates/js/translated/stock.js:431
-#, fuzzy
-#| msgid "Serial Number"
 msgid "Find Serial Number"
-msgstr "Seri Numara"
+msgstr ""
 
 #: templates/js/translated/stock.js:435 templates/js/translated/stock.js:436
-#, fuzzy
-#| msgid "Assigned serial number"
 msgid "Enter serial number"
-msgstr "Atanan seri numarası"
+msgstr ""
 
 #: templates/js/translated/stock.js:452
-#, fuzzy
-#| msgid "Enter stock item serial numbers"
 msgid "Enter a serial number"
-msgstr "Stok kalemi seri numaları girin"
+msgstr ""
 
 #: templates/js/translated/stock.js:472
-#, fuzzy
-#| msgid "Allocate serial numbers"
 msgid "No matching serial number"
-msgstr "Seri numaralarını tahsis et"
+msgstr ""
 
 #: templates/js/translated/stock.js:481
-#, fuzzy
-#| msgid "No matching action found"
 msgid "More than one matching result found"
-msgstr "Eşleşen eylem bulunamadı"
+msgstr ""
 
 #: templates/js/translated/stock.js:604
-#, fuzzy
-#| msgid "Confirm stock adjustment"
 msgid "Confirm stock assignment"
-msgstr "Stok ayarlamasını onayla"
+msgstr ""
 
 #: templates/js/translated/stock.js:605
-#, fuzzy
-#| msgid "Sent to customer"
 msgid "Assign Stock to Customer"
-msgstr "Müşteriye gönderildi"
+msgstr ""
 
 #: templates/js/translated/stock.js:682
 msgid "Warning: Merge operation cannot be reversed"
@@ -9884,16 +9371,12 @@ msgid "Supplier part information will be deleted for merged items"
 msgstr ""
 
 #: templates/js/translated/stock.js:772
-#, fuzzy
-#| msgid "Confirm stock adjustment"
 msgid "Confirm stock item merge"
-msgstr "Stok ayarlamasını onayla"
+msgstr ""
 
 #: templates/js/translated/stock.js:773
-#, fuzzy
-#| msgid "Stock Items"
 msgid "Merge Stock Items"
-msgstr "Stok Kalemleri"
+msgstr ""
 
 #: templates/js/translated/stock.js:868
 msgid "Transfer Stock"
@@ -10016,22 +9499,16 @@ msgid "Stock item will expire soon"
 msgstr ""
 
 #: templates/js/translated/stock.js:1732
-#, fuzzy
-#| msgid "Required stock has not been fully allocated"
 msgid "Serialized stock item has been allocated"
-msgstr "Gerekli stok tamamen tahsis edilemedi"
+msgstr ""
 
 #: templates/js/translated/stock.js:1734
-#, fuzzy
-#| msgid "Required stock has not been fully allocated"
 msgid "Stock item has been fully allocated"
-msgstr "Gerekli stok tamamen tahsis edilemedi"
+msgstr ""
 
 #: templates/js/translated/stock.js:1736
-#, fuzzy
-#| msgid "Stock item is over-allocated"
 msgid "Stock item has been partially allocated"
-msgstr "Stok kalemi fazladan tahsis edilmiş"
+msgstr ""
 
 #: templates/js/translated/stock.js:1741
 msgid "Stock item has been installed in another item"
@@ -10083,10 +9560,8 @@ msgid "Details"
 msgstr "Detaylar"
 
 #: templates/js/translated/stock.js:2385
-#, fuzzy
-#| msgid "Stock item is over-allocated"
 msgid "Part information unavailable"
-msgstr "Stok kalemi fazladan tahsis edilmiş"
+msgstr ""
 
 #: templates/js/translated/stock.js:2407
 msgid "Location no longer exists"
@@ -10133,28 +9608,20 @@ msgid "The Stock Item links to a Part which is the BOM for this Stock Item"
 msgstr ""
 
 #: templates/js/translated/stock.js:2661
-#, fuzzy
-#| msgid "Stock Item already in this location"
 msgid "The Stock Item is currently available in stock"
-msgstr "Stok kalemi zaten bu konumda"
+msgstr ""
 
 #: templates/js/translated/stock.js:2662
-#, fuzzy
-#| msgid "Stock item to install"
 msgid "The Stock Item is not already installed in another item"
-msgstr "Kurulacak stok kalemi"
+msgstr ""
 
 #: templates/js/translated/stock.js:2663
-#, fuzzy
-#| msgid "Part stock is tracked by serial number"
 msgid "The Stock Item is tracked by either a batch code or serial number"
-msgstr "Parça stoku seri numarası ile takip edilebilir"
+msgstr ""
 
 #: templates/js/translated/stock.js:2676
-#, fuzzy
-#| msgid "Select part to build"
 msgid "Select part to install"
-msgstr "Yapım işi için parça seçin"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:56
 msgid "Trackable Part"
@@ -10300,22 +9767,16 @@ msgid "Stock status"
 msgstr ""
 
 #: templates/js/translated/table_filters.js:238
-#, fuzzy
-#| msgid "Batch Code"
 msgid "Has batch code"
-msgstr "Sıra numarası"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:246
-#, fuzzy
-#| msgid "Trackable"
 msgid "Tracked"
-msgstr "Takip Edilebilir"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:247
-#, fuzzy
-#| msgid "Part stock is tracked by serial number"
 msgid "Stock item is tracked by either batch code or serial number"
-msgstr "Parça stoku seri numarası ile takip edilebilir"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:252
 msgid "Has purchase price"
@@ -10334,16 +9795,12 @@ msgid "Show stock which is close to expiring"
 msgstr ""
 
 #: templates/js/translated/table_filters.js:280
-#, fuzzy
-#| msgid "Test Name"
 msgid "Test Passed"
-msgstr "Test Adı"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:284
-#, fuzzy
-#| msgid "Include Variants"
 msgid "Include Installed Items"
-msgstr "Çeşitleri Dahil Et"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:303
 msgid "Build status"
@@ -10351,10 +9808,8 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:316
 #: templates/js/translated/table_filters.js:357
-#, fuzzy
-#| msgid "Assigned Stock"
 msgid "Assigned to me"
-msgstr "Atanan Stok"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:333
 #: templates/js/translated/table_filters.js:344
@@ -10385,16 +9840,12 @@ msgid "Show active parts"
 msgstr ""
 
 #: templates/js/translated/table_filters.js:448
-#, fuzzy
-#| msgid "Serialize stock"
 msgid "In stock"
-msgstr "Stoku seri numarala"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:456
-#, fuzzy
-#| msgid "Available"
 msgid "Available stock"
-msgstr "Mevcut"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:480
 msgid "Purchasable"
@@ -10405,10 +9856,8 @@ msgid "Export Table Data"
 msgstr ""
 
 #: templates/js/translated/tables.js:54
-#, fuzzy
-#| msgid "Select output file format"
 msgid "Select File Format"
-msgstr "Çıktı dosyası biçimi seçin"
+msgstr ""
 
 #: templates/js/translated/tables.js:433
 msgid "Loading data"
@@ -10424,81 +9873,77 @@ msgstr ""
 
 #: templates/js/translated/tables.js:443
 msgid "Showing"
-msgstr ""
+msgstr "Gösteriliyor"
 
 #: templates/js/translated/tables.js:443
 msgid "to"
-msgstr ""
+msgstr "için"
 
 #: templates/js/translated/tables.js:443
 msgid "of"
-msgstr ""
+msgstr "yüzünden"
 
 #: templates/js/translated/tables.js:443
 msgid "rows"
-msgstr ""
+msgstr "satırlar"
 
 #: templates/js/translated/tables.js:447 templates/navbar.html:102
 #: templates/search.html:8 templates/search_form.html:6
 #: templates/search_form.html:7
 msgid "Search"
-msgstr ""
+msgstr "Arama"
 
 #: templates/js/translated/tables.js:450
 msgid "No matching results"
-msgstr ""
+msgstr "Sonuç bulunamadı"
 
 #: templates/js/translated/tables.js:453
 msgid "Hide/Show pagination"
-msgstr ""
+msgstr "Sayfalandırmayı Göster"
 
 #: templates/js/translated/tables.js:456
 msgid "Refresh"
-msgstr ""
+msgstr "Yenile"
 
 #: templates/js/translated/tables.js:459
 msgid "Toggle"
-msgstr ""
+msgstr "Değiştir"
 
 #: templates/js/translated/tables.js:462
 msgid "Columns"
-msgstr ""
+msgstr "Sütunlar"
 
 #: templates/js/translated/tables.js:465
 msgid "All"
-msgstr ""
+msgstr "Tümü"
 
 #: templates/navbar.html:45
 msgid "Buy"
-msgstr ""
+msgstr "Al"
 
 #: templates/navbar.html:57
 msgid "Sell"
-msgstr ""
+msgstr "Sat"
 
 #: templates/navbar.html:116
-#, fuzzy
-#| msgid "Stock Locations"
 msgid "Show Notifications"
-msgstr "Stok Konumları"
+msgstr "Bildirimleri Göster"
 
 #: templates/navbar.html:119
-#, fuzzy
-#| msgid "New Location"
 msgid "New Notifications"
-msgstr "Yeni Konum"
+msgstr "Yeni Bildirimler"
 
 #: templates/navbar.html:140
 msgid "Logout"
-msgstr ""
+msgstr "Çıkış"
 
 #: templates/navbar.html:142
 msgid "Login"
-msgstr ""
+msgstr "Giriş"
 
 #: templates/navbar.html:163
 msgid "About InvenTree"
-msgstr ""
+msgstr "InvenTree Hakkında"
 
 #: templates/notes_buttons.html:6 templates/notes_buttons.html:7
 msgid "Save"
@@ -10506,107 +9951,103 @@ msgstr ""
 
 #: templates/notifications.html:13
 msgid "Show all notifications and history"
-msgstr ""
+msgstr "Tüm bildirimleri ve içeriğini göster"
 
 #: templates/qr_code.html:11
 msgid "QR data not provided"
-msgstr ""
+msgstr "QR sağlanamadı"
 
 #: templates/registration/logged_out.html:6
 msgid "You were logged out successfully."
-msgstr ""
+msgstr "Başarıyla çıkış yapıldı."
 
 #: templates/registration/logged_out.html:8
 msgid "Log in again"
-msgstr ""
+msgstr "Tekrar giriş yap"
 
 #: templates/search.html:9
 msgid "Show full search results"
-msgstr ""
+msgstr "Arama sonuçlarının hepsini göster"
 
 #: templates/search.html:12
 msgid "Clear search"
-msgstr ""
+msgstr "Aramayı temizle"
 
 #: templates/search.html:16
-#, fuzzy
-#| msgid "Filters"
 msgid "Filter results"
-msgstr "Filtreler"
+msgstr "Sonuçları filtrele"
 
 #: templates/search.html:20
 msgid "Close search menu"
-msgstr ""
+msgstr "Arama menüsünü kapat"
 
 #: templates/search.html:35
 msgid "No search results"
-msgstr ""
+msgstr "Arama sonucu yok"
 
 #: templates/stats.html:9
 msgid "Server"
-msgstr ""
+msgstr "Sunucu"
 
 #: templates/stats.html:13
 msgid "Instance Name"
-msgstr ""
+msgstr "Sistem adı"
 
 #: templates/stats.html:18
 msgid "Database"
-msgstr ""
+msgstr "Veritabanı"
 
 #: templates/stats.html:26
 msgid "Server is running in debug mode"
-msgstr ""
+msgstr "Sunucu debug modunda çalışıyor"
 
 #: templates/stats.html:33
 msgid "Docker Mode"
-msgstr ""
+msgstr "Docker modu"
 
 #: templates/stats.html:34
 msgid "Server is deployed using docker"
-msgstr ""
+msgstr "Server docker ile yayınlandı"
 
 #: templates/stats.html:39
-#, fuzzy
-#| msgid "Pricing Information"
 msgid "Plugin Support"
-msgstr "Fiyat Bilgisi"
+msgstr "Eklenti Desteği"
 
 #: templates/stats.html:43
 msgid "Plugin support enabled"
-msgstr ""
+msgstr "Eklenti desteği etkin"
 
 #: templates/stats.html:45
 msgid "Plugin support disabled"
-msgstr ""
+msgstr "Eklenti desteği devre dışı"
 
 #: templates/stats.html:52
 msgid "Server status"
-msgstr ""
+msgstr "Sunucu Durumu"
 
 #: templates/stats.html:55
 msgid "Healthy"
-msgstr ""
+msgstr "Sağlıklı"
 
 #: templates/stats.html:57
 msgid "Issues detected"
-msgstr ""
+msgstr "Sorun algılandı"
 
 #: templates/stats.html:64
 msgid "Background Worker"
-msgstr ""
+msgstr "Arkaplan işi"
 
 #: templates/stats.html:67
 msgid "Background worker not running"
-msgstr ""
+msgstr "Arkaplan işleri çalışmıyor"
 
 #: templates/stats.html:75
 msgid "Email Settings"
-msgstr ""
+msgstr "E-posta Ayarları"
 
 #: templates/stats.html:78
 msgid "Email settings not configured"
-msgstr ""
+msgstr "E-posta ayarları yapılandırılmadı"
 
 #: templates/stock_table.html:17
 msgid "Barcode Actions"
@@ -10614,242 +10055,117 @@ msgstr "Barkod İşlemleri"
 
 #: templates/stock_table.html:33
 msgid "Print test reports"
-msgstr ""
+msgstr "Test raporunu yazdır"
 
 #: templates/stock_table.html:40
 msgid "Stock Options"
-msgstr ""
+msgstr "Stok Seçenekleri"
 
 #: templates/stock_table.html:45
 msgid "Add to selected stock items"
-msgstr ""
+msgstr "Seçili stok parçalarını ekle"
 
 #: templates/stock_table.html:46
 msgid "Remove from selected stock items"
-msgstr ""
+msgstr "Seçili stok parçalarını kaldır"
 
 #: templates/stock_table.html:47
 msgid "Stocktake selected stock items"
-msgstr ""
+msgstr "Seçili stok parçalarını değerlendir"
 
 #: templates/stock_table.html:48
 msgid "Move selected stock items"
-msgstr ""
+msgstr "Stok parçalarını taşı"
 
 #: templates/stock_table.html:49
-#, fuzzy
-#| msgid "Edited stock item"
 msgid "Merge selected stock items"
-msgstr "Düzenlenen stok kalemi"
+msgstr "Seçili stok parçalarını birleştir"
 
 #: templates/stock_table.html:49
-#, fuzzy
-#| msgid "Serialize stock"
 msgid "Merge stock"
-msgstr "Stoku seri numarala"
+msgstr "Stok birlşetirme"
 
 #: templates/stock_table.html:50
 msgid "Order selected items"
-msgstr ""
+msgstr "Seçili parçaları sırala"
 
 #: templates/stock_table.html:52
 msgid "Change status"
-msgstr ""
+msgstr "Durumu Değiştir"
 
 #: templates/stock_table.html:52
 msgid "Change stock status"
-msgstr ""
+msgstr "Stok durumunu değiştir"
 
 #: templates/stock_table.html:55
 msgid "Delete selected items"
-msgstr ""
+msgstr "Seçili parçaları sil"
 
 #: templates/stock_table.html:55
-#, fuzzy
-#| msgid "Delete Item"
 msgid "Delete stock"
-msgstr "Ögeyi Sil"
+msgstr "Parça sil"
 
 #: templates/yesnolabel.html:4
 msgid "Yes"
-msgstr ""
+msgstr "Evet"
 
 #: templates/yesnolabel.html:6
 msgid "No"
-msgstr ""
+msgstr "Hayır"
 
 #: users/admin.py:64
 msgid "Users"
-msgstr ""
+msgstr "Kullanıcılar"
 
 #: users/admin.py:65
 msgid "Select which users are assigned to this group"
-msgstr ""
+msgstr "Bu gruba atanacak kullanıcıyı seçin"
 
 #: users/admin.py:187
 msgid "The following users are members of multiple groups:"
-msgstr ""
+msgstr "Aşağıdaki kullanıcılar birden çok grubun üyesi:"
 
 #: users/admin.py:210
 msgid "Personal info"
-msgstr ""
+msgstr "Kullanıcı bilgisi"
 
 #: users/admin.py:211
 msgid "Permissions"
-msgstr ""
+msgstr "Yetkiler"
 
 #: users/admin.py:214
 msgid "Important dates"
-msgstr ""
+msgstr "Önemli tarihler"
 
 #: users/models.py:201
 msgid "Permission set"
-msgstr ""
+msgstr "İzinleri ayarla"
 
 #: users/models.py:209
 msgid "Group"
-msgstr ""
+msgstr "Grup"
 
 #: users/models.py:212
 msgid "View"
-msgstr ""
+msgstr "Görünüm"
 
 #: users/models.py:212
 msgid "Permission to view items"
-msgstr ""
+msgstr "Parçayı görüntüleme izni"
 
 #: users/models.py:214
 msgid "Permission to add items"
-msgstr ""
+msgstr "Parça ekleme izni"
 
 #: users/models.py:216
 msgid "Change"
-msgstr ""
+msgstr "Değiştir"
 
 #: users/models.py:216
 msgid "Permissions to edit items"
-msgstr ""
+msgstr "Parçaları düzenleme izni"
 
 #: users/models.py:218
 msgid "Permission to delete items"
-msgstr ""
+msgstr "Parçaları silme izni"
 
-#, fuzzy
-#~| msgid "Required build quantity has not been completed"
-#~ msgid "Required quantity has not been allocated"
-#~ msgstr "Gerekli yapım işi miktarı tamamlanmadı"
-
-#, fuzzy
-#~| msgid "Required build quantity has not been completed"
-#~ msgid "Required quantity has been allocated"
-#~ msgstr "Gerekli yapım işi miktarı tamamlanmadı"
-
-#~ msgid "Required for Sales Orders"
-#~ msgstr "Satış Emirleri için Gerekli"
-
-#~ msgid "Edit Notes"
-#~ msgstr "Notları Düzenle"
-
-#~ msgid "locations"
-#~ msgstr "konumlar"
-
-#~ msgid "Undefined location"
-#~ msgstr "Tanımsız konum"
-
-#~ msgid "Select Label"
-#~ msgstr "Etiket Seç"
-
-#, fuzzy
-#~| msgid "Stock Locations"
-#~ msgid "Part Stock Allocations"
-#~ msgstr "Stok Konumları"
-
-#, fuzzy
-#~| msgid "Stock Locations"
-#~ msgid "Stock Item Allocations"
-#~ msgstr "Stok Konumları"
-
-#, fuzzy
-#~| msgid "Build Quantity"
-#~ msgid "Allocated Quantity"
-#~ msgstr "Yapım İşi Miktarı"
-
-#~ msgid "category"
-#~ msgstr "kategori"
-
-#, fuzzy
-#~| msgid "Invalid group: {g}"
-#~ msgid "Invalid group {group}"
-#~ msgstr "Geçersiz grup: {g}"
-
-#, fuzzy
-#~| msgid "The Bill of Materials contains trackable parts"
-#~ msgid "Select Bill of Materials file"
-#~ msgstr "Bu Malzeme Listesi takip edilebilir parçalar içeriyor"
-
-#, fuzzy
-#~| msgid "Source stock item"
-#~ msgid "Duplicate part selected"
-#~ msgstr "Kaynak stok kalemi"
-
-#~ msgid "Confirm creation of build output"
-#~ msgstr "Yapım işi çıktısının oluşturulmasını onaylayın"
-
-#~ msgid "Maximum output quantity is "
-#~ msgstr "Maksimum çıktı miktarı "
-
-#, fuzzy
-#~| msgid "Allocation quantity must be greater than zero"
-#~ msgid "Output quantity must be greater than zero"
-#~ msgstr "Tahsis edilen miktar sıfırdan büyük olmalıdır"
-
-#~ msgid "Confirm deletion of build output"
-#~ msgstr "Yapım işi çıktısının silinmesini onaylayın"
-
-#~ msgid "Confirm unallocation of build stock"
-#~ msgstr "Yapım işi stoku tahsisinin iptalini onayla"
-
-#~ msgid "Build output does not match build"
-#~ msgstr "Yapım işi çıktısı yapım işi ile eşleşmiyor"
-
-#~ msgid "Build output must be specified"
-#~ msgstr "Yapım işi çıktısı belirtilmeli"
-
-#~ msgid "Build output deleted"
-#~ msgstr "Yapım işi çıktısı silindi"
-
-#~ msgid "Overage must be an integer value or a percentage"
-#~ msgstr "Fazlalık bir tamsayı veya yüzde olmalıdır"
-
-#~ msgid "Must be an integer value"
-#~ msgstr "Bir tam sayı olmalı"
-
-#~ msgid "Mark build as complete"
-#~ msgstr "Yapım işini tamamlandı olarak işaretle"
-
-#~ msgid "Build Order is complete"
-#~ msgstr "Yapım işi emri tamamlandı"
-
-#~ msgid "Incompleted build outputs remain"
-#~ msgstr "Eksik yapım işi çıktıları kaldı"
-
-#~ msgid "Build order cannot be completed - incomplete outputs remain"
-#~ msgstr "Yapım işi emri tamamlanamadı - eksik çıktılar kaldı"
-
-#~ msgid "Duplicate serial: {g}"
-#~ msgstr "Tekrarlanan seri {g}"
-
-#~ msgid "Enter stock item serial numbers"
-#~ msgstr "Stok kalemi seri numaları girin"
-
-#~ msgid "Ensure that the order allocation is correct before shipping the order."
-#~ msgstr "Emri göndermeden önce emir tahsisinin doğru olduğundan emin olun."
-
-#~ msgid "No matching item for serial {serial}"
-#~ msgstr "{serial} seri numarası için eşleşen öge bulunamadı"
-
-#~ msgid "{serial} is not in stock"
-#~ msgstr "{serial} stokta yok"
-
-#~ msgid "{serial} already allocated to an order"
-#~ msgstr "{serial} zaten bir emirde tahsis edilmiş"
