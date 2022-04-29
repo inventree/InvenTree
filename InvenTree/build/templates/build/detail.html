@@ -270,6 +270,16 @@
                         </ul>
                     </div>
 
+                    {% if build.has_tracked_bom_items %}
+                    <button id='outputs-expand' class='btn btn-outline-secondary' type='button' title='{% trans "Expand all build output rows" %}'>
+                        <span class='fas fa-expand'></span>
+                    </button>
+
+                    <button id='outputs-collapse' class='btn btn-outline-secondary' type='button' title='{% trans "Collapse all build output rows" %}'>
+                        <span class='fas fa-compress'></span>
+                    </button>
+                    {% endif %}
+
                     {% include "filter_list.html" with id='incompletebuilditems' %}
                 </div>
                 {% endif %}
@@ -401,110 +411,53 @@ function reloadTable() {
     $('#allocation-table-untracked').bootstrapTable('refresh');
 }
 
-// Get the list of BOM items required for this build
-inventreeGet(
-    '{% url "api-bom-list" %}',
-    {
+onPanelLoad('outputs', function() {
+    {% if build.active %}
+
+    var build_info = {
+        pk: {{ build.pk }},
         part: {{ build.part.pk }},
-        sub_part_detail: true,
-    },
-    {
-        success: function(response) {
+        quantity: {{ build.quantity }},
+        {% if build.take_from %}
+        source_location: {{ build.take_from.pk }},
+        {% endif %}
+        tracked_parts: true,
+    };
 
-            var build_info = {
-                pk: {{ build.pk }},
-                part: {{ build.part.pk }},
-                quantity: {{ build.quantity }},
-                bom_items: response,
-                {% if build.take_from %}
-                source_location: {{ build.take_from.pk }},
-                {% endif %}
-                {% if build.has_tracked_bom_items %}
-                tracked_parts: true,
-                {% else %}
-                tracked_parts: false,
-                {% endif %}
-            };
+    loadBuildOutputTable(build_info);
 
-            {% if build.active %}
-            loadBuildOutputTable(build_info);
-            linkButtonsToSelection(
-                '#build-output-table',
-                [
-                    '#output-options',
-                    '#multi-output-complete',
-                    '#multi-output-delete',
-                ]
-            );
+    {% endif %}
+});
 
-            $('#multi-output-complete').click(function() {
-                var outputs = $('#build-output-table').bootstrapTable('getSelections');
+{% if build.active and build.has_untracked_bom_items %}
 
-                completeBuildOutputs(
-                    build_info.pk,
-                    outputs,
-                    {
-                        success: function() {
-                            // Reload the "in progress" table
-                            $('#build-output-table').bootstrapTable('refresh');
+function loadUntrackedStockTable() {
 
-                            // Reload the "completed" table
-                            $('#build-stock-table').bootstrapTable('refresh');
-                        }
-                    }
-                );
-            });
+    var build_info = {
+        pk: {{ build.pk }},
+        part: {{ build.part.pk }},
+        quantity: {{ build.quantity }},
+        {% if build.take_from %}
+        source_location: {{ build.take_from.pk }},
+        {% endif %}
+        tracked_parts: false,
+    };
+    
+    $('#allocation-table-untracked').bootstrapTable('destroy');
 
-            $('#multi-output-delete').click(function() {
-                var outputs = $('#build-output-table').bootstrapTable('getSelections');
-
-                deleteBuildOutputs(
-                    build_info.pk,
-                    outputs,
-                    {
-                        success: function() {
-                            // Reload the "in progress" table
-                            $('#build-output-table').bootstrapTable('refresh');
-
-                            // Reload the "completed" table
-                            $('#build-stock-table').bootstrapTable('refresh');
-                        }
-                    }
-                )
-            });
-
-            $('#incomplete-output-print-label').click(function() {
-                var outputs = $('#build-output-table').bootstrapTable('getSelections');
-
-                if  (outputs.length == 0) {
-                    outputs = $('#build-output-table').bootstrapTable('getData');
-                }
-
-                var stock_id_values = [];
-
-                outputs.forEach(function(output) {
-                    stock_id_values.push(output.pk);
-                });
-
-                printStockItemLabels(stock_id_values);
-
-            });
-
-            {% endif %}
-        
-            {% if build.active and build.has_untracked_bom_items %}
-            // Load allocation table for un-tracked parts
-            loadBuildOutputAllocationTable(
-                build_info,
-                null,
-                {
-                    search: true,
-                }
-            );
-            {% endif %}
+    // Load allocation table for un-tracked parts
+    loadBuildOutputAllocationTable(
+        build_info,
+        null,
+        {
+            search: true,
         }
-    }
-);
+    );
+}
+
+loadUntrackedStockTable();
+
+{% endif %}
 
 $('#btn-create-output').click(function() {
 
@@ -527,6 +480,7 @@ $("#btn-auto-allocate").on('click', function() {
             {% if build.take_from %}
             location: {{ build.take_from.pk }},
             {% endif %}
+            onSuccess: loadUntrackedStockTable,
         }
     );
 });
@@ -558,9 +512,7 @@ $("#btn-allocate").on('click', function() {
                 {% if build.take_from %}
                 source_location: {{ build.take_from.pk }},
                 {% endif %}
-                success: function(data) {
-                    $('#allocation-table-untracked').bootstrapTable('refresh');
-                }
+                success: loadUntrackedStockTable,
             }
         );
     }
@@ -569,6 +521,7 @@ $("#btn-allocate").on('click', function() {
 $('#btn-unallocate').on('click', function() {
     unallocateStock({{ build.id }}, {
         table: '#allocation-table-untracked',
+        onSuccess: loadUntrackedStockTable,
     });
 });
 
@@ -588,9 +541,7 @@ $('#allocate-selected-items').click(function() {
             {% if build.take_from %}
             source_location: {{ build.take_from.pk }},
             {% endif %}
-            success: function(data) {
-                $('#allocation-table-untracked').bootstrapTable('refresh');
-            }
+            success: loadUntrackedStockTable,
         }
     );
 });
