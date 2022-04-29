@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-29 07:59+0000\n"
-"PO-Revision-Date: 2022-04-29 20:41\n"
+"PO-Revision-Date: 2022-04-29 21:46\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -525,7 +525,7 @@ msgstr "Splits onderliggende item"
 
 #: InvenTree/status_codes.py:298 templates/js/translated/stock.js:2025
 msgid "Merged stock items"
-msgstr "Samengevoegde stock items"
+msgstr "Samengevoegde voorraadartikelen"
 
 #: InvenTree/status_codes.py:300
 msgid "Converted to variant"
@@ -911,7 +911,7 @@ msgstr "Voorraad item is te veel toegewezen"
 
 #: build/models.py:1196 order/models.py:1225
 msgid "Allocation quantity must be greater than zero"
-msgstr "Toewijzingsaantal moet groter zijn dan nul"
+msgstr "Toewijzingshoeveelheid moet groter zijn dan nul"
 
 #: build/models.py:1202
 msgid "Quantity must be 1 for serialized stock"
@@ -1417,11 +1417,11 @@ msgstr ""
 
 #: build/templates/build/detail.html:183 build/templates/build/sidebar.html:8
 msgid "Allocate Stock"
-msgstr ""
+msgstr "Voorraad toewijzen"
 
 #: build/templates/build/detail.html:186
 msgid "Order required parts"
-msgstr ""
+msgstr "Vereiste onderdelen bestellen"
 
 #: build/templates/build/detail.html:187
 #: company/templates/company/detail.html:37
@@ -1588,7 +1588,7 @@ msgstr "Selecteer bestand om te uploaden"
 
 #: common/forms.py:50
 msgid "{name.title()} File"
-msgstr ""
+msgstr "{name.title()} Bestand"
 
 #: common/forms.py:51
 #, python-brace-format
@@ -1597,7 +1597,7 @@ msgstr "Kies {name} bestand om te uploaden"
 
 #: common/models.py:381
 msgid "Settings key (must be unique - case insensitive)"
-msgstr ""
+msgstr "Instellingssleutel (moet uniek zijn - hoofdletter ongevoelig)"
 
 #: common/models.py:383
 msgid "Settings value"
@@ -1621,15 +1621,15 @@ msgstr "Sleutelreeks moet uniek zijn"
 
 #: common/models.py:637
 msgid "No group"
-msgstr ""
+msgstr "Geen groep"
 
 #: common/models.py:679
 msgid "Restart required"
-msgstr ""
+msgstr "Opnieuw opstarten vereist"
 
 #: common/models.py:680
 msgid "A setting has been changed which requires a server restart"
-msgstr ""
+msgstr "Een instelling is gewijzigd waarvoor een herstart van de server vereist is"
 
 #: common/models.py:687
 msgid "Server Instance Name"
@@ -1820,7 +1820,7 @@ msgstr "Onderdelen zijn standaard virtueel"
 
 #: common/models.py:837
 msgid "Show Import in Views"
-msgstr "Toon Import in weergaven"
+msgstr "Toon Import in Weergaven"
 
 #: common/models.py:838
 msgid "Display the import wizard in some part views"
@@ -1832,7 +1832,7 @@ msgstr "Toon Prijs in Formulieren"
 
 #: common/models.py:845
 msgid "Display part price in some forms"
-msgstr "Toon onderdeel prijs in sommige formulieren"
+msgstr "Toon onderdeelprijs in sommige formulieren"
 
 #: common/models.py:856
 msgid "Show Price in BOM"
@@ -1872,27 +1872,27 @@ msgstr "Interne prijzen"
 
 #: common/models.py:890
 msgid "Enable internal prices for parts"
-msgstr ""
+msgstr "Inschakelen van interne prijzen voor onderdelen"
 
 #: common/models.py:896
 msgid "Internal Price as BOM-Price"
-msgstr ""
+msgstr "Interne prijs als BOM-Prijs"
 
 #: common/models.py:897
 msgid "Use the internal price (if set) in BOM-price calculations"
-msgstr ""
+msgstr "Gebruik de interne prijs (indien ingesteld) in BOM-prijs berekeningen"
 
 #: common/models.py:903
 msgid "Part Name Display Format"
-msgstr ""
+msgstr "Weergaveformaat voor onderdelennaam"
 
 #: common/models.py:904
 msgid "Format to display the part name"
-msgstr ""
+msgstr "Indeling om de onderdelnaam weer te geven"
 
 #: common/models.py:911
 msgid "Enable Reports"
-msgstr "Activeer rapporteringen"
+msgstr "Activeer Rapporten"
 
 #: common/models.py:912
 msgid "Enable generation of reports"
@@ -1904,7 +1904,7 @@ msgstr "Foutopsporingsmodus"
 
 #: common/models.py:919
 msgid "Generate reports in debug mode (HTML output)"
-msgstr "Rapporten genereren in debug modus (HTML uitvoer)"
+msgstr "Rapporten genereren in debug modus (HTML-uitvoer)"
 
 #: common/models.py:925
 msgid "Page Size"
@@ -1912,7 +1912,7 @@ msgstr "Paginagrootte"
 
 #: common/models.py:926
 msgid "Default page size for PDF reports"
-msgstr "Standaard paginagrootte voor PDF rapporten"
+msgstr "Standaard paginagrootte voor PDF-rapporten"
 
 #: common/models.py:936
 msgid "Test Reports"
@@ -1924,11 +1924,11 @@ msgstr "Activeer het genereren van testrapporten"
 
 #: common/models.py:943
 msgid "Batch Code Template"
-msgstr ""
+msgstr "Batch Code sjabloon"
 
 #: common/models.py:944
 msgid "Template for generating default batch codes for stock items"
-msgstr ""
+msgstr "Sjabloon voor het genereren van standaard batchcodes voor voorraadartikelen"
 
 #: common/models.py:949
 msgid "Stock Expiry"
@@ -1972,31 +1972,31 @@ msgstr ""
 
 #: common/models.py:979
 msgid "Enable ownership control over stock locations and items"
-msgstr ""
+msgstr "Eigendomscontrole over voorraadlocaties en artikelen inschakelen"
 
 #: common/models.py:985
 msgid "Build Order Reference Prefix"
-msgstr ""
+msgstr "Voorvoegsel Bouwopdracht referentie"
 
 #: common/models.py:986
 msgid "Prefix value for build order reference"
-msgstr ""
+msgstr "Voorvoegsel waarde voor de bouwopdracht verwijzing"
 
 #: common/models.py:991
 msgid "Build Order Reference Regex"
-msgstr ""
+msgstr "Bouwopdracht verwijzing reguliere expressie"
 
 #: common/models.py:992
 msgid "Regular expression pattern for matching build order reference"
-msgstr ""
+msgstr "Reguliere expressiepatroon voor overeenstemmende bouwopdracht verwijzing"
 
 #: common/models.py:996
 msgid "Sales Order Reference Prefix"
-msgstr ""
+msgstr "Voorvoegsel verkooporder referentie"
 
 #: common/models.py:997
 msgid "Prefix value for sales order reference"
-msgstr ""
+msgstr "Voorvoegsel waarde voor verkooporder referentie"
 
 #: common/models.py:1002
 msgid "Purchase Order Reference Prefix"
@@ -2008,35 +2008,35 @@ msgstr ""
 
 #: common/models.py:1009
 msgid "Enable password forgot"
-msgstr ""
+msgstr "Wachtwoord vergeten inschakelen"
 
 #: common/models.py:1010
 msgid "Enable password forgot function on the login pages"
-msgstr ""
+msgstr "Wachtwoord vergeten functie inschakelen op de inlogpagina's"
 
 #: common/models.py:1015
 msgid "Enable registration"
-msgstr ""
+msgstr "Registratie inschakelen"
 
 #: common/models.py:1016
 msgid "Enable self-registration for users on the login pages"
-msgstr ""
+msgstr "Zelfregistratie voor gebruikers op de inlogpagina's inschakelen"
 
 #: common/models.py:1021
 msgid "Enable SSO"
-msgstr ""
+msgstr "SSO inschakelen"
 
 #: common/models.py:1022
 msgid "Enable SSO on the login pages"
-msgstr ""
+msgstr "SSO inschakelen op de inlogpagina's"
 
 #: common/models.py:1027
 msgid "Email required"
-msgstr ""
+msgstr "E-mailadres verplicht"
 
 #: common/models.py:1028
 msgid "Require user to supply mail on signup"
-msgstr ""
+msgstr "Vereis gebruiker om e-mailadres te registreren bij aanmelding"
 
 #: common/models.py:1033
 msgid "Auto-fill SSO users"
@@ -2048,7 +2048,7 @@ msgstr ""
 
 #: common/models.py:1039
 msgid "Mail twice"
-msgstr ""
+msgstr "E-mail tweemaal"
 
 #: common/models.py:1040
 msgid "On signup ask users twice for their mail"
@@ -2056,7 +2056,7 @@ msgstr ""
 
 #: common/models.py:1045
 msgid "Password twice"
-msgstr ""
+msgstr "Wachtwoord tweemaal"
 
 #: common/models.py:1046
 msgid "On signup ask users twice for their password"
@@ -2072,31 +2072,31 @@ msgstr ""
 
 #: common/models.py:1057
 msgid "Enforce MFA"
-msgstr ""
+msgstr "MFA afdwingen"
 
 #: common/models.py:1058
 msgid "Users must use multifactor security."
-msgstr ""
+msgstr "Gebruikers moeten multifactor-beveiliging gebruiken."
 
 #: common/models.py:1064
 msgid "Check plugins on startup"
-msgstr ""
+msgstr "Controleer plug-ins bij het opstarten"
 
 #: common/models.py:1065
 msgid "Check that all plugins are installed on startup - enable in container enviroments"
-msgstr ""
+msgstr "Controleer of alle plug-ins zijn geïnstalleerd bij het opstarten - inschakelen in container-omgevingen"
 
 #: common/models.py:1072
 msgid "Enable URL integration"
-msgstr ""
+msgstr "Activeer URL-integratie"
 
 #: common/models.py:1073
 msgid "Enable plugins to add URL routes"
-msgstr ""
+msgstr "Activeer plug-ins om URL-routes toe te voegen"
 
 #: common/models.py:1079
 msgid "Enable navigation integration"
-msgstr ""
+msgstr "Activeer navigatie integratie"
 
 #: common/models.py:1080
 msgid "Enable plugins to integrate into navigation"
@@ -2104,7 +2104,7 @@ msgstr ""
 
 #: common/models.py:1086
 msgid "Enable app integration"
-msgstr ""
+msgstr "Activeer app integratie"
 
 #: common/models.py:1087
 msgid "Enable plugins to add apps"
@@ -2256,39 +2256,39 @@ msgstr ""
 
 #: common/models.py:1239
 msgid "Show overdue POs on the homepage"
-msgstr ""
+msgstr "Toon achterstallige PO's op de startpagina"
 
 #: common/models.py:1244
 msgid "Show outstanding SOs"
-msgstr ""
+msgstr "Toon uitstaande SO's"
 
 #: common/models.py:1245
 msgid "Show outstanding SOs on the homepage"
-msgstr ""
+msgstr "Toon uitstaande SO's op de startpagina"
 
 #: common/models.py:1250
 msgid "Show overdue SOs"
-msgstr ""
+msgstr "Toon uitstaande SO's"
 
 #: common/models.py:1251
 msgid "Show overdue SOs on the homepage"
-msgstr ""
+msgstr "Toon achterstallige SO's op de startpagina"
 
 #: common/models.py:1257
 msgid "Enable email notifications"
-msgstr ""
+msgstr "E-mailmelding inschakelen"
 
 #: common/models.py:1258
 msgid "Allow sending of emails for event notifications"
-msgstr ""
+msgstr "Het verzenden van e-mails voor gebeurtenismeldingen toestaan"
 
 #: common/models.py:1264
 msgid "Enable label printing"
-msgstr ""
+msgstr "Labelafdrukken inschakelen"
 
 #: common/models.py:1265
 msgid "Enable label printing from the web interface"
-msgstr ""
+msgstr "Labelafdrukken vanuit de webinterface inschakelen"
 
 #: common/models.py:1271
 msgid "Inline label display"
@@ -2308,55 +2308,55 @@ msgstr ""
 
 #: common/models.py:1285
 msgid "Search Parts"
-msgstr ""
+msgstr "Onderdelen zoeken"
 
 #: common/models.py:1286
 msgid "Display parts in search preview window"
-msgstr ""
+msgstr "Onderdelen weergeven in zoekvoorbeeld venster"
 
 #: common/models.py:1292
 msgid "Search Categories"
-msgstr ""
+msgstr "Categorieën zoeken"
 
 #: common/models.py:1293
 msgid "Display part categories in search preview window"
-msgstr ""
+msgstr "Toon onderdelencategorieën in zoekvoorbeeld venster"
 
 #: common/models.py:1299
 msgid "Search Stock"
-msgstr ""
+msgstr "Voorraad zoeken"
 
 #: common/models.py:1300
 msgid "Display stock items in search preview window"
-msgstr ""
+msgstr "Toon voorraad items in zoekvoorbeeldvenster"
 
 #: common/models.py:1306
 msgid "Search Locations"
-msgstr ""
+msgstr "Locaties zoeken"
 
 #: common/models.py:1307
 msgid "Display stock locations in search preview window"
-msgstr ""
+msgstr "Toon voorraadlocaties in zoekvoorbeeldvenster"
 
 #: common/models.py:1313
 msgid "Search Companies"
-msgstr ""
+msgstr "Bedrijven zoeken"
 
 #: common/models.py:1314
 msgid "Display companies in search preview window"
-msgstr ""
+msgstr "Toon bedrijven in zoekvoorbeeldvenster"
 
 #: common/models.py:1320
 msgid "Search Purchase Orders"
-msgstr ""
+msgstr "Inkooporders zoeken"
 
 #: common/models.py:1321
 msgid "Display purchase orders in search preview window"
-msgstr ""
+msgstr "Toon inkooporders in zoekvoorbeeldvenster"
 
 #: common/models.py:1327
 msgid "Search Sales Orders"
-msgstr ""
+msgstr "Verkooporders zoeken"
 
 #: common/models.py:1328
 msgid "Display sales orders in search preview window"
@@ -2598,7 +2598,7 @@ msgstr ""
 #: company/models.py:125 company/templates/company/company_base.html:129
 #: templates/InvenTree/settings/user.html:48
 msgid "Email"
-msgstr "Email"
+msgstr "E-mail"
 
 #: company/models.py:125
 msgid "Contact email address"
