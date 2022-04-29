@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-29 05:07+0000\n"
-"PO-Revision-Date: 2021-11-30 21:51\n"
+"PO-Revision-Date: 2022-04-29 05:17\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -38,7 +38,7 @@ msgstr ""
 #: order/forms.py:57 templates/account/email_confirm.html:20
 #: templates/js/translated/forms.js:601
 msgid "Confirm"
-msgstr ""
+msgstr "확인"
 
 #: InvenTree/forms.py:142
 msgid "Confirm delete"
@@ -50,19 +50,19 @@ msgstr ""
 
 #: InvenTree/forms.py:174
 msgid "Enter password"
-msgstr ""
+msgstr "비밀번호를 입력하세요"
 
 #: InvenTree/forms.py:175
 msgid "Enter new password"
-msgstr ""
+msgstr "새로운 비밀번호를 입력하세요"
 
 #: InvenTree/forms.py:182
 msgid "Confirm password"
-msgstr ""
+msgstr "비밀번호 확인"
 
 #: InvenTree/forms.py:183
 msgid "Confirm new password"
-msgstr ""
+msgstr "새 비밀번호 확인"
 
 #: InvenTree/forms.py:215
 msgid "Select Category"
@@ -70,11 +70,11 @@ msgstr ""
 
 #: InvenTree/forms.py:236
 msgid "Email (again)"
-msgstr ""
+msgstr "이메일 (다시 입력)"
 
 #: InvenTree/forms.py:240
 msgid "Email address confirmation"
-msgstr ""
+msgstr "이메일 주소 확인"
 
 #: InvenTree/forms.py:260
 msgid "You must type the same email each time."
@@ -134,11 +134,11 @@ msgstr ""
 #: InvenTree/models.py:197 stock/models.py:2202
 #: templates/js/translated/attachment.js:119
 msgid "Attachment"
-msgstr ""
+msgstr "첨부파일"
 
 #: InvenTree/models.py:198
 msgid "Select file to attach"
-msgstr ""
+msgstr "첨부할 파일을 선택하세요"
 
 #: InvenTree/models.py:204 company/models.py:131 company/models.py:348
 #: company/models.py:564 order/models.py:127 part/models.py:873
@@ -146,12 +146,12 @@ msgstr ""
 #: templates/js/translated/company.js:540
 #: templates/js/translated/company.js:829 templates/js/translated/part.js:1441
 msgid "Link"
-msgstr ""
+msgstr "링크"
 
 #: InvenTree/models.py:205 build/models.py:332 part/models.py:874
 #: stock/models.py:669
 msgid "Link to external URL"
-msgstr ""
+msgstr "외부 URL로 링크"
 
 #: InvenTree/models.py:208 templates/js/translated/attachment.js:163
 msgid "Comment"
@@ -168,15 +168,15 @@ msgstr ""
 #: report/templates/report/inventree_test_report_base.html:96
 #: templates/js/translated/stock.js:2517
 msgid "User"
-msgstr ""
+msgstr "사용자"
 
 #: InvenTree/models.py:218
 msgid "upload date"
-msgstr ""
+msgstr "업로드 날짜"
 
 #: InvenTree/models.py:241
 msgid "Filename must not be empty"
-msgstr ""
+msgstr "파일명은 비워둘 수 없습니다"
 
 #: InvenTree/models.py:264
 msgid "Invalid attachment directory"
@@ -185,7 +185,7 @@ msgstr ""
 #: InvenTree/models.py:274
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr ""
+msgstr "파일명에 허용되지 않은 문자 '{c}'가 포함되어 있습니다"
 
 #: InvenTree/models.py:277
 msgid "Filename missing extension"
@@ -193,11 +193,11 @@ msgstr ""
 
 #: InvenTree/models.py:284
 msgid "Attachment with this filename already exists"
-msgstr ""
+msgstr "같은 이름의 첨부파일이 이미 존재합니다"
 
 #: InvenTree/models.py:291
 msgid "Error renaming file"
-msgstr ""
+msgstr "파일 이름 바꾸기 오류"
 
 #: InvenTree/models.py:326
 msgid "Invalid choice"
@@ -216,7 +216,7 @@ msgstr ""
 #: templates/js/translated/part.js:767 templates/js/translated/part.js:1748
 #: templates/js/translated/stock.js:2287
 msgid "Name"
-msgstr ""
+msgstr "이름"
 
 #: InvenTree/models.py:349 build/models.py:209
 #: build/templates/build/detail.html:24 company/models.py:354
@@ -240,11 +240,11 @@ msgstr ""
 #: templates/js/translated/part.js:1836 templates/js/translated/stock.js:1685
 #: templates/js/translated/stock.js:2299 templates/js/translated/stock.js:2354
 msgid "Description"
-msgstr ""
+msgstr "설명"
 
 #: InvenTree/models.py:350
 msgid "Description (optional)"
-msgstr ""
+msgstr "설명 (선택 사항)"
 
 #: InvenTree/models.py:358
 msgid "parent"
@@ -252,11 +252,11 @@ msgstr ""
 
 #: InvenTree/serializers.py:65 part/models.py:2891
 msgid "Must be a valid number"
-msgstr ""
+msgstr "유효한 숫자여야 합니다"
 
 #: InvenTree/serializers.py:299
 msgid "Filename"
-msgstr ""
+msgstr "파일명"
 
 #: InvenTree/serializers.py:334
 msgid "Invalid value"
@@ -276,7 +276,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:386
 msgid "File is too large"
-msgstr ""
+msgstr "파일이 너무 큽니다"
 
 #: InvenTree/serializers.py:407
 msgid "No columns found in file"
@@ -306,67 +306,67 @@ msgstr ""
 
 #: InvenTree/settings.py:668
 msgid "Czech"
-msgstr ""
+msgstr "체코어"
 
 #: InvenTree/settings.py:669
 msgid "German"
-msgstr ""
+msgstr "독일어"
 
 #: InvenTree/settings.py:670
 msgid "Greek"
-msgstr ""
+msgstr "그리스어"
 
 #: InvenTree/settings.py:671
 msgid "English"
-msgstr ""
+msgstr "영어"
 
 #: InvenTree/settings.py:672
 msgid "Spanish"
-msgstr ""
+msgstr "스페인어"
 
 #: InvenTree/settings.py:673
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "스페인어 (멕시코)"
 
 #: InvenTree/settings.py:674
 msgid "Farsi / Persian"
-msgstr ""
+msgstr "파르시어/페르시아어"
 
 #: InvenTree/settings.py:675
 msgid "French"
-msgstr ""
+msgstr "프랑스어"
 
 #: InvenTree/settings.py:676
 msgid "Hebrew"
-msgstr ""
+msgstr "히브리어"
 
 #: InvenTree/settings.py:677
 msgid "Hungarian"
-msgstr ""
+msgstr "헝가리어"
 
 #: InvenTree/settings.py:678
 msgid "Italian"
-msgstr ""
+msgstr "이탈리아어"
 
 #: InvenTree/settings.py:679
 msgid "Japanese"
-msgstr ""
+msgstr "일본어"
 
 #: InvenTree/settings.py:680
 msgid "Korean"
-msgstr ""
+msgstr "한국어"
 
 #: InvenTree/settings.py:681
 msgid "Dutch"
-msgstr ""
+msgstr "네덜란드어"
 
 #: InvenTree/settings.py:682
 msgid "Norwegian"
-msgstr ""
+msgstr "노르웨이어"
 
 #: InvenTree/settings.py:683
 msgid "Polish"
-msgstr ""
+msgstr "폴란드어"
 
 #: InvenTree/settings.py:684
 msgid "Portuguese"
@@ -378,27 +378,27 @@ msgstr ""
 
 #: InvenTree/settings.py:686
 msgid "Russian"
-msgstr ""
+msgstr "러시아어"
 
 #: InvenTree/settings.py:687
 msgid "Swedish"
-msgstr ""
+msgstr "스웨덴어"
 
 #: InvenTree/settings.py:688
 msgid "Thai"
-msgstr ""
+msgstr "태국어"
 
 #: InvenTree/settings.py:689
 msgid "Turkish"
-msgstr ""
+msgstr "터키어"
 
 #: InvenTree/settings.py:690
 msgid "Vietnamese"
-msgstr ""
+msgstr "베트남어"
 
 #: InvenTree/settings.py:691
 msgid "Chinese"
-msgstr ""
+msgstr "중국어"
 
 #: InvenTree/status.py:110
 msgid "Background worker check failed"
@@ -430,7 +430,7 @@ msgstr ""
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:144
 #: InvenTree/status_codes.py:325
 msgid "Cancelled"
-msgstr ""
+msgstr "취소됨"
 
 #: InvenTree/status_codes.py:105 InvenTree/status_codes.py:145
 #: InvenTree/status_codes.py:187
@@ -457,11 +457,11 @@ msgstr ""
 
 #: InvenTree/status_codes.py:185
 msgid "Damaged"
-msgstr ""
+msgstr "파손됨"
 
 #: InvenTree/status_codes.py:186
 msgid "Destroyed"
-msgstr ""
+msgstr "파괴됨"
 
 #: InvenTree/status_codes.py:188
 msgid "Rejected"
@@ -605,19 +605,19 @@ msgstr ""
 
 #: InvenTree/views.py:601 templates/InvenTree/settings/user.html:22
 msgid "Edit User Information"
-msgstr ""
+msgstr "사용자 정보 수정"
 
 #: InvenTree/views.py:612 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
-msgstr ""
+msgstr "비밀번호 설정"
 
 #: InvenTree/views.py:631
 msgid "Password fields must match"
-msgstr ""
+msgstr "비밀번호가 일치해야 합니다"
 
 #: InvenTree/views.py:882 templates/navbar.html:152
 msgid "System Information"
-msgstr ""
+msgstr "시스템 정보"
 
 #: barcodes/api.py:55 barcodes/api.py:156
 msgid "Must provide barcode_data parameter"
@@ -859,7 +859,7 @@ msgstr ""
 #: part/templates/part/part_base.html:346 stock/models.py:667
 #: stock/templates/stock/item_base.html:357
 msgid "External Link"
-msgstr ""
+msgstr "외부 링크"
 
 #: build/models.py:336 build/serializers.py:394
 #: build/templates/build/sidebar.html:21 company/models.py:142
@@ -985,7 +985,7 @@ msgstr ""
 #: templates/js/translated/stock.js:726 templates/js/translated/stock.js:2502
 #: templates/js/translated/stock.js:2587
 msgid "Quantity"
-msgstr ""
+msgstr "수량"
 
 #: build/models.py:1364
 msgid "Stock quantity to allocate to build"
@@ -1028,7 +1028,7 @@ msgstr ""
 #: order/serializers.py:267 part/serializers.py:593 part/serializers.py:1089
 #: stock/models.py:507 stock/models.py:1311 stock/serializers.py:305
 msgid "Quantity must be greater than zero"
-msgstr ""
+msgstr "수량 값은 0보다 커야 합니다"
 
 #: build/serializers.py:213
 msgid "Integer quantity required for trackable parts"
@@ -1043,7 +1043,7 @@ msgstr ""
 #: templates/js/translated/order.js:584 templates/js/translated/stock.js:237
 #: templates/js/translated/stock.js:403
 msgid "Serial Numbers"
-msgstr ""
+msgstr "일련번호"
 
 #: build/serializers.py:231
 msgid "Enter serial numbers for build outputs"
@@ -1077,7 +1077,7 @@ msgstr ""
 #: templates/js/translated/stock.js:697 templates/js/translated/stock.js:904
 #: templates/js/translated/stock.js:1792 templates/js/translated/stock.js:2394
 msgid "Location"
-msgstr ""
+msgstr "위치"
 
 #: build/serializers.py:377
 msgid "Location for completed build outputs"
@@ -1091,7 +1091,7 @@ msgstr ""
 #: templates/js/translated/order.js:1459 templates/js/translated/stock.js:1767
 #: templates/js/translated/stock.js:2471 templates/js/translated/stock.js:2603
 msgid "Status"
-msgstr ""
+msgstr "상태"
 
 #: build/serializers.py:389
 msgid "Accept Incomplete Allocation"
@@ -1580,20 +1580,20 @@ msgstr ""
 
 #: common/forms.py:34
 msgid "File"
-msgstr ""
+msgstr "파일"
 
 #: common/forms.py:35
 msgid "Select file to upload"
-msgstr ""
+msgstr "업로드할 파일을 선택하세요"
 
 #: common/forms.py:50
 msgid "{name.title()} File"
-msgstr ""
+msgstr "{name.title()} 파일"
 
 #: common/forms.py:51
 #, python-brace-format
 msgid "Select {name} file to upload"
-msgstr ""
+msgstr "업로드할 {name} 파일을 선택하세요"
 
 #: common/models.py:381
 msgid "Settings key (must be unique - case insensitive)"
@@ -1625,7 +1625,7 @@ msgstr ""
 
 #: common/models.py:679
 msgid "Restart required"
-msgstr ""
+msgstr "재시작 필요"
 
 #: common/models.py:680
 msgid "A setting has been changed which requires a server restart"
@@ -1657,7 +1657,7 @@ msgstr ""
 
 #: common/models.py:707 company/models.py:100 company/models.py:101
 msgid "Company name"
-msgstr ""
+msgstr "회사명"
 
 #: common/models.py:708
 msgid "Internal company name"
@@ -1673,15 +1673,15 @@ msgstr ""
 
 #: common/models.py:720
 msgid "Default Currency"
-msgstr ""
+msgstr "기본 통화"
 
 #: common/models.py:721
 msgid "Default currency"
-msgstr ""
+msgstr "기본 통화"
 
 #: common/models.py:727
 msgid "Download from URL"
-msgstr ""
+msgstr "URL에서 다운로드"
 
 #: common/models.py:728
 msgid "Allow download of remote images and files from external URL"
@@ -1689,7 +1689,7 @@ msgstr ""
 
 #: common/models.py:734 templates/InvenTree/settings/sidebar.html:33
 msgid "Barcode Support"
-msgstr ""
+msgstr "바코드 지원"
 
 #: common/models.py:735
 msgid "Enable barcode scanner support"
@@ -1782,7 +1782,7 @@ msgstr ""
 
 #: common/models.py:809 part/models.py:981
 msgid "Purchaseable"
-msgstr ""
+msgstr "구입 가능"
 
 #: common/models.py:810
 msgid "Parts are purchaseable by default"
@@ -1791,7 +1791,7 @@ msgstr ""
 #: common/models.py:816 part/models.py:986
 #: templates/js/translated/table_filters.js:472
 msgid "Salable"
-msgstr ""
+msgstr "판매 가능"
 
 #: common/models.py:817
 msgid "Parts are salable by default"
@@ -1900,7 +1900,7 @@ msgstr ""
 
 #: common/models.py:918 templates/stats.html:25
 msgid "Debug Mode"
-msgstr ""
+msgstr "디버그 모드"
 
 #: common/models.py:919
 msgid "Generate reports in debug mode (HTML output)"
@@ -1908,11 +1908,11 @@ msgstr ""
 
 #: common/models.py:925
 msgid "Page Size"
-msgstr ""
+msgstr "페이지 크기"
 
 #: common/models.py:926
 msgid "Default page size for PDF reports"
-msgstr ""
+msgstr "PDF 보고서 기본 페이지 크기"
 
 #: common/models.py:936
 msgid "Test Reports"
@@ -2024,15 +2024,15 @@ msgstr ""
 
 #: common/models.py:1021
 msgid "Enable SSO"
-msgstr ""
+msgstr "SSO 활성화"
 
 #: common/models.py:1022
 msgid "Enable SSO on the login pages"
-msgstr ""
+msgstr "로그인 페이지에서 SSO 활성화"
 
 #: common/models.py:1027
 msgid "Email required"
-msgstr ""
+msgstr "이메일 필요"
 
 #: common/models.py:1028
 msgid "Require user to supply mail on signup"
@@ -2048,7 +2048,7 @@ msgstr ""
 
 #: common/models.py:1039
 msgid "Mail twice"
-msgstr ""
+msgstr "두 번 보내기"
 
 #: common/models.py:1040
 msgid "On signup ask users twice for their mail"
@@ -2521,7 +2521,7 @@ msgstr ""
 #: part/templates/part/import_wizard/part_upload.html:47 part/views.py:206
 #: templates/patterns/wizard/upload.html:37
 msgid "Upload File"
-msgstr ""
+msgstr "파일 업로드"
 
 #: common/views.py:94 order/views.py:244
 #: part/templates/part/import_wizard/ajax_match_fields.html:45
@@ -2555,15 +2555,15 @@ msgstr ""
 #: company/forms.py:24 part/forms.py:46
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: company/forms.py:25 part/forms.py:47
 msgid "Image URL"
-msgstr ""
+msgstr "이미지 URL"
 
 #: company/models.py:105
 msgid "Company description"
-msgstr ""
+msgstr "회사 소개"
 
 #: company/models.py:106
 msgid "Description of the company"
@@ -2573,23 +2573,23 @@ msgstr ""
 #: templates/InvenTree/settings/plugin_settings.html:55
 #: templates/js/translated/company.js:349
 msgid "Website"
-msgstr ""
+msgstr "웹사이트"
 
 #: company/models.py:113
 msgid "Company website URL"
-msgstr ""
+msgstr "회사 웹사이트 URL"
 
 #: company/models.py:117 company/templates/company/company_base.html:115
 msgid "Address"
-msgstr ""
+msgstr "주소"
 
 #: company/models.py:118
 msgid "Company address"
-msgstr ""
+msgstr "회사 주소"
 
 #: company/models.py:121
 msgid "Phone number"
-msgstr ""
+msgstr "전화번호"
 
 #: company/models.py:122
 msgid "Contact phone number"
@@ -2598,7 +2598,7 @@ msgstr ""
 #: company/models.py:125 company/templates/company/company_base.html:129
 #: templates/InvenTree/settings/user.html:48
 msgid "Email"
-msgstr ""
+msgstr "이메일"
 
 #: company/models.py:125
 msgid "Contact email address"
@@ -2618,7 +2618,7 @@ msgstr ""
 
 #: company/models.py:139 part/models.py:883
 msgid "Image"
-msgstr ""
+msgstr "이미지"
 
 #: company/models.py:144
 msgid "is customer"
@@ -2755,7 +2755,7 @@ msgstr ""
 #: part/bom.py:238 part/bom.py:266 templates/js/translated/order.js:1198
 #: templates/js/translated/part.js:227 templates/js/translated/part.js:942
 msgid "SKU"
-msgstr ""
+msgstr "SKU"
 
 #: company/models.py:552 templates/js/translated/part.js:228
 msgid "Supplier stock keeping unit"
@@ -2822,7 +2822,7 @@ msgstr ""
 #: company/templates/company/company_base.html:12
 #: templates/InvenTree/search.html:176 templates/js/translated/company.js:322
 msgid "Company"
-msgstr ""
+msgstr "회사"
 
 #: company/templates/company/company_base.html:22
 #: templates/js/translated/order.js:279
@@ -2835,31 +2835,31 @@ msgstr ""
 
 #: company/templates/company/company_base.html:31
 msgid "Edit company information"
-msgstr ""
+msgstr "회사 정보 수정"
 
 #: company/templates/company/company_base.html:32
 #: templates/js/translated/company.js:265
 msgid "Edit Company"
-msgstr ""
+msgstr "회사 수정"
 
 #: company/templates/company/company_base.html:36
 msgid "Delete company"
-msgstr ""
+msgstr "회사 삭제"
 
 #: company/templates/company/company_base.html:37
 #: company/templates/company/company_base.html:159
 msgid "Delete Company"
-msgstr ""
+msgstr "회사 삭제"
 
 #: company/templates/company/company_base.html:53
 #: part/templates/part/part_thumb.html:12
 msgid "Upload new image"
-msgstr ""
+msgstr "새 이미지 업로드"
 
 #: company/templates/company/company_base.html:56
 #: part/templates/part/part_thumb.html:14
 msgid "Download image from URL"
-msgstr ""
+msgstr "URL에서 이미지 다운로드"
 
 #: company/templates/company/company_base.html:83 order/models.py:574
 #: order/templates/order/sales_order_base.html:115 stock/models.py:654
@@ -2869,7 +2869,7 @@ msgstr ""
 #: templates/js/translated/stock.js:2435
 #: templates/js/translated/table_filters.js:419
 msgid "Customer"
-msgstr ""
+msgstr "고객"
 
 #: company/templates/company/company_base.html:108
 msgid "Uses default currency"
@@ -2877,12 +2877,12 @@ msgstr ""
 
 #: company/templates/company/company_base.html:122
 msgid "Phone"
-msgstr ""
+msgstr "전화번호"
 
 #: company/templates/company/company_base.html:205
 #: part/templates/part/part_base.html:465
 msgid "Upload Image"
-msgstr ""
+msgstr "이미지 업로드"
 
 #: company/templates/company/detail.html:14
 #: company/templates/company/manufacturer_part_sidebar.html:7
@@ -3061,7 +3061,7 @@ msgstr ""
 #: templates/js/translated/company.js:426 templates/js/translated/helpers.js:32
 #: users/models.py:218
 msgid "Delete"
-msgstr ""
+msgstr "삭제"
 
 #: company/templates/company/manufacturer_part.html:144
 #: company/templates/company/manufacturer_part_sidebar.html:5
@@ -3244,7 +3244,7 @@ msgstr ""
 
 #: company/views.py:62
 msgid "New Customer"
-msgstr ""
+msgstr "신규 고객"
 
 #: company/views.py:69 templates/js/translated/search.js:159
 msgid "Companies"
@@ -3252,11 +3252,11 @@ msgstr ""
 
 #: company/views.py:70
 msgid "New Company"
-msgstr ""
+msgstr "새 회사"
 
 #: company/views.py:129 part/views.py:591
 msgid "Download Image"
-msgstr ""
+msgstr "이미지 다운로드"
 
 #: company/views.py:158 part/views.py:623
 msgid "Image size exceeds maximum allowable size for download"
@@ -3301,7 +3301,7 @@ msgstr ""
 
 #: label/models.py:140
 msgid "Width [mm]"
-msgstr ""
+msgstr "너비 [mm]"
 
 #: label/models.py:141
 msgid "Label width, specified in mm"
@@ -3309,7 +3309,7 @@ msgstr ""
 
 #: label/models.py:147
 msgid "Height [mm]"
-msgstr ""
+msgstr "높이 [mm]"
 
 #: label/models.py:148
 msgid "Label height, specified in mm"
@@ -3662,7 +3662,7 @@ msgstr ""
 
 #: order/serializers.py:294
 msgid "Barcode Hash"
-msgstr ""
+msgstr "바코드 해시"
 
 #: order/serializers.py:295
 msgid "Unique identifier field"
@@ -3670,7 +3670,7 @@ msgstr ""
 
 #: order/serializers.py:312
 msgid "Barcode is already in use"
-msgstr ""
+msgstr "이미 사용 중인 바코드입니다"
 
 #: order/serializers.py:331
 msgid "An integer quantity must be provided for trackable parts"
@@ -4006,7 +4006,7 @@ msgstr ""
 #: order/templates/order/sales_order_cancel.html:8
 #: stock/templates/stock/stockitem_convert.html:13
 msgid "Warning"
-msgstr ""
+msgstr "경고"
 
 #: order/templates/order/sales_order_cancel.html:9
 msgid "Cancelling this order means that the order will no longer be editable."
@@ -4467,7 +4467,7 @@ msgstr ""
 
 #: part/models.py:2600
 msgid "Data"
-msgstr ""
+msgstr "데이터"
 
 #: part/models.py:2600
 msgid "Parameter Value"
@@ -4942,7 +4942,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:245 part/templates/part/part_sidebar.html:17
 msgid "Bill of Materials"
-msgstr ""
+msgstr "부품 명세서"
 
 #: part/templates/part/detail.html:250
 msgid "Export actions"
@@ -5109,7 +5109,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:39
 #: stock/templates/stock/location.html:36 templates/qr_button.html:1
 msgid "Show QR Code"
-msgstr ""
+msgstr "QR 코드 보기"
 
 #: part/templates/part/part_base.html:49
 #: stock/templates/stock/item_base.html:57
@@ -5232,7 +5232,7 @@ msgstr ""
 #: part/templates/part/part_base.html:320
 #: stock/templates/stock/item_base.html:166
 msgid "Search for serial number"
-msgstr ""
+msgstr "일련번호 검색"
 
 #: part/templates/part/part_base.html:443 part/templates/part/prices.html:147
 msgid "Calculate"
@@ -5325,8 +5325,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -5446,7 +5445,7 @@ msgstr ""
 
 #: part/templates/part/upload_bom.html:13
 msgid "Upload Bill of Materials"
-msgstr ""
+msgstr "부품 명세서 업로드"
 
 #: part/templates/part/upload_bom.html:19
 msgid "BOM upload requirements"
@@ -5602,7 +5601,7 @@ msgstr ""
 
 #: plugin/models.py:32
 msgid "Key"
-msgstr ""
+msgstr "키"
 
 #: plugin/models.py:33
 msgid "Key of plugin"
@@ -5630,7 +5629,7 @@ msgstr ""
 
 #: plugin/samples/integration/sample.py:48
 msgid "API Key"
-msgstr ""
+msgstr "API 키"
 
 #: plugin/samples/integration/sample.py:49
 msgid "Key required for accessing external API"
@@ -5789,7 +5788,7 @@ msgstr ""
 #: templates/js/translated/order.js:99 templates/js/translated/order.js:2142
 #: templates/js/translated/order.js:2231 templates/js/translated/stock.js:434
 msgid "Serial Number"
-msgstr ""
+msgstr "일련번호"
 
 #: report/templates/report/inventree_test_report_base.html:88
 msgid "Test Results"
@@ -5863,7 +5862,7 @@ msgstr ""
 
 #: stock/forms.py:135
 msgid "Serial numbers"
-msgstr ""
+msgstr "일련번호"
 
 #: stock/forms.py:135
 msgid "Unique serial numbers (must match quantity)"
@@ -6145,7 +6144,7 @@ msgstr ""
 
 #: stock/serializers.py:363 stock/views.py:1019
 msgid "Serial numbers already exist"
-msgstr ""
+msgstr "일련번호가 이미 존재합니다"
 
 #: stock/serializers.py:405
 msgid "Select stock item to install"
@@ -6699,7 +6698,7 @@ msgstr ""
 
 #: templates/404.html:6 templates/404.html:12
 msgid "Page Not Found"
-msgstr ""
+msgstr "페이지를 찾을 수 없습니다."
 
 #: templates/404.html:15
 msgid "The requested page does not exist"
@@ -6707,7 +6706,7 @@ msgstr ""
 
 #: templates/500.html:6 templates/500.html:12
 msgid "Internal Server Error"
-msgstr ""
+msgstr "내부 서버 오류"
 
 #: templates/500.html:15
 #, python-format
@@ -6831,7 +6830,7 @@ msgstr ""
 #: templates/InvenTree/notifications/notifications.html:88
 #: templates/InvenTree/settings/plugin.html:133
 msgid "Message"
-msgstr ""
+msgstr "메시지"
 
 #: templates/InvenTree/notifications/notifications.html:94
 #: templates/InvenTree/notifications/notifications.html:150
@@ -6892,16 +6891,16 @@ msgstr ""
 
 #: templates/InvenTree/settings/currencies.html:49
 msgid "Update Now"
-msgstr ""
+msgstr "지금 업데이트"
 
 #: templates/InvenTree/settings/global.html:9
 msgid "Server Settings"
-msgstr ""
+msgstr "서버 설정"
 
 #: templates/InvenTree/settings/login.html:9
 #: templates/InvenTree/settings/sidebar.html:31
 msgid "Login Settings"
-msgstr ""
+msgstr "로그인 설정"
 
 #: templates/InvenTree/settings/login.html:21 templates/account/signup.html:5
 msgid "Signup"
@@ -6910,7 +6909,7 @@ msgstr ""
 #: templates/InvenTree/settings/mixins/settings.html:5
 #: templates/InvenTree/settings/settings.html:12 templates/navbar.html:139
 msgid "Settings"
-msgstr ""
+msgstr "설정"
 
 #: templates/InvenTree/settings/mixins/urls.html:5
 msgid "URLs"
@@ -6923,7 +6922,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/mixins/urls.html:23
 msgid "Open in new tab"
-msgstr ""
+msgstr "새 탭에서 열기"
 
 #: templates/InvenTree/settings/part.html:7
 msgid "Part Settings"
@@ -6961,17 +6960,17 @@ msgstr ""
 #: templates/InvenTree/settings/plugin.html:48 templates/navbar.html:137
 #: users/models.py:39
 msgid "Admin"
-msgstr ""
+msgstr "관리자"
 
 #: templates/InvenTree/settings/plugin.html:50
 #: templates/InvenTree/settings/plugin_settings.html:28
 msgid "Author"
-msgstr ""
+msgstr "작성자"
 
 #: templates/InvenTree/settings/plugin.html:52
 #: templates/InvenTree/settings/plugin_settings.html:43
 msgid "Version"
-msgstr ""
+msgstr "버전"
 
 #: templates/InvenTree/settings/plugin.html:82
 msgid "code sample"
@@ -7106,12 +7105,12 @@ msgstr ""
 #: templates/InvenTree/settings/sidebar.html:6
 #: templates/InvenTree/settings/user_settings.html:9
 msgid "User Settings"
-msgstr ""
+msgstr "사용자 설정"
 
 #: templates/InvenTree/settings/sidebar.html:9
 #: templates/InvenTree/settings/user.html:12
 msgid "Account Settings"
-msgstr ""
+msgstr "계정 설정"
 
 #: templates/InvenTree/settings/sidebar.html:11
 #: templates/InvenTree/settings/user_display.html:9
@@ -7120,7 +7119,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:13
 msgid "Home Page"
-msgstr ""
+msgstr "홈페이지"
 
 #: templates/InvenTree/settings/sidebar.html:15
 #: templates/InvenTree/settings/user_search.html:9
@@ -7164,7 +7163,7 @@ msgstr ""
 #: templates/account/password_reset_from_key.html:4
 #: templates/account/password_reset_from_key.html:7
 msgid "Change Password"
-msgstr ""
+msgstr "비밀번호 변경"
 
 #: templates/InvenTree/settings/user.html:23
 #: templates/js/translated/helpers.js:27 templates/notes_buttons.html:3
@@ -7178,11 +7177,11 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:36
 msgid "First Name"
-msgstr ""
+msgstr "이름"
 
 #: templates/InvenTree/settings/user.html:40
 msgid "Last Name"
-msgstr ""
+msgstr "성"
 
 #: templates/InvenTree/settings/user.html:54
 msgid "The following email addresses are associated with your account:"
@@ -7216,7 +7215,7 @@ msgstr ""
 #: templates/InvenTree/settings/user.html:95
 #: templates/InvenTree/settings/user.html:201
 msgid "Warning:"
-msgstr ""
+msgstr "경고:"
 
 #: templates/InvenTree/settings/user.html:96
 msgid "You currently do not have any email address set up. You should really add an email address so you can receive notifications, reset your password, etc."
@@ -7224,11 +7223,11 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:104
 msgid "Add Email Address"
-msgstr ""
+msgstr "이메일 주소 추가"
 
 #: templates/InvenTree/settings/user.html:109
 msgid "Add Email"
-msgstr ""
+msgstr "이메일 추가"
 
 #: templates/InvenTree/settings/user.html:117
 msgid "Social Accounts"
@@ -7300,7 +7299,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:241
 msgid "IP Address"
-msgstr ""
+msgstr "IP 주소"
 
 #: templates/InvenTree/settings/user.html:242
 msgid "Device"
@@ -7308,7 +7307,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:243
 msgid "Last Activity"
-msgstr ""
+msgstr "마지막 활동"
 
 #: templates/InvenTree/settings/user.html:252
 #, python-format
@@ -7322,15 +7321,15 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:266
 msgid "Do you really want to remove the selected email address?"
-msgstr ""
+msgstr "선택한 이메일 주소를 정말로 제거하시겠습니까?"
 
 #: templates/InvenTree/settings/user_display.html:27
 msgid "Theme Settings"
-msgstr ""
+msgstr "테마 설정"
 
 #: templates/InvenTree/settings/user_display.html:37
 msgid "Select theme"
-msgstr ""
+msgstr "테마 선택"
 
 #: templates/InvenTree/settings/user_display.html:48
 msgid "Set Theme"
@@ -7384,7 +7383,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user_homepage.html:9
 msgid "Home Page Settings"
-msgstr ""
+msgstr "홈 페이지 설정"
 
 #: templates/InvenTree/settings/user_labels.html:9
 msgid "Label Settings"
@@ -7396,7 +7395,7 @@ msgstr ""
 
 #: templates/about.html:10
 msgid "InvenTree Version Information"
-msgstr ""
+msgstr "InvenTree 버전 정보"
 
 #: templates/about.html:11 templates/about.html:105
 #: templates/js/translated/bom.js:132 templates/js/translated/bom.js:620
@@ -7409,11 +7408,11 @@ msgstr ""
 
 #: templates/about.html:20
 msgid "InvenTree Version"
-msgstr ""
+msgstr "InvenTree 버전"
 
 #: templates/about.html:25
 msgid "Development Version"
-msgstr ""
+msgstr "개발 버전"
 
 #: templates/about.html:28
 msgid "Up to Date"
@@ -7425,23 +7424,23 @@ msgstr ""
 
 #: templates/about.html:53
 msgid "InvenTree Documentation"
-msgstr ""
+msgstr "InvenTree 문서"
 
 #: templates/about.html:58
 msgid "API Version"
-msgstr ""
+msgstr "API 버전"
 
 #: templates/about.html:63
 msgid "Python Version"
-msgstr ""
+msgstr "Python 버전"
 
 #: templates/about.html:68
 msgid "Django Version"
-msgstr ""
+msgstr "Django 버전"
 
 #: templates/about.html:73
 msgid "View Code on GitHub"
-msgstr ""
+msgstr "GitHub에서 코드 보기"
 
 #: templates/about.html:78
 msgid "Credits"
@@ -7449,7 +7448,7 @@ msgstr ""
 
 #: templates/about.html:83
 msgid "Mobile App"
-msgstr ""
+msgstr "모바일 앱"
 
 #: templates/about.html:88
 msgid "Submit Bug Report"
@@ -7461,7 +7460,7 @@ msgstr ""
 
 #: templates/about.html:95
 msgid "copy version information"
-msgstr ""
+msgstr "버전 정보 복사"
 
 #: templates/account/email_confirm.html:6
 #: templates/account/email_confirm.html:10
@@ -7481,20 +7480,18 @@ msgstr ""
 #: templates/account/login.html:6 templates/account/login.html:16
 #: templates/account/login.html:42
 msgid "Sign In"
-msgstr ""
+msgstr "로그인"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -7509,20 +7506,20 @@ msgstr ""
 #: templates/account/logout.html:5 templates/account/logout.html:8
 #: templates/account/logout.html:20
 msgid "Sign Out"
-msgstr ""
+msgstr "로그아웃"
 
 #: templates/account/logout.html:10
 msgid "Are you sure you want to sign out?"
-msgstr ""
+msgstr "정말 로그아웃하시겠습니까?"
 
 #: templates/account/logout.html:19
 msgid "Back to Site"
-msgstr ""
+msgstr "사이트로 돌아가기"
 
 #: templates/account/password_reset.html:5
 #: templates/account/password_reset.html:12
 msgid "Password Reset"
-msgstr ""
+msgstr "비밀번호 재설정"
 
 #: templates/account/password_reset.html:18
 msgid "Forgotten your password? Enter your email address below, and we'll send you an email allowing you to reset it."
@@ -7534,7 +7531,7 @@ msgstr ""
 
 #: templates/account/password_reset.html:27 templates/account/signup.html:36
 msgid "This function is currently disabled. Please contact an administrator."
-msgstr ""
+msgstr "이 기능은 활성화되지 않았습니다. 관리자에게 연락하세요."
 
 #: templates/account/password_reset_from_key.html:7
 msgid "Bad Token"
@@ -7547,11 +7544,11 @@ msgstr ""
 
 #: templates/account/password_reset_from_key.html:18
 msgid "Change password"
-msgstr ""
+msgstr "비밀번호 변경"
 
 #: templates/account/password_reset_from_key.html:22
 msgid "Your password is now changed."
-msgstr ""
+msgstr "비밀번호가 변경되었습니다."
 
 #: templates/account/signup.html:11 templates/account/signup.html:22
 msgid "Sign Up"
@@ -7637,15 +7634,15 @@ msgstr ""
 
 #: templates/attachment_button.html:4 templates/js/translated/attachment.js:54
 msgid "Add Link"
-msgstr ""
+msgstr "링크 추가"
 
 #: templates/attachment_button.html:7 templates/js/translated/attachment.js:36
 msgid "Add Attachment"
-msgstr ""
+msgstr "첨부파일 추가"
 
 #: templates/base.html:99
 msgid "Server Restart Required"
-msgstr ""
+msgstr "서버 재시작 필요"
 
 #: templates/base.html:102
 msgid "A configuration option has been changed which requires a server restart"
@@ -7765,7 +7762,7 @@ msgstr ""
 
 #: templates/js/translated/api.js:222 templates/js/translated/modals.js:1081
 msgid "Error 408: Timeout"
-msgstr ""
+msgstr "오류 408: 시간 초과"
 
 #: templates/js/translated/api.js:223 templates/js/translated/modals.js:1082
 msgid "Connection timeout while requesting data from server"
@@ -7817,7 +7814,7 @@ msgstr ""
 
 #: templates/js/translated/barcode.js:35
 msgid "Barcode"
-msgstr ""
+msgstr "바코드"
 
 #: templates/js/translated/barcode.js:53
 msgid "Enter optional notes for stock transfer"
@@ -7829,7 +7826,7 @@ msgstr ""
 
 #: templates/js/translated/barcode.js:92
 msgid "Server error"
-msgstr ""
+msgstr "서버 오류"
 
 #: templates/js/translated/barcode.js:113
 msgid "Unknown response from server"
@@ -8322,7 +8319,7 @@ msgstr ""
 #: templates/js/translated/part.js:1741 templates/js/translated/stock.js:1628
 #: templates/js/translated/stock.js:2281
 msgid "Select"
-msgstr ""
+msgstr "선택"
 
 #: templates/js/translated/build.js:2350
 msgid "Build order is overdue"
@@ -8534,11 +8531,11 @@ msgstr ""
 
 #: templates/js/translated/helpers.js:20
 msgid "YES"
-msgstr ""
+msgstr "예"
 
 #: templates/js/translated/helpers.js:22
 msgid "NO"
-msgstr ""
+msgstr "아니오"
 
 #: templates/js/translated/helpers.js:307
 msgid "Notes updated"
@@ -8605,13 +8602,13 @@ msgstr ""
 #: templates/js/translated/modals.js:76 templates/js/translated/modals.js:120
 #: templates/js/translated/modals.js:610
 msgid "Cancel"
-msgstr ""
+msgstr "취소"
 
 #: templates/js/translated/modals.js:77 templates/js/translated/modals.js:119
 #: templates/js/translated/modals.js:677 templates/js/translated/modals.js:985
 #: templates/modals.html:28 templates/modals.html:51
 msgid "Submit"
-msgstr ""
+msgstr "제출"
 
 #: templates/js/translated/modals.js:118
 msgid "Form Title"
@@ -8821,7 +8818,7 @@ msgstr ""
 #: templates/js/translated/order.js:1241 templates/js/translated/order.js:2360
 #: templates/js/translated/part.js:1960 templates/js/translated/part.js:2313
 msgid "Unit Price"
-msgstr ""
+msgstr "단가"
 
 #: templates/js/translated/order.js:1256 templates/js/translated/order.js:2376
 msgid "Total Price"
@@ -9015,7 +9012,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:265
 msgid "Copy Image"
-msgstr ""
+msgstr "이미지 복사"
 
 #: templates/js/translated/part.js:266
 msgid "Copy image from original part"
@@ -9079,7 +9076,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:487
 msgid "Copy Bill of Materials"
-msgstr ""
+msgstr "부품 명세서 복사"
 
 #: templates/js/translated/part.js:513 templates/js/translated/part.js:1397
 #: templates/js/translated/table_filters.js:452
@@ -9331,19 +9328,19 @@ msgstr ""
 
 #: templates/js/translated/stock.js:431
 msgid "Find Serial Number"
-msgstr ""
+msgstr "일련번호 찾기"
 
 #: templates/js/translated/stock.js:435 templates/js/translated/stock.js:436
 msgid "Enter serial number"
-msgstr ""
+msgstr "일련번호를 입력하세요"
 
 #: templates/js/translated/stock.js:452
 msgid "Enter a serial number"
-msgstr ""
+msgstr "일련번호를 입력하세요"
 
 #: templates/js/translated/stock.js:472
 msgid "No matching serial number"
-msgstr ""
+msgstr "일치하는 일련번호가 없습니다"
 
 #: templates/js/translated/stock.js:481
 msgid "More than one matching result found"
@@ -9692,7 +9689,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:221
 #: templates/js/translated/table_filters.js:222
 msgid "Serial number"
-msgstr ""
+msgstr "일련번호"
 
 #: templates/js/translated/table_filters.js:152
 #: templates/js/translated/table_filters.js:243
@@ -10171,3 +10168,4 @@ msgstr ""
 #: users/models.py:218
 msgid "Permission to delete items"
 msgstr ""
+
