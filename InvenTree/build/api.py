@@ -96,6 +96,7 @@ class BuildList(generics.ListCreateAPIView):
         'target_date',
         'completion_date',
         'quantity',
+        'completed',
         'issued_by',
         'responsible',
     ]

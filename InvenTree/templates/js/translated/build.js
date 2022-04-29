@@ -1121,7 +1121,7 @@ function loadBuildOutputTable(build_info, options={}) {
             {
                 field: 'quantity',
                 title: '{% trans "Build Output" %}',
-                switchable: true,
+                switchable: false,
                 sortable: true,
                 formatter: function(value, row) {
 
@@ -1834,12 +1834,12 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
                     // Handle the case where both ratios are equal
                     if (progressA == progressB) {
-                        return (qA < qB) ? 1 : -1;
+                        return (qA > qB) ? 1 : -1;
                     }
 
                     if (progressA == progressB) return 0;
 
-                    return (progressA < progressB) ? 1 : -1;
+                    return (progressA > progressB) ? 1 : -1;
                 }
             },
             {
@@ -2374,8 +2374,8 @@ function loadBuildTable(table, options) {
                 }
             },
             {
-                field: 'quantity',
-                title: '{% trans "Completed" %}',
+                field: 'completed',
+                title: '{% trans "Progress" %}',
                 sortable: true,
                 formatter: function(value, row) {
                     return makeProgressBar(
