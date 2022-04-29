@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-29 05:07+0000\n"
-"PO-Revision-Date: 2021-11-30 21:52\n"
+"PO-Revision-Date: 2022-04-29 05:17\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -70,21 +70,20 @@ msgstr "カテゴリの選択"
 
 #: InvenTree/forms.py:236
 msgid "Email (again)"
-msgstr ""
+msgstr "メールアドレス(確認用)"
 
 #: InvenTree/forms.py:240
 msgid "Email address confirmation"
-msgstr ""
+msgstr "メールアドレスの確認"
 
 #: InvenTree/forms.py:260
 msgid "You must type the same email each time."
-msgstr ""
+msgstr "毎回同じメールアドレスを入力する必要があります。"
 
 #: InvenTree/helpers.py:449
-#, fuzzy, python-brace-format
-#| msgid "Duplicate serial: {g}"
+#, python-brace-format
 msgid "Duplicate serial: {sn}"
-msgstr "重複シリアル: {g}"
+msgstr "重複したシリアル番号: {sn}"
 
 #: InvenTree/helpers.py:456 order/models.py:282 order/models.py:435
 #: stock/views.py:993
@@ -96,10 +95,9 @@ msgid "Empty serial number string"
 msgstr "シリアル番号は空です"
 
 #: InvenTree/helpers.py:491
-#, fuzzy, python-brace-format
-#| msgid "Invalid group: {g}"
+#, python-brace-format
 msgid "Invalid group range: {g}"
-msgstr "無効なグループ： {g}"
+msgstr ""
 
 #: InvenTree/helpers.py:494
 #, python-brace-format
@@ -107,16 +105,14 @@ msgid "Invalid group: {g}"
 msgstr "無効なグループ： {g}"
 
 #: InvenTree/helpers.py:522
-#, fuzzy, python-brace-format
-#| msgid "Invalid group: {g}"
+#, python-brace-format
 msgid "Invalid group sequence: {g}"
-msgstr "無効なグループ： {g}"
+msgstr ""
 
 #: InvenTree/helpers.py:530
-#, fuzzy, python-brace-format
-#| msgid "Invalid group: {g}"
+#, python-brace-format
 msgid "Invalid/no group {group}"
-msgstr "無効なグループ： {g}"
+msgstr "{group} は無効なグループか、存在しません。"
 
 #: InvenTree/helpers.py:536
 msgid "No serial numbers found"
@@ -129,11 +125,11 @@ msgstr ""
 
 #: InvenTree/models.py:185
 msgid "Missing file"
-msgstr ""
+msgstr "ファイルがありません"
 
 #: InvenTree/models.py:186
 msgid "Missing external link"
-msgstr ""
+msgstr "外部リンクが見つかりません。"
 
 #: InvenTree/models.py:197 stock/models.py:2202
 #: templates/js/translated/attachment.js:119
@@ -150,12 +146,12 @@ msgstr "添付ファイルを選択"
 #: templates/js/translated/company.js:540
 #: templates/js/translated/company.js:829 templates/js/translated/part.js:1441
 msgid "Link"
-msgstr ""
+msgstr "リンク"
 
 #: InvenTree/models.py:205 build/models.py:332 part/models.py:874
 #: stock/models.py:669
 msgid "Link to external URL"
-msgstr ""
+msgstr "外部 サイト へのリンク"
 
 #: InvenTree/models.py:208 templates/js/translated/attachment.js:163
 msgid "Comment"
@@ -180,28 +176,28 @@ msgstr "アップロード日時"
 
 #: InvenTree/models.py:241
 msgid "Filename must not be empty"
-msgstr ""
+msgstr "ファイル名は空欄にできません"
 
 #: InvenTree/models.py:264
 msgid "Invalid attachment directory"
-msgstr ""
+msgstr "添付ファイルのディレクトリが正しくありません"
 
 #: InvenTree/models.py:274
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr ""
+msgstr "ファイル名に無効な文字'{c}'が含まれています"
 
 #: InvenTree/models.py:277
 msgid "Filename missing extension"
-msgstr ""
+msgstr "ファイル名に拡張子がありません"
 
 #: InvenTree/models.py:284
 msgid "Attachment with this filename already exists"
-msgstr ""
+msgstr "この名前の貼付ファイルは既に存在します"
 
 #: InvenTree/models.py:291
 msgid "Error renaming file"
-msgstr ""
+msgstr "ファイル名の変更に失敗しました"
 
 #: InvenTree/models.py:326
 msgid "Invalid choice"
@@ -260,66 +256,53 @@ msgstr "有効な数字でなければなりません"
 
 #: InvenTree/serializers.py:299
 msgid "Filename"
-msgstr ""
+msgstr "ファイル名"
 
 #: InvenTree/serializers.py:334
-#, fuzzy
-#| msgid "Invalid choice"
 msgid "Invalid value"
-msgstr "無効な選択です"
+msgstr "無効な値です。"
 
 #: InvenTree/serializers.py:355
 msgid "Data File"
-msgstr ""
+msgstr "データファイル"
 
 #: InvenTree/serializers.py:356
-#, fuzzy
-#| msgid "Select file to attach"
 msgid "Select data file for upload"
-msgstr "添付ファイルを選択"
+msgstr "アップロードするファイルを選択"
 
 #: InvenTree/serializers.py:380
 msgid "Unsupported file type"
-msgstr ""
+msgstr "サポートされていないファイル形式"
 
 #: InvenTree/serializers.py:386
 msgid "File is too large"
-msgstr ""
+msgstr "ファイルサイズが大きすぎます"
 
 #: InvenTree/serializers.py:407
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No columns found in file"
-msgstr "一致するアクションが見つかりませんでした"
+msgstr "ファイルに列が見つかりません"
 
 #: InvenTree/serializers.py:410
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "No data rows found in file"
-msgstr "シリアル番号が見つかりません"
+msgstr "ファイルにデータ行がみつかりません"
 
 #: InvenTree/serializers.py:533
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "No data rows provided"
-msgstr "シリアル番号が見つかりません"
+msgstr "データが入力されていません"
 
 #: InvenTree/serializers.py:536
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No data columns supplied"
-msgstr "一致するアクションが見つかりませんでした"
+msgstr "データ列が指定されていません"
 
 #: InvenTree/serializers.py:623
 #, python-brace-format
 msgid "Missing required column: '{name}'"
-msgstr ""
+msgstr "必須の列がありません: {name}"
 
 #: InvenTree/serializers.py:632
-#, fuzzy, python-brace-format
-#| msgid "Delete parts"
+#, python-brace-format
 msgid "Duplicate column: '{col}'"
-msgstr "パーツを削除"
+msgstr "{col} 列が重複しています。"
 
 #: InvenTree/settings.py:668
 msgid "Czech"
@@ -331,7 +314,7 @@ msgstr "ドイツ語"
 
 #: InvenTree/settings.py:670
 msgid "Greek"
-msgstr ""
+msgstr "ギリシャ語"
 
 #: InvenTree/settings.py:671
 msgid "English"
@@ -339,11 +322,11 @@ msgstr "英語"
 
 #: InvenTree/settings.py:672
 msgid "Spanish"
-msgstr ""
+msgstr "スペイン語"
 
 #: InvenTree/settings.py:673
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "スペイン語(メキシコ)"
 
 #: InvenTree/settings.py:674
 msgid "Farsi / Persian"
@@ -355,31 +338,31 @@ msgstr "フランス語"
 
 #: InvenTree/settings.py:676
 msgid "Hebrew"
-msgstr ""
+msgstr "ヘブライ語"
 
 #: InvenTree/settings.py:677
 msgid "Hungarian"
-msgstr ""
+msgstr "ハンガリー語"
 
 #: InvenTree/settings.py:678
 msgid "Italian"
-msgstr ""
+msgstr "イタリア語"
 
 #: InvenTree/settings.py:679
 msgid "Japanese"
-msgstr ""
+msgstr "日本語"
 
 #: InvenTree/settings.py:680
 msgid "Korean"
-msgstr ""
+msgstr "韓国語"
 
 #: InvenTree/settings.py:681
 msgid "Dutch"
-msgstr ""
+msgstr "オランダ語"
 
 #: InvenTree/settings.py:682
 msgid "Norwegian"
-msgstr ""
+msgstr "ノルウェー語"
 
 #: InvenTree/settings.py:683
 msgid "Polish"
@@ -395,15 +378,15 @@ msgstr ""
 
 #: InvenTree/settings.py:686
 msgid "Russian"
-msgstr ""
+msgstr "ロシア語"
 
 #: InvenTree/settings.py:687
 msgid "Swedish"
-msgstr ""
+msgstr "スウェーデン語"
 
 #: InvenTree/settings.py:688
 msgid "Thai"
-msgstr ""
+msgstr "タイ語"
 
 #: InvenTree/settings.py:689
 msgid "Turkish"
@@ -411,11 +394,11 @@ msgstr "トルコ語"
 
 #: InvenTree/settings.py:690
 msgid "Vietnamese"
-msgstr ""
+msgstr "ベトナム語"
 
 #: InvenTree/settings.py:691
 msgid "Chinese"
-msgstr ""
+msgstr "中国語"
 
 #: InvenTree/status.py:110
 msgid "Background worker check failed"
@@ -478,7 +461,7 @@ msgstr "破損"
 
 #: InvenTree/status_codes.py:186
 msgid "Destroyed"
-msgstr ""
+msgstr "破壊されました"
 
 #: InvenTree/status_codes.py:188
 msgid "Rejected"
@@ -490,59 +473,59 @@ msgstr ""
 
 #: InvenTree/status_codes.py:278
 msgid "Stock item created"
-msgstr ""
+msgstr "在庫商品を作成しました"
 
 #: InvenTree/status_codes.py:280
 msgid "Edited stock item"
-msgstr ""
+msgstr "在庫商品編集済み"
 
 #: InvenTree/status_codes.py:281
 msgid "Assigned serial number"
-msgstr ""
+msgstr "割り当てられたシリアル番号"
 
 #: InvenTree/status_codes.py:283
 msgid "Stock counted"
-msgstr ""
+msgstr "在庫数"
 
 #: InvenTree/status_codes.py:284
 msgid "Stock manually added"
-msgstr ""
+msgstr "手動在庫追加が完了しました"
 
 #: InvenTree/status_codes.py:285
 msgid "Stock manually removed"
-msgstr ""
+msgstr "手動在庫削除が完了しました"
 
 #: InvenTree/status_codes.py:287
 msgid "Location changed"
-msgstr ""
+msgstr "ロケーションが変更されました"
 
 #: InvenTree/status_codes.py:289
 msgid "Installed into assembly"
-msgstr ""
+msgstr "アセンブリへインストールしました"
 
 #: InvenTree/status_codes.py:290
 msgid "Removed from assembly"
-msgstr ""
+msgstr "アセンブリから削除しました"
 
 #: InvenTree/status_codes.py:292
 msgid "Installed component item"
-msgstr ""
+msgstr "インストール済みのコンポーネント項目"
 
 #: InvenTree/status_codes.py:293
 msgid "Removed component item"
-msgstr ""
+msgstr "コンポーネント項目を削除しました"
 
 #: InvenTree/status_codes.py:295
 msgid "Split from parent item"
-msgstr ""
+msgstr "親アイテムから分割する"
 
 #: InvenTree/status_codes.py:296
 msgid "Split child item"
-msgstr ""
+msgstr "子項目を分割"
 
 #: InvenTree/status_codes.py:298 templates/js/translated/stock.js:2025
 msgid "Merged stock items"
-msgstr ""
+msgstr "商品在庫をマージしました"
 
 #: InvenTree/status_codes.py:300
 msgid "Converted to variant"
@@ -550,19 +533,19 @@ msgstr ""
 
 #: InvenTree/status_codes.py:302 templates/js/translated/table_filters.js:213
 msgid "Sent to customer"
-msgstr ""
+msgstr "顧客に送信されました"
 
 #: InvenTree/status_codes.py:303
 msgid "Returned from customer"
-msgstr ""
+msgstr "顧客からの返品"
 
 #: InvenTree/status_codes.py:305
 msgid "Build order output created"
-msgstr ""
+msgstr "組立注文の出力が作成されました"
 
 #: InvenTree/status_codes.py:306
 msgid "Build order output completed"
-msgstr ""
+msgstr "組立注文の出力が完了しました"
 
 #: InvenTree/status_codes.py:307
 msgid "Consumed by build order"
@@ -574,7 +557,7 @@ msgstr ""
 
 #: InvenTree/status_codes.py:324
 msgid "Production"
-msgstr ""
+msgstr "生産"
 
 #: InvenTree/validators.py:25
 msgid "Not a valid currency code"
@@ -598,7 +581,7 @@ msgstr ""
 #: InvenTree/validators.py:116
 #, python-brace-format
 msgid "Illegal character in name ({x})"
-msgstr ""
+msgstr "名前の一部に不正な文字が使用されています({x})"
 
 #: InvenTree/validators.py:137 InvenTree/validators.py:153
 msgid "Overage value must not be negative"
@@ -614,7 +597,7 @@ msgstr ""
 
 #: InvenTree/views.py:537
 msgid "Delete Item"
-msgstr ""
+msgstr "項目を削除"
 
 #: InvenTree/views.py:586
 msgid "Check box to confirm item deletion"
@@ -622,11 +605,11 @@ msgstr ""
 
 #: InvenTree/views.py:601 templates/InvenTree/settings/user.html:22
 msgid "Edit User Information"
-msgstr ""
+msgstr "ユーザー情報を編集"
 
 #: InvenTree/views.py:612 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
-msgstr ""
+msgstr "パスワードを設定"
 
 #: InvenTree/views.py:631
 msgid "Password fields must match"
@@ -634,7 +617,7 @@ msgstr ""
 
 #: InvenTree/views.py:882 templates/navbar.html:152
 msgid "System Information"
-msgstr ""
+msgstr "システム情報"
 
 #: barcodes/api.py:55 barcodes/api.py:156
 msgid "Must provide barcode_data parameter"
@@ -830,7 +813,7 @@ msgstr ""
 #: build/models.py:294 order/models.py:129 part/models.py:1012
 #: part/templates/part/part_base.html:305 templates/js/translated/order.js:1467
 msgid "Creation Date"
-msgstr ""
+msgstr "作成日時"
 
 #: build/models.py:298 order/models.py:585
 msgid "Target completion date"
@@ -895,7 +878,7 @@ msgstr ""
 #: templates/js/translated/order.js:1650 templates/js/translated/order.js:2499
 #: templates/js/translated/stock.js:1316 templates/js/translated/stock.js:1921
 msgid "Notes"
-msgstr ""
+msgstr "メモ"
 
 #: build/models.py:337
 msgid "Extra build notes"
@@ -1002,7 +985,7 @@ msgstr ""
 #: templates/js/translated/stock.js:726 templates/js/translated/stock.js:2502
 #: templates/js/translated/stock.js:2587
 msgid "Quantity"
-msgstr ""
+msgstr "数量"
 
 #: build/models.py:1364
 msgid "Stock quantity to allocate to build"
@@ -1067,20 +1050,16 @@ msgid "Enter serial numbers for build outputs"
 msgstr ""
 
 #: build/serializers.py:245
-#, fuzzy
-#| msgid "Empty serial number string"
 msgid "Auto Allocate Serial Numbers"
-msgstr "シリアル番号は空です"
+msgstr ""
 
 #: build/serializers.py:246
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr ""
 
 #: build/serializers.py:280 stock/api.py:593
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "The following serial numbers already exist"
-msgstr "シリアル番号が見つかりません"
+msgstr ""
 
 #: build/serializers.py:333 build/serializers.py:406
 msgid "A list of build outputs must be provided"
@@ -1112,13 +1091,11 @@ msgstr ""
 #: templates/js/translated/order.js:1459 templates/js/translated/stock.js:1767
 #: templates/js/translated/stock.js:2471 templates/js/translated/stock.js:2603
 msgid "Status"
-msgstr ""
+msgstr "ステータス"
 
 #: build/serializers.py:389
-#, fuzzy
-#| msgid "Complete"
 msgid "Accept Incomplete Allocation"
-msgstr "完了"
+msgstr ""
 
 #: build/serializers.py:390
 msgid "Complete ouputs if stock has not been fully allocated"
@@ -1137,10 +1114,8 @@ msgid "Required stock has not been fully allocated"
 msgstr ""
 
 #: build/serializers.py:463
-#, fuzzy
-#| msgid "Complete"
 msgid "Accept Incomplete"
-msgstr "完了"
+msgstr ""
 
 #: build/serializers.py:464
 msgid "Accept that the required number of build outputs have not been completed"
@@ -1265,10 +1240,8 @@ msgid "Complete Build"
 msgstr ""
 
 #: build/templates/build/build_base.html:87
-#, fuzzy
-#| msgid "Description"
 msgid "Build Description"
-msgstr "説明"
+msgstr ""
 
 #: build/templates/build/build_base.html:101
 #, python-format
@@ -1435,10 +1408,8 @@ msgid "Automatically allocate stock to build"
 msgstr ""
 
 #: build/templates/build/detail.html:180
-#, fuzzy
-#| msgid "Empty serial number string"
 msgid "Auto Allocate"
-msgstr "シリアル番号は空です"
+msgstr ""
 
 #: build/templates/build/detail.html:182
 msgid "Manually allocate stock to build"
@@ -1504,10 +1475,8 @@ msgid "Delete selected build outputs"
 msgstr ""
 
 #: build/templates/build/detail.html:256
-#, fuzzy
-#| msgid "Delete parts"
 msgid "Delete outputs"
-msgstr "パーツを削除"
+msgstr ""
 
 #: build/templates/build/detail.html:263
 #: stock/templates/stock/location.html:188 templates/stock_table.html:27
@@ -1578,10 +1547,8 @@ msgid "Build Order Details"
 msgstr ""
 
 #: build/templates/build/sidebar.html:15
-#, fuzzy
-#| msgid "Delete parts"
 msgid "Completed Outputs"
-msgstr "パーツを削除"
+msgstr ""
 
 #: build/views.py:73
 msgid "Build was cancelled"
@@ -1613,7 +1580,7 @@ msgstr ""
 
 #: common/forms.py:34
 msgid "File"
-msgstr ""
+msgstr "ファイル"
 
 #: common/forms.py:35
 msgid "Select file to upload"
@@ -1933,7 +1900,7 @@ msgstr ""
 
 #: common/models.py:918 templates/stats.html:25
 msgid "Debug Mode"
-msgstr ""
+msgstr "デバッグモード"
 
 #: common/models.py:919
 msgid "Generate reports in debug mode (HTML output)"
@@ -2308,10 +2275,8 @@ msgid "Show overdue SOs on the homepage"
 msgstr ""
 
 #: common/models.py:1257
-#, fuzzy
-#| msgid "Delete parts"
 msgid "Enable email notifications"
-msgstr "パーツを削除"
+msgstr ""
 
 #: common/models.py:1258
 msgid "Allow sending of emails for event notifications"
@@ -2342,20 +2307,16 @@ msgid "Display PDF reports in the browser, instead of downloading as a file"
 msgstr ""
 
 #: common/models.py:1285
-#, fuzzy
-#| msgid "Order Parts"
 msgid "Search Parts"
-msgstr "パーツの注文"
+msgstr ""
 
 #: common/models.py:1286
 msgid "Display parts in search preview window"
 msgstr ""
 
 #: common/models.py:1292
-#, fuzzy
-#| msgid "Select Category"
 msgid "Search Categories"
-msgstr "カテゴリの選択"
+msgstr ""
 
 #: common/models.py:1293
 msgid "Display part categories in search preview window"
@@ -2394,10 +2355,8 @@ msgid "Display purchase orders in search preview window"
 msgstr ""
 
 #: common/models.py:1327
-#, fuzzy
-#| msgid "Empty serial number string"
 msgid "Search Sales Orders"
-msgstr "シリアル番号は空です"
+msgstr ""
 
 #: common/models.py:1328
 msgid "Display sales orders in search preview window"
@@ -2515,7 +2474,7 @@ msgstr ""
 
 #: common/models.py:1714
 msgid "Message ID"
-msgstr ""
+msgstr "メッセージ ID："
 
 #: common/models.py:1715
 msgid "Unique identifier for this message"
@@ -2596,7 +2555,7 @@ msgstr ""
 #: company/forms.py:24 part/forms.py:46
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: company/forms.py:25 part/forms.py:47
 msgid "Image URL"
@@ -2848,10 +2807,8 @@ msgid "Order multiple"
 msgstr ""
 
 #: company/models.py:708
-#, fuzzy
-#| msgid "upload date"
 msgid "last updated"
-msgstr "アップロード日時"
+msgstr ""
 
 #: company/serializers.py:70
 msgid "Default currency used for this supplier"
@@ -2886,10 +2843,8 @@ msgid "Edit Company"
 msgstr ""
 
 #: company/templates/company/company_base.html:36
-#, fuzzy
-#| msgid "Delete parts"
 msgid "Delete company"
-msgstr "パーツを削除"
+msgstr ""
 
 #: company/templates/company/company_base.html:37
 #: company/templates/company/company_base.html:159
@@ -3585,10 +3540,8 @@ msgid "Unit sale price"
 msgstr ""
 
 #: order/models.py:998
-#, fuzzy
-#| msgid "Shipped"
 msgid "Shipped quantity"
-msgstr "発送済み"
+msgstr ""
 
 #: order/models.py:1085
 msgid "Date of shipment"
@@ -3664,10 +3617,8 @@ msgstr ""
 
 #: order/models.py:1248 order/serializers.py:918 order/serializers.py:1046
 #: templates/js/translated/model_renderers.js:300
-#, fuzzy
-#| msgid "Shipped"
 msgid "Shipment"
-msgstr "発送済み"
+msgstr ""
 
 #: order/models.py:1249
 msgid "Sales order shipment reference"
@@ -3706,10 +3657,8 @@ msgid "Enter batch code for incoming stock items"
 msgstr ""
 
 #: order/serializers.py:281 templates/js/translated/order.js:585
-#, fuzzy
-#| msgid "Empty serial number string"
 msgid "Enter serial numbers for incoming stock items"
-msgstr "シリアル番号は空です"
+msgstr ""
 
 #: order/serializers.py:294
 msgid "Barcode Hash"
@@ -3756,10 +3705,8 @@ msgid "Quantity must be positive"
 msgstr ""
 
 #: order/serializers.py:908
-#, fuzzy
-#| msgid "Empty serial number string"
 msgid "Enter serial numbers to allocate"
-msgstr "シリアル番号は空です"
+msgstr ""
 
 #: order/serializers.py:932 order/serializers.py:1057
 msgid "Shipment has already been shipped"
@@ -3770,10 +3717,8 @@ msgid "Shipment is not associated with this order"
 msgstr ""
 
 #: order/serializers.py:987
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "No match found for the following serial numbers"
-msgstr "シリアル番号が見つかりません"
+msgstr ""
 
 #: order/serializers.py:997
 msgid "The following serial numbers are already allocated"
@@ -3824,10 +3769,8 @@ msgstr ""
 
 #: order/templates/order/order_base.html:89
 #: order/templates/order/sales_order_base.html:84
-#, fuzzy
-#| msgid "Description"
 msgid "Order Description"
-msgstr "説明"
+msgstr ""
 
 #: order/templates/order/order_base.html:94
 #: order/templates/order/sales_order_base.html:89
@@ -3842,10 +3785,8 @@ msgstr ""
 #: order/templates/order/order_base.html:130
 #: order/templates/order/sales_order_base.html:134
 #: order/templates/order/sales_order_base.html:144
-#, fuzzy
-#| msgid "Complete"
 msgid "Incomplete"
-msgstr "完了"
+msgstr ""
 
 #: order/templates/order/order_base.html:149
 #: report/templates/report/inventree_build_order_base.html:122
@@ -4553,16 +4494,12 @@ msgid "Unique part ID value"
 msgstr ""
 
 #: part/models.py:2694
-#, fuzzy
-#| msgid "Name"
 msgid "Part Name"
-msgstr "お名前"
+msgstr ""
 
 #: part/models.py:2698
-#, fuzzy
-#| msgid "Part"
 msgid "Part IPN"
-msgstr "パーツ"
+msgstr ""
 
 #: part/models.py:2699
 msgid "Part IPN value"
@@ -4735,40 +4672,28 @@ msgid "Delete existing BOM items before uploading"
 msgstr ""
 
 #: part/serializers.py:1025
-#, fuzzy
-#| msgid "No action specified"
 msgid "No part column specified"
-msgstr "アクションが指定されていません"
+msgstr ""
 
 #: part/serializers.py:1068
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Multiple matching parts found"
-msgstr "一致するアクションが見つかりませんでした"
+msgstr ""
 
 #: part/serializers.py:1071
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No matching part found"
-msgstr "一致するアクションが見つかりませんでした"
+msgstr ""
 
 #: part/serializers.py:1074
-#, fuzzy
-#| msgid "Parts can be used as sub-components by default"
 msgid "Part is not designated as a component"
-msgstr "パーツはデフォルトでサブコンポーネントとして使用できます"
+msgstr ""
 
 #: part/serializers.py:1083
-#, fuzzy
-#| msgid "Invalid quantity provided"
 msgid "Quantity not provided"
-msgstr "数量コードが無効です"
+msgstr ""
 
 #: part/serializers.py:1091
-#, fuzzy
-#| msgid "Invalid quantity provided"
 msgid "Invalid quantity"
-msgstr "数量コードが無効です"
+msgstr ""
 
 #: part/serializers.py:1110
 msgid "At least one BOM item is required"
@@ -4988,10 +4913,8 @@ msgid "Sales Order Allocations"
 msgstr ""
 
 #: part/templates/part/detail.html:136
-#, fuzzy
-#| msgid "Name"
 msgid "Part Notes"
-msgstr "お名前"
+msgstr ""
 
 #: part/templates/part/detail.html:151
 msgid "Part Variants"
@@ -5285,10 +5208,8 @@ msgid "Allocated to Build Orders"
 msgstr ""
 
 #: part/templates/part/part_base.html:224
-#, fuzzy
-#| msgid "Empty serial number string"
 msgid "Allocated to Sales Orders"
-msgstr "シリアル番号は空です"
+msgstr ""
 
 #: part/templates/part/part_base.html:232 templates/js/translated/bom.js:937
 msgid "Can Build"
@@ -5310,10 +5231,8 @@ msgstr ""
 
 #: part/templates/part/part_base.html:320
 #: stock/templates/stock/item_base.html:166
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "Search for serial number"
-msgstr "シリアル番号が見つかりません"
+msgstr ""
 
 #: part/templates/part/part_base.html:443 part/templates/part/prices.html:147
 msgid "Calculate"
@@ -5406,8 +5325,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -5666,16 +5584,12 @@ msgid "Label printing failed"
 msgstr ""
 
 #: plugin/integration.py:146
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No author found"
-msgstr "一致するアクションが見つかりませんでした"
+msgstr ""
 
 #: plugin/integration.py:160
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "No date found"
-msgstr "シリアル番号が見つかりません"
+msgstr ""
 
 #: plugin/models.py:26
 msgid "Plugin Configuration"
@@ -5754,20 +5668,16 @@ msgid "Name for the Plugin Package - can also contain a version indicator"
 msgstr ""
 
 #: plugin/serializers.py:59
-#, fuzzy
-#| msgid "Confirm item deletion"
 msgid "Confirm plugin installation"
-msgstr "削除の確認"
+msgstr ""
 
 #: plugin/serializers.py:60
 msgid "This will install this plugin now into the current instance. The instance will go into maintenance."
 msgstr ""
 
 #: plugin/serializers.py:75
-#, fuzzy
-#| msgid "Email backend not configured"
 msgid "Installation not confirmed"
-msgstr "メールアドレスが未設定です"
+msgstr ""
 
 #: plugin/serializers.py:77
 msgid "Either packagename of URL must be provided"
@@ -5925,10 +5835,8 @@ msgid "Quantity is required"
 msgstr ""
 
 #: stock/api.py:552
-#, fuzzy
-#| msgid "Parts are salable by default"
 msgid "Valid part must be supplied"
-msgstr "パーツはデフォルトで販売可能です"
+msgstr ""
 
 #: stock/api.py:577
 msgid "Serial numbers cannot be supplied for a non-trackable part"
@@ -6239,26 +6147,20 @@ msgid "Serial numbers already exist"
 msgstr ""
 
 #: stock/serializers.py:405
-#, fuzzy
-#| msgid "Select file to attach"
 msgid "Select stock item to install"
-msgstr "添付ファイルを選択"
+msgstr ""
 
 #: stock/serializers.py:421
 msgid "Stock item is unavailable"
 msgstr ""
 
 #: stock/serializers.py:428
-#, fuzzy
-#| msgid "Select file to attach"
 msgid "Selected part is not in the Bill of Materials"
-msgstr "添付ファイルを選択"
+msgstr ""
 
 #: stock/serializers.py:646
-#, fuzzy
-#| msgid "Parts are salable by default"
 msgid "Part must be salable"
-msgstr "パーツはデフォルトで販売可能です"
+msgstr ""
 
 #: stock/serializers.py:650
 msgid "Item is allocated to a sales order"
@@ -6458,10 +6360,8 @@ msgid "next page"
 msgstr ""
 
 #: stock/templates/stock/item_base.html:170
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "Navigate to next serial number"
-msgstr "シリアル番号が見つかりません"
+msgstr ""
 
 #: stock/templates/stock/item_base.html:197
 #, python-format
@@ -6934,22 +6834,16 @@ msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:94
 #: templates/InvenTree/notifications/notifications.html:150
-#, fuzzy
-#| msgid "Delete parts"
 msgid "Delete Notification"
-msgstr "パーツを削除"
+msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:116
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No unread notifications found"
-msgstr "一致するアクションが見つかりませんでした"
+msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:140
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No notification history found"
-msgstr "一致するアクションが見つかりませんでした"
+msgstr ""
 
 #: templates/InvenTree/notifications/sidebar.html:8
 msgid "Inbox"
@@ -7496,10 +7390,8 @@ msgid "Label Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/user_notifications.html:8
-#, fuzzy
-#| msgid "Delete parts"
 msgid "Notification Settings"
-msgstr "パーツを削除"
+msgstr ""
 
 #: templates/about.html:10
 msgid "InvenTree Version Information"
@@ -7592,16 +7484,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -7985,10 +7875,8 @@ msgid "Check In"
 msgstr ""
 
 #: templates/js/translated/barcode.js:480
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "No barcode provided"
-msgstr "シリアル番号が見つかりません"
+msgstr ""
 
 #: templates/js/translated/barcode.js:515
 msgid "Stock Item already scanned"
@@ -8280,10 +8168,8 @@ msgid "Complete Build Outputs"
 msgstr ""
 
 #: templates/js/translated/build.js:583
-#, fuzzy
-#| msgid "Delete parts"
 msgid "Delete Build Outputs"
-msgstr "パーツを削除"
+msgstr ""
 
 #: templates/js/translated/build.js:672
 msgid "No build order allocations found"
@@ -8298,20 +8184,16 @@ msgid "No active build outputs found"
 msgstr ""
 
 #: templates/js/translated/build.js:1162
-#, fuzzy
-#| msgid "Empty serial number string"
 msgid "Allocated Stock"
-msgstr "シリアル番号は空です"
+msgstr ""
 
 #: templates/js/translated/build.js:1169
 msgid "No tracked BOM items for this build"
 msgstr ""
 
 #: templates/js/translated/build.js:1191
-#, fuzzy
-#| msgid "Delete parts"
 msgid "Completed Tests"
-msgstr "パーツを削除"
+msgstr ""
 
 #: templates/js/translated/build.js:1196
 msgid "No required tests for this build"
@@ -8570,10 +8452,8 @@ msgid "Select filter"
 msgstr ""
 
 #: templates/js/translated/filters.js:288
-#, fuzzy
-#| msgid "upload date"
 msgid "Download data"
-msgstr "アップロード日時"
+msgstr ""
 
 #: templates/js/translated/filters.js:291
 msgid "Reload data"
@@ -8638,20 +8518,16 @@ msgid "Clear input"
 msgstr ""
 
 #: templates/js/translated/forms.js:2547
-#, fuzzy
-#| msgid "File comment"
 msgid "File Column"
-msgstr "ファイルコメント"
+msgstr ""
 
 #: templates/js/translated/forms.js:2547
 msgid "Field Name"
 msgstr ""
 
 #: templates/js/translated/forms.js:2559
-#, fuzzy
-#| msgid "Select Category"
 msgid "Select Columns"
-msgstr "カテゴリの選択"
+msgstr ""
 
 #: templates/js/translated/helpers.js:20
 msgid "YES"
@@ -8662,10 +8538,8 @@ msgid "NO"
 msgstr ""
 
 #: templates/js/translated/helpers.js:307
-#, fuzzy
-#| msgid "upload date"
 msgid "Notes updated"
-msgstr "アップロード日時"
+msgstr ""
 
 #: templates/js/translated/label.js:39
 msgid "Labels sent to printer"
@@ -8710,10 +8584,8 @@ msgid "No labels found which match the selected part(s)"
 msgstr ""
 
 #: templates/js/translated/label.js:261
-#, fuzzy
-#| msgid "Select Category"
 msgid "Select Printer"
-msgstr "カテゴリの選択"
+msgstr ""
 
 #: templates/js/translated/label.js:265
 msgid "Export to PDF"
@@ -8848,22 +8720,16 @@ msgid "The following stock items will be shipped"
 msgstr ""
 
 #: templates/js/translated/order.js:120
-#, fuzzy
-#| msgid "Complete"
 msgid "Complete Shipment"
-msgstr "完了"
+msgstr ""
 
 #: templates/js/translated/order.js:126
-#, fuzzy
-#| msgid "Confirm delete"
 msgid "Confirm Shipment"
-msgstr "削除の確認"
+msgstr ""
 
 #: templates/js/translated/order.js:181
-#, fuzzy
-#| msgid "Create new supplier part"
 msgid "Create New Shipment"
-msgstr "新しいサプライヤー・パーツを作成"
+msgstr ""
 
 #: templates/js/translated/order.js:206
 msgid "Add Customer"
@@ -8890,10 +8756,8 @@ msgid "Add batch code"
 msgstr ""
 
 #: templates/js/translated/order.js:547 templates/js/translated/order.js:651
-#, fuzzy
-#| msgid "Empty serial number string"
 msgid "Add serial numbers"
-msgstr "シリアル番号は空です"
+msgstr ""
 
 #: templates/js/translated/order.js:559
 msgid "Quantity to receive"
@@ -8912,10 +8776,8 @@ msgid "Ordered"
 msgstr ""
 
 #: templates/js/translated/order.js:715
-#, fuzzy
-#| msgid "Invalid quantity provided"
 msgid "Quantity to Receive"
-msgstr "数量コードが無効です"
+msgstr ""
 
 #: templates/js/translated/order.js:734
 msgid "Confirm receipt of items"
@@ -8934,10 +8796,8 @@ msgid "Order is overdue"
 msgstr ""
 
 #: templates/js/translated/order.js:1074 templates/js/translated/order.js:2577
-#, fuzzy
-#| msgid "No purchaseable parts selected"
 msgid "Duplicate Line Item"
-msgstr "購入可能なパーツが選択されていません"
+msgstr ""
 
 #: templates/js/translated/order.js:1104 templates/js/translated/order.js:2599
 msgid "Edit Line Item"
@@ -8974,10 +8834,8 @@ msgid "Receive line item"
 msgstr ""
 
 #: templates/js/translated/order.js:1360 templates/js/translated/order.js:2532
-#, fuzzy
-#| msgid "No purchaseable parts selected"
 msgid "Duplicate line item"
-msgstr "購入可能なパーツが選択されていません"
+msgstr ""
 
 #: templates/js/translated/order.js:1361 templates/js/translated/order.js:2533
 msgid "Edit line item"
@@ -9000,42 +8858,32 @@ msgid "Edit shipment"
 msgstr ""
 
 #: templates/js/translated/order.js:1530
-#, fuzzy
-#| msgid "Complete"
 msgid "Complete shipment"
-msgstr "完了"
+msgstr ""
 
 #: templates/js/translated/order.js:1535
-#, fuzzy
-#| msgid "Delete parts"
 msgid "Delete shipment"
-msgstr "パーツを削除"
+msgstr ""
 
 #: templates/js/translated/order.js:1555
 msgid "Edit Shipment"
 msgstr ""
 
 #: templates/js/translated/order.js:1572
-#, fuzzy
-#| msgid "Delete parts"
 msgid "Delete Shipment"
-msgstr "パーツを削除"
+msgstr ""
 
 #: templates/js/translated/order.js:1606
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No matching shipments found"
-msgstr "一致するアクションが見つかりませんでした"
+msgstr ""
 
 #: templates/js/translated/order.js:1616
 msgid "Shipment Reference"
 msgstr ""
 
 #: templates/js/translated/order.js:1640
-#, fuzzy
-#| msgid "Shipped"
 msgid "Not shipped"
-msgstr "発送済み"
+msgstr ""
 
 #: templates/js/translated/order.js:1646
 msgid "Tracking"
@@ -9443,10 +9291,8 @@ msgid "Serialize Stock Item"
 msgstr ""
 
 #: templates/js/translated/stock.js:100
-#, fuzzy
-#| msgid "Confirm item deletion"
 msgid "Confirm Stock Serialization"
-msgstr "削除の確認"
+msgstr ""
 
 #: templates/js/translated/stock.js:109
 msgid "Parent stock location"
@@ -9485,34 +9331,24 @@ msgid "Find Serial Number"
 msgstr ""
 
 #: templates/js/translated/stock.js:435 templates/js/translated/stock.js:436
-#, fuzzy
-#| msgid "Empty serial number string"
 msgid "Enter serial number"
-msgstr "シリアル番号は空です"
+msgstr ""
 
 #: templates/js/translated/stock.js:452
-#, fuzzy
-#| msgid "Empty serial number string"
 msgid "Enter a serial number"
-msgstr "シリアル番号は空です"
+msgstr ""
 
 #: templates/js/translated/stock.js:472
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "No matching serial number"
-msgstr "シリアル番号が見つかりません"
+msgstr ""
 
 #: templates/js/translated/stock.js:481
-#, fuzzy
-#| msgid "No matching action found"
 msgid "More than one matching result found"
-msgstr "一致するアクションが見つかりませんでした"
+msgstr ""
 
 #: templates/js/translated/stock.js:604
-#, fuzzy
-#| msgid "Confirm delete"
 msgid "Confirm stock assignment"
-msgstr "削除の確認"
+msgstr ""
 
 #: templates/js/translated/stock.js:605
 msgid "Assign Stock to Customer"
@@ -9535,10 +9371,8 @@ msgid "Supplier part information will be deleted for merged items"
 msgstr ""
 
 #: templates/js/translated/stock.js:772
-#, fuzzy
-#| msgid "Confirm delete"
 msgid "Confirm stock item merge"
-msgstr "削除の確認"
+msgstr ""
 
 #: templates/js/translated/stock.js:773
 msgid "Merge Stock Items"
@@ -9786,10 +9620,8 @@ msgid "The Stock Item is tracked by either a batch code or serial number"
 msgstr ""
 
 #: templates/js/translated/stock.js:2676
-#, fuzzy
-#| msgid "Select file to attach"
 msgid "Select part to install"
-msgstr "添付ファイルを選択"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:56
 msgid "Trackable Part"
@@ -9939,10 +9771,8 @@ msgid "Has batch code"
 msgstr ""
 
 #: templates/js/translated/table_filters.js:246
-#, fuzzy
-#| msgid "Trackable"
 msgid "Tracked"
-msgstr "追跡可能"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:247
 msgid "Stock item is tracked by either batch code or serial number"
@@ -10010,10 +9840,8 @@ msgid "Show active parts"
 msgstr ""
 
 #: templates/js/translated/table_filters.js:448
-#, fuzzy
-#| msgid "Delete parts"
 msgid "In stock"
-msgstr "パーツを削除"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:456
 msgid "Available stock"
@@ -10028,10 +9856,8 @@ msgid "Export Table Data"
 msgstr ""
 
 #: templates/js/translated/tables.js:54
-#, fuzzy
-#| msgid "Select file to attach"
 msgid "Select File Format"
-msgstr "添付ファイルを選択"
+msgstr ""
 
 #: templates/js/translated/tables.js:433
 msgid "Loading data"
@@ -10276,10 +10102,8 @@ msgid "Delete selected items"
 msgstr ""
 
 #: templates/stock_table.html:55
-#, fuzzy
-#| msgid "Delete parts"
 msgid "Delete stock"
-msgstr "パーツを削除"
+msgstr ""
 
 #: templates/yesnolabel.html:4
 msgid "Yes"
@@ -10345,12 +10169,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#, fuzzy
-#~| msgid "Invalid group: {g}"
-#~ msgid "Invalid group {group}"
-#~ msgstr "無効なグループ： {g}"
-
-#, fuzzy
-#~| msgid "Select file to attach"
-#~ msgid "Select Bill of Materials file"
-#~ msgstr "添付ファイルを選択"
