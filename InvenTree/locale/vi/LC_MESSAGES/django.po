@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-29 05:07+0000\n"
-"PO-Revision-Date: 2021-11-30 21:51\n"
+"PO-Revision-Date: 2022-04-29 05:17\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -279,28 +279,20 @@ msgid "File is too large"
 msgstr ""
 
 #: InvenTree/serializers.py:407
-#, fuzzy
-#| msgid "Latest serial number"
 msgid "No columns found in file"
-msgstr "Số seri mới nhất"
+msgstr ""
 
 #: InvenTree/serializers.py:410
-#, fuzzy
-#| msgid "Latest serial number"
 msgid "No data rows found in file"
-msgstr "Số seri mới nhất"
+msgstr ""
 
 #: InvenTree/serializers.py:533
-#, fuzzy
-#| msgid "Latest serial number"
 msgid "No data rows provided"
-msgstr "Số seri mới nhất"
+msgstr ""
 
 #: InvenTree/serializers.py:536
-#, fuzzy
-#| msgid "Latest serial number"
 msgid "No data columns supplied"
-msgstr "Số seri mới nhất"
+msgstr ""
 
 #: InvenTree/serializers.py:623
 #, python-brace-format
@@ -1058,20 +1050,16 @@ msgid "Enter serial numbers for build outputs"
 msgstr ""
 
 #: build/serializers.py:245
-#, fuzzy
-#| msgid "Latest Serial Number"
 msgid "Auto Allocate Serial Numbers"
-msgstr "Số seri mới nhất"
+msgstr ""
 
 #: build/serializers.py:246
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr ""
 
 #: build/serializers.py:280 stock/api.py:593
-#, fuzzy
-#| msgid "Latest serial number"
 msgid "The following serial numbers already exist"
-msgstr "Số seri mới nhất"
+msgstr ""
 
 #: build/serializers.py:333 build/serializers.py:406
 msgid "A list of build outputs must be provided"
@@ -1106,10 +1094,8 @@ msgid "Status"
 msgstr "Trạng thái"
 
 #: build/serializers.py:389
-#, fuzzy
-#| msgid "Completed"
 msgid "Accept Incomplete Allocation"
-msgstr "Đã hoàn thành"
+msgstr ""
 
 #: build/serializers.py:390
 msgid "Complete ouputs if stock has not been fully allocated"
@@ -1128,10 +1114,8 @@ msgid "Required stock has not been fully allocated"
 msgstr ""
 
 #: build/serializers.py:463
-#, fuzzy
-#| msgid "Completed"
 msgid "Accept Incomplete"
-msgstr "Đã hoàn thành"
+msgstr ""
 
 #: build/serializers.py:464
 msgid "Accept that the required number of build outputs have not been completed"
@@ -1196,10 +1180,8 @@ msgid "Stock location where parts are to be sourced (leave blank to take from an
 msgstr ""
 
 #: build/serializers.py:757
-#, fuzzy
-#| msgid "Stock Location"
 msgid "Exclude Location"
-msgstr "Kho hàng"
+msgstr ""
 
 #: build/serializers.py:758
 msgid "Exclude stock items from this selected location"
@@ -1258,10 +1240,8 @@ msgid "Complete Build"
 msgstr ""
 
 #: build/templates/build/build_base.html:87
-#, fuzzy
-#| msgid "Description"
 msgid "Build Description"
-msgstr "Mô tả"
+msgstr ""
 
 #: build/templates/build/build_base.html:101
 #, python-format
@@ -1353,10 +1333,8 @@ msgid "Are you sure you wish to cancel this build?"
 msgstr ""
 
 #: build/templates/build/delete_build.html:5
-#, fuzzy
-#| msgid "Are you sure you want to sign out?"
 msgid "Are you sure you want to delete this build?"
-msgstr "Bạn có chắc bạn muốn đăng xuất không?"
+msgstr ""
 
 #: build/templates/build/detail.html:15
 msgid "Build Details"
@@ -1430,10 +1408,8 @@ msgid "Automatically allocate stock to build"
 msgstr ""
 
 #: build/templates/build/detail.html:180
-#, fuzzy
-#| msgid "Latest Serial Number"
 msgid "Auto Allocate"
-msgstr "Số seri mới nhất"
+msgstr ""
 
 #: build/templates/build/detail.html:182
 msgid "Manually allocate stock to build"
@@ -1571,10 +1547,8 @@ msgid "Build Order Details"
 msgstr ""
 
 #: build/templates/build/sidebar.html:15
-#, fuzzy
-#| msgid "Completed"
 msgid "Completed Outputs"
-msgstr "Đã hoàn thành"
+msgstr ""
 
 #: build/views.py:73
 msgid "Build was cancelled"
@@ -2333,42 +2307,32 @@ msgid "Display PDF reports in the browser, instead of downloading as a file"
 msgstr ""
 
 #: common/models.py:1285
-#, fuzzy
-#| msgid "Search Settings"
 msgid "Search Parts"
-msgstr "Cài đặt tìm kiếm"
+msgstr ""
 
 #: common/models.py:1286
-#, fuzzy
-#| msgid "System Information"
 msgid "Display parts in search preview window"
-msgstr "Thông tin hệ thống"
+msgstr ""
 
 #: common/models.py:1292
-#, fuzzy
-#| msgid "Select Category"
 msgid "Search Categories"
-msgstr "Chọn danh mục"
+msgstr ""
 
 #: common/models.py:1293
 msgid "Display part categories in search preview window"
 msgstr ""
 
 #: common/models.py:1299
-#, fuzzy
-#| msgid "Search Settings"
 msgid "Search Stock"
-msgstr "Cài đặt tìm kiếm"
+msgstr ""
 
 #: common/models.py:1300
 msgid "Display stock items in search preview window"
 msgstr ""
 
 #: common/models.py:1306
-#, fuzzy
-#| msgid "Stock Location"
 msgid "Search Locations"
-msgstr "Kho hàng"
+msgstr ""
 
 #: common/models.py:1307
 msgid "Display stock locations in search preview window"
@@ -2383,20 +2347,16 @@ msgid "Display companies in search preview window"
 msgstr ""
 
 #: common/models.py:1320
-#, fuzzy
-#| msgid "Purchase Order"
 msgid "Search Purchase Orders"
-msgstr "Đơn hàng"
+msgstr ""
 
 #: common/models.py:1321
 msgid "Display purchase orders in search preview window"
 msgstr ""
 
 #: common/models.py:1327
-#, fuzzy
-#| msgid "Completed"
 msgid "Search Sales Orders"
-msgstr "Đã hoàn thành"
+msgstr ""
 
 #: common/models.py:1328
 msgid "Display sales orders in search preview window"
@@ -2455,10 +2415,8 @@ msgid "Part Scheduling"
 msgstr ""
 
 #: common/models.py:1385
-#, fuzzy
-#| msgid "System Information"
 msgid "Display part scheduling information"
-msgstr "Thông tin hệ thống"
+msgstr ""
 
 #: common/models.py:1443 company/forms.py:43
 msgid "Price break quantity"
@@ -2849,10 +2807,8 @@ msgid "Order multiple"
 msgstr ""
 
 #: company/models.py:708
-#, fuzzy
-#| msgid "upload date"
 msgid "last updated"
-msgstr "Ngày tải lên"
+msgstr ""
 
 #: company/serializers.py:70
 msgid "Default currency used for this supplier"
@@ -3701,10 +3657,8 @@ msgid "Enter batch code for incoming stock items"
 msgstr ""
 
 #: order/serializers.py:281 templates/js/translated/order.js:585
-#, fuzzy
-#| msgid "Latest serial number"
 msgid "Enter serial numbers for incoming stock items"
-msgstr "Số seri mới nhất"
+msgstr ""
 
 #: order/serializers.py:294
 msgid "Barcode Hash"
@@ -3751,10 +3705,8 @@ msgid "Quantity must be positive"
 msgstr ""
 
 #: order/serializers.py:908
-#, fuzzy
-#| msgid "Latest serial number"
 msgid "Enter serial numbers to allocate"
-msgstr "Số seri mới nhất"
+msgstr ""
 
 #: order/serializers.py:932 order/serializers.py:1057
 msgid "Shipment has already been shipped"
@@ -3765,10 +3717,8 @@ msgid "Shipment is not associated with this order"
 msgstr ""
 
 #: order/serializers.py:987
-#, fuzzy
-#| msgid "Latest serial number"
 msgid "No match found for the following serial numbers"
-msgstr "Số seri mới nhất"
+msgstr ""
 
 #: order/serializers.py:997
 msgid "The following serial numbers are already allocated"
@@ -3819,10 +3769,8 @@ msgstr ""
 
 #: order/templates/order/order_base.html:89
 #: order/templates/order/sales_order_base.html:84
-#, fuzzy
-#| msgid "Description"
 msgid "Order Description"
-msgstr "Mô tả"
+msgstr ""
 
 #: order/templates/order/order_base.html:94
 #: order/templates/order/sales_order_base.html:89
@@ -3831,18 +3779,14 @@ msgstr ""
 
 #: order/templates/order/order_base.html:124
 #: order/templates/order/sales_order_base.html:128
-#, fuzzy
-#| msgid "Completion Date"
 msgid "Completed Line Items"
-msgstr "Ngày hoàn thành"
+msgstr ""
 
 #: order/templates/order/order_base.html:130
 #: order/templates/order/sales_order_base.html:134
 #: order/templates/order/sales_order_base.html:144
-#, fuzzy
-#| msgid "Completed"
 msgid "Incomplete"
-msgstr "Đã hoàn thành"
+msgstr ""
 
 #: order/templates/order/order_base.html:149
 #: report/templates/report/inventree_build_order_base.html:122
@@ -4037,10 +3981,8 @@ msgstr ""
 
 #: order/templates/order/sales_order_base.html:66
 #: order/templates/order/sales_order_base.html:229
-#, fuzzy
-#| msgid "Completed"
 msgid "Complete Sales Order"
-msgstr "Đã hoàn thành"
+msgstr ""
 
 #: order/templates/order/sales_order_base.html:102
 msgid "This Sales Order has not been fully allocated"
@@ -4054,10 +3996,8 @@ msgstr ""
 #: order/templates/order/sales_order_base.html:140
 #: order/templates/order/sales_order_detail.html:77
 #: order/templates/order/so_sidebar.html:11
-#, fuzzy
-#| msgid "Completed"
 msgid "Completed Shipments"
-msgstr "Đã hoàn thành"
+msgstr ""
 
 #: order/templates/order/sales_order_base.html:215
 msgid "Edit Sales Order"
@@ -4158,16 +4098,12 @@ msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr ""
 
 #: part/api.py:509
-#, fuzzy
-#| msgid "Purchase Order"
 msgid "Incoming Purchase Order"
-msgstr "Đơn hàng"
+msgstr ""
 
 #: part/api.py:529
-#, fuzzy
-#| msgid "Completed"
 msgid "Outgoing Sales Order"
-msgstr "Đã hoàn thành"
+msgstr ""
 
 #: part/api.py:547
 msgid "Stock produced by Build Order"
@@ -4558,16 +4494,12 @@ msgid "Unique part ID value"
 msgstr ""
 
 #: part/models.py:2694
-#, fuzzy
-#| msgid "Part"
 msgid "Part Name"
-msgstr "Nguyên liệu"
+msgstr ""
 
 #: part/models.py:2698
-#, fuzzy
-#| msgid "Part"
 msgid "Part IPN"
-msgstr "Nguyên liệu"
+msgstr ""
 
 #: part/models.py:2699
 msgid "Part IPN value"
@@ -4740,22 +4672,16 @@ msgid "Delete existing BOM items before uploading"
 msgstr ""
 
 #: part/serializers.py:1025
-#, fuzzy
-#| msgid "Latest serial number"
 msgid "No part column specified"
-msgstr "Số seri mới nhất"
+msgstr ""
 
 #: part/serializers.py:1068
-#, fuzzy
-#| msgid "Latest serial number"
 msgid "Multiple matching parts found"
-msgstr "Số seri mới nhất"
+msgstr ""
 
 #: part/serializers.py:1071
-#, fuzzy
-#| msgid "Latest serial number"
 msgid "No matching part found"
-msgstr "Số seri mới nhất"
+msgstr ""
 
 #: part/serializers.py:1074
 msgid "Part is not designated as a component"
@@ -4911,10 +4837,8 @@ msgid "Part created successfully"
 msgstr ""
 
 #: part/templates/part/category_delete.html:7
-#, fuzzy
-#| msgid "Are you sure you want to sign out?"
 msgid "Are you sure you want to delete this part category?"
-msgstr "Bạn có chắc bạn muốn đăng xuất không?"
+msgstr ""
 
 #: part/templates/part/category_delete.html:12
 #, python-format
@@ -4989,10 +4913,8 @@ msgid "Sales Order Allocations"
 msgstr ""
 
 #: part/templates/part/detail.html:136
-#, fuzzy
-#| msgid "Part"
 msgid "Part Notes"
-msgstr "Nguyên liệu"
+msgstr ""
 
 #: part/templates/part/detail.html:151
 msgid "Part Variants"
@@ -5268,10 +5190,8 @@ msgstr ""
 
 #: part/templates/part/part_base.html:160
 #: part/templates/part/part_base.html:573
-#, fuzzy
-#| msgid "Show latest parts"
 msgid "Show Part Details"
-msgstr "Hiển thị nguyên liệu mới nhất"
+msgstr ""
 
 #: part/templates/part/part_base.html:177
 #, python-format
@@ -5284,16 +5204,12 @@ msgid "In Stock"
 msgstr ""
 
 #: part/templates/part/part_base.html:215
-#, fuzzy
-#| msgid "Build Orders"
 msgid "Allocated to Build Orders"
-msgstr "Tạo đơn hàng"
+msgstr ""
 
 #: part/templates/part/part_base.html:224
-#, fuzzy
-#| msgid "Completed"
 msgid "Allocated to Sales Orders"
-msgstr "Đã hoàn thành"
+msgstr ""
 
 #: part/templates/part/part_base.html:232 templates/js/translated/bom.js:937
 msgid "Can Build"
@@ -5315,10 +5231,8 @@ msgstr "Số seri mới nhất"
 
 #: part/templates/part/part_base.html:320
 #: stock/templates/stock/item_base.html:166
-#, fuzzy
-#| msgid "Latest serial number"
 msgid "Search for serial number"
-msgstr "Số seri mới nhất"
+msgstr ""
 
 #: part/templates/part/part_base.html:443 part/templates/part/prices.html:147
 msgid "Calculate"
@@ -5411,8 +5325,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -5675,10 +5588,8 @@ msgid "No author found"
 msgstr ""
 
 #: plugin/integration.py:160
-#, fuzzy
-#| msgid "Latest serial number"
 msgid "No date found"
-msgstr "Số seri mới nhất"
+msgstr ""
 
 #: plugin/models.py:26
 msgid "Plugin Configuration"
@@ -5733,10 +5644,8 @@ msgid "A numerical setting"
 msgstr ""
 
 #: plugin/samples/integration/sample.py:58
-#, fuzzy
-#| msgid "Theme Settings"
 msgid "Choice Setting"
-msgstr "Thiết lập giao diện"
+msgstr ""
 
 #: plugin/samples/integration/sample.py:59
 msgid "A setting with multiple choices"
@@ -6443,20 +6352,16 @@ msgid "previous page"
 msgstr ""
 
 #: stock/templates/stock/item_base.html:161
-#, fuzzy
-#| msgid "Latest serial number"
 msgid "Navigate to previous serial number"
-msgstr "Số seri mới nhất"
+msgstr ""
 
 #: stock/templates/stock/item_base.html:170
 msgid "next page"
 msgstr ""
 
 #: stock/templates/stock/item_base.html:170
-#, fuzzy
-#| msgid "Latest serial number"
 msgid "Navigate to next serial number"
-msgstr "Số seri mới nhất"
+msgstr ""
 
 #: stock/templates/stock/item_base.html:197
 #, python-format
@@ -6937,10 +6842,8 @@ msgid "No unread notifications found"
 msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:140
-#, fuzzy
-#| msgid "Latest serial number"
 msgid "No notification history found"
-msgstr "Số seri mới nhất"
+msgstr ""
 
 #: templates/InvenTree/notifications/sidebar.html:8
 msgid "Inbox"
@@ -7038,20 +6941,16 @@ msgid "Part Parameter Templates"
 msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:10
-#, fuzzy
-#| msgid "Account Settings"
 msgid "Plugin Settings"
-msgstr "Cài đặt tài khoản"
+msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:16
 msgid "Changing the settings below require you to immediatly restart the server. Do not change this while under active usage."
 msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:34
-#, fuzzy
-#| msgid "Account Settings"
 msgid "Plugins"
-msgstr "Cài đặt tài khoản"
+msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:39
 #: templates/js/translated/plugin.js:15
@@ -7095,10 +6994,8 @@ msgid "Plugin details for %(name)s"
 msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:17
-#, fuzzy
-#| msgid "System Information"
 msgid "Plugin information"
-msgstr "Thông tin hệ thống"
+msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:48
 msgid "no version information supplied"
@@ -7113,10 +7010,8 @@ msgid "The code information is pulled from the latest git commit for this plugin
 msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:77
-#, fuzzy
-#| msgid "System Information"
 msgid "Package information"
-msgstr "Thông tin hệ thống"
+msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:83
 msgid "Installation method"
@@ -7153,16 +7048,12 @@ msgid "Commit Message"
 msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:117
-#, fuzzy
-#| msgid "Status"
 msgid "Sign Status"
-msgstr "Trạng thái"
+msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:122
-#, fuzzy
-#| msgid "Sign Out"
 msgid "Sign Key"
-msgstr "Đăng xuất"
+msgstr ""
 
 #: templates/InvenTree/settings/po.html:7
 msgid "Purchase Order Settings"
@@ -7182,10 +7073,8 @@ msgid "Edit setting"
 msgstr ""
 
 #: templates/InvenTree/settings/settings.html:116
-#, fuzzy
-#| msgid "Account Settings"
 msgid "Edit Plugin Setting"
-msgstr "Cài đặt tài khoản"
+msgstr ""
 
 #: templates/InvenTree/settings/settings.html:118
 msgid "Edit Global Setting"
@@ -7357,10 +7246,8 @@ msgid "Add a 3rd Party Account"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:172
-#, fuzzy
-#| msgid "Manufacturer"
 msgid "Multifactor"
-msgstr "Nhà sản xuất"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:177
 msgid "You have these factors available:"
@@ -7371,10 +7258,8 @@ msgid "TOTP"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:193
-#, fuzzy
-#| msgid "Status"
 msgid "Static"
-msgstr "Trạng thái"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:202
 msgid "You currently do not have any factors set up."
@@ -7505,10 +7390,8 @@ msgid "Label Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/user_notifications.html:8
-#, fuzzy
-#| msgid "Stock Location"
 msgid "Notification Settings"
-msgstr "Kho hàng"
+msgstr ""
 
 #: templates/about.html:10
 msgid "InvenTree Version Information"
@@ -7601,16 +7484,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -7712,10 +7593,8 @@ msgstr ""
 
 #: templates/allauth_2fa/backup_tokens.html:31
 #: templates/allauth_2fa/setup.html:40
-#, fuzzy
-#| msgid "Search Settings"
 msgid "Back to settings"
-msgstr "Cài đặt tìm kiếm"
+msgstr ""
 
 #: templates/allauth_2fa/remove.html:6
 msgid "Disable Two-Factor Authentication"
@@ -7996,10 +7875,8 @@ msgid "Check In"
 msgstr ""
 
 #: templates/js/translated/barcode.js:480
-#, fuzzy
-#| msgid "Latest serial number"
 msgid "No barcode provided"
-msgstr "Số seri mới nhất"
+msgstr ""
 
 #: templates/js/translated/barcode.js:515
 msgid "Stock Item already scanned"
@@ -8307,20 +8184,16 @@ msgid "No active build outputs found"
 msgstr ""
 
 #: templates/js/translated/build.js:1162
-#, fuzzy
-#| msgid "Build Orders"
 msgid "Allocated Stock"
-msgstr "Tạo đơn hàng"
+msgstr ""
 
 #: templates/js/translated/build.js:1169
 msgid "No tracked BOM items for this build"
 msgstr ""
 
 #: templates/js/translated/build.js:1191
-#, fuzzy
-#| msgid "Completed"
 msgid "Completed Tests"
-msgstr "Đã hoàn thành"
+msgstr ""
 
 #: templates/js/translated/build.js:1196
 msgid "No required tests for this build"
@@ -8415,10 +8288,8 @@ msgid "No matching stock items"
 msgstr ""
 
 #: templates/js/translated/build.js:2247
-#, fuzzy
-#| msgid "Stock Location"
 msgid "Automatic Stock Allocation"
-msgstr "Kho hàng"
+msgstr ""
 
 #: templates/js/translated/build.js:2248
 msgid "Stock items will be automatically allocated to this build order, according to the provided guidelines"
@@ -8581,10 +8452,8 @@ msgid "Select filter"
 msgstr ""
 
 #: templates/js/translated/filters.js:288
-#, fuzzy
-#| msgid "upload date"
 msgid "Download data"
-msgstr "Ngày tải lên"
+msgstr ""
 
 #: templates/js/translated/filters.js:291
 msgid "Reload data"
@@ -8657,10 +8526,8 @@ msgid "Field Name"
 msgstr ""
 
 #: templates/js/translated/forms.js:2559
-#, fuzzy
-#| msgid "Select Category"
 msgid "Select Columns"
-msgstr "Chọn danh mục"
+msgstr ""
 
 #: templates/js/translated/helpers.js:20
 msgid "YES"
@@ -8671,10 +8538,8 @@ msgid "NO"
 msgstr ""
 
 #: templates/js/translated/helpers.js:307
-#, fuzzy
-#| msgid "upload date"
 msgid "Notes updated"
-msgstr "Ngày tải lên"
+msgstr ""
 
 #: templates/js/translated/label.js:39
 msgid "Labels sent to printer"
@@ -8719,10 +8584,8 @@ msgid "No labels found which match the selected part(s)"
 msgstr ""
 
 #: templates/js/translated/label.js:261
-#, fuzzy
-#| msgid "Select Category"
 msgid "Select Printer"
-msgstr "Chọn danh mục"
+msgstr ""
 
 #: templates/js/translated/label.js:265
 msgid "Export to PDF"
@@ -8857,16 +8720,12 @@ msgid "The following stock items will be shipped"
 msgstr ""
 
 #: templates/js/translated/order.js:120
-#, fuzzy
-#| msgid "Completion Date"
 msgid "Complete Shipment"
-msgstr "Ngày hoàn thành"
+msgstr ""
 
 #: templates/js/translated/order.js:126
-#, fuzzy
-#| msgid "Comment"
 msgid "Confirm Shipment"
-msgstr "Bình luận"
+msgstr ""
 
 #: templates/js/translated/order.js:181
 msgid "Create New Shipment"
@@ -8897,10 +8756,8 @@ msgid "Add batch code"
 msgstr ""
 
 #: templates/js/translated/order.js:547 templates/js/translated/order.js:651
-#, fuzzy
-#| msgid "Latest serial number"
 msgid "Add serial numbers"
-msgstr "Số seri mới nhất"
+msgstr ""
 
 #: templates/js/translated/order.js:559
 msgid "Quantity to receive"
@@ -8939,10 +8796,8 @@ msgid "Order is overdue"
 msgstr ""
 
 #: templates/js/translated/order.js:1074 templates/js/translated/order.js:2577
-#, fuzzy
-#| msgid "Completion Date"
 msgid "Duplicate Line Item"
-msgstr "Ngày hoàn thành"
+msgstr ""
 
 #: templates/js/translated/order.js:1104 templates/js/translated/order.js:2599
 msgid "Edit Line Item"
@@ -8979,10 +8834,8 @@ msgid "Receive line item"
 msgstr ""
 
 #: templates/js/translated/order.js:1360 templates/js/translated/order.js:2532
-#, fuzzy
-#| msgid "Completion Date"
 msgid "Duplicate line item"
-msgstr "Ngày hoàn thành"
+msgstr ""
 
 #: templates/js/translated/order.js:1361 templates/js/translated/order.js:2533
 msgid "Edit line item"
@@ -9005,10 +8858,8 @@ msgid "Edit shipment"
 msgstr ""
 
 #: templates/js/translated/order.js:1530
-#, fuzzy
-#| msgid "Completion Date"
 msgid "Complete shipment"
-msgstr "Ngày hoàn thành"
+msgstr ""
 
 #: templates/js/translated/order.js:1535
 msgid "Delete shipment"
@@ -9023,10 +8874,8 @@ msgid "Delete Shipment"
 msgstr ""
 
 #: templates/js/translated/order.js:1606
-#, fuzzy
-#| msgid "Latest serial number"
 msgid "No matching shipments found"
-msgstr "Số seri mới nhất"
+msgstr ""
 
 #: templates/js/translated/order.js:1616
 msgid "Shipment Reference"
@@ -9466,10 +9315,8 @@ msgid "Enter serial numbers for new stock (or leave blank)"
 msgstr ""
 
 #: templates/js/translated/stock.js:303
-#, fuzzy
-#| msgid "Stock Location"
 msgid "Stock item duplicated"
-msgstr "Kho hàng"
+msgstr ""
 
 #: templates/js/translated/stock.js:393
 msgid "Created new stock item"
@@ -9480,38 +9327,28 @@ msgid "Created multiple stock items"
 msgstr ""
 
 #: templates/js/translated/stock.js:431
-#, fuzzy
-#| msgid "Latest Serial Number"
 msgid "Find Serial Number"
-msgstr "Số seri mới nhất"
+msgstr ""
 
 #: templates/js/translated/stock.js:435 templates/js/translated/stock.js:436
-#, fuzzy
-#| msgid "Latest serial number"
 msgid "Enter serial number"
-msgstr "Số seri mới nhất"
+msgstr ""
 
 #: templates/js/translated/stock.js:452
-#, fuzzy
-#| msgid "Latest serial number"
 msgid "Enter a serial number"
-msgstr "Số seri mới nhất"
+msgstr ""
 
 #: templates/js/translated/stock.js:472
-#, fuzzy
-#| msgid "Latest serial number"
 msgid "No matching serial number"
-msgstr "Số seri mới nhất"
+msgstr ""
 
 #: templates/js/translated/stock.js:481
 msgid "More than one matching result found"
 msgstr ""
 
 #: templates/js/translated/stock.js:604
-#, fuzzy
-#| msgid "Comment"
 msgid "Confirm stock assignment"
-msgstr "Bình luận"
+msgstr ""
 
 #: templates/js/translated/stock.js:605
 msgid "Assign Stock to Customer"
@@ -9534,10 +9371,8 @@ msgid "Supplier part information will be deleted for merged items"
 msgstr ""
 
 #: templates/js/translated/stock.js:772
-#, fuzzy
-#| msgid "Comment"
 msgid "Confirm stock item merge"
-msgstr "Bình luận"
+msgstr ""
 
 #: templates/js/translated/stock.js:773
 msgid "Merge Stock Items"
@@ -9960,10 +9795,8 @@ msgid "Show stock which is close to expiring"
 msgstr ""
 
 #: templates/js/translated/table_filters.js:280
-#, fuzzy
-#| msgid "Latest Parts"
 msgid "Test Passed"
-msgstr "Nguyên liệu mới nhất"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:284
 msgid "Include Installed Items"
@@ -10007,10 +9840,8 @@ msgid "Show active parts"
 msgstr ""
 
 #: templates/js/translated/table_filters.js:448
-#, fuzzy
-#| msgid "Stock"
 msgid "In stock"
-msgstr "Kiện hàng"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:456
 msgid "Available stock"
@@ -10025,10 +9856,8 @@ msgid "Export Table Data"
 msgstr ""
 
 #: templates/js/translated/tables.js:54
-#, fuzzy
-#| msgid "Select Category"
 msgid "Select File Format"
-msgstr "Chọn danh mục"
+msgstr ""
 
 #: templates/js/translated/tables.js:433
 msgid "Loading data"
@@ -10097,10 +9926,8 @@ msgid "Sell"
 msgstr "Bán"
 
 #: templates/navbar.html:116
-#, fuzzy
-#| msgid "Stock Location"
 msgid "Show Notifications"
-msgstr "Kho hàng"
+msgstr ""
 
 #: templates/navbar.html:119
 msgid "New Notifications"
@@ -10183,10 +10010,8 @@ msgid "Server is deployed using docker"
 msgstr ""
 
 #: templates/stats.html:39
-#, fuzzy
-#| msgid "System Information"
 msgid "Plugin Support"
-msgstr "Thông tin hệ thống"
+msgstr ""
 
 #: templates/stats.html:43
 msgid "Plugin support enabled"
@@ -10344,12 +10169,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#, fuzzy
-#~| msgid "Stock Location"
-#~ msgid "Part Stock Allocations"
-#~ msgstr "Kho hàng"
-
-#, fuzzy
-#~| msgid "Stock Location"
-#~ msgid "Stock Item Allocations"
-#~ msgstr "Kho hàng"
