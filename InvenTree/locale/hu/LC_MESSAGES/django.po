@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-29 07:59+0000\n"
-"PO-Revision-Date: 2022-04-29 09:58\n"
+"PO-Revision-Date: 2022-04-29 10:58\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1095,11 +1095,11 @@ msgstr "Állapot"
 
 #: build/serializers.py:389
 msgid "Accept Incomplete Allocation"
-msgstr ""
+msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:390
 msgid "Complete ouputs if stock has not been fully allocated"
-msgstr ""
+msgstr "Kimenetek befejezése akkor is ha a készlet nincs teljesen lefoglalva"
 
 #: build/serializers.py:447
 msgid "Accept Unallocated"
@@ -1169,7 +1169,7 @@ msgstr "Gyártási kimenetet nem lehet megadni a követésre kötelezett alkatr�
 
 #: build/serializers.py:670
 msgid "This stock item has already been allocated to this build output"
-msgstr ""
+msgstr "Ez a készlet tétel már le lett foglalva ehhez a gyártási kimenethez"
 
 #: build/serializers.py:697 order/serializers.py:1077
 msgid "Allocation items must be provided"
@@ -1490,11 +1490,11 @@ msgstr "Címke nyomtatása"
 
 #: build/templates/build/detail.html:274
 msgid "Expand all build output rows"
-msgstr ""
+msgstr "Összes gyártási kimenet sor kinyitása"
 
 #: build/templates/build/detail.html:278
 msgid "Collapse all build output rows"
-msgstr ""
+msgstr "Összes gyártási kimenet sor összezárása"
 
 #: build/templates/build/detail.html:295
 msgid "Completed Build Outputs"
@@ -7998,7 +7998,7 @@ msgstr "Alkatrészjegyzék tétel helyettesítők szerkesztése"
 
 #: templates/js/translated/bom.js:763
 msgid "Load BOM for subassembly"
-msgstr ""
+msgstr "BOM betöltése az al-gyártmányhoz"
 
 #: templates/js/translated/bom.js:773
 msgid "Substitutes Available"
@@ -8189,7 +8189,7 @@ msgstr "Lefoglalt készlet"
 
 #: templates/js/translated/build.js:1169
 msgid "No tracked BOM items for this build"
-msgstr "Nincsenek követett BOM tételek ebben a gyártásban"
+msgstr "Nincsenek követett BOM tételek ehhez a gyártáshoz"
 
 #: templates/js/translated/build.js:1191
 msgid "Completed Tests"
@@ -8197,7 +8197,7 @@ msgstr "Befejezett tesztek"
 
 #: templates/js/translated/build.js:1196
 msgid "No required tests for this build"
-msgstr ""
+msgstr "Nincsenek szükséges tesztek ehhez a gyártáshoz"
 
 #: templates/js/translated/build.js:1677 templates/js/translated/build.js:2506
 #: templates/js/translated/order.js:2179
@@ -8327,7 +8327,7 @@ msgstr "Gyártás késésben van"
 
 #: templates/js/translated/build.js:2378
 msgid "Progress"
-msgstr ""
+msgstr "Haladás"
 
 #: templates/js/translated/build.js:2414 templates/js/translated/stock.js:2523
 msgid "No user information"
