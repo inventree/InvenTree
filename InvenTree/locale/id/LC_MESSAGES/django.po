@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-29 05:07+0000\n"
-"PO-Revision-Date: 2021-11-30 21:51\n"
+"PO-Revision-Date: 2022-04-29 05:17\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -279,28 +279,20 @@ msgid "File is too large"
 msgstr ""
 
 #: InvenTree/serializers.py:407
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No columns found in file"
-msgstr "Aksi tidak ditemukan"
+msgstr ""
 
 #: InvenTree/serializers.py:410
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No data rows found in file"
-msgstr "Aksi tidak ditemukan"
+msgstr ""
 
 #: InvenTree/serializers.py:533
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No data rows provided"
-msgstr "Aksi tidak ditemukan"
+msgstr ""
 
 #: InvenTree/serializers.py:536
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No data columns supplied"
-msgstr "Aksi tidak ditemukan"
+msgstr ""
 
 #: InvenTree/serializers.py:623
 #, python-brace-format
@@ -1058,20 +1050,16 @@ msgid "Enter serial numbers for build outputs"
 msgstr ""
 
 #: build/serializers.py:245
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Auto Allocate Serial Numbers"
-msgstr "Aksi tidak ditemukan"
+msgstr ""
 
 #: build/serializers.py:246
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr ""
 
 #: build/serializers.py:280 stock/api.py:593
-#, fuzzy
-#| msgid "No matching action found"
 msgid "The following serial numbers already exist"
-msgstr "Aksi tidak ditemukan"
+msgstr ""
 
 #: build/serializers.py:333 build/serializers.py:406
 msgid "A list of build outputs must be provided"
@@ -1420,10 +1408,8 @@ msgid "Automatically allocate stock to build"
 msgstr ""
 
 #: build/templates/build/detail.html:180
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Auto Allocate"
-msgstr "Aksi tidak ditemukan"
+msgstr ""
 
 #: build/templates/build/detail.html:182
 msgid "Manually allocate stock to build"
@@ -2289,10 +2275,8 @@ msgid "Show overdue SOs on the homepage"
 msgstr ""
 
 #: common/models.py:1257
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Enable email notifications"
-msgstr "Aksi tidak ditemukan"
+msgstr ""
 
 #: common/models.py:1258
 msgid "Allow sending of emails for event notifications"
@@ -2331,10 +2315,8 @@ msgid "Display parts in search preview window"
 msgstr ""
 
 #: common/models.py:1292
-#, fuzzy
-#| msgid "Select Category"
 msgid "Search Categories"
-msgstr "Pilih Kategori"
+msgstr ""
 
 #: common/models.py:1293
 msgid "Display part categories in search preview window"
@@ -2373,10 +2355,8 @@ msgid "Display purchase orders in search preview window"
 msgstr ""
 
 #: common/models.py:1327
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Search Sales Orders"
-msgstr "Aksi tidak ditemukan"
+msgstr ""
 
 #: common/models.py:1328
 msgid "Display sales orders in search preview window"
@@ -3737,10 +3717,8 @@ msgid "Shipment is not associated with this order"
 msgstr ""
 
 #: order/serializers.py:987
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No match found for the following serial numbers"
-msgstr "Aksi tidak ditemukan"
+msgstr ""
 
 #: order/serializers.py:997
 msgid "The following serial numbers are already allocated"
@@ -4694,22 +4672,16 @@ msgid "Delete existing BOM items before uploading"
 msgstr ""
 
 #: part/serializers.py:1025
-#, fuzzy
-#| msgid "No action specified"
 msgid "No part column specified"
-msgstr "Tidak ada tindakan yang ditentukan"
+msgstr ""
 
 #: part/serializers.py:1068
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Multiple matching parts found"
-msgstr "Aksi tidak ditemukan"
+msgstr ""
 
 #: part/serializers.py:1071
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No matching part found"
-msgstr "Aksi tidak ditemukan"
+msgstr ""
 
 #: part/serializers.py:1074
 msgid "Part is not designated as a component"
@@ -5236,10 +5208,8 @@ msgid "Allocated to Build Orders"
 msgstr ""
 
 #: part/templates/part/part_base.html:224
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Allocated to Sales Orders"
-msgstr "Aksi tidak ditemukan"
+msgstr ""
 
 #: part/templates/part/part_base.html:232 templates/js/translated/bom.js:937
 msgid "Can Build"
@@ -5355,8 +5325,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -5615,16 +5584,12 @@ msgid "Label printing failed"
 msgstr ""
 
 #: plugin/integration.py:146
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No author found"
-msgstr "Aksi tidak ditemukan"
+msgstr ""
 
 #: plugin/integration.py:160
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No date found"
-msgstr "Aksi tidak ditemukan"
+msgstr ""
 
 #: plugin/models.py:26
 msgid "Plugin Configuration"
@@ -5703,10 +5668,8 @@ msgid "Name for the Plugin Package - can also contain a version indicator"
 msgstr ""
 
 #: plugin/serializers.py:59
-#, fuzzy
-#| msgid "Confirm item deletion"
 msgid "Confirm plugin installation"
-msgstr "Konfirmasi penghapusan item"
+msgstr ""
 
 #: plugin/serializers.py:60
 msgid "This will install this plugin now into the current instance. The instance will go into maintenance."
@@ -6875,16 +6838,12 @@ msgid "Delete Notification"
 msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:116
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No unread notifications found"
-msgstr "Aksi tidak ditemukan"
+msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:140
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No notification history found"
-msgstr "Aksi tidak ditemukan"
+msgstr ""
 
 #: templates/InvenTree/notifications/sidebar.html:8
 msgid "Inbox"
@@ -7431,10 +7390,8 @@ msgid "Label Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/user_notifications.html:8
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Notification Settings"
-msgstr "Aksi tidak ditemukan"
+msgstr ""
 
 #: templates/about.html:10
 msgid "InvenTree Version Information"
@@ -7527,16 +7484,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -7920,10 +7875,8 @@ msgid "Check In"
 msgstr ""
 
 #: templates/js/translated/barcode.js:480
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No barcode provided"
-msgstr "Aksi tidak ditemukan"
+msgstr ""
 
 #: templates/js/translated/barcode.js:515
 msgid "Stock Item already scanned"
@@ -8231,10 +8184,8 @@ msgid "No active build outputs found"
 msgstr ""
 
 #: templates/js/translated/build.js:1162
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Allocated Stock"
-msgstr "Aksi tidak ditemukan"
+msgstr ""
 
 #: templates/js/translated/build.js:1169
 msgid "No tracked BOM items for this build"
@@ -8575,10 +8526,8 @@ msgid "Field Name"
 msgstr ""
 
 #: templates/js/translated/forms.js:2559
-#, fuzzy
-#| msgid "Select Category"
 msgid "Select Columns"
-msgstr "Pilih Kategori"
+msgstr ""
 
 #: templates/js/translated/helpers.js:20
 msgid "YES"
@@ -8589,10 +8538,8 @@ msgid "NO"
 msgstr ""
 
 #: templates/js/translated/helpers.js:307
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Notes updated"
-msgstr "Aksi tidak ditemukan"
+msgstr ""
 
 #: templates/js/translated/label.js:39
 msgid "Labels sent to printer"
@@ -8637,10 +8584,8 @@ msgid "No labels found which match the selected part(s)"
 msgstr ""
 
 #: templates/js/translated/label.js:261
-#, fuzzy
-#| msgid "Select Category"
 msgid "Select Printer"
-msgstr "Pilih Kategori"
+msgstr ""
 
 #: templates/js/translated/label.js:265
 msgid "Export to PDF"
@@ -8779,10 +8724,8 @@ msgid "Complete Shipment"
 msgstr ""
 
 #: templates/js/translated/order.js:126
-#, fuzzy
-#| msgid "Confirm delete"
 msgid "Confirm Shipment"
-msgstr "Konfirmasi penghapusan"
+msgstr ""
 
 #: templates/js/translated/order.js:181
 msgid "Create New Shipment"
@@ -8813,10 +8756,8 @@ msgid "Add batch code"
 msgstr ""
 
 #: templates/js/translated/order.js:547 templates/js/translated/order.js:651
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Add serial numbers"
-msgstr "Aksi tidak ditemukan"
+msgstr ""
 
 #: templates/js/translated/order.js:559
 msgid "Quantity to receive"
@@ -8933,10 +8874,8 @@ msgid "Delete Shipment"
 msgstr ""
 
 #: templates/js/translated/order.js:1606
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No matching shipments found"
-msgstr "Aksi tidak ditemukan"
+msgstr ""
 
 #: templates/js/translated/order.js:1616
 msgid "Shipment Reference"
@@ -9352,10 +9291,8 @@ msgid "Serialize Stock Item"
 msgstr ""
 
 #: templates/js/translated/stock.js:100
-#, fuzzy
-#| msgid "Confirm item deletion"
 msgid "Confirm Stock Serialization"
-msgstr "Konfirmasi penghapusan item"
+msgstr ""
 
 #: templates/js/translated/stock.js:109
 msgid "Parent stock location"
@@ -9402,22 +9339,16 @@ msgid "Enter a serial number"
 msgstr ""
 
 #: templates/js/translated/stock.js:472
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No matching serial number"
-msgstr "Aksi tidak ditemukan"
+msgstr ""
 
 #: templates/js/translated/stock.js:481
-#, fuzzy
-#| msgid "No matching action found"
 msgid "More than one matching result found"
-msgstr "Aksi tidak ditemukan"
+msgstr ""
 
 #: templates/js/translated/stock.js:604
-#, fuzzy
-#| msgid "Confirm delete"
 msgid "Confirm stock assignment"
-msgstr "Konfirmasi penghapusan"
+msgstr ""
 
 #: templates/js/translated/stock.js:605
 msgid "Assign Stock to Customer"
@@ -9440,10 +9371,8 @@ msgid "Supplier part information will be deleted for merged items"
 msgstr ""
 
 #: templates/js/translated/stock.js:772
-#, fuzzy
-#| msgid "Confirm delete"
 msgid "Confirm stock item merge"
-msgstr "Konfirmasi penghapusan"
+msgstr ""
 
 #: templates/js/translated/stock.js:773
 msgid "Merge Stock Items"
@@ -9927,10 +9856,8 @@ msgid "Export Table Data"
 msgstr ""
 
 #: templates/js/translated/tables.js:54
-#, fuzzy
-#| msgid "Select Category"
 msgid "Select File Format"
-msgstr "Pilih Kategori"
+msgstr ""
 
 #: templates/js/translated/tables.js:433
 msgid "Loading data"
@@ -10241,3 +10168,4 @@ msgstr ""
 #: users/models.py:218
 msgid "Permission to delete items"
 msgstr ""
+
