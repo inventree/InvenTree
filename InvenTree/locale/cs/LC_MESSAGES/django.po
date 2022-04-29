@@ -1,99 +1,98 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
 #: templates/js/translated/order.js:2170
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-29 05:07+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2022-04-29 05:17\n"
+"Last-Translator: \n"
+"Language-Team: Czech\n"
+"Language: cs_CZ\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
+"Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
+"X-Crowdin-Project: inventree\n"
+"X-Crowdin-Project-ID: 452300\n"
+"X-Crowdin-Language: cs\n"
+"X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 138\n"
 
 #: InvenTree/api.py:57
 msgid "API endpoint not found"
-msgstr ""
+msgstr "API endpoint nebyl nalezen"
 
 #: InvenTree/api.py:103
 msgid "No action specified"
-msgstr ""
+msgstr "Činnost nebyla specifikována"
 
 #: InvenTree/api.py:118
 msgid "No matching action found"
-msgstr ""
+msgstr "Nebyla nalezena odpovídající činnost"
 
 #: InvenTree/fields.py:100
 msgid "Enter date"
-msgstr ""
+msgstr "Zadejte datum"
 
 #: InvenTree/forms.py:126 order/forms.py:24 order/forms.py:35 order/forms.py:46
 #: order/forms.py:57 templates/account/email_confirm.html:20
 #: templates/js/translated/forms.js:601
 msgid "Confirm"
-msgstr ""
+msgstr "Potvrdit"
 
 #: InvenTree/forms.py:142
 msgid "Confirm delete"
-msgstr ""
+msgstr "Potvrdit odstranění"
 
 #: InvenTree/forms.py:143
 msgid "Confirm item deletion"
-msgstr ""
+msgstr "Potvrdit odstranění položky"
 
 #: InvenTree/forms.py:174
 msgid "Enter password"
-msgstr ""
+msgstr "Zadejte heslo"
 
 #: InvenTree/forms.py:175
 msgid "Enter new password"
-msgstr ""
+msgstr "Zadejte nové heslo"
 
 #: InvenTree/forms.py:182
 msgid "Confirm password"
-msgstr ""
+msgstr "Potvrďte heslo"
 
 #: InvenTree/forms.py:183
 msgid "Confirm new password"
-msgstr ""
+msgstr "Potvrďte nové heslo"
 
 #: InvenTree/forms.py:215
 msgid "Select Category"
-msgstr ""
+msgstr "Vyberte kategorii"
 
 #: InvenTree/forms.py:236
 msgid "Email (again)"
-msgstr ""
+msgstr "Email (znovu)"
 
 #: InvenTree/forms.py:240
 msgid "Email address confirmation"
-msgstr ""
+msgstr "Potvrzení emailové adresy"
 
 #: InvenTree/forms.py:260
 msgid "You must type the same email each time."
-msgstr ""
+msgstr "Pokaždé musíte zadat stejný email."
 
 #: InvenTree/helpers.py:449
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
-msgstr ""
+msgstr "Duplicitní výrobní číslo: {sn}"
 
 #: InvenTree/helpers.py:456 order/models.py:282 order/models.py:435
 #: stock/views.py:993
 msgid "Invalid quantity provided"
-msgstr ""
+msgstr "Vyplněno neplatné množství"
 
 #: InvenTree/helpers.py:459
 msgid "Empty serial number string"
-msgstr ""
+msgstr "Nevyplněné výrobní číslo"
 
 #: InvenTree/helpers.py:491
 #, python-brace-format
@@ -103,7 +102,7 @@ msgstr ""
 #: InvenTree/helpers.py:494
 #, python-brace-format
 msgid "Invalid group: {g}"
-msgstr ""
+msgstr "Neplatná skupina: {g}"
 
 #: InvenTree/helpers.py:522
 #, python-brace-format
@@ -113,33 +112,33 @@ msgstr ""
 #: InvenTree/helpers.py:530
 #, python-brace-format
 msgid "Invalid/no group {group}"
-msgstr ""
+msgstr "Neplatná/nevyplněná skupina {group}"
 
 #: InvenTree/helpers.py:536
 msgid "No serial numbers found"
-msgstr ""
+msgstr "Nenalezena žádná výrobní čísla"
 
 #: InvenTree/helpers.py:540
 #, python-brace-format
 msgid "Number of unique serial number ({s}) must match quantity ({q})"
-msgstr ""
+msgstr "Počet unikátních výrobních čísel ({s}) musí odpovídat množství ({q})"
 
 #: InvenTree/models.py:185
 msgid "Missing file"
-msgstr ""
+msgstr "Chybějící soubor"
 
 #: InvenTree/models.py:186
 msgid "Missing external link"
-msgstr ""
+msgstr "Chybějící externí odkaz"
 
 #: InvenTree/models.py:197 stock/models.py:2202
 #: templates/js/translated/attachment.js:119
 msgid "Attachment"
-msgstr ""
+msgstr "Příloha"
 
 #: InvenTree/models.py:198
 msgid "Select file to attach"
-msgstr ""
+msgstr "Vyberte soubor k přiložení"
 
 #: InvenTree/models.py:204 company/models.py:131 company/models.py:348
 #: company/models.py:564 order/models.py:127 part/models.py:873
@@ -147,20 +146,20 @@ msgstr ""
 #: templates/js/translated/company.js:540
 #: templates/js/translated/company.js:829 templates/js/translated/part.js:1441
 msgid "Link"
-msgstr ""
+msgstr "Odkaz"
 
 #: InvenTree/models.py:205 build/models.py:332 part/models.py:874
 #: stock/models.py:669
 msgid "Link to external URL"
-msgstr ""
+msgstr "Odkaz na externí URL"
 
 #: InvenTree/models.py:208 templates/js/translated/attachment.js:163
 msgid "Comment"
-msgstr ""
+msgstr "Komentář"
 
 #: InvenTree/models.py:208
 msgid "File comment"
-msgstr ""
+msgstr "Komentář k souboru"
 
 #: InvenTree/models.py:214 InvenTree/models.py:215 common/models.py:1409
 #: common/models.py:1410 common/models.py:1631 common/models.py:1632
@@ -169,40 +168,40 @@ msgstr ""
 #: report/templates/report/inventree_test_report_base.html:96
 #: templates/js/translated/stock.js:2517
 msgid "User"
-msgstr ""
+msgstr "Uživatel"
 
 #: InvenTree/models.py:218
 msgid "upload date"
-msgstr ""
+msgstr "datum přidání"
 
 #: InvenTree/models.py:241
 msgid "Filename must not be empty"
-msgstr ""
+msgstr "Název souboru nesmí být prázdný"
 
 #: InvenTree/models.py:264
 msgid "Invalid attachment directory"
-msgstr ""
+msgstr "Neplatný adresář přílohy"
 
 #: InvenTree/models.py:274
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr ""
+msgstr "Název souboru obsahuje nepovolený znak '{c}'"
 
 #: InvenTree/models.py:277
 msgid "Filename missing extension"
-msgstr ""
+msgstr "Chybějící přípona souboru"
 
 #: InvenTree/models.py:284
 msgid "Attachment with this filename already exists"
-msgstr ""
+msgstr "Příloha s tímto názvem již existuje"
 
 #: InvenTree/models.py:291
 msgid "Error renaming file"
-msgstr ""
+msgstr "Chyba při přejmenování souboru"
 
 #: InvenTree/models.py:326
 msgid "Invalid choice"
-msgstr ""
+msgstr "Neplatný výběr"
 
 #: InvenTree/models.py:342 InvenTree/models.py:343 common/models.py:1617
 #: company/models.py:415 label/models.py:112 part/models.py:817
@@ -217,7 +216,7 @@ msgstr ""
 #: templates/js/translated/part.js:767 templates/js/translated/part.js:1748
 #: templates/js/translated/stock.js:2287
 msgid "Name"
-msgstr ""
+msgstr "Název"
 
 #: InvenTree/models.py:349 build/models.py:209
 #: build/templates/build/detail.html:24 company/models.py:354
@@ -241,133 +240,133 @@ msgstr ""
 #: templates/js/translated/part.js:1836 templates/js/translated/stock.js:1685
 #: templates/js/translated/stock.js:2299 templates/js/translated/stock.js:2354
 msgid "Description"
-msgstr ""
+msgstr "Popis"
 
 #: InvenTree/models.py:350
 msgid "Description (optional)"
-msgstr ""
+msgstr "Popis (volitelně)"
 
 #: InvenTree/models.py:358
 msgid "parent"
-msgstr ""
+msgstr "nadřazený"
 
 #: InvenTree/serializers.py:65 part/models.py:2891
 msgid "Must be a valid number"
-msgstr ""
+msgstr "Musí být platné číslo"
 
 #: InvenTree/serializers.py:299
 msgid "Filename"
-msgstr ""
+msgstr "Název souboru"
 
 #: InvenTree/serializers.py:334
 msgid "Invalid value"
-msgstr ""
+msgstr "Neplatná hodnota"
 
 #: InvenTree/serializers.py:355
 msgid "Data File"
-msgstr ""
+msgstr "Datový soubor"
 
 #: InvenTree/serializers.py:356
 msgid "Select data file for upload"
-msgstr ""
+msgstr "Vyberte datový soubor k nahrání"
 
 #: InvenTree/serializers.py:380
 msgid "Unsupported file type"
-msgstr ""
+msgstr "Nepodporovaný typ souboru"
 
 #: InvenTree/serializers.py:386
 msgid "File is too large"
-msgstr ""
+msgstr "Soubor je příliš velký"
 
 #: InvenTree/serializers.py:407
 msgid "No columns found in file"
-msgstr ""
+msgstr "V souboru nebyly nalezeny žádné sloupce"
 
 #: InvenTree/serializers.py:410
 msgid "No data rows found in file"
-msgstr ""
+msgstr "V souboru nebyly nalezeny žádné řádky s daty"
 
 #: InvenTree/serializers.py:533
 msgid "No data rows provided"
-msgstr ""
+msgstr "Nebyly zadány žádné řádky s daty"
 
 #: InvenTree/serializers.py:536
 msgid "No data columns supplied"
-msgstr ""
+msgstr "Nebyly zadány žádné sloupce s daty"
 
 #: InvenTree/serializers.py:623
 #, python-brace-format
 msgid "Missing required column: '{name}'"
-msgstr ""
+msgstr "Chybí povinný sloupec: '{name}'"
 
 #: InvenTree/serializers.py:632
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
-msgstr ""
+msgstr "Duplicitní sloupec: '{col}'"
 
 #: InvenTree/settings.py:668
 msgid "Czech"
-msgstr ""
+msgstr "Čeština"
 
 #: InvenTree/settings.py:669
 msgid "German"
-msgstr ""
+msgstr "Němčina"
 
 #: InvenTree/settings.py:670
 msgid "Greek"
-msgstr ""
+msgstr "Řečtina"
 
 #: InvenTree/settings.py:671
 msgid "English"
-msgstr ""
+msgstr "Angličtina"
 
 #: InvenTree/settings.py:672
 msgid "Spanish"
-msgstr ""
+msgstr "Španělština"
 
 #: InvenTree/settings.py:673
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "Španělština (Mexiko)"
 
 #: InvenTree/settings.py:674
 msgid "Farsi / Persian"
-msgstr ""
+msgstr "Farsi / Perština"
 
 #: InvenTree/settings.py:675
 msgid "French"
-msgstr ""
+msgstr "Francouzština"
 
 #: InvenTree/settings.py:676
 msgid "Hebrew"
-msgstr ""
+msgstr "Hebrejština"
 
 #: InvenTree/settings.py:677
 msgid "Hungarian"
-msgstr ""
+msgstr "Maďarština"
 
 #: InvenTree/settings.py:678
 msgid "Italian"
-msgstr ""
+msgstr "Italština"
 
 #: InvenTree/settings.py:679
 msgid "Japanese"
-msgstr ""
+msgstr "Japonština"
 
 #: InvenTree/settings.py:680
 msgid "Korean"
-msgstr ""
+msgstr "Korejština"
 
 #: InvenTree/settings.py:681
 msgid "Dutch"
-msgstr ""
+msgstr "Nizozemština"
 
 #: InvenTree/settings.py:682
 msgid "Norwegian"
-msgstr ""
+msgstr "Norština"
 
 #: InvenTree/settings.py:683
 msgid "Polish"
-msgstr ""
+msgstr "Polština"
 
 #: InvenTree/settings.py:684
 msgid "Portuguese"
@@ -379,126 +378,126 @@ msgstr ""
 
 #: InvenTree/settings.py:686
 msgid "Russian"
-msgstr ""
+msgstr "Ruština"
 
 #: InvenTree/settings.py:687
 msgid "Swedish"
-msgstr ""
+msgstr "Švédština"
 
 #: InvenTree/settings.py:688
 msgid "Thai"
-msgstr ""
+msgstr "Thajština"
 
 #: InvenTree/settings.py:689
 msgid "Turkish"
-msgstr ""
+msgstr "Turečtina"
 
 #: InvenTree/settings.py:690
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnamština"
 
 #: InvenTree/settings.py:691
 msgid "Chinese"
-msgstr ""
+msgstr "Čínština"
 
 #: InvenTree/status.py:110
 msgid "Background worker check failed"
-msgstr ""
+msgstr "Kontrola procesů na pozadí se nezdařila"
 
 #: InvenTree/status.py:114
 msgid "Email backend not configured"
-msgstr ""
+msgstr "Email backend není nakonfigurován"
 
 #: InvenTree/status.py:117
 msgid "InvenTree system health checks failed"
-msgstr ""
+msgstr "Kontroly zdraví systému InvenTree selhaly"
 
 #: InvenTree/status_codes.py:101 InvenTree/status_codes.py:142
 #: InvenTree/status_codes.py:323 templates/js/translated/table_filters.js:326
 msgid "Pending"
-msgstr ""
+msgstr "Nevyřízeno"
 
 #: InvenTree/status_codes.py:102
 msgid "Placed"
-msgstr ""
+msgstr "Umístěno"
 
 #: InvenTree/status_codes.py:103 InvenTree/status_codes.py:326
 #: order/templates/order/order_base.html:128
 #: order/templates/order/sales_order_base.html:132
 msgid "Complete"
-msgstr ""
+msgstr "Hotovo"
 
 #: InvenTree/status_codes.py:104 InvenTree/status_codes.py:144
 #: InvenTree/status_codes.py:325
 msgid "Cancelled"
-msgstr ""
+msgstr "Zrušeno"
 
 #: InvenTree/status_codes.py:105 InvenTree/status_codes.py:145
 #: InvenTree/status_codes.py:187
 msgid "Lost"
-msgstr ""
+msgstr "Ztraceno"
 
 #: InvenTree/status_codes.py:106 InvenTree/status_codes.py:146
 #: InvenTree/status_codes.py:189
 msgid "Returned"
-msgstr ""
+msgstr "Vráceno"
 
 #: InvenTree/status_codes.py:143 order/models.py:997
 #: templates/js/translated/order.js:2177 templates/js/translated/order.js:2474
 msgid "Shipped"
-msgstr ""
+msgstr "Odesláno"
 
 #: InvenTree/status_codes.py:183
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: InvenTree/status_codes.py:184
 msgid "Attention needed"
-msgstr ""
+msgstr "Vyžaduje pozornost"
 
 #: InvenTree/status_codes.py:185
 msgid "Damaged"
-msgstr ""
+msgstr "Poškozeno"
 
 #: InvenTree/status_codes.py:186
 msgid "Destroyed"
-msgstr ""
+msgstr "Zničeno"
 
 #: InvenTree/status_codes.py:188
 msgid "Rejected"
-msgstr ""
+msgstr "Odmítnuto"
 
 #: InvenTree/status_codes.py:276
 msgid "Legacy stock tracking entry"
-msgstr ""
+msgstr "Původní položka sledování zásob"
 
 #: InvenTree/status_codes.py:278
 msgid "Stock item created"
-msgstr ""
+msgstr "Položka zásob vytvořena"
 
 #: InvenTree/status_codes.py:280
 msgid "Edited stock item"
-msgstr ""
+msgstr "Položka zásob upravena"
 
 #: InvenTree/status_codes.py:281
 msgid "Assigned serial number"
-msgstr ""
+msgstr "Přiřazeno výrobní číslo"
 
 #: InvenTree/status_codes.py:283
 msgid "Stock counted"
-msgstr ""
+msgstr "Stav zásob sečten"
 
 #: InvenTree/status_codes.py:284
 msgid "Stock manually added"
-msgstr ""
+msgstr "Zásoba přidána ručně"
 
 #: InvenTree/status_codes.py:285
 msgid "Stock manually removed"
-msgstr ""
+msgstr "Zásoba odebrána ručně"
 
 #: InvenTree/status_codes.py:287
 msgid "Location changed"
-msgstr ""
+msgstr "Umístění změněno"
 
 #: InvenTree/status_codes.py:289
 msgid "Installed into assembly"
@@ -602,23 +601,23 @@ msgstr ""
 
 #: InvenTree/views.py:586
 msgid "Check box to confirm item deletion"
-msgstr ""
+msgstr "Zaškrtněte políčko pro potvrzení odstranění položky"
 
 #: InvenTree/views.py:601 templates/InvenTree/settings/user.html:22
 msgid "Edit User Information"
-msgstr ""
+msgstr "Upravit informace o uživateli"
 
 #: InvenTree/views.py:612 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
-msgstr ""
+msgstr "Nastavit heslo"
 
 #: InvenTree/views.py:631
 msgid "Password fields must match"
-msgstr ""
+msgstr "Hesla se musí shodovat"
 
 #: InvenTree/views.py:882 templates/navbar.html:152
 msgid "System Information"
-msgstr ""
+msgstr "Informace o systému"
 
 #: barcodes/api.py:55 barcodes/api.py:156
 msgid "Must provide barcode_data parameter"
@@ -626,11 +625,11 @@ msgstr ""
 
 #: barcodes/api.py:132
 msgid "No match found for barcode data"
-msgstr ""
+msgstr "Pro data čárového kódu nebyla nalezena shoda"
 
 #: barcodes/api.py:134
 msgid "Match found for barcode data"
-msgstr ""
+msgstr "Pro data čárového kódu byla nalezena shoda"
 
 #: barcodes/api.py:159
 msgid "Must provide stockitem parameter"
@@ -5326,8 +5325,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -7486,16 +7484,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -10172,3 +10168,4 @@ msgstr ""
 #: users/models.py:218
 msgid "Permission to delete items"
 msgstr ""
+
