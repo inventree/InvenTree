@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-29 05:07+0000\n"
-"PO-Revision-Date: 2021-11-30 21:51\n"
+"PO-Revision-Date: 2022-04-29 05:17\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -95,10 +95,9 @@ msgid "Empty serial number string"
 msgstr "Tom serienummersträng"
 
 #: InvenTree/helpers.py:491
-#, fuzzy, python-brace-format
-#| msgid "Invalid group: {g}"
+#, python-brace-format
 msgid "Invalid group range: {g}"
-msgstr "Ogiltig grupp: {g}"
+msgstr ""
 
 #: InvenTree/helpers.py:494
 #, python-brace-format
@@ -106,16 +105,14 @@ msgid "Invalid group: {g}"
 msgstr "Ogiltig grupp: {g}"
 
 #: InvenTree/helpers.py:522
-#, fuzzy, python-brace-format
-#| msgid "Invalid group: {g}"
+#, python-brace-format
 msgid "Invalid group sequence: {g}"
-msgstr "Ogiltig grupp: {g}"
+msgstr ""
 
 #: InvenTree/helpers.py:530
-#, fuzzy, python-brace-format
-#| msgid "Invalid group: {g}"
+#, python-brace-format
 msgid "Invalid/no group {group}"
-msgstr "Ogiltig grupp: {g}"
+msgstr ""
 
 #: InvenTree/helpers.py:536
 msgid "No serial numbers found"
@@ -262,20 +259,16 @@ msgid "Filename"
 msgstr "Filnamn"
 
 #: InvenTree/serializers.py:334
-#, fuzzy
-#| msgid "Invalid choice"
 msgid "Invalid value"
-msgstr "Ogiltigt val"
+msgstr ""
 
 #: InvenTree/serializers.py:355
 msgid "Data File"
 msgstr ""
 
 #: InvenTree/serializers.py:356
-#, fuzzy
-#| msgid "Select file to attach"
 msgid "Select data file for upload"
-msgstr "Välj fil att bifoga"
+msgstr ""
 
 #: InvenTree/serializers.py:380
 msgid "Unsupported file type"
@@ -286,28 +279,20 @@ msgid "File is too large"
 msgstr ""
 
 #: InvenTree/serializers.py:407
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No columns found in file"
-msgstr "Ingen matchande åtgärd hittades"
+msgstr ""
 
 #: InvenTree/serializers.py:410
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "No data rows found in file"
-msgstr "Inga serienummer hittades"
+msgstr ""
 
 #: InvenTree/serializers.py:533
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "No data rows provided"
-msgstr "Inga serienummer hittades"
+msgstr ""
 
 #: InvenTree/serializers.py:536
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No data columns supplied"
-msgstr "Ingen matchande åtgärd hittades"
+msgstr ""
 
 #: InvenTree/serializers.py:623
 #, python-brace-format
@@ -1065,20 +1050,16 @@ msgid "Enter serial numbers for build outputs"
 msgstr ""
 
 #: build/serializers.py:245
-#, fuzzy
-#| msgid "Empty serial number string"
 msgid "Auto Allocate Serial Numbers"
-msgstr "Tom serienummersträng"
+msgstr ""
 
 #: build/serializers.py:246
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr ""
 
 #: build/serializers.py:280 stock/api.py:593
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "The following serial numbers already exist"
-msgstr "Inga serienummer hittades"
+msgstr ""
 
 #: build/serializers.py:333 build/serializers.py:406
 msgid "A list of build outputs must be provided"
@@ -1113,10 +1094,8 @@ msgid "Status"
 msgstr ""
 
 #: build/serializers.py:389
-#, fuzzy
-#| msgid "Complete"
 msgid "Accept Incomplete Allocation"
-msgstr "Slutför"
+msgstr ""
 
 #: build/serializers.py:390
 msgid "Complete ouputs if stock has not been fully allocated"
@@ -1135,10 +1114,8 @@ msgid "Required stock has not been fully allocated"
 msgstr ""
 
 #: build/serializers.py:463
-#, fuzzy
-#| msgid "Complete"
 msgid "Accept Incomplete"
-msgstr "Slutför"
+msgstr ""
 
 #: build/serializers.py:464
 msgid "Accept that the required number of build outputs have not been completed"
@@ -1263,10 +1240,8 @@ msgid "Complete Build"
 msgstr ""
 
 #: build/templates/build/build_base.html:87
-#, fuzzy
-#| msgid "Description"
 msgid "Build Description"
-msgstr "Beskrivning"
+msgstr ""
 
 #: build/templates/build/build_base.html:101
 #, python-format
@@ -1433,10 +1408,8 @@ msgid "Automatically allocate stock to build"
 msgstr ""
 
 #: build/templates/build/detail.html:180
-#, fuzzy
-#| msgid "Empty serial number string"
 msgid "Auto Allocate"
-msgstr "Tom serienummersträng"
+msgstr ""
 
 #: build/templates/build/detail.html:182
 msgid "Manually allocate stock to build"
@@ -1574,10 +1547,8 @@ msgid "Build Order Details"
 msgstr ""
 
 #: build/templates/build/sidebar.html:15
-#, fuzzy
-#| msgid "Complete"
 msgid "Completed Outputs"
-msgstr "Slutför"
+msgstr ""
 
 #: build/views.py:73
 msgid "Build was cancelled"
@@ -2304,10 +2275,8 @@ msgid "Show overdue SOs on the homepage"
 msgstr ""
 
 #: common/models.py:1257
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Enable email notifications"
-msgstr "Ingen matchande åtgärd hittades"
+msgstr ""
 
 #: common/models.py:1258
 msgid "Allow sending of emails for event notifications"
@@ -2346,10 +2315,8 @@ msgid "Display parts in search preview window"
 msgstr ""
 
 #: common/models.py:1292
-#, fuzzy
-#| msgid "Select Category"
 msgid "Search Categories"
-msgstr "Välj Kategori"
+msgstr ""
 
 #: common/models.py:1293
 msgid "Display part categories in search preview window"
@@ -2388,10 +2355,8 @@ msgid "Display purchase orders in search preview window"
 msgstr ""
 
 #: common/models.py:1327
-#, fuzzy
-#| msgid "Empty serial number string"
 msgid "Search Sales Orders"
-msgstr "Tom serienummersträng"
+msgstr ""
 
 #: common/models.py:1328
 msgid "Display sales orders in search preview window"
@@ -2842,10 +2807,8 @@ msgid "Order multiple"
 msgstr ""
 
 #: company/models.py:708
-#, fuzzy
-#| msgid "upload date"
 msgid "last updated"
-msgstr "uppladdningsdatum"
+msgstr ""
 
 #: company/serializers.py:70
 msgid "Default currency used for this supplier"
@@ -3577,10 +3540,8 @@ msgid "Unit sale price"
 msgstr ""
 
 #: order/models.py:998
-#, fuzzy
-#| msgid "Shipped"
 msgid "Shipped quantity"
-msgstr "Skickad"
+msgstr ""
 
 #: order/models.py:1085
 msgid "Date of shipment"
@@ -3656,10 +3617,8 @@ msgstr ""
 
 #: order/models.py:1248 order/serializers.py:918 order/serializers.py:1046
 #: templates/js/translated/model_renderers.js:300
-#, fuzzy
-#| msgid "Shipped"
 msgid "Shipment"
-msgstr "Skickad"
+msgstr ""
 
 #: order/models.py:1249
 msgid "Sales order shipment reference"
@@ -3698,10 +3657,8 @@ msgid "Enter batch code for incoming stock items"
 msgstr ""
 
 #: order/serializers.py:281 templates/js/translated/order.js:585
-#, fuzzy
-#| msgid "Empty serial number string"
 msgid "Enter serial numbers for incoming stock items"
-msgstr "Tom serienummersträng"
+msgstr ""
 
 #: order/serializers.py:294
 msgid "Barcode Hash"
@@ -3748,10 +3705,8 @@ msgid "Quantity must be positive"
 msgstr ""
 
 #: order/serializers.py:908
-#, fuzzy
-#| msgid "Empty serial number string"
 msgid "Enter serial numbers to allocate"
-msgstr "Tom serienummersträng"
+msgstr ""
 
 #: order/serializers.py:932 order/serializers.py:1057
 msgid "Shipment has already been shipped"
@@ -3762,10 +3717,8 @@ msgid "Shipment is not associated with this order"
 msgstr ""
 
 #: order/serializers.py:987
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "No match found for the following serial numbers"
-msgstr "Inga serienummer hittades"
+msgstr ""
 
 #: order/serializers.py:997
 msgid "The following serial numbers are already allocated"
@@ -3816,10 +3769,8 @@ msgstr ""
 
 #: order/templates/order/order_base.html:89
 #: order/templates/order/sales_order_base.html:84
-#, fuzzy
-#| msgid "Description"
 msgid "Order Description"
-msgstr "Beskrivning"
+msgstr ""
 
 #: order/templates/order/order_base.html:94
 #: order/templates/order/sales_order_base.html:89
@@ -3834,10 +3785,8 @@ msgstr ""
 #: order/templates/order/order_base.html:130
 #: order/templates/order/sales_order_base.html:134
 #: order/templates/order/sales_order_base.html:144
-#, fuzzy
-#| msgid "Complete"
 msgid "Incomplete"
-msgstr "Slutför"
+msgstr ""
 
 #: order/templates/order/order_base.html:149
 #: report/templates/report/inventree_build_order_base.html:122
@@ -4545,10 +4494,8 @@ msgid "Unique part ID value"
 msgstr ""
 
 #: part/models.py:2694
-#, fuzzy
-#| msgid "Name"
 msgid "Part Name"
-msgstr "Namn"
+msgstr ""
 
 #: part/models.py:2698
 msgid "Part IPN"
@@ -4725,38 +4672,28 @@ msgid "Delete existing BOM items before uploading"
 msgstr ""
 
 #: part/serializers.py:1025
-#, fuzzy
-#| msgid "No action specified"
 msgid "No part column specified"
-msgstr "Ingen åtgärd specificerad"
+msgstr ""
 
 #: part/serializers.py:1068
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Multiple matching parts found"
-msgstr "Ingen matchande åtgärd hittades"
+msgstr ""
 
 #: part/serializers.py:1071
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No matching part found"
-msgstr "Ingen matchande åtgärd hittades"
+msgstr ""
 
 #: part/serializers.py:1074
 msgid "Part is not designated as a component"
 msgstr ""
 
 #: part/serializers.py:1083
-#, fuzzy
-#| msgid "Invalid quantity provided"
 msgid "Quantity not provided"
-msgstr "Ogiltigt antal angivet"
+msgstr ""
 
 #: part/serializers.py:1091
-#, fuzzy
-#| msgid "Invalid quantity provided"
 msgid "Invalid quantity"
-msgstr "Ogiltigt antal angivet"
+msgstr ""
 
 #: part/serializers.py:1110
 msgid "At least one BOM item is required"
@@ -4976,10 +4913,8 @@ msgid "Sales Order Allocations"
 msgstr ""
 
 #: part/templates/part/detail.html:136
-#, fuzzy
-#| msgid "Name"
 msgid "Part Notes"
-msgstr "Namn"
+msgstr ""
 
 #: part/templates/part/detail.html:151
 msgid "Part Variants"
@@ -5273,10 +5208,8 @@ msgid "Allocated to Build Orders"
 msgstr ""
 
 #: part/templates/part/part_base.html:224
-#, fuzzy
-#| msgid "Empty serial number string"
 msgid "Allocated to Sales Orders"
-msgstr "Tom serienummersträng"
+msgstr ""
 
 #: part/templates/part/part_base.html:232 templates/js/translated/bom.js:937
 msgid "Can Build"
@@ -5298,10 +5231,8 @@ msgstr ""
 
 #: part/templates/part/part_base.html:320
 #: stock/templates/stock/item_base.html:166
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "Search for serial number"
-msgstr "Inga serienummer hittades"
+msgstr ""
 
 #: part/templates/part/part_base.html:443 part/templates/part/prices.html:147
 msgid "Calculate"
@@ -5394,8 +5325,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -5654,16 +5584,12 @@ msgid "Label printing failed"
 msgstr ""
 
 #: plugin/integration.py:146
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No author found"
-msgstr "Ingen matchande åtgärd hittades"
+msgstr ""
 
 #: plugin/integration.py:160
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "No date found"
-msgstr "Inga serienummer hittades"
+msgstr ""
 
 #: plugin/models.py:26
 msgid "Plugin Configuration"
@@ -5742,20 +5668,16 @@ msgid "Name for the Plugin Package - can also contain a version indicator"
 msgstr ""
 
 #: plugin/serializers.py:59
-#, fuzzy
-#| msgid "Confirm item deletion"
 msgid "Confirm plugin installation"
-msgstr "Bekräfta borttagning av artikel"
+msgstr ""
 
 #: plugin/serializers.py:60
 msgid "This will install this plugin now into the current instance. The instance will go into maintenance."
 msgstr ""
 
 #: plugin/serializers.py:75
-#, fuzzy
-#| msgid "Email backend not configured"
 msgid "Installation not confirmed"
-msgstr "Backend för e-post är inte konfigurerad"
+msgstr ""
 
 #: plugin/serializers.py:77
 msgid "Either packagename of URL must be provided"
@@ -6225,20 +6147,16 @@ msgid "Serial numbers already exist"
 msgstr ""
 
 #: stock/serializers.py:405
-#, fuzzy
-#| msgid "Select file to attach"
 msgid "Select stock item to install"
-msgstr "Välj fil att bifoga"
+msgstr ""
 
 #: stock/serializers.py:421
 msgid "Stock item is unavailable"
 msgstr ""
 
 #: stock/serializers.py:428
-#, fuzzy
-#| msgid "Select file to attach"
 msgid "Selected part is not in the Bill of Materials"
-msgstr "Välj fil att bifoga"
+msgstr ""
 
 #: stock/serializers.py:646
 msgid "Part must be salable"
@@ -6442,10 +6360,8 @@ msgid "next page"
 msgstr ""
 
 #: stock/templates/stock/item_base.html:170
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "Navigate to next serial number"
-msgstr "Inga serienummer hittades"
+msgstr ""
 
 #: stock/templates/stock/item_base.html:197
 #, python-format
@@ -6922,16 +6838,12 @@ msgid "Delete Notification"
 msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:116
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No unread notifications found"
-msgstr "Ingen matchande åtgärd hittades"
+msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:140
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No notification history found"
-msgstr "Ingen matchande åtgärd hittades"
+msgstr ""
 
 #: templates/InvenTree/notifications/sidebar.html:8
 msgid "Inbox"
@@ -7478,10 +7390,8 @@ msgid "Label Settings"
 msgstr ""
 
 #: templates/InvenTree/settings/user_notifications.html:8
-#, fuzzy
-#| msgid "No matching action found"
 msgid "Notification Settings"
-msgstr "Ingen matchande åtgärd hittades"
+msgstr ""
 
 #: templates/about.html:10
 msgid "InvenTree Version Information"
@@ -7574,16 +7484,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -7967,10 +7875,8 @@ msgid "Check In"
 msgstr ""
 
 #: templates/js/translated/barcode.js:480
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "No barcode provided"
-msgstr "Inga serienummer hittades"
+msgstr ""
 
 #: templates/js/translated/barcode.js:515
 msgid "Stock Item already scanned"
@@ -8278,20 +8184,16 @@ msgid "No active build outputs found"
 msgstr ""
 
 #: templates/js/translated/build.js:1162
-#, fuzzy
-#| msgid "Empty serial number string"
 msgid "Allocated Stock"
-msgstr "Tom serienummersträng"
+msgstr ""
 
 #: templates/js/translated/build.js:1169
 msgid "No tracked BOM items for this build"
 msgstr ""
 
 #: templates/js/translated/build.js:1191
-#, fuzzy
-#| msgid "Complete"
 msgid "Completed Tests"
-msgstr "Slutför"
+msgstr ""
 
 #: templates/js/translated/build.js:1196
 msgid "No required tests for this build"
@@ -8550,10 +8452,8 @@ msgid "Select filter"
 msgstr ""
 
 #: templates/js/translated/filters.js:288
-#, fuzzy
-#| msgid "upload date"
 msgid "Download data"
-msgstr "uppladdningsdatum"
+msgstr ""
 
 #: templates/js/translated/filters.js:291
 msgid "Reload data"
@@ -8618,20 +8518,16 @@ msgid "Clear input"
 msgstr ""
 
 #: templates/js/translated/forms.js:2547
-#, fuzzy
-#| msgid "File comment"
 msgid "File Column"
-msgstr "Fil kommentar"
+msgstr ""
 
 #: templates/js/translated/forms.js:2547
 msgid "Field Name"
 msgstr ""
 
 #: templates/js/translated/forms.js:2559
-#, fuzzy
-#| msgid "Select Category"
 msgid "Select Columns"
-msgstr "Välj Kategori"
+msgstr ""
 
 #: templates/js/translated/helpers.js:20
 msgid "YES"
@@ -8642,10 +8538,8 @@ msgid "NO"
 msgstr ""
 
 #: templates/js/translated/helpers.js:307
-#, fuzzy
-#| msgid "upload date"
 msgid "Notes updated"
-msgstr "uppladdningsdatum"
+msgstr ""
 
 #: templates/js/translated/label.js:39
 msgid "Labels sent to printer"
@@ -8690,10 +8584,8 @@ msgid "No labels found which match the selected part(s)"
 msgstr ""
 
 #: templates/js/translated/label.js:261
-#, fuzzy
-#| msgid "Select Category"
 msgid "Select Printer"
-msgstr "Välj Kategori"
+msgstr ""
 
 #: templates/js/translated/label.js:265
 msgid "Export to PDF"
@@ -8828,16 +8720,12 @@ msgid "The following stock items will be shipped"
 msgstr ""
 
 #: templates/js/translated/order.js:120
-#, fuzzy
-#| msgid "Complete"
 msgid "Complete Shipment"
-msgstr "Slutför"
+msgstr ""
 
 #: templates/js/translated/order.js:126
-#, fuzzy
-#| msgid "Confirm delete"
 msgid "Confirm Shipment"
-msgstr "Bekräfta borttagning"
+msgstr ""
 
 #: templates/js/translated/order.js:181
 msgid "Create New Shipment"
@@ -8868,10 +8756,8 @@ msgid "Add batch code"
 msgstr ""
 
 #: templates/js/translated/order.js:547 templates/js/translated/order.js:651
-#, fuzzy
-#| msgid "Empty serial number string"
 msgid "Add serial numbers"
-msgstr "Tom serienummersträng"
+msgstr ""
 
 #: templates/js/translated/order.js:559
 msgid "Quantity to receive"
@@ -8890,10 +8776,8 @@ msgid "Ordered"
 msgstr ""
 
 #: templates/js/translated/order.js:715
-#, fuzzy
-#| msgid "Invalid quantity provided"
 msgid "Quantity to Receive"
-msgstr "Ogiltigt antal angivet"
+msgstr ""
 
 #: templates/js/translated/order.js:734
 msgid "Confirm receipt of items"
@@ -8974,10 +8858,8 @@ msgid "Edit shipment"
 msgstr ""
 
 #: templates/js/translated/order.js:1530
-#, fuzzy
-#| msgid "Complete"
 msgid "Complete shipment"
-msgstr "Slutför"
+msgstr ""
 
 #: templates/js/translated/order.js:1535
 msgid "Delete shipment"
@@ -8992,20 +8874,16 @@ msgid "Delete Shipment"
 msgstr ""
 
 #: templates/js/translated/order.js:1606
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No matching shipments found"
-msgstr "Ingen matchande åtgärd hittades"
+msgstr ""
 
 #: templates/js/translated/order.js:1616
 msgid "Shipment Reference"
 msgstr ""
 
 #: templates/js/translated/order.js:1640
-#, fuzzy
-#| msgid "Shipped"
 msgid "Not shipped"
-msgstr "Skickad"
+msgstr ""
 
 #: templates/js/translated/order.js:1646
 msgid "Tracking"
@@ -9413,10 +9291,8 @@ msgid "Serialize Stock Item"
 msgstr ""
 
 #: templates/js/translated/stock.js:100
-#, fuzzy
-#| msgid "Confirm item deletion"
 msgid "Confirm Stock Serialization"
-msgstr "Bekräfta borttagning av artikel"
+msgstr ""
 
 #: templates/js/translated/stock.js:109
 msgid "Parent stock location"
@@ -9455,34 +9331,24 @@ msgid "Find Serial Number"
 msgstr ""
 
 #: templates/js/translated/stock.js:435 templates/js/translated/stock.js:436
-#, fuzzy
-#| msgid "Empty serial number string"
 msgid "Enter serial number"
-msgstr "Tom serienummersträng"
+msgstr ""
 
 #: templates/js/translated/stock.js:452
-#, fuzzy
-#| msgid "Empty serial number string"
 msgid "Enter a serial number"
-msgstr "Tom serienummersträng"
+msgstr ""
 
 #: templates/js/translated/stock.js:472
-#, fuzzy
-#| msgid "No serial numbers found"
 msgid "No matching serial number"
-msgstr "Inga serienummer hittades"
+msgstr ""
 
 #: templates/js/translated/stock.js:481
-#, fuzzy
-#| msgid "No matching action found"
 msgid "More than one matching result found"
-msgstr "Ingen matchande åtgärd hittades"
+msgstr ""
 
 #: templates/js/translated/stock.js:604
-#, fuzzy
-#| msgid "Confirm delete"
 msgid "Confirm stock assignment"
-msgstr "Bekräfta borttagning"
+msgstr ""
 
 #: templates/js/translated/stock.js:605
 msgid "Assign Stock to Customer"
@@ -9505,10 +9371,8 @@ msgid "Supplier part information will be deleted for merged items"
 msgstr ""
 
 #: templates/js/translated/stock.js:772
-#, fuzzy
-#| msgid "Confirm delete"
 msgid "Confirm stock item merge"
-msgstr "Bekräfta borttagning"
+msgstr ""
 
 #: templates/js/translated/stock.js:773
 msgid "Merge Stock Items"
@@ -9756,10 +9620,8 @@ msgid "The Stock Item is tracked by either a batch code or serial number"
 msgstr ""
 
 #: templates/js/translated/stock.js:2676
-#, fuzzy
-#| msgid "Select file to attach"
 msgid "Select part to install"
-msgstr "Välj fil att bifoga"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:56
 msgid "Trackable Part"
@@ -9994,10 +9856,8 @@ msgid "Export Table Data"
 msgstr ""
 
 #: templates/js/translated/tables.js:54
-#, fuzzy
-#| msgid "Select file to attach"
 msgid "Select File Format"
-msgstr "Välj fil att bifoga"
+msgstr ""
 
 #: templates/js/translated/tables.js:433
 msgid "Loading data"
@@ -10309,12 +10169,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#, fuzzy
-#~| msgid "Invalid group: {g}"
-#~ msgid "Invalid group {group}"
-#~ msgstr "Ogiltig grupp: {g}"
-
-#, fuzzy
-#~| msgid "Select file to attach"
-#~ msgid "Select Bill of Materials file"
-#~ msgstr "Välj fil att bifoga"
