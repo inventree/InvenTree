@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-29 07:59+0000\n"
-"PO-Revision-Date: 2022-04-29 08:14\n"
+"PO-Revision-Date: 2022-04-30 17:52\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -306,7 +306,7 @@ msgstr "Doppelte Spalte: '{col}'"
 
 #: InvenTree/settings.py:668
 msgid "Czech"
-msgstr ""
+msgstr "Tschechisch"
 
 #: InvenTree/settings.py:669
 msgid "German"
@@ -370,11 +370,11 @@ msgstr "Polnisch"
 
 #: InvenTree/settings.py:684
 msgid "Portuguese"
-msgstr ""
+msgstr "Portugiesisch"
 
 #: InvenTree/settings.py:685
 msgid "Portuguese (Brazilian)"
-msgstr ""
+msgstr "Portugiesisch (Brasilien)"
 
 #: InvenTree/settings.py:686
 msgid "Russian"
@@ -1633,7 +1633,7 @@ msgstr "Eine Einstellung wurde geändert, die einen Neustart des Servers erforde
 
 #: common/models.py:687
 msgid "Server Instance Name"
-msgstr ""
+msgstr "Name der Serverinstanz"
 
 #: common/models.py:689
 msgid "String descriptor for the server instance"
@@ -5494,7 +5494,7 @@ msgstr "Unbekannte Datenbank"
 #: part/templatetags/inventree_extras.py:228
 #, python-brace-format
 msgid "{title} v{version}"
-msgstr ""
+msgstr "{title} v{version}"
 
 #: part/views.py:86
 msgid "Set Part Category"
@@ -7025,7 +7025,7 @@ msgstr "Dieses Plugin wurde als Paket installiert"
 
 #: templates/InvenTree/settings/plugin_settings.html:88
 msgid "This plugin was found in a local server path"
-msgstr ""
+msgstr "Dieses Plugin wurde in einem lokalen Serverpfad gefunden"
 
 #: templates/InvenTree/settings/plugin_settings.html:94
 msgid "Installation path"
@@ -8187,7 +8187,7 @@ msgstr "Keine aktiven Endprodukte gefunden"
 
 #: templates/js/translated/build.js:1162
 msgid "Allocated Stock"
-msgstr ""
+msgstr "Zugewiesener Bestand"
 
 #: templates/js/translated/build.js:1169
 msgid "No tracked BOM items for this build"
@@ -8195,11 +8195,11 @@ msgstr ""
 
 #: templates/js/translated/build.js:1191
 msgid "Completed Tests"
-msgstr ""
+msgstr "Abgeschlossene Tests"
 
 #: templates/js/translated/build.js:1196
 msgid "No required tests for this build"
-msgstr ""
+msgstr "Keine erforderlichen Tests für diesen Bauauftrag"
 
 #: templates/js/translated/build.js:1677 templates/js/translated/build.js:2506
 #: templates/js/translated/order.js:2179
@@ -8229,11 +8229,11 @@ msgstr "Anzahl pro"
 
 #: templates/js/translated/build.js:1775
 msgid "Insufficient stock available"
-msgstr ""
+msgstr "Unzureichender Bestand verfügbar"
 
 #: templates/js/translated/build.js:1777
 msgid "Sufficient stock available"
-msgstr ""
+msgstr "Ausreichender Bestand verfügbar"
 
 #: templates/js/translated/build.js:1806 templates/js/translated/build.js:2051
 #: templates/js/translated/build.js:2502 templates/js/translated/order.js:2446
@@ -8329,7 +8329,7 @@ msgstr "Bauauftrag ist überfällig"
 
 #: templates/js/translated/build.js:2378
 msgid "Progress"
-msgstr ""
+msgstr "Fortschritt"
 
 #: templates/js/translated/build.js:2414 templates/js/translated/stock.js:2523
 msgid "No user information"
