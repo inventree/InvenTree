@@ -19,6 +19,7 @@
     linkBarcodeDialog,
     scanItemsIntoLocation,
     unlinkBarcode,
+    onBarcodeScanClicked,
 */
 
 function makeBarcodeInput(placeholderText='', hintText='') {
@@ -31,6 +32,9 @@ function makeBarcodeInput(placeholderText='', hintText='') {
     hintText = hintText || '{% trans "Enter barcode data" %}';
 
     var html = `
+    <div id='barcode_scan_video_container' class='text-center' style='height: 240px; display: none;'>
+        <video id='barcode_scan_video' disablepictureinpicture playsinline height='240' style='object-fit: fill;'></video>
+    </div>
     <div class='form-group'>
         <label class='control-label' for='barcode'>{% trans "Barcode" %}</label>
         <div class='controls'>
@@ -39,6 +43,7 @@ function makeBarcodeInput(placeholderText='', hintText='') {
                     <span class='fas fa-qrcode'></span>
                 </span>
                 <input id='barcode' class='textinput textInput form-control' type='text' name='barcode' placeholder='${placeholderText}'>
+                <button id='barcode_scan_btn' class='btn btn-secondary' onclick='onBarcodeScanClicked()' style='display: none;'><span class='fas fa-camera'></span></button>
             </div>
             <div id='hint_barcode_data' class='help-block'>${hintText}</div>
         </div>
@@ -46,6 +51,44 @@ function makeBarcodeInput(placeholderText='', hintText='') {
     `;
 
     return html;
+}
+
+qrScanner = null;
+
+function startQrScanner() {
+    $('#barcode_scan_video_container').show();
+    qrScanner.start();
+}
+
+function stopQrScanner() {
+    if (qrScanner != null) qrScanner.stop();
+    $('#barcode_scan_video_container').hide();
+}
+
+function onBarcodeScanClicked(e) {
+    if ($('#barcode_scan_video_container').is(':visible') == false) startQrScanner(); else stopQrScanner();
+}
+
+function onCameraAvailable(hasCamera, options) {
+    if ( hasCamera == true ) {
+        // Camera is only acccessible if page is served over secure connection
+        if ( window.isSecureContext == true ) {
+            qrScanner = new QrScanner(document.getElementById('barcode_scan_video'), (result) => {
+                onBarcodeScanCompleted(result, options);
+            }, {
+                highlightScanRegion: true,
+                highlightCodeOutline: true,
+            });
+            $('#barcode_scan_btn').show();
+        }
+    }
+}
+
+function onBarcodeScanCompleted(result, options) {
+    if (result.data == '') return;
+    console.log('decoded qr code:', result.data);
+    stopQrScanner();
+    postBarcodeData(result.data, options);
 }
 
 function makeNotesField(options={}) {
@@ -186,6 +229,11 @@ function barcodeDialog(title, options={}) {
     $(modal).on('shown.bs.modal', function() {
         $(modal + ' .modal-form-content').scrollTop(0);
 
+        // Check for qr-scanner camera
+        QrScanner.hasCamera().then( (hasCamera) => {
+            onCameraAvailable(hasCamera, options);
+        });
+
         var barcode = $(modal + ' #barcode');
 
         // Handle 'enter' key on barcode
@@ -218,6 +266,12 @@ function barcodeDialog(title, options={}) {
             options.onShow();
         }
 
+    });
+
+    $(modal).on('hidden.bs.modal', function() {
+        stopQrScanner();
+        if (qrScanner != null) qrScanner.destroy();
+        qrScanner = null;
     });
 
     modalSetTitle(modal, title);
