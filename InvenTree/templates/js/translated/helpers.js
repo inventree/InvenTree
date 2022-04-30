@@ -163,27 +163,29 @@ function makeProgressBar(value, maximum, opts={}) {
 
     var style = options.style || '';
 
-    var text = '';
+    var text = options.text;
+    
+    if (!text) {
+        if (style == 'percent') {
+            // Display e.g. "50%"
 
-    if (style == 'percent') {
-        // Display e.g. "50%"
+            text = `${percent}%`;
+        } else if (style == 'max') {
+            // Display just the maximum value
+            text = `${maximum}`;
+        } else if (style == 'value') {
+            // Display just the current value
+            text = `${value}`;
+        } else if (style == 'blank') {
+            // No display!
+            text = '';
+        } else {
+            /* Default style
+            * Display e.g. "5 / 10"
+            */
 
-        text = `${percent}%`;
-    } else if (style == 'max') {
-        // Display just the maximum value
-        text = `${maximum}`;
-    } else if (style == 'value') {
-        // Display just the current value
-        text = `${value}`;
-    } else if (style == 'blank') {
-        // No display!
-        text = '';
-    } else {
-        /* Default style
-        * Display e.g. "5 / 10"
-        */
-
-        text = `${value} / ${maximum}`;
+            text = `${value} / ${maximum}`;
+        }
     }
 
     var id = options.id || 'progress-bar';

@@ -383,7 +383,7 @@ class PartTestTemplateList(generics.ListCreateAPIView):
         required = params.get('required', None)
 
         if required is not None:
-            queryset = queryset.filter(required=required)
+            queryset = queryset.filter(required=str2bool(required))
 
         return queryset
 
