@@ -62,12 +62,6 @@ DEBUG = _is_true(get_setting(
     CONFIG.get('debug', True)
 ))
 
-# Determine if we are running in "demo mode"
-DEMO_MODE = _is_true(get_setting(
-    'INVENTREE_DEMO',
-    CONFIG.get('demo', False)
-))
-
 DOCKER = _is_true(get_setting(
     'INVENTREE_DOCKER',
     False
@@ -216,9 +210,6 @@ MEDIA_URL = '/media/'
 
 if DEBUG:
     logger.info("InvenTree running with DEBUG enabled")
-
-if DEMO_MODE:
-    logger.warning("InvenTree running in DEMO mode")  # pragma: no cover
 
 logger.debug(f"MEDIA_ROOT: '{MEDIA_ROOT}'")
 logger.debug(f"STATIC_ROOT: '{STATIC_ROOT}'")
@@ -921,7 +912,7 @@ PLUGIN_TESTING_SETUP = get_setting('PLUGIN_TESTING_SETUP', False)  # load plugin
 PLUGIN_RETRY = get_setting('PLUGIN_RETRY', 5)  # how often should plugin loading be tried?
 PLUGIN_FILE_CHECKED = False                    # Was the plugin file checked?
 
-# user interface customization values
+# User interface customization values
 CUSTOMIZE = get_setting(
     'INVENTREE_CUSTOMIZE',
     CONFIG.get('customize', {}),
