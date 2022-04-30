@@ -18,23 +18,23 @@
 {% url 'admin:company_company_change' company.pk as url %}
 {% include "admin_button.html" with url=url %}
 {% endif %}
-{% if company.is_supplier and roles.purchase_order.add and not company.is_deleted %}
+{% if company.is_supplier and roles.purchase_order.add %}
 <button type='button' class='btn btn-outline-primary' id='company-order-2' title='{% trans "Create Purchase Order" %}'>
     <span class='fas fa-shopping-cart'/>
 </button>
 {% endif %}
 {% define perms.company.change_company or perms.company.delete_company as has_permission %}
-{% if not company.is_deleted and has_permission %}
+{% if has_permission %}
 <button id='company-edit-actions' title='{% trans "Company actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
     <span class='fas fa-tools'></span> <span class='caret'></span>
 </button>
 <ul class='dropdown-menu' role='menu'>
-    {% if perms.company.change_company and not company.is_deleted %}
+    {% if perms.company.change_company %}
     <li><a class='dropdown-item' href='#' id='company-edit' title='{% trans "Edit company information" %}'>
         <span class='fas fa-edit icon-green'></span> {% trans "Edit Company" %}
     </a></li>
     {% endif %}
-    {% if perms.company.delete_company and not company.is_deleted %}
+    {% if perms.company.delete_company %}
     <li><a class='dropdown-item' href='#' id='company-delete' title='{% trans "Delete company" %}'>
         <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete Company" %}
     </a></li>
