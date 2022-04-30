@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-29 07:59+0000\n"
-"PO-Revision-Date: 2022-04-30 18:49\n"
+"PO-Revision-Date: 2022-04-30 20:07\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1490,11 +1490,11 @@ msgstr "Label drucken"
 
 #: build/templates/build/detail.html:274
 msgid "Expand all build output rows"
-msgstr ""
+msgstr "Alle Endprodukt-Ausgabezeilen erweitern"
 
 #: build/templates/build/detail.html:278
 msgid "Collapse all build output rows"
-msgstr ""
+msgstr "Alle Endprodukt-Ausgabezeilen einklappen"
 
 #: build/templates/build/detail.html:295
 msgid "Completed Build Outputs"
@@ -1649,11 +1649,11 @@ msgstr "Den Namen der Instanz in der Titelleiste verwenden"
 
 #: common/models.py:700
 msgid "Restrict showing `about`"
-msgstr ""
+msgstr "Anzeige von `Über` einschränken"
 
 #: common/models.py:701
 msgid "Show the `about` modal only to superusers"
-msgstr ""
+msgstr "Zeige das `Über` Fenster nur Administratoren"
 
 #: common/models.py:707 company/models.py:100 company/models.py:101
 msgid "Company name"
@@ -1924,11 +1924,11 @@ msgstr "Erstellung von Test-Berichten aktivieren"
 
 #: common/models.py:943
 msgid "Batch Code Template"
-msgstr ""
+msgstr "Losnummer Vorlage"
 
 #: common/models.py:944
 msgid "Template for generating default batch codes for stock items"
-msgstr ""
+msgstr "Vorlage für die Generierung von Standard-Losnummern für Lagerbestände"
 
 #: common/models.py:949
 msgid "Stock Expiry"
@@ -8000,7 +8000,7 @@ msgstr "Stücklisten Ersatzteile bearbeiten"
 
 #: templates/js/translated/bom.js:763
 msgid "Load BOM for subassembly"
-msgstr ""
+msgstr "Stückliste für Bauteile laden"
 
 #: templates/js/translated/bom.js:773
 msgid "Substitutes Available"
