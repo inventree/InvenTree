@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-29 07:59+0000\n"
-"PO-Revision-Date: 2022-04-29 21:46\n"
+"PO-Revision-Date: 2022-04-30 13:13\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -180,12 +180,12 @@ msgstr "Bestandsnaam mag niet leeg zijn"
 
 #: InvenTree/models.py:264
 msgid "Invalid attachment directory"
-msgstr "Fout bijlagemap"
+msgstr "Ongeldige bijlagemap"
 
 #: InvenTree/models.py:274
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr "Bestandsnaam bevat illegale teken '{c}'"
+msgstr "Bestandsnaam bevat illegaal teken '{c}'"
 
 #: InvenTree/models.py:277
 msgid "Filename missing extension"
