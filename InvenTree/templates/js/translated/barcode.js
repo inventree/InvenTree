@@ -72,7 +72,9 @@ function onCameraAvailable(hasCamera, options) {
     if ( hasCamera == true ) {
         // Camera is only acccessible if page is served over secure connection
         if ( window.isSecureContext == true ) {
-            qrScanner = new QrScanner(document.getElementById('barcode_scan_video'), result => {onBarcodeScanCompleted(result, options)}, {
+            qrScanner = new QrScanner(document.getElementById('barcode_scan_video'), (result) => {
+                onBarcodeScanCompleted(result, options);
+            }, {
                 highlightScanRegion: true,
                 highlightCodeOutline: true,
             });
@@ -227,7 +229,9 @@ function barcodeDialog(title, options={}) {
         $(modal + ' .modal-form-content').scrollTop(0);
 
         // Check for qr-scanner camera
-        QrScanner.hasCamera().then( hasCamera => {onCameraAvailable(hasCamera, options)});
+        QrScanner.hasCamera().then( (hasCamera) => {
+            onCameraAvailable(hasCamera, options);
+        });
 
         var barcode = $(modal + ' #barcode');
 
