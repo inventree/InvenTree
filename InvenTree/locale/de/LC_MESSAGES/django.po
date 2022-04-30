@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-29 07:59+0000\n"
-"PO-Revision-Date: 2022-04-30 20:07\n"
+"PO-Revision-Date: 2022-04-30 21:34\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1169,7 +1169,7 @@ msgstr "Endprodukt kann bei Zuweisung nicht-verfolgter Teile nicht angegeben wer
 
 #: build/serializers.py:670
 msgid "This stock item has already been allocated to this build output"
-msgstr ""
+msgstr "Dieser Lagerbestand wurde bereits diesem Endprodukt zugewiesen"
 
 #: build/serializers.py:697 order/serializers.py:1077
 msgid "Allocation items must be provided"
@@ -2400,7 +2400,7 @@ msgstr "Fixierter Navigationsleiste"
 
 #: common/models.py:1363
 msgid "The navbar position is fixed to the top of the screen"
-msgstr ""
+msgstr "Position der Navigationsleiste am oberen Bildschirmrand fixieren"
 
 #: common/models.py:1369
 msgid "Date Format"
@@ -6713,7 +6713,7 @@ msgstr "Interner Serverfehler"
 #: templates/500.html:15
 #, python-format
 msgid "The %(inventree_title)s server raised an internal error"
-msgstr ""
+msgstr "Der %(inventree_title)s -Server hat einen internen Fehler aufgeworfen"
 
 #: templates/500.html:16
 msgid "Refer to the error log in the admin interface for further details"
@@ -7381,7 +7381,7 @@ msgstr "Hilf bei der Übersetzung!"
 #: templates/InvenTree/settings/user_display.html:104
 #, python-format
 msgid "Native language translation of the web application is <a href=\"%(link)s\">community contributed via crowdin</a>. Contributions are welcomed and encouraged."
-msgstr ""
+msgstr "Die Übersetzung der Website wird <a href=\"%(link)s\">von Nutzern mit Crowdin</a> betrieben. Wir ermutigen zur und freuen uns über jeden Mithilfe!"
 
 #: templates/InvenTree/settings/user_homepage.html:9
 msgid "Home Page Settings"
@@ -8016,12 +8016,12 @@ msgstr "Kein Lagerbestand verfügbar"
 
 #: templates/js/translated/bom.js:849 templates/js/translated/build.js:1785
 msgid "Includes variant and substitute stock"
-msgstr ""
+msgstr "Beinhaltet Variante und Ersatzbestand"
 
 #: templates/js/translated/bom.js:851 templates/js/translated/build.js:1787
 #: templates/js/translated/part.js:690
 msgid "Includes variant stock"
-msgstr ""
+msgstr "Beinhaltet Variantenbestand"
 
 #: templates/js/translated/bom.js:853 templates/js/translated/build.js:1789
 msgid "Includes substitute stock"
