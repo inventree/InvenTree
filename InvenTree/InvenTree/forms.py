@@ -150,13 +150,13 @@ class DeleteForm(forms.Form):
 
 
 class EditUserForm(HelperForm):
-    """ Form for editing user information
+    """
+    Form for editing user information
     """
 
     class Meta:
         model = User
         fields = [
-            'username',
             'first_name',
             'last_name',
         ]
