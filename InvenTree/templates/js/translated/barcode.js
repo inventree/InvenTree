@@ -54,14 +54,12 @@ function makeBarcodeInput(placeholderText='', hintText='') {
 
 qrScanner = null;
 
-function startQrScanner()
-{
+function startQrScanner() {
     $('#barcode_scan_video_container').show();
     qrScanner.start();
 }
 
-function stopQrScanner()
-{
+function stopQrScanner() {
     if (qrScanner != null) qrScanner.stop();
     $('#barcode_scan_video_container').hide();
 }
@@ -74,7 +72,7 @@ function onCameraAvailable(hasCamera, options) {
     if ( hasCamera == true ) {
         // Camera is only acccessible if page is served over secure connection
         if ( window.isSecureContext == true ) {
-            qrScanner = new QrScanner(document.getElementById('barcode_scan_video'), result => onBarcodeScanCompleted(result, options), {
+            qrScanner = new QrScanner(document.getElementById('barcode_scan_video'), (result => onBarcodeScanCompleted(result, options)), {
                 highlightScanRegion: true,
                 highlightCodeOutline: true,
             });
@@ -83,8 +81,7 @@ function onCameraAvailable(hasCamera, options) {
     }
 }
 
-function onBarcodeScanCompleted(result, options)
-{
+function onBarcodeScanCompleted(result, options) {
     if (result.data == '') return;
     console.log('decoded qr code:', result.data);
     stopQrScanner();
@@ -230,7 +227,7 @@ function barcodeDialog(title, options={}) {
         $(modal + ' .modal-form-content').scrollTop(0);
 
         // Check for qr-scanner camera
-        QrScanner.hasCamera().then( hasCamera => onCameraAvailable(hasCamera, options) );
+        QrScanner.hasCamera().then( (hasCamera => onCameraAvailable(hasCamera, options)) );
 
         var barcode = $(modal + ' #barcode');
 
