@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-29 07:59+0000\n"
-"PO-Revision-Date: 2022-04-30 17:52\n"
+"PO-Revision-Date: 2022-04-30 18:49\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -97,7 +97,7 @@ msgstr "Keine Seriennummer angegeben"
 #: InvenTree/helpers.py:491
 #, python-brace-format
 msgid "Invalid group range: {g}"
-msgstr ""
+msgstr "Ungültiger Gruppenbereich: {g}"
 
 #: InvenTree/helpers.py:494
 #, python-brace-format
@@ -107,7 +107,7 @@ msgstr "Ungültige Gruppe: {g}"
 #: InvenTree/helpers.py:522
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
-msgstr ""
+msgstr "Ungültige Gruppensequenz: {g}"
 
 #: InvenTree/helpers.py:530
 #, python-brace-format
