@@ -23,6 +23,8 @@ from rest_framework.serializers import ValidationError
 from rest_framework.response import Response
 from rest_framework import generics, filters
 
+from build.models import Build
+
 import common.settings
 import common.models
 
@@ -1158,6 +1160,19 @@ class StockItemTestResultList(generics.ListCreateAPIView):
         params = self.request.query_params
 
         queryset = super().filter_queryset(queryset)
+
+        # Filter by 'build'
+        build = params.get('build', None)
+
+        if build is not None:
+
+            try:
+                build = Build.objects.get(pk=build)
+
+                queryset = queryset.filter(stock_item__build=build)
+
+            except (ValueError, Build.DoesNotExist):
+                pass
 
         # Filter by stock item
         item = params.get('stock_item', None)

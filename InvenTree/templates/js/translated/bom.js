@@ -743,11 +743,29 @@ function loadBomTable(table, options={}) {
             field: 'sub_part',
             title: '{% trans "Part" %}',
             sortable: true,
+            switchable: false,
             formatter: function(value, row) {
                 var url = `/part/${row.sub_part}/`;
-                var html = imageHoverIcon(row.sub_part_detail.thumbnail) + renderLink(row.sub_part_detail.full_name, url);
+                var html = '';
 
                 var sub_part = row.sub_part_detail;
+                
+                // Display an extra icon if this part is an assembly
+                if (sub_part.assembly) {
+                    
+                    if (row.sub_assembly_received) {
+                        // Data received, ignore
+                    } else if (row.sub_assembly_requested) {
+                        html += `<a href='#'><span class='fas fa-sync fa-spin'></span></a>`;
+                    } else {
+                        html += `
+                            <a href='#' pk='${row.pk}' class='load-sub-assembly' id='load-sub-assembly-${row.pk}'>
+                                <span class='fas fa-sync-alt' title='{% trans "Load BOM for subassembly" %}'></span>
+                            </a> `;
+                    }
+                }
+
+                html += imageHoverIcon(sub_part.thumbnail) + renderLink(row.sub_part_detail.full_name, url);
 
                 html += makePartIcons(sub_part);
 
@@ -757,13 +775,6 @@ function loadBomTable(table, options={}) {
 
                 if (row.allow_variants) {
                     html += makeIconBadge('fa-sitemap', '{% trans "Variant stock allowed" %}');
-                }
-
-                // Display an extra icon if this part is an assembly
-                if (sub_part.assembly) {
-                    var text = `<span title='{% trans "Open subassembly" %}' class='fas fa-stream float-right'></span>`;
-
-                    html += renderLink(text, `/part/${row.sub_part}/bom/`);
                 }
 
                 return html;
@@ -1027,14 +1038,6 @@ function loadBomTable(table, options={}) {
     // This function may be called recursively for multi-level BOMs
     function requestSubItems(bom_pk, part_pk, depth=0) {
 
-        // Prevent multi-level recursion
-        const MAX_BOM_DEPTH = 25;
-
-        if (depth >= MAX_BOM_DEPTH) {
-            console.log(`Maximum BOM depth (${MAX_BOM_DEPTH}) reached!`);
-            return;
-        }
-
         inventreeGet(
             options.bom_url,
             {
@@ -1049,17 +1052,13 @@ function loadBomTable(table, options={}) {
                     for (var idx = 0; idx < response.length; idx++) {
                         response[idx].parentId = bom_pk;
                     }
+
+                    var row = $(table).bootstrapTable('getRowByUniqueId', bom_pk);
+                    row.sub_assembly_received = true;
+
+                    $(table).bootstrapTable('updateByUniqueId', bom_pk, row, true);
                     
                     table.bootstrapTable('append', response);
-
-                    // Next, re-iterate and check if the new items also have sub items
-                    response.forEach(function(bom_item) {
-                        if (bom_item.sub_part_detail.assembly) {
-                            requestSubItems(bom_item.pk, bom_item.sub_part, depth + 1);
-                        }
-                    });
-
-                    table.treegrid('collapseAll');
                 },
                 error: function(xhr) {
                     console.log('Error requesting BOM for part=' + part_pk);
@@ -1103,7 +1102,6 @@ function loadBomTable(table, options={}) {
         formatNoMatches: function() {
             return '{% trans "No BOM items found" %}';
         },
-        clickToSelect: true,
         queryParams: filters,
         original: params,
         columns: cols,
@@ -1117,31 +1115,25 @@ function loadBomTable(table, options={}) {
             });
 
             table.treegrid('collapseAll');
+
+            // Callback for 'load sub assembly' button
+            $(table).find('.load-sub-assembly').click(function(event) {
+
+                event.preventDefault();
+
+                var pk = $(this).attr('pk');
+                var row = $(table).bootstrapTable('getRowByUniqueId', pk);
+
+                // Request BOM data for this subassembly
+                requestSubItems(row.pk, row.sub_part);
+
+                row.sub_assembly_requested = true;
+                $(table).bootstrapTable('updateByUniqueId', pk, row, true);
+            });
         },
         onLoadSuccess: function() {
-
             if (options.editable) {
                 table.bootstrapTable('uncheckAll');
-            }
-
-            var data = table.bootstrapTable('getData');
-
-            for (var idx = 0; idx < data.length; idx++) {
-                var row = data[idx];
-
-                // If a row already has a parent ID set, it's already been updated!
-                if (row.parentId) {
-                    continue;
-                }
-
-                // Set the parent ID of the top-level rows
-                row.parentId = parent_id;
-
-                table.bootstrapTable('updateRow', idx, row, true);
-
-                if (row.sub_part_detail.assembly) {
-                    requestSubItems(row.pk, row.sub_part);
-                }
             }
         },
     });

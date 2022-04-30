@@ -8,7 +8,6 @@
 {% settings_value "SERVER_RESTART_REQUIRED" as server_restart_required %}
 {% settings_value "LABEL_ENABLE" with user=user as labels_enabled %}
 {% inventree_show_about user as show_about %}
-{% inventree_demo_mode as demo_mode %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -94,7 +93,7 @@
             {% block alerts %}
             <div class='notification-area' id='alerts'>
                 <!-- Div for displayed alerts -->
-                {% if server_restart_required and not demo_mode %}
+                {% if server_restart_required %}
                 <div id='alert-restart-server' class='alert alert-danger' role='alert'>
                     <span class='fas fa-server'></span>
                     <strong>{% trans "Server Restart Required" %}</strong>
