@@ -19,6 +19,7 @@
     linkBarcodeDialog,
     scanItemsIntoLocation,
     unlinkBarcode,
+    onBarcodeScanClicked,
 */
 
 function makeBarcodeInput(placeholderText='', hintText='') {
