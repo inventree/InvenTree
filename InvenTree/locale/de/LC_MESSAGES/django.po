@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-04-29 07:59+0000\n"
-"PO-Revision-Date: 2022-04-30 21:34\n"
+"PO-Revision-Date: 2022-04-30 22:30\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1095,11 +1095,11 @@ msgstr "Status"
 
 #: build/serializers.py:389
 msgid "Accept Incomplete Allocation"
-msgstr ""
+msgstr "Unvollständige Zuweisung akzeptieren"
 
 #: build/serializers.py:390
 msgid "Complete ouputs if stock has not been fully allocated"
-msgstr ""
+msgstr "Endprodukte fertigstellen, auch wenn Bestand nicht fertig zugewiesen wurde"
 
 #: build/serializers.py:447
 msgid "Accept Unallocated"
@@ -6948,7 +6948,7 @@ msgstr "Plugin-Einstellungen"
 
 #: templates/InvenTree/settings/plugin.html:16
 msgid "Changing the settings below require you to immediatly restart the server. Do not change this while under active usage."
-msgstr ""
+msgstr "Wenn Sie die folgenden Einstellungen ändern, müssen Sie den Server sofort neu starten. Ändern Sie dies nicht während der aktiven Nutzung."
 
 #: templates/InvenTree/settings/plugin.html:34
 msgid "Plugins"
@@ -8191,7 +8191,7 @@ msgstr "Zugewiesener Bestand"
 
 #: templates/js/translated/build.js:1169
 msgid "No tracked BOM items for this build"
-msgstr ""
+msgstr "Keine nachverfolgten Teile für diesen Bauauftrag"
 
 #: templates/js/translated/build.js:1191
 msgid "Completed Tests"
@@ -9615,7 +9615,7 @@ msgstr "Dieser Lagerartikel ist aktuell vorhanden"
 
 #: templates/js/translated/stock.js:2662
 msgid "The Stock Item is not already installed in another item"
-msgstr ""
+msgstr "Der Lagerbestand ist nicht bereits in einem anderen Bestand installiert"
 
 #: templates/js/translated/stock.js:2663
 msgid "The Stock Item is tracked by either a batch code or serial number"
