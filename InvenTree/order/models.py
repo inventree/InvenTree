@@ -220,6 +220,7 @@ class PurchaseOrder(Order):
 
     supplier = models.ForeignKey(
         Company, on_delete=models.SET_NULL,
+        null=True,
         limit_choices_to={
             'is_supplier': True,
         },
