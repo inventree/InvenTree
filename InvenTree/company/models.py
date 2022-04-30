@@ -60,20 +60,6 @@ def rename_company_image(instance, filename):
     return os.path.join(base, fn)
 
 
-def get_deleted_company():
-    """
-    Returns the deleted company object
-    """
-    return Company.objects.get_or_create(
-        name='deleted',
-        email='deleted',
-        is_deleted=True,
-        is_customer=True,
-        is_supplier=True,
-        is_manufacturer=True
-    )[0]
-
-
 class Company(models.Model):
     """ A Company object represents an external company.
     It may be a supplier or a customer or a manufacturer (or a combination)
@@ -160,8 +146,6 @@ class Company(models.Model):
     is_supplier = models.BooleanField(default=True, verbose_name=_('is supplier'), help_text=_('Do you purchase items from this company?'))
 
     is_manufacturer = models.BooleanField(default=False, verbose_name=_('is manufacturer'), help_text=_('Does this company manufacture parts?'))
-
-    is_deleted = models.BooleanField(default=False, verbose_name=_('is deleted'), help_text=_('Is this company a deleted placeholder?'))
 
     currency = models.CharField(
         max_length=3,
@@ -281,18 +265,6 @@ class Company(models.Model):
         """ Return any purchase orders which were not successful """
 
         return self.purchase_orders.filter(status__in=PurchaseOrderStatus.FAILED)
-
-    def save(self, *args, **kwargs):
-        """Save the instance, unless it is the magic already deleted object"""
-        if self.pk and self.is_deleted:
-            raise PermissionDenied(_('This company is a placeholder and can not be updated'))
-        return super().save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        """Delete the instance, unless it is the magic already deleted object"""
-        if self.is_deleted:
-            raise PermissionDenied(_('This company is a placeholder and can not be deleted'))
-        return super().delete(*args, **kwargs)
 
 
 class Contact(models.Model):

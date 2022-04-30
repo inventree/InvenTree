@@ -24,7 +24,7 @@ from mptt.models import TreeForeignKey
 from users import models as UserModels
 from part import models as PartModels
 from stock import models as stock_models
-from company.models import Company, SupplierPart, get_deleted_company
+from company.models import Company, SupplierPart
 from plugin.events import trigger_event
 
 import InvenTree.helpers
@@ -219,7 +219,7 @@ class PurchaseOrder(Order):
                                          help_text=_('Purchase order status'))
 
     supplier = models.ForeignKey(
-        Company, on_delete=models.SET(get_deleted_company),
+        Company, on_delete=models.SET_NULL,
         limit_choices_to={
             'is_supplier': True,
         },
@@ -567,7 +567,7 @@ class SalesOrder(Order):
 
     customer = models.ForeignKey(
         Company,
-        on_delete=models.SET(get_deleted_company),
+        on_delete=models.SET_NULL,
         null=True,
         limit_choices_to={'is_customer': True},
         related_name='sales_orders',

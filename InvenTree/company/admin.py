@@ -21,7 +21,6 @@ class CompanyResource(ModelResource):
 
     class Meta:
         model = Company
-        exclude = ('is_deleted', )
         skip_unchanged = True
         report_skipped = False
         clean_model_instances = True
@@ -37,14 +36,6 @@ class CompanyAdmin(ImportExportModelAdmin):
         'name',
         'description',
     ]
-
-    exclude = ('is_deleted',)
-
-    def has_delete_permission(self, request, obj=None):
-        """Magic objects are not allowd to be deleted"""
-        if obj and obj.is_deleted:
-            return False
-        return True
 
 
 class SupplierPartResource(ModelResource):
