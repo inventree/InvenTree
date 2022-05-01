@@ -222,8 +222,8 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
         Test list URL for user settings
         """
         url = reverse('api-user-setting-list')
-        # test setting with choice
-        response = self.get(url, expected_code=200)
+
+        self.get(url, expected_code=200)
 
     def test_user_setting_boolean(self):
         """
@@ -293,7 +293,7 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
             self.assertFalse(str2bool(response.data['value']))
 
     def test_user_setting_choice(self):
-        
+
         setting = InvenTreeUserSetting.get_setting_object(
             'DATE_DISPLAY_FORMAT',
             user=self.user
@@ -303,10 +303,10 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
 
         # Check default value
         self.assertEqual(setting.value, 'YYYY-MM-DD')
-        
+
         # Check that a valid option can be assigned via the API
         for opt in ['YYYY-MM-DD', 'DD-MM-YYYY', 'MM/DD/YYYY']:
-            
+
             self.patch(
                 url,
                 {
@@ -332,7 +332,7 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
             self.assertIn('Chosen value is not a valid option', str(response.data))
 
     def test_user_setting_integer(self):
-        
+
         setting = InvenTreeUserSetting.get_setting_object(
             'SEARCH_PREVIEW_RESULTS',
             user=self.user

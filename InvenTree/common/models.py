@@ -461,7 +461,7 @@ class BaseInvenTreeSetting(models.Model):
 
             if self.is_bool():
                 value = self.as_bool()
-            
+
             if self.is_int():
                 value = self.as_int()
 
@@ -642,6 +642,7 @@ class BaseInvenTreeSetting(models.Model):
     @property
     def protected(self):
         return self.__class__.is_protected(self.key)
+
 
 def settings_group_options():
     """
@@ -1066,7 +1067,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
-        
+
         'SIGNUP_GROUP': {
             'name': _('Group on signup'),
             'description': _('Group to which new users are assigned on registration'),
@@ -1121,7 +1122,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
             'requires_restart': True,
         },
-        
+
         'ENABLE_PLUGINS_EVENTS': {
             'name': _('Enable event integration'),
             'description': _('Enable plugins to respond to internal events'),
@@ -1203,7 +1204,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
-        
+
         'HOMEPAGE_STOCK_RECENT': {
             'name': _('Show recent stock changes'),
             'description': _('Show recently changed stock items on the homepage'),
@@ -1385,7 +1386,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
-        
+
         'PART_SHOW_QUANTITY_IN_FORMS': {
             'name': _('Show Quantity in Forms'),
             'description': _('Display available part quantity in some forms'),
@@ -1399,7 +1400,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
-        
+
         'STICKY_HEADER': {
             'name': _('Fixed Navbar'),
             'description': _('The navbar position is fixed to the top of the screen'),
