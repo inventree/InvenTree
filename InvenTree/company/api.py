@@ -12,13 +12,14 @@ from django.urls import include, re_path
 from django.db.models import Q
 
 from InvenTree.helpers import str2bool
+from InvenTree.api import AttachmentMixin
 
 from .models import Company
-from .models import ManufacturerPart, ManufacturerPartParameter
+from .models import ManufacturerPart, ManufacturerPartAttachment, ManufacturerPartParameter
 from .models import SupplierPart, SupplierPriceBreak
 
 from .serializers import CompanySerializer
-from .serializers import ManufacturerPartSerializer, ManufacturerPartParameterSerializer
+from .serializers import ManufacturerPartSerializer, ManufacturerPartAttachmentSerializer, ManufacturerPartParameterSerializer
 from .serializers import SupplierPartSerializer, SupplierPriceBreakSerializer
 
 
@@ -158,6 +159,32 @@ class ManufacturerPartDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = ManufacturerPart.objects.all()
     serializer_class = ManufacturerPartSerializer
+
+
+class ManufacturerPartAttachmentList(AttachmentMixin, generics.ListCreateAPIView):
+    """
+    API endpoint for listing (and creating) a ManufacturerPartAttachment (file upload).
+    """
+
+    queryset = ManufacturerPartAttachment.objects.all()
+    serializer_class = ManufacturerPartAttachmentSerializer
+
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+
+    filter_fields = [
+        'manufacturer_part',
+    ]
+
+
+class ManufacturerPartAttachmentDetail(AttachmentMixin, generics.RetrieveUpdateDestroyAPIView):
+    """
+    Detail endpooint for ManufacturerPartAttachment model
+    """
+
+    queryset = ManufacturerPartAttachment.objects.all()
+    serializer_class = ManufacturerPartAttachmentSerializer
 
 
 class ManufacturerPartParameterList(generics.ListCreateAPIView):
