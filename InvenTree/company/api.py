@@ -414,6 +414,12 @@ class SupplierPriceBreakDetail(generics.RetrieveUpdateDestroyAPIView):
 
 manufacturer_part_api_urls = [
 
+    # Base URL for ManufacturerPartAttachment API endpoints
+    re_path(r'^attachment/', include([
+        re_path(r'^(?P<pk>\d+)/', ManufacturerPartAttachmentDetail.as_view(), name='api-manufacturer-part-attachment-detail'),
+        re_path(r'^$', ManufacturerPartAttachmentList.as_view(), name='api-manufacturer-part-attachment-list'),
+    ])),
+
     re_path(r'^parameter/', include([
         re_path(r'^(?P<pk>\d+)/', ManufacturerPartParameterDetail.as_view(), name='api-manufacturer-part-parameter-detail'),
 
