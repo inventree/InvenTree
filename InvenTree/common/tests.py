@@ -247,7 +247,43 @@ class SettingsApiTest(InvenTreeAPITestCase):
         ...
 
     def test_user_setting_choice(self):
-        ...
+        
+        setting = InvenTreeUserSetting.get_setting_object(
+            'DATE_DISPLAY_FORMAT',
+            user=self.user
+        )
+
+        url = reverse('api-user-setting-detail', kwargs={'pk': setting.pk})
+
+        # Check default value
+        self.assertEqual(setting.value, 'YYYY-MM-DD')
+        
+        # Check that a valid option can be assigned via the API
+        for opt in ['YYYY-MM-DD', 'DD-MM-YYYY', 'MM/DD/YYYY']:
+            
+            self.patch(
+                url,
+                {
+                    'value': opt,
+                },
+                expected_code=200,
+            )
+
+            setting.refresh_from_db()
+            self.assertEqual(setting.value, opt)
+
+        # Send an invalid option
+        for opt in ['cat', 'dog', 12345]:
+
+            response = self.patch(
+                url,
+                {
+                    'value': opt,
+                },
+                expected_code=400,
+            )
+
+            self.assertIn('Chosen value is not a valid option', str(response.data))
 
     def test_user_setting_integer(self):
         ...
