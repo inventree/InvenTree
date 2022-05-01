@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-01 14:04+0000\n"
-"PO-Revision-Date: 2022-04-27 11:55\n"
+"PO-Revision-Date: 2022-05-01 23:28\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Crowdin-Project-ID: 452300\n"
 "X-Crowdin-Language: cs\n"
 "X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
-"X-Crowdin-File-ID: 138\n"
+"X-Crowdin-File-ID: 154\n"
 
 #: InvenTree/api.py:57
 msgid "API endpoint not found"
@@ -94,10 +94,9 @@ msgid "Empty serial number string"
 msgstr "Nevyplněné výrobní číslo"
 
 #: InvenTree/helpers.py:491
-#, fuzzy, python-brace-format
-#| msgid "Invalid group: {g}"
+#, python-brace-format
 msgid "Invalid group range: {g}"
-msgstr "Neplatná skupina: {g}"
+msgstr ""
 
 #: InvenTree/helpers.py:494
 #, python-brace-format
@@ -105,10 +104,9 @@ msgid "Invalid group: {g}"
 msgstr "Neplatná skupina: {g}"
 
 #: InvenTree/helpers.py:522
-#, fuzzy, python-brace-format
-#| msgid "Invalid group: {g}"
+#, python-brace-format
 msgid "Invalid group sequence: {g}"
-msgstr "Neplatná skupina: {g}"
+msgstr ""
 
 #: InvenTree/helpers.py:530
 #, python-brace-format
@@ -450,7 +448,7 @@ msgstr "Odesláno"
 
 #: InvenTree/status_codes.py:183
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: InvenTree/status_codes.py:184
 msgid "Attention needed"
@@ -5354,8 +5352,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -7514,16 +7511,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -8224,10 +8219,8 @@ msgid "No tracked BOM items for this build"
 msgstr ""
 
 #: templates/js/translated/build.js:1191
-#, fuzzy
-#| msgid "Complete"
 msgid "Completed Tests"
-msgstr "Hotovo"
+msgstr ""
 
 #: templates/js/translated/build.js:1196
 msgid "No required tests for this build"
@@ -8882,10 +8875,8 @@ msgid "Delete line item"
 msgstr ""
 
 #: templates/js/translated/order.js:1534 templates/js/translated/order.js:3169
-#, fuzzy
-#| msgid "Duplicate serial: {sn}"
 msgid "Duplicate line"
-msgstr "Duplicitní výrobní číslo: {sn}"
+msgstr ""
 
 #: templates/js/translated/order.js:1535 templates/js/translated/order.js:3170
 msgid "Edit line"
@@ -8896,10 +8887,8 @@ msgid "Delete line"
 msgstr ""
 
 #: templates/js/translated/order.js:1566 templates/js/translated/order.js:3201
-#, fuzzy
-#| msgid "Duplicate serial: {sn}"
 msgid "Duplicate Line"
-msgstr "Duplicitní výrobní číslo: {sn}"
+msgstr ""
 
 #: templates/js/translated/order.js:1587 templates/js/translated/order.js:3222
 msgid "Edit Line"
@@ -8910,10 +8899,8 @@ msgid "Delete Line"
 msgstr ""
 
 #: templates/js/translated/order.js:1609
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No matching line"
-msgstr "Nebyla nalezena odpovídající činnost"
+msgstr ""
 
 #: templates/js/translated/order.js:1648
 msgid "No sales orders found"
@@ -9025,10 +9012,8 @@ msgid "No matching line items"
 msgstr ""
 
 #: templates/js/translated/order.js:3244
-#, fuzzy
-#| msgid "No matching action found"
 msgid "No matching lines"
-msgstr "Nebyla nalezena odpovídající činnost"
+msgstr ""
 
 #: templates/js/translated/part.js:55
 msgid "Part Attributes"
@@ -10244,3 +10229,4 @@ msgstr ""
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr ""
+
