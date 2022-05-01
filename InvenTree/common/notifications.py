@@ -139,12 +139,21 @@ class MethodStorageClass:
     user_settings = {}
 
     def collect(self, selected_classes=None):
+        print('collecting')
         current_method = inheritors(NotificationMethod) - IGNORED_NOTIFICATION_CLS
 
         # for testing selective loading is made available
         if selected_classes:
             current_method = [item for item in current_method if item is selected_classes]
-        storage.liste = current_method
+        
+        # make sure only one of each method is added
+        filtered_list = {}
+        for item  in current_method:
+            plugin = item.get_plugin(item)
+            ref = f'{plugin.package_path}_{item.METHOD_NAME}'  if plugin else item.METHOD_NAME
+            filtered_list[ref] = item
+
+        storage.liste = list(filtered_list.values())
 
     def get_usersettings(self, user):
         methods = []
