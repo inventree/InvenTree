@@ -193,6 +193,34 @@ src="{% static 'img/blank_image.png' %}"
 {% block js_ready %}
 {{ block.super }}
 
+onPanelLoad("attachments", function() {
+    loadAttachmentTable('{% url "api-manufacturer-part-attachment-list" %}', {
+        filters: {
+            manufacturer_part: {{ part.pk }},
+        },
+        fields: {
+            manufacturer_part: {
+                value: {{ part.pk }},
+                hidden: true
+            }
+        }
+    });
+
+    enableDragAndDrop(
+        '#attachment-dropzone',
+        '{% url "api-manufacturer-part-attachment-list" %}',
+        {
+            data: {
+                manufacturer_part: {{ part.id }},
+            },
+            label: 'attachment',
+            success: function(data, status, xhr) {
+                reloadAttachmentTable();
+            }
+        }
+    );
+});
+
 function reloadParameters() {
     $("#parameter-table").bootstrapTable("refresh");
 }
