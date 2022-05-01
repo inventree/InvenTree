@@ -398,6 +398,17 @@ class BaseInvenTreeSetting(models.Model):
     def units(self):
         return self.__class__.get_setting_units(self.key)
 
+    @property
+    def native_value(self):
+
+        if self.is_bool():
+            return self.as_bool()
+
+        if self.is_int():
+            return self.as_int()
+        
+        return self.value
+
     def clean(self, **kwargs):
         """
         If a validator (or multiple validators) are defined for a particular setting key,
@@ -636,6 +647,9 @@ class BaseInvenTreeSetting(models.Model):
 
         return setting.get('protected', False)
 
+    @property
+    def protected(self):
+        return self.__class__.is_protected(self.key)
 
 def settings_group_options():
     """
