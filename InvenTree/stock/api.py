@@ -13,7 +13,7 @@ from django.urls import include, path, re_path
 from django.http import JsonResponse
 from django.db.models import Q, F
 from django.db import transaction
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as rest_filters

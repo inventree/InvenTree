@@ -6,6 +6,7 @@ from plugin import IntegrationPluginBase
 from plugin.mixins import AppMixin, SettingsMixin, UrlsMixin, NavigationMixin
 
 from django.http import HttpResponse
+from django.utils.translation import gettext_lazy as _
 from django.urls import include, re_path
 
 

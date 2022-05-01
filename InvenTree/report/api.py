@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.utils.translation import gettext_lazy as _
 from django.urls import include, path, re_path
 from django.core.exceptions import ValidationError, FieldError
 from django.http import HttpResponse

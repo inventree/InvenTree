@@ -11,7 +11,7 @@ from django.db.models import ExpressionWrapper, F, Q, Func
 from django.db.models import Subquery, OuterRef, FloatField
 
 from django.db.models.functions import Coalesce
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
