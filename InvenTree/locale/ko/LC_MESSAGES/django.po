@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-01 14:04+0000\n"
-"PO-Revision-Date: 2022-04-27 11:55\n"
+"PO-Revision-Date: 2022-05-01 23:28\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Crowdin-Project-ID: 452300\n"
 "X-Crowdin-Language: ko\n"
 "X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
-"X-Crowdin-File-ID: 138\n"
+"X-Crowdin-File-ID: 154\n"
 
 #: InvenTree/api.py:57
 msgid "API endpoint not found"
@@ -2553,7 +2553,7 @@ msgstr ""
 #: company/forms.py:24 part/forms.py:46
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
-msgstr "URL"
+msgstr ""
 
 #: company/forms.py:25 part/forms.py:47
 msgid "Image URL"
@@ -2753,7 +2753,7 @@ msgstr ""
 #: part/bom.py:238 part/bom.py:266 templates/js/translated/order.js:1224
 #: templates/js/translated/part.js:227 templates/js/translated/part.js:942
 msgid "SKU"
-msgstr "SKU"
+msgstr ""
 
 #: company/models.py:552 templates/js/translated/part.js:228
 msgid "Supplier stock keeping unit"
@@ -3490,10 +3490,8 @@ msgid "Additional context for this line"
 msgstr ""
 
 #: order/models.py:901
-#, fuzzy
-#| msgid "Unit Price"
 msgid "Unit price"
-msgstr "단가"
+msgstr ""
 
 #: order/models.py:934
 msgid "Supplier part must match supplier"
@@ -3651,10 +3649,8 @@ msgid "Enter stock allocation quantity"
 msgstr ""
 
 #: order/serializers.py:77
-#, fuzzy
-#| msgid "Default currency"
 msgid "Price currency"
-msgstr "기본 통화"
+msgstr ""
 
 #: order/serializers.py:246
 msgid "Purchase price currency"
@@ -3974,18 +3970,14 @@ msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:48
 #: order/templates/order/sales_order_detail.html:40
-#, fuzzy
-#| msgid "External Link"
 msgid "Extra Lines"
-msgstr "외부 링크"
+msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:53
 #: order/templates/order/sales_order_detail.html:45
 #: order/templates/order/sales_order_detail.html:273
-#, fuzzy
-#| msgid "External Link"
 msgid "Add Extra Line"
-msgstr "외부 링크"
+msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:72
 msgid "Received Items"
@@ -3997,10 +3989,8 @@ msgid "Order Notes"
 msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:235
-#, fuzzy
-#| msgid "Add Link"
 msgid "Add Order Line"
-msgstr "링크 추가"
+msgstr ""
 
 #: order/templates/order/purchase_orders.html:30
 #: order/templates/order/sales_orders.html:33
@@ -5362,8 +5352,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -7522,16 +7511,14 @@ msgstr "로그인"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -8896,10 +8883,8 @@ msgid "Edit line"
 msgstr ""
 
 #: templates/js/translated/order.js:1536 templates/js/translated/order.js:3171
-#, fuzzy
-#| msgid "Delete"
 msgid "Delete line"
-msgstr "삭제"
+msgstr ""
 
 #: templates/js/translated/order.js:1566 templates/js/translated/order.js:3201
 msgid "Duplicate Line"
@@ -8910,16 +8895,12 @@ msgid "Edit Line"
 msgstr ""
 
 #: templates/js/translated/order.js:1598 templates/js/translated/order.js:3233
-#, fuzzy
-#| msgid "Delete"
 msgid "Delete Line"
-msgstr "삭제"
+msgstr ""
 
 #: templates/js/translated/order.js:1609
-#, fuzzy
-#| msgid "No matching serial number"
 msgid "No matching line"
-msgstr "일치하는 일련번호가 없습니다"
+msgstr ""
 
 #: templates/js/translated/order.js:1648
 msgid "No sales orders found"
@@ -9031,10 +9012,8 @@ msgid "No matching line items"
 msgstr ""
 
 #: templates/js/translated/order.js:3244
-#, fuzzy
-#| msgid "No matching serial number"
 msgid "No matching lines"
-msgstr "일치하는 일련번호가 없습니다"
+msgstr ""
 
 #: templates/js/translated/part.js:55
 msgid "Part Attributes"
@@ -10250,3 +10229,4 @@ msgstr ""
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr ""
+
