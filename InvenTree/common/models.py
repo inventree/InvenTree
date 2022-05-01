@@ -155,6 +155,20 @@ class BaseInvenTreeSetting(models.Model):
         else:
             return {}
 
+    @property
+    def native_value(self):
+        """
+        Return the 'native' representation of this setting (e.g. boolean, integer)
+        """
+
+        if self.is_bool():
+            return self.as_bool()
+        
+        if self.is_int():
+            return self.as_int()
+
+        return self.value
+
     @classmethod
     def get_setting_name(cls, key, **kwargs):
         """
@@ -455,7 +469,8 @@ class BaseInvenTreeSetting(models.Model):
 
         if callable(validator):
             # We can accept function validators with a single argument
-            validator(self.value)
+
+            validator(self.native_value)
 
     def validate_unique(self, exclude=None, **kwargs):
         """
