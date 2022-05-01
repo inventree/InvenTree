@@ -5,7 +5,6 @@ Passes URL lookup downstream to each app as required.
 """
 
 from django.urls import include, path, re_path
-from django.urls import path
 from django.contrib import admin
 
 from company.urls import company_urls
