@@ -5,7 +5,7 @@ JSON API for the plugin app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.conf.urls import url, include
+from django.urls import include, re_path
 
 from rest_framework import generics
 from rest_framework import status
@@ -118,18 +118,18 @@ class PluginSettingDetail(generics.RetrieveUpdateAPIView):
 plugin_api_urls = [
 
     # Plugin settings URLs
-    url(r'^settings/', include([
-        url(r'^(?P<pk>\d+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail'),
-        url(r'^.*$', PluginSettingList.as_view(), name='api-plugin-setting-list'),
+    re_path(r'^settings/', include([
+        re_path(r'^(?P<pk>\d+)/', PluginSettingDetail.as_view(), name='api-plugin-setting-detail'),
+        re_path(r'^.*$', PluginSettingList.as_view(), name='api-plugin-setting-list'),
     ])),
 
     # Detail views for a single PluginConfig item
-    url(r'^(?P<pk>\d+)/', include([
-        url(r'^.*$', PluginDetail.as_view(), name='api-plugin-detail'),
+    re_path(r'^(?P<pk>\d+)/', include([
+        re_path(r'^.*$', PluginDetail.as_view(), name='api-plugin-detail'),
     ])),
 
-    url(r'^install/', PluginInstall.as_view(), name='api-plugin-install'),
+    re_path(r'^install/', PluginInstall.as_view(), name='api-plugin-install'),
 
     # Anything else
-    url(r'^.*$', PluginList.as_view(), name='api-plugin-list'),
+    re_path(r'^.*$', PluginList.as_view(), name='api-plugin-list'),
 ]
