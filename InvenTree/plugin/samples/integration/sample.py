@@ -28,13 +28,13 @@ class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixi
 
     def setup_urls(self):
         he_urls = [
-            url(r'^he/', self.view_test, name='he'),
-            url(r'^ha/', self.view_test, name='ha'),
+            re_path(r'^he/', self.view_test, name='he'),
+            re_path(r'^ha/', self.view_test, name='ha'),
         ]
 
         return [
-            url(r'^hi/', self.view_test, name='hi'),
-            url(r'^ho/', include(he_urls), name='ho'),
+            re_path(r'^hi/', self.view_test, name='hi'),
+            re_path(r'^ho/', include(he_urls), name='ho'),
         ]
 
     SETTINGS = {
