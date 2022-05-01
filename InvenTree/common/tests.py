@@ -243,9 +243,6 @@ class SettingsApiTest(InvenTreeAPITestCase):
             # Invalid values evaluate to False
             self.assertFalse(str2bool(response.data['value']))
 
-    def test_user_setting_string(self):
-        ...
-
     def test_user_setting_choice(self):
         
         setting = InvenTreeUserSetting.get_setting_object(
@@ -286,7 +283,49 @@ class SettingsApiTest(InvenTreeAPITestCase):
             self.assertIn('Chosen value is not a valid option', str(response.data))
 
     def test_user_setting_integer(self):
-        ...
+        
+        setting = InvenTreeUserSetting.get_setting_object(
+            'SEARCH_PREVIEW_RESULTS',
+            user=self.user
+        )
+
+        url = reverse('api-user-setting-detail', kwargs={'pk': setting.pk})
+
+        # Check default value for this setting
+        self.assertEqual(setting.value, 10)
+
+        for v in [1, 9, 99]:
+            setting.value = v
+            setting.save()
+
+            response = self.get(url)
+
+            self.assertEqual(response.data['value'], str(v))
+
+        # Set valid options via the api
+        for v in [5, 15, 25]:
+            self.patch(
+                url,
+                {
+                    'value': v,
+                },
+                expected_code=200,
+            )
+
+            setting.refresh_from_db()
+            self.assertEqual(setting.native_value, v)
+
+        # Set invalid options via the API
+        # Note that this particular setting has a MinValueValidator(1) associated with it
+        for v in [0, -1, -5]:
+
+            response = self.patch(
+                url,
+                {
+                    'value': v,
+                },
+                expected_code=400,
+            )
 
 
 class WebhookMessageTests(TestCase):
