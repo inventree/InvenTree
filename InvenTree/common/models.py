@@ -407,7 +407,11 @@ class BaseInvenTreeSetting(models.Model):
         super().clean()
 
         # Encode as native values
-        self.value = self.to_native_value()
+        if self.is_int():
+            self.value = self.as_int()
+
+        elif self.is_bool():
+            self.value = self.as_bool()
 
         validator = self.__class__.get_setting_validator(self.key, **kwargs)
 
