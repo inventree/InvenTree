@@ -9,7 +9,9 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 
 from InvenTree.api_tester import InvenTreeAPITestCase
-from .models import InvenTreeSetting, WebhookEndpoint, WebhookMessage, NotificationEntry
+from InvenTree.helpers import str2bool
+
+from .models import InvenTreeSetting, InvenTreeUserSetting, WebhookEndpoint, WebhookMessage, NotificationEntry
 from .api import WebhookView
 
 CONTENT_TYPE_JSON = 'application/json'
@@ -158,10 +160,97 @@ class SettingsTest(TestCase):
 
 class SettingsApiTest(InvenTreeAPITestCase):
 
-    def test_settings_api(self):
-        # test setting with choice
+    def test_global_settings_api_list(self):
+        """
+        Test list URL for global settings
+        """
+        url = reverse('api-global-setting-list')
+
+        response = self.get(url, expected_code=200)
+
+    def test_user_settings_api_list(self):
+        """
+        Test list URL for user settings
+        """
         url = reverse('api-user-setting-list')
-        self.get(url, expected_code=200)
+        # test setting with choice
+        response = self.get(url, expected_code=200)
+
+    def test_user_setting_boolean(self):
+        """
+        Test a boolean user setting value
+        """
+
+        # Ensure we have a boolean setting available
+        setting = InvenTreeUserSetting.get_setting_object(
+            'SEARCH_PREVIEW_SHOW_PARTS',
+            user=self.user
+        )
+
+        # Check default values
+        self.assertEqual(setting.native_value, True)
+
+        # Fetch via API
+        url = reverse('api-user-setting-detail', kwargs={'pk': setting.pk})
+
+        response = self.get(url, expected_code=200)
+
+        self.assertEqual(response.data['pk'], setting.pk)
+        self.assertEqual(response.data['key'], 'SEARCH_PREVIEW_SHOW_PARTS')
+        self.assertEqual(response.data['description'], 'Display parts in search preview window')
+        self.assertEqual(response.data['type'], 'boolean')
+        self.assertEqual(len(response.data['choices']), 0)
+        self.assertTrue(str2bool(response.data['value']))
+
+        # Assign some truthy values
+        for v in ['true', True, 1, 'y', 'TRUE']:
+            self.patch(
+                url,
+                {
+                    'value': str(v),
+                },
+                expected_code=200,
+            )
+
+            response = self.get(url, expected_code=200)
+
+            self.assertTrue(str2bool(response.data['value']))
+
+        # Assign some falsey values
+        for v in ['false', False, '0', 'n', 'FalSe']:
+            self.patch(
+                url,
+                {
+                    'value': str(v),
+                },
+                expected_code=200,
+            )
+
+            response = self.get(url, expected_code=200)
+
+            self.assertFalse(str2bool(response.data['value']))
+
+        # Assign some invalid values
+        for v in ['x', '', 'invalid', None, '-1', 'abcde']:
+            response = self.patch(
+                url,
+                {
+                    'value': str(v),
+                },
+                expected_code=200
+            )
+
+            # Invalid values evaluate to False
+            self.assertFalse(str2bool(response.data['value']))
+
+    def test_user_setting_string(self):
+        ...
+
+    def test_user_setting_choice(self):
+        ...
+
+    def test_user_setting_integer(self):
+        ...
 
 
 class WebhookMessageTests(TestCase):

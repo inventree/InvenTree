@@ -417,6 +417,9 @@ class BaseInvenTreeSetting(models.Model):
 
         super().clean()
 
+        # Encode as native values
+        self.value = self.native_value
+
         validator = self.__class__.get_setting_validator(self.key, **kwargs)
 
         if validator is not None:
