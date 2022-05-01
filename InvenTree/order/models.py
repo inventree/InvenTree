@@ -49,7 +49,7 @@ def get_next_po_number():
 
     order = PurchaseOrder.objects.exclude(reference=None).last()
 
-    attempts = set([order.reference])
+    attempts = {order.reference}
 
     reference = order.reference
 
@@ -78,7 +78,7 @@ def get_next_so_number():
 
     order = SalesOrder.objects.exclude(reference=None).last()
 
-    attempts = set([order.reference])
+    attempts = {order.reference}
 
     reference = order.reference
 
@@ -161,10 +161,10 @@ class Order(ReferenceIndexingMixin):
         # gather name reference
         price_ref = 'sale_price' if isinstance(self, SalesOrder) else 'purchase_price'
         # order items
-        total += sum([a.quantity * convert_money(getattr(a, price_ref), target_currency) for a in self.lines.all() if getattr(a, price_ref)])
+        total += sum(a.quantity * convert_money(getattr(a, price_ref), target_currency) for a in self.lines.all() if getattr(a, price_ref))
 
         # extra lines
-        total += sum([a.quantity * convert_money(a.price, target_currency) for a in self.extra_lines.all() if a.price])
+        total += sum(a.quantity * convert_money(a.price, target_currency) for a in self.extra_lines.all() if a.price)
 
         # set decimal-places
         total.decimal_places = 4

@@ -319,7 +319,7 @@ class CustomSocialAccountAdapter(RegistratonMixin, DefaultSocialAccountAdapter):
             redirect_url = reverse('two-factor-authenticate')
             # Add GET parameters to the URL if they exist.
             if request.GET:
-                redirect_url += u'?' + urlencode(request.GET)
+                redirect_url += '?' + urlencode(request.GET)
 
             raise ImmediateHttpResponse(
                 response=HttpResponseRedirect(redirect_url)

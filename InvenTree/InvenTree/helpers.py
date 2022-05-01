@@ -432,7 +432,7 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
         next_number += 1
 
     # Split input string by whitespace or comma (,) characters
-    groups = re.split("[\s,]+", serials)
+    groups = re.split(r"[\s,]+", serials)
 
     numbers = []
     errors = []

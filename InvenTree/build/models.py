@@ -53,7 +53,7 @@ def get_next_build_number():
 
     build = Build.objects.exclude(reference=None).last()
 
-    attempts = set([build.reference])
+    attempts = {build.reference}
 
     reference = build.reference
 

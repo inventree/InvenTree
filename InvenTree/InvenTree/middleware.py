@@ -85,7 +85,7 @@ class AuthRequiredMiddleware(object):
                 if path not in urls and not path.startswith('/api/'):
                     # Save the 'next' parameter to pass through to the login view
 
-                    return redirect('%s?next=%s' % (reverse_lazy('account_login'), request.path))
+                    return redirect('{}?next={}'.format(reverse_lazy('account_login'), request.path))
 
         response = self.get_response(request)
 
