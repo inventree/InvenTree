@@ -398,17 +398,6 @@ class BaseInvenTreeSetting(models.Model):
     def units(self):
         return self.__class__.get_setting_units(self.key)
 
-    @property
-    def native_value(self):
-
-        if self.is_bool():
-            return self.as_bool()
-
-        if self.is_int():
-            return self.as_int()
-        
-        return self.value
-
     def clean(self, **kwargs):
         """
         If a validator (or multiple validators) are defined for a particular setting key,
@@ -418,7 +407,7 @@ class BaseInvenTreeSetting(models.Model):
         super().clean()
 
         # Encode as native values
-        self.value = self.native_value
+        self.value = self.to_native_value()
 
         validator = self.__class__.get_setting_validator(self.key, **kwargs)
 
@@ -1432,7 +1421,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
                 ('MMM DD YYYY', 'Feb 22 2022'),
             ]
         },
-        
+
         'DISPLAY_SCHEDULE_TAB': {
             'name': _('Part Scheduling'),
             'description': _('Display part scheduling information'),

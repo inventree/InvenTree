@@ -158,7 +158,6 @@ class SettingsTest(TestCase):
                     raise ValueError(f'Non-boolean default value specified for {key}')  # pragma: no cover
 
 
-
 class GlobalSettingsApiTest(InvenTreeAPITestCase):
     """
     Tests for the global settings API
@@ -238,7 +237,7 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
         )
 
         # Check default values
-        self.assertEqual(setting.native_value, True)
+        self.assertEqual(setting.to_native_value(), True)
 
         # Fetch via API
         url = reverse('api-user-setting-detail', kwargs={'pk': setting.pk})
@@ -363,7 +362,7 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
             )
 
             setting.refresh_from_db()
-            self.assertEqual(setting.native_value, v)
+            self.assertEqual(setting.to_native_value(), v)
 
         # Set invalid options via the API
         # Note that this particular setting has a MinValueValidator(1) associated with it
