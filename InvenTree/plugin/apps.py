@@ -5,7 +5,7 @@ import logging
 
 from django.apps import AppConfig
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from maintenance_mode.core import set_maintenance_mode
 

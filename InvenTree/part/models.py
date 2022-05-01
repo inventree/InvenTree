@@ -2510,7 +2510,7 @@ def validate_template_name(name):
     Prevent illegal characters in "name" field for PartParameterTemplate
     """
 
-    for c in "!@#$%^&*()<>{}[].,?/\|~`_+-=\'\"":
+    for c in "!@#$%^&*()<>{}[].,?/\\|~`_+-=\'\"":
         if c in str(name):
             raise ValidationError(_(f"Illegal character in template name ({c})"))
 

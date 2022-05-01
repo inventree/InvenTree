@@ -17,7 +17,7 @@ from importlib import reload
 from django.apps import apps
 from django.conf import settings
 from django.db.utils import OperationalError, ProgrammingError, IntegrityError
-from django.conf.urls import url, include
+from django.urls import include, re_path
 from django.urls import clear_url_caches
 from django.contrib import admin
 from django.utils.text import slugify
@@ -570,12 +570,12 @@ class PluginsRegistry:
         for index, a in enumerate(urlpatterns):
             if hasattr(a, 'app_name'):
                 if a.app_name == 'admin':
-                    urlpatterns[index] = url(r'^admin/', admin.site.urls, name='inventree-admin')
+                    urlpatterns[index] = re_path(r'^admin/', admin.site.urls, name='inventree-admin')
                 elif a.app_name == 'plugin':
                     urlpatterns[index] = get_plugin_urls()
 
         # replace frontendpatterns
-        global_pattern[0] = url('', include(urlpatterns))
+        global_pattern[0] = re_path('', include(urlpatterns))
         clear_url_caches()
 
     def _reload_apps(self, force_reload: bool = False):

@@ -33,7 +33,7 @@ from djmoney.contrib.exchange.exceptions import MissingRate
 
 from rest_framework.exceptions import PermissionDenied
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator, URLValidator
 from django.core.exceptions import ValidationError
 

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from django.urls import reverse
-from django.conf.urls import url
-from django.utils.translation import ugettext_lazy as _
+from django.urls import path, re_path
+from django.utils.translation import gettext_lazy as _
 
 from rest_framework.exceptions import ValidationError
 from rest_framework import permissions
@@ -240,8 +240,8 @@ class BarcodeAssign(APIView):
 
 barcode_api_urls = [
 
-    url(r'^link/$', BarcodeAssign.as_view(), name='api-barcode-link'),
+    path('link/', BarcodeAssign.as_view(), name='api-barcode-link'),
 
     # Catch-all performs barcode 'scan'
-    url(r'^.*$', BarcodeScan.as_view(), name='api-barcode-scan'),
+    re_path(r'^.*$', BarcodeScan.as_view(), name='api-barcode-scan'),
 ]

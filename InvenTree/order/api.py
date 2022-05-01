@@ -5,7 +5,7 @@ JSON API for the Order app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.conf.urls import url, include
+from django.urls import include, path, re_path
 from django.db.models import Q, F
 
 from django_filters import rest_framework as rest_filters
@@ -1096,78 +1096,78 @@ class PurchaseOrderAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, Attac
 order_api_urls = [
 
     # API endpoints for purchase orders
-    url(r'^po/', include([
+    re_path(r'^po/', include([
 
         # Purchase order attachments
-        url(r'attachment/', include([
-            url(r'^(?P<pk>\d+)/$', PurchaseOrderAttachmentDetail.as_view(), name='api-po-attachment-detail'),
-            url(r'^.*$', PurchaseOrderAttachmentList.as_view(), name='api-po-attachment-list'),
+        re_path(r'attachment/', include([
+            path('<int:pk>/', PurchaseOrderAttachmentDetail.as_view(), name='api-po-attachment-detail'),
+            re_path(r'^.*$', PurchaseOrderAttachmentList.as_view(), name='api-po-attachment-list'),
         ])),
 
         # Individual purchase order detail URLs
-        url(r'^(?P<pk>\d+)/', include([
-            url(r'^receive/', PurchaseOrderReceive.as_view(), name='api-po-receive'),
-            url(r'.*$', PurchaseOrderDetail.as_view(), name='api-po-detail'),
+        re_path(r'^(?P<pk>\d+)/', include([
+            re_path(r'^receive/', PurchaseOrderReceive.as_view(), name='api-po-receive'),
+            re_path(r'.*$', PurchaseOrderDetail.as_view(), name='api-po-detail'),
         ])),
 
         # Purchase order list
-        url(r'^.*$', PurchaseOrderList.as_view(), name='api-po-list'),
+        re_path(r'^.*$', PurchaseOrderList.as_view(), name='api-po-list'),
     ])),
 
     # API endpoints for purchase order line items
-    url(r'^po-line/', include([
-        url(r'^(?P<pk>\d+)/$', PurchaseOrderLineItemDetail.as_view(), name='api-po-line-detail'),
-        url(r'^.*$', PurchaseOrderLineItemList.as_view(), name='api-po-line-list'),
+    re_path(r'^po-line/', include([
+        path('<int:pk>/', PurchaseOrderLineItemDetail.as_view(), name='api-po-line-detail'),
+        re_path(r'^.*$', PurchaseOrderLineItemList.as_view(), name='api-po-line-list'),
     ])),
 
     # API endpoints for purchase order extra line
-    url(r'^po-extra-line/', include([
-        url(r'^(?P<pk>\d+)/$', PurchaseOrderExtraLineDetail.as_view(), name='api-po-extra-line-detail'),
-        url(r'^$', PurchaseOrderExtraLineList.as_view(), name='api-po-extra-line-list'),
+    re_path(r'^po-extra-line/', include([
+        path('<int:pk>/', PurchaseOrderExtraLineDetail.as_view(), name='api-po-extra-line-detail'),
+        path('', PurchaseOrderExtraLineList.as_view(), name='api-po-extra-line-list'),
     ])),
 
     # API endpoints for sales ordesr
-    url(r'^so/', include([
-        url(r'attachment/', include([
-            url(r'^(?P<pk>\d+)/$', SalesOrderAttachmentDetail.as_view(), name='api-so-attachment-detail'),
-            url(r'^.*$', SalesOrderAttachmentList.as_view(), name='api-so-attachment-list'),
+    re_path(r'^so/', include([
+        re_path(r'attachment/', include([
+            path('<int:pk>/', SalesOrderAttachmentDetail.as_view(), name='api-so-attachment-detail'),
+            re_path(r'^.*$', SalesOrderAttachmentList.as_view(), name='api-so-attachment-list'),
         ])),
 
-        url(r'^shipment/', include([
-            url(r'^(?P<pk>\d+)/', include([
-                url(r'^ship/$', SalesOrderShipmentComplete.as_view(), name='api-so-shipment-ship'),
-                url(r'^.*$', SalesOrderShipmentDetail.as_view(), name='api-so-shipment-detail'),
+        re_path(r'^shipment/', include([
+            re_path(r'^(?P<pk>\d+)/', include([
+                path('ship/', SalesOrderShipmentComplete.as_view(), name='api-so-shipment-ship'),
+                re_path(r'^.*$', SalesOrderShipmentDetail.as_view(), name='api-so-shipment-detail'),
             ])),
-            url(r'^.*$', SalesOrderShipmentList.as_view(), name='api-so-shipment-list'),
+            re_path(r'^.*$', SalesOrderShipmentList.as_view(), name='api-so-shipment-list'),
         ])),
 
         # Sales order detail view
-        url(r'^(?P<pk>\d+)/', include([
-            url(r'^complete/', SalesOrderComplete.as_view(), name='api-so-complete'),
-            url(r'^allocate/', SalesOrderAllocate.as_view(), name='api-so-allocate'),
-            url(r'^allocate-serials/', SalesOrderAllocateSerials.as_view(), name='api-so-allocate-serials'),
-            url(r'^.*$', SalesOrderDetail.as_view(), name='api-so-detail'),
+        re_path(r'^(?P<pk>\d+)/', include([
+            re_path(r'^complete/', SalesOrderComplete.as_view(), name='api-so-complete'),
+            re_path(r'^allocate/', SalesOrderAllocate.as_view(), name='api-so-allocate'),
+            re_path(r'^allocate-serials/', SalesOrderAllocateSerials.as_view(), name='api-so-allocate-serials'),
+            re_path(r'^.*$', SalesOrderDetail.as_view(), name='api-so-detail'),
         ])),
 
         # Sales order list view
-        url(r'^.*$', SalesOrderList.as_view(), name='api-so-list'),
+        re_path(r'^.*$', SalesOrderList.as_view(), name='api-so-list'),
     ])),
 
     # API endpoints for sales order line items
-    url(r'^so-line/', include([
-        url(r'^(?P<pk>\d+)/$', SalesOrderLineItemDetail.as_view(), name='api-so-line-detail'),
-        url(r'^$', SalesOrderLineItemList.as_view(), name='api-so-line-list'),
+    re_path(r'^so-line/', include([
+        path('<int:pk>/', SalesOrderLineItemDetail.as_view(), name='api-so-line-detail'),
+        path('', SalesOrderLineItemList.as_view(), name='api-so-line-list'),
     ])),
 
     # API endpoints for sales order extra line
-    url(r'^so-extra-line/', include([
-        url(r'^(?P<pk>\d+)/$', SalesOrderExtraLineDetail.as_view(), name='api-so-extra-line-detail'),
-        url(r'^$', SalesOrderExtraLineList.as_view(), name='api-so-extra-line-list'),
+    re_path(r'^so-extra-line/', include([
+        path('<int:pk>/', SalesOrderExtraLineDetail.as_view(), name='api-so-extra-line-detail'),
+        path('', SalesOrderExtraLineList.as_view(), name='api-so-extra-line-list'),
     ])),
 
     # API endpoints for sales order allocations
-    url(r'^so-allocation/', include([
-        url(r'^(?P<pk>\d+)/$', SalesOrderAllocationDetail.as_view(), name='api-so-allocation-detail'),
-        url(r'^.*$', SalesOrderAllocationList.as_view(), name='api-so-allocation-list'),
+    re_path(r'^so-allocation/', include([
+        path('<int:pk>/', SalesOrderAllocationDetail.as_view(), name='api-so-allocation-detail'),
+        re_path(r'^.*$', SalesOrderAllocationList.as_view(), name='api-so-allocation-list'),
     ])),
 ]

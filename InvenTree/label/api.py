@@ -4,10 +4,10 @@ from __future__ import unicode_literals
 from io import BytesIO
 from PIL import Image
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from django.conf import settings
-from django.conf.urls import url, include
+from django.urls import include, re_path
 from django.core.exceptions import ValidationError, FieldError
 from django.http import HttpResponse, JsonResponse
 
@@ -579,38 +579,38 @@ class PartLabelPrint(generics.RetrieveAPIView, PartLabelMixin, LabelPrintMixin):
 label_api_urls = [
 
     # Stock item labels
-    url(r'stock/', include([
+    re_path(r'stock/', include([
         # Detail views
-        url(r'^(?P<pk>\d+)/', include([
-            url(r'print/?', StockItemLabelPrint.as_view(), name='api-stockitem-label-print'),
-            url(r'^.*$', StockItemLabelDetail.as_view(), name='api-stockitem-label-detail'),
+        re_path(r'^(?P<pk>\d+)/', include([
+            re_path(r'print/?', StockItemLabelPrint.as_view(), name='api-stockitem-label-print'),
+            re_path(r'^.*$', StockItemLabelDetail.as_view(), name='api-stockitem-label-detail'),
         ])),
 
         # List view
-        url(r'^.*$', StockItemLabelList.as_view(), name='api-stockitem-label-list'),
+        re_path(r'^.*$', StockItemLabelList.as_view(), name='api-stockitem-label-list'),
     ])),
 
     # Stock location labels
-    url(r'location/', include([
+    re_path(r'location/', include([
         # Detail views
-        url(r'^(?P<pk>\d+)/', include([
-            url(r'print/?', StockLocationLabelPrint.as_view(), name='api-stocklocation-label-print'),
-            url(r'^.*$', StockLocationLabelDetail.as_view(), name='api-stocklocation-label-detail'),
+        re_path(r'^(?P<pk>\d+)/', include([
+            re_path(r'print/?', StockLocationLabelPrint.as_view(), name='api-stocklocation-label-print'),
+            re_path(r'^.*$', StockLocationLabelDetail.as_view(), name='api-stocklocation-label-detail'),
         ])),
 
         # List view
-        url(r'^.*$', StockLocationLabelList.as_view(), name='api-stocklocation-label-list'),
+        re_path(r'^.*$', StockLocationLabelList.as_view(), name='api-stocklocation-label-list'),
     ])),
 
     # Part labels
-    url(r'^part/', include([
+    re_path(r'^part/', include([
         # Detail views
-        url(r'^(?P<pk>\d+)/', include([
-            url(r'^print/', PartLabelPrint.as_view(), name='api-part-label-print'),
-            url(r'^.*$', PartLabelDetail.as_view(), name='api-part-label-detail'),
+        re_path(r'^(?P<pk>\d+)/', include([
+            re_path(r'^print/', PartLabelPrint.as_view(), name='api-part-label-print'),
+            re_path(r'^.*$', PartLabelDetail.as_view(), name='api-part-label-detail'),
         ])),
 
         # List view
-        url(r'^.*$', PartLabelList.as_view(), name='api-part-label-list'),
+        re_path(r'^.*$', PartLabelList.as_view(), name='api-part-label-list'),
     ])),
 ]
