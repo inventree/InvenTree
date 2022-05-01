@@ -38,7 +38,7 @@ from InvenTree.filters import InvenTreeOrderingFilter
 
 from order.models import PurchaseOrder
 from order.models import SalesOrder, SalesOrderAllocation
-from order.serializers import POSerializer
+from order.serializers import PurchaseOrderSerializer
 
 from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
@@ -1315,7 +1315,7 @@ class StockTrackingList(generics.ListAPIView):
             if 'purchaseorder' in deltas:
                 try:
                     order = PurchaseOrder.objects.get(pk=deltas['purchaseorder'])
-                    serializer = POSerializer(order)
+                    serializer = PurchaseOrderSerializer(order)
                     deltas['purchaseorder_detail'] = serializer.data
                 except:
                     pass
