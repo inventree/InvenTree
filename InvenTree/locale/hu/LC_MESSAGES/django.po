@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-01 14:04+0000\n"
-"PO-Revision-Date: 2022-04-27 11:55\n"
+"PO-Revision-Date: 2022-05-01 23:28\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Crowdin-Project-ID: 452300\n"
 "X-Crowdin-Language: hu\n"
 "X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
-"X-Crowdin-File-ID: 138\n"
+"X-Crowdin-File-ID: 154\n"
 
 #: InvenTree/api.py:57
 msgid "API endpoint not found"
@@ -94,10 +94,9 @@ msgid "Empty serial number string"
 msgstr "Üres sorozatszám"
 
 #: InvenTree/helpers.py:491
-#, fuzzy, python-brace-format
-#| msgid "Invalid group: {g}"
+#, python-brace-format
 msgid "Invalid group range: {g}"
-msgstr "Érvénytelen csoport: {g}"
+msgstr ""
 
 #: InvenTree/helpers.py:494
 #, python-brace-format
@@ -105,10 +104,9 @@ msgid "Invalid group: {g}"
 msgstr "Érvénytelen csoport: {g}"
 
 #: InvenTree/helpers.py:522
-#, fuzzy, python-brace-format
-#| msgid "Invalid group: {g}"
+#, python-brace-format
 msgid "Invalid group sequence: {g}"
-msgstr "Érvénytelen csoport: {g}"
+msgstr ""
 
 #: InvenTree/helpers.py:530
 #, python-brace-format
@@ -147,7 +145,7 @@ msgstr "Válaszd ki a mellekelni kívánt fájlt"
 #: templates/js/translated/company.js:540
 #: templates/js/translated/company.js:829 templates/js/translated/part.js:1441
 msgid "Link"
-msgstr "Link"
+msgstr ""
 
 #: InvenTree/models.py:205 build/models.py:332 part/models.py:874
 #: stock/models.py:669
@@ -1098,16 +1096,12 @@ msgid "Status"
 msgstr "Állapot"
 
 #: build/serializers.py:389
-#, fuzzy
-#| msgid "Accept Incomplete"
 msgid "Accept Incomplete Allocation"
-msgstr "Befejezetlenek elfogadása"
+msgstr ""
 
 #: build/serializers.py:390
-#, fuzzy
-#| msgid "Required stock has not been fully allocated"
 msgid "Complete ouputs if stock has not been fully allocated"
-msgstr "A szükséges készlet nem lett teljesen lefoglalva"
+msgstr ""
 
 #: build/serializers.py:447
 msgid "Accept Unallocated"
@@ -1176,10 +1170,8 @@ msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr "Gyártási kimenetet nem lehet megadni a követésre kötelezett alkatrészek lefoglalásához"
 
 #: build/serializers.py:670
-#, fuzzy
-#| msgid "No stock items have been allocated to this shipment"
 msgid "This stock item has already been allocated to this build output"
-msgstr "Ehhez a szállítmányhoz nincs készlet hozzárendelve"
+msgstr ""
 
 #: build/serializers.py:697 order/serializers.py:1147
 msgid "Allocation items must be provided"
@@ -1381,7 +1373,7 @@ msgstr "Lefoglalt alkatrészek"
 #: templates/js/translated/table_filters.js:151
 #: templates/js/translated/table_filters.js:242
 msgid "Batch"
-msgstr "Batch"
+msgstr ""
 
 #: build/templates/build/detail.html:126
 #: order/templates/order/order_base.html:143
@@ -1500,16 +1492,12 @@ msgid "Print labels"
 msgstr "Címke nyomtatása"
 
 #: build/templates/build/detail.html:274
-#, fuzzy
-#| msgid "Complete build output"
 msgid "Expand all build output rows"
-msgstr "Gyártási kimenet befejezése"
+msgstr ""
 
 #: build/templates/build/detail.html:278
-#, fuzzy
-#| msgid "Complete build output"
 msgid "Collapse all build output rows"
-msgstr "Gyártási kimenet befejezése"
+msgstr ""
 
 #: build/templates/build/detail.html:295
 msgid "Completed Build Outputs"
@@ -2473,7 +2461,7 @@ msgstr "Aktív-e ez a webhook"
 
 #: common/models.py:1685
 msgid "Token"
-msgstr "Token"
+msgstr ""
 
 #: common/models.py:1686
 msgid "Token for access"
@@ -2565,7 +2553,7 @@ msgstr "Előző lépés"
 #: company/forms.py:24 part/forms.py:46
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
-msgstr "URL"
+msgstr ""
 
 #: company/forms.py:25 part/forms.py:47
 msgid "Image URL"
@@ -2608,7 +2596,7 @@ msgstr "Kapcsolattartó telefonszáma"
 #: company/models.py:125 company/templates/company/company_base.html:129
 #: templates/InvenTree/settings/user.html:48
 msgid "Email"
-msgstr "Email"
+msgstr ""
 
 #: company/models.py:125
 msgid "Contact email address"
@@ -2694,7 +2682,7 @@ msgstr "Gyártó kiválasztása"
 #: templates/js/translated/company.js:818 templates/js/translated/order.js:1237
 #: templates/js/translated/part.js:246 templates/js/translated/part.js:956
 msgid "MPN"
-msgstr "MPN"
+msgstr ""
 
 #: company/models.py:343 templates/js/translated/part.js:247
 msgid "Manufacturer Part Number"
@@ -2765,7 +2753,7 @@ msgstr "Beszállító kiválasztása"
 #: part/bom.py:238 part/bom.py:266 templates/js/translated/order.js:1224
 #: templates/js/translated/part.js:227 templates/js/translated/part.js:942
 msgid "SKU"
-msgstr "SKU"
+msgstr ""
 
 #: company/models.py:552 templates/js/translated/part.js:228
 msgid "Supplier stock keeping unit"
@@ -3494,22 +3482,16 @@ msgid "Target shipping date for this line item"
 msgstr "Cél szállítási dátuma ennek a sortételnek"
 
 #: order/models.py:892
-#, fuzzy
-#| msgid "Contact"
 msgid "Context"
-msgstr "Kapcsolattartó"
+msgstr ""
 
 #: order/models.py:893
-#, fuzzy
-#| msgid "Serial number for this item"
 msgid "Additional context for this line"
-msgstr "Sorozatszám ehhez a tételhez"
+msgstr ""
 
 #: order/models.py:901
-#, fuzzy
-#| msgid "Unit Price"
 msgid "Unit price"
-msgstr "Egységár"
+msgstr ""
 
 #: order/models.py:934
 msgid "Supplier part must match supplier"
@@ -3667,10 +3649,8 @@ msgid "Enter stock allocation quantity"
 msgstr "Készlet foglalási mennyiség megadása"
 
 #: order/serializers.py:77
-#, fuzzy
-#| msgid "Sale price currency"
 msgid "Price currency"
-msgstr "Eladási ár pénzneme"
+msgstr ""
 
 #: order/serializers.py:246
 msgid "Purchase price currency"
@@ -3831,10 +3811,8 @@ msgstr "Kiküldve"
 
 #: order/templates/order/order_base.html:177
 #: order/templates/order/sales_order_base.html:189
-#, fuzzy
-#| msgid "Total Cost"
 msgid "Total cost"
-msgstr "Teljes költség"
+msgstr ""
 
 #: order/templates/order/order_base.html:225
 msgid "Edit Purchase Order"
@@ -3992,18 +3970,14 @@ msgstr "Kiválasztott tételek bevételezése"
 
 #: order/templates/order/purchase_order_detail.html:48
 #: order/templates/order/sales_order_detail.html:40
-#, fuzzy
-#| msgid "External Link"
 msgid "Extra Lines"
-msgstr "Külső link"
+msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:53
 #: order/templates/order/sales_order_detail.html:45
 #: order/templates/order/sales_order_detail.html:273
-#, fuzzy
-#| msgid "External Link"
 msgid "Add Extra Line"
-msgstr "Külső link"
+msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:72
 msgid "Received Items"
@@ -4015,10 +3989,8 @@ msgid "Order Notes"
 msgstr "Rendelés megjegyzések"
 
 #: order/templates/order/purchase_order_detail.html:235
-#, fuzzy
-#| msgid "Order notes"
 msgid "Add Order Line"
-msgstr "Rendelés jegyzetek"
+msgstr ""
 
 #: order/templates/order/purchase_orders.html:30
 #: order/templates/order/sales_orders.html:33
@@ -4340,7 +4312,7 @@ msgstr "Alkatrész kategória"
 #: templates/js/translated/part.js:666 templates/js/translated/part.js:1322
 #: templates/js/translated/stock.js:1668
 msgid "IPN"
-msgstr "IPN"
+msgstr ""
 
 #: part/models.py:861
 msgid "Internal Part Number"
@@ -5380,8 +5352,7 @@ msgstr "Válassz a meglévő képek közül"
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr "A(z) '<strong>%(full_name)s</strong>' alkatrész nem törölhető mert még mindig <strong>aktív</strong>. Előbb állítsd az alkatrészt inaktív állapotúra és probáld újra!    "
@@ -5673,7 +5644,7 @@ msgstr "Aktív-e a plugin"
 
 #: plugin/models.py:182
 msgid "Plugin"
-msgstr "Plugin"
+msgstr ""
 
 #: plugin/samples/integration/sample.py:42
 msgid "Enable PO"
@@ -5740,10 +5711,9 @@ msgid "Either packagename of URL must be provided"
 msgstr "Vagy csomag nevet vagy URL-t meg kell adni"
 
 #: report/api.py:235 report/api.py:282
-#, fuzzy, python-brace-format
-#| msgid "Template file '{filename}' is missing or does not exist"
+#, python-brace-format
 msgid "Template file '{template}' is missing or does not exist"
-msgstr "A '{filename}' sablon fájl hiányzik vagy nem érhető el"
+msgstr ""
 
 #: report/models.py:178
 msgid "Template name"
@@ -5819,7 +5789,7 @@ msgstr "Részlet fájl leírása"
 
 #: report/models.py:590
 msgid "Asset"
-msgstr "Asset"
+msgstr ""
 
 #: report/models.py:591
 msgid "Report asset file"
@@ -6784,7 +6754,7 @@ msgstr "Az oldal jelenleg karbantartás alatt van, hamarosan újra használható
 
 #: templates/InvenTree/index.html:7
 msgid "Index"
-msgstr "Index"
+msgstr ""
 
 #: templates/InvenTree/index.html:88
 msgid "Subscribed Parts"
@@ -7017,7 +6987,7 @@ msgstr "Plugin Telepítése"
 #: templates/InvenTree/settings/plugin.html:48 templates/navbar.html:137
 #: users/models.py:39
 msgid "Admin"
-msgstr "Admin"
+msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:50
 #: templates/InvenTree/settings/plugin_settings.html:28
@@ -7312,7 +7282,7 @@ msgstr "Ezek a faktorok állnak rendelkezésre:"
 
 #: templates/InvenTree/settings/user.html:187
 msgid "TOTP"
-msgstr "TOTP"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:193
 msgid "Static"
@@ -7541,16 +7511,14 @@ msgstr "Bejelentkezés"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Kérlek jelentkezz be az egyik meglévő külső fiókkal vagy <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">Regisztrálj</a> fiókért és jelentkezz be lentebb:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Ha még nem hoztál létre fiókot akkor előbb <a href=\"%(signup_url)s\">regisztrálj</a>."
 
@@ -8056,10 +8024,8 @@ msgid "Edit BOM Item Substitutes"
 msgstr "Alkatrészjegyzék tétel helyettesítők szerkesztése"
 
 #: templates/js/translated/bom.js:763
-#, fuzzy
-#| msgid "Open subassembly"
 msgid "Load BOM for subassembly"
-msgstr "Al-gyártmány megnyitása"
+msgstr ""
 
 #: templates/js/translated/bom.js:773
 msgid "Substitutes Available"
@@ -8245,28 +8211,20 @@ msgid "No active build outputs found"
 msgstr "Nem található aktív gyártási kimenet"
 
 #: templates/js/translated/build.js:1162
-#, fuzzy
-#| msgid "Allocate Stock"
 msgid "Allocated Stock"
-msgstr "Készlet foglalása"
+msgstr ""
 
 #: templates/js/translated/build.js:1169
-#, fuzzy
-#| msgid "No BOM items found"
 msgid "No tracked BOM items for this build"
-msgstr "Nem találhatók alkatrészjegyzék tételek"
+msgstr ""
 
 #: templates/js/translated/build.js:1191
-#, fuzzy
-#| msgid "Completed items"
 msgid "Completed Tests"
-msgstr "Kész tételek"
+msgstr ""
 
 #: templates/js/translated/build.js:1196
-#, fuzzy
-#| msgid "Stock required for build order"
 msgid "No required tests for this build"
-msgstr "A gyártási utasításhoz készlet szükséges"
+msgstr ""
 
 #: templates/js/translated/build.js:1677 templates/js/translated/build.js:2506
 #: templates/js/translated/order.js:2425
@@ -8917,46 +8875,32 @@ msgid "Delete line item"
 msgstr "Sortétel törlése"
 
 #: templates/js/translated/order.js:1534 templates/js/translated/order.js:3169
-#, fuzzy
-#| msgid "Duplicate line item"
 msgid "Duplicate line"
-msgstr "Sortétel másolása"
+msgstr ""
 
 #: templates/js/translated/order.js:1535 templates/js/translated/order.js:3170
-#, fuzzy
-#| msgid "Edit line item"
 msgid "Edit line"
-msgstr "Sortétel szerkesztése"
+msgstr ""
 
 #: templates/js/translated/order.js:1536 templates/js/translated/order.js:3171
-#, fuzzy
-#| msgid "Delete line item"
 msgid "Delete line"
-msgstr "Sortétel törlése"
+msgstr ""
 
 #: templates/js/translated/order.js:1566 templates/js/translated/order.js:3201
-#, fuzzy
-#| msgid "Duplicate Line Item"
 msgid "Duplicate Line"
-msgstr "Sortétel másolása"
+msgstr ""
 
 #: templates/js/translated/order.js:1587 templates/js/translated/order.js:3222
-#, fuzzy
-#| msgid "Edit Line Item"
 msgid "Edit Line"
-msgstr "Sortétel szerkesztése"
+msgstr ""
 
 #: templates/js/translated/order.js:1598 templates/js/translated/order.js:3233
-#, fuzzy
-#| msgid "Delete Line Item"
 msgid "Delete Line"
-msgstr "Sortétel törlése"
+msgstr ""
 
 #: templates/js/translated/order.js:1609
-#, fuzzy
-#| msgid "No matching line items"
 msgid "No matching line"
-msgstr "Nincs egyező sortétel"
+msgstr ""
 
 #: templates/js/translated/order.js:1648
 msgid "No sales orders found"
@@ -9068,10 +9012,8 @@ msgid "No matching line items"
 msgstr "Nincs egyező sortétel"
 
 #: templates/js/translated/order.js:3244
-#, fuzzy
-#| msgid "No matching line items"
 msgid "No matching lines"
-msgstr "Nincs egyező sortétel"
+msgstr ""
 
 #: templates/js/translated/part.js:55
 msgid "Part Attributes"
@@ -10288,5 +10230,3 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
 
-#~ msgid "loading"
-#~ msgstr "betöltés"
