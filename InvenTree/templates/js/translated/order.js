@@ -2413,7 +2413,7 @@ function showAllocationSubTable(index, row, element, options) {
             },
             {
                 field: 'buttons',
-                title: '{% trans "" %}',
+                title: '',
                 formatter: function(value, row, index, field) {
 
                     var html = `<div class='btn-group float-right' role='group'>`;

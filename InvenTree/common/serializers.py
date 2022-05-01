@@ -50,11 +50,12 @@ class SettingsSerializer(InvenTreeModelSerializer):
         """
         Make sure protected values are not returned
         """
-        result = obj.value
 
         # never return protected values
-        if obj.is_protected:
+        if obj.protected:
             result = '***'
+        else:
+            result = obj.value
 
         return result
 
