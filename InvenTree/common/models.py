@@ -455,7 +455,14 @@ class BaseInvenTreeSetting(models.Model):
 
         if callable(validator):
             # We can accept function validators with a single argument
-            validator(self.value)
+
+            if self.is_bool():
+                value = self.as_bool()
+            
+            if self.is_int():
+                value = self.as_int()
+
+            validator(value)
 
     def validate_unique(self, exclude=None, **kwargs):
         """
