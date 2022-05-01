@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-01 00:30+0000\n"
-"PO-Revision-Date: 2022-05-01 05:02\n"
+"PO-Revision-Date: 2022-05-01 06:00\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -1576,11 +1576,11 @@ msgstr "Fout bij lezen bestand (ongeldig formaat)"
 
 #: common/files.py:74
 msgid "Error reading file (incorrect dimension)"
-msgstr ""
+msgstr "Fout bij lezen bestand (onjuiste dimensie)"
 
 #: common/files.py:76
 msgid "Error reading file (data could be corrupted)"
-msgstr ""
+msgstr "Fout bij lezen bestand (data kan beschadigd zijn)"
 
 #: common/forms.py:34
 msgid "File"
@@ -1725,45 +1725,45 @@ msgstr "Sta het wijzigen van de IPN toe tijdens het bewerken van een onderdeel"
 
 #: common/models.py:760
 msgid "Copy Part BOM Data"
-msgstr ""
+msgstr "Kopieer Onderdeel Stuklijstgegevens"
 
 #: common/models.py:761
 msgid "Copy BOM data by default when duplicating a part"
-msgstr ""
+msgstr "Kopieer BOM gegevens standaard bij het dupliceren van een onderdeel"
 
 #: common/models.py:767
 msgid "Copy Part Parameter Data"
-msgstr ""
+msgstr "Kopieer Onderdeel Parametergegevens"
 
 #: common/models.py:768
 msgid "Copy parameter data by default when duplicating a part"
-msgstr ""
+msgstr "Parametergegevens standaard kopiëren bij het dupliceren van een onderdeel"
 
 #: common/models.py:774
 msgid "Copy Part Test Data"
-msgstr ""
+msgstr "Kopieer Onderdeel Testdata"
 
 #: common/models.py:775
 msgid "Copy test data by default when duplicating a part"
-msgstr ""
+msgstr "Testdata standaard kopiëren bij het dupliceren van een onderdeel"
 
 #: common/models.py:781
 msgid "Copy Category Parameter Templates"
-msgstr ""
+msgstr "Sjablonen voor categorieparameters kopiëren"
 
 #: common/models.py:782
 msgid "Copy category parameter templates when creating a part"
-msgstr ""
+msgstr "Kopieer categorie parametersjablonen bij het maken van een onderdeel"
 
 #: common/models.py:788 part/models.py:2598 report/models.py:187
 #: templates/js/translated/table_filters.js:38
 #: templates/js/translated/table_filters.js:444
 msgid "Template"
-msgstr ""
+msgstr "Sjabloon"
 
 #: common/models.py:789
 msgid "Parts are templates by default"
-msgstr ""
+msgstr "Onderdelen zijn standaard sjablonen"
 
 #: common/models.py:795 part/models.py:964 templates/js/translated/bom.js:1335
 #: templates/js/translated/table_filters.js:168
@@ -1778,11 +1778,11 @@ msgstr "Onderdelen kunnen standaard vanuit andere delen worden samengesteld"
 #: common/models.py:802 part/models.py:970
 #: templates/js/translated/table_filters.js:464
 msgid "Component"
-msgstr ""
+msgstr "Component"
 
 #: common/models.py:803
 msgid "Parts can be used as sub-components by default"
-msgstr ""
+msgstr "Onderdelen kunnen standaard worden gebruikt als subcomponenten"
 
 #: common/models.py:809 part/models.py:981
 msgid "Purchaseable"
@@ -1840,7 +1840,7 @@ msgstr "Toon onderdeelprijs in sommige formulieren"
 
 #: common/models.py:856
 msgid "Show Price in BOM"
-msgstr ""
+msgstr "Prijs in Stuklijst weergeven"
 
 #: common/models.py:857
 msgid "Include pricing information in BOM tables"
@@ -1964,15 +1964,15 @@ msgstr "dagen"
 
 #: common/models.py:971
 msgid "Build Expired Stock"
-msgstr ""
+msgstr "Bouw Verlopen Voorraad"
 
 #: common/models.py:972
 msgid "Allow building with expired stock"
-msgstr ""
+msgstr "Bouwen met verlopen voorraad toestaan"
 
 #: common/models.py:978
 msgid "Stock Ownership Control"
-msgstr ""
+msgstr "Voorraad Eigenaar Toezicht"
 
 #: common/models.py:979
 msgid "Enable ownership control over stock locations and items"
@@ -2004,11 +2004,11 @@ msgstr "Voorvoegsel waarde voor verkooporder referentie"
 
 #: common/models.py:1002
 msgid "Purchase Order Reference Prefix"
-msgstr ""
+msgstr "Inkooporder Verwijzingsvoorvoegsel"
 
 #: common/models.py:1003
 msgid "Prefix value for purchase order reference"
-msgstr ""
+msgstr "Voorvoegselwaarde voor Inkooporderreferentie"
 
 #: common/models.py:1009
 msgid "Enable password forgot"
@@ -2044,11 +2044,11 @@ msgstr "Vereis gebruiker om e-mailadres te registreren bij aanmelding"
 
 #: common/models.py:1033
 msgid "Auto-fill SSO users"
-msgstr ""
+msgstr "SSO-gebruikers automatisch invullen"
 
 #: common/models.py:1034
 msgid "Automatically fill out user-details from SSO account-data"
-msgstr ""
+msgstr "Gebruikersgegevens van SSO-accountgegevens automatisch invullen"
 
 #: common/models.py:1039
 msgid "Mail twice"
@@ -2056,7 +2056,7 @@ msgstr "E-mail tweemaal"
 
 #: common/models.py:1040
 msgid "On signup ask users twice for their mail"
-msgstr ""
+msgstr "Bij inschrijving gebruikers twee keer om hun e-mail vragen"
 
 #: common/models.py:1045
 msgid "Password twice"
@@ -2064,11 +2064,11 @@ msgstr "Wachtwoord tweemaal"
 
 #: common/models.py:1046
 msgid "On signup ask users twice for their password"
-msgstr ""
+msgstr "Bij inschrijving gebruikers twee keer om hun wachtwoord vragen"
 
 #: common/models.py:1051
 msgid "Group on signup"
-msgstr ""
+msgstr "Groep bij inschrijving"
 
 #: common/models.py:1052
 msgid "Group to which new users are assigned on registration"
