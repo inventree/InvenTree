@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-01 14:04+0000\n"
-"PO-Revision-Date: 2022-04-27 11:55\n"
+"PO-Revision-Date: 2022-05-01 23:28\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Crowdin-Project-ID: 452300\n"
 "X-Crowdin-Language: pl\n"
 "X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
-"X-Crowdin-File-ID: 138\n"
+"X-Crowdin-File-ID: 154\n"
 
 #: InvenTree/api.py:57
 msgid "API endpoint not found"
@@ -94,10 +94,9 @@ msgid "Empty serial number string"
 msgstr "Pusty ciąg numeru seryjnego"
 
 #: InvenTree/helpers.py:491
-#, fuzzy, python-brace-format
-#| msgid "Invalid group: {g}"
+#, python-brace-format
 msgid "Invalid group range: {g}"
-msgstr "Nieprawidłowa grupa: {g}"
+msgstr ""
 
 #: InvenTree/helpers.py:494
 #, python-brace-format
@@ -105,10 +104,9 @@ msgid "Invalid group: {g}"
 msgstr "Nieprawidłowa grupa: {g}"
 
 #: InvenTree/helpers.py:522
-#, fuzzy, python-brace-format
-#| msgid "Invalid group: {g}"
+#, python-brace-format
 msgid "Invalid group sequence: {g}"
-msgstr "Nieprawidłowa grupa: {g}"
+msgstr ""
 
 #: InvenTree/helpers.py:530
 #, python-brace-format
@@ -450,7 +448,7 @@ msgstr "Wysłane"
 
 #: InvenTree/status_codes.py:183
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: InvenTree/status_codes.py:184
 msgid "Attention needed"
@@ -1095,13 +1093,11 @@ msgstr ""
 #: templates/js/translated/order.js:1705 templates/js/translated/stock.js:1767
 #: templates/js/translated/stock.js:2471 templates/js/translated/stock.js:2603
 msgid "Status"
-msgstr "Status"
+msgstr ""
 
 #: build/serializers.py:389
-#, fuzzy
-#| msgid "Accept Incomplete"
 msgid "Accept Incomplete Allocation"
-msgstr "Akceptuj niekompletne"
+msgstr ""
 
 #: build/serializers.py:390
 msgid "Complete ouputs if stock has not been fully allocated"
@@ -2465,7 +2461,7 @@ msgstr ""
 
 #: common/models.py:1685
 msgid "Token"
-msgstr "Token"
+msgstr ""
 
 #: common/models.py:1686
 msgid "Token for access"
@@ -2489,7 +2485,7 @@ msgstr "Unikalny identyfikator dla tej wiadomości"
 
 #: common/models.py:1770
 msgid "Host"
-msgstr "Host"
+msgstr ""
 
 #: common/models.py:1771
 msgid "Host from which this message was received"
@@ -2557,7 +2553,7 @@ msgstr "Poprzedni krok"
 #: company/forms.py:24 part/forms.py:46
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
-msgstr "URL"
+msgstr ""
 
 #: company/forms.py:25 part/forms.py:47
 msgid "Image URL"
@@ -2686,7 +2682,7 @@ msgstr "Wybierz producenta"
 #: templates/js/translated/company.js:818 templates/js/translated/order.js:1237
 #: templates/js/translated/part.js:246 templates/js/translated/part.js:956
 msgid "MPN"
-msgstr "MPN"
+msgstr ""
 
 #: company/models.py:343 templates/js/translated/part.js:247
 msgid "Manufacturer Part Number"
@@ -2757,7 +2753,7 @@ msgstr "Wybierz dostawcę"
 #: part/bom.py:238 part/bom.py:266 templates/js/translated/order.js:1224
 #: templates/js/translated/part.js:227 templates/js/translated/part.js:942
 msgid "SKU"
-msgstr "SKU"
+msgstr ""
 
 #: company/models.py:552 templates/js/translated/part.js:228
 msgid "Supplier stock keeping unit"
@@ -3486,20 +3482,16 @@ msgid "Target shipping date for this line item"
 msgstr ""
 
 #: order/models.py:892
-#, fuzzy
-#| msgid "Contact"
 msgid "Context"
-msgstr "Kontakt"
+msgstr ""
 
 #: order/models.py:893
 msgid "Additional context for this line"
 msgstr ""
 
 #: order/models.py:901
-#, fuzzy
-#| msgid "Unit Price"
 msgid "Unit price"
-msgstr "Cena jednostkowa"
+msgstr ""
 
 #: order/models.py:934
 msgid "Supplier part must match supplier"
@@ -3657,10 +3649,8 @@ msgid "Enter stock allocation quantity"
 msgstr ""
 
 #: order/serializers.py:77
-#, fuzzy
-#| msgid "Default currency"
 msgid "Price currency"
-msgstr "Domyślna waluta"
+msgstr ""
 
 #: order/serializers.py:246
 msgid "Purchase price currency"
@@ -3821,10 +3811,8 @@ msgstr "Wydany"
 
 #: order/templates/order/order_base.html:177
 #: order/templates/order/sales_order_base.html:189
-#, fuzzy
-#| msgid "Total Cost"
 msgid "Total cost"
-msgstr "Całkowity Koszt"
+msgstr ""
 
 #: order/templates/order/order_base.html:225
 msgid "Edit Purchase Order"
@@ -3982,18 +3970,14 @@ msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:48
 #: order/templates/order/sales_order_detail.html:40
-#, fuzzy
-#| msgid "External Link"
 msgid "Extra Lines"
-msgstr "Link Zewnętrzny"
+msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:53
 #: order/templates/order/sales_order_detail.html:45
 #: order/templates/order/sales_order_detail.html:273
-#, fuzzy
-#| msgid "External Link"
 msgid "Add Extra Line"
-msgstr "Link Zewnętrzny"
+msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:72
 msgid "Received Items"
@@ -4005,10 +3989,8 @@ msgid "Order Notes"
 msgstr "Notatki zamówień"
 
 #: order/templates/order/purchase_order_detail.html:235
-#, fuzzy
-#| msgid "Order notes"
 msgid "Add Order Line"
-msgstr "Notatki do zamówienia"
+msgstr ""
 
 #: order/templates/order/purchase_orders.html:30
 #: order/templates/order/sales_orders.html:33
@@ -4330,7 +4312,7 @@ msgstr ""
 #: templates/js/translated/part.js:666 templates/js/translated/part.js:1322
 #: templates/js/translated/stock.js:1668
 msgid "IPN"
-msgstr "IPN"
+msgstr ""
 
 #: part/models.py:861
 msgid "Internal Part Number"
@@ -5370,12 +5352,10 @@ msgstr "Wybierz z istniejących obrazów"
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
-msgstr ""
-"Część '<strong>%(full_name)s</strong>' nie może zostać usunięta, ponieważ jest nadal oznaczona jako <strong>aktywna</strong>.\n"
+msgstr "Część '<strong>%(full_name)s</strong>' nie może zostać usunięta, ponieważ jest nadal oznaczona jako <strong>aktywna</strong>.\n"
 "    <br>Wyłącz atrybut części \"Aktywne\" i spróbuj ponownie.\n"
 "    "
 
@@ -5846,7 +5826,7 @@ msgstr ""
 #: report/templates/report/inventree_test_report_base.html:93
 #: stock/models.py:2183
 msgid "Test"
-msgstr "Test"
+msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:94
 #: stock/models.py:2189
@@ -6870,7 +6850,7 @@ msgstr ""
 #: templates/InvenTree/notifications/notifications.html:51
 #: templates/InvenTree/settings/settings.html:314
 msgid "ID"
-msgstr "ID"
+msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:57
 msgid "Age"
@@ -7009,7 +6989,7 @@ msgstr "Instaluj wtyczkę"
 #: templates/InvenTree/settings/plugin.html:48 templates/navbar.html:137
 #: users/models.py:39
 msgid "Admin"
-msgstr "Admin"
+msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:50
 #: templates/InvenTree/settings/plugin_settings.html:28
@@ -7533,22 +7513,18 @@ msgstr "Zaloguj się"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
-msgstr ""
-"Zaloguj się za pomocą jednego\n"
+msgstr "Zaloguj się za pomocą jednego\n"
 "istniejących kont stron trzecich lub  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">zarejestruj się</a>\n"
 "w celu założenia konta i zaloguj się poniżej:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
-msgstr ""
-"Jeżeli jeszcze nie utworzyłeś konta, to proszę najpierw\n"
+msgstr "Jeżeli jeszcze nie utworzyłeś konta, to proszę najpierw\n"
 "<a href=\"%(signup_url)s\">zarejstruj się</a>."
 
 #: templates/account/login.html:45
@@ -7973,7 +7949,7 @@ msgstr ""
 #: templates/js/translated/bom.js:252 templates/js/translated/bom.js:286
 #: templates/js/translated/order.js:455 templates/js/translated/tables.js:53
 msgid "Format"
-msgstr "Format"
+msgstr ""
 
 #: templates/js/translated/bom.js:253 templates/js/translated/bom.js:287
 #: templates/js/translated/order.js:456
@@ -8240,28 +8216,20 @@ msgid "No active build outputs found"
 msgstr ""
 
 #: templates/js/translated/build.js:1162
-#, fuzzy
-#| msgid "Allocate Stock"
 msgid "Allocated Stock"
-msgstr "Przydziel zapasy"
+msgstr ""
 
 #: templates/js/translated/build.js:1169
-#, fuzzy
-#| msgid "Number of stock items to build"
 msgid "No tracked BOM items for this build"
-msgstr "Ilość przedmiotów do zbudowania"
+msgstr ""
 
 #: templates/js/translated/build.js:1191
-#, fuzzy
-#| msgid "Completed items"
 msgid "Completed Tests"
-msgstr "Ukończone elementy"
+msgstr ""
 
 #: templates/js/translated/build.js:1196
-#, fuzzy
-#| msgid "User responsible for this build order"
 msgid "No required tests for this build"
-msgstr "Użytkownik odpowiedzialny za to zamówienie budowy"
+msgstr ""
 
 #: templates/js/translated/build.js:1677 templates/js/translated/build.js:2506
 #: templates/js/translated/order.js:2425
@@ -8912,46 +8880,32 @@ msgid "Delete line item"
 msgstr ""
 
 #: templates/js/translated/order.js:1534 templates/js/translated/order.js:3169
-#, fuzzy
-#| msgid "Duplicate selection"
 msgid "Duplicate line"
-msgstr "Duplikuj wybrane"
+msgstr ""
 
 #: templates/js/translated/order.js:1535 templates/js/translated/order.js:3170
-#, fuzzy
-#| msgid "Edit location"
 msgid "Edit line"
-msgstr "Edytuj lokację"
+msgstr ""
 
 #: templates/js/translated/order.js:1536 templates/js/translated/order.js:3171
-#, fuzzy
-#| msgid "Delete Item"
 msgid "Delete line"
-msgstr "Usuń element"
+msgstr ""
 
 #: templates/js/translated/order.js:1566 templates/js/translated/order.js:3201
-#, fuzzy
-#| msgid "Duplicate selection"
 msgid "Duplicate Line"
-msgstr "Duplikuj wybrane"
+msgstr ""
 
 #: templates/js/translated/order.js:1587 templates/js/translated/order.js:3222
-#, fuzzy
-#| msgid "Edit setting"
 msgid "Edit Line"
-msgstr "Edytuj ustawienie"
+msgstr ""
 
 #: templates/js/translated/order.js:1598 templates/js/translated/order.js:3233
-#, fuzzy
-#| msgid "Delete Item"
 msgid "Delete Line"
-msgstr "Usuń element"
+msgstr ""
 
 #: templates/js/translated/order.js:1609
-#, fuzzy
-#| msgid "No matching results"
 msgid "No matching line"
-msgstr "Brak pasujących wyników"
+msgstr ""
 
 #: templates/js/translated/order.js:1648
 msgid "No sales orders found"
@@ -9063,10 +9017,8 @@ msgid "No matching line items"
 msgstr ""
 
 #: templates/js/translated/order.js:3244
-#, fuzzy
-#| msgid "No matching results"
 msgid "No matching lines"
-msgstr "Brak pasujących wyników"
+msgstr ""
 
 #: templates/js/translated/part.js:55
 msgid "Part Attributes"
@@ -10283,5 +10235,3 @@ msgstr "Uprawnienie do edycji przedmiotów"
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
 
-#~ msgid "loading"
-#~ msgstr "ładowanie"
