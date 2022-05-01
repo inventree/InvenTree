@@ -158,7 +158,11 @@ class SettingsTest(TestCase):
                     raise ValueError(f'Non-boolean default value specified for {key}')  # pragma: no cover
 
 
-class SettingsApiTest(InvenTreeAPITestCase):
+
+class GlobalSettingsApiTest(InvenTreeAPITestCase):
+    """
+    Tests for the global settings API
+    """
 
     def test_global_settings_api_list(self):
         """
@@ -166,7 +170,53 @@ class SettingsApiTest(InvenTreeAPITestCase):
         """
         url = reverse('api-global-setting-list')
 
+        # Read out each of the global settings value, to ensure they are instantiated in the database
+        for key in InvenTreeSetting.SETTINGS:
+            InvenTreeSetting.get_setting_object(key)
+
         response = self.get(url, expected_code=200)
+
+        # Number of results should match the number of settings
+        self.assertEqual(len(response.data), len(InvenTreeSetting.SETTINGS.keys()))
+
+    def test_company_name(self):
+
+        setting = InvenTreeSetting.get_setting_object('INVENTREE_COMPANY_NAME')
+
+        # Check default value
+        self.assertEqual(setting.value, 'My company name')
+
+        url = reverse('api-global-setting-detail', kwargs={'pk': setting.pk})
+
+        # Test getting via the API
+        for val in ['test', '123', 'My company nam3']:
+            setting.value = val
+            setting.save()
+
+            response = self.get(url, expected_code=200)
+
+            self.assertEqual(response.data['value'], val)
+
+        # Test setting via the API
+        for val in ['cat', 'hat', 'bat', 'mat']:
+            response = self.patch(
+                url,
+                {
+                    'value': val,
+                },
+                expected_code=200
+            )
+
+            self.assertEqual(response.data['value'], val)
+
+            setting.refresh_from_db()
+            self.assertEqual(setting.value, val)
+
+
+class UserSettingsApiTest(InvenTreeAPITestCase):
+    """
+    Tests for the user settings API
+    """
 
     def test_user_settings_api_list(self):
         """
