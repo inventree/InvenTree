@@ -145,12 +145,12 @@ class MethodStorageClass:
         # for testing selective loading is made available
         if selected_classes:
             current_method = [item for item in current_method if item is selected_classes]
-        
+
         # make sure only one of each method is added
         filtered_list = {}
-        for item  in current_method:
+        for item in current_method:
             plugin = item.get_plugin(item)
-            ref = f'{plugin.package_path}_{item.METHOD_NAME}'  if plugin else item.METHOD_NAME
+            ref = f'{plugin.package_path}_{item.METHOD_NAME}' if plugin else item.METHOD_NAME
             filtered_list[ref] = item
 
         storage.liste = list(filtered_list.values())
