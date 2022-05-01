@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-01 14:04+0000\n"
-"PO-Revision-Date: 2022-04-27 11:55\n"
+"PO-Revision-Date: 2022-05-01 23:28\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Crowdin-Project-ID: 452300\n"
 "X-Crowdin-Language: ru\n"
 "X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
-"X-Crowdin-File-ID: 138\n"
+"X-Crowdin-File-ID: 154\n"
 
 #: InvenTree/api.py:57
 msgid "API endpoint not found"
@@ -94,10 +94,9 @@ msgid "Empty serial number string"
 msgstr "Пустая строка серийного номера"
 
 #: InvenTree/helpers.py:491
-#, fuzzy, python-brace-format
-#| msgid "Invalid group: {g}"
+#, python-brace-format
 msgid "Invalid group range: {g}"
-msgstr "Некорректный идентификатор группы {g}"
+msgstr ""
 
 #: InvenTree/helpers.py:494
 #, python-brace-format
@@ -105,10 +104,9 @@ msgid "Invalid group: {g}"
 msgstr "Некорректный идентификатор группы {g}"
 
 #: InvenTree/helpers.py:522
-#, fuzzy, python-brace-format
-#| msgid "Invalid group: {g}"
+#, python-brace-format
 msgid "Invalid group sequence: {g}"
-msgstr "Некорректный идентификатор группы {g}"
+msgstr ""
 
 #: InvenTree/helpers.py:530
 #, python-brace-format
@@ -1098,10 +1096,8 @@ msgid "Status"
 msgstr "Статус"
 
 #: build/serializers.py:389
-#, fuzzy
-#| msgid "Delete location"
 msgid "Accept Incomplete Allocation"
-msgstr "Удалить место хранения"
+msgstr ""
 
 #: build/serializers.py:390
 msgid "Complete ouputs if stock has not been fully allocated"
@@ -2686,7 +2682,7 @@ msgstr "Выберите производителя"
 #: templates/js/translated/company.js:818 templates/js/translated/order.js:1237
 #: templates/js/translated/part.js:246 templates/js/translated/part.js:956
 msgid "MPN"
-msgstr "MPN"
+msgstr ""
 
 #: company/models.py:343 templates/js/translated/part.js:247
 msgid "Manufacturer Part Number"
@@ -2757,7 +2753,7 @@ msgstr "Выберите поставщика"
 #: part/bom.py:238 part/bom.py:266 templates/js/translated/order.js:1224
 #: templates/js/translated/part.js:227 templates/js/translated/part.js:942
 msgid "SKU"
-msgstr "SKU"
+msgstr ""
 
 #: company/models.py:552 templates/js/translated/part.js:228
 msgid "Supplier stock keeping unit"
@@ -3486,20 +3482,16 @@ msgid "Target shipping date for this line item"
 msgstr ""
 
 #: order/models.py:892
-#, fuzzy
-#| msgid "Contact"
 msgid "Context"
-msgstr "Контакт"
+msgstr ""
 
 #: order/models.py:893
 msgid "Additional context for this line"
 msgstr ""
 
 #: order/models.py:901
-#, fuzzy
-#| msgid "No price"
 msgid "Unit price"
-msgstr "Нет цены"
+msgstr ""
 
 #: order/models.py:934
 msgid "Supplier part must match supplier"
@@ -3657,10 +3649,8 @@ msgid "Enter stock allocation quantity"
 msgstr ""
 
 #: order/serializers.py:77
-#, fuzzy
-#| msgid "Sale price currency"
 msgid "Price currency"
-msgstr "Курс продажи валюты"
+msgstr ""
 
 #: order/serializers.py:246
 msgid "Purchase price currency"
@@ -3821,10 +3811,8 @@ msgstr ""
 
 #: order/templates/order/order_base.html:177
 #: order/templates/order/sales_order_base.html:189
-#, fuzzy
-#| msgid "Total Price"
 msgid "Total cost"
-msgstr "Общая стоимость"
+msgstr ""
 
 #: order/templates/order/order_base.html:225
 msgid "Edit Purchase Order"
@@ -3982,18 +3970,14 @@ msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:48
 #: order/templates/order/sales_order_detail.html:40
-#, fuzzy
-#| msgid "External Link"
 msgid "Extra Lines"
-msgstr "Внешняя ссылка"
+msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:53
 #: order/templates/order/sales_order_detail.html:45
 #: order/templates/order/sales_order_detail.html:273
-#, fuzzy
-#| msgid "External Link"
 msgid "Add Extra Line"
-msgstr "Внешняя ссылка"
+msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:72
 msgid "Received Items"
@@ -5368,8 +5352,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -7528,16 +7511,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -8043,10 +8024,8 @@ msgid "Edit BOM Item Substitutes"
 msgstr ""
 
 #: templates/js/translated/bom.js:763
-#, fuzzy
-#| msgid "Removed from assembly"
 msgid "Load BOM for subassembly"
-msgstr "Удалено из сборки"
+msgstr ""
 
 #: templates/js/translated/bom.js:773
 msgid "Substitutes Available"
@@ -8232,28 +8211,20 @@ msgid "No active build outputs found"
 msgstr ""
 
 #: templates/js/translated/build.js:1162
-#, fuzzy
-#| msgid "Available Stock"
 msgid "Allocated Stock"
-msgstr "Доступный запас"
+msgstr ""
 
 #: templates/js/translated/build.js:1169
-#, fuzzy
-#| msgid "No BOM items found"
 msgid "No tracked BOM items for this build"
-msgstr "Элементы BOM не найдены"
+msgstr ""
 
 #: templates/js/translated/build.js:1191
-#, fuzzy
-#| msgid "Completed items"
 msgid "Completed Tests"
-msgstr "Завершенные предметы"
+msgstr ""
 
 #: templates/js/translated/build.js:1196
-#, fuzzy
-#| msgid "Stock required for build order"
 msgid "No required tests for this build"
-msgstr "Для заказа сборки необходим остаток"
+msgstr ""
 
 #: templates/js/translated/build.js:1677 templates/js/translated/build.js:2506
 #: templates/js/translated/order.js:2425
@@ -8904,46 +8875,32 @@ msgid "Delete line item"
 msgstr ""
 
 #: templates/js/translated/order.js:1534 templates/js/translated/order.js:3169
-#, fuzzy
-#| msgid "Duplicate Part"
 msgid "Duplicate line"
-msgstr "Дублировать деталь"
+msgstr ""
 
 #: templates/js/translated/order.js:1535 templates/js/translated/order.js:3170
-#, fuzzy
-#| msgid "Edit location"
 msgid "Edit line"
-msgstr "Редактировать место хранения"
+msgstr ""
 
 #: templates/js/translated/order.js:1536 templates/js/translated/order.js:3171
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete line"
-msgstr "Удалить место хранения"
+msgstr ""
 
 #: templates/js/translated/order.js:1566 templates/js/translated/order.js:3201
-#, fuzzy
-#| msgid "Duplicate Part"
 msgid "Duplicate Line"
-msgstr "Дублировать деталь"
+msgstr ""
 
 #: templates/js/translated/order.js:1587 templates/js/translated/order.js:3222
-#, fuzzy
-#| msgid "Edit setting"
 msgid "Edit Line"
-msgstr "Изменить настройки"
+msgstr ""
 
 #: templates/js/translated/order.js:1598 templates/js/translated/order.js:3233
-#, fuzzy
-#| msgid "Delete Item"
 msgid "Delete Line"
-msgstr "Удалить элемент"
+msgstr ""
 
 #: templates/js/translated/order.js:1609
-#, fuzzy
-#| msgid "No matching results"
 msgid "No matching line"
-msgstr "Ничего не найдено"
+msgstr ""
 
 #: templates/js/translated/order.js:1648
 msgid "No sales orders found"
@@ -9055,10 +9012,8 @@ msgid "No matching line items"
 msgstr ""
 
 #: templates/js/translated/order.js:3244
-#, fuzzy
-#| msgid "No matching results"
 msgid "No matching lines"
-msgstr "Ничего не найдено"
+msgstr ""
 
 #: templates/js/translated/part.js:55
 msgid "Part Attributes"
@@ -10274,3 +10229,4 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
+
