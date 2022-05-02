@@ -63,7 +63,7 @@ class PurchaseOrderTest(OrderTest):
 
     def test_po_list(self):
 
-        # List *ALL* PO items
+        # List *ALL* PurchaseOrder items
         self.filter({}, 7)
 
         # Filter by supplier
@@ -175,7 +175,7 @@ class PurchaseOrderTest(OrderTest):
 
         pk = response.data['pk']
 
-        # Try to create a PO with identical reference (should fail!)
+        # Try to create a PurchaseOrder with identical reference (should fail!)
         response = self.post(
             url,
             {
@@ -493,7 +493,7 @@ class PurchaseOrderReceiveTest(OrderTest):
 
         self.assertIn('can only be received against', str(response.data))
 
-        # Now, set the PO back to "PLACED" so the items can be received
+        # Now, set the PurchaseOrder back to "PLACED" so the items can be received
         order.status = PurchaseOrderStatus.PLACED
         order.save()
 

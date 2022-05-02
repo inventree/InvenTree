@@ -500,6 +500,11 @@ function duplicateBom(part_id, options={}) {
  */
 function partStockLabel(part, options={}) {
 
+    // Prevent literal string 'null' from being displayed
+    if (part.units == null) {
+        part.units = '';
+    }
+
     if (part.in_stock) {
         // There IS stock available for this part
 

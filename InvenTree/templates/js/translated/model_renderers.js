@@ -113,8 +113,6 @@ function renderStockItem(name, data, parameters={}, options={}) {
         }
     }
 
-
-
     var html = `
     <span>
         ${part_detail}
@@ -162,11 +160,9 @@ function renderBuild(name, data, parameters={}, options={}) {
 
     var html = select2Thumbnail(image);
 
-    html += `<span><b>${data.reference}</b></span> - ${data.quantity} x ${data.part_detail.full_name}`;
+    html += `<span><b>${data.reference}</b> - ${data.quantity} x ${data.part_detail.full_name}</span>`;
 
     html += renderId('{% trans "Build ID" %}', data.pk, parameters);
-
-    html += `<p><i>${data.title}</i></p>`;
 
     return html;
 }
@@ -302,8 +298,9 @@ function renderSalesOrderShipment(name, data, parameters={}, options={}) {
     var so_prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
 
     var html = `
-    <span>
-        ${so_prefix}${data.order_detail.reference} - {% trans "Shipment" %} ${data.reference}
+    <span>${so_prefix}${data.order_detail.reference} - {% trans "Shipment" %} ${data.reference}</span>
+    <span class='float-right'>
+        <small>{% trans "Shipment ID" %}: ${data.pk}</small>
     </span>
     `;
 
@@ -406,5 +403,4 @@ function renderSupplierPart(name, data, parameters={}, options={}) {
     html += renderId('{% trans "Supplier Part ID" %}', data.pk, parameters);
 
     return html;
-
 }

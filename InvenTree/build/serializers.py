@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 from django.db import transaction
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from django.db.models import Case, When, Value
 from django.db.models import BooleanField
@@ -161,7 +161,12 @@ class BuildOutputSerializer(serializers.Serializer):
 
             # The build output must have all tracked parts allocated
             if not build.is_fully_allocated(output):
-                raise ValidationError(_("This build output is not fully allocated"))
+
+                # Check if the user has specified that incomplete allocations are ok
+                accept_incomplete = InvenTree.helpers.str2bool(self.context['request'].data.get('accept_incomplete_allocation', False))
+
+                if not accept_incomplete:
+                    raise ValidationError(_("This build output is not fully allocated"))
 
         return output
 
@@ -355,6 +360,7 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
             'outputs',
             'location',
             'status',
+            'accept_incomplete_allocation',
             'notes',
         ]
 
@@ -375,6 +381,13 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         choices=list(StockStatus.items()),
         default=StockStatus.OK,
         label=_("Status"),
+    )
+
+    accept_incomplete_allocation = serializers.BooleanField(
+        default=False,
+        required=False,
+        label=_('Accept Incomplete Allocation'),
+        help_text=_('Complete ouputs if stock has not been fully allocated'),
     )
 
     notes = serializers.CharField(
@@ -617,6 +630,7 @@ class BuildAllocationItemSerializer(serializers.Serializer):
 
         super().validate(data)
 
+        build = self.context['build']
         bom_item = data['bom_item']
         stock_item = data['stock_item']
         quantity = data['quantity']
@@ -641,15 +655,19 @@ class BuildAllocationItemSerializer(serializers.Serializer):
         # Output *must* be set for trackable parts
         if output is None and bom_item.sub_part.trackable:
             raise ValidationError({
-                'output': _('Build output must be specified for allocation of tracked parts')
+                'output': _('Build output must be specified for allocation of tracked parts'),
             })
 
         # Output *cannot* be set for un-tracked parts
         if output is not None and not bom_item.sub_part.trackable:
 
             raise ValidationError({
-                'output': _('Build output cannot be specified for allocation of untracked parts')
+                'output': _('Build output cannot be specified for allocation of untracked parts'),
             })
+
+        # Check if this allocation would be unique
+        if BuildItem.objects.filter(build=build, stock_item=stock_item, install_into=output).exists():
+            raise ValidationError(_('This stock item has already been allocated to this build output'))
 
         return data
 

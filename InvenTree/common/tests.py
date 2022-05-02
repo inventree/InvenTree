@@ -9,7 +9,9 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 
 from InvenTree.api_tester import InvenTreeAPITestCase
-from .models import InvenTreeSetting, WebhookEndpoint, WebhookMessage, NotificationEntry
+from InvenTree.helpers import str2bool
+
+from .models import InvenTreeSetting, InvenTreeUserSetting, WebhookEndpoint, WebhookMessage, NotificationEntry
 from .api import WebhookView
 
 CONTENT_TYPE_JSON = 'application/json'
@@ -63,8 +65,8 @@ class SettingsTest(TestCase):
         report_test_obj = InvenTreeSetting.get_setting_object('REPORT_ENABLE_TEST_REPORT')
 
         # check settings base fields
-        self.assertEqual(instance_obj.name, 'InvenTree Instance Name')
-        self.assertEqual(instance_obj.get_setting_name(instance_ref), 'InvenTree Instance Name')
+        self.assertEqual(instance_obj.name, 'Server Instance Name')
+        self.assertEqual(instance_obj.get_setting_name(instance_ref), 'Server Instance Name')
         self.assertEqual(instance_obj.description, 'String descriptor for the server instance')
         self.assertEqual(instance_obj.get_setting_description(instance_ref), 'String descriptor for the server instance')
 
@@ -156,12 +158,223 @@ class SettingsTest(TestCase):
                     raise ValueError(f'Non-boolean default value specified for {key}')  # pragma: no cover
 
 
-class SettingsApiTest(InvenTreeAPITestCase):
+class GlobalSettingsApiTest(InvenTreeAPITestCase):
+    """
+    Tests for the global settings API
+    """
 
-    def test_settings_api(self):
-        # test setting with choice
+    def test_global_settings_api_list(self):
+        """
+        Test list URL for global settings
+        """
+        url = reverse('api-global-setting-list')
+
+        # Read out each of the global settings value, to ensure they are instantiated in the database
+        for key in InvenTreeSetting.SETTINGS:
+            InvenTreeSetting.get_setting_object(key)
+
+        response = self.get(url, expected_code=200)
+
+        # Number of results should match the number of settings
+        self.assertEqual(len(response.data), len(InvenTreeSetting.SETTINGS.keys()))
+
+    def test_company_name(self):
+
+        setting = InvenTreeSetting.get_setting_object('INVENTREE_COMPANY_NAME')
+
+        # Check default value
+        self.assertEqual(setting.value, 'My company name')
+
+        url = reverse('api-global-setting-detail', kwargs={'pk': setting.pk})
+
+        # Test getting via the API
+        for val in ['test', '123', 'My company nam3']:
+            setting.value = val
+            setting.save()
+
+            response = self.get(url, expected_code=200)
+
+            self.assertEqual(response.data['value'], val)
+
+        # Test setting via the API
+        for val in ['cat', 'hat', 'bat', 'mat']:
+            response = self.patch(
+                url,
+                {
+                    'value': val,
+                },
+                expected_code=200
+            )
+
+            self.assertEqual(response.data['value'], val)
+
+            setting.refresh_from_db()
+            self.assertEqual(setting.value, val)
+
+
+class UserSettingsApiTest(InvenTreeAPITestCase):
+    """
+    Tests for the user settings API
+    """
+
+    def test_user_settings_api_list(self):
+        """
+        Test list URL for user settings
+        """
         url = reverse('api-user-setting-list')
+
         self.get(url, expected_code=200)
+
+    def test_user_setting_boolean(self):
+        """
+        Test a boolean user setting value
+        """
+
+        # Ensure we have a boolean setting available
+        setting = InvenTreeUserSetting.get_setting_object(
+            'SEARCH_PREVIEW_SHOW_PARTS',
+            user=self.user
+        )
+
+        # Check default values
+        self.assertEqual(setting.to_native_value(), True)
+
+        # Fetch via API
+        url = reverse('api-user-setting-detail', kwargs={'pk': setting.pk})
+
+        response = self.get(url, expected_code=200)
+
+        self.assertEqual(response.data['pk'], setting.pk)
+        self.assertEqual(response.data['key'], 'SEARCH_PREVIEW_SHOW_PARTS')
+        self.assertEqual(response.data['description'], 'Display parts in search preview window')
+        self.assertEqual(response.data['type'], 'boolean')
+        self.assertEqual(len(response.data['choices']), 0)
+        self.assertTrue(str2bool(response.data['value']))
+
+        # Assign some truthy values
+        for v in ['true', True, 1, 'y', 'TRUE']:
+            self.patch(
+                url,
+                {
+                    'value': str(v),
+                },
+                expected_code=200,
+            )
+
+            response = self.get(url, expected_code=200)
+
+            self.assertTrue(str2bool(response.data['value']))
+
+        # Assign some falsey values
+        for v in ['false', False, '0', 'n', 'FalSe']:
+            self.patch(
+                url,
+                {
+                    'value': str(v),
+                },
+                expected_code=200,
+            )
+
+            response = self.get(url, expected_code=200)
+
+            self.assertFalse(str2bool(response.data['value']))
+
+        # Assign some invalid values
+        for v in ['x', '', 'invalid', None, '-1', 'abcde']:
+            response = self.patch(
+                url,
+                {
+                    'value': str(v),
+                },
+                expected_code=200
+            )
+
+            # Invalid values evaluate to False
+            self.assertFalse(str2bool(response.data['value']))
+
+    def test_user_setting_choice(self):
+
+        setting = InvenTreeUserSetting.get_setting_object(
+            'DATE_DISPLAY_FORMAT',
+            user=self.user
+        )
+
+        url = reverse('api-user-setting-detail', kwargs={'pk': setting.pk})
+
+        # Check default value
+        self.assertEqual(setting.value, 'YYYY-MM-DD')
+
+        # Check that a valid option can be assigned via the API
+        for opt in ['YYYY-MM-DD', 'DD-MM-YYYY', 'MM/DD/YYYY']:
+
+            self.patch(
+                url,
+                {
+                    'value': opt,
+                },
+                expected_code=200,
+            )
+
+            setting.refresh_from_db()
+            self.assertEqual(setting.value, opt)
+
+        # Send an invalid option
+        for opt in ['cat', 'dog', 12345]:
+
+            response = self.patch(
+                url,
+                {
+                    'value': opt,
+                },
+                expected_code=400,
+            )
+
+            self.assertIn('Chosen value is not a valid option', str(response.data))
+
+    def test_user_setting_integer(self):
+
+        setting = InvenTreeUserSetting.get_setting_object(
+            'SEARCH_PREVIEW_RESULTS',
+            user=self.user
+        )
+
+        url = reverse('api-user-setting-detail', kwargs={'pk': setting.pk})
+
+        # Check default value for this setting
+        self.assertEqual(setting.value, 10)
+
+        for v in [1, 9, 99]:
+            setting.value = v
+            setting.save()
+
+            response = self.get(url)
+
+            self.assertEqual(response.data['value'], str(v))
+
+        # Set valid options via the api
+        for v in [5, 15, 25]:
+            self.patch(
+                url,
+                {
+                    'value': v,
+                },
+                expected_code=200,
+            )
+
+            setting.refresh_from_db()
+            self.assertEqual(setting.to_native_value(), v)
+
+        # Set invalid options via the API
+        # Note that this particular setting has a MinValueValidator(1) associated with it
+        for v in [0, -1, -5]:
+
+            response = self.patch(
+                url,
+                {
+                    'value': v,
+                },
+                expected_code=400,
+            )
 
 
 class WebhookMessageTests(TestCase):

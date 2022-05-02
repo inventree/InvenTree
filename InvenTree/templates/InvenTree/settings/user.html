@@ -13,15 +13,15 @@
 {% endblock %}
 
 {% block actions %}
-{% inventree_demo_mode as demo %}
-{% if not demo %}
+{% inventree_customize 'hide_password_reset' as hide_password_reset %}
+{% if not hide_password_reset %}
 <div class='btn btn-outline-primary' type='button' id='edit-password' title='{% trans "Change Password" %}'>
     <span class='fas fa-key'></span> {% trans "Set Password" %}
 </div>
+{% endif %}
 <div class='btn btn-primary' type='button' id='edit-user' title='{% trans "Edit User Information" %}'>
     <span class='fas fa-user-cog'></span> {% trans "Edit" %}
 </div>
-{% endif %}
 {% endblock %}
 
 {% block content %}

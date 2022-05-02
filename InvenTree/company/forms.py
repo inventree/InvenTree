@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 from InvenTree.forms import HelperForm
 from InvenTree.fields import RoundingDecimalFormField
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 import django.forms
 
 from .models import Company

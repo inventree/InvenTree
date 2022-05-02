@@ -6,6 +6,7 @@ import sys
 import pathlib
 import re
 
+
 try:
     from invoke import ctask as task
 except:
@@ -225,10 +226,10 @@ def translate_stats(c):
 @task(post=[translate_stats, static])
 def translate(c):
     """
-    Regenerate translation files.
+    Rebuild translation source files. (Advanced use only!)
 
-    Run this command after added new translatable strings,
-    or after adding translations for existing strings.
+    Note: This command should not be used on a local install,
+    it is performed as part of the InvenTree translation toolchain.
     """
 
     # Translate applicable .py / .html / .js files
@@ -236,7 +237,7 @@ def translate(c):
     manage(c, "compilemessages")
 
 
-@task(pre=[install, migrate, translate_stats, static, clean_settings])
+@task(pre=[install, migrate, static, clean_settings])
 def update(c):
     """
     Update InvenTree installation.
@@ -252,7 +253,10 @@ def update(c):
     - static
     - clean_settings
     """
-    pass
+    
+    # Recompile the translation files (.mo)
+    # We do not run 'invoke translate' here, as that will touch the source (.po) files too!
+    manage(c, 'compilemessages', pty=True)
 
 
 @task
@@ -380,8 +384,8 @@ def export_records(c, filename='data.json'):
     print("Data export completed")
 
 
-@task(help={'filename': 'Input filename'}, post=[rebuild_models, rebuild_thumbnails])
-def import_records(c, filename='data.json'):
+@task(help={'filename': 'Input filename', 'clear': 'Clear existing data before import'}, post=[rebuild_models, rebuild_thumbnails])
+def import_records(c, filename='data.json', clear=False):
     """
     Import database records from a file
     """
@@ -393,6 +397,9 @@ def import_records(c, filename='data.json'):
     if not os.path.exists(filename):
         print(f"Error: File '{filename}' does not exist")
         sys.exit(1)
+
+    if clear:
+        delete_data(c, force=True)
 
     print(f"Importing database records from '{filename}'")
 
@@ -431,6 +438,8 @@ def delete_data(c, force=False):
 
     Warning: This will REALLY delete all records in the database!!
     """
+
+    print(f"Deleting all data from InvenTree database...")
 
     if force:
         manage(c, 'flush --noinput')

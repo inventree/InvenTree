@@ -1,7 +1,10 @@
 from django.shortcuts import HttpResponseRedirect
 from django.urls import reverse_lazy, Resolver404
 from django.shortcuts import redirect
-from django.conf.urls import include, url
+from django.urls import include, re_path
+from django.conf import settings
+from django.contrib.auth.middleware import PersistentRemoteUserMiddleware
+
 import logging
 
 from rest_framework.authtoken.models import Token
@@ -82,14 +85,14 @@ class AuthRequiredMiddleware(object):
                 if path not in urls and not path.startswith('/api/'):
                     # Save the 'next' parameter to pass through to the login view
 
-                    return redirect('%s?next=%s' % (reverse_lazy('account_login'), request.path))
+                    return redirect('{}?next={}'.format(reverse_lazy('account_login'), request.path))
 
         response = self.get_response(request)
 
         return response
 
 
-url_matcher = url('', include(frontendpatterns))
+url_matcher = re_path('', include(frontendpatterns))
 
 
 class Check2FAMiddleware(BaseRequire2FAMiddleware):
@@ -112,3 +115,16 @@ class CustomAllauthTwoFactorMiddleware(AllauthTwoFactorMiddleware):
                 super().process_request(request)
         except Resolver404:
             pass
+
+
+class InvenTreeRemoteUserMiddleware(PersistentRemoteUserMiddleware):
+    """
+    Middleware to check if HTTP-header based auth is enabled and to set it up
+    """
+    header = settings.REMOTE_LOGIN_HEADER
+
+    def process_request(self, request):
+        if not settings.REMOTE_LOGIN:
+            return
+
+        return super().process_request(request)

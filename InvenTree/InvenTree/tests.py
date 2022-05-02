@@ -1,4 +1,3 @@
-
 import json
 from test.support import EnvironmentVarGuard
 
@@ -186,7 +185,7 @@ class TestDownloadFile(TestCase):
 
     def test_download(self):
         helpers.DownloadFile("hello world", "out.txt")
-        helpers.DownloadFile(bytes("hello world".encode("utf8")), "out.bin")
+        helpers.DownloadFile(bytes(b"hello world"), "out.bin")
 
 
 class TestMPTT(TestCase):
@@ -252,6 +251,31 @@ class TestSerialNumberExtraction(TestCase):
         sn = e("1, 2, 3, 4, 5", 5, 1)
         self.assertEqual(len(sn), 5)
 
+        # Test partially specifying serials
+        sn = e("1, 2, 4+", 5, 1)
+        self.assertEqual(len(sn), 5)
+        self.assertEqual(sn, [1, 2, 4, 5, 6])
+
+        # Test groups are not interpolated if enough serials are supplied
+        sn = e("1, 2, 3, AF5-69H, 5", 5, 1)
+        self.assertEqual(len(sn), 5)
+        self.assertEqual(sn, [1, 2, 3, "AF5-69H", 5])
+
+        # Test groups are not interpolated with more than one hyphen in a word
+        sn = e("1, 2, TG-4SR-92, 4+", 5, 1)
+        self.assertEqual(len(sn), 5)
+        self.assertEqual(sn, [1, 2, "TG-4SR-92", 4, 5])
+
+        # Test groups are not interpolated with alpha characters
+        sn = e("1, A-2, 3+", 5, 1)
+        self.assertEqual(len(sn), 5)
+        self.assertEqual(sn, [1, "A-2", 3, 4, 5])
+
+        # Test multiple placeholders
+        sn = e("1 2 ~ ~ ~", 5, 3)
+        self.assertEqual(len(sn), 5)
+        self.assertEqual(sn, [1, 2, 3, 4, 5])
+
         sn = e("1-5, 10-15", 11, 1)
         self.assertIn(3, sn)
         self.assertIn(13, sn)
@@ -306,6 +330,10 @@ class TestSerialNumberExtraction(TestCase):
 
         with self.assertRaises(ValidationError):
             e("10, a, 7-70j", 4, 1)
+
+        # Test groups are not interpolated with word characters
+        with self.assertRaises(ValidationError):
+            e("1, 2, 3, E-5", 5, 1)
 
     def test_combinations(self):
         e = helpers.extract_serial_numbers

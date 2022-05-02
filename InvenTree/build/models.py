@@ -18,7 +18,7 @@ from django.db.models.functions import Coalesce
 from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
 from django.urls import reverse
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from markdownx.models import MarkdownxField
 
@@ -53,7 +53,7 @@ def get_next_build_number():
 
     build = Build.objects.exclude(reference=None).last()
 
-    attempts = set([build.reference])
+    attempts = {build.reference}
 
     reference = build.reference
 
@@ -1260,7 +1260,7 @@ class BuildItem(models.Model):
             })
 
     @transaction.atomic
-    def complete_allocation(self, user):
+    def complete_allocation(self, user, notes=''):
         """
         Complete the allocation of this BuildItem into the output stock item.
 
@@ -1286,8 +1286,13 @@ class BuildItem(models.Model):
                 self.save()
 
             # Install the stock item into the output
-            item.belongs_to = self.install_into
-            item.save()
+            self.install_into.installStockItem(
+                item,
+                self.quantity,
+                user,
+                notes
+            )
+
         else:
             # Simply remove the items from stock
             item.take_stock(

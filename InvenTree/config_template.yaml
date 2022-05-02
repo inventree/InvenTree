@@ -154,6 +154,14 @@ static_root: '/home/inventree/data/static'
 # Use environment variable INVENTREE_LOGIN_ATTEMPTS
 #login_attempts: 5
 
+# Remote / proxy login
+# These settings can introduce security problems if configured incorrectly. Please read
+# https://docs.djangoproject.com/en/4.0/howto/auth-remote-user/ for more details
+# Use environment variable INVENTREE_REMOTE_LOGIN
+# remote_login: True
+# Use environment variable INVENTREE_REMOTE_LOGIN_HEADER
+# remote_login_header: REMOTE_USER
+
 # Add new user on first startup
 #admin_user: admin
 #admin_email: info@example.com
@@ -186,3 +194,12 @@ static_root: '/home/inventree/data/static'
 #     KEYCLOAK_URL: 'https://keycloak.custom/auth'
 #     KEYCLOAK_REALM: 'master'
 
+# Customization options
+# Add custom messages to the login page or main interface navbar or exchange the logo
+# Use environment variable INVENTREE_CUSTOMIZE or INVENTREE_CUSTOM_LOGO
+# customize:
+#   login_message: InvenTree demo instance - <a href='https://inventree.readthedocs.io/en/latest/demo/'> Click here for login details</a>
+#   navbar_message: <h6>InvenTree demo mode <a href='https://inventree.readthedocs.io/en/latest/demo/'><span class='fas fa-info-circle'></span></a></h6>
+#   logo: logo.png
+#   hide_admin_link: true
+#   hide_password_reset: true

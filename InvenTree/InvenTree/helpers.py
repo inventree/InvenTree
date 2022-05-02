@@ -13,7 +13,7 @@ from decimal import Decimal, InvalidOperation
 from wsgiref.util import FileWrapper
 from django.http import StreamingHttpResponse
 from django.core.exceptions import ValidationError, FieldError
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from django.contrib.auth.models import Permission
 
@@ -427,17 +427,24 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
     serials = serials.strip()
 
     # fill in the next serial number into the serial
-    if '~' in serials:
-        serials = serials.replace('~', str(next_number))
+    while '~' in serials:
+        serials = serials.replace('~', str(next_number), 1)
+        next_number += 1
 
     # Split input string by whitespace or comma (,) characters
-    groups = re.split("[\s,]+", serials)
+    groups = re.split(r"[\s,]+", serials)
 
     numbers = []
     errors = []
 
     # Helper function to check for duplicated numbers
     def add_sn(sn):
+        # Attempt integer conversion first, so numerical strings are never stored
+        try:
+            sn = int(sn)
+        except ValueError:
+            pass
+
         if sn in numbers:
             errors.append(_('Duplicate serial: {sn}').format(sn=sn))
         else:
@@ -451,15 +458,25 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
     if len(serials) == 0:
         raise ValidationError([_("Empty serial number string")])
 
-    for group in groups:
+    # If the user has supplied the correct number of serials, don't process them for groups
+    # just add them so any duplicates (or future validations) are checked
+    if len(groups) == expected_quantity:
+        for group in groups:
+            add_sn(group)
 
+        if len(errors) > 0:
+            raise ValidationError(errors)
+
+        return numbers
+
+    for group in groups:
         group = group.strip()
 
         # Hyphen indicates a range of numbers
         if '-' in group:
             items = group.split('-')
 
-            if len(items) == 2:
+            if len(items) == 2 and all([i.isnumeric() for i in items]):
                 a = items[0].strip()
                 b = items[1].strip()
 
@@ -471,13 +488,14 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
                         for n in range(a, b + 1):
                             add_sn(n)
                     else:
-                        errors.append(_("Invalid group: {g}").format(g=group))
+                        errors.append(_("Invalid group range: {g}").format(g=group))
 
                 except ValueError:
                     errors.append(_("Invalid group: {g}").format(g=group))
                     continue
             else:
-                errors.append(_("Invalid group: {g}").format(g=group))
+                # More than 2 hyphens or non-numeric group so add without interpolating
+                add_sn(group)
 
         # plus signals either
         # 1:  'start+':  expected number of serials, starting at start
@@ -495,23 +513,17 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
 
                 # case 1
                 else:
-                    end = start + expected_quantity
+                    end = start + (expected_quantity - len(numbers))
 
                 for n in range(start, end):
                     add_sn(n)
             # no case
             else:
-                errors.append(_("Invalid group: {g}").format(g=group))
+                errors.append(_("Invalid group sequence: {g}").format(g=group))
 
         # At this point, we assume that the "group" is just a single serial value
         elif group:
-
-            try:
-                # First attempt to add as an integer value
-                add_sn(int(group))
-            except (ValueError):
-                # As a backup, add as a string value
-                add_sn(group)
+            add_sn(group)
 
         # No valid input group detected
         else:

@@ -11,7 +11,7 @@ from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.http import HttpResponseRedirect
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView
 from django.forms import HiddenInput, IntegerField
 
@@ -20,7 +20,7 @@ from decimal import Decimal, InvalidOperation
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .models import SalesOrder, SalesOrderLineItem
-from .admin import POLineItemResource, SOLineItemResource
+from .admin import PurchaseOrderLineItemResource, SalesOrderLineItemResource
 from build.models import Build
 from company.models import Company, SupplierPart  # ManufacturerPart
 from stock.models import StockItem
@@ -410,7 +410,7 @@ class SalesOrderExport(AjaxView):
 
         filename = f"{str(order)} - {order.customer.name}.{export_format}"
 
-        dataset = SOLineItemResource().export(queryset=order.lines.all())
+        dataset = SalesOrderLineItemResource().export(queryset=order.lines.all())
 
         filedata = dataset.export(format=export_format)
 
@@ -441,7 +441,7 @@ class PurchaseOrderExport(AjaxView):
             fmt=export_format
         )
 
-        dataset = POLineItemResource().export(queryset=order.lines.all())
+        dataset = PurchaseOrderLineItemResource().export(queryset=order.lines.all())
 
         filedata = dataset.export(format=export_format)
 
@@ -491,7 +491,7 @@ class OrderParts(AjaxView):
         return data
 
     def get_suppliers(self):
-        """ Calculates a list of suppliers which the user will need to create POs for.
+        """ Calculates a list of suppliers which the user will need to create PurchaseOrders for.
         This is calculated AFTER the user finishes selecting the parts to order.
         Crucially, get_parts() must be called before get_suppliers()
         """

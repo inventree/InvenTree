@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 from urllib.parse import urlencode
 import logging
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django import forms
 from django.contrib.auth.models import User, Group
 from django.conf import settings
@@ -150,13 +150,13 @@ class DeleteForm(forms.Form):
 
 
 class EditUserForm(HelperForm):
-    """ Form for editing user information
+    """
+    Form for editing user information
     """
 
     class Meta:
         model = User
         fields = [
-            'username',
             'first_name',
             'last_name',
         ]
@@ -319,7 +319,7 @@ class CustomSocialAccountAdapter(RegistratonMixin, DefaultSocialAccountAdapter):
             redirect_url = reverse('two-factor-authenticate')
             # Add GET parameters to the URL if they exist.
             if request.GET:
-                redirect_url += u'?' + urlencode(request.GET)
+                redirect_url += '?' + urlencode(request.GET)
 
             raise ImmediateHttpResponse(
                 response=HttpResponseRedirect(redirect_url)

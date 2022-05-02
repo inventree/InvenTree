@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 from django.db import transaction
 
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.db.models.functions import Coalesce
 from django.db.models import Case, When, Value
 from django.db.models import BooleanField

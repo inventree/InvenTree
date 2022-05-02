@@ -2510,7 +2510,7 @@ def validate_template_name(name):
     Prevent illegal characters in "name" field for PartParameterTemplate
     """
 
-    for c in "!@#$%^&*()<>{}[].,?/\|~`_+-=\'\"":
+    for c in "!@#$%^&*()<>{}[].,?/\\|~`_+-=\'\"":
         if c in str(name):
             raise ValidationError(_(f"Illegal character in template name ({c})"))
 
@@ -2740,8 +2740,8 @@ class BomItem(models.Model, DataImportMixin):
             if not p.active:
                 continue
 
-            # Trackable parts cannot be 'auto allocated'
-            if p.trackable:
+            # Trackable status must be the same as the sub_part
+            if p.trackable != self.sub_part.trackable:
                 continue
 
             valid_parts.append(p)

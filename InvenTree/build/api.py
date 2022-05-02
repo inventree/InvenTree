@@ -5,7 +5,7 @@ JSON API for the Build app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.conf.urls import url, include
+from django.urls import include, re_path
 
 from rest_framework import filters, generics
 
@@ -96,6 +96,7 @@ class BuildList(generics.ListCreateAPIView):
         'target_date',
         'completion_date',
         'quantity',
+        'completed',
         'issued_by',
         'responsible',
     ]
@@ -442,6 +443,18 @@ class BuildItemList(generics.ListCreateAPIView):
         if part_pk:
             queryset = queryset.filter(stock_item__part=part_pk)
 
+        # Filter by "tracked" status
+        # Tracked means that the item is "installed" into a build output (stock item)
+        tracked = params.get('tracked', None)
+
+        if tracked is not None:
+            tracked = str2bool(tracked)
+
+            if tracked:
+                queryset = queryset.exclude(install_into=None)
+            else:
+                queryset = queryset.filter(install_into=None)
+
         # Filter by output target
         output = params.get('output', None)
 
@@ -495,29 +508,29 @@ class BuildAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMix
 build_api_urls = [
 
     # Attachments
-    url(r'^attachment/', include([
-        url(r'^(?P<pk>\d+)/', BuildAttachmentDetail.as_view(), name='api-build-attachment-detail'),
-        url(r'^.*$', BuildAttachmentList.as_view(), name='api-build-attachment-list'),
+    re_path(r'^attachment/', include([
+        re_path(r'^(?P<pk>\d+)/', BuildAttachmentDetail.as_view(), name='api-build-attachment-detail'),
+        re_path(r'^.*$', BuildAttachmentList.as_view(), name='api-build-attachment-list'),
     ])),
 
     # Build Items
-    url(r'^item/', include([
-        url(r'^(?P<pk>\d+)/', BuildItemDetail.as_view(), name='api-build-item-detail'),
-        url(r'^.*$', BuildItemList.as_view(), name='api-build-item-list'),
+    re_path(r'^item/', include([
+        re_path(r'^(?P<pk>\d+)/', BuildItemDetail.as_view(), name='api-build-item-detail'),
+        re_path(r'^.*$', BuildItemList.as_view(), name='api-build-item-list'),
     ])),
 
     # Build Detail
-    url(r'^(?P<pk>\d+)/', include([
-        url(r'^allocate/', BuildAllocate.as_view(), name='api-build-allocate'),
-        url(r'^auto-allocate/', BuildAutoAllocate.as_view(), name='api-build-auto-allocate'),
-        url(r'^complete/', BuildOutputComplete.as_view(), name='api-build-output-complete'),
-        url(r'^create-output/', BuildOutputCreate.as_view(), name='api-build-output-create'),
-        url(r'^delete-outputs/', BuildOutputDelete.as_view(), name='api-build-output-delete'),
-        url(r'^finish/', BuildFinish.as_view(), name='api-build-finish'),
-        url(r'^unallocate/', BuildUnallocate.as_view(), name='api-build-unallocate'),
-        url(r'^.*$', BuildDetail.as_view(), name='api-build-detail'),
+    re_path(r'^(?P<pk>\d+)/', include([
+        re_path(r'^allocate/', BuildAllocate.as_view(), name='api-build-allocate'),
+        re_path(r'^auto-allocate/', BuildAutoAllocate.as_view(), name='api-build-auto-allocate'),
+        re_path(r'^complete/', BuildOutputComplete.as_view(), name='api-build-output-complete'),
+        re_path(r'^create-output/', BuildOutputCreate.as_view(), name='api-build-output-create'),
+        re_path(r'^delete-outputs/', BuildOutputDelete.as_view(), name='api-build-output-delete'),
+        re_path(r'^finish/', BuildFinish.as_view(), name='api-build-finish'),
+        re_path(r'^unallocate/', BuildUnallocate.as_view(), name='api-build-unallocate'),
+        re_path(r'^.*$', BuildDetail.as_view(), name='api-build-detail'),
     ])),
 
     # Build List
-    url(r'^.*$', BuildList.as_view(), name='api-build-list'),
+    re_path(r'^.*$', BuildList.as_view(), name='api-build-list'),
 ]
