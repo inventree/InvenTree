@@ -131,7 +131,7 @@ HTML and javascript files are passed through the django templating engine. Trans
 The tags describe issues and PRs in multiple areas:
 | Area | Name | Description |
 |---|---|---|
-| Inventree Features |  |  |
+| Feature |  |  |
 |  | feat: API | tbd |
 |  | feat: barcode | tbd |
 |  | feat: build | tbd |
@@ -162,6 +162,6 @@ The tags describe issues and PRs in multiple areas:
 |  | eco: app | tbd |
 |  | eco: CI | tbd |
 |  | eco: demo | tbd |
-| Built in |  |  |
+| GH Built in |  |  |
 |  | help wanted | tbd |
 |  | starter | tbd |
