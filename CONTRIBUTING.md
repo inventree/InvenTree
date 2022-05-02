@@ -17,7 +17,7 @@ The HEAD of the "main" or "master" branch of InvenTree represents the current "l
 
 **No pushing to master:** New featues must be submitted as a pull request from a separate branch (one branch per feature).
 
-#### Feature Branches
+### Feature Branches
 
 Feature branches should be branched *from* the *master* branch.
 
@@ -45,7 +45,7 @@ The HEAD of the "stable" branch represents the latest stable release code.
 - The bugfix *must* also be cherry picked into the *master* branch.
 
 ## Environment
-#### Target version
+### Target version
 We are currently targeting:
 | Name | Minimum version |
 |---|---|
@@ -65,7 +65,7 @@ pyupgrade `find . -name "*.py"`
 django-upgrade --target-version 3.2 `find . -name "*.py"`
 ```
 
-### Credits
+## Credits
 If you add any new dependencies / libraries, they need to be added to [the docs](https://github.com/inventree/inventree-docs/blob/master/docs/credits.md). Please try to do that as timely as possible.
 
 
