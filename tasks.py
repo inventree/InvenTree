@@ -225,10 +225,10 @@ def translate_stats(c):
 @task(post=[translate_stats, static])
 def translate(c):
     """
-    Regenerate translation files.
+    Rebuild translation source files. (Advanced use only!)
 
-    Run this command after added new translatable strings,
-    or after adding translations for existing strings.
+    Note: This command should not be used on a local install,
+    it is performed as part of the InvenTree translation toolchain.
     """
 
     # Translate applicable .py / .html / .js files
@@ -236,7 +236,7 @@ def translate(c):
     manage(c, "compilemessages")
 
 
-@task(pre=[install, migrate, translate, static, clean_settings])
+@task(pre=[install, migrate, static, clean_settings])
 def update(c):
     """
     Update InvenTree installation.
@@ -252,7 +252,10 @@ def update(c):
     - static
     - clean_settings
     """
-    pass
+    
+    # Recompile the translation files (.mo)
+    # We do not run 'invoke translate' here, as that will touch the source (.po) files too!
+    manage(c, 'compilemessages', pty=True)
 
 
 @task
