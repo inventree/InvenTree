@@ -6,6 +6,7 @@ import sys
 import pathlib
 import re
 
+
 try:
     from invoke import ctask as task
 except:
@@ -380,8 +381,8 @@ def export_records(c, filename='data.json'):
     print("Data export completed")
 
 
-@task(help={'filename': 'Input filename'}, post=[rebuild_models, rebuild_thumbnails])
-def import_records(c, filename='data.json'):
+@task(help={'filename': 'Input filename', 'clear': 'Clear existing data before import'}, post=[rebuild_models, rebuild_thumbnails])
+def import_records(c, filename='data.json', clear=False):
     """
     Import database records from a file
     """
@@ -393,6 +394,9 @@ def import_records(c, filename='data.json'):
     if not os.path.exists(filename):
         print(f"Error: File '{filename}' does not exist")
         sys.exit(1)
+
+    if clear:
+        delete_data(c, force=True)
 
     print(f"Importing database records from '{filename}'")
 
@@ -431,6 +435,8 @@ def delete_data(c, force=False):
 
     Warning: This will REALLY delete all records in the database!!
     """
+
+    print(f"Deleting all data from InvenTree database...")
 
     if force:
         manage(c, 'flush --noinput')
