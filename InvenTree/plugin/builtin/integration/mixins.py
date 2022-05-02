@@ -6,7 +6,7 @@ import logging
 import json
 import requests
 
-from django.conf.urls import url, include
+from django.urls import include, re_path
 from django.db.utils import OperationalError, ProgrammingError
 
 from plugin.models import PluginConfig, PluginSetting
@@ -303,7 +303,7 @@ class UrlsMixin:
         Urlpatterns for this plugin
         """
         if self.has_urls:
-            return url(f'^{self.slug}/', include((self.urls, self.slug)), name=self.slug)
+            return re_path(f'^{self.slug}/', include((self.urls, self.slug)), name=self.slug)
         return None
 
     @property

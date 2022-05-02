@@ -183,6 +183,12 @@ src="{% static 'img/blank_image.png' %}"
         <td>{{ order.responsible }}</td>
     </tr>
     {% endif %}
+
+    <tr>
+        <td><span class='fas fa-dollar-sign'></span></td>
+        <td>{% trans "Total cost" %}</td>
+        <td id="soTotalPrice">{{ order.get_total_price }}</td>
+    </tr>
 </table>
 {% endblock %}
 

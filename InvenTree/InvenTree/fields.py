@@ -6,7 +6,7 @@ import sys
 
 from .validators import allowable_url_schemes
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from django.forms.fields import URLField as FormURLField
 from django.db import models as models

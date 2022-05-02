@@ -17,8 +17,6 @@ def assign_bom_items(apps, schema_editor):
     BuildItem = apps.get_model('build', 'builditem')
     BomItem = apps.get_model('part', 'bomitem')
     Part = apps.get_model('part', 'part')
-    
-    logger.info("Assigning BomItems to existing BuildItem objects")
 
     count_valid = 0
     count_total = 0
@@ -28,6 +26,10 @@ def assign_bom_items(apps, schema_editor):
         # Try to find a BomItem which matches the BuildItem
         # Note: Before this migration, variant stock assignment was not allowed,
         #       so BomItem lookup should be pretty easy
+
+        if count_total == 0:
+            # First time around
+            logger.info("Assigning BomItems to existing BuildItem objects")
 
         count_total += 1
 

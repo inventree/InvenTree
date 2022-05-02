@@ -18,7 +18,7 @@ from django.db.models.functions import Coalesce
 from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
 from django.urls import reverse
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from markdownx.models import MarkdownxField
 
@@ -53,7 +53,7 @@ def get_next_build_number():
 
     build = Build.objects.exclude(reference=None).last()
 
-    attempts = set([build.reference])
+    attempts = {build.reference}
 
     reference = build.reference
 
