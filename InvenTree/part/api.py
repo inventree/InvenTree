@@ -315,7 +315,7 @@ class PartInternalPriceList(generics.ListCreateAPIView):
     ]
 
 
-class PartAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
+class PartAttachmentList(AttachmentMixin, generics.ListCreateAPIView):
     """
     API endpoint for listing (and creating) a PartAttachment (file upload).
     """
@@ -332,7 +332,7 @@ class PartAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     ]
 
 
-class PartAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):
+class PartAttachmentDetail(AttachmentMixin, generics.RetrieveUpdateDestroyAPIView):
     """
     Detail endpoint for PartAttachment model
     """

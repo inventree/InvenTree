@@ -1095,7 +1095,7 @@ class StockList(generics.ListCreateAPIView):
     ]
 
 
-class StockAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
+class StockAttachmentList(AttachmentMixin, generics.ListCreateAPIView):
     """
     API endpoint for listing (and creating) a StockItemAttachment (file upload)
     """
@@ -1114,7 +1114,7 @@ class StockAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     ]
 
 
-class StockAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):
+class StockAttachmentDetail(AttachmentMixin, generics.RetrieveUpdateDestroyAPIView):
     """
     Detail endpoint for StockItemAttachment
     """

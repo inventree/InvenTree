@@ -479,7 +479,7 @@ class BuildItemList(generics.ListCreateAPIView):
     ]
 
 
-class BuildAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
+class BuildAttachmentList(AttachmentMixin, generics.ListCreateAPIView):
     """
     API endpoint for listing (and creating) BuildOrderAttachment objects
     """
@@ -496,7 +496,7 @@ class BuildAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     ]
 
 
-class BuildAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):
+class BuildAttachmentDetail(AttachmentMixin, generics.RetrieveUpdateDestroyAPIView):
     """
     Detail endpoint for a BuildOrderAttachment object
     """
