@@ -66,7 +66,7 @@ if __name__ == '__main__':
 
         print("Checking development branch")
 
-        pattern = "^\d+(\.\d+)+ dev$"
+        pattern = r"^\d+(\.\d+)+ dev$"
 
         result = re.match(pattern, version)
 
@@ -82,7 +82,7 @@ if __name__ == '__main__':
 
         print("Checking release branch")
 
-        pattern = "^\d+(\.\d+)+$"
+        pattern = r"^\d+(\.\d+)+$"
 
         result = re.match(pattern, version)
 

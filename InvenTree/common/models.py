@@ -33,7 +33,7 @@ from djmoney.contrib.exchange.exceptions import MissingRate
 
 from rest_framework.exceptions import PermissionDenied
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator, URLValidator
 from django.core.exceptions import ValidationError
 
@@ -406,6 +406,13 @@ class BaseInvenTreeSetting(models.Model):
 
         super().clean()
 
+        # Encode as native values
+        if self.is_int():
+            self.value = self.as_int()
+
+        elif self.is_bool():
+            self.value = self.as_bool()
+
         validator = self.__class__.get_setting_validator(self.key, **kwargs)
 
         if validator is not None:
@@ -455,7 +462,14 @@ class BaseInvenTreeSetting(models.Model):
 
         if callable(validator):
             # We can accept function validators with a single argument
-            validator(self.value)
+
+            if self.is_bool():
+                value = self.as_bool()
+
+            if self.is_int():
+                value = self.as_int()
+
+            validator(value)
 
     def validate_unique(self, exclude=None, **kwargs):
         """
@@ -628,6 +642,10 @@ class BaseInvenTreeSetting(models.Model):
         setting = cls.get_setting_definition(key, **kwargs)
 
         return setting.get('protected', False)
+
+    @property
+    def protected(self):
+        return self.__class__.is_protected(self.key)
 
 
 def settings_group_options():
@@ -1011,48 +1029,56 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+
         'LOGIN_ENABLE_REG': {
             'name': _('Enable registration'),
             'description': _('Enable self-registration for users on the login pages'),
             'default': False,
             'validator': bool,
         },
+
         'LOGIN_ENABLE_SSO': {
             'name': _('Enable SSO'),
             'description': _('Enable SSO on the login pages'),
             'default': False,
             'validator': bool,
         },
+
         'LOGIN_MAIL_REQUIRED': {
             'name': _('Email required'),
             'description': _('Require user to supply mail on signup'),
             'default': False,
             'validator': bool,
         },
+
         'LOGIN_SIGNUP_SSO_AUTO': {
             'name': _('Auto-fill SSO users'),
             'description': _('Automatically fill out user-details from SSO account-data'),
             'default': True,
             'validator': bool,
         },
+
         'LOGIN_SIGNUP_MAIL_TWICE': {
             'name': _('Mail twice'),
             'description': _('On signup ask users twice for their mail'),
             'default': False,
             'validator': bool,
         },
+
         'LOGIN_SIGNUP_PWD_TWICE': {
             'name': _('Password twice'),
             'description': _('On signup ask users twice for their password'),
             'default': True,
             'validator': bool,
         },
+
         'SIGNUP_GROUP': {
             'name': _('Group on signup'),
             'description': _('Group to which new users are assigned on registration'),
             'default': '',
             'choices': settings_group_options
         },
+
         'LOGIN_ENFORCE_MFA': {
             'name': _('Enforce MFA'),
             'description': _('Users must use multifactor security.'),
@@ -1067,6 +1093,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
             'requires_restart': True,
         },
+
         # Settings for plugin mixin features
         'ENABLE_PLUGINS_URL': {
             'name': _('Enable URL integration'),
@@ -1075,6 +1102,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
             'requires_restart': True,
         },
+
         'ENABLE_PLUGINS_NAVIGATION': {
             'name': _('Enable navigation integration'),
             'description': _('Enable plugins to integrate into navigation'),
@@ -1082,6 +1110,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
             'requires_restart': True,
         },
+
         'ENABLE_PLUGINS_APP': {
             'name': _('Enable app integration'),
             'description': _('Enable plugins to add apps'),
@@ -1089,6 +1118,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
             'requires_restart': True,
         },
+
         'ENABLE_PLUGINS_SCHEDULE': {
             'name': _('Enable schedule integration'),
             'description': _('Enable plugins to run scheduled tasks'),
@@ -1096,6 +1126,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
             'requires_restart': True,
         },
+
         'ENABLE_PLUGINS_EVENTS': {
             'name': _('Enable event integration'),
             'description': _('Enable plugins to respond to internal events'),
@@ -1149,18 +1180,21 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+
         'HOMEPAGE_CATEGORY_STARRED': {
             'name': _('Show subscribed categories'),
             'description': _('Show subscribed part categories on the homepage'),
             'default': True,
             'validator': bool,
         },
+
         'HOMEPAGE_PART_LATEST': {
             'name': _('Show latest parts'),
             'description': _('Show latest parts on the homepage'),
             'default': True,
             'validator': bool,
         },
+
         'PART_RECENT_COUNT': {
             'name': _('Recent Part Count'),
             'description': _('Number of recent parts to display on index page'),
@@ -1174,78 +1208,91 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+
         'HOMEPAGE_STOCK_RECENT': {
             'name': _('Show recent stock changes'),
             'description': _('Show recently changed stock items on the homepage'),
             'default': True,
             'validator': bool,
         },
+
         'STOCK_RECENT_COUNT': {
             'name': _('Recent Stock Count'),
             'description': _('Number of recent stock items to display on index page'),
             'default': 10,
             'validator': [int, MinValueValidator(1)]
         },
+
         'HOMEPAGE_STOCK_LOW': {
             'name': _('Show low stock'),
             'description': _('Show low stock items on the homepage'),
             'default': True,
             'validator': bool,
         },
+
         'HOMEPAGE_STOCK_DEPLETED': {
             'name': _('Show depleted stock'),
             'description': _('Show depleted stock items on the homepage'),
             'default': True,
             'validator': bool,
         },
+
         'HOMEPAGE_STOCK_NEEDED': {
             'name': _('Show needed stock'),
             'description': _('Show stock items needed for builds on the homepage'),
             'default': True,
             'validator': bool,
         },
+
         'HOMEPAGE_STOCK_EXPIRED': {
             'name': _('Show expired stock'),
             'description': _('Show expired stock items on the homepage'),
             'default': True,
             'validator': bool,
         },
+
         'HOMEPAGE_STOCK_STALE': {
             'name': _('Show stale stock'),
             'description': _('Show stale stock items on the homepage'),
             'default': True,
             'validator': bool,
         },
+
         'HOMEPAGE_BUILD_PENDING': {
             'name': _('Show pending builds'),
             'description': _('Show pending builds on the homepage'),
             'default': True,
             'validator': bool,
         },
+
         'HOMEPAGE_BUILD_OVERDUE': {
             'name': _('Show overdue builds'),
             'description': _('Show overdue builds on the homepage'),
             'default': True,
             'validator': bool,
         },
+
         'HOMEPAGE_PO_OUTSTANDING': {
             'name': _('Show outstanding POs'),
             'description': _('Show outstanding POs on the homepage'),
             'default': True,
             'validator': bool,
         },
+
         'HOMEPAGE_PO_OVERDUE': {
             'name': _('Show overdue POs'),
             'description': _('Show overdue POs on the homepage'),
             'default': True,
             'validator': bool,
         },
+
         'HOMEPAGE_SO_OUTSTANDING': {
             'name': _('Show outstanding SOs'),
             'description': _('Show outstanding SOs on the homepage'),
             'default': True,
             'validator': bool,
         },
+
         'HOMEPAGE_SO_OVERDUE': {
             'name': _('Show overdue SOs'),
             'description': _('Show overdue SOs on the homepage'),

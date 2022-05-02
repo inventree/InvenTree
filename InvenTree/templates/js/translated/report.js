@@ -271,7 +271,7 @@ function printBomReports(parts) {
 
 function printPurchaseOrderReports(orders) {
     /**
-     * Print PO reports for the provided purchase order(s)
+     * Print PurchaseOrder reports for the provided purchase order(s)
      */
 
     if (orders.length == 0) {
@@ -325,7 +325,7 @@ function printPurchaseOrderReports(orders) {
 
 function printSalesOrderReports(orders) {
     /**
-     * Print SO reports for the provided purchase order(s)
+     * Print SalesOrder reports for the provided purchase order(s)
      */
 
     if (orders.length == 0) {

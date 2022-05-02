@@ -78,7 +78,7 @@ def update_history(apps, schema_editor):
                     tracking_type = StockHistoryCode.STOCK_REMOVE
 
                 # Extract the number of removed items
-                result = re.search("^removed ([\d\.]+) items", title)
+                result = re.search(r"^removed ([\d\.]+) items", title)
 
                 if result:
                     
@@ -102,7 +102,7 @@ def update_history(apps, schema_editor):
             elif 'moved to' in title:
                 tracking_type = StockHistoryCode.STOCK_MOVE
 
-                result = re.search('^Moved to (.*)( - )*(.*) \(from.*$', entry.title)
+                result = re.search(r'^Moved to (.*)( - )*(.*) \(from.*$', entry.title)
 
                 if result:
                     # Legacy tracking entries recorded the location in multiple ways, because.. why not?
@@ -157,7 +157,7 @@ def update_history(apps, schema_editor):
                 tracking_type = StockHistoryCode.STOCK_ADD
 
                 # Extract the number of added items
-                result = re.search("^added ([\d\.]+) items", title)
+                result = re.search(r"^added ([\d\.]+) items", title)
 
                 if result:
                     

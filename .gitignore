@@ -85,3 +85,6 @@ maintenance_mode_state.txt
 
 # plugin dev directory
 plugins/
+
+# Compiled translation files
+*.mo
