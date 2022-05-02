@@ -125,3 +125,43 @@ HTML and javascript files are passed through the django templating engine. Trans
 
 <span>{% trans "This string will be translated" %} - this string will not!</span>
 ```
+
+## Github use
+### Tags
+The tags describe issues and PRs in multiple areas:
+| Area | Name | Description |
+|---|---|---|
+| Inventree Features |  |  |
+|  | feat: API | tbd |
+|  | feat: barcode | tbd |
+|  | feat: build | tbd |
+|  | feat: docker | tbd |
+|  | feat: importer | tbd |
+|  | feat: order | tbd |
+|  | feat: part | tbd |
+|  | feat: plugin | tbd |
+|  | feat: pricing | tbd |
+|  | feat: report | tbd |
+|  | feat: setup | tbd |
+|  | feat: stock | tbd |
+|  | feat: user interface | tbd |
+| Type |  |  |
+|  | typ: bug | tbd |
+|  | typ: dependencies | tbd |
+|  | typ: enhancement | tbd |
+|  | typ: security | tbd |
+|  | typ: question | tbd |
+|  | typ: roadmap | tbd |
+| State |  |  |
+|  | state: duplicate | tbd |
+|  | state: invalid | tbd |
+|  | state: no-activity | tbd |
+|  | state: duplicate | tbd |
+|  | state: wontfix | tbd |
+| Ecosystem |  |  |
+|  | eco: app | tbd |
+|  | eco: CI | tbd |
+|  | eco: demo | tbd |
+| Built in |  |  |
+|  | help wanted | tbd |
+|  | starter | tbd |
