@@ -44,6 +44,31 @@ The HEAD of the "stable" branch represents the latest stable release code.
 - When approved, the branch is merged back *into* stable, with an incremented PATCH number (e.g. 0.4.1 -> 0.4.2)
 - The bugfix *must* also be cherry picked into the *master* branch.
 
+## Environment
+#### Target version
+We are currently targeting:
+| Name | Minimum version |
+|---|---|
+| Python | 3.9 |
+| Django | 3.2 |
+
+### Auto creating updates
+The following tools can be used to auto-upgrade syntax that was depreciated in new versions:
+```bash
+pip install pyupgrade
+pip install django-upgrade
+```
+
+To update the codebase run the following script.
+```bash
+pyupgrade `find . -name "*.py"`
+django-upgrade --target-version 3.2 `find . -name "*.py"`
+```
+
+### Credits
+If you add any new dependencies / libraries, they need to be added to [the docs](https://github.com/inventree/inventree-docs/blob/master/docs/credits.md). Please try to do that as timely as possible.
+
+
 ## Migration Files
 
 Any required migration files **must** be included in the commit, or the pull-request will be rejected. If you change the underlying database schema, make sure you run `invoke migrate` and commit the migration files before submitting the PR.

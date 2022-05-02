@@ -133,6 +133,7 @@ class RuleSet(models.Model):
             'order_purchaseorder',
             'order_purchaseorderattachment',
             'order_purchaseorderlineitem',
+            'order_purchaseorderextraline',
             'company_supplierpart',
             'company_manufacturerpart',
             'company_manufacturerpartparameter',
@@ -143,6 +144,7 @@ class RuleSet(models.Model):
             'order_salesorderallocation',
             'order_salesorderattachment',
             'order_salesorderlineitem',
+            'order_salesorderextraline',
             'order_salesordershipment',
         ]
     }

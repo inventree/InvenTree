@@ -2,7 +2,7 @@
 
 from django.test import TestCase
 from django.conf import settings
-from django.conf.urls import url, include
+from django.urls import include, re_path
 from django.contrib.auth import get_user_model
 
 from datetime import datetime
@@ -66,7 +66,7 @@ class UrlsMixinTest(BaseMixinDefinition, TestCase):
         class UrlsCls(UrlsMixin, IntegrationPluginBase):
             def test():
                 return 'ccc'
-            URLS = [url('testpath', test, name='test'), ]
+            URLS = [re_path('testpath', test, name='test'), ]
         self.mixin = UrlsCls()
 
         class NoUrlsCls(UrlsMixin, IntegrationPluginBase):
@@ -81,7 +81,7 @@ class UrlsMixinTest(BaseMixinDefinition, TestCase):
         self.assertEqual(self.mixin.base_url, target_url)
 
         # urlpattern
-        target_pattern = url(f'^{plg_name}/', include((self.mixin.urls, plg_name)), name=plg_name)
+        target_pattern = re_path(f'^{plg_name}/', include((self.mixin.urls, plg_name)), name=plg_name)
         self.assertEqual(self.mixin.urlpatterns.reverse_dict, target_pattern.reverse_dict)
 
         # resolve the view
