@@ -32,6 +32,7 @@
             <th colspan='2'>{% trans "Select Purchase Order" %}</th>
         </tr>
         {% for supplier in suppliers %}
+        {% if supplier %}
         <tr id='suppier_row_{{ supplier.id }}'>
             <td>
                 {% include 'hover_image.html' with image=supplier.image hover=False %}
@@ -70,6 +71,7 @@
                 </div>
             </td>
         </tr>
+        {% endif %}
         {% endfor %}
 
     </table>

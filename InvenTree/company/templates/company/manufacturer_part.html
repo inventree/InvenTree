@@ -90,7 +90,11 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-industry'></span></td>
         <td>{% trans "Manufacturer" %}</td>
-        <td><a href="{% url 'company-detail' part.manufacturer.id %}">{{ part.manufacturer.name }}</a>{% include "clip.html"%}</td>
+        <td>
+            {% if part.manufacturer %}
+            <a href="{% url 'company-detail' part.manufacturer.id %}">{{ part.manufacturer.name }}</a>{% include "clip.html"%}
+            {% endif %}
+        </td>
     </tr>
     <tr>
         <td><span class='fas fa-hashtag'></span></td>
@@ -324,7 +328,9 @@ $('#delete-part').click(function() {
 
     deleteManufacturerPart({{ part.pk }}, {
         onSuccess: function() {
+            {% if part.manufacturer %}
             window.location.href = "{% url 'company-detail' part.manufacturer.id %}";
+            {% endif %}
         }
     });
 });
