@@ -78,7 +78,7 @@ class ScheduledTaskPluginTests(TestCase):
             }
 
             def test(self):
-                pass
+                pass  # pragma: no cover
 
         with self.assertRaises(MixinImplementationError):
             WrongFuncSchedules()
