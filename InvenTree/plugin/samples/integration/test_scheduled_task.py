@@ -6,8 +6,8 @@ from plugin import registry
 from plugin.registry import call_function
 
 
-class ScheduledTaskPluginTests(TestCase):
-    """ Tests for ScheduledTaskPlugin """
+class ExampleScheduledTaskPluginTests(TestCase):
+    """ Tests for provided ScheduledTaskPlugin """
 
     def test_function(self):
         """check if the scheduling works"""
