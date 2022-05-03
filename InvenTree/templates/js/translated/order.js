@@ -485,9 +485,16 @@ function orderParts(parts_list, options={}) {
 
     var parts = [];
 
+    var parts_seen = {};
+
     parts_list.forEach(function(part) {
         if (part.purchaseable) {
-            parts.push(part);
+
+            // Prevent duplicates
+            if (!(part.pk in parts_seen)) {
+                parts_seen[part.pk] = true;
+                parts.push(part);
+            }
         }
     });
 
@@ -596,6 +603,17 @@ function orderParts(parts_list, options={}) {
         return html;
     }
 
+    // Remove a single row form this dialog
+    function removeRow(pk, opts) {
+        // Remove the row
+        $(opts.modal).find(`#order_row_${pk}`).remove();
+
+        // If the modal is now "empty", dismiss it
+        if (!($(opts.modal).find('.part-order-row').exists())) {
+            closeModal(opts.modal);
+        }
+    }
+
     var table_entries = '';
 
     parts.forEach(function(part) {
@@ -622,14 +640,50 @@ function orderParts(parts_list, options={}) {
     </table>
     `;
 
+    // Construct API filters for the SupplierPart field
+    var supplier_part_filters = {
+        supplier_detail: true,
+        part_detail: true,
+    };
+
+    if (options.supplier) {
+        supplier_part_filters.supplier = options.supplier;
+    }
+
+    if (options.manufacturer) {
+        supplier_part_filters.manufacturer = options.manufacturer;
+    }
+
+    if (options.manufacturer_part) {
+        supplier_part_filters.manufacturer_part = options.manufacturer_part;
+    }
+
+    // Construct API filtres for the PurchaseOrder field
+    var order_filters = {
+        status: {{ PurchaseOrderStatus.PENDING }},
+        supplier_detail: true,
+    };
+
+    if (options.supplier) {
+        order_filters.supplier = options.supplier;
+    }
+
     constructFormBody({}, {
         preFormContent: html,
         title: '{% trans "Order Parts" %}',
         preventSubmit: true,
         closeText: '{% trans "Close" %}',
         afterRender: function(fields, opts) {
-            // TODO
             parts.forEach(function(part) {
+
+                // Filter by base part
+                supplier_part_filters.part = part.pk;
+
+                if (part.manufacturer_part) {
+                    // Filter by manufacturer part
+                    supplier_part_filters.manufacturer_part = part.manufacturer_part;
+                }
+
                 // Configure the "supplier part" field
                 initializeRelatedField({
                     name: `part_${part.pk}`,
@@ -638,11 +692,8 @@ function orderParts(parts_list, options={}) {
                     required: true,
                     type: 'related field',
                     auto_fill: true,
-                    filters: {
-                        part: part.pk,
-                        supplier_detail: true,
-                        part_detail: false,
-                    },
+                    value: options.supplier_part,
+                    filters: supplier_part_filters,
                     noResults: function(query) {
                         return '{% trans "No matching supplier parts" %}';
                     }                    
@@ -656,10 +707,8 @@ function orderParts(parts_list, options={}) {
                     required: true,
                     type: 'related field',
                     auto_fill: false,
-                    filters: {
-                        status: {{ PurchaseOrderStatus.PENDING }},
-                        supplier_detail: true,
-                    },
+                    value: options.order,
+                    filters: order_filters,
                     noResults: function(query) {
                         return '{% trans "No matching purchase orders" %}';
                     }
@@ -689,8 +738,7 @@ function orderParts(parts_list, options={}) {
                     {
                         method: 'POST',
                         success: function(response) {
-                            // Remove the row
-                            $(opts.modal).find(`#order_row_${pk}`).remove();
+                            removeRow(pk, opts);
                         },
                         error: function(xhr) {
                             switch (xhr.status) {
@@ -711,7 +759,7 @@ function orderParts(parts_list, options={}) {
             $(opts.modal).find('.button-row-remove').click(function() {
                 var pk = $(this).attr('pk');
 
-                $(opts.modal).find(`#order_row_${pk}`).remove();
+                removeRow(pk, opts);
             });
 
             // Add callback for "new supplier part" button
@@ -3242,13 +3290,18 @@ function loadSalesOrderLineItemTable(table, options={}) {
         $(table).find('.button-buy').click(function() {
             var pk = $(this).attr('pk');
 
-            launchModalForm('{% url "order-parts" %}', {
-                data: {
-                    parts: [
-                        pk
-                    ],
-                },
-            });
+            inventreeGet(
+                `/api/part/${pk}/`,
+                {},
+                {
+                    success: function(part) {
+                        orderParts(
+                            [part],
+                            {}
+                        );
+                    }
+                }
+            );
         });
 
         // Callback for displaying price

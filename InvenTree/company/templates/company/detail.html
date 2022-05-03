@@ -325,14 +325,14 @@
         var parts = [];
 
         selections.forEach(function(item) {
-            parts.push(item.part);
+            var part = item.part_detail;
+            part.manufacturer_part = item.pk;
+            parts.push(part);
         });
 
-        launchModalForm("/order/purchase-order/order-parts/", {
-            data: {
-                parts: parts,
-            },
-        });
+        orderParts(
+            parts,
+        );
     });
 
     {% endif %}
@@ -396,14 +396,16 @@
         var parts = [];
 
         selections.forEach(function(item) {
-            parts.push(item.part);
+            var part = item.part_detail;
+            parts.push(part);
         });
 
-        launchModalForm("/order/purchase-order/order-parts/", {
-            data: {
-                parts: parts,
-            },
-        });
+        orderParts(
+            parts,
+            {
+                supplier: {{ company.pk }},
+            }
+        );
     });
 
     {% endif %}
