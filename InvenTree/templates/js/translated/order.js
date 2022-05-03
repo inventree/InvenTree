@@ -514,7 +514,7 @@ function orderParts(parts_list, options={}) {
         }
 
         var quantity_input = constructField(
-            `items_quantity_${pk}`,
+            `quantity_${pk}`,
             {
                 type: 'decimal',
                 min_value: 0,
@@ -552,7 +552,7 @@ function orderParts(parts_list, options={}) {
         `;
 
         var purchase_order_input = constructField(
-            `purchase_order_${pk}`,
+            `order_${pk}`,
             {
                 type: 'related field',
                 required: true,
@@ -565,16 +565,6 @@ function orderParts(parts_list, options={}) {
 
         var buttons = `<div class='btn-group float-right' role='group'>`;
 
-        buttons += makeIconButton(
-            'fa-layer-group',
-            'button-row-expand',
-            pk,
-            '{% trans "Expand Row" %}',
-            {
-                collapseTarget: `order_row_expand_${pk}`,
-            }
-        );
-
         if (parts.length > 1) {
             buttons += makeIconButton(
                 'fa-times icon-red',
@@ -584,26 +574,23 @@ function orderParts(parts_list, options={}) {
             );
         }
 
+        // Button to add row to purchase order
+        buttons += makeIconButton(
+            'fa-shopping-cart icon-blue',
+            'button-row-add',
+            pk,
+            '{% trans "Add to purchase order" %}',
+        );
+
         buttons += `</div>`;
 
         var html = `
         <tr id='order_row_${pk}' class='part-order-row'>
-            <td id='part_${pk}'>${thumb} ${part.full_name}</td>
-            <td id='supplier_part_${pk}'>${supplier_part_input}</td>
-            <td id='purchase_order_${pk}'>${purchase_order_input}</td>
-            <td id='quantity_${pk}'>${quantity_input}</td>
-            <td id='actions_${pk}'>${buttons}</td>
-        </tr>`;
-
-        // Add a second row "underneath" the first one, but collapsed
-        // Allows extra data to be added if required, but hidden by default
-        html += `
-        <tr id='order_row_expand_${pk}' class='part-order-row collapse'>
-            <td></td>
-            <td>reference goes here</td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td id='td_part_${pk}'>${thumb} ${part.full_name}</td>
+            <td id='td_supplier_part_${pk}'>${supplier_part_input}</td>
+            <td id='td_order_${pk}'>${purchase_order_input}</td>
+            <td id='td_quantity_${pk}'>${quantity_input}</td>
+            <td id='td_actions_${pk}'>${buttons}</td>
         </tr>`;
 
         return html;
@@ -662,7 +649,7 @@ function orderParts(parts_list, options={}) {
 
                 // Configure the "purchase order" field
                 initializeRelatedField({
-                    name: `purchase_order_${part.pk}`,
+                    name: `order_${part.pk}`,
                     model: 'purchaseorder',
                     api_url: '{% url "api-po-list" %}',
                     required: true,
@@ -676,6 +663,50 @@ function orderParts(parts_list, options={}) {
                         return '{% trans "No matching purchase orders" %}';
                     }
                 }, null, opts);
+            });
+
+            // Add callback for "add to purchase order" button
+            $(opts.modal).find('.button-row-add').click(function() {
+                var pk = $(this).attr('pk');
+
+                opts.field_suffix = null;
+
+                // Extract information from the row
+                var data = {
+                    quantity: getFormFieldValue(`quantity_${pk}`, {type: 'decimal',}, opts),
+                    supplier_part: getFormFieldValue(`supplier_part_${pk}`, {}, opts),
+                    order: getFormFieldValue(`order_${pk}`, {}, opts),
+                }
+
+                // $(opts.modal).find(`#order_row_${pk}`).disable();
+                // $(this).disable();
+
+                // Duplicate the form options, to prevent 'field_suffix' override
+                var row_opts = Object.assign(opts);
+                row_opts.field_suffix = `_${pk}`;
+
+                inventreePut(
+                    '{% url "api-po-line-list" %}',
+                    data,
+                    {
+                        method: 'POST',
+                        success: function(response) {
+                            // Remove the row
+                            $(opts.modal).find(`#order_row_${pk}`).remove();
+                        },
+                        error: function(xhr) {
+                            switch (xhr.status) {
+                            case 400:
+                                handleFormErrors(xhr.responseJSON, fields, row_opts);
+                                break;
+                            default:
+                                console.error(`Error adding line to purchase order`);
+                                showApiError(xhr, options.url);
+                                break;
+                            }
+                        }
+                    }
+                );
             });
 
             // Add callback for "remove row" button
@@ -710,7 +741,7 @@ function orderParts(parts_list, options={}) {
                 createPurchaseOrder({
                     onSuccess: function(response) {
                         setRelatedFieldData(
-                            `purchase_order_${pk}`,
+                            `order_${pk}`,
                             response,
                             opts
                         );

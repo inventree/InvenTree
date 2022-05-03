@@ -1218,29 +1218,26 @@ function handleFormErrors(errors, fields={}, options={}) {
 
     for (var field_name in errors) {
 
-        if (field_name in fields) {
+        var field = fields[field_name] || {};
 
-            var field = fields[field_name];
+        if ((field.type == 'field') && ('child' in field)) {
+            // This is a "nested" field
+            handleNestedErrors(errors, field_name, options);
+        } else {
+            // This is a "simple" field
 
-            if ((field.type == 'field') && ('child' in field)) {
-                // This is a "nested" field
-                handleNestedErrors(errors, field_name, options);
-            } else {
-                // This is a "simple" field
+            var field_errors = errors[field_name];
 
-                var field_errors = errors[field_name];
+            if (field_errors && !first_error_field && isFieldVisible(field_name, options)) {
+                first_error_field = field_name;
+            }
 
-                if (field_errors && !first_error_field && isFieldVisible(field_name, options)) {
-                    first_error_field = field_name;
-                }
+            // Add an entry for each returned error message
+            for (var ii = field_errors.length-1; ii >= 0; ii--) {
 
-                // Add an entry for each returned error message
-                for (var ii = field_errors.length-1; ii >= 0; ii--) {
+                var error_text = field_errors[ii];
 
-                    var error_text = field_errors[ii];
-
-                    addFieldErrorMessage(field_name, error_text, ii, options);
-                }
+                addFieldErrorMessage(field_name, error_text, ii, options);
             }
         }
     }
@@ -1928,6 +1925,10 @@ function renderModelData(name, model, data, parameters, options) {
  */
 function getFieldName(name, options={}) {
     var field_name = name;
+
+    if (options.field_suffix) {
+        field_name += options.field_suffix;
+    }
 
     if (options && options.depth) {
         field_name += `_${options.depth}`;
