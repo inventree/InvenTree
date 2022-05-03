@@ -485,9 +485,16 @@ function orderParts(parts_list, options={}) {
 
     var parts = [];
 
+    var parts_seen = {};
+
     parts_list.forEach(function(part) {
         if (part.purchaseable) {
-            parts.push(part);
+
+            // Prevent duplicates
+            if (!(part.pk in parts_seen)) {
+                parts_seen[part.pk] = true;
+                parts.push(part);
+            }
         }
     });
 
@@ -622,24 +629,40 @@ function orderParts(parts_list, options={}) {
     </table>
     `;
 
+    // Construct API filters for the SupplierPart field
+    var supplier_part_filters = {
+        supplier_detail: true,
+        part_detail: true,
+    };
+
+    if (options.supplier) {
+        supplier_part_filters.supplier = options.supplier;
+    }
+
+    // Construct API filtres for the PurchaseOrder field
+    var order_filters = {
+        status: {{ PurchaseOrderStatus.PENDING }},
+        supplier_detail: true,
+    };
+
+    if (options.supplier) {
+        order_filters.supplier = options.supplier;
+    }
+
     constructFormBody({}, {
         preFormContent: html,
         title: '{% trans "Order Parts" %}',
         preventSubmit: true,
         closeText: '{% trans "Close" %}',
         afterRender: function(fields, opts) {
-            // TODO
             parts.forEach(function(part) {
 
-                var filters = {
-                    part: part.pk,
-                    supplier_detail: true,
-                    part_detail: true,
-                };
+                // Filter by base part
+                supplier_part_filters.part = part.pk;
 
                 if (part.manufacturer_part) {
                     // Filter by manufacturer part
-                    filters.manufacturer_part = part.manufacturer_part;
+                    supplier_part_filters.manufacturer_part = part.manufacturer_part;
                 }
 
                 // Configure the "supplier part" field
@@ -650,7 +673,7 @@ function orderParts(parts_list, options={}) {
                     required: true,
                     type: 'related field',
                     auto_fill: true,
-                    filters: filters,
+                    filters: supplier_part_filters,
                     noResults: function(query) {
                         return '{% trans "No matching supplier parts" %}';
                     }                    
@@ -664,10 +687,7 @@ function orderParts(parts_list, options={}) {
                     required: true,
                     type: 'related field',
                     auto_fill: false,
-                    filters: {
-                        status: {{ PurchaseOrderStatus.PENDING }},
-                        supplier_detail: true,
-                    },
+                    filters: order_filters,
                     noResults: function(query) {
                         return '{% trans "No matching purchase orders" %}';
                     }
