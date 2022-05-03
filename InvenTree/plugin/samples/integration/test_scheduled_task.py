@@ -64,7 +64,7 @@ class ScheduledTaskPluginTests(TestCase):
         class WrongFuncSchedules(Base):
             """
             Plugin with broken functions
-            
+
             This plugin is missing a func
             """
 
@@ -84,7 +84,7 @@ class ScheduledTaskPluginTests(TestCase):
         class WrongFuncSchedules1(WrongFuncSchedules):
             """
             Plugin with broken functions
-            
+
             This plugin is missing a schedule
             """
 
@@ -98,11 +98,10 @@ class ScheduledTaskPluginTests(TestCase):
         with self.assertRaises(MixinImplementationError):
             WrongFuncSchedules1()
 
-
         class WrongFuncSchedules2(WrongFuncSchedules):
             """
             Plugin with broken functions
-            
+
             This plugin is missing a schedule
             """
 
@@ -119,7 +118,7 @@ class ScheduledTaskPluginTests(TestCase):
         class WrongFuncSchedules3(WrongFuncSchedules):
             """
             Plugin with broken functions
-            
+
             This plugin has a broken schedule
             """
 
@@ -137,7 +136,7 @@ class ScheduledTaskPluginTests(TestCase):
         class WrongFuncSchedules4(WrongFuncSchedules):
             """
             Plugin with broken functions
-            
+
             This plugin is missing a minute marker for its schedule
             """
 
