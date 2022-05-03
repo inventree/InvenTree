@@ -312,7 +312,7 @@ class SupplierPartList(generics.ListCreateAPIView):
         try:
             params = self.request.query_params
             kwargs['part_detail'] = str2bool(params.get('part_detail', None))
-            kwargs['supplier_detail'] = str2bool(params.get('supplier_detail', None))
+            kwargs['supplier_detail'] = str2bool(params.get('supplier_detail', True))
             kwargs['manufacturer_detail'] = str2bool(params.get('manufacturer_detail', None))
             kwargs['pretty'] = str2bool(params.get('pretty', None))
         except AttributeError:

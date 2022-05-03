@@ -260,8 +260,8 @@ function createPurchaseOrder(options={}) {
                     }
                 }
             },
-            supplier_reference: {},
             description: {},
+            supplier_reference: {},
             target_date: {
                 icon: 'fa-calendar-alt',
             },
@@ -670,61 +670,51 @@ function orderParts(parts_list, options={}) {
                     auto_fill: false,
                     filters: {
                         status: {{ PurchaseOrderStatus.PENDING }},
-                    },
-                    adjustFilters: function(query, opts) {
-
-                        // Whenever we open the drop-down to select an order,
-                        // ensure we are only displaying orders which match the selected supplier part
-                        var supplier_part_pk = getFormFieldValue(`supplier_part_${part.pk}`, opts);
-
-                        inventreeGet(
-                            `/api/company/part/${supplier_part_pk}/`,
-                            {},
-                            {
-                                async: false,
-                                success: function(data) {
-                                    query.supplier = data.supplier;
-                                }
-                            }
-                        );
-
-                        return query;
+                        supplier_detail: true,
                     },
                     noResults: function(query) {
                         return '{% trans "No matching purchase orders" %}';
                     }
                 }, null, opts);
+            });
 
-                // Add callback for "remove row" button
-                $(opts.modal).find('.button-row-remove').click(function() {
-                    var pk = $(this).attr('pk');
+            // Add callback for "remove row" button
+            $(opts.modal).find('.button-row-remove').click(function() {
+                var pk = $(this).attr('pk');
 
-                    $(opts.modal).find(`#order_row_${pk}`).remove();
+                $(opts.modal).find(`#order_row_${pk}`).remove();
+            });
+
+            // Add callback for "new supplier part" button
+            $(opts.modal).find('.button-row-new-sp').click(function() {
+                var pk = $(this).attr('pk');
+
+                // Launch dialog to create new supplier part
+                createSupplierPart({
+                    part: pk,
+                    onSuccess: function(response) {
+                        setRelatedFieldData(
+                            `supplier_part_${pk}`,
+                            response,
+                            opts
+                        );
+                    }
                 });
+            });
 
-                // Add callback for "new supplier part" button
-                $(opts.modal).find('.button-row-new-sp').click(function() {
-                    var pk = $(this).attr('pk');
+            // Add callback for "new purchase order" button
+            $(opts.modal).find('.button-row-new-po').click(function() {
+                var pk = $(this).attr('pk');
 
-                    // Launch dialog to create new supplier part
-                    createSupplierPart({
-                        part: pk,
-                        onSuccess: function(response) {
-                            // TODO
-                        }
-                    });
-                });
-
-                // Add callback for "new purchase order" button
-                $(opts.modal).find('.button-row-new-po').click(function() {
-                    var pk = $(this).attr('pk');
-
-                    // Launch dialog to create new purchase order
-                    createPurchaseOrder({
-                        onSuccess: function(response) {
-                            // TODO
-                        }
-                    });
+                // Launch dialog to create new purchase order
+                createPurchaseOrder({
+                    onSuccess: function(response) {
+                        setRelatedFieldData(
+                            `purchase_order_${pk}`,
+                            response,
+                            opts
+                        );
+                    }
                 });
             });
         }

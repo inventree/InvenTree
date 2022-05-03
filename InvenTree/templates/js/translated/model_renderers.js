@@ -394,7 +394,9 @@ function renderSupplierPart(name, data, parameters={}, options={}) {
         html += select2Thumbnail(part_image);
     }
     
-    html += ` <span><b>${data.supplier_detail.name}</b> - ${data.SKU}</span>`;
+    if (data.supplier_detail) {
+        html += ` <span><b>${data.supplier_detail.name}</b> - ${data.SKU}</span>`;
+    }
 
     if (data.part_detail) {
         html += ` - <i>${data.part_detail.full_name}</i>`;
