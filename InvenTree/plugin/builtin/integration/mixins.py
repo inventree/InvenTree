@@ -426,7 +426,7 @@ class LabelPrintingMixin:
         """
 
         # Unimplemented (to be implemented by the particular plugin class)
-        ...
+        ...  # pragma: no cover
 
 
 class APICallMixin:
