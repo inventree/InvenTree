@@ -3,6 +3,7 @@
 from django.test import TestCase
 
 from plugin import registry
+from plugin.registry import call_function
 
 
 class ScheduledTaskPluginTests(TestCase):
@@ -27,3 +28,7 @@ class ScheduledTaskPluginTests(TestCase):
         from django_q.models import Schedule
         scheduled_plugin_tasks = Schedule.objects.filter(name__istartswith="plugin.")
         self.assertEqual(len(scheduled_plugin_tasks), 3)
+
+    def test_calling(self):
+        """check if a function can be called without errors"""
+        call_function('schedule', 'member_func')
