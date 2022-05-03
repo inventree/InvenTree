@@ -387,7 +387,7 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         default=False,
         required=False,
         label=_('Accept Incomplete Allocation'),
-        help_text=_('Complete ouputs if stock has not been fully allocated'),
+        help_text=_('Complete outputs if stock has not been fully allocated'),
     )
 
     notes = serializers.CharField(
