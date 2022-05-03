@@ -534,7 +534,7 @@ function orderParts(parts_list, options={}) {
         `;
 
         var supplier_part_input = constructField(
-            `supplier_part_${pk}`,
+            `part_${pk}`,
             {
                 type: 'related field',
                 required: true,
@@ -631,7 +631,7 @@ function orderParts(parts_list, options={}) {
             parts.forEach(function(part) {
                 // Configure the "supplier part" field
                 initializeRelatedField({
-                    name: `supplier_part_${part.pk}`,
+                    name: `part_${part.pk}`,
                     model: 'supplierpart',
                     api_url: '{% url "api-supplier-part-list" %}',
                     required: true,
@@ -674,7 +674,7 @@ function orderParts(parts_list, options={}) {
                 // Extract information from the row
                 var data = {
                     quantity: getFormFieldValue(`quantity_${pk}`, {type: 'decimal',}, opts),
-                    supplier_part: getFormFieldValue(`supplier_part_${pk}`, {}, opts),
+                    part: getFormFieldValue(`part_${pk}`, {}, opts),
                     order: getFormFieldValue(`order_${pk}`, {}, opts),
                 }
 
@@ -725,7 +725,7 @@ function orderParts(parts_list, options={}) {
                     part: pk,
                     onSuccess: function(response) {
                         setRelatedFieldData(
-                            `supplier_part_${pk}`,
+                            `part_${pk}`,
                             response,
                             opts
                         );

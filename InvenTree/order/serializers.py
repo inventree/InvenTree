@@ -268,8 +268,18 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
 
         data = super().validate(data)
 
-        supplier_part = data['part']
-        purchase_order = data['order']
+        supplier_part = data.get('part', None)
+        purchase_order = data.get('order', None)
+
+        if not supplier_part:
+            raise ValidationError({
+                'part': _('Supplier part must be specified'),
+            })
+
+        if not purchase_order:
+            raise ValidationError({
+                'order': _('Purchase order must be specified'),
+            })
 
         # Check that the supplier part and purchase order match
         if supplier_part is not None and supplier_part.supplier != purchase_order.supplier:
