@@ -2,8 +2,10 @@
 
 from django.test import TestCase
 
-from plugin import registry
+from plugin import registry, IntegrationPluginBase
+from plugin.helpers import MixinImplementationError
 from plugin.registry import call_function
+from plugin.mixins import ScheduleMixin
 
 
 class ExampleScheduledTaskPluginTests(TestCase):
@@ -42,3 +44,109 @@ class ExampleScheduledTaskPluginTests(TestCase):
     def test_calling(self):
         """check if a function can be called without errors"""
         self.assertEqual(call_function('schedule', 'member_func'), False)
+
+
+class ScheduledTaskPluginTests(TestCase):
+    """ Tests for ScheduledTaskPluginTests mixin base """
+
+    def test_init(self):
+        """Check that all MixinImplementationErrors raise"""
+        class Base(ScheduleMixin, IntegrationPluginBase):
+            PLUGIN_NAME = 'APlugin'
+
+        class NoSchedules(Base):
+            """Plugin without schedules"""
+            pass
+
+        with self.assertRaises(MixinImplementationError):
+            NoSchedules()
+
+        class WrongFuncSchedules(Base):
+            """
+            Plugin with broken functions
+            
+            This plugin is missing a func
+            """
+
+            SCHEDULED_TASKS = {
+                'test': {
+                    'schedule': 'I',
+                    'minutes': 30,
+                },
+            }
+
+            def test(self):
+                pass
+
+        with self.assertRaises(MixinImplementationError):
+            WrongFuncSchedules()
+
+        class WrongFuncSchedules1(WrongFuncSchedules):
+            """
+            Plugin with broken functions
+            
+            This plugin is missing a schedule
+            """
+
+            SCHEDULED_TASKS = {
+                'test': {
+                    'func': 'test',
+                    'minutes': 30,
+                },
+            }
+
+        with self.assertRaises(MixinImplementationError):
+            WrongFuncSchedules1()
+
+
+        class WrongFuncSchedules2(WrongFuncSchedules):
+            """
+            Plugin with broken functions
+            
+            This plugin is missing a schedule
+            """
+
+            SCHEDULED_TASKS = {
+                'test': {
+                    'func': 'test',
+                    'minutes': 30,
+                },
+            }
+
+        with self.assertRaises(MixinImplementationError):
+            WrongFuncSchedules2()
+
+        class WrongFuncSchedules3(WrongFuncSchedules):
+            """
+            Plugin with broken functions
+            
+            This plugin has a broken schedule
+            """
+
+            SCHEDULED_TASKS = {
+                'test': {
+                    'func': 'test',
+                    'schedule': 'XX',
+                    'minutes': 30,
+                },
+            }
+
+        with self.assertRaises(MixinImplementationError):
+            WrongFuncSchedules3()
+
+        class WrongFuncSchedules4(WrongFuncSchedules):
+            """
+            Plugin with broken functions
+            
+            This plugin is missing a minute marker for its schedule
+            """
+
+            SCHEDULED_TASKS = {
+                'test': {
+                    'func': 'test',
+                    'schedule': 'I',
+                },
+            }
+
+        with self.assertRaises(MixinImplementationError):
+            WrongFuncSchedules4()
