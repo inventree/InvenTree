@@ -639,6 +639,14 @@ function orderParts(parts_list, options={}) {
         supplier_part_filters.supplier = options.supplier;
     }
 
+    if (options.manufacturer) {
+        supplier_part_filters.manufacturer = options.manufacturer;
+    }
+
+    if (options.manufacturer_part) {
+        supplier_part_filters.manufacturer_part = options.manufacturer_part;
+    }
+
     // Construct API filtres for the PurchaseOrder field
     var order_filters = {
         status: {{ PurchaseOrderStatus.PENDING }},
