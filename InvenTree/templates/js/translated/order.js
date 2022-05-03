@@ -681,6 +681,7 @@ function orderParts(parts_list, options={}) {
                     required: true,
                     type: 'related field',
                     auto_fill: true,
+                    value: options.supplier_part,
                     filters: supplier_part_filters,
                     noResults: function(query) {
                         return '{% trans "No matching supplier parts" %}';
@@ -695,6 +696,7 @@ function orderParts(parts_list, options={}) {
                     required: true,
                     type: 'related field',
                     auto_fill: false,
+                    value: options.order,
                     filters: order_filters,
                     noResults: function(query) {
                         return '{% trans "No matching purchase orders" %}';
