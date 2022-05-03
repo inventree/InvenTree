@@ -246,7 +246,7 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
     total_price = serializers.FloatField(read_only=True)
 
     part_detail = PartBriefSerializer(source='get_base_part', many=False, read_only=True)
-    
+
     supplier_part_detail = SupplierPartSerializer(source='part', many=False, read_only=True)
 
     purchase_price = InvenTreeMoneySerializer(

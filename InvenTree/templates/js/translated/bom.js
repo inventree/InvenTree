@@ -129,7 +129,7 @@ function constructBomUploadTable(data, options={}) {
 
             var modal = createNewModal({
                 title: '{% trans "Row Data" %}',
-                cancelText: '{% trans "Close" %}',
+                closeText: '{% trans "Close" %}',
                 hideSubmitButton: true
             });
 
@@ -617,7 +617,7 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
             },
         },
         preFormContent: html,
-        cancelText: '{% trans "Close" %}',
+        closeText: '{% trans "Close" %}',
         submitText: '{% trans "Add Substitute" %}',
         title: '{% trans "Edit BOM Item Substitutes" %}',
         afterRender: function(fields, opts) {
