@@ -8,11 +8,11 @@ from plugin.mixins import ScheduleMixin, SettingsMixin
 
 # Define some simple tasks to perform
 def print_hello():
-    print("Hello")
+    print("Hello")  # pragma: no cover
 
 
 def print_world():
-    print("World")
+    print("World")  # pragma: no cover
 
 
 class ScheduledTaskPlugin(ScheduleMixin, SettingsMixin, IntegrationPluginBase):
