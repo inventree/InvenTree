@@ -29,6 +29,11 @@ class ScheduledTaskPluginTests(TestCase):
         scheduled_plugin_tasks = Schedule.objects.filter(name__istartswith="plugin.")
         self.assertEqual(len(scheduled_plugin_tasks), 3)
 
+        # delete middle task
+        # this is to check the system also deals with disappearing tasks
+        scheduled_plugin_tasks[1].delete()
+        self.assertEqual(len(scheduled_plugin_tasks), 2)
+
         # test unregistering
         plg.unregister_tasks()
         scheduled_plugin_tasks = Schedule.objects.filter(name__istartswith="plugin.")
