@@ -603,6 +603,17 @@ function orderParts(parts_list, options={}) {
         return html;
     }
 
+    // Remove a single row form this dialog
+    function removeRow(pk, opts) {
+        // Remove the row
+        $(opts.modal).find(`#order_row_${pk}`).remove();
+
+        // If the modal is now "empty", dismiss it
+        if (!($(opts.modal).find('.part-order-row').exists())) {
+            closeModal(opts.modal);
+        }
+    }
+
     var table_entries = '';
 
     parts.forEach(function(part) {
@@ -727,8 +738,7 @@ function orderParts(parts_list, options={}) {
                     {
                         method: 'POST',
                         success: function(response) {
-                            // Remove the row
-                            $(opts.modal).find(`#order_row_${pk}`).remove();
+                            removeRow(pk, opts);
                         },
                         error: function(xhr) {
                             switch (xhr.status) {
@@ -749,7 +759,7 @@ function orderParts(parts_list, options={}) {
             $(opts.modal).find('.button-row-remove').click(function() {
                 var pk = $(this).attr('pk');
 
-                $(opts.modal).find(`#order_row_${pk}`).remove();
+                removeRow(pk, opts);
             });
 
             // Add callback for "new supplier part" button

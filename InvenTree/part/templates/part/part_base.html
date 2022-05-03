@@ -549,15 +549,6 @@
                 }
             }
         );
-
-        return;
-
-        launchModalForm("{% url 'order-parts' %}", {
-            data: {
-                part: {{ part.id }},
-            },
-            reload: true,
-        });
     });
 
     {% if roles.part.add %}
