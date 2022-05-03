@@ -209,7 +209,7 @@ class ScheduleMixin:
                         repeats=task.get('repeats', -1),
                     )
 
-        except (ProgrammingError, OperationalError):
+        except (ProgrammingError, OperationalError):  # pragma: no cover
             # Database might not yet be ready
             logger.warning("register_tasks failed, database not ready")
 
