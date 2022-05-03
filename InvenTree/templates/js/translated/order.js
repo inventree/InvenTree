@@ -525,7 +525,7 @@ function orderParts(parts_list, options={}) {
             {
                 hideLabels: true,
             }
-        )
+        );
 
         var supplier_part_prefix = `
             <button type='button' class='input-group-text button-row-new-sp' pk='${pk}' title='{% trans "New supplier part" %}'>
@@ -545,7 +545,7 @@ function orderParts(parts_list, options={}) {
             }
         );
 
-        var purchase_order_prefix  = `
+        var purchase_order_prefix = `
             <button type='button' class='input-group-text button-row-new-po' pk='${pk}' title='{% trans "New purchase order" %}'>
                 <span class='fas fa-plus-circle icon-green'></span>
             </button>
@@ -674,13 +674,10 @@ function orderParts(parts_list, options={}) {
 
                 // Extract information from the row
                 var data = {
-                    quantity: getFormFieldValue(`quantity_${pk}`, {type: 'decimal',}, opts),
+                    quantity: getFormFieldValue(`quantity_${pk}`, {type: 'decimal'}, opts),
                     part: getFormFieldValue(`part_${pk}`, {}, opts),
                     order: getFormFieldValue(`order_${pk}`, {}, opts),
-                }
-
-                // $(opts.modal).find(`#order_row_${pk}`).disable();
-                // $(this).disable();
+                };
 
                 // Duplicate the form options, to prevent 'field_suffix' override
                 var row_opts = Object.assign(opts);
