@@ -58,3 +58,4 @@ class ScheduledTaskPlugin(ScheduleMixin, SettingsMixin, IntegrationPluginBase):
         t_or_f = self.get_setting('T_OR_F')
 
         print(f"Called member_func - value is {t_or_f}")
+        return t_or_f

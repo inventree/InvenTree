@@ -17,7 +17,7 @@ class ScheduledTaskPluginTests(TestCase):
         self.assertTrue(plg)
 
         # check that the built-in function is running
-        plg.member_func()
+        self.assertEqual(plg.member_func(), False)
 
         # check that the tasks are defined
         self.assertEqual(plg.get_task_names(), ['plugin.schedule.member', 'plugin.schedule.hello', 'plugin.schedule.world'])
@@ -31,4 +31,4 @@ class ScheduledTaskPluginTests(TestCase):
 
     def test_calling(self):
         """check if a function can be called without errors"""
-        call_function('schedule', 'member_func')
+        self.assertEqual(call_function('schedule', 'member_func'), False)
