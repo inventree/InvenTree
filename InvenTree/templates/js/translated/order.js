@@ -3290,13 +3290,18 @@ function loadSalesOrderLineItemTable(table, options={}) {
         $(table).find('.button-buy').click(function() {
             var pk = $(this).attr('pk');
 
-            launchModalForm('{% url "order-parts" %}', {
-                data: {
-                    parts: [
-                        pk
-                    ],
-                },
-            });
+            inventreeGet(
+                `/api/part/${pk}/`,
+                {},
+                {
+                    success: function(part) {
+                        orderParts(
+                            [part],
+                            {}
+                        );
+                    }
+                }
+            );
         });
 
         // Callback for displaying price

@@ -1532,13 +1532,18 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
             var pk = $(this).attr('pk');
 
-            launchModalForm('{% url "order-parts" %}', {
-                data: {
-                    parts: [
-                        pk,
-                    ]
+            inventreeGet(
+                `/api/part/${pk}/`,
+                {},
+                {
+                    success: function(part) {
+                        orderParts(
+                            [part],
+                            {}
+                        );
+                    }
                 }
-            });
+            );
         });
 
         // Callback for 'build' button

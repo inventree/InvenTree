@@ -22,8 +22,7 @@ purchase_order_detail_urls = [
 ]
 
 purchase_order_urls = [
-
-    re_path(r'^order-parts/', views.OrderParts.as_view(), name='order-parts'),
+    
     re_path(r'^pricing/', views.LineItemPricing.as_view(), name='line-pricing'),
 
     # Display detail view for a single purchase order
