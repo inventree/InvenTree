@@ -230,7 +230,7 @@ class ScheduleMixin:
                     scheduled_task.delete()
                 except Schedule.DoesNotExist:
                     pass
-        except (ProgrammingError, OperationalError):
+        except (ProgrammingError, OperationalError):  # pragma: no cover
             # Database might not yet be ready
             logger.warning("unregister_tasks failed, database not ready")
 
