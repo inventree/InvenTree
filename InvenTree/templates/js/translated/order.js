@@ -630,6 +630,18 @@ function orderParts(parts_list, options={}) {
         afterRender: function(fields, opts) {
             // TODO
             parts.forEach(function(part) {
+
+                var filters = {
+                    part: part.pk,
+                    supplier_detail: true,
+                    part_detail: true,
+                };
+
+                if (part.manufacturer_part) {
+                    // Filter by manufacturer part
+                    filters.manufacturer_part = part.manufacturer_part;
+                }
+
                 // Configure the "supplier part" field
                 initializeRelatedField({
                     name: `part_${part.pk}`,
@@ -638,11 +650,7 @@ function orderParts(parts_list, options={}) {
                     required: true,
                     type: 'related field',
                     auto_fill: true,
-                    filters: {
-                        part: part.pk,
-                        supplier_detail: true,
-                        part_detail: false,
-                    },
+                    filters: filters,
                     noResults: function(query) {
                         return '{% trans "No matching supplier parts" %}';
                     }                    

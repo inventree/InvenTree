@@ -325,8 +325,16 @@
         var parts = [];
 
         selections.forEach(function(item) {
-            parts.push(item.part);
+            var part = item.part_detail;
+            part.manufacturer_part = item.pk;
+            parts.push(part);
         });
+
+        orderParts(
+            parts,
+        );
+
+        return;
 
         launchModalForm("/order/purchase-order/order-parts/", {
             data: {
