@@ -135,7 +135,7 @@ function getApiEndpointOptions(url, callback) {
         success: callback,
         error: function(xhr) {
             // TODO: Handle error
-            console.log(`ERROR in getApiEndpointOptions at '${url}'`);
+            console.error(`Error in getApiEndpointOptions at '${url}'`);
             showApiError(xhr, url);
         }
     });
@@ -227,7 +227,7 @@ function constructChangeForm(fields, options) {
         },
         error: function(xhr) {
             // TODO: Handle error here
-            console.log(`ERROR in constructChangeForm at '${options.url}'`);
+            console.error(`Error in constructChangeForm at '${options.url}'`);
 
             showApiError(xhr, options.url);
         }
@@ -268,7 +268,7 @@ function constructDeleteForm(fields, options) {
         },
         error: function(xhr) {
             // TODO: Handle error here
-            console.log(`ERROR in constructDeleteForm at '${options.url}`);
+            console.error(`Error in constructDeleteForm at '${options.url}`);
 
             showApiError(xhr, options.url);
         }
@@ -354,7 +354,7 @@ function constructForm(url, options) {
                     icon: 'fas fa-user-times',
                 });
             
-                console.log(`'POST action unavailable at ${url}`);
+                console.warn(`'POST action unavailable at ${url}`);
             }
             break;
         case 'PUT':
@@ -369,7 +369,7 @@ function constructForm(url, options) {
                     icon: 'fas fa-user-times',
                 });
             
-                console.log(`${options.method} action unavailable at ${url}`);
+                console.warn(`${options.method} action unavailable at ${url}`);
             }
             break;
         case 'DELETE':
@@ -383,7 +383,7 @@ function constructForm(url, options) {
                     icon: 'fas fa-user-times',
                 });
             
-                console.log(`DELETE action unavailable at ${url}`);
+                console.warn(`DELETE action unavailable at ${url}`);
             }
             break;
         case 'GET':
@@ -397,11 +397,11 @@ function constructForm(url, options) {
                     icon: 'fas fa-user-times',
                 });
             
-                console.log(`GET action unavailable at ${url}`);
+                console.warn(`GET action unavailable at ${url}`);
             }
             break;
         default:
-            console.log(`constructForm() called with invalid method '${options.method}'`);
+            console.warn(`constructForm() called with invalid method '${options.method}'`);
             break;
         }
     });
@@ -731,7 +731,7 @@ function submitFormData(fields, options) {
                 data[name] = value;
             }
         } else {
-            console.log(`WARNING: Could not find field matching '${name}'`);
+            console.warn(`Could not find field matching '${name}'`);
         }
     }
 
@@ -776,7 +776,7 @@ function submitFormData(fields, options) {
                 default:
                     $(options.modal).modal('hide');
 
-                    console.log(`upload error at ${options.url}`);
+                    console.error(`Upload error at ${options.url}`);
                     showApiError(xhr, options.url);
                     break;
                 }
@@ -827,7 +827,7 @@ function updateFieldValue(name, value, field, options) {
     var el = getFormFieldElement(name, options);
 
     if (!el) {
-        console.log(`WARNING: updateFieldValue could not find field '${name}'`);
+        console.warn(`updateFieldValue could not find field '${name}'`);
         return;
     }
 
@@ -870,7 +870,7 @@ function getFormFieldElement(name, options) {
     }
 
     if (!el.exists) {
-        console.log(`ERROR: Could not find form element for field '${name}'`);
+        console.error(`Could not find form element for field '${name}'`);
     }
 
     return el;
@@ -918,7 +918,7 @@ function getFormFieldValue(name, field={}, options={}) {
     var el = getFormFieldElement(name, options);
 
     if (!el.exists()) {
-        console.log(`ERROR: getFormFieldValue could not locate field '${name}'`);
+        console.error(`getFormFieldValue could not locate field '${name}'`);
         return null;
     }
 
@@ -1104,7 +1104,7 @@ function handleNestedErrors(errors, field_name, options={}) {
     
     // Nest list must be provided!
     if (!nest_list) {
-        console.log(`WARNING: handleNestedErrors missing nesting options for field '${fieldName}'`);
+        console.warn(`handleNestedErrors missing nesting options for field '${fieldName}'`);
         return;
     }
 
@@ -1113,7 +1113,7 @@ function handleNestedErrors(errors, field_name, options={}) {
         var error_item = error_list[idx];
         
         if (idx >= nest_list.length) {
-            console.log(`WARNING: handleNestedErrors returned greater number of errors (${error_list.length}) than could be handled (${nest_list.length})`);
+            console.warn(`handleNestedErrors returned greater number of errors (${error_list.length}) than could be handled (${nest_list.length})`);
             break;
         }
 
@@ -1218,29 +1218,26 @@ function handleFormErrors(errors, fields={}, options={}) {
 
     for (var field_name in errors) {
 
-        if (field_name in fields) {
+        var field = fields[field_name] || {};
 
-            var field = fields[field_name];
+        if ((field.type == 'field') && ('child' in field)) {
+            // This is a "nested" field
+            handleNestedErrors(errors, field_name, options);
+        } else {
+            // This is a "simple" field
 
-            if ((field.type == 'field') && ('child' in field)) {
-                // This is a "nested" field
-                handleNestedErrors(errors, field_name, options);
-            } else {
-                // This is a "simple" field
+            var field_errors = errors[field_name];
 
-                var field_errors = errors[field_name];
+            if (field_errors && !first_error_field && isFieldVisible(field_name, options)) {
+                first_error_field = field_name;
+            }
 
-                if (field_errors && !first_error_field && isFieldVisible(field_name, options)) {
-                    first_error_field = field_name;
-                }
+            // Add an entry for each returned error message
+            for (var ii = field_errors.length-1; ii >= 0; ii--) {
 
-                // Add an entry for each returned error message
-                for (var ii = field_errors.length-1; ii >= 0; ii--) {
+                var error_text = field_errors[ii];
 
-                    var error_text = field_errors[ii];
-
-                    addFieldErrorMessage(field_name, error_text, ii, options);
-                }
+                addFieldErrorMessage(field_name, error_text, ii, options);
             }
         }
     }
@@ -1285,7 +1282,7 @@ function addFieldErrorMessage(name, error_text, error_idx=0, options={}) {
 
         field_dom.append(error_html);
     } else {
-        console.log(`WARNING: addFieldErrorMessage could not locate field '${field_name}'`);
+        console.warn(`addFieldErrorMessage could not locate field '${field_name}'`);
     }
 }
 
@@ -1358,7 +1355,7 @@ function addClearCallback(name, field, options={}) {
     }
 
     if (!el) {
-        console.log(`WARNING: addClearCallback could not find field '${name}'`);
+        console.warn(`addClearCallback could not find field '${name}'`);
         return;
     }
 
@@ -1582,7 +1579,7 @@ function initializeRelatedField(field, fields, options={}) {
     var name = field.name;
 
     if (!field.api_url) {
-        console.log(`WARNING: Related field '${name}' missing 'api_url' parameter.`);
+        console.warn(`Related field '${name}' missing 'api_url' parameter.`);
         return;
     }
 
@@ -1712,7 +1709,7 @@ function initializeRelatedField(field, fields, options={}) {
                 return $(html);
             } else {
                 // Return a simple renderering
-                console.log(`WARNING: templateResult() missing 'field.model' for '${name}'`);
+                console.warn(`templateResult() missing 'field.model' for '${name}'`);
                 return `${name} - ${item.id}`;
             }
         },
@@ -1742,7 +1739,7 @@ function initializeRelatedField(field, fields, options={}) {
                 return $(html);
             } else {
                 // Return a simple renderering
-                console.log(`WARNING: templateSelection() missing 'field.model' for '${name}'`);
+                console.warn(`templateSelection() missing 'field.model' for '${name}'`);
                 return `${name} - ${item.id}`;
             }
         }
@@ -1780,6 +1777,11 @@ function initializeRelatedField(field, fields, options={}) {
                 // Only a single result is available, given the provided filters
                 if (data.count == 1) {
                     setRelatedFieldData(name, data.results[0], options);
+
+                    // Run "callback" function (if supplied)
+                    if (field.onEdit) {
+                        field.onEdit(data.results[0], name, field, options);
+                    }
                 }
             }
         });
@@ -1911,7 +1913,7 @@ function renderModelData(name, model, data, parameters, options) {
     if (html != null) {
         return html;
     } else {
-        console.log(`ERROR: Rendering not implemented for model '${model}'`);
+        console.error(`Rendering not implemented for model '${model}'`);
         // Simple text rendering
         return `${model} - ID ${data.id}`;
     }
@@ -1923,6 +1925,10 @@ function renderModelData(name, model, data, parameters, options) {
  */
 function getFieldName(name, options={}) {
     var field_name = name;
+
+    if (options.field_suffix) {
+        field_name += options.field_suffix;
+    }
 
     if (options && options.depth) {
         field_name += `_${options.depth}`;
@@ -2196,7 +2202,7 @@ function constructInput(name, parameters, options={}) {
     if (func != null) {
         html = func(name, parameters, options);
     } else {
-        console.log(`WARNING: Unhandled form field type: '${parameters.type}'`);
+        console.warn(`Unhandled form field type: '${parameters.type}'`);
     }
 
     return html;
@@ -2499,12 +2505,12 @@ function constructHelpText(name, parameters) {
 function selectImportFields(url, data={}, options={}) {
 
     if (!data.model_fields) {
-        console.log(`WARNING: selectImportFields is missing 'model_fields'`);
+        console.warn(`selectImportFields is missing 'model_fields'`);
         return;
     }
 
     if (!data.file_fields) {
-        console.log(`WARNING: selectImportFields is missing 'file_fields'`);
+        console.warn(`selectImportFields is missing 'file_fields'`);
         return;
     }
 
@@ -2595,7 +2601,7 @@ function selectImportFields(url, data={}, options={}) {
                         default:
                             $(opts.modal).modal('hide');
         
-                            console.log(`upload error at ${opts.url}`);
+                            console.error(`upload error at ${opts.url}`);
                             showApiError(xhr, opts.url);
                             break;
                         }
