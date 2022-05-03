@@ -86,7 +86,6 @@ function onCameraAvailable(hasCamera, options) {
 
 function onBarcodeScanCompleted(result, options) {
     if (result.data == '') return;
-    console.log('decoded qr code:', result.data);
     stopQrScanner();
     postBarcodeData(result.data, options);
 }

@@ -1061,7 +1061,7 @@ function loadBomTable(table, options={}) {
                     table.bootstrapTable('append', response);
                 },
                 error: function(xhr) {
-                    console.log('Error requesting BOM for part=' + part_pk);
+                    console.error('Error requesting BOM for part=' + part_pk);
                     showApiError(xhr);
                 }
             }

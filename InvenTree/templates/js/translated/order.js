@@ -1403,7 +1403,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 var line_item = $(table).bootstrapTable('getRowByUniqueId', pk);
 
                 if (!line_item) {
-                    console.log('WARNING: getRowByUniqueId returned null');
+                    console.warn('getRowByUniqueId returned null');
                     return;
                 }
 
@@ -1662,12 +1662,12 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
     options.params = options.params || {};
 
     if (!options.order) {
-        console.log('ERROR: function called without order ID');
+        console.error('function called without order ID');
         return;
     }
 
     if (!options.status) {
-        console.log('ERROR: function called without order status');
+        console.error('function called without order status');
         return;
     }
 
@@ -2789,12 +2789,12 @@ function loadSalesOrderLineItemTable(table, options={}) {
     options.params = options.params || {};
 
     if (!options.order) {
-        console.log('ERROR: function called without order ID');
+        console.error('function called without order ID');
         return;
     }
 
     if (!options.status) {
-        console.log('ERROR: function called without order status');
+        console.error('function called without order status');
         return;
     }
 
@@ -3297,12 +3297,12 @@ function loadSalesOrderExtraLineTable(table, options={}) {
     options.params = options.params || {};
 
     if (!options.order) {
-        console.log('ERROR: function called without order ID');
+        console.error('function called without order ID');
         return;
     }
 
     if (!options.status) {
-        console.log('ERROR: function called without order status');
+        console.error('function called without order status');
         return;
     }
 

@@ -105,7 +105,7 @@ function inventreeFormDataUpload(url, data, options={}) {
             }
         },
         error: function(xhr, status, error) {
-            console.log('Form data upload failure: ' + status);
+            console.error('Form data upload failure: ' + status);
 
             if (options.error) {
                 options.error(xhr, status, error);

@@ -274,7 +274,7 @@ function reloadFieldOptions(fieldName, options) {
             setFieldOptions(fieldName, opts);
         },
         error: function() {
-            console.log('Error GETting field options');
+            console.error('Error GETting field options');
         }
     });
 }
@@ -842,7 +842,7 @@ function attachFieldCallback(modal, callback) {
             // Run the callback function with the new value of the field!
             callback.action(field.val(), field);
         } else {
-            console.log(`Value changed for field ${callback.field} - ${field.val()}`);
+            console.info(`Value changed for field ${callback.field} - ${field.val()} (no callback attached)`);
         }
     });
 }
@@ -1085,8 +1085,8 @@ function launchModalForm(url, options = {}) {
                 showAlertDialog('{% trans "Error requesting form data" %}', renderErrorMessage(xhr));
             }
 
-            console.log('Modal form error: ' + xhr.status);
-            console.log('Message: ' + xhr.responseText);
+            console.error('Modal form error: ' + xhr.status);
+            console.info('Message: ' + xhr.responseText);
         }
     };
 
