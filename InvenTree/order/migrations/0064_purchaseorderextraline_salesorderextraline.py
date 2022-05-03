@@ -35,7 +35,7 @@ def _convert_model(apps, line_item_ref, extra_line_ref, price_ref):
     print(f'Done converting line items - now at {OrderExtraLine.objects.all().count()} {extra_line_ref} / {OrderLineItem.objects.all().count()} {line_item_ref} instance(s)')
 
 
-def _reconvert_model(apps, line_item_ref, extra_line_ref):
+def _reconvert_model(apps, line_item_ref, extra_line_ref):  # pragma: no cover
     """Convert ExtraLine instances back to OrderLineItem instances"""
     OrderLineItem = apps.get_model('order', line_item_ref)
     OrderExtraLine = apps.get_model('order', extra_line_ref)

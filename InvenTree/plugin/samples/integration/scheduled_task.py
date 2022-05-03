@@ -8,11 +8,11 @@ from plugin.mixins import ScheduleMixin, SettingsMixin
 
 # Define some simple tasks to perform
 def print_hello():
-    print("Hello")
+    print("Hello")  # pragma: no cover
 
 
 def print_world():
-    print("World")
+    print("World")  # pragma: no cover
 
 
 class ScheduledTaskPlugin(ScheduleMixin, SettingsMixin, IntegrationPluginBase):
@@ -36,7 +36,7 @@ class ScheduledTaskPlugin(ScheduleMixin, SettingsMixin, IntegrationPluginBase):
             'minutes': 45,
         },
         'world': {
-            'func': 'plugin.samples.integration.scheduled_task.print_hello',
+            'func': 'plugin.samples.integration.scheduled_task.print_world',
             'schedule': 'H',
         },
     }
@@ -58,3 +58,4 @@ class ScheduledTaskPlugin(ScheduleMixin, SettingsMixin, IntegrationPluginBase):
         t_or_f = self.get_setting('T_OR_F')
 
         print(f"Called member_func - value is {t_or_f}")
+        return t_or_f
