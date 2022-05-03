@@ -75,7 +75,7 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: st
             path_parts.remove('plugin')
             path_parts.pop(0)
         else:
-            path_parts.remove('plugins')
+            path_parts.remove('plugins')  # pragma: no cover
 
         package_name = '.'.join(path_parts)
 
@@ -135,7 +135,7 @@ def check_git_version():
     except ValueError:  # pragma: no cover
         pass
 
-    return False
+    return False  # pragma: no cover
 
 
 class GitStatus:
