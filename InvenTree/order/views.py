@@ -5,7 +5,6 @@ Django views for interacting with Order app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import transaction
 from django.db.utils import IntegrityError
 from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -21,9 +20,7 @@ from decimal import Decimal, InvalidOperation
 from .models import PurchaseOrder, PurchaseOrderLineItem
 from .models import SalesOrder, SalesOrderLineItem
 from .admin import PurchaseOrderLineItemResource, SalesOrderLineItemResource
-from build.models import Build
-from company.models import Company, SupplierPart  # ManufacturerPart
-from stock.models import StockItem
+from company.models import SupplierPart  # ManufacturerPart
 from part.models import Part
 
 from common.forms import UploadFileForm, MatchFieldForm
@@ -36,8 +33,6 @@ from part.views import PartPricing
 from InvenTree.views import AjaxView, AjaxUpdateView
 from InvenTree.helpers import DownloadFile, str2bool
 from InvenTree.views import InvenTreeRoleMixin
-
-from InvenTree.status_codes import PurchaseOrderStatus
 
 
 logger = logging.getLogger("inventree")
