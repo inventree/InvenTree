@@ -29,6 +29,11 @@ class ScheduledTaskPluginTests(TestCase):
         scheduled_plugin_tasks = Schedule.objects.filter(name__istartswith="plugin.")
         self.assertEqual(len(scheduled_plugin_tasks), 3)
 
+        # test unregistering
+        plg.unregister_tasks()
+        scheduled_plugin_tasks = Schedule.objects.filter(name__istartswith="plugin.")
+        self.assertEqual(len(scheduled_plugin_tasks), 0)
+
     def test_calling(self):
         """check if a function can be called without errors"""
         self.assertEqual(call_function('schedule', 'member_func'), False)
