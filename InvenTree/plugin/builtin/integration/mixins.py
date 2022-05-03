@@ -56,7 +56,7 @@ class SettingsMixin:
 
         if not plugin:
             # Cannot find associated plugin model, return
-            return
+            return  # pragma: no cover
 
         PluginSetting.set_setting(key, value, user, plugin=plugin)
 
