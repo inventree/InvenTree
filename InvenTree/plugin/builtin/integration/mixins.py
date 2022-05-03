@@ -408,7 +408,7 @@ class LabelPrintingMixin:
         """
         MIXIN_NAME = 'Label printing'
 
-    def __init__(self):
+    def __init__(self):  # pragma: no cover
         super().__init__()
         self.add_mixin('labels', True, __class__)
 
