@@ -163,17 +163,15 @@ def after_save(sender, instance, created, **kwargs):
 
     if created:
         trigger_event(
-            'instance.created',
+            f'{table}.created',
             id=instance.id,
             model=sender.__name__,
-            table=table,
         )
     else:
         trigger_event(
-            'instance.saved',
+            f'{table}.saved',
             id=instance.id,
             model=sender.__name__,
-            table=table,
         )
 
 
@@ -189,9 +187,8 @@ def after_delete(sender, instance, **kwargs):
         return
 
     trigger_event(
-        'instance.deleted',
+        f'{table}.deleted',
         model=sender.__name__,
-        table=table,
     )
 
 
