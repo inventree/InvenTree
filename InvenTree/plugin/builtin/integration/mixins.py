@@ -171,7 +171,7 @@ class ScheduleMixin:
 
                 if Schedule.objects.filter(name=task_name).exists():
                     # Scheduled task already exists - continue!
-                    continue
+                    continue  # pragma: no cover
 
                 logger.info(f"Adding scheduled task '{task_name}'")
 
