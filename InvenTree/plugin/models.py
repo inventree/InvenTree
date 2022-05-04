@@ -183,3 +183,6 @@ class NotificationUserSetting(common.models.GenericReferencedSettingClass, commo
         verbose_name=_('User'),
         help_text=_('User'),
     )
+
+    def __str__(self) -> str:
+        return f'{self.key} (for {self.user}): {self.value}'
