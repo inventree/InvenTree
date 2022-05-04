@@ -122,7 +122,7 @@ class BuildAPITest(InvenTreeAPITestCase):
         super().setUp()
 
 
-class BuildOutputCompleteTest(BuildAPITest):
+class BuildTest(BuildAPITest):
     """
     Unit testing for the build complete API endpoint
     """
@@ -289,6 +289,21 @@ class BuildOutputCompleteTest(BuildAPITest):
 
         # Build should have been marked as complete
         self.assertTrue(self.build.is_complete)
+
+    def test_cancel(self):
+        """ Test that we can cancel a BuildOrder via the API """
+
+        bo = Build.objects.get(pk=1)
+
+        url = reverse('api-build-cancel', kwargs={'pk': bo.pk})
+
+        self.assertEqual(bo.status, BuildStatus.PENDING)
+
+        self.post(url, {}, expected_code=201)
+
+        bo.refresh_from_db()
+
+        self.assertEqual(bo.status, BuildStatus.CANCELLED)
 
 
 class BuildAllocationTest(BuildAPITest):
