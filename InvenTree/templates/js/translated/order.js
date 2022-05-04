@@ -27,6 +27,7 @@
     createSalesOrderShipment,
     editPurchaseOrderLineItem,
     exportOrder,
+    issurPurchaseOrder,
     loadPurchaseOrderLineItemTable,
     loadPurchaseOrderExtraLineTable
     loadPurchaseOrderTable,
@@ -142,7 +143,9 @@ function completeShipment(shipment_id) {
     });
 }
 
-
+/*
+ * Launches a modal form to mark a PurchaseOrder as "complete"
+*/
 function completePurchaseOrder(order_id, options={}) {
 
     constructForm(
@@ -174,36 +177,72 @@ function completePurchaseOrder(order_id, options={}) {
                 return html;
             },
             onSuccess: function(response) {
-                if (options.onSuccess) {
-                    options.onSuccess(response);
-                }
+                handleFormSuccess(response, options);
             }
         }
     );
 }
 
 
+/*
+ * Launches a modal form to mark a PurchaseOrder as 'cancelled'
+ */
 function cancelPurchaseOrder(order_id, options={}) {
     
-    var html = `
-    <div class='alert alert-info alert-block'>
-        {% trans "Are you sure you wish to cancel this purchase order?" %}
-    </div>`;
-
     constructForm(
         `/api/order/po/${order_id}/cancel/`,
         {
             method: 'POST',
             title: '{% trans "Cancel Purchase Order" %}',
             confirm: true,
-            preFormContent: html,
-            onSuccess: function(response) {
-                if (options.onSuccess) {
-                    options.onSuccess(response);
+            preFormContent: function(opts) {
+                var html = `
+                <div class='alert alert-info alert-block'>
+                    {% trans "Are you sure you wish to cancel this purchase order?" %}
+                </div>`;
+
+                if (!opts.context.can_cancel) {
+                    html += `
+                    <div class='alert alert-danger alert-block'>
+                        {% trans "This purchase order can not be cancelled" %}
+                    </div>`;
                 }
+
+                return html;
+            },
+            onSuccess: function(response) {
+                handleFormSuccess(response, options);
             }
         }
     );
+}
+
+
+/*
+ * Launches a modal form to mark a PurchaseOrder as "issued"
+ */
+function issuePurchaseOrder(order_id, options={}) {
+
+    constructForm(
+        `/api/order/po/${order_id}/issue/`,
+        {
+            method: 'POST',
+            title: '{% trans "Issue Purchase Order" %}',
+            confirm: true,
+            preFormContent: function(opts) {
+                var html = `
+                <div class='alert alert-block alert-warning'>
+                {% trans 'After placing this purchase order, line items will no longer be editable.' %}
+                </div>`;
+
+                return html;
+            },
+            onSuccess: function(response) {
+                handleFormSuccess(response, options);
+            }
+        }
+    )
+
 }
 
 

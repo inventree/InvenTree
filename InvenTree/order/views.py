@@ -113,33 +113,6 @@ class SalesOrderCancel(AjaxUpdateView):
         order.cancel_order()
 
 
-class PurchaseOrderIssue(AjaxUpdateView):
-    """ View for changing a purchase order from 'PENDING' to 'ISSUED' """
-
-    model = PurchaseOrder
-    ajax_form_title = _('Issue Order')
-    ajax_template_name = "order/order_issue.html"
-    form_class = order_forms.IssuePurchaseOrderForm
-
-    def validate(self, order, form, **kwargs):
-
-        confirm = str2bool(self.request.POST.get('confirm', False))
-
-        if not confirm:
-            form.add_error('confirm', _('Confirm order placement'))
-
-    def save(self, order, form, **kwargs):
-        """
-        Once the form has been validated, place the order.
-        """
-        order.place_order()
-
-    def get_data(self):
-        return {
-            'success': _('Purchase order issued')
-        }
-
-
 class PurchaseOrderUpload(FileManagementFormView):
     ''' PurchaseOrder: Upload file, match to fields and parts (using multi-Step form) '''
 

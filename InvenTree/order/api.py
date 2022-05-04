@@ -326,6 +326,17 @@ class PurchaseOrderComplete(PurchaseOrderContextMixin, generics.CreateAPIView):
     serializer_class = serializers.PurchaseOrderCompleteSerializer
 
 
+class PurchaseOrderIssue(PurchaseOrderContextMixin, generics.CreateAPIView):
+    """
+    API endpoint to 'complete' a purchase order
+    """
+
+    queryset = models.PurchaseOrder.objects.all()
+
+    serializer_class = serializers.PurchaseOrderIssueSerializer
+
+
+
 class PurchaseOrderReceive(PurchaseOrderContextMixin, generics.CreateAPIView):
     """
     API endpoint to receive stock items against a purchase order.
@@ -1132,6 +1143,7 @@ order_api_urls = [
 
         # Individual purchase order detail URLs
         re_path(r'^(?P<pk>\d+)/', include([
+            re_path(r'^issue/', PurchaseOrderIssue.as_view(), name='api-po-issue'),
             re_path(r'^receive/', PurchaseOrderReceive.as_view(), name='api-po-receive'),
             re_path(r'^cancel/', PurchaseOrderCancel.as_view(), name='api-po-cancel'),
             re_path(r'^complete/', PurchaseOrderComplete.as_view(), name='api-po-complete'),

@@ -230,8 +230,20 @@ class PurchaseOrderCompleteSerializer(serializers.Serializer):
     def save(self):
 
         order = self.context['order']
+        order.complete_order()
 
 
+class PurchaseOrderIssueSerializer(serializers.Serializer):
+    """ Serializer for issuing (sending) a purchase order """
+
+    class Meta:
+        fields = []
+    
+
+    def save(self):
+
+        order = self.context['order']
+        order.place_order()
 
 
 class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):

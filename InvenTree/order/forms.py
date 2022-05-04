@@ -19,16 +19,6 @@ from .models import PurchaseOrder
 from .models import SalesOrder
 
 
-class IssuePurchaseOrderForm(HelperForm):
-
-    confirm = forms.BooleanField(required=True, initial=False, label=_('Confirm'), help_text=_('Place order'))
-
-    class Meta:
-        model = PurchaseOrder
-        fields = [
-            'confirm',
-        ]
-
 
 class CancelSalesOrderForm(HelperForm):
 
