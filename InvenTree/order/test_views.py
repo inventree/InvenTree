@@ -8,12 +8,6 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 
-from InvenTree.status_codes import PurchaseOrderStatus
-
-from .models import PurchaseOrder
-
-import json
-
 
 class OrderViewTestCase(TestCase):
 
