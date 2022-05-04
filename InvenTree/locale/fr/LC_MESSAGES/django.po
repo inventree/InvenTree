@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-03 08:38+0000\n"
-"PO-Revision-Date: 2022-05-03 23:45\n"
+"POT-Creation-Date: 2022-05-03 23:57+0000\n"
+"PO-Revision-Date: 2022-05-04 23:46\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -96,7 +96,7 @@ msgstr "Chaîne de numéro de série vide"
 #: InvenTree/helpers.py:491
 #, python-brace-format
 msgid "Invalid group range: {g}"
-msgstr ""
+msgstr "Plage de groupe invalide : {g}"
 
 #: InvenTree/helpers.py:494
 #, python-brace-format
@@ -106,7 +106,7 @@ msgstr "Groupe invalide : {g}"
 #: InvenTree/helpers.py:522
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
-msgstr ""
+msgstr "Séquence de groupe invalide : {g}"
 
 #: InvenTree/helpers.py:530
 #, python-brace-format
@@ -119,8 +119,8 @@ msgstr "Aucun numéro de série trouvé"
 
 #: InvenTree/helpers.py:540
 #, python-brace-format
-msgid "Number of unique serial number ({s}) must match quantity ({q})"
-msgstr "Le nombre de numéros de série uniques ({s}) doit correspondre à la quantité ({q})"
+msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
+msgstr ""
 
 #: InvenTree/models.py:185
 msgid "Missing file"
@@ -239,7 +239,7 @@ msgstr "Nom"
 #: templates/js/translated/part.js:1824 templates/js/translated/stock.js:1685
 #: templates/js/translated/stock.js:2299 templates/js/translated/stock.js:2354
 msgid "Description"
-msgstr ""
+msgstr "Description"
 
 #: InvenTree/models.py:350
 msgid "Description (optional)"
@@ -247,7 +247,7 @@ msgstr "Description (facultative)"
 
 #: InvenTree/models.py:358
 msgid "parent"
-msgstr ""
+msgstr "parent"
 
 #: InvenTree/serializers.py:65 part/models.py:2891
 msgid "Must be a valid number"
@@ -313,7 +313,7 @@ msgstr "Allemand"
 
 #: InvenTree/settings.py:674
 msgid "Greek"
-msgstr ""
+msgstr "Grec"
 
 #: InvenTree/settings.py:675
 msgid "English"
@@ -321,7 +321,7 @@ msgstr "Anglais"
 
 #: InvenTree/settings.py:676
 msgid "Spanish"
-msgstr ""
+msgstr "Espagnol"
 
 #: InvenTree/settings.py:677
 msgid "Spanish (Mexican)"
@@ -329,7 +329,7 @@ msgstr "Espagnol (Mexique)"
 
 #: InvenTree/settings.py:678
 msgid "Farsi / Persian"
-msgstr ""
+msgstr "Farsi / Perse"
 
 #: InvenTree/settings.py:679
 msgid "French"
@@ -337,7 +337,7 @@ msgstr "Français"
 
 #: InvenTree/settings.py:680
 msgid "Hebrew"
-msgstr ""
+msgstr "Hébreu"
 
 #: InvenTree/settings.py:681
 msgid "Hungarian"
@@ -345,23 +345,23 @@ msgstr "Hongrois"
 
 #: InvenTree/settings.py:682
 msgid "Italian"
-msgstr ""
+msgstr "Italien"
 
 #: InvenTree/settings.py:683
 msgid "Japanese"
-msgstr ""
+msgstr "Japonais"
 
 #: InvenTree/settings.py:684
 msgid "Korean"
-msgstr ""
+msgstr "Coréen"
 
 #: InvenTree/settings.py:685
 msgid "Dutch"
-msgstr ""
+msgstr "Néerlandais"
 
 #: InvenTree/settings.py:686
 msgid "Norwegian"
-msgstr ""
+msgstr "Norvégien"
 
 #: InvenTree/settings.py:687
 msgid "Polish"
@@ -369,23 +369,23 @@ msgstr "Polonais"
 
 #: InvenTree/settings.py:688
 msgid "Portuguese"
-msgstr ""
+msgstr "Portugais"
 
 #: InvenTree/settings.py:689
 msgid "Portuguese (Brazilian)"
-msgstr ""
+msgstr "Portugais (Brésilien)"
 
 #: InvenTree/settings.py:690
 msgid "Russian"
-msgstr ""
+msgstr "Russe"
 
 #: InvenTree/settings.py:691
 msgid "Swedish"
-msgstr ""
+msgstr "Suédois"
 
 #: InvenTree/settings.py:692
 msgid "Thai"
-msgstr ""
+msgstr "Thaïlandais"
 
 #: InvenTree/settings.py:693
 msgid "Turkish"
@@ -393,11 +393,11 @@ msgstr "Turc"
 
 #: InvenTree/settings.py:694
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnamien"
 
 #: InvenTree/settings.py:695
 msgid "Chinese"
-msgstr ""
+msgstr "Chinois"
 
 #: InvenTree/status.py:110
 msgid "Background worker check failed"
@@ -448,7 +448,7 @@ msgstr "Expédié"
 
 #: InvenTree/status_codes.py:183
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: InvenTree/status_codes.py:184
 msgid "Attention needed"
@@ -528,7 +528,7 @@ msgstr "Articles de stock fusionnés"
 
 #: InvenTree/status_codes.py:300
 msgid "Converted to variant"
-msgstr ""
+msgstr "Converti en variante"
 
 #: InvenTree/status_codes.py:302 templates/js/translated/table_filters.js:213
 msgid "Sent to customer"
@@ -878,7 +878,7 @@ msgstr "Lien Externe"
 #: templates/js/translated/order.js:3090 templates/js/translated/order.js:3486
 #: templates/js/translated/stock.js:1316 templates/js/translated/stock.js:1921
 msgid "Notes"
-msgstr ""
+msgstr "Notes"
 
 #: build/models.py:337
 msgid "Extra build notes"
@@ -902,7 +902,7 @@ msgstr "L'élément de construction doit spécifier une sortie de construction, 
 
 #: build/models.py:1180
 #, python-brace-format
-msgid "Allocated quantity ({q}) must not execed available stock quantity ({a})"
+msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "La quantité allouée ({q}) ne doit pas excéder la quantité disponible ({a})"
 
 #: build/models.py:1190
@@ -1010,7 +1010,7 @@ msgstr "L'ordre de production ne correspond pas à l'ordre parent"
 
 #: build/serializers.py:154
 msgid "Output part does not match BuildOrder part"
-msgstr ""
+msgstr "La pièce en sortie ne correspond pas à la pièce de l'ordre de construction"
 
 #: build/serializers.py:158
 msgid "This build output has already been completed"
@@ -1096,11 +1096,11 @@ msgstr "État"
 
 #: build/serializers.py:389
 msgid "Accept Incomplete Allocation"
-msgstr ""
+msgstr "Accepter l'allocation incomplète"
 
 #: build/serializers.py:390
-msgid "Complete ouputs if stock has not been fully allocated"
-msgstr ""
+msgid "Complete outputs if stock has not been fully allocated"
+msgstr "Compléter les sorties si le stock n'a pas été entièrement alloué"
 
 #: build/serializers.py:447
 msgid "Accept Unallocated"
@@ -1132,7 +1132,7 @@ msgstr "L'ordre de production a des sorties incomplètes"
 
 #: build/serializers.py:486 build/templates/build/build_base.html:95
 msgid "No build outputs have been created for this build order"
-msgstr ""
+msgstr "Aucune sortie de construction n'a été créée pour cet ordre de construction"
 
 #: build/serializers.py:514 build/serializers.py:563 part/models.py:2917
 #: part/models.py:3059
@@ -1141,7 +1141,7 @@ msgstr ""
 
 #: build/serializers.py:524
 msgid "Build output"
-msgstr ""
+msgstr "Sortie d'assemblage"
 
 #: build/serializers.py:533
 msgid "Build output must point to the same build"
@@ -1182,7 +1182,7 @@ msgstr ""
 
 #: build/serializers.py:757
 msgid "Exclude Location"
-msgstr ""
+msgstr "Emplacements exclus"
 
 #: build/serializers.py:758
 msgid "Exclude stock items from this selected location"
@@ -1353,7 +1353,7 @@ msgstr "Le stock peut être pris à partir de n'importe quel endroit disponible.
 #: build/templates/build/detail.html:49 order/models.py:988 stock/forms.py:133
 #: templates/js/translated/order.js:1068 templates/js/translated/order.js:1684
 msgid "Destination"
-msgstr ""
+msgstr "Destination"
 
 #: build/templates/build/detail.html:56
 msgid "Destination location not specified"
@@ -1372,7 +1372,7 @@ msgstr "Pièces allouées"
 #: templates/js/translated/table_filters.js:151
 #: templates/js/translated/table_filters.js:242
 msgid "Batch"
-msgstr ""
+msgstr "Lot"
 
 #: build/templates/build/detail.html:126
 #: order/templates/order/order_base.html:143
@@ -1387,7 +1387,7 @@ msgstr "Pas de date cible définie"
 
 #: build/templates/build/detail.html:146
 msgid "Build not complete"
-msgstr ""
+msgstr "Compilation incomplète"
 
 #: build/templates/build/detail.html:157 build/templates/build/sidebar.html:17
 msgid "Child Build Orders"
@@ -3441,7 +3441,7 @@ msgstr ""
 #: order/models.py:613 order/models.py:1153
 #: templates/js/translated/order.js:2054 templates/js/translated/order.js:2205
 msgid "Shipment Date"
-msgstr ""
+msgstr "Nom de l’expédition"
 
 #: order/models.py:620
 msgid "shipped by"
@@ -3449,15 +3449,15 @@ msgstr "expédié par"
 
 #: order/models.py:686
 msgid "Order cannot be completed as no parts have been assigned"
-msgstr ""
+msgstr "La commande ne peut pas être terminée car aucune pièce n'a été assignée"
 
 #: order/models.py:690
 msgid "Only a pending order can be marked as complete"
-msgstr ""
+msgstr "Seule une commande en attente peut être marquée comme terminée"
 
 #: order/models.py:693
 msgid "Order cannot be completed as there are incomplete shipments"
-msgstr ""
+msgstr "La commande ne peut pas être terminée car il y a des envois incomplets"
 
 #: order/models.py:696
 msgid "Order cannot be completed as there are incomplete line items"
@@ -3481,7 +3481,7 @@ msgstr ""
 
 #: order/models.py:892
 msgid "Context"
-msgstr ""
+msgstr "Contexte"
 
 #: order/models.py:893
 msgid "Additional context for this line"
@@ -3629,7 +3629,7 @@ msgstr "Ligne"
 #: order/models.py:1332 order/serializers.py:1030 order/serializers.py:1158
 #: templates/js/translated/model_renderers.js:301
 msgid "Shipment"
-msgstr ""
+msgstr "Envoi"
 
 #: order/models.py:1333
 msgid "Sales order shipment reference"
@@ -3649,11 +3649,11 @@ msgstr ""
 
 #: order/serializers.py:77
 msgid "Price currency"
-msgstr ""
+msgstr "Devise *"
 
 #: order/serializers.py:238
 msgid "Order is not open"
-msgstr ""
+msgstr "La commande n'est pas ouverte"
 
 #: order/serializers.py:262
 msgid "Purchase price currency"
@@ -3693,7 +3693,7 @@ msgstr ""
 
 #: order/serializers.py:391 templates/js/translated/order.js:934
 msgid "Enter serial numbers for incoming stock items"
-msgstr ""
+msgstr "Entrez les numéros de série pour les articles de stock entrants"
 
 #: order/serializers.py:404
 msgid "Barcode Hash"
@@ -3701,7 +3701,7 @@ msgstr ""
 
 #: order/serializers.py:405
 msgid "Unique identifier field"
-msgstr ""
+msgstr "Champ d'identifiant unique"
 
 #: order/serializers.py:422
 msgid "Barcode is already in use"
@@ -3709,7 +3709,7 @@ msgstr "Le code-barres est déjà utilisé"
 
 #: order/serializers.py:441
 msgid "An integer quantity must be provided for trackable parts"
-msgstr ""
+msgstr "Une quantité entière doit être fournie pour les pièces tracables"
 
 #: order/serializers.py:481
 msgid "Line items must be provided"
@@ -3785,12 +3785,12 @@ msgstr "Modifier la commande"
 
 #: order/templates/order/order_base.html:56
 msgid "Receive items"
-msgstr ""
+msgstr "Recevoir objet"
 
 #: order/templates/order/order_base.html:58
 #: order/templates/order/purchase_order_detail.html:30
 msgid "Receive Items"
-msgstr ""
+msgstr "Réception d'articles"
 
 #: order/templates/order/order_base.html:62
 #: order/templates/order/sales_order_base.html:67 order/views.py:176
@@ -3821,7 +3821,7 @@ msgstr ""
 #: order/templates/order/sales_order_base.html:134
 #: order/templates/order/sales_order_base.html:144
 msgid "Incomplete"
-msgstr ""
+msgstr "Incomplet"
 
 #: order/templates/order/order_base.html:149
 #: report/templates/report/inventree_build_order_base.html:122
