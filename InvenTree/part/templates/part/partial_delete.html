@@ -43,7 +43,7 @@
 <p>{% blocktrans with count=part.manufacturer_parts.all|length %}There are {{count}} manufacturers defined for this part. If you delete this part, the following manufacturer parts will also be deleted:{% endblocktrans %}
     <ul class='list-group'>
         {% for spart in part.manufacturer_parts.all %}
-        <li class='list-group-item'>{{ spart.manufacturer.name }} - {{ spart.MPN }}</li>
+        <li class='list-group-item'>{% if spart.manufacturer %}{{ spart.manufacturer.name }} - {% endif %}{{ spart.MPN }}</li>
         {% endfor %}
     </ul>
 </p>
@@ -54,7 +54,9 @@
 <p>{% blocktrans with count=part.supplier_parts.all|length %}There are {{count}} suppliers defined for this part. If you delete this part, the following supplier parts will also be deleted:{% endblocktrans %}
     <ul class='list-group'>
         {% for spart in part.supplier_parts.all %}
+        {% if spart.supplier %}
         <li class='list-group-item'>{{ spart.supplier.name }} - {{ spart.SKU }}</li>
+        {% endif %}
         {% endfor %}
     </ul>
 </p>

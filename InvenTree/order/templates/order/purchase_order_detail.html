@@ -170,9 +170,11 @@ $('#new-po-line').click(function() {
 
     var fields = poLineItemFields({
         order: {{ order.pk }},
+        {% if order.supplier %}
         supplier: {{ order.supplier.pk }},
         {% if order.supplier.currency %}
         currency: '{{ order.supplier.currency }}',
+        {% endif %}
         {% endif %}
     });
 
@@ -210,7 +212,9 @@ $('#new-po-line').click(function() {
 
 loadPurchaseOrderLineItemTable('#po-line-table', {
     order: {{ order.pk }},
+    {% if order.supplier %}
     supplier: {{ order.supplier.pk }},
+    {% endif %}
     {% if roles.purchase_order.change %}
     allow_edit: true,
     {% else %}

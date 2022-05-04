@@ -228,7 +228,7 @@ class PurchaseOrder(Order):
 
         prefix = getSetting('PURCHASEORDER_REFERENCE_PREFIX')
 
-        return f"{prefix}{self.reference} - {self.supplier.name}"
+        return f"{prefix}{self.reference} - {self.supplier.name if self.supplier else _('deleted')}"
 
     reference = models.CharField(
         unique=True,
@@ -243,7 +243,8 @@ class PurchaseOrder(Order):
                                          help_text=_('Purchase order status'))
 
     supplier = models.ForeignKey(
-        Company, on_delete=models.CASCADE,
+        Company, on_delete=models.SET_NULL,
+        null=True,
         limit_choices_to={
             'is_supplier': True,
         },
@@ -575,7 +576,7 @@ class SalesOrder(Order):
 
         prefix = getSetting('SALESORDER_REFERENCE_PREFIX')
 
-        return f"{prefix}{self.reference} - {self.customer.name}"
+        return f"{prefix}{self.reference} - {self.customer.name if self.customer else _('deleted')}"
 
     def get_absolute_url(self):
         return reverse('so-detail', kwargs={'pk': self.id})
@@ -938,7 +939,7 @@ class PurchaseOrderLineItem(OrderLineItem):
         return "{n} x {part} from {supplier} (for {po})".format(
             n=decimal2string(self.quantity),
             part=self.part.SKU if self.part else 'unknown part',
-            supplier=self.order.supplier.name,
+            supplier=self.order.supplier.name if self.order.supplier else _('deleted'),
             po=self.order)
 
     order = models.ForeignKey(

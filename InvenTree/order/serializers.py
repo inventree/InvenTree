@@ -223,14 +223,30 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
         if order_detail is not True:
             self.fields.pop('order_detail')
 
-    quantity = serializers.FloatField(default=1)
-    received = serializers.FloatField(default=0)
+    quantity = serializers.FloatField(min_value=0, required=True)
+
+    def validate_quantity(self, quantity):
+
+        if quantity <= 0:
+            raise ValidationError(_("Quantity must be greater than zero"))
+
+        return quantity
+
+    def validate_purchase_order(self, purchase_order):
+
+        if purchase_order.status not in PurchaseOrderStatus.OPEN:
+            raise ValidationError(_('Order is not open'))
+
+        return purchase_order
+
+    received = serializers.FloatField(default=0, read_only=True)
 
     overdue = serializers.BooleanField(required=False, read_only=True)
 
     total_price = serializers.FloatField(read_only=True)
 
     part_detail = PartBriefSerializer(source='get_base_part', many=False, read_only=True)
+
     supplier_part_detail = SupplierPartSerializer(source='part', many=False, read_only=True)
 
     purchase_price = InvenTreeMoneySerializer(
@@ -247,6 +263,32 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
     )
 
     order_detail = PurchaseOrderSerializer(source='order', read_only=True, many=False)
+
+    def validate(self, data):
+
+        data = super().validate(data)
+
+        supplier_part = data.get('part', None)
+        purchase_order = data.get('order', None)
+
+        if not supplier_part:
+            raise ValidationError({
+                'part': _('Supplier part must be specified'),
+            })
+
+        if not purchase_order:
+            raise ValidationError({
+                'order': _('Purchase order must be specified'),
+            })
+
+        # Check that the supplier part and purchase order match
+        if supplier_part is not None and supplier_part.supplier != purchase_order.supplier:
+            raise ValidationError({
+                'part': _('Supplier must match purchase order'),
+                'order': _('Purchase order must match supplier'),
+            })
+
+        return data
 
     class Meta:
         model = order.models.PurchaseOrderLineItem

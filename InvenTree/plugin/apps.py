@@ -35,7 +35,7 @@ class PluginAppConfig(AppConfig):
                         if InvenTreeSetting.get_setting('PLUGIN_ON_STARTUP', create=False):
                             # make sure all plugins are installed
                             registry.install_plugin_file()
-                    except:
+                    except:  # pragma: no cover
                         pass
 
                     # get plugins and init them

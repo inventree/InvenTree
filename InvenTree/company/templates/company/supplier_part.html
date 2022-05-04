@@ -85,7 +85,13 @@ src="{% static 'img/blank_image.png' %}"
         <tr>
             <td><span class='fas fa-building'></span></td>
             <td>{% trans "Supplier" %}</td>
-            <td><a href="{% url 'company-detail' part.supplier.id %}">{{ part.supplier.name }}</a>{% include "clip.html"%}</td></tr>
+            <td>{% if part.supplier %}
+                <a href="{% url 'company-detail' part.supplier.id %}">{{ part.supplier.name }}</a>{% include "clip.html"%}
+                {% else %}
+                <em>{% trans "No supplier information available" %}</em>
+                {% endif %}
+            </td>
+        </tr>
         <tr>
             <td><span class='fas fa-hashtag'></span></td>
             <td>{% trans "SKU" %}</td>
@@ -165,7 +171,8 @@ src="{% static 'img/blank_image.png' %}"
     </div>
     <div class='panel-content'>
         <div id='button-bar'>
-            <div class='btn-group'>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id='purchaseorder' %}
             </div>
         </div>
         <table class='table table-striped table-condensed po-table' id='purchase-order-table' data-toolbar='#button-bar'>
@@ -326,14 +333,19 @@ $("#item-create").click(function() {
 });
 
 $('#order-part, #order-part2').click(function() {
-    launchModalForm(
-        "{% url 'order-parts' %}",
+
+    inventreeGet(
+        '{% url "api-part-detail" part.part.pk %}', {},
         {
-            data: {
-                part: {{ part.part.id }},
-            },
-            reload: true,
-        },
+            success: function(response) {
+                orderParts([response], {
+                    supplier_part: {{ part.pk }},
+                    {% if part.supplier %}
+                    supplier: {{ part.supplier.pk }},
+                    {% endif %}
+                });
+            }
+        }
     );
 });
 
@@ -350,7 +362,9 @@ $('#delete-part').click(function() {
 
     deleteSupplierPart({{ part.pk }}, {
         onSuccess: function() {
+            {% if part.supplier %}
             window.location.href = "{% url 'company-detail' part.supplier.id %}";
+            {% endif %}
         }
     });
 });

@@ -283,7 +283,7 @@ class PluginsRegistry:
                 if not settings.PLUGIN_TESTING:
                     raise error  # pragma: no cover
                 plugin_db_setting = None
-            except (IntegrityError) as error:
+            except (IntegrityError) as error:  # pragma: no cover
                 logger.error(f"Error initializing plugin: {error}")
 
             # Always activate if testing
@@ -322,7 +322,7 @@ class PluginsRegistry:
                 self.plugins[plugin.slug] = plugin
             else:
                 # save for later reference
-                self.plugins_inactive[plug_key] = plugin_db_setting
+                self.plugins_inactive[plug_key] = plugin_db_setting  # pragma: no cover
 
     def _activate_plugins(self, force_reload=False):
         """
@@ -411,7 +411,7 @@ class PluginsRegistry:
                     deleted_count += 1
 
             if deleted_count > 0:
-                logger.info(f"Removed {deleted_count} old scheduled tasks")
+                logger.info(f"Removed {deleted_count} old scheduled tasks")  # pragma: no cover
         except (ProgrammingError, OperationalError):
             # Database might not yet be ready
             logger.warning("activate_integration_schedule failed, database not ready")
