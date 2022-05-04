@@ -92,13 +92,8 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
         return self.serializer_class(*args, **kwargs)
 
 
-class StockItemSerialize(generics.CreateAPIView):
-    """
-    API endpoint for serializing a stock item
-    """
-
-    queryset = StockItem.objects.none()
-    serializer_class = StockSerializers.SerializeStockItemSerializer
+class StockItemContextMixin:
+    """ Mixin class for adding StockItem object to serializer context """
 
     def get_serializer_context(self):
 
@@ -113,7 +108,16 @@ class StockItemSerialize(generics.CreateAPIView):
         return context
 
 
-class StockItemInstall(generics.CreateAPIView):
+class StockItemSerialize(StockItemContextMixin, generics.CreateAPIView):
+    """
+    API endpoint for serializing a stock item
+    """
+
+    queryset = StockItem.objects.none()
+    serializer_class = StockSerializers.SerializeStockItemSerializer
+
+
+class StockItemInstall(StockItemContextMixin, generics.CreateAPIView):
     """
     API endpoint for installing a particular stock item into this stock item.
 
@@ -125,17 +129,14 @@ class StockItemInstall(generics.CreateAPIView):
     queryset = StockItem.objects.none()
     serializer_class = StockSerializers.InstallStockItemSerializer
 
-    def get_serializer_context(self):
 
-        context = super().get_serializer_context()
-        context['request'] = self.request
+class StockItemUninstall(StockItemContextMixin, generics.CreateAPIView):
+    """
+    API endpoint for removing (uninstalling) items from this item
+    """
 
-        try:
-            context['item'] = StockItem.objects.get(pk=self.kwargs.get('pk', None))
-        except:
-            pass
-
-        return context
+    queryset = StockItem.objects.none()
+    serializer_class = StockSerializers.UninstallStockItemSerializer
 
 
 class StockAdjustView(generics.CreateAPIView):
@@ -1421,6 +1422,7 @@ stock_api_urls = [
     re_path(r'^(?P<pk>\d+)/', include([
         re_path(r'^serialize/', StockItemSerialize.as_view(), name='api-stock-item-serialize'),
         re_path(r'^install/', StockItemInstall.as_view(), name='api-stock-item-install'),
+        re_path(r'^uninstall/', StockItemUninstall.as_view(), name='api-stock-item-uninstall'),
         re_path(r'^.*$', StockDetail.as_view(), name='api-stock-detail'),
     ])),
 

@@ -381,6 +381,7 @@ class PurchaseOrder(Order):
             PurchaseOrderStatus.PENDING
         ]
 
+    @transaction.atomic
     def cancel_order(self):
         """ Marks the PurchaseOrder as CANCELLED. """
 

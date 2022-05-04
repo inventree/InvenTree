@@ -9,11 +9,9 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView
 
 from .models import Build
-from . import forms
 
-from InvenTree.views import AjaxUpdateView, AjaxDeleteView
+from InvenTree.views import AjaxDeleteView
 from InvenTree.views import InvenTreeRoleMixin
-from InvenTree.helpers import str2bool
 from InvenTree.status_codes import BuildStatus
 
 
@@ -41,37 +39,6 @@ class BuildIndex(InvenTreeRoleMixin, ListView):
         context['cancelled'] = self.get_queryset().filter(status=BuildStatus.CANCELLED)
 
         return context
-
-
-class BuildCancel(AjaxUpdateView):
-    """ View to cancel a Build.
-    Provides a cancellation information dialog
-    """
-
-    model = Build
-    ajax_template_name = 'build/cancel.html'
-    ajax_form_title = _('Cancel Build')
-    context_object_name = 'build'
-    form_class = forms.CancelBuildForm
-
-    def validate(self, build, form, **kwargs):
-
-        confirm = str2bool(form.cleaned_data.get('confirm_cancel', False))
-
-        if not confirm:
-            form.add_error('confirm_cancel', _('Confirm build cancellation'))
-
-    def save(self, build, form, **kwargs):
-        """
-        Cancel the build.
-        """
-
-        build.cancelBuild(self.request.user)
-
-    def get_data(self):
-        return {
-            'danger': _('Build was cancelled')
-        }
 
 
 class BuildDetail(InvenTreeRoleMixin, DetailView):

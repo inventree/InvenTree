@@ -1001,45 +1001,6 @@ class CategoryDetail(InvenTreeRoleMixin, DetailView):
         return context
 
 
-class CategoryEdit(AjaxUpdateView):
-    """
-    Update view to edit a PartCategory
-    """
-
-    model = PartCategory
-    form_class = part_forms.EditCategoryForm
-    ajax_template_name = 'modal_form.html'
-    ajax_form_title = _('Edit Part Category')
-
-    def get_context_data(self, **kwargs):
-        context = super(CategoryEdit, self).get_context_data(**kwargs).copy()
-
-        try:
-            context['category'] = self.get_object()
-        except:
-            pass
-
-        return context
-
-    def get_form(self):
-        """ Customize form data for PartCategory editing.
-
-        Limit the choices for 'parent' field to those which make sense
-        """
-
-        form = super(AjaxUpdateView, self).get_form()
-
-        category = self.get_object()
-
-        # Remove any invalid choices for the parent category part
-        parent_choices = PartCategory.objects.all()
-        parent_choices = parent_choices.exclude(id__in=category.getUniqueChildren())
-
-        form.fields['parent'].queryset = parent_choices
-
-        return form
-
-
 class CategoryDelete(AjaxDeleteView):
     """
     Delete view to delete a PartCategory
