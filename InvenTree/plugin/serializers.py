@@ -15,7 +15,7 @@ from django.utils import timezone
 
 from rest_framework import serializers
 
-from plugin.models import PluginConfig, PluginSetting
+from plugin.models import PluginConfig, PluginSetting, NotificationUserSetting
 from common.serializers import GenericReferencedSettingSerializer
 
 
@@ -139,3 +139,14 @@ class PluginSettingSerializer(GenericReferencedSettingSerializer):
     ]
 
     plugin = serializers.PrimaryKeyRelatedField(read_only=True)
+
+
+class NotificationUserSettingSerializer(GenericReferencedSettingSerializer):
+    """
+    Serializer for the PluginSetting model
+    """
+
+    MODEL = NotificationUserSetting
+    EXTRA_FIELDS = ['method', ]
+
+    method = serializers.CharField(read_only=True)

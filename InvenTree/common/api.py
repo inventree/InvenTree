@@ -24,6 +24,8 @@ from django_q.tasks import async_task
 import common.models
 import common.serializers
 from InvenTree.helpers import inheritors
+from plugin.models import NotificationUserSetting
+from plugin.serializers import NotificationUserSettingSerializer
 
 
 class CsrfExemptMixin(object):
@@ -219,6 +221,44 @@ class UserSettingsDetail(generics.RetrieveUpdateAPIView):
     ]
 
 
+class NotificationUserSettingsList(SettingsList):
+    """
+    API endpoint for accessing a list of notification user settings objects
+    """
+
+    queryset = NotificationUserSetting.objects.all()
+    serializer_class = NotificationUserSettingSerializer
+
+    def filter_queryset(self, queryset):
+        """
+        Only list settings which apply to the current user
+        """
+
+        try:
+            user = self.request.user
+        except AttributeError:
+            return NotificationUserSetting.objects.none()
+
+        queryset = super().filter_queryset(queryset)
+        queryset = queryset.filter(user=user)
+        return queryset
+
+
+class NotificationUserSettingsDetail(generics.RetrieveUpdateAPIView):
+    """
+    Detail view for an individual "notification user setting" object
+
+    - User can only view / edit settings their own settings objects
+    """
+
+    queryset = NotificationUserSetting.objects.all()
+    serializer_class = NotificationUserSettingSerializer
+
+    permission_classes = [
+        UserSettingsPermissions,
+    ]
+
+
 class NotificationList(generics.ListAPIView):
     queryset = common.models.NotificationMessage.objects.all()
     serializer_class = common.serializers.NotificationMessageSerializer
@@ -342,6 +382,15 @@ settings_api_urls = [
 
         # User Settings List
         re_path(r'^.*$', UserSettingsList.as_view(), name='api-user-setting-list'),
+    ])),
+
+    # Notification settings
+    re_path(r'^notification/', include([
+        # Notification Settings Detail
+        re_path(r'^(?P<pk>\d+)/', NotificationUserSettingsDetail.as_view(), name='api-notification-setting-detail'),
+
+        # Notification Settings List
+        re_path(r'^.*$', NotificationUserSettingsList.as_view(), name='api-notifcation-setting-list'),
     ])),
 
     # Global settings
