@@ -1041,6 +1041,25 @@ class SalesOrderCompleteSerializer(serializers.Serializer):
         order.complete_order(user)
 
 
+class SalesOrderCancelSerializer(serializers.Serializer):
+    """ Serializer for marking a SalesOrder as cancelled
+    """
+
+    def get_context_data(self):
+
+        order = self.context['order']
+
+        return {
+            'can_cancel': order.can_cancel(),
+        }
+
+    def save(self):
+
+        order = self.context['order']
+
+        order.cancel_order()
+
+
 class SalesOrderSerialAllocationSerializer(serializers.Serializer):
     """
     DRF serializer for allocation of serial numbers against a sales order / shipment

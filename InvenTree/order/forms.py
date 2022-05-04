@@ -8,27 +8,11 @@ from __future__ import unicode_literals
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from InvenTree.forms import HelperForm
 from InvenTree.fields import InvenTreeMoneyField
 
 from InvenTree.helpers import clean_decimal
 
 from common.forms import MatchItemForm
-
-from .models import PurchaseOrder
-from .models import SalesOrder
-
-
-
-class CancelSalesOrderForm(HelperForm):
-
-    confirm = forms.BooleanField(required=True, label=_('Confirm'), help_text=_('Cancel order'))
-
-    class Meta:
-        model = SalesOrder
-        fields = [
-            'confirm',
-        ]
 
 
 class OrderMatchItemForm(MatchItemForm):

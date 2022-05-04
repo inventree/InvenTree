@@ -287,6 +287,7 @@ class PurchaseOrderDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class PurchaseOrderContextMixin:
+    """ Mixin to add purchase order object as serializer context variable """
 
     def get_serializer_context(self):
         """ Add the PurchaseOrder object to the serializer context """
@@ -871,13 +872,8 @@ class SalesOrderLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.SalesOrderLineItemSerializer
 
 
-class SalesOrderComplete(generics.CreateAPIView):
-    """
-    API endpoint for manually marking a SalesOrder as "complete".
-    """
-
-    queryset = models.SalesOrder.objects.all()
-    serializer_class = serializers.SalesOrderCompleteSerializer
+class SalesOrderContextMixin:
+    """ Mixin to add sales order object as serializer context variable """
 
     def get_serializer_context(self):
 
@@ -893,7 +889,22 @@ class SalesOrderComplete(generics.CreateAPIView):
         return ctx
 
 
-class SalesOrderAllocateSerials(generics.CreateAPIView):
+class SalesOrderCancel(SalesOrderContextMixin, generics.CreateAPIView):
+
+    queryset = models.SalesOrder.objects.all()
+    serializer_class = serializers.SalesOrderCancelSerializer
+
+
+class SalesOrderComplete(SalesOrderContextMixin, generics.CreateAPIView):
+    """
+    API endpoint for manually marking a SalesOrder as "complete".
+    """
+
+    queryset = models.SalesOrder.objects.all()
+    serializer_class = serializers.SalesOrderCompleteSerializer
+
+
+class SalesOrderAllocateSerials(SalesOrderContextMixin, generics.CreateAPIView):
     """
     API endpoint to allocation stock items against a SalesOrder,
     by specifying serial numbers.
@@ -902,22 +913,8 @@ class SalesOrderAllocateSerials(generics.CreateAPIView):
     queryset = models.SalesOrder.objects.none()
     serializer_class = serializers.SalesOrderSerialAllocationSerializer
 
-    def get_serializer_context(self):
 
-        ctx = super().get_serializer_context()
-
-        # Pass through the SalesOrder object to the serializer
-        try:
-            ctx['order'] = models.SalesOrder.objects.get(pk=self.kwargs.get('pk', None))
-        except:
-            pass
-
-        ctx['request'] = self.request
-
-        return ctx
-
-
-class SalesOrderAllocate(generics.CreateAPIView):
+class SalesOrderAllocate(SalesOrderContextMixin, generics.CreateAPIView):
     """
     API endpoint to allocate stock items against a SalesOrder
 
@@ -927,20 +924,6 @@ class SalesOrderAllocate(generics.CreateAPIView):
 
     queryset = models.SalesOrder.objects.none()
     serializer_class = serializers.SalesOrderShipmentAllocationSerializer
-
-    def get_serializer_context(self):
-
-        ctx = super().get_serializer_context()
-
-        # Pass through the SalesOrder object to the serializer
-        try:
-            ctx['order'] = models.SalesOrder.objects.get(pk=self.kwargs.get('pk', None))
-        except:
-            pass
-
-        ctx['request'] = self.request
-
-        return ctx
 
 
 class SalesOrderAllocationDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -1183,6 +1166,7 @@ order_api_urls = [
 
         # Sales order detail view
         re_path(r'^(?P<pk>\d+)/', include([
+            re_path(r'^cancel/', SalesOrderCancel.as_view(), name='api-so-cancel'),
             re_path(r'^complete/', SalesOrderComplete.as_view(), name='api-so-complete'),
             re_path(r'^allocate/', SalesOrderAllocate.as_view(), name='api-so-allocate'),
             re_path(r'^allocate-serials/', SalesOrderAllocateSerials.as_view(), name='api-so-allocate-serials'),
