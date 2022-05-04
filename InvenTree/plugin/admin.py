@@ -84,5 +84,6 @@ class NotificationUserSettingAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
 
+
 admin.site.register(models.PluginConfig, PluginConfigAdmin)
 admin.site.register(models.NotificationUserSetting, NotificationUserSettingAdmin)
