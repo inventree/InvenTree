@@ -43,8 +43,6 @@ stock_urls = [
     # Stock location
     re_path(r'^location/', include(location_urls)),
 
-    re_path(r'^item/uninstall/', views.StockItemUninstall.as_view(), name='stock-item-uninstall'),
-
     re_path(r'^track/', include(stock_tracking_urls)),
 
     # Individual stock items

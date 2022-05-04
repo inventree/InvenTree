@@ -5,19 +5,12 @@ Django views for interacting with Stock app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.core.exceptions import ValidationError
-from django.views.generic.edit import FormMixin
+
 from django.views.generic import DetailView, ListView
-from django.forms.models import model_to_dict
-from django.forms import HiddenInput
 from django.urls import reverse
 from django.http import HttpResponseRedirect
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
 
 from django.utils.translation import gettext_lazy as _
-
-from moneyed import CURRENCIES
 
 from InvenTree.views import AjaxUpdateView, AjaxDeleteView, AjaxCreateView
 from InvenTree.views import QRCodeView
@@ -25,18 +18,10 @@ from InvenTree.views import InvenTreeRoleMixin
 from InvenTree.forms import ConfirmForm
 
 from InvenTree.helpers import str2bool
-from InvenTree.helpers import extract_serial_numbers
 
-from decimal import Decimal, InvalidOperation
-from datetime import datetime, timedelta
-
-from company.models import SupplierPart
-from part.models import Part
 from .models import StockItem, StockLocation, StockItemTracking
 
 import common.settings
-from common.models import InvenTreeSetting
-from users.models import Owner
 
 from . import forms as StockForms
 
