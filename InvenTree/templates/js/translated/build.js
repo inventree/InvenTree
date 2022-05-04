@@ -21,6 +21,7 @@
 /* exported
     allocateStockToBuild,
     autoAllocateStockToBuild,
+    cancelBuildOrder,
     completeBuildOrder,
     createBuildOutput,
     editBuildOrder,
@@ -120,6 +121,49 @@ function newBuildOrder(options={}) {
         title: '{% trans "Create Build Order" %}',
         onSuccess: options.onSuccess,
     });
+}
+
+
+/* Construct a form to cancel a build order */
+function cancelBuildOrder(build_id, options={}) {
+    
+    constructForm(
+        `/api/build/${build_id}/cancel/`,
+        {
+            method: 'POST',
+            title: '{% trans "Cancel Build Order" %}',
+            confirm: true,
+            fields: {
+                remove_allocated_stock: {},
+                remove_incomplete_outputs: {},
+            },
+            preFormContent: function(opts) {
+                var html = `
+                <div class='alert alert-block alert-info'>
+                    {% trans "Are you sure you wish to cancel this build?" %}
+                </div>`;
+
+                if (opts.context.has_allocated_stock) {
+                    html += `
+                    <div class='alert alert-block alert-warning'>
+                        {% trans "Stock items have been allocated to this build order" %}
+                    </div>`;
+                }
+
+                if (opts.context.incomplete_outputs) {
+                    html += `
+                    <div class='alert alert-block alert-warning'>
+                        {% trans "There are incomplete outputs remaining for this build order" %}
+                    </div>`;
+                }
+
+                return html;
+            },
+            onSuccess: function(response) {
+                handleFormSuccess(response, options);
+            }
+        }
+    );
 }
 
 

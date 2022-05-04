@@ -290,9 +290,6 @@ class Contact(models.Model):
 
     role = models.CharField(max_length=100, blank=True)
 
-    company = models.ForeignKey(Company, related_name='contacts',
-                                on_delete=models.CASCADE)
-
 
 class ManufacturerPart(models.Model):
     """ Represents a unique part as provided by a Manufacturer

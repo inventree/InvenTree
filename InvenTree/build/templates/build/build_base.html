@@ -56,7 +56,7 @@ src="{% static 'img/blank_image.png' %}"
         <li><a class='dropdown-item' href='#' id='build-cancel'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel Build" %}</a></li>
         {% endif %}
         {% if build.status == BuildStatus.CANCELLED and roles.build.delete %}
-        <li><a class='dropdown-item' href='#' id='build-delete'><span class='fas fa-trash-alt'></span> {% trans "Delete Build" %}</a>
+        <li><a class='dropdown-item' href='#' id='build-delete'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete Build" %}</a>
         {% endif %}
     </ul>
 </div>
@@ -214,11 +214,13 @@ src="{% static 'img/blank_image.png' %}"
     });
 
     $("#build-cancel").click(function() {
-        launchModalForm("{% url 'build-cancel' build.id %}",
-                        {
-                            reload: true,
-                            submit_text: '{% trans "Cancel Build" %}',
-                        });
+
+        cancelBuildOrder(
+            {{ build.pk }},
+            {
+                reload: true,
+            }
+        );
     });
 
     $("#build-complete").on('click', function() {

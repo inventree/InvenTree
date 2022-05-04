@@ -67,7 +67,7 @@
 
 {% block thumbnail %}
 <img class='part-thumb'
-{% if order.supplier.image %}
+{% if order.supplier and order.supplier.image %}
 src="{{ order.supplier.image.url }}"
 {% else %}
 src="{% static 'img/blank_image.png' %}"
@@ -110,7 +110,13 @@ src="{% static 'img/blank_image.png' %}"
     <tr>
         <td><span class='fas fa-building'></span></td>
         <td>{% trans "Supplier" %}</td>
-        <td><a href="{% url 'company-detail' order.supplier.id %}">{{ order.supplier.name }}</a>{% include "clip.html"%}</td>
+        <td>
+            {% if order.supplier %}
+            <a href="{% url 'company-detail' order.supplier.id %}">{{ order.supplier.name }}</a>{% include "clip.html"%}
+            {% else %}
+            <em>{% trans "No suppplier information available" %}</em>
+            {% endif %}
+        </td>
     </tr>
     {% if order.supplier_reference %}
     <tr>
@@ -186,10 +192,14 @@ src="{% static 'img/blank_image.png' %}"
 
 {% if order.status == PurchaseOrderStatus.PENDING %}
 $("#place-order").click(function() {
-    launchModalForm("{% url 'po-issue' order.id %}",
-    {
-        reload: true,
-    });
+
+    issuePurchaseOrder(
+        {{ order.pk }},
+        {
+            reload: true,
+        }
+    );
+
 });
 {% endif %}
 
@@ -252,15 +262,27 @@ $("#receive-order").click(function() {
 });
 
 $("#complete-order").click(function() {
-    launchModalForm("{% url 'po-complete' order.id %}", {
-        reload: true,
-    });
+
+    completePurchaseOrder(
+        {{ order.pk }},
+        {
+            onSuccess: function() {
+                window.location.reload();
+            }
+        }
+    );
 });
 
 $("#cancel-order").click(function() {
-    launchModalForm("{% url 'po-cancel' order.id %}", {
-        reload: true,
-    });
+
+    cancelPurchaseOrder(
+        {{ order.pk }},
+        {
+            onSuccess: function() {
+                window.location.reload();
+            }
+        },
+    );
 });
 
 $("#export-order").click(function() {
