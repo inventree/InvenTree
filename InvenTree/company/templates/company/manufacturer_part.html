@@ -91,6 +91,9 @@ src="{% static 'img/blank_image.png' %}"
         <td>
             {% if part.manufacturer %}
             <a href="{% url 'company-detail' part.manufacturer.id %}">{{ part.manufacturer.name }}</a>{% include "clip.html"%}
+            {% else %}
+            <em>{% trans "No manufacturer information available" %}</em>
+            {% endif %}
             {% endif %}
         </td>
     </tr>
