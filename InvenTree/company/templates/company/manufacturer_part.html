@@ -338,6 +338,8 @@ $('#delete-part').click(function() {
         onSuccess: function() {
             {% if part.manufacturer %}
             window.location.href = "{% url 'company-detail' part.manufacturer.id %}";
+            {% else%}
+            window.location.href = "{% url 'index' %}";
             {% endif %}
         }
     });
