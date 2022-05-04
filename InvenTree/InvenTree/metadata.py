@@ -9,6 +9,8 @@ from rest_framework.metadata import SimpleMetadata
 from rest_framework.utils import model_meta
 from rest_framework.fields import empty
 
+from InvenTree.helpers import str2bool
+
 import users.models
 
 
@@ -49,12 +51,14 @@ class InvenTreeMetadata(SimpleMetadata):
 
         context = {}
 
-        if hasattr(self.serializer, 'get_context_data'):
-            context = self.serializer.get_context_data()
-        elif hasattr(self.erializer, 'CONTEXT_DATA'):
-            context = self.serializer.CONTEXT_DATA
+        if str2bool(request.query_params.get('context', False)):
 
-        metadata['context'] = context
+            if hasattr(self.serializer, 'get_context_data'):
+                context = self.serializer.get_context_data()
+            elif hasattr(self.erializer, 'CONTEXT_DATA'):
+                context = self.serializer.CONTEXT_DATA
+
+            metadata['context'] = context
 
         user = request.user
 
