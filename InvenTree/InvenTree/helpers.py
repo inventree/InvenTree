@@ -537,7 +537,7 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
 
     # The number of extracted serial numbers must match the expected quantity
     if not expected_quantity == len(numbers):
-        raise ValidationError([_("Number of unique serial number ({s}) must match quantity ({q})").format(s=len(numbers), q=expected_quantity)])
+        raise ValidationError([_("Number of unique serial numbers ({s}) must match quantity ({q})").format(s=len(numbers), q=expected_quantity)])
 
     return numbers
 
