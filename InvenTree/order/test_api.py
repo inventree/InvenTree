@@ -9,7 +9,7 @@ from rest_framework import status
 from django.urls import reverse
 
 from InvenTree.api_tester import InvenTreeAPITestCase
-from InvenTree.status_codes import PurchaseOrderStatus
+from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
 
 from part.models import Part
 from stock.models import StockItem
@@ -238,7 +238,7 @@ class PurchaseOrderTest(OrderTest):
             },
             expected_code=201
         )
-    
+
     def test_po_cancel(self):
         """
         Test the PurchaseOrderCancel API endpoint
@@ -251,11 +251,7 @@ class PurchaseOrderTest(OrderTest):
         url = reverse('api-po-cancel', kwargs={'pk': po.pk})
 
         # Try to cancel the PO, but without reqiured permissions
-        self.post(
-            url,
-            {},
-            expected_code=403,
-        )
+        self.post(url, {}, expected_code=403)
 
         self.assignRole('purchase_order.add')
 
@@ -270,11 +266,7 @@ class PurchaseOrderTest(OrderTest):
         self.assertEqual(po.status, PurchaseOrderStatus.CANCELLED)
 
         # Try to cancel again (should fail)
-        self.post(
-            url,
-            {},
-            expected_code=400,
-        )
+        self.post(url, {}, expected_code=400)
 
     def test_po_complete(self):
         """ Test the PurchaseOrderComplete API endpoint """
@@ -286,24 +278,15 @@ class PurchaseOrderTest(OrderTest):
         self.assertEqual(po.status, PurchaseOrderStatus.PLACED)
 
         # Try to complete the PO, without required permissions
-        response = self.post(
-            url,
-            {},
-            expected_code=403,
-        )
+        self.post(url, {}, expected_code=403)
 
         self.assignRole('purchase_order.add')
 
-        response = self.post(
-            url,
-            {},
-            expected_code=201,
-        )
+        self.post(url, {}, expected_code=201)
 
         po.refresh_from_db()
 
         self.assertEqual(po.status, PurchaseOrderStatus.COMPLETE)
-
 
     def test_po_issue(self):
         """ Test the PurchaseOrderIssue API endpoint """
@@ -313,19 +296,11 @@ class PurchaseOrderTest(OrderTest):
         url = reverse('api-po-issue', kwargs={'pk': po.pk})
 
         # Try to issue the PO, without required permissions
-        response = self.post(
-            url,
-            {},
-            expected_code=403,
-        )
+        self.post(url, {}, expected_code=403)
 
         self.assignRole('purchase_order.add')
 
-        response = self.post(
-            url,
-            {},
-            expected_code=201,
-        )
+        self.post(url, {}, expected_code=201)
 
         po.refresh_from_db()
 
@@ -879,6 +854,26 @@ class SalesOrderTest(OrderTest):
             },
             expected_code=201
         )
+
+    def test_so_cancel(self):
+        """ Test API endpoint for cancelling a SalesOrder """
+
+        so = models.SalesOrder.objects.get(pk=1)
+
+        self.assertEqual(so.status, SalesOrderStatus.PENDING)
+
+        url = reverse('api-so-cancel', kwargs={'pk': so.pk})
+
+        # Try to cancel, without permission
+        self.post(url, {}, expected_code=403)
+
+        self.assignRole('sales_order.add')
+
+        self.post(url, {}, expected_code=201)
+
+        so.refresh_from_db()
+
+        self.assertEqual(so.status, SalesOrderStatus.CANCELLED)
 
 
 class SalesOrderAllocateTest(OrderTest):
