@@ -21,6 +21,7 @@
 /* exported
     allocateStockToSalesOrder,
     cancelPurchaseOrder,
+    completePurchaseOrder,
     completeShipment,
     createSalesOrder,
     createSalesOrderShipment,
@@ -139,6 +140,46 @@ function completeShipment(shipment_id) {
             });
         }
     });
+}
+
+
+function completePurchaseOrder(order_id, options={}) {
+
+    constructForm(
+        `/api/order/po/${order_id}/complete/`,
+        {
+            method: 'POST',
+            title: '{% trans "Complete Purchase Order" %}',
+            confirm: true,
+            preFormContent: function(opts) {
+
+                var html = `
+                <div class='alert alert-block alert-info'>
+                    {% trans "Mark this order as complete?" %}
+                </div>`;
+
+                if (opts.context.is_complete) {
+                    html += `
+                    <div class='alert alert-block alert-success'>
+                        {% trans "All line items have been received" %}
+                    </div>`;
+                } else {
+                    html += `
+                    <div class='alert alert-block alert-warning'>
+                        {% trans 'This order has line items which have not been marked as received.' %}</br>
+                        {% trans 'Completing this order means that the order and line items will no longer be editable.' %}
+                    </div>`;
+                }
+
+                return html;
+            },
+            onSuccess: function(response) {
+                if (options.onSuccess) {
+                    options.onSuccess(response);
+                }
+            }
+        }
+    );
 }
 
 

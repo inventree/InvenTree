@@ -140,44 +140,6 @@ class PurchaseOrderIssue(AjaxUpdateView):
         }
 
 
-class PurchaseOrderComplete(AjaxUpdateView):
-    """ View for marking a PurchaseOrder as complete.
-    """
-
-    form_class = order_forms.CompletePurchaseOrderForm
-    model = PurchaseOrder
-    ajax_template_name = "order/order_complete.html"
-    ajax_form_title = _("Complete Order")
-    context_object_name = 'order'
-
-    def get_context_data(self):
-
-        ctx = {
-            'order': self.get_object(),
-        }
-
-        return ctx
-
-    def validate(self, order, form, **kwargs):
-
-        confirm = str2bool(form.cleaned_data.get('confirm', False))
-
-        if not confirm:
-            form.add_error('confirm', _('Confirm order completion'))
-
-    def save(self, order, form, **kwargs):
-        """
-        Complete the PurchaseOrder
-        """
-
-        order.complete_order()
-
-    def get_data(self):
-        return {
-            'success': _('Purchase order completed')
-        }
-
-
 class PurchaseOrderUpload(FileManagementFormView):
     ''' PurchaseOrder: Upload file, match to fields and parts (using multi-Step form) '''
 

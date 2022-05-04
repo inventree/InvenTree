@@ -311,9 +311,19 @@ class PurchaseOrderCancel(PurchaseOrderContextMixin, generics.CreateAPIView):
     The purchase order must be in a state which can be cancelled
     """
 
-    queryset = models.PurchaseOrderLineItem.objects.all()
+    queryset = models.PurchaseOrder.objects.all()
 
     serializer_class = serializers.PurchaseOrderCancelSerializer
+
+
+class PurchaseOrderComplete(PurchaseOrderContextMixin, generics.CreateAPIView):
+    """
+    API endpoint to 'complete' a purchase order
+    """
+
+    queryset = models.PurchaseOrder.objects.all()
+
+    serializer_class = serializers.PurchaseOrderCompleteSerializer
 
 
 class PurchaseOrderReceive(PurchaseOrderContextMixin, generics.CreateAPIView):
@@ -1124,6 +1134,7 @@ order_api_urls = [
         re_path(r'^(?P<pk>\d+)/', include([
             re_path(r'^receive/', PurchaseOrderReceive.as_view(), name='api-po-receive'),
             re_path(r'^cancel/', PurchaseOrderCancel.as_view(), name='api-po-cancel'),
+            re_path(r'^complete/', PurchaseOrderComplete.as_view(), name='api-po-complete'),
             re_path(r'.*$', PurchaseOrderDetail.as_view(), name='api-po-detail'),
         ])),
 

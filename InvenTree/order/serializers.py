@@ -208,6 +208,32 @@ class PurchaseOrderCancelSerializer(serializers.Serializer):
         order.cancel_order()
 
 
+class PurchaseOrderCompleteSerializer(serializers.Serializer):
+    """
+    Serializer for completing a purchase order
+    """
+
+    class Meta:
+        fields = []
+
+    def get_context_data(self):
+        """
+        Custom context information for this serializer
+        """
+
+        order = self.context['order']
+
+        return {
+            'is_complete': order.is_complete,
+        }
+
+    def save(self):
+
+        order = self.context['order']
+
+
+
+
 class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
 
     @staticmethod
