@@ -17,7 +17,7 @@ The HEAD of the "main" or "master" branch of InvenTree represents the current "l
 
 **No pushing to master:** New featues must be submitted as a pull request from a separate branch (one branch per feature).
 
-#### Feature Branches
+### Feature Branches
 
 Feature branches should be branched *from* the *master* branch.
 
@@ -45,7 +45,7 @@ The HEAD of the "stable" branch represents the latest stable release code.
 - The bugfix *must* also be cherry picked into the *master* branch.
 
 ## Environment
-#### Target version
+### Target version
 We are currently targeting:
 | Name | Minimum version |
 |---|---|
@@ -65,7 +65,7 @@ pyupgrade `find . -name "*.py"`
 django-upgrade --target-version 3.2 `find . -name "*.py"`
 ```
 
-### Credits
+## Credits
 If you add any new dependencies / libraries, they need to be added to [the docs](https://github.com/inventree/inventree-docs/blob/master/docs/credits.md). Please try to do that as timely as possible.
 
 
@@ -125,3 +125,43 @@ HTML and javascript files are passed through the django templating engine. Trans
 
 <span>{% trans "This string will be translated" %} - this string will not!</span>
 ```
+
+## Github use
+### Tags
+The tags describe issues and PRs in multiple areas:
+| Area | Name | Description |
+|---|---|---|
+| Feature |  |  |
+|  | feat: API | tbd |
+|  | feat: barcode | tbd |
+|  | feat: build | tbd |
+|  | feat: docker | tbd |
+|  | feat: importer | tbd |
+|  | feat: order | tbd |
+|  | feat: part | tbd |
+|  | feat: plugin | tbd |
+|  | feat: pricing | tbd |
+|  | feat: report | tbd |
+|  | feat: setup | tbd |
+|  | feat: stock | tbd |
+|  | feat: user interface | tbd |
+| Type |  |  |
+|  | typ: bug | tbd |
+|  | typ: dependencies | tbd |
+|  | typ: enhancement | tbd |
+|  | typ: security | tbd |
+|  | typ: question | tbd |
+|  | typ: roadmap | tbd |
+| State |  |  |
+|  | state: duplicate | tbd |
+|  | state: invalid | tbd |
+|  | state: no-activity | tbd |
+|  | state: duplicate | tbd |
+|  | state: wontfix | tbd |
+| Ecosystem |  |  |
+|  | eco: app | tbd |
+|  | eco: CI | tbd |
+|  | eco: demo | tbd |
+| GH Built in |  |  |
+|  | help wanted | tbd |
+|  | starter | tbd |
