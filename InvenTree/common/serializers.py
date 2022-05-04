@@ -112,33 +112,28 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
     MODEL = None
     EXTRA_FIELDS = None
 
-    def __init__(self, instance=None, data=..., **kwargs):
+    def __init__(self, **kwargs):
         """Init overrides the Meta class to make it dynamic"""
-        # set Meta class
-        self.Meta = self.CustomMeta
-        self.Meta.model = self.MODEL
+        class CustomMeta:
+            """Scaffold for custom Meta class"""
+            fields = [
+                'pk',
+                'key',
+                'value',
+                'name',
+                'description',
+                'type',
+                'choices',
+            ]
 
+        # set Meta class
+        self.Meta = CustomMeta
+        self.Meta.model = self.MODEL
         # extend the fields
-        if not self.CustomMeta.DEFINED:
-            self.Meta.fields.extend(self.EXTRA_FIELDS)
-            self.CustomMeta.DEFINED = True
+        self.Meta.fields.extend(self.EXTRA_FIELDS)
 
         # resume operations
-        super().__init__(instance, data, **kwargs)
-
-    class CustomMeta:
-        """Scaffold for custom Meta class"""
-        DEFINED: bool = False
-
-        fields = [
-            'pk',
-            'key',
-            'value',
-            'name',
-            'description',
-            'type',
-            'choices',
-        ]
+        super().__init__(**kwargs)
 
 
 class NotificationMessageSerializer(InvenTreeModelSerializer):
