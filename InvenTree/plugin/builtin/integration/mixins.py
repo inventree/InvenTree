@@ -56,7 +56,7 @@ class SettingsMixin:
 
         if not plugin:
             # Cannot find associated plugin model, return
-            return
+            return  # pragma: no cover
 
         PluginSetting.set_setting(key, value, user, plugin=plugin)
 
@@ -171,7 +171,7 @@ class ScheduleMixin:
 
                 if Schedule.objects.filter(name=task_name).exists():
                     # Scheduled task already exists - continue!
-                    continue
+                    continue  # pragma: no cover
 
                 logger.info(f"Adding scheduled task '{task_name}'")
 
@@ -209,7 +209,7 @@ class ScheduleMixin:
                         repeats=task.get('repeats', -1),
                     )
 
-        except (ProgrammingError, OperationalError):
+        except (ProgrammingError, OperationalError):  # pragma: no cover
             # Database might not yet be ready
             logger.warning("register_tasks failed, database not ready")
 
@@ -230,7 +230,7 @@ class ScheduleMixin:
                     scheduled_task.delete()
                 except Schedule.DoesNotExist:
                     pass
-        except (ProgrammingError, OperationalError):
+        except (ProgrammingError, OperationalError):  # pragma: no cover
             # Database might not yet be ready
             logger.warning("unregister_tasks failed, database not ready")
 
@@ -408,7 +408,7 @@ class LabelPrintingMixin:
         """
         MIXIN_NAME = 'Label printing'
 
-    def __init__(self):
+    def __init__(self):  # pragma: no cover
         super().__init__()
         self.add_mixin('labels', True, __class__)
 
@@ -426,7 +426,7 @@ class LabelPrintingMixin:
         """
 
         # Unimplemented (to be implemented by the particular plugin class)
-        ...
+        ...  # pragma: no cover
 
 
 class APICallMixin:

@@ -754,12 +754,18 @@
 
 
     $("#part-order2").click(function() {
-        launchModalForm("{% url 'order-parts' %}", {
-            data: {
-                part: {{ part.id }},
-            },
-            reload: true,
-        });
+        inventreeGet(
+            '{% url "api-part-detail" part.pk %}',
+            {},
+            {
+                success: function(part) {
+                    orderParts(
+                        [part],
+                        {}
+                    );
+                }
+            }
+        );
     });
 
     onPanelLoad("test-templates", function() {

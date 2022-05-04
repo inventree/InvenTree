@@ -31,6 +31,10 @@ class InvenTreePluginTests(TestCase):
         self.assertEqual(self.named_plugin.PLUGIN_NAME, 'abc123')
         self.assertEqual(self.named_plugin.plugin_name(), 'abc123')
 
+    def test_basic_is_active(self):
+        """check if a basic plugin is active"""
+        self.assertEqual(self.plugin.is_active(), False)
+
 
 class PluginTagTests(TestCase):
     """ Tests for the plugin extras """

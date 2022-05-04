@@ -31,13 +31,11 @@
 {% include "admin_button.html" with url=url %}
 {% endif %}
 {% if roles.purchase_order.change %}
-{% comment "for later" %}
-{% if roles.purchase_order.add %}
+{% if roles.purchase_order.add and part.part.purchaseable %}
 <button type='button' class='btn btn-outline-secondary' id='order-part' title='{% trans "Order part" %}'>
     <span class='fas fa-shopping-cart'></span>
 </button>
 {% endif %}
-{% endcomment %}
 <button type='button' class='btn btn-outline-secondary' id='edit-part' title='{% trans "Edit manufacturer part" %}'>
     <span class='fas fa-edit icon-green'/>
 </button>
@@ -130,6 +128,7 @@ src="{% static 'img/blank_image.png' %}"
                         <li><a class='dropdown-item' href='#' id='supplier-part-delete' title='{% trans "Delete supplier parts" %}'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete" %}</a></li>
                     </ul>
                 </div>
+                {% include "filter_list.html" with id='supplier-part' %}
             </div>
         </div>
         
@@ -300,14 +299,20 @@ linkButtonsToSelection($("#supplier-table"), ['#supplier-part-options']);
 linkButtonsToSelection($("#parameter-table"), ['#parameter-options']);
 
 $('#order-part, #order-part2').click(function() {
-    launchModalForm(
-        "{% url 'order-parts' %}",
+
+    inventreeGet(
+        '{% url "api-part-detail" part.part.pk %}', {},
         {
-            data: {
-                part: {{ part.part.id }},
-            },
-            reload: true,
-        },
+            success: function(response) {
+                
+                orderParts([response], {
+                    manufacturer_part: {{ part.pk }},
+                    {% if part.manufacturer %}
+                    manufacturer: {{ part.manufacturer.pk }},
+                    {% endif %}
+                });
+            }
+        }
     );
 });
 

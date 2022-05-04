@@ -11,6 +11,8 @@ from plugin import IntegrationPluginBase
 from plugin.mixins import AppMixin, SettingsMixin, UrlsMixin, NavigationMixin, APICallMixin
 from plugin.urls import PLUGIN_BASE
 
+from plugin.samples.integration.sample import SampleIntegrationPlugin
+
 
 class BaseMixinDefinition:
     def test_mixin_name(self):
@@ -238,6 +240,7 @@ class IntegrationPluginBaseTests(TestCase):
             LICENSE = 'MIT'
 
         self.plugin_name = NameIntegrationPluginBase()
+        self.plugin_sample = SampleIntegrationPlugin()
 
     def test_action_name(self):
         """check the name definition possibilities"""
@@ -245,6 +248,10 @@ class IntegrationPluginBaseTests(TestCase):
         self.assertEqual(self.plugin.plugin_name(), '')
         self.assertEqual(self.plugin_simple.plugin_name(), 'SimplePlugin')
         self.assertEqual(self.plugin_name.plugin_name(), 'Aplugin')
+
+        # is_sampe
+        self.assertEqual(self.plugin.is_sample, False)
+        self.assertEqual(self.plugin_sample.is_sample, True)
 
         # slug
         self.assertEqual(self.plugin.slug, '')
