@@ -34,7 +34,7 @@
 // Should the ID be rendered for this string
 function renderId(title, pk, parameters={}) {
 
-    // Default = do not display
+    // Default = do not render
     var render = false;
 
     if ('render_pk' in parameters) {
@@ -297,7 +297,12 @@ function renderSalesOrderShipment(name, data, parameters={}, options={}) {
 
     var so_prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
 
-    var html = `<span>${so_prefix}${data.order_detail.reference} - {% trans "Shipment" %} ${data.reference}</span>`;
+    var html = `
+    <span>${so_prefix}${data.order_detail.reference} - {% trans "Shipment" %} ${data.reference}</span>
+    <span class='float-right'>
+        <small>{% trans "Shipment ID" %}: ${data.pk}</small>
+    </span>
+    `;
 
     html += renderId('{% trans "Shipment ID" %}', data.pk, parameters);
 
@@ -384,10 +389,18 @@ function renderSupplierPart(name, data, parameters={}, options={}) {
     var html = '';
     
     html += select2Thumbnail(supplier_image);
-    html += select2Thumbnail(part_image);
     
-    html += ` <span><b>${data.supplier_detail.name}</b> - ${data.SKU}</span>`;
-    html += ` - <i>${data.part_detail.full_name}</i>`;
+    if (data.part_detail) {
+        html += select2Thumbnail(part_image);
+    }
+    
+    if (data.supplier_detail) {
+        html += ` <span><b>${data.supplier_detail.name}</b> - ${data.SKU}</span>`;
+    }
+
+    if (data.part_detail) {
+        html += ` - <i>${data.part_detail.full_name}</i>`;
+    }
 
     html += renderId('{% trans "Supplier Part ID" %}', data.pk, parameters);
 

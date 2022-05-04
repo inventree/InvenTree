@@ -165,7 +165,8 @@ src="{% static 'img/blank_image.png' %}"
     </div>
     <div class='panel-content'>
         <div id='button-bar'>
-            <div class='btn-group'>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id='purchaseorder' %}
             </div>
         </div>
         <table class='table table-striped table-condensed po-table' id='purchase-order-table' data-toolbar='#button-bar'>
@@ -326,14 +327,19 @@ $("#item-create").click(function() {
 });
 
 $('#order-part, #order-part2').click(function() {
-    launchModalForm(
-        "{% url 'order-parts' %}",
+
+    inventreeGet(
+        '{% url "api-part-detail" part.part.pk %}', {},
         {
-            data: {
-                part: {{ part.part.id }},
-            },
-            reload: true,
-        },
+            success: function(response) {
+                orderParts([response], {
+                    supplier_part: {{ part.pk }},
+                    {% if part.supplier %}
+                    supplier: {{ part.supplier.pk }},
+                    {% endif %}
+                });
+            }
+        }
     );
 });
 

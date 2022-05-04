@@ -33,7 +33,7 @@ def calculate_shipped_quantity(apps, schema_editor):
                 part=item.part
             )
 
-            q = sum([item.quantity for item in items])
+            q = sum(item.quantity for item in items)
 
             item.shipped = q
 

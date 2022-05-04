@@ -11,7 +11,7 @@ from django_filters import rest_framework as rest_filters
 from rest_framework import filters
 from rest_framework import generics
 
-from django.conf.urls import url, include
+from django.urls import include, re_path
 from django.db.models import Q
 
 from InvenTree.helpers import str2bool
@@ -312,7 +312,7 @@ class SupplierPartList(generics.ListCreateAPIView):
         try:
             params = self.request.query_params
             kwargs['part_detail'] = str2bool(params.get('part_detail', None))
-            kwargs['supplier_detail'] = str2bool(params.get('supplier_detail', None))
+            kwargs['supplier_detail'] = str2bool(params.get('supplier_detail', True))
             kwargs['manufacturer_detail'] = str2bool(params.get('manufacturer_detail', None))
             kwargs['pretty'] = str2bool(params.get('pretty', None))
         except AttributeError:
@@ -390,42 +390,42 @@ class SupplierPriceBreakDetail(generics.RetrieveUpdateDestroyAPIView):
 
 manufacturer_part_api_urls = [
 
-    url(r'^parameter/', include([
-        url(r'^(?P<pk>\d+)/', ManufacturerPartParameterDetail.as_view(), name='api-manufacturer-part-parameter-detail'),
+    re_path(r'^parameter/', include([
+        re_path(r'^(?P<pk>\d+)/', ManufacturerPartParameterDetail.as_view(), name='api-manufacturer-part-parameter-detail'),
 
         # Catch anything else
-        url(r'^.*$', ManufacturerPartParameterList.as_view(), name='api-manufacturer-part-parameter-list'),
+        re_path(r'^.*$', ManufacturerPartParameterList.as_view(), name='api-manufacturer-part-parameter-list'),
     ])),
 
-    url(r'^(?P<pk>\d+)/?', ManufacturerPartDetail.as_view(), name='api-manufacturer-part-detail'),
+    re_path(r'^(?P<pk>\d+)/?', ManufacturerPartDetail.as_view(), name='api-manufacturer-part-detail'),
 
     # Catch anything else
-    url(r'^.*$', ManufacturerPartList.as_view(), name='api-manufacturer-part-list'),
+    re_path(r'^.*$', ManufacturerPartList.as_view(), name='api-manufacturer-part-list'),
 ]
 
 
 supplier_part_api_urls = [
 
-    url(r'^(?P<pk>\d+)/?', SupplierPartDetail.as_view(), name='api-supplier-part-detail'),
+    re_path(r'^(?P<pk>\d+)/?', SupplierPartDetail.as_view(), name='api-supplier-part-detail'),
 
     # Catch anything else
-    url(r'^.*$', SupplierPartList.as_view(), name='api-supplier-part-list'),
+    re_path(r'^.*$', SupplierPartList.as_view(), name='api-supplier-part-list'),
 ]
 
 
 company_api_urls = [
-    url(r'^part/manufacturer/', include(manufacturer_part_api_urls)),
+    re_path(r'^part/manufacturer/', include(manufacturer_part_api_urls)),
 
-    url(r'^part/', include(supplier_part_api_urls)),
+    re_path(r'^part/', include(supplier_part_api_urls)),
 
     # Supplier price breaks
-    url(r'^price-break/', include([
+    re_path(r'^price-break/', include([
 
-        url(r'^(?P<pk>\d+)/?', SupplierPriceBreakDetail.as_view(), name='api-part-supplier-price-detail'),
-        url(r'^.*$', SupplierPriceBreakList.as_view(), name='api-part-supplier-price-list'),
+        re_path(r'^(?P<pk>\d+)/?', SupplierPriceBreakDetail.as_view(), name='api-part-supplier-price-detail'),
+        re_path(r'^.*$', SupplierPriceBreakList.as_view(), name='api-part-supplier-price-list'),
     ])),
 
-    url(r'^(?P<pk>\d+)/?', CompanyDetail.as_view(), name='api-company-detail'),
+    re_path(r'^(?P<pk>\d+)/?', CompanyDetail.as_view(), name='api-company-detail'),
 
-    url(r'^.*$', CompanyList.as_view(), name='api-company-list'),
+    re_path(r'^.*$', CompanyList.as_view(), name='api-company-list'),
 ]

@@ -2,7 +2,7 @@
 
 from django.test import TestCase
 from django.conf import settings
-from django.conf.urls import url, include
+from django.urls import include, re_path
 from django.contrib.auth import get_user_model
 
 from datetime import datetime
@@ -10,6 +10,8 @@ from datetime import datetime
 from plugin import IntegrationPluginBase
 from plugin.mixins import AppMixin, SettingsMixin, UrlsMixin, NavigationMixin, APICallMixin
 from plugin.urls import PLUGIN_BASE
+
+from plugin.samples.integration.sample import SampleIntegrationPlugin
 
 
 class BaseMixinDefinition:
@@ -66,7 +68,7 @@ class UrlsMixinTest(BaseMixinDefinition, TestCase):
         class UrlsCls(UrlsMixin, IntegrationPluginBase):
             def test():
                 return 'ccc'
-            URLS = [url('testpath', test, name='test'), ]
+            URLS = [re_path('testpath', test, name='test'), ]
         self.mixin = UrlsCls()
 
         class NoUrlsCls(UrlsMixin, IntegrationPluginBase):
@@ -81,7 +83,7 @@ class UrlsMixinTest(BaseMixinDefinition, TestCase):
         self.assertEqual(self.mixin.base_url, target_url)
 
         # urlpattern
-        target_pattern = url(f'^{plg_name}/', include((self.mixin.urls, plg_name)), name=plg_name)
+        target_pattern = re_path(f'^{plg_name}/', include((self.mixin.urls, plg_name)), name=plg_name)
         self.assertEqual(self.mixin.urlpatterns.reverse_dict, target_pattern.reverse_dict)
 
         # resolve the view
@@ -238,6 +240,7 @@ class IntegrationPluginBaseTests(TestCase):
             LICENSE = 'MIT'
 
         self.plugin_name = NameIntegrationPluginBase()
+        self.plugin_sample = SampleIntegrationPlugin()
 
     def test_action_name(self):
         """check the name definition possibilities"""
@@ -245,6 +248,10 @@ class IntegrationPluginBaseTests(TestCase):
         self.assertEqual(self.plugin.plugin_name(), '')
         self.assertEqual(self.plugin_simple.plugin_name(), 'SimplePlugin')
         self.assertEqual(self.plugin_name.plugin_name(), 'Aplugin')
+
+        # is_sampe
+        self.assertEqual(self.plugin.is_sample, False)
+        self.assertEqual(self.plugin_sample.is_sample, True)
 
         # slug
         self.assertEqual(self.plugin.slug, '')

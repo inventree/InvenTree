@@ -115,16 +115,16 @@ function supplierPartFields() {
 
     return {
         part: {},
-        supplier: {},
-        SKU: {
-            icon: 'fa-hashtag',
-        },
         manufacturer_part: {
             filters: {
                 part_detail: true,
                 manufacturer_detail: true,
             },
             auto_fill: true,
+        },
+        supplier: {},
+        SKU: {
+            icon: 'fa-hashtag',
         },
         description: {},
         link: {

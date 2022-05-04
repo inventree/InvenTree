@@ -5,7 +5,7 @@ import logging
 
 from django.apps import AppConfig
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from maintenance_mode.core import set_maintenance_mode
 
@@ -35,7 +35,7 @@ class PluginAppConfig(AppConfig):
                         if InvenTreeSetting.get_setting('PLUGIN_ON_STARTUP', create=False):
                             # make sure all plugins are installed
                             registry.install_plugin_file()
-                    except:
+                    except:  # pragma: no cover
                         pass
 
                     # get plugins and init them

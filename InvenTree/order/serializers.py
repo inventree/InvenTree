@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 from decimal import Decimal
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models, transaction
@@ -40,7 +40,64 @@ import stock.serializers
 from users.serializers import OwnerSerializer
 
 
-class POSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSerializer):
+class AbstractOrderSerializer(serializers.Serializer):
+    """
+    Abstract field definitions for OrderSerializers
+    """
+    total_price = InvenTreeMoneySerializer(
+        source='get_total_price',
+        allow_null=True,
+        read_only=True,
+    )
+
+    total_price_string = serializers.CharField(source='get_total_price', read_only=True)
+
+
+class AbstractExtraLineSerializer(serializers.Serializer):
+    """ Abstract Serializer for a ExtraLine object """
+    def __init__(self, *args, **kwargs):
+
+        order_detail = kwargs.pop('order_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        if order_detail is not True:
+            self.fields.pop('order_detail')
+
+    quantity = serializers.FloatField()
+
+    price = InvenTreeMoneySerializer(
+        allow_null=True
+    )
+
+    price_string = serializers.CharField(source='price', read_only=True)
+
+    price_currency = serializers.ChoiceField(
+        choices=currency_code_mappings(),
+        help_text=_('Price currency'),
+    )
+
+
+class AbstractExtraLineMeta:
+    """
+    Abstract Meta for ExtraLine
+    """
+
+    fields = [
+        'pk',
+        'quantity',
+        'reference',
+        'notes',
+        'context',
+        'order',
+        'order_detail',
+        'price',
+        'price_currency',
+        'price_string',
+    ]
+
+
+class PurchaseOrderSerializer(AbstractOrderSerializer, ReferenceIndexingSerializerMixin, InvenTreeModelSerializer):
     """ Serializer for a PurchaseOrder object """
 
     def __init__(self, *args, **kwargs):
@@ -110,6 +167,8 @@ class POSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSerializer):
             'status_text',
             'target_date',
             'notes',
+            'total_price',
+            'total_price_string',
         ]
 
         read_only_fields = [
@@ -120,7 +179,7 @@ class POSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSerializer):
         ]
 
 
-class POLineItemSerializer(InvenTreeModelSerializer):
+class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -164,14 +223,30 @@ class POLineItemSerializer(InvenTreeModelSerializer):
         if order_detail is not True:
             self.fields.pop('order_detail')
 
-    quantity = serializers.FloatField(default=1)
-    received = serializers.FloatField(default=0)
+    quantity = serializers.FloatField(min_value=0, required=True)
+
+    def validate_quantity(self, quantity):
+
+        if quantity <= 0:
+            raise ValidationError(_("Quantity must be greater than zero"))
+
+        return quantity
+
+    def validate_purchase_order(self, purchase_order):
+
+        if purchase_order.status not in PurchaseOrderStatus.OPEN:
+            raise ValidationError(_('Order is not open'))
+
+        return purchase_order
+
+    received = serializers.FloatField(default=0, read_only=True)
 
     overdue = serializers.BooleanField(required=False, read_only=True)
 
     total_price = serializers.FloatField(read_only=True)
 
     part_detail = PartBriefSerializer(source='get_base_part', many=False, read_only=True)
+
     supplier_part_detail = SupplierPartSerializer(source='part', many=False, read_only=True)
 
     purchase_price = InvenTreeMoneySerializer(
@@ -187,7 +262,33 @@ class POLineItemSerializer(InvenTreeModelSerializer):
         help_text=_('Purchase price currency'),
     )
 
-    order_detail = POSerializer(source='order', read_only=True, many=False)
+    order_detail = PurchaseOrderSerializer(source='order', read_only=True, many=False)
+
+    def validate(self, data):
+
+        data = super().validate(data)
+
+        supplier_part = data.get('part', None)
+        purchase_order = data.get('order', None)
+
+        if not supplier_part:
+            raise ValidationError({
+                'part': _('Supplier part must be specified'),
+            })
+
+        if not purchase_order:
+            raise ValidationError({
+                'order': _('Purchase order must be specified'),
+            })
+
+        # Check that the supplier part and purchase order match
+        if supplier_part is not None and supplier_part.supplier != purchase_order.supplier:
+            raise ValidationError({
+                'part': _('Supplier must match purchase order'),
+                'order': _('Purchase order must match supplier'),
+            })
+
+        return data
 
     class Meta:
         model = order.models.PurchaseOrderLineItem
@@ -214,7 +315,16 @@ class POLineItemSerializer(InvenTreeModelSerializer):
         ]
 
 
-class POLineItemReceiveSerializer(serializers.Serializer):
+class PurchaseOrderExtraLineSerializer(AbstractExtraLineSerializer, InvenTreeModelSerializer):
+    """ Serializer for a PurchaseOrderExtraLine object """
+
+    order_detail = PurchaseOrderSerializer(source='order', many=False, read_only=True)
+
+    class Meta(AbstractExtraLineMeta):
+        model = order.models.PurchaseOrderExtraLine
+
+
+class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
     """
     A serializer for receiving a single purchase order line item against a purchase order
     """
@@ -344,12 +454,12 @@ class POLineItemReceiveSerializer(serializers.Serializer):
         return data
 
 
-class POReceiveSerializer(serializers.Serializer):
+class PurchaseOrderReceiveSerializer(serializers.Serializer):
     """
     Serializer for receiving items against a purchase order
     """
 
-    items = POLineItemReceiveSerializer(many=True)
+    items = PurchaseOrderLineItemReceiveSerializer(many=True)
 
     location = serializers.PrimaryKeyRelatedField(
         queryset=stock.models.StockLocation.objects.all(),
@@ -444,7 +554,7 @@ class POReceiveSerializer(serializers.Serializer):
         ]
 
 
-class POAttachmentSerializer(InvenTreeAttachmentSerializer):
+class PurchaseOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
     """
     Serializers for the PurchaseOrderAttachment model
     """
@@ -467,7 +577,7 @@ class POAttachmentSerializer(InvenTreeAttachmentSerializer):
         ]
 
 
-class SalesOrderSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSerializer):
+class SalesOrderSerializer(AbstractOrderSerializer, ReferenceIndexingSerializerMixin, InvenTreeModelSerializer):
     """
     Serializers for the SalesOrder object
     """
@@ -535,6 +645,8 @@ class SalesOrderSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSeria
             'status_text',
             'shipment_date',
             'target_date',
+            'total_price',
+            'total_price_string',
         ]
 
         read_only_fields = [
@@ -612,7 +724,7 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
         ]
 
 
-class SOLineItemSerializer(InvenTreeModelSerializer):
+class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
     """ Serializer for a SalesOrderLineItem object """
 
     @staticmethod
@@ -862,7 +974,7 @@ class SalesOrderCompleteSerializer(serializers.Serializer):
         order.complete_order(user)
 
 
-class SOSerialAllocationSerializer(serializers.Serializer):
+class SalesOrderSerialAllocationSerializer(serializers.Serializer):
     """
     DRF serializer for allocation of serial numbers against a sales order / shipment
     """
@@ -1025,7 +1137,7 @@ class SOSerialAllocationSerializer(serializers.Serializer):
                 )
 
 
-class SOShipmentAllocationSerializer(serializers.Serializer):
+class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
     """
     DRF serializer for allocation of stock items against a sales order / shipment
     """
@@ -1099,7 +1211,16 @@ class SOShipmentAllocationSerializer(serializers.Serializer):
                 )
 
 
-class SOAttachmentSerializer(InvenTreeAttachmentSerializer):
+class SalesOrderExtraLineSerializer(AbstractExtraLineSerializer, InvenTreeModelSerializer):
+    """ Serializer for a SalesOrderExtraLine object """
+
+    order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
+
+    class Meta(AbstractExtraLineMeta):
+        model = order.models.SalesOrderExtraLine
+
+
+class SalesOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
     """
     Serializers for the SalesOrderAttachment model
     """

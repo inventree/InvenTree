@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 from django.db import transaction
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from django.db.models import Case, When, Value
 from django.db.models import BooleanField
@@ -387,7 +387,7 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
         default=False,
         required=False,
         label=_('Accept Incomplete Allocation'),
-        help_text=_('Complete ouputs if stock has not been fully allocated'),
+        help_text=_('Complete outputs if stock has not been fully allocated'),
     )
 
     notes = serializers.CharField(

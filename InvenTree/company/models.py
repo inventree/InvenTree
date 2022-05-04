@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 import os
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 
@@ -637,7 +637,7 @@ class SupplierPart(models.Model):
     get_price = common.models.get_price
 
     def open_orders(self):
-        """ Return a database query for PO line items for this SupplierPart,
+        """ Return a database query for PurchaseOrder line items for this SupplierPart,
         limited to purchase orders that are open / outstanding.
         """
 

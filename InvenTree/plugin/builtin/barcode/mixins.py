@@ -69,7 +69,7 @@ class BarcodeMixin:
         Default implementation returns None
         """
 
-        return None
+        return None  # pragma: no cover
 
     def getStockItemByHash(self):
         """
@@ -97,7 +97,7 @@ class BarcodeMixin:
         Default implementation returns None
         """
 
-        return None
+        return None  # pragma: no cover
 
     def renderStockLocation(self, loc):
         """
@@ -113,7 +113,7 @@ class BarcodeMixin:
         Default implementation returns None
         """
 
-        return None
+        return None  # pragma: no cover
 
     def renderPart(self, part):
         """
@@ -143,4 +143,4 @@ class BarcodeMixin:
         """
         Default implementation returns False
         """
-        return False
+        return False  # pragma: no cover

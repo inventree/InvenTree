@@ -2043,17 +2043,17 @@ function loadStockTable(table, options) {
     $('#multi-item-order').click(function() {
         var selections = $(table).bootstrapTable('getSelections');
 
-        var stock = [];
+        var parts = [];
 
         selections.forEach(function(item) {
-            stock.push(item.pk);
+            var part = item.part_detail;
+
+            if (part) {
+                parts.push(part);
+            }
         });
 
-        launchModalForm('/order/purchase-order/order-parts/', {
-            data: {
-                stock: stock,
-            },
-        });
+        orderParts(parts, {});
     });
 
     $('#multi-item-set-status').click(function() {

@@ -306,6 +306,10 @@ if DEBUG and CONFIG.get('debug_toolbar', False):  # pragma: no cover
     INSTALLED_APPS.append('debug_toolbar')
     MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
 
+# Allow secure http developer server in debug mode
+if DEBUG:
+    INSTALLED_APPS.append('sslserver')
+
 # InvenTree URL configuration
 
 # Base URL for admin pages (default="admin")

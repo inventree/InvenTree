@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 
-from django.conf.urls import url, include
+from django.urls import include, path, re_path
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -174,14 +174,14 @@ class GetAuthToken(APIView):
 
 user_urls = [
 
-    url(r'roles/?$', RoleDetails.as_view(), name='api-user-roles'),
-    url(r'token/?$', GetAuthToken.as_view(), name='api-token'),
+    re_path(r'roles/?$', RoleDetails.as_view(), name='api-user-roles'),
+    re_path(r'token/?$', GetAuthToken.as_view(), name='api-token'),
 
-    url(r'^owner/', include([
-        url(r'^(?P<pk>[0-9]+)/$', OwnerDetail.as_view(), name='api-owner-detail'),
-        url(r'^.*$', OwnerList.as_view(), name='api-owner-list'),
+    re_path(r'^owner/', include([
+        path('<int:pk>/', OwnerDetail.as_view(), name='api-owner-detail'),
+        re_path(r'^.*$', OwnerList.as_view(), name='api-owner-list'),
     ])),
 
-    url(r'^(?P<pk>[0-9]+)/?$', UserDetail.as_view(), name='user-detail'),
-    url(r'^$', UserList.as_view()),
+    re_path(r'^(?P<pk>[0-9]+)/?$', UserDetail.as_view(), name='user-detail'),
+    path('', UserList.as_view()),
 ]

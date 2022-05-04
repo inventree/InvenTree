@@ -11,7 +11,7 @@ import pathlib
 
 from django.urls.base import reverse
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 import plugin.plugin as plugin_base
 from plugin.helpers import get_git_log, GitStatus
@@ -191,7 +191,7 @@ class IntegrationPluginBase(MixinBase, plugin_base.InvenTreePluginBase):
         Path to the plugin
         """
         if self._is_package:
-            return self.__module__
+            return self.__module__  # pragma: no cover
         return pathlib.Path(self.def_path).relative_to(settings.BASE_DIR)
 
     @property

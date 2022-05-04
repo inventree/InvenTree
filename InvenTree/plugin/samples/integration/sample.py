@@ -6,8 +6,8 @@ from plugin import IntegrationPluginBase
 from plugin.mixins import AppMixin, SettingsMixin, UrlsMixin, NavigationMixin
 
 from django.http import HttpResponse
-from django.utils.translation import ugettext_lazy as _
-from django.conf.urls import url, include
+from django.utils.translation import gettext_lazy as _
+from django.urls import include, re_path
 
 
 class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixin, IntegrationPluginBase):
@@ -28,13 +28,13 @@ class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixi
 
     def setup_urls(self):
         he_urls = [
-            url(r'^he/', self.view_test, name='he'),
-            url(r'^ha/', self.view_test, name='ha'),
+            re_path(r'^he/', self.view_test, name='he'),
+            re_path(r'^ha/', self.view_test, name='ha'),
         ]
 
         return [
-            url(r'^hi/', self.view_test, name='hi'),
-            url(r'^ho/', include(he_urls), name='ho'),
+            re_path(r'^hi/', self.view_test, name='hi'),
+            re_path(r'^ho/', include(he_urls), name='ho'),
         ]
 
     SETTINGS = {

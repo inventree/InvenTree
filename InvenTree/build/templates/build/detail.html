@@ -546,14 +546,6 @@ $('#allocate-selected-items').click(function() {
     );
 });
 
-$("#btn-order-parts").click(function() {
-    launchModalForm("/order/purchase-order/order-parts/", {
-        data: {
-            build: {{ build.id }},
-        },
-    });
-});
-
 {% endif %}
 
 enableSidebar('buildorder');

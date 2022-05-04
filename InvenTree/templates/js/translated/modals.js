@@ -85,12 +85,25 @@ function createNewModal(options={}) {
 
     var modal_name = `#modal-form-${id}`;
 
+    // Callback *after* the modal has been rendered
     $(modal_name).on('shown.bs.modal', function() {
         $(modal_name + ' .modal-form-content').scrollTop(0);
 
         if (options.focus) {
             getFieldByName(modal_name, options.focus).focus();
         }
+    
+        // Steal keyboard focus
+        $(modal_name).focus();
+
+        if (options.hideCloseButton) {
+            $(modal_name).find('#modal-form-cancel').hide();
+        }
+
+        if (options.preventSubmit || options.hideSubmitButton) {
+            $(modal_name).find('#modal-form-submit').hide();
+        }
+
     });
 
     // Automatically remove the modal when it is deleted!
@@ -102,8 +115,11 @@ function createNewModal(options={}) {
     $(modal_name).on('keydown', 'input', function(event) {
         if (event.keyCode == 13) {
             event.preventDefault();
-            // Simulate a click on the 'Submit' button
-            $(modal_name).find('#modal-form-submit').click();
+
+            if (!options.preventSubmit) {
+                // Simulate a click on the 'Submit' button
+                $(modal_name).find('#modal-form-submit').click();
+            }
             
             return false;
         }
@@ -117,18 +133,7 @@ function createNewModal(options={}) {
     // Set labels based on supplied options
     modalSetTitle(modal_name, options.title || '{% trans "Form Title" %}');
     modalSetSubmitText(modal_name, options.submitText || '{% trans "Submit" %}');
-    modalSetCloseText(modal_name, options.cancelText || '{% trans "Cancel" %}');
-
-    if (options.hideSubmitButton) {
-        $(modal_name).find('#modal-form-submit').hide();
-    }
-
-    if (options.hideCloseButton) {
-        $(modal_name).find('#modal-form-cancel').hide();
-    }
-
-    // Steal keyboard focus
-    $(modal_name).focus();
+    modalSetCloseText(modal_name, options.closeText || '{% trans "Cancel" %}');
 
     // Return the "name" of the modal
     return modal_name;
@@ -274,7 +279,7 @@ function reloadFieldOptions(fieldName, options) {
             setFieldOptions(fieldName, opts);
         },
         error: function() {
-            console.log('Error GETting field options');
+            console.error('Error GETting field options');
         }
     });
 }
@@ -581,7 +586,7 @@ function showAlertDialog(title, content, options={}) {
 
     var modal = createNewModal({
         title: title,
-        cancelText: '{% trans "Close" %}',
+        closeText: '{% trans "Close" %}',
         hideSubmitButton: true,
     });
 
@@ -607,7 +612,7 @@ function showQuestionDialog(title, content, options={}) {
     var modal = createNewModal({
         title: title,
         submitText: options.accept_text || '{% trans "Accept" %}',
-        cancelText: options.cancel_text || '{% trans "Cancel" %}',
+        closeText: options.cancel_text || '{% trans "Cancel" %}',
     });
 
     modalSetContent(modal, content);
@@ -842,7 +847,7 @@ function attachFieldCallback(modal, callback) {
             // Run the callback function with the new value of the field!
             callback.action(field.val(), field);
         } else {
-            console.log(`Value changed for field ${callback.field} - ${field.val()}`);
+            console.info(`Value changed for field ${callback.field} - ${field.val()} (no callback attached)`);
         }
     });
 }
@@ -1085,8 +1090,8 @@ function launchModalForm(url, options = {}) {
                 showAlertDialog('{% trans "Error requesting form data" %}', renderErrorMessage(xhr));
             }
 
-            console.log('Modal form error: ' + xhr.status);
-            console.log('Message: ' + xhr.responseText);
+            console.error('Modal form error: ' + xhr.status);
+            console.info('Message: ' + xhr.responseText);
         }
     };
 

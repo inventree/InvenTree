@@ -6,7 +6,7 @@ Django Forms for interacting with Order objects
 from __future__ import unicode_literals
 
 from django import forms
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from InvenTree.forms import HelperForm
 from InvenTree.fields import InvenTreeMoneyField

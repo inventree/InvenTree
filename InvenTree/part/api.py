@@ -7,11 +7,11 @@ from __future__ import unicode_literals
 
 import datetime
 
-from django.conf.urls import url, include
+from django.urls import include, path, re_path
 from django.http import JsonResponse
 from django.db.models import Q, F, Count, Min, Max, Avg
 from django.db import transaction
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -1916,100 +1916,100 @@ class BomItemSubstituteDetail(generics.RetrieveUpdateDestroyAPIView):
 part_api_urls = [
 
     # Base URL for PartCategory API endpoints
-    url(r'^category/', include([
-        url(r'^tree/', CategoryTree.as_view(), name='api-part-category-tree'),
-        url(r'^parameters/', CategoryParameterList.as_view(), name='api-part-category-parameter-list'),
+    re_path(r'^category/', include([
+        re_path(r'^tree/', CategoryTree.as_view(), name='api-part-category-tree'),
+        re_path(r'^parameters/', CategoryParameterList.as_view(), name='api-part-category-parameter-list'),
 
-        url(r'^(?P<pk>\d+)/?', CategoryDetail.as_view(), name='api-part-category-detail'),
-        url(r'^$', CategoryList.as_view(), name='api-part-category-list'),
+        re_path(r'^(?P<pk>\d+)/?', CategoryDetail.as_view(), name='api-part-category-detail'),
+        path('', CategoryList.as_view(), name='api-part-category-list'),
     ])),
 
     # Base URL for PartTestTemplate API endpoints
-    url(r'^test-template/', include([
-        url(r'^(?P<pk>\d+)/', PartTestTemplateDetail.as_view(), name='api-part-test-template-detail'),
-        url(r'^$', PartTestTemplateList.as_view(), name='api-part-test-template-list'),
+    re_path(r'^test-template/', include([
+        re_path(r'^(?P<pk>\d+)/', PartTestTemplateDetail.as_view(), name='api-part-test-template-detail'),
+        path('', PartTestTemplateList.as_view(), name='api-part-test-template-list'),
     ])),
 
     # Base URL for PartAttachment API endpoints
-    url(r'^attachment/', include([
-        url(r'^(?P<pk>\d+)/', PartAttachmentDetail.as_view(), name='api-part-attachment-detail'),
-        url(r'^$', PartAttachmentList.as_view(), name='api-part-attachment-list'),
+    re_path(r'^attachment/', include([
+        re_path(r'^(?P<pk>\d+)/', PartAttachmentDetail.as_view(), name='api-part-attachment-detail'),
+        path('', PartAttachmentList.as_view(), name='api-part-attachment-list'),
     ])),
 
     # Base URL for part sale pricing
-    url(r'^sale-price/', include([
-        url(r'^(?P<pk>\d+)/', PartSalePriceDetail.as_view(), name='api-part-sale-price-detail'),
-        url(r'^.*$', PartSalePriceList.as_view(), name='api-part-sale-price-list'),
+    re_path(r'^sale-price/', include([
+        re_path(r'^(?P<pk>\d+)/', PartSalePriceDetail.as_view(), name='api-part-sale-price-detail'),
+        re_path(r'^.*$', PartSalePriceList.as_view(), name='api-part-sale-price-list'),
     ])),
 
     # Base URL for part internal pricing
-    url(r'^internal-price/', include([
-        url(r'^(?P<pk>\d+)/', PartInternalPriceDetail.as_view(), name='api-part-internal-price-detail'),
-        url(r'^.*$', PartInternalPriceList.as_view(), name='api-part-internal-price-list'),
+    re_path(r'^internal-price/', include([
+        re_path(r'^(?P<pk>\d+)/', PartInternalPriceDetail.as_view(), name='api-part-internal-price-detail'),
+        re_path(r'^.*$', PartInternalPriceList.as_view(), name='api-part-internal-price-list'),
     ])),
 
     # Base URL for PartRelated API endpoints
-    url(r'^related/', include([
-        url(r'^(?P<pk>\d+)/', PartRelatedDetail.as_view(), name='api-part-related-detail'),
-        url(r'^.*$', PartRelatedList.as_view(), name='api-part-related-list'),
+    re_path(r'^related/', include([
+        re_path(r'^(?P<pk>\d+)/', PartRelatedDetail.as_view(), name='api-part-related-detail'),
+        re_path(r'^.*$', PartRelatedList.as_view(), name='api-part-related-list'),
     ])),
 
     # Base URL for PartParameter API endpoints
-    url(r'^parameter/', include([
-        url(r'^template/$', PartParameterTemplateList.as_view(), name='api-part-parameter-template-list'),
+    re_path(r'^parameter/', include([
+        path('template/', PartParameterTemplateList.as_view(), name='api-part-parameter-template-list'),
 
-        url(r'^(?P<pk>\d+)/', PartParameterDetail.as_view(), name='api-part-parameter-detail'),
-        url(r'^.*$', PartParameterList.as_view(), name='api-part-parameter-list'),
+        re_path(r'^(?P<pk>\d+)/', PartParameterDetail.as_view(), name='api-part-parameter-detail'),
+        re_path(r'^.*$', PartParameterList.as_view(), name='api-part-parameter-list'),
     ])),
 
-    url(r'^thumbs/', include([
-        url(r'^$', PartThumbs.as_view(), name='api-part-thumbs'),
-        url(r'^(?P<pk>\d+)/?', PartThumbsUpdate.as_view(), name='api-part-thumbs-update'),
+    re_path(r'^thumbs/', include([
+        path('', PartThumbs.as_view(), name='api-part-thumbs'),
+        re_path(r'^(?P<pk>\d+)/?', PartThumbsUpdate.as_view(), name='api-part-thumbs-update'),
     ])),
 
-    url(r'^(?P<pk>\d+)/', include([
+    re_path(r'^(?P<pk>\d+)/', include([
 
         # Endpoint for extra serial number information
-        url(r'^serial-numbers/', PartSerialNumberDetail.as_view(), name='api-part-serial-number-detail'),
+        re_path(r'^serial-numbers/', PartSerialNumberDetail.as_view(), name='api-part-serial-number-detail'),
 
         # Endpoint for future scheduling information
-        url(r'^scheduling/', PartScheduling.as_view(), name='api-part-scheduling'),
+        re_path(r'^scheduling/', PartScheduling.as_view(), name='api-part-scheduling'),
 
         # Endpoint for duplicating a BOM for the specific Part
-        url(r'^bom-copy/', PartCopyBOM.as_view(), name='api-part-bom-copy'),
+        re_path(r'^bom-copy/', PartCopyBOM.as_view(), name='api-part-bom-copy'),
 
         # Endpoint for validating a BOM for the specific Part
-        url(r'^bom-validate/', PartValidateBOM.as_view(), name='api-part-bom-validate'),
+        re_path(r'^bom-validate/', PartValidateBOM.as_view(), name='api-part-bom-validate'),
 
         # Part detail endpoint
-        url(r'^.*$', PartDetail.as_view(), name='api-part-detail'),
+        re_path(r'^.*$', PartDetail.as_view(), name='api-part-detail'),
     ])),
 
-    url(r'^.*$', PartList.as_view(), name='api-part-list'),
+    re_path(r'^.*$', PartList.as_view(), name='api-part-list'),
 ]
 
 bom_api_urls = [
 
-    url(r'^substitute/', include([
+    re_path(r'^substitute/', include([
 
         # Detail view
-        url(r'^(?P<pk>\d+)/', BomItemSubstituteDetail.as_view(), name='api-bom-substitute-detail'),
+        re_path(r'^(?P<pk>\d+)/', BomItemSubstituteDetail.as_view(), name='api-bom-substitute-detail'),
 
         # Catch all
-        url(r'^.*$', BomItemSubstituteList.as_view(), name='api-bom-substitute-list'),
+        re_path(r'^.*$', BomItemSubstituteList.as_view(), name='api-bom-substitute-list'),
     ])),
 
     # BOM Item Detail
-    url(r'^(?P<pk>\d+)/', include([
-        url(r'^validate/?', BomItemValidate.as_view(), name='api-bom-item-validate'),
-        url(r'^.*$', BomDetail.as_view(), name='api-bom-item-detail'),
+    re_path(r'^(?P<pk>\d+)/', include([
+        re_path(r'^validate/?', BomItemValidate.as_view(), name='api-bom-item-validate'),
+        re_path(r'^.*$', BomDetail.as_view(), name='api-bom-item-detail'),
     ])),
 
     # API endpoint URLs for importing BOM data
-    url(r'^import/upload/', BomImportUpload.as_view(), name='api-bom-import-upload'),
-    url(r'^import/extract/', BomImportExtract.as_view(), name='api-bom-import-extract'),
-    url(r'^import/submit/', BomImportSubmit.as_view(), name='api-bom-import-submit'),
+    re_path(r'^import/upload/', BomImportUpload.as_view(), name='api-bom-import-upload'),
+    re_path(r'^import/extract/', BomImportExtract.as_view(), name='api-bom-import-extract'),
+    re_path(r'^import/submit/', BomImportSubmit.as_view(), name='api-bom-import-submit'),
 
     # Catch-all
-    url(r'^.*$', BomList.as_view(), name='api-bom-list'),
+    re_path(r'^.*$', BomList.as_view(), name='api-bom-list'),
 ]

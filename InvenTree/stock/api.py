@@ -9,11 +9,11 @@ from collections import OrderedDict
 from datetime import datetime, timedelta
 
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.conf.urls import url, include
+from django.urls import include, path, re_path
 from django.http import JsonResponse
 from django.db.models import Q, F
 from django.db import transaction
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as rest_filters
@@ -38,7 +38,7 @@ from InvenTree.filters import InvenTreeOrderingFilter
 
 from order.models import PurchaseOrder
 from order.models import SalesOrder, SalesOrderAllocation
-from order.serializers import POSerializer
+from order.serializers import PurchaseOrderSerializer
 
 from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
@@ -1315,7 +1315,7 @@ class StockTrackingList(generics.ListAPIView):
             if 'purchaseorder' in deltas:
                 try:
                     order = PurchaseOrder.objects.get(pk=deltas['purchaseorder'])
-                    serializer = POSerializer(order)
+                    serializer = PurchaseOrderSerializer(order)
                     deltas['purchaseorder_detail'] = serializer.data
                 except:
                     pass
@@ -1383,47 +1383,47 @@ class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 stock_api_urls = [
-    url(r'^location/', include([
+    re_path(r'^location/', include([
 
-        url(r'^tree/', StockLocationTree.as_view(), name='api-location-tree'),
+        re_path(r'^tree/', StockLocationTree.as_view(), name='api-location-tree'),
 
-        url(r'^(?P<pk>\d+)/', LocationDetail.as_view(), name='api-location-detail'),
-        url(r'^.*$', StockLocationList.as_view(), name='api-location-list'),
+        re_path(r'^(?P<pk>\d+)/', LocationDetail.as_view(), name='api-location-detail'),
+        re_path(r'^.*$', StockLocationList.as_view(), name='api-location-list'),
     ])),
 
     # Endpoints for bulk stock adjustment actions
-    url(r'^count/', StockCount.as_view(), name='api-stock-count'),
-    url(r'^add/', StockAdd.as_view(), name='api-stock-add'),
-    url(r'^remove/', StockRemove.as_view(), name='api-stock-remove'),
-    url(r'^transfer/', StockTransfer.as_view(), name='api-stock-transfer'),
-    url(r'^assign/', StockAssign.as_view(), name='api-stock-assign'),
-    url(r'^merge/', StockMerge.as_view(), name='api-stock-merge'),
+    re_path(r'^count/', StockCount.as_view(), name='api-stock-count'),
+    re_path(r'^add/', StockAdd.as_view(), name='api-stock-add'),
+    re_path(r'^remove/', StockRemove.as_view(), name='api-stock-remove'),
+    re_path(r'^transfer/', StockTransfer.as_view(), name='api-stock-transfer'),
+    re_path(r'^assign/', StockAssign.as_view(), name='api-stock-assign'),
+    re_path(r'^merge/', StockMerge.as_view(), name='api-stock-merge'),
 
     # StockItemAttachment API endpoints
-    url(r'^attachment/', include([
-        url(r'^(?P<pk>\d+)/', StockAttachmentDetail.as_view(), name='api-stock-attachment-detail'),
-        url(r'^$', StockAttachmentList.as_view(), name='api-stock-attachment-list'),
+    re_path(r'^attachment/', include([
+        re_path(r'^(?P<pk>\d+)/', StockAttachmentDetail.as_view(), name='api-stock-attachment-detail'),
+        path('', StockAttachmentList.as_view(), name='api-stock-attachment-list'),
     ])),
 
     # StockItemTestResult API endpoints
-    url(r'^test/', include([
-        url(r'^(?P<pk>\d+)/', StockItemTestResultDetail.as_view(), name='api-stock-test-result-detail'),
-        url(r'^.*$', StockItemTestResultList.as_view(), name='api-stock-test-result-list'),
+    re_path(r'^test/', include([
+        re_path(r'^(?P<pk>\d+)/', StockItemTestResultDetail.as_view(), name='api-stock-test-result-detail'),
+        re_path(r'^.*$', StockItemTestResultList.as_view(), name='api-stock-test-result-list'),
     ])),
 
     # StockItemTracking API endpoints
-    url(r'^track/', include([
-        url(r'^(?P<pk>\d+)/', StockTrackingDetail.as_view(), name='api-stock-tracking-detail'),
-        url(r'^.*$', StockTrackingList.as_view(), name='api-stock-tracking-list'),
+    re_path(r'^track/', include([
+        re_path(r'^(?P<pk>\d+)/', StockTrackingDetail.as_view(), name='api-stock-tracking-detail'),
+        re_path(r'^.*$', StockTrackingList.as_view(), name='api-stock-tracking-list'),
     ])),
 
     # Detail views for a single stock item
-    url(r'^(?P<pk>\d+)/', include([
-        url(r'^serialize/', StockItemSerialize.as_view(), name='api-stock-item-serialize'),
-        url(r'^install/', StockItemInstall.as_view(), name='api-stock-item-install'),
-        url(r'^.*$', StockDetail.as_view(), name='api-stock-detail'),
+    re_path(r'^(?P<pk>\d+)/', include([
+        re_path(r'^serialize/', StockItemSerialize.as_view(), name='api-stock-item-serialize'),
+        re_path(r'^install/', StockItemInstall.as_view(), name='api-stock-item-install'),
+        re_path(r'^.*$', StockDetail.as_view(), name='api-stock-detail'),
     ])),
 
     # Anything else
-    url(r'^.*$', StockList.as_view(), name='api-stock-list'),
+    re_path(r'^.*$', StockList.as_view(), name='api-stock-list'),
 ]
