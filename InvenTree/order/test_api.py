@@ -238,6 +238,98 @@ class PurchaseOrderTest(OrderTest):
             },
             expected_code=201
         )
+    
+    def test_po_cancel(self):
+        """
+        Test the PurchaseOrderCancel API endpoint
+        """
+
+        po = models.PurchaseOrder.objects.get(pk=1)
+
+        self.assertEqual(po.status, PurchaseOrderStatus.PENDING)
+
+        url = reverse('api-po-cancel', kwargs={'pk': po.pk})
+
+        # Try to cancel the PO, but without reqiured permissions
+        self.post(
+            url,
+            {},
+            expected_code=403,
+        )
+
+        self.assignRole('purchase_order.add')
+
+        self.post(
+            url,
+            {},
+            expected_code=201,
+        )
+
+        po.refresh_from_db()
+
+        self.assertEqual(po.status, PurchaseOrderStatus.CANCELLED)
+
+        # Try to cancel again (should fail)
+        self.post(
+            url,
+            {},
+            expected_code=400,
+        )
+
+    def test_po_complete(self):
+        """ Test the PurchaseOrderComplete API endpoint """
+
+        po = models.PurchaseOrder.objects.get(pk=3)
+
+        url = reverse('api-po-complete', kwargs={'pk': po.pk})
+
+        self.assertEqual(po.status, PurchaseOrderStatus.PLACED)
+
+        # Try to complete the PO, without required permissions
+        response = self.post(
+            url,
+            {},
+            expected_code=403,
+        )
+
+        self.assignRole('purchase_order.add')
+
+        response = self.post(
+            url,
+            {},
+            expected_code=201,
+        )
+
+        po.refresh_from_db()
+
+        self.assertEqual(po.status, PurchaseOrderStatus.COMPLETE)
+
+
+    def test_po_issue(self):
+        """ Test the PurchaseOrderIssue API endpoint """
+
+        po = models.PurchaseOrder.objects.get(pk=2)
+
+        url = reverse('api-po-issue', kwargs={'pk': po.pk})
+
+        # Try to issue the PO, without required permissions
+        response = self.post(
+            url,
+            {},
+            expected_code=403,
+        )
+
+        self.assignRole('purchase_order.add')
+
+        response = self.post(
+            url,
+            {},
+            expected_code=201,
+        )
+
+        po.refresh_from_db()
+
+        self.assertEqual(po.status, PurchaseOrderStatus.PLACED)
 
 
 class PurchaseOrderReceiveTest(OrderTest):
