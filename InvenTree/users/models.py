@@ -132,7 +132,7 @@ class RuleSet(models.Model):
             'order_purchaseorder',
             'order_purchaseorderattachment',
             'order_purchaseorderlineitem',
-            'order_purchaseorderadditionallineitem',
+            'order_purchaseorderextraline',
             'company_supplierpart',
             'company_manufacturerpart',
             'company_manufacturerpartparameter',
@@ -143,7 +143,7 @@ class RuleSet(models.Model):
             'order_salesorderallocation',
             'order_salesorderattachment',
             'order_salesorderlineitem',
-            'order_salesorderadditionallineitem',
+            'order_salesorderextraline',
             'order_salesordershipment',
         ]
     }
@@ -564,14 +564,14 @@ class Owner(models.Model):
 
         try:
             owners.append(cls.objects.get(owner_id=user.pk, owner_type=user_type))
-        except:
+        except:  # pragma: no cover
             pass
 
         for group in user.groups.all():
             try:
                 owner = cls.objects.get(owner_id=group.pk, owner_type=group_type)
                 owners.append(owner)
-            except:
+            except:  # pragma: no cover
                 pass
 
         return owners

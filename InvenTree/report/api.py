@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext_lazy as _
-from django.conf.urls import url, include
+from django.utils.translation import gettext_lazy as _
+from django.urls import include, path, re_path
 from django.core.exceptions import ValidationError, FieldError
 from django.http import HttpResponse
 
@@ -730,62 +730,62 @@ class SalesOrderReportPrint(generics.RetrieveAPIView, OrderReportMixin, ReportPr
 report_api_urls = [
 
     # Purchase order reports
-    url(r'po/', include([
+    re_path(r'po/', include([
         # Detail views
-        url(r'^(?P<pk>\d+)/', include([
-            url(r'print/', PurchaseOrderReportPrint.as_view(), name='api-po-report-print'),
-            url(r'^$', PurchaseOrderReportDetail.as_view(), name='api-po-report-detail'),
+        re_path(r'^(?P<pk>\d+)/', include([
+            re_path(r'print/', PurchaseOrderReportPrint.as_view(), name='api-po-report-print'),
+            path('', PurchaseOrderReportDetail.as_view(), name='api-po-report-detail'),
         ])),
 
         # List view
-        url(r'^$', PurchaseOrderReportList.as_view(), name='api-po-report-list'),
+        path('', PurchaseOrderReportList.as_view(), name='api-po-report-list'),
     ])),
 
     # Sales order reports
-    url(r'so/', include([
+    re_path(r'so/', include([
         # Detail views
-        url(r'^(?P<pk>\d+)/', include([
-            url(r'print/', SalesOrderReportPrint.as_view(), name='api-so-report-print'),
-            url(r'^$', SalesOrderReportDetail.as_view(), name='api-so-report-detail'),
+        re_path(r'^(?P<pk>\d+)/', include([
+            re_path(r'print/', SalesOrderReportPrint.as_view(), name='api-so-report-print'),
+            path('', SalesOrderReportDetail.as_view(), name='api-so-report-detail'),
         ])),
 
-        url(r'^$', SalesOrderReportList.as_view(), name='api-so-report-list'),
+        path('', SalesOrderReportList.as_view(), name='api-so-report-list'),
     ])),
 
     # Build reports
-    url(r'build/', include([
+    re_path(r'build/', include([
         # Detail views
-        url(r'^(?P<pk>\d+)/', include([
-            url(r'print/?', BuildReportPrint.as_view(), name='api-build-report-print'),
-            url(r'^.$', BuildReportDetail.as_view(), name='api-build-report-detail'),
+        re_path(r'^(?P<pk>\d+)/', include([
+            re_path(r'print/?', BuildReportPrint.as_view(), name='api-build-report-print'),
+            re_path(r'^.$', BuildReportDetail.as_view(), name='api-build-report-detail'),
         ])),
 
         # List view
-        url(r'^.*$', BuildReportList.as_view(), name='api-build-report-list'),
+        re_path(r'^.*$', BuildReportList.as_view(), name='api-build-report-list'),
     ])),
 
     # Bill of Material reports
-    url(r'bom/', include([
+    re_path(r'bom/', include([
 
         # Detail views
-        url(r'^(?P<pk>\d+)/', include([
-            url(r'print/?', BOMReportPrint.as_view(), name='api-bom-report-print'),
-            url(r'^.*$', BOMReportDetail.as_view(), name='api-bom-report-detail'),
+        re_path(r'^(?P<pk>\d+)/', include([
+            re_path(r'print/?', BOMReportPrint.as_view(), name='api-bom-report-print'),
+            re_path(r'^.*$', BOMReportDetail.as_view(), name='api-bom-report-detail'),
         ])),
 
         # List view
-        url(r'^.*$', BOMReportList.as_view(), name='api-bom-report-list'),
+        re_path(r'^.*$', BOMReportList.as_view(), name='api-bom-report-list'),
     ])),
 
     # Stock item test reports
-    url(r'test/', include([
+    re_path(r'test/', include([
         # Detail views
-        url(r'^(?P<pk>\d+)/', include([
-            url(r'print/?', StockItemTestReportPrint.as_view(), name='api-stockitem-testreport-print'),
-            url(r'^.*$', StockItemTestReportDetail.as_view(), name='api-stockitem-testreport-detail'),
+        re_path(r'^(?P<pk>\d+)/', include([
+            re_path(r'print/?', StockItemTestReportPrint.as_view(), name='api-stockitem-testreport-print'),
+            re_path(r'^.*$', StockItemTestReportDetail.as_view(), name='api-stockitem-testreport-detail'),
         ])),
 
         # List view
-        url(r'^.*$', StockItemTestReportList.as_view(), name='api-stockitem-testreport-list'),
+        re_path(r'^.*$', StockItemTestReportList.as_view(), name='api-stockitem-testreport-list'),
     ])),
 ]

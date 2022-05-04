@@ -536,12 +536,19 @@
     {% endif %}
 
     $("#part-order").click(function() {
-        launchModalForm("{% url 'order-parts' %}", {
-            data: {
-                part: {{ part.id }},
-            },
-            reload: true,
-        });
+
+        inventreeGet(
+            '{% url "api-part-detail" part.pk %}',
+            {},
+            {
+                success: function(part) {
+                    orderParts(
+                        [part],
+                        {}
+                    );
+                }
+            }
+        );
     });
 
     {% if roles.part.add %}

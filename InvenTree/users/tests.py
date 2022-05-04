@@ -197,6 +197,10 @@ class OwnerModelTest(TestCase):
         self.assertTrue(user_as_owner in related_owners)
         self.assertTrue(group_as_owner in related_owners)
 
+        # Check owner matching
+        owners = Owner.get_owners_matching_user(self.user)
+        self.assertEqual(owners, [user_as_owner, group_as_owner])
+
         # Delete user and verify owner was deleted too
         self.user.delete()
         user_as_owner = Owner.get_owner(self.user)

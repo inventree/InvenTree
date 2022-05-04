@@ -39,7 +39,7 @@ function downloadTableData(table, opts={}) {
     var url = table_options.url;
 
     if (!url) {
-        console.log('Error: downloadTableData could not find "url" parameter.');
+        console.error('downloadTableData could not find "url" parameter.');
     }
 
     var query_params = table_options.query_params || {};
@@ -343,7 +343,7 @@ $.fn.inventreeTable = function(options) {
                 }
             });
         } else {
-            console.log(`Could not get list of visible columns for table '${tableName}'`);
+            console.error(`Could not get list of visible columns for table '${tableName}'`);
         }
     }
 

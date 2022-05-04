@@ -1,4 +1,3 @@
-
 import json
 from test.support import EnvironmentVarGuard
 
@@ -186,7 +185,7 @@ class TestDownloadFile(TestCase):
 
     def test_download(self):
         helpers.DownloadFile("hello world", "out.txt")
-        helpers.DownloadFile(bytes("hello world".encode("utf8")), "out.bin")
+        helpers.DownloadFile(bytes(b"hello world"), "out.bin")
 
 
 class TestMPTT(TestCase):

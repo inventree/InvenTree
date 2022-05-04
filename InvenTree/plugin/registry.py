@@ -17,7 +17,7 @@ from importlib import reload
 from django.apps import apps
 from django.conf import settings
 from django.db.utils import OperationalError, ProgrammingError, IntegrityError
-from django.conf.urls import url, include
+from django.urls import include, re_path
 from django.urls import clear_url_caches
 from django.contrib import admin
 from django.utils.text import slugify
@@ -283,7 +283,7 @@ class PluginsRegistry:
                 if not settings.PLUGIN_TESTING:
                     raise error  # pragma: no cover
                 plugin_db_setting = None
-            except (IntegrityError) as error:
+            except (IntegrityError) as error:  # pragma: no cover
                 logger.error(f"Error initializing plugin: {error}")
 
             # Always activate if testing
@@ -322,7 +322,7 @@ class PluginsRegistry:
                 self.plugins[plugin.slug] = plugin
             else:
                 # save for later reference
-                self.plugins_inactive[plug_key] = plugin_db_setting
+                self.plugins_inactive[plug_key] = plugin_db_setting  # pragma: no cover
 
     def _activate_plugins(self, force_reload=False):
         """
@@ -411,7 +411,7 @@ class PluginsRegistry:
                     deleted_count += 1
 
             if deleted_count > 0:
-                logger.info(f"Removed {deleted_count} old scheduled tasks")
+                logger.info(f"Removed {deleted_count} old scheduled tasks")  # pragma: no cover
         except (ProgrammingError, OperationalError):
             # Database might not yet be ready
             logger.warning("activate_integration_schedule failed, database not ready")
@@ -570,12 +570,12 @@ class PluginsRegistry:
         for index, a in enumerate(urlpatterns):
             if hasattr(a, 'app_name'):
                 if a.app_name == 'admin':
-                    urlpatterns[index] = url(r'^admin/', admin.site.urls, name='inventree-admin')
+                    urlpatterns[index] = re_path(r'^admin/', admin.site.urls, name='inventree-admin')
                 elif a.app_name == 'plugin':
                     urlpatterns[index] = get_plugin_urls()
 
         # replace frontendpatterns
-        global_pattern[0] = url('', include(urlpatterns))
+        global_pattern[0] = re_path('', include(urlpatterns))
         clear_url_caches()
 
     def _reload_apps(self, force_reload: bool = False):

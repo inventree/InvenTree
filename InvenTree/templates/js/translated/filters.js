@@ -62,7 +62,7 @@ function loadTableFilters(tableKey) {
             if (f.length == 2) {
                 filters[f[0]] = f[1];
             } else {
-                console.log(`Improperly formatted filter: ${item}`);
+                console.warn(`Improperly formatted filter: ${item}`);
             }
         }
     });
@@ -274,7 +274,7 @@ function setupFilterList(tableKey, table, target, options={}) {
     var element = $(target);
 
     if (!element || !element.exists()) {
-        console.log(`WARNING: setupFilterList could not find target '${target}'`);
+        console.warn(`setupFilterList could not find target '${target}'`);
         return;
     }
 

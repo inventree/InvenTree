@@ -17,7 +17,7 @@ from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.urls import reverse
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from markdownx.models import MarkdownxField
 from mptt.models import TreeForeignKey
@@ -49,7 +49,7 @@ def get_next_po_number():
 
     order = PurchaseOrder.objects.exclude(reference=None).last()
 
-    attempts = set([order.reference])
+    attempts = {order.reference}
 
     reference = order.reference
 
@@ -78,7 +78,7 @@ def get_next_so_number():
 
     order = SalesOrder.objects.exclude(reference=None).last()
 
-    attempts = set([order.reference])
+    attempts = {order.reference}
 
     reference = order.reference
 
@@ -161,10 +161,10 @@ class Order(ReferenceIndexingMixin):
         # gather name reference
         price_ref = 'sale_price' if isinstance(self, SalesOrder) else 'purchase_price'
         # order items
-        total += sum([a.quantity * convert_money(getattr(a, price_ref), target_currency) for a in self.lines.all() if getattr(a, price_ref)])
+        total += sum(a.quantity * convert_money(getattr(a, price_ref), target_currency) for a in self.lines.all() if getattr(a, price_ref))
 
-        # additional lines
-        total += sum([a.quantity * convert_money(a.sale_price, target_currency) for a in self.additional_lines.all() if a.sale_price])
+        # extra lines
+        total += sum(a.quantity * convert_money(a.price, target_currency) for a in self.extra_lines.all() if a.price)
 
         # set decimal-places
         total.decimal_places = 4
@@ -228,7 +228,7 @@ class PurchaseOrder(Order):
 
         prefix = getSetting('PURCHASEORDER_REFERENCE_PREFIX')
 
-        return f"{prefix}{self.reference} - {self.supplier.name}"
+        return f"{prefix}{self.reference} - {self.supplier.name if self.supplier else _('deleted')}"
 
     reference = models.CharField(
         unique=True,
@@ -243,7 +243,8 @@ class PurchaseOrder(Order):
                                          help_text=_('Purchase order status'))
 
     supplier = models.ForeignKey(
-        Company, on_delete=models.CASCADE,
+        Company, on_delete=models.SET_NULL,
+        null=True,
         limit_choices_to={
             'is_supplier': True,
         },
@@ -575,7 +576,7 @@ class SalesOrder(Order):
 
         prefix = getSetting('SALESORDER_REFERENCE_PREFIX')
 
-        return f"{prefix}{self.reference} - {self.customer.name}"
+        return f"{prefix}{self.reference} - {self.customer.name if self.customer else _('deleted')}"
 
     def get_absolute_url(self):
         return reverse('so-detail', kwargs={'pk': self.id})
@@ -875,11 +876,11 @@ class OrderLineItem(models.Model):
     )
 
 
-class OrderAdditionalLineItem(OrderLineItem):
+class OrderExtraLine(OrderLineItem):
     """
-    Abstract Model for a single AdditionalLineItem in a Order
+    Abstract Model for a single ExtraLine in a Order
     Attributes:
-        sale_price: The unit sale price for this OrderLineItem
+        price: The unit sale price for this OrderLineItem
     """
 
     class Meta:
@@ -887,18 +888,24 @@ class OrderAdditionalLineItem(OrderLineItem):
         unique_together = [
         ]
 
-    sale_price = InvenTreeModelMoneyField(
+    context = models.JSONField(
+        blank=True, null=True,
+        verbose_name=_('Context'),
+        help_text=_('Additional context for this line'),
+    )
+
+    price = InvenTreeModelMoneyField(
         max_digits=19,
         decimal_places=4,
         null=True, blank=True,
-        verbose_name=_('Sale Price'),
-        help_text=_('Unit sale price'),
+        verbose_name=_('Price'),
+        help_text=_('Unit price'),
     )
 
-    def sale_price_converted(self):
-        return convert_money(self.sale_price, currency_code_default())
+    def price_converted(self):
+        return convert_money(self.price, currency_code_default())
 
-    def sale_price_converted_currency(self):
+    def price_converted_currency(self):
         return currency_code_default()
 
 
@@ -907,7 +914,6 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     Attributes:
         order: Reference to a PurchaseOrder object
-
     """
 
     class Meta:
@@ -933,7 +939,7 @@ class PurchaseOrderLineItem(OrderLineItem):
         return "{n} x {part} from {supplier} (for {po})".format(
             n=decimal2string(self.quantity),
             part=self.part.SKU if self.part else 'unknown part',
-            supplier=self.order.supplier.name,
+            supplier=self.order.supplier.name if self.order.supplier else _('deleted'),
             po=self.order)
 
     order = models.ForeignKey(
@@ -954,11 +960,9 @@ class PurchaseOrderLineItem(OrderLineItem):
         else:
             return self.part.part
 
-    # TODO - Function callback for when the SupplierPart is deleted?
-
     part = models.ForeignKey(
         SupplierPart, on_delete=models.SET_NULL,
-        blank=True, null=True,
+        blank=False, null=True,
         related_name='purchase_order_line_items',
         verbose_name=_('Part'),
         help_text=_("Supplier part"),
@@ -1011,19 +1015,19 @@ class PurchaseOrderLineItem(OrderLineItem):
         return max(r, 0)
 
 
-class PurchaseOrderAdditionalLineItem(OrderAdditionalLineItem):
+class PurchaseOrderExtraLine(OrderExtraLine):
     """
-    Model for a single AdditionalLineItem in a PurchaseOrder
+    Model for a single ExtraLine in a PurchaseOrder
     Attributes:
-        order: Link to the PurchaseOrder that this line item belongs to
-        title: title of line item
-        sale_price: The unit sale price for this OrderLineItem
+        order: Link to the PurchaseOrder that this line belongs to
+        title: title of line
+        price: The unit price for this OrderLine
     """
     @staticmethod
     def get_api_url():
-        return reverse('api-po-additional-line-list')
+        return reverse('api-po-extra-line-list')
 
-    order = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, related_name='additional_lines', verbose_name=_('Order'), help_text=_('Purchase Order'))
+    order = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, related_name='extra_lines', verbose_name=_('Order'), help_text=_('Purchase Order'))
 
 
 class SalesOrderLineItem(OrderLineItem):
@@ -1229,19 +1233,19 @@ class SalesOrderShipment(models.Model):
         trigger_event('salesordershipment.completed', id=self.pk)
 
 
-class SalesOrderAdditionalLineItem(OrderAdditionalLineItem):
+class SalesOrderExtraLine(OrderExtraLine):
     """
-    Model for a single AdditionalLineItem in a SalesOrder
+    Model for a single ExtraLine in a SalesOrder
     Attributes:
-        order: Link to the SalesOrder that this line item belongs to
-        title: title of line item
-        sale_price: The unit sale price for this OrderLineItem
+        order: Link to the SalesOrder that this line belongs to
+        title: title of line
+        price: The unit price for this OrderLine
     """
     @staticmethod
     def get_api_url():
-        return reverse('api-so-additional-line-list')
+        return reverse('api-so-extra-line-list')
 
-    order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='additional_lines', verbose_name=_('Order'), help_text=_('Sales Order'))
+    order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='extra_lines', verbose_name=_('Order'), help_text=_('Sales Order'))
 
 
 class SalesOrderAllocation(models.Model):

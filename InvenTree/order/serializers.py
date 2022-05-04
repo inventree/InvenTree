@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 from decimal import Decimal
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models, transaction
@@ -53,8 +53,8 @@ class AbstractOrderSerializer(serializers.Serializer):
     total_price_string = serializers.CharField(source='get_total_price', read_only=True)
 
 
-class AbstractAdditionalLineItemSerializer(serializers.Serializer):
-    """ Abstract Serializer for a AdditionalLineItem object """
+class AbstractExtraLineSerializer(serializers.Serializer):
+    """ Abstract Serializer for a ExtraLine object """
     def __init__(self, *args, **kwargs):
 
         order_detail = kwargs.pop('order_detail', False)
@@ -66,21 +66,21 @@ class AbstractAdditionalLineItemSerializer(serializers.Serializer):
 
     quantity = serializers.FloatField()
 
-    sale_price = InvenTreeMoneySerializer(
+    price = InvenTreeMoneySerializer(
         allow_null=True
     )
 
-    sale_price_string = serializers.CharField(source='sale_price', read_only=True)
+    price_string = serializers.CharField(source='price', read_only=True)
 
-    sale_price_currency = serializers.ChoiceField(
+    price_currency = serializers.ChoiceField(
         choices=currency_code_mappings(),
-        help_text=_('Sale price currency'),
+        help_text=_('Price currency'),
     )
 
 
-class AbstractAdditionalLineItemMeta:
+class AbstractExtraLineMeta:
     """
-    Abstract Meta for LineItem
+    Abstract Meta for ExtraLine
     """
 
     fields = [
@@ -88,11 +88,12 @@ class AbstractAdditionalLineItemMeta:
         'quantity',
         'reference',
         'notes',
+        'context',
         'order',
         'order_detail',
-        'sale_price',
-        'sale_price_currency',
-        'sale_price_string',
+        'price',
+        'price_currency',
+        'price_string',
     ]
 
 
@@ -222,14 +223,30 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
         if order_detail is not True:
             self.fields.pop('order_detail')
 
-    quantity = serializers.FloatField(default=1)
-    received = serializers.FloatField(default=0)
+    quantity = serializers.FloatField(min_value=0, required=True)
+
+    def validate_quantity(self, quantity):
+
+        if quantity <= 0:
+            raise ValidationError(_("Quantity must be greater than zero"))
+
+        return quantity
+
+    def validate_purchase_order(self, purchase_order):
+
+        if purchase_order.status not in PurchaseOrderStatus.OPEN:
+            raise ValidationError(_('Order is not open'))
+
+        return purchase_order
+
+    received = serializers.FloatField(default=0, read_only=True)
 
     overdue = serializers.BooleanField(required=False, read_only=True)
 
     total_price = serializers.FloatField(read_only=True)
 
     part_detail = PartBriefSerializer(source='get_base_part', many=False, read_only=True)
+
     supplier_part_detail = SupplierPartSerializer(source='part', many=False, read_only=True)
 
     purchase_price = InvenTreeMoneySerializer(
@@ -246,6 +263,32 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
     )
 
     order_detail = PurchaseOrderSerializer(source='order', read_only=True, many=False)
+
+    def validate(self, data):
+
+        data = super().validate(data)
+
+        supplier_part = data.get('part', None)
+        purchase_order = data.get('order', None)
+
+        if not supplier_part:
+            raise ValidationError({
+                'part': _('Supplier part must be specified'),
+            })
+
+        if not purchase_order:
+            raise ValidationError({
+                'order': _('Purchase order must be specified'),
+            })
+
+        # Check that the supplier part and purchase order match
+        if supplier_part is not None and supplier_part.supplier != purchase_order.supplier:
+            raise ValidationError({
+                'part': _('Supplier must match purchase order'),
+                'order': _('Purchase order must match supplier'),
+            })
+
+        return data
 
     class Meta:
         model = order.models.PurchaseOrderLineItem
@@ -272,13 +315,13 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
         ]
 
 
-class PurchaseOrderAdditionalLineItemSerializer(AbstractAdditionalLineItemSerializer, InvenTreeModelSerializer):
-    """ Serializer for a PurchaseOrderAdditionalLineItem object """
+class PurchaseOrderExtraLineSerializer(AbstractExtraLineSerializer, InvenTreeModelSerializer):
+    """ Serializer for a PurchaseOrderExtraLine object """
 
     order_detail = PurchaseOrderSerializer(source='order', many=False, read_only=True)
 
-    class Meta(AbstractAdditionalLineItemMeta):
-        model = order.models.PurchaseOrderAdditionalLineItem
+    class Meta(AbstractExtraLineMeta):
+        model = order.models.PurchaseOrderExtraLine
 
 
 class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
@@ -1168,13 +1211,13 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
                 )
 
 
-class SalesOrderAdditionalLineItemSerializer(AbstractAdditionalLineItemSerializer, InvenTreeModelSerializer):
-    """ Serializer for a SalesOrderAdditionalLineItem object """
+class SalesOrderExtraLineSerializer(AbstractExtraLineSerializer, InvenTreeModelSerializer):
+    """ Serializer for a SalesOrderExtraLine object """
 
     order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
 
-    class Meta(AbstractAdditionalLineItemMeta):
-        model = order.models.SalesOrderAdditionalLineItem
+    class Meta(AbstractExtraLineMeta):
+        model = order.models.SalesOrderExtraLine
 
 
 class SalesOrderAttachmentSerializer(InvenTreeAttachmentSerializer):

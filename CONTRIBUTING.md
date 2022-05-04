@@ -17,7 +17,7 @@ The HEAD of the "main" or "master" branch of InvenTree represents the current "l
 
 **No pushing to master:** New featues must be submitted as a pull request from a separate branch (one branch per feature).
 
-#### Feature Branches
+### Feature Branches
 
 Feature branches should be branched *from* the *master* branch.
 
@@ -43,6 +43,31 @@ The HEAD of the "stable" branch represents the latest stable release code.
 - If a bug is discovered in a tagged release version of InvenTree, a "bugfix" or "hotfix" branch should be made *from* that tagged release
 - When approved, the branch is merged back *into* stable, with an incremented PATCH number (e.g. 0.4.1 -> 0.4.2)
 - The bugfix *must* also be cherry picked into the *master* branch.
+
+## Environment
+### Target version
+We are currently targeting:
+| Name | Minimum version |
+|---|---|
+| Python | 3.9 |
+| Django | 3.2 |
+
+### Auto creating updates
+The following tools can be used to auto-upgrade syntax that was depreciated in new versions:
+```bash
+pip install pyupgrade
+pip install django-upgrade
+```
+
+To update the codebase run the following script.
+```bash
+pyupgrade `find . -name "*.py"`
+django-upgrade --target-version 3.2 `find . -name "*.py"`
+```
+
+## Credits
+If you add any new dependencies / libraries, they need to be added to [the docs](https://github.com/inventree/inventree-docs/blob/master/docs/credits.md). Please try to do that as timely as possible.
+
 
 ## Migration Files
 
@@ -100,3 +125,40 @@ HTML and javascript files are passed through the django templating engine. Trans
 
 <span>{% trans "This string will be translated" %} - this string will not!</span>
 ```
+
+## Github use
+### Tags
+The tags describe issues and PRs in multiple areas:
+| Area | Name | Description |
+|---|---|---|
+| Type Labels |  |  |
+|  | bug | Identifies a bug which needs to be addressed |
+|  | dependency | Relates to a project dependency |
+|  | duplicate | Duplicate of another issue or PR |
+|  | enhancement | This is an suggested enhancement or new feature |
+|  | help wanted | Assistance required |
+|  | invalid | This issue or PR is considered invalid |
+|  | inactive | Indicates lack of activity |
+|  | question | This is a question |
+|  | roadmap | This is a roadmap feature with no immediate plans for implementation |
+|  | security | Relates to a security issue |
+|  | starter | Good issue for a developer new to the project |
+|  | wontfix | No work will be done against this issue or PR |
+| Feature Labels |  |  |
+|  | API | Relates to the API |
+|  | barcode | Barcode scanning and integration |
+|  | build | Build orders |
+|  | importer | Data importing and processing |
+|  | order | Purchase order and sales orders |
+|  | part | Parts |
+|  | plugin | Plugin ecosystem |
+|  | pricing | Pricing functionality |
+|  | report | Report generation |
+|  | stock | Stock item management |
+|  | user interface | User interface |
+| Ecosystem Labels |  |  |
+|  | demo | Relates to the InvenTree demo server or dataset |
+|  | docker | Docker / docker-compose |
+|  | CI | CI / unit testing ecosystem |
+|  | setup | Relates to the InvenTree setup / installation process |
+

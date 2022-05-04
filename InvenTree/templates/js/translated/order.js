@@ -26,19 +26,20 @@
     editPurchaseOrderLineItem,
     exportOrder,
     loadPurchaseOrderLineItemTable,
-    loadPurchaseOrderAdditionalLineItemTable
+    loadPurchaseOrderExtraLineTable
     loadPurchaseOrderTable,
     loadSalesOrderAllocationTable,
     loadSalesOrderLineItemTable,
-    loadSalesOrderAdditionalLineItemTable
+    loadSalesOrderExtraLineTable
     loadSalesOrderShipmentTable,
     loadSalesOrderTable,
     newPurchaseOrderFromOrderWizard,
     newSupplierPartFromOrderWizard,
+    orderParts,
     removeOrderRowFromOrderWizard,
     removePurchaseOrderLineItem,
     loadOrderTotal,
-    additionalLineItemFields,
+    extraLineFields,
 */
 
 
@@ -259,8 +260,8 @@ function createPurchaseOrder(options={}) {
                     }
                 }
             },
-            supplier_reference: {},
             description: {},
+            supplier_reference: {},
             target_date: {
                 icon: 'fa-calendar-alt',
             },
@@ -276,7 +277,7 @@ function createPurchaseOrder(options={}) {
             if (options.onSuccess) {
                 options.onSuccess(data);
             } else {
-                // Default action is to redirect browser to the new PO
+                // Default action is to redirect browser to the new PurchaseOrder
                 location.href = `/order/purchase-order/${data.pk}/`;
             }
         },
@@ -309,8 +310,8 @@ function soLineItemFields(options={}) {
 }
 
 
-/* Construct a set of fields for a OrderAdditionalLineItem form */
-function additionalLineItemFields(options={}) {
+/* Construct a set of fields for a OrderExtraLine form */
+function extraLineFields(options={}) {
 
     var fields = {
         order: {
@@ -318,8 +319,8 @@ function additionalLineItemFields(options={}) {
         },
         quantity: {},
         reference: {},
-        sale_price: {},
-        sale_price_currency: {},
+        price: {},
+        price_currency: {},
         notes: {},
     };
 
@@ -476,6 +477,328 @@ function exportOrder(redirect_url, options={}) {
     });
 }
 
+
+/*
+ * Create a new form to order parts based on the list of provided parts.
+ */
+function orderParts(parts_list, options={}) {
+
+    var parts = [];
+
+    var parts_seen = {};
+
+    parts_list.forEach(function(part) {
+        if (part.purchaseable) {
+
+            // Prevent duplicates
+            if (!(part.pk in parts_seen)) {
+                parts_seen[part.pk] = true;
+                parts.push(part);
+            }
+        }
+    });
+
+    if (parts.length == 0) {
+        showAlertDialog(
+            '{% trans "Select Parts" %}',
+            '{% trans "At least one purchaseable part must be selected" %}',
+        );
+        return;
+    }
+
+    // Render a single part within the dialog
+    function renderPart(part, opts={}) {
+
+        var pk = part.pk;
+
+        var thumb = thumbnailImage(part.thumbnail || part.image);
+
+        // The "quantity" field should have been provided for each part
+        var quantity = part.quantity || 1;
+
+        if (quantity < 0) {
+            quantity = 0;
+        }
+
+        var quantity_input = constructField(
+            `quantity_${pk}`,
+            {
+                type: 'decimal',
+                min_value: 0,
+                value: quantity,
+                title: '{% trans "Quantity to order" %}',
+                required: true,
+            },
+            {
+                hideLabels: true,
+            }
+        );
+
+        var supplier_part_prefix = `
+            <button type='button' class='input-group-text button-row-new-sp' pk='${pk}' title='{% trans "New supplier part" %}'>
+                <span class='fas fa-plus-circle icon-green'></span>
+            </button>
+        `;
+
+        var supplier_part_input = constructField(
+            `part_${pk}`,
+            {
+                type: 'related field',
+                required: true,
+                prefixRaw: supplier_part_prefix,
+            },
+            {
+                hideLabels: true,
+            }
+        );
+
+        var purchase_order_prefix = `
+            <button type='button' class='input-group-text button-row-new-po' pk='${pk}' title='{% trans "New purchase order" %}'>
+                <span class='fas fa-plus-circle icon-green'></span>
+            </button>
+        `;
+
+        var purchase_order_input = constructField(
+            `order_${pk}`,
+            {
+                type: 'related field',
+                required: true,
+                prefixRaw: purchase_order_prefix,
+            },
+            {
+                hideLabels: 'true',
+            }
+        );
+
+        var buttons = `<div class='btn-group float-right' role='group'>`;
+
+        if (parts.length > 1) {
+            buttons += makeIconButton(
+                'fa-times icon-red',
+                'button-row-remove',
+                pk,
+                '{% trans "Remove row" %}',
+            );
+        }
+
+        // Button to add row to purchase order
+        buttons += makeIconButton(
+            'fa-shopping-cart icon-blue',
+            'button-row-add',
+            pk,
+            '{% trans "Add to purchase order" %}',
+        );
+
+        buttons += `</div>`;
+
+        var html = `
+        <tr id='order_row_${pk}' class='part-order-row'>
+            <td id='td_part_${pk}'>${thumb} ${part.full_name}</td>
+            <td id='td_supplier_part_${pk}'>${supplier_part_input}</td>
+            <td id='td_order_${pk}'>${purchase_order_input}</td>
+            <td id='td_quantity_${pk}'>${quantity_input}</td>
+            <td id='td_actions_${pk}'>${buttons}</td>
+        </tr>`;
+
+        return html;
+    }
+
+    // Remove a single row form this dialog
+    function removeRow(pk, opts) {
+        // Remove the row
+        $(opts.modal).find(`#order_row_${pk}`).remove();
+
+        // If the modal is now "empty", dismiss it
+        if (!($(opts.modal).find('.part-order-row').exists())) {
+            closeModal(opts.modal);
+        }
+    }
+
+    var table_entries = '';
+
+    parts.forEach(function(part) {
+        table_entries += renderPart(part);
+    });
+
+    var html = '';
+
+    // Add table
+    html += `
+    <table class='table table-striped table-condensed' id='order-parts-table'>
+        <thead>
+            <tr>
+                <th>{% trans "Part" %}</th>
+                <th style='min-width: 300px;'>{% trans "Supplier Part" %}</th>
+                <th style='min-width: 300px;'>{% trans "Purchase Order" %}</th>
+                <th style='min-width: 50px;'>{% trans "Quantity" %}</th>
+                <th><!-- Actions --></th>
+            </tr>
+        </thead>
+        <tbody>
+            ${table_entries}
+        </tbody>
+    </table>
+    `;
+
+    // Construct API filters for the SupplierPart field
+    var supplier_part_filters = {
+        supplier_detail: true,
+        part_detail: true,
+    };
+
+    if (options.supplier) {
+        supplier_part_filters.supplier = options.supplier;
+    }
+
+    if (options.manufacturer) {
+        supplier_part_filters.manufacturer = options.manufacturer;
+    }
+
+    if (options.manufacturer_part) {
+        supplier_part_filters.manufacturer_part = options.manufacturer_part;
+    }
+
+    // Construct API filtres for the PurchaseOrder field
+    var order_filters = {
+        status: {{ PurchaseOrderStatus.PENDING }},
+        supplier_detail: true,
+    };
+
+    if (options.supplier) {
+        order_filters.supplier = options.supplier;
+    }
+
+    constructFormBody({}, {
+        preFormContent: html,
+        title: '{% trans "Order Parts" %}',
+        preventSubmit: true,
+        closeText: '{% trans "Close" %}',
+        afterRender: function(fields, opts) {
+            parts.forEach(function(part) {
+
+                // Filter by base part
+                supplier_part_filters.part = part.pk;
+
+                if (part.manufacturer_part) {
+                    // Filter by manufacturer part
+                    supplier_part_filters.manufacturer_part = part.manufacturer_part;
+                }
+
+                // Configure the "supplier part" field
+                initializeRelatedField({
+                    name: `part_${part.pk}`,
+                    model: 'supplierpart',
+                    api_url: '{% url "api-supplier-part-list" %}',
+                    required: true,
+                    type: 'related field',
+                    auto_fill: true,
+                    value: options.supplier_part,
+                    filters: supplier_part_filters,
+                    noResults: function(query) {
+                        return '{% trans "No matching supplier parts" %}';
+                    }                    
+                }, null, opts);
+
+                // Configure the "purchase order" field
+                initializeRelatedField({
+                    name: `order_${part.pk}`,
+                    model: 'purchaseorder',
+                    api_url: '{% url "api-po-list" %}',
+                    required: true,
+                    type: 'related field',
+                    auto_fill: false,
+                    value: options.order,
+                    filters: order_filters,
+                    noResults: function(query) {
+                        return '{% trans "No matching purchase orders" %}';
+                    }
+                }, null, opts);
+            });
+
+            // Add callback for "add to purchase order" button
+            $(opts.modal).find('.button-row-add').click(function() {
+                var pk = $(this).attr('pk');
+
+                opts.field_suffix = null;
+
+                // Extract information from the row
+                var data = {
+                    quantity: getFormFieldValue(`quantity_${pk}`, {type: 'decimal'}, opts),
+                    part: getFormFieldValue(`part_${pk}`, {}, opts),
+                    order: getFormFieldValue(`order_${pk}`, {}, opts),
+                };
+
+                // Duplicate the form options, to prevent 'field_suffix' override
+                var row_opts = Object.assign(opts);
+                row_opts.field_suffix = `_${pk}`;
+
+                inventreePut(
+                    '{% url "api-po-line-list" %}',
+                    data,
+                    {
+                        method: 'POST',
+                        success: function(response) {
+                            removeRow(pk, opts);
+                        },
+                        error: function(xhr) {
+                            switch (xhr.status) {
+                            case 400:
+                                handleFormErrors(xhr.responseJSON, fields, row_opts);
+                                break;
+                            default:
+                                console.error(`Error adding line to purchase order`);
+                                showApiError(xhr, options.url);
+                                break;
+                            }
+                        }
+                    }
+                );
+            });
+
+            // Add callback for "remove row" button
+            $(opts.modal).find('.button-row-remove').click(function() {
+                var pk = $(this).attr('pk');
+
+                removeRow(pk, opts);
+            });
+
+            // Add callback for "new supplier part" button
+            $(opts.modal).find('.button-row-new-sp').click(function() {
+                var pk = $(this).attr('pk');
+
+                // Launch dialog to create new supplier part
+                createSupplierPart({
+                    part: pk,
+                    onSuccess: function(response) {
+                        setRelatedFieldData(
+                            `part_${pk}`,
+                            response,
+                            opts
+                        );
+                    }
+                });
+            });
+
+            // Add callback for "new purchase order" button
+            $(opts.modal).find('.button-row-new-po').click(function() {
+                var pk = $(this).attr('pk');
+
+                // Launch dialog to create new purchase order
+                createPurchaseOrder({
+                    onSuccess: function(response) {
+                        setRelatedFieldData(
+                            `order_${pk}`,
+                            response,
+                            opts
+                        );
+                    }
+                });
+            });
+        }
+    });
+
+}
+
 function newPurchaseOrderFromOrderWizard(e) {
     /* Create a new purchase order directly from an order form.
      * Launches a secondary modal and (if successful),
@@ -528,7 +851,7 @@ function newPurchaseOrderFromOrderWizard(e) {
 
 /**
  * Receive stock items against a PurchaseOrder
- * Uses the POReceive API endpoint
+ * Uses the PurchaseOrderReceive API endpoint
  * 
  * arguments:
  * - order_id, ID / PK for the PurchaseOrder instance
@@ -681,12 +1004,14 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             );
         }
 
-        buttons += makeIconButton(
-            'fa-times icon-red',
-            'button-row-remove',
-            pk,
-            '{% trans "Remove row" %}',
-        );
+        if (line_items.length > 1) {
+            buttons += makeIconButton(
+                'fa-times icon-red',
+                'button-row-remove',
+                pk,
+                '{% trans "Remove row" %}',
+            );
+        }
 
         buttons += '</div>';
 
@@ -1155,7 +1480,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 var line_item = $(table).bootstrapTable('getRowByUniqueId', pk);
 
                 if (!line_item) {
-                    console.log('WARNING: getRowByUniqueId returned null');
+                    console.warn('getRowByUniqueId returned null');
                     return;
                 }
 
@@ -1400,26 +1725,26 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
 
 
 /**
- * Load a table displaying line items for a particular PurchaseOrder
+ * Load a table displaying lines for a particular PurchaseOrder
  * 
  * @param {String} table : HTML ID tag e.g. '#table'
  * @param {Object} options : object which contains:
  *      - order {integer} : pk of the PurchaseOrder
  *      - status: {integer} : status code for the order
  */
-function loadPurchaseOrderAdditionalLineItemTable(table, options={}) {
+function loadPurchaseOrderExtraLineTable(table, options={}) {
 
     options.table = table;
 
     options.params = options.params || {};
 
     if (!options.order) {
-        console.log('ERROR: function called without order ID');
+        console.error('function called without order ID');
         return;
     }
 
     if (!options.status) {
-        console.log('ERROR: function called without order status');
+        console.error('function called without order status');
         return;
     }
 
@@ -1427,17 +1752,17 @@ function loadPurchaseOrderAdditionalLineItemTable(table, options={}) {
     options.params.part_detail = true;
     options.params.allocations = true;
     
-    var filters = loadTableFilters('purchaseorderadditionallineitem');
+    var filters = loadTableFilters('purchaseorderextraline');
 
     for (var key in options.params) {
         filters[key] = options.params[key];
     }
 
-    options.url = options.url || '{% url "api-po-additional-line-list" %}';
+    options.url = options.url || '{% url "api-po-extra-line-list" %}';
 
-    var filter_target = options.filter_target || '#filter-list-purchase-order-additional-lines';
+    var filter_target = options.filter_target || '#filter-list-purchase-order-extra-lines';
 
-    setupFilterList('purchaseorderadditionallineitem', $(table), filter_target);
+    setupFilterList('purchaseorderextraline', $(table), filter_target);
 
     // Is the order pending?
     var pending = options.status == {{ SalesOrderStatus.PENDING }};
@@ -1465,18 +1790,18 @@ function loadPurchaseOrderAdditionalLineItemTable(table, options={}) {
         },
         {
             sortable: true,
-            field: 'sale_price',
+            field: 'price',
             title: '{% trans "Unit Price" %}',
             formatter: function(value, row) {
                 var formatter = new Intl.NumberFormat(
                     'en-US',
                     {
                         style: 'currency',
-                        currency: row.sale_price_currency
+                        currency: row.price_currency
                     }
                 );
 
-                return formatter.format(row.sale_price);
+                return formatter.format(row.price);
             }
         },
         {
@@ -1488,20 +1813,20 @@ function loadPurchaseOrderAdditionalLineItemTable(table, options={}) {
                     'en-US',
                     {
                         style: 'currency',
-                        currency: row.sale_price_currency
+                        currency: row.price_currency
                     }
                 );
 
-                return formatter.format(row.sale_price * row.quantity);
+                return formatter.format(row.price * row.quantity);
             },
             footerFormatter: function(data) {
                 var total = data.map(function(row) {
-                    return +row['sale_price'] * row['quantity'];
+                    return +row['price'] * row['quantity'];
                 }).reduce(function(sum, i) {
                     return sum + i;
                 }, 0);
 
-                var currency = (data.slice(-1)[0] && data.slice(-1)[0].sale_price_currency) || 'USD';
+                var currency = (data.slice(-1)[0] && data.slice(-1)[0].price_currency) || 'USD';
                 
                 var formatter = new Intl.NumberFormat(
                     'en-US',
@@ -1531,13 +1856,9 @@ function loadPurchaseOrderAdditionalLineItemTable(table, options={}) {
 
                 var pk = row.pk;
 
-                html += makeIconButton('fa-clone', 'button-duplicate', pk, '{% trans "Duplicate line item" %}');
-                html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line item" %}');
-
-                var title = '{% trans "Delete line item" %}';
-
-                // Prevent deletion of the line item if items have been allocated or shipped!
-                html += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, title, );
+                html += makeIconButton('fa-clone', 'button-duplicate', pk, '{% trans "Duplicate line" %}');
+                html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line" %}');
+                html += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, '{% trans "Delete line" %}', );
 
                 html += `</div>`;
 
@@ -1554,20 +1875,20 @@ function loadPurchaseOrderAdditionalLineItemTable(table, options={}) {
     // Configure callback functions once the table is loaded
     function setupCallbacks() {
 
-        // Callback for duplicating line items
+        // Callback for duplicating lines
         $(table).find('.button-duplicate').click(function() {
             var pk = $(this).attr('pk');
 
-            inventreeGet(`/api/order/po-additional-line/${pk}/`, {}, {
+            inventreeGet(`/api/order/po-extra-line/${pk}/`, {}, {
                 success: function(data) {
 
-                    var fields = additionalLineItemFields();
+                    var fields = extraLineFields();
 
-                    constructForm('{% url "api-po-additional-line-list" %}', {
+                    constructForm('{% url "api-po-extra-line-list" %}', {
                         method: 'POST',
                         fields: fields,
                         data: data,
-                        title: '{% trans "Duplicate Line Item" %}',
+                        title: '{% trans "Duplicate Line" %}',
                         onSuccess: function(response) {
                             $(table).bootstrapTable('refresh');
                         }
@@ -1576,30 +1897,30 @@ function loadPurchaseOrderAdditionalLineItemTable(table, options={}) {
             });
         });
 
-        // Callback for editing line items
+        // Callback for editing lines
         $(table).find('.button-edit').click(function() {
             var pk = $(this).attr('pk');
 
-            constructForm(`/api/order/po-additional-line/${pk}/`, {
+            constructForm(`/api/order/po-extra-line/${pk}/`, {
                 fields: {
                     quantity: {},
                     reference: {},
-                    sale_price: {},
-                    sale_price_currency: {},
+                    price: {},
+                    price_currency: {},
                     notes: {},
                 },
-                title: '{% trans "Edit Line Item" %}',
+                title: '{% trans "Edit Line" %}',
                 onSuccess: reloadTable,
             });
         });
 
-        // Callback for deleting line items
+        // Callback for deleting lines
         $(table).find('.button-delete').click(function() {
             var pk = $(this).attr('pk');
 
-            constructForm(`/api/order/po-additional-line/${pk}/`, {
+            constructForm(`/api/order/po-extra-line/${pk}/`, {
                 method: 'DELETE',
-                title: '{% trans "Delete Line Item" %}',
+                title: '{% trans "Delete Line" %}',
                 onSuccess: reloadTable,
             });
         });
@@ -1607,10 +1928,10 @@ function loadPurchaseOrderAdditionalLineItemTable(table, options={}) {
 
     $(table).inventreeTable({
         onPostBody: setupCallbacks,
-        name: 'purchaseorderadditionallineitems',
+        name: 'purchaseorderextraline',
         sidePagination: 'client',
         formatNoMatches: function() {
-            return '{% trans "No matching line items" %}';
+            return '{% trans "No matching line" %}';
         },
         queryParams: filters,
         original: options.params,
@@ -2417,7 +2738,7 @@ function showAllocationSubTable(index, row, element, options) {
             },
             {
                 field: 'buttons',
-                title: '{% trans "" %}',
+                title: '',
                 formatter: function(value, row, index, field) {
 
                     var html = `<div class='btn-group float-right' role='group'>`;
@@ -2545,12 +2866,12 @@ function loadSalesOrderLineItemTable(table, options={}) {
     options.params = options.params || {};
 
     if (!options.order) {
-        console.log('ERROR: function called without order ID');
+        console.error('function called without order ID');
         return;
     }
 
     if (!options.status) {
-        console.log('ERROR: function called without order status');
+        console.error('function called without order status');
         return;
     }
 
@@ -2969,13 +3290,18 @@ function loadSalesOrderLineItemTable(table, options={}) {
         $(table).find('.button-buy').click(function() {
             var pk = $(this).attr('pk');
 
-            launchModalForm('{% url "order-parts" %}', {
-                data: {
-                    parts: [
-                        pk
-                    ],
-                },
-            });
+            inventreeGet(
+                `/api/part/${pk}/`,
+                {},
+                {
+                    success: function(part) {
+                        orderParts(
+                            [part],
+                            {}
+                        );
+                    }
+                }
+            );
         });
 
         // Callback for displaying price
@@ -3039,26 +3365,26 @@ function loadSalesOrderLineItemTable(table, options={}) {
 
 
 /**
- * Load a table displaying line items for a particular SalesOrder
+ * Load a table displaying lines for a particular SalesOrder
  * 
  * @param {String} table : HTML ID tag e.g. '#table'
  * @param {Object} options : object which contains:
  *      - order {integer} : pk of the SalesOrder
  *      - status: {integer} : status code for the order
  */
-function loadSalesOrderAdditionalLineItemTable(table, options={}) {
+function loadSalesOrderExtraLineTable(table, options={}) {
 
     options.table = table;
 
     options.params = options.params || {};
 
     if (!options.order) {
-        console.log('ERROR: function called without order ID');
+        console.error('function called without order ID');
         return;
     }
 
     if (!options.status) {
-        console.log('ERROR: function called without order status');
+        console.error('function called without order status');
         return;
     }
 
@@ -3066,17 +3392,17 @@ function loadSalesOrderAdditionalLineItemTable(table, options={}) {
     options.params.part_detail = true;
     options.params.allocations = true;
     
-    var filters = loadTableFilters('salesorderadditionallineitem');
+    var filters = loadTableFilters('salesorderextraline');
 
     for (var key in options.params) {
         filters[key] = options.params[key];
     }
 
-    options.url = options.url || '{% url "api-so-additional-line-list" %}';
+    options.url = options.url || '{% url "api-so-extra-line-list" %}';
 
-    var filter_target = options.filter_target || '#filter-list-sales-order-additional-lines';
+    var filter_target = options.filter_target || '#filter-list-sales-order-extra-lines';
 
-    setupFilterList('salesorderadditionallineitem', $(table), filter_target);
+    setupFilterList('salesorderextraline', $(table), filter_target);
 
     // Is the order pending?
     var pending = options.status == {{ SalesOrderStatus.PENDING }};
@@ -3104,18 +3430,18 @@ function loadSalesOrderAdditionalLineItemTable(table, options={}) {
         },
         {
             sortable: true,
-            field: 'sale_price',
+            field: 'price',
             title: '{% trans "Unit Price" %}',
             formatter: function(value, row) {
                 var formatter = new Intl.NumberFormat(
                     'en-US',
                     {
                         style: 'currency',
-                        currency: row.sale_price_currency
+                        currency: row.price_currency
                     }
                 );
 
-                return formatter.format(row.sale_price);
+                return formatter.format(row.price);
             }
         },
         {
@@ -3127,20 +3453,20 @@ function loadSalesOrderAdditionalLineItemTable(table, options={}) {
                     'en-US',
                     {
                         style: 'currency',
-                        currency: row.sale_price_currency
+                        currency: row.price_currency
                     }
                 );
 
-                return formatter.format(row.sale_price * row.quantity);
+                return formatter.format(row.price * row.quantity);
             },
             footerFormatter: function(data) {
                 var total = data.map(function(row) {
-                    return +row['sale_price'] * row['quantity'];
+                    return +row['price'] * row['quantity'];
                 }).reduce(function(sum, i) {
                     return sum + i;
                 }, 0);
 
-                var currency = (data.slice(-1)[0] && data.slice(-1)[0].sale_price_currency) || 'USD';
+                var currency = (data.slice(-1)[0] && data.slice(-1)[0].price_currency) || 'USD';
                 
                 var formatter = new Intl.NumberFormat(
                     'en-US',
@@ -3170,13 +3496,9 @@ function loadSalesOrderAdditionalLineItemTable(table, options={}) {
 
                 var pk = row.pk;
 
-                html += makeIconButton('fa-clone', 'button-duplicate', pk, '{% trans "Duplicate line item" %}');
-                html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line item" %}');
-
-                var title = '{% trans "Delete line item" %}';
-
-                // Prevent deletion of the line item if items have been allocated or shipped!
-                html += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, title, );
+                html += makeIconButton('fa-clone', 'button-duplicate', pk, '{% trans "Duplicate line" %}');
+                html += makeIconButton('fa-edit icon-blue', 'button-edit', pk, '{% trans "Edit line" %}');
+                html += makeIconButton('fa-trash-alt icon-red', 'button-delete', pk, '{% trans "Delete line" %}', );
 
                 html += `</div>`;
 
@@ -3193,20 +3515,20 @@ function loadSalesOrderAdditionalLineItemTable(table, options={}) {
     // Configure callback functions once the table is loaded
     function setupCallbacks() {
 
-        // Callback for duplicating line items
+        // Callback for duplicating lines
         $(table).find('.button-duplicate').click(function() {
             var pk = $(this).attr('pk');
 
-            inventreeGet(`/api/order/so-additional-line/${pk}/`, {}, {
+            inventreeGet(`/api/order/so-extra-line/${pk}/`, {}, {
                 success: function(data) {
 
-                    var fields = additionalLineItemFields();
+                    var fields = extraLineFields();
 
-                    constructForm('{% url "api-so-additional-line-list" %}', {
+                    constructForm('{% url "api-so-extra-line-list" %}', {
                         method: 'POST',
                         fields: fields,
                         data: data,
-                        title: '{% trans "Duplicate Line Item" %}',
+                        title: '{% trans "Duplicate Line" %}',
                         onSuccess: function(response) {
                             $(table).bootstrapTable('refresh');
                         }
@@ -3215,30 +3537,30 @@ function loadSalesOrderAdditionalLineItemTable(table, options={}) {
             });
         });
 
-        // Callback for editing line items
+        // Callback for editing lines
         $(table).find('.button-edit').click(function() {
             var pk = $(this).attr('pk');
 
-            constructForm(`/api/order/so-additional-line/${pk}/`, {
+            constructForm(`/api/order/so-extra-line/${pk}/`, {
                 fields: {
                     quantity: {},
                     reference: {},
-                    sale_price: {},
-                    sale_price_currency: {},
+                    price: {},
+                    price_currency: {},
                     notes: {},
                 },
-                title: '{% trans "Edit Line Item" %}',
+                title: '{% trans "Edit Line" %}',
                 onSuccess: reloadTable,
             });
         });
 
-        // Callback for deleting line items
+        // Callback for deleting lines
         $(table).find('.button-delete').click(function() {
             var pk = $(this).attr('pk');
 
-            constructForm(`/api/order/so-additional-line/${pk}/`, {
+            constructForm(`/api/order/so-extra-line/${pk}/`, {
                 method: 'DELETE',
-                title: '{% trans "Delete Line Item" %}',
+                title: '{% trans "Delete Line" %}',
                 onSuccess: reloadTable,
             });
         });
@@ -3246,10 +3568,10 @@ function loadSalesOrderAdditionalLineItemTable(table, options={}) {
 
     $(table).inventreeTable({
         onPostBody: setupCallbacks,
-        name: 'salesorderadditionallineitems',
+        name: 'salesorderextraline',
         sidePagination: 'client',
         formatNoMatches: function() {
-            return '{% trans "No matching line items" %}';
+            return '{% trans "No matching lines" %}';
         },
         queryParams: filters,
         original: options.params,

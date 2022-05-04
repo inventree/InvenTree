@@ -15,7 +15,7 @@ from collections import OrderedDict
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.db import models
 
 from djmoney.contrib.django_rest_framework.fields import MoneyField

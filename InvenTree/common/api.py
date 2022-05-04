@@ -11,7 +11,7 @@ from django.http.response import HttpResponse
 from django.utils.decorators import method_decorator
 from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
-from django.conf.urls import url, include
+from django.urls import include, re_path
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -336,21 +336,21 @@ class NotificationReadAll(generics.RetrieveAPIView):
 
 settings_api_urls = [
     # User settings
-    url(r'^user/', include([
+    re_path(r'^user/', include([
         # User Settings Detail
-        url(r'^(?P<pk>\d+)/', UserSettingsDetail.as_view(), name='api-user-setting-detail'),
+        re_path(r'^(?P<pk>\d+)/', UserSettingsDetail.as_view(), name='api-user-setting-detail'),
 
         # User Settings List
-        url(r'^.*$', UserSettingsList.as_view(), name='api-user-setting-list'),
+        re_path(r'^.*$', UserSettingsList.as_view(), name='api-user-setting-list'),
     ])),
 
     # Global settings
-    url(r'^global/', include([
+    re_path(r'^global/', include([
         # Global Settings Detail
-        url(r'^(?P<pk>\d+)/', GlobalSettingsDetail.as_view(), name='api-global-setting-detail'),
+        re_path(r'^(?P<pk>\d+)/', GlobalSettingsDetail.as_view(), name='api-global-setting-detail'),
 
         # Global Settings List
-        url(r'^.*$', GlobalSettingsList.as_view(), name='api-global-setting-list'),
+        re_path(r'^.*$', GlobalSettingsList.as_view(), name='api-global-setting-list'),
     ])),
 ]
 
@@ -359,18 +359,18 @@ common_api_urls = [
     path('webhook/<slug:endpoint>/', WebhookView.as_view(), name='api-webhook'),
 
     # Notifications
-    url(r'^notifications/', include([
+    re_path(r'^notifications/', include([
         # Individual purchase order detail URLs
-        url(r'^(?P<pk>\d+)/', include([
-            url(r'^read/', NotificationRead.as_view(), name='api-notifications-read'),
-            url(r'^unread/', NotificationUnread.as_view(), name='api-notifications-unread'),
-            url(r'.*$', NotificationDetail.as_view(), name='api-notifications-detail'),
+        re_path(r'^(?P<pk>\d+)/', include([
+            re_path(r'^read/', NotificationRead.as_view(), name='api-notifications-read'),
+            re_path(r'^unread/', NotificationUnread.as_view(), name='api-notifications-unread'),
+            re_path(r'.*$', NotificationDetail.as_view(), name='api-notifications-detail'),
         ])),
         # Read all
-        url(r'^readall/', NotificationReadAll.as_view(), name='api-notifications-readall'),
+        re_path(r'^readall/', NotificationReadAll.as_view(), name='api-notifications-readall'),
 
         # Notification messages list
-        url(r'^.*$', NotificationList.as_view(), name='api-notifications-list'),
+        re_path(r'^.*$', NotificationList.as_view(), name='api-notifications-list'),
     ])),
 
 ]
