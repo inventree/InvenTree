@@ -876,7 +876,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                 var line_item = $(table).bootstrapTable('getRowByUniqueId', pk);
 
                 if (!line_item) {
-                    console.log('WARNING: getRowByUniqueId returned null');
+                    console.warn('getRowByUniqueId returned null');
                     return;
                 }
 
@@ -1564,15 +1564,16 @@ function loadPartTable(table, url, options={}) {
 
         var parts = [];
 
-        selections.forEach(function(item) {
-            parts.push(item.pk);
+        selections.forEach(function(part) {
+            parts.push(part);
         });
 
-        launchModalForm('/order/purchase-order/order-parts/', {
-            data: {
-                parts: parts,
-            },
-        });
+        orderParts(
+            parts,
+            {
+
+            }
+        );
     });
 
     $('#multi-part-category').click(function() {
@@ -1602,19 +1603,6 @@ function loadPartTable(table, url, options={}) {
         });
 
         printPartLabels(items);
-    });
-
-    $('#multi-part-export').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
-
-        var parts = '';
-
-        selections.forEach(function(item) {
-            parts += item.pk;
-            parts += ',';
-        });
-
-        location.href = '/part/export/?parts=' + parts;
     });
 }
 

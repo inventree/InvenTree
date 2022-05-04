@@ -35,6 +35,7 @@
     loadSalesOrderTable,
     newPurchaseOrderFromOrderWizard,
     newSupplierPartFromOrderWizard,
+    orderParts,
     removeOrderRowFromOrderWizard,
     removePurchaseOrderLineItem,
     loadOrderTotal,
@@ -259,8 +260,8 @@ function createPurchaseOrder(options={}) {
                     }
                 }
             },
-            supplier_reference: {},
             description: {},
+            supplier_reference: {},
             target_date: {
                 icon: 'fa-calendar-alt',
             },
@@ -476,6 +477,328 @@ function exportOrder(redirect_url, options={}) {
     });
 }
 
+
+/*
+ * Create a new form to order parts based on the list of provided parts.
+ */
+function orderParts(parts_list, options={}) {
+
+    var parts = [];
+
+    var parts_seen = {};
+
+    parts_list.forEach(function(part) {
+        if (part.purchaseable) {
+
+            // Prevent duplicates
+            if (!(part.pk in parts_seen)) {
+                parts_seen[part.pk] = true;
+                parts.push(part);
+            }
+        }
+    });
+
+    if (parts.length == 0) {
+        showAlertDialog(
+            '{% trans "Select Parts" %}',
+            '{% trans "At least one purchaseable part must be selected" %}',
+        );
+        return;
+    }
+
+    // Render a single part within the dialog
+    function renderPart(part, opts={}) {
+
+        var pk = part.pk;
+
+        var thumb = thumbnailImage(part.thumbnail || part.image);
+
+        // The "quantity" field should have been provided for each part
+        var quantity = part.quantity || 1;
+
+        if (quantity < 0) {
+            quantity = 0;
+        }
+
+        var quantity_input = constructField(
+            `quantity_${pk}`,
+            {
+                type: 'decimal',
+                min_value: 0,
+                value: quantity,
+                title: '{% trans "Quantity to order" %}',
+                required: true,
+            },
+            {
+                hideLabels: true,
+            }
+        );
+
+        var supplier_part_prefix = `
+            <button type='button' class='input-group-text button-row-new-sp' pk='${pk}' title='{% trans "New supplier part" %}'>
+                <span class='fas fa-plus-circle icon-green'></span>
+            </button>
+        `;
+
+        var supplier_part_input = constructField(
+            `part_${pk}`,
+            {
+                type: 'related field',
+                required: true,
+                prefixRaw: supplier_part_prefix,
+            },
+            {
+                hideLabels: true,
+            }
+        );
+
+        var purchase_order_prefix = `
+            <button type='button' class='input-group-text button-row-new-po' pk='${pk}' title='{% trans "New purchase order" %}'>
+                <span class='fas fa-plus-circle icon-green'></span>
+            </button>
+        `;
+
+        var purchase_order_input = constructField(
+            `order_${pk}`,
+            {
+                type: 'related field',
+                required: true,
+                prefixRaw: purchase_order_prefix,
+            },
+            {
+                hideLabels: 'true',
+            }
+        );
+
+        var buttons = `<div class='btn-group float-right' role='group'>`;
+
+        if (parts.length > 1) {
+            buttons += makeIconButton(
+                'fa-times icon-red',
+                'button-row-remove',
+                pk,
+                '{% trans "Remove row" %}',
+            );
+        }
+
+        // Button to add row to purchase order
+        buttons += makeIconButton(
+            'fa-shopping-cart icon-blue',
+            'button-row-add',
+            pk,
+            '{% trans "Add to purchase order" %}',
+        );
+
+        buttons += `</div>`;
+
+        var html = `
+        <tr id='order_row_${pk}' class='part-order-row'>
+            <td id='td_part_${pk}'>${thumb} ${part.full_name}</td>
+            <td id='td_supplier_part_${pk}'>${supplier_part_input}</td>
+            <td id='td_order_${pk}'>${purchase_order_input}</td>
+            <td id='td_quantity_${pk}'>${quantity_input}</td>
+            <td id='td_actions_${pk}'>${buttons}</td>
+        </tr>`;
+
+        return html;
+    }
+
+    // Remove a single row form this dialog
+    function removeRow(pk, opts) {
+        // Remove the row
+        $(opts.modal).find(`#order_row_${pk}`).remove();
+
+        // If the modal is now "empty", dismiss it
+        if (!($(opts.modal).find('.part-order-row').exists())) {
+            closeModal(opts.modal);
+        }
+    }
+
+    var table_entries = '';
+
+    parts.forEach(function(part) {
+        table_entries += renderPart(part);
+    });
+
+    var html = '';
+
+    // Add table
+    html += `
+    <table class='table table-striped table-condensed' id='order-parts-table'>
+        <thead>
+            <tr>
+                <th>{% trans "Part" %}</th>
+                <th style='min-width: 300px;'>{% trans "Supplier Part" %}</th>
+                <th style='min-width: 300px;'>{% trans "Purchase Order" %}</th>
+                <th style='min-width: 50px;'>{% trans "Quantity" %}</th>
+                <th><!-- Actions --></th>
+            </tr>
+        </thead>
+        <tbody>
+            ${table_entries}
+        </tbody>
+    </table>
+    `;
+
+    // Construct API filters for the SupplierPart field
+    var supplier_part_filters = {
+        supplier_detail: true,
+        part_detail: true,
+    };
+
+    if (options.supplier) {
+        supplier_part_filters.supplier = options.supplier;
+    }
+
+    if (options.manufacturer) {
+        supplier_part_filters.manufacturer = options.manufacturer;
+    }
+
+    if (options.manufacturer_part) {
+        supplier_part_filters.manufacturer_part = options.manufacturer_part;
+    }
+
+    // Construct API filtres for the PurchaseOrder field
+    var order_filters = {
+        status: {{ PurchaseOrderStatus.PENDING }},
+        supplier_detail: true,
+    };
+
+    if (options.supplier) {
+        order_filters.supplier = options.supplier;
+    }
+
+    constructFormBody({}, {
+        preFormContent: html,
+        title: '{% trans "Order Parts" %}',
+        preventSubmit: true,
+        closeText: '{% trans "Close" %}',
+        afterRender: function(fields, opts) {
+            parts.forEach(function(part) {
+
+                // Filter by base part
+                supplier_part_filters.part = part.pk;
+
+                if (part.manufacturer_part) {
+                    // Filter by manufacturer part
+                    supplier_part_filters.manufacturer_part = part.manufacturer_part;
+                }
+
+                // Configure the "supplier part" field
+                initializeRelatedField({
+                    name: `part_${part.pk}`,
+                    model: 'supplierpart',
+                    api_url: '{% url "api-supplier-part-list" %}',
+                    required: true,
+                    type: 'related field',
+                    auto_fill: true,
+                    value: options.supplier_part,
+                    filters: supplier_part_filters,
+                    noResults: function(query) {
+                        return '{% trans "No matching supplier parts" %}';
+                    }                    
+                }, null, opts);
+
+                // Configure the "purchase order" field
+                initializeRelatedField({
+                    name: `order_${part.pk}`,
+                    model: 'purchaseorder',
+                    api_url: '{% url "api-po-list" %}',
+                    required: true,
+                    type: 'related field',
+                    auto_fill: false,
+                    value: options.order,
+                    filters: order_filters,
+                    noResults: function(query) {
+                        return '{% trans "No matching purchase orders" %}';
+                    }
+                }, null, opts);
+            });
+
+            // Add callback for "add to purchase order" button
+            $(opts.modal).find('.button-row-add').click(function() {
+                var pk = $(this).attr('pk');
+
+                opts.field_suffix = null;
+
+                // Extract information from the row
+                var data = {
+                    quantity: getFormFieldValue(`quantity_${pk}`, {type: 'decimal'}, opts),
+                    part: getFormFieldValue(`part_${pk}`, {}, opts),
+                    order: getFormFieldValue(`order_${pk}`, {}, opts),
+                };
+
+                // Duplicate the form options, to prevent 'field_suffix' override
+                var row_opts = Object.assign(opts);
+                row_opts.field_suffix = `_${pk}`;
+
+                inventreePut(
+                    '{% url "api-po-line-list" %}',
+                    data,
+                    {
+                        method: 'POST',
+                        success: function(response) {
+                            removeRow(pk, opts);
+                        },
+                        error: function(xhr) {
+                            switch (xhr.status) {
+                            case 400:
+                                handleFormErrors(xhr.responseJSON, fields, row_opts);
+                                break;
+                            default:
+                                console.error(`Error adding line to purchase order`);
+                                showApiError(xhr, options.url);
+                                break;
+                            }
+                        }
+                    }
+                );
+            });
+
+            // Add callback for "remove row" button
+            $(opts.modal).find('.button-row-remove').click(function() {
+                var pk = $(this).attr('pk');
+
+                removeRow(pk, opts);
+            });
+
+            // Add callback for "new supplier part" button
+            $(opts.modal).find('.button-row-new-sp').click(function() {
+                var pk = $(this).attr('pk');
+
+                // Launch dialog to create new supplier part
+                createSupplierPart({
+                    part: pk,
+                    onSuccess: function(response) {
+                        setRelatedFieldData(
+                            `part_${pk}`,
+                            response,
+                            opts
+                        );
+                    }
+                });
+            });
+
+            // Add callback for "new purchase order" button
+            $(opts.modal).find('.button-row-new-po').click(function() {
+                var pk = $(this).attr('pk');
+
+                // Launch dialog to create new purchase order
+                createPurchaseOrder({
+                    onSuccess: function(response) {
+                        setRelatedFieldData(
+                            `order_${pk}`,
+                            response,
+                            opts
+                        );
+                    }
+                });
+            });
+        }
+    });
+
+}
+
 function newPurchaseOrderFromOrderWizard(e) {
     /* Create a new purchase order directly from an order form.
      * Launches a secondary modal and (if successful),
@@ -681,12 +1004,14 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             );
         }
 
-        buttons += makeIconButton(
-            'fa-times icon-red',
-            'button-row-remove',
-            pk,
-            '{% trans "Remove row" %}',
-        );
+        if (line_items.length > 1) {
+            buttons += makeIconButton(
+                'fa-times icon-red',
+                'button-row-remove',
+                pk,
+                '{% trans "Remove row" %}',
+            );
+        }
 
         buttons += '</div>';
 
@@ -1155,7 +1480,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 var line_item = $(table).bootstrapTable('getRowByUniqueId', pk);
 
                 if (!line_item) {
-                    console.log('WARNING: getRowByUniqueId returned null');
+                    console.warn('getRowByUniqueId returned null');
                     return;
                 }
 
@@ -1414,12 +1739,12 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
     options.params = options.params || {};
 
     if (!options.order) {
-        console.log('ERROR: function called without order ID');
+        console.error('function called without order ID');
         return;
     }
 
     if (!options.status) {
-        console.log('ERROR: function called without order status');
+        console.error('function called without order status');
         return;
     }
 
@@ -2541,12 +2866,12 @@ function loadSalesOrderLineItemTable(table, options={}) {
     options.params = options.params || {};
 
     if (!options.order) {
-        console.log('ERROR: function called without order ID');
+        console.error('function called without order ID');
         return;
     }
 
     if (!options.status) {
-        console.log('ERROR: function called without order status');
+        console.error('function called without order status');
         return;
     }
 
@@ -2965,13 +3290,18 @@ function loadSalesOrderLineItemTable(table, options={}) {
         $(table).find('.button-buy').click(function() {
             var pk = $(this).attr('pk');
 
-            launchModalForm('{% url "order-parts" %}', {
-                data: {
-                    parts: [
-                        pk
-                    ],
-                },
-            });
+            inventreeGet(
+                `/api/part/${pk}/`,
+                {},
+                {
+                    success: function(part) {
+                        orderParts(
+                            [part],
+                            {}
+                        );
+                    }
+                }
+            );
         });
 
         // Callback for displaying price
@@ -3049,12 +3379,12 @@ function loadSalesOrderExtraLineTable(table, options={}) {
     options.params = options.params || {};
 
     if (!options.order) {
-        console.log('ERROR: function called without order ID');
+        console.error('function called without order ID');
         return;
     }
 
     if (!options.status) {
-        console.log('ERROR: function called without order status');
+        console.error('function called without order status');
         return;
     }
 

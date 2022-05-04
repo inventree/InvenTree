@@ -1177,7 +1177,7 @@ class BuildItem(models.Model):
                 a = normalize(self.stock_item.quantity)
 
                 raise ValidationError({
-                    'quantity': _(f'Allocated quantity ({q}) must not execed available stock quantity ({a})')
+                    'quantity': _(f'Allocated quantity ({q}) must not exceed available stock quantity ({a})')
                 })
 
             # Allocated quantity cannot cause the stock item to be over-allocated
