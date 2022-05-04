@@ -99,6 +99,48 @@ class UserSettingsSerializer(SettingsSerializer):
         ]
 
 
+class GenericReferencedSettingSerializer(SettingsSerializer):
+    """
+    Serializer for a GenericReferencedSetting model
+
+    Args:
+        MODEL: model class for the serializer
+        EXTRA_FIELDS: fields that need to be appended to the serializer
+            field must also be defined in the custom class
+    """
+
+    MODEL = None
+    EXTRA_FIELDS = None
+
+    def __init__(self, instance=None, data=..., **kwargs):
+        """Init overrides the Meta class to make it dynamic"""
+        # set Meta class
+        self.Meta = self.CustomMeta
+        self.Meta.model = self.MODEL
+
+        # extend the fields
+        if not self.CustomMeta.DEFINED:
+            self.Meta.fields.extend(self.EXTRA_FIELDS)
+            self.CustomMeta.DEFINED = True
+
+        # resume operations
+        super().__init__(instance, data, **kwargs)
+
+    class CustomMeta:
+        """Scaffold for custom Meta class"""
+        DEFINED: bool = False
+
+        fields = [
+            'pk',
+            'key',
+            'value',
+            'name',
+            'description',
+            'type',
+            'choices',
+        ]
+
+
 class NotificationMessageSerializer(InvenTreeModelSerializer):
     """
     Serializer for the InvenTreeUserSetting model
