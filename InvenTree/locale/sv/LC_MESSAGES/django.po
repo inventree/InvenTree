@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-03 08:38+0000\n"
-"PO-Revision-Date: 2022-05-03 23:45\n"
+"POT-Creation-Date: 2022-05-03 23:57+0000\n"
+"PO-Revision-Date: 2022-05-04 23:46\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -119,7 +119,7 @@ msgstr "Inga serienummer hittades"
 
 #: InvenTree/helpers.py:540
 #, python-brace-format
-msgid "Number of unique serial number ({s}) must match quantity ({q})"
+msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
 msgstr ""
 
 #: InvenTree/models.py:185
@@ -902,7 +902,7 @@ msgstr ""
 
 #: build/models.py:1180
 #, python-brace-format
-msgid "Allocated quantity ({q}) must not execed available stock quantity ({a})"
+msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr ""
 
 #: build/models.py:1190
@@ -1099,7 +1099,7 @@ msgid "Accept Incomplete Allocation"
 msgstr ""
 
 #: build/serializers.py:390
-msgid "Complete ouputs if stock has not been fully allocated"
+msgid "Complete outputs if stock has not been fully allocated"
 msgstr ""
 
 #: build/serializers.py:447
