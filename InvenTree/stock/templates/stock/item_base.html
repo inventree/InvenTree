@@ -379,7 +379,11 @@
     <tr>
         <td><span class='fas fa-building'></span></td>
         <td>{% trans "Supplier" %}</td>
-        <td><a href="{% url 'company-detail' item.supplier_part.supplier.id %}">{{ item.supplier_part.supplier.name }}</a></td>
+        <td>
+            {% if item.supplier_part.supplier %}
+            <a href="{% url 'company-detail' item.supplier_part.supplier.id %}">{{ item.supplier_part.supplier.name }}</a>
+            {% endif %}
+        </td>
     </tr>
     <tr>
         <td><span class='fas fa-shapes'></span></td>

@@ -85,7 +85,13 @@ src="{% static 'img/blank_image.png' %}"
         <tr>
             <td><span class='fas fa-building'></span></td>
             <td>{% trans "Supplier" %}</td>
-            <td><a href="{% url 'company-detail' part.supplier.id %}">{{ part.supplier.name }}</a>{% include "clip.html"%}</td></tr>
+            <td>{% if part.supplier %}
+                <a href="{% url 'company-detail' part.supplier.id %}">{{ part.supplier.name }}</a>{% include "clip.html"%}
+                {% else %}
+                <em>{% trans "No supplier information available" %}</em>
+                {% endif %}
+            </td>
+        </tr>
         <tr>
             <td><span class='fas fa-hashtag'></span></td>
             <td>{% trans "SKU" %}</td>
@@ -356,7 +362,9 @@ $('#delete-part').click(function() {
 
     deleteSupplierPart({{ part.pk }}, {
         onSuccess: function() {
+            {% if part.supplier %}
             window.location.href = "{% url 'company-detail' part.supplier.id %}";
+            {% endif %}
         }
     });
 });
