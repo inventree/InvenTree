@@ -214,11 +214,13 @@ src="{% static 'img/blank_image.png' %}"
     });
 
     $("#build-cancel").click(function() {
-        launchModalForm("{% url 'build-cancel' build.id %}",
-                        {
-                            reload: true,
-                            submit_text: '{% trans "Cancel Build" %}',
-                        });
+
+        cancelBuildOrder(
+            {{ build.pk }},
+            {
+                reload: true,
+            }
+        );
     });
 
     $("#build-complete").on('click', function() {

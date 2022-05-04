@@ -304,7 +304,7 @@ class BuildTest(BuildTestBase):
 
         """
         self.allocate_stock(50, 50, 200, self.output_1)
-        self.build.cancelBuild(None)
+        self.build.cancel_build(None)
 
         self.assertEqual(BuildItem.objects.count(), 0)
         """

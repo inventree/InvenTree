@@ -107,7 +107,7 @@ class BuildTestSimple(TestCase):
 
         self.assertEqual(build.status, BuildStatus.PENDING)
 
-        build.cancelBuild(self.user)
+        build.cancel_build(self.user)
 
         self.assertEqual(build.status, BuildStatus.CANCELLED)
 

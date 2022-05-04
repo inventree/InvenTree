@@ -322,6 +322,13 @@ class BuildAllocate(BuildOrderContextMixin, generics.CreateAPIView):
     serializer_class = build.serializers.BuildAllocationSerializer
 
 
+class BuildCancel(BuildOrderContextMixin, generics.CreateAPIView):
+    """ API endpoint for cancelling a BuildOrder """
+
+    queryset = Build.objects.all()
+    serializer_class = build.serializers.BuildCancelSerializer
+
+
 class BuildItemDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     API endpoint for detail view of a BuildItem object
@@ -462,6 +469,7 @@ build_api_urls = [
         re_path(r'^create-output/', BuildOutputCreate.as_view(), name='api-build-output-create'),
         re_path(r'^delete-outputs/', BuildOutputDelete.as_view(), name='api-build-output-delete'),
         re_path(r'^finish/', BuildFinish.as_view(), name='api-build-finish'),
+        re_path(r'^cancel/', BuildCancel.as_view(), name='api-build-cancel'),
         re_path(r'^unallocate/', BuildUnallocate.as_view(), name='api-build-unallocate'),
         re_path(r'^.*$', BuildDetail.as_view(), name='api-build-detail'),
     ])),

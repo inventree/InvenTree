@@ -438,6 +438,52 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
                 )
 
 
+class BuildCancelSerializer(serializers.Serializer):
+
+    class Meta:
+        fields = [
+            'remove_allocated_stock',
+            'remove_incomplete_outputs',
+        ]
+
+    def get_context_data(self):
+
+        build = self.context['build']
+
+        return {
+            'has_allocated_stock': build.is_partially_allocated(None),
+            'incomplete_outputs': build.incomplete_count,
+            'completed_outputs': build.complete_count,
+        }
+
+    remove_allocated_stock = serializers.BooleanField(
+        label=_('Remove Allocated Stock'),
+        help_text=_('Subtract any stock which has already been allocated to this build'),
+        required=False,
+        default=False,
+    )
+
+    remove_incomplete_outputs = serializers.BooleanField(
+        label=_('Remove Incomplete Outputs'),
+        help_text=_('Delete any build outputs which have not been completed'),
+        required=False,
+        default=False,
+    )
+
+    def save(self):
+
+        build = self.context['build']
+        request = self.context['request']
+
+        data = self.validated_data
+
+        build.cancel_build(
+            request.user,
+            remove_allocated_stock=data.get('remove_unallocated_stock', False),
+            remove_incomplete_outputs=data.get('remove_incomplete_outputs', False),
+        )
+
+
 class BuildCompleteSerializer(serializers.Serializer):
     """
     DRF serializer for marking a BuildOrder as complete

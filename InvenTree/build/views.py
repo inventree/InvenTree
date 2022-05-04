@@ -43,37 +43,6 @@ class BuildIndex(InvenTreeRoleMixin, ListView):
         return context
 
 
-class BuildCancel(AjaxUpdateView):
-    """ View to cancel a Build.
-    Provides a cancellation information dialog
-    """
-
-    model = Build
-    ajax_template_name = 'build/cancel.html'
-    ajax_form_title = _('Cancel Build')
-    context_object_name = 'build'
-    form_class = forms.CancelBuildForm
-
-    def validate(self, build, form, **kwargs):
-
-        confirm = str2bool(form.cleaned_data.get('confirm_cancel', False))
-
-        if not confirm:
-            form.add_error('confirm_cancel', _('Confirm build cancellation'))
-
-    def save(self, build, form, **kwargs):
-        """
-        Cancel the build.
-        """
-
-        build.cancelBuild(self.request.user)
-
-    def get_data(self):
-        return {
-            'danger': _('Build was cancelled')
-        }
-
-
 class BuildDetail(InvenTreeRoleMixin, DetailView):
     """
     Detail view of a single Build object.
