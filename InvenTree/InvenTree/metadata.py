@@ -43,10 +43,7 @@ class InvenTreeMetadata(SimpleMetadata):
         Custom context information to pass through to the OPTIONS endpoint,
         if the "context=True" is supplied to the OPTIONS requst
         
-        Serializer class can supply either:
-
-        - get_context_data() (method)
-        - CONTEXT_DATA (dict)
+        Serializer class can supply context data by defining a get_context_data() method (no arguments)
         """
 
         context = {}
@@ -55,8 +52,6 @@ class InvenTreeMetadata(SimpleMetadata):
 
             if hasattr(self.serializer, 'get_context_data'):
                 context = self.serializer.get_context_data()
-            elif hasattr(self.erializer, 'CONTEXT_DATA'):
-                context = self.serializer.CONTEXT_DATA
 
             metadata['context'] = context
 
