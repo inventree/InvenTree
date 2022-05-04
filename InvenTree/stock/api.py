@@ -107,6 +107,7 @@ class StockItemContextMixin:
 
         return context
 
+
 class StockItemSerialize(StockItemContextMixin, generics.CreateAPIView):
     """
     API endpoint for serializing a stock item

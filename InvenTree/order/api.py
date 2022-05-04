@@ -337,7 +337,6 @@ class PurchaseOrderIssue(PurchaseOrderContextMixin, generics.CreateAPIView):
     serializer_class = serializers.PurchaseOrderIssueSerializer
 
 
-
 class PurchaseOrderReceive(PurchaseOrderContextMixin, generics.CreateAPIView):
     """
     API endpoint to receive stock items against a purchase order.

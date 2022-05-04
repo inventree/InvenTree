@@ -9,11 +9,9 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView
 
 from .models import Build
-from . import forms
 
-from InvenTree.views import AjaxUpdateView, AjaxDeleteView
+from InvenTree.views import AjaxDeleteView
 from InvenTree.views import InvenTreeRoleMixin
-from InvenTree.helpers import str2bool
 from InvenTree.status_codes import BuildStatus
 
 

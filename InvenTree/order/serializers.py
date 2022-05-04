@@ -204,7 +204,7 @@ class PurchaseOrderCancelSerializer(serializers.Serializer):
 
         if not order.can_cancel():
             raise ValidationError(_("Order cannot be cancelled"))
-        
+
         order.cancel_order()
 
 
@@ -238,7 +238,6 @@ class PurchaseOrderIssueSerializer(serializers.Serializer):
 
     class Meta:
         fields = []
-    
 
     def save(self):
 

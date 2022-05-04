@@ -486,7 +486,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
         for output in self.complete_outputs:
             quantity += output.quantity
-        
+
         return quantity
 
     @property

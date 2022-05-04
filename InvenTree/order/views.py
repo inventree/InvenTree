@@ -30,9 +30,8 @@ from common.files import FileManager
 from . import forms as order_forms
 from part.views import PartPricing
 
-from InvenTree.views import AjaxView, AjaxUpdateView
-from InvenTree.helpers import DownloadFile, str2bool
-from InvenTree.views import InvenTreeRoleMixin
+from InvenTree.helpers import DownloadFile
+from InvenTree.views import InvenTreeRoleMixin, AjaxView
 
 
 logger = logging.getLogger("inventree")
