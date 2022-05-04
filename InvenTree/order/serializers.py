@@ -179,6 +179,35 @@ class PurchaseOrderSerializer(AbstractOrderSerializer, ReferenceIndexingSerializ
         ]
 
 
+class PurchaseOrderCancelSerializer(serializers.Serializer):
+    """
+    Serializer for cancelling a PurchaseOrder
+    """
+
+    class Meta:
+        fields = [],
+
+    def get_context_data(self):
+        """
+        Return custom context information about the order
+        """
+
+        self.order = self.context['order']
+
+        return {
+            'can_cancel': self.order.can_cancel(),
+        }
+
+    def save(self):
+
+        order = self.context['order']
+
+        if not order.can_cancel():
+            raise ValidationError(_("Order cannot be cancelled"))
+        
+        order.cancel_order()
+
+
 class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
 
     @staticmethod

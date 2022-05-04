@@ -286,7 +286,37 @@ class PurchaseOrderDetail(generics.RetrieveUpdateDestroyAPIView):
         return queryset
 
 
-class PurchaseOrderReceive(generics.CreateAPIView):
+class PurchaseOrderContextMixin:
+
+    def get_serializer_context(self):
+        """ Add the PurchaseOrder object to the serializer context """
+
+        context = super().get_serializer_context()
+
+        # Pass the purchase order through to the serializer for validation
+        try:
+            context['order'] = models.PurchaseOrder.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
+        context['request'] = self.request
+
+        return context
+
+
+class PurchaseOrderCancel(PurchaseOrderContextMixin, generics.CreateAPIView):
+    """
+    API endpoint to 'cancel' a purchase order.
+
+    The purchase order must be in a state which can be cancelled
+    """
+
+    queryset = models.PurchaseOrderLineItem.objects.all()
+
+    serializer_class = serializers.PurchaseOrderCancelSerializer
+
+
+class PurchaseOrderReceive(PurchaseOrderContextMixin, generics.CreateAPIView):
     """
     API endpoint to receive stock items against a purchase order.
 
@@ -302,20 +332,6 @@ class PurchaseOrderReceive(generics.CreateAPIView):
     queryset = models.PurchaseOrderLineItem.objects.none()
 
     serializer_class = serializers.PurchaseOrderReceiveSerializer
-
-    def get_serializer_context(self):
-
-        context = super().get_serializer_context()
-
-        # Pass the purchase order through to the serializer for validation
-        try:
-            context['order'] = models.PurchaseOrder.objects.get(pk=self.kwargs.get('pk', None))
-        except:
-            pass
-
-        context['request'] = self.request
-
-        return context
 
 
 class PurchaseOrderLineItemFilter(rest_filters.FilterSet):
@@ -1107,6 +1123,7 @@ order_api_urls = [
         # Individual purchase order detail URLs
         re_path(r'^(?P<pk>\d+)/', include([
             re_path(r'^receive/', PurchaseOrderReceive.as_view(), name='api-po-receive'),
+            re_path(r'^cancel/', PurchaseOrderCancel.as_view(), name='api-po-cancel'),
             re_path(r'.*$', PurchaseOrderDetail.as_view(), name='api-po-detail'),
         ])),
 
