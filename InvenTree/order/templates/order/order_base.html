@@ -258,9 +258,15 @@ $("#complete-order").click(function() {
 });
 
 $("#cancel-order").click(function() {
-    launchModalForm("{% url 'po-cancel' order.id %}", {
-        reload: true,
-    });
+
+    cancelPurchaseOrder(
+        {{ order.pk }},
+        {
+            onSuccess: function() {
+                window.location.reload();
+            }
+        },
+    );
 });
 
 $("#export-order").click(function() {

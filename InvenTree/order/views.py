@@ -87,32 +87,6 @@ class SalesOrderDetail(InvenTreeRoleMixin, DetailView):
     template_name = 'order/sales_order_detail.html'
 
 
-class PurchaseOrderCancel(AjaxUpdateView):
-    """ View for cancelling a purchase order """
-
-    model = PurchaseOrder
-    ajax_form_title = _('Cancel Order')
-    ajax_template_name = 'order/order_cancel.html'
-    form_class = order_forms.CancelPurchaseOrderForm
-
-    def validate(self, order, form, **kwargs):
-
-        confirm = str2bool(form.cleaned_data.get('confirm', False))
-
-        if not confirm:
-            form.add_error('confirm', _('Confirm order cancellation'))
-
-        if not order.can_cancel():
-            form.add_error(None, _('Order cannot be cancelled'))
-
-    def save(self, order, form, **kwargs):
-        """
-        Cancel the PurchaseOrder
-        """
-
-        order.cancel_order()
-
-
 class SalesOrderCancel(AjaxUpdateView):
     """ View for cancelling a sales order """
 

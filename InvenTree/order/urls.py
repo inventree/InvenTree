@@ -11,7 +11,6 @@ from . import views
 
 purchase_order_detail_urls = [
 
-    re_path(r'^cancel/', views.PurchaseOrderCancel.as_view(), name='po-cancel'),
     re_path(r'^issue/', views.PurchaseOrderIssue.as_view(), name='po-issue'),
     re_path(r'^complete/', views.PurchaseOrderComplete.as_view(), name='po-complete'),
 

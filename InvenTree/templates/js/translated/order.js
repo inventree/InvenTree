@@ -20,6 +20,7 @@
 
 /* exported
     allocateStockToSalesOrder,
+    cancelPurchaseOrder,
     completeShipment,
     createSalesOrder,
     createSalesOrderShipment,
@@ -138,6 +139,30 @@ function completeShipment(shipment_id) {
             });
         }
     });
+}
+
+
+function cancelPurchaseOrder(order_id, options={}) {
+    
+    var html = `
+    <div class='alert alert-info alert-block'>
+        {% trans "Are you sure you wish to cancel this purchase order?" %}
+    </div>`;
+
+    constructForm(
+        `/api/order/po/${order_id}/cancel/`,
+        {
+            method: 'POST',
+            title: '{% trans "Cancel Purchase Order" %}',
+            confirm: true,
+            preFormContent: html,
+            onSuccess: function(response) {
+                if (options.onSuccess) {
+                    options.onSuccess(response);
+                }
+            }
+        }
+    );
 }
 
 
