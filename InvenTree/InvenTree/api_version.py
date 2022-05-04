@@ -4,10 +4,14 @@ InvenTree API version information
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 43
+INVENTREE_API_VERSION = 44
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v44 -> 2022-05-04 : https://github.com/inventree/InvenTree/pull/2931
+    - Converting more server-side rendered forms to the API
+    - Exposes more core functionality to API endpoints
 
 v43 -> 2022-04-26 : https://github.com/inventree/InvenTree/pull/2875
     - Adds API detail endpoint for PartSalePrice model
