@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-03 08:38+0000\n"
-"PO-Revision-Date: 2022-05-03 23:46\n"
+"POT-Creation-Date: 2022-05-03 23:57+0000\n"
+"PO-Revision-Date: 2022-05-04 23:46\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -119,8 +119,8 @@ msgstr "Nem található sorozatszám"
 
 #: InvenTree/helpers.py:540
 #, python-brace-format
-msgid "Number of unique serial number ({s}) must match quantity ({q})"
-msgstr "Az egyedi sorozatszámok száma ({s}) meg kell egyezzen a mennyiséggel ({q})"
+msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
+msgstr "A megadott számú egyedi sorozatszám ({s}) meg kell egyezzen a darabszámmal ({q})"
 
 #: InvenTree/models.py:185
 msgid "Missing file"
@@ -902,8 +902,8 @@ msgstr "Gyártási tételnek meg kell adnia a gyártási kimenetet, mivel a fő 
 
 #: build/models.py:1180
 #, python-brace-format
-msgid "Allocated quantity ({q}) must not execed available stock quantity ({a})"
-msgstr "Lefoglalt mennyiség ({q}) nem lépheti túl a készletet ({a})"
+msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
+msgstr "A lefoglalt mennyiség ({q}) nem lépheti túl a szabad készletet ({a})"
 
 #: build/models.py:1190
 msgid "Stock item is over-allocated"
@@ -1099,8 +1099,9 @@ msgid "Accept Incomplete Allocation"
 msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:390
-msgid "Complete ouputs if stock has not been fully allocated"
-msgstr "Kimenetek befejezése akkor is ha a készlet nincs teljesen lefoglalva"
+msgid "Complete outputs if stock has not been fully allocated"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
+"lett teljesen lefoglalva"
 
 #: build/serializers.py:447
 msgid "Accept Unallocated"
@@ -2206,7 +2207,7 @@ msgstr "Kimerült készletek megjelenítése a főoldalon"
 
 #: common/models.py:1241
 msgid "Show needed stock"
-msgstr "Szükséges készlet megjelenítése"
+msgstr "Gyártáshoz szükséges készlet megjelenítése"
 
 #: common/models.py:1242
 msgid "Show stock items needed for builds on the homepage"
