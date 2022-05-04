@@ -124,7 +124,7 @@ function getApiEndpointOptions(url, callback) {
     }
 
     // Include extra context information in the request
-    url += '?context=true'
+    url += '?context=true';
 
     // Return the ajax request object
     $.ajax({

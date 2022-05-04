@@ -28,7 +28,7 @@
     createSalesOrderShipment,
     editPurchaseOrderLineItem,
     exportOrder,
-    issurPurchaseOrder,
+    issuePurchaseOrder,
     loadPurchaseOrderLineItemTable,
     loadPurchaseOrderExtraLineTable
     loadPurchaseOrderTable,
@@ -242,8 +242,7 @@ function issuePurchaseOrder(order_id, options={}) {
                 handleFormSuccess(response, options);
             }
         }
-    )
-
+    );
 }
 
 
