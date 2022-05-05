@@ -1142,7 +1142,7 @@ class StockItem(MPTTModel):
         )
 
     @transaction.atomic
-    def uninstallIntoLocation(self, location, user, notes):
+    def uninstall_into_location(self, location, user, notes):
         """
         Uninstall this stock item from another item, into a location.
 

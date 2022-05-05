@@ -95,24 +95,6 @@ class EditPartParameterTemplateForm(HelperForm):
         ]
 
 
-class EditCategoryForm(HelperForm):
-    """ Form for editing a PartCategory object """
-
-    field_prefix = {
-        'default_keywords': 'fa-key',
-    }
-
-    class Meta:
-        model = PartCategory
-        fields = [
-            'parent',
-            'name',
-            'description',
-            'default_location',
-            'default_keywords',
-        ]
-
-
 class EditCategoryParameterTemplateForm(HelperForm):
     """ Form for editing a PartCategoryParameterTemplate object """
 

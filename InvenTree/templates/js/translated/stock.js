@@ -57,6 +57,7 @@
     stockItemFields,
     stockLocationFields,
     stockStatusCodes,
+    uninstallStockItem,
 */
 
 
@@ -2630,13 +2631,10 @@ function loadInstalledInTable(table, options) {
             table.find('.button-uninstall').click(function() {
                 var pk = $(this).attr('pk');
 
-                launchModalForm(
-                    '{% url "stock-item-uninstall" %}',
+                uninstallStockItem(
+                    pk,
                     {
-                        data: {
-                            'items[]': pk,
-                        },
-                        success: function() {
+                        onSuccess: function(response) {
                             table.bootstrapTable('refresh');
                         }
                     }
@@ -2644,6 +2642,43 @@ function loadInstalledInTable(table, options) {
             });
         }
     });
+}
+
+
+/*
+ * Launch a dialog to uninstall a stock item from another stock item
+*/
+function uninstallStockItem(installed_item_id, options={}) {
+
+    constructForm(
+        `/api/stock/${installed_item_id}/uninstall/`,
+        {
+            confirm: true,
+            method: 'POST',
+            title: '{% trans "Uninstall Stock Item" %}',
+            fields: {
+                location: {
+                    icon: 'fa-sitemap',
+                },
+                note: {},
+            },
+            preFormContent: function(opts) {
+                var html = '';
+                
+                if (installed_item_id == null) {
+                    html += `
+                    <div class='alert alert-block alert-info'>
+                    {% trans "Select stock item to uninstall" %}
+                    </div>`;
+                }
+
+                return html;
+            },
+            onSuccess: function(response) {
+                handleFormSuccess(response, options);
+            }
+        }
+    );
 }
 
 
