@@ -15,5 +15,5 @@ class PluginTemplateLoader(FilesystemLoader):
         for plugin in registry.plugins.values():
             new_path = Path(plugin.path) / dirname
             if Path(new_path).is_dir():
-                template_dirs.append(new_path)
+                template_dirs.append(new_path)  # pragma: no cover
         return tuple(template_dirs)

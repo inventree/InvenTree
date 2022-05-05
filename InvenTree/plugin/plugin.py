@@ -80,7 +80,7 @@ class InvenTreePluginBase():
         if cfg:
             return cfg.active
         else:
-            return False
+            return False  # pragma: no cover
 
 
 # TODO @matmair remove after InvenTree 0.7.0 release
