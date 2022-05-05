@@ -199,7 +199,7 @@ class BuildList(generics.ListCreateAPIView):
         return self.serializer_class(*args, **kwargs)
 
 
-class BuildDetail(generics.RetrieveUpdateAPIView):
+class BuildDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of a Build object """
 
     queryset = Build.objects.all()

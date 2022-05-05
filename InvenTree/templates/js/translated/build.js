@@ -24,6 +24,7 @@
     cancelBuildOrder,
     completeBuildOrder,
     createBuildOutput,
+    deleteBuildOrder,
     editBuildOrder,
     loadAllocationTable,
     loadBuildOrderAllocationTable,
@@ -74,6 +75,36 @@ function buildFormFields() {
             icon: 'fa-users',
         },
     };
+}
+
+
+function deleteBuildOrder(pk, options={}) {
+    constructForm(
+        `/api/build/${pk}/`,
+        {
+            method: 'DELETE',
+            title: '{% trans "Delete Build Order" %}',
+            preFormContent: function(options) {
+
+                var build = options.instance;
+                var part = build.part_detail;
+                var prefix = global_settings.BUILDORDER_REFERENCE_PREFIX;
+
+                var html = `
+                <div class='alert alert-block'>
+                    ${thumbnailImage(part.thumbnail || part.image)} - ${prefix}${build.reference} - ${build.title}
+                </div>
+                <div class='alert alert-block alert-danger'>
+                    {% trans "Are you sure you want to delete this build?" %}
+                </div>`;
+
+                return html;
+            },
+            onSuccess: function(response) {
+                handleFormSuccess(response, options);
+            }
+        }
+    );
 }
 
 

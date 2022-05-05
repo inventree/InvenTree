@@ -249,12 +249,9 @@ src="{% static 'img/blank_image.png' %}"
     {% endif %}
 
     $("#build-delete").on('click', function() {
-        launchModalForm(
-            "{% url 'build-delete' build.id %}",
-            {
-                redirect: "{% url 'build-index' %}",
-            }
-        );
+        deleteBuildOrder({{ build.pk }}, {
+            redirect: "{% url 'build-index' %}",
+        });
     });
     
 {% endblock %}

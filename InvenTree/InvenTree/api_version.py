@@ -4,10 +4,14 @@ InvenTree API version information
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 44
+INVENTREE_API_VERSION = 45
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v45 -> 2022-05-05 : https://github.com/inventree/InvenTree/pull/2934
+    - Converting more server-side actions to use the API
+    - Build orders can now be deleted via the API
 
 v44 -> 2022-05-04 : https://github.com/inventree/InvenTree/pull/2931
     - Converting more server-side rendered forms to the API
