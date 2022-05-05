@@ -139,7 +139,7 @@ class MethodStorageClass:
     user_settings = {}
 
     def collect(self, selected_classes=None):
-        print('collecting')
+        logger.info('collecting notification methods')
         current_method = inheritors(NotificationMethod) - IGNORED_NOTIFICATION_CLS
 
         # for testing selective loading is made available
@@ -154,6 +154,7 @@ class MethodStorageClass:
             filtered_list[ref] = item
 
         storage.liste = list(filtered_list.values())
+        logger.info(f'found {len(storage.liste)} notification methods')
 
     def get_usersettings(self, user):
         methods = []
