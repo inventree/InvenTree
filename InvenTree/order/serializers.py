@@ -941,7 +941,7 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
         shipment.complete_shipment(user, tracking_number=tracking_number)
 
 
-class SOShipmentAllocationItemSerializer(serializers.Serializer):
+class SalesOrderShipmentAllocationItemSerializer(serializers.Serializer):
     """
     A serializer for allocating a single stock-item against a SalesOrder shipment
     """
@@ -1233,7 +1233,7 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
             'shipment',
         ]
 
-    items = SOShipmentAllocationItemSerializer(many=True)
+    items = SalesOrderShipmentAllocationItemSerializer(many=True)
 
     shipment = serializers.PrimaryKeyRelatedField(
         queryset=order.models.SalesOrderShipment.objects.all(),
