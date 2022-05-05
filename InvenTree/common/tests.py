@@ -10,6 +10,7 @@ from django.urls import reverse
 
 from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.helpers import str2bool
+from plugin.models import NotificationUserSetting
 
 from .models import InvenTreeSetting, InvenTreeUserSetting, WebhookEndpoint, WebhookMessage, NotificationEntry
 from .api import WebhookView
@@ -385,6 +386,11 @@ class NotificationUserSettingsApiTest(InvenTreeAPITestCase):
         url = reverse('api-notifcation-setting-list')
 
         self.get(url, expected_code=200)
+
+    def test_setting(self):
+        """Test the string name for NotificationUserSetting"""
+        test_setting = NotificationUserSetting.get_setting_object('NOTIFICATION_METHOD_MAIL', user=self.user)
+        self.assertEqual(str(test_setting), 'NOTIFICATION_METHOD_MAIL (for testuser): ')
 
 
 class WebhookMessageTests(TestCase):
