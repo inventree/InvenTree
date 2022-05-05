@@ -1537,7 +1537,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
     )
 
     @classmethod
-    def get_setting_object(cls, key, user):
+    def get_setting_object(cls, key, user=None):
         return super().get_setting_object(key, user=user)
 
     def validate_unique(self, exclude=None, **kwargs):
