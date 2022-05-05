@@ -81,7 +81,7 @@ function renderStockItem(name, data, parameters={}, options={}) {
 
     var part_detail = '';
 
-    if (render_part_detail) {
+    if (render_part_detail && data.part_detail) {
         part_detail = `<img src='${image}' class='select2-thumbnail'><span>${data.part_detail.full_name}</span> - `;
     }
 

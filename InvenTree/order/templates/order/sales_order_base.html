@@ -224,9 +224,13 @@ $("#edit-order").click(function() {
 });
 
 $("#cancel-order").click(function() {
-    launchModalForm("{% url 'so-cancel' order.id %}", {
-        reload: true,
-    });
+
+    cancelSalesOrder(
+        {{ order.pk }},
+        {
+            reload: true,
+        }
+    );
 });
 
 $("#complete-order").click(function() {

@@ -20,11 +20,15 @@
 
 /* exported
     allocateStockToSalesOrder,
+    cancelPurchaseOrder,
+    cancelSalesOrder,
+    completePurchaseOrder,
     completeShipment,
     createSalesOrder,
     createSalesOrderShipment,
     editPurchaseOrderLineItem,
     exportOrder,
+    issuePurchaseOrder,
     loadPurchaseOrderLineItemTable,
     loadPurchaseOrderExtraLineTable
     loadPurchaseOrderTable,
@@ -140,6 +144,133 @@ function completeShipment(shipment_id) {
     });
 }
 
+/*
+ * Launches a modal form to mark a PurchaseOrder as "complete"
+*/
+function completePurchaseOrder(order_id, options={}) {
+
+    constructForm(
+        `/api/order/po/${order_id}/complete/`,
+        {
+            method: 'POST',
+            title: '{% trans "Complete Purchase Order" %}',
+            confirm: true,
+            preFormContent: function(opts) {
+
+                var html = `
+                <div class='alert alert-block alert-info'>
+                    {% trans "Mark this order as complete?" %}
+                </div>`;
+
+                if (opts.context.is_complete) {
+                    html += `
+                    <div class='alert alert-block alert-success'>
+                        {% trans "All line items have been received" %}
+                    </div>`;
+                } else {
+                    html += `
+                    <div class='alert alert-block alert-warning'>
+                        {% trans 'This order has line items which have not been marked as received.' %}</br>
+                        {% trans 'Completing this order means that the order and line items will no longer be editable.' %}
+                    </div>`;
+                }
+
+                return html;
+            },
+            onSuccess: function(response) {
+                handleFormSuccess(response, options);
+            }
+        }
+    );
+}
+
+
+/*
+ * Launches a modal form to mark a PurchaseOrder as 'cancelled'
+ */
+function cancelPurchaseOrder(order_id, options={}) {
+    
+    constructForm(
+        `/api/order/po/${order_id}/cancel/`,
+        {
+            method: 'POST',
+            title: '{% trans "Cancel Purchase Order" %}',
+            confirm: true,
+            preFormContent: function(opts) {
+                var html = `
+                <div class='alert alert-info alert-block'>
+                    {% trans "Are you sure you wish to cancel this purchase order?" %}
+                </div>`;
+
+                if (!opts.context.can_cancel) {
+                    html += `
+                    <div class='alert alert-danger alert-block'>
+                        {% trans "This purchase order can not be cancelled" %}
+                    </div>`;
+                }
+
+                return html;
+            },
+            onSuccess: function(response) {
+                handleFormSuccess(response, options);
+            }
+        }
+    );
+}
+
+
+/*
+ * Launches a modal form to mark a PurchaseOrder as "issued"
+ */
+function issuePurchaseOrder(order_id, options={}) {
+
+    constructForm(
+        `/api/order/po/${order_id}/issue/`,
+        {
+            method: 'POST',
+            title: '{% trans "Issue Purchase Order" %}',
+            confirm: true,
+            preFormContent: function(opts) {
+                var html = `
+                <div class='alert alert-block alert-warning'>
+                {% trans 'After placing this purchase order, line items will no longer be editable.' %}
+                </div>`;
+
+                return html;
+            },
+            onSuccess: function(response) {
+                handleFormSuccess(response, options);
+            }
+        }
+    );
+}
+
+
+/*
+ * Launches a modal form to mark a SalesOrder as "cancelled"
+ */
+function cancelSalesOrder(order_id, options={}) {
+
+    constructForm(
+        `/api/order/so/${order_id}/cancel/`,
+        {
+            method: 'POST',
+            title: '{% trans "Cancel Sales Order" %}',
+            confirm: true,
+            preFormContent: function(opts) {
+                var html = `
+                <div class='alert alert-block alert-warning'>
+                {% trans "Cancelling this order means that the order will no longer be editable." %}
+                </div>`;
+
+                return html;
+            },
+            onSuccess: function(response) {
+                handleFormSuccess(response, options);
+            }
+        }
+    );
+}
 
 // Open a dialog to create a new sales order shipment
 function createSalesOrderShipment(options={}) {

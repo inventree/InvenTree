@@ -233,7 +233,24 @@ class BuildUnallocate(generics.CreateAPIView):
         return ctx
 
 
-class BuildOutputCreate(generics.CreateAPIView):
+class BuildOrderContextMixin:
+    """ Mixin class which adds build order as serializer context variable """
+
+    def get_serializer_context(self):
+        ctx = super().get_serializer_context()
+
+        ctx['request'] = self.request
+        ctx['to_complete'] = True
+
+        try:
+            ctx['build'] = Build.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
+        return ctx
+
+
+class BuildOutputCreate(BuildOrderContextMixin, generics.CreateAPIView):
     """
     API endpoint for creating new build output(s)
     """
@@ -242,21 +259,8 @@ class BuildOutputCreate(generics.CreateAPIView):
 
     serializer_class = build.serializers.BuildOutputCreateSerializer
 
-    def get_serializer_context(self):
-        ctx = super().get_serializer_context()
 
-        ctx['request'] = self.request
-        ctx['to_complete'] = True
-
-        try:
-            ctx['build'] = Build.objects.get(pk=self.kwargs.get('pk', None))
-        except:
-            pass
-
-        return ctx
-
-
-class BuildOutputComplete(generics.CreateAPIView):
+class BuildOutputComplete(BuildOrderContextMixin, generics.CreateAPIView):
     """
     API endpoint for completing build outputs
     """
@@ -265,21 +269,8 @@ class BuildOutputComplete(generics.CreateAPIView):
 
     serializer_class = build.serializers.BuildOutputCompleteSerializer
 
-    def get_serializer_context(self):
-        ctx = super().get_serializer_context()
 
-        ctx['request'] = self.request
-        ctx['to_complete'] = True
-
-        try:
-            ctx['build'] = Build.objects.get(pk=self.kwargs.get('pk', None))
-        except:
-            pass
-
-        return ctx
-
-
-class BuildOutputDelete(generics.CreateAPIView):
+class BuildOutputDelete(BuildOrderContextMixin, generics.CreateAPIView):
     """
     API endpoint for deleting multiple build outputs
     """
@@ -288,20 +279,8 @@ class BuildOutputDelete(generics.CreateAPIView):
 
     serializer_class = build.serializers.BuildOutputDeleteSerializer
 
-    def get_serializer_context(self):
-        ctx = super().get_serializer_context()
 
-        ctx['request'] = self.request
-
-        try:
-            ctx['build'] = Build.objects.get(pk=self.kwargs.get('pk', None))
-        except:
-            pass
-
-        return ctx
-
-
-class BuildFinish(generics.CreateAPIView):
+class BuildFinish(BuildOrderContextMixin, generics.CreateAPIView):
     """
     API endpoint for marking a build as finished (completed)
     """
@@ -310,20 +289,8 @@ class BuildFinish(generics.CreateAPIView):
 
     serializer_class = build.serializers.BuildCompleteSerializer
 
-    def get_serializer_context(self):
-        ctx = super().get_serializer_context()
 
-        ctx['request'] = self.request
-
-        try:
-            ctx['build'] = Build.objects.get(pk=self.kwargs.get('pk', None))
-        except:
-            pass
-
-        return ctx
-
-
-class BuildAutoAllocate(generics.CreateAPIView):
+class BuildAutoAllocate(BuildOrderContextMixin, generics.CreateAPIView):
     """
     API endpoint for 'automatically' allocating stock against a build order.
 
@@ -337,24 +304,8 @@ class BuildAutoAllocate(generics.CreateAPIView):
 
     serializer_class = build.serializers.BuildAutoAllocationSerializer
 
-    def get_serializer_context(self):
-        """
-        Provide the Build object to the serializer context
-        """
 
-        context = super().get_serializer_context()
-
-        try:
-            context['build'] = Build.objects.get(pk=self.kwargs.get('pk', None))
-        except:
-            pass
-
-        context['request'] = self.request
-
-        return context
-
-
-class BuildAllocate(generics.CreateAPIView):
+class BuildAllocate(BuildOrderContextMixin, generics.CreateAPIView):
     """
     API endpoint to allocate stock items to a build order
 
@@ -370,21 +321,12 @@ class BuildAllocate(generics.CreateAPIView):
 
     serializer_class = build.serializers.BuildAllocationSerializer
 
-    def get_serializer_context(self):
-        """
-        Provide the Build object to the serializer context
-        """
 
-        context = super().get_serializer_context()
+class BuildCancel(BuildOrderContextMixin, generics.CreateAPIView):
+    """ API endpoint for cancelling a BuildOrder """
 
-        try:
-            context['build'] = Build.objects.get(pk=self.kwargs.get('pk', None))
-        except:
-            pass
-
-        context['request'] = self.request
-
-        return context
+    queryset = Build.objects.all()
+    serializer_class = build.serializers.BuildCancelSerializer
 
 
 class BuildItemDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -527,6 +469,7 @@ build_api_urls = [
         re_path(r'^create-output/', BuildOutputCreate.as_view(), name='api-build-output-create'),
         re_path(r'^delete-outputs/', BuildOutputDelete.as_view(), name='api-build-output-delete'),
         re_path(r'^finish/', BuildFinish.as_view(), name='api-build-finish'),
+        re_path(r'^cancel/', BuildCancel.as_view(), name='api-build-cancel'),
         re_path(r'^unallocate/', BuildUnallocate.as_view(), name='api-build-unallocate'),
         re_path(r'^.*$', BuildDetail.as_view(), name='api-build-detail'),
     ])),

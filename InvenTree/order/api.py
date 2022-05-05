@@ -286,7 +286,58 @@ class PurchaseOrderDetail(generics.RetrieveUpdateDestroyAPIView):
         return queryset
 
 
-class PurchaseOrderReceive(generics.CreateAPIView):
+class PurchaseOrderContextMixin:
+    """ Mixin to add purchase order object as serializer context variable """
+
+    def get_serializer_context(self):
+        """ Add the PurchaseOrder object to the serializer context """
+
+        context = super().get_serializer_context()
+
+        # Pass the purchase order through to the serializer for validation
+        try:
+            context['order'] = models.PurchaseOrder.objects.get(pk=self.kwargs.get('pk', None))
+        except:
+            pass
+
+        context['request'] = self.request
+
+        return context
+
+
+class PurchaseOrderCancel(PurchaseOrderContextMixin, generics.CreateAPIView):
+    """
+    API endpoint to 'cancel' a purchase order.
+
+    The purchase order must be in a state which can be cancelled
+    """
+
+    queryset = models.PurchaseOrder.objects.all()
+
+    serializer_class = serializers.PurchaseOrderCancelSerializer
+
+
+class PurchaseOrderComplete(PurchaseOrderContextMixin, generics.CreateAPIView):
+    """
+    API endpoint to 'complete' a purchase order
+    """
+
+    queryset = models.PurchaseOrder.objects.all()
+
+    serializer_class = serializers.PurchaseOrderCompleteSerializer
+
+
+class PurchaseOrderIssue(PurchaseOrderContextMixin, generics.CreateAPIView):
+    """
+    API endpoint to 'complete' a purchase order
+    """
+
+    queryset = models.PurchaseOrder.objects.all()
+
+    serializer_class = serializers.PurchaseOrderIssueSerializer
+
+
+class PurchaseOrderReceive(PurchaseOrderContextMixin, generics.CreateAPIView):
     """
     API endpoint to receive stock items against a purchase order.
 
@@ -302,20 +353,6 @@ class PurchaseOrderReceive(generics.CreateAPIView):
     queryset = models.PurchaseOrderLineItem.objects.none()
 
     serializer_class = serializers.PurchaseOrderReceiveSerializer
-
-    def get_serializer_context(self):
-
-        context = super().get_serializer_context()
-
-        # Pass the purchase order through to the serializer for validation
-        try:
-            context['order'] = models.PurchaseOrder.objects.get(pk=self.kwargs.get('pk', None))
-        except:
-            pass
-
-        context['request'] = self.request
-
-        return context
 
 
 class PurchaseOrderLineItemFilter(rest_filters.FilterSet):
@@ -834,13 +871,8 @@ class SalesOrderLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.SalesOrderLineItemSerializer
 
 
-class SalesOrderComplete(generics.CreateAPIView):
-    """
-    API endpoint for manually marking a SalesOrder as "complete".
-    """
-
-    queryset = models.SalesOrder.objects.all()
-    serializer_class = serializers.SalesOrderCompleteSerializer
+class SalesOrderContextMixin:
+    """ Mixin to add sales order object as serializer context variable """
 
     def get_serializer_context(self):
 
@@ -856,7 +888,22 @@ class SalesOrderComplete(generics.CreateAPIView):
         return ctx
 
 
-class SalesOrderAllocateSerials(generics.CreateAPIView):
+class SalesOrderCancel(SalesOrderContextMixin, generics.CreateAPIView):
+
+    queryset = models.SalesOrder.objects.all()
+    serializer_class = serializers.SalesOrderCancelSerializer
+
+
+class SalesOrderComplete(SalesOrderContextMixin, generics.CreateAPIView):
+    """
+    API endpoint for manually marking a SalesOrder as "complete".
+    """
+
+    queryset = models.SalesOrder.objects.all()
+    serializer_class = serializers.SalesOrderCompleteSerializer
+
+
+class SalesOrderAllocateSerials(SalesOrderContextMixin, generics.CreateAPIView):
     """
     API endpoint to allocation stock items against a SalesOrder,
     by specifying serial numbers.
@@ -865,22 +912,8 @@ class SalesOrderAllocateSerials(generics.CreateAPIView):
     queryset = models.SalesOrder.objects.none()
     serializer_class = serializers.SalesOrderSerialAllocationSerializer
 
-    def get_serializer_context(self):
 
-        ctx = super().get_serializer_context()
-
-        # Pass through the SalesOrder object to the serializer
-        try:
-            ctx['order'] = models.SalesOrder.objects.get(pk=self.kwargs.get('pk', None))
-        except:
-            pass
-
-        ctx['request'] = self.request
-
-        return ctx
-
-
-class SalesOrderAllocate(generics.CreateAPIView):
+class SalesOrderAllocate(SalesOrderContextMixin, generics.CreateAPIView):
     """
     API endpoint to allocate stock items against a SalesOrder
 
@@ -890,20 +923,6 @@ class SalesOrderAllocate(generics.CreateAPIView):
 
     queryset = models.SalesOrder.objects.none()
     serializer_class = serializers.SalesOrderShipmentAllocationSerializer
-
-    def get_serializer_context(self):
-
-        ctx = super().get_serializer_context()
-
-        # Pass through the SalesOrder object to the serializer
-        try:
-            ctx['order'] = models.SalesOrder.objects.get(pk=self.kwargs.get('pk', None))
-        except:
-            pass
-
-        ctx['request'] = self.request
-
-        return ctx
 
 
 class SalesOrderAllocationDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -1106,7 +1125,10 @@ order_api_urls = [
 
         # Individual purchase order detail URLs
         re_path(r'^(?P<pk>\d+)/', include([
+            re_path(r'^issue/', PurchaseOrderIssue.as_view(), name='api-po-issue'),
             re_path(r'^receive/', PurchaseOrderReceive.as_view(), name='api-po-receive'),
+            re_path(r'^cancel/', PurchaseOrderCancel.as_view(), name='api-po-cancel'),
+            re_path(r'^complete/', PurchaseOrderComplete.as_view(), name='api-po-complete'),
             re_path(r'.*$', PurchaseOrderDetail.as_view(), name='api-po-detail'),
         ])),
 
@@ -1143,6 +1165,7 @@ order_api_urls = [
 
         # Sales order detail view
         re_path(r'^(?P<pk>\d+)/', include([
+            re_path(r'^cancel/', SalesOrderCancel.as_view(), name='api-so-cancel'),
             re_path(r'^complete/', SalesOrderComplete.as_view(), name='api-so-complete'),
             re_path(r'^allocate/', SalesOrderAllocate.as_view(), name='api-so-allocate'),
             re_path(r'^allocate-serials/', SalesOrderAllocateSerials.as_view(), name='api-so-allocate-serials'),

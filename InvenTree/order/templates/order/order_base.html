@@ -192,10 +192,14 @@ src="{% static 'img/blank_image.png' %}"
 
 {% if order.status == PurchaseOrderStatus.PENDING %}
 $("#place-order").click(function() {
-    launchModalForm("{% url 'po-issue' order.id %}",
-    {
-        reload: true,
-    });
+
+    issuePurchaseOrder(
+        {{ order.pk }},
+        {
+            reload: true,
+        }
+    );
+
 });
 {% endif %}
 
@@ -258,15 +262,27 @@ $("#receive-order").click(function() {
 });
 
 $("#complete-order").click(function() {
-    launchModalForm("{% url 'po-complete' order.id %}", {
-        reload: true,
-    });
+
+    completePurchaseOrder(
+        {{ order.pk }},
+        {
+            onSuccess: function() {
+                window.location.reload();
+            }
+        }
+    );
 });
 
 $("#cancel-order").click(function() {
-    launchModalForm("{% url 'po-cancel' order.id %}", {
-        reload: true,
-    });
+
+    cancelPurchaseOrder(
+        {{ order.pk }},
+        {
+            onSuccess: function() {
+                window.location.reload();
+            }
+        },
+    );
 });
 
 $("#export-order").click(function() {

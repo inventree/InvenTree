@@ -179,6 +179,72 @@ class PurchaseOrderSerializer(AbstractOrderSerializer, ReferenceIndexingSerializ
         ]
 
 
+class PurchaseOrderCancelSerializer(serializers.Serializer):
+    """
+    Serializer for cancelling a PurchaseOrder
+    """
+
+    class Meta:
+        fields = [],
+
+    def get_context_data(self):
+        """
+        Return custom context information about the order
+        """
+
+        self.order = self.context['order']
+
+        return {
+            'can_cancel': self.order.can_cancel(),
+        }
+
+    def save(self):
+
+        order = self.context['order']
+
+        if not order.can_cancel():
+            raise ValidationError(_("Order cannot be cancelled"))
+
+        order.cancel_order()
+
+
+class PurchaseOrderCompleteSerializer(serializers.Serializer):
+    """
+    Serializer for completing a purchase order
+    """
+
+    class Meta:
+        fields = []
+
+    def get_context_data(self):
+        """
+        Custom context information for this serializer
+        """
+
+        order = self.context['order']
+
+        return {
+            'is_complete': order.is_complete,
+        }
+
+    def save(self):
+
+        order = self.context['order']
+        order.complete_order()
+
+
+class PurchaseOrderIssueSerializer(serializers.Serializer):
+    """ Serializer for issuing (sending) a purchase order """
+
+    class Meta:
+        fields = []
+
+    def save(self):
+
+        order = self.context['order']
+        order.place_order()
+
+
 class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
 
     @staticmethod
@@ -972,6 +1038,25 @@ class SalesOrderCompleteSerializer(serializers.Serializer):
         user = getattr(request, 'user', None)
 
         order.complete_order(user)
+
+
+class SalesOrderCancelSerializer(serializers.Serializer):
+    """ Serializer for marking a SalesOrder as cancelled
+    """
+
+    def get_context_data(self):
+
+        order = self.context['order']
+
+        return {
+            'can_cancel': order.can_cancel(),
+        }
+
+    def save(self):
+
+        order = self.context['order']
+
+        order.cancel_order()
 
 
 class SalesOrderSerialAllocationSerializer(serializers.Serializer):
