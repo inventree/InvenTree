@@ -200,7 +200,7 @@ class UserSettingsPermissions(permissions.BasePermission):
 
         try:
             user = request.user
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             return False
 
         return user == obj.user
