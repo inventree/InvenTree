@@ -548,7 +548,8 @@ class I18nStaticNode(StaticNode):
             # Store the original (un-rendered) path template, as it gets overwritten below
             self.original = self.path.var
 
-        self.path.var = self.original.format(lng=context.request.LANGUAGE_CODE)
+        if hasattr(context, 'request'):
+            self.path.var = self.original.format(lng=context.request.LANGUAGE_CODE)
 
         ret = super().render(context)
 
