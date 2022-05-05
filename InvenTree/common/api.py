@@ -147,7 +147,7 @@ class GlobalSettingsPermissions(permissions.BasePermission):
             user = request.user
 
             return user.is_staff
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             return False
 
 
@@ -181,7 +181,7 @@ class UserSettingsList(SettingsList):
 
         try:
             user = self.request.user
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             return common.models.InvenTreeUserSetting.objects.none()
 
         queryset = super().filter_queryset(queryset)
