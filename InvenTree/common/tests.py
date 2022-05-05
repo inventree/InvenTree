@@ -534,6 +534,11 @@ class NotificationTest(TestCase):
 
         self.assertTrue(NotificationEntry.check_recent('test.notification', 1, delta))
 
+    def test_api_list(self):
+        """Test list URL"""
+        url = reverse('api-notifications-list')
+        self.get(url, expected_code=200)
+
 
 class LoadingTest(TestCase):
     """
