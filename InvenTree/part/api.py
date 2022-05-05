@@ -728,10 +728,8 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
             return super(PartDetail, self).destroy(request, *args, **kwargs)
         else:
             # Return 400 error
-            return Response(
-                400,
-                data=f"Part '{part.name}' (pk = {part.pk}) is active: cannot delete"
-            )
+            data = f"Part '{part.name}' (pk = {part.pk}) is active: cannot delete"
+            return Response(status=400, data=data)
 
     def update(self, request, *args, **kwargs):
         """
