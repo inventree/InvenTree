@@ -43,7 +43,7 @@ class BomItemTest(TestCase):
 
         self.assertIn(self.orphan, parts)
 
-    # TODO: Tests for multi-level BOMs
+        self.assertTrue(self.bob.check_if_part_in_bom(self.orphan))
 
     def test_used_in(self):
         self.assertEqual(self.bob.used_in_count, 1)

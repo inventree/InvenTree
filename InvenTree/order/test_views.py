@@ -8,12 +8,6 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 
-from InvenTree.status_codes import PurchaseOrderStatus
-
-from .models import PurchaseOrder
-
-import json
-
 
 class OrderViewTestCase(TestCase):
 
@@ -76,30 +70,3 @@ class POTests(OrderViewTestCase):
 
         # Response should be streaming-content (file download)
         self.assertIn('streaming_content', dir(response))
-
-    def test_po_issue(self):
-        """ Test PurchaseOrderIssue view """
-
-        url = reverse('po-issue', args=(1,))
-
-        order = PurchaseOrder.objects.get(pk=1)
-        self.assertEqual(order.status, PurchaseOrderStatus.PENDING)
-
-        # Test without confirmation
-        response = self.client.post(url, {'confirm': 0}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        data = json.loads(response.content)
-
-        self.assertFalse(data['form_valid'])
-
-        # Test WITH confirmation
-        response = self.client.post(url, {'confirm': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(response.status_code, 200)
-
-        data = json.loads(response.content)
-        self.assertTrue(data['form_valid'])
-
-        # Test that the order was actually placed
-        order = PurchaseOrder.objects.get(pk=1)
-        self.assertEqual(order.status, PurchaseOrderStatus.PLACED)

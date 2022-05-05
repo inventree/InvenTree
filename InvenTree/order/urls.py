@@ -11,10 +11,6 @@ from . import views
 
 purchase_order_detail_urls = [
 
-    re_path(r'^cancel/', views.PurchaseOrderCancel.as_view(), name='po-cancel'),
-    re_path(r'^issue/', views.PurchaseOrderIssue.as_view(), name='po-issue'),
-    re_path(r'^complete/', views.PurchaseOrderComplete.as_view(), name='po-complete'),
-
     re_path(r'^upload/', views.PurchaseOrderUpload.as_view(), name='po-upload'),
     re_path(r'^export/', views.PurchaseOrderExport.as_view(), name='po-export'),
 
@@ -33,7 +29,6 @@ purchase_order_urls = [
 ]
 
 sales_order_detail_urls = [
-    re_path(r'^cancel/', views.SalesOrderCancel.as_view(), name='so-cancel'),
     re_path(r'^export/', views.SalesOrderExport.as_view(), name='so-export'),
 
     re_path(r'^.*$', views.SalesOrderDetail.as_view(), name='so-detail'),
