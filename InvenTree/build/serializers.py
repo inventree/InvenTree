@@ -446,7 +446,7 @@ class BuildCancelSerializer(serializers.Serializer):
             'remove_incomplete_outputs',
         ]
 
-    def get_context_data(self):
+    def get_context_data(self, instance=None):
 
         build = self.context['build']
 

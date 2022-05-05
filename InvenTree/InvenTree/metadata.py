@@ -43,15 +43,23 @@ class InvenTreeMetadata(SimpleMetadata):
         Custom context information to pass through to the OPTIONS endpoint,
         if the "context=True" is supplied to the OPTIONS requst
 
-        Serializer class can supply context data by defining a get_context_data() method (no arguments)
+        Serializer class can supply context data by defining a get_context_data() method,
+        which accepts an 'instance' argument (for when the API endpoint points to a particular model instance)
         """
 
         context = {}
 
         if str2bool(request.query_params.get('context', False)):
 
+            # Attempt to extract the model instance from the view
+            try:
+                instance = view.get_object()
+            except AttributeError:
+                instance = None
+
+            # Context data can be defined at the serializer level
             if hasattr(self.serializer, 'get_context_data'):
-                context = self.serializer.get_context_data()
+                context = self.serializer.get_context_data(instance=instance)
 
             metadata['context'] = context
 
@@ -116,6 +124,10 @@ class InvenTreeMetadata(SimpleMetadata):
         Override get_serializer_info so that we can add 'default' values
         to any fields whose Meta.model specifies a default value
         """
+
+        if hasattr(self, 'serializer'):
+            # Exit if we have already extracted serializer information
+            return
 
         self.serializer = serializer
 

@@ -727,9 +727,11 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
             # Delete
             return super(PartDetail, self).destroy(request, *args, **kwargs)
         else:
-            # Return 405 error
-            message = f'Part \'{part.name}\' (pk = {part.pk}) is active: cannot delete'
-            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED, data=message)
+            # Return 400 error
+            return Response(
+                400,
+                data=f"Part '{part.name}' (pk = {part.pk}) is active: cannot delete",
+            )
 
     def update(self, request, *args, **kwargs):
         """

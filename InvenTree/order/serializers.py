@@ -187,7 +187,7 @@ class PurchaseOrderCancelSerializer(serializers.Serializer):
     class Meta:
         fields = [],
 
-    def get_context_data(self):
+    def get_context_data(self, instance=None):
         """
         Return custom context information about the order
         """
@@ -216,7 +216,7 @@ class PurchaseOrderCompleteSerializer(serializers.Serializer):
     class Meta:
         fields = []
 
-    def get_context_data(self):
+    def get_context_data(self, instance=None):
         """
         Custom context information for this serializer
         """
@@ -1044,7 +1044,7 @@ class SalesOrderCancelSerializer(serializers.Serializer):
     """ Serializer for marking a SalesOrder as cancelled
     """
 
-    def get_context_data(self):
+    def get_context_data(self, instance=None):
 
         order = self.context['order']
 
