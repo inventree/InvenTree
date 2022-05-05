@@ -377,6 +377,16 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
             )
 
 
+class NotificationUserSettingsApiTest(InvenTreeAPITestCase):
+    """Tests for the notification user settings API"""
+
+    def test_api_list(self):
+        """Test list URL"""
+        url = reverse('api-notifcation-setting-list')
+
+        self.get(url, expected_code=200)
+
+
 class WebhookMessageTests(TestCase):
     def setUp(self):
         self.endpoint_def = WebhookEndpoint.objects.create()
