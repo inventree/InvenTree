@@ -449,12 +449,9 @@ $('#stock-install-in').click(function() {
 
 $('#stock-uninstall').click(function() {
 
-    launchModalForm(
-        "{% url 'stock-item-uninstall' %}",
+    uninstallStockItem(
+        {{ item.pk }},
         {
-            data: {
-                'items[]': [{{ item.pk }}],
-            },
             reload: true,
         }
     );

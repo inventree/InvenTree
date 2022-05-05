@@ -480,6 +480,16 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         return outputs
 
     @property
+    def complete_count(self):
+
+        quantity = 0
+
+        for output in self.complete_outputs:
+            quantity += output.quantity
+
+        return quantity
+
+    @property
     def incomplete_outputs(self):
         """
         Return all the "incomplete" build outputs
@@ -588,7 +598,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         trigger_event('build.completed', id=self.pk)
 
     @transaction.atomic
-    def cancelBuild(self, user):
+    def cancel_build(self, user, **kwargs):
         """ Mark the Build as CANCELLED
 
         - Delete any pending BuildItem objects (but do not remove items from stock)
@@ -596,8 +606,23 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         - Save the Build object
         """
 
-        for item in self.allocated_stock.all():
-            item.delete()
+        remove_allocated_stock = kwargs.get('remove_allocated_stock', False)
+        remove_incomplete_outputs = kwargs.get('remove_incomplete_outputs', False)
+
+        # Handle stock allocations
+        for build_item in self.allocated_stock.all():
+
+            if remove_allocated_stock:
+                build_item.complete_allocation(user)
+
+            build_item.delete()
+
+        # Remove incomplete outputs (if required)
+        if remove_incomplete_outputs:
+            outputs = self.build_outputs.filter(is_building=True)
+
+            for output in outputs:
+                output.delete()
 
         # Date of 'completion' is the date the build was cancelled
         self.completion_date = datetime.now().date()
@@ -1024,6 +1049,24 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
         # All parts must be fully allocated!
         return True
+
+    def is_partially_allocated(self, output):
+        """
+        Returns True if the particular build output is (at least) partially allocated
+        """
+
+        # If output is not specified, we are talking about "untracked" items
+        if output is None:
+            bom_items = self.untracked_bom_items
+        else:
+            bom_items = self.tracked_bom_items
+
+        for bom_item in bom_items:
+
+            if self.allocated_quantity(bom_item, output) > 0:
+                return True
+
+        return False
 
     def are_untracked_parts_allocated(self):
         """

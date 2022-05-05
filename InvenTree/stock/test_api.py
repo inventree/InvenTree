@@ -29,6 +29,7 @@ class StockAPITestCase(InvenTreeAPITestCase):
     fixtures = [
         'category',
         'part',
+        'bom',
         'company',
         'location',
         'supplier_part',
@@ -642,6 +643,88 @@ class StockItemTest(StockAPITestCase):
 
         data = self.get(url).data
         self.assertEqual(data['purchase_price_currency'], 'NZD')
+
+    def test_install(self):
+        """ Test that stock item can be installed into antoher item, via the API """
+
+        # Select the "parent" stock item
+        parent_part = part.models.Part.objects.get(pk=100)
+
+        item = StockItem.objects.create(
+            part=parent_part,
+            serial='12345688-1230',
+            quantity=1,
+        )
+
+        sub_part = part.models.Part.objects.get(pk=50)
+        sub_item = StockItem.objects.create(
+            part=sub_part,
+            serial='xyz-123',
+            quantity=1,
+        )
+
+        n_entries = sub_item.tracking_info.count()
+
+        self.assertIsNone(sub_item.belongs_to)
+
+        url = reverse('api-stock-item-install', kwargs={'pk': item.pk})
+
+        # Try to install an item that is *not* in the BOM for this part!
+        response = self.post(
+            url,
+            {
+                'stock_item': 520,
+                'note': 'This should fail, as Item #522 is not in the BOM',
+            },
+            expected_code=400
+        )
+
+        self.assertIn('Selected part is not in the Bill of Materials', str(response.data))
+
+        # Now, try to install an item which *is* in the BOM for the parent part
+        response = self.post(
+            url,
+            {
+                'stock_item': sub_item.pk,
+                'note': "This time, it should be good!",
+            },
+            expected_code=201,
+        )
+
+        sub_item.refresh_from_db()
+
+        self.assertEqual(sub_item.belongs_to, item)
+
+        self.assertEqual(n_entries + 1, sub_item.tracking_info.count())
+
+        # Try to install again - this time, should fail because the StockItem is not available!
+        response = self.post(
+            url,
+            {
+                'stock_item': sub_item.pk,
+                'note': 'Expectation: failure!',
+            },
+            expected_code=400,
+        )
+
+        self.assertIn('Stock item is unavailable', str(response.data))
+
+        # Now, try to uninstall via the API
+
+        url = reverse('api-stock-item-uninstall', kwargs={'pk': sub_item.pk})
+
+        self.post(
+            url,
+            {
+                'location': 1,
+            },
+            expected_code=201,
+        )
+
+        sub_item.refresh_from_db()
+
+        self.assertIsNone(sub_item.belongs_to)
+        self.assertEqual(sub_item.location.pk, 1)
 
 
 class StocktakeTest(StockAPITestCase):

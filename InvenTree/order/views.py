@@ -30,9 +30,8 @@ from common.files import FileManager
 from . import forms as order_forms
 from part.views import PartPricing
 
-from InvenTree.views import AjaxView, AjaxUpdateView
-from InvenTree.helpers import DownloadFile, str2bool
-from InvenTree.views import InvenTreeRoleMixin
+from InvenTree.helpers import DownloadFile
+from InvenTree.views import InvenTreeRoleMixin, AjaxView
 
 
 logger = logging.getLogger("inventree")
@@ -85,123 +84,6 @@ class SalesOrderDetail(InvenTreeRoleMixin, DetailView):
     context_object_name = 'order'
     queryset = SalesOrder.objects.all().prefetch_related('lines__allocations__item__purchase_order')
     template_name = 'order/sales_order_detail.html'
-
-
-class PurchaseOrderCancel(AjaxUpdateView):
-    """ View for cancelling a purchase order """
-
-    model = PurchaseOrder
-    ajax_form_title = _('Cancel Order')
-    ajax_template_name = 'order/order_cancel.html'
-    form_class = order_forms.CancelPurchaseOrderForm
-
-    def validate(self, order, form, **kwargs):
-
-        confirm = str2bool(form.cleaned_data.get('confirm', False))
-
-        if not confirm:
-            form.add_error('confirm', _('Confirm order cancellation'))
-
-        if not order.can_cancel():
-            form.add_error(None, _('Order cannot be cancelled'))
-
-    def save(self, order, form, **kwargs):
-        """
-        Cancel the PurchaseOrder
-        """
-
-        order.cancel_order()
-
-
-class SalesOrderCancel(AjaxUpdateView):
-    """ View for cancelling a sales order """
-
-    model = SalesOrder
-    ajax_form_title = _("Cancel sales order")
-    ajax_template_name = "order/sales_order_cancel.html"
-    form_class = order_forms.CancelSalesOrderForm
-
-    def validate(self, order, form, **kwargs):
-
-        confirm = str2bool(form.cleaned_data.get('confirm', False))
-
-        if not confirm:
-            form.add_error('confirm', _('Confirm order cancellation'))
-
-        if not order.can_cancel():
-            form.add_error(None, _('Order cannot be cancelled'))
-
-    def save(self, order, form, **kwargs):
-        """
-        Once the form has been validated, cancel the SalesOrder
-        """
-
-        order.cancel_order()
-
-
-class PurchaseOrderIssue(AjaxUpdateView):
-    """ View for changing a purchase order from 'PENDING' to 'ISSUED' """
-
-    model = PurchaseOrder
-    ajax_form_title = _('Issue Order')
-    ajax_template_name = "order/order_issue.html"
-    form_class = order_forms.IssuePurchaseOrderForm
-
-    def validate(self, order, form, **kwargs):
-
-        confirm = str2bool(self.request.POST.get('confirm', False))
-
-        if not confirm:
-            form.add_error('confirm', _('Confirm order placement'))
-
-    def save(self, order, form, **kwargs):
-        """
-        Once the form has been validated, place the order.
-        """
-        order.place_order()
-
-    def get_data(self):
-        return {
-            'success': _('Purchase order issued')
-        }
-
-
-class PurchaseOrderComplete(AjaxUpdateView):
-    """ View for marking a PurchaseOrder as complete.
-    """
-
-    form_class = order_forms.CompletePurchaseOrderForm
-    model = PurchaseOrder
-    ajax_template_name = "order/order_complete.html"
-    ajax_form_title = _("Complete Order")
-    context_object_name = 'order'
-
-    def get_context_data(self):
-
-        ctx = {
-            'order': self.get_object(),
-        }
-
-        return ctx
-
-    def validate(self, order, form, **kwargs):
-
-        confirm = str2bool(form.cleaned_data.get('confirm', False))
-
-        if not confirm:
-            form.add_error('confirm', _('Confirm order completion'))
-
-    def save(self, order, form, **kwargs):
-        """
-        Complete the PurchaseOrder
-        """
-
-        order.complete_order()
-
-    def get_data(self):
-        return {
-            'success': _('Purchase order completed')
-        }
 
 
 class PurchaseOrderUpload(FileManagementFormView):

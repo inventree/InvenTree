@@ -159,9 +159,12 @@
         </div>
     </div>
     <div class='panel-content'>
-        <div class='btn-group'>
+        <div id='installed-table-toolbar'>
+            <div class='btn-group' role='group'>
+                {% include "filter_list.html" with id='installed-items' %}
+            </div>
         </div>
-        <table class='table table-striped table-condensed' id='installed-table'></table>
+        <table class='table table-striped table-condensed' id='installed-table' data-toolbar='#installed-table-toolbar'></table>
     </div>
 </div>
 
@@ -207,28 +210,6 @@
             quantity: {{ item.quantity|unlocalize }},
         }
     );
-
-    $('#multi-item-uninstall').click(function() {
-
-        var selections = $('#installed-table').bootstrapTable('getSelections');
-
-        var items = [];
-
-        selections.forEach(function(item) {
-            items.push(item.pk);
-        });
-
-        launchModalForm(
-            "{% url 'stock-item-uninstall' %}",
-            {
-                data: {
-                    'items[]': items,
-                },
-                reload: true,
-            }
-        );
-
-    });
     
     onPanelLoad('notes', function() {
         setupNotesField(

@@ -448,6 +448,48 @@ class InstallStockItemSerializer(serializers.Serializer):
         )
 
 
+class UninstallStockItemSerializer(serializers.Serializer):
+    """
+    API serializers for uninstalling an installed item from a stock item
+    """
+
+    class Meta:
+        fields = [
+            'location',
+            'note',
+        ]
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        many=False, required=True, allow_null=False,
+        label=_('Location'),
+        help_text=_('Destination location for uninstalled item')
+    )
+
+    note = serializers.CharField(
+        label=_('Notes'),
+        help_text=_('Add transaction note (optional)'),
+        required=False, allow_blank=True,
+    )
+
+    def save(self):
+
+        item = self.context['item']
+
+        data = self.validated_data
+        request = self.context['request']
+
+        location = data['location']
+
+        note = data.get('note', '')
+
+        item.uninstall_into_location(
+            location,
+            request.user,
+            note
+        )
+
+
 class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """
     Serializer for a simple tree view

@@ -123,6 +123,9 @@ function getApiEndpointOptions(url, callback) {
         return;
     }
 
+    // Include extra context information in the request
+    url += '?context=true';
+
     // Return the ajax request object
     $.ajax({
         url: url,
@@ -335,6 +338,9 @@ function constructForm(url, options) {
     // Request OPTIONS endpoint from the API
     getApiEndpointOptions(url, function(OPTIONS) {
 
+        // Extract any custom 'context' information from the OPTIONS data
+        options.context = OPTIONS.context || {};
+
         /*
          * Determine what "type" of form we want to construct,
          * based on the requested action.
@@ -527,7 +533,14 @@ function constructFormBody(fields, options) {
     $(modal).find('#form-content').html(html);
 
     if (options.preFormContent) {
-        $(modal).find('#pre-form-content').html(options.preFormContent);
+
+        if (typeof(options.preFormContent) === 'function') {
+            var content = options.preFormContent(options);
+        } else {
+            var content = options.preFormContent;
+        }
+
+        $(modal).find('#pre-form-content').html(content);
     }
 
     if (options.postFormContent) {
