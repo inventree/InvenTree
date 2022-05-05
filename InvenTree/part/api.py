@@ -730,7 +730,7 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
             # Return 400 error
             return Response(
                 400,
-                data=f"Part '{part.name}' (pk = {part.pk}) is active: cannot delete",
+                data=f"Part '{part.name}' (pk = {part.pk}) is active: cannot delete"
             )
 
     def update(self, request, *args, **kwargs):
