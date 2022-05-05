@@ -21,6 +21,7 @@
 */
 
 /* exported
+    deletePart,
     duplicateBom,
     duplicatePart,
     editCategory,
@@ -318,6 +319,37 @@ function editCategory(pk) {
         reload: true,
     });
 
+}
+
+
+function deletePart(part_id, options={}) {
+    constructForm(
+        `/api/part/${part_id}/`,
+        {
+            method: 'DELETE',
+            title: '{% trans "Confirm Part Deletion" %}',
+            preFormContent: function(opts) {
+
+                var part = opts.instance;
+
+                var html = `
+                <div class='alert alert-block'>
+                    ${thumbnailImage(part.thumbnail || part.image)} <strong>${part.full_name}</strong> - <em>${part.description}</em>
+                </div>
+                <div class='alert alert-danger alert-block'>
+                    {% trans "Are you sure you want to delete this part?" %}
+                    <ul>
+                        <li>{% trans "Any existing stock items for this part will be deleted" %}</li>
+                    </ul>
+                </div>`;
+
+                return html;
+            },
+            onSuccess: function(response) {
+                handleFormSuccess(response, options);
+            }
+        }
+    );
 }
 
 
