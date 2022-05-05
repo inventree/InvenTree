@@ -393,6 +393,16 @@ class NotificationUserSettingsApiTest(InvenTreeAPITestCase):
         self.assertEqual(str(test_setting), 'NOTIFICATION_METHOD_MAIL (for testuser): ')
 
 
+class PluginSettingsApiTest(InvenTreeAPITestCase):
+    """Tests for the plugin settings API"""
+
+    def test_api_list(self):
+        """Test list URL"""
+        url = reverse('api-plugin-setting-list')
+
+        self.get(url, expected_code=200)
+
+
 class WebhookMessageTests(TestCase):
     def setUp(self):
         self.endpoint_def = WebhookEndpoint.objects.create()
