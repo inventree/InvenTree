@@ -17,6 +17,8 @@ class CustomPanelSample(PanelMixin, IntegrationPluginBase):
     PLUGIN_NAME = "CustomPanelExample"
     PLUGIN_SLUG = "panel"
     PLUGIN_TITLE = "Custom Panel Example"
+    DESCRIPTION = "An example plugin demonstrating how custom panels can be added to the user interface"
+    VERSION = "0.1"
 
     def render_location_info(self, loc):
         """
