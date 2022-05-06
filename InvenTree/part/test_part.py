@@ -82,7 +82,7 @@ class TemplateTagTest(TestCase):
         self.assertEqual(inventree_extras.keyvalue({'a': 'a'}, 'a'), 'a')
 
     def test_mail_configured(self):
-        self.assertEqual(inventree_extras.mail_configured(), True)
+        self.assertEqual(inventree_extras.mail_configured(), False)
 
     def test_user_settings(self):
         result = inventree_extras.user_settings(self.user)
