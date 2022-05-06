@@ -515,7 +515,7 @@ class WebhookMessageTests(TestCase):
         assert message.body == {"this": "is a message"}
 
 
-class NotificationTest(TestCase):
+class NotificationTest(InvenTreeAPITestCase):
 
     def test_check_notification_entries(self):
 

@@ -35,10 +35,6 @@ class InvenTreePluginTests(TestCase):
         """check if a basic plugin is active"""
         self.assertEqual(self.plugin.is_active(), False)
 
-    def test_mixins(self):
-        """check if mixins fnc works"""
-        self.assertEqual(self.named_plugin.mixins(), {})
-
 
 class PluginTagTests(TestCase):
     """ Tests for the plugin extras """
