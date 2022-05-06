@@ -397,8 +397,10 @@
             </div>
             <table class='table table-condensed table-striped' id='manufacturer-part-table' data-toolbar='#manufacturer-button-toolbar'></table>
         </div>
-    </div>
+    </div>    
 </div>
+
+{% include "panel/plugin_panels.html" %}
 
 {% endblock %}
 
@@ -1082,5 +1084,7 @@
             return node;
         }
     });
+
+    {% include "panel/plugin_javascript.html" %}
 
 {% endblock %}

@@ -49,7 +49,7 @@ from order.models import PurchaseOrderLineItem
 
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.views import QRCodeView
-from InvenTree.views import InvenTreeRoleMixin
+from InvenTree.views import InvenTreeRoleMixin, InvenTreePluginMixin
 
 from InvenTree.helpers import str2bool
 
@@ -365,7 +365,7 @@ class PartImportAjax(FileManagementAjaxView, PartImport):
         return PartImport.validate(self, self.steps.current, form, **kwargs)
 
 
-class PartDetail(InvenTreeRoleMixin, DetailView):
+class PartDetail(InvenTreeRoleMixin, InvenTreePluginMixin, DetailView):
     """ Detail view for Part object
     """
 

@@ -1,0 +1,3 @@
+{% for panel in plugin_panels %}
+{% include "sidebar_item.html" with label=panel.key text=panel.title icon=panel.icon %}
+{% endfor %}

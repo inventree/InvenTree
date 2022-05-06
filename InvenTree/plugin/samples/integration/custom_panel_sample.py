@@ -46,9 +46,6 @@ class CustomPanelSample(PanelMixin, IntegrationPluginBase):
         # This panel will *only* display on the StockLocation view,
         # and *only* if the StockLocation has *no* child locations
         if isinstance(view, StockLocationDetail):
-            
-            print("yep, stocklocation view!")
-
             try:
                 loc = view.get_object()
 
@@ -58,11 +55,7 @@ class CustomPanelSample(PanelMixin, IntegrationPluginBase):
                         'icon': 'fa-user',
                         'content': '<h4>I have no children!</h4>'
                     })
-                else:
-                    print("abcdefgh")
-
             except:
-                print("error could not get object!")
                 pass
 
         return panels
