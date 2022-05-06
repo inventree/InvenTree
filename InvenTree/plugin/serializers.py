@@ -15,8 +15,8 @@ from django.utils import timezone
 
 from rest_framework import serializers
 
-from plugin.models import PluginConfig, PluginSetting
-from common.serializers import SettingsSerializer
+from plugin.models import PluginConfig, PluginSetting, NotificationUserSetting
+from common.serializers import GenericReferencedSettingSerializer
 
 
 class PluginConfigSerializer(serializers.ModelSerializer):
@@ -128,22 +128,25 @@ class PluginConfigInstallSerializer(serializers.Serializer):
         return ret
 
 
-class PluginSettingSerializer(SettingsSerializer):
+class PluginSettingSerializer(GenericReferencedSettingSerializer):
     """
     Serializer for the PluginSetting model
     """
 
+    MODEL = PluginSetting
+    EXTRA_FIELDS = [
+        'plugin',
+    ]
+
     plugin = serializers.PrimaryKeyRelatedField(read_only=True)
 
-    class Meta:
-        model = PluginSetting
-        fields = [
-            'pk',
-            'key',
-            'value',
-            'name',
-            'description',
-            'type',
-            'choices',
-            'plugin',
-        ]
+
+class NotificationUserSettingSerializer(GenericReferencedSettingSerializer):
+    """
+    Serializer for the PluginSetting model
+    """
+
+    MODEL = NotificationUserSetting
+    EXTRA_FIELDS = ['method', ]
+
+    method = serializers.CharField(read_only=True)

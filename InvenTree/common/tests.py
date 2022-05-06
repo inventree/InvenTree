@@ -10,6 +10,7 @@ from django.urls import reverse
 
 from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.helpers import str2bool
+from plugin.models import NotificationUserSetting
 
 from .models import InvenTreeSetting, InvenTreeUserSetting, WebhookEndpoint, WebhookMessage, NotificationEntry
 from .api import WebhookView
@@ -377,6 +378,31 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
             )
 
 
+class NotificationUserSettingsApiTest(InvenTreeAPITestCase):
+    """Tests for the notification user settings API"""
+
+    def test_api_list(self):
+        """Test list URL"""
+        url = reverse('api-notifcation-setting-list')
+
+        self.get(url, expected_code=200)
+
+    def test_setting(self):
+        """Test the string name for NotificationUserSetting"""
+        test_setting = NotificationUserSetting.get_setting_object('NOTIFICATION_METHOD_MAIL', user=self.user)
+        self.assertEqual(str(test_setting), 'NOTIFICATION_METHOD_MAIL (for testuser): ')
+
+
+class PluginSettingsApiTest(InvenTreeAPITestCase):
+    """Tests for the plugin settings API"""
+
+    def test_api_list(self):
+        """Test list URL"""
+        url = reverse('api-plugin-setting-list')
+
+        self.get(url, expected_code=200)
+
+
 class WebhookMessageTests(TestCase):
     def setUp(self):
         self.endpoint_def = WebhookEndpoint.objects.create()
@@ -489,7 +515,7 @@ class WebhookMessageTests(TestCase):
         assert message.body == {"this": "is a message"}
 
 
-class NotificationTest(TestCase):
+class NotificationTest(InvenTreeAPITestCase):
 
     def test_check_notification_entries(self):
 
@@ -507,6 +533,11 @@ class NotificationTest(TestCase):
         self.assertFalse(NotificationEntry.check_recent('test.notification2', 1, delta))
 
         self.assertTrue(NotificationEntry.check_recent('test.notification', 1, delta))
+
+    def test_api_list(self):
+        """Test list URL"""
+        url = reverse('api-notifications-list')
+        self.get(url, expected_code=200)
 
 
 class LoadingTest(TestCase):
