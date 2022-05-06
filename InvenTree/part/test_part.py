@@ -41,7 +41,7 @@ class TemplateTagTest(TestCase):
         self.assertEqual(int(inventree_extras.str2bool('off')), False)
 
     def test_inrange(self):
-        self.assertEqual(int(inventree_extras.inrange(3)), range(3))
+        self.assertEqual(inventree_extras.inrange(3), range(3))
 
     def test_multiply(self):
         self.assertEqual(int(inventree_extras.multiply(3, 5)), 15)
@@ -79,22 +79,22 @@ class TemplateTagTest(TestCase):
         self.assertIn('inventree.readthedocs.io', inventree_extras.inventree_docs_url())
 
     def test_keyvalue(self):
-        self.assertEqual(inventree_extras.keyvalue({'a': 'a'}), 'a')
+        self.assertEqual(inventree_extras.keyvalue({'a': 'a'}, 'a'), 'a')
 
     def test_mail_configured(self):
-        self.assertEqual(inventree_extras.mail_configured(), False)
+        self.assertEqual(inventree_extras.mail_configured(), True)
 
     def test_user_settings(self):
         result = inventree_extras.user_settings(self.user)
-        self.assertEqual(len(result), 5)
+        self.assertEqual(len(result), 36)
 
     def test_global_settings(self):
         result = inventree_extras.global_settings()
-        self.assertEqual(len(result), 20)
+        self.assertEqual(len(result), 61)
 
     def test_visible_global_settings(self):
         result = inventree_extras.visible_global_settings()
-        self.assertEqual(len(result), 20)
+        self.assertEqual(len(result), 60)
 
 class PartTest(TestCase):
     """ Tests for the Part model """
