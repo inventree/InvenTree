@@ -33,6 +33,15 @@ class CustomPanelSample(PanelMixin, IntegrationPluginBase):
 
     def get_custom_panels(self, view, request):
 
+        """
+        You can decide at run-time which custom panels you want to display!
+
+        - Display on every page
+        - Only on a single page or set of pages
+        - Only for a specific instance (e.g. part)
+        - Based on the user viewing the page!
+        """
+
         panels = [
             {
                 # This 'hello world' panel will be displayed on any view which implements custom panels
