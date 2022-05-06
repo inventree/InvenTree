@@ -606,18 +606,18 @@ class PanelMixin:
         for panel in self.get_custom_panels(view, request):
 
             if 'content_template' in panel:
-                # TODO: Render the actual content
+                # TODO: Render the actual HTML content from a template file
                 ...
 
             if 'javascript_template' in panel:
-                # TODO: Render the actual content
+                # TODO: Render the actual javascript content from a template file
                 ...
             
             # Check for required keys
             required_keys = ['title', 'content']
 
             if any([key not in panel for key in required_keys]):
-                logger.warning(f"Custom panel for plugin '{__class__}' is missing a required key")
+                logger.warning(f"Custom panel for plugin {__class__} is missing a required parameter")
                 continue
 
             # Add some information on this plugin

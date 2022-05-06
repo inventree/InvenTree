@@ -18,6 +18,19 @@ class CustomPanelSample(PanelMixin, IntegrationPluginBase):
     PLUGIN_SLUG = "panel"
     PLUGIN_TITLE = "Custom Panel Example"
 
+    def render_location_info(self, loc):
+        """
+        Demonstrate that we can render information particular to a page
+        """
+        return f"""
+        <h5>Location Information</h5>
+        <em>This location has no sublocations!</em>
+        <ul>
+        <li><b>Name</b>: {loc.name}</li>
+        <li><b>Path</b>: {loc.pathstring}</li>
+        </ul>
+        """
+
     def get_custom_panels(self, view, request):
 
         panels = [
@@ -46,14 +59,15 @@ class CustomPanelSample(PanelMixin, IntegrationPluginBase):
         # This panel will *only* display on the StockLocation view,
         # and *only* if the StockLocation has *no* child locations
         if isinstance(view, StockLocationDetail):
+
             try:
                 loc = view.get_object()
 
                 if not loc.get_descendants(include_self=False).exists():
                     panels.append({
-                        'title': 'Childless',
+                        'title': 'Childless Location',
                         'icon': 'fa-user',
-                        'content': '<h4>I have no children!</h4>'
+                        'content': self.render_location_info(loc),
                     })
             except:
                 pass
