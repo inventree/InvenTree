@@ -8,7 +8,7 @@ from django.urls import reverse
 
 from common.models import InvenTreeSetting
 from plugin import registry
-
+from common.notifications import storage
 
 register = template.Library()
 
@@ -73,3 +73,11 @@ def plugin_errors(*args, **kwargs):
     All plugin errors in the current session
     """
     return registry.errors
+
+
+@register.simple_tag(takes_context=True)
+def notification_settings_list(context, *args, **kwargs):
+    """
+    List of all user notification settings
+    """
+    return storage.get_usersettings(user=context.get('user', None))

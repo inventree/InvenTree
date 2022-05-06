@@ -523,7 +523,10 @@ class PluginsRegistry:
                 # check all models
                 for model in app_config.get_models():
                     # remove model from admin site
-                    admin.site.unregister(model)
+                    try:
+                        admin.site.unregister(model)
+                    except:  # pragma: no cover
+                        pass
                     models += [model._meta.model_name]
             except LookupError:  # pragma: no cover
                 # if an error occurs the app was never loaded right -> so nothing to do anymore

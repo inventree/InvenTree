@@ -70,6 +70,7 @@ $('table').find('.boolean-setting').change(function() {
     var pk = $(this).attr('pk');
     var plugin = $(this).attr('plugin');
     var user = $(this).attr('user');
+    var notification = $(this).attr('notification');
 
     var checked = this.checked;
 
@@ -80,6 +81,8 @@ $('table').find('.boolean-setting').change(function() {
         url = `/api/plugin/settings/${pk}/`;
     } else if (user) {
         url = `/api/settings/user/${pk}/`;
+    } else if (notification) {
+        url = `/api/settings/notification/${pk}/`;
     }
 
     inventreePut(

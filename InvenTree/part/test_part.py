@@ -20,6 +20,7 @@ import part.settings
 
 from InvenTree import version
 from common.models import InvenTreeSetting, NotificationEntry, NotificationMessage
+from common.notifications import storage, UIMessageNotification
 
 
 class TemplateTagTest(TestCase):
@@ -565,8 +566,15 @@ class BaseNotificationIntegrationTest(TestCase):
         # Define part that will be tested
         self.part = Part.objects.get(name='R_2K2_0805')
 
-    def _notification_run(self):
-        # There  should be no notification runs
+    def _notification_run(self, run_class=None):
+        """
+        Run a notification test suit through.
+        If you only want to test one class pass it to run_class
+        """
+        # reload notification methods
+        storage.collect(run_class)
+
+        # There should be no notification runs
         self.assertEqual(NotificationEntry.objects.all().count(), 0)
 
         # Test that notifications run through without errors
@@ -588,7 +596,7 @@ class PartNotificationTest(BaseNotificationIntegrationTest):
     """ Integration test for part notifications """
 
     def test_notification(self):
-        self._notification_run()
+        self._notification_run(UIMessageNotification)
 
         # There should be 1 notification message right now
         self.assertEqual(NotificationMessage.objects.all().count(), 1)
