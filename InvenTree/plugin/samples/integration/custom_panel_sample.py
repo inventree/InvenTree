@@ -5,6 +5,9 @@ Sample plugin which renders custom panels on certain pages
 from plugin import IntegrationPluginBase
 from plugin.mixins import PanelMixin
 
+from part.views import PartDetail
+from stock.views import StockLocationDetail
+
 
 class CustomPanelSample(PanelMixin, IntegrationPluginBase):
     """
@@ -15,8 +18,51 @@ class CustomPanelSample(PanelMixin, IntegrationPluginBase):
     PLUGIN_SLUG = "panel"
     PLUGIN_TITLE = "Custom Panel Example"
 
-    def get_custom_panels(self, page, instance, request):
+    def get_custom_panels(self, view, request):
 
-        print("get_custom_panels:")
+        panels = [
+            {
+                # This 'hello world' panel will be displayed on any view which implements custom panels
+                'title': 'Hello World',
+                'icon': 'fas fa-boxes',
+                'content': '<b>Hello world!</b>',
+                'description': 'A simple panel which renders hello world',
+                'javascript': 'alert("Hello world");',
+            },
+            {
+                # This panel will not be displayed, as it is missing the 'content' key
+                'title': 'No Content',
+            }
+        ]
 
-        return []
+        # This panel will *only* display on the PartDetail view
+        if isinstance(view, PartDetail):
+            panels.append({
+                'title': 'Custom Part Panel',
+                'icon': 'fas fa-shapes',
+                'content': '<em>This content only appears on the PartDetail page, you know!</em>',
+            })
+
+        # This panel will *only* display on the StockLocation view,
+        # and *only* if the StockLocation has *no* child locations
+        if isinstance(view, StockLocationDetail):
+            
+            print("yep, stocklocation view!")
+
+            try:
+                loc = view.get_object()
+
+                if not loc.get_descendants(include_self=False).exists():
+                    panels.append({
+                        'title': 'Childless',
+                        'icon': 'fa-user',
+                        'content': '<h4>I have no children!</h4>'
+                    })
+                else:
+                    print("abcdefgh")
+
+            except:
+                print("error could not get object!")
+                pass
+
+        return panels

@@ -9,6 +9,8 @@ import requests
 from django.urls import include, re_path
 from django.db.utils import OperationalError, ProgrammingError
 
+import InvenTree.helpers
+
 from plugin.models import PluginConfig, PluginSetting
 from plugin.urls import PLUGIN_BASE
 from plugin.helpers import MixinImplementationError, MixinNotImplementedError
@@ -563,26 +565,72 @@ class PanelMixin:
 
     This method is provided with:
 
-    - page: The name of the page e.g. 'part-detail'
-    - instance: The model instance specific to the page
-    - request: The request object responsible for the page load
-
-    It must return a list of CustomPanel class instances (see below).
+    - view : The View object which is being rendered
+    - request : The HTTPRequest object
 
     Note that as this is called dynamically (per request),
     then the actual panels returned can vary depending on the particular request or page
 
-    """
+    The 'get_custom_panels' method must return a list of dict objects, each with the following keys:
 
-    class CustomPanel:
-        ...
+    - title : The title of the panel, to appear in the sidebar menu
+    - description : Extra descriptive text (optional)
+    - icon : The icon to appear in the sidebar menu
+    - content : The HTML content to appear in the panel, OR
+    - content_template : A template file which will be rendered to produce the panel content
+    - javascript : The javascript content to be rendered when the panel is loade, OR
+    - javascript_template : A template file which will be rendered to produce javascript
+
+    e.g.
+
+    {
+        'title': "Updates",
+        'description': "Latest updates for this part",
+        'javascript': 'alert("You just loaded this panel!")',
+        'content': '<b>Hello world</b>',
+    }
+
+    """
 
     class MixinMeta:
         MIXIN_NAME = 'Panel'
-    
+
     def __init__(self):
         super().__init__()
         self.add_mixin('panel', True, __class__)
-    
-    def get_custom_panels(self, page, instance, request):
+
+    def render_panels(self, view, request):
+
+        panels = []
+
+        for panel in self.get_custom_panels(view, request):
+
+            if 'content_template' in panel:
+                # TODO: Render the actual content
+                ...
+
+            if 'javascript_template' in panel:
+                # TODO: Render the actual content
+                ...
+            
+            # Check for required keys
+            required_keys = ['title', 'content']
+
+            if any([key not in panel for key in required_keys]):
+                logger.warning(f"Custom panel for plugin '{__class__}' is missing a required key")
+                continue
+
+            # Add some information on this plugin
+            panel['plugin'] = self
+            panel['slug'] = self.slug
+            
+            # Add a 'key' for the panel, which is mostly guaranteed to be unique
+            panel['key'] = InvenTree.helpers.generateTestKey(self.slug + panel.get('title', 'panel')) 
+
+            panels.append(panel)
+
+        return panels
+
+    def get_custom_panels(self, view, request):
+        """ This method *must* be implemented by the plugin class """
         raise NotImplementedError(f"{__class__} is missing the 'get_custom_panels' method")
