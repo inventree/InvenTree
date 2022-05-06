@@ -542,3 +542,47 @@ class APICallMixin:
         if simple_response:
             return response.json()
         return response
+
+
+class PanelMixin:
+    """
+    Mixin which allows integration of custom 'panels' into a particular page.
+
+    The mixin provides a number of key functionalities:
+
+    - Adds an (initially hidden) panel to the page
+    - Allows rendering of custom templated content to the panel
+    - Adds a menu item to the 'navbar' on the left side of the screen
+    - Allows custom javascript to be run when the panel is initially loaded
+
+    The PanelMixin class allows multiple panels to be returned for any page,
+    and also allows the plugin to return panels for many different pages.
+
+    Any class implementing this mixin must provide the 'get_custom_panels' method,
+    which dynamically returns the custom panels for a particular page.
+
+    This method is provided with:
+
+    - page: The name of the page e.g. 'part-detail'
+    - instance: The model instance specific to the page
+    - request: The request object responsible for the page load
+
+    It must return a list of CustomPanel class instances (see below).
+
+    Note that as this is called dynamically (per request),
+    then the actual panels returned can vary depending on the particular request or page
+
+    """
+
+    class CustomPanel:
+        ...
+
+    class MixinMeta:
+        MIXIN_NAME = 'Panel'
+    
+    def __init__(self):
+        super().__init__()
+        self.add_mixin('panel', True, __class__)
+    
+    def get_custom_panels(self, page, instance, request):
+        raise NotImplementedError(f"{__class__} is missing the 'get_custom_panels' method")
