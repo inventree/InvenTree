@@ -503,7 +503,7 @@ class PluginsRegistry:
         try:
             # for local path plugins
             plugin_path = '.'.join(pathlib.Path(plugin.path).relative_to(settings.BASE_DIR).parts)
-        except ValueError:
+        except ValueError:  # pragma: no cover
             # plugin is shipped as package
             plugin_path = plugin.PLUGIN_NAME
         return plugin_path

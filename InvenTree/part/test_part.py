@@ -18,17 +18,51 @@ from .templatetags import inventree_extras
 
 import part.settings
 
+from InvenTree import version
 from common.models import InvenTreeSetting, NotificationEntry, NotificationMessage
 
 
 class TemplateTagTest(TestCase):
     """ Tests for the custom template tag code """
 
+    def setUp(self):
+        # Create a user for auth
+        user = get_user_model()
+        self.user = user.objects.create_user('testuser', 'test@testing.com', 'password')
+        self.client.login(username='testuser', password='password')
+
+    def test_define(self):
+        self.assertEqual(int(inventree_extras.define(3)), 3)
+
+    def test_str2bool(self):
+        self.assertEqual(int(inventree_extras.str2bool('true')), True)
+        self.assertEqual(int(inventree_extras.str2bool('yes')), True)
+        self.assertEqual(int(inventree_extras.str2bool('none')), False)
+        self.assertEqual(int(inventree_extras.str2bool('off')), False)
+
+    def test_inrange(self):
+        self.assertEqual(inventree_extras.inrange(3), range(3))
+
     def test_multiply(self):
         self.assertEqual(int(inventree_extras.multiply(3, 5)), 15)
 
-    def test_version(self):
-        self.assertEqual(type(inventree_extras.inventree_version()), str)
+    def test_add(self):
+        self.assertEqual(int(inventree_extras.add(3, 5)), 8)
+
+    def test_plugins_enabled(self):
+        self.assertEqual(inventree_extras.plugins_enabled(), True)
+
+    def test_inventree_instance_name(self):
+        self.assertEqual(inventree_extras.inventree_instance_name(), 'InvenTree server')
+
+    def test_inventree_base_url(self):
+        self.assertEqual(inventree_extras.inventree_base_url(), '')
+
+    def test_inventree_is_release(self):
+        self.assertEqual(inventree_extras.inventree_is_release(), not version.isInvenTreeDevelopmentVersion())
+
+    def test_inventree_docs_version(self):
+        self.assertEqual(inventree_extras.inventree_docs_version(), version.inventreeDocsVersion())
 
     def test_hash(self):
         result_hash = inventree_extras.inventree_commit_hash()
@@ -43,6 +77,24 @@ class TemplateTagTest(TestCase):
 
     def test_docs(self):
         self.assertIn('inventree.readthedocs.io', inventree_extras.inventree_docs_url())
+
+    def test_keyvalue(self):
+        self.assertEqual(inventree_extras.keyvalue({'a': 'a'}, 'a'), 'a')
+
+    def test_mail_configured(self):
+        self.assertEqual(inventree_extras.mail_configured(), False)
+
+    def test_user_settings(self):
+        result = inventree_extras.user_settings(self.user)
+        self.assertEqual(len(result), 36)
+
+    def test_global_settings(self):
+        result = inventree_extras.global_settings()
+        self.assertEqual(len(result), 61)
+
+    def test_visible_global_settings(self):
+        result = inventree_extras.visible_global_settings()
+        self.assertEqual(len(result), 60)
 
 
 class PartTest(TestCase):
