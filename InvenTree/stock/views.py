@@ -15,7 +15,7 @@ from django.utils.translation import gettext_lazy as _
 
 from InvenTree.views import AjaxUpdateView, AjaxDeleteView, AjaxCreateView
 from InvenTree.views import QRCodeView
-from InvenTree.views import InvenTreeRoleMixin
+from InvenTree.views import InvenTreeRoleMixin, InvenTreePluginMixin
 from InvenTree.forms import ConfirmForm
 
 from InvenTree.helpers import str2bool
@@ -27,7 +27,7 @@ import common.settings
 from . import forms as StockForms
 
 
-class StockIndex(InvenTreeRoleMixin, ListView):
+class StockIndex(InvenTreeRoleMixin, InvenTreePluginMixin, ListView):
     """ StockIndex view loads all StockLocation and StockItem object
     """
     model = StockItem
@@ -35,7 +35,7 @@ class StockIndex(InvenTreeRoleMixin, ListView):
     context_obect_name = 'locations'
 
     def get_context_data(self, **kwargs):
-        context = super(StockIndex, self).get_context_data(**kwargs).copy()
+        context = super().get_context_data(**kwargs).copy()
 
         # Return all top-level locations
         locations = StockLocation.objects.filter(parent=None)
@@ -54,7 +54,7 @@ class StockIndex(InvenTreeRoleMixin, ListView):
         return context
 
 
-class StockLocationDetail(InvenTreeRoleMixin, DetailView):
+class StockLocationDetail(InvenTreeRoleMixin, InvenTreePluginMixin, DetailView):
     """
     Detailed view of a single StockLocation object
     """
@@ -75,7 +75,7 @@ class StockLocationDetail(InvenTreeRoleMixin, DetailView):
         return context
 
 
-class StockItemDetail(InvenTreeRoleMixin, DetailView):
+class StockItemDetail(InvenTreeRoleMixin, InvenTreePluginMixin, DetailView):
     """
     Detailed view of a single StockItem object
     """

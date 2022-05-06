@@ -67,7 +67,7 @@ class PartIndex(InvenTreeRoleMixin, ListView):
 
     def get_context_data(self, **kwargs):
 
-        context = super(PartIndex, self).get_context_data(**kwargs).copy()
+        context = super().get_context_data(**kwargs).copy()
 
         # View top-level categories
         children = PartCategory.objects.filter(parent=None)
@@ -969,7 +969,7 @@ class PartParameterTemplateDelete(AjaxDeleteView):
     ajax_form_title = _("Delete Part Parameter Template")
 
 
-class CategoryDetail(InvenTreeRoleMixin, DetailView):
+class CategoryDetail(InvenTreeRoleMixin, InvenTreePluginMixin, DetailView):
     """ Detail view for PartCategory """
 
     model = PartCategory

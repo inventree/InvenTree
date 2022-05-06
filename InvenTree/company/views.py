@@ -17,7 +17,7 @@ import requests
 import io
 
 from InvenTree.views import AjaxUpdateView
-from InvenTree.views import InvenTreeRoleMixin
+from InvenTree.views import InvenTreeRoleMixin, InvenTreePluginMixin
 
 from .models import Company
 from .models import ManufacturerPart
@@ -104,7 +104,7 @@ class CompanyIndex(InvenTreeRoleMixin, ListView):
         return queryset
 
 
-class CompanyDetail(DetailView):
+class CompanyDetail(InvenTreePluginMixin, DetailView):
     """ Detail view for Company object """
     context_obect_name = 'company'
     template_name = 'company/detail.html'
@@ -196,7 +196,7 @@ class CompanyImageDownloadFromURL(AjaxUpdateView):
         )
 
 
-class ManufacturerPartDetail(DetailView):
+class ManufacturerPartDetail(InvenTreePluginMixin, DetailView):
     """ Detail view for ManufacturerPart """
     model = ManufacturerPart
     template_name = 'company/manufacturer_part_detail.html'
@@ -210,7 +210,7 @@ class ManufacturerPartDetail(DetailView):
         return ctx
 
 
-class SupplierPartDetail(DetailView):
+class SupplierPartDetail(InvenTreePluginMixin, DetailView):
     """ Detail view for SupplierPart """
     model = SupplierPart
     template_name = 'company/supplier_part_detail.html'
