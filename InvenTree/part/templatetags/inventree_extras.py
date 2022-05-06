@@ -540,7 +540,7 @@ class I18nStaticNode(StaticNode):
     custom StaticNode
     replaces a variable named *lng* in the path with the current language
     """
-    def render(self, context):
+    def render(self, context):  # pragma: no cover
 
         self.original = getattr(self, 'original', None)
 
@@ -563,7 +563,7 @@ if settings.DEBUG:
         """ simple tag to enable {% url %} functionality instead of {% static %} """
         return reverse(url_name)
 
-else:
+else:  # pragma: no cover
 
     @register.tag('i18n_static')
     def do_i18n_static(parser, token):
