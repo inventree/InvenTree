@@ -51,7 +51,7 @@ class InvenTreeMoneySerializer(MoneyField):
         Test that the returned amount is a valid Decimal
         """
 
-        amount = super(DecimalField, self).get_value(data)
+        amount = super().get_value(data)
 
         # Convert an empty string to None
         if len(str(amount).strip()) == 0:

@@ -29,7 +29,7 @@ class BuildIndex(InvenTreeRoleMixin, ListView):
 
     def get_context_data(self, **kwargs):
 
-        context = super(BuildIndex, self).get_context_data(**kwargs).copy()
+        context = super(self).get_context_data(**kwargs).copy()
 
         context['BuildStatus'] = BuildStatus
 
@@ -52,7 +52,7 @@ class BuildDetail(InvenTreeRoleMixin, DetailView):
 
     def get_context_data(self, **kwargs):
 
-        ctx = super(DetailView, self).get_context_data(**kwargs)
+        ctx = super().get_context_data(**kwargs)
 
         build = self.get_object()
 

@@ -979,7 +979,7 @@ class CategoryDetail(InvenTreeRoleMixin, DetailView):
 
     def get_context_data(self, **kwargs):
 
-        context = super(CategoryDetail, self).get_context_data(**kwargs).copy()
+        context = super().get_context_data(**kwargs).copy()
 
         try:
             context['part_count'] = kwargs['object'].partcount()
@@ -1045,7 +1045,7 @@ class CategoryParameterTemplateCreate(AjaxCreateView):
         - Display parameter templates which are not yet related
         """
 
-        form = super(AjaxCreateView, self).get_form()
+        form = super().get_form()
 
         form.fields['category'].widget = HiddenInput()
 
@@ -1140,7 +1140,7 @@ class CategoryParameterTemplateEdit(AjaxUpdateView):
         - Display parameter templates which are not yet related
         """
 
-        form = super(AjaxUpdateView, self).get_form()
+        form = super().get_form()
 
         form.fields['category'].widget = HiddenInput()
         form.fields['add_to_all_categories'].widget = HiddenInput()
