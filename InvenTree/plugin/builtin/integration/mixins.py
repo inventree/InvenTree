@@ -612,7 +612,7 @@ class PanelMixin:
             if 'javascript_template' in panel:
                 # TODO: Render the actual javascript content from a template file
                 ...
-            
+
             # Check for required keys
             required_keys = ['title', 'content']
 
@@ -623,9 +623,9 @@ class PanelMixin:
             # Add some information on this plugin
             panel['plugin'] = self
             panel['slug'] = self.slug
-            
+
             # Add a 'key' for the panel, which is mostly guaranteed to be unique
-            panel['key'] = InvenTree.helpers.generateTestKey(self.slug + panel.get('title', 'panel')) 
+            panel['key'] = InvenTree.helpers.generateTestKey(self.slug + panel.get('title', 'panel'))
 
             panels.append(panel)
 
