@@ -96,6 +96,7 @@ class TemplateTagTest(TestCase):
         result = inventree_extras.visible_global_settings()
         self.assertEqual(len(result), 60)
 
+
 class PartTest(TestCase):
     """ Tests for the Part model """
 
