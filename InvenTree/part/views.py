@@ -49,9 +49,11 @@ from order.models import PurchaseOrderLineItem
 
 from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
 from InvenTree.views import QRCodeView
-from InvenTree.views import InvenTreeRoleMixin, InvenTreePluginMixin
+from InvenTree.views import InvenTreeRoleMixin
 
 from InvenTree.helpers import str2bool
+
+from plugin.views import InvenTreePluginViewMixin
 
 
 class PartIndex(InvenTreeRoleMixin, ListView):
@@ -365,7 +367,7 @@ class PartImportAjax(FileManagementAjaxView, PartImport):
         return PartImport.validate(self, self.steps.current, form, **kwargs)
 
 
-class PartDetail(InvenTreeRoleMixin, InvenTreePluginMixin, DetailView):
+class PartDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
     """ Detail view for Part object
     """
 
@@ -969,7 +971,7 @@ class PartParameterTemplateDelete(AjaxDeleteView):
     ajax_form_title = _("Delete Part Parameter Template")
 
 
-class CategoryDetail(InvenTreeRoleMixin, InvenTreePluginMixin, DetailView):
+class CategoryDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
     """ Detail view for PartCategory """
 
     model = PartCategory

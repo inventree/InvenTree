@@ -31,7 +31,9 @@ from . import forms as order_forms
 from part.views import PartPricing
 
 from InvenTree.helpers import DownloadFile
-from InvenTree.views import InvenTreeRoleMixin, InvenTreePluginMixin, AjaxView
+from InvenTree.views import InvenTreeRoleMixin, AjaxView
+
+from plugin.views import InvenTreePluginViewMixin
 
 
 logger = logging.getLogger("inventree")
@@ -65,7 +67,7 @@ class SalesOrderIndex(InvenTreeRoleMixin, ListView):
     context_object_name = 'orders'
 
 
-class PurchaseOrderDetail(InvenTreeRoleMixin, InvenTreePluginMixin, DetailView):
+class PurchaseOrderDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
     """ Detail view for a PurchaseOrder object """
 
     context_object_name = 'order'
@@ -78,7 +80,7 @@ class PurchaseOrderDetail(InvenTreeRoleMixin, InvenTreePluginMixin, DetailView):
         return ctx
 
 
-class SalesOrderDetail(InvenTreeRoleMixin, InvenTreePluginMixin, DetailView):
+class SalesOrderDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
     """ Detail view for a SalesOrder object """
 
     context_object_name = 'order'

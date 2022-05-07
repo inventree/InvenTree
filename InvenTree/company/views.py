@@ -17,14 +17,15 @@ import requests
 import io
 
 from InvenTree.views import AjaxUpdateView
-from InvenTree.views import InvenTreeRoleMixin, InvenTreePluginMixin
+from InvenTree.views import InvenTreeRoleMixin
 
 from .models import Company
 from .models import ManufacturerPart
 from .models import SupplierPart
 
-
 from .forms import CompanyImageDownloadForm
+
+from plugin.views import InvenTreePluginViewMixin
 
 
 class CompanyIndex(InvenTreeRoleMixin, ListView):
@@ -104,7 +105,7 @@ class CompanyIndex(InvenTreeRoleMixin, ListView):
         return queryset
 
 
-class CompanyDetail(InvenTreePluginMixin, DetailView):
+class CompanyDetail(InvenTreePluginViewMixin, DetailView):
     """ Detail view for Company object """
     context_obect_name = 'company'
     template_name = 'company/detail.html'
@@ -196,7 +197,7 @@ class CompanyImageDownloadFromURL(AjaxUpdateView):
         )
 
 
-class ManufacturerPartDetail(InvenTreePluginMixin, DetailView):
+class ManufacturerPartDetail(InvenTreePluginViewMixin, DetailView):
     """ Detail view for ManufacturerPart """
     model = ManufacturerPart
     template_name = 'company/manufacturer_part_detail.html'
@@ -210,7 +211,7 @@ class ManufacturerPartDetail(InvenTreePluginMixin, DetailView):
         return ctx
 
 
-class SupplierPartDetail(InvenTreePluginMixin, DetailView):
+class SupplierPartDetail(InvenTreePluginViewMixin, DetailView):
     """ Detail view for SupplierPart """
     model = SupplierPart
     template_name = 'company/supplier_part_detail.html'

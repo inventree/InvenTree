@@ -11,8 +11,10 @@ from django.views.generic import DetailView, ListView
 from .models import Build
 
 from InvenTree.views import AjaxDeleteView
-from InvenTree.views import InvenTreeRoleMixin, InvenTreePluginMixin
+from InvenTree.views import InvenTreeRoleMixin
 from InvenTree.status_codes import BuildStatus
+
+from plugin.views import InvenTreePluginViewMixin
 
 
 class BuildIndex(InvenTreeRoleMixin, ListView):
@@ -41,7 +43,7 @@ class BuildIndex(InvenTreeRoleMixin, ListView):
         return context
 
 
-class BuildDetail(InvenTreeRoleMixin, InvenTreePluginMixin, DetailView):
+class BuildDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
     """
     Detail view of a single Build object.
     """
