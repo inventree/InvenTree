@@ -622,7 +622,7 @@ class PanelMixin:
             context['object'] = view.get_object()
         except AttributeError:
             pass
-            
+
         return context
 
     def render_panels(self, view, request, context):

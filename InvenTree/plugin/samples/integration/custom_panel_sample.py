@@ -64,7 +64,7 @@ class CustomPanelSample(PanelMixin, SettingsMixin, IntegrationPluginBase):
                 'icon': 'fas fa-boxes',
                 'content': '<b>Hello world!</b>',
                 'description': 'A simple panel which renders hello world',
-                'javascript': 'alert("Hello world");',
+                'javascript': 'console.log("Hello world, from a custom panel!");',
             })
 
         # This panel will *only* display on the PartDetail view
