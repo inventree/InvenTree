@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-06 10:02+0000\n"
+"POT-Creation-Date: 2022-05-07 23:02+0000\n"
 "PO-Revision-Date: 2022-05-07 00:06\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
@@ -1551,7 +1551,7 @@ msgstr ""
 msgid "Completed Outputs"
 msgstr ""
 
-#: build/views.py:81
+#: build/views.py:83
 msgid "Delete Build Order"
 msgstr "Elimina Ordine Build"
 
@@ -2506,14 +2506,14 @@ msgid "Was the work on this message finished?"
 msgstr ""
 
 #: common/views.py:93 order/templates/order/purchase_order_detail.html:23
-#: order/views.py:120 part/views.py:206
+#: order/views.py:122 part/views.py:208
 #: templates/patterns/wizard/upload.html:37
 msgid "Upload File"
 msgstr "Carica file"
 
-#: common/views.py:94 order/views.py:121
+#: common/views.py:94 order/views.py:123
 #: part/templates/part/import_wizard/ajax_match_fields.html:45
-#: part/views.py:207 templates/patterns/wizard/match_fields.html:51
+#: part/views.py:209 templates/patterns/wizard/match_fields.html:51
 msgid "Match Fields"
 msgstr "Abbina Campi"
 
@@ -2996,7 +2996,7 @@ msgstr "Tutte gli articoli del fornitore selezionati saranno eliminati"
 msgid "Supplier List"
 msgstr "Elenco dei fornitori"
 
-#: company/templates/company/manufacturer_part.html:15 company/views.py:55
+#: company/templates/company/manufacturer_part.html:15 company/views.py:56
 #: part/templates/part/prices.html:170 templates/InvenTree/search.html:178
 #: templates/navbar.html:49
 msgid "Manufacturers"
@@ -3029,7 +3029,7 @@ msgid "No manufacturer information available"
 msgstr ""
 
 #: company/templates/company/manufacturer_part.html:120
-#: company/templates/company/supplier_part.html:15 company/views.py:49
+#: company/templates/company/supplier_part.html:15 company/views.py:50
 #: part/templates/part/part_sidebar.html:35 part/templates/part/prices.html:166
 #: templates/InvenTree/search.html:188 templates/navbar.html:48
 msgid "Suppliers"
@@ -3220,45 +3220,45 @@ msgstr "Prezzi"
 msgid "Stock Items"
 msgstr "Articoli in magazzino"
 
-#: company/views.py:50
+#: company/views.py:51
 msgid "New Supplier"
 msgstr "Nuovo Fornitore"
 
-#: company/views.py:56
+#: company/views.py:57
 msgid "New Manufacturer"
 msgstr "Nuovo Produttore"
 
-#: company/views.py:61 templates/InvenTree/search.html:208
+#: company/views.py:62 templates/InvenTree/search.html:208
 #: templates/navbar.html:60
 msgid "Customers"
 msgstr "Clienti"
 
-#: company/views.py:62
+#: company/views.py:63
 msgid "New Customer"
 msgstr "Nuovo cliente"
 
-#: company/views.py:69 templates/js/translated/search.js:159
+#: company/views.py:70 templates/js/translated/search.js:159
 msgid "Companies"
 msgstr "Aziende"
 
-#: company/views.py:70
+#: company/views.py:71
 msgid "New Company"
 msgstr "Nuova Azienda"
 
-#: company/views.py:129 part/views.py:591
+#: company/views.py:130 part/views.py:593
 msgid "Download Image"
 msgstr "Download Immagine"
 
-#: company/views.py:158 part/views.py:623
+#: company/views.py:159 part/views.py:625
 msgid "Image size exceeds maximum allowable size for download"
 msgstr "La dimensione dell'immagine supera la dimensione massima consentita per il download"
 
-#: company/views.py:165 part/views.py:630
+#: company/views.py:166 part/views.py:632
 #, python-brace-format
 msgid "Invalid response: {code}"
 msgstr "Risposta non valida: {code}"
 
-#: company/views.py:174 part/views.py:639
+#: company/views.py:175 part/views.py:641
 msgid "Supplied URL is not a valid image file"
 msgstr "L'URL fornito non è un file immagine valido"
 
@@ -3991,24 +3991,24 @@ msgstr ""
 msgid "New Shipment"
 msgstr ""
 
-#: order/views.py:122
+#: order/views.py:124
 msgid "Match Supplier Parts"
 msgstr ""
 
-#: order/views.py:395
+#: order/views.py:397
 msgid "Sales order not found"
 msgstr ""
 
-#: order/views.py:401
+#: order/views.py:403
 msgid "Price not found"
 msgstr ""
 
-#: order/views.py:404
+#: order/views.py:406
 #, python-brace-format
 msgid "Updated {part} unit-price to {price}"
 msgstr ""
 
-#: order/views.py:409
+#: order/views.py:411
 #, python-brace-format
 msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr ""
@@ -5234,7 +5234,8 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid ""
+"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -5407,80 +5408,80 @@ msgstr "Database sconosciuto"
 msgid "{title} v{version}"
 msgstr ""
 
-#: part/views.py:86
+#: part/views.py:88
 msgid "Set Part Category"
 msgstr "Imposta categoria articolo"
 
-#: part/views.py:136
+#: part/views.py:138
 #, python-brace-format
 msgid "Set category for {n} parts"
 msgstr "Imposta categoria per {n} articoli"
 
-#: part/views.py:208
+#: part/views.py:210
 msgid "Match References"
 msgstr ""
 
-#: part/views.py:509
+#: part/views.py:511
 msgid "None"
 msgstr ""
 
-#: part/views.py:568
+#: part/views.py:570
 msgid "Part QR Code"
 msgstr ""
 
-#: part/views.py:670
+#: part/views.py:672
 msgid "Select Part Image"
 msgstr ""
 
-#: part/views.py:696
+#: part/views.py:698
 msgid "Updated part image"
 msgstr ""
 
-#: part/views.py:699
+#: part/views.py:701
 msgid "Part image not found"
 msgstr ""
 
-#: part/views.py:787
+#: part/views.py:789
 msgid "Confirm Part Deletion"
 msgstr ""
 
-#: part/views.py:794
+#: part/views.py:796
 msgid "Part was deleted"
 msgstr ""
 
-#: part/views.py:803
+#: part/views.py:805
 msgid "Part Pricing"
 msgstr ""
 
-#: part/views.py:952
+#: part/views.py:954
 msgid "Create Part Parameter Template"
 msgstr ""
 
-#: part/views.py:962
+#: part/views.py:964
 msgid "Edit Part Parameter Template"
 msgstr ""
 
-#: part/views.py:969
+#: part/views.py:971
 msgid "Delete Part Parameter Template"
 msgstr ""
 
-#: part/views.py:1011
+#: part/views.py:1013
 msgid "Delete Part Category"
 msgstr "Elimina categoria"
 
-#: part/views.py:1017
+#: part/views.py:1019
 msgid "Part category was deleted"
 msgstr "La Categoria articoli è stata eliminata"
 
-#: part/views.py:1026
+#: part/views.py:1028
 msgid "Create Category Parameter Template"
 msgstr "Crea Template Parametro Categoria"
 
-#: part/views.py:1127
+#: part/views.py:1129
 msgid "Edit Category Parameter Template"
 msgstr "Modifica Modello Parametro Categoria"
 
-#: part/views.py:1183
+#: part/views.py:1185
 msgid "Delete Category Parameter Template"
 msgstr "Elimina Modello Parametro Categoria"
 
@@ -6477,7 +6478,7 @@ msgstr ""
 msgid "Child Items"
 msgstr ""
 
-#: stock/templates/stock/stockitem_convert.html:7 stock/views.py:228
+#: stock/templates/stock/stockitem_convert.html:7 stock/views.py:230
 msgid "Convert Stock Item"
 msgstr ""
 
@@ -6502,55 +6503,55 @@ msgstr ""
 msgid "Are you sure you want to delete this stock tracking entry?"
 msgstr ""
 
-#: stock/views.py:126
+#: stock/views.py:128
 msgid "Stock Location QR code"
 msgstr "QR Code della posizione magazzino"
 
-#: stock/views.py:145
+#: stock/views.py:147
 msgid "Return to Stock"
 msgstr ""
 
-#: stock/views.py:154
+#: stock/views.py:156
 msgid "Specify a valid location"
 msgstr "Specificare una posizione valida"
 
-#: stock/views.py:165
+#: stock/views.py:167
 msgid "Stock item returned from customer"
 msgstr ""
 
-#: stock/views.py:176
+#: stock/views.py:178
 msgid "Delete All Test Data"
 msgstr ""
 
-#: stock/views.py:193
+#: stock/views.py:195
 msgid "Confirm test data deletion"
 msgstr ""
 
-#: stock/views.py:194
+#: stock/views.py:196
 msgid "Check the confirmation box"
 msgstr ""
 
-#: stock/views.py:209
+#: stock/views.py:211
 msgid "Stock Item QR Code"
 msgstr ""
 
-#: stock/views.py:265
+#: stock/views.py:267
 msgid "Delete Stock Location"
 msgstr "Elimina Posizione di Giacenza"
 
-#: stock/views.py:278
+#: stock/views.py:280
 msgid "Delete Stock Item"
 msgstr ""
 
-#: stock/views.py:289
+#: stock/views.py:291
 msgid "Delete Stock Tracking Entry"
 msgstr ""
 
-#: stock/views.py:296
+#: stock/views.py:298
 msgid "Edit Stock Tracking Entry"
 msgstr ""
 
-#: stock/views.py:305
+#: stock/views.py:307
 msgid "Add Stock Tracking Entry"
 msgstr ""
 
@@ -6838,8 +6839,8 @@ msgstr ""
 msgid "Version"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:82
-msgid "code sample"
+#: templates/InvenTree/settings/plugin.html:74
+msgid "Sample"
 msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:99
@@ -7350,14 +7351,16 @@ msgstr "Accedi"
 
 #: templates/account/login.html:21
 #, python-format
-msgid "Please sign in with one\n"
+msgid ""
+"Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid "If you have not created an account yet, then please\n"
+msgid ""
+"If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -7506,15 +7509,15 @@ msgstr ""
 msgid "Add Attachment"
 msgstr "Aggiungi allegato"
 
-#: templates/base.html:99
+#: templates/base.html:100
 msgid "Server Restart Required"
 msgstr "È necessario riavviare il server"
 
-#: templates/base.html:102
+#: templates/base.html:103
 msgid "A configuration option has been changed which requires a server restart"
 msgstr "È stata modificata un'impostazione che richiede un riavvio del server"
 
-#: templates/base.html:102
+#: templates/base.html:103
 msgid "Contact your system administrator for further information"
 msgstr "Contatta l'amministratore per maggiori informazioni"
 
@@ -10191,4 +10194,3 @@ msgstr "Permessi per modificare gli elementi"
 #: users/models.py:221
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
-
