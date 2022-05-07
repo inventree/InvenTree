@@ -53,6 +53,8 @@ from InvenTree.views import InvenTreeRoleMixin
 
 from InvenTree.helpers import str2bool
 
+from plugin.views import InvenTreePluginViewMixin
+
 
 class PartIndex(InvenTreeRoleMixin, ListView):
     """ View for displaying list of Part objects
@@ -67,7 +69,7 @@ class PartIndex(InvenTreeRoleMixin, ListView):
 
     def get_context_data(self, **kwargs):
 
-        context = super(PartIndex, self).get_context_data(**kwargs).copy()
+        context = super().get_context_data(**kwargs).copy()
 
         # View top-level categories
         children = PartCategory.objects.filter(parent=None)
@@ -365,7 +367,7 @@ class PartImportAjax(FileManagementAjaxView, PartImport):
         return PartImport.validate(self, self.steps.current, form, **kwargs)
 
 
-class PartDetail(InvenTreeRoleMixin, DetailView):
+class PartDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
     """ Detail view for Part object
     """
 
@@ -969,7 +971,7 @@ class PartParameterTemplateDelete(AjaxDeleteView):
     ajax_form_title = _("Delete Part Parameter Template")
 
 
-class CategoryDetail(InvenTreeRoleMixin, DetailView):
+class CategoryDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
     """ Detail view for PartCategory """
 
     model = PartCategory
@@ -979,7 +981,7 @@ class CategoryDetail(InvenTreeRoleMixin, DetailView):
 
     def get_context_data(self, **kwargs):
 
-        context = super(CategoryDetail, self).get_context_data(**kwargs).copy()
+        context = super().get_context_data(**kwargs).copy()
 
         try:
             context['part_count'] = kwargs['object'].partcount()
@@ -1045,7 +1047,7 @@ class CategoryParameterTemplateCreate(AjaxCreateView):
         - Display parameter templates which are not yet related
         """
 
-        form = super(AjaxCreateView, self).get_form()
+        form = super().get_form()
 
         form.fields['category'].widget = HiddenInput()
 
@@ -1140,7 +1142,7 @@ class CategoryParameterTemplateEdit(AjaxUpdateView):
         - Display parameter templates which are not yet related
         """
 
-        form = super(AjaxUpdateView, self).get_form()
+        form = super().get_form()
 
         form.fields['category'].widget = HiddenInput()
         form.fields['add_to_all_categories'].widget = HiddenInput()
