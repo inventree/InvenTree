@@ -45,10 +45,6 @@ def render_template(plugin, template_file, context=None):
     Locate and render a template file, available in the global template context.
     """
 
-    print("render_template", "->", template_file)
-    print("Context:")
-    print(context)
-
     try:
         tmp = template.loader.get_template(template_file)
     except template.TemplateDoesNotExist:

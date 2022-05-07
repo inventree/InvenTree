@@ -11,9 +11,10 @@ from django.db.utils import OperationalError, ProgrammingError
 
 import InvenTree.helpers
 
-from plugin.models import PluginConfig, PluginSetting
-from plugin.urls import PLUGIN_BASE
 from plugin.helpers import MixinImplementationError, MixinNotImplementedError
+from plugin.models import PluginConfig, PluginSetting
+from plugin.template import render_template
+from plugin.urls import PLUGIN_BASE
 
 
 logger = logging.getLogger('inventree')
@@ -599,19 +600,50 @@ class PanelMixin:
         super().__init__()
         self.add_mixin('panel', True, __class__)
 
-    def render_panels(self, view, request):
+    def get_custom_panels(self, view, request):
+        """ This method *must* be implemented by the plugin class """
+        raise NotImplementedError(f"{__class__} is missing the 'get_custom_panels' method")
+
+    def get_panel_context(self, view, request, context):
+        """
+        Build the context data to be used for template rendering.
+        Custom class can override this to provide any custom context data.
+
+        (See the example in "custom_panel_sample.py")
+        """
+
+        # Provide some standard context items to the template for rendering
+        context['plugin'] = self
+        context['request'] = request
+        context['user'] = getattr(request, 'user', None)
+        context['view'] = view
+
+        try:
+            context['object'] = view.get_object()
+        except AttributeError:
+            pass
+            
+        return context
+
+    def render_panels(self, view, request, context):
 
         panels = []
 
+        # Construct an updated context object for template rendering
+        ctx = self.get_panel_context(view, request, context)
+
         for panel in self.get_custom_panels(view, request):
 
-            if 'content_template' in panel:
-                # TODO: Render the actual HTML content from a template file
-                ...
+            content_template = panel.get('content_template', None)
+            javascript_template = panel.get('javascript_template', None)
 
-            if 'javascript_template' in panel:
-                # TODO: Render the actual javascript content from a template file
-                ...
+            if content_template:
+                # Render content template to HTML
+                panel['content'] = render_template(self, content_template, ctx)
+
+            if javascript_template:
+                # Render javascript template to HTML
+                panel['javascript'] = render_template(self, javascript_template, ctx)
 
             # Check for required keys
             required_keys = ['title', 'content']
@@ -630,7 +662,3 @@ class PanelMixin:
             panels.append(panel)
 
         return panels
-
-    def get_custom_panels(self, view, request):
-        """ This method *must* be implemented by the plugin class """
-        raise NotImplementedError(f"{__class__} is missing the 'get_custom_panels' method")

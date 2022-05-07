@@ -67,7 +67,7 @@ class InvenTreePluginMixin:
 
     """
 
-    def get_plugin_panels(self):
+    def get_plugin_panels(self, ctx):
         """
         Return a list of extra 'plugin panels' associated with this view
         """
@@ -75,7 +75,7 @@ class InvenTreePluginMixin:
         panels = []
 
         for plug in registry.with_mixin('panel'):
-            panels += plug.render_panels(self, self.request)
+            panels += plug.render_panels(self, self.request, ctx)
 
         return panels
 
@@ -84,7 +84,7 @@ class InvenTreePluginMixin:
         ctx = super().get_context_data(**kwargs)
 
         if settings.PLUGINS_ENABLED:
-            ctx['plugin_panels'] = self.get_plugin_panels()
+            ctx['plugin_panels'] = self.get_plugin_panels(ctx)
 
         return ctx
 

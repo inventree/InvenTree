@@ -29,18 +29,15 @@ class CustomPanelSample(PanelMixin, SettingsMixin, IntegrationPluginBase):
         }
     }
 
-    def render_location_info(self, loc):
-        """
-        Demonstrate that we can render information particular to a page
-        """
-        return f"""
-        <h5>Location Information</h5>
-        <em>This location has no sublocations!</em>
-        <ul>
-        <li><b>Name</b>: {loc.name}</li>
-        <li><b>Path</b>: {loc.pathstring}</li>
-        </ul>
-        """
+    def get_panel_context(self, view, request, context):
+
+        ctx = super().get_panel_context(view, request, context)
+
+        # If we are looking at a StockLocationDetail view, add location context object
+        if isinstance(view, StockLocationDetail):
+            ctx['location'] = view.get_object()
+
+        return ctx
 
     def get_custom_panels(self, view, request):
 
@@ -89,7 +86,7 @@ class CustomPanelSample(PanelMixin, SettingsMixin, IntegrationPluginBase):
                     panels.append({
                         'title': 'Childless Location',
                         'icon': 'fa-user',
-                        'content': self.render_location_info(loc),
+                        'content_template': 'panel_demo/childless.html',  # Note that the panel content is rendered using a template file!
                     })
             except:
                 pass
