@@ -87,7 +87,7 @@ class TemplateTagTest(TestCase):
 
     def test_user_settings(self):
         result = inventree_extras.user_settings(self.user)
-        self.assertEqual(len(result), 36)
+        self.assertEqual(len(result), 35)
 
     def test_global_settings(self):
         result = inventree_extras.global_settings()
