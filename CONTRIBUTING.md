@@ -90,7 +90,8 @@ The various github actions can be found in the `./github/workflows` directory
 
 ## Code Style
 
-Sumbitted Python code is automatically checked against PEP style guidelines. Locally you can run `invoke style` to ensure the style checks will pass, before submitting the PR.
+Sumbitted Python code is automatically checked against PEP style guidelines. Locally you can run `invoke style` to ensure the style checks will pass, before submitting the PR.  
+Please write docstrings for each function and class - we follow the [google doc-style](https://google.github.io/styleguide/pyguide.html#244-decision) for python. Docstrings for general javascript code is encouraged! Docstyles are checked by `invoke style`.
 
 ## Documentation
 

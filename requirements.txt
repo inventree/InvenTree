@@ -33,6 +33,7 @@ django-weasyprint==1.0.1                # django weasyprint integration
 djangorestframework==3.12.4             # DRF framework
 django-xforwardedfor-middleware==2.0    # IP forwarding metadata
 flake8==3.8.3                           # PEP checking
+flake8-docstrings==1.6.0                # docstring format testing
 gunicorn>=20.1.0                        # Gunicorn web server
 importlib_metadata                      # Backport for importlib.metadata
 inventree                               # Install the latest version of the InvenTree API python library
