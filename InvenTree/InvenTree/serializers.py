@@ -26,6 +26,7 @@ from rest_framework import serializers
 from rest_framework.utils import model_meta
 from rest_framework.fields import empty
 from rest_framework.exceptions import ValidationError
+from rest_framework.serializers import DecimalField
 
 from .models import extract_int
 
@@ -50,7 +51,7 @@ class InvenTreeMoneySerializer(MoneyField):
         Test that the returned amount is a valid Decimal
         """
 
-        amount = super().get_value(data)
+        amount = super(DecimalField, self).get_value(data)
 
         # Convert an empty string to None
         if len(str(amount).strip()) == 0:
