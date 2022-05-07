@@ -19,7 +19,7 @@ from .templatetags import inventree_extras
 import part.settings
 
 from InvenTree import version
-from common.models import InvenTreeSetting, NotificationEntry, NotificationMessage
+from common.models import InvenTreeSetting, InvenTreeUserSetting, NotificationEntry, NotificationMessage
 from common.notifications import storage, UIMessageNotification
 
 
@@ -87,7 +87,7 @@ class TemplateTagTest(TestCase):
 
     def test_user_settings(self):
         result = inventree_extras.user_settings(self.user)
-        self.assertEqual(len(result), 36)
+        self.assertEqual(len(result), len(InvenTreeUserSetting.SETTINGS))
 
     def test_global_settings(self):
         result = inventree_extras.global_settings()

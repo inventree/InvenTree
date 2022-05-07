@@ -83,6 +83,7 @@
                         {% block sidebar %}
                         <!-- Sidebar goes here -->
                         {% endblock %}
+                        {% include "plugin/panel_menu.html" %}
                         {% include "sidebar_toggle.html" with target='sidebar' %}
                     </ul>
                 </div>
@@ -209,6 +210,9 @@
 <script type='text/javascript'>
 
 $(document).ready(function () {
+
+    {% include "plugin/panel_js.html" %}
+
 {% block js_ready %}
 {% endblock %}
 

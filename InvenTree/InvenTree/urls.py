@@ -153,28 +153,24 @@ backendpatterns = [
 ]
 
 frontendpatterns = [
-    re_path(r'^part/', include(part_urls)),
-    re_path(r'^manufacturer-part/', include(manufacturer_part_urls)),
-    re_path(r'^supplier-part/', include(supplier_part_urls)),
 
+    # Apps
+    re_path(r'^build/', include(build_urls)),
     re_path(r'^common/', include(common_urls)),
-
-    re_path(r'^stock/', include(stock_urls)),
-
     re_path(r'^company/', include(company_urls)),
     re_path(r'^order/', include(order_urls)),
-
-    re_path(r'^build/', include(build_urls)),
-
-    re_path(r'^settings/', include(settings_urls)),
-
-    re_path(r'^notifications/', include(notifications_urls)),
+    re_path(r'^manufacturer-part/', include(manufacturer_part_urls)),
+    re_path(r'^part/', include(part_urls)),
+    re_path(r'^stock/', include(stock_urls)),
+    re_path(r'^supplier-part/', include(supplier_part_urls)),
 
     re_path(r'^edit-user/', EditUserView.as_view(), name='edit-user'),
     re_path(r'^set-password/', SetPasswordView.as_view(), name='set-password'),
 
     re_path(r'^index/', IndexView.as_view(), name='index'),
+    re_path(r'^notifications/', include(notifications_urls)),
     re_path(r'^search/', SearchView.as_view(), name='search'),
+    re_path(r'^settings/', include(settings_urls)),
     re_path(r'^stats/', DatabaseStatsView.as_view(), name='stats'),
 
     # admin sites

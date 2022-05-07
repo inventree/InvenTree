@@ -654,7 +654,7 @@ class IndexView(TemplateView):
 
     def get_context_data(self, **kwargs):
 
-        context = super(TemplateView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         return context
 
@@ -849,7 +849,7 @@ class SettingCategorySelectView(FormView):
     def get_initial(self):
         """ Set category selection """
 
-        initial = super(SettingCategorySelectView, self).get_initial()
+        initial = super().get_initial()
 
         category = self.request.GET.get('category', None)
         if category:
