@@ -60,7 +60,7 @@ class SetupWizard(NamedMultiStepFormView):
         # Update form_list to use the setup (referenced by slug)
         # Check if setup slug is valid
         ref = self.kwargs.get('setup', None)
-        if ref:
+        if not ref:
             raise Http404()
 
         # Check if steps are valid
