@@ -1,9 +1,9 @@
-from common.views import MultiStepFormView
+from common.views import NamedMultiStepFormView
 
 from .forms import ContactForm1, ContactForm2
 
 
-class ContactWizard(MultiStepFormView):
+class ContactWizard(NamedMultiStepFormView):
     form_list = [ContactForm1, ContactForm2]
     template_name = 'oobe/setup.html'
 
