@@ -469,7 +469,7 @@ class PluginSettingsApiTest(InvenTreeAPITestCase):
         """List installed plugins via API"""
         url = reverse('api-plugin-list')
 
-        response = self.get(url, expected_code=200)
+        self.get(url, expected_code=200)
 
     def test_api_list(self):
         """Test list URL"""
@@ -479,7 +479,7 @@ class PluginSettingsApiTest(InvenTreeAPITestCase):
 
     def test_invalid_plugin_slug(self):
         """Test that an invalid plugin slug returns a 404"""
-        
+
         url = reverse('api-plugin-setting-detail', kwargs={'plugin': 'doesnotexist', 'key': 'doesnotmatter'})
 
         response = self.get(url, expected_code=404)

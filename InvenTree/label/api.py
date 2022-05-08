@@ -79,7 +79,7 @@ class LabelPrintMixin:
             if config and config.active:
                 # Only return the plugin if it is enabled!
                 return plugin
-        
+
         # No matches found
         return None
 

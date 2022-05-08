@@ -147,7 +147,7 @@ class PluginSettingDetail(generics.RetrieveUpdateAPIView):
 
         if key not in settings:
             raise NotFound(detail=f"Plugin '{plugin_slug}' has no setting matching '{key}'")
-        
+
         return PluginSetting.get_setting_object(key, plugin=plugin)
 
     # Staff permission required

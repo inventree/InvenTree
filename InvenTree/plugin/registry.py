@@ -71,7 +71,7 @@ class PluginsRegistry:
         if slug not in self.plugins:
             logger.warning(f"Plugin registry has no record of plugin '{slug}'")
             return None
-        
+
         return self.plugins[slug]
 
     def call_plugin_function(self, slug, func, *args, **kwargs):
