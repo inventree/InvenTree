@@ -14,7 +14,7 @@ class CommentTextWidget(forms.TextInput):
 
 
 class CommentTextField(forms.CharField):
-    widget=CommentTextWidget
+    widget = CommentTextWidget
     required = False
 
 
@@ -27,15 +27,17 @@ class EmptyForm(forms.Form):
 class ContactForm3(forms.Form):
     comment = forms.CharField(
         widget=CommentTextWidget,
-        required = False,
+        required=False,
         label='Info text changed'
     )
     message1 = forms.CharField(widget=forms.Textarea)
     sender = forms.EmailField()
 
+
 class ContactForm4(forms.Form):
     sender = forms.EmailField()
     message2 = forms.CharField(widget=forms.Textarea)
+
 
 class ContactForm5(forms.Form):
     sender = forms.EmailField()
