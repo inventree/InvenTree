@@ -14,6 +14,9 @@ from rest_framework.documentation import include_docs_urls
 
 from build.api import build_api_urls
 from build.urls import build_urls
+from oobe.urls import oobe_urls
+from plugin.urls import get_plugin_urls
+
 from common.api import common_api_urls, settings_api_urls
 from common.urls import common_urls
 from company.api import company_api_urls
@@ -145,6 +148,8 @@ frontendpatterns = [
     re_path(r'^part/', include(part_urls)),
     re_path(r'^stock/', include(stock_urls)),
     re_path(r'^supplier-part/', include(supplier_part_urls)),
+
+    re_path(r'^setup/', include(oobe_urls)),
 
     re_path(r'^edit-user/', EditUserView.as_view(), name='edit-user'),
     re_path(r'^set-password/', SetPasswordView.as_view(), name='set-password'),
