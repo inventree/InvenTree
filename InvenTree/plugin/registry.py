@@ -307,14 +307,17 @@ class PluginsRegistry:
                 # TODO check more stuff -> as of Nov 2021 there are not many checks in place
                 # but we could enhance those to check signatures, run the plugin against a whitelist etc.
                 logger.info(f'Loading integration plugin {plugin.PLUGIN_NAME}')
+
                 try:
                     plugin = plugin()
                 except Exception as error:
                     # log error and raise it -> disable plugin
                     handle_error(error, log_name='init')
 
-                logger.info(f'Loaded integration plugin {plugin.slug}')
+                logger.debug(f'Loaded integration plugin {plugin.PLUGIN_NAME}')
+
                 plugin.is_package = was_packaged
+
                 if plugin_db_setting:
                     plugin.pk = plugin_db_setting.pk
 

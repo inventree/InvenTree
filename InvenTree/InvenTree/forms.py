@@ -58,7 +58,7 @@ class HelperForm(forms.ModelForm):
 
     def is_valid(self):
 
-        valid = super(HelperForm, self).is_valid()
+        valid = super().is_valid()
 
         return valid
 

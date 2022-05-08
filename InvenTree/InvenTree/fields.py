@@ -131,7 +131,7 @@ def round_decimal(value, places):
 
 class RoundingDecimalFormField(forms.DecimalField):
     def to_python(self, value):
-        value = super(RoundingDecimalFormField, self).to_python(value)
+        value = super().to_python(value)
         value = round_decimal(value, self.decimal_places)
         return value
 
@@ -149,7 +149,7 @@ class RoundingDecimalFormField(forms.DecimalField):
 
 class RoundingDecimalField(models.DecimalField):
     def to_python(self, value):
-        value = super(RoundingDecimalField, self).to_python(value)
+        value = super().to_python(value)
         return round_decimal(value, self.decimal_places)
 
     def formfield(self, **kwargs):
