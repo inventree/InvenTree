@@ -25,7 +25,11 @@ class EmptyForm(forms.Form):
 # region defaults
 # TODO remove
 class ContactForm3(forms.Form):
-    comment = CommentTextField(label='Info text changed')
+    comment = forms.CharField(
+        widget=CommentTextWidget,
+        required = False,
+        label='Info text changed'
+    )
     message1 = forms.CharField(widget=forms.Textarea)
     sender = forms.EmailField()
 
