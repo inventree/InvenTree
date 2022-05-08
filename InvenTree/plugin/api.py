@@ -12,6 +12,8 @@ from rest_framework import status
 from rest_framework import permissions
 from rest_framework.response import Response
 
+from django_filters.rest_framework import DjangoFilterBackend
+
 from common.api import GlobalSettingsPermissions
 from plugin.models import PluginConfig, PluginSetting
 import plugin.serializers as PluginSerializers
@@ -96,6 +98,15 @@ class PluginSettingList(generics.ListAPIView):
 
     permission_classes = [
         GlobalSettingsPermissions,
+    ]
+
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+
+    filter_fields = [
+        'plugin__active',
+        'plugin__key',
     ]
 
 
