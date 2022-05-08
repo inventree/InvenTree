@@ -12,8 +12,6 @@ class SetupWizard(NamedMultiStepFormView):
     template_name = 'oobe/setup.html'
 
     def done(self, form_list, **kwargs):
-        print(form_list)
-        print(kwargs)
 
         return render(self.request, 'oobe/done.html', {
             'form_data': [form.cleaned_data for form in form_list],
