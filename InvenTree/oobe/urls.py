@@ -7,10 +7,10 @@ from django.urls import re_path
 from . import views
 
 
-setup_wizard = views.SetupWizard.as_view(views.SetupWizard.form_list, url_name='setup_step', done_step_name='finished')
+setup_wizard = views.SetupWizard.as_view(url_name='dynamic_setup_step', done_step_name='done')
 
 oobe_urls = [
-    # Initial setup
-    re_path(r'^oobe/(?P<step>.+)/$', setup_wizard, name='setup_step'),
-    re_path(r'^oobe/', setup_wizard, name='setup'),
+    # Dynamic setup
+    re_path(r'^(?P<setup>.+)/(?P<step>.+)/$', setup_wizard, name='dynamic_setup_step'),
+    re_path(r'^(?P<setup>.+)/', setup_wizard, name='dynamic_setup'),
 ]
