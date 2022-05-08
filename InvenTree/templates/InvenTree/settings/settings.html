@@ -75,7 +75,7 @@ $('table').find('.boolean-setting').change(function() {
     var checked = this.checked;
 
     // Global setting by default
-    var url = `/api/settings/global/${pk}/`;
+    var url = `/api/settings/global/${setting}/`;
 
     if (plugin) {
         url = `/api/plugin/settings/${pk}/`;
@@ -108,6 +108,7 @@ $('table').find('.btn-edit-setting').click(function() {
     var pk = $(this).attr('pk');
     var plugin = $(this).attr('plugin');
     var is_global = true;
+    var notification = $(this).attr('notification');
 
     if ($(this).attr('user')){
         is_global = false;
@@ -117,8 +118,11 @@ $('table').find('.btn-edit-setting').click(function() {
 
     if (plugin != null) {
         title = '{% trans "Edit Plugin Setting" %}';
+    } else if (notification) {
+        title = '{% trans "Edit Notification Setting" %}';
     } else if (is_global) {
         title = '{% trans "Edit Global Setting" %}';
+        pk = setting;
     } else {
         title = '{% trans "Edit User Setting" %}';
     }
@@ -126,6 +130,7 @@ $('table').find('.btn-edit-setting').click(function() {
     editSetting(pk, {
         plugin: plugin,
         global: is_global,
+        notification: notification,
         title: title,
     });
 });
