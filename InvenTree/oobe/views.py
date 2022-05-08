@@ -1,5 +1,5 @@
-
-from xml.dom import NotFoundErr
+"""Views for OOBE"""
+from django.http import Http404
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -61,12 +61,12 @@ class SetupWizard(NamedMultiStepFormView):
         # Check if setup slug is valid
         ref = self.kwargs.get('setup', None)
         if ref:
-            raise NotFoundErr()
+            raise Http404()
 
         # Check if steps are valid
         self.setup_def = global_form_list.get(ref, None)
         if not self.setup_def:
-            raise NotFoundErr()
+            raise Http404()
         self.form_list = self.get_initkwargs(self.setup_def.get('steps'), url_name= self.url_name)['form_list']
         self.from_list_overriden = True
 
