@@ -171,7 +171,7 @@ class GlobalSettingsDetail(generics.RetrieveUpdateAPIView):
 
         if key not in common.models.InvenTreeSetting.SETTINGS.keys():
             raise NotFound()
-        
+
         return common.models.InvenTreeSetting.get_setting_object(key)
 
     permission_classes = [
@@ -239,7 +239,7 @@ class UserSettingsDetail(generics.RetrieveUpdateAPIView):
 
         if key not in common.models.InvenTreeUserSetting.SETTINGS.keys():
             raise NotFound()
-        
+
         return common.models.InvenTreeUserSetting.get_setting_object(key, user=self.request.user)
 
     permission_classes = [

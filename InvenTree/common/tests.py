@@ -276,7 +276,7 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
 
     def test_user_setting_init(self):
         """Test we can retrieve a setting which has not yet been initialized"""
-        
+
         key = 'HOMEPAGE_PART_LATEST'
 
         # Ensure it does not actually exist in the database
