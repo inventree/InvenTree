@@ -21,6 +21,7 @@ global_form_list = {
     },
 }
 
+
 class SetupWizard(NamedMultiStepFormView):
     form_list = [forms.EmptyForm, ]
     template_name = 'oobe/setup.html'
@@ -32,7 +33,7 @@ class SetupWizard(NamedMultiStepFormView):
         if not args and not hasattr(kwargs, 'form_list'):
             kwargs['form_list'] = cls.form_list
         return super().get_initkwargs(*args, **kwargs)
-    
+
     def __init__(self, *args, **kwargs):
         """Set dynamic flags"""
         self.from_list_overriden = False
@@ -74,7 +75,7 @@ class SetupWizard(NamedMultiStepFormView):
         self.setup_def = global_form_list.get(ref, None)
         if not self.setup_def:
             raise Http404()
-        self.form_list = self.get_initkwargs(self.setup_def.get('steps'), url_name= self.url_name)['form_list']
+        self.form_list = self.get_initkwargs(self.setup_def.get('steps'), url_name=self.url_name)['form_list']
         self.from_list_overriden = True
 
     def done(self, form_list, **kwargs):
