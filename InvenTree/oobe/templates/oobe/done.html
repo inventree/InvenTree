@@ -1,0 +1,13 @@
+{% extends "account/base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block head %}
+{{ wizard.form.media }}
+{% endblock %}
+
+{% block content %}
+<h3>{% trans "Done with setup" %}</h3>
+{{ success_message }}
+<a href="{% url 'index' %}" class="btn btn-secondary w-100 btn-sm mt-3">{% trans "Go to home" %}</a>
+{% endblock %}
