@@ -6,8 +6,13 @@
 {{ wizard.form.media }}
 {% endblock %}
 
+{% block head_title %}{{title}}{% endblock %}
+
 {% block content %}
-<p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p>
+<p class="w-100">
+    {{title}}
+    <span class="float-right">Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</span>
+</p>
 <form action="" method="post">{% csrf_token %}
 <table>
 {{ wizard.management_form }}

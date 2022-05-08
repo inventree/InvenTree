@@ -16,7 +16,8 @@ global_form_list = {
             forms.ContactForm4,
             forms.ContactForm5,
         ],
-        'done': _('Done with initial setup')
+        'done': _('Done with initial setup'),
+        'title': _('Testtitle'),
     },
 }
 
@@ -50,6 +51,12 @@ class SetupWizard(NamedMultiStepFormView):
     def get_step_url(self, step):
         """Override url lookup to introduce current setup into lookup"""
         return reverse(self.url_name, kwargs={'step': step, 'setup': self.kwargs.get('setup')})
+
+    def get_context_data(self, **kwargs):
+        """Override to add setup title to context"""
+        context = super().get_context_data(**kwargs)
+        context['title'] = self.setup_def.get('title')
+        return context
     # endregion
 
     def _set_form_list(self):
