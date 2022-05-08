@@ -8,8 +8,8 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.utils.translation import gettext_lazy as _
 
+from formtools.wizard.views import SessionWizardView, NamedUrlSessionWizardView
 from crispy_forms.helper import FormHelper
-from formtools.wizard.views import SessionWizardView
 
 from InvenTree.views import AjaxView
 
@@ -76,6 +76,17 @@ class MultiStepFormView(InvenTreeMultiStepMixin, SessionWizardView):
         form_steps_description: description for each form
     """
     pass
+
+
+class NamedMultiStepFormView(InvenTreeMultiStepMixin, NamedUrlSessionWizardView):
+    """ Setup basic methods of multi-step form
+
+        form_list: list of forms
+        form_steps_description: description for each form
+    """
+    pass
+
+
 class FileManagementFormView(MultiStepFormView):
     """ Setup form wizard to perform the following steps:
         1. Upload tabular data file
