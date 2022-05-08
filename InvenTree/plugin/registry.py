@@ -89,14 +89,9 @@ class PluginsRegistry:
         if not plugin:
             return
 
-        # Check that the plugin is enabled
-        config = plugin.plugin_config()
+        plugin_func = getattr(plugin, func)
 
-        if config and config.active:
-
-            plugin_func = getattr(plugin, func)
-
-            return plugin_func(*args, **kwargs)
+        return plugin_func(*args, **kwargs)
 
     # region public functions
     # region loading / unloading
