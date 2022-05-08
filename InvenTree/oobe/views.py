@@ -64,7 +64,7 @@ class SetupWizard(NamedMultiStepFormView):
             raise NotFoundErr()
 
         # Check if steps are valid
-        self.setup_def = global_form_list.get(self.setup_def, None)
+        self.setup_def = global_form_list.get(ref, None)
         if not self.setup_def:
             raise NotFoundErr()
         self.form_list = self.get_initkwargs(self.setup_def.get('steps'), url_name= self.url_name)['form_list']
