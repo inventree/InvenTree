@@ -158,8 +158,21 @@ class GlobalSettingsDetail(generics.RetrieveUpdateAPIView):
     - User must have 'staff' status to view / edit
     """
 
+    lookup_field = 'key'
     queryset = common.models.InvenTreeSetting.objects.all()
     serializer_class = common.serializers.GlobalSettingsSerializer
+
+    def get_object(self):
+        """
+        Attempt to find a global setting object with the provided key.
+        """
+
+        key = self.kwargs['key']
+
+        if key not in common.models.InvenTreeSetting.SETTINGS.keys():
+            raise NotFound()
+        
+        return common.models.InvenTreeSetting.get_setting_object(key)
 
     permission_classes = [
         GlobalSettingsPermissions,
@@ -396,7 +409,7 @@ settings_api_urls = [
     # Global settings
     re_path(r'^global/', include([
         # Global Settings Detail
-        re_path(r'^(?P<pk>\d+)/', GlobalSettingsDetail.as_view(), name='api-global-setting-detail'),
+        re_path(r'^(?P<key>\w+)/', GlobalSettingsDetail.as_view(), name='api-global-setting-detail'),
 
         # Global Settings List
         re_path(r'^.*$', GlobalSettingsList.as_view(), name='api-global-setting-list'),
