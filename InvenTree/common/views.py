@@ -17,12 +17,8 @@ from . import forms
 from .files import FileManager
 
 
-class MultiStepFormView(SessionWizardView):
-    """ Setup basic methods of multi-step form
-
-        form_list: list of forms
-        form_steps_description: description for each form
-    """
+class InvenTreeMultiStepMixin():
+    """Mixin to setup basic methods of multi-step forms"""
 
     form_steps_template = []
     form_steps_description = []
@@ -73,6 +69,13 @@ class MultiStepFormView(SessionWizardView):
         return context
 
 
+class MultiStepFormView(InvenTreeMultiStepMixin, SessionWizardView):
+    """ Setup basic methods of multi-step form
+
+        form_list: list of forms
+        form_steps_description: description for each form
+    """
+    pass
 class FileManagementFormView(MultiStepFormView):
     """ Setup form wizard to perform the following steps:
         1. Upload tabular data file
