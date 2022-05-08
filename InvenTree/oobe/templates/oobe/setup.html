@@ -1,5 +1,6 @@
 {% extends "account/base.html" %}
 {% load i18n %}
+{% load crispy_forms_tags %}
 
 {% block head %}
 {{ wizard.form.media }}
@@ -13,16 +14,18 @@
 {% if wizard.form.forms %}
     {{ wizard.form.management_form }}
     {% for form in wizard.form.forms %}
-        {{ form }}
+        {{ form|crispy }}
     {% endfor %}
 {% else %}
     {{ wizard.form }}
 {% endif %}
 </table>
 {% if wizard.steps.prev %}
-<button name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% trans "first step" %}</button>
-<button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% trans "prev step" %}</button>
+<div class='btn-group float-left' role='group'>
+    <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}" class="save btn btn-secondary">{% trans "first step" %}</button>
+    <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="save btn btn-secondary">{% trans "prev step" %}</button>
+</div>
 {% endif %}
-<input type="submit" value="{% trans "submit" %}"/>
+<button type="submit" class="save btn btn-primary float-right">{% trans "Next Step" %}</button>
 </form>
 {% endblock %}
