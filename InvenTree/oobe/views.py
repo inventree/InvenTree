@@ -56,7 +56,7 @@ class SetupWizard(NamedMultiStepFormView):
     def get_context_data(self, **kwargs):
         """Override to add setup title to context"""
         context = super().get_context_data(**kwargs)
-        context['title'] = self.setup_def.get('title')
+        context['title'] = self.setup_context.get('title')
         return context
     # endregion
 
@@ -72,10 +72,10 @@ class SetupWizard(NamedMultiStepFormView):
             raise Http404()
 
         # Check if steps are valid
-        self.setup_def = global_form_list.get(ref, None)
-        if not self.setup_def:
+        self.setup_context = global_form_list.get(ref, None)
+        if not self.setup_context:
             raise Http404()
-        self.form_list = self.get_initkwargs(self.setup_def.get('steps'), url_name=self.url_name)['form_list']
+        self.form_list = self.get_initkwargs(self.setup_context.get('steps'), url_name=self.url_name)['form_list']
         self.from_list_overriden = True
 
     def done(self, form_list, **kwargs):
@@ -83,5 +83,5 @@ class SetupWizard(NamedMultiStepFormView):
 
         return render(self.request, 'oobe/done.html', {
             'form_data': [form.cleaned_data for form in form_list],
-            'success_message': self.setup_def.get('done'),
+            'success_message': self.setup_context.get('done'),
         })
