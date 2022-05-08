@@ -66,6 +66,7 @@
 // Callback for when boolean settings are edited
 $('table').find('.boolean-setting').change(function() {
 
+    var pk = $(this).attr('pk');
     var setting = $(this).attr('setting');
     var plugin = $(this).attr('plugin');
     var user = $(this).attr('user');
@@ -118,6 +119,7 @@ $('table').find('.btn-edit-setting').click(function() {
         title = '{% trans "Edit Plugin Setting" %}';
     } else if (notification) {
         title = '{% trans "Edit Notification Setting" %}';
+        setting = $(this).attr('pk');
     } else if (is_global) {
         title = '{% trans "Edit Global Setting" %}';
     } else {
