@@ -87,6 +87,7 @@ class SetupWizard(NamedMultiStepFormView):
 
         # Set context
         self.setup_context = context
+        return self.setup_context
 
     def done(self, form_list, **kwargs):
         print(kwargs)
