@@ -80,7 +80,7 @@ $('table').find('.boolean-setting').change(function() {
     if (plugin) {
         url = `/api/plugin/settings/${pk}/`;
     } else if (user) {
-        url = `/api/settings/user/${pk}/`;
+        url = `/api/settings/user/${setting}/`;
     } else if (notification) {
         url = `/api/settings/notification/${pk}/`;
     }
@@ -125,6 +125,7 @@ $('table').find('.btn-edit-setting').click(function() {
         pk = setting;
     } else {
         title = '{% trans "Edit User Setting" %}';
+        pk = setting;
     }
 
     editSetting(pk, {

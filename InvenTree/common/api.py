@@ -226,8 +226,21 @@ class UserSettingsDetail(generics.RetrieveUpdateAPIView):
     - User can only view / edit settings their own settings objects
     """
 
+    lookup_field = 'key'
     queryset = common.models.InvenTreeUserSetting.objects.all()
     serializer_class = common.serializers.UserSettingsSerializer
+
+    def get_object(self):
+        """
+        Attempt to find a user setting object with the provided key.
+        """
+
+        key = self.kwargs['key']
+
+        if key not in common.models.InvenTreeUserSetting.SETTINGS.keys():
+            raise NotFound()
+        
+        return common.models.InvenTreeUserSetting.get_setting_object(key, user=self.request.user)
 
     permission_classes = [
         UserSettingsPermissions,
@@ -391,7 +404,7 @@ settings_api_urls = [
     # User settings
     re_path(r'^user/', include([
         # User Settings Detail
-        re_path(r'^(?P<pk>\d+)/', UserSettingsDetail.as_view(), name='api-user-setting-detail'),
+        re_path(r'^(?P<key>\w+)/', UserSettingsDetail.as_view(), name='api-user-setting-detail'),
 
         # User Settings List
         re_path(r'^.*$', UserSettingsList.as_view(), name='api-user-setting-list'),
