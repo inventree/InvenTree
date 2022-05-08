@@ -3,7 +3,7 @@ from common.views import NamedMultiStepFormView
 from .forms import ContactForm1, ContactForm2
 
 
-class ContactWizard(NamedMultiStepFormView):
+class SetupWizard(NamedMultiStepFormView):
     form_list = [ContactForm1, ContactForm2]
     template_name = 'oobe/setup.html'
 
