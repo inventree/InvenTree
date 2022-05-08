@@ -66,17 +66,27 @@ class SetupWizard(NamedMultiStepFormView):
             return
 
         # Update form_list to use the setup (referenced by slug)
-        # Check if setup slug is valid
-        ref = self.kwargs.get('setup', None)
-        if not ref:
-            raise Http404()
+        self.set_setup_context()
 
         # Check if steps are valid
-        self.setup_context = global_form_list.get(ref, None)
-        if not self.setup_context:
-            raise Http404()
-        self.form_list = self.get_initkwargs(self.setup_context.get('steps'), url_name=self.url_name)['form_list']
+        steps = self.setup_context.get('steps')
+        self.form_list = self.get_initkwargs(steps, url_name=self.url_name).get('form_list')
         self.from_list_overriden = True
+
+    def set_setup_context(self):
+        """Set the setup context for the current context"""
+        # Check if setup slug is valid
+        reference = self.kwargs.get('setup', None)
+        if not reference:
+            raise Http404()
+
+        # Get context
+        context = global_form_list.get(reference, None)
+        if not context:
+            raise Http404()
+
+        # Set context
+        self.setup_context = context
 
     def done(self, form_list, **kwargs):
         print(kwargs)
