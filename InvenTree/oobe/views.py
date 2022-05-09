@@ -82,6 +82,7 @@ class SetupWizard(NamedMultiStepFormView):
         return self.setup_context
 
     def done(self, form_list, **kwargs):
+        """Final action with data"""
         # TODO take actions
 
         return render(self.request, 'oobe/done.html', {
