@@ -178,7 +178,7 @@ class LocatePluginView(APIView):
         
         elif location_pk:
             try:
-                location = StockItem.objects.get(pk=location_pk)
+                location = StockLocation.objects.get(pk=location_pk)
 
                 offload_task('plugin.registry.call_function', plugin, 'locate_stock_location', location_pk)
 
