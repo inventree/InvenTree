@@ -1,6 +1,7 @@
 """Registry for setups"""
 from dataclasses import dataclass
 from pathlib import Path
+from typing import List
 
 import yaml
 
@@ -134,7 +135,7 @@ class SetupInstance(SerializableObject):
 
 class SetupRegistry:
     """Registry for keeping SetupInstance instances"""
-    collection: dict[SetupInstance] = {}
+    collection: List[SetupInstance] = {}
     path: list = ['oobe', 'setups']
 
     def __init__(self) -> None:
