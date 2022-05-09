@@ -2,77 +2,77 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-07 23:02+0000\n"
-"PO-Revision-Date: 2022-05-08 00:18\n"
+"POT-Creation-Date: 2022-05-08 22:16+0000\n"
+"PO-Revision-Date: 2022-05-09 00:29\n"
 "Last-Translator: \n"
-"Language-Team: Portuguese, Brazilian\n"
-"Language: pt_BR\n"
+"Language-Team: Portuguese\n"
+"Language: pt_PT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
-"X-Crowdin-Language: pt-BR\n"
+"X-Crowdin-Language: pt-PT\n"
 "X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 154\n"
 
 #: InvenTree/api.py:57
 msgid "API endpoint not found"
-msgstr "API endpoint não encontrado"
+msgstr ""
 
 #: InvenTree/api.py:103
 msgid "No action specified"
-msgstr "Nenhuma ação especificada"
+msgstr ""
 
 #: InvenTree/api.py:118
 msgid "No matching action found"
-msgstr "Nenhuma ação correspondente encontrada"
+msgstr ""
 
 #: InvenTree/fields.py:100
 msgid "Enter date"
-msgstr "Insira uma Data"
+msgstr ""
 
 #: InvenTree/forms.py:126 templates/account/email_confirm.html:20
 #: templates/js/translated/forms.js:614
 msgid "Confirm"
-msgstr "Confirmar"
+msgstr ""
 
 #: InvenTree/forms.py:142
 msgid "Confirm delete"
-msgstr "Confirmar exclusão"
+msgstr ""
 
 #: InvenTree/forms.py:143
 msgid "Confirm item deletion"
-msgstr "Confirmar exclusão do item"
+msgstr ""
 
 #: InvenTree/forms.py:174
 msgid "Enter password"
-msgstr "Digite a senha"
+msgstr ""
 
 #: InvenTree/forms.py:175
 msgid "Enter new password"
-msgstr "Insira uma nova senha"
+msgstr ""
 
 #: InvenTree/forms.py:182
 msgid "Confirm password"
-msgstr "Confirmar senha"
+msgstr ""
 
 #: InvenTree/forms.py:183
 msgid "Confirm new password"
-msgstr "Confirmar nova senha"
+msgstr ""
 
 #: InvenTree/forms.py:215
 msgid "Select Category"
-msgstr "Selecionar Categoria"
+msgstr ""
 
 #: InvenTree/forms.py:236
 msgid "Email (again)"
-msgstr "E-mail (novamente)"
+msgstr ""
 
 #: InvenTree/forms.py:240
 msgid "Email address confirmation"
-msgstr "Confirmação do endereço de email"
+msgstr ""
 
 #: InvenTree/forms.py:260
 msgid "You must type the same email each time."
@@ -283,20 +283,20 @@ msgstr ""
 msgid "No data rows found in file"
 msgstr ""
 
-#: InvenTree/serializers.py:533
+#: InvenTree/serializers.py:536
 msgid "No data rows provided"
 msgstr ""
 
-#: InvenTree/serializers.py:536
+#: InvenTree/serializers.py:539
 msgid "No data columns supplied"
 msgstr ""
 
-#: InvenTree/serializers.py:623
+#: InvenTree/serializers.py:626
 #, python-brace-format
 msgid "Missing required column: '{name}'"
 msgstr ""
 
-#: InvenTree/serializers.py:632
+#: InvenTree/serializers.py:635
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
 msgstr ""
