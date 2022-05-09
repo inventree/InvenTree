@@ -16,7 +16,7 @@ logger = logging.getLogger('inventree')
 class SampleLocatePlugin(LocateMixin, IntegrationPluginBase):
 
     PLUGIN_NAME = "SampleLocatePlugin"
-    PLUGIN_SLUG = "samplelocate",
+    PLUGIN_SLUG = "samplelocate"
     PLUGIN_TITLE = "Sample plugin for locating items"
 
     VERSION = "0.1"
