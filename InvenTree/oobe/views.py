@@ -7,19 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from common.views import NamedMultiStepFormView
 
 from . import forms
-
-
-global_form_list = {
-    'abc': {
-        'steps': [
-            forms.ContactForm3,
-            forms.ContactForm4,
-            forms.ContactForm5,
-        ],
-        'done': _('Done with initial setup'),
-        'title': _('Testtitle'),
-    },
-}
+from oobe.registry import setups
 
 
 class SetupWizard(NamedMultiStepFormView):
@@ -56,7 +44,7 @@ class SetupWizard(NamedMultiStepFormView):
     def get_context_data(self, **kwargs):
         """Override to add setup title to context"""
         context = super().get_context_data(**kwargs)
-        context['title'] = self.setup_context.get('title')
+        context['title'] = self.setup_context.title
         return context
     # endregion
 
@@ -69,8 +57,7 @@ class SetupWizard(NamedMultiStepFormView):
         self.set_setup_context()
 
         # Check if steps are valid
-        steps = self.setup_context.get('steps')
-        self.form_list = self.get_initkwargs(steps, url_name=self.url_name).get('form_list')
+        self.form_list = self.get_initkwargs(self.setup_context.form_list, url_name=self.url_name).get('form_list')
         self.from_list_overriden = True
 
     def set_setup_context(self):
@@ -81,12 +68,9 @@ class SetupWizard(NamedMultiStepFormView):
             raise Http404()
 
         # Get context
-        context = global_form_list.get(reference, None)
-        if not context:
+        self.setup_context = setups.get(reference, None)
+        if not self.setup_context:
             raise Http404()
-
-        # Set context
-        self.setup_context = context
         return self.setup_context
 
     def done(self, form_list, **kwargs):
@@ -94,5 +78,5 @@ class SetupWizard(NamedMultiStepFormView):
 
         return render(self.request, 'oobe/done.html', {
             'form_data': [form.cleaned_data for form in form_list],
-            'success_message': self.setup_context.get('done'),
+            'success_message': self.setup_context.done,
         })
