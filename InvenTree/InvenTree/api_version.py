@@ -4,10 +4,14 @@ InvenTree API version information
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 45
+INVENTREE_API_VERSION = 46
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v46 -> 2022-05-09
+    - Fixes read permissions on settings API
+    - Allows non-staff users to read global settings via the API
 
 v45 -> 2022-05-08 : https://github.com/inventree/InvenTree/pull/2944
     - Settings are now accessed via the API using their unique key, not their PK

@@ -146,7 +146,12 @@ class GlobalSettingsPermissions(permissions.BasePermission):
         try:
             user = request.user
 
-            return user.is_staff
+            if request.method in ['GET', 'HEAD', 'OPTIONS']:
+                return True
+            else:
+                # Any other methods require staff access permissions
+                return user.is_staff
+
         except AttributeError:  # pragma: no cover
             return False
 
@@ -175,6 +180,7 @@ class GlobalSettingsDetail(generics.RetrieveUpdateAPIView):
         return common.models.InvenTreeSetting.get_setting_object(key)
 
     permission_classes = [
+        permissions.IsAuthenticated,
         GlobalSettingsPermissions,
     ]
 
