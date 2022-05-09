@@ -520,6 +520,14 @@ $("#barcode-scan-into-location").click(function() {
     });
 });
 
+{% if plugins_enabled %}
+$('#locate-item-button').click(function() {
+    locateItemOrLocation({
+        item: {{ item.pk }},
+    });
+});
+{% endif %}
+
 function itemAdjust(action) {
 
     inventreeGet(

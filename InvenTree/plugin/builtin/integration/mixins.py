@@ -473,6 +473,8 @@ class LocateMixin:
         Note: A custom implemenation could always change this behaviour
         """
 
+        logger.info(f"LocateMixin: Attempting to locate StockItem pk={item_pk}")
+
         from stock.models import StockItem
 
         try:
@@ -482,6 +484,7 @@ class LocateMixin:
                 self.locate_stock_location(item.location.pk)
 
         except StockItem.DoesNotExist:
+            logger.warning("LocateMixin: StockItem pk={item_pk} not found")
             pass
 
     def locate_stock_location(self, location_pk):

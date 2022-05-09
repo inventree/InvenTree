@@ -45,7 +45,7 @@ from .views import DynamicJsView
 from .views import NotificationsView
 
 from .api import InfoView, NotFoundView
-from .api import ActionPluginView
+from .api import ActionPluginView, LocatePluginView
 
 from users.api import user_urls
 
@@ -75,6 +75,7 @@ apipatterns += [
 
     # Plugin endpoints
     re_path(r'^action/', ActionPluginView.as_view(), name='api-action-plugin'),
+    re_path(r'^locate/', LocatePluginView.as_view(), name='api-locate-plugin'),
 
     # Webhook enpoint
     path('', include(common_api_urls)),
