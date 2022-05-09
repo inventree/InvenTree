@@ -456,7 +456,7 @@ class LocateMixin:
     
     def __init__(self):
         super().__init__()
-        self.add_mixin('localte', True, __class__)
+        self.add_mixin('locate', True, __class__)
     
     def locate_stock_item(self, item_pk):
         """
