@@ -19,7 +19,7 @@ class OOBEApiTest(InvenTreeAPITestCase):
 
         # Check that the setup redirects to the first setup page
         response = self.get(url, expected_code=302)
-        self.assertContains(response.url, 'welcome/')
+        self.assertTrue('welcome' in response.url)
         url = response.url
 
         # check the first page loads without errors
