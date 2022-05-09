@@ -54,7 +54,7 @@ class SetupWizard(NamedMultiStepFormView):
             return self.setup_context.pages[self.kwargs["step"]]
 
         # This should never happen - raise if it does to caution against wrong dev moves
-        raise Http404()
+        raise Http404()  # pragma: no cover
 
     def _set_form_list(self):
         """Helper function to make sure the dynamic form_list is used"""
