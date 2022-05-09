@@ -12,3 +12,15 @@ class OOBEApiTest(InvenTreeAPITestCase):
         """Test list URL"""
         url = reverse('api-setup-list')
         self.get(url, expected_code=200)
+
+    def test_view(self):
+        """Test initial setup view"""
+        url = reverse('dynamic_setup', kwargs={'setup': 'initial'})
+
+        # Check that the setup redirects to the first setup page
+        response = self.get(url, expected_code=302)
+        self.assertContains(response.url, 'welcome/')
+        url = response.url
+
+        # check the first page loads without errors
+        self.get(url, expected_code=200)
