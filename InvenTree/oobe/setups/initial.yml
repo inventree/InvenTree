@@ -1,0 +1,21 @@
+title: Intital InvenTree Setup
+pages:
+  welcome:
+    title: Welcome to InvenTree
+    items:
+    - info: InvenTree is an open-source inventory management system which provides intuitive parts management and stock control
+    - info: The following steps will guide you throug the initial setup
+    - char: Char field
+    - text: message
+    - email: sender
+    - int: Full number
+
+  general:
+    title: General settings
+    items:
+    - setting: INVENTREE_INSTANCE
+    - setting: INVENTREE_INSTANCE_TITLE
+
+  fine:
+    title: we are done for now
+    is_done: true
