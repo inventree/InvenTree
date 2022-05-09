@@ -43,9 +43,18 @@ class SetupWizard(NamedMultiStepFormView):
     def get_context_data(self, **kwargs):
         """Override to add setup title to context"""
         context = super().get_context_data(**kwargs)
-        context['title'] = self.setup_context.title
+        context['title'] = f'{self.setup_context.title} | {self.step.title}'
         return context
     # endregion
+
+    @property
+    def step(self):
+        """The current steps page"""
+        if hasattr(self, 'setup_context') and hasattr(self, 'kwargs') and self.kwargs.get('step'):
+            return self.setup_context.pages[self.kwargs["step"]]
+
+        # This should never happen - raise if it does to caution against wrong dev moves
+        raise Http404()
 
     def _set_form_list(self):
         """Helper function to make sure the dynamic form_list is used"""
