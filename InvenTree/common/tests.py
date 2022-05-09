@@ -186,7 +186,7 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
         # Check default value
         self.assertEqual(setting.value, 'My company name')
 
-        url = reverse('api-global-setting-detail', kwargs={'pk': setting.pk})
+        url = reverse('api-global-setting-detail', kwargs={'key': setting.key})
 
         # Test getting via the API
         for val in ['test', '123', 'My company nam3']:
@@ -212,6 +212,47 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
             setting.refresh_from_db()
             self.assertEqual(setting.value, val)
 
+    def test_api_detail(self):
+        """Test that we can access the detail view for a setting based on the <key>"""
+
+        # These keys are invalid, and should return 404
+        for key in ["apple", "carrot", "dog"]:
+            response = self.get(
+                reverse('api-global-setting-detail', kwargs={'key': key}),
+                expected_code=404,
+            )
+
+        key = 'INVENTREE_INSTANCE'
+        url = reverse('api-global-setting-detail', kwargs={'key': key})
+
+        InvenTreeSetting.objects.filter(key=key).delete()
+
+        # Check that we can access a setting which has not previously been created
+        self.assertFalse(InvenTreeSetting.objects.filter(key=key).exists())
+
+        # Access via the API, and the default value should be received
+        response = self.get(url, expected_code=200)
+
+        self.assertEqual(response.data['value'], 'InvenTree server')
+
+        # Now, the object should have been created in the DB
+        self.patch(
+            url,
+            {
+                'value': 'My new title',
+            },
+            expected_code=200,
+        )
+
+        setting = InvenTreeSetting.objects.get(key=key)
+
+        self.assertEqual(setting.value, 'My new title')
+
+        # And retrieving via the API now returns the updated value
+        response = self.get(url, expected_code=200)
+
+        self.assertEqual(response.data['value'], 'My new title')
+
 
 class UserSettingsApiTest(InvenTreeAPITestCase):
     """
@@ -225,6 +266,34 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
         url = reverse('api-user-setting-list')
 
         self.get(url, expected_code=200)
+
+    def test_user_setting_invalid(self):
+        """Test a user setting with an invalid key"""
+
+        url = reverse('api-user-setting-detail', kwargs={'key': 'DONKEY'})
+
+        self.get(url, expected_code=404)
+
+    def test_user_setting_init(self):
+        """Test we can retrieve a setting which has not yet been initialized"""
+
+        key = 'HOMEPAGE_PART_LATEST'
+
+        # Ensure it does not actually exist in the database
+        self.assertFalse(InvenTreeUserSetting.objects.filter(key=key).exists())
+
+        url = reverse('api-user-setting-detail', kwargs={'key': key})
+
+        response = self.get(url, expected_code=200)
+
+        self.assertEqual(response.data['value'], 'True')
+
+        self.patch(url, {'value': 'False'}, expected_code=200)
+
+        setting = InvenTreeUserSetting.objects.get(key=key, user=self.user)
+
+        self.assertEqual(setting.value, 'False')
+        self.assertEqual(setting.to_native_value(), False)
 
     def test_user_setting_boolean(self):
         """
@@ -241,7 +310,7 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
         self.assertEqual(setting.to_native_value(), True)
 
         # Fetch via API
-        url = reverse('api-user-setting-detail', kwargs={'pk': setting.pk})
+        url = reverse('api-user-setting-detail', kwargs={'key': setting.key})
 
         response = self.get(url, expected_code=200)
 
@@ -300,7 +369,7 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
             user=self.user
         )
 
-        url = reverse('api-user-setting-detail', kwargs={'pk': setting.pk})
+        url = reverse('api-user-setting-detail', kwargs={'key': setting.key})
 
         # Check default value
         self.assertEqual(setting.value, 'YYYY-MM-DD')
@@ -339,7 +408,7 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
             user=self.user
         )
 
-        url = reverse('api-user-setting-detail', kwargs={'pk': setting.pk})
+        url = reverse('api-user-setting-detail', kwargs={'key': setting.key})
 
         # Check default value for this setting
         self.assertEqual(setting.value, 10)
@@ -396,11 +465,34 @@ class NotificationUserSettingsApiTest(InvenTreeAPITestCase):
 class PluginSettingsApiTest(InvenTreeAPITestCase):
     """Tests for the plugin settings API"""
 
+    def test_plugin_list(self):
+        """List installed plugins via API"""
+        url = reverse('api-plugin-list')
+
+        self.get(url, expected_code=200)
+
     def test_api_list(self):
         """Test list URL"""
         url = reverse('api-plugin-setting-list')
 
         self.get(url, expected_code=200)
+
+    def test_invalid_plugin_slug(self):
+        """Test that an invalid plugin slug returns a 404"""
+
+        url = reverse('api-plugin-setting-detail', kwargs={'plugin': 'doesnotexist', 'key': 'doesnotmatter'})
+
+        response = self.get(url, expected_code=404)
+
+        self.assertIn("Plugin 'doesnotexist' not installed", str(response.data))
+
+    def test_invalid_setting_key(self):
+        """Test that an invalid setting key returns a 404"""
+        ...
+
+    def test_uninitialized_setting(self):
+        """Test that requesting an uninitialized setting creates the setting"""
+        ...
 
 
 class WebhookMessageTests(TestCase):
