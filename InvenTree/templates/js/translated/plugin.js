@@ -50,7 +50,7 @@ function locateItemOrLocation(options={}) {
 
     // Request the list of available 'locate' plugins
     inventreeGet(
-        '{% url "api-plugin-list" %}',
+        `/api/plugin/`,
         {
             mixin: 'locate',
         },
