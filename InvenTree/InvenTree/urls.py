@@ -33,6 +33,22 @@ from report.api import report_api_urls
 from stock.api import stock_api_urls
 from stock.urls import stock_urls
 from users.api import user_urls
+from oobe.api import oobe_api_urls
+
+from django.conf import settings
+from django.conf.urls.static import static
+
+from django.views.generic.base import RedirectView
+from rest_framework.documentation import include_docs_urls
+
+from .views import auth_request
+from .views import IndexView, SearchView, DatabaseStatsView
+from .views import SettingsView, EditUserView, SetPasswordView, CustomEmailView, CustomConnectionsView, CustomPasswordResetFromKeyView
+from .views import CustomSessionDeleteView, CustomSessionDeleteOtherView
+from .views import CurrencyRefreshView
+from .views import AppearanceSelectView, SettingCategorySelectView
+from .views import DynamicJsView
+from .views import NotificationsView
 
 from .api import InfoView, NotFoundView
 from .views import (AppearanceSelectView, CurrencyRefreshView,
@@ -56,6 +72,9 @@ apipatterns = [
     re_path(r'^order/', include(order_api_urls)),
     re_path(r'^label/', include(label_api_urls)),
     re_path(r'^report/', include(report_api_urls)),
+    re_path(r'^setups/', include(oobe_api_urls)),
+
+    # User URLs
     re_path(r'^user/', include(user_urls)),
 
     # Plugin endpoints
