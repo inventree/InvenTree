@@ -82,7 +82,7 @@ class SetupWizard(NamedMultiStepFormView):
         return self.setup_context
 
     def done(self, form_list, **kwargs):
-        print(kwargs)
+        # TODO take actions
 
         return render(self.request, 'oobe/done.html', {
             'form_data': [form.cleaned_data for form in form_list],
