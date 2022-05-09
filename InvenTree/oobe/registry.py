@@ -37,6 +37,14 @@ class Page(SerializableObject):
         form = forms.Form
         attrs = {}
 
+        # helper function
+        def unique_name(reference):
+            """Ensure name is unique"""
+            if reference in attrs:
+                reference = reference + '_'
+                return unique_name(reference)
+            return reference
+
         # Set up fields
         for item in self.items:
             # Set field name
@@ -66,10 +74,8 @@ class Page(SerializableObject):
                     'label': list(item.values())[0]
                 }
 
-            # Add field with uniwue name
-            # TODO fix
-            if attr_name in attrs:
-                attr_name = attr_name + '_'
+            # Add field with unique name
+            attr_name = unique_name(attr_name)
             attrs[attr_name] = attry_type(**attr_kwargs)
 
         # Create form and return it
