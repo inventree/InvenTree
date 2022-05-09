@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-07 23:02+0000\n"
-"PO-Revision-Date: 2022-05-08 00:18\n"
+"POT-Creation-Date: 2022-05-08 22:16+0000\n"
+"PO-Revision-Date: 2022-05-09 00:29\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -283,20 +283,20 @@ msgstr "Nem találhatók oszlopok a fájlban"
 msgid "No data rows found in file"
 msgstr "Nincsenek adatsorok a fájlban"
 
-#: InvenTree/serializers.py:533
+#: InvenTree/serializers.py:536
 msgid "No data rows provided"
 msgstr "Nincs adatsor megadva"
 
-#: InvenTree/serializers.py:536
+#: InvenTree/serializers.py:539
 msgid "No data columns supplied"
 msgstr "Nincs adat oszlop megadva"
 
-#: InvenTree/serializers.py:623
+#: InvenTree/serializers.py:626
 #, python-brace-format
 msgid "Missing required column: '{name}'"
 msgstr "Szükséges oszlop hiányzik: '{name}'"
 
-#: InvenTree/serializers.py:632
+#: InvenTree/serializers.py:635
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
 msgstr "Duplikált oszlop: '{col}'"
