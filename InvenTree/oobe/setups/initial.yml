@@ -19,5 +19,5 @@ pages:
     - setting: INVENTREE_INSTANCE_TITLE
 
   fine:
-    title: we are done for now
+    title: We are done for now
     is_done: true
