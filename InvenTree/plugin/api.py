@@ -7,9 +7,7 @@ from __future__ import unicode_literals
 
 from django.urls import include, re_path
 
-from rest_framework import generics
-from rest_framework import status
-from rest_framework import permissions
+from rest_framework import filters, generics, permissions, status
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
@@ -34,6 +32,35 @@ class PluginList(generics.ListAPIView):
 
     serializer_class = PluginSerializers.PluginConfigSerializer
     queryset = PluginConfig.objects.all()
+
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+
+        params = self.request.query_params
+
+        # Filter plugins which support a given mixin
+        mixin = params.get('mixin', None)
+
+        if mixin:
+            matches = []
+
+            for result in queryset:
+                if mixin in result.mixins().keys():
+                    matches.append(result.pk)
+            
+            queryset = queryset.filter(pk__in=matches)
+
+        return queryset
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+
+    filter_fields = [
+        'active',
+    ]
 
     ordering_fields = [
         'key',
