@@ -67,7 +67,7 @@ class SetupWizard(NamedMultiStepFormView):
             raise Http404()
 
         # Get context
-        self.setup_context = setups.get(reference, None)
+        self.setup_context = setups.get(reference)
         if not self.setup_context:
             raise Http404()
         return self.setup_context
