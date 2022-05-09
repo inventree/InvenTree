@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import yaml
+import json
 
 from django.conf import settings
 from django import forms
@@ -11,8 +12,14 @@ from django.utils.translation import gettext_lazy as _
 from . import forms as oobe_forms
 
 
+class SerializableObject():
+    def toJson(self):
+        """Get JSON compatible representation"""
+        return self.__dict__()
+
+
 @dataclass()
-class Page:
+class Page(SerializableObject):
     """Page in a Setup"""
     title: str = ''
     slug: str = ''
@@ -68,13 +75,23 @@ class Page:
         # Create form and return it
         return type(form)(class_name, (form,), attrs)
 
+    def __dict__(self):
+        return {
+            'title': self.title,
+            'slug': self.slug,
+            'is_done': self.is_done,
+            'items': self.items,
+        }
 
 class PageDict(dict):
     """Collection of Pages"""
-    pass
+
+    def toJson(self):
+        """Returns json-compatible representation of collection"""
+        return {key: item.toJson() for key, item in self.items()}
 
 
-class SetupInstance:
+class SetupInstance(SerializableObject):
     """Represents a setup instance"""
     title: str
     """Title of setup"""
@@ -88,13 +105,22 @@ class SetupInstance:
 
     def __init__(self, data: dict, pages: PageDict = None, title: str = None, done: str = None) -> None:
         """Create instance"""
-        self.pages = pages
+        self.pages = PageDict(pages)
         self.title = title if title else data.get('title')
         self.done = done if done else data.get('done', _('All done here'))
         self._data = data
 
         # process formlist
         self.form_list = self.get_formlist()
+
+    def __dict__(self, *args, **kwargs):
+        data = {
+            'title': self.title,
+            'done': self.done,
+            'pages': self.pages.toJson(),
+        }
+        return data
+
 
     def get_formlist(self):
         """Returns formlist for SetupView"""
@@ -110,7 +136,7 @@ class SetupInstance:
 
 class SetupRegistry:
     """Registry for keeping SetupInstance instances"""
-    collection: dict = {}
+    collection: dict[SetupInstance] = {}
     path: list = ['oobe', 'setups']
 
     def __init__(self) -> None:
@@ -152,6 +178,10 @@ class SetupRegistry:
     def get(self, key: str, __default) -> SetupInstance:
         """Return SetupInstance of key"""
         return self.collection.get(key, __default)
+
+    def to_representation(self):
+        """Returns json-compatible representation of collection"""
+        return {key: item.toJson() for key, item in self.collection.items()}
 
 
 setups = SetupRegistry()

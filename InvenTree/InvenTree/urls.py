@@ -29,6 +29,7 @@ from label.api import label_api_urls
 from report.api import report_api_urls
 from plugin.api import plugin_api_urls
 from users.api import user_urls
+from oobe.api import oobe_api_urls
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -60,6 +61,9 @@ apipatterns = [
     re_path(r'^order/', include(order_api_urls)),
     re_path(r'^label/', include(label_api_urls)),
     re_path(r'^report/', include(report_api_urls)),
+    re_path(r'^setups/', include(oobe_api_urls)),
+
+    # User URLs
     re_path(r'^user/', include(user_urls)),
 
     # Plugin endpoints
