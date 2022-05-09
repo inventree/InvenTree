@@ -138,7 +138,7 @@ class LocatePluginView(APIView):
 
         # Which plugin to we wish to use?
         plugin = request.data.get('plugin', None)
-        
+
         if not plugin:
             raise ParseError("'plugin' field must be supplied")
 
@@ -146,10 +146,10 @@ class LocatePluginView(APIView):
         plugins = registry.with_mixin('locate')
 
         if plugin not in [p.slug for p in plugins]:
-            raise ParseError(f"Plugin '{plugin}' is not installed, or does not support the location mixin")             
+            raise ParseError(f"Plugin '{plugin}' is not installed, or does not support the location mixin")
 
         # StockItem to identify
-        item_pk= request.data.get('item', None)
+        item_pk = request.data.get('item', None)
 
         # StockLocation to identify
         location_pk = request.data.get('location', None)
@@ -165,7 +165,7 @@ class LocatePluginView(APIView):
         # StockItem takes priority
         if item_pk:
             try:
-                item = StockItem.objects.get(pk=item_pk)
+                StockItem.objects.get(pk=item_pk)
 
                 offload_task('plugin.registry.call_function', plugin, 'locate_stock_item', item_pk)
 
@@ -175,10 +175,10 @@ class LocatePluginView(APIView):
 
             except StockItem.DoesNotExist:
                 raise NotFound("StockItem matching PK '{item}' not found")
-        
+
         elif location_pk:
             try:
-                location = StockLocation.objects.get(pk=location_pk)
+                StockLocation.objects.get(pk=location_pk)
 
                 offload_task('plugin.registry.call_function', plugin, 'locate_stock_location', location_pk)
 

@@ -47,7 +47,7 @@ class PluginList(generics.ListAPIView):
             for result in queryset:
                 if mixin in result.mixins().keys():
                     matches.append(result.pk)
-            
+
             queryset = queryset.filter(pk__in=matches)
 
         return queryset

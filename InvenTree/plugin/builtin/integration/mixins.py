@@ -453,11 +453,11 @@ class LocateMixin:
 
     class MixinMeta:
         MIXIN_NAME = "Locate"
-    
+
     def __init__(self):
         super().__init__()
         self.add_mixin('locate', True, __class__)
-    
+
     def locate_stock_item(self, item_pk):
         """
         Attempt to locate a particular StockItem
@@ -490,10 +490,10 @@ class LocateMixin:
     def locate_stock_location(self, location_pk):
         """
         Attempt to location a particular StockLocation
-        
+
         Arguments:
             location_pk: The PK (primary key) of the StockLocation to be located
-        
+
         Note: The default implementation here does nothing!
         """
         ...
