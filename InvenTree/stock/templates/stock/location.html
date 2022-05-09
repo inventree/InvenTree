@@ -215,6 +215,14 @@
 {% block js_ready %}
 {{ block.super }}
 
+    {% if plugins_enabled and location %}
+    $('#locate-location-button').click(function() {
+        locateItemOrLocation({
+            location: {{ location.pk }},
+        });
+    });
+    {% endif %}
+
     onPanelLoad('sublocations', function() {
         loadStockLocationTable($('#sublocation-table'), {
             params: {
