@@ -91,11 +91,18 @@ class TemplateTagTest(TestCase):
 
     def test_global_settings(self):
         result = inventree_extras.global_settings()
-        self.assertEqual(len(result), 61)
+        self.assertEqual(len(result), len(InvenTreeSetting.SETTINGS))
 
     def test_visible_global_settings(self):
         result = inventree_extras.visible_global_settings()
-        self.assertEqual(len(result), 60)
+
+        n_hidden = 0
+
+        for val in InvenTreeSetting.SETTINGS.values():
+            if val.get('hidden', False):
+                n_hidden += 1
+
+        self.assertEqual(len(result), n_hidden)
 
 
 class PartTest(TestCase):
