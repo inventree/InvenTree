@@ -4,10 +4,15 @@ InvenTree API version information
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 46
+INVENTREE_API_VERSION = 47
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v47 -> 2022-05-09 : https://github.com/inventree/InvenTree/pull/2957
+    - Allows filtering of plugin list by 'active' status
+    - Allows filtering of plugin list by 'mixin' support
+    - Adds endpoint to "identify" or "locate" stock items and locations (using plugins)
 
 v46 -> 2022-05-09
     - Fixes read permissions on settings API
