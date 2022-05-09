@@ -29,23 +29,28 @@ const plugins_enabled = false;
 {% endif %}
 
 /*
- * Edit a setting value
+ * Interactively edit a setting value.
+ * Launches a modal dialog form to adjut the value of the setting.
  */
-function editSetting(pk, options={}) {
+function editSetting(key, options={}) {
 
     // Is this a global setting or a user setting?
     var global = options.global || false;
 
     var plugin = options.plugin;
 
+    var notification = options.notification;
+
     var url = '';
 
     if (plugin) {
-        url = `/api/plugin/settings/${pk}/`;
+        url = `/api/plugin/settings/${plugin}/${key}/`;
+    } else if (notification) {
+        url = `/api/settings/notification/${pk}/`;
     } else if (global) {
-        url = `/api/settings/global/${pk}/`;
+        url = `/api/settings/global/${key}/`;
     } else {
-        url = `/api/settings/user/${pk}/`;
+        url = `/api/settings/user/${key}/`;
     }
 
     var reload_required = false;

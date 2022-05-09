@@ -138,7 +138,7 @@ class PluginSettingSerializer(GenericReferencedSettingSerializer):
         'plugin',
     ]
 
-    plugin = serializers.PrimaryKeyRelatedField(read_only=True)
+    plugin = serializers.CharField(source='plugin.key', read_only=True)
 
 
 class NotificationUserSettingSerializer(GenericReferencedSettingSerializer):
