@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import yaml
-import json
 
 from django.conf import settings
 from django import forms
@@ -83,6 +82,7 @@ class Page(SerializableObject):
             'items': self.items,
         }
 
+
 class PageDict(dict):
     """Collection of Pages"""
 
@@ -114,13 +114,11 @@ class SetupInstance(SerializableObject):
         self.form_list = self.get_formlist()
 
     def __dict__(self, *args, **kwargs):
-        data = {
+        return {
             'title': self.title,
             'done': self.done,
             'pages': self.pages.toJson(),
         }
-        return data
-
 
     def get_formlist(self):
         """Returns formlist for SetupView"""
