@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load inventree_extras %}
 
+{% plugins_enabled as plugins_enabled %}
 {% settings_value 'BARCODE_ENABLE' as barcodes %}
 {% settings_value 'REPORT_ENABLE_TEST_REPORT' as test_report_enabled %}
 {% settings_value "REPORT_ENABLE" as report_enabled %}
