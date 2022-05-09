@@ -73,7 +73,7 @@ class SetupWizard(NamedMultiStepFormView):
         # Check if setup slug is valid
         reference = self.kwargs.get('setup', None)
         if not reference:
-            raise Http404()
+            raise NotImplementedError('The url pattern must contain a')  # pragma: no cover
 
         # Get context
         self.setup_context = setups.get(reference)
