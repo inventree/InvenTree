@@ -71,15 +71,14 @@ class LabelPrintMixin:
 
         plugin_key = request.query_params.get('plugin', None)
 
-        for slug, plugin in registry.plugins.items():
+        plugin = registry.get_plugin(plugin_key)
 
-            if slug == plugin_key and plugin.mixin_enabled('labels'):
+        if plugin:
+            config = plugin.plugin_config()
 
-                config = plugin.plugin_config()
-
-                if config and config.active:
-                    # Only return the plugin if it is enabled!
-                    return plugin
+            if config and config.active:
+                # Only return the plugin if it is enabled!
+                return plugin
 
         # No matches found
         return None

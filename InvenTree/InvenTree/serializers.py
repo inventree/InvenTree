@@ -421,7 +421,10 @@ class DataFileUploadSerializer(serializers.Serializer):
         - Fuzzy match
         """
 
-        column_name = column_name.strip()
+        if not column_name:
+            return None
+
+        column_name = str(column_name).strip()
 
         column_name_lower = column_name.lower()
 
