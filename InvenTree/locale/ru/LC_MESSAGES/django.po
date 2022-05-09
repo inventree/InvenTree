@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-07 23:02+0000\n"
-"PO-Revision-Date: 2022-05-08 00:18\n"
+"POT-Creation-Date: 2022-05-08 22:16+0000\n"
+"PO-Revision-Date: 2022-05-09 00:29\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -283,20 +283,20 @@ msgstr "Столбцы в файле не найдены"
 msgid "No data rows found in file"
 msgstr "Строки данных в файле не найдены"
 
-#: InvenTree/serializers.py:533
+#: InvenTree/serializers.py:536
 msgid "No data rows provided"
 msgstr "Строки данных в файле не найдены"
 
-#: InvenTree/serializers.py:536
+#: InvenTree/serializers.py:539
 msgid "No data columns supplied"
 msgstr ""
 
-#: InvenTree/serializers.py:623
+#: InvenTree/serializers.py:626
 #, python-brace-format
 msgid "Missing required column: '{name}'"
 msgstr ""
 
-#: InvenTree/serializers.py:632
+#: InvenTree/serializers.py:635
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
 msgstr "Повторяющийся столбец: '{col}'"
