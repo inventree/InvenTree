@@ -24,3 +24,12 @@ class OOBEApiTest(InvenTreeAPITestCase):
 
         # check the first page loads without errors
         self.get(url, expected_code=200)
+
+        # Check with wrong setup reference
+        url = reverse('dynamic_setup', kwargs={'setup': 'wrong'})
+        self.get(url, expected_code=404)
+
+        # Check with wrong step reference - should send back to the first step
+        url = reverse('dynamic_setup_step', kwargs={'setup': 'initial', 'step': 'failed'})
+        response = self.get(url, expected_code=302)
+        self.assertTrue('welcome' in response.url)
