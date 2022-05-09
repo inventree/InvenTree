@@ -16,8 +16,8 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/inventree/inventree)](https://hub.docker.com/r/inventree/inventree)
 
 ![GitHub Org's stars](https://img.shields.io/github/stars/inventree?style=social)
-![Twitter Follow](https://img.shields.io/twitter/follow/inventreedb?style=social)
-![Subreddit subscribers](https://img.shields.io/reddit/subreddit-subscribers/inventree?style=social)
+[![Twitter Follow](https://img.shields.io/twitter/follow/inventreedb?style=social)](https://twitter.com/inventreedb)
+[![Subreddit subscribers](https://img.shields.io/reddit/subreddit-subscribers/inventree?style=social)](https://www.reddit.com/r/InvenTree/)
 
 
 <h4>
