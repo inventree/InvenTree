@@ -173,7 +173,7 @@ class SetupRegistry:
         # Save new list
         self.collection = new_collection
 
-    def get(self, key: str, __default) -> SetupInstance:
+    def get(self, key: str, __default: None) -> SetupInstance:
         """Return SetupInstance of key"""
         return self.collection.get(key, __default)
 
