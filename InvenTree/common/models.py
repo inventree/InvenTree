@@ -842,6 +842,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'BARCODE_WEBCAM_SUPPORT': {
+            'name': _('Barcode Webcam Support'),
+            'description': _('Allow barcode scanning via webcam in browser'),
+            'default': True,
+            'validator': bool,
+        },
+
         'PART_IPN_REGEX': {
             'name': _('IPN Regex'),
             'description': _('Regular expression pattern for matching Part IPN')
