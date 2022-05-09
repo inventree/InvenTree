@@ -2,7 +2,6 @@
 from django.http import Http404
 from django.shortcuts import render
 from django.urls import reverse
-from django.utils.translation import gettext_lazy as _
 
 from common.views import NamedMultiStepFormView
 

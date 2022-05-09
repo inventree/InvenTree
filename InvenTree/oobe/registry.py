@@ -55,7 +55,7 @@ class Page:
                 attry_type = forms.CharField
                 attr_kwargs = {
                     'widget': oobe_forms.CommentTextWidget,
-                    'required':False,
+                    'required': False,
                     'label': list(item.values())[0]
                 }
 
@@ -104,7 +104,7 @@ class SetupInstance:
 
             # Pages can be just an endpage - so we need to check
             if form:
-                form_list.append(form) 
+                form_list.append(form)
         return form_list
 
 
