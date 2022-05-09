@@ -129,8 +129,8 @@ class SetupInstance(SerializableObject):
 
             # Pages can be just an endpage - so we need to check
             if form:
-                form_list.append(form)
-        return form_list
+                form_list.append((item.slug, form))
+        return tuple(form_list)
 
 
 class SetupRegistry:
