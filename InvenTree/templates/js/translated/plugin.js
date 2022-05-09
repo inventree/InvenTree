@@ -30,7 +30,7 @@ function installPlugin() {
 function locateItemOrLocation(options={}) {
 
     if (!options.item && !options.location) {
-        console.error("locateItemOrLocation: Either 'item' or 'location' must be provided!");
+        console.error(`locateItemOrLocation: Either 'item' or 'location' must be provided!`);
         return;
     }
 
@@ -58,7 +58,7 @@ function locateItemOrLocation(options={}) {
             success: function(plugins) {
                 // No 'locate' plugins are available!
                 if (plugins.length == 0) {
-                    console.warn("No 'locate' plugins are available");
+                    console.warn(`No 'locate' plugins are available`);
                 } else if (plugins.length == 1) {
                     // Only a single locate plugin is available
                     performLocate(plugins[0].key);
