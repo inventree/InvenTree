@@ -17,7 +17,7 @@ from django.dispatch.dispatcher import receiver
 from common.models import InvenTreeSetting
 import common.notifications
 
-from InvenTree.ready import canAppAccessDatabase
+from InvenTree.ready import canAppAccessDatabase, isImportingData
 from InvenTree.tasks import offload_task
 
 from plugin.registry import registry
@@ -112,6 +112,10 @@ def allow_table_event(table_name):
     Determine if an automatic event should be fired for a given table.
     We *do not* want events to be fired for some tables!
     """
+
+    if isImportingData():
+        # Prevent table events during the data import process
+        return False
 
     table_name = table_name.lower().strip()
 

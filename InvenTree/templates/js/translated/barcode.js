@@ -70,7 +70,7 @@ function onBarcodeScanClicked(e) {
 }
 
 function onCameraAvailable(hasCamera, options) {
-    if ( hasCamera == true ) {
+    if (hasCamera && global_settings.BARCODE_WEBCAM_SUPPORT) {
         // Camera is only acccessible if page is served over secure connection
         if ( window.isSecureContext == true ) {
             qrScanner = new QrScanner(document.getElementById('barcode_scan_video'), (result) => {

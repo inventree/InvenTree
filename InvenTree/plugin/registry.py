@@ -63,6 +63,17 @@ class PluginsRegistry:
         # mixins
         self.mixins_settings = {}
 
+    def get_plugin(self, slug):
+        """
+        Lookup plugin by slug (unique key).
+        """
+
+        if slug not in self.plugins:
+            logger.warning(f"Plugin registry has no record of plugin '{slug}'")
+            return None
+
+        return self.plugins[slug]
+
     def call_plugin_function(self, slug, func, *args, **kwargs):
         """
         Call a member function (named by 'func') of the plugin named by 'slug'.
@@ -73,7 +84,10 @@ class PluginsRegistry:
         Instead, any error messages are returned to the worker.
         """
 
-        plugin = self.plugins[slug]
+        plugin = self.get_plugin(slug)
+
+        if not plugin:
+            return
 
         plugin_func = getattr(plugin, func)
 
