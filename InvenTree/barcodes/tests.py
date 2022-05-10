@@ -102,7 +102,6 @@ class BarcodeAPITest(APITestCase):
 
         self.assertEqual(response.data['part'], 'Part does not exist')
 
-
     def test_find_stock_item(self):
         """
         Test that we can lookup a stock item based on ID
