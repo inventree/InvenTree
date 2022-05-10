@@ -11,6 +11,7 @@ Increment this API version number whenever there is a significant change to the 
 
 v47 -> 2022-05-10 : https://github.com/inventree/InvenTree/pull/2964
     - Fixes barcode API error response when scanning a StockItem which does not exist
+    - Fixes barcode API error response when scanning a StockLocation which does not exist
 
 v46 -> 2022-05-09
     - Fixes read permissions on settings API
