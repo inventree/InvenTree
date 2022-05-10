@@ -95,6 +95,9 @@ RUN echo "Downloading InvenTree from ${INVENTREE_GIT_REPO}"
 
 RUN git clone --branch ${INVENTREE_GIT_BRANCH} --depth 1 ${INVENTREE_GIT_REPO} ${INVENTREE_HOME}
 
+# Ref: https://github.blog/2022-04-12-git-security-vulnerability-announced/
+RUN git config --global --add safe.directory ${INVENTREE_HOME}
+
 # Checkout against a particular git tag
 RUN if [ -n "${INVENTREE_GIT_TAG}" ] ; then cd ${INVENTREE_HOME} && git fetch --all --tags && git checkout tags/${INVENTREE_GIT_TAG} -b v${INVENTREE_GIT_TAG}-branch ; fi
 
