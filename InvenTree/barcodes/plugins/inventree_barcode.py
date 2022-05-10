@@ -83,7 +83,7 @@ class InvenTreeBarcodePlugin(BarcodePlugin):
                     item = StockItem.objects.get(pk=pk)
                     return item
                 except (ValueError, StockItem.DoesNotExist):  # pragma: no cover
-                    raise ValidationError({k, "Stock item does not exist"})
+                    raise ValidationError({k: "Stock item does not exist"})
 
         return None
 
