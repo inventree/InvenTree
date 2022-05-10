@@ -106,6 +106,23 @@ class BarcodeAPITest(APITestCase):
         self.assertIn('barcode_data', response.data)
         self.assertEqual(response.data['stockitem']['pk'], 1)
 
+    def test_invalid_item(self):
+        """Test response for invalid stock item"""
+
+        response = self.client.post(
+            self.scan_url,
+            {
+                'barcode': {
+                    'stockitem': 999999999,
+                }
+            },
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, 400)
+
+        self.assertEqual(response.data['stockitem'], 'Stock item does not exist')
+
     def test_find_location(self):
         """
         Test that we can lookup a stock location based on ID
