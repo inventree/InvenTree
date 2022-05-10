@@ -30,7 +30,8 @@ from mptt.managers import TreeManager
 from decimal import Decimal, InvalidOperation
 from datetime import datetime, timedelta
 
-from InvenTree import helpers
+import InvenTree.helpers
+import InvenTree.ready
 import InvenTree.tasks
 
 import common.models
@@ -137,7 +138,7 @@ class StockLocation(InvenTreeTree):
     def format_barcode(self, **kwargs):
         """ Return a JSON string for formatting a barcode for this StockLocation object """
 
-        return helpers.MakeBarcode(
+        return InvenTree.helpers.MakeBarcode(
             'stocklocation',
             self.pk,
             {
@@ -577,7 +578,7 @@ class StockItem(MPTTModel):
         Voltagile data (e.g. stock quantity) should be looked up using the InvenTree API (as it may change)
         """
 
-        return helpers.MakeBarcode(
+        return InvenTree.helpers.MakeBarcode(
             "stockitem",
             self.id,
             {
@@ -1775,7 +1776,7 @@ class StockItem(MPTTModel):
                 sn=self.serial)
         else:
             s = '{n} x {part}'.format(
-                n=helpers.decimal2string(self.quantity),
+                n=InvenTree.helpers.decimal2string(self.quantity),
                 part=self.part.full_name)
 
         if self.location:
@@ -1783,7 +1784,7 @@ class StockItem(MPTTModel):
 
         if self.purchase_order:
             s += " ({pre}{po})".format(
-                pre=helpers.getSetting("PURCHASEORDER_REFERENCE_PREFIX"),
+                pre=InvenTree.helpers.getSetting("PURCHASEORDER_REFERENCE_PREFIX"),
                 po=self.purchase_order,
             )
 
@@ -1851,7 +1852,7 @@ class StockItem(MPTTModel):
         result_map = {}
 
         for result in results:
-            key = helpers.generateTestKey(result.test)
+            key = InvenTree.helpers.generateTestKey(result.test)
             result_map[key] = result
 
         # Do we wish to "cascade" and include test results from installed stock items?
@@ -1898,7 +1899,7 @@ class StockItem(MPTTModel):
         failed = 0
 
         for test in required:
-            key = helpers.generateTestKey(test.test_name)
+            key = InvenTree.helpers.generateTestKey(test.test_name)
 
             if key in results:
                 result = results[key]
@@ -1949,7 +1950,7 @@ class StockItem(MPTTModel):
 
             # Attempt to validate report filter (skip if invalid)
             try:
-                filters = helpers.validateFilterString(test_report.filters)
+                filters = InvenTree.helpers.validateFilterString(test_report.filters)
                 if item_query.filter(**filters).exists():
                     reports.append(test_report)
             except (ValidationError, FieldError):
@@ -1977,7 +1978,7 @@ class StockItem(MPTTModel):
         for lbl in label.models.StockItemLabel.objects.filter(enabled=True):
 
             try:
-                filters = helpers.validateFilterString(lbl.filters)
+                filters = InvenTree.helpers.validateFilterString(lbl.filters)
 
                 if item_query.filter(**filters).exists():
                     labels.append(lbl)
@@ -2016,8 +2017,9 @@ def after_delete_stock_item(sender, instance: StockItem, **kwargs):
     Function to be executed after a StockItem object is deleted
     """
 
-    # Run this check in the background
-    InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance.part)
+    if not InvenTree.ready.isImportingData():
+        # Run this check in the background
+        InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance.part)
 
 
 @receiver(post_save, sender=StockItem, dispatch_uid='stock_item_post_save_log')
@@ -2026,8 +2028,9 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
     Hook function to be executed after StockItem object is saved/updated
     """
 
-    # Run this check in the background
-    InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance.part)
+    if not InvenTree.ready.isImportingData():
+        # Run this check in the background
+        InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance.part)
 
 
 class StockItemAttachment(InvenTreeAttachment):
@@ -2170,7 +2173,7 @@ class StockItemTestResult(models.Model):
 
     @property
     def key(self):
-        return helpers.generateTestKey(self.test)
+        return InvenTree.helpers.generateTestKey(self.test)
 
     stock_item = models.ForeignKey(
         StockItem,
