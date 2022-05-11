@@ -139,7 +139,15 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
             registry.reload_plugins()
             fixtures = PluginConfig.objects.all()
 
+        # check mixin registry
         plg = fixtures.first()
         mixin_dict = plg.mixins()
         self.assertIn('base', mixin_dict)
         self.assertDictContainsSubset({'base':{'key':'base', 'human_name':'base'}}, mixin_dict)
+
+        # check reload on save
+        with self.assertWarns('A reload was triggered'):
+            plg_inactive = fixtures.filter(active=False).first()
+            plg_inactive.active = True
+            plg_inactive.save()
+        print('done')
