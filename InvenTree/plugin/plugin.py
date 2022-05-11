@@ -29,7 +29,7 @@ class MetaBase:
     SLUG = None
     TITLE = None
 
-    def get_meta_value(self, key: str, old_key: str = None, __default = None):
+    def get_meta_value(self, key: str, old_key: str = None, __default=None):
         """Reference a meta item with a key
 
         Args:
