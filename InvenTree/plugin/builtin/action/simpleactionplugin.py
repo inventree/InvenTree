@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-"""sample implementation for ActionPlugin"""
-from plugin.base.action.action import ActionPlugin
+"""sample implementation for ActionMixin"""
+from plugin import IntegrationPluginBase
+from plugin.mixins import ActionMixin
 
 
-class SimpleActionPlugin(ActionPlugin):
+class SimpleActionPlugin(ActionMixin, IntegrationPluginBase):
     """
     An EXTREMELY simple action plugin which demonstrates
-    the capability of the ActionPlugin class
+    the capability of the ActionMixin class
     """
 
     PLUGIN_NAME = "SimpleActionPlugin"

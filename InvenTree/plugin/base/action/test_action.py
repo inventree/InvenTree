@@ -2,32 +2,35 @@
 
 from django.test import TestCase
 
-from plugin.base.action.action import ActionPlugin
+from plugin import IntegrationPluginBase
+from plugin.mixins import ActionMixin
 
 
-class ActionPluginTests(TestCase):
-    """ Tests for ActionPlugin """
+class ActionMixinTests(TestCase):
+    """ Tests for ActionMixin """
     ACTION_RETURN = 'a action was performed'
 
     def setUp(self):
-        self.plugin = ActionPlugin('user')
+        class SimplePlugin(ActionMixin, IntegrationPluginBase):
+            pass
+        self.plugin = SimplePlugin('user')
 
-        class TestActionPlugin(ActionPlugin):
+        class TestActionPlugin(ActionMixin, IntegrationPluginBase):
             """a action plugin"""
             ACTION_NAME = 'abc123'
 
             def perform_action(self):
-                return ActionPluginTests.ACTION_RETURN + 'action'
+                return ActionMixinTests.ACTION_RETURN + 'action'
 
             def get_result(self):
-                return ActionPluginTests.ACTION_RETURN + 'result'
+                return ActionMixinTests.ACTION_RETURN + 'result'
 
             def get_info(self):
-                return ActionPluginTests.ACTION_RETURN + 'info'
+                return ActionMixinTests.ACTION_RETURN + 'info'
 
         self.action_plugin = TestActionPlugin('user')
 
-        class NameActionPlugin(ActionPlugin):
+        class NameActionPlugin(ActionMixin, IntegrationPluginBase):
             PLUGIN_NAME = 'Aplugin'
 
         self.action_name = NameActionPlugin('user')
