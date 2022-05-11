@@ -237,7 +237,7 @@ class BarcodeAssign(APIView):
 
 
 barcode_api_urls = [
-
+    # Link a barcode to a part
     path('link/', BarcodeAssign.as_view(), name='api-barcode-link'),
 
     # Catch-all performs barcode 'scan'

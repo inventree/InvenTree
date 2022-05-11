@@ -27,7 +27,6 @@ from order.api import order_api_urls
 from label.api import label_api_urls
 from report.api import report_api_urls
 from plugin.api import plugin_api_urls
-from plugin.base.barcodes.barcode import barcode_api_urls
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -45,20 +44,13 @@ from .views import DynamicJsView
 from .views import NotificationsView
 
 from .api import InfoView, NotFoundView
-from .api import ActionPluginView
 
 from users.api import user_urls
 
 admin.site.site_header = "InvenTree Admin"
 
-apipatterns = []
 
-if settings.PLUGINS_ENABLED:
-    apipatterns.append(
-        re_path(r'^plugin/', include(plugin_api_urls))
-    )
-
-apipatterns += [
+apipatterns = [
     re_path(r'^settings/', include(settings_api_urls)),
     re_path(r'^part/', include(part_api_urls)),
     re_path(r'^bom/', include(bom_api_urls)),
@@ -73,8 +65,7 @@ apipatterns += [
     re_path(r'^user/', include(user_urls)),
 
     # Plugin endpoints
-    re_path(r'^action/', ActionPluginView.as_view(), name='api-action-plugin'),
-    re_path(r'^barcode/', include(barcode_api_urls)),
+    path('', include(plugin_api_urls)),
 
     # Webhook enpoint
     path('', include(common_api_urls)),
