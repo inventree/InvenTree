@@ -8,10 +8,15 @@ import sysconfig
 import traceback
 import inspect
 import pkgutil
+import logging
 
+from django import template
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import IntegrityError
+
+
+logger = logging.getLogger('inventree')
 
 
 # region logging / errors
@@ -216,4 +221,27 @@ def get_plugins(pkg, baseclass):
                 plugins.append(plugin)
 
     return plugins
+# endregion
+
+# region templates
+def render_template(plugin, template_file, context=None):
+    """
+    Locate and render a template file, available in the global template context.
+    """
+
+    try:
+        tmp = template.loader.get_template(template_file)
+    except template.TemplateDoesNotExist:
+        logger.error(f"Plugin {plugin.slug} could not locate template '{template_file}'")
+
+        return f"""
+        <div class='alert alert-block alert-danger'>
+        Template file <em>{template_file}</em> does not exist.
+        </div>
+        """
+
+    # Render with the provided context
+    html = tmp.render(context)
+
+    return html
 # endregion

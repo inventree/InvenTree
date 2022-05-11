@@ -11,9 +11,8 @@ from django.db.utils import OperationalError, ProgrammingError
 
 import InvenTree.helpers
 
-from plugin.helpers import MixinImplementationError, MixinNotImplementedError
+from plugin.helpers import MixinImplementationError, MixinNotImplementedError, render_template
 from plugin.models import PluginConfig, PluginSetting
-from plugin.template import render_template
 from plugin.urls import PLUGIN_BASE
 
 
