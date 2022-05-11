@@ -13,7 +13,8 @@ references model objects actually exist in the database.
 
 import json
 
-from barcodes.barcode import BarcodePlugin
+from plugin import IntegrationPluginBase
+from plugin.mixins import BarcodeMixin
 
 from stock.models import StockItem, StockLocation
 from part.models import Part
@@ -21,7 +22,7 @@ from part.models import Part
 from rest_framework.exceptions import ValidationError
 
 
-class InvenTreeBarcodePlugin(BarcodePlugin):
+class InvenTreeBarcodePlugin(BarcodeMixin, IntegrationPluginBase):
 
     PLUGIN_NAME = "InvenTreeBarcode"
 
@@ -83,7 +84,7 @@ class InvenTreeBarcodePlugin(BarcodePlugin):
                     item = StockItem.objects.get(pk=pk)
                     return item
                 except (ValueError, StockItem.DoesNotExist):  # pragma: no cover
-                    raise ValidationError({k, "Stock item does not exist"})
+                    raise ValidationError({k: "Stock item does not exist"})
 
         return None
 
@@ -111,7 +112,7 @@ class InvenTreeBarcodePlugin(BarcodePlugin):
                     loc = StockLocation.objects.get(pk=pk)
                     return loc
                 except (ValueError, StockLocation.DoesNotExist):  # pragma: no cover
-                    raise ValidationError({k, "Stock location does not exist"})
+                    raise ValidationError({k: "Stock location does not exist"})
 
         return None
 
@@ -132,12 +133,12 @@ class InvenTreeBarcodePlugin(BarcodePlugin):
                     try:
                         pk = self.data[k]['id']
                     except (AttributeError, KeyError):
-                        raise ValidationError({k, 'id parameter not supplied'})
+                        raise ValidationError({k: 'id parameter not supplied'})
 
                 try:
                     part = Part.objects.get(pk=pk)
                     return part
                 except (ValueError, Part.DoesNotExist):  # pragma: no cover
-                    raise ValidationError({k, 'Part does not exist'})
+                    raise ValidationError({k: 'Part does not exist'})
 
         return None

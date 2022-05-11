@@ -49,6 +49,8 @@ from InvenTree import validators
 from InvenTree.models import InvenTreeTree, InvenTreeAttachment, DataImportMixin
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2string, normalize, decimal2money
+
+import InvenTree.ready
 import InvenTree.tasks
 
 from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus, SalesOrderStatus
@@ -2292,7 +2294,7 @@ def after_save_part(sender, instance: Part, created, **kwargs):
     Function to be executed after a Part is saved
     """
 
-    if not created:
+    if not created and not InvenTree.ready.isImportingData():
         # Check part stock only if we are *updating* the part (not creating it)
 
         # Run this check in the background

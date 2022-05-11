@@ -1,0 +1,33 @@
+{% extends "label/label_base.html" %}
+
+{% load barcode %}
+
+{% block style %}
+
+.qr {
+    position: fixed;
+    left: 0mm;
+    top: 0mm;
+    height: {{ height }}mm;
+    width: {{ height }}mm;
+}
+
+.part {
+    font-family: Arial, Helvetica, sans-serif;
+    display: inline;
+    position: absolute;
+    left: {{ height }}mm;
+    top: 2mm;
+}
+
+{% endblock %}
+
+{% block content %}
+
+<img class='qr' src='{% barcode qr_data %}'>
+
+<div class='part'>
+    {{ part.full_name }}
+</div>
+
+{% endblock %}
