@@ -161,4 +161,4 @@ class InvenTreePluginTests(TestCase):
         with self.assertRaises(DeprecationWarning):
             self.assertEqual(self.plugin_old.name, 'OldPlugin')
             # check default value is used
-            self.assertEqual(self.plugin_old.get_meta_value('ABC', __default='123'), '123')
+            self.assertEqual(self.plugin_old.get_meta_value('ABC', 'ABCD', '123'), '123')
