@@ -9,7 +9,7 @@ from django.test import TestCase
 from plugin.samples.integration.sample import SampleIntegrationPlugin
 from plugin.samples.integration.another_sample import WrongIntegrationPlugin, NoIntegrationPlugin
 import plugin.templatetags.plugin_extras as plugin_tags
-from plugin import registry, InvenTreePlugin
+from plugin import registry, InvenTreePlugin, IntegrationPluginBase
 
 
 class PluginTagTests(TestCase):
@@ -162,3 +162,11 @@ class InvenTreePluginTests(TestCase):
             self.assertEqual(self.plugin_old.name, 'OldPlugin')
             # check default value is used
             self.assertEqual(self.plugin_old.get_meta_value('ABC', 'ABCD', '123'), '123')
+
+        # check usage of the old class fires
+        class OldPlugin(IntegrationPluginBase):
+            pass
+
+        with self.assertWarns(DeprecationWarning):
+            plg = OldPlugin()
+            self.assertIsInstance(plg, InvenTreePlugin)
