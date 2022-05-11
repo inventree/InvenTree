@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 
 import common.models
 
-from plugin import InvenTreePluginBase, registry
+from plugin import IntegrationPluginBase, registry
 
 
 class PluginConfig(models.Model):
@@ -135,7 +135,7 @@ class PluginSetting(common.models.GenericReferencedSettingClass, common.models.B
 
             if plugin:
 
-                if issubclass(plugin.__class__, InvenTreePluginBase):
+                if issubclass(plugin.__class__, IntegrationPluginBase):
                     plugin = plugin.plugin_config()
 
                 kwargs['settings'] = registry.mixins_settings.get(plugin.key, {})
