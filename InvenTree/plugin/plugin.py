@@ -121,6 +121,26 @@ class MixinBase:
         self._mixins = {}
         super().__init__(*args, **kwargs)
 
+    def mixin(self, key):
+        """
+        Check if mixin is registered
+        """
+        return key in self._mixins
+
+    def mixin_enabled(self, key):
+        """
+        Check if mixin is registered, enabled and ready
+        """
+        if self.mixin(key):
+            fnc_name = self._mixins.get(key)
+
+            # Allow for simple case where the mixin is "always" ready
+            if fnc_name is True:
+                return True
+
+            return getattr(self, fnc_name, True)
+        return False
+
     def add_mixin(self, key: str, fnc_enabled=True, cls=None):
         """
         Add a mixin to the plugins registry
@@ -273,28 +293,6 @@ class InvenTreePlugin(MixinBase, MetaBase):
         URL to the settings panel for this plugin
         """
         return f'{reverse("settings")}#select-plugin-{self.slug}'
-
-    # region mixins
-    def mixin(self, key):
-        """
-        Check if mixin is registered
-        """
-        return key in self._mixins
-
-    def mixin_enabled(self, key):
-        """
-        Check if mixin is registered, enabled and ready
-        """
-        if self.mixin(key):
-            fnc_name = self._mixins.get(key)
-
-            # Allow for simple case where the mixin is "always" ready
-            if fnc_name is True:
-                return True
-
-            return getattr(self, fnc_name, True)
-        return False
-    # endregion
 
     # region package info
     def _get_package_commit(self):
