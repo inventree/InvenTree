@@ -96,6 +96,13 @@ class HTMLAPITests(TestCase):
         response = self.client.get(url, HTTP_ACCEPT='text/html')
         self.assertEqual(response.status_code, 200)
 
+    def test_not_found(self):
+        """Test that the NotFoundView is working"""
+        url = reverse('api-404')
+
+        # Check JSON response
+        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 404)
 
 class APITests(InvenTreeAPITestCase):
     """ Tests for the InvenTree API """
