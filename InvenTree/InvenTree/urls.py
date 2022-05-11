@@ -27,7 +27,7 @@ from order.api import order_api_urls
 from label.api import label_api_urls
 from report.api import report_api_urls
 from plugin.api import plugin_api_urls
-from plugin.barcode import barcode_api_urls
+from plugin.base.barcodes.barcode import barcode_api_urls
 
 from django.conf import settings
 from django.conf.urls.static import static
