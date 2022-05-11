@@ -10,7 +10,7 @@ from django.urls import reverse
 
 from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.helpers import str2bool
-from plugin.models import NotificationUserSetting, PluginConfig, PluginSetting
+from plugin.models import NotificationUserSetting, PluginConfig
 from plugin import registry
 
 from .models import InvenTreeSetting, InvenTreeUserSetting, WebhookEndpoint, WebhookMessage, NotificationEntry
