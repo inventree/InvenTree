@@ -5,7 +5,6 @@ URL lookup for plugin app
 from django.urls import include, re_path
 
 from plugin import registry
-from plugin.base.barcodes.api import barcode_api_urls
 
 
 PLUGIN_BASE = 'plugin'  # Constant for links
