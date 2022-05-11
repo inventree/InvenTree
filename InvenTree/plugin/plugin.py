@@ -82,12 +82,3 @@ class InvenTreePluginBase():
         else:
             return False  # pragma: no cover
 
-
-# TODO @matmair remove after InvenTree 0.7.0 release
-class InvenTreePlugin(InvenTreePluginBase):
-    """
-    This is here for leagcy reasons and will be removed in the next major release
-    """
-    def __init__(self):  # pragma: no cover
-        warnings.warn("Using the InvenTreePlugin is depreceated", DeprecationWarning)
-        super().__init__()
