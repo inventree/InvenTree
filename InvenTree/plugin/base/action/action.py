@@ -5,13 +5,13 @@ import logging
 import warnings
 
 from plugin.base.action.mixins import ActionMixin
-import plugin.integration
+import plugin.plugin
 
 
 logger = logging.getLogger("inventree")
 
 
-class ActionPlugin(ActionMixin, plugin.integration.IntegrationPluginBase):
+class ActionPlugin(ActionMixin, plugin.plugin.IntegrationPluginBase):
     """
     Legacy action definition - will be replaced
     Please use the new Integration Plugin API and the Action mixin

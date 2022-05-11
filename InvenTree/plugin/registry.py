@@ -31,7 +31,7 @@ except:  # pragma: no cover
 from maintenance_mode.core import maintenance_mode_on
 from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
 
-from .integration import IntegrationPluginBase
+from .plugin import IntegrationPluginBase
 from .helpers import handle_error, log_error, get_plugins, IntegrationPluginError
 
 
