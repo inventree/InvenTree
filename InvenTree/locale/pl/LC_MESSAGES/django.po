@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-10 04:16+0000\n"
+"POT-Creation-Date: 2022-05-11 13:30+0000\n"
 "PO-Revision-Date: 2022-05-11 00:29\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
@@ -615,46 +615,6 @@ msgstr "Hasła muszą być zgodne"
 #: InvenTree/views.py:882 templates/navbar.html:152
 msgid "System Information"
 msgstr "Informacja systemowa"
-
-#: barcodes/api.py:55 barcodes/api.py:156
-msgid "Must provide barcode_data parameter"
-msgstr "Należy określić parametr barcode_data"
-
-#: barcodes/api.py:132
-msgid "No match found for barcode data"
-msgstr "Nie znaleziono wyników dla danych kodu kreskowego"
-
-#: barcodes/api.py:134
-msgid "Match found for barcode data"
-msgstr "Znaleziono wyniki dla danych kodu kreskowego"
-
-#: barcodes/api.py:159
-msgid "Must provide stockitem parameter"
-msgstr ""
-
-#: barcodes/api.py:166
-msgid "No matching stock item found"
-msgstr "Nie znaleziono pasujących stanów magazynowych"
-
-#: barcodes/api.py:197
-msgid "Barcode already matches Stock Item"
-msgstr ""
-
-#: barcodes/api.py:201
-msgid "Barcode already matches Stock Location"
-msgstr ""
-
-#: barcodes/api.py:205
-msgid "Barcode already matches Part"
-msgstr ""
-
-#: barcodes/api.py:211 barcodes/api.py:223
-msgid "Barcode hash already matches Stock Item"
-msgstr ""
-
-#: barcodes/api.py:229
-msgid "Barcode associated with Stock Item"
-msgstr ""
 
 #: build/models.py:135
 msgid "Invalid choice for parent build"
@@ -5242,10 +5202,12 @@ msgstr "Wybierz z istniejących obrazów"
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid ""
+"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
-msgstr "Część '<strong>%(full_name)s</strong>' nie może zostać usunięta, ponieważ jest nadal oznaczona jako <strong>aktywna</strong>.\n"
+msgstr ""
+"Część '<strong>%(full_name)s</strong>' nie może zostać usunięta, ponieważ jest nadal oznaczona jako <strong>aktywna</strong>.\n"
 "    <br>Wyłącz atrybut części \"Aktywne\" i spróbuj ponownie.\n"
 "    "
 
@@ -5496,6 +5458,46 @@ msgstr ""
 
 #: plugin/apps.py:52
 msgid "Your enviroment has an outdated git version. This prevents InvenTree from loading plugin details."
+msgstr ""
+
+#: plugin/barcode.py:53 plugin/barcode.py:154
+msgid "Must provide barcode_data parameter"
+msgstr "Należy określić parametr barcode_data"
+
+#: plugin/barcode.py:130
+msgid "No match found for barcode data"
+msgstr "Nie znaleziono wyników dla danych kodu kreskowego"
+
+#: plugin/barcode.py:132
+msgid "Match found for barcode data"
+msgstr "Znaleziono wyniki dla danych kodu kreskowego"
+
+#: plugin/barcode.py:157
+msgid "Must provide stockitem parameter"
+msgstr ""
+
+#: plugin/barcode.py:164
+msgid "No matching stock item found"
+msgstr "Nie znaleziono pasujących stanów magazynowych"
+
+#: plugin/barcode.py:195
+msgid "Barcode already matches Stock Item"
+msgstr ""
+
+#: plugin/barcode.py:199
+msgid "Barcode already matches Stock Location"
+msgstr ""
+
+#: plugin/barcode.py:203
+msgid "Barcode already matches Part"
+msgstr ""
+
+#: plugin/barcode.py:209 plugin/barcode.py:221
+msgid "Barcode hash already matches Stock Item"
+msgstr ""
+
+#: plugin/barcode.py:227
+msgid "Barcode associated with Stock Item"
 msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:24
@@ -7364,18 +7366,22 @@ msgstr "Zaloguj się"
 
 #: templates/account/login.html:21
 #, python-format
-msgid "Please sign in with one\n"
+msgid ""
+"Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
-msgstr "Zaloguj się za pomocą jednego\n"
+msgstr ""
+"Zaloguj się za pomocą jednego\n"
 "istniejących kont stron trzecich lub  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">zarejestruj się</a>\n"
 "w celu założenia konta i zaloguj się poniżej:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid "If you have not created an account yet, then please\n"
+msgid ""
+"If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
-msgstr "Jeżeli jeszcze nie utworzyłeś konta, to proszę najpierw\n"
+msgstr ""
+"Jeżeli jeszcze nie utworzyłeś konta, to proszę najpierw\n"
 "<a href=\"%(signup_url)s\">zarejstruj się</a>."
 
 #: templates/account/login.html:45
@@ -10208,4 +10214,3 @@ msgstr "Uprawnienie do edycji przedmiotów"
 #: users/models.py:221
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
-

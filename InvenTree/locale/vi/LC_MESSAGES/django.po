@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-10 04:16+0000\n"
+"POT-Creation-Date: 2022-05-11 13:30+0000\n"
 "PO-Revision-Date: 2022-05-11 00:28\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
@@ -615,46 +615,6 @@ msgstr ""
 #: InvenTree/views.py:882 templates/navbar.html:152
 msgid "System Information"
 msgstr "Thông tin hệ thống"
-
-#: barcodes/api.py:55 barcodes/api.py:156
-msgid "Must provide barcode_data parameter"
-msgstr ""
-
-#: barcodes/api.py:132
-msgid "No match found for barcode data"
-msgstr ""
-
-#: barcodes/api.py:134
-msgid "Match found for barcode data"
-msgstr ""
-
-#: barcodes/api.py:159
-msgid "Must provide stockitem parameter"
-msgstr ""
-
-#: barcodes/api.py:166
-msgid "No matching stock item found"
-msgstr ""
-
-#: barcodes/api.py:197
-msgid "Barcode already matches Stock Item"
-msgstr ""
-
-#: barcodes/api.py:201
-msgid "Barcode already matches Stock Location"
-msgstr ""
-
-#: barcodes/api.py:205
-msgid "Barcode already matches Part"
-msgstr ""
-
-#: barcodes/api.py:211 barcodes/api.py:223
-msgid "Barcode hash already matches Stock Item"
-msgstr ""
-
-#: barcodes/api.py:229
-msgid "Barcode associated with Stock Item"
-msgstr ""
 
 #: build/models.py:135
 msgid "Invalid choice for parent build"
@@ -5242,7 +5202,8 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid ""
+"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -5494,6 +5455,46 @@ msgstr ""
 
 #: plugin/apps.py:52
 msgid "Your enviroment has an outdated git version. This prevents InvenTree from loading plugin details."
+msgstr ""
+
+#: plugin/barcode.py:53 plugin/barcode.py:154
+msgid "Must provide barcode_data parameter"
+msgstr ""
+
+#: plugin/barcode.py:130
+msgid "No match found for barcode data"
+msgstr ""
+
+#: plugin/barcode.py:132
+msgid "Match found for barcode data"
+msgstr ""
+
+#: plugin/barcode.py:157
+msgid "Must provide stockitem parameter"
+msgstr ""
+
+#: plugin/barcode.py:164
+msgid "No matching stock item found"
+msgstr ""
+
+#: plugin/barcode.py:195
+msgid "Barcode already matches Stock Item"
+msgstr ""
+
+#: plugin/barcode.py:199
+msgid "Barcode already matches Stock Location"
+msgstr ""
+
+#: plugin/barcode.py:203
+msgid "Barcode already matches Part"
+msgstr ""
+
+#: plugin/barcode.py:209 plugin/barcode.py:221
+msgid "Barcode hash already matches Stock Item"
+msgstr ""
+
+#: plugin/barcode.py:227
+msgid "Barcode associated with Stock Item"
 msgstr ""
 
 #: plugin/builtin/integration/core_notifications.py:24
@@ -7362,14 +7363,16 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid "Please sign in with one\n"
+msgid ""
+"Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid "If you have not created an account yet, then please\n"
+msgid ""
+"If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -10203,4 +10206,3 @@ msgstr ""
 #: users/models.py:221
 msgid "Permission to delete items"
 msgstr ""
-

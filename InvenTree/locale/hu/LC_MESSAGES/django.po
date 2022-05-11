@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-10 04:16+0000\n"
+"POT-Creation-Date: 2022-05-11 13:30+0000\n"
 "PO-Revision-Date: 2022-05-11 00:29\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
@@ -616,46 +616,6 @@ msgstr "A jelszavaknak egyeznie kell"
 msgid "System Information"
 msgstr "Rendszerinformáció"
 
-#: barcodes/api.py:55 barcodes/api.py:156
-msgid "Must provide barcode_data parameter"
-msgstr "Meg kell adni a barcode_data paramétert"
-
-#: barcodes/api.py:132
-msgid "No match found for barcode data"
-msgstr "Nincs egyező vonalkód"
-
-#: barcodes/api.py:134
-msgid "Match found for barcode data"
-msgstr "Egyezés vonalkódra"
-
-#: barcodes/api.py:159
-msgid "Must provide stockitem parameter"
-msgstr "Meg kell adni a stockitem paramétert"
-
-#: barcodes/api.py:166
-msgid "No matching stock item found"
-msgstr "Nincs egyező készlet"
-
-#: barcodes/api.py:197
-msgid "Barcode already matches Stock Item"
-msgstr "Vonalkód már egyezik a készlet tétellel"
-
-#: barcodes/api.py:201
-msgid "Barcode already matches Stock Location"
-msgstr "Vonalkód már egyezik a készlet hellyel"
-
-#: barcodes/api.py:205
-msgid "Barcode already matches Part"
-msgstr "Vonalkód már egyezik az alkatrésszel"
-
-#: barcodes/api.py:211 barcodes/api.py:223
-msgid "Barcode hash already matches Stock Item"
-msgstr "Vonalkód hash már egyezik a készlet tétellel"
-
-#: barcodes/api.py:229
-msgid "Barcode associated with Stock Item"
-msgstr "Készlet tételhez tartozó vonalkód"
-
 #: build/models.py:135
 msgid "Invalid choice for parent build"
 msgstr "Hibás választás a szülő gyártásra"
@@ -1088,7 +1048,8 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:390
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr ""
+"Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:460
@@ -5243,7 +5204,8 @@ msgstr "Válassz a meglévő képek közül"
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid ""
+"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr "A(z) '<strong>%(full_name)s</strong>' alkatrész nem törölhető mert még mindig <strong>aktív</strong>. Előbb állítsd az alkatrészt inaktív állapotúra és probáld újra!    "
@@ -5496,6 +5458,46 @@ msgstr "Kategória paraméter sablon törlése"
 #: plugin/apps.py:52
 msgid "Your enviroment has an outdated git version. This prevents InvenTree from loading plugin details."
 msgstr "A környezeted egy elavult git verziót használ. Ez megakadályozza hogy az InvenTree betöltse a plugin részleteit."
+
+#: plugin/barcode.py:53 plugin/barcode.py:154
+msgid "Must provide barcode_data parameter"
+msgstr "Meg kell adni a barcode_data paramétert"
+
+#: plugin/barcode.py:130
+msgid "No match found for barcode data"
+msgstr "Nincs egyező vonalkód"
+
+#: plugin/barcode.py:132
+msgid "Match found for barcode data"
+msgstr "Egyezés vonalkódra"
+
+#: plugin/barcode.py:157
+msgid "Must provide stockitem parameter"
+msgstr "Meg kell adni a stockitem paramétert"
+
+#: plugin/barcode.py:164
+msgid "No matching stock item found"
+msgstr "Nincs egyező készlet"
+
+#: plugin/barcode.py:195
+msgid "Barcode already matches Stock Item"
+msgstr "Vonalkód már egyezik a készlet tétellel"
+
+#: plugin/barcode.py:199
+msgid "Barcode already matches Stock Location"
+msgstr "Vonalkód már egyezik a készlet hellyel"
+
+#: plugin/barcode.py:203
+msgid "Barcode already matches Part"
+msgstr "Vonalkód már egyezik az alkatrésszel"
+
+#: plugin/barcode.py:209 plugin/barcode.py:221
+msgid "Barcode hash already matches Stock Item"
+msgstr "Vonalkód hash már egyezik a készlet tétellel"
+
+#: plugin/barcode.py:227
+msgid "Barcode associated with Stock Item"
+msgstr "Készlet tételhez tartozó vonalkód"
 
 #: plugin/builtin/integration/core_notifications.py:24
 msgid "InvenTree contributors"
@@ -7363,14 +7365,16 @@ msgstr "Bejelentkezés"
 
 #: templates/account/login.html:21
 #, python-format
-msgid "Please sign in with one\n"
+msgid ""
+"Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Kérlek jelentkezz be az egyik meglévő külső fiókkal vagy <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">Regisztrálj</a> fiókért és jelentkezz be lentebb:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid "If you have not created an account yet, then please\n"
+msgid ""
+"If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Ha még nem hoztál létre fiókot akkor előbb <a href=\"%(signup_url)s\">regisztrálj</a>."
 
@@ -10204,4 +10208,3 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:221
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
-
