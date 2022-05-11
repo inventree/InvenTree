@@ -14,7 +14,6 @@ from django.db import transaction
 from django.db.models.signals import post_save, post_delete
 from django.dispatch.dispatcher import receiver
 
-from common.models import InvenTreeSetting
 import common.notifications
 
 from InvenTree.ready import canAppAccessDatabase, isImportingData
@@ -59,6 +58,7 @@ def register_event(event, *args, **kwargs):
     Note: This function is processed by the background worker,
     as it performs multiple database access operations.
     """
+    from common.models import InvenTreeSetting
 
     logger.debug(f"Registering triggered event: '{event}'")
 
