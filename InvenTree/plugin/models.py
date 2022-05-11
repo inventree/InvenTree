@@ -59,7 +59,7 @@ class PluginConfig(models.Model):
 
         try:
             return self.plugin._mixinreg
-        except (AttributeError, ValueError):
+        except (AttributeError, ValueError):  # pragma: no cover
             return {}
 
     # functions
