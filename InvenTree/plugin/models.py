@@ -4,10 +4,12 @@ Plugin model definitions
 
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from logging import warning
 
 from django.utils.translation import gettext_lazy as _
 from django.db import models
 from django.contrib.auth.models import User
+from django.conf import settings
 
 import common.models
 
@@ -97,6 +99,8 @@ class PluginConfig(models.Model):
         if not reload:
             if (self.active is False and self.__org_active is True) or \
                (self.active is True and self.__org_active is False):
+                if settings.PLUGIN_TESTING:
+                    warning('A reload was triggered')
                 registry.reload_plugins()
 
         return ret
