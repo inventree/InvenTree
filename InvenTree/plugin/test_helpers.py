@@ -14,10 +14,10 @@ class HelperTests(TestCase):
             slug = 'sampleplg'
 
         # working sample
-        response = render_template(ErrorSource(), 'sample/sample.html', {'abc': 123} )
+        response = render_template(ErrorSource(), 'sample/sample.html', {'abc': 123})
         self.assertEqual(response, '<h1>123</h1>')
 
         # Wrong sample
-        response = render_template(ErrorSource(), 'sample/wrongsample.html', {'abc': 123} )
+        response = render_template(ErrorSource(), 'sample/wrongsample.html', {'abc': 123})
         self.assertTrue('lert alert-block alert-danger' in response)
         self.assertTrue('Template file <em>sample/wrongsample.html</em>' in response)
