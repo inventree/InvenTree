@@ -25,7 +25,7 @@ class MetaBase:
     """Base class for a plugins metadata"""
 
     # Override the plugin name for each concrete plugin instance
-    NAME = None
+    NAME = ''
     SLUG = None
     TITLE = None
 
@@ -59,7 +59,7 @@ class MetaBase:
         """
         Name of plugin
         """
-        return self.get_meta_value('NAME', 'PLUGIN_NAME', '')
+        return self.get_meta_value('NAME', 'PLUGIN_NAME')
 
     @property
     def name(self):
