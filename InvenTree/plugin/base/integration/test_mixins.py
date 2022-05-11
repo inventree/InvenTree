@@ -147,7 +147,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
 
     def setUp(self):
         class MixinCls(APICallMixin, SettingsMixin, InvenTreePlugin):
-            PLUGIN_NAME = "Sample API Caller"
+            NAME = "Sample API Caller"
 
             SETTINGS = {
                 'API_TOKEN': {

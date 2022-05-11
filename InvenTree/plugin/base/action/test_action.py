@@ -31,7 +31,7 @@ class ActionMixinTests(TestCase):
         self.action_plugin = TestActionPlugin('user')
 
         class NameActionPlugin(ActionMixin, InvenTreePlugin):
-            PLUGIN_NAME = 'Aplugin'
+            NAME = 'Aplugin'
 
         self.action_name = NameActionPlugin('user')
 

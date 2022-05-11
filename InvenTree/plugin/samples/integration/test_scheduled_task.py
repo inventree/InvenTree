@@ -54,7 +54,7 @@ class ScheduledTaskPluginTests(TestCase):
     def test_init(self):
         """Check that all MixinImplementationErrors raise"""
         class Base(ScheduleMixin, InvenTreePlugin):
-            PLUGIN_NAME = 'APlugin'
+            NAME = 'APlugin'
 
         class NoSchedules(Base):
             """Plugin without schedules"""

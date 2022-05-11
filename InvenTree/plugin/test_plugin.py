@@ -65,19 +65,19 @@ class InvenTreePluginTests(TestCase):
 
         class NamedPlugin(InvenTreePlugin):
             """a named plugin"""
-            PLUGIN_NAME = 'abc123'
+            NAME = 'abc123'
 
         self.named_plugin = NamedPlugin()
 
         class SimpleInvenTreePlugin(InvenTreePlugin):
-            PLUGIN_NAME = 'SimplePlugin'
+            NAME = 'SimplePlugin'
 
         self.plugin_simple = SimpleInvenTreePlugin()
 
         class NameInvenTreePlugin(InvenTreePlugin):
-            PLUGIN_NAME = 'Aplugin'
-            PLUGIN_SLUG = 'a'
-            PLUGIN_TITLE = 'a titel'
+            NAME = 'Aplugin'
+            SLUG = 'a'
+            TITLE = 'a titel'
             PUBLISH_DATE = "1111-11-11"
             AUTHOR = 'AA BB'
             DESCRIPTION = 'A description'
@@ -90,12 +90,12 @@ class InvenTreePluginTests(TestCase):
 
     def test_basic_plugin_init(self):
         """check if a basic plugin intis"""
-        self.assertEqual(self.plugin.PLUGIN_NAME, '')
+        self.assertEqual(self.plugin.NAME, '')
         self.assertEqual(self.plugin.plugin_name(), '')
 
     def test_basic_plugin_name(self):
         """check if the name of a basic plugin can be set"""
-        self.assertEqual(self.named_plugin.PLUGIN_NAME, 'abc123')
+        self.assertEqual(self.named_plugin.NAME, 'abc123')
         self.assertEqual(self.named_plugin.plugin_name(), 'abc123')
 
     def test_basic_is_active(self):

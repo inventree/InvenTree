@@ -373,7 +373,7 @@ class LabelPrintingMixin:
     """
     Mixin which enables direct printing of stock labels.
 
-    Each plugin must provide a PLUGIN_NAME attribute, which is used to uniquely identify the printer.
+    Each plugin must provide a NAME attribute, which is used to uniquely identify the printer.
 
     The plugin must also implement the print_label() function
     """
@@ -428,7 +428,7 @@ class APICallMixin:
         '''
         A small api call sample
         '''
-        PLUGIN_NAME = "Sample API Caller"
+        NAME = "Sample API Caller"
 
         SETTINGS = {
             'API_TOKEN': {

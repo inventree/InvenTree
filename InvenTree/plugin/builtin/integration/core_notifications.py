@@ -20,7 +20,7 @@ class CoreNotificationsPlugin(SettingsMixin, InvenTreePlugin):
     Core notification methods for InvenTree
     """
 
-    PLUGIN_NAME = "CoreNotificationsPlugin"
+    NAME = "CoreNotificationsPlugin"
     AUTHOR = _('InvenTree contributors')
     DESCRIPTION = _('Integrated outgoing notificaton methods')
 

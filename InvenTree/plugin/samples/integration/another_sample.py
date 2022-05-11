@@ -8,7 +8,7 @@ class NoIntegrationPlugin(InvenTreePlugin):
     An basic integration plugin
     """
 
-    PLUGIN_NAME = "NoIntegrationPlugin"
+    NAME = "NoIntegrationPlugin"
 
 
 class WrongIntegrationPlugin(UrlsMixin, InvenTreePlugin):
@@ -16,4 +16,4 @@ class WrongIntegrationPlugin(UrlsMixin, InvenTreePlugin):
     An basic integration plugin
     """
 
-    PLUGIN_NAME = "WrongIntegrationPlugin"
+    NAME = "WrongIntegrationPlugin"

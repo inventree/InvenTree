@@ -15,9 +15,9 @@ class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixi
     A full integration plugin example
     """
 
-    PLUGIN_NAME = "SampleIntegrationPlugin"
-    PLUGIN_SLUG = "sample"
-    PLUGIN_TITLE = "Sample Plugin"
+    NAME = "SampleIntegrationPlugin"
+    SLUG = "sample"
+    TITLE = "Sample Plugin"
 
     NAVIGATION_TAB_NAME = "Sample Nav"
     NAVIGATION_TAB_ICON = 'fas fa-plus'

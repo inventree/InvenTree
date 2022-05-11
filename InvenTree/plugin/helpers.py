@@ -205,7 +205,7 @@ def get_plugins(pkg, baseclass):
     Return a list of all modules under a given package.
 
     - Modules must be a subclass of the provided 'baseclass'
-    - Modules must have a non-empty PLUGIN_NAME parameter
+    - Modules must have a non-empty NAME parameter
     """
 
     plugins = []
@@ -217,7 +217,7 @@ def get_plugins(pkg, baseclass):
         # Iterate through each class in the module
         for item in get_classes(mod):
             plugin = item[1]
-            if issubclass(plugin, baseclass) and plugin.PLUGIN_NAME:
+            if issubclass(plugin, baseclass) and plugin.NAME:
                 plugins.append(plugin)
 
     return plugins

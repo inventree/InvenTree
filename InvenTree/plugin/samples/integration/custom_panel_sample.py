@@ -14,9 +14,9 @@ class CustomPanelSample(PanelMixin, SettingsMixin, InvenTreePlugin):
     A sample plugin which renders some custom panels.
     """
 
-    PLUGIN_NAME = "CustomPanelExample"
-    PLUGIN_SLUG = "panel"
-    PLUGIN_TITLE = "Custom Panel Example"
+    NAME = "CustomPanelExample"
+    SLUG = "panel"
+    TITLE = "Custom Panel Example"
     DESCRIPTION = "An example plugin demonstrating how custom panels can be added to the user interface"
     VERSION = "0.1"
 

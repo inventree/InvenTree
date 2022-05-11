@@ -10,7 +10,7 @@ class SimpleActionPlugin(ActionMixin, InvenTreePlugin):
     the capability of the ActionMixin class
     """
 
-    PLUGIN_NAME = "SimpleActionPlugin"
+    NAME = "SimpleActionPlugin"
     ACTION_NAME = "simple"
 
     def perform_action(self):

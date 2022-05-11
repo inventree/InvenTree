@@ -20,9 +20,9 @@ class ScheduledTaskPlugin(ScheduleMixin, SettingsMixin, InvenTreePlugin):
     A sample plugin which provides support for scheduled tasks
     """
 
-    PLUGIN_NAME = "ScheduledTasksPlugin"
-    PLUGIN_SLUG = "schedule"
-    PLUGIN_TITLE = "Scheduled Tasks"
+    NAME = "ScheduledTasksPlugin"
+    SLUG = "schedule"
+    TITLE = "Scheduled Tasks"
 
     SCHEDULED_TASKS = {
         'member': {

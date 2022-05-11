@@ -281,8 +281,8 @@ class PluginsRegistry:
 
             # Check if activated
             # These checks only use attributes - never use plugin supplied functions -> that would lead to arbitrary code execution!!
-            plug_name = plugin.PLUGIN_NAME
-            plug_key = plugin.PLUGIN_SLUG if getattr(plugin, 'PLUGIN_SLUG', None) else plug_name
+            plug_name = plugin.NAME
+            plug_key = plugin.SLUG if getattr(plugin, 'SLUG', None) else plug_name
             plug_key = slugify(plug_key)  # keys are slugs!
             try:
                 plugin_db_setting, _ = PluginConfig.objects.get_or_create(key=plug_key, name=plug_name)
@@ -314,7 +314,7 @@ class PluginsRegistry:
                 # now we can be sure that an admin has activated the plugin
                 # TODO check more stuff -> as of Nov 2021 there are not many checks in place
                 # but we could enhance those to check signatures, run the plugin against a whitelist etc.
-                logger.info(f'Loading integration plugin {plugin.PLUGIN_NAME}')
+                logger.info(f'Loading plugin {plug_name}')
 
                 try:
                     plugin = plugin()
@@ -322,7 +322,7 @@ class PluginsRegistry:
                     # log error and raise it -> disable plugin
                     handle_error(error, log_name='init')
 
-                logger.debug(f'Loaded integration plugin {plugin.PLUGIN_NAME}')
+                logger.debug(f'Loaded plugin {plug_name}')
 
                 plugin.is_package = was_packaged
 
@@ -516,7 +516,7 @@ class PluginsRegistry:
             plugin_path = '.'.join(pathlib.Path(plugin.path).relative_to(settings.BASE_DIR).parts)
         except ValueError:  # pragma: no cover
             # plugin is shipped as package
-            plugin_path = plugin.PLUGIN_NAME
+            plugin_path = plugin.NAME
         return plugin_path
 
     def deactivate_integration_app(self):

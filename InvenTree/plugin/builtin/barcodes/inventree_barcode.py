@@ -24,7 +24,7 @@ from rest_framework.exceptions import ValidationError
 
 class InvenTreeBarcodePlugin(BarcodeMixin, InvenTreePlugin):
 
-    PLUGIN_NAME = "InvenTreeBarcode"
+    NAME = "InvenTreeBarcode"
 
     def validate(self):
         """

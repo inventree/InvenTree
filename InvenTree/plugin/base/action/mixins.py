@@ -24,7 +24,7 @@ class ActionMixin:
         Action name for this plugin.
 
         If the ACTION_NAME parameter is empty,
-        uses the PLUGIN_NAME instead.
+        uses the NAME instead.
         """
         if self.ACTION_NAME:
             return self.ACTION_NAME
