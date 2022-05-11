@@ -191,10 +191,10 @@ class InvenTreeConfig(AppConfig):
         try:
             with transaction.atomic():
                 if user.objects.filter(username=add_user).exists():
-                    logger.info(f"User {str(new_user)} already exists - skipping creation")
+                    logger.info(f"User {add_user} already exists - skipping creation")
                 else:
                     new_user = user.objects.create_superuser(add_user, add_email, add_password)
-                    logger.info(f'User {str(new_user)} was created!')
+                    logger.info(f'User {add_user} was created!')
         except IntegrityError as _e:
             logger.warning(f'The user "{add_user}" could not be created due to the following error:\n{str(_e)}')
             if settings.TESTING_ENV:
