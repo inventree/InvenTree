@@ -146,7 +146,7 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
         self.assertDictContainsSubset({'base':{'key':'base', 'human_name':'base'}}, mixin_dict)
 
         # check reload on save
-        with self.assertWarns('A reload was triggered'):
+        with self.assertWarns(Warning('A reload was triggered')):
             plg_inactive = fixtures.filter(active=False).first()
             plg_inactive.active = True
             plg_inactive.save()

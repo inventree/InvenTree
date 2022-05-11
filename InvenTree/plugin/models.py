@@ -4,7 +4,7 @@ Plugin model definitions
 
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from logging import warning
+import warnings
 
 from django.utils.translation import gettext_lazy as _
 from django.db import models
@@ -100,7 +100,7 @@ class PluginConfig(models.Model):
             if (self.active is False and self.__org_active is True) or \
                (self.active is True and self.__org_active is False):
                 if settings.PLUGIN_TESTING:
-                    warning('A reload was triggered')
+                    warnings.warn('A reload was triggered')
                 registry.reload_plugins()
 
         return ret
