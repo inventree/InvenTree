@@ -27,6 +27,7 @@ from order.api import order_api_urls
 from label.api import label_api_urls
 from report.api import report_api_urls
 from plugin.api import plugin_api_urls
+from users.api import user_urls
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -45,8 +46,6 @@ from .views import NotificationsView
 
 from .api import InfoView, NotFoundView
 
-from users.api import user_urls
-
 admin.site.site_header = "InvenTree Admin"
 
 
@@ -60,8 +59,6 @@ apipatterns = [
     re_path(r'^order/', include(order_api_urls)),
     re_path(r'^label/', include(label_api_urls)),
     re_path(r'^report/', include(report_api_urls)),
-
-    # User URLs
     re_path(r'^user/', include(user_urls)),
 
     # Plugin endpoints
