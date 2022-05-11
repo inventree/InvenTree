@@ -25,17 +25,41 @@ class MetaBase:
     """Base class for a plugins metadata"""
 
     # Override the plugin name for each concrete plugin instance
-    PLUGIN_NAME = ''
+    NAME = ''
+    SLUG = None
+    TITLE = None
 
-    PLUGIN_SLUG = None
+    def get_meta_value(self, key: str, old_key: str = None, __default = None):
+        """Reference a meta item with a key
 
-    PLUGIN_TITLE = None
+        Args:
+            key (str): key for the value
+            old_key (str, optional): depreceated key - will throw warning
+            __default (optional): Value if nothing with key can be found. Defaults to None.
+
+        Returns:
+            Value referenced with key, old_key or __default if set and not value found
+        """
+        value = getattr(self, key, None)
+
+        # The key was not used
+        if old_key and not value:
+            value = getattr(self, old_key, None)
+
+            # Sound of a warning if old_key worked
+            if value:
+                warnings.warn(f'Usage of {old_key} was depreciated in 0.7.0 in favour of {key}', DeprecationWarning)
+
+        # Use __default if still nothing set
+        if not value:
+            return __default
+        return value
 
     def plugin_name(self):
         """
         Name of plugin
         """
-        return self.PLUGIN_NAME
+        return self.get_meta_value('NAME', 'PLUGIN_NAME')
 
     @property
     def name(self):
@@ -50,10 +74,7 @@ class MetaBase:
         If not set plugin name slugified
         """
 
-        slug = getattr(self, 'PLUGIN_SLUG', None)
-
-        if slug is None:
-            slug = self.plugin_name()
+        slug = self.get_meta_value('SLUG', 'PLUGIN_SLUG', self.plugin_name())
 
         return slugify(slug.lower())
 
@@ -69,10 +90,7 @@ class MetaBase:
         Title of plugin
         """
 
-        if self.PLUGIN_TITLE:
-            return self.PLUGIN_TITLE
-        else:
-            return self.plugin_name()
+        return self.get_meta_value('TITLE', 'PLUGIN_TITLE', self.plugin_name())
 
     @property
     def human_name(self):
