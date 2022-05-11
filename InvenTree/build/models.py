@@ -36,7 +36,7 @@ import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.tasks
 
-from plugin.event import trigger_event
+from plugin.events import trigger_event
 
 from part import models as PartModels
 from stock import models as StockModels
