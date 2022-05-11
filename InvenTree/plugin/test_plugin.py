@@ -74,6 +74,11 @@ class InvenTreePluginTests(TestCase):
 
         self.plugin_simple = SimpleInvenTreePlugin()
 
+        class OldInvenTreePlugin(InvenTreePlugin):
+            PLUGIN_NAME = 'OldPlugin'
+
+        self.plugin_old = OldInvenTreePlugin()
+
         class NameInvenTreePlugin(InvenTreePlugin):
             NAME = 'Aplugin'
             SLUG = 'a'
@@ -148,3 +153,12 @@ class InvenTreePluginTests(TestCase):
         self.assertEqual(self.plugin.license, None)
         self.assertEqual(self.plugin_simple.license, None)
         self.assertEqual(self.plugin_name.license, 'MIT')
+
+    def test_depreciation(self):
+        """Check if depreciations raise as expected"""
+
+        # check deprecation warning is firing
+        with self.assertRaises(DeprecationWarning):
+            self.assertEqual(self.plugin_old.name, 'OldPlugin')
+            # check default value is used
+            self.assertEqual(self.plugin_old.get_meta_value('ABC', __default='123'), '123')
