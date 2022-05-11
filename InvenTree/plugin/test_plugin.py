@@ -158,7 +158,7 @@ class InvenTreePluginTests(TestCase):
         """Check if depreciations raise as expected"""
 
         # check deprecation warning is firing
-        with self.assertWarns(Warning):
+        with self.assertWarns(DeprecationWarning):
             self.assertEqual(self.plugin_old.name, 'OldPlugin')
             # check default value is used
             self.assertEqual(self.plugin_old.get_meta_value('ABC', 'ABCD', '123'), '123')
