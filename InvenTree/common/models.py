@@ -257,9 +257,9 @@ class BaseInvenTreeSetting(models.Model):
         plugin = kwargs.get('plugin', None)
 
         if plugin is not None:
-            from plugin import IntegrationPluginBase
+            from plugin import InvenTreePlugin
 
-            if issubclass(plugin.__class__, IntegrationPluginBase):
+            if issubclass(plugin.__class__, InvenTreePlugin):
                 plugin = plugin.plugin_config()
 
             filters['plugin'] = plugin

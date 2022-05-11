@@ -1,9 +1,9 @@
 """sample implementation for IntegrationPlugin"""
-from plugin import IntegrationPluginBase
+from plugin import InvenTreePlugin
 from plugin.mixins import UrlsMixin
 
 
-class NoIntegrationPlugin(IntegrationPluginBase):
+class NoIntegrationPlugin(InvenTreePlugin):
     """
     An basic integration plugin
     """
@@ -11,7 +11,7 @@ class NoIntegrationPlugin(IntegrationPluginBase):
     PLUGIN_NAME = "NoIntegrationPlugin"
 
 
-class WrongIntegrationPlugin(UrlsMixin, IntegrationPluginBase):
+class WrongIntegrationPlugin(UrlsMixin, InvenTreePlugin):
     """
     An basic integration plugin
     """

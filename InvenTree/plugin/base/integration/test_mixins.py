@@ -5,7 +5,7 @@ from django.conf import settings
 from django.urls import include, re_path
 from django.contrib.auth import get_user_model
 
-from plugin import IntegrationPluginBase
+from plugin import InvenTreePlugin
 from plugin.mixins import AppMixin, SettingsMixin, UrlsMixin, NavigationMixin, APICallMixin
 from plugin.urls import PLUGIN_BASE
 
@@ -26,11 +26,11 @@ class SettingsMixinTest(BaseMixinDefinition, TestCase):
     TEST_SETTINGS = {'SETTING1': {'default': '123', }}
 
     def setUp(self):
-        class SettingsCls(SettingsMixin, IntegrationPluginBase):
+        class SettingsCls(SettingsMixin, InvenTreePlugin):
             SETTINGS = self.TEST_SETTINGS
         self.mixin = SettingsCls()
 
-        class NoSettingsCls(SettingsMixin, IntegrationPluginBase):
+        class NoSettingsCls(SettingsMixin, InvenTreePlugin):
             pass
         self.mixin_nothing = NoSettingsCls()
 
@@ -61,13 +61,13 @@ class UrlsMixinTest(BaseMixinDefinition, TestCase):
     MIXIN_ENABLE_CHECK = 'has_urls'
 
     def setUp(self):
-        class UrlsCls(UrlsMixin, IntegrationPluginBase):
+        class UrlsCls(UrlsMixin, InvenTreePlugin):
             def test():
                 return 'ccc'
             URLS = [re_path('testpath', test, name='test'), ]
         self.mixin = UrlsCls()
 
-        class NoUrlsCls(UrlsMixin, IntegrationPluginBase):
+        class NoUrlsCls(UrlsMixin, InvenTreePlugin):
             pass
         self.mixin_nothing = NoUrlsCls()
 
@@ -100,7 +100,7 @@ class AppMixinTest(BaseMixinDefinition, TestCase):
     MIXIN_ENABLE_CHECK = 'has_app'
 
     def setUp(self):
-        class TestCls(AppMixin, IntegrationPluginBase):
+        class TestCls(AppMixin, InvenTreePlugin):
             pass
         self.mixin = TestCls()
 
@@ -115,14 +115,14 @@ class NavigationMixinTest(BaseMixinDefinition, TestCase):
     MIXIN_ENABLE_CHECK = 'has_naviation'
 
     def setUp(self):
-        class NavigationCls(NavigationMixin, IntegrationPluginBase):
+        class NavigationCls(NavigationMixin, InvenTreePlugin):
             NAVIGATION = [
                 {'name': 'aa', 'link': 'plugin:test:test_view'},
             ]
             NAVIGATION_TAB_NAME = 'abcd1'
         self.mixin = NavigationCls()
 
-        class NothingNavigationCls(NavigationMixin, IntegrationPluginBase):
+        class NothingNavigationCls(NavigationMixin, InvenTreePlugin):
             pass
         self.nothing_mixin = NothingNavigationCls()
 
@@ -131,7 +131,7 @@ class NavigationMixinTest(BaseMixinDefinition, TestCase):
         self.assertEqual(self.mixin.navigation, [{'name': 'aa', 'link': 'plugin:test:test_view'}, ])
         # check wrong links fails
         with self.assertRaises(NotImplementedError):
-            class NavigationCls(NavigationMixin, IntegrationPluginBase):
+            class NavigationCls(NavigationMixin, InvenTreePlugin):
                 NAVIGATION = ['aa', 'aa']
             NavigationCls()
 
@@ -146,7 +146,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
     MIXIN_ENABLE_CHECK = 'has_api_call'
 
     def setUp(self):
-        class MixinCls(APICallMixin, SettingsMixin, IntegrationPluginBase):
+        class MixinCls(APICallMixin, SettingsMixin, InvenTreePlugin):
             PLUGIN_NAME = "Sample API Caller"
 
             SETTINGS = {
@@ -170,11 +170,11 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
                 return self.api_call('api/users/2')
         self.mixin = MixinCls()
 
-        class WrongCLS(APICallMixin, IntegrationPluginBase):
+        class WrongCLS(APICallMixin, InvenTreePlugin):
             pass
         self.mixin_wrong = WrongCLS()
 
-        class WrongCLS2(APICallMixin, IntegrationPluginBase):
+        class WrongCLS2(APICallMixin, InvenTreePlugin):
             API_URL_SETTING = 'test'
         self.mixin_wrong2 = WrongCLS2()
 

@@ -2,7 +2,7 @@
 
 from django.test import TestCase
 
-from plugin import registry, IntegrationPluginBase
+from plugin import registry, InvenTreePlugin
 from plugin.helpers import MixinImplementationError
 from plugin.registry import call_function
 from plugin.mixins import ScheduleMixin
@@ -53,7 +53,7 @@ class ScheduledTaskPluginTests(TestCase):
 
     def test_init(self):
         """Check that all MixinImplementationErrors raise"""
-        class Base(ScheduleMixin, IntegrationPluginBase):
+        class Base(ScheduleMixin, InvenTreePlugin):
             PLUGIN_NAME = 'APlugin'
 
         class NoSchedules(Base):

@@ -2,11 +2,11 @@
 Sample plugin which responds to events
 """
 
-from plugin import IntegrationPluginBase
+from plugin import InvenTreePlugin
 from plugin.mixins import EventMixin
 
 
-class EventPluginSample(EventMixin, IntegrationPluginBase):
+class EventPluginSample(EventMixin, InvenTreePlugin):
     """
     A sample plugin which provides supports for triggered events
     """

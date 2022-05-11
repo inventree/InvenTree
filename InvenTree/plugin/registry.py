@@ -25,7 +25,7 @@ from django.utils.text import slugify
 from maintenance_mode.core import maintenance_mode_on
 from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
 
-from .plugin import IntegrationPluginBase
+from .plugin import InvenTreePlugin
 from .helpers import handle_error, log_error, get_plugins, IntegrationPluginError
 
 
@@ -204,7 +204,7 @@ class PluginsRegistry:
 
         # Collect plugins from paths
         for plugin in settings.PLUGIN_DIRS:
-            modules = get_plugins(importlib.import_module(plugin), IntegrationPluginBase)
+            modules = get_plugins(importlib.import_module(plugin), InvenTreePlugin)
             if modules:
                 [self.plugin_modules.append(item) for item in modules]
 

@@ -2,14 +2,14 @@
 Sample plugin which renders custom panels on certain pages
 """
 
-from plugin import IntegrationPluginBase
+from plugin import InvenTreePlugin
 from plugin.mixins import PanelMixin, SettingsMixin
 
 from part.views import PartDetail
 from stock.views import StockLocationDetail
 
 
-class CustomPanelSample(PanelMixin, SettingsMixin, IntegrationPluginBase):
+class CustomPanelSample(PanelMixin, SettingsMixin, InvenTreePlugin):
     """
     A sample plugin which renders some custom panels.
     """

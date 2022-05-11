@@ -9,8 +9,8 @@ from django.test import TestCase
 from plugin.samples.integration.sample import SampleIntegrationPlugin
 from plugin.samples.integration.another_sample import WrongIntegrationPlugin, NoIntegrationPlugin
 import plugin.templatetags.plugin_extras as plugin_tags
-from plugin import registry, IntegrationPluginBase
-from plugin.plugin import IntegrationPluginBase
+from plugin import registry, InvenTreePlugin
+from plugin.plugin import InvenTreePlugin
 
 
 class PluginTagTests(TestCase):
@@ -58,24 +58,24 @@ class PluginTagTests(TestCase):
         self.assertEqual(plugin_tags.plugin_errors(), registry.errors)
 
 
-class IntegrationPluginBaseTests(TestCase):
-    """ Tests for IntegrationPluginBase """
+class InvenTreePluginTests(TestCase):
+    """ Tests for InvenTreePlugin """
 
     def setUp(self):
-        self.plugin = IntegrationPluginBase()
+        self.plugin = InvenTreePlugin()
 
-        class NamedPlugin(IntegrationPluginBase):
+        class NamedPlugin(InvenTreePlugin):
             """a named plugin"""
             PLUGIN_NAME = 'abc123'
 
         self.named_plugin = NamedPlugin()
 
-        class SimpeIntegrationPluginBase(IntegrationPluginBase):
+        class SimpleInvenTreePlugin(InvenTreePlugin):
             PLUGIN_NAME = 'SimplePlugin'
 
-        self.plugin_simple = SimpeIntegrationPluginBase()
+        self.plugin_simple = SimpleInvenTreePlugin()
 
-        class NameIntegrationPluginBase(IntegrationPluginBase):
+        class NameInvenTreePlugin(InvenTreePlugin):
             PLUGIN_NAME = 'Aplugin'
             PLUGIN_SLUG = 'a'
             PLUGIN_TITLE = 'a titel'
@@ -86,7 +86,7 @@ class IntegrationPluginBaseTests(TestCase):
             WEBSITE = 'http://aa.bb/cc'
             LICENSE = 'MIT'
 
-        self.plugin_name = NameIntegrationPluginBase()
+        self.plugin_name = NameInvenTreePlugin()
         self.plugin_sample = SampleIntegrationPlugin()
 
     def test_basic_plugin_init(self):

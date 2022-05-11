@@ -142,11 +142,11 @@ class MixinBase:
         return mixins
 
 
-class IntegrationPluginBase(MixinBase, InvenTreePluginBase):
+class InvenTreePlugin(MixinBase, InvenTreePluginBase):
     """
-    The IntegrationPluginBase class is used to integrate with 3rd party software
+    The InvenTreePlugin class is used to integrate with 3rd party software
 
-    DO NOT USE THIS DIRECTLY, USE plugin.IntegrationPluginBase
+    DO NOT USE THIS DIRECTLY, USE plugin.InvenTreePlugin
     """
 
     AUTHOR = None

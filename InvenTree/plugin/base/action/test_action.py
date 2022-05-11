@@ -2,7 +2,7 @@
 
 from django.test import TestCase
 
-from plugin import IntegrationPluginBase
+from plugin import InvenTreePlugin
 from plugin.mixins import ActionMixin
 
 
@@ -11,11 +11,11 @@ class ActionMixinTests(TestCase):
     ACTION_RETURN = 'a action was performed'
 
     def setUp(self):
-        class SimplePlugin(ActionMixin, IntegrationPluginBase):
+        class SimplePlugin(ActionMixin, InvenTreePlugin):
             pass
         self.plugin = SimplePlugin('user')
 
-        class TestActionPlugin(ActionMixin, IntegrationPluginBase):
+        class TestActionPlugin(ActionMixin, InvenTreePlugin):
             """a action plugin"""
             ACTION_NAME = 'abc123'
 
@@ -30,7 +30,7 @@ class ActionMixinTests(TestCase):
 
         self.action_plugin = TestActionPlugin('user')
 
-        class NameActionPlugin(ActionMixin, IntegrationPluginBase):
+        class NameActionPlugin(ActionMixin, InvenTreePlugin):
             PLUGIN_NAME = 'Aplugin'
 
         self.action_name = NameActionPlugin('user')

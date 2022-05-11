@@ -1,8 +1,8 @@
 """sample of a broken integration plugin"""
-from plugin import IntegrationPluginBase
+from plugin import InvenTreePlugin
 
 
-class BrokenIntegrationPlugin(IntegrationPluginBase):
+class BrokenIntegrationPlugin(InvenTreePlugin):
     """
     An very broken integration plugin
     """

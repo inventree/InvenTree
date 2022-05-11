@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """sample implementation for ActionMixin"""
-from plugin import IntegrationPluginBase
+from plugin import InvenTreePlugin
 from plugin.mixins import ActionMixin
 
 
-class SimpleActionPlugin(ActionMixin, IntegrationPluginBase):
+class SimpleActionPlugin(ActionMixin, InvenTreePlugin):
     """
     An EXTREMELY simple action plugin which demonstrates
     the capability of the ActionMixin class

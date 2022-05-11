@@ -3,13 +3,13 @@ Utility file to enable simper imports
 """
 
 from .registry import registry
-from .plugin import IntegrationPluginBase
+from .plugin import InvenTreePlugin
 from .helpers import MixinNotImplementedError, MixinImplementationError
 
 __all__ = [
     'registry',
 
-    'IntegrationPluginBase',
+    'InvenTreePlugin',
     'MixinNotImplementedError',
     'MixinImplementationError',
 ]
