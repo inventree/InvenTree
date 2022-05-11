@@ -38,7 +38,7 @@ import common.models
 import report.models
 import label.models
 
-from plugin.events import trigger_event
+from plugin.event import trigger_event
 
 from InvenTree.status_codes import StockStatus, StockHistoryCode
 from InvenTree.models import InvenTreeTree, InvenTreeAttachment

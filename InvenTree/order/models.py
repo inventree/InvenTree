@@ -30,7 +30,7 @@ from users import models as UserModels
 from part import models as PartModels
 from stock import models as stock_models
 from company.models import Company, SupplierPart
-from plugin.events import trigger_event
+from plugin.event import trigger_event
 
 import InvenTree.helpers
 from InvenTree.fields import InvenTreeModelMoneyField, RoundingDecimalField
