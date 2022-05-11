@@ -481,6 +481,16 @@ class TestSettings(TestCase):
         self.run_reload()
         self.assertEqual(user_count(), 1)
 
+        # create user manually
+        self.user_mdl.objects.create_user('testuser', 'test@testing.com', 'password')
+        self.assertEqual(user_count(), 2)
+        # check it will not be created again
+        self.env.set('INVENTREE_ADMIN_USER', 'testuser')
+        self.env.set('INVENTREE_ADMIN_EMAIL', 'test@testing.com')
+        self.env.set('INVENTREE_ADMIN_PASSWORD', 'password')
+        self.run_reload()
+        self.assertEqual(user_count(), 2)
+
         # make sure to clean up
         settings.TESTING_ENV = False
 
