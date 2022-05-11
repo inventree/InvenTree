@@ -104,6 +104,7 @@ class HTMLAPITests(TestCase):
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 404)
 
+
 class APITests(InvenTreeAPITestCase):
     """ Tests for the InvenTree API """
 
