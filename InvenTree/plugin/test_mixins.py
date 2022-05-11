@@ -1,17 +1,13 @@
-""" Unit tests for integration plugins """
+""" Unit tests for base mixins for plugins """
 
 from django.test import TestCase
 from django.conf import settings
 from django.urls import include, re_path
 from django.contrib.auth import get_user_model
 
-from datetime import datetime
-
 from plugin import IntegrationPluginBase
 from plugin.mixins import AppMixin, SettingsMixin, UrlsMixin, NavigationMixin, APICallMixin
 from plugin.urls import PLUGIN_BASE
-
-from plugin.samples.integration.sample import SampleIntegrationPlugin
 
 
 class BaseMixinDefinition:
@@ -216,75 +212,3 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         with self.assertRaises(ValueError):
             self.mixin_wrong.has_api_call()
 
-
-class IntegrationPluginBaseTests(TestCase):
-    """ Tests for IntegrationPluginBase """
-
-    def setUp(self):
-        self.plugin = IntegrationPluginBase()
-
-        class SimpeIntegrationPluginBase(IntegrationPluginBase):
-            PLUGIN_NAME = 'SimplePlugin'
-
-        self.plugin_simple = SimpeIntegrationPluginBase()
-
-        class NameIntegrationPluginBase(IntegrationPluginBase):
-            PLUGIN_NAME = 'Aplugin'
-            PLUGIN_SLUG = 'a'
-            PLUGIN_TITLE = 'a titel'
-            PUBLISH_DATE = "1111-11-11"
-            AUTHOR = 'AA BB'
-            DESCRIPTION = 'A description'
-            VERSION = '1.2.3a'
-            WEBSITE = 'http://aa.bb/cc'
-            LICENSE = 'MIT'
-
-        self.plugin_name = NameIntegrationPluginBase()
-        self.plugin_sample = SampleIntegrationPlugin()
-
-    def test_action_name(self):
-        """check the name definition possibilities"""
-        # plugin_name
-        self.assertEqual(self.plugin.plugin_name(), '')
-        self.assertEqual(self.plugin_simple.plugin_name(), 'SimplePlugin')
-        self.assertEqual(self.plugin_name.plugin_name(), 'Aplugin')
-
-        # is_sampe
-        self.assertEqual(self.plugin.is_sample, False)
-        self.assertEqual(self.plugin_sample.is_sample, True)
-
-        # slug
-        self.assertEqual(self.plugin.slug, '')
-        self.assertEqual(self.plugin_simple.slug, 'simpleplugin')
-        self.assertEqual(self.plugin_name.slug, 'a')
-
-        # human_name
-        self.assertEqual(self.plugin.human_name, '')
-        self.assertEqual(self.plugin_simple.human_name, 'SimplePlugin')
-        self.assertEqual(self.plugin_name.human_name, 'a titel')
-
-        # description
-        self.assertEqual(self.plugin.description, '')
-        self.assertEqual(self.plugin_simple.description, 'SimplePlugin')
-        self.assertEqual(self.plugin_name.description, 'A description')
-
-        # author
-        self.assertEqual(self.plugin_name.author, 'AA BB')
-
-        # pub_date
-        self.assertEqual(self.plugin_name.pub_date, datetime(1111, 11, 11, 0, 0))
-
-        # version
-        self.assertEqual(self.plugin.version, None)
-        self.assertEqual(self.plugin_simple.version, None)
-        self.assertEqual(self.plugin_name.version, '1.2.3a')
-
-        # website
-        self.assertEqual(self.plugin.website, None)
-        self.assertEqual(self.plugin_simple.website, None)
-        self.assertEqual(self.plugin_name.website, 'http://aa.bb/cc')
-
-        # license
-        self.assertEqual(self.plugin.license, None)
-        self.assertEqual(self.plugin_simple.license, None)
-        self.assertEqual(self.plugin_name.license, 'MIT')
