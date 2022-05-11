@@ -5,7 +5,7 @@ from plugin.mixins import UrlsMixin
 
 class NoIntegrationPlugin(InvenTreePlugin):
     """
-    An basic integration plugin
+    An basic plugin
     """
 
     NAME = "NoIntegrationPlugin"
@@ -13,7 +13,7 @@ class NoIntegrationPlugin(InvenTreePlugin):
 
 class WrongIntegrationPlugin(UrlsMixin, InvenTreePlugin):
     """
-    An basic integration plugin
+    An basic wron plugin with urls
     """
 
     NAME = "WrongIntegrationPlugin"

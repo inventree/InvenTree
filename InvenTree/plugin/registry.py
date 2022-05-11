@@ -51,7 +51,6 @@ class PluginsRegistry:
         self.apps_loading = True        # Marks if apps were reloaded yet
         self.git_is_modern = True       # Is a modern version of git available
 
-        # integration specific
         self.installed_apps = []         # Holds all added plugin_paths
 
         # mixins
@@ -123,7 +122,7 @@ class PluginsRegistry:
                 log_error({error.path: error.message}, 'load')
                 blocked_plugin = error.path  # we will not try to load this app again
 
-                # Initialize apps without any integration plugins
+                # Initialize apps without any plugins
                 self._clean_registry()
                 self._clean_installed_apps()
                 self._activate_plugins(force_reload=True)
@@ -192,9 +191,7 @@ class PluginsRegistry:
         logger.info('Finished reloading plugins')
 
     def collect_plugins(self):
-        """
-        Collect integration plugins from all possible ways of loading
-        """
+        """Collect plugins from all possible ways of loading"""
 
         if not settings.PLUGINS_ENABLED:
             # Plugins not enabled, do nothing
@@ -274,7 +271,7 @@ class PluginsRegistry:
 
         logger.info('Starting plugin initialisation')
 
-        # Initialize integration plugins
+        # Initialize plugins
         for plugin in self.plugin_modules:
             # Check if package
             was_packaged = getattr(plugin, 'is_package', False)
@@ -337,7 +334,7 @@ class PluginsRegistry:
 
     def _activate_plugins(self, force_reload=False):
         """
-        Run integration functions for all plugins
+        Run activation functions for all plugins
 
         :param force_reload: force reload base apps, defaults to False
         :type force_reload: bool, optional
@@ -351,9 +348,7 @@ class PluginsRegistry:
         self.activate_integration_app(plugins, force_reload=force_reload)
 
     def _deactivate_plugins(self):
-        """
-        Run integration deactivation functions for all plugins
-        """
+        """Run deactivation functions for all plugins"""
 
         self.deactivate_integration_app()
         self.deactivate_integration_schedule()
@@ -520,9 +515,7 @@ class PluginsRegistry:
         return plugin_path
 
     def deactivate_integration_app(self):
-        """
-        Deactivate integration app - some magic required
-        """
+        """Deactivate AppMixin plugins - some magic required"""
 
         # unregister models from admin
         for plugin_path in self.installed_apps:

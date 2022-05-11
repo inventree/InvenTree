@@ -12,7 +12,7 @@ from django.urls import include, re_path
 
 class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixin, InvenTreePlugin):
     """
-    A full integration plugin example
+    A full plugin example
     """
 
     NAME = "SampleIntegrationPlugin"

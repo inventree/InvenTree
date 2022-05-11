@@ -4,7 +4,7 @@ from plugin import InvenTreePlugin
 
 class BrokenFileIntegrationPlugin(InvenTreePlugin):
     """
-    An very broken integration plugin
+    An very broken plugin
     """
 
 
