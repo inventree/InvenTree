@@ -201,21 +201,6 @@ class InvenTreePlugin(MixinBase, MetaBase):
 
         self.define_package()
 
-    @property
-    def _is_package(self):
-        """
-        Is the plugin delivered as a package
-        """
-        return getattr(self, 'is_package', False)
-
-    @property
-    def is_sample(self):
-        """
-        Is this plugin part of the samples?
-        """
-        path = str(self.package_path)
-        return path.startswith('plugin/samples/')
-
     # region properties
     @property
     def description(self):
@@ -277,6 +262,21 @@ class InvenTreePlugin(MixinBase, MetaBase):
         lic = getattr(self, 'LICENSE', None)
         return lic
     # endregion
+
+    @property
+    def _is_package(self):
+        """
+        Is the plugin delivered as a package
+        """
+        return getattr(self, 'is_package', False)
+
+    @property
+    def is_sample(self):
+        """
+        Is this plugin part of the samples?
+        """
+        path = str(self.package_path)
+        return path.startswith('plugin/samples/')
 
     @property
     def package_path(self):
