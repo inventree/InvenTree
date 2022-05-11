@@ -223,6 +223,7 @@ def get_plugins(pkg, baseclass):
     return plugins
 # endregion
 
+
 # region templates
 def render_template(plugin, template_file, context=None):
     """
