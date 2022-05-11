@@ -116,9 +116,10 @@ class MixinBase:
     Base set of mixin functions and mechanisms
     """
 
-    def __init__(self) -> None:
+    def __init__(self, *args, **kwargs) -> None:
         self._mixinreg = {}
         self._mixins = {}
+        super().__init__(*args, **kwargs)
 
     def add_mixin(self, key: str, fnc_enabled=True, cls=None):
         """
