@@ -98,10 +98,8 @@ class HTMLAPITests(TestCase):
 
     def test_not_found(self):
         """Test that the NotFoundView is working"""
-        url = reverse('api-404')
 
-        # Check JSON response
-        response = self.client.get(url, HTTP_ACCEPT='application/json')
+        response = self.client.get('/api/anc')
         self.assertEqual(response.status_code, 404)
 
 
