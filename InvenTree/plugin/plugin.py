@@ -21,14 +21,8 @@ from plugin.helpers import get_git_log, GitStatus
 logger = logging.getLogger("inventree")
 
 
-class InvenTreePluginBase:
-    """
-    Base class for a plugin
-    DO NOT USE THIS DIRECTLY, USE plugin.IntegrationPluginBase
-    """
-
-    def __init__(self):
-        pass
+class MetaBase:
+    """Base class for a plugins metadata"""
 
     # Override the plugin name for each concrete plugin instance
     PLUGIN_NAME = ''
@@ -43,6 +37,13 @@ class InvenTreePluginBase:
         """
         return self.PLUGIN_NAME
 
+    @property
+    def name(self):
+        """
+        Name of plugin
+        """
+        return self.plugin_name()
+
     def plugin_slug(self):
         """
         Slug of plugin
@@ -56,6 +57,13 @@ class InvenTreePluginBase:
 
         return slugify(slug.lower())
 
+    @property
+    def slug(self):
+        """
+        Slug of plugin
+        """
+        return self.plugin_slug()
+
     def plugin_title(self):
         """
         Title of plugin
@@ -65,6 +73,13 @@ class InvenTreePluginBase:
             return self.PLUGIN_TITLE
         else:
             return self.plugin_name()
+
+    @property
+    def human_name(self):
+        """
+        Human readable name of plugin
+        """
+        return self.plugin_title()
 
     def plugin_config(self):
         """
@@ -143,7 +158,7 @@ class MixinBase:
         return mixins
 
 
-class InvenTreePlugin(MixinBase, InvenTreePluginBase):
+class InvenTreePlugin(MixinBase, MetaBase):
     """
     The InvenTreePlugin class is used to integrate with 3rd party software
 
@@ -181,27 +196,6 @@ class InvenTreePlugin(MixinBase, InvenTreePluginBase):
         return path.startswith('plugin/samples/')
 
     # region properties
-    @property
-    def slug(self):
-        """
-        Slug of plugin
-        """
-        return self.plugin_slug()
-
-    @property
-    def name(self):
-        """
-        Name of plugin
-        """
-        return self.plugin_name()
-
-    @property
-    def human_name(self):
-        """
-        Human readable name of plugin
-        """
-        return self.plugin_title()
-
     @property
     def description(self):
         """
