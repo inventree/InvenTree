@@ -4,7 +4,7 @@
 import logging
 import warnings
 
-from plugin.builtin.action.mixins import ActionMixin
+from plugin.base.action.mixins import ActionMixin
 import plugin.integration
 
 

@@ -6,7 +6,7 @@ from ..base.integration.mixins import APICallMixin, AppMixin, LabelPrintingMixin
 
 from common.notifications import SingleNotificationMethod, BulkNotificationMethod
 
-from ..builtin.action.mixins import ActionMixin
+from ..base.action.mixins import ActionMixin
 from ..builtin.barcodes.mixins import BarcodeMixin
 
 __all__ = [
