@@ -10,7 +10,8 @@ from django.urls import reverse
 
 from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.helpers import str2bool
-from plugin.models import NotificationUserSetting
+from plugin.models import NotificationUserSetting, PluginConfig, PluginSetting
+from plugin import registry
 
 from .models import InvenTreeSetting, InvenTreeUserSetting, WebhookEndpoint, WebhookMessage, NotificationEntry
 from .api import WebhookView
@@ -476,6 +477,24 @@ class PluginSettingsApiTest(InvenTreeAPITestCase):
         url = reverse('api-plugin-setting-list')
 
         self.get(url, expected_code=200)
+
+    def test_valid_plugin_slug(self):
+        """Test that an valid plugin slug runs through"""
+        # load plugin configs
+        fixtures = PluginConfig.objects.all()
+        if not fixtures:
+            registry.reload_plugins()
+            fixtures = PluginConfig.objects.all()
+
+        # get data
+        url = reverse('api-plugin-setting-detail', kwargs={'plugin': 'sample', 'key': 'API_KEY'})
+        response = self.get(url, expected_code=200)
+
+        # check the right setting came through
+        self.assertTrue(response.data['key'], 'API_KEY')
+        self.assertTrue(response.data['plugin'], 'sample')
+        self.assertTrue(response.data['type'], 'string')
+        self.assertTrue(response.data['description'], 'Key required for accessing external API')
 
     def test_invalid_plugin_slug(self):
         """Test that an invalid plugin slug returns a 404"""
