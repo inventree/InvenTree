@@ -124,3 +124,22 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
             '_save': 'Save',
         }, follow=True)
         self.assertEqual(response.status_code, 200)
+
+    def test_model(self):
+        """
+        Test the PluginConfig model
+        """
+        from plugin.models import PluginConfig
+        from plugin import registry
+
+        fixtures = PluginConfig.objects.all()
+
+        # check if plugins were registered
+        if not fixtures:
+            registry.reload_plugins()
+            fixtures = PluginConfig.objects.all()
+
+        plg = fixtures.first()
+        mixin_dict = plg.mixins()
+        self.assertIn('base', mixin_dict)
+        self.assertDictContainsSubset({'base':{'key':'base', 'human_name':'base'}}, mixin_dict)
