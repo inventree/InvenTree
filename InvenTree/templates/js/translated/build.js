@@ -1056,6 +1056,7 @@ function loadBuildOutputTable(build_info, options={}) {
             '{% url "api-stock-test-result-list" %}',
             {
                 build: build_info.pk,
+                ordering: '-date',
             },
             {
                 success: function(results) {

@@ -84,7 +84,7 @@ class InvenTreeBarcodePlugin(BarcodeMixin, plugin.integration.IntegrationPluginB
                     item = StockItem.objects.get(pk=pk)
                     return item
                 except (ValueError, StockItem.DoesNotExist):  # pragma: no cover
-                    raise ValidationError({k, "Stock item does not exist"})
+                    raise ValidationError({k: "Stock item does not exist"})
 
         return None
 
@@ -112,7 +112,7 @@ class InvenTreeBarcodePlugin(BarcodeMixin, plugin.integration.IntegrationPluginB
                     loc = StockLocation.objects.get(pk=pk)
                     return loc
                 except (ValueError, StockLocation.DoesNotExist):  # pragma: no cover
-                    raise ValidationError({k, "Stock location does not exist"})
+                    raise ValidationError({k: "Stock location does not exist"})
 
         return None
 
@@ -133,12 +133,12 @@ class InvenTreeBarcodePlugin(BarcodeMixin, plugin.integration.IntegrationPluginB
                     try:
                         pk = self.data[k]['id']
                     except (AttributeError, KeyError):
-                        raise ValidationError({k, 'id parameter not supplied'})
+                        raise ValidationError({k: 'id parameter not supplied'})
 
                 try:
                     part = Part.objects.get(pk=pk)
                     return part
                 except (ValueError, Part.DoesNotExist):  # pragma: no cover
-                    raise ValidationError({k, 'Part does not exist'})
+                    raise ValidationError({k: 'Part does not exist'})
 
         return None
