@@ -8,7 +8,7 @@ from common.notifications import SingleNotificationMethod, BulkNotificationMetho
 
 from ..base.action.mixins import ActionMixin
 from ..base.barcodes.mixins import BarcodeMixin
-from ..base.events.mixins import EventMixin
+from ..base.event.mixins import EventMixin
 
 __all__ = [
     'APICallMixin',
