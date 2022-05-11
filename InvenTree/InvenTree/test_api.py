@@ -102,7 +102,7 @@ class HTMLAPITests(TestCase):
 
         # Check JSON response
         response = self.client.get(url, HTTP_ACCEPT='application/json')
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 200)
 
 
 class APITests(InvenTreeAPITestCase):
