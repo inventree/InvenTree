@@ -8,17 +8,27 @@ import os
 from django.test import TestCase
 from django.conf import settings
 from django.apps import apps
+from django.urls import reverse
 from django.core.exceptions import ValidationError
 
 from InvenTree.helpers import validateFilterString
+from InvenTree.api_tester import InvenTreeAPITestCase
 
-from .models import StockItemLabel, StockLocationLabel
+from .models import StockItemLabel, StockLocationLabel, PartLabel
 from stock.models import StockItem
 
 
-class LabelTest(TestCase):
+class LabelTest(InvenTreeAPITestCase):
+
+    fixtures = [
+        'category',
+        'part',
+        'location',
+        'stock'
+    ]
 
     def setUp(self) -> None:
+        super().setUp()
         # ensure the labels were created
         apps.get_app_config('label').create_labels()
 
@@ -77,3 +87,13 @@ class LabelTest(TestCase):
 
         with self.assertRaises(ValidationError):
             validateFilterString(bad_filter_string, model=StockItem)
+
+    def test_label_rendering(self):
+        """Test label rendering"""
+
+        labels = [PartLabel.objects.first(), ]
+        part = PartLabel.objects.first()
+
+        for label in labels:
+            url = reverse('api-part-label-print', kwargs={'pk': label.pk})
+            self.get(f'{url}?parts={part.pk}', expected_code=200)
