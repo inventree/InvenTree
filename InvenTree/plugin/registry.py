@@ -343,20 +343,20 @@ class PluginsRegistry:
         plugins = self.plugins.items()
         logger.info(f'Found {len(plugins)} active plugins')
 
-        self.activate_integration_settings(plugins)
-        self.activate_integration_schedule(plugins)
-        self.activate_integration_app(plugins, force_reload=force_reload)
+        self.activate_plugin_settings(plugins)
+        self.activate_plugin_schedule(plugins)
+        self.activate_plugin_app(plugins, force_reload=force_reload)
 
     def _deactivate_plugins(self):
         """Run deactivation functions for all plugins"""
 
-        self.deactivate_integration_app()
-        self.deactivate_integration_schedule()
-        self.deactivate_integration_settings()
+        self.deactivate_plugin_app()
+        self.deactivate_plugin_schedule()
+        self.deactivate_plugin_settings()
     # endregion
 
     # region mixin specific loading ...
-    def activate_integration_settings(self, plugins):
+    def activate_plugin_settings(self, plugins):
 
         logger.info('Activating plugin settings')
 
@@ -367,7 +367,7 @@ class PluginsRegistry:
                 plugin_setting = plugin.settings
                 self.mixins_settings[slug] = plugin_setting
 
-    def deactivate_integration_settings(self):
+    def deactivate_plugin_settings(self):
 
         # collect all settings
         plugin_settings = {}
@@ -378,7 +378,7 @@ class PluginsRegistry:
         # clear cache
         self.mixins_settings = {}
 
-    def activate_integration_schedule(self, plugins):
+    def activate_plugin_schedule(self, plugins):
 
         logger.info('Activating plugin tasks')
 
@@ -422,14 +422,14 @@ class PluginsRegistry:
             # Database might not yet be ready
             logger.warning("activate_integration_schedule failed, database not ready")
 
-    def deactivate_integration_schedule(self):
+    def deactivate_plugin_schedule(self):
         """
         Deactivate ScheduleMixin
         currently nothing is done
         """
         pass
 
-    def activate_integration_app(self, plugins, force_reload=False):
+    def activate_plugin_app(self, plugins, force_reload=False):
         """
         Activate AppMixin plugins - add custom apps and reload
 
@@ -514,7 +514,7 @@ class PluginsRegistry:
             plugin_path = plugin.NAME
         return plugin_path
 
-    def deactivate_integration_app(self):
+    def deactivate_plugin_app(self):
         """Deactivate AppMixin plugins - some magic required"""
 
         # unregister models from admin
