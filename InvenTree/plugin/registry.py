@@ -12,7 +12,7 @@ import os
 import subprocess
 
 from typing import OrderedDict
-from importlib import reload
+from importlib import reload, metadata
 
 from django.apps import apps
 from django.conf import settings
@@ -21,12 +21,6 @@ from django.urls import include, re_path
 from django.urls import clear_url_caches
 from django.contrib import admin
 from django.utils.text import slugify
-
-try:
-    from importlib import metadata
-except:  # pragma: no cover
-    import importlib_metadata as metadata
-    # TODO remove when python minimum is 3.8
 
 from maintenance_mode.core import maintenance_mode_on
 from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
