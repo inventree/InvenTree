@@ -145,6 +145,8 @@ class MixinBase:
 class IntegrationPluginBase(MixinBase, InvenTreePluginBase):
     """
     The IntegrationPluginBase class is used to integrate with 3rd party software
+
+    DO NOT USE THIS DIRECTLY, USE plugin.IntegrationPluginBase
     """
 
     AUTHOR = None
