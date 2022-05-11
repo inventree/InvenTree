@@ -43,7 +43,7 @@ class MetaBase:
         value = getattr(self, key, None)
 
         # The key was not used
-        if old_key and not value:
+        if old_key and value is None:
             value = getattr(self, old_key, None)
 
             # Sound of a warning if old_key worked
@@ -51,7 +51,7 @@ class MetaBase:
                 warnings.warn(f'Usage of {old_key} was depreciated in 0.7.0 in favour of {key}', DeprecationWarning)
 
         # Use __default if still nothing set
-        if not value:
+        if (value is None) and __default:
             return __default
         return value
 
