@@ -10,7 +10,6 @@ from plugin.samples.integration.sample import SampleIntegrationPlugin
 from plugin.samples.integration.another_sample import WrongIntegrationPlugin, NoIntegrationPlugin
 import plugin.templatetags.plugin_extras as plugin_tags
 from plugin import registry, InvenTreePlugin
-from plugin.plugin import InvenTreePlugin
 
 
 class PluginTagTests(TestCase):
