@@ -74,7 +74,9 @@ class MetaBase:
         If not set plugin name slugified
         """
 
-        slug = self.get_meta_value('SLUG', 'PLUGIN_SLUG', self.plugin_name())
+        slug = self.get_meta_value('SLUG', 'PLUGIN_SLUG', None)
+        if not slug:
+            slug = self.plugin_name()
 
         return slugify(slug.lower())
 
@@ -90,7 +92,10 @@ class MetaBase:
         Title of plugin
         """
 
-        return self.get_meta_value('TITLE', 'PLUGIN_TITLE', self.plugin_name())
+        title = self.get_meta_value('TITLE', 'PLUGIN_TITLE', None)
+        if title:
+            return title
+        return self.plugin_name()
 
     @property
     def human_name(self):
