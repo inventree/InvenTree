@@ -3,7 +3,7 @@ Utility file to enable simper imports
 """
 
 from .registry import registry
-from .base.event.events import trigger_event
+from .events import trigger_event
 
 from .plugin import InvenTreePluginBase, IntegrationPluginBase
 from .base.action.action import ActionPlugin
