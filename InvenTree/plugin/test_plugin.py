@@ -75,7 +75,7 @@ class InvenTreePluginTests(TestCase):
         self.plugin_simple = SimpleInvenTreePlugin()
 
         class OldInvenTreePlugin(InvenTreePlugin):
-            PLUGIN_NAME = 'OldPlugin'
+            PLUGIN_SLUG = 'old'
 
         self.plugin_old = OldInvenTreePlugin()
 
@@ -159,7 +159,7 @@ class InvenTreePluginTests(TestCase):
 
         # check deprecation warning is firing
         with self.assertWarns(DeprecationWarning):
-            self.assertEqual(self.plugin_old.name, 'OldPlugin')
+            self.assertEqual(self.plugin_old.slug, 'old')
             # check default value is used
             self.assertEqual(self.plugin_old.get_meta_value('ABC', 'ABCD', '123'), '123')
 
