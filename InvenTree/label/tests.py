@@ -91,7 +91,7 @@ class LabelTest(InvenTreeAPITestCase):
         """Test label rendering"""
 
         labels = PartLabel.objects.all()
-        part = PartLabel.objects.first()
+        part = PartLabel.objects.get(pk=1)
 
         for label in labels:
 
