@@ -94,6 +94,9 @@ class LabelTest(InvenTreeAPITestCase):
         part = PartLabel.objects.first()
 
         for label in labels:
+
+            print("Printing label:", label.pk, part.pk)
+
             url = reverse('api-part-label-print', kwargs={'pk': label.pk})
 
             print("URL:", url)
