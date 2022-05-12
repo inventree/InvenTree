@@ -135,6 +135,23 @@ class PurchaseOrderExtraLineResource(ModelResource):
         model = PurchaseOrderExtraLine
 
 
+class SalesOrderResource(ModelResource):
+    """
+    Class for managing import / export of SalesOrder data
+    """
+
+    # Add number of line items
+    line_items = Field(attribute='line_count', widget=widgets.IntegerWidget(), readonly=True)
+
+    # Is this order overdue?
+    overdue = Field(attribute='is_overdue', widget=widgets.BooleanWidget(), readonly=True)
+
+    class Meta:
+        model = SalesOrder
+        skip_unchanged = True
+        clean_model_instances = True
+
+
 class SalesOrderLineItemResource(ModelResource):
     """
     Class for managing import / export of SalesOrderLineItem data

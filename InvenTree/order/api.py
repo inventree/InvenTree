@@ -21,6 +21,7 @@ from InvenTree.api import AttachmentMixin, APIDownloadMixin
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
 
 from order.admin import PurchaseOrderResource, PurchaseOrderLineItemResource
+from order.admin import SalesOrderResource
 import order.models as models
 import order.serializers as serializers
 from part.models import Part
@@ -583,7 +584,7 @@ class SalesOrderAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, Attachme
     serializer_class = serializers.SalesOrderAttachmentSerializer
 
 
-class SalesOrderList(generics.ListCreateAPIView):
+class SalesOrderList(APIDownloadMixin, generics.ListCreateAPIView):
     """
     API endpoint for accessing a list of SalesOrder objects.
 
@@ -632,6 +633,15 @@ class SalesOrderList(generics.ListCreateAPIView):
         queryset = serializers.SalesOrderSerializer.annotate_queryset(queryset)
 
         return queryset
+
+    def download_queryset(self, queryset, export_format):
+        dataset = SalesOrderResource().export(queryset=queryset)
+
+        filedata = dataset.export(export_format)
+
+        filename = f"InvenTree_SalesOrders.{export_format}"
+
+        return DownloadFile(filedata, filename)
 
     def filter_queryset(self, queryset):
         """

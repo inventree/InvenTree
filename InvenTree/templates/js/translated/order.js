@@ -2093,7 +2093,9 @@ function loadSalesOrderTable(table, options) {
 
     options.url = options.url || '{% url "api-so-list" %}';
 
-    setupFilterList('salesorder', $(table));
+    var target = '#filter-list-salesorder';
+
+    setupFilterList('salesorder', $(table), target, {download: true});
 
     $(table).inventreeTable({
         url: options.url,
