@@ -144,7 +144,7 @@ class BaseInvenTreeSetting(models.Model):
 
         This is necessary to abtract the settings object
         from the implementing class (e.g plugins)
-        
+
         Subclasses should override this function to ensure the kwargs are correctly set.
         """
 
@@ -601,7 +601,7 @@ class BaseInvenTreeSetting(models.Model):
 
         if not model_name:
             return None
-        
+
         try:
             (app, mdl) = model_name.strip().split('.')
         except ValueError:
@@ -637,7 +637,7 @@ class BaseInvenTreeSetting(models.Model):
                 return model_class.get_api_url()
             except:
                 pass
-        
+
         return None
 
     def is_bool(self):
