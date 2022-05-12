@@ -627,7 +627,7 @@ class SetPasswordView(AjaxUpdateView):
         if valid:
             # Passwords must match
 
-            if not p1 == p2:
+            if p1 != p2:
                 error = _('Password fields must match')
                 form.add_error('enter_password', error)
                 form.add_error('confirm_password', error)
