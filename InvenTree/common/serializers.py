@@ -30,6 +30,8 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
     model_name = serializers.CharField(read_only=True)
 
+    api_url = serializers.CharField(read_only=True)
+
     def get_choices(self, obj):
         """
         Returns the choices available for a given item
@@ -78,6 +80,7 @@ class GlobalSettingsSerializer(SettingsSerializer):
             'type',
             'choices',
             'model_name',
+            'api_url',
         ]
 
 
@@ -100,6 +103,7 @@ class UserSettingsSerializer(SettingsSerializer):
             'type',
             'choices',
             'model_name',
+            'api_url',
         ]
 
 
@@ -129,6 +133,7 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
                 'type',
                 'choices',
                 'model_name',
+                'api_url',
             ]
 
         # set Meta class

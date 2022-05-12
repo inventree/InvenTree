@@ -71,8 +71,23 @@ function editSetting(key, options={}) {
                     help_text: response.description,
                     type: response.type,
                     choices: response.choices,
+                    value: response.value,
                 }
             };
+
+            // Foreign key lookup available!
+            if (response.type == 'related field') {
+                
+                if (response.model_name && response.api_url) {
+                    fields.value.type = 'related field';
+                    fields.value.model = response.model_name.split('.').at(-1);
+                    fields.value.api_url = response.api_url;
+                } else {
+                    // Unknown / unsupported model type, default to 'text' field
+                    fields.value.type = 'text';
+                    console.warn(`Unsupported model type: '${response.model_name}' for setting '${response.key}'`);
+                }
+            }
 
             constructChangeForm(fields, {
                 url: url,

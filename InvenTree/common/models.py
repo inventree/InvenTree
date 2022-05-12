@@ -17,15 +17,16 @@ import base64
 from secrets import compare_digest
 from datetime import datetime, timedelta
 
+from django.apps import apps
 from django.db import models, transaction
+from django.db.utils import IntegrityError, OperationalError
+from django.conf import settings
 from django.contrib.auth.models import User, Group
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.db.utils import IntegrityError, OperationalError
-from django.conf import settings
+from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.urls import reverse
 from django.utils.timezone import now
-from django.contrib.humanize.templatetags.humanize import naturaltime
 
 from djmoney.settings import CURRENCY_CHOICES
 from djmoney.contrib.exchange.models import convert_money
@@ -587,6 +588,58 @@ class BaseInvenTreeSetting(models.Model):
 
         return setting.get('model', None)
 
+    def model_class(self):
+        """
+        Return the model class associated with this setting, if (and only if):
+
+        - It has a defined 'model' parameter
+        - The 'model' parameter is of the form app.model
+        - The 'model' parameter has matches a known app model
+        """
+
+        model_name = self.model_name()
+
+        if not model_name:
+            return None
+        
+        try:
+            (app, mdl) = model_name.strip().split('.')
+        except ValueError:
+            logger.error(f"Invalid 'model' parameter for setting {self.key} : '{model_name}'")
+            return None
+
+        app_models = apps.all_models.get(app, None)
+
+        if app_models is None:
+            logger.error(f"Error retrieving model class '{model_name}' for setting '{self.key}' - no app named '{app}'")
+            return None
+
+        model = app_models.get(mdl, None)
+
+        if model is None:
+            logger.error(f"Error retrieving model class '{model_name}' for setting '{self.key}' - no model named '{mdl}'")
+            return None
+
+        # Looks like we have found a model!
+        return model
+
+    def api_url(self):
+        """
+        Return the API url associated with the linked model,
+        if provided, and valid!
+        """
+
+        model_class = self.model_class()
+
+        if model_class:
+            # If a valid class has been found, see if it has registered an API URL
+            try:
+                return model_class.get_api_url()
+            except:
+                pass
+        
+        return None
+
     def is_bool(self):
         """
         Check if this setting is required to be a boolean value
@@ -617,7 +670,7 @@ class BaseInvenTreeSetting(models.Model):
             return 'integer'
 
         elif self.is_model():
-            return 'model'
+            return 'related field'
 
         else:
             return 'string'

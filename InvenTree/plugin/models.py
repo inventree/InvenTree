@@ -137,7 +137,7 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
 
         if 'settings' not in kwargs:
 
-            plugin = kwargs.pop('plugin')
+            plugin = kwargs.pop('plugin', None)
 
             if plugin:
 
