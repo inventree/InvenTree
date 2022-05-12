@@ -47,3 +47,20 @@ class MiddlewareTests(TestCase):
 
         # check that a 401 is raised
         self.check_path(reverse('settings.js'), 401)
+
+    def test_token_auth(self):
+        """Test auth with token auth"""
+        # get token
+        response = self.client.get(reverse('api-token'), format='json', data={})
+        token = response.data['token']
+
+        # logout
+        self.client.logout()
+        # this should raise a 401
+        self.check_path(reverse('settings.js'), 401)
+
+        # request with token
+        self.check_path(reverse('settings.js'), HTTP_Authorization= f'Token {token}')
+
+        # should still fail without token
+        self.check_path(reverse('settings.js'), 401)
