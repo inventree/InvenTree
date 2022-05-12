@@ -12,13 +12,15 @@ from rest_framework import filters, generics
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as rest_filters
 
-from InvenTree.api import AttachmentMixin
-from InvenTree.helpers import str2bool, isNull
+from InvenTree.api import AttachmentMixin, APIDownloadMixin
+from InvenTree.helpers import str2bool, isNull, DownloadFile
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.status_codes import BuildStatus
 
-from .models import Build, BuildItem, BuildOrderAttachment
+import build.admin
 import build.serializers
+from build.models import Build, BuildItem, BuildOrderAttachment
+
 from users.models import Owner
 
 
@@ -71,7 +73,7 @@ class BuildFilter(rest_filters.FilterSet):
         return queryset
 
 
-class BuildList(generics.ListCreateAPIView):
+class BuildList(APIDownloadMixin, generics.ListCreateAPIView):
     """ API endpoint for accessing a list of Build objects.
 
     - GET: Return list of objects (with filters)
@@ -122,6 +124,14 @@ class BuildList(generics.ListCreateAPIView):
         queryset = build.serializers.BuildSerializer.annotate_queryset(queryset)
 
         return queryset
+
+    def download_queryset(self, queryset, export_format):
+        dataset = build.admin.BuildResource().export(queryset=queryset)
+
+        filedata = dataset.export(export_format)
+        filename = f"InvenTree_BuildOrders.{export_format}"
+
+        return DownloadFile(filedata, filename)
 
     def filter_queryset(self, queryset):
 

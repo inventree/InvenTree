@@ -901,7 +901,6 @@ class PartList(APIDownloadMixin, generics.ListCreateAPIView):
         dataset = PartResource().export(queryset=queryset)
 
         filedata = dataset.export(export_format)
-
         filename = f"InvenTree_Parts.{export_format}"
 
         return DownloadFile(filedata, filename)

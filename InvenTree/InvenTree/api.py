@@ -87,7 +87,7 @@ class APIDownloadMixin:
 
         export_format = request.query_params.get('export', None)
 
-        if export_format:
+        if export_format and export_format in ['csv', 'tsv', 'xls', 'xlsx']:
             queryset = self.filter_queryset(self.get_queryset())
             return self.download_queryset(queryset, export_format)
 
