@@ -1394,7 +1394,9 @@ function loadPurchaseOrderTable(table, options) {
         filters[key] = options.params[key];
     }
 
-    setupFilterList('purchaseorder', $(table));
+    var target = '#filter-list-purchaseorder';
+
+    setupFilterList('purchaseorder', $(table), target, {download: true});
 
     $(table).inventreeTable({
         url: '{% url "api-po-list" %}',

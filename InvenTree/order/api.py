@@ -20,7 +20,7 @@ from InvenTree.helpers import str2bool, DownloadFile
 from InvenTree.api import AttachmentMixin, APIDownloadMixin
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
 
-from order.admin import PurchaseOrderLineItemResource
+from order.admin import PurchaseOrderResource, PurchaseOrderLineItemResource
 import order.models as models
 import order.serializers as serializers
 from part.models import Part
@@ -110,7 +110,7 @@ class PurchaseOrderFilter(rest_filters.FilterSet):
         ]
 
 
-class PurchaseOrderList(generics.ListCreateAPIView):
+class PurchaseOrderList(APIDownloadMixin, generics.ListCreateAPIView):
     """ API endpoint for accessing a list of PurchaseOrder objects
 
     - GET: Return list of PurchaseOrder objects (with filters)
@@ -159,6 +159,15 @@ class PurchaseOrderList(generics.ListCreateAPIView):
         queryset = serializers.PurchaseOrderSerializer.annotate_queryset(queryset)
 
         return queryset
+
+    def download_queryset(self, queryset, export_format):
+        dataset = PurchaseOrderResource().export(queryset=queryset)
+
+        filedata = dataset.export(export_format)
+
+        filename = f"InvenTree_PurchaseOrders.{export_format}"
+
+        return DownloadFile(filedata, filename)
 
     def filter_queryset(self, queryset):
 
