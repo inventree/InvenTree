@@ -2233,7 +2233,7 @@ class Part(MPTTModel):
         for child in children:
             parts.append(child)
 
-        # Immediate parent
+        # Immediate parent, and siblings
         if self.variant_of:
             parts.append(self.variant_of)
 
