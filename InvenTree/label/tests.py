@@ -99,5 +99,5 @@ class LabelTest(InvenTreeAPITestCase):
             print("URL:", url)
             response = self.get(f'{url}?parts={part.pk}')
 
-            print("status:", response.status_code)
-            print("data:", response.data)
+            print("Response:")
+            print(response)
