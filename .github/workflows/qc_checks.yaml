@@ -207,7 +207,7 @@ jobs:
     name: Postgres
     needs: ['javascript', 'html']
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
+    #if: github.event_name == 'push'
 
     env:
       INVENTREE_DB_ENGINE: django.db.backends.postgresql
@@ -265,7 +265,7 @@ jobs:
     name: MySql
     needs: ['javascript', 'html']
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
+    #if: github.event_name == 'push'
 
     env:
       # Database backend configuration
