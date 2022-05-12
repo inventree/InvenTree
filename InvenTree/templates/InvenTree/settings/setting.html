@@ -22,6 +22,9 @@
         {{ setting.description }}
     </td>
     <td>
+        {% if setting.model_name %}
+        <b>Model name: {{ setting.model_name }}</b>
+        {% endif %}
         {% if setting.is_bool %}
         <div class='form-check form-switch'>
             <input class='form-check-input boolean-setting' fieldname='{{ setting.key.upper }}' pk='{{ setting.pk }}' setting='{{ setting.key.upper }}' id='setting-value-{{ setting.key.upper }}' type='checkbox' {% if setting.as_bool %}checked=''{% endif %} {% if plugin %}plugin='{{ plugin.slug }}'{% endif %}{% if user_setting %}user='{{request.user.id}}'{% endif %}{% if notification_setting %}notification='{{request.user.id}}'{% endif %}>

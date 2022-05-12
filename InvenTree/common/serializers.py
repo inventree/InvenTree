@@ -28,6 +28,8 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
     choices = serializers.SerializerMethodField()
 
+    model_name = serializers.CharField(read_only=True)
+
     def get_choices(self, obj):
         """
         Returns the choices available for a given item
@@ -75,6 +77,7 @@ class GlobalSettingsSerializer(SettingsSerializer):
             'description',
             'type',
             'choices',
+            'model_name',
         ]
 
 
@@ -96,6 +99,7 @@ class UserSettingsSerializer(SettingsSerializer):
             'user',
             'type',
             'choices',
+            'model_name',
         ]
 
 
@@ -124,6 +128,7 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
                 'description',
                 'type',
                 'choices',
+                'model_name',
             ]
 
         # set Meta class
