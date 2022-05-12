@@ -5,8 +5,9 @@ from django.contrib import admin
 
 from import_export.admin import ImportExportModelAdmin
 
-from import_export.resources import ModelResource
 from import_export.fields import Field
+from import_export.resources import ModelResource
+import import_export.widgets as widgets
 
 from .models import PurchaseOrder, PurchaseOrderLineItem, PurchaseOrderExtraLine
 from .models import SalesOrder, SalesOrderLineItem, SalesOrderExtraLine
@@ -92,6 +93,23 @@ class SalesOrderAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('customer',)
 
 
+class PurchaseOrderResource(ModelResource):
+    """
+    Class for managing import / export of PurchaseOrder data
+    """
+
+    # Add number of line items
+    line_items = Field(attribute='line_count', widget=widgets.IntegerWidget(), readonly=True)
+
+    # Is this order overdue?
+    overdue = Field(attribute='is_overdue', widget=widgets.BooleanWidget(), readonly=True)
+
+    class Meta:
+        model = PurchaseOrder
+        skip_unchanged = True
+        clean_model_instances = True
+
+
 class PurchaseOrderLineItemResource(ModelResource):
     """ Class for managing import / export of PurchaseOrderLineItem data """
 
@@ -115,6 +133,23 @@ class PurchaseOrderExtraLineResource(ModelResource):
 
     class Meta(GeneralExtraLineMeta):
         model = PurchaseOrderExtraLine
+
+
+class SalesOrderResource(ModelResource):
+    """
+    Class for managing import / export of SalesOrder data
+    """
+
+    # Add number of line items
+    line_items = Field(attribute='line_count', widget=widgets.IntegerWidget(), readonly=True)
+
+    # Is this order overdue?
+    overdue = Field(attribute='is_overdue', widget=widgets.BooleanWidget(), readonly=True)
+
+    class Meta:
+        model = SalesOrder
+        skip_unchanged = True
+        clean_model_instances = True
 
 
 class SalesOrderLineItemResource(ModelResource):

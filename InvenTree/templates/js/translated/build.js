@@ -2355,7 +2355,7 @@ function loadBuildTable(table, options) {
 
     var filterTarget = options.filterTarget || null;
 
-    setupFilterList('build', table, filterTarget);
+    setupFilterList('build', table, filterTarget, {download: true});
 
     $(table).inventreeTable({
         method: 'get',
