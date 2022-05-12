@@ -157,7 +157,7 @@ jobs:
         run: |
           cd ${{ env.wrapper_name }}
           invoke check-server
-          coverage run -m unittest -s test/
+          coverage run -m unittest discover -s test/
 
   coverage:
     name: Sqlite / coverage
