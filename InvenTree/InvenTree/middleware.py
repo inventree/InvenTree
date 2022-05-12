@@ -3,7 +3,6 @@
 from django.conf import settings
 from django.contrib.auth.middleware import PersistentRemoteUserMiddleware
 from django.http import HttpResponse
-from django.shortcuts import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse_lazy, Resolver404
 from django.urls import include, re_path
