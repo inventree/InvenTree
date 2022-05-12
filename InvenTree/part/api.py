@@ -49,7 +49,7 @@ from . import serializers as part_serializers
 
 from InvenTree.helpers import str2bool, isNull, increment
 from InvenTree.helpers import DownloadFile
-from InvenTree.api import AttachmentMixin
+from InvenTree.api import AttachmentMixin, APIDownloadMixin
 
 from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus, SalesOrderStatus
 
@@ -847,7 +847,7 @@ class PartFilter(rest_filters.FilterSet):
     virtual = rest_filters.BooleanFilter()
 
 
-class PartList(generics.ListCreateAPIView):
+class PartList(APIDownloadMixin, generics.ListCreateAPIView):
     """
     API endpoint for accessing a list of Part objects
 
@@ -897,6 +897,15 @@ class PartList(generics.ListCreateAPIView):
 
         return self.serializer_class(*args, **kwargs)
 
+    def download_queryset(self, queryset, export_format):
+        dataset = PartResource().export(queryset=queryset)
+
+        filedata = dataset.export(export_format)
+
+        filename = f"InvenTree_Parts.{export_format}"
+
+        return DownloadFile(filedata, filename)
+
     def list(self, request, *args, **kwargs):
         """
         Overide the 'list' method, as the PartCategory objects are
@@ -907,22 +916,6 @@ class PartList(generics.ListCreateAPIView):
         """
 
         queryset = self.filter_queryset(self.get_queryset())
-
-        # Check if we wish to export the queried data to a file.
-        # If so, skip pagination!
-        export_format = request.query_params.get('export', None)
-
-        if export_format:
-            export_format = str(export_format).strip().lower()
-
-            if export_format in ['csv', 'tsv', 'xls', 'xlsx']:
-                dataset = PartResource().export(queryset=queryset)
-
-                filedata = dataset.export(export_format)
-
-                filename = f"InvenTree_Parts.{export_format}"
-
-                return DownloadFile(filedata, filename)
 
         page = self.paginate_queryset(queryset)
 
