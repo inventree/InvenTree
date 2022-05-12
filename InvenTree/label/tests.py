@@ -97,7 +97,7 @@ class LabelTest(InvenTreeAPITestCase):
             url = reverse('api-part-label-print', kwargs={'pk': label.pk})
 
             print("URL:", url)
-            response = self.get(f'{url}?parts={part.pk}')  #, expected_code=200)
+            response = self.get(f'{url}?parts={part.pk}')
 
             print("status:", response.status_code)
             print("data:", response.data)
