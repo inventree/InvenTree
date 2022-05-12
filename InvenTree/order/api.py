@@ -17,10 +17,11 @@ from company.models import SupplierPart
 
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import str2bool, DownloadFile
-from InvenTree.api import AttachmentMixin
+from InvenTree.api import AttachmentMixin, APIDownloadMixin
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
 
-from order.admin import PurchaseOrderLineItemResource
+from order.admin import PurchaseOrderResource, PurchaseOrderLineItemResource
+from order.admin import SalesOrderResource
 import order.models as models
 import order.serializers as serializers
 from part.models import Part
@@ -110,7 +111,7 @@ class PurchaseOrderFilter(rest_filters.FilterSet):
         ]
 
 
-class PurchaseOrderList(generics.ListCreateAPIView):
+class PurchaseOrderList(APIDownloadMixin, generics.ListCreateAPIView):
     """ API endpoint for accessing a list of PurchaseOrder objects
 
     - GET: Return list of PurchaseOrder objects (with filters)
@@ -159,6 +160,15 @@ class PurchaseOrderList(generics.ListCreateAPIView):
         queryset = serializers.PurchaseOrderSerializer.annotate_queryset(queryset)
 
         return queryset
+
+    def download_queryset(self, queryset, export_format):
+        dataset = PurchaseOrderResource().export(queryset=queryset)
+
+        filedata = dataset.export(export_format)
+
+        filename = f"InvenTree_PurchaseOrders.{export_format}"
+
+        return DownloadFile(filedata, filename)
 
     def filter_queryset(self, queryset):
 
@@ -407,7 +417,7 @@ class PurchaseOrderLineItemFilter(rest_filters.FilterSet):
         return queryset
 
 
-class PurchaseOrderLineItemList(generics.ListCreateAPIView):
+class PurchaseOrderLineItemList(APIDownloadMixin, generics.ListCreateAPIView):
     """ API endpoint for accessing a list of PurchaseOrderLineItem objects
 
     - GET: Return a list of PurchaseOrder Line Item objects
@@ -460,24 +470,18 @@ class PurchaseOrderLineItemList(generics.ListCreateAPIView):
 
         return queryset
 
+    def download_queryset(self, queryset, export_format):
+        dataset = PurchaseOrderLineItemResource().export(queryset=queryset)
+
+        filedata = dataset.export(export_format)
+
+        filename = f"InvenTree_PurchaseOrderItems.{export_format}"
+
+        return DownloadFile(filedata, filename)
+
     def list(self, request, *args, **kwargs):
 
         queryset = self.filter_queryset(self.get_queryset())
-
-        # Check if we wish to export the queried data to a file
-        export_format = request.query_params.get('export', None)
-
-        if export_format:
-            export_format = str(export_format).strip().lower()
-
-            if export_format in ['csv', 'tsv', 'xls', 'xlsx']:
-                dataset = PurchaseOrderLineItemResource().export(queryset=queryset)
-
-                filedata = dataset.export(export_format)
-
-                filename = f"InvenTree_PurchaseOrderData.{export_format}"
-
-                return DownloadFile(filedata, filename)
 
         page = self.paginate_queryset(queryset)
 
@@ -580,7 +584,7 @@ class SalesOrderAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, Attachme
     serializer_class = serializers.SalesOrderAttachmentSerializer
 
 
-class SalesOrderList(generics.ListCreateAPIView):
+class SalesOrderList(APIDownloadMixin, generics.ListCreateAPIView):
     """
     API endpoint for accessing a list of SalesOrder objects.
 
@@ -629,6 +633,15 @@ class SalesOrderList(generics.ListCreateAPIView):
         queryset = serializers.SalesOrderSerializer.annotate_queryset(queryset)
 
         return queryset
+
+    def download_queryset(self, queryset, export_format):
+        dataset = SalesOrderResource().export(queryset=queryset)
+
+        filedata = dataset.export(export_format)
+
+        filename = f"InvenTree_SalesOrders.{export_format}"
+
+        return DownloadFile(filedata, filename)
 
     def filter_queryset(self, queryset):
         """

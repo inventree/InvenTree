@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-
-from django.urls import reverse
-from django.urls import path, re_path
+from django.urls import reverse, path, re_path
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework.exceptions import ValidationError
@@ -12,8 +10,8 @@ from rest_framework.views import APIView
 from stock.models import StockItem
 from stock.serializers import StockItemSerializer
 
-from barcodes.plugins.inventree_barcode import InvenTreeBarcodePlugin
-from barcodes.barcode import hash_barcode
+from plugin.builtin.barcodes.inventree_barcode import InvenTreeBarcodePlugin
+from plugin.builtin.barcodes.mixins import hash_barcode
 from plugin import registry
 
 

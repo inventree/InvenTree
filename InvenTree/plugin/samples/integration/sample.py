@@ -65,6 +65,16 @@ class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixi
             ],
             'default': 'A',
         },
+        'SELECT_COMPANY': {
+            'name': 'Company',
+            'description': 'Select a company object from the database',
+            'model': 'company.company',
+        },
+        'SELECT_PART': {
+            'name': 'Part',
+            'description': 'Select a part object from the database',
+            'model': 'part.part',
+        },
     }
 
     NAVIGATION = [
