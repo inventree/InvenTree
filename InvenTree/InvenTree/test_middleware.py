@@ -33,7 +33,7 @@ class MiddlewareTests(TestCase):
         self.client.logout()
 
         # check that static files go through
-        self.check_path('/static/admin/fonts/LICENSE.txt')
+        self.check_path('/static/admin/css/login.css')
 
         # check that account things go through
         self.check_path(reverse('account_login'))
