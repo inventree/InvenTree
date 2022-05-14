@@ -86,13 +86,3 @@ class LabelTest(InvenTreeAPITestCase):
 
         with self.assertRaises(ValidationError):
             validateFilterString(bad_filter_string, model=StockItem)
-
-    def test_label_rendering(self):
-        """Test label rendering"""
-
-        labels = PartLabel.objects.all()
-        part = PartLabel.objects.first()
-
-        for label in labels:
-            url = reverse('api-part-label-print', kwargs={'pk': label.pk})
-            self.get(f'{url}?parts={part.pk}', expected_code=200)
