@@ -45,6 +45,7 @@ class ExampleScheduledTaskPluginTests(TestCase):
 
     def test_calling(self):
         """check if a function can be called without errors"""
+        # Check with right parameters
         self.assertEqual(call_function('schedule', 'member_func'), False)
 
         # Check with wrong key
