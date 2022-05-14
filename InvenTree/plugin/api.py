@@ -144,7 +144,8 @@ class PluginSettingDetail(generics.RetrieveUpdateAPIView):
         plugin = registry.get_plugin(plugin_slug)
 
         if plugin is None:
-            raise NotFound(detail=f"Plugin '{plugin_slug}' not found")
+            # This only occurs if the plugin mechanism broke
+            raise NotFound(detail=f"Plugin '{plugin_slug}' not found")  # pragma: no cover
 
         settings = getattr(plugin, 'SETTINGS', {})
 
