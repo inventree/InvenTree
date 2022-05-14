@@ -49,7 +49,7 @@ class ExampleScheduledTaskPluginTests(TestCase):
         self.assertEqual(call_function('schedule', 'member_func'), False)
 
         # Check with wrong key
-        self.assertEqual(call_function('does_not_exsist', 'member_func'), '')
+        self.assertEqual(call_function('does_not_exsist', 'member_func'), None)
 
 
 class ScheduledTaskPluginTests(TestCase):
