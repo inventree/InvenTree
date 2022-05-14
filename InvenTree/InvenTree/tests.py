@@ -451,6 +451,11 @@ class TestSettings(TestCase):
         self.user_mdl = get_user_model()
         self.env = EnvironmentVarGuard()
 
+        # Create a user for auth
+        user = get_user_model()
+        self.user = user.objects.create_superuser('testuser', 'test@testing.com', 'password')
+        self.client.login(username='testuser', password='password')
+
     def run_reload(self):
         from plugin import registry
 
@@ -493,6 +498,22 @@ class TestSettings(TestCase):
 
         # make sure to clean up
         settings.TESTING_ENV = False
+
+    def test_initial_install(self):
+        """Test if install of plugins on startup works"""
+        from plugin import registry
+
+        # Check an install run
+        response = registry.install_plugin_file()
+        self.assertEqual(response, 'first_run')
+
+        # Set dynamic setting to True and rerun to launch install
+        InvenTreeSetting.set_setting('PLUGIN_ON_STARTUP', True, self.user)
+        registry.reload_plugins()
+
+        # Check that there was anotehr run
+        response = registry.install_plugin_file()
+        self.assertEqual(response, True)
 
     def test_helpers_cfg_file(self):
         # normal run - not configured
