@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-12 08:01+0000\n"
-"PO-Revision-Date: 2022-05-13 00:49\n"
+"PO-Revision-Date: 2022-05-14 00:54\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -94,7 +94,7 @@ msgstr "Keine Seriennummer angegeben"
 #: InvenTree/helpers.py:491
 #, python-brace-format
 msgid "Invalid group range: {g}"
-msgstr ""
+msgstr "Ungültiger Gruppenbereich: {g}"
 
 #: InvenTree/helpers.py:494
 #, python-brace-format
@@ -1052,11 +1052,11 @@ msgstr "Endprodukte fertigstellen, auch wenn Bestand nicht fertig zugewiesen wur
 
 #: build/serializers.py:460
 msgid "Remove Allocated Stock"
-msgstr ""
+msgstr "Zugewiesenen Bestand entfernen"
 
 #: build/serializers.py:461
 msgid "Subtract any stock which has already been allocated to this build"
-msgstr ""
+msgstr "Abzug aller Lagerbestände, die diesem Build bereits zugewiesen wurden"
 
 #: build/serializers.py:467
 msgid "Remove Incomplete Outputs"
@@ -1064,7 +1064,7 @@ msgstr "Unfertige Endprodukte entfernen"
 
 #: build/serializers.py:468
 msgid "Delete any build outputs which have not been completed"
-msgstr ""
+msgstr "Lösche alle noch nicht abgeschlossenen Build-Ausgänge"
 
 #: build/serializers.py:493
 msgid "Accept Unallocated"
@@ -1658,7 +1658,7 @@ msgstr ""
 
 #: common/models.py:851
 msgid "Allow barcode scanning via webcam in browser"
-msgstr ""
+msgstr "Barcode-Scannen über Webcam im Browser erlauben"
 
 #: common/models.py:857
 msgid "IPN Regex"
@@ -2994,7 +2994,7 @@ msgstr "Internes Teil"
 
 #: company/templates/company/manufacturer_part.html:95
 msgid "No manufacturer information available"
-msgstr ""
+msgstr "Keine Produktionsdaten verfügbar"
 
 #: company/templates/company/manufacturer_part.html:120
 #: company/templates/company/supplier_part.html:15 company/views.py:50
@@ -3084,7 +3084,7 @@ msgstr "Zuliefererteil entfernen"
 
 #: company/templates/company/supplier_part.html:91
 msgid "No supplier information available"
-msgstr ""
+msgstr "Keine Lieferinformationen verfügbar"
 
 #: company/templates/company/supplier_part.html:144
 #: company/templates/company/supplier_part_navbar.html:12
@@ -3883,7 +3883,7 @@ msgstr "Ausgewählte Positionen erhalten"
 #: order/templates/order/purchase_order_detail.html:48
 #: order/templates/order/sales_order_detail.html:40
 msgid "Extra Lines"
-msgstr ""
+msgstr "Zusätzliche Linien"
 
 #: order/templates/order/purchase_order_detail.html:53
 #: order/templates/order/sales_order_detail.html:45
@@ -4183,7 +4183,7 @@ msgstr "Revisions- oder Versionsnummer"
 #: part/models.py:865 part/templates/part/part_base.html:273
 #: report/models.py:196 templates/js/translated/part.js:670
 msgid "Revision"
-msgstr ""
+msgstr "Version"
 
 #: part/models.py:887
 msgid "Where is this item normally stored?"
@@ -5500,11 +5500,11 @@ msgstr "Barcode Lagerartikel zugeordnet"
 
 #: plugin/builtin/integration/core_notifications.py:24
 msgid "InvenTree contributors"
-msgstr ""
+msgstr "InvenTree Mitwirkende"
 
 #: plugin/builtin/integration/core_notifications.py:25
 msgid "Integrated outgoing notificaton methods"
-msgstr ""
+msgstr "Integrierte Ausgehende Benachrichtigungsmethoden"
 
 #: plugin/builtin/integration/core_notifications.py:29
 #: plugin/builtin/integration/core_notifications.py:46
@@ -6822,7 +6822,7 @@ msgstr "Plugin-Einstellungen"
 
 #: templates/InvenTree/settings/plugin.html:16
 msgid "Changing the settings below require you to immediatly restart the server. Do not change this while under active usage."
-msgstr ""
+msgstr "Wenn Sie die folgenden Einstellungen ändern, müssen Sie InvenTree sofort neu starten. Ändern Sie dies nicht während der aktiven Nutzung."
 
 #: templates/InvenTree/settings/plugin.html:34
 msgid "Plugins"
@@ -6954,7 +6954,7 @@ msgstr "Plugin-Einstellungen bearbeiten"
 
 #: templates/InvenTree/settings/settings.html:121
 msgid "Edit Notification Setting"
-msgstr ""
+msgstr "Benachrichtigungs-Einstellungen"
 
 #: templates/InvenTree/settings/settings.html:124
 msgid "Edit Global Setting"
@@ -8647,19 +8647,19 @@ msgstr "Fertigstellen dieser Bestellung bedeutet, dass sie und ihre Positionen n
 
 #: templates/js/translated/order.js:197
 msgid "Cancel Purchase Order"
-msgstr ""
+msgstr "Bestellung abbrechen"
 
 #: templates/js/translated/order.js:202
 msgid "Are you sure you wish to cancel this purchase order?"
-msgstr ""
+msgstr "Sind Sie sicher, dass Sie diese Bestellung abbrechen möchten?"
 
 #: templates/js/translated/order.js:208
 msgid "This purchase order can not be cancelled"
-msgstr ""
+msgstr "Diese Bestellung kann nicht storniert werden"
 
 #: templates/js/translated/order.js:231
 msgid "Issue Purchase Order"
-msgstr ""
+msgstr "Bestellung aufgeben"
 
 #: templates/js/translated/order.js:236
 msgid "After placing this purchase order, line items will no longer be editable."
@@ -8667,7 +8667,7 @@ msgstr "Nachdem diese Bestellung plaziert ist können die Positionen nicht läng
 
 #: templates/js/translated/order.js:258
 msgid "Cancel Sales Order"
-msgstr ""
+msgstr "Verkaufsauftrag stornieren"
 
 #: templates/js/translated/order.js:263
 msgid "Cancelling this order means that the order will no longer be editable."
@@ -8695,27 +8695,27 @@ msgstr ""
 
 #: templates/js/translated/order.js:660
 msgid "Quantity to order"
-msgstr ""
+msgstr "Menge in der Bestellung"
 
 #: templates/js/translated/order.js:669
 msgid "New supplier part"
-msgstr ""
+msgstr "Neues Zuliefererteil"
 
 #: templates/js/translated/order.js:687
 msgid "New purchase order"
-msgstr ""
+msgstr "Neue Bestellungen"
 
 #: templates/js/translated/order.js:720
 msgid "Add to purchase order"
-msgstr ""
+msgstr "Zur Bestellung hinzufügen"
 
 #: templates/js/translated/order.js:829
 msgid "No matching supplier parts"
-msgstr ""
+msgstr "Keine passenden Lieferantenteile"
 
 #: templates/js/translated/order.js:844
 msgid "No matching purchase orders"
-msgstr ""
+msgstr "Keine passenden Einkaufsaufträge"
 
 #: templates/js/translated/order.js:1000
 msgid "Select Line Items"
