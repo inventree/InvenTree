@@ -47,6 +47,9 @@ class ExampleScheduledTaskPluginTests(TestCase):
         """check if a function can be called without errors"""
         self.assertEqual(call_function('schedule', 'member_func'), False)
 
+        # Check with wrong key
+        self.assertEqual(call_function('does_not_exsist', 'member_func'), '')
+
 
 class ScheduledTaskPluginTests(TestCase):
     """ Tests for ScheduledTaskPluginTests mixin base """
