@@ -60,7 +60,7 @@ class MiddlewareTests(TestCase):
         self.check_path(reverse('settings.js'), HTTP_Authorization=f'Token {token}')
 
         # Request with broken token
-        self.check_path(reverse('settings.js'), 401, HTTP_Authorization=f'Token abcd123')
+        self.check_path(reverse('settings.js'), 401, HTTP_Authorization='Token abcd123')
 
         # should still fail without token
         self.check_path(reverse('settings.js'), 401)
