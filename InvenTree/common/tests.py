@@ -503,6 +503,11 @@ class PluginSettingsApiTest(InvenTreeAPITestCase):
         response = self.get(url, expected_code=404)
         self.assertIn("Plugin 'doesnotexist' not installed", str(response.data))
 
+        # Wrong key
+        url = reverse('api-plugin-setting-detail', kwargs={'plugin': 'sample', 'key': 'doesnotexsist'})
+        response = self.get(url, expected_code=404)
+        self.assertIn("Plugin 'sample' has no setting matching 'doesnotexsist'", str(response.data))
+
     def test_invalid_setting_key(self):
         """Test that an invalid setting key returns a 404"""
         ...
