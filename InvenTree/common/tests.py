@@ -496,9 +496,9 @@ class PluginSettingsApiTest(InvenTreeAPITestCase):
         self.assertTrue(response.data['type'], 'string')
         self.assertTrue(response.data['description'], 'Key required for accessing external API')
 
-    def test_invalid_plugin_slug(self):
-        """Test that an invalid plugin slug returns a 404"""
+        # Failure mode tests
 
+        # Non - exsistant plugin
         url = reverse('api-plugin-setting-detail', kwargs={'plugin': 'doesnotexist', 'key': 'doesnotmatter'})
 
         response = self.get(url, expected_code=404)
