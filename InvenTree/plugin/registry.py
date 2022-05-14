@@ -227,7 +227,7 @@ class PluginsRegistry:
 
         if settings.PLUGIN_FILE_CHECKED:
             logger.info('Plugin file was already checked')
-            return
+            return True
 
         try:
             output = str(subprocess.check_output(['pip', 'install', '-U', '-r', settings.PLUGIN_FILE], cwd=os.path.dirname(settings.BASE_DIR)), 'utf-8')
@@ -239,6 +239,7 @@ class PluginsRegistry:
 
         # do not run again
         settings.PLUGIN_FILE_CHECKED = True
+        return 'first_run'
 
     # endregion
 
