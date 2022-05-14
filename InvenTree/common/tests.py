@@ -12,7 +12,7 @@ from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.helpers import str2bool
 from plugin.models import NotificationUserSetting
 
-from .models import InvenTreeSetting, InvenTreeUserSetting, WebhookEndpoint, WebhookMessage, NotificationEntry
+from .models import InvenTreeSetting, InvenTreeUserSetting, WebhookEndpoint, WebhookMessage, NotificationEntry, ColorTheme
 from .api import WebhookView
 
 CONTENT_TYPE_JSON = 'application/json'
@@ -653,3 +653,24 @@ class LoadingTest(TestCase):
 
         # now it should be false again
         self.assertFalse(common.models.InvenTreeSetting.get_setting('SERVER_RESTART_REQUIRED'))
+
+
+class ColorThemeTest(TestCase):
+    """Tests for ColorTheme"""
+
+    def test_choices(self):
+        result = ColorTheme.get_color_themes_choices()
+
+        self.assertIn(('default', 'Default'), result)
+
+    def test_valid_choice(self):
+        # check wrong reference
+        self.assertFalse(ColorTheme.is_valid_choice('abcdd'))
+
+        # create themes
+        aa = ColorTheme.objects.create(user='aa', name='testname')
+        ab = ColorTheme.objects.create(user='ab', name='darker')
+
+        # check valid theme
+        self.assertFalse(ColorTheme.is_valid_choice(aa))
+        self.assertTrue(ColorTheme.is_valid_choice(ab))
