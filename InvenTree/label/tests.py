@@ -7,13 +7,12 @@ import os
 
 from django.conf import settings
 from django.apps import apps
-from django.urls import reverse
 from django.core.exceptions import ValidationError
 
 from InvenTree.helpers import validateFilterString
 from InvenTree.api_tester import InvenTreeAPITestCase
 
-from .models import StockItemLabel, StockLocationLabel, PartLabel
+from .models import StockItemLabel, StockLocationLabel
 from stock.models import StockItem
 
 
