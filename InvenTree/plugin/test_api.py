@@ -45,6 +45,14 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
         }, expected_code=201).data
         self.assertEqual(data['success'], True)
 
+        # valid - github url and packagename
+        data = self.post(url, {
+            'confirm': True,
+            'url': self.PKG_URL,
+            'packagename': 'minimal',
+        }, expected_code=201).data
+        self.assertEqual(data['success'], True)
+
         # invalid tries
         # no input
         self.post(url, {}, expected_code=400)
