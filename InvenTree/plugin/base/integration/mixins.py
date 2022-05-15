@@ -11,9 +11,8 @@ from django.db.utils import OperationalError, ProgrammingError
 
 import InvenTree.helpers
 
-from plugin.helpers import MixinImplementationError, MixinNotImplementedError
+from plugin.helpers import MixinImplementationError, MixinNotImplementedError, render_template
 from plugin.models import PluginConfig, PluginSetting
-from plugin.template import render_template
 from plugin.urls import PLUGIN_BASE
 
 
@@ -238,32 +237,6 @@ class ScheduleMixin:
             logger.warning("unregister_tasks failed, database not ready")
 
 
-class EventMixin:
-    """
-    Mixin that provides support for responding to triggered events.
-
-    Implementing classes must provide a "process_event" function:
-    """
-
-    def process_event(self, event, *args, **kwargs):
-        """
-        Function to handle events
-        Must be overridden by plugin
-        """
-        # Default implementation does not do anything
-        raise MixinNotImplementedError
-
-    class MixinMeta:
-        """
-        Meta options for this mixin
-        """
-        MIXIN_NAME = 'Events'
-
-    def __init__(self):
-        super().__init__()
-        self.add_mixin('events', True, __class__)
-
-
 class UrlsMixin:
     """
     Mixin that enables custom URLs for the plugin
@@ -396,42 +369,6 @@ class AppMixin:
         return True
 
 
-class LabelPrintingMixin:
-    """
-    Mixin which enables direct printing of stock labels.
-
-    Each plugin must provide a PLUGIN_NAME attribute, which is used to uniquely identify the printer.
-
-    The plugin must also implement the print_label() function
-    """
-
-    class MixinMeta:
-        """
-        Meta options for this mixin
-        """
-        MIXIN_NAME = 'Label printing'
-
-    def __init__(self):  # pragma: no cover
-        super().__init__()
-        self.add_mixin('labels', True, __class__)
-
-    def print_label(self, label, **kwargs):
-        """
-        Callback to print a single label
-
-        Arguments:
-            label: A black-and-white pillow Image object
-
-        kwargs:
-            length: The length of the label (in mm)
-            width: The width of the label (in mm)
-
-        """
-
-        # Unimplemented (to be implemented by the particular plugin class)
-        ...  # pragma: no cover
-
-
 class APICallMixin:
     """
     Mixin that enables easier API calls for a plugin
@@ -447,15 +384,15 @@ class APICallMixin:
 
     Example:
     ```
-    from plugin import IntegrationPluginBase
+    from plugin import InvenTreePlugin
     from plugin.mixins import APICallMixin, SettingsMixin
 
 
-    class SampleApiCallerPlugin(APICallMixin, SettingsMixin, IntegrationPluginBase):
+    class SampleApiCallerPlugin(APICallMixin, SettingsMixin, InvenTreePlugin):
         '''
         A small api call sample
         '''
-        PLUGIN_NAME = "Sample API Caller"
+        NAME = "Sample API Caller"
 
         SETTINGS = {
             'API_TOKEN': {
@@ -496,9 +433,9 @@ class APICallMixin:
     def has_api_call(self):
         """Is the mixin ready to call external APIs?"""
         if not bool(self.API_URL_SETTING):
-            raise ValueError("API_URL_SETTING must be defined")
+            raise MixinNotImplementedError("API_URL_SETTING must be defined")
         if not bool(self.API_TOKEN_SETTING):
-            raise ValueError("API_TOKEN_SETTING must be defined")
+            raise MixinNotImplementedError("API_TOKEN_SETTING must be defined")
         return True
 
     @property

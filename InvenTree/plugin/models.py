@@ -4,14 +4,16 @@ Plugin model definitions
 
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import warnings
 
 from django.utils.translation import gettext_lazy as _
 from django.db import models
 from django.contrib.auth.models import User
+from django.conf import settings
 
 import common.models
 
-from plugin import InvenTreePluginBase, registry
+from plugin import InvenTreePlugin, registry
 
 
 class PluginConfig(models.Model):
@@ -59,7 +61,7 @@ class PluginConfig(models.Model):
 
         try:
             return self.plugin._mixinreg
-        except (AttributeError, ValueError):
+        except (AttributeError, ValueError):  # pragma: no cover
             return {}
 
     # functions
@@ -97,6 +99,8 @@ class PluginConfig(models.Model):
         if not reload:
             if (self.active is False and self.__org_active is True) or \
                (self.active is True and self.__org_active is False):
+                if settings.PLUGIN_TESTING:
+                    warnings.warn('A reload was triggered')
                 registry.reload_plugins()
 
         return ret
@@ -141,7 +145,7 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
 
             if plugin:
 
-                if issubclass(plugin.__class__, InvenTreePluginBase):
+                if issubclass(plugin.__class__, InvenTreePlugin):
                     plugin = plugin.plugin_config()
 
                 kwargs['settings'] = registry.mixins_settings.get(plugin.key, {})
