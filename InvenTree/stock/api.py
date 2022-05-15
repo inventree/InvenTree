@@ -33,7 +33,7 @@ from company.serializers import CompanySerializer, SupplierPartSerializer
 
 from InvenTree.helpers import str2bool, isNull, extract_serial_numbers
 from InvenTree.helpers import DownloadFile
-from InvenTree.api import AttachmentMixin
+from InvenTree.api import AttachmentMixin, APIDownloadMixin
 from InvenTree.filters import InvenTreeOrderingFilter
 
 from order.models import PurchaseOrder
@@ -505,7 +505,7 @@ class StockFilter(rest_filters.FilterSet):
     updated_after = rest_filters.DateFilter(label='Updated after', field_name='updated', lookup_expr='gte')
 
 
-class StockList(generics.ListCreateAPIView):
+class StockList(APIDownloadMixin, generics.ListCreateAPIView):
     """ API endpoint for list view of Stock objects
 
     - GET: Return a list of all StockItem objects (with optional query filters)
@@ -646,6 +646,22 @@ class StockList(generics.ListCreateAPIView):
 
             return Response(response_data, status=status.HTTP_201_CREATED, headers=self.get_success_headers(serializer.data))
 
+    def download_queryset(self, queryset, export_format):
+        """
+        Download this queryset as a file.
+        Uses the APIDownloadMixin mixin class
+        """
+        dataset = StockItemResource().export(queryset=queryset)
+
+        filedata = dataset.export(export_format)
+
+        filename = 'InvenTree_StockItems_{date}.{fmt}'.format(
+            date=datetime.now().strftime("%d-%b-%Y"),
+            fmt=export_format
+        )
+
+        return DownloadFile(filedata, filename)
+
     def list(self, request, *args, **kwargs):
         """
         Override the 'list' method, as the StockLocation objects
@@ -657,25 +673,6 @@ class StockList(generics.ListCreateAPIView):
         queryset = self.filter_queryset(self.get_queryset())
 
         params = request.query_params
-
-        # Check if we wish to export the queried data to a file.
-        # If so, skip pagination!
-        export_format = params.get('export', None)
-
-        if export_format:
-            export_format = str(export_format).strip().lower()
-
-            if export_format in ['csv', 'tsv', 'xls', 'xlsx']:
-                dataset = StockItemResource().export(queryset=queryset)
-
-                filedata = dataset.export(export_format)
-
-                filename = 'InvenTree_Stocktake_{date}.{fmt}'.format(
-                    date=datetime.now().strftime("%d-%b-%Y"),
-                    fmt=export_format
-                )
-
-                return DownloadFile(filedata, filename)
 
         page = self.paginate_queryset(queryset)
 

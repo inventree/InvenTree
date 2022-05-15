@@ -1,34 +1,38 @@
 """ Unit tests for action plugins """
 
 from django.test import TestCase
+from django.contrib.auth import get_user_model
 
-from plugin.action import ActionPlugin
+from plugin import InvenTreePlugin
+from plugin.mixins import ActionMixin
 
 
-class ActionPluginTests(TestCase):
-    """ Tests for ActionPlugin """
+class ActionMixinTests(TestCase):
+    """ Tests for ActionMixin """
     ACTION_RETURN = 'a action was performed'
 
     def setUp(self):
-        self.plugin = ActionPlugin('user')
+        class SimplePlugin(ActionMixin, InvenTreePlugin):
+            pass
+        self.plugin = SimplePlugin('user')
 
-        class TestActionPlugin(ActionPlugin):
+        class TestActionPlugin(ActionMixin, InvenTreePlugin):
             """a action plugin"""
             ACTION_NAME = 'abc123'
 
             def perform_action(self):
-                return ActionPluginTests.ACTION_RETURN + 'action'
+                return ActionMixinTests.ACTION_RETURN + 'action'
 
             def get_result(self):
-                return ActionPluginTests.ACTION_RETURN + 'result'
+                return ActionMixinTests.ACTION_RETURN + 'result'
 
             def get_info(self):
-                return ActionPluginTests.ACTION_RETURN + 'info'
+                return ActionMixinTests.ACTION_RETURN + 'info'
 
         self.action_plugin = TestActionPlugin('user')
 
-        class NameActionPlugin(ActionPlugin):
-            PLUGIN_NAME = 'Aplugin'
+        class NameActionPlugin(ActionMixin, InvenTreePlugin):
+            NAME = 'Aplugin'
 
         self.action_name = NameActionPlugin('user')
 
@@ -59,3 +63,32 @@ class ActionPluginTests(TestCase):
             "result": self.ACTION_RETURN + 'result',
             "info": self.ACTION_RETURN + 'info',
         })
+
+
+class APITests(TestCase):
+    """ Tests for action api """
+
+    def setUp(self):
+        # Create a user for auth
+        user = get_user_model()
+        self.test_user = user.objects.create_user('testuser', 'test@testing.com', 'password')
+        self.client.login(username='testuser', password='password')
+
+    def test_post_errors(self):
+        """Check the possible errors with post"""
+
+        # Test empty request
+        response = self.client.post('/api/action/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.data,
+            {'error': 'No action specified'}
+        )
+
+        # Test non-exsisting action
+        response = self.client.post('/api/action/', data={'action': "nonexsisting"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.data,
+            {'error': 'No matching action found', 'action': 'nonexsisting'}
+        )

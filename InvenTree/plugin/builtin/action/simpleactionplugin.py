@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
-"""sample implementation for ActionPlugin"""
-from plugin.action import ActionPlugin
+"""sample implementation for ActionMixin"""
+from plugin import InvenTreePlugin
+from plugin.mixins import ActionMixin
 
 
-class SimpleActionPlugin(ActionPlugin):
+class SimpleActionPlugin(ActionMixin, InvenTreePlugin):
     """
     An EXTREMELY simple action plugin which demonstrates
-    the capability of the ActionPlugin class
+    the capability of the ActionMixin class
     """
 
-    PLUGIN_NAME = "SimpleActionPlugin"
+    NAME = "SimpleActionPlugin"
     ACTION_NAME = "simple"
 
     def perform_action(self):

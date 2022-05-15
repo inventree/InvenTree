@@ -2,21 +2,21 @@
 Sample plugin which renders custom panels on certain pages
 """
 
-from plugin import IntegrationPluginBase
+from plugin import InvenTreePlugin
 from plugin.mixins import PanelMixin, SettingsMixin
 
 from part.views import PartDetail
 from stock.views import StockLocationDetail
 
 
-class CustomPanelSample(PanelMixin, SettingsMixin, IntegrationPluginBase):
+class CustomPanelSample(PanelMixin, SettingsMixin, InvenTreePlugin):
     """
     A sample plugin which renders some custom panels.
     """
 
-    PLUGIN_NAME = "CustomPanelExample"
-    PLUGIN_SLUG = "panel"
-    PLUGIN_TITLE = "Custom Panel Example"
+    NAME = "CustomPanelExample"
+    SLUG = "panel"
+    TITLE = "Custom Panel Example"
     DESCRIPTION = "An example plugin demonstrating how custom panels can be added to the user interface"
     VERSION = "0.1"
 
