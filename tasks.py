@@ -112,6 +112,9 @@ def setup_dev(c):
     # Install pre-commit hook
     c.run('pre-commit install')
 
+    # Update all the hooks
+    c.run('pre-commit autoupdate')
+
 @task
 def shell(c):
     """
