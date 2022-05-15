@@ -29,7 +29,7 @@
 {% endif %}
 
 {% mixin_available "locate" as locate_available %}
-{% if plugins_enabled and locate_available %}
+{% if location and plugins_enabled and locate_available %}
 <button id='locate-location-button' title='{% trans "Locate stock location" %}' class='btn btn-outline-secondary' typy='button'>
     <span class='fas fa-search-location'></span>
 </button>
