@@ -45,6 +45,14 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
         }, expected_code=201).data
         self.assertEqual(data['success'], True)
 
+        # valid - github url and packagename
+        data = self.post(url, {
+            'confirm': True,
+            'url': self.PKG_URL,
+            'packagename': 'minimal',
+        }, expected_code=201).data
+        self.assertEqual(data['success'], True)
+
         # invalid tries
         # no input
         self.post(url, {}, expected_code=400)
@@ -124,3 +132,30 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
             '_save': 'Save',
         }, follow=True)
         self.assertEqual(response.status_code, 200)
+
+    def test_model(self):
+        """
+        Test the PluginConfig model
+        """
+        from plugin.models import PluginConfig
+        from plugin import registry
+
+        fixtures = PluginConfig.objects.all()
+
+        # check if plugins were registered
+        if not fixtures:
+            registry.reload_plugins()
+            fixtures = PluginConfig.objects.all()
+
+        # check mixin registry
+        plg = fixtures.first()
+        mixin_dict = plg.mixins()
+        self.assertIn('base', mixin_dict)
+        self.assertDictContainsSubset({'base': {'key': 'base', 'human_name': 'base'}}, mixin_dict)
+
+        # check reload on save
+        with self.assertWarns(Warning) as cm:
+            plg_inactive = fixtures.filter(active=False).first()
+            plg_inactive.active = True
+            plg_inactive.save()
+        self.assertEqual(cm.warning.args[0], 'A reload was triggered')

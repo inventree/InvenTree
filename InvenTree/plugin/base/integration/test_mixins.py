@@ -1,17 +1,14 @@
-""" Unit tests for integration plugins """
+""" Unit tests for base mixins for plugins """
 
 from django.test import TestCase
 from django.conf import settings
 from django.urls import include, re_path
 from django.contrib.auth import get_user_model
 
-from datetime import datetime
-
-from plugin import IntegrationPluginBase
+from plugin import InvenTreePlugin
 from plugin.mixins import AppMixin, SettingsMixin, UrlsMixin, NavigationMixin, APICallMixin
 from plugin.urls import PLUGIN_BASE
-
-from plugin.samples.integration.sample import SampleIntegrationPlugin
+from plugin.helpers import MixinNotImplementedError
 
 
 class BaseMixinDefinition:
@@ -30,11 +27,11 @@ class SettingsMixinTest(BaseMixinDefinition, TestCase):
     TEST_SETTINGS = {'SETTING1': {'default': '123', }}
 
     def setUp(self):
-        class SettingsCls(SettingsMixin, IntegrationPluginBase):
+        class SettingsCls(SettingsMixin, InvenTreePlugin):
             SETTINGS = self.TEST_SETTINGS
         self.mixin = SettingsCls()
 
-        class NoSettingsCls(SettingsMixin, IntegrationPluginBase):
+        class NoSettingsCls(SettingsMixin, InvenTreePlugin):
             pass
         self.mixin_nothing = NoSettingsCls()
 
@@ -65,13 +62,13 @@ class UrlsMixinTest(BaseMixinDefinition, TestCase):
     MIXIN_ENABLE_CHECK = 'has_urls'
 
     def setUp(self):
-        class UrlsCls(UrlsMixin, IntegrationPluginBase):
+        class UrlsCls(UrlsMixin, InvenTreePlugin):
             def test():
                 return 'ccc'
             URLS = [re_path('testpath', test, name='test'), ]
         self.mixin = UrlsCls()
 
-        class NoUrlsCls(UrlsMixin, IntegrationPluginBase):
+        class NoUrlsCls(UrlsMixin, InvenTreePlugin):
             pass
         self.mixin_nothing = NoUrlsCls()
 
@@ -104,7 +101,7 @@ class AppMixinTest(BaseMixinDefinition, TestCase):
     MIXIN_ENABLE_CHECK = 'has_app'
 
     def setUp(self):
-        class TestCls(AppMixin, IntegrationPluginBase):
+        class TestCls(AppMixin, InvenTreePlugin):
             pass
         self.mixin = TestCls()
 
@@ -119,29 +116,31 @@ class NavigationMixinTest(BaseMixinDefinition, TestCase):
     MIXIN_ENABLE_CHECK = 'has_naviation'
 
     def setUp(self):
-        class NavigationCls(NavigationMixin, IntegrationPluginBase):
+        class NavigationCls(NavigationMixin, InvenTreePlugin):
             NAVIGATION = [
                 {'name': 'aa', 'link': 'plugin:test:test_view'},
             ]
             NAVIGATION_TAB_NAME = 'abcd1'
         self.mixin = NavigationCls()
 
-        class NothingNavigationCls(NavigationMixin, IntegrationPluginBase):
+        class NothingNavigationCls(NavigationMixin, InvenTreePlugin):
             pass
         self.nothing_mixin = NothingNavigationCls()
 
     def test_function(self):
         # check right configuration
         self.assertEqual(self.mixin.navigation, [{'name': 'aa', 'link': 'plugin:test:test_view'}, ])
-        # check wrong links fails
-        with self.assertRaises(NotImplementedError):
-            class NavigationCls(NavigationMixin, IntegrationPluginBase):
-                NAVIGATION = ['aa', 'aa']
-            NavigationCls()
 
         # navigation name
         self.assertEqual(self.mixin.navigation_name, 'abcd1')
         self.assertEqual(self.nothing_mixin.navigation_name, '')
+
+    def test_fail(self):
+        # check wrong links fails
+        with self.assertRaises(NotImplementedError):
+            class NavigationCls(NavigationMixin, InvenTreePlugin):
+                NAVIGATION = ['aa', 'aa']
+            NavigationCls()
 
 
 class APICallMixinTest(BaseMixinDefinition, TestCase):
@@ -150,8 +149,8 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
     MIXIN_ENABLE_CHECK = 'has_api_call'
 
     def setUp(self):
-        class MixinCls(APICallMixin, SettingsMixin, IntegrationPluginBase):
-            PLUGIN_NAME = "Sample API Caller"
+        class MixinCls(APICallMixin, SettingsMixin, InvenTreePlugin):
+            NAME = "Sample API Caller"
 
             SETTINGS = {
                 'API_TOKEN': {
@@ -167,22 +166,23 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
             API_URL_SETTING = 'API_URL'
             API_TOKEN_SETTING = 'API_TOKEN'
 
-            def get_external_url(self):
+            def get_external_url(self, simple: bool = True):
                 '''
                 returns data from the sample endpoint
                 '''
-                return self.api_call('api/users/2')
+                return self.api_call('api/users/2', simple_response=simple)
         self.mixin = MixinCls()
 
-        class WrongCLS(APICallMixin, IntegrationPluginBase):
+        class WrongCLS(APICallMixin, InvenTreePlugin):
             pass
         self.mixin_wrong = WrongCLS()
 
-        class WrongCLS2(APICallMixin, IntegrationPluginBase):
+        class WrongCLS2(APICallMixin, InvenTreePlugin):
             API_URL_SETTING = 'test'
         self.mixin_wrong2 = WrongCLS2()
 
-    def test_function(self):
+    def test_base_setup(self):
+        """Test that the base settings work"""
         # check init
         self.assertTrue(self.mixin.has_api_call)
         # api_url
@@ -192,6 +192,8 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         headers = self.mixin.api_headers
         self.assertEqual(headers, {'Bearer': '', 'Content-Type': 'application/json'})
 
+    def test_args(self):
+        """Test that building up args work"""
         # api_build_url_args
         # 1 arg
         result = self.mixin.api_build_url_args({'a': 'b'})
@@ -203,88 +205,42 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         result = self.mixin.api_build_url_args({'a': 'b', 'c': ['d', 'e', 'f', ]})
         self.assertEqual(result, '?a=b&c=d,e,f')
 
+    def test_api_call(self):
+        """Test that api calls work"""
         # api_call
         result = self.mixin.get_external_url()
         self.assertTrue(result)
         self.assertIn('data', result,)
 
+        # api_call without json conversion
+        result = self.mixin.get_external_url(False)
+        self.assertTrue(result)
+        self.assertEqual(result.reason, 'OK')
+
+        # api_call with full url
+        result = self.mixin.api_call('https://reqres.in/api/users/2', endpoint_is_url=True)
+        self.assertTrue(result)
+
+        # api_call with post and data
+        result = self.mixin.api_call(
+            'api/users/',
+            data={"name": "morpheus", "job": "leader"},
+            method='POST'
+        )
+        self.assertTrue(result)
+        self.assertEqual(result['name'], 'morpheus')
+
+        # api_call with filter
+        result = self.mixin.api_call('api/users', url_args={'page': '2'})
+        self.assertTrue(result)
+        self.assertEqual(result['page'], 2)
+
+    def test_function_errors(self):
+        """Test function errors"""
         # wrongly defined plugins should not load
-        with self.assertRaises(ValueError):
+        with self.assertRaises(MixinNotImplementedError):
             self.mixin_wrong.has_api_call()
 
         # cover wrong token setting
-        with self.assertRaises(ValueError):
-            self.mixin_wrong.has_api_call()
-
-
-class IntegrationPluginBaseTests(TestCase):
-    """ Tests for IntegrationPluginBase """
-
-    def setUp(self):
-        self.plugin = IntegrationPluginBase()
-
-        class SimpeIntegrationPluginBase(IntegrationPluginBase):
-            PLUGIN_NAME = 'SimplePlugin'
-
-        self.plugin_simple = SimpeIntegrationPluginBase()
-
-        class NameIntegrationPluginBase(IntegrationPluginBase):
-            PLUGIN_NAME = 'Aplugin'
-            PLUGIN_SLUG = 'a'
-            PLUGIN_TITLE = 'a titel'
-            PUBLISH_DATE = "1111-11-11"
-            AUTHOR = 'AA BB'
-            DESCRIPTION = 'A description'
-            VERSION = '1.2.3a'
-            WEBSITE = 'http://aa.bb/cc'
-            LICENSE = 'MIT'
-
-        self.plugin_name = NameIntegrationPluginBase()
-        self.plugin_sample = SampleIntegrationPlugin()
-
-    def test_action_name(self):
-        """check the name definition possibilities"""
-        # plugin_name
-        self.assertEqual(self.plugin.plugin_name(), '')
-        self.assertEqual(self.plugin_simple.plugin_name(), 'SimplePlugin')
-        self.assertEqual(self.plugin_name.plugin_name(), 'Aplugin')
-
-        # is_sampe
-        self.assertEqual(self.plugin.is_sample, False)
-        self.assertEqual(self.plugin_sample.is_sample, True)
-
-        # slug
-        self.assertEqual(self.plugin.slug, '')
-        self.assertEqual(self.plugin_simple.slug, 'simpleplugin')
-        self.assertEqual(self.plugin_name.slug, 'a')
-
-        # human_name
-        self.assertEqual(self.plugin.human_name, '')
-        self.assertEqual(self.plugin_simple.human_name, 'SimplePlugin')
-        self.assertEqual(self.plugin_name.human_name, 'a titel')
-
-        # description
-        self.assertEqual(self.plugin.description, '')
-        self.assertEqual(self.plugin_simple.description, 'SimplePlugin')
-        self.assertEqual(self.plugin_name.description, 'A description')
-
-        # author
-        self.assertEqual(self.plugin_name.author, 'AA BB')
-
-        # pub_date
-        self.assertEqual(self.plugin_name.pub_date, datetime(1111, 11, 11, 0, 0))
-
-        # version
-        self.assertEqual(self.plugin.version, None)
-        self.assertEqual(self.plugin_simple.version, None)
-        self.assertEqual(self.plugin_name.version, '1.2.3a')
-
-        # website
-        self.assertEqual(self.plugin.website, None)
-        self.assertEqual(self.plugin_simple.website, None)
-        self.assertEqual(self.plugin_name.website, 'http://aa.bb/cc')
-
-        # license
-        self.assertEqual(self.plugin.license, None)
-        self.assertEqual(self.plugin_simple.license, None)
-        self.assertEqual(self.plugin_name.license, 'MIT')
+        with self.assertRaises(MixinNotImplementedError):
+            self.mixin_wrong2.has_api_call()
