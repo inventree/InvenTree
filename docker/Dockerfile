@@ -62,7 +62,7 @@ RUN apk -U upgrade
 RUN apk add --no-cache git make bash \
     gcc libgcc g++ libstdc++ \
     gnupg \
-    libjpeg-turbo libjpeg-turbo-dev jpeg jpeg-dev \
+    libjpeg-turbo libjpeg-turbo-dev jpeg jpeg-dev libwebp-dev \
     libffi libffi-dev \
     zlib zlib-dev \
     # Special deps for WeasyPrint (these will be deprecated once WeasyPrint drops cairo requirement)
