@@ -16,6 +16,30 @@ import common.models
 from plugin import InvenTreePlugin, registry
 
 
+class MetadataMixin(models.Model):
+    """
+    Model mixin class which adds a JSON metadata field to a model,
+    for use by any (and all) plugins.
+
+    The intent of this mixin is to provide a metadata field on a model instance,
+    for plugins to read / modify as required, to store any extra information.
+    
+    The assumptions for models implementing this mixin are:
+
+    - The internal InvenTree business logic will make no use of this field
+    - Multiple plugins may read / write to this metadata field, and not assume they have sole rights 
+    """
+
+    class Meta:
+        abstract = True
+
+    metadata = models.JSONField(
+        blank=True, null=True,
+        verbose_name=_('Plugin Metadata'),
+        help_text=_('JSON metadata field, for use by external plugins'),
+    )
+
+
 class PluginConfig(models.Model):
     """
     A PluginConfig object holds settings for plugins.

@@ -38,6 +38,7 @@ import common.models
 import report.models
 import label.models
 
+from plugin.models import MetadataMixin
 from plugin.events import trigger_event
 
 from InvenTree.status_codes import StockStatus, StockHistoryCode
@@ -51,7 +52,7 @@ from company import models as CompanyModels
 from part import models as PartModels
 
 
-class StockLocation(InvenTreeTree):
+class StockLocation(MetadataMixin, InvenTreeTree):
     """ Organization tree for StockItem objects
     A "StockLocation" can be considered a warehouse, or storage location
     Stock locations can be heirarchical as required
@@ -242,7 +243,7 @@ def generate_batch_code():
     return Template(batch_template).render(context)
 
 
-class StockItem(MPTTModel):
+class StockItem(MetadataMixin, MPTTModel):
     """
     A StockItem object represents a quantity of physical instances of a part.
 
