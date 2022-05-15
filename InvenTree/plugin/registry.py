@@ -133,7 +133,6 @@ class PluginsRegistry:
                 if retry_counter <= 0:  # pragma: no cover
                     if settings.PLUGIN_TESTING:
                         print('[PLUGIN] Max retries, breaking loading')
-                    # TODO error for server status
                     break
                 if settings.PLUGIN_TESTING:
                     print(f'[PLUGIN] Above error occured during testing - {retry_counter}/{settings.PLUGIN_RETRY} retries left')
@@ -301,7 +300,6 @@ class PluginsRegistry:
                         # Errors are bad so disable the plugin in the database
                         if not settings.PLUGIN_TESTING:  # pragma: no cover
                             plugin_db_setting.active = False
-                            # TODO save the error to the plugin
                             plugin_db_setting.save(no_reload=True)
 
                         # Add to inactive plugins so it shows up in the ui
@@ -310,8 +308,6 @@ class PluginsRegistry:
 
                 # Initialize package
                 # now we can be sure that an admin has activated the plugin
-                # TODO check more stuff -> as of Nov 2021 there are not many checks in place
-                # but we could enhance those to check signatures, run the plugin against a whitelist etc.
                 logger.info(f'Loading plugin {plug_name}')
 
                 try:
