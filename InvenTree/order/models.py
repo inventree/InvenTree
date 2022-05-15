@@ -306,7 +306,7 @@ class PurchaseOrder(Order):
         except ValueError:
             raise ValidationError({'quantity': _("Invalid quantity provided")})
 
-        if not supplier_part.supplier == self.supplier:
+        if supplier_part.supplier != self.supplier:
             raise ValidationError({'supplier': _("Part supplier must match PO supplier")})
 
         if group:
@@ -445,7 +445,7 @@ class PurchaseOrder(Order):
         if barcode is None:
             barcode = ''
 
-        if not self.status == PurchaseOrderStatus.PLACED:
+        if self.status != PurchaseOrderStatus.PLACED:
             raise ValidationError(
                 "Lines can only be received against an order marked as 'PLACED'"
             )
@@ -729,7 +729,7 @@ class SalesOrder(Order):
         Return True if this order can be cancelled
         """
 
-        if not self.status == SalesOrderStatus.PENDING:
+        if self.status != SalesOrderStatus.PENDING:
             return False
 
         return True
@@ -1295,7 +1295,7 @@ class SalesOrderAllocation(models.Model):
             raise ValidationError({'item': _('Stock item has not been assigned')})
 
         try:
-            if not self.line.part == self.item.part:
+            if self.line.part != self.item.part:
                 errors['item'] = _('Cannot allocate stock item to a line with a different part')
         except PartModels.Part.DoesNotExist:
             errors['line'] = _('Cannot allocate stock to a line without a part')
@@ -1310,7 +1310,7 @@ class SalesOrderAllocation(models.Model):
         if self.quantity <= 0:
             errors['quantity'] = _('Allocation quantity must be greater than zero')
 
-        if self.item.serial and not self.quantity == 1:
+        if self.item.serial and self.quantity != 1:
             errors['quantity'] = _('Quantity must be 1 for serialized stock item')
 
         if self.line.order != self.shipment.order:

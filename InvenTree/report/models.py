@@ -389,7 +389,7 @@ class BuildReport(ReportTemplateBase):
 
         my_build = self.object_to_print
 
-        if not type(my_build) == build.models.Build:
+        if type(my_build) != build.models.Build:
             raise TypeError('Provided model is not a Build object')
 
         return {

@@ -132,7 +132,7 @@ class SettingsTest(TestCase):
             if description is None:
                 raise ValueError(f'Missing GLOBAL_SETTING description for {key}')  # pragma: no cover
 
-            if not key == key.upper():
+            if key != key.upper():
                 raise ValueError(f"SETTINGS key '{key}' is not uppercase")  # pragma: no cover
 
     def test_defaults(self):
