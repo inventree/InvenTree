@@ -214,6 +214,10 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         self.assertTrue(result)
         self.assertEqual(result.reason, 'OK')
 
+        # api_call with full url
+        result = self.mixin.api_call('https://reqres.in/api/users/2', endpoint_is_url=True)
+        self.assertTrue(result)
+
     def test_function_errors(self):
         """Test function errors"""
         # wrongly defined plugins should not load
