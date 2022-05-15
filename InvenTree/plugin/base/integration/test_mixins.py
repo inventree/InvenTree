@@ -204,6 +204,8 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         self.assertTrue(result)
         self.assertIn('data', result,)
 
+    def test_function_errors(self):
+        """Test function errors"""
         # wrongly defined plugins should not load
         with self.assertRaises(ValueError):
             self.mixin_wrong.has_api_call()
