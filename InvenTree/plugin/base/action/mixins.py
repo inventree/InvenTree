@@ -15,10 +15,9 @@ class ActionMixin:
         """
         MIXIN_NAME = 'Actions'
 
-    def __init__(self, user=None, data=None):
+    def __init__(self):
         super().__init__()
         self.add_mixin('action', True, __class__)
-        self.init(user, data)
 
     def action_name(self):
         """
@@ -31,14 +30,7 @@ class ActionMixin:
             return self.ACTION_NAME
         return self.name
 
-    def init(self, user, data=None):
-        """
-        An action plugin takes a user reference, and an optional dataset (dict)
-        """
-        self.user = user
-        self.data = data
-
-    def perform_action(self):
+    def perform_action(self, user=None, data=None):
         """
         Override this method to perform the action!
         """
