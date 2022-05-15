@@ -3,9 +3,8 @@
 # This CI action runs on pushes to either the master or stable branches
 
 # 1. Build the development docker image (as per the documentation)
-# 2. Install requied python libs into the docker container
-# 3. Launch the container
-# 4. Check that the API endpoint is available
+# 2. Launch the development server, and update the installation
+# 3. Run unit tests within the docker context
 
 name: Docker Test
 
@@ -14,6 +13,10 @@ on:
     branches:
       - 'master'
       - 'stable'
+
+  pull_request:
+    branches-ignore:
+      - l10*
 
 jobs:
 
@@ -26,12 +29,14 @@ jobs:
       - name: Build Docker Image
         run: |
           cd docker
-          docker-compose -f docker-compose.sqlite.yml build
-          docker-compose -f docker-compose.sqlite.yml run inventree-dev-server invoke update
-          docker-compose -f docker-compose.sqlite.yml up -d
-      - name: Sleepy Time
-        run: sleep 60
-      - name: Test API
+          docker-compose build
+          docker-compose run inventree-dev-server invoke update
+          docker-compose up -d
+      - name: Wait for Server
         run: |
-          pip install requests
-          python3 ci/check_api_endpoint.py
+          cd docker
+          docker-compose run inventree-dev-server invoke wait
+      - name: Run unit tests
+        run: |
+          cd docker
+          docker-compose run inventree-dev-server invoke test
