@@ -7,7 +7,6 @@ from plugin.helpers import MixinImplementationError
 logger = logging.getLogger('inventree')
 
 
-
 class LocateMixin:
     """
     Mixin class which provides support for 'locating' inventory items,

@@ -14,8 +14,6 @@ from rest_framework import filters
 
 from rest_framework import permissions
 
-from InvenTree.tasks import offload_task
-
 from .views import AjaxView
 from .version import inventreeVersion, inventreeApiVersion, inventreeInstanceName
 from .status import is_worker_running
