@@ -124,6 +124,16 @@ jobs:
 
     env:
       wrapper_name: inventree-python
+      INVENTREE_DB_ENGINE: django.db.backends.sqlite3
+      INVENTREE_DB_NAME: ../inventree_unit_test_db.sqlite3
+      INVENTREE_MEDIA_ROOT: ../test_inventree_media
+      INVENTREE_STATIC_ROOT: ../test_inventree_static
+      INVENTREE_ADMIN_USER: testuser
+      INVENTREE_ADMIN_PASSWORD: testpassword
+      INVENTREE_ADMIN_EMAIL: test@test.com
+      INVENTREE_PYTHON_TEST_SERVER: http://localhost:12345
+      INVENTREE_PYTHON_TEST_USERNAME: testuser
+      INVENTREE_PYTHON_TEST_PASSWORD: testpassword
 
     steps:
       - name: Checkout Code
@@ -140,13 +150,14 @@ jobs:
           git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }} ./${{ env.wrapper_name }}
       - name: Start Server
         run: |
-          invoke import-records -f ./${{ env.wrapper_name }}/test/test_data.json
-          invoke server -a 127.0.0.1:8000 &
-          sleep ${{ env.server_start_sleep }}
+          invoke delete-data -f
+          invoke import-fixtures
+          invoke server -a 127.0.0.1:12345 &
       - name: Run Tests
         run: |
           cd ${{ env.wrapper_name }}
-          invoke test
+          invoke check-server
+          coverage run -m unittest discover -s test/
 
   coverage:
     name: Sqlite / coverage
@@ -196,6 +207,7 @@ jobs:
     name: Postgres
     needs: ['javascript', 'html']
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
 
     env:
       INVENTREE_DB_ENGINE: django.db.backends.postgresql
@@ -253,6 +265,8 @@ jobs:
     name: MySql
     needs: ['javascript', 'html']
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
     env:
       # Database backend configuration
       INVENTREE_DB_ENGINE: django.db.backends.mysql

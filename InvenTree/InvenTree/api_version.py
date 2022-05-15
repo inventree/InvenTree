@@ -4,15 +4,24 @@ InvenTree API version information
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 47
+INVENTREE_API_VERSION = 49
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
 
-v47 -> 2022-05-09 : https://github.com/inventree/InvenTree/pull/2957
+v49 -> 2022-05-09 : https://github.com/inventree/InvenTree/pull/2957
     - Allows filtering of plugin list by 'active' status
     - Allows filtering of plugin list by 'mixin' support
     - Adds endpoint to "identify" or "locate" stock items and locations (using plugins)
+
+v48 -> 2022-05-12 : https://github.com/inventree/InvenTree/pull/2977
+    - Adds "export to file" functionality for PurchaseOrder API endpoint
+    - Adds "export to file" functionality for SalesOrder API endpoint
+    - Adds "export to file" functionality for BuildOrder API endpoint
+
+v47 -> 2022-05-10 : https://github.com/inventree/InvenTree/pull/2964
+    - Fixes barcode API error response when scanning a StockItem which does not exist
+    - Fixes barcode API error response when scanning a StockLocation which does not exist
 
 v46 -> 2022-05-09
     - Fixes read permissions on settings API

@@ -18,7 +18,6 @@ from build.urls import build_urls
 from order.urls import order_urls
 from plugin.urls import get_plugin_urls
 
-from barcodes.api import barcode_api_urls
 from common.api import common_api_urls, settings_api_urls
 from part.api import part_api_urls, bom_api_urls
 from company.api import company_api_urls
@@ -28,6 +27,7 @@ from order.api import order_api_urls
 from label.api import label_api_urls
 from report.api import report_api_urls
 from plugin.api import plugin_api_urls
+from plugin.barcode import barcode_api_urls
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -59,7 +59,6 @@ if settings.PLUGINS_ENABLED:
     )
 
 apipatterns += [
-    re_path(r'^barcode/', include(barcode_api_urls)),
     re_path(r'^settings/', include(settings_api_urls)),
     re_path(r'^part/', include(part_api_urls)),
     re_path(r'^bom/', include(bom_api_urls)),
@@ -75,6 +74,7 @@ apipatterns += [
 
     # Plugin endpoints
     re_path(r'^action/', ActionPluginView.as_view(), name='api-action-plugin'),
+    re_path(r'^barcode/', include(barcode_api_urls)),
     re_path(r'^locate/', LocatePluginView.as_view(), name='api-locate-plugin'),
 
     # Webhook enpoint

@@ -66,6 +66,44 @@ class NotFoundView(AjaxView):
         return JsonResponse(data, status=404)
 
 
+class APIDownloadMixin:
+    """
+    Mixin for enabling a LIST endpoint to be downloaded a file.
+
+    To download the data, add the ?export=<fmt> to the query string.
+
+    The implementing class must provided a download_queryset method,
+    e.g.
+
+    def download_queryset(self, queryset, export_format):
+        dataset = StockItemResource().export(queryset=queryset)
+
+        filedata = dataset.export(export_format)
+
+        filename = 'InvenTree_Stocktake_{date}.{fmt}'.format(
+            date=datetime.now().strftime("%d-%b-%Y"),
+            fmt=export_format
+        )
+
+        return DownloadFile(filedata, filename)
+    """
+
+    def get(self, request, *args, **kwargs):
+
+        export_format = request.query_params.get('export', None)
+
+        if export_format and export_format in ['csv', 'tsv', 'xls', 'xlsx']:
+            queryset = self.filter_queryset(self.get_queryset())
+            return self.download_queryset(queryset, export_format)
+
+        else:
+            # Default to the parent class implementation
+            return super().get(request, *args, **kwargs)
+
+    def download_queryset(self, queryset, export_format):
+        raise NotImplementedError("download_queryset method not implemented!")
+
+
 class AttachmentMixin:
     """
     Mixin for creating attachment objects,

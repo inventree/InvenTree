@@ -5,20 +5,28 @@ from __future__ import unicode_literals
 
 import os
 
-from django.test import TestCase
 from django.conf import settings
 from django.apps import apps
 from django.core.exceptions import ValidationError
 
 from InvenTree.helpers import validateFilterString
+from InvenTree.api_tester import InvenTreeAPITestCase
 
 from .models import StockItemLabel, StockLocationLabel
 from stock.models import StockItem
 
 
-class LabelTest(TestCase):
+class LabelTest(InvenTreeAPITestCase):
+
+    fixtures = [
+        'category',
+        'part',
+        'location',
+        'stock'
+    ]
 
     def setUp(self) -> None:
+        super().setUp()
         # ensure the labels were created
         apps.get_app_config('label').create_labels()
 

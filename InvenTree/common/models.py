@@ -17,15 +17,16 @@ import base64
 from secrets import compare_digest
 from datetime import datetime, timedelta
 
+from django.apps import apps
 from django.db import models, transaction
+from django.db.utils import IntegrityError, OperationalError
+from django.conf import settings
 from django.contrib.auth.models import User, Group
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.db.utils import IntegrityError, OperationalError
-from django.conf import settings
+from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.urls import reverse
 from django.utils.timezone import now
-from django.contrib.humanize.templatetags.humanize import naturaltime
 
 from djmoney.settings import CURRENCY_CHOICES
 from djmoney.contrib.exchange.models import convert_money
@@ -135,6 +136,19 @@ class BaseInvenTreeSetting(models.Model):
             settings[key] = value
 
         return settings
+
+    def get_kwargs(self):
+        """
+        Construct kwargs for doing class-based settings lookup,
+        depending on *which* class we are.
+
+        This is necessary to abtract the settings object
+        from the implementing class (e.g plugins)
+
+        Subclasses should override this function to ensure the kwargs are correctly set.
+        """
+
+        return {}
 
     @classmethod
     def get_setting_definition(cls, key, **kwargs):
@@ -319,11 +333,11 @@ class BaseInvenTreeSetting(models.Model):
             value = setting.value
 
             # Cast to boolean if necessary
-            if setting.is_bool(**kwargs):
+            if setting.is_bool():
                 value = InvenTree.helpers.str2bool(value)
 
             # Cast to integer if necessary
-            if setting.is_int(**kwargs):
+            if setting.is_int():
                 try:
                     value = int(value)
                 except (ValueError, TypeError):
@@ -390,19 +404,19 @@ class BaseInvenTreeSetting(models.Model):
 
     @property
     def name(self):
-        return self.__class__.get_setting_name(self.key)
+        return self.__class__.get_setting_name(self.key, **self.get_kwargs())
 
     @property
     def default_value(self):
-        return self.__class__.get_setting_default(self.key)
+        return self.__class__.get_setting_default(self.key, **self.get_kwargs())
 
     @property
     def description(self):
-        return self.__class__.get_setting_description(self.key)
+        return self.__class__.get_setting_description(self.key, **self.get_kwargs())
 
     @property
     def units(self):
-        return self.__class__.get_setting_units(self.key)
+        return self.__class__.get_setting_units(self.key, **self.get_kwargs())
 
     def clean(self, **kwargs):
         """
@@ -512,12 +526,12 @@ class BaseInvenTreeSetting(models.Model):
         except self.DoesNotExist:
             pass
 
-    def choices(self, **kwargs):
+    def choices(self):
         """
         Return the available choices for this setting (or None if no choices are defined)
         """
 
-        return self.__class__.get_setting_choices(self.key, **kwargs)
+        return self.__class__.get_setting_choices(self.key, **self.get_kwargs())
 
     def valid_options(self):
         """
@@ -531,14 +545,14 @@ class BaseInvenTreeSetting(models.Model):
 
         return [opt[0] for opt in choices]
 
-    def is_choice(self, **kwargs):
+    def is_choice(self):
         """
         Check if this setting is a "choice" field
         """
 
-        return self.__class__.get_setting_choices(self.key, **kwargs) is not None
+        return self.__class__.get_setting_choices(self.key, **self.get_kwargs()) is not None
 
-    def as_choice(self, **kwargs):
+    def as_choice(self):
         """
         Render this setting as the "display" value of a choice field,
         e.g. if the choices are:
@@ -547,7 +561,7 @@ class BaseInvenTreeSetting(models.Model):
         then display 'A4 paper'
         """
 
-        choices = self.get_setting_choices(self.key, **kwargs)
+        choices = self.get_setting_choices(self.key, **self.get_kwargs())
 
         if not choices:
             return self.value
@@ -558,12 +572,80 @@ class BaseInvenTreeSetting(models.Model):
 
         return self.value
 
-    def is_bool(self, **kwargs):
+    def is_model(self):
+        """
+        Check if this setting references a model instance in the database
+        """
+
+        return self.model_name() is not None
+
+    def model_name(self):
+        """
+        Return the model name associated with this setting
+        """
+
+        setting = self.get_setting_definition(self.key, **self.get_kwargs())
+
+        return setting.get('model', None)
+
+    def model_class(self):
+        """
+        Return the model class associated with this setting, if (and only if):
+
+        - It has a defined 'model' parameter
+        - The 'model' parameter is of the form app.model
+        - The 'model' parameter has matches a known app model
+        """
+
+        model_name = self.model_name()
+
+        if not model_name:
+            return None
+
+        try:
+            (app, mdl) = model_name.strip().split('.')
+        except ValueError:
+            logger.error(f"Invalid 'model' parameter for setting {self.key} : '{model_name}'")
+            return None
+
+        app_models = apps.all_models.get(app, None)
+
+        if app_models is None:
+            logger.error(f"Error retrieving model class '{model_name}' for setting '{self.key}' - no app named '{app}'")
+            return None
+
+        model = app_models.get(mdl, None)
+
+        if model is None:
+            logger.error(f"Error retrieving model class '{model_name}' for setting '{self.key}' - no model named '{mdl}'")
+            return None
+
+        # Looks like we have found a model!
+        return model
+
+    def api_url(self):
+        """
+        Return the API url associated with the linked model,
+        if provided, and valid!
+        """
+
+        model_class = self.model_class()
+
+        if model_class:
+            # If a valid class has been found, see if it has registered an API URL
+            try:
+                return model_class.get_api_url()
+            except:
+                pass
+
+        return None
+
+    def is_bool(self):
         """
         Check if this setting is required to be a boolean value
         """
 
-        validator = self.__class__.get_setting_validator(self.key, **kwargs)
+        validator = self.__class__.get_setting_validator(self.key, **self.get_kwargs())
 
         return self.__class__.validator_is_bool(validator)
 
@@ -576,16 +658,19 @@ class BaseInvenTreeSetting(models.Model):
 
         return InvenTree.helpers.str2bool(self.value)
 
-    def setting_type(self, **kwargs):
+    def setting_type(self):
         """
         Return the field type identifier for this setting object
         """
 
-        if self.is_bool(**kwargs):
+        if self.is_bool():
             return 'boolean'
 
-        elif self.is_int(**kwargs):
+        elif self.is_int():
             return 'integer'
+
+        elif self.is_model():
+            return 'related field'
 
         else:
             return 'string'
@@ -603,12 +688,12 @@ class BaseInvenTreeSetting(models.Model):
 
         return False
 
-    def is_int(self, **kwargs):
+    def is_int(self,):
         """
         Check if the setting is required to be an integer value:
         """
 
-        validator = self.__class__.get_setting_validator(self.key, **kwargs)
+        validator = self.__class__.get_setting_validator(self.key, **self.get_kwargs())
 
         return self.__class__.validator_is_int(validator)
 
@@ -651,88 +736,7 @@ class BaseInvenTreeSetting(models.Model):
 
     @property
     def protected(self):
-        return self.__class__.is_protected(self.key)
-
-
-class GenericReferencedSettingClass:
-    """
-    This mixin can be used to add reference keys to static properties
-
-    Sample:
-    ```python
-    class SampleSetting(GenericReferencedSettingClass, common.models.BaseInvenTreeSetting):
-        class Meta:
-            unique_together = [
-                ('sample', 'key'),
-            ]
-
-        REFERENCE_NAME = 'sample'
-
-        @classmethod
-        def get_setting_definition(cls, key, **kwargs):
-            # mysampledict contains the dict with all settings for this SettingClass - this could also be a dynamic lookup
-
-            kwargs['settings'] = mysampledict
-            return super().get_setting_definition(key, **kwargs)
-
-        sample = models.charKey(  # the name for this field is the additonal key and must be set in the Meta class an REFERENCE_NAME
-            max_length=256,
-            verbose_name=_('sample')
-        )
-    ```
-    """
-
-    REFERENCE_NAME = None
-
-    def _get_reference(self):
-        """
-        Returns dict that can be used as an argument for kwargs calls.
-        Helps to make overriden calls generic for simple reuse.
-
-        Usage:
-        ```python
-        some_random_function(argument0, kwarg1=value1, **self._get_reference())
-        ```
-        """
-        return {
-            self.REFERENCE_NAME: getattr(self, self.REFERENCE_NAME)
-        }
-
-    """
-    We override the following class methods,
-    so that we can pass the modified key instance as an additional argument
-    """
-
-    def clean(self, **kwargs):
-
-        kwargs[self.REFERENCE_NAME] = getattr(self, self.REFERENCE_NAME)
-
-        super().clean(**kwargs)
-
-    def is_bool(self, **kwargs):
-
-        kwargs[self.REFERENCE_NAME] = getattr(self, self.REFERENCE_NAME)
-
-        return super().is_bool(**kwargs)
-
-    @property
-    def name(self):
-        return self.__class__.get_setting_name(self.key, **self._get_reference())
-
-    @property
-    def default_value(self):
-        return self.__class__.get_setting_default(self.key, **self._get_reference())
-
-    @property
-    def description(self):
-        return self.__class__.get_setting_description(self.key, **self._get_reference())
-
-    @property
-    def units(self):
-        return self.__class__.get_setting_units(self.key, **self._get_reference())
-
-    def choices(self):
-        return self.__class__.get_setting_choices(self.key, **self._get_reference())
+        return self.__class__.is_protected(self.key, **self.get_kwargs())
 
 
 def settings_group_options():
@@ -1557,6 +1561,16 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         """
 
         return self.__class__.get_setting(self.key, user=self.user)
+
+    def get_kwargs(self):
+        """
+        Explicit kwargs required to uniquely identify a particular setting object,
+        in addition to the 'key' parameter
+        """
+
+        return {
+            'user': self.user,
+        }
 
 
 class PriceBreak(models.Model):

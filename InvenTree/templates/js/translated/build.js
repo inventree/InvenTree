@@ -1056,6 +1056,7 @@ function loadBuildOutputTable(build_info, options={}) {
             '{% url "api-stock-test-result-list" %}',
             {
                 build: build_info.pk,
+                ordering: '-date',
             },
             {
                 success: function(results) {
@@ -2354,7 +2355,7 @@ function loadBuildTable(table, options) {
 
     var filterTarget = options.filterTarget || null;
 
-    setupFilterList('build', table, filterTarget);
+    setupFilterList('build', table, filterTarget, {download: true});
 
     $(table).inventreeTable({
         method: 'get',

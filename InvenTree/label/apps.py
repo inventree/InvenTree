@@ -265,6 +265,13 @@ class LabelConfig(AppConfig):
                 'width': 70,
                 'height': 24,
             },
+            {
+                'file': 'part_label_code128.html',
+                'name': 'Barcode Part Label',
+                'description': 'Simple part label with Code128 barcode',
+                'width': 70,
+                'height': 24,
+            },
         ]
 
         for label in labels:

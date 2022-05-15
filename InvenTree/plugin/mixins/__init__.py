@@ -18,7 +18,7 @@ from ..builtin.integration.mixins import (
 from common.notifications import SingleNotificationMethod, BulkNotificationMethod
 
 from ..builtin.action.mixins import ActionMixin
-from ..builtin.barcode.mixins import BarcodeMixin
+from ..builtin.barcodes.mixins import BarcodeMixin
 
 __all__ = [
     'ActionMixin',
