@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-12 08:01+0000\n"
-"PO-Revision-Date: 2022-05-14 00:54\n"
+"PO-Revision-Date: 2022-05-15 01:04\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1064,7 +1064,7 @@ msgstr "Unfertige Endprodukte entfernen"
 
 #: build/serializers.py:468
 msgid "Delete any build outputs which have not been completed"
-msgstr "Lösche alle noch nicht abgeschlossenen Build-Ausgänge"
+msgstr "Lösche alle noch nicht abgeschlossenen Endprodukte"
 
 #: build/serializers.py:493
 msgid "Accept Unallocated"
@@ -1654,7 +1654,7 @@ msgstr "Barcode-Scanner Unterstützung"
 
 #: common/models.py:850
 msgid "Barcode Webcam Support"
-msgstr ""
+msgstr "Barcode Webcam-Unterstützung"
 
 #: common/models.py:851
 msgid "Allow barcode scanning via webcam in browser"
@@ -2994,7 +2994,7 @@ msgstr "Internes Teil"
 
 #: company/templates/company/manufacturer_part.html:95
 msgid "No manufacturer information available"
-msgstr "Keine Produktionsdaten verfügbar"
+msgstr "Keine Herstellerdaten verfügbar"
 
 #: company/templates/company/manufacturer_part.html:120
 #: company/templates/company/supplier_part.html:15 company/views.py:50
@@ -3084,7 +3084,7 @@ msgstr "Zuliefererteil entfernen"
 
 #: company/templates/company/supplier_part.html:91
 msgid "No supplier information available"
-msgstr "Keine Lieferinformationen verfügbar"
+msgstr "Keine Lieferanteninformationen verfügbar"
 
 #: company/templates/company/supplier_part.html:144
 #: company/templates/company/supplier_part_navbar.html:12
@@ -3623,15 +3623,15 @@ msgstr "Zuliefererteil muss ausgewählt werden"
 
 #: order/serializers.py:347
 msgid "Purchase order must be specified"
-msgstr ""
+msgstr "Bestellung muss angegeben sein"
 
 #: order/serializers.py:353
 msgid "Supplier must match purchase order"
-msgstr ""
+msgstr "Lieferant muss mit der Bestellung übereinstimmen"
 
 #: order/serializers.py:354
 msgid "Purchase order must match supplier"
-msgstr ""
+msgstr "Die Bestellung muss mit dem Lieferant übereinstimmen"
 
 #: order/serializers.py:414 order/serializers.py:1080
 msgid "Line Item"
@@ -3780,7 +3780,7 @@ msgstr "Bestellstatus"
 
 #: order/templates/order/order_base.html:117
 msgid "No suppplier information available"
-msgstr ""
+msgstr "Keine Lieferanteninformationen verfügbar"
 
 #: order/templates/order/order_base.html:130
 #: order/templates/order/sales_order_base.html:128
@@ -3883,7 +3883,7 @@ msgstr "Ausgewählte Positionen erhalten"
 #: order/templates/order/purchase_order_detail.html:48
 #: order/templates/order/sales_order_detail.html:40
 msgid "Extra Lines"
-msgstr "Zusätzliche Linien"
+msgstr "Zusätzliche Positionen"
 
 #: order/templates/order/purchase_order_detail.html:53
 #: order/templates/order/sales_order_detail.html:45
@@ -3902,7 +3902,7 @@ msgstr "Notizen zur Bestellung"
 
 #: order/templates/order/purchase_order_detail.html:239
 msgid "Add Order Line"
-msgstr ""
+msgstr "Neue Auftragspositionen hinzufügen"
 
 #: order/templates/order/purchase_orders.html:30
 #: order/templates/order/sales_orders.html:33
@@ -7975,11 +7975,11 @@ msgstr "Sind Sie sicher, dass sie diesen Bauauftrag abbrechen möchten?"
 
 #: templates/js/translated/build.js:149
 msgid "Stock items have been allocated to this build order"
-msgstr ""
+msgstr "Lagerbestand wurde zu diesem Bauauftrag hinzugefügt"
 
 #: templates/js/translated/build.js:156
 msgid "There are incomplete outputs remaining for this build order"
-msgstr ""
+msgstr "Für diesen Bau-Auftrag sind noch unvollständige Endprodukte vorhanden"
 
 #: templates/js/translated/build.js:185
 msgid "Build order is ready to be completed"
@@ -8081,11 +8081,11 @@ msgstr "Keine aktiven Endprodukte gefunden"
 
 #: templates/js/translated/build.js:1207
 msgid "Allocated Stock"
-msgstr ""
+msgstr "Bestand zuteilen"
 
 #: templates/js/translated/build.js:1214
 msgid "No tracked BOM items for this build"
-msgstr ""
+msgstr "Keine nachverfolgten BOM Elemente für diese Fertigung"
 
 #: templates/js/translated/build.js:1236
 msgid "Completed Tests"
@@ -8627,7 +8627,7 @@ msgstr "Sendung bestätigen"
 
 #: templates/js/translated/order.js:156
 msgid "Complete Purchase Order"
-msgstr ""
+msgstr "Bestellung vervollständigen"
 
 #: templates/js/translated/order.js:162
 msgid "Mark this order as complete?"
@@ -8635,7 +8635,7 @@ msgstr "Diese Bestellung als vollständig markieren?"
 
 #: templates/js/translated/order.js:168
 msgid "All line items have been received"
-msgstr ""
+msgstr "Alle Einträge wurden erhalten"
 
 #: templates/js/translated/order.js:173
 msgid "This order has line items which have not been marked as received."
@@ -8667,7 +8667,7 @@ msgstr "Nachdem diese Bestellung plaziert ist können die Positionen nicht läng
 
 #: templates/js/translated/order.js:258
 msgid "Cancel Sales Order"
-msgstr "Verkaufsauftrag stornieren"
+msgstr "Auftrag stornieren"
 
 #: templates/js/translated/order.js:263
 msgid "Cancelling this order means that the order will no longer be editable."
@@ -8691,11 +8691,11 @@ msgstr "Bestellung exportieren"
 
 #: templates/js/translated/order.js:635
 msgid "At least one purchaseable part must be selected"
-msgstr ""
+msgstr "Mindestens ein kaufbares Teil muss ausgewählt werden"
 
 #: templates/js/translated/order.js:660
 msgid "Quantity to order"
-msgstr "Menge in der Bestellung"
+msgstr "Zu bestellende Menge"
 
 #: templates/js/translated/order.js:669
 msgid "New supplier part"
@@ -8703,7 +8703,7 @@ msgstr "Neues Zuliefererteil"
 
 #: templates/js/translated/order.js:687
 msgid "New purchase order"
-msgstr "Neue Bestellungen"
+msgstr "Neue Bestellung"
 
 #: templates/js/translated/order.js:720
 msgid "Add to purchase order"
@@ -8715,7 +8715,7 @@ msgstr "Keine passenden Lieferantenteile"
 
 #: templates/js/translated/order.js:844
 msgid "No matching purchase orders"
-msgstr "Keine passenden Einkaufsaufträge"
+msgstr "Keine passenden Bestellungen"
 
 #: templates/js/translated/order.js:1000
 msgid "Select Line Items"
@@ -9630,7 +9630,7 @@ msgstr "Lagerartikel entfernen"
 
 #: templates/js/translated/stock.js:2671
 msgid "Select stock item to uninstall"
-msgstr ""
+msgstr "Zu deinstallierende Lagerartikel auswählen"
 
 #: templates/js/translated/stock.js:2692
 msgid "Install another stock item into this item"
@@ -9650,7 +9650,7 @@ msgstr "Dieser Lagerartikel ist aktuell vorhanden"
 
 #: templates/js/translated/stock.js:2697
 msgid "The Stock Item is not already installed in another item"
-msgstr ""
+msgstr "Der Lagerbestand ist nicht bereits in einem anderen Bestand installiert"
 
 #: templates/js/translated/stock.js:2698
 msgid "The Stock Item is tracked by either a batch code or serial number"
