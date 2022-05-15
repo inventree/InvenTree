@@ -14,7 +14,7 @@ class ActionMixinTests(TestCase):
     def setUp(self):
         class SimplePlugin(ActionMixin, InvenTreePlugin):
             pass
-        self.plugin = SimplePlugin('user')
+        self.plugin = SimplePlugin()
 
         class TestActionPlugin(ActionMixin, InvenTreePlugin):
             """a action plugin"""
@@ -29,12 +29,12 @@ class ActionMixinTests(TestCase):
             def get_info(self):
                 return ActionMixinTests.ACTION_RETURN + 'info'
 
-        self.action_plugin = TestActionPlugin('user')
+        self.action_plugin = TestActionPlugin()
 
         class NameActionPlugin(ActionMixin, InvenTreePlugin):
             NAME = 'Aplugin'
 
-        self.action_name = NameActionPlugin('user')
+        self.action_name = NameActionPlugin()
 
     def test_action_name(self):
         """check the name definition possibilities"""
