@@ -202,7 +202,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         result = self.mixin.api_build_url_args({'a': 'b', 'c': ['d', 'e', 'f', ]})
         self.assertEqual(result, '?a=b&c=d,e,f')
 
-    def test_function(self):
+    def test_api_call(self):
         """Test that api calls work"""
         # api_call
         result = self.mixin.get_external_url()
