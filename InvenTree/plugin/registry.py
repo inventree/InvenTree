@@ -133,7 +133,6 @@ class PluginsRegistry:
                 if retry_counter <= 0:  # pragma: no cover
                     if settings.PLUGIN_TESTING:
                         print('[PLUGIN] Max retries, breaking loading')
-                    # TODO error for server status
                     break
                 if settings.PLUGIN_TESTING:
                     print(f'[PLUGIN] Above error occured during testing - {retry_counter}/{settings.PLUGIN_RETRY} retries left')
