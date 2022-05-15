@@ -165,7 +165,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
             API_URL_SETTING = 'API_URL'
             API_TOKEN_SETTING = 'API_TOKEN'
 
-            def get_external_url(self, simple:bool = True):
+            def get_external_url(self, simple: bool = True):
                 '''
                 returns data from the sample endpoint
                 '''
