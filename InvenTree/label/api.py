@@ -156,7 +156,7 @@ class LabelPrintMixin:
 
                 # Offload a background task to print the provided label
                 offload_task(
-                    'plugin.events.print_label',
+                    'plugin.base.label.label.print_label',
                     plugin.plugin_slug(),
                     image,
                     label_instance=label_instance,
