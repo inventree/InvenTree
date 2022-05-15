@@ -2,6 +2,7 @@
 
 from plugin.helpers import MixinNotImplementedError
 
+
 class LabelPrintingMixin:
     """
     Mixin which enables direct printing of stock labels.
