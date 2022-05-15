@@ -178,7 +178,8 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
             API_URL_SETTING = 'test'
         self.mixin_wrong2 = WrongCLS2()
 
-    def test_function(self):
+    def test_base_setup(self):
+        """Test that the base settings work"""
         # check init
         self.assertTrue(self.mixin.has_api_call)
         # api_url
@@ -188,6 +189,8 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         headers = self.mixin.api_headers
         self.assertEqual(headers, {'Bearer': '', 'Content-Type': 'application/json'})
 
+    def test_args(self):
+        """Test that building up args work"""
         # api_build_url_args
         # 1 arg
         result = self.mixin.api_build_url_args({'a': 'b'})
@@ -199,6 +202,8 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         result = self.mixin.api_build_url_args({'a': 'b', 'c': ['d', 'e', 'f', ]})
         self.assertEqual(result, '?a=b&c=d,e,f')
 
+    def test_function(self):
+        """Test that api calls work"""
         # api_call
         result = self.mixin.get_external_url()
         self.assertTrue(result)
