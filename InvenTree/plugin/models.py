@@ -23,11 +23,11 @@ class MetadataMixin(models.Model):
 
     The intent of this mixin is to provide a metadata field on a model instance,
     for plugins to read / modify as required, to store any extra information.
-    
+
     The assumptions for models implementing this mixin are:
 
     - The internal InvenTree business logic will make no use of this field
-    - Multiple plugins may read / write to this metadata field, and not assume they have sole rights 
+    - Multiple plugins may read / write to this metadata field, and not assume they have sole rights
     """
 
     class Meta:
