@@ -209,7 +209,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         self.assertTrue(result)
         self.assertIn('data', result,)
 
-        # api_call without response
+        # api_call without json conversion
         result = self.mixin.get_external_url(False)
         self.assertTrue(result)
         self.assertEqual(result.reason, 'OK')
