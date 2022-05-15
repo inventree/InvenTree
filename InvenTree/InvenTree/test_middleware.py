@@ -32,9 +32,6 @@ class MiddlewareTests(TestCase):
         # logout
         self.client.logout()
 
-        # check that static files go through
-        self.check_path('/static/css/inventree.css')
-
         # check that account things go through
         self.check_path(reverse('account_login'))
 
@@ -61,6 +58,9 @@ class MiddlewareTests(TestCase):
 
         # request with token
         self.check_path(reverse('settings.js'), HTTP_Authorization=f'Token {token}')
+
+        # Request with broken token
+        self.check_path(reverse('settings.js'), 401, HTTP_Authorization='Token abcd123')
 
         # should still fail without token
         self.check_path(reverse('settings.js'), 401)

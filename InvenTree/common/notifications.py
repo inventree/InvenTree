@@ -108,7 +108,7 @@ class NotificationMethod:
             return False
 
         # Check if method globally enabled
-        plg_instance = registry.plugins.get(plg_cls.PLUGIN_NAME.lower())
+        plg_instance = registry.plugins.get(plg_cls.NAME.lower())
         if plg_instance and not plg_instance.get_setting(self.GLOBAL_SETTING):
             return True
 

@@ -451,6 +451,11 @@ class TestSettings(TestCase):
         self.user_mdl = get_user_model()
         self.env = EnvironmentVarGuard()
 
+        # Create a user for auth
+        user = get_user_model()
+        self.user = user.objects.create_superuser('testuser1', 'test1@testing.com', 'password1')
+        self.client.login(username='testuser1', password='password1')
+
     def run_reload(self):
         from plugin import registry
 
@@ -467,22 +472,48 @@ class TestSettings(TestCase):
 
         # nothing set
         self.run_reload()
-        self.assertEqual(user_count(), 0)
+        self.assertEqual(user_count(), 1)
 
         # not enough set
         self.env.set('INVENTREE_ADMIN_USER', 'admin')  # set username
         self.run_reload()
-        self.assertEqual(user_count(), 0)
+        self.assertEqual(user_count(), 1)
 
         # enough set
         self.env.set('INVENTREE_ADMIN_USER', 'admin')  # set username
         self.env.set('INVENTREE_ADMIN_EMAIL', 'info@example.com')  # set email
         self.env.set('INVENTREE_ADMIN_PASSWORD', 'password123')  # set password
         self.run_reload()
-        self.assertEqual(user_count(), 1)
+        self.assertEqual(user_count(), 2)
+
+        # create user manually
+        self.user_mdl.objects.create_user('testuser', 'test@testing.com', 'password')
+        self.assertEqual(user_count(), 3)
+        # check it will not be created again
+        self.env.set('INVENTREE_ADMIN_USER', 'testuser')
+        self.env.set('INVENTREE_ADMIN_EMAIL', 'test@testing.com')
+        self.env.set('INVENTREE_ADMIN_PASSWORD', 'password')
+        self.run_reload()
+        self.assertEqual(user_count(), 3)
 
         # make sure to clean up
         settings.TESTING_ENV = False
+
+    def test_initial_install(self):
+        """Test if install of plugins on startup works"""
+        from plugin import registry
+
+        # Check an install run
+        response = registry.install_plugin_file()
+        self.assertEqual(response, 'first_run')
+
+        # Set dynamic setting to True and rerun to launch install
+        InvenTreeSetting.set_setting('PLUGIN_ON_STARTUP', True, self.user)
+        registry.reload_plugins()
+
+        # Check that there was anotehr run
+        response = registry.install_plugin_file()
+        self.assertEqual(response, True)
 
     def test_helpers_cfg_file(self):
         # normal run - not configured
