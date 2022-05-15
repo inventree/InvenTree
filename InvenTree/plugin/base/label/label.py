@@ -4,6 +4,7 @@ import logging
 from django.utils.translation import gettext_lazy as _
 
 from plugin.registry import registry
+import common.notifications
 
 
 logger = logging.getLogger('inventree')
