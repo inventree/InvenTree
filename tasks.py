@@ -98,6 +98,19 @@ def install(c):
     # Install required Python packages with PIP
     c.run('pip3 install -U -r requirements.txt')
 
+def setup_dev(c):
+    """
+    Sets up everything needed for the dev enviroment
+    """
+
+    print("Installing required python packages from 'requirements.txt'")
+
+    # Install required Python packages with PIP
+    c.run('pip3 install -U -r requirements.txt')
+
+    # Install pre-commit hook
+    c.run('pre-commit install')
+
 @task
 def shell(c):
     """
@@ -253,7 +266,7 @@ def update(c):
     - static
     - clean_settings
     """
-    
+
     # Recompile the translation files (.mo)
     # We do not run 'invoke translate' here, as that will touch the source (.po) files too!
     manage(c, 'compilemessages', pty=True)

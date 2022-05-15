@@ -39,6 +39,7 @@ inventree                               # Install the latest version of the Inve
 markdown==3.3.4                         # Force particular version of markdown
 pep8-naming==0.11.1                     # PEP naming convention extension
 pillow==9.0.1                           # Image manipulation
+pre-commit==2.19.0                      # Git pre-commit
 py-moneyed==0.8.0                       # Specific version requirement for py-moneyed
 pygments==2.7.4                         # Syntax highlighting
 python-barcode[images]==0.13.1          # Barcode generator
