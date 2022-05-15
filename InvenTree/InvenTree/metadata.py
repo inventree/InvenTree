@@ -250,7 +250,7 @@ class InvenTreeMetadata(SimpleMetadata):
         field_info = super().get_field_info(field)
 
         # If a default value is specified for the serializer field, add it!
-        if 'default' not in field_info and not field.default == empty:
+        if 'default' not in field_info and field.default != empty:
             field_info['default'] = field.get_default()
 
         # Force non-nullable fields to read as "required"
