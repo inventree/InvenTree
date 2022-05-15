@@ -20,13 +20,13 @@ class ActionMixinTests(TestCase):
             """a action plugin"""
             ACTION_NAME = 'abc123'
 
-            def perform_action(self):
+            def perform_action(self, user=None, data=None):
                 return ActionMixinTests.ACTION_RETURN + 'action'
 
-            def get_result(self):
+            def get_result(self, user=None, data=None):
                 return ActionMixinTests.ACTION_RETURN + 'result'
 
-            def get_info(self):
+            def get_info(self, user=None, data=None):
                 return ActionMixinTests.ACTION_RETURN + 'info'
 
         self.action_plugin = TestActionPlugin()
