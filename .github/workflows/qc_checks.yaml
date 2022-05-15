@@ -12,7 +12,7 @@ on:
       - l10*
 
 env:
-  python_version: 3.8
+  python_version: 3.9
   node_version: 16
 
   server_start_sleep: 60
