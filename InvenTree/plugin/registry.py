@@ -300,7 +300,6 @@ class PluginsRegistry:
                         # Errors are bad so disable the plugin in the database
                         if not settings.PLUGIN_TESTING:  # pragma: no cover
                             plugin_db_setting.active = False
-                            # TODO save the error to the plugin
                             plugin_db_setting.save(no_reload=True)
 
                         # Add to inactive plugins so it shows up in the ui
