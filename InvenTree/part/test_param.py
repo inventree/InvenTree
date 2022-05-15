@@ -1,8 +1,5 @@
 # Tests for Part Parameters
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.test import TestCase, TransactionTestCase
 import django.core.exceptions as django_exceptions
 

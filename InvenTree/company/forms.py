@@ -2,9 +2,6 @@
 Django Forms for interacting with Company app
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from InvenTree.forms import HelperForm
 from InvenTree.fields import RoundingDecimalFormField
 

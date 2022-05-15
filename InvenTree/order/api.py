@@ -2,9 +2,6 @@
 JSON API for the Order app
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.urls import include, path, re_path
 from django.db.models import Q, F
 

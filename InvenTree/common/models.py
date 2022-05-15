@@ -3,9 +3,6 @@ Common database model definitions.
 These models are 'generic' and do not fit a particular business logic object.
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import os
 import decimal
 import math

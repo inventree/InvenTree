@@ -2,8 +2,6 @@
 Plugin model definitions
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 import warnings
 
 from django.utils.translation import gettext_lazy as _

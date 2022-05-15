@@ -2,9 +2,6 @@
 Provides a JSON API for the Part app
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import datetime
 
 from django.urls import include, path, re_path

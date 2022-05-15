@@ -2,8 +2,6 @@
 Helper forms which subclass Django forms to provide additional functionality
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 from urllib.parse import urlencode
 import logging
 
