@@ -129,15 +129,17 @@ class NavigationMixinTest(BaseMixinDefinition, TestCase):
     def test_function(self):
         # check right configuration
         self.assertEqual(self.mixin.navigation, [{'name': 'aa', 'link': 'plugin:test:test_view'}, ])
+
+        # navigation name
+        self.assertEqual(self.mixin.navigation_name, 'abcd1')
+        self.assertEqual(self.nothing_mixin.navigation_name, '')
+
+    def test_fail(self):
         # check wrong links fails
         with self.assertRaises(NotImplementedError):
             class NavigationCls(NavigationMixin, InvenTreePlugin):
                 NAVIGATION = ['aa', 'aa']
             NavigationCls()
-
-        # navigation name
-        self.assertEqual(self.mixin.navigation_name, 'abcd1')
-        self.assertEqual(self.nothing_mixin.navigation_name, '')
 
 
 class APICallMixinTest(BaseMixinDefinition, TestCase):
