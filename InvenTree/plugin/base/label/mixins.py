@@ -1,5 +1,6 @@
 """Plugin mixin classes for label plugins"""
 
+from plugin.helpers import MixinNotImplementedError
 
 class LabelPrintingMixin:
     """
@@ -34,4 +35,4 @@ class LabelPrintingMixin:
         """
 
         # Unimplemented (to be implemented by the particular plugin class)
-        ...  # pragma: no cover
+        MixinNotImplementedError('This Plugin must implement a `print_label` method')
