@@ -228,7 +228,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         self.assertEqual(result['name'], 'morpheus')
 
         # api_call with filter
-        result = self.mixin.api_call('api/users', url_args={"page": 2})
+        result = self.mixin.api_call('api/users', url_args={'page': '2'})
         self.assertTrue(result)
         self.assertEqual(result['page'], 2)
 
