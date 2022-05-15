@@ -240,4 +240,4 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
 
         # cover wrong token setting
         with self.assertRaises(ValueError):
-            self.mixin_wrong.has_api_call()
+            self.mixin_wrong2.has_api_call()
