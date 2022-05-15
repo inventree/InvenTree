@@ -308,8 +308,6 @@ class PluginsRegistry:
 
                 # Initialize package
                 # now we can be sure that an admin has activated the plugin
-                # TODO check more stuff -> as of Nov 2021 there are not many checks in place
-                # but we could enhance those to check signatures, run the plugin against a whitelist etc.
                 logger.info(f'Loading plugin {plug_name}')
 
                 try:
