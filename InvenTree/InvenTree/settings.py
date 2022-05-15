@@ -41,6 +41,13 @@ TESTING = 'test' in sys.argv
 # Are enviroment variables manipulated by tests? Needs to be set by testing code
 TESTING_ENV = False
 
+# Testing speed settings
+if TESTING:
+    # see https://docs.djangoproject.com/en/4.0/topics/testing/overview/#password-hashing
+    PASSWORD_HASHERS = [
+        'django.contrib.auth.hashers.MD5PasswordHasher',
+    ]
+
 # New requirement for django 3.2+
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
