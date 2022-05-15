@@ -32,7 +32,7 @@ class ActionPluginView(APIView):
         for plugin in action_plugins:
             if plugin.action_name() == action:
                 plugin.perform_action(request.user, data=data)
-                return Response(plugin.get_response())
+                return Response(plugin.get_response(request.user, data=data))
 
         # If we got to here, no matching action was found
         return Response({

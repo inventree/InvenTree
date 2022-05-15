@@ -16,9 +16,9 @@ class SimpleActionPlugin(ActionMixin, InvenTreePlugin):
     def perform_action(self):
         print("Action plugin in action!")
 
-    def get_info(self):
+    def get_info(self, user, data):
         return {
-            "user": self.user.username,
+            "user": user.username,
             "hello": "world",
         }
 

@@ -35,7 +35,7 @@ class ActionMixin:
         Override this method to perform the action!
         """
 
-    def get_result(self):
+    def get_result(self, user=None, data=None):
         """
         Result of the action?
         """
@@ -43,19 +43,19 @@ class ActionMixin:
         # Re-implement this for cutsom actions
         return False
 
-    def get_info(self):
+    def get_info(self, user=None, data=None):
         """
         Extra info? Can be a string / dict / etc
         """
         return None
 
-    def get_response(self):
+    def get_response(self, user=None, data=None):
         """
         Return a response. Default implementation is a simple response
         which can be overridden.
         """
         return {
             "action": self.action_name(),
-            "result": self.get_result(),
-            "info": self.get_info(),
+            "result": self.get_result(user, data),
+            "info": self.get_info(user, data),
         }
