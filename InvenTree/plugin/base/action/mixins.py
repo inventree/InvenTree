@@ -15,16 +15,17 @@ class ActionMixin:
         """
         MIXIN_NAME = 'Actions'
 
-    def __init__(self):
+    def __init__(self, user=None, data=None):
         super().__init__()
         self.add_mixin('action', True, __class__)
+        self.init(user, data)
 
     def action_name(self):
         """
         Action name for this plugin.
 
         If the ACTION_NAME parameter is empty,
-        uses the PLUGIN_NAME instead.
+        uses the NAME instead.
         """
         if self.ACTION_NAME:
             return self.ACTION_NAME

@@ -13,14 +13,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 
 from rest_framework import permissions
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from .views import AjaxView
 from .version import inventreeVersion, inventreeApiVersion, inventreeInstanceName
 from .status import is_worker_running
-
-from plugin import registry
 
 
 class InfoView(AjaxView):
@@ -61,6 +57,44 @@ class NotFoundView(AjaxView):
         return JsonResponse(data, status=404)
 
 
+class APIDownloadMixin:
+    """
+    Mixin for enabling a LIST endpoint to be downloaded a file.
+
+    To download the data, add the ?export=<fmt> to the query string.
+
+    The implementing class must provided a download_queryset method,
+    e.g.
+
+    def download_queryset(self, queryset, export_format):
+        dataset = StockItemResource().export(queryset=queryset)
+
+        filedata = dataset.export(export_format)
+
+        filename = 'InvenTree_Stocktake_{date}.{fmt}'.format(
+            date=datetime.now().strftime("%d-%b-%Y"),
+            fmt=export_format
+        )
+
+        return DownloadFile(filedata, filename)
+    """
+
+    def get(self, request, *args, **kwargs):
+
+        export_format = request.query_params.get('export', None)
+
+        if export_format and export_format in ['csv', 'tsv', 'xls', 'xlsx']:
+            queryset = self.filter_queryset(self.get_queryset())
+            return self.download_queryset(queryset, export_format)
+
+        else:
+            # Default to the parent class implementation
+            return super().get(request, *args, **kwargs)
+
+    def download_queryset(self, queryset, export_format):
+        raise NotImplementedError("download_queryset method not implemented!")
+
+
 class AttachmentMixin:
     """
     Mixin for creating attachment objects,
@@ -81,40 +115,3 @@ class AttachmentMixin:
         attachment = serializer.save()
         attachment.user = self.request.user
         attachment.save()
-
-
-class ActionPluginView(APIView):
-    """
-    Endpoint for running custom action plugins.
-    """
-
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
-
-    def post(self, request, *args, **kwargs):
-
-        action = request.data.get('action', None)
-
-        data = request.data.get('data', None)
-
-        if action is None:
-            return Response({
-                'error': _("No action specified")
-            })
-
-        action_plugins = registry.with_mixin('action')
-        for plugin in action_plugins:
-            if plugin.action_name() == action:
-                # TODO @matmair use easier syntax once InvenTree 0.7.0 is released
-                plugin.init(request.user, data=data)
-
-                plugin.perform_action()
-
-                return Response(plugin.get_response())
-
-        # If we got to here, no matching action was found
-        return Response({
-            'error': _("No matching action found"),
-            "action": action,
-        })

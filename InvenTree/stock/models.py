@@ -556,7 +556,14 @@ class StockItem(MPTTModel):
 
         # If the item points to a build, check that the Part references match
         if self.build:
-            if not self.part == self.build.part:
+
+            if self.part == self.build.part:
+                # Part references match exactly
+                pass
+            elif self.part in self.build.part.get_conversion_options():
+                # Part reference is one of the valid conversion options for the build output
+                pass
+            else:
                 raise ValidationError({
                     'build': _("Build reference does not point to the same part object")
                 })

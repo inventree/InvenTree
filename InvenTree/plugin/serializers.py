@@ -96,8 +96,10 @@ class PluginConfigInstallSerializer(serializers.Serializer):
                     install_name.append(f'{packagename}@{url}')
                 else:
                     install_name.append(url)
-            else:
+            else:  # pragma: no cover
                 # using a custom package repositories
+                # This is only for pypa compliant directory services (all current are tested above)
+                # and not covered by tests.
                 install_name.append('-i')
                 install_name.append(url)
                 install_name.append(packagename)

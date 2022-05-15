@@ -4,14 +4,16 @@ Plugin model definitions
 
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import warnings
 
 from django.utils.translation import gettext_lazy as _
 from django.db import models
 from django.contrib.auth.models import User
+from django.conf import settings
 
 import common.models
 
-from plugin import InvenTreePluginBase, registry
+from plugin import InvenTreePlugin, registry
 
 
 class PluginConfig(models.Model):
@@ -59,7 +61,7 @@ class PluginConfig(models.Model):
 
         try:
             return self.plugin._mixinreg
-        except (AttributeError, ValueError):
+        except (AttributeError, ValueError):  # pragma: no cover
             return {}
 
     # functions
@@ -97,12 +99,14 @@ class PluginConfig(models.Model):
         if not reload:
             if (self.active is False and self.__org_active is True) or \
                (self.active is True and self.__org_active is False):
+                if settings.PLUGIN_TESTING:
+                    warnings.warn('A reload was triggered')
                 registry.reload_plugins()
 
         return ret
 
 
-class PluginSetting(common.models.GenericReferencedSettingClass, common.models.BaseInvenTreeSetting):
+class PluginSetting(common.models.BaseInvenTreeSetting):
     """
     This model represents settings for individual plugins
     """
@@ -112,7 +116,13 @@ class PluginSetting(common.models.GenericReferencedSettingClass, common.models.B
             ('plugin', 'key'),
         ]
 
-    REFERENCE_NAME = 'plugin'
+    plugin = models.ForeignKey(
+        PluginConfig,
+        related_name='settings',
+        null=False,
+        verbose_name=_('Plugin'),
+        on_delete=models.CASCADE,
+    )
 
     @classmethod
     def get_setting_definition(cls, key, **kwargs):
@@ -135,23 +145,25 @@ class PluginSetting(common.models.GenericReferencedSettingClass, common.models.B
 
             if plugin:
 
-                if issubclass(plugin.__class__, InvenTreePluginBase):
+                if issubclass(plugin.__class__, InvenTreePlugin):
                     plugin = plugin.plugin_config()
 
                 kwargs['settings'] = registry.mixins_settings.get(plugin.key, {})
 
         return super().get_setting_definition(key, **kwargs)
 
-    plugin = models.ForeignKey(
-        PluginConfig,
-        related_name='settings',
-        null=False,
-        verbose_name=_('Plugin'),
-        on_delete=models.CASCADE,
-    )
+    def get_kwargs(self):
+        """
+        Explicit kwargs required to uniquely identify a particular setting object,
+        in addition to the 'key' parameter
+        """
+
+        return {
+            'plugin': self.plugin,
+        }
 
 
-class NotificationUserSetting(common.models.GenericReferencedSettingClass, common.models.BaseInvenTreeSetting):
+class NotificationUserSetting(common.models.BaseInvenTreeSetting):
     """
     This model represents notification settings for a user
     """
@@ -161,8 +173,6 @@ class NotificationUserSetting(common.models.GenericReferencedSettingClass, commo
             ('method', 'user', 'key'),
         ]
 
-    REFERENCE_NAME = 'method'
-
     @classmethod
     def get_setting_definition(cls, key, **kwargs):
         from common.notifications import storage
@@ -170,6 +180,17 @@ class NotificationUserSetting(common.models.GenericReferencedSettingClass, commo
         kwargs['settings'] = storage.user_settings
 
         return super().get_setting_definition(key, **kwargs)
+
+    def get_kwargs(self):
+        """
+        Explicit kwargs required to uniquely identify a particular setting object,
+        in addition to the 'key' parameter
+        """
+
+        return {
+            'method': self.method,
+            'user': self.user,
+        }
 
     method = models.CharField(
         max_length=255,

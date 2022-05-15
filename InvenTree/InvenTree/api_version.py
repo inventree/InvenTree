@@ -4,10 +4,15 @@ InvenTree API version information
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 47
+INVENTREE_API_VERSION = 48
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v48 -> 2022-05-12 : https://github.com/inventree/InvenTree/pull/2977
+    - Adds "export to file" functionality for PurchaseOrder API endpoint
+    - Adds "export to file" functionality for SalesOrder API endpoint
+    - Adds "export to file" functionality for BuildOrder API endpoint
 
 v47 -> 2022-05-10 : https://github.com/inventree/InvenTree/pull/2964
     - Fixes barcode API error response when scanning a StockItem which does not exist
