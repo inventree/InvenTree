@@ -13,7 +13,7 @@ references model objects actually exist in the database.
 
 import json
 
-from plugin import IntegrationPluginBase
+from plugin import InvenTreePlugin
 from plugin.mixins import BarcodeMixin
 
 from stock.models import StockItem, StockLocation
@@ -22,9 +22,9 @@ from part.models import Part
 from rest_framework.exceptions import ValidationError
 
 
-class InvenTreeBarcodePlugin(BarcodeMixin, IntegrationPluginBase):
+class InvenTreeBarcodePlugin(BarcodeMixin, InvenTreePlugin):
 
-    PLUGIN_NAME = "InvenTreeBarcode"
+    NAME = "InvenTreeBarcode"
 
     def validate(self):
         """

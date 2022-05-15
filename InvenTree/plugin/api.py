@@ -5,6 +5,7 @@ JSON API for the plugin app
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.conf import settings
 from django.urls import include, re_path
 
 from rest_framework import generics
@@ -16,6 +17,8 @@ from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 
 from common.api import GlobalSettingsPermissions
+from plugin.base.barcodes.api import barcode_api_urls
+from plugin.base.action.api import ActionPluginView
 from plugin.models import PluginConfig, PluginSetting
 import plugin.serializers as PluginSerializers
 from plugin.registry import registry
@@ -141,7 +144,8 @@ class PluginSettingDetail(generics.RetrieveUpdateAPIView):
         plugin = registry.get_plugin(plugin_slug)
 
         if plugin is None:
-            raise NotFound(detail=f"Plugin '{plugin_slug}' not found")
+            # This only occurs if the plugin mechanism broke
+            raise NotFound(detail=f"Plugin '{plugin_slug}' not found")  # pragma: no cover
 
         settings = getattr(plugin, 'SETTINGS', {})
 
@@ -157,6 +161,11 @@ class PluginSettingDetail(generics.RetrieveUpdateAPIView):
 
 
 plugin_api_urls = [
+    re_path(r'^action/', ActionPluginView.as_view(), name='api-action-plugin'),
+    re_path(r'^barcode/', include(barcode_api_urls)),
+]
+
+general_plugin_api_urls = [
 
     # Plugin settings URLs
     re_path(r'^settings/', include([
@@ -174,3 +183,8 @@ plugin_api_urls = [
     # Anything else
     re_path(r'^.*$', PluginList.as_view(), name='api-plugin-list'),
 ]
+
+if settings.PLUGINS_ENABLED:
+    plugin_api_urls.append(
+        re_path(r'^plugin/', include(general_plugin_api_urls))
+    )
