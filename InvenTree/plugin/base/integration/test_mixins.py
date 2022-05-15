@@ -163,11 +163,11 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
             API_URL_SETTING = 'API_URL'
             API_TOKEN_SETTING = 'API_TOKEN'
 
-            def get_external_url(self):
+            def get_external_url(self, simple:bool = True):
                 '''
                 returns data from the sample endpoint
                 '''
-                return self.api_call('api/users/2')
+                return self.api_call('api/users/2', simple_response=simple)
         self.mixin = MixinCls()
 
         class WrongCLS(APICallMixin, InvenTreePlugin):
@@ -203,6 +203,11 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         result = self.mixin.get_external_url()
         self.assertTrue(result)
         self.assertIn('data', result,)
+
+        # api_call without response
+        result = self.mixin.get_external_url(False)
+        self.assertTrue(result)
+        self.assertEqual(result.reason, 'OK')
 
     def test_function_errors(self):
         """Test function errors"""
