@@ -6,18 +6,22 @@ Note: This plugin does not *actually* locate anything!
 
 import logging
 
-from plugin import IntegrationPluginBase
+from plugin import InvenTreePlugin
 from plugin.mixins import LocateMixin
 
 
 logger = logging.getLogger('inventree')
 
 
-class SampleLocatePlugin(LocateMixin, IntegrationPluginBase):
+class SampleLocatePlugin(LocateMixin, InvenTreePlugin):
+    """
+    A very simple example of the 'locate' plugin.
+    This plugin class simply prints location information to the logger.
+    """
 
-    PLUGIN_NAME = "SampleLocatePlugin"
-    PLUGIN_SLUG = "samplelocate"
-    PLUGIN_TITLE = "Sample plugin for locating items"
+    NAME = "SampleLocatePlugin"
+    SLUG = "samplelocate"
+    TITLE = "Sample plugin for locating items"
 
     VERSION = "0.1"
 

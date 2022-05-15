@@ -11,7 +11,7 @@ from stock.models import StockItem
 from stock.serializers import StockItemSerializer
 
 from plugin.builtin.barcodes.inventree_barcode import InvenTreeBarcodePlugin
-from plugin.builtin.barcodes.mixins import hash_barcode
+from plugin.base.barcodes.mixins import hash_barcode
 from plugin import registry
 
 
@@ -237,7 +237,7 @@ class BarcodeAssign(APIView):
 
 
 barcode_api_urls = [
-
+    # Link a barcode to a part
     path('link/', BarcodeAssign.as_view(), name='api-barcode-link'),
 
     # Catch-all performs barcode 'scan'

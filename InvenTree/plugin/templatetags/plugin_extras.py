@@ -16,7 +16,7 @@ register = template.Library()
 @register.simple_tag()
 def plugin_list(*args, **kwargs):
     """
-    List of all installed integration plugins
+    List of all installed plugins
     """
     return registry.plugins
 
@@ -24,7 +24,7 @@ def plugin_list(*args, **kwargs):
 @register.simple_tag()
 def inactive_plugin_list(*args, **kwargs):
     """
-    List of all inactive integration plugins
+    List of all inactive plugins
     """
     return registry.plugins_inactive
 
