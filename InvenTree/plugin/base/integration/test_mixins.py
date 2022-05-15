@@ -227,6 +227,11 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         self.assertTrue(result)
         self.assertEqual(result['name'], 'morpheus')
 
+        # api_call with filter
+        result = self.mixin.api_call('api/users', url_args={"page": 2})
+        self.assertTrue(result)
+        self.assertEqual(result['page'], 2)
+
     def test_function_errors(self):
         """Test function errors"""
         # wrongly defined plugins should not load
