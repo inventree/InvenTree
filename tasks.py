@@ -98,6 +98,7 @@ def install(c):
     # Install required Python packages with PIP
     c.run('pip3 install -U -r requirements.txt')
 
+@task
 def setup_dev(c):
     """
     Sets up everything needed for the dev enviroment
