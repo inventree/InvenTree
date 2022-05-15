@@ -8,6 +8,7 @@ from django.contrib.auth import get_user_model
 from plugin import InvenTreePlugin
 from plugin.mixins import AppMixin, SettingsMixin, UrlsMixin, NavigationMixin, APICallMixin
 from plugin.urls import PLUGIN_BASE
+from plugin.helpers import MixinNotImplementedError
 
 
 class BaseMixinDefinition:
@@ -237,9 +238,9 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
     def test_function_errors(self):
         """Test function errors"""
         # wrongly defined plugins should not load
-        with self.assertRaises(ValueError):
+        with self.assertRaises(MixinNotImplementedError):
             self.mixin_wrong.has_api_call()
 
         # cover wrong token setting
-        with self.assertRaises(ValueError):
+        with self.assertRaises(MixinNotImplementedError):
             self.mixin_wrong2.has_api_call()
