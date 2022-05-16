@@ -79,7 +79,7 @@ def exception_handler(exc, context):
     
         # Convert errors returned under the label '__all__' to 'non_field_errors'
         if '__all__' in response.data:
-            response.data['non_field_errors'] = response.data['all']
+            response.data['non_field_errors'] = response.data['__all__']
             del response.data['__all__']
 
     return response
