@@ -120,7 +120,6 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
         _func(*args, **kwargs)
 
 
-
 def heartbeat():
     """
     Simple task which runs at 5 minute intervals,

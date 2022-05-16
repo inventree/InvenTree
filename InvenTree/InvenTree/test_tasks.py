@@ -42,6 +42,7 @@ class ScheduledTaskTests(TestCase):
         t = Schedule.objects.get(func=task)
         self.assertEqual(t.minutes, 5)
 
+
 class InvenTreeTaskTests(TestCase):
     """Unit tests for tasks"""
 
