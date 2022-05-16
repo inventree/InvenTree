@@ -15,8 +15,6 @@ from django.utils import timezone
 
 from rest_framework import serializers
 
-from InvenTree.helpers import str2bool
-
 from plugin.models import PluginConfig, PluginSetting, NotificationUserSetting
 from common.serializers import GenericReferencedSettingSerializer
 
@@ -37,7 +35,7 @@ class MetadataSerializer(serializers.ModelSerializer):
         fields = [
             'metadata',
         ]
-    
+
     def update(self, instance, data):
 
         if self.partial:

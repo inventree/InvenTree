@@ -199,7 +199,7 @@ class PartTest(TestCase):
         with self.assertRaises(ValidationError):
             part_2.validate_unique()
 
-    def test_metadata(self):
+    def test_attributes(self):
         self.assertEqual(self.r1.name, 'R_2K2_0805')
         self.assertEqual(self.r1.get_absolute_url(), '/part/3/')
 

@@ -1384,7 +1384,7 @@ class LocationMetadata(generics.RetrieveUpdateAPIView):
 
     def get_serializer(self, *args, **kwargs):
         return MetadataSerializer(StockLocation, *args, **kwargs)
-    
+
     queryset = StockLocation.objects.all()
 
 
@@ -1412,8 +1412,7 @@ stock_api_urls = [
 
             re_path(r'^.*$', LocationDetail.as_view(), name='api-location-detail'),
         ])),
-        
-         
+
         re_path(r'^.*$', StockLocationList.as_view(), name='api-location-list'),
     ])),
 

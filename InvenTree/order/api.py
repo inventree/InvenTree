@@ -354,7 +354,7 @@ class PurchaseOrderMetadata(generics.RetrieveUpdateAPIView):
 
     def get_serializer(self, *args, **kwargs):
         return MetadataSerializer(models.PurchaseOrder, *args, **kwargs)
-    
+
     queryset = models.PurchaseOrder.objects.all()
 
 
@@ -932,7 +932,7 @@ class SalesOrderMetadata(generics.RetrieveUpdateAPIView):
 
     def get_serializer(self, *args, **kwargs):
         return MetadataSerializer(models.SalesOrder, *args, **kwargs)
-    
+
     queryset = models.SalesOrder.objects.all()
 
 

@@ -45,16 +45,16 @@ class MetadataMixin(models.Model):
 
         Args:
             key: String key for requesting metadata. e.g. if a plugin is accessing the metadata, the plugin slug should be used
-        
+
         Returns:
             Python dict object containing requested metadata. If no matching metadata is found, returns None
         """
 
         if self.metadata is None:
             return backup_value
-        
+
         return self.metadata.get(key, backup_value)
-        
+
     def set_metadata(self, key: str, data, commit=True):
         """
         Save the provided metadata under the provided key.
@@ -68,9 +68,9 @@ class MetadataMixin(models.Model):
         if self.metadata is None:
             # Handle a null field value
             self.metadata = {}
-        
+
         self.metadata[key] = data
-        
+
         if commit:
             self.save()
 
