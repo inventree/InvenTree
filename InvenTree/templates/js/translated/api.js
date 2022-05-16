@@ -231,7 +231,7 @@ function showApiError(xhr, url) {
         // The server may have provided some extra information about this error
         if (response) {
             if (response.error) {
-                title = response.error
+                title = response.error;
             }
 
             if (response.detail) {
