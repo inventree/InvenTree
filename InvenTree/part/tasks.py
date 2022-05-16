@@ -10,7 +10,6 @@ import InvenTree.tasks
 import common.notifications
 
 import part.models
-from part import tasks as part_tasks
 
 logger = logging.getLogger("inventree")
 
@@ -50,6 +49,6 @@ def notify_low_stock_if_required(part: part.models.Part):
     for p in parts:
         if p.is_part_low_on_stock():
             InvenTree.tasks.offload_task(
-                part_tasks.notify_low_stock,
+                notify_low_stock,
                 p
             )
