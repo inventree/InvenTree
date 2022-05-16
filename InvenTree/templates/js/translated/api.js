@@ -225,6 +225,20 @@ function showApiError(xhr, url) {
     default:
         title = '{% trans "Unhandled Error Code" %}';
         message = `{% trans "Error code" %}: ${xhr.status}`;
+
+        var response = xhr.responseJSON;
+
+        // The server may have provided some extra information about this error
+        if (response) {
+            if (response.error) {
+                title = response.error
+            }
+
+            if (response.detail) {
+                message = response.detail;
+            }
+        }
+
         break;
     }
 
