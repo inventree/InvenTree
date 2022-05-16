@@ -74,17 +74,18 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
     except (OperationalError, ProgrammingError):  # pragma: no cover
         logger.warning(f"Could not offload task '{taskname}' - database not ready")
 
-        # make sure the taskname is a string
-        if not isinstance(taskname, str):
-            taskname = str(taskname)
+    if is_worker_running() and not force_sync:  # pragma: no cover
+        # Running as asynchronous task
+        try:
+            task = AsyncTask(taskname, *args, **kwargs)
+            task.run()
+        except ImportError:
+            logger.warning(f"WARNING: '{taskname}' not started - Function not found")
+    else:
 
-        if is_worker_running() and not force_sync:  # pragma: no cover
-            # Running as asynchronous task
-            try:
-                task = AsyncTask(taskname, *args, **kwargs)
-                task.run()
-            except ImportError:
-                logger.warning(f"WARNING: '{taskname}' not started - Function not found")
+        if isinstance(taskname, function):
+            # function was passed - use that
+            _func = taskname
         else:
             # Split path
             try:
@@ -115,8 +116,8 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
                 logger.warning(f"WARNING: '{taskname}' not started - No function named '{func}'")
                 return
 
-            # Workers are not running: run it as synchronous task
-            _func(*args, **kwargs)
+        # Workers are not running: run it as synchronous task
+        _func(*args, **kwargs)
 
 
 
