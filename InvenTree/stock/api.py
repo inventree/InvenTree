@@ -43,6 +43,8 @@ from order.serializers import PurchaseOrderSerializer
 from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
 
+from plugin.serializers import MetadataSerializer
+
 from stock.admin import StockItemResource
 from stock.models import StockLocation, StockItem
 from stock.models import StockItemTracking
@@ -90,6 +92,15 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
         kwargs['context'] = self.get_serializer_context()
 
         return self.serializer_class(*args, **kwargs)
+
+
+class StockMetadata(generics.RetrieveUpdateAPIView):
+    """API endpoint for viewing / updating StockItem metadata"""
+
+    def get_serializer(self, *args, **kwargs):
+        return MetadataSerializer(StockItem, *args, **kwargs)
+
+    queryset = StockItem.objects.all()
 
 
 class StockItemContextMixin:
@@ -1368,6 +1379,15 @@ class StockTrackingList(generics.ListAPIView):
     ]
 
 
+class LocationMetadata(generics.RetrieveUpdateAPIView):
+    """API endpoint for viewing / updating StockLocation metadata"""
+
+    def get_serializer(self, *args, **kwargs):
+        return MetadataSerializer(StockLocation, *args, **kwargs)
+    
+    queryset = StockLocation.objects.all()
+
+
 class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of StockLocation object
 
@@ -1385,7 +1405,15 @@ stock_api_urls = [
 
         re_path(r'^tree/', StockLocationTree.as_view(), name='api-location-tree'),
 
-        re_path(r'^(?P<pk>\d+)/', LocationDetail.as_view(), name='api-location-detail'),
+        # Stock location detail endpoints
+        re_path(r'^(?P<pk>\d+)/', include([
+
+            re_path(r'^metadata/', LocationMetadata.as_view(), name='api-location-metadata'),
+
+            re_path(r'^.*$', LocationDetail.as_view(), name='api-location-detail'),
+        ])),
+        
+         
         re_path(r'^.*$', StockLocationList.as_view(), name='api-location-list'),
     ])),
 
@@ -1417,8 +1445,9 @@ stock_api_urls = [
 
     # Detail views for a single stock item
     re_path(r'^(?P<pk>\d+)/', include([
-        re_path(r'^serialize/', StockItemSerialize.as_view(), name='api-stock-item-serialize'),
         re_path(r'^install/', StockItemInstall.as_view(), name='api-stock-item-install'),
+        re_path(r'^metadata/', StockMetadata.as_view(), name='api-stock-item-metadata'),
+        re_path(r'^serialize/', StockItemSerialize.as_view(), name='api-stock-item-serialize'),
         re_path(r'^uninstall/', StockItemUninstall.as_view(), name='api-stock-item-uninstall'),
         re_path(r'^.*$', StockDetail.as_view(), name='api-stock-detail'),
     ])),

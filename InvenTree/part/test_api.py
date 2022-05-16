@@ -1021,6 +1021,59 @@ class PartDetailTests(InvenTreeAPITestCase):
         self.assertEqual(data['in_stock'], 9000)
         self.assertEqual(data['unallocated_stock'], 9000)
 
+    def test_part_metadata(self):
+        """
+        Tests for the part metadata endpoint
+        """
+
+        url = reverse('api-part-metadata', kwargs={'pk': 1})
+
+        part = Part.objects.get(pk=1)
+
+        # Metadata is initially null
+        self.assertIsNone(part.metadata)
+
+        part.metadata = {'foo': 'bar'}
+        part.save()
+
+        response = self.get(url, expected_code=200)
+
+        self.assertEqual(response.data['metadata']['foo'], 'bar')
+
+        # Add more data via the API
+        # Using the 'patch' method causes the new data to be merged in
+        self.patch(
+            url,
+            {
+                'metadata': {
+                    'hello': 'world',
+                }
+            },
+            expected_code=200
+        )
+
+        part.refresh_from_db()
+
+        self.assertEqual(part.metadata['foo'], 'bar')
+        self.assertEqual(part.metadata['hello'], 'world')
+
+        # Now, issue a PUT request (existing data will be replacted)
+        self.put(
+            url,
+            {
+                'metadata': {
+                    'x': 'y'
+                },
+            },
+            expected_code=200
+        )
+
+        part.refresh_from_db()
+
+        self.assertFalse('foo' in part.metadata)
+        self.assertFalse('hello' in part.metadata)
+        self.assertEqual(part.metadata['x'], 'y')
+
 
 class PartAPIAggregationTest(InvenTreeAPITestCase):
     """

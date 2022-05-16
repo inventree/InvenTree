@@ -39,6 +39,41 @@ class MetadataMixin(models.Model):
         help_text=_('JSON metadata field, for use by external plugins'),
     )
 
+    def get_metadata(self, key: str, backup_value=None):
+        """
+        Finds metadata for this model instance, using the provided key for lookup
+
+        Args:
+            key: String key for requesting metadata. e.g. if a plugin is accessing the metadata, the plugin slug should be used
+        
+        Returns:
+            Python dict object containing requested metadata. If no matching metadata is found, returns None
+        """
+
+        if self.metadata is None:
+            return backup_value
+        
+        return self.metadata.get(key, backup_value)
+        
+    def set_metadata(self, key: str, data, commit=True):
+        """
+        Save the provided metadata under the provided key.
+
+        Args:
+            key: String key for saving metadata
+            data: Data object to save - must be able to be rendered as a JSON string
+            overwrite: If true, existing metadata with the provided key will be overwritten. If false, a merge will be attempted
+        """
+
+        if self.metadata is None:
+            # Handle a null field value
+            self.metadata = {}
+        
+        self.metadata[key] = data
+        
+        if commit:
+            self.save()
+
 
 class PluginConfig(models.Model):
     """

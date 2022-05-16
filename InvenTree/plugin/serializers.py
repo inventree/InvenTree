@@ -15,8 +15,38 @@ from django.utils import timezone
 
 from rest_framework import serializers
 
+from InvenTree.helpers import str2bool
+
 from plugin.models import PluginConfig, PluginSetting, NotificationUserSetting
 from common.serializers import GenericReferencedSettingSerializer
+
+
+class MetadataSerializer(serializers.ModelSerializer):
+    """
+    Serializer class for model metadata API access.
+    """
+
+    metadata = serializers.JSONField(required=True)
+
+    def __init__(self, model_type, *args, **kwargs):
+
+        self.Meta.model = model_type
+        super().__init__(*args, **kwargs)
+
+    class Meta:
+        fields = [
+            'metadata',
+        ]
+    
+    def update(self, instance, data):
+
+        if self.partial:
+            # Default behaviour is to "merge" new data in
+            metadata = instance.metadata.copy() if instance.metadata else {}
+            metadata.update(data['metadata'])
+            data['metadata'] = metadata
+
+        return super().update(instance, data)
 
 
 class PluginConfigSerializer(serializers.ModelSerializer):

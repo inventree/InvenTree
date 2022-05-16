@@ -142,6 +142,18 @@ class InvenTreeAPITestCase(APITestCase):
 
         return response
 
+    def put(self, url, data, expected_code=None, format='json'):
+        """
+        Issue a PUT request
+        """
+
+        response = self.client.put(url, data=data, format=format)
+
+        if expected_code is not None:
+            self.assertEqual(response.status_code, expected_code)
+
+        return response
+
     def options(self, url, expected_code=None):
         """
         Issue an OPTIONS request
