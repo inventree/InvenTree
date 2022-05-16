@@ -1295,7 +1295,7 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
                     quantity=entry.get('quantity'),
                     shipment=shipment,
                 )
-                
+
                 allocation.full_clean()
                 allocation.save()
 

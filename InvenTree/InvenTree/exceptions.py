@@ -5,8 +5,6 @@ Custom exception handling for the DRF API
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import json
-
 from django.db.utils import OperationalError, ProgrammingError, IntegrityError
 from django.conf import settings
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -76,7 +74,7 @@ def exception_handler(exc, context):
     if response is not None:
         # For an error response, include status code information
         response.data['status_code'] = response.status_code
-    
+
         # Convert errors returned under the label '__all__' to 'non_field_errors'
         if '__all__' in response.data:
             response.data['non_field_errors'] = response.data['__all__']
