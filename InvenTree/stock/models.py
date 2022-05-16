@@ -2,10 +2,6 @@
 Stock database model definitions
 """
 
-
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import os
 
 from jinja2 import Template

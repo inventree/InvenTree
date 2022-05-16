@@ -5,8 +5,6 @@ In particular these views provide base functionality for rendering Django forms
 as JSON objects and passing them to modal forms (using jQuery / bootstrap).
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 import os
 import json
 
