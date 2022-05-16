@@ -210,25 +210,25 @@ def check_for_updates():
     response = requests.get('https://api.github.com/repos/inventree/inventree/releases/latest')
 
     if response.status_code != 200:
-        raise ValueError(f'Unexpected status code from GitHub API: {response.status_code}')
+        raise ValueError(f'Unexpected status code from GitHub API: {response.status_code}')  # pragma: no cover
 
     data = json.loads(response.text)
 
     tag = data.get('tag_name', None)
 
     if not tag:
-        raise ValueError("'tag_name' missing from GitHub response")
+        raise ValueError("'tag_name' missing from GitHub response")  # pragma: no cover
 
     match = re.match(r"^.*(\d+)\.(\d+)\.(\d+).*$", tag)
 
-    if len(match.groups()) != 3:
+    if len(match.groups()) != 3:  # pragma: no cover
         logger.warning(f"Version '{tag}' did not match expected pattern")
         return
 
     latest_version = [int(x) for x in match.groups()]
 
     if len(latest_version) != 3:
-        raise ValueError(f"Version '{tag}' is not correct format")
+        raise ValueError(f"Version '{tag}' is not correct format")  # pragma: no cover
 
     logger.info(f"Latest InvenTree version: '{tag}'")
 
