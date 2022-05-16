@@ -2,9 +2,6 @@
 Main JSON interface views
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.http import JsonResponse

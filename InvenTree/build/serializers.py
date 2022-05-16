@@ -2,9 +2,6 @@
 JSON serializers for Build API
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.db import transaction
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import gettext_lazy as _

@@ -2,8 +2,6 @@
 Plugin model definitions
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 import warnings
 
 from django.utils.translation import gettext_lazy as _
@@ -14,6 +12,65 @@ from django.conf import settings
 import common.models
 
 from plugin import InvenTreePlugin, registry
+
+
+class MetadataMixin(models.Model):
+    """
+    Model mixin class which adds a JSON metadata field to a model,
+    for use by any (and all) plugins.
+
+    The intent of this mixin is to provide a metadata field on a model instance,
+    for plugins to read / modify as required, to store any extra information.
+
+    The assumptions for models implementing this mixin are:
+
+    - The internal InvenTree business logic will make no use of this field
+    - Multiple plugins may read / write to this metadata field, and not assume they have sole rights
+    """
+
+    class Meta:
+        abstract = True
+
+    metadata = models.JSONField(
+        blank=True, null=True,
+        verbose_name=_('Plugin Metadata'),
+        help_text=_('JSON metadata field, for use by external plugins'),
+    )
+
+    def get_metadata(self, key: str, backup_value=None):
+        """
+        Finds metadata for this model instance, using the provided key for lookup
+
+        Args:
+            key: String key for requesting metadata. e.g. if a plugin is accessing the metadata, the plugin slug should be used
+
+        Returns:
+            Python dict object containing requested metadata. If no matching metadata is found, returns None
+        """
+
+        if self.metadata is None:
+            return backup_value
+
+        return self.metadata.get(key, backup_value)
+
+    def set_metadata(self, key: str, data, commit=True):
+        """
+        Save the provided metadata under the provided key.
+
+        Args:
+            key: String key for saving metadata
+            data: Data object to save - must be able to be rendered as a JSON string
+            overwrite: If true, existing metadata with the provided key will be overwritten. If false, a merge will be attempted
+        """
+
+        if self.metadata is None:
+            # Handle a null field value
+            self.metadata = {}
+
+        self.metadata[key] = data
+
+        if commit:
+            self.save()
 
 
 class PluginConfig(models.Model):

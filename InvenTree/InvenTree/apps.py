@@ -131,7 +131,7 @@ class InvenTreeConfig(AppConfig):
                 update = True
 
             # Backend currency has changed?
-            if not base_currency == backend.base_currency:
+            if base_currency != backend.base_currency:
                 logger.info(f"Base currency changed from {backend.base_currency} to {base_currency}")
                 update = True
 

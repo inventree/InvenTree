@@ -2,9 +2,6 @@
 On release, ensure that the release tag matches the InvenTree version number!
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import sys
 import re
 import os
@@ -25,7 +22,7 @@ if __name__ == '__main__':
         # Extract the InvenTree software version
         results = re.findall(r'INVENTREE_SW_VERSION = "(.*)"', text)
 
-        if not len(results) == 1:
+        if len(results) != 1:
             print(f"Could not find INVENTREE_SW_VERSION in {version_file}")
             sys.exit(1)
 
@@ -91,7 +88,7 @@ if __name__ == '__main__':
             sys.exit(1)
 
     if args.tag:
-        if not args.tag == version:
+        if args.tag != version:
             print(f"Release tag '{args.tag}' does not match INVENTREE_SW_VERSION '{version}'")
             sys.exit(1)
 

@@ -16,6 +16,7 @@
 
 /* exported
     constructBomUploadTable,
+    deleteBomItems,
     downloadBomTemplate,
     exportBom,
     newPartFromBomWizard,
@@ -647,7 +648,88 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
             reloadParentTable();
         }
     });
+}
 
+
+function deleteBomItems(items, options={}) {
+    /* Delete the selected BOM items from the database
+     */
+
+    function renderItem(item, opts={}) {
+
+        var sub_part = item.sub_part_detail;
+        var thumb = thumbnailImage(sub_part.thumbnail || sub_part.image);
+        
+        var html = `
+        <tr>
+            <td>${thumb} ${sub_part.full_name}</td>
+            <td>${item.reference}</td>
+            <td>${item.quantity}
+        </tr>
+        `;
+
+        return html;
+    }
+
+    var rows = '';
+
+    items.forEach(function(item) {
+        rows += renderItem(item);
+    });
+
+    var html = `
+    <div class='alert alert-block alert-danger'>
+    {% trans "All selected BOM items will be deleted" %}
+    </div>
+
+    <table class='table table-striped table-condensed'>
+        <tr>
+            <th>{% trans "Part" %}</th>
+            <th>{% trans "Reference" %}</th>
+            <th>{% trans "Quantity" %}</th>
+        </tr>
+        ${rows}
+    </table>
+    `;
+
+    constructFormBody({}, {
+        title: '{% trans "Delete selected BOM items?" %}',
+        fields: {},
+        preFormContent: html,
+        submitText: '{% trans "Delete" %}',
+        submitClass: 'danger',
+        confirm: true,
+        onSubmit: function(fields, opts) {
+            // Individually send DELETE requests for each BOM item
+            // We do *not* send these all at once, to prevent overloading the server
+
+            // Show the progress spinner
+            $(opts.modal).find('#modal-progress-spinner').show();
+
+            function deleteNextBomItem() {
+
+                if (items.length > 0) {
+                    
+                    var item = items.shift();
+
+                    inventreeDelete(`/api/bom/${item.pk}/`,
+                        {
+                            complete: deleteNextBomItem,
+                        }
+                    );
+                } else {
+                    // Destroy this modal once all items are deleted
+                    $(opts.modal).modal('hide');
+
+                    if (options.success) {
+                        options.success();
+                    }
+                }
+            }
+
+            deleteNextBomItem();
+        },
+    });
 }
 
 
@@ -1146,19 +1228,13 @@ function loadBomTable(table, options={}) {
 
             var pk = $(this).attr('pk');
 
-            var html = `
-            <div class='alert alert-block alert-danger'>
-            {% trans "Are you sure you want to delete this BOM item?" %}
-            </div>`;
+            var item = table.bootstrapTable('getRowByUniqueId', pk);
 
-            constructForm(`/api/bom/${pk}/`, {
-                method: 'DELETE',
-                title: '{% trans "Delete BOM Item" %}',
-                preFormContent: html,
-                onSuccess: function() {
+            deleteBomItems([item], {
+                success: function() {
                     reloadBomTable(table);
                 }
-            }); 
+            });
         });
 
         // Callback for "edit" button

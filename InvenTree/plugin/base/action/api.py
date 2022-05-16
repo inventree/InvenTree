@@ -31,12 +31,8 @@ class ActionPluginView(APIView):
         action_plugins = registry.with_mixin('action')
         for plugin in action_plugins:
             if plugin.action_name() == action:
-                # TODO @matmair use easier syntax once InvenTree 0.7.0 is released
-                plugin.init(request.user, data=data)
-
-                plugin.perform_action()
-
-                return Response(plugin.get_response())
+                plugin.perform_action(request.user, data=data)
+                return Response(plugin.get_response(request.user, data=data))
 
         # If we got to here, no matching action was found
         return Response({

@@ -2,9 +2,6 @@
 JSON API for the Build app
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.urls import include, re_path
 
 from rest_framework import filters, generics
