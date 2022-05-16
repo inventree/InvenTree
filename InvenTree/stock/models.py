@@ -2,10 +2,6 @@
 Stock database model definitions
 """
 
-
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import os
 
 from jinja2 import Template
@@ -38,6 +34,7 @@ import common.models
 import report.models
 import label.models
 
+from plugin.models import MetadataMixin
 from plugin.events import trigger_event
 
 from InvenTree.status_codes import StockStatus, StockHistoryCode
@@ -52,7 +49,7 @@ from part import models as PartModels
 from part import tasks as part_tasks
 
 
-class StockLocation(InvenTreeTree):
+class StockLocation(MetadataMixin, InvenTreeTree):
     """ Organization tree for StockItem objects
     A "StockLocation" can be considered a warehouse, or storage location
     Stock locations can be heirarchical as required
@@ -243,7 +240,7 @@ def generate_batch_code():
     return Template(batch_template).render(context)
 
 
-class StockItem(MPTTModel):
+class StockItem(MetadataMixin, MPTTModel):
     """
     A StockItem object represents a quantity of physical instances of a part.
 
@@ -405,7 +402,7 @@ class StockItem(MPTTModel):
                 deltas = {}
 
                 # Status changed?
-                if not old.status == self.status:
+                if old.status != self.status:
                     deltas['status'] = self.status
 
                 # TODO - Other interesting changes we are interested in...
@@ -494,7 +491,7 @@ class StockItem(MPTTModel):
         try:
             if self.part.trackable:
                 # Trackable parts must have integer values for quantity field!
-                if not self.quantity == int(self.quantity):
+                if self.quantity != int(self.quantity):
                     raise ValidationError({
                         'quantity': _('Quantity must be integer value for trackable parts')
                     })
@@ -512,7 +509,7 @@ class StockItem(MPTTModel):
         # The 'supplier_part' field must point to the same part!
         try:
             if self.supplier_part is not None:
-                if not self.supplier_part.part == self.part:
+                if self.supplier_part.part != self.part:
                     raise ValidationError({'supplier_part': _("Part type ('{pf}') must be {pe}").format(
                                            pf=str(self.supplier_part.part),
                                            pe=str(self.part))
@@ -1322,10 +1319,10 @@ class StockItem(MPTTModel):
         if quantity > self.quantity:
             raise ValidationError({"quantity": _("Quantity must not exceed available stock quantity ({n})").format(n=self.quantity)})
 
-        if not type(serials) in [list, tuple]:
+        if type(serials) not in [list, tuple]:
             raise ValidationError({"serial_numbers": _("Serial numbers must be a list of integers")})
 
-        if not quantity == len(serials):
+        if quantity != len(serials):
             raise ValidationError({"quantity": _("Quantity does not match serial numbers")})
 
         # Test if each of the serial numbers are valid

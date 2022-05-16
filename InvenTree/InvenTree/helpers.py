@@ -224,7 +224,7 @@ def increment(n):
     groups = result.groups()
 
     # If we cannot match the regex, then simply return the provided value
-    if not len(groups) == 2:
+    if len(groups) != 2:
         return value
 
     prefix, number = groups
@@ -536,7 +536,7 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
         raise ValidationError([_("No serial numbers found")])
 
     # The number of extracted serial numbers must match the expected quantity
-    if not expected_quantity == len(numbers):
+    if expected_quantity != len(numbers):
         raise ValidationError([_("Number of unique serial numbers ({s}) must match quantity ({q})").format(s=len(numbers), q=expected_quantity)])
 
     return numbers
@@ -575,7 +575,7 @@ def validateFilterString(value, model=None):
 
         pair = group.split('=')
 
-        if not len(pair) == 2:
+        if len(pair) != 2:
             raise ValidationError(
                 "Invalid group: {g}".format(g=group)
             )

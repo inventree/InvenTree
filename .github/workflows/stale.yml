@@ -19,7 +19,7 @@ jobs:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         stale-issue-message: 'This issue seems stale. Please react to show this is still important.'
         stale-pr-message: 'This PR seems stale. Please react to show this is still important.'
-        stale-issue-label: 'no-activity'
-        stale-pr-label: 'no-activity'
+        stale-issue-label: 'inactive'
+        stale-pr-label: 'inactive'
         start-date: '2022-01-01'
         exempt-all-milestones: true

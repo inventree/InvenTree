@@ -288,6 +288,7 @@ function constructDeleteForm(fields, options) {
  * - method: The HTTP method e.g. 'PUT', 'POST', 'DELETE' (default='PATCH')
  * - title: The form title
  * - submitText: Text for the "submit" button
+ * - submitClass: CSS class for the "submit" button (default = ')
  * - closeText: Text for the "close" button
  * - fields: list of fields to display, with the following options
  *      - filters: API query filters

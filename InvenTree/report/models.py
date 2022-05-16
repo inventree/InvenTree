@@ -2,9 +2,6 @@
 Report template model definitions
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import os
 import sys
 import logging
@@ -389,7 +386,7 @@ class BuildReport(ReportTemplateBase):
 
         my_build = self.object_to_print
 
-        if not type(my_build) == build.models.Build:
+        if type(my_build) != build.models.Build:
             raise TypeError('Provided model is not a Build object')
 
         return {

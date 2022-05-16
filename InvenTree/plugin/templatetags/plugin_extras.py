@@ -46,6 +46,14 @@ def mixin_enabled(plugin, key, *args, **kwargs):
 
 
 @register.simple_tag()
+def mixin_available(mixin, *args, **kwargs):
+    """
+    Returns True if there is at least one active plugin which supports the provided mixin
+    """
+    return len(registry.with_mixin(mixin)) > 0
+
+
+@register.simple_tag()
 def navigation_enabled(*args, **kwargs):
     """
     Is plugin navigation enabled?

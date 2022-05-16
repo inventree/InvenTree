@@ -2,8 +2,6 @@
 Build database model definitions
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 import decimal
 
 import os
@@ -778,7 +776,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         if not output.is_building:
             raise ValidationError(_("Build output is already completed"))
 
-        if not output.build == self:
+        if output.build != self:
             raise ValidationError(_("Build output does not match Build Order"))
 
         # Unallocate all build items against the output
@@ -1241,7 +1239,7 @@ class BuildItem(models.Model):
                 })
 
             # Quantity must be 1 for serialized stock
-            if self.stock_item.serialized and not self.quantity == 1:
+            if self.stock_item.serialized and self.quantity != 1:
                 raise ValidationError({
                     'quantity': _('Quantity must be 1 for serialized stock')
                 })

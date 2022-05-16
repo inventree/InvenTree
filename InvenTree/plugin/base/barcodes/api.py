@@ -63,7 +63,6 @@ class BarcodeScan(APIView):
         plugin = None
 
         for current_plugin in plugins:
-            # TODO @matmair make simpler after InvenTree 0.7.0 release
             current_plugin.init(barcode_data)
 
             if current_plugin.validate():
@@ -168,7 +167,6 @@ class BarcodeAssign(APIView):
         plugin = None
 
         for current_plugin in plugins:
-            # TODO @matmair make simpler after InvenTree 0.7.0 release
             current_plugin.init(barcode_data)
 
             if current_plugin.validate():

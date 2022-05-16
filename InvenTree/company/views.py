@@ -2,10 +2,6 @@
 Django views for interacting with Company app
 """
 
-
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView
 
@@ -162,7 +158,7 @@ class CompanyImageDownloadFromURL(AjaxUpdateView):
         self.response = response
 
         # Check for valid response code
-        if not response.status_code == 200:
+        if response.status_code != 200:
             form.add_error('url', _('Invalid response: {code}').format(code=response.status_code))
             return
 

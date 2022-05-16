@@ -131,8 +131,8 @@ def heartbeat():
 
     try:
         from django_q.models import Success
-        logger.info("Could not perform heartbeat task - App registry not ready")
     except AppRegistryNotReady:  # pragma: no cover
+        logger.info("Could not perform heartbeat task - App registry not ready")
         return
 
     threshold = timezone.now() - timedelta(minutes=30)
@@ -209,7 +209,7 @@ def check_for_updates():
 
     response = requests.get('https://api.github.com/repos/inventree/inventree/releases/latest')
 
-    if not response.status_code == 200:
+    if response.status_code != 200:
         raise ValueError(f'Unexpected status code from GitHub API: {response.status_code}')
 
     data = json.loads(response.text)
@@ -221,13 +221,13 @@ def check_for_updates():
 
     match = re.match(r"^.*(\d+)\.(\d+)\.(\d+).*$", tag)
 
-    if not len(match.groups()) == 3:
+    if len(match.groups()) != 3:
         logger.warning(f"Version '{tag}' did not match expected pattern")
         return
 
     latest_version = [int(x) for x in match.groups()]
 
-    if not len(latest_version) == 3:
+    if len(latest_version) != 3:
         raise ValueError(f"Version '{tag}' is not correct format")
 
     logger.info(f"Latest InvenTree version: '{tag}'")

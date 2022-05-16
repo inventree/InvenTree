@@ -2,9 +2,6 @@
 Provides a JSON API for the Part app
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import datetime
 
 from django.urls import include, path, re_path
@@ -44,6 +41,7 @@ from stock.models import StockItem, StockLocation
 from common.models import InvenTreeSetting
 from build.models import Build, BuildItem
 import order.models
+from plugin.serializers import MetadataSerializer
 
 from . import serializers as part_serializers
 
@@ -201,6 +199,15 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
         response = super().update(request, *args, **kwargs)
 
         return response
+
+
+class CategoryMetadata(generics.RetrieveUpdateAPIView):
+    """API endpoint for viewing / updating PartCategory metadata"""
+
+    def get_serializer(self, *args, **kwargs):
+        return MetadataSerializer(PartCategory, *args, **kwargs)
+
+    queryset = PartCategory.objects.all()
 
 
 class CategoryParameterList(generics.ListAPIView):
@@ -585,6 +592,17 @@ class PartScheduling(generics.RetrieveAPIView):
         schedule = sorted(schedule, key=lambda entry: entry['date'])
 
         return Response(schedule)
+
+
+class PartMetadata(generics.RetrieveUpdateAPIView):
+    """
+    API endpoint for viewing / updating Part metadata
+    """
+
+    def get_serializer(self, *args, **kwargs):
+        return MetadataSerializer(Part, *args, **kwargs)
+
+    queryset = Part.objects.all()
 
 
 class PartSerialNumberDetail(generics.RetrieveAPIView):
@@ -1912,7 +1930,15 @@ part_api_urls = [
         re_path(r'^tree/', CategoryTree.as_view(), name='api-part-category-tree'),
         re_path(r'^parameters/', CategoryParameterList.as_view(), name='api-part-category-parameter-list'),
 
-        re_path(r'^(?P<pk>\d+)/?', CategoryDetail.as_view(), name='api-part-category-detail'),
+        # Category detail endpoints
+        re_path(r'^(?P<pk>\d+)/', include([
+
+            re_path(r'^metadata/', CategoryMetadata.as_view(), name='api-part-category-metadata'),
+
+            # PartCategory detail endpoint
+            re_path(r'^.*$', CategoryDetail.as_view(), name='api-part-category-detail'),
+        ])),
+
         path('', CategoryList.as_view(), name='api-part-category-list'),
     ])),
 
@@ -1972,6 +1998,9 @@ part_api_urls = [
 
         # Endpoint for validating a BOM for the specific Part
         re_path(r'^bom-validate/', PartValidateBOM.as_view(), name='api-part-bom-validate'),
+
+        # Part metadata
+        re_path(r'^metadata/', PartMetadata.as_view(), name='api-part-metadata'),
 
         # Part detail endpoint
         re_path(r'^.*$', PartDetail.as_view(), name='api-part-detail'),

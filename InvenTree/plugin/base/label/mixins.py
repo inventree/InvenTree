@@ -36,4 +36,4 @@ class LabelPrintingMixin:
         """
 
         # Unimplemented (to be implemented by the particular plugin class)
-        MixinNotImplementedError('This Plugin must implement a `print_label` method')
+        raise MixinNotImplementedError('This Plugin must implement a `print_label` method')

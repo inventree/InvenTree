@@ -2,9 +2,6 @@
 Company database model definitions
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import os
 
 from django.utils.translation import gettext_lazy as _
@@ -494,7 +491,7 @@ class SupplierPart(models.Model):
         # Ensure that the linked manufacturer_part points to the same part!
         if self.manufacturer_part and self.part:
 
-            if not self.manufacturer_part.part == self.part:
+            if self.manufacturer_part.part != self.part:
                 raise ValidationError({
                     'manufacturer_part': _("Linked manufacturer part must reference the same base part"),
                 })

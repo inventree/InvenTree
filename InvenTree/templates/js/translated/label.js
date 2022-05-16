@@ -236,17 +236,13 @@ function selectLabel(labels, items, options={}) {
     if (plugins_enabled) {
         inventreeGet(
             `/api/plugin/`,
-            {},
+            {
+                mixin: 'labels',
+            },
             {
                 async: false,
                 success: function(response) {
-                    response.forEach(function(plugin) {
-                        // Look for active plugins which implement the 'labels' mixin class
-                        if (plugin.active && plugin.mixins && plugin.mixins.labels) {
-                            // This plugin supports label printing
-                            plugins.push(plugin);
-                        }
-                    });
+                    plugins = response;
                 }
             }
         );
