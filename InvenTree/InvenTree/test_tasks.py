@@ -8,8 +8,14 @@ from django.utils import timezone
 from django.test import TestCase
 from django_q.models import Schedule
 
+from error_report.models import Error
+
 import InvenTree.tasks
 from common.models import InvenTreeSetting
+
+
+threshold = timezone.now() - timedelta(days=30)
+threshold_low = threshold - timedelta(days=1)
 
 
 class ScheduledTaskTests(TestCase):
@@ -72,7 +78,22 @@ class InvenTreeTaskTests(TestCase):
 
     def test_task_delete_old_error_logs(self):
         """Test the task delete_old_error_logs"""
+
+        # Create error
+        error_obj = Error.objects.create()
+        error_obj.when = threshold_low
+        error_obj.save()
+
+        # Check that it is not empty
+        errors = Error.objects.filter(when__lte=threshold,)
+        self.assertNotEqual(len(errors), 0)
+
+        # Run action
         InvenTree.tasks.offload_task(InvenTree.tasks.delete_old_error_logs)
+
+        # Check that it is empty again
+        errors = Error.objects.filter(when__lte=threshold,)
+        self.assertEqual(len(errors), 0)
 
     def test_task_check_for_updates(self):
         """Test the task check_for_updates"""
