@@ -10,6 +10,7 @@ from ..base.action.mixins import ActionMixin
 from ..base.barcodes.mixins import BarcodeMixin
 from ..base.event.mixins import EventMixin
 from ..base.label.mixins import LabelPrintingMixin
+from ..base.locate.mixins import LocateMixin
 
 __all__ = [
     'APICallMixin',
@@ -23,6 +24,7 @@ __all__ = [
     'PanelMixin',
     'ActionMixin',
     'BarcodeMixin',
+    'LocateMixin',
     'SingleNotificationMethod',
     'BulkNotificationMethod',
 ]

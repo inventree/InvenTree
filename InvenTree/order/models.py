@@ -30,7 +30,9 @@ from users import models as UserModels
 from part import models as PartModels
 from stock import models as stock_models
 from company.models import Company, SupplierPart
+
 from plugin.events import trigger_event
+from plugin.models import MetadataMixin
 
 import InvenTree.helpers
 from InvenTree.fields import InvenTreeModelMoneyField, RoundingDecimalField
@@ -97,7 +99,7 @@ def get_next_so_number():
     return reference
 
 
-class Order(ReferenceIndexingMixin):
+class Order(MetadataMixin, ReferenceIndexingMixin):
     """ Abstract model for an order.
 
     Instances of this class:
