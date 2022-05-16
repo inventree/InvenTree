@@ -67,7 +67,7 @@ class InvenTreeTaskTests(TestCase):
         Success.objects.create(name='abc', func='abc', stopped=threshold, started=threshold_low)
         InvenTree.tasks.offload_task(InvenTree.tasks.delete_successful_tasks)
         results = Success.objects.filter(started__lte=threshold)
-        self.assertEqual(len(results, 0))
+        self.assertEqual(len(results), 0)
 
     def test_task_delete_old_error_logs(self):
         """Test the task delete_old_error_logs"""
