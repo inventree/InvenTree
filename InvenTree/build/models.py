@@ -39,7 +39,6 @@ from plugin.events import trigger_event
 from part import models as PartModels
 from stock import models as StockModels
 from users import models as UserModels
-from . import tasks as build_tasks
 
 
 def get_next_build_number():
@@ -1140,6 +1139,7 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
     """
     Callback function to be executed after a Build instance is saved
     """
+    from . import tasks as build_tasks
 
     if created:
         # A new Build has just been created

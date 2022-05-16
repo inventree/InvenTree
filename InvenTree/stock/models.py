@@ -46,7 +46,6 @@ from users.models import Owner
 
 from company import models as CompanyModels
 from part import models as PartModels
-from part import tasks as part_tasks
 
 
 class StockLocation(MetadataMixin, InvenTreeTree):
@@ -2021,6 +2020,7 @@ def after_delete_stock_item(sender, instance: StockItem, **kwargs):
     """
     Function to be executed after a StockItem object is deleted
     """
+    from part import tasks as part_tasks
 
     if not InvenTree.ready.isImportingData():
         # Run this check in the background
@@ -2032,6 +2032,7 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
     """
     Hook function to be executed after StockItem object is saved/updated
     """
+    from part import tasks as part_tasks
 
     if not InvenTree.ready.isImportingData():
         # Run this check in the background
