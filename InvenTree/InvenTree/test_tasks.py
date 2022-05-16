@@ -46,18 +46,18 @@ class ScheduledTaskTests(TestCase):
 class InvenTreeTaskTests(TestCase):
     """Unit tests for tasks"""
 
-    def test_task_hearbeat(self, name):
+    def test_task_hearbeat(self):
         """Test the task heartbeat"""
         InvenTree.tasks.offload_task(InvenTree.tasks.heartbeat)
 
-    def test_task_delete_successful_tasks(self, name):
+    def test_task_delete_successful_tasks(self):
         """Test the task delete_successful_tasks"""
         InvenTree.tasks.offload_task(InvenTree.tasks.delete_successful_tasks)
 
-    def test_task_delete_old_error_logs(self, name):
+    def test_task_delete_old_error_logs(self):
         """Test the task delete_old_error_logs"""
         InvenTree.tasks.offload_task(InvenTree.tasks.delete_old_error_logs)
 
-    def test_task_check_for_updates(self, name):
+    def test_task_check_for_updates(self):
         """Test the task check_for_updates"""
         InvenTree.tasks.offload_task(InvenTree.tasks.check_for_updates)
