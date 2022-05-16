@@ -126,8 +126,8 @@ def heartbeat():
 
     try:
         from django_q.models import Success
-        logger.info("Could not perform heartbeat task - App registry not ready")
     except AppRegistryNotReady:  # pragma: no cover
+        logger.info("Could not perform heartbeat task - App registry not ready")
         return
 
     threshold = timezone.now() - timedelta(minutes=30)
