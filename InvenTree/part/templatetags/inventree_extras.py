@@ -329,7 +329,7 @@ def settings_value(key, *args, **kwargs):
     """
 
     if 'user' in kwargs:
-        if not kwargs['user'] or (kwargs['user'] and kwargs['user'].is_authenticated == False):
+        if not kwargs['user'] or (kwargs['user'] and kwargs['user'].is_authenticated is False):
             return InvenTreeUserSetting.get_setting(key)
         return InvenTreeUserSetting.get_setting(key, user=kwargs['user'])
 
