@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import re
 import json
+import warnings
 import requests
 import logging
 
@@ -12,6 +13,7 @@ from django.utils import timezone
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import OperationalError, ProgrammingError
 from django.core import mail as django_mail
+from django.conf import settings
 
 
 logger = logging.getLogger("inventree")
@@ -53,6 +55,15 @@ def schedule_task(taskname, **kwargs):
         pass
 
 
+def raise_warning(msg):
+    """Log and raise a warning"""
+    logger.warning(msg)
+
+    # If testing is running raise a warning that can be asserted
+    if settings.TESTING:
+        warnings.warn(msg)
+
+
 def offload_task(taskname, *args, force_sync=False, **kwargs):
     """
         Create an AsyncTask if workers are running.
@@ -72,7 +83,7 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
         logger.warning(f"Could not offload task '{taskname}' - app registry not ready")
         return
     except (OperationalError, ProgrammingError):  # pragma: no cover
-        logger.warning(f"Could not offload task '{taskname}' - database not ready")
+        raise_warning(f"Could not offload task '{taskname}' - database not ready")
 
     if is_worker_running() and not force_sync:  # pragma: no cover
         # Running as asynchronous task
@@ -80,7 +91,7 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
             task = AsyncTask(taskname, *args, **kwargs)
             task.run()
         except ImportError:
-            logger.warning(f"WARNING: '{taskname}' not started - Function not found")
+            raise_warning(f"WARNING: '{taskname}' not started - Function not found")
     else:
 
         if callable(taskname):
@@ -92,14 +103,14 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
                 app, mod, func = taskname.split('.')
                 app_mod = app + '.' + mod
             except ValueError:
-                logger.warning(f"WARNING: '{taskname}' not started - Malformed function path")
+                raise_warning(f"WARNING: '{taskname}' not started - Malformed function path")
                 return
 
             # Import module from app
             try:
                 _mod = importlib.import_module(app_mod)
             except ModuleNotFoundError:
-                logger.warning(f"WARNING: '{taskname}' not started - No module named '{app_mod}'")
+                raise_warning(f"WARNING: '{taskname}' not started - No module named '{app_mod}'")
                 return
 
             # Retrieve function
@@ -113,7 +124,7 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
                 if not _func:
                     _func = eval(func)  # pragma: no cover
             except NameError:
-                logger.warning(f"WARNING: '{taskname}' not started - No function named '{func}'")
+                raise_warning(f"WARNING: '{taskname}' not started - No function named '{func}'")
                 return
 
         # Workers are not running: run it as synchronous task

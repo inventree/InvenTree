@@ -72,11 +72,16 @@ class InvenTreeTaskTests(TestCase):
 
         # Error runs
         # Malformed taskname
-        InvenTree.tasks.offload_task('InvenTree')
+        with self.assertWarnsMessage(UserWarning, "WARNING: 'InvenTree' not started - Malformed function path"):
+            InvenTree.tasks.offload_task('InvenTree')
+
         # Non exsistent app
-        InvenTree.tasks.offload_task('InvenTreeABC.test_tasks.doesnotmatter')
+        with self.assertWarnsMessage(UserWarning, "WARNING: 'InvenTreeABC.test_tasks.doesnotmatter' not started - No module named 'InvenTreeABC'"):
+            InvenTree.tasks.offload_task('InvenTreeABC.test_tasks.doesnotmatter')
+
         # Non exsistent function
-        InvenTree.tasks.offload_task('InvenTree.test_tasks.doesnotexsist')
+        with self.assertWarnsMessage(UserWarning, "WARNING: 'InvenTree.test_tasks.doesnotexsist' not started - No function named 'doesnotexsist'"):
+            InvenTree.tasks.offload_task('InvenTree.test_tasks.doesnotexsist')
 
     def test_task_hearbeat(self):
         """Test the task heartbeat"""
