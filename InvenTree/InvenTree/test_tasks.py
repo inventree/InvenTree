@@ -9,6 +9,7 @@ from django.test import TestCase
 from django_q.models import Schedule
 
 import InvenTree.tasks
+from common.models import InvenTreeSetting
 
 
 class ScheduledTaskTests(TestCase):
@@ -75,4 +76,13 @@ class InvenTreeTaskTests(TestCase):
 
     def test_task_check_for_updates(self):
         """Test the task check_for_updates"""
+        # Check that setting should be empty
+        self.assertEqual(InvenTreeSetting.get_setting('INVENTREE_LATEST_VERSION'), '')
+
+        # Get new version
         InvenTree.tasks.offload_task(InvenTree.tasks.check_for_updates)
+
+        # Check that setting is not empty
+        response = InvenTreeSetting.get_setting('INVENTREE_LATEST_VERSION')
+        self.assertNotEqual(response, '')
+        self.assertTrue(bool(response))
