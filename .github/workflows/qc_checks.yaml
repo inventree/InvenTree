@@ -248,7 +248,7 @@ jobs:
           pip3 install invoke
           pip3 install psycopg2
           pip3 install django-redis>=5.0.0
-          invoke install
+          invoke update
       - name: Run Tests
         run: invoke test
       - name: Data Import Export
@@ -304,7 +304,7 @@ jobs:
           sudo apt-get install libmysqlclient-dev
           pip3 install invoke
           pip3 install mysqlclient
-          invoke install
+          invoke update
       - name: Run Tests
         run: invoke test
       - name: Data Import Export
