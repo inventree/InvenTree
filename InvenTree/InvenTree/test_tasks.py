@@ -76,7 +76,7 @@ class InvenTreeTaskTests(TestCase):
             InvenTree.tasks.offload_task('InvenTree')
 
         # Non exsistent app
-        with self.assertWarnsMessage(UserWarning, "WARNING: 'InvenTreeABC.test_tasks.doesnotmatter' not started - No module named 'InvenTreeABC'"):
+        with self.assertWarnsMessage(UserWarning, "WARNING: 'InvenTreeABC.test_tasks.doesnotmatter' not started - No module named 'InvenTreeABC.test_tasks'"):
             InvenTree.tasks.offload_task('InvenTreeABC.test_tasks.doesnotmatter')
 
         # Non exsistent function
