@@ -68,9 +68,6 @@ def exception_handler(exc, context):
         )
 
     if response is not None:
-        # For an error response, include status code information
-        response.data['status_code'] = response.status_code
-
         # Convert errors returned under the label '__all__' to 'non_field_errors'
         if '__all__' in response.data:
             response.data['non_field_errors'] = response.data['__all__']
