@@ -42,6 +42,8 @@ function createNewModal(options={}) {
         }
     });
 
+    var submitClass = options.submitClass || 'primary';
+
     var html = `
     <div class='modal fade modal-fixed-footer modal-primary inventree-modal' role='dialog' id='modal-form-${id}' tabindex='-1'>
         <div class='modal-dialog'>
@@ -74,7 +76,7 @@ function createNewModal(options={}) {
                     <span class='flex-item' style='flex-grow: 1;'></span>
                     <h4><span id='modal-progress-spinner' class='fas fa-circle-notch fa-spin' style='display: none;'></span></h4>
                     <button type='button' class='btn btn-secondary' id='modal-form-close' data-bs-dismiss='modal'>{% trans "Cancel" %}</button>
-                    <button type='button' class='btn btn-primary' id='modal-form-submit'>{% trans "Submit" %}</button>
+                    <button type='button' class='btn btn-${submitClass}' id='modal-form-submit'>{% trans "Submit" %}</button>
                 </div>
             </div>
         </div>
