@@ -21,6 +21,85 @@ import build.models
 import order.models
 
 
+class PartCategoryAPITest(InvenTreeAPITestCase):
+    """Unit tests for the PartCategory API"""
+
+    fixtures = [
+        'category',
+        'part',
+        'location',
+        'bom',
+        'company',
+        'test_templates',
+        'manufacturer_part',
+        'supplier_part',
+        'order',
+        'stock',
+    ]
+
+    roles = [
+        'part.change',
+        'part.add',
+        'part.delete',
+        'part_category.change',
+        'part_category.add',
+    ]
+
+    def test_category_list(self):
+
+        # List all part categories
+        url = reverse('api-part-category-list')
+
+        response = self.get(url, expected_code=200)
+
+        self.assertEqual(len(response.data), 8)
+
+        # Filter by parent, depth=1
+        response = self.get(
+            url,
+            {
+                'parent': 1,
+                'cascade': False,
+            },
+            expected_code=200
+        )
+
+        self.assertEqual(len(response.data), 3)
+
+        # Filter by parent, cascading
+        response = self.get(
+            url,
+            {
+                'parent': 1,
+                'cascade': True,
+            },
+            expected_code=200,
+        )
+
+        self.assertEqual(len(response.data), 5)
+
+    def test_category_metadata(self):
+        """Test metadata endpoint for the PartCategory"""
+
+        cat = PartCategory.objects.get(pk=1)
+
+        cat.metadata = {
+            'foo': 'bar',
+            'water': 'melon',
+            'abc': 'xyz',
+        }
+
+        cat.set_metadata('abc', 'ABC')
+
+        response = self.get(reverse('api-part-category-detail', kwargs={'pk': 1}), expected_code=200)
+
+        metadata = response.data['metadata']
+
+        self.assertEqual(metadata['foo'], 'bar')
+        self.assertEqual(metadata['water'], 'melon')
+        self.assertEqual(metadata['abc'], 'ABC')
+
+
 class PartOptionsAPITest(InvenTreeAPITestCase):
     """
     Tests for the various OPTIONS endpoints in the /part/ API
