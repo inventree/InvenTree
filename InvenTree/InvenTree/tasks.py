@@ -83,7 +83,7 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
             logger.warning(f"WARNING: '{taskname}' not started - Function not found")
     else:
 
-        if isinstance(taskname, function):
+        if callable(taskname):
             # function was passed - use that
             _func = taskname
         else:
