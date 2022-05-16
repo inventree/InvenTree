@@ -53,8 +53,30 @@ class ScheduledTaskTests(TestCase):
         self.assertEqual(t.minutes, 5)
 
 
+def get_result():
+    """Demo function for test_offloading"""
+    return 'abc'
+
+
 class InvenTreeTaskTests(TestCase):
     """Unit tests for tasks"""
+
+    def test_offloading(self):
+        """Test task offloading"""
+
+        # Run with function ref
+        InvenTree.tasks.offload_task(get_result)
+
+        # Run with string ref
+        InvenTree.tasks.offload_task('InvenTree.test_tasks.get_result')
+
+        # Error runs
+        # Malformed taskname
+        InvenTree.tasks.offload_task('InvenTree')
+        # Non exsistent app
+        InvenTree.tasks.offload_task('InvenTreeABC.test_tasks.doesnotmatter')
+        # Non exsistent function
+        InvenTree.tasks.offload_task('InvenTree.test_tasks.doesnotexsist')
 
     def test_task_hearbeat(self):
         """Test the task heartbeat"""
