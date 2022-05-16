@@ -91,7 +91,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
 
         cat.set_metadata('abc', 'ABC')
 
-        response = self.get(reverse('api-part-category-detail', kwargs={'pk': 1}), expected_code=200)
+        response = self.get(reverse('api-part-category-metadata', kwargs={'pk': 1}), expected_code=200)
 
         metadata = response.data['metadata']
 
