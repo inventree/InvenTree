@@ -5,7 +5,8 @@ Custom exception handling for the DRF API
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db.utils import OperationalError, ProgrammingError, IntegrityError
+import traceback
+
 from django.conf import settings
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import gettext_lazy as _
@@ -32,17 +33,11 @@ def exception_handler(exc, context):
     if isinstance(exc, DjangoValidationError):
         exc = DRFValidationError(detail=serializers.as_serializer_error(exc))
 
-    # Exceptions we will manually check for here
-    handled_exceptions = [
-        IntegrityError,
-        OperationalError,
-        ProgrammingError,
-        ValueError,
-        TypeError,
-        NameError,
-    ]
+    # Default to the built-in DRF exception handler
+    response = drfviews.exception_handler(exc, context)
 
-    if any([isinstance(exc, err_type) for err_type in handled_exceptions]):
+    if response is None:
+        # DRF handler did not provide a default response for this exception
 
         if settings.DEBUG:
             error_detail = str(exc)
@@ -59,17 +54,16 @@ def exception_handler(exc, context):
 
         response = Response(response_data, status=500)
 
+        # Format error traceback
+        trace = ''.join(traceback.format_exception(type(exc), exc, exc.__traceback__))
+
         # Log the exception to the database, too
         Error.objects.create(
-            kind="Unhandled DRF API Exception",
+            kind="Unhandled API Exception",
             info=str(type(exc)),
-            data=str(exc),
+            data=trace,
             path=context['request'].path,
         )
-
-    else:
-        # Fallback to the default DRF exception handler
-        response = drfviews.exception_handler(exc, context)
 
     if response is not None:
         # For an error response, include status code information
