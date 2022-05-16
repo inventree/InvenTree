@@ -1,5 +1,6 @@
 import json
-from test.support import EnvironmentVarGuard
+
+from test import support
 
 from django.test import TestCase, override_settings
 import django.core.exceptions as django_exceptions
@@ -449,7 +450,7 @@ class TestSettings(TestCase):
 
     def setUp(self) -> None:
         self.user_mdl = get_user_model()
-        self.env = EnvironmentVarGuard()
+        self.env = support.EnvironmentVarGuard()
 
     def run_reload(self):
         from plugin import registry
