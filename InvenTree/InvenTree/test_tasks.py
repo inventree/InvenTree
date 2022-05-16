@@ -2,6 +2,9 @@
 Unit tests for task management
 """
 
+from datetime import timedelta
+
+from django.utils import timezone
 from django.test import TestCase
 from django_q.models import Schedule
 
@@ -52,7 +55,19 @@ class InvenTreeTaskTests(TestCase):
 
     def test_task_delete_successful_tasks(self):
         """Test the task delete_successful_tasks"""
+        from django_q.models import Success
+
+        Success.objects.create(
+            name='abc',
+            func='abc',
+            started=timezone.now() - timedelta(days=31)
+        )
         InvenTree.tasks.offload_task(InvenTree.tasks.delete_successful_tasks)
+        threshold = timezone.now() - timedelta(days=30)
+        results = Success.objects.filter(
+            started__lte=threshold
+        )
+        self.assertEqual(len(results, 0))
 
     def test_task_delete_old_error_logs(self):
         """Test the task delete_old_error_logs"""
