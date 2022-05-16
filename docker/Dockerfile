@@ -1,4 +1,4 @@
-FROM alpine:3.13 as base
+FROM alpine:3.14 as base
 
 # GitHub source
 ARG repository="https://github.com/inventree/InvenTree.git"
@@ -68,7 +68,7 @@ RUN apk add --no-cache git make bash \
     # Special deps for WeasyPrint (these will be deprecated once WeasyPrint drops cairo requirement)
     cairo cairo-dev pango pango-dev gdk-pixbuf \
     # Fonts
-    fontconfig ttf-droid ttf-liberation ttf-dejavu ttf-opensans ttf-ubuntu-font-family font-croscore font-noto \
+    fontconfig ttf-droid ttf-liberation ttf-dejavu ttf-opensans font-croscore font-noto \
     # Core python
     python3 python3-dev py3-pip \
     # SQLite support
