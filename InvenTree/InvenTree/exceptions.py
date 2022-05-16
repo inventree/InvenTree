@@ -6,10 +6,12 @@ Custom exception handling for the DRF API
 from __future__ import unicode_literals
 
 import traceback
+import sys
 
 from django.conf import settings
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import gettext_lazy as _
+from django.views.debug import ExceptionReporter
 
 from error_report.models import Error
 
@@ -54,15 +56,15 @@ def exception_handler(exc, context):
 
         response = Response(response_data, status=500)
 
-        # Format error traceback
-        trace = ''.join(traceback.format_exception(type(exc), exc, exc.__traceback__))
-
         # Log the exception to the database, too
+        kind, info, data = sys.exc_info()
+
         Error.objects.create(
-            kind="Unhandled API Exception",
-            info=str(type(exc)),
-            data=trace,
+            kind=kind.__name__,
+            info=info,
+            data='\n'.join(traceback.format_exception(kind, info, data)),
             path=context['request'].path,
+            html=ExceptionReporter(context['request'], kind, info, data).get_traceback_html(),
         )
 
     if response is not None:
