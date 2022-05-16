@@ -46,29 +46,29 @@ from common.models import InvenTreeSetting
 
 from InvenTree import helpers
 from InvenTree import validators
-from InvenTree.models import InvenTreeTree, InvenTreeAttachment, DataImportMixin
-from InvenTree.fields import InvenTreeURLField
-from InvenTree.helpers import decimal2string, normalize, decimal2money
 
 import InvenTree.ready
 import InvenTree.tasks
 
+from InvenTree.fields import InvenTreeURLField
+from InvenTree.helpers import decimal2string, normalize, decimal2money
+from InvenTree.models import InvenTreeTree, InvenTreeAttachment, DataImportMixin
 from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus, SalesOrderStatus
 
+import common.models
 from build import models as BuildModels
 from order import models as OrderModels
 from company.models import SupplierPart
+import part.settings as part_settings
 from stock import models as StockModels
 
-import common.models
-
-import part.settings as part_settings
+from plugin.models import MetadataMixin
 
 
 logger = logging.getLogger("inventree")
 
 
-class PartCategory(InvenTreeTree):
+class PartCategory(MetadataMixin, InvenTreeTree):
     """ PartCategory provides hierarchical organization of Part objects.
 
     Attributes:
@@ -327,7 +327,7 @@ class PartManager(TreeManager):
 
 
 @cleanup.ignore
-class Part(MPTTModel):
+class Part(MetadataMixin, MPTTModel):
     """ The Part object represents an abstract part, the 'concept' of an actual entity.
 
     An actual physical instance of a Part is a StockItem which is treated separately.
@@ -444,7 +444,7 @@ class Part(MPTTModel):
             previous = Part.objects.get(pk=self.pk)
 
             # Image has been changed
-            if previous.image is not None and not self.image == previous.image:
+            if previous.image is not None and self.image != previous.image:
 
                 # Are there any (other) parts which reference the image?
                 n_refs = Part.objects.filter(image=previous.image).exclude(pk=self.pk).count()
@@ -2895,7 +2895,7 @@ class BomItem(models.Model, DataImportMixin):
 
                 # If the sub_part is 'trackable' then the 'quantity' field must be an integer
                 if self.sub_part.trackable:
-                    if not self.quantity == int(self.quantity):
+                    if self.quantity != int(self.quantity):
                         raise ValidationError({
                             "quantity": _("Quantity must be integer value for trackable parts")
                         })

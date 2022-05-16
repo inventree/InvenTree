@@ -1,17 +1,10 @@
-"""
-load templates for loaded plugins
-"""
+"""Load templates for loaded plugins"""
 
-import logging
 from pathlib import Path
 
-from django import template
 from django.template.loaders.filesystem import Loader as FilesystemLoader
 
 from plugin import registry
-
-
-logger = logging.getLogger('inventree')
 
 
 class PluginTemplateLoader(FilesystemLoader):
@@ -38,25 +31,3 @@ class PluginTemplateLoader(FilesystemLoader):
                 template_dirs.append(new_path)
 
         return tuple(template_dirs)
-
-
-def render_template(plugin, template_file, context=None):
-    """
-    Locate and render a template file, available in the global template context.
-    """
-
-    try:
-        tmp = template.loader.get_template(template_file)
-    except template.TemplateDoesNotExist:
-        logger.error(f"Plugin {plugin.slug} could not locate template '{template_file}'")
-
-        return f"""
-        <div class='alert alert-block alert-danger'>
-        Template file <em>{template_file}</em> does not exist.
-        </div>
-        """
-
-    # Render with the provided context
-    html = tmp.render(context)
-
-    return html

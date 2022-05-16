@@ -271,9 +271,9 @@ class BaseInvenTreeSetting(models.Model):
         plugin = kwargs.get('plugin', None)
 
         if plugin is not None:
-            from plugin import InvenTreePluginBase
+            from plugin import InvenTreePlugin
 
-            if issubclass(plugin.__class__, InvenTreePluginBase):
+            if issubclass(plugin.__class__, InvenTreePlugin):
                 plugin = plugin.plugin_config()
 
             filters['plugin'] = plugin
@@ -375,9 +375,9 @@ class BaseInvenTreeSetting(models.Model):
             filters['user'] = user
 
         if plugin is not None:
-            from plugin import InvenTreePluginBase
+            from plugin import InvenTreePlugin
 
-            if issubclass(plugin.__class__, InvenTreePluginBase):
+            if issubclass(plugin.__class__, InvenTreePlugin):
                 filters['plugin'] = plugin.plugin_config()
             else:
                 filters['plugin'] = plugin
@@ -1802,10 +1802,8 @@ class WebhookEndpoint(models.Model):
     def process_webhook(self):
         if self.token:
             self.verify = VerificationMethod.TOKEN
-            # TODO make a object-setting
         if self.secret:
             self.verify = VerificationMethod.HMAC
-            # TODO make a object-setting
         return True
 
     def validate_token(self, payload, headers, request):
