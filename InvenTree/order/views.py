@@ -2,9 +2,6 @@
 Django views for interacting with Order app
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.db.utils import IntegrityError
 from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404

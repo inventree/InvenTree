@@ -10,7 +10,7 @@ __all__ = [
     'registry',
 
     'InvenTreePlugin',
-    IntegrationPluginBase,
+    'IntegrationPluginBase',
     'MixinNotImplementedError',
     'MixinImplementationError',
 ]

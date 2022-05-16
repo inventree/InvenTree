@@ -87,7 +87,7 @@ class InvenTreePluginTests(TestCase):
             AUTHOR = 'AA BB'
             DESCRIPTION = 'A description'
             VERSION = '1.2.3a'
-            WEBSITE = 'http://aa.bb/cc'
+            WEBSITE = 'https://aa.bb/cc'
             LICENSE = 'MIT'
 
         self.plugin_name = NameInvenTreePlugin()
@@ -147,7 +147,7 @@ class InvenTreePluginTests(TestCase):
         # website
         self.assertEqual(self.plugin.website, None)
         self.assertEqual(self.plugin_simple.website, None)
-        self.assertEqual(self.plugin_name.website, 'http://aa.bb/cc')
+        self.assertEqual(self.plugin_name.website, 'https://aa.bb/cc')
 
         # license
         self.assertEqual(self.plugin.license, None)

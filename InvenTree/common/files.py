@@ -199,7 +199,7 @@ class FileManager:
 
                 try:
                     # Excel import casts number-looking-items into floats, which is annoying
-                    if item == int(item) and not str(item) == str(int(item)):
+                    if item == int(item) and str(item) != str(int(item)):
                         data[idx] = int(item)
                 except ValueError:
                     pass

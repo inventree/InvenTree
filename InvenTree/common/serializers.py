@@ -2,9 +2,6 @@
 JSON serializers for common components
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from InvenTree.serializers import InvenTreeModelSerializer
 from InvenTree.helpers import get_objectreference
 
