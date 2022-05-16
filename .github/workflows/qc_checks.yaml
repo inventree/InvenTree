@@ -244,7 +244,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install libpq-dev
+          sudo apt-get install libpq-dev gettext
           pip3 install invoke
           pip3 install psycopg2
           pip3 install django-redis>=5.0.0
@@ -301,7 +301,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install libmysqlclient-dev
+          sudo apt-get install libmysqlclient-dev gettext
           pip3 install invoke
           pip3 install mysqlclient
           invoke update
