@@ -1287,13 +1287,17 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
 
         with transaction.atomic():
             for entry in items:
+
                 # Create a new SalesOrderAllocation
-                order.models.SalesOrderAllocation.objects.create(
+                allocation = order.models.SalesOrderAllocation(
                     line=entry.get('line_item'),
                     item=entry.get('stock_item'),
                     quantity=entry.get('quantity'),
                     shipment=shipment,
                 )
+                
+                allocation.full_clean()
+                allocation.save()
 
 
 class SalesOrderExtraLineSerializer(AbstractExtraLineSerializer, InvenTreeModelSerializer):
