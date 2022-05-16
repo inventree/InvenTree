@@ -24,6 +24,7 @@ from plugin.registry import registry
 
 from stock.models import StockItem, StockLocation
 from part.models import Part
+from plugin.base.label import label as plugin_label
 
 from .models import StockItemLabel, StockLocationLabel, PartLabel
 from .serializers import StockItemLabelSerializer, StockLocationLabelSerializer, PartLabelSerializer
@@ -156,7 +157,7 @@ class LabelPrintMixin:
 
                 # Offload a background task to print the provided label
                 offload_task(
-                    'plugin.base.label.label.print_label',
+                    plugin_label.print_label,
                     plugin.plugin_slug(),
                     image,
                     label_instance=label_instance,

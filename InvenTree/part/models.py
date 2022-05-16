@@ -63,6 +63,7 @@ from stock import models as StockModels
 import common.models
 
 import part.settings as part_settings
+from part import tasks as part_tasks
 
 
 logger = logging.getLogger("inventree")
@@ -2298,7 +2299,7 @@ def after_save_part(sender, instance: Part, created, **kwargs):
         # Check part stock only if we are *updating* the part (not creating it)
 
         # Run this check in the background
-        InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance)
+        InvenTree.tasks.offload_task(part_tasks.notify_low_stock_if_required, instance)
 
 
 class PartAttachment(InvenTreeAttachment):

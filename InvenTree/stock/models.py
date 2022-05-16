@@ -49,6 +49,7 @@ from users.models import Owner
 
 from company import models as CompanyModels
 from part import models as PartModels
+from part import tasks as part_tasks
 
 
 class StockLocation(InvenTreeTree):
@@ -2026,7 +2027,7 @@ def after_delete_stock_item(sender, instance: StockItem, **kwargs):
 
     if not InvenTree.ready.isImportingData():
         # Run this check in the background
-        InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance.part)
+        InvenTree.tasks.offload_task(part_tasks.notify_low_stock_if_required, instance.part)
 
 
 @receiver(post_save, sender=StockItem, dispatch_uid='stock_item_post_save_log')
@@ -2037,7 +2038,7 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
 
     if not InvenTree.ready.isImportingData():
         # Run this check in the background
-        InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance.part)
+        InvenTree.tasks.offload_task(part_tasks.notify_low_stock_if_required, instance.part)
 
 
 class StockItemAttachment(InvenTreeAttachment):

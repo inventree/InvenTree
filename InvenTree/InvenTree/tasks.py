@@ -11,6 +11,7 @@ from django.utils import timezone
 
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import OperationalError, ProgrammingError
+from django.core import mail as django_mail
 
 
 logger = logging.getLogger("inventree")
@@ -292,7 +293,7 @@ def send_email(subject, body, recipients, from_email=None, html_message=None):
         recipients = [recipients]
 
     offload_task(
-        'django.core.mail.send_mail',
+        django_mail.send_mail,
         subject,
         body,
         from_email,
