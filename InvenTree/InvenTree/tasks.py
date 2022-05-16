@@ -68,6 +68,11 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
 
         import importlib
         from InvenTree.status import is_worker_running
+    except AppRegistryNotReady:  # pragma: no cover
+        logger.warning(f"Could not offload task '{taskname}' - app registry not ready")
+        return
+    except (OperationalError, ProgrammingError):  # pragma: no cover
+        logger.warning(f"Could not offload task '{taskname}' - database not ready")
 
         # make sure the taskname is a string
         if not isinstance(taskname, str):
@@ -113,11 +118,6 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
             # Workers are not running: run it as synchronous task
             _func(*args, **kwargs)
 
-    except AppRegistryNotReady:  # pragma: no cover
-        logger.warning(f"Could not offload task '{taskname}' - app registry not ready")
-        return
-    except (OperationalError, ProgrammingError):  # pragma: no cover
-        logger.warning(f"Could not offload task '{taskname}' - database not ready")
 
 
 def heartbeat():
