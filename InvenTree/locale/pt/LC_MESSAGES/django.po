@@ -2,69 +2,69 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-16 15:08+0000\n"
-"PO-Revision-Date: 2022-05-16 01:10\n"
+"POT-Creation-Date: 2022-05-16 14:52+0000\n"
+"PO-Revision-Date: 2022-05-17 01:05\n"
 "Last-Translator: \n"
-"Language-Team: Portuguese, Brazilian\n"
-"Language: pt_BR\n"
+"Language-Team: Portuguese\n"
+"Language: pt_PT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
-"X-Crowdin-Language: pt-BR\n"
+"X-Crowdin-Language: pt-PT\n"
 "X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 154\n"
 
 #: InvenTree/api.py:50
 msgid "API endpoint not found"
-msgstr "API endpoint não encontrado"
+msgstr ""
 
 #: InvenTree/fields.py:98
 msgid "Enter date"
-msgstr "Insira uma Data"
+msgstr ""
 
 #: InvenTree/forms.py:124 templates/account/email_confirm.html:20
 #: templates/js/translated/forms.js:615
 msgid "Confirm"
-msgstr "Confirmar"
+msgstr ""
 
 #: InvenTree/forms.py:140
 msgid "Confirm delete"
-msgstr "Confirmar exclusão"
+msgstr ""
 
 #: InvenTree/forms.py:141
 msgid "Confirm item deletion"
-msgstr "Confirmar exclusão do item"
+msgstr ""
 
 #: InvenTree/forms.py:172
 msgid "Enter password"
-msgstr "Digite a senha"
+msgstr ""
 
 #: InvenTree/forms.py:173
 msgid "Enter new password"
-msgstr "Insira uma nova senha"
+msgstr ""
 
 #: InvenTree/forms.py:180
 msgid "Confirm password"
-msgstr "Confirmar senha"
+msgstr ""
 
 #: InvenTree/forms.py:181
 msgid "Confirm new password"
-msgstr "Confirmar nova senha"
+msgstr ""
 
 #: InvenTree/forms.py:213
 msgid "Select Category"
-msgstr "Selecionar Categoria"
+msgstr ""
 
 #: InvenTree/forms.py:234
 msgid "Email (again)"
-msgstr "E-mail (novamente)"
+msgstr ""
 
 #: InvenTree/forms.py:238
 msgid "Email address confirmation"
-msgstr "Confirmação do endereço de email"
+msgstr ""
 
 #: InvenTree/forms.py:258
 msgid "You must type the same email each time."
@@ -5189,8 +5189,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -5446,11 +5445,11 @@ msgstr ""
 
 #: plugin/base/action/api.py:28
 msgid "No action specified"
-msgstr "Nenhuma ação especificada"
+msgstr ""
 
 #: plugin/base/action/api.py:39
 msgid "No matching action found"
-msgstr "Nenhuma ação correspondente encontrada"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:53 plugin/base/barcodes/api.py:153
 msgid "Must provide barcode_data parameter"
@@ -7374,16 +7373,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -10221,3 +10218,4 @@ msgstr ""
 #: users/models.py:221
 msgid "Permission to delete items"
 msgstr ""
+
