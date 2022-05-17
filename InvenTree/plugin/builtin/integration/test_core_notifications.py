@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from plugin.models import NotificationUserSetting
 from part.test_part import BaseNotificationIntegrationTest
 from plugin.builtin.integration.core_notifications import CoreNotificationsPlugin
