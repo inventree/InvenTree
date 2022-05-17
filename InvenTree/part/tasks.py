@@ -49,6 +49,6 @@ def notify_low_stock_if_required(part: part.models.Part):
     for p in parts:
         if p.is_part_low_on_stock():
             InvenTree.tasks.offload_task(
-                'part.tasks.notify_low_stock',
+                notify_low_stock,
                 p
             )

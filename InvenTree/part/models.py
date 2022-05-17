@@ -59,7 +59,6 @@ from order import models as OrderModels
 from company.models import SupplierPart
 import part.settings as part_settings
 from stock import models as StockModels
-
 from plugin.models import MetadataMixin
 
 
@@ -2291,12 +2290,13 @@ def after_save_part(sender, instance: Part, created, **kwargs):
     """
     Function to be executed after a Part is saved
     """
+    from part import tasks as part_tasks
 
     if not created and not InvenTree.ready.isImportingData():
         # Check part stock only if we are *updating* the part (not creating it)
 
         # Run this check in the background
-        InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance)
+        InvenTree.tasks.offload_task(part_tasks.notify_low_stock_if_required, instance)
 
 
 class PartAttachment(InvenTreeAttachment):
