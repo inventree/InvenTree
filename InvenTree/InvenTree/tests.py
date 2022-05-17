@@ -1,6 +1,6 @@
 import json
 
-from test import support
+from unittest import mock
 
 from django.test import TestCase, override_settings
 import django.core.exceptions as django_exceptions
@@ -450,12 +450,11 @@ class TestSettings(TestCase):
 
     def setUp(self) -> None:
         self.user_mdl = get_user_model()
-        self.env = support.EnvironmentVarGuard()
 
-    def run_reload(self):
+    def run_reload(self, envs):
         from plugin import registry
 
-        with self.env:
+        with mock.patch.dict(os.environ, envs):
             settings.USER_ADDED = False
             registry.reload_plugins()
 
@@ -471,15 +470,17 @@ class TestSettings(TestCase):
         self.assertEqual(user_count(), 0)
 
         # not enough set
-        self.env.set('INVENTREE_ADMIN_USER', 'admin')  # set username
-        self.run_reload()
+        envs = {}
+        envs['INVENTREE_ADMIN_USER'] = 'admin'
+        self.run_reload(envs)
         self.assertEqual(user_count(), 0)
 
         # enough set
-        self.env.set('INVENTREE_ADMIN_USER', 'admin')  # set username
-        self.env.set('INVENTREE_ADMIN_EMAIL', 'info@example.com')  # set email
-        self.env.set('INVENTREE_ADMIN_PASSWORD', 'password123')  # set password
-        self.run_reload()
+        envs = {'INVENTREE_ADMIN_USER': 'admin',  # set username
+            'INVENTREE_ADMIN_EMAIL': 'info@example.com',  # set email
+            'INVENTREE_ADMIN_PASSWORD': 'password123'  # set password
+        }
+        self.run_reload(envs)
         self.assertEqual(user_count(), 1)
 
         # make sure to clean up
