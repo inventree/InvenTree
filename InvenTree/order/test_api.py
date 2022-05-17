@@ -989,6 +989,7 @@ class SalesOrderDownloadTest(OrderTest):
             },
             expected_code=200,
             expected_fn='InvenTree_SalesOrders.xls',
+            deode=False,
         ) as fo:
             self.assertTrue(isinstance(fo, io.BytesIO))
 
