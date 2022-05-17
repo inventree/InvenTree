@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-16 15:08+0000\n"
-"PO-Revision-Date: 2022-05-16 01:10\n"
+"POT-Creation-Date: 2022-05-16 14:52+0000\n"
+"PO-Revision-Date: 2022-05-17 01:05\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1043,25 +1043,24 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:387
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:457
 msgid "Remove Allocated Stock"
-msgstr ""
+msgstr "Lefoglalt készlet levonása"
 
 #: build/serializers.py:458
 msgid "Subtract any stock which has already been allocated to this build"
-msgstr ""
+msgstr "Az összes lefoglalt tétel levonása a készletről"
 
 #: build/serializers.py:464
 msgid "Remove Incomplete Outputs"
-msgstr ""
+msgstr "Befejezetlen kimenetek törlése"
 
 #: build/serializers.py:465
 msgid "Delete any build outputs which have not been completed"
-msgstr ""
+msgstr "A nem befejezett gyártási kimenetek törlése"
 
 #: build/serializers.py:490
 msgid "Accept Unallocated"
@@ -1651,11 +1650,11 @@ msgstr "Vonalkód olvasó engedélyezése"
 
 #: common/models.py:847
 msgid "Barcode Webcam Support"
-msgstr ""
+msgstr "Webkamerás vonalkód olvasás"
 
 #: common/models.py:848
 msgid "Allow barcode scanning via webcam in browser"
-msgstr ""
+msgstr "Webkamerás kódolvasás engedélyezése a böngészőből"
 
 #: common/models.py:854
 msgid "IPN Regex"
@@ -2991,7 +2990,7 @@ msgstr "Belső alkatrész"
 
 #: company/templates/company/manufacturer_part.html:95
 msgid "No manufacturer information available"
-msgstr ""
+msgstr "Nincs elérhető gyártói információ"
 
 #: company/templates/company/manufacturer_part.html:120
 #: company/templates/company/supplier_part.html:15 company/views.py:46
@@ -3081,7 +3080,7 @@ msgstr "Beszállítói alkatrész törlése"
 
 #: company/templates/company/supplier_part.html:91
 msgid "No supplier information available"
-msgstr ""
+msgstr "Nincs elérhető beszállítói információ"
 
 #: company/templates/company/supplier_part.html:144
 #: company/templates/company/supplier_part_navbar.html:12
@@ -3444,7 +3443,7 @@ msgstr "Beszállítói alkatrésznek egyeznie kell a beszállítóval"
 
 #: order/models.py:945
 msgid "deleted"
-msgstr ""
+msgstr "törölve"
 
 #: order/models.py:951 order/models.py:1033 order/models.py:1055
 #: order/models.py:1151 order/models.py:1251
@@ -3777,7 +3776,7 @@ msgstr "Rendelés állapota"
 
 #: order/templates/order/order_base.html:117
 msgid "No suppplier information available"
-msgstr ""
+msgstr "Nincs elérhető beszállítói információ"
 
 #: order/templates/order/order_base.html:130
 #: order/templates/order/sales_order_base.html:128
@@ -5191,8 +5190,7 @@ msgstr "Válassz a meglévő képek közül"
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr "A(z) '<strong>%(full_name)s</strong>' alkatrész nem törölhető mert még mindig <strong>aktív</strong>. Előbb állítsd az alkatrészt inaktív állapotúra és probáld újra!    "
@@ -5500,11 +5498,11 @@ msgstr "Címkenyomtatás sikertelen"
 
 #: plugin/builtin/integration/core_notifications.py:24
 msgid "InvenTree contributors"
-msgstr ""
+msgstr "InvenTree fejlesztők"
 
 #: plugin/builtin/integration/core_notifications.py:25
 msgid "Integrated outgoing notificaton methods"
-msgstr ""
+msgstr "Integrált kimenő értesítési módszerek"
 
 #: plugin/builtin/integration/core_notifications.py:29
 #: plugin/builtin/integration/core_notifications.py:46
@@ -5517,14 +5515,12 @@ msgid "Allow sending of emails for event notifications"
 msgstr "Email küldés engedélyezése esemény értesítésekre"
 
 #: plugin/models.py:36
-#, fuzzy
-#| msgid "Plugin Settings"
 msgid "Plugin Metadata"
-msgstr "Plugin beállítások"
+msgstr "Plugin meta adatok"
 
 #: plugin/models.py:37
 msgid "JSON metadata field, for use by external plugins"
-msgstr ""
+msgstr "JSON meta adat mező, külső pluginok számára"
 
 #: plugin/models.py:86
 msgid "Plugin Configuration"
@@ -5556,7 +5552,7 @@ msgstr "Plugin"
 
 #: plugin/models.py:254
 msgid "Method"
-msgstr ""
+msgstr "Módszer"
 
 #: plugin/plugin.py:247
 msgid "No author found"
@@ -5725,7 +5721,7 @@ msgstr "Szükséges ehhez"
 
 #: report/templates/report/inventree_po_report.html:77
 msgid "Supplier was deleted"
-msgstr ""
+msgstr "Beszállító törölve lett"
 
 #: report/templates/report/inventree_test_report_base.html:21
 msgid "Stock Item Test Report"
@@ -6074,7 +6070,7 @@ msgstr "A kiválasztott alkatrész nincs az alkatrészjegyzékben"
 
 #: stock/serializers.py:463
 msgid "Destination location for uninstalled item"
-msgstr ""
+msgstr "Cél hely a kiszedett tételeknek"
 
 #: stock/serializers.py:468
 msgid "Add transaction note (optional)"
@@ -6186,10 +6182,8 @@ msgid "Add Test Result"
 msgstr "Teszt eredmény hozzáadása"
 
 #: stock/templates/stock/item_base.html:34
-#, fuzzy
-#| msgid "Source stock item"
 msgid "Locate stock item"
-msgstr "Forrás készlet tétel"
+msgstr "Készlet tétel keresése"
 
 #: stock/templates/stock/item_base.html:48
 #: templates/js/translated/barcode.js:383
@@ -6400,10 +6394,8 @@ msgid "Select quantity to serialize, and unique serial numbers."
 msgstr "Válassz mennyiséget és egyedi sorozatszámokat a sorozatszámozáshoz."
 
 #: stock/templates/stock/location.html:33
-#, fuzzy
-#| msgid "Parent stock location"
 msgid "Locate stock location"
-msgstr "Felsőbb szintű készlet hely"
+msgstr "Készlet hely keresése"
 
 #: stock/templates/stock/location.html:49
 msgid "Check-in Items"
@@ -6868,7 +6860,7 @@ msgstr "Verzió"
 
 #: templates/InvenTree/settings/plugin.html:74
 msgid "Sample"
-msgstr ""
+msgstr "Minta"
 
 #: templates/InvenTree/settings/plugin.html:99
 msgid "Inactive plugins"
@@ -6972,7 +6964,7 @@ msgstr "Plugin beállítások módosítása"
 
 #: templates/InvenTree/settings/settings.html:121
 msgid "Edit Notification Setting"
-msgstr ""
+msgstr "Értesítési beállítások szerkesztése"
 
 #: templates/InvenTree/settings/settings.html:124
 msgid "Edit Global Setting"
@@ -7382,16 +7374,14 @@ msgstr "Bejelentkezés"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Kérlek jelentkezz be az egyik meglévő külső fiókkal vagy <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">Regisztrálj</a> fiókért és jelentkezz be lentebb:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Ha még nem hoztál létre fiókot akkor előbb <a href=\"%(signup_url)s\">regisztrálj</a>."
 
@@ -7991,7 +7981,7 @@ msgstr "Gyártási utasítás létrehozása"
 
 #: templates/js/translated/build.js:134
 msgid "Cancel Build Order"
-msgstr ""
+msgstr "Gyártási utasítás törlése"
 
 #: templates/js/translated/build.js:143
 msgid "Are you sure you wish to cancel this build?"
@@ -7999,11 +7989,11 @@ msgstr "Biztosan meg szeretnéd szakítani ezt a gyártást?"
 
 #: templates/js/translated/build.js:149
 msgid "Stock items have been allocated to this build order"
-msgstr ""
+msgstr "Ehhez a gyártáshoz készlet lett hozzárendelve"
 
 #: templates/js/translated/build.js:156
 msgid "There are incomplete outputs remaining for this build order"
-msgstr ""
+msgstr "Ennek a gyártásnak befejezetlen kimenetei vannak"
 
 #: templates/js/translated/build.js:185
 msgid "Build order is ready to be completed"
@@ -8651,7 +8641,7 @@ msgstr "Szállítmány megerősítése"
 
 #: templates/js/translated/order.js:156
 msgid "Complete Purchase Order"
-msgstr ""
+msgstr "Beszerzési rendelés befejezése"
 
 #: templates/js/translated/order.js:162
 msgid "Mark this order as complete?"
@@ -8659,7 +8649,7 @@ msgstr "Rendelés befejezettnek jelölése?"
 
 #: templates/js/translated/order.js:168
 msgid "All line items have been received"
-msgstr ""
+msgstr "Minden sortétel megérkezett"
 
 #: templates/js/translated/order.js:173
 msgid "This order has line items which have not been marked as received."
@@ -8671,19 +8661,19 @@ msgstr "A rendelés befejezésével jelölésével annak adatai és sortételei 
 
 #: templates/js/translated/order.js:197
 msgid "Cancel Purchase Order"
-msgstr ""
+msgstr "Beszerzési rendelés törlése"
 
 #: templates/js/translated/order.js:202
 msgid "Are you sure you wish to cancel this purchase order?"
-msgstr ""
+msgstr "Biztosan törölni szeretnéd ezt a beszerzési rendelést?"
 
 #: templates/js/translated/order.js:208
 msgid "This purchase order can not be cancelled"
-msgstr ""
+msgstr "Ezt a beszerzési rendelést nem lehet törölni"
 
 #: templates/js/translated/order.js:231
 msgid "Issue Purchase Order"
-msgstr ""
+msgstr "Beszerzési rendelés kiküldése"
 
 #: templates/js/translated/order.js:236
 msgid "After placing this purchase order, line items will no longer be editable."
@@ -8691,7 +8681,7 @@ msgstr "A beszerzési rendelés kiküldése után annak sortételei a továbbiak
 
 #: templates/js/translated/order.js:258
 msgid "Cancel Sales Order"
-msgstr ""
+msgstr "Vevő rendelés törlése"
 
 #: templates/js/translated/order.js:263
 msgid "Cancelling this order means that the order will no longer be editable."
@@ -9654,7 +9644,7 @@ msgstr "Készlet tétel kiszedése"
 
 #: templates/js/translated/stock.js:2671
 msgid "Select stock item to uninstall"
-msgstr ""
+msgstr "Válaszd ki a kiszedni való készlet tételt"
 
 #: templates/js/translated/stock.js:2692
 msgid "Install another stock item into this item"
@@ -10230,5 +10220,3 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
 
-#~ msgid "Are you sure you want to delete this BOM item?"
-#~ msgstr "Biztos törölni akarod ezt az alkatrészjegyzék tételt?"
