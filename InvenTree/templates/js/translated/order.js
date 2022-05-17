@@ -1568,23 +1568,10 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
             $(table).find('.button-line-edit').click(function() {
                 var pk = $(this).attr('pk');
 
+                var fields = poLineItemFields(options);
+
                 constructForm(`/api/order/po-line/${pk}/`, {
-                    fields: {
-                        part: {
-                            filters: {
-                                part_detail: true,
-                                supplier_detail: true,
-                                supplier: options.supplier,
-                            }
-                        },
-                        quantity: {},
-                        reference: {},
-                        purchase_price: {},
-                        purchase_price_currency: {},
-                        target_date: {},
-                        destination: {},
-                        notes: {},
-                    },
+                    fields: fields,
                     title: '{% trans "Edit Line Item" %}',
                     onSuccess: function() {
                         $(table).bootstrapTable('refresh');

@@ -2,6 +2,7 @@
 from django.test import TestCase
 
 from common.models import NotificationEntry
+from . import tasks as common_tasks
 from InvenTree.tasks import offload_task
 
 
@@ -14,4 +15,4 @@ class TaskTest(TestCase):
 
         # check empty run
         self.assertEqual(NotificationEntry.objects.all().count(), 0)
-        offload_task('common.tasks.delete_old_notifications',)
+        offload_task(common_tasks.delete_old_notifications,)

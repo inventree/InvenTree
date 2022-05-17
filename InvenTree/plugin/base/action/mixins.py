@@ -24,25 +24,18 @@ class ActionMixin:
         Action name for this plugin.
 
         If the ACTION_NAME parameter is empty,
-        uses the PLUGIN_NAME instead.
+        uses the NAME instead.
         """
         if self.ACTION_NAME:
             return self.ACTION_NAME
         return self.name
 
-    def init(self, user, data=None):
-        """
-        An action plugin takes a user reference, and an optional dataset (dict)
-        """
-        self.user = user
-        self.data = data
-
-    def perform_action(self):
+    def perform_action(self, user=None, data=None):
         """
         Override this method to perform the action!
         """
 
-    def get_result(self):
+    def get_result(self, user=None, data=None):
         """
         Result of the action?
         """
@@ -50,19 +43,19 @@ class ActionMixin:
         # Re-implement this for cutsom actions
         return False
 
-    def get_info(self):
+    def get_info(self, user=None, data=None):
         """
         Extra info? Can be a string / dict / etc
         """
         return None
 
-    def get_response(self):
+    def get_response(self, user=None, data=None):
         """
         Return a response. Default implementation is a simple response
         which can be overridden.
         """
         return {
             "action": self.action_name(),
-            "result": self.get_result(),
-            "info": self.get_info(),
+            "result": self.get_result(user, data),
+            "info": self.get_info(user, data),
         }

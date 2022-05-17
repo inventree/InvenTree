@@ -2,12 +2,15 @@
 Utility class to enable simpler imports
 """
 
-from ..builtin.integration.mixins import APICallMixin, AppMixin, LabelPrintingMixin, SettingsMixin, EventMixin, ScheduleMixin, UrlsMixin, NavigationMixin, PanelMixin
+from ..base.integration.mixins import APICallMixin, AppMixin, SettingsMixin, ScheduleMixin, UrlsMixin, NavigationMixin, PanelMixin
 
 from common.notifications import SingleNotificationMethod, BulkNotificationMethod
 
-from ..builtin.action.mixins import ActionMixin
-from ..builtin.barcodes.mixins import BarcodeMixin
+from ..base.action.mixins import ActionMixin
+from ..base.barcodes.mixins import BarcodeMixin
+from ..base.event.mixins import EventMixin
+from ..base.label.mixins import LabelPrintingMixin
+from ..base.locate.mixins import LocateMixin
 
 __all__ = [
     'APICallMixin',
@@ -21,6 +24,7 @@ __all__ = [
     'PanelMixin',
     'ActionMixin',
     'BarcodeMixin',
+    'LocateMixin',
     'SingleNotificationMethod',
     'BulkNotificationMethod',
 ]

@@ -2,9 +2,6 @@
 Django views for interacting with common models
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import os
 
 from django.utils.translation import gettext_lazy as _

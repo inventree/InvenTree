@@ -2,9 +2,6 @@
 JSON serializers for plugin app
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import os
 import subprocess
 
@@ -17,6 +14,34 @@ from rest_framework import serializers
 
 from plugin.models import PluginConfig, PluginSetting, NotificationUserSetting
 from common.serializers import GenericReferencedSettingSerializer
+
+
+class MetadataSerializer(serializers.ModelSerializer):
+    """
+    Serializer class for model metadata API access.
+    """
+
+    metadata = serializers.JSONField(required=True)
+
+    def __init__(self, model_type, *args, **kwargs):
+
+        self.Meta.model = model_type
+        super().__init__(*args, **kwargs)
+
+    class Meta:
+        fields = [
+            'metadata',
+        ]
+
+    def update(self, instance, data):
+
+        if self.partial:
+            # Default behaviour is to "merge" new data in
+            metadata = instance.metadata.copy() if instance.metadata else {}
+            metadata.update(data['metadata'])
+            data['metadata'] = metadata
+
+        return super().update(instance, data)
 
 
 class PluginConfigSerializer(serializers.ModelSerializer):
@@ -96,8 +121,10 @@ class PluginConfigInstallSerializer(serializers.Serializer):
                     install_name.append(f'{packagename}@{url}')
                 else:
                     install_name.append(url)
-            else:
+            else:  # pragma: no cover
                 # using a custom package repositories
+                # This is only for pypa compliant directory services (all current are tested above)
+                # and not covered by tests.
                 install_name.append('-i')
                 install_name.append(url)
                 install_name.append(packagename)

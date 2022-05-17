@@ -2,9 +2,6 @@
 Django Forms for interacting with Stock app
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from InvenTree.forms import HelperForm
 
 from .models import StockItem, StockItemTracking

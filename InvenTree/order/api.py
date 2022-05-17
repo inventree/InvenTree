@@ -2,9 +2,6 @@
 JSON API for the Order app
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.urls import include, path, re_path
 from django.db.models import Q, F
 
@@ -26,6 +23,8 @@ import order.models as models
 import order.serializers as serializers
 from part.models import Part
 from users.models import Owner
+
+from plugin.serializers import MetadataSerializer
 
 
 class GeneralExtraLineList:
@@ -345,6 +344,15 @@ class PurchaseOrderIssue(PurchaseOrderContextMixin, generics.CreateAPIView):
     queryset = models.PurchaseOrder.objects.all()
 
     serializer_class = serializers.PurchaseOrderIssueSerializer
+
+
+class PurchaseOrderMetadata(generics.RetrieveUpdateAPIView):
+    """API endpoint for viewing / updating PurchaseOrder metadata"""
+
+    def get_serializer(self, *args, **kwargs):
+        return MetadataSerializer(models.PurchaseOrder, *args, **kwargs)
+
+    queryset = models.PurchaseOrder.objects.all()
 
 
 class PurchaseOrderReceive(PurchaseOrderContextMixin, generics.CreateAPIView):
@@ -916,6 +924,15 @@ class SalesOrderComplete(SalesOrderContextMixin, generics.CreateAPIView):
     serializer_class = serializers.SalesOrderCompleteSerializer
 
 
+class SalesOrderMetadata(generics.RetrieveUpdateAPIView):
+    """API endpoint for viewing / updating SalesOrder metadata"""
+
+    def get_serializer(self, *args, **kwargs):
+        return MetadataSerializer(models.SalesOrder, *args, **kwargs)
+
+    queryset = models.SalesOrder.objects.all()
+
+
 class SalesOrderAllocateSerials(SalesOrderContextMixin, generics.CreateAPIView):
     """
     API endpoint to allocation stock items against a SalesOrder,
@@ -1138,10 +1155,13 @@ order_api_urls = [
 
         # Individual purchase order detail URLs
         re_path(r'^(?P<pk>\d+)/', include([
-            re_path(r'^issue/', PurchaseOrderIssue.as_view(), name='api-po-issue'),
-            re_path(r'^receive/', PurchaseOrderReceive.as_view(), name='api-po-receive'),
             re_path(r'^cancel/', PurchaseOrderCancel.as_view(), name='api-po-cancel'),
             re_path(r'^complete/', PurchaseOrderComplete.as_view(), name='api-po-complete'),
+            re_path(r'^issue/', PurchaseOrderIssue.as_view(), name='api-po-issue'),
+            re_path(r'^metadata/', PurchaseOrderMetadata.as_view(), name='api-po-metadata'),
+            re_path(r'^receive/', PurchaseOrderReceive.as_view(), name='api-po-receive'),
+
+            # PurchaseOrder detail API endpoint
             re_path(r'.*$', PurchaseOrderDetail.as_view(), name='api-po-detail'),
         ])),
 
@@ -1178,10 +1198,13 @@ order_api_urls = [
 
         # Sales order detail view
         re_path(r'^(?P<pk>\d+)/', include([
-            re_path(r'^cancel/', SalesOrderCancel.as_view(), name='api-so-cancel'),
-            re_path(r'^complete/', SalesOrderComplete.as_view(), name='api-so-complete'),
             re_path(r'^allocate/', SalesOrderAllocate.as_view(), name='api-so-allocate'),
             re_path(r'^allocate-serials/', SalesOrderAllocateSerials.as_view(), name='api-so-allocate-serials'),
+            re_path(r'^cancel/', SalesOrderCancel.as_view(), name='api-so-cancel'),
+            re_path(r'^complete/', SalesOrderComplete.as_view(), name='api-so-complete'),
+            re_path(r'^metadata/', SalesOrderMetadata.as_view(), name='api-so-metadata'),
+
+            # SalesOrder detail endpoint
             re_path(r'^.*$', SalesOrderDetail.as_view(), name='api-so-detail'),
         ])),
 

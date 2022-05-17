@@ -1,6 +1,7 @@
 {% extends "stock/stock_app_base.html" %}
 {% load static %}
 {% load inventree_extras %}
+{% load plugin_extras %}
 {% load i18n %}
 
 {% block sidebar %}
@@ -25,6 +26,14 @@
 {% if location and user.is_staff and roles.stock_location.change %}
 {% url 'admin:stock_stocklocation_change' location.pk as url %}
 {% include "admin_button.html" with url=url %}
+{% endif %}
+
+{% mixin_available "locate" as locate_available %}
+{% if location and plugins_enabled and locate_available %}
+<button id='locate-location-button' title='{% trans "Locate stock location" %}' class='btn btn-outline-secondary' typy='button'>
+    <span class='fas fa-search-location'></span>
+</button>
+
 {% endif %}
 
 {% if barcodes %}
@@ -205,6 +214,14 @@
 
 {% block js_ready %}
 {{ block.super }}
+
+    {% if plugins_enabled and location %}
+    $('#locate-location-button').click(function() {
+        locateItemOrLocation({
+            location: {{ location.pk }},
+        });
+    });
+    {% endif %}
 
     onPanelLoad('sublocations', function() {
         loadStockLocationTable($('#sublocation-table'), {

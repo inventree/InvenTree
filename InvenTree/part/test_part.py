@@ -1,8 +1,5 @@
 # Tests for the Part model
 
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
 from allauth.account.models import EmailAddress
 
 from django.conf import settings
@@ -210,7 +207,7 @@ class PartTest(TestCase):
         with self.assertRaises(ValidationError):
             part_2.validate_unique()
 
-    def test_metadata(self):
+    def test_attributes(self):
         self.assertEqual(self.r1.name, 'R_2K2_0805')
         self.assertEqual(self.r1.get_absolute_url(), '/part/3/')
 
@@ -255,6 +252,24 @@ class PartTest(TestCase):
         # check that the sell pricebreaks work
         self.assertEqual(float(self.r1.get_internal_price(1)), 0.08)
         self.assertEqual(float(self.r1.get_internal_price(10)), 0.5)
+
+    def test_metadata(self):
+        """Unit tests for the Part metadata field"""
+
+        p = Part.objects.get(pk=1)
+        self.assertIsNone(p.metadata)
+
+        self.assertIsNone(p.get_metadata('test'))
+        self.assertEqual(p.get_metadata('test', backup_value=123), 123)
+
+        # Test update via the set_metadata() method
+        p.set_metadata('test', 3)
+        self.assertEqual(p.get_metadata('test'), 3)
+
+        for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
+            p.set_metadata(k, k)
+
+        self.assertEqual(len(p.metadata.keys()), 4)
 
 
 class TestTemplateTest(TestCase):
