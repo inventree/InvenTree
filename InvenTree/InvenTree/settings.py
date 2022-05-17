@@ -360,7 +360,7 @@ TEMPLATES = [
 ]
 
 REST_FRAMEWORK = {
-    'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
+    'EXCEPTION_HANDLER': 'InvenTree.exceptions.exception_handler',
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
