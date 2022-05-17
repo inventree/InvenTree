@@ -381,6 +381,7 @@ class PurchaseOrderDownloadTest(OrderTest):
                 self.assertEqual(order.description, row['description'])
                 self.assertEqual(order.reference, row['reference'])
 
+
 class PurchaseOrderReceiveTest(OrderTest):
     """
     Unit tests for receiving items against a PurchaseOrder
