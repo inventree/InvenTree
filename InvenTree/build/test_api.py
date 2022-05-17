@@ -305,6 +305,102 @@ class BuildTest(BuildAPITest):
 
         self.assertEqual(bo.status, BuildStatus.CANCELLED)
 
+    def test_create_delete_output(self):
+        """
+        Test that we can create and delete build outputs via the API
+        """
+
+        bo = Build.objects.get(pk=1)
+
+        n_outputs = bo.output_count
+
+        create_url = reverse('api-build-output-create', kwargs={'pk': 1})
+
+        # Attempt to create outputs with invalid data
+        response = self.post(
+            create_url,
+            {
+                'quantity': 'not a number',
+            },
+            expected_code=400
+        )
+
+        self.assertIn('A valid number is required', str(response.data))
+
+        for q in [-100, -10.3, 0]:
+
+            response = self.post(
+                create_url,
+                {
+                    'quantity': q,
+                },
+                expected_code=400
+            )
+
+            if q == 0:
+                self.assertIn('Quantity must be greater than zero', str(response.data))
+            else:
+                self.assertIn('Ensure this value is greater than or equal to 0', str(response.data))
+
+        # Mark the part being built as 'trackable' (requires integer quantity)
+        bo.part.trackable = True
+        bo.part.save()
+
+        response = self.post(
+            create_url,
+            {
+                'quantity': 12.3,
+            },
+            expected_code=400
+        )
+
+        self.assertIn('Integer quantity required for trackable parts', str(response.data))
+
+        # Erroneous serial numbers
+        response = self.post(
+            create_url,
+            {
+                'quantity': 5,
+                'serial_numbers': '1, 2, 3, 4, 5, 6',
+                'batch': 'my-batch',
+            },
+            expected_code=400
+        )
+
+        self.assertIn('Number of unique serial numbers (6) must match quantity (5)', str(response.data))
+
+        # At this point, no new build outputs should have been created
+        self.assertEqual(n_outputs, bo.output_count)
+
+        # Now, create with *good* data
+        response = self.post(
+            create_url,
+            {
+                'quantity': 5,
+                'serial_numbers': '1, 2, 3, 4, 5',
+                'batch': 'my-batch',
+            },
+            expected_code=201,
+        )
+
+        # 5 new outputs have been created
+        self.assertEqual(n_outputs + 5, bo.output_count)
+
+        # Attempt to create with identical serial numbers
+        response = self.post(
+            create_url,
+            {
+                'quantity': 3,
+                'serial_numbers': '1-3',
+            },
+            expected_code=400,
+        )
+
+        self.assertIn('The following serial numbers already exist : 1,2,3', str(response.data))
+
+        # Double check no new outputs have been created
+        self.assertEqual(n_outputs + 5, bo.output_count)
+
 
 class BuildAllocationTest(BuildAPITest):
     """
