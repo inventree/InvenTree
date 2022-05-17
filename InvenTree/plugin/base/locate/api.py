@@ -1,8 +1,5 @@
 """API for location plugins"""
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from rest_framework import permissions
 from rest_framework.exceptions import ParseError, NotFound
 from rest_framework.response import Response
