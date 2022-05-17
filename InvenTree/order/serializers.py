@@ -2,9 +2,6 @@
 JSON serializers for the Order API
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from decimal import Decimal
 
 from django.utils.translation import gettext_lazy as _

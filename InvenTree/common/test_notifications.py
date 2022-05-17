@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from common.notifications import NotificationMethod, SingleNotificationMethod, BulkNotificationMethod, storage
 from plugin.models import NotificationUserSetting
 from part.test_part import BaseNotificationIntegrationTest

@@ -7,9 +7,6 @@ This is because the "translated" javascript files are compiled into the "static"
 They should only contain template tags that render static information.
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import sys
 import re
 import os

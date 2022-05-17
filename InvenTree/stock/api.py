@@ -2,9 +2,6 @@
 JSON API for the Stock app
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from collections import OrderedDict
 from datetime import datetime, timedelta
 

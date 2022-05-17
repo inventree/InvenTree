@@ -2,9 +2,6 @@
 On release, ensure that the release tag matches the InvenTree version number!
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import sys
 import re
 import os

@@ -2,9 +2,6 @@
 Django views for interacting with Build objects
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView
 
