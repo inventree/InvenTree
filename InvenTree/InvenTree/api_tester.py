@@ -2,6 +2,7 @@
 Helper functions for performing API unit tests
 """
 
+import csv
 import io
 import re
 
@@ -208,3 +209,37 @@ class InvenTreeAPITestCase(APITestCase):
         fo.seek(0)
 
         return fo
+
+    def process_csv(self, fo, delimiter=',', required_cols=None, excluded_cols=None, required_rows=None):
+        """
+        Helper function to process and validate a downloaded csv file
+        """
+
+        # Check that the correct object type has been passed
+        self.assertTrue(isinstance(fo, io.StringIO))
+
+        fo.seek(0)
+
+        reader = csv.reader(fo, delimiter=delimiter)
+
+        headers = []
+        rows = []
+
+        for idx, row in enumerate(reader):
+            if idx == 0:
+                headers = row
+            else:
+                rows.append(row)
+        
+        if required_cols is not None:
+            for col in required_cols:
+                self.assertIn(col, required_cols)
+            
+        if excluded_cols is not None:
+            for col in excluded_cols:
+                self.assertNotIn(col, excluded_cols)
+        
+        if required_rows is not None:
+            self.assertEqual(len(rows), required_rows)
+        
+        return (headers, rows)
