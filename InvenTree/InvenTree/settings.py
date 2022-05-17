@@ -353,7 +353,7 @@ TEMPLATES = [
 ]
 
 REST_FRAMEWORK = {
-    'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
+    'EXCEPTION_HANDLER': 'InvenTree.exceptions.exception_handler',
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
@@ -658,7 +658,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 EXTRA_URL_SCHEMES = CONFIG.get('extra_url_schemes', [])
 
-if not type(EXTRA_URL_SCHEMES) in [list]:  # pragma: no cover
+if type(EXTRA_URL_SCHEMES) not in [list]:  # pragma: no cover
     logger.warning("extra_url_schemes not correctly formatted")
     EXTRA_URL_SCHEMES = []
 

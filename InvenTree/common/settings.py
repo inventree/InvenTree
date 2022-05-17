@@ -2,9 +2,6 @@
 User-configurable settings for the common app
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from moneyed import CURRENCIES
 from django.conf import settings
 

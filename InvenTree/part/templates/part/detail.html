@@ -589,32 +589,15 @@
             // Get a list of the selected BOM items
             var rows = $("#bom-table").bootstrapTable('getSelections');
 
-            // TODO - In the future, display (in the dialog) which items are going to be deleted
+            if (rows.length == 0) {
+                rows = $('#bom-table').bootstrapTable('getData');
+            }
 
-            showQuestionDialog(
-                '{% trans "Delete selected BOM items?" %}',
-                '{% trans "All selected BOM items will be deleted" %}',
-                {
-                    accept: function() {
-
-                        // Keep track of each DELETE request
-                        var requests = [];
-
-                        rows.forEach(function(row) {
-                            requests.push(
-                                inventreeDelete(
-                                    `/api/bom/${row.pk}/`,
-                                )
-                            );
-                        });
-
-                        // Wait for *all* the requests to complete
-                        $.when.apply($, requests).done(function() {
-                            location.reload();
-                        });
-                    }
+            deleteBomItems(rows, {
+                success: function() {
+                    $('#bom-table').bootstrapTable('refresh');
                 }
-            );
+            });
         });
 
         $('#bom-upload').click(function() {

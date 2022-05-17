@@ -2,9 +2,6 @@
 JSON API for the Build app
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.urls import include, re_path
 
 from rest_framework import filters, generics
@@ -284,6 +281,13 @@ class BuildOutputDelete(BuildOrderContextMixin, generics.CreateAPIView):
     """
     API endpoint for deleting multiple build outputs
     """
+
+    def get_serializer_context(self):
+        ctx = super().get_serializer_context()
+
+        ctx['to_complete'] = False
+
+        return ctx
 
     queryset = Build.objects.none()
 

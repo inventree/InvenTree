@@ -2,7 +2,7 @@
 Sample plugin which supports task scheduling
 """
 
-from plugin import IntegrationPluginBase
+from plugin import InvenTreePlugin
 from plugin.mixins import ScheduleMixin, SettingsMixin
 
 
@@ -15,14 +15,14 @@ def print_world():
     print("World")  # pragma: no cover
 
 
-class ScheduledTaskPlugin(ScheduleMixin, SettingsMixin, IntegrationPluginBase):
+class ScheduledTaskPlugin(ScheduleMixin, SettingsMixin, InvenTreePlugin):
     """
     A sample plugin which provides support for scheduled tasks
     """
 
-    PLUGIN_NAME = "ScheduledTasksPlugin"
-    PLUGIN_SLUG = "schedule"
-    PLUGIN_TITLE = "Scheduled Tasks"
+    NAME = "ScheduledTasksPlugin"
+    SLUG = "schedule"
+    TITLE = "Scheduled Tasks"
 
     SCHEDULED_TASKS = {
         'member': {

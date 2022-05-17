@@ -2,8 +2,6 @@
 Build database model definitions
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 import decimal
 
 import os
@@ -777,7 +775,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         if not output.is_building:
             raise ValidationError(_("Build output is already completed"))
 
-        if not output.build == self:
+        if output.build != self:
             raise ValidationError(_("Build output does not match Build Order"))
 
         # Unallocate all build items against the output
@@ -1141,12 +1139,13 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
     """
     Callback function to be executed after a Build instance is saved
     """
+    from . import tasks as build_tasks
 
     if created:
         # A new Build has just been created
 
         # Run checks on required parts
-        InvenTree.tasks.offload_task('build.tasks.check_build_stock', instance)
+        InvenTree.tasks.offload_task(build_tasks.check_build_stock, instance)
 
 
 class BuildOrderAttachment(InvenTreeAttachment):
@@ -1240,7 +1239,7 @@ class BuildItem(models.Model):
                 })
 
             # Quantity must be 1 for serialized stock
-            if self.stock_item.serialized and not self.quantity == 1:
+            if self.stock_item.serialized and self.quantity != 1:
                 raise ValidationError({
                     'quantity': _('Quantity must be 1 for serialized stock')
                 })
