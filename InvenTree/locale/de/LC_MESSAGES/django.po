@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-16 15:08+0000\n"
-"PO-Revision-Date: 2022-05-16 01:10\n"
+"POT-Creation-Date: 2022-05-16 14:52+0000\n"
+"PO-Revision-Date: 2022-05-17 01:05\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -5189,12 +5189,10 @@ msgstr "Aus vorhandenen Bildern auswählen"
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
-msgstr ""
-"Teil '<strong>%(full_name)s</strong>' kann nicht gelöscht werden, da er noch als <strong>aktiv</strong>markiert ist.\n"
+msgstr "Teil '<strong>%(full_name)s</strong>' kann nicht gelöscht werden, da er noch als <strong>aktiv</strong>markiert ist.\n"
 "    <br>Deaktivieren Sie das Attribut \"Aktiv\" und versuchen Sie es erneut.\n"
 "    "
 
@@ -5518,14 +5516,12 @@ msgid "Allow sending of emails for event notifications"
 msgstr "Das Senden von Benachrichtigungen als E-Mails erlauben"
 
 #: plugin/models.py:36
-#, fuzzy
-#| msgid "Plugin Settings"
 msgid "Plugin Metadata"
-msgstr "Plugin-Einstellungen"
+msgstr "Plugin Metadaten"
 
 #: plugin/models.py:37
 msgid "JSON metadata field, for use by external plugins"
-msgstr ""
+msgstr "JSON-Metadatenfeld, für die Verwendung durch externe Plugins"
 
 #: plugin/models.py:86
 msgid "Plugin Configuration"
@@ -6187,10 +6183,8 @@ msgid "Add Test Result"
 msgstr "Testergebnis hinzufügen"
 
 #: stock/templates/stock/item_base.html:34
-#, fuzzy
-#| msgid "Source stock item"
 msgid "Locate stock item"
-msgstr "Quell-Lagerartikel"
+msgstr "Lagerbestand lokalisieren"
 
 #: stock/templates/stock/item_base.html:48
 #: templates/js/translated/barcode.js:383
@@ -6401,10 +6395,8 @@ msgid "Select quantity to serialize, and unique serial numbers."
 msgstr "Zu serialisierende Anzahl und eindeutige Seriennummern angeben."
 
 #: stock/templates/stock/location.html:33
-#, fuzzy
-#| msgid "Parent stock location"
 msgid "Locate stock location"
-msgstr "Übergeordneter Lagerort"
+msgstr "Lagerort lokalisieren"
 
 #: stock/templates/stock/location.html:49
 msgid "Check-in Items"
@@ -6841,7 +6833,7 @@ msgstr "Plugin-Einstellungen"
 
 #: templates/InvenTree/settings/plugin.html:16
 msgid "Changing the settings below require you to immediatly restart the server. Do not change this while under active usage."
-msgstr "Wenn Sie die folgenden Einstellungen ändern, müssen Sie InvenTree sofort neu starten. Ändern Sie dies nicht während der aktiven Nutzung."
+msgstr "Wenn Sie die folgenden Einstellungen ändern, müssen Sie den Server sofort neu starten. Ändern Sie dies nicht während der aktiven Nutzung."
 
 #: templates/InvenTree/settings/plugin.html:34
 msgid "Plugins"
@@ -6973,7 +6965,7 @@ msgstr "Plugin-Einstellungen bearbeiten"
 
 #: templates/InvenTree/settings/settings.html:121
 msgid "Edit Notification Setting"
-msgstr "Benachrichtigungs-Einstellungen"
+msgstr "Benachrichtigungs-Einstellungen bearbeiten"
 
 #: templates/InvenTree/settings/settings.html:124
 msgid "Edit Global Setting"
@@ -7383,16 +7375,14 @@ msgstr "Einloggen"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Bitte melden Sie sich mit einem Ihrer bestehenden Drittkonten an oder  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">registrieren Sie sich</a> für ein Konto und melden Sie sich unten an:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Wenn Sie noch kein Konto erstellt haben, dann bitte<a href=\"%(signup_url)s\">registrieren Sie sich</a> zuerst."
 
@@ -10231,5 +10221,3 @@ msgstr "Berechtigungen Einträge zu ändern"
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
 
-#~ msgid "Are you sure you want to delete this BOM item?"
-#~ msgstr "Sind Sie sicher, dass Sie diese Stücklisten-Position löschen wollen?"
