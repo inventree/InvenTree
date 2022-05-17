@@ -2491,6 +2491,57 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
                 },
                 value: options.shipment || null,
                 auto_fill: true,
+                secondary: {
+                    method: 'POST',
+                    title: '{% trans "Add Shipment" %}',
+                    fields: function() {
+                        var ref = null;
+
+                        // TODO: Refactor code for getting next shipment number
+                        inventreeGet(
+                            '{% url "api-so-shipment-list" %}',
+                            {
+                                order: options.order,
+                            },
+                            {
+                                async: false,
+                                success: function(results) {
+                                    // "predict" the next reference number
+                                    ref = results.length + 1;
+
+                                    var found = false;
+
+                                    while (!found) {
+
+                                        var no_match = true;
+
+                                        for (var ii = 0; ii < results.length; ii++) {
+                                            if (ref.toString() == results[ii].reference.toString()) {
+                                                no_match = false;
+                                                break;
+                                            }
+                                        }
+
+                                        if (no_match) {
+                                            break;
+                                        } else {
+                                            ref++;
+                                        }
+                                    }
+                                }
+                            }
+                        );
+
+                        var fields = salesOrderShipmentFields(options);
+
+                        fields.reference.value = ref;
+                        fields.reference.prefix = global_settings.SALESORDER_REFERENCE_PREFIX + options.reference;
+                        
+                        fields.order.hidden = false; // TODO: Hide order id field
+                        
+                        return fields;
+                    }
+                }
             }
         },
         preFormContent: html,
@@ -3373,6 +3424,8 @@ function loadSalesOrderLineItemTable(table, options={}) {
                     line_item
                 ],
                 {
+                    order: options.order,
+                    reference: options.reference,
                     success: function() {
                         // Reload this table
                         $(table).bootstrapTable('refresh');
