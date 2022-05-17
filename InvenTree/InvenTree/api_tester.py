@@ -242,4 +242,15 @@ class InvenTreeAPITestCase(APITestCase):
         if required_rows is not None:
             self.assertEqual(len(rows), required_rows)
         
-        return (headers, rows)
+        # Return the file data as a list of dict items, based on the headers
+        data = []
+
+        for row in rows:
+            entry = {}
+        
+            for idx, col in enumerate(headers):
+                entry[col] = row[idx]
+
+            data.append(entry)
+
+        return data
