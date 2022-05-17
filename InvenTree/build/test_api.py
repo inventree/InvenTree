@@ -401,6 +401,54 @@ class BuildTest(BuildAPITest):
         # Double check no new outputs have been created
         self.assertEqual(n_outputs + 5, bo.output_count)
 
+        # Now, let's delete each build output individually via the API
+        outputs = bo.build_outputs.all()
+
+        delete_url = reverse('api-build-output-delete', kwargs={'pk': 1})
+
+        # Mark 1 build output as complete
+        bo.complete_build_output(outputs[0], self.user)
+
+        self.assertEqual(n_outputs + 5, bo.output_count)
+        self.assertEqual(1, bo.complete_count)
+
+        # Delete all outputs at once
+        # Note: One has been completed, so this should fail!
+        response = self.post(
+            delete_url,
+            {
+                'outputs': [
+                    {
+                        'output': output.pk,
+                    } for output in outputs
+                ]
+            },
+            expected_code=400
+        )
+
+        self.assertIn('This build output has already been completed', str(response.data))
+
+        # No change to the build outputs
+        self.assertEqual(n_outputs + 5, bo.output_count)
+        self.assertEqual(1, bo.complete_count)
+
+        # Let's delete 2 build outputs
+        response = self.post(
+            delete_url,
+            {
+                'outputs': [
+                    {
+                        'output': output.pk,
+                    } for output in outputs[1:3]
+                ]
+            },
+            expected_code=201
+        )
+
+        # Two build outputs have been removed
+        self.assertEqual(n_outputs + 3, bo.output_count)
+        self.assertEqual(1, bo.complete_count)
+
 
 class BuildAllocationTest(BuildAPITest):
     """
