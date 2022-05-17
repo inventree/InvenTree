@@ -325,6 +325,62 @@ class PurchaseOrderTest(OrderTest):
         self.assertEqual(order.get_metadata('yam'), 'yum')
 
 
+class PurchaseOrderDownloadTest(OrderTest):
+    """Unit tests for downloading PurchaseOrder data via the API endpoint"""
+
+    required_cols = [
+        'id',
+        'line_items',
+        'description',
+        'issue_date',
+        'notes',
+        'reference',
+        'status',
+        'supplier_reference',
+    ]
+
+    excluded_cols = [
+        'metadata',
+    ]
+
+    def test_download_wrong_format(self):
+        """Incorrect format should default raise an error"""
+
+        url = reverse('api-po-list')
+
+        with self.assertRaises(ValueError):
+            self.download_file(
+                url,
+                {
+                    'export': 'xyz',
+                }
+            )
+
+    def test_download_csv(self):
+        """Download PurchaseOrder data as .csv"""
+
+        with self.download_file(
+            reverse('api-po-list'),
+            {
+                'export': 'csv',
+            },
+            expected_code=200,
+            expected_fn='InvenTree_PurchaseOrders.csv',
+        ) as fo:
+
+            data = self.process_csv(
+                fo,
+                required_cols=self.required_cols,
+                excluded_cols=self.excluded_cols,
+                required_rows=models.PurchaseOrder.objects.count()
+            )
+
+            for row in data:
+                order = models.PurchaseOrder.objects.get(pk=row['id'])
+
+                self.assertEqual(order.description, row['description'])
+                self.assertEqual(order.reference, row['reference'])
+
 class PurchaseOrderReceiveTest(OrderTest):
     """
     Unit tests for receiving items against a PurchaseOrder
@@ -925,16 +981,15 @@ class SalesOrderDownloadTest(OrderTest):
         url = reverse('api-so-list')
 
         # Download .xls file
-        fo = self.download_file(
+        with self.download_file(
             url,
             {
                 'export': 'xls',
             },
             expected_code=200,
             expected_fn='InvenTree_SalesOrders.xls',
-        )
-
-        self.assertTrue(isinstance(fo, io.BytesIO))
+        ) as fo:
+            self.assertTrue(isinstance(fo, io.BytesIO))
 
     def test_download_csv(self):
 

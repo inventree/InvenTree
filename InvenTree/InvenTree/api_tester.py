@@ -171,7 +171,7 @@ class InvenTreeAPITestCase(APITestCase):
 
         return response
 
-    def download_file(self, url, data, expected_code=None, expected_fn=None, decode=False):
+    def download_file(self, url, data, expected_code=None, expected_fn=None, decode=True):
         """
         Download a file from the server, and return an in-memory file
         """
