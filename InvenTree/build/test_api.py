@@ -406,6 +406,16 @@ class BuildTest(BuildAPITest):
 
         delete_url = reverse('api-build-output-delete', kwargs={'pk': 1})
 
+        response = self.post(
+            delete_url,
+            {
+                'outputs': [],
+            },
+            expected_code=400
+        )
+
+        self.assertIn('A list of build outputs must be provided', str(response.data))
+
         # Mark 1 build output as complete
         bo.complete_build_output(outputs[0], self.user)
 
@@ -448,6 +458,61 @@ class BuildTest(BuildAPITest):
         # Two build outputs have been removed
         self.assertEqual(n_outputs + 3, bo.output_count)
         self.assertEqual(1, bo.complete_count)
+
+        # Tests for BuildOutputComplete serializer
+        complete_url = reverse('api-build-output-complete', kwargs={'pk': 1})
+
+        # Let's mark the remaining outputs as complete
+        response = self.post(
+            complete_url,
+            {
+                'outputs': [],
+                'location': 4,
+            },
+            expected_code=400,
+        )
+
+        self.assertIn('A list of build outputs must be provided', str(response.data))
+
+        for output in outputs[3:]:
+            output.refresh_from_db()
+            self.assertTrue(output.is_building)
+
+        response = self.post(
+            complete_url,
+            {
+                'outputs': [
+                    {
+                        'output': output.pk
+                    } for output in outputs[3:]
+                ],
+                'location': 4,
+            },
+            expected_code=201,
+        )
+
+        # Check that the outputs have been completed
+        self.assertEqual(3, bo.complete_count)
+
+        for output in outputs[3:]:
+            output.refresh_from_db()
+            self.assertEqual(output.location.pk, 4)
+            self.assertFalse(output.is_building)
+
+        # Try again, with an output which has already been completed
+        response = self.post(
+            complete_url,
+            {
+                'outputs': [
+                    {
+                        'output': outputs.last().pk,
+                    }
+                ]
+            },
+            expected_code=400,
+        )
+
+        self.assertIn('This build output has already been completed', str(response.data))
 
 
 class BuildAllocationTest(BuildAPITest):
