@@ -282,6 +282,13 @@ class BuildOutputDelete(BuildOrderContextMixin, generics.CreateAPIView):
     API endpoint for deleting multiple build outputs
     """
 
+    def get_serializer_context(self):
+        ctx = super().get_serializer_context()
+
+        ctx['to_complete'] = False
+
+        return ctx
+
     queryset = Build.objects.none()
 
     serializer_class = build.serializers.BuildOutputDeleteSerializer
