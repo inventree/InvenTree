@@ -2,6 +2,8 @@
 Tests for the Order API
 """
 
+import io
+
 from datetime import datetime, timedelta
 
 from rest_framework import status
@@ -906,6 +908,97 @@ class SalesOrderTest(OrderTest):
 
         order = models.SalesOrder.objects.get(pk=1)
         self.assertEqual(order.get_metadata('xyz'), 'abc')
+
+
+class SalesOrderDownloadTest(OrderTest):
+    """Unit tests for downloading SalesOrder data via the API endpoint"""
+
+    def test_download_fail(self):
+        """Test that downloading without the 'export' option fails"""
+
+        url = reverse('api-so-list')
+
+        with self.assertRaises(ValueError):
+            self.download_file(url, {}, expected_code=200)
+
+    def test_download_xls(self):
+        url = reverse('api-so-list')
+
+        # Download .xls file
+        fo = self.download_file(
+            url,
+            {
+                'export': 'xls',
+            },
+            expected_code=200,
+            expected_fn='InvenTree_SalesOrders.xls',
+        )
+
+        self.assertTrue(isinstance(fo, io.BytesIO))
+
+    def test_download_csv(self):
+
+        url = reverse('api-so-list')
+
+        required_cols = [
+            'line_items',
+            'id',
+            'reference',
+            'customer',
+            'status',
+            'shipment_date',
+            'notes',
+            'description',
+        ]
+
+        excluded_cols = [
+            'metadata'
+        ]
+
+        # Download .xls file
+        with self.download_file(
+            url,
+            {
+                'export': 'csv',
+            },
+            expected_code=200,
+            expected_fn='InvenTree_SalesOrders.csv',
+            decode=True
+        ) as fo:
+
+            data = self.process_csv(
+                fo,
+                required_cols=required_cols,
+                excluded_cols=excluded_cols,
+                required_rows=models.SalesOrder.objects.count()
+            )
+
+            for line in data:
+
+                order = models.SalesOrder.objects.get(pk=line['id'])
+
+                self.assertEqual(line['description'], order.description)
+                self.assertEqual(line['status'], str(order.status))
+
+        # Download only outstanding sales orders
+        with self.download_file(
+            url,
+            {
+                'export': 'tsv',
+                'outstanding': True,
+            },
+            expected_code=200,
+            expected_fn='InvenTree_SalesOrders.tsv',
+            decode=True,
+        ) as fo:
+
+            self.process_csv(
+                fo,
+                required_cols=required_cols,
+                excluded_cols=excluded_cols,
+                required_rows=models.SalesOrder.objects.filter(status__in=SalesOrderStatus.OPEN).count(),
+                delimiter='\t',
+            )
 
 
 class SalesOrderAllocateTest(OrderTest):

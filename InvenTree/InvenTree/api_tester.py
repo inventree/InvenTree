@@ -184,7 +184,7 @@ class InvenTreeAPITestCase(APITestCase):
         # Check that the response is of the correct type
         if not isinstance(response, StreamingHttpResponse):
             raise ValueError("Response is not a StreamingHttpResponse object as expected")
-        
+
         # Extract filename
         disposition = response.headers['Content-Disposition']
 
@@ -230,24 +230,24 @@ class InvenTreeAPITestCase(APITestCase):
                 headers = row
             else:
                 rows.append(row)
-        
+
         if required_cols is not None:
             for col in required_cols:
                 self.assertIn(col, headers)
-            
+
         if excluded_cols is not None:
             for col in excluded_cols:
                 self.assertNotIn(col, headers)
-        
+
         if required_rows is not None:
             self.assertEqual(len(rows), required_rows)
-        
+
         # Return the file data as a list of dict items, based on the headers
         data = []
 
         for row in rows:
             entry = {}
-        
+
             for idx, col in enumerate(headers):
                 entry[col] = row[idx]
 
