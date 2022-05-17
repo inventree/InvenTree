@@ -1269,12 +1269,6 @@ class SalesOrderAllocation(models.Model):
     def get_api_url():
         return reverse('api-so-allocation-list')
 
-    class Meta:
-        unique_together = [
-            # Cannot allocate any given StockItem to the same line more than once
-            ('line', 'item'),
-        ]
-
     def clean(self):
         """
         Validate the SalesOrderAllocation object:
