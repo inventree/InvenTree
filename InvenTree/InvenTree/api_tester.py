@@ -170,7 +170,7 @@ class InvenTreeAPITestCase(APITestCase):
 
         return response
 
-    def download_file(self, url, data, expected_code=None, expected_fn=None):
+    def download_file(self, url, data, expected_code=None, expected_fn=None, decode=False):
         """
         Download a file from the server, and return an in-memory file
         """
@@ -191,11 +191,20 @@ class InvenTreeAPITestCase(APITestCase):
 
         fn = result.groups()[0]
 
-        with io.BytesIO() as fo:
-            fo.name = fn
-            fo.write(response.getvalue())
-        
         if expected_fn is not None:
             self.assertEqual(expected_fn, fn)
-        
+
+        if decode:
+            # Decode data and return as StringIO file object
+            fo = io.StringIO()
+            fo.name = fo
+            fo.write(response.getvalue().decode('UTF-8'))
+        else:
+            # Return a a BytesIO file object
+            fo = io.BytesIO()
+            fo.name = fn
+            fo.write(response.getvalue())
+
+        fo.seek(0)
+
         return fo
