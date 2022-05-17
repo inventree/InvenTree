@@ -233,11 +233,11 @@ class InvenTreeAPITestCase(APITestCase):
         
         if required_cols is not None:
             for col in required_cols:
-                self.assertIn(col, required_cols)
+                self.assertIn(col, headers)
             
         if excluded_cols is not None:
             for col in excluded_cols:
-                self.assertNotIn(col, excluded_cols)
+                self.assertNotIn(col, headers)
         
         if required_rows is not None:
             self.assertEqual(len(rows), required_rows)
