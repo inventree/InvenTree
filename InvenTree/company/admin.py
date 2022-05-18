@@ -8,7 +8,7 @@ import import_export.widgets as widgets
 from .models import Company
 from .models import SupplierPart
 from .models import SupplierPriceBreak
-from .models import ManufacturerPart, ManufacturerPartParameter
+from .models import ManufacturerPart, ManufacturerPartAttachment, ManufacturerPartParameter
 
 from part.models import Part
 
@@ -109,6 +109,16 @@ class ManufacturerPartAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('part', 'manufacturer',)
 
 
+class ManufacturerPartAttachmentAdmin(ImportExportModelAdmin):
+    """
+    Admin class for ManufacturerPartAttachment model
+    """
+
+    list_display = ('manufacturer_part', 'attachment', 'comment')
+
+    autocomplete_fields = ('manufacturer_part',)
+
+
 class ManufacturerPartParameterResource(ModelResource):
     """
     Class for managing ManufacturerPartParameter data import/export
@@ -175,4 +185,5 @@ admin.site.register(SupplierPart, SupplierPartAdmin)
 admin.site.register(SupplierPriceBreak, SupplierPriceBreakAdmin)
 
 admin.site.register(ManufacturerPart, ManufacturerPartAdmin)
+admin.site.register(ManufacturerPartAttachment, ManufacturerPartAttachmentAdmin)
 admin.site.register(ManufacturerPartParameter, ManufacturerPartParameterAdmin)

@@ -144,6 +144,21 @@ src="{% static 'img/blank_image.png' %}"
     </div>
 </div>
 
+<div class='panel panel-hidden' id='panel-attachments'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Attachments" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% include "attachment_button.html" %}
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        {% include "attachment_table.html" %}
+    </div>
+</div>
+
 <div class='panel panel-hidden' id='panel-parameters'>
     <div class='panel-heading'>
         <div class='d-flex flex-wrap'>
@@ -177,6 +192,34 @@ src="{% static 'img/blank_image.png' %}"
 
 {% block js_ready %}
 {{ block.super }}
+
+onPanelLoad("attachments", function() {
+    loadAttachmentTable('{% url "api-manufacturer-part-attachment-list" %}', {
+        filters: {
+            manufacturer_part: {{ part.pk }},
+        },
+        fields: {
+            manufacturer_part: {
+                value: {{ part.pk }},
+                hidden: true
+            }
+        }
+    });
+
+    enableDragAndDrop(
+        '#attachment-dropzone',
+        '{% url "api-manufacturer-part-attachment-list" %}',
+        {
+            data: {
+                manufacturer_part: {{ part.id }},
+            },
+            label: 'attachment',
+            success: function(data, status, xhr) {
+                reloadAttachmentTable();
+            }
+        }
+    );
+});
 
 function reloadParameters() {
     $("#parameter-table").bootstrapTable("refresh");
