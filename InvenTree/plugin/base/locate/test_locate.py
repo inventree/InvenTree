@@ -7,6 +7,7 @@ from django.urls import reverse
 from InvenTree.api_tester import InvenTreeAPITestCase
 
 from plugin.registry import registry
+from stock.models import StockItem, StockLocation
 
 
 class LocatePluginTests(InvenTreeAPITestCase):
@@ -29,7 +30,7 @@ class LocatePluginTests(InvenTreeAPITestCase):
 
     def test_locate_fail(self):
         """Test various API failure modes"""
-        
+
         url = reverse('api-locate-plugin')
 
         # Post without a plugin
@@ -87,3 +88,61 @@ class LocatePluginTests(InvenTreeAPITestCase):
             )
 
             self.assertIn(f"StockLocation matching PK '{pk}' not found", str(response.data))
+
+    def test_locate_item(self):
+        """
+        Test that the plugin correctly 'locates' a StockItem
+
+        As the background worker is not running during unit testing,
+        the sample 'locate' function will be called 'inline'
+        """
+
+        url = reverse('api-locate-plugin')
+
+        item = StockItem.objects.get(pk=1)
+
+        # The sample plugin will set the 'located' metadata tag
+        item.set_metadata('located', False)
+
+        response = self.post(
+            url,
+            {
+                'plugin': 'samplelocate',
+                'item': 1,
+            },
+            expected_code=200
+        )
+
+        self.assertEqual(response.data['item'], 1)
+
+        item.refresh_from_db()
+
+        # Item metadata should have been altered!
+        self.assertTrue(item.metadata['located'])
+
+    def test_locate_location(self):
+        """
+        Test that the plugin correctly 'locates' a StockLocation
+        """
+
+        url = reverse('api-locate-plugin')
+
+        for location in StockLocation.objects.all():
+
+            location.set_metadata('located', False)
+
+            response = self.post(
+                url,
+                {
+                    'plugin': 'samplelocate',
+                    'location': location.pk,
+                },
+                expected_code=200
+            )
+
+            self.assertEqual(response.data['location'], location.pk)
+
+            location.refresh_from_db()
+
+            # Item metadata should have been altered!
+            self.assertTrue(location.metadata['located'])
