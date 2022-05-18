@@ -43,8 +43,10 @@ class LabelConfig(AppConfig):
         """
         Create all default templates
         """
+        # Test if models are ready
         try:
             from .models import StockLocationLabel
+            obj = StockLocationLabel.objects.first()
         except AppRegistryNotReady:
             # Database might not yet be ready
             warnings.warn('Database was not ready for creating labels')
