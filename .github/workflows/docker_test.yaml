@@ -13,7 +13,6 @@ on:
     branches:
       - 'master'
       - 'stable'
-      - 'webp-support'
 
   pull_request:
     branches-ignore:
