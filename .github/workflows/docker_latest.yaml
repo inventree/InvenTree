@@ -18,6 +18,20 @@ jobs:
       - name: Check version number
         run: |
           python3 ci/check_version_number.py --dev
+      - name: Build Docker Image
+        run: |
+          cd docker
+          docker-compose build
+          docker-compose run inventree-dev-server invoke update
+          docker-compose up -d
+      - name: Wait for Server
+        run: |
+          cd docker
+          docker-compose run inventree-dev-server invoke wait
+      - name: Run unit tests
+        run: |
+          cd docker
+          docker-compose run inventree-dev-server invoke test
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
