@@ -2,6 +2,7 @@ import os
 import shutil
 import logging
 import hashlib
+import warnings
 
 from django.apps import AppConfig
 from django.conf import settings
@@ -42,6 +43,13 @@ class LabelConfig(AppConfig):
         """
         Create all default templates
         """
+        try:
+            from .models import StockLocationLabel
+        except AppRegistryNotReady:
+            # Database might not yet be ready
+            warnings.warn('Database was not ready for creating labels')
+            return
+
         self.create_stock_item_labels()
         self.create_stock_location_labels()
         self.create_part_labels()
