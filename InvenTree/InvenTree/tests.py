@@ -483,7 +483,7 @@ class TestSettings(TestCase):
         self.run_reload({
             'INVENTREE_ADMIN_USER': 'admin'
         })
-        self.assertEqual(user_count(), 0)
+        self.assertEqual(user_count(), 1)
 
         # enough set
         self.run_reload({
@@ -491,7 +491,7 @@ class TestSettings(TestCase):
             'INVENTREE_ADMIN_EMAIL': 'info@example.com',  # set email
             'INVENTREE_ADMIN_PASSWORD': 'password123'  # set password
         })
-        self.assertEqual(user_count(), 1)
+        self.assertEqual(user_count(), 2)
 
         # make sure to clean up
         settings.TESTING_ENV = False
