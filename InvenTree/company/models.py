@@ -22,6 +22,7 @@ from stdimage.models import StdImageField
 
 from InvenTree.helpers import getMediaUrl, getBlankImage, getBlankThumbnail
 from InvenTree.fields import InvenTreeURLField
+from InvenTree.models import InvenTreeAttachment
 from InvenTree.status_codes import PurchaseOrderStatus
 
 import InvenTree.validators
@@ -378,6 +379,22 @@ class ManufacturerPart(models.Model):
         s += f'{self.MPN}'
 
         return s
+
+
+class ManufacturerPartAttachment(InvenTreeAttachment):
+    """
+    Model for storing file attachments against a ManufacturerPart object
+    """
+
+    @staticmethod
+    def get_api_url():
+        return reverse('api-manufacturer-part-attachment-list')
+
+    def getSubdir(self):
+        return os.path.join("manufacturer_part_files", str(self.manufacturer_part.id))
+
+    manufacturer_part = models.ForeignKey(ManufacturerPart, on_delete=models.CASCADE,
+                                          verbose_name=_('Manufacturer Part'), related_name='attachments')
 
 
 class ManufacturerPartParameter(models.Model):
