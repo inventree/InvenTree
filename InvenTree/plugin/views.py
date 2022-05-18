@@ -1,5 +1,10 @@
+import sys
+import traceback
 
 from django.conf import settings
+from django.views.debug import ExceptionReporter
+
+from error_report.models import Error
 
 from plugin.registry import registry
 
@@ -21,7 +26,21 @@ class InvenTreePluginViewMixin:
         panels = []
 
         for plug in registry.with_mixin('panel'):
-            panels += plug.render_panels(self, self.request, ctx)
+
+            try:
+                panels += plug.render_panels(self, self.request, ctx)
+            except Exception:
+                # Prevent any plugin error from crashing the page render
+                kind, info, data = sys.exc_info()
+
+                # Log the error to the database
+                Error.objects.create(
+                    kind=kind.__name__,
+                    info=info,
+                    data='\n'.join(traceback.format_exception(kind, info, data)),
+                    path=self.request.path,
+                    html=ExceptionReporter(self.request, kind, info, data).get_traceback_html(),
+                )
 
         return panels
 
