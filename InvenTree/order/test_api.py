@@ -381,6 +381,20 @@ class PurchaseOrderDownloadTest(OrderTest):
                 self.assertEqual(order.description, row['description'])
                 self.assertEqual(order.reference, row['reference'])
 
+    def test_download_line_items(self):
+
+        with self.download_file(
+            reverse('api-po-line-list'),
+            {
+                'export': 'xlsx',
+            },
+            decode=False,
+            expected_code=200,
+            expected_fn='InvenTree_PurchaseOrderItems.xlsx',
+        ) as fo:
+
+            self.assertTrue(isinstance(fo, io.BytesIO))
+
 
 class PurchaseOrderReceiveTest(OrderTest):
     """
@@ -965,6 +979,86 @@ class SalesOrderTest(OrderTest):
 
         order = models.SalesOrder.objects.get(pk=1)
         self.assertEqual(order.get_metadata('xyz'), 'abc')
+
+
+class SalesOrderLineItemTest(OrderTest):
+    """
+    Tests for the SalesOrderLineItem API
+    """
+
+    def setUp(self):
+
+        super().setUp()
+
+        # List of salable parts
+        parts = Part.objects.filter(salable=True)
+
+        # Create a bunch of SalesOrderLineItems for each order
+        for idx, so in enumerate(models.SalesOrder.objects.all()):
+
+            for part in parts:
+                models.SalesOrderLineItem.objects.create(
+                    order=so,
+                    part=part,
+                    quantity=(idx + 1) * 5,
+                    reference=f"Order {so.reference} - line {idx}",
+                )
+
+        self.url = reverse('api-so-line-list')
+
+    def test_so_line_list(self):
+
+        # List *all* lines
+
+        response = self.get(
+            self.url,
+            {},
+            expected_code=200,
+        )
+
+        n = models.SalesOrderLineItem.objects.count()
+
+        # We should have received *all* lines
+        self.assertEqual(len(response.data), n)
+
+        # List *all* lines, but paginate
+        response = self.get(
+            self.url,
+            {
+                "limit": 5,
+            },
+            expected_code=200,
+        )
+
+        self.assertEqual(response.data['count'], n)
+        self.assertEqual(len(response.data['results']), 5)
+
+        n_orders = models.SalesOrder.objects.count()
+        n_parts = Part.objects.filter(salable=True).count()
+
+        # List by part
+        for part in Part.objects.filter(salable=True):
+            response = self.get(
+                self.url,
+                {
+                    'part': part.pk,
+                    'limit': 10,
+                }
+            )
+
+            self.assertEqual(response.data['count'], n_orders)
+
+        # List by order
+        for order in models.SalesOrder.objects.all():
+            response = self.get(
+                self.url,
+                {
+                    'order': order.pk,
+                    'limit': 10,
+                }
+            )
+
+            self.assertEqual(response.data['count'], n_parts)
 
 
 class SalesOrderDownloadTest(OrderTest):
