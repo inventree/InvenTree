@@ -533,7 +533,13 @@ class TestSettings(TestCase):
 
     def test_helpers_plugin_file(self):
         # normal run - not configured
-        self.assertIn('InvenTree/InvenTree/plugins.txt', config.get_plugin_file())
+
+        valid = [
+            'inventree/plugins.txt',
+            'inventree/dev/plugins.txt',
+        ]
+
+        self.assertIn(config.get_plugin_file().lower(), valid)
 
         # with env set
         with self.in_env_context({'INVENTREE_PLUGIN_FILE': 'my_special_plugins.txt'}):
