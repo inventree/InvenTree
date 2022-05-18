@@ -13,6 +13,7 @@ import hashlib
 import base64
 from secrets import compare_digest
 from datetime import datetime, timedelta
+import warnings
 
 from django.apps import apps
 from django.db import models, transaction
@@ -1694,6 +1695,11 @@ class ColorTheme(models.Model):
     @classmethod
     def get_color_themes_choices(cls):
         """ Get all color themes from static folder """
+
+        # Check that settings exsist
+        if not os.path.exists(settings.STATIC_COLOR_THEMES_DIR):
+            warnings.warn('No Theme-data found')
+            return []
 
         # Get files list from css/color-themes/ folder
         files_list = []
