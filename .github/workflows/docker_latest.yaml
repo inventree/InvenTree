@@ -32,6 +32,10 @@ jobs:
         run: |
           cd docker
           docker-compose run inventree-dev-server invoke test
+      - name: Down again
+        run: |
+          cd docker
+          docker-compose down
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
