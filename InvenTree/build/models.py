@@ -2,8 +2,6 @@
 Build database model definitions
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 import decimal
 
 import os
@@ -1141,12 +1139,13 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
     """
     Callback function to be executed after a Build instance is saved
     """
+    from . import tasks as build_tasks
 
     if created:
         # A new Build has just been created
 
         # Run checks on required parts
-        InvenTree.tasks.offload_task('build.tasks.check_build_stock', instance)
+        InvenTree.tasks.offload_task(build_tasks.check_build_stock, instance)
 
 
 class BuildOrderAttachment(InvenTreeAttachment):

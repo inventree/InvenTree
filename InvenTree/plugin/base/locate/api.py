@@ -1,8 +1,5 @@
 """API for location plugins"""
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from rest_framework import permissions
 from rest_framework.exceptions import ParseError, NotFound
 from rest_framework.response import Response
@@ -56,7 +53,7 @@ class LocatePluginView(APIView):
             try:
                 StockItem.objects.get(pk=item_pk)
 
-                offload_task('plugin.registry.call_function', plugin, 'locate_stock_item', item_pk)
+                offload_task(registry.call_function, plugin, 'locate_stock_item', item_pk)
 
                 data['item'] = item_pk
 
@@ -69,7 +66,7 @@ class LocatePluginView(APIView):
             try:
                 StockLocation.objects.get(pk=location_pk)
 
-                offload_task('plugin.registry.call_function', plugin, 'locate_stock_location', location_pk)
+                offload_task(registry.call_function, plugin, 'locate_stock_location', location_pk)
 
                 data['location'] = location_pk
 

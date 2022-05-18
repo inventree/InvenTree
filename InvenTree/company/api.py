@@ -2,9 +2,6 @@
 Provides a JSON API for the Company app
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as rest_filters
 
