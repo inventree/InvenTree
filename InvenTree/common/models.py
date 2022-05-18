@@ -1117,7 +1117,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
-        
+
         'PURCHASEORDER_REFERENCE_PREFIX': {
             'name': _('Purchase Order Reference Prefix'),
             'description': _('Prefix value for purchase order reference'),

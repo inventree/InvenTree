@@ -810,6 +810,7 @@ class SalesOrder(Order):
     def pending_shipment_count(self):
         return self.pending_shipments().count()
 
+
 @receiver(post_save, sender=SalesOrder, dispatch_uid='build_post_save_log')
 def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs):
     """
