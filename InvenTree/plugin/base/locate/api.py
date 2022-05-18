@@ -74,4 +74,3 @@ class LocatePluginView(APIView):
 
         else:
             raise ParseError("Must supply either 'item' or 'location' parameter")
-
