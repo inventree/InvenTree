@@ -461,7 +461,7 @@ class TestSettings(TestCase):
         """Patch the env to include the given dict"""
         return mock.patch.dict(os.environ, envs)
 
-    def run_reload(self, envs):
+    def run_reload(self, envs={}):
         from plugin import registry
 
         with self.in_env_context(envs):
