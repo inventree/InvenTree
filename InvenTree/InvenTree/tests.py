@@ -525,7 +525,13 @@ class TestSettings(TestCase):
 
     def test_helpers_cfg_file(self):
         # normal run - not configured
-        self.assertIn('InvenTree/InvenTree/config.yaml', config.get_config_file())
+
+        valid = [
+            'inventree/config.yaml',
+            'inventree/dev/config.yaml',
+        ]
+
+        self.assertTrue(any([opt in config.get_config_file().lower() for opt in valid]))
 
         # with env set
         with self.in_env_context({'INVENTREE_CONFIG_FILE': 'my_special_conf.yaml'}):
