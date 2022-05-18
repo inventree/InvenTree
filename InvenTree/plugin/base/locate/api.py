@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 
 from InvenTree.tasks import offload_task
 
-from plugin import registry
+from plugin.registry import registry
 from stock.models import StockItem, StockLocation
 
 
@@ -53,7 +53,7 @@ class LocatePluginView(APIView):
             try:
                 StockItem.objects.get(pk=item_pk)
 
-                offload_task(registry.call_function, plugin, 'locate_stock_item', item_pk)
+                offload_task(registry.call_plugin_function, plugin, 'locate_stock_item', item_pk)
 
                 data['item'] = item_pk
 
@@ -66,7 +66,7 @@ class LocatePluginView(APIView):
             try:
                 StockLocation.objects.get(pk=location_pk)
 
-                offload_task(registry.call_function, plugin, 'locate_stock_location', location_pk)
+                offload_task(registry.call_plugin_function, plugin, 'locate_stock_location', location_pk)
 
                 data['location'] = location_pk
 
