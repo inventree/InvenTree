@@ -15,7 +15,6 @@ def apps():
     """
 
     return [
-        'barcode',
         'build',
         'common',
         'company',
@@ -24,8 +23,9 @@ def apps():
         'part',
         'report',
         'stock',
-        'InvenTree',
         'users',
+        'plugin',
+        'InvenTree',
     ]
 
 
