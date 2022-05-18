@@ -2537,8 +2537,6 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
                         fields.reference.value = ref;
                         fields.reference.prefix = global_settings.SALESORDER_REFERENCE_PREFIX + options.reference;
                         
-                        fields.order.hidden = false; // TODO: Hide order id field
-                        
                         return fields;
                     }
                 }

@@ -1989,7 +1989,7 @@ function constructField(name, parameters, options={}) {
 
     // Hidden inputs are rendered without label / help text / etc
     if (parameters.hidden) {
-        return constructHiddenInput(name, parameters, options);
+        return constructHiddenInput(field_name, parameters, options);
     }
 
     // Are we ending a group?
