@@ -883,7 +883,7 @@ function getFormFieldElement(name, options) {
         el = $(`#id_${field_name}`);
     }
 
-    if (!el.exists) {
+    if (!el.exists()) {
         console.error(`Could not find form element for field '${name}'`);
     }
 
