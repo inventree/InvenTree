@@ -10,7 +10,6 @@ from django.core.exceptions import ValidationError
 from InvenTree.helpers import validateFilterString
 from InvenTree.api_tester import InvenTreeAPITestCase
 
-from .apps import LabelConfig
 from .models import StockItemLabel, StockLocationLabel, PartLabel
 from stock.models import StockItem
 
