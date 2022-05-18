@@ -10,6 +10,8 @@ from company.models import Company
 
 from InvenTree import status_codes as status
 
+from common.models import InvenTreeSetting
+
 from order.models import SalesOrder, SalesOrderLineItem, SalesOrderAllocation, SalesOrderShipment
 
 from part.models import Part
@@ -200,3 +202,38 @@ class SalesOrderTest(TestCase):
         self.assertTrue(self.line.is_fully_allocated())
         self.assertEqual(self.line.fulfilled_quantity(), 50)
         self.assertEqual(self.line.allocated_quantity(), 50)
+
+    def test_default_shipment(self):
+        # Test sales order default shipment creation
+
+        # Default setting value should be False
+        self.assertEqual(False, InvenTreeSetting.get_setting('SALESORDER_DEFAULT_SHIPMENT'))
+
+        # Create an order
+        order_1 = SalesOrder.objects.create(
+            customer=self.customer,
+            reference='1235',
+            customer_reference='ABC 55556'
+        )
+
+        # Order should have no shipments when setting is False
+        self.assertEqual(0, order_1.shipment_count)
+
+        # Update setting to True
+        InvenTreeSetting.set_setting('SALESORDER_DEFAULT_SHIPMENT', True, None)
+        self.assertEqual(True, InvenTreeSetting.get_setting('SALESORDER_DEFAULT_SHIPMENT'))
+
+        # Create a second order
+        order_2 = SalesOrder.objects.create(
+            customer=self.customer,
+            reference='1236',
+            customer_reference='ABC 55557'
+        )
+
+        # Order should have one shipment
+        self.assertEqual(1, order_2.shipment_count)
+        self.assertEqual(1, order_2.pending_shipments().count())
+
+        # Shipment should have default reference of '1'
+        self.assertEqual('1', order_2.pending_shipments()[0].reference)
+        
