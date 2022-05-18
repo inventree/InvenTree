@@ -457,10 +457,14 @@ class TestSettings(TestCase):
         self.user = user.objects.create_superuser('testuser1', 'test1@testing.com', 'password1')
         self.client.login(username='testuser1', password='password1')
 
+    def in_env_context(self, envs={}):
+        """Patch the env to include the given dict"""
+        return mock.patch.dict(os.environ, envs)
+
     def run_reload(self, envs):
         from plugin import registry
 
-        with mock.patch.dict(os.environ, envs):
+        with self.in_env_context(envs):
             settings.USER_ADDED = False
             registry.reload_plugins()
 
@@ -513,7 +517,7 @@ class TestSettings(TestCase):
         self.assertIn('InvenTree/InvenTree/config.yaml', config.get_config_file())
 
         # with env set
-        with mock.patch.dict(os.environ, {'INVENTREE_CONFIG_FILE': 'my_special_conf.yaml'}):
+        with self.in_env_context({'INVENTREE_CONFIG_FILE': 'my_special_conf.yaml'}):
             self.assertIn('InvenTree/InvenTree/my_special_conf.yaml', config.get_config_file())
 
     def test_helpers_plugin_file(self):
@@ -521,7 +525,7 @@ class TestSettings(TestCase):
         self.assertIn('InvenTree/InvenTree/plugins.txt', config.get_plugin_file())
 
         # with env set
-        with mock.patch.dict(os.environ, {'INVENTREE_PLUGIN_FILE': 'my_special_plugins.txt'}):
+        with self.in_env_context({'INVENTREE_PLUGIN_FILE': 'my_special_plugins.txt'}):
             self.assertIn('my_special_plugins.txt', config.get_plugin_file())
 
     def test_helpers_setting(self):
@@ -530,7 +534,7 @@ class TestSettings(TestCase):
         self.assertEqual(config.get_setting(TEST_ENV_NAME, None, '123!'), '123!')
 
         # with env set
-        with mock.patch.dict(os.environ, {'TEST_ENV_NAME': '321'}):
+        with self.in_env_context({'TEST_ENV_NAME': '321'}):
             self.assertEqual(config.get_setting(TEST_ENV_NAME, None), '321')
 
 
