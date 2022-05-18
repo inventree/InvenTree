@@ -10,6 +10,7 @@ from django.core.exceptions import ValidationError
 from InvenTree.helpers import validateFilterString
 from InvenTree.api_tester import InvenTreeAPITestCase
 
+from .apps import LabelConfig
 from .models import StockItemLabel, StockLocationLabel, PartLabel
 from stock.models import StockItem
 
@@ -86,6 +87,9 @@ class LabelTest(InvenTreeAPITestCase):
 
     def test_label_rendering(self):
         """Test label rendering"""
+
+        # make sure the labels exsist
+        LabelConfig.create_labels()
 
         labels = PartLabel.objects.all()
         part = PartLabel.objects.first()
