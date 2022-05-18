@@ -13,6 +13,7 @@ import InvenTree.helpers
 
 from plugin.helpers import MixinImplementationError, MixinNotImplementedError, render_template
 from plugin.models import PluginConfig, PluginSetting
+from plugin.registry import registry
 from plugin.urls import PLUGIN_BASE
 
 
@@ -204,7 +205,7 @@ class ScheduleMixin:
 
                     Schedule.objects.create(
                         name=task_name,
-                        func='plugin.registry.call_function',
+                        func=registry.call_plugin_function,
                         args=f"'{slug}', '{func_name}'",
                         schedule_type=task['schedule'],
                         minutes=task.get('minutes', None),
