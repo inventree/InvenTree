@@ -186,6 +186,7 @@ jobs:
           invoke static
       - name: Coverage Tests
         run: |
+          invoke static
           invoke coverage
       - name: Data Import Export
         run: |
