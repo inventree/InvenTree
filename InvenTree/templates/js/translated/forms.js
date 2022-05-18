@@ -2338,13 +2338,14 @@ function constructInputOptions(name, classes, type, parameters, options={}) {
 
 
 // Construct a "hidden" input
-function constructHiddenInput(name, parameters) {
+function constructHiddenInput(name, parameters, options={}) {
 
     return constructInputOptions(
         name,
         'hiddeninput',
         'hidden',
-        parameters
+        parameters,
+        options
     );
 }
 
