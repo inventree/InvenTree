@@ -1,5 +1,7 @@
 import json
-from test.support import EnvironmentVarGuard
+import os
+
+from unittest import mock
 
 from django.test import TestCase, override_settings
 import django.core.exceptions as django_exceptions
@@ -449,17 +451,20 @@ class TestSettings(TestCase):
 
     def setUp(self) -> None:
         self.user_mdl = get_user_model()
-        self.env = EnvironmentVarGuard()
 
         # Create a user for auth
         user = get_user_model()
         self.user = user.objects.create_superuser('testuser1', 'test1@testing.com', 'password1')
         self.client.login(username='testuser1', password='password1')
 
-    def run_reload(self):
+    def in_env_context(self, envs={}):
+        """Patch the env to include the given dict"""
+        return mock.patch.dict(os.environ, envs)
+
+    def run_reload(self, envs={}):
         from plugin import registry
 
-        with self.env:
+        with self.in_env_context(envs):
             settings.USER_ADDED = False
             registry.reload_plugins()
 
@@ -475,25 +480,28 @@ class TestSettings(TestCase):
         self.assertEqual(user_count(), 1)
 
         # not enough set
-        self.env.set('INVENTREE_ADMIN_USER', 'admin')  # set username
-        self.run_reload()
+        self.run_reload({
+            'INVENTREE_ADMIN_USER': 'admin'
+        })
         self.assertEqual(user_count(), 1)
 
         # enough set
-        self.env.set('INVENTREE_ADMIN_USER', 'admin')  # set username
-        self.env.set('INVENTREE_ADMIN_EMAIL', 'info@example.com')  # set email
-        self.env.set('INVENTREE_ADMIN_PASSWORD', 'password123')  # set password
-        self.run_reload()
+        self.run_reload({
+            'INVENTREE_ADMIN_USER': 'admin',  # set username
+            'INVENTREE_ADMIN_EMAIL': 'info@example.com',  # set email
+            'INVENTREE_ADMIN_PASSWORD': 'password123'  # set password
+        })
         self.assertEqual(user_count(), 2)
 
         # create user manually
         self.user_mdl.objects.create_user('testuser', 'test@testing.com', 'password')
         self.assertEqual(user_count(), 3)
         # check it will not be created again
-        self.env.set('INVENTREE_ADMIN_USER', 'testuser')
-        self.env.set('INVENTREE_ADMIN_EMAIL', 'test@testing.com')
-        self.env.set('INVENTREE_ADMIN_PASSWORD', 'password')
-        self.run_reload()
+        self.run_reload({
+            'INVENTREE_ADMIN_USER': 'testuser',
+            'INVENTREE_ADMIN_EMAIL': 'test@testing.com',
+            'INVENTREE_ADMIN_PASSWORD': 'password',
+        })
         self.assertEqual(user_count(), 3)
 
         # make sure to clean up
@@ -517,20 +525,30 @@ class TestSettings(TestCase):
 
     def test_helpers_cfg_file(self):
         # normal run - not configured
-        self.assertIn('InvenTree/InvenTree/config.yaml', config.get_config_file())
+
+        valid = [
+            'inventree/config.yaml',
+            'inventree/dev/config.yaml',
+        ]
+
+        self.assertTrue(any([opt in config.get_config_file().lower() for opt in valid]))
 
         # with env set
-        with self.env:
-            self.env.set('INVENTREE_CONFIG_FILE', 'my_special_conf.yaml')
-            self.assertIn('InvenTree/InvenTree/my_special_conf.yaml', config.get_config_file())
+        with self.in_env_context({'INVENTREE_CONFIG_FILE': 'my_special_conf.yaml'}):
+            self.assertIn('inventree/inventree/my_special_conf.yaml', config.get_config_file().lower())
 
     def test_helpers_plugin_file(self):
         # normal run - not configured
-        self.assertIn('InvenTree/InvenTree/plugins.txt', config.get_plugin_file())
+
+        valid = [
+            'inventree/plugins.txt',
+            'inventree/dev/plugins.txt',
+        ]
+
+        self.assertTrue(any([opt in config.get_plugin_file().lower() for opt in valid]))
 
         # with env set
-        with self.env:
-            self.env.set('INVENTREE_PLUGIN_FILE', 'my_special_plugins.txt')
+        with self.in_env_context({'INVENTREE_PLUGIN_FILE': 'my_special_plugins.txt'}):
             self.assertIn('my_special_plugins.txt', config.get_plugin_file())
 
     def test_helpers_setting(self):
@@ -539,8 +557,7 @@ class TestSettings(TestCase):
         self.assertEqual(config.get_setting(TEST_ENV_NAME, None, '123!'), '123!')
 
         # with env set
-        with self.env:
-            self.env.set(TEST_ENV_NAME, '321')
+        with self.in_env_context({TEST_ENV_NAME: '321'}):
             self.assertEqual(config.get_setting(TEST_ENV_NAME, None), '321')
 
 
