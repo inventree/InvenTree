@@ -362,17 +362,6 @@ function createSalesOrder(options={}) {
             }
         },
         onSuccess: function(data) {
-            inventreePut(
-                '{% url "api-so-shipment-list" %}',
-                {
-                    order: data.pk,
-                    reference: 1
-                },
-                {
-                    method: 'POST'
-                }
-            );
-
             location.href = `/order/sales-order/${data.pk}/`;
         },
         title: '{% trans "Create Sales Order" %}',
