@@ -183,10 +183,9 @@ jobs:
           sudo apt-get install gettext
           pip3 install invoke
           invoke install
-          invoke static
+          invoke update
       - name: Coverage Tests
         run: |
-          invoke static
           invoke coverage
       - name: Data Import Export
         run: |
