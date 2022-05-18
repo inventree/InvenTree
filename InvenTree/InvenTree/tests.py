@@ -539,7 +539,7 @@ class TestSettings(TestCase):
             'inventree/dev/plugins.txt',
         ]
 
-        self.assertIn(config.get_plugin_file().lower(), valid)
+        self.assertTrue(any([opt in config.get_plugin_file().lower() for opt in valid]))
 
         # with env set
         with self.in_env_context({'INVENTREE_PLUGIN_FILE': 'my_special_plugins.txt'}):
