@@ -40,9 +40,6 @@ class LocatePluginView(APIView):
         # StockLocation to identify
         location_pk = request.data.get('location', None)
 
-        if not item_pk and not location_pk:
-            raise ParseError("Must supply either 'item' or 'location' parameter")
-
         data = {
             "success": "Identification plugin activated",
             "plugin": plugin,
@@ -59,8 +56,8 @@ class LocatePluginView(APIView):
 
                 return Response(data)
 
-            except StockItem.DoesNotExist:
-                raise NotFound("StockItem matching PK '{item}' not found")
+            except (ValueError, StockItem.DoesNotExist):
+                raise NotFound(f"StockItem matching PK '{item_pk}' not found")
 
         elif location_pk:
             try:
@@ -72,8 +69,9 @@ class LocatePluginView(APIView):
 
                 return Response(data)
 
-            except StockLocation.DoesNotExist:
-                raise NotFound("StockLocation matching PK {'location'} not found")
+            except (ValueError, StockLocation.DoesNotExist):
+                raise NotFound(f"StockLocation matching PK '{location_pk}' not found")
 
         else:
-            raise NotFound()
+            raise ParseError("Must supply either 'item' or 'location' parameter")
+
