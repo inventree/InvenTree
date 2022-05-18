@@ -476,18 +476,17 @@ class TestSettings(TestCase):
         self.assertEqual(user_count(), 1)
 
         # not enough set
-        envs = {}
-        envs['INVENTREE_ADMIN_USER'] = 'admin'
-        self.run_reload(envs)
+        self.run_reload({
+            'INVENTREE_ADMIN_USER': 'admin'
+        })
         self.assertEqual(user_count(), 0)
 
         # enough set
-        envs = {
+        self.run_reload({
             'INVENTREE_ADMIN_USER': 'admin',  # set username
             'INVENTREE_ADMIN_EMAIL': 'info@example.com',  # set email
             'INVENTREE_ADMIN_PASSWORD': 'password123'  # set password
-        }
-        self.run_reload(envs)
+        })
         self.assertEqual(user_count(), 1)
 
         # make sure to clean up
