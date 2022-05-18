@@ -11,6 +11,7 @@ from InvenTree.helpers import validateFilterString
 from InvenTree.api_tester import InvenTreeAPITestCase
 
 from .models import StockItemLabel, StockLocationLabel, PartLabel
+from part.models import Part
 from stock.models import StockItem
 
 
@@ -88,7 +89,7 @@ class LabelTest(InvenTreeAPITestCase):
         """Test label rendering"""
 
         labels = PartLabel.objects.all()
-        part = PartLabel.objects.first()
+        part = Part.objects.first()
 
         for label in labels:
             url = reverse('api-part-label-print', kwargs={'pk': label.pk})
