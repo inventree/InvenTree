@@ -105,7 +105,7 @@ class LabelConfig(AppConfig):
                 # File already exists - let's see if it is the "same",
                 # or if we need to overwrite it with a newer copy!
 
-                if not hashFile(dst_file) == hashFile(src_file):  # pragma: no cover
+                if hashFile(dst_file) != hashFile(src_file):  # pragma: no cover
                     logger.info(f"Hash differs for '{filename}'")
                     to_copy = True
 
@@ -199,7 +199,7 @@ class LabelConfig(AppConfig):
                 # File already exists - let's see if it is the "same",
                 # or if we need to overwrite it with a newer copy!
 
-                if not hashFile(dst_file) == hashFile(src_file):  # pragma: no cover
+                if hashFile(dst_file) != hashFile(src_file):  # pragma: no cover
                     logger.info(f"Hash differs for '{filename}'")
                     to_copy = True
 
@@ -291,7 +291,7 @@ class LabelConfig(AppConfig):
             if os.path.exists(dst_file):
                 # File already exists - let's see if it is the "same"
 
-                if not hashFile(dst_file) == hashFile(src_file):  # pragma: no cover
+                if hashFile(dst_file) != hashFile(src_file):  # pragma: no cover
                     logger.info(f"Hash differs for '{filename}'")
                     to_copy = True
 

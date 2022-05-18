@@ -2,9 +2,6 @@
 JSON serializers for Stock app
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from decimal import Decimal
 from datetime import datetime, timedelta
 from django.db import transaction

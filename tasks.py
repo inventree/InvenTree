@@ -6,11 +6,7 @@ import sys
 import pathlib
 import re
 
-
-try:
-    from invoke import ctask as task
-except:
-    from invoke import task
+from invoke import task
 
 
 def apps():

@@ -306,6 +306,22 @@ class PurchaseOrderTest(OrderTest):
 
         self.assertEqual(po.status, PurchaseOrderStatus.PLACED)
 
+    def test_po_metadata(self):
+        url = reverse('api-po-metadata', kwargs={'pk': 1})
+
+        self.patch(
+            url,
+            {
+                'metadata': {
+                    'yam': 'yum',
+                }
+            },
+            expected_code=200
+        )
+
+        order = models.PurchaseOrder.objects.get(pk=1)
+        self.assertEqual(order.get_metadata('yam'), 'yum')
+
 
 class PurchaseOrderReceiveTest(OrderTest):
     """
@@ -874,6 +890,22 @@ class SalesOrderTest(OrderTest):
         so.refresh_from_db()
 
         self.assertEqual(so.status, SalesOrderStatus.CANCELLED)
+
+    def test_so_metadata(self):
+        url = reverse('api-so-metadata', kwargs={'pk': 1})
+
+        self.patch(
+            url,
+            {
+                'metadata': {
+                    'xyz': 'abc',
+                }
+            },
+            expected_code=200
+        )
+
+        order = models.SalesOrder.objects.get(pk=1)
+        self.assertEqual(order.get_metadata('xyz'), 'abc')
 
 
 class SalesOrderAllocateTest(OrderTest):

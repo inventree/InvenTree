@@ -2,8 +2,6 @@
 Generic models which provide extra functionality over base Django model types.
 """
 
-from __future__ import unicode_literals
-
 import re
 import os
 import logging
@@ -259,7 +257,7 @@ class InvenTreeAttachment(models.Model):
         new_file = os.path.abspath(new_file)
 
         # Check that there are no directory tricks going on...
-        if not os.path.dirname(new_file) == attachment_dir:
+        if os.path.dirname(new_file) != attachment_dir:
             logger.error(f"Attempted to rename attachment outside valid directory: '{new_file}'")
             raise ValidationError(_("Invalid attachment directory"))
 

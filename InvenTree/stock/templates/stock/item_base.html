@@ -1,5 +1,6 @@
 {% extends "page_base.html" %}
 {% load static %}
+{% load plugin_extras %}
 {% load inventree_extras %}
 {% load status_codes %}
 {% load i18n %}
@@ -18,7 +19,6 @@
 <div id="breadcrumb-tree"></div>
 {% endblock breadcrumb_tree %}
 
-
 {% block heading %}
     {% trans "Stock Item" %}: {{ item.part.full_name}}
 {% endblock heading %}
@@ -28,6 +28,12 @@
 {% if user.is_staff and roles.stock.change %}
 {% url 'admin:stock_stockitem_change' item.pk as url %}
 {% include "admin_button.html" with url=url %}
+{% endif %}
+{% mixin_available "locate" as locate_available %}
+{% if plugins_enabled and locate_available %}
+<button id='locate-item-button' title='{% trans "Locate stock item" %}' class='btn btn-outline-secondary' typy='button'>
+    <span class='fas fa-search-location'></span>
+</button>
 {% endif %}
 {% if barcodes %}
 <!-- Barcode actions menu -->
@@ -513,6 +519,14 @@ $("#barcode-scan-into-location").click(function() {
         }
     });
 });
+
+{% if plugins_enabled %}
+$('#locate-item-button').click(function() {
+    locateItemOrLocation({
+        item: {{ item.pk }},
+    });
+});
+{% endif %}
 
 function itemAdjust(action) {
 

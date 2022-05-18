@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import PIL
 
 from django.urls import reverse
@@ -19,6 +16,85 @@ from common.models import InvenTreeSetting
 
 import build.models
 import order.models
+
+
+class PartCategoryAPITest(InvenTreeAPITestCase):
+    """Unit tests for the PartCategory API"""
+
+    fixtures = [
+        'category',
+        'part',
+        'location',
+        'bom',
+        'company',
+        'test_templates',
+        'manufacturer_part',
+        'supplier_part',
+        'order',
+        'stock',
+    ]
+
+    roles = [
+        'part.change',
+        'part.add',
+        'part.delete',
+        'part_category.change',
+        'part_category.add',
+    ]
+
+    def test_category_list(self):
+
+        # List all part categories
+        url = reverse('api-part-category-list')
+
+        response = self.get(url, expected_code=200)
+
+        self.assertEqual(len(response.data), 8)
+
+        # Filter by parent, depth=1
+        response = self.get(
+            url,
+            {
+                'parent': 1,
+                'cascade': False,
+            },
+            expected_code=200
+        )
+
+        self.assertEqual(len(response.data), 3)
+
+        # Filter by parent, cascading
+        response = self.get(
+            url,
+            {
+                'parent': 1,
+                'cascade': True,
+            },
+            expected_code=200,
+        )
+
+        self.assertEqual(len(response.data), 5)
+
+    def test_category_metadata(self):
+        """Test metadata endpoint for the PartCategory"""
+
+        cat = PartCategory.objects.get(pk=1)
+
+        cat.metadata = {
+            'foo': 'bar',
+            'water': 'melon',
+            'abc': 'xyz',
+        }
+
+        cat.set_metadata('abc', 'ABC')
+
+        response = self.get(reverse('api-part-category-metadata', kwargs={'pk': 1}), expected_code=200)
+
+        metadata = response.data['metadata']
+
+        self.assertEqual(metadata['foo'], 'bar')
+        self.assertEqual(metadata['water'], 'melon')
+        self.assertEqual(metadata['abc'], 'ABC')
 
 
 class PartOptionsAPITest(InvenTreeAPITestCase):
@@ -970,24 +1046,29 @@ class PartDetailTests(InvenTreeAPITestCase):
             )
 
             self.assertEqual(response.status_code, 400)
+            self.assertIn('Upload a valid image', str(response.data))
 
-        # Now try to upload a valid image file
-        img = PIL.Image.new('RGB', (128, 128), color='red')
-        img.save('dummy_image.jpg')
+        # Now try to upload a valid image file, in multiple formats
+        for fmt in ['jpg', 'png', 'bmp', 'webp']:
+            fn = f'dummy_image.{fmt}'
 
-        with open('dummy_image.jpg', 'rb') as dummy_image:
-            response = upload_client.patch(
-                url,
-                {
-                    'image': dummy_image,
-                },
-                format='multipart',
-            )
+            img = PIL.Image.new('RGB', (128, 128), color='red')
+            img.save(fn)
 
-            self.assertEqual(response.status_code, 200)
+            with open(fn, 'rb') as dummy_image:
+                response = upload_client.patch(
+                    url,
+                    {
+                        'image': dummy_image,
+                    },
+                    format='multipart',
+                )
 
-        # And now check that the image has been set
-        p = Part.objects.get(pk=pk)
+                self.assertEqual(response.status_code, 200)
+
+            # And now check that the image has been set
+            p = Part.objects.get(pk=pk)
+            self.assertIsNotNone(p.image)
 
     def test_details(self):
         """
@@ -1020,6 +1101,59 @@ class PartDetailTests(InvenTreeAPITestCase):
         # Some other checks
         self.assertEqual(data['in_stock'], 9000)
         self.assertEqual(data['unallocated_stock'], 9000)
+
+    def test_part_metadata(self):
+        """
+        Tests for the part metadata endpoint
+        """
+
+        url = reverse('api-part-metadata', kwargs={'pk': 1})
+
+        part = Part.objects.get(pk=1)
+
+        # Metadata is initially null
+        self.assertIsNone(part.metadata)
+
+        part.metadata = {'foo': 'bar'}
+        part.save()
+
+        response = self.get(url, expected_code=200)
+
+        self.assertEqual(response.data['metadata']['foo'], 'bar')
+
+        # Add more data via the API
+        # Using the 'patch' method causes the new data to be merged in
+        self.patch(
+            url,
+            {
+                'metadata': {
+                    'hello': 'world',
+                }
+            },
+            expected_code=200
+        )
+
+        part.refresh_from_db()
+
+        self.assertEqual(part.metadata['foo'], 'bar')
+        self.assertEqual(part.metadata['hello'], 'world')
+
+        # Now, issue a PUT request (existing data will be replacted)
+        self.put(
+            url,
+            {
+                'metadata': {
+                    'x': 'y'
+                },
+            },
+            expected_code=200
+        )
+
+        part.refresh_from_db()
+
+        self.assertFalse('foo' in part.metadata)
+        self.assertFalse('hello' in part.metadata)
+        self.assertEqual(part.metadata['x'], 'y')
 
 
 class PartAPIAggregationTest(InvenTreeAPITestCase):

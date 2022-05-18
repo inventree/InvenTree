@@ -3,9 +3,6 @@ Common database model definitions.
 These models are 'generic' and do not fit a particular business logic object.
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import os
 import decimal
 import math
@@ -1802,10 +1799,8 @@ class WebhookEndpoint(models.Model):
     def process_webhook(self):
         if self.token:
             self.verify = VerificationMethod.TOKEN
-            # TODO make a object-setting
         if self.secret:
             self.verify = VerificationMethod.HMAC
-            # TODO make a object-setting
         return True
 
     def validate_token(self, payload, headers, request):
