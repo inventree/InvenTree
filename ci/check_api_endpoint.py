@@ -2,9 +2,6 @@
 Test that the root API endpoint is available.
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import json
 import requests
 

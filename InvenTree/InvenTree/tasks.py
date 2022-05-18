@@ -1,8 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import re
 import json
+import warnings
 import requests
 import logging
 
@@ -11,6 +9,8 @@ from django.utils import timezone
 
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import OperationalError, ProgrammingError
+from django.core import mail as django_mail
+from django.conf import settings
 
 
 logger = logging.getLogger("inventree")
@@ -52,6 +52,15 @@ def schedule_task(taskname, **kwargs):
         pass
 
 
+def raise_warning(msg):
+    """Log and raise a warning"""
+    logger.warning(msg)
+
+    # If testing is running raise a warning that can be asserted
+    if settings.TESTING:
+        warnings.warn(msg)
+
+
 def offload_task(taskname, *args, force_sync=False, **kwargs):
     """
         Create an AsyncTask if workers are running.
@@ -67,28 +76,38 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
 
         import importlib
         from InvenTree.status import is_worker_running
+    except AppRegistryNotReady:  # pragma: no cover
+        logger.warning(f"Could not offload task '{taskname}' - app registry not ready")
+        return
+    except (OperationalError, ProgrammingError):  # pragma: no cover
+        raise_warning(f"Could not offload task '{taskname}' - database not ready")
 
-        if is_worker_running() and not force_sync:  # pragma: no cover
-            # Running as asynchronous task
-            try:
-                task = AsyncTask(taskname, *args, **kwargs)
-                task.run()
-            except ImportError:
-                logger.warning(f"WARNING: '{taskname}' not started - Function not found")
+    if is_worker_running() and not force_sync:  # pragma: no cover
+        # Running as asynchronous task
+        try:
+            task = AsyncTask(taskname, *args, **kwargs)
+            task.run()
+        except ImportError:
+            raise_warning(f"WARNING: '{taskname}' not started - Function not found")
+    else:
+
+        if callable(taskname):
+            # function was passed - use that
+            _func = taskname
         else:
             # Split path
             try:
                 app, mod, func = taskname.split('.')
                 app_mod = app + '.' + mod
             except ValueError:
-                logger.warning(f"WARNING: '{taskname}' not started - Malformed function path")
+                raise_warning(f"WARNING: '{taskname}' not started - Malformed function path")
                 return
 
             # Import module from app
             try:
                 _mod = importlib.import_module(app_mod)
             except ModuleNotFoundError:
-                logger.warning(f"WARNING: '{taskname}' not started - No module named '{app_mod}'")
+                raise_warning(f"WARNING: '{taskname}' not started - No module named '{app_mod}'")
                 return
 
             # Retrieve function
@@ -102,17 +121,11 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
                 if not _func:
                     _func = eval(func)  # pragma: no cover
             except NameError:
-                logger.warning(f"WARNING: '{taskname}' not started - No function named '{func}'")
+                raise_warning(f"WARNING: '{taskname}' not started - No function named '{func}'")
                 return
 
-            # Workers are not running: run it as synchronous task
-            _func(*args, **kwargs)
-
-    except AppRegistryNotReady:  # pragma: no cover
-        logger.warning(f"Could not offload task '{taskname}' - app registry not ready")
-        return
-    except (OperationalError, ProgrammingError):  # pragma: no cover
-        logger.warning(f"Could not offload task '{taskname}' - database not ready")
+        # Workers are not running: run it as synchronous task
+        _func(*args, **kwargs)
 
 
 def heartbeat():
@@ -205,25 +218,25 @@ def check_for_updates():
     response = requests.get('https://api.github.com/repos/inventree/inventree/releases/latest')
 
     if response.status_code != 200:
-        raise ValueError(f'Unexpected status code from GitHub API: {response.status_code}')
+        raise ValueError(f'Unexpected status code from GitHub API: {response.status_code}')  # pragma: no cover
 
     data = json.loads(response.text)
 
     tag = data.get('tag_name', None)
 
     if not tag:
-        raise ValueError("'tag_name' missing from GitHub response")
+        raise ValueError("'tag_name' missing from GitHub response")  # pragma: no cover
 
     match = re.match(r"^.*(\d+)\.(\d+)\.(\d+).*$", tag)
 
-    if len(match.groups()) != 3:
+    if len(match.groups()) != 3:  # pragma: no cover
         logger.warning(f"Version '{tag}' did not match expected pattern")
         return
 
     latest_version = [int(x) for x in match.groups()]
 
     if len(latest_version) != 3:
-        raise ValueError(f"Version '{tag}' is not correct format")
+        raise ValueError(f"Version '{tag}' is not correct format")  # pragma: no cover
 
     logger.info(f"Latest InvenTree version: '{tag}'")
 
@@ -288,7 +301,7 @@ def send_email(subject, body, recipients, from_email=None, html_message=None):
         recipients = [recipients]
 
     offload_task(
-        'django.core.mail.send_mail',
+        django_mail.send_mail,
         subject,
         body,
         from_email,

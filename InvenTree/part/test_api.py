@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import PIL
 
 from django.urls import reverse
@@ -1049,24 +1046,29 @@ class PartDetailTests(InvenTreeAPITestCase):
             )
 
             self.assertEqual(response.status_code, 400)
+            self.assertIn('Upload a valid image', str(response.data))
 
-        # Now try to upload a valid image file
-        img = PIL.Image.new('RGB', (128, 128), color='red')
-        img.save('dummy_image.jpg')
+        # Now try to upload a valid image file, in multiple formats
+        for fmt in ['jpg', 'png', 'bmp', 'webp']:
+            fn = f'dummy_image.{fmt}'
 
-        with open('dummy_image.jpg', 'rb') as dummy_image:
-            response = upload_client.patch(
-                url,
-                {
-                    'image': dummy_image,
-                },
-                format='multipart',
-            )
+            img = PIL.Image.new('RGB', (128, 128), color='red')
+            img.save(fn)
 
-            self.assertEqual(response.status_code, 200)
+            with open(fn, 'rb') as dummy_image:
+                response = upload_client.patch(
+                    url,
+                    {
+                        'image': dummy_image,
+                    },
+                    format='multipart',
+                )
 
-        # And now check that the image has been set
-        p = Part.objects.get(pk=pk)
+                self.assertEqual(response.status_code, 200)
+
+            # And now check that the image has been set
+            p = Part.objects.get(pk=pk)
+            self.assertIsNotNone(p.image)
 
     def test_details(self):
         """

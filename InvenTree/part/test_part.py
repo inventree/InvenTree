@@ -1,10 +1,8 @@
 # Tests for the Part model
 
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
 from allauth.account.models import EmailAddress
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 
 from django.test import TestCase
@@ -67,11 +65,21 @@ class TemplateTagTest(TestCase):
 
     def test_hash(self):
         result_hash = inventree_extras.inventree_commit_hash()
-        self.assertGreater(len(result_hash), 5)
+        if settings.DOCKER:
+            # Testing inside docker environment *may* return an empty git commit hash
+            # In such a case, skip this check
+            pass
+        else:
+            self.assertGreater(len(result_hash), 5)
 
     def test_date(self):
         d = inventree_extras.inventree_commit_date()
-        self.assertEqual(len(d.split('-')), 3)
+        if settings.DOCKER:
+            # Testing inside docker environment *may* return an empty git commit hash
+            # In such a case, skip this check
+            pass
+        else:
+            self.assertEqual(len(d.split('-')), 3)
 
     def test_github(self):
         self.assertIn('github.com', inventree_extras.inventree_github_url())

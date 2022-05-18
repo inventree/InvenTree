@@ -1,7 +1,5 @@
 """ Custom fields used in InvenTree """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 import sys
 
 from .validators import allowable_url_schemes
