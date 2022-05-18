@@ -23,18 +23,12 @@ jobs:
           cd docker
           docker-compose build
           docker-compose run inventree-dev-server invoke update
-          docker-compose up -d
-      - name: Wait for Server
-        run: |
-          cd docker
-          docker-compose run inventree-dev-server invoke wait
       - name: Run unit tests
         run: |
           cd docker
+          docker-compose up -d
+          docker-compose run inventree-dev-server invoke wait
           docker-compose run inventree-dev-server invoke test
-      - name: Down again
-        run: |
-          cd docker
           docker-compose down
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
