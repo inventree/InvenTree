@@ -29,7 +29,7 @@ class InvenTreePluginViewMixin:
 
             try:
                 panels += plug.render_panels(self, self.request, ctx)
-            except Exception as exc:
+            except Exception:
                 # Prevent any plugin error from crashing the page render
                 kind, info, data = sys.exc_info()
 
