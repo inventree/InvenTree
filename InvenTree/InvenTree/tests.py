@@ -545,7 +545,7 @@ class TestSettings(TestCase):
         self.assertEqual(config.get_setting(TEST_ENV_NAME, None, '123!'), '123!')
 
         # with env set
-        with self.in_env_context({'TEST_ENV_NAME': '321'}):
+        with self.in_env_context({TEST_ENV_NAME: '321'}):
             self.assertEqual(config.get_setting(TEST_ENV_NAME, None), '321')
 
 
