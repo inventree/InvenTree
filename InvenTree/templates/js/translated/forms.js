@@ -1538,10 +1538,17 @@ function addSecondaryModal(field, fields, options) {
         var url = secondary.api_url || field.api_url;
 
         // If the "fields" attribute is a function, call it with data
-        if (secondary.fields instanceof Function) {
+        if (secondary.fields instanceof Function || secondary.fieldsFunction instanceof Function) {
 
             // Extract form values at time of button press
             var data = extractFormData(fields, options);
+
+            // Backup and execute fields function in sequential executions of modal
+            if (secondary.fields instanceof Function) {
+                secondary.fieldsFunction = secondary.fields;
+            } else if (secondary.fieldsFunction instanceof Function) {
+                secondary.fields = secondary.fieldsFunction;
+            }
 
             secondary.fields = secondary.fields(data);
         }
