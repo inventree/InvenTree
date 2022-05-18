@@ -88,9 +88,6 @@ class LabelTest(InvenTreeAPITestCase):
     def test_label_rendering(self):
         """Test label rendering"""
 
-        # make sure the labels exsist
-        apps.get_app_config('label').create_labels()
-
         labels = PartLabel.objects.all()
         part = PartLabel.objects.first()
 
