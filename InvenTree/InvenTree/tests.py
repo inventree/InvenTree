@@ -514,8 +514,7 @@ class TestSettings(TestCase):
         self.assertIn('InvenTree/InvenTree/config.yaml', config.get_config_file())
 
         # with env set
-        with self.env:
-            self.env.set('INVENTREE_CONFIG_FILE', 'my_special_conf.yaml')
+        with mock.patch.dict(os.environ, {'INVENTREE_CONFIG_FILE': 'my_special_conf.yaml'}):
             self.assertIn('InvenTree/InvenTree/my_special_conf.yaml', config.get_config_file())
 
     def test_helpers_plugin_file(self):
@@ -523,8 +522,7 @@ class TestSettings(TestCase):
         self.assertIn('InvenTree/InvenTree/plugins.txt', config.get_plugin_file())
 
         # with env set
-        with self.env:
-            self.env.set('INVENTREE_PLUGIN_FILE', 'my_special_plugins.txt')
+        with mock.patch.dict(os.environ, {'INVENTREE_PLUGIN_FILE': 'my_special_plugins.txt'}):
             self.assertIn('my_special_plugins.txt', config.get_plugin_file())
 
     def test_helpers_setting(self):
@@ -533,8 +531,7 @@ class TestSettings(TestCase):
         self.assertEqual(config.get_setting(TEST_ENV_NAME, None, '123!'), '123!')
 
         # with env set
-        with self.env:
-            self.env.set(TEST_ENV_NAME, '321')
+        with mock.patch.dict(os.environ, {'TEST_ENV_NAME': '321'}):
             self.assertEqual(config.get_setting(TEST_ENV_NAME, None), '321')
 
 
