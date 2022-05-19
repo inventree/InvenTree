@@ -138,7 +138,8 @@ function completeShipment(shipment_id) {
                     $('#so-lines-table').bootstrapTable('refresh');
                     $('#pending-shipments-table').bootstrapTable('refresh');
                     $('#completed-shipments-table').bootstrapTable('refresh');
-                }
+                },
+                reload: true
             });
         }
     });
