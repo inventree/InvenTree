@@ -23,7 +23,6 @@ def apps():
         'part',
         'report',
         'stock',
-        'static',
         'users',
         'plugin',
         'InvenTree',
