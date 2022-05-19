@@ -16,7 +16,7 @@ class BuildResource(ModelResource):
     # but we don't for other ones.
     # TODO: 2022-05-12 - Need to investigate why this is the case!
 
-    pk = Field(attribute='pk')
+    id = Field(attribute='pk')
 
     reference = Field(attribute='reference')
 
@@ -45,6 +45,7 @@ class BuildResource(ModelResource):
         clean_model_instances = True
         exclude = [
             'lft', 'rght', 'tree_id', 'level',
+            'metadata',
         ]
 
 

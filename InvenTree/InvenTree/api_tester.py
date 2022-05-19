@@ -2,6 +2,11 @@
 Helper functions for performing API unit tests
 """
 
+import csv
+import io
+import re
+
+from django.http.response import StreamingHttpResponse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from rest_framework.test import APITestCase
@@ -165,3 +170,87 @@ class InvenTreeAPITestCase(APITestCase):
             self.assertEqual(response.status_code, expected_code)
 
         return response
+
+    def download_file(self, url, data, expected_code=None, expected_fn=None, decode=True):
+        """
+        Download a file from the server, and return an in-memory file
+        """
+
+        response = self.client.get(url, data=data, format='json')
+
+        if expected_code is not None:
+            self.assertEqual(response.status_code, expected_code)
+
+        # Check that the response is of the correct type
+        if not isinstance(response, StreamingHttpResponse):
+            raise ValueError("Response is not a StreamingHttpResponse object as expected")
+
+        # Extract filename
+        disposition = response.headers['Content-Disposition']
+
+        result = re.search(r'attachment; filename="([\w.]+)"', disposition)
+
+        fn = result.groups()[0]
+
+        if expected_fn is not None:
+            self.assertEqual(expected_fn, fn)
+
+        if decode:
+            # Decode data and return as StringIO file object
+            fo = io.StringIO()
+            fo.name = fo
+            fo.write(response.getvalue().decode('UTF-8'))
+        else:
+            # Return a a BytesIO file object
+            fo = io.BytesIO()
+            fo.name = fn
+            fo.write(response.getvalue())
+
+        fo.seek(0)
+
+        return fo
+
+    def process_csv(self, fo, delimiter=',', required_cols=None, excluded_cols=None, required_rows=None):
+        """
+        Helper function to process and validate a downloaded csv file
+        """
+
+        # Check that the correct object type has been passed
+        self.assertTrue(isinstance(fo, io.StringIO))
+
+        fo.seek(0)
+
+        reader = csv.reader(fo, delimiter=delimiter)
+
+        headers = []
+        rows = []
+
+        for idx, row in enumerate(reader):
+            if idx == 0:
+                headers = row
+            else:
+                rows.append(row)
+
+        if required_cols is not None:
+            for col in required_cols:
+                self.assertIn(col, headers)
+
+        if excluded_cols is not None:
+            for col in excluded_cols:
+                self.assertNotIn(col, headers)
+
+        if required_rows is not None:
+            self.assertEqual(len(rows), required_rows)
+
+        # Return the file data as a list of dict items, based on the headers
+        data = []
+
+        for row in rows:
+            entry = {}
+
+            for idx, col in enumerate(headers):
+                entry[col] = row[idx]
+
+            data.append(entry)
+
+        return data

@@ -822,6 +822,58 @@ class PartAPITest(InvenTreeAPITestCase):
         response = self.get('/api/part/10004/', {})
         self.assertEqual(response.data['variant_stock'], 500)
 
+    def test_part_download(self):
+        """Test download of part data via the API"""
+
+        url = reverse('api-part-list')
+
+        required_cols = [
+            'id',
+            'name',
+            'description',
+            'in_stock',
+            'category_name',
+            'keywords',
+            'is_template',
+            'virtual',
+            'trackable',
+            'active',
+            'notes',
+            'creation_date',
+        ]
+
+        excluded_cols = [
+            'lft', 'rght', 'level', 'tree_id',
+            'metadata',
+        ]
+
+        with self.download_file(
+            url,
+            {
+                'export': 'csv',
+            },
+            expected_fn='InvenTree_Parts.csv',
+        ) as fo:
+
+            data = self.process_csv(
+                fo,
+                excluded_cols=excluded_cols,
+                required_cols=required_cols,
+                required_rows=Part.objects.count(),
+            )
+
+            for row in data:
+                part = Part.objects.get(pk=row['id'])
+
+                if part.IPN:
+                    self.assertEqual(part.IPN, row['IPN'])
+
+                self.assertEqual(part.name, row['name'])
+                self.assertEqual(part.description, row['description'])
+
+                if part.category:
+                    self.assertEqual(part.category.name, row['category_name'])
+
 
 class PartDetailTests(InvenTreeAPITestCase):
     """
