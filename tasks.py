@@ -291,13 +291,17 @@ def coverage(c):
     manage(c, 'check')
 
     # Run coverage tests
-    c.run('coverage run {manage} test --parallel --timing {apps}'.format(
+    c.run('coverage run --parallel-mode --concurrency=multiprocessing --rcfile=./.coveragerc {manage} test --parallel --timing {apps}'.format(
         manage=managePyPath(),
         apps=' '.join(apps())
     ))
 
     # Combine coverage
-    c.run('coverage combine')
+    c.run('coverage combine --rcfile=./.coveragerc')
+
+    # Report
+    c.run('coverage report -m --rcfile=./.coveragerc')
+
 
 def content_excludes():
     """
