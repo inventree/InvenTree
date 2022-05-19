@@ -1,5 +1,6 @@
 import json
 import os
+import time
 
 from unittest import mock
 
@@ -406,11 +407,23 @@ class CurrencyTests(TestCase):
         with self.assertRaises(MissingRate):
             convert_money(Money(100, 'AUD'), 'USD')
 
-        InvenTree.tasks.update_exchange_rates()
+        update_successful = False
 
-        rates = Rate.objects.all()
+        # Note: the update sometimes fails in CI, let's give it a few chances
+        for idx in range(10):
+            InvenTree.tasks.update_exchange_rates()
 
-        self.assertEqual(rates.count(), len(currency_codes()))
+            rates = Rate.objects.all()
+
+            if rates.count() == len(currency_codes()):
+                update_successful = True
+                break
+
+            else:
+                print("Exchange rate update failed - retrying")
+                time.sleep(1)
+
+        self.assertTrue(update_successful)
 
         # Now that we have some exchange rate information, we can perform conversions
 

@@ -112,28 +112,61 @@ class SettingsTest(TestCase):
         self.assertIn('STOCK_OWNERSHIP_CONTROL', result)
         self.assertIn('SIGNUP_GROUP', result)
 
-    def test_required_values(self):
+    def run_settings_check(self, key, setting):
+
+        self.assertTrue(type(setting) is dict)
+
+        name = setting.get('name', None)
+
+        self.assertIsNotNone(name)
+        self.assertIn('django.utils.functional.lazy', str(type(name)))
+
+        description = setting.get('description', None)
+
+        self.assertIsNotNone(description)
+        self.assertIn('django.utils.functional.lazy', str(type(description)))
+
+        if key != key.upper():
+            raise ValueError(f"Setting key '{key}' is not uppercase")  # pragma: no cover
+
+        # Check that only allowed keys are provided
+        allowed_keys = [
+            'name',
+            'description',
+            'default',
+            'validator',
+            'hidden',
+            'choices',
+            'units',
+            'requires_restart',
+        ]
+
+        for k in setting.keys():
+            self.assertIn(k, allowed_keys)
+
+        # Check default value for boolean settings
+        validator = setting.get('validator', None)
+
+        if validator is bool:
+            default = setting.get('default', None)
+
+            # Default value *must* be supplied for boolean setting!
+            self.assertIsNotNone(default)
+
+            # Default value for boolean must itself be a boolean
+            self.assertIn(default, [True, False])
+
+    def test_setting_data(self):
         """
-        - Ensure that every global setting has a name.
-        - Ensure that every global setting has a description.
+        - Ensure that every setting has a name, which is translated
+        - Ensure that every setting has a description, which is translated
         """
 
-        for key in InvenTreeSetting.SETTINGS.keys():
+        for key, setting in InvenTreeSetting.SETTINGS.items():
+            self.run_settings_check(key, setting)
 
-            setting = InvenTreeSetting.SETTINGS[key]
-
-            name = setting.get('name', None)
-
-            if name is None:
-                raise ValueError(f'Missing GLOBAL_SETTING name for {key}')  # pragma: no cover
-
-            description = setting.get('description', None)
-
-            if description is None:
-                raise ValueError(f'Missing GLOBAL_SETTING description for {key}')  # pragma: no cover
-
-            if key != key.upper():
-                raise ValueError(f"SETTINGS key '{key}' is not uppercase")  # pragma: no cover
+        for key, setting in InvenTreeUserSetting.SETTINGS.items():
+            self.run_settings_check(key, setting)
 
     def test_defaults(self):
         """
