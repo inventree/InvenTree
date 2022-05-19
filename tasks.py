@@ -296,9 +296,8 @@ def coverage(c):
         apps=' '.join(apps())
     ))
 
-    # Generate coverage report
-    c.run('coverage html')
-
+    # Combine coverage
+    c.run('coverage combine')
 
 def content_excludes():
     """
