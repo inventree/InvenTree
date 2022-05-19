@@ -6,6 +6,8 @@ from django.urls import include, re_path, reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 
+from error_report.models import Error
+
 from plugin import InvenTreePlugin
 from plugin.mixins import AppMixin, SettingsMixin, UrlsMixin, NavigationMixin, APICallMixin
 from plugin.urls import PLUGIN_BASE
@@ -391,6 +393,8 @@ class PanelMixinTests(TestCase):
         # Enable the 'broken panel' setting - this will cause all panels to not render
         plugin.set_setting('ENABLE_BROKEN_PANEL', True)
 
+        n_errors = Error.objects.count()
+
         for url in urls:
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
@@ -400,3 +404,6 @@ class PanelMixinTests(TestCase):
             self.assertNotIn('Hello world!', str(response.content))
             self.assertNotIn('Broken Panel', str(response.content))
             self.assertNotIn('Custom Part Panel', str(response.content))
+
+        # Assert that each request threw an error
+        self.assertEqual(Error.objects.count(), n_errors + len(urls))
