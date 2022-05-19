@@ -255,7 +255,7 @@ class PluginsRegistry:
                 if active is not None:
                     # Filter by 'enabled' status
                     config = plugin.plugin_config()
-                    
+
                     if config.active != active:
                         continue
 
