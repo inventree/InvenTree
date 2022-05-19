@@ -11,6 +11,7 @@ from django.http import HttpResponse, JsonResponse
 from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework import generics, filters
+from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 import InvenTree.helpers
@@ -69,6 +70,10 @@ class LabelPrintMixin:
 
         plugin_key = request.query_params.get('plugin', None)
 
+        # No plugin provided, and that's OK
+        if plugin_key is None:
+            return None
+
         plugin = registry.get_plugin(plugin_key)
 
         if plugin:
@@ -77,9 +82,10 @@ class LabelPrintMixin:
             if config and config.active:
                 # Only return the plugin if it is enabled!
                 return plugin
-
-        # No matches found
-        return None
+            else:
+                raise ValidationError(f"Plugin '{plugin_key}' is not enabled")
+        else:
+            raise NotFound(f"Plugin '{plugin_key}' not found")
 
     def print(self, request, items_to_print):
         """
@@ -88,13 +94,11 @@ class LabelPrintMixin:
 
         # Check the request to determine if the user has selected a label printing plugin
         plugin = self.get_plugin(request)
+
         if len(items_to_print) == 0:
             # No valid items provided, return an error message
-            data = {
-                'error': _('No valid objects provided to template'),
-            }
 
-            return Response(data, status=400)
+            raise ValidationError('No valid objects provided to label template')
 
         outputs = []
 
