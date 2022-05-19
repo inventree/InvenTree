@@ -31,6 +31,7 @@ class LocationResource(ModelResource):
         exclude = [
             # Exclude MPTT internal model fields
             'lft', 'rght', 'tree_id', 'level',
+            'metadata',
         ]
 
     def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
@@ -119,7 +120,7 @@ class StockItemResource(ModelResource):
             # Exclude MPTT internal model fields
             'lft', 'rght', 'tree_id', 'level',
             # Exclude internal fields
-            'serial_int',
+            'serial_int', 'metadata',
         ]
 
 

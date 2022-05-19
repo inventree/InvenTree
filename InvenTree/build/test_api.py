@@ -511,6 +511,50 @@ class BuildTest(BuildAPITest):
 
         self.assertIn('This build output has already been completed', str(response.data))
 
+    def test_download_build_orders(self):
+
+        required_cols = [
+            'reference',
+            'status',
+            'completed',
+            'batch',
+            'notes',
+            'title',
+            'part',
+            'part_name',
+            'id',
+            'quantity',
+        ]
+
+        excluded_cols = [
+            'lft', 'rght', 'tree_id', 'level',
+            'metadata',
+        ]
+
+        with self.download_file(
+            reverse('api-build-list'),
+            {
+                'export': 'csv',
+            }
+        ) as fo:
+
+            data = self.process_csv(
+                fo,
+                required_cols=required_cols,
+                excluded_cols=excluded_cols,
+                required_rows=Build.objects.count()
+            )
+
+            for row in data:
+
+                build = Build.objects.get(pk=row['id'])
+
+                self.assertEqual(str(build.part.pk), row['part'])
+                self.assertEqual(build.part.full_name, row['part_name'])
+
+                self.assertEqual(build.reference, row['reference'])
+                self.assertEqual(build.title, row['title'])
+
 
 class BuildAllocationTest(BuildAPITest):
     """

@@ -105,6 +105,9 @@ class PurchaseOrderResource(ModelResource):
         model = PurchaseOrder
         skip_unchanged = True
         clean_model_instances = True
+        exclude = [
+            'metadata',
+        ]
 
 
 class PurchaseOrderLineItemResource(ModelResource):
@@ -147,6 +150,9 @@ class SalesOrderResource(ModelResource):
         model = SalesOrder
         skip_unchanged = True
         clean_model_instances = True
+        exclude = [
+            'metadata',
+        ]
 
 
 class SalesOrderLineItemResource(ModelResource):
