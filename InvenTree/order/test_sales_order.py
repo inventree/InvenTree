@@ -236,4 +236,3 @@ class SalesOrderTest(TestCase):
 
         # Shipment should have default reference of '1'
         self.assertEqual('1', order_2.pending_shipments()[0].reference)
-        
