@@ -29,7 +29,7 @@ class InvenTreePluginViewMixin:
 
         panels = []
 
-        for plug in registry.with_mixin('panel'):
+        for plug in registry.with_mixin('panel', active=True):
 
             try:
                 panels += plug.render_panels(self, self.request, ctx)

@@ -58,7 +58,7 @@ class CustomPanelSample(PanelMixin, SettingsMixin, InvenTreePlugin):
 
         panels = [
             {
-                # This panel will not be displayed, as it is missing the 'content' key
+                # Simple panel without any actual content
                 'title': 'No Content',
             }
         ]

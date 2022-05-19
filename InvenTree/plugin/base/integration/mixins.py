@@ -60,6 +60,7 @@ class SettingsMixin:
 
         if not plugin:
             # Cannot find associated plugin model, return
+            logger.error(f"Plugin configuration not found for plugin '{self.slug}'")
             return  # pragma: no cover
 
         PluginSetting.set_setting(key, value, user, plugin=plugin)
