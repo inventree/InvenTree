@@ -2,13 +2,18 @@
 
 from django.test import TestCase
 from django.conf import settings
-from django.urls import include, re_path
+from django.urls import include, re_path, reverse
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
+
+from error_report.models import Error
 
 from plugin import InvenTreePlugin
 from plugin.mixins import AppMixin, SettingsMixin, UrlsMixin, NavigationMixin, APICallMixin
 from plugin.urls import PLUGIN_BASE
 from plugin.helpers import MixinNotImplementedError
+
+from plugin.registry import registry
 
 
 class BaseMixinDefinition:
@@ -244,3 +249,161 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         # cover wrong token setting
         with self.assertRaises(MixinNotImplementedError):
             self.mixin_wrong2.has_api_call()
+
+
+class PanelMixinTests(TestCase):
+    """Test that the PanelMixin plugin operates correctly"""
+
+    fixtures = [
+        'category',
+        'part',
+        'location',
+        'stock',
+    ]
+
+    def setUp(self):
+        super().setUp()
+
+        # Create a user which has all the privelages
+        user = get_user_model()
+
+        self.user = user.objects.create_user(
+            username='username',
+            email='user@email.com',
+            password='password'
+        )
+
+        # Put the user into a group with the correct permissions
+        group = Group.objects.create(name='mygroup')
+        self.user.groups.add(group)
+
+        # Give the group *all* the permissions!
+        for rule in group.rule_sets.all():
+            rule.can_view = True
+            rule.can_change = True
+            rule.can_add = True
+            rule.can_delete = True
+
+            rule.save()
+
+        self.client.login(username='username', password='password')
+
+    def test_installed(self):
+        """Test that the sample panel plugin is installed"""
+
+        plugins = registry.with_mixin('panel')
+
+        self.assertTrue(len(plugins) > 0)
+
+        self.assertIn('samplepanel', [p.slug for p in plugins])
+
+        plugins = registry.with_mixin('panel', active=True)
+
+        self.assertEqual(len(plugins), 0)
+
+    def test_disabled(self):
+        """Test that the panels *do not load* if the plugin is not enabled"""
+
+        plugin = registry.get_plugin('samplepanel')
+
+        plugin.set_setting('ENABLE_HELLO_WORLD', True)
+        plugin.set_setting('ENABLE_BROKEN_PANEL', True)
+
+        # Ensure that the plugin is *not* enabled
+        config = plugin.plugin_config()
+
+        self.assertFalse(config.active)
+
+        # Load some pages, ensure that the panel content is *not* loaded
+        for url in [
+            reverse('part-detail', kwargs={'pk': 1}),
+            reverse('stock-item-detail', kwargs={'pk': 2}),
+            reverse('stock-location-detail', kwargs={'pk': 1}),
+        ]:
+            response = self.client.get(
+                url
+            )
+
+            self.assertEqual(response.status_code, 200)
+
+            # Test that these panels have *not* been loaded
+            self.assertNotIn('No Content', str(response.content))
+            self.assertNotIn('Hello world', str(response.content))
+            self.assertNotIn('Custom Part Panel', str(response.content))
+
+    def test_enabled(self):
+        """
+        Test that the panels *do* load if the plugin is enabled
+        """
+
+        plugin = registry.get_plugin('samplepanel')
+
+        self.assertEqual(len(registry.with_mixin('panel', active=True)), 0)
+
+        # Ensure that the plugin is enabled
+        config = plugin.plugin_config()
+        config.active = True
+        config.save()
+
+        self.assertTrue(config.active)
+        self.assertEqual(len(registry.with_mixin('panel', active=True)), 1)
+
+        # Load some pages, ensure that the panel content is *not* loaded
+        urls = [
+            reverse('part-detail', kwargs={'pk': 1}),
+            reverse('stock-item-detail', kwargs={'pk': 2}),
+            reverse('stock-location-detail', kwargs={'pk': 1}),
+        ]
+
+        plugin.set_setting('ENABLE_HELLO_WORLD', False)
+        plugin.set_setting('ENABLE_BROKEN_PANEL', False)
+
+        for url in urls:
+            response = self.client.get(url)
+
+            self.assertEqual(response.status_code, 200)
+
+            self.assertIn('No Content', str(response.content))
+
+            # This panel is disabled by plugin setting
+            self.assertNotIn('Hello world!', str(response.content))
+
+            # This panel is only active for the "Part" view
+            if url == urls[0]:
+                self.assertIn('Custom Part Panel', str(response.content))
+            else:
+                self.assertNotIn('Custom Part Panel', str(response.content))
+
+        # Enable the 'Hello World' panel
+        plugin.set_setting('ENABLE_HELLO_WORLD', True)
+
+        for url in urls:
+            response = self.client.get(url)
+
+            self.assertEqual(response.status_code, 200)
+
+            self.assertIn('Hello world!', str(response.content))
+
+            # The 'Custom Part' panel should still be there, too
+            if url == urls[0]:
+                self.assertIn('Custom Part Panel', str(response.content))
+            else:
+                self.assertNotIn('Custom Part Panel', str(response.content))
+
+        # Enable the 'broken panel' setting - this will cause all panels to not render
+        plugin.set_setting('ENABLE_BROKEN_PANEL', True)
+
+        n_errors = Error.objects.count()
+
+        for url in urls:
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 200)
+
+            # No custom panels should have been loaded
+            self.assertNotIn('No Content', str(response.content))
+            self.assertNotIn('Hello world!', str(response.content))
+            self.assertNotIn('Broken Panel', str(response.content))
+            self.assertNotIn('Custom Part Panel', str(response.content))
+
+        # Assert that each request threw an error
+        self.assertEqual(Error.objects.count(), n_errors + len(urls))
