@@ -245,4 +245,15 @@ def render_template(plugin, template_file, context=None):
     html = tmp.render(context)
 
     return html
+
+
+def render_text(text, context=None):
+    """
+    Locate a raw string with provided context
+    """
+
+    ctx = template.Context(context)
+
+    return template.Template(text).render(ctx)
+
 # endregion
