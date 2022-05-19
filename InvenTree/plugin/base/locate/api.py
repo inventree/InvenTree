@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 
 from InvenTree.tasks import offload_task
 
-from plugin import registry
+from plugin.registry import registry
 from stock.models import StockItem, StockLocation
 
 
@@ -40,9 +40,6 @@ class LocatePluginView(APIView):
         # StockLocation to identify
         location_pk = request.data.get('location', None)
 
-        if not item_pk and not location_pk:
-            raise ParseError("Must supply either 'item' or 'location' parameter")
-
         data = {
             "success": "Identification plugin activated",
             "plugin": plugin,
@@ -53,27 +50,27 @@ class LocatePluginView(APIView):
             try:
                 StockItem.objects.get(pk=item_pk)
 
-                offload_task(registry.call_function, plugin, 'locate_stock_item', item_pk)
+                offload_task(registry.call_plugin_function, plugin, 'locate_stock_item', item_pk)
 
                 data['item'] = item_pk
 
                 return Response(data)
 
-            except StockItem.DoesNotExist:
-                raise NotFound("StockItem matching PK '{item}' not found")
+            except (ValueError, StockItem.DoesNotExist):
+                raise NotFound(f"StockItem matching PK '{item_pk}' not found")
 
         elif location_pk:
             try:
                 StockLocation.objects.get(pk=location_pk)
 
-                offload_task(registry.call_function, plugin, 'locate_stock_location', location_pk)
+                offload_task(registry.call_plugin_function, plugin, 'locate_stock_location', location_pk)
 
                 data['location'] = location_pk
 
                 return Response(data)
 
-            except StockLocation.DoesNotExist:
-                raise NotFound("StockLocation matching PK {'location'} not found")
+            except (ValueError, StockLocation.DoesNotExist):
+                raise NotFound(f"StockLocation matching PK '{location_pk}' not found")
 
         else:
-            raise NotFound()
+            raise ParseError("Must supply either 'item' or 'location' parameter")

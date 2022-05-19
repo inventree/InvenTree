@@ -1111,6 +1111,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': 'SO',
         },
 
+        'SALESORDER_DEFAULT_SHIPMENT': {
+            'name': _('Sales Order Default Shipment'),
+            'description': _('Enable creation of default shipment with sales orders'),
+            'default': False,
+            'validator': bool,
+        },
+
         'PURCHASEORDER_REFERENCE_PREFIX': {
             'name': _('Purchase Order Reference Prefix'),
             'description': _('Prefix value for purchase order reference'),

@@ -12,7 +12,7 @@ class EventPluginSample(EventMixin, InvenTreePlugin):
     """
 
     NAME = "EventPlugin"
-    SLUG = "event"
+    SLUG = "sampleevent"
     TITLE = "Triggered Events"
 
     def process_event(self, event, *args, **kwargs):

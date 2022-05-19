@@ -8,6 +8,7 @@ from rest_framework import serializers
 
 from sql_util.utils import SubqueryCount
 
+from InvenTree.serializers import InvenTreeAttachmentSerializer
 from InvenTree.serializers import InvenTreeDecimalField
 from InvenTree.serializers import InvenTreeImageSerializerField
 from InvenTree.serializers import InvenTreeModelSerializer
@@ -16,7 +17,7 @@ from InvenTree.serializers import InvenTreeMoneySerializer
 from part.serializers import PartBriefSerializer
 
 from .models import Company
-from .models import ManufacturerPart, ManufacturerPartParameter
+from .models import ManufacturerPart, ManufacturerPartAttachment, ManufacturerPartParameter
 from .models import SupplierPart, SupplierPriceBreak
 
 from common.settings import currency_code_default, currency_code_mappings
@@ -139,6 +140,29 @@ class ManufacturerPartSerializer(InvenTreeModelSerializer):
             'description',
             'MPN',
             'link',
+        ]
+
+
+class ManufacturerPartAttachmentSerializer(InvenTreeAttachmentSerializer):
+    """
+    Serializer for the ManufacturerPartAttachment class
+    """
+
+    class Meta:
+        model = ManufacturerPartAttachment
+
+        fields = [
+            'pk',
+            'manufacturer_part',
+            'attachment',
+            'filename',
+            'link',
+            'comment',
+            'upload_date',
+        ]
+
+        read_only_fields = [
+            'upload_date',
         ]
 
 
