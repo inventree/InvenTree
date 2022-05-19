@@ -45,6 +45,7 @@ class PartResource(ModelResource):
         exclude = [
             'bom_checksum', 'bom_checked_by', 'bom_checked_date',
             'lft', 'rght', 'tree_id', 'level',
+            'metadata',
         ]
 
     def get_queryset(self):
@@ -98,6 +99,7 @@ class PartCategoryResource(ModelResource):
         exclude = [
             # Exclude MPTT internal model fields
             'lft', 'rght', 'tree_id', 'level',
+            'metadata',
         ]
 
     def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
