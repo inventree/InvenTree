@@ -61,7 +61,7 @@ apipatterns = [
     re_path(r'^order/', include(order_api_urls)),
     re_path(r'^label/', include(label_api_urls)),
     re_path(r'^report/', include(report_api_urls)),
-    re_path(r'^setups/', include(oobe_api_urls)),
+    re_path(r'^setup/', include(oobe_api_urls)),
 
     # User URLs
     re_path(r'^user/', include(user_urls)),
