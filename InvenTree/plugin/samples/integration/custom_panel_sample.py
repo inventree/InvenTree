@@ -15,15 +15,21 @@ class CustomPanelSample(PanelMixin, SettingsMixin, InvenTreePlugin):
     """
 
     NAME = "CustomPanelExample"
-    SLUG = "panel"
+    SLUG = "samplepanel"
     TITLE = "Custom Panel Example"
     DESCRIPTION = "An example plugin demonstrating how custom panels can be added to the user interface"
     VERSION = "0.1"
 
     SETTINGS = {
         'ENABLE_HELLO_WORLD': {
-            'name': 'Hello World',
+            'name': 'Enable Hello World',
             'description': 'Enable a custom hello world panel on every page',
+            'default': False,
+            'validator': bool,
+        },
+        'ENABLE_BROKEN_PANEL': {
+            'name': 'Enable Broken Panel',
+            'description': 'Enable a panel with rendering issues',
             'default': False,
             'validator': bool,
         }
@@ -58,13 +64,40 @@ class CustomPanelSample(PanelMixin, SettingsMixin, InvenTreePlugin):
         ]
 
         if self.get_setting('ENABLE_HELLO_WORLD'):
+
+            # We can use template rendering in the raw content
+            content = """
+            <strong>Hello world!</strong>
+            <hr>
+            <div class='alert-alert-block alert-info'>
+                <em>We can render custom content using the templating system!</em>
+            </div>
+            <hr>
+            <table class='table table-striped'>
+                <tr><td><strong>Path</strong></td><td>{{ request.path }}</tr>
+                <tr><td><strong>User</strong></td><td>{{ user.username }}</tr>
+            </table>
+            """
+
             panels.append({
                 # This 'hello world' panel will be displayed on any view which implements custom panels
                 'title': 'Hello World',
                 'icon': 'fas fa-boxes',
-                'content': '<b>Hello world!</b>',
+                'content': content,
                 'description': 'A simple panel which renders hello world',
                 'javascript': 'console.log("Hello world, from a custom panel!");',
+            })
+
+        if self.get_setting('ENABLE_BROKEN_PANEL'):
+
+            # Enabling this panel will cause panel rendering to break,
+            # due to the invalid tags
+            panels.append({
+                'title': 'Broken Panel',
+                'icon': 'fas fa-times-circle',
+                'content': '{% tag_not_loaded %}',
+                'description': 'This panel is broken',
+                'javascript': '{% another_bad_tag %}',
             })
 
         # This panel will *only* display on the PartDetail view
