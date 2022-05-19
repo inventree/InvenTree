@@ -12,6 +12,8 @@ from decimal import Decimal
 from django.db import models, transaction
 from django.db.models import Q, F, Sum
 from django.db.models.functions import Coalesce
+from django.db.models.signals import post_save
+from django.dispatch.dispatcher import receiver
 
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
@@ -807,6 +809,21 @@ class SalesOrder(Order):
     @property
     def pending_shipment_count(self):
         return self.pending_shipments().count()
+
+
+@receiver(post_save, sender=SalesOrder, dispatch_uid='build_post_save_log')
+def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs):
+    """
+    Callback function to be executed after a SalesOrder instance is saved
+    """
+    if created and getSetting('SALESORDER_DEFAULT_SHIPMENT'):
+        # A new SalesOrder has just been created
+
+        # Create default shipment
+        SalesOrderShipment.objects.create(
+            order=instance,
+            reference='1',
+        )
 
 
 class PurchaseOrderAttachment(InvenTreeAttachment):
