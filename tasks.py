@@ -274,7 +274,7 @@ def test(c, database=None):
     # Run sanity check on the django install
     manage(c, 'check')
 
-    # Run coverage tests
+    # Run tests
     manage(c, 'test', pty=True)
 
 
