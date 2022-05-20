@@ -17,7 +17,7 @@ from django.utils.translation import gettext_lazy as _
 from django.test import TestCase
 
 from django.contrib.auth.models import Permission
-from InvenTree.InvenTree.api_tester import UserMixin
+from .api_tester import UserMixin
 
 import InvenTree.version
 
