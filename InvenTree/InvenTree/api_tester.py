@@ -52,7 +52,7 @@ class UserMixin:
 
         # Assign all roles if set
         if self.roles == 'all':
-            self.assignRole()
+            self.assignRole(assign_all=True)
         # else filter the roles
         else:
             for role in self.roles:
@@ -68,7 +68,7 @@ class UserMixin:
 
         # role is of the format 'rule.permission' e.g. 'part.add'
 
-        if not assign_all:
+        if not assign_all and role:
             rule, perm = role.split('.')
 
         for ruleset in self.group.rule_sets.all():
