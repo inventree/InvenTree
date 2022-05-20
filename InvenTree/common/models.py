@@ -1464,11 +1464,25 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SEARCH_PREVIEW_EXCLUDE_INACTIVE_PURCHASE_ORDERS': {
+            'name': _('Exclude Inactive Purchase Orders'),
+            'description': _('Exclude inactive purchase orders from search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
         'SEARCH_PREVIEW_SHOW_SALES_ORDERS': {
             'name': _('Search Sales Orders'),
             'description': _('Display sales orders in search preview window'),
             'default': True,
             'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_EXCLUDE_INACTIVE_SALES_ORDERS': {
+            'name': 'Exclude Inactive Sales Orders',
+            'description': _('Exclude inactive sales orders from search preview window'),
+            'validator': bool,
+            'default': True,
         },
 
         'SEARCH_PREVIEW_RESULTS': {
