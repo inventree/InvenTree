@@ -2,7 +2,7 @@ from django.urls import reverse
 
 from datetime import datetime, timedelta
 
-from InvenTree.InvenTree.helpers import InvenTreeTestCate
+from InvenTree.InvenTree.helpers import InvenTreeTestCase
 
 from .models import Build
 from stock.models import StockItem
@@ -10,7 +10,7 @@ from stock.models import StockItem
 from InvenTree.status_codes import BuildStatus
 
 
-class BuildTestSimple(InvenTreeTestCate):
+class BuildTestSimple(InvenTreeTestCase):
 
     fixtures = [
         'category',
@@ -88,7 +88,7 @@ class BuildTestSimple(InvenTreeTestCate):
         self.assertEqual(build.status, BuildStatus.CANCELLED)
 
 
-class TestBuildViews(InvenTreeTestCate):
+class TestBuildViews(InvenTreeTestCase):
     """ Tests for Build app views """
 
     fixtures = [

@@ -456,7 +456,7 @@ class TestStatus(TestCase):
         self.assertEqual(ready.isImportingData(), False)
 
 
-class TestSettings(helpers.InvenTreeTestCate):
+class TestSettings(helpers.InvenTreeTestCase):
     """
     Unit tests for settings
     """
@@ -567,7 +567,7 @@ class TestSettings(helpers.InvenTreeTestCate):
             self.assertEqual(config.get_setting(TEST_ENV_NAME, None), '321')
 
 
-class TestInstanceName(helpers.InvenTreeTestCate):
+class TestInstanceName(helpers.InvenTreeTestCase):
     """
     Unit tests for instance name
     """

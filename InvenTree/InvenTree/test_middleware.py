@@ -2,10 +2,10 @@
 
 from django.urls import reverse
 
-from InvenTree.InvenTree.helpers import InvenTreeTestCate
+from InvenTree.InvenTree.helpers import InvenTreeTestCase
 
 
-class MiddlewareTests(InvenTreeTestCate):
+class MiddlewareTests(InvenTreeTestCase):
     """Test for middleware functions"""
 
     def check_path(self, url, code=200, **kwargs):

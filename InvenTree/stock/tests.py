@@ -2,7 +2,7 @@ from django.db.models import Sum
 from django.core.exceptions import ValidationError
 
 import datetime
-from InvenTree.InvenTree.helpers import InvenTreeTestCate
+from InvenTree.InvenTree.helpers import InvenTreeTestCase
 
 from InvenTree.status_codes import StockHistoryCode
 
@@ -13,7 +13,7 @@ from part.models import Part
 from build.models import Build
 
 
-class StockTest(InvenTreeTestCate):
+class StockTest(InvenTreeTestCase):
     """
     Tests to ensure that the stock location tree functions correcly
     """

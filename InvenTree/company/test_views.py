@@ -2,10 +2,10 @@
 
 from django.urls import reverse
 
-from InvenTree.InvenTree.helpers import InvenTreeTestCate
+from InvenTree.InvenTree.helpers import InvenTreeTestCase
 
 
-class CompanyViewTestBase(InvenTreeTestCate):
+class CompanyViewTestBase(InvenTreeTestCase):
 
     fixtures = [
         'category',

@@ -3,7 +3,7 @@
 from rest_framework import status
 
 from django.urls import reverse
-from InvenTree.InvenTree.helpers import InvenTreeTestCate
+from InvenTree.InvenTree.helpers import InvenTreeTestCase
 
 from InvenTree.api_tester import InvenTreeAPITestCase
 
@@ -12,7 +12,7 @@ from users.models import RuleSet
 from base64 import b64encode
 
 
-class HTMLAPITests(InvenTreeTestCate):
+class HTMLAPITests(InvenTreeTestCase):
     """
     Test that we can access the REST API endpoints via the HTML interface.
 

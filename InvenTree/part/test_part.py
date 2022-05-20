@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 
 import os
 
-from InvenTree.InvenTree.helpers import InvenTreeTestCate
+from InvenTree.InvenTree.helpers import InvenTreeTestCase
 
 from .models import Part, PartCategory, PartCategoryStar, PartStar, PartTestTemplate
 from .models import rename_part_image
@@ -22,7 +22,7 @@ from common.models import InvenTreeSetting, InvenTreeUserSetting, NotificationEn
 from common.notifications import storage, UIMessageNotification
 
 
-class TemplateTagTest(InvenTreeTestCate):
+class TemplateTagTest(InvenTreeTestCase):
     """ Tests for the custom template tag code """
 
     def test_define(self):
@@ -325,7 +325,7 @@ class TestTemplateTest(TestCase):
         self.assertEqual(variant.getTestTemplates().count(), n + 1)
 
 
-class PartSettingsTest(InvenTreeTestCate):
+class PartSettingsTest(InvenTreeTestCase):
     """
     Tests to ensure that the user-configurable default values work as expected.
 
@@ -445,7 +445,7 @@ class PartSettingsTest(InvenTreeTestCate):
         Part.objects.create(name='abc', revision='6', description='A part', IPN=' ')
 
 
-class PartSubscriptionTests(InvenTreeTestCate):
+class PartSubscriptionTests(InvenTreeTestCase):
 
     fixtures = [
         'location',
@@ -554,7 +554,7 @@ class PartSubscriptionTests(InvenTreeTestCate):
         self.assertTrue(self.part.is_starred_by(self.user))
 
 
-class BaseNotificationIntegrationTest(InvenTreeTestCate):
+class BaseNotificationIntegrationTest(InvenTreeTestCase):
     """ Integration test for notifications """
 
     fixtures = [

@@ -7,10 +7,10 @@ import os
 
 from django.urls import reverse
 
-from InvenTree.InvenTree.helpers import InvenTreeTestCate
+from InvenTree.InvenTree.helpers import InvenTreeTestCase
 
 
-class ViewTests(InvenTreeTestCate):
+class ViewTests(InvenTreeTestCase):
     """ Tests for various top-level views """
 
     username = 'test_user'

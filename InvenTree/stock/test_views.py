@@ -2,12 +2,12 @@
 
 from django.urls import reverse
 
-from InvenTree.InvenTree.helpers import InvenTreeTestCate
+from InvenTree.InvenTree.helpers import InvenTreeTestCase
 
 # from common.models import InvenTreeSetting
 
 
-class StockViewTestCase(InvenTreeTestCate):
+class StockViewTestCase(InvenTreeTestCase):
 
     fixtures = [
         'category',

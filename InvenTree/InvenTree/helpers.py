@@ -785,5 +785,5 @@ def inheritors(cls):
     return subcls
 
 
-class InvenTreeTestCate(UserMixin, TestCase):
+class InvenTreeTestCase(UserMixin, TestCase):
     pass

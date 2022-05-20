@@ -7,7 +7,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 
 from InvenTree.api_tester import InvenTreeAPITestCase
-from InvenTree.helpers import InvenTreeTestCate, str2bool
+from InvenTree.helpers import InvenTreeTestCase, str2bool
 from plugin.models import NotificationUserSetting, PluginConfig
 from plugin import registry
 
@@ -17,7 +17,7 @@ from .api import WebhookView
 CONTENT_TYPE_JSON = 'application/json'
 
 
-class SettingsTest(InvenTreeTestCate):
+class SettingsTest(InvenTreeTestCase):
     """
     Tests for the 'settings' model
     """

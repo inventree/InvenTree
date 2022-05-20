@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.contrib.auth.models import Group
 
 from rest_framework.authtoken.models import Token
-from InvenTree.InvenTree.helpers import InvenTreeTestCate
+from InvenTree.InvenTree.helpers import InvenTreeTestCase
 
 from users.models import RuleSet, Owner
 
@@ -160,7 +160,7 @@ class RuleSetModelTest(TestCase):
         self.assertEqual(group.permissions.count(), 0)
 
 
-class OwnerModelTest(InvenTreeTestCate):
+class OwnerModelTest(InvenTreeTestCase):
     """
     Some simplistic tests to ensure the Owner model is setup correctly.
     """

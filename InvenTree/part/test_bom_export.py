@@ -6,10 +6,10 @@ import csv
 
 from django.urls import reverse
 
-from InvenTree.InvenTree.helpers import InvenTreeTestCate
+from InvenTree.InvenTree.helpers import InvenTreeTestCase
 
 
-class BomExportTest(InvenTreeTestCate):
+class BomExportTest(InvenTreeTestCase):
 
     fixtures = [
         'category',
