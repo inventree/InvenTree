@@ -126,7 +126,7 @@ function completeShipment(shipment_id, options={}) {
 
             constructForm(`/api/order/so/shipment/${shipment_id}/ship/`, {
                 method: 'POST',
-                title: '{% trans "Complete Shipment" %}',
+                title: `{% trans "Complete Shipment" %} ${shipment.reference}`,
                 fields: {
                     tracking_number: {},
                 },
@@ -138,6 +138,10 @@ function completeShipment(shipment_id, options={}) {
                     $('#so-lines-table').bootstrapTable('refresh');
                     $('#pending-shipments-table').bootstrapTable('refresh');
                     $('#completed-shipments-table').bootstrapTable('refresh');
+
+                    if (options.onSuccess instanceof Function) {
+                        options.onSuccess(data);
+                    }
                 },
                 reload: !!options.reload
             });
@@ -147,7 +151,7 @@ function completeShipment(shipment_id, options={}) {
 
 /*
  * Launches a modal form to mark a PurchaseOrder as "complete"
-*/
+ */
 function completePurchaseOrder(order_id, options={}) {
 
     constructForm(
