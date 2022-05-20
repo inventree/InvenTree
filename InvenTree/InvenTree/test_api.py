@@ -20,7 +20,7 @@ class HTMLAPITests(InvenTreeTestCase):
     which raised an AssertionError when using the HTML API interface,
     while the regular JSON interface continued to work as expected.
     """
-    roles = ['all']
+    roles = 'all'
 
     def test_part_api(self):
         url = reverse('api-part-list')

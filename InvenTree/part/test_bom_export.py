@@ -18,7 +18,7 @@ class BomExportTest(InvenTreeTestCase):
         'bom',
     ]
 
-    roles = ['all']
+    roles = 'all'
 
     def setUp(self):
         super().setUp()

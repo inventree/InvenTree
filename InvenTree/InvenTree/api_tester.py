@@ -49,32 +49,38 @@ class UserMixin:
 
         self.user.save()
 
-        for role in self.roles:
-            self.assignRole(role, self.roles == ['all'])
+        # Assign all roles if set
+        if self.roles == 'all':
+            self.assignRole()
+        # else filter the roles
+        else:
+            for role in self.roles:
+                self.assignRole(role)
 
         if self.auto_login:
             self.client.login(username=self.username, password=self.password)
 
-    def assignRole(self, role, assign_all: bool = False):
+    def assignRole(self, role = None, assign_all: bool = False):
         """
         Set the user roles for the registered user
         """
 
         # role is of the format 'rule.permission' e.g. 'part.add'
 
-        rule, perm = role.split('.')
+        if not assign_all:
+            rule, perm = role.split('.')
 
         for ruleset in self.group.rule_sets.all():
 
-            if ruleset.name == rule or assign_all:
+            if assign_all or ruleset.name == rule:
 
-                if perm == 'view' or assign_all:
+                if assign_all or perm == 'view':
                     ruleset.can_view = True
-                elif perm == 'change' or assign_all:
+                elif assign_all or perm == 'change':
                     ruleset.can_change = True
-                elif perm == 'delete' or assign_all:
+                elif assign_all or perm == 'delete':
                     ruleset.can_delete = True
-                elif perm == 'add' or assign_all:
+                elif assign_all or perm == 'add':
                     ruleset.can_add = True
 
                 ruleset.save()

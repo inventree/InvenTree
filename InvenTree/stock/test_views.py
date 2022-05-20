@@ -18,7 +18,7 @@ class StockViewTestCase(InvenTreeTestCase):
         'stock',
     ]
 
-    roles = ['all']
+    roles = 'all'
 
 
 class StockListTest(StockViewTestCase):

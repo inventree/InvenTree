@@ -16,9 +16,7 @@ class CompanyViewTestBase(InvenTreeTestCase):
         'supplier_part',
     ]
 
-    roles = [
-        'all',
-    ]
+    roles = 'all'
 
 
 class CompanyViewTest(CompanyViewTestBase):

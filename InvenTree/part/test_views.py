@@ -17,7 +17,7 @@ class PartViewTestCase(TestCase):
         'supplier_part',
     ]
 
-    roles = ['all']
+    roles = 'all'
 
     def setUp(self):
         super().setUp()
