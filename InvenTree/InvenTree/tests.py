@@ -8,6 +8,7 @@ from django.test import TestCase, override_settings
 import django.core.exceptions as django_exceptions
 from django.core.exceptions import ValidationError
 from django.conf import settings
+from django.contrib.auth import get_user_model
 
 from djmoney.money import Money
 from djmoney.contrib.exchange.models import Rate, convert_money
@@ -476,8 +477,9 @@ class TestSettings(helpers.InvenTreeTestCase):
 
     @override_settings(TESTING_ENV=True)
     def test_set_user_to_few(self):
+        user_model = get_user_model()
         # add shortcut
-        user_count = self.user_mdl.objects.count
+        user_count = user_model.objects.count
         # enable testing mode
         settings.TESTING_ENV = True
 
@@ -500,7 +502,7 @@ class TestSettings(helpers.InvenTreeTestCase):
         self.assertEqual(user_count(), 2)
 
         # create user manually
-        self.user_mdl.objects.create_user('testuser', 'test@testing.com', 'password')
+        user_model.objects.create_user('testuser', 'test@testing.com', 'password')
         self.assertEqual(user_count(), 3)
         # check it will not be created again
         self.run_reload({
