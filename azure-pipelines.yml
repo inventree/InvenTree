@@ -46,6 +46,7 @@ steps:
 
 - script: |
     pushd '$(projectRoot)'
+    invoke update
     python manage.py test --testrunner xmlrunner.extra.djangotestrunner.XMLTestRunner --no-input
   displayName: 'Run tests'
 
