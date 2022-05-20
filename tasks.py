@@ -63,10 +63,11 @@ def manage(c, cmd, pty=False):
         cmd - django command to run
     """
 
-    result = c.run('cd "{path}" && python3 manage.py {cmd}'.format(
+    c.run('cd "{path}" && python3 manage.py {cmd}'.format(
         path=managePyDir(),
         cmd=cmd
     ), pty=pty)
+
 
 @task
 def plugins(c):
@@ -83,6 +84,7 @@ def plugins(c):
     # Install the plugins
     c.run(f"pip3 install -U -r '{plugin_file}'")
 
+
 @task(post=[plugins])
 def install(c):
     """
@@ -93,6 +95,7 @@ def install(c):
 
     # Install required Python packages with PIP
     c.run('pip3 install -U -r requirements.txt')
+
 
 @task
 def setup_dev(c):
@@ -110,6 +113,7 @@ def setup_dev(c):
 
     # Update all the hooks
     c.run('pre-commit autoupdate')
+
 
 @task
 def shell(c):
@@ -452,7 +456,7 @@ def delete_data(c, force=False):
     Warning: This will REALLY delete all records in the database!!
     """
 
-    print(f"Deleting all data from InvenTree database...")
+    print("Deleting all data from InvenTree database...")
 
     if force:
         manage(c, 'flush --noinput')
