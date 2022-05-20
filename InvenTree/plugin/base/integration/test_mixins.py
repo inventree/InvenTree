@@ -262,7 +262,6 @@ class PanelMixinTests(TestCase):
 
     roles = ['all']
 
-
     def test_installed(self):
         """Test that the sample panel plugin is installed"""
 

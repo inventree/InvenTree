@@ -22,6 +22,7 @@ class PartViewTestCase(TestCase):
     def setUp(self):
         super().setUp()
 
+
 class PartListTest(PartViewTestCase):
 
     def test_part_index(self):

@@ -20,6 +20,7 @@ class StockViewTestCase(InvenTreeTestCate):
 
     roles = ['all']
 
+
 class StockListTest(StockViewTestCase):
     """ Tests for Stock list views """
 

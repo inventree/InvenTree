@@ -20,6 +20,7 @@ class CompanyViewTestBase(InvenTreeTestCate):
         'all',
     ]
 
+
 class CompanyViewTest(CompanyViewTestBase):
     """
     Tests for various 'Company' views
