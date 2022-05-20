@@ -163,10 +163,19 @@ class SettingsTest(TestCase):
         """
 
         for key, setting in InvenTreeSetting.SETTINGS.items():
-            self.run_settings_check(key, setting)
+
+            try:
+                self.run_settings_check(key, setting)
+            except Exception as exc:
+                print(f"run_settings_check failed for global setting '{key}'")
+                raise exc
 
         for key, setting in InvenTreeUserSetting.SETTINGS.items():
-            self.run_settings_check(key, setting)
+            try:
+                self.run_settings_check(key, setting)
+            except Exception as exc:
+                print(f"run_settings_check failed for user setting '{key}'")
+                raise exc
 
     def test_defaults(self):
         """
