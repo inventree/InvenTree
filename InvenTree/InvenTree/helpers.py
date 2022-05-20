@@ -14,8 +14,10 @@ from wsgiref.util import FileWrapper
 from django.http import StreamingHttpResponse
 from django.core.exceptions import ValidationError, FieldError
 from django.utils.translation import gettext_lazy as _
+from django.test import TestCase
 
 from django.contrib.auth.models import Permission
+from InvenTree.InvenTree.api_tester import UserMixin
 
 import InvenTree.version
 
@@ -781,3 +783,7 @@ def inheritors(cls):
                 subcls.add(child)
                 work.append(child)
     return subcls
+
+
+class InvenTreeTestCate(UserMixin, TestCase):
+    pass

@@ -3,32 +3,19 @@ Pull rendered copies of the templated
 only used for testing the js files! - This file is omited from coverage
 """
 
-from django.test import TestCase  # pragma: no cover
-from django.contrib.auth import get_user_model  # pragma: no cover
-
 import os  # pragma: no cover
-import pathlib  # pragma: no cover
+import pathlib
+
+from InvenTree.InvenTree.helpers import InvenTreeTestCate  # pragma: no cover
 
 
-class RenderJavascriptFiles(TestCase):  # pragma: no cover
+class RenderJavascriptFiles(InvenTreeTestCate):  # pragma: no cover
     """
     A unit test to "render" javascript files.
 
     The server renders templated javascript files,
     we need the fully-rendered files for linting and static tests.
     """
-
-    def setUp(self):
-
-        user = get_user_model()
-
-        self.user = user.objects.create_user(
-            username='testuser',
-            password='testpassword',
-            email='user@gmail.com',
-        )
-
-        self.client.login(username='testuser', password='testpassword')
 
     def download_file(self, filename, prefix):
 

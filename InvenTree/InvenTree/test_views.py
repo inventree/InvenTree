@@ -5,27 +5,16 @@ Unit tests for the main web views
 import re
 import os
 
-from django.test import TestCase
 from django.urls import reverse
-from django.contrib.auth import get_user_model
+
+from InvenTree.InvenTree.helpers import InvenTreeTestCate
 
 
-class ViewTests(TestCase):
+class ViewTests(InvenTreeTestCate):
     """ Tests for various top-level views """
 
     username = 'test_user'
     password = 'test_pass'
-
-    def setUp(self):
-
-        # Create a user
-        self.user = get_user_model().objects.create_user(self.username, 'user@email.com', self.password)
-        self.user.set_password(self.password)
-        self.user.save()
-
-        result = self.client.login(username=self.username, password=self.password)
-
-        self.assertEqual(result, True)
 
     def test_api_doc(self):
         """ Test that the api-doc view works """

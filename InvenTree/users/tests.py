@@ -1,10 +1,10 @@
 from django.test import TestCase
 from django.apps import apps
 from django.urls import reverse
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 
 from rest_framework.authtoken.models import Token
+from InvenTree.InvenTree.helpers import InvenTreeTestCate
 
 from users.models import RuleSet, Owner
 
@@ -160,19 +160,10 @@ class RuleSetModelTest(TestCase):
         self.assertEqual(group.permissions.count(), 0)
 
 
-class OwnerModelTest(TestCase):
+class OwnerModelTest(InvenTreeTestCate):
     """
     Some simplistic tests to ensure the Owner model is setup correctly.
     """
-
-    def setUp(self):
-        """ Add users and groups """
-
-        # Create a new user
-        self.user = get_user_model().objects.create_user('username', 'user@email.com', 'password')
-        # Put the user into a new group
-        self.group = Group.objects.create(name='new_group')
-        self.user.groups.add(self.group)
 
     def do_request(self, endpoint, filters, status_code=200):
         response = self.client.get(endpoint, filters, format='json')

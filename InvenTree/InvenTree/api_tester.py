@@ -12,10 +12,7 @@ from django.contrib.auth.models import Group
 from rest_framework.test import APITestCase
 
 
-class InvenTreeAPITestCase(APITestCase):
-    """
-    Base class for running InvenTree API tests
-    """
+class UserMixin:
 
     # User information
     username = 'testuser'
@@ -53,12 +50,12 @@ class InvenTreeAPITestCase(APITestCase):
         self.user.save()
 
         for role in self.roles:
-            self.assignRole(role)
+            self.assignRole(role, self.roles == ['all'])
 
         if self.auto_login:
             self.client.login(username=self.username, password=self.password)
 
-    def assignRole(self, role):
+    def assignRole(self, role, assign_all: bool = False):
         """
         Set the user roles for the registered user
         """
@@ -69,19 +66,25 @@ class InvenTreeAPITestCase(APITestCase):
 
         for ruleset in self.group.rule_sets.all():
 
-            if ruleset.name == rule:
+            if ruleset.name == rule or assign_all:
 
-                if perm == 'view':
+                if perm == 'view' or assign_all:
                     ruleset.can_view = True
-                elif perm == 'change':
+                elif perm == 'change' or assign_all:
                     ruleset.can_change = True
-                elif perm == 'delete':
+                elif perm == 'delete' or assign_all:
                     ruleset.can_delete = True
-                elif perm == 'add':
+                elif perm == 'add' or assign_all:
                     ruleset.can_add = True
 
                 ruleset.save()
                 break
+
+
+class InvenTreeAPITestCase(UserMixin, APITestCase):
+    """
+    Base class for running InvenTree API tests
+    """
 
     def getActions(self, url):
         """

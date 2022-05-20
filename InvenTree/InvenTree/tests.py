@@ -7,7 +7,6 @@ from unittest import mock
 from django.test import TestCase, override_settings
 import django.core.exceptions as django_exceptions
 from django.core.exceptions import ValidationError
-from django.contrib.auth import get_user_model
 from django.conf import settings
 
 from djmoney.money import Money
@@ -457,18 +456,12 @@ class TestStatus(TestCase):
         self.assertEqual(ready.isImportingData(), False)
 
 
-class TestSettings(TestCase):
+class TestSettings(helpers.InvenTreeTestCate):
     """
     Unit tests for settings
     """
 
-    def setUp(self) -> None:
-        self.user_mdl = get_user_model()
-
-        # Create a user for auth
-        user = get_user_model()
-        self.user = user.objects.create_superuser('testuser1', 'test1@testing.com', 'password1')
-        self.client.login(username='testuser1', password='password1')
+    superuser = True
 
     def in_env_context(self, envs={}):
         """Patch the env to include the given dict"""
@@ -574,17 +567,10 @@ class TestSettings(TestCase):
             self.assertEqual(config.get_setting(TEST_ENV_NAME, None), '321')
 
 
-class TestInstanceName(TestCase):
+class TestInstanceName(helpers.InvenTreeTestCate):
     """
     Unit tests for instance name
     """
-
-    def setUp(self):
-        # Create a user for auth
-        user = get_user_model()
-        self.user = user.objects.create_superuser('testuser', 'test@testing.com', 'password')
-
-        self.client.login(username='testuser', password='password')
 
     def test_instance_name(self):
 
