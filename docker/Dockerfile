@@ -1,4 +1,4 @@
-FROM alpine:3.14 as base
+FROM python:3.9-slim as base
 
 # GitHub source
 ARG repository="https://github.com/inventree/InvenTree.git"
@@ -53,32 +53,27 @@ LABEL org.label-schema.schema-version="1.0" \
       org.label-schema.vcs-branch=${INVENTREE_GIT_BRANCH} \
       org.label-schema.vcs-ref=${INVENTREE_GIT_TAG}
 
-# Create user account
-RUN addgroup -S inventreegroup && adduser -S inventree -G inventreegroup
+# Create user account and group
+RUN adduser inventree
+RUN addgroup inventreegroup
+RUN usermod -aG inventreegroup inventree
 
-RUN apk -U upgrade
+# RUN apt-get upgrade && apt-get update
+RUN apt-get update
 
 # Install required system packages
-RUN apk add --no-cache git make bash \
-    gcc libgcc g++ libstdc++ \
-    gnupg \
-    libjpeg-turbo libjpeg-turbo-dev jpeg jpeg-dev libwebp-dev \
-    libffi libffi-dev \
-    zlib zlib-dev \
-    # Special deps for WeasyPrint (these will be deprecated once WeasyPrint drops cairo requirement)
-    cairo cairo-dev pango pango-dev gdk-pixbuf \
-    # Fonts
-    fontconfig ttf-droid ttf-liberation ttf-dejavu ttf-opensans font-croscore font-noto \
-    # Core python
-    python3 python3-dev py3-pip \
+RUN apt-get install -y \
+    git build-essential \
+    # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#debian-11
+    libpango-1.0-0 libpangoft2-1.0-0 \
+    # Image format support
+    libjpeg-dev webp libffi-dev \
     # SQLite support
-    sqlite \
+    sqlite3 \
     # PostgreSQL support
-    postgresql postgresql-contrib postgresql-dev libpq \
-    # MySQL/MariaDB support
-    mariadb-connector-c mariadb-dev mariadb-client \
-    # Required for python cryptography support
-    openssl-dev musl-dev libffi-dev rust cargo
+    libpq-dev \
+    # MySQL / MariaDB support
+    default-libmysqlclient-dev mariadb-client
 
 # Update pip
 RUN pip install --upgrade pip

@@ -29,7 +29,7 @@ django-sslserver==0.22                  # Secure HTTP development server
 django-stdimage==5.1.1                  # Advanced ImageField management
 django-test-migrations==1.1.0           # Unit testing for database migrations
 django-user-sessions==1.7.1             # user sessions in DB
-django-weasyprint==1.0.1                # django weasyprint integration
+django-weasyprint==2.1.0                # django weasyprint integration
 djangorestframework==3.12.4             # DRF framework
 django-xforwardedfor-middleware==2.0    # IP forwarding metadata
 flake8==3.8.3                           # PEP checking
@@ -48,4 +48,4 @@ python-barcode[images]==0.13.1          # Barcode generator
 qrcode[pil]==6.1                        # QR code generator
 rapidfuzz==0.7.6                        # Fuzzy string matching
 tablib[xls,xlsx,yaml]                   # Support for XLS and XLSX formats
-weasyprint==52.5                        # PDF generation library (Note: in the future need to update to 53)
+weasyprint==53                          # PDF generation library
