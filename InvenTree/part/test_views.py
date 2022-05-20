@@ -19,6 +19,7 @@ class PartViewTestCase(InvenTreeTestCase):
     ]
 
     roles = 'all'
+    superuser = True
 
     def setUp(self):
         super().setUp()
