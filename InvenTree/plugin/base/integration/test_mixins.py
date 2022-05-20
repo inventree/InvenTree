@@ -1,7 +1,6 @@
 """ Unit tests for base mixins for plugins """
 
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import include, re_path, reverse
 
@@ -24,7 +23,7 @@ class BaseMixinDefinition:
         self.assertIn(self.MIXIN_HUMAN_NAME, [item['human_name'] for item in self.mixin.registered_mixins])
 
 
-class SettingsMixinTest(BaseMixinDefinition, TestCase):
+class SettingsMixinTest(BaseMixinDefinition, InvenTreeTestCase):
     MIXIN_HUMAN_NAME = 'Settings'
     MIXIN_NAME = 'settings'
     MIXIN_ENABLE_CHECK = 'has_settings'
@@ -40,9 +39,7 @@ class SettingsMixinTest(BaseMixinDefinition, TestCase):
             pass
         self.mixin_nothing = NoSettingsCls()
 
-        user = get_user_model()
-        self.test_user = user.objects.create_user('testuser', 'test@testing.com', 'password')
-        self.test_user.is_staff = True
+        super().setUp()
 
     def test_function(self):
         # settings variable
@@ -54,7 +51,7 @@ class SettingsMixinTest(BaseMixinDefinition, TestCase):
         self.assertEqual(self.mixin_nothing.get_setting('ABCD'), '')
 
         # right setting
-        self.mixin.set_setting('SETTING1', '12345', self.test_user)
+        self.mixin.set_setting('SETTING1', '12345', self.user)
         self.assertEqual(self.mixin.get_setting('SETTING1'), '12345')
 
         # no setting
