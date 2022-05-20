@@ -226,7 +226,7 @@ $("#edit-order").click(function() {
 
 $("#complete-order-shipments").click(function() {
 
-    completeShipments(
+    completePendingShipments(
         {{ order.pk }},
         {
             reload: true,

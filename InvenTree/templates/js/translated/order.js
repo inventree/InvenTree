@@ -133,6 +133,7 @@ function completeShipment(shipment_id, options={}) {
                 preFormContent: html,
                 confirm: true,
                 confirmMessage: '{% trans "Confirm Shipment" %}',
+                buttons: options.buttons,
                 onSuccess: function(data) {
                     // Reload tables
                     $('#so-lines-table').bootstrapTable('refresh');
@@ -143,10 +144,105 @@ function completeShipment(shipment_id, options={}) {
                         options.onSuccess(data);
                     }
                 },
-                reload: !!options.reload
+                reload: options.reload
             });
         }
     });
+}
+
+/*
+ * Launches a modal to mark all allocated pending shipments as complete
+ */
+function completePendingShipments(order_id, options={}) {
+    var pending_shipments = null;
+
+    // Request the list of stock items which will be shipped
+    inventreeGet(`/api/order/so/shipment/.*`,
+        {
+            order: order_id,
+            shipped: false
+        },
+        {
+            async: false,
+            success: function(shipments) {
+                pending_shipments = shipments;
+            }
+        }
+    );
+
+    var allocated_shipments = [];
+
+    for (var idx = 0; idx < pending_shipments.length; idx++) {
+        if (pending_shipments[idx].allocations.length > 0) {
+            allocated_shipments.push(pending_shipments[idx]);
+        }
+    }
+    
+    if (allocated_shipments.length > 0) {
+        completePendingShipmentsHelper(allocated_shipments, 0, options);
+
+    } else {
+        html = `
+        <div class='alert alert-block alert-danger'>
+        `;
+
+        if (!pending_shipments.length) {
+            html += `
+            {% trans "No pending shipments found" %}
+            `;
+        } else {
+            html += `
+            {% trans "No stock items have been allocated to pending shipments" %}
+            `;
+        }
+        
+        html += `
+        </div>
+        `;
+
+        constructForm(`/api/order/so/shipment/0/ship/`, {
+            method: 'POST',
+            title: '{% trans "Complete Shipments" %}',
+            preFormContent: html,
+            onSubmit: function(fields, options) {
+                handleFormSuccess(fields, options);
+            },
+            closeText: 'Close',
+            hideSubmitButton: true,
+        });
+    }
+}
+
+
+/*
+ * Recursive helper for opening shipment completion modals
+ */
+function completePendingShipmentsHelper(shipments, shipment_idx, options={}) {
+    if (shipment_idx < shipments.length) {
+        completeShipment(shipments[shipment_idx].pk,
+            {
+                buttons: [
+                    {
+                        name: 'skip',
+                        title: `{% trans "Skip" %}`,
+                        onClick: function(form_options) {
+                            if (form_options.modal) {
+                                $(form_options.modal).modal('hide');
+                            }
+
+                            completePendingShipmentsHelper(shipments, shipment_idx + 1, options);
+                        }
+                    }
+                ],
+                onSuccess: function(data) {
+                    completePendingShipmentsHelper(shipments, shipment_idx + 1, options);
+                },
+            }
+        );
+
+    } else if (options.reload) {
+        location.reload();
+    }
 }
 
 /*
