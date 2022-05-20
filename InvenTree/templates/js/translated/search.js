@@ -122,14 +122,22 @@ function updateSearch() {
 
     if (user_settings.SEARCH_PREVIEW_SHOW_STOCK) {
         // Search for matching stock items
+        
+        var filters = {
+            part_detail: true,
+            location_detail: true,
+        };
+
+        if (user_settings.SEARCH_PREVIEW_HIDE_UNAVAILABLE_STOCK) {
+            // Only show 'in stock' items in the preview windoww
+            filters.in_stock = true;
+        }
+
         addSearchQuery(
             'stock',
             '{% trans "Stock Items" %}',
             '{% url "api-stock-list" %}',
-            {
-                part_detail: true,
-                location_detail: true,
-            },
+            filters,
             renderStockItem,
             {
                 url: '/stock/item',
@@ -167,15 +175,21 @@ function updateSearch() {
     }
 
     if (user_settings.SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS) {
+
+        var filters = {
+            supplier_detail: true,
+        };
+
+        if (user_settings.SEARCH_PREVIEW_EXCLUDE_INACTIVE_PURCHASE_ORDERS) {
+            filters.outstanding = true;
+        }
+
         // Search for matching purchase orders
         addSearchQuery(
             'purchaseorder',
             '{% trans "Purchase Orders" %}',
             '{% url "api-po-list" %}',
-            {
-                supplier_detail: true,
-                outstanding: true,
-            },
+            filters,
             renderPurchaseOrder,
             {
                 url: '/order/purchase-order',
@@ -184,15 +198,22 @@ function updateSearch() {
     }
 
     if (user_settings.SEARCH_PREVIEW_SHOW_SALES_ORDERS) {
+
+        var filters = {
+            customer_detail: true,
+        };
+
+        // Hide inactive (not "outstanding" orders)
+        if (user_settings.SEARCH_PREVIEW_EXCLUDE_INACTIVE_SALES_ORDERS) {
+            filters.outstanding = true;
+        }
+
         // Search for matching sales orders
         addSearchQuery(
             'salesorder',
             '{% trans "Sales Orders" %}',
             '{% url "api-so-list" %}',
-            {
-                customer_detail: true,
-                outstanding: true,
-            },
+            filters,
             renderSalesOrder,
             {
                 url: '/order/sales-order',
