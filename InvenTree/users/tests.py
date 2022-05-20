@@ -203,11 +203,13 @@ class OwnerModelTest(InvenTreeTestCase):
         """
         Test user APIs
         """
+        self.client.logout()
+
         # not authed
         self.do_request(reverse('api-owner-list'), {}, 401)
         self.do_request(reverse('api-owner-detail', kwargs={'pk': self.user.id}), {}, 401)
 
-        self.client.login(username='username', password='password')
+        self.client.login(username=self.username, password=self.password)
         # user list
         self.do_request(reverse('api-owner-list'), {})
         # user list with search
@@ -220,12 +222,14 @@ class OwnerModelTest(InvenTreeTestCase):
         """
         Test token mechanisms
         """
+        self.client.logout()
+
         token = Token.objects.filter(user=self.user)
 
         # not authed
         self.do_request(reverse('api-token'), {}, 401)
 
-        self.client.login(username='username', password='password')
+        self.client.login(username=self.username, password=self.password)
         # token get
         response = self.do_request(reverse('api-token'), {})
         self.assertEqual(response['token'], token.first().key)
