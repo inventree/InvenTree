@@ -24,6 +24,7 @@
     cancelSalesOrder,
     completePurchaseOrder,
     completeShipment,
+    completePendingShipments,
     createSalesOrder,
     createSalesOrderShipment,
     editPurchaseOrderLineItem,
