@@ -11,7 +11,8 @@ from django.db.utils import OperationalError, ProgrammingError
 
 import InvenTree.helpers
 
-from plugin.helpers import MixinImplementationError, MixinNotImplementedError, render_template
+from plugin.helpers import MixinImplementationError, MixinNotImplementedError
+from plugin.helpers import render_template, render_text
 from plugin.models import PluginConfig, PluginSetting
 from plugin.registry import registry
 from plugin.urls import PLUGIN_BASE
@@ -59,6 +60,7 @@ class SettingsMixin:
 
         if not plugin:
             # Cannot find associated plugin model, return
+            logger.error(f"Plugin configuration not found for plugin '{self.slug}'")
             return  # pragma: no cover
 
         PluginSetting.set_setting(key, value, user, plugin=plugin)
@@ -578,10 +580,16 @@ class PanelMixin:
             if content_template:
                 # Render content template to HTML
                 panel['content'] = render_template(self, content_template, ctx)
+            else:
+                # Render content string to HTML
+                panel['content'] = render_text(panel.get('content', ''), ctx)
 
             if javascript_template:
                 # Render javascript template to HTML
                 panel['javascript'] = render_template(self, javascript_template, ctx)
+            else:
+                # Render javascript string to HTML
+                panel['javascript'] = render_text(panel.get('javascript', ''), ctx)
 
             # Check for required keys
             required_keys = ['title', 'content']

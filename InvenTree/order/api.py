@@ -667,9 +667,9 @@ class SalesOrderList(APIDownloadMixin, generics.ListCreateAPIView):
             outstanding = str2bool(outstanding)
 
             if outstanding:
-                queryset = queryset.filter(status__in=models.SalesOrderStatus.OPEN)
+                queryset = queryset.filter(status__in=SalesOrderStatus.OPEN)
             else:
-                queryset = queryset.exclude(status__in=models.SalesOrderStatus.OPEN)
+                queryset = queryset.exclude(status__in=SalesOrderStatus.OPEN)
 
         # Filter by 'overdue' status
         overdue = params.get('overdue', None)

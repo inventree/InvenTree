@@ -1,3 +1,4 @@
+import logging
 import sys
 import traceback
 
@@ -7,6 +8,9 @@ from django.views.debug import ExceptionReporter
 from error_report.models import Error
 
 from plugin.registry import registry
+
+
+logger = logging.getLogger('inventree')
 
 
 class InvenTreePluginViewMixin:
@@ -25,7 +29,7 @@ class InvenTreePluginViewMixin:
 
         panels = []
 
-        for plug in registry.with_mixin('panel'):
+        for plug in registry.with_mixin('panel', active=True):
 
             try:
                 panels += plug.render_panels(self, self.request, ctx)
@@ -41,6 +45,8 @@ class InvenTreePluginViewMixin:
                     path=self.request.path,
                     html=ExceptionReporter(self.request, kind, info, data).get_traceback_html(),
                 )
+
+                logger.error(f"Plugin '{plug.slug}' could not render custom panels at '{self.request.path}'")
 
         return panels
 

@@ -344,6 +344,13 @@ class StockItemListTest(StockAPITestCase):
         for h in headers:
             self.assertIn(h, dataset.headers)
 
+        excluded_headers = [
+            'metadata',
+        ]
+
+        for h in excluded_headers:
+            self.assertNotIn(h, dataset.headers)
+
         # Now, add a filter to the results
         dataset = self.export_data({'location': 1})
 
