@@ -6,9 +6,10 @@ import csv
 import io
 import re
 
-from django.http.response import StreamingHttpResponse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.http.response import StreamingHttpResponse
+
 from rest_framework.test import APITestCase
 
 
@@ -60,7 +61,7 @@ class UserMixin:
         if self.auto_login:
             self.client.login(username=self.username, password=self.password)
 
-    def assignRole(self, role = None, assign_all: bool = False):
+    def assignRole(self, role=None, assign_all: bool = False):
         """
         Set the user roles for the registered user
         """

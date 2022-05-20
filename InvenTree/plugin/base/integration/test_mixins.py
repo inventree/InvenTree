@@ -1,18 +1,18 @@
 """ Unit tests for base mixins for plugins """
 
-from django.test import TestCase
 from django.conf import settings
-from django.urls import include, re_path, reverse
 from django.contrib.auth import get_user_model
+from django.test import TestCase
+from django.urls import include, re_path, reverse
 
 from error_report.models import Error
 
 from plugin import InvenTreePlugin
-from plugin.mixins import AppMixin, SettingsMixin, UrlsMixin, NavigationMixin, APICallMixin
-from plugin.urls import PLUGIN_BASE
 from plugin.helpers import MixinNotImplementedError
-
+from plugin.mixins import (APICallMixin, AppMixin, NavigationMixin,
+                           SettingsMixin, UrlsMixin)
 from plugin.registry import registry
+from plugin.urls import PLUGIN_BASE
 
 
 class BaseMixinDefinition:
