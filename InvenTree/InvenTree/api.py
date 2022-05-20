@@ -2,18 +2,17 @@
 Main JSON interface views
 """
 
-from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.http import JsonResponse
+from django.utils.translation import gettext_lazy as _
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
+from rest_framework import filters, permissions
 
-from rest_framework import permissions
-
-from .views import AjaxView
-from .version import inventreeVersion, inventreeApiVersion, inventreeInstanceName
 from .status import is_worker_running
+from .version import (inventreeApiVersion, inventreeInstanceName,
+                      inventreeVersion)
+from .views import AjaxView
 
 
 class InfoView(AjaxView):

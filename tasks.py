@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import os
 import json
-import sys
+import os
 import pathlib
 import re
+import sys
 
 from invoke import task
 

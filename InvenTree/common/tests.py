@@ -1,19 +1,20 @@
 
-from http import HTTPStatus
 import json
 from datetime import timedelta
+from http import HTTPStatus
 
-from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
+from django.test import Client, TestCase
 from django.urls import reverse
 
 from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.helpers import str2bool
-from plugin.models import NotificationUserSetting, PluginConfig
 from plugin import registry
+from plugin.models import NotificationUserSetting, PluginConfig
 
-from .models import InvenTreeSetting, InvenTreeUserSetting, WebhookEndpoint, WebhookMessage, NotificationEntry, ColorTheme
 from .api import WebhookView
+from .models import (ColorTheme, InvenTreeSetting, InvenTreeUserSetting,
+                     NotificationEntry, WebhookEndpoint, WebhookMessage)
 
 CONTENT_TYPE_JSON = 'application/json'
 

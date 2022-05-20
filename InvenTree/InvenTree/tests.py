@@ -1,33 +1,26 @@
 import json
 import os
 import time
-
+from decimal import Decimal
 from unittest import mock
 
-from django.test import TestCase, override_settings
 import django.core.exceptions as django_exceptions
-from django.core.exceptions import ValidationError
-from django.contrib.auth import get_user_model
 from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+from django.test import TestCase, override_settings
 
-from djmoney.money import Money
-from djmoney.contrib.exchange.models import Rate, convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
-
-from .validators import validate_overage, validate_part_name
-from . import helpers
-from . import version
-from . import status
-from . import ready
-from . import config
-
-from decimal import Decimal
+from djmoney.contrib.exchange.models import Rate, convert_money
+from djmoney.money import Money
 
 import InvenTree.tasks
-
-from stock.models import StockLocation
-from common.settings import currency_codes
 from common.models import InvenTreeSetting
+from common.settings import currency_codes
+from stock.models import StockLocation
+
+from . import config, helpers, ready, status, version
+from .validators import validate_overage, validate_part_name
 
 
 class ValidatorTest(TestCase):

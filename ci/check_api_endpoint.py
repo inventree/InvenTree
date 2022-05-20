@@ -3,6 +3,7 @@ Test that the root API endpoint is available.
 """
 
 import json
+
 import requests
 
 # We expect the server to be running on the local host

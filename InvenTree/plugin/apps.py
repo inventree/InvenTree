@@ -11,7 +11,6 @@ from InvenTree.ready import canAppAccessDatabase
 from plugin import registry
 from plugin.helpers import check_git_version, log_error
 
-
 logger = logging.getLogger('inventree')
 
 

@@ -1,19 +1,16 @@
 """ Low level tests for the InvenTree API """
 
-from rest_framework import status
-
-from django.test import TestCase
+from base64 import b64encode
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-
+from django.test import TestCase
 from django.urls import reverse
 
+from rest_framework import status
+
 from InvenTree.api_tester import InvenTreeAPITestCase
-
 from users.models import RuleSet
-
-from base64 import b64encode
 
 
 class HTMLAPITests(TestCase):

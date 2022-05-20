@@ -1,17 +1,16 @@
-from django.test import TestCase
-from django.db.models import Sum
-from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
-
 import datetime
 
-from InvenTree.status_codes import StockHistoryCode
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+from django.db.models import Sum
+from django.test import TestCase
 
-from .models import StockLocation, StockItem, StockItemTracking
-from .models import StockItemTestResult
-
-from part.models import Part
 from build.models import Build
+from InvenTree.status_codes import StockHistoryCode
+from part.models import Part
+
+from .models import (StockItem, StockItemTestResult, StockItemTracking,
+                     StockLocation)
 
 
 class StockTest(TestCase):

@@ -5,7 +5,6 @@ Unit tests for the 'locate' plugin mixin class
 from django.urls import reverse
 
 from InvenTree.api_tester import InvenTreeAPITestCase
-
 from plugin.registry import registry
 from stock.models import StockItem, StockLocation
 

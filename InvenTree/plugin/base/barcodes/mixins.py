@@ -1,12 +1,12 @@
 """
 Plugin mixin classes for barcode plugin
 """
-import string
 import hashlib
+import string
 
-from stock.models import StockItem
-from stock.serializers import StockItemSerializer, LocationSerializer
 from part.serializers import PartSerializer
+from stock.models import StockItem
+from stock.serializers import LocationSerializer, StockItemSerializer
 
 
 def hash_barcode(barcode_data):

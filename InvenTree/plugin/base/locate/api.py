@@ -1,12 +1,11 @@
 """API for location plugins"""
 
 from rest_framework import permissions
-from rest_framework.exceptions import ParseError, NotFound
+from rest_framework.exceptions import NotFound, ParseError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from InvenTree.tasks import offload_task
-
 from plugin.registry import registry
 from stock.models import StockItem, StockLocation
 

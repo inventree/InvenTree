@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
-from django.urls import reverse, path, re_path
+from django.urls import path, re_path, reverse
 from django.utils.translation import gettext_lazy as _
 
-from rest_framework.exceptions import ValidationError
 from rest_framework import permissions
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from plugin import registry
+from plugin.base.barcodes.mixins import hash_barcode
+from plugin.builtin.barcodes.inventree_barcode import InvenTreeBarcodePlugin
 from stock.models import StockItem
 from stock.serializers import StockItemSerializer
-
-from plugin.builtin.barcodes.inventree_barcode import InvenTreeBarcodePlugin
-from plugin.base.barcodes.mixins import hash_barcode
-from plugin import registry
 
 
 class BarcodeScan(APIView):

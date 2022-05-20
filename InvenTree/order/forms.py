@@ -5,11 +5,9 @@ Django Forms for interacting with Order objects
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from InvenTree.fields import InvenTreeMoneyField
-
-from InvenTree.helpers import clean_decimal
-
 from common.forms import MatchItemForm
+from InvenTree.fields import InvenTreeMoneyField
+from InvenTree.helpers import clean_decimal
 
 
 class OrderMatchItemForm(MatchItemForm):

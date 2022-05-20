@@ -1,7 +1,7 @@
 """ Unit tests for action plugins """
 
-from django.test import TestCase
 from django.contrib.auth import get_user_model
+from django.test import TestCase
 
 from plugin import InvenTreePlugin
 from plugin.mixins import ActionMixin

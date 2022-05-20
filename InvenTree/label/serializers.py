@@ -1,7 +1,7 @@
-from InvenTree.serializers import InvenTreeModelSerializer
-from InvenTree.serializers import InvenTreeAttachmentSerializerField
+from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
+                                   InvenTreeModelSerializer)
 
-from .models import StockItemLabel, StockLocationLabel, PartLabel
+from .models import PartLabel, StockItemLabel, StockLocationLabel
 
 
 class StockItemLabelSerializer(InvenTreeModelSerializer):

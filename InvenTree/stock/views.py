@@ -4,26 +4,20 @@ Django views for interacting with Stock app
 
 from datetime import datetime
 
-from django.views.generic import DetailView, ListView
-from django.urls import reverse
 from django.http import HttpResponseRedirect
-
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-
-from InvenTree.views import AjaxUpdateView, AjaxDeleteView, AjaxCreateView
-from InvenTree.views import QRCodeView
-from InvenTree.views import InvenTreeRoleMixin
-from InvenTree.forms import ConfirmForm
-
-from InvenTree.helpers import str2bool
-
-from .models import StockItem, StockLocation, StockItemTracking
+from django.views.generic import DetailView, ListView
 
 import common.settings
+from InvenTree.forms import ConfirmForm
+from InvenTree.helpers import str2bool
+from InvenTree.views import (AjaxCreateView, AjaxDeleteView, AjaxUpdateView,
+                             InvenTreeRoleMixin, QRCodeView)
+from plugin.views import InvenTreePluginViewMixin
 
 from . import forms as StockForms
-
-from plugin.views import InvenTreePluginViewMixin
+from .models import StockItem, StockItemTracking, StockLocation
 
 
 class StockIndex(InvenTreeRoleMixin, InvenTreePluginViewMixin, ListView):

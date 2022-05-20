@@ -1,9 +1,9 @@
 """ Unit tests for Stock views (see views.py) """
 
-from django.test import TestCase
-from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.test import TestCase
+from django.urls import reverse
 
 # from common.models import InvenTreeSetting
 
