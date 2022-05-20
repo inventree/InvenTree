@@ -1428,7 +1428,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
-        
+
         'SEARCH_HIDE_INACTIVE_PARTS': {
             'name': _("Hide Inactive Parts"),
             'description': _('Excluded inactive parts from search preview window'),
