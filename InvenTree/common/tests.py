@@ -12,7 +12,7 @@ from InvenTree.helpers import str2bool
 from plugin.models import NotificationUserSetting, PluginConfig
 from plugin import registry
 
-from .models import InvenTreeSetting, InvenTreeUserSetting, WebhookEndpoint, WebhookMessage, NotificationEntry
+from .models import InvenTreeSetting, InvenTreeUserSetting, WebhookEndpoint, WebhookMessage, NotificationEntry, ColorTheme
 from .api import WebhookView
 
 CONTENT_TYPE_JSON = 'application/json'
@@ -163,10 +163,19 @@ class SettingsTest(TestCase):
         """
 
         for key, setting in InvenTreeSetting.SETTINGS.items():
-            self.run_settings_check(key, setting)
+
+            try:
+                self.run_settings_check(key, setting)
+            except Exception as exc:
+                print(f"run_settings_check failed for global setting '{key}'")
+                raise exc
 
         for key, setting in InvenTreeUserSetting.SETTINGS.items():
-            self.run_settings_check(key, setting)
+            try:
+                self.run_settings_check(key, setting)
+            except Exception as exc:
+                print(f"run_settings_check failed for user setting '{key}'")
+                raise exc
 
     def test_defaults(self):
         """
@@ -707,3 +716,35 @@ class LoadingTest(TestCase):
 
         # now it should be false again
         self.assertFalse(common.models.InvenTreeSetting.get_setting('SERVER_RESTART_REQUIRED'))
+
+
+class ColorThemeTest(TestCase):
+    """Tests for ColorTheme"""
+
+    def test_choices(self):
+        """Test that default choices are returned"""
+        result = ColorTheme.get_color_themes_choices()
+
+        # skip
+        if not result:
+            return
+        self.assertIn(('default', 'Default'), result)
+
+    def test_valid_choice(self):
+        """Check that is_valid_choice works correctly"""
+        result = ColorTheme.get_color_themes_choices()
+
+        # skip
+        if not result:
+            return
+
+        # check wrong reference
+        self.assertFalse(ColorTheme.is_valid_choice('abcdd'))
+
+        # create themes
+        aa = ColorTheme.objects.create(user='aa', name='testname')
+        ab = ColorTheme.objects.create(user='ab', name='darker')
+
+        # check valid theme
+        self.assertFalse(ColorTheme.is_valid_choice(aa))
+        self.assertTrue(ColorTheme.is_valid_choice(ab))

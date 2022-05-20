@@ -548,7 +548,7 @@ class TestSettings(TestCase):
 
         # with env set
         with self.in_env_context({'INVENTREE_CONFIG_FILE': 'my_special_conf.yaml'}):
-            self.assertIn('inventree/inventree/my_special_conf.yaml', config.get_config_file().lower())
+            self.assertIn('inventree/my_special_conf.yaml', config.get_config_file().lower())
 
     def test_helpers_plugin_file(self):
         # normal run - not configured

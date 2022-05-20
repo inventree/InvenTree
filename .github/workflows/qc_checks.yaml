@@ -182,9 +182,9 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install gettext
+          python -m pip install -U pip
           pip3 install invoke
-          invoke install
-          invoke static
+          invoke update
       - name: Coverage Tests
         run: |
           invoke coverage
@@ -245,11 +245,12 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install libpq-dev
+          sudo apt-get install libpq-dev gettext
+          python -m pip install -U pip
           pip3 install invoke
           pip3 install psycopg2
           pip3 install django-redis>=5.0.0
-          invoke install
+          invoke update
       - name: Run Tests
         run: invoke test
       - name: Data Import Export
@@ -302,10 +303,11 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install libmysqlclient-dev
+          sudo apt-get install libmysqlclient-dev gettext
+          python -m pip install -U pip
           pip3 install invoke
           pip3 install mysqlclient
-          invoke install
+          invoke update
       - name: Run Tests
         run: invoke test
       - name: Data Import Export

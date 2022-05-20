@@ -1429,6 +1429,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SEARCH_HIDE_INACTIVE_PARTS': {
+            'name': _("Hide Inactive Parts"),
+            'description': _('Excluded inactive parts from search preview window'),
+            'default': False,
+            'validator': bool,
+        },
+
         'SEARCH_PREVIEW_SHOW_CATEGORIES': {
             'name': _('Search Categories'),
             'description': _('Display part categories in search preview window'),
@@ -1441,6 +1448,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'description': _('Display stock items in search preview window'),
             'default': True,
             'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_HIDE_UNAVAILABLE_STOCK': {
+            'name': _('Hide Unavailable Stock Items'),
+            'description': _('Exclude stock items which are not available from the search preview window'),
+            'validator': bool,
+            'default': False,
         },
 
         'SEARCH_PREVIEW_SHOW_LOCATIONS': {
@@ -1464,6 +1478,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SEARCH_PREVIEW_EXCLUDE_INACTIVE_PURCHASE_ORDERS': {
+            'name': _('Exclude Inactive Purchase Orders'),
+            'description': _('Exclude inactive purchase orders from search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
         'SEARCH_PREVIEW_SHOW_SALES_ORDERS': {
             'name': _('Search Sales Orders'),
             'description': _('Display sales orders in search preview window'),
@@ -1471,18 +1492,18 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SEARCH_PREVIEW_EXCLUDE_INACTIVE_SALES_ORDERS': {
+            'name': _('Exclude Inactive Sales Orders'),
+            'description': _('Exclude inactive sales orders from search preview window'),
+            'validator': bool,
+            'default': True,
+        },
+
         'SEARCH_PREVIEW_RESULTS': {
             'name': _('Search Preview Results'),
             'description': _('Number of results to show in each section of the search preview window'),
             'default': 10,
             'validator': [int, MinValueValidator(1)]
-        },
-
-        'SEARCH_HIDE_INACTIVE_PARTS': {
-            'name': _("Hide Inactive Parts"),
-            'description': _('Hide inactive parts in search preview window'),
-            'default': False,
-            'validator': bool,
         },
 
         'PART_SHOW_QUANTITY_IN_FORMS': {
@@ -1701,6 +1722,9 @@ class ColorTheme(models.Model):
     @classmethod
     def get_color_themes_choices(cls):
         """ Get all color themes from static folder """
+        if settings.TESTING and not os.path.exists(settings.STATIC_COLOR_THEMES_DIR):
+            logger.error('Theme directory does not exsist')
+            return []
 
         # Get files list from css/color-themes/ folder
         files_list = []
