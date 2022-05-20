@@ -1428,6 +1428,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+        
+        'SEARCH_HIDE_INACTIVE_PARTS': {
+            'name': _("Hide Inactive Parts"),
+            'description': _('Excluded inactive parts from search preview window'),
+            'default': False,
+            'validator': bool,
+        },
 
         'SEARCH_PREVIEW_SHOW_CATEGORIES': {
             'name': _('Search Categories'),
@@ -1441,6 +1448,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'description': _('Display stock items in search preview window'),
             'default': True,
             'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_HIDE_UNAVAILABLE_STOCK': {
+            'name': _('Hide Unavailable Stock Items'),
+            'description': _('Exclude stock items which are not available from the search preview window'),
+            'validator': bool,
+            'default': False,
         },
 
         'SEARCH_PREVIEW_SHOW_LOCATIONS': {
@@ -1479,7 +1493,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         },
 
         'SEARCH_PREVIEW_EXCLUDE_INACTIVE_SALES_ORDERS': {
-            'name': 'Exclude Inactive Sales Orders',
+            'name': _('Exclude Inactive Sales Orders'),
             'description': _('Exclude inactive sales orders from search preview window'),
             'validator': bool,
             'default': True,
@@ -1490,13 +1504,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'description': _('Number of results to show in each section of the search preview window'),
             'default': 10,
             'validator': [int, MinValueValidator(1)]
-        },
-
-        'SEARCH_HIDE_INACTIVE_PARTS': {
-            'name': _("Hide Inactive Parts"),
-            'description': _('Hide inactive parts in search preview window'),
-            'default': False,
-            'validator': bool,
         },
 
         'PART_SHOW_QUANTITY_IN_FORMS': {

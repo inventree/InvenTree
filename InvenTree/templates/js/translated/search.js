@@ -122,14 +122,22 @@ function updateSearch() {
 
     if (user_settings.SEARCH_PREVIEW_SHOW_STOCK) {
         // Search for matching stock items
+        
+        var filters = {
+            part_detail: true,
+            location_detail: true,
+        };
+
+        if (user_settings.SEARCH_PREVIEW_HIDE_UNAVAILABLE_STOCK) {
+            // Only show 'in stock' items in the preview windoww
+            filters.in_stock = true;
+        }
+
         addSearchQuery(
             'stock',
             '{% trans "Stock Items" %}',
             '{% url "api-stock-list" %}',
-            {
-                part_detail: true,
-                location_detail: true,
-            },
+            filters,
             renderStockItem,
             {
                 url: '/stock/item',
