@@ -69,7 +69,7 @@ function salesOrderShipmentFields(options={}) {
 /*
  * Complete a shipment
  */
-function completeShipment(shipment_id) {
+function completeShipment(shipment_id, options={}) {
 
     // Request the list of stock items which will be shipped
     inventreeGet(`/api/order/so/shipment/${shipment_id}/`, {}, {
@@ -139,7 +139,7 @@ function completeShipment(shipment_id) {
                     $('#pending-shipments-table').bootstrapTable('refresh');
                     $('#completed-shipments-table').bootstrapTable('refresh');
                 },
-                reload: true
+                reload: !!options.reload
             });
         }
     });
