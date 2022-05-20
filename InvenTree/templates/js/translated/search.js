@@ -170,12 +170,10 @@ function updateSearch() {
 
         var filters = {
             supplier_detail: true,
-        }
+        };
 
         if (user_settings.SEARCH_PREVIEW_EXCLUDE_INACTIVE_PURCHASE_ORDERS) {
-            var filters = {
-                outstanding: true,
-            }
+            filters.outstanding = true;
         }
 
         // Search for matching purchase orders

@@ -15,18 +15,18 @@
     <table class='table table-striped table-condensed'>
         <tbody>
             {% include "InvenTree/settings/setting.html" with key="SEARCH_PREVIEW_SHOW_PARTS" user_setting=True icon='fa-shapes' %}
+            {% include "InvenTree/settings/setting.html" with key="SEARCH_HIDE_INACTIVE_PARTS" user_setting=True icon='fa-eye-slash' %}
             {% include "InvenTree/settings/setting.html" with key="SEARCH_PREVIEW_SHOW_CATEGORIES" user_setting=True icon='fa-sitemap' %}
             {% include "InvenTree/settings/setting.html" with key="SEARCH_PREVIEW_SHOW_STOCK" user_setting=True icon='fa-boxes' %}
             {% include "InvenTree/settings/setting.html" with key="SEARCH_PREVIEW_SHOW_LOCATIONS" user_setting=True icon='fa-sitemap' %}
             {% include "InvenTree/settings/setting.html" with key="SEARCH_PREVIEW_SHOW_COMPANIES" user_setting=True icon='fa-building' %}
             {% include "InvenTree/settings/setting.html" with key="SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS" user_setting=True icon='fa-shopping-cart' %}
-            {% include "InvenTree/settings/setting.html" with key="SEARCH_PREVIEW_EXCLUDE_INACTIVE_PURCHASE_ORDERS" user_setting=True icon='fa-search-minus' %}
+            {% include "InvenTree/settings/setting.html" with key="SEARCH_PREVIEW_EXCLUDE_INACTIVE_PURCHASE_ORDERS" user_setting=True icon='fa-eye-slash' %}
             {% include "InvenTree/settings/setting.html" with key="SEARCH_PREVIEW_SHOW_SALES_ORDERS" user_setting=True icon='fa-truck' %}
-            {% include "InvenTree/settings/setting.html" with key="SEARCH_PREVIEW_EXCLUDE_INACTIVE_SALES_ORDERS" user_setting=True icon='fa-search-minus' %}
+            {% include "InvenTree/settings/setting.html" with key="SEARCH_PREVIEW_EXCLUDE_INACTIVE_SALES_ORDERS" user_setting=True icon='fa-eye-slash' %}
             
             {% include "InvenTree/settings/setting.html" with key="SEARCH_PREVIEW_RESULTS" user_setting=True icon='fa-search' %}
 
-            {% include "InvenTree/settings/setting.html" with key="SEARCH_HIDE_INACTIVE_PARTS" user_setting=True icon='fa-eye-slash' %}
         </tbody>
     </table>
 </div>
