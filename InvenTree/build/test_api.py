@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 
 from django.urls import reverse
 
-from rest_framework.test import APITestCase
 from rest_framework import status
 
 from part.models import Part
@@ -13,7 +12,7 @@ from InvenTree.status_codes import BuildStatus
 from InvenTree.api_tester import InvenTreeAPITestCase
 
 
-class TestBuildAPI(APITestCase):
+class TestBuildAPI(InvenTreeAPITestCase):
     """
     Series of tests for the Build DRF API
     - Tests for Build API
