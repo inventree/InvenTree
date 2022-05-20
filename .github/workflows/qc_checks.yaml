@@ -197,7 +197,7 @@ jobs:
           invoke migrate
           invoke import-records -f data.json
           invoke import-records -f data.json
-      - name: Test Translations 
+      - name: Test Translations
         run: invoke translate
       - name: Check Migration Files
         run: python3 ci/check_migration_files.py

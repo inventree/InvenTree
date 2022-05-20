@@ -181,7 +181,7 @@
         {% endif %}
 
     });
-    
+
     onPanelLoad('order-shipments-complete', function() {
         loadSalesOrderShipmentTable('#completed-shipments-table', {
             order: {{ order.pk }},
@@ -293,5 +293,5 @@
     );
 
     enableSidebar('salesorder');
-    
+
 {% endblock %}

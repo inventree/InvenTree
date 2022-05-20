@@ -36,7 +36,7 @@
         <div class='btn-group' role='group'>
             {% url 'admin:plugin_pluginconfig_changelist' as url %}
             {% include "admin_button.html" with url=url %}
-            <button class="btn btn-success" id="install-plugin" title="{% trans 'Install Plugin' %}"><span class='fas fa-plus-circle'></span> {% trans "Install Plugin" %}</button>        
+            <button class="btn btn-success" id="install-plugin" title="{% trans 'Install Plugin' %}"><span class='fas fa-plus-circle'></span> {% trans "Install Plugin" %}</button>
         </div>
     </div>
 </div>
@@ -52,7 +52,7 @@
             <th>{% trans "Version" %}</th>
         </tr>
     </thead>
-    
+
     <tbody>
         {% plugin_list as pl_list %}
         {% for plugin_key, plugin in pl_list.items %}
@@ -133,7 +133,7 @@
                 <th>{% trans "Message" %}</th>
             </tr>
         </thead>
-        
+
         <tbody>
         {% for stage, errors in pl_errors.items %}
             {% for error_detail in errors %}
