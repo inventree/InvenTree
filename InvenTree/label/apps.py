@@ -47,7 +47,7 @@ class LabelConfig(AppConfig):
         try:
             from .models import StockLocationLabel
             obj = StockLocationLabel.objects.first()
-            print(obj)
+            assert bool(obj is not None)
         except AppRegistryNotReady:
             # Database might not yet be ready
             warnings.warn('Database was not ready for creating labels')
