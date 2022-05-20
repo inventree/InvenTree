@@ -99,7 +99,7 @@ function createNewModal(options={}) {
         $(modal_name).focus();
 
         if (options.hideCloseButton) {
-            $(modal_name).find('#modal-form-cancel').hide();
+            $(modal_name).find('#modal-form-close').hide();
         }
 
         if (options.preventSubmit || options.hideSubmitButton) {
