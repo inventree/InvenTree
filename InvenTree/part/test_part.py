@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 
 import os
 
-from InvenTree.InvenTree.helpers import InvenTreeTestCase
+from InvenTree.helpers import InvenTreeTestCase
 
 from .models import Part, PartCategory, PartCategoryStar, PartStar, PartTestTemplate
 from .models import rename_part_image

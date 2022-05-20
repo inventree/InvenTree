@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.contrib.auth.models import Group
 
 from rest_framework.authtoken.models import Token
-from InvenTree.InvenTree.helpers import InvenTreeTestCase
+from InvenTree.helpers import InvenTreeTestCase
 
 from users.models import RuleSet, Owner
 

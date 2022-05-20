@@ -7,7 +7,7 @@ import os
 
 from django.urls import reverse
 
-from InvenTree.InvenTree.helpers import InvenTreeTestCase
+from InvenTree.helpers import InvenTreeTestCase
 
 
 class ViewTests(InvenTreeTestCase):

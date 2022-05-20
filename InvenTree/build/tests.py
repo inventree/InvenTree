@@ -2,7 +2,7 @@ from django.urls import reverse
 
 from datetime import datetime, timedelta
 
-from InvenTree.InvenTree.helpers import InvenTreeTestCase
+from InvenTree.helpers import InvenTreeTestCase
 
 from .models import Build
 from stock.models import StockItem

@@ -3,7 +3,7 @@
 from rest_framework import status
 
 from django.urls import reverse
-from InvenTree.InvenTree.helpers import InvenTreeTestCase
+from InvenTree.helpers import InvenTreeTestCase
 
 from InvenTree.api_tester import InvenTreeAPITestCase
 
