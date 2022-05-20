@@ -16,7 +16,7 @@ class CompanyViewTestBase(InvenTreeTestCate):
         'supplier_part',
     ]
 
-    rules = [
+    roles = [
         'all',
     ]
 

@@ -19,7 +19,7 @@ class BuildTestSimple(InvenTreeTestCate):
         'build',
     ]
 
-    rules = [
+    roles = [
         'build.change',
         'build.add',
         'build.delete',
@@ -98,7 +98,7 @@ class TestBuildViews(InvenTreeTestCate):
         'build',
     ]
 
-    rules = [
+    roles = [
         'build.change',
         'build.add',
         'build.delete',
