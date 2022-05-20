@@ -1,12 +1,13 @@
 """ Unit tests for Part Views (see views.py) """
 
-from django.test import TestCase
 from django.urls import reverse
+
+from InvenTree.helpers import InvenTreeTestCase
 
 from .models import Part
 
 
-class PartViewTestCase(TestCase):
+class PartViewTestCase(InvenTreeTestCase):
 
     fixtures = [
         'category',

@@ -7,6 +7,7 @@ from django.urls import include, re_path, reverse
 
 from error_report.models import Error
 
+from InvenTree.helpers import InvenTreeTestCase
 from plugin import InvenTreePlugin
 from plugin.helpers import MixinNotImplementedError
 from plugin.mixins import (APICallMixin, AppMixin, NavigationMixin,
@@ -250,7 +251,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
             self.mixin_wrong2.has_api_call()
 
 
-class PanelMixinTests(TestCase):
+class PanelMixinTests(InvenTreeTestCase):
     """Test that the PanelMixin plugin operates correctly"""
 
     fixtures = [
