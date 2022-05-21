@@ -41,13 +41,14 @@ steps:
 - script: |
     python -m pip install --upgrade pip setuptools wheel
     pip install -r requirements.txt
-    pip install unittest-xml-reporting
+    pip install pytest pytest-azurepipelines pytest-cov
   displayName: 'Install prerequisites'
 
 - script: |
     pushd '$(projectRoot)'
     invoke update
     python manage.py test --testrunner xmlrunner.extra.djangotestrunner.XMLTestRunner --no-input
+    pytest --junitxml=junit/test-results.xml --cov=. --cov-report=xml
   displayName: 'Run tests'
   env:
     INVENTREE_DB_ENGINE: sqlite3
@@ -61,3 +62,8 @@ steps:
     testResultsFiles: "**/TEST-*.xml"
     testRunTitle: 'Python $(PYTHON_VERSION)'
   condition: succeededOrFailed()
+
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: Cobertura
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
