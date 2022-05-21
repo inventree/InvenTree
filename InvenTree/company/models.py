@@ -4,32 +4,26 @@ Company database model definitions
 
 import os
 
-from django.utils.translation import gettext_lazy as _
-from django.core.validators import MinValueValidator
-from django.core.exceptions import ValidationError
-
-from django.db import models
-from django.db.models import Sum, Q, UniqueConstraint
-
 from django.apps import apps
+from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
+from django.db import models
+from django.db.models import Q, Sum, UniqueConstraint
 from django.urls import reverse
-
-from moneyed import CURRENCIES
+from django.utils.translation import gettext_lazy as _
 
 from markdownx.models import MarkdownxField
-
+from moneyed import CURRENCIES
 from stdimage.models import StdImageField
-
-from InvenTree.helpers import getMediaUrl, getBlankImage, getBlankThumbnail
-from InvenTree.fields import InvenTreeURLField
-from InvenTree.models import InvenTreeAttachment
-from InvenTree.status_codes import PurchaseOrderStatus
-
-import InvenTree.validators
 
 import common.models
 import common.settings
+import InvenTree.validators
 from common.settings import currency_code_default
+from InvenTree.fields import InvenTreeURLField
+from InvenTree.helpers import getBlankImage, getBlankThumbnail, getMediaUrl
+from InvenTree.models import InvenTreeAttachment
+from InvenTree.status_codes import PurchaseOrderStatus
 
 
 def rename_company_image(instance, filename):

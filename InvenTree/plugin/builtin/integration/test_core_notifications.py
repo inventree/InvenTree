@@ -1,7 +1,8 @@
-from plugin.models import NotificationUserSetting
 from part.test_part import BaseNotificationIntegrationTest
-from plugin.builtin.integration.core_notifications import CoreNotificationsPlugin
 from plugin import registry
+from plugin.builtin.integration.core_notifications import \
+    CoreNotificationsPlugin
+from plugin.models import NotificationUserSetting
 
 
 class CoreNotificationTestTests(BaseNotificationIntegrationTest):

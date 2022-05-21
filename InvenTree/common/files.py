@@ -2,12 +2,13 @@
 Files management tools.
 """
 
-from rapidfuzz import fuzz
-import tablib
 import os
 
-from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+
+import tablib
+from rapidfuzz import fuzz
 
 
 class FileManager:

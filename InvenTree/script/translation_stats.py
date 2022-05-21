@@ -2,8 +2,8 @@
 This script calculates translation coverage for various languages
 """
 
-import os
 import json
+import os
 import sys
 
 

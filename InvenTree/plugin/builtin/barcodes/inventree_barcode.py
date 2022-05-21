@@ -13,13 +13,12 @@ references model objects actually exist in the database.
 
 import json
 
+from rest_framework.exceptions import ValidationError
+
+from part.models import Part
 from plugin import InvenTreePlugin
 from plugin.mixins import BarcodeMixin
-
 from stock.models import StockItem, StockLocation
-from part.models import Part
-
-from rest_framework.exceptions import ValidationError
 
 
 class InvenTreeBarcodePlugin(BarcodeMixin, InvenTreePlugin):

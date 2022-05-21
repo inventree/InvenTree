@@ -26,7 +26,7 @@ def update_history(apps, schema_editor):
         # Note we cannot use the 'pathstring' function here as we don't have access to model functions!
 
         path = [location.name]
-        
+
         loc = location
 
         while loc.parent:
@@ -48,7 +48,7 @@ def update_history(apps, schema_editor):
 
             deltas = {}
             updated = False
-            
+
             q = entry.quantity
 
             if idx == 0 or not q == quantity:
@@ -69,7 +69,7 @@ def update_history(apps, schema_editor):
 
             if 'completed build' in title:
                 tracking_type = StockHistoryCode.BUILD_OUTPUT_COMPLETED
-            
+
             elif 'removed' in title and 'item' in title:
 
                 if entry.notes.lower().startswith('split '):
@@ -81,7 +81,7 @@ def update_history(apps, schema_editor):
                 result = re.search(r"^removed ([\d\.]+) items", title)
 
                 if result:
-                    
+
                     removed = result.groups()[0]
 
                     try:
@@ -93,12 +93,12 @@ def update_history(apps, schema_editor):
                         print(f"WARNING: Error converting removed quantity '{removed}'")
                 else:
                     print(f"Could not decode '{title}'")
-            
+
             elif 'split from existing' in title:
                 tracking_type = StockHistoryCode.SPLIT_FROM_PARENT
 
                 deltas['quantity'] = float(q)
-            
+
             elif 'moved to' in title:
                 tracking_type = StockHistoryCode.STOCK_MOVE
 
@@ -119,7 +119,7 @@ def update_history(apps, schema_editor):
                         # Direct match for name
                         if text == location.name:
                             matches.add(location)
-                        
+
                         # Match for "name - description"
                         compare = f"{location.name} - {location.description}"
 
@@ -140,7 +140,7 @@ def update_history(apps, schema_editor):
                     else:
                         print(f"No location match: '{text}'")
                         break
-            
+
             elif 'created stock item' in title:
                 tracking_type = StockHistoryCode.CREATED
 
@@ -152,7 +152,7 @@ def update_history(apps, schema_editor):
 
             elif 'counted' in title:
                 tracking_type = StockHistoryCode.STOCK_COUNT
-            
+
             elif 'added' in title:
                 tracking_type = StockHistoryCode.STOCK_ADD
 
@@ -160,7 +160,7 @@ def update_history(apps, schema_editor):
                 result = re.search(r"^added ([\d\.]+) items", title)
 
                 if result:
-                    
+
                     added = result.groups()[0]
 
                     try:

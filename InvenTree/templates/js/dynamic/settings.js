@@ -58,13 +58,13 @@ function editSetting(key, options={}) {
     // First, read the settings object from the server
     inventreeGet(url, {}, {
         success: function(response) {
-    
+
             if (response.choices && response.choices.length > 0) {
                 response.type = 'choice';
                 reload_required = true;
             }
 
-            // Construct the field 
+            // Construct the field
             var fields = {
                 value: {
                     label: response.name,
@@ -77,7 +77,7 @@ function editSetting(key, options={}) {
 
             // Foreign key lookup available!
             if (response.type == 'related field') {
-                
+
                 if (response.model_name && response.api_url) {
                     fields.value.type = 'related field';
                     fields.value.model = response.model_name.split('.').at(-1);

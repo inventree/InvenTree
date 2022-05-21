@@ -90,7 +90,7 @@
                             </a></li>
                             {% endif %}
                         </ul>
-                    </div> 
+                    </div>
                     {% include "filter_list.html" with id="manufacturer-part" %}
                 </div>
             </div>
@@ -172,9 +172,9 @@
                 {% include "filter_list.html" with id="customerstock" %}
             </div>
         </div>
-        
+
         <table class='table table-striped table-condensed' id='assigned-stock-table' data-toolbar='#assigned-stock-button-toolbar'></table>
-        
+
     </div>
 </div>
 
@@ -313,7 +313,7 @@
         var selections = $("#manufacturer-part-table").bootstrapTable("getSelections");
 
         deleteManufacturerParts(selections, {
-            onSuccess: function() { 
+            onSuccess: function() {
                 $("#manufacturer-part-table").bootstrapTable("refresh");
             }
         });
@@ -378,10 +378,10 @@
                 accept: function() {
                     selections.forEach(function(part) {
                         var url = `/api/company/part/${part.pk}/`;
-            
+
                         requests.push(inventreeDelete(url));
                     });
-            
+
                     $.when.apply($, requests).done(function() {
                         $('#supplier-part-table').bootstrapTable('refresh');
                     });

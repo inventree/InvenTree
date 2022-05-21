@@ -2,22 +2,21 @@
 Unit testing for the Stock API
 """
 
-import os
 import io
-import tablib
-
+import os
 from datetime import datetime, timedelta
 
 import django.http
 from django.urls import reverse
+
+import tablib
 from rest_framework import status
 
-from InvenTree.status_codes import StockStatus
-from InvenTree.api_tester import InvenTreeAPITestCase
-
-from common.models import InvenTreeSetting
 import company.models
 import part.models
+from common.models import InvenTreeSetting
+from InvenTree.api_tester import InvenTreeAPITestCase
+from InvenTree.status_codes import StockStatus
 from stock.models import StockItem, StockLocation
 
 

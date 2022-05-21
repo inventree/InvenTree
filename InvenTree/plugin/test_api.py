@@ -76,8 +76,8 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
         """
         Test the PluginConfig action commands
         """
-        from plugin.models import PluginConfig
         from plugin import registry
+        from plugin.models import PluginConfig
 
         url = reverse('admin:plugin_pluginconfig_changelist')
         fixtures = PluginConfig.objects.all()
@@ -135,8 +135,8 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
         """
         Test the PluginConfig model
         """
-        from plugin.models import PluginConfig
         from plugin import registry
+        from plugin.models import PluginConfig
 
         fixtures = PluginConfig.objects.all()
 

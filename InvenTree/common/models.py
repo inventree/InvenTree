@@ -3,44 +3,40 @@ Common database model definitions.
 These models are 'generic' and do not fit a particular business logic object.
 """
 
-import os
+import base64
 import decimal
-import math
-import uuid
+import hashlib
 import hmac
 import json
-import hashlib
-import base64
-from secrets import compare_digest
+import logging
+import math
+import os
+import uuid
 from datetime import datetime, timedelta
+from secrets import compare_digest
 
 from django.apps import apps
-from django.db import models, transaction
-from django.db.utils import IntegrityError, OperationalError
 from django.conf import settings
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group, User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator, URLValidator
+from django.db import models, transaction
+from django.db.utils import IntegrityError, OperationalError
 from django.urls import reverse
 from django.utils.timezone import now
+from django.utils.translation import gettext_lazy as _
 
-from djmoney.settings import CURRENCY_CHOICES
-from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
-
+from djmoney.contrib.exchange.models import convert_money
+from djmoney.settings import CURRENCY_CHOICES
 from rest_framework.exceptions import PermissionDenied
 
-from django.utils.translation import gettext_lazy as _
-from django.core.validators import MinValueValidator, URLValidator
-from django.core.exceptions import ValidationError
-
-import InvenTree.helpers
 import InvenTree.fields
+import InvenTree.helpers
 import InvenTree.validators
-
-import logging
-
 
 logger = logging.getLogger('inventree')
 
@@ -1429,6 +1425,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SEARCH_HIDE_INACTIVE_PARTS': {
+            'name': _("Hide Inactive Parts"),
+            'description': _('Excluded inactive parts from search preview window'),
+            'default': False,
+            'validator': bool,
+        },
+
         'SEARCH_PREVIEW_SHOW_CATEGORIES': {
             'name': _('Search Categories'),
             'description': _('Display part categories in search preview window'),
@@ -1441,6 +1444,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'description': _('Display stock items in search preview window'),
             'default': True,
             'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_HIDE_UNAVAILABLE_STOCK': {
+            'name': _('Hide Unavailable Stock Items'),
+            'description': _('Exclude stock items which are not available from the search preview window'),
+            'validator': bool,
+            'default': False,
         },
 
         'SEARCH_PREVIEW_SHOW_LOCATIONS': {
@@ -1464,6 +1474,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SEARCH_PREVIEW_EXCLUDE_INACTIVE_PURCHASE_ORDERS': {
+            'name': _('Exclude Inactive Purchase Orders'),
+            'description': _('Exclude inactive purchase orders from search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
         'SEARCH_PREVIEW_SHOW_SALES_ORDERS': {
             'name': _('Search Sales Orders'),
             'description': _('Display sales orders in search preview window'),
@@ -1471,18 +1488,18 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SEARCH_PREVIEW_EXCLUDE_INACTIVE_SALES_ORDERS': {
+            'name': _('Exclude Inactive Sales Orders'),
+            'description': _('Exclude inactive sales orders from search preview window'),
+            'validator': bool,
+            'default': True,
+        },
+
         'SEARCH_PREVIEW_RESULTS': {
             'name': _('Search Preview Results'),
             'description': _('Number of results to show in each section of the search preview window'),
             'default': 10,
             'validator': [int, MinValueValidator(1)]
-        },
-
-        'SEARCH_HIDE_INACTIVE_PARTS': {
-            'name': _("Hide Inactive Parts"),
-            'description': _('Hide inactive parts in search preview window'),
-            'default': False,
-            'validator': bool,
         },
 
         'PART_SHOW_QUANTITY_IN_FORMS': {
@@ -1701,6 +1718,9 @@ class ColorTheme(models.Model):
     @classmethod
     def get_color_themes_choices(cls):
         """ Get all color themes from static folder """
+        if settings.TESTING and not os.path.exists(settings.STATIC_COLOR_THEMES_DIR):
+            logger.error('Theme directory does not exsist')
+            return []
 
         # Get files list from css/color-themes/ folder
         files_list = []

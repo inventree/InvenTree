@@ -14,11 +14,11 @@
 $.urlParam = function(name) {
     // eslint-disable-next-line no-useless-escape
     var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
-    
+
     if (results == null) {
         return null;
     }
-    
+
     return decodeURI(results[1]) || 0;
 };
 
@@ -80,9 +80,9 @@ function inventreeGet(url, filters={}, options={}) {
 
 function inventreeFormDataUpload(url, data, options={}) {
     /* Upload via AJAX using the FormData approach.
-     * 
+     *
      * Note that the following AJAX parameters are required for FormData upload
-     * 
+     *
      * processData: false
      * contentType: false
      */

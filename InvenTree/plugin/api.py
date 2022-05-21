@@ -5,18 +5,17 @@ JSON API for the plugin app
 from django.conf import settings
 from django.urls import include, re_path
 
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, generics, permissions, status
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
-from django_filters.rest_framework import DjangoFilterBackend
-
+import plugin.serializers as PluginSerializers
 from common.api import GlobalSettingsPermissions
-from plugin.base.barcodes.api import barcode_api_urls
 from plugin.base.action.api import ActionPluginView
+from plugin.base.barcodes.api import barcode_api_urls
 from plugin.base.locate.api import LocatePluginView
 from plugin.models import PluginConfig, PluginSetting
-import plugin.serializers as PluginSerializers
 from plugin.registry import registry
 
 

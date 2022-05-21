@@ -2,18 +2,16 @@
 Custom field validators for InvenTree
 """
 
+import re
 from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
-from django.core.exceptions import ValidationError
+from django.core.exceptions import FieldDoesNotExist, ValidationError
 from django.utils.translation import gettext_lazy as _
-from django.core.exceptions import FieldDoesNotExist
 
 from moneyed import CURRENCIES
 
 import common.models
-
-import re
 
 
 def validate_currency_code(code):

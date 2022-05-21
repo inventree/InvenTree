@@ -1,21 +1,18 @@
-import PIL
-
 from django.urls import reverse
 
+import PIL
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from InvenTree.api_tester import InvenTreeAPITestCase
-from InvenTree.status_codes import BuildStatus, StockStatus, PurchaseOrderStatus
-
-from part.models import Part, PartCategory
-from part.models import BomItem, BomItemSubstitute
-from stock.models import StockItem, StockLocation
-from company.models import Company
-from common.models import InvenTreeSetting
-
 import build.models
 import order.models
+from common.models import InvenTreeSetting
+from company.models import Company
+from InvenTree.api_tester import InvenTreeAPITestCase
+from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
+                                    StockStatus)
+from part.models import BomItem, BomItemSubstitute, Part, PartCategory
+from stock.models import StockItem, StockLocation
 
 
 class PartCategoryAPITest(InvenTreeAPITestCase):

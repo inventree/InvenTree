@@ -57,6 +57,7 @@ src="{% static 'img/blank_image.png' %}"
     <ul class='dropdown-menu' role='menu'>
         <li><a class='dropdown-item' href='#' id='edit-order'><span class='fas fa-edit icon-green'></span> {% trans "Edit order" %}</a></li>
         {% if order.status == SalesOrderStatus.PENDING %}
+        <li><a class='dropdown-item' href='#' id='complete-order-shipments'><span class='fas fa-truck'></span> {% trans "Complete Shipments" %}</a></li>
         <li><a class='dropdown-item' href='#' id='cancel-order'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}</a></li>
         {% endif %}
     </ul>
@@ -221,6 +222,16 @@ $("#edit-order").click(function() {
         title: '{% trans "Edit Sales Order" %}',
         reload: true,
     });
+});
+
+$("#complete-order-shipments").click(function() {
+
+    completePendingShipments(
+        {{ order.pk }},
+        {
+            reload: true,
+        }
+    );
 });
 
 $("#cancel-order").click(function() {

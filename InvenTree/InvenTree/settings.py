@@ -12,7 +12,6 @@ database setup in this file.
 """
 
 import logging
-
 import os
 import random
 import socket
@@ -20,13 +19,13 @@ import string
 import sys
 from datetime import datetime
 
-import moneyed
-
-import yaml
-from django.utils.translation import gettext_lazy as _
+import django.conf.locale
 from django.contrib.messages import constants as messages
 from django.core.files.storage import default_storage
-import django.conf.locale
+from django.utils.translation import gettext_lazy as _
+
+import moneyed
+import yaml
 
 from .config import get_base_dir, get_config_file, get_plugin_file, get_setting
 
@@ -453,10 +452,8 @@ db_options = db_config.get("OPTIONS", db_config.get("options", {}))
 
 # Specific options for postgres backend
 if "postgres" in db_engine:  # pragma: no cover
-    from psycopg2.extensions import (
-        ISOLATION_LEVEL_READ_COMMITTED,
-        ISOLATION_LEVEL_SERIALIZABLE,
-    )
+    from psycopg2.extensions import (ISOLATION_LEVEL_READ_COMMITTED,
+                                     ISOLATION_LEVEL_SERIALIZABLE)
 
     # Connection timeout
     if "connect_timeout" not in db_options:

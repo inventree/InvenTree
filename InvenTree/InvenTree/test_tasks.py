@@ -4,15 +4,14 @@ Unit tests for task management
 
 from datetime import timedelta
 
-from django.utils import timezone
 from django.test import TestCase
-from django_q.models import Schedule
+from django.utils import timezone
 
+from django_q.models import Schedule
 from error_report.models import Error
 
 import InvenTree.tasks
 from common.models import InvenTreeSetting
-
 
 threshold = timezone.now() - timedelta(days=30)
 threshold_low = threshold - timedelta(days=1)

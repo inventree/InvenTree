@@ -3,64 +3,52 @@ Part database model definitions
 """
 
 import decimal
-
-import os
+import hashlib
 import logging
-
-from django.utils.translation import gettext_lazy as _
-from django.core.exceptions import ValidationError
-from django.urls import reverse
-
-from django.db import models, transaction
-from django.db.utils import IntegrityError
-from django.db.models import Q, Sum, UniqueConstraint
-from django.db.models.functions import Coalesce
-from django.core.validators import MinValueValidator
+import os
+from datetime import datetime
+from decimal import Decimal, InvalidOperation
 
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
+from django.db import models, transaction
+from django.db.models import Q, Sum, UniqueConstraint
+from django.db.models.functions import Coalesce
 from django.db.models.signals import post_save
+from django.db.utils import IntegrityError
 from django.dispatch import receiver
-
-from jinja2 import Template
-
-from markdownx.models import MarkdownxField
+from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 from django_cleanup import cleanup
-
 from djmoney.contrib.exchange.exceptions import MissingRate
-
-from mptt.models import TreeForeignKey, MPTTModel
+from djmoney.contrib.exchange.models import convert_money
+from jinja2 import Template
+from markdownx.models import MarkdownxField
 from mptt.exceptions import InvalidMove
 from mptt.managers import TreeManager
-
+from mptt.models import MPTTModel, TreeForeignKey
 from stdimage.models import StdImageField
 
-from decimal import Decimal, InvalidOperation
-from datetime import datetime
-import hashlib
-from djmoney.contrib.exchange.models import convert_money
-from common.settings import currency_code_default
-from common.models import InvenTreeSetting
-
-from InvenTree import helpers
-from InvenTree import validators
-
+import common.models
 import InvenTree.ready
 import InvenTree.tasks
-
-from InvenTree.fields import InvenTreeURLField
-from InvenTree.helpers import decimal2string, normalize, decimal2money
-from InvenTree.models import InvenTreeTree, InvenTreeAttachment, DataImportMixin
-from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus, SalesOrderStatus
-
-import common.models
-from build import models as BuildModels
-from order import models as OrderModels
-from company.models import SupplierPart
 import part.settings as part_settings
-from stock import models as StockModels
+from build import models as BuildModels
+from common.models import InvenTreeSetting
+from common.settings import currency_code_default
+from company.models import SupplierPart
+from InvenTree import helpers, validators
+from InvenTree.fields import InvenTreeURLField
+from InvenTree.helpers import decimal2money, decimal2string, normalize
+from InvenTree.models import (DataImportMixin, InvenTreeAttachment,
+                              InvenTreeTree)
+from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
+                                    SalesOrderStatus)
+from order import models as OrderModels
 from plugin.models import MetadataMixin
-
+from stock import models as StockModels
 
 logger = logging.getLogger("inventree")
 

@@ -1,31 +1,26 @@
 from io import BytesIO
-from PIL import Image
-
-from django.utils.translation import gettext_lazy as _
 
 from django.conf import settings
-from django.urls import include, re_path
-from django.core.exceptions import ValidationError, FieldError
+from django.core.exceptions import FieldError, ValidationError
 from django.http import HttpResponse, JsonResponse
+from django.urls import include, re_path
 
 from django_filters.rest_framework import DjangoFilterBackend
-
-from rest_framework import generics, filters
+from PIL import Image
+from rest_framework import filters, generics
 from rest_framework.exceptions import NotFound
-from rest_framework.response import Response
 
+import common.models
 import InvenTree.helpers
 from InvenTree.tasks import offload_task
-import common.models
-
-from plugin.registry import registry
-
-from stock.models import StockItem, StockLocation
 from part.models import Part
 from plugin.base.label import label as plugin_label
+from plugin.registry import registry
+from stock.models import StockItem, StockLocation
 
-from .models import StockItemLabel, StockLocationLabel, PartLabel
-from .serializers import StockItemLabelSerializer, StockLocationLabelSerializer, PartLabelSerializer
+from .models import PartLabel, StockItemLabel, StockLocationLabel
+from .serializers import (PartLabelSerializer, StockItemLabelSerializer,
+                          StockLocationLabelSerializer)
 
 
 class LabelListView(generics.ListAPIView):

@@ -5,42 +5,38 @@ Order model definitions
 # -*- coding: utf-8 -*-
 
 import os
-
 from datetime import datetime
 from decimal import Decimal
 
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 from django.db import models, transaction
-from django.db.models import Q, F, Sum
+from django.db.models import F, Q, Sum
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
-
-from django.core.validators import MinValueValidator
-from django.core.exceptions import ValidationError
-from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from djmoney.contrib.exchange.models import convert_money
+from djmoney.money import Money
 from markdownx.models import MarkdownxField
 from mptt.models import TreeForeignKey
 
-from djmoney.contrib.exchange.models import convert_money
-from djmoney.money import Money
+import InvenTree.helpers
 from common.settings import currency_code_default
-
-from users import models as UserModels
-from part import models as PartModels
-from stock import models as stock_models
 from company.models import Company, SupplierPart
-
+from InvenTree.fields import InvenTreeModelMoneyField, RoundingDecimalField
+from InvenTree.helpers import decimal2string, getSetting, increment
+from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
+from InvenTree.status_codes import (PurchaseOrderStatus, SalesOrderStatus,
+                                    StockHistoryCode, StockStatus)
+from part import models as PartModels
 from plugin.events import trigger_event
 from plugin.models import MetadataMixin
-
-import InvenTree.helpers
-from InvenTree.fields import InvenTreeModelMoneyField, RoundingDecimalField
-from InvenTree.helpers import decimal2string, increment, getSetting
-from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus, StockHistoryCode
-from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
+from stock import models as stock_models
+from users import models as UserModels
 
 
 def get_next_po_number():

@@ -12,7 +12,6 @@ from django.urls import include, re_path
 
 from . import views
 
-
 part_parameter_urls = [
     re_path(r'^template/new/', views.PartParameterTemplateCreate.as_view(), name='part-param-template-create'),
     re_path(r'^template/(?P<pk>\d+)/edit/', views.PartParameterTemplateEdit.as_view(), name='part-param-template-edit'),

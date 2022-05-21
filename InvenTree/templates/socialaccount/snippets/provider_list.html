@@ -5,13 +5,13 @@
 {% for provider in socialaccount_providers %}
 {% if provider.id == "openid" %}
 {% for brand in provider.get_brands %}
-  <a title="{{brand.name}}" 
-     class="btn btn-primary socialaccount_provider {{provider.id}} {{brand.id}}" 
+  <a title="{{brand.name}}"
+     class="btn btn-primary socialaccount_provider {{provider.id}} {{brand.id}}"
      href="{% provider_login_url provider.id openid=brand.openid_url process=process %}"
      ><span class='brand-icon' brand_name='{{provider.id}}'></span> {{brand.name}}</a>
 {% endfor %}
 {% endif %}
-  <a title="{{provider.name}}" class="btn btn-primary socialaccount_provider {{provider.id}}" 
+  <a title="{{provider.name}}" class="btn btn-primary socialaccount_provider {{provider.id}}"
      href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}"
      ><span class='brand-icon' brand_name='{{provider.id}}'></span> {{provider.name}}</a>
 {% endfor %}

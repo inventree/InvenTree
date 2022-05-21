@@ -6,7 +6,6 @@ from django.urls import include, re_path
 
 from . import views
 
-
 company_detail_urls = [
 
     re_path(r'^thumb-download/', views.CompanyImageDownloadFromURL.as_view(), name='company-image-download'),

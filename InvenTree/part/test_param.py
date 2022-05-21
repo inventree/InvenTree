@@ -1,11 +1,10 @@
 # Tests for Part Parameters
 
-from django.test import TestCase, TransactionTestCase
 import django.core.exceptions as django_exceptions
+from django.test import TestCase, TransactionTestCase
 
-from .models import Part, PartCategory
-from .models import PartParameter, PartParameterTemplate
-from .models import PartCategoryParameterTemplate
+from .models import (Part, PartCategory, PartCategoryParameterTemplate,
+                     PartParameter, PartParameterTemplate)
 
 
 class TestParams(TestCase):
