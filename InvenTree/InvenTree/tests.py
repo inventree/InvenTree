@@ -450,18 +450,12 @@ class TestStatus(TestCase):
         self.assertEqual(ready.isImportingData(), False)
 
 
-class TestSettings(TestCase):
+class TestSettings(helpers.InvenTreeTestCase):
     """
     Unit tests for settings
     """
 
-    def setUp(self) -> None:
-        self.user_mdl = get_user_model()
-
-        # Create a user for auth
-        user = get_user_model()
-        self.user = user.objects.create_superuser('testuser1', 'test1@testing.com', 'password1')
-        self.client.login(username='testuser1', password='password1')
+    superuser = True
 
     def in_env_context(self, envs={}):
         """Patch the env to include the given dict"""
@@ -476,8 +470,9 @@ class TestSettings(TestCase):
 
     @override_settings(TESTING_ENV=True)
     def test_set_user_to_few(self):
+        user_model = get_user_model()
         # add shortcut
-        user_count = self.user_mdl.objects.count
+        user_count = user_model.objects.count
         # enable testing mode
         settings.TESTING_ENV = True
 
@@ -499,14 +494,18 @@ class TestSettings(TestCase):
         })
         self.assertEqual(user_count(), 2)
 
+        username2 = 'testuser1'
+        email2 = 'test1@testing.com'
+        password2 = 'password1'
+
         # create user manually
-        self.user_mdl.objects.create_user('testuser', 'test@testing.com', 'password')
+        user_model.objects.create_user(username2, email2, password2)
         self.assertEqual(user_count(), 3)
         # check it will not be created again
         self.run_reload({
-            'INVENTREE_ADMIN_USER': 'testuser',
-            'INVENTREE_ADMIN_EMAIL': 'test@testing.com',
-            'INVENTREE_ADMIN_PASSWORD': 'password',
+            'INVENTREE_ADMIN_USER': username2,
+            'INVENTREE_ADMIN_EMAIL': email2,
+            'INVENTREE_ADMIN_PASSWORD': password2,
         })
         self.assertEqual(user_count(), 3)
 
@@ -541,7 +540,7 @@ class TestSettings(TestCase):
 
         # with env set
         with self.in_env_context({'INVENTREE_CONFIG_FILE': 'my_special_conf.yaml'}):
-            self.assertIn('inventree/inventree/my_special_conf.yaml', config.get_config_file().lower())
+            self.assertIn('inventree/my_special_conf.yaml', config.get_config_file().lower())
 
     def test_helpers_plugin_file(self):
         # normal run - not configured
@@ -567,17 +566,10 @@ class TestSettings(TestCase):
             self.assertEqual(config.get_setting(TEST_ENV_NAME, None), '321')
 
 
-class TestInstanceName(TestCase):
+class TestInstanceName(helpers.InvenTreeTestCase):
     """
     Unit tests for instance name
     """
-
-    def setUp(self):
-        # Create a user for auth
-        user = get_user_model()
-        self.user = user.objects.create_superuser('testuser', 'test@testing.com', 'password')
-
-        self.client.login(username='testuser', password='password')
 
     def test_instance_name(self):
 

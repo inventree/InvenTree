@@ -1,11 +1,11 @@
 from django.apps import apps
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.test import TestCase
 from django.urls import reverse
 
 from rest_framework.authtoken.models import Token
 
+from InvenTree.helpers import InvenTreeTestCase
 from users.models import Owner, RuleSet
 
 
@@ -160,19 +160,10 @@ class RuleSetModelTest(TestCase):
         self.assertEqual(group.permissions.count(), 0)
 
 
-class OwnerModelTest(TestCase):
+class OwnerModelTest(InvenTreeTestCase):
     """
     Some simplistic tests to ensure the Owner model is setup correctly.
     """
-
-    def setUp(self):
-        """ Add users and groups """
-
-        # Create a new user
-        self.user = get_user_model().objects.create_user('username', 'user@email.com', 'password')
-        # Put the user into a new group
-        self.group = Group.objects.create(name='new_group')
-        self.user.groups.add(self.group)
 
     def do_request(self, endpoint, filters, status_code=200):
         response = self.client.get(endpoint, filters, format='json')
@@ -212,11 +203,13 @@ class OwnerModelTest(TestCase):
         """
         Test user APIs
         """
+        self.client.logout()
+
         # not authed
         self.do_request(reverse('api-owner-list'), {}, 401)
         self.do_request(reverse('api-owner-detail', kwargs={'pk': self.user.id}), {}, 401)
 
-        self.client.login(username='username', password='password')
+        self.client.login(username=self.username, password=self.password)
         # user list
         self.do_request(reverse('api-owner-list'), {})
         # user list with search
@@ -229,12 +222,14 @@ class OwnerModelTest(TestCase):
         """
         Test token mechanisms
         """
+        self.client.logout()
+
         token = Token.objects.filter(user=self.user)
 
         # not authed
         self.do_request(reverse('api-token'), {}, 401)
 
-        self.client.login(username='username', password='password')
+        self.client.login(username=self.username, password=self.password)
         # token get
         response = self.do_request(reverse('api-token'), {})
         self.assertEqual(response['token'], token.first().key)
