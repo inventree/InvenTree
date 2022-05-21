@@ -47,7 +47,7 @@ steps:
 - script: |
     pushd '$(projectRoot)'
     invoke update
-    pytest --junitxml=junit/test-results.xml --cov=. --cov-report=xml --ds=settings
+    pytest --junitxml=junit/test-results.xml --cov=. --cov-report=xml --ds=InvenTree.settings
   displayName: 'Run tests'
   env:
     INVENTREE_DB_ENGINE: sqlite3
