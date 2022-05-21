@@ -2,26 +2,21 @@
 Django views for interacting with Company app
 """
 
+import io
+
+from django.core.files.base import ContentFile
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView
 
-from django.urls import reverse
-from django.core.files.base import ContentFile
-
-from PIL import Image
 import requests
-import io
+from PIL import Image
 
-from InvenTree.views import AjaxUpdateView
-from InvenTree.views import InvenTreeRoleMixin
-
-from .models import Company
-from .models import ManufacturerPart
-from .models import SupplierPart
+from InvenTree.views import AjaxUpdateView, InvenTreeRoleMixin
+from plugin.views import InvenTreePluginViewMixin
 
 from .forms import CompanyImageDownloadForm
-
-from plugin.views import InvenTreePluginViewMixin
+from .models import Company, ManufacturerPart, SupplierPart
 
 
 class CompanyIndex(InvenTreeRoleMixin, ListView):

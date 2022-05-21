@@ -10223,4 +10223,3 @@ msgstr "Uprawnienie do edycji przedmiotów"
 #: users/models.py:221
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
-

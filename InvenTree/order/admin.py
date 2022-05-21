@@ -1,14 +1,14 @@
 from django.contrib import admin
 
+import import_export.widgets as widgets
 from import_export.admin import ImportExportModelAdmin
-
 from import_export.fields import Field
 from import_export.resources import ModelResource
-import import_export.widgets as widgets
 
-from .models import PurchaseOrder, PurchaseOrderLineItem, PurchaseOrderExtraLine
-from .models import SalesOrder, SalesOrderLineItem, SalesOrderExtraLine
-from .models import SalesOrderShipment, SalesOrderAllocation
+from .models import (PurchaseOrder, PurchaseOrderExtraLine,
+                     PurchaseOrderLineItem, SalesOrder, SalesOrderAllocation,
+                     SalesOrderExtraLine, SalesOrderLineItem,
+                     SalesOrderShipment)
 
 
 # region general classes

@@ -3,12 +3,12 @@ Version information for InvenTree.
 Provides information on the current InvenTree version
 """
 
-import subprocess
-import django
 import re
+import subprocess
+
+import django
 
 import common.models
-
 from InvenTree.api_version import INVENTREE_API_VERSION
 
 # InvenTree software version

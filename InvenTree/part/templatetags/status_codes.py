@@ -4,8 +4,9 @@ Provide templates for the various model status codes.
 
 from django import template
 from django.utils.safestring import mark_safe
-from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
-from InvenTree.status_codes import StockStatus, BuildStatus
+
+from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
+                                    SalesOrderStatus, StockStatus)
 
 register = template.Library()
 

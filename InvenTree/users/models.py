@@ -1,22 +1,20 @@
 # -*- coding: utf-8 -*-
 
-from django.urls import reverse
+import logging
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import UniqueConstraint, Q
-from django.db.utils import IntegrityError
 from django.db import models
+from django.db.models import Q, UniqueConstraint
+from django.db.models.signals import post_delete, post_save
+from django.db.utils import IntegrityError
+from django.dispatch import receiver
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from django.dispatch import receiver
-from django.db.models.signals import post_save, post_delete
-
-import logging
-
 from InvenTree.ready import canAppAccessDatabase
-
 
 logger = logging.getLogger("inventree")
 

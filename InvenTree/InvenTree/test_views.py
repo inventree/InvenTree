@@ -2,8 +2,8 @@
 Unit tests for the main web views
 """
 
-import re
 import os
+import re
 
 from django.urls import reverse
 

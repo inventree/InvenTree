@@ -1,20 +1,19 @@
 """
 Helpers for plugin app
 """
+import inspect
+import logging
 import os
-import subprocess
 import pathlib
+import pkgutil
+import subprocess
 import sysconfig
 import traceback
-import inspect
-import pkgutil
-import logging
 
 from django import template
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import IntegrityError
-
 
 logger = logging.getLogger('inventree')
 

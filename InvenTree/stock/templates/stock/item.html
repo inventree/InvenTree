@@ -26,7 +26,7 @@
         </div>
     </div>
     <div class='panel-content'>
-        <div id='tracking-table-toolbar'>  
+        <div id='tracking-table-toolbar'>
             <div class='btn-group'>
                 {% include "filter_list.html" with id="stocktracking" %}
             </div>
@@ -111,8 +111,8 @@
                 {% include "filter_list.html" with id="stocktests" %}
             </div>
         </div>
-        
-        <table class='table table-striped table-condensed' data-toolbar='#test-button-toolbar' id='test-result-table'></table>                        
+
+        <table class='table table-striped table-condensed' data-toolbar='#test-button-toolbar' id='test-result-table'></table>
     </div>
 </div>
 
@@ -210,7 +210,7 @@
             quantity: {{ item.quantity|unlocalize }},
         }
     );
-    
+
     onPanelLoad('notes', function() {
         setupNotesField(
             'stock-notes',
@@ -322,7 +322,7 @@
                 reload: true,
             }
         );
-    }); 
+    });
 
     loadStockTrackingTable($("#track-table"), {
         params: {
@@ -330,7 +330,7 @@
             item: {{ item.pk }},
             user_detail: true,
         },
-        url: "{% url 'api-stock-tracking-list' %}", 
+        url: "{% url 'api-stock-tracking-list' %}",
     });
 
     enableSidebar('stockitem');

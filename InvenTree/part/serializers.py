@@ -5,40 +5,35 @@ JSON serializers for Part app
 import imghdr
 from decimal import Decimal
 
-from django.urls import reverse_lazy
 from django.db import models, transaction
-from django.db.models import ExpressionWrapper, F, Q, Func
-from django.db.models import Subquery, OuterRef, FloatField
-
+from django.db.models import (ExpressionWrapper, F, FloatField, Func, OuterRef,
+                              Q, Subquery)
 from django.db.models.functions import Coalesce
+from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
+from djmoney.contrib.django_rest_framework import MoneyField
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
-from djmoney.contrib.django_rest_framework import MoneyField
 
 from common.settings import currency_code_default, currency_code_mappings
-
-from InvenTree.serializers import (DataFileUploadSerializer,
-                                   DataFileExtractSerializer,
+from InvenTree.serializers import (DataFileExtractSerializer,
+                                   DataFileUploadSerializer,
+                                   InvenTreeAttachmentSerializer,
                                    InvenTreeAttachmentSerializerField,
                                    InvenTreeDecimalField,
                                    InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer,
-                                   InvenTreeAttachmentSerializer,
                                    InvenTreeMoneySerializer)
-
-from InvenTree.status_codes import (BuildStatus,
-                                    PurchaseOrderStatus,
+from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     SalesOrderStatus)
-
 from stock.models import StockItem
 
-from .models import (BomItem, BomItemSubstitute,
-                     Part, PartAttachment, PartCategory, PartRelated,
-                     PartParameter, PartParameterTemplate, PartSellPriceBreak,
-                     PartStar, PartTestTemplate, PartCategoryParameterTemplate,
-                     PartInternalPriceBreak)
+from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
+                     PartCategory, PartCategoryParameterTemplate,
+                     PartInternalPriceBreak, PartParameter,
+                     PartParameterTemplate, PartRelated, PartSellPriceBreak,
+                     PartStar, PartTestTemplate)
 
 
 class CategorySerializer(InvenTreeModelSerializer):

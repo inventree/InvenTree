@@ -2,29 +2,29 @@
 Helper forms which subclass Django forms to provide additional functionality
 """
 
-from urllib.parse import urlencode
 import logging
+from urllib.parse import urlencode
 
-from django.utils.translation import gettext_lazy as _
 from django import forms
-from django.contrib.auth.models import User, Group
 from django.conf import settings
+from django.contrib.auth.models import Group, User
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Field
-from crispy_forms.bootstrap import PrependedText, AppendedText, PrependedAppendedText, StrictButton, Div
-
-from allauth.account.forms import SignupForm, set_form_field_order
 from allauth.account.adapter import DefaultAccountAdapter
-from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
+from allauth.account.forms import SignupForm, set_form_field_order
 from allauth.exceptions import ImmediateHttpResponse
+from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth_2fa.adapter import OTPAdapter
 from allauth_2fa.utils import user_has_valid_totp_device
+from crispy_forms.bootstrap import (AppendedText, Div, PrependedAppendedText,
+                                    PrependedText, StrictButton)
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Field, Layout
 
-from part.models import PartCategory
 from common.models import InvenTreeSetting
+from part.models import PartCategory
 
 logger = logging.getLogger('inventree')
 

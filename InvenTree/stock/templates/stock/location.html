@@ -205,7 +205,7 @@
                 {% include "filter_list.html" with id="location" %}
             </div>
         </div>
-    
+
         <table class='table table-striped table-condensed' data-toolbar='#sublocation-button-toolbar' id='sublocation-table'></table>
     </div>
 </div>
@@ -235,33 +235,33 @@
             allowTreeView: true,
         });
     });
-    
+
     linkButtonsToSelection(
         $('#sublocation-table'),
         [
             '#location-print-options',
         ]
     );
-    
+
     {% if labels_enabled %}
     $('#print-label').click(function() {
 
         var locs = [{{ location.pk }}];
 
-        printStockLocationLabels(locs);        
+        printStockLocationLabels(locs);
 
     });
-    
+
     $('#multi-location-print-label').click(function() {
-    
+
         var selections = $('#sublocation-table').bootstrapTable('getSelections');
-    
+
         var locations = [];
-    
+
         selections.forEach(function(loc) {
             locations.push(loc.pk);
         });
-    
+
         printStockLocationLabels(locations);
     });
     {% endif %}

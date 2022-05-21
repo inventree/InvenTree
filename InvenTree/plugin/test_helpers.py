@@ -15,7 +15,7 @@ class HelperTests(TestCase):
 
         # working sample
         response = render_template(ErrorSource(), 'sample/sample.html', {'abc': 123})
-        self.assertEqual(response, '<h1>123</h1>')
+        self.assertEqual(response, '<h1>123</h1>\n')
 
         # Wrong sample
         response = render_template(ErrorSource(), 'sample/wrongsample.html', {'abc': 123})

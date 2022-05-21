@@ -1,10 +1,9 @@
 import logging
 
-from django.db.utils import OperationalError, ProgrammingError
 from django.apps import AppConfig
+from django.db.utils import OperationalError, ProgrammingError
 
 from InvenTree.ready import canAppAccessDatabase
-
 
 logger = logging.getLogger("inventree")
 

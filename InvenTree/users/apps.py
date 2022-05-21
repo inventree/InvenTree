@@ -1,6 +1,5 @@
-from django.db.utils import OperationalError, ProgrammingError
-
 from django.apps import AppConfig
+from django.db.utils import OperationalError, ProgrammingError
 
 from InvenTree.ready import canAppAccessDatabase
 
@@ -25,6 +24,7 @@ class UsersConfig(AppConfig):
     def assign_permissions(self):
 
         from django.contrib.auth.models import Group
+
         from users.models import RuleSet, update_group_roles
 
         # First, delete any rule_set objects which have become outdated!
@@ -42,6 +42,7 @@ class UsersConfig(AppConfig):
 
         from django.contrib.auth import get_user_model
         from django.contrib.auth.models import Group
+
         from users.models import Owner
 
         # Create group owners

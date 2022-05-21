@@ -2,13 +2,12 @@
 Validate that all URLs specified in template files are correct.
 """
 
-from django.test import TestCase
-from django.urls import reverse
-
 import os
 import re
-
 from pathlib import Path
+
+from django.test import TestCase
+from django.urls import reverse
 
 
 class URLTest(TestCase):

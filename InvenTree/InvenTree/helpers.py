@@ -3,29 +3,27 @@ Provides helper functions used throughout the InvenTree project
 """
 
 import io
-import re
 import json
 import os.path
-from PIL import Image
-
+import re
 from decimal import Decimal, InvalidOperation
-
 from wsgiref.util import FileWrapper
-from django.http import StreamingHttpResponse
-from django.core.exceptions import ValidationError, FieldError
-from django.utils.translation import gettext_lazy as _
-from django.test import TestCase
 
 from django.contrib.auth.models import Permission
-from .api_tester import UserMixin
-
-import InvenTree.version
-
-from common.models import InvenTreeSetting
-from .settings import MEDIA_URL, STATIC_URL
-from common.settings import currency_code_default
+from django.core.exceptions import FieldError, ValidationError
+from django.http import StreamingHttpResponse
+from django.test import TestCase
+from django.utils.translation import gettext_lazy as _
 
 from djmoney.money import Money
+from PIL import Image
+
+import InvenTree.version
+from common.models import InvenTreeSetting
+from common.settings import currency_code_default
+
+from .api_tester import UserMixin
+from .settings import MEDIA_URL, STATIC_URL
 
 
 def getSetting(key, backup_value=None):

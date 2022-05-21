@@ -224,7 +224,7 @@ function selectLabel(labels, items, options={}) {
     /**
      * Present the user with the available labels,
      * and allow them to select which label to print.
-     * 
+     *
      * The intent is that the available labels have been requested
      * (via AJAX) from the server.
      */
@@ -249,7 +249,7 @@ function selectLabel(labels, items, options={}) {
     }
 
     var plugin_selection = '';
-    
+
     if (plugins_enabled && plugins.length > 0) {
         plugin_selection =`
         <div class='form-group'>

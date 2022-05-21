@@ -1,23 +1,21 @@
 """ Custom fields used in InvenTree """
 
 import sys
-
-from .validators import allowable_url_schemes
-
-from django.utils.translation import gettext_lazy as _
-
-from django.forms.fields import URLField as FormURLField
-from django.db import models as models
-from django.core import validators
-from django import forms
-
 from decimal import Decimal
 
-from djmoney.models.fields import MoneyField as ModelMoneyField
+from django import forms
+from django.core import validators
+from django.db import models as models
+from django.forms.fields import URLField as FormURLField
+from django.utils.translation import gettext_lazy as _
+
 from djmoney.forms.fields import MoneyField
+from djmoney.models.fields import MoneyField as ModelMoneyField
 from djmoney.models.validators import MinMoneyValidator
 
 import InvenTree.helpers
+
+from .validators import allowable_url_schemes
 
 
 class InvenTreeURLFormField(FormURLField):
@@ -39,7 +37,7 @@ class InvenTreeURLField(models.URLField):
 
 def money_kwargs():
     """ returns the database settings for MoneyFields """
-    from common.settings import currency_code_mappings, currency_code_default
+    from common.settings import currency_code_default, currency_code_mappings
 
     kwargs = {}
     kwargs['currency_choices'] = currency_code_mappings()

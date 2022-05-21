@@ -1,17 +1,16 @@
-import re
 import json
-import warnings
-import requests
 import logging
-
+import re
+import warnings
 from datetime import timedelta
-from django.utils import timezone
 
+from django.conf import settings
+from django.core import mail as django_mail
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import OperationalError, ProgrammingError
-from django.core import mail as django_mail
-from django.conf import settings
+from django.utils import timezone
 
+import requests
 
 logger = logging.getLogger("inventree")
 
@@ -72,9 +71,10 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
     """
 
     try:
+        import importlib
+
         from django_q.tasks import AsyncTask
 
-        import importlib
         from InvenTree.status import is_worker_running
     except AppRegistryNotReady:  # pragma: no cover
         logger.warning(f"Could not offload task '{taskname}' - app registry not ready")
@@ -254,9 +254,10 @@ def update_exchange_rates():
     """
 
     try:
-        from InvenTree.exchange import InvenTreeExchange
         from djmoney.contrib.exchange.models import ExchangeBackend, Rate
+
         from common.settings import currency_code_default, currency_codes
+        from InvenTree.exchange import InvenTreeExchange
     except AppRegistryNotReady:  # pragma: no cover
         # Apps not yet loaded!
         logger.info("Could not perform 'update_exchange_rates' - App registry not ready")

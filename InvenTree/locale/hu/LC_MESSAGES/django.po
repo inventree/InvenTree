@@ -10219,4 +10219,3 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:221
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
-

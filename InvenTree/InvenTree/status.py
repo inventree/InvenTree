@@ -3,19 +3,17 @@ Provides system status functionality checks.
 """
 # -*- coding: utf-8 -*-
 
-from django.utils.translation import gettext_lazy as _
-from django.utils import timezone
-
 import logging
 from datetime import timedelta
+
+from django.conf import settings
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from django_q.models import Success
 from django_q.monitor import Stat
 
-from django.conf import settings
-
 import InvenTree.ready
-
 
 logger = logging.getLogger("inventree")
 

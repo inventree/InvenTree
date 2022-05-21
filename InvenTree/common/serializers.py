@@ -2,12 +2,12 @@
 JSON serializers for common components
 """
 
-from InvenTree.serializers import InvenTreeModelSerializer
-from InvenTree.helpers import get_objectreference
-
 from rest_framework import serializers
 
-from common.models import InvenTreeSetting, InvenTreeUserSetting, NotificationMessage
+from common.models import (InvenTreeSetting, InvenTreeUserSetting,
+                           NotificationMessage)
+from InvenTree.helpers import get_objectreference
+from InvenTree.serializers import InvenTreeModelSerializer
 
 
 class SettingsSerializer(InvenTreeModelSerializer):
