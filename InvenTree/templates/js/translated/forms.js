@@ -561,6 +561,11 @@ function constructFormBody(fields, options) {
         insertPersistButton(options);
     }
 
+    // Insert secondary buttons (if required)
+    if (options.buttons) {
+        insertSecondaryButtons(options);
+    }
+
     // Display the modal
     $(modal).modal('show');
 
@@ -650,6 +655,31 @@ function insertPersistButton(options) {
     $(options.modal).find('#modal-footer-buttons').append(html);
 }
 
+/*
+ * Add secondary buttons to the left of the close and submit buttons
+ * with callback functions
+ */
+function insertSecondaryButtons(options) {
+    for (var idx = 0; idx < options.buttons.length; idx++) {
+
+        var html = `
+        <button type="button" class="btn btn-outline-secondary" id="modal-form-${options.buttons[idx].name}">
+            ${options.buttons[idx].title}
+        </button>
+        `;
+
+        $(options.modal).find('#modal-footer-secondary-buttons').append(html);
+
+        if (options.buttons[idx].onClick instanceof Function) {
+            // Copy callback reference to prevent errors if `idx` changes value before execution
+            var onclick_callback = options.buttons[idx].onClick;
+
+            $(options.modal).find(`#modal-form-${options.buttons[idx].name}`).click(function() {
+                onclick_callback(options);
+            });
+        }
+    }
+}
 
 /*
  * Extract all specified form values as a single object
