@@ -59,7 +59,7 @@ class LabelMixinTests(InvenTreeTestCase):
             }
         )
 
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data), 0)
 
         # Activate the plugin
         plugin = registry.get_plugin('samplelabel')
