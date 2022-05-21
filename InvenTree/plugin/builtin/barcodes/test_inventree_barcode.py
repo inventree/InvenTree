@@ -5,7 +5,7 @@ from django.urls import reverse
 
 from rest_framework import status
 
-from InvenTree.InvenTree.api_tester import InvenTreeAPITestCase
+from InvenTree.api_tester import InvenTreeAPITestCase
 
 
 class TestInvenTreeBarcode(InvenTreeAPITestCase):

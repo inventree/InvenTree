@@ -1,6 +1,6 @@
 """ Unit tests for action plugins """
 
-from InvenTree.InvenTree.helpers import InvenTreeTestCase
+from InvenTree.helpers import InvenTreeTestCase
 from plugin.builtin.action.simpleactionplugin import SimpleActionPlugin
 
 
