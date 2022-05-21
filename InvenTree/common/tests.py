@@ -156,14 +156,14 @@ class SettingsTest(InvenTreeTestCase):
 
             try:
                 self.run_settings_check(key, setting)
-            except Exception as exc:
+            except Exception as exc:  # pragma: no cover
                 print(f"run_settings_check failed for global setting '{key}'")
                 raise exc
 
         for key, setting in InvenTreeUserSetting.SETTINGS.items():
             try:
                 self.run_settings_check(key, setting)
-            except Exception as exc:
+            except Exception as exc:  # pragma: no cover
                 print(f"run_settings_check failed for user setting '{key}'")
                 raise exc
 
