@@ -6,28 +6,26 @@ Registry for loading and managing multiple plugins at run-time
 """
 
 import importlib
-import pathlib
 import logging
 import os
+import pathlib
 import subprocess
-
+from importlib import metadata, reload
 from typing import OrderedDict
-from importlib import reload, metadata
 
 from django.apps import apps
 from django.conf import settings
-from django.db.utils import OperationalError, ProgrammingError, IntegrityError
-from django.urls import include, re_path
-from django.urls import clear_url_caches
 from django.contrib import admin
+from django.db.utils import IntegrityError, OperationalError, ProgrammingError
+from django.urls import clear_url_caches, include, re_path
 from django.utils.text import slugify
 
-from maintenance_mode.core import maintenance_mode_on
-from maintenance_mode.core import get_maintenance_mode, set_maintenance_mode
+from maintenance_mode.core import (get_maintenance_mode, maintenance_mode_on,
+                                   set_maintenance_mode)
 
+from .helpers import (IntegrationPluginError, get_plugins, handle_error,
+                      log_error)
 from .plugin import InvenTreePlugin
-from .helpers import handle_error, log_error, get_plugins, IntegrationPluginError
-
 
 logger = logging.getLogger('inventree')
 
@@ -576,7 +574,8 @@ class PluginsRegistry:
         self.plugins_inactive = {}
 
     def _update_urls(self):
-        from InvenTree.urls import urlpatterns as global_pattern, frontendpatterns as urlpatterns
+        from InvenTree.urls import frontendpatterns as urlpatterns
+        from InvenTree.urls import urlpatterns as global_pattern
         from plugin.urls import get_plugin_urls
 
         for index, a in enumerate(urlpatterns):

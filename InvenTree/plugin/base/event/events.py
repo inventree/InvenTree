@@ -6,14 +6,12 @@ import logging
 
 from django.conf import settings
 from django.db import transaction
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_delete, post_save
 from django.dispatch.dispatcher import receiver
 
 from InvenTree.ready import canAppAccessDatabase, isImportingData
 from InvenTree.tasks import offload_task
-
 from plugin.registry import registry
-
 
 logger = logging.getLogger('inventree')
 

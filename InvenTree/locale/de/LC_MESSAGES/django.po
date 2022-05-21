@@ -10220,4 +10220,3 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:221
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
-

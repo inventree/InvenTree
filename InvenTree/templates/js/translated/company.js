@@ -10,7 +10,7 @@
     setupFilterList,
     showQuestionDialog,
 */
-   
+
 /* exported
     createCompany,
     createManufacturerPart,
@@ -26,7 +26,7 @@
 
 /**
  * Construct a set of form fields for creating / editing a ManufacturerPart
- * @returns 
+ * @returns
  */
 function manufacturerPartFields() {
 
@@ -46,7 +46,7 @@ function manufacturerPartFields() {
 
 /**
  * Launches a form to create a new ManufacturerPart
- * @param {object} options 
+ * @param {object} options
  */
 function createManufacturerPart(options={}) {
 
@@ -67,7 +67,7 @@ function createManufacturerPart(options={}) {
             var company_fields = companyFormFields();
 
             company_fields.is_manufacturer.value = true;
-            
+
             return company_fields;
         }
     };
@@ -84,7 +84,7 @@ function createManufacturerPart(options={}) {
 /**
  * Launches a form to edit a ManufacturerPart
  * @param {integer} part - ID of a ManufacturerPart
- * @param {object} options 
+ * @param {object} options
  */
 function editManufacturerPart(part, options={}) {
 
@@ -414,7 +414,7 @@ function deleteManufacturerParts(selections, options={}) {
             <p>${item.MPN} - ${item.part_detail.full_name}</p>
         </li>`;
     });
-            
+
     text += `
         </ul>
     </div>`;
@@ -577,7 +577,7 @@ function loadManufacturerPartTable(table, url, options) {
                 var pk = $(this).attr('pk');
 
                 editManufacturerPart(
-                    pk, 
+                    pk,
                     {
                         onSuccess: function() {
                             $(table).bootstrapTable('refresh');
@@ -590,7 +590,7 @@ function loadManufacturerPartTable(table, url, options) {
                 var pk = $(this).attr('pk');
 
                 deleteManufacturerPart(
-                    pk, 
+                    pk,
                     {
                         onSuccess: function() {
                             $(table).bootstrapTable('refresh');
@@ -775,7 +775,7 @@ function loadSupplierPartTable(table, url, options) {
                 formatter: function(value, row) {
                     if (value) {
                         var name = row.supplier_detail.name;
-                        var url = `/company/${value}/`; 
+                        var url = `/company/${value}/`;
                         var html = imageHoverIcon(row.supplier_detail.image) + renderLink(name, url);
 
                         return html;
@@ -875,7 +875,7 @@ function loadSupplierPartTable(table, url, options) {
                 var pk = $(this).attr('pk');
 
                 editSupplierPart(
-                    pk, 
+                    pk,
                     {
                         onSuccess: function() {
                             $(table).bootstrapTable('refresh');
@@ -888,7 +888,7 @@ function loadSupplierPartTable(table, url, options) {
                 var pk = $(this).attr('pk');
 
                 deleteSupplierPart(
-                    pk, 
+                    pk,
                     {
                         onSuccess: function() {
                             $(table).bootstrapTable('refresh');

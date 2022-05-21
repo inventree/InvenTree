@@ -1,8 +1,7 @@
 import logging
-from datetime import timedelta, datetime
+from datetime import datetime, timedelta
 
 from django.core.exceptions import AppRegistryNotReady
-
 
 logger = logging.getLogger('inventree')
 

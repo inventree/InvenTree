@@ -1,25 +1,23 @@
 # Tests for the Part model
 
-from allauth.account.models import EmailAddress
-
-from django.conf import settings
-
-from django.test import TestCase
-from django.core.exceptions import ValidationError
-
 import os
 
-from InvenTree.helpers import InvenTreeTestCase
+from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.test import TestCase
 
-from .models import Part, PartCategory, PartCategoryStar, PartStar, PartTestTemplate
-from .models import rename_part_image
-from .templatetags import inventree_extras
+from allauth.account.models import EmailAddress
 
 import part.settings
-
+from common.models import (InvenTreeSetting, InvenTreeUserSetting,
+                           NotificationEntry, NotificationMessage)
+from common.notifications import UIMessageNotification, storage
 from InvenTree import version
-from common.models import InvenTreeSetting, InvenTreeUserSetting, NotificationEntry, NotificationMessage
-from common.notifications import storage, UIMessageNotification
+from InvenTree.helpers import InvenTreeTestCase
+
+from .models import (Part, PartCategory, PartCategoryStar, PartStar,
+                     PartTestTemplate, rename_part_image)
+from .templatetags import inventree_extras
 
 
 class TemplateTagTest(InvenTreeTestCase):

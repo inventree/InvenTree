@@ -4,12 +4,10 @@
 Provides extra global data to all templates.
 """
 
-from InvenTree.status_codes import SalesOrderStatus, PurchaseOrderStatus
-from InvenTree.status_codes import BuildStatus, StockStatus
-from InvenTree.status_codes import StockHistoryCode
-
 import InvenTree.status
-
+from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
+                                    SalesOrderStatus, StockHistoryCode,
+                                    StockStatus)
 from users.models import RuleSet
 
 

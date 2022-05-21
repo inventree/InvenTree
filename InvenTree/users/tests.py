@@ -1,12 +1,12 @@
-from django.test import TestCase
 from django.apps import apps
-from django.urls import reverse
 from django.contrib.auth.models import Group
+from django.test import TestCase
+from django.urls import reverse
 
 from rest_framework.authtoken.models import Token
-from InvenTree.helpers import InvenTreeTestCase
 
-from users.models import RuleSet, Owner
+from InvenTree.helpers import InvenTreeTestCase
+from users.models import Owner, RuleSet
 
 
 class RuleSetModelTest(TestCase):

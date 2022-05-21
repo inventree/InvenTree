@@ -1,5 +1,6 @@
-from rest_framework import status
 from django.urls import reverse
+
+from rest_framework import status
 
 from InvenTree.api_tester import InvenTreeAPITestCase
 

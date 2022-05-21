@@ -29,7 +29,7 @@ tasks:
       git clone https://github.com/inventree/demo-dataset /workspace/InvenTree/inventree-data
       invoke delete-data -f
       invoke import-records -f /workspace/InvenTree/inventree-data/inventree_data.json
-      
+
       inv server
 
 # List the ports to expose. Learn more https://www.gitpod.io/docs/config-ports/

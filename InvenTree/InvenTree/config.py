@@ -2,10 +2,9 @@
 Helper functions for loading InvenTree configuration options
 """
 
+import logging
 import os
 import shutil
-import logging
-
 
 logger = logging.getLogger('inventree')
 

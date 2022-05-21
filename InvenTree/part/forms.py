@@ -7,17 +7,15 @@ from django.utils.translation import gettext_lazy as _
 
 from mptt.fields import TreeNodeChoiceField
 
-from InvenTree.forms import HelperForm
-from InvenTree.helpers import clean_decimal
-from InvenTree.fields import RoundingDecimalFormField
-
 import common.models
 from common.forms import MatchItemForm
+from InvenTree.fields import RoundingDecimalFormField
+from InvenTree.forms import HelperForm
+from InvenTree.helpers import clean_decimal
 
-from .models import Part, PartCategory
-from .models import PartParameterTemplate
-from .models import PartCategoryParameterTemplate
-from .models import PartSellPriceBreak, PartInternalPriceBreak
+from .models import (Part, PartCategory, PartCategoryParameterTemplate,
+                     PartInternalPriceBreak, PartParameterTemplate,
+                     PartSellPriceBreak)
 
 
 class PartModelChoiceField(forms.ModelChoiceField):

@@ -74,14 +74,14 @@ function showCachedAlerts() {
 }
 
 
-/* 
+/*
  * Display an alert message at the top of the screen.
  * The message will contain a "close" button,
  * and also dismiss automatically after a certain amount of time.
- * 
+ *
  * arguments:
  * - message: Text / HTML content to display
- * 
+ *
  * options:
  * - style: alert style e.g. 'success' / 'warning'
  * - timeout: Time (in milliseconds) after which the message will be dismissed
@@ -119,7 +119,7 @@ function showMessage(message, options={}) {
         ${icon}
         <b>${message}</b>
         ${details}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>  
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     `;
 
@@ -152,7 +152,7 @@ var notificationUpdateTic = 0;
 /**
  * The notification checker is initiated when the document is loaded. It checks if there are unread notifications
  * if unread messages exist the notification indicator is updated
- * 
+ *
  * options:
  * - force: set true to force an update now (if you got in focus for example)
  **/
@@ -182,10 +182,10 @@ function notificationCheck(force = false) {
 
 /**
  * handles read / unread buttons and UI rebuilding
- * 
+ *
  * arguments:
  * - btn: element that got clicked / fired the event -> must contain pk and target as attributes
- * 
+ *
  * options:
  * - panel_caller: this button was clicked in the notification panel
  **/
@@ -220,7 +220,7 @@ function updateNotificationReadState(btn, panel_caller=false) {
 
 /**
  * Returns the html for a read / unread button
- * 
+ *
  * arguments:
  * - pk: primary key of the notification
  * - state: current state of the notification (read / unread) -> just pass what you were handed by the api

@@ -6,7 +6,6 @@ from django.urls import include, re_path
 
 from plugin import registry
 
-
 PLUGIN_BASE = 'plugin'  # Constant for links
 
 

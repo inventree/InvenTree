@@ -1,12 +1,11 @@
+import logging
 import os
 import shutil
-import logging
 
 from django.apps import AppConfig
 from django.conf import settings
 
 from InvenTree.ready import canAppAccessDatabase
-
 
 logger = logging.getLogger("inventree")
 

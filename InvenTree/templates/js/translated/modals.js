@@ -20,7 +20,7 @@
 
 /*
  * Create and display a new modal dialog
- * 
+ *
  * options:
  * - title: Form title to render
  * - submitText: Text to render on 'submit' button (default = "Submit")
@@ -97,7 +97,7 @@ function createNewModal(options={}) {
         if (options.focus) {
             getFieldByName(modal_name, options.focus).focus();
         }
-    
+
         // Steal keyboard focus
         $(modal_name).focus();
 
@@ -125,7 +125,7 @@ function createNewModal(options={}) {
                 // Simulate a click on the 'Submit' button
                 $(modal_name).find('#modal-form-submit').click();
             }
-            
+
             return false;
         }
     });
@@ -166,10 +166,10 @@ function makeOptionsList(elements, textFunc, valueFunc, titleFunc) {
      * from the (assumed array) of elements.
      * For each element, we pass the element to the supplied functions,
      * which (in turn) generate display / value / title values.
-     * 
+     *
      * Args:
      * - elements: List of elements
-     * - textFunc: Function which takes an element and generates the text to be displayed 
+     * - textFunc: Function which takes an element and generates the text to be displayed
      * - valueFunc: optional function which takes an element and generates the value
      * - titleFunc: optional function which takes an element and generates a title
      */
@@ -217,7 +217,7 @@ function setFieldOptions(fieldName, optionList, options={}) {
 
     var addEmptyOption = options.addEmptyOption || true;
 
-    // If not appending, clear out the field... 
+    // If not appending, clear out the field...
     if (!append) {
         field.find('option').remove();
     }
@@ -249,7 +249,7 @@ function reloadFieldOptions(fieldName, options) {
      *
      * Args:
      * - fieldName: The name of the field
-     * - options: 
+     * - options:
      * -- url: Query url
      * -- params: Query params
      * -- value: A function which takes a returned option and returns the 'value' (if not specified, the `pk` field is used)
@@ -292,7 +292,7 @@ function reloadFieldOptions(fieldName, options) {
 
 function enableField(fieldName, enabled, options={}) {
     /* Enable (or disable) a particular field in a modal.
-     * 
+     *
      * Args:
      * - fieldName: The name of the field
      * - enabled: boolean enabled / disabled status
@@ -369,7 +369,7 @@ function partialMatcher(params, data) {
 
 
 function attachSelect(modal) {
-    /* Attach 'select2' functionality to any drop-down list in the modal. 
+    /* Attach 'select2' functionality to any drop-down list in the modal.
      * Provides search filtering for dropdown items
      */
 
@@ -394,7 +394,7 @@ function attachBootstrapCheckbox(modal) {
 
 
 function loadingMessageContent() {
-    /* Render a 'loading' message to display in a form 
+    /* Render a 'loading' message to display in a form
      * when waiting for a response from the server
      */
 
@@ -407,7 +407,7 @@ function afterForm(response, options) {
     /* afterForm is called after a form is successfully submitted,
      * and the form is dismissed.
      * Used for general purpose functionality after form submission:
-     * 
+     *
      * - Display a bootstrap alert (success / info / warning / danger)
      * - Run a supplied success callback function
      * - Redirect the browser to a different URL
@@ -427,11 +427,11 @@ function afterForm(response, options) {
     if (response.info) {
         showAlertOrCache(response.info, cache, {style: 'info'});
     }
-    
+
     if (response.warning) {
         showAlertOrCache(response.warning, cache, {style: 'warning'});
     }
-    
+
     if (response.danger) {
         showAlertOrCache(response.danger, cache, {style: 'danger'});
     }
@@ -470,7 +470,7 @@ function modalEnable(modal, enable=true) {
 
 
 function modalSetTitle(modal, title='') {
-    /* Update the title of a modal form 
+    /* Update the title of a modal form
      */
     $(modal + ' #modal-title').html(title);
 }
@@ -499,7 +499,7 @@ function modalSetCloseText(modal, text) {
 
 function modalSetButtonText(modal, submit_text, close_text) {
     /* Set the button text for a modal form
-     * 
+     *
      * submit_text - text for the form submit button
      * close_text - text for the form dismiss button
      */
@@ -578,8 +578,8 @@ function renderErrorMessage(xhr) {
 
 function showAlertDialog(title, content, options={}) {
     /* Display a modal dialog message box.
-     * 
-     * title - Title text 
+     *
+     * title - Title text
      * content - HTML content of the dialog window
      */
 
@@ -603,7 +603,7 @@ function showAlertDialog(title, content, options={}) {
 
 function showQuestionDialog(title, content, options={}) {
     /* Display a modal dialog for user input (Yes/No confirmation dialog)
-     * 
+     *
      * title - Title text
      * content - HTML content of the dialog window
      * options:
@@ -612,7 +612,7 @@ function showQuestionDialog(title, content, options={}) {
      *   cancel_text - Text for the cancel button (default = 'Cancel')
      *   accept - Function to run if the user presses 'Accept'
      *   cancel - Functino to run if the user presses 'Cancel'
-     */ 
+     */
 
     var modal = createNewModal({
         title: title,
@@ -635,9 +635,9 @@ function showQuestionDialog(title, content, options={}) {
 
 function openModal(options) {
     /* Open a modal form, and perform some action based on the provided options object:
-     * 
+     *
      * options can contain:
-     * 
+     *
      * modal - ID of the modal form element (default = '#modal-form')
      * title - Custom title for the form
      * content - Default content for the form panel
@@ -746,7 +746,7 @@ function attachSecondaryModal(modal, options) {
     /* Attach a secondary modal form to the primary modal form.
      * Inserts a button into the primary form which, when clicked,
      * will launch the secondary modal to do /something/ and then return a result.
-     * 
+     *
      * options:
      *  field: Name of the field to attach to
      *  label: Button text
@@ -837,7 +837,7 @@ function attachButtons(modal, buttons) {
 function attachFieldCallback(modal, callback) {
     /* Attach a 'callback' function to a given field in the modal form.
      * When the value of that field is changed, the callback function is performed.
-     * 
+     *
      * options:
      * - field: The name of the field to attach to
      * - action: A function to perform
@@ -870,7 +870,7 @@ function attachCallbacks(modal, callbacks) {
 function handleModalForm(url, options) {
     /* Update a modal form after data are received from the server.
      * Manages POST requests until the form is successfully submitted.
-     * 
+     *
      * The server should respond with a JSON object containing a boolean value 'form_valid'
      * Form submission repeats (after user interaction) until 'form_valid' = true
      */
@@ -955,8 +955,8 @@ function handleModalForm(url, options) {
             error: function(xhr) {
                 // There was an error submitting form data via POST
 
-                $(modal).modal('hide'); 
-                showAlertDialog('{% trans "Error posting form data" %}', renderErrorMessage(xhr));                
+                $(modal).modal('hide');
+                showAlertDialog('{% trans "Error posting form data" %}', renderErrorMessage(xhr));
             },
             complete: function() {
                 // TODO
@@ -968,15 +968,15 @@ function handleModalForm(url, options) {
 
 function launchModalForm(url, options = {}) {
     /* Launch a modal form, and request data from the server to fill the form
-     * If the form data is returned from the server, calls handleModalForm() 
+     * If the form data is returned from the server, calls handleModalForm()
      *
      * A successful request will return a JSON object with, at minimum,
      * an object called 'html_form'
-     * 
+     *
      * If the request is NOT successful, displays an appropriate error message.
-     * 
+     *
      * options:
-     * 
+     *
      * modal - Name of the modal (default = '#modal-form')
      * data - Data to pass through to the AJAX request to fill the form
      * submit_text - Text for the submit button (default = 'Submit')

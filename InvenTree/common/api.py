@@ -5,18 +5,16 @@ Provides a JSON API for common components.
 import json
 
 from django.http.response import HttpResponse
+from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
-from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
-from django.urls import include, re_path
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.exceptions import NotAcceptable, NotFound
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, generics, permissions
-from rest_framework import serializers
 from django_q.tasks import async_task
+from rest_framework import filters, generics, permissions, serializers
+from rest_framework.exceptions import NotAcceptable, NotFound
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 import common.models
 import common.serializers
