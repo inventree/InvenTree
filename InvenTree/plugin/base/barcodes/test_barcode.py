@@ -4,16 +4,15 @@
 Unit tests for Barcode endpoints
 """
 
-from django.contrib.auth import get_user_model
 from django.urls import reverse
 
-from rest_framework.test import APITestCase
 from rest_framework import status
 
+from InvenTree.api_tester import InvenTreeAPITestCase
 from stock.models import StockItem
 
 
-class BarcodeAPITest(APITestCase):
+class BarcodeAPITest(InvenTreeAPITestCase):
 
     fixtures = [
         'category',
@@ -23,11 +22,7 @@ class BarcodeAPITest(APITestCase):
     ]
 
     def setUp(self):
-        # Create a user for auth
-        user = get_user_model()
-        user.objects.create_user('testuser', 'test@testing.com', 'password')
-
-        self.client.login(username='testuser', password='password')
+        super().setUp()
 
         self.scan_url = reverse('api-barcode-scan')
         self.assign_url = reverse('api-barcode-link')

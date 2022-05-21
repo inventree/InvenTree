@@ -4,11 +4,10 @@ import json
 from datetime import timedelta
 
 from django.test import TestCase, Client
-from django.contrib.auth import get_user_model
 from django.urls import reverse
 
 from InvenTree.api_tester import InvenTreeAPITestCase
-from InvenTree.helpers import str2bool
+from InvenTree.helpers import InvenTreeTestCase, str2bool
 from plugin.models import NotificationUserSetting, PluginConfig
 from plugin import registry
 
@@ -18,7 +17,7 @@ from .api import WebhookView
 CONTENT_TYPE_JSON = 'application/json'
 
 
-class SettingsTest(TestCase):
+class SettingsTest(InvenTreeTestCase):
     """
     Tests for the 'settings' model
     """
@@ -26,16 +25,6 @@ class SettingsTest(TestCase):
     fixtures = [
         'settings',
     ]
-
-    def setUp(self):
-
-        user = get_user_model()
-
-        self.user = user.objects.create_user('username', 'user@email.com', 'password')
-        self.user.is_staff = True
-        self.user.save()
-
-        self.client.login(username='username', password='password')
 
     def test_settings_objects(self):
 
