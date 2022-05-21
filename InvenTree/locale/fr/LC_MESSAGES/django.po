@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-19 11:18+0000\n"
-"PO-Revision-Date: 2022-05-20 01:09\n"
+"POT-Creation-Date: 2022-05-20 10:47+0000\n"
+"PO-Revision-Date: 2022-05-21 01:06\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -154,9 +154,9 @@ msgstr "Commentaire"
 msgid "File comment"
 msgstr "Commentaire du fichier"
 
-#: InvenTree/models.py:212 InvenTree/models.py:213 common/models.py:1550
-#: common/models.py:1551 common/models.py:1782 common/models.py:1783
-#: common/models.py:2010 common/models.py:2011 part/models.py:2369
+#: InvenTree/models.py:212 InvenTree/models.py:213 common/models.py:1571
+#: common/models.py:1572 common/models.py:1806 common/models.py:1807
+#: common/models.py:2034 common/models.py:2035 part/models.py:2369
 #: part/models.py:2389 plugin/models.py:261 plugin/models.py:262
 #: report/templates/report/inventree_test_report_base.html:96
 #: templates/js/translated/stock.js:2518
@@ -196,7 +196,7 @@ msgstr "Erreur lors du renommage du fichier"
 msgid "Invalid choice"
 msgstr "Choix invalide"
 
-#: InvenTree/models.py:340 InvenTree/models.py:341 common/models.py:1768
+#: InvenTree/models.py:340 InvenTree/models.py:341 common/models.py:1792
 #: company/models.py:426 label/models.py:109 part/models.py:811
 #: part/models.py:2553 plugin/models.py:100 report/models.py:174
 #: templates/InvenTree/notifications/notifications.html:84
@@ -900,7 +900,7 @@ msgstr "Stock d'origine de l'article"
 
 #: build/models.py:1405 build/serializers.py:190
 #: build/templates/build/build_base.html:82
-#: build/templates/build/detail.html:34 common/models.py:1593
+#: build/templates/build/detail.html:34 common/models.py:1614
 #: company/forms.py:39 company/templates/company/supplier_part.html:258
 #: order/models.py:881 order/models.py:1364 order/serializers.py:1097
 #: order/templates/order/order_wizard/match_parts.html:30 part/forms.py:123
@@ -2100,7 +2100,7 @@ msgstr ""
 msgid "Enable plugins to respond to internal events"
 msgstr ""
 
-#: common/models.py:1249 common/models.py:1543
+#: common/models.py:1249 common/models.py:1564
 msgid "Settings key (must be unique - case insensitive"
 msgstr "Clé du paramètre (doit être unique - insensible à la casse)"
 
@@ -2281,136 +2281,160 @@ msgid "Display parts in search preview window"
 msgstr ""
 
 #: common/models.py:1433
-msgid "Search Categories"
-msgstr ""
-
-#: common/models.py:1434
-msgid "Display part categories in search preview window"
-msgstr ""
-
-#: common/models.py:1440
-msgid "Search Stock"
-msgstr ""
-
-#: common/models.py:1441
-msgid "Display stock items in search preview window"
-msgstr ""
-
-#: common/models.py:1447
-msgid "Search Locations"
-msgstr ""
-
-#: common/models.py:1448
-msgid "Display stock locations in search preview window"
-msgstr ""
-
-#: common/models.py:1454
-msgid "Search Companies"
-msgstr ""
-
-#: common/models.py:1455
-msgid "Display companies in search preview window"
-msgstr ""
-
-#: common/models.py:1461
-msgid "Search Purchase Orders"
-msgstr ""
-
-#: common/models.py:1462
-msgid "Display purchase orders in search preview window"
-msgstr ""
-
-#: common/models.py:1468
-msgid "Search Sales Orders"
-msgstr ""
-
-#: common/models.py:1469
-msgid "Display sales orders in search preview window"
-msgstr ""
-
-#: common/models.py:1475
-msgid "Search Preview Results"
-msgstr ""
-
-#: common/models.py:1476
-msgid "Number of results to show in each section of the search preview window"
-msgstr ""
-
-#: common/models.py:1482
 msgid "Hide Inactive Parts"
 msgstr ""
 
+#: common/models.py:1434
+msgid "Excluded inactive parts from search preview window"
+msgstr ""
+
+#: common/models.py:1440
+msgid "Search Categories"
+msgstr ""
+
+#: common/models.py:1441
+msgid "Display part categories in search preview window"
+msgstr ""
+
+#: common/models.py:1447
+msgid "Search Stock"
+msgstr ""
+
+#: common/models.py:1448
+msgid "Display stock items in search preview window"
+msgstr ""
+
+#: common/models.py:1454
+msgid "Hide Unavailable Stock Items"
+msgstr ""
+
+#: common/models.py:1455
+msgid "Exclude stock items which are not available from the search preview window"
+msgstr ""
+
+#: common/models.py:1461
+msgid "Search Locations"
+msgstr ""
+
+#: common/models.py:1462
+msgid "Display stock locations in search preview window"
+msgstr ""
+
+#: common/models.py:1468
+msgid "Search Companies"
+msgstr ""
+
+#: common/models.py:1469
+msgid "Display companies in search preview window"
+msgstr ""
+
+#: common/models.py:1475
+msgid "Search Purchase Orders"
+msgstr ""
+
+#: common/models.py:1476
+msgid "Display purchase orders in search preview window"
+msgstr ""
+
+#: common/models.py:1482
+msgid "Exclude Inactive Purchase Orders"
+msgstr ""
+
 #: common/models.py:1483
-msgid "Hide inactive parts in search preview window"
+msgid "Exclude inactive purchase orders from search preview window"
 msgstr ""
 
 #: common/models.py:1489
-msgid "Show Quantity in Forms"
+msgid "Search Sales Orders"
 msgstr ""
 
 #: common/models.py:1490
-msgid "Display available part quantity in some forms"
+msgid "Display sales orders in search preview window"
 msgstr ""
 
 #: common/models.py:1496
-msgid "Escape Key Closes Forms"
+msgid "Exclude Inactive Sales Orders"
 msgstr ""
 
 #: common/models.py:1497
-msgid "Use the escape key to close modal forms"
+msgid "Exclude inactive sales orders from search preview window"
 msgstr ""
 
 #: common/models.py:1503
-msgid "Fixed Navbar"
+msgid "Search Preview Results"
 msgstr ""
 
 #: common/models.py:1504
-msgid "The navbar position is fixed to the top of the screen"
+msgid "Number of results to show in each section of the search preview window"
 msgstr ""
 
 #: common/models.py:1510
-msgid "Date Format"
+msgid "Show Quantity in Forms"
 msgstr ""
 
 #: common/models.py:1511
+msgid "Display available part quantity in some forms"
+msgstr ""
+
+#: common/models.py:1517
+msgid "Escape Key Closes Forms"
+msgstr ""
+
+#: common/models.py:1518
+msgid "Use the escape key to close modal forms"
+msgstr ""
+
+#: common/models.py:1524
+msgid "Fixed Navbar"
+msgstr ""
+
+#: common/models.py:1525
+msgid "The navbar position is fixed to the top of the screen"
+msgstr ""
+
+#: common/models.py:1531
+msgid "Date Format"
+msgstr ""
+
+#: common/models.py:1532
 msgid "Preferred format for displaying dates"
 msgstr "Format préféré pour l'affichage des dates"
 
-#: common/models.py:1525 part/templates/part/detail.html:39
+#: common/models.py:1546 part/templates/part/detail.html:39
 msgid "Part Scheduling"
 msgstr ""
 
-#: common/models.py:1526
+#: common/models.py:1547
 msgid "Display part scheduling information"
 msgstr ""
 
-#: common/models.py:1594 company/forms.py:40
+#: common/models.py:1615 company/forms.py:40
 msgid "Price break quantity"
 msgstr ""
 
-#: common/models.py:1601 company/serializers.py:288
+#: common/models.py:1622 company/serializers.py:288
 #: company/templates/company/supplier_part.html:263 order/models.py:921
 #: templates/js/translated/part.js:998 templates/js/translated/part.js:1974
 msgid "Price"
 msgstr "Prix"
 
-#: common/models.py:1602
+#: common/models.py:1623
 msgid "Unit price at specified quantity"
 msgstr ""
 
-#: common/models.py:1759 common/models.py:1896
+#: common/models.py:1783 common/models.py:1920
 msgid "Endpoint"
 msgstr ""
 
-#: common/models.py:1760
+#: common/models.py:1784
 msgid "Endpoint at which this webhook is received"
 msgstr ""
 
-#: common/models.py:1769
+#: common/models.py:1793
 msgid "Name for this webhook"
 msgstr ""
 
-#: common/models.py:1774 part/models.py:985 plugin/models.py:106
+#: common/models.py:1798 part/models.py:985 plugin/models.py:106
 #: templates/js/translated/table_filters.js:34
 #: templates/js/translated/table_filters.js:96
 #: templates/js/translated/table_filters.js:308
@@ -2418,67 +2442,67 @@ msgstr ""
 msgid "Active"
 msgstr "Actif"
 
-#: common/models.py:1775
+#: common/models.py:1799
 msgid "Is this webhook active"
 msgstr ""
 
-#: common/models.py:1789
+#: common/models.py:1813
 msgid "Token"
 msgstr ""
 
-#: common/models.py:1790
+#: common/models.py:1814
 msgid "Token for access"
 msgstr ""
 
-#: common/models.py:1797
+#: common/models.py:1821
 msgid "Secret"
 msgstr ""
 
-#: common/models.py:1798
+#: common/models.py:1822
 msgid "Shared secret for HMAC"
 msgstr ""
 
-#: common/models.py:1863
+#: common/models.py:1887
 msgid "Message ID"
 msgstr ""
 
-#: common/models.py:1864
+#: common/models.py:1888
 msgid "Unique identifier for this message"
 msgstr ""
 
-#: common/models.py:1872
+#: common/models.py:1896
 msgid "Host"
 msgstr ""
 
-#: common/models.py:1873
+#: common/models.py:1897
 msgid "Host from which this message was received"
 msgstr ""
 
-#: common/models.py:1880
+#: common/models.py:1904
 msgid "Header"
 msgstr ""
 
-#: common/models.py:1881
+#: common/models.py:1905
 msgid "Header of this message"
 msgstr ""
 
-#: common/models.py:1887
+#: common/models.py:1911
 msgid "Body"
 msgstr ""
 
-#: common/models.py:1888
+#: common/models.py:1912
 msgid "Body of this message"
 msgstr ""
 
-#: common/models.py:1897
+#: common/models.py:1921
 msgid "Endpoint on which this message was received"
 msgstr ""
 
-#: common/models.py:1902
+#: common/models.py:1926
 msgid "Worked on"
 msgstr ""
 
-#: common/models.py:1903
+#: common/models.py:1927
 msgid "Was the work on this message finished?"
 msgstr ""
 
@@ -2910,7 +2934,7 @@ msgstr ""
 #: part/templates/part/detail.html:77 part/templates/part/part_sidebar.html:37
 #: templates/InvenTree/index.html:252 templates/InvenTree/search.html:197
 #: templates/InvenTree/settings/sidebar.html:47
-#: templates/js/translated/search.js:173 templates/navbar.html:50
+#: templates/js/translated/search.js:190 templates/navbar.html:50
 #: users/models.py:45
 msgid "Purchase Orders"
 msgstr "Commandes d'achat"
@@ -2933,7 +2957,7 @@ msgstr "Nouvelle commande achat"
 #: part/templates/part/detail.html:100 part/templates/part/part_sidebar.html:41
 #: templates/InvenTree/index.html:283 templates/InvenTree/search.html:217
 #: templates/InvenTree/settings/sidebar.html:49
-#: templates/js/translated/search.js:190 templates/navbar.html:61
+#: templates/js/translated/search.js:214 templates/navbar.html:61
 #: users/models.py:46
 msgid "Sales Orders"
 msgstr "Ventes"
@@ -3192,7 +3216,7 @@ msgstr "Tarif"
 #: stock/templates/stock/location.html:161
 #: stock/templates/stock/location.html:173
 #: stock/templates/stock/location_sidebar.html:7
-#: templates/InvenTree/search.html:152 templates/js/translated/search.js:127
+#: templates/InvenTree/search.html:152 templates/js/translated/search.js:138
 #: templates/js/translated/stock.js:2312 users/models.py:43
 msgid "Stock Items"
 msgstr "Éléments en stock"
@@ -3214,7 +3238,7 @@ msgstr "Clients"
 msgid "New Customer"
 msgstr "Nouveaux Clients"
 
-#: company/views.py:66 templates/js/translated/search.js:159
+#: company/views.py:66 templates/js/translated/search.js:167
 msgid "Companies"
 msgstr "Entreprises"
 
@@ -6458,7 +6482,7 @@ msgid "Sublocations"
 msgstr ""
 
 #: stock/templates/stock/location.html:156 templates/InvenTree/search.html:164
-#: templates/js/translated/search.js:145 users/models.py:42
+#: templates/js/translated/search.js:153 users/models.py:42
 msgid "Stock Locations"
 msgstr ""
 
@@ -9322,11 +9346,11 @@ msgstr ""
 msgid "Sales Order(s) must be selected before printing report"
 msgstr ""
 
-#: templates/js/translated/search.js:286
+#: templates/js/translated/search.js:307
 msgid "Minimize results"
 msgstr ""
 
-#: templates/js/translated/search.js:289
+#: templates/js/translated/search.js:310
 msgid "Remove results"
 msgstr ""
 
