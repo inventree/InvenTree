@@ -39,13 +39,13 @@ steps:
 - script: |
     python -m pip install --upgrade pip setuptools wheel
     pip install -r requirements.txt
-    pip install unittest-xml-reporting coverage
+    pip install unittest-xml-reporting coverage invoke
   displayName: 'Install prerequisites'
 
 - script: |
     pushd '$(projectRoot)'
     invoke update
-    coverage run manage.py test --testrunner xmlrunner.extra.djangotestrunner.XMLTestRunner --no-input --source=.
+    coverage run manage.py test --testrunner xmlrunner.extra.djangotestrunner.XMLTestRunner --no-input
     coverage html
     coverage xml
   displayName: 'Run tests'
