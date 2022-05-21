@@ -46,7 +46,6 @@ steps:
     pushd '$(projectRoot)'
     invoke update
     coverage run manage.py test --testrunner xmlrunner.extra.djangotestrunner.XMLTestRunner --no-input
-    coverage html
     coverage xml
   displayName: 'Run tests'
   env:
