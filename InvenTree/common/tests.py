@@ -4,21 +4,20 @@ import json
 from datetime import timedelta
 
 from django.test import TestCase, Client
-from django.contrib.auth import get_user_model
 from django.urls import reverse
 
 from InvenTree.api_tester import InvenTreeAPITestCase
-from InvenTree.helpers import str2bool
+from InvenTree.helpers import InvenTreeTestCase, str2bool
 from plugin.models import NotificationUserSetting, PluginConfig
 from plugin import registry
 
-from .models import InvenTreeSetting, InvenTreeUserSetting, WebhookEndpoint, WebhookMessage, NotificationEntry
+from .models import InvenTreeSetting, InvenTreeUserSetting, WebhookEndpoint, WebhookMessage, NotificationEntry, ColorTheme
 from .api import WebhookView
 
 CONTENT_TYPE_JSON = 'application/json'
 
 
-class SettingsTest(TestCase):
+class SettingsTest(InvenTreeTestCase):
     """
     Tests for the 'settings' model
     """
@@ -26,16 +25,6 @@ class SettingsTest(TestCase):
     fixtures = [
         'settings',
     ]
-
-    def setUp(self):
-
-        user = get_user_model()
-
-        self.user = user.objects.create_user('username', 'user@email.com', 'password')
-        self.user.is_staff = True
-        self.user.save()
-
-        self.client.login(username='username', password='password')
 
     def test_settings_objects(self):
 
@@ -112,28 +101,70 @@ class SettingsTest(TestCase):
         self.assertIn('STOCK_OWNERSHIP_CONTROL', result)
         self.assertIn('SIGNUP_GROUP', result)
 
-    def test_required_values(self):
+    def run_settings_check(self, key, setting):
+
+        self.assertTrue(type(setting) is dict)
+
+        name = setting.get('name', None)
+
+        self.assertIsNotNone(name)
+        self.assertIn('django.utils.functional.lazy', str(type(name)))
+
+        description = setting.get('description', None)
+
+        self.assertIsNotNone(description)
+        self.assertIn('django.utils.functional.lazy', str(type(description)))
+
+        if key != key.upper():
+            raise ValueError(f"Setting key '{key}' is not uppercase")  # pragma: no cover
+
+        # Check that only allowed keys are provided
+        allowed_keys = [
+            'name',
+            'description',
+            'default',
+            'validator',
+            'hidden',
+            'choices',
+            'units',
+            'requires_restart',
+        ]
+
+        for k in setting.keys():
+            self.assertIn(k, allowed_keys)
+
+        # Check default value for boolean settings
+        validator = setting.get('validator', None)
+
+        if validator is bool:
+            default = setting.get('default', None)
+
+            # Default value *must* be supplied for boolean setting!
+            self.assertIsNotNone(default)
+
+            # Default value for boolean must itself be a boolean
+            self.assertIn(default, [True, False])
+
+    def test_setting_data(self):
         """
-        - Ensure that every global setting has a name.
-        - Ensure that every global setting has a description.
+        - Ensure that every setting has a name, which is translated
+        - Ensure that every setting has a description, which is translated
         """
 
-        for key in InvenTreeSetting.SETTINGS.keys():
+        for key, setting in InvenTreeSetting.SETTINGS.items():
 
-            setting = InvenTreeSetting.SETTINGS[key]
+            try:
+                self.run_settings_check(key, setting)
+            except Exception as exc:
+                print(f"run_settings_check failed for global setting '{key}'")
+                raise exc
 
-            name = setting.get('name', None)
-
-            if name is None:
-                raise ValueError(f'Missing GLOBAL_SETTING name for {key}')  # pragma: no cover
-
-            description = setting.get('description', None)
-
-            if description is None:
-                raise ValueError(f'Missing GLOBAL_SETTING description for {key}')  # pragma: no cover
-
-            if key != key.upper():
-                raise ValueError(f"SETTINGS key '{key}' is not uppercase")  # pragma: no cover
+        for key, setting in InvenTreeUserSetting.SETTINGS.items():
+            try:
+                self.run_settings_check(key, setting)
+            except Exception as exc:
+                print(f"run_settings_check failed for user setting '{key}'")
+                raise exc
 
     def test_defaults(self):
         """
@@ -674,3 +705,35 @@ class LoadingTest(TestCase):
 
         # now it should be false again
         self.assertFalse(common.models.InvenTreeSetting.get_setting('SERVER_RESTART_REQUIRED'))
+
+
+class ColorThemeTest(TestCase):
+    """Tests for ColorTheme"""
+
+    def test_choices(self):
+        """Test that default choices are returned"""
+        result = ColorTheme.get_color_themes_choices()
+
+        # skip
+        if not result:
+            return
+        self.assertIn(('default', 'Default'), result)
+
+    def test_valid_choice(self):
+        """Check that is_valid_choice works correctly"""
+        result = ColorTheme.get_color_themes_choices()
+
+        # skip
+        if not result:
+            return
+
+        # check wrong reference
+        self.assertFalse(ColorTheme.is_valid_choice('abcdd'))
+
+        # create themes
+        aa = ColorTheme.objects.create(user='aa', name='testname')
+        ab = ColorTheme.objects.create(user='ab', name='darker')
+
+        # check valid theme
+        self.assertFalse(ColorTheme.is_valid_choice(aa))
+        self.assertTrue(ColorTheme.is_valid_choice(ab))

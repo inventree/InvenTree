@@ -3,12 +3,13 @@
 from allauth.account.models import EmailAddress
 
 from django.conf import settings
-from django.contrib.auth import get_user_model
 
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
 import os
+
+from InvenTree.helpers import InvenTreeTestCase
 
 from .models import Part, PartCategory, PartCategoryStar, PartStar, PartTestTemplate
 from .models import rename_part_image
@@ -21,14 +22,8 @@ from common.models import InvenTreeSetting, InvenTreeUserSetting, NotificationEn
 from common.notifications import storage, UIMessageNotification
 
 
-class TemplateTagTest(TestCase):
+class TemplateTagTest(InvenTreeTestCase):
     """ Tests for the custom template tag code """
-
-    def setUp(self):
-        # Create a user for auth
-        user = get_user_model()
-        self.user = user.objects.create_user('testuser', 'test@testing.com', 'password')
-        self.client.login(username='testuser', password='password')
 
     def test_define(self):
         self.assertEqual(int(inventree_extras.define(3)), 3)
@@ -330,23 +325,12 @@ class TestTemplateTest(TestCase):
         self.assertEqual(variant.getTestTemplates().count(), n + 1)
 
 
-class PartSettingsTest(TestCase):
+class PartSettingsTest(InvenTreeTestCase):
     """
     Tests to ensure that the user-configurable default values work as expected.
 
     Some fields for the Part model can have default values specified by the user.
     """
-
-    def setUp(self):
-        # Create a user for auth
-        user = get_user_model()
-
-        self.user = user.objects.create_user(
-            username='testuser',
-            email='test@testing.com',
-            password='password',
-            is_staff=True
-        )
 
     def make_part(self):
         """
@@ -461,7 +445,7 @@ class PartSettingsTest(TestCase):
         Part.objects.create(name='abc', revision='6', description='A part', IPN=' ')
 
 
-class PartSubscriptionTests(TestCase):
+class PartSubscriptionTests(InvenTreeTestCase):
 
     fixtures = [
         'location',
@@ -470,15 +454,7 @@ class PartSubscriptionTests(TestCase):
     ]
 
     def setUp(self):
-        # Create a user for auth
-        user = get_user_model()
-
-        self.user = user.objects.create_user(
-            username='testuser',
-            email='test@testing.com',
-            password='password',
-            is_staff=True
-        )
+        super().setUp()
 
         # electronics / IC / MCU
         self.category = PartCategory.objects.get(pk=4)
@@ -578,7 +554,7 @@ class PartSubscriptionTests(TestCase):
         self.assertTrue(self.part.is_starred_by(self.user))
 
 
-class BaseNotificationIntegrationTest(TestCase):
+class BaseNotificationIntegrationTest(InvenTreeTestCase):
     """ Integration test for notifications """
 
     fixtures = [
@@ -589,15 +565,7 @@ class BaseNotificationIntegrationTest(TestCase):
     ]
 
     def setUp(self):
-        # Create a user for auth
-        user = get_user_model()
-
-        self.user = user.objects.create_user(
-            username='testuser',
-            email='test@testing.com',
-            password='password',
-            is_staff=True
-        )
+        super().setUp()
         # Add Mailadress
         EmailAddress.objects.create(user=self.user, email='test@testing.com')
 

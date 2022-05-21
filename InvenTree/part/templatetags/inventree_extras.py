@@ -83,7 +83,7 @@ def render_date(context, date_object):
 
         user = context.get('user', None)
 
-        if user:
+        if user and user.is_authenticated:
             # User is specified - look for their date display preference
             user_date_format = InvenTreeUserSetting.get_setting('DATE_DISPLAY_FORMAT', user=user)
         else:
@@ -329,7 +329,7 @@ def settings_value(key, *args, **kwargs):
     """
 
     if 'user' in kwargs:
-        if not kwargs['user']:
+        if not kwargs['user'] or (kwargs['user'] and kwargs['user'].is_authenticated is False):
             return InvenTreeUserSetting.get_setting(key)
         return InvenTreeUserSetting.get_setting(key, user=kwargs['user'])
 

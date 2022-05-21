@@ -6,16 +6,14 @@ import csv
 import io
 import re
 
-from django.http.response import StreamingHttpResponse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.http.response import StreamingHttpResponse
+
 from rest_framework.test import APITestCase
 
 
-class InvenTreeAPITestCase(APITestCase):
-    """
-    Base class for running InvenTree API tests
-    """
+class UserMixin:
 
     # User information
     username = 'testuser'
@@ -52,36 +50,48 @@ class InvenTreeAPITestCase(APITestCase):
 
         self.user.save()
 
-        for role in self.roles:
-            self.assignRole(role)
+        # Assign all roles if set
+        if self.roles == 'all':
+            self.assignRole(assign_all=True)
+        # else filter the roles
+        else:
+            for role in self.roles:
+                self.assignRole(role)
 
         if self.auto_login:
             self.client.login(username=self.username, password=self.password)
 
-    def assignRole(self, role):
+    def assignRole(self, role=None, assign_all: bool = False):
         """
         Set the user roles for the registered user
         """
 
         # role is of the format 'rule.permission' e.g. 'part.add'
 
-        rule, perm = role.split('.')
+        if not assign_all and role:
+            rule, perm = role.split('.')
 
         for ruleset in self.group.rule_sets.all():
 
-            if ruleset.name == rule:
+            if assign_all or ruleset.name == rule:
 
-                if perm == 'view':
+                if assign_all or perm == 'view':
                     ruleset.can_view = True
-                elif perm == 'change':
+                elif assign_all or perm == 'change':
                     ruleset.can_change = True
-                elif perm == 'delete':
+                elif assign_all or perm == 'delete':
                     ruleset.can_delete = True
-                elif perm == 'add':
+                elif assign_all or perm == 'add':
                     ruleset.can_add = True
 
                 ruleset.save()
                 break
+
+
+class InvenTreeAPITestCase(UserMixin, APITestCase):
+    """
+    Base class for running InvenTree API tests
+    """
 
     def getActions(self, url):
         """

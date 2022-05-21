@@ -2,10 +2,6 @@ from datetime import datetime, timedelta
 
 from django.urls import reverse
 
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
-
-from rest_framework.test import APITestCase
 from rest_framework import status
 
 from part.models import Part
@@ -16,7 +12,7 @@ from InvenTree.status_codes import BuildStatus
 from InvenTree.api_tester import InvenTreeAPITestCase
 
 
-class TestBuildAPI(APITestCase):
+class TestBuildAPI(InvenTreeAPITestCase):
     """
     Series of tests for the Build DRF API
     - Tests for Build API
@@ -30,25 +26,11 @@ class TestBuildAPI(APITestCase):
         'build',
     ]
 
-    def setUp(self):
-        # Create a user for auth
-        user = get_user_model()
-        self.user = user.objects.create_user('testuser', 'test@testing.com', 'password')
-
-        g = Group.objects.create(name='builders')
-        self.user.groups.add(g)
-
-        for rule in g.rule_sets.all():
-            if rule.name == 'build':
-                rule.can_change = True
-                rule.can_add = True
-                rule.can_delete = True
-
-                rule.save()
-
-        g.save()
-
-        self.client.login(username='testuser', password='password')
+    roles = [
+        'build.change',
+        'build.add',
+        'build.delete',
+    ]
 
     def test_get_build_list(self):
         """

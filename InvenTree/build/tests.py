@@ -1,10 +1,8 @@
-from django.test import TestCase
 from django.urls import reverse
 
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
-
 from datetime import datetime, timedelta
+
+from InvenTree.helpers import InvenTreeTestCase
 
 from .models import Build
 from stock.models import StockItem
@@ -12,7 +10,7 @@ from stock.models import StockItem
 from InvenTree.status_codes import BuildStatus
 
 
-class BuildTestSimple(TestCase):
+class BuildTestSimple(InvenTreeTestCase):
 
     fixtures = [
         'category',
@@ -21,27 +19,11 @@ class BuildTestSimple(TestCase):
         'build',
     ]
 
-    def setUp(self):
-        # Create a user for auth
-        user = get_user_model()
-        user.objects.create_user('testuser', 'test@testing.com', 'password')
-
-        self.user = user.objects.get(username='testuser')
-
-        g = Group.objects.create(name='builders')
-        self.user.groups.add(g)
-
-        for rule in g.rule_sets.all():
-            if rule.name == 'build':
-                rule.can_change = True
-                rule.can_add = True
-                rule.can_delete = True
-
-                rule.save()
-
-        g.save()
-
-        self.client.login(username='testuser', password='password')
+    roles = [
+        'build.change',
+        'build.add',
+        'build.delete',
+    ]
 
     def test_build_objects(self):
         # Ensure the Build objects were correctly created
@@ -106,7 +88,7 @@ class BuildTestSimple(TestCase):
         self.assertEqual(build.status, BuildStatus.CANCELLED)
 
 
-class TestBuildViews(TestCase):
+class TestBuildViews(InvenTreeTestCase):
     """ Tests for Build app views """
 
     fixtures = [
@@ -116,27 +98,14 @@ class TestBuildViews(TestCase):
         'build',
     ]
 
+    roles = [
+        'build.change',
+        'build.add',
+        'build.delete',
+    ]
+
     def setUp(self):
         super().setUp()
-
-        # Create a user
-        user = get_user_model()
-        self.user = user.objects.create_user('username', 'user@email.com', 'password')
-
-        g = Group.objects.create(name='builders')
-        self.user.groups.add(g)
-
-        for rule in g.rule_sets.all():
-            if rule.name == 'build':
-                rule.can_change = True
-                rule.can_add = True
-                rule.can_delete = True
-
-                rule.save()
-
-        g.save()
-
-        self.client.login(username='username', password='password')
 
         # Create a build output for build # 1
         self.build = Build.objects.get(pk=1)
