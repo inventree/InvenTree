@@ -20,7 +20,7 @@ class PluginAppConfig(AppConfig):
     def ready(self):
         if settings.PLUGINS_ENABLED:
             if not canAppAccessDatabase(allow_test=True):
-                logger.info("Skipping plugin loading sequence")
+                logger.info("Skipping plugin loading sequence")  # pragma: no cover
             else:
                 logger.info('Loading InvenTree plugins')
 
@@ -48,4 +48,4 @@ class PluginAppConfig(AppConfig):
                 log_error(_('Your enviroment has an outdated git version. This prevents InvenTree from loading plugin details.'), 'load')
 
         else:
-            logger.info("Plugins not enabled - skipping loading sequence")
+            logger.info("Plugins not enabled - skipping loading sequence")  # pragma: no cover
