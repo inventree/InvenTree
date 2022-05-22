@@ -48,7 +48,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
         elif len(parts) == 1:
             url += f'?{url_single}={parts[0].pk}'
         elif len(parts) > 1:
-            url += '?&'.join([f'{url_single}s={item.pk}' for item in parts])
+            url += '?' + '&'.join([f'{url_single}s={item.pk}' for item in parts])
 
         # Append an invalid item
         if invalid:
