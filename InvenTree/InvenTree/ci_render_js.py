@@ -4,7 +4,7 @@ only used for testing the js files! - This file is omited from coverage
 """
 
 import os  # pragma: no cover
-import pathlib
+import pathlib  # pragma: no cover
 
 from InvenTree.helpers import InvenTreeTestCase  # pragma: no cover
 

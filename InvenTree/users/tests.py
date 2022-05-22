@@ -180,10 +180,22 @@ class OwnerModelTest(InvenTreeTestCase):
         group_as_owner = Owner.get_owner(self.group)
         self.assertEqual(type(group_as_owner), Owner)
 
+        # Check name
+        self.assertEqual(str(user_as_owner), 'testuser (user)')
+
         # Get related owners (user + group)
         related_owners = group_as_owner.get_related_owners(include_group=True)
         self.assertTrue(user_as_owner in related_owners)
         self.assertTrue(group_as_owner in related_owners)
+
+        # Get related owners (only user)
+        related_owners = group_as_owner.get_related_owners(include_group=False)
+        self.assertTrue(user_as_owner in related_owners)
+        self.assertFalse(group_as_owner in related_owners)
+
+        # Get related owners on user
+        related_owners = user_as_owner.get_related_owners()
+        self.assertEqual(related_owners, [user_as_owner])
 
         # Check owner matching
         owners = Owner.get_owners_matching_user(self.user)

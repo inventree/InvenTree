@@ -57,10 +57,10 @@ class SettingsMixin:
         except (OperationalError, ProgrammingError):  # pragma: no cover
             plugin = None
 
-        if not plugin:
+        if not plugin:  # pragma: no cover
             # Cannot find associated plugin model, return
             logger.error(f"Plugin configuration not found for plugin '{self.slug}'")
-            return  # pragma: no cover
+            return
 
         PluginSetting.set_setting(key, value, user, plugin=plugin)
 

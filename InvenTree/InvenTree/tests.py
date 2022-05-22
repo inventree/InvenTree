@@ -412,7 +412,7 @@ class CurrencyTests(TestCase):
                 update_successful = True
                 break
 
-            else:
+            else:  # pragma: no cover
                 print("Exchange rate update failed - retrying")
                 time.sleep(1)
 

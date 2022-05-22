@@ -58,7 +58,7 @@ class TemplateTagTest(InvenTreeTestCase):
 
     def test_hash(self):
         result_hash = inventree_extras.inventree_commit_hash()
-        if settings.DOCKER:
+        if settings.DOCKER:  # pragma: no cover
             # Testing inside docker environment *may* return an empty git commit hash
             # In such a case, skip this check
             pass
@@ -67,7 +67,7 @@ class TemplateTagTest(InvenTreeTestCase):
 
     def test_date(self):
         d = inventree_extras.inventree_commit_date()
-        if settings.DOCKER:
+        if settings.DOCKER:  # pragma: no cover
             # Testing inside docker environment *may* return an empty git commit hash
             # In such a case, skip this check
             pass
