@@ -1,16 +1,15 @@
 from django.contrib import admin
 
-from import_export.admin import ImportExportModelAdmin
-from import_export.resources import ModelResource
-from import_export.fields import Field
 import import_export.widgets as widgets
-
-from .models import Company
-from .models import SupplierPart
-from .models import SupplierPriceBreak
-from .models import ManufacturerPart, ManufacturerPartAttachment, ManufacturerPartParameter
+from import_export.admin import ImportExportModelAdmin
+from import_export.fields import Field
+from import_export.resources import ModelResource
 
 from part.models import Part
+
+from .models import (Company, ManufacturerPart, ManufacturerPartAttachment,
+                     ManufacturerPartParameter, SupplierPart,
+                     SupplierPriceBreak)
 
 
 class CompanyResource(ModelResource):

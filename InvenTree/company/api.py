@@ -2,25 +2,24 @@
 Provides a JSON API for the Company app
 """
 
-from django_filters.rest_framework import DjangoFilterBackend
-from django_filters import rest_framework as rest_filters
-
-from rest_framework import filters
-from rest_framework import generics
-
-from django.urls import include, re_path
 from django.db.models import Q
+from django.urls import include, re_path
 
-from InvenTree.helpers import str2bool
+from django_filters import rest_framework as rest_filters
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, generics
+
 from InvenTree.api import AttachmentMixin
+from InvenTree.helpers import str2bool
 
-from .models import Company
-from .models import ManufacturerPart, ManufacturerPartAttachment, ManufacturerPartParameter
-from .models import SupplierPart, SupplierPriceBreak
-
-from .serializers import CompanySerializer
-from .serializers import ManufacturerPartSerializer, ManufacturerPartAttachmentSerializer, ManufacturerPartParameterSerializer
-from .serializers import SupplierPartSerializer, SupplierPriceBreakSerializer
+from .models import (Company, ManufacturerPart, ManufacturerPartAttachment,
+                     ManufacturerPartParameter, SupplierPart,
+                     SupplierPriceBreak)
+from .serializers import (CompanySerializer,
+                          ManufacturerPartAttachmentSerializer,
+                          ManufacturerPartParameterSerializer,
+                          ManufacturerPartSerializer, SupplierPartSerializer,
+                          SupplierPriceBreakSerializer)
 
 
 class CompanyList(generics.ListCreateAPIView):

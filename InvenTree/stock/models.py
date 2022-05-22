@@ -3,49 +3,40 @@ Stock database model definitions
 """
 
 import os
+from datetime import datetime, timedelta
+from decimal import Decimal, InvalidOperation
+
+from django.contrib.auth.models import User
+from django.core.exceptions import FieldError, ValidationError
+from django.core.validators import MinValueValidator
+from django.db import models, transaction
+from django.db.models import Q, Sum
+from django.db.models.functions import Coalesce
+from django.db.models.signals import post_delete, post_save, pre_delete
+from django.dispatch import receiver
+from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 from jinja2 import Template
-
-from django.utils.translation import gettext_lazy as _
-from django.core.exceptions import ValidationError, FieldError
-from django.urls import reverse
-
-from django.db import models, transaction
-from django.db.models import Sum, Q
-from django.db.models.functions import Coalesce
-from django.core.validators import MinValueValidator
-from django.contrib.auth.models import User
-from django.db.models.signals import pre_delete, post_save, post_delete
-from django.dispatch import receiver
-
 from markdownx.models import MarkdownxField
-
-from mptt.models import MPTTModel, TreeForeignKey
 from mptt.managers import TreeManager
+from mptt.models import MPTTModel, TreeForeignKey
 
-from decimal import Decimal, InvalidOperation
-from datetime import datetime, timedelta
-
+import common.models
 import InvenTree.helpers
 import InvenTree.ready
 import InvenTree.tasks
-
-import common.models
-import report.models
 import label.models
-
-from plugin.models import MetadataMixin
-from plugin.events import trigger_event
-
-from InvenTree.status_codes import StockStatus, StockHistoryCode
-from InvenTree.models import InvenTreeTree, InvenTreeAttachment
-from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
-from InvenTree.serializers import extract_int
-
-from users.models import Owner
-
+import report.models
 from company import models as CompanyModels
+from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
+from InvenTree.models import InvenTreeAttachment, InvenTreeTree
+from InvenTree.serializers import extract_int
+from InvenTree.status_codes import StockHistoryCode, StockStatus
 from part import models as PartModels
+from plugin.events import trigger_event
+from plugin.models import MetadataMixin
+from users.models import Owner
 
 
 class StockLocation(MetadataMixin, InvenTreeTree):

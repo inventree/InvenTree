@@ -3,44 +3,40 @@ Common database model definitions.
 These models are 'generic' and do not fit a particular business logic object.
 """
 
-import os
+import base64
 import decimal
-import math
-import uuid
+import hashlib
 import hmac
 import json
-import hashlib
-import base64
-from secrets import compare_digest
+import logging
+import math
+import os
+import uuid
 from datetime import datetime, timedelta
+from secrets import compare_digest
 
 from django.apps import apps
-from django.db import models, transaction
-from django.db.utils import IntegrityError, OperationalError
 from django.conf import settings
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group, User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator, URLValidator
+from django.db import models, transaction
+from django.db.utils import IntegrityError, OperationalError
 from django.urls import reverse
 from django.utils.timezone import now
+from django.utils.translation import gettext_lazy as _
 
-from djmoney.settings import CURRENCY_CHOICES
-from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
-
+from djmoney.contrib.exchange.models import convert_money
+from djmoney.settings import CURRENCY_CHOICES
 from rest_framework.exceptions import PermissionDenied
 
-from django.utils.translation import gettext_lazy as _
-from django.core.validators import MinValueValidator, URLValidator
-from django.core.exceptions import ValidationError
-
-import InvenTree.helpers
 import InvenTree.fields
+import InvenTree.helpers
 import InvenTree.validators
-
-import logging
-
 
 logger = logging.getLogger('inventree')
 

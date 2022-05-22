@@ -1,12 +1,11 @@
 """ Unit tests for Order views (see views.py) """
 
-from django.test import TestCase
 from django.urls import reverse
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
+
+from InvenTree.helpers import InvenTreeTestCase
 
 
-class OrderViewTestCase(TestCase):
+class OrderViewTestCase(InvenTreeTestCase):
 
     fixtures = [
         'category',
@@ -19,27 +18,14 @@ class OrderViewTestCase(TestCase):
         'order',
     ]
 
-    def setUp(self):
-        super().setUp()
-
-        # Create a user
-        user = get_user_model().objects.create_user('username', 'user@email.com', 'password')
-
-        # Ensure that the user has the correct permissions!
-        g = Group.objects.create(name='orders')
-        user.groups.add(g)
-
-        for rule in g.rule_sets.all():
-            if rule.name in ['purchase_order', 'sales_order']:
-                rule.can_change = True
-                rule.can_add = True
-                rule.can_delete = True
-
-                rule.save()
-
-        g.save()
-
-        self.client.login(username='username', password='password')
+    roles = [
+        'purchase_order.change',
+        'purchase_order.add',
+        'purchase_order.delete',
+        'sales_order.change',
+        'sales_order.add',
+        'sales_order.delete',
+    ]
 
 
 class OrderListTest(OrderViewTestCase):

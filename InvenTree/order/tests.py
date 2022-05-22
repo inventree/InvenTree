@@ -2,15 +2,15 @@
 
 from datetime import datetime, timedelta
 
-from django.test import TestCase
 import django.core.exceptions as django_exceptions
+from django.test import TestCase
 
-from part.models import Part
-from .models import PurchaseOrder, PurchaseOrderLineItem
-from stock.models import StockLocation
 from company.models import SupplierPart
-
 from InvenTree.status_codes import PurchaseOrderStatus
+from part.models import Part
+from stock.models import StockLocation
+
+from .models import PurchaseOrder, PurchaseOrderLineItem
 
 
 class OrderTest(TestCase):

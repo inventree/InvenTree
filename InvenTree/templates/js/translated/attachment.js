@@ -14,7 +14,7 @@
 
 /*
  * Add callbacks to buttons for creating new attachments.
- * 
+ *
  * Note: Attachments can also be external links!
  */
 function addAttachmentButtonCallbacks(url, fields={}) {
@@ -46,7 +46,7 @@ function addAttachmentButtonCallbacks(url, fields={}) {
         };
 
         Object.assign(link_fields, fields);
-        
+
         constructForm(url, {
             fields: link_fields,
             method: 'POST',
@@ -88,7 +88,7 @@ function loadAttachmentTable(url, options) {
                 constructForm(`${url}${pk}/`, {
                     fields: {
                         link: {},
-                        comment: {}, 
+                        comment: {},
                     },
                     processResults: function(data, fields, opts) {
                         // Remove the "link" field if the attachment is a file!
@@ -100,7 +100,7 @@ function loadAttachmentTable(url, options) {
                     title: '{% trans "Edit Attachment" %}',
                 });
             });
-            
+
             // Add callback for 'delete' button
             $(table).find('.button-attachment-delete').click(function() {
                 var pk = $(this).attr('pk');

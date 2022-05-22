@@ -1,27 +1,17 @@
 """Tests for middleware functions"""
 
-from django.test import TestCase
-
-from django.contrib.auth import get_user_model
 from django.urls import reverse
 
+from InvenTree.helpers import InvenTreeTestCase
 
-class MiddlewareTests(TestCase):
+
+class MiddlewareTests(InvenTreeTestCase):
     """Test for middleware functions"""
 
     def check_path(self, url, code=200, **kwargs):
         response = self.client.get(url, HTTP_ACCEPT='application/json', **kwargs)
         self.assertEqual(response.status_code, code)
         return response
-
-    def setUp(self):
-        super().setUp()
-
-        # Create a user
-        user = get_user_model()
-
-        self.user = user.objects.create_user(username='username', email='user@email.com', password='password')
-        self.client.login(username='username', password='password')
 
     def test_AuthRequiredMiddleware(self):
         """Test the auth middleware"""

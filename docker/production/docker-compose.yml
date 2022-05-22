@@ -27,7 +27,7 @@ version: "3.8"
 # ------------------------
 # By default, this docker-compose script targets the STABLE version of InvenTree,
 # image: inventree/inventree:stable
-# 
+#
 # To run the LATEST (development) version of InvenTree, change the target image to:
 # image: inventree/inventree:latest
 #

@@ -5,20 +5,19 @@ Custom exception handling for the DRF API
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import traceback
 import sys
+import traceback
 
 from django.conf import settings
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import gettext_lazy as _
 from django.views.debug import ExceptionReporter
 
+import rest_framework.views as drfviews
 from error_report.models import Error
-
+from rest_framework import serializers
 from rest_framework.exceptions import ValidationError as DRFValidationError
 from rest_framework.response import Response
-from rest_framework import serializers
-import rest_framework.views as drfviews
 
 
 def exception_handler(exc, context):

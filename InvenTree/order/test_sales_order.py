@@ -1,21 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from django.test import TestCase
-
-from django.core.exceptions import ValidationError
-
 from datetime import datetime, timedelta
 
-from company.models import Company
-
-from InvenTree import status_codes as status
+from django.core.exceptions import ValidationError
+from django.test import TestCase
 
 from common.models import InvenTreeSetting
-
-from order.models import SalesOrder, SalesOrderLineItem, SalesOrderAllocation, SalesOrderShipment
-
+from company.models import Company
+from InvenTree import status_codes as status
+from order.models import (SalesOrder, SalesOrderAllocation, SalesOrderLineItem,
+                          SalesOrderShipment)
 from part.models import Part
-
 from stock.models import StockItem
 
 

@@ -5,9 +5,9 @@ from django.utils.translation import ugettext_lazy as _
 
 from allauth.account.models import EmailAddress
 
+import InvenTree.tasks
 from plugin import InvenTreePlugin
 from plugin.mixins import BulkNotificationMethod, SettingsMixin
-import InvenTree.tasks
 
 
 class PlgMixin:

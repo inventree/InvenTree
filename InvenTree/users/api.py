@@ -1,19 +1,16 @@
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
-
 from django.urls import include, path, re_path
 
 from django_filters.rest_framework import DjangoFilterBackend
-
-from rest_framework import filters, generics, permissions
-from rest_framework.views import APIView
+from rest_framework import filters, generics, permissions, status
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework.views import APIView
 
-from users.models import RuleSet, Owner, check_user_role
-from users.serializers import UserSerializer, OwnerSerializer
+from users.models import Owner, RuleSet, check_user_role
+from users.serializers import OwnerSerializer, UserSerializer
 
 
 class OwnerList(generics.ListAPIView):

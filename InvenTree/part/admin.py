@@ -1,12 +1,12 @@
 from django.contrib import admin
 
+import import_export.widgets as widgets
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 from import_export.resources import ModelResource
-import import_export.widgets as widgets
 
-from company.models import SupplierPart
 import part.models as models
+from company.models import SupplierPart
 from stock.models import StockLocation
 
 

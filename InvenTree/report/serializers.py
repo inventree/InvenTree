@@ -1,11 +1,9 @@
 
-from InvenTree.serializers import InvenTreeModelSerializer
-from InvenTree.serializers import InvenTreeAttachmentSerializerField
+from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
+                                   InvenTreeModelSerializer)
 
-from .models import TestReport
-from .models import BuildReport
-from .models import BillOfMaterialsReport
-from .models import PurchaseOrderReport, SalesOrderReport
+from .models import (BillOfMaterialsReport, BuildReport, PurchaseOrderReport,
+                     SalesOrderReport, TestReport)
 
 
 class TestReportSerializer(InvenTreeModelSerializer):
