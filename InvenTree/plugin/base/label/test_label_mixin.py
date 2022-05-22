@@ -4,9 +4,10 @@ from django.apps import apps
 from django.urls import reverse
 
 from InvenTree.api_tester import InvenTreeAPITestCase
-from label.models import PartLabel
+from label.models import PartLabel, StockItemLabel, StockLocationLabel
 from part.models import Part
 from plugin.registry import registry
+from stock.models import StockItem, StockLocation
 
 
 class LabelMixinTests(InvenTreeAPITestCase):
@@ -28,15 +29,15 @@ class LabelMixinTests(InvenTreeAPITestCase):
         config.active = True
         config.save()
 
-    def get_url(self, parts, plugin_ref, label):
+    def get_url(self, parts, plugin_ref, label, url_name: str = 'api-part-label-print', url_single: str = 'part'):
         """Generate an URL to print a label"""
         # Gather part details
         if len(parts) == 1:
-            part_url = f'part={parts[0].pk}'
+            part_url = f'{url_single}={parts[0].pk}'
         else:
-            part_url = '&'.join([f'parts={item.pk}' for item in parts])
+            part_url = '&'.join([f'{url_single}s={item.pk}' for item in parts])
         # Construct url
-        url = f'{reverse("api-part-label-print", kwargs={"pk": label.pk})}?{part_url}'
+        url = f'{reverse(url_name, kwargs={"pk": label.pk})}?{part_url}'
         if plugin_ref:
             url += f'&plugin={plugin_ref}'
         return url
@@ -129,3 +130,35 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
         # Print multiple parts without a plugin
         self.get(self.get_url(Part.objects.all()[:2], None, label), expected_code=200)
+
+    def test_printing_endpoints(self):
+        """Cover the endpoints not covered by `test_printing_process`"""
+        plugin_ref = 'samplelabel'
+
+        # Activate the label components
+        apps.get_app_config('label').create_labels()
+        self.activate_plugin()
+
+        def run_print_test(label, qs, url_name, url_single):
+            """Run tests on single and multiple page printing
+
+            Args:
+                label (_type_): class of the label
+                qs (_type_): class of the base queryset
+                url_name (_type_): url for printing endpoint
+                url_single (_type_): item lookup reference
+            """
+            label = label.objects.first()
+            qs = qs.objects.all()
+
+            # Single page printing
+            self.get(self.get_url(qs[:1], plugin_ref, label, url_name, url_single), expected_code=200)
+
+            # Multi page printing
+            self.get(self.get_url(qs[:2], plugin_ref, label, url_name, url_single), expected_code=200)
+
+        # Test StockItemLabels
+        run_print_test(StockItemLabel, StockItem, 'api-stockitem-label-print', 'item')
+
+        # Test StockLocationLabels
+        run_print_test(StockLocationLabel, StockLocation, 'api-stocklocation-label-print', 'location')
