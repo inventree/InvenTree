@@ -501,7 +501,11 @@ class PluginSettingsApiTest(InvenTreeAPITestCase):
         """List installed plugins via API"""
         url = reverse('api-plugin-list')
 
+        # Simple request
         self.get(url, expected_code=200)
+
+        # Request with filter
+        self.get(url, expected_code=200, data={'mixin': 'settings'})
 
     def test_api_list(self):
         """Test list URL"""
