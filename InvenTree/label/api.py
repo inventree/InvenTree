@@ -61,7 +61,7 @@ class LabelPrintMixin:
         """
 
         if not settings.PLUGINS_ENABLED:
-            return None
+            return None  # pragma: no cover
 
         plugin_key = request.query_params.get('plugin', None)
 
