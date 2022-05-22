@@ -36,7 +36,9 @@ class LabelMixinTests(InvenTreeAPITestCase):
         else:
             part_url = '&'.join([f'parts={item.pk}' for item in parts])
         # Construct url
-        url = f'{reverse("api-part-label-print", kwargs={"pk": label.pk})}?{part_url}&plugin={plugin_ref}'
+        url = f'{reverse("api-part-label-print", kwargs={"pk": label.pk})}?{part_url}'
+        if plugin_ref:
+            url += f'&plugin={plugin_ref}'
         return url
 
     def test_installed(self):
@@ -118,4 +120,12 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
         # Active plugin
         self.activate_plugin()
+
+        # Print one part
         self.get(url, expected_code=200)
+
+        # Print multiple parts
+        self.get(self.get_url(Part.objects.all()[:2], plugin_ref, label), expected_code=200)
+
+        # Print multiple parts without a plugin
+        self.get(self.get_url(Part.objects.all()[:2], None, label), expected_code=200)
