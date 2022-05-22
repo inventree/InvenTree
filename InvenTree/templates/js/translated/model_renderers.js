@@ -21,9 +21,9 @@
 /*
  * This file contains functions for rendering various InvenTree database models,
  * in particular for displaying them in modal forms in a 'select2' context.
- * 
+ *
  * Each renderer is provided with three arguments:
- * 
+ *
  * - name: The 'name' of the model instance in the referring model
  * - data: JSON data which represents the model instance. Returned via a GET request.
  * - parameters: The field parameters provided via an OPTIONS request to the endpoint.
@@ -40,7 +40,7 @@ function renderId(title, pk, parameters={}) {
     if ('render_pk' in parameters) {
         render = parameters['render_pk'];
     }
-    
+
     if (render) {
         return `<span class='float-right'><small>${title}: ${pk}</small></span>`;
     } else {
@@ -52,7 +52,7 @@ function renderId(title, pk, parameters={}) {
 // Renderer for "Company" model
 // eslint-disable-next-line no-unused-vars
 function renderCompany(name, data, parameters={}, options={}) {
-    
+
     var html = select2Thumbnail(data.image);
 
     html += `<span><b>${data.name}</b></span> - <i>${data.description}</i>`;
@@ -68,11 +68,11 @@ function renderCompany(name, data, parameters={}, options={}) {
 function renderStockItem(name, data, parameters={}, options={}) {
 
     var image = blankImage();
-    
+
     if (data.part_detail) {
         image = data.part_detail.thumbnail || data.part_detail.image || blankImage();
     }
-    
+
     var render_part_detail = true;
 
     if ('render_part_detail' in parameters) {
@@ -151,12 +151,12 @@ function renderStockLocation(name, data, parameters={}, options={}) {
 
 // eslint-disable-next-line no-unused-vars
 function renderBuild(name, data, parameters={}, options={}) {
-    
+
     var image = null;
 
     if (data.part_detail && data.part_detail.thumbnail) {
         image = data.part_detail.thumbnail;
-    } 
+    }
 
     var html = select2Thumbnail(image);
 
@@ -173,7 +173,7 @@ function renderBuild(name, data, parameters={}, options={}) {
 function renderPart(name, data, parameters={}, options={}) {
 
     var html = select2Thumbnail(data.image);
-    
+
     html += ` <span>${data.full_name || data.name}</span>`;
 
     if (data.description) {
@@ -245,9 +245,9 @@ function renderPurchaseOrder(name, data, parameters={}, options={}) {
 
     var prefix = global_settings.PURCHASEORDER_REFERENCE_PREFIX;
     var html = `<span>${prefix}${data.reference}</span>`;
-    
+
     var thumbnail = null;
-    
+
     if (data.supplier_detail) {
         thumbnail = data.supplier_detail.thumbnail || data.supplier_detail.image;
 
@@ -268,10 +268,10 @@ function renderPurchaseOrder(name, data, parameters={}, options={}) {
 // Renderer for "SalesOrder" model
 // eslint-disable-next-line no-unused-vars
 function renderSalesOrder(name, data, parameters={}, options={}) {
-    
+
     var prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
     var html = `<span>${prefix}${data.reference}</span>`;
-    
+
     var thumbnail = null;
 
     if (data.customer_detail) {
@@ -335,7 +335,7 @@ function renderPartParameterTemplate(name, data, parameters={}, options={}) {
     if (data.units) {
         units = ` [${data.units}]`;
     }
-    
+
     var html = `<span>${data.name}${units}</span>`;
 
     return html;
@@ -377,7 +377,7 @@ function renderSupplierPart(name, data, parameters={}, options={}) {
 
     var supplier_image = null;
     var part_image = null;
-    
+
     if (data.supplier_detail) {
         supplier_image = data.supplier_detail.image;
     }
@@ -387,13 +387,13 @@ function renderSupplierPart(name, data, parameters={}, options={}) {
     }
 
     var html = '';
-    
+
     html += select2Thumbnail(supplier_image);
-    
+
     if (data.part_detail) {
         html += select2Thumbnail(part_image);
     }
-    
+
     if (data.supplier_detail) {
         html += ` <span><b>${data.supplier_detail.name}</b> - ${data.SKU}</span>`;
     }

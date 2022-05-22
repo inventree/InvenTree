@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import StockItemLabel, StockLocationLabel, PartLabel
+from .models import PartLabel, StockItemLabel, StockLocationLabel
 
 
 class LabelAdmin(admin.ModelAdmin):

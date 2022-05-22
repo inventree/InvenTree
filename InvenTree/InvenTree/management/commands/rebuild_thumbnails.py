@@ -4,18 +4,17 @@ Custom management command to rebuild thumbnail images
 - May be required after importing a new dataset, for example
 """
 
-import os
 import logging
+import os
+
+from django.conf import settings
+from django.core.management.base import BaseCommand
+from django.db.utils import OperationalError, ProgrammingError
 
 from PIL import UnidentifiedImageError
 
-from django.core.management.base import BaseCommand
-from django.conf import settings
-from django.db.utils import OperationalError, ProgrammingError
-
 from company.models import Company
 from part.models import Part
-
 
 logger = logging.getLogger('inventree')
 

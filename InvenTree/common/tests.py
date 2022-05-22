@@ -1,24 +1,24 @@
 
-from http import HTTPStatus
 import json
 from datetime import timedelta
+from http import HTTPStatus
 
-from django.test import TestCase, Client
-from django.contrib.auth import get_user_model
+from django.test import Client, TestCase
 from django.urls import reverse
 
 from InvenTree.api_tester import InvenTreeAPITestCase
-from InvenTree.helpers import str2bool
-from plugin.models import NotificationUserSetting, PluginConfig
+from InvenTree.helpers import InvenTreeTestCase, str2bool
 from plugin import registry
+from plugin.models import NotificationUserSetting, PluginConfig
 
-from .models import InvenTreeSetting, InvenTreeUserSetting, WebhookEndpoint, WebhookMessage, NotificationEntry, ColorTheme
 from .api import WebhookView
+from .models import (ColorTheme, InvenTreeSetting, InvenTreeUserSetting,
+                     NotificationEntry, WebhookEndpoint, WebhookMessage)
 
 CONTENT_TYPE_JSON = 'application/json'
 
 
-class SettingsTest(TestCase):
+class SettingsTest(InvenTreeTestCase):
     """
     Tests for the 'settings' model
     """
@@ -26,16 +26,6 @@ class SettingsTest(TestCase):
     fixtures = [
         'settings',
     ]
-
-    def setUp(self):
-
-        user = get_user_model()
-
-        self.user = user.objects.create_user('username', 'user@email.com', 'password')
-        self.user.is_staff = True
-        self.user.save()
-
-        self.client.login(username='username', password='password')
 
     def test_settings_objects(self):
 
@@ -166,14 +156,14 @@ class SettingsTest(TestCase):
 
             try:
                 self.run_settings_check(key, setting)
-            except Exception as exc:
+            except Exception as exc:  # pragma: no cover
                 print(f"run_settings_check failed for global setting '{key}'")
                 raise exc
 
         for key, setting in InvenTreeUserSetting.SETTINGS.items():
             try:
                 self.run_settings_check(key, setting)
-            except Exception as exc:
+            except Exception as exc:  # pragma: no cover
                 print(f"run_settings_check failed for user setting '{key}'")
                 raise exc
 
@@ -511,7 +501,11 @@ class PluginSettingsApiTest(InvenTreeAPITestCase):
         """List installed plugins via API"""
         url = reverse('api-plugin-list')
 
+        # Simple request
         self.get(url, expected_code=200)
+
+        # Request with filter
+        self.get(url, expected_code=200, data={'mixin': 'settings'})
 
     def test_api_list(self):
         """Test list URL"""

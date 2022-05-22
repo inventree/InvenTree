@@ -6,10 +6,11 @@ from datetime import datetime
 
 from django.test import TestCase
 
-from plugin.samples.integration.sample import SampleIntegrationPlugin
-from plugin.samples.integration.another_sample import WrongIntegrationPlugin, NoIntegrationPlugin
 import plugin.templatetags.plugin_extras as plugin_tags
-from plugin import registry, InvenTreePlugin, IntegrationPluginBase
+from plugin import IntegrationPluginBase, InvenTreePlugin, registry
+from plugin.samples.integration.another_sample import (NoIntegrationPlugin,
+                                                       WrongIntegrationPlugin)
+from plugin.samples.integration.sample import SampleIntegrationPlugin
 
 
 class PluginTagTests(TestCase):

@@ -1,11 +1,11 @@
 
-from django.db import transaction
-
-from django.test import TestCase
-import django.core.exceptions as django_exceptions
 from decimal import Decimal
 
-from .models import Part, BomItem, BomItemSubstitute
+import django.core.exceptions as django_exceptions
+from django.db import transaction
+from django.test import TestCase
+
+from .models import BomItem, BomItemSubstitute, Part
 
 
 class BomItemTest(TestCase):

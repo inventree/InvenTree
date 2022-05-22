@@ -5,39 +5,38 @@ In particular these views provide base functionality for rendering Django forms
 as JSON objects and passing them to modal forms (using jQuery / bootstrap).
 """
 
-import os
 import json
+import os
 
-from django.utils.translation import gettext_lazy as _
+from django.conf import settings
+from django.contrib.auth.mixins import (LoginRequiredMixin,
+                                        PermissionRequiredMixin)
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.shortcuts import redirect
 from django.template.loader import render_to_string
-from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.utils.timezone import now
-from django.shortcuts import redirect
-from django.conf import settings
-
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-
+from django.utils.translation import gettext_lazy as _
 from django.views import View
-from django.views.generic import ListView, DetailView, CreateView, FormView, DeleteView, UpdateView
+from django.views.generic import (CreateView, DeleteView, DetailView, FormView,
+                                  ListView, UpdateView)
 from django.views.generic.base import RedirectView, TemplateView
 
-from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from allauth.account.forms import AddEmailForm
-from allauth.socialaccount.forms import DisconnectForm
 from allauth.account.models import EmailAddress
 from allauth.account.views import EmailView, PasswordResetFromKeyView
+from allauth.socialaccount.forms import DisconnectForm
 from allauth.socialaccount.views import ConnectionsView
-from user_sessions.views import SessionDeleteView, SessionDeleteOtherView
+from djmoney.contrib.exchange.models import ExchangeBackend, Rate
+from user_sessions.views import SessionDeleteOtherView, SessionDeleteView
 
+from common.models import ColorTheme, InvenTreeSetting
 from common.settings import currency_code_default, currency_codes
-
 from part.models import PartCategory
-from common.models import InvenTreeSetting, ColorTheme
-from users.models import check_user_role, RuleSet
+from users.models import RuleSet, check_user_role
 
-from .forms import DeleteForm, EditUserForm, SetPasswordForm
-from .forms import SettingCategorySelectForm
+from .forms import (DeleteForm, EditUserForm, SetPasswordForm,
+                    SettingCategorySelectForm)
 from .helpers import str2bool
 
 

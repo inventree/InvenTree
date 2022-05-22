@@ -2,17 +2,17 @@
 
 import os
 
-from django.conf import settings
 from django.apps import apps
-from django.urls import reverse
+from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.urls import reverse
 
-from InvenTree.helpers import validateFilterString
 from InvenTree.api_tester import InvenTreeAPITestCase
-
-from .models import StockItemLabel, StockLocationLabel, PartLabel
+from InvenTree.helpers import validateFilterString
 from part.models import Part
 from stock.models import StockItem
+
+from .models import PartLabel, StockItemLabel, StockLocationLabel
 
 
 class LabelTest(InvenTreeAPITestCase):

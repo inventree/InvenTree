@@ -1,7 +1,7 @@
+import hashlib
+import logging
 import os
 import shutil
-import logging
-import hashlib
 import warnings
 
 from django.apps import AppConfig
@@ -9,7 +9,6 @@ from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 
 from InvenTree.ready import canAppAccessDatabase
-
 
 logger = logging.getLogger("inventree")
 

@@ -1,36 +1,26 @@
 
-from django.utils.translation import gettext_lazy as _
-from django.urls import include, path, re_path
-from django.core.exceptions import ValidationError, FieldError
+from django.core.exceptions import FieldError, ValidationError
 from django.http import HttpResponse
-
 from django.template.exceptions import TemplateDoesNotExist
+from django.urls import include, path, re_path
+from django.utils.translation import gettext_lazy as _
 
 from django_filters.rest_framework import DjangoFilterBackend
-
-from rest_framework import generics, filters
+from rest_framework import filters, generics
 from rest_framework.response import Response
 
+import build.models
 import common.models
 import InvenTree.helpers
-
+import order.models
+import part.models
 from stock.models import StockItem
 
-import build.models
-import part.models
-import order.models
-
-from .models import TestReport
-from .models import BuildReport
-from .models import BillOfMaterialsReport
-from .models import PurchaseOrderReport
-from .models import SalesOrderReport
-
-from .serializers import TestReportSerializer
-from .serializers import BuildReportSerializer
-from .serializers import BOMReportSerializer
-from .serializers import PurchaseOrderReportSerializer
-from .serializers import SalesOrderReportSerializer
+from .models import (BillOfMaterialsReport, BuildReport, PurchaseOrderReport,
+                     SalesOrderReport, TestReport)
+from .serializers import (BOMReportSerializer, BuildReportSerializer,
+                          PurchaseOrderReportSerializer,
+                          SalesOrderReportSerializer, TestReportSerializer)
 
 
 class ReportListView(generics.ListAPIView):

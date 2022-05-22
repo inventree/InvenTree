@@ -19,7 +19,7 @@ main {
 }
 
 .login-screen {
-    background: url(/static/img/paper_splash.jpg) no-repeat center fixed; 
+    background: url(/static/img/paper_splash.jpg) no-repeat center fixed;
     background-size: cover;
     height: 100vh;
     font-family: 'Numans', sans-serif;
@@ -259,7 +259,7 @@ main {
 }
 
 .rowinvalid {
-    color: #A00; 
+    color: #A00;
 }
 
 .rowinherited {
@@ -306,7 +306,7 @@ main {
     padding-left: 2px;
     transform: translate(0%, -25%);
 }
-  
+
 .filter-list .close:hover {
     background: #bbb;
 }
@@ -1008,7 +1008,7 @@ input[type='number']{
 
 .product-card-panel{
     height: 100%;
-    margin-bottom: 5px;    
+    margin-bottom: 5px;
 }
 
 .borderless {

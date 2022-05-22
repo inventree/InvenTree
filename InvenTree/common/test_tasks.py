@@ -2,8 +2,9 @@
 from django.test import TestCase
 
 from common.models import NotificationEntry
-from . import tasks as common_tasks
 from InvenTree.tasks import offload_task
+
+from . import tasks as common_tasks
 
 
 class TaskTest(TestCase):

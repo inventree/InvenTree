@@ -19,7 +19,7 @@ def add_shipment(apps, schema_editor):
     Allocation = apps.get_model('order', 'salesorderallocation')
     SalesOrder = apps.get_model('order', 'salesorder')
     Shipment = apps.get_model('order', 'salesordershipment')
-    
+
     n = 0
 
     for order in SalesOrder.objects.all():

@@ -126,7 +126,7 @@ function newBuildOrder(options={}) {
 
 /* Construct a form to cancel a build order */
 function cancelBuildOrder(build_id, options={}) {
-    
+
     constructForm(
         `/api/build/${build_id}/cancel/`,
         {
@@ -304,7 +304,7 @@ function createBuildOutput(build_id, options) {
  * Construct a set of output buttons for a particular build output
  */
 function makeBuildOutputButtons(output_id, build_info, options={}) {
- 
+
     var html = `<div class='btn-group float-right' role='group'>`;
 
     // Tracked parts? Must be individually allocated
@@ -355,7 +355,7 @@ function makeBuildOutputButtons(output_id, build_info, options={}) {
 
 /*
  * Unallocate stock against a particular build order
- * 
+ *
  * Options:
  * - output: pk value for a stock item "build output"
  * - bom_item: pk value for a particular BOMItem (build item)
@@ -401,7 +401,7 @@ function unallocateStock(build_id, options={}) {
  * Launch a modal form to complete selected build outputs
  */
 function completeBuildOutputs(build_id, outputs, options={}) {
-    
+
     if (outputs.length == 0) {
         showAlertDialog(
             '{% trans "Select Build Outputs" %}',
@@ -487,7 +487,7 @@ function completeBuildOutputs(build_id, outputs, options={}) {
             });
         },
         onSubmit: function(fields, opts) {
-            
+
             // Extract data elements from the form
             var data = {
                 outputs: [],
@@ -631,7 +631,7 @@ function deleteBuildOutputs(build_id, outputs, options={}) {
                 var pk = $(this).attr('pk');
 
                 $(opts.modal).find(`#output_row_${pk}`).remove();
-            }); 
+            });
         },
         onSubmit: function(fields, opts) {
             var data = {
@@ -753,7 +753,7 @@ function loadBuildOrderAllocationTable(table, options={}) {
                     if (!value) {
                         return '{% trans "Location not specified" %}';
                     }
-                    
+
                     var link = `/stock/location/${value}`;
                     var text = row.location_detail.description;
 
@@ -803,7 +803,7 @@ function sumAllocationsForBomRow(bom_row, allocations) {
  * Display a "build output" table for a particular build.
  *
  * This displays a list of "active" (i.e. "in production") build outputs for a given build
- * 
+ *
  */
 function loadBuildOutputTable(build_info, options={}) {
 
@@ -825,7 +825,7 @@ function loadBuildOutputTable(build_info, options={}) {
     setupFilterList('builditems', $(table), options.filterTarget || '#filter-list-incompletebuilditems');
 
     function setupBuildOutputButtonCallbacks() {
-        
+
         // Callback for the "allocate" button
         $(table).find('.button-output-allocate').click(function() {
             var pk = $(this).attr('pk');
@@ -997,7 +997,7 @@ function loadBuildOutputTable(build_info, options={}) {
 
                         // Check how many BOM lines have been completely allocated for this build output
                         bom_items.forEach(function(bom_item) {
-                            
+
                             var required_quantity = bom_item.quantity * row.quantity;
 
                             if (sumAllocationsForBomRow(bom_item, row.allocations) >= required_quantity) {
@@ -1281,7 +1281,7 @@ function loadBuildOutputTable(build_info, options={}) {
     $(table).on('expand-row.bs.table', function(detail, index, row) {
         $(`#button-output-allocate-${row.pk}`).prop('disabled', false);
     });
-    
+
     // Disable the "allocate" button when the sub-table is collapsed
     $(table).on('collapse-row.bs.table', function(detail, index, row) {
         $(`#button-output-allocate-${row.pk}`).prop('disabled', true);
@@ -1364,9 +1364,9 @@ function loadBuildOutputTable(build_info, options={}) {
 
 /*
  * Display the "allocation table" for a particular build output.
- * 
+ *
  * This displays a table of required allocations for a particular build output
- * 
+ *
  * Args:
  * - buildId: The PK of the Build object
  * - partId: The PK of the Part object
@@ -1375,7 +1375,7 @@ function loadBuildOutputTable(build_info, options={}) {
  * -- table: The #id of the table (will be auto-calculated if not provided)
  */
 function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
-    
+
     var buildId = buildInfo.pk;
     var partId = buildInfo.part;
 
@@ -1628,7 +1628,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
     $(table).inventreeTable({
         data: bom_items,
         disablePagination: true,
-        formatNoMatches: function() { 
+        formatNoMatches: function() {
             return '{% trans "No BOM items found" %}';
         },
         name: 'build-allocation',
@@ -1715,7 +1715,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         field: 'actions',
                         formatter: function(value, row) {
                             /* Actions available for a particular stock item allocation:
-                             * 
+                             *
                              * - Edit the allocation quantity
                              * - Delete the allocation
                              */
@@ -1812,15 +1812,15 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     var variant_stock = row.allow_variants ? (row.available_variant_stock || 0) : 0;
 
                     var available_stock = availableQuantity(row);
-            
+
                     var required = requiredQuantity(row);
 
                     var text = '';
-                    
+
                     if (available_stock > 0) {
                         text += `${available_stock}`;
                     }
-                    
+
                     if (available_stock < required) {
                         text += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "Insufficient stock available" %}'></span>`;
                     } else {
@@ -1838,12 +1838,12 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         } else if (substitute_stock > 0) {
                             extra = '{% trans "Includes substitute stock" %}';
                         }
-        
+
                         if (extra) {
                             text += `<span title='${extra}' class='fas fa-info-circle float-right icon-blue'></span>`;
                         }
                     }
-        
+
                     return renderLink(text, url);
                 },
                 sorter: function(valA, valB, rowA, rowB) {
@@ -1862,7 +1862,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 },
                 sorter: function(valA, valB, rowA, rowB) {
                     // Custom sorting function for progress bars
-                    
+
                     var aA = allocatedQuantity(rowA);
                     var aB = allocatedQuantity(rowB);
 
@@ -1932,12 +1932,12 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
 /**
  * Allocate stock items to a build
- * 
+ *
  * arguments:
  * - buildId: ID / PK value for the build
  * - partId: ID / PK value for the part being built
  * - bom_items: A list of BomItem objects to be allocated
- * 
+ *
  * options:
  *  - output: ID / PK of the associated build output (or null for untracked items)
  *  - source_location: ID / PK of the top-level StockLocation to source stock from (or null)
@@ -2109,7 +2109,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
         </tbody>
     </table>
     `;
-              
+
     constructForm(`/api/build/${build_id}/allocate/`, {
         method: 'POST',
         fields: {},
@@ -2193,7 +2193,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
 
                             filters.location = location;
                             filters.cascade = true;
-                            
+
                             return filters;
                         },
                         noResults: function(query) {
@@ -2371,7 +2371,7 @@ function loadBuildTable(table, options) {
         columns: [
             {
                 field: 'pk',
-                title: 'ID', 
+                title: 'ID',
                 visible: false,
                 switchable: false,
             },

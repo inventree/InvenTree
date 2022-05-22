@@ -1,20 +1,19 @@
 # -*- coding: utf-8 -*-
 
+import logging
+
 from django.conf import settings
 from django.contrib.auth.middleware import PersistentRemoteUserMiddleware
 from django.http import HttpResponse
 from django.shortcuts import redirect
-from django.urls import reverse_lazy, Resolver404
-from django.urls import include, re_path
+from django.urls import Resolver404, include, re_path, reverse_lazy
 
-import logging
-
+from allauth_2fa.middleware import (AllauthTwoFactorMiddleware,
+                                    BaseRequire2FAMiddleware)
 from rest_framework.authtoken.models import Token
-from allauth_2fa.middleware import BaseRequire2FAMiddleware, AllauthTwoFactorMiddleware
 
-from InvenTree.urls import frontendpatterns
 from common.models import InvenTreeSetting
-
+from InvenTree.urls import frontendpatterns
 
 logger = logging.getLogger("inventree")
 

@@ -2,55 +2,44 @@
 Django views for interacting with Part app
 """
 
-from django.core.files.base import ContentFile
-from django.core.exceptions import ValidationError
-from django.db import transaction
-from django.db.utils import IntegrityError
-from django.shortcuts import get_object_or_404
-from django.shortcuts import HttpResponseRedirect
-from django.utils.translation import gettext_lazy as _
-from django.urls import reverse
-from django.views.generic import DetailView, ListView
-from django.forms import HiddenInput
-from django.conf import settings
-from django.contrib import messages
-
-from djmoney.contrib.exchange.models import convert_money
-from djmoney.contrib.exchange.exceptions import MissingRate
-
-from PIL import Image
-
-import requests
-import os
 import io
-
+import os
 from decimal import Decimal
 
-from .models import PartCategory, Part
-from .models import PartParameterTemplate
-from .models import PartCategoryParameterTemplate
+from django.conf import settings
+from django.contrib import messages
+from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
+from django.db import transaction
+from django.db.utils import IntegrityError
+from django.forms import HiddenInput
+from django.shortcuts import HttpResponseRedirect, get_object_or_404
+from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
+from django.views.generic import DetailView, ListView
 
-from common.models import InvenTreeSetting
-from company.models import SupplierPart
-from common.files import FileManager
-from common.views import FileManagementFormView, FileManagementAjaxView
-
-from stock.models import StockItem, StockLocation
+import requests
+from djmoney.contrib.exchange.exceptions import MissingRate
+from djmoney.contrib.exchange.models import convert_money
+from PIL import Image
 
 import common.settings as inventree_settings
+from common.files import FileManager
+from common.models import InvenTreeSetting
+from common.views import FileManagementAjaxView, FileManagementFormView
+from company.models import SupplierPart
+from InvenTree.helpers import str2bool
+from InvenTree.views import (AjaxCreateView, AjaxDeleteView, AjaxUpdateView,
+                             AjaxView, InvenTreeRoleMixin, QRCodeView)
+from order.models import PurchaseOrderLineItem
+from plugin.views import InvenTreePluginViewMixin
+from stock.models import StockItem, StockLocation
 
 from . import forms as part_forms
 from . import settings as part_settings
-from .bom import MakeBomTemplate, ExportBom, IsValidBOMFormat
-from order.models import PurchaseOrderLineItem
-
-from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
-from InvenTree.views import QRCodeView
-from InvenTree.views import InvenTreeRoleMixin
-
-from InvenTree.helpers import str2bool
-
-from plugin.views import InvenTreePluginViewMixin
+from .bom import ExportBom, IsValidBOMFormat, MakeBomTemplate
+from .models import (Part, PartCategory, PartCategoryParameterTemplate,
+                     PartParameterTemplate)
 
 
 class PartIndex(InvenTreeRoleMixin, ListView):
