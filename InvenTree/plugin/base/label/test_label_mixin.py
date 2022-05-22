@@ -22,14 +22,14 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
     roles = 'all'
 
-    def activate_plugin(self):
+    def do_activate_plugin(self):
         """Activate the 'samplelabel' plugin"""
 
         config = registry.get_plugin('samplelabel').plugin_config()
         config.active = True
         config.save()
 
-    def get_url(self, parts, plugin_ref, label, url_name: str = 'api-part-label-print', url_single: str = 'part', invalid: bool = False):
+    def do_url(self, parts, plugin_ref, label, url_name: str = 'api-part-label-print', url_single: str = 'part', invalid: bool = False):
         """Generate an URL to print a label"""
         # Construct URL
         kwargs = {}
@@ -98,7 +98,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
         self.assertEqual(len(response.data), 0)
 
-        self.activate_plugin()
+        self.do_activate_plugin()
         # Should be available via the API now
         response = self.client.get(
             url,
@@ -123,7 +123,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
         plugin_ref = 'samplelabel'
         label = PartLabel.objects.first()
 
-        url = self.get_url([part], plugin_ref, label)
+        url = self.do_url([part], plugin_ref, label)
 
         # Non-exsisting plugin
         response = self.get(f'{url}123', expected_code=404)
@@ -134,16 +134,16 @@ class LabelMixinTests(InvenTreeAPITestCase):
         self.assertIn(f'Plugin \'{plugin_ref}\' is not enabled', str(response.content, 'utf8'))
 
         # Active plugin
-        self.activate_plugin()
+        self.do_activate_plugin()
 
         # Print one part
         self.get(url, expected_code=200)
 
         # Print multiple parts
-        self.get(self.get_url(Part.objects.all()[:2], plugin_ref, label), expected_code=200)
+        self.get(self.do_url(Part.objects.all()[:2], plugin_ref, label), expected_code=200)
 
         # Print multiple parts without a plugin
-        self.get(self.get_url(Part.objects.all()[:2], None, label), expected_code=200)
+        self.get(self.do_url(Part.objects.all()[:2], None, label), expected_code=200)
 
     def test_printing_endpoints(self):
         """Cover the endpoints not covered by `test_printing_process`"""
@@ -151,7 +151,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
         # Activate the label components
         apps.get_app_config('label').create_labels()
-        self.activate_plugin()
+        self.do_activate_plugin()
 
         def run_print_test(label, qs, url_name, url_single):
             """Run tests on single and multiple page printing
@@ -166,16 +166,16 @@ class LabelMixinTests(InvenTreeAPITestCase):
             qs = qs.objects.all()
 
             # List endpoint
-            self.get(self.get_url(None, None, None, f'{url_name}-list', url_single), expected_code=200)
+            self.get(self.do_url(None, None, None, f'{url_name}-list', url_single), expected_code=200)
 
             # List endpoint with filter
-            self.get(self.get_url(qs[:2], None, None, f'{url_name}-list', url_single, invalid=True), expected_code=200)
+            self.get(self.do_url(qs[:2], None, None, f'{url_name}-list', url_single, invalid=True), expected_code=200)
 
             # Single page printing
-            self.get(self.get_url(qs[:1], plugin_ref, label, f'{url_name}-print', url_single), expected_code=200)
+            self.get(self.do_url(qs[:1], plugin_ref, label, f'{url_name}-print', url_single), expected_code=200)
 
             # Multi page printing
-            self.get(self.get_url(qs[:2], plugin_ref, label, f'{url_name}-print', url_single), expected_code=200)
+            self.get(self.do_url(qs[:2], plugin_ref, label, f'{url_name}-print', url_single), expected_code=200)
 
         # Test StockItemLabels
         run_print_test(StockItemLabel, StockItem, 'api-stockitem-label', 'item')
