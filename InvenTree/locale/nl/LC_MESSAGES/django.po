@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-21 23:35+0000\n"
-"PO-Revision-Date: 2022-05-21 01:06\n"
+"PO-Revision-Date: 2022-05-22 01:15\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -3952,10 +3952,8 @@ msgstr ""
 
 #: order/templates/order/sales_order_base.html:60
 #: templates/js/translated/order.js:206
-#, fuzzy
-#| msgid "Completed items"
 msgid "Complete Shipments"
-msgstr "Voltooide voorraadartikelen"
+msgstr ""
 
 #: order/templates/order/sales_order_base.html:67
 #: order/templates/order/sales_order_base.html:250
@@ -5234,8 +5232,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -7419,16 +7416,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -8687,16 +8682,12 @@ msgid "Confirm Shipment"
 msgstr ""
 
 #: templates/js/translated/order.js:192
-#, fuzzy
-#| msgid "API endpoint not found"
 msgid "No pending shipments found"
-msgstr "API eindpunt niet gevonden"
+msgstr ""
 
 #: templates/js/translated/order.js:196
-#, fuzzy
-#| msgid "This stock item has already been allocated to this build output"
 msgid "No stock items have been allocated to pending shipments"
-msgstr "Dit voorraadartikel is al toegewezen aan deze productieoutput"
+msgstr ""
 
 #: templates/js/translated/order.js:228
 msgid "Skip"
@@ -10286,3 +10277,4 @@ msgstr ""
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr ""
+
