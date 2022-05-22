@@ -51,7 +51,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
         # Append an invalid item
         if invalid:
-            url += '&abc'
+            url += f'&{url_single}{"s" if len(parts) > 1 else ""}=abc'
 
         # Append plugin reference
         if plugin_ref:
