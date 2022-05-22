@@ -161,7 +161,8 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
         # Print multiple parts without a plugin in debug mode
         InvenTreeSetting.set_setting('REPORT_DEBUG_MODE', True, None)
-        self.get(self.do_url(Part.objects.all()[:2], None, label), expected_code=200)
+        response = self.get(self.do_url(Part.objects.all()[:2], None, label), expected_code=200)
+        self.assertIn('@page', str(response.content))
 
         # Print no part
         self.get(self.do_url(None, plugin_ref, label), expected_code=400)
