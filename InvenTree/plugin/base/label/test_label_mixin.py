@@ -28,6 +28,17 @@ class LabelMixinTests(InvenTreeAPITestCase):
         config.active = True
         config.save()
 
+    def get_url(self, parts, plugin_ref, label):
+        """Generate an URL to print a label"""
+        # Gather part details
+        if len(parts) == 1:
+            part_url = parts[0].pk
+        else:
+            part_url = f'[{",".join([str(item.pk) for item in parts])}]'
+        # Construct url
+        url = f'{reverse("api-part-label-print", kwargs={"pk": label.pk})}?parts={part_url}&plugin={plugin_ref}'
+        return url
+
     def test_installed(self):
         """Test that the sample printing plugin is installed"""
 
@@ -95,7 +106,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
         plugin_ref = 'samplelabel'
         label = PartLabel.objects.first()
 
-        url = f'{reverse("api-part-label-print", kwargs={"pk": label.pk})}?parts={part.pk}&plugin={plugin_ref}'
+        url = self.get_url([part], plugin_ref, label)
 
         # Non-exsisting plugin
         response = self.get(f'{url}123', expected_code=404)
