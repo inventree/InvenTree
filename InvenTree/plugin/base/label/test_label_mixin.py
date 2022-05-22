@@ -1,7 +1,7 @@
 """Unit tests for the label printing mixin"""
 
-from django.urls import reverse
 from django.apps import apps
+from django.urls import reverse
 
 from InvenTree.api_tester import InvenTreeAPITestCase
 from label.models import PartLabel
@@ -70,7 +70,6 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
         self.assertEqual(len(response.data), 0)
 
-
         self.activate_plugin()
         # Should be available via the API now
         response = self.client.get(
@@ -87,25 +86,25 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
     def test_printing_process(self):
         """Test that a label can be printed"""
+
+        # Ensure the labels were created
+        apps.get_app_config('label').create_labels()
+
         # Lookup references
-        label = PartLabel.objects.first()
         part = Part.objects.first()
         plugin_ref = 'samplelabel'
+        label = PartLabel.objects.first()
+
+        url = f'{reverse("api-part-label-print", kwargs={"pk": label.pk})}?parts={part.pk}&plugin={plugin_ref}'
 
         # Non-exsisting plugin
-        url = reverse('api-part-label-print', kwargs={'pk': label.pk})
-        self.get(f'{url}?parts={part.pk}&plugin={plugin_ref}123', expected_code=404)
+        response = self.get(f'{url}123', expected_code=404)
+        self.assertIn(f'Plugin \'{plugin_ref}123\' not found', str(response.content, 'utf8'))
 
         # Inactive plugin
-        url = reverse('api-part-label-print', kwargs={'pk': label.pk})
-        self.get(f'{url}?parts={part.pk}&plugin={plugin_ref}', expected_code=404)
-
-        # Activate the plugin
-        plugin = registry.get_plugin(plugin_ref)
-
-        config = plugin.plugin_config()
-        config.active = True
-        config.save()
+        response = self.get(url, expected_code=400)
+        self.assertIn(f'Plugin \'{plugin_ref}\' is not enabled', str(response.content, 'utf8'))
 
         # Active plugin
-        self.get(f'{url}?parts={part.pk}&plugin=samplelabel', expected_code=200)
+        self.activate_plugin()
+        self.get(url, expected_code=200)
