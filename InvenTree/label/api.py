@@ -283,7 +283,7 @@ class StockItemLabelList(LabelListView, StockItemLabelMixin):
                 # Filter string defined for the StockItemLabel object
                 try:
                     filters = InvenTree.helpers.validateFilterString(label.filters)
-                except ValidationError:
+                except ValidationError:  # pragma: no cover
                     continue
 
                 for item in items:
@@ -302,7 +302,7 @@ class StockItemLabelList(LabelListView, StockItemLabelMixin):
                 if matches:
                     valid_label_ids.add(label.pk)
                 else:
-                    continue
+                    continue  # pragma: no cover
 
             # Reduce queryset to only valid matches
             queryset = queryset.filter(pk__in=[pk for pk in valid_label_ids])
@@ -414,7 +414,7 @@ class StockLocationLabelList(LabelListView, StockLocationLabelMixin):
                 # Filter string defined for the StockLocationLabel object
                 try:
                     filters = InvenTree.helpers.validateFilterString(label.filters)
-                except:
+                except:  # pragma: no cover
                     # Skip if there was an error validating the filters...
                     continue
 
@@ -434,7 +434,7 @@ class StockLocationLabelList(LabelListView, StockLocationLabelMixin):
                 if matches:
                     valid_label_ids.add(label.pk)
                 else:
-                    continue
+                    continue  # pragma: no cover
 
             # Reduce queryset to only valid matches
             queryset = queryset.filter(pk__in=[pk for pk in valid_label_ids])
@@ -521,7 +521,7 @@ class PartLabelList(LabelListView, PartLabelMixin):
 
                 try:
                     filters = InvenTree.helpers.validateFilterString(label.filters)
-                except ValidationError:
+                except ValidationError:  # pragma: no cover
                     continue
 
                 for part in parts:
