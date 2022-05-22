@@ -3,6 +3,7 @@
 from django.apps import apps
 from django.urls import reverse
 
+from common.models import InvenTreeSetting
 from InvenTree.api_tester import InvenTreeAPITestCase
 from label.models import PartLabel, StockItemLabel, StockLocationLabel
 from part.models import Part
@@ -156,6 +157,10 @@ class LabelMixinTests(InvenTreeAPITestCase):
         self.get(self.do_url(Part.objects.all()[:2], plugin_ref, label), expected_code=200)
 
         # Print multiple parts without a plugin
+        self.get(self.do_url(Part.objects.all()[:2], None, label), expected_code=200)
+
+        # Print multiple parts without a plugin in debug mode
+        InvenTreeSetting.set_setting('REPORT_DEBUG_MODE', True, None)
         self.get(self.do_url(Part.objects.all()[:2], None, label), expected_code=200)
 
         # Print no part
