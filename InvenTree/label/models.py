@@ -171,7 +171,7 @@ class LabelTemplate(models.Model):
         Note: Override this in any subclass
         """
 
-        return {}
+        return {}  # pragma: no cover
 
     def generate_filename(self, request, **kwargs):
         """
@@ -242,7 +242,7 @@ class StockItemLabel(LabelTemplate):
 
     @staticmethod
     def get_api_url():
-        return reverse('api-stockitem-label-list')
+        return reverse('api-stockitem-label-list')  # pragma: no cover
 
     SUBDIR = "stockitem"
 
@@ -302,7 +302,7 @@ class StockLocationLabel(LabelTemplate):
 
     @staticmethod
     def get_api_url():
-        return reverse('api-stocklocation-label-list')
+        return reverse('api-stocklocation-label-list')  # pragma: no cover
 
     SUBDIR = "stocklocation"
 
@@ -349,7 +349,7 @@ class PartLabel(LabelTemplate):
 
     @staticmethod
     def get_api_url():
-        return reverse('api-part-label-list')
+        return reverse('api-part-label-list')  # pragma: no cover
 
     SUBDIR = 'part'
 
