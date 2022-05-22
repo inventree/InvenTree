@@ -29,7 +29,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
         config.active = True
         config.save()
 
-    def get_url(self, parts, plugin_ref, label, url_name: str = 'api-part-label-print', url_single: str = 'part'):
+    def get_url(self, parts, plugin_ref, label, url_name: str = 'api-part-label-print', url_single: str = 'part', invalid: bool = False):
         """Generate an URL to print a label"""
         # Construct URL
         kwargs = {}
@@ -45,6 +45,10 @@ class LabelMixinTests(InvenTreeAPITestCase):
             url += f'?{url_single}={parts[0].pk}'
         elif len(parts) > 1:
             url += '?&'.join([f'{url_single}s={item.pk}' for item in parts])
+
+        # Append an invalid item
+        if invalid:
+            url += '&abc'
 
         # Append plugin reference
         if plugin_ref:
@@ -165,7 +169,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
             self.get(self.get_url(None, None, None, f'{url_name}-list', url_single), expected_code=200)
 
             # List endpoint with filter
-            self.get(self.get_url(qs[:2], None, None, f'{url_name}-list', url_single), expected_code=200)
+            self.get(self.get_url(qs[:2], None, None, f'{url_name}-list', url_single, invalid=True), expected_code=200)
 
             # Single page printing
             self.get(self.get_url(qs[:1], plugin_ref, label, f'{url_name}-print', url_single), expected_code=200)
