@@ -6,6 +6,9 @@ from django.urls import reverse
 from InvenTree.api_tester import InvenTreeAPITestCase
 from label.models import PartLabel, StockItemLabel, StockLocationLabel
 from part.models import Part
+from plugin.base.label.mixins import LabelPrintingMixin
+from plugin.helpers import MixinNotImplementedError
+from plugin.plugin import InvenTreePlugin
 from plugin.registry import registry
 from stock.models import StockItem, StockLocation
 
@@ -55,6 +58,16 @@ class LabelMixinTests(InvenTreeAPITestCase):
             url += f'&plugin={plugin_ref}'
 
         return url
+
+    def test_wrong_implementation(self):
+        """Test that a wrong implementation raises an error"""
+
+        class WrongPlugin(LabelPrintingMixin, InvenTreePlugin):
+            pass
+
+        with self.assertRaises(MixinNotImplementedError):
+            plugin = WrongPlugin()
+            plugin.print_label('test')
 
     def test_installed(self):
         """Test that the sample printing plugin is installed"""
