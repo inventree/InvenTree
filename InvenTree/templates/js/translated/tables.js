@@ -15,7 +15,7 @@
 
 /**
  * Reload a named table
- * @param table 
+ * @param table
  */
 function reloadtable(table) {
     $(table).bootstrapTable('refresh');
@@ -25,7 +25,7 @@ function reloadtable(table) {
 /**
  * Download data from a table, via the API.
  * This requires a number of conditions to be met:
- * 
+ *
  * - The API endpoint supports data download (on the server side)
  * - The table is "flat" (does not support multi-level loading, etc)
  * - The table has been loaded using the inventreeTable() function, not bootstrapTable()
@@ -60,16 +60,16 @@ function downloadTableData(table, opts={}) {
         },
         onSubmit: function(fields, form_options) {
             var format = getFormFieldValue('format', fields['format'], form_options);
-            
+
             // Hide the modal
             $(form_options.modal).modal('hide');
 
             for (const [key, value] of Object.entries(query_params)) {
                 url += `${key}=${value}&`;
             }
-        
+
             url += `export=${format}`;
-        
+
             location.href = url;
         }
     });
@@ -80,9 +80,9 @@ function downloadTableData(table, opts={}) {
 
 /**
  * Render a URL for display
- * @param {String} text 
- * @param {String} url 
- * @param {object} options 
+ * @param {String} text
+ * @param {String} url
+ * @param {object} options
  * @returns link text
  */
 function renderLink(text, url, options={}) {
@@ -134,8 +134,8 @@ function linkButtonsToSelection(table, buttons) {
 
 /**
  * Returns true if the input looks like a valid number
- * @param {String} n 
- * @returns 
+ * @param {String} n
+ * @returns
  */
 function isNumeric(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
@@ -251,7 +251,7 @@ function convertQueryParameters(params, filters) {
 
         delete params['original_search'];
     }
-    
+
     return params;
 }
 

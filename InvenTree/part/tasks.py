@@ -2,10 +2,9 @@ import logging
 
 from django.utils.translation import gettext_lazy as _
 
+import common.notifications
 import InvenTree.helpers
 import InvenTree.tasks
-import common.notifications
-
 import part.models
 
 logger = logging.getLogger("inventree")

@@ -2,26 +2,24 @@
 Generic models which provide extra functionality over base Django model types.
 """
 
-import re
-import os
 import logging
+import os
+import re
 
-from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
-
+from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
+from django.utils.translation import gettext_lazy as _
 
-from mptt.models import MPTTModel, TreeForeignKey
 from mptt.exceptions import InvalidMove
+from mptt.models import MPTTModel, TreeForeignKey
 
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.validators import validate_tree_name
-
 
 logger = logging.getLogger('inventree')
 

@@ -1,30 +1,26 @@
 from io import BytesIO
-from PIL import Image
-
-from django.utils.translation import gettext_lazy as _
 
 from django.conf import settings
-from django.urls import include, re_path
-from django.core.exceptions import ValidationError, FieldError
+from django.core.exceptions import FieldError, ValidationError
 from django.http import HttpResponse, JsonResponse
+from django.urls import include, re_path
 
 from django_filters.rest_framework import DjangoFilterBackend
+from PIL import Image
+from rest_framework import filters, generics
+from rest_framework.exceptions import NotFound
 
-from rest_framework import generics, filters
-from rest_framework.response import Response
-
+import common.models
 import InvenTree.helpers
 from InvenTree.tasks import offload_task
-import common.models
-
-from plugin.registry import registry
-
-from stock.models import StockItem, StockLocation
 from part.models import Part
 from plugin.base.label import label as plugin_label
+from plugin.registry import registry
+from stock.models import StockItem, StockLocation
 
-from .models import StockItemLabel, StockLocationLabel, PartLabel
-from .serializers import StockItemLabelSerializer, StockLocationLabelSerializer, PartLabelSerializer
+from .models import PartLabel, StockItemLabel, StockLocationLabel
+from .serializers import (PartLabelSerializer, StockItemLabelSerializer,
+                          StockLocationLabelSerializer)
 
 
 class LabelListView(generics.ListAPIView):
@@ -65,9 +61,13 @@ class LabelPrintMixin:
         """
 
         if not settings.PLUGINS_ENABLED:
-            return None
+            return None  # pragma: no cover
 
         plugin_key = request.query_params.get('plugin', None)
+
+        # No plugin provided, and that's OK
+        if plugin_key is None:
+            return None
 
         plugin = registry.get_plugin(plugin_key)
 
@@ -77,9 +77,10 @@ class LabelPrintMixin:
             if config and config.active:
                 # Only return the plugin if it is enabled!
                 return plugin
-
-        # No matches found
-        return None
+            else:
+                raise ValidationError(f"Plugin '{plugin_key}' is not enabled")
+        else:
+            raise NotFound(f"Plugin '{plugin_key}' not found")
 
     def print(self, request, items_to_print):
         """
@@ -88,13 +89,11 @@ class LabelPrintMixin:
 
         # Check the request to determine if the user has selected a label printing plugin
         plugin = self.get_plugin(request)
+
         if len(items_to_print) == 0:
             # No valid items provided, return an error message
-            data = {
-                'error': _('No valid objects provided to template'),
-            }
 
-            return Response(data, status=400)
+            raise ValidationError('No valid objects provided to label template')
 
         outputs = []
 
@@ -284,7 +283,7 @@ class StockItemLabelList(LabelListView, StockItemLabelMixin):
                 # Filter string defined for the StockItemLabel object
                 try:
                     filters = InvenTree.helpers.validateFilterString(label.filters)
-                except ValidationError:
+                except ValidationError:  # pragma: no cover
                     continue
 
                 for item in items:
@@ -303,7 +302,7 @@ class StockItemLabelList(LabelListView, StockItemLabelMixin):
                 if matches:
                     valid_label_ids.add(label.pk)
                 else:
-                    continue
+                    continue  # pragma: no cover
 
             # Reduce queryset to only valid matches
             queryset = queryset.filter(pk__in=[pk for pk in valid_label_ids])
@@ -415,7 +414,7 @@ class StockLocationLabelList(LabelListView, StockLocationLabelMixin):
                 # Filter string defined for the StockLocationLabel object
                 try:
                     filters = InvenTree.helpers.validateFilterString(label.filters)
-                except:
+                except:  # pragma: no cover
                     # Skip if there was an error validating the filters...
                     continue
 
@@ -435,7 +434,7 @@ class StockLocationLabelList(LabelListView, StockLocationLabelMixin):
                 if matches:
                     valid_label_ids.add(label.pk)
                 else:
-                    continue
+                    continue  # pragma: no cover
 
             # Reduce queryset to only valid matches
             queryset = queryset.filter(pk__in=[pk for pk in valid_label_ids])
@@ -522,7 +521,7 @@ class PartLabelList(LabelListView, PartLabelMixin):
 
                 try:
                     filters = InvenTree.helpers.validateFilterString(label.filters)
-                except ValidationError:
+                except ValidationError:  # pragma: no cover
                     continue
 
                 for part in parts:

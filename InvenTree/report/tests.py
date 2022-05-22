@@ -2,16 +2,15 @@
 import os
 import shutil
 
+from django.conf import settings
 from django.http.response import StreamingHttpResponse
 from django.urls import reverse
-from django.conf import settings
-
-from InvenTree.api_tester import InvenTreeAPITestCase
 
 import report.models as report_models
-from common.models import InvenTreeUserSetting
-from stock.models import StockItem
 from build.models import Build
+from common.models import InvenTreeUserSetting
+from InvenTree.api_tester import InvenTreeAPITestCase
+from stock.models import StockItem
 
 
 class ReportTest(InvenTreeAPITestCase):

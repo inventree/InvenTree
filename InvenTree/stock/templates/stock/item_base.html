@@ -102,7 +102,7 @@
             <li><a class='dropdown-item' href='#' id='stock-uninstall' title='{% trans "Uninstall stock item" %}'><span class='fas fa-unlink'></span> {% trans "Uninstall" %}</a></li>
             {% else %}
             {% if item.part.get_used_in %}
-            <!--    
+            <!--
                 <li><a class='dropdown-item' href='#' id='stock-install-in' title='{% trans "Install stock item" %}'><span class='fas fa-link'></span> {% trans "Install" %}</a></li>
             -->
             {% endif %}
@@ -260,13 +260,13 @@
         {% trans "This stock item is allocated to Build Order" %} {{ link }} {% if qty < item.quantity %}({% trans "Quantity" %}: {{ qty }}){% endif %}
     </div>
     {% endfor %}
-    
+
     {% if item.serialized %}
     <div class='alert alert-block alert-warning'>
         {% trans "This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted." %}
     </div>
     {% endif %}
-    
+
 </div>
 {% endblock details %}
 
@@ -473,7 +473,7 @@ $("#print-label").click(function() {
 
 {% if roles.stock.change %}
 $("#stock-duplicate").click(function() {
-    // Duplicate a stock item 
+    // Duplicate a stock item
     duplicateStockItem({{ item.pk }}, {});
 });
 
@@ -512,7 +512,7 @@ $("#barcode-unlink").click(function() {
 });
 
 $("#barcode-scan-into-location").click(function() {
-    
+
     inventreeGet('{% url "api-stock-detail" item.pk %}', {}, {
         success: function(item) {
             scanItemsIntoLocation([item]);

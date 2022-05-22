@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import os
 import json
-import sys
+import os
 import pathlib
 import re
+import sys
 
 from invoke import task
 
@@ -15,7 +15,6 @@ def apps():
     """
 
     return [
-        'barcode',
         'build',
         'common',
         'company',
@@ -25,8 +24,9 @@ def apps():
         'plugin'
         'report',
         'stock',
-        'InvenTree',
         'users',
+        'plugin',
+        'InvenTree',
     ]
 
 
@@ -64,10 +64,11 @@ def manage(c, cmd, pty=False):
         cmd - django command to run
     """
 
-    result = c.run('cd "{path}" && python3 manage.py {cmd}'.format(
+    c.run('cd "{path}" && python3 manage.py {cmd}'.format(
         path=managePyDir(),
         cmd=cmd
     ), pty=pty)
+
 
 @task
 def plugins(c):
@@ -84,6 +85,7 @@ def plugins(c):
     # Install the plugins
     c.run(f"pip3 install -U -r '{plugin_file}'")
 
+
 @task(post=[plugins])
 def install(c):
     """
@@ -94,6 +96,25 @@ def install(c):
 
     # Install required Python packages with PIP
     c.run('pip3 install -U -r requirements.txt')
+
+
+@task
+def setup_dev(c):
+    """
+    Sets up everything needed for the dev enviroment
+    """
+
+    print("Installing required python packages from 'requirements.txt'")
+
+    # Install required Python packages with PIP
+    c.run('pip3 install -U -r requirements.txt')
+
+    # Install pre-commit hook
+    c.run('pre-commit install')
+
+    # Update all the hooks
+    c.run('pre-commit autoupdate')
+
 
 @task
 def shell(c):
@@ -250,7 +271,7 @@ def update(c):
     - static
     - clean_settings
     """
-    
+
     # Recompile the translation files (.mo)
     # We do not run 'invoke translate' here, as that will touch the source (.po) files too!
     manage(c, 'compilemessages', pty=True)
@@ -439,7 +460,7 @@ def delete_data(c, force=False):
     Warning: This will REALLY delete all records in the database!!
     """
 
-    print(f"Deleting all data from InvenTree database...")
+    print("Deleting all data from InvenTree database...")
 
     if force:
         manage(c, 'flush --noinput')

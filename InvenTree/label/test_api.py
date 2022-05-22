@@ -63,39 +63,3 @@ class TestReportTests(InvenTreeAPITestCase):
                 'items': [10, 11, 12],
             }
         )
-
-
-class TestLabels(InvenTreeAPITestCase):
-    """
-    Tests for the label APIs
-    """
-
-    fixtures = [
-        'category',
-        'part',
-        'location',
-        'stock',
-    ]
-
-    roles = [
-        'stock.view',
-        'stock_location.view',
-    ]
-
-    def do_list(self, filters={}):
-
-        response = self.client.get(self.list_url, filters, format='json')
-
-        self.assertEqual(response.status_code, 200)
-
-        return response.data
-
-    def test_lists(self):
-        self.list_url = reverse('api-stockitem-label-list')
-        self.do_list()
-
-        self.list_url = reverse('api-stocklocation-label-list')
-        self.do_list()
-
-        self.list_url = reverse('api-part-label-list')
-        self.do_list()

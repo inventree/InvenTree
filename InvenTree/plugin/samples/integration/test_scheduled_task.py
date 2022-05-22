@@ -2,10 +2,10 @@
 
 from django.test import TestCase
 
-from plugin import registry, InvenTreePlugin
+from plugin import InvenTreePlugin, registry
 from plugin.helpers import MixinImplementationError
-from plugin.registry import call_function
 from plugin.mixins import ScheduleMixin
+from plugin.registry import call_function
 
 
 class ExampleScheduledTaskPluginTests(TestCase):

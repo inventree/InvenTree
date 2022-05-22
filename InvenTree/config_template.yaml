@@ -39,7 +39,7 @@ database:
   #PASSWORD: inventree_password
   #HOST: 'localhost'
   #PORT: '5432'
-  
+
   # --- Example Configuration - sqlite3 ---
   # ENGINE: sqlite3
   # NAME: '/home/inventree/database.sqlite3'
@@ -98,7 +98,7 @@ email:
 debug: True
 
 # Set debug_toolbar to True to enable a debugging toolbar for InvenTree
-# Note: This will only be displayed if DEBUG mode is enabled, 
+# Note: This will only be displayed if DEBUG mode is enabled,
 #       and only if InvenTree is accessed from a local IP (127.0.0.1)
 debug_toolbar: False
 
@@ -118,7 +118,7 @@ allowed_hosts:
   - '*'
 
 # Cross Origin Resource Sharing (CORS) settings (see https://github.com/ottoyiu/django-cors-headers)
-# Following parameters are 
+# Following parameters are
 cors:
   # CORS_ORIGIN_ALLOW_ALL - If True, the whitelist will not be used and all origins will be accepted.
   allow_all: True

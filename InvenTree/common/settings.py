@@ -2,8 +2,9 @@
 User-configurable settings for the common app
 """
 
-from moneyed import CURRENCIES
 from django.conf import settings
+
+from moneyed import CURRENCIES
 
 
 def currency_code_default():
@@ -11,6 +12,7 @@ def currency_code_default():
     Returns the default currency code (or USD if not specified)
     """
     from django.db.utils import ProgrammingError
+
     from common.models import InvenTreeSetting
 
     try:

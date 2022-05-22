@@ -3,20 +3,17 @@ Tests for the Order API
 """
 
 import io
-
 from datetime import datetime, timedelta
-
-from rest_framework import status
 
 from django.urls import reverse
 
-from InvenTree.api_tester import InvenTreeAPITestCase
-from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
-
-from part.models import Part
-from stock.models import StockItem
+from rest_framework import status
 
 import order.models as models
+from InvenTree.api_tester import InvenTreeAPITestCase
+from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
+from part.models import Part
+from stock.models import StockItem
 
 
 class OrderTest(InvenTreeAPITestCase):

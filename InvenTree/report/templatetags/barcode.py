@@ -7,8 +7,8 @@ from io import BytesIO
 
 from django import template
 
-import qrcode as python_qrcode
 import barcode as python_barcode
+import qrcode as python_qrcode
 
 register = template.Library()
 

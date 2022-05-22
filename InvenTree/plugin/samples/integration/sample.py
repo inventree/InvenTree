@@ -2,12 +2,12 @@
 Sample implementations for IntegrationPlugin
 """
 
-from plugin import InvenTreePlugin
-from plugin.mixins import AppMixin, SettingsMixin, UrlsMixin, NavigationMixin
-
 from django.http import HttpResponse
-from django.utils.translation import gettext_lazy as _
 from django.urls import include, re_path
+from django.utils.translation import gettext_lazy as _
+
+from plugin import InvenTreePlugin
+from plugin.mixins import AppMixin, NavigationMixin, SettingsMixin, UrlsMixin
 
 
 class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixin, InvenTreePlugin):

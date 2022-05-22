@@ -4,36 +4,30 @@ JSON serializers for the Order API
 
 from decimal import Decimal
 
-from django.utils.translation import gettext_lazy as _
-
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models, transaction
-from django.db.models import Case, When, Value
-from django.db.models import BooleanField, ExpressionWrapper, F, Q
+from django.db.models import (BooleanField, Case, ExpressionWrapper, F, Q,
+                              Value, When)
+from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
-
 from sql_util.utils import SubqueryCount
 
-from common.settings import currency_code_mappings
-from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
-
-from InvenTree.serializers import InvenTreeAttachmentSerializer
-from InvenTree.helpers import normalize, extract_serial_numbers
-from InvenTree.serializers import InvenTreeModelSerializer
-from InvenTree.serializers import InvenTreeDecimalField
-from InvenTree.serializers import InvenTreeMoneySerializer
-from InvenTree.serializers import ReferenceIndexingSerializerMixin
-from InvenTree.status_codes import StockStatus, PurchaseOrderStatus, SalesOrderStatus
-
 import order.models
-
-from part.serializers import PartBriefSerializer
-
 import stock.models
 import stock.serializers
-
+from common.settings import currency_code_mappings
+from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
+from InvenTree.helpers import extract_serial_numbers, normalize
+from InvenTree.serializers import (InvenTreeAttachmentSerializer,
+                                   InvenTreeDecimalField,
+                                   InvenTreeModelSerializer,
+                                   InvenTreeMoneySerializer,
+                                   ReferenceIndexingSerializerMixin)
+from InvenTree.status_codes import (PurchaseOrderStatus, SalesOrderStatus,
+                                    StockStatus)
+from part.serializers import PartBriefSerializer
 from users.serializers import OwnerSerializer
 
 

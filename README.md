@@ -35,7 +35,7 @@
 
 InvenTree is an open-source Inventory Management System which provides powerful low-level stock control and part tracking. The core of the InvenTree system is a Python/Django database backend which provides an admin interface (web-based) and a REST API for interaction with external interfaces and applications.
 
-InvenTree is designed to be lightweight and easy to use for SME or hobbyist applications, where many existing stock management solutions are bloated and cumbersome to use. Updating stock is a single-action process and does not require a complex system of work orders or stock transactions. 
+InvenTree is designed to be lightweight and easy to use for SME or hobbyist applications, where many existing stock management solutions are bloated and cumbersome to use. Updating stock is a single-action process and does not require a complex system of work orders or stock transactions.
 
 Powerful business logic works in the background to ensure that stock tracking history is maintained, and users have ready access to stock level information.
 
@@ -115,7 +115,7 @@ Refer to the [getting started guide](https://inventree.readthedocs.io/en/latest/
 <!-- Mobile App -->
 ## 	:iphone: Mobile App
 
-InvenTree is supported by a [companion mobile app](https://inventree.readthedocs.io/en/latest/app/app/) which allows users access to stock control information and functionality. 
+InvenTree is supported by a [companion mobile app](https://inventree.readthedocs.io/en/latest/app/app/) which allows users access to stock control information and functionality.
 
 <div align="center"><h4>
     <a href="https://play.google.com/store/apps/details?id=inventree.inventree_app">Android Play Store</a>
@@ -139,7 +139,7 @@ There are several options to deploy InvenTree.
 <!-- Contributing -->
 ## :wave: Contributing
 
-Contributions are welcomed and encouraged. Please help to make this project even better!  
+Contributions are welcomed and encouraged. Please help to make this project even better!
 Refer to the [contribution page in the docs ](https://inventree.readthedocs.io/en/latest/contribute/) and check out [contributing.md](CONTRIBUTING.md).
 
 <!-- Translation -->
@@ -152,7 +152,7 @@ To contribute to the translation effort, navigate to the [InvenTree crowdin proj
 <!-- Sponsor -->
 ## :money_with_wings: Sponsor
 
-If you use InvenTree and find it to be useful, please consider making a donation toward its continued development. 
+If you use InvenTree and find it to be useful, please consider making a donation toward its continued development.
 
 [Donate via PayPal](https://paypal.me/inventree?locale.x=en_AU)
 

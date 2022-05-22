@@ -2,10 +2,9 @@
 Sample plugin which renders custom panels on certain pages
 """
 
+from part.views import PartDetail
 from plugin import InvenTreePlugin
 from plugin.mixins import PanelMixin, SettingsMixin
-
-from part.views import PartDetail
 from stock.views import StockLocationDetail
 
 
@@ -121,7 +120,7 @@ class CustomPanelSample(PanelMixin, SettingsMixin, InvenTreePlugin):
                         'icon': 'fa-user',
                         'content_template': 'panel_demo/childless.html',  # Note that the panel content is rendered using a template file!
                     })
-            except:
+            except:  # pragma: no cover
                 pass
 
         return panels

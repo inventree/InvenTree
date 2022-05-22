@@ -1,24 +1,24 @@
 
-from http import HTTPStatus
 import json
 from datetime import timedelta
+from http import HTTPStatus
 
-from django.test import TestCase, Client
-from django.contrib.auth import get_user_model
+from django.test import Client, TestCase
 from django.urls import reverse
 
 from InvenTree.api_tester import InvenTreeAPITestCase
-from InvenTree.helpers import str2bool
-from plugin.models import NotificationUserSetting, PluginConfig
+from InvenTree.helpers import InvenTreeTestCase, str2bool
 from plugin import registry
+from plugin.models import NotificationUserSetting, PluginConfig
 
-from .models import InvenTreeSetting, InvenTreeUserSetting, WebhookEndpoint, WebhookMessage, NotificationEntry
 from .api import WebhookView
+from .models import (ColorTheme, InvenTreeSetting, InvenTreeUserSetting,
+                     NotificationEntry, WebhookEndpoint, WebhookMessage)
 
 CONTENT_TYPE_JSON = 'application/json'
 
 
-class SettingsTest(TestCase):
+class SettingsTest(InvenTreeTestCase):
     """
     Tests for the 'settings' model
     """
@@ -26,16 +26,6 @@ class SettingsTest(TestCase):
     fixtures = [
         'settings',
     ]
-
-    def setUp(self):
-
-        user = get_user_model()
-
-        self.user = user.objects.create_user('username', 'user@email.com', 'password')
-        self.user.is_staff = True
-        self.user.save()
-
-        self.client.login(username='username', password='password')
 
     def test_settings_objects(self):
 
@@ -163,10 +153,19 @@ class SettingsTest(TestCase):
         """
 
         for key, setting in InvenTreeSetting.SETTINGS.items():
-            self.run_settings_check(key, setting)
+
+            try:
+                self.run_settings_check(key, setting)
+            except Exception as exc:  # pragma: no cover
+                print(f"run_settings_check failed for global setting '{key}'")
+                raise exc
 
         for key, setting in InvenTreeUserSetting.SETTINGS.items():
-            self.run_settings_check(key, setting)
+            try:
+                self.run_settings_check(key, setting)
+            except Exception as exc:  # pragma: no cover
+                print(f"run_settings_check failed for user setting '{key}'")
+                raise exc
 
     def test_defaults(self):
         """
@@ -502,7 +501,11 @@ class PluginSettingsApiTest(InvenTreeAPITestCase):
         """List installed plugins via API"""
         url = reverse('api-plugin-list')
 
+        # Simple request
         self.get(url, expected_code=200)
+
+        # Request with filter
+        self.get(url, expected_code=200, data={'mixin': 'settings'})
 
     def test_api_list(self):
         """Test list URL"""
@@ -707,3 +710,35 @@ class LoadingTest(TestCase):
 
         # now it should be false again
         self.assertFalse(common.models.InvenTreeSetting.get_setting('SERVER_RESTART_REQUIRED'))
+
+
+class ColorThemeTest(TestCase):
+    """Tests for ColorTheme"""
+
+    def test_choices(self):
+        """Test that default choices are returned"""
+        result = ColorTheme.get_color_themes_choices()
+
+        # skip
+        if not result:
+            return
+        self.assertIn(('default', 'Default'), result)
+
+    def test_valid_choice(self):
+        """Check that is_valid_choice works correctly"""
+        result = ColorTheme.get_color_themes_choices()
+
+        # skip
+        if not result:
+            return
+
+        # check wrong reference
+        self.assertFalse(ColorTheme.is_valid_choice('abcdd'))
+
+        # create themes
+        aa = ColorTheme.objects.create(user='aa', name='testname')
+        ab = ColorTheme.objects.create(user='ab', name='darker')
+
+        # check valid theme
+        self.assertFalse(ColorTheme.is_valid_choice(aa))
+        self.assertTrue(ColorTheme.is_valid_choice(ab))

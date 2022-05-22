@@ -1,19 +1,18 @@
 """ Unit tests for base mixins for plugins """
 
-from django.test import TestCase
 from django.conf import settings
+from django.test import TestCase
 from django.urls import include, re_path, reverse
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
 
 from error_report.models import Error
 
+from InvenTree.helpers import InvenTreeTestCase
 from plugin import InvenTreePlugin
-from plugin.mixins import AppMixin, SettingsMixin, UrlsMixin, NavigationMixin, APICallMixin
-from plugin.urls import PLUGIN_BASE
 from plugin.helpers import MixinNotImplementedError
-
+from plugin.mixins import (APICallMixin, AppMixin, NavigationMixin,
+                           SettingsMixin, UrlsMixin)
 from plugin.registry import registry
+from plugin.urls import PLUGIN_BASE
 
 
 class BaseMixinDefinition:
@@ -24,7 +23,7 @@ class BaseMixinDefinition:
         self.assertIn(self.MIXIN_HUMAN_NAME, [item['human_name'] for item in self.mixin.registered_mixins])
 
 
-class SettingsMixinTest(BaseMixinDefinition, TestCase):
+class SettingsMixinTest(BaseMixinDefinition, InvenTreeTestCase):
     MIXIN_HUMAN_NAME = 'Settings'
     MIXIN_NAME = 'settings'
     MIXIN_ENABLE_CHECK = 'has_settings'
@@ -40,9 +39,7 @@ class SettingsMixinTest(BaseMixinDefinition, TestCase):
             pass
         self.mixin_nothing = NoSettingsCls()
 
-        user = get_user_model()
-        self.test_user = user.objects.create_user('testuser', 'test@testing.com', 'password')
-        self.test_user.is_staff = True
+        super().setUp()
 
     def test_function(self):
         # settings variable
@@ -54,7 +51,7 @@ class SettingsMixinTest(BaseMixinDefinition, TestCase):
         self.assertEqual(self.mixin_nothing.get_setting('ABCD'), '')
 
         # right setting
-        self.mixin.set_setting('SETTING1', '12345', self.test_user)
+        self.mixin.set_setting('SETTING1', '12345', self.user)
         self.assertEqual(self.mixin.get_setting('SETTING1'), '12345')
 
         # no setting
@@ -251,7 +248,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
             self.mixin_wrong2.has_api_call()
 
 
-class PanelMixinTests(TestCase):
+class PanelMixinTests(InvenTreeTestCase):
     """Test that the PanelMixin plugin operates correctly"""
 
     fixtures = [
@@ -261,32 +258,7 @@ class PanelMixinTests(TestCase):
         'stock',
     ]
 
-    def setUp(self):
-        super().setUp()
-
-        # Create a user which has all the privelages
-        user = get_user_model()
-
-        self.user = user.objects.create_user(
-            username='username',
-            email='user@email.com',
-            password='password'
-        )
-
-        # Put the user into a group with the correct permissions
-        group = Group.objects.create(name='mygroup')
-        self.user.groups.add(group)
-
-        # Give the group *all* the permissions!
-        for rule in group.rule_sets.all():
-            rule.can_view = True
-            rule.can_change = True
-            rule.can_add = True
-            rule.can_delete = True
-
-            rule.save()
-
-        self.client.login(username='username', password='password')
+    roles = 'all'
 
     def test_installed(self):
         """Test that the sample panel plugin is installed"""

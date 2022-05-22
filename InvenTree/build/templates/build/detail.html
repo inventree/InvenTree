@@ -162,7 +162,7 @@
                 {% include "filter_list.html" with id='sub-build' %}
             </div>
         </div>
-        <table class='table table-striped table-condensed' id='sub-build-table' data-toolbar='#child-button-toolbar'></table>  
+        <table class='table table-striped table-condensed' id='sub-build-table' data-toolbar='#child-button-toolbar'></table>
     </div>
 </div>
 
@@ -349,7 +349,7 @@ onPanelLoad('completed', function() {
         buttons: [
             '#stock-options',
         ],
-        url: "{% url 'api-stock-list' %}",    
+        url: "{% url 'api-stock-list' %}",
     });
 });
 
@@ -442,7 +442,7 @@ function loadUntrackedStockTable() {
         {% endif %}
         tracked_parts: false,
     };
-    
+
     $('#allocation-table-untracked').bootstrapTable('destroy');
 
     // Load allocation table for un-tracked parts

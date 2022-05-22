@@ -9,7 +9,6 @@ from error_report.models import Error
 
 from plugin.registry import registry
 
-
 logger = logging.getLogger('inventree')
 
 

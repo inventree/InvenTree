@@ -2,29 +2,25 @@
 JSON API for the Order app
 """
 
+from django.db.models import F, Q
 from django.urls import include, path, re_path
-from django.db.models import Q, F
 
 from django_filters import rest_framework as rest_filters
-from rest_framework import generics
-from rest_framework import filters, status
+from rest_framework import filters, generics, status
 from rest_framework.response import Response
 
-from company.models import SupplierPart
-
-from InvenTree.filters import InvenTreeOrderingFilter
-from InvenTree.helpers import str2bool, DownloadFile
-from InvenTree.api import AttachmentMixin, APIDownloadMixin
-from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
-
-from order.admin import PurchaseOrderResource, PurchaseOrderLineItemResource
-from order.admin import SalesOrderResource
 import order.models as models
 import order.serializers as serializers
+from company.models import SupplierPart
+from InvenTree.api import APIDownloadMixin, AttachmentMixin
+from InvenTree.filters import InvenTreeOrderingFilter
+from InvenTree.helpers import DownloadFile, str2bool
+from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
+from order.admin import (PurchaseOrderLineItemResource, PurchaseOrderResource,
+                         SalesOrderResource)
 from part.models import Part
-from users.models import Owner
-
 from plugin.serializers import MetadataSerializer
+from users.models import Owner
 
 
 class GeneralExtraLineList:

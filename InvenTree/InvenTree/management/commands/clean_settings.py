@@ -6,7 +6,6 @@ import logging
 
 from django.core.management.base import BaseCommand
 
-
 logger = logging.getLogger('inventree')
 
 

@@ -34,11 +34,11 @@ function openSearchPanel() {
 
         // Prevent this button from actually submitting the form
         event.preventDefault();
-        
+
         panel.find('#search-input').val('');
         clearSearchResults();
     });
-    
+
     // Callback for the "close search" button
     panel.find('#search-close').click(function(event) {
         // Prevent this button from actually submitting the form
@@ -67,11 +67,11 @@ function updateSearch() {
     }
 
     clearSearchResults();
-    
+
     if (searchText.length == 0) {
         return;
     }
-    
+
     searchTextCurrent = searchText;
 
     // Cancel any previous AJAX requests
@@ -83,7 +83,7 @@ function updateSearch() {
 
     // Show the "searching" text
     $('#offcanvas-search').find('#search-pending').show();
-    
+
     if (user_settings.SEARCH_PREVIEW_SHOW_PARTS) {
 
         var params = {};
@@ -122,14 +122,22 @@ function updateSearch() {
 
     if (user_settings.SEARCH_PREVIEW_SHOW_STOCK) {
         // Search for matching stock items
+
+        var filters = {
+            part_detail: true,
+            location_detail: true,
+        };
+
+        if (user_settings.SEARCH_PREVIEW_HIDE_UNAVAILABLE_STOCK) {
+            // Only show 'in stock' items in the preview windoww
+            filters.in_stock = true;
+        }
+
         addSearchQuery(
             'stock',
             '{% trans "Stock Items" %}',
             '{% url "api-stock-list" %}',
-            {
-                part_detail: true,
-                location_detail: true,
-            },
+            filters,
             renderStockItem,
             {
                 url: '/stock/item',
@@ -167,15 +175,21 @@ function updateSearch() {
     }
 
     if (user_settings.SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS) {
+
+        var filters = {
+            supplier_detail: true,
+        };
+
+        if (user_settings.SEARCH_PREVIEW_EXCLUDE_INACTIVE_PURCHASE_ORDERS) {
+            filters.outstanding = true;
+        }
+
         // Search for matching purchase orders
         addSearchQuery(
             'purchaseorder',
             '{% trans "Purchase Orders" %}',
             '{% url "api-po-list" %}',
-            {
-                supplier_detail: true,
-                outstanding: true,
-            },
+            filters,
             renderPurchaseOrder,
             {
                 url: '/order/purchase-order',
@@ -184,22 +198,29 @@ function updateSearch() {
     }
 
     if (user_settings.SEARCH_PREVIEW_SHOW_SALES_ORDERS) {
+
+        var filters = {
+            customer_detail: true,
+        };
+
+        // Hide inactive (not "outstanding" orders)
+        if (user_settings.SEARCH_PREVIEW_EXCLUDE_INACTIVE_SALES_ORDERS) {
+            filters.outstanding = true;
+        }
+
         // Search for matching sales orders
         addSearchQuery(
             'salesorder',
             '{% trans "Sales Orders" %}',
             '{% url "api-so-list" %}',
-            {
-                customer_detail: true,
-                outstanding: true,
-            },
+            filters,
             renderSalesOrder,
             {
                 url: '/order/sales-order',
             }
         );
     }
-    
+
     // Wait until all the pending queries are completed
     $.when.apply($, searchQueries).done(function() {
         $('#offcanvas-search').find('#search-pending').hide();
@@ -210,13 +231,13 @@ function updateSearch() {
 function clearSearchResults() {
 
     var panel = $('#offcanvas-search');
-    
+
     // Ensure the 'no results found' element is visible
     panel.find('#search-no-results').show();
 
     // Ensure that the 'searching' element is hidden
     panel.find('#search-pending').hide();
-    
+
     // Delete any existing search results
     panel.find('#search-results').empty();
 
@@ -266,7 +287,7 @@ function addSearchQuery(key, title, query_url, query_params, render_func, render
 
 // Add a group of results to the list
 function addSearchResults(key, results, title, renderFunc, renderParams={}) {
-    
+
     if (results.length == 0) {
         // Do not display this group, as there are no results
         return;
@@ -276,7 +297,7 @@ function addSearchResults(key, results, title, renderFunc, renderParams={}) {
 
     // Ensure the 'no results found' element is hidden
     panel.find('#search-no-results').hide();
-    
+
     panel.find(`#search-results-wrapper-${key}`).append(`
         <div class='search-result-group' id='search-results-${key}'>
             <div class='search-result-header' style='display: flex;'>
