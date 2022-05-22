@@ -1,14 +1,15 @@
 """Unit tests for the label printing mixin"""
 
 from django.urls import reverse
+from django.apps import apps
 
-from InvenTree.helpers import InvenTreeTestCase
+from InvenTree.api_tester import InvenTreeAPITestCase
 from label.models import PartLabel
 from part.models import Part
 from plugin.registry import registry
 
 
-class LabelMixinTests(InvenTreeTestCase):
+class LabelMixinTests(InvenTreeAPITestCase):
     """Test that the Label mixin operates correctly"""
 
     fixtures = [
@@ -20,16 +21,22 @@ class LabelMixinTests(InvenTreeTestCase):
 
     roles = 'all'
 
-    def test_intalled(self):
+    def activate_plugin(self):
+        """Activate the 'samplelabel' plugin"""
+
+        config = registry.get_plugin('samplelabel').plugin_config()
+        config.active = True
+        config.save()
+
+    def test_installed(self):
         """Test that the sample printing plugin is installed"""
 
+        # Get all label plugins
         plugins = registry.with_mixin('labels')
-
         self.assertEqual(len(plugins), 1)
 
         # But, it is not 'active'
         plugins = registry.with_mixin('labels', active=True)
-
         self.assertEqual(len(plugins), 0)
 
     def test_api(self):
@@ -63,13 +70,8 @@ class LabelMixinTests(InvenTreeTestCase):
 
         self.assertEqual(len(response.data), 0)
 
-        # Activate the plugin
-        plugin = registry.get_plugin('samplelabel')
 
-        config = plugin.plugin_config()
-        config.active = True
-        config.save()
-
+        self.activate_plugin()
         # Should be available via the API now
         response = self.client.get(
             url,
@@ -80,9 +82,7 @@ class LabelMixinTests(InvenTreeTestCase):
         )
 
         self.assertEqual(len(response.data), 1)
-
         data = response.data[0]
-
         self.assertEqual(data['key'], 'samplelabel')
 
     def test_printing_process(self):
