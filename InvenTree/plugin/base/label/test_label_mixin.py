@@ -146,7 +146,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
         self.get(self.do_url(Part.objects.all()[:2], None, label), expected_code=200)
 
         # Print no part
-        self.get(self.do_url(None, plugin_ref, label), expected_code=200)
+        self.get(self.do_url(None, plugin_ref, label), expected_code=400)
 
     def test_printing_endpoints(self):
         """Cover the endpoints not covered by `test_printing_process`"""
