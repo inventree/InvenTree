@@ -32,11 +32,11 @@ class LabelMixinTests(InvenTreeAPITestCase):
         """Generate an URL to print a label"""
         # Gather part details
         if len(parts) == 1:
-            part_url = parts[0].pk
+            part_url = f'part={parts[0].pk}'
         else:
-            part_url = f'[{",".join([str(item.pk) for item in parts])}]'
+            part_url = '&'.join([f'parts={item.pk}' for item in parts])
         # Construct url
-        url = f'{reverse("api-part-label-print", kwargs={"pk": label.pk})}?parts={part_url}&plugin={plugin_ref}'
+        url = f'{reverse("api-part-label-print", kwargs={"pk": label.pk})}?{part_url}&plugin={plugin_ref}'
         return url
 
     def test_installed(self):
