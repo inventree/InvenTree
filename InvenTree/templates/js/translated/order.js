@@ -130,6 +130,9 @@ function completeShipment(shipment_id, options={}) {
                 title: `{% trans "Complete Shipment" %} ${shipment.reference}`,
                 fields: {
                     tracking_number: {},
+                    shipment_date: {
+                        value: moment().format("YYYY-MM-DD"),
+                    }
                 },
                 preFormContent: html,
                 confirm: true,

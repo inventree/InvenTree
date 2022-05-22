@@ -2,6 +2,7 @@
 JSON serializers for the Order API
 """
 
+from datetime import datetime
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -899,6 +900,7 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
 
         fields = [
             'tracking_number',
+            'shipment_date',
         ]
 
     def validate(self, data):
@@ -929,7 +931,14 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
         # Extract provided tracking number (optional)
         tracking_number = data.get('tracking_number', None)
 
-        shipment.complete_shipment(user, tracking_number=tracking_number)
+        # Extract shipping date (defaults to today's date)
+        shipment_date = data.get('shipment_date', datetime.now())
+
+        shipment.complete_shipment(
+            user,
+            tracking_number=tracking_number,
+            shipment_date=shipment_date,
+        )
 
 
 class SalesOrderShipmentAllocationItemSerializer(serializers.Serializer):

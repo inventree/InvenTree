@@ -1235,7 +1235,7 @@ class SalesOrderShipment(models.Model):
             allocation.complete_allocation(user)
 
         # Update the "shipment" date
-        self.shipment_date = datetime.now()
+        self.shipment_date = kwargs.get('shipment_date', datetime.now())
         self.shipped_by = user
 
         # Was a tracking number provided?
