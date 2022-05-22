@@ -31,15 +31,25 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
     def get_url(self, parts, plugin_ref, label, url_name: str = 'api-part-label-print', url_single: str = 'part'):
         """Generate an URL to print a label"""
-        # Gather part details
-        if len(parts) == 1:
-            part_url = f'{url_single}={parts[0].pk}'
-        else:
-            part_url = '&'.join([f'{url_single}s={item.pk}' for item in parts])
-        # Construct url
-        url = f'{reverse(url_name, kwargs={"pk": label.pk})}?{part_url}'
+        # Construct URL
+        kwargs = {}
+        if label:
+            kwargs["pk"] = label.pk
+
+        url = reverse(url_name, kwargs=kwargs)
+
+        # Append part filters
+        if not parts:
+            pass
+        elif len(parts) == 1:
+            url += f'?{url_single}={parts[0].pk}'
+        elif len(parts) > 1:
+            url += '?&'.join([f'{url_single}s={item.pk}' for item in parts])
+
+        # Append plugin reference
         if plugin_ref:
             url += f'&plugin={plugin_ref}'
+
         return url
 
     def test_installed(self):
@@ -145,20 +155,29 @@ class LabelMixinTests(InvenTreeAPITestCase):
             Args:
                 label (_type_): class of the label
                 qs (_type_): class of the base queryset
-                url_name (_type_): url for printing endpoint
+                url_name (_type_): url for endpoints
                 url_single (_type_): item lookup reference
             """
             label = label.objects.first()
             qs = qs.objects.all()
 
+            # List endpoint
+            self.get(self.get_url(None, None, None, f'{url_name}-list', url_single), expected_code=200)
+
+            # List endpoint with filter
+            self.get(self.get_url(qs[:2], None, None, f'{url_name}-list', url_single), expected_code=200)
+
             # Single page printing
-            self.get(self.get_url(qs[:1], plugin_ref, label, url_name, url_single), expected_code=200)
+            self.get(self.get_url(qs[:1], plugin_ref, label, f'{url_name}-print', url_single), expected_code=200)
 
             # Multi page printing
-            self.get(self.get_url(qs[:2], plugin_ref, label, url_name, url_single), expected_code=200)
+            self.get(self.get_url(qs[:2], plugin_ref, label, f'{url_name}-print', url_single), expected_code=200)
 
         # Test StockItemLabels
-        run_print_test(StockItemLabel, StockItem, 'api-stockitem-label-print', 'item')
+        run_print_test(StockItemLabel, StockItem, 'api-stockitem-label', 'item')
 
         # Test StockLocationLabels
-        run_print_test(StockLocationLabel, StockLocation, 'api-stocklocation-label-print', 'location')
+        run_print_test(StockLocationLabel, StockLocation, 'api-stocklocation-label', 'location')
+
+        # Test PartLabels
+        run_print_test(PartLabel, Part, 'api-part-label', 'part')
