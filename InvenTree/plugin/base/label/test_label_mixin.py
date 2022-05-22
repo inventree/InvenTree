@@ -82,4 +82,3 @@ class LabelMixinTests(InvenTreeTestCase):
         data = response.data[0]
 
         self.assertEqual(data['key'], 'samplelabel')
-        self.assertEqual(data[''])
