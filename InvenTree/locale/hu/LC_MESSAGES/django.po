@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-21 23:35+0000\n"
-"PO-Revision-Date: 2022-05-21 01:06\n"
+"PO-Revision-Date: 2022-05-22 01:15\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -478,7 +478,7 @@ msgstr "Hozzárendelt sorozatszám"
 
 #: InvenTree/status_codes.py:283
 msgid "Stock counted"
-msgstr "Készlet megszámolva"
+msgstr "Készlet leleltározva"
 
 #: InvenTree/status_codes.py:284
 msgid "Stock manually added"
@@ -1047,8 +1047,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:386
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:456
@@ -1232,7 +1231,7 @@ msgstr "Szükséges gyártási mennyiség még nincs meg"
 
 #: build/templates/build/build_base.html:130
 msgid "Stock has not been fully allocated to this Build Order"
-msgstr "A készlet nem lett teljesen lefoglalva ehhez a gyártási utasításhoz"
+msgstr "Még nincs lefoglalva a szükséges készlet"
 
 #: build/templates/build/build_base.html:151
 #: build/templates/build/detail.html:131 order/models.py:890
@@ -2220,7 +2219,7 @@ msgstr "Késésben lévő gyártások megjelenítése a főoldalon"
 
 #: common/models.py:1374
 msgid "Show outstanding POs"
-msgstr "Kintlévő beszerzési rendelések"
+msgstr "Kintlévő beszerzési rendelések megjelenítése"
 
 #: common/models.py:1375
 msgid "Show outstanding POs on the homepage"
@@ -2240,7 +2239,7 @@ msgstr "Függő vevői rendelések megjelenítése"
 
 #: common/models.py:1389
 msgid "Show outstanding SOs on the homepage"
-msgstr "Kintlévő vevői rendelések megjelenítése a főoldalon"
+msgstr "Függő vevői rendelések megjelenítése a főoldalon"
 
 #: common/models.py:1395
 msgid "Show overdue SOs"
@@ -2288,7 +2287,7 @@ msgstr "Inaktív alkatrészek elrejtése"
 
 #: common/models.py:1430
 msgid "Excluded inactive parts from search preview window"
-msgstr ""
+msgstr "Inaktív alkatrészek kihagyása a keresési előnézet találataiból"
 
 #: common/models.py:1436
 msgid "Search Categories"
@@ -2308,11 +2307,11 @@ msgstr "Készlet tételek megjelenítése a keresési előnézetben"
 
 #: common/models.py:1450
 msgid "Hide Unavailable Stock Items"
-msgstr ""
+msgstr "Nem elérhető készlet tételek elrejtése"
 
 #: common/models.py:1451
 msgid "Exclude stock items which are not available from the search preview window"
-msgstr ""
+msgstr "Nem elérhető készlet kihagyása a keresési előnézet találataiból"
 
 #: common/models.py:1457
 msgid "Search Locations"
@@ -2340,11 +2339,11 @@ msgstr "Beszerzési rendelések megjelenítése a keresési előnézetben"
 
 #: common/models.py:1478
 msgid "Exclude Inactive Purchase Orders"
-msgstr ""
+msgstr "Inaktív beszerzési rendelések kihagyása"
 
 #: common/models.py:1479
 msgid "Exclude inactive purchase orders from search preview window"
-msgstr ""
+msgstr "Inaktív beszerzési rendelések kihagyása a keresési előnézet találataiból"
 
 #: common/models.py:1485
 msgid "Search Sales Orders"
@@ -2356,11 +2355,11 @@ msgstr "Vevői rendelések megjelenítése a keresési előnézetben"
 
 #: common/models.py:1492
 msgid "Exclude Inactive Sales Orders"
-msgstr ""
+msgstr "Inaktív vevői rendelések kihagyása"
 
 #: common/models.py:1493
 msgid "Exclude inactive sales orders from search preview window"
-msgstr ""
+msgstr "Inaktív vevői rendelések kihagyása a keresési előnézet találataiból"
 
 #: common/models.py:1499
 msgid "Search Preview Results"
@@ -3954,10 +3953,8 @@ msgstr "Csomagolási lista nyomtatása"
 
 #: order/templates/order/sales_order_base.html:60
 #: templates/js/translated/order.js:206
-#, fuzzy
-#| msgid "Completed Shipments"
 msgid "Complete Shipments"
-msgstr "Kész szállítások"
+msgstr ""
 
 #: order/templates/order/sales_order_base.html:67
 #: order/templates/order/sales_order_base.html:250
@@ -5236,8 +5233,7 @@ msgstr "Válassz a meglévő képek közül"
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr "A(z) '<strong>%(full_name)s</strong>' alkatrész nem törölhető mert még mindig <strong>aktív</strong>. Előbb állítsd az alkatrészt inaktív állapotúra és probáld újra!    "
@@ -6712,7 +6708,7 @@ msgstr "Kintlévő beszerzési rendelések"
 
 #: templates/InvenTree/index.html:266
 msgid "Overdue Purchase Orders"
-msgstr "Késésben lévő megrendelések"
+msgstr "Késésben lévő beszerzések"
 
 #: templates/InvenTree/index.html:286
 msgid "Outstanding Sales Orders"
@@ -7421,16 +7417,14 @@ msgstr "Bejelentkezés"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Kérlek jelentkezz be az egyik meglévő külső fiókkal vagy <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">Regisztrálj</a> fiókért és jelentkezz be lentebb:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Ha még nem hoztál létre fiókot akkor előbb <a href=\"%(signup_url)s\">regisztrálj</a>."
 
@@ -8689,16 +8683,12 @@ msgid "Confirm Shipment"
 msgstr "Szállítmány megerősítése"
 
 #: templates/js/translated/order.js:192
-#, fuzzy
-#| msgid "No matching shipments found"
 msgid "No pending shipments found"
-msgstr "Nincs egyező szállímány"
+msgstr ""
 
 #: templates/js/translated/order.js:196
-#, fuzzy
-#| msgid "No stock items have been allocated to this shipment"
 msgid "No stock items have been allocated to pending shipments"
-msgstr "Ehhez a szállítmányhoz nincs készlet hozzárendelve"
+msgstr ""
 
 #: templates/js/translated/order.js:228
 msgid "Skip"
@@ -8978,10 +8968,8 @@ msgid "Tracking"
 msgstr "Követés"
 
 #: templates/js/translated/order.js:2598
-#, fuzzy
-#| msgid "Edit Shipment"
 msgid "Add Shipment"
-msgstr "Szállítmány szerkesztése"
+msgstr ""
 
 #: templates/js/translated/order.js:2649
 msgid "Confirm stock allocation"
@@ -10290,3 +10278,4 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
+
