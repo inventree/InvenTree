@@ -2,7 +2,6 @@ import plugin.templatetags.plugin_extras as plugin_tags
 from common.notifications import (BulkNotificationMethod, NotificationMethod,
                                   SingleNotificationMethod, storage)
 from part.test_part import BaseNotificationIntegrationTest
-from plugin import MixinImplementationError, MixinNotImplementedError
 from plugin.models import NotificationUserSetting
 
 
@@ -38,19 +37,19 @@ class BaseNotificationTests(BaseNotificationIntegrationTest):
                 """a comment so we do not need a pass"""
 
         # no send / send bulk
-        with self.assertRaises(MixinNotImplementedError):
+        with self.assertRaises(NotImplementedError):
             FalseNotificationMethod('', '', '', '', )
 
         # no METHOD_NAME
-        with self.assertRaises(MixinImplementationError):
+        with self.assertRaises(NotImplementedError):
             NoNameNotificationMethod('', '', '', '', )
 
         # a not existant context check
-        with self.assertRaises(MixinImplementationError):
+        with self.assertRaises(NotImplementedError):
             WrongContextNotificationMethod('', '', '', '', )
 
         # no get_targets
-        with self.assertRaises(MixinImplementationError):
+        with self.assertRaises(NotImplementedError):
             AnotherFalseNotificationMethod('', '', '', {'name': 1, 'message': 2, }, )
 
     def test_failing_passing(self):
@@ -86,7 +85,7 @@ class BulkNotificationMethodTests(BaseNotificationIntegrationTest):
             def get_targets(self):
                 return [1, ]
 
-        with self.assertRaises(MixinNotImplementedError):
+        with self.assertRaises(NotImplementedError):
             self._notification_run(WrongImplementation)
 
 
@@ -104,7 +103,7 @@ class SingleNotificationMethodTests(BaseNotificationIntegrationTest):
             def get_targets(self):
                 return [1, ]
 
-        with self.assertRaises(MixinNotImplementedError):
+        with self.assertRaises(NotImplementedError):
             self._notification_run(WrongImplementation)
 
 # A integration test for notifications is provided in test_part.PartNotificationTest
