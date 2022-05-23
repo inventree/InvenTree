@@ -58,7 +58,7 @@ class LocateMixin:
             if item.in_stock and item.location is not None:
                 self.locate_stock_location(item.location.pk)
 
-        except StockItem.DoesNotExist:
+        except StockItem.DoesNotExist:  # pragma: no cover
             logger.warning("LocateMixin: StockItem pk={item_pk} not found")
             pass
 
