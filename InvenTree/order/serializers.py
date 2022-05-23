@@ -912,7 +912,7 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
         if not shipment:
             raise ValidationError(_("No shipment details provided"))
 
-        shipment.check_can_complete()
+        shipment.check_can_complete(raise_error=True)
 
         return data
 
@@ -929,7 +929,7 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
         user = request.user
 
         # Extract provided tracking number (optional)
-        tracking_number = data.get('tracking_number', None)
+        tracking_number = data.get('tracking_number', shipment.tracking_number)
 
         # Extract shipping date (defaults to today's date)
         shipment_date = data.get('shipment_date', datetime.now())
