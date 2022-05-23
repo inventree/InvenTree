@@ -3,8 +3,10 @@
 from django.conf import settings
 from django.test import TestCase
 
-from plugin import registry
+from plugin import InvenTreePlugin, registry
 from plugin.base.event.events import trigger_event
+from plugin.helpers import MixinNotImplementedError
+from plugin.mixins import EventMixin
 
 
 class EventPluginSampleTests(TestCase):
@@ -26,3 +28,13 @@ class EventPluginSampleTests(TestCase):
 
         # Disable again
         settings.PLUGIN_TESTING_EVENTS = False
+
+    def test_mixin(self):
+        """Test that MixinNotImplementedError is raised"""
+
+        with self.assertRaises(MixinNotImplementedError):
+            class Wrong(EventMixin, InvenTreePlugin):
+                pass
+
+            plugin = Wrong()
+            plugin.process_event('abc')
