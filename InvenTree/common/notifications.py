@@ -26,7 +26,7 @@ class NotificationMethod:
     def __init__(self, obj, category, targets, context) -> None:
         # Check if a sending fnc is defined
         if (not hasattr(self, 'send')) and (not hasattr(self, 'send_bulk')):
-            raise MixinImplementationError('A NotificationMethod must either define a `send` or a `send_bulk` method')
+            raise MixinNotImplementedError('A NotificationMethod must either define a `send` or a `send_bulk` method')
 
         # No method name is no good
         if self.METHOD_NAME in ('', None):
@@ -255,7 +255,7 @@ def trigger_notifaction(obj, category=None, obj_ref='pk', **kwargs):
             logger.info(f"Triggering method '{method.METHOD_NAME}'")
             try:
                 deliver_notification(method, obj, category, targets, context)
-            except [MixinImplementationError, MixinNotImplementedError] as error:
+            except (MixinImplementationError, MixinNotImplementedError) as error:
                 raise error
             except Exception as error:
                 logger.error(error)
