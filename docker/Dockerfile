@@ -15,7 +15,7 @@ ENV CRYPTOGRAPHY_DONT_BUILD_RUST 1
 # InvenTree key settings
 
 # The INVENTREE_HOME directory is where the InvenTree source repository will be located
-ENV INVENTREE_HOME="/home/inventree"
+ENV INVENTREE_HOME="/home/inventree/inventree"
 
 # GitHub settings
 ENV INVENTREE_GIT_REPO="${repository}"
@@ -77,17 +77,14 @@ RUN pip install --upgrade pip
 COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -U -r requirements.txt
 
+# Drop to the inventree user
+RUN adduser inventree
+USER inventree
+
 # Production code (pulled from tagged github release)
 FROM base as production
 
-# Create user account and group
-RUN adduser inventree
-RUN addgroup inventreegroup
-RUN usermod -aG inventreegroup inventree
-
 # Clone source code
-RUN echo "Downloading InvenTree from ${INVENTREE_GIT_REPO}"
-
 RUN git clone --branch ${INVENTREE_GIT_BRANCH} --depth 1 ${INVENTREE_GIT_REPO} ${INVENTREE_HOME}
 
 # Ref: https://github.blog/2022-04-12-git-security-vulnerability-announced/
@@ -96,10 +93,6 @@ RUN git config --global --add safe.directory ${INVENTREE_HOME}
 # Checkout against a particular git tag
 RUN if [ -n "${INVENTREE_GIT_TAG}" ] ; then cd ${INVENTREE_HOME} && git fetch --all --tags && git checkout tags/${INVENTREE_GIT_TAG} -b v${INVENTREE_GIT_TAG}-branch ; fi
 
-RUN chown -R inventree:inventreegroup ${INVENTREE_HOME}/*
-
-# Drop to the inventree user
-USER inventree
 
 # Install InvenTree packages
 RUN pip3 install --user --no-cache-dir --disable-pip-version-check -r ${INVENTREE_HOME}/requirements.txt
