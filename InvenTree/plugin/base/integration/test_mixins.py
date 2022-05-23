@@ -324,7 +324,7 @@ class PanelMixinTests(InvenTreeTestCase):
         urls = [
             reverse('part-detail', kwargs={'pk': 1}),
             reverse('stock-item-detail', kwargs={'pk': 2}),
-            reverse('stock-location-detail', kwargs={'pk': 1}),
+            reverse('stock-location-detail', kwargs={'pk': 2}),
         ]
 
         plugin.set_setting('ENABLE_HELLO_WORLD', False)
