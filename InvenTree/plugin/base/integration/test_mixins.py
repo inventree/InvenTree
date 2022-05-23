@@ -384,7 +384,7 @@ class PanelMixinTests(InvenTreeTestCase):
     def test_mixin(self):
         """Test that ImplementationError is raised"""
 
-        with self.assertRaises(NotImplementedError):
+        with self.assertRaises(MixinNotImplementedError):
             class Wrong(PanelMixin, InvenTreePlugin):
                 pass
 

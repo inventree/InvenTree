@@ -541,7 +541,7 @@ class PanelMixin:
 
     def get_custom_panels(self, view, request):
         """ This method *must* be implemented by the plugin class """
-        raise NotImplementedError(f"{__class__} is missing the 'get_custom_panels' method")
+        raise MixinNotImplementedError(f"{__class__} is missing the 'get_custom_panels' method")
 
     def get_panel_context(self, view, request, context):
         """
