@@ -38,13 +38,13 @@ class SampleLocatePlugintests(InvenTreeAPITestCase):
         self.post(url, {'plugin': 'samplelocate'}, expected_code=400)
 
         # Right plugin - wrong reference
-        self.post(url, {'plugin': 'samplelocate', 'item': 999}, expected_code=400)
+        self.post(url, {'plugin': 'samplelocate', 'item': 999}, expected_code=404)
 
         # Right plugin - right reference
         self.post(url, {'plugin': 'samplelocate', 'item': 1}, expected_code=200)
 
         # Right plugin - wrong reference
-        self.post(url, {'plugin': 'samplelocate', 'location': 999}, expected_code=400)
+        self.post(url, {'plugin': 'samplelocate', 'location': 999}, expected_code=404)
 
         # Right plugin - right reference
         self.post(url, {'plugin': 'samplelocate', 'location': 1}, expected_code=200)
@@ -57,4 +57,4 @@ class SampleLocatePlugintests(InvenTreeAPITestCase):
                 pass
 
             plugin = Wrong()
-            plugin.locate_stock_item()
+            plugin.locate_stock_location()
