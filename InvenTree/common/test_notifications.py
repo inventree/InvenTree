@@ -76,7 +76,7 @@ class BulkNotificationMethodTests(BaseNotificationIntegrationTest):
     def test_BulkNotificationMethod(self):
         """
         Ensure the implementation requirements are tested.
-        NotImplementedError needs to raise if the send_bulk() method is not set.
+        MixinNotImplementedError needs to raise if the send_bulk() method is not set.
         """
 
         class WrongImplementation(BulkNotificationMethod):
@@ -94,7 +94,7 @@ class SingleNotificationMethodTests(BaseNotificationIntegrationTest):
     def test_SingleNotificationMethod(self):
         """
         Ensure the implementation requirements are tested.
-        NotImplementedError needs to raise if the send() method is not set.
+        MixinNotImplementedError needs to raise if the send() method is not set.
         """
 
         class WrongImplementation(SingleNotificationMethod):

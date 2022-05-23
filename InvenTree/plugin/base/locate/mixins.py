@@ -2,7 +2,7 @@
 
 import logging
 
-from plugin.helpers import MixinImplementationError
+from plugin.helpers import MixinNotImplementedError
 
 logger = logging.getLogger('inventree')
 
@@ -58,7 +58,7 @@ class LocateMixin:
             if item.in_stock and item.location is not None:
                 self.locate_stock_location(item.location.pk)
 
-        except StockItem.DoesNotExist:
+        except StockItem.DoesNotExist:  # pragma: no cover
             logger.warning("LocateMixin: StockItem pk={item_pk} not found")
             pass
 
@@ -71,4 +71,4 @@ class LocateMixin:
 
         Note: The default implementation here does nothing!
         """
-        raise MixinImplementationError
+        raise MixinNotImplementedError

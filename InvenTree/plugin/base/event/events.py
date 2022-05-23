@@ -26,9 +26,10 @@ def trigger_event(event, *args, **kwargs):
 
     if not settings.PLUGINS_ENABLED:
         # Do nothing if plugins are not enabled
-        return
+        return  # pragma: no cover
 
-    if not canAppAccessDatabase():
+    # Make sure the database can be accessed and is not beeing tested rn
+    if not canAppAccessDatabase() and not settings.PLUGIN_TESTING_EVENTS:
         logger.debug(f"Ignoring triggered event '{event}' - database not ready")
         return
 
@@ -91,7 +92,7 @@ def process_event(plugin_slug, event, *args, **kwargs):
 
     plugin = registry.plugins.get(plugin_slug, None)
 
-    if plugin is None:
+    if plugin is None:  # pragma: no cover
         logger.error(f"Could not find matching plugin for '{plugin_slug}'")
         return
 
@@ -106,7 +107,7 @@ def allow_table_event(table_name):
 
     if isImportingData():
         # Prevent table events during the data import process
-        return False
+        return False  # pragma: no cover
 
     table_name = table_name.lower().strip()
 
