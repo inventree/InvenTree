@@ -8,7 +8,6 @@ import os
 import sys
 
 from django.conf import settings
-from django.core.exceptions import FieldError, ValidationError
 from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.db import models
 from django.template import Context, Template
@@ -255,22 +254,6 @@ class StockItemLabel(LabelTemplate):
         ]
     )
 
-    def matches_stock_item(self, item):
-        """
-        Test if this label template matches a given StockItem object
-        """
-
-        try:
-            filters = validateFilterString(self.filters)
-            items = stock.models.StockItem.objects.filter(**filters)
-        except (ValidationError, FieldError):
-            # If an error exists with the "filters" field, return False
-            return False
-
-        items = items.filter(pk=item.pk)
-
-        return items.exists()
-
     def get_context_data(self, request):
         """
         Generate context data for each provided StockItem
@@ -314,21 +297,6 @@ class StockLocationLabel(LabelTemplate):
             validate_stock_location_filters]
     )
 
-    def matches_stock_location(self, location):
-        """
-        Test if this label template matches a given StockLocation object
-        """
-
-        try:
-            filters = validateFilterString(self.filters)
-            locs = stock.models.StockLocation.objects.filter(**filters)
-        except (ValidationError, FieldError):
-            return False
-
-        locs = locs.filter(pk=location.pk)
-
-        return locs.exists()
-
     def get_context_data(self, request):
         """
         Generate context data for each provided StockLocation
@@ -361,21 +329,6 @@ class PartLabel(LabelTemplate):
             validate_part_filters
         ]
     )
-
-    def matches_part(self, part):
-        """
-        Test if this label template matches a given Part object
-        """
-
-        try:
-            filters = validateFilterString(self.filters)
-            parts = part.models.Part.objects.filter(**filters)
-        except (ValidationError, FieldError):
-            return False
-
-        parts = parts.filter(pk=part.pk)
-
-        return parts.exists()
 
     def get_context_data(self, request):
         """
