@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-21 23:35+0000\n"
-"PO-Revision-Date: 2022-05-22 01:15\n"
+"POT-Creation-Date: 2022-05-22 22:56+0000\n"
+"PO-Revision-Date: 2022-05-23 01:47\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -3263,10 +3263,6 @@ msgstr "Ungültige Antwort {code}"
 msgid "Supplied URL is not a valid image file"
 msgstr "Angegebene URL ist kein gültiges Bild"
 
-#: label/api.py:91 report/api.py:191
-msgid "No valid objects provided to template"
-msgstr "Keine korrekten Objekte für Vorlage gegeben"
-
 #: label/models.py:106
 msgid "Label name"
 msgstr "Label Name"
@@ -5669,6 +5665,10 @@ msgstr "Installation nicht bestätigt"
 #: plugin/serializers.py:102
 msgid "Either packagename of URL must be provided"
 msgstr "Entweder Paketname oder URL muss angegeben werden"
+
+#: report/api.py:191
+msgid "No valid objects provided to template"
+msgstr "Keine korrekten Objekte für Vorlage gegeben"
 
 #: report/api.py:223 report/api.py:270
 #, python-brace-format
