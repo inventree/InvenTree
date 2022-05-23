@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-21 23:35+0000\n"
-"PO-Revision-Date: 2022-05-22 01:15\n"
+"POT-Creation-Date: 2022-05-22 22:56+0000\n"
+"PO-Revision-Date: 2022-05-23 01:47\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -3264,10 +3264,6 @@ msgstr "Érvénytelen válasz: {code}"
 msgid "Supplied URL is not a valid image file"
 msgstr "A megadott URL nem egy érvényes kép fájl"
 
-#: label/api.py:91 report/api.py:191
-msgid "No valid objects provided to template"
-msgstr "Nincs érvényes objektum megadva a sablonhoz"
-
 #: label/models.py:106
 msgid "Label name"
 msgstr "Címke neve"
@@ -5668,6 +5664,10 @@ msgstr "Tlepítés nincs megerősítve"
 #: plugin/serializers.py:102
 msgid "Either packagename of URL must be provided"
 msgstr "Vagy csomag nevet vagy URL-t meg kell adni"
+
+#: report/api.py:191
+msgid "No valid objects provided to template"
+msgstr "Nincs érvényes objektum megadva a sablonhoz"
 
 #: report/api.py:223 report/api.py:270
 #, python-brace-format
