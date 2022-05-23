@@ -133,7 +133,7 @@ function completeShipment(shipment_id, options={}) {
                         value: shipment.tracking_number,
                     },
                     shipment_date: {
-                        value: moment().format("YYYY-MM-DD"),
+                        value: moment().format('YYYY-MM-DD'),
                     }
                 },
                 preFormContent: html,
