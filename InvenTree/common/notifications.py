@@ -4,7 +4,7 @@ from datetime import timedelta
 from common.models import NotificationEntry, NotificationMessage
 from InvenTree.helpers import inheritors
 from InvenTree.ready import isImportingData
-from plugin import registry
+from plugin import MixinImplementationError, MixinNotImplementedError, registry
 from plugin.models import NotificationUserSetting
 
 logger = logging.getLogger('inventree')
@@ -26,11 +26,11 @@ class NotificationMethod:
     def __init__(self, obj, category, targets, context) -> None:
         # Check if a sending fnc is defined
         if (not hasattr(self, 'send')) and (not hasattr(self, 'send_bulk')):
-            raise NotImplementedError('A NotificationMethod must either define a `send` or a `send_bulk` method')
+            raise MixinImplementationError('A NotificationMethod must either define a `send` or a `send_bulk` method')
 
         # No method name is no good
         if self.METHOD_NAME in ('', None):
-            raise NotImplementedError(f'The NotificationMethod {self.__class__} did not provide a METHOD_NAME')
+            raise MixinImplementationError(f'The NotificationMethod {self.__class__} did not provide a METHOD_NAME')
 
         # Check if plugin is disabled - if so do not gather targets etc.
         if self.global_setting_disable():
@@ -68,7 +68,7 @@ class NotificationMethod:
                 return check(ref[1:], obj[ref[0]])
 
             # other cases -> raise
-            raise NotImplementedError('This type can not be used as a context reference')
+            raise MixinImplementationError('This type can not be used as a context reference')
 
         missing = []
         for item in (*self.CONTEXT_BUILTIN, *self.CONTEXT_EXTRA):
@@ -77,12 +77,12 @@ class NotificationMethod:
                 missing.append(ret)
 
         if missing:
-            raise NotImplementedError(f'The `context` is missing the following items:\n{missing}')
+            raise MixinImplementationError(f'The `context` is missing the following items:\n{missing}')
 
         return context
 
     def get_targets(self):
-        raise NotImplementedError('The `get_targets` method must be implemented!')
+        raise MixinImplementationError('The `get_targets` method must be implemented!')
 
     def setup(self):
         return True
@@ -124,12 +124,12 @@ class NotificationMethod:
 
 class SingleNotificationMethod(NotificationMethod):
     def send(self, target):
-        raise NotImplementedError('The `send` method must be overriden!')
+        raise MixinNotImplementedError('The `send` method must be overriden!')
 
 
 class BulkNotificationMethod(NotificationMethod):
     def send_bulk(self):
-        raise NotImplementedError('The `send` method must be overriden!')
+        raise MixinNotImplementedError('The `send` method must be overriden!')
 # endregion
 
 
@@ -255,7 +255,7 @@ def trigger_notifaction(obj, category=None, obj_ref='pk', **kwargs):
             logger.info(f"Triggering method '{method.METHOD_NAME}'")
             try:
                 deliver_notification(method, obj, category, targets, context)
-            except NotImplementedError as error:
+            except [MixinImplementationError, MixinNotImplementedError] as error:
                 raise error
             except Exception as error:
                 logger.error(error)
