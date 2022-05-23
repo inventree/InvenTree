@@ -8,6 +8,7 @@ from error_report.models import Error
 
 from InvenTree.helpers import InvenTreeTestCase
 from plugin import InvenTreePlugin
+from plugin.base.integration.mixins import PanelMixin
 from plugin.helpers import MixinNotImplementedError
 from plugin.mixins import (APICallMixin, AppMixin, NavigationMixin,
                            SettingsMixin, UrlsMixin)
@@ -379,3 +380,13 @@ class PanelMixinTests(InvenTreeTestCase):
 
         # Assert that each request threw an error
         self.assertEqual(Error.objects.count(), n_errors + len(urls))
+
+    def test_mixin(self):
+        """Test that ImplementationError is raised"""
+
+        with self.assertRaises(NotImplementedError):
+            class Wrong(PanelMixin, InvenTreePlugin):
+                pass
+
+            plugin = Wrong()
+            plugin.get_custom_panels('abc', 'abc')
