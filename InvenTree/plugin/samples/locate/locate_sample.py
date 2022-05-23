@@ -9,7 +9,6 @@ import logging
 from plugin import InvenTreePlugin
 from plugin.mixins import LocateMixin
 
-
 logger = logging.getLogger('inventree')
 
 

@@ -1,12 +1,13 @@
-import certifi
 import ssl
+from urllib.error import URLError
 from urllib.request import urlopen
 
-from common.settings import currency_code_default, currency_codes
-from urllib.error import URLError
-
-from djmoney.contrib.exchange.backends.base import SimpleExchangeBackend
 from django.db.utils import OperationalError
+
+import certifi
+from djmoney.contrib.exchange.backends.base import SimpleExchangeBackend
+
+from common.settings import currency_code_default, currency_codes
 
 
 class InvenTreeExchange(SimpleExchangeBackend):

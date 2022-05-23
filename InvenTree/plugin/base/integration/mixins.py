@@ -2,21 +2,20 @@
 Plugin mixin classes
 """
 
-import logging
 import json
+import logging
+
+from django.db.utils import OperationalError, ProgrammingError
+from django.urls import include, re_path
+
 import requests
 
-from django.urls import include, re_path
-from django.db.utils import OperationalError, ProgrammingError
-
 import InvenTree.helpers
-
-from plugin.helpers import MixinImplementationError, MixinNotImplementedError
-from plugin.helpers import render_template, render_text
+from plugin.helpers import (MixinImplementationError, MixinNotImplementedError,
+                            render_template, render_text)
 from plugin.models import PluginConfig, PluginSetting
 from plugin.registry import registry
 from plugin.urls import PLUGIN_BASE
-
 
 logger = logging.getLogger('inventree')
 
@@ -58,10 +57,10 @@ class SettingsMixin:
         except (OperationalError, ProgrammingError):  # pragma: no cover
             plugin = None
 
-        if not plugin:
+        if not plugin:  # pragma: no cover
             # Cannot find associated plugin model, return
             logger.error(f"Plugin configuration not found for plugin '{self.slug}'")
-            return  # pragma: no cover
+            return
 
         PluginSetting.set_setting(key, value, user, plugin=plugin)
 

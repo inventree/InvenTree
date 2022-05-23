@@ -6,48 +6,36 @@ from collections import OrderedDict
 from datetime import datetime, timedelta
 
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.urls import include, path, re_path
-from django.http import JsonResponse
-from django.db.models import Q, F
 from django.db import transaction
+from django.db.models import F, Q
+from django.http import JsonResponse
+from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 
-from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as rest_filters
-
-from rest_framework import status
-from rest_framework.serializers import ValidationError
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, generics, status
 from rest_framework.response import Response
-from rest_framework import generics, filters
+from rest_framework.serializers import ValidationError
 
-from build.models import Build
-
-import common.settings
 import common.models
-
+import common.settings
+import stock.serializers as StockSerializers
+from build.models import Build
 from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer, SupplierPartSerializer
-
-from InvenTree.helpers import str2bool, isNull, extract_serial_numbers
-from InvenTree.helpers import DownloadFile
-from InvenTree.api import AttachmentMixin, APIDownloadMixin
+from InvenTree.api import APIDownloadMixin, AttachmentMixin
 from InvenTree.filters import InvenTreeOrderingFilter
-
-from order.models import PurchaseOrder
-from order.models import SalesOrder, SalesOrderAllocation
+from InvenTree.helpers import (DownloadFile, extract_serial_numbers, isNull,
+                               str2bool)
+from order.models import PurchaseOrder, SalesOrder, SalesOrderAllocation
 from order.serializers import PurchaseOrderSerializer
-
 from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
-
 from plugin.serializers import MetadataSerializer
-
 from stock.admin import StockItemResource
-from stock.models import StockLocation, StockItem
-from stock.models import StockItemTracking
-from stock.models import StockItemAttachment
-from stock.models import StockItemTestResult
-import stock.serializers as StockSerializers
+from stock.models import (StockItem, StockItemAttachment, StockItemTestResult,
+                          StockItemTracking, StockLocation)
 
 
 class StockDetail(generics.RetrieveUpdateDestroyAPIView):

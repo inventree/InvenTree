@@ -2,28 +2,24 @@
 Label printing models
 """
 
-import sys
-import os
-import logging
 import datetime
+import logging
+import os
+import sys
 
 from django.conf import settings
-from django.db import models
-from django.urls import reverse
+from django.core.exceptions import FieldError, ValidationError
 from django.core.validators import FileExtensionValidator, MinValueValidator
-from django.core.exceptions import ValidationError, FieldError
-
-from django.template import Template, Context
+from django.db import models
+from django.template import Context, Template
 from django.template.loader import render_to_string
-
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from InvenTree.helpers import validateFilterString, normalize
-
 import common.models
-import stock.models
 import part.models
-
+import stock.models
+from InvenTree.helpers import normalize, validateFilterString
 
 try:
     from django_weasyprint import WeasyTemplateResponseMixin
@@ -175,7 +171,7 @@ class LabelTemplate(models.Model):
         Note: Override this in any subclass
         """
 
-        return {}
+        return {}  # pragma: no cover
 
     def generate_filename(self, request, **kwargs):
         """
@@ -246,7 +242,7 @@ class StockItemLabel(LabelTemplate):
 
     @staticmethod
     def get_api_url():
-        return reverse('api-stockitem-label-list')
+        return reverse('api-stockitem-label-list')  # pragma: no cover
 
     SUBDIR = "stockitem"
 
@@ -306,7 +302,7 @@ class StockLocationLabel(LabelTemplate):
 
     @staticmethod
     def get_api_url():
-        return reverse('api-stocklocation-label-list')
+        return reverse('api-stocklocation-label-list')  # pragma: no cover
 
     SUBDIR = "stocklocation"
 
@@ -353,7 +349,7 @@ class PartLabel(LabelTemplate):
 
     @staticmethod
     def get_api_url():
-        return reverse('api-part-label-list')
+        return reverse('api-part-label-list')  # pragma: no cover
 
     SUBDIR = 'part'
 

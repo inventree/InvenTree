@@ -1,14 +1,12 @@
 import logging
 
 from rest_framework import serializers
+from rest_framework.fields import empty
 from rest_framework.metadata import SimpleMetadata
 from rest_framework.utils import model_meta
-from rest_framework.fields import empty
-
-from InvenTree.helpers import str2bool
 
 import users.models
-
+from InvenTree.helpers import str2bool
 
 logger = logging.getLogger('inventree')
 

@@ -3,16 +3,16 @@
 import logging
 
 from django.apps import AppConfig
-from django.core.exceptions import AppRegistryNotReady
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.exceptions import AppRegistryNotReady
 from django.db import transaction
 from django.db.utils import IntegrityError
 
-from InvenTree.ready import isInTestMode, canAppAccessDatabase
-from .config import get_setting
 import InvenTree.tasks
+from InvenTree.ready import canAppAccessDatabase, isInTestMode
 
+from .config import get_setting
 
 logger = logging.getLogger("inventree")
 
@@ -111,8 +111,8 @@ class InvenTreeConfig(AppConfig):
         try:
             from djmoney.contrib.exchange.models import ExchangeBackend
 
-            from InvenTree.tasks import update_exchange_rates
             from common.settings import currency_code_default
+            from InvenTree.tasks import update_exchange_rates
         except AppRegistryNotReady:  # pragma: no cover
             pass
 

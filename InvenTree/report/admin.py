@@ -1,11 +1,7 @@
 from django.contrib import admin
 
-from .models import ReportSnippet, ReportAsset
-from .models import TestReport
-from .models import BuildReport
-from .models import BillOfMaterialsReport
-from .models import PurchaseOrderReport
-from .models import SalesOrderReport
+from .models import (BillOfMaterialsReport, BuildReport, PurchaseOrderReport,
+                     ReportAsset, ReportSnippet, SalesOrderReport, TestReport)
 
 
 class ReportTemplateAdmin(admin.ModelAdmin):

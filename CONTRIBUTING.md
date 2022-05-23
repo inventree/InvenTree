@@ -1,5 +1,9 @@
 Please read the contribution guidelines below, before submitting your first pull request to the InvenTree codebase.
 
+## Setup
+
+Please run `invoke setup_dev` in the root directory of your InvenTree code base to set up your development setup before starting to contribute. This will install and set up pre-commit to run some checks before each commit and help reduce the style errors.
+
 ## Branches and Versioning
 
 InvenTree roughly follow the [GitLab flow](https://docs.gitlab.com/ee/topics/gitlab_flow.html) branching style, to allow simple management of multiple tagged releases, short-lived branches, and development on the main branch.
@@ -91,6 +95,7 @@ The various github actions can be found in the `./github/workflows` directory
 ## Code Style
 
 Sumbitted Python code is automatically checked against PEP style guidelines. Locally you can run `invoke style` to ensure the style checks will pass, before submitting the PR.
+Please write docstrings for each function and class - we follow the [google doc-style](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings) for python. Docstrings for general javascript code is encouraged! Docstyles are checked by `invoke style`.
 
 ## Documentation
 
@@ -161,4 +166,3 @@ The tags describe issues and PRs in multiple areas:
 |  | docker | Docker / docker-compose |
 |  | CI | CI / unit testing ecosystem |
 |  | setup | Relates to the InvenTree setup / installation process |
-

@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """Unit tests for InvenTreeBarcodePlugin"""
 
-from django.contrib.auth import get_user_model
 from django.urls import reverse
 
-from rest_framework.test import APITestCase
 from rest_framework import status
 
+from InvenTree.api_tester import InvenTreeAPITestCase
 
-class TestInvenTreeBarcode(APITestCase):
+
+class TestInvenTreeBarcode(InvenTreeAPITestCase):
 
     fixtures = [
         'category',
@@ -16,13 +16,6 @@ class TestInvenTreeBarcode(APITestCase):
         'location',
         'stock'
     ]
-
-    def setUp(self):
-        # Create a user for auth
-        user = get_user_model()
-        user.objects.create_user('testuser', 'test@testing.com', 'password')
-
-        self.client.login(username='testuser', password='password')
 
     def test_errors(self):
         """

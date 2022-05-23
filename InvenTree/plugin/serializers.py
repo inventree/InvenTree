@@ -5,15 +5,15 @@ JSON serializers for plugin app
 import os
 import subprocess
 
-from django.core.exceptions import ValidationError
 from django.conf import settings
-from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 
-from plugin.models import PluginConfig, PluginSetting, NotificationUserSetting
 from common.serializers import GenericReferencedSettingSerializer
+from plugin.models import NotificationUserSetting, PluginConfig, PluginSetting
 
 
 class MetadataSerializer(serializers.ModelSerializer):

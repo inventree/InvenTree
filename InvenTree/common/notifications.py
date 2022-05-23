@@ -1,12 +1,11 @@
 import logging
 from datetime import timedelta
 
+from common.models import NotificationEntry, NotificationMessage
 from InvenTree.helpers import inheritors
 from InvenTree.ready import isImportingData
-from common.models import NotificationEntry, NotificationMessage
 from plugin import registry
 from plugin.models import NotificationUserSetting
-
 
 logger = logging.getLogger('inventree')
 

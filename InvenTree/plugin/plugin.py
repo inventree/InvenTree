@@ -2,21 +2,20 @@
 """
 Base Class for InvenTree plugins
 """
+import inspect
 import logging
 import os
-import inspect
-from datetime import datetime
 import pathlib
 import warnings
+from datetime import datetime
 
 from django.conf import settings
 from django.db.utils import OperationalError, ProgrammingError
+from django.urls.base import reverse
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
-from django.urls.base import reverse
 
-from plugin.helpers import get_git_log, GitStatus
-
+from plugin.helpers import GitStatus, get_git_log
 
 logger = logging.getLogger("inventree")
 

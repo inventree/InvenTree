@@ -1,7 +1,8 @@
-from common.notifications import NotificationMethod, SingleNotificationMethod, BulkNotificationMethod, storage
-from plugin.models import NotificationUserSetting
-from part.test_part import BaseNotificationIntegrationTest
 import plugin.templatetags.plugin_extras as plugin_tags
+from common.notifications import (BulkNotificationMethod, NotificationMethod,
+                                  SingleNotificationMethod, storage)
+from part.test_part import BaseNotificationIntegrationTest
+from plugin.models import NotificationUserSetting
 
 
 class BaseNotificationTests(BaseNotificationIntegrationTest):

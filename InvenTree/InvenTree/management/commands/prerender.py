@@ -2,14 +2,14 @@
 Custom management command to prerender files
 """
 
-from django.core.management.base import BaseCommand
+import os
+
 from django.conf import settings
+from django.core.management.base import BaseCommand
+from django.http.request import HttpRequest
 from django.template.loader import render_to_string
 from django.utils.module_loading import import_string
-from django.http.request import HttpRequest
 from django.utils.translation import override as lang_over
-
-import os
 
 
 def render_file(file_name, source, target, locales, ctx):

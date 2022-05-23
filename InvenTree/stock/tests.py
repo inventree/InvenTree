@@ -1,20 +1,18 @@
-from django.test import TestCase
-from django.db.models import Sum
-from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
-
 import datetime
 
-from InvenTree.status_codes import StockHistoryCode
+from django.core.exceptions import ValidationError
+from django.db.models import Sum
 
-from .models import StockLocation, StockItem, StockItemTracking
-from .models import StockItemTestResult
-
-from part.models import Part
 from build.models import Build
+from InvenTree.helpers import InvenTreeTestCase
+from InvenTree.status_codes import StockHistoryCode
+from part.models import Part
+
+from .models import (StockItem, StockItemTestResult, StockItemTracking,
+                     StockLocation)
 
 
-class StockTest(TestCase):
+class StockTest(InvenTreeTestCase):
     """
     Tests to ensure that the stock location tree functions correcly
     """
@@ -29,6 +27,8 @@ class StockTest(TestCase):
     ]
 
     def setUp(self):
+        super().setUp()
+
         # Extract some shortcuts from the fixtures
         self.home = StockLocation.objects.get(name='Home')
         self.bathroom = StockLocation.objects.get(name='Bathroom')
@@ -38,14 +38,6 @@ class StockTest(TestCase):
         self.drawer1 = StockLocation.objects.get(name='Drawer_1')
         self.drawer2 = StockLocation.objects.get(name='Drawer_2')
         self.drawer3 = StockLocation.objects.get(name='Drawer_3')
-
-        # Create a user
-        user = get_user_model()
-        user.objects.create_user('username', 'user@email.com', 'password')
-
-        self.client.login(username='username', password='password')
-
-        self.user = user.objects.get(username='username')
 
         # Ensure the MPTT objects are correctly rebuild
         Part.objects.rebuild()

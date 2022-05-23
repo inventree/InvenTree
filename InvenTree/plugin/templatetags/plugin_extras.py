@@ -2,13 +2,13 @@
 
 """ This module provides template tags for handeling plugins
 """
-from django.conf import settings as djangosettings
 from django import template
+from django.conf import settings as djangosettings
 from django.urls import reverse
 
 from common.models import InvenTreeSetting
-from plugin import registry
 from common.notifications import storage
+from plugin import registry
 
 register = template.Library()
 
