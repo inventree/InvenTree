@@ -57,4 +57,4 @@ class SampleLocatePlugintests(InvenTreeAPITestCase):
                 pass
 
             plugin = Wrong()
-            plugin.locate_stock_location()
+            plugin.locate_stock_location(1)
