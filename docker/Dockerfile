@@ -53,17 +53,12 @@ LABEL org.label-schema.schema-version="1.0" \
       org.label-schema.vcs-branch=${INVENTREE_GIT_BRANCH} \
       org.label-schema.vcs-ref=${INVENTREE_GIT_TAG}
 
-# Create user account and group
-RUN adduser inventree
-RUN addgroup inventreegroup
-RUN usermod -aG inventreegroup inventree
-
 # RUN apt-get upgrade && apt-get update
 RUN apt-get update
 
 # Install required system packages
 RUN apt-get install -y \
-    git build-essential \
+    git build-essential gettext  \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#debian-11
     libpango-1.0-0 libpangoft2-1.0-0 \
     # Image format support
@@ -84,6 +79,11 @@ RUN pip install --no-cache-dir -U -r requirements.txt
 
 # Production code (pulled from tagged github release)
 FROM base as production
+
+# Create user account and group
+RUN adduser inventree
+RUN addgroup inventreegroup
+RUN usermod -aG inventreegroup inventree
 
 # Clone source code
 RUN echo "Downloading InvenTree from ${INVENTREE_GIT_REPO}"

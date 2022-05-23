@@ -8,6 +8,7 @@ __pycache__/
 env/
 inventree-env/
 ./build/
+.cache/
 develop-eggs/
 dist/
 bin/
