@@ -2,7 +2,7 @@
 
 import logging
 
-from plugin.helpers import MixinImplementationError
+from plugin.helpers import MixinNotImplementedError
 
 logger = logging.getLogger('inventree')
 
@@ -71,4 +71,4 @@ class LocateMixin:
 
         Note: The default implementation here does nothing!
         """
-        raise MixinImplementationError
+        raise MixinNotImplementedError
