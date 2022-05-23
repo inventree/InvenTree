@@ -1,5 +1,6 @@
 """Unit tests for event_sample sample plugins"""
 
+from django.conf import settings
 from django.test import TestCase
 
 from plugin import registry
@@ -16,7 +17,12 @@ class EventPluginSampleTests(TestCase):
         config.active = True
         config.save()
 
+        # Enable event testing
+        settings.PLUGIN_TESTING_EVENTS = True
         # Check that an event is issued
         with self.assertWarns(Warning) as cm:
             trigger_event('test.event')
         self.assertEqual(cm.warning.args[0], 'Event `test.event` triggered')
+
+        # Disable again
+        settings.PLUGIN_TESTING_EVENTS = False

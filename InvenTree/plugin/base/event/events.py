@@ -28,7 +28,8 @@ def trigger_event(event, *args, **kwargs):
         # Do nothing if plugins are not enabled
         return  # pragma: no cover
 
-    if not canAppAccessDatabase():
+    # Make sure the database can be accessed and is not beeing tested rn
+    if not canAppAccessDatabase() and not settings.PLUGIN_TESTING_EVENTS:
         logger.debug(f"Ignoring triggered event '{event}' - database not ready")
         return
 
