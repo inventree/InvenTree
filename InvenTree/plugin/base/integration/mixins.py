@@ -559,7 +559,7 @@ class PanelMixin:
 
         try:
             context['object'] = view.get_object()
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             pass
 
         return context
