@@ -937,7 +937,7 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
 
         shipment.complete_shipment(
             user,
-            tracking_number = data.get('tracking_number', shipment.tracking_number),
+            tracking_number=data.get('tracking_number', shipment.tracking_number),
             invoice_number=data.get('invoice_number', shipment.invoice_number),
             link=data.get('link', shipment.link),
             shipment_date=shipment_date,
