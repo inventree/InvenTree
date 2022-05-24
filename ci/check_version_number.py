@@ -11,6 +11,8 @@ if __name__ == '__main__':
 
     here = os.path.abspath(os.path.dirname(__file__))
 
+    print(f"GITHUB_REF: {os.environ.get('GITHUB_REF', 'none')}")
+
     version_file = os.path.join(here, '..', 'InvenTree', 'InvenTree', 'version.py')
 
     version = None

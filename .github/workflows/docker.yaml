@@ -1,0 +1,34 @@
+# Build, test and push InvenTree docker image
+# This workflow runs under any of the following conditions:
+# 
+# - Push to the master branch
+# - Push to the stable branch
+# - Publish release
+
+name: Docker
+
+on:
+  release:
+    types: [published]
+  
+  push:
+    branches:
+      - 'master'
+      - 'stable'
+    
+  pull_request:
+    branches:
+      - 'master'
+  
+jobs:
+
+  # Build the docker image
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v2
+      - name: Check Release tag
+        run: |
+          python3 ci/check_version_number.py --release --tag ${{ github.event.release.tag_name }}
