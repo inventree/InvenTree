@@ -57,10 +57,10 @@ class SettingsMixin:
         except (OperationalError, ProgrammingError):  # pragma: no cover
             plugin = None
 
-        if not plugin:
+        if not plugin:  # pragma: no cover
             # Cannot find associated plugin model, return
             logger.error(f"Plugin configuration not found for plugin '{self.slug}'")
-            return  # pragma: no cover
+            return
 
         PluginSetting.set_setting(key, value, user, plugin=plugin)
 
@@ -541,7 +541,7 @@ class PanelMixin:
 
     def get_custom_panels(self, view, request):
         """ This method *must* be implemented by the plugin class """
-        raise NotImplementedError(f"{__class__} is missing the 'get_custom_panels' method")
+        raise MixinNotImplementedError(f"{__class__} is missing the 'get_custom_panels' method")
 
     def get_panel_context(self, view, request, context):
         """
@@ -559,7 +559,7 @@ class PanelMixin:
 
         try:
             context['object'] = view.get_object()
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             pass
 
         return context

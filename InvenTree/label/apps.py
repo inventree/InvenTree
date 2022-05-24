@@ -46,7 +46,7 @@ class LabelConfig(AppConfig):
         try:
             from .models import StockLocationLabel
             assert bool(StockLocationLabel is not None)
-        except AppRegistryNotReady:
+        except AppRegistryNotReady:  # pragma: no cover
             # Database might not yet be ready
             warnings.warn('Database was not ready for creating labels')
             return
