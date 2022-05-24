@@ -15,7 +15,7 @@ ENV CRYPTOGRAPHY_DONT_BUILD_RUST 1
 # InvenTree key settings
 
 # The INVENTREE_HOME directory is where the InvenTree source repository will be located
-ENV INVENTREE_HOME="/home/inventree/inventree"
+ENV INVENTREE_HOME="/home/inventree"
 
 # GitHub settings
 ENV INVENTREE_GIT_REPO="${repository}"
@@ -53,6 +53,9 @@ LABEL org.label-schema.schema-version="1.0" \
       org.label-schema.vcs-branch=${INVENTREE_GIT_BRANCH} \
       org.label-schema.vcs-ref=${INVENTREE_GIT_TAG}
 
+# Create a non-root user - we will drop to this user as part of the entrypoint script (init.sh)
+RUN adduser inventree
+
 # RUN apt-get upgrade && apt-get update
 RUN apt-get update
 
@@ -77,10 +80,6 @@ RUN pip install --upgrade pip
 COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -U -r requirements.txt
 
-# Drop to the inventree user
-RUN adduser inventree
-USER inventree
-
 # Production code (pulled from tagged github release)
 FROM base as production
 
@@ -92,7 +91,6 @@ RUN git config --global --add safe.directory ${INVENTREE_HOME}
 
 # Checkout against a particular git tag
 RUN if [ -n "${INVENTREE_GIT_TAG}" ] ; then cd ${INVENTREE_HOME} && git fetch --all --tags && git checkout tags/${INVENTREE_GIT_TAG} -b v${INVENTREE_GIT_TAG}-branch ; fi
-
 
 # Install InvenTree packages
 RUN pip3 install --user --no-cache-dir --disable-pip-version-check -r ${INVENTREE_HOME}/requirements.txt

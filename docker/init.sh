@@ -41,5 +41,8 @@ cd ${INVENTREE_HOME}
 # Collect translation file stats
 invoke translate-stats
 
+# Drop to the 'inventree' user after ensuring they own the INVENTREE_HOME directory
+chown -R inventree:inventree $INVENTREE_HOME
+
 # Launch the CMD *after* the ENTRYPOINT completes
-exec "$@"
+exec runuser -u inventree "$@"
