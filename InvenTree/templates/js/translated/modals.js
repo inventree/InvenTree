@@ -16,6 +16,7 @@
     showModalImage,
     removeRowFromModalForm,
     showQuestionDialog,
+    showModalSpinner,
 */
 
 /*
@@ -1145,4 +1146,14 @@ function showModalImage(image_url) {
     modal.click(function() {
         hideModalImage();
     });
+}
+
+
+/* Show (or hide) a progress spinner icon in the dialog */
+function showModalSpinner(modal, show=true) {
+    if (show) {
+        $(modal).find('#modal-progress-spinner').show();
+    } else {
+        $(modal).find('#modal-progress-spinner').hide();
+    }
 }

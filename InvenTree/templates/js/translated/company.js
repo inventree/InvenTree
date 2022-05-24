@@ -101,15 +101,6 @@ function editManufacturerPart(part, options={}) {
     });
 }
 
-function deleteManufacturerPart(part, options={}) {
-
-    constructForm(`/api/company/part/manufacturer/${part}/`, {
-        method: 'DELETE',
-        title: '{% trans "Delete Manufacturer Part" %}',
-        onSuccess: options.onSuccess,
-    });
-}
-
 
 function supplierPartFields() {
 
@@ -393,31 +384,77 @@ function loadCompanyTable(table, url, options={}) {
 }
 
 
+/* Delete one or more ManufacturerPart objects from the database.
+ */
 function deleteManufacturerParts(selections, options={}) {
 
     if (selections.length == 0) {
         return;
     }
 
-    var parts = [];
+    function renderPart(man_part, opts={}) {
+        var part = man_part.part_detail;
+        var thumb = thumbnailImage(part.thumbnail || part.image);
 
-    var text = `
-        <div class='alert alert-block alert-danger'>
-            <p>{% trans "The following manufacturer parts will be deleted" %}:</p>
-            <ul>`;
+        return `
+        <tr>
+            <td>${thumb} ${part.full_name}</td>
+            <td>${man_part.MPN}</td>
+            <td>${man_part.manufacturer_detail.name}</td>
+        </tr>`;
+    }
 
-    selections.forEach(function(item) {
-        parts.push(item.pk);
+    var rows = '';
 
-        text += `
-        <li>
-            <p>${item.MPN} - ${item.part_detail.full_name}</p>
-        </li>`;
+    selections.forEach(function(man_part) {
+        rows += renderPart(man_part);
     });
 
-    text += `
-        </ul>
-    </div>`;
+    var html = `
+    <div class='alert alert-block alert-danger'>
+    {% trans "All selected manufacturer parts will be deleted" %}
+    </div>
+    <table class='table table-striped table-condensed'>
+    <tr>
+        <th>{% trans "Part" %}</th>
+        <th>{% trans "MPN" %}</th>
+        <th>{% trans "Manufacturer" %}</th>
+    </tr>
+    ${rows}
+    </table>
+    `;
+
+    constructFormBody({}, {
+        title: '{% trans "Delete Manufacturer Parts" %}',
+        preFormContent: html,
+        submitText: '{% trans "Delete" %}',
+        submitClass: 'danger',
+        confirm: true,
+        onSubmit: function(fields, opts) {
+            // Delete each item one at a time, so we don't overload the database
+            showModalSpinner(opts.modal);
+
+            function deleteNextPart() {
+                if (selections.length > 0) {
+                    var part = selections.shift();
+
+                    inventreeDelete(`/api/company/part/manufacturer/${part.pk}/`, {
+                        complete: deleteNextPart,
+                    });
+                } else {
+                    $(opts.modal).modal('hide');
+
+                    if (options.success) {
+                        options.success();
+                    }
+                }
+            }
+
+            deleteNextPart();
+        }
+    });
+
+    return;
 
     showQuestionDialog(
         '{% trans "Delete Manufacturer Parts" %}',
@@ -473,6 +510,7 @@ function loadManufacturerPartTable(table, url, options) {
         method: 'get',
         original: params,
         queryParams: filters,
+        uniqueId: 'pk',
         sidePagination: 'server',
         name: 'manufacturerparts',
         groupBy: false,
@@ -588,11 +626,12 @@ function loadManufacturerPartTable(table, url, options) {
 
             $(table).find('.button-manufacturer-part-delete').click(function() {
                 var pk = $(this).attr('pk');
+                var row = $(table).bootstrapTable('getRowByUniqueId', pk);
 
-                deleteManufacturerPart(
-                    pk,
+                deleteManufacturerParts(
+                    [row],
                     {
-                        onSuccess: function() {
+                        success: function() {
                             $(table).bootstrapTable('refresh');
                         }
                     }

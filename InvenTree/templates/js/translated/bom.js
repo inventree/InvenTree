@@ -703,8 +703,7 @@ function deleteBomItems(items, options={}) {
             // Individually send DELETE requests for each BOM item
             // We do *not* send these all at once, to prevent overloading the server
 
-            // Show the progress spinner
-            $(opts.modal).find('#modal-progress-spinner').show();
+            showModalSpinner(opts.modal);
 
             function deleteNextBomItem() {
 

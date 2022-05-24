@@ -376,15 +376,26 @@ $('#edit-part').click(function () {
 
 $('#delete-part').click(function() {
 
-    deleteManufacturerPart({{ part.pk }}, {
-        onSuccess: function() {
-            {% if part.manufacturer %}
-            window.location.href = "{% url 'company-detail' part.manufacturer.id %}";
-            {% else%}
-            window.location.href = "{% url 'index' %}";
-            {% endif %}
+    inventreeGet(
+        '{% url "api-manufacturer-part-detail" part.pk %}',
+        {},
+        {
+            success: function(data) {
+                deleteManufacturerParts(
+                    [data],
+                    {
+                        success: function() {
+                            {% if part.manufacturer %}
+                            window.location.href = "{% url 'company-detail' part.manufacturer.id %}";
+                            {% else%}
+                            window.location.href = "{% url 'index' %}";
+                            {% endif %}
+                        }
+                    }
+                );
+            }
         }
-    });
+    );
 });
 
 enableSidebar('manufacturerpart');

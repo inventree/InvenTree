@@ -313,7 +313,7 @@
         var selections = $("#manufacturer-part-table").bootstrapTable("getSelections");
 
         deleteManufacturerParts(selections, {
-            onSuccess: function() {
+            success: function() {
                 $("#manufacturer-part-table").bootstrapTable("refresh");
             }
         });
