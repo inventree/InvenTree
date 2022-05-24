@@ -1267,6 +1267,19 @@ class SalesOrderShipment(models.Model):
         if tracking_number is not None:
             self.tracking_number = tracking_number
 
+        # Was an invoice number provided?
+        invoice_number = kwargs.get('invoice_number', None)
+
+        if invoice_number is not None:
+            self.invoice_number = invoice_number
+
+        # Was a link provided?
+        link = kwargs.get('link', None)
+
+        if link is not None:
+            self.link = link
+
+
         self.save()
 
         trigger_event('salesordershipment.completed', id=self.pk)
