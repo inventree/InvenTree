@@ -120,7 +120,7 @@ class CustomPanelSample(PanelMixin, SettingsMixin, InvenTreePlugin):
                         'icon': 'fa-user',
                         'content_template': 'panel_demo/childless.html',  # Note that the panel content is rendered using a template file!
                     })
-            except:
+            except:  # pragma: no cover
                 pass
 
         return panels

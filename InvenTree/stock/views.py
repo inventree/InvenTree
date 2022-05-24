@@ -94,6 +94,12 @@ class StockItemDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
         data['item_owner'] = self.object.get_item_owner()
         data['user_owns_item'] = self.object.check_ownership(self.request.user)
 
+        # Allocation information
+        data['allocated_to_sales_orders'] = self.object.sales_order_allocation_count()
+        data['allocated_to_build_orders'] = self.object.build_allocation_count()
+        data['allocated_to_orders'] = data['allocated_to_sales_orders'] + data['allocated_to_build_orders']
+        data['available'] = max(0, self.object.quantity - data['allocated_to_orders'])
+
         return data
 
     def get(self, request, *args, **kwargs):

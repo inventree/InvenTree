@@ -37,7 +37,7 @@ class SampleLocatePlugin(LocateMixin, InvenTreePlugin):
             # Tag metadata
             item.set_metadata('located', True)
 
-        except (ValueError, StockItem.DoesNotExist):
+        except (ValueError, StockItem.DoesNotExist):  # pragma: no cover
             logger.error(f"StockItem ID {item_pk} does not exist!")
 
     def locate_stock_location(self, location_pk):
@@ -53,5 +53,5 @@ class SampleLocatePlugin(LocateMixin, InvenTreePlugin):
             # Tag metadata
             location.set_metadata('located', True)
 
-        except (ValueError, StockLocation.DoesNotExist):
+        except (ValueError, StockLocation.DoesNotExist):  # pragma: no cover
             logger.error(f"Location ID {location_pk} does not exist!")

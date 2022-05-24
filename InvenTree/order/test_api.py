@@ -5,6 +5,7 @@ Tests for the Order API
 import io
 from datetime import datetime, timedelta
 
+from django.core.exceptions import ValidationError
 from django.urls import reverse
 
 from rest_framework import status
@@ -1275,3 +1276,96 @@ class SalesOrderAllocateTest(OrderTest):
 
         for line in self.order.lines.all():
             self.assertEqual(line.allocations.count(), 1)
+
+    def test_shipment_complete(self):
+        """Test that we can complete a shipment via the API"""
+
+        url = reverse('api-so-shipment-ship', kwargs={'pk': self.shipment.pk})
+
+        self.assertFalse(self.shipment.is_complete())
+        self.assertFalse(self.shipment.check_can_complete(raise_error=False))
+
+        with self.assertRaises(ValidationError):
+            self.shipment.check_can_complete()
+
+        # Attempting to complete this shipment via the API should fail
+        response = self.post(
+            url, {},
+            expected_code=400
+        )
+
+        self.assertIn('Shipment has no allocated stock items', str(response.data))
+
+        # Allocate stock against this shipment
+        line = self.order.lines.first()
+        part = line.part
+
+        models.SalesOrderAllocation.objects.create(
+            shipment=self.shipment,
+            line=line,
+            item=part.stock_items.last(),
+            quantity=5
+        )
+
+        # Shipment should now be able to be completed
+        self.assertTrue(self.shipment.check_can_complete())
+
+        # Attempt with an invalid date
+        response = self.post(
+            url,
+            {
+                'shipment_date': 'asfasd',
+            },
+            expected_code=400,
+        )
+
+        self.assertIn('Date has wrong format', str(response.data))
+
+        response = self.post(
+            url,
+            {
+                'tracking_number': 'TRK12345',
+                'shipment_date': '2020-12-05',
+            },
+            expected_code=201,
+        )
+
+        self.shipment.refresh_from_db()
+
+        self.assertTrue(self.shipment.is_complete())
+        self.assertEqual(self.shipment.tracking_number, 'TRK12345')
+
+    def test_sales_order_shipment_list(self):
+
+        url = reverse('api-so-shipment-list')
+
+        # Create some new shipments via the API
+        for order in models.SalesOrder.objects.all():
+
+            for idx in range(3):
+                self.post(
+                    url,
+                    {
+                        'order': order.pk,
+                        'reference': f"SH{idx + 1}",
+                        'tracking_number': f"TRK_{order.pk}_{idx}"
+                    },
+                    expected_code=201
+                )
+
+            # Filter API by order
+            response = self.get(
+                url,
+                {
+                    'order': order.pk,
+                },
+                expected_code=200,
+            )
+
+            # 3 shipments returned for each SalesOrder instance
+            self.assertGreaterEqual(len(response.data), 3)
+
+        # List *all* shipments
+        response = self.get(url, expected_code=200)
+
+        self.assertEqual(len(response.data), 1 + 3 * models.SalesOrder.objects.count())
