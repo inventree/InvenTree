@@ -1202,6 +1202,20 @@ class SalesOrderShipment(models.Model):
         help_text=_('Shipment tracking information'),
     )
 
+    invoice_number = models.CharField(
+        max_length=100,
+        blank=True,
+        unique=False,
+        verbose_name=_('Invoice Number'),
+        help_text=_('Reference number for associated invoice'),
+    )
+
+    link = models.URLField(
+        blank=True,
+        verbose_name=_('Link'),
+        help_text=_('Link to external page')
+    )
+
     def is_complete(self):
         return self.shipment_date is not None
 
