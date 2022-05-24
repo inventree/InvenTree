@@ -57,18 +57,19 @@ LABEL org.label-schema.schema-version="1.0" \
 RUN apt-get update
 
 # Install required system packages
-RUN apt-get install -y \
-    git build-essential gettext  \
+RUN apt-get install -y  --no-install-recommends \
+    git gcc g++ gettext \ 
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#debian-11
     libpango-1.0-0 libpangoft2-1.0-0 \
     # Image format support
-    libjpeg-dev webp libffi-dev \
+    libjpeg-dev webp \
     # SQLite support
     sqlite3 \
     # PostgreSQL support
     libpq-dev \
     # MySQL / MariaDB support
-    default-libmysqlclient-dev mariadb-client
+    default-libmysqlclient-dev mariadb-client && \
+    apt-get autoclean && apt-get autoremove
 
 # Update pip
 RUN pip install --upgrade pip
@@ -89,16 +90,17 @@ RUN git config --global --add safe.directory ${INVENTREE_HOME}
 # Checkout against a particular git tag
 RUN if [ -n "${INVENTREE_GIT_TAG}" ] ; then cd ${INVENTREE_HOME} && git fetch --all --tags && git checkout tags/${INVENTREE_GIT_TAG} -b v${INVENTREE_GIT_TAG}-branch ; fi
 
-# Install InvenTree packages
-RUN pip3 install --user --no-cache-dir --disable-pip-version-check -r ${INVENTREE_HOME}/requirements.txt
-
 # Need to be running from within this directory
 WORKDIR ${INVENTREE_MNG_DIR}
 
 # Drop to the inventree user for the production image
 RUN adduser inventree
 RUN chown -R inventree:inventree ${INVENTREE_HOME}
-RUN user inventree
+
+USER inventree
+
+# Install InvenTree packages
+RUN pip3 install --user --no-cache-dir --disable-pip-version-check -r ${INVENTREE_HOME}/requirements.txt
 
 # Server init entrypoint
 ENTRYPOINT ["/bin/bash", "../docker/init.sh"]
