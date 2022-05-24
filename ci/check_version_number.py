@@ -15,6 +15,7 @@ if __name__ == '__main__':
         'GITHUB_EVENT_NAME',
         'GITHUB_REF',
         'GITHUB_REF_TYPE',
+        'GITHUB_BASE_REF',
     ]:
         print(f"'{var}' - '{os.environ.get(var, '')}'")
 
