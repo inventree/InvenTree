@@ -156,41 +156,7 @@
             {% endif %}
         </td>
     </tr>
-
-    {% if item.customer %}
-    <tr>
-        <td><span class='fas fa-user-tie'></span></td>
-        <td>{% trans "Customer" %}</td>
-        <td><a href="{% url 'company-detail' item.customer.id %}?display=assigned-stock">{{ item.customer.name }}</a></td>
-    </tr>
-    {% endif %}
-    {% if item.belongs_to %}
-    <tr>
-        <td><span class='fas fa-box'></span></td>
-        <td>
-            {% trans "Installed In" %}
-        </td>
-        <td>
-            <a href="{% url 'stock-item-detail' item.belongs_to.id %}">{{ item.belongs_to }}</a>
-        </td>
-    </tr>
-    {% elif item.sales_order %}
-    <tr>
-        <td><span class='fas fa-user-tie'></span></td>
-        <td>{% trans "Sales Order" %}</td>
-        <td><a href="{% url 'so-detail' item.sales_order.id %}">{{ item.sales_order.reference }}</a> - <a href="{% url 'company-detail' item.sales_order.customer.id %}">{{ item.sales_order.customer.name }}</a></td>
-    </tr>
-    {% else %}
-    <tr>
-        <td><span class='fas fa-map-marker-alt'></span></td>
-        <td>{% trans "Location" %}</td>
-        {% if item.location %}
-        <td><a href="{% url 'stock-location-detail' item.location.id %}">{{ item.location.name }}</a></td>
-        {% else %}
-        <td><em>{% trans "No location set" %}</em></td>
-        {% endif %}
-    </tr>
-    {% endif %}
+    
     {% if item.uid %}
     <tr>
         <td><span class='fas fa-barcode'></span></td>
@@ -203,13 +169,6 @@
         <td><span class='fas fa-layer-group'></span></td>
         <td>{% trans "Batch" %}</td>
         <td>{{ item.batch }}</td>
-    </tr>
-    {% endif %}
-    {% if item.packaging %}
-    <tr>
-        <td><span class='fas fa-cube'></span></td>
-        <td>{% trans "Packaging" %}</td>
-        <td>{{ item.packaging }}</td>
     </tr>
     {% endif %}
     {% if item.build %}
@@ -280,18 +239,11 @@
         <td><a href="{% url 'supplier-part-detail' item.supplier_part.id %}">{{ item.supplier_part.SKU }}</a></td>
     </tr>
     {% endif %}
-    {% if item.hasRequiredTests %}
+    {% if item.packaging %}
     <tr>
-        <td><span class='fas fa-vial'></span></td>
-        <td>{% trans "Tests" %}</td>
-        <td>
-            {{ item.requiredTestStatus.passed }} / {{ item.requiredTestStatus.total }}
-            {% if item.passedAllRequiredTests %}
-            <span class='fas fa-check-circle float-right icon-green'></span>
-            {% else %}
-            <span class='fas fa-times-circle float-right icon-red'></span>
-            {% endif %}
-        </td>
+        <td><span class='fas fa-cube'></span></td>
+        <td>{% trans "Packaging" %}</td>
+        <td>{{ item.packaging }}</td>
     </tr>
     {% endif %}
     {% if ownership_enabled and item_owner %}
@@ -354,7 +306,6 @@
         {% trans "This stock item is serialized - it has a unique serial number and the quantity cannot be adjusted." %}
     </div>
     {% endif %}
-
 </div>
 {% endblock details %}
 
@@ -362,11 +313,15 @@
 <table class="table table-striped table-condensed">
     <col width='25'>
 
-    {% if item.serialized %}
     <tr>
-        <td><span class='fas fa-hashtag'></span></td>
-        <td>{% trans "Serial Number" %}</td>
+        {% if item.serialized %}
         <td>
+            <h5><span class='fas fa-hashtag'></span></h5>
+        </td>
+        <td>
+            <h5>{% trans "Serial Number" %}</h5>
+        </td>
+        <td><h5>
             {{ item.serial }}
             <div class='btn-group float-right' role='group'>
                 {% if previous %}
@@ -385,15 +340,84 @@
                 </a>
                 {% endif %}
             </div>
+            </h5>
+        </td>
+        {% else %}
+        <td>
+            <h5><div class='fas fa-boxes'></div></h5>
+        </td>
+        <td>
+            <h5>{% trans "Available Quantity" %}</h5>
+        </td>
+        <td>
+            <h5>{% if item.quantity != available %}{% decimal available %} / {% endif %}{% decimal item.quantity %} {% if item.part.units %}{{ item.part.units }}{% endif %}</h5>
+        </td>
+        {% endif %}
+    </tr>
+    {% if item.belongs_to %}
+    <tr>
+        <td><span class='fas fa-box'></span></td>
+        <td>
+            {% trans "Installed In" %}
+        </td>
+        <td>
+            <a href="{% url 'stock-item-detail' item.belongs_to.id %}">{{ item.belongs_to }}</a>
         </td>
     </tr>
-    {% else %}
+    {% elif item.sales_order %}
     <tr>
-        <td></td>
-        <td>{% trans "Quantity" %}</td>
-        <td>{% decimal item.quantity %} {% if item.part.units %}{{ item.part.units }}{% endif %}</td>
+        <td><span class='fas fa-user-tie'></span></td>
+        <td>{% trans "Sales Order" %}</td>
+        <td><a href="{% url 'so-detail' item.sales_order.id %}">{{ item.sales_order.reference }}</a> - <a href="{% url 'company-detail' item.sales_order.customer.id %}">{{ item.sales_order.customer.name }}</a></td>
+    </tr>
+    {% else %}
+    {% if allocated_to_sales_orders %}
+    <tr>
+        <td><span class='fas fa-truck'></span></td>
+        <td>{% trans "Allocated to Sales Orders" %}</td>
+        <td>{% decimal allocated_to_sales_orders %}</td>
     </tr>
     {% endif %}
+    {% if allocated_to_build_orders %}
+    <tr>
+        <td><span class='fas fa-tools'></span></td>
+        <td>{% trans "Allocated to Build Orders" %}</td>
+        <td>{% decimal allocated_to_build_orders %}</td>
+    </tr>
+    {% endif %}
+    <tr>
+        <td><span class='fas fa-map-marker-alt'></span></td>
+        <td>{% trans "Location" %}</td>
+        {% if item.location %}
+        <td><a href="{% url 'stock-location-detail' item.location.id %}">{{ item.location.name }}</a></td>
+        {% elif not item.customer %}
+        <td><em>{% trans "No location set" %}</em></td>
+        {% endif %}
+    </tr>
+    {% endif %}
+    {% if item.customer %}
+    <tr>
+        <td><span class='fas fa-user-tie'></span></td>
+        <td>{% trans "Customer" %}</td>
+        <td><a href="{% url 'company-detail' item.customer.id %}?display=assigned-stock">{{ item.customer.name }}</a></td>
+    </tr>
+    {% endif %}
+
+    {% if item.hasRequiredTests %}
+    <tr>
+        <td><span class='fas fa-vial'></span></td>
+        <td>{% trans "Tests" %}</td>
+        <td>
+            {{ item.requiredTestStatus.passed }} / {{ item.requiredTestStatus.total }}
+            {% if item.passedAllRequiredTests %}
+            <span class='fas fa-check-circle float-right icon-green'></span>
+            {% else %}
+            <span class='fas fa-times-circle float-right icon-red'></span>
+            {% endif %}
+        </td>
+    </tr>
+    {% endif %}
+
     <tr>
         <td><span class='fas fa-info'></span></td>
         <td>{% trans "Status" %}</td>
