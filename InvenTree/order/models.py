@@ -1279,7 +1279,6 @@ class SalesOrderShipment(models.Model):
         if link is not None:
             self.link = link
 
-
         self.save()
 
         trigger_event('salesordershipment.completed', id=self.pk)
