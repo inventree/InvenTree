@@ -5,7 +5,8 @@ Unit tests for the 'locate' plugin mixin class
 from django.urls import reverse
 
 from InvenTree.api_tester import InvenTreeAPITestCase
-from plugin.registry import registry
+from plugin import InvenTreePlugin, MixinNotImplementedError, registry
+from plugin.base.locate.mixins import LocateMixin
 from stock.models import StockItem, StockLocation
 
 
@@ -145,3 +146,17 @@ class LocatePluginTests(InvenTreeAPITestCase):
 
             # Item metadata should have been altered!
             self.assertTrue(location.metadata['located'])
+
+    def test_mixin_locate(self):
+        """Test the sample mixin redirection"""
+        class SamplePlugin(LocateMixin, InvenTreePlugin):
+            pass
+
+        plugin = SamplePlugin()
+
+        # Test that the request is patched through to location
+        with self.assertRaises(MixinNotImplementedError):
+            plugin.locate_stock_item(1)
+
+        # Test that it runs through
+        plugin.locate_stock_item(999)

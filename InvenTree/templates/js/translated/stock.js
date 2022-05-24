@@ -1698,13 +1698,22 @@ function loadStockTable(table, options) {
         sortable: true,
         formatter: function(value, row) {
 
-            var val = parseFloat(value);
+            var val = '';
 
-            // If there is a single unit with a serial number, use the serial number
+            var available = Math.max(0, (row.quantity || 0) - (row.allocated || 0));
+
             if (row.serial && row.quantity == 1) {
+                // If there is a single unit with a serial number, use the serial number
                 val = '# ' + row.serial;
+            } else if (row.quantity != available) {
+                // Some quantity is available, show available *and* quantity
+                var ava = +parseFloat(available).toFixed(5);
+                var tot = +parseFloat(row.quantity).toFixed(5);
+
+                val = `${ava} / ${tot}`;
             } else {
-                val = +val.toFixed(5);
+                // Format floating point numbers with this one weird trick
+                val = +parseFloat(value).toFixed(5);
             }
 
             var html = renderLink(val, `/stock/item/${row.pk}/`);
@@ -1719,16 +1728,7 @@ function loadStockTable(table, options) {
             } else if (row.customer) {
                 // StockItem has been assigned to a customer
                 html += makeIconBadge('fa-user', '{% trans "Stock item assigned to customer" %}');
-            }
-
-            if (row.expired) {
-                html += makeIconBadge('fa-calendar-times icon-red', '{% trans "Stock item has expired" %}');
-            } else if (row.stale) {
-                html += makeIconBadge('fa-stopwatch', '{% trans "Stock item will expire soon" %}');
-            }
-
-            if (row.allocated) {
-
+            } else if (row.allocated) {
                 if (row.serial != null && row.quantity == 1) {
                     html += makeIconBadge('fa-bookmark icon-yellow', '{% trans "Serialized stock item has been allocated" %}');
                 } else if (row.allocated >= row.quantity) {
@@ -1736,10 +1736,14 @@ function loadStockTable(table, options) {
                 } else {
                     html += makeIconBadge('fa-bookmark', '{% trans "Stock item has been partially allocated" %}');
                 }
+            } else if (row.belongs_to) {
+                html += makeIconBadge('fa-box', '{% trans "Stock item has been installed in another item" %}');
             }
 
-            if (row.belongs_to) {
-                html += makeIconBadge('fa-box', '{% trans "Stock item has been installed in another item" %}');
+            if (row.expired) {
+                html += makeIconBadge('fa-calendar-times icon-red', '{% trans "Stock item has expired" %}');
+            } else if (row.stale) {
+                html += makeIconBadge('fa-stopwatch', '{% trans "Stock item will expire soon" %}');
             }
 
             // Special stock status codes

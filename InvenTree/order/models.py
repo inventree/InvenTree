@@ -1205,14 +1205,23 @@ class SalesOrderShipment(models.Model):
     def is_complete(self):
         return self.shipment_date is not None
 
-    def check_can_complete(self):
+    def check_can_complete(self, raise_error=True):
 
-        if self.shipment_date:
-            # Shipment has already been sent!
-            raise ValidationError(_("Shipment has already been sent"))
+        try:
+            if self.shipment_date:
+                # Shipment has already been sent!
+                raise ValidationError(_("Shipment has already been sent"))
 
-        if self.allocations.count() == 0:
-            raise ValidationError(_("Shipment has no allocated stock items"))
+            if self.allocations.count() == 0:
+                raise ValidationError(_("Shipment has no allocated stock items"))
+
+        except ValidationError as e:
+            if raise_error:
+                raise e
+            else:
+                return False
+
+        return True
 
     @transaction.atomic
     def complete_shipment(self, user, **kwargs):
@@ -1235,7 +1244,7 @@ class SalesOrderShipment(models.Model):
             allocation.complete_allocation(user)
 
         # Update the "shipment" date
-        self.shipment_date = datetime.now()
+        self.shipment_date = kwargs.get('shipment_date', datetime.now())
         self.shipped_by = user
 
         # Was a tracking number provided?
