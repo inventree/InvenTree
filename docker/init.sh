@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # exit when any command fails
 set -e
 
@@ -42,7 +42,8 @@ cd ${INVENTREE_HOME}
 invoke translate-stats
 
 # Drop to the 'inventree' user after ensuring they own the INVENTREE_HOME directory
-chown -R inventree:inventree $INVENTREE_HOME
+# chown -R inventree:inventree $INVENTREE_HOME
 
 # Launch the CMD *after* the ENTRYPOINT completes
-exec runuser -u inventree "$@"
+exec "$@"
+# exec runuser -u inventree "$@"

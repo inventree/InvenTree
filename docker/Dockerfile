@@ -53,9 +53,6 @@ LABEL org.label-schema.schema-version="1.0" \
       org.label-schema.vcs-branch=${INVENTREE_GIT_BRANCH} \
       org.label-schema.vcs-ref=${INVENTREE_GIT_TAG}
 
-# Create a non-root user - we will drop to this user as part of the entrypoint script (init.sh)
-RUN adduser inventree
-
 # RUN apt-get upgrade && apt-get update
 RUN apt-get update
 
@@ -97,6 +94,11 @@ RUN pip3 install --user --no-cache-dir --disable-pip-version-check -r ${INVENTRE
 
 # Need to be running from within this directory
 WORKDIR ${INVENTREE_MNG_DIR}
+
+# Drop to the inventree user for the production image
+RUN adduser inventree
+RUN chown -R inventree:inventree ${INVENTREE_HOME}
+RUN user inventree
 
 # Server init entrypoint
 ENTRYPOINT ["/bin/bash", "../docker/init.sh"]

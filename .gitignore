@@ -64,6 +64,7 @@ secret_key.txt
 .idea/
 *.code-workspace
 .vscode/
+.bash_history
 
 # Coverage reports
 .coverage
