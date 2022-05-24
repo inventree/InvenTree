@@ -1719,16 +1719,7 @@ function loadStockTable(table, options) {
             } else if (row.customer) {
                 // StockItem has been assigned to a customer
                 html += makeIconBadge('fa-user', '{% trans "Stock item assigned to customer" %}');
-            }
-
-            if (row.expired) {
-                html += makeIconBadge('fa-calendar-times icon-red', '{% trans "Stock item has expired" %}');
-            } else if (row.stale) {
-                html += makeIconBadge('fa-stopwatch', '{% trans "Stock item will expire soon" %}');
-            }
-
-            if (row.allocated) {
-
+            } else if (row.allocated) {
                 if (row.serial != null && row.quantity == 1) {
                     html += makeIconBadge('fa-bookmark icon-yellow', '{% trans "Serialized stock item has been allocated" %}');
                 } else if (row.allocated >= row.quantity) {
@@ -1736,10 +1727,14 @@ function loadStockTable(table, options) {
                 } else {
                     html += makeIconBadge('fa-bookmark', '{% trans "Stock item has been partially allocated" %}');
                 }
+            } else if (row.belongs_to) {
+                html += makeIconBadge('fa-box', '{% trans "Stock item has been installed in another item" %}');
             }
 
-            if (row.belongs_to) {
-                html += makeIconBadge('fa-box', '{% trans "Stock item has been installed in another item" %}');
+            if (row.expired) {
+                html += makeIconBadge('fa-calendar-times icon-red', '{% trans "Stock item has expired" %}');
+            } else if (row.stale) {
+                html += makeIconBadge('fa-stopwatch', '{% trans "Stock item will expire soon" %}');
             }
 
             // Special stock status codes
