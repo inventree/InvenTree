@@ -1698,13 +1698,22 @@ function loadStockTable(table, options) {
         sortable: true,
         formatter: function(value, row) {
 
-            var val = parseFloat(value);
+            var val = '';
 
-            // If there is a single unit with a serial number, use the serial number
+            var available = Math.max(0, (row.quantity || 0) - (row.allocated || 0));
+
             if (row.serial && row.quantity == 1) {
+                // If there is a single unit with a serial number, use the serial number
                 val = '# ' + row.serial;
+            } else if (row.quantity != available) {
+                // Some quantity is available, show available *and* quantity
+                var ava = +parseFloat(available).toFixed(5);
+                var tot = +parseFloat(row.quantity).toFixed(5);
+
+                val = `${ava} / ${tot}`;
             } else {
-                val = +val.toFixed(5);
+                // Format floating point numbers with this one weird trick
+                val = +parseFloat(value).toFixed(5);
             }
 
             var html = renderLink(val, `/stock/item/${row.pk}/`);
