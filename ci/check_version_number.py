@@ -11,7 +11,12 @@ if __name__ == '__main__':
 
     here = os.path.abspath(os.path.dirname(__file__))
 
-    print(f"GITHUB_REF: {os.environ.get('GITHUB_REF', 'none')}")
+    for var in [
+        'GITHUB_EVENT_NAME',
+        'GITHUB_REF',
+        'GITHUB_REF_TYPE',
+    ]:
+        print(f"'{var}' - '{os.environ.get(var, '')}'")
 
     version_file = os.path.join(here, '..', 'InvenTree', 'InvenTree', 'version.py')
 
