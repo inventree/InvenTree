@@ -4,9 +4,9 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from common.views import NamedMultiStepFormView
+from oobe.registry import setups
 
 from . import forms
-from oobe.registry import setups
 
 
 class SetupWizard(NamedMultiStepFormView):

@@ -8,8 +8,8 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.utils.translation import gettext_lazy as _
 
-from formtools.wizard.views import SessionWizardView, NamedUrlSessionWizardView
 from crispy_forms.helper import FormHelper
+from formtools.wizard.views import NamedUrlSessionWizardView, SessionWizardView
 
 from InvenTree.views import AjaxView
 

@@ -14,15 +14,14 @@ from rest_framework.documentation import include_docs_urls
 
 from build.api import build_api_urls
 from build.urls import build_urls
-from oobe.urls import oobe_urls
-from plugin.urls import get_plugin_urls
-
 from common.api import common_api_urls, settings_api_urls
 from common.urls import common_urls
 from company.api import company_api_urls
 from company.urls import (company_urls, manufacturer_part_urls,
                           supplier_part_urls)
 from label.api import label_api_urls
+from oobe.api import oobe_api_urls
+from oobe.urls import oobe_urls
 from order.api import order_api_urls
 from order.urls import order_urls
 from part.api import bom_api_urls, part_api_urls
@@ -33,22 +32,6 @@ from report.api import report_api_urls
 from stock.api import stock_api_urls
 from stock.urls import stock_urls
 from users.api import user_urls
-from oobe.api import oobe_api_urls
-
-from django.conf import settings
-from django.conf.urls.static import static
-
-from django.views.generic.base import RedirectView
-from rest_framework.documentation import include_docs_urls
-
-from .views import auth_request
-from .views import IndexView, SearchView, DatabaseStatsView
-from .views import SettingsView, EditUserView, SetPasswordView, CustomEmailView, CustomConnectionsView, CustomPasswordResetFromKeyView
-from .views import CustomSessionDeleteView, CustomSessionDeleteOtherView
-from .views import CurrencyRefreshView
-from .views import AppearanceSelectView, SettingCategorySelectView
-from .views import DynamicJsView
-from .views import NotificationsView
 
 from .api import InfoView, NotFoundView
 from .views import (AppearanceSelectView, CurrencyRefreshView,

@@ -3,11 +3,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List
 
-import yaml
-
-from django.conf import settings
 from django import forms
+from django.conf import settings
 from django.utils.translation import gettext_lazy as _
+
+import yaml
 
 from . import forms as oobe_forms
 

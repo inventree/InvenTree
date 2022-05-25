@@ -6,7 +6,6 @@ from django.urls import re_path
 
 from . import views
 
-
 setup_wizard = views.SetupWizard.as_view(url_name='dynamic_setup_step')
 
 oobe_urls = [
