@@ -1489,7 +1489,8 @@ function removePurchaseOrderLineItem(e) {
  * Load a table displaying list of purchase orders
  */
 function loadPurchaseOrderTable(table, options) {
-    /* Create a purchase-order table */
+    // Ensure the table starts in a known state
+    $(table).bootstrapTable('destroy');
 
     options.params = options.params || {};
 
@@ -1505,6 +1506,71 @@ function loadPurchaseOrderTable(table, options) {
 
     setupFilterList('purchaseorder', $(table), target, {download: true});
 
+    var display_mode = inventreeLoad('purchaseorder-table-display-mode', 'list');
+    
+    // Function for rendering PurchaseOrder calendar display
+    function buildEvents(calendar) {
+
+        var start = startDate(calendar);
+        var end = endDate(calendar);
+
+        clearEvents(calendar);
+
+        // Extract current filters from table
+        var table_options = $(table).bootstrapTable('getOptions');
+        var filters = table_options.query_params || {};
+
+        filters.supplier_detail = true;
+        filters.min_date = start;
+        filters.max_date = end;
+        
+        // Request purchase orders from the server within specified date range
+        inventreeGet(
+            '{% url "api-po-list" %}',
+            filters,
+            {
+                success: function(response) {
+                    var prefix = global_settings.PURCHASEORDER_REFERENCE_PREFIX;
+
+                    for (var idx = 0; idx < response.length; idx++) {
+
+                        var order = response[idx];
+
+                        var date = order.creation_date;
+
+                        if (order.complete_date) {
+                            date = order.complete_date;
+                        } else if (order.target_date) {
+                            date = order.target_date;
+                        }
+
+                        var title = `${prefix}${order.reference} - ${order.supplier_detail.name}`;
+
+                        var color = '#4c68f5';
+
+                        if (order.complete_date) {
+                            color = '#25c235';
+                        } else if (order.overdue) {
+                            color = '#c22525';
+                        } else {
+                            color = '#4c68f5';
+                        }
+
+                        var event = {
+                            title: title,
+                            start: date,
+                            end: date,
+                            url: `/order/purchase-order/${order.pk}/`,
+                            backgroundColor: color,
+                        };
+
+                        calendar.addEvent(event);
+                    }
+                }
+            }
+        );
+    }
+
     $(table).inventreeTable({
         url: '{% url "api-po-list" %}',
         queryParams: filters,
@@ -1512,9 +1578,22 @@ function loadPurchaseOrderTable(table, options) {
         groupBy: false,
         sidePagination: 'server',
         original: options.params,
+        showColumns: display_mode == 'list',
+        disablePagination: display_mode == 'calendar',
+        showCustomViewButton: false,
+        showCustomView: display_mode == 'calendar',
+        search: display_mode != 'calendar',
         formatNoMatches: function() {
             return '{% trans "No purchase orders found" %}';
         },
+        buttons: constructOrderTableButtons({
+            prefix: 'purchaseorder',
+            disableTreeView: true,
+            callback: function() {
+                // Reload the entire table
+                loadPurchaseOrderTable(table, options);
+            }
+        }),
         columns: [
             {
                 title: '',
@@ -1614,6 +1693,31 @@ function loadPurchaseOrderTable(table, options) {
                 }
             },
         ],
+        customView: function(data) {
+            return `<div id='purchase-order-calendar'></div>`;
+        },
+        onRefresh: function() {
+            loadPurchaseOrderTable(table, options);
+        },
+        onLoadSuccess: function() {
+
+            if (display_mode == 'calendar') {
+                var el = document.getElementById('purchase-order-calendar');
+    
+                    calendar = new FullCalendar.Calendar(el, {
+                        initialView: 'dayGridMonth',
+                        nowIndicator: true,
+                        aspectRatio: 2.5,
+                        locale: options.locale,
+                        datesSet: function() {
+                            buildEvents(calendar);
+                        }
+                    });
+            
+                    calendar.render();
+            }
+
+        }
     });
 }
 

@@ -2364,46 +2364,6 @@ function loadBuildTable(table, options) {
 
     var loaded_calendar = false;
 
-    function buildButtons() {
-        // Construct extra buttons to display in the top-right
-        var buttons = [];
-
-        var class_calendar = display_mode == 'calendar' ? 'btn-secondary' : 'btn-outline-secondary';
-        var class_list = display_mode == 'list' ? 'btn-secondary' : 'btn-outline-secondary';
-        var class_tree = display_mode == 'tree' ? 'btn-secondary' : 'btn-outline-secondary';
-
-        var idx = 0;
-
-        // Calendar view button
-        buttons.push({
-            html: `<button type='button' name='${idx++}' class='btn ${class_calendar}' title='{% trans "Display calendar view" %}'><span class='fas fa-calendar-alt'></span></button>`,
-            event: function() {
-                inventreeSave('build-table-display-mode', 'calendar');
-                loadBuildTable(table, options);
-            }
-        });
-
-        // List view button
-        buttons.push({
-            html: `<button type='button' name='${idx++}' class='btn ${class_list}' title='{% trans "Display list view" %}'><span class='fas fa-th-list'></span></button>`,
-            event: function() {
-                inventreeSave('build-table-display-mode', 'list');
-                loadBuildTable(table, options);
-            }
-        });
-
-        // Tree view button
-        buttons.push({
-            html: `<button type='button' name='${idx++}' class='btn ${class_tree}' title='{% trans "Display tree view" %}'><span class='fas fa-sitemap'></span></button>`,
-            event: function() {
-                inventreeSave('build-table-display-mode', 'tree');
-                loadBuildTable(table, options);
-            }
-        });
-
-        return buttons;
-    }
-
     // Function for rendering BuildOrder calendar display
     function buildEvents(calendar) {
         var start = startDate(calendar);
@@ -2486,7 +2446,13 @@ function loadBuildTable(table, options) {
         showCustomViewButton: false,
         disablePagination: display_mode == 'calendar',
         search: display_mode != 'calendar',
-        buttons: buildButtons(),
+        buttons: constructOrderTableButtons({
+            prefix: 'build',
+            callback: function() {
+                // Force complete reload of the table
+                loadBuildTable(table, options);
+            }
+        }),
         columns: [
             {
                 field: 'pk',
