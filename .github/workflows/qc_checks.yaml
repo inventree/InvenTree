@@ -148,10 +148,15 @@ jobs:
       - name: Download Python Code
         run: |
           git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }} ./${{ env.wrapper_name }}
-      - name: Start Server
+      - name: Text Fixtures
         run: |
+          git clone --depth 1 https://github.com/inventree/demo-dataset.git ./demodata
+          invoke import-records -c -f ./demodata/inventree_data.json
+          invoke export-records -f ./demodata/data_export.json
           invoke delete-data -f
           invoke import-fixtures
+      - name: Start Server
+        run: |
           invoke server -a 127.0.0.1:12345 &
           invoke wait
       - name: Run Tests
