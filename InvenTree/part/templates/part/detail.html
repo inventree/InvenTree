@@ -483,7 +483,7 @@
 
         $("#manufacturer-part-delete").click(function() {
 
-            var selections = $("#manufacturer-part-table").bootstrapTable("getSelections");
+            var selectionss = getTableData('#manufacturer-part-table');
 
             deleteManufacturerParts(selections, {
                 success: function() {
@@ -573,11 +573,7 @@
         $('#bom-item-delete').click(function() {
 
             // Get a list of the selected BOM items
-            var rows = $("#bom-table").bootstrapTable('getSelections');
-
-            if (rows.length == 0) {
-                rows = $('#bom-table').bootstrapTable('getData');
-            }
+            var rows = getTableData('#bom-table');
 
             deleteBomItems(rows, {
                 success: function() {

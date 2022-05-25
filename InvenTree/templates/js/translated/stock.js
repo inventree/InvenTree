@@ -1955,7 +1955,7 @@ function loadStockTable(table, options) {
     );
 
     function stockAdjustment(action) {
-        var items = $(table).bootstrapTable('getSelections');
+        var items = getTableData(table);
 
         adjustStock(action, items, {
             success: function() {
@@ -1967,7 +1967,7 @@ function loadStockTable(table, options) {
     // Automatically link button callbacks
 
     $('#multi-item-print-label').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
+        var selections = getTableData(table);
 
         var items = [];
 
@@ -1979,7 +1979,7 @@ function loadStockTable(table, options) {
     });
 
     $('#multi-item-print-test-report').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
+        var selections = getTableData(table);
 
         var items = [];
 
@@ -1992,7 +1992,7 @@ function loadStockTable(table, options) {
 
     if (global_settings.BARCODE_ENABLE) {
         $('#multi-item-barcode-scan-into-location').click(function() {
-            var selections = $(table).bootstrapTable('getSelections');
+            var selections = getTableData(table);
 
             var items = [];
 
@@ -2021,7 +2021,7 @@ function loadStockTable(table, options) {
     });
 
     $('#multi-item-merge').click(function() {
-        var items = $(table).bootstrapTable('getSelections');
+        var items = getTableData(table);
 
         mergeStockItems(items, {
             success: function(response) {
@@ -2036,7 +2036,7 @@ function loadStockTable(table, options) {
 
     $('#multi-item-assign').click(function() {
 
-        var items = $(table).bootstrapTable('getSelections');
+        var items = getTableData(table);
 
         assignStockToCustomer(items, {
             success: function() {
@@ -2046,7 +2046,8 @@ function loadStockTable(table, options) {
     });
 
     $('#multi-item-order').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
+
+        var selections = getTableData(table);
 
         var parts = [];
 
@@ -2063,7 +2064,7 @@ function loadStockTable(table, options) {
 
     $('#multi-item-set-status').click(function() {
         // Select and set the STATUS field for selected stock items
-        var selections = $(table).bootstrapTable('getSelections');
+        var selections = getTableData(table);
 
         // Select stock status
         var modal = '#modal-form';
@@ -2149,7 +2150,7 @@ function loadStockTable(table, options) {
     });
 
     $('#multi-item-delete').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
+        var selections = getTableData(table);
 
         var stock = [];
 

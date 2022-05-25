@@ -176,7 +176,7 @@ loadSalesOrderTable("#sales-order-table", {
 
 {% if report_enabled %}
 $("#order-print").click(function() {
-    var rows = $("#sales-order-table").bootstrapTable('getSelections');
+    var rows = getTableData('#sales-order-table');
 
     var orders = [];
 

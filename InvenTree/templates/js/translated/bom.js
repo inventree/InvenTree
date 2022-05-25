@@ -693,12 +693,10 @@ function deleteBomItems(items, options={}) {
     `;
 
     constructFormBody({}, {
+        method: 'DELETE',
         title: '{% trans "Delete selected BOM items?" %}',
         fields: {},
         preFormContent: html,
-        submitText: '{% trans "Delete" %}',
-        submitClass: 'danger',
-        confirm: true,
         onSubmit: function(fields, opts) {
             // Individually send DELETE requests for each BOM item
             // We do *not* send these all at once, to prevent overloading the server
