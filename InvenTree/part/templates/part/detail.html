@@ -528,7 +528,7 @@
         });
 
         loadBuildTable($("#build-table"), {
-            url: "{% url 'api-build-list' %}",
+            locale: '{{ request.LANGUAGE_CODE }}',
             params: {
                 part: {{ part.id }},
             }

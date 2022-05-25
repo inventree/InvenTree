@@ -355,7 +355,7 @@ onPanelLoad('completed', function() {
 
 onPanelLoad('children', function() {
     loadBuildTable($('#sub-build-table'), {
-        url: '{% url "api-build-list" %}',
+        locale: '{{ request.LANGUAGE_CODE }}',
         filterTarget: "#filter-list-sub-build",
         params: {
             ancestor: {{ build.pk }},
