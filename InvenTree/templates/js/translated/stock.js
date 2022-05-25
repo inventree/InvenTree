@@ -1106,25 +1106,15 @@ function adjustStock(action, items, options={}) {
 
             // Delete action is handled differently
             if (action == 'delete') {
-                var requests = [];
 
-                item_pk_values.forEach(function(pk) {
-                    requests.push(
-                        inventreeDelete(
-                            `/api/stock/${pk}/`,
-                        )
-                    );
-                });
-
-                // Wait for *all* the requests to complete
-                $.when.apply($, requests).done(function() {
-                    // Destroy the modal window
-                    $(opts.modal).modal('hide');
-
-                    if (options.success) {
-                        options.success();
+                inventreeMultiDelete(
+                    '{% url "api-stock-list" %}',
+                    items,
+                    {
+                        modal: opts.modal,
+                        success: options.success,
                     }
-                });
+                );
 
                 return;
             }
