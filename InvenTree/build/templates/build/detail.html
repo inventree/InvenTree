@@ -357,6 +357,7 @@ onPanelLoad('children', function() {
     loadBuildTable($('#sub-build-table'), {
         locale: '{{ request.LANGUAGE_CODE }}',
         filterTarget: "#filter-list-sub-build",
+        parentBuild: {{ build.pk }},
         params: {
             ancestor: {{ build.pk }},
         }
