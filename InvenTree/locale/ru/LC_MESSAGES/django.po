@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-25 01:01+0000\n"
-"PO-Revision-Date: 2022-05-24 01:42\n"
+"PO-Revision-Date: 2022-05-25 01:53\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -3567,10 +3567,8 @@ msgid "Shipment tracking information"
 msgstr ""
 
 #: order/models.py:1209
-#, fuzzy
-#| msgid "Phone number"
 msgid "Invoice Number"
-msgstr "Телефон"
+msgstr ""
 
 #: order/models.py:1210
 msgid "Reference number for associated invoice"
@@ -5241,8 +5239,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -6387,10 +6384,8 @@ msgid "Navigate to next serial number"
 msgstr ""
 
 #: stock/templates/stock/item_base.html:350
-#, fuzzy
-#| msgid "Build Quantity"
 msgid "Available Quantity"
-msgstr "Количество сборки"
+msgstr ""
 
 #: stock/templates/stock/item_base.html:394
 #: templates/js/translated/build.js:1710
@@ -7436,16 +7431,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -8989,10 +8982,8 @@ msgid "Tracking"
 msgstr ""
 
 #: templates/js/translated/order.js:2465
-#, fuzzy
-#| msgid "Invalid choice"
 msgid "Invoice"
-msgstr "Неверный выбор"
+msgstr ""
 
 #: templates/js/translated/order.js:2634
 msgid "Add Shipment"
@@ -10305,3 +10296,4 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
+
