@@ -310,7 +310,7 @@
     linkButtonsToSelection($("#manufacturer-part-table"), ['#manufacturer-table-options']);
 
     $("#multi-manufacturer-part-delete").click(function() {
-        var selections = $("#manufacturer-part-table").bootstrapTable("getSelections");
+        var selections = getTableData('#manufacturer-part-table');
 
         deleteManufacturerParts(selections, {
             success: function() {
@@ -320,7 +320,7 @@
     });
 
     $("#multi-manufacturer-part-order").click(function() {
-        var selections = $("#manufacturer-part-table").bootstrapTable("getSelections");
+        var selections = getTableData('#manufacturer-part-table');
 
         var parts = [];
 
@@ -364,34 +364,20 @@
         }
     );
 
-    linkButtonsToSelection($("#supplier-part-table"), ['#supplier-table-options']);
-
     $("#multi-supplier-part-delete").click(function() {
-        var selections = $("#supplier-part-table").bootstrapTable("getSelections");
 
-        var requests = [];
+        var selections = getTableData("#supplier-part-table");
 
-        showQuestionDialog(
-            '{% trans "Delete Supplier Parts?" %}',
-            '{% trans "All selected supplier parts will be deleted" %}',
-            {
-                accept: function() {
-                    selections.forEach(function(part) {
-                        var url = `/api/company/part/${part.pk}/`;
-
-                        requests.push(inventreeDelete(url));
-                    });
-
-                    $.when.apply($, requests).done(function() {
-                        $('#supplier-part-table').bootstrapTable('refresh');
-                    });
-                }
+        deleteSupplierParts(selections, {
+            success: function() {
+                $('#supplier-part-table').bootstrapTable('refresh');
             }
-        );
+        });
     });
 
     $("#multi-supplier-part-order").click(function() {
-        var selections = $("#supplier-part-table").bootstrapTable("getSelections");
+
+        var selections = getTableData('#supplier-part-table');
 
         var parts = [];
 
