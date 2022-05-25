@@ -698,33 +698,15 @@ function deleteBomItems(items, options={}) {
         fields: {},
         preFormContent: html,
         onSubmit: function(fields, opts) {
-            // Individually send DELETE requests for each BOM item
-            // We do *not* send these all at once, to prevent overloading the server
 
-            showModalSpinner(opts.modal);
-
-            function deleteNextBomItem() {
-
-                if (items.length > 0) {
-
-                    var item = items.shift();
-
-                    inventreeDelete(`/api/bom/${item.pk}/`,
-                        {
-                            complete: deleteNextBomItem,
-                        }
-                    );
-                } else {
-                    // Destroy this modal once all items are deleted
-                    $(opts.modal).modal('hide');
-
-                    if (options.success) {
-                        options.success();
-                    }
+            inventreeMultiDelete(
+                '{% url "api-bom-list" %}',
+                items,
+                {
+                    modal: opts.modal,
+                    success: options.success,
                 }
-            }
-
-            deleteNextBomItem();
+            );
         },
     });
 }

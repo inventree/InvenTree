@@ -171,6 +171,50 @@ function inventreeDelete(url, options={}) {
     return inventreePut(url, {}, options);
 }
 
+
+/*
+ * Perform a 'multi delete' operation:
+ * 
+ * - Items are deleted sequentially from the database, rather than simultaneous requests
+ * - This prevents potential overload / transaction issues in the DB backend
+ * 
+ * Notes:
+ * - Assumes that each item in the 'items' list has a parameter 'pk'
+ */
+function inventreeMultiDelete(url, items, options={}) {
+
+    if (!url.endsWith('/')) {
+        url += '/';
+    }
+
+    function doNextDelete() {
+        if (items.length > 0) {
+            var item = items.shift();
+
+            inventreeDelete(`${url}${item.pk}/`, {
+                complete: doNextDelete
+            });
+        } else {
+            if (options.modal) {
+                $(options.modal).modal('hide');
+            }
+
+            if (options.success) {
+                options.success();
+            }
+        }
+    }
+
+    if (options.modal) {
+        showModalSpinner(options.modal);
+    }
+
+    // Initiate the process
+    doNextDelete();
+
+}
+
+
 /*
  * Display a notification with error information
  */
