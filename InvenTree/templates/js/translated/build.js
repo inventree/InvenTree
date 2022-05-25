@@ -2368,6 +2368,13 @@ function loadBuildTable(table, options) {
         sidePagination: 'server',
         name: 'builds',
         original: params,
+        treeEnable: true,
+        uniqueId: 'pk',
+        rootParentId: null,
+        idField: 'pk',
+        parentIdField: 'parent',
+        treeShowField: 'reference',
+        showColumns: true,
         columns: [
             {
                 field: 'pk',
@@ -2494,6 +2501,13 @@ function loadBuildTable(table, options) {
                 }
             },
         ],
+        onPostBody: function() {
+            $(table).treegrid({
+                treeColumn: 1,
+            });
+
+            table.treegrid('expandAll');
+        }
     });
 
     linkButtonsToSelection(
