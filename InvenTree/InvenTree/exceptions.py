@@ -40,7 +40,8 @@ def exception_handler(exc, context):
     if response is None:
         # DRF handler did not provide a default response for this exception
 
-        if settings.DEBUG:
+        # If in DEBUG or TESTING mode, provide error information in the response
+        if settings.DEBUG or settings.TESTING:
             error_detail = str(exc)
         else:
             error_detail = _("Error details can be found in the admin panel")
