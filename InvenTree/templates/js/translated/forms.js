@@ -247,11 +247,6 @@ function constructChangeForm(fields, options) {
  */
 function constructDeleteForm(fields, options) {
 
-    // Force the "confirm" property if not set
-    if (!('confirm' in options)) {
-        options.confirm = true;
-    }
-
     // Request existing data from the API endpoint
     // This data can be used to render some information on the form
     $.ajax({
@@ -429,6 +424,21 @@ function constructFormBody(fields, options) {
     // Client must provide set of fields to be displayed,
     // otherwise *all* fields will be displayed
     var displayed_fields = options.fields || fields;
+
+    // Override default option values if a 'DELETE' form is specified
+    if (options.method == 'DELETE') {
+        if (!('confirm' in options)) {
+            options.confirm = true;
+        }
+
+        if (!('submitClass' in options)) {
+            options.submitClass = 'danger';
+        }
+
+        if (!('submitText' in options)) {
+            options.submitText = '{% trans "Delete" %}';
+        }
+    }
 
     // Handle initial data overrides
     if (options.data) {

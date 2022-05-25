@@ -16,6 +16,7 @@
     createManufacturerPart,
     createSupplierPart,
     deleteManufacturerParts,
+    deleteSupplierParts,
     editCompany,
     loadCompanyTable,
     loadManufacturerPartTable,
@@ -202,12 +203,86 @@ function editSupplierPart(part, options={}) {
 }
 
 
-function deleteSupplierPart(part, options={}) {
+/*
+ * Delete one or more SupplierPart objects from the database.
+ * - User will be provided with a modal form, showing all the parts to be deleted.
+ * - Delete operations are performed sequentialy, not simultaneously
+ */
+function deleteSupplierParts(parts, options={}) {
 
-    constructForm(`/api/company/part/${part}/`, {
+    if (parts.length == 0){
+        return;
+    }
+
+    function renderPart(sup_part) {
+        var part = sup_part.part_detail;
+        var thumb = thumbnailImage(part.thumbnail || part.image);
+        var supplier = '-';
+        var MPN = '-';
+
+        if (sup_part.supplier_detail) {
+            supplier = sup_part.supplier_detail.name;
+        }
+
+        if (sup_part.manufacturer_part_detail) {
+            MPN = sup_part.manufacturer_part_detail.MPN;
+        }
+
+        return `
+        <tr>
+            <td>${thumb} ${part.full_name}</td>
+            <td>${sup_part.SKU}</td>
+            <td>${supplier}</td>
+            <td>${MPN}</td>
+        </tr>`;
+    }
+
+    var rows = '';
+
+    parts.forEach(function(sup_part) {
+        rows += renderPart(sup_part);
+    })
+
+    var html = `
+    <div class='alert alert-block alert-danger'>
+    {% trans "All selected supplier parts will be deleted" %}
+    </div>
+    <table class='table table-striped table-condensed'>
+    <tr>
+        <th>{% trans "Part" %}</th>
+        <th>{% trans "SKU" %}</th>
+        <th>{% trans "Supplier" %}</th>
+        <th>{% trans "MPN" %}</th>
+    </tr>
+    ${rows}
+    </table>
+    `;
+
+    constructFormBody({}, {
         method: 'DELETE',
-        title: '{% trans "Delete Supplier Part" %}',
-        onSuccess: options.onSuccess,
+        title: '{% trans "Delete Supplier Parts" %}',
+        preFormContent: html,
+        onSubmit: function(fields, opts) {
+            showModalSpinner(opts.modal);
+
+            function deleteNextPart() {
+                if (parts.length > 0) {
+                    var part = parts.shift();
+
+                    inventreeDelete(`/api/company/part/${part.pk}/`, {
+                        complete: deleteNextPart,
+                    });
+                } else {
+                    $(opts.modal).modal('hide');
+
+                    if (options.success) {
+                        options.success();
+                    }
+                }
+            }
+
+            deleteNextPart();
+        }
     });
 }
 
@@ -385,6 +460,8 @@ function loadCompanyTable(table, url, options={}) {
 
 
 /* Delete one or more ManufacturerPart objects from the database.
+ * - User will be provided with a modal form, showing all the parts to be deleted.
+ * - Delete operations are performed sequentialy, not simultaneously
  */
 function deleteManufacturerParts(selections, options={}) {
 
@@ -425,11 +502,9 @@ function deleteManufacturerParts(selections, options={}) {
     `;
 
     constructFormBody({}, {
+        method: 'DELETE',
         title: '{% trans "Delete Manufacturer Parts" %}',
         preFormContent: html,
-        submitText: '{% trans "Delete" %}',
-        submitClass: 'danger',
-        confirm: true,
         onSubmit: function(fields, opts) {
             // Delete each item one at a time, so we don't overload the database
             showModalSpinner(opts.modal);
@@ -769,6 +844,7 @@ function loadSupplierPartTable(table, url, options) {
         method: 'get',
         original: params,
         sidePagination: 'server',
+        uniqueId: 'pk',
         queryParams: filters,
         name: 'supplierparts',
         groupBy: false,
@@ -925,11 +1001,12 @@ function loadSupplierPartTable(table, url, options) {
 
             $(table).find('.button-supplier-part-delete').click(function() {
                 var pk = $(this).attr('pk');
+                var row = $(table).bootstrapTable('getRowByUniqueId', pk);
 
-                deleteSupplierPart(
-                    pk,
+                deleteSupplierParts(
+                    [row],
                     {
-                        onSuccess: function() {
+                        success: function() {
                             $(table).bootstrapTable('refresh');
                         }
                     }
