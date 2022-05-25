@@ -64,6 +64,8 @@ if __name__ == '__main__':
         if result is None:
             print(f"Version number '{version}' does not match required pattern for stable branch")
             sys.exit(1)
+        else:
+            print(f"Version number '{version}' matches stable branch")
 
     elif GITHUB_BASE_REF in ['master', 'main'] and GITHUB_REF_TYPE == 'branch':
         print("Checking requirements for main development branch:")
@@ -74,9 +76,21 @@ if __name__ == '__main__':
         if result is None:
             print(f"Version number '{version}' does not match required pattern for development branch")
             sys.exit(1)
+        else:
+            print(f"Version number '{version}' matches development branch")
 
     elif GITHUB_REF_TYPE == 'tag':
         print("Checking requirements for tagged release")
+
+    else:
+        print("Unsupported branch / version combination:")
+        print(f"InvenTree Version: {version}")
+        print("GITHUB_REF_TYPE:", GITHUB_REF_TYPE)
+        print("GITHUB_REF:", GITHUB_REF)
+        print("GITHUB_BASE_REF:", GITHUB_BASE_REF)
+        sys.exit(1)
+
+    sys.exit(0)
 
     # error out
     sys.exit(1)

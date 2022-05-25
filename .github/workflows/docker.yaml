@@ -1,25 +1,32 @@
 # Build, test and push InvenTree docker image
 # This workflow runs under any of the following conditions:
-# 
+#
 # - Push to the master branch
 # - Push to the stable branch
 # - Publish release
+#
+# The following actions are performed:
+#
+# - Check that the version number matches the current branch or tag
+# - Build the specified InvenTree docker image
+# - Run suite of unit tests against the build image
+# - Push the compiled, tested image to dockerhub
 
 name: Docker
 
 on:
   release:
     types: [published]
-  
+
   push:
     branches:
       - 'master'
       - 'stable'
-    
+
   pull_request:
     branches:
       - 'master'
-  
+
 jobs:
 
   # Build the docker image
@@ -29,6 +36,18 @@ jobs:
     steps:
       - name: Check out repo
         uses: actions/checkout@v2
-      - name: Check Release tag
+      - name: Version Check
         run: |
           python3 ci/check_version_number.py --release --tag ${{ github.event.release.tag_name }}
+      - name: Build Docker Image
+        run: |
+          cd docker
+          docker-compose build
+          docker-compose run inventree-dev-server invoke update
+      - name: Run Unit Tests
+        run: |
+          cd docker
+          docker-compose up -d
+          docker-compose run inventree-dev-server invoke wait
+          docker-compose run inventree-dev-server invoke test
+          docker-compose down
