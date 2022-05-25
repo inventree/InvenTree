@@ -27,12 +27,14 @@ class LabelPrintingMixin:
         Callback to print a single label
 
         Arguments:
-            label: A black-and-white pillow Image object
+            label: A PDF label object
 
         kwargs:
-            length: The length of the label (in mm)
-            width: The width of the label (in mm)
-
+            label_instance: The instance of the label model which triggered the print_label() method
+            width: The expected width of the label (in mm)
+            height: The expected height of the label (in mm)
+            filename: The filename of this PDF label
+            user: The user who printed this label
         """
 
         # Unimplemented (to be implemented by the particular plugin class)

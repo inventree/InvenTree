@@ -1,12 +1,9 @@
-from io import BytesIO
-
 from django.conf import settings
 from django.core.exceptions import FieldError, ValidationError
 from django.http import HttpResponse, JsonResponse
 from django.urls import include, re_path
 
 from django_filters.rest_framework import DjangoFilterBackend
-from PIL import Image
 from rest_framework import filters, generics
 from rest_framework.exceptions import NotFound
 
@@ -137,25 +134,21 @@ class LabelPrintMixin:
             # Label instance
             label_instance = self.get_object()
 
-            for output in outputs:
+            for idx, output in enumerate(outputs):
                 """
                 For each output, we generate a temporary image file,
                 which will then get sent to the printer
                 """
 
-                # Generate a png image at 300dpi
-                (img_data, w, h) = output.get_document().write_png(resolution=300)
-
-                # Construct a BytesIO object, which can be read by pillow
-                img_bytes = BytesIO(img_data)
-
-                image = Image.open(img_bytes)
+                # Generate PDF data for the label
+                pdf = output.get_document().write_pdf()
 
                 # Offload a background task to print the provided label
                 offload_task(
                     plugin_label.print_label,
                     plugin.plugin_slug(),
-                    image,
+                    pdf,
+                    filename=label_names[idx],
                     label_instance=label_instance,
                     user=request.user,
                 )

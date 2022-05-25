@@ -1,4 +1,5 @@
 """Unit tests for the label printing mixin"""
+import os
 
 from django.apps import apps
 from django.urls import reverse
@@ -166,6 +167,15 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
         # Print no part
         self.get(self.do_url(None, plugin_ref, label), expected_code=400)
+
+        # Test that the labels have been printed
+        # The sample labelling plugin simply prints to file
+        self.assertTrue(os.path.exists('label.pdf'))
+
+        # Read the raw .pdf data - ensure it contains some sensible information
+        with open('label.pdf', 'rb') as f:
+            pdf_data = str(f.read())
+            self.assertIn('WeasyPrint', pdf_data)
 
     def test_printing_endpoints(self):
         """Cover the endpoints not covered by `test_printing_process`"""

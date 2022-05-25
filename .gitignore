@@ -27,7 +27,6 @@ var/
 .installed.cfg
 *.egg
 
-
 # Django stuff:
 *.log
 local_settings.py
@@ -39,6 +38,7 @@ local_settings.py
 # Files used for testing
 dummy_image.*
 _tmp.csv
+inventree/label.pdf
 
 # Sphinx files
 docs/_build
