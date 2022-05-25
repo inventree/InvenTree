@@ -2616,14 +2616,18 @@ function loadBuildTable(table, options) {
         customView: function(data) {
             return `<div id='build-order-calendar'></div>`;
         },
+        onRefresh: function() {
+            loadBuildTable(table, options);
+        },
         onLoadSuccess: function() {
+
             if (tree_enable) {
                 $(table).treegrid({
                     treeColumn: 1,
                 });
 
                 table.treegrid('expandAll');
-            } else if (1 || display_mode == 'calendar') {
+            } else if (display_mode == 'calendar') {
 
                 if (!loaded_calendar) {
                     loaded_calendar = true;
