@@ -3,12 +3,11 @@
 /* globals
     constructForm,
     imageHoverIcon,
-    inventreeDelete,
+    inventreeMultiDelete,
     loadTableFilters,
     makeIconButton,
     renderLink,
     setupFilterList,
-    showQuestionDialog,
 */
 
 /* exported
@@ -211,7 +210,7 @@ function editSupplierPart(part, options={}) {
  */
 function deleteSupplierParts(parts, options={}) {
 
-    if (parts.length == 0){
+    if (parts.length == 0) {
         return;
     }
 
@@ -242,7 +241,7 @@ function deleteSupplierParts(parts, options={}) {
 
     parts.forEach(function(sup_part) {
         rows += renderPart(sup_part);
-    })
+    });
 
     var html = `
     <div class='alert alert-block alert-danger'>
@@ -735,7 +734,7 @@ function loadManufacturerPartParameterTable(table, url, options) {
         filters[key] = params[key];
     }
 
-    setupFilterList("manufacturer-part-parameters", $(table));
+    setupFilterList('manufacturer-part-parameters', $(table));
 
     $(table).inventreeTable({
         url: url,

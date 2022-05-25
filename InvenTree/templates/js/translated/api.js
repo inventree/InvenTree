@@ -7,6 +7,7 @@
 /* exported
     inventreeGet,
     inventreeDelete,
+    inventreeMultiDelete,
     inventreeFormDataUpload,
     showApiError,
 */
@@ -174,10 +175,10 @@ function inventreeDelete(url, options={}) {
 
 /*
  * Perform a 'multi delete' operation:
- * 
+ *
  * - Items are deleted sequentially from the database, rather than simultaneous requests
  * - This prevents potential overload / transaction issues in the DB backend
- * 
+ *
  * Notes:
  * - Assumes that each item in the 'items' list has a parameter 'pk'
  */
