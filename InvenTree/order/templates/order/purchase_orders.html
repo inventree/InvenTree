@@ -172,7 +172,7 @@ $("#view-list").click(function() {
 
 {% if report_enabled %}
 $("#order-print").click(function() {
-    var rows = $("#purchase-order-table").bootstrapTable('getSelections');
+    var rows = getTableData('#purchase-order-table');
 
     var orders = [];
 

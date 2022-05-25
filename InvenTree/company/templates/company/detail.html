@@ -28,8 +28,8 @@
             <div class='button-toolbar container-fluid'>
                 <div class='btn-group' role='group'>
                     <div class='btn-group'>
-                        <button class="btn btn-primary dropdown-toggle" id='supplier-table-options' type="button" data-bs-toggle="dropdown">{% trans "Options" %}
-                            <span class="caret"></span>
+                        <button class="btn btn-primary dropdown-toggle" id='supplier-table-options' type="button" data-bs-toggle="dropdown">
+                            <span class='fas fa-tools'></span> <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu">
                             {% if roles.purchase_order.add %}
@@ -75,7 +75,8 @@
             <div class='button-toolbar container-fluid'>
                 <div class='btn-group' role='group'>
                     <div class='btn-group' role='group'>
-                        <button class="btn btn-primary dropdown-toggle" id='manufacturer-table-options' type="button" data-bs-toggle="dropdown">{% trans "Options" %}
+                        <button class="btn btn-primary dropdown-toggle" id='manufacturer-table-options' type="button" data-bs-toggle="dropdown">
+                            <span class='fas fa-tools'></span>
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu">
@@ -307,20 +308,18 @@
         }
     );
 
-    linkButtonsToSelection($("#manufacturer-part-table"), ['#manufacturer-table-options']);
-
     $("#multi-manufacturer-part-delete").click(function() {
-        var selections = $("#manufacturer-part-table").bootstrapTable("getSelections");
+        var selections = getTableData('#manufacturer-part-table');
 
         deleteManufacturerParts(selections, {
-            onSuccess: function() {
+            success: function() {
                 $("#manufacturer-part-table").bootstrapTable("refresh");
             }
         });
     });
 
     $("#multi-manufacturer-part-order").click(function() {
-        var selections = $("#manufacturer-part-table").bootstrapTable("getSelections");
+        var selections = getTableData('#manufacturer-part-table');
 
         var parts = [];
 
@@ -364,34 +363,20 @@
         }
     );
 
-    linkButtonsToSelection($("#supplier-part-table"), ['#supplier-table-options']);
-
     $("#multi-supplier-part-delete").click(function() {
-        var selections = $("#supplier-part-table").bootstrapTable("getSelections");
 
-        var requests = [];
+        var selections = getTableData("#supplier-part-table");
 
-        showQuestionDialog(
-            '{% trans "Delete Supplier Parts?" %}',
-            '{% trans "All selected supplier parts will be deleted" %}',
-            {
-                accept: function() {
-                    selections.forEach(function(part) {
-                        var url = `/api/company/part/${part.pk}/`;
-
-                        requests.push(inventreeDelete(url));
-                    });
-
-                    $.when.apply($, requests).done(function() {
-                        $('#supplier-part-table').bootstrapTable('refresh');
-                    });
-                }
+        deleteSupplierParts(selections, {
+            success: function() {
+                $('#supplier-part-table').bootstrapTable('refresh');
             }
-        );
+        });
     });
 
     $("#multi-supplier-part-order").click(function() {
-        var selections = $("#supplier-part-table").bootstrapTable("getSelections");
+
+        var selections = getTableData('#supplier-part-table');
 
         var parts = [];
 

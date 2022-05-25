@@ -360,7 +360,9 @@
                 <div id='opt-dropdown' class="btn-group">
                     <button id='supplier-part-options' class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">{% trans "Options" %} <span class="caret"></span></button>
                     <ul class="dropdown-menu">
-                        <li><a class='dropdown-item' href='#' id='supplier-part-delete' title='{% trans "Delete supplier parts" %}'>{% trans "Delete" %}</a></li>
+                        <li><a class='dropdown-item' href='#' id='supplier-part-delete' title='{% trans "Delete supplier parts" %}'>
+                            <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete" %}
+                        </a></li>
                     </ul>
                 </div>
                 {% include "filter_list.html" with id="supplier-part" %}
@@ -443,27 +445,11 @@
 
         $("#supplier-part-delete").click(function() {
 
-            var selections = $("#supplier-part-table").bootstrapTable("getSelections");
+            var selections = getTableData('#supplier-part-table');
 
-            var requests = [];
-
-            showQuestionDialog(
-                '{% trans "Delete Supplier Parts?" %}',
-                '{% trans "All selected supplier parts will be deleted" %}',
-                {
-                    accept: function() {
-                        selections.forEach(function(part) {
-                            var url = `/api/company/part/${part.pk}/`;
-
-                            requests.push(inventreeDelete(url));
-                        });
-
-                        $.when.apply($, requests).done(function() {
-                            reloadSupplierPartTable();
-                        });
-                    }
-                }
-            );
+            deleteSupplierParts(selections, {
+                success: reloadSupplierPartTable,
+            });
         });
 
         loadSupplierPartTable(
@@ -472,7 +458,7 @@
             {
                 params: {
                     part: {{ part.id }},
-                    part_detail: false,
+                    part_detail: true,
                     supplier_detail: true,
                     manufacturer_detail: true,
                 },
@@ -497,10 +483,10 @@
 
         $("#manufacturer-part-delete").click(function() {
 
-            var selections = $("#manufacturer-part-table").bootstrapTable("getSelections");
+            var selectionss = getTableData('#manufacturer-part-table');
 
             deleteManufacturerParts(selections, {
-                onSuccess: function() {
+                success: function() {
                     $("#manufacturer-part-table").bootstrapTable("refresh");
                 }
             });
@@ -587,11 +573,7 @@
         $('#bom-item-delete').click(function() {
 
             // Get a list of the selected BOM items
-            var rows = $("#bom-table").bootstrapTable('getSelections');
-
-            if (rows.length == 0) {
-                rows = $('#bom-table').bootstrapTable('getData');
-            }
+            var rows = getTableData('#bom-table');
 
             deleteBomItems(rows, {
                 success: function() {

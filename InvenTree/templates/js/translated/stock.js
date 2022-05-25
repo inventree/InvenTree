@@ -11,8 +11,8 @@
     global_settings,
     handleFormErrors,
     imageHoverIcon,
-    inventreeDelete,
     inventreeGet,
+    inventreeMultiDelete,
     inventreePut,
     launchModalForm,
     linkButtonsToSelection,
@@ -1106,25 +1106,15 @@ function adjustStock(action, items, options={}) {
 
             // Delete action is handled differently
             if (action == 'delete') {
-                var requests = [];
 
-                item_pk_values.forEach(function(pk) {
-                    requests.push(
-                        inventreeDelete(
-                            `/api/stock/${pk}/`,
-                        )
-                    );
-                });
-
-                // Wait for *all* the requests to complete
-                $.when.apply($, requests).done(function() {
-                    // Destroy the modal window
-                    $(opts.modal).modal('hide');
-
-                    if (options.success) {
-                        options.success();
+                inventreeMultiDelete(
+                    '{% url "api-stock-list" %}',
+                    items,
+                    {
+                        modal: opts.modal,
+                        success: options.success,
                     }
-                });
+                );
 
                 return;
             }
@@ -1955,7 +1945,7 @@ function loadStockTable(table, options) {
     );
 
     function stockAdjustment(action) {
-        var items = $(table).bootstrapTable('getSelections');
+        var items = getTableData(table);
 
         adjustStock(action, items, {
             success: function() {
@@ -1967,7 +1957,7 @@ function loadStockTable(table, options) {
     // Automatically link button callbacks
 
     $('#multi-item-print-label').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
+        var selections = getTableData(table);
 
         var items = [];
 
@@ -1979,7 +1969,7 @@ function loadStockTable(table, options) {
     });
 
     $('#multi-item-print-test-report').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
+        var selections = getTableData(table);
 
         var items = [];
 
@@ -1992,7 +1982,7 @@ function loadStockTable(table, options) {
 
     if (global_settings.BARCODE_ENABLE) {
         $('#multi-item-barcode-scan-into-location').click(function() {
-            var selections = $(table).bootstrapTable('getSelections');
+            var selections = getTableData(table);
 
             var items = [];
 
@@ -2021,7 +2011,7 @@ function loadStockTable(table, options) {
     });
 
     $('#multi-item-merge').click(function() {
-        var items = $(table).bootstrapTable('getSelections');
+        var items = getTableData(table);
 
         mergeStockItems(items, {
             success: function(response) {
@@ -2036,7 +2026,7 @@ function loadStockTable(table, options) {
 
     $('#multi-item-assign').click(function() {
 
-        var items = $(table).bootstrapTable('getSelections');
+        var items = getTableData(table);
 
         assignStockToCustomer(items, {
             success: function() {
@@ -2046,7 +2036,8 @@ function loadStockTable(table, options) {
     });
 
     $('#multi-item-order').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
+
+        var selections = getTableData(table);
 
         var parts = [];
 
@@ -2063,7 +2054,7 @@ function loadStockTable(table, options) {
 
     $('#multi-item-set-status').click(function() {
         // Select and set the STATUS field for selected stock items
-        var selections = $(table).bootstrapTable('getSelections');
+        var selections = getTableData(table);
 
         // Select stock status
         var modal = '#modal-form';
@@ -2149,7 +2140,7 @@ function loadStockTable(table, options) {
     });
 
     $('#multi-item-delete').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
+        var selections = getTableData(table);
 
         var stock = [];
 
