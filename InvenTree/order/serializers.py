@@ -886,6 +886,8 @@ class SalesOrderShipmentSerializer(InvenTreeModelSerializer):
             'checked_by',
             'reference',
             'tracking_number',
+            'invoice_number',
+            'link',
             'notes',
         ]
 
@@ -899,8 +901,10 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
         model = order.models.SalesOrderShipment
 
         fields = [
-            'tracking_number',
             'shipment_date',
+            'tracking_number',
+            'invoice_number',
+            'link',
         ]
 
     def validate(self, data):
@@ -928,15 +932,14 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
         request = self.context['request']
         user = request.user
 
-        # Extract provided tracking number (optional)
-        tracking_number = data.get('tracking_number', shipment.tracking_number)
-
         # Extract shipping date (defaults to today's date)
         shipment_date = data.get('shipment_date', datetime.now())
 
         shipment.complete_shipment(
             user,
-            tracking_number=tracking_number,
+            tracking_number=data.get('tracking_number', shipment.tracking_number),
+            invoice_number=data.get('invoice_number', shipment.invoice_number),
+            link=data.get('link', shipment.link),
             shipment_date=shipment_date,
         )
 

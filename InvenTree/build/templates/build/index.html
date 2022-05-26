@@ -64,8 +64,7 @@ loadBuildTable($("#build-table"), {
 
 {% if report_enabled %}
 $('#multi-build-print').click(function() {
-    var rows = $("#build-table").bootstrapTable('getSelections');
-
+    var rows = getTableData("#build-table");
     var build_ids = [];
 
     rows.forEach(function(row) {

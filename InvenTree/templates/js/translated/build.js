@@ -834,12 +834,7 @@ function loadBuildOutputTable(build_info, options={}) {
             var subtable = $(`#output-sub-table-${pk}`);
 
             if (subtable.exists()) {
-                var rows = subtable.bootstrapTable('getSelections');
-
-                // None selected? Use all!
-                if (rows.length == 0) {
-                    rows = subtable.bootstrapTable('getData');
-                }
+                var rows = getTableData(`#output-sub-table-${pk}`);
 
                 allocateStockToBuild(
                     build_info.pk,
@@ -1291,11 +1286,7 @@ function loadBuildOutputTable(build_info, options={}) {
 
     // Complete multiple outputs
     $('#multi-output-complete').click(function() {
-        var outputs = $(table).bootstrapTable('getSelections');
-
-        if (outputs.length == 0) {
-            outputs = $(table).bootstrapTable('getData');
-        }
+        var outputs = getTableData(table);
 
         completeBuildOutputs(
             build_info.pk,
@@ -1314,11 +1305,7 @@ function loadBuildOutputTable(build_info, options={}) {
 
     // Delete multiple build outputs
     $('#multi-output-delete').click(function() {
-        var outputs = $(table).bootstrapTable('getSelections');
-
-        if (outputs.length == 0) {
-            outputs = $(table).bootstrapTable('getData');
-        }
+        var outputs = getTableData(table);
 
         deleteBuildOutputs(
             build_info.pk,
@@ -1337,11 +1324,7 @@ function loadBuildOutputTable(build_info, options={}) {
 
     // Print stock item labels
     $('#incomplete-output-print-label').click(function() {
-        var outputs = $(table).bootstrapTable('getSelections');
-
-        if (outputs.length == 0) {
-            outputs = $(table).bootstrapTable('getData');
-        }
+        var outputs = getTableData(table);
 
         var stock_id_values = [];
 

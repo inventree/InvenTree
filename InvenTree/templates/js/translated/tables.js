@@ -8,6 +8,7 @@
 /* exported
     customGroupSorter,
     downloadTableData,
+    getTableData,
     reloadtable,
     renderLink,
     reloadTableFilters,
@@ -94,6 +95,22 @@ function constructOrderTableButtons(options={}) {
     }
 
     return buttons;
+}
+
+
+/* Return the 'selected' data rows from a bootstrap table.
+ * If allowEmpty = false, and the returned dataset is empty,
+ * then instead try to return *all* the data
+ */
+function getTableData(table, allowEmpty=false) {
+
+    var data = $(table).bootstrapTable('getSelections');
+
+    if (data.length == 0 && !allowEmpty) {
+        data = $(table).bootstrapTable('getData');
+    }
+
+    return data;
 }
 
 

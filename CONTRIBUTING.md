@@ -2,7 +2,7 @@ Please read the contribution guidelines below, before submitting your first pull
 
 ## Setup
 
-Please run `invoke setup_dev` in the root directory of your InvenTree code base to set up your development setup before starting to contribute. This will install and set up pre-commit to run some checks before each commit and help reduce the style errors.
+Please run `invoke setup-dev` in the root directory of your InvenTree code base to set up your development setup before starting to contribute. This will install and set up pre-commit to run some checks before each commit and help reduce the style errors.
 
 ## Branches and Versioning
 

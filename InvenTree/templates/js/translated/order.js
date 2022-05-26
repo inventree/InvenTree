@@ -55,6 +55,12 @@ function salesOrderShipmentFields(options={}) {
         tracking_number: {
             icon: 'fa-hashtag',
         },
+        invoice_number: {
+            icon: 'fa-dollar-sign',
+        },
+        link: {
+            icon: 'fa-link',
+        }
     };
 
     // If order is specified, hide the order field
@@ -129,11 +135,20 @@ function completeShipment(shipment_id, options={}) {
                 method: 'POST',
                 title: `{% trans "Complete Shipment" %} ${shipment.reference}`,
                 fields: {
-                    tracking_number: {
-                        value: shipment.tracking_number,
-                    },
                     shipment_date: {
                         value: moment().format('YYYY-MM-DD'),
+                    },
+                    tracking_number: {
+                        value: shipment.tracking_number,
+                        icon: 'fa-hashtag',
+                    },
+                    invoice_number: {
+                        value: shipment.invoice_number,
+                        icon: 'fa-dollar-sign',
+                    },
+                    link: {
+                        value: shipment.link,
+                        icon: 'fa-link',
                     }
                 },
                 preFormContent: html,
@@ -2653,9 +2668,25 @@ function loadSalesOrderShipmentTable(table, options={}) {
                 title: '{% trans "Tracking" %}',
             },
             {
+                field: 'invoice_number',
+                title: '{% trans "Invoice" %}',
+            },
+            {
+                field: 'link',
+                title: '{% trans "Link" %}',
+                formatter: function(value) {
+                    if (value) {
+                        return renderLink(value, value);
+                    } else {
+                        return '-';
+                    }
+                }
+            },
+            {
                 field: 'notes',
                 title: '{% trans "Notes" %}',
                 visible: false,
+                switchable: false,
                 // TODO: Implement 'notes' field
             },
             {
