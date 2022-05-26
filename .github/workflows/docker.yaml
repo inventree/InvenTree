@@ -41,12 +41,10 @@ jobs:
           python3 ci/check_version_number.py --release --tag ${{ github.event.release.tag_name }}
       - name: Build Docker Image
         run: |
-          cd docker
           docker-compose build
           docker-compose run inventree-dev-server invoke update
       - name: Run Unit Tests
         run: |
-          cd docker
           docker-compose up -d
           docker-compose run inventree-dev-server invoke wait
           docker-compose run inventree-dev-server invoke test
