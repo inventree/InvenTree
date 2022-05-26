@@ -22,14 +22,13 @@ class LabelPrintingMixin:
         super().__init__()
         self.add_mixin('labels', True, __class__)
 
-    def print_label(self, label, **kwargs):
+    def print_label(self, **kwargs):
         """
         Callback to print a single label
 
-        Arguments:
-            label: A PDF label object
-
         kwargs:
+            pdf_data: Raw PDF data of the rendered label
+            png_file: An in-memory PIL image file, rendered at 300dpi
             label_instance: The instance of the label model which triggered the print_label() method
             width: The expected width of the label (in mm)
             height: The expected height of the label (in mm)

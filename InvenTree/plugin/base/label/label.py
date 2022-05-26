@@ -7,6 +7,7 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django.views.debug import ExceptionReporter
 
+import pdf2image
 from error_report.models import Error
 
 import common.notifications
@@ -37,9 +38,16 @@ def print_label(plugin_slug, pdf_data, filename=None, label_instance=None, user=
         logger.error(f"Could not find matching plugin for '{plugin_slug}'")
         return
 
+    # In addition to providing a .pdf image, we'll also provide a .png file
+    png_file = pdf2image.convert_from_bytes(
+        pdf_data,
+        dpi=300,
+    )[0]
+
     try:
         plugin.print_label(
-            pdf_data,
+            pdf_data=pdf_data,
+            png_file=png_file,
             filename=filename,
             label_instance=label_instance,
             width=label_instance.width,

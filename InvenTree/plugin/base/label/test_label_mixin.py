@@ -4,6 +4,8 @@ import os
 from django.apps import apps
 from django.urls import reverse
 
+from PIL import Image
+
 from common.models import InvenTreeSetting
 from InvenTree.api_tester import InvenTreeAPITestCase
 from label.models import PartLabel, StockItemLabel, StockLocationLabel
@@ -69,7 +71,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
         with self.assertRaises(MixinNotImplementedError):
             plugin = WrongPlugin()
-            plugin.print_label('test')
+            plugin.print_label(filename='test')
 
     def test_installed(self):
         """Test that the sample printing plugin is installed"""
@@ -176,6 +178,12 @@ class LabelMixinTests(InvenTreeAPITestCase):
         with open('label.pdf', 'rb') as f:
             pdf_data = str(f.read())
             self.assertIn('WeasyPrint', pdf_data)
+
+        # Check that the .png file has already been created
+        self.assertTrue(os.path.exists('label.png'))
+
+        # And that it is a valid image file
+        Image.open('label.png')
 
     def test_printing_endpoints(self):
         """Cover the endpoints not covered by `test_printing_process`"""
