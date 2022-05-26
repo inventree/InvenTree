@@ -1,12 +1,5 @@
 FROM python:3.9-slim as base
 
-# GitHub source
-ARG repository="https://github.com/inventree/InvenTree.git"
-ARG branch="master"
-
-# Optionally specify a particular tag to checkout
-ARG tag=""
-
 ENV PYTHONUNBUFFERED 1
 
 # Ref: https://github.com/pyca/cryptography/issues/5776
@@ -49,9 +42,7 @@ LABEL org.label-schema.schema-version="1.0" \
       org.label-schema.vendor="inventree" \
       org.label-schema.name="inventree/inventree" \
       org.label-schema.url="https://hub.docker.com/r/inventree/inventree" \
-      org.label-schema.vcs-url=${INVENTREE_GIT_REPO} \
-      org.label-schema.vcs-branch=${INVENTREE_GIT_BRANCH} \
-      org.label-schema.vcs-ref=${INVENTREE_GIT_TAG}
+      org.label-schema.vcs-url="https://github.com/inventree/InvenTree.git"
 
 # RUN apt-get upgrade && apt-get update
 RUN apt-get update
@@ -75,20 +66,20 @@ RUN apt-get install -y  --no-install-recommends \
 RUN pip install --upgrade pip
 
 # Install required base-level python packages
-COPY requirements.txt requirements.txt
+COPY ./docker/requirements.txt requirements.txt
 RUN pip install --no-cache-dir -U -r requirements.txt
 
-# Production code (pulled from tagged github release)
+# Production image, copies required files from local directory
 FROM base as production
 
-# Clone source code
-RUN git clone --branch ${INVENTREE_GIT_BRANCH} --depth 1 ${INVENTREE_GIT_REPO} ${INVENTREE_HOME}
+# Copy source code
+COPY InvenTree ${INVENTREE_HOME}
 
-# Ref: https://github.blog/2022-04-12-git-security-vulnerability-announced/
-RUN git config --global --add safe.directory ${INVENTREE_HOME}
-
-# Checkout against a particular git tag
-RUN if [ -n "${INVENTREE_GIT_TAG}" ] ; then cd ${INVENTREE_HOME} && git fetch --all --tags && git checkout tags/${INVENTREE_GIT_TAG} -b v${INVENTREE_GIT_TAG}-branch ; fi
+# Copy other key files
+COPY requirements.txt ${INVENTREE_HOME}/requirements.txt
+COPY tasks.py ${INVENTREE_HOME}/tasks.py
+COPY docker/gunicorn.conf.py ${INVENTREE_MNG_DIR}/gunicorn.conf.py
+COPY docker/init.sh ${INVENTREE_MNG_DIR}/init.sh
 
 # Need to be running from within this directory
 WORKDIR ${INVENTREE_MNG_DIR}
@@ -103,12 +94,12 @@ USER inventree
 RUN pip3 install --user --no-cache-dir --disable-pip-version-check -r ${INVENTREE_HOME}/requirements.txt
 
 # Server init entrypoint
-ENTRYPOINT ["/bin/bash", "../docker/init.sh"]
+ENTRYPOINT ["/bin/bash", "./init.sh"]
 
 # Launch the production server
 # TODO: Work out why environment variables cannot be interpolated in this command
 # TODO: e.g. -b ${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT} fails here
-CMD gunicorn -c ./docker/gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ./InvenTree
+CMD gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ./InvenTree
 
 FROM base as dev
 
