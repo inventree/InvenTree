@@ -21,7 +21,6 @@ from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from django.views.debug import ExceptionReporter
 
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
@@ -163,13 +162,13 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
     def get_total_price(self, target_currency=currency_code_default()):
         """
         Calculates the total price of all order lines, and converts to the specified target currency.
-        
+
         If not specified, the default system currency is used.
 
         If currency conversion fails (e.g. there are no valid conversion rates),
         then we simply return zero, rather than attempting some other calculation.
         """
-        
+
         total = Money(0, target_currency)
 
         # gather name reference
@@ -182,7 +181,7 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
 
             if not price_ref:
                 continue
-        
+
             try:
                 total += line.quantity * convert_money(price_ref, target_currency)
             except MissingRate:
@@ -197,7 +196,7 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
                 )
 
                 logger.error(f"Missing exchange rate for '{target_currency}'")
-                
+
                 return Money(0, target_currency)
 
         # extra items
@@ -205,7 +204,7 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
 
             if not line.price:
                 continue
-                
+
             try:
                 total += line.quantity * convert_money(line.price, target_currency)
             except MissingRate:
