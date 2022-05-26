@@ -4,7 +4,10 @@ Order model definitions
 
 # -*- coding: utf-8 -*-
 
+import logging
 import os
+import sys
+import traceback
 from datetime import datetime
 from decimal import Decimal
 
@@ -18,9 +21,12 @@ from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from django.views.debug import ExceptionReporter
 
 from djmoney.contrib.exchange.models import convert_money
+from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.money import Money
+from error_report.models import Error
 from markdownx.models import MarkdownxField
 from mptt.models import TreeForeignKey
 
@@ -37,6 +43,9 @@ from plugin.events import trigger_event
 from plugin.models import MetadataMixin
 from stock import models as stock_models
 from users import models as UserModels
+
+
+logger = logging.getLogger('inventree')
 
 
 def get_next_po_number():
@@ -151,23 +160,71 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
 
     notes = MarkdownxField(blank=True, verbose_name=_('Notes'), help_text=_('Order notes'))
 
-    def get_total_price(self):
+    def get_total_price(self, target_currency=currency_code_default()):
         """
-        Calculates the total price of all order lines
+        Calculates the total price of all order lines, and converts to the specified target currency.
+        
+        If not specified, the default system currency is used.
+
+        If currency conversion fails (e.g. there are no valid conversion rates),
+        then we simply return zero, rather than attempting some other calculation.
         """
-        target_currency = currency_code_default()
+        
         total = Money(0, target_currency)
 
         # gather name reference
-        price_ref = 'sale_price' if isinstance(self, SalesOrder) else 'purchase_price'
-        # order items
-        total += sum(a.quantity * convert_money(getattr(a, price_ref), target_currency) for a in self.lines.all() if getattr(a, price_ref))
+        price_ref_tag = 'sale_price' if isinstance(self, SalesOrder) else 'purchase_price'
 
-        # extra lines
-        total += sum(a.quantity * convert_money(a.price, target_currency) for a in self.extra_lines.all() if a.price)
+        # order items
+        for line in self.lines.all():
+
+            price_ref = getattr(line, price_ref_tag)
+
+            if not price_ref:
+                continue
+        
+            try:
+                total += line.quantity * convert_money(price_ref, target_currency)
+            except MissingRate:
+                # Record the error, try to press on
+                kind, info, data = sys.exc_info()
+
+                Error.objects.create(
+                    kind=kind.__name__,
+                    info=info,
+                    data='\n'.join(traceback.format_exception(kind, info, data)),
+                    path='order.get_total_price',
+                )
+
+                logger.error(f"Missing exchange rate for '{target_currency}'")
+                
+                return Money(0, target_currency)
+
+        # extra items
+        for line in self.extra_lines.all():
+
+            if not line.price:
+                continue
+                
+            try:
+                total += line.quantity * convert_money(line.price, target_currency)
+            except MissingRate:
+                # Record the error, try to press on
+                kind, info, data = sys.exc_info()
+
+                Error.objects.create(
+                    kind=kind.__name__,
+                    info=info,
+                    data='\n'.join(traceback.format_exception(kind, info, data)),
+                    path='order.get_total_price',
+                )
+
+                logger.error(f"Missing exchange rate for '{target_currency}'")
+                return Money(0, target_currency)
 
         # set decimal-places
         total.decimal_places = 4
+
         return total
 
 
