@@ -38,6 +38,7 @@ gunicorn>=20.1.0                        # Gunicorn web server
 importlib_metadata                      # Backport for importlib.metadata
 isort==5.10.1                           # DEV: python import sorting
 markdown==3.3.4                         # Force particular version of markdown
+pdf2image==1.16.0                       # PDF to image conversion
 pep8-naming==0.11.1                     # PEP naming convention extension
 pre-commit==2.19.0                      # Git pre-commit
 pillow==9.1.0                           # Image manipulation

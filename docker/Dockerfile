@@ -60,7 +60,7 @@ RUN apt-get update
 RUN apt-get install -y  --no-install-recommends \
     git gcc g++ gettext gnupg \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#debian-11
-    libpango-1.0-0 libpangoft2-1.0-0 \
+    poppler-utils libpango-1.0-0 libpangoft2-1.0-0 \
     # Image format support
     libjpeg-dev webp \
     # SQLite support
