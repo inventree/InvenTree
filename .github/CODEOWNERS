@@ -1,0 +1,6 @@
+# General owner is the maintainers team
+*       @inventree/maintainer
+
+# plugins are co-owned
+InvenTree/plugin/*      @inventree/maintainer @matmair
+InvenTree/plugins/*     @inventree/maintainer @matmair
