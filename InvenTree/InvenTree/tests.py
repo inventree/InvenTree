@@ -522,7 +522,7 @@ class TestSettings(helpers.InvenTreeTestCase):
 
         # Set dynamic setting to True and rerun to launch install
         InvenTreeSetting.set_setting('PLUGIN_ON_STARTUP', True, self.user)
-        registry.reload_plugins()
+        registry.reload_plugins(full_reload=True)
 
         # Check that there was anotehr run
         response = registry.install_plugin_file()
