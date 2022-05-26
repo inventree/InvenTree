@@ -181,7 +181,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install gettext
+          sudo apt-get install gettext poppler-utils
           python -m pip install -U pip
           pip3 install invoke
           invoke update
@@ -245,7 +245,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install libpq-dev gettext
+          sudo apt-get install libpq-dev gettext poppler-utils
           python -m pip install -U pip
           pip3 install invoke
           pip3 install psycopg2
@@ -303,7 +303,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install libmysqlclient-dev gettext
+          sudo apt-get install libmysqlclient-dev gettext poppler-utils
           python -m pip install -U pip
           pip3 install invoke
           pip3 install mysqlclient
