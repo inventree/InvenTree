@@ -1716,7 +1716,6 @@ function loadPurchaseOrderTable(table, options) {
             
                     calendar.render();
             }
-
         }
     });
 }
@@ -2280,6 +2279,9 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
  */
 function loadSalesOrderTable(table, options) {
 
+    // Ensure the table starts in a known state
+    $(table).bootstrapTable('destroy');
+
     options.params = options.params || {};
     options.params['customer_detail'] = true;
 
@@ -2295,6 +2297,70 @@ function loadSalesOrderTable(table, options) {
 
     setupFilterList('salesorder', $(table), target, {download: true});
 
+    var display_mode = inventreeLoad('salesorder-table-display-mode', 'list');
+
+    function buildEvents(calendar) {
+
+        var start = startDate(calendar);
+        var end = endDate(calendar);
+
+        clearEvents(calendar);
+
+        // Extract current filters from table
+        var table_options = $(table).bootstrapTable('getOptions');
+        var filters = table_options.query_params || {};
+
+        filters.customer_detail = true;
+        filters.min_date = start;
+        filters.max_date = end;
+
+        // Request orders from the server within specified date range
+        inventreeGet(
+            '{% url "api-so-list" %}',
+            filters,
+            {
+                success: function(response) {
+
+                    var prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
+
+                    for (var idx = 0; idx < response.length; idx++) {
+                        var order = response[idx];
+
+                        var date = order.creation_date;
+
+                        if (order.shipment_date) {
+                            date = order.shipment_date;
+                        } else if (order.target_date) {
+                            date = order.target_date;
+                        }
+
+                        var title = `${prefix}${order.reference} - ${order.customer_detail.name}`;
+
+                        // Default color is blue
+                        var color = '#4c68f5';
+
+                        // Overdue orders are red
+                        if (order.overdue) {
+                            color = '#c22525';
+                        } else if (order.status == {{ SalesOrderStatus.SHIPPED }}) {
+                            color = '#25c235';
+                        }
+
+                        var event = {
+                            title: title,
+                            start: date,
+                            end: date,
+                            url: `/order/sales-order/${order.pk}/`,
+                            backgroundColor: color,
+                        };
+
+                        calendar.addEvent(event);
+                    }
+                }
+            }
+        );
+    }
+
     $(table).inventreeTable({
         url: options.url,
         queryParams: filters,
@@ -2302,8 +2368,45 @@ function loadSalesOrderTable(table, options) {
         groupBy: false,
         sidePagination: 'server',
         original: options.params,
+        showColums: display_mode != 'calendar',
+        search: display_mode != 'calendar',
+        showCustomViewButton: false,
+        showCustomView: display_mode == 'calendar',
+        disablePagination: display_mode == 'calendar',
         formatNoMatches: function() {
             return '{% trans "No sales orders found" %}';
+        },
+        buttons: constructOrderTableButtons({
+            prefix: 'salesorder',
+            disableTreeView: true,
+            callback: function() {
+                // Reload the entire table
+                loadSalesOrderTable(table, options);
+            },
+        }),
+        customView: function(data) {
+            return `<div id='purchase-order-calendar'></div>`;
+        },
+        onRefresh: function() {
+            loadPurchaseOrderTable(table, options);
+        },
+        onLoadSuccess: function() {
+
+            if (display_mode == 'calendar') {
+                var el = document.getElementById('purchase-order-calendar');
+    
+                    calendar = new FullCalendar.Calendar(el, {
+                        initialView: 'dayGridMonth',
+                        nowIndicator: true,
+                        aspectRatio: 2.5,
+                        locale: options.locale,
+                        datesSet: function() {
+                            buildEvents(calendar);
+                        }
+                    });
+            
+                    calendar.render();
+            }
         },
         columns: [
             {
