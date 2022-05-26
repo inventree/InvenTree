@@ -1719,17 +1719,17 @@ function loadPurchaseOrderTable(table, options) {
             if (display_mode == 'calendar') {
                 var el = document.getElementById('purchase-order-calendar');
     
-                    calendar = new FullCalendar.Calendar(el, {
-                        initialView: 'dayGridMonth',
-                        nowIndicator: true,
-                        aspectRatio: 2.5,
-                        locale: options.locale,
-                        datesSet: function() {
-                            buildEvents(calendar);
-                        }
-                    });
-            
-                    calendar.render();
+                calendar = new FullCalendar.Calendar(el, {
+                    initialView: 'dayGridMonth',
+                    nowIndicator: true,
+                    aspectRatio: 2.5,
+                    locale: options.locale,
+                    datesSet: function() {
+                        buildEvents(calendar);
+                    }
+                });
+        
+                calendar.render();
             }
         }
     });
@@ -2410,17 +2410,17 @@ function loadSalesOrderTable(table, options) {
             if (display_mode == 'calendar') {
                 var el = document.getElementById('purchase-order-calendar');
     
-                    calendar = new FullCalendar.Calendar(el, {
-                        initialView: 'dayGridMonth',
-                        nowIndicator: true,
-                        aspectRatio: 2.5,
-                        locale: options.locale,
-                        datesSet: function() {
-                            buildEvents(calendar);
-                        }
-                    });
-            
-                    calendar.render();
+                calendar = new FullCalendar.Calendar(el, {
+                    initialView: 'dayGridMonth',
+                    nowIndicator: true,
+                    aspectRatio: 2.5,
+                    locale: options.locale,
+                    datesSet: function() {
+                        buildEvents(calendar);
+                    }
+                });
+        
+                calendar.render();
             }
         },
         columns: [
