@@ -5,20 +5,11 @@ ENV PYTHONUNBUFFERED 1
 # Ref: https://github.com/pyca/cryptography/issues/5776
 ENV CRYPTOGRAPHY_DONT_BUILD_RUST 1
 
-# InvenTree key settings
-
-# The INVENTREE_HOME directory is where the InvenTree source repository will be located
-ENV INVENTREE_HOME="/home/inventree"
-
-# GitHub settings
-ENV INVENTREE_GIT_REPO="${repository}"
-ENV INVENTREE_GIT_BRANCH="${branch}"
-ENV INVENTREE_GIT_TAG="${tag}"
-
 ENV INVENTREE_LOG_LEVEL="INFO"
 ENV INVENTREE_DOCKER="true"
 
 # InvenTree paths
+ENV INVENTREE_HOME="/home/inventree"
 ENV INVENTREE_MNG_DIR="${INVENTREE_HOME}/InvenTree"
 ENV INVENTREE_DATA_DIR="${INVENTREE_HOME}/data"
 ENV INVENTREE_STATIC_ROOT="${INVENTREE_DATA_DIR}/static"

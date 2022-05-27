@@ -40,6 +40,10 @@ if __name__ == '__main__':
     print("GITHUB_REF:", GITHUB_REF)
     print("GITHUB_BASE_REF:", GITHUB_BASE_REF)
 
+    git_sha = os.environ['GITHUB_SHA']
+
+    print("Git SHA:", git_sha)
+
     with open(version_file, 'r') as f:
 
         text = f.read()
