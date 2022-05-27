@@ -39,7 +39,7 @@ runs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.python_version }}
-          cache: ${{ runner.os }}-pip
+          cache: pip
       - name: Install Base Python Dependencies
         if: ${{ inputs.python }} == true
         shell: bash
