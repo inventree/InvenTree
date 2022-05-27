@@ -39,10 +39,10 @@ jobs:
         with:
           python-version: ${{ env.python_version }}
           cache: 'pip'
-      - name: Install deps
+      - name: Install Dependencies
         run: |
-          pip install flake8==3.8.3
-          pip install pep8-naming==0.11.1
+          pip3 install invoke
+          invoke install
       - name: flake8
         run: |
           flake8 InvenTree
