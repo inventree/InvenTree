@@ -77,7 +77,7 @@ jobs:
       - name: Check Templated Files
         run: |
           cd ci
-          python check_js_templates.py
+          python3 check_js_templates.py
       - name: Lint Javascript Files
         run: |
           invoke render-js-files
