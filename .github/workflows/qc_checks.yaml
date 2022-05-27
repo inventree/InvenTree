@@ -26,7 +26,7 @@ env:
 
 jobs:
   pep_style:
-    name: PEP style (python)
+    name: python style (PEP8)
     runs-on: ubuntu-latest
 
     steps:
@@ -46,7 +46,7 @@ jobs:
           flake8 InvenTree
 
   javascript:
-    name: javascript template files
+    name: JS template files
     needs: pep_style
     runs-on: ubuntu-latest
 
@@ -81,7 +81,7 @@ jobs:
           npx eslint js_tmp/*.js
 
   html:
-    name: html template files
+    name: HTML template files
     needs: pep_style
     runs-on: ubuntu-latest
 
@@ -118,7 +118,7 @@ jobs:
           npx markuplint InvenTree/templates/InvenTree/settings/*.html
 
   pre-commit:
-    name: pre-commit rules are followed
+    name: pre-commit rules
     needs: pep_style
     runs-on: ubuntu-latest
     steps:
@@ -127,7 +127,7 @@ jobs:
     - uses: pre-commit/action@v2.0.3
 
   python:
-    name: python bindings
+    name: inventree-python tests
     needs: pre-commit
     runs-on: ubuntu-latest
 
@@ -170,7 +170,7 @@ jobs:
           coverage run -m unittest discover -s test/
 
   coverage:
-    name: Sqlite / coverage
+    name: Sqlite + coverage
     needs: ['javascript', 'html']
     runs-on: ubuntu-latest
 
