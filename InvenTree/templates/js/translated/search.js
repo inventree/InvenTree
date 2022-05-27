@@ -42,7 +42,7 @@ function checkPermission(role, permission='view') {
 
     var found = false;
 
-    search_user_roles[role].forEach(function (p) {
+    search_user_roles[role].forEach(function(p) {
         if (String(p).valueOf() == String(permission).valueOf()) {
             found = true;
         }
