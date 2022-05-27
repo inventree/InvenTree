@@ -42,13 +42,14 @@ runs:
           cache: ${{ runner.os }}-pip
       - name: Install Base Python Dependencies
         if: ${{ inputs.python }} == true
+        shell: bash
         run: |
           python3 -m pip install -U pip
           pip3 install invoke
       - name: Install Specific Python Dependencies
         if: ${{ inputs.pip-dependency }}
-        run: |
-          pip3 install ${{ inputs.pip-dependency }}
+        shell: bash
+        run: pip3 install ${{ inputs.pip-dependency }}
 
       # NPM installs
       - name: Install node.js ${{ env.node_version }}
@@ -59,22 +60,26 @@ runs:
           cache: 'npm'
       - name: Intall npm packages
         if: ${{ inputs.npm }} == true
+        shell: bash
         run: npm install
 
       # OS installs
       - name: Install OS Dependencies
+        shell: bash
         run: |
           sudo apt-get update
           sudo apt-get install gettext
       - name: Install Specific OS Dependencies
         if: ${{ inputs.apt-dependency }}
-        run: |
-          sudo apt-get install ${{ inputs.apt-dependency }}
+        shell: bash
+        run: sudo apt-get install ${{ inputs.apt-dependency }}
 
       # Invoke commands
       - name: Run invoke install
         if: ${{ inputs.install }} == true
+        shell: bash
         run: invoke install
       - name: Run invoke update
         if: ${{ inputs.update }} == true
+        shell: bash
         run: invoke update
