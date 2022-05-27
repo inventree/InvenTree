@@ -108,14 +108,7 @@ jobs:
           invoke static
       - name: Check HTML Files
         run: |
-          npx markuplint InvenTree/build/templates/build/*.html
-          npx markuplint InvenTree/company/templates/company/*.html
-          npx markuplint InvenTree/order/templates/order/*.html
-          npx markuplint InvenTree/part/templates/part/*.html
-          npx markuplint InvenTree/stock/templates/stock/*.html
-          npx markuplint InvenTree/templates/*.html
-          npx markuplint InvenTree/templates/InvenTree/*.html
-          npx markuplint InvenTree/templates/InvenTree/settings/*.html
+          npx markuplint **/templates/*.html
 
   pre-commit:
     name: pre-commit rules
@@ -171,7 +164,7 @@ jobs:
 
   coverage:
     name: Sqlite + coverage
-    needs: ['javascript', 'html']
+    needs: ['javascript', 'html', 'pre-commit']
     runs-on: ubuntu-latest
 
     env:
@@ -215,7 +208,7 @@ jobs:
 
   postgres:
     name: Postgres
-    needs: ['javascript', 'html']
+    needs: ['javascript', 'html', 'pre-commit']
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
 
@@ -274,7 +267,7 @@ jobs:
 
   mysql:
     name: MySql
-    needs: ['javascript', 'html']
+    needs: ['javascript', 'html', 'pre-commit']
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
 
