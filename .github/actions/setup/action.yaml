@@ -45,8 +45,7 @@ runs:
         shell: bash
         run: |
           python3 -m pip install -U pip
-          sudo apt-get install python-wheel
-          pip3 install invoke
+          pip3 install invoke wheel
       - name: Install Specific Python Dependencies
         if: ${{ inputs.pip-dependency }}
         shell: bash
