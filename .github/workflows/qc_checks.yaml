@@ -125,21 +125,6 @@ jobs:
           invoke check-server
           coverage run -m unittest discover -s test/
 
-  docstyle:
-    name: Style [Python Docstrings]
-    runs-on: ubuntu-20.04
-
-    needs: pre-commit
-    continue-on-error: true
-
-    steps:
-      - name: Enviroment Setup
-        uses: matmair/inventree/.github/actions/setup@ci-updates
-        with:
-          install: true
-      - name: flake8
-        run: flake8 InvenTree
-
   coverage:
     name: Tests - DB [SQLite] + Coverage
     runs-on: ubuntu-20.04
