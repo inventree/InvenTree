@@ -170,8 +170,10 @@ jobs:
 
   docstyle:
     name: Python Style (Docstrings)
-    needs: pre-commit
     runs-on: ubuntu-20.04
+
+    needs: pre-commit
+    continue-on-error: true   # this test is more an info then breaking
 
     steps:
       - name: Checkout code
