@@ -159,15 +159,8 @@ jobs:
           update: true
       - name: Coverage Tests
         run: invoke coverage
-      - name: Data Import Export
-        run: |
-          invoke migrate
-          invoke import-fixtures
-          invoke export-records -f data.json
-          rm inventree.sqlite
-          invoke migrate
-          invoke import-records -f data.json
-          invoke import-records -f data.json
+      - name: Data Export Test
+        uses: matmair/inventree/.github/actions/migration@ci-updates
       - name: Test Translations
         run: invoke translate
       - name: Check Migration Files
@@ -214,18 +207,10 @@ jobs:
           apt-dependency: gettext libpq-dev
           pip-dependency: psycopg2 django-redis>=5.0.0
           update: true
-
       - name: Run Tests
         run: invoke test
-      - name: Data Import Export
-        run: |
-          invoke migrate
-          python3 ./InvenTree/manage.py flush --noinput
-          invoke import-fixtures
-          invoke export-records -f data.json
-          python3 ./InvenTree/manage.py flush --noinput
-          invoke import-records -f data.json
-          invoke import-records -f data.json
+      - name: Data Export Test
+        uses: matmair/inventree/.github/actions/migration@ci-updates
 
   mysql:
     name: Tests - DB [MySQL]
@@ -264,15 +249,7 @@ jobs:
           apt-dependency: gettext libmysqlclient-dev
           pip-dependency: mysqlclient
           update: true
-
       - name: Run Tests
         run: invoke test
-      - name: Data Import Export
-        run: |
-          invoke migrate
-          python3 ./InvenTree/manage.py flush --noinput
-          invoke import-fixtures
-          invoke export-records -f data.json
-          python3 ./InvenTree/manage.py flush --noinput
-          invoke import-records -f data.json
-          invoke import-records -f data.json
+      - name: Data Export Test
+        uses: matmair/inventree/.github/actions/migration@ci-updates
