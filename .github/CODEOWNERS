@@ -1,6 +1,7 @@
 # General owner is the maintainers team
 *       @SchrodingersGat
 
+# 2022-05-27 specific rights are disabled due to current privileges setup
 # plugins are co-owned
-/InvenTree/plugin/      @SchrodingersGat @matmair
-/InvenTree/plugins/     @SchrodingersGat @matmair
+# /InvenTree/plugin/      @SchrodingersGat @matmair
+# /InvenTree/plugins/     @SchrodingersGat @matmair
