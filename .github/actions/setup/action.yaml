@@ -14,7 +14,7 @@ inputs:
     install:
         required: false
         description: 'Install the InvenTree requirements?'
-        default: 'true'
+        default: 'false'
     update:
         required: false
         description: 'Should a full update cycle be run?'
@@ -35,13 +35,13 @@ runs:
 
       # Python installs
       - name: Set up Python ${{ env.python_version }}
-        if: ${{ inputs.python }} == 'true'
+        if: ${{ inputs.python == 'true' }}
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.python_version }}
           cache: pip
       - name: Install Base Python Dependencies
-        if: ${{ inputs.python }} == 'true'
+        if: ${{ inputs.python == 'true' }}
         shell: bash
         run: |
           python3 -m pip install -U pip
@@ -53,13 +53,13 @@ runs:
 
       # NPM installs
       - name: Install node.js ${{ env.node_version }}
-        if: ${{ inputs.npm }} == 'true'
+        if: ${{ inputs.npm == 'true' }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ env.node_version }}
           cache: 'npm'
       - name: Intall npm packages
-        if: ${{ inputs.npm }} == 'true'
+        if: ${{ inputs.npm == 'true' }}
         shell: bash
         run: npm install
 
@@ -73,10 +73,10 @@ runs:
 
       # Invoke commands
       - name: Run invoke install
-        if: ${{ inputs.install }} == 'true'
+        if: ${{ inputs.install == 'true' }}
         shell: bash
         run: invoke install
       - name: Run invoke update
-        if: ${{ inputs.update }} == 'true'
+        if: ${{ inputs.update == 'true' }}
         shell: bash
         run: invoke update

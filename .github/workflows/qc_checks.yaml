@@ -34,7 +34,7 @@ jobs:
 
     steps:
       - name: Enviroment Setup
-        uses: matmair/inventree/.github/actions/setup@ci-updates
+        uses: ../actions/setup@master
         with:
           install: true
       - name: flake8
