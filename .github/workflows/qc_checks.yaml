@@ -31,7 +31,7 @@ jobs:
 
     steps:
       - name: Enviroment Setup
-        uses: matmair/inventree/.github/actions/setup@ci-updates
+        uses: inventree/inventree/.github/actions/setup@master
         with:
           install: true
       - name: flake8
@@ -45,7 +45,7 @@ jobs:
 
     steps:
       - name: Enviroment Setup
-        uses: matmair/inventree/.github/actions/setup@ci-updates
+        uses: inventree/inventree/.github/actions/setup@master
         with:
           npm: true
           install: true
@@ -66,7 +66,7 @@ jobs:
 
     steps:
       - name: Enviroment Setup
-        uses: matmair/inventree/.github/actions/setup@ci-updates
+        uses: inventree/inventree/.github/actions/setup@master
         with:
           npm: true
           install: true
@@ -107,7 +107,7 @@ jobs:
 
     steps:
       - name: Enviroment Setup
-        uses: matmair/inventree/.github/actions/setup@ci-updates
+        uses: inventree/inventree/.github/actions/setup@master
         with:
           apt-dependency: gettext
           update: true
@@ -138,14 +138,14 @@ jobs:
 
     steps:
       - name: Enviroment Setup
-        uses: matmair/inventree/.github/actions/setup@ci-updates
+        uses: inventree/inventree/.github/actions/setup@master
         with:
           apt-dependency: gettext
           update: true
       - name: Coverage Tests
         run: invoke coverage
       - name: Data Export Test
-        uses: matmair/inventree/.github/actions/migration@ci-updates
+        uses: inventree/inventree/.github/actions/migration@master
       - name: Test Translations
         run: invoke translate
       - name: Check Migration Files
@@ -187,7 +187,7 @@ jobs:
     steps:
 
       - name: Enviroment Setup
-        uses: matmair/inventree/.github/actions/setup@ci-updates
+        uses: inventree/inventree/.github/actions/setup@master
         with:
           apt-dependency: gettext libpq-dev
           pip-dependency: psycopg2 django-redis>=5.0.0
@@ -195,7 +195,7 @@ jobs:
       - name: Run Tests
         run: invoke test
       - name: Data Export Test
-        uses: matmair/inventree/.github/actions/migration@ci-updates
+        uses: inventree/inventree/.github/actions/migration@master
 
   mysql:
     name: Tests - DB [MySQL]
@@ -229,7 +229,7 @@ jobs:
 
     steps:
       - name: Enviroment Setup
-        uses: matmair/inventree/.github/actions/setup@ci-updates
+        uses: inventree/inventree/.github/actions/setup@master
         with:
           apt-dependency: gettext libmysqlclient-dev
           pip-dependency: mysqlclient
@@ -237,4 +237,4 @@ jobs:
       - name: Run Tests
         run: invoke test
       - name: Data Export Test
-        uses: matmair/inventree/.github/actions/migration@ci-updates
+        uses: inventree/inventree/.github/actions/migration@master
