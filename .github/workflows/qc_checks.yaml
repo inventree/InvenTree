@@ -33,17 +33,11 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@v2
+      - name: Enviroment Setup
+        uses: .reuse/setup@master
         with:
           python-version: ${{ env.python_version }}
-          cache: 'pip'
-      - name: Install Dependencies
-        run: |
-          pip3 install invoke
-          invoke install
+          install: true
       - name: flake8
         run: |
           flake8 InvenTree --extend-ignore=D
@@ -54,27 +48,12 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-      - name: Install node.js ${{ env.node_version }}
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ env.node_version }}
-          cache: 'npm'
-      - run: npm install
-      - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@v2
+      - name: Enviroment Setup
+        uses: .reuse/setup@master
         with:
           python-version: ${{ env.python_version }}
-          cache: 'pip'
-      - name: Install OS Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install gettext
-      - name: Install Python Dependencies
-        run: |
-          pip3 install invoke
-          invoke update
+          update: true
+          npm: true
       - name: Check Templated Files
         run: |
           cd ci
@@ -90,27 +69,12 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-      - name: Install node.js ${{ env.node_version }}
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ env.node_version }}
-          cache: 'npm'
-      - run: npm install
-      - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@v2
+      - name: Enviroment Setup
+        uses: .reuse/setup@master
         with:
           python-version: ${{ env.python_version }}
-          cache: 'pip'
-      - name: Install OS Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install gettext
-      - name: Install Python Dependencies
-        run: |
-          pip3 install invoke
-          invoke update
+          update: true
+          npm: true
       - name: Check HTML Files
         run: |
           npx markuplint **/templates/*.html
@@ -142,17 +106,11 @@ jobs:
       INVENTREE_PYTHON_TEST_PASSWORD: testpassword
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-      - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@v2
+      - name: Enviroment Setup
+        uses: .reuse/setup@master
         with:
           python-version: ${{ env.python_version }}
-          cache: 'pip'
-      - name: Install InvenTree
-        run: |
-          pip3 install invoke
-          invoke update
+          update: true
       - name: Download Python Code
         run: |
           git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }} ./${{ env.wrapper_name }}
@@ -173,7 +131,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     needs: pre-commit
-    continue-on-error: true   # this test is more an info then breaking
+    continue-on-error: true
 
     steps:
       - name: Checkout code
@@ -202,22 +160,11 @@ jobs:
       INVENTREE_PLUGINS_ENABLED: true
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-      - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@v2
+      - name: Enviroment Setup
+        uses: .reuse/setup@master
         with:
           python-version: ${{ env.python_version }}
-          cache: 'pip'
-      - name: Install OS Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install gettext
-      - name: Install Python Dependencies
-        run: |
-          python3 -m pip3 install -U pip3
-          pip3 install invoke
-          invoke update
+          update: true
       - name: Coverage Tests
         run: |
           invoke coverage
@@ -268,28 +215,15 @@ jobs:
           - 6379:6379
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-      - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@v2
+
+      - name: Enviroment Setup
+        uses: .reuse/setup@master
         with:
           python-version: ${{ env.python_version }}
-          cache: 'pip'
-      - name: Install OS Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install gettext
+          update: true
+          apt-dependency: libpq-dev
+          pip-dependency: psycopg2 django-redis>=5.0.0
 
-          sudo apt-get install libpq-dev
-      - name: Install Specific Python Dependencies
-        run: |
-          pip3 install psycopg2
-          pip3 install django-redis>=5.0.0
-      - name: Install Python Dependencies
-        run: |
-          python3 -m pip3 install -U pip3
-          pip3 install invoke
-          invoke update
       - name: Run Tests
         run: invoke test
       - name: Data Import Export
@@ -332,27 +266,14 @@ jobs:
           - 3306:3306
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-      - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@v2
+      - name: Enviroment Setup
+        uses: .reuse/setup@master
         with:
           python-version: ${{ env.python_version }}
-          cache: 'pip'
-      - name: Install OS Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install gettext
+          update: true
+          apt-dependency: libmysqlclient-dev
+          pip-dependency: mysqlclient
 
-          sudo apt-get install libmysqlclient-dev
-      - name: Install Specific Python Dependencies
-        run: |
-          pip3 install mysqlclient
-      - name: Install Python Dependencies
-        run: |
-          python3 -m pip3 install -U pip3
-          pip3 install invoke
-          invoke update
       - name: Run Tests
         run: invoke test
       - name: Data Import Export

@@ -1,0 +1,80 @@
+name: 'Setup Enviroment'
+description: 'Setup the enviroment for general InvenTree tests'
+author: 'inventree'
+inputs:
+    python:
+        required: false
+        description: 'Install python.'
+        default: true
+    npm:
+        required: false
+        description: 'Install npm.'
+        default: false
+
+    install:
+        required: false
+        description: 'Install the InvenTree requirements?'
+        default: true
+    update:
+        required: false
+        description: 'Should a full update cycle be run?'
+        default: false
+
+    apt-dependency:
+        required: false
+        description: 'Extra APT package for install.'
+    pip-dependency:
+        required: false
+        description: 'Extra python package for install.'
+
+runs:
+    using: 'composite'
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      # Python installs
+      - name: Set up Python ${{ env.python_version }}
+        if: ${{ inputs.python }} == true
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.python_version }}
+          cache: ${{ runner.os }}-pip
+      - name: Install Base Python Dependencies
+        if: ${{ inputs.python }} == true
+        run: |
+          python3 -m pip install -U pip
+          pip3 install invoke
+      - name: Install Specific Python Dependencies
+        if: ${{ inputs.pip-dependency }}
+        run: |
+          pip3 install ${{ inputs.pip-dependency }}
+
+      # NPM installs
+      - name: Install node.js ${{ env.node_version }}
+        if: ${{ inputs.npm }} == true
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.node_version }}
+          cache: 'npm'
+      - name: Intall npm packages
+        if: ${{ inputs.npm }} == true
+        run: npm install
+
+      # OS installs
+      - name: Install OS Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install gettext
+      - name: Install Specific OS Dependencies
+        if: ${{ inputs.apt-dependency }}
+        run: |
+          sudo apt-get install ${{ inputs.apt-dependency }}
+
+      # Invoke commands
+      - name: Run invoke install
+        if: ${{ inputs.install }} == true
+        run: invoke install
+      - name: Run invoke update
+        if: ${{ inputs.update }} == true
+        run: invoke update
