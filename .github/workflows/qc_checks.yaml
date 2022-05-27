@@ -66,10 +66,12 @@ jobs:
         with:
           python-version: ${{ env.python_version }}
           cache: 'pip'
-      - name: Install Dependencies
+      - name: Install OS Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install gettext
+      - name: Install Python Dependencies
+        run: |
           pip3 install invoke
           invoke update
       - name: Check Templated Files
@@ -100,10 +102,12 @@ jobs:
         with:
           python-version: ${{ env.python_version }}
           cache: 'pip'
-      - name: Install Dependencies
+      - name: Install OS Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install gettext
+      - name: Install Python Dependencies
+        run: |
           pip3 install invoke
           invoke update
       - name: Check HTML Files
@@ -181,11 +185,13 @@ jobs:
         with:
           python-version: ${{ env.python_version }}
           cache: 'pip'
-      - name: Install Dependencies
+      - name: Install OS Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install gettext
-          python -m pip install -U pip
+      - name: Install Python Dependencies
+        run: |
+          python3 -m pip3 install -U pip3
           pip3 install invoke
           invoke update
       - name: Coverage Tests
@@ -245,14 +251,20 @@ jobs:
         with:
           python-version: ${{ env.python_version }}
           cache: 'pip'
-      - name: Install Dependencies
+      - name: Install OS Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install libpq-dev gettext
-          python -m pip install -U pip
-          pip3 install invoke
+          sudo apt-get install gettext
+
+          sudo apt-get install libpq-dev
+      - name: Install Specific Python Dependencies
+        run: |
           pip3 install psycopg2
           pip3 install django-redis>=5.0.0
+      - name: Install Python Dependencies
+        run: |
+          python3 -m pip3 install -U pip3
+          pip3 install invoke
           invoke update
       - name: Run Tests
         run: invoke test
@@ -303,13 +315,19 @@ jobs:
         with:
           python-version: ${{ env.python_version }}
           cache: 'pip'
-      - name: Install Dependencies
+      - name: Install OS Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install libmysqlclient-dev gettext
-          python -m pip install -U pip
-          pip3 install invoke
+          sudo apt-get install gettext
+
+          sudo apt-get install libmysqlclient-dev
+      - name: Install Specific Python Dependencies
+        run: |
           pip3 install mysqlclient
+      - name: Install Python Dependencies
+        run: |
+          python3 -m pip3 install -U pip3
+          pip3 install invoke
           invoke update
       - name: Run Tests
         run: invoke test
