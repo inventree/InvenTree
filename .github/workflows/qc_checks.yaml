@@ -144,10 +144,13 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
+      - name: Set up Python ${{ env.python_version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.python_version }}
+          cache: 'pip'
       - name: Install InvenTree
         run: |
-          sudo apt-get update
-          sudo apt-get install python3-dev python3-pip python3-venv
           pip3 install invoke
           invoke install
           invoke migrate
