@@ -2582,7 +2582,7 @@ function loadBuildTable(table, options) {
                     loaded_calendar = true;
 
                     var el = document.getElementById('build-order-calendar');
-    
+
                     calendar = new FullCalendar.Calendar(el, {
                         initialView: 'dayGridMonth',
                         nowIndicator: true,
@@ -2592,7 +2592,7 @@ function loadBuildTable(table, options) {
                             buildEvents(calendar);
                         }
                     });
-            
+
                     calendar.render();
                 } else {
                     calendar.render();
