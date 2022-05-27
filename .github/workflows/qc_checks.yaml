@@ -59,7 +59,7 @@ jobs:
           node-version: ${{ env.node_version }}
           cache: 'npm'
       - run: npm install
-      - name: Setup Python
+      - name: Set up Python ${{ env.python_version }}
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.python_version }}
@@ -94,7 +94,7 @@ jobs:
           node-version: ${{ env.node_version }}
           cache: 'npm'
       - run: npm install
-      - name: Setup Python
+      - name: Set up Python ${{ env.python_version }}
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.python_version }}
@@ -116,7 +116,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
+    - name: Set up Python ${{ env.python_version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ env.python_version }}
+        cache: 'pip'
     - uses: pre-commit/action@v2.0.3
 
   python:
@@ -175,7 +179,7 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
-      - name: Setup Python ${{ env.python_version }}
+      - name: Set up Python ${{ env.python_version }}
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.python_version }}
@@ -239,7 +243,7 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
-      - name: Setup Python ${{ env.python_version }}
+      - name: Set up Python ${{ env.python_version }}
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.python_version }}
@@ -297,7 +301,7 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
-      - name: Setup Python ${{ env.python_version }}
+      - name: Set up Python ${{ env.python_version }}
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.python_version }}
