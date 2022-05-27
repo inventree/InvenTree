@@ -35,7 +35,7 @@ jobs:
         uses: ./.github/actions/setup
         with:
           install: true
-      - name: flake8
+      - name: Run flake8
         run: flake8 InvenTree --extend-ignore=D
 
   javascript:
@@ -51,7 +51,7 @@ jobs:
         with:
           npm: true
           install: true
-      - name: Check Templated Files
+      - name: Check Templated JS Files
         run: |
           cd ci
           python3 check_js_templates.py
@@ -89,7 +89,8 @@ jobs:
       with:
         python-version: ${{ env.python_version }}
         cache: 'pip'
-    - uses: pre-commit/action@v2.0.3
+    - name: Run pre-commit Checks
+      uses: pre-commit/action@v2.0.3
 
   python:
     name: Tests - inventree-python
@@ -115,15 +116,15 @@ jobs:
         with:
           apt-dependency: gettext
           update: true
-      - name: Download Python Code
+      - name: Download Python Code For `${{ env.wrapper_name }}`
         run: git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }} ./${{ env.wrapper_name }}
-      - name: Start Server
+      - name: Start InvenTree Server
         run: |
           invoke delete-data -f
           invoke import-fixtures
           invoke server -a 127.0.0.1:12345 &
           invoke wait
-      - name: Run Tests
+      - name: Run Tests For `${{ env.wrapper_name }}`
         run: |
           cd ${{ env.wrapper_name }}
           invoke check-server
