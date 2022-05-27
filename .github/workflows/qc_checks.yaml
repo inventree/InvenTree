@@ -30,7 +30,7 @@ env:
 jobs:
   pep_style:
     name: Python Style (PEP8)
-    runs-on: ${{ runner_ref }}
+    runs-on: ${{ env.runner_ref }}
 
     steps:
       - name: Checkout code
@@ -51,7 +51,7 @@ jobs:
   javascript:
     name: JS Template Files
     needs: pep_style
-    runs-on: ${{ runner_ref }}
+    runs-on: ${{ env.runner_ref }}
 
     steps:
       - name: Checkout Code
@@ -87,7 +87,7 @@ jobs:
   html:
     name: HTML Template Files
     needs: pep_style
-    runs-on: ${{ runner_ref }}
+    runs-on: ${{ env.runner_ref }}
 
     steps:
       - name: Checkout Code
@@ -118,7 +118,7 @@ jobs:
   pre-commit:
     name: pre-commit
     needs: pep_style
-    runs-on: ${{ runner_ref }}
+    runs-on: ${{ env.runner_ref }}
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ env.python_version }}
@@ -131,7 +131,7 @@ jobs:
   python:
     name: Test inventree-python
     needs: pre-commit
-    runs-on: ${{ runner_ref }}
+    runs-on: ${{ env.runner_ref }}
 
     env:
       wrapper_name: inventree-python
@@ -171,7 +171,7 @@ jobs:
   coverage:
     name: Tests + Coverage [SQLite]
     needs: ['javascript', 'html', 'pre-commit']
-    runs-on: ${{ runner_ref }}
+    runs-on: ${{ env.runner_ref }}
 
     env:
       INVENTREE_DB_NAME: ./inventree.sqlite
@@ -217,7 +217,7 @@ jobs:
   postgres:
     name: Tests [PostgreSQL]
     needs: ['javascript', 'html', 'pre-commit']
-    runs-on: ${{ runner_ref }}
+    runs-on: ${{ env.runner_ref }}
     if: github.event_name == 'push'
 
     env:
@@ -282,7 +282,7 @@ jobs:
   mysql:
     name: Tests [MySQL]
     needs: ['javascript', 'html', 'pre-commit']
-    runs-on: ${{ runner_ref }}
+    runs-on: ${{ env.runner_ref }}
     if: github.event_name == 'push'
 
     env:
