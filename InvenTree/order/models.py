@@ -197,7 +197,8 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
 
                 logger.error(f"Missing exchange rate for '{target_currency}'")
 
-                return Money(0, target_currency)
+                # Return None to indicate the calculated price is invalid
+                return None
 
         # extra items
         for line in self.extra_lines.all():
@@ -219,7 +220,9 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
                 )
 
                 logger.error(f"Missing exchange rate for '{target_currency}'")
-                return Money(0, target_currency)
+
+                # Return None to indicate the calculated price is invalid
+                return None
 
         # set decimal-places
         total.decimal_places = 4
