@@ -138,11 +138,12 @@ jobs:
     continue-on-error: true
 
     steps:
+      - uses: actions/checkout@v1
       - name: Enviroment Setup
-        uses: inventree/inventree/.github/actions/setup@master
+        uses: ./.github/actions/setup
         with:
           install: true
-      - name: flake8
+      - name: Run flake8
         run: flake8 InvenTree
 
   coverage:
