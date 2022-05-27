@@ -51,7 +51,7 @@ jobs:
         uses: matmair/inventree/.github/actions/setup@ci-updates
         with:
           npm: true
-          update: true
+          install: true
       - name: Check Templated Files
         run: |
           cd ci
@@ -72,7 +72,7 @@ jobs:
         uses: matmair/inventree/.github/actions/setup@ci-updates
         with:
           npm: true
-          update: true
+          install: true
       - name: Check HTML Files
         run: npx markuplint **/templates/*.html
 
