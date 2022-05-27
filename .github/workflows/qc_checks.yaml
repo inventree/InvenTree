@@ -30,8 +30,9 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
+      - uses: actions/checkout@v1
       - name: Enviroment Setup
-        uses: inventree/inventree/.github/actions/setup@master
+        uses: ./.github/actions/setup
         with:
           install: true
       - name: flake8
@@ -44,8 +45,9 @@ jobs:
     needs: pep_style
 
     steps:
+      - uses: actions/checkout@v1
       - name: Enviroment Setup
-        uses: inventree/inventree/.github/actions/setup@master
+        uses: ./.github/actions/setup
         with:
           npm: true
           install: true
@@ -65,8 +67,9 @@ jobs:
     needs: pep_style
 
     steps:
+      - uses: actions/checkout@v1
       - name: Enviroment Setup
-        uses: inventree/inventree/.github/actions/setup@master
+        uses: ./.github/actions/setup
         with:
           npm: true
           install: true
@@ -106,8 +109,9 @@ jobs:
       INVENTREE_PYTHON_TEST_PASSWORD: testpassword
 
     steps:
+      - uses: actions/checkout@v1
       - name: Enviroment Setup
-        uses: inventree/inventree/.github/actions/setup@master
+        uses: ./.github/actions/setup
         with:
           apt-dependency: gettext
           update: true
@@ -138,15 +142,16 @@ jobs:
       INVENTREE_PLUGINS_ENABLED: true
 
     steps:
+      - uses: actions/checkout@v1
       - name: Enviroment Setup
-        uses: inventree/inventree/.github/actions/setup@master
+        uses: ./.github/actions/setup
         with:
           apt-dependency: gettext
           update: true
       - name: Coverage Tests
         run: invoke coverage
       - name: Data Export Test
-        uses: inventree/inventree/.github/actions/migration@master
+        uses: ./.github/actions/migration
       - name: Test Translations
         run: invoke translate
       - name: Check Migration Files
@@ -186,9 +191,9 @@ jobs:
           - 6379:6379
 
     steps:
-
+      - uses: actions/checkout@v1
       - name: Enviroment Setup
-        uses: inventree/inventree/.github/actions/setup@master
+        uses: ./.github/actions/setup
         with:
           apt-dependency: gettext libpq-dev
           pip-dependency: psycopg2 django-redis>=5.0.0
@@ -196,7 +201,7 @@ jobs:
       - name: Run Tests
         run: invoke test
       - name: Data Export Test
-        uses: inventree/inventree/.github/actions/migration@master
+        uses: ./.github/actions/migration
 
   mysql:
     name: Tests - DB [MySQL]
@@ -229,8 +234,9 @@ jobs:
           - 3306:3306
 
     steps:
+      - uses: actions/checkout@v1
       - name: Enviroment Setup
-        uses: inventree/inventree/.github/actions/setup@master
+        uses: ./.github/actions/setup
         with:
           apt-dependency: gettext libmysqlclient-dev
           pip-dependency: mysqlclient
@@ -238,4 +244,4 @@ jobs:
       - name: Run Tests
         run: invoke test
       - name: Data Export Test
-        uses: inventree/inventree/.github/actions/migration@master
+        uses: ./.github/actions/migration
