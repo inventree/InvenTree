@@ -71,8 +71,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install gettext
           pip3 install invoke
-          invoke install
-          invoke static
+          invoke update
       - name: Check Templated Files
         run: |
           cd ci
@@ -106,8 +105,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install gettext
           pip3 install invoke
-          invoke install
-          invoke static
+          invoke update
       - name: Check HTML Files
         run: |
           npx markuplint **/templates/*.html
@@ -149,8 +147,7 @@ jobs:
       - name: Install InvenTree
         run: |
           pip3 install invoke
-          invoke install
-          invoke migrate
+          invoke update
       - name: Download Python Code
         run: |
           git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }} ./${{ env.wrapper_name }}
