@@ -130,6 +130,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     needs: ['javascript', 'html', 'pre-commit']
+    continue-on-error: true   # continue if a step fails so that coverage gets pushed
 
     env:
       INVENTREE_DB_NAME: ./inventree.sqlite
