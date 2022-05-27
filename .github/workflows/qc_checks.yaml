@@ -168,6 +168,27 @@ jobs:
           invoke check-server
           coverage run -m unittest discover -s test/
 
+  docstyle:
+    name: Python Style (Docstrings)
+    needs: pre-commit
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Python ${{ env.python_version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.python_version }}
+          cache: 'pip'
+      - name: Install Dependencies
+        run: |
+          pip3 install invoke
+          invoke install
+      - name: flake8
+        run: |
+          flake8 InvenTree
+
   coverage:
     name: Tests + Coverage [SQLite]
     needs: ['javascript', 'html', 'pre-commit']
