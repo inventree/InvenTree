@@ -46,7 +46,7 @@ jobs:
           invoke install
       - name: flake8
         run: |
-          flake8 InvenTree --extend-ignore=D .
+          flake8 InvenTree --extend-ignore=D
 
   javascript:
     name: JS Template Files
