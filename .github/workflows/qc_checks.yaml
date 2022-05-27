@@ -34,7 +34,7 @@ jobs:
 
     steps:
       - name: Enviroment Setup
-        uses: inventree/inventree/.github/workflows/reuse/setup@master
+        uses: inventree/inventree/.github/workflows/reuse@master
         with:
           python-version: ${{ env.python_version }}
           install: true
@@ -49,7 +49,7 @@ jobs:
 
     steps:
       - name: Enviroment Setup
-        uses: inventree/inventree/.github/workflows/reuse/setup@master
+        uses: inventree/inventree/.github/workflows/reuse@master
         with:
           python-version: ${{ env.python_version }}
           update: true
@@ -70,7 +70,7 @@ jobs:
 
     steps:
       - name: Enviroment Setup
-        uses: inventree/inventree/.github/workflows/reuse/setup@master
+        uses: inventree/inventree/.github/workflows/reuse@master
         with:
           python-version: ${{ env.python_version }}
           update: true
@@ -107,7 +107,7 @@ jobs:
 
     steps:
       - name: Enviroment Setup
-        uses: inventree/inventree/.github/workflows/reuse/setup@master
+        uses: inventree/inventree/.github/workflows/reuse@master
         with:
           python-version: ${{ env.python_version }}
           update: true
@@ -161,7 +161,7 @@ jobs:
 
     steps:
       - name: Enviroment Setup
-        uses: inventree/inventree/.github/workflows/reuse/setup@master
+        uses: inventree/inventree/.github/workflows/reuse@master
         with:
           python-version: ${{ env.python_version }}
           update: true
@@ -217,7 +217,7 @@ jobs:
     steps:
 
       - name: Enviroment Setup
-        uses: inventree/inventree/.github/workflows/reuse/setup@master
+        uses: inventree/inventree/.github/workflows/reuse@master
         with:
           python-version: ${{ env.python_version }}
           update: true
@@ -267,7 +267,7 @@ jobs:
 
     steps:
       - name: Enviroment Setup
-        uses: inventree/inventree/.github/workflows/reuse/setup@master
+        uses: inventree/inventree/.github/workflows/reuse@master
         with:
           python-version: ${{ env.python_version }}
           update: true
