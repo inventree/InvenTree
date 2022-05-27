@@ -14,7 +14,7 @@ on:
 env:
   python_version: 3.9
   node_version: 16
-  runner_ref: ubuntu-20.04
+  # Set the runner os in os_matrix.strategy.matrix.os
 
   server_start_sleep: 60
 
@@ -28,9 +28,14 @@ env:
   INVENTREE_ADMIN_EMAIL: test@test.com
 
 jobs:
+  os_matrix:
+    strategy:
+      matrix:
+        os: [ubuntu-20.04]
+
   pep_style:
     name: Python Style (PEP8)
-    runs-on: ${{ env.runner_ref }}
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout code
@@ -51,7 +56,7 @@ jobs:
   javascript:
     name: JS Template Files
     needs: pep_style
-    runs-on: ${{ env.runner_ref }}
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout Code
@@ -87,7 +92,7 @@ jobs:
   html:
     name: HTML Template Files
     needs: pep_style
-    runs-on: ${{ env.runner_ref }}
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout Code
@@ -118,7 +123,7 @@ jobs:
   pre-commit:
     name: pre-commit
     needs: pep_style
-    runs-on: ${{ env.runner_ref }}
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ env.python_version }}
@@ -131,7 +136,7 @@ jobs:
   python:
     name: Test inventree-python
     needs: pre-commit
-    runs-on: ${{ env.runner_ref }}
+    runs-on: ${{ matrix.os }}
 
     env:
       wrapper_name: inventree-python
@@ -171,7 +176,7 @@ jobs:
   coverage:
     name: Tests + Coverage [SQLite]
     needs: ['javascript', 'html', 'pre-commit']
-    runs-on: ${{ env.runner_ref }}
+    runs-on: ${{ matrix.os }}
 
     env:
       INVENTREE_DB_NAME: ./inventree.sqlite
@@ -217,7 +222,7 @@ jobs:
   postgres:
     name: Tests [PostgreSQL]
     needs: ['javascript', 'html', 'pre-commit']
-    runs-on: ${{ env.runner_ref }}
+    runs-on: ${{ matrix.os }}
     if: github.event_name == 'push'
 
     env:
@@ -282,7 +287,7 @@ jobs:
   mysql:
     name: Tests [MySQL]
     needs: ['javascript', 'html', 'pre-commit']
-    runs-on: ${{ env.runner_ref }}
+    runs-on: ${{ matrix.os }}
     if: github.event_name == 'push'
 
     env:
