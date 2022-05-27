@@ -20,9 +20,11 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   INVENTREE_DB_ENGINE: sqlite3
   INVENTREE_DB_NAME: inventree
-  INVENTREE_MEDIA_ROOT: ./media
-  INVENTREE_STATIC_ROOT: ./static
-
+  INVENTREE_MEDIA_ROOT: ../test_inventree_media
+  INVENTREE_STATIC_ROOT: ../test_inventree_static
+  INVENTREE_ADMIN_USER: testuser
+  INVENTREE_ADMIN_PASSWORD: testpassword
+  INVENTREE_ADMIN_EMAIL: test@test.com
 
 jobs:
   pep_style:
@@ -132,11 +134,6 @@ jobs:
       wrapper_name: inventree-python
       INVENTREE_DB_ENGINE: django.db.backends.sqlite3
       INVENTREE_DB_NAME: ../inventree_unit_test_db.sqlite3
-      INVENTREE_MEDIA_ROOT: ../test_inventree_media
-      INVENTREE_STATIC_ROOT: ../test_inventree_static
-      INVENTREE_ADMIN_USER: testuser
-      INVENTREE_ADMIN_PASSWORD: testpassword
-      INVENTREE_ADMIN_EMAIL: test@test.com
       INVENTREE_PYTHON_TEST_SERVER: http://localhost:12345
       INVENTREE_PYTHON_TEST_USERNAME: testuser
       INVENTREE_PYTHON_TEST_PASSWORD: testpassword
