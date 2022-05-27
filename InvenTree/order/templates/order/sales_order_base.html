@@ -191,7 +191,7 @@ src="{% static 'img/blank_image.png' %}"
         <td id="soTotalPrice">
             {% with order.get_total_price as tp %}
             {% if tp == None %}
-            <span class='badge bg-warning'>{% trans "Total price could not be calculated" %}</span>
+            <span class='badge bg-warning'>{% trans "Total cost could not be calculated" %}</span>
             {% else %}
             {{ tp }}
             {% endif %}
