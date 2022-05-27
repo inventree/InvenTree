@@ -46,6 +46,6 @@ py-moneyed==0.8.0                       # Specific version requirement for py-mo
 pygments==2.7.4                         # Syntax highlighting
 python-barcode[images]==0.13.1          # Barcode generator
 qrcode[pil]==6.1                        # QR code generator
-rapidfuzz==0.7.6                        # Fuzzy string matching
+# rapidfuzz==0.7.6                        # Fuzzy string matching
 tablib[xls,xlsx,yaml]                   # Support for XLS and XLSX formats
 weasyprint==52.5                        # PDF generation library (Note: in the future need to update to 53)
