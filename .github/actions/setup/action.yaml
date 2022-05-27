@@ -53,7 +53,7 @@ runs:
 
       # NPM installs
       - name: Install node.js ${{ env.node_version }}
-        if: ${{ inputs.npm }} == true
+        if: ${{ inputs.npm }} == 'true'
         uses: actions/setup-node@v2
         with:
           node-version: ${{ env.node_version }}
@@ -65,14 +65,11 @@ runs:
 
       # OS installs
       - name: Install OS Dependencies
+        if: ${{ inputs.apt-dependency }}
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get install gettext
-      - name: Install Specific OS Dependencies
-        if: ${{ inputs.apt-dependency }}
-        shell: bash
-        run: sudo apt-get install ${{ inputs.apt-dependency }}
+          sudo apt-get install ${{ inputs.apt-dependency }}
 
       # Invoke commands
       - name: Run invoke install

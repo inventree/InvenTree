@@ -29,31 +29,29 @@ env:
 
 jobs:
   pep_style:
-    name: Python Style (PEP8)
+    name: Style [Python]
     runs-on: ubuntu-20.04
 
     steps:
       - name: Enviroment Setup
         uses: matmair/inventree/.github/actions/setup@ci-updates
         with:
-          python-version: ${{ env.python_version }}
           install: true
       - name: flake8
-        run: |
-          flake8 InvenTree --extend-ignore=D
+        run: flake8 InvenTree --extend-ignore=D
 
   javascript:
-    name: JS Template Files
-    needs: pep_style
+    name: Style [JS]
     runs-on: ubuntu-20.04
+
+    needs: pep_style
 
     steps:
       - name: Enviroment Setup
         uses: matmair/inventree/.github/actions/setup@ci-updates
         with:
-          python-version: ${{ env.python_version }}
-          update: true
           npm: true
+          update: true
       - name: Check Templated Files
         run: |
           cd ci
@@ -64,25 +62,26 @@ jobs:
           npx eslint js_tmp/*.js
 
   html:
-    name: HTML Template Files
-    needs: pep_style
+    name: Style [HTML]
     runs-on: ubuntu-20.04
+
+    needs: pep_style
 
     steps:
       - name: Enviroment Setup
         uses: matmair/inventree/.github/actions/setup@ci-updates
         with:
-          python-version: ${{ env.python_version }}
-          update: true
           npm: true
+          update: true
       - name: Check HTML Files
-        run: |
-          npx markuplint **/templates/*.html
+        run: npx markuplint **/templates/*.html
 
   pre-commit:
     name: pre-commit
-    needs: pep_style
     runs-on: ubuntu-20.04
+
+    needs: pep_style
+
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ env.python_version }}
@@ -93,9 +92,10 @@ jobs:
     - uses: pre-commit/action@v2.0.3
 
   python:
-    name: Test inventree-python
-    needs: pre-commit
+    name: Tests - inventree-python
     runs-on: ubuntu-20.04
+
+    needs: pre-commit
 
     env:
       wrapper_name: inventree-python
@@ -109,11 +109,10 @@ jobs:
       - name: Enviroment Setup
         uses: matmair/inventree/.github/actions/setup@ci-updates
         with:
-          python-version: ${{ env.python_version }}
+          apt-dependency: gettext
           update: true
       - name: Download Python Code
-        run: |
-          git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }} ./${{ env.wrapper_name }}
+        run: git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }} ./${{ env.wrapper_name }}
       - name: Start Server
         run: |
           invoke delete-data -f
@@ -127,32 +126,25 @@ jobs:
           coverage run -m unittest discover -s test/
 
   docstyle:
-    name: Python Style (Docstrings)
+    name: Style [Python Docstrings]
     runs-on: ubuntu-20.04
 
     needs: pre-commit
     continue-on-error: true
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@v2
+      - name: Enviroment Setup
+        uses: matmair/inventree/.github/actions/setup@ci-updates
         with:
-          python-version: ${{ env.python_version }}
-          cache: 'pip'
-      - name: Install Dependencies
-        run: |
-          pip3 install invoke
-          invoke install
+          install: true
       - name: flake8
-        run: |
-          flake8 InvenTree
+        run: flake8 InvenTree
 
   coverage:
-    name: Tests + Coverage [SQLite]
-    needs: ['javascript', 'html', 'pre-commit']
+    name: Tests - DB [SQLite] + Coverage
     runs-on: ubuntu-20.04
+
+    needs: ['javascript', 'html', 'pre-commit']
 
     env:
       INVENTREE_DB_NAME: ./inventree.sqlite
@@ -163,11 +155,10 @@ jobs:
       - name: Enviroment Setup
         uses: matmair/inventree/.github/actions/setup@ci-updates
         with:
-          python-version: ${{ env.python_version }}
+          apt-dependency: gettext
           update: true
       - name: Coverage Tests
-        run: |
-          invoke coverage
+        run: invoke coverage
       - name: Data Import Export
         run: |
           invoke migrate
@@ -185,9 +176,10 @@ jobs:
         run: coveralls
 
   postgres:
-    name: Tests [PostgreSQL]
-    needs: ['javascript', 'html', 'pre-commit']
+    name: Tests - DB [PostgreSQL]
     runs-on: ubuntu-20.04
+
+    needs: ['javascript', 'html', 'pre-commit']
     if: github.event_name == 'push'
 
     env:
@@ -219,10 +211,9 @@ jobs:
       - name: Enviroment Setup
         uses: matmair/inventree/.github/actions/setup@ci-updates
         with:
-          python-version: ${{ env.python_version }}
-          update: true
-          apt-dependency: libpq-dev
+          apt-dependency: gettext libpq-dev
           pip-dependency: psycopg2 django-redis>=5.0.0
+          update: true
 
       - name: Run Tests
         run: invoke test
@@ -237,9 +228,10 @@ jobs:
           invoke import-records -f data.json
 
   mysql:
-    name: Tests [MySQL]
-    needs: ['javascript', 'html', 'pre-commit']
+    name: Tests - DB [MySQL]
     runs-on: ubuntu-20.04
+
+    needs: ['javascript', 'html', 'pre-commit']
     if: github.event_name == 'push'
 
     env:
@@ -269,10 +261,9 @@ jobs:
       - name: Enviroment Setup
         uses: matmair/inventree/.github/actions/setup@ci-updates
         with:
-          python-version: ${{ env.python_version }}
-          update: true
-          apt-dependency: libmysqlclient-dev
+          apt-dependency: gettext libmysqlclient-dev
           pip-dependency: mysqlclient
+          update: true
 
       - name: Run Tests
         run: invoke test
