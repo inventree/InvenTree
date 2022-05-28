@@ -38,7 +38,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Version Check
         run: |
-          python3 ci/check_version_number.py --release --tag ${{ github.event.release.tag_name }}
+          python3 ci/check_version_number.py
       - name: Build Docker Image
         run: |
           docker-compose build

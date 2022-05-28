@@ -14,7 +14,6 @@ tagged branch:
 
 """
 
-import argparse
 import os
 import re
 import sys
@@ -35,14 +34,6 @@ if __name__ == '__main__':
     version_file = os.path.join(here, '..', 'InvenTree', 'InvenTree', 'version.py')
 
     version = None
-
-    print("GITHUB_REF_TYPE:", GITHUB_REF_TYPE)
-    print("GITHUB_REF:", GITHUB_REF)
-    print("GITHUB_BASE_REF:", GITHUB_BASE_REF)
-
-    git_sha = os.environ['GITHUB_SHA']
-
-    print("Git SHA:", git_sha)
 
     with open(version_file, 'r') as f:
 
@@ -84,7 +75,15 @@ if __name__ == '__main__':
             print(f"Version number '{version}' matches development branch")
 
     elif GITHUB_REF_TYPE == 'tag':
-        print("Checking requirements for tagged release")
+        # GITHUB_REF should be of th eform /refs/heads/<tag>
+        version_tag = GITHUB_REF.split('/')[-1]
+        print(f"Checking requirements for tagged release - '{version_tag}'")
+
+        if version_tag != version:
+            print(f"Version number '{version}' does not match tag '{version_tag}'")
+            sys.exit
+
+        # TODO: Check if there is already a release with this tag!
 
     else:
         print("Unsupported branch / version combination:")
@@ -94,71 +93,4 @@ if __name__ == '__main__':
         print("GITHUB_BASE_REF:", GITHUB_BASE_REF)
         sys.exit(1)
 
-    sys.exit(0)
-
-    # error out
-    sys.exit(1)
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-t', '--tag', help='Compare against specified version tag', action='store')
-    parser.add_argument('-r', '--release', help='Check that this is a release version', action='store_true')
-    parser.add_argument('-d', '--dev', help='Check that this is a development version', action='store_true')
-    parser.add_argument('-b', '--branch', help='Check against a particular branch', action='store')
-
-    args = parser.parse_args()
-
-    if args.branch:
-        """
-        Version number requirement depends on format of branch
-
-        'master': development branch
-        'stable': release branch
-        """
-
-        print(f"Checking version number for branch '{args.branch}'")
-
-        if args.branch == 'master':
-            print("- This is a development branch")
-            args.dev = True
-        elif args.branch == 'stable':
-            print("- This is a stable release branch")
-            args.release = True
-
-    if args.dev:
-        """
-        Check that the current verrsion number matches the "development" format
-        e.g. "0.5 dev"
-        """
-
-        print("Checking development branch")
-
-        pattern = r"^\d+(\.\d+)+ dev$"
-
-        result = re.match(pattern, version)
-
-        if result is None:
-            print(f"Version number '{version}' does not match required pattern for development branch")
-            sys.exit(1)
-
-    elif args.release:
-        """
-        Check that the current version number matches the "release" format
-        e.g. "0.5.1"
-        """
-
-        print("Checking release branch")
-
-        pattern = r"^\d+(\.\d+)+$"
-
-        result = re.match(pattern, version)
-
-        if result is None:
-            print(f"Version number '{version}' does not match required pattern for stable branch")
-            sys.exit(1)
-
-    if args.tag:
-        if args.tag != version:
-            print(f"Release tag '{args.tag}' does not match INVENTREE_SW_VERSION '{version}'")
-            sys.exit(1)
-
-sys.exit(0)
+    print("Version check successful!")
