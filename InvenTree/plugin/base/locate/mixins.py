@@ -8,8 +8,7 @@ logger = logging.getLogger('inventree')
 
 
 class LocateMixin:
-    """
-    Mixin class which provides support for 'locating' inventory items,
+    """Mixin class which provides support for 'locating' inventory items,
     for example identifying the location of a particular StockLocation.
 
     Plugins could implement audible or visual cues to direct attention to the location,
@@ -23,7 +22,6 @@ class LocateMixin:
     - locate_stock_location : Used to locate / identify a particular stock location
 
     Refer to the default method implementations below for more information!
-
     """
 
     class MixinMeta:
@@ -34,8 +32,7 @@ class LocateMixin:
         self.add_mixin('locate', True, __class__)
 
     def locate_stock_item(self, item_pk):
-        """
-        Attempt to locate a particular StockItem
+        """Attempt to locate a particular StockItem
 
         Arguments:
             item_pk: The PK (primary key) of the StockItem to be located
@@ -63,8 +60,7 @@ class LocateMixin:
             pass
 
     def locate_stock_location(self, location_pk):
-        """
-        Attempt to location a particular StockLocation
+        """Attempt to location a particular StockLocation
 
         Arguments:
             location_pk: The PK (primary key) of the StockLocation to be located

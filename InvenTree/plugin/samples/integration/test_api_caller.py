@@ -1,4 +1,4 @@
-""" Unit tests for action caller sample"""
+"""Unit tests for action caller sample"""
 
 from django.test import TestCase
 
@@ -6,10 +6,10 @@ from plugin import registry
 
 
 class SampleApiCallerPluginTests(TestCase):
-    """ Tests for SampleApiCallerPluginTests """
+    """Tests for SampleApiCallerPluginTests """
 
     def test_return(self):
-        """check if the external api call works"""
+        """Check if the external api call works"""
         # The plugin should be defined
         self.assertIn('sample-api-caller', registry.plugins)
         plg = registry.plugins['sample-api-caller']

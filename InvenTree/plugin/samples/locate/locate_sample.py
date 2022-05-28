@@ -13,8 +13,8 @@ logger = logging.getLogger('inventree')
 
 
 class SampleLocatePlugin(LocateMixin, InvenTreePlugin):
-    """
-    A very simple example of the 'locate' plugin.
+    """A very simple example of the 'locate' plugin.
+
     This plugin class simply prints location information to the logger.
     """
 

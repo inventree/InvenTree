@@ -28,7 +28,6 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
     def do_activate_plugin(self):
         """Activate the 'samplelabel' plugin"""
-
         config = registry.get_plugin('samplelabel').plugin_config()
         config.active = True
         config.save()
@@ -62,7 +61,6 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
     def test_wrong_implementation(self):
         """Test that a wrong implementation raises an error"""
-
         class WrongPlugin(LabelPrintingMixin, InvenTreePlugin):
             pass
 
@@ -72,7 +70,6 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
     def test_installed(self):
         """Test that the sample printing plugin is installed"""
-
         # Get all label plugins
         plugins = registry.with_mixin('labels')
         self.assertEqual(len(plugins), 1)
@@ -83,7 +80,6 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
     def test_api(self):
         """Test that we can filter the API endpoint by mixin"""
-
         url = reverse('api-plugin-list')
 
         # Try POST (disallowed)
@@ -128,7 +124,6 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
     def test_printing_process(self):
         """Test that a label can be printed"""
-
         # Ensure the labels were created
         apps.get_app_config('label').create_labels()
 

@@ -1,14 +1,11 @@
-"""
-Sample plugin for calling an external API
-"""
+"""Sample plugin for calling an external API"""
 from plugin import InvenTreePlugin
 from plugin.mixins import APICallMixin, SettingsMixin
 
 
 class SampleApiCallerPlugin(APICallMixin, SettingsMixin, InvenTreePlugin):
-    """
-    A small api call sample
-    """
+    """A small api call sample"""
+
     NAME = "Sample API Caller"
 
     SETTINGS = {
@@ -26,7 +23,5 @@ class SampleApiCallerPlugin(APICallMixin, SettingsMixin, InvenTreePlugin):
     API_TOKEN_SETTING = 'API_TOKEN'
 
     def get_external_url(self):
-        """
-        returns data from the sample endpoint
-        """
+        """Returns data from the sample endpoint"""
         return self.api_call('api/users/2')

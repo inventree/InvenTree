@@ -1,11 +1,10 @@
-"""sample of a broken plugin"""
+"""Sample of a broken plugin"""
 from plugin import InvenTreePlugin
 
 
 class BrokenIntegrationPlugin(InvenTreePlugin):
-    """
-    An very broken plugin
-    """
+    """A very broken plugin"""
+
     NAME = 'Test'
     TITLE = 'Broken Plugin'
     SLUG = 'broken'

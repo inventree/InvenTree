@@ -14,19 +14,13 @@ class ReportConfig(AppConfig):
     name = 'report'
 
     def ready(self):
-        """
-        This function is called whenever the report app is loaded
-        """
-
+        """This function is called whenever the report app is loaded"""
         if canAppAccessDatabase(allow_test=True):
             self.create_default_test_reports()
             self.create_default_build_reports()
 
     def create_default_reports(self, model, reports):
-        """
-        Copy defualt report files across to the media directory.
-        """
-
+        """Copy defualt report files across to the media directory."""
         # Source directory for report templates
         src_dir = os.path.join(
             os.path.dirname(os.path.realpath(__file__)),
@@ -82,11 +76,7 @@ class ReportConfig(AppConfig):
                 pass
 
     def create_default_test_reports(self):
-        """
-        Create database entries for the default TestReport templates,
-        if they do not already exist
-        """
-
+        """Create database entries for the default TestReport templates, if they do not already exist"""
         try:
             from .models import TestReport
         except:  # pragma: no cover
@@ -105,11 +95,7 @@ class ReportConfig(AppConfig):
         self.create_default_reports(TestReport, reports)
 
     def create_default_build_reports(self):
-        """
-        Create database entries for the default BuildReport templates
-        (if they do not already exist)
-        """
-
+        """Create database entries for the default BuildReport templates (if they do not already exist)"""
         try:
             from .models import BuildReport
         except:  # pragma: no cover

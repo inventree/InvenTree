@@ -31,7 +31,6 @@ class EventPluginSampleTests(TestCase):
 
     def test_mixin(self):
         """Test that MixinNotImplementedError is raised"""
-
         with self.assertRaises(MixinNotImplementedError):
             class Wrong(EventMixin, InvenTreePlugin):
                 pass

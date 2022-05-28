@@ -11,9 +11,7 @@ from stock.models import StockItem, StockLocation
 
 
 class LocatePluginView(APIView):
-    """
-    Endpoint for using a custom plugin to identify or 'locate' a stock item or location
-    """
+    """Endpoint for using a custom plugin to identify or 'locate' a stock item or location"""
 
     permission_classes = [
         permissions.IsAuthenticated,

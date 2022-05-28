@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
 """Core set of Notifications as a Plugin"""
+
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
@@ -16,9 +16,7 @@ class PlgMixin:
 
 
 class CoreNotificationsPlugin(SettingsMixin, InvenTreePlugin):
-    """
-    Core notification methods for InvenTree
-    """
+    """Core notification methods for InvenTree"""
 
     NAME = "CoreNotificationsPlugin"
     AUTHOR = _('InvenTree contributors')
@@ -50,11 +48,7 @@ class CoreNotificationsPlugin(SettingsMixin, InvenTreePlugin):
         }
 
         def get_targets(self):
-            """
-            Return a list of target email addresses,
-            only for users which allow email notifications
-            """
-
+            """Return a list of target email addresses, only for users which allow email notifications"""
             allowed_users = []
 
             for user in self.targets:

@@ -24,9 +24,7 @@ from .serializers import (BOMReportSerializer, BuildReportSerializer,
 
 
 class ReportListView(generics.ListAPIView):
-    """
-    Generic API class for report templates
-    """
+    """Generic API class for report templates"""
 
     filter_backends = [
         DjangoFilterBackend,
@@ -44,15 +42,10 @@ class ReportListView(generics.ListAPIView):
 
 
 class StockItemReportMixin:
-    """
-    Mixin for extracting stock items from query params
-    """
+    """Mixin for extracting stock items from query params"""
 
     def get_items(self):
-        """
-        Return a list of requested stock items
-        """
-
+        """Return a list of requested stock items"""
         items = []
 
         params = self.request.query_params
@@ -77,15 +70,10 @@ class StockItemReportMixin:
 
 
 class BuildReportMixin:
-    """
-    Mixin for extracting Build items from query params
-    """
+    """Mixin for extracting Build items from query params"""
 
     def get_builds(self):
-        """
-        Return a list of requested Build objects
-        """
-
+        """Return a list of requested Build objects"""
         builds = []
 
         params = self.request.query_params
@@ -109,17 +97,13 @@ class BuildReportMixin:
 
 
 class OrderReportMixin:
-    """
-    Mixin for extracting order items from query params
+    """Mixin for extracting order items from query params
 
     requires the OrderModel class attribute to be set!
     """
 
     def get_orders(self):
-        """
-        Return a list of order objects
-        """
-
+        """Return a list of order objects"""
         orders = []
 
         params = self.request.query_params
@@ -143,15 +127,10 @@ class OrderReportMixin:
 
 
 class PartReportMixin:
-    """
-    Mixin for extracting part items from query params
-    """
+    """Mixin for extracting part items from query params"""
 
     def get_parts(self):
-        """
-        Return a list of requested part objects
-        """
-
+        """Return a list of requested part objects"""
         parts = []
 
         params = self.request.query_params
@@ -176,15 +155,10 @@ class PartReportMixin:
 
 
 class ReportPrintMixin:
-    """
-    Mixin for printing reports
-    """
+    """Mixin for printing reports"""
 
     def print(self, request, items_to_print):
-        """
-        Print this report template against a number of pre-validated items.
-        """
-
+        """Print this report template against a number of pre-validated items."""
         if len(items_to_print) == 0:
             # No valid items provided, return an error message
             data = {
@@ -283,8 +257,7 @@ class ReportPrintMixin:
 
 
 class StockItemTestReportList(ReportListView, StockItemReportMixin):
-    """
-    API endpoint for viewing list of TestReport objects.
+    """API endpoint for viewing list of TestReport objects.
 
     Filterable by:
 
@@ -347,35 +320,27 @@ class StockItemTestReportList(ReportListView, StockItemReportMixin):
 
 
 class StockItemTestReportDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API endpoint for a single TestReport object
-    """
+    """API endpoint for a single TestReport object"""
 
     queryset = TestReport.objects.all()
     serializer_class = TestReportSerializer
 
 
 class StockItemTestReportPrint(generics.RetrieveAPIView, StockItemReportMixin, ReportPrintMixin):
-    """
-    API endpoint for printing a TestReport object
-    """
+    """API endpoint for printing a TestReport object"""
 
     queryset = TestReport.objects.all()
     serializer_class = TestReportSerializer
 
     def get(self, request, *args, **kwargs):
-        """
-        Check if valid stock item(s) have been provided.
-        """
-
+        """Check if valid stock item(s) have been provided."""
         items = self.get_items()
 
         return self.print(request, items)
 
 
 class BOMReportList(ReportListView, PartReportMixin):
-    """
-    API endpoint for viewing a list of BillOfMaterialReport objects.
+    """API endpoint for viewing a list of BillOfMaterialReport objects.
 
     Filterably by:
 
@@ -436,35 +401,27 @@ class BOMReportList(ReportListView, PartReportMixin):
 
 
 class BOMReportDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API endpoint for a single BillOfMaterialReport object
-    """
+    """API endpoint for a single BillOfMaterialReport object"""
 
     queryset = BillOfMaterialsReport.objects.all()
     serializer_class = BOMReportSerializer
 
 
 class BOMReportPrint(generics.RetrieveAPIView, PartReportMixin, ReportPrintMixin):
-    """
-    API endpoint for printing a BillOfMaterialReport object
-    """
+    """API endpoint for printing a BillOfMaterialReport object"""
 
     queryset = BillOfMaterialsReport.objects.all()
     serializer_class = BOMReportSerializer
 
     def get(self, request, *args, **kwargs):
-        """
-        Check if valid part item(s) have been provided
-        """
-
+        """Check if valid part item(s) have been provided"""
         parts = self.get_parts()
 
         return self.print(request, parts)
 
 
 class BuildReportList(ReportListView, BuildReportMixin):
-    """
-    API endpoint for viewing a list of BuildReport objects.
+    """API endpoint for viewing a list of BuildReport objects.
 
     Can be filtered by:
 
@@ -526,18 +483,14 @@ class BuildReportList(ReportListView, BuildReportMixin):
 
 
 class BuildReportDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API endpoint for a single BuildReport object
-    """
+    """API endpoint for a single BuildReport object"""
 
     queryset = BuildReport.objects.all()
     serializer_class = BuildReportSerializer
 
 
 class BuildReportPrint(generics.RetrieveAPIView, BuildReportMixin, ReportPrintMixin):
-    """
-    API endpoint for printing a BuildReport
-    """
+    """API endpoint for printing a BuildReport"""
 
     queryset = BuildReport.objects.all()
     serializer_class = BuildReportSerializer
@@ -607,18 +560,14 @@ class PurchaseOrderReportList(ReportListView, OrderReportMixin):
 
 
 class PurchaseOrderReportDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API endpoint for a single PurchaseOrderReport object
-    """
+    """API endpoint for a single PurchaseOrderReport object"""
 
     queryset = PurchaseOrderReport.objects.all()
     serializer_class = PurchaseOrderReportSerializer
 
 
 class PurchaseOrderReportPrint(generics.RetrieveAPIView, OrderReportMixin, ReportPrintMixin):
-    """
-    API endpoint for printing a PurchaseOrderReport object
-    """
+    """API endpoint for printing a PurchaseOrderReport object"""
 
     OrderModel = order.models.PurchaseOrder
 
@@ -690,18 +639,14 @@ class SalesOrderReportList(ReportListView, OrderReportMixin):
 
 
 class SalesOrderReportDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API endpoint for a single SalesOrderReport object
-    """
+    """API endpoint for a single SalesOrderReport object"""
 
     queryset = SalesOrderReport.objects.all()
     serializer_class = SalesOrderReportSerializer
 
 
 class SalesOrderReportPrint(generics.RetrieveAPIView, OrderReportMixin, ReportPrintMixin):
-    """
-    API endpoint for printing a PurchaseOrderReport object
-    """
+    """API endpoint for printing a PurchaseOrderReport object"""
 
     OrderModel = order.models.SalesOrder
 

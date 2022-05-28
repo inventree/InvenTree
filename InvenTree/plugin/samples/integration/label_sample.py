@@ -4,9 +4,7 @@ from plugin.mixins import LabelPrintingMixin
 
 
 class SampleLabelPrinter(LabelPrintingMixin, InvenTreePlugin):
-    """
-    Sample plugin which provides a 'fake' label printer endpoint
-    """
+    """Sample plugin which provides a 'fake' label printer endpoint"""
 
     NAME = "Label Printer"
     SLUG = "samplelabel"

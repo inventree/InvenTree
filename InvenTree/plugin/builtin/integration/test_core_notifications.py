@@ -8,10 +8,7 @@ from plugin.models import NotificationUserSetting
 class CoreNotificationTestTests(BaseNotificationIntegrationTest):
 
     def test_email(self):
-        """
-        Ensure that the email notifications run
-        """
-
+        """Ensure that the email notifications run"""
         # enable plugin and set mail setting to true
         plugin = registry.plugins.get('corenotificationsplugin')
         plugin.set_setting('ENABLE_NOTIFICATION_EMAILS', True)
