@@ -23,10 +23,6 @@ on:
       - 'master'
       - 'stable'
 
-  pull_request:
-    branches:
-      - 'master'
-
 jobs:
 
   # Build the docker image
