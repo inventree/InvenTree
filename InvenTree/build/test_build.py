@@ -1,3 +1,5 @@
+"""Unit tests for the BuildOrder app"""
+
 from ctypes import Union
 from django.test import TestCase
 
@@ -114,6 +116,7 @@ class BuildTestBase(TestCase):
 
 
 class BuildTest(BuildTestBase):
+    """Basic set of tests for the Build model"""
 
     def test_ref_int(self):
         """Test the "integer reference" field used for natural sorting."""
@@ -133,8 +136,7 @@ class BuildTest(BuildTestBase):
             self.assertEqual(build.reference_int, ii)
 
     def test_init(self):
-        # Perform some basic tests before we start the ball rolling
-
+        """Perform some basic tests before we start the ball rolling"""
         self.assertEqual(StockItem.objects.count(), 10)
 
         # Build is PENDING
@@ -158,8 +160,7 @@ class BuildTest(BuildTestBase):
         self.assertFalse(self.build.is_complete)
 
     def test_build_item_clean(self):
-        # Ensure that dodgy BuildItem objects cannot be created
-
+        """Ensure that dodgy BuildItem objects cannot be created"""
         stock = StockItem.objects.create(part=self.assembly, quantity=99)
 
         # Create a BuiltItem which points to an invalid StockItem
@@ -185,8 +186,7 @@ class BuildTest(BuildTestBase):
         b.save()
 
     def test_duplicate_bom_line(self):
-        # Try to add a duplicate BOM item - it should fail!
-
+        """Try to add a duplicate BOM item - it should fail!"""
         with self.assertRaises(IntegrityError):
             BomItem.objects.create(
                 part=self.assembly,
@@ -291,7 +291,7 @@ class BuildTest(BuildTestBase):
 
         self.assertEqual(BuildItem.objects.count(), 0)
         """
-        pass
+        ...
 
     def test_complete(self):
         """Test completion of a build output."""
@@ -370,7 +370,7 @@ class AutoAllocationTests(BuildTestBase):
     """Tests for auto allocating stock against a build order."""
 
     def setUp(self):
-
+        """Create some data as part of this test suite"""
         super().setUp()
 
         # Add a "substitute" part for bom_item_2

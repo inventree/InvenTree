@@ -1,3 +1,5 @@
+"""Background task definitions for the BuildOrder app"""
+
 from decimal import Decimal
 import logging
 

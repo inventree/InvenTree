@@ -31,7 +31,7 @@ class BuildDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
     context_object_name = 'build'
 
     def get_context_data(self, **kwargs):
-
+        """Return extra context information for the BuildDetail view"""
         ctx = super().get_context_data(**kwargs)
 
         build = self.get_object()
