@@ -1,0 +1,69 @@
+# Build, test and push InvenTree docker image
+# This workflow runs under any of the following conditions:
+#
+# - Push to the master branch
+# - Push to the stable branch
+# - Publish release
+#
+# The following actions are performed:
+#
+# - Check that the version number matches the current branch or tag
+# - Build the InvenTree docker image
+# - Run suite of unit tests against the build image
+# - Push the compiled, tested image to dockerhub
+
+name: Docker
+
+on:
+  release:
+    types: [published]
+
+  push:
+    branches:
+      - 'master'
+      - 'stable'
+
+jobs:
+
+  # Build the docker image
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v2
+      - name: Version Check
+        run: |
+          python3 ci/check_version_number.py
+          echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_ENV
+      - name: Run Unit Tests
+        run: |
+          docker-compose build
+          docker-compose run inventree-dev-server invoke update
+          docker-compose up -d
+          docker-compose run inventree-dev-server invoke wait
+          docker-compose run inventree-dev-server invoke test
+          docker-compose down
+      - name: Set up QEMU
+        if: github.event_name != 'pull_request'
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        if: github.event_name != 'pull_request'
+        uses: docker/setup-buildx-action@v1
+      - name: Login to Dockerhub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build and Push
+        if: github.event_name != 'pull_request'
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          push: false
+          target: production
+          tags: inventree/inventree:${{ env.docker_tag }}
+          build-args: commit_hash=${{ env.git_commit_hash }},commit_date=${{ env.git_commit_date }},commit_tag=${{ env.docker_tag }}
