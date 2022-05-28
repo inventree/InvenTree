@@ -4,9 +4,8 @@ from django.conf import settings
 from django.urls import include, re_path
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, generics, permissions, status
+from rest_framework import filters, generics, permissions
 from rest_framework.exceptions import NotFound
-from rest_framework.response import Response
 
 import plugin.serializers as PluginSerializers
 from common.api import GlobalSettingsPermissions
@@ -98,17 +97,6 @@ class PluginInstall(generics.CreateAPIView):
 
     queryset = PluginConfig.objects.none()
     serializer_class = PluginSerializers.PluginConfigInstallSerializer
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        result = self.perform_create(serializer)
-        result['input'] = serializer.data
-        headers = self.get_success_headers(serializer.data)
-        return Response(result, status=status.HTTP_201_CREATED, headers=headers)
-
-    def perform_create(self, serializer):
-        return serializer.save()
 
 
 class PluginSettingList(generics.ListAPIView):
