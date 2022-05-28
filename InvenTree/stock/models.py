@@ -1897,9 +1897,7 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
 
 
 class StockItemAttachment(InvenTreeAttachment):
-    """
-    Model for storing file attachments against a StockItem object.
-    """
+    """Model for storing file attachments against a StockItem object."""
 
     @staticmethod
     def get_api_url():
@@ -1980,6 +1978,7 @@ def rename_stock_item_test_result_attachment(instance, filename):
 
 class StockItemTestResult(models.Model):
     """A StockItemTestResult records results of custom tests against individual StockItem objects.
+
     This is useful for tracking unit acceptance tests, and particularly useful when integrated
     with automated testing setups.
 

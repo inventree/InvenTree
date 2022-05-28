@@ -74,10 +74,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """
 
     def update(self, instance, validated_data):
-        """
-        Custom update method to pass the user information through to the instance
-        """
-
+        """Custom update method to pass the user information through to the instance"""
         instance._user = self.context['user']
 
         return super().update(instance, validated_data)
@@ -276,7 +273,6 @@ class SerializeStockItemSerializer(serializers.Serializer):
 
     def validate_quantity(self, quantity):
         """Validate that the quantity value is correct"""
-
         item = self.context['item']
 
         if quantity < 0:
@@ -313,7 +309,6 @@ class SerializeStockItemSerializer(serializers.Serializer):
 
     def validate(self, data):
         """Check that the supplied serial numbers are valid"""
-
         data = super().validate(data)
 
         item = self.context['item']
@@ -387,7 +382,6 @@ class InstallStockItemSerializer(serializers.Serializer):
 
     def validate_stock_item(self, stock_item):
         """Validate the selected stock item"""
-
         if not stock_item.in_stock:
             # StockItem must be in stock to be "installed"
             raise ValidationError(_("Stock item is unavailable"))
@@ -403,7 +397,6 @@ class InstallStockItemSerializer(serializers.Serializer):
 
     def save(self):
         """Install the selected stock item into this one"""
-
         data = self.validated_data
 
         stock_item = data['stock_item']
@@ -856,7 +849,6 @@ class StockMergeSerializer(serializers.Serializer):
 
         At this point we are confident that the merge can take place
         """
-
         data = self.validated_data
 
         base_item = data['base_item']

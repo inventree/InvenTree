@@ -47,7 +47,6 @@ class RuleSetModelTest(TestCase):
 
     def test_model_names(self):
         """Test that each model defined in the rulesets is valid, based on the database schema!"""
-
         available_models = apps.get_models()
 
         available_tables = set()
@@ -104,7 +103,6 @@ class RuleSetModelTest(TestCase):
 
     def test_permission_assign(self):
         """Test that the permission assigning works!"""
-
         # Create a new group
         group = Group.objects.create(name="Test group")
 

@@ -188,7 +188,7 @@ class StockTest(InvenTreeTestCase):
             self.assertEqual(s_item.location, self.office)
 
     def test_move(self):
-        """ Test stock movement functions """
+        """Test stock movement functions"""
         # Move 4,000 screws to the bathroom
         it = StockItem.objects.get(pk=1)
         self.assertNotEqual(it.location, self.bathroom)
@@ -508,7 +508,6 @@ class StockTest(InvenTreeTestCase):
         Ref: https://github.com/inventree/InvenTree/issues/2636
         Ref: https://github.com/inventree/InvenTree/issues/2733
         """
-
         # First, we will create a stock location structure
 
         A = StockLocation.objects.create(

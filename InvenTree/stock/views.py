@@ -72,11 +72,7 @@ class StockItemDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
     model = StockItem
 
     def get_context_data(self, **kwargs):
-        """
-        Add information on the "next" and "previous" StockItem objects,
-        based on the serial numbers.
-        """
-
+        """Add information on the "next" and "previous" StockItem objects, based on the serial numbers."""
         data = super().get_context_data(**kwargs)
 
         if self.object.serialized:
@@ -97,7 +93,6 @@ class StockItemDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
 
     def get(self, request, *args, **kwargs):
         """Check if item exists else return to stock index"""
-
         stock_pk = kwargs.get('pk', None)
 
         if stock_pk:
@@ -120,7 +115,7 @@ class StockLocationQRCode(QRCodeView):
     role_required = ['stock_location.view', 'stock.view']
 
     def get_qr_data(self):
-        """ Generate QR code data for the StockLocation """
+        """Generate QR code data for the StockLocation"""
         try:
             loc = StockLocation.objects.get(id=self.pk)
             return loc.format_barcode()
@@ -198,7 +193,7 @@ class StockItemQRCode(QRCodeView):
     role_required = 'stock.view'
 
     def get_qr_data(self):
-        """ Generate QR code data for the StockItem """
+        """Generate QR code data for the StockItem"""
         try:
             item = StockItem.objects.get(id=self.pk)
             return item.format_barcode()
@@ -237,8 +232,8 @@ class StockItemConvert(AjaxUpdateView):
 
 
 class StockLocationDelete(AjaxDeleteView):
-    """
-    View to delete a StockLocation
+    """View to delete a StockLocation
+
     Presents a deletion confirmation form to the user
     """
 
@@ -250,8 +245,8 @@ class StockLocationDelete(AjaxDeleteView):
 
 
 class StockItemDelete(AjaxDeleteView):
-    """
-    View to delete a StockItem
+    """View to delete a StockItem
+
     Presents a deletion confirmation form to the user
     """
 
@@ -263,8 +258,8 @@ class StockItemDelete(AjaxDeleteView):
 
 
 class StockItemTrackingDelete(AjaxDeleteView):
-    """
-    View to delete a StockItemTracking object
+    """View to delete a StockItemTracking object
+
     Presents a deletion confirmation form to the user
     """
 
