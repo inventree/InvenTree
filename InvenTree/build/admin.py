@@ -1,3 +1,5 @@
+"""Admin functionality for the BuildOrder app"""
+
 from django.contrib import admin
 
 from import_export.admin import ImportExportModelAdmin
@@ -39,6 +41,7 @@ class BuildResource(ModelResource):
     notes = Field(attribute='notes')
 
     class Meta:
+        """Metaclass options"""
         models = Build
         skip_unchanged = True
         report_skipped = False
@@ -50,6 +53,7 @@ class BuildResource(ModelResource):
 
 
 class BuildAdmin(ImportExportModelAdmin):
+    """Class for managing the Build model via the admin interface"""
 
     exclude = [
         'reference_int',
@@ -81,6 +85,7 @@ class BuildAdmin(ImportExportModelAdmin):
 
 
 class BuildItemAdmin(admin.ModelAdmin):
+    """Class for managing the BuildItem model via the admin interface"""
 
     list_display = (
         'build',

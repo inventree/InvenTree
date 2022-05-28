@@ -1,3 +1,5 @@
+"""Basic unit tests for the BuildOrder app"""
+
 from django.urls import reverse
 
 from datetime import datetime, timedelta
@@ -11,6 +13,7 @@ from InvenTree.status_codes import BuildStatus
 
 
 class BuildTestSimple(InvenTreeTestCase):
+    """Basic set of tests for the BuildOrder model functionality"""
 
     fixtures = [
         'category',
@@ -26,7 +29,7 @@ class BuildTestSimple(InvenTreeTestCase):
     ]
 
     def test_build_objects(self):
-        # Ensure the Build objects were correctly created
+        """Ensure the Build objects were correctly created"""
         self.assertEqual(Build.objects.count(), 5)
         b = Build.objects.get(pk=2)
         self.assertEqual(b.batch, 'B2')
@@ -35,10 +38,12 @@ class BuildTestSimple(InvenTreeTestCase):
         self.assertEqual(str(b), 'BO0002')
 
     def test_url(self):
+        """Test URL lookup"""
         b1 = Build.objects.get(pk=1)
         self.assertEqual(b1.get_absolute_url(), '/build/1/')
 
     def test_is_complete(self):
+        """Test build completion status"""
         b1 = Build.objects.get(pk=1)
         b2 = Build.objects.get(pk=2)
 
@@ -63,6 +68,7 @@ class BuildTestSimple(InvenTreeTestCase):
         self.assertFalse(build.is_overdue)
 
     def test_is_active(self):
+        """Test active / inactive build status"""
         b1 = Build.objects.get(pk=1)
         b2 = Build.objects.get(pk=2)
 
@@ -70,8 +76,9 @@ class BuildTestSimple(InvenTreeTestCase):
         self.assertEqual(b2.is_active, False)
 
     def test_required_parts(self):
-        # TODO - Generate BOM for test part
-        pass
+        """Test set of required BOM items for the build"""
+        # TODO: Generate BOM for test part
+        ...
 
     def test_cancel_build(self):
         """Test build cancellation function."""
@@ -101,6 +108,7 @@ class TestBuildViews(InvenTreeTestCase):
     ]
 
     def setUp(self):
+        """Fixturing for this suite of unit tests"""
         super().setUp()
 
         # Create a build output for build # 1

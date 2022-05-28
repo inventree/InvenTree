@@ -38,7 +38,7 @@ class TestForwardMigrations(MigratorTestCase):
         )
 
     def test_items_exist(self):
-
+        """Test to ensure that the 'assembly' field is correctly configured"""
         Part = self.new_state.apps.get_model('part', 'part')
 
         self.assertEqual(Part.objects.count(), 1)
@@ -96,7 +96,7 @@ class TestReferenceMigration(MigratorTestCase):
                 print(build.reference)
 
     def test_build_reference(self):
-
+        """Test that the build reference is correctly assigned to the PK of the Build"""
         Build = self.new_state.apps.get_model('build', 'build')
 
         self.assertEqual(Build.objects.count(), 3)

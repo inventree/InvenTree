@@ -92,10 +92,11 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @staticmethod
     def get_api_url():
+        """Return the API URL associated with the BuildOrder model"""
         return reverse('api-build-list')
 
     def api_instance_filters(self):
-
+        """Returns custom API filters for the particular BuildOrder instance"""
         return {
             'parent': {
                 'exclude_tree': self.pk,
@@ -115,7 +116,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         return defaults
 
     def save(self, *args, **kwargs):
-
+        """Custom save method for the BuildOrder model"""
         self.rebuild_reference_field()
 
         try:
@@ -126,6 +127,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
             })
 
     class Meta:
+        """Metaclass options for the BuildOrder model"""
         verbose_name = _("Build Order")
         verbose_name_plural = _("Build Orders")
 
@@ -170,12 +172,13 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         return queryset
 
     def __str__(self):
-
+        """String representation of a BuildOrder"""
         prefix = getSetting("BUILDORDER_REFERENCE_PREFIX")
 
         return f"{prefix}{self.reference}"
 
     def get_absolute_url(self):
+        """Return the web URL associated with this BuildOrder"""
         return reverse('build-detail', kwargs={'pk': self.id})
 
     reference = models.CharField(
@@ -393,9 +396,11 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @property
     def output_count(self):
+        """Return the number of build outputs (StockItem) associated with this build order"""
         return self.build_outputs.count()
 
     def has_build_outputs(self):
+        """Returns True if this build has more than zero build outputs"""
         return self.output_count > 0
 
     def get_build_outputs(self, **kwargs):
@@ -436,7 +441,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @property
     def complete_count(self):
-
+        """Return the total quantity of completed outputs"""
         quantity = 0
 
         for output in self.complete_outputs:
@@ -1049,6 +1054,7 @@ class BuildOrderAttachment(InvenTreeAttachment):
     """Model for storing file attachments against a BuildOrder object."""
 
     def getSubdir(self):
+        """Return the media file subdirectory for storing BuildOrder attachments"""
         return os.path.join('bo_files', str(self.build.id))
 
     build = models.ForeignKey(Build, on_delete=models.CASCADE, related_name='attachments')
@@ -1069,20 +1075,17 @@ class BuildItem(models.Model):
 
     @staticmethod
     def get_api_url():
+        """Return the API URL used to access this model"""
         return reverse('api-build-item-list')
 
-    def get_absolute_url(self):
-        # TODO - Fix!
-        return '/build/item/{pk}/'.format(pk=self.id)
-        # return reverse('build-detail', kwargs={'pk': self.id})
-
     class Meta:
+        """Serializer metaclass"""
         unique_together = [
             ('build', 'stock_item', 'install_into'),
         ]
 
     def save(self, *args, **kwargs):
-
+        """Custom save method for the BuildItem model"""
         self.clean()
 
         super().save()

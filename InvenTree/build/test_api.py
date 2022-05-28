@@ -1,3 +1,5 @@
+"""Unit tests for the BuildOrder API"""
+
 from datetime import datetime, timedelta
 
 from django.urls import reverse
@@ -91,16 +93,12 @@ class BuildAPITest(InvenTreeAPITestCase):
         'build.add'
     ]
 
-    def setUp(self):
-
-        super().setUp()
-
 
 class BuildTest(BuildAPITest):
     """Unit testing for the build complete API endpoint."""
 
     def setUp(self):
-
+        """Basic setup for this test suite"""
         super().setUp()
 
         self.build = Build.objects.get(pk=1)
@@ -477,7 +475,7 @@ class BuildTest(BuildAPITest):
         self.assertIn('This build output has already been completed', str(response.data))
 
     def test_download_build_orders(self):
-
+        """Test that we can download a list of build orders via the API"""
         required_cols = [
             'reference',
             'status',
@@ -532,7 +530,7 @@ class BuildAllocationTest(BuildAPITest):
     """
 
     def setUp(self):
-
+        """Basic operation as part of test suite setup"""
         super().setUp()
 
         self.assignRole('build.add')
