@@ -84,6 +84,8 @@ RUN pip install --no-cache-dir -U -r base_requirements.txt
 
 FROM base as production
 
+ENV INVENTREE_DEBUG=False
+
 # As .git directory is not available in production image, we pass the commit information via ENV
 ENV INVENTREE_COMMIT_HASH="${commit_hash}"
 ENV INVENTREE_COMMIT_DATE="${commit_date}"
@@ -121,6 +123,8 @@ FROM base as dev
 
 # The development image requires the source code to be mounted to /home/inventree/
 # So from here, we don't actually "do" anything, apart from some file management
+
+ENV INVENTREE_DEBUG=True
 
 ENV INVENTREE_DEV_DIR="${INVENTREE_HOME}/dev"
 
