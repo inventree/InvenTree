@@ -36,22 +36,39 @@ jobs:
     steps:
       - name: Check out repo
         uses: actions/checkout@v2
-      - name: Extract Commit Information
-        run: |
-          echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-          echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_ENV
       - name: Version Check
         run: |
           python3 ci/check_version_number.py
-          echo "Git Commit Hash: ${{ env.git_commit_hash }}"
-          echo "Git Commit Date: ${{ env.git_commit_date }}"
-      #- name: Build Docker Image
-      #  run: |
+          echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_ENV
+      - name: Run Unit Tests
+        run: |
+          echo "commit hash: ${{ env.git_commit_hash }}"
+          echo "commit date: ${{ env.git_commit_date }}"
+          echo "docker tag: ${{ env.docker_tag }}"
       #    docker-compose build
-      #    docker-compose run inventree-dev-server invoke update
-      #- name: Run Unit Tests
-      #  run: |
-      #    docker-compose up -d
-      #    docker-compose run inventree-dev-server invoke wait
-      #    docker-compose run inventree-dev-server invoke test
-      #    docker-compose down
+      #     docker-compose run inventree-dev-server invoke update
+      #     docker-compose up -d
+      #     docker-compose run inventree-dev-server invoke wait
+      #     docker-compose run inventree-dev-server invoke test
+      #     docker-compose down
+      # - name: Set up QEMU
+      #   uses: docker/setup-qemu-action@v1
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v1
+      # - name: Login to Dockerhub
+      #   uses: docker/login-action@v1
+      #   with:
+      #     username: ${{ secrets.DOCKER_USERNAME }}
+      #     password: ${{ secrets.DOCKER_PASSWORD }}
+      # - name: Build and Push
+      #   uses: docker/build-push-action@v2
+      #   with:
+      #     context: .
+      #     platforms: linux/amd64,linux/arm64,linux/arm/v7
+      #     push: false
+      #     target: production
+      #     tags: inventree/inventree:${{ env.docker_tag }}
+      #     build-args:
+      #       - "commit_hash=${{ env.git_commit_hash }}"
+      #       - "commit_date=${{ env.git_commit_date }}"

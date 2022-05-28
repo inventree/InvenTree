@@ -50,6 +50,9 @@ if __name__ == '__main__':
 
     print(f"InvenTree Version: '{version}'")
 
+    # Determine which docker tag we are going to use
+    docker_tag = None
+
     if GITHUB_BASE_REF == 'stable' and GITHUB_REF_TYPE == 'branch':
         print("Checking requirements for 'stable' release")
 
@@ -61,6 +64,8 @@ if __name__ == '__main__':
             sys.exit(1)
         else:
             print(f"Version number '{version}' matches stable branch")
+
+        docker_tag = 'stable'
 
     elif GITHUB_BASE_REF in ['master', 'main'] and GITHUB_REF_TYPE == 'branch':
         print("Checking requirements for main development branch:")
@@ -74,6 +79,8 @@ if __name__ == '__main__':
         else:
             print(f"Version number '{version}' matches development branch")
 
+        docker_tag = 'latest'
+
     elif GITHUB_REF_TYPE == 'tag':
         # GITHUB_REF should be of th eform /refs/heads/<tag>
         version_tag = GITHUB_REF.split('/')[-1]
@@ -85,6 +92,8 @@ if __name__ == '__main__':
 
         # TODO: Check if there is already a release with this tag!
 
+        docker_tag = version_tag
+
     else:
         print("Unsupported branch / version combination:")
         print(f"InvenTree Version: {version}")
@@ -93,4 +102,13 @@ if __name__ == '__main__':
         print("GITHUB_BASE_REF:", GITHUB_BASE_REF)
         sys.exit(1)
 
-    print("Version check successful!")
+    if docker_tag is None:
+        print("Docker tag could not be determined")
+        sys.exit(1)
+
+    print(f"Version check passed for '{version}'!")
+    print(f"Docker tag: '{docker_tag}'")
+
+    # Ref: https://getridbug.com/python/how-to-set-environment-variables-in-github-actions-using-python/
+    with open(os.getenv('GITHUB_ENV'), 'a') as env_file:
+        env_file.write(f"docker_tag={docker_tag}")

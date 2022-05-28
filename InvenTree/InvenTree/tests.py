@@ -401,7 +401,7 @@ class TestVersionNumber(TestCase):
         hash = str(subprocess.check_output('git rev-parse --short HEAD'.split()), 'utf-8').strip()
         self.assertEqual(hash, version.inventreeCommitHash())
 
-        d = str(subprocess.check_output('git show -s --format=%ci'.split()), 'utf-8').strip()
+        d = str(subprocess.check_output('git show -s --format=%ci'.split()), 'utf-8').strip().split(' ')[0]
         self.assertEqual(d, version.inventreeCommitDate())
 
 
