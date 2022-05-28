@@ -1522,7 +1522,7 @@ function loadPurchaseOrderTable(table, options) {
     setupFilterList('purchaseorder', $(table), target, {download: true});
 
     var display_mode = inventreeLoad('purchaseorder-table-display-mode', 'list');
-    
+
     // Function for rendering PurchaseOrder calendar display
     function buildEvents(calendar) {
 
@@ -1538,7 +1538,7 @@ function loadPurchaseOrderTable(table, options) {
         filters.supplier_detail = true;
         filters.min_date = start;
         filters.max_date = end;
-        
+
         // Request purchase orders from the server within specified date range
         inventreeGet(
             '{% url "api-po-list" %}',
@@ -1718,7 +1718,7 @@ function loadPurchaseOrderTable(table, options) {
 
             if (display_mode == 'calendar') {
                 var el = document.getElementById('purchase-order-calendar');
-    
+
                 calendar = new FullCalendar.Calendar(el, {
                     initialView: 'dayGridMonth',
                     nowIndicator: true,
@@ -1728,7 +1728,7 @@ function loadPurchaseOrderTable(table, options) {
                         buildEvents(calendar);
                     }
                 });
-        
+
                 calendar.render();
             }
         }
@@ -2409,7 +2409,7 @@ function loadSalesOrderTable(table, options) {
 
             if (display_mode == 'calendar') {
                 var el = document.getElementById('purchase-order-calendar');
-    
+
                 calendar = new FullCalendar.Calendar(el, {
                     initialView: 'dayGridMonth',
                     nowIndicator: true,
@@ -2419,7 +2419,7 @@ function loadSalesOrderTable(table, options) {
                         buildEvents(calendar);
                     }
                 });
-        
+
                 calendar.render();
             }
         },
@@ -2881,7 +2881,7 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
 
                         fields.reference.value = ref;
                         fields.reference.prefix = global_settings.SALESORDER_REFERENCE_PREFIX + options.reference;
-                        
+
                         return fields;
                     }
                 }

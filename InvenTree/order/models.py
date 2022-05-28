@@ -22,8 +22,8 @@ from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
+from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 from error_report.models import Error
 from markdownx.models import MarkdownxField
@@ -42,7 +42,6 @@ from plugin.events import trigger_event
 from plugin.models import MetadataMixin
 from stock import models as stock_models
 from users import models as UserModels
-
 
 logger = logging.getLogger('inventree')
 

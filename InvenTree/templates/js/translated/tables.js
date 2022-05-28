@@ -27,16 +27,16 @@ function reloadtable(table) {
 /*
  * Construct a set of extra buttons to display against a list of orders,
  * allowing the orders to be displayed in various 'view' modes:
- * 
+ *
  * - Calendar view
  * - List view
  * - Tree view
- * 
+ *
  * Options:
  * - callback: Callback function to be called when one of the buttons is pressed
  * - prefix: The prefix to use when saving display data to user session
  * - display: Which button to set as 'active' by default
- * 
+ *
  */
 function constructOrderTableButtons(options={}) {
 
@@ -51,10 +51,10 @@ function constructOrderTableButtons(options={}) {
 
     var idx = 0;
     var buttons = [];
-    
+
     function buttonCallback(view_mode) {
         inventreeSave(key, view_mode);
-        
+
         if (options.callback) {
             options.callback(view_mode);
         }
