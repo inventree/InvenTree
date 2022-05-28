@@ -1,4 +1,5 @@
 """Functions to print a label to a mixin printer"""
+
 import logging
 
 from django.utils.translation import gettext_lazy as _
@@ -10,8 +11,7 @@ logger = logging.getLogger('inventree')
 
 
 def print_label(plugin_slug, label_image, label_instance=None, user=None):
-    """
-    Print label with the provided plugin.
+    """Print label with the provided plugin.
 
     This task is nominally handled by the background worker.
 
@@ -21,7 +21,6 @@ def print_label(plugin_slug, label_image, label_instance=None, user=None):
         plugin_slug: The unique slug (key) of the plugin
         label_image: A PIL.Image image object to be printed
     """
-
     logger.info(f"Plugin '{plugin_slug}' is printing a label")
 
     plugin = registry.plugins.get(plugin_slug, None)

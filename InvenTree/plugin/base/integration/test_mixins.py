@@ -1,4 +1,4 @@
-""" Unit tests for base mixins for plugins """
+"""Unit tests for base mixins for plugins"""
 
 from django.conf import settings
 from django.test import TestCase
@@ -170,9 +170,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
             API_TOKEN_SETTING = 'API_TOKEN'
 
             def get_external_url(self, simple: bool = True):
-                '''
-                returns data from the sample endpoint
-                '''
+                """Returns data from the sample endpoint"""
                 return self.api_call('api/users/2', simple_response=simple)
         self.mixin = MixinCls()
 
@@ -263,7 +261,6 @@ class PanelMixinTests(InvenTreeTestCase):
 
     def test_installed(self):
         """Test that the sample panel plugin is installed"""
-
         plugins = registry.with_mixin('panel')
 
         self.assertTrue(len(plugins) > 0)
@@ -276,7 +273,6 @@ class PanelMixinTests(InvenTreeTestCase):
 
     def test_disabled(self):
         """Test that the panels *do not load* if the plugin is not enabled"""
-
         plugin = registry.get_plugin('samplepanel')
 
         plugin.set_setting('ENABLE_HELLO_WORLD', True)
@@ -308,7 +304,6 @@ class PanelMixinTests(InvenTreeTestCase):
         """
         Test that the panels *do* load if the plugin is enabled
         """
-
         plugin = registry.get_plugin('samplepanel')
 
         self.assertEqual(len(registry.with_mixin('panel', active=True)), 0)
@@ -383,7 +378,6 @@ class PanelMixinTests(InvenTreeTestCase):
 
     def test_mixin(self):
         """Test that ImplementationError is raised"""
-
         with self.assertRaises(MixinNotImplementedError):
             class Wrong(PanelMixin, InvenTreePlugin):
                 pass

@@ -1,6 +1,4 @@
-"""
-Functions for triggering and responding to server side events
-"""
+"""Functions for triggering and responding to server side events"""
 
 import logging
 
@@ -17,13 +15,11 @@ logger = logging.getLogger('inventree')
 
 
 def trigger_event(event, *args, **kwargs):
-    """
-    Trigger an event with optional arguments.
+    """Trigger an event with optional arguments.
 
     This event will be stored in the database,
     and the worker will respond to it later on.
     """
-
     if not settings.PLUGINS_ENABLED:
         # Do nothing if plugins are not enabled
         return  # pragma: no cover
@@ -44,8 +40,7 @@ def trigger_event(event, *args, **kwargs):
 
 
 def register_event(event, *args, **kwargs):
-    """
-    Register the event with any interested plugins.
+    """Register the event with any interested plugins.
 
     Note: This function is processed by the background worker,
     as it performs multiple database access operations.
@@ -80,14 +75,11 @@ def register_event(event, *args, **kwargs):
 
 
 def process_event(plugin_slug, event, *args, **kwargs):
-    """
-    Respond to a triggered event.
+    """Respond to a triggered event.
 
     This function is run by the background worker process.
-
     This function may queue multiple functions to be handled by the background worker.
     """
-
     logger.info(f"Plugin '{plugin_slug}' is processing triggered event '{event}'")
 
     plugin = registry.plugins.get(plugin_slug, None)
@@ -100,11 +92,10 @@ def process_event(plugin_slug, event, *args, **kwargs):
 
 
 def allow_table_event(table_name):
-    """
-    Determine if an automatic event should be fired for a given table.
+    """Determine if an automatic event should be fired for a given table.
+
     We *do not* want events to be fired for some tables!
     """
-
     if isImportingData():
         # Prevent table events during the data import process
         return False  # pragma: no cover
@@ -143,10 +134,7 @@ def allow_table_event(table_name):
 
 @receiver(post_save)
 def after_save(sender, instance, created, **kwargs):
-    """
-    Trigger an event whenever a database entry is saved
-    """
-
+    """Trigger an event whenever a database entry is saved"""
     table = sender.objects.model._meta.db_table
 
     instance_id = getattr(instance, 'id', None)
@@ -173,10 +161,7 @@ def after_save(sender, instance, created, **kwargs):
 
 @receiver(post_delete)
 def after_delete(sender, instance, **kwargs):
-    """
-    Trigger an event whenever a database entry is deleted
-    """
-
+    """Trigger an event whenever a database entry is deleted"""
     table = sender.objects.model._meta.db_table
 
     if not allow_table_event(table):
