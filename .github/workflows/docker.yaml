@@ -66,4 +66,4 @@ jobs:
           push: false
           target: production
           tags: inventree/inventree:${{ env.docker_tag }}
-          build-args: commit_hash=${{ env.git_commit_hash }},commit_date=${{ env.git_commit_date }}
+          build-args: commit_hash=${{ env.git_commit_hash }},commit_date=${{ env.git_commit_date }},commit_tag=${{ env.docker_tag }}

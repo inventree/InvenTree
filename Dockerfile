@@ -15,6 +15,7 @@ FROM python:3.9-slim as base
 # Build arguments for this image
 ARG commit_hash=""
 ARG commit_date=""
+ARG commit_tag=""
 
 ENV PYTHONUNBUFFERED 1
 
@@ -50,7 +51,8 @@ LABEL org.label-schema.schema-version="1.0" \
       org.label-schema.vendor="inventree" \
       org.label-schema.name="inventree/inventree" \
       org.label-schema.url="https://hub.docker.com/r/inventree/inventree" \
-      org.label-schema.vcs-url="https://github.com/inventree/InvenTree.git"
+      org.label-schema.vcs-url="https://github.com/inventree/InvenTree.git" \
+      org.label-schema.vcs-ref=${commit_tag}
 
 # RUN apt-get upgrade && apt-get update
 RUN apt-get update

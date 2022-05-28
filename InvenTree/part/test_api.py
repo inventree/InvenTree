@@ -1098,7 +1098,7 @@ class PartDetailTests(InvenTreeAPITestCase):
             self.assertIn('Upload a valid image', str(response.data))
 
         # Now try to upload a valid image file, in multiple formats
-        for fmt in ['jpg', 'png', 'bmp', 'webp']:
+        for fmt in ['jpg', 'j2k', 'png', 'bmp', 'webp']:
             fn = f'dummy_image.{fmt}'
 
             img = PIL.Image.new('RGB', (128, 128), color='red')
