@@ -1,4 +1,4 @@
-""" Low level tests for the InvenTree API """
+"""Low level tests for the InvenTree API."""
 
 from base64 import b64encode
 
@@ -12,8 +12,7 @@ from users.models import RuleSet
 
 
 class HTMLAPITests(InvenTreeTestCase):
-    """
-    Test that we can access the REST API endpoints via the HTML interface.
+    """Test that we can access the REST API endpoints via the HTML interface.
 
     History: Discovered on 2021-06-28 a bug in InvenTreeModelSerializer,
     which raised an AssertionError when using the HTML API interface,
@@ -66,14 +65,13 @@ class HTMLAPITests(InvenTreeTestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_not_found(self):
-        """Test that the NotFoundView is working"""
-
+        """Test that the NotFoundView is working."""
         response = self.client.get('/api/anc')
         self.assertEqual(response.status_code, 404)
 
 
 class APITests(InvenTreeAPITestCase):
-    """ Tests for the InvenTree API """
+    """Tests for the InvenTree API."""
 
     fixtures = [
         'location',
@@ -125,10 +123,7 @@ class APITests(InvenTreeAPITestCase):
         self.assertIsNotNone(self.token)
 
     def test_info_view(self):
-        """
-        Test that we can read the 'info-view' endpoint.
-        """
-
+        """Test that we can read the 'info-view' endpoint."""
         url = reverse('api-inventree-info')
 
         response = self.client.get(url, format='json')
@@ -141,12 +136,10 @@ class APITests(InvenTreeAPITestCase):
         self.assertEqual('InvenTree', data['server'])
 
     def test_role_view(self):
-        """
-        Test that we can access the 'roles' view for the logged in user.
+        """Test that we can access the 'roles' view for the logged in user.
 
         Also tests that it is *not* accessible if the client is not logged in.
         """
-
         url = reverse('api-user-roles')
 
         response = self.client.get(url, format='json')
@@ -182,10 +175,7 @@ class APITests(InvenTreeAPITestCase):
             self.assertNotIn('delete', roles[rule])
 
     def test_with_superuser(self):
-        """
-        Superuser should have *all* roles assigned
-        """
-
+        """Superuser should have *all* roles assigned."""
         self.user.is_superuser = True
         self.user.save()
 
@@ -202,10 +192,7 @@ class APITests(InvenTreeAPITestCase):
                 self.assertIn(perm, roles[rule])
 
     def test_with_roles(self):
-        """
-        Assign some roles to the user
-        """
-
+        """Assign some roles to the user."""
         self.basicAuth()
         response = self.get(reverse('api-user-roles'))
 
@@ -220,10 +207,7 @@ class APITests(InvenTreeAPITestCase):
         self.assertIn('change', roles['build'])
 
     def test_list_endpoint_actions(self):
-        """
-        Tests for the OPTIONS method for API endpoints.
-        """
-
+        """Tests for the OPTIONS method for API endpoints."""
         self.basicAuth()
 
         # Without any 'part' permissions, we should not see any available actions
@@ -252,10 +236,7 @@ class APITests(InvenTreeAPITestCase):
         self.assertIn('GET', actions)
 
     def test_detail_endpoint_actions(self):
-        """
-        Tests for detail API endpoint actions
-        """
-
+        """Tests for detail API endpoint actions."""
         self.basicAuth()
 
         url = reverse('api-part-detail', kwargs={'pk': 1})

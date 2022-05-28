@@ -1,4 +1,4 @@
-"""Load templates for loaded plugins"""
+"""Load templates for loaded plugins."""
 
 from pathlib import Path
 

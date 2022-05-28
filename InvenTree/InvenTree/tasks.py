@@ -16,11 +16,10 @@ logger = logging.getLogger("inventree")
 
 
 def schedule_task(taskname, **kwargs):
-    """
-    Create a scheduled task.
+    """Create a scheduled task.
+
     If the task has already been scheduled, ignore!
     """
-
     # If unspecified, repeat indefinitely
     repeats = kwargs.pop('repeats', -1)
     kwargs['repeats'] = repeats
@@ -52,7 +51,7 @@ def schedule_task(taskname, **kwargs):
 
 
 def raise_warning(msg):
-    """Log and raise a warning"""
+    """Log and raise a warning."""
     logger.warning(msg)
 
     # If testing is running raise a warning that can be asserted
@@ -61,15 +60,11 @@ def raise_warning(msg):
 
 
 def offload_task(taskname, *args, force_sync=False, **kwargs):
-    """
-        Create an AsyncTask if workers are running.
-        This is different to a 'scheduled' task,
-        in that it only runs once!
+    """Create an AsyncTask if workers are running. This is different to a 'scheduled' task, in that it only runs once!
 
-        If workers are not running or force_sync flag
-        is set then the task is ran synchronously.
+    If workers are not running or force_sync flag
+    is set then the task is ran synchronously.
     """
-
     try:
         import importlib
 
@@ -129,14 +124,10 @@ def offload_task(taskname, *args, force_sync=False, **kwargs):
 
 
 def heartbeat():
-    """
-    Simple task which runs at 5 minute intervals,
-    so we can determine that the background worker
-    is actually running.
+    """Simple task which runs at 5 minute intervals, so we can determine that the background worker is actually running.
 
     (There is probably a less "hacky" way of achieving this)?
     """
-
     try:
         from django_q.models import Success
     except AppRegistryNotReady:  # pragma: no cover
@@ -156,11 +147,7 @@ def heartbeat():
 
 
 def delete_successful_tasks():
-    """
-    Delete successful task logs
-    which are more than a month old.
-    """
-
+    """Delete successful task logs which are more than a month old."""
     try:
         from django_q.models import Success
     except AppRegistryNotReady:  # pragma: no cover
@@ -179,10 +166,7 @@ def delete_successful_tasks():
 
 
 def delete_old_error_logs():
-    """
-    Delete old error logs from the server
-    """
-
+    """Delete old error logs from the server."""
     try:
         from error_report.models import Error
 
@@ -204,10 +188,7 @@ def delete_old_error_logs():
 
 
 def check_for_updates():
-    """
-    Check if there is an update for InvenTree
-    """
-
+    """Check if there is an update for InvenTree."""
     try:
         import common.models
     except AppRegistryNotReady:  # pragma: no cover
@@ -249,10 +230,7 @@ def check_for_updates():
 
 
 def update_exchange_rates():
-    """
-    Update currency exchange rates
-    """
-
+    """Update currency exchange rates."""
     try:
         from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 
@@ -293,11 +271,7 @@ def update_exchange_rates():
 
 
 def send_email(subject, body, recipients, from_email=None, html_message=None):
-    """
-    Send an email with the specified subject and body,
-    to the specified recipients list.
-    """
-
+    """Send an email with the specified subject and body, to the specified recipients list."""
     if type(recipients) == str:
         recipients = [recipients]
 

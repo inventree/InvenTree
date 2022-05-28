@@ -11,7 +11,7 @@ from stock.models import StockLocation
 
 
 class PartResource(ModelResource):
-    """ Class for managing Part data import/export """
+    """Class for managing Part data import/export."""
 
     # ForeignKey fields
     category = Field(attribute='category', widget=widgets.ForeignKeyWidget(models.PartCategory))
@@ -49,8 +49,7 @@ class PartResource(ModelResource):
         ]
 
     def get_queryset(self):
-        """ Prefetch related data for quicker access """
-
+        """Prefetch related data for quicker access."""
         query = super().get_queryset()
         query = query.prefetch_related(
             'category',
@@ -82,7 +81,7 @@ class PartAdmin(ImportExportModelAdmin):
 
 
 class PartCategoryResource(ModelResource):
-    """ Class for managing PartCategory data import/export """
+    """Class for managing PartCategory data import/export."""
 
     parent = Field(attribute='parent', widget=widgets.ForeignKeyWidget(models.PartCategory))
 
@@ -122,9 +121,7 @@ class PartCategoryAdmin(ImportExportModelAdmin):
 
 
 class PartRelatedAdmin(admin.ModelAdmin):
-    """
-    Class to manage PartRelated objects
-    """
+    """Class to manage PartRelated objects."""
 
     autocomplete_fields = ('part_1', 'part_2')
 
@@ -158,7 +155,7 @@ class PartTestTemplateAdmin(admin.ModelAdmin):
 
 
 class BomItemResource(ModelResource):
-    """ Class for managing BomItem data import/export """
+    """Class for managing BomItem data import/export."""
 
     level = Field(attribute='level', readonly=True)
 
@@ -189,9 +186,7 @@ class BomItemResource(ModelResource):
     sub_assembly = Field(attribute='sub_part__assembly', readonly=True)
 
     def dehydrate_quantity(self, item):
-        """
-        Special consideration for the 'quantity' field on data export.
-        We do not want a spreadsheet full of "1.0000" (we'd rather "1")
+        """Special consideration for the 'quantity' field on data export. We do not want a spreadsheet full of "1.0000" (we'd rather "1")
 
         Ref: https://django-import-export.readthedocs.io/en/latest/getting_started.html#advanced-data-manipulation-on-export
         """
@@ -202,12 +197,7 @@ class BomItemResource(ModelResource):
         self.is_importing = kwargs.get('importing', False)
 
     def get_fields(self, **kwargs):
-        """
-        If we are exporting for the purposes of generating
-        a 'bom-import' template, there are some fields which
-        we are not interested in.
-        """
-
+        """If we are exporting for the purposes of generating a 'bom-import' template, there are some fields which we are not interested in."""
         fields = super().get_fields(**kwargs)
 
         # If we are not generating an "import" template,
@@ -270,7 +260,7 @@ class ParameterTemplateAdmin(ImportExportModelAdmin):
 
 
 class ParameterResource(ModelResource):
-    """ Class for managing PartParameter data import/export """
+    """Class for managing PartParameter data import/export."""
 
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(models.Part))
 

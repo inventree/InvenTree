@@ -217,7 +217,7 @@ class RuleSet(models.Model):
 
     @classmethod
     def check_table_permission(cls, user, table, permission):
-        """Check if the provided user has the specified permission against the table"""
+        """Check if the provided user has the specified permission against the table."""
         # If the table does *not* require permissions
         if table in cls.RULESET_IGNORE:
             return True
@@ -258,7 +258,7 @@ class RuleSet(models.Model):
         )
 
     def __str__(self, debug=False):  # pragma: no cover
-        """Ruleset string representation"""
+        """Ruleset string representation."""
         if debug:
             # Makes debugging easier
             return f'{str(self.group).ljust(15)}: {self.name.title().ljust(15)} | ' \
@@ -290,7 +290,7 @@ class RuleSet(models.Model):
 
 
 def split_model(model):
-    """Get modelname and app from modelstring"""
+    """Get modelname and app from modelstring."""
     *app, model = model.split('_')
 
     # handle models that have
@@ -303,7 +303,7 @@ def split_model(model):
 
 
 def split_permission(app, perm):
-    """Split permission string into permission and model"""
+    """Split permission string into permission and model."""
     permission_name, *model = perm.split('_')
     # handle models that have underscores
     if len(model) > 1:  # pragma: no cover
@@ -397,7 +397,7 @@ def update_group_roles(group, debug=False):
             add_model(model, 'delete', ruleset.can_delete)
 
     def get_permission_object(permission_string):
-        """Find the permission object in the database, from the simplified permission string
+        """Find the permission object in the database, from the simplified permission string.
 
         Args:
             permission_string - a simplified permission_string e.g. 'part.view_partcategory'
@@ -563,20 +563,20 @@ class Owner(models.Model):
     owner = GenericForeignKey('owner_type', 'owner_id')
 
     def __str__(self):
-        """Defines the owner string representation"""
+        """Defines the owner string representation."""
         return f'{self.owner} ({self.owner_type.name})'
 
     def name(self):
-        """Return the 'name' of this owner"""
+        """Return the 'name' of this owner."""
         return str(self.owner)
 
     def label(self):
-        """Return the 'type' label of this owner i.e. 'user' or 'group'"""
+        """Return the 'type' label of this owner i.e. 'user' or 'group'."""
         return str(self.owner_type.name)
 
     @classmethod
     def create(cls, obj):
-        """Check if owner exist then create new owner entry"""
+        """Check if owner exist then create new owner entry."""
         # Check for existing owner
         existing_owner = cls.get_owner(obj)
 
@@ -591,7 +591,7 @@ class Owner(models.Model):
 
     @classmethod
     def get_owner(cls, user_or_group):
-        """Get owner instance for a group or user"""
+        """Get owner instance for a group or user."""
         user_model = get_user_model()
         owner = None
         content_type_id = 0

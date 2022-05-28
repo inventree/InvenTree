@@ -1,4 +1,4 @@
-""" Custom fields used in InvenTree """
+"""Custom fields used in InvenTree."""
 
 import sys
 from decimal import Decimal
@@ -19,13 +19,13 @@ from .validators import allowable_url_schemes
 
 
 class InvenTreeURLFormField(FormURLField):
-    """ Custom URL form field with custom scheme validators """
+    """Custom URL form field with custom scheme validators."""
 
     default_validators = [validators.URLValidator(schemes=allowable_url_schemes())]
 
 
 class InvenTreeURLField(models.URLField):
-    """ Custom URL field which has custom scheme validators """
+    """Custom URL field which has custom scheme validators."""
 
     default_validators = [validators.URLValidator(schemes=allowable_url_schemes())]
 
@@ -36,7 +36,7 @@ class InvenTreeURLField(models.URLField):
 
 
 def money_kwargs():
-    """ returns the database settings for MoneyFields """
+    """Returns the database settings for MoneyFields."""
     from common.settings import currency_code_default, currency_code_mappings
 
     kwargs = {}
@@ -46,9 +46,7 @@ def money_kwargs():
 
 
 class InvenTreeModelMoneyField(ModelMoneyField):
-    """
-    Custom MoneyField for clean migrations while using dynamic currency settings
-    """
+    """Custom MoneyField for clean migrations while using dynamic currency settings."""
 
     def __init__(self, **kwargs):
         # detect if creating migration
@@ -73,13 +71,13 @@ class InvenTreeModelMoneyField(ModelMoneyField):
         super().__init__(**kwargs)
 
     def formfield(self, **kwargs):
-        """ override form class to use own function """
+        """Override form class to use own function."""
         kwargs['form_class'] = InvenTreeMoneyField
         return super().formfield(**kwargs)
 
 
 class InvenTreeMoneyField(MoneyField):
-    """ custom MoneyField for clean migrations while using dynamic currency settings """
+    """Custom MoneyField for clean migrations while using dynamic currency settings."""
     def __init__(self, *args, **kwargs):
         # override initial values with the real info from database
         kwargs.update(money_kwargs())
@@ -87,9 +85,7 @@ class InvenTreeMoneyField(MoneyField):
 
 
 class DatePickerFormField(forms.DateField):
-    """
-    Custom date-picker field
-    """
+    """Custom date-picker field."""
 
     def __init__(self, **kwargs):
 
@@ -115,10 +111,7 @@ class DatePickerFormField(forms.DateField):
 
 
 def round_decimal(value, places):
-    """
-    Round value to the specified number of places.
-    """
-
+    """Round value to the specified number of places."""
     if value is not None:
         # see https://docs.python.org/2/library/decimal.html#decimal.Decimal.quantize for options
         return value.quantize(Decimal(10) ** -places)
@@ -132,11 +125,10 @@ class RoundingDecimalFormField(forms.DecimalField):
         return value
 
     def prepare_value(self, value):
-        """
-        Override the 'prepare_value' method, to remove trailing zeros when displaying.
+        """Override the 'prepare_value' method, to remove trailing zeros when displaying.
+
         Why? It looks nice!
         """
-
         if type(value) == Decimal:
             return InvenTree.helpers.normalize(value)
         else:

@@ -1,4 +1,4 @@
-"""Stock database model definitions"""
+"""Stock database model definitions."""
 
 import os
 from datetime import datetime, timedelta
@@ -117,7 +117,7 @@ class StockLocation(MetadataMixin, InvenTreeTree):
         return reverse('stock-location-detail', kwargs={'pk': self.id})
 
     def format_barcode(self, **kwargs):
-        """Return a JSON string for formatting a barcode for this StockLocation object"""
+        """Return a JSON string for formatting a barcode for this StockLocation object."""
         return InvenTree.helpers.MakeBarcode(
             'stocklocation',
             self.pk,
@@ -147,7 +147,7 @@ class StockLocation(MetadataMixin, InvenTreeTree):
         return query
 
     def stock_item_count(self, cascade=True):
-        """Return the number of StockItem objects which live in or under this category"""
+        """Return the number of StockItem objects which live in or under this category."""
         return self.get_stock_items(cascade).count()
 
     def has_items(self, cascade=True):
@@ -250,7 +250,7 @@ class StockItem(MetadataMixin, MPTTModel):
         return reverse('api-stock-list')
 
     def api_instance_filters(self):
-        """Custom API instance filters"""
+        """Custom API instance filters."""
         return {
             'parent': {
                 'exclude_tree': self.pk,
@@ -408,7 +408,7 @@ class StockItem(MetadataMixin, MPTTModel):
 
     @property
     def serialized(self):
-        """Return True if this StockItem is serialized"""
+        """Return True if this StockItem is serialized."""
         return self.serial is not None and len(str(self.serial).strip()) > 0 and self.quantity == 1
 
     def validate_unique(self, exclude=None):
@@ -538,11 +538,10 @@ class StockItem(MetadataMixin, MPTTModel):
     def format_barcode(self, **kwargs):
         """Return a JSON string for formatting a barcode for this StockItem.
 
-        Can be used to perform lookup of a stockitem using barcode
+        Can be used to perform lookup of a stockitem using barcode.
 
         Contains the following data:
-
-        { type: 'StockItem', stock_id: <pk>, part_id: <part_pk> }
+        `{ type: 'StockItem', stock_id: <pk>, part_id: <part_pk> }`
 
         Voltagile data (e.g. stock quantity) should be looked up using the InvenTree API (as it may change)
         """
@@ -724,7 +723,7 @@ class StockItem(MetadataMixin, MPTTModel):
 
     @transaction.atomic
     def convert_to_variant(self, variant, user, notes=None):
-        """Convert this StockItem instance to a "variant", i.e. change the "part" reference field"""
+        """Convert this StockItem instance to a "variant", i.e. change the "part" reference field."""
         if not variant:
             # Ignore null values
             return
@@ -764,7 +763,7 @@ class StockItem(MetadataMixin, MPTTModel):
         return None
 
     def check_ownership(self, user):
-        """Check if the user "owns" (or is one of the owners of) the item"""
+        """Check if the user "owns" (or is one of the owners of) the item."""
         # Superuser accounts automatically "own" everything
         if user.is_superuser:
             return True
@@ -786,7 +785,6 @@ class StockItem(MetadataMixin, MPTTModel):
         """Returns True if this Stock item is "stale".
 
         To be "stale", the following conditions must be met:
-
         - Expiry date is not None
         - Expiry date will "expire" within the configured stale date
         - The StockItem is otherwise "in stock"
@@ -812,7 +810,6 @@ class StockItem(MetadataMixin, MPTTModel):
         """Returns True if this StockItem is "expired".
 
         To be "expired", the following conditions must be met:
-
         - Expiry date is not None
         - Expiry date is "in the past"
         - The StockItem is otherwise "in stock"
@@ -923,7 +920,7 @@ class StockItem(MetadataMixin, MPTTModel):
     infinite = models.BooleanField(default=False)
 
     def is_allocated(self):
-        """Return True if this StockItem is allocated to a SalesOrder or a Build"""
+        """Return True if this StockItem is allocated to a SalesOrder or a Build."""
         # TODO - For now this only checks if the StockItem is allocated to a SalesOrder
         # TODO - In future, once the "build" is working better, check this too
 
@@ -936,7 +933,7 @@ class StockItem(MetadataMixin, MPTTModel):
         return False
 
     def build_allocation_count(self):
-        """Return the total quantity allocated to builds"""
+        """Return the total quantity allocated to builds."""
         query = self.allocations.aggregate(q=Coalesce(Sum('quantity'), Decimal(0)))
 
         total = query['q']
@@ -947,7 +944,7 @@ class StockItem(MetadataMixin, MPTTModel):
         return total
 
     def sales_order_allocation_count(self):
-        """Return the total quantity allocated to SalesOrders"""
+        """Return the total quantity allocated to SalesOrders."""
         query = self.sales_order_allocations.aggregate(q=Coalesce(Sum('quantity'), Decimal(0)))
 
         total = query['q']
@@ -958,14 +955,14 @@ class StockItem(MetadataMixin, MPTTModel):
         return total
 
     def allocation_count(self):
-        """Return the total quantity allocated to builds or orders"""
+        """Return the total quantity allocated to builds or orders."""
         bo = self.build_allocation_count()
         so = self.sales_order_allocation_count()
 
         return bo + so
 
     def unallocated_quantity(self):
-        """Return the quantity of this StockItem which is *not* allocated"""
+        """Return the quantity of this StockItem which is *not* allocated."""
         return max(self.quantity - self.allocation_count(), 0)
 
     def can_delete(self):
@@ -1110,7 +1107,7 @@ class StockItem(MetadataMixin, MPTTModel):
 
     @property
     def children(self):
-        """Return a list of the child items which have been split from this stock item"""
+        """Return a list of the child items which have been split from this stock item."""
         return self.get_descendants(include_self=False)
 
     @property
@@ -1135,7 +1132,7 @@ class StockItem(MetadataMixin, MPTTModel):
 
     @property
     def can_adjust_location(self):
-        """Returns True if the stock location can be "adjusted" for this part
+        """Returns True if the stock location can be "adjusted" for this part.
 
         Cannot be adjusted if:
         - Has been delivered to a customer
@@ -1161,7 +1158,7 @@ class StockItem(MetadataMixin, MPTTModel):
         return self.tracking_info_count > 0
 
     def add_tracking_entry(self, entry_type, user, deltas=None, notes='', **kwargs):
-        """Add a history tracking entry for this StockItem
+        """Add a history tracking entry for this StockItem.
 
         Args:
             entry_type - Integer code describing the "type" of historical action (see StockHistoryCode)
@@ -1281,7 +1278,7 @@ class StockItem(MetadataMixin, MPTTModel):
 
     @transaction.atomic
     def copyHistoryFrom(self, other):
-        """Copy stock history from another StockItem"""
+        """Copy stock history from another StockItem."""
         for item in other.tracking_info.all():
 
             item.item = self
@@ -1290,7 +1287,7 @@ class StockItem(MetadataMixin, MPTTModel):
 
     @transaction.atomic
     def copyTestResultsFrom(self, other, filters={}):
-        """Copy all test results from another StockItem"""
+        """Copy all test results from another StockItem."""
         for result in other.test_results.all().filter(**filters):
 
             # Create a copy of the test result by nulling-out the pk
@@ -1299,7 +1296,7 @@ class StockItem(MetadataMixin, MPTTModel):
             result.save()
 
     def can_merge(self, other=None, raise_error=False, **kwargs):
-        """Check if this stock item can be merged into another stock item"""
+        """Check if this stock item can be merged into another stock item."""
         allow_mismatched_suppliers = kwargs.get('allow_mismatched_suppliers', False)
 
         allow_mismatched_status = kwargs.get('allow_mismatched_status', False)
@@ -1612,7 +1609,7 @@ class StockItem(MetadataMixin, MPTTModel):
 
     @transaction.atomic
     def add_stock(self, quantity, user, notes=''):
-        """Add items to stock
+        """Add items to stock.
 
         This function can be called by initiating a ProjectRun,
         or by manually adding the items to the stock location
@@ -1646,7 +1643,7 @@ class StockItem(MetadataMixin, MPTTModel):
 
     @transaction.atomic
     def take_stock(self, quantity, user, notes='', code=StockHistoryCode.STOCK_REMOVE):
-        """Remove items from stock"""
+        """Remove items from stock."""
         # Cannot remove items from a serialized part
         if self.serialized:
             return False
@@ -1696,7 +1693,7 @@ class StockItem(MetadataMixin, MPTTModel):
 
     @transaction.atomic
     def clear_test_results(self, **kwargs):
-        """Remove all test results"""
+        """Remove all test results."""
         # All test results
         results = self.test_results.all()
 
@@ -1767,7 +1764,7 @@ class StockItem(MetadataMixin, MPTTModel):
         return result_map
 
     def testResultList(self, **kwargs):
-        """Return a list of test-result objects for this StockItem"""
+        """Return a list of test-result objects for this StockItem."""
         return self.testResultMap(**kwargs).values()
 
     def requiredTestStatus(self):
@@ -1807,15 +1804,15 @@ class StockItem(MetadataMixin, MPTTModel):
 
     @property
     def required_test_count(self):
-        """Return the number of 'required tests' for this StockItem"""
+        """Return the number of 'required tests' for this StockItem."""
         return self.part.getRequiredTests().count()
 
     def hasRequiredTests(self):
-        """Return True if there are any 'required tests' associated with this StockItem"""
+        """Return True if there are any 'required tests' associated with this StockItem."""
         return self.part.getRequiredTests().count() > 0
 
     def passedAllRequiredTests(self):
-        """Returns True if this StockItem has passed all required tests"""
+        """Returns True if this StockItem has passed all required tests."""
         status = self.requiredTestStatus()
 
         return status['passed'] >= status['total']
@@ -1840,11 +1837,11 @@ class StockItem(MetadataMixin, MPTTModel):
 
     @property
     def has_test_reports(self):
-        """Return True if there are test reports available for this stock item"""
+        """Return True if there are test reports available for this stock item."""
         return len(self.available_test_reports()) > 0
 
     def available_labels(self):
-        """Return a list of Label objects which match this StockItem"""
+        """Return a list of Label objects which match this StockItem."""
         labels = []
 
         item_query = StockItem.objects.filter(pk=self.pk)
@@ -1863,7 +1860,7 @@ class StockItem(MetadataMixin, MPTTModel):
 
     @property
     def has_labels(self):
-        """Return True if there are any label templates available for this stock item"""
+        """Return True if there are any label templates available for this stock item."""
         return len(self.available_labels()) > 0
 
 
@@ -1882,7 +1879,7 @@ def before_delete_stock_item(sender, instance, using, **kwargs):
 
 @receiver(post_delete, sender=StockItem, dispatch_uid='stock_item_post_delete_log')
 def after_delete_stock_item(sender, instance: StockItem, **kwargs):
-    """Function to be executed after a StockItem object is deleted"""
+    """Function to be executed after a StockItem object is deleted."""
     from part import tasks as part_tasks
 
     if not InvenTree.ready.isImportingData():
@@ -1892,7 +1889,7 @@ def after_delete_stock_item(sender, instance: StockItem, **kwargs):
 
 @receiver(post_save, sender=StockItem, dispatch_uid='stock_item_post_save_log')
 def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
-    """Hook function to be executed after StockItem object is saved/updated"""
+    """Hook function to be executed after StockItem object is saved/updated."""
     from part import tasks as part_tasks
 
     if not InvenTree.ready.isImportingData():

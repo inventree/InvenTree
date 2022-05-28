@@ -1,4 +1,4 @@
-"""Unit tests for InvenTreeBarcodePlugin"""
+"""Unit tests for InvenTreeBarcodePlugin."""
 
 from django.urls import reverse
 
@@ -17,7 +17,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
     ]
 
     def test_errors(self):
-        """Test all possible error cases for assigment action"""
+        """Test all possible error cases for assigment action."""
 
         def test_assert_error(barcode_data):
             response = self.client.post(
@@ -43,7 +43,7 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         test_assert_error('{"blbla": 10004}')
 
     def test_scan(self):
-        """Test that a barcode can be scanned"""
+        """Test that a barcode can be scanned."""
         response = self.client.post(reverse('api-barcode-scan'), format='json', data={'barcode': 'blbla=10004'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('success', response.data)

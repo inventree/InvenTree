@@ -13,7 +13,7 @@ from .models import (Company, ManufacturerPart, ManufacturerPartAttachment,
 
 
 class CompanyResource(ModelResource):
-    """ Class for managing Company data import/export """
+    """Class for managing Company data import/export."""
 
     class Meta:
         model = Company
@@ -35,9 +35,7 @@ class CompanyAdmin(ImportExportModelAdmin):
 
 
 class SupplierPartResource(ModelResource):
-    """
-    Class for managing SupplierPart data import/export
-    """
+    """Class for managing SupplierPart data import/export."""
 
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
 
@@ -71,9 +69,7 @@ class SupplierPartAdmin(ImportExportModelAdmin):
 
 
 class ManufacturerPartResource(ModelResource):
-    """
-    Class for managing ManufacturerPart data import/export
-    """
+    """Class for managing ManufacturerPart data import/export."""
 
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
 
@@ -91,9 +87,7 @@ class ManufacturerPartResource(ModelResource):
 
 
 class ManufacturerPartAdmin(ImportExportModelAdmin):
-    """
-    Admin class for ManufacturerPart model
-    """
+    """Admin class for ManufacturerPart model."""
 
     resource_class = ManufacturerPartResource
 
@@ -109,9 +103,7 @@ class ManufacturerPartAdmin(ImportExportModelAdmin):
 
 
 class ManufacturerPartAttachmentAdmin(ImportExportModelAdmin):
-    """
-    Admin class for ManufacturerPartAttachment model
-    """
+    """Admin class for ManufacturerPartAttachment model."""
 
     list_display = ('manufacturer_part', 'attachment', 'comment')
 
@@ -119,9 +111,7 @@ class ManufacturerPartAttachmentAdmin(ImportExportModelAdmin):
 
 
 class ManufacturerPartParameterResource(ModelResource):
-    """
-    Class for managing ManufacturerPartParameter data import/export
-    """
+    """Class for managing ManufacturerPartParameter data import/export."""
 
     class Meta:
         model = ManufacturerPartParameter
@@ -131,9 +121,7 @@ class ManufacturerPartParameterResource(ModelResource):
 
 
 class ManufacturerPartParameterAdmin(ImportExportModelAdmin):
-    """
-    Admin class for ManufacturerPartParameter model
-    """
+    """Admin class for ManufacturerPartParameter model."""
 
     resource_class = ManufacturerPartParameterResource
 
@@ -149,7 +137,7 @@ class ManufacturerPartParameterAdmin(ImportExportModelAdmin):
 
 
 class SupplierPriceBreakResource(ModelResource):
-    """ Class for managing SupplierPriceBreak data import/export """
+    """Class for managing SupplierPriceBreak data import/export."""
 
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(SupplierPart))
 

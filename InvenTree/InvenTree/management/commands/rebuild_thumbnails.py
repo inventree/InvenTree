@@ -1,5 +1,4 @@
-"""
-Custom management command to rebuild thumbnail images
+"""Custom management command to rebuild thumbnail images.
 
 - May be required after importing a new dataset, for example
 """
@@ -20,15 +19,10 @@ logger = logging.getLogger('inventree')
 
 
 class Command(BaseCommand):
-    """
-    Rebuild all thumbnail images
-    """
+    """Rebuild all thumbnail images."""
 
     def rebuild_thumbnail(self, model):
-        """
-        Rebuild the thumbnail specified by the "image" field of the provided model
-        """
-
+        """Rebuild the thumbnail specified by the "image" field of the provided model."""
         if not model.image:
             return
 

@@ -1,4 +1,4 @@
-# Tests for labels
+"""Tests for labels"""
 
 import os
 
@@ -30,10 +30,7 @@ class LabelTest(InvenTreeAPITestCase):
         apps.get_app_config('label').create_labels()
 
     def test_default_labels(self):
-        """
-        Test that the default label templates are copied across
-        """
-
+        """Test that the default label templates are copied across."""
         labels = StockItemLabel.objects.all()
 
         self.assertTrue(labels.count() > 0)
@@ -43,10 +40,7 @@ class LabelTest(InvenTreeAPITestCase):
         self.assertTrue(labels.count() > 0)
 
     def test_default_files(self):
-        """
-        Test that label files exist in the MEDIA directory
-        """
-
+        """Test that label files exist in the MEDIA directory."""
         item_dir = os.path.join(
             settings.MEDIA_ROOT,
             'label',
@@ -70,10 +64,7 @@ class LabelTest(InvenTreeAPITestCase):
         self.assertTrue(len(files) > 0)
 
     def test_filters(self):
-        """
-        Test the label filters
-        """
-
+        """Test the label filters."""
         filter_string = "part__pk=10"
 
         filters = validateFilterString(filter_string, model=StockItem)
@@ -86,8 +77,7 @@ class LabelTest(InvenTreeAPITestCase):
             validateFilterString(bad_filter_string, model=StockItem)
 
     def test_label_rendering(self):
-        """Test label rendering"""
-
+        """Test label rendering."""
         labels = PartLabel.objects.all()
         part = Part.objects.first()
 

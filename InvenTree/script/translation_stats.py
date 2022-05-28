@@ -1,4 +1,4 @@
-"""This script calculates translation coverage for various languages"""
+"""This script calculates translation coverage for various languages."""
 
 import json
 import os
@@ -6,7 +6,7 @@ import sys
 
 
 def calculate_coverage(filename):
-    """Calculate translation coverage for a .po file"""
+    """Calculate translation coverage for a .po file."""
     with open(filename, 'r') as f:
         lines = f.readlines()
 

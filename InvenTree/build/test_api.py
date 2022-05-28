@@ -13,8 +13,8 @@ from InvenTree.api_tester import InvenTreeAPITestCase
 
 
 class TestBuildAPI(InvenTreeAPITestCase):
-    """
-    Series of tests for the Build DRF API
+    """Series of tests for the Build DRF API.
+
     - Tests for Build API
     - Tests for BuildItem API
     """
@@ -33,10 +33,7 @@ class TestBuildAPI(InvenTreeAPITestCase):
     ]
 
     def test_get_build_list(self):
-        """
-        Test that we can retrieve list of build objects
-        """
-
+        """Test that we can retrieve list of build objects."""
         url = reverse('api-build-list')
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -65,7 +62,7 @@ class TestBuildAPI(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), 0)
 
     def test_get_build_item_list(self):
-        """ Test that we can retrieve list of BuildItem objects """
+        """Test that we can retrieve list of BuildItem objects."""
         url = reverse('api-build-item-list')
 
         response = self.client.get(url, format='json')
@@ -77,9 +74,7 @@ class TestBuildAPI(InvenTreeAPITestCase):
 
 
 class BuildAPITest(InvenTreeAPITestCase):
-    """
-    Series of tests for the Build DRF API
-    """
+    """Series of tests for the Build DRF API."""
 
     fixtures = [
         'category',
@@ -102,9 +97,7 @@ class BuildAPITest(InvenTreeAPITestCase):
 
 
 class BuildTest(BuildAPITest):
-    """
-    Unit testing for the build complete API endpoint
-    """
+    """Unit testing for the build complete API endpoint."""
 
     def setUp(self):
 
@@ -115,10 +108,7 @@ class BuildTest(BuildAPITest):
         self.url = reverse('api-build-output-complete', kwargs={'pk': self.build.pk})
 
     def test_invalid(self):
-        """
-        Test with invalid data
-        """
-
+        """Test with invalid data."""
         # Test with an invalid build ID
         self.post(
             reverse('api-build-output-complete', kwargs={'pk': 99999}),
@@ -199,10 +189,7 @@ class BuildTest(BuildAPITest):
         )
 
     def test_complete(self):
-        """
-        Test build order completion
-        """
-
+        """Test build order completion."""
         # Initially, build should not be able to be completed
         self.assertFalse(self.build.can_complete)
 
@@ -270,8 +257,7 @@ class BuildTest(BuildAPITest):
         self.assertTrue(self.build.is_complete)
 
     def test_cancel(self):
-        """ Test that we can cancel a BuildOrder via the API """
-
+        """Test that we can cancel a BuildOrder via the API."""
         bo = Build.objects.get(pk=1)
 
         url = reverse('api-build-cancel', kwargs={'pk': bo.pk})
@@ -285,10 +271,7 @@ class BuildTest(BuildAPITest):
         self.assertEqual(bo.status, BuildStatus.CANCELLED)
 
     def test_create_delete_output(self):
-        """
-        Test that we can create and delete build outputs via the API
-        """
-
+        """Test that we can create and delete build outputs via the API."""
         bo = Build.objects.get(pk=1)
 
         n_outputs = bo.output_count
@@ -539,15 +522,13 @@ class BuildTest(BuildAPITest):
 
 
 class BuildAllocationTest(BuildAPITest):
-    """
-    Unit tests for allocation of stock items against a build order.
+    """Unit tests for allocation of stock items against a build order.
 
     For this test, we will be using Build ID=1;
 
     - This points to Part 100 (see fixture data in part.yaml)
     - This Part already has a BOM with 4 items (see fixture data in bom.yaml)
     - There are no BomItem objects yet created for this build
-
     """
 
     def setUp(self):
@@ -565,10 +546,7 @@ class BuildAllocationTest(BuildAPITest):
         self.n = BuildItem.objects.count()
 
     def test_build_data(self):
-        """
-        Check that our assumptions about the particular BuildOrder are correct
-        """
-
+        """Check that our assumptions about the particular BuildOrder are correct."""
         self.assertEqual(self.build.part.pk, 100)
 
         # There should be 4x BOM items we can use
@@ -578,26 +556,17 @@ class BuildAllocationTest(BuildAPITest):
         self.assertEqual(self.build.allocated_stock.count(), 0)
 
     def test_get(self):
-        """
-        A GET request to the endpoint should return an error
-        """
-
+        """A GET request to the endpoint should return an error."""
         self.get(self.url, expected_code=405)
 
     def test_options(self):
-        """
-        An OPTIONS request to the endpoint should return information about the endpoint
-        """
-
+        """An OPTIONS request to the endpoint should return information about the endpoint."""
         response = self.options(self.url, expected_code=200)
 
         self.assertIn("API endpoint to allocate stock items to a build order", str(response.data))
 
     def test_empty(self):
-        """
-        Test without any POST data
-        """
-
+        """Test without any POST data."""
         # Initially test with an empty data set
         data = self.post(self.url, {}, expected_code=400).data
 
@@ -618,10 +587,7 @@ class BuildAllocationTest(BuildAPITest):
         self.assertEqual(self.n, BuildItem.objects.count())
 
     def test_missing(self):
-        """
-        Test with missing data
-        """
-
+        """Test with missing data."""
         # Missing quantity
         data = self.post(
             self.url,
@@ -674,10 +640,7 @@ class BuildAllocationTest(BuildAPITest):
         self.assertEqual(self.n, BuildItem.objects.count())
 
     def test_invalid_bom_item(self):
-        """
-        Test by passing an invalid BOM item
-        """
-
+        """Test by passing an invalid BOM item."""
         data = self.post(
             self.url,
             {
@@ -695,11 +658,10 @@ class BuildAllocationTest(BuildAPITest):
         self.assertIn('must point to the same part', str(data))
 
     def test_valid_data(self):
-        """
-        Test with valid data.
+        """Test with valid data.
+
         This should result in creation of a new BuildItem object
         """
-
         self.post(
             self.url,
             {
@@ -725,17 +687,12 @@ class BuildAllocationTest(BuildAPITest):
 
 
 class BuildListTest(BuildAPITest):
-    """
-    Tests for the BuildOrder LIST API
-    """
+    """Tests for the BuildOrder LIST API."""
 
     url = reverse('api-build-list')
 
     def test_get_all_builds(self):
-        """
-        Retrieve *all* builds via the API
-        """
-
+        """Retrieve *all* builds via the API."""
         builds = self.get(self.url)
 
         self.assertEqual(len(builds.data), 5)
@@ -753,10 +710,7 @@ class BuildListTest(BuildAPITest):
         self.assertEqual(len(builds.data), 0)
 
     def test_overdue(self):
-        """
-        Create a new build, in the past
-        """
-
+        """Create a new build, in the past."""
         in_the_past = datetime.now().date() - timedelta(days=50)
 
         part = Part.objects.get(pk=50)
@@ -776,10 +730,7 @@ class BuildListTest(BuildAPITest):
         self.assertEqual(len(builds), 1)
 
     def test_sub_builds(self):
-        """
-        Test the build / sub-build relationship
-        """
-
+        """Test the build / sub-build relationship."""
         parent = Build.objects.get(pk=5)
 
         part = Part.objects.get(pk=50)

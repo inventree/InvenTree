@@ -1,4 +1,4 @@
-"""Unit tests for the 'locate' plugin mixin class"""
+"""Unit tests for the 'locate' plugin mixin class."""
 
 from django.urls import reverse
 
@@ -18,7 +18,7 @@ class LocatePluginTests(InvenTreeAPITestCase):
     ]
 
     def test_installed(self):
-        """Test that a locate plugin is actually installed"""
+        """Test that a locate plugin is actually installed."""
         plugins = registry.with_mixin('locate')
 
         self.assertTrue(len(plugins) > 0)
@@ -26,7 +26,7 @@ class LocatePluginTests(InvenTreeAPITestCase):
         self.assertTrue('samplelocate' in [p.slug for p in plugins])
 
     def test_locate_fail(self):
-        """Test various API failure modes"""
+        """Test various API failure modes."""
         url = reverse('api-locate-plugin')
 
         # Post without a plugin
@@ -86,7 +86,7 @@ class LocatePluginTests(InvenTreeAPITestCase):
             self.assertIn(f"StockLocation matching PK '{pk}' not found", str(response.data))
 
     def test_locate_item(self):
-        """Test that the plugin correctly 'locates' a StockItem
+        """Test that the plugin correctly 'locates' a StockItem.
 
         As the background worker is not running during unit testing,
         the sample 'locate' function will be called 'inline'
@@ -115,7 +115,7 @@ class LocatePluginTests(InvenTreeAPITestCase):
         self.assertTrue(item.metadata['located'])
 
     def test_locate_location(self):
-        """Test that the plugin correctly 'locates' a StockLocation"""
+        """Test that the plugin correctly 'locates' a StockLocation."""
         url = reverse('api-locate-plugin')
 
         for location in StockLocation.objects.all():
@@ -139,7 +139,7 @@ class LocatePluginTests(InvenTreeAPITestCase):
             self.assertTrue(location.metadata['located'])
 
     def test_mixin_locate(self):
-        """Test the sample mixin redirection"""
+        """Test the sample mixin redirection."""
         class SamplePlugin(LocateMixin, InvenTreePlugin):
             pass
 

@@ -1,4 +1,4 @@
-"""Utility class to enable simpler imports"""
+"""Utility class to enable simpler imports."""
 
 from common.notifications import (BulkNotificationMethod,
                                   SingleNotificationMethod)

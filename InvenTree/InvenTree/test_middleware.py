@@ -1,4 +1,4 @@
-"""Tests for middleware functions"""
+"""Tests for middleware functions."""
 
 from django.urls import reverse
 
@@ -6,7 +6,7 @@ from InvenTree.helpers import InvenTreeTestCase
 
 
 class MiddlewareTests(InvenTreeTestCase):
-    """Test for middleware functions"""
+    """Test for middleware functions."""
 
     def check_path(self, url, code=200, **kwargs):
         response = self.client.get(url, HTTP_ACCEPT='application/json', **kwargs)
@@ -14,8 +14,7 @@ class MiddlewareTests(InvenTreeTestCase):
         return response
 
     def test_AuthRequiredMiddleware(self):
-        """Test the auth middleware"""
-
+        """Test the auth middleware."""
         # test that /api/ routes go through
         self.check_path(reverse('api-inventree-info'))
 
@@ -40,7 +39,7 @@ class MiddlewareTests(InvenTreeTestCase):
         self.check_path(reverse('settings.js'), 401)
 
     def test_token_auth(self):
-        """Test auth with token auth"""
+        """Test auth with token auth."""
         # get token
         response = self.client.get(reverse('api-token'), format='json', data={})
         token = response.data['token']

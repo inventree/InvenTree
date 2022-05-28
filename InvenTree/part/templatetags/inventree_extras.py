@@ -28,7 +28,7 @@ logger = logging.getLogger('inventree')
 
 @register.simple_tag()
 def define(value, *args, **kwargs):
-    """Shortcut function to overcome the shortcomings of the django templating language
+    """Shortcut function to overcome the shortcomings of the django templating language.
 
     Use as follows: {% define "hello_world" as hello %}
 
@@ -39,7 +39,7 @@ def define(value, *args, **kwargs):
 
 @register.simple_tag(takes_context=True)
 def render_date(context, date_object):
-    """Renders a date according to the preference of the provided user
+    """Renders a date according to the preference of the provided user.
 
     Note that the user preference is stored using the formatting adopted by moment.js,
     which differs from the python formatting!
@@ -96,37 +96,37 @@ def render_date(context, date_object):
 
 @register.simple_tag()
 def decimal(x, *args, **kwargs):
-    """Simplified rendering of a decimal number"""
+    """Simplified rendering of a decimal number."""
     return InvenTree.helpers.decimal2string(x)
 
 
 @register.simple_tag()
 def str2bool(x, *args, **kwargs):
-    """Convert a string to a boolean value"""
+    """Convert a string to a boolean value."""
     return InvenTree.helpers.str2bool(x)
 
 
 @register.simple_tag()
 def inrange(n, *args, **kwargs):
-    """Return range(n) for iterating through a numeric quantity"""
+    """Return range(n) for iterating through a numeric quantity."""
     return range(n)
 
 
 @register.simple_tag()
 def multiply(x, y, *args, **kwargs):
-    """Multiply two numbers together"""
+    """Multiply two numbers together."""
     return InvenTree.helpers.decimal2string(x * y)
 
 
 @register.simple_tag()
 def add(x, y, *args, **kwargs):
-    """Add two numbers together"""
+    """Add two numbers together."""
     return x + y
 
 
 @register.simple_tag()
 def to_list(*args):
-    """Return the input arguments as list"""
+    """Return the input arguments as list."""
     return args
 
 
@@ -138,13 +138,13 @@ def part_allocation_count(build, part, *args, **kwargs):
 
 @register.simple_tag()
 def inventree_in_debug_mode(*args, **kwargs):
-    """Return True if the server is running in DEBUG mode"""
+    """Return True if the server is running in DEBUG mode."""
     return djangosettings.DEBUG
 
 
 @register.simple_tag()
 def inventree_show_about(user, *args, **kwargs):
-    """Return True if the about modal should be shown"""
+    """Return True if the about modal should be shown."""
     if InvenTreeSetting.get_setting('INVENTREE_RESTRICT_ABOUT') and not user.is_superuser:
         return False
     return True
@@ -152,19 +152,19 @@ def inventree_show_about(user, *args, **kwargs):
 
 @register.simple_tag()
 def inventree_docker_mode(*args, **kwargs):
-    """Return True if the server is running as a Docker image"""
+    """Return True if the server is running as a Docker image."""
     return djangosettings.DOCKER
 
 
 @register.simple_tag()
 def plugins_enabled(*args, **kwargs):
-    """Return True if plugins are enabled for the server instance"""
+    """Return True if plugins are enabled for the server instance."""
     return djangosettings.PLUGINS_ENABLED
 
 
 @register.simple_tag()
 def inventree_db_engine(*args, **kwargs):
-    """Return the InvenTree database backend e.g. 'postgresql'"""
+    """Return the InvenTree database backend e.g. 'postgresql'."""
     db = djangosettings.DATABASES['default']
 
     engine = db.get('ENGINE', _('Unknown database'))
@@ -176,7 +176,7 @@ def inventree_db_engine(*args, **kwargs):
 
 @register.simple_tag()
 def inventree_instance_name(*args, **kwargs):
-    """Return the InstanceName associated with the current database"""
+    """Return the InstanceName associated with the current database."""
     return version.inventreeInstanceName()
 
 
@@ -188,19 +188,19 @@ def inventree_title(*args, **kwargs):
 
 @register.simple_tag()
 def inventree_base_url(*args, **kwargs):
-    """Return the INVENTREE_BASE_URL setting"""
+    """Return the INVENTREE_BASE_URL setting."""
     return InvenTreeSetting.get_setting('INVENTREE_BASE_URL')
 
 
 @register.simple_tag()
 def python_version(*args, **kwargs):
-    """Return the current python version"""
+    """Return the current python version."""
     return sys.version.split(' ')[0]
 
 
 @register.simple_tag()
 def inventree_version(shortstring=False, *args, **kwargs):
-    """Return InvenTree version string"""
+    """Return InvenTree version string."""
     if shortstring:
         return _("{title} v{version}".format(
             title=version.inventreeInstanceTitle(),
@@ -226,37 +226,37 @@ def inventree_docs_version(*args, **kwargs):
 
 @register.simple_tag()
 def inventree_api_version(*args, **kwargs):
-    """Return InvenTree API version"""
+    """Return InvenTree API version."""
     return version.inventreeApiVersion()
 
 
 @register.simple_tag()
 def django_version(*args, **kwargs):
-    """Return Django version string"""
+    """Return Django version string."""
     return version.inventreeDjangoVersion()
 
 
 @register.simple_tag()
 def inventree_commit_hash(*args, **kwargs):
-    """Return InvenTree git commit hash string"""
+    """Return InvenTree git commit hash string."""
     return version.inventreeCommitHash()
 
 
 @register.simple_tag()
 def inventree_commit_date(*args, **kwargs):
-    """Return InvenTree git commit date string"""
+    """Return InvenTree git commit date string."""
     return version.inventreeCommitDate()
 
 
 @register.simple_tag()
 def inventree_github_url(*args, **kwargs):
-    """Return URL for InvenTree github site"""
+    """Return URL for InvenTree github site."""
     return "https://github.com/InvenTree/InvenTree/"
 
 
 @register.simple_tag()
 def inventree_docs_url(*args, **kwargs):
-    """Return URL for InvenTree documenation site"""
+    """Return URL for InvenTree documenation site."""
     tag = version.inventreeDocsVersion()
 
     return f"https://inventree.readthedocs.io/en/{tag}"
@@ -264,19 +264,19 @@ def inventree_docs_url(*args, **kwargs):
 
 @register.simple_tag()
 def inventree_credits_url(*args, **kwargs):
-    """Return URL for InvenTree credits site"""
+    """Return URL for InvenTree credits site."""
     return "https://inventree.readthedocs.io/en/latest/credits/"
 
 
 @register.simple_tag()
 def default_currency(*args, **kwargs):
-    """Returns the default currency code"""
+    """Returns the default currency code."""
     return currency_code_default()
 
 
 @register.simple_tag()
 def setting_object(key, *args, **kwargs):
-    """Return a setting object speciifed by the given key
+    """Return a setting object speciifed by the given key.
 
     (Or return None if the setting does not exist)
     if a user-setting was requested return that
@@ -299,7 +299,7 @@ def setting_object(key, *args, **kwargs):
 
 @register.simple_tag()
 def settings_value(key, *args, **kwargs):
-    """Return a settings value specified by the given key"""
+    """Return a settings value specified by the given key."""
     if 'user' in kwargs:
         if not kwargs['user'] or (kwargs['user'] and kwargs['user'].is_authenticated is False):
             return InvenTreeUserSetting.get_setting(key)
@@ -310,25 +310,25 @@ def settings_value(key, *args, **kwargs):
 
 @register.simple_tag()
 def user_settings(user, *args, **kwargs):
-    """Return all USER settings as a key:value dict"""
+    """Return all USER settings as a key:value dict."""
     return InvenTreeUserSetting.allValues(user=user)
 
 
 @register.simple_tag()
 def global_settings(*args, **kwargs):
-    """Return all GLOBAL InvenTree settings as a key:value dict"""
+    """Return all GLOBAL InvenTree settings as a key:value dict."""
     return InvenTreeSetting.allValues()
 
 
 @register.simple_tag()
 def visible_global_settings(*args, **kwargs):
-    """Return any global settings which are not marked as 'hidden'"""
+    """Return any global settings which are not marked as 'hidden'."""
     return InvenTreeSetting.allValues(exclude_hidden=True)
 
 
 @register.simple_tag()
 def progress_bar(val, max_val, *args, **kwargs):
-    """Render a progress bar element"""
+    """Render a progress bar element."""
     item_id = kwargs.get('id', 'progress-bar')
 
     val = InvenTree.helpers.normalize(val)
@@ -379,7 +379,7 @@ def get_color_theme_css(username):
 
 @register.simple_tag()
 def get_user_color_theme(username):
-    """Get current user color theme"""
+    """Get current user color theme."""
     try:
         user_theme = ColorTheme.objects.filter(user=username).get()
         user_theme_name = user_theme.name
@@ -393,7 +393,7 @@ def get_user_color_theme(username):
 
 @register.simple_tag()
 def get_available_themes(*args, **kwargs):
-    """Return the available theme choices"""
+    """Return the available theme choices."""
     themes = []
 
     for key, name in ColorTheme.get_color_themes_choices():
@@ -425,7 +425,7 @@ def primitive_to_javascript(primitive):
 
 @register.filter
 def keyvalue(dict, key):
-    """Access to key of supplied dict
+    """Access to key of supplied dict.
 
     Usage:
     {% mydict|keyvalue:mykey %}
@@ -435,7 +435,7 @@ def keyvalue(dict, key):
 
 @register.simple_tag()
 def call_method(obj, method_name, *args):
-    """Enables calling model methods / functions from templates with arguments
+    """Enables calling model methods / functions from templates with arguments.
 
     Usage:
     {% call_method model_object 'fnc_name' argument1 %}
@@ -446,7 +446,7 @@ def call_method(obj, method_name, *args):
 
 @register.simple_tag()
 def authorized_owners(group):
-    """Return authorized owners"""
+    """Return authorized owners."""
     owners = []
 
     try:
@@ -464,33 +464,33 @@ def authorized_owners(group):
 
 @register.simple_tag()
 def object_link(url_name, pk, ref):
-    """Return highlighted link to object"""
+    """Return highlighted link to object."""
     ref_url = reverse(url_name, kwargs={'pk': pk})
     return mark_safe('<b><a href="{}">{}</a></b>'.format(ref_url, ref))
 
 
 @register.simple_tag()
 def mail_configured():
-    """Return if mail is configured"""
+    """Return if mail is configured."""
     return bool(settings.EMAIL_HOST)
 
 
 @register.simple_tag()
 def inventree_customize(reference, *args, **kwargs):
-    """Return customization values for the user interface"""
+    """Return customization values for the user interface."""
     return djangosettings.CUSTOMIZE.get(reference, '')
 
 
 @register.simple_tag()
 def inventree_logo(*args, **kwargs):
-    """Return the path to the logo-file"""
+    """Return the path to the logo-file."""
     if settings.CUSTOM_LOGO:
         return default_storage.url(settings.CUSTOM_LOGO)
     return static('img/inventree.png')
 
 
 class I18nStaticNode(StaticNode):
-    """Custom StaticNode
+    """Custom StaticNode.
 
     Replaces a variable named *lng* in the path with the current language
     """

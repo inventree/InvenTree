@@ -1,4 +1,4 @@
-"""Unit tests for event_sample sample plugins"""
+"""Unit tests for event_sample sample plugins."""
 
 from django.conf import settings
 from django.test import TestCase
@@ -10,10 +10,10 @@ from plugin.mixins import EventMixin
 
 
 class EventPluginSampleTests(TestCase):
-    """Tests for EventPluginSample"""
+    """Tests for EventPluginSample."""
 
     def test_run_event(self):
-        """Check if the event is issued"""
+        """Check if the event is issued."""
         # Activate plugin
         config = registry.get_plugin('sampleevent').plugin_config()
         config.active = True
@@ -30,7 +30,7 @@ class EventPluginSampleTests(TestCase):
         settings.PLUGIN_TESTING_EVENTS = False
 
     def test_mixin(self):
-        """Test that MixinNotImplementedError is raised"""
+        """Test that MixinNotImplementedError is raised."""
         with self.assertRaises(MixinNotImplementedError):
             class Wrong(EventMixin, InvenTreePlugin):
                 pass

@@ -91,9 +91,7 @@ class SalesOrderAdmin(ImportExportModelAdmin):
 
 
 class PurchaseOrderResource(ModelResource):
-    """
-    Class for managing import / export of PurchaseOrder data
-    """
+    """Class for managing import / export of PurchaseOrder data."""
 
     # Add number of line items
     line_items = Field(attribute='line_count', widget=widgets.IntegerWidget(), readonly=True)
@@ -111,7 +109,7 @@ class PurchaseOrderResource(ModelResource):
 
 
 class PurchaseOrderLineItemResource(ModelResource):
-    """ Class for managing import / export of PurchaseOrderLineItem data """
+    """Class for managing import / export of PurchaseOrderLineItem data."""
 
     part_name = Field(attribute='part__part__name', readonly=True)
 
@@ -129,16 +127,14 @@ class PurchaseOrderLineItemResource(ModelResource):
 
 
 class PurchaseOrderExtraLineResource(ModelResource):
-    """ Class for managing import / export of PurchaseOrderExtraLine data """
+    """Class for managing import / export of PurchaseOrderExtraLine data."""
 
     class Meta(GeneralExtraLineMeta):
         model = PurchaseOrderExtraLine
 
 
 class SalesOrderResource(ModelResource):
-    """
-    Class for managing import / export of SalesOrder data
-    """
+    """Class for managing import / export of SalesOrder data."""
 
     # Add number of line items
     line_items = Field(attribute='line_count', widget=widgets.IntegerWidget(), readonly=True)
@@ -156,9 +152,7 @@ class SalesOrderResource(ModelResource):
 
 
 class SalesOrderLineItemResource(ModelResource):
-    """
-    Class for managing import / export of SalesOrderLineItem data
-    """
+    """Class for managing import / export of SalesOrderLineItem data."""
 
     part_name = Field(attribute='part__name', readonly=True)
 
@@ -169,11 +163,10 @@ class SalesOrderLineItemResource(ModelResource):
     fulfilled = Field(attribute='fulfilled_quantity', readonly=True)
 
     def dehydrate_sale_price(self, item):
-        """
-        Return a string value of the 'sale_price' field, rather than the 'Money' object.
+        """Return a string value of the 'sale_price' field, rather than the 'Money' object.
+
         Ref: https://github.com/inventree/InvenTree/issues/2207
         """
-
         if item.sale_price:
             return str(item.sale_price)
         else:
@@ -187,7 +180,7 @@ class SalesOrderLineItemResource(ModelResource):
 
 
 class SalesOrderExtraLineResource(ModelResource):
-    """ Class for managing import / export of SalesOrderExtraLine data """
+    """Class for managing import / export of SalesOrderExtraLine data."""
 
     class Meta(GeneralExtraLineMeta):
         model = SalesOrderExtraLine

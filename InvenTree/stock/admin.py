@@ -15,7 +15,7 @@ from .models import (StockItem, StockItemAttachment, StockItemTestResult,
 
 
 class LocationResource(ModelResource):
-    """Class for managing StockLocation data import/export"""
+    """Class for managing StockLocation data import/export."""
 
     parent = Field(attribute='parent', widget=widgets.ForeignKeyWidget(StockLocation))
 
@@ -42,7 +42,7 @@ class LocationResource(ModelResource):
 
 
 class LocationInline(admin.TabularInline):
-    """Inline for sub-locations"""
+    """Inline for sub-locations."""
     model = StockLocation
 
 
@@ -64,7 +64,7 @@ class LocationAdmin(ImportExportModelAdmin):
 
 
 class StockItemResource(ModelResource):
-    """Class for managing StockItem data import/export"""
+    """Class for managing StockItem data import/export."""
 
     # Custom managers for ForeignKey fields
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))

@@ -1,4 +1,4 @@
-"""Unit testing for the Stock API"""
+"""Unit testing for the Stock API."""
 
 import io
 import os
@@ -45,7 +45,7 @@ class StockAPITestCase(InvenTreeAPITestCase):
 
 
 class StockLocationTest(StockAPITestCase):
-    """Series of API tests for the StockLocation API"""
+    """Series of API tests for the StockLocation API."""
     list_url = reverse('api-location-list')
 
     def setUp(self):
@@ -72,12 +72,12 @@ class StockLocationTest(StockAPITestCase):
 
 
 class StockItemListTest(StockAPITestCase):
-    """Tests for the StockItem API LIST endpoint"""
+    """Tests for the StockItem API LIST endpoint."""
 
     list_url = reverse('api-stock-list')
 
     def get_stock(self, **kwargs):
-        """Filter stock and return JSON object"""
+        """Filter stock and return JSON object."""
         response = self.client.get(self.list_url, format='json', data=kwargs)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -92,7 +92,7 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(len(response), 29)
 
     def test_filter_by_part(self):
-        """Filter StockItem by Part reference"""
+        """Filter StockItem by Part reference."""
         response = self.get_stock(part=25)
 
         self.assertEqual(len(response), 17)
@@ -102,12 +102,12 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(len(response), 12)
 
     def test_filter_by_IPN(self):
-        """Filter StockItem by IPN reference"""
+        """Filter StockItem by IPN reference."""
         response = self.get_stock(IPN="R.CH")
         self.assertEqual(len(response), 3)
 
     def test_filter_by_location(self):
-        """Filter StockItem by StockLocation reference"""
+        """Filter StockItem by StockLocation reference."""
         response = self.get_stock(location=5)
         self.assertEqual(len(response), 1)
 
@@ -121,7 +121,7 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(len(response), 18)
 
     def test_filter_by_depleted(self):
-        """Filter StockItem by depleted status"""
+        """Filter StockItem by depleted status."""
         response = self.get_stock(depleted=1)
         self.assertEqual(len(response), 1)
 
@@ -129,7 +129,7 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(len(response), 28)
 
     def test_filter_by_in_stock(self):
-        """Filter StockItem by 'in stock' status"""
+        """Filter StockItem by 'in stock' status."""
         response = self.get_stock(in_stock=1)
         self.assertEqual(len(response), 26)
 
@@ -137,7 +137,7 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(len(response), 3)
 
     def test_filter_by_status(self):
-        """Filter StockItem by 'status' field"""
+        """Filter StockItem by 'status' field."""
         codes = {
             StockStatus.OK: 27,
             StockStatus.DESTROYED: 1,
@@ -153,12 +153,12 @@ class StockItemListTest(StockAPITestCase):
             self.assertEqual(len(response), num)
 
     def test_filter_by_batch(self):
-        """Filter StockItem by batch code"""
+        """Filter StockItem by batch code."""
         response = self.get_stock(batch='B123')
         self.assertEqual(len(response), 1)
 
     def test_filter_by_serialized(self):
-        """Filter StockItem by serialized status"""
+        """Filter StockItem by serialized status."""
         response = self.get_stock(serialized=1)
         self.assertEqual(len(response), 12)
 
@@ -172,7 +172,7 @@ class StockItemListTest(StockAPITestCase):
             self.assertIsNone(item['serial'])
 
     def test_filter_by_has_batch(self):
-        """Test the 'has_batch' filter, which tests if the stock item has been assigned a batch code"""
+        """Test the 'has_batch' filter, which tests if the stock item has been assigned a batch code."""
         with_batch = self.get_stock(has_batch=1)
         without_batch = self.get_stock(has_batch=0)
 
@@ -208,7 +208,7 @@ class StockItemListTest(StockAPITestCase):
             self.assertTrue(item['batch'] in blank and item['serial'] in blank)
 
     def test_filter_by_expired(self):
-        """Filter StockItem by expiry status"""
+        """Filter StockItem by expiry status."""
         # First, we can assume that the 'stock expiry' feature is disabled
         response = self.get_stock(expired=1)
         self.assertEqual(len(response), 29)
@@ -246,7 +246,7 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(len(response), 25)
 
     def test_paginate(self):
-        """Test that we can paginate results correctly"""
+        """Test that we can paginate results correctly."""
         for n in [1, 5, 10]:
             response = self.get_stock(limit=n)
 
@@ -275,7 +275,7 @@ class StockItemListTest(StockAPITestCase):
         return dataset
 
     def test_export(self):
-        """Test exporting of Stock data via the API"""
+        """Test exporting of Stock data via the API."""
         dataset = self.export_data({})
 
         # Check that *all* stock item objects have been exported
@@ -312,7 +312,7 @@ class StockItemListTest(StockAPITestCase):
 
 
 class StockItemTest(StockAPITestCase):
-    """Series of API tests for the StockItem API"""
+    """Series of API tests for the StockItem API."""
 
     list_url = reverse('api-stock-list')
 
@@ -368,7 +368,7 @@ class StockItemTest(StockAPITestCase):
         self.assertEqual(response.data['location'], None)
 
     def test_stock_item_create(self):
-        """Test creation of a StockItem via the API"""
+        """Test creation of a StockItem via the API."""
         # POST with an empty part reference
 
         response = self.client.post(
@@ -485,7 +485,6 @@ class StockItemTest(StockAPITestCase):
 
         Notes:
             - Part <25> has a default_expiry of 10 days
-
         """
         # First test - create a new StockItem without an expiry date
         data = {
@@ -524,7 +523,7 @@ class StockItemTest(StockAPITestCase):
         self.assertEqual(response.data['expiry_date'], expiry.isoformat())
 
     def test_purchase_price(self):
-        """Test that we can correctly read and adjust purchase price information via the API"""
+        """Test that we can correctly read and adjust purchase price information via the API."""
         url = reverse('api-stock-detail', kwargs={'pk': 1})
 
         data = self.get(url, expected_code=200).data
@@ -582,7 +581,7 @@ class StockItemTest(StockAPITestCase):
         self.assertEqual(data['purchase_price_currency'], 'NZD')
 
     def test_install(self):
-        """Test that stock item can be installed into antoher item, via the API"""
+        """Test that stock item can be installed into antoher item, via the API."""
         # Select the "parent" stock item
         parent_part = part.models.Part.objects.get(pk=100)
 
@@ -664,10 +663,10 @@ class StockItemTest(StockAPITestCase):
 
 
 class StocktakeTest(StockAPITestCase):
-    """Series of tests for the Stocktake API"""
+    """Series of tests for the Stocktake API."""
 
     def test_action(self):
-        """Test each stocktake action endpoint, for validation"""
+        """Test each stocktake action endpoint, for validation."""
         for endpoint in ['api-stock-count', 'api-stock-add', 'api-stock-remove']:
 
             url = reverse(endpoint)
@@ -723,7 +722,7 @@ class StocktakeTest(StockAPITestCase):
             self.assertContains(response, 'Ensure this value is greater than or equal to 0', status_code=status.HTTP_400_BAD_REQUEST)
 
     def test_transfer(self):
-        """Test stock transfers"""
+        """Test stock transfers."""
         data = {
             'items': [
                 {
@@ -749,7 +748,7 @@ class StocktakeTest(StockAPITestCase):
 
 
 class StockItemDeletionTest(StockAPITestCase):
-    """Tests for stock item deletion via the API"""
+    """Tests for stock item deletion via the API."""
 
     def test_delete(self):
 
@@ -861,7 +860,7 @@ class StockTestResultTest(StockAPITestCase):
         self.assertEqual(test['user'], self.user.pk)
 
     def test_post_bitmap(self):
-        """2021-08-25
+        """2021-08-25.
 
         For some (unknown) reason, prior to fix https://github.com/inventree/InvenTree/pull/2018
         uploading a bitmap image would result in a failure.
@@ -894,7 +893,7 @@ class StockTestResultTest(StockAPITestCase):
 
 
 class StockAssignTest(StockAPITestCase):
-    """Unit tests for the stock assignment API endpoint, where stock items are manually assigned to a customer"""
+    """Unit tests for the stock assignment API endpoint, where stock items are manually assigned to a customer."""
 
     URL = reverse('api-stock-assign')
 
@@ -1000,7 +999,7 @@ class StockAssignTest(StockAPITestCase):
 
 
 class StockMergeTest(StockAPITestCase):
-    """Unit tests for merging stock items via the API"""
+    """Unit tests for merging stock items via the API."""
 
     URL = reverse('api-stock-merge')
 
@@ -1032,7 +1031,7 @@ class StockMergeTest(StockAPITestCase):
         )
 
     def test_missing_data(self):
-        """Test responses which are missing required data"""
+        """Test responses which are missing required data."""
         # Post completely empty
 
         data = self.post(
@@ -1057,7 +1056,7 @@ class StockMergeTest(StockAPITestCase):
         self.assertIn('At least two stock items', str(data))
 
     def test_invalid_data(self):
-        """Test responses which have invalid data"""
+        """Test responses which have invalid data."""
         # Serialized stock items should be rejected
         data = self.post(
             self.URL,
@@ -1138,7 +1137,7 @@ class StockMergeTest(StockAPITestCase):
         self.assertIn('Stock items must refer to the same supplier part', str(data))
 
     def test_valid_merge(self):
-        """Test valid merging of stock items"""
+        """Test valid merging of stock items."""
         # Check initial conditions
         n = StockItem.objects.filter(part=self.part).count()
         self.assertEqual(self.item_1.quantity, 100)

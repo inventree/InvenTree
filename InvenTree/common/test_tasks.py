@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from django.test import TestCase
 
 from common.models import NotificationEntry
@@ -8,9 +7,7 @@ from . import tasks as common_tasks
 
 
 class TaskTest(TestCase):
-    """
-    Tests for common tasks
-    """
+    """Tests for common tasks."""
 
     def test_delete(self):
 

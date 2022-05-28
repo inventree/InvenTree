@@ -1,4 +1,4 @@
-"""Unit tests for Barcode endpoints"""
+"""Unit tests for Barcode endpoints."""
 
 from django.urls import reverse
 
@@ -58,7 +58,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         self.assertIsNone(data['plugin'])
 
     def test_find_part(self):
-        """Test that we can lookup a part based on ID"""
+        """Test that we can lookup a part based on ID."""
         response = self.client.post(
             self.scan_url,
             {
@@ -75,7 +75,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         self.assertEqual(response.data['part']['pk'], 1)
 
     def test_invalid_part(self):
-        """Test response for invalid part"""
+        """Test response for invalid part."""
         response = self.client.post(
             self.scan_url,
             {
@@ -91,7 +91,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         self.assertEqual(response.data['part'], 'Part does not exist')
 
     def test_find_stock_item(self):
-        """Test that we can lookup a stock item based on ID"""
+        """Test that we can lookup a stock item based on ID."""
         response = self.client.post(
             self.scan_url,
             {
@@ -108,7 +108,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         self.assertEqual(response.data['stockitem']['pk'], 1)
 
     def test_invalid_item(self):
-        """Test response for invalid stock item"""
+        """Test response for invalid stock item."""
         response = self.client.post(
             self.scan_url,
             {
@@ -124,7 +124,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         self.assertEqual(response.data['stockitem'], 'Stock item does not exist')
 
     def test_find_location(self):
-        """Test that we can lookup a stock location based on ID"""
+        """Test that we can lookup a stock location based on ID."""
         response = self.client.post(
             self.scan_url,
             {
@@ -141,7 +141,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         self.assertEqual(response.data['stocklocation']['pk'], 1)
 
     def test_invalid_location(self):
-        """Test response for an invalid location"""
+        """Test response for an invalid location."""
         response = self.client.post(
             self.scan_url,
             {
@@ -200,7 +200,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         self.assertEqual(pk, item.pk)
 
     def test_association(self):
-        """Test that a barcode can be associated with a StockItem"""
+        """Test that a barcode can be associated with a StockItem."""
         item = StockItem.objects.get(pk=522)
 
         self.assertEqual(len(item.uid), 0)

@@ -1,4 +1,4 @@
-"""Report template model definitions"""
+"""Report template model definitions."""
 
 import datetime
 import logging
@@ -43,27 +43,27 @@ def rename_template(instance, filename):
 
 
 def validate_stock_item_report_filters(filters):
-    """Validate filter string against StockItem model"""
+    """Validate filter string against StockItem model."""
     return validateFilterString(filters, model=stock.models.StockItem)
 
 
 def validate_part_report_filters(filters):
-    """Validate filter string against Part model"""
+    """Validate filter string against Part model."""
     return validateFilterString(filters, model=part.models.Part)
 
 
 def validate_build_report_filters(filters):
-    """Validate filter string against Build model"""
+    """Validate filter string against Build model."""
     return validateFilterString(filters, model=build.models.Build)
 
 
 def validate_purchase_order_filters(filters):
-    """Validate filter string against PurchaseOrder model"""
+    """Validate filter string against PurchaseOrder model."""
     return validateFilterString(filters, model=order.models.PurchaseOrder)
 
 
 def validate_sales_order_filters(filters):
-    """Validate filter string against SalesOrder model"""
+    """Validate filter string against SalesOrder model."""
     return validateFilterString(filters, model=order.models.SalesOrder)
 
 
@@ -81,7 +81,7 @@ class WeasyprintReportMixin(WeasyTemplateResponseMixin):
 
 
 class ReportBase(models.Model):
-    """Base class for uploading html templates"""
+    """Base class for uploading html templates."""
 
     class Meta:
         abstract = True
@@ -178,7 +178,7 @@ class ReportTemplateBase(ReportBase):
     object_to_print = None
 
     def get_context_data(self, request):
-        """Supply context data to the template for rendering"""
+        """Supply context data to the template for rendering."""
         return {}
 
     def context(self, request):
@@ -199,7 +199,7 @@ class ReportTemplateBase(ReportBase):
         return context
 
     def generate_filename(self, request, **kwargs):
-        """Generate a filename for this report"""
+        """Generate a filename for this report."""
         template_string = Template(self.filename_pattern)
 
         ctx = self.context(request)
@@ -281,7 +281,7 @@ class TestReport(ReportTemplateBase):
     )
 
     def matches_stock_item(self, item):
-        """Test if this report template matches a given StockItem objects"""
+        """Test if this report template matches a given StockItem objects."""
         try:
             filters = validateFilterString(self.filters)
             items = stock.models.StockItem.objects.filter(**filters)
@@ -309,7 +309,7 @@ class TestReport(ReportTemplateBase):
 
 
 class BuildReport(ReportTemplateBase):
-    """Build order / work order report"""
+    """Build order / work order report."""
 
     @staticmethod
     def get_api_url():
@@ -330,7 +330,7 @@ class BuildReport(ReportTemplateBase):
     )
 
     def get_context_data(self, request):
-        """Custom context data for the build report"""
+        """Custom context data for the build report."""
         my_build = self.object_to_print
 
         if type(my_build) != build.models.Build:
@@ -347,7 +347,7 @@ class BuildReport(ReportTemplateBase):
 
 
 class BillOfMaterialsReport(ReportTemplateBase):
-    """Render a Bill of Materials against a Part object"""
+    """Render a Bill of Materials against a Part object."""
 
     @staticmethod
     def get_api_url():
@@ -379,7 +379,7 @@ class BillOfMaterialsReport(ReportTemplateBase):
 
 
 class PurchaseOrderReport(ReportTemplateBase):
-    """Render a report against a PurchaseOrder object"""
+    """Render a report against a PurchaseOrder object."""
 
     @staticmethod
     def get_api_url():
@@ -416,7 +416,7 @@ class PurchaseOrderReport(ReportTemplateBase):
 
 
 class SalesOrderReport(ReportTemplateBase):
-    """Render a report against a SalesOrder object"""
+    """Render a report against a SalesOrder object."""
 
     @staticmethod
     def get_api_url():

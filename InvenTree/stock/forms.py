@@ -1,4 +1,4 @@
-"""Django Forms for interacting with Stock app"""
+"""Django Forms for interacting with Stock app."""
 
 from InvenTree.forms import HelperForm
 
@@ -6,7 +6,7 @@ from .models import StockItem, StockItemTracking
 
 
 class ReturnStockItemForm(HelperForm):
-    """Form for manually returning a StockItem into stock
+    """Form for manually returning a StockItem into stock.
 
     TODO: This could be a simple API driven form!
     """

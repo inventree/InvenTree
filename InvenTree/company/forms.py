@@ -1,6 +1,4 @@
-"""
-Django Forms for interacting with Company app
-"""
+"""Django Forms for interacting with Company app."""
 
 import django.forms
 from django.utils.translation import gettext_lazy as _
@@ -12,9 +10,7 @@ from .models import Company, SupplierPriceBreak
 
 
 class CompanyImageDownloadForm(HelperForm):
-    """
-    Form for downloading an image from a URL
-    """
+    """Form for downloading an image from a URL."""
 
     url = django.forms.URLField(
         label=_('URL'),
@@ -30,7 +26,7 @@ class CompanyImageDownloadForm(HelperForm):
 
 
 class EditPriceBreakForm(HelperForm):
-    """ Form for creating / editing a supplier price break """
+    """Form for creating / editing a supplier price break."""
 
     quantity = RoundingDecimalFormField(
         max_digits=10,

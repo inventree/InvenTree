@@ -1,6 +1,4 @@
-"""
-Tests for the build model database migrations
-"""
+"""Tests for the build model database migrations."""
 
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
 
@@ -8,18 +6,13 @@ from InvenTree import helpers
 
 
 class TestForwardMigrations(MigratorTestCase):
-    """
-    Test entire schema migration sequence for the build app
-    """
+    """Test entire schema migration sequence for the build app."""
 
     migrate_from = ('build', helpers.getOldestMigrationFile('build'))
     migrate_to = ('build', helpers.getNewestMigrationFile('build'))
 
     def prepare(self):
-        """
-        Create initial data!
-        """
-
+        """Create initial data!"""
         Part = self.old_state.apps.get_model('part', 'part')
 
         buildable_part = Part.objects.create(
@@ -63,18 +56,13 @@ class TestForwardMigrations(MigratorTestCase):
 
 
 class TestReferenceMigration(MigratorTestCase):
-    """
-    Test custom migration which adds 'reference' field to Build model
-    """
+    """Test custom migration which adds 'reference' field to Build model."""
 
     migrate_from = ('build', helpers.getOldestMigrationFile('build'))
     migrate_to = ('build', '0018_build_reference')
 
     def prepare(self):
-        """
-        Create some builds
-        """
-
+        """Create some builds."""
         Part = self.old_state.apps.get_model('part', 'part')
 
         part = Part.objects.create(

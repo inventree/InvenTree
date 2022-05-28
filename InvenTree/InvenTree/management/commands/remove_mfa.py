@@ -1,15 +1,11 @@
-"""
-Custom management command to remove MFA for a user
-"""
+"""Custom management command to remove MFA for a user."""
 
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
-    """
-    Remove MFA for a user
-    """
+    """Remove MFA for a user."""
 
     def add_arguments(self, parser):
         parser.add_argument('mail', type=str)

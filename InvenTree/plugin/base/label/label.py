@@ -1,4 +1,4 @@
-"""Functions to print a label to a mixin printer"""
+"""Functions to print a label to a mixin printer."""
 
 import logging
 

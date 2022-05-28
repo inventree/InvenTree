@@ -40,7 +40,7 @@ class PartListTest(PartViewTestCase):
 class PartDetailTest(PartViewTestCase):
 
     def test_part_detail(self):
-        """Test that we can retrieve a part detail page"""
+        """Test that we can retrieve a part detail page."""
         pk = 1
 
         response = self.client.get(reverse('part-detail', args=(pk,)))
@@ -107,14 +107,14 @@ class PartDetailTest(PartViewTestCase):
         test_ipn_match(index_result=True, detail_result=False)
 
     def test_bom_download(self):
-        """Test downloading a BOM for a valid part"""
+        """Test downloading a BOM for a valid part."""
         response = self.client.get(reverse('bom-download', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
         self.assertIn('streaming_content', dir(response))
 
 
 class PartQRTest(PartViewTestCase):
-    """Tests for the Part QR Code AJAX view"""
+    """Tests for the Part QR Code AJAX view."""
 
     def test_html_redirect(self):
         # A HTML request for a QR code should be redirected (use an AJAX request instead)
@@ -137,10 +137,10 @@ class PartQRTest(PartViewTestCase):
 
 
 class CategoryTest(PartViewTestCase):
-    """Tests for PartCategory related views"""
+    """Tests for PartCategory related views."""
 
     def test_set_category(self):
-        """Test that the "SetCategory" view works"""
+        """Test that the "SetCategory" view works."""
         url = reverse('part-set-category')
 
         response = self.client.get(url, {'parts[]': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')

@@ -1,4 +1,4 @@
-"""Template tags for rendering various barcodes"""
+"""Template tags for rendering various barcodes."""
 
 import base64
 from io import BytesIO
@@ -12,7 +12,7 @@ register = template.Library()
 
 
 def image_data(img, fmt='PNG'):
-    """Convert an image into HTML renderable data
+    """Convert an image into HTML renderable data.
 
     Returns a string ``data:image/FMT;base64,xxxxxxxxx`` which can be rendered to an <img> tag
     """
@@ -26,7 +26,7 @@ def image_data(img, fmt='PNG'):
 
 @register.simple_tag()
 def qrcode(data, **kwargs):
-    """Return a byte-encoded QR code image
+    """Return a byte-encoded QR code image.
 
     Optional kwargs
     ---------------
@@ -57,7 +57,7 @@ def qrcode(data, **kwargs):
 
 @register.simple_tag()
 def barcode(data, barcode_class='code128', **kwargs):
-    """Render a barcode"""
+    """Render a barcode."""
     constructor = python_barcode.get_barcode_class(barcode_class)
 
     data = str(data).zfill(constructor.digits)

@@ -1,6 +1,4 @@
-"""
-Django views for interacting with Company app
-"""
+"""Django views for interacting with Company app."""
 
 import io
 
@@ -20,8 +18,7 @@ from .models import Company, ManufacturerPart, SupplierPart
 
 
 class CompanyIndex(InvenTreeRoleMixin, ListView):
-    """ View for displaying list of companies
-    """
+    """View for displaying list of companies."""
 
     model = Company
     template_name = 'company/index.html'
@@ -80,7 +77,7 @@ class CompanyIndex(InvenTreeRoleMixin, ListView):
         return ctx
 
     def get_queryset(self):
-        """ Retrieve the Company queryset based on HTTP request parameters.
+        """Retrieve the Company queryset based on HTTP request parameters.
 
         - supplier: Filter by supplier
         - customer: Filter by customer
@@ -97,7 +94,7 @@ class CompanyIndex(InvenTreeRoleMixin, ListView):
 
 
 class CompanyDetail(InvenTreePluginViewMixin, DetailView):
-    """ Detail view for Company object """
+    """Detail view for Company object."""
     context_obect_name = 'company'
     template_name = 'company/detail.html'
     queryset = Company.objects.all()
@@ -111,9 +108,7 @@ class CompanyDetail(InvenTreePluginViewMixin, DetailView):
 
 
 class CompanyImageDownloadFromURL(AjaxUpdateView):
-    """
-    View for downloading an image from a provided URL
-    """
+    """View for downloading an image from a provided URL."""
 
     model = Company
     ajax_template_name = 'image_download.html'
@@ -121,9 +116,7 @@ class CompanyImageDownloadFromURL(AjaxUpdateView):
     ajax_form_title = _('Download Image')
 
     def validate(self, company, form):
-        """
-        Validate that the image data are correct
-        """
+        """Validate that the image data are correct."""
         # First ensure that the normal validation routines pass
         if not form.is_valid():
             return
@@ -167,9 +160,7 @@ class CompanyImageDownloadFromURL(AjaxUpdateView):
             return
 
     def save(self, company, form, **kwargs):
-        """
-        Save the downloaded image to the company
-        """
+        """Save the downloaded image to the company."""
         fmt = self.image.format
 
         if not fmt:
@@ -189,7 +180,7 @@ class CompanyImageDownloadFromURL(AjaxUpdateView):
 
 
 class ManufacturerPartDetail(InvenTreePluginViewMixin, DetailView):
-    """ Detail view for ManufacturerPart """
+    """Detail view for ManufacturerPart."""
     model = ManufacturerPart
     template_name = 'company/manufacturer_part_detail.html'
     context_object_name = 'part'
@@ -203,7 +194,7 @@ class ManufacturerPartDetail(InvenTreePluginViewMixin, DetailView):
 
 
 class SupplierPartDetail(InvenTreePluginViewMixin, DetailView):
-    """ Detail view for SupplierPart """
+    """Detail view for SupplierPart."""
     model = SupplierPart
     template_name = 'company/supplier_part_detail.html'
     context_object_name = 'part'

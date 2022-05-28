@@ -1,4 +1,4 @@
-"""Plugin mixin classes for barcode plugin"""
+"""Plugin mixin classes for barcode plugin."""
 
 import hashlib
 import string
@@ -27,7 +27,7 @@ def hash_barcode(barcode_data):
 
 
 class BarcodeMixin:
-    """Mixin that enables barcode handeling
+    """Mixin that enables barcode handeling.
 
     Custom barcode plugins should use and extend this mixin as necessary.
     """
@@ -35,7 +35,7 @@ class BarcodeMixin:
     ACTION_NAME = ""
 
     class MixinMeta:
-        """Meta options for this mixin"""
+        """Meta options for this mixin."""
 
         MIXIN_NAME = 'Barcode'
 
@@ -45,11 +45,11 @@ class BarcodeMixin:
 
     @property
     def has_barcode(self):
-        """Does this plugin have everything needed to process a barcode"""
+        """Does this plugin have everything needed to process a barcode."""
         return True
 
     def init(self, barcode_data):
-        """Initialize the BarcodePlugin instance
+        """Initialize the BarcodePlugin instance.
 
         Args:
             barcode_data - The raw barcode data
@@ -72,7 +72,7 @@ class BarcodeMixin:
             return None
 
     def renderStockItem(self, item):
-        """Render a stock item to JSON response"""
+        """Render a stock item to JSON response."""
         serializer = StockItemSerializer(item, part_detail=True, location_detail=True, supplier_part_detail=True)
         return serializer.data
 
@@ -84,7 +84,7 @@ class BarcodeMixin:
         return None  # pragma: no cover
 
     def renderStockLocation(self, loc):
-        """Render a stock location to a JSON response"""
+        """Render a stock location to a JSON response."""
         serializer = LocationSerializer(loc)
         return serializer.data
 
@@ -96,7 +96,7 @@ class BarcodeMixin:
         return None  # pragma: no cover
 
     def renderPart(self, part):
-        """Render a part to JSON response"""
+        """Render a part to JSON response."""
         serializer = PartSerializer(part)
         return serializer.data
 
@@ -115,5 +115,5 @@ class BarcodeMixin:
         return hash_barcode(self.data)
 
     def validate(self):
-        """Default implementation returns False"""
+        """Default implementation returns False."""
         return False  # pragma: no cover

@@ -1,6 +1,4 @@
-"""
-Label printing models
-"""
+"""Label printing models."""
 
 import datetime
 import logging
@@ -32,8 +30,7 @@ logger = logging.getLogger("inventree")
 
 
 def rename_label(instance, filename):
-    """ Place the label file into the correct subdirectory """
-
+    """Place the label file into the correct subdirectory."""
     filename = os.path.basename(filename)
 
     return os.path.join('label', 'template', instance.SUBDIR, filename)
@@ -61,9 +58,7 @@ def validate_part_filters(filters):
 
 
 class WeasyprintLabelMixin(WeasyTemplateResponseMixin):
-    """
-    Class for rendering a label to a PDF
-    """
+    """Class for rendering a label to a PDF."""
 
     pdf_filename = 'label.pdf'
     pdf_attachment = True
@@ -76,9 +71,7 @@ class WeasyprintLabelMixin(WeasyTemplateResponseMixin):
 
 
 class LabelTemplate(models.Model):
-    """
-    Base class for generic, filterable labels.
-    """
+    """Base class for generic, filterable labels."""
 
     class Meta:
         abstract = True
@@ -150,11 +143,10 @@ class LabelTemplate(models.Model):
 
     @property
     def template_name(self):
-        """
-        Returns the file system path to the template file.
+        """Returns the file system path to the template file.
+
         Required for passing the file to an external process
         """
-
         template = self.label.name
         template = template.replace('/', os.path.sep)
         template = template.replace('\\', os.path.sep)
@@ -164,19 +156,14 @@ class LabelTemplate(models.Model):
         return template
 
     def get_context_data(self, request):
-        """
-        Supply custom context data to the template for rendering.
+        """Supply custom context data to the template for rendering.
 
         Note: Override this in any subclass
         """
-
         return {}  # pragma: no cover
 
     def generate_filename(self, request, **kwargs):
-        """
-        Generate a filename for this label
-        """
-
+        """Generate a filename for this label."""
         template_string = Template(self.filename_pattern)
 
         ctx = self.context(request)
@@ -186,10 +173,7 @@ class LabelTemplate(models.Model):
         return template_string.render(context)
 
     def context(self, request):
-        """
-        Provides context data to the template.
-        """
-
+        """Provides context data to the template."""
         context = self.get_context_data(request)
 
         # Add "basic" context data which gets passed to every label
@@ -204,21 +188,17 @@ class LabelTemplate(models.Model):
         return context
 
     def render_as_string(self, request, **kwargs):
-        """
-        Render the label to a HTML string
+        """Render the label to a HTML string.
 
         Useful for debug mode (viewing generated code)
         """
-
         return render_to_string(self.template_name, self.context(request), request)
 
     def render(self, request, **kwargs):
-        """
-        Render the label template to a PDF file
+        """Render the label template to a PDF file.
 
         Uses django-weasyprint plugin to render HTML template
         """
-
         wp = WeasyprintLabelMixin(
             request,
             self.template_name,
@@ -235,9 +215,7 @@ class LabelTemplate(models.Model):
 
 
 class StockItemLabel(LabelTemplate):
-    """
-    Template for printing StockItem labels
-    """
+    """Template for printing StockItem labels."""
 
     @staticmethod
     def get_api_url():
@@ -255,10 +233,7 @@ class StockItemLabel(LabelTemplate):
     )
 
     def get_context_data(self, request):
-        """
-        Generate context data for each provided StockItem
-        """
-
+        """Generate context data for each provided StockItem."""
         stock_item = self.object_to_print
 
         return {
@@ -279,9 +254,7 @@ class StockItemLabel(LabelTemplate):
 
 
 class StockLocationLabel(LabelTemplate):
-    """
-    Template for printing StockLocation labels
-    """
+    """Template for printing StockLocation labels."""
 
     @staticmethod
     def get_api_url():
@@ -298,10 +271,7 @@ class StockLocationLabel(LabelTemplate):
     )
 
     def get_context_data(self, request):
-        """
-        Generate context data for each provided StockLocation
-        """
-
+        """Generate context data for each provided StockLocation."""
         location = self.object_to_print
 
         return {
@@ -311,9 +281,7 @@ class StockLocationLabel(LabelTemplate):
 
 
 class PartLabel(LabelTemplate):
-    """
-    Template for printing Part labels
-    """
+    """Template for printing Part labels."""
 
     @staticmethod
     def get_api_url():
@@ -331,10 +299,7 @@ class PartLabel(LabelTemplate):
     )
 
     def get_context_data(self, request):
-        """
-        Generate context data for each provided Part object
-        """
-
+        """Generate context data for each provided Part object."""
         part = self.object_to_print
 
         return {

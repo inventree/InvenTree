@@ -1,6 +1,6 @@
-"""
-Pull rendered copies of the templated
-only used for testing the js files! - This file is omited from coverage
+"""Pull rendered copies of the templated.
+
+Only used for testing the js files! - This file is omited from coverage.
 """
 
 import os  # pragma: no cover
@@ -10,8 +10,7 @@ from InvenTree.helpers import InvenTreeTestCase  # pragma: no cover
 
 
 class RenderJavascriptFiles(InvenTreeTestCase):  # pragma: no cover
-    """
-    A unit test to "render" javascript files.
+    """A unit test to "render" javascript files.
 
     The server renders templated javascript files,
     we need the fully-rendered files for linting and static tests.
@@ -73,10 +72,7 @@ class RenderJavascriptFiles(InvenTreeTestCase):  # pragma: no cover
         return n
 
     def test_render_files(self):
-        """
-        Look for all javascript files
-        """
-
+        """Look for all javascript files."""
         n = 0
 
         print("Rendering javascript files...")

@@ -10,7 +10,7 @@ from .models import Owner
 
 
 class UserSerializer(InvenTreeModelSerializer):
-    """Serializer for a User"""
+    """Serializer for a User."""
 
     class Meta:
         model = User

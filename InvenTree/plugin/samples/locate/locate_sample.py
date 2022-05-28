@@ -1,5 +1,4 @@
-"""
-Sample plugin for locating stock items / locations.
+"""Sample plugin for locating stock items / locations.
 
 Note: This plugin does not *actually* locate anything!
 """

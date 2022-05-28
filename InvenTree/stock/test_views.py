@@ -22,7 +22,7 @@ class StockViewTestCase(InvenTreeTestCase):
 
 
 class StockListTest(StockViewTestCase):
-    """Tests for Stock list views"""
+    """Tests for Stock list views."""
 
     def test_stock_index(self):
         response = self.client.get(reverse('stock-index'))
@@ -30,10 +30,10 @@ class StockListTest(StockViewTestCase):
 
 
 class StockOwnershipTest(StockViewTestCase):
-    """Tests for stock ownership views"""
+    """Tests for stock ownership views."""
 
     def setUp(self):
-        """Add another user for ownership tests"""
+        """Add another user for ownership tests."""
 
     """
     TODO: Refactor this following test to use the new API form

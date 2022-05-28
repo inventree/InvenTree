@@ -1,4 +1,4 @@
-"""Plugin mixin classes for label plugins"""
+"""Plugin mixin classes for label plugins."""
 
 from plugin.helpers import MixinNotImplementedError
 
@@ -12,7 +12,7 @@ class LabelPrintingMixin:
     """
 
     class MixinMeta:
-        """Meta options for this mixin"""
+        """Meta options for this mixin."""
 
         MIXIN_NAME = 'Label printing'
 
@@ -21,7 +21,7 @@ class LabelPrintingMixin:
         self.add_mixin('labels', True, __class__)
 
     def print_label(self, label, **kwargs):
-        """Callback to print a single label
+        """Callback to print a single label.
 
         Arguments:
             label: A black-and-white pillow Image object

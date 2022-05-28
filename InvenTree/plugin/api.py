@@ -1,4 +1,4 @@
-"""JSON API for the plugin app"""
+"""JSON API for the plugin app."""
 
 from django.conf import settings
 from django.urls import include, re_path
@@ -18,7 +18,7 @@ from plugin.registry import registry
 
 
 class PluginList(generics.ListAPIView):
-    """API endpoint for list of PluginConfig objects
+    """API endpoint for list of PluginConfig objects.
 
     - GET: Return a list of all PluginConfig objects
     """
@@ -77,7 +77,7 @@ class PluginList(generics.ListAPIView):
 
 
 class PluginDetail(generics.RetrieveUpdateDestroyAPIView):
-    """API detail endpoint for PluginConfig object
+    """API detail endpoint for PluginConfig object.
 
     get:
     Return a single PluginConfig object
@@ -94,7 +94,7 @@ class PluginDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class PluginInstall(generics.CreateAPIView):
-    """Endpoint for installing a new plugin"""
+    """Endpoint for installing a new plugin."""
 
     queryset = PluginConfig.objects.none()
     serializer_class = PluginSerializers.PluginConfigInstallSerializer

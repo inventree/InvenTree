@@ -6,9 +6,7 @@ from InvenTree.api_tester import InvenTreeAPITestCase
 
 
 class TestReportTests(InvenTreeAPITestCase):
-    """
-    Tests for the StockItem TestReport templates
-    """
+    """Tests for the StockItem TestReport templates."""
 
     fixtures = [
         'category',

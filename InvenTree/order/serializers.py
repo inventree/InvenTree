@@ -1,4 +1,4 @@
-"""JSON serializers for the Order API"""
+"""JSON serializers for the Order API."""
 
 from datetime import datetime
 from decimal import Decimal
@@ -31,7 +31,7 @@ from users.serializers import OwnerSerializer
 
 
 class AbstractOrderSerializer(serializers.Serializer):
-    """Abstract field definitions for OrderSerializers"""
+    """Abstract field definitions for OrderSerializers."""
 
     total_price = InvenTreeMoneySerializer(
         source='get_total_price',
@@ -43,7 +43,7 @@ class AbstractOrderSerializer(serializers.Serializer):
 
 
 class AbstractExtraLineSerializer(serializers.Serializer):
-    """Abstract Serializer for a ExtraLine object"""
+    """Abstract Serializer for a ExtraLine object."""
 
     def __init__(self, *args, **kwargs):
 
@@ -69,7 +69,7 @@ class AbstractExtraLineSerializer(serializers.Serializer):
 
 
 class AbstractExtraLineMeta:
-    """Abstract Meta for ExtraLine"""
+    """Abstract Meta for ExtraLine."""
 
     fields = [
         'pk',
@@ -86,7 +86,7 @@ class AbstractExtraLineMeta:
 
 
 class PurchaseOrderSerializer(AbstractOrderSerializer, ReferenceIndexingSerializerMixin, InvenTreeModelSerializer):
-    """Serializer for a PurchaseOrder object"""
+    """Serializer for a PurchaseOrder object."""
 
     def __init__(self, *args, **kwargs):
 
@@ -99,7 +99,7 @@ class PurchaseOrderSerializer(AbstractOrderSerializer, ReferenceIndexingSerializ
 
     @staticmethod
     def annotate_queryset(queryset):
-        """Add extra information to the queryset
+        """Add extra information to the queryset.
 
         - Number of lines in the PurchaseOrder
         - Overdue status of the PurchaseOrder
@@ -166,13 +166,13 @@ class PurchaseOrderSerializer(AbstractOrderSerializer, ReferenceIndexingSerializ
 
 
 class PurchaseOrderCancelSerializer(serializers.Serializer):
-    """Serializer for cancelling a PurchaseOrder"""
+    """Serializer for cancelling a PurchaseOrder."""
 
     class Meta:
         fields = [],
 
     def get_context_data(self):
-        """Return custom context information about the order"""
+        """Return custom context information about the order."""
         self.order = self.context['order']
 
         return {
@@ -190,13 +190,13 @@ class PurchaseOrderCancelSerializer(serializers.Serializer):
 
 
 class PurchaseOrderCompleteSerializer(serializers.Serializer):
-    """Serializer for completing a purchase order"""
+    """Serializer for completing a purchase order."""
 
     class Meta:
         fields = []
 
     def get_context_data(self):
-        """Custom context information for this serializer"""
+        """Custom context information for this serializer."""
         order = self.context['order']
 
         return {
@@ -210,7 +210,7 @@ class PurchaseOrderCompleteSerializer(serializers.Serializer):
 
 
 class PurchaseOrderIssueSerializer(serializers.Serializer):
-    """Serializer for issuing (sending) a purchase order"""
+    """Serializer for issuing (sending) a purchase order."""
 
     class Meta:
         fields = []
@@ -356,7 +356,7 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
 
 
 class PurchaseOrderExtraLineSerializer(AbstractExtraLineSerializer, InvenTreeModelSerializer):
-    """Serializer for a PurchaseOrderExtraLine object"""
+    """Serializer for a PurchaseOrderExtraLine object."""
 
     order_detail = PurchaseOrderSerializer(source='order', many=False, read_only=True)
 
@@ -365,7 +365,7 @@ class PurchaseOrderExtraLineSerializer(AbstractExtraLineSerializer, InvenTreeMod
 
 
 class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
-    """A serializer for receiving a single purchase order line item against a purchase order"""
+    """A serializer for receiving a single purchase order line item against a purchase order."""
 
     class Meta:
         fields = [
@@ -448,7 +448,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
     )
 
     def validate_barcode(self, barcode):
-        """Cannot check in a LineItem with a barcode that is already assigned"""
+        """Cannot check in a LineItem with a barcode that is already assigned."""
         # Ignore empty barcode values
         if not barcode or barcode.strip() == '':
             return None
@@ -490,7 +490,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
 
 
 class PurchaseOrderReceiveSerializer(serializers.Serializer):
-    """Serializer for receiving items against a purchase order"""
+    """Serializer for receiving items against a purchase order."""
 
     items = PurchaseOrderLineItemReceiveSerializer(many=True)
 
@@ -546,8 +546,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
         return data
 
     def save(self):
-        """Perform the actual database transaction to receive purchase order items"""
-
+        """Perform the actual database transaction to receive purchase order items."""
         data = self.validated_data
 
         request = self.context['request']
@@ -586,7 +585,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
 
 
 class PurchaseOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
-    """Serializers for the PurchaseOrderAttachment model"""
+    """Serializers for the PurchaseOrderAttachment model."""
 
     class Meta:
         model = order.models.PurchaseOrderAttachment
@@ -607,7 +606,7 @@ class PurchaseOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
 
 
 class SalesOrderSerializer(AbstractOrderSerializer, ReferenceIndexingSerializerMixin, InvenTreeModelSerializer):
-    """Serializers for the SalesOrder object"""
+    """Serializers for the SalesOrder object."""
 
     def __init__(self, *args, **kwargs):
 
@@ -620,7 +619,7 @@ class SalesOrderSerializer(AbstractOrderSerializer, ReferenceIndexingSerializerM
 
     @staticmethod
     def annotate_queryset(queryset):
-        """Add extra information to the queryset
+        """Add extra information to the queryset.
 
         - Number of line items in the SalesOrder
         - Overdue status of the SalesOrder
@@ -750,7 +749,7 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
 
 
 class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
-    """Serializer for a SalesOrderLineItem object"""
+    """Serializer for a SalesOrderLineItem object."""
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -831,7 +830,7 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
 
 
 class SalesOrderShipmentSerializer(InvenTreeModelSerializer):
-    """Serializer for the SalesOrderShipment class"""
+    """Serializer for the SalesOrderShipment class."""
 
     allocations = SalesOrderAllocationSerializer(many=True, read_only=True, location_detail=True)
 
@@ -856,7 +855,7 @@ class SalesOrderShipmentSerializer(InvenTreeModelSerializer):
 
 
 class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
-    """Serializer for completing (shipping) a SalesOrderShipment"""
+    """Serializer for completing (shipping) a SalesOrderShipment."""
 
     class Meta:
         model = order.models.SalesOrderShipment
@@ -906,7 +905,7 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
 
 
 class SalesOrderShipmentAllocationItemSerializer(serializers.Serializer):
-    """A serializer for allocating a single stock-item against a SalesOrder shipment"""
+    """A serializer for allocating a single stock-item against a SalesOrder shipment."""
 
     class Meta:
         fields = [
@@ -978,7 +977,7 @@ class SalesOrderShipmentAllocationItemSerializer(serializers.Serializer):
 
 
 class SalesOrderCompleteSerializer(serializers.Serializer):
-    """DRF serializer for manually marking a sales order as complete"""
+    """DRF serializer for manually marking a sales order as complete."""
 
     def validate(self, data):
 
@@ -1001,7 +1000,7 @@ class SalesOrderCompleteSerializer(serializers.Serializer):
 
 
 class SalesOrderCancelSerializer(serializers.Serializer):
-    """Serializer for marking a SalesOrder as cancelled"""
+    """Serializer for marking a SalesOrder as cancelled."""
 
     def get_context_data(self):
 
@@ -1019,7 +1018,7 @@ class SalesOrderCancelSerializer(serializers.Serializer):
 
 
 class SalesOrderSerialAllocationSerializer(serializers.Serializer):
-    """DRF serializer for allocation of serial numbers against a sales order / shipment"""
+    """DRF serializer for allocation of serial numbers against a sales order / shipment."""
 
     class Meta:
         fields = [
@@ -1038,7 +1037,7 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
     )
 
     def validate_line_item(self, line_item):
-        """Ensure that the line_item is valid"""
+        """Ensure that the line_item is valid."""
         order = self.context['order']
 
         # Ensure that the line item points to the correct order
@@ -1173,7 +1172,7 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
 
 
 class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
-    """DRF serializer for allocation of stock items against a sales order / shipment"""
+    """DRF serializer for allocation of stock items against a sales order / shipment."""
 
     class Meta:
         fields = [
@@ -1192,7 +1191,7 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
     )
 
     def validate_shipment(self, shipment):
-        """Run validation against the provided shipment instance"""
+        """Run validation against the provided shipment instance."""
         order = self.context['order']
 
         if shipment.shipment_date is not None:
@@ -1204,7 +1203,7 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
         return shipment
 
     def validate(self, data):
-        """Serializer validation"""
+        """Serializer validation."""
         data = super().validate(data)
 
         # Extract SalesOrder from serializer context
@@ -1218,7 +1217,7 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
         return data
 
     def save(self):
-        """Perform the allocation of items against this order"""
+        """Perform the allocation of items against this order."""
         data = self.validated_data
 
         items = data['items']
@@ -1240,7 +1239,7 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
 
 
 class SalesOrderExtraLineSerializer(AbstractExtraLineSerializer, InvenTreeModelSerializer):
-    """Serializer for a SalesOrderExtraLine object"""
+    """Serializer for a SalesOrderExtraLine object."""
 
     order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
 
@@ -1249,7 +1248,7 @@ class SalesOrderExtraLineSerializer(AbstractExtraLineSerializer, InvenTreeModelS
 
 
 class SalesOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
-    """Serializers for the SalesOrderAttachment model"""
+    """Serializers for the SalesOrderAttachment model."""
 
     class Meta:
         model = order.models.SalesOrderAttachment

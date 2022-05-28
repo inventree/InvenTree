@@ -11,8 +11,7 @@ from common.settings import currency_code_default, currency_codes
 
 
 class InvenTreeExchange(SimpleExchangeBackend):
-    """
-    Backend for automatically updating currency exchange rates.
+    """Backend for automatically updating currency exchange rates.
 
     Uses the exchangerate.host service API
     """
@@ -30,11 +29,10 @@ class InvenTreeExchange(SimpleExchangeBackend):
         }
 
     def get_response(self, **kwargs):
-        """
-        Custom code to get response from server.
+        """Custom code to get response from server.
+
         Note: Adds a 5-second timeout
         """
-
         url = self.get_url(**kwargs)
 
         try:

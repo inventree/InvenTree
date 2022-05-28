@@ -1,4 +1,4 @@
-"""Plugin model definitions"""
+"""Plugin model definitions."""
 
 import warnings
 
@@ -33,7 +33,7 @@ class MetadataMixin(models.Model):
     )
 
     def get_metadata(self, key: str, backup_value=None):
-        """Finds metadata for this model instance, using the provided key for lookup
+        """Finds metadata for this model instance, using the provided key for lookup.
 
         Args:
             key: String key for requesting metadata. e.g. if a plugin is accessing the metadata, the plugin slug should be used
@@ -115,7 +115,7 @@ class PluginConfig(models.Model):
     # functions
 
     def __init__(self, *args, **kwargs):
-        """Override to set original state of the plugin-config instance"""
+        """Override to set original state of the plugin-config instance."""
         super().__init__(*args, **kwargs)
         self.__org_active = self.active
 
@@ -134,7 +134,7 @@ class PluginConfig(models.Model):
         }
 
     def save(self, force_insert=False, force_update=False, *args, **kwargs):
-        """Extend save method to reload plugins if the 'active' status changes"""
+        """Extend save method to reload plugins if the 'active' status changes."""
         reload = kwargs.pop('no_reload', False)  # check if no_reload flag is set
 
         ret = super().save(force_insert, force_update, *args, **kwargs)
@@ -150,7 +150,7 @@ class PluginConfig(models.Model):
 
 
 class PluginSetting(common.models.BaseInvenTreeSetting):
-    """This model represents settings for individual plugins"""
+    """This model represents settings for individual plugins."""
 
     class Meta:
         unique_together = [
@@ -191,14 +191,14 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
         return super().get_setting_definition(key, **kwargs)
 
     def get_kwargs(self):
-        """Explicit kwargs required to uniquely identify a particular setting object, in addition to the 'key' parameter"""
+        """Explicit kwargs required to uniquely identify a particular setting object, in addition to the 'key' parameter."""
         return {
             'plugin': self.plugin,
         }
 
 
 class NotificationUserSetting(common.models.BaseInvenTreeSetting):
-    """This model represents notification settings for a user"""
+    """This model represents notification settings for a user."""
 
     class Meta:
         unique_together = [
@@ -214,7 +214,7 @@ class NotificationUserSetting(common.models.BaseInvenTreeSetting):
         return super().get_setting_definition(key, **kwargs)
 
     def get_kwargs(self):
-        """Explicit kwargs required to uniquely identify a particular setting object, in addition to the 'key' parameter"""
+        """Explicit kwargs required to uniquely identify a particular setting object, in addition to the 'key' parameter."""
         return {
             'method': self.method,
             'user': self.user,

@@ -1,4 +1,4 @@
-"""Helpers for plugin app"""
+"""Helpers for plugin app."""
 
 import inspect
 import logging
@@ -19,7 +19,7 @@ logger = logging.getLogger('inventree')
 
 # region logging / errors
 class IntegrationPluginError(Exception):
-    """Error that encapsulates another error and adds the path / reference of the raising plugin"""
+    """Error that encapsulates another error and adds the path / reference of the raising plugin."""
 
     def __init__(self, path, message):
         self.path = path
@@ -30,7 +30,7 @@ class IntegrationPluginError(Exception):
 
 
 class MixinImplementationError(ValueError):
-    """Error if mixin was implemented wrong in plugin
+    """Error if mixin was implemented wrong in plugin.
 
     Mostly raised if constant is missing
     """
@@ -38,12 +38,12 @@ class MixinImplementationError(ValueError):
 
 
 class MixinNotImplementedError(NotImplementedError):
-    """Error if necessary mixin function was not overwritten"""
+    """Error if necessary mixin function was not overwritten."""
     pass
 
 
 def log_error(error, reference: str = 'general'):
-    """Log an plugin error"""
+    """Log an plugin error."""
     from plugin import registry
 
     # make sure the registry is set up
@@ -55,7 +55,7 @@ def log_error(error, reference: str = 'general'):
 
 
 def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: str = ''):
-    """Handles an error and casts it as an IntegrationPluginError"""
+    """Handles an error and casts it as an IntegrationPluginError."""
     package_path = traceback.extract_tb(error.__traceback__)[-1].filename
     install_path = sysconfig.get_paths()["purelib"]
     try:
@@ -91,7 +91,7 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: st
 
 # region git-helpers
 def get_git_log(path):
-    """Get dict with info of the last commit to file named in path"""
+    """Get dict with info of the last commit to file named in path."""
     from plugin import registry
 
     output = None
@@ -112,7 +112,7 @@ def get_git_log(path):
 
 
 def check_git_version():
-    """Returns if the current git version supports modern features"""
+    """Returns if the current git version supports modern features."""
     # get version string
     try:
         output = str(subprocess.check_output(['git', '--version'], cwd=os.path.dirname(settings.BASE_DIR)), 'utf-8')
@@ -132,10 +132,10 @@ def check_git_version():
 
 
 class GitStatus:
-    """Class for resolving git gpg singing state"""
+    """Class for resolving git gpg singing state."""
 
     class Definition:
-        """Definition of a git gpg sing state"""
+        """Definition of a git gpg sing state."""
 
         key: str = 'N'
         status: int = 2
@@ -159,7 +159,7 @@ class GitStatus:
 
 # region plugin finders
 def get_modules(pkg):
-    """Get all modules in a package"""
+    """Get all modules in a package."""
     context = {}
     for loader, name, ispkg in pkgutil.walk_packages(pkg.__path__):
         try:
@@ -181,7 +181,7 @@ def get_modules(pkg):
 
 
 def get_classes(module):
-    """Get all classes in a given module"""
+    """Get all classes in a given module."""
     return inspect.getmembers(module, inspect.isclass)
 
 
@@ -228,7 +228,7 @@ def render_template(plugin, template_file, context=None):
 
 
 def render_text(text, context=None):
-    """Locate a raw string with provided context"""
+    """Locate a raw string with provided context."""
     ctx = template.Context(context)
 
     return template.Template(text).render(ctx)

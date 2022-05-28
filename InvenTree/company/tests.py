@@ -81,8 +81,7 @@ class CompanySimpleTest(TestCase):
         self.assertEqual(self.zergm312.price_breaks.count(), 2)
 
     def test_quantity_pricing(self):
-        """ Simple test for quantity pricing """
-
+        """Simple test for quantity pricing."""
         p = self.acme0001.get_price
         self.assertEqual(p(1), 10)
         self.assertEqual(p(4), 40)
@@ -116,10 +115,7 @@ class CompanySimpleTest(TestCase):
         self.assertIsNotNone(m3x12.get_price_info(50))
 
     def test_currency_validation(self):
-        """
-        Test validation for currency selection
-        """
-
+        """Test validation for currency selection."""
         # Create a company with a valid currency code (should pass)
         company = Company.objects.create(
             name='Test',

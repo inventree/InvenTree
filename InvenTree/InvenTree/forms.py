@@ -1,6 +1,4 @@
-"""
-Helper forms which subclass Django forms to provide additional functionality
-"""
+"""Helper forms which subclass Django forms to provide additional functionality."""
 
 import logging
 from urllib.parse import urlencode
@@ -30,7 +28,7 @@ logger = logging.getLogger('inventree')
 
 
 class HelperForm(forms.ModelForm):
-    """ Provides simple integration of crispy_forms extension. """
+    """Provides simple integration of crispy_forms extension."""
 
     # Custom field decorations can be specified here, per form class
     field_prefix = {}
@@ -117,7 +115,7 @@ class HelperForm(forms.ModelForm):
 
 
 class ConfirmForm(forms.Form):
-    """ Generic confirmation form """
+    """Generic confirmation form."""
 
     confirm = forms.BooleanField(
         required=False, initial=False,
@@ -131,8 +129,7 @@ class ConfirmForm(forms.Form):
 
 
 class DeleteForm(forms.Form):
-    """ Generic deletion form which provides simple user confirmation
-    """
+    """Generic deletion form which provides simple user confirmation."""
 
     confirm_delete = forms.BooleanField(
         required=False,
@@ -148,9 +145,7 @@ class DeleteForm(forms.Form):
 
 
 class EditUserForm(HelperForm):
-    """
-    Form for editing user information
-    """
+    """Form for editing user information."""
 
     class Meta:
         model = User
@@ -161,8 +156,7 @@ class EditUserForm(HelperForm):
 
 
 class SetPasswordForm(HelperForm):
-    """ Form for setting user password
-    """
+    """Form for setting user password."""
 
     enter_password = forms.CharField(max_length=100,
                                      min_length=8,
@@ -189,7 +183,7 @@ class SetPasswordForm(HelperForm):
 
 
 class SettingCategorySelectForm(forms.ModelForm):
-    """ Form for setting category settings """
+    """Form for setting category settings."""
 
     category = forms.ModelChoiceField(queryset=PartCategory.objects.all())
 
@@ -220,9 +214,7 @@ class SettingCategorySelectForm(forms.ModelForm):
 
 # override allauth
 class CustomSignupForm(SignupForm):
-    """
-    Override to use dynamic settings
-    """
+    """Override to use dynamic settings."""
     def __init__(self, *args, **kwargs):
         kwargs['email_required'] = InvenTreeSetting.get_setting('LOGIN_MAIL_REQUIRED')
 
@@ -261,9 +253,7 @@ class CustomSignupForm(SignupForm):
 
 
 class RegistratonMixin:
-    """
-    Mixin to check if registration should be enabled
-    """
+    """Mixin to check if registration should be enabled."""
     def is_open_for_signup(self, request, *args, **kwargs):
         if settings.EMAIL_HOST and InvenTreeSetting.get_setting('LOGIN_ENABLE_REG', True):
             return super().is_open_for_signup(request, *args, **kwargs)
@@ -283,20 +273,16 @@ class RegistratonMixin:
 
 
 class CustomAccountAdapter(RegistratonMixin, OTPAdapter, DefaultAccountAdapter):
-    """
-    Override of adapter to use dynamic settings
-    """
+    """Override of adapter to use dynamic settings."""
     def send_mail(self, template_prefix, email, context):
-        """only send mail if backend configured"""
+        """Only send mail if backend configured."""
         if settings.EMAIL_HOST:
             return super().send_mail(template_prefix, email, context)
         return False
 
 
 class CustomSocialAccountAdapter(RegistratonMixin, DefaultSocialAccountAdapter):
-    """
-    Override of adapter to use dynamic settings
-    """
+    """Override of adapter to use dynamic settings."""
     def is_auto_signup_allowed(self, request, sociallogin):
         if InvenTreeSetting.get_setting('LOGIN_SIGNUP_SSO_AUTO', True):
             return super().is_auto_signup_allowed(request, sociallogin)

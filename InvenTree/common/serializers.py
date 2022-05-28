@@ -1,6 +1,4 @@
-"""
-JSON serializers for common components
-"""
+"""JSON serializers for common components."""
 
 from rest_framework import serializers
 
@@ -11,9 +9,7 @@ from InvenTree.serializers import InvenTreeModelSerializer
 
 
 class SettingsSerializer(InvenTreeModelSerializer):
-    """
-    Base serializer for a settings object
-    """
+    """Base serializer for a settings object."""
 
     key = serializers.CharField(read_only=True)
 
@@ -30,10 +26,7 @@ class SettingsSerializer(InvenTreeModelSerializer):
     api_url = serializers.CharField(read_only=True)
 
     def get_choices(self, obj):
-        """
-        Returns the choices available for a given item
-        """
-
+        """Returns the choices available for a given item."""
         results = []
 
         choices = obj.choices()
@@ -48,10 +41,7 @@ class SettingsSerializer(InvenTreeModelSerializer):
         return results
 
     def get_value(self, obj):
-        """
-        Make sure protected values are not returned
-        """
-
+        """Make sure protected values are not returned."""
         # never return protected values
         if obj.protected:
             result = '***'
@@ -62,9 +52,7 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
 
 class GlobalSettingsSerializer(SettingsSerializer):
-    """
-    Serializer for the InvenTreeSetting model
-    """
+    """Serializer for the InvenTreeSetting model."""
 
     class Meta:
         model = InvenTreeSetting
@@ -82,9 +70,7 @@ class GlobalSettingsSerializer(SettingsSerializer):
 
 
 class UserSettingsSerializer(SettingsSerializer):
-    """
-    Serializer for the InvenTreeUserSetting model
-    """
+    """Serializer for the InvenTreeUserSetting model."""
 
     user = serializers.PrimaryKeyRelatedField(read_only=True)
 
@@ -105,8 +91,7 @@ class UserSettingsSerializer(SettingsSerializer):
 
 
 class GenericReferencedSettingSerializer(SettingsSerializer):
-    """
-    Serializer for a GenericReferencedSetting model
+    """Serializer for a GenericReferencedSetting model.
 
     Args:
         MODEL: model class for the serializer
@@ -118,9 +103,9 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
     EXTRA_FIELDS = None
 
     def __init__(self, *args, **kwargs):
-        """Init overrides the Meta class to make it dynamic"""
+        """Init overrides the Meta class to make it dynamic."""
         class CustomMeta:
-            """Scaffold for custom Meta class"""
+            """Scaffold for custom Meta class."""
             fields = [
                 'pk',
                 'key',
@@ -144,9 +129,7 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
 
 
 class NotificationMessageSerializer(InvenTreeModelSerializer):
-    """
-    Serializer for the InvenTreeUserSetting model
-    """
+    """Serializer for the InvenTreeUserSetting model."""
 
     target = serializers.SerializerMethodField(read_only=True)
 

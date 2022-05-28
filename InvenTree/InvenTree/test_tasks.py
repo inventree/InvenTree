@@ -1,6 +1,4 @@
-"""
-Unit tests for task management
-"""
+"""Unit tests for task management."""
 
 from datetime import timedelta
 
@@ -18,19 +16,14 @@ threshold_low = threshold - timedelta(days=1)
 
 
 class ScheduledTaskTests(TestCase):
-    """
-    Unit tests for scheduled tasks
-    """
+    """Unit tests for scheduled tasks."""
 
     def get_tasks(self, name):
 
         return Schedule.objects.filter(func=name)
 
     def test_add_task(self):
-        """
-        Ensure that duplicate tasks cannot be added.
-        """
-
+        """Ensure that duplicate tasks cannot be added."""
         task = 'InvenTree.tasks.heartbeat'
 
         self.assertEqual(self.get_tasks(task).count(), 0)
@@ -53,16 +46,15 @@ class ScheduledTaskTests(TestCase):
 
 
 def get_result():
-    """Demo function for test_offloading"""
+    """Demo function for test_offloading."""
     return 'abc'
 
 
 class InvenTreeTaskTests(TestCase):
-    """Unit tests for tasks"""
+    """Unit tests for tasks."""
 
     def test_offloading(self):
-        """Test task offloading"""
-
+        """Test task offloading."""
         # Run with function ref
         InvenTree.tasks.offload_task(get_result)
 
@@ -83,11 +75,11 @@ class InvenTreeTaskTests(TestCase):
             InvenTree.tasks.offload_task('InvenTree.test_tasks.doesnotexsist')
 
     def test_task_hearbeat(self):
-        """Test the task heartbeat"""
+        """Test the task heartbeat."""
         InvenTree.tasks.offload_task(InvenTree.tasks.heartbeat)
 
     def test_task_delete_successful_tasks(self):
-        """Test the task delete_successful_tasks"""
+        """Test the task delete_successful_tasks."""
         from django_q.models import Success
 
         Success.objects.create(name='abc', func='abc', stopped=threshold, started=threshold_low)
@@ -96,8 +88,7 @@ class InvenTreeTaskTests(TestCase):
         self.assertEqual(len(results), 0)
 
     def test_task_delete_old_error_logs(self):
-        """Test the task delete_old_error_logs"""
-
+        """Test the task delete_old_error_logs."""
         # Create error
         error_obj = Error.objects.create()
         error_obj.when = threshold_low
@@ -115,7 +106,7 @@ class InvenTreeTaskTests(TestCase):
         self.assertEqual(len(errors), 0)
 
     def test_task_check_for_updates(self):
-        """Test the task check_for_updates"""
+        """Test the task check_for_updates."""
         # Check that setting should be empty
         self.assertEqual(InvenTreeSetting.get_setting('INVENTREE_LATEST_VERSION'), '')
 

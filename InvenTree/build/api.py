@@ -1,6 +1,4 @@
-"""
-JSON API for the Build app
-"""
+"""JSON API for the Build app."""
 
 from django.urls import include, re_path
 
@@ -22,9 +20,7 @@ from users.models import Owner
 
 
 class BuildFilter(rest_filters.FilterSet):
-    """
-    Custom filterset for BuildList API endpoint
-    """
+    """Custom filterset for BuildList API endpoint."""
 
     status = rest_filters.NumberFilter(label='Status')
 
@@ -53,10 +49,7 @@ class BuildFilter(rest_filters.FilterSet):
     assigned_to_me = rest_filters.BooleanFilter(label='assigned_to_me', method='filter_assigned_to_me')
 
     def filter_assigned_to_me(self, queryset, name, value):
-        """
-        Filter by orders which are assigned to the current user
-        """
-
+        """Filter by orders which are assigned to the current user."""
         value = str2bool(value)
 
         # Work out who "me" is!
@@ -71,7 +64,7 @@ class BuildFilter(rest_filters.FilterSet):
 
 
 class BuildList(APIDownloadMixin, generics.ListCreateAPIView):
-    """ API endpoint for accessing a list of Build objects.
+    """API endpoint for accessing a list of Build objects.
 
     - GET: Return list of objects (with filters)
     - POST: Create a new Build object
@@ -111,11 +104,7 @@ class BuildList(APIDownloadMixin, generics.ListCreateAPIView):
     ]
 
     def get_queryset(self):
-        """
-        Override the queryset filtering,
-        as some of the fields don't natively play nicely with DRF
-        """
-
+        """Override the queryset filtering, as some of the fields don't natively play nicely with DRF."""
         queryset = super().get_queryset().select_related('part')
 
         queryset = build.serializers.BuildSerializer.annotate_queryset(queryset)
@@ -207,15 +196,14 @@ class BuildList(APIDownloadMixin, generics.ListCreateAPIView):
 
 
 class BuildDetail(generics.RetrieveUpdateAPIView):
-    """ API endpoint for detail view of a Build object """
+    """API endpoint for detail view of a Build object."""
 
     queryset = Build.objects.all()
     serializer_class = build.serializers.BuildSerializer
 
 
 class BuildUnallocate(generics.CreateAPIView):
-    """
-    API endpoint for unallocating stock items from a build order
+    """API endpoint for unallocating stock items from a build order.
 
     - The BuildOrder object is specified by the URL
     - "output" (StockItem) can optionally be specified
@@ -241,7 +229,7 @@ class BuildUnallocate(generics.CreateAPIView):
 
 
 class BuildOrderContextMixin:
-    """ Mixin class which adds build order as serializer context variable """
+    """Mixin class which adds build order as serializer context variable."""
 
     def get_serializer_context(self):
         ctx = super().get_serializer_context()
@@ -258,9 +246,7 @@ class BuildOrderContextMixin:
 
 
 class BuildOutputCreate(BuildOrderContextMixin, generics.CreateAPIView):
-    """
-    API endpoint for creating new build output(s)
-    """
+    """API endpoint for creating new build output(s)"""
 
     queryset = Build.objects.none()
 
@@ -268,9 +254,7 @@ class BuildOutputCreate(BuildOrderContextMixin, generics.CreateAPIView):
 
 
 class BuildOutputComplete(BuildOrderContextMixin, generics.CreateAPIView):
-    """
-    API endpoint for completing build outputs
-    """
+    """API endpoint for completing build outputs."""
 
     queryset = Build.objects.none()
 
@@ -278,9 +262,7 @@ class BuildOutputComplete(BuildOrderContextMixin, generics.CreateAPIView):
 
 
 class BuildOutputDelete(BuildOrderContextMixin, generics.CreateAPIView):
-    """
-    API endpoint for deleting multiple build outputs
-    """
+    """API endpoint for deleting multiple build outputs."""
 
     def get_serializer_context(self):
         ctx = super().get_serializer_context()
@@ -295,9 +277,7 @@ class BuildOutputDelete(BuildOrderContextMixin, generics.CreateAPIView):
 
 
 class BuildFinish(BuildOrderContextMixin, generics.CreateAPIView):
-    """
-    API endpoint for marking a build as finished (completed)
-    """
+    """API endpoint for marking a build as finished (completed)"""
 
     queryset = Build.objects.none()
 
@@ -305,8 +285,7 @@ class BuildFinish(BuildOrderContextMixin, generics.CreateAPIView):
 
 
 class BuildAutoAllocate(BuildOrderContextMixin, generics.CreateAPIView):
-    """
-    API endpoint for 'automatically' allocating stock against a build order.
+    """API endpoint for 'automatically' allocating stock against a build order.
 
     - Only looks at 'untracked' parts
     - If stock exists in a single location, easy!
@@ -320,8 +299,7 @@ class BuildAutoAllocate(BuildOrderContextMixin, generics.CreateAPIView):
 
 
 class BuildAllocate(BuildOrderContextMixin, generics.CreateAPIView):
-    """
-    API endpoint to allocate stock items to a build order
+    """API endpoint to allocate stock items to a build order.
 
     - The BuildOrder object is specified by the URL
     - Items to allocate are specified as a list called "items" with the following options:
@@ -337,23 +315,21 @@ class BuildAllocate(BuildOrderContextMixin, generics.CreateAPIView):
 
 
 class BuildCancel(BuildOrderContextMixin, generics.CreateAPIView):
-    """ API endpoint for cancelling a BuildOrder """
+    """API endpoint for cancelling a BuildOrder."""
 
     queryset = Build.objects.all()
     serializer_class = build.serializers.BuildCancelSerializer
 
 
 class BuildItemDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API endpoint for detail view of a BuildItem object
-    """
+    """API endpoint for detail view of a BuildItem object."""
 
     queryset = BuildItem.objects.all()
     serializer_class = build.serializers.BuildItemSerializer
 
 
 class BuildItemList(generics.ListCreateAPIView):
-    """ API endpoint for accessing a list of BuildItem objects
+    """API endpoint for accessing a list of BuildItem objects.
 
     - GET: Return list of objects
     - POST: Create a new BuildItem object
@@ -375,10 +351,7 @@ class BuildItemList(generics.ListCreateAPIView):
         return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self):
-        """ Override the queryset method,
-        to allow filtering by stock_item.part
-        """
-
+        """Override the queryset method, to allow filtering by stock_item.part."""
         query = BuildItem.objects.all()
 
         query = query.select_related('stock_item__location')
@@ -436,9 +409,7 @@ class BuildItemList(generics.ListCreateAPIView):
 
 
 class BuildAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
-    """
-    API endpoint for listing (and creating) BuildOrderAttachment objects
-    """
+    """API endpoint for listing (and creating) BuildOrderAttachment objects."""
 
     queryset = BuildOrderAttachment.objects.all()
     serializer_class = build.serializers.BuildAttachmentSerializer
@@ -453,9 +424,7 @@ class BuildAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
 
 
 class BuildAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):
-    """
-    Detail endpoint for a BuildOrderAttachment object
-    """
+    """Detail endpoint for a BuildOrderAttachment object."""
 
     queryset = BuildOrderAttachment.objects.all()
     serializer_class = build.serializers.BuildAttachmentSerializer

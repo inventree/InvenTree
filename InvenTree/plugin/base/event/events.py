@@ -1,4 +1,4 @@
-"""Functions for triggering and responding to server side events"""
+"""Functions for triggering and responding to server side events."""
 
 import logging
 
@@ -134,7 +134,7 @@ def allow_table_event(table_name):
 
 @receiver(post_save)
 def after_save(sender, instance, created, **kwargs):
-    """Trigger an event whenever a database entry is saved"""
+    """Trigger an event whenever a database entry is saved."""
     table = sender.objects.model._meta.db_table
 
     instance_id = getattr(instance, 'id', None)
@@ -161,7 +161,7 @@ def after_save(sender, instance, created, **kwargs):
 
 @receiver(post_delete)
 def after_delete(sender, instance, **kwargs):
-    """Trigger an event whenever a database entry is deleted"""
+    """Trigger an event whenever a database entry is deleted."""
     table = sender.objects.model._meta.db_table
 
     if not allow_table_event(table):

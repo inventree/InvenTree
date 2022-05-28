@@ -33,7 +33,6 @@ class BarcodeScan(APIView):
 
     hashing:
     Barcode hashes are calculated using MD5
-
     """
 
     permission_classes = [
@@ -41,7 +40,7 @@ class BarcodeScan(APIView):
     ]
 
     def post(self, request, *args, **kwargs):
-        """Respond to a barcode POST request"""
+        """Respond to a barcode POST request."""
         data = request.data
 
         if 'barcode' not in data:

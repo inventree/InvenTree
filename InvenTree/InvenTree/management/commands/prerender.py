@@ -1,6 +1,4 @@
-"""
-Custom management command to prerender files
-"""
+"""Custom management command to prerender files."""
 
 import os
 
@@ -13,7 +11,7 @@ from django.utils.translation import override as lang_over
 
 
 def render_file(file_name, source, target, locales, ctx):
-    """ renders a file into all provided locales """
+    """Renders a file into all provided locales."""
     for locale in locales:
         target_file = os.path.join(target, locale + '.' + file_name)
         with open(target_file, 'w') as localised_file:
@@ -23,9 +21,7 @@ def render_file(file_name, source, target, locales, ctx):
 
 
 class Command(BaseCommand):
-    """
-    django command to prerender files
-    """
+    """Django command to prerender files."""
 
     def handle(self, *args, **kwargs):
         # static directories

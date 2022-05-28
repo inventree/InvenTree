@@ -201,7 +201,7 @@ class OwnerModelTest(InvenTreeTestCase):
         self.assertEqual(group_as_owner, None)
 
     def test_api(self):
-        """Test user APIs"""
+        """Test user APIs."""
         self.client.logout()
 
         # not authed
@@ -218,7 +218,7 @@ class OwnerModelTest(InvenTreeTestCase):
         # self.do_request(reverse('api-owner-detail', kwargs={'pk': self.user.id}), {})
 
     def test_token(self):
-        """Test token mechanisms"""
+        """Test token mechanisms."""
         self.client.logout()
 
         token = Token.objects.filter(user=self.user)

@@ -1,4 +1,4 @@
-"""Unit tests for the part model database migrations"""
+"""Unit tests for the part model database migrations."""
 
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
 
@@ -6,13 +6,13 @@ from InvenTree import helpers
 
 
 class TestForwardMigrations(MigratorTestCase):
-    """Test entire schema migration sequence for the part app"""
+    """Test entire schema migration sequence for the part app."""
 
     migrate_from = ('part', helpers.getOldestMigrationFile('part'))
     migrate_to = ('part', helpers.getNewestMigrationFile('part'))
 
     def prepare(self):
-        """Create initial data"""
+        """Create initial data."""
         Part = self.old_state.apps.get_model('part', 'part')
 
         Part.objects.create(name='A', description='My part A')

@@ -1,6 +1,4 @@
-"""
-Validate that all URLs specified in template files are correct.
-"""
+"""Validate that all URLs specified in template files are correct."""
 
 import os
 import re
@@ -35,11 +33,7 @@ class URLTest(TestCase):
     ]
 
     def find_files(self, suffix):
-        """
-        Search for all files in the template directories,
-        which can have URLs rendered
-        """
-
+        """Search for all files in the template directories, which can have URLs rendered."""
         template_dirs = [
             ('build', 'templates'),
             ('common', 'templates'),
@@ -71,10 +65,7 @@ class URLTest(TestCase):
         return template_files
 
     def find_urls(self, input_file):
-        """
-        Search for all instances of {% url %} in supplied template file
-        """
-
+        """Search for all instances of {% url %} in supplied template file."""
         urls = []
 
         pattern = "{% url ['\"]([^'\"]+)['\"]([^%]*)%}"
@@ -100,10 +91,7 @@ class URLTest(TestCase):
         return urls
 
     def reverse_url(self, url_pair):
-        """
-        Perform lookup on the URL
-        """
-
+        """Perform lookup on the URL."""
         url, pk = url_pair
 
         # Ignore "renaming"
@@ -125,10 +113,7 @@ class URLTest(TestCase):
             reverse(url)
 
     def check_file(self, f):
-        """
-        Run URL checks for the provided file
-        """
-
+        """Run URL checks for the provided file."""
         urls = self.find_urls(f)
 
         for url in urls:

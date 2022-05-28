@@ -1,4 +1,4 @@
-"""JSON serializers for Part app"""
+"""JSON serializers for Part app."""
 
 import imghdr
 from decimal import Decimal
@@ -35,15 +35,14 @@ from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
 
 
 class CategorySerializer(InvenTreeModelSerializer):
-    """Serializer for PartCategory"""
+    """Serializer for PartCategory."""
 
     def __init__(self, *args, **kwargs):
 
         super().__init__(*args, **kwargs)
 
     def get_starred(self, category):
-        """Return True if the category is directly "starred" by the current user"""
-
+        """Return True if the category is directly "starred" by the current user."""
         return category in self.context.get('starred_categories', [])
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
@@ -72,7 +71,7 @@ class CategorySerializer(InvenTreeModelSerializer):
 
 
 class CategoryTree(InvenTreeModelSerializer):
-    """Serializer for PartCategory tree"""
+    """Serializer for PartCategory tree."""
 
     class Meta:
         model = PartCategory
@@ -84,7 +83,7 @@ class CategoryTree(InvenTreeModelSerializer):
 
 
 class PartAttachmentSerializer(InvenTreeAttachmentSerializer):
-    """Serializer for the PartAttachment class"""
+    """Serializer for the PartAttachment class."""
 
     class Meta:
         model = PartAttachment
@@ -105,7 +104,7 @@ class PartAttachmentSerializer(InvenTreeAttachmentSerializer):
 
 
 class PartTestTemplateSerializer(InvenTreeModelSerializer):
-    """Serializer for the PartTestTemplate class"""
+    """Serializer for the PartTestTemplate class."""
 
     key = serializers.CharField(read_only=True)
 
@@ -195,7 +194,7 @@ class PartThumbSerializer(serializers.Serializer):
 
 
 class PartThumbSerializerUpdate(InvenTreeModelSerializer):
-    """Serializer for updating Part thumbnail"""
+    """Serializer for updating Part thumbnail."""
 
     def validate_image(self, value):
         """Check that file is an image."""
@@ -214,7 +213,7 @@ class PartThumbSerializerUpdate(InvenTreeModelSerializer):
 
 
 class PartParameterTemplateSerializer(InvenTreeModelSerializer):
-    """JSON serializer for the PartParameterTemplate model"""
+    """JSON serializer for the PartParameterTemplate model."""
 
     class Meta:
         model = PartParameterTemplate
@@ -226,7 +225,7 @@ class PartParameterTemplateSerializer(InvenTreeModelSerializer):
 
 
 class PartParameterSerializer(InvenTreeModelSerializer):
-    """JSON serializers for the PartParameter model"""
+    """JSON serializers for the PartParameter model."""
 
     template_detail = PartParameterTemplateSerializer(source='template', many=False, read_only=True)
 
@@ -498,7 +497,7 @@ class PartSerializer(InvenTreeModelSerializer):
 
 
 class PartRelationSerializer(InvenTreeModelSerializer):
-    """Serializer for a PartRelated model"""
+    """Serializer for a PartRelated model."""
 
     part_1_detail = PartSerializer(source='part_1', read_only=True, many=False)
     part_2_detail = PartSerializer(source='part_2', read_only=True, many=False)
@@ -515,7 +514,7 @@ class PartRelationSerializer(InvenTreeModelSerializer):
 
 
 class PartStarSerializer(InvenTreeModelSerializer):
-    """Serializer for a PartStar object"""
+    """Serializer for a PartStar object."""
 
     partname = serializers.CharField(source='part.full_name', read_only=True)
     username = serializers.CharField(source='user.username', read_only=True)
@@ -532,7 +531,7 @@ class PartStarSerializer(InvenTreeModelSerializer):
 
 
 class BomItemSubstituteSerializer(InvenTreeModelSerializer):
-    """Serializer for the BomItemSubstitute class"""
+    """Serializer for the BomItemSubstitute class."""
 
     part_detail = PartBriefSerializer(source='part', read_only=True, many=False)
 
@@ -547,7 +546,7 @@ class BomItemSubstituteSerializer(InvenTreeModelSerializer):
 
 
 class BomItemSerializer(InvenTreeModelSerializer):
-    """Serializer for BomItem object"""
+    """Serializer for BomItem object."""
 
     price_range = serializers.CharField(read_only=True)
 
@@ -638,7 +637,6 @@ class BomItemSerializer(InvenTreeModelSerializer):
         Annotations:
             available_stock: The amount of stock available for the sub_part Part object
         """
-
         """
         Construct an "available stock" quantity:
         available_stock = total_stock - build_order_allocations - sales_order_allocations
@@ -767,7 +765,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
         return queryset
 
     def get_purchase_price_range(self, obj):
-        """Return purchase price range"""
+        """Return purchase price range."""
         try:
             purchase_price_min = obj.purchase_price_min
         except AttributeError:
@@ -797,7 +795,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
         return purchase_price_range
 
     def get_purchase_price_avg(self, obj):
-        """Return purchase price average"""
+        """Return purchase price average."""
         try:
             purchase_price_avg = obj.purchase_price_avg
         except AttributeError:
@@ -843,7 +841,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
 
 class CategoryParameterTemplateSerializer(InvenTreeModelSerializer):
-    """Serializer for PartCategoryParameterTemplate"""
+    """Serializer for PartCategoryParameterTemplate."""
 
     parameter_template = PartParameterTemplateSerializer(many=False,
                                                          read_only=True)
@@ -862,7 +860,7 @@ class CategoryParameterTemplateSerializer(InvenTreeModelSerializer):
 
 
 class PartCopyBOMSerializer(serializers.Serializer):
-    """Serializer for copying a BOM from another part"""
+    """Serializer for copying a BOM from another part."""
 
     class Meta:
         fields = [
@@ -883,7 +881,7 @@ class PartCopyBOMSerializer(serializers.Serializer):
     )
 
     def validate_part(self, part):
-        """Check that a 'valid' part was selected"""
+        """Check that a 'valid' part was selected."""
         return part
 
     remove_existing = serializers.BooleanField(
@@ -911,7 +909,7 @@ class PartCopyBOMSerializer(serializers.Serializer):
     )
 
     def save(self):
-        """Actually duplicate the BOM"""
+        """Actually duplicate the BOM."""
         base_part = self.context['part']
 
         data = self.validated_data
@@ -961,8 +959,7 @@ class BomImportUploadSerializer(DataFileUploadSerializer):
 
 
 class BomImportExtractSerializer(DataFileExtractSerializer):
-    """
-    """
+    """"""
 
     TARGET_MODEL = BomItem
 

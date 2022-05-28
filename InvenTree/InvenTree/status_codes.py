@@ -2,8 +2,8 @@ from django.utils.translation import gettext_lazy as _
 
 
 class StatusCode:
-    """
-    Base class for representing a set of StatusCodes.
+    """Base class for representing a set of StatusCodes.
+
     This is used to map a set of integer values to text.
     """
 
@@ -11,10 +11,7 @@ class StatusCode:
 
     @classmethod
     def render(cls, key, large=False):
-        """
-        Render the value as a HTML label.
-        """
-
+        """Render the value as a HTML label."""
         # If the key cannot be found, pass it back
         if key not in cls.options.keys():
             return key
@@ -31,10 +28,7 @@ class StatusCode:
 
     @classmethod
     def list(cls):
-        """
-        Return the StatusCode options as a list of mapped key / value items
-        """
-
+        """Return the StatusCode options as a list of mapped key / value items."""
         codes = []
 
         for key in cls.options.keys():
@@ -71,12 +65,12 @@ class StatusCode:
 
     @classmethod
     def label(cls, value):
-        """ Return the status code label associated with the provided value """
+        """Return the status code label associated with the provided value."""
         return cls.options.get(value, value)
 
     @classmethod
     def value(cls, label):
-        """ Return the value associated with the provided label """
+        """Return the value associated with the provided label."""
         for k in cls.options.keys():
             if cls.options[k].lower() == label.lower():
                 return k
@@ -85,9 +79,7 @@ class StatusCode:
 
 
 class PurchaseOrderStatus(StatusCode):
-    """
-    Defines a set of status codes for a PurchaseOrder
-    """
+    """Defines a set of status codes for a PurchaseOrder."""
 
     # Order status codes
     PENDING = 10  # Order is pending (not yet placed)
@@ -130,7 +122,7 @@ class PurchaseOrderStatus(StatusCode):
 
 
 class SalesOrderStatus(StatusCode):
-    """ Defines a set of status codes for a SalesOrder """
+    """Defines a set of status codes for a SalesOrder."""
 
     PENDING = 10  # Order is pending
     SHIPPED = 20  # Order has been shipped to customer

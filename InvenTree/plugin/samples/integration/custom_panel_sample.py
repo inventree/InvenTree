@@ -1,4 +1,4 @@
-"""Sample plugin which renders custom panels on certain pages"""
+"""Sample plugin which renders custom panels on certain pages."""
 
 from part.views import PartDetail
 from plugin import InvenTreePlugin

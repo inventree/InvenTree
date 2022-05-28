@@ -8,9 +8,7 @@ from .models import Company
 
 
 class CompanyTest(InvenTreeAPITestCase):
-    """
-    Series of tests for the Company DRF API
-    """
+    """Series of tests for the Company DRF API."""
 
     roles = [
         'purchase_order.add',
@@ -45,10 +43,7 @@ class CompanyTest(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), 2)
 
     def test_company_detail(self):
-        """
-        Tests for the Company detail endpoint
-        """
-
+        """Tests for the Company detail endpoint."""
         url = reverse('api-company-detail', kwargs={'pk': self.acme.pk})
         response = self.get(url)
 
@@ -71,20 +66,14 @@ class CompanyTest(InvenTreeAPITestCase):
         self.assertEqual(response.data['currency'], 'NZD')
 
     def test_company_search(self):
-        """
-        Test search functionality in company list
-        """
-
+        """Test search functionality in company list."""
         url = reverse('api-company-list')
         data = {'search': 'cup'}
         response = self.get(url, data)
         self.assertEqual(len(response.data), 2)
 
     def test_company_create(self):
-        """
-        Test that we can create a company via the API!
-        """
-
+        """Test that we can create a company via the API!"""
         url = reverse('api-company-list')
 
         # Name is required
@@ -146,9 +135,7 @@ class CompanyTest(InvenTreeAPITestCase):
 
 
 class ManufacturerTest(InvenTreeAPITestCase):
-    """
-    Series of tests for the Manufacturer DRF API
-    """
+    """Series of tests for the Manufacturer DRF API."""
 
     fixtures = [
         'category',
@@ -191,9 +178,7 @@ class ManufacturerTest(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), 2)
 
     def test_manufacturer_part_detail(self):
-        """
-        Tests for the ManufacturerPart detail endpoint
-        """
+        """Tests for the ManufacturerPart detail endpoint."""
         url = reverse('api-manufacturer-part-detail', kwargs={'pk': 1})
 
         response = self.get(url)

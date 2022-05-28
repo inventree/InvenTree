@@ -1,4 +1,4 @@
-"""Plugin mixin class for events"""
+"""Plugin mixin class for events."""
 
 from plugin.helpers import MixinNotImplementedError
 
@@ -10,7 +10,7 @@ class EventMixin:
     """
 
     def process_event(self, event, *args, **kwargs):
-        """Function to handle events
+        """Function to handle events.
 
         Must be overridden by plugin
         """
@@ -18,7 +18,7 @@ class EventMixin:
         raise MixinNotImplementedError
 
     class MixinMeta:
-        """Meta options for this mixin"""
+        """Meta options for this mixin."""
 
         MIXIN_NAME = 'Events'
 

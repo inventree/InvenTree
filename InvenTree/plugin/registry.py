@@ -1,4 +1,4 @@
-"""Registry for loading and managing multiple plugins at run-time
+"""Registry for loading and managing multiple plugins at run-time.
 
 - Holds the class and the object that contains all code to maintain plugin states
 - Manages setup and teardown of plugin class instances
@@ -30,7 +30,7 @@ logger = logging.getLogger('inventree')
 
 
 class PluginsRegistry:
-    """The PluginsRegistry class"""
+    """The PluginsRegistry class."""
 
     def __init__(self) -> None:
         # plugin registry
@@ -79,7 +79,7 @@ class PluginsRegistry:
     # region public functions
     # region loading / unloading
     def load_plugins(self):
-        """Load and activate all IntegrationPlugins"""
+        """Load and activate all IntegrationPlugins."""
         if not settings.PLUGINS_ENABLED:
             # Plugins not enabled, do nothing
             return  # pragma: no cover
@@ -134,7 +134,7 @@ class PluginsRegistry:
         logger.info('Finished loading plugins')
 
     def unload_plugins(self):
-        """Unload and deactivate all IntegrationPlugins"""
+        """Unload and deactivate all IntegrationPlugins."""
         if not settings.PLUGINS_ENABLED:
             # Plugins not enabled, do nothing
             return  # pragma: no cover
@@ -158,7 +158,7 @@ class PluginsRegistry:
         logger.info('Finished unloading plugins')
 
     def reload_plugins(self):
-        """Safely reload IntegrationPlugins"""
+        """Safely reload IntegrationPlugins."""
         # Do not reload whe currently loading
         if self.is_loading:
             return  # pragma: no cover
@@ -172,7 +172,7 @@ class PluginsRegistry:
         logger.info('Finished reloading plugins')
 
     def collect_plugins(self):
-        """Collect plugins from all possible ways of loading"""
+        """Collect plugins from all possible ways of loading."""
         if not settings.PLUGINS_ENABLED:
             # Plugins not enabled, do nothing
             return  # pragma: no cover
@@ -201,7 +201,7 @@ class PluginsRegistry:
         logger.info(", ".join([a.__module__ for a in self.plugin_modules]))
 
     def install_plugin_file(self):
-        """Make sure all plugins are installed in the current enviroment"""
+        """Make sure all plugins are installed in the current enviroment."""
         if settings.PLUGIN_FILE_CHECKED:
             logger.info('Plugin file was already checked')
             return True
@@ -222,7 +222,7 @@ class PluginsRegistry:
 
     # region registry functions
     def with_mixin(self, mixin: str, active=None):
-        """Returns reference to all plugins that have a specified mixin enabled"""
+        """Returns reference to all plugins that have a specified mixin enabled."""
         result = []
 
         for plugin in self.plugins.values():
@@ -243,7 +243,7 @@ class PluginsRegistry:
 
     # region general internal loading /activating / deactivating / deloading
     def _init_plugins(self, disabled=None):
-        """Initialise all found plugins
+        """Initialise all found plugins.
 
         :param disabled: loading path of disabled app, defaults to None
         :type disabled: str, optional
@@ -312,7 +312,7 @@ class PluginsRegistry:
                 self.plugins_inactive[plug_key] = plugin_db_setting  # pragma: no cover
 
     def _activate_plugins(self, force_reload=False):
-        """Run activation functions for all plugins
+        """Run activation functions for all plugins.
 
         :param force_reload: force reload base apps, defaults to False
         :type force_reload: bool, optional
@@ -326,7 +326,7 @@ class PluginsRegistry:
         self.activate_plugin_app(plugins, force_reload=force_reload)
 
     def _deactivate_plugins(self):
-        """Run deactivation functions for all plugins"""
+        """Run deactivation functions for all plugins."""
         self.deactivate_plugin_app()
         self.deactivate_plugin_schedule()
         self.deactivate_plugin_settings()
@@ -400,7 +400,7 @@ class PluginsRegistry:
             logger.warning("activate_integration_schedule failed, database not ready")
 
     def deactivate_plugin_schedule(self):
-        """Deactivate ScheduleMixin
+        """Deactivate ScheduleMixin.
 
         currently nothing is done
         """
@@ -478,7 +478,7 @@ class PluginsRegistry:
                 reload(app_config.module.admin)
 
     def _get_plugin_path(self, plugin):
-        """Parse plugin path
+        """Parse plugin path.
 
         The input can be eiter:
         - a local file / dir
@@ -576,7 +576,7 @@ class PluginsRegistry:
         self.is_loading = False
 
     def _try_reload(self, cmd, *args, **kwargs):
-        """Wrapper to try reloading the apps
+        """Wrapper to try reloading the apps.
 
         Throws an custom error that gets handled by the loading function
         """
@@ -592,5 +592,5 @@ registry = PluginsRegistry()
 
 
 def call_function(plugin_name, function_name, *args, **kwargs):
-    """Global helper function to call a specific member function of a plugin"""
+    """Global helper function to call a specific member function of a plugin."""
     return registry.call_plugin_function(plugin_name, function_name, *args, **kwargs)

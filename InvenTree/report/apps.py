@@ -14,7 +14,7 @@ class ReportConfig(AppConfig):
     name = 'report'
 
     def ready(self):
-        """This function is called whenever the report app is loaded"""
+        """This function is called whenever the report app is loaded."""
         if canAppAccessDatabase(allow_test=True):
             self.create_default_test_reports()
             self.create_default_build_reports()
@@ -76,7 +76,7 @@ class ReportConfig(AppConfig):
                 pass
 
     def create_default_test_reports(self):
-        """Create database entries for the default TestReport templates, if they do not already exist"""
+        """Create database entries for the default TestReport templates, if they do not already exist."""
         try:
             from .models import TestReport
         except:  # pragma: no cover

@@ -1,6 +1,4 @@
-"""
-Tests for the company model database migrations
-"""
+"""Tests for the company model database migrations."""
 
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
 
@@ -13,10 +11,7 @@ class TestForwardMigrations(MigratorTestCase):
     migrate_to = ('company', helpers.getNewestMigrationFile('company'))
 
     def prepare(self):
-        """
-        Create some simple Company data, and ensure that it migrates OK
-        """
-
+        """Create some simple Company data, and ensure that it migrates OK."""
         Company = self.old_state.apps.get_model('company', 'company')
 
         Company.objects.create(
@@ -33,22 +28,18 @@ class TestForwardMigrations(MigratorTestCase):
 
 
 class TestManufacturerField(MigratorTestCase):
-    """
-    Tests for migration 0019 which migrates from old 'manufacturer_name' field to new 'manufacturer' field
-    """
+    """Tests for migration 0019 which migrates from old 'manufacturer_name' field to new 'manufacturer' field."""
 
     migrate_from = ('company', '0018_supplierpart_manufacturer')
     migrate_to = ('company', '0019_auto_20200413_0642')
 
     def prepare(self):
-        """
-        Prepare the database by adding some test data 'before' the change:
+        """Prepare the database by adding some test data 'before' the change:
 
         - Part object
         - Company object (supplier)
         - SupplierPart object
         """
-
         Part = self.old_state.apps.get_model('part', 'part')
         Company = self.old_state.apps.get_model('company', 'company')
         SupplierPart = self.old_state.apps.get_model('company', 'supplierpart')
@@ -85,10 +76,7 @@ class TestManufacturerField(MigratorTestCase):
         self.assertEqual(Company.objects.count(), 1)
 
     def test_company_objects(self):
-        """
-        Test that the new companies have been created successfully
-        """
-
+        """Test that the new companies have been created successfully."""
         # Two additional company objects should have been created
         Company = self.new_state.apps.get_model('company', 'company')
         self.assertEqual(Company.objects.count(), 3)
@@ -108,22 +96,18 @@ class TestManufacturerField(MigratorTestCase):
 
 
 class TestManufacturerPart(MigratorTestCase):
-    """
-    Tests for migration 0034-0037 which added and transitioned to the ManufacturerPart model
-    """
+    """Tests for migration 0034-0037 which added and transitioned to the ManufacturerPart model."""
 
     migrate_from = ('company', '0033_auto_20210410_1528')
     migrate_to = ('company', '0037_supplierpart_update_3')
 
     def prepare(self):
-        """
-        Prepare the database by adding some test data 'before' the change:
+        """Prepare the database by adding some test data 'before' the change:
 
         - Part object
         - Company object (supplier)
         - SupplierPart object
         """
-
         Part = self.old_state.apps.get_model('part', 'part')
         Company = self.old_state.apps.get_model('company', 'company')
         SupplierPart = self.old_state.apps.get_model('company', 'supplierpart')
@@ -214,10 +198,7 @@ class TestManufacturerPart(MigratorTestCase):
         )
 
     def test_manufacturer_part_objects(self):
-        """
-        Test that the new companies have been created successfully
-        """
-
+        """Test that the new companies have been created successfully."""
         # Check on the SupplierPart objects
         SupplierPart = self.new_state.apps.get_model('company', 'supplierpart')
 
@@ -238,16 +219,13 @@ class TestManufacturerPart(MigratorTestCase):
 
 
 class TestCurrencyMigration(MigratorTestCase):
-    """
-    Tests for upgrade from basic currency support to django-money
-    """
+    """Tests for upgrade from basic currency support to django-money."""
 
     migrate_from = ('company', '0025_auto_20201110_1001')
     migrate_to = ('company', '0026_auto_20201110_1011')
 
     def prepare(self):
-        """
-        Prepare some data:
+        """Prepare some data:
 
         - A part to buy
         - A supplier to buy from
@@ -255,7 +233,6 @@ class TestCurrencyMigration(MigratorTestCase):
         - Multiple currency objects
         - Multiple supplier price breaks
         """
-
         Part = self.old_state.apps.get_model('part', 'part')
 
         part = Part.objects.create(

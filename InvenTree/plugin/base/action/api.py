@@ -1,4 +1,4 @@
-"""APIs for action plugins"""
+"""APIs for action plugins."""
 
 from django.utils.translation import gettext_lazy as _
 

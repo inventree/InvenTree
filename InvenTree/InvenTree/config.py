@@ -1,6 +1,4 @@
-"""
-Helper functions for loading InvenTree configuration options
-"""
+"""Helper functions for loading InvenTree configuration options."""
 
 import logging
 import os
@@ -10,17 +8,15 @@ logger = logging.getLogger('inventree')
 
 
 def get_base_dir():
-    """ Returns the base (top-level) InvenTree directory """
+    """Returns the base (top-level) InvenTree directory."""
     return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def get_config_file():
-    """
-    Returns the path of the InvenTree configuration file.
+    """Returns the path of the InvenTree configuration file.
 
     Note: It will be created it if does not already exist!
     """
-
     base_dir = get_base_dir()
 
     cfg_filename = os.getenv('INVENTREE_CONFIG_FILE')
@@ -43,8 +39,7 @@ def get_config_file():
 
 
 def get_plugin_file():
-    """
-    Returns the path of the InvenTree plugins specification file.
+    """Returns the path of the InvenTree plugins specification file.
 
     Note: It will be created if it does not already exist!
     """
@@ -70,14 +65,12 @@ def get_plugin_file():
 
 
 def get_setting(environment_var, backup_val, default_value=None):
-    """
-    Helper function for retrieving a configuration setting value
+    """Helper function for retrieving a configuration setting value.
 
     - First preference is to look for the environment variable
     - Second preference is to look for the value of the settings file
     - Third preference is the default value
     """
-
     val = os.getenv(environment_var)
 
     if val is not None:

@@ -1,5 +1,4 @@
-"""
-Custom management command to rebuild all MPTT models
+"""Custom management command to rebuild all MPTT models.
 
 - This is crucial after importing any fixtures, etc
 """
@@ -8,9 +7,7 @@ from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
-    """
-    Rebuild all database models which leverage the MPTT structure.
-    """
+    """Rebuild all database models which leverage the MPTT structure."""
 
     def handle(self, *args, **kwargs):
 

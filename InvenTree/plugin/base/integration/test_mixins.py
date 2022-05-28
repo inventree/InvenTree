@@ -1,4 +1,4 @@
-"""Unit tests for base mixins for plugins"""
+"""Unit tests for base mixins for plugins."""
 
 from django.conf import settings
 from django.test import TestCase
@@ -170,7 +170,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
             API_TOKEN_SETTING = 'API_TOKEN'
 
             def get_external_url(self, simple: bool = True):
-                """Returns data from the sample endpoint"""
+                """Returns data from the sample endpoint."""
                 return self.api_call('api/users/2', simple_response=simple)
         self.mixin = MixinCls()
 
@@ -183,7 +183,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         self.mixin_wrong2 = WrongCLS2()
 
     def test_base_setup(self):
-        """Test that the base settings work"""
+        """Test that the base settings work."""
         # check init
         self.assertTrue(self.mixin.has_api_call)
         # api_url
@@ -194,7 +194,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         self.assertEqual(headers, {'Bearer': '', 'Content-Type': 'application/json'})
 
     def test_args(self):
-        """Test that building up args work"""
+        """Test that building up args work."""
         # api_build_url_args
         # 1 arg
         result = self.mixin.api_build_url_args({'a': 'b'})
@@ -207,7 +207,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         self.assertEqual(result, '?a=b&c=d,e,f')
 
     def test_api_call(self):
-        """Test that api calls work"""
+        """Test that api calls work."""
         # api_call
         result = self.mixin.get_external_url()
         self.assertTrue(result)
@@ -237,7 +237,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
         self.assertEqual(result['page'], 2)
 
     def test_function_errors(self):
-        """Test function errors"""
+        """Test function errors."""
         # wrongly defined plugins should not load
         with self.assertRaises(MixinNotImplementedError):
             self.mixin_wrong.has_api_call()
@@ -248,7 +248,7 @@ class APICallMixinTest(BaseMixinDefinition, TestCase):
 
 
 class PanelMixinTests(InvenTreeTestCase):
-    """Test that the PanelMixin plugin operates correctly"""
+    """Test that the PanelMixin plugin operates correctly."""
 
     fixtures = [
         'category',
@@ -260,7 +260,7 @@ class PanelMixinTests(InvenTreeTestCase):
     roles = 'all'
 
     def test_installed(self):
-        """Test that the sample panel plugin is installed"""
+        """Test that the sample panel plugin is installed."""
         plugins = registry.with_mixin('panel')
 
         self.assertTrue(len(plugins) > 0)
@@ -272,7 +272,7 @@ class PanelMixinTests(InvenTreeTestCase):
         self.assertEqual(len(plugins), 0)
 
     def test_disabled(self):
-        """Test that the panels *do not load* if the plugin is not enabled"""
+        """Test that the panels *do not load* if the plugin is not enabled."""
         plugin = registry.get_plugin('samplepanel')
 
         plugin.set_setting('ENABLE_HELLO_WORLD', True)
@@ -301,7 +301,7 @@ class PanelMixinTests(InvenTreeTestCase):
             self.assertNotIn('Custom Part Panel', str(response.content))
 
     def test_enabled(self):
-        """Test that the panels *do* load if the plugin is enabled"""
+        """Test that the panels *do* load if the plugin is enabled."""
         plugin = registry.get_plugin('samplepanel')
 
         self.assertEqual(len(registry.with_mixin('panel', active=True)), 0)
@@ -375,7 +375,7 @@ class PanelMixinTests(InvenTreeTestCase):
         self.assertEqual(Error.objects.count(), n_errors + len(urls))
 
     def test_mixin(self):
-        """Test that ImplementationError is raised"""
+        """Test that ImplementationError is raised."""
         with self.assertRaises(MixinNotImplementedError):
             class Wrong(PanelMixin, InvenTreePlugin):
                 pass

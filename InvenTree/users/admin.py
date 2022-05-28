@@ -73,7 +73,7 @@ class InvenTreeGroupAdminForm(forms.ModelForm):
 
 
 class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
-    """Custom admin interface for the Group model"""
+    """Custom admin interface for the Group model."""
 
     form = InvenTreeGroupAdminForm
 
@@ -85,7 +85,7 @@ class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
                     'stock_item', 'build', 'purchase_order', 'sales_order')
 
     def get_rule_set(self, obj, rule_set_type):
-        """Return list of permissions for the given ruleset"""
+        """Return list of permissions for the given ruleset."""
         # Get all rulesets associated to object
         rule_sets = RuleSet.objects.filter(group=obj.pk)
 
@@ -206,7 +206,7 @@ class InvenTreeUserAdmin(UserAdmin):
 
 
 class OwnerAdmin(admin.ModelAdmin):
-    """Custom admin interface for the Owner model"""
+    """Custom admin interface for the Owner model."""
     pass
 
 

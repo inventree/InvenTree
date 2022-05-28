@@ -11,7 +11,7 @@ import part.models
 
 
 class BuildResource(ModelResource):
-    """Class for managing import/export of Build data"""
+    """Class for managing import/export of Build data."""
     # For some reason, we need to specify the fields individually for this ModelResource,
     # but we don't for other ones.
     # TODO: 2022-05-12 - Need to investigate why this is the case!

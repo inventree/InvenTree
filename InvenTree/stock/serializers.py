@@ -1,4 +1,4 @@
-"""JSON serializers for Stock app"""
+"""JSON serializers for Stock app."""
 
 from datetime import datetime, timedelta
 from decimal import Decimal
@@ -27,7 +27,7 @@ from .models import (StockItem, StockItemAttachment, StockItemTestResult,
 
 
 class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """Provides a brief serializer for a StockLocation object"""
+    """Provides a brief serializer for a StockLocation object."""
 
     class Meta:
         model = StockLocation
@@ -39,7 +39,7 @@ class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 
 class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
-    """Brief serializers for a StockItem"""
+    """Brief serializers for a StockItem."""
 
     location_name = serializers.CharField(source='location', read_only=True)
     part_name = serializers.CharField(source='part.full_name', read_only=True)
@@ -74,7 +74,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """
 
     def update(self, instance, validated_data):
-        """Custom update method to pass the user information through to the instance"""
+        """Custom update method to pass the user information through to the instance."""
         instance._user = self.context['user']
 
         return super().update(instance, validated_data)
@@ -272,7 +272,7 @@ class SerializeStockItemSerializer(serializers.Serializer):
     )
 
     def validate_quantity(self, quantity):
-        """Validate that the quantity value is correct"""
+        """Validate that the quantity value is correct."""
         item = self.context['item']
 
         if quantity < 0:
@@ -308,7 +308,7 @@ class SerializeStockItemSerializer(serializers.Serializer):
     )
 
     def validate(self, data):
-        """Check that the supplied serial numbers are valid"""
+        """Check that the supplied serial numbers are valid."""
         data = super().validate(data)
 
         item = self.context['item']
@@ -363,7 +363,7 @@ class SerializeStockItemSerializer(serializers.Serializer):
 
 
 class InstallStockItemSerializer(serializers.Serializer):
-    """Serializer for installing a stock item into a given part"""
+    """Serializer for installing a stock item into a given part."""
 
     stock_item = serializers.PrimaryKeyRelatedField(
         queryset=StockItem.objects.all(),
@@ -381,7 +381,7 @@ class InstallStockItemSerializer(serializers.Serializer):
     )
 
     def validate_stock_item(self, stock_item):
-        """Validate the selected stock item"""
+        """Validate the selected stock item."""
         if not stock_item.in_stock:
             # StockItem must be in stock to be "installed"
             raise ValidationError(_("Stock item is unavailable"))
@@ -396,7 +396,7 @@ class InstallStockItemSerializer(serializers.Serializer):
         return stock_item
 
     def save(self):
-        """Install the selected stock item into this one"""
+        """Install the selected stock item into this one."""
         data = self.validated_data
 
         stock_item = data['stock_item']
@@ -414,7 +414,7 @@ class InstallStockItemSerializer(serializers.Serializer):
 
 
 class UninstallStockItemSerializer(serializers.Serializer):
-    """API serializers for uninstalling an installed item from a stock item"""
+    """API serializers for uninstalling an installed item from a stock item."""
 
     class Meta:
         fields = [
@@ -454,7 +454,7 @@ class UninstallStockItemSerializer(serializers.Serializer):
 
 
 class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """Serializer for a simple tree view"""
+    """Serializer for a simple tree view."""
 
     class Meta:
         model = StockLocation
@@ -466,7 +466,7 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 
 class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """Detailed information about a stock location"""
+    """Detailed information about a stock location."""
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
@@ -490,7 +490,7 @@ class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 
 class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSerializer):
-    """Serializer for StockItemAttachment model"""
+    """Serializer for StockItemAttachment model."""
 
     def __init__(self, *args, **kwargs):
         user_detail = kwargs.pop('user_detail', False)
@@ -527,7 +527,7 @@ class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSer
 
 
 class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """Serializer for the StockItemTestResult model"""
+    """Serializer for the StockItemTestResult model."""
 
     user_detail = InvenTree.serializers.UserSerializerBrief(source='user', read_only=True)
 
@@ -568,7 +568,7 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
 
 
 class StockTrackingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """Serializer for StockItemTracking model"""
+    """Serializer for StockItemTracking model."""
 
     def __init__(self, *args, **kwargs):
 
@@ -761,7 +761,7 @@ class StockMergeItemSerializer(serializers.Serializer):
 
 
 class StockMergeSerializer(serializers.Serializer):
-    """Serializer for merging two (or more) stock items together"""
+    """Serializer for merging two (or more) stock items together."""
 
     class Meta:
         fields = [
@@ -904,7 +904,7 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
 
 
 class StockAdjustmentSerializer(serializers.Serializer):
-    """Base class for managing stock adjustment actions via the API"""
+    """Base class for managing stock adjustment actions via the API."""
 
     class Meta:
         fields = [
@@ -934,7 +934,7 @@ class StockAdjustmentSerializer(serializers.Serializer):
 
 
 class StockCountSerializer(StockAdjustmentSerializer):
-    """Serializer for counting stock items"""
+    """Serializer for counting stock items."""
 
     def save(self):
 

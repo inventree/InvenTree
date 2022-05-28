@@ -1,4 +1,4 @@
-"""Tests for the Order API"""
+"""Tests for the Order API."""
 
 import io
 from datetime import datetime, timedelta
@@ -37,7 +37,7 @@ class OrderTest(InvenTreeAPITestCase):
         super().setUp()
 
     def filter(self, filters, count):
-        """Test API filters"""
+        """Test API filters."""
         response = self.get(
             self.LIST_URL,
             filters
@@ -50,7 +50,7 @@ class OrderTest(InvenTreeAPITestCase):
 
 
 class PurchaseOrderTest(OrderTest):
-    """Tests for the PurchaseOrder API"""
+    """Tests for the PurchaseOrder API."""
 
     LIST_URL = reverse('api-po-list')
 
@@ -72,7 +72,7 @@ class PurchaseOrderTest(OrderTest):
         self.filter({'status': 40}, 1)
 
     def test_overdue(self):
-        """Test "overdue" status"""
+        """Test "overdue" status."""
         self.filter({'overdue': True}, 0)
         self.filter({'overdue': False}, 7)
 
@@ -97,7 +97,7 @@ class PurchaseOrderTest(OrderTest):
         self.assertEqual(data['description'], 'Ordering some screws')
 
     def test_po_reference(self):
-        """test that a reference with a too big / small reference is not possible"""
+        """Test that a reference with a too big / small reference is not possible."""
         # get permissions
         self.assignRole('purchase_order.add')
 
@@ -123,7 +123,7 @@ class PurchaseOrderTest(OrderTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_po_operations(self):
-        """Test that we can create / edit and delete a PurchaseOrder via the API"""
+        """Test that we can create / edit and delete a PurchaseOrder via the API."""
         n = models.PurchaseOrder.objects.count()
 
         url = reverse('api-po-list')
@@ -210,7 +210,7 @@ class PurchaseOrderTest(OrderTest):
         response = self.get(url, expected_code=404)
 
     def test_po_create(self):
-        """Test that we can create a new PurchaseOrder via the API"""
+        """Test that we can create a new PurchaseOrder via the API."""
         self.assignRole('purchase_order.add')
 
         self.post(
@@ -224,7 +224,7 @@ class PurchaseOrderTest(OrderTest):
         )
 
     def test_po_cancel(self):
-        """Test the PurchaseOrderCancel API endpoint"""
+        """Test the PurchaseOrderCancel API endpoint."""
         po = models.PurchaseOrder.objects.get(pk=1)
 
         self.assertEqual(po.status, PurchaseOrderStatus.PENDING)
@@ -250,7 +250,7 @@ class PurchaseOrderTest(OrderTest):
         self.post(url, {}, expected_code=400)
 
     def test_po_complete(self):
-        """ Test the PurchaseOrderComplete API endpoint """
+        """Test the PurchaseOrderComplete API endpoint."""
         po = models.PurchaseOrder.objects.get(pk=3)
 
         url = reverse('api-po-complete', kwargs={'pk': po.pk})
@@ -269,7 +269,7 @@ class PurchaseOrderTest(OrderTest):
         self.assertEqual(po.status, PurchaseOrderStatus.COMPLETE)
 
     def test_po_issue(self):
-        """ Test the PurchaseOrderIssue API endpoint """
+        """Test the PurchaseOrderIssue API endpoint."""
         po = models.PurchaseOrder.objects.get(pk=2)
 
         url = reverse('api-po-issue', kwargs={'pk': po.pk})
@@ -303,7 +303,7 @@ class PurchaseOrderTest(OrderTest):
 
 
 class PurchaseOrderDownloadTest(OrderTest):
-    """Unit tests for downloading PurchaseOrder data via the API endpoint"""
+    """Unit tests for downloading PurchaseOrder data via the API endpoint."""
 
     required_cols = [
         'id',
@@ -321,8 +321,7 @@ class PurchaseOrderDownloadTest(OrderTest):
     ]
 
     def test_download_wrong_format(self):
-        """Incorrect format should default raise an error"""
-
+        """Incorrect format should default raise an error."""
         url = reverse('api-po-list')
 
         with self.assertRaises(ValueError):
@@ -334,8 +333,7 @@ class PurchaseOrderDownloadTest(OrderTest):
             )
 
     def test_download_csv(self):
-        """Download PurchaseOrder data as .csv"""
-
+        """Download PurchaseOrder data as .csv."""
         with self.download_file(
             reverse('api-po-list'),
             {
@@ -374,7 +372,7 @@ class PurchaseOrderDownloadTest(OrderTest):
 
 
 class PurchaseOrderReceiveTest(OrderTest):
-    """Unit tests for receiving items against a PurchaseOrder"""
+    """Unit tests for receiving items against a PurchaseOrder."""
 
     def setUp(self):
         super().setUp()
@@ -392,7 +390,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         order.save()
 
     def test_empty(self):
-        """Test without any POST data"""
+        """Test without any POST data."""
         data = self.post(self.url, {}, expected_code=400).data
 
         self.assertIn('This field is required', str(data['items']))
@@ -402,7 +400,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(self.n, StockItem.objects.count())
 
     def test_no_items(self):
-        """Test with an empty list of items"""
+        """Test with an empty list of items."""
         data = self.post(
             self.url,
             {
@@ -418,7 +416,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(self.n, StockItem.objects.count())
 
     def test_invalid_items(self):
-        """Test than errors are returned as expected for invalid data"""
+        """Test than errors are returned as expected for invalid data."""
         data = self.post(
             self.url,
             {
@@ -441,7 +439,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(self.n, StockItem.objects.count())
 
     def test_invalid_status(self):
-        """Test with an invalid StockStatus value"""
+        """Test with an invalid StockStatus value."""
         data = self.post(
             self.url,
             {
@@ -463,7 +461,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(self.n, StockItem.objects.count())
 
     def test_mismatched_items(self):
-        """Test for supplier parts which *do* exist but do not match the order supplier"""
+        """Test for supplier parts which *do* exist but do not match the order supplier."""
         data = self.post(
             self.url,
             {
@@ -485,7 +483,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(self.n, StockItem.objects.count())
 
     def test_null_barcode(self):
-        """Test than a "null" barcode field can be provided"""
+        """Test than a "null" barcode field can be provided."""
         # Set stock item barcode
         item = StockItem.objects.get(pk=1)
         item.save()
@@ -560,7 +558,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(self.n, StockItem.objects.count())
 
     def test_valid(self):
-        """Test receipt of valid data"""
+        """Test receipt of valid data."""
         line_1 = models.PurchaseOrderLineItem.objects.get(pk=1)
         line_2 = models.PurchaseOrderLineItem.objects.get(pk=2)
 
@@ -637,7 +635,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertTrue(StockItem.objects.filter(uid='MY-UNIQUE-BARCODE-456').exists())
 
     def test_batch_code(self):
-        """Test that we can supply a 'batch code' when receiving items"""
+        """Test that we can supply a 'batch code' when receiving items."""
         line_1 = models.PurchaseOrderLineItem.objects.get(pk=1)
         line_2 = models.PurchaseOrderLineItem.objects.get(pk=2)
 
@@ -678,7 +676,7 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(item_2.batch, 'xyz-789')
 
     def test_serial_numbers(self):
-        """Test that we can supply a 'serial number' when receiving items"""
+        """Test that we can supply a 'serial number' when receiving items."""
         line_1 = models.PurchaseOrderLineItem.objects.get(pk=1)
         line_2 = models.PurchaseOrderLineItem.objects.get(pk=2)
 
@@ -734,7 +732,7 @@ class PurchaseOrderReceiveTest(OrderTest):
 
 
 class SalesOrderTest(OrderTest):
-    """Tests for the SalesOrder API"""
+    """Tests for the SalesOrder API."""
 
     LIST_URL = reverse('api-so-list')
 
@@ -757,10 +755,7 @@ class SalesOrderTest(OrderTest):
         self.filter({'status': 99}, 0)  # Invalid
 
     def test_overdue(self):
-        """
-        Test "overdue" status
-        """
-
+        """Test "overdue" status."""
         self.filter({'overdue': True}, 0)
         self.filter({'overdue': False}, 5)
 
@@ -789,7 +784,7 @@ class SalesOrderTest(OrderTest):
         self.get(url)
 
     def test_so_operations(self):
-        """Test that we can create / edit and delete a SalesOrder via the API"""
+        """Test that we can create / edit and delete a SalesOrder via the API."""
         n = models.SalesOrder.objects.count()
 
         url = reverse('api-so-list')
@@ -869,7 +864,7 @@ class SalesOrderTest(OrderTest):
         response = self.get(url, expected_code=404)
 
     def test_so_create(self):
-        """Test that we can create a new SalesOrder via the API"""
+        """Test that we can create a new SalesOrder via the API."""
         self.assignRole('sales_order.add')
 
         self.post(
@@ -883,8 +878,7 @@ class SalesOrderTest(OrderTest):
         )
 
     def test_so_cancel(self):
-        """ Test API endpoint for cancelling a SalesOrder """
-
+        """Test API endpoint for cancelling a SalesOrder."""
         so = models.SalesOrder.objects.get(pk=1)
 
         self.assertEqual(so.status, SalesOrderStatus.PENDING)
@@ -920,7 +914,7 @@ class SalesOrderTest(OrderTest):
 
 
 class SalesOrderLineItemTest(OrderTest):
-    """Tests for the SalesOrderLineItem API"""
+    """Tests for the SalesOrderLineItem API."""
 
     def setUp(self):
 
@@ -998,10 +992,10 @@ class SalesOrderLineItemTest(OrderTest):
 
 
 class SalesOrderDownloadTest(OrderTest):
-    """Unit tests for downloading SalesOrder data via the API endpoint"""
+    """Unit tests for downloading SalesOrder data via the API endpoint."""
 
     def test_download_fail(self):
-        """Test that downloading without the 'export' option fails"""
+        """Test that downloading without the 'export' option fails."""
         url = reverse('api-so-list')
 
         with self.assertRaises(ValueError):
@@ -1088,7 +1082,7 @@ class SalesOrderDownloadTest(OrderTest):
 
 
 class SalesOrderAllocateTest(OrderTest):
-    """Unit tests for allocating stock items against a SalesOrder"""
+    """Unit tests for allocating stock items against a SalesOrder."""
 
     def setUp(self):
         super().setUp()
@@ -1123,7 +1117,7 @@ class SalesOrderAllocateTest(OrderTest):
         )
 
     def test_invalid(self):
-        """Test POST with invalid data"""
+        """Test POST with invalid data."""
         # No data
         response = self.post(self.url, {}, expected_code=400)
 
@@ -1206,7 +1200,7 @@ class SalesOrderAllocateTest(OrderTest):
             self.assertEqual(line.allocations.count(), 1)
 
     def test_shipment_complete(self):
-        """Test that we can complete a shipment via the API"""
+        """Test that we can complete a shipment via the API."""
         url = reverse('api-so-shipment-ship', kwargs={'pk': self.shipment.pk})
 
         self.assertFalse(self.shipment.is_complete())

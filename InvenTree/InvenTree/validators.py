@@ -1,6 +1,4 @@
-"""
-Custom field validators for InvenTree
-"""
+"""Custom field validators for InvenTree."""
 
 import re
 from decimal import Decimal, InvalidOperation
@@ -15,20 +13,18 @@ import common.models
 
 
 def validate_currency_code(code):
-    """
-    Check that a given code is a valid currency code.
-    """
-
+    """Check that a given code is a valid currency code."""
     if code not in CURRENCIES:
         raise ValidationError(_('Not a valid currency code'))
 
 
 def allowable_url_schemes():
-    """ Return the list of allowable URL schemes.
+    """Return the list of allowable URL schemes.
+
     In addition to the default schemes allowed by Django,
     the install configuration file (config.yaml) can specify
-    extra schemas """
-
+    extra schemas
+    """
     # Default schemes
     schemes = ['http', 'https', 'ftp', 'ftps']
 
@@ -42,9 +38,7 @@ def allowable_url_schemes():
 
 
 def validate_part_name(value):
-    """ Prevent some illegal characters in part names.
-    """
-
+    """Prevent some illegal characters in part names."""
     for c in ['|', '#', '$', '{', '}']:
         if c in str(value):
             raise ValidationError(
@@ -53,8 +47,7 @@ def validate_part_name(value):
 
 
 def validate_part_ipn(value):
-    """ Validate the Part IPN against regex rule """
-
+    """Validate the Part IPN against regex rule."""
     pattern = common.models.InvenTreeSetting.get_setting('PART_IPN_REGEX')
 
     if pattern:
@@ -65,10 +58,7 @@ def validate_part_ipn(value):
 
 
 def validate_build_order_reference(value):
-    """
-    Validate the 'reference' field of a BuildOrder
-    """
-
+    """Validate the 'reference' field of a BuildOrder."""
     pattern = common.models.InvenTreeSetting.get_setting('BUILDORDER_REFERENCE_REGEX')
 
     if pattern:
@@ -79,10 +69,7 @@ def validate_build_order_reference(value):
 
 
 def validate_purchase_order_reference(value):
-    """
-    Validate the 'reference' field of a PurchaseOrder
-    """
-
+    """Validate the 'reference' field of a PurchaseOrder."""
     pattern = common.models.InvenTreeSetting.get_setting('PURCHASEORDER_REFERENCE_REGEX')
 
     if pattern:
@@ -93,10 +80,7 @@ def validate_purchase_order_reference(value):
 
 
 def validate_sales_order_reference(value):
-    """
-    Validate the 'reference' field of a SalesOrder
-    """
-
+    """Validate the 'reference' field of a SalesOrder."""
     pattern = common.models.InvenTreeSetting.get_setting('SALESORDER_REFERENCE_REGEX')
 
     if pattern:
@@ -107,16 +91,14 @@ def validate_sales_order_reference(value):
 
 
 def validate_tree_name(value):
-    """ Prevent illegal characters in tree item names """
-
+    """Prevent illegal characters in tree item names."""
     for c in "!@#$%^&*'\"\\/[]{}<>,|+=~`\"":
         if c in str(value):
             raise ValidationError(_('Illegal character in name ({x})'.format(x=c)))
 
 
 def validate_overage(value):
-    """
-    Validate that a BOM overage string is properly formatted.
+    """Validate that a BOM overage string is properly formatted.
 
     An overage string can look like:
 
@@ -124,7 +106,6 @@ def validate_overage(value):
     - A decimal number ('0.123')
     - A percentage ('5%' / '10 %')
     """
-
     value = str(value).lower().strip()
 
     # First look for a simple numerical value
@@ -162,11 +143,10 @@ def validate_overage(value):
 
 
 def validate_part_name_format(self):
-    """
-    Validate part name format.
+    """Validate part name format.
+
     Make sure that each template container has a field of Part Model
     """
-
     jinja_template_regex = re.compile('{{.*?}}')
     field_name_regex = re.compile('(?<=part\\.)[A-z]+')
     for jinja_template in jinja_template_regex.findall(str(self)):

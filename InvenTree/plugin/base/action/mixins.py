@@ -1,13 +1,13 @@
-"""Plugin mixin classes for action plugin"""
+"""Plugin mixin classes for action plugin."""
 
 
 class ActionMixin:
-    """Mixin that enables custom actions"""
+    """Mixin that enables custom actions."""
 
     ACTION_NAME = ""
 
     class MixinMeta:
-        """Meta options for this mixin"""
+        """Meta options for this mixin."""
 
         MIXIN_NAME = 'Actions'
 
@@ -34,7 +34,10 @@ class ActionMixin:
         return False
 
     def get_info(self, user=None, data=None):
-        """Extra info? Can be a string / dict / etc"""
+        """Extra info?
+
+        Can be a string / dict / etc
+        """
         return None
 
     def get_response(self, user=None, data=None):

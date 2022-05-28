@@ -14,7 +14,10 @@ from users.serializers import OwnerSerializer, UserSerializer
 
 
 class OwnerList(generics.ListAPIView):
-    """List API endpoint for Owner model. Cannot create."""
+    """List API endpoint for Owner model.
+
+    Cannot create.
+    """
 
     queryset = Owner.objects.all()
     serializer_class = OwnerSerializer
@@ -50,14 +53,17 @@ class OwnerList(generics.ListAPIView):
 
 
 class OwnerDetail(generics.RetrieveAPIView):
-    """Detail API endpoint for Owner model. Cannot edit or delete"""
+    """Detail API endpoint for Owner model.
+
+    Cannot edit or delete
+    """
 
     queryset = Owner.objects.all()
     serializer_class = OwnerSerializer
 
 
 class RoleDetails(APIView):
-    """API endpoint which lists the available role permissions for the current user
+    """API endpoint which lists the available role permissions for the current user.
 
     (Requires authentication)
     """
@@ -100,7 +106,7 @@ class RoleDetails(APIView):
 
 
 class UserDetail(generics.RetrieveAPIView):
-    """Detail endpoint for a single user"""
+    """Detail endpoint for a single user."""
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -108,7 +114,7 @@ class UserDetail(generics.RetrieveAPIView):
 
 
 class UserList(generics.ListAPIView):
-    """List endpoint for detail on all users"""
+    """List endpoint for detail on all users."""
 
     queryset = User.objects.all()
     serializer_class = UserSerializer

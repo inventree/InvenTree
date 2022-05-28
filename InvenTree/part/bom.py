@@ -1,4 +1,5 @@
 """Functionality for Bill of Material (BOM) management.
+
 Primarily BOM upload tools.
 """
 
@@ -14,7 +15,7 @@ from .models import BomItem
 
 
 def IsValidBOMFormat(fmt):
-    """Test if a file format specifier is in the valid list of BOM file formats"""
+    """Test if a file format specifier is in the valid list of BOM file formats."""
     return fmt.strip().lower() in GetExportFormats()
 
 
@@ -88,9 +89,7 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
             pass
 
     if parameter_data:
-        """
-        If requested, add extra columns for each PartParameter associated with each line item
-        """
+        """If requested, add extra columns for each PartParameter associated with each line item."""
 
         parameter_cols = {}
 
@@ -113,9 +112,7 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
         add_columns_to_dataset(parameter_cols_ordered, len(bom_items))
 
     if stock_data:
-        """
-        If requested, add extra columns for stock data associated with each line item
-        """
+        """If requested, add extra columns for stock data associated with each line item."""
 
         stock_headers = [
             _('Default Location'),
@@ -168,9 +165,7 @@ def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=Fa
         add_columns_to_dataset(stock_cols, len(bom_items))
 
     if manufacturer_data or supplier_data:
-        """
-        If requested, add extra columns for each SupplierPart and ManufacturerPart associated with each line item
-        """
+        """If requested, add extra columns for each SupplierPart and ManufacturerPart associated with each line item."""
 
         # Keep track of the supplier parts we have already exported
         supplier_parts_used = set()

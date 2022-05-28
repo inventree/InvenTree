@@ -35,6 +35,7 @@ class AuthRequiredMiddleware(object):
         if not request.user.is_authenticated:
             """
             Normally, a web-based session would use csrftoken based authentication.
+
             However when running an external application (e.g. the InvenTree app or Python library),
             we must validate the user token manually.
             """
@@ -105,7 +106,7 @@ url_matcher = re_path('', include(frontendpatterns))
 
 
 class Check2FAMiddleware(BaseRequire2FAMiddleware):
-    """check if user is required to have MFA enabled"""
+    """check if user is required to have MFA enabled."""
     def require_2fa(self, request):
         # Superusers are require to have 2FA.
         try:
@@ -117,7 +118,7 @@ class Check2FAMiddleware(BaseRequire2FAMiddleware):
 
 
 class CustomAllauthTwoFactorMiddleware(AllauthTwoFactorMiddleware):
-    """This function ensures only frontend code triggers the MFA auth cycle"""
+    """This function ensures only frontend code triggers the MFA auth cycle."""
     def process_request(self, request):
         try:
             if not url_matcher.resolve(request.path[1:]):
@@ -127,9 +128,7 @@ class CustomAllauthTwoFactorMiddleware(AllauthTwoFactorMiddleware):
 
 
 class InvenTreeRemoteUserMiddleware(PersistentRemoteUserMiddleware):
-    """
-    Middleware to check if HTTP-header based auth is enabled and to set it up
-    """
+    """Middleware to check if HTTP-header based auth is enabled and to set it up."""
     header = settings.REMOTE_LOGIN_HEADER
 
     def process_request(self, request):

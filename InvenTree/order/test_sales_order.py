@@ -44,8 +44,7 @@ class SalesOrderTest(TestCase):
         self.line = SalesOrderLineItem.objects.create(quantity=50, order=self.order, part=self.part)
 
     def test_overdue(self):
-        """Tests for overdue functionality"""
-
+        """Tests for overdue functionality."""
         today = datetime.now().date()
 
         # By default, order is *not* overdue as the target date is not set

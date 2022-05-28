@@ -48,10 +48,7 @@ class BuildTestSimple(InvenTreeTestCase):
         self.assertEqual(b2.status, BuildStatus.COMPLETE)
 
     def test_overdue(self):
-        """
-        Test overdue status functionality
-        """
-
+        """Test overdue status functionality."""
         today = datetime.now().date()
 
         build = Build.objects.get(pk=1)
@@ -77,8 +74,7 @@ class BuildTestSimple(InvenTreeTestCase):
         pass
 
     def test_cancel_build(self):
-        """ Test build cancellation function """
-
+        """Test build cancellation function."""
         build = Build.objects.get(id=1)
 
         self.assertEqual(build.status, BuildStatus.PENDING)
@@ -89,7 +85,7 @@ class BuildTestSimple(InvenTreeTestCase):
 
 
 class TestBuildViews(InvenTreeTestCase):
-    """ Tests for Build app views """
+    """Tests for Build app views."""
 
     fixtures = [
         'category',
@@ -118,14 +114,12 @@ class TestBuildViews(InvenTreeTestCase):
         )
 
     def test_build_index(self):
-        """ test build index view """
-
+        """Test build index view."""
         response = self.client.get(reverse('build-index'))
         self.assertEqual(response.status_code, 200)
 
     def test_build_detail(self):
-        """ Test the detail view for a Build object """
-
+        """Test the detail view for a Build object."""
         pk = 1
 
         response = self.client.get(reverse('build-detail', args=(pk,)))

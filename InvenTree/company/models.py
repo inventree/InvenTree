@@ -1,4 +1,4 @@
-"""Company database model definitions"""
+"""Company database model definitions."""
 
 import os
 
@@ -25,7 +25,7 @@ from InvenTree.status_codes import PurchaseOrderStatus
 
 
 def rename_company_image(instance, filename):
-    """Function to rename a company image after upload
+    """Function to rename a company image after upload.
 
     Args:
         instance: Company object
@@ -50,7 +50,7 @@ def rename_company_image(instance, filename):
 
 
 class Company(models.Model):
-    """ A Company object represents an external company.
+    """A Company object represents an external company.
 
     It may be a supplier or a customer or a manufacturer (or a combination)
 
@@ -148,8 +148,7 @@ class Company(models.Model):
 
     @property
     def currency_code(self):
-        """
-        Return the currency code associated with this company.
+        """Return the currency code associated with this company.
 
         - If the currency code is invalid, use the default currency
         - If the currency code is not specified, use the default currency
@@ -162,22 +161,22 @@ class Company(models.Model):
         return code
 
     def __str__(self):
-        """ Get string representation of a Company """
+        """Get string representation of a Company."""
         return "{n} - {d}".format(n=self.name, d=self.description)
 
     def get_absolute_url(self):
-        """ Get the web URL for the detail view for this Company """
+        """Get the web URL for the detail view for this Company."""
         return reverse('company-detail', kwargs={'pk': self.id})
 
     def get_image_url(self):
-        """ Return the URL of the image for this company """
+        """Return the URL of the image for this company."""
         if self.image:
             return getMediaUrl(self.image.url)
         else:
             return getBlankImage()
 
     def get_thumbnail_url(self):
-        """ Return the URL for the thumbnail image for this Company """
+        """Return the URL for the thumbnail image for this Company."""
         if self.image:
             return getMediaUrl(self.image.thumbnail.url)
         else:
@@ -185,7 +184,7 @@ class Company(models.Model):
 
     @property
     def manufactured_part_count(self):
-        """ The number of parts manufactured by this company """
+        """The number of parts manufactured by this company."""
         return self.manufactured_parts.count()
 
     @property
@@ -194,22 +193,22 @@ class Company(models.Model):
 
     @property
     def supplied_part_count(self):
-        """ The number of parts supplied by this company """
+        """The number of parts supplied by this company."""
         return self.supplied_parts.count()
 
     @property
     def has_supplied_parts(self):
-        """ Return True if this company supplies any parts """
+        """Return True if this company supplies any parts."""
         return self.supplied_part_count > 0
 
     @property
     def parts(self):
-        """ Return SupplierPart objects which are supplied or manufactured by this company """
+        """Return SupplierPart objects which are supplied or manufactured by this company."""
         return SupplierPart.objects.filter(Q(supplier=self.id) | Q(manufacturer_part__manufacturer=self.id))
 
     @property
     def part_count(self):
-        """ The number of parts manufactured (or supplied) by this Company """
+        """The number of parts manufactured (or supplied) by this Company."""
         return self.parts.count()
 
     @property
@@ -218,25 +217,25 @@ class Company(models.Model):
 
     @property
     def stock_items(self):
-        """ Return a list of all stock items supplied or manufactured by this company """
+        """Return a list of all stock items supplied or manufactured by this company."""
         stock = apps.get_model('stock', 'StockItem')
         return stock.objects.filter(Q(supplier_part__supplier=self.id) | Q(supplier_part__manufacturer_part__manufacturer=self.id)).all()
 
     @property
     def stock_count(self):
-        """ Return the number of stock items supplied or manufactured by this company """
+        """Return the number of stock items supplied or manufactured by this company."""
         return self.stock_items.count()
 
     def outstanding_purchase_orders(self):
-        """ Return purchase orders which are 'outstanding' """
+        """Return purchase orders which are 'outstanding'."""
         return self.purchase_orders.filter(status__in=PurchaseOrderStatus.OPEN)
 
     def pending_purchase_orders(self):
-        """ Return purchase orders which are PENDING (not yet issued) """
+        """Return purchase orders which are PENDING (not yet issued)"""
         return self.purchase_orders.filter(status=PurchaseOrderStatus.PENDING)
 
     def closed_purchase_orders(self):
-        """ Return purchase orders which are not 'outstanding'
+        """Return purchase orders which are not 'outstanding'.
 
         - Complete
         - Failed / lost
@@ -248,13 +247,12 @@ class Company(models.Model):
         return self.purchase_orders.filter(status=PurchaseOrderStatus.COMPLETE)
 
     def failed_purchase_orders(self):
-        """ Return any purchase orders which were not successful """
+        """Return any purchase orders which were not successful."""
         return self.purchase_orders.filter(status__in=PurchaseOrderStatus.FAILED)
 
 
 class Contact(models.Model):
-    """ A Contact represents a person who works at a particular company.
-    A Company may have zero or more associated Contact objects.
+    """A Contact represents a person who works at a particular company. A Company may have zero or more associated Contact objects.
 
     Attributes:
         company: Company link for this contact
@@ -277,10 +275,7 @@ class Contact(models.Model):
 
 
 class ManufacturerPart(models.Model):
-    """ Represents a unique part as provided by a Manufacturer
-    Each ManufacturerPart is identified by a MPN (Manufacturer Part Number)
-    Each ManufacturerPart is also linked to a Part object.
-    A Part may be available from multiple manufacturers
+    """Represents a unique part as provided by a Manufacturer Each ManufacturerPart is identified by a MPN (Manufacturer Part Number) Each ManufacturerPart is also linked to a Part object. A Part may be available from multiple manufacturers.
 
     Attributes:
         part: Link to the master Part
@@ -339,7 +334,7 @@ class ManufacturerPart(models.Model):
 
     @classmethod
     def create(cls, part, manufacturer, mpn, description, link=None):
-        """Check if ManufacturerPart instance does not already exist then create it"""
+        """Check if ManufacturerPart instance does not already exist then create it."""
         manufacturer_part = None
 
         try:
@@ -366,9 +361,7 @@ class ManufacturerPart(models.Model):
 
 
 class ManufacturerPartAttachment(InvenTreeAttachment):
-    """
-    Model for storing file attachments against a ManufacturerPart object
-    """
+    """Model for storing file attachments against a ManufacturerPart object."""
 
     @staticmethod
     def get_api_url():
@@ -382,8 +375,7 @@ class ManufacturerPartAttachment(InvenTreeAttachment):
 
 
 class ManufacturerPartParameter(models.Model):
-    """
-    A ManufacturerPartParameter represents a key:value parameter for a MnaufacturerPart.
+    """A ManufacturerPartParameter represents a key:value parameter for a MnaufacturerPart.
 
     This is used to represent parmeters / properties for a particular manufacturer part.
 
@@ -427,10 +419,10 @@ class ManufacturerPartParameter(models.Model):
 
 
 class SupplierPartManager(models.Manager):
-    """ Define custom SupplierPart objects manager
+    """Define custom SupplierPart objects manager.
 
-        The main purpose of this manager is to improve database hit as the
-        SupplierPart model involves A LOT of foreign keys lookups
+    The main purpose of this manager is to improve database hit as the
+    SupplierPart model involves A LOT of foreign keys lookups
     """
 
     def get_queryset(self):
@@ -443,10 +435,7 @@ class SupplierPartManager(models.Manager):
 
 
 class SupplierPart(models.Model):
-    """ Represents a unique part as provided by a Supplier
-    Each SupplierPart is identified by a SKU (Supplier Part Number)
-    Each SupplierPart is also linked to a Part or ManufacturerPart object.
-    A Part may be available from multiple suppliers
+    """Represents a unique part as provided by a Supplier Each SupplierPart is identified by a SKU (Supplier Part Number) Each SupplierPart is also linked to a Part or ManufacturerPart object. A Part may be available from multiple suppliers.
 
     Attributes:
         part: Link to the master Part (Obsolete)
@@ -498,7 +487,7 @@ class SupplierPart(models.Model):
                 })
 
     def save(self, *args, **kwargs):
-        """ Overriding save method to connect an existing ManufacturerPart """
+        """Overriding save method to connect an existing ManufacturerPart."""
         manufacturer_part = None
 
         if all(key in kwargs for key in ('manufacturer', 'MPN')):
@@ -602,7 +591,7 @@ class SupplierPart(models.Model):
 
     @property
     def price_breaks(self):
-        """ Return the associated price breaks in the correct order """
+        """Return the associated price breaks in the correct order."""
         return self.pricebreaks.order_by('quantity').all()
 
     @property
@@ -610,9 +599,9 @@ class SupplierPart(models.Model):
         return self.get_price(1)
 
     def add_price_break(self, quantity, price):
-        """Create a new price break for this part
+        """Create a new price break for this part.
 
-        args:
+        Args:
             quantity - Numerical quantity
             price - Must be a Money object
         """
@@ -651,7 +640,7 @@ class SupplierPart(models.Model):
             return max(q - r, 0)
 
     def purchase_orders(self):
-        """Returns a list of purchase orders relating to this supplier part"""
+        """Returns a list of purchase orders relating to this supplier part."""
         return [line.order for line in self.purchase_order_line_items.all().prefetch_related('order')]
 
     @property
@@ -675,6 +664,7 @@ class SupplierPart(models.Model):
 
 class SupplierPriceBreak(common.models.PriceBreak):
     """Represents a quantity price break for a SupplierPart.
+
     - Suppliers can offer discounts at larger quantities
     - SupplierPart(s) may have zero-or-more associated SupplierPriceBreak(s)
 

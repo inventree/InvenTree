@@ -1,4 +1,4 @@
-"""Django views for interacting with Order app"""
+"""Django views for interacting with Order app."""
 
 import logging
 from decimal import Decimal, InvalidOperation
@@ -31,16 +31,14 @@ logger = logging.getLogger("inventree")
 
 
 class PurchaseOrderIndex(InvenTreeRoleMixin, ListView):
-    """List view for all purchase orders"""
+    """List view for all purchase orders."""
 
     model = PurchaseOrder
     template_name = 'order/purchase_orders.html'
     context_object_name = 'orders'
 
     def get_queryset(self):
-        """ Retrieve the list of purchase orders,
-        ensure that the most recent ones are returned first. """
-
+        """Retrieve the list of purchase orders, ensure that the most recent ones are returned first."""
         queryset = PurchaseOrder.objects.all().order_by('-creation_date')
 
         return queryset
@@ -59,7 +57,7 @@ class SalesOrderIndex(InvenTreeRoleMixin, ListView):
 
 
 class PurchaseOrderDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
-    """Detail view for a PurchaseOrder object"""
+    """Detail view for a PurchaseOrder object."""
 
     context_object_name = 'order'
     queryset = PurchaseOrder.objects.all().prefetch_related('lines')
@@ -72,7 +70,7 @@ class PurchaseOrderDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailVi
 
 
 class SalesOrderDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
-    """Detail view for a SalesOrder object"""
+    """Detail view for a SalesOrder object."""
 
     context_object_name = 'order'
     queryset = SalesOrder.objects.all().prefetch_related('lines__allocations__item__purchase_order')
@@ -124,13 +122,11 @@ class PurchaseOrderUpload(FileManagementFormView):
     file_manager_class = OrderFileManager
 
     def get_order(self):
-        """Get order or return 404"""
-
+        """Get order or return 404."""
         return get_object_or_404(PurchaseOrder, pk=self.kwargs['pk'])
 
     def get_context_data(self, form, **kwargs):
-        """Handle context data for order"""
-
+        """Handle context data for order."""
         context = super().get_context_data(form=form, **kwargs)
 
         order = self.get_order()
@@ -229,7 +225,7 @@ class PurchaseOrderUpload(FileManagementFormView):
                 row['notes'] = notes
 
     def done(self, form_list, **kwargs):
-        """Once all the data is in, process it to add PurchaseOrderLineItem instances to the order"""
+        """Once all the data is in, process it to add PurchaseOrderLineItem instances to the order."""
         order = self.get_order()
         items = self.get_clean_items()
 
@@ -260,7 +256,7 @@ class PurchaseOrderUpload(FileManagementFormView):
 
 
 class SalesOrderExport(AjaxView):
-    """Export a sales order
+    """Export a sales order.
 
     - File format can optionally be passed as a query parameter e.g. ?format=CSV
     - Default file format is CSV
@@ -286,7 +282,7 @@ class SalesOrderExport(AjaxView):
 
 
 class PurchaseOrderExport(AjaxView):
-    """File download for a purchase order
+    """File download for a purchase order.
 
     - File format can be optionally passed as a query param e.g. ?format=CSV
     - Default file format is CSV
@@ -317,7 +313,7 @@ class PurchaseOrderExport(AjaxView):
 
 
 class LineItemPricing(PartPricing):
-    """View for inspecting part pricing information"""
+    """View for inspecting part pricing information."""
 
     class EnhancedForm(PartPricing.form_class):
         pk = IntegerField(widget=HiddenInput())
@@ -361,7 +357,7 @@ class LineItemPricing(PartPricing):
         return None
 
     def get_quantity(self):
-        """Return set quantity in decimal format"""
+        """Return set quantity in decimal format."""
         qty = Decimal(self.request.GET.get('quantity', 1))
         if qty == 1:
             return Decimal(self.request.POST.get('quantity', 1))

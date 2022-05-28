@@ -1,6 +1,4 @@
-"""
-Main JSON interface views
-"""
+"""Main JSON interface views."""
 
 from django.conf import settings
 from django.http import JsonResponse
@@ -16,7 +14,8 @@ from .views import AjaxView
 
 
 class InfoView(AjaxView):
-    """ Simple JSON endpoint for InvenTree information.
+    """Simple JSON endpoint for InvenTree information.
+
     Use to confirm that the server is running, etc.
     """
 
@@ -37,9 +36,7 @@ class InfoView(AjaxView):
 
 
 class NotFoundView(AjaxView):
-    """
-    Simple JSON view when accessing an invalid API view.
-    """
+    """Simple JSON view when accessing an invalid API view."""
 
     permission_classes = [permissions.AllowAny]
 
@@ -54,8 +51,7 @@ class NotFoundView(AjaxView):
 
 
 class APIDownloadMixin:
-    """
-    Mixin for enabling a LIST endpoint to be downloaded a file.
+    """Mixin for enabling a LIST endpoint to be downloaded a file.
 
     To download the data, add the ?export=<fmt> to the query string.
 
@@ -92,10 +88,7 @@ class APIDownloadMixin:
 
 
 class AttachmentMixin:
-    """
-    Mixin for creating attachment objects,
-    and ensuring the user information is saved correctly.
-    """
+    """Mixin for creating attachment objects, and ensuring the user information is saved correctly."""
 
     permission_classes = [permissions.IsAuthenticated]
 
@@ -106,8 +99,7 @@ class AttachmentMixin:
     ]
 
     def perform_create(self, serializer):
-        """ Save the user information when a file is uploaded """
-
+        """Save the user information when a file is uploaded."""
         attachment = serializer.save()
         attachment.user = self.request.user
         attachment.save()

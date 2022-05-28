@@ -1,6 +1,4 @@
-"""
-Helper functions for performing API unit tests
-"""
+"""Helper functions for performing API unit tests."""
 
 import csv
 import io
@@ -62,10 +60,7 @@ class UserMixin:
             self.client.login(username=self.username, password=self.password)
 
     def assignRole(self, role=None, assign_all: bool = False):
-        """
-        Set the user roles for the registered user
-        """
-
+        """Set the user roles for the registered user."""
         # role is of the format 'rule.permission' e.g. 'part.add'
 
         if not assign_all and role:
@@ -89,16 +84,13 @@ class UserMixin:
 
 
 class InvenTreeAPITestCase(UserMixin, APITestCase):
-    """
-    Base class for running InvenTree API tests
-    """
+    """Base class for running InvenTree API tests."""
 
     def getActions(self, url):
-        """
-        Return a dict of the 'actions' available at a given endpoint.
+        """Return a dict of the 'actions' available at a given endpoint.
+
         Makes use of the HTTP 'OPTIONS' method to request this.
         """
-
         response = self.client.options(url)
         self.assertEqual(response.status_code, 200)
 
@@ -110,10 +102,7 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
         return actions
 
     def get(self, url, data={}, expected_code=200):
-        """
-        Issue a GET request
-        """
-
+        """Issue a GET request."""
         response = self.client.get(url, data, format='json')
 
         if expected_code is not None:
@@ -122,10 +111,7 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
         return response
 
     def post(self, url, data, expected_code=None, format='json'):
-        """
-        Issue a POST request
-        """
-
+        """Issue a POST request."""
         response = self.client.post(url, data=data, format=format)
 
         if expected_code is not None:
@@ -134,10 +120,7 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
         return response
 
     def delete(self, url, expected_code=None):
-        """
-        Issue a DELETE request
-        """
-
+        """Issue a DELETE request."""
         response = self.client.delete(url)
 
         if expected_code is not None:
@@ -146,10 +129,7 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
         return response
 
     def patch(self, url, data, expected_code=None, format='json'):
-        """
-        Issue a PATCH request
-        """
-
+        """Issue a PATCH request."""
         response = self.client.patch(url, data=data, format=format)
 
         if expected_code is not None:
@@ -158,10 +138,7 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
         return response
 
     def put(self, url, data, expected_code=None, format='json'):
-        """
-        Issue a PUT request
-        """
-
+        """Issue a PUT request."""
         response = self.client.put(url, data=data, format=format)
 
         if expected_code is not None:
@@ -170,10 +147,7 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
         return response
 
     def options(self, url, expected_code=None):
-        """
-        Issue an OPTIONS request
-        """
-
+        """Issue an OPTIONS request."""
         response = self.client.options(url, format='json')
 
         if expected_code is not None:
@@ -182,10 +156,7 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
         return response
 
     def download_file(self, url, data, expected_code=None, expected_fn=None, decode=True):
-        """
-        Download a file from the server, and return an in-memory file
-        """
-
+        """Download a file from the server, and return an in-memory file."""
         response = self.client.get(url, data=data, format='json')
 
         if expected_code is not None:
@@ -221,10 +192,7 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
         return fo
 
     def process_csv(self, fo, delimiter=',', required_cols=None, excluded_cols=None, required_rows=None):
-        """
-        Helper function to process and validate a downloaded csv file
-        """
-
+        """Helper function to process and validate a downloaded csv file."""
         # Check that the correct object type has been passed
         self.assertTrue(isinstance(fo, io.StringIO))
 

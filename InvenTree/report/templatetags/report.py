@@ -1,4 +1,4 @@
-"""Custom template tags for report generation"""
+"""Custom template tags for report generation."""
 
 import os
 
@@ -33,7 +33,7 @@ def asset(filename):
 
 @register.simple_tag()
 def part_image(part):
-    """Return a fully-qualified path for a part image"""
+    """Return a fully-qualified path for a part image."""
     # If in debug mode, return URL to the image, not a local file
     debug_mode = InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
 
@@ -67,7 +67,7 @@ def part_image(part):
 
 @register.simple_tag()
 def company_image(company):
-    """Return a fully-qualified path for a company image"""
+    """Return a fully-qualified path for a company image."""
     # If in debug mode, return the URL to the image, not a local file
     debug_mode = InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
 

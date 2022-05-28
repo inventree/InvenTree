@@ -24,20 +24,17 @@ from .validators import validate_overage, validate_part_name
 
 
 class ValidatorTest(TestCase):
-
-    """ Simple tests for custom field validators """
+    """Simple tests for custom field validators."""
 
     def test_part_name(self):
-        """ Test part name validator """
-
+        """Test part name validator."""
         validate_part_name('hello world')
 
         with self.assertRaises(django_exceptions.ValidationError):
             validate_part_name('This | name is not } valid')
 
     def test_overage(self):
-        """ Test overage validator """
-
+        """Test overage validator."""
         validate_overage("100%")
         validate_overage("10")
         validate_overage("45.2 %")
@@ -59,11 +56,10 @@ class ValidatorTest(TestCase):
 
 
 class TestHelpers(TestCase):
-    """ Tests for InvenTree helper functions """
+    """Tests for InvenTree helper functions."""
 
     def test_image_url(self):
-        """ Test if a filename looks like an image """
-
+        """Test if a filename looks like an image."""
         for name in ['ape.png', 'bat.GiF', 'apple.WeBP', 'BiTMap.Bmp']:
             self.assertTrue(helpers.TestIfImageURL(name))
 
@@ -71,8 +67,7 @@ class TestHelpers(TestCase):
             self.assertFalse(helpers.TestIfImageURL(name))
 
     def test_str2bool(self):
-        """ Test string to boolean conversion """
-
+        """Test string to boolean conversion."""
         for s in ['yes', 'Y', 'ok', '1', 'OK', 'Ok', 'tRuE', 'oN']:
             self.assertTrue(helpers.str2bool(s))
             self.assertFalse(helpers.str2bool(s, test=False))
@@ -110,7 +105,7 @@ class TestHelpers(TestCase):
 
 
 class TestQuoteWrap(TestCase):
-    """ Tests for string wrapping """
+    """Tests for string wrapping."""
 
     def test_single(self):
 
@@ -121,8 +116,7 @@ class TestQuoteWrap(TestCase):
 class TestIncrement(TestCase):
 
     def tests(self):
-        """ Test 'intelligent' incrementing function """
-
+        """Test 'intelligent' incrementing function."""
         tests = [
             ("", ""),
             (1, "2"),
@@ -142,7 +136,7 @@ class TestIncrement(TestCase):
 
 
 class TestMakeBarcode(TestCase):
-    """ Tests for barcode string creation """
+    """Tests for barcode string creation."""
 
     def test_barcode_extended(self):
 
@@ -185,7 +179,7 @@ class TestDownloadFile(TestCase):
 
 
 class TestMPTT(TestCase):
-    """ Tests for the MPTT tree models """
+    """Tests for the MPTT tree models."""
 
     fixtures = [
         'location',
@@ -197,8 +191,7 @@ class TestMPTT(TestCase):
         StockLocation.objects.rebuild()
 
     def test_self_as_parent(self):
-        """ Test that we cannot set self as parent """
-
+        """Test that we cannot set self as parent."""
         loc = StockLocation.objects.get(pk=4)
         loc.parent = loc
 
@@ -206,8 +199,7 @@ class TestMPTT(TestCase):
             loc.save()
 
     def test_child_as_parent(self):
-        """ Test that we cannot set a child as parent """
-
+        """Test that we cannot set a child as parent."""
         parent = StockLocation.objects.get(pk=4)
         child = StockLocation.objects.get(pk=5)
 
@@ -217,8 +209,7 @@ class TestMPTT(TestCase):
             parent.save()
 
     def test_move(self):
-        """ Move an item to a different tree """
-
+        """Move an item to a different tree."""
         drawer = StockLocation.objects.get(name='Drawer_1')
 
         # Record the tree ID
@@ -233,7 +224,7 @@ class TestMPTT(TestCase):
 
 
 class TestSerialNumberExtraction(TestCase):
-    """ Tests for serial number extraction code """
+    """Tests for serial number extraction code."""
 
     def test_simple(self):
 
@@ -352,9 +343,7 @@ class TestSerialNumberExtraction(TestCase):
 
 
 class TestVersionNumber(TestCase):
-    """
-    Unit tests for version number functions
-    """
+    """Unit tests for version number functions."""
 
     def test_tuple(self):
 
@@ -366,10 +355,7 @@ class TestVersionNumber(TestCase):
         self.assertTrue(s in version.inventreeVersion())
 
     def test_comparison(self):
-        """
-        Test direct comparison of version numbers
-        """
-
+        """Test direct comparison of version numbers."""
         v_a = version.inventreeVersionTuple('1.2.0')
         v_b = version.inventreeVersionTuple('1.2.3')
         v_c = version.inventreeVersionTuple('1.2.4')
@@ -382,9 +368,7 @@ class TestVersionNumber(TestCase):
 
 
 class CurrencyTests(TestCase):
-    """
-    Unit tests for currency / exchange rate functionality
-    """
+    """Unit tests for currency / exchange rate functionality."""
 
     def test_rates(self):
 
@@ -435,12 +419,10 @@ class CurrencyTests(TestCase):
 
 
 class TestStatus(TestCase):
-    """
-    Unit tests for status functions
-    """
+    """Unit tests for status functions."""
 
     def test_check_system_healt(self):
-        """test that the system health check is false in testing -> background worker not running"""
+        """Test that the system health check is false in testing -> background worker not running."""
         self.assertEqual(status.check_system_health(), False)
 
     def test_TestMode(self):
@@ -451,14 +433,12 @@ class TestStatus(TestCase):
 
 
 class TestSettings(helpers.InvenTreeTestCase):
-    """
-    Unit tests for settings
-    """
+    """Unit tests for settings."""
 
     superuser = True
 
     def in_env_context(self, envs={}):
-        """Patch the env to include the given dict"""
+        """Patch the env to include the given dict."""
         return mock.patch.dict(os.environ, envs)
 
     def run_reload(self, envs={}):
@@ -513,7 +493,7 @@ class TestSettings(helpers.InvenTreeTestCase):
         settings.TESTING_ENV = False
 
     def test_initial_install(self):
-        """Test if install of plugins on startup works"""
+        """Test if install of plugins on startup works."""
         from plugin import registry
 
         # Check an install run
@@ -567,9 +547,7 @@ class TestSettings(helpers.InvenTreeTestCase):
 
 
 class TestInstanceName(helpers.InvenTreeTestCase):
-    """
-    Unit tests for instance name
-    """
+    """Unit tests for instance name."""
 
     def test_instance_name(self):
 

@@ -1,4 +1,4 @@
-"""This module provides template tags for handeling plugins"""
+"""This module provides template tags for handeling plugins."""
 
 from django import template
 from django.conf import settings as djangosettings
@@ -13,19 +13,19 @@ register = template.Library()
 
 @register.simple_tag()
 def plugin_list(*args, **kwargs):
-    """List of all installed plugins"""
+    """List of all installed plugins."""
     return registry.plugins
 
 
 @register.simple_tag()
 def inactive_plugin_list(*args, **kwargs):
-    """List of all inactive plugins"""
+    """List of all inactive plugins."""
     return registry.plugins_inactive
 
 
 @register.simple_tag()
 def plugin_settings(plugin, *args, **kwargs):
-    """List of all settings for the plugin"""
+    """List of all settings for the plugin."""
     return registry.mixins_settings.get(plugin)
 
 
@@ -37,7 +37,7 @@ def mixin_enabled(plugin, key, *args, **kwargs):
 
 @register.simple_tag()
 def mixin_available(mixin, *args, **kwargs):
-    """Returns True if there is at least one active plugin which supports the provided mixin"""
+    """Returns True if there is at least one active plugin which supports the provided mixin."""
     return len(registry.with_mixin(mixin)) > 0
 
 
@@ -51,7 +51,7 @@ def navigation_enabled(*args, **kwargs):
 
 @register.simple_tag()
 def safe_url(view_name, *args, **kwargs):
-    """Safe lookup fnc for URLs
+    """Safe lookup fnc for URLs.
 
     Returns None if not found
     """
@@ -63,11 +63,11 @@ def safe_url(view_name, *args, **kwargs):
 
 @register.simple_tag()
 def plugin_errors(*args, **kwargs):
-    """All plugin errors in the current session"""
+    """All plugin errors in the current session."""
     return registry.errors
 
 
 @register.simple_tag(takes_context=True)
 def notification_settings_list(context, *args, **kwargs):
-    """List of all user notification settings"""
+    """List of all user notification settings."""
     return storage.get_usersettings(user=context.get('user', None))

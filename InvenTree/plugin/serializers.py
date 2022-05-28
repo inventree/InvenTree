@@ -1,4 +1,4 @@
-"""JSON serializers for plugin app"""
+"""JSON serializers for plugin app."""
 
 import os
 import subprocess
@@ -58,7 +58,7 @@ class PluginConfigSerializer(serializers.ModelSerializer):
 
 
 class PluginConfigInstallSerializer(serializers.Serializer):
-    """Serializer for installing a new plugin"""
+    """Serializer for installing a new plugin."""
 
     url = serializers.CharField(
         required=False,
@@ -148,7 +148,7 @@ class PluginConfigInstallSerializer(serializers.Serializer):
 
 
 class PluginSettingSerializer(GenericReferencedSettingSerializer):
-    """Serializer for the PluginSetting model"""
+    """Serializer for the PluginSetting model."""
 
     MODEL = PluginSetting
     EXTRA_FIELDS = [
@@ -159,7 +159,7 @@ class PluginSettingSerializer(GenericReferencedSettingSerializer):
 
 
 class NotificationUserSettingSerializer(GenericReferencedSettingSerializer):
-    """Serializer for the PluginSetting model"""
+    """Serializer for the PluginSetting model."""
 
     MODEL = NotificationUserSetting
     EXTRA_FIELDS = ['method', ]

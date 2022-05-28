@@ -18,11 +18,10 @@ logger = logging.getLogger('inventree')
 
 
 def check_build_stock(build: build.models.Build):
-    """
-    Check the required stock for a newly created build order,
-    and send an email out to any subscribed users if stock is low.
-    """
+    """Check the required stock for a newly created build order.
 
+    Send an email out to any subscribed users if stock is low.
+    """
     # Do not notify if we are importing data
     if isImportingData():
         return

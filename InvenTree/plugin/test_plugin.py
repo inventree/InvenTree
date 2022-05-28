@@ -1,4 +1,4 @@
-"""Unit tests for plugins"""
+"""Unit tests for plugins."""
 
 from datetime import datetime
 
@@ -12,7 +12,7 @@ from plugin.samples.integration.sample import SampleIntegrationPlugin
 
 
 class PluginTagTests(TestCase):
-    """Tests for the plugin extras"""
+    """Tests for the plugin extras."""
 
     def setUp(self):
         self.sample = SampleIntegrationPlugin()
@@ -20,22 +20,22 @@ class PluginTagTests(TestCase):
         self.plugin_wrong = WrongIntegrationPlugin()
 
     def test_tag_plugin_list(self):
-        """Test that all plugins are listed"""
+        """Test that all plugins are listed."""
         self.assertEqual(plugin_tags.plugin_list(), registry.plugins)
 
     def test_tag_incative_plugin_list(self):
-        """Test that all inactive plugins are listed"""
+        """Test that all inactive plugins are listed."""
         self.assertEqual(plugin_tags.inactive_plugin_list(), registry.plugins_inactive)
 
     def test_tag_plugin_settings(self):
-        """Check all plugins are listed"""
+        """Check all plugins are listed."""
         self.assertEqual(
             plugin_tags.plugin_settings(self.sample),
             registry.mixins_settings.get(self.sample)
         )
 
     def test_tag_mixin_enabled(self):
-        """Check that mixin enabled functions work"""
+        """Check that mixin enabled functions work."""
         key = 'urls'
         # mixin enabled
         self.assertEqual(plugin_tags.mixin_enabled(self.sample, key), True)
@@ -45,25 +45,25 @@ class PluginTagTests(TestCase):
         self.assertEqual(plugin_tags.mixin_enabled(self.plugin_no, key), False)
 
     def test_tag_safe_url(self):
-        """Test that the safe url tag works expected"""
+        """Test that the safe url tag works expected."""
         # right url
         self.assertEqual(plugin_tags.safe_url('api-plugin-install'), '/api/plugin/install/')
         # wrong url
         self.assertEqual(plugin_tags.safe_url('indexas'), None)
 
     def test_tag_plugin_errors(self):
-        """Test that all errors are listed"""
+        """Test that all errors are listed."""
         self.assertEqual(plugin_tags.plugin_errors(), registry.errors)
 
 
 class InvenTreePluginTests(TestCase):
-    """Tests for InvenTreePlugin"""
+    """Tests for InvenTreePlugin."""
 
     def setUp(self):
         self.plugin = InvenTreePlugin()
 
         class NamedPlugin(InvenTreePlugin):
-            """a named plugin"""
+            """a named plugin."""
             NAME = 'abc123'
 
         self.named_plugin = NamedPlugin()
@@ -93,21 +93,21 @@ class InvenTreePluginTests(TestCase):
         self.plugin_sample = SampleIntegrationPlugin()
 
     def test_basic_plugin_init(self):
-        """Check if a basic plugin intis"""
+        """Check if a basic plugin intis."""
         self.assertEqual(self.plugin.NAME, '')
         self.assertEqual(self.plugin.plugin_name(), '')
 
     def test_basic_plugin_name(self):
-        """Check if the name of a basic plugin can be set"""
+        """Check if the name of a basic plugin can be set."""
         self.assertEqual(self.named_plugin.NAME, 'abc123')
         self.assertEqual(self.named_plugin.plugin_name(), 'abc123')
 
     def test_basic_is_active(self):
-        """Check if a basic plugin is active"""
+        """Check if a basic plugin is active."""
         self.assertEqual(self.plugin.is_active(), False)
 
     def test_action_name(self):
-        """Check the name definition possibilities"""
+        """Check the name definition possibilities."""
         # plugin_name
         self.assertEqual(self.plugin.plugin_name(), '')
         self.assertEqual(self.plugin_simple.plugin_name(), 'SimplePlugin')
@@ -154,7 +154,7 @@ class InvenTreePluginTests(TestCase):
         self.assertEqual(self.plugin_name.license, 'MIT')
 
     def test_depreciation(self):
-        """Check if depreciations raise as expected"""
+        """Check if depreciations raise as expected."""
         # check deprecation warning is firing
         with self.assertWarns(DeprecationWarning):
             self.assertEqual(self.plugin_old.slug, 'old')

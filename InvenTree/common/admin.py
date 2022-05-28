@@ -10,10 +10,7 @@ class SettingsAdmin(ImportExportModelAdmin):
     list_display = ('key', 'value')
 
     def get_readonly_fields(self, request, obj=None):  # pragma: no cover
-        """
-        Prevent the 'key' field being edited once the setting is created
-        """
-
+        """Prevent the 'key' field being edited once the setting is created."""
         if obj:
             return ['key']
         else:
@@ -25,10 +22,7 @@ class UserSettingsAdmin(ImportExportModelAdmin):
     list_display = ('key', 'value', 'user', )
 
     def get_readonly_fields(self, request, obj=None):  # pragma: no cover
-        """
-        Prevent the 'key' field being edited once the setting is created
-        """
-
+        """Prevent the 'key' field being edited once the setting is created."""
         if obj:
             return ['key']
         else:

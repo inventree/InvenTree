@@ -1,5 +1,4 @@
-"""
-Top-level URL lookup for InvenTree application.
+"""Top-level URL lookup for InvenTree application.
 
 Passes URL lookup downstream to each app as required.
 """

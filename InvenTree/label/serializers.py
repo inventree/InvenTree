@@ -5,9 +5,7 @@ from .models import PartLabel, StockItemLabel, StockLocationLabel
 
 
 class StockItemLabelSerializer(InvenTreeModelSerializer):
-    """
-    Serializes a StockItemLabel object.
-    """
+    """Serializes a StockItemLabel object."""
 
     label = InvenTreeAttachmentSerializerField(required=True)
 
@@ -24,9 +22,7 @@ class StockItemLabelSerializer(InvenTreeModelSerializer):
 
 
 class StockLocationLabelSerializer(InvenTreeModelSerializer):
-    """
-    Serializes a StockLocationLabel object
-    """
+    """Serializes a StockLocationLabel object."""
 
     label = InvenTreeAttachmentSerializerField(required=True)
 
@@ -43,9 +39,7 @@ class StockLocationLabelSerializer(InvenTreeModelSerializer):
 
 
 class PartLabelSerializer(InvenTreeModelSerializer):
-    """
-    Serializes a PartLabel object
-    """
+    """Serializes a PartLabel object."""
 
     label = InvenTreeAttachmentSerializerField(required=True)
 

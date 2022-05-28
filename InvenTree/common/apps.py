@@ -15,10 +15,7 @@ class CommonConfig(AppConfig):
         self.clear_restart_flag()
 
     def clear_restart_flag(self):
-        """
-        Clear the SERVER_RESTART_REQUIRED setting
-        """
-
+        """Clear the SERVER_RESTART_REQUIRED setting."""
         try:
             import common.models
 

@@ -13,7 +13,7 @@ from .models import (StockItem, StockItemTestResult, StockItemTracking,
 
 
 class StockTest(InvenTreeTestCase):
-    """Tests to ensure that the stock location tree functions correcly"""
+    """Tests to ensure that the stock location tree functions correcly."""
 
     fixtures = [
         'category',
@@ -188,7 +188,7 @@ class StockTest(InvenTreeTestCase):
             self.assertEqual(s_item.location, self.office)
 
     def test_move(self):
-        """Test stock movement functions"""
+        """Test stock movement functions."""
         # Move 4,000 screws to the bathroom
         it = StockItem.objects.get(pk=1)
         self.assertNotEqual(it.location, self.bathroom)
@@ -330,7 +330,7 @@ class StockTest(InvenTreeTestCase):
             w2 = StockItem.objects.get(pk=101)
 
     def test_serials(self):
-        """Tests for stock serialization"""
+        """Tests for stock serialization."""
         p = Part.objects.create(
             name='trackable part',
             description='trackable part',
@@ -361,7 +361,7 @@ class StockTest(InvenTreeTestCase):
         self.assertTrue(item.serialized)
 
     def test_big_serials(self):
-        """Unit tests for "large" serial numbers which exceed integer encoding"""
+        """Unit tests for "large" serial numbers which exceed integer encoding."""
         p = Part.objects.create(
             name='trackable part',
             description='trackable part',
@@ -464,7 +464,7 @@ class StockTest(InvenTreeTestCase):
             item.serializeStock(3, "hello", self.user)
 
     def test_serialize_stock_valid(self):
-        """Perform valid stock serializations"""
+        """Perform valid stock serializations."""
         # There are 10 of these in stock
         # Item will deplete when deleted
         item = StockItem.objects.get(pk=100)
@@ -668,7 +668,7 @@ class StockTest(InvenTreeTestCase):
 
 
 class VariantTest(StockTest):
-    """Tests for calculation stock counts against templates / variants"""
+    """Tests for calculation stock counts against templates / variants."""
 
     def test_variant_stock(self):
         # Check the 'Chair' variant

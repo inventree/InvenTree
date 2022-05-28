@@ -1,6 +1,4 @@
-"""
-JSON serializers for Company app
-"""
+"""JSON serializers for Company app."""
 
 from django.utils.translation import gettext_lazy as _
 
@@ -21,7 +19,7 @@ from .models import (Company, ManufacturerPart, ManufacturerPartAttachment,
 
 
 class CompanyBriefSerializer(InvenTreeModelSerializer):
-    """ Serializer for Company object (limited detail) """
+    """Serializer for Company object (limited detail)"""
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
@@ -39,7 +37,7 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
 
 
 class CompanySerializer(InvenTreeModelSerializer):
-    """ Serializer for Company object (full detail) """
+    """Serializer for Company object (full detail)"""
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -96,9 +94,7 @@ class CompanySerializer(InvenTreeModelSerializer):
 
 
 class ManufacturerPartSerializer(InvenTreeModelSerializer):
-    """
-    Serializer for ManufacturerPart object
-    """
+    """Serializer for ManufacturerPart object."""
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
@@ -141,9 +137,7 @@ class ManufacturerPartSerializer(InvenTreeModelSerializer):
 
 
 class ManufacturerPartAttachmentSerializer(InvenTreeAttachmentSerializer):
-    """
-    Serializer for the ManufacturerPartAttachment class
-    """
+    """Serializer for the ManufacturerPartAttachment class."""
 
     class Meta:
         model = ManufacturerPartAttachment
@@ -164,9 +158,7 @@ class ManufacturerPartAttachmentSerializer(InvenTreeAttachmentSerializer):
 
 
 class ManufacturerPartParameterSerializer(InvenTreeModelSerializer):
-    """
-    Serializer for the ManufacturerPartParameter model
-    """
+    """Serializer for the ManufacturerPartParameter model."""
 
     manufacturer_part_detail = ManufacturerPartSerializer(source='manufacturer_part', many=False, read_only=True)
 
@@ -193,7 +185,7 @@ class ManufacturerPartParameterSerializer(InvenTreeModelSerializer):
 
 
 class SupplierPartSerializer(InvenTreeModelSerializer):
-    """ Serializer for SupplierPart object """
+    """Serializer for SupplierPart object."""
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
@@ -255,8 +247,7 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
         ]
 
     def create(self, validated_data):
-        """ Extract manufacturer data and process ManufacturerPart """
-
+        """Extract manufacturer data and process ManufacturerPart."""
         # Create SupplierPart
         supplier_part = super().create(validated_data)
 
@@ -275,7 +266,7 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
 
 class SupplierPriceBreakSerializer(InvenTreeModelSerializer):
-    """ Serializer for SupplierPriceBreak object """
+    """Serializer for SupplierPriceBreak object."""
 
     quantity = InvenTreeDecimalField()
 

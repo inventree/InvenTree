@@ -1,4 +1,4 @@
-"""Unit tests for the user model database migrations"""
+"""Unit tests for the user model database migrations."""
 
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
 
@@ -6,7 +6,7 @@ from InvenTree import helpers
 
 
 class TestForwardMigrations(MigratorTestCase):
-    """Test entire schema migration sequence for the users app"""
+    """Test entire schema migration sequence for the users app."""
 
     migrate_from = ('users', helpers.getOldestMigrationFile('users'))
     migrate_to = ('users', helpers.getNewestMigrationFile('users'))
