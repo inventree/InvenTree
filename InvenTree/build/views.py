@@ -22,19 +22,6 @@ class BuildIndex(InvenTreeRoleMixin, ListView):
         """Return all Build objects (order by date, newest first)"""
         return Build.objects.order_by('status', '-completion_date')
 
-    def get_context_data(self, **kwargs):
-
-        context = super().get_context_data(**kwargs)
-
-        context['BuildStatus'] = BuildStatus
-
-        context['active'] = self.get_queryset().filter(status__in=BuildStatus.ACTIVE_CODES)
-
-        context['completed'] = self.get_queryset().filter(status=BuildStatus.COMPLETE)
-        context['cancelled'] = self.get_queryset().filter(status=BuildStatus.CANCELLED)
-
-        return context
-
 
 class BuildDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
     """Detail view of a single Build object."""
