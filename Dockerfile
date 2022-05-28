@@ -77,7 +77,7 @@ RUN pip install --upgrade pip
 
 # Install required base-level python packages
 COPY ./docker/requirements.txt base_requirements.txt
-RUN pip install --no-cache-dir -U -r base_requirements.txt
+RUN pip install --disable-pip-version-check -U -r base_requirements.txt
 
 # InvenTree production image:
 # - Copies required files from local directory
@@ -111,7 +111,7 @@ RUN chown -R inventree:inventree ${INVENTREE_HOME}
 USER inventree
 
 # Install InvenTree packages
-RUN pip3 install --user --no-cache-dir --disable-pip-version-check -r ${INVENTREE_HOME}/requirements.txt
+RUN pip3 install --user --disable-pip-version-check -r ${INVENTREE_HOME}/requirements.txt
 
 # Server init entrypoint
 ENTRYPOINT ["/bin/bash", "./init.sh"]
