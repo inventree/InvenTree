@@ -102,7 +102,7 @@ class StockItemListTest(StockAPITestCase):
 
         self.assertEqual(len(response), 12)
 
-    def test_filter_by_IPN(self):
+    def test_filter_by_ipn(self):
         """Filter StockItem by IPN reference."""
         response = self.get_stock(IPN="R.CH")
         self.assertEqual(len(response), 3)
