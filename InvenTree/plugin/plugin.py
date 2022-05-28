@@ -64,7 +64,8 @@ class MetaBase:
     def plugin_slug(self):
         """Slug of plugin
 
-        If not set plugin name slugified"""
+        If not set plugin name slugified
+        """
         slug = self.get_meta_value('SLUG', 'PLUGIN_SLUG', None)
         if not slug:
             slug = self.plugin_name()

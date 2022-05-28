@@ -301,9 +301,7 @@ class PanelMixinTests(InvenTreeTestCase):
             self.assertNotIn('Custom Part Panel', str(response.content))
 
     def test_enabled(self):
-        """
-        Test that the panels *do* load if the plugin is enabled
-        """
+        """Test that the panels *do* load if the plugin is enabled"""
         plugin = registry.get_plugin('samplepanel')
 
         self.assertEqual(len(registry.with_mixin('panel', active=True)), 0)

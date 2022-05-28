@@ -58,6 +58,7 @@ class PartDetailTest(PartViewTestCase):
 
     def test_part_detail_from_ipn(self):
         """Test that we can retrieve a part detail page from part IPN:
+
         - if no part with matching IPN -> return part index
         - if unique IPN match -> return part detail page
         - if multiple IPN matches -> return part index
@@ -107,7 +108,6 @@ class PartDetailTest(PartViewTestCase):
 
     def test_bom_download(self):
         """Test downloading a BOM for a valid part"""
-
         response = self.client.get(reverse('bom-download', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
         self.assertIn('streaming_content', dir(response))
@@ -141,7 +141,6 @@ class CategoryTest(PartViewTestCase):
 
     def test_set_category(self):
         """Test that the "SetCategory" view works"""
-
         url = reverse('part-set-category')
 
         response = self.client.get(url, {'parts[]': 1}, HTTP_X_REQUESTED_WITH='XMLHttpRequest')

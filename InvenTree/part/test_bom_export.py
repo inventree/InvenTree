@@ -1,6 +1,4 @@
-"""
-Unit testing for BOM export functionality
-"""
+"""Unit testing for BOM export functionality"""
 
 import csv
 
@@ -26,10 +24,7 @@ class BomExportTest(InvenTreeTestCase):
         self.url = reverse('bom-download', kwargs={'pk': 100})
 
     def test_bom_template(self):
-        """
-        Test that the BOM template can be downloaded from the server
-        """
-
+        """Test that the BOM template can be downloaded from the server"""
         url = reverse('bom-upload-template')
 
         # Download an XLS template
@@ -78,10 +73,7 @@ class BomExportTest(InvenTreeTestCase):
                 self.assertTrue(header in headers)
 
     def test_export_csv(self):
-        """
-        Test BOM download in CSV format
-        """
-
+        """Test BOM download in CSV format"""
         params = {
             'format': 'csv',
             'cascade': True,
@@ -142,10 +134,7 @@ class BomExportTest(InvenTreeTestCase):
                 self.assertTrue(header in expected)
 
     def test_export_xls(self):
-        """
-        Test BOM download in XLS format
-        """
-
+        """Test BOM download in XLS format"""
         params = {
             'format': 'xls',
             'cascade': True,
@@ -163,10 +152,7 @@ class BomExportTest(InvenTreeTestCase):
         self.assertEqual(content, 'attachment; filename="BOB | Bob | A2_BOM.xls"')
 
     def test_export_xlsx(self):
-        """
-        Test BOM download in XLSX format
-        """
-
+        """Test BOM download in XLSX format"""
         params = {
             'format': 'xlsx',
             'cascade': True,
@@ -181,10 +167,7 @@ class BomExportTest(InvenTreeTestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_export_json(self):
-        """
-        Test BOM download in JSON format
-        """
-
+        """Test BOM download in JSON format"""
         params = {
             'format': 'json',
             'cascade': True,

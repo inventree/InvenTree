@@ -31,7 +31,6 @@ class OwnerList(generics.ListAPIView):
         It is not necessarily "efficient" to do it this way,
         but until we determine a better way, this is what we have...
         """
-
         search_term = str(self.request.query_params.get('search', '')).lower()
 
         queryset = super().filter_queryset(queryset)
@@ -58,8 +57,7 @@ class OwnerDetail(generics.RetrieveAPIView):
 
 
 class RoleDetails(APIView):
-    """API endpoint which lists the available role permissions
-    for the current user
+    """API endpoint which lists the available role permissions for the current user
 
     (Requires authentication)
     """

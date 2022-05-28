@@ -13,8 +13,7 @@ logger = logging.getLogger('inventree')
 
 
 class InvenTreePluginViewMixin:
-    """Custom view mixin which adds context data to the view,
-    based on loaded plugins.
+    """Custom view mixin which adds context data to the view, based on loaded plugins.
 
     This allows rendered pages to be augmented by loaded plugins.
     """

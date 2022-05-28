@@ -1730,6 +1730,7 @@ class StockItem(MetadataMixin, MPTTModel):
 
     def testResultMap(self, **kwargs):
         """Return a map of test-results using the test name as the key.
+
         Where multiple test results exist for a given name,
         the *most recent* test is used.
 

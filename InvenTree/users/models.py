@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import logging
 
 from django.contrib.auth import get_user_model
@@ -20,8 +18,7 @@ logger = logging.getLogger("inventree")
 
 
 class RuleSet(models.Model):
-    """A RuleSet is somewhat like a superset of the django permission  class,
-    in that in encapsulates a bunch of permissions.
+    """A RuleSet is somewhat like a superset of the django permission  class, in that in encapsulates a bunch of permissions.
 
     There are *many* apps models used within InvenTree,
     so it makes sense to group them into "roles".
@@ -317,8 +314,7 @@ def split_permission(app, perm):
 
 
 def update_group_roles(group, debug=False):
-    """Iterates through all of the RuleSets associated with the group,
-    and ensures that the correct permissions are either applied or removed from the group.
+    """Iterates through all of the RuleSets associated with the group, and ensures that the correct permissions are either applied or removed from the group.
 
     This function is called under the following conditions:
 
@@ -354,7 +350,7 @@ def update_group_roles(group, debug=False):
     def add_model(name, action, allowed):
         """Add a new model to the pile:
 
-        args:
+        Args:
             name - The name of the model e.g. part_part
             action - The permission action e.g. view
             allowed - Whether or not the action is allowed
@@ -477,9 +473,8 @@ def update_group_roles(group, debug=False):
 @receiver(post_save, sender=Group, dispatch_uid='create_missing_rule_sets')
 def create_missing_rule_sets(sender, instance, **kwargs):
     """Called *after* a Group object is saved.
-    As the linked RuleSet instances are saved *before* the Group,
-    then we can now use these RuleSet values to update the
-    group permissions.
+
+    As the linked RuleSet instances are saved *before* the Group, then we can now use these RuleSet values to update the group permissions.
     """
     update_group_roles(instance)
 
@@ -516,6 +511,7 @@ def check_user_role(user, role, permission):
 
 class Owner(models.Model):
     """The Owner class is a proxy for a Group or User instance.
+
     Owner can be associated to any InvenTree model (part, stock, build, etc.)
 
     owner_type: Model type (Group or User)

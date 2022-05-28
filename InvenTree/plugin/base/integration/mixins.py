@@ -481,6 +481,7 @@ class PanelMixin:
 
     def get_panel_context(self, view, request, context):
         """Build the context data to be used for template rendering.
+
         Custom class can override this to provide any custom context data.
 
         (See the example in "custom_panel_sample.py")

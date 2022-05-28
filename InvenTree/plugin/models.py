@@ -12,8 +12,7 @@ from plugin import InvenTreePlugin, registry
 
 
 class MetadataMixin(models.Model):
-    """Model mixin class which adds a JSON metadata field to a model,
-    for use by any (and all) plugins.
+    """Model mixin class which adds a JSON metadata field to a model, for use by any (and all) plugins.
 
     The intent of this mixin is to provide a metadata field on a model instance,
     for plugins to read / modify as required, to store any extra information.
@@ -168,8 +167,7 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
 
     @classmethod
     def get_setting_definition(cls, key, **kwargs):
-        """In the BaseInvenTreeSetting class, we have a class attribute named 'SETTINGS',
-        which is a dict object that fully defines all the setting parameters.
+        """In the BaseInvenTreeSetting class, we have a class attribute named 'SETTINGS', which is a dict object that fully defines all the setting parameters.
 
         Here, unlike the BaseInvenTreeSetting, we do not know the definitions of all settings
         'ahead of time' (as they are defined externally in the plugins).
@@ -179,7 +177,6 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
         If not provided, we'll look at the plugin registry to see what settings are available,
         (if the plugin is specified!)
         """
-
         if 'settings' not in kwargs:
 
             plugin = kwargs.pop('plugin', None)

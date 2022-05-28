@@ -17,7 +17,6 @@ class EventPluginSample(EventMixin, InvenTreePlugin):
 
     def process_event(self, event, *args, **kwargs):
         """Custom event processing"""
-
         print(f"Processing triggered event: '{event}'")
         print("args:", str(args))
         print("kwargs:", str(kwargs))

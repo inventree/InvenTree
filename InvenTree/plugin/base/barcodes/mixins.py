@@ -64,8 +64,7 @@ class BarcodeMixin:
         return None  # pragma: no cover
 
     def getStockItemByHash(self):
-        """Attempt to retrieve a StockItem associated with this barcode, based on the barcode hash.
-        """
+        """Attempt to retrieve a StockItem associated with this barcode, based on the barcode hash."""
         try:
             item = StockItem.objects.get(uid=self.hash())
             return item

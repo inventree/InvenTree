@@ -120,7 +120,7 @@ def multiply(x, y, *args, **kwargs):
 
 @register.simple_tag()
 def add(x, y, *args, **kwargs):
-    """ Add two numbers together """
+    """Add two numbers together"""
     return x + y
 
 
@@ -277,6 +277,7 @@ def default_currency(*args, **kwargs):
 @register.simple_tag()
 def setting_object(key, *args, **kwargs):
     """Return a setting object speciifed by the given key
+
     (Or return None if the setting does not exist)
     if a user-setting was requested return that
     """

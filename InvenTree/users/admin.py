@@ -154,7 +154,9 @@ class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
     filter_horizontal = ['permissions']
 
     def save_model(self, request, obj, form, change):
-        """This method serves two purposes:
+        """Save overwrite.
+
+        This method serves two purposes:
             - show warning message whenever the group users belong to multiple groups
             - skip saving of the group instance model as inlines needs to be saved before.
         """

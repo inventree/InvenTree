@@ -112,7 +112,7 @@ class TemplateTagTest(InvenTreeTestCase):
 
 
 class PartTest(TestCase):
-    """ Tests for the Part model """
+    """Tests for the Part model"""
 
     fixtures = [
         'category',
@@ -326,10 +326,7 @@ class PartSettingsTest(InvenTreeTestCase):
     """
 
     def make_part(self):
-        """
-        Helper function to create a simple part
-        """
-
+        """Helper function to create a simple part"""
         part = Part.objects.create(
             name='Test Part',
             description='I am but a humble test part',

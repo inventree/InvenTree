@@ -6,7 +6,7 @@ from plugin import registry
 
 
 class SampleApiCallerPluginTests(TestCase):
-    """Tests for SampleApiCallerPluginTests """
+    """Tests for SampleApiCallerPluginTests"""
 
     def test_return(self):
         """Check if the external api call works"""

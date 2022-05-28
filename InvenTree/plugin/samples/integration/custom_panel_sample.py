@@ -48,7 +48,6 @@ class CustomPanelSample(PanelMixin, SettingsMixin, InvenTreePlugin):
         - Only for a specific instance (e.g. part)
         - Based on the user viewing the page!
         """
-
         panels = [
             {
                 # Simple panel without any actual content

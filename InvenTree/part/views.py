@@ -78,7 +78,6 @@ class PartSetCategory(AjaxUpdateView):
 
     def get(self, request, *args, **kwargs):
         """Respond to a GET request to this view"""
-
         self.request = request
 
         if 'parts[]' in request.GET:
@@ -90,7 +89,6 @@ class PartSetCategory(AjaxUpdateView):
 
     def post(self, request, *args, **kwargs):
         """Respond to a POST request to this view"""
-
         self.parts = []
 
         for item in request.POST:
@@ -1009,6 +1007,7 @@ class CategoryParameterTemplateCreate(AjaxCreateView):
 
     def get_form(self):
         """Create a form to upload a new CategoryParameterTemplate
+
         - Hide the 'category' field (parent part)
         - Display parameter templates which are not yet related
         """
@@ -1102,10 +1101,10 @@ class CategoryParameterTemplateEdit(AjaxUpdateView):
 
     def get_form(self):
         """Create a form to upload a new CategoryParameterTemplate
+
         - Hide the 'category' field (parent part)
         - Display parameter templates which are not yet related
         """
-
         form = super().get_form()
 
         form.fields['category'].widget = HiddenInput()

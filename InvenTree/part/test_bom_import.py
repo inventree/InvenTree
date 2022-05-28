@@ -1,6 +1,4 @@
-"""
-Unit testing for BOM upload / import functionality
-"""
+"""Unit testing for BOM upload / import functionality"""
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
@@ -12,9 +10,7 @@ from part.models import Part
 
 
 class BomUploadTest(InvenTreeAPITestCase):
-    """
-    Test BOM file upload API endpoint
-    """
+    """Test BOM file upload API endpoint"""
 
     roles = [
         'part.add',
@@ -63,10 +59,7 @@ class BomUploadTest(InvenTreeAPITestCase):
         return response
 
     def test_missing_file(self):
-        """
-        POST without a file
-        """
-
+        """POST without a file"""
         response = self.post(
             reverse('api-bom-import-upload'),
             data={},
@@ -76,10 +69,7 @@ class BomUploadTest(InvenTreeAPITestCase):
         self.assertIn('No file was submitted', str(response.data['data_file']))
 
     def test_unsupported_file(self):
-        """
-        POST with an unsupported file type
-        """
-
+        """POST with an unsupported file type"""
         response = self.post_bom(
             'sample.txt',
             b'hello world',
@@ -89,10 +79,7 @@ class BomUploadTest(InvenTreeAPITestCase):
         self.assertIn('Unsupported file type', str(response.data['data_file']))
 
     def test_broken_file(self):
-        """
-        Test upload with broken (corrupted) files
-        """
-
+        """Test upload with broken (corrupted) files"""
         response = self.post_bom(
             'sample.csv',
             b'',
@@ -111,10 +98,7 @@ class BomUploadTest(InvenTreeAPITestCase):
         self.assertIn('Unsupported format, or corrupt file', str(response.data['data_file']))
 
     def test_missing_rows(self):
-        """
-        Test upload of an invalid file (without data rows)
-        """
-
+        """Test upload of an invalid file (without data rows)"""
         dataset = tablib.Dataset()
 
         dataset.headers = [
@@ -142,10 +126,7 @@ class BomUploadTest(InvenTreeAPITestCase):
         self.assertIn('No data rows found in file', str(response.data))
 
     def test_missing_columns(self):
-        """
-        Upload extracted data, but with missing columns
-        """
-
+        """Upload extracted data, but with missing columns"""
         url = reverse('api-bom-import-extract')
 
         rows = [
@@ -195,10 +176,7 @@ class BomUploadTest(InvenTreeAPITestCase):
         )
 
     def test_invalid_data(self):
-        """
-        Upload data which contains errors
-        """
-
+        """Upload data which contains errors"""
         dataset = tablib.Dataset()
 
         # Only these headers are strictly necessary
@@ -241,10 +219,7 @@ class BomUploadTest(InvenTreeAPITestCase):
         self.assertEqual(rows[5]['data']['errors']['part'], 'Part is not designated as a component')
 
     def test_part_guess(self):
-        """
-        Test part 'guessing' when PK values are not supplied
-        """
-
+        """Test part 'guessing' when PK values are not supplied"""
         dataset = tablib.Dataset()
 
         # Should be able to 'guess' the part from the name
@@ -304,10 +279,7 @@ class BomUploadTest(InvenTreeAPITestCase):
             self.assertEqual(rows[idx]['data']['part'], components[idx].pk)
 
     def test_levels(self):
-        """
-        Test that multi-level BOMs are correctly handled during upload
-        """
-
+        """Test that multi-level BOMs are correctly handled during upload"""
         url = reverse('api-bom-import-extract')
 
         dataset = tablib.Dataset()

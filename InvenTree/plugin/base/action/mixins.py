@@ -30,7 +30,6 @@ class ActionMixin:
 
     def get_result(self, user=None, data=None):
         """Result of the action?"""
-
         # Re-implement this for cutsom actions
         return False
 
