@@ -1,6 +1,4 @@
-"""
-Django views for interacting with Stock app
-"""
+"""Django views for interacting with Stock app"""
 
 from datetime import datetime
 
@@ -21,8 +19,7 @@ from .models import StockItem, StockItemTracking, StockLocation
 
 
 class StockIndex(InvenTreeRoleMixin, InvenTreePluginViewMixin, ListView):
-    """ StockIndex view loads all StockLocation and StockItem object
-    """
+    """StockIndex view loads all StockLocation and StockItem object"""
     model = StockItem
     template_name = 'stock/location.html'
     context_obect_name = 'locations'
@@ -48,9 +45,7 @@ class StockIndex(InvenTreeRoleMixin, InvenTreePluginViewMixin, ListView):
 
 
 class StockLocationDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
-    """
-    Detailed view of a single StockLocation object
-    """
+    """Detailed view of a single StockLocation object"""
 
     context_object_name = 'location'
     template_name = 'stock/location.html'
@@ -69,9 +64,7 @@ class StockLocationDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailVi
 
 
 class StockItemDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
-    """
-    Detailed view of a single StockItem object
-    """
+    """Detailed view of a single StockItem object"""
 
     context_object_name = 'item'
     template_name = 'stock/item.html'
@@ -103,7 +96,7 @@ class StockItemDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
         return data
 
     def get(self, request, *args, **kwargs):
-        """ check if item exists else return to stock index """
+        """Check if item exists else return to stock index"""
 
         stock_pk = kwargs.get('pk', None)
 
@@ -120,7 +113,7 @@ class StockItemDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
 
 
 class StockLocationQRCode(QRCodeView):
-    """ View for displaying a QR code for a StockLocation object """
+    """View for displaying a QR code for a StockLocation object"""
 
     ajax_form_title = _("Stock Location QR code")
 
@@ -136,9 +129,7 @@ class StockLocationQRCode(QRCodeView):
 
 
 class StockItemReturnToStock(AjaxUpdateView):
-    """
-    View for returning a stock item (which is assigned to a customer) to stock.
-    """
+    """View for returning a stock item (which is assigned to a customer) to stock."""
 
     model = StockItem
     ajax_form_title = _("Return to Stock")
@@ -166,9 +157,7 @@ class StockItemReturnToStock(AjaxUpdateView):
 
 
 class StockItemDeleteTestData(AjaxUpdateView):
-    """
-    View for deleting all test data
-    """
+    """View for deleting all test data"""
 
     model = StockItem
     form_class = ConfirmForm
@@ -203,7 +192,7 @@ class StockItemDeleteTestData(AjaxUpdateView):
 
 
 class StockItemQRCode(QRCodeView):
-    """ View for displaying a QR code for a StockItem object """
+    """View for displaying a QR code for a StockItem object"""
 
     ajax_form_title = _("Stock Item QR Code")
     role_required = 'stock.view'
@@ -218,9 +207,7 @@ class StockItemQRCode(QRCodeView):
 
 
 class StockItemConvert(AjaxUpdateView):
-    """
-    View for 'converting' a StockItem to a variant of its current part.
-    """
+    """View for 'converting' a StockItem to a variant of its current part."""
 
     model = StockItem
     form_class = StockForms.ConvertStockItemForm
@@ -229,9 +216,7 @@ class StockItemConvert(AjaxUpdateView):
     context_object_name = 'item'
 
     def get_form(self):
-        """
-        Filter the available parts.
-        """
+        """Filter the available parts."""
 
         form = super().get_form()
         item = self.get_object()
@@ -289,7 +274,7 @@ class StockItemTrackingDelete(AjaxDeleteView):
 
 
 class StockItemTrackingEdit(AjaxUpdateView):
-    """ View for editing a StockItemTracking object """
+    """View for editing a StockItemTracking object"""
 
     model = StockItemTracking
     ajax_form_title = _('Edit Stock Tracking Entry')
@@ -297,8 +282,7 @@ class StockItemTrackingEdit(AjaxUpdateView):
 
 
 class StockItemTrackingCreate(AjaxCreateView):
-    """ View for creating a new StockItemTracking object.
-    """
+    """View for creating a new StockItemTracking object."""
 
     model = StockItemTracking
     ajax_form_title = _("Add Stock Tracking Entry")

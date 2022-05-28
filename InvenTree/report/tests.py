@@ -36,10 +36,7 @@ class ReportTest(InvenTreeAPITestCase):
         super().setUp()
 
     def copyReportTemplate(self, filename, description):
-        """
-        Copy the provided report template into the required media directory
-        """
-
+        """Copy the provided report template into the required media directory"""
         src_dir = os.path.join(
             os.path.dirname(os.path.realpath(__file__)),
             'templates',
@@ -81,10 +78,7 @@ class ReportTest(InvenTreeAPITestCase):
         )
 
     def test_list_endpoint(self):
-        """
-        Test that the LIST endpoint works for each report
-        """
-
+        """Test that the LIST endpoint works for each report"""
         if not self.list_url:
             return
 
@@ -135,10 +129,7 @@ class TestReportTest(ReportTest):
         return super().setUp()
 
     def test_print(self):
-        """
-        Printing tests for the TestReport
-        """
-
+        """Printing tests for the TestReport"""
         report = self.model.objects.first()
 
         url = reverse(self.print_url, kwargs={'pk': report.pk})
@@ -177,10 +168,7 @@ class BuildReportTest(ReportTest):
         return super().setUp()
 
     def test_print(self):
-        """
-        Printing tests for the BuildReport
-        """
-
+        """Printing tests for the BuildReport"""
         report = self.model.objects.first()
 
         url = reverse(self.print_url, kwargs={'pk': report.pk})

@@ -14,9 +14,7 @@ User = get_user_model()
 
 
 class RuleSetInline(admin.TabularInline):
-    """
-    Class for displaying inline RuleSet data in the Group admin page.
-    """
+    """Class for displaying inline RuleSet data in the Group admin page."""
 
     model = RuleSet
     can_delete = False
@@ -76,9 +74,7 @@ class InvenTreeGroupAdminForm(forms.ModelForm):
 
 
 class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
-    """
-    Custom admin interface for the Group model
-    """
+    """Custom admin interface for the Group model"""
 
     form = InvenTreeGroupAdminForm
 
@@ -213,9 +209,7 @@ class InvenTreeUserAdmin(UserAdmin):
 
 
 class OwnerAdmin(admin.ModelAdmin):
-    """
-    Custom admin interface for the Owner model
-    """
+    """Custom admin interface for the Owner model"""
     pass
 
 

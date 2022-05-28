@@ -10,8 +10,7 @@ from .models import Owner
 
 
 class UserSerializer(InvenTreeModelSerializer):
-    """ Serializer for a User
-    """
+    """Serializer for a User"""
 
     class Meta:
         model = User
@@ -23,9 +22,7 @@ class UserSerializer(InvenTreeModelSerializer):
 
 
 class OwnerSerializer(InvenTreeModelSerializer):
-    """
-    Serializer for an "Owner" (either a "user" or a "group")
-    """
+    """Serializer for an "Owner" (either a "user" or a "group")"""
 
     name = serializers.CharField(read_only=True)
 

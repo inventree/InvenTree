@@ -221,9 +221,7 @@ class RuleSet(models.Model):
 
     @classmethod
     def check_table_permission(cls, user, table, permission):
-        """
-        Check if the provided user has the specified permission against the table
-        """
+        """Check if the provided user has the specified permission against the table"""
 
         # If the table does *not* require permissions
         if table in cls.RULESET_IGNORE:
@@ -269,7 +267,7 @@ class RuleSet(models.Model):
         )
 
     def __str__(self, debug=False):  # pragma: no cover
-        """ Ruleset string representation """
+        """Ruleset string representation"""
         if debug:
             # Makes debugging easier
             return f'{str(self.group).ljust(15)}: {self.name.title().ljust(15)} | ' \
@@ -296,15 +294,13 @@ class RuleSet(models.Model):
             self.group.save()
 
     def get_models(self):
-        """
-        Return the database tables / models that this ruleset covers.
-        """
+        """Return the database tables / models that this ruleset covers."""
 
         return self.RULESET_MODELS.get(self.name, [])
 
 
 def split_model(model):
-    """get modelname and app from modelstring"""
+    """Get modelname and app from modelstring"""
     *app, model = model.split('_')
 
     # handle models that have
@@ -317,7 +313,7 @@ def split_model(model):
 
 
 def split_permission(app, perm):
-    """split permission string into permission and model"""
+    """Split permission string into permission and model"""
     permission_name, *model = perm.split('_')
     # handle models that have underscores
     if len(model) > 1:  # pragma: no cover
@@ -329,7 +325,6 @@ def split_permission(app, perm):
 
 def update_group_roles(group, debug=False):
     """
-
     Iterates through all of the RuleSets associated with the group,
     and ensures that the correct permissions are either applied or removed from the group.
 
@@ -339,7 +334,6 @@ def update_group_roles(group, debug=False):
     b) Whenver the group object is updated
 
     The RuleSet model has complete control over the permissions applied to any group.
-
     """
 
     if not canAppAccessDatabase(allow_test=True):
@@ -594,24 +588,20 @@ class Owner(models.Model):
     owner = GenericForeignKey('owner_type', 'owner_id')
 
     def __str__(self):
-        """ Defines the owner string representation """
+        """Defines the owner string representation"""
         return f'{self.owner} ({self.owner_type.name})'
 
     def name(self):
-        """
-        Return the 'name' of this owner
-        """
+        """Return the 'name' of this owner"""
         return str(self.owner)
 
     def label(self):
-        """
-        Return the 'type' label of this owner i.e. 'user' or 'group'
-        """
+        """Return the 'type' label of this owner i.e. 'user' or 'group'"""
         return str(self.owner_type.name)
 
     @classmethod
     def create(cls, obj):
-        """ Check if owner exist then create new owner entry """
+        """Check if owner exist then create new owner entry"""
 
         # Check for existing owner
         existing_owner = cls.get_owner(obj)
@@ -627,7 +617,7 @@ class Owner(models.Model):
 
     @classmethod
     def get_owner(cls, user_or_group):
-        """ Get owner instance for a group or user """
+        """Get owner instance for a group or user"""
 
         user_model = get_user_model()
         owner = None

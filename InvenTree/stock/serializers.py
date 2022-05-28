@@ -1,6 +1,4 @@
-"""
-JSON serializers for Stock app
-"""
+"""JSON serializers for Stock app"""
 
 from datetime import datetime, timedelta
 from decimal import Decimal
@@ -29,9 +27,7 @@ from .models import (StockItem, StockItemAttachment, StockItemTestResult,
 
 
 class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """
-    Provides a brief serializer for a StockLocation object
-    """
+    """Provides a brief serializer for a StockLocation object"""
 
     class Meta:
         model = StockLocation
@@ -43,7 +39,7 @@ class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 
 class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
-    """ Brief serializers for a StockItem """
+    """Brief serializers for a StockItem"""
 
     location_name = serializers.CharField(source='location', read_only=True)
     part_name = serializers.CharField(source='part.full_name', read_only=True)
@@ -71,7 +67,7 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
 
 
 class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """ Serializer for a StockItem:
+    """Serializer for a StockItem:
 
     - Includes serialization for the linked part
     - Includes serialization for the item location
@@ -88,11 +84,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     @staticmethod
     def annotate_queryset(queryset):
-        """
-        Add some extra annotations to the queryset,
-        performing database queries as efficiently as possible.
-        """
-
+        """Add some extra annotations to the queryset, performing database queries as efficiently as possible."""
         # Annotate the queryset with the total allocated to sales orders
         queryset = queryset.annotate(
             allocated=Coalesce(
@@ -257,8 +249,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 
 class SerializeStockItemSerializer(serializers.Serializer):
-    """
-    A DRF serializer for "serializing" a StockItem.
+    """A DRF serializer for "serializing" a StockItem.
 
     (Sorry for the confusing naming...)
 
@@ -284,9 +275,7 @@ class SerializeStockItemSerializer(serializers.Serializer):
     )
 
     def validate_quantity(self, quantity):
-        """
-        Validate that the quantity value is correct
-        """
+        """Validate that the quantity value is correct"""
 
         item = self.context['item']
 
@@ -323,9 +312,7 @@ class SerializeStockItemSerializer(serializers.Serializer):
     )
 
     def validate(self, data):
-        """
-        Check that the supplied serial numbers are valid
-        """
+        """Check that the supplied serial numbers are valid"""
 
         data = super().validate(data)
 
@@ -381,9 +368,7 @@ class SerializeStockItemSerializer(serializers.Serializer):
 
 
 class InstallStockItemSerializer(serializers.Serializer):
-    """
-    Serializer for installing a stock item into a given part
-    """
+    """Serializer for installing a stock item into a given part"""
 
     stock_item = serializers.PrimaryKeyRelatedField(
         queryset=StockItem.objects.all(),
@@ -401,9 +386,7 @@ class InstallStockItemSerializer(serializers.Serializer):
     )
 
     def validate_stock_item(self, stock_item):
-        """
-        Validate the selected stock item
-        """
+        """Validate the selected stock item"""
 
         if not stock_item.in_stock:
             # StockItem must be in stock to be "installed"
@@ -419,7 +402,7 @@ class InstallStockItemSerializer(serializers.Serializer):
         return stock_item
 
     def save(self):
-        """ Install the selected stock item into this one """
+        """Install the selected stock item into this one"""
 
         data = self.validated_data
 
@@ -438,9 +421,7 @@ class InstallStockItemSerializer(serializers.Serializer):
 
 
 class UninstallStockItemSerializer(serializers.Serializer):
-    """
-    API serializers for uninstalling an installed item from a stock item
-    """
+    """API serializers for uninstalling an installed item from a stock item"""
 
     class Meta:
         fields = [
@@ -480,9 +461,7 @@ class UninstallStockItemSerializer(serializers.Serializer):
 
 
 class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """
-    Serializer for a simple tree view
-    """
+    """Serializer for a simple tree view"""
 
     class Meta:
         model = StockLocation
@@ -494,8 +473,7 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 
 class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """ Detailed information about a stock location
-    """
+    """Detailed information about a stock location"""
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
@@ -519,7 +497,7 @@ class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 
 class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSerializer):
-    """ Serializer for StockItemAttachment model """
+    """Serializer for StockItemAttachment model"""
 
     def __init__(self, *args, **kwargs):
         user_detail = kwargs.pop('user_detail', False)
@@ -556,7 +534,7 @@ class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSer
 
 
 class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """ Serializer for the StockItemTestResult model """
+    """Serializer for the StockItemTestResult model"""
 
     user_detail = InvenTree.serializers.UserSerializerBrief(source='user', read_only=True)
 
@@ -597,7 +575,7 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
 
 
 class StockTrackingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """ Serializer for StockItemTracking model """
+    """Serializer for StockItemTracking model"""
 
     def __init__(self, *args, **kwargs):
 
@@ -644,8 +622,7 @@ class StockTrackingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 
 class StockAssignmentItemSerializer(serializers.Serializer):
-    """
-    Serializer for a single StockItem with in StockAssignment request.
+    """Serializer for a single StockItem with in StockAssignment request.
 
     Here, the particular StockItem is being assigned (manually) to a customer
 
@@ -688,8 +665,7 @@ class StockAssignmentItemSerializer(serializers.Serializer):
 
 
 class StockAssignmentSerializer(serializers.Serializer):
-    """
-    Serializer for assigning one (or more) stock items to a customer.
+    """Serializer for assigning one (or more) stock items to a customer.
 
     This is a manual assignment process, separate for (for example) a Sales Order
     """
@@ -765,8 +741,7 @@ class StockAssignmentSerializer(serializers.Serializer):
 
 
 class StockMergeItemSerializer(serializers.Serializer):
-    """
-    Serializer for a single StockItem within the StockMergeSerializer class.
+    """Serializer for a single StockItem within the StockMergeSerializer class.
 
     Here, the individual StockItem is being checked for merge compatibility.
     """
@@ -793,9 +768,7 @@ class StockMergeItemSerializer(serializers.Serializer):
 
 
 class StockMergeSerializer(serializers.Serializer):
-    """
-    Serializer for merging two (or more) stock items together
-    """
+    """Serializer for merging two (or more) stock items together"""
 
     class Meta:
         fields = [
@@ -879,8 +852,8 @@ class StockMergeSerializer(serializers.Serializer):
         return data
 
     def save(self):
-        """
-        Actually perform the stock merging action.
+        """Actually perform the stock merging action.
+
         At this point we are confident that the merge can take place
         """
 
@@ -908,8 +881,7 @@ class StockMergeSerializer(serializers.Serializer):
 
 
 class StockAdjustmentItemSerializer(serializers.Serializer):
-    """
-    Serializer for a single StockItem within a stock adjument request.
+    """Serializer for a single StockItem within a stock adjument request.
 
     Fields:
         - item: StockItem object
@@ -940,9 +912,7 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
 
 
 class StockAdjustmentSerializer(serializers.Serializer):
-    """
-    Base class for managing stock adjustment actions via the API
-    """
+    """Base class for managing stock adjustment actions via the API"""
 
     class Meta:
         fields = [
@@ -972,9 +942,7 @@ class StockAdjustmentSerializer(serializers.Serializer):
 
 
 class StockCountSerializer(StockAdjustmentSerializer):
-    """
-    Serializer for counting stock items
-    """
+    """Serializer for counting stock items"""
 
     def save(self):
 
@@ -998,9 +966,7 @@ class StockCountSerializer(StockAdjustmentSerializer):
 
 
 class StockAddSerializer(StockAdjustmentSerializer):
-    """
-    Serializer for adding stock to stock item(s)
-    """
+    """Serializer for adding stock to stock item(s)"""
 
     def save(self):
 
@@ -1023,9 +989,7 @@ class StockAddSerializer(StockAdjustmentSerializer):
 
 
 class StockRemoveSerializer(StockAdjustmentSerializer):
-    """
-    Serializer for removing stock from stock item(s)
-    """
+    """Serializer for removing stock from stock item(s)"""
 
     def save(self):
 
@@ -1048,9 +1012,7 @@ class StockRemoveSerializer(StockAdjustmentSerializer):
 
 
 class StockTransferSerializer(StockAdjustmentSerializer):
-    """
-    Serializer for transferring (moving) stock item(s)
-    """
+    """Serializer for transferring (moving) stock item(s)"""
 
     location = serializers.PrimaryKeyRelatedField(
         queryset=StockLocation.objects.all(),

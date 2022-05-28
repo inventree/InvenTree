@@ -13,9 +13,7 @@ from .models import (StockItem, StockItemTestResult, StockItemTracking,
 
 
 class StockTest(InvenTreeTestCase):
-    """
-    Tests to ensure that the stock location tree functions correcly
-    """
+    """Tests to ensure that the stock location tree functions correcly"""
 
     fixtures = [
         'category',
@@ -44,10 +42,7 @@ class StockTest(InvenTreeTestCase):
         StockItem.objects.rebuild()
 
     def test_expiry(self):
-        """
-        Test expiry date functionality for StockItem model.
-        """
-
+        """Test expiry date functionality for StockItem model."""
         today = datetime.datetime.now().date()
 
         item = StockItem.objects.create(
@@ -78,10 +73,7 @@ class StockTest(InvenTreeTestCase):
         self.assertTrue(item.is_expired())
 
     def test_is_building(self):
-        """
-        Test that the is_building flag does not count towards stock.
-        """
-
+        """Test that the is_building flag does not count towards stock."""
         part = Part.objects.get(pk=1)
 
         # Record the total stock count
@@ -197,7 +189,6 @@ class StockTest(InvenTreeTestCase):
 
     def test_move(self):
         """ Test stock movement functions """
-
         # Move 4,000 screws to the bathroom
         it = StockItem.objects.get(pk=1)
         self.assertNotEqual(it.location, self.bathroom)
@@ -339,10 +330,7 @@ class StockTest(InvenTreeTestCase):
             w2 = StockItem.objects.get(pk=101)
 
     def test_serials(self):
-        """
-        Tests for stock serialization
-        """
-
+        """Tests for stock serialization"""
         p = Part.objects.create(
             name='trackable part',
             description='trackable part',
@@ -373,10 +361,7 @@ class StockTest(InvenTreeTestCase):
         self.assertTrue(item.serialized)
 
     def test_big_serials(self):
-        """
-        Unit tests for "large" serial numbers which exceed integer encoding
-        """
-
+        """Unit tests for "large" serial numbers which exceed integer encoding"""
         p = Part.objects.create(
             name='trackable part',
             description='trackable part',
@@ -451,11 +436,10 @@ class StockTest(InvenTreeTestCase):
         self.assertEqual(item_prev.serial_int, 99)
 
     def test_serialize_stock_invalid(self):
-        """
-        Test manual serialization of parts.
+        """Test manual serialization of parts.
+
         Each of these tests should fail
         """
-
         # Test serialization of non-serializable part
         item = StockItem.objects.get(pk=1234)
 
@@ -480,8 +464,7 @@ class StockTest(InvenTreeTestCase):
             item.serializeStock(3, "hello", self.user)
 
     def test_serialize_stock_valid(self):
-        """ Perform valid stock serializations """
-
+        """Perform valid stock serializations"""
         # There are 10 of these in stock
         # Item will deplete when deleted
         item = StockItem.objects.get(pk=100)
@@ -517,8 +500,8 @@ class StockTest(InvenTreeTestCase):
         item.serializeStock(2, [99, 100], self.user)
 
     def test_location_tree(self):
-        """
-        Unit tests for stock location tree structure (MPTT).
+        """Unit tests for stock location tree structure (MPTT).
+
         Ensure that the MPTT structure is rebuilt correctly,
         and the corrent ancestor tree is observed.
 
@@ -686,9 +669,7 @@ class StockTest(InvenTreeTestCase):
 
 
 class VariantTest(StockTest):
-    """
-    Tests for calculation stock counts against templates / variants
-    """
+    """Tests for calculation stock counts against templates / variants"""
 
     def test_variant_stock(self):
         # Check the 'Chair' variant
@@ -769,9 +750,7 @@ class VariantTest(StockTest):
 
 
 class TestResultTest(StockTest):
-    """
-    Tests for the StockItemTestResult model.
-    """
+    """Tests for the StockItemTestResult model."""
 
     def test_test_count(self):
         item = StockItem.objects.get(pk=105)
@@ -898,12 +877,10 @@ class TestResultTest(StockTest):
         self.assertEqual(item3.test_results.count(), 4)
 
     def test_installed_tests(self):
-        """
-        Test test results for stock in stock.
+        """Test test results for stock in stock.
 
         Or, test "test results" for "stock items" installed "inside" a "stock item"
         """
-
         # Get a "master" stock item
         item = StockItem.objects.get(pk=105)
 

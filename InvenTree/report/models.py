@@ -567,8 +567,7 @@ def rename_asset(instance, filename):
 
 
 class ReportAsset(models.Model):
-    """
-    Asset file for use in report templates.
+    """Asset file for use in report templates.
     For example, an image to use in a header file.
     Uploaded asset files appear in MEDIA_ROOT/report/assets,
     and can be loaded in a template using the {% report_asset <filename> %} tag.

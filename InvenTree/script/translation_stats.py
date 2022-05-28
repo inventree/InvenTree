@@ -1,6 +1,4 @@
-"""
-This script calculates translation coverage for various languages
-"""
+"""This script calculates translation coverage for various languages"""
 
 import json
 import os

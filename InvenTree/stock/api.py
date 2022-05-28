@@ -1,6 +1,4 @@
-"""
-JSON API for the Stock app
-"""
+"""JSON API for the Stock app"""
 
 from collections import OrderedDict
 from datetime import datetime, timedelta
@@ -39,7 +37,7 @@ from stock.models import (StockItem, StockItemAttachment, StockItemTestResult,
 
 
 class StockDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ API detail endpoint for Stock object
+    """API detail endpoint for Stock object
 
     get:
     Return a single StockItem object
@@ -89,7 +87,7 @@ class StockMetadata(generics.RetrieveUpdateAPIView):
 
 
 class StockItemContextMixin:
-    """ Mixin class for adding StockItem object to serializer context """
+    """Mixin class for adding StockItem object to serializer context"""
 
     def get_serializer_context(self):
 
@@ -105,17 +103,14 @@ class StockItemContextMixin:
 
 
 class StockItemSerialize(StockItemContextMixin, generics.CreateAPIView):
-    """
-    API endpoint for serializing a stock item
-    """
+    """API endpoint for serializing a stock item"""
 
     queryset = StockItem.objects.none()
     serializer_class = StockSerializers.SerializeStockItemSerializer
 
 
 class StockItemInstall(StockItemContextMixin, generics.CreateAPIView):
-    """
-    API endpoint for installing a particular stock item into this stock item.
+    """API endpoint for installing a particular stock item into this stock item.
 
     - stock_item.part must be in the BOM for this part
     - stock_item must currently be "in stock"
@@ -127,17 +122,14 @@ class StockItemInstall(StockItemContextMixin, generics.CreateAPIView):
 
 
 class StockItemUninstall(StockItemContextMixin, generics.CreateAPIView):
-    """
-    API endpoint for removing (uninstalling) items from this item
-    """
+    """API endpoint for removing (uninstalling) items from this item"""
 
     queryset = StockItem.objects.none()
     serializer_class = StockSerializers.UninstallStockItemSerializer
 
 
 class StockAdjustView(generics.CreateAPIView):
-    """
-    A generic class for handling stocktake actions.
+    """A generic class for handling stocktake actions.
 
     Subclasses exist for:
 
@@ -159,41 +151,31 @@ class StockAdjustView(generics.CreateAPIView):
 
 
 class StockCount(StockAdjustView):
-    """
-    Endpoint for counting stock (performing a stocktake).
-    """
+    """Endpoint for counting stock (performing a stocktake)."""
 
     serializer_class = StockSerializers.StockCountSerializer
 
 
 class StockAdd(StockAdjustView):
-    """
-    Endpoint for adding a quantity of stock to an existing StockItem
-    """
+    """Endpoint for adding a quantity of stock to an existing StockItem"""
 
     serializer_class = StockSerializers.StockAddSerializer
 
 
 class StockRemove(StockAdjustView):
-    """
-    Endpoint for removing a quantity of stock from an existing StockItem.
-    """
+    """Endpoint for removing a quantity of stock from an existing StockItem."""
 
     serializer_class = StockSerializers.StockRemoveSerializer
 
 
 class StockTransfer(StockAdjustView):
-    """
-    API endpoint for performing stock movements
-    """
+    """API endpoint for performing stock movements"""
 
     serializer_class = StockSerializers.StockTransferSerializer
 
 
 class StockAssign(generics.CreateAPIView):
-    """
-    API endpoint for assigning stock to a particular customer
-    """
+    """API endpoint for assigning stock to a particular customer"""
 
     queryset = StockItem.objects.all()
     serializer_class = StockSerializers.StockAssignmentSerializer
@@ -208,9 +190,7 @@ class StockAssign(generics.CreateAPIView):
 
 
 class StockMerge(generics.CreateAPIView):
-    """
-    API endpoint for merging multiple stock items
-    """
+    """API endpoint for merging multiple stock items"""
 
     queryset = StockItem.objects.none()
     serializer_class = StockSerializers.StockMergeSerializer
@@ -222,8 +202,7 @@ class StockMerge(generics.CreateAPIView):
 
 
 class StockLocationList(generics.ListCreateAPIView):
-    """
-    API endpoint for list view of StockLocation objects:
+    """API endpoint for list view of StockLocation objects:
 
     - GET: Return list of StockLocation objects
     - POST: Create a new StockLocation
@@ -233,11 +212,9 @@ class StockLocationList(generics.ListCreateAPIView):
     serializer_class = StockSerializers.LocationSerializer
 
     def filter_queryset(self, queryset):
-        """
-        Custom filtering:
+        """Custom filtering:
         - Allow filtering by "null" parent to retrieve top-level stock locations
         """
-
         queryset = super().filter_queryset(queryset)
 
         params = self.request.query_params
@@ -319,10 +296,7 @@ class StockLocationList(generics.ListCreateAPIView):
 
 
 class StockLocationTree(generics.ListAPIView):
-    """
-    API endpoint for accessing a list of StockLocation objects,
-    ready for rendering as a tree
-    """
+    """API endpoint for accessing a list of StockLocation objects, ready for rendering as a tree"""
 
     queryset = StockLocation.objects.all()
     serializer_class = StockSerializers.LocationTreeSerializer
@@ -337,9 +311,7 @@ class StockLocationTree(generics.ListAPIView):
 
 
 class StockFilter(rest_filters.FilterSet):
-    """
-    FilterSet for StockItem LIST API
-    """
+    """FilterSet for StockItem LIST API"""
 
     # Part name filters
     name = rest_filters.CharFilter(label='Part name (case insensitive)', field_name='part__name', lookup_expr='iexact')
@@ -372,12 +344,10 @@ class StockFilter(rest_filters.FilterSet):
     available = rest_filters.BooleanFilter(label='Available', method='filter_available')
 
     def filter_available(self, queryset, name, value):
-        """
-        Filter by whether the StockItem is "available" or not.
+        """Filter by whether the StockItem is "available" or not.
 
         Here, "available" means that the allocated quantity is less than the total quantity
         """
-
         if str2bool(value):
             # The 'quantity' field is greater than the calculated 'allocated' field
             queryset = queryset.filter(Q(quantity__gt=F('allocated')))
@@ -401,10 +371,7 @@ class StockFilter(rest_filters.FilterSet):
     serialized = rest_filters.BooleanFilter(label='Has serial number', method='filter_serialized')
 
     def filter_serialized(self, queryset, name, value):
-        """
-        Filter by whether the StockItem has a serial number (or not)
-        """
-
+        """Filter by whether the StockItem has a serial number (or not)"""
         q = Q(serial=None) | Q(serial='')
 
         if str2bool(value):
@@ -417,10 +384,7 @@ class StockFilter(rest_filters.FilterSet):
     has_batch = rest_filters.BooleanFilter(label='Has batch code', method='filter_has_batch')
 
     def filter_has_batch(self, queryset, name, value):
-        """
-        Filter by whether the StockItem has a batch code (or not)
-        """
-
+        """Filter by whether the StockItem has a batch code (or not)"""
         q = Q(batch=None) | Q(batch='')
 
         if str2bool(value):
@@ -433,12 +397,10 @@ class StockFilter(rest_filters.FilterSet):
     tracked = rest_filters.BooleanFilter(label='Tracked', method='filter_tracked')
 
     def filter_tracked(self, queryset, name, value):
-        """
-        Filter by whether this stock item is *tracked*, meaning either:
+        """Filter by whether this stock item is *tracked*, meaning either:
         - It has a serial number
         - It has a batch code
         """
-
         q_batch = Q(batch=None) | Q(batch='')
         q_serial = Q(serial=None) | Q(serial='')
 
@@ -452,10 +414,7 @@ class StockFilter(rest_filters.FilterSet):
     installed = rest_filters.BooleanFilter(label='Installed in other stock item', method='filter_installed')
 
     def filter_installed(self, queryset, name, value):
-        """
-        Filter stock items by "belongs_to" field being empty
-        """
-
+        """Filter stock items by "belongs_to" field being empty"""
         if str2bool(value):
             queryset = queryset.exclude(belongs_to=None)
         else:
@@ -502,7 +461,7 @@ class StockFilter(rest_filters.FilterSet):
 
 
 class StockList(APIDownloadMixin, generics.ListCreateAPIView):
-    """ API endpoint for list view of Stock objects
+    """API endpoint for list view of Stock objects
 
     - GET: Return a list of all StockItem objects (with optional query filters)
     - POST: Create a new StockItem
@@ -520,15 +479,13 @@ class StockList(APIDownloadMixin, generics.ListCreateAPIView):
         return ctx
 
     def create(self, request, *args, **kwargs):
-        """
-        Create a new StockItem object via the API.
+        """Create a new StockItem object via the API.
 
         We override the default 'create' implementation.
 
         If a location is *not* specified, but the linked *part* has a default location,
         we can pre-fill the location automatically.
         """
-
         user = request.user
 
         # Copy the request data, to side-step "mutability" issues
@@ -643,8 +600,8 @@ class StockList(APIDownloadMixin, generics.ListCreateAPIView):
             return Response(response_data, status=status.HTTP_201_CREATED, headers=self.get_success_headers(serializer.data))
 
     def download_queryset(self, queryset, export_format):
-        """
-        Download this queryset as a file.
+        """Download this queryset as a file.
+
         Uses the APIDownloadMixin mixin class
         """
         dataset = StockItemResource().export(queryset=queryset)
@@ -659,13 +616,11 @@ class StockList(APIDownloadMixin, generics.ListCreateAPIView):
         return DownloadFile(filedata, filename)
 
     def list(self, request, *args, **kwargs):
-        """
-        Override the 'list' method, as the StockLocation objects
+        """Override the 'list' method, as the StockLocation objects
         are very expensive to serialize.
 
         So, we fetch and serialize the required StockLocation objects only as required.
         """
-
         queryset = self.filter_queryset(self.get_queryset())
 
         params = request.query_params
@@ -775,9 +730,7 @@ class StockList(APIDownloadMixin, generics.ListCreateAPIView):
         return queryset
 
     def filter_queryset(self, queryset):
-        """
-        Custom filtering for the StockItem queryset
-        """
+        """Custom filtering for the StockItem queryset"""
 
         params = self.request.query_params
 
@@ -1090,9 +1043,7 @@ class StockList(APIDownloadMixin, generics.ListCreateAPIView):
 
 
 class StockAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
-    """
-    API endpoint for listing (and creating) a StockItemAttachment (file upload)
-    """
+    """API endpoint for listing (and creating) a StockItemAttachment (file upload)"""
 
     queryset = StockItemAttachment.objects.all()
     serializer_class = StockSerializers.StockItemAttachmentSerializer
@@ -1109,27 +1060,21 @@ class StockAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
 
 
 class StockAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):
-    """
-    Detail endpoint for StockItemAttachment
-    """
+    """Detail endpoint for StockItemAttachment"""
 
     queryset = StockItemAttachment.objects.all()
     serializer_class = StockSerializers.StockItemAttachmentSerializer
 
 
 class StockItemTestResultDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Detail endpoint for StockItemTestResult
-    """
+    """Detail endpoint for StockItemTestResult"""
 
     queryset = StockItemTestResult.objects.all()
     serializer_class = StockSerializers.StockItemTestResultSerializer
 
 
 class StockItemTestResultList(generics.ListCreateAPIView):
-    """
-    API endpoint for listing (and creating) a StockItemTestResult object.
-    """
+    """API endpoint for listing (and creating) a StockItemTestResult object."""
 
     queryset = StockItemTestResult.objects.all()
     serializer_class = StockSerializers.StockItemTestResultSerializer
@@ -1205,8 +1150,7 @@ class StockItemTestResultList(generics.ListCreateAPIView):
         return self.serializer_class(*args, **kwargs)
 
     def perform_create(self, serializer):
-        """
-        Create a new test result object.
+        """Create a new test result object.
 
         Also, check if an attachment was uploaded alongside the test result,
         and save it to the database if it were.
@@ -1219,16 +1163,14 @@ class StockItemTestResultList(generics.ListCreateAPIView):
 
 
 class StockTrackingDetail(generics.RetrieveAPIView):
-    """
-    Detail API endpoint for StockItemTracking model
-    """
+    """Detail API endpoint for StockItemTracking model"""
 
     queryset = StockItemTracking.objects.all()
     serializer_class = StockSerializers.StockTrackingSerializer
 
 
 class StockTrackingList(generics.ListAPIView):
-    """ API endpoint for list view of StockItemTracking objects.
+    """API endpoint for list view of StockItemTracking objects.
 
     StockItemTracking objects are read-only
     (they are created by internal model functionality)
@@ -1320,7 +1262,7 @@ class StockTrackingList(generics.ListAPIView):
             return Response(data)
 
     def create(self, request, *args, **kwargs):
-        """ Create a new StockItemTracking object
+        """Create a new StockItemTracking object
 
         Here we override the default 'create' implementation,
         to save the user information associated with the request object.
@@ -1374,7 +1316,7 @@ class LocationMetadata(generics.RetrieveUpdateAPIView):
 
 
 class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ API endpoint for detail view of StockLocation object
+    """API endpoint for detail view of StockLocation object
 
     - GET: Return a single StockLocation object
     - PATCH: Update a StockLocation object
