@@ -1,6 +1,4 @@
-"""
-JSON serializers for plugin app
-"""
+"""JSON serializers for plugin app"""
 
 import os
 import subprocess
@@ -17,9 +15,7 @@ from plugin.models import NotificationUserSetting, PluginConfig, PluginSetting
 
 
 class MetadataSerializer(serializers.ModelSerializer):
-    """
-    Serializer class for model metadata API access.
-    """
+    """Serializer class for model metadata API access."""
 
     metadata = serializers.JSONField(required=True)
 
@@ -45,9 +41,7 @@ class MetadataSerializer(serializers.ModelSerializer):
 
 
 class PluginConfigSerializer(serializers.ModelSerializer):
-    """
-    Serializer for a PluginConfig:
-    """
+    """Serializer for a PluginConfig:"""
 
     meta = serializers.DictField(read_only=True)
     mixins = serializers.DictField(read_only=True)
@@ -64,9 +58,7 @@ class PluginConfigSerializer(serializers.ModelSerializer):
 
 
 class PluginConfigInstallSerializer(serializers.Serializer):
-    """
-    Serializer for installing a new plugin
-    """
+    """Serializer for installing a new plugin"""
 
     url = serializers.CharField(
         required=False,
@@ -156,9 +148,7 @@ class PluginConfigInstallSerializer(serializers.Serializer):
 
 
 class PluginSettingSerializer(GenericReferencedSettingSerializer):
-    """
-    Serializer for the PluginSetting model
-    """
+    """Serializer for the PluginSetting model"""
 
     MODEL = PluginSetting
     EXTRA_FIELDS = [
@@ -169,9 +159,7 @@ class PluginSettingSerializer(GenericReferencedSettingSerializer):
 
 
 class NotificationUserSettingSerializer(GenericReferencedSettingSerializer):
-    """
-    Serializer for the PluginSetting model
-    """
+    """Serializer for the PluginSetting model"""
 
     MODEL = NotificationUserSetting
     EXTRA_FIELDS = ['method', ]

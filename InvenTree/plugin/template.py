@@ -8,8 +8,7 @@ from plugin import registry
 
 
 class PluginTemplateLoader(FilesystemLoader):
-    """
-    A custom template loader which allows loading of templates from installed plugins.
+    """A custom template loader which allows loading of templates from installed plugins.
 
     Each plugin can register templates simply by providing a 'templates' directory in its root path.
 

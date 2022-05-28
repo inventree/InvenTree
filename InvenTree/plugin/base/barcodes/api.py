@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+
 from django.urls import path, re_path, reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -15,8 +15,7 @@ from stock.serializers import StockItemSerializer
 
 
 class BarcodeScan(APIView):
-    """
-    Endpoint for handling generic barcode scan requests.
+    """Endpoint for handling generic barcode scan requests.
 
     Barcode data are decoded by the client application,
     and sent to this endpoint (as a JSON object) for validation.
@@ -42,10 +41,7 @@ class BarcodeScan(APIView):
     ]
 
     def post(self, request, *args, **kwargs):
-        """
-        Respond to a barcode POST request
-        """
-
+        """Respond to a barcode POST request"""
         data = request.data
 
         if 'barcode' not in data:
@@ -133,8 +129,7 @@ class BarcodeScan(APIView):
 
 
 class BarcodeAssign(APIView):
-    """
-    Endpoint for assigning a barcode to a stock item.
+    """Endpoint for assigning a barcode to a stock item.
 
     - This only works if the barcode is not already associated with an object in the database
     - If the barcode does not match an object, then the barcode hash is assigned to the StockItem

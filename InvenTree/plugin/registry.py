@@ -1,5 +1,4 @@
-"""
-Registry for loading and managing multiple plugins at run-time
+"""Registry for loading and managing multiple plugins at run-time
 
 - Holds the class and the object that contains all code to maintain plugin states
 - Manages setup and teardown of plugin class instances
