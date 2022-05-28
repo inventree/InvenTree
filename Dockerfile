@@ -1,3 +1,15 @@
+# The InvenTree dockerfile provides two build targets:
+#
+# production:
+# - Required files are copied into the image
+# - Runs InvenTree web server under gunicorn
+#
+# dev:
+# - Expects source directories to be loaded as a run-time volume
+# - Runs InvenTree web server under django development server
+# - Monitors source files for any changes, and live-reloads server
+
+
 FROM python:3.9-slim as base
 
 # Build arguments for this image
@@ -62,8 +74,8 @@ RUN apt-get install -y  --no-install-recommends \
 RUN pip install --upgrade pip
 
 # Install required base-level python packages
-COPY ./docker/requirements.txt requirements.txt
-RUN pip install --no-cache-dir -U -r requirements.txt
+COPY ./docker/requirements.txt base_requirements.txt
+RUN pip install --no-cache-dir -U -r base_requirements.txt
 
 # InvenTree production image:
 # - Copies required files from local directory
