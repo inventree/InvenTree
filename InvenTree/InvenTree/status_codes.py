@@ -173,11 +173,8 @@ class StockStatus(StatusCode):
     DESTROYED = 60  # Item is destroyed
     REJECTED = 65  # Item is rejected
     LOST = 70  # Item has been lost
+    QUARANTINED = 75  # Item has been quarantined and is unavailable
     RETURNED = 85  # Item has been returned from a customer
-
-    # Any stock code above 100 means that the stock item is not "in stock"
-    # This can be used as a quick check for filtering
-    NOT_IN_STOCK = 100
 
     options = {
         OK: _("OK"),
@@ -186,6 +183,7 @@ class StockStatus(StatusCode):
         DESTROYED: _("Destroyed"),
         LOST: _("Lost"),
         REJECTED: _("Rejected"),
+        QUARANTINED: _("Quarantined"),
         RETURNED: _("Returned"),
     }
 
@@ -196,6 +194,7 @@ class StockStatus(StatusCode):
         DESTROYED: 'danger',
         LOST: 'dark',
         REJECTED: 'danger',
+        QUARANTINED: 'info'
     }
 
     # The following codes correspond to parts that are 'available' or 'in stock'
@@ -204,22 +203,6 @@ class StockStatus(StatusCode):
         ATTENTION,
         DAMAGED,
         RETURNED,
-    ]
-
-    # The following codes correspond to parts that are 'unavailable'
-    UNAVAILABLE_CODES = [
-        DESTROYED,
-        LOST,
-        REJECTED,
-    ]
-
-    # The following codes are available for receiving goods
-    RECEIVING_CODES = [
-        OK,
-        ATTENTION,
-        DAMAGED,
-        DESTROYED,
-        REJECTED
     ]
 
 

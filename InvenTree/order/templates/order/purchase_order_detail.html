@@ -191,11 +191,7 @@ $('#new-po-line').click(function() {
 {% elif order.status == PurchaseOrderStatus.PLACED %}
 
     $('#receive-selected-items').click(function() {
-        var items = $("#po-line-table").bootstrapTable('getSelections');
-
-        if (items.length == 0) {
-            items = $("#po-line-table").bootstrapTable('getData');
-        }
+        var items = getTableData('#po-line-table');
 
         receivePurchaseOrderItems(
             {{ order.id }},

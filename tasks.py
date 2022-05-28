@@ -554,9 +554,9 @@ def test_translations(c):
 
     # complie regex
     reg = re.compile(
-        r"[a-zA-Z0-9]{1}"+  # match any single letter and number
-        r"(?![^{\(\<]*[}\)\>])"+  # that is not inside curly brackets, brackets or a tag
-        r"(?<![^\%][^\(][)][a-z])"+  # that is not a specially formatted variable with singles
+        r"[a-zA-Z0-9]{1}" +  # match any single letter and number  # noqa: W504
+        r"(?![^{\(\<]*[}\)\>])" +  # that is not inside curly brackets, brackets or a tag  # noqa: W504
+        r"(?<![^\%][^\(][)][a-z])" +  # that is not a specially formatted variable with singles  # noqa: W504
         r"(?![^\\][\n])"  # that is not a newline
     )
     last_string = ''
