@@ -94,8 +94,11 @@ class FileManager:
         """Try to match a header (from the file) to a list of known headers.
 
         Args:
-            header - Header name to look for
-            threshold - Match threshold for fuzzy search
+            header (Any): Header name to look for
+            threshold (int, optional): Match threshold for fuzzy search. Defaults to 80.
+
+        Returns:
+            Any: Matched headers
         """
         # Replace null values with empty string
         if header is None:

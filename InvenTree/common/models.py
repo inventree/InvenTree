@@ -477,7 +477,7 @@ class BaseInvenTreeSetting(models.Model):
             pass
 
     def choices(self):
-        """Return the available choices for this setting (or None if no choices are defined)"""
+        """Return the available choices for this setting (or None if no choices are defined)."""
         return self.__class__.get_setting_choices(self.key, **self.get_kwargs())
 
     def valid_options(self):
@@ -1519,7 +1519,7 @@ class PriceBreak(models.Model):
         """Convert the unit-price at this price break to the specified currency code.
 
         Args:
-            currency_code - The currency code to convert to (e.g "USD" or "AUD")
+            currency_code: The currency code to convert to (e.g "USD" or "AUD")
         """
         try:
             converted = convert_money(self.price, currency_code)

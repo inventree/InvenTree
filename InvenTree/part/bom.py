@@ -11,7 +11,7 @@ from company.models import ManufacturerPart, SupplierPart
 from InvenTree.helpers import DownloadFile, GetExportFormats, normalize
 
 from .admin import BomItemResource
-from .models import BomItem
+from .models import BomItem, Part
 
 
 def IsValidBOMFormat(fmt):
@@ -20,7 +20,7 @@ def IsValidBOMFormat(fmt):
 
 
 def MakeBomTemplate(fmt):
-    """Generate a Bill of Materials upload template file (for user download)"""
+    """Generate a Bill of Materials upload template file (for user download)."""
     fmt = fmt.strip().lower()
 
     if not IsValidBOMFormat(fmt):
@@ -42,12 +42,21 @@ def MakeBomTemplate(fmt):
     return DownloadFile(data, filename)
 
 
-def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=False, stock_data=False, supplier_data=False, manufacturer_data=False):
+def ExportBom(part: Part, fmt='csv', cascade: bool = False, max_levels: int = None, parameter_data=False, stock_data=False, supplier_data=False, manufacturer_data=False):
     """Export a BOM (Bill of Materials) for a given part.
 
     Args:
-        fmt: File format (default = 'csv')
-        cascade: If True, multi-level BOM output is supported. Otherwise, a flat top-level-only BOM is exported.
+        part (Part): Part for which the BOM should be exported
+        fmt (str, optional): file format. Defaults to 'csv'.
+        cascade (bool, optional): If True, multi-level BOM output is supported. Otherwise, a flat top-level-only BOM is exported.. Defaults to False.
+        max_levels (int, optional): Levels of items that should be included. None for np sublevels. Defaults to None.
+        parameter_data (bool, optional): Additonal data that should be added. Defaults to False.
+        stock_data (bool, optional): Additonal data that should be added. Defaults to False.
+        supplier_data (bool, optional): Additonal data that should be added. Defaults to False.
+        manufacturer_data (bool, optional): Additonal data that should be added. Defaults to False.
+
+    Returns:
+        StreamingHttpResponse: Response that can be passed to the endpoint
     """
     if not IsValidBOMFormat(fmt):
         fmt = 'csv'

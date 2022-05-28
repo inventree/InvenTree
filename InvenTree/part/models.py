@@ -1,5 +1,7 @@
 """Part database model definitions."""
 
+from __future__ import annotations
+
 import decimal
 import hashlib
 import logging
@@ -110,11 +112,14 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         verbose_name = _("Part Category")
         verbose_name_plural = _("Part Categories")
 
-    def get_parts(self, cascade=True):
+    def get_parts(self, cascade=True) -> set[Part]:
         """Return a queryset for all parts under this category.
 
         Args:
-            cascade - If True, also look under subcategories (default = True)
+            cascade (bool, optional): If True, also look under subcategories. Defaults to True.
+
+        Returns:
+            set[Part]: All matching parts
         """
         if cascade:
             """Select any parts which exist in this category or any child categories."""
@@ -129,7 +134,7 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         return self.partcount()
 
     def partcount(self, cascade=True, active=False):
-        """Return the total part count under this category (including children of child categories)"""
+        """Return the total part count under this category (including children of child categories)."""
         query = self.get_parts(cascade=cascade)
 
         if active:
@@ -1071,8 +1076,9 @@ class Part(MetadataMixin, MPTTModel):
 
     @property
     def net_stock(self):
-        """Return the 'net' stock. It takes into account:
+        """Return the 'net' stock.
 
+        It takes into account:
         - Stock on hand (total_stock)
         - Stock on order (on_order)
         - Stock allocated (allocation_count)
@@ -1370,12 +1376,12 @@ class Part(MetadataMixin, MPTTModel):
 
         return queryset.prefetch_related('sub_part')
 
-    def get_installed_part_options(self, include_inherited=True, include_variants=True):
+    def get_installed_part_options(self, include_inherited: bool = True, include_variants: bool = True):
         """Return a set of all Parts which can be "installed" into this part, based on the BOM.
 
         Arguments:
-            include_inherited - If set, include BomItem entries defined for parent parts
-            include_variants - If set, include variant parts for BomItems which allow variants
+            include_inherited (bool): If set, include BomItem entries defined for parent parts
+            include_variants (bool): If set, include variant parts for BomItems which allow variants
         """
         parts = set()
 
@@ -1480,7 +1486,7 @@ class Part(MetadataMixin, MPTTModel):
         return str(result_hash.digest())
 
     def is_bom_valid(self):
-        """Check if the BOM is 'valid' - if the calculated checksum matches the stored value"""
+        """Check if the BOM is 'valid' - if the calculated checksum matches the stored value."""
         return self.get_bom_hash() == self.bom_checksum or not self.has_bom
 
     @transaction.atomic
@@ -1728,8 +1734,8 @@ class Part(MetadataMixin, MPTTModel):
         """Create a new price break for this part.
 
         Args:
-            quantity - Numerical quantity
-            price - Must be a Money object
+            quantity: Numerical quantity
+            price: Must be a Money object
         """
         # Check if a price break at that quantity already exists...
         if self.price_breaks.filter(quantity=quantity, part=self.pk).exists():
@@ -1774,8 +1780,8 @@ class Part(MetadataMixin, MPTTModel):
         """Copy the BOM from another part.
 
         Args:
-            other - The part to copy the BOM from
-            clear - Remove existing BOM items first (default=True)
+            other: The part to copy the BOM from
+            clear (bool, optional): Remove existing BOM items first. Defaults to True.
         """
         # Ignore if the other part is actually this part?
         if other == self:
@@ -2017,10 +2023,9 @@ class Part(MetadataMixin, MPTTModel):
 
     @property
     def can_convert(self):
-        """Check if this Part can be "converted" to a different variant:
+        """Check if this Part can be "converted" to a different variant.
 
         It can be converted if:
-
         a) It has non-virtual variant parts underneath it
         b) It has non-virtual template parts above it
         c) It has non-virtual sibling variants
@@ -2064,8 +2069,9 @@ class Part(MetadataMixin, MPTTModel):
         return filtered_parts
 
     def get_related_parts(self):
-        """Return list of tuples for all related parts:
+        """Return list of tuples for all related parts.
 
+        Includes:
         - first value is PartRelated object
         - second value is matching Part object
         """
@@ -2408,7 +2414,7 @@ class PartCategoryParameterTemplate(models.Model):
         ]
 
     def __str__(self):
-        """String representation of a PartCategoryParameterTemplate (admin interface)"""
+        """String representation of a PartCategoryParameterTemplate (admin interface)."""
         if self.default_value:
             return f'{self.category.name} | {self.parameter_template.name} | {self.default_value}'
         else:
@@ -2489,11 +2495,12 @@ class BomItem(models.Model, DataImportMixin):
         return reverse('api-bom-list')
 
     def get_valid_parts_for_allocation(self, allow_variants=True, allow_substitutes=True):
-        """Return a list of valid parts which can be allocated against this BomItem:
+        """Return a list of valid parts which can be allocated against this BomItem.
 
-        - Include the referenced sub_part
-        - Include any directly specvified substitute parts
-        - If allow_variants is True, allow all variants of sub_part
+        Includes:
+        - The referenced sub_part
+        - Any directly specvified substitute parts
+        - If allow_variants is True, all variants of sub_part
         """
         # Set of parts we will allow
         parts = set()
@@ -2591,10 +2598,9 @@ class BomItem(models.Model, DataImportMixin):
     )
 
     def get_item_hash(self):
-        """Calculate the checksum hash of this BOM line item:
+        """Calculate the checksum hash of this BOM line item.
 
         The hash is calculated from the following fields:
-
         - Part.full_name (if the part name changes, the BOM checksum is invalidated)
         - Quantity
         - Reference field
@@ -2794,8 +2800,9 @@ class BomItemSubstitute(models.Model):
         super().save(*args, **kwargs)
 
     def validate_unique(self, exclude=None):
-        """Ensure that this BomItemSubstitute is "unique":
+        """Ensure that this BomItemSubstitute is "unique".
 
+        Ensure:
         - It cannot point to the same "part" as the "sub_part" of the parent "bom_item"
         """
         super().validate_unique(exclude=exclude)
@@ -2830,7 +2837,7 @@ class BomItemSubstitute(models.Model):
 
 
 class PartRelated(models.Model):
-    """Store and handle related parts (eg. mating connector, crimps, etc.)"""
+    """Store and handle related parts (eg. mating connector, crimps, etc.)."""
 
     part_1 = models.ForeignKey(Part, related_name='related_parts_1',
                                verbose_name=_('Part 1'), on_delete=models.DO_NOTHING)

@@ -231,7 +231,7 @@ class Company(models.Model):
         return self.purchase_orders.filter(status__in=PurchaseOrderStatus.OPEN)
 
     def pending_purchase_orders(self):
-        """Return purchase orders which are PENDING (not yet issued)"""
+        """Return purchase orders which are PENDING (not yet issued)."""
         return self.purchase_orders.filter(status=PurchaseOrderStatus.PENDING)
 
     def closed_purchase_orders(self):
@@ -598,12 +598,12 @@ class SupplierPart(models.Model):
     def unit_pricing(self):
         return self.get_price(1)
 
-    def add_price_break(self, quantity, price):
+    def add_price_break(self, quantity, price) -> None:
         """Create a new price break for this part.
 
         Args:
-            quantity - Numerical quantity
-            price - Must be a Money object
+            quantity: Numerical quantity
+            price: Must be a Money object
         """
         # Check if a price break at that quantity already exists...
         if self.price_breaks.filter(quantity=quantity, part=self.pk).exists():

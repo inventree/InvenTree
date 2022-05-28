@@ -329,16 +329,24 @@ class PurchaseOrder(Order):
         return reverse('po-detail', kwargs={'pk': self.id})
 
     @transaction.atomic
-    def add_line_item(self, supplier_part, quantity, group=True, reference='', purchase_price=None):
-        """Add a new line item to this purchase order. This function will check that:
+    def add_line_item(self, supplier_part, quantity, group: bool = True, reference: str = '', purchase_price=None):
+        """Add a new line item to this purchase order.
 
+        This function will check that:
         * The supplier part matches the supplier specified for this purchase order
         * The quantity is greater than zero
 
         Args:
-            supplier_part - The supplier_part to add
-            quantity - The number of items to add
-            group - If True, this new quantity will be added to an existing line item for the same supplier_part (if it exists)
+            supplier_part: The supplier_part to add
+            quantity : The number of items to add
+            group (bool, optional): If True, this new quantity will be added to an existing line item for the same supplier_part (if it exists). Defaults to True.
+            reference (str, optional): Reference to item. Defaults to ''.
+            purchase_price (optional): Price of item. Defaults to None.
+
+        Raises:
+            ValidationError: quantity is smaller than 0
+            ValidationError: quantity is not type int
+            ValidationError: supplier is not supplier of purchase order
         """
         try:
             quantity = int(quantity)
@@ -416,7 +424,11 @@ class PurchaseOrder(Order):
         return query.exists()
 
     def can_cancel(self):
-        """A PurchaseOrder can only be cancelled under the following circumstances:"""
+        """A PurchaseOrder can only be cancelled under the following circumstances.
+
+        - Status is PLACED
+        - Status is PENDING
+        """
         return self.status in [
             PurchaseOrderStatus.PLACED,
             PurchaseOrderStatus.PENDING
@@ -655,7 +667,7 @@ class SalesOrder(Order):
 
     @property
     def is_overdue(self):
-        """Returns true if this SalesOrder is "overdue":
+        """Returns true if this SalesOrder is "overdue".
 
         Makes use of the OVERDUE_FILTER to avoid code duplication.
         """
@@ -692,7 +704,7 @@ class SalesOrder(Order):
         return False
 
     def is_completed(self):
-        """Check if this order is "shipped" (all line items delivered)"""
+        """Check if this order is "shipped" (all line items delivered)."""
         return self.lines.count() > 0 and all([line.is_completed() for line in self.lines.all()])
 
     def can_complete(self, raise_error=False):
@@ -749,8 +761,9 @@ class SalesOrder(Order):
 
     @transaction.atomic
     def cancel_order(self):
-        """Cancel this order (only if it is "pending")
+        """Cancel this order (only if it is "pending").
 
+        Executes:
         - Mark the order as 'cancelled'
         - Delete any StockItems which have been allocated
         """
@@ -1110,7 +1123,7 @@ class SalesOrderLineItem(OrderLineItem):
         return self.allocated_quantity() > self.quantity
 
     def is_completed(self):
-        """Return True if this line item is completed (has been fully shipped)"""
+        """Return True if this line item is completed (has been fully shipped)."""
         return self.shipped >= self.quantity
 
 
@@ -1222,8 +1235,9 @@ class SalesOrderShipment(models.Model):
 
     @transaction.atomic
     def complete_shipment(self, user, **kwargs):
-        """Complete this particular shipment:
+        """Complete this particular shipment.
 
+        Executes:
         1. Update any stock items associated with this shipment
         2. Update the "shipped" quantity of all associated line items
         3. Set the "shipment_date" to now
@@ -1295,8 +1309,9 @@ class SalesOrderAllocation(models.Model):
         return reverse('api-so-allocation-list')
 
     def clean(self):
-        """Validate the SalesOrderAllocation object:
+        """Validate the SalesOrderAllocation object.
 
+        Executes:
         - Cannot allocate stock to a line item without a part reference
         - The referenced part must match the part associated with the line item
         - Allocated quantity cannot exceed the quantity of the stock item
@@ -1385,8 +1400,9 @@ class SalesOrderAllocation(models.Model):
         return self.item.purchase_order
 
     def complete_allocation(self, user):
-        """Complete this allocation (called when the parent SalesOrder is marked as "shipped"):
+        """Complete this allocation (called when the parent SalesOrder is marked as "shipped").
 
+        Executes:
         - Determine if the referenced StockItem needs to be "split" (if allocated quantity != stock quantity)
         - Mark the StockItem as belonging to the Customer (this will remove it from stock)
         """

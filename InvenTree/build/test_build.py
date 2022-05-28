@@ -1,3 +1,4 @@
+from ctypes import Union
 from django.test import TestCase
 
 from django.core.exceptions import ValidationError
@@ -193,12 +194,12 @@ class BuildTest(BuildTestBase):
                 quantity=99
             )
 
-    def allocate_stock(self, output, allocations):
+    def allocate_stock(self, output: Union[StockItem, None], allocations: dict[StockItem, int]) -> None:
         """Allocate stock to this build, against a particular output.
 
         Args:
-            output - StockItem object (or None)
-            allocations - Map of {StockItem: quantity}
+            output (Union[StockItem, None]): StockItem object or None
+            allocations (dict[StockItem, int]): Map of `{StockItem: quantity}`
         """
         for item, quantity in allocations.items():
             BuildItem.objects.create(

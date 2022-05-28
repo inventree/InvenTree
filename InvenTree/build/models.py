@@ -340,9 +340,12 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @property
     def is_overdue(self):
-        """Returns true if this build is "overdue":
+        """Returns true if this build is "overdue".
 
         Makes use of the OVERDUE_FILTER to avoid code duplication
+
+        Returns:
+            bool: Is the build overdue
         """
         query = Build.objects.filter(pk=self.pk)
         query = query.filter(Build.OVERDUE_FILTER)
@@ -574,9 +577,9 @@ class Build(MPTTModel, ReferenceIndexingMixin):
     def unallocateStock(self, bom_item=None, output=None):
         """Unallocate stock from this Build.
 
-        Arguments:
-            - bom_item: Specify a particular BomItem to unallocate stock against
-            - output: Specify a particular StockItem (output) to unallocate stock against
+        Args:
+            bom_item: Specify a particular BomItem to unallocate stock against
+            output: Specify a particular StockItem (output) to unallocate stock against
         """
         allocations = BuildItem.objects.filter(
             build=self,
@@ -693,8 +696,9 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @transaction.atomic
     def delete_output(self, output):
-        """Remove a build output from the database:
+        """Remove a build output from the database.
 
+        Executes:
         - Unallocate any build items against the output
         - Delete the output StockItem
         """
@@ -882,8 +886,8 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         """Get the quantity of a part required to complete the particular build output.
 
         Args:
-            part: The Part object
-            output - The particular build output (StockItem)
+            bom_item: The Part object
+            output: The particular build output (StockItem)
         """
         quantity = bom_item.quantity
 
@@ -895,14 +899,14 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         return quantity
 
     def allocated_bom_items(self, bom_item, output=None):
-        """Return all BuildItem objects which allocate stock of <bom_item> to <output>
+        """Return all BuildItem objects which allocate stock of <bom_item> to <output>.
 
         Note that the bom_item may allow variants, or direct substitutes,
         making things difficult.
 
         Args:
-            bom_item - The BomItem object
-            output - Build output (StockItem).
+            bom_item: The BomItem object
+            output: Build output (StockItem).
         """
         allocations = BuildItem.objects.filter(
             build=self,
@@ -991,7 +995,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @property
     def required_parts(self):
-        """Returns a list of parts required to build this part (BOM)"""
+        """Returns a list of parts required to build this part (BOM)."""
         parts = []
 
         for item in self.bom_items:

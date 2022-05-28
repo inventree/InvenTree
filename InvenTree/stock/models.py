@@ -1,5 +1,7 @@
 """Stock database model definitions."""
 
+from __future__ import annotations
+
 import os
 from datetime import datetime, timedelta
 from decimal import Decimal, InvalidOperation
@@ -129,8 +131,12 @@ class StockLocation(MetadataMixin, InvenTreeTree):
         )
 
     @property
-    def barcode(self):
-        """Brief payload data (e.g. for labels)"""
+    def barcode(self) -> str:
+        """Get Brief payload data (e.g. for labels).
+
+        Returns:
+            str: Brief pyload data
+        """
         return self.format_barcode(brief=True)
 
     def get_stock_items(self, cascade=True):
@@ -335,8 +341,9 @@ class StockItem(MetadataMixin, MPTTModel):
         return None
 
     def save(self, *args, **kwargs):
-        """Save this StockItem to the database. Performs a number of checks:
+        """Save this StockItem to the database.
 
+        Performs a number of checks:
         - Unique serial number requirement
         - Adds a transaction note when the item is first created.
         """
@@ -433,10 +440,9 @@ class StockItem(MetadataMixin, MPTTModel):
                 raise ValidationError({"serial": _("StockItem with this serial number already exists")})
 
     def clean(self):
-        """Validate the StockItem object (separate to field validation)
+        """Validate the StockItem object (separate to field validation).
 
         The following validation checks are performed:
-
         - The 'part' and 'supplier_part.part' fields cannot point to the same Part object
         - The 'part' does not belong to itself
         - Quantity must be 1 if the StockItem has a serial number
@@ -558,7 +564,11 @@ class StockItem(MetadataMixin, MPTTModel):
 
     @property
     def barcode(self):
-        """Brief payload data (e.g. for labels)"""
+        """Get Brief payload data (e.g. for labels).
+
+        Returns:
+            str: Brief pyload data
+        """
         return self.format_barcode(brief=True)
 
     uid = models.CharField(blank=True, max_length=128, help_text=("Unique identifier field"))
@@ -825,8 +835,9 @@ class StockItem(MetadataMixin, MPTTModel):
         return self.expiry_date < today
 
     def clearAllocations(self):
-        """Clear all order allocations for this StockItem:
+        """Clear all order allocations for this StockItem.
 
+        Clears:
         - SalesOrder allocations
         - Build allocations
         """
@@ -966,8 +977,9 @@ class StockItem(MetadataMixin, MPTTModel):
         return max(self.quantity - self.allocation_count(), 0)
 
     def can_delete(self):
-        """Can this stock item be deleted? It can NOT be deleted under the following circumstances:
+        """Can this stock item be deleted?
 
+        It can NOT be deleted under the following circumstances:
         - Has installed stock items
         - Is installed inside another StockItem
         - It has been assigned to a SalesOrder
@@ -981,13 +993,16 @@ class StockItem(MetadataMixin, MPTTModel):
 
         return True
 
-    def get_installed_items(self, cascade=False):
+    def get_installed_items(self, cascade: bool = False) -> set[StockItem]:
         """Return all stock items which are *installed* in this one!
 
-        Args:
-            cascade - Include items which are installed in items which are installed in items
-
         Note: This function is recursive, and may result in a number of database hits!
+
+        Args:
+            cascade (bool, optional): Include items which are installed in items which are installed in items. Defaults to False.
+
+        Returns:
+            set[StockItem]: Sll stock items which are installed
         """
         installed = set()
 
@@ -1157,15 +1172,14 @@ class StockItem(MetadataMixin, MPTTModel):
     def has_tracking_info(self):
         return self.tracking_info_count > 0
 
-    def add_tracking_entry(self, entry_type, user, deltas=None, notes='', **kwargs):
+    def add_tracking_entry(self, entry_type: int, user: User, deltas: dict = None, notes: str = '', **kwargs):
         """Add a history tracking entry for this StockItem.
 
         Args:
-            entry_type - Integer code describing the "type" of historical action (see StockHistoryCode)
-            user - The user performing this action
-            deltas - A map of the changes made to the model
-            notes - User notes associated with this tracking entry
-            url - Optional URL associated with this tracking entry
+            entry_type (int): Code describing the "type" of historical action (see StockHistoryCode)
+            user (User): The user performing this action
+            deltas (dict, optional): A map of the changes made to the model. Defaults to None.
+            notes (str, optional): URL associated with this tracking entry. Defaults to ''.
         """
         if deltas is None:
             deltas = {}
@@ -1915,7 +1929,7 @@ class StockItemAttachment(InvenTreeAttachment):
 
 
 class StockItemTracking(models.Model):
-    """Stock tracking entry - used for tracking history of a particular StockItem
+    """Stock tracking entry - used for tracking history of a particular StockItem.
 
     Note: 2021-05-11
     The legacy StockTrackingItem model contained very litle information about the "history" of the item.

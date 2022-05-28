@@ -348,12 +348,12 @@ def update_group_roles(group, debug=False):
     permissions_to_delete = set()
 
     def add_model(name, action, allowed):
-        """Add a new model to the pile:
+        """Add a new model to the pile.
 
         Args:
-            name - The name of the model e.g. part_part
-            action - The permission action e.g. view
-            allowed - Whether or not the action is allowed
+            name: The name of the model e.g. part_part
+            action: The permission action e.g. view
+            allowed: Whether or not the action is allowed
         """
         if action not in ['view', 'add', 'change', 'delete']:  # pragma: no cover
             raise ValueError("Action {a} is invalid".format(a=action))
@@ -400,7 +400,7 @@ def update_group_roles(group, debug=False):
         """Find the permission object in the database, from the simplified permission string.
 
         Args:
-            permission_string - a simplified permission_string e.g. 'part.view_partcategory'
+            permission_string: a simplified permission_string e.g. 'part.view_partcategory'
 
         Returns the permission object in the database associated with the permission string
         """
@@ -521,10 +521,11 @@ class Owner(models.Model):
 
     @classmethod
     def get_owners_matching_user(cls, user):
-        """Return all "owner" objects matching the provided user:
+        """Return all "owner" objects matching the provided user.
 
-        A) An exact match for the user
-        B) Any groups that the user is a part of
+        Includes:
+        - An exact match for the user
+        - Any groups that the user is a part of
         """
         user_type = ContentType.objects.get(app_label='auth', model='user')
         group_type = ContentType.objects.get(app_label='auth', model='group')

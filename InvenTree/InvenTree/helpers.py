@@ -162,7 +162,7 @@ def normalize(d):
 
 
 def increment(n):
-    """Attempt to increment an integer (or a string that looks like an integer!)
+    """Attempt to increment an integer (or a string that looks like an integer).
 
     e.g.
 
@@ -332,7 +332,7 @@ def GetExportFormats():
     ]
 
 
-def DownloadFile(data, filename, content_type='application/text', inline=False):
+def DownloadFile(data, filename, content_type='application/text', inline=False) -> StreamingHttpResponse:
     """Create a dynamic file for the user to download.
 
     Args:
@@ -362,7 +362,7 @@ def DownloadFile(data, filename, content_type='application/text', inline=False):
 
 
 def extract_serial_numbers(serials, expected_quantity, next_number: int):
-    """Attempt to extract serial numbers from an input string:
+    """Attempt to extract serial numbers from an input string.
 
     Requirements:
         - Serial numbers can be either strings, or integers

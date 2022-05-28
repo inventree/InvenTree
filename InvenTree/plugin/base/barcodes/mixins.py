@@ -52,7 +52,7 @@ class BarcodeMixin:
         """Initialize the BarcodePlugin instance.
 
         Args:
-            barcode_data - The raw barcode data
+            barcode_data: The raw barcode data
         """
         self.data = barcode_data
 

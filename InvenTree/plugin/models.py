@@ -46,13 +46,13 @@ class MetadataMixin(models.Model):
 
         return self.metadata.get(key, backup_value)
 
-    def set_metadata(self, key: str, data, commit=True):
+    def set_metadata(self, key: str, data, commit: bool = True):
         """Save the provided metadata under the provided key.
 
         Args:
-            key: String key for saving metadata
-            data: Data object to save - must be able to be rendered as a JSON string
-            overwrite: If true, existing metadata with the provided key will be overwritten. If false, a merge will be attempted
+            key (str): Key for saving metadata
+            data (Any): Data object to save - must be able to be rendered as a JSON string
+            commit (bool, optional): If true, existing metadata with the provided key will be overwritten. If false, a merge will be attempted. Defaults to True.
         """
         if self.metadata is None:
             # Handle a null field value
