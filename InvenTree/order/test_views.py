@@ -1,4 +1,4 @@
-""" Unit tests for Order views (see views.py) """
+"""Unit tests for Order views (see views.py)"""
 
 from django.urls import reverse
 
@@ -37,7 +37,7 @@ class OrderListTest(OrderViewTestCase):
 
 
 class PurchaseOrderTests(OrderViewTestCase):
-    """ Tests for PurchaseOrder views """
+    """Tests for PurchaseOrder views"""
 
     def test_detail_view(self):
         """ Retrieve PO detail view """
@@ -47,8 +47,7 @@ class PurchaseOrderTests(OrderViewTestCase):
         self.assertIn('PurchaseOrderStatus', keys)
 
     def test_po_export(self):
-        """ Export PurchaseOrder """
-
+        """Export PurchaseOrder"""
         response = self.client.get(reverse('po-export', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         # Response should be streaming-content (file download)

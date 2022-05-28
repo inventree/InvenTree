@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from datetime import datetime, timedelta
 
 from django.core.exceptions import ValidationError
@@ -15,10 +13,7 @@ from stock.models import StockItem
 
 
 class SalesOrderTest(TestCase):
-    """
-    Run tests to ensure that the SalesOrder model is working correctly.
-
-    """
+    """Run tests to ensure that the SalesOrder model is working correctly."""
 
     def setUp(self):
 
@@ -49,9 +44,7 @@ class SalesOrderTest(TestCase):
         self.line = SalesOrderLineItem.objects.create(quantity=50, order=self.order, part=self.part)
 
     def test_overdue(self):
-        """
-        Tests for overdue functionality
-        """
+        """Tests for overdue functionality"""
 
         today = datetime.now().date()
 

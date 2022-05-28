@@ -1,6 +1,4 @@
-"""
-Provides a JSON API for the Part app
-"""
+"""Provides a JSON API for the Part app"""
 
 import datetime
 from decimal import Decimal, InvalidOperation
@@ -41,7 +39,7 @@ from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
 
 
 class CategoryList(generics.ListCreateAPIView):
-    """ API endpoint for accessing a list of PartCategory objects.
+    """API endpoint for accessing a list of PartCategory objects.
 
     - GET: Return a list of PartCategory objects
     - POST: Create a new PartCategory object
@@ -63,11 +61,10 @@ class CategoryList(generics.ListCreateAPIView):
         return ctx
 
     def filter_queryset(self, queryset):
-        """
-        Custom filtering:
+        """Custom filtering:
+
         - Allow filtering by "null" parent to retrieve top-level part categories
         """
-
         queryset = super().filter_queryset(queryset)
 
         params = self.request.query_params
@@ -158,9 +155,7 @@ class CategoryList(generics.ListCreateAPIView):
 
 
 class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API endpoint for detail view of a single PartCategory object
-    """
+    """API endpoint for detail view of a single PartCategory object"""
 
     serializer_class = part_serializers.CategorySerializer
     queryset = PartCategory.objects.all()
@@ -199,7 +194,7 @@ class CategoryMetadata(generics.RetrieveUpdateAPIView):
 
 
 class CategoryParameterList(generics.ListAPIView):
-    """ API endpoint for accessing a list of PartCategoryParameterTemplate objects.
+    """API endpoint for accessing a list of PartCategoryParameterTemplate objects.
 
     - GET: Return a list of PartCategoryParameterTemplate objects
     """
@@ -208,13 +203,12 @@ class CategoryParameterList(generics.ListAPIView):
     serializer_class = part_serializers.CategoryParameterTemplateSerializer
 
     def get_queryset(self):
-        """
-        Custom filtering:
+        """Custom filtering:
+
         - Allow filtering by "null" parent to retrieve all categories parameter templates
         - Allow filtering by category
         - Allow traversing all parent categories
         """
-
         queryset = super().get_queryset()
 
         params = self.request.query_params
@@ -241,9 +235,7 @@ class CategoryParameterList(generics.ListAPIView):
 
 
 class CategoryTree(generics.ListAPIView):
-    """
-    API endpoint for accessing a list of PartCategory objects ready for rendering a tree.
-    """
+    """API endpoint for accessing a list of PartCategory objects ready for rendering a tree."""
 
     queryset = PartCategory.objects.all()
     serializer_class = part_serializers.CategoryTree
@@ -258,18 +250,14 @@ class CategoryTree(generics.ListAPIView):
 
 
 class PartSalePriceDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Detail endpoint for PartSellPriceBreak model
-    """
+    """Detail endpoint for PartSellPriceBreak model"""
 
     queryset = PartSellPriceBreak.objects.all()
     serializer_class = part_serializers.PartSalePriceSerializer
 
 
 class PartSalePriceList(generics.ListCreateAPIView):
-    """
-    API endpoint for list view of PartSalePriceBreak model
-    """
+    """API endpoint for list view of PartSalePriceBreak model"""
 
     queryset = PartSellPriceBreak.objects.all()
     serializer_class = part_serializers.PartSalePriceSerializer
@@ -284,18 +272,14 @@ class PartSalePriceList(generics.ListCreateAPIView):
 
 
 class PartInternalPriceDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Detail endpoint for PartInternalPriceBreak model
-    """
+    """Detail endpoint for PartInternalPriceBreak model"""
 
     queryset = PartInternalPriceBreak.objects.all()
     serializer_class = part_serializers.PartInternalPriceSerializer
 
 
 class PartInternalPriceList(generics.ListCreateAPIView):
-    """
-    API endpoint for list view of PartInternalPriceBreak model
-    """
+    """API endpoint for list view of PartInternalPriceBreak model"""
 
     queryset = PartInternalPriceBreak.objects.all()
     serializer_class = part_serializers.PartInternalPriceSerializer
@@ -311,9 +295,7 @@ class PartInternalPriceList(generics.ListCreateAPIView):
 
 
 class PartAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
-    """
-    API endpoint for listing (and creating) a PartAttachment (file upload).
-    """
+    """API endpoint for listing (and creating) a PartAttachment (file upload)."""
 
     queryset = PartAttachment.objects.all()
     serializer_class = part_serializers.PartAttachmentSerializer
@@ -328,38 +310,30 @@ class PartAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
 
 
 class PartAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):
-    """
-    Detail endpoint for PartAttachment model
-    """
+    """Detail endpoint for PartAttachment model"""
 
     queryset = PartAttachment.objects.all()
     serializer_class = part_serializers.PartAttachmentSerializer
 
 
 class PartTestTemplateDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Detail endpoint for PartTestTemplate model
-    """
+    """Detail endpoint for PartTestTemplate model"""
 
     queryset = PartTestTemplate.objects.all()
     serializer_class = part_serializers.PartTestTemplateSerializer
 
 
 class PartTestTemplateList(generics.ListCreateAPIView):
-    """
-    API endpoint for listing (and creating) a PartTestTemplate.
-    """
+    """API endpoint for listing (and creating) a PartTestTemplate."""
 
     queryset = PartTestTemplate.objects.all()
     serializer_class = part_serializers.PartTestTemplateSerializer
 
     def filter_queryset(self, queryset):
-        """
-        Filter the test list queryset.
+        """Filter the test list queryset.
 
         If filtering by 'part', we include results for any parts "above" the specified part.
         """
-
         queryset = super().filter_queryset(queryset)
 
         params = self.request.query_params
@@ -390,9 +364,7 @@ class PartTestTemplateList(generics.ListCreateAPIView):
 
 
 class PartThumbs(generics.ListAPIView):
-    """
-    API endpoint for retrieving information on available Part thumbnails
-    """
+    """API endpoint for retrieving information on available Part thumbnails"""
 
     queryset = Part.objects.all()
     serializer_class = part_serializers.PartThumbSerializer
@@ -407,11 +379,10 @@ class PartThumbs(generics.ListAPIView):
         return queryset
 
     def list(self, request, *args, **kwargs):
-        """
-        Serialize the available Part images.
+        """Serialize the available Part images.
+
         - Images may be used for multiple parts!
         """
-
         queryset = self.filter_queryset(self.get_queryset())
 
         # Return the most popular parts first
@@ -436,7 +407,7 @@ class PartThumbs(generics.ListAPIView):
 
 
 class PartThumbsUpdate(generics.RetrieveUpdateAPIView):
-    """ API endpoint for updating Part thumbnails"""
+    """API endpoint for updating Part thumbnails"""
 
     queryset = Part.objects.all()
     serializer_class = part_serializers.PartThumbSerializerUpdate
@@ -447,8 +418,7 @@ class PartThumbsUpdate(generics.RetrieveUpdateAPIView):
 
 
 class PartScheduling(generics.RetrieveAPIView):
-    """
-    API endpoint for delivering "scheduling" information about a given part via the API.
+    """API endpoint for delivering "scheduling" information about a given part via the API.
 
     Returns a chronologically ordered list about future "scheduled" events,
     concerning stock levels for the part:
@@ -470,13 +440,12 @@ class PartScheduling(generics.RetrieveAPIView):
         schedule = []
 
         def add_schedule_entry(date, quantity, title, label, url):
-            """
-            Check if a scheduled entry should be added:
+            """Check if a scheduled entry should be added:
+
             - date must be non-null
             - date cannot be in the "past"
             - quantity must not be zero
             """
-
             if date and date >= today and quantity != 0:
                 schedule.append({
                     'date': date,
@@ -583,9 +552,7 @@ class PartScheduling(generics.RetrieveAPIView):
 
 
 class PartMetadata(generics.RetrieveUpdateAPIView):
-    """
-    API endpoint for viewing / updating Part metadata
-    """
+    """API endpoint for viewing / updating Part metadata"""
 
     def get_serializer(self, *args, **kwargs):
         return MetadataSerializer(Part, *args, **kwargs)
@@ -594,9 +561,7 @@ class PartMetadata(generics.RetrieveUpdateAPIView):
 
 
 class PartSerialNumberDetail(generics.RetrieveAPIView):
-    """
-    API endpoint for returning extra serial number information about a particular part
-    """
+    """API endpoint for returning extra serial number information about a particular part"""
 
     queryset = Part.objects.all()
 
@@ -621,9 +586,7 @@ class PartSerialNumberDetail(generics.RetrieveAPIView):
 
 
 class PartCopyBOM(generics.CreateAPIView):
-    """
-    API endpoint for duplicating a BOM
-    """
+    """API endpoint for duplicating a BOM"""
 
     queryset = Part.objects.all()
     serializer_class = part_serializers.PartCopyBOMSerializer
@@ -641,9 +604,7 @@ class PartCopyBOM(generics.CreateAPIView):
 
 
 class PartValidateBOM(generics.RetrieveUpdateAPIView):
-    """
-    API endpoint for 'validating' the BOM for a given Part
-    """
+    """API endpoint for 'validating' the BOM for a given Part"""
 
     class BOMValidateSerializer(serializers.ModelSerializer):
 
@@ -691,7 +652,7 @@ class PartValidateBOM(generics.RetrieveUpdateAPIView):
 
 
 class PartDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ API endpoint for detail view of a single Part object """
+    """API endpoint for detail view of a single Part object"""
 
     queryset = Part.objects.all()
     serializer_class = part_serializers.PartSerializer
@@ -738,12 +699,10 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
             return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED, data=message)
 
     def update(self, request, *args, **kwargs):
-        """
-        Custom update functionality for Part instance.
+        """Custom update functionality for Part instance.
 
         - If the 'starred' field is provided, update the 'starred' status against current user
         """
-
         if 'starred' in request.data:
             starred = str2bool(request.data.get('starred', False))
 
@@ -755,8 +714,8 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class PartFilter(rest_filters.FilterSet):
-    """
-    Custom filters for the PartList endpoint.
+    """Custom filters for the PartList endpoint.
+
     Uses the django_filters extension framework
     """
 
@@ -791,9 +750,7 @@ class PartFilter(rest_filters.FilterSet):
     low_stock = rest_filters.BooleanFilter(label='Low stock', method='filter_low_stock')
 
     def filter_low_stock(self, queryset, name, value):
-        """
-        Filter by "low stock" status
-        """
+        """Filter by "low stock" status"""
 
         value = str2bool(value)
 
@@ -854,8 +811,7 @@ class PartFilter(rest_filters.FilterSet):
 
 
 class PartList(APIDownloadMixin, generics.ListCreateAPIView):
-    """
-    API endpoint for accessing a list of Part objects
+    """API endpoint for accessing a list of Part objects
 
     - GET: Return list of objects
     - POST: Create a new Part object
@@ -912,14 +868,10 @@ class PartList(APIDownloadMixin, generics.ListCreateAPIView):
         return DownloadFile(filedata, filename)
 
     def list(self, request, *args, **kwargs):
-        """
-        Overide the 'list' method, as the PartCategory objects are
-        very expensive to serialize!
+        """Overide the 'list' method, as the PartCategory objects are very expensive to serialize!
 
-        So we will serialize them first, and keep them in memory,
-        so that they do not have to be serialized multiple times...
+        So we will serialize them first, and keep them in memory, so that they do not have to be serialized multiple times...
         """
-
         queryset = self.filter_queryset(self.get_queryset())
 
         page = self.paginate_queryset(queryset)
@@ -980,12 +932,10 @@ class PartList(APIDownloadMixin, generics.ListCreateAPIView):
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
-        """
-        We wish to save the user who created this part!
+        """We wish to save the user who created this part!
 
         Note: Implementation copied from DRF class CreateModelMixin
         """
-
         # TODO: Unit tests for this function!
 
         serializer = self.get_serializer(data=request.data)
@@ -1135,11 +1085,10 @@ class PartList(APIDownloadMixin, generics.ListCreateAPIView):
         return queryset
 
     def filter_queryset(self, queryset):
-        """
-        Perform custom filtering of the queryset.
+        """Perform custom filtering of the queryset.
+
         We overide the DRF filter_fields here because
         """
-
         params = self.request.query_params
 
         queryset = super().filter_queryset(queryset)
@@ -1391,9 +1340,7 @@ class PartList(APIDownloadMixin, generics.ListCreateAPIView):
 
 
 class PartRelatedList(generics.ListCreateAPIView):
-    """
-    API endpoint for accessing a list of PartRelated objects
-    """
+    """API endpoint for accessing a list of PartRelated objects"""
 
     queryset = PartRelated.objects.all()
     serializer_class = part_serializers.PartRelationSerializer
@@ -1420,16 +1367,14 @@ class PartRelatedList(generics.ListCreateAPIView):
 
 
 class PartRelatedDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API endpoint for accessing detail view of a PartRelated object
-    """
+    """API endpoint for accessing detail view of a PartRelated object"""
 
     queryset = PartRelated.objects.all()
     serializer_class = part_serializers.PartRelationSerializer
 
 
 class PartParameterTemplateList(generics.ListCreateAPIView):
-    """ API endpoint for accessing a list of PartParameterTemplate objects.
+    """API endpoint for accessing a list of PartParameterTemplate objects.
 
     - GET: Return list of PartParameterTemplate objects
     - POST: Create a new PartParameterTemplate object
@@ -1453,10 +1398,7 @@ class PartParameterTemplateList(generics.ListCreateAPIView):
     ]
 
     def filter_queryset(self, queryset):
-        """
-        Custom filtering for the PartParameterTemplate API
-        """
-
+        """Custom filtering for the PartParameterTemplate API"""
         queryset = super().filter_queryset(queryset)
 
         params = self.request.query_params
@@ -1492,7 +1434,7 @@ class PartParameterTemplateList(generics.ListCreateAPIView):
 
 
 class PartParameterList(generics.ListCreateAPIView):
-    """ API endpoint for accessing a list of PartParameter objects
+    """API endpoint for accessing a list of PartParameter objects
 
     - GET: Return list of PartParameter objects
     - POST: Create a new PartParameter object
@@ -1512,18 +1454,14 @@ class PartParameterList(generics.ListCreateAPIView):
 
 
 class PartParameterDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API endpoint for detail view of a single PartParameter object
-    """
+    """API endpoint for detail view of a single PartParameter object"""
 
     queryset = PartParameter.objects.all()
     serializer_class = part_serializers.PartParameterSerializer
 
 
 class BomFilter(rest_filters.FilterSet):
-    """
-    Custom filters for the BOM list
-    """
+    """Custom filters for the BOM list"""
 
     # Boolean filters for BOM item
     optional = rest_filters.BooleanFilter(label='BOM line is optional')
@@ -1564,8 +1502,7 @@ class BomFilter(rest_filters.FilterSet):
 
 
 class BomList(generics.ListCreateAPIView):
-    """
-    API endpoint for accessing a list of BomItem objects.
+    """API endpoint for accessing a list of BomItem objects.
 
     - GET: Return list of BomItem objects
     - POST: Create a new BomItem object
@@ -1715,18 +1652,13 @@ class BomList(generics.ListCreateAPIView):
         return queryset
 
     def include_pricing(self):
-        """
-        Determine if pricing information should be included in the response
-        """
+        """Determine if pricing information should be included in the response"""
         pricing_default = InvenTreeSetting.get_setting('PART_SHOW_PRICE_IN_BOM')
 
         return str2bool(self.request.query_params.get('include_pricing', pricing_default))
 
     def annotate_pricing(self, queryset):
-        """
-        Add part pricing information to the queryset
-        """
-
+        """Add part pricing information to the queryset"""
         # Annotate with purchase prices
         queryset = queryset.annotate(
             purchase_price_min=Min('sub_part__stock_items__purchase_price'),
@@ -1741,8 +1673,7 @@ class BomList(generics.ListCreateAPIView):
         ).values('pk', 'sub_part', 'purchase_price', 'purchase_price_currency')
 
         def convert_price(price, currency, decimal_places=4):
-            """ Convert price field, returns Money field """
-
+            """Convert price field, returns Money field"""
             price_adjusted = None
 
             # Get default currency from settings
@@ -1795,8 +1726,7 @@ class BomList(generics.ListCreateAPIView):
 
 
 class BomImportUpload(generics.CreateAPIView):
-    """
-    API endpoint for uploading a complete Bill of Materials.
+    """API endpoint for uploading a complete Bill of Materials.
 
     It is assumed that the BOM has been extracted from a file using the BomExtract endpoint.
     """
@@ -1805,10 +1735,7 @@ class BomImportUpload(generics.CreateAPIView):
     serializer_class = part_serializers.BomImportUploadSerializer
 
     def create(self, request, *args, **kwargs):
-        """
-        Custom create function to return the extracted data
-        """
-
+        """Custom create function to return the extracted data"""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -1820,25 +1747,21 @@ class BomImportUpload(generics.CreateAPIView):
 
 
 class BomImportExtract(generics.CreateAPIView):
-    """
-    API endpoint for extracting BOM data from a BOM file.
-    """
+    """API endpoint for extracting BOM data from a BOM file."""
 
     queryset = Part.objects.none()
     serializer_class = part_serializers.BomImportExtractSerializer
 
 
 class BomImportSubmit(generics.CreateAPIView):
-    """
-    API endpoint for submitting BOM data from a BOM file
-    """
+    """API endpoint for submitting BOM data from a BOM file"""
 
     queryset = BomItem.objects.none()
     serializer_class = part_serializers.BomImportSubmitSerializer
 
 
 class BomDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ API endpoint for detail view of a single BomItem object """
+    """API endpoint for detail view of a single BomItem object"""
 
     queryset = BomItem.objects.all()
     serializer_class = part_serializers.BomItemSerializer
@@ -1854,7 +1777,7 @@ class BomDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class BomItemValidate(generics.UpdateAPIView):
-    """ API endpoint for validating a BomItem """
+    """API endpoint for validating a BomItem"""
 
     # Very simple serializers
     class BomItemValidationSerializer(serializers.Serializer):
@@ -1883,9 +1806,7 @@ class BomItemValidate(generics.UpdateAPIView):
 
 
 class BomItemSubstituteList(generics.ListCreateAPIView):
-    """
-    API endpoint for accessing a list of BomItemSubstitute objects
-    """
+    """API endpoint for accessing a list of BomItemSubstitute objects"""
 
     serializer_class = part_serializers.BomItemSubstituteSerializer
     queryset = BomItemSubstitute.objects.all()
@@ -1903,9 +1824,7 @@ class BomItemSubstituteList(generics.ListCreateAPIView):
 
 
 class BomItemSubstituteDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API endpoint for detail view of a single BomItemSubstitute object
-    """
+    """API endpoint for detail view of a single BomItemSubstitute object"""
 
     queryset = BomItemSubstitute.objects.all()
     serializer_class = part_serializers.BomItemSubstituteSerializer

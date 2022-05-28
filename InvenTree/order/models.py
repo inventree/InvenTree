@@ -1,8 +1,4 @@
-"""
-Order model definitions
-"""
-
-# -*- coding: utf-8 -*-
+"""Order model definitions"""
 
 import logging
 import os
@@ -47,10 +43,7 @@ logger = logging.getLogger('inventree')
 
 
 def get_next_po_number():
-    """
-    Returns the next available PurchaseOrder reference number
-    """
-
+    """Returns the next available PurchaseOrder reference number"""
     if PurchaseOrder.objects.count() == 0:
         return '0001'
 
@@ -76,10 +69,7 @@ def get_next_po_number():
 
 
 def get_next_so_number():
-    """
-    Returns the next available SalesOrder reference number
-    """
-
+    """Returns the next available SalesOrder reference number"""
     if SalesOrder.objects.count() == 0:
         return '0001'
 
@@ -105,7 +95,7 @@ def get_next_so_number():
 
 
 class Order(MetadataMixin, ReferenceIndexingMixin):
-    """ Abstract model for an order.
+    """Abstract model for an order.
 
     Instances of this class:
 
@@ -159,15 +149,13 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
     notes = MarkdownxField(blank=True, verbose_name=_('Notes'), help_text=_('Order notes'))
 
     def get_total_price(self, target_currency=currency_code_default()):
-        """
-        Calculates the total price of all order lines, and converts to the specified target currency.
+        """Calculates the total price of all order lines, and converts to the specified target currency.
 
         If not specified, the default system currency is used.
 
         If currency conversion fails (e.g. there are no valid conversion rates),
         then we simply return zero, rather than attempting some other calculation.
         """
-
         total = Money(0, target_currency)
 
         # gather name reference
@@ -230,7 +218,7 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
 
 
 class PurchaseOrder(Order):
-    """ A PurchaseOrder represents goods shipped inwards from an external supplier.
+    """A PurchaseOrder represents goods shipped inwards from an external supplier.
 
     Attributes:
         supplier: Reference to the company supplying the goods in the order
@@ -247,8 +235,7 @@ class PurchaseOrder(Order):
 
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
-        """
-        Filter by 'minimum and maximum date range'
+        """Filter by 'minimum and maximum date range'
 
         - Specified as min_date, max_date
         - Both must be specified for filter to be applied
@@ -259,7 +246,6 @@ class PurchaseOrder(Order):
         - A "pending" order where the target date lies within the date range
         - TODO: An "overdue" order where the target date is in the past
         """
-
         date_fmt = '%Y-%m-%d'  # ISO format date string
 
         # Ensure that both dates are valid
@@ -344,7 +330,7 @@ class PurchaseOrder(Order):
 
     @transaction.atomic
     def add_line_item(self, supplier_part, quantity, group=True, reference='', purchase_price=None):
-        """ Add a new line item to this purchase order.
+        """Add a new line item to this purchase order.
         This function will check that:
 
         * The supplier part matches the supplier specified for this purchase order
@@ -355,7 +341,6 @@ class PurchaseOrder(Order):
             quantity - The number of items to add
             group - If True, this new quantity will be added to an existing line item for the same supplier_part (if it exists)
         """
-
         try:
             quantity = int(quantity)
             if quantity <= 0:
@@ -396,8 +381,7 @@ class PurchaseOrder(Order):
 
     @transaction.atomic
     def place_order(self):
-        """ Marks the PurchaseOrder as PLACED. Order must be currently PENDING. """
-
+        """Marks the PurchaseOrder as PLACED. Order must be currently PENDING."""
         if self.status == PurchaseOrderStatus.PENDING:
             self.status = PurchaseOrderStatus.PLACED
             self.issue_date = datetime.now().date()
@@ -407,8 +391,7 @@ class PurchaseOrder(Order):
 
     @transaction.atomic
     def complete_order(self):
-        """ Marks the PurchaseOrder as COMPLETE. Order must be currently PLACED. """
-
+        """Marks the PurchaseOrder as COMPLETE. Order must be currently PLACED."""
         if self.status == PurchaseOrderStatus.PLACED:
             self.status = PurchaseOrderStatus.COMPLETE
             self.complete_date = datetime.now().date()
@@ -418,22 +401,17 @@ class PurchaseOrder(Order):
 
     @property
     def is_overdue(self):
-        """
-        Returns True if this PurchaseOrder is "overdue"
+        """Returns True if this PurchaseOrder is "overdue"
 
         Makes use of the OVERDUE_FILTER to avoid code duplication.
         """
-
         query = PurchaseOrder.objects.filter(pk=self.pk)
         query = query.filter(PurchaseOrder.OVERDUE_FILTER)
 
         return query.exists()
 
     def can_cancel(self):
-        """
-        A PurchaseOrder can only be cancelled under the following circumstances:
-        """
-
+        """A PurchaseOrder can only be cancelled under the following circumstances:"""
         return self.status in [
             PurchaseOrderStatus.PLACED,
             PurchaseOrderStatus.PENDING
@@ -441,8 +419,7 @@ class PurchaseOrder(Order):
 
     @transaction.atomic
     def cancel_order(self):
-        """ Marks the PurchaseOrder as CANCELLED. """
-
+        """Marks the PurchaseOrder as CANCELLED."""
         if self.can_cancel():
             self.status = PurchaseOrderStatus.CANCELLED
             self.save()
@@ -450,16 +427,14 @@ class PurchaseOrder(Order):
             trigger_event('purchaseorder.cancelled', id=self.pk)
 
     def pending_line_items(self):
-        """ Return a list of pending line items for this order.
+        """Return a list of pending line items for this order.
+
         Any line item where 'received' < 'quantity' will be returned.
         """
-
         return self.lines.filter(quantity__gt=F('received'))
 
     def completed_line_items(self):
-        """
-        Return a list of completed line items against this order
-        """
+        """Return a list of completed line items against this order"""
         return self.lines.filter(quantity__lte=F('received'))
 
     @property
@@ -477,16 +452,12 @@ class PurchaseOrder(Order):
 
     @property
     def is_complete(self):
-        """ Return True if all line items have been received """
-
+        """Return True if all line items have been received"""
         return self.lines.count() > 0 and self.pending_line_items().count() == 0
 
     @transaction.atomic
     def receive_line_item(self, line, location, quantity, user, status=StockStatus.OK, **kwargs):
-        """
-        Receive a line item (or partial line item) against this PurchaseOrder
-        """
-
+        """Receive a line item (or partial line item) against this PurchaseOrder"""
         # Extract optional batch code for the new stock item
         batch_code = kwargs.get('batch_code', '')
 
@@ -573,8 +544,7 @@ class PurchaseOrder(Order):
 
 
 class SalesOrder(Order):
-    """
-    A SalesOrder represents a list of goods shipped outwards to a customer.
+    """A SalesOrder represents a list of goods shipped outwards to a customer.
 
     Attributes:
         customer: Reference to the company receiving the goods in the order
@@ -590,8 +560,7 @@ class SalesOrder(Order):
 
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
-        """
-        Filter by "minimum and maximum date range"
+        """Filter by "minimum and maximum date range"
 
         - Specified as min_date, max_date
         - Both must be specified for filter to be applied
@@ -602,7 +571,6 @@ class SalesOrder(Order):
         - A "pending" order where the target date lies within the date range
         - TODO: An "overdue" order where the target date is in the past
         """
-
         date_fmt = '%Y-%m-%d'  # ISO format date string
 
         # Ensure that both dates are valid
@@ -682,12 +650,10 @@ class SalesOrder(Order):
 
     @property
     def is_overdue(self):
-        """
-        Returns true if this SalesOrder is "overdue":
+        """Returns true if this SalesOrder is "overdue":
 
         Makes use of the OVERDUE_FILTER to avoid code duplication.
         """
-
         query = SalesOrder.objects.filter(pk=self.pk)
         query = query.filter(SalesOrder.OVERDUE_FILTER)
 
@@ -699,17 +665,13 @@ class SalesOrder(Order):
 
     @property
     def stock_allocations(self):
-        """
-        Return a queryset containing all allocations for this order
-        """
-
+        """Return a queryset containing all allocations for this order"""
         return SalesOrderAllocation.objects.filter(
             line__in=[line.pk for line in self.lines.all()]
         )
 
     def is_fully_allocated(self):
-        """ Return True if all line items are fully allocated """
-
+        """Return True if all line items are fully allocated"""
         for line in self.lines.all():
             if not line.is_fully_allocated():
                 return False
@@ -717,8 +679,7 @@ class SalesOrder(Order):
         return True
 
     def is_over_allocated(self):
-        """ Return true if any lines in the order are over-allocated """
-
+        """Return true if any lines in the order are over-allocated"""
         for line in self.lines.all():
             if line.is_over_allocated():
                 return True
@@ -726,19 +687,14 @@ class SalesOrder(Order):
         return False
 
     def is_completed(self):
-        """
-        Check if this order is "shipped" (all line items delivered),
-        """
-
+        """Check if this order is "shipped" (all line items delivered)"""
         return self.lines.count() > 0 and all([line.is_completed() for line in self.lines.all()])
 
     def can_complete(self, raise_error=False):
-        """
-        Test if this SalesOrder can be completed.
+        """Test if this SalesOrder can be completed.
 
         Throws a ValidationError if cannot be completed.
         """
-
         try:
 
             # Order without line items cannot be completed
@@ -765,10 +721,7 @@ class SalesOrder(Order):
         return True
 
     def complete_order(self, user):
-        """
-        Mark this order as "complete"
-        """
-
+        """Mark this order as "complete"""
         if not self.can_complete():
             return False
 
@@ -783,10 +736,7 @@ class SalesOrder(Order):
         return True
 
     def can_cancel(self):
-        """
-        Return True if this order can be cancelled
-        """
-
+        """Return True if this order can be cancelled"""
         if self.status != SalesOrderStatus.PENDING:
             return False
 
@@ -794,13 +744,11 @@ class SalesOrder(Order):
 
     @transaction.atomic
     def cancel_order(self):
-        """
-        Cancel this order (only if it is "pending")
+        """Cancel this order (only if it is "pending")
 
         - Mark the order as 'cancelled'
         - Delete any StockItems which have been allocated
         """
-
         if not self.can_cancel():
             return False
 
@@ -820,15 +768,11 @@ class SalesOrder(Order):
         return self.lines.count()
 
     def completed_line_items(self):
-        """
-        Return a queryset of the completed line items for this order
-        """
+        """Return a queryset of the completed line items for this order"""
         return self.lines.filter(shipped__gte=F('quantity'))
 
     def pending_line_items(self):
-        """
-        Return a queryset of the pending line items for this order
-        """
+        """Return a queryset of the pending line items for this order"""
         return self.lines.filter(shipped__lt=F('quantity'))
 
     @property
@@ -840,16 +784,11 @@ class SalesOrder(Order):
         return self.pending_line_items().count()
 
     def completed_shipments(self):
-        """
-        Return a queryset of the completed shipments for this order
-        """
+        """Return a queryset of the completed shipments for this order"""
         return self.shipments.exclude(shipment_date=None)
 
     def pending_shipments(self):
-        """
-        Return a queryset of the pending shipments for this order
-        """
-
+        """Return a queryset of the pending shipments for this order"""
         return self.shipments.filter(shipment_date=None)
 
     @property
@@ -867,9 +806,7 @@ class SalesOrder(Order):
 
 @receiver(post_save, sender=SalesOrder, dispatch_uid='build_post_save_log')
 def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs):
-    """
-    Callback function to be executed after a SalesOrder instance is saved
-    """
+    """Callback function to be executed after a SalesOrder instance is saved"""
     if created and getSetting('SALESORDER_DEFAULT_SHIPMENT'):
         # A new SalesOrder has just been created
 
@@ -881,9 +818,7 @@ def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs
 
 
 class PurchaseOrderAttachment(InvenTreeAttachment):
-    """
-    Model for storing file attachments against a PurchaseOrder object
-    """
+    """Model for storing file attachments against a PurchaseOrder object"""
 
     @staticmethod
     def get_api_url():
@@ -896,9 +831,7 @@ class PurchaseOrderAttachment(InvenTreeAttachment):
 
 
 class SalesOrderAttachment(InvenTreeAttachment):
-    """
-    Model for storing file attachments against a SalesOrder object
-    """
+    """Model for storing file attachments against a SalesOrder object"""
 
     @staticmethod
     def get_api_url():
@@ -911,7 +844,7 @@ class SalesOrderAttachment(InvenTreeAttachment):
 
 
 class OrderLineItem(models.Model):
-    """ Abstract model for an order line item
+    """Abstract model for an order line item
 
     Attributes:
         quantity: Number of items
@@ -951,8 +884,8 @@ class OrderLineItem(models.Model):
 
 
 class OrderExtraLine(OrderLineItem):
-    """
-    Abstract Model for a single ExtraLine in a Order
+    """Abstract Model for a single ExtraLine in a Order
+
     Attributes:
         price: The unit sale price for this OrderLineItem
     """
@@ -984,7 +917,7 @@ class OrderExtraLine(OrderLineItem):
 
 
 class PurchaseOrderLineItem(OrderLineItem):
-    """ Model for a purchase order line item.
+    """Model for a purchase order line item.
 
     Attributes:
         order: Reference to a PurchaseOrder object
@@ -1024,8 +957,7 @@ class PurchaseOrderLineItem(OrderLineItem):
     )
 
     def get_base_part(self):
-        """
-        Return the base part.Part object for the line item
+        """Return the base part.Part object for the line item
 
         Note: Returns None if the SupplierPart is not set!
         """
@@ -1067,14 +999,12 @@ class PurchaseOrderLineItem(OrderLineItem):
     )
 
     def get_destination(self):
-        """
-        Show where the line item is or should be placed
+        """Show where the line item is or should be placed
 
         NOTE: If a line item gets split when recieved, only an arbitrary
               stock items location will be reported as the location for the
               entire line.
         """
-
         for stock in stock_models.StockItem.objects.filter(supplier_part=self.part, purchase_order=self.order):
             if stock.location:
                 return stock.location
@@ -1084,14 +1014,13 @@ class PurchaseOrderLineItem(OrderLineItem):
             return self.part.part.default_location
 
     def remaining(self):
-        """ Calculate the number of items remaining to be received """
+        """Calculate the number of items remaining to be received"""
         r = self.quantity - self.received
         return max(r, 0)
 
 
 class PurchaseOrderExtraLine(OrderExtraLine):
-    """
-    Model for a single ExtraLine in a PurchaseOrder
+    """Model for a single ExtraLine in a PurchaseOrder
     Attributes:
         order: Link to the PurchaseOrder that this line belongs to
         title: title of line
@@ -1105,8 +1034,7 @@ class PurchaseOrderExtraLine(OrderExtraLine):
 
 
 class SalesOrderLineItem(OrderLineItem):
-    """
-    Model for a single LineItem in a SalesOrder
+    """Model for a single LineItem in a SalesOrder
 
     Attributes:
         order: Link to the SalesOrder that this line item belongs to
@@ -1150,47 +1078,38 @@ class SalesOrderLineItem(OrderLineItem):
         ]
 
     def fulfilled_quantity(self):
-        """
-        Return the total stock quantity fulfilled against this line item.
-        """
-
+        """Return the total stock quantity fulfilled against this line item."""
         query = self.order.stock_items.filter(part=self.part).aggregate(fulfilled=Coalesce(Sum('quantity'), Decimal(0)))
 
         return query['fulfilled']
 
     def allocated_quantity(self):
-        """ Return the total stock quantity allocated to this LineItem.
+        """Return the total stock quantity allocated to this LineItem.
 
         This is a summation of the quantity of each attached StockItem
         """
-
         query = self.allocations.aggregate(allocated=Coalesce(Sum('quantity'), Decimal(0)))
 
         return query['allocated']
 
     def is_fully_allocated(self):
-        """ Return True if this line item is fully allocated """
-
+        """Return True if this line item is fully allocated"""
         if self.order.status == SalesOrderStatus.SHIPPED:
             return self.fulfilled_quantity() >= self.quantity
 
         return self.allocated_quantity() >= self.quantity
 
     def is_over_allocated(self):
-        """ Return True if this line item is over allocated """
+        """Return True if this line item is over allocated"""
         return self.allocated_quantity() > self.quantity
 
     def is_completed(self):
-        """
-        Return True if this line item is completed (has been fully shipped)
-        """
-
+        """Return True if this line item is completed (has been fully shipped)"""
         return self.shipped >= self.quantity
 
 
 class SalesOrderShipment(models.Model):
-    """
-    The SalesOrderShipment model represents a physical shipment made against a SalesOrder.
+    """The SalesOrderShipment model represents a physical shipment made against a SalesOrder.
 
     - Points to a single SalesOrder object
     - Multiple SalesOrderAllocation objects point to a particular SalesOrderShipment
@@ -1297,14 +1216,12 @@ class SalesOrderShipment(models.Model):
 
     @transaction.atomic
     def complete_shipment(self, user, **kwargs):
-        """
-        Complete this particular shipment:
+        """Complete this particular shipment:
 
         1. Update any stock items associated with this shipment
         2. Update the "shipped" quantity of all associated line items
         3. Set the "shipment_date" to now
         """
-
         # Check if the shipment can be completed (throw error if not)
         self.check_can_complete()
 
@@ -1343,8 +1260,8 @@ class SalesOrderShipment(models.Model):
 
 
 class SalesOrderExtraLine(OrderExtraLine):
-    """
-    Model for a single ExtraLine in a SalesOrder
+    """Model for a single ExtraLine in a SalesOrder
+
     Attributes:
         order: Link to the SalesOrder that this line belongs to
         title: title of line
@@ -1358,8 +1275,7 @@ class SalesOrderExtraLine(OrderExtraLine):
 
 
 class SalesOrderAllocation(models.Model):
-    """
-    This model is used to 'allocate' stock items to a SalesOrder.
+    """This model is used to 'allocate' stock items to a SalesOrder.
     Items that are "allocated" to a SalesOrder are not yet "attached" to the order,
     but they will be once the order is fulfilled.
 
@@ -1368,7 +1284,6 @@ class SalesOrderAllocation(models.Model):
         shipment: SalesOrderShipment reference
         item: StockItem reference
         quantity: Quantity to take from the StockItem
-
     """
 
     @staticmethod
@@ -1376,8 +1291,7 @@ class SalesOrderAllocation(models.Model):
         return reverse('api-so-allocation-list')
 
     def clean(self):
-        """
-        Validate the SalesOrderAllocation object:
+        """Validate the SalesOrderAllocation object:
 
         - Cannot allocate stock to a line item without a part reference
         - The referenced part must match the part associated with the line item
@@ -1385,7 +1299,6 @@ class SalesOrderAllocation(models.Model):
         - Allocation quantity must be "1" if the StockItem is serialized
         - Allocation quantity cannot be zero
         """
-
         super().clean()
 
         errors = {}
@@ -1468,13 +1381,11 @@ class SalesOrderAllocation(models.Model):
         return self.item.purchase_order
 
     def complete_allocation(self, user):
-        """
-        Complete this allocation (called when the parent SalesOrder is marked as "shipped"):
+        """Complete this allocation (called when the parent SalesOrder is marked as "shipped"):
 
         - Determine if the referenced StockItem needs to be "split" (if allocated quantity != stock quantity)
         - Mark the StockItem as belonging to the Customer (this will remove it from stock)
         """
-
         order = self.line.order
 
         item = self.item.allocateToCustomer(

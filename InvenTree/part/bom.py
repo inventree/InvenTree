@@ -1,5 +1,4 @@
-"""
-Functionality for Bill of Material (BOM) management.
+"""Functionality for Bill of Material (BOM) management.
 Primarily BOM upload tools.
 """
 
@@ -15,14 +14,12 @@ from .models import BomItem
 
 
 def IsValidBOMFormat(fmt):
-    """ Test if a file format specifier is in the valid list of BOM file formats """
-
+    """Test if a file format specifier is in the valid list of BOM file formats"""
     return fmt.strip().lower() in GetExportFormats()
 
 
 def MakeBomTemplate(fmt):
-    """ Generate a Bill of Materials upload template file (for user download) """
-
+    """Generate a Bill of Materials upload template file (for user download)"""
     fmt = fmt.strip().lower()
 
     if not IsValidBOMFormat(fmt):
@@ -45,13 +42,12 @@ def MakeBomTemplate(fmt):
 
 
 def ExportBom(part, fmt='csv', cascade=False, max_levels=None, parameter_data=False, stock_data=False, supplier_data=False, manufacturer_data=False):
-    """ Export a BOM (Bill of Materials) for a given part.
+    """Export a BOM (Bill of Materials) for a given part.
 
     Args:
         fmt: File format (default = 'csv')
         cascade: If True, multi-level BOM output is supported. Otherwise, a flat top-level-only BOM is exported.
     """
-
     if not IsValidBOMFormat(fmt):
         fmt = 'csv'
 

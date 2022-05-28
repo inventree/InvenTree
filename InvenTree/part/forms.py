@@ -1,6 +1,4 @@
-"""
-Django Forms for interacting with Part objects
-"""
+"""Django Forms for interacting with Part objects"""
 
 from django import forms
 from django.utils.translation import gettext_lazy as _
@@ -19,7 +17,7 @@ from .models import (Part, PartCategory, PartCategoryParameterTemplate,
 
 
 class PartModelChoiceField(forms.ModelChoiceField):
-    """ Extending string representation of Part instance with available stock """
+    """Extending string representation of Part instance with available stock"""
 
     def label_from_instance(self, part):
 
@@ -33,9 +31,7 @@ class PartModelChoiceField(forms.ModelChoiceField):
 
 
 class PartImageDownloadForm(HelperForm):
-    """
-    Form for downloading an image from a URL
-    """
+    """Form for downloading an image from a URL"""
 
     url = forms.URLField(
         label=_('URL'),
@@ -51,10 +47,10 @@ class PartImageDownloadForm(HelperForm):
 
 
 class BomMatchItemForm(MatchItemForm):
-    """ Override MatchItemForm fields """
+    """Override MatchItemForm fields"""
 
     def get_special_field(self, col_guess, row, file_manager):
-        """ Set special fields """
+        """Set special fields"""
 
         # set quantity field
         if 'quantity' in col_guess.lower():
@@ -74,13 +70,13 @@ class BomMatchItemForm(MatchItemForm):
 
 
 class SetPartCategoryForm(forms.Form):
-    """ Form for setting the category of multiple Part objects """
+    """Form for setting the category of multiple Part objects"""
 
     part_category = TreeNodeChoiceField(queryset=PartCategory.objects.all(), required=True, help_text=_('Select part category'))
 
 
 class EditPartParameterTemplateForm(HelperForm):
-    """ Form for editing a PartParameterTemplate object """
+    """Form for editing a PartParameterTemplate object"""
 
     class Meta:
         model = PartParameterTemplate
@@ -91,7 +87,7 @@ class EditPartParameterTemplateForm(HelperForm):
 
 
 class EditCategoryParameterTemplateForm(HelperForm):
-    """ Form for editing a PartCategoryParameterTemplate object """
+    """Form for editing a PartCategoryParameterTemplate object"""
 
     add_to_same_level_categories = forms.BooleanField(required=False,
                                                       initial=False,
@@ -113,7 +109,7 @@ class EditCategoryParameterTemplateForm(HelperForm):
 
 
 class PartPriceForm(forms.Form):
-    """ Simple form for viewing part pricing information """
+    """Simple form for viewing part pricing information"""
 
     quantity = forms.IntegerField(
         required=True,
@@ -130,9 +126,7 @@ class PartPriceForm(forms.Form):
 
 
 class EditPartSalePriceBreakForm(HelperForm):
-    """
-    Form for creating / editing a sale price for a part
-    """
+    """Form for creating / editing a sale price for a part"""
 
     quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
 
@@ -146,9 +140,7 @@ class EditPartSalePriceBreakForm(HelperForm):
 
 
 class EditPartInternalPriceBreakForm(HelperForm):
-    """
-    Form for creating / editing a internal price for a part
-    """
+    """Form for creating / editing a internal price for a part"""
 
     quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
 

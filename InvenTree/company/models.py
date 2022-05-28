@@ -1,6 +1,4 @@
-"""
-Company database model definitions
-"""
+"""Company database model definitions"""
 
 import os
 
@@ -27,7 +25,7 @@ from InvenTree.status_codes import PurchaseOrderStatus
 
 
 def rename_company_image(instance, filename):
-    """ Function to rename a company image after upload
+    """Function to rename a company image after upload
 
     Args:
         instance: Company object
@@ -36,7 +34,6 @@ def rename_company_image(instance, filename):
     Returns:
         New image filename
     """
-
     base = 'company_images'
 
     if filename.count('.') > 0:
@@ -54,6 +51,7 @@ def rename_company_image(instance, filename):
 
 class Company(models.Model):
     """ A Company object represents an external company.
+
     It may be a supplier or a customer or a manufacturer (or a combination)
 
     - A supplier is a company from which parts can be purchased
@@ -156,7 +154,6 @@ class Company(models.Model):
         - If the currency code is invalid, use the default currency
         - If the currency code is not specified, use the default currency
         """
-
         code = self.currency
 
         if code not in CURRENCIES:
@@ -174,7 +171,6 @@ class Company(models.Model):
 
     def get_image_url(self):
         """ Return the URL of the image for this company """
-
         if self.image:
             return getMediaUrl(self.image.url)
         else:
@@ -182,7 +178,6 @@ class Company(models.Model):
 
     def get_thumbnail_url(self):
         """ Return the URL for the thumbnail image for this Company """
-
         if self.image:
             return getMediaUrl(self.image.thumbnail.url)
         else:
@@ -247,7 +242,6 @@ class Company(models.Model):
         - Failed / lost
         - Returned
         """
-
         return self.purchase_orders.exclude(status__in=PurchaseOrderStatus.OPEN)
 
     def complete_purchase_orders(self):
@@ -255,7 +249,6 @@ class Company(models.Model):
 
     def failed_purchase_orders(self):
         """ Return any purchase orders which were not successful """
-
         return self.purchase_orders.filter(status__in=PurchaseOrderStatus.FAILED)
 
 
@@ -346,10 +339,7 @@ class ManufacturerPart(models.Model):
 
     @classmethod
     def create(cls, part, manufacturer, mpn, description, link=None):
-        """ Check if ManufacturerPart instance does not already exist
-            then create it
-        """
-
+        """Check if ManufacturerPart instance does not already exist then create it"""
         manufacturer_part = None
 
         try:
@@ -509,7 +499,6 @@ class SupplierPart(models.Model):
 
     def save(self, *args, **kwargs):
         """ Overriding save method to connect an existing ManufacturerPart """
-
         manufacturer_part = None
 
         if all(key in kwargs for key in ('manufacturer', 'MPN')):
@@ -593,10 +582,10 @@ class SupplierPart(models.Model):
 
     @property
     def manufacturer_string(self):
-        """ Format a MPN string for this SupplierPart.
+        """Format a MPN string for this SupplierPart.
+
         Concatenates manufacture name and part number.
         """
-
         items = []
 
         if self.manufacturer_part:
@@ -621,14 +610,12 @@ class SupplierPart(models.Model):
         return self.get_price(1)
 
     def add_price_break(self, quantity, price):
-        """
-        Create a new price break for this part
+        """Create a new price break for this part
 
         args:
             quantity - Numerical quantity
             price - Must be a Money object
         """
-
         # Check if a price break at that quantity already exists...
         if self.price_breaks.filter(quantity=quantity, part=self.pk).exists():
             return
@@ -642,18 +629,14 @@ class SupplierPart(models.Model):
     get_price = common.models.get_price
 
     def open_orders(self):
-        """ Return a database query for PurchaseOrder line items for this SupplierPart,
-        limited to purchase orders that are open / outstanding.
-        """
-
+        """Return a database query for PurchaseOrder line items for this SupplierPart, limited to purchase orders that are open / outstanding."""
         return self.purchase_order_line_items.prefetch_related('order').filter(order__status__in=PurchaseOrderStatus.OPEN)
 
     def on_order(self):
-        """ Return the total quantity of items currently on order.
+        """Return the total quantity of items currently on order.
 
         Subtract partially received stock as appropriate
         """
-
         totals = self.open_orders().aggregate(Sum('quantity'), Sum('received'))
 
         # Quantity on order
@@ -668,8 +651,7 @@ class SupplierPart(models.Model):
             return max(q - r, 0)
 
     def purchase_orders(self):
-        """ Returns a list of purchase orders relating to this supplier part """
-
+        """Returns a list of purchase orders relating to this supplier part"""
         return [line.order for line in self.purchase_order_line_items.all().prefetch_related('order')]
 
     @property
@@ -692,7 +674,7 @@ class SupplierPart(models.Model):
 
 
 class SupplierPriceBreak(common.models.PriceBreak):
-    """ Represents a quantity price break for a SupplierPart.
+    """Represents a quantity price break for a SupplierPart.
     - Suppliers can offer discounts at larger quantities
     - SupplierPart(s) may have zero-or-more associated SupplierPriceBreak(s)
 
