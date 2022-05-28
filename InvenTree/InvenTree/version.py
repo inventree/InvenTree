@@ -119,7 +119,7 @@ def inventreeCommitDate():
     commit_date = os.environ.get('INVENTREE_COMMIT_DATE', '')
 
     if commit_date:
-        return commit_date
+        return commit_date.split(' ')[0]
 
     try:
         d = str(subprocess.check_output('git show -s --format=%ci'.split()), 'utf-8').strip()

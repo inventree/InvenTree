@@ -36,16 +36,22 @@ jobs:
     steps:
       - name: Check out repo
         uses: actions/checkout@v2
+      - name: Extract Commit Information
+        run: |
+          echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_ENV
       - name: Version Check
         run: |
           python3 ci/check_version_number.py
-      - name: Build Docker Image
-        run: |
-          docker-compose build
-          docker-compose run inventree-dev-server invoke update
-      - name: Run Unit Tests
-        run: |
-          docker-compose up -d
-          docker-compose run inventree-dev-server invoke wait
-          docker-compose run inventree-dev-server invoke test
-          docker-compose down
+          echo "Git Commit Hash: ${{ env.git_commit_hash }}"
+          echo "Git Commit Date: ${{ env.git_commit_date }}"
+      #- name: Build Docker Image
+      #  run: |
+      #    docker-compose build
+      #    docker-compose run inventree-dev-server invoke update
+      #- name: Run Unit Tests
+      #  run: |
+      #    docker-compose up -d
+      #    docker-compose run inventree-dev-server invoke wait
+      #    docker-compose run inventree-dev-server invoke test
+      #    docker-compose down
