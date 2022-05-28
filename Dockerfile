@@ -1,5 +1,9 @@
 FROM python:3.9-slim as base
 
+# Build arguments for this image
+ARG commit_hash=""
+ARG commit_date=""
+
 ENV PYTHONUNBUFFERED 1
 
 # Ref: https://github.com/pyca/cryptography/issues/5776
@@ -16,6 +20,7 @@ ENV INVENTREE_STATIC_ROOT="${INVENTREE_DATA_DIR}/static"
 ENV INVENTREE_MEDIA_ROOT="${INVENTREE_DATA_DIR}/media"
 ENV INVENTREE_PLUGIN_DIR="${INVENTREE_DATA_DIR}/plugins"
 
+# InvenTree configuration files
 ENV INVENTREE_CONFIG_FILE="${INVENTREE_DATA_DIR}/config.yaml"
 ENV INVENTREE_SECRET_KEY_FILE="${INVENTREE_DATA_DIR}/secret_key.txt"
 ENV INVENTREE_PLUGIN_FILE="${INVENTREE_DATA_DIR}/plugins.txt"
@@ -60,8 +65,16 @@ RUN pip install --upgrade pip
 COPY ./docker/requirements.txt requirements.txt
 RUN pip install --no-cache-dir -U -r requirements.txt
 
-# Production image, copies required files from local directory
+# InvenTree production image:
+# - Copies required files from local directory
+# - Installs required python packages from requirements.txt
+# - Starts a gunicorn webserver
+
 FROM base as production
+
+# As .git directory is not available in production image, we pass the commit information via ENV
+ENV INVENTREE_COMMIT_HASH="${commit_hash}"
+ENV INVENTREE_COMMIT_DATE="${commit_date}"
 
 # Copy source code
 COPY InvenTree ${INVENTREE_HOME}
