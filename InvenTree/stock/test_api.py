@@ -46,6 +46,7 @@ class StockAPITestCase(InvenTreeAPITestCase):
 
 class StockLocationTest(StockAPITestCase):
     """Series of API tests for the StockLocation API."""
+
     list_url = reverse('api-location-list')
 
     def setUp(self):

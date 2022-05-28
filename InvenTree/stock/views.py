@@ -20,6 +20,7 @@ from .models import StockItem, StockItemTracking, StockLocation
 
 class StockIndex(InvenTreeRoleMixin, InvenTreePluginViewMixin, ListView):
     """StockIndex view loads all StockLocation and StockItem object."""
+
     model = StockItem
     template_name = 'stock/location.html'
     context_obect_name = 'locations'
