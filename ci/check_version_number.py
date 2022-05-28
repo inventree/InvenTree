@@ -111,4 +111,4 @@ if __name__ == '__main__':
 
     # Ref: https://getridbug.com/python/how-to-set-environment-variables-in-github-actions-using-python/
     with open(os.getenv('GITHUB_ENV'), 'a') as env_file:
-        env_file.write(f"docker_tag={docker_tag}")
+        env_file.write(f"docker_tag={docker_tag}\n")
