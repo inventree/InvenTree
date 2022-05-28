@@ -89,12 +89,12 @@ ENV INVENTREE_COMMIT_HASH="${commit_hash}"
 ENV INVENTREE_COMMIT_DATE="${commit_date}"
 
 # Copy source code
-COPY InvenTree ${INVENTREE_HOME}
+COPY InvenTree ${INVENTREE_HOME}/InvenTree
 
 # Copy other key files
 COPY requirements.txt ${INVENTREE_HOME}/requirements.txt
 COPY tasks.py ${INVENTREE_HOME}/tasks.py
-COPY docker/gunicorn.conf.py ${INVENTREE_MNG_DIR}/gunicorn.conf.py
+COPY docker/gunicorn.conf.py ${INVENTREE_HOME}/gunicorn.conf.py
 COPY docker/init.sh ${INVENTREE_MNG_DIR}/init.sh
 
 # Need to be running from within this directory
