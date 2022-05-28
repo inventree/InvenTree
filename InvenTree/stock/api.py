@@ -212,9 +212,7 @@ class StockLocationList(generics.ListCreateAPIView):
     serializer_class = StockSerializers.LocationSerializer
 
     def filter_queryset(self, queryset):
-        """Custom filtering:
-        - Allow filtering by "null" parent to retrieve top-level stock locations
-        """
+        """Custom filtering: - Allow filtering by "null" parent to retrieve top-level stock locations"""
         queryset = super().filter_queryset(queryset)
 
         params = self.request.query_params
@@ -397,7 +395,9 @@ class StockFilter(rest_filters.FilterSet):
     tracked = rest_filters.BooleanFilter(label='Tracked', method='filter_tracked')
 
     def filter_tracked(self, queryset, name, value):
-        """Filter by whether this stock item is *tracked*, meaning either:
+        """Filter by whether this stock item is *tracked*.
+
+        Meaning either:
         - It has a serial number
         - It has a batch code
         """
@@ -616,8 +616,7 @@ class StockList(APIDownloadMixin, generics.ListCreateAPIView):
         return DownloadFile(filedata, filename)
 
     def list(self, request, *args, **kwargs):
-        """Override the 'list' method, as the StockLocation objects
-        are very expensive to serialize.
+        """Override the 'list' method, as the StockLocation objects are very expensive to serialize.
 
         So, we fetch and serialize the required StockLocation objects only as required.
         """
@@ -731,7 +730,6 @@ class StockList(APIDownloadMixin, generics.ListCreateAPIView):
 
     def filter_queryset(self, queryset):
         """Custom filtering for the StockItem queryset"""
-
         params = self.request.query_params
 
         queryset = super().filter_queryset(queryset)
@@ -1155,7 +1153,6 @@ class StockItemTestResultList(generics.ListCreateAPIView):
         Also, check if an attachment was uploaded alongside the test result,
         and save it to the database if it were.
         """
-
         # Capture the user information
         test_result = serializer.save()
         test_result.user = self.request.user
@@ -1267,7 +1264,6 @@ class StockTrackingList(generics.ListAPIView):
         Here we override the default 'create' implementation,
         to save the user information associated with the request object.
         """
-
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 

@@ -20,8 +20,7 @@ class OwnerList(generics.ListAPIView):
     serializer_class = OwnerSerializer
 
     def filter_queryset(self, queryset):
-        """
-        Implement text search for the "owner" model.
+        """Implement text search for the "owner" model.
 
         Note that an "owner" can be either a group, or a user,
         so we cannot do a direct text search.
@@ -59,8 +58,7 @@ class OwnerDetail(generics.RetrieveAPIView):
 
 
 class RoleDetails(APIView):
-    """
-    API endpoint which lists the available role permissions
+    """API endpoint which lists the available role permissions
     for the current user
 
     (Requires authentication)

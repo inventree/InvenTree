@@ -325,9 +325,7 @@ class StockItemTest(StockAPITestCase):
         StockLocation.objects.create(name='C', description='location c', parent=top)
 
     def test_create_default_location(self):
-        """Test the default location functionality,
-        if a 'location' is not specified in the creation request.
-        """
+        """Test the default location functionality, if a 'location' is not specified in the creation request."""
         # The part 'R_4K7_0603' (pk=4) has a default location specified
 
         response = self.client.post(

@@ -30,8 +30,7 @@ class RuleSetInline(admin.TabularInline):
 
 
 class InvenTreeGroupAdminForm(forms.ModelForm):
-    """
-    Custom admin form for the Group model.
+    """Custom admin form for the Group model.
 
     Adds the ability for editing user membership directly in the group admin page.
     """
@@ -86,8 +85,7 @@ class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
                     'stock_item', 'build', 'purchase_order', 'sales_order')
 
     def get_rule_set(self, obj, rule_set_type):
-        ''' Return list of permissions for the given ruleset '''
-
+        """Return list of permissions for the given ruleset"""
         # Get all rulesets associated to object
         rule_sets = RuleSet.objects.filter(group=obj.pk)
 
@@ -156,12 +154,10 @@ class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
     filter_horizontal = ['permissions']
 
     def save_model(self, request, obj, form, change):
-        """
-            This method serves two purposes:
+        """This method serves two purposes:
             - show warning message whenever the group users belong to multiple groups
             - skip saving of the group instance model as inlines needs to be saved before.
         """
-
         # Get form cleaned data
         users = form.cleaned_data['users']
 
@@ -189,8 +185,7 @@ class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
 
 
 class InvenTreeUserAdmin(UserAdmin):
-    """
-    Custom admin page for the User model.
+    """Custom admin page for the User model.
 
     Hides the "permissions" view as this is now handled
     entirely by groups and RuleSets.

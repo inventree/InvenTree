@@ -46,6 +46,7 @@ class StockLocation(MetadataMixin, InvenTreeTree):
 
     def delete(self, *args, **kwargs):
         """Custom model deletion routine, which updates any child locations or items.
+
         This must be handled within a transaction.atomic(), otherwise the tree structure is damaged
         """
         with transaction.atomic():
@@ -161,7 +162,8 @@ class StockLocation(MetadataMixin, InvenTreeTree):
     def item_count(self):
         """Simply returns the number of stock items in this location.
 
-        Required for tree view serializer."""
+        Required for tree view serializer.
+        """
         return self.stock_item_count()
 
 
@@ -248,10 +250,7 @@ class StockItem(MetadataMixin, MPTTModel):
         return reverse('api-stock-list')
 
     def api_instance_filters(self):
-        """
-        Custom API instance filters
-        """
-
+        """Custom API instance filters"""
         return {
             'parent': {
                 'exclude_tree': self.pk,
@@ -538,6 +537,7 @@ class StockItem(MetadataMixin, MPTTModel):
 
     def format_barcode(self, **kwargs):
         """Return a JSON string for formatting a barcode for this StockItem.
+
         Can be used to perform lookup of a stockitem using barcode
 
         Contains the following data:
@@ -1025,7 +1025,7 @@ class StockItem(MetadataMixin, MPTTModel):
     def installStockItem(self, other_item, quantity, user, notes):
         """Install another stock item into this stock item.
 
-        Args
+        Args:
             other_item: The stock item to install into this stock item
             quantity: The quantity of stock to install
             user: The user performing the operation
@@ -1117,7 +1117,8 @@ class StockItem(MetadataMixin, MPTTModel):
     def child_count(self):
         """Return the number of 'child' items associated with this StockItem.
 
-        A child item is one which has been split from this one."""
+        A child item is one which has been split from this one.
+        """
         return self.children.count()
 
     @property
@@ -1581,6 +1582,7 @@ class StockItem(MetadataMixin, MPTTModel):
     @transaction.atomic
     def stocktake(self, count, user, notes=''):
         """Perform item stocktake.
+
         When the quantity of an item is counted,
         record the date of stocktake
         """
@@ -1611,6 +1613,7 @@ class StockItem(MetadataMixin, MPTTModel):
     @transaction.atomic
     def add_stock(self, quantity, user, notes=''):
         """Add items to stock
+
         This function can be called by initiating a ProjectRun,
         or by manually adding the items to the stock location
         """
@@ -1769,7 +1772,7 @@ class StockItem(MetadataMixin, MPTTModel):
     def requiredTestStatus(self):
         """Return the status of the tests required for this StockItem.
 
-        return:
+        Return:
             A dict containing the following items:
             - total: Number of required tests
             - passed: Number of tests that have passed

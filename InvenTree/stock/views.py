@@ -212,7 +212,6 @@ class StockItemConvert(AjaxUpdateView):
 
     def get_form(self):
         """Filter the available parts."""
-
         form = super().get_form()
         item = self.get_object()
 

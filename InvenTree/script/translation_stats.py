@@ -6,10 +6,7 @@ import sys
 
 
 def calculate_coverage(filename):
-    """
-    Calculate translation coverage for a .po file
-    """
-
+    """Calculate translation coverage for a .po file"""
     with open(filename, 'r') as f:
         lines = f.readlines()
 
