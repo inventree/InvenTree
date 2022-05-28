@@ -1,4 +1,4 @@
-# Tests for the Part model
+"""Tests for the Part model"""
 
 import os
 
@@ -21,7 +21,7 @@ from .templatetags import inventree_extras
 
 
 class TemplateTagTest(InvenTreeTestCase):
-    """ Tests for the custom template tag code """
+    """Tests for the custom template tag code"""
 
     def test_define(self):
         self.assertEqual(int(inventree_extras.define(3)), 3)
@@ -146,10 +146,7 @@ class PartTest(TestCase):
         self.assertEqual(str(p), "BOB | Bob | A2 - Can we build it?")
 
     def test_duplicate(self):
-        """
-        Test that we cannot create a "duplicate" Part
-        """
-
+        """Test that we cannot create a "duplicate" Part"""
         n = Part.objects.count()
 
         cat = PartCategory.objects.get(pk=1)
@@ -248,7 +245,6 @@ class PartTest(TestCase):
 
     def test_metadata(self):
         """Unit tests for the Part metadata field"""
-
         p = Part.objects.get(pk=1)
         self.assertIsNone(p.metadata)
 
@@ -324,8 +320,7 @@ class TestTemplateTest(TestCase):
 
 
 class PartSettingsTest(InvenTreeTestCase):
-    """
-    Tests to ensure that the user-configurable default values work as expected.
+    """Tests to ensure that the user-configurable default values work as expected.
 
     Some fields for the Part model can have default values specified by the user.
     """
@@ -344,20 +339,14 @@ class PartSettingsTest(InvenTreeTestCase):
         return part
 
     def test_defaults(self):
-        """
-        Test that the default values for the part settings are correct
-        """
-
+        """Test that the default values for the part settings are correct"""
         self.assertTrue(part.settings.part_component_default())
         self.assertTrue(part.settings.part_purchaseable_default())
         self.assertFalse(part.settings.part_salable_default())
         self.assertFalse(part.settings.part_trackable_default())
 
     def test_initial(self):
-        """
-        Test the 'initial' default values (no default values have been set)
-        """
-
+        """Test the 'initial' default values (no default values have been set)"""
         part = self.make_part()
 
         self.assertTrue(part.component)
@@ -366,10 +355,7 @@ class PartSettingsTest(InvenTreeTestCase):
         self.assertFalse(part.trackable)
 
     def test_custom(self):
-        """
-        Update some of the part values and re-test
-        """
-
+        """Update some of the part values and re-test"""
         for val in [True, False]:
             InvenTreeSetting.set_setting('PART_COMPONENT', val, self.user)
             InvenTreeSetting.set_setting('PART_PURCHASEABLE', val, self.user)
@@ -395,10 +381,7 @@ class PartSettingsTest(InvenTreeTestCase):
             Part.objects.filter(pk=part.pk).delete()
 
     def test_duplicate_ipn(self):
-        """
-        Test the setting which controls duplicate IPN values
-        """
-
+        """Test the setting which controls duplicate IPN values"""
         # Create a part
         Part.objects.create(name='Hello', description='A thing', IPN='IPN123', revision='A')
 
@@ -465,10 +448,7 @@ class PartSubscriptionTests(InvenTreeTestCase):
         )
 
     def test_part_subcription(self):
-        """
-        Test basic subscription against a part
-        """
-
+        """Test basic subscription against a part"""
         # First check that the user is *not* subscribed to the part
         self.assertFalse(self.part.is_starred_by(self.user))
 
@@ -485,10 +465,7 @@ class PartSubscriptionTests(InvenTreeTestCase):
         self.assertFalse(self.part.is_starred_by(self.user))
 
     def test_variant_subscription(self):
-        """
-        Test subscription against a parent part
-        """
-
+        """Test subscription against a parent part"""
         # Construct a sub-part to star against
         sub_part = Part.objects.create(
             name='sub_part',
@@ -505,10 +482,7 @@ class PartSubscriptionTests(InvenTreeTestCase):
         self.assertTrue(sub_part.is_starred_by(self.user))
 
     def test_category_subscription(self):
-        """
-        Test subscription against a PartCategory
-        """
-
+        """Test subscription against a PartCategory"""
         self.assertEqual(PartCategoryStar.objects.count(), 0)
 
         self.assertFalse(self.part.is_starred_by(self.user))
@@ -533,10 +507,7 @@ class PartSubscriptionTests(InvenTreeTestCase):
         self.assertFalse(self.part.is_starred_by(self.user))
 
     def test_parent_category_subscription(self):
-        """
-        Check that a parent category can be subscribed to
-        """
-
+        """Check that a parent category can be subscribed to"""
         # Top-level "electronics" category
         cat = PartCategory.objects.get(pk=1)
 
@@ -553,7 +524,7 @@ class PartSubscriptionTests(InvenTreeTestCase):
 
 
 class BaseNotificationIntegrationTest(InvenTreeTestCase):
-    """ Integration test for notifications """
+    """Integration test for notifications"""
 
     fixtures = [
         'location',
@@ -571,8 +542,8 @@ class BaseNotificationIntegrationTest(InvenTreeTestCase):
         self.part = Part.objects.get(name='R_2K2_0805')
 
     def _notification_run(self, run_class=None):
-        """
-        Run a notification test suit through.
+        """Run a notification test suit through.
+
         If you only want to test one class pass it to run_class
         """
         # reload notification methods
@@ -597,7 +568,7 @@ class BaseNotificationIntegrationTest(InvenTreeTestCase):
 
 
 class PartNotificationTest(BaseNotificationIntegrationTest):
-    """ Integration test for part notifications """
+    """Integration test for part notifications"""
 
     def test_notification(self):
         self._notification_run(UIMessageNotification)

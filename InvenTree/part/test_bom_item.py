@@ -48,18 +48,14 @@ class BomItemTest(TestCase):
         self.assertEqual(self.orphan.used_in_count, 1)
 
     def test_self_reference(self):
-        """ Test that we get an appropriate error when we create a BomItem which points to itself """
-
+        """Test that we get an appropriate error when we create a BomItem which points to itself"""
         with self.assertRaises(django_exceptions.ValidationError):
             # A validation error should be raised here
             item = BomItem.objects.create(part=self.bob, sub_part=self.bob, quantity=7)
             item.clean()  # pragma: no cover
 
     def test_integer_quantity(self):
-        """
-        Test integer validation for BomItem
-        """
-
+        """Test integer validation for BomItem"""
         p = Part.objects.create(name="test", description="d", component=True, trackable=True)
 
         # Creation of a BOMItem with a non-integer quantity of a trackable Part should fail
@@ -70,8 +66,7 @@ class BomItemTest(TestCase):
         BomItem.objects.create(part=self.bob, sub_part=p, quantity=21)
 
     def test_overage(self):
-        """ Test that BOM line overages are calculated correctly """
-
+        """Test that BOM line overages are calculated correctly"""
         item = BomItem.objects.get(part=100, sub_part=50)
 
         q = 300
@@ -106,8 +101,7 @@ class BomItemTest(TestCase):
         self.assertEqual(n, 3150)
 
     def test_item_hash(self):
-        """ Test BOM item hash encoding """
-
+        """Test BOM item hash encoding"""
         item = BomItem.objects.get(part=100, sub_part=50)
 
         h1 = item.get_item_hash()
@@ -135,10 +129,7 @@ class BomItemTest(TestCase):
         )
 
     def test_substitutes(self):
-        """
-        Tests for BOM item substitutes
-        """
-
+        """Tests for BOM item substitutes"""
         # We will make some subtitute parts for the "orphan" part
         bom_item = BomItem.objects.get(
             part=self.bob,

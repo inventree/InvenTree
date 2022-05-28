@@ -1,4 +1,4 @@
-""" Unit tests for Part Views (see views.py) """
+"""Unit tests for Part Views (see views.py)"""
 
 from django.urls import reverse
 
@@ -40,8 +40,7 @@ class PartListTest(PartViewTestCase):
 class PartDetailTest(PartViewTestCase):
 
     def test_part_detail(self):
-        """ Test that we can retrieve a part detail page """
-
+        """Test that we can retrieve a part detail page"""
         pk = 1
 
         response = self.client.get(reverse('part-detail', args=(pk,)))
@@ -58,8 +57,7 @@ class PartDetailTest(PartViewTestCase):
         self.assertEqual(response.context['category'], part.category)
 
     def test_part_detail_from_ipn(self):
-        """
-        Test that we can retrieve a part detail page from part IPN:
+        """Test that we can retrieve a part detail page from part IPN:
         - if no part with matching IPN -> return part index
         - if unique IPN match -> return part detail page
         - if multiple IPN matches -> return part index
@@ -108,7 +106,7 @@ class PartDetailTest(PartViewTestCase):
         test_ipn_match(index_result=True, detail_result=False)
 
     def test_bom_download(self):
-        """ Test downloading a BOM for a valid part """
+        """Test downloading a BOM for a valid part"""
 
         response = self.client.get(reverse('bom-download', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
@@ -116,7 +114,7 @@ class PartDetailTest(PartViewTestCase):
 
 
 class PartQRTest(PartViewTestCase):
-    """ Tests for the Part QR Code AJAX view """
+    """Tests for the Part QR Code AJAX view"""
 
     def test_html_redirect(self):
         # A HTML request for a QR code should be redirected (use an AJAX request instead)
@@ -139,10 +137,10 @@ class PartQRTest(PartViewTestCase):
 
 
 class CategoryTest(PartViewTestCase):
-    """ Tests for PartCategory related views """
+    """Tests for PartCategory related views"""
 
     def test_set_category(self):
-        """ Test that the "SetCategory" view works """
+        """Test that the "SetCategory" view works"""
 
         url = reverse('part-set-category')
 
