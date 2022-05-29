@@ -40,6 +40,7 @@ class BarcodeMixin:
         MIXIN_NAME = 'Barcode'
 
     def __init__(self):
+        """Register mixin."""
         super().__init__()
         self.add_mixin('barcode', 'has_barcode', __class__)
 

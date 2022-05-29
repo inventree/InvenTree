@@ -12,6 +12,7 @@ class ActionMixin:
         MIXIN_NAME = 'Actions'
 
     def __init__(self):
+        """Register mixin."""
         super().__init__()
         self.add_mixin('action', True, __class__)
 

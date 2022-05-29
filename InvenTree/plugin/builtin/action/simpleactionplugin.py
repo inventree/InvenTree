@@ -11,13 +11,16 @@ class SimpleActionPlugin(ActionMixin, InvenTreePlugin):
     ACTION_NAME = "simple"
 
     def perform_action(self, user=None, data=None):
+        """Sample method."""
         print("Action plugin in action!")
 
     def get_info(self, user, data=None):
+        """Sample method."""
         return {
             "user": user.username,
             "hello": "world",
         }
 
     def get_result(self, user=None, data=None):
+        """Sample method."""
         return True

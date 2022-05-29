@@ -11,7 +11,13 @@ from plugin.mixins import BulkNotificationMethod, SettingsMixin
 
 
 class PlgMixin:
+    """Mixin to access plugin easier.
+
+    This needs to be spit out to reference the class. Perks of python.
+    """
+
     def get_plugin(self):
+        """Return plugin reference."""
         return CoreNotificationsPlugin
 
 
@@ -32,6 +38,8 @@ class CoreNotificationsPlugin(SettingsMixin, InvenTreePlugin):
     }
 
     class EmailNotification(PlgMixin, BulkNotificationMethod):
+        """Notificationmethod for delivery via Email."""
+
         METHOD_NAME = 'mail'
         METHOD_ICON = 'fa-envelope'
         CONTEXT_EXTRA = [
@@ -62,6 +70,7 @@ class CoreNotificationsPlugin(SettingsMixin, InvenTreePlugin):
             )
 
         def send_bulk(self):
+            """Send the notifications out via email."""
             html_message = render_to_string(self.context['template']['html'], self.context)
             targets = self.targets.values_list('email', flat=True)
 

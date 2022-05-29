@@ -18,12 +18,14 @@ from stock.models import StockItem, StockLocation
 
 
 class InvenTreeBarcodePlugin(BarcodeMixin, InvenTreePlugin):
+    """Builtin BarcodePlugin for matching and generating internal barcodes."""
 
     NAME = "InvenTreeBarcode"
 
     def validate(self):
-        """An "InvenTree" barcode must be a jsonnable-dict with the following tags:
+        """Validate a barcode.
 
+        An "InvenTree" barcode must be a jsonnable-dict with the following tags:
         {
             'tool': 'InvenTree',
             'version': <anything>
@@ -52,7 +54,7 @@ class InvenTreeBarcodePlugin(BarcodeMixin, InvenTreePlugin):
         return True
 
     def getStockItem(self):
-
+        """Lookup StockItem by 'stockitem' key in barcode data."""
         for k in self.data.keys():
             if k.lower() == 'stockitem':
 
@@ -81,7 +83,7 @@ class InvenTreeBarcodePlugin(BarcodeMixin, InvenTreePlugin):
         return None
 
     def getStockLocation(self):
-
+        """Lookup StockLocation by 'stocklocation' key in barcode data."""
         for k in self.data.keys():
             if k.lower() == 'stocklocation':
 
@@ -109,7 +111,7 @@ class InvenTreeBarcodePlugin(BarcodeMixin, InvenTreePlugin):
         return None
 
     def getPart(self):
-
+        """Lookup Part by 'part' key in barcode data."""
         for k in self.data.keys():
             if k.lower() == 'part':
 
