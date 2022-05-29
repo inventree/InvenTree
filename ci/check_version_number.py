@@ -28,6 +28,8 @@ if __name__ == '__main__':
     # GITHUB_REF may be either 'refs/heads/<branch>' or 'refs/heads/<tag>'
     GITHUB_REF = os.environ['GITHUB_REF']
 
+    GITHUB_BASE_REF = os.environ['GITHUB_BASE_REF']
+
     version_file = os.path.join(here, '..', 'InvenTree', 'InvenTree', 'version.py')
 
     version = None
@@ -95,6 +97,7 @@ if __name__ == '__main__':
         print("Unsupported branch / version combination:")
         print(f"InvenTree Version: {version}")
         print("GITHUB_REF_TYPE:", GITHUB_REF_TYPE)
+        print("GITHUB_BASE_REF:", GITHUB_BASE_REF)
         print("GITHUB_REF:", GITHUB_REF)
         sys.exit(1)
 
