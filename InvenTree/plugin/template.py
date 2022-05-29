@@ -21,6 +21,7 @@ class PluginTemplateLoader(FilesystemLoader):
     """
 
     def get_dirs(self):
+        """Returns all template dir paths in plugins."""
         dirname = 'templates'
         template_dirs = []
 

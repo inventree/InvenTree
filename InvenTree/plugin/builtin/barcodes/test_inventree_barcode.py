@@ -8,6 +8,7 @@ from InvenTree.api_tester import InvenTreeAPITestCase
 
 
 class TestInvenTreeBarcode(InvenTreeAPITestCase):
+    """Tests for the integrated InvenTreeBarcode barcode plugin."""
 
     fixtures = [
         'category',

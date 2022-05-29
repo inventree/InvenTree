@@ -15,6 +15,7 @@ class PluginTagTests(TestCase):
     """Tests for the plugin extras."""
 
     def setUp(self):
+        """Setup for all tests."""
         self.sample = SampleIntegrationPlugin()
         self.plugin_no = NoIntegrationPlugin()
         self.plugin_wrong = WrongIntegrationPlugin()
@@ -60,6 +61,7 @@ class InvenTreePluginTests(TestCase):
     """Tests for InvenTreePlugin."""
 
     def setUp(self):
+        """Setup for all tests."""
         self.plugin = InvenTreePlugin()
 
         class NamedPlugin(InvenTreePlugin):

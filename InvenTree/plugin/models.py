@@ -24,6 +24,7 @@ class MetadataMixin(models.Model):
     """
 
     class Meta:
+        """Meta for MetadataMixin."""
         abstract = True
 
     metadata = models.JSONField(
@@ -74,6 +75,7 @@ class PluginConfig(models.Model):
     """
 
     class Meta:
+        """Meta for PluginConfig."""
         verbose_name = _("Plugin Configuration")
         verbose_name_plural = _("Plugin Configurations")
 
@@ -99,6 +101,7 @@ class PluginConfig(models.Model):
     )
 
     def __str__(self) -> str:
+        """Nice name for printing."""
         name = f'{self.name} - {self.key}'
         if not self.active:
             name += '(not active)'
@@ -106,7 +109,7 @@ class PluginConfig(models.Model):
 
     # extra attributes from the registry
     def mixins(self):
-
+        """Returns all registered mixins."""
         try:
             return self.plugin._mixinreg
         except (AttributeError, ValueError):  # pragma: no cover
@@ -153,6 +156,7 @@ class PluginSetting(common.models.BaseInvenTreeSetting):
     """This model represents settings for individual plugins."""
 
     class Meta:
+        """Meta for PluginSetting."""
         unique_together = [
             ('plugin', 'key'),
         ]
@@ -201,12 +205,14 @@ class NotificationUserSetting(common.models.BaseInvenTreeSetting):
     """This model represents notification settings for a user."""
 
     class Meta:
+        """Meta for NotificationUserSetting."""
         unique_together = [
             ('method', 'user', 'key'),
         ]
 
     @classmethod
     def get_setting_definition(cls, key, **kwargs):
+        """Override setting_definition to use notification settings."""
         from common.notifications import storage
 
         kwargs['settings'] = storage.user_settings
@@ -234,4 +240,5 @@ class NotificationUserSetting(common.models.BaseInvenTreeSetting):
     )
 
     def __str__(self) -> str:
+        """Nice name of printing."""
         return f'{self.key} (for {self.user}): {self.value}'

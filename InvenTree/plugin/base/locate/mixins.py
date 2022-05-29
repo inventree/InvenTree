@@ -24,9 +24,11 @@ class LocateMixin:
     """
 
     class MixinMeta:
+        """Meta for mixin."""
         MIXIN_NAME = "Locate"
 
     def __init__(self):
+        """Register the mixin."""
         super().__init__()
         self.add_mixin('locate', True, __class__)
 

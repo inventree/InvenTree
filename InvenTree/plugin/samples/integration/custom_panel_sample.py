@@ -31,7 +31,7 @@ class CustomPanelSample(PanelMixin, SettingsMixin, InvenTreePlugin):
     }
 
     def get_panel_context(self, view, request, context):
-
+        """Returns enriched context."""
         ctx = super().get_panel_context(view, request, context)
 
         # If we are looking at a StockLocationDetail view, add location context object

@@ -22,9 +22,11 @@ class SettingsMixin:
     """Mixin that enables global settings for the plugin."""
 
     class MixinMeta:
+        """Meta for mixin."""
         MIXIN_NAME = 'Settings'
 
     def __init__(self):
+        """Register mixin."""
         super().__init__()
         self.add_mixin('settings', 'has_settings', __class__)
         self.settings = getattr(self, 'SETTINGS', {})
@@ -91,6 +93,7 @@ class ScheduleMixin:
         MIXIN_NAME = 'Schedule'
 
     def __init__(self):
+        """Register mixin."""
         super().__init__()
         self.scheduled_tasks = self.get_scheduled_tasks()
         self.validate_scheduled_tasks()
@@ -98,6 +101,10 @@ class ScheduleMixin:
         self.add_mixin('schedule', 'has_scheduled_tasks', __class__)
 
     def get_scheduled_tasks(self):
+        """Returns `SCHEDULED_TASKS` context.
+
+        Override if you want the scheduled tasks to be dynamic (influenced by settings for example).
+        """
         return getattr(self, 'SCHEDULED_TASKS', {})
 
     @property
@@ -216,6 +223,7 @@ class UrlsMixin:
         MIXIN_NAME = 'URLs'
 
     def __init__(self):
+        """Register mixin."""
         super().__init__()
         self.add_mixin('urls', 'has_urls', __class__)
         self.urls = self.setup_urls()
@@ -259,6 +267,7 @@ class NavigationMixin:
         MIXIN_NAME = 'Navigation Links'
 
     def __init__(self):
+        """Register mixin."""
         super().__init__()
         self.add_mixin('navigation', 'has_naviation', __class__)
         self.navigation = self.setup_navigation()
@@ -301,6 +310,7 @@ class AppMixin:
         MIXIN_NAME = 'App registration'
 
     def __init__(self):
+        """Register mixin."""
         super().__init__()
         self.add_mixin('app', 'has_app', __class__)
 
@@ -366,6 +376,7 @@ class APICallMixin:
         MIXIN_NAME = 'API calls'
 
     def __init__(self):
+        """Register mixin."""
         super().__init__()
         self.add_mixin('api_call', 'has_api_call', __class__)
 
@@ -380,22 +391,49 @@ class APICallMixin:
 
     @property
     def api_url(self):
+        """Base url path."""
         return f'{self.API_METHOD}://{self.get_setting(self.API_URL_SETTING)}'
 
     @property
     def api_headers(self):
+        """Returns the default headers for requests with api_call.
+
+        Contains a header with the key set in `API_TOKEN` for the plugin it `API_TOKEN_SETTING` is defined.
+        Check the mixin class docstring for a full example.
+        """
         headers = {'Content-Type': 'application/json'}
         if getattr(self, 'API_TOKEN_SETTING'):
             headers[self.API_TOKEN] = self.get_setting(self.API_TOKEN_SETTING)
         return headers
 
-    def api_build_url_args(self, arguments):
+    def api_build_url_args(self, arguments: dict) -> str:
+        """Returns an encoded path for the provided dict."""
         groups = []
         for key, val in arguments.items():
             groups.append(f'{key}={",".join([str(a) for a in val])}')
         return f'?{"&".join(groups)}'
 
-    def api_call(self, endpoint, method: str = 'GET', url_args=None, data=None, headers=None, simple_response: bool = True, endpoint_is_url: bool = False):
+    def api_call(self, endpoint: str, method: str = 'GET', url_args: dict = None, data=None, headers: dict = None, simple_response: bool = True, endpoint_is_url: bool = False):
+        """Do an API call.
+
+        Simplest call example:
+        ```python
+        self.api_call('hello')
+        ```
+        Will call the `{base_url}/hello` with a GET request and - if set - the token for this plugin.
+
+        Args:
+            endpoint (str): Path to current endpoint. Either the endpoint or the full or if the flag is set
+            method (str, optional): HTTP method that should be uses - capitalized. Defaults to 'GET'.
+            url_args (dict, optional): arguments that should be appended to the url. Defaults to None.
+            data (Any, optional): Data that should be transmitted in the body - must be JSON serializable. Defaults to None.
+            headers (dict, optional): Headers that should be used for the request. Defaults to self.api_headers.
+            simple_response (bool, optional): Return the response as JSON. Defaults to True.
+            endpoint_is_url (bool, optional): The provided endpoint is the full url - do not use self.api_url as base. Defaults to False.
+
+        Returns:
+            Response
+        """
         if url_args:
             endpoint += self.api_build_url_args(url_args)
 
@@ -469,9 +507,12 @@ class PanelMixin:
     """
 
     class MixinMeta:
+        """Meta for mixin."""
+
         MIXIN_NAME = 'Panel'
 
     def __init__(self):
+        """Register mixin."""
         super().__init__()
         self.add_mixin('panel', True, __class__)
 
@@ -500,7 +541,16 @@ class PanelMixin:
         return context
 
     def render_panels(self, view, request, context):
+        """Get panels for a view.
 
+        Args:
+            view: Current view context
+            request: Current request for passthrough
+            context: Rendering context
+
+        Returns:
+            Array of panels
+        """
         panels = []
 
         # Construct an updated context object for template rendering

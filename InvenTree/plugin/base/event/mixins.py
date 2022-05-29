@@ -23,5 +23,6 @@ class EventMixin:
         MIXIN_NAME = 'Events'
 
     def __init__(self):
+        """Register the mixin."""
         super().__init__()
         self.add_mixin('events', True, __class__)

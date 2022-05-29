@@ -1,3 +1,4 @@
+"""Admin for plugin app."""
 
 from django.contrib import admin
 
@@ -43,6 +44,7 @@ class PluginSettingInline(admin.TabularInline):
     ]
 
     def has_add_permission(self, request, obj):
+        """The plugin settings should not be meddled with manually."""
         return False
 
 
@@ -66,6 +68,7 @@ class NotificationUserSettingAdmin(admin.ModelAdmin):
     ]
 
     def has_add_permission(self, request):
+        """Notifications should not be changed."""
         return False
 
 

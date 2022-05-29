@@ -41,12 +41,13 @@ class MetadataSerializer(serializers.ModelSerializer):
 
 
 class PluginConfigSerializer(serializers.ModelSerializer):
-    """Serializer for a PluginConfig:"""
+    """Serializer for a PluginConfig."""
 
     meta = serializers.DictField(read_only=True)
     mixins = serializers.DictField(read_only=True)
 
     class Meta:
+        """Meta for serializer."""
         model = PluginConfig
         fields = [
             'key',
@@ -78,6 +79,7 @@ class PluginConfigInstallSerializer(serializers.Serializer):
     )
 
     class Meta:
+        """Meta for serializer."""
         fields = [
             'url',
             'packagename',
@@ -85,6 +87,10 @@ class PluginConfigInstallSerializer(serializers.Serializer):
         ]
 
     def validate(self, data):
+        """Validate inputs.
+
+        Make sure both confirm and url are provided.
+        """
         super().validate(data)
 
         # check the base requirements are met
@@ -97,6 +103,7 @@ class PluginConfigInstallSerializer(serializers.Serializer):
         return data
 
     def save(self):
+        """Install a plugin from a package registry and set operational results as instance data."""
         data = self.validated_data
 
         packagename = data.get('packagename', '')

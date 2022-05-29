@@ -18,7 +18,7 @@ class LocatePluginView(APIView):
     ]
 
     def post(self, request, *args, **kwargs):
-
+        """Check inputs and offload the task to the plugin."""
         # Which plugin to we wish to use?
         plugin = request.data.get('plugin', None)
 

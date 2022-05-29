@@ -1,3 +1,5 @@
+"""Views for plugin app."""
+
 import logging
 import sys
 import traceback

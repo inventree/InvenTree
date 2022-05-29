@@ -22,10 +22,17 @@ class IntegrationPluginError(Exception):
     """Error that encapsulates another error and adds the path / reference of the raising plugin."""
 
     def __init__(self, path, message):
+        """Init a plugin error.
+
+        Args:
+            path: Path on which the error occured - used to find out which plugin it was
+            message: The original error message
+        """
         self.path = path
         self.message = message
 
     def __str__(self):
+        """Returns the error message."""
         return self.message  # pragma: no cover
 
 
@@ -142,6 +149,7 @@ class GitStatus:
         msg: str = ''
 
         def __init__(self, key: str = 'N', status: int = 2, msg: str = '') -> None:
+            """Define a git Status -> needed for lookup."""
             self.key = key
             self.status = status
             self.msg = msg

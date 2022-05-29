@@ -9,6 +9,7 @@ from stock.models import StockItem
 
 
 class BarcodeAPITest(InvenTreeAPITestCase):
+    """Tests for barcode api."""
 
     fixtures = [
         'category',
@@ -18,17 +19,18 @@ class BarcodeAPITest(InvenTreeAPITestCase):
     ]
 
     def setUp(self):
+        """Setup for all tests."""
         super().setUp()
 
         self.scan_url = reverse('api-barcode-scan')
         self.assign_url = reverse('api-barcode-link')
 
     def postBarcode(self, url, barcode):
-
+        """Post barcode and return results."""
         return self.client.post(url, format='json', data={'barcode': str(barcode)})
 
     def test_invalid(self):
-
+        """Test that invalid requests fail."""
         # test scan url
         response = self.client.post(self.scan_url, format='json', data={})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -44,7 +46,10 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_empty(self):
+        """Test an empty barcode scan.
 
+        Ensure that all required data is in teh respomse.
+        """
         response = self.postBarcode(self.scan_url, '')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -157,7 +162,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         self.assertEqual(response.data['stocklocation'], 'Stock location does not exist')
 
     def test_integer_barcode(self):
-
+        """Test scan of an integer barcode."""
         response = self.postBarcode(self.scan_url, '123456789')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -171,7 +176,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         self.assertIsNone(data['plugin'])
 
     def test_array_barcode(self):
-
+        """Test scan of barcode with string encoded array."""
         response = self.postBarcode(self.scan_url, "['foo', 'bar']")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -185,7 +190,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         self.assertIsNone(data['plugin'])
 
     def test_barcode_generation(self):
-
+        """Test that a barcode is generated with a scan."""
         item = StockItem.objects.get(pk=522)
 
         response = self.postBarcode(self.scan_url, item.format_barcode())

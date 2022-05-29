@@ -6,10 +6,18 @@ from plugin.mixins import ScheduleMixin, SettingsMixin
 
 # Define some simple tasks to perform
 def print_hello():
+    """Sample function that can be called on schedule.
+
+    Contents do not matter - therefore no coverage.
+    """
     print("Hello")  # pragma: no cover
 
 
 def print_world():
+    """Sample function that can be called on schedule.
+
+    Contents do not matter - therefore no coverage.
+    """
     print("World")  # pragma: no cover
 
 

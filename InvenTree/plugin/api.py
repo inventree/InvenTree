@@ -31,6 +31,10 @@ class PluginList(generics.ListAPIView):
     queryset = PluginConfig.objects.all()
 
     def filter_queryset(self, queryset):
+        """Filter for API requests.
+
+        Filter by mixin with the `mixin` flag
+        """
         queryset = super().filter_queryset(queryset)
 
         params = self.request.query_params

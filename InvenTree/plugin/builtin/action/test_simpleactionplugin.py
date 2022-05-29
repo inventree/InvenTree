@@ -8,6 +8,7 @@ class SimpleActionPluginTests(InvenTreeTestCase):
     """Tests for SampleIntegrationPlugin."""
 
     def setUp(self):
+        """Setup for tests."""
         super().setUp()
 
         self.plugin = SimpleActionPlugin()

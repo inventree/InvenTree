@@ -1,3 +1,4 @@
+"""Tests for general API tests for the plugin app."""
 
 from django.urls import reverse
 
@@ -15,6 +16,7 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
     ]
 
     def setUp(self):
+        """Setup for all tests."""
         self.MSG_NO_PKG = 'Either packagename of URL must be provided'
 
         self.PKG_NAME = 'minimal'

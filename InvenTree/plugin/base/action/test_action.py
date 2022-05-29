@@ -13,6 +13,10 @@ class ActionMixinTests(TestCase):
     ACTION_RETURN = 'a action was performed'
 
     def setUp(self):
+        """Setup enviroment for tests.
+
+        Contains multiple sample plugins that are used in the tests
+        """
         class SimplePlugin(ActionMixin, InvenTreePlugin):
             pass
         self.plugin = SimplePlugin()

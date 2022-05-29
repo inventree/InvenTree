@@ -9,6 +9,7 @@ from stock.models import StockItem, StockLocation
 
 
 class LocatePluginTests(InvenTreeAPITestCase):
+    """Tests for LocateMixin."""
 
     fixtures = [
         'category',

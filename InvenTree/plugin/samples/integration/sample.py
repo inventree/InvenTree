@@ -23,6 +23,7 @@ class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixi
         return HttpResponse(f'Hi there {request.user.username} this works')
 
     def setup_urls(self):
+        """Urls that are exposed by this plugin."""
         he_urls = [
             re_path(r'^he/', self.view_test, name='he'),
             re_path(r'^ha/', self.view_test, name='ha'),

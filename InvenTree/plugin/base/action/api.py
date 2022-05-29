@@ -17,7 +17,7 @@ class ActionPluginView(APIView):
     ]
 
     def post(self, request, *args, **kwargs):
-
+        """This function checks if all required info was submitted and then performs a plugin_action or returns an error."""
         action = request.data.get('action', None)
 
         data = request.data.get('data', None)

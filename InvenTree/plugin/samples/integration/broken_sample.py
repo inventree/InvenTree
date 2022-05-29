@@ -10,6 +10,7 @@ class BrokenIntegrationPlugin(InvenTreePlugin):
     SLUG = 'broken'
 
     def __init__(self):
+        """Raise a KeyError to provoke a range of unit tests and safety mechanisms in the plugin loading mechanism."""
         super().__init__()
 
         raise KeyError('This is a dummy error')

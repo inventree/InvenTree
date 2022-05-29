@@ -117,6 +117,10 @@ class MixinBase:
     """Base set of mixin functions and mechanisms."""
 
     def __init__(self, *args, **kwargs) -> None:
+        """Init sup-parts.
+
+        Adds state dicts.
+        """
         self._mixinreg = {}
         self._mixins = {}
         super().__init__(*args, **kwargs)
@@ -180,6 +184,10 @@ class InvenTreePlugin(MixinBase, MetaBase):
     LICENSE = None
 
     def __init__(self):
+        """Init a plugin.
+
+        Set paths and load metadata.
+        """
         super().__init__()
         self.add_mixin('base')
         self.def_path = inspect.getfile(self.__class__)
@@ -198,7 +206,7 @@ class InvenTreePlugin(MixinBase, MetaBase):
 
     @property
     def author(self):
-        """Author of plugin - either from plugin settings or git"""
+        """Author of plugin - either from plugin settings or git."""
         author = getattr(self, 'AUTHOR', None)
         if not author:
             author = self.package.get('author')
@@ -208,7 +216,7 @@ class InvenTreePlugin(MixinBase, MetaBase):
 
     @property
     def pub_date(self):
-        """Publishing date of plugin - either from plugin settings or git"""
+        """Publishing date of plugin - either from plugin settings or git."""
         pub_date = getattr(self, 'PUBLISH_DATE', None)
         if not pub_date:
             pub_date = self.package.get('date')
@@ -226,7 +234,7 @@ class InvenTreePlugin(MixinBase, MetaBase):
 
     @property
     def website(self):
-        """Website of plugin - if set else None"""
+        """Website of plugin - if set else None."""
         website = getattr(self, 'WEBSITE', None)
         return website
 
@@ -293,6 +301,11 @@ class InvenTreePlugin(MixinBase, MetaBase):
 
 
 class IntegrationPluginBase(InvenTreePlugin):
+    """Legacy base class for plugins.
+
+    Do not use!
+    """
+
     def __init__(self, *args, **kwargs):
         """Send warning about using this reference."""
         # TODO remove in 0.8.0

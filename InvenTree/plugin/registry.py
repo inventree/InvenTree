@@ -33,6 +33,10 @@ class PluginsRegistry:
     """The PluginsRegistry class."""
 
     def __init__(self) -> None:
+        """Initialize registry.
+
+        Set up all needed references for internal and external states.
+        """
         # plugin registry
         self.plugins = {}
         self.plugins_inactive = {}
@@ -334,7 +338,11 @@ class PluginsRegistry:
 
     # region mixin specific loading ...
     def activate_plugin_settings(self, plugins):
+        """Activate plugin settings.
 
+        Add all defined settings form the plugins to a unified dict in the registry.
+        This dict is referenced by the PluginSettings for settings definitions.
+        """
         logger.info('Activating plugin settings')
 
         self.mixins_settings = {}
@@ -356,7 +364,7 @@ class PluginsRegistry:
         self.mixins_settings = {}
 
     def activate_plugin_schedule(self, plugins):
-
+        """Activate scheudles from plugins with the ScheduleMixin."""
         logger.info('Activating plugin tasks')
 
         from common.models import InvenTreeSetting
@@ -407,7 +415,7 @@ class PluginsRegistry:
         pass
 
     def activate_plugin_app(self, plugins, force_reload=False):
-        """Activate AppMixin plugins - add custom apps and reload
+        """Activate AppMixin plugins - add custom apps and reload.
 
         :param plugins: list of IntegrationPlugins that should be installed
         :type plugins: dict
@@ -445,7 +453,7 @@ class PluginsRegistry:
                 self._update_urls()
 
     def _reregister_contrib_apps(self):
-        """Fix reloading of contrib apps - models and admin
+        """Fix reloading of contrib apps - models and admin.
 
         This is needed if plugins were loaded earlier and then reloaded as models and admins rely on imports.
         Those register models and admin in their respective objects (e.g. admin.site for admin).
@@ -493,7 +501,7 @@ class PluginsRegistry:
         return plugin_path
 
     def deactivate_plugin_app(self):
-        """Deactivate AppMixin plugins - some magic required"""
+        """Deactivate AppMixin plugins - some magic required."""
         # unregister models from admin
         for plugin_path in self.installed_apps:
             models = []  # the modelrefs need to be collected as poping an item in a iter is not welcomed

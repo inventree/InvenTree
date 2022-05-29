@@ -163,7 +163,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
         self.get(self.do_url(None, plugin_ref, label), expected_code=400)
 
     def test_printing_endpoints(self):
-        """Cover the endpoints not covered by `test_printing_process`"""
+        """Cover the endpoints not covered by `test_printing_process`."""
         plugin_ref = 'samplelabel'
 
         # Activate the label components

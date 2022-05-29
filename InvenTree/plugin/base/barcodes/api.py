@@ -1,3 +1,5 @@
+"""API endpoints for barcode plugins."""
+
 
 from django.urls import path, re_path, reverse
 from django.utils.translation import gettext_lazy as _
@@ -40,7 +42,10 @@ class BarcodeScan(APIView):
     ]
 
     def post(self, request, *args, **kwargs):
-        """Respond to a barcode POST request."""
+        """Respond to a barcode POST request.
+
+        Check if required info was provided and then run though the plugin steps or try to match up-
+        """
         data = request.data
 
         if 'barcode' not in data:
@@ -139,7 +144,10 @@ class BarcodeAssign(APIView):
     ]
 
     def post(self, request, *args, **kwargs):
+        """Respond to a barcode assign POST request.
 
+        Checks inputs and assign barcode (hash) to StockItem.
+        """
         data = request.data
 
         if 'barcode' not in data:
