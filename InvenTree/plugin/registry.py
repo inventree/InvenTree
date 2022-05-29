@@ -353,14 +353,9 @@ class PluginsRegistry:
                 self.mixins_settings[slug] = plugin_setting
 
     def deactivate_plugin_settings(self):
-
-        # collect all settings
-        plugin_settings = {}
-
-        for _, plugin_setting in self.mixins_settings.items():
-            plugin_settings.update(plugin_setting)
-
-        # clear cache
+        """Deactivate all plugin settings."""
+        logger.info('Deactivating plugin settings')
+        # clear settings cache
         self.mixins_settings = {}
 
     def activate_plugin_schedule(self, plugins):
