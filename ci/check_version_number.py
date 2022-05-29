@@ -52,7 +52,7 @@ if __name__ == '__main__':
     # Determine which docker tag we are going to use
     docker_tag = None
 
-    if GITHUB_REF_TYPE == 'branch' and 'stable' in GITHUB_REF:
+    if GITHUB_REF_TYPE == 'branch' and ('stable' in GITHUB_REF or 'stable' in GITHUB_BASE_REF):
         print("Checking requirements for 'stable' release")
 
         pattern = r"^\d+(\.\d+)+$"
@@ -66,7 +66,7 @@ if __name__ == '__main__':
 
         docker_tag = 'stable'
 
-    elif GITHUB_REF_TYPE == 'branch' and ('master' in GITHUB_REF or 'main' in GITHUB_REF):
+    elif GITHUB_REF_TYPE == 'branch' and ('master' in GITHUB_REF or 'master' in GITHUB_BASE_REF):
         print("Checking requirements for main development branch:")
 
         pattern = r"^\d+(\.\d+)+ dev$"
