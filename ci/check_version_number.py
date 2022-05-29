@@ -53,7 +53,7 @@ if __name__ == '__main__':
     docker_tag = None
 
     if GITHUB_REF_TYPE == 'branch' and ('stable' in GITHUB_REF or 'stable' in GITHUB_BASE_REF):
-        print("Checking requirements for 'stable' release")
+        print("Checking requirements for 'stable' release branch:")
 
         pattern = r"^\d+(\.\d+)+$"
         result = re.match(pattern, version)
@@ -66,8 +66,22 @@ if __name__ == '__main__':
 
         docker_tag = 'stable'
 
-    elif GITHUB_REF_TYPE == 'branch' and ('master' in GITHUB_REF or 'master' in GITHUB_BASE_REF):
-        print("Checking requirements for main development branch:")
+    elif GITHUB_REF_TYPE == 'tag':
+        # GITHUB_REF should be of th eform /refs/heads/<tag>
+        version_tag = GITHUB_REF.split('/')[-1]
+        print(f"Checking requirements for tagged release - '{version_tag}':")
+
+        if version_tag != version:
+            print(f"Version number '{version}' does not match tag '{version_tag}'")
+            sys.exit
+
+        # TODO: Check if there is already a release with this tag!
+
+        docker_tag = version_tag
+
+    elif GITHUB_REF_TYPE == 'branch':
+        # Otherwise we know we are targetting the 'master' branch
+        print("Checking requirements for 'master' development branch:")
 
         pattern = r"^\d+(\.\d+)+ dev$"
         result = re.match(pattern, version)
@@ -79,19 +93,6 @@ if __name__ == '__main__':
             print(f"Version number '{version}' matches development branch")
 
         docker_tag = 'latest'
-
-    elif GITHUB_REF_TYPE == 'tag':
-        # GITHUB_REF should be of th eform /refs/heads/<tag>
-        version_tag = GITHUB_REF.split('/')[-1]
-        print(f"Checking requirements for tagged release - '{version_tag}'")
-
-        if version_tag != version:
-            print(f"Version number '{version}' does not match tag '{version_tag}'")
-            sys.exit
-
-        # TODO: Check if there is already a release with this tag!
-
-        docker_tag = version_tag
 
     else:
         print("Unsupported branch / version combination:")
