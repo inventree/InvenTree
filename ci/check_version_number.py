@@ -28,6 +28,8 @@ if __name__ == '__main__':
     # GITHUB_REF may be either 'refs/heads/<branch>' or 'refs/heads/<tag>'
     GITHUB_REF = os.environ['GITHUB_REF']
 
+    GITHUB_BASE_REF = os.environ['GITHUB_BASE_REF']
+
     version_file = os.path.join(here, '..', 'InvenTree', 'InvenTree', 'version.py')
 
     version = None
@@ -50,7 +52,7 @@ if __name__ == '__main__':
     # Determine which docker tag we are going to use
     docker_tag = None
 
-    if GITHUB_REF_TYPE == 'branch' and 'stable' in GITHUB_REF:
+    if GITHUB_REF_TYPE == 'branch' and ('stable' in GITHUB_REF or 'stable' in GITHUB_BASE_REF):
         print("Checking requirements for 'stable' release")
 
         pattern = r"^\d+(\.\d+)+$"
@@ -64,7 +66,7 @@ if __name__ == '__main__':
 
         docker_tag = 'stable'
 
-    elif GITHUB_REF_TYPE == 'branch' and ('master' in GITHUB_REF or 'main' in GITHUB_REF):
+    elif GITHUB_REF_TYPE == 'branch' and ('master' in GITHUB_REF or 'master' in GITHUB_BASE_REF):
         print("Checking requirements for main development branch:")
 
         pattern = r"^\d+(\.\d+)+ dev$"
@@ -95,6 +97,7 @@ if __name__ == '__main__':
         print("Unsupported branch / version combination:")
         print(f"InvenTree Version: {version}")
         print("GITHUB_REF_TYPE:", GITHUB_REF_TYPE)
+        print("GITHUB_BASE_REF:", GITHUB_BASE_REF)
         print("GITHUB_REF:", GITHUB_REF)
         sys.exit(1)
 
