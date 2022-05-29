@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-28 00:40+0000\n"
-"PO-Revision-Date: 2022-05-28 01:49\n"
+"POT-Creation-Date: 2022-05-28 23:41+0000\n"
+"PO-Revision-Date: 2022-05-29 01:47\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "API endpoint not found"
 msgstr "API funkciót nem találom"
 
-#: InvenTree/exceptions.py:46
+#: InvenTree/exceptions.py:50
 msgid "Error details can be found in the admin panel"
 msgstr "A hiba részleteit megtalálod az admin panelen"
 
@@ -5523,7 +5523,7 @@ msgstr "Vonalkód hash már egyezik a készlet tétellel"
 msgid "Barcode associated with Stock Item"
 msgstr "Készlet tételhez tartozó vonalkód"
 
-#: plugin/base/label/label.py:39
+#: plugin/base/label/label.py:61
 msgid "Label printing failed"
 msgstr "Címkenyomtatás sikertelen"
 
