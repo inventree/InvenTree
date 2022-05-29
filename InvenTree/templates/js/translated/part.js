@@ -1560,7 +1560,7 @@ function loadPartTable(table, url, options={}) {
     /* Button callbacks for part table buttons */
 
     $('#multi-part-order').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
+        var selections = getTableData(table);
 
         var parts = [];
 
@@ -1594,7 +1594,7 @@ function loadPartTable(table, url, options={}) {
     });
 
     $('#multi-part-print-label').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
+        var selections = getTableData(table);
 
         var items = [];
 

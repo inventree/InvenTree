@@ -380,6 +380,30 @@ class TestVersionNumber(TestCase):
         self.assertTrue(v_d > v_c)
         self.assertTrue(v_d > v_a)
 
+    def test_commit_info(self):
+        """Test that the git commit information is extracted successfully"""
+
+        envs = {
+            'INVENTREE_COMMIT_HASH': 'abcdef',
+            'INVENTREE_COMMIT_DATE': '2022-12-31'
+        }
+
+        # Check that the environment variables take priority
+
+        with mock.patch.dict(os.environ, envs):
+            self.assertEqual(version.inventreeCommitHash(), 'abcdef')
+            self.assertEqual(version.inventreeCommitDate(), '2022-12-31')
+
+        import subprocess
+
+        # Check that the current .git values work too
+
+        hash = str(subprocess.check_output('git rev-parse --short HEAD'.split()), 'utf-8').strip()
+        self.assertEqual(hash, version.inventreeCommitHash())
+
+        d = str(subprocess.check_output('git show -s --format=%ci'.split()), 'utf-8').strip().split(' ')[0]
+        self.assertEqual(d, version.inventreeCommitDate())
+
 
 class CurrencyTests(TestCase):
     """
@@ -522,7 +546,7 @@ class TestSettings(helpers.InvenTreeTestCase):
 
         # Set dynamic setting to True and rerun to launch install
         InvenTreeSetting.set_setting('PLUGIN_ON_STARTUP', True, self.user)
-        registry.reload_plugins()
+        registry.reload_plugins(full_reload=True)
 
         # Check that there was anotehr run
         response = registry.install_plugin_file()

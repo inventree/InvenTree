@@ -129,7 +129,9 @@ src="{% static 'img/blank_image.png' %}"
         <div id='supplier-button-toolbar'>
             <div class='btn-group'>
                 <div id='opt-dropdown' class="btn-group">
-                    <button id='supplier-part-options' class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">{% trans "Options" %} <span class="caret"></span></button>
+                    <button id='supplier-part-options' class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <span class='fas fa-tools'></span> <span class="caret"></span>
+                    </button>
                     <ul class="dropdown-menu">
                         <li><a class='dropdown-item' href='#' id='supplier-part-delete' title='{% trans "Delete supplier parts" %}'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete" %}</a></li>
                     </ul>
@@ -174,11 +176,14 @@ src="{% static 'img/blank_image.png' %}"
         <div id='parameter-toolbar'>
             <div class='btn-group'>
                 <div id='opt-dropdown' class="btn-group">
-                    <button id='parameter-options' class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">{% trans "Options" %} <span class="caret"></span></button>
+                    <button id='parameter-options' class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <span class='fas fa-tools'></span> <span class="caret"></span>
+                    </button>
                     <ul class="dropdown-menu">
                         <li><a class='dropdown-item' href='#' id='multi-parameter-delete' title='{% trans "Delete parameters" %}'><span class='fas fa-trash-alt icon-red'></span> {% trans "Delete" %}</a></li>
                     </ul>
                 </div>
+                {% include "filter_list.html" with id="manufacturer-part-parameters" %}
             </div>
         </div>
 
@@ -256,67 +261,22 @@ $('#supplier-create').click(function () {
 
 $("#supplier-part-delete").click(function() {
 
-    var selections = $("#supplier-table").bootstrapTable("getSelections");
+    var selections = getTableData('#supplier-table');
 
-    var requests = [];
-
-    showQuestionDialog(
-        '{% trans "Delete Supplier Parts?" %}',
-        '{% trans "All selected supplier parts will be deleted" %}',
-        {
-            accept: function() {
-                selections.forEach(function(part) {
-                    var url = `/api/company/part/${part.pk}/`;
-
-                    requests.push(inventreeDelete(url));
-                });
-
-                $.when.apply($, requests).done(function() {
-                    reloadSupplierPartTable();
-                });
-            }
-        }
-    );
+    deleteSupplierParts(selections, {
+        success: reloadSupplierPartTable,
+    });
 });
 
 $("#multi-parameter-delete").click(function() {
 
-    var selections = $("#parameter-table").bootstrapTable("getSelections");
+    var selections = getTableData('#parameter-table');
 
-    var text = `
-    <div class ='alert alert-block alert-danger'>
-        <p>{% trans "Selected parameters will be deleted" %}:</p>
-        <ul>`;
-
-    selections.forEach(function(item) {
-        text += `<li>${item.name} - <em>${item.value}</em></li>`;
-    });
-
-    text += `
-        </ul>
-    </div>`;
-
-    showQuestionDialog(
-        '{% trans "Delete Parameters" %}',
-        text,
-        {
-            accept_text: '{% trans "Delete" %}',
-            accept: function() {
-                // Delete each parameter via the API
-                var requests = [];
-
-                selections.forEach(function(item) {
-                    var url = `/api/company/part/manufacturer/parameter/${item.pk}/`;
-
-                    requests.push(inventreeDelete(url));
-                });
-
-                $.when.apply($, requests).done(function() {
-                    $('#parameter-table').bootstrapTable('refresh');
-                });
-            }
+    deleteManufacturerPartParameters(selections, {
+        success: function() {
+            $('#parameter-table').bootstrapTable('refresh');
         }
-    );
+    });
 });
 
 loadSupplierPartTable(
@@ -326,9 +286,9 @@ loadSupplierPartTable(
         params: {
             part: {{ part.part.id }},
             manufacturer_part: {{ part.id }},
-            part_detail: false,
+            part_detail: true,
             supplier_detail: true,
-            manufacturer_detail: false,
+            manufacturer_detail: true,
         },
     }
 );
@@ -342,10 +302,6 @@ loadManufacturerPartParameterTable(
         }
     }
 );
-
-linkButtonsToSelection($("#supplier-table"), ['#supplier-part-options']);
-
-linkButtonsToSelection($("#parameter-table"), ['#parameter-options']);
 
 $('#order-part, #order-part2').click(function() {
 
@@ -376,15 +332,26 @@ $('#edit-part').click(function () {
 
 $('#delete-part').click(function() {
 
-    deleteManufacturerPart({{ part.pk }}, {
-        onSuccess: function() {
-            {% if part.manufacturer %}
-            window.location.href = "{% url 'company-detail' part.manufacturer.id %}";
-            {% else%}
-            window.location.href = "{% url 'index' %}";
-            {% endif %}
+    inventreeGet(
+        '{% url "api-manufacturer-part-detail" part.pk %}',
+        {},
+        {
+            success: function(data) {
+                deleteManufacturerParts(
+                    [data],
+                    {
+                        success: function() {
+                            {% if part.manufacturer %}
+                            window.location.href = "{% url 'company-detail' part.manufacturer.id %}";
+                            {% else%}
+                            window.location.href = "{% url 'index' %}";
+                            {% endif %}
+                        }
+                    }
+                );
+            }
         }
-    });
+    );
 });
 
 enableSidebar('manufacturerpart');

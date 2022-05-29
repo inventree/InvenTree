@@ -834,12 +834,7 @@ function loadBuildOutputTable(build_info, options={}) {
             var subtable = $(`#output-sub-table-${pk}`);
 
             if (subtable.exists()) {
-                var rows = subtable.bootstrapTable('getSelections');
-
-                // None selected? Use all!
-                if (rows.length == 0) {
-                    rows = subtable.bootstrapTable('getData');
-                }
+                var rows = getTableData(`#output-sub-table-${pk}`);
 
                 allocateStockToBuild(
                     build_info.pk,
@@ -1291,11 +1286,7 @@ function loadBuildOutputTable(build_info, options={}) {
 
     // Complete multiple outputs
     $('#multi-output-complete').click(function() {
-        var outputs = $(table).bootstrapTable('getSelections');
-
-        if (outputs.length == 0) {
-            outputs = $(table).bootstrapTable('getData');
-        }
+        var outputs = getTableData(table);
 
         completeBuildOutputs(
             build_info.pk,
@@ -1314,11 +1305,7 @@ function loadBuildOutputTable(build_info, options={}) {
 
     // Delete multiple build outputs
     $('#multi-output-delete').click(function() {
-        var outputs = $(table).bootstrapTable('getSelections');
-
-        if (outputs.length == 0) {
-            outputs = $(table).bootstrapTable('getData');
-        }
+        var outputs = getTableData(table);
 
         deleteBuildOutputs(
             build_info.pk,
@@ -1337,11 +1324,7 @@ function loadBuildOutputTable(build_info, options={}) {
 
     // Print stock item labels
     $('#incomplete-output-print-label').click(function() {
-        var outputs = $(table).bootstrapTable('getSelections');
-
-        if (outputs.length == 0) {
-            outputs = $(table).bootstrapTable('getData');
-        }
+        var outputs = getTableData(table);
 
         var stock_id_values = [];
 
@@ -2337,6 +2320,9 @@ function autoAllocateStockToBuild(build_id, bom_items=[], options={}) {
  */
 function loadBuildTable(table, options) {
 
+    // Ensure the table starts in a known state
+    $(table).bootstrapTable('destroy');
+
     var params = options.params || {};
 
     var filters = {};
@@ -2351,23 +2337,105 @@ function loadBuildTable(table, options) {
         filters[key] = params[key];
     }
 
-    options.url = options.url || '{% url "api-build-list" %}';
-
     var filterTarget = options.filterTarget || null;
 
     setupFilterList('build', table, filterTarget, {download: true});
+
+    // Which display mode to use for the build table?
+    var display_mode = inventreeLoad('build-table-display-mode', 'list');
+    var tree_enable = display_mode == 'tree';
+
+    var loaded_calendar = false;
+
+    // Function for rendering BuildOrder calendar display
+    function buildEvents(calendar) {
+        var start = startDate(calendar);
+        var end = endDate(calendar);
+
+        clearEvents(calendar);
+
+        // Extract current filters from table
+        var table_options = $(table).bootstrapTable('getOptions');
+        var filters = table_options.query_params || {};
+
+        filters.min_date = start;
+        filters.max_date = end;
+        filters.part_detail = true;
+
+        // Request build orders from the server within specified date range
+        inventreeGet(
+            '{% url "api-build-list" %}',
+            filters,
+            {
+                success: function(response) {
+                    var prefix = global_settings.BUILDORDER_REFERENCE_PREFIX;
+
+                    for (var idx = 0; idx < response.length; idx++) {
+
+                        var order = response[idx];
+
+                        var date = order.creation_date;
+
+                        if (order.completion_date) {
+                            date = order.completion_date;
+                        } else if (order.target_date) {
+                            date = order.target_date;
+                        }
+
+                        var title = `${prefix}${order.reference}`;
+
+                        var color = '#4c68f5';
+
+                        if (order.completed) {
+                            color = '#25c234';
+                        } else if (order.overdue) {
+                            color = '#c22525';
+                        }
+
+                        var event = {
+                            title: title,
+                            start: date,
+                            end: date,
+                            url: `/build/${order.pk}/`,
+                            backgroundColor: color,
+                        };
+
+                        calendar.addEvent(event);
+                    }
+                }
+            }
+        );
+    }
 
     $(table).inventreeTable({
         method: 'get',
         formatNoMatches: function() {
             return '{% trans "No builds matching query" %}';
         },
-        url: options.url,
+        url: '{% url "api-build-list" %}',
         queryParams: filters,
         groupBy: false,
         sidePagination: 'server',
         name: 'builds',
         original: params,
+        treeEnable: tree_enable,
+        uniqueId: 'pk',
+        rootParentId: options.parentBuild || null,
+        idField: 'pk',
+        parentIdField: 'parent',
+        treeShowField: tree_enable ? 'reference' : null,
+        showColumns: display_mode == 'list' || display_mode == 'tree',
+        showCustomView: display_mode == 'calendar',
+        showCustomViewButton: false,
+        disablePagination: display_mode == 'calendar',
+        search: display_mode != 'calendar',
+        buttons: constructOrderTableButtons({
+            prefix: 'build',
+            callback: function() {
+                // Force complete reload of the table
+                loadBuildTable(table, options);
+            }
+        }),
         columns: [
             {
                 field: 'pk',
@@ -2494,6 +2562,43 @@ function loadBuildTable(table, options) {
                 }
             },
         ],
+        customView: function(data) {
+            return `<div id='build-order-calendar'></div>`;
+        },
+        onRefresh: function() {
+            loadBuildTable(table, options);
+        },
+        onLoadSuccess: function() {
+
+            if (tree_enable) {
+                $(table).treegrid({
+                    treeColumn: 1,
+                });
+
+                table.treegrid('expandAll');
+            } else if (display_mode == 'calendar') {
+
+                if (!loaded_calendar) {
+                    loaded_calendar = true;
+
+                    var el = document.getElementById('build-order-calendar');
+
+                    calendar = new FullCalendar.Calendar(el, {
+                        initialView: 'dayGridMonth',
+                        nowIndicator: true,
+                        aspectRatio: 2.5,
+                        locale: options.locale,
+                        datesSet: function() {
+                            buildEvents(calendar);
+                        }
+                    });
+
+                    calendar.render();
+                } else {
+                    calendar.render();
+                }
+            }
+        }
     });
 
     linkButtonsToSelection(

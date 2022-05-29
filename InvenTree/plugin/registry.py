@@ -86,9 +86,11 @@ class PluginsRegistry:
 
     # region public functions
     # region loading / unloading
-    def load_plugins(self):
-        """
-        Load and activate all IntegrationPlugins
+    def load_plugins(self, full_reload: bool = False):
+        """Load and activate all IntegrationPlugins
+
+        Args:
+            full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
         """
         if not settings.PLUGINS_ENABLED:
             # Plugins not enabled, do nothing
@@ -109,7 +111,7 @@ class PluginsRegistry:
             try:
                 # We are using the db so for migrations etc we need to try this block
                 self._init_plugins(blocked_plugin)
-                self._activate_plugins()
+                self._activate_plugins(full_reload=full_reload)
                 registered_successful = True
             except (OperationalError, ProgrammingError):  # pragma: no cover
                 # Exception if the database has not been migrated yet
@@ -123,7 +125,7 @@ class PluginsRegistry:
                 # Initialize apps without any plugins
                 self._clean_registry()
                 self._clean_installed_apps()
-                self._activate_plugins(force_reload=True)
+                self._activate_plugins(force_reload=True, full_reload=full_reload)
 
                 # We do not want to end in an endless loop
                 retry_counter -= 1
@@ -136,6 +138,10 @@ class PluginsRegistry:
                     print(f'[PLUGIN] Above error occured during testing - {retry_counter}/{settings.PLUGIN_RETRY} retries left')
 
                 # now the loading will re-start up with init
+
+            # disable full reload after the first round
+            if full_reload:
+                full_reload = False
 
         # Remove maintenance mode
         if not _maintenance:
@@ -170,9 +176,11 @@ class PluginsRegistry:
             set_maintenance_mode(False)  # pragma: no cover
         logger.info('Finished unloading plugins')
 
-    def reload_plugins(self):
-        """
-        Safely reload IntegrationPlugins
+    def reload_plugins(self, full_reload: bool = False):
+        """Safely reload IntegrationPlugins
+
+        Args:
+            full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
         """
 
         # Do not reload whe currently loading
@@ -183,7 +191,7 @@ class PluginsRegistry:
 
         with maintenance_mode_on():
             self.unload_plugins()
-            self.load_plugins()
+            self.load_plugins(full_reload)
 
         logger.info('Finished reloading plugins')
 
@@ -335,12 +343,12 @@ class PluginsRegistry:
                 # save for later reference
                 self.plugins_inactive[plug_key] = plugin_db_setting  # pragma: no cover
 
-    def _activate_plugins(self, force_reload=False):
-        """
-        Run activation functions for all plugins
+    def _activate_plugins(self, force_reload=False, full_reload: bool = False):
+        """Run activation functions for all plugins
 
-        :param force_reload: force reload base apps, defaults to False
-        :type force_reload: bool, optional
+        Args:
+            force_reload (bool, optional): Also reload base apps. Defaults to False.
+            full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
         """
         # activate integrations
         plugins = self.plugins.items()
@@ -348,7 +356,7 @@ class PluginsRegistry:
 
         self.activate_plugin_settings(plugins)
         self.activate_plugin_schedule(plugins)
-        self.activate_plugin_app(plugins, force_reload=force_reload)
+        self.activate_plugin_app(plugins, force_reload=force_reload, full_reload=full_reload)
 
     def _deactivate_plugins(self):
         """Run deactivation functions for all plugins"""
@@ -432,15 +440,15 @@ class PluginsRegistry:
         """
         pass
 
-    def activate_plugin_app(self, plugins, force_reload=False):
-        """
-        Activate AppMixin plugins - add custom apps and reload
+    def activate_plugin_app(self, plugins, force_reload=False, full_reload: bool = False):
+        """Activate AppMixin plugins - add custom apps and reload
 
-        :param plugins: list of IntegrationPlugins that should be installed
-        :type plugins: dict
-        :param force_reload: only reload base apps, defaults to False
-        :type force_reload: bool, optional
+        Args:
+            plugins (dict): List of IntegrationPlugins that should be installed
+            force_reload (bool, optional): Only reload base apps. Defaults to False.
+            full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
         """
+
         from common.models import InvenTreeSetting
 
         if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_APP'):
@@ -461,9 +469,9 @@ class PluginsRegistry:
                 # first startup or force loading of base apps -> registry is prob false
                 if self.apps_loading or force_reload:
                     self.apps_loading = False
-                    self._reload_apps(force_reload=True)
+                    self._reload_apps(force_reload=True, full_reload=full_reload)
                 else:
-                    self._reload_apps()
+                    self._reload_apps(full_reload=full_reload)
 
                 # rediscover models/ admin sites
                 self._reregister_contrib_apps()
@@ -589,8 +597,17 @@ class PluginsRegistry:
         global_pattern[0] = re_path('', include(urlpatterns))
         clear_url_caches()
 
-    def _reload_apps(self, force_reload: bool = False):
-        self.is_loading = True  # set flag to disable loop reloading
+    def _reload_apps(self, force_reload: bool = False, full_reload: bool = False):
+        """Internal: reload apps using django internal functions
+
+        Args:
+            force_reload (bool, optional): Also reload base apps. Defaults to False.
+            full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
+        """
+
+        # If full_reloading is set to true we do not want to set the flag
+        if not full_reload:
+            self.is_loading = True  # set flag to disable loop reloading
         if force_reload:
             # we can not use the built in functions as we need to brute force the registry
             apps.app_configs = OrderedDict()

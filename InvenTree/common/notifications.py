@@ -203,7 +203,7 @@ class UIMessageNotification(SingleNotificationMethod):
         return True
 
 
-def trigger_notifaction(obj, category=None, obj_ref='pk', **kwargs):
+def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
     """
     Send out a notification
     """

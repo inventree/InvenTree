@@ -4,10 +4,13 @@ InvenTree API version information
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 50
+INVENTREE_API_VERSION = 51
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v51 -> 2022-05-24 : https://github.com/inventree/InvenTree/pull/3058
+    - Adds new fields to the SalesOrderShipment model
 
 v50 -> 2022-05-18 : https://github.com/inventree/InvenTree/pull/2912
     - Implement Attachments for manufacturer parts

@@ -55,6 +55,12 @@ function salesOrderShipmentFields(options={}) {
         tracking_number: {
             icon: 'fa-hashtag',
         },
+        invoice_number: {
+            icon: 'fa-dollar-sign',
+        },
+        link: {
+            icon: 'fa-link',
+        }
     };
 
     // If order is specified, hide the order field
@@ -129,11 +135,20 @@ function completeShipment(shipment_id, options={}) {
                 method: 'POST',
                 title: `{% trans "Complete Shipment" %} ${shipment.reference}`,
                 fields: {
-                    tracking_number: {
-                        value: shipment.tracking_number,
-                    },
                     shipment_date: {
                         value: moment().format('YYYY-MM-DD'),
+                    },
+                    tracking_number: {
+                        value: shipment.tracking_number,
+                        icon: 'fa-hashtag',
+                    },
+                    invoice_number: {
+                        value: shipment.invoice_number,
+                        icon: 'fa-dollar-sign',
+                    },
+                    link: {
+                        value: shipment.link,
+                        icon: 'fa-link',
                     }
                 },
                 preFormContent: html,
@@ -1489,7 +1504,8 @@ function removePurchaseOrderLineItem(e) {
  * Load a table displaying list of purchase orders
  */
 function loadPurchaseOrderTable(table, options) {
-    /* Create a purchase-order table */
+    // Ensure the table starts in a known state
+    $(table).bootstrapTable('destroy');
 
     options.params = options.params || {};
 
@@ -1505,6 +1521,71 @@ function loadPurchaseOrderTable(table, options) {
 
     setupFilterList('purchaseorder', $(table), target, {download: true});
 
+    var display_mode = inventreeLoad('purchaseorder-table-display-mode', 'list');
+
+    // Function for rendering PurchaseOrder calendar display
+    function buildEvents(calendar) {
+
+        var start = startDate(calendar);
+        var end = endDate(calendar);
+
+        clearEvents(calendar);
+
+        // Extract current filters from table
+        var table_options = $(table).bootstrapTable('getOptions');
+        var filters = table_options.query_params || {};
+
+        filters.supplier_detail = true;
+        filters.min_date = start;
+        filters.max_date = end;
+
+        // Request purchase orders from the server within specified date range
+        inventreeGet(
+            '{% url "api-po-list" %}',
+            filters,
+            {
+                success: function(response) {
+                    var prefix = global_settings.PURCHASEORDER_REFERENCE_PREFIX;
+
+                    for (var idx = 0; idx < response.length; idx++) {
+
+                        var order = response[idx];
+
+                        var date = order.creation_date;
+
+                        if (order.complete_date) {
+                            date = order.complete_date;
+                        } else if (order.target_date) {
+                            date = order.target_date;
+                        }
+
+                        var title = `${prefix}${order.reference} - ${order.supplier_detail.name}`;
+
+                        var color = '#4c68f5';
+
+                        if (order.complete_date) {
+                            color = '#25c235';
+                        } else if (order.overdue) {
+                            color = '#c22525';
+                        } else {
+                            color = '#4c68f5';
+                        }
+
+                        var event = {
+                            title: title,
+                            start: date,
+                            end: date,
+                            url: `/order/purchase-order/${order.pk}/`,
+                            backgroundColor: color,
+                        };
+
+                        calendar.addEvent(event);
+                    }
+                }
+            }
+        );
+    }
+
     $(table).inventreeTable({
         url: '{% url "api-po-list" %}',
         queryParams: filters,
@@ -1512,9 +1593,22 @@ function loadPurchaseOrderTable(table, options) {
         groupBy: false,
         sidePagination: 'server',
         original: options.params,
+        showColumns: display_mode == 'list',
+        disablePagination: display_mode == 'calendar',
+        showCustomViewButton: false,
+        showCustomView: display_mode == 'calendar',
+        search: display_mode != 'calendar',
         formatNoMatches: function() {
             return '{% trans "No purchase orders found" %}';
         },
+        buttons: constructOrderTableButtons({
+            prefix: 'purchaseorder',
+            disableTreeView: true,
+            callback: function() {
+                // Reload the entire table
+                loadPurchaseOrderTable(table, options);
+            }
+        }),
         columns: [
             {
                 title: '',
@@ -1614,6 +1708,30 @@ function loadPurchaseOrderTable(table, options) {
                 }
             },
         ],
+        customView: function(data) {
+            return `<div id='purchase-order-calendar'></div>`;
+        },
+        onRefresh: function() {
+            loadPurchaseOrderTable(table, options);
+        },
+        onLoadSuccess: function() {
+
+            if (display_mode == 'calendar') {
+                var el = document.getElementById('purchase-order-calendar');
+
+                calendar = new FullCalendar.Calendar(el, {
+                    initialView: 'dayGridMonth',
+                    nowIndicator: true,
+                    aspectRatio: 2.5,
+                    locale: options.locale,
+                    datesSet: function() {
+                        buildEvents(calendar);
+                    }
+                });
+
+                calendar.render();
+            }
+        }
     });
 }
 
@@ -2176,6 +2294,9 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
  */
 function loadSalesOrderTable(table, options) {
 
+    // Ensure the table starts in a known state
+    $(table).bootstrapTable('destroy');
+
     options.params = options.params || {};
     options.params['customer_detail'] = true;
 
@@ -2191,6 +2312,70 @@ function loadSalesOrderTable(table, options) {
 
     setupFilterList('salesorder', $(table), target, {download: true});
 
+    var display_mode = inventreeLoad('salesorder-table-display-mode', 'list');
+
+    function buildEvents(calendar) {
+
+        var start = startDate(calendar);
+        var end = endDate(calendar);
+
+        clearEvents(calendar);
+
+        // Extract current filters from table
+        var table_options = $(table).bootstrapTable('getOptions');
+        var filters = table_options.query_params || {};
+
+        filters.customer_detail = true;
+        filters.min_date = start;
+        filters.max_date = end;
+
+        // Request orders from the server within specified date range
+        inventreeGet(
+            '{% url "api-so-list" %}',
+            filters,
+            {
+                success: function(response) {
+
+                    var prefix = global_settings.SALESORDER_REFERENCE_PREFIX;
+
+                    for (var idx = 0; idx < response.length; idx++) {
+                        var order = response[idx];
+
+                        var date = order.creation_date;
+
+                        if (order.shipment_date) {
+                            date = order.shipment_date;
+                        } else if (order.target_date) {
+                            date = order.target_date;
+                        }
+
+                        var title = `${prefix}${order.reference} - ${order.customer_detail.name}`;
+
+                        // Default color is blue
+                        var color = '#4c68f5';
+
+                        // Overdue orders are red
+                        if (order.overdue) {
+                            color = '#c22525';
+                        } else if (order.status == {{ SalesOrderStatus.SHIPPED }}) {
+                            color = '#25c235';
+                        }
+
+                        var event = {
+                            title: title,
+                            start: date,
+                            end: date,
+                            url: `/order/sales-order/${order.pk}/`,
+                            backgroundColor: color,
+                        };
+
+                        calendar.addEvent(event);
+                    }
+                }
+            }
+        );
+    }
+
     $(table).inventreeTable({
         url: options.url,
         queryParams: filters,
@@ -2198,8 +2383,45 @@ function loadSalesOrderTable(table, options) {
         groupBy: false,
         sidePagination: 'server',
         original: options.params,
+        showColums: display_mode != 'calendar',
+        search: display_mode != 'calendar',
+        showCustomViewButton: false,
+        showCustomView: display_mode == 'calendar',
+        disablePagination: display_mode == 'calendar',
         formatNoMatches: function() {
             return '{% trans "No sales orders found" %}';
+        },
+        buttons: constructOrderTableButtons({
+            prefix: 'salesorder',
+            disableTreeView: true,
+            callback: function() {
+                // Reload the entire table
+                loadSalesOrderTable(table, options);
+            },
+        }),
+        customView: function(data) {
+            return `<div id='purchase-order-calendar'></div>`;
+        },
+        onRefresh: function() {
+            loadPurchaseOrderTable(table, options);
+        },
+        onLoadSuccess: function() {
+
+            if (display_mode == 'calendar') {
+                var el = document.getElementById('purchase-order-calendar');
+
+                calendar = new FullCalendar.Calendar(el, {
+                    initialView: 'dayGridMonth',
+                    nowIndicator: true,
+                    aspectRatio: 2.5,
+                    locale: options.locale,
+                    datesSet: function() {
+                        buildEvents(calendar);
+                    }
+                });
+
+                calendar.render();
+            }
         },
         columns: [
             {
@@ -2446,9 +2668,25 @@ function loadSalesOrderShipmentTable(table, options={}) {
                 title: '{% trans "Tracking" %}',
             },
             {
+                field: 'invoice_number',
+                title: '{% trans "Invoice" %}',
+            },
+            {
+                field: 'link',
+                title: '{% trans "Link" %}',
+                formatter: function(value) {
+                    if (value) {
+                        return renderLink(value, value);
+                    } else {
+                        return '-';
+                    }
+                }
+            },
+            {
                 field: 'notes',
                 title: '{% trans "Notes" %}',
                 visible: false,
+                switchable: false,
                 // TODO: Implement 'notes' field
             },
             {
@@ -2643,7 +2881,7 @@ function allocateStockToSalesOrder(order_id, line_items, options={}) {
 
                         fields.reference.value = ref;
                         fields.reference.prefix = global_settings.SALESORDER_REFERENCE_PREFIX + options.reference;
-                        
+
                         return fields;
                     }
                 }

@@ -17,6 +17,41 @@ function closeSearchPanel() {
 }
 
 
+// Keep track of the roles / permissions available to the current user
+var search_user_roles = null;
+
+
+/*
+ * Check if the user has the specified role and permission
+ */
+function checkPermission(role, permission='view') {
+
+    if (!search_user_roles) {
+        return false;
+    }
+
+    if (!(role in search_user_roles)) {
+        return false;
+    }
+
+    var roles = search_user_roles[role];
+
+    if (!roles) {
+        return false;
+    }
+
+    var found = false;
+
+    search_user_roles[role].forEach(function(p) {
+        if (String(p).valueOf() == String(permission).valueOf()) {
+            found = true;
+        }
+    });
+
+    return found;
+}
+
+
 /*
  * Callback when the search panel is opened.
  * Ensure the panel is in a known state
@@ -27,6 +62,16 @@ function openSearchPanel() {
 
     clearSearchResults();
 
+    // Request user roles if we do not have them
+    if (search_user_roles == null) {
+        inventreeGet('{% url "api-user-roles" %}', {}, {
+            success: function(response) {
+                search_user_roles = response.roles || {};
+            }
+        });
+    }
+
+    // Callback for text input changed
     panel.find('#search-input').on('keyup change', searchTextChanged);
 
     // Callback for "clear search" button
@@ -84,7 +129,7 @@ function updateSearch() {
     // Show the "searching" text
     $('#offcanvas-search').find('#search-pending').show();
 
-    if (user_settings.SEARCH_PREVIEW_SHOW_PARTS) {
+    if (checkPermission('part') && user_settings.SEARCH_PREVIEW_SHOW_PARTS) {
 
         var params = {};
 
@@ -106,7 +151,7 @@ function updateSearch() {
         );
     }
 
-    if (user_settings.SEARCH_PREVIEW_SHOW_CATEGORIES) {
+    if (checkPermission('part_category') && user_settings.SEARCH_PREVIEW_SHOW_CATEGORIES) {
         // Search for matching part categories
         addSearchQuery(
             'category',
@@ -120,7 +165,7 @@ function updateSearch() {
         );
     }
 
-    if (user_settings.SEARCH_PREVIEW_SHOW_STOCK) {
+    if (checkPermission('stock') && user_settings.SEARCH_PREVIEW_SHOW_STOCK) {
         // Search for matching stock items
 
         var filters = {
@@ -146,7 +191,7 @@ function updateSearch() {
         );
     }
 
-    if (user_settings.SEARCH_PREVIEW_SHOW_LOCATIONS) {
+    if (checkPermission('stock_location') && user_settings.SEARCH_PREVIEW_SHOW_LOCATIONS) {
         // Search for matching stock locations
         addSearchQuery(
             'location',
@@ -160,7 +205,7 @@ function updateSearch() {
         );
     }
 
-    if (user_settings.SEARCH_PREVIEW_SHOW_COMPANIES) {
+    if ((checkPermission('sales_order') || checkPermission('purchase_order')) && user_settings.SEARCH_PREVIEW_SHOW_COMPANIES) {
         // Search for matching companies
         addSearchQuery(
             'company',
@@ -174,7 +219,7 @@ function updateSearch() {
         );
     }
 
-    if (user_settings.SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS) {
+    if (checkPermission('purchase_order') && user_settings.SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS) {
 
         var filters = {
             supplier_detail: true,
@@ -197,7 +242,7 @@ function updateSearch() {
         );
     }
 
-    if (user_settings.SEARCH_PREVIEW_SHOW_SALES_ORDERS) {
+    if (checkPermission('sales_order') && user_settings.SEARCH_PREVIEW_SHOW_SALES_ORDERS) {
 
         var filters = {
             customer_detail: true,

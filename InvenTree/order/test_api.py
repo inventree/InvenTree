@@ -1324,6 +1324,8 @@ class SalesOrderAllocateTest(OrderTest):
         response = self.post(
             url,
             {
+                'invoice_number': 'INV01234',
+                'link': 'http://test.com/link.html',
                 'tracking_number': 'TRK12345',
                 'shipment_date': '2020-12-05',
             },
@@ -1334,6 +1336,8 @@ class SalesOrderAllocateTest(OrderTest):
 
         self.assertTrue(self.shipment.is_complete())
         self.assertEqual(self.shipment.tracking_number, 'TRK12345')
+        self.assertEqual(self.shipment.invoice_number, 'INV01234')
+        self.assertEqual(self.shipment.link, 'http://test.com/link.html')
 
     def test_sales_order_shipment_list(self):
 

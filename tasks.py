@@ -82,7 +82,7 @@ def plugins(c):
     print(f"Installing plugin packages from '{plugin_file}'")
 
     # Install the plugins
-    c.run(f"pip3 install -U -r '{plugin_file}'")
+    c.run(f"pip3 install --disable-pip-version-check -U -r '{plugin_file}'")
 
 
 @task(post=[plugins])
@@ -94,7 +94,7 @@ def install(c):
     print("Installing required python packages from 'requirements.txt'")
 
     # Install required Python packages with PIP
-    c.run('pip3 install -U -r requirements.txt')
+    c.run('pip3 install --no-cache-dir --disable-pip-version-check -U -r requirements.txt')
 
 
 @task
@@ -554,9 +554,9 @@ def test_translations(c):
 
     # complie regex
     reg = re.compile(
-        r"[a-zA-Z0-9]{1}"+  # match any single letter and number
-        r"(?![^{\(\<]*[}\)\>])"+  # that is not inside curly brackets, brackets or a tag
-        r"(?<![^\%][^\(][)][a-z])"+  # that is not a specially formatted variable with singles
+        r"[a-zA-Z0-9]{1}" +  # match any single letter and number  # noqa: W504
+        r"(?![^{\(\<]*[}\)\>])" +  # that is not inside curly brackets, brackets or a tag  # noqa: W504
+        r"(?<![^\%][^\(][)][a-z])" +  # that is not a specially formatted variable with singles  # noqa: W504
         r"(?![^\\][\n])"  # that is not a newline
     )
     last_string = ''
