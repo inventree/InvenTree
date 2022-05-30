@@ -30,6 +30,8 @@ class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Provides a brief serializer for a StockLocation object."""
 
     class Meta:
+        """Metaclass options."""
+
         model = StockLocation
         fields = [
             'pk',
@@ -47,6 +49,8 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
     quantity = InvenTreeDecimalField()
 
     class Meta:
+        """Metaclass options."""
+
         model = StockItem
         fields = [
             'part',
@@ -190,6 +194,8 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             self.fields.pop('required_tests')
 
     class Meta:
+        """Metaclass options."""
+
         model = StockItem
         fields = [
             'allocated',
@@ -257,6 +263,8 @@ class SerializeStockItemSerializer(serializers.Serializer):
     """
 
     class Meta:
+        """Metaclass options."""
+
         fields = [
             'quantity',
             'serial_numbers',
@@ -417,6 +425,8 @@ class UninstallStockItemSerializer(serializers.Serializer):
     """API serializers for uninstalling an installed item from a stock item."""
 
     class Meta:
+        """Metaclass options."""
+
         fields = [
             'location',
             'note',
@@ -457,6 +467,8 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for a simple tree view."""
 
     class Meta:
+        """Metaclass options."""
+
         model = StockLocation
         fields = [
             'pk',
@@ -475,6 +487,8 @@ class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     level = serializers.IntegerField(read_only=True)
 
     class Meta:
+        """Metaclass options."""
+
         model = StockLocation
         fields = [
             'pk',
@@ -505,6 +519,8 @@ class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSer
     # TODO: Record the uploading user when creating or updating an attachment!
 
     class Meta:
+        """Metaclass options."""
+
         model = StockItemAttachment
 
         fields = [
@@ -544,6 +560,8 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
             self.fields.pop('user_detail')
 
     class Meta:
+        """Metaclass options."""
+
         model = StockItemTestResult
 
         fields = [
@@ -592,6 +610,8 @@ class StockTrackingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     deltas = serializers.JSONField(read_only=True)
 
     class Meta:
+        """Metaclass options."""
+
         model = StockItemTracking
         fields = [
             'pk',
@@ -624,6 +644,8 @@ class StockAssignmentItemSerializer(serializers.Serializer):
     """
 
     class Meta:
+        """Metaclass options."""
+
         fields = [
             'item',
         ]
@@ -664,6 +686,8 @@ class StockAssignmentSerializer(serializers.Serializer):
     """
 
     class Meta:
+        """Metaclass options."""
+
         fields = [
             'items',
             'customer',
@@ -740,6 +764,8 @@ class StockMergeItemSerializer(serializers.Serializer):
     """
 
     class Meta:
+        """Metaclass options."""
+
         fields = [
             'item',
         ]
@@ -764,6 +790,8 @@ class StockMergeSerializer(serializers.Serializer):
     """Serializer for merging two (or more) stock items together."""
 
     class Meta:
+        """Metaclass options."""
+
         fields = [
             'items',
             'location',
@@ -881,6 +909,8 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
     """
 
     class Meta:
+        """Metaclass options."""
+
         fields = [
             'item',
             'quantity'
@@ -907,6 +937,8 @@ class StockAdjustmentSerializer(serializers.Serializer):
     """Base class for managing stock adjustment actions via the API."""
 
     class Meta:
+        """Metaclass options."""
+
         fields = [
             'items',
             'notes',
@@ -1016,6 +1048,8 @@ class StockTransferSerializer(StockAdjustmentSerializer):
     )
 
     class Meta:
+        """Metaclass options."""
+
         fields = [
             'items',
             'notes',
