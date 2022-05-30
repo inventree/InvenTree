@@ -105,7 +105,7 @@ def TestIfImageURL(url):
     Simply tests the extension against a set of allowed values
     """
     return os.path.splitext(os.path.basename(url))[-1].lower() in [
-        '.jpg', '.jpeg',
+        '.jpg', '.jpeg', '.j2k',
         '.png', '.bmp',
         '.tif', '.tiff',
         '.webp', '.gif',

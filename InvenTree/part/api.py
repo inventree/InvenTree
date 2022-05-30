@@ -49,7 +49,7 @@ class CategoryList(generics.ListCreateAPIView):
     serializer_class = part_serializers.CategorySerializer
 
     def get_serializer_context(self):
-
+        """Add extra context data to the serializer for the PartCategoryList endpoint"""
         ctx = super().get_serializer_context()
 
         try:
@@ -161,7 +161,7 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = PartCategory.objects.all()
 
     def get_serializer_context(self):
-
+        """Add extra context to the serializer for the CategoryDetail endpoint"""
         ctx = super().get_serializer_context()
 
         try:
@@ -173,7 +173,7 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
         return ctx
 
     def update(self, request, *args, **kwargs):
-
+        """Perform 'update' function and mark this part as 'starred' (or not)"""
         if 'starred' in request.data:
             starred = str2bool(request.data.get('starred', False))
 
@@ -188,6 +188,7 @@ class CategoryMetadata(generics.RetrieveUpdateAPIView):
     """API endpoint for viewing / updating PartCategory metadata."""
 
     def get_serializer(self, *args, **kwargs):
+        """Return a MetadataSerializer pointing to the referenced PartCategory instance"""
         return MetadataSerializer(PartCategory, *args, **kwargs)
 
     queryset = PartCategory.objects.all()
@@ -370,7 +371,7 @@ class PartThumbs(generics.ListAPIView):
     serializer_class = part_serializers.PartThumbSerializer
 
     def get_queryset(self):
-
+        """Return a queryset which exlcudes any parts without images"""
         queryset = super().get_queryset()
 
         # Get all Parts which have an associated image
@@ -432,7 +433,7 @@ class PartScheduling(generics.RetrieveAPIView):
     queryset = Part.objects.all()
 
     def retrieve(self, request, *args, **kwargs):
-
+        """Return scheduling information for the referenced Part instance"""
         today = datetime.datetime.now().date()
 
         part = self.get_object()
@@ -555,6 +556,7 @@ class PartMetadata(generics.RetrieveUpdateAPIView):
     """API endpoint for viewing / updating Part metadata."""
 
     def get_serializer(self, *args, **kwargs):
+        """Returns a MetadataSerializer instance pointing to the referenced Part"""
         return MetadataSerializer(Part, *args, **kwargs)
 
     queryset = Part.objects.all()
@@ -566,7 +568,7 @@ class PartSerialNumberDetail(generics.RetrieveAPIView):
     queryset = Part.objects.all()
 
     def retrieve(self, request, *args, **kwargs):
-
+        """Return serial number information for the referenced Part instance"""
         part = self.get_object()
 
         # Calculate the "latest" serial number
@@ -592,7 +594,7 @@ class PartCopyBOM(generics.CreateAPIView):
     serializer_class = part_serializers.PartCopyBOMSerializer
 
     def get_serializer_context(self):
-
+        """Add custom information to the serializer context for this endpoint"""
         ctx = super().get_serializer_context()
 
         try:
@@ -607,8 +609,10 @@ class PartValidateBOM(generics.RetrieveUpdateAPIView):
     """API endpoint for 'validating' the BOM for a given Part."""
 
     class BOMValidateSerializer(serializers.ModelSerializer):
+        """Simple serializer class for validating a single BomItem instance"""
 
         class Meta:
+            """Metaclass defines serializer fields"""
             model = Part
             fields = [
                 'checksum',
@@ -628,6 +632,7 @@ class PartValidateBOM(generics.RetrieveUpdateAPIView):
         )
 
         def validate_valid(self, valid):
+            """Check that the 'valid' input was flagged"""
             if not valid:
                 raise ValidationError(_('This option must be selected'))
 
@@ -636,7 +641,7 @@ class PartValidateBOM(generics.RetrieveUpdateAPIView):
     serializer_class = BOMValidateSerializer
 
     def update(self, request, *args, **kwargs):
-
+        """Validate the referenced BomItem instance"""
         part = self.get_object()
 
         partial = kwargs.pop('partial', False)
@@ -660,6 +665,7 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
     starred_parts = None
 
     def get_queryset(self, *args, **kwargs):
+        """Return an annotated queryset object for the PartDetail endpoint"""
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
@@ -667,7 +673,7 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
         return queryset
 
     def get_serializer(self, *args, **kwargs):
-
+        """Return a serializer instance for the PartDetail endpoint"""
         # By default, include 'category_detail' information in the detail view
         try:
             kwargs['category_detail'] = str2bool(self.request.query_params.get('category_detail', True))
@@ -687,7 +693,11 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
         return self.serializer_class(*args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
-        # Retrieve part
+        """Delete a Part instance via the API
+
+        - If the part is 'active' it cannot be deleted
+        - It must first be marked as 'inactive'
+        """
         part = Part.objects.get(pk=int(kwargs['pk']))
         # Check if inactive
         if not part.active:
@@ -695,7 +705,7 @@ class PartDetail(generics.RetrieveUpdateDestroyAPIView):
             return super(PartDetail, self).destroy(request, *args, **kwargs)
         else:
             # Return 405 error
-            message = f'Part \'{part.name}\' (pk = {part.pk}) is active: cannot delete'
+            message = 'Part is active: cannot delete'
             return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED, data=message)
 
     def update(self, request, *args, **kwargs):
@@ -723,7 +733,7 @@ class PartFilter(rest_filters.FilterSet):
     has_ipn = rest_filters.BooleanFilter(label='Has IPN', method='filter_has_ipn')
 
     def filter_has_ipn(self, queryset, name, value):
-
+        """Filter by whether the Part has an IPN (internal part number) or not"""
         value = str2bool(value)
 
         if value:
@@ -768,7 +778,7 @@ class PartFilter(rest_filters.FilterSet):
     has_stock = rest_filters.BooleanFilter(label='Has stock', method='filter_has_stock')
 
     def filter_has_stock(self, queryset, name, value):
-
+        """Filter by whether the Part has any stock"""
         value = str2bool(value)
 
         if value:
@@ -782,7 +792,7 @@ class PartFilter(rest_filters.FilterSet):
     unallocated_stock = rest_filters.BooleanFilter(label='Unallocated stock', method='filter_unallocated_stock')
 
     def filter_unallocated_stock(self, queryset, name, value):
-
+        """Filter by whether the Part has unallocated stock"""
         value = str2bool(value)
 
         if value:
@@ -837,7 +847,7 @@ class PartList(APIDownloadMixin, generics.ListCreateAPIView):
     starred_parts = None
 
     def get_serializer(self, *args, **kwargs):
-
+        """Return a serializer instance for this endpoint"""
         # Ensure the request context is passed through
         kwargs['context'] = self.get_serializer_context()
 
@@ -859,6 +869,7 @@ class PartList(APIDownloadMixin, generics.ListCreateAPIView):
         return self.serializer_class(*args, **kwargs)
 
     def download_queryset(self, queryset, export_format):
+        """Download the filtered queryset as a data file"""
         dataset = PartResource().export(queryset=queryset)
 
         filedata = dataset.export(export_format)
@@ -1077,17 +1088,14 @@ class PartList(APIDownloadMixin, generics.ListCreateAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def get_queryset(self, *args, **kwargs):
-
+        """Return an annotated queryset object"""
         queryset = super().get_queryset(*args, **kwargs)
         queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
 
         return queryset
 
     def filter_queryset(self, queryset):
-        """Perform custom filtering of the queryset.
-
-        We overide the DRF filter_fields here because
-        """
+        """Perform custom filtering of the queryset"""
         params = self.request.query_params
 
         queryset = super().filter_queryset(queryset)
@@ -1345,7 +1353,7 @@ class PartRelatedList(generics.ListCreateAPIView):
     serializer_class = part_serializers.PartRelationSerializer
 
     def filter_queryset(self, queryset):
-
+        """Custom queryset filtering"""
         queryset = super().filter_queryset(queryset)
 
         params = self.request.query_params
@@ -1478,8 +1486,7 @@ class BomFilter(rest_filters.FilterSet):
     validated = rest_filters.BooleanFilter(label='BOM line has been validated', method='filter_validated')
 
     def filter_validated(self, queryset, name, value):
-
-        # Work out which lines have actually been validated
+        """Filter by which lines have actually been validated"""
         pks = []
 
         value = str2bool(value)
@@ -1512,6 +1519,7 @@ class BomList(generics.ListCreateAPIView):
     filterset_class = BomFilter
 
     def list(self, request, *args, **kwargs):
+        """Return serialized list response for this endpoint"""
 
         queryset = self.filter_queryset(self.get_queryset())
 
@@ -1537,6 +1545,13 @@ class BomList(generics.ListCreateAPIView):
             return Response(data)
 
     def get_serializer(self, *args, **kwargs):
+        """Return the serializer instance for this API endpoint
+
+        If requested, extra detail fields are annotated to the queryset:
+        - part_detail
+        - sub_part_detail
+        - include_pricing
+        """
 
         # Do we wish to include extra detail?
         try:
@@ -1561,7 +1576,7 @@ class BomList(generics.ListCreateAPIView):
         return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
-
+        """Return the queryset object for this endpoint"""
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = self.get_serializer_class().setup_eager_loading(queryset)
@@ -1570,7 +1585,7 @@ class BomList(generics.ListCreateAPIView):
         return queryset
 
     def filter_queryset(self, queryset):
-
+        """Custom query filtering for the BomItem list API"""
         queryset = super().filter_queryset(queryset)
 
         params = self.request.query_params
@@ -1766,7 +1781,7 @@ class BomDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = part_serializers.BomItemSerializer
 
     def get_queryset(self, *args, **kwargs):
-
+        """Prefetch related fields for this queryset"""
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = self.get_serializer_class().setup_eager_loading(queryset)
@@ -1778,9 +1793,8 @@ class BomDetail(generics.RetrieveUpdateDestroyAPIView):
 class BomItemValidate(generics.UpdateAPIView):
     """API endpoint for validating a BomItem."""
 
-    # Very simple serializers
     class BomItemValidationSerializer(serializers.Serializer):
-
+        """Simple serializer for passing a single boolean field"""
         valid = serializers.BooleanField(default=False)
 
     queryset = BomItem.objects.all()

@@ -1,8 +1,19 @@
 """
-On release, ensure that the release tag matches the InvenTree version number!
+Ensure that the release tag matches the InvenTree version number:
+
+master / main branch:
+    - version number must end with 'dev'
+
+stable branch:
+    - version number must *not* end with 'dev'
+    - version number cannot already exist as a release tag
+
+tagged branch:
+    - version number must match tag being built
+    - version number cannot already exist as a release tag
+
 """
 
-import argparse
 import os
 import re
 import sys
@@ -10,6 +21,14 @@ import sys
 if __name__ == '__main__':
 
     here = os.path.abspath(os.path.dirname(__file__))
+
+    # GITHUB_REF_TYPE may be either 'branch' or 'tag'
+    GITHUB_REF_TYPE = os.environ['GITHUB_REF_TYPE']
+
+    # GITHUB_REF may be either 'refs/heads/<branch>' or 'refs/heads/<tag>'
+    GITHUB_REF = os.environ['GITHUB_REF']
+
+    GITHUB_BASE_REF = os.environ['GITHUB_BASE_REF']
 
     version_file = os.path.join(here, '..', 'InvenTree', 'InvenTree', 'version.py')
 
@@ -30,66 +49,66 @@ if __name__ == '__main__':
 
     print(f"InvenTree Version: '{version}'")
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-t', '--tag', help='Compare against specified version tag', action='store')
-    parser.add_argument('-r', '--release', help='Check that this is a release version', action='store_true')
-    parser.add_argument('-d', '--dev', help='Check that this is a development version', action='store_true')
-    parser.add_argument('-b', '--branch', help='Check against a particular branch', action='store')
+    # Determine which docker tag we are going to use
+    docker_tag = None
 
-    args = parser.parse_args()
-
-    if args.branch:
-        """
-        Version number requirement depends on format of branch
-
-        'master': development branch
-        'stable': release branch
-        """
-
-        print(f"Checking version number for branch '{args.branch}'")
-
-        if args.branch == 'master':
-            print("- This is a development branch")
-            args.dev = True
-        elif args.branch == 'stable':
-            print("- This is a stable release branch")
-            args.release = True
-
-    if args.dev:
-        """
-        Check that the current verrsion number matches the "development" format
-        e.g. "0.5 dev"
-        """
-
-        print("Checking development branch")
-
-        pattern = r"^\d+(\.\d+)+ dev$"
-
-        result = re.match(pattern, version)
-
-        if result is None:
-            print(f"Version number '{version}' does not match required pattern for development branch")
-            sys.exit(1)
-
-    elif args.release:
-        """
-        Check that the current version number matches the "release" format
-        e.g. "0.5.1"
-        """
-
-        print("Checking release branch")
+    if GITHUB_REF_TYPE == 'branch' and ('stable' in GITHUB_REF or 'stable' in GITHUB_BASE_REF):
+        print("Checking requirements for 'stable' release branch:")
 
         pattern = r"^\d+(\.\d+)+$"
-
         result = re.match(pattern, version)
 
         if result is None:
             print(f"Version number '{version}' does not match required pattern for stable branch")
             sys.exit(1)
+        else:
+            print(f"Version number '{version}' matches stable branch")
 
-    if args.tag:
-        if args.tag != version:
-            print(f"Release tag '{args.tag}' does not match INVENTREE_SW_VERSION '{version}'")
+        docker_tag = 'stable'
+
+    elif GITHUB_REF_TYPE == 'tag':
+        # GITHUB_REF should be of th eform /refs/heads/<tag>
+        version_tag = GITHUB_REF.split('/')[-1]
+        print(f"Checking requirements for tagged release - '{version_tag}':")
+
+        if version_tag != version:
+            print(f"Version number '{version}' does not match tag '{version_tag}'")
+            sys.exit
+
+        # TODO: Check if there is already a release with this tag!
+
+        docker_tag = version_tag
+
+    elif GITHUB_REF_TYPE == 'branch':
+        # Otherwise we know we are targetting the 'master' branch
+        print("Checking requirements for 'master' development branch:")
+
+        pattern = r"^\d+(\.\d+)+ dev$"
+        result = re.match(pattern, version)
+
+        if result is None:
+            print(f"Version number '{version}' does not match required pattern for development branch")
             sys.exit(1)
+        else:
+            print(f"Version number '{version}' matches development branch")
 
-sys.exit(0)
+        docker_tag = 'latest'
+
+    else:
+        print("Unsupported branch / version combination:")
+        print(f"InvenTree Version: {version}")
+        print("GITHUB_REF_TYPE:", GITHUB_REF_TYPE)
+        print("GITHUB_BASE_REF:", GITHUB_BASE_REF)
+        print("GITHUB_REF:", GITHUB_REF)
+        sys.exit(1)
+
+    if docker_tag is None:
+        print("Docker tag could not be determined")
+        sys.exit(1)
+
+    print(f"Version check passed for '{version}'!")
+    print(f"Docker tag: '{docker_tag}'")
+
+    # Ref: https://getridbug.com/python/how-to-set-environment-variables-in-github-actions-using-python/
+    with open(os.getenv('GITHUB_ENV'), 'a') as env_file:
+        env_file.write(f"docker_tag={docker_tag}\n")

@@ -106,6 +106,11 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
         response = self.client.get(url, data, format='json')
 
         if expected_code is not None:
+
+            if response.status_code != expected_code:
+                print(f"Unexpected response at '{url}':")
+                print(response.data)
+
             self.assertEqual(response.status_code, expected_code)
 
         return response

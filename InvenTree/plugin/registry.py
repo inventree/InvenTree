@@ -1,4 +1,5 @@
-"""Registry for loading and managing multiple plugins at run-time.
+"""
+Registry for loading and managing multiple plugins at run-time
 
 - Holds the class and the object that contains all code to maintain plugin states
 - Manages setup and teardown of plugin class instances
@@ -30,7 +31,9 @@ logger = logging.getLogger('inventree')
 
 
 class PluginsRegistry:
-    """The PluginsRegistry class."""
+    """
+    The PluginsRegistry class
+    """
 
     def __init__(self) -> None:
         """Initialize registry.
@@ -56,7 +59,10 @@ class PluginsRegistry:
         self.mixins_settings = {}
 
     def get_plugin(self, slug):
-        """Lookup plugin by slug (unique key)."""
+        """
+        Lookup plugin by slug (unique key).
+        """
+
         if slug not in self.plugins:
             logger.warning(f"Plugin registry has no record of plugin '{slug}'")
             return None
@@ -64,13 +70,15 @@ class PluginsRegistry:
         return self.plugins[slug]
 
     def call_plugin_function(self, slug, func, *args, **kwargs):
-        """Call a member function (named by 'func') of the plugin named by 'slug'.
+        """
+        Call a member function (named by 'func') of the plugin named by 'slug'.
 
         As this is intended to be run by the background worker,
         we do not perform any try/except here.
 
         Instead, any error messages are returned to the worker.
         """
+
         plugin = self.get_plugin(slug)
 
         if not plugin:
@@ -82,8 +90,12 @@ class PluginsRegistry:
 
     # region public functions
     # region loading / unloading
-    def load_plugins(self):
-        """Load and activate all IntegrationPlugins."""
+    def load_plugins(self, full_reload: bool = False):
+        """Load and activate all IntegrationPlugins
+
+        Args:
+            full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
+        """
         if not settings.PLUGINS_ENABLED:
             # Plugins not enabled, do nothing
             return  # pragma: no cover
@@ -103,7 +115,7 @@ class PluginsRegistry:
             try:
                 # We are using the db so for migrations etc we need to try this block
                 self._init_plugins(blocked_plugin)
-                self._activate_plugins()
+                self._activate_plugins(full_reload=full_reload)
                 registered_successful = True
             except (OperationalError, ProgrammingError):  # pragma: no cover
                 # Exception if the database has not been migrated yet
@@ -117,7 +129,7 @@ class PluginsRegistry:
                 # Initialize apps without any plugins
                 self._clean_registry()
                 self._clean_installed_apps()
-                self._activate_plugins(force_reload=True)
+                self._activate_plugins(force_reload=True, full_reload=full_reload)
 
                 # We do not want to end in an endless loop
                 retry_counter -= 1
@@ -131,6 +143,10 @@ class PluginsRegistry:
 
                 # now the loading will re-start up with init
 
+            # disable full reload after the first round
+            if full_reload:
+                full_reload = False
+
         # Remove maintenance mode
         if not _maintenance:
             set_maintenance_mode(False)
@@ -138,7 +154,10 @@ class PluginsRegistry:
         logger.info('Finished loading plugins')
 
     def unload_plugins(self):
-        """Unload and deactivate all IntegrationPlugins."""
+        """
+        Unload and deactivate all IntegrationPlugins
+        """
+
         if not settings.PLUGINS_ENABLED:
             # Plugins not enabled, do nothing
             return  # pragma: no cover
@@ -161,8 +180,13 @@ class PluginsRegistry:
             set_maintenance_mode(False)  # pragma: no cover
         logger.info('Finished unloading plugins')
 
-    def reload_plugins(self):
-        """Safely reload IntegrationPlugins."""
+    def reload_plugins(self, full_reload: bool = False):
+        """Safely reload IntegrationPlugins
+
+        Args:
+            full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
+        """
+
         # Do not reload whe currently loading
         if self.is_loading:
             return  # pragma: no cover
@@ -171,12 +195,13 @@ class PluginsRegistry:
 
         with maintenance_mode_on():
             self.unload_plugins()
-            self.load_plugins()
+            self.load_plugins(full_reload)
 
         logger.info('Finished reloading plugins')
 
     def collect_plugins(self):
-        """Collect plugins from all possible ways of loading."""
+        """Collect plugins from all possible ways of loading"""
+
         if not settings.PLUGINS_ENABLED:
             # Plugins not enabled, do nothing
             return  # pragma: no cover
@@ -205,7 +230,10 @@ class PluginsRegistry:
         logger.info(", ".join([a.__module__ for a in self.plugin_modules]))
 
     def install_plugin_file(self):
-        """Make sure all plugins are installed in the current enviroment."""
+        """
+        Make sure all plugins are installed in the current enviroment
+        """
+
         if settings.PLUGIN_FILE_CHECKED:
             logger.info('Plugin file was already checked')
             return True
@@ -226,7 +254,9 @@ class PluginsRegistry:
 
     # region registry functions
     def with_mixin(self, mixin: str, active=None):
-        """Returns reference to all plugins that have a specified mixin enabled."""
+        """
+        Returns reference to all plugins that have a specified mixin enabled
+        """
         result = []
 
         for plugin in self.plugins.values():
@@ -247,12 +277,14 @@ class PluginsRegistry:
 
     # region general internal loading /activating / deactivating / deloading
     def _init_plugins(self, disabled=None):
-        """Initialise all found plugins.
+        """
+        Initialise all found plugins
 
         :param disabled: loading path of disabled app, defaults to None
         :type disabled: str, optional
         :raises error: IntegrationPluginError
         """
+
         from plugin.models import PluginConfig
 
         logger.info('Starting plugin initialisation')
@@ -315,11 +347,12 @@ class PluginsRegistry:
                 # save for later reference
                 self.plugins_inactive[plug_key] = plugin_db_setting  # pragma: no cover
 
-    def _activate_plugins(self, force_reload=False):
-        """Run activation functions for all plugins.
+    def _activate_plugins(self, force_reload=False, full_reload: bool = False):
+        """Run activation functions for all plugins
 
-        :param force_reload: force reload base apps, defaults to False
-        :type force_reload: bool, optional
+        Args:
+            force_reload (bool, optional): Also reload base apps. Defaults to False.
+            full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
         """
         # activate integrations
         plugins = self.plugins.items()
@@ -327,10 +360,11 @@ class PluginsRegistry:
 
         self.activate_plugin_settings(plugins)
         self.activate_plugin_schedule(plugins)
-        self.activate_plugin_app(plugins, force_reload=force_reload)
+        self.activate_plugin_app(plugins, force_reload=force_reload, full_reload=full_reload)
 
     def _deactivate_plugins(self):
-        """Run deactivation functions for all plugins."""
+        """Run deactivation functions for all plugins"""
+
         self.deactivate_plugin_app()
         self.deactivate_plugin_schedule()
         self.deactivate_plugin_settings()
@@ -403,20 +437,21 @@ class PluginsRegistry:
             logger.warning("activate_integration_schedule failed, database not ready")
 
     def deactivate_plugin_schedule(self):
-        """Deactivate ScheduleMixin.
-
+        """
+        Deactivate ScheduleMixin
         currently nothing is done
         """
         pass
 
-    def activate_plugin_app(self, plugins, force_reload=False):
-        """Activate AppMixin plugins - add custom apps and reload.
+    def activate_plugin_app(self, plugins, force_reload=False, full_reload: bool = False):
+        """Activate AppMixin plugins - add custom apps and reload
 
-        :param plugins: list of IntegrationPlugins that should be installed
-        :type plugins: dict
-        :param force_reload: only reload base apps, defaults to False
-        :type force_reload: bool, optional
+        Args:
+            plugins (dict): List of IntegrationPlugins that should be installed
+            force_reload (bool, optional): Only reload base apps. Defaults to False.
+            full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
         """
+
         from common.models import InvenTreeSetting
 
         if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_APP'):
@@ -437,9 +472,9 @@ class PluginsRegistry:
                 # first startup or force loading of base apps -> registry is prob false
                 if self.apps_loading or force_reload:
                     self.apps_loading = False
-                    self._reload_apps(force_reload=True)
+                    self._reload_apps(force_reload=True, full_reload=full_reload)
                 else:
-                    self._reload_apps()
+                    self._reload_apps(full_reload=full_reload)
 
                 # rediscover models/ admin sites
                 self._reregister_contrib_apps()
@@ -481,9 +516,8 @@ class PluginsRegistry:
                 reload(app_config.module.admin)
 
     def _get_plugin_path(self, plugin):
-        """Parse plugin path.
-
-        The input can be eiter:
+        """parse plugin path
+        the input can be eiter:
         - a local file / dir
         - a package
         """
@@ -566,8 +600,17 @@ class PluginsRegistry:
         global_pattern[0] = re_path('', include(urlpatterns))
         clear_url_caches()
 
-    def _reload_apps(self, force_reload: bool = False):
-        self.is_loading = True  # set flag to disable loop reloading
+    def _reload_apps(self, force_reload: bool = False, full_reload: bool = False):
+        """Internal: reload apps using django internal functions
+
+        Args:
+            force_reload (bool, optional): Also reload base apps. Defaults to False.
+            full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
+        """
+
+        # If full_reloading is set to true we do not want to set the flag
+        if not full_reload:
+            self.is_loading = True  # set flag to disable loop reloading
         if force_reload:
             # we can not use the built in functions as we need to brute force the registry
             apps.app_configs = OrderedDict()
@@ -579,9 +622,9 @@ class PluginsRegistry:
         self.is_loading = False
 
     def _try_reload(self, cmd, *args, **kwargs):
-        """Wrapper to try reloading the apps.
-
-        Throws an custom error that gets handled by the loading function
+        """
+        wrapper to try reloading the apps
+        throws an custom error that gets handled by the loading function
         """
         try:
             cmd(*args, **kwargs)
@@ -595,5 +638,5 @@ registry = PluginsRegistry()
 
 
 def call_function(plugin_name, function_name, *args, **kwargs):
-    """Global helper function to call a specific member function of a plugin."""
+    """ Global helper function to call a specific member function of a plugin """
     return registry.call_plugin_function(plugin_name, function_name, *args, **kwargs)

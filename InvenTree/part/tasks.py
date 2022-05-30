@@ -1,3 +1,5 @@
+"""Background task definitions for the 'part' app"""
+
 import logging
 
 from django.utils.translation import gettext_lazy as _
@@ -11,6 +13,11 @@ logger = logging.getLogger("inventree")
 
 
 def notify_low_stock(part: part.models.Part):
+    """Notify interested users that a part is 'low stock':
+
+    - Triggered when the available stock for a given part falls be low the configured threhsold
+    - A notification is delivered to any users who are 'subscribed' to this part
+    """
     name = _("Low stock notification")
     message = _(f'The available stock for {part.name} has fallen below the configured minimum level')
     context = {
@@ -24,7 +31,7 @@ def notify_low_stock(part: part.models.Part):
         },
     }
 
-    common.notifications.trigger_notifaction(
+    common.notifications.trigger_notification(
         part,
         'part.notify_low_stock',
         target_fnc=part.get_subscribers,

@@ -1,3 +1,5 @@
+"""Admin class definitions for the 'part' app"""
+
 from django.contrib import admin
 
 import import_export.widgets as widgets
@@ -38,6 +40,7 @@ class PartResource(ModelResource):
     building = Field(attribute='quantity_being_built', readonly=True, widget=widgets.IntegerWidget())
 
     class Meta:
+        """Metaclass definition"""
         model = models.Part
         skip_unchanged = True
         report_skipped = False
@@ -61,8 +64,17 @@ class PartResource(ModelResource):
 
         return query
 
+    def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
+        """Rebuild MPTT tree structure after importing Part data"""
+
+        super().after_import(dataset, result, using_transactions, dry_run, **kwargs)
+
+        # Rebuild the Part tree(s)
+        models.Part.objects.rebuild()
+
 
 class PartAdmin(ImportExportModelAdmin):
+    """Admin class for the Part model"""
 
     resource_class = PartResource
 
@@ -90,6 +102,7 @@ class PartCategoryResource(ModelResource):
     default_location = Field(attribute='default_location', widget=widgets.ForeignKeyWidget(StockLocation))
 
     class Meta:
+        """Metaclass definition"""
         model = models.PartCategory
         skip_unchanged = True
         report_skipped = False
@@ -102,6 +115,7 @@ class PartCategoryResource(ModelResource):
         ]
 
     def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
+        """Rebuild MPTT tree structure after importing PartCategory data"""
 
         super().after_import(dataset, result, using_transactions, dry_run, **kwargs)
 
@@ -110,6 +124,7 @@ class PartCategoryResource(ModelResource):
 
 
 class PartCategoryAdmin(ImportExportModelAdmin):
+    """Admin class for the PartCategory model"""
 
     resource_class = PartCategoryResource
 
@@ -127,27 +142,15 @@ class PartRelatedAdmin(admin.ModelAdmin):
 
 
 class PartAttachmentAdmin(admin.ModelAdmin):
+    """Admin class for the PartAttachment model"""
 
     list_display = ('part', 'attachment', 'comment')
 
     autocomplete_fields = ('part',)
 
 
-class PartStarAdmin(admin.ModelAdmin):
-
-    list_display = ('part', 'user')
-
-    autocomplete_fields = ('part',)
-
-
-class PartCategoryStarAdmin(admin.ModelAdmin):
-
-    list_display = ('category', 'user')
-
-    autocomplete_fields = ('category',)
-
-
 class PartTestTemplateAdmin(admin.ModelAdmin):
+    """Admin class for the PartTestTemplate model"""
 
     list_display = ('part', 'test_name', 'required')
 
@@ -193,7 +196,7 @@ class BomItemResource(ModelResource):
         return float(item.quantity)
 
     def before_export(self, queryset, *args, **kwargs):
-
+        """Perform before exporting data"""
         self.is_importing = kwargs.get('importing', False)
 
     def get_fields(self, **kwargs):
@@ -229,6 +232,7 @@ class BomItemResource(ModelResource):
         return fields
 
     class Meta:
+        """Metaclass definition"""
         model = models.BomItem
         skip_unchanged = True
         report_skipped = False
@@ -243,6 +247,7 @@ class BomItemResource(ModelResource):
 
 
 class BomItemAdmin(ImportExportModelAdmin):
+    """Admin class for the BomItem model"""
 
     resource_class = BomItemResource
 
@@ -254,6 +259,8 @@ class BomItemAdmin(ImportExportModelAdmin):
 
 
 class ParameterTemplateAdmin(ImportExportModelAdmin):
+    """Admin class for the PartParameterTemplate model"""
+
     list_display = ('name', 'units')
 
     search_fields = ('name', 'units')
@@ -271,6 +278,7 @@ class ParameterResource(ModelResource):
     template_name = Field(attribute='template__name', readonly=True)
 
     class Meta:
+        """Metaclass definition"""
         model = models.PartParameter
         skip_unchanged = True
         report_skipped = False
@@ -278,6 +286,7 @@ class ParameterResource(ModelResource):
 
 
 class ParameterAdmin(ImportExportModelAdmin):
+    """Admin class for the PartParameter model"""
 
     resource_class = ParameterResource
 
@@ -287,21 +296,26 @@ class ParameterAdmin(ImportExportModelAdmin):
 
 
 class PartCategoryParameterAdmin(admin.ModelAdmin):
+    """Admin class for the PartCategoryParameterTemplate model"""
 
     autocomplete_fields = ('category', 'parameter_template',)
 
 
 class PartSellPriceBreakAdmin(admin.ModelAdmin):
+    """Admin class for the PartSellPriceBreak model"""
 
     class Meta:
+        """Metaclass definition"""
         model = models.PartSellPriceBreak
 
     list_display = ('part', 'quantity', 'price',)
 
 
 class PartInternalPriceBreakAdmin(admin.ModelAdmin):
+    """Admin class for the PartInternalPriceBreak model"""
 
     class Meta:
+        """Metaclass definition"""
         model = models.PartInternalPriceBreak
 
     list_display = ('part', 'quantity', 'price',)
@@ -313,8 +327,6 @@ admin.site.register(models.Part, PartAdmin)
 admin.site.register(models.PartCategory, PartCategoryAdmin)
 admin.site.register(models.PartRelated, PartRelatedAdmin)
 admin.site.register(models.PartAttachment, PartAttachmentAdmin)
-admin.site.register(models.PartStar, PartStarAdmin)
-admin.site.register(models.PartCategoryStar, PartCategoryStarAdmin)
 admin.site.register(models.BomItem, BomItemAdmin)
 admin.site.register(models.PartParameterTemplate, ParameterTemplateAdmin)
 admin.site.register(models.PartParameter, ParameterAdmin)

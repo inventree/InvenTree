@@ -1,4 +1,6 @@
 
+"""Unit tests for the BomItem model"""
+
 from decimal import Decimal
 
 import django.core.exceptions as django_exceptions
@@ -9,6 +11,7 @@ from .models import BomItem, BomItemSubstitute, Part
 
 
 class BomItemTest(TestCase):
+    """Class for unit testing BomItem model"""
 
     fixtures = [
         'category',
@@ -22,21 +25,25 @@ class BomItemTest(TestCase):
     ]
 
     def setUp(self):
+        """Create initial data"""
         self.bob = Part.objects.get(id=100)
         self.orphan = Part.objects.get(name='Orphan')
         self.r1 = Part.objects.get(name='R_2K2_0805')
 
     def test_str(self):
+        """Test the string representation of a BOMItem"""
         b = BomItem.objects.get(id=1)
         self.assertEqual(str(b), '10 x M2x4 LPHS to make BOB | Bob | A2')
 
     def test_has_bom(self):
+        """Test the has_bom attribute"""
         self.assertFalse(self.orphan.has_bom)
         self.assertTrue(self.bob.has_bom)
 
         self.assertEqual(self.bob.bom_count, 4)
 
     def test_in_bom(self):
+        """Test BOM aggregation"""
         parts = self.bob.getRequiredParts()
 
         self.assertIn(self.orphan, parts)
@@ -44,6 +51,7 @@ class BomItemTest(TestCase):
         self.assertTrue(self.bob.check_if_part_in_bom(self.orphan))
 
     def test_used_in(self):
+        """Test that the 'used_in_count' attribute is calculated correctly"""
         self.assertEqual(self.bob.used_in_count, 1)
         self.assertEqual(self.orphan.used_in_count, 1)
 
@@ -116,6 +124,7 @@ class BomItemTest(TestCase):
         self.assertNotEqual(h1, h2)
 
     def test_pricing(self):
+        """Test BOM pricing"""
         self.bob.get_price(1)
         self.assertEqual(
             self.bob.get_bom_price_range(1, internal=True),

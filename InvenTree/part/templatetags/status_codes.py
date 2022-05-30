@@ -29,6 +29,7 @@ def stock_status_label(key, *args, **kwargs):
 
 @register.simple_tag
 def stock_status_text(key, *args, **kwargs):
+    """Render the text value of a StockItem status value"""
     return mark_safe(StockStatus.text(key))
 
 
