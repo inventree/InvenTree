@@ -945,10 +945,6 @@ class PurchaseOrderLineItem(OrderLineItem):
         order: Reference to a PurchaseOrder object
     """
 
-    class Meta:
-        unique_together = (
-        )
-
     @staticmethod
     def get_api_url():
         return reverse('api-po-line-list')
@@ -1095,10 +1091,6 @@ class SalesOrderLineItem(OrderLineItem):
         max_digits=15, decimal_places=5,
         validators=[MinValueValidator(0)]
     )
-
-    class Meta:
-        unique_together = [
-        ]
 
     def fulfilled_quantity(self):
         """Return the total stock quantity fulfilled against this line item."""
