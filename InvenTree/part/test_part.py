@@ -15,8 +15,8 @@ from common.notifications import UIMessageNotification, storage
 from InvenTree import version
 from InvenTree.helpers import InvenTreeTestCase
 
-from .models import (Part, PartCategory, PartCategoryStar, PartRelated,
-                     PartStar, PartTestTemplate, rename_part_image)
+from .models import (Part, PartCategory, PartCategoryStar, PartStar,
+                     PartTestTemplate, rename_part_image)
 from .templatetags import inventree_extras
 
 
@@ -159,19 +159,6 @@ class PartTest(TestCase):
         """Test string representation of a Part"""
         p = Part.objects.get(pk=100)
         self.assertEqual(str(p), "BOB | Bob | A2 - Can we build it?")
-
-    def test_related(self):
-        """Test the part relationship functionality"""
-        self.assertEqual(self.r1.related_count, 0)
-        self.assertEqual(self.r2.related_count, 0)
-
-        PartRelated.objects.create(part_1=self.r1, part_2=self.r2)
-
-        self.assertEqual(self.r1.related_count, 1)
-        self.assertEqual(self.r2.related_count, 1)
-
-        self.assertTrue(self.r2 in self.r1.get_related_parts())
-        self.assertTrue(self.r1 in self.r2.get_related_parts())
 
     def test_duplicate(self):
         """Test that we cannot create a "duplicate" Part."""

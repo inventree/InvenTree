@@ -2093,13 +2093,15 @@ class Part(MetadataMixin, MPTTModel):
 
         related_parts_2 = self.related_parts_2.filter(part_2__id=self.pk)
 
+        related_parts.append()
+
         for related_part in related_parts_1:
             # Add to related parts list
-            related_parts.append((related_part, related_part.part_2))
+            related_parts.append(related_part.part_2)
 
         for related_part in related_parts_2:
             # Add to related parts list
-            related_parts.append((related_part, related_part.part_1))
+            related_parts.append(related_part.part_1)
 
         return related_parts
 
