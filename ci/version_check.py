@@ -55,7 +55,7 @@ def check_version_number(version_string):
     # Check that the version string matches the required format
     match = re.match(r"^(\d+)\.(\d+)\.(\d+)(?: dev)?$", version_string)
 
-    if len(match.groups()) != 3:
+    if not match or len(match.groups()) != 3:
         raise ValueError(f"Version string '{version_string}' did not match required pattern")
 
     version_tuple = [int(x) for x in match.groups()]
@@ -157,7 +157,7 @@ if __name__ == '__main__':
         sys.exit(1)
 
     print(f"Version check passed for '{version}'!")
-    print(f"Docker tag: '{docker_tags}'")
+    print(f"Docker tags: '{docker_tags}'")
 
     # Ref: https://getridbug.com/python/how-to-set-environment-variables-in-github-actions-using-python/
     with open(os.getenv('GITHUB_ENV'), 'a') as env_file:
