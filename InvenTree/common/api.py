@@ -27,7 +27,7 @@ class CsrfExemptMixin(object):
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
         """Overwrites dispatch to be extempt from csrf checks."""
-        return super(CsrfExemptMixin, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
 
 class WebhookView(CsrfExemptMixin, APIView):
