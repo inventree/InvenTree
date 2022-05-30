@@ -161,6 +161,7 @@ class FileManager:
         return headers
 
     def col_count(self):
+        """Return the number of columns in the file."""
         if self.data is None:
             return 0
 
