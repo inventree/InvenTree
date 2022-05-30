@@ -42,9 +42,10 @@ logger = logging.getLogger('inventree')
 
 
 class EmptyURLValidator(URLValidator):
+    """Validator for filed with url - that can be empty."""
 
     def __call__(self, value):
-
+        """Make sure empty values pass."""
         value = str(value).strip()
 
         if len(value) == 0:
@@ -60,6 +61,8 @@ class BaseInvenTreeSetting(models.Model):
     SETTINGS = {}
 
     class Meta:
+        """Meta options for BaseInvenTreeSetting -> abstract stops creation of database entry."""
+
         abstract = True
 
     def save(self, *args, **kwargs):
@@ -365,18 +368,22 @@ class BaseInvenTreeSetting(models.Model):
 
     @property
     def name(self):
+        """Return name for setting."""
         return self.__class__.get_setting_name(self.key, **self.get_kwargs())
 
     @property
     def default_value(self):
+        """Return default_value for setting."""
         return self.__class__.get_setting_default(self.key, **self.get_kwargs())
 
     @property
     def description(self):
+        """Return description for setting."""
         return self.__class__.get_setting_description(self.key, **self.get_kwargs())
 
     @property
     def units(self):
+        """Return units for setting."""
         return self.__class__.get_setting_units(self.key, **self.get_kwargs())
 
     def clean(self, **kwargs):
@@ -598,7 +605,7 @@ class BaseInvenTreeSetting(models.Model):
 
     @classmethod
     def validator_is_bool(cls, validator):
-
+        """Return if validator is for bool."""
         if validator == bool:
             return True
 
@@ -617,7 +624,7 @@ class BaseInvenTreeSetting(models.Model):
 
     @classmethod
     def validator_is_int(cls, validator):
-
+        """Return if validator is for int."""
         if validator == int:
             return True
 
@@ -649,6 +656,7 @@ class BaseInvenTreeSetting(models.Model):
 
     @property
     def protected(self):
+        """Returns if setting is protected from rendering."""
         return self.__class__.is_protected(self.key, **self.get_kwargs())
 
 
@@ -1150,6 +1158,8 @@ class InvenTreeSetting(BaseInvenTreeSetting):
     }
 
     class Meta:
+        """Meta options for InvenTreeSetting."""
+
         verbose_name = "InvenTree Setting"
         verbose_name_plural = "InvenTree Settings"
 
@@ -1453,6 +1463,8 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
     }
 
     class Meta:
+        """Meta options for InvenTreeUserSetting."""
+
         verbose_name = "InvenTree User Setting"
         verbose_name_plural = "InvenTree User Settings"
         constraints = [
@@ -1476,9 +1488,11 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
 
     @classmethod
     def get_setting_object(cls, key, user=None):
+        """Return setting object for provided user."""
         return super().get_setting_object(key, user=user)
 
     def validate_unique(self, exclude=None, **kwargs):
+        """Return if the setting (including key) is unique."""
         return super().validate_unique(exclude=exclude, user=self.user)
 
     def to_native_value(self):
@@ -1496,6 +1510,8 @@ class PriceBreak(models.Model):
     """Represents a PriceBreak model."""
 
     class Meta:
+        """Define this as abstract -> no DB entry is created."""
+
         abstract = True
 
     quantity = InvenTree.fields.RoundingDecimalField(
@@ -1644,6 +1660,8 @@ class ColorTheme(models.Model):
 
 
 class VerificationMethod:
+    """Class to hold method references."""
+
     NONE = 0
     TOKEN = 1
     HMAC = 2
@@ -1715,9 +1733,19 @@ class WebhookEndpoint(models.Model):
     # To be overridden
 
     def init(self, request, *args, **kwargs):
+        """Set verification method.
+
+        Args:
+            request: Original request object.
+        """
         self.verify = self.VERIFICATION_METHOD
 
     def process_webhook(self):
+        """Process the webhook incomming.
+
+        This does not deal with the data itself - that happens in process_payload.
+        Do not touch or pickle data here - it was not verified to be safe.
+        """
         if self.token:
             self.verify = VerificationMethod.TOKEN
         if self.secret:
@@ -1725,6 +1753,10 @@ class WebhookEndpoint(models.Model):
         return True
 
     def validate_token(self, payload, headers, request):
+        """Make sure that the provided token (if any) confirms to the setting for this endpoint.
+
+        This can be overridden to create your own token validation method.
+        """
         token = headers.get(self.TOKEN_NAME, "")
 
         # no token
@@ -1746,7 +1778,14 @@ class WebhookEndpoint(models.Model):
 
         return True
 
-    def save_data(self, payload, headers=None, request=None):
+    def save_data(self, payload=None, headers=None, request=None):
+        """Safes payload to database.
+
+        Args:
+            payload  (optional): Payload that was send along. Defaults to None.
+            headers (optional): Headers that were send along. Defaults to None.
+            request (optional): Original request object. Defaults to None.
+        """
         return WebhookMessage.objects.create(
             host=request.get_host(),
             header=json.dumps({key: val for key, val in headers.items()}),
@@ -1754,10 +1793,30 @@ class WebhookEndpoint(models.Model):
             endpoint=self,
         )
 
-    def process_payload(self, message, payload=None, headers=None):
+    def process_payload(self, message, payload=None, headers=None) -> bool:
+        """Process a payload.
+
+        Args:
+            message: DB entry for this message mm
+            payload (optional): Payload that was send along. Defaults to None.
+            headers (optional): Headers that were included. Defaults to None.
+
+        Returns:
+            bool: Was the message processed
+        """
         return True
 
-    def get_return(self, payload, headers=None, request=None):
+    def get_return(self, payload=None, headers=None, request=None) -> str:
+        """Returns the message that should be returned to the endpoint caller.
+
+        Args:
+            payload  (optional): Payload that was send along. Defaults to None.
+            headers (optional): Headers that were send along. Defaults to None.
+            request (optional): Original request object. Defaults to None.
+
+        Returns:
+            str: Message for caller.
+        """
         return self.MESSAGE_OK
 
 
@@ -1830,6 +1889,8 @@ class NotificationEntry(models.Model):
     """
 
     class Meta:
+        """Meta options for NotificationEntry."""
+
         unique_together = [
             ('key', 'uid'),
         ]
@@ -1945,6 +2006,7 @@ class NotificationMessage(models.Model):
 
     @staticmethod
     def get_api_url():
+        """Return API endpoint."""
         return reverse('api-notifications-list')
 
     def age(self):
