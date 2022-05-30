@@ -1,3 +1,5 @@
+"""Unit tests for the 'users' app"""
+
 from django.apps import apps
 from django.contrib.auth.models import Group
 from django.test import TestCase
@@ -13,7 +15,7 @@ class RuleSetModelTest(TestCase):
     """Some simplistic tests to ensure the RuleSet model is setup correctly."""
 
     def test_ruleset_models(self):
-
+        """Test that the role rulesets work as intended"""
         keys = RuleSet.RULESET_MODELS.keys()
 
         # Check if there are any rulesets which do not have models defined
@@ -155,12 +157,13 @@ class OwnerModelTest(InvenTreeTestCase):
     """Some simplistic tests to ensure the Owner model is setup correctly."""
 
     def do_request(self, endpoint, filters, status_code=200):
+        """Perform an API request"""
         response = self.client.get(endpoint, filters, format='json')
         self.assertEqual(response.status_code, status_code)
         return response.data
 
     def test_owner(self):
-
+        """Tests for the 'owner' model"""
         # Check that owner was created for user
         user_as_owner = Owner.get_owner(self.user)
         self.assertEqual(type(user_as_owner), Owner)

@@ -1,3 +1,4 @@
+"""DRF API definition for the 'users' app"""
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
@@ -73,7 +74,7 @@ class RoleDetails(APIView):
     ]
 
     def get(self, request, *args, **kwargs):
-
+        """Return the list of roles / permissions available to the current user"""
         user = request.user
 
         roles = {}
@@ -140,13 +141,11 @@ class GetAuthToken(APIView):
     ]
 
     def get(self, request, *args, **kwargs):
-        return self.login(request)
+        """Return an API token if the user is authenticated
 
-    def delete(self, request):
-        return self.logout(request)
-
-    def login(self, request):
-
+        - If the user already has a token, return it
+        - Otherwise, create a new token
+        """
         if request.user.is_authenticated:
             # Get the user token (or create one if it does not exist)
             token, created = Token.objects.get_or_create(user=request.user)
@@ -154,7 +153,8 @@ class GetAuthToken(APIView):
                 'token': token.key,
             })
 
-    def logout(self, request):
+    def delete(self, request):
+        """User has requested deletion of API token"""
         try:
             request.user.auth_token.delete()
             return Response({"success": "Successfully logged out."},

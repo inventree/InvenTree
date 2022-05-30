@@ -1,3 +1,5 @@
+"""Database model definitions for the 'users' app"""
+
 import logging
 
 from django.contrib.auth import get_user_model
@@ -188,6 +190,7 @@ class RuleSet(models.Model):
     ]
 
     class Meta:
+        """Metaclass defines additional model properties"""
         unique_together = (
             ('name', 'group'),
         )
@@ -268,10 +271,11 @@ class RuleSet(models.Model):
             return self.name
 
     def save(self, *args, **kwargs):
+        """Intercept the 'save' functionality to make addtional permission changes:
 
-        # It does not make sense to be able to change / create something,
-        # but not be able to view it!
-
+        It does not make sense to be able to change / create something,
+        but not be able to view it!
+        """
         if self.can_add or self.can_change or self.can_delete:
             self.can_view = True
 
@@ -548,9 +552,11 @@ class Owner(models.Model):
 
     @staticmethod
     def get_api_url():  # pragma: no cover
+        """Returns the API endpoint URL associated with the Owner model"""
         return reverse('api-owner-list')
 
     class Meta:
+        """Metaclass defines extra model properties"""
         # Ensure all owners are unique
         constraints = [
             UniqueConstraint(fields=['owner_type', 'owner_id'],

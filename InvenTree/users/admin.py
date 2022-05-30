@@ -1,3 +1,4 @@
+"""Admin classes for the 'users' app"""
 
 from django import forms
 from django.contrib import admin, messages
@@ -36,6 +37,7 @@ class InvenTreeGroupAdminForm(forms.ModelForm):
     """
 
     class Meta:
+        """Metaclass defines extra fields"""
         model = Group
         exclude = []
         fields = [
@@ -44,6 +46,7 @@ class InvenTreeGroupAdminForm(forms.ModelForm):
         ]
 
     def __init__(self, *args, **kwargs):  # pragma: no cover
+        """Populate the 'users' field with the users in the current group"""
         super().__init__(*args, **kwargs)
 
         if self.instance.pk:
@@ -60,11 +63,11 @@ class InvenTreeGroupAdminForm(forms.ModelForm):
     )
 
     def save_m2m(self):  # pragma: no cover
-        # Add the users to the Group.
-
+        """Add the users to the Group"""
         self.instance.user_set.set(self.cleaned_data['users'])
 
     def save(self, *args, **kwargs):  # pragma: no cover
+        """Custom save method for Group admin form"""
         # Default save
         instance = super().save()
         # Save many-to-many data
@@ -95,6 +98,7 @@ class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
                 break
 
         def append_permission_level(permission_level, next_level):
+            """Appen permission level"""
             if not permission_level:
                 return next_level
 
@@ -122,30 +126,39 @@ class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
         return permission_level
 
     def admin(self, obj):
+        """Return the ruleset for the admin role"""
         return self.get_rule_set(obj, 'admin')
 
     def part_category(self, obj):
+        """Return the ruleset for the PartCategory role"""
         return self.get_rule_set(obj, 'part_category')
 
     def part(self, obj):
+        """Return the ruleset for the Part role"""
         return self.get_rule_set(obj, 'part')
 
     def stock_location(self, obj):
+        """Return the ruleset for the StockLocation role"""
         return self.get_rule_set(obj, 'stock_location')
 
     def stock_item(self, obj):
+        """Return the ruleset for the StockItem role"""
         return self.get_rule_set(obj, 'stock')
 
     def build(self, obj):
+        """Return the ruleset for the BuildOrder role"""
         return self.get_rule_set(obj, 'build')
 
     def purchase_order(self, obj):
+        """Return the ruleset for the PurchaseOrder role"""
         return self.get_rule_set(obj, 'purchase_order')
 
     def sales_order(self, obj):
+        """Return the ruleset for the SalesOrder role"""
         return self.get_rule_set(obj, 'sales_order')
 
     def get_formsets_with_inlines(self, request, obj=None):
+        """Return all inline formsets"""
         for inline in self.get_inline_instances(request, obj):
             # Hide RuleSetInline in the 'Add role' view
             if not isinstance(inline, RuleSetInline) or obj is not None:
@@ -180,6 +193,7 @@ class RoleGroupAdmin(admin.ModelAdmin):  # pragma: no cover
             messages.add_message(request, messages.WARNING, warning_message)
 
     def save_formset(self, request, form, formset, change):
+        """Save the inline formset"""
         # Save inline Rulesets
         formset.save()
         # Save Group instance and update permissions
