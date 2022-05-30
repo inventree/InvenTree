@@ -5,7 +5,6 @@ from django.utils.translation import gettext_lazy as _
 
 from mptt.fields import TreeNodeChoiceField
 
-import common.models
 from common.forms import MatchItemForm
 from InvenTree.fields import RoundingDecimalFormField
 from InvenTree.forms import HelperForm
@@ -14,20 +13,6 @@ from InvenTree.helpers import clean_decimal
 from .models import (Part, PartCategory, PartCategoryParameterTemplate,
                      PartInternalPriceBreak, PartParameterTemplate,
                      PartSellPriceBreak)
-
-
-class PartModelChoiceField(forms.ModelChoiceField):
-    """Extending string representation of Part instance with available stock."""
-
-    def label_from_instance(self, part):
-
-        label = str(part)
-
-        # Optionally display available part quantity
-        if common.models.InvenTreeSetting.get_setting('PART_SHOW_QUANTITY_IN_FORMS'):
-            label += f" - {part.available_stock}"
-
-        return label
 
 
 class PartImageDownloadForm(HelperForm):
@@ -40,6 +25,7 @@ class PartImageDownloadForm(HelperForm):
     )
 
     class Meta:
+        """Metaclass defines fields for this form"""
         model = Part
         fields = [
             'url',
@@ -78,6 +64,7 @@ class EditPartParameterTemplateForm(HelperForm):
     """Form for editing a PartParameterTemplate object."""
 
     class Meta:
+        """Metaclass defines fields for this form"""
         model = PartParameterTemplate
         fields = [
             'name',
@@ -97,6 +84,7 @@ class EditCategoryParameterTemplateForm(HelperForm):
                                                help_text=_('Add parameter template to all categories'))
 
     class Meta:
+        """Metaclass defines fields for this form"""
         model = PartCategoryParameterTemplate
         fields = [
             'category',
@@ -118,6 +106,7 @@ class PartPriceForm(forms.Form):
     )
 
     class Meta:
+        """Metaclass defines fields for this form"""
         model = Part
         fields = [
             'quantity',
@@ -130,6 +119,7 @@ class EditPartSalePriceBreakForm(HelperForm):
     quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
 
     class Meta:
+        """Metaclass defines fields for this form"""
         model = PartSellPriceBreak
         fields = [
             'part',
@@ -144,6 +134,7 @@ class EditPartInternalPriceBreakForm(HelperForm):
     quantity = RoundingDecimalFormField(max_digits=10, decimal_places=5, label=_('Quantity'))
 
     class Meta:
+        """Metaclass defines fields for this form"""
         model = PartInternalPriceBreak
         fields = [
             'part',

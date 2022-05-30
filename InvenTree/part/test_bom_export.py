@@ -8,6 +8,7 @@ from InvenTree.helpers import InvenTreeTestCase
 
 
 class BomExportTest(InvenTreeTestCase):
+    """Class for performing unit testing of BOM export functionality"""
 
     fixtures = [
         'category',
@@ -19,6 +20,7 @@ class BomExportTest(InvenTreeTestCase):
     roles = 'all'
 
     def setUp(self):
+        """Perform test setup functions"""
         super().setUp()
 
         self.url = reverse('bom-download', kwargs={'pk': 100})

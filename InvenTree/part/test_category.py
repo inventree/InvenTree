@@ -1,3 +1,5 @@
+"""Unit tests for the PartCategory model"""
+
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
@@ -18,7 +20,7 @@ class CategoryTest(TestCase):
     ]
 
     def setUp(self):
-        # Extract some interesting categories for time-saving
+        """Extract some interesting categories for time-saving"""
         self.electronics = PartCategory.objects.get(name='Electronics')
         self.mechanical = PartCategory.objects.get(name='Mechanical')
         self.resistors = PartCategory.objects.get(name='Resistors')
@@ -111,8 +113,7 @@ class CategoryTest(TestCase):
                 self.assertEqual(len(part_parameter), 1)
 
     def test_invalid_name(self):
-        # Test that an illegal character is prohibited in a category name
-
+        """Test that an illegal character is prohibited in a category name"""
         cat = PartCategory(name='test/with/illegal/chars', description='Test category', parent=None)
 
         with self.assertRaises(ValidationError) as err:

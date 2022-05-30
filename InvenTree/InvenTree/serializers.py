@@ -583,4 +583,4 @@ class DataFileExtractSerializer(serializers.Serializer):
 
     def save(self):
         """No "save" action for this serializer."""
-        ...
+        pass

@@ -103,12 +103,15 @@ class PartCategory(MetadataMixin, InvenTreeTree):
 
     @staticmethod
     def get_api_url():
+        """Return the API url associated with the PartCategory model"""
         return reverse('api-part-category-list')
 
     def get_absolute_url(self):
+        """Return the web URL associated with the detail view for this PartCategory instance"""
         return reverse('category-detail', kwargs={'pk': self.id})
 
     class Meta:
+        """Metaclass defines extra model properties"""
         verbose_name = _("Part Category")
         verbose_name_plural = _("Part Categories")
 
@@ -131,6 +134,7 @@ class PartCategory(MetadataMixin, InvenTreeTree):
 
     @property
     def item_count(self):
+        """Return the number of parts contained in this PartCategory"""
         return self.partcount()
 
     def partcount(self, cascade=True, active=False):
@@ -284,7 +288,7 @@ class PartManager(TreeManager):
     """
 
     def get_queryset(self):
-
+        """Perform default prefetch operations when accessing Part model from the database"""
         return super().get_queryset().prefetch_related(
             'category',
             'category__parent',
@@ -333,6 +337,7 @@ class Part(MetadataMixin, MPTTModel):
     objects = PartManager()
 
     class Meta:
+        """Metaclass defines extra model properties"""
         verbose_name = _("Part")
         verbose_name_plural = _("Parts")
         ordering = ['name', ]
@@ -341,12 +346,13 @@ class Part(MetadataMixin, MPTTModel):
         ]
 
     class MPTTMeta:
+        """MPTT metaclass definitions"""
         # For legacy reasons the 'variant_of' field is used to indicate the MPTT parent
         parent_attr = 'variant_of'
 
     @staticmethod
     def get_api_url():
-
+        """Return the list API endpoint URL associated with the Part model"""
         return reverse('api-part-list')
 
     def api_instance_filters(self):
@@ -450,6 +456,7 @@ class Part(MetadataMixin, MPTTModel):
                                 pass
 
     def __str__(self):
+        """Return a string representation of the Part (for use in the admin interface)"""
         return f"{self.full_name} - {self.description}"
 
     def get_parts_in_bom(self, **kwargs):
@@ -664,15 +671,6 @@ class Part(MetadataMixin, MPTTModel):
                 elements.append(self.revision)
 
             return ' | '.join(elements)
-
-    def set_category(self, category):
-
-        # Ignore if the category is already the same
-        if self.category == category:
-            return
-
-        self.category = category
-        self.save()
 
     def get_absolute_url(self):
         """Return the web URL for viewing this part."""
@@ -956,6 +954,7 @@ class Part(MetadataMixin, MPTTModel):
 
     @property
     def category_path(self):
+        """Return the category path of this Part instance"""
         if self.category:
             return self.category.pathstring
         return ''
@@ -1442,6 +1441,7 @@ class Part(MetadataMixin, MPTTModel):
 
     @property
     def has_bom(self):
+        """Return True if this Part instance has any BOM items"""
         return self.get_bom_items().count() > 0
 
     def get_trackable_parts(self):
@@ -1605,7 +1605,17 @@ class Part(MetadataMixin, MPTTModel):
         return "{a} - {b}".format(a=min_price, b=max_price)
 
     def get_supplier_price_range(self, quantity=1):
+        """Return the supplier price range of this part:
 
+        - Checks if there is any supplier pricing information associated with this Part
+        - Iterate through available supplier pricing and select (min, max)
+        - Returns tuple of (min, max)
+
+        Arguments:
+            quantity: Quantity at which to calculate price (default=1)
+
+        Returns: (min, max) tuple or (None, None) if no supplier pricing available
+        """
         min_price = None
         max_price = None
 
@@ -1719,6 +1729,7 @@ class Part(MetadataMixin, MPTTModel):
 
     @property
     def has_price_breaks(self):
+        """Return True if this part has sale price breaks"""
         return self.price_breaks.count() > 0
 
     @property
@@ -1728,6 +1739,7 @@ class Part(MetadataMixin, MPTTModel):
 
     @property
     def unit_pricing(self):
+        """Returns the price of this Part at quantity=1"""
         return self.get_price(1)
 
     def add_price_break(self, quantity, price):
@@ -1748,10 +1760,12 @@ class Part(MetadataMixin, MPTTModel):
         )
 
     def get_internal_price(self, quantity, moq=True, multiples=True, currency=None):
+        """Return the internal price of this Part at the specified quantity"""
         return common.models.get_price(self, quantity, moq, multiples, currency, break_name='internal_price_breaks')
 
     @property
     def has_internal_price_breaks(self):
+        """Return True if this Part has internal pricing information"""
         return self.internal_price_breaks.count() > 0
 
     @property
@@ -1759,11 +1773,12 @@ class Part(MetadataMixin, MPTTModel):
         """Return the associated price breaks in the correct order."""
         return self.internalpricebreaks.order_by('quantity').all()
 
-    @property
-    def internal_unit_pricing(self):
-        return self.get_internal_price(1)
-
     def get_purchase_price(self, quantity):
+        """Calculate the purchase price for this part at the specified quantity
+
+        - Looks at available supplier pricing data
+        - Calculates the price base on the closest price point
+        """
         currency = currency_code_default()
         try:
             prices = [convert_money(item.purchase_price, currency).amount for item in self.stock_items.all() if item.purchase_price]
@@ -1843,7 +1858,7 @@ class Part(MetadataMixin, MPTTModel):
 
     @transaction.atomic
     def copy_parameters_from(self, other, **kwargs):
-
+        """Copy all parameter values from another Part instance"""
         clear = kwargs.get('clear', True)
 
         if clear:
@@ -1920,11 +1935,8 @@ class Part(MetadataMixin, MPTTModel):
         return tests
 
     def getRequiredTests(self):
-        # Return the tests which are required by this part
+        """Return the tests which are required by this part"""
         return self.getTestTemplates(required=True)
-
-    def requiredTestCount(self):
-        return self.getRequiredTests().count()
 
     @property
     def attachment_count(self):
@@ -2093,6 +2105,7 @@ class Part(MetadataMixin, MPTTModel):
 
     @property
     def related_count(self):
+        """Return the number of 'related parts' which point to this Part"""
         return len(self.get_related_parts())
 
     def is_part_low_on_stock(self):
@@ -2117,9 +2130,11 @@ class PartAttachment(InvenTreeAttachment):
 
     @staticmethod
     def get_api_url():
+        """Return the list API endpoint URL associated with the PartAttachment model"""
         return reverse('api-part-attachment-list')
 
     def getSubdir(self):
+        """Returns the media subdirectory where part attachments are stored"""
         return os.path.join("part_files", str(self.part.id))
 
     part = models.ForeignKey(Part, on_delete=models.CASCADE,
@@ -2131,6 +2146,7 @@ class PartSellPriceBreak(common.models.PriceBreak):
 
     @staticmethod
     def get_api_url():
+        """Return the list API endpoint URL associated with the PartSellPriceBreak model"""
         return reverse('api-part-sale-price-list')
 
     part = models.ForeignKey(
@@ -2141,6 +2157,7 @@ class PartSellPriceBreak(common.models.PriceBreak):
     )
 
     class Meta:
+        """Metaclass providing extra model definition"""
         unique_together = ('part', 'quantity')
 
 
@@ -2149,6 +2166,7 @@ class PartInternalPriceBreak(common.models.PriceBreak):
 
     @staticmethod
     def get_api_url():
+        """Return the list API endpoint URL associated with the PartInternalPriceBreak model"""
         return reverse('api-part-internal-price-list')
 
     part = models.ForeignKey(
@@ -2158,6 +2176,7 @@ class PartInternalPriceBreak(common.models.PriceBreak):
     )
 
     class Meta:
+        """Metaclass providing extra model definition"""
         unique_together = ('part', 'quantity')
 
 
@@ -2176,6 +2195,7 @@ class PartStar(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('User'), related_name='starred_parts')
 
     class Meta:
+        """Metaclass providing extra model definition"""
         unique_together = [
             'part',
             'user'
@@ -2195,6 +2215,7 @@ class PartCategoryStar(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('User'), related_name='starred_categories')
 
     class Meta:
+        """Metaclass providing extra model definition"""
         unique_together = [
             'category',
             'user',
@@ -2216,16 +2237,17 @@ class PartTestTemplate(models.Model):
 
     @staticmethod
     def get_api_url():
+        """Return the list API endpoint URL associated with the PartTestTemplate model"""
         return reverse('api-part-test-template-list')
 
     def save(self, *args, **kwargs):
-
+        """Enforce 'clean' operation when saving a PartTestTemplate instance"""
         self.clean()
 
         super().save(*args, **kwargs)
 
     def clean(self):
-
+        """Clean fields for the PartTestTemplate model"""
         self.test_name = self.test_name.strip()
 
         self.validate_unique()
@@ -2320,9 +2342,11 @@ class PartParameterTemplate(models.Model):
 
     @staticmethod
     def get_api_url():
+        """Return the list API endpoint URL associated with the PartParameterTemplate model"""
         return reverse('api-part-parameter-template-list')
 
     def __str__(self):
+        """Return a string representation of a PartParameterTemplate instance"""
         s = str(self.name)
         if self.units:
             s += " ({units})".format(units=self.units)
@@ -2368,10 +2392,11 @@ class PartParameter(models.Model):
 
     @staticmethod
     def get_api_url():
+        """Return the list API endpoint URL associated with the PartParameter model"""
         return reverse('api-part-parameter-list')
 
     def __str__(self):
-        # String representation of a PartParameter (used in the admin interface)
+        """String representation of a PartParameter (used in the admin interface)"""
         return "{part} : {param} = {data}{units}".format(
             part=str(self.part.full_name),
             param=str(self.template.name),
@@ -2380,6 +2405,7 @@ class PartParameter(models.Model):
         )
 
     class Meta:
+        """Metaclass providing extra model definition"""
         # Prevent multiple instances of a parameter for a single part
         unique_together = ('part', 'template')
 
@@ -2391,6 +2417,7 @@ class PartParameter(models.Model):
 
     @classmethod
     def create(cls, part, template, data, save=False):
+        """Custom save method for the PartParameter class"""
         part_parameter = cls(part=part, template=template, data=data)
         if save:
             part_parameter.save()
@@ -2408,6 +2435,7 @@ class PartCategoryParameterTemplate(models.Model):
     """
 
     class Meta:
+        """Metaclass providing extra model definition"""
         constraints = [
             UniqueConstraint(fields=['category', 'parameter_template'],
                              name='unique_category_parameter_template_pair')
@@ -2438,7 +2466,7 @@ class PartCategoryParameterTemplate(models.Model):
                                      help_text=_('Default Parameter Value'))
 
 
-class BomItem(models.Model, DataImportMixin):
+class BomItem(DataImportMixin, models.Model):
     """A BomItem links a part to its component items.
 
     A part can have a BOM (bill of materials) which defines
@@ -2492,6 +2520,7 @@ class BomItem(models.Model, DataImportMixin):
 
     @staticmethod
     def get_api_url():
+        """Return the list API endpoint URL associated with the BomItem model"""
         return reverse('api-bom-list')
 
     def get_valid_parts_for_allocation(self, allow_variants=True, allow_substitutes=True):
@@ -2546,7 +2575,7 @@ class BomItem(models.Model, DataImportMixin):
         return Q(part__in=[part.pk for part in self.get_valid_parts_for_allocation()])
 
     def save(self, *args, **kwargs):
-
+        """Enforce 'clean' operation when saving a BomItem instance"""
         self.clean()
         super().save(*args, **kwargs)
 
@@ -2686,12 +2715,14 @@ class BomItem(models.Model, DataImportMixin):
             raise ValidationError({'sub_part': _('Sub part must be specified')})
 
     class Meta:
+        """Metaclass providing extra model definition"""
         verbose_name = _("BOM Item")
 
         # Prevent duplication of parent/child rows
         unique_together = ('part', 'sub_part')
 
     def __str__(self):
+        """Return a string representation of this BomItem instance"""
         return "{n} x {child} to make {parent}".format(
             parent=self.part.full_name,
             child=self.sub_part.full_name,
@@ -2788,13 +2819,14 @@ class BomItemSubstitute(models.Model):
     """
 
     class Meta:
+        """Metaclass providing extra model definition"""
         verbose_name = _("BOM Item Substitute")
 
         # Prevent duplication of substitute parts
         unique_together = ('part', 'bom_item')
 
     def save(self, *args, **kwargs):
-
+        """Enforce a full_clean when saving the BomItemSubstitute model"""
         self.full_clean()
 
         super().save(*args, **kwargs)
@@ -2814,6 +2846,7 @@ class BomItemSubstitute(models.Model):
 
     @staticmethod
     def get_api_url():
+        """Returns the list API endpoint URL associated with this model"""
         return reverse('api-bom-substitute-list')
 
     bom_item = models.ForeignKey(
@@ -2847,6 +2880,7 @@ class PartRelated(models.Model):
                                verbose_name=_('Part 2'), help_text=_('Select Related Part'))
 
     def __str__(self):
+        """Return a string representation of this Part-Part relationship"""
         return f'{self.part_1} <--> {self.part_2}'
 
     def validate(self, part_1, part_2):

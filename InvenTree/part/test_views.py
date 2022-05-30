@@ -8,6 +8,7 @@ from .models import Part
 
 
 class PartViewTestCase(InvenTreeTestCase):
+    """Base class for unit testing the various Part views"""
 
     fixtures = [
         'category',
@@ -21,13 +22,12 @@ class PartViewTestCase(InvenTreeTestCase):
     roles = 'all'
     superuser = True
 
-    def setUp(self):
-        super().setUp()
-
 
 class PartListTest(PartViewTestCase):
+    """Unit tests for the PartList view"""
 
     def test_part_index(self):
+        """Test that the PartIndex page returns successfully"""
         response = self.client.get(reverse('part-index'))
         self.assertEqual(response.status_code, 200)
 
@@ -38,6 +38,7 @@ class PartListTest(PartViewTestCase):
 
 
 class PartDetailTest(PartViewTestCase):
+    """Unit tests for the PartDetail view"""
 
     def test_part_detail(self):
         """Test that we can retrieve a part detail page."""
@@ -67,6 +68,7 @@ class PartDetailTest(PartViewTestCase):
         pk = 1
 
         def test_ipn_match(index_result=False, detail_result=False):
+            """Helper function for matching IPN detail view"""
             index_redirect = False
             detail_redirect = False
 
@@ -117,11 +119,12 @@ class PartQRTest(PartViewTestCase):
     """Tests for the Part QR Code AJAX view."""
 
     def test_html_redirect(self):
-        # A HTML request for a QR code should be redirected (use an AJAX request instead)
+        """A HTML request for a QR code should be redirected (use an AJAX request instead)"""
         response = self.client.get(reverse('part-qr', args=(1,)))
         self.assertEqual(response.status_code, 302)
 
     def test_valid_part(self):
+        """Test QR code response for a Part"""
         response = self.client.get(reverse('part-qr', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
 
@@ -131,6 +134,7 @@ class PartQRTest(PartViewTestCase):
         self.assertIn('<img src=', data)
 
     def test_invalid_part(self):
+        """Test response for an invalid Part ID value"""
         response = self.client.get(reverse('part-qr', args=(9999,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
 
         self.assertEqual(response.status_code, 200)

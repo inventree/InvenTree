@@ -32,7 +32,7 @@ class TestForwardMigrations(MigratorTestCase):
             print(p.is_template)
 
     def test_models_exist(self):
-
+        """Test that the Part model can still be accessed at the end of schema migration"""
         Part = self.new_state.apps.get_model('part', 'part')
 
         self.assertEqual(Part.objects.count(), 5)
@@ -42,3 +42,7 @@ class TestForwardMigrations(MigratorTestCase):
             part.save()
             part.is_template = False
             part.save()
+
+        for name in ['A', 'C', 'E']:
+            part = Part.objects.get(name=name)
+            self.assertEqual(part.description, f"My part {name}")

@@ -18,6 +18,7 @@ class BomUploadTest(InvenTreeAPITestCase):
     ]
 
     def setUp(self):
+        """Create BOM data as part of setup routine"""
         super().setUp()
 
         self.part = Part.objects.create(
@@ -37,7 +38,7 @@ class BomUploadTest(InvenTreeAPITestCase):
             )
 
     def post_bom(self, filename, file_data, clear_existing=None, expected_code=None, content_type='text/plain'):
-
+        """Helper function for submitting a BOM file"""
         bom_file = SimpleUploadedFile(
             filename,
             file_data,

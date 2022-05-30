@@ -1,3 +1,5 @@
+"""part app specification"""
+
 import logging
 
 from django.apps import AppConfig
@@ -9,6 +11,7 @@ logger = logging.getLogger("inventree")
 
 
 class PartConfig(AppConfig):
+    """Config class for the 'part' app"""
     name = 'part'
 
     def ready(self):

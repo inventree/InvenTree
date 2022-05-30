@@ -107,18 +107,6 @@ def str2bool(x, *args, **kwargs):
 
 
 @register.simple_tag()
-def inrange(n, *args, **kwargs):
-    """Return range(n) for iterating through a numeric quantity."""
-    return range(n)
-
-
-@register.simple_tag()
-def multiply(x, y, *args, **kwargs):
-    """Multiply two numbers together."""
-    return InvenTree.helpers.decimal2string(x * y)
-
-
-@register.simple_tag()
 def add(x, y, *args, **kwargs):
     """Add two numbers together."""
     return x + y
@@ -211,16 +199,19 @@ def inventree_version(shortstring=False, *args, **kwargs):
 
 @register.simple_tag()
 def inventree_is_development(*args, **kwargs):
+    """Returns True if this is a development version of InvenTree"""
     return version.isInvenTreeDevelopmentVersion()
 
 
 @register.simple_tag()
 def inventree_is_release(*args, **kwargs):
+    """Returns True if this is a release version of InvenTree"""
     return not version.isInvenTreeDevelopmentVersion()
 
 
 @register.simple_tag()
 def inventree_docs_version(*args, **kwargs):
+    """Returns the InvenTree documentation version"""
     return version.inventreeDocsVersion()
 
 
@@ -367,6 +358,7 @@ def progress_bar(val, max_val, *args, **kwargs):
 
 @register.simple_tag()
 def get_color_theme_css(username):
+    """Return the cutsom theme .css file for the selected user"""
     user_theme_name = get_user_color_theme(username)
     # Build path to CSS sheet
     inventree_css_sheet = os.path.join('css', 'color-themes', user_theme_name + '.css')
@@ -496,7 +488,7 @@ class I18nStaticNode(StaticNode):
     """
 
     def render(self, context):  # pragma: no cover
-
+        """Render this node with the determined locale context."""
         self.original = getattr(self, 'original', None)
 
         if not self.original:
