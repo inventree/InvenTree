@@ -1,6 +1,6 @@
 """Unit tests for the BuildOrder app"""
 
-from ctypes import Union
+from typing import Union
 from django.test import TestCase
 
 from django.core.exceptions import ValidationError
