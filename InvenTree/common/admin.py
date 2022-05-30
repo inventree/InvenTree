@@ -7,6 +7,7 @@ from import_export.admin import ImportExportModelAdmin
 import common.models
 
 
+@admin.site.register(common.models.InvenTreeSetting)
 class SettingsAdmin(ImportExportModelAdmin):
     """Admin settings for InvenTreeSetting."""
 
@@ -20,6 +21,7 @@ class SettingsAdmin(ImportExportModelAdmin):
             return []
 
 
+@admin.site.register(common.models.InvenTreeUserSetting)
 class UserSettingsAdmin(ImportExportModelAdmin):
     """Admin settings for InvenTreeUserSetting."""
 
@@ -33,18 +35,21 @@ class UserSettingsAdmin(ImportExportModelAdmin):
             return []
 
 
+@admin.site.register(common.models.WebhookEndpoint)
 class WebhookAdmin(ImportExportModelAdmin):
     """Admin settings for Webhook."""
 
     list_display = ('endpoint_id', 'name', 'active', 'user')
 
 
+@admin.site.register(common.models.NotificationEntry)
 class NotificationEntryAdmin(admin.ModelAdmin):
     """Admin settings for NotificationEntry."""
 
     list_display = ('key', 'uid', 'updated', )
 
 
+@admin.site.register(common.models.NotificationMessage)
 class NotificationMessageAdmin(admin.ModelAdmin):
     """Admin settings for NotificationMessage."""
 
@@ -55,9 +60,5 @@ class NotificationMessageAdmin(admin.ModelAdmin):
     search_fields = ('name', 'category', 'message', )
 
 
-admin.site.register(common.models.InvenTreeSetting, SettingsAdmin)
-admin.site.register(common.models.InvenTreeUserSetting, UserSettingsAdmin)
-admin.site.register(common.models.WebhookEndpoint, WebhookAdmin)
+# Register Models to admin
 admin.site.register(common.models.WebhookMessage, ImportExportModelAdmin)
-admin.site.register(common.models.NotificationEntry, NotificationEntryAdmin)
-admin.site.register(common.models.NotificationMessage, NotificationMessageAdmin)
