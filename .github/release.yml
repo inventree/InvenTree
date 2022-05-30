@@ -1,0 +1,26 @@
+# .github/release.yml
+
+changelog:
+  categories:
+    - title: Breaking Changes
+      labels:
+        - Semver-Major
+        - breaking
+    - title: New Features
+      labels:
+        - Semver-Minor
+        - enhancement
+    - title: Bug Fixes
+      labels:
+        - Semver-Patch
+        - bug
+    - title: Devops / Setup Changes
+      labels:
+        - docker
+        - setup
+        - demo
+        - CI
+        - security
+    - title: Other Changes
+      labels:
+        - "*"
