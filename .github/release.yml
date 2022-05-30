@@ -14,11 +14,13 @@ changelog:
       labels:
         - Semver-Patch
         - bug
-    - title: Setup Changes
+    - title: Devops / Setup Changes
       labels:
         - docker
         - setup
         - demo
+        - CI
+        - security
     - title: Other Changes
       labels:
         - "*"
