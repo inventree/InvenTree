@@ -147,7 +147,7 @@ jobs:
         with:
           install: true
       - name: Run flake8
-        run: flake8 InvenTree
+        run: flake8 InvenTree --statistics
 
   coverage:
     name: Tests - DB [SQLite] + Coverage
