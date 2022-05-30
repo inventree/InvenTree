@@ -151,8 +151,7 @@ class PluginConfigInstallSerializer(serializers.Serializer):
             with open(settings.PLUGIN_FILE, "a") as plugin_file:
                 plugin_file.write(f'{" ".join(install_name)}  # Installed {timezone.now()} by {str(self.context["request"].user)}\n')
 
-        # Set result as serializer data -> this will be returned
-        self.data = ret
+        return ret
 
 
 class PluginSettingSerializer(GenericReferencedSettingSerializer):
