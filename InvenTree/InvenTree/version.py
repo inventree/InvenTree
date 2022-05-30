@@ -80,16 +80,17 @@ def isInvenTreeUpToDate():
 
 
 def inventreeApiVersion():
+    """Returns current API version of InvenTree."""
     return INVENTREE_API_VERSION
 
 
 def inventreeDjangoVersion():
-    """Return the version of Django library."""
+    """Returns the version of Django library."""
     return django.get_version()
 
 
 def inventreeCommitHash():
-    """ Returns the git commit hash for the running codebase."""
+    """Returns the git commit hash for the running codebase."""
     # First look in the environment variables, i.e. if running in docker
     commit_hash = os.environ.get('INVENTREE_COMMIT_HASH', '')
 
