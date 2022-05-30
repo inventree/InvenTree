@@ -69,7 +69,7 @@ class MultiStepFormView(SessionWizardView):
 
 
 class FileManagementFormView(MultiStepFormView):
-    """File management form wizard
+    """File management form wizard.
 
     Perform the following steps:
         1. Upload tabular data file
@@ -449,6 +449,14 @@ class FileManagementAjaxView(AjaxView):
     """
 
     def post(self, request):
+        """Handle wizard step call.
+
+        Possible actions:
+        - Step back -> render previous step
+        - Invalid  form -> render error
+        - Valid form and not done -> render next step
+        - Valid form and done -> render final step
+        """
         # check if back-step button was selected
         wizard_back = self.request.POST.get('act-btn_back', None)
         if wizard_back:
@@ -480,6 +488,7 @@ class FileManagementAjaxView(AjaxView):
         return self.renderJsonResponse(request, data={'form_valid': None})
 
     def get(self, request):
+        """Reset storage if flag is set, proceed to render JsonResponse."""
         if 'reset' in request.GET:
             # reset form
             self.storage.reset()
@@ -491,7 +500,8 @@ class FileManagementAjaxView(AjaxView):
         self.setTemplate()
         return super().renderJsonResponse(request, form=form, data=data, context=context)
 
-    def get_data(self):
+    def get_data(self) -> dict:
+        """Get extra context data."""
         data = super().get_data()
         data['hideErrorMessage'] = '1'  # hide the error
         buttons = [{'name': 'back', 'title': _('Previous Step')}] if self.get_step_index() > 0 else []
@@ -504,4 +514,8 @@ class FileManagementAjaxView(AjaxView):
         self.ajax_form_title = self.form_steps_description[self.get_step_index()]
 
     def validate(self, obj, form, **kwargs):
+        """Generic validate action.
+
+        This is the point to process provided userinput.
+        """
         raise NotImplementedError('This function needs to be overridden!')

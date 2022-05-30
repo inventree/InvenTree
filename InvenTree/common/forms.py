@@ -13,6 +13,8 @@ class SettingEditForm(HelperForm):
     """Form for creating / editing a settings object."""
 
     class Meta:
+        """Metaclassoptions for SettingEditForm."""
+
         model = InvenTreeSetting
 
         fields = [
@@ -60,7 +62,7 @@ class MatchFieldForm(forms.Form):
     """Step 2 of FileManagementFormView."""
 
     def __init__(self, *args, **kwargs):
-
+        """Setup filemanager and check columsn."""
         # Get FileManager
         file_manager = None
         if 'file_manager' in kwargs:
@@ -93,7 +95,7 @@ class MatchItemForm(forms.Form):
     """Step 3 of FileManagementFormView."""
 
     def __init__(self, *args, **kwargs):
-
+        """Setup filemanager and create fields."""
         # Get FileManager
         file_manager = None
         if 'file_manager' in kwargs:

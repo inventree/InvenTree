@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+"""App config for common app."""
 
 import logging
 
@@ -8,10 +8,15 @@ logger = logging.getLogger('inventree')
 
 
 class CommonConfig(AppConfig):
+    """AppConfig for common app.
+
+    Clears system wide flags on ready.
+    """
+
     name = 'common'
 
     def ready(self):
-
+        """Initialize restart flag clearance on startup."""
         self.clear_restart_flag()
 
     def clear_restart_flag(self):

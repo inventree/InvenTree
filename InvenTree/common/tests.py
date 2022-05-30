@@ -232,7 +232,7 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
             self.assertEqual(setting.value, val)
 
     def test_api_detail(self):
-        """Test that we can access the detail view for a setting based on the <key>"""
+        """Test that we can access the detail view for a setting based on the <key>."""
         # These keys are invalid, and should return 404
         for key in ["apple", "carrot", "dog"]:
             response = self.get(
