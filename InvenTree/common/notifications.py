@@ -12,9 +12,7 @@ logger = logging.getLogger('inventree')
 
 # region methods
 class NotificationMethod:
-    """
-    Base class for notification methods
-    """
+    """Base class for notification methods."""
 
     METHOD_NAME = ''
     METHOD_ICON = None
@@ -92,11 +90,11 @@ class NotificationMethod:
 
     # region plugins
     def get_plugin(self):
-        """Returns plugin class"""
+        """Returns plugin class."""
         return False
 
     def global_setting_disable(self):
-        """Check if the method is defined in a plugin and has a global setting"""
+        """Check if the method is defined in a plugin and has a global setting."""
         # Check if plugin has a setting
         if not self.GLOBAL_SETTING:
             return False
@@ -115,9 +113,7 @@ class NotificationMethod:
         return False
 
     def usersetting(self, target):
-        """
-        Returns setting for this method for a given user
-        """
+        """Returns setting for this method for a given user."""
         return NotificationUserSetting.get_setting(f'NOTIFICATION_METHOD_{self.METHOD_NAME.upper()}', user=target, method=self.METHOD_NAME)
     # endregion
 
@@ -204,10 +200,7 @@ class UIMessageNotification(SingleNotificationMethod):
 
 
 def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
-    """
-    Send out a notification
-    """
-
+    """Send out a notification."""
     targets = kwargs.get('targets', None)
     target_fnc = kwargs.get('target_fnc', None)
     target_args = kwargs.get('target_args', [])
