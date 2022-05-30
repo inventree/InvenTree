@@ -55,6 +55,8 @@ class GlobalSettingsSerializer(SettingsSerializer):
     """Serializer for the InvenTreeSetting model."""
 
     class Meta:
+        """Meta options for GlobalSettingsSerializer."""
+
         model = InvenTreeSetting
         fields = [
             'pk',
@@ -75,6 +77,8 @@ class UserSettingsSerializer(SettingsSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
+        """Meta options for UserSettingsSerializer."""
+
         model = InvenTreeUserSetting
         fields = [
             'pk',
@@ -152,12 +156,16 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
     read = serializers.BooleanField(read_only=True)
 
     def get_target(self, obj):
+        """Function to resolve generic object reference to target."""
         return get_objectreference(obj, 'target_content_type', 'target_object_id')
 
     def get_source(self, obj):
+        """Function to resolve generic object reference to source."""
         return get_objectreference(obj, 'source_content_type', 'source_object_id')
 
     class Meta:
+        """Meta options for NotificationMessageSerializer."""
+
         model = NotificationMessage
         fields = [
             'pk',
@@ -175,8 +183,10 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
 
 
 class NotificationReadSerializer(NotificationMessageSerializer):
+    """Serializer for reading a notification."""
 
     def is_valid(self, raise_exception=False):
+        """Ensure instance data is available for view."""
         self.instance = self.context['instance']  # set instance that should be returned
         self._validated_data = True
         return True

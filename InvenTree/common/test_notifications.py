@@ -1,3 +1,5 @@
+"""Tests for basic notification methods and functions in InvenTree."""
+
 import plugin.templatetags.plugin_extras as plugin_tags
 from common.notifications import (BulkNotificationMethod, NotificationMethod,
                                   SingleNotificationMethod, storage)
@@ -6,6 +8,7 @@ from plugin.models import NotificationUserSetting
 
 
 class BaseNotificationTests(BaseNotificationIntegrationTest):
+    """Tests for basic NotificationMethod."""
 
     def test_NotificationMethod(self):
         """Ensure the implementation requirements are tested."""
@@ -53,6 +56,7 @@ class BaseNotificationTests(BaseNotificationIntegrationTest):
             AnotherFalseNotificationMethod('', '', '', {'name': 1, 'message': 2, }, )
 
     def test_failing_passing(self):
+        """Ensure that an error in one deliverymethod is not blocking all mehthods."""
         # cover failing delivery
         self._notification_run()
 
@@ -72,6 +76,10 @@ class BaseNotificationTests(BaseNotificationIntegrationTest):
 
 
 class BulkNotificationMethodTests(BaseNotificationIntegrationTest):
+    """Tests for BulkNotificationMethod classes specifically.
+
+    General tests for NotificationMethods are in BaseNotificationTests.
+    """
 
     def test_BulkNotificationMethod(self):
         """Ensure the implementation requirements are tested.
@@ -90,6 +98,10 @@ class BulkNotificationMethodTests(BaseNotificationIntegrationTest):
 
 
 class SingleNotificationMethodTests(BaseNotificationIntegrationTest):
+    """Tests for SingleNotificationMethod classes specifically.
+
+    General tests for NotificationMethods are in BaseNotificationTests.
+    """
 
     def test_SingleNotificationMethod(self):
         """Ensure the implementation requirements are tested.
@@ -113,6 +125,7 @@ class NotificationUserSettingTests(BaseNotificationIntegrationTest):
     """Tests for NotificationUserSetting."""
 
     def setUp(self):
+        """Setup for all tests."""
         super().setUp()
         self.client.login(username=self.user.username, password='password')
 
