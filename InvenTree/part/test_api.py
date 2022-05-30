@@ -220,8 +220,7 @@ class PartAPITest(InvenTreeAPITestCase):
             url,
             {
                 'parent': 'null',
-            },
-            format='json'
+            }
         )
 
         self.assertEqual(len(response.data), 2)
@@ -232,8 +231,7 @@ class PartAPITest(InvenTreeAPITestCase):
             {
                 'parent': 1,
                 'cascade': 'true',
-            },
-            format='json',
+            }
         )
 
         self.assertEqual(len(response.data), 5)
@@ -244,8 +242,7 @@ class PartAPITest(InvenTreeAPITestCase):
             {
                 'parent': 1,
                 'cascade': 'false',
-            },
-            format='json',
+            }
         )
 
         self.assertEqual(len(response.data), 3)
@@ -392,8 +389,7 @@ class PartAPITest(InvenTreeAPITestCase):
                 'test_name': 'New Test',
                 'required': True,
                 'description': 'a test description'
-            },
-            format='json',
+            }
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -405,8 +401,7 @@ class PartAPITest(InvenTreeAPITestCase):
                 'part': 10004,
                 'test_name': "   newtest",
                 'description': 'dafsdf',
-            },
-            format='json',
+            }
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -1005,8 +1000,7 @@ class PartDetailTests(InvenTreeAPITestCase):
             url,
             {
                 'revision': 'A',
-            },
-            format='json',
+            }
         )
 
         self.assertEqual(response.status_code, 400)
@@ -1808,8 +1802,7 @@ class PartParameterTest(InvenTreeAPITestCase):
             url,
             {
                 'part': 3,
-            },
-            format='json'
+            }
         )
 
         self.assertEqual(len(response.data), 3)
@@ -1819,8 +1812,7 @@ class PartParameterTest(InvenTreeAPITestCase):
             url,
             {
                 'template': 1,
-            },
-            format='json',
+            }
         )
 
         self.assertEqual(len(response.data), 3)
