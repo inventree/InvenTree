@@ -130,6 +130,8 @@ class PurchaseOrderExtraLineResource(ModelResource):
     """Class for managing import / export of PurchaseOrderExtraLine data."""
 
     class Meta(GeneralExtraLineMeta):
+        """Metaclass options."""
+
         model = PurchaseOrderExtraLine
 
 
@@ -183,6 +185,8 @@ class SalesOrderExtraLineResource(ModelResource):
     """Class for managing import / export of SalesOrderExtraLine data."""
 
     class Meta(GeneralExtraLineMeta):
+        """Metaclass options."""
+
         model = SalesOrderExtraLine
 
 

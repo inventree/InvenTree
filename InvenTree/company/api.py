@@ -85,6 +85,8 @@ class ManufacturerPartFilter(rest_filters.FilterSet):
     """Custom API filters for the ManufacturerPart list endpoint."""
 
     class Meta:
+        """Metaclass options."""
+
         model = ManufacturerPart
         fields = [
             'manufacturer',

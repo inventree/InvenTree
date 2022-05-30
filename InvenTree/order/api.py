@@ -91,6 +91,8 @@ class PurchaseOrderFilter(rest_filters.FilterSet):
         return queryset
 
     class Meta:
+        """Metaclass options."""
+
         model = models.PurchaseOrder
         fields = [
             'supplier',
@@ -355,6 +357,8 @@ class PurchaseOrderLineItemFilter(rest_filters.FilterSet):
     """Custom filters for the PurchaseOrderLineItemList endpoint."""
 
     class Meta:
+        """Metaclass options."""
+
         model = models.PurchaseOrderLineItem
         fields = [
             'order',
@@ -728,6 +732,8 @@ class SalesOrderLineItemFilter(rest_filters.FilterSet):
     """Custom filters for SalesOrderLineItemList endpoint."""
 
     class Meta:
+        """Metaclass options."""
+
         model = models.SalesOrderLineItem
         fields = [
             'order',
@@ -993,6 +999,8 @@ class SalesOrderShipmentFilter(rest_filters.FilterSet):
         return queryset
 
     class Meta:
+        """Metaclass options."""
+
         model = models.SalesOrderShipment
         fields = [
             'order',

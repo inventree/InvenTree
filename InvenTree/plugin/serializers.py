@@ -25,6 +25,8 @@ class MetadataSerializer(serializers.ModelSerializer):
         super().__init__(*args, **kwargs)
 
     class Meta:
+        """Metaclass options."""
+
         fields = [
             'metadata',
         ]

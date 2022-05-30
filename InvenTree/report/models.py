@@ -84,6 +84,8 @@ class ReportBase(models.Model):
     """Base class for uploading html templates."""
 
     class Meta:
+        """Metaclass options. Abstract ensures no database table is created."""
+
         abstract = True
 
     def save(self, *args, **kwargs):
@@ -250,6 +252,8 @@ class ReportTemplateBase(ReportBase):
     )
 
     class Meta:
+        """Metaclass options. Abstract ensures no database table is created."""
+
         abstract = True
 
 

@@ -64,6 +64,8 @@ class UserSerializer(serializers.ModelSerializer):
     """Serializer for User - provides all fields"""
 
     class Meta:
+        """Metaclass options."""
+
         model = User
         fields = 'all'
 
@@ -72,6 +74,8 @@ class UserSerializerBrief(serializers.ModelSerializer):
     """Serializer for User - provides limited information"""
 
     class Meta:
+        """Metaclass options."""
+
         model = User
         fields = [
             'pk',
@@ -311,6 +315,8 @@ class DataFileUploadSerializer(serializers.Serializer):
     TARGET_MODEL = None
 
     class Meta:
+        """Metaclass options."""
+
         fields = [
             'data_file',
         ]
@@ -459,6 +465,8 @@ class DataFileExtractSerializer(serializers.Serializer):
     TARGET_MODEL = None
 
     class Meta:
+        """Metaclass options."""
+
         fields = [
             'columns',
             'rows',

@@ -109,6 +109,8 @@ class ReferenceIndexingMixin(models.Model):
     """
 
     class Meta:
+        """Metaclass options. Abstract ensures no database table is created."""
+
         abstract = True
 
     def rebuild_reference_field(self):
@@ -275,6 +277,8 @@ class InvenTreeAttachment(models.Model):
             raise ValidationError(_("Error renaming file"))
 
     class Meta:
+        """Metaclass options. Abstract ensures no database table is created."""
+
         abstract = True
 
 

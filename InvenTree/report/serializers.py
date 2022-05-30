@@ -11,6 +11,8 @@ class TestReportSerializer(InvenTreeModelSerializer):
     template = InvenTreeAttachmentSerializerField(required=True)
 
     class Meta:
+        """Metaclass options."""
+
         model = TestReport
         fields = [
             'pk',
@@ -27,6 +29,8 @@ class BuildReportSerializer(InvenTreeModelSerializer):
     template = InvenTreeAttachmentSerializerField(required=True)
 
     class Meta:
+        """Metaclass options."""
+
         model = BuildReport
         fields = [
             'pk',
@@ -43,6 +47,8 @@ class BOMReportSerializer(InvenTreeModelSerializer):
     template = InvenTreeAttachmentSerializerField(required=True)
 
     class Meta:
+        """Metaclass options."""
+
         model = BillOfMaterialsReport
         fields = [
             'pk',
@@ -59,6 +65,8 @@ class PurchaseOrderReportSerializer(InvenTreeModelSerializer):
     template = InvenTreeAttachmentSerializerField(required=True)
 
     class Meta:
+        """Metaclass options."""
+
         model = PurchaseOrderReport
         fields = [
             'pk',
@@ -75,6 +83,8 @@ class SalesOrderReportSerializer(InvenTreeModelSerializer):
     template = InvenTreeAttachmentSerializerField(required=True)
 
     class Meta:
+        """Metaclass options."""
+
         model = SalesOrderReport
         fields = [
             'pk',

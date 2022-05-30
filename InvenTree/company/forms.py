@@ -19,6 +19,8 @@ class CompanyImageDownloadForm(HelperForm):
     )
 
     class Meta:
+        """Metaclass options."""
+
         model = Company
         fields = [
             'url',
@@ -36,6 +38,8 @@ class EditPriceBreakForm(HelperForm):
     )
 
     class Meta:
+        """Metaclass options."""
+
         model = SupplierPriceBreak
         fields = [
             'part',

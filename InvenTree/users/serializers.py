@@ -13,7 +13,7 @@ class UserSerializer(InvenTreeModelSerializer):
     """Serializer for a User."""
 
     class Meta:
-        """Metaclass defines serializer fields"""
+        """Metaclass defines serializer fields."""
         model = User
         fields = ('pk',
                   'username',
@@ -30,7 +30,7 @@ class OwnerSerializer(InvenTreeModelSerializer):
     label = serializers.CharField(read_only=True)
 
     class Meta:
-        """Metaclass defines serializer fields"""
+        """Metaclass defines serializer fields."""
         model = Owner
         fields = [
             'pk',

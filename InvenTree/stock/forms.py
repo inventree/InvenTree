@@ -12,6 +12,8 @@ class ReturnStockItemForm(HelperForm):
     """
 
     class Meta:
+        """Metaclass options."""
+
         model = StockItem
         fields = [
             'location',
@@ -25,6 +27,8 @@ class ConvertStockItemForm(HelperForm):
     """
 
     class Meta:
+        """Metaclass options."""
+
         model = StockItem
         fields = [
             'part'
@@ -38,6 +42,8 @@ class TrackingEntryForm(HelperForm):
     """
 
     class Meta:
+        """Metaclass options."""
+
         model = StockItemTracking
 
         fields = [

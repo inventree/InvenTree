@@ -123,6 +123,8 @@ class ConfirmForm(forms.Form):
     )
 
     class Meta:
+        """Metaclass options."""
+
         fields = [
             'confirm'
         ]
@@ -139,6 +141,8 @@ class DeleteForm(forms.Form):
     )
 
     class Meta:
+        """Metaclass options."""
+
         fields = [
             'confirm_delete'
         ]
@@ -148,6 +152,8 @@ class EditUserForm(HelperForm):
     """Form for editing user information."""
 
     class Meta:
+        """Metaclass options."""
+
         model = User
         fields = [
             'first_name',
@@ -175,6 +181,8 @@ class SetPasswordForm(HelperForm):
                                        help_text=_('Confirm new password'))
 
     class Meta:
+        """Metaclass options."""
+
         model = User
         fields = [
             'enter_password',
@@ -188,6 +196,8 @@ class SettingCategorySelectForm(forms.ModelForm):
     category = forms.ModelChoiceField(queryset=PartCategory.objects.all())
 
     class Meta:
+        """Metaclass options."""
+
         model = PartCategory
         fields = [
             'category'

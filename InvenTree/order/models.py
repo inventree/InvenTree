@@ -122,6 +122,8 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
         super().save(*args, **kwargs)
 
     class Meta:
+        """Metaclass options. Abstract ensures no database table is created."""
+
         abstract = True
 
     description = models.CharField(max_length=250, verbose_name=_('Description'), help_text=_('Order description'))
@@ -880,6 +882,8 @@ class OrderLineItem(models.Model):
     OVERDUE_FILTER = Q(received__lt=F('quantity')) & ~Q(target_date=None) & Q(target_date__lt=datetime.now().date())
 
     class Meta:
+        """Metaclass options. Abstract ensures no database table is created."""
+
         abstract = True
 
     quantity = RoundingDecimalField(
@@ -909,9 +913,9 @@ class OrderExtraLine(OrderLineItem):
     """
 
     class Meta:
+        """Metaclass options. Abstract ensures no database table is created."""
+
         abstract = True
-        unique_together = [
-        ]
 
     context = models.JSONField(
         blank=True, null=True,

@@ -132,6 +132,8 @@ class PurchaseOrderSerializer(AbstractOrderSerializer, ReferenceIndexingSerializ
     responsible_detail = OwnerSerializer(source='responsible', read_only=True, many=False)
 
     class Meta:
+        """Metaclass options."""
+
         model = order.models.PurchaseOrder
 
         fields = [
@@ -169,6 +171,8 @@ class PurchaseOrderCancelSerializer(serializers.Serializer):
     """Serializer for cancelling a PurchaseOrder."""
 
     class Meta:
+        """Metaclass options."""
+
         fields = [],
 
     def get_context_data(self):
@@ -193,6 +197,8 @@ class PurchaseOrderCompleteSerializer(serializers.Serializer):
     """Serializer for completing a purchase order."""
 
     class Meta:
+        """Metaclass options."""
+
         fields = []
 
     def get_context_data(self):
@@ -213,6 +219,8 @@ class PurchaseOrderIssueSerializer(serializers.Serializer):
     """Serializer for issuing (sending) a purchase order."""
 
     class Meta:
+        """Metaclass options."""
+
         fields = []
 
     def save(self):
@@ -331,6 +339,8 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
         return data
 
     class Meta:
+        """Metaclass options."""
+
         model = order.models.PurchaseOrderLineItem
 
         fields = [
@@ -361,6 +371,8 @@ class PurchaseOrderExtraLineSerializer(AbstractExtraLineSerializer, InvenTreeMod
     order_detail = PurchaseOrderSerializer(source='order', many=False, read_only=True)
 
     class Meta(AbstractExtraLineMeta):
+        """Metaclass options."""
+
         model = order.models.PurchaseOrderExtraLine
 
 
@@ -368,6 +380,8 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
     """A serializer for receiving a single purchase order line item against a purchase order."""
 
     class Meta:
+        """Metaclass options."""
+
         fields = [
             'barcode',
             'line_item',
@@ -578,6 +592,8 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
                     raise ValidationError(detail=serializers.as_serializer_error(exc))
 
     class Meta:
+        """Metaclass options."""
+
         fields = [
             'items',
             'location',
@@ -588,6 +604,8 @@ class PurchaseOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
     """Serializers for the PurchaseOrderAttachment model."""
 
     class Meta:
+        """Metaclass options."""
+
         model = order.models.PurchaseOrderAttachment
 
         fields = [
@@ -650,6 +668,8 @@ class SalesOrderSerializer(AbstractOrderSerializer, ReferenceIndexingSerializerM
     reference = serializers.CharField(required=True)
 
     class Meta:
+        """Metaclass options."""
+
         model = order.models.SalesOrder
 
         fields = [
@@ -727,6 +747,8 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
             self.fields.pop('customer_detail')
 
     class Meta:
+        """Metaclass options."""
+
         model = order.models.SalesOrderAllocation
 
         fields = [
@@ -807,6 +829,8 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
     )
 
     class Meta:
+        """Metaclass options."""
+
         model = order.models.SalesOrderLineItem
 
         fields = [
@@ -837,6 +861,8 @@ class SalesOrderShipmentSerializer(InvenTreeModelSerializer):
     order_detail = SalesOrderSerializer(source='order', read_only=True, many=False)
 
     class Meta:
+        """Metaclass options."""
+
         model = order.models.SalesOrderShipment
 
         fields = [
@@ -858,6 +884,8 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
     """Serializer for completing (shipping) a SalesOrderShipment."""
 
     class Meta:
+        """Metaclass options."""
+
         model = order.models.SalesOrderShipment
 
         fields = [
@@ -908,6 +936,8 @@ class SalesOrderShipmentAllocationItemSerializer(serializers.Serializer):
     """A serializer for allocating a single stock-item against a SalesOrder shipment."""
 
     class Meta:
+        """Metaclass options."""
+
         fields = [
             'line_item',
             'stock_item',
@@ -1021,6 +1051,8 @@ class SalesOrderSerialAllocationSerializer(serializers.Serializer):
     """DRF serializer for allocation of serial numbers against a sales order / shipment."""
 
     class Meta:
+        """Metaclass options."""
+
         fields = [
             'line_item',
             'quantity',
@@ -1175,6 +1207,8 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
     """DRF serializer for allocation of stock items against a sales order / shipment."""
 
     class Meta:
+        """Metaclass options."""
+
         fields = [
             'items',
             'shipment',
@@ -1244,6 +1278,8 @@ class SalesOrderExtraLineSerializer(AbstractExtraLineSerializer, InvenTreeModelS
     order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
 
     class Meta(AbstractExtraLineMeta):
+        """Metaclass options."""
+
         model = order.models.SalesOrderExtraLine
 
 
@@ -1251,6 +1287,8 @@ class SalesOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
     """Serializers for the SalesOrderAttachment model."""
 
     class Meta:
+        """Metaclass options."""
+
         model = order.models.SalesOrderAttachment
 
         fields = [

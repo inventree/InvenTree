@@ -10,6 +10,8 @@ class StockItemLabelSerializer(InvenTreeModelSerializer):
     label = InvenTreeAttachmentSerializerField(required=True)
 
     class Meta:
+        """Metaclass options."""
+
         model = StockItemLabel
         fields = [
             'pk',
@@ -27,6 +29,8 @@ class StockLocationLabelSerializer(InvenTreeModelSerializer):
     label = InvenTreeAttachmentSerializerField(required=True)
 
     class Meta:
+        """Metaclass options."""
+
         model = StockLocationLabel
         fields = [
             'pk',
@@ -44,6 +48,8 @@ class PartLabelSerializer(InvenTreeModelSerializer):
     label = InvenTreeAttachmentSerializerField(required=True)
 
     class Meta:
+        """Metaclass options."""
+
         model = PartLabel
         fields = [
             'pk',

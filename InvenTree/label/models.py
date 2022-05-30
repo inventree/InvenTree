@@ -74,6 +74,8 @@ class LabelTemplate(models.Model):
     """Base class for generic, filterable labels."""
 
     class Meta:
+        """Metaclass options. Abstract ensures no database table is created."""
+
         abstract = True
 
     # Each class of label files will be stored in a separate subdirectory

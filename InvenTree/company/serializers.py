@@ -26,6 +26,8 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
     image = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
     class Meta:
+        """Metaclass options."""
+
         model = Company
         fields = [
             'pk',
@@ -69,6 +71,8 @@ class CompanySerializer(InvenTreeModelSerializer):
     )
 
     class Meta:
+        """Metaclass options."""
+
         model = Company
         fields = [
             'pk',
@@ -122,6 +126,8 @@ class ManufacturerPartSerializer(InvenTreeModelSerializer):
     manufacturer = serializers.PrimaryKeyRelatedField(queryset=Company.objects.filter(is_manufacturer=True))
 
     class Meta:
+        """Metaclass options."""
+
         model = ManufacturerPart
         fields = [
             'pk',
@@ -140,6 +146,8 @@ class ManufacturerPartAttachmentSerializer(InvenTreeAttachmentSerializer):
     """Serializer for the ManufacturerPartAttachment class."""
 
     class Meta:
+        """Metaclass options."""
+
         model = ManufacturerPartAttachment
 
         fields = [
@@ -172,6 +180,8 @@ class ManufacturerPartParameterSerializer(InvenTreeModelSerializer):
             self.fields.pop('manufacturer_part_detail')
 
     class Meta:
+        """Metaclass options."""
+
         model = ManufacturerPartParameter
 
         fields = [
@@ -226,6 +236,8 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
     manufacturer_part_detail = ManufacturerPartSerializer(source='manufacturer_part', read_only=True)
 
     class Meta:
+        """Metaclass options."""
+
         model = SupplierPart
         fields = [
             'description',
@@ -283,6 +295,8 @@ class SupplierPriceBreakSerializer(InvenTreeModelSerializer):
     )
 
     class Meta:
+        """Metaclass options."""
+
         model = SupplierPriceBreak
         fields = [
             'pk',
