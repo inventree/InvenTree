@@ -4,19 +4,78 @@ Ensure that the release tag matches the InvenTree version number:
 master / main branch:
     - version number must end with 'dev'
 
-stable branch:
-    - version number must *not* end with 'dev'
-    - version number cannot already exist as a release tag
-
 tagged branch:
     - version number must match tag being built
     - version number cannot already exist as a release tag
 
 """
 
+import json
 import os
 import re
 import sys
+
+import requests
+
+
+def get_existing_release_tags():
+    """Request information on existing releases via the GitHub API"""
+
+    response = requests.get('https://api.github.com/repos/inventree/inventree/releases')
+
+    if response.status_code != 200:
+        raise ValueError(f'Unexpected status code from GitHub API: {response.status_code}')
+
+    data = json.loads(response.text)
+
+    # Return a list of all tags
+    tags = []
+
+    for release in data:
+        tag = release['tag_name'].strip()
+        match = re.match(r"^.*(\d+)\.(\d+)\.(\d+).*$", tag)
+
+        if len(match.groups()) != 3:
+            print(f"Version '{tag}' did not match expected pattern")
+            continue
+
+        tags.append([int(x) for x in match.groups()])
+
+    return tags
+
+
+def check_version_number(version_string):
+    """Check the provided version number.
+
+    Returns True if the provided version is the 'newest' InvenTree release
+    """
+
+    print(f"Checking version '{version_string}'")
+
+    # Check that the version string matches the required format
+    match = re.match(r"^(\d+)\.(\d+)\.(\d+)(?: dev)$", version_string)
+
+    if len(match.groups()) != 3:
+        raise ValueError(f"Version string '{version_string}' did not match required pattern")
+
+    version_tuple = [int(x) for x in match.groups()]
+
+    # Look through the existing releases
+    existing = get_existing_release_tags()
+
+    # Assume that this is the highest release, unless told otherwise
+    highest_release = True
+
+    for release in existing:
+        if release == version_tuple:
+            raise ValueError(f"Duplicate release '{version_string}' exists!")
+
+        if release > version_tuple:
+            highest_release = False
+            print(f"Found newer release: {str(release)}")
+
+    return highest_release
+
 
 if __name__ == '__main__':
 
@@ -49,24 +108,12 @@ if __name__ == '__main__':
 
     print(f"InvenTree Version: '{version}'")
 
+    highest_release = check_version_number(version)
+
     # Determine which docker tag we are going to use
-    docker_tag = None
+    docker_tags = None
 
-    if GITHUB_REF_TYPE == 'branch' and ('stable' in GITHUB_REF or 'stable' in GITHUB_BASE_REF):
-        print("Checking requirements for 'stable' release branch:")
-
-        pattern = r"^\d+(\.\d+)+$"
-        result = re.match(pattern, version)
-
-        if result is None:
-            print(f"Version number '{version}' does not match required pattern for stable branch")
-            sys.exit(1)
-        else:
-            print(f"Version number '{version}' matches stable branch")
-
-        docker_tag = 'stable'
-
-    elif GITHUB_REF_TYPE == 'tag':
+    if GITHUB_REF_TYPE == 'tag':
         # GITHUB_REF should be of th eform /refs/heads/<tag>
         version_tag = GITHUB_REF.split('/')[-1]
         print(f"Checking requirements for tagged release - '{version_tag}':")
@@ -77,7 +124,10 @@ if __name__ == '__main__':
 
         # TODO: Check if there is already a release with this tag!
 
-        docker_tag = version_tag
+        if highest_release:
+            docker_tags = [version_tag, 'stable']
+        else:
+            docker_tags = [version_tag]
 
     elif GITHUB_REF_TYPE == 'branch':
         # Otherwise we know we are targetting the 'master' branch
@@ -92,7 +142,7 @@ if __name__ == '__main__':
         else:
             print(f"Version number '{version}' matches development branch")
 
-        docker_tag = 'latest'
+        docker_tags = ['latest']
 
     else:
         print("Unsupported branch / version combination:")
@@ -102,13 +152,20 @@ if __name__ == '__main__':
         print("GITHUB_REF:", GITHUB_REF)
         sys.exit(1)
 
-    if docker_tag is None:
+    if docker_tags is None:
         print("Docker tag could not be determined")
         sys.exit(1)
 
     print(f"Version check passed for '{version}'!")
-    print(f"Docker tag: '{docker_tag}'")
+    print(f"Docker tag: '{docker_tags}'")
 
     # Ref: https://getridbug.com/python/how-to-set-environment-variables-in-github-actions-using-python/
     with open(os.getenv('GITHUB_ENV'), 'a') as env_file:
-        env_file.write(f"docker_tag={docker_tag}\n")
+
+        # Construct tag string
+        tags = ",".join([f"inventree/inventree:{tag}" for tag in docker_tags])
+
+        env_file.write(f"docker_tags={tags}\n")
+
+        if GITHUB_REF_TYPE == 'tag' and highest_release:
+            env_file.write("stable_release=1\n")
