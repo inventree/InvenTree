@@ -168,4 +168,4 @@ if __name__ == '__main__':
         env_file.write(f"docker_tags={tags}\n")
 
         if GITHUB_REF_TYPE == 'tag' and highest_release:
-            env_file.write("stable_release=1\n")
+            env_file.write("stable_release=true\n")

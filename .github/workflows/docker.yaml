@@ -27,6 +27,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
       - name: Check out repo
         uses: actions/checkout@v2
@@ -64,4 +67,11 @@ jobs:
           push: true
           target: production
           tags: ${{ env.docker_tags }}
-          build-args: commit_hash=${{ env.git_commit_hash }},commit_date=${{ env.git_commit_date }}
+          build-args: commit_hash="${{ env.git_commit_hash }}", commit_date="${{ env.git_commit_date }}"
+      - name: Push to Stable Branch
+        uses: ad-m/github-push-action@master
+        if: env.stable_release == 'true'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: stable
+          force: true
