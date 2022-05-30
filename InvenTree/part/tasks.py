@@ -24,7 +24,7 @@ def notify_low_stock(part: part.models.Part):
         },
     }
 
-    common.notifications.trigger_notifaction(
+    common.notifications.trigger_notification(
         part,
         'part.notify_low_stock',
         target_fnc=part.get_subscribers,

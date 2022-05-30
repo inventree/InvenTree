@@ -101,4 +101,4 @@ volumes:
             o: bind
             # This directory specified where InvenTree source code is stored "outside" the docker containers
             # By default, this directory is one level above the "docker" directory
-            device: ${INVENTREE_EXT_VOLUME:-../}
+            device: ${INVENTREE_EXT_VOLUME:-./}

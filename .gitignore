@@ -8,6 +8,7 @@ __pycache__/
 env/
 inventree-env/
 ./build/
+.cache/
 develop-eggs/
 dist/
 bin/
@@ -26,7 +27,6 @@ var/
 .installed.cfg
 *.egg
 
-
 # Django stuff:
 *.log
 local_settings.py
@@ -38,6 +38,8 @@ local_settings.py
 # Files used for testing
 dummy_image.*
 _tmp.csv
+inventree/label.pdf
+inventree/label.png
 
 # Sphinx files
 docs/_build
@@ -63,6 +65,7 @@ secret_key.txt
 .idea/
 *.code-workspace
 .vscode/
+.bash_history
 
 # Coverage reports
 .coverage

@@ -91,6 +91,9 @@ jobs:
         cache: 'pip'
     - name: Run pre-commit Checks
       uses: pre-commit/action@v2.0.3
+    - name: Check version number
+      run: |
+        python3 ci/check_version_number.py
 
   python:
     name: Tests - inventree-python
@@ -114,7 +117,7 @@ jobs:
       - name: Enviroment Setup
         uses: ./.github/actions/setup
         with:
-          apt-dependency: gettext
+          apt-dependency: gettext poppler-utils
           update: true
       - name: Download Python Code For `${{ env.wrapper_name }}`
         run: git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }} ./${{ env.wrapper_name }}
@@ -129,22 +132,6 @@ jobs:
           cd ${{ env.wrapper_name }}
           invoke check-server
           coverage run -m unittest discover -s test/
-
-  docstyle:
-    name: Style [Python Docstrings]
-    runs-on: ubuntu-20.04
-
-    needs: pre-commit
-    continue-on-error: true
-
-    steps:
-      - uses: actions/checkout@v1
-      - name: Enviroment Setup
-        uses: ./.github/actions/setup
-        with:
-          install: true
-      - name: Run flake8
-        run: flake8 InvenTree
 
   coverage:
     name: Tests - DB [SQLite] + Coverage
@@ -163,7 +150,7 @@ jobs:
       - name: Enviroment Setup
         uses: ./.github/actions/setup
         with:
-          apt-dependency: gettext
+          apt-dependency: gettext poppler-utils
           update: true
       - name: Coverage Tests
         run: invoke coverage
@@ -212,7 +199,7 @@ jobs:
       - name: Enviroment Setup
         uses: ./.github/actions/setup
         with:
-          apt-dependency: gettext libpq-dev
+          apt-dependency: gettext poppler-utils libpq-dev
           pip-dependency: psycopg2 django-redis>=5.0.0
           update: true
       - name: Run Tests
@@ -255,7 +242,7 @@ jobs:
       - name: Enviroment Setup
         uses: ./.github/actions/setup
         with:
-          apt-dependency: gettext libmysqlclient-dev
+          apt-dependency: gettext poppler-utils libmysqlclient-dev
           pip-dependency: mysqlclient
           update: true
       - name: Run Tests
