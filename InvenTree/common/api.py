@@ -26,6 +26,7 @@ class CsrfExemptMixin(object):
 
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
+        """Overwrites dispatch to be extempt from csrf checks."""
         return super(CsrfExemptMixin, self).dispatch(*args, **kwargs)
 
 
@@ -37,6 +38,7 @@ class WebhookView(CsrfExemptMixin, APIView):
     run_async = False
 
     def post(self, request, endpoint, *args, **kwargs):
+        """Process incomming webhook."""
         # get webhook definition
         self._get_webhook(endpoint, request, *args, **kwargs)
 
@@ -95,6 +97,10 @@ class WebhookView(CsrfExemptMixin, APIView):
 
 
 class SettingsList(generics.ListAPIView):
+    """Generic ListView for settings.
+
+    This is inheritted by all list views for settings.
+    """
 
     filter_backends = [
         DjangoFilterBackend,
@@ -187,7 +193,7 @@ class UserSettingsPermissions(permissions.BasePermission):
     """Special permission class to determine if the user can view / edit a particular setting."""
 
     def has_object_permission(self, request, view, obj):
-
+        """Check if the user that requested is also the object owner."""
         try:
             user = request.user
         except AttributeError:  # pragma: no cover
@@ -253,6 +259,8 @@ class NotificationUserSettingsDetail(generics.RetrieveUpdateAPIView):
 
 
 class NotificationList(generics.ListAPIView):
+    """List view for all notifications of the current user."""
+
     queryset = common.models.NotificationMessage.objects.all()
     serializer_class = common.serializers.NotificationMessageSerializer
 
@@ -314,12 +322,14 @@ class NotificationReadEdit(generics.CreateAPIView):
     ]
 
     def get_serializer_context(self):
+        """Add instance to context so it can be accessed in the serializer."""
         context = super().get_serializer_context()
         if self.request:
             context['instance'] = self.get_object()
         return context
 
     def perform_create(self, serializer):
+        """Set the `read` status to the target value."""
         message = self.get_object()
         try:
             message.read = self.target
@@ -348,6 +358,7 @@ class NotificationReadAll(generics.RetrieveAPIView):
     ]
 
     def get(self, request, *args, **kwargs):
+        """Set all messages for the current user as read."""
         try:
             self.queryset.filter(user=request.user, read=False).update(read=True)
             return Response({'status': 'ok'})

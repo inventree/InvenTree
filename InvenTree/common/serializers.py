@@ -186,7 +186,7 @@ class NotificationReadSerializer(NotificationMessageSerializer):
     """Serializer for reading a notification."""
 
     def is_valid(self, raise_exception=False):
-        """Ensure instance data is available for view."""
+        """Ensure instance data is available for view and let validation pass."""
         self.instance = self.context['instance']  # set instance that should be returned
         self._validated_data = True
         return True
