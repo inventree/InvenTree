@@ -210,7 +210,7 @@ class PartAPITest(InvenTreeAPITestCase):
         url = reverse('api-part-category-list')
 
         # Request *all* part categories
-        response = self.get(url, format='json')
+        response = self.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 8)
@@ -258,7 +258,7 @@ class PartAPITest(InvenTreeAPITestCase):
         }
 
         url = reverse('api-part-category-list')
-        response = self.post(url, data, format='json')
+        response = self.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         parent = response.data['pk']
@@ -270,20 +270,20 @@ class PartAPITest(InvenTreeAPITestCase):
                 'description': 'A sort of animal',
                 'parent': parent,
             }
-            response = self.post(url, data, format='json')
+            response = self.post(url, data)
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(response.data['parent'], parent)
             self.assertEqual(response.data['name'], animal)
             self.assertEqual(response.data['pathstring'], 'Animals/' + animal)
 
         # There should be now 8 categories
-        response = self.get(url, format='json')
+        response = self.get(url)
         self.assertEqual(len(response.data), 12)
 
     def test_cat_detail(self):
         """Test the PartCategoryDetail API endpoint"""
         url = reverse('api-part-category-detail', kwargs={'pk': 4})
-        response = self.get(url, format='json')
+        response = self.get(url)
 
         # Test that we have retrieved the category
         self.assertEqual(response.data['description'], 'Integrated Circuits')
@@ -294,7 +294,7 @@ class PartAPITest(InvenTreeAPITestCase):
         data['name'] = 'Changing category'
         data['parent'] = None
         data['description'] = 'Changing the description'
-        response = self.patch(url, data, format='json')
+        response = self.patch(url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['description'], 'Changing the description')
         self.assertIsNone(response.data['parent'])
@@ -303,13 +303,13 @@ class PartAPITest(InvenTreeAPITestCase):
         """Test part filtering using the API"""
         url = reverse('api-part-list')
         data = {'cascade': True}
-        response = self.get(url, data, format='json')
+        response = self.get(url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), Part.objects.count())
 
         # Test filtering parts by category
         data = {'category': 2}
-        response = self.get(url, data, format='json')
+        response = self.get(url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # There should only be 2 objects in category C
@@ -349,7 +349,7 @@ class PartAPITest(InvenTreeAPITestCase):
         data = {'category': 1, 'cascade': True}
 
         # Now request to include child categories
-        response = self.get(url, data, format='json')
+        response = self.get(url, data)
 
         # Now there should be 5 total parts
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -1218,7 +1218,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         """Helper function for retrieving part data"""
         url = reverse('api-part-list')
 
-        response = self.get(url, format='json')
+        response = self.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -1799,7 +1799,7 @@ class PartParameterTest(InvenTreeAPITestCase):
         """Test for listing part parameters."""
         url = reverse('api-part-parameter-list')
 
-        response = self.get(url, format='json')
+        response = self.get(url)
 
         self.assertEqual(len(response.data), 5)
 
@@ -1840,7 +1840,7 @@ class PartParameterTest(InvenTreeAPITestCase):
 
         self.assertEqual(response.status_code, 201)
 
-        response = self.get(url, format='json')
+        response = self.get(url)
 
         self.assertEqual(len(response.data), 6)
 
@@ -1859,12 +1859,12 @@ class PartParameterTest(InvenTreeAPITestCase):
         self.assertEqual(data['data'], '12')
 
         # PATCH data back in
-        response = self.patch(url, {'data': '15'}, format='json')
+        response = self.patch(url, {'data': '15'})
 
         self.assertEqual(response.status_code, 200)
 
         # Check that the data changed!
-        response = self.get(url, format='json')
+        response = self.get(url)
 
         data = response.data
 
