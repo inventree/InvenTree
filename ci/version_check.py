@@ -53,7 +53,7 @@ def check_version_number(version_string):
     print(f"Checking version '{version_string}'")
 
     # Check that the version string matches the required format
-    match = re.match(r"^(\d+)\.(\d+)\.(\d+)(?: dev)$", version_string)
+    match = re.match(r"^(\d+)\.(\d+)\.(\d+)(?: dev)?$", version_string)
 
     if len(match.groups()) != 3:
         raise ValueError(f"Version string '{version_string}' did not match required pattern")
