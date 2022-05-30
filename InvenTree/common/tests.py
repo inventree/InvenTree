@@ -1,3 +1,4 @@
+"""Tests for mechanisms in common."""
 
 import json
 from datetime import timedelta
@@ -26,7 +27,7 @@ class SettingsTest(InvenTreeTestCase):
     ]
 
     def test_settings_objects(self):
-
+        """Test fixture loading and lookup for settings."""
         # There should be two settings objects in the database
         settings = InvenTreeSetting.objects.all()
 
@@ -97,7 +98,13 @@ class SettingsTest(InvenTreeTestCase):
         self.assertIn('SIGNUP_GROUP', result)
 
     def run_settings_check(self, key, setting):
+        """Test that all settings are valid.
 
+        - Ensure that a name is set and that it is translated
+        - Ensure that a description is set
+        - Ensure that every setting key is valid
+        - Ensure that a validator is supplied
+        """
         self.assertTrue(type(setting) is dict)
 
         name = setting.get('name', None)
@@ -199,7 +206,7 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), len(InvenTreeSetting.SETTINGS.keys()))
 
     def test_company_name(self):
-
+        """Test a settings object lifecyle e2e."""
         setting = InvenTreeSetting.get_setting_object('INVENTREE_COMPANY_NAME')
 
         # Check default value
@@ -372,7 +379,7 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
             self.assertFalse(str2bool(response.data['value']))
 
     def test_user_setting_choice(self):
-
+        """Test a user setting with choices."""
         setting = InvenTreeUserSetting.get_setting_object(
             'DATE_DISPLAY_FORMAT',
             user=self.user
@@ -411,7 +418,7 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
             self.assertIn('Chosen value is not a valid option', str(response.data))
 
     def test_user_setting_integer(self):
-
+        """Test a integer user setting value."""
         setting = InvenTreeUserSetting.get_setting_object(
             'SEARCH_PREVIEW_RESULTS',
             user=self.user
@@ -530,17 +537,21 @@ class PluginSettingsApiTest(InvenTreeAPITestCase):
 
 
 class WebhookMessageTests(TestCase):
+    """Tests for webhooks."""
+
     def setUp(self):
+        """Setup for all tests."""
         self.endpoint_def = WebhookEndpoint.objects.create()
         self.url = f'/api/webhook/{self.endpoint_def.endpoint_id}/'
         self.client = Client(enforce_csrf_checks=True)
 
     def test_bad_method(self):
+        """Test that a wrong HTTP method does not work."""
         response = self.client.get(self.url)
-
         assert response.status_code == HTTPStatus.METHOD_NOT_ALLOWED
 
     def test_missing_token(self):
+        """Tests that token checks work."""
         response = self.client.post(
             self.url,
             content_type=CONTENT_TYPE_JSON,
@@ -552,6 +563,7 @@ class WebhookMessageTests(TestCase):
         )
 
     def test_bad_token(self):
+        """Test that a wrong token is not working."""
         response = self.client.post(
             self.url,
             content_type=CONTENT_TYPE_JSON,
@@ -562,6 +574,7 @@ class WebhookMessageTests(TestCase):
         assert (json.loads(response.content)['detail'] == WebhookView.model_class.MESSAGE_TOKEN_ERROR)
 
     def test_bad_url(self):
+        """Test that a wrongly formed url is not working."""
         response = self.client.post(
             '/api/webhook/1234/',
             content_type=CONTENT_TYPE_JSON,
@@ -570,6 +583,7 @@ class WebhookMessageTests(TestCase):
         assert response.status_code == HTTPStatus.NOT_FOUND
 
     def test_bad_json(self):
+        """Test that malformed JSON is not accepted."""
         response = self.client.post(
             self.url,
             data="{'this': 123}",
@@ -583,6 +597,7 @@ class WebhookMessageTests(TestCase):
         )
 
     def test_success_no_token_check(self):
+        """Test that a endpoint without a token set does not require one."""
         # delete token
         self.endpoint_def.token = ''
         self.endpoint_def.save()
@@ -597,6 +612,7 @@ class WebhookMessageTests(TestCase):
         assert str(response.content, 'utf-8') == WebhookView.model_class.MESSAGE_OK
 
     def test_bad_hmac(self):
+        """Test that a malformed HMAC does not pass."""
         # delete token
         self.endpoint_def.token = ''
         self.endpoint_def.secret = '123abc'
@@ -612,6 +628,7 @@ class WebhookMessageTests(TestCase):
         assert (json.loads(response.content)['detail'] == WebhookView.model_class.MESSAGE_TOKEN_ERROR)
 
     def test_success_hmac(self):
+        """Test with a valid HMAC provided."""
         # delete token
         self.endpoint_def.token = ''
         self.endpoint_def.secret = '123abc'
@@ -628,6 +645,10 @@ class WebhookMessageTests(TestCase):
         assert str(response.content, 'utf-8') == WebhookView.model_class.MESSAGE_OK
 
     def test_success(self):
+        """Test full e2e webhook call.
+
+        The message should go through and save the json payload.
+        """
         response = self.client.post(
             self.url,
             data={"this": "is a message"},
@@ -642,9 +663,10 @@ class WebhookMessageTests(TestCase):
 
 
 class NotificationTest(InvenTreeAPITestCase):
+    """Tests for NotificationEntriy."""
 
     def test_check_notification_entries(self):
-
+        """Test that notification entries can be created."""
         # Create some notification entries
 
         self.assertEqual(NotificationEntry.objects.count(), 0)
