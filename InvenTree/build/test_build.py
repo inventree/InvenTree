@@ -194,14 +194,13 @@ class BuildTest(BuildTestBase):
         b.save()
 
     def test_duplicate_bom_line(self):
-        # Try to add a duplicate BOM item - it should fail!
+        # Try to add a duplicate BOM item - it should be allowed
 
-        with self.assertRaises(IntegrityError):
-            BomItem.objects.create(
-                part=self.assembly,
-                sub_part=self.sub_part_1,
-                quantity=99
-            )
+        BomItem.objects.create(
+            part=self.assembly,
+            sub_part=self.sub_part_1,
+            quantity=99
+        )
 
     def allocate_stock(self, output, allocations):
         """
