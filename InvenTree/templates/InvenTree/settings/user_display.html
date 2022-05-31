@@ -76,7 +76,7 @@
                         {% if lang_translated > 10 or lang_code == 'en' or lang_code == LANGUAGE_CODE %}{% define True as use_lang %}{% else %}{% define False as use_lang %}{% endif %}
                         {% if ALL_LANG or use_lang  %}
                         <option value="{{ lang_code }}"{% if lang_code == LANGUAGE_CODE %} selected{% endif %}>
-                            {{ language.name_local }} ({{ lang_code }}) 
+                            {{ language.name_local }} ({{ lang_code }})
                             {% if lang_translated %}
                                 {% blocktrans %}{{ lang_translated }}% translated{% endblocktrans %}
                             {% else %}

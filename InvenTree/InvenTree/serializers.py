@@ -2,31 +2,25 @@
 Serializers used in various InvenTree apps
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import os
-import tablib
-
-from decimal import Decimal
-
 from collections import OrderedDict
+from decimal import Decimal
 
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.utils.translation import gettext_lazy as _
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
+import tablib
 from djmoney.contrib.django_rest_framework.fields import MoneyField
 from djmoney.money import Money
 from djmoney.utils import MONEY_CLASSES, get_currency_field_name
-
 from rest_framework import serializers
-from rest_framework.utils import model_meta
-from rest_framework.fields import empty
 from rest_framework.exceptions import ValidationError
+from rest_framework.fields import empty
 from rest_framework.serializers import DecimalField
+from rest_framework.utils import model_meta
 
 from .models import extract_int
 
@@ -421,7 +415,10 @@ class DataFileUploadSerializer(serializers.Serializer):
         - Fuzzy match
         """
 
-        column_name = column_name.strip()
+        if not column_name:
+            return None
+
+        column_name = str(column_name).strip()
 
         column_name_lower = column_name.lower()
 

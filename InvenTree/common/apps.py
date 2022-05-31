@@ -4,7 +4,6 @@ import logging
 
 from django.apps import AppConfig
 
-
 logger = logging.getLogger('inventree')
 
 

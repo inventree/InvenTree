@@ -3,19 +3,20 @@
 /* globals
     constructForm,
     imageHoverIcon,
-    inventreeDelete,
+    inventreeMultiDelete,
     loadTableFilters,
     makeIconButton,
     renderLink,
     setupFilterList,
-    showQuestionDialog,
 */
-   
+
 /* exported
     createCompany,
     createManufacturerPart,
     createSupplierPart,
     deleteManufacturerParts,
+    deleteManufacturerPartParameters,
+    deleteSupplierParts,
     editCompany,
     loadCompanyTable,
     loadManufacturerPartTable,
@@ -26,7 +27,7 @@
 
 /**
  * Construct a set of form fields for creating / editing a ManufacturerPart
- * @returns 
+ * @returns
  */
 function manufacturerPartFields() {
 
@@ -46,7 +47,7 @@ function manufacturerPartFields() {
 
 /**
  * Launches a form to create a new ManufacturerPart
- * @param {object} options 
+ * @param {object} options
  */
 function createManufacturerPart(options={}) {
 
@@ -67,7 +68,7 @@ function createManufacturerPart(options={}) {
             var company_fields = companyFormFields();
 
             company_fields.is_manufacturer.value = true;
-            
+
             return company_fields;
         }
     };
@@ -84,7 +85,7 @@ function createManufacturerPart(options={}) {
 /**
  * Launches a form to edit a ManufacturerPart
  * @param {integer} part - ID of a ManufacturerPart
- * @param {object} options 
+ * @param {object} options
  */
 function editManufacturerPart(part, options={}) {
 
@@ -98,15 +99,6 @@ function editManufacturerPart(part, options={}) {
         fields: fields,
         title: '{% trans "Edit Manufacturer Part" %}',
         onSuccess: options.onSuccess
-    });
-}
-
-function deleteManufacturerPart(part, options={}) {
-
-    constructForm(`/api/company/part/manufacturer/${part}/`, {
-        method: 'DELETE',
-        title: '{% trans "Delete Manufacturer Part" %}',
-        onSuccess: options.onSuccess,
     });
 }
 
@@ -211,12 +203,76 @@ function editSupplierPart(part, options={}) {
 }
 
 
-function deleteSupplierPart(part, options={}) {
+/*
+ * Delete one or more SupplierPart objects from the database.
+ * - User will be provided with a modal form, showing all the parts to be deleted.
+ * - Delete operations are performed sequentialy, not simultaneously
+ */
+function deleteSupplierParts(parts, options={}) {
 
-    constructForm(`/api/company/part/${part}/`, {
+    if (parts.length == 0) {
+        return;
+    }
+
+    function renderPart(sup_part) {
+        var part = sup_part.part_detail;
+        var thumb = thumbnailImage(part.thumbnail || part.image);
+        var supplier = '-';
+        var MPN = '-';
+
+        if (sup_part.supplier_detail) {
+            supplier = sup_part.supplier_detail.name;
+        }
+
+        if (sup_part.manufacturer_part_detail) {
+            MPN = sup_part.manufacturer_part_detail.MPN;
+        }
+
+        return `
+        <tr>
+            <td>${thumb} ${part.full_name}</td>
+            <td>${sup_part.SKU}</td>
+            <td>${supplier}</td>
+            <td>${MPN}</td>
+        </tr>`;
+    }
+
+    var rows = '';
+
+    parts.forEach(function(sup_part) {
+        rows += renderPart(sup_part);
+    });
+
+    var html = `
+    <div class='alert alert-block alert-danger'>
+    {% trans "All selected supplier parts will be deleted" %}
+    </div>
+    <table class='table table-striped table-condensed'>
+    <tr>
+        <th>{% trans "Part" %}</th>
+        <th>{% trans "SKU" %}</th>
+        <th>{% trans "Supplier" %}</th>
+        <th>{% trans "MPN" %}</th>
+    </tr>
+    ${rows}
+    </table>
+    `;
+
+    constructFormBody({}, {
         method: 'DELETE',
-        title: '{% trans "Delete Supplier Part" %}',
-        onSuccess: options.onSuccess,
+        title: '{% trans "Delete Supplier Parts" %}',
+        preFormContent: html,
+        onSubmit: function(fields, opts) {
+
+            inventreeMultiDelete(
+                '{% url "api-supplier-part-list" %}',
+                parts,
+                {
+                    modal: opts.modal,
+                    success: options.success
+                }
+            );
+        }
     });
 }
 
@@ -393,58 +449,116 @@ function loadCompanyTable(table, url, options={}) {
 }
 
 
+/* Delete one or more ManufacturerPart objects from the database.
+ * - User will be provided with a modal form, showing all the parts to be deleted.
+ * - Delete operations are performed sequentialy, not simultaneously
+ */
 function deleteManufacturerParts(selections, options={}) {
 
     if (selections.length == 0) {
         return;
     }
 
-    var parts = [];
+    function renderPart(man_part, opts={}) {
+        var part = man_part.part_detail;
+        var thumb = thumbnailImage(part.thumbnail || part.image);
 
-    var text = `
-        <div class='alert alert-block alert-danger'>
-            <p>{% trans "The following manufacturer parts will be deleted" %}:</p>
-            <ul>`;
+        return `
+        <tr>
+            <td>${thumb} ${part.full_name}</td>
+            <td>${man_part.MPN}</td>
+            <td>${man_part.manufacturer_detail.name}</td>
+        </tr>`;
+    }
 
-    selections.forEach(function(item) {
-        parts.push(item.pk);
+    var rows = '';
 
-        text += `
-        <li>
-            <p>${item.MPN} - ${item.part_detail.full_name}</p>
-        </li>`;
+    selections.forEach(function(man_part) {
+        rows += renderPart(man_part);
     });
-            
-    text += `
-        </ul>
-    </div>`;
 
-    showQuestionDialog(
-        '{% trans "Delete Manufacturer Parts" %}',
-        text,
-        {
-            accept_text: '{% trans "Delete" %}',
-            accept: function() {
+    var html = `
+    <div class='alert alert-block alert-danger'>
+    {% trans "All selected manufacturer parts will be deleted" %}
+    </div>
+    <table class='table table-striped table-condensed'>
+    <tr>
+        <th>{% trans "Part" %}</th>
+        <th>{% trans "MPN" %}</th>
+        <th>{% trans "Manufacturer" %}</th>
+    </tr>
+    ${rows}
+    </table>
+    `;
 
-                // Delete each manufacturer part
-                var requests = [];
+    constructFormBody({}, {
+        method: 'DELETE',
+        title: '{% trans "Delete Manufacturer Parts" %}',
+        preFormContent: html,
+        onSubmit: function(fields, opts) {
 
-                parts.forEach(function(pk) {
-                    var url = `/api/company/part/manufacturer/${pk}`;
-
-                    requests.push(inventreeDelete(url));
-                });
-
-                // Wait for all the requests to complete
-                $.when.apply($, requests).done(function() {
-
-                    if (options.onSuccess) {
-                        options.onSuccess();
-                    }
-                });
-            }
+            inventreeMultiDelete(
+                '{% url "api-manufacturer-part-list" %}',
+                selections,
+                {
+                    modal: opts.modal,
+                    success: options.success,
+                }
+            );
         }
-    );
+    });
+}
+
+
+function deleteManufacturerPartParameters(selections, options={}) {
+
+    if (selections.length == 0) {
+        return;
+    }
+
+    function renderParam(param) {
+        return `
+        <tr>
+            <td>${param.name}</td>
+            <td>${param.units}</td>
+        </tr>`;
+    }
+
+    var rows = '';
+
+    selections.forEach(function(param) {
+        rows += renderParam(param);
+    });
+
+    var html = `
+    <div class='alert alert-block alert-danger'>
+    {% trans "All selected parameters will be deleted" %}
+    </div>
+    <table class='table table-striped table-condensed'>
+    <tr>
+        <th>{% trans "Name" %}</th>
+        <th>{% trans "Value" %}</th>
+    </tr>
+    ${rows}
+    </table>
+    `;
+
+    constructFormBody({}, {
+        method: 'DELETE',
+        title: '{% trans "Delete Parameters" %}',
+        preFormContent: html,
+        onSubmit: function(fields, opts) {
+            inventreeMultiDelete(
+                '{% url "api-manufacturer-part-parameter-list" %}',
+                selections,
+                {
+                    modal: opts.modal,
+                    success: options.success,
+                }
+            );
+        }
+    });
+
 }
 
 
@@ -473,6 +587,7 @@ function loadManufacturerPartTable(table, url, options) {
         method: 'get',
         original: params,
         queryParams: filters,
+        uniqueId: 'pk',
         sidePagination: 'server',
         name: 'manufacturerparts',
         groupBy: false,
@@ -577,7 +692,7 @@ function loadManufacturerPartTable(table, url, options) {
                 var pk = $(this).attr('pk');
 
                 editManufacturerPart(
-                    pk, 
+                    pk,
                     {
                         onSuccess: function() {
                             $(table).bootstrapTable('refresh');
@@ -588,11 +703,12 @@ function loadManufacturerPartTable(table, url, options) {
 
             $(table).find('.button-manufacturer-part-delete').click(function() {
                 var pk = $(this).attr('pk');
+                var row = $(table).bootstrapTable('getRowByUniqueId', pk);
 
-                deleteManufacturerPart(
-                    pk, 
+                deleteManufacturerParts(
+                    [row],
                     {
-                        onSuccess: function() {
+                        success: function() {
                             $(table).bootstrapTable('refresh');
                         }
                     }
@@ -618,7 +734,7 @@ function loadManufacturerPartParameterTable(table, url, options) {
         filters[key] = params[key];
     }
 
-    // setupFilterList("manufacturer-part-parameters", $(table));
+    setupFilterList('manufacturer-part-parameters', $(table));
 
     $(table).inventreeTable({
         url: url,
@@ -730,6 +846,7 @@ function loadSupplierPartTable(table, url, options) {
         method: 'get',
         original: params,
         sidePagination: 'server',
+        uniqueId: 'pk',
         queryParams: filters,
         name: 'supplierparts',
         groupBy: false,
@@ -775,7 +892,7 @@ function loadSupplierPartTable(table, url, options) {
                 formatter: function(value, row) {
                     if (value) {
                         var name = row.supplier_detail.name;
-                        var url = `/company/${value}/`; 
+                        var url = `/company/${value}/`;
                         var html = imageHoverIcon(row.supplier_detail.image) + renderLink(name, url);
 
                         return html;
@@ -875,7 +992,7 @@ function loadSupplierPartTable(table, url, options) {
                 var pk = $(this).attr('pk');
 
                 editSupplierPart(
-                    pk, 
+                    pk,
                     {
                         onSuccess: function() {
                             $(table).bootstrapTable('refresh');
@@ -886,11 +1003,12 @@ function loadSupplierPartTable(table, url, options) {
 
             $(table).find('.button-supplier-part-delete').click(function() {
                 var pk = $(this).attr('pk');
+                var row = $(table).bootstrapTable('getRowByUniqueId', pk);
 
-                deleteSupplierPart(
-                    pk, 
+                deleteSupplierParts(
+                    [row],
                     {
-                        onSuccess: function() {
+                        success: function() {
                             $(table).bootstrapTable('refresh');
                         }
                     }

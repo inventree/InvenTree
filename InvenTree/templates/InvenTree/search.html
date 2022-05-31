@@ -139,6 +139,7 @@
     addItem('build-order', '{% trans "Build Orders" %}', 'fa-tools');
 
     loadBuildTable('#table-build-order', {
+        locale: '{{ request.LANGUAGE_CODE }}',
         params: {
             original_search: '{{ query }}',
         }
@@ -224,7 +225,7 @@
 
     {% endif %}
 
-    {% endif %}    
+    {% endif %}
 
     enableSidebar(
         'search',

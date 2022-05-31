@@ -3,46 +3,40 @@ Common database model definitions.
 These models are 'generic' and do not fit a particular business logic object.
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-import os
+import base64
 import decimal
-import math
-import uuid
+import hashlib
 import hmac
 import json
-import hashlib
-import base64
-from secrets import compare_digest
+import logging
+import math
+import os
+import uuid
 from datetime import datetime, timedelta
+from secrets import compare_digest
 
-from django.db import models, transaction
-from django.contrib.auth.models import User, Group
+from django.apps import apps
+from django.conf import settings
+from django.contrib.auth.models import Group, User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator, URLValidator
+from django.db import models, transaction
 from django.db.utils import IntegrityError, OperationalError
-from django.conf import settings
 from django.urls import reverse
 from django.utils.timezone import now
-from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.utils.translation import gettext_lazy as _
 
-from djmoney.settings import CURRENCY_CHOICES
-from djmoney.contrib.exchange.models import convert_money
 from djmoney.contrib.exchange.exceptions import MissingRate
-
+from djmoney.contrib.exchange.models import convert_money
+from djmoney.settings import CURRENCY_CHOICES
 from rest_framework.exceptions import PermissionDenied
 
-from django.utils.translation import gettext_lazy as _
-from django.core.validators import MinValueValidator, URLValidator
-from django.core.exceptions import ValidationError
-
-import InvenTree.helpers
 import InvenTree.fields
+import InvenTree.helpers
 import InvenTree.validators
-
-import logging
-
 
 logger = logging.getLogger('inventree')
 
@@ -135,6 +129,19 @@ class BaseInvenTreeSetting(models.Model):
             settings[key] = value
 
         return settings
+
+    def get_kwargs(self):
+        """
+        Construct kwargs for doing class-based settings lookup,
+        depending on *which* class we are.
+
+        This is necessary to abtract the settings object
+        from the implementing class (e.g plugins)
+
+        Subclasses should override this function to ensure the kwargs are correctly set.
+        """
+
+        return {}
 
     @classmethod
     def get_setting_definition(cls, key, **kwargs):
@@ -257,13 +264,19 @@ class BaseInvenTreeSetting(models.Model):
         plugin = kwargs.get('plugin', None)
 
         if plugin is not None:
-            from plugin import InvenTreePluginBase
+            from plugin import InvenTreePlugin
 
-            if issubclass(plugin.__class__, InvenTreePluginBase):
+            if issubclass(plugin.__class__, InvenTreePlugin):
                 plugin = plugin.plugin_config()
 
             filters['plugin'] = plugin
             kwargs['plugin'] = plugin
+
+        # Filter by method
+        method = kwargs.get('method', None)
+
+        if method is not None:
+            filters['method'] = method
 
         try:
             setting = settings.filter(**filters).first()
@@ -313,11 +326,11 @@ class BaseInvenTreeSetting(models.Model):
             value = setting.value
 
             # Cast to boolean if necessary
-            if setting.is_bool(**kwargs):
+            if setting.is_bool():
                 value = InvenTree.helpers.str2bool(value)
 
             # Cast to integer if necessary
-            if setting.is_int(**kwargs):
+            if setting.is_int():
                 try:
                     value = int(value)
                 except (ValueError, TypeError):
@@ -355,9 +368,9 @@ class BaseInvenTreeSetting(models.Model):
             filters['user'] = user
 
         if plugin is not None:
-            from plugin import InvenTreePluginBase
+            from plugin import InvenTreePlugin
 
-            if issubclass(plugin.__class__, InvenTreePluginBase):
+            if issubclass(plugin.__class__, InvenTreePlugin):
                 filters['plugin'] = plugin.plugin_config()
             else:
                 filters['plugin'] = plugin
@@ -384,19 +397,19 @@ class BaseInvenTreeSetting(models.Model):
 
     @property
     def name(self):
-        return self.__class__.get_setting_name(self.key)
+        return self.__class__.get_setting_name(self.key, **self.get_kwargs())
 
     @property
     def default_value(self):
-        return self.__class__.get_setting_default(self.key)
+        return self.__class__.get_setting_default(self.key, **self.get_kwargs())
 
     @property
     def description(self):
-        return self.__class__.get_setting_description(self.key)
+        return self.__class__.get_setting_description(self.key, **self.get_kwargs())
 
     @property
     def units(self):
-        return self.__class__.get_setting_units(self.key)
+        return self.__class__.get_setting_units(self.key, **self.get_kwargs())
 
     def clean(self, **kwargs):
         """
@@ -506,12 +519,12 @@ class BaseInvenTreeSetting(models.Model):
         except self.DoesNotExist:
             pass
 
-    def choices(self, **kwargs):
+    def choices(self):
         """
         Return the available choices for this setting (or None if no choices are defined)
         """
 
-        return self.__class__.get_setting_choices(self.key, **kwargs)
+        return self.__class__.get_setting_choices(self.key, **self.get_kwargs())
 
     def valid_options(self):
         """
@@ -525,14 +538,14 @@ class BaseInvenTreeSetting(models.Model):
 
         return [opt[0] for opt in choices]
 
-    def is_choice(self, **kwargs):
+    def is_choice(self):
         """
         Check if this setting is a "choice" field
         """
 
-        return self.__class__.get_setting_choices(self.key, **kwargs) is not None
+        return self.__class__.get_setting_choices(self.key, **self.get_kwargs()) is not None
 
-    def as_choice(self, **kwargs):
+    def as_choice(self):
         """
         Render this setting as the "display" value of a choice field,
         e.g. if the choices are:
@@ -541,7 +554,7 @@ class BaseInvenTreeSetting(models.Model):
         then display 'A4 paper'
         """
 
-        choices = self.get_setting_choices(self.key, **kwargs)
+        choices = self.get_setting_choices(self.key, **self.get_kwargs())
 
         if not choices:
             return self.value
@@ -552,12 +565,80 @@ class BaseInvenTreeSetting(models.Model):
 
         return self.value
 
-    def is_bool(self, **kwargs):
+    def is_model(self):
+        """
+        Check if this setting references a model instance in the database
+        """
+
+        return self.model_name() is not None
+
+    def model_name(self):
+        """
+        Return the model name associated with this setting
+        """
+
+        setting = self.get_setting_definition(self.key, **self.get_kwargs())
+
+        return setting.get('model', None)
+
+    def model_class(self):
+        """
+        Return the model class associated with this setting, if (and only if):
+
+        - It has a defined 'model' parameter
+        - The 'model' parameter is of the form app.model
+        - The 'model' parameter has matches a known app model
+        """
+
+        model_name = self.model_name()
+
+        if not model_name:
+            return None
+
+        try:
+            (app, mdl) = model_name.strip().split('.')
+        except ValueError:
+            logger.error(f"Invalid 'model' parameter for setting {self.key} : '{model_name}'")
+            return None
+
+        app_models = apps.all_models.get(app, None)
+
+        if app_models is None:
+            logger.error(f"Error retrieving model class '{model_name}' for setting '{self.key}' - no app named '{app}'")
+            return None
+
+        model = app_models.get(mdl, None)
+
+        if model is None:
+            logger.error(f"Error retrieving model class '{model_name}' for setting '{self.key}' - no model named '{mdl}'")
+            return None
+
+        # Looks like we have found a model!
+        return model
+
+    def api_url(self):
+        """
+        Return the API url associated with the linked model,
+        if provided, and valid!
+        """
+
+        model_class = self.model_class()
+
+        if model_class:
+            # If a valid class has been found, see if it has registered an API URL
+            try:
+                return model_class.get_api_url()
+            except:
+                pass
+
+        return None
+
+    def is_bool(self):
         """
         Check if this setting is required to be a boolean value
         """
 
-        validator = self.__class__.get_setting_validator(self.key, **kwargs)
+        validator = self.__class__.get_setting_validator(self.key, **self.get_kwargs())
 
         return self.__class__.validator_is_bool(validator)
 
@@ -570,16 +651,19 @@ class BaseInvenTreeSetting(models.Model):
 
         return InvenTree.helpers.str2bool(self.value)
 
-    def setting_type(self, **kwargs):
+    def setting_type(self):
         """
         Return the field type identifier for this setting object
         """
 
-        if self.is_bool(**kwargs):
+        if self.is_bool():
             return 'boolean'
 
-        elif self.is_int(**kwargs):
+        elif self.is_int():
             return 'integer'
+
+        elif self.is_model():
+            return 'related field'
 
         else:
             return 'string'
@@ -597,12 +681,12 @@ class BaseInvenTreeSetting(models.Model):
 
         return False
 
-    def is_int(self, **kwargs):
+    def is_int(self,):
         """
         Check if the setting is required to be an integer value:
         """
 
-        validator = self.__class__.get_setting_validator(self.key, **kwargs)
+        validator = self.__class__.get_setting_validator(self.key, **self.get_kwargs())
 
         return self.__class__.validator_is_int(validator)
 
@@ -645,7 +729,7 @@ class BaseInvenTreeSetting(models.Model):
 
     @property
     def protected(self):
-        return self.__class__.is_protected(self.key)
+        return self.__class__.is_protected(self.key, **self.get_kwargs())
 
 
 def settings_group_options():
@@ -751,6 +835,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'BARCODE_ENABLE': {
             'name': _('Barcode Support'),
             'description': _('Enable barcode scanner support'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'BARCODE_WEBCAM_SUPPORT': {
+            'name': _('Barcode Webcam Support'),
+            'description': _('Allow barcode scanning via webcam in browser'),
             'default': True,
             'validator': bool,
         },
@@ -1014,6 +1105,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Sales Order Reference Prefix'),
             'description': _('Prefix value for sales order reference'),
             'default': 'SO',
+        },
+
+        'SALESORDER_DEFAULT_SHIPMENT': {
+            'name': _('Sales Order Default Shipment'),
+            'description': _('Enable creation of default shipment with sales orders'),
+            'default': False,
+            'validator': bool,
         },
 
         'PURCHASEORDER_REFERENCE_PREFIX': {
@@ -1299,14 +1397,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
-
-        'NOTIFICATION_SEND_EMAILS': {
-            'name': _('Enable email notifications'),
-            'description': _('Allow sending of emails for event notifications'),
-            'default': True,
-            'validator': bool,
-        },
-
         'LABEL_ENABLE': {
             'name': _('Enable label printing'),
             'description': _('Enable label printing from the web interface'),
@@ -1335,6 +1425,27 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SEARCH_PREVIEW_SHOW_SUPPLIER_PARTS': {
+            'name': _('Seach Supplier Parts'),
+            'description': _('Display supplier parts in search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_SHOW_MANUFACTURER_PARTS': {
+            'name': _('Search Manufacturer Parts'),
+            'description': _('Display manufacturer parts in search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'SEARCH_HIDE_INACTIVE_PARTS': {
+            'name': _("Hide Inactive Parts"),
+            'description': _('Excluded inactive parts from search preview window'),
+            'default': False,
+            'validator': bool,
+        },
+
         'SEARCH_PREVIEW_SHOW_CATEGORIES': {
             'name': _('Search Categories'),
             'description': _('Display part categories in search preview window'),
@@ -1347,6 +1458,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'description': _('Display stock items in search preview window'),
             'default': True,
             'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_HIDE_UNAVAILABLE_STOCK': {
+            'name': _('Hide Unavailable Stock Items'),
+            'description': _('Exclude stock items which are not available from the search preview window'),
+            'validator': bool,
+            'default': False,
         },
 
         'SEARCH_PREVIEW_SHOW_LOCATIONS': {
@@ -1370,6 +1488,13 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SEARCH_PREVIEW_EXCLUDE_INACTIVE_PURCHASE_ORDERS': {
+            'name': _('Exclude Inactive Purchase Orders'),
+            'description': _('Exclude inactive purchase orders from search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
         'SEARCH_PREVIEW_SHOW_SALES_ORDERS': {
             'name': _('Search Sales Orders'),
             'description': _('Display sales orders in search preview window'),
@@ -1377,18 +1502,18 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SEARCH_PREVIEW_EXCLUDE_INACTIVE_SALES_ORDERS': {
+            'name': _('Exclude Inactive Sales Orders'),
+            'description': _('Exclude inactive sales orders from search preview window'),
+            'validator': bool,
+            'default': True,
+        },
+
         'SEARCH_PREVIEW_RESULTS': {
             'name': _('Search Preview Results'),
             'description': _('Number of results to show in each section of the search preview window'),
             'default': 10,
             'validator': [int, MinValueValidator(1)]
-        },
-
-        'SEARCH_HIDE_INACTIVE_PARTS': {
-            'name': _("Hide Inactive Parts"),
-            'description': _('Hide inactive parts in search preview window'),
-            'default': False,
-            'validator': bool,
         },
 
         'PART_SHOW_QUANTITY_IN_FORMS': {
@@ -1458,7 +1583,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
     )
 
     @classmethod
-    def get_setting_object(cls, key, user):
+    def get_setting_object(cls, key, user=None):
         return super().get_setting_object(key, user=user)
 
     def validate_unique(self, exclude=None, **kwargs):
@@ -1471,6 +1596,16 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         """
 
         return self.__class__.get_setting(self.key, user=self.user)
+
+    def get_kwargs(self):
+        """
+        Explicit kwargs required to uniquely identify a particular setting object,
+        in addition to the 'key' parameter
+        """
+
+        return {
+            'user': self.user,
+        }
 
 
 class PriceBreak(models.Model):
@@ -1597,6 +1732,9 @@ class ColorTheme(models.Model):
     @classmethod
     def get_color_themes_choices(cls):
         """ Get all color themes from static folder """
+        if settings.TESTING and not os.path.exists(settings.STATIC_COLOR_THEMES_DIR):
+            logger.error('Theme directory does not exsist')
+            return []
 
         # Get files list from css/color-themes/ folder
         files_list = []
@@ -1702,10 +1840,8 @@ class WebhookEndpoint(models.Model):
     def process_webhook(self):
         if self.token:
             self.verify = VerificationMethod.TOKEN
-            # TODO make a object-setting
         if self.secret:
             self.verify = VerificationMethod.HMAC
-            # TODO make a object-setting
         return True
 
     def validate_token(self, payload, headers, request):

@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-from common.notifications import NotificationMethod, SingleNotificationMethod, BulkNotificationMethod
+import plugin.templatetags.plugin_extras as plugin_tags
+from common.notifications import (BulkNotificationMethod, NotificationMethod,
+                                  SingleNotificationMethod, storage)
 from part.test_part import BaseNotificationIntegrationTest
+from plugin.models import NotificationUserSetting
 
 
 class BaseNotificationTests(BaseNotificationIntegrationTest):
@@ -36,15 +36,6 @@ class BaseNotificationTests(BaseNotificationIntegrationTest):
             def send(self):
                 """a comment so we do not need a pass"""
 
-        class WrongDeliveryImplementation(SingleNotificationMethod):
-            METHOD_NAME = 'WrongDeliveryImplementation'
-
-            def get_targets(self):
-                return [1, ]
-
-            def send(self, target):
-                return False
-
         # no send / send bulk
         with self.assertRaises(NotImplementedError):
             FalseNotificationMethod('', '', '', '', )
@@ -77,13 +68,16 @@ class BaseNotificationTests(BaseNotificationIntegrationTest):
             def send(self, target):
                 raise KeyError('This could be any error')
 
-        self._notification_run()
+        self._notification_run(ErrorImplementation)
 
 
 class BulkNotificationMethodTests(BaseNotificationIntegrationTest):
 
     def test_BulkNotificationMethod(self):
-        """ensure the implementation requirements are tested"""
+        """
+        Ensure the implementation requirements are tested.
+        MixinNotImplementedError needs to raise if the send_bulk() method is not set.
+        """
 
         class WrongImplementation(BulkNotificationMethod):
             METHOD_NAME = 'WrongImplementationBulk'
@@ -92,13 +86,16 @@ class BulkNotificationMethodTests(BaseNotificationIntegrationTest):
                 return [1, ]
 
         with self.assertRaises(NotImplementedError):
-            self._notification_run()
+            self._notification_run(WrongImplementation)
 
 
 class SingleNotificationMethodTests(BaseNotificationIntegrationTest):
 
     def test_SingleNotificationMethod(self):
-        """ensure the implementation requirements are tested"""
+        """
+        Ensure the implementation requirements are tested.
+        MixinNotImplementedError needs to raise if the send() method is not set.
+        """
 
         class WrongImplementation(SingleNotificationMethod):
             METHOD_NAME = 'WrongImplementationSingle'
@@ -107,6 +104,51 @@ class SingleNotificationMethodTests(BaseNotificationIntegrationTest):
                 return [1, ]
 
         with self.assertRaises(NotImplementedError):
-            self._notification_run()
+            self._notification_run(WrongImplementation)
 
 # A integration test for notifications is provided in test_part.PartNotificationTest
+
+
+class NotificationUserSettingTests(BaseNotificationIntegrationTest):
+    """ Tests for NotificationUserSetting """
+
+    def setUp(self):
+        super().setUp()
+        self.client.login(username=self.user.username, password='password')
+
+    def test_setting_attributes(self):
+        """check notification method plugin methods: usersettings and tags """
+
+        class SampleImplementation(BulkNotificationMethod):
+            METHOD_NAME = 'test'
+            GLOBAL_SETTING = 'ENABLE_NOTIFICATION_TEST'
+            USER_SETTING = {
+                'name': 'Enable test notifications',
+                'description': 'Allow sending of test for event notifications',
+                'default': True,
+                'validator': bool,
+                'units': 'alpha',
+            }
+
+            def get_targets(self):
+                return [1, ]
+
+            def send_bulk(self):
+                return True
+
+        # run thorugh notification
+        self._notification_run(SampleImplementation)
+        # make sure the array fits
+        array = storage.get_usersettings(self.user)
+        setting = NotificationUserSetting.objects.all().first()
+
+        # assertions for settings
+        self.assertEqual(setting.name, 'Enable test notifications')
+        self.assertEqual(setting.default_value, True)
+        self.assertEqual(setting.description, 'Allow sending of test for event notifications')
+        self.assertEqual(setting.units, 'alpha')
+
+        # test tag and array
+        self.assertEqual(plugin_tags.notification_settings_list({'user': self.user}), array)
+        self.assertEqual(array[0]['key'], 'NOTIFICATION_METHOD_TEST')
+        self.assertEqual(array[0]['method'], 'test')

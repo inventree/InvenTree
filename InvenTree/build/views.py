@@ -2,9 +2,6 @@
 Django views for interacting with Build objects
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView
 
@@ -12,6 +9,8 @@ from .models import Build
 
 from InvenTree.views import InvenTreeRoleMixin
 from InvenTree.status_codes import BuildStatus
+
+from plugin.views import InvenTreePluginViewMixin
 
 
 class BuildIndex(InvenTreeRoleMixin, ListView):
@@ -28,7 +27,7 @@ class BuildIndex(InvenTreeRoleMixin, ListView):
 
     def get_context_data(self, **kwargs):
 
-        context = super(BuildIndex, self).get_context_data(**kwargs).copy()
+        context = super().get_context_data(**kwargs)
 
         context['BuildStatus'] = BuildStatus
 
@@ -40,7 +39,7 @@ class BuildIndex(InvenTreeRoleMixin, ListView):
         return context
 
 
-class BuildDetail(InvenTreeRoleMixin, DetailView):
+class BuildDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
     """
     Detail view of a single Build object.
     """
@@ -51,7 +50,7 @@ class BuildDetail(InvenTreeRoleMixin, DetailView):
 
     def get_context_data(self, **kwargs):
 
-        ctx = super(DetailView, self).get_context_data(**kwargs)
+        ctx = super().get_context_data(**kwargs)
 
         build = self.get_object()
 

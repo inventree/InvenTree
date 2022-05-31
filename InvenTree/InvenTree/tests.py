@@ -1,30 +1,26 @@
 import json
-from test.support import EnvironmentVarGuard
-
-from django.test import TestCase, override_settings
-import django.core.exceptions as django_exceptions
-from django.core.exceptions import ValidationError
-from django.contrib.auth import get_user_model
-from django.conf import settings
-
-from djmoney.money import Money
-from djmoney.contrib.exchange.models import Rate, convert_money
-from djmoney.contrib.exchange.exceptions import MissingRate
-
-from .validators import validate_overage, validate_part_name
-from . import helpers
-from . import version
-from . import status
-from . import ready
-from . import config
-
+import os
+import time
 from decimal import Decimal
+from unittest import mock
+
+import django.core.exceptions as django_exceptions
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+from django.test import TestCase, override_settings
+
+from djmoney.contrib.exchange.exceptions import MissingRate
+from djmoney.contrib.exchange.models import Rate, convert_money
+from djmoney.money import Money
 
 import InvenTree.tasks
-
-from stock.models import StockLocation
-from common.settings import currency_codes
 from common.models import InvenTreeSetting
+from common.settings import currency_codes
+from stock.models import StockLocation
+
+from . import config, helpers, ready, status, version
+from .validators import validate_overage, validate_part_name
 
 
 class ValidatorTest(TestCase):
@@ -384,6 +380,30 @@ class TestVersionNumber(TestCase):
         self.assertTrue(v_d > v_c)
         self.assertTrue(v_d > v_a)
 
+    def test_commit_info(self):
+        """Test that the git commit information is extracted successfully"""
+
+        envs = {
+            'INVENTREE_COMMIT_HASH': 'abcdef',
+            'INVENTREE_COMMIT_DATE': '2022-12-31'
+        }
+
+        # Check that the environment variables take priority
+
+        with mock.patch.dict(os.environ, envs):
+            self.assertEqual(version.inventreeCommitHash(), 'abcdef')
+            self.assertEqual(version.inventreeCommitDate(), '2022-12-31')
+
+        import subprocess
+
+        # Check that the current .git values work too
+
+        hash = str(subprocess.check_output('git rev-parse --short HEAD'.split()), 'utf-8').strip()
+        self.assertEqual(hash, version.inventreeCommitHash())
+
+        d = str(subprocess.check_output('git show -s --format=%ci'.split()), 'utf-8').strip().split(' ')[0]
+        self.assertEqual(d, version.inventreeCommitDate())
+
 
 class CurrencyTests(TestCase):
     """
@@ -404,11 +424,23 @@ class CurrencyTests(TestCase):
         with self.assertRaises(MissingRate):
             convert_money(Money(100, 'AUD'), 'USD')
 
-        InvenTree.tasks.update_exchange_rates()
+        update_successful = False
 
-        rates = Rate.objects.all()
+        # Note: the update sometimes fails in CI, let's give it a few chances
+        for idx in range(10):
+            InvenTree.tasks.update_exchange_rates()
 
-        self.assertEqual(rates.count(), len(currency_codes()))
+            rates = Rate.objects.all()
+
+            if rates.count() == len(currency_codes()):
+                update_successful = True
+                break
+
+            else:  # pragma: no cover
+                print("Exchange rate update failed - retrying")
+                time.sleep(1)
+
+        self.assertTrue(update_successful)
 
         # Now that we have some exchange rate information, we can perform conversions
 
@@ -442,64 +474,110 @@ class TestStatus(TestCase):
         self.assertEqual(ready.isImportingData(), False)
 
 
-class TestSettings(TestCase):
+class TestSettings(helpers.InvenTreeTestCase):
     """
     Unit tests for settings
     """
 
-    def setUp(self) -> None:
-        self.user_mdl = get_user_model()
-        self.env = EnvironmentVarGuard()
+    superuser = True
 
-    def run_reload(self):
+    def in_env_context(self, envs={}):
+        """Patch the env to include the given dict"""
+        return mock.patch.dict(os.environ, envs)
+
+    def run_reload(self, envs={}):
         from plugin import registry
 
-        with self.env:
+        with self.in_env_context(envs):
             settings.USER_ADDED = False
             registry.reload_plugins()
 
     @override_settings(TESTING_ENV=True)
     def test_set_user_to_few(self):
+        user_model = get_user_model()
         # add shortcut
-        user_count = self.user_mdl.objects.count
+        user_count = user_model.objects.count
         # enable testing mode
         settings.TESTING_ENV = True
 
         # nothing set
         self.run_reload()
-        self.assertEqual(user_count(), 0)
+        self.assertEqual(user_count(), 1)
 
         # not enough set
-        self.env.set('INVENTREE_ADMIN_USER', 'admin')  # set username
-        self.run_reload()
-        self.assertEqual(user_count(), 0)
+        self.run_reload({
+            'INVENTREE_ADMIN_USER': 'admin'
+        })
+        self.assertEqual(user_count(), 1)
 
         # enough set
-        self.env.set('INVENTREE_ADMIN_USER', 'admin')  # set username
-        self.env.set('INVENTREE_ADMIN_EMAIL', 'info@example.com')  # set email
-        self.env.set('INVENTREE_ADMIN_PASSWORD', 'password123')  # set password
-        self.run_reload()
-        self.assertEqual(user_count(), 1)
+        self.run_reload({
+            'INVENTREE_ADMIN_USER': 'admin',  # set username
+            'INVENTREE_ADMIN_EMAIL': 'info@example.com',  # set email
+            'INVENTREE_ADMIN_PASSWORD': 'password123'  # set password
+        })
+        self.assertEqual(user_count(), 2)
+
+        username2 = 'testuser1'
+        email2 = 'test1@testing.com'
+        password2 = 'password1'
+
+        # create user manually
+        user_model.objects.create_user(username2, email2, password2)
+        self.assertEqual(user_count(), 3)
+        # check it will not be created again
+        self.run_reload({
+            'INVENTREE_ADMIN_USER': username2,
+            'INVENTREE_ADMIN_EMAIL': email2,
+            'INVENTREE_ADMIN_PASSWORD': password2,
+        })
+        self.assertEqual(user_count(), 3)
 
         # make sure to clean up
         settings.TESTING_ENV = False
 
+    def test_initial_install(self):
+        """Test if install of plugins on startup works"""
+        from plugin import registry
+
+        # Check an install run
+        response = registry.install_plugin_file()
+        self.assertEqual(response, 'first_run')
+
+        # Set dynamic setting to True and rerun to launch install
+        InvenTreeSetting.set_setting('PLUGIN_ON_STARTUP', True, self.user)
+        registry.reload_plugins(full_reload=True)
+
+        # Check that there was anotehr run
+        response = registry.install_plugin_file()
+        self.assertEqual(response, True)
+
     def test_helpers_cfg_file(self):
         # normal run - not configured
-        self.assertIn('InvenTree/InvenTree/config.yaml', config.get_config_file())
+
+        valid = [
+            'inventree/config.yaml',
+            'inventree/dev/config.yaml',
+        ]
+
+        self.assertTrue(any([opt in config.get_config_file().lower() for opt in valid]))
 
         # with env set
-        with self.env:
-            self.env.set('INVENTREE_CONFIG_FILE', 'my_special_conf.yaml')
-            self.assertIn('InvenTree/InvenTree/my_special_conf.yaml', config.get_config_file())
+        with self.in_env_context({'INVENTREE_CONFIG_FILE': 'my_special_conf.yaml'}):
+            self.assertIn('inventree/my_special_conf.yaml', config.get_config_file().lower())
 
     def test_helpers_plugin_file(self):
         # normal run - not configured
-        self.assertIn('InvenTree/InvenTree/plugins.txt', config.get_plugin_file())
+
+        valid = [
+            'inventree/plugins.txt',
+            'inventree/dev/plugins.txt',
+        ]
+
+        self.assertTrue(any([opt in config.get_plugin_file().lower() for opt in valid]))
 
         # with env set
-        with self.env:
-            self.env.set('INVENTREE_PLUGIN_FILE', 'my_special_plugins.txt')
+        with self.in_env_context({'INVENTREE_PLUGIN_FILE': 'my_special_plugins.txt'}):
             self.assertIn('my_special_plugins.txt', config.get_plugin_file())
 
     def test_helpers_setting(self):
@@ -508,22 +586,14 @@ class TestSettings(TestCase):
         self.assertEqual(config.get_setting(TEST_ENV_NAME, None, '123!'), '123!')
 
         # with env set
-        with self.env:
-            self.env.set(TEST_ENV_NAME, '321')
+        with self.in_env_context({TEST_ENV_NAME: '321'}):
             self.assertEqual(config.get_setting(TEST_ENV_NAME, None), '321')
 
 
-class TestInstanceName(TestCase):
+class TestInstanceName(helpers.InvenTreeTestCase):
     """
     Unit tests for instance name
     """
-
-    def setUp(self):
-        # Create a user for auth
-        user = get_user_model()
-        self.user = user.objects.create_superuser('testuser', 'test@testing.com', 'password')
-
-        self.client.login(username='testuser', password='password')
 
     def test_instance_name(self):
 

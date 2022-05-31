@@ -2,56 +2,44 @@
 Django views for interacting with Part app
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-from django.core.files.base import ContentFile
-from django.core.exceptions import ValidationError
-from django.db import transaction
-from django.db.utils import IntegrityError
-from django.shortcuts import get_object_or_404
-from django.shortcuts import HttpResponseRedirect
-from django.utils.translation import gettext_lazy as _
-from django.urls import reverse
-from django.views.generic import DetailView, ListView
-from django.forms import HiddenInput
-from django.conf import settings
-from django.contrib import messages
-
-from djmoney.contrib.exchange.models import convert_money
-from djmoney.contrib.exchange.exceptions import MissingRate
-
-from PIL import Image
-
-import requests
-import os
 import io
-
+import os
 from decimal import Decimal
 
-from .models import PartCategory, Part
-from .models import PartParameterTemplate
-from .models import PartCategoryParameterTemplate
+from django.conf import settings
+from django.contrib import messages
+from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
+from django.db import transaction
+from django.db.utils import IntegrityError
+from django.forms import HiddenInput
+from django.shortcuts import HttpResponseRedirect, get_object_or_404
+from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
+from django.views.generic import DetailView, ListView
 
-from common.models import InvenTreeSetting
-from company.models import SupplierPart
-from common.files import FileManager
-from common.views import FileManagementFormView, FileManagementAjaxView
-
-from stock.models import StockItem, StockLocation
+import requests
+from djmoney.contrib.exchange.exceptions import MissingRate
+from djmoney.contrib.exchange.models import convert_money
+from PIL import Image
 
 import common.settings as inventree_settings
+from common.files import FileManager
+from common.models import InvenTreeSetting
+from common.views import FileManagementAjaxView, FileManagementFormView
+from company.models import SupplierPart
+from InvenTree.helpers import str2bool
+from InvenTree.views import (AjaxCreateView, AjaxDeleteView, AjaxUpdateView,
+                             AjaxView, InvenTreeRoleMixin, QRCodeView)
+from order.models import PurchaseOrderLineItem
+from plugin.views import InvenTreePluginViewMixin
+from stock.models import StockItem, StockLocation
 
 from . import forms as part_forms
 from . import settings as part_settings
-from .bom import MakeBomTemplate, ExportBom, IsValidBOMFormat
-from order.models import PurchaseOrderLineItem
-
-from InvenTree.views import AjaxView, AjaxCreateView, AjaxUpdateView, AjaxDeleteView
-from InvenTree.views import QRCodeView
-from InvenTree.views import InvenTreeRoleMixin
-
-from InvenTree.helpers import str2bool
+from .bom import ExportBom, IsValidBOMFormat, MakeBomTemplate
+from .models import (Part, PartCategory, PartCategoryParameterTemplate,
+                     PartParameterTemplate)
 
 
 class PartIndex(InvenTreeRoleMixin, ListView):
@@ -67,7 +55,7 @@ class PartIndex(InvenTreeRoleMixin, ListView):
 
     def get_context_data(self, **kwargs):
 
-        context = super(PartIndex, self).get_context_data(**kwargs).copy()
+        context = super().get_context_data(**kwargs).copy()
 
         # View top-level categories
         children = PartCategory.objects.filter(parent=None)
@@ -365,7 +353,7 @@ class PartImportAjax(FileManagementAjaxView, PartImport):
         return PartImport.validate(self, self.steps.current, form, **kwargs)
 
 
-class PartDetail(InvenTreeRoleMixin, DetailView):
+class PartDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
     """ Detail view for Part object
     """
 
@@ -626,7 +614,7 @@ class PartImageDownloadFromURL(AjaxUpdateView):
         self.response = response
 
         # Check for valid response code
-        if not response.status_code == 200:
+        if response.status_code != 200:
             form.add_error('url', _('Invalid response: {code}').format(code=response.status_code))
             return
 
@@ -953,7 +941,7 @@ class PartParameterTemplateDelete(AjaxDeleteView):
     ajax_form_title = _("Delete Part Parameter Template")
 
 
-class CategoryDetail(InvenTreeRoleMixin, DetailView):
+class CategoryDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
     """ Detail view for PartCategory """
 
     model = PartCategory
@@ -963,7 +951,7 @@ class CategoryDetail(InvenTreeRoleMixin, DetailView):
 
     def get_context_data(self, **kwargs):
 
-        context = super(CategoryDetail, self).get_context_data(**kwargs).copy()
+        context = super().get_context_data(**kwargs).copy()
 
         try:
             context['part_count'] = kwargs['object'].partcount()
@@ -1029,7 +1017,7 @@ class CategoryParameterTemplateCreate(AjaxCreateView):
         - Display parameter templates which are not yet related
         """
 
-        form = super(AjaxCreateView, self).get_form()
+        form = super().get_form()
 
         form.fields['category'].widget = HiddenInput()
 
@@ -1124,7 +1112,7 @@ class CategoryParameterTemplateEdit(AjaxUpdateView):
         - Display parameter templates which are not yet related
         """
 
-        form = super(AjaxUpdateView, self).get_form()
+        form = super().get_form()
 
         form.fields['category'].widget = HiddenInput()
         form.fields['add_to_all_categories'].widget = HiddenInput()

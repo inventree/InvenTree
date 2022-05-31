@@ -2,17 +2,14 @@
 Django views for interacting with common models
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import os
 
-from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
+from django.utils.translation import gettext_lazy as _
 
-from formtools.wizard.views import SessionWizardView
 from crispy_forms.helper import FormHelper
+from formtools.wizard.views import SessionWizardView
 
 from InvenTree.views import AjaxView
 

@@ -2,71 +2,58 @@
 Part database model definitions
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 import decimal
-
-import os
+import hashlib
 import logging
-
-from django.utils.translation import gettext_lazy as _
-from django.core.exceptions import ValidationError
-from django.urls import reverse
-
-from django.db import models, transaction
-from django.db.utils import IntegrityError
-from django.db.models import Q, Sum, UniqueConstraint
-from django.db.models.functions import Coalesce
-from django.core.validators import MinValueValidator
+import os
+from datetime import datetime
+from decimal import Decimal, InvalidOperation
 
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
+from django.db import models, transaction
+from django.db.models import Q, Sum, UniqueConstraint
+from django.db.models.functions import Coalesce
 from django.db.models.signals import post_save
+from django.db.utils import IntegrityError
 from django.dispatch import receiver
-
-from jinja2 import Template
-
-from markdownx.models import MarkdownxField
+from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 from django_cleanup import cleanup
-
 from djmoney.contrib.exchange.exceptions import MissingRate
-
-from mptt.models import TreeForeignKey, MPTTModel
+from djmoney.contrib.exchange.models import convert_money
+from jinja2 import Template
+from markdownx.models import MarkdownxField
 from mptt.exceptions import InvalidMove
 from mptt.managers import TreeManager
-
+from mptt.models import MPTTModel, TreeForeignKey
 from stdimage.models import StdImageField
 
-from decimal import Decimal, InvalidOperation
-from datetime import datetime
-import hashlib
-from djmoney.contrib.exchange.models import convert_money
-from common.settings import currency_code_default
-from common.models import InvenTreeSetting
-
-from InvenTree import helpers
-from InvenTree import validators
-from InvenTree.models import InvenTreeTree, InvenTreeAttachment, DataImportMixin
-from InvenTree.fields import InvenTreeURLField
-from InvenTree.helpers import decimal2string, normalize, decimal2money
-import InvenTree.tasks
-
-from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus, SalesOrderStatus
-
-from build import models as BuildModels
-from order import models as OrderModels
-from company.models import SupplierPart
-from stock import models as StockModels
-
 import common.models
-
+import InvenTree.ready
+import InvenTree.tasks
 import part.settings as part_settings
-
+from build import models as BuildModels
+from common.models import InvenTreeSetting
+from common.settings import currency_code_default
+from company.models import SupplierPart
+from InvenTree import helpers, validators
+from InvenTree.fields import InvenTreeURLField
+from InvenTree.helpers import decimal2money, decimal2string, normalize
+from InvenTree.models import (DataImportMixin, InvenTreeAttachment,
+                              InvenTreeTree)
+from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
+                                    SalesOrderStatus)
+from order import models as OrderModels
+from plugin.models import MetadataMixin
+from stock import models as StockModels
 
 logger = logging.getLogger("inventree")
 
 
-class PartCategory(InvenTreeTree):
+class PartCategory(MetadataMixin, InvenTreeTree):
     """ PartCategory provides hierarchical organization of Part objects.
 
     Attributes:
@@ -325,7 +312,7 @@ class PartManager(TreeManager):
 
 
 @cleanup.ignore
-class Part(MPTTModel):
+class Part(MetadataMixin, MPTTModel):
     """ The Part object represents an abstract part, the 'concept' of an actual entity.
 
     An actual physical instance of a Part is a StockItem which is treated separately.
@@ -442,7 +429,7 @@ class Part(MPTTModel):
             previous = Part.objects.get(pk=self.pk)
 
             # Image has been changed
-            if previous.image is not None and not self.image == previous.image:
+            if previous.image is not None and self.image != previous.image:
 
                 # Are there any (other) parts which reference the image?
                 n_refs = Part.objects.filter(image=previous.image).exclude(pk=self.pk).count()
@@ -2231,7 +2218,7 @@ class Part(MPTTModel):
         for child in children:
             parts.append(child)
 
-        # Immediate parent
+        # Immediate parent, and siblings
         if self.variant_of:
             parts.append(self.variant_of)
 
@@ -2291,12 +2278,13 @@ def after_save_part(sender, instance: Part, created, **kwargs):
     """
     Function to be executed after a Part is saved
     """
+    from part import tasks as part_tasks
 
-    if not created:
+    if not created and not InvenTree.ready.isImportingData():
         # Check part stock only if we are *updating* the part (not creating it)
 
         # Run this check in the background
-        InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance)
+        InvenTree.tasks.offload_task(part_tasks.notify_low_stock_if_required, instance)
 
 
 class PartAttachment(InvenTreeAttachment):
@@ -2893,7 +2881,7 @@ class BomItem(models.Model, DataImportMixin):
 
                 # If the sub_part is 'trackable' then the 'quantity' field must be an integer
                 if self.sub_part.trackable:
-                    if not self.quantity == int(self.quantity):
+                    if self.quantity != int(self.quantity):
                         raise ValidationError({
                             "quantity": _("Quantity must be integer value for trackable parts")
                         })
@@ -2910,9 +2898,6 @@ class BomItem(models.Model, DataImportMixin):
 
     class Meta:
         verbose_name = _("BOM Item")
-
-        # Prevent duplication of parent/child rows
-        unique_together = ('part', 'sub_part')
 
     def __str__(self):
         return "{n} x {child} to make {parent}".format(

@@ -1,15 +1,12 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.contrib import admin
 
-from import_export.admin import ImportExportModelAdmin
-from import_export.resources import ModelResource
-from import_export.fields import Field
 import import_export.widgets as widgets
+from import_export.admin import ImportExportModelAdmin
+from import_export.fields import Field
+from import_export.resources import ModelResource
 
-from company.models import SupplierPart
 import part.models as models
+from company.models import SupplierPart
 from stock.models import StockLocation
 
 
@@ -48,6 +45,7 @@ class PartResource(ModelResource):
         exclude = [
             'bom_checksum', 'bom_checked_by', 'bom_checked_date',
             'lft', 'rght', 'tree_id', 'level',
+            'metadata',
         ]
 
     def get_queryset(self):
@@ -101,6 +99,7 @@ class PartCategoryResource(ModelResource):
         exclude = [
             # Exclude MPTT internal model fields
             'lft', 'rght', 'tree_id', 'level',
+            'metadata',
         ]
 
     def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):

@@ -5,6 +5,8 @@
 {% setting_object key plugin=plugin as setting %}
 {% elif user_setting %}
 {% setting_object key user=request.user as setting %}
+{% elif notification_setting %}
+{% setting_object key method=method user=request.user as setting %}
 {% else %}
 {% setting_object key as setting %}
 {% endif %}
@@ -22,7 +24,7 @@
     <td>
         {% if setting.is_bool %}
         <div class='form-check form-switch'>
-            <input class='form-check-input boolean-setting' fieldname='{{ setting.key.upper }}' pk='{{ setting.pk }}' setting='{{ setting.key.upper }}' id='setting-value-{{ setting.key.upper }}' type='checkbox' {% if setting.as_bool %}checked=''{% endif %} {% if plugin %}plugin='{{ plugin.pk }}'{% endif %}{% if user_setting %}user='{{request.user.id}}'{% endif %}>
+            <input class='form-check-input boolean-setting' fieldname='{{ setting.key.upper }}' pk='{{ setting.pk }}' setting='{{ setting.key.upper }}' id='setting-value-{{ setting.key.upper }}' type='checkbox' {% if setting.as_bool %}checked=''{% endif %} {% if plugin %}plugin='{{ plugin.slug }}'{% endif %}{% if user_setting %}user='{{request.user.id}}'{% endif %}{% if notification_setting %}notification='{{request.user.id}}'{% endif %}>
         </div>
         {% else %}
         <div id='setting-{{ setting.pk }}'>
@@ -39,7 +41,7 @@
             </span>
             {{ setting.units }}
             <div class='btn-group float-right'>
-                <button class='btn btn-outline-secondary btn-small btn-edit-setting' pk='{{ setting.pk }}' setting='{{ setting.key.upper }}' title='{% trans "Edit setting" %}' {% if plugin %}plugin='{{ plugin.pk }}'{% endif %}{% if user_setting %}user='{{request.user.id}}'{% endif %}>
+                <button class='btn btn-outline-secondary btn-small btn-edit-setting' pk='{{ setting.pk }}' setting='{{ setting.key.upper }}' title='{% trans "Edit setting" %}' {% if plugin %}plugin='{{ plugin.slug }}'{% endif %}{% if user_setting %}user='{{request.user.id}}'{% endif %}>
                     <span class='fas fa-edit icon-green'></span>
                 </button>
             </div>

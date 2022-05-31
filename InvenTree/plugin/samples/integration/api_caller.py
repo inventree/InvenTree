@@ -1,15 +1,15 @@
 """
 Sample plugin for calling an external API
 """
-from plugin import IntegrationPluginBase
+from plugin import InvenTreePlugin
 from plugin.mixins import APICallMixin, SettingsMixin
 
 
-class SampleApiCallerPlugin(APICallMixin, SettingsMixin, IntegrationPluginBase):
+class SampleApiCallerPlugin(APICallMixin, SettingsMixin, InvenTreePlugin):
     """
     A small api call sample
     """
-    PLUGIN_NAME = "Sample API Caller"
+    NAME = "Sample API Caller"
 
     SETTINGS = {
         'API_TOKEN': {

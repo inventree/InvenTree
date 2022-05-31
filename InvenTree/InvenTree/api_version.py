@@ -4,14 +4,45 @@ InvenTree API version information
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 45
+INVENTREE_API_VERSION = 53
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
 
-v45 -> 2022-05-05 : https://github.com/inventree/InvenTree/pull/2934
+v53 -> 2022-06-01 : https://github.com/inventree/InvenTree/pull/2934
     - Converting more server-side actions to use the API
     - Build orders can now be deleted via the API
+
+v52 -> 2022-05-31 : https://github.com/inventree/InvenTree/pull/3103
+    - Allow part list API to be searched by supplier SKU
+
+v51 -> 2022-05-24 : https://github.com/inventree/InvenTree/pull/3058
+    - Adds new fields to the SalesOrderShipment model
+
+v50 -> 2022-05-18 : https://github.com/inventree/InvenTree/pull/2912
+    - Implement Attachments for manufacturer parts
+
+v49 -> 2022-05-09 : https://github.com/inventree/InvenTree/pull/2957
+    - Allows filtering of plugin list by 'active' status
+    - Allows filtering of plugin list by 'mixin' support
+    - Adds endpoint to "identify" or "locate" stock items and locations (using plugins)
+
+v48 -> 2022-05-12 : https://github.com/inventree/InvenTree/pull/2977
+    - Adds "export to file" functionality for PurchaseOrder API endpoint
+    - Adds "export to file" functionality for SalesOrder API endpoint
+    - Adds "export to file" functionality for BuildOrder API endpoint
+
+v47 -> 2022-05-10 : https://github.com/inventree/InvenTree/pull/2964
+    - Fixes barcode API error response when scanning a StockItem which does not exist
+    - Fixes barcode API error response when scanning a StockLocation which does not exist
+
+v46 -> 2022-05-09
+    - Fixes read permissions on settings API
+    - Allows non-staff users to read global settings via the API
+
+v45 -> 2022-05-08 : https://github.com/inventree/InvenTree/pull/2944
+    - Settings are now accessed via the API using their unique key, not their PK
+    - This allows the settings to be accessed without prior knowledge of the PK
 
 v44 -> 2022-05-04 : https://github.com/inventree/InvenTree/pull/2931
     - Converting more server-side rendered forms to the API

@@ -1,10 +1,7 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
+                                   InvenTreeModelSerializer)
 
-from InvenTree.serializers import InvenTreeModelSerializer
-from InvenTree.serializers import InvenTreeAttachmentSerializerField
-
-from .models import StockItemLabel, StockLocationLabel, PartLabel
+from .models import PartLabel, StockItemLabel, StockLocationLabel
 
 
 class StockItemLabelSerializer(InvenTreeModelSerializer):

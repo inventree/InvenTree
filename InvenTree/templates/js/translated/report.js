@@ -25,7 +25,7 @@ function selectReport(reports, items, options={}) {
     /**
      * Present the user with the available reports,
      * and allow them to select which report to print.
-     * 
+     *
      * The intent is that the available report templates have been requested
      * (via AJAX) from the server.
      */

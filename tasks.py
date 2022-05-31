@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import os
 import json
-import sys
+import os
 import pathlib
 import re
+import sys
 
-
-try:
-    from invoke import ctask as task
-except:
-    from invoke import task
+from invoke import task
 
 
 def apps():
@@ -19,7 +15,6 @@ def apps():
     """
 
     return [
-        'barcode',
         'build',
         'common',
         'company',
@@ -28,8 +23,9 @@ def apps():
         'part',
         'report',
         'stock',
-        'InvenTree',
         'users',
+        'plugin',
+        'InvenTree',
     ]
 
 
@@ -67,10 +63,11 @@ def manage(c, cmd, pty=False):
         cmd - django command to run
     """
 
-    result = c.run('cd "{path}" && python3 manage.py {cmd}'.format(
+    c.run('cd "{path}" && python3 manage.py {cmd}'.format(
         path=managePyDir(),
         cmd=cmd
     ), pty=pty)
+
 
 @task
 def plugins(c):
@@ -85,7 +82,8 @@ def plugins(c):
     print(f"Installing plugin packages from '{plugin_file}'")
 
     # Install the plugins
-    c.run(f"pip3 install -U -r '{plugin_file}'")
+    c.run(f"pip3 install --disable-pip-version-check -U -r '{plugin_file}'")
+
 
 @task(post=[plugins])
 def install(c):
@@ -96,7 +94,26 @@ def install(c):
     print("Installing required python packages from 'requirements.txt'")
 
     # Install required Python packages with PIP
+    c.run('pip3 install --no-cache-dir --disable-pip-version-check -U -r requirements.txt')
+
+
+@task
+def setup_dev(c):
+    """
+    Sets up everything needed for the dev enviroment
+    """
+
+    print("Installing required python packages from 'requirements.txt'")
+
+    # Install required Python packages with PIP
     c.run('pip3 install -U -r requirements.txt')
+
+    # Install pre-commit hook
+    c.run('pre-commit install')
+
+    # Update all the hooks
+    c.run('pre-commit autoupdate')
+
 
 @task
 def shell(c):
@@ -253,7 +270,7 @@ def update(c):
     - static
     - clean_settings
     """
-    
+
     # Recompile the translation files (.mo)
     # We do not run 'invoke translate' here, as that will touch the source (.po) files too!
     manage(c, 'compilemessages', pty=True)
@@ -439,7 +456,7 @@ def delete_data(c, force=False):
     Warning: This will REALLY delete all records in the database!!
     """
 
-    print(f"Deleting all data from InvenTree database...")
+    print("Deleting all data from InvenTree database...")
 
     if force:
         manage(c, 'flush --noinput')
@@ -537,9 +554,9 @@ def test_translations(c):
 
     # complie regex
     reg = re.compile(
-        r"[a-zA-Z0-9]{1}"+  # match any single letter and number
-        r"(?![^{\(\<]*[}\)\>])"+  # that is not inside curly brackets, brackets or a tag
-        r"(?<![^\%][^\(][)][a-z])"+  # that is not a specially formatted variable with singles
+        r"[a-zA-Z0-9]{1}" +  # match any single letter and number  # noqa: W504
+        r"(?![^{\(\<]*[}\)\>])" +  # that is not inside curly brackets, brackets or a tag  # noqa: W504
+        r"(?<![^\%][^\(][)][a-z])" +  # that is not a specially formatted variable with singles  # noqa: W504
         r"(?![^\\][\n])"  # that is not a newline
     )
     last_string = ''

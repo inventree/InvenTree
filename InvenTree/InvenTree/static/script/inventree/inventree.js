@@ -47,7 +47,7 @@ function attachClipboard(selector, containerselector, textElement) {
 
 
 /**
- * Return a standard list of export format options * 
+ * Return a standard list of export format options *
  */
 function exportFormatOptions() {
     return [
@@ -167,7 +167,7 @@ function inventreeDocReady() {
 
 
 function isFileTransfer(transfer) {
-    /* Determine if a transfer (e.g. drag-and-drop) is a file transfer 
+    /* Determine if a transfer (e.g. drag-and-drop) is a file transfer
      */
 
     return transfer.files.length > 0;
@@ -176,7 +176,7 @@ function isFileTransfer(transfer) {
 
 function enableDragAndDrop(element, url, options) {
     /* Enable drag-and-drop file uploading for a given element.
-    
+
     Params:
         element - HTML element lookup string e.g. "#drop-div"
         url - URL to POST the file to
@@ -205,7 +205,7 @@ function enableDragAndDrop(element, url, options) {
 
         if (isFileTransfer(transfer)) {
             formData.append(label, transfer.files[0]);
-            
+
             inventreeFormDataUpload(
                 url,
                 formData,
@@ -234,7 +234,7 @@ function enableDragAndDrop(element, url, options) {
 
 /**
  * Save a key:value pair to local storage
- * @param {String} name - settting key 
+ * @param {String} name - settting key
  * @param {String} value - setting value
  */
 function inventreeSave(name, value) {
@@ -248,7 +248,7 @@ function inventreeSave(name, value) {
  * Retrieve a key:value pair from local storage
  * @param {*} name - setting key
  * @param {*} defaultValue - default value (returned if no matching key:value pair is found)
- * @returns 
+ * @returns
  */
 function inventreeLoad(name, defaultValue) {
 

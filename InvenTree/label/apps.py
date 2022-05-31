@@ -1,14 +1,14 @@
+import hashlib
+import logging
 import os
 import shutil
-import logging
-import hashlib
+import warnings
 
 from django.apps import AppConfig
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 
 from InvenTree.ready import canAppAccessDatabase
-
 
 logger = logging.getLogger("inventree")
 
@@ -42,6 +42,15 @@ class LabelConfig(AppConfig):
         """
         Create all default templates
         """
+        # Test if models are ready
+        try:
+            from .models import StockLocationLabel
+            assert bool(StockLocationLabel is not None)
+        except AppRegistryNotReady:  # pragma: no cover
+            # Database might not yet be ready
+            warnings.warn('Database was not ready for creating labels')
+            return
+
         self.create_stock_item_labels()
         self.create_stock_location_labels()
         self.create_part_labels()
@@ -52,11 +61,7 @@ class LabelConfig(AppConfig):
         if they do not already exist
         """
 
-        try:
-            from .models import StockItemLabel
-        except AppRegistryNotReady:  # pragma: no cover
-            # Database might not by ready yet
-            return
+        from .models import StockItemLabel
 
         src_dir = os.path.join(
             os.path.dirname(os.path.realpath(__file__)),
@@ -105,7 +110,7 @@ class LabelConfig(AppConfig):
                 # File already exists - let's see if it is the "same",
                 # or if we need to overwrite it with a newer copy!
 
-                if not hashFile(dst_file) == hashFile(src_file):  # pragma: no cover
+                if hashFile(dst_file) != hashFile(src_file):  # pragma: no cover
                     logger.info(f"Hash differs for '{filename}'")
                     to_copy = True
 
@@ -139,11 +144,7 @@ class LabelConfig(AppConfig):
         if they do not already exist
         """
 
-        try:
-            from .models import StockLocationLabel
-        except AppRegistryNotReady:  # pragma: no cover
-            # Database might not yet be ready
-            return
+        from .models import StockLocationLabel
 
         src_dir = os.path.join(
             os.path.dirname(os.path.realpath(__file__)),
@@ -199,7 +200,7 @@ class LabelConfig(AppConfig):
                 # File already exists - let's see if it is the "same",
                 # or if we need to overwrite it with a newer copy!
 
-                if not hashFile(dst_file) == hashFile(src_file):  # pragma: no cover
+                if hashFile(dst_file) != hashFile(src_file):  # pragma: no cover
                     logger.info(f"Hash differs for '{filename}'")
                     to_copy = True
 
@@ -233,11 +234,7 @@ class LabelConfig(AppConfig):
         if they do not already exist.
         """
 
-        try:
-            from .models import PartLabel
-        except AppRegistryNotReady:  # pragma: no cover
-            # Database might not yet be ready
-            return
+        from .models import PartLabel
 
         src_dir = os.path.join(
             os.path.dirname(os.path.realpath(__file__)),
@@ -265,6 +262,13 @@ class LabelConfig(AppConfig):
                 'width': 70,
                 'height': 24,
             },
+            {
+                'file': 'part_label_code128.html',
+                'name': 'Barcode Part Label',
+                'description': 'Simple part label with Code128 barcode',
+                'width': 70,
+                'height': 24,
+            },
         ]
 
         for label in labels:
@@ -284,7 +288,7 @@ class LabelConfig(AppConfig):
             if os.path.exists(dst_file):
                 # File already exists - let's see if it is the "same"
 
-                if not hashFile(dst_file) == hashFile(src_file):  # pragma: no cover
+                if hashFile(dst_file) != hashFile(src_file):  # pragma: no cover
                     logger.info(f"Hash differs for '{filename}'")
                     to_copy = True
 

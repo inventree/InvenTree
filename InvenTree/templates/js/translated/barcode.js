@@ -70,7 +70,7 @@ function onBarcodeScanClicked(e) {
 }
 
 function onCameraAvailable(hasCamera, options) {
-    if ( hasCamera == true ) {
+    if (hasCamera && global_settings.BARCODE_WEBCAM_SUPPORT) {
         // Camera is only acccessible if page is served over secure connection
         if ( window.isSecureContext == true ) {
             qrScanner = new QrScanner(document.getElementById('barcode_scan_video'), (result) => {
@@ -324,7 +324,7 @@ function barcodeDialog(title, options={}) {
 function barcodeScanDialog() {
     /*
      * Perform a barcode scan,
-     * and (potentially) redirect the browser 
+     * and (potentially) redirect the browser
      */
 
     var modal = '#modal-form';
@@ -345,9 +345,9 @@ function barcodeScanDialog() {
                         'warning'
                     );
                 }
-            } 
+            }
         },
-    ); 
+    );
 }
 
 
@@ -647,7 +647,7 @@ function scanItemsIntoLocation(item_list, options={}) {
                 item_list.forEach(function(item) {
                     items.push({
                         pk: item.pk || item.id,
-                        quantity: item.quantity, 
+                        quantity: item.quantity,
                     });
                 });
 

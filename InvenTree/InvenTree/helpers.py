@@ -3,27 +3,27 @@ Provides helper functions used throughout the InvenTree project
 """
 
 import io
-import re
 import json
 import os.path
-from PIL import Image
-
+import re
 from decimal import Decimal, InvalidOperation
-
 from wsgiref.util import FileWrapper
-from django.http import StreamingHttpResponse
-from django.core.exceptions import ValidationError, FieldError
-from django.utils.translation import gettext_lazy as _
 
 from django.contrib.auth.models import Permission
-
-import InvenTree.version
-
-from common.models import InvenTreeSetting
-from .settings import MEDIA_URL, STATIC_URL
-from common.settings import currency_code_default
+from django.core.exceptions import FieldError, ValidationError
+from django.http import StreamingHttpResponse
+from django.test import TestCase
+from django.utils.translation import gettext_lazy as _
 
 from djmoney.money import Money
+from PIL import Image
+
+import InvenTree.version
+from common.models import InvenTreeSetting
+from common.settings import currency_code_default
+
+from .api_tester import UserMixin
+from .settings import MEDIA_URL, STATIC_URL
 
 
 def getSetting(key, backup_value=None):
@@ -129,7 +129,7 @@ def TestIfImageURL(url):
     Simply tests the extension against a set of allowed values
     """
     return os.path.splitext(os.path.basename(url))[-1].lower() in [
-        '.jpg', '.jpeg',
+        '.jpg', '.jpeg', '.j2k',
         '.png', '.bmp',
         '.tif', '.tiff',
         '.webp', '.gif',
@@ -224,7 +224,7 @@ def increment(n):
     groups = result.groups()
 
     # If we cannot match the regex, then simply return the provided value
-    if not len(groups) == 2:
+    if len(groups) != 2:
         return value
 
     prefix, number = groups
@@ -536,7 +536,7 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
         raise ValidationError([_("No serial numbers found")])
 
     # The number of extracted serial numbers must match the expected quantity
-    if not expected_quantity == len(numbers):
+    if expected_quantity != len(numbers):
         raise ValidationError([_("Number of unique serial numbers ({s}) must match quantity ({q})").format(s=len(numbers), q=expected_quantity)])
 
     return numbers
@@ -575,7 +575,7 @@ def validateFilterString(value, model=None):
 
         pair = group.split('=')
 
-        if not len(pair) == 2:
+        if len(pair) != 2:
             raise ValidationError(
                 "Invalid group: {g}".format(g=group)
             )
@@ -781,3 +781,7 @@ def inheritors(cls):
                 subcls.add(child)
                 work.append(child)
     return subcls
+
+
+class InvenTreeTestCase(UserMixin, TestCase):
+    pass

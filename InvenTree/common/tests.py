@@ -1,23 +1,24 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-from http import HTTPStatus
+
 import json
 from datetime import timedelta
+from http import HTTPStatus
 
-from django.test import TestCase, Client
-from django.contrib.auth import get_user_model
+from django.test import Client, TestCase
 from django.urls import reverse
 
 from InvenTree.api_tester import InvenTreeAPITestCase
-from InvenTree.helpers import str2bool
+from InvenTree.helpers import InvenTreeTestCase, str2bool
+from plugin import registry
+from plugin.models import NotificationUserSetting, PluginConfig
 
-from .models import InvenTreeSetting, InvenTreeUserSetting, WebhookEndpoint, WebhookMessage, NotificationEntry
 from .api import WebhookView
+from .models import (ColorTheme, InvenTreeSetting, InvenTreeUserSetting,
+                     NotificationEntry, WebhookEndpoint, WebhookMessage)
 
 CONTENT_TYPE_JSON = 'application/json'
 
 
-class SettingsTest(TestCase):
+class SettingsTest(InvenTreeTestCase):
     """
     Tests for the 'settings' model
     """
@@ -25,16 +26,6 @@ class SettingsTest(TestCase):
     fixtures = [
         'settings',
     ]
-
-    def setUp(self):
-
-        user = get_user_model()
-
-        self.user = user.objects.create_user('username', 'user@email.com', 'password')
-        self.user.is_staff = True
-        self.user.save()
-
-        self.client.login(username='username', password='password')
 
     def test_settings_objects(self):
 
@@ -111,28 +102,70 @@ class SettingsTest(TestCase):
         self.assertIn('STOCK_OWNERSHIP_CONTROL', result)
         self.assertIn('SIGNUP_GROUP', result)
 
-    def test_required_values(self):
+    def run_settings_check(self, key, setting):
+
+        self.assertTrue(type(setting) is dict)
+
+        name = setting.get('name', None)
+
+        self.assertIsNotNone(name)
+        self.assertIn('django.utils.functional.lazy', str(type(name)))
+
+        description = setting.get('description', None)
+
+        self.assertIsNotNone(description)
+        self.assertIn('django.utils.functional.lazy', str(type(description)))
+
+        if key != key.upper():
+            raise ValueError(f"Setting key '{key}' is not uppercase")  # pragma: no cover
+
+        # Check that only allowed keys are provided
+        allowed_keys = [
+            'name',
+            'description',
+            'default',
+            'validator',
+            'hidden',
+            'choices',
+            'units',
+            'requires_restart',
+        ]
+
+        for k in setting.keys():
+            self.assertIn(k, allowed_keys)
+
+        # Check default value for boolean settings
+        validator = setting.get('validator', None)
+
+        if validator is bool:
+            default = setting.get('default', None)
+
+            # Default value *must* be supplied for boolean setting!
+            self.assertIsNotNone(default)
+
+            # Default value for boolean must itself be a boolean
+            self.assertIn(default, [True, False])
+
+    def test_setting_data(self):
         """
-        - Ensure that every global setting has a name.
-        - Ensure that every global setting has a description.
+        - Ensure that every setting has a name, which is translated
+        - Ensure that every setting has a description, which is translated
         """
 
-        for key in InvenTreeSetting.SETTINGS.keys():
+        for key, setting in InvenTreeSetting.SETTINGS.items():
 
-            setting = InvenTreeSetting.SETTINGS[key]
+            try:
+                self.run_settings_check(key, setting)
+            except Exception as exc:  # pragma: no cover
+                print(f"run_settings_check failed for global setting '{key}'")
+                raise exc
 
-            name = setting.get('name', None)
-
-            if name is None:
-                raise ValueError(f'Missing GLOBAL_SETTING name for {key}')  # pragma: no cover
-
-            description = setting.get('description', None)
-
-            if description is None:
-                raise ValueError(f'Missing GLOBAL_SETTING description for {key}')  # pragma: no cover
-
-            if not key == key.upper():
-                raise ValueError(f"SETTINGS key '{key}' is not uppercase")  # pragma: no cover
+        for key, setting in InvenTreeUserSetting.SETTINGS.items():
+            try:
+                self.run_settings_check(key, setting)
+            except Exception as exc:  # pragma: no cover
+                print(f"run_settings_check failed for user setting '{key}'")
+                raise exc
 
     def test_defaults(self):
         """
@@ -185,7 +218,7 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
         # Check default value
         self.assertEqual(setting.value, 'My company name')
 
-        url = reverse('api-global-setting-detail', kwargs={'pk': setting.pk})
+        url = reverse('api-global-setting-detail', kwargs={'key': setting.key})
 
         # Test getting via the API
         for val in ['test', '123', 'My company nam3']:
@@ -211,6 +244,47 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
             setting.refresh_from_db()
             self.assertEqual(setting.value, val)
 
+    def test_api_detail(self):
+        """Test that we can access the detail view for a setting based on the <key>"""
+
+        # These keys are invalid, and should return 404
+        for key in ["apple", "carrot", "dog"]:
+            response = self.get(
+                reverse('api-global-setting-detail', kwargs={'key': key}),
+                expected_code=404,
+            )
+
+        key = 'INVENTREE_INSTANCE'
+        url = reverse('api-global-setting-detail', kwargs={'key': key})
+
+        InvenTreeSetting.objects.filter(key=key).delete()
+
+        # Check that we can access a setting which has not previously been created
+        self.assertFalse(InvenTreeSetting.objects.filter(key=key).exists())
+
+        # Access via the API, and the default value should be received
+        response = self.get(url, expected_code=200)
+
+        self.assertEqual(response.data['value'], 'InvenTree server')
+
+        # Now, the object should have been created in the DB
+        self.patch(
+            url,
+            {
+                'value': 'My new title',
+            },
+            expected_code=200,
+        )
+
+        setting = InvenTreeSetting.objects.get(key=key)
+
+        self.assertEqual(setting.value, 'My new title')
+
+        # And retrieving via the API now returns the updated value
+        response = self.get(url, expected_code=200)
+
+        self.assertEqual(response.data['value'], 'My new title')
+
 
 class UserSettingsApiTest(InvenTreeAPITestCase):
     """
@@ -224,6 +298,34 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
         url = reverse('api-user-setting-list')
 
         self.get(url, expected_code=200)
+
+    def test_user_setting_invalid(self):
+        """Test a user setting with an invalid key"""
+
+        url = reverse('api-user-setting-detail', kwargs={'key': 'DONKEY'})
+
+        self.get(url, expected_code=404)
+
+    def test_user_setting_init(self):
+        """Test we can retrieve a setting which has not yet been initialized"""
+
+        key = 'HOMEPAGE_PART_LATEST'
+
+        # Ensure it does not actually exist in the database
+        self.assertFalse(InvenTreeUserSetting.objects.filter(key=key).exists())
+
+        url = reverse('api-user-setting-detail', kwargs={'key': key})
+
+        response = self.get(url, expected_code=200)
+
+        self.assertEqual(response.data['value'], 'True')
+
+        self.patch(url, {'value': 'False'}, expected_code=200)
+
+        setting = InvenTreeUserSetting.objects.get(key=key, user=self.user)
+
+        self.assertEqual(setting.value, 'False')
+        self.assertEqual(setting.to_native_value(), False)
 
     def test_user_setting_boolean(self):
         """
@@ -240,7 +342,7 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
         self.assertEqual(setting.to_native_value(), True)
 
         # Fetch via API
-        url = reverse('api-user-setting-detail', kwargs={'pk': setting.pk})
+        url = reverse('api-user-setting-detail', kwargs={'key': setting.key})
 
         response = self.get(url, expected_code=200)
 
@@ -299,7 +401,7 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
             user=self.user
         )
 
-        url = reverse('api-user-setting-detail', kwargs={'pk': setting.pk})
+        url = reverse('api-user-setting-detail', kwargs={'key': setting.key})
 
         # Check default value
         self.assertEqual(setting.value, 'YYYY-MM-DD')
@@ -338,7 +440,7 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
             user=self.user
         )
 
-        url = reverse('api-user-setting-detail', kwargs={'pk': setting.pk})
+        url = reverse('api-user-setting-detail', kwargs={'key': setting.key})
 
         # Check default value for this setting
         self.assertEqual(setting.value, 10)
@@ -375,6 +477,79 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
                 },
                 expected_code=400,
             )
+
+
+class NotificationUserSettingsApiTest(InvenTreeAPITestCase):
+    """Tests for the notification user settings API"""
+
+    def test_api_list(self):
+        """Test list URL"""
+        url = reverse('api-notifcation-setting-list')
+
+        self.get(url, expected_code=200)
+
+    def test_setting(self):
+        """Test the string name for NotificationUserSetting"""
+        test_setting = NotificationUserSetting.get_setting_object('NOTIFICATION_METHOD_MAIL', user=self.user)
+        self.assertEqual(str(test_setting), 'NOTIFICATION_METHOD_MAIL (for testuser): ')
+
+
+class PluginSettingsApiTest(InvenTreeAPITestCase):
+    """Tests for the plugin settings API"""
+
+    def test_plugin_list(self):
+        """List installed plugins via API"""
+        url = reverse('api-plugin-list')
+
+        # Simple request
+        self.get(url, expected_code=200)
+
+        # Request with filter
+        self.get(url, expected_code=200, data={'mixin': 'settings'})
+
+    def test_api_list(self):
+        """Test list URL"""
+        url = reverse('api-plugin-setting-list')
+
+        self.get(url, expected_code=200)
+
+    def test_valid_plugin_slug(self):
+        """Test that an valid plugin slug runs through"""
+        # load plugin configs
+        fixtures = PluginConfig.objects.all()
+        if not fixtures:
+            registry.reload_plugins()
+            fixtures = PluginConfig.objects.all()
+
+        # get data
+        url = reverse('api-plugin-setting-detail', kwargs={'plugin': 'sample', 'key': 'API_KEY'})
+        response = self.get(url, expected_code=200)
+
+        # check the right setting came through
+        self.assertTrue(response.data['key'], 'API_KEY')
+        self.assertTrue(response.data['plugin'], 'sample')
+        self.assertTrue(response.data['type'], 'string')
+        self.assertTrue(response.data['description'], 'Key required for accessing external API')
+
+        # Failure mode tests
+
+        # Non - exsistant plugin
+        url = reverse('api-plugin-setting-detail', kwargs={'plugin': 'doesnotexist', 'key': 'doesnotmatter'})
+        response = self.get(url, expected_code=404)
+        self.assertIn("Plugin 'doesnotexist' not installed", str(response.data))
+
+        # Wrong key
+        url = reverse('api-plugin-setting-detail', kwargs={'plugin': 'sample', 'key': 'doesnotexsist'})
+        response = self.get(url, expected_code=404)
+        self.assertIn("Plugin 'sample' has no setting matching 'doesnotexsist'", str(response.data))
+
+    def test_invalid_setting_key(self):
+        """Test that an invalid setting key returns a 404"""
+        ...
+
+    def test_uninitialized_setting(self):
+        """Test that requesting an uninitialized setting creates the setting"""
+        ...
 
 
 class WebhookMessageTests(TestCase):
@@ -489,7 +664,7 @@ class WebhookMessageTests(TestCase):
         assert message.body == {"this": "is a message"}
 
 
-class NotificationTest(TestCase):
+class NotificationTest(InvenTreeAPITestCase):
 
     def test_check_notification_entries(self):
 
@@ -507,6 +682,11 @@ class NotificationTest(TestCase):
         self.assertFalse(NotificationEntry.check_recent('test.notification2', 1, delta))
 
         self.assertTrue(NotificationEntry.check_recent('test.notification', 1, delta))
+
+    def test_api_list(self):
+        """Test list URL"""
+        url = reverse('api-notifications-list')
+        self.get(url, expected_code=200)
 
 
 class LoadingTest(TestCase):
@@ -530,3 +710,35 @@ class LoadingTest(TestCase):
 
         # now it should be false again
         self.assertFalse(common.models.InvenTreeSetting.get_setting('SERVER_RESTART_REQUIRED'))
+
+
+class ColorThemeTest(TestCase):
+    """Tests for ColorTheme"""
+
+    def test_choices(self):
+        """Test that default choices are returned"""
+        result = ColorTheme.get_color_themes_choices()
+
+        # skip
+        if not result:
+            return
+        self.assertIn(('default', 'Default'), result)
+
+    def test_valid_choice(self):
+        """Check that is_valid_choice works correctly"""
+        result = ColorTheme.get_color_themes_choices()
+
+        # skip
+        if not result:
+            return
+
+        # check wrong reference
+        self.assertFalse(ColorTheme.is_valid_choice('abcdd'))
+
+        # create themes
+        aa = ColorTheme.objects.create(user='aa', name='testname')
+        ab = ColorTheme.objects.create(user='ab', name='darker')
+
+        # check valid theme
+        self.assertFalse(ColorTheme.is_valid_choice(aa))
+        self.assertTrue(ColorTheme.is_valid_choice(ab))

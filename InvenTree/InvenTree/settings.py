@@ -12,7 +12,6 @@ database setup in this file.
 """
 
 import logging
-
 import os
 import random
 import socket
@@ -20,13 +19,13 @@ import string
 import sys
 from datetime import datetime
 
-import moneyed
-
-import yaml
-from django.utils.translation import gettext_lazy as _
+import django.conf.locale
 from django.contrib.messages import constants as messages
 from django.core.files.storage import default_storage
-import django.conf.locale
+from django.utils.translation import gettext_lazy as _
+
+import moneyed
+import yaml
 
 from .config import get_base_dir, get_config_file, get_plugin_file, get_setting
 
@@ -343,7 +342,7 @@ TEMPLATES = [
             ],
             'loaders': [(
                 'django.template.loaders.cached.Loader', [
-                    'plugin.loader.PluginTemplateLoader',
+                    'plugin.template.PluginTemplateLoader',
                     'django.template.loaders.filesystem.Loader',
                     'django.template.loaders.app_directories.Loader',
                 ])
@@ -353,7 +352,7 @@ TEMPLATES = [
 ]
 
 REST_FRAMEWORK = {
-    'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
+    'EXCEPTION_HANDLER': 'InvenTree.exceptions.exception_handler',
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
@@ -453,10 +452,8 @@ db_options = db_config.get("OPTIONS", db_config.get("options", {}))
 
 # Specific options for postgres backend
 if "postgres" in db_engine:  # pragma: no cover
-    from psycopg2.extensions import (
-        ISOLATION_LEVEL_READ_COMMITTED,
-        ISOLATION_LEVEL_SERIALIZABLE,
-    )
+    from psycopg2.extensions import (ISOLATION_LEVEL_READ_COMMITTED,
+                                     ISOLATION_LEVEL_SERIALIZABLE)
 
     # Connection timeout
     if "connect_timeout" not in db_options:
@@ -658,7 +655,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 EXTRA_URL_SCHEMES = CONFIG.get('extra_url_schemes', [])
 
-if not type(EXTRA_URL_SCHEMES) in [list]:  # pragma: no cover
+if type(EXTRA_URL_SCHEMES) not in [list]:  # pragma: no cover
     logger.warning("extra_url_schemes not correctly formatted")
     EXTRA_URL_SCHEMES = []
 
@@ -900,7 +897,7 @@ PLUGINS_ENABLED = _is_true(get_setting(
 PLUGIN_FILE = get_plugin_file()
 
 # Plugin Directories (local plugins will be loaded from these directories)
-PLUGIN_DIRS = ['plugin.builtin', 'barcodes.plugins', ]
+PLUGIN_DIRS = ['plugin.builtin', ]
 
 if not TESTING:
     # load local deploy directory in prod
@@ -913,6 +910,7 @@ if DEBUG or TESTING:
 # Plugin test settings
 PLUGIN_TESTING = get_setting('PLUGIN_TESTING', TESTING)  # are plugins beeing tested?
 PLUGIN_TESTING_SETUP = get_setting('PLUGIN_TESTING_SETUP', False)  # load plugins from setup hooks in testing?
+PLUGIN_TESTING_EVENTS = False                  # Flag if events are tested right now
 PLUGIN_RETRY = get_setting('PLUGIN_RETRY', 5)  # how often should plugin loading be tried?
 PLUGIN_FILE_CHECKED = False                    # Was the plugin file checked?
 

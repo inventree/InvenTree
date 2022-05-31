@@ -1,17 +1,21 @@
 """
 Helpers for plugin app
 """
+import inspect
+import logging
 import os
-import subprocess
 import pathlib
+import pkgutil
+import subprocess
 import sysconfig
 import traceback
-import inspect
-import pkgutil
 
+from django import template
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import IntegrityError
+
+logger = logging.getLogger('inventree')
 
 
 # region logging / errors
@@ -200,7 +204,7 @@ def get_plugins(pkg, baseclass):
     Return a list of all modules under a given package.
 
     - Modules must be a subclass of the provided 'baseclass'
-    - Modules must have a non-empty PLUGIN_NAME parameter
+    - Modules must have a non-empty NAME parameter
     """
 
     plugins = []
@@ -212,8 +216,43 @@ def get_plugins(pkg, baseclass):
         # Iterate through each class in the module
         for item in get_classes(mod):
             plugin = item[1]
-            if issubclass(plugin, baseclass) and plugin.PLUGIN_NAME:
+            if issubclass(plugin, baseclass) and plugin.NAME:
                 plugins.append(plugin)
 
     return plugins
+# endregion
+
+
+# region templates
+def render_template(plugin, template_file, context=None):
+    """
+    Locate and render a template file, available in the global template context.
+    """
+
+    try:
+        tmp = template.loader.get_template(template_file)
+    except template.TemplateDoesNotExist:
+        logger.error(f"Plugin {plugin.slug} could not locate template '{template_file}'")
+
+        return f"""
+        <div class='alert alert-block alert-danger'>
+        Template file <em>{template_file}</em> does not exist.
+        </div>
+        """
+
+    # Render with the provided context
+    html = tmp.render(context)
+
+    return html
+
+
+def render_text(text, context=None):
+    """
+    Locate a raw string with provided context
+    """
+
+    ctx = template.Context(context)
+
+    return template.Template(text).render(ctx)
+
 # endregion

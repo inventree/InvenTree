@@ -2,53 +2,40 @@
 JSON API for the Stock app
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from collections import OrderedDict
 from datetime import datetime, timedelta
 
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.urls import include, path, re_path
-from django.http import JsonResponse
-from django.db.models import Q, F
 from django.db import transaction
+from django.db.models import F, Q
+from django.http import JsonResponse
+from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 
-from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as rest_filters
-
-from rest_framework import status
-from rest_framework.serializers import ValidationError
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, generics, status
 from rest_framework.response import Response
-from rest_framework import generics, filters
+from rest_framework.serializers import ValidationError
 
-from build.models import Build
-
-import common.settings
 import common.models
-
+import common.settings
+import stock.serializers as StockSerializers
+from build.models import Build
 from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer, SupplierPartSerializer
-
-from InvenTree.helpers import str2bool, isNull, extract_serial_numbers
-from InvenTree.helpers import DownloadFile
-from InvenTree.api import AttachmentMixin
+from InvenTree.api import APIDownloadMixin, AttachmentMixin
 from InvenTree.filters import InvenTreeOrderingFilter
-
-from order.models import PurchaseOrder
-from order.models import SalesOrder, SalesOrderAllocation
+from InvenTree.helpers import (DownloadFile, extract_serial_numbers, isNull,
+                               str2bool)
+from order.models import PurchaseOrder, SalesOrder, SalesOrderAllocation
 from order.serializers import PurchaseOrderSerializer
-
 from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
-
+from plugin.serializers import MetadataSerializer
 from stock.admin import StockItemResource
-from stock.models import StockLocation, StockItem
-from stock.models import StockItemTracking
-from stock.models import StockItemAttachment
-from stock.models import StockItemTestResult
-import stock.serializers as StockSerializers
+from stock.models import (StockItem, StockItemAttachment, StockItemTestResult,
+                          StockItemTracking, StockLocation)
 
 
 class StockDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -90,6 +77,15 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
         kwargs['context'] = self.get_serializer_context()
 
         return self.serializer_class(*args, **kwargs)
+
+
+class StockMetadata(generics.RetrieveUpdateAPIView):
+    """API endpoint for viewing / updating StockItem metadata"""
+
+    def get_serializer(self, *args, **kwargs):
+        return MetadataSerializer(StockItem, *args, **kwargs)
+
+    queryset = StockItem.objects.all()
 
 
 class StockItemContextMixin:
@@ -505,7 +501,7 @@ class StockFilter(rest_filters.FilterSet):
     updated_after = rest_filters.DateFilter(label='Updated after', field_name='updated', lookup_expr='gte')
 
 
-class StockList(generics.ListCreateAPIView):
+class StockList(APIDownloadMixin, generics.ListCreateAPIView):
     """ API endpoint for list view of Stock objects
 
     - GET: Return a list of all StockItem objects (with optional query filters)
@@ -646,6 +642,22 @@ class StockList(generics.ListCreateAPIView):
 
             return Response(response_data, status=status.HTTP_201_CREATED, headers=self.get_success_headers(serializer.data))
 
+    def download_queryset(self, queryset, export_format):
+        """
+        Download this queryset as a file.
+        Uses the APIDownloadMixin mixin class
+        """
+        dataset = StockItemResource().export(queryset=queryset)
+
+        filedata = dataset.export(export_format)
+
+        filename = 'InvenTree_StockItems_{date}.{fmt}'.format(
+            date=datetime.now().strftime("%d-%b-%Y"),
+            fmt=export_format
+        )
+
+        return DownloadFile(filedata, filename)
+
     def list(self, request, *args, **kwargs):
         """
         Override the 'list' method, as the StockLocation objects
@@ -657,25 +669,6 @@ class StockList(generics.ListCreateAPIView):
         queryset = self.filter_queryset(self.get_queryset())
 
         params = request.query_params
-
-        # Check if we wish to export the queried data to a file.
-        # If so, skip pagination!
-        export_format = params.get('export', None)
-
-        if export_format:
-            export_format = str(export_format).strip().lower()
-
-            if export_format in ['csv', 'tsv', 'xls', 'xlsx']:
-                dataset = StockItemResource().export(queryset=queryset)
-
-                filedata = dataset.export(export_format)
-
-                filename = 'InvenTree_Stocktake_{date}.{fmt}'.format(
-                    date=datetime.now().strftime("%d-%b-%Y"),
-                    fmt=export_format
-                )
-
-                return DownloadFile(filedata, filename)
 
         page = self.paginate_queryset(queryset)
 
@@ -1371,6 +1364,15 @@ class StockTrackingList(generics.ListAPIView):
     ]
 
 
+class LocationMetadata(generics.RetrieveUpdateAPIView):
+    """API endpoint for viewing / updating StockLocation metadata"""
+
+    def get_serializer(self, *args, **kwargs):
+        return MetadataSerializer(StockLocation, *args, **kwargs)
+
+    queryset = StockLocation.objects.all()
+
+
 class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
     """ API endpoint for detail view of StockLocation object
 
@@ -1388,7 +1390,14 @@ stock_api_urls = [
 
         re_path(r'^tree/', StockLocationTree.as_view(), name='api-location-tree'),
 
-        re_path(r'^(?P<pk>\d+)/', LocationDetail.as_view(), name='api-location-detail'),
+        # Stock location detail endpoints
+        re_path(r'^(?P<pk>\d+)/', include([
+
+            re_path(r'^metadata/', LocationMetadata.as_view(), name='api-location-metadata'),
+
+            re_path(r'^.*$', LocationDetail.as_view(), name='api-location-detail'),
+        ])),
+
         re_path(r'^.*$', StockLocationList.as_view(), name='api-location-list'),
     ])),
 
@@ -1420,8 +1429,9 @@ stock_api_urls = [
 
     # Detail views for a single stock item
     re_path(r'^(?P<pk>\d+)/', include([
-        re_path(r'^serialize/', StockItemSerialize.as_view(), name='api-stock-item-serialize'),
         re_path(r'^install/', StockItemInstall.as_view(), name='api-stock-item-install'),
+        re_path(r'^metadata/', StockMetadata.as_view(), name='api-stock-item-metadata'),
+        re_path(r'^serialize/', StockItemSerialize.as_view(), name='api-stock-item-serialize'),
         re_path(r'^uninstall/', StockItemUninstall.as_view(), name='api-stock-item-uninstall'),
         re_path(r'^.*$', StockDetail.as_view(), name='api-stock-detail'),
     ])),

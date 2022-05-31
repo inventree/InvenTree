@@ -2,29 +2,21 @@
 Django views for interacting with Company app
 """
 
+import io
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
+from django.core.files.base import ContentFile
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView
 
-from django.urls import reverse
-from django.core.files.base import ContentFile
-
-from PIL import Image
 import requests
-import io
+from PIL import Image
 
-from InvenTree.views import AjaxUpdateView
-from InvenTree.views import InvenTreeRoleMixin
-
-from .models import Company
-from .models import ManufacturerPart
-from .models import SupplierPart
-
+from InvenTree.views import AjaxUpdateView, InvenTreeRoleMixin
+from plugin.views import InvenTreePluginViewMixin
 
 from .forms import CompanyImageDownloadForm
+from .models import Company, ManufacturerPart, SupplierPart
 
 
 class CompanyIndex(InvenTreeRoleMixin, ListView):
@@ -104,7 +96,7 @@ class CompanyIndex(InvenTreeRoleMixin, ListView):
         return queryset
 
 
-class CompanyDetail(DetailView):
+class CompanyDetail(InvenTreePluginViewMixin, DetailView):
     """ Detail view for Company object """
     context_obect_name = 'company'
     template_name = 'company/detail.html'
@@ -161,7 +153,7 @@ class CompanyImageDownloadFromURL(AjaxUpdateView):
         self.response = response
 
         # Check for valid response code
-        if not response.status_code == 200:
+        if response.status_code != 200:
             form.add_error('url', _('Invalid response: {code}').format(code=response.status_code))
             return
 
@@ -196,7 +188,7 @@ class CompanyImageDownloadFromURL(AjaxUpdateView):
         )
 
 
-class ManufacturerPartDetail(DetailView):
+class ManufacturerPartDetail(InvenTreePluginViewMixin, DetailView):
     """ Detail view for ManufacturerPart """
     model = ManufacturerPart
     template_name = 'company/manufacturer_part_detail.html'
@@ -210,7 +202,7 @@ class ManufacturerPartDetail(DetailView):
         return ctx
 
 
-class SupplierPartDetail(DetailView):
+class SupplierPartDetail(InvenTreePluginViewMixin, DetailView):
     """ Detail view for SupplierPart """
     model = SupplierPart
     template_name = 'company/supplier_part_detail.html'

@@ -1,18 +1,12 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-
 import logging
 
 from rest_framework import serializers
+from rest_framework.fields import empty
 from rest_framework.metadata import SimpleMetadata
 from rest_framework.utils import model_meta
-from rest_framework.fields import empty
-
-from InvenTree.helpers import str2bool
 
 import users.models
-
+from InvenTree.helpers import str2bool
 
 logger = logging.getLogger('inventree')
 
@@ -262,7 +256,7 @@ class InvenTreeMetadata(SimpleMetadata):
         field_info = super().get_field_info(field)
 
         # If a default value is specified for the serializer field, add it!
-        if 'default' not in field_info and not field.default == empty:
+        if 'default' not in field_info and field.default != empty:
             field_info['default'] = field.get_default()
 
         # Force non-nullable fields to read as "required"

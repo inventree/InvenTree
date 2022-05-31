@@ -181,7 +181,7 @@
         {% endif %}
 
     });
-    
+
     onPanelLoad('order-shipments-complete', function() {
         loadSalesOrderShipmentTable('#completed-shipments-table', {
             order: {{ order.pk }},
@@ -231,7 +231,7 @@
     });
 
     loadBuildTable($("#builds-table"), {
-        url: "{% url 'api-build-list' %}",
+        locale: '{{ request.LANGUAGE_CODE }}',
         params: {
             sales_order: {{ order.id }},
         },
@@ -257,6 +257,7 @@
         '#so-lines-table',
         {
             order: {{ order.pk }},
+            reference: '{{ order.reference }}',
             status: {{ order.status }},
         }
     );
@@ -293,5 +294,5 @@
     );
 
     enableSidebar('salesorder');
-    
+
 {% endblock %}

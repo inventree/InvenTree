@@ -60,7 +60,7 @@ function imageHoverIcon(url) {
 
 /**
  * Renders a simple thumbnail image
- * @param {String} url is the image URL 
+ * @param {String} url is the image URL
  * @returns html <img> tag
  */
 function thumbnailImage(url, options={}) {
@@ -131,7 +131,7 @@ function makeIconButton(icon, cls, pk, title, options={}) {
 
 /*
  * Render a progessbar!
- * 
+ *
  * @param value is the current value of the progress bar
  * @param maximum is the maximum value of the progress bar
  */
@@ -164,7 +164,7 @@ function makeProgressBar(value, maximum, opts={}) {
     var style = options.style || '';
 
     var text = options.text;
-    
+
     if (!text) {
         if (style == 'percent') {
             // Display e.g. "50%"
@@ -247,13 +247,13 @@ function setupNotesField(element, url, options={}) {
     if (editable) {
         // Heading icons
         toolbar_icons.push('heading-1', 'heading-2', 'heading-3', '|');
-            
+
         // Font style
         toolbar_icons.push('bold', 'italic', 'strikethrough', '|');
-        
+
         // Text formatting
         toolbar_icons.push('unordered-list', 'ordered-list', 'code', 'quote', '|');
-        
+
         // Elements
         toolbar_icons.push('table', 'link', 'image');
     }
@@ -275,11 +275,11 @@ function setupNotesField(element, url, options={}) {
     if (!editable) {
         // Set readonly
         mde.codemirror.setOption('readOnly', true);
-            
+
         // Hide the "edit" and "save" buttons
         $('#edit-notes').hide();
         $('#save-notes').hide();
-        
+
     } else {
         mde.togglePreview();
 
@@ -289,7 +289,7 @@ function setupNotesField(element, url, options={}) {
             $('#save-notes').show();
 
             // Show the toolbar
-            $(`#${element}`).next('.EasyMDEContainer').find('.editor-toolbar').show();     
+            $(`#${element}`).next('.EasyMDEContainer').find('.editor-toolbar').show();
 
             mde.togglePreview();
         });
@@ -313,4 +313,3 @@ function setupNotesField(element, url, options={}) {
         });
     }
 }
-

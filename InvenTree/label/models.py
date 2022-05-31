@@ -2,31 +2,23 @@
 Label printing models
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-import sys
-import os
-import logging
 import datetime
+import logging
+import os
+import sys
 
 from django.conf import settings
-from django.db import models
-from django.urls import reverse
 from django.core.validators import FileExtensionValidator, MinValueValidator
-from django.core.exceptions import ValidationError, FieldError
-
-from django.template import Template, Context
+from django.db import models
+from django.template import Context, Template
 from django.template.loader import render_to_string
-
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from InvenTree.helpers import validateFilterString, normalize
-
 import common.models
-import stock.models
 import part.models
-
+import stock.models
+from InvenTree.helpers import normalize, validateFilterString
 
 try:
     from django_weasyprint import WeasyTemplateResponseMixin
@@ -178,7 +170,7 @@ class LabelTemplate(models.Model):
         Note: Override this in any subclass
         """
 
-        return {}
+        return {}  # pragma: no cover
 
     def generate_filename(self, request, **kwargs):
         """
@@ -249,7 +241,7 @@ class StockItemLabel(LabelTemplate):
 
     @staticmethod
     def get_api_url():
-        return reverse('api-stockitem-label-list')
+        return reverse('api-stockitem-label-list')  # pragma: no cover
 
     SUBDIR = "stockitem"
 
@@ -261,22 +253,6 @@ class StockItemLabel(LabelTemplate):
             validate_stock_item_filters
         ]
     )
-
-    def matches_stock_item(self, item):
-        """
-        Test if this label template matches a given StockItem object
-        """
-
-        try:
-            filters = validateFilterString(self.filters)
-            items = stock.models.StockItem.objects.filter(**filters)
-        except (ValidationError, FieldError):
-            # If an error exists with the "filters" field, return False
-            return False
-
-        items = items.filter(pk=item.pk)
-
-        return items.exists()
 
     def get_context_data(self, request):
         """
@@ -309,7 +285,7 @@ class StockLocationLabel(LabelTemplate):
 
     @staticmethod
     def get_api_url():
-        return reverse('api-stocklocation-label-list')
+        return reverse('api-stocklocation-label-list')  # pragma: no cover
 
     SUBDIR = "stocklocation"
 
@@ -320,21 +296,6 @@ class StockLocationLabel(LabelTemplate):
         validators=[
             validate_stock_location_filters]
     )
-
-    def matches_stock_location(self, location):
-        """
-        Test if this label template matches a given StockLocation object
-        """
-
-        try:
-            filters = validateFilterString(self.filters)
-            locs = stock.models.StockLocation.objects.filter(**filters)
-        except (ValidationError, FieldError):
-            return False
-
-        locs = locs.filter(pk=location.pk)
-
-        return locs.exists()
 
     def get_context_data(self, request):
         """
@@ -356,7 +317,7 @@ class PartLabel(LabelTemplate):
 
     @staticmethod
     def get_api_url():
-        return reverse('api-part-label-list')
+        return reverse('api-part-label-list')  # pragma: no cover
 
     SUBDIR = 'part'
 
@@ -368,21 +329,6 @@ class PartLabel(LabelTemplate):
             validate_part_filters
         ]
     )
-
-    def matches_part(self, part):
-        """
-        Test if this label template matches a given Part object
-        """
-
-        try:
-            filters = validateFilterString(self.filters)
-            parts = part.models.Part.objects.filter(**filters)
-        except (ValidationError, FieldError):
-            return False
-
-        parts = parts.filter(pk=part.pk)
-
-        return parts.exists()
 
     def get_context_data(self, request):
         """

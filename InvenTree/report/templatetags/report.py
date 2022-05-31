@@ -8,13 +8,11 @@ from django import template
 from django.conf import settings
 from django.utils.safestring import mark_safe
 
+import InvenTree.helpers
+from common.models import InvenTreeSetting
 from company.models import Company
 from part.models import Part
 from stock.models import StockItem
-
-from common.models import InvenTreeSetting
-
-import InvenTree.helpers
 
 register = template.Library()
 

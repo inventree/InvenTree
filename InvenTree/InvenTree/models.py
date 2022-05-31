@@ -2,28 +2,24 @@
 Generic models which provide extra functionality over base Django model types.
 """
 
-from __future__ import unicode_literals
-
-import re
-import os
 import logging
+import os
+import re
 
-from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
-
+from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
+from django.utils.translation import gettext_lazy as _
 
-from mptt.models import MPTTModel, TreeForeignKey
 from mptt.exceptions import InvalidMove
+from mptt.models import MPTTModel, TreeForeignKey
 
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.validators import validate_tree_name
-
 
 logger = logging.getLogger('inventree')
 
@@ -259,7 +255,7 @@ class InvenTreeAttachment(models.Model):
         new_file = os.path.abspath(new_file)
 
         # Check that there are no directory tricks going on...
-        if not os.path.dirname(new_file) == attachment_dir:
+        if os.path.dirname(new_file) != attachment_dir:
             logger.error(f"Attempted to rename attachment outside valid directory: '{new_file}'")
             raise ValidationError(_("Invalid attachment directory"))
 

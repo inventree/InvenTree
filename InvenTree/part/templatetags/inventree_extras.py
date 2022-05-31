@@ -5,30 +5,25 @@ This module provides template tags for extra functionality,
 over and above the built-in Django tags.
 """
 
-from datetime import date, datetime
+import logging
 import os
 import sys
-import logging
-
-from django.utils.html import format_html
-
-from django.utils.translation import gettext_lazy as _
-from django.conf import settings as djangosettings
+from datetime import date, datetime
 
 from django import template
-from django.urls import reverse
-from django.utils.safestring import mark_safe
-from django.templatetags.static import StaticNode, static
+from django.conf import settings as djangosettings
 from django.core.files.storage import default_storage
-
-from InvenTree import version, settings
+from django.templatetags.static import StaticNode, static
+from django.urls import reverse
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
 
 import InvenTree.helpers
-
-from common.models import InvenTreeSetting, ColorTheme, InvenTreeUserSetting
+from common.models import ColorTheme, InvenTreeSetting, InvenTreeUserSetting
 from common.settings import currency_code_default
-
-from plugin.models import PluginSetting
+from InvenTree import settings, version
+from plugin.models import NotificationUserSetting, PluginSetting
 
 register = template.Library()
 
@@ -83,7 +78,7 @@ def render_date(context, date_object):
 
         user = context.get('user', None)
 
-        if user:
+        if user and user.is_authenticated:
             # User is specified - look for their date display preference
             user_date_format = InvenTreeUserSetting.get_setting('DATE_DISPLAY_FORMAT', user=user)
         else:
@@ -313,6 +308,9 @@ def setting_object(key, *args, **kwargs):
 
         return PluginSetting.get_setting_object(key, plugin=plugin)
 
+    if 'method' in kwargs:
+        return NotificationUserSetting.get_setting_object(key, user=kwargs['user'], method=kwargs['method'])
+
     if 'user' in kwargs:
         return InvenTreeUserSetting.get_setting_object(key, user=kwargs['user'])
 
@@ -326,6 +324,8 @@ def settings_value(key, *args, **kwargs):
     """
 
     if 'user' in kwargs:
+        if not kwargs['user'] or (kwargs['user'] and kwargs['user'].is_authenticated is False):
+            return InvenTreeUserSetting.get_setting(key)
         return InvenTreeUserSetting.get_setting(key, user=kwargs['user'])
 
     return InvenTreeSetting.get_setting(key)
@@ -540,7 +540,7 @@ class I18nStaticNode(StaticNode):
     custom StaticNode
     replaces a variable named *lng* in the path with the current language
     """
-    def render(self, context):
+    def render(self, context):  # pragma: no cover
 
         self.original = getattr(self, 'original', None)
 
@@ -548,7 +548,8 @@ class I18nStaticNode(StaticNode):
             # Store the original (un-rendered) path template, as it gets overwritten below
             self.original = self.path.var
 
-        self.path.var = self.original.format(lng=context.request.LANGUAGE_CODE)
+        if hasattr(context, 'request'):
+            self.path.var = self.original.format(lng=context.request.LANGUAGE_CODE)
 
         ret = super().render(context)
 
@@ -563,7 +564,7 @@ if settings.DEBUG:
         """ simple tag to enable {% url %} functionality instead of {% static %} """
         return reverse(url_name)
 
-else:
+else:  # pragma: no cover
 
     @register.tag('i18n_static')
     def do_i18n_static(parser, token):

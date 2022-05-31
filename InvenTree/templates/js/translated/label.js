@@ -224,7 +224,7 @@ function selectLabel(labels, items, options={}) {
     /**
      * Present the user with the available labels,
      * and allow them to select which label to print.
-     * 
+     *
      * The intent is that the available labels have been requested
      * (via AJAX) from the server.
      */
@@ -236,24 +236,20 @@ function selectLabel(labels, items, options={}) {
     if (plugins_enabled) {
         inventreeGet(
             `/api/plugin/`,
-            {},
+            {
+                mixin: 'labels',
+            },
             {
                 async: false,
                 success: function(response) {
-                    response.forEach(function(plugin) {
-                        // Look for active plugins which implement the 'labels' mixin class
-                        if (plugin.active && plugin.mixins && plugin.mixins.labels) {
-                            // This plugin supports label printing
-                            plugins.push(plugin);
-                        }
-                    });
+                    plugins = response;
                 }
             }
         );
     }
 
     var plugin_selection = '';
-    
+
     if (plugins_enabled && plugins.length > 0) {
         plugin_selection =`
         <div class='form-group'>

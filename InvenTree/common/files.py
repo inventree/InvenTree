@@ -2,12 +2,13 @@
 Files management tools.
 """
 
-from rapidfuzz import fuzz
-import tablib
 import os
 
-from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+
+import tablib
+from rapidfuzz import fuzz
 
 
 class FileManager:
@@ -199,7 +200,7 @@ class FileManager:
 
                 try:
                     # Excel import casts number-looking-items into floats, which is annoying
-                    if item == int(item) and not str(item) == str(int(item)):
+                    if item == int(item) and str(item) != str(int(item)):
                         data[idx] = int(item)
                 except ValueError:
                     pass

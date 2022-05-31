@@ -7,6 +7,7 @@
 /* exported
     inventreeGet,
     inventreeDelete,
+    inventreeMultiDelete,
     inventreeFormDataUpload,
     showApiError,
 */
@@ -14,11 +15,11 @@
 $.urlParam = function(name) {
     // eslint-disable-next-line no-useless-escape
     var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
-    
+
     if (results == null) {
         return null;
     }
-    
+
     return decodeURI(results[1]) || 0;
 };
 
@@ -80,9 +81,9 @@ function inventreeGet(url, filters={}, options={}) {
 
 function inventreeFormDataUpload(url, data, options={}) {
     /* Upload via AJAX using the FormData approach.
-     * 
+     *
      * Note that the following AJAX parameters are required for FormData upload
-     * 
+     *
      * processData: false
      * contentType: false
      */
@@ -171,6 +172,50 @@ function inventreeDelete(url, options={}) {
     return inventreePut(url, {}, options);
 }
 
+
+/*
+ * Perform a 'multi delete' operation:
+ *
+ * - Items are deleted sequentially from the database, rather than simultaneous requests
+ * - This prevents potential overload / transaction issues in the DB backend
+ *
+ * Notes:
+ * - Assumes that each item in the 'items' list has a parameter 'pk'
+ */
+function inventreeMultiDelete(url, items, options={}) {
+
+    if (!url.endsWith('/')) {
+        url += '/';
+    }
+
+    function doNextDelete() {
+        if (items.length > 0) {
+            var item = items.shift();
+
+            inventreeDelete(`${url}${item.pk}/`, {
+                complete: doNextDelete
+            });
+        } else {
+            if (options.modal) {
+                $(options.modal).modal('hide');
+            }
+
+            if (options.success) {
+                options.success();
+            }
+        }
+    }
+
+    if (options.modal) {
+        showModalSpinner(options.modal);
+    }
+
+    // Initiate the process
+    doNextDelete();
+
+}
+
+
 /*
  * Display a notification with error information
  */
@@ -225,6 +270,20 @@ function showApiError(xhr, url) {
     default:
         title = '{% trans "Unhandled Error Code" %}';
         message = `{% trans "Error code" %}: ${xhr.status}`;
+
+        var response = xhr.responseJSON;
+
+        // The server may have provided some extra information about this error
+        if (response) {
+            if (response.error) {
+                title = response.error;
+            }
+
+            if (response.detail) {
+                message = response.detail;
+            }
+        }
+
         break;
     }
 

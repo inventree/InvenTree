@@ -1,15 +1,13 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-from django.test import TestCase
-from django.core.exceptions import ValidationError
-
 import os
 from decimal import Decimal
 
-from .models import Company, Contact, ManufacturerPart, SupplierPart
-from .models import rename_company_image
+from django.core.exceptions import ValidationError
+from django.test import TestCase
+
 from part.models import Part
+
+from .models import (Company, Contact, ManufacturerPart, SupplierPart,
+                     rename_company_image)
 
 
 class CompanySimpleTest(TestCase):

@@ -2,36 +2,28 @@
 Company database model definitions
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import os
 
-from django.utils.translation import gettext_lazy as _
-from django.core.validators import MinValueValidator
-from django.core.exceptions import ValidationError
-
-from django.db import models
-from django.db.models import Sum, Q, UniqueConstraint
-
 from django.apps import apps
+from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
+from django.db import models
+from django.db.models import Q, Sum, UniqueConstraint
 from django.urls import reverse
-
-from moneyed import CURRENCIES
+from django.utils.translation import gettext_lazy as _
 
 from markdownx.models import MarkdownxField
-
+from moneyed import CURRENCIES
 from stdimage.models import StdImageField
-
-from InvenTree.helpers import getMediaUrl, getBlankImage, getBlankThumbnail
-from InvenTree.fields import InvenTreeURLField
-from InvenTree.status_codes import PurchaseOrderStatus
-
-import InvenTree.validators
 
 import common.models
 import common.settings
+import InvenTree.validators
 from common.settings import currency_code_default
+from InvenTree.fields import InvenTreeURLField
+from InvenTree.helpers import getBlankImage, getBlankThumbnail, getMediaUrl
+from InvenTree.models import InvenTreeAttachment
+from InvenTree.status_codes import PurchaseOrderStatus
 
 
 def rename_company_image(instance, filename):
@@ -383,6 +375,22 @@ class ManufacturerPart(models.Model):
         return s
 
 
+class ManufacturerPartAttachment(InvenTreeAttachment):
+    """
+    Model for storing file attachments against a ManufacturerPart object
+    """
+
+    @staticmethod
+    def get_api_url():
+        return reverse('api-manufacturer-part-attachment-list')
+
+    def getSubdir(self):
+        return os.path.join("manufacturer_part_files", str(self.manufacturer_part.id))
+
+    manufacturer_part = models.ForeignKey(ManufacturerPart, on_delete=models.CASCADE,
+                                          verbose_name=_('Manufacturer Part'), related_name='attachments')
+
+
 class ManufacturerPartParameter(models.Model):
     """
     A ManufacturerPartParameter represents a key:value parameter for a MnaufacturerPart.
@@ -494,7 +502,7 @@ class SupplierPart(models.Model):
         # Ensure that the linked manufacturer_part points to the same part!
         if self.manufacturer_part and self.part:
 
-            if not self.manufacturer_part.part == self.part:
+            if self.manufacturer_part.part != self.part:
                 raise ValidationError({
                     'manufacturer_part': _("Linked manufacturer part must reference the same base part"),
                 })

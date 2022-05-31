@@ -6,18 +6,17 @@
 <!-- Badges -->
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/inventree/inventree)
 ![CI](https://github.com/inventree/inventree/actions/workflows/qc_checks.yaml/badge.svg)
-![Docker Build](https://github.com/inventree/inventree/actions/workflows/docker_latest.yaml/badge.svg)
+![Docker Build](https://github.com/inventree/inventree/actions/workflows/docker.yaml/badge.svg)
 
-![Coveralls](https://img.shields.io/coveralls/github/inventree/InvenTree)
+[![Coveralls](https://img.shields.io/coveralls/github/inventree/InvenTree)](https://coveralls.io/github/inventree/InvenTree)
 [![Crowdin](https://badges.crowdin.net/inventree/localized.svg)](https://crowdin.com/project/inventree)
 ![Lines of code](https://img.shields.io/tokei/lines/github/inventree/InvenTree)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/inventree/inventree)
-![PyPI - Downloads](https://img.shields.io/pypi/dm/inventree)
 [![Docker Pulls](https://img.shields.io/docker/pulls/inventree/inventree)](https://hub.docker.com/r/inventree/inventree)
 
 ![GitHub Org's stars](https://img.shields.io/github/stars/inventree?style=social)
-![Twitter Follow](https://img.shields.io/twitter/follow/inventreedb?style=social)
-![Subreddit subscribers](https://img.shields.io/reddit/subreddit-subscribers/inventree?style=social)
+[![Twitter Follow](https://img.shields.io/twitter/follow/inventreedb?style=social)](https://twitter.com/inventreedb)
+[![Subreddit subscribers](https://img.shields.io/reddit/subreddit-subscribers/inventree?style=social)](https://www.reddit.com/r/InvenTree/)
 
 
 <h4>
@@ -36,7 +35,7 @@
 
 InvenTree is an open-source Inventory Management System which provides powerful low-level stock control and part tracking. The core of the InvenTree system is a Python/Django database backend which provides an admin interface (web-based) and a REST API for interaction with external interfaces and applications.
 
-InvenTree is designed to be lightweight and easy to use for SME or hobbyist applications, where many existing stock management solutions are bloated and cumbersome to use. Updating stock is a single-action process and does not require a complex system of work orders or stock transactions. 
+InvenTree is designed to be lightweight and easy to use for SME or hobbyist applications, where many existing stock management solutions are bloated and cumbersome to use. Updating stock is a single-action process and does not require a complex system of work orders or stock transactions.
 
 Powerful business logic works in the background to ensure that stock tracking history is maintained, and users have ready access to stock level information.
 
@@ -116,7 +115,7 @@ Refer to the [getting started guide](https://inventree.readthedocs.io/en/latest/
 <!-- Mobile App -->
 ## 	:iphone: Mobile App
 
-InvenTree is supported by a [companion mobile app](https://inventree.readthedocs.io/en/latest/app/app/) which allows users access to stock control information and functionality. 
+InvenTree is supported by a [companion mobile app](https://inventree.readthedocs.io/en/latest/app/app/) which allows users access to stock control information and functionality.
 
 <div align="center"><h4>
     <a href="https://play.google.com/store/apps/details?id=inventree.inventree_app">Android Play Store</a>
@@ -140,7 +139,7 @@ There are several options to deploy InvenTree.
 <!-- Contributing -->
 ## :wave: Contributing
 
-Contributions are welcomed and encouraged. Please help to make this project even better!  
+Contributions are welcomed and encouraged. Please help to make this project even better!
 Refer to the [contribution page in the docs ](https://inventree.readthedocs.io/en/latest/contribute/) and check out [contributing.md](CONTRIBUTING.md).
 
 <!-- Translation -->
@@ -153,7 +152,7 @@ To contribute to the translation effort, navigate to the [InvenTree crowdin proj
 <!-- Sponsor -->
 ## :money_with_wings: Sponsor
 
-If you use InvenTree and find it to be useful, please consider making a donation toward its continued development. 
+If you use InvenTree and find it to be useful, please consider making a donation toward its continued development.
 
 [Donate via PayPal](https://paypal.me/inventree?locale.x=en_AU)
 
@@ -169,4 +168,4 @@ Find a full list of used third-party libraries in [our documentation](https://in
 <!-- License -->
 ## :warning: License
 
-Distributed under the [MIT](https://choosealicense.com/licenses/mit/) License. See LICENSE.txt for more information.
+Distributed under the [MIT](https://choosealicense.com/licenses/mit/) License. See [LICENSE.txt](https://github.com/inventree/InvenTree/blob/master/LICENSE) for more information.

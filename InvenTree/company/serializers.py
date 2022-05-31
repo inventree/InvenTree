@@ -5,21 +5,19 @@ JSON serializers for Company app
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
-
 from sql_util.utils import SubqueryCount
 
-from InvenTree.serializers import InvenTreeDecimalField
-from InvenTree.serializers import InvenTreeImageSerializerField
-from InvenTree.serializers import InvenTreeModelSerializer
-from InvenTree.serializers import InvenTreeMoneySerializer
-
+from common.settings import currency_code_default, currency_code_mappings
+from InvenTree.serializers import (InvenTreeAttachmentSerializer,
+                                   InvenTreeDecimalField,
+                                   InvenTreeImageSerializerField,
+                                   InvenTreeModelSerializer,
+                                   InvenTreeMoneySerializer)
 from part.serializers import PartBriefSerializer
 
-from .models import Company
-from .models import ManufacturerPart, ManufacturerPartParameter
-from .models import SupplierPart, SupplierPriceBreak
-
-from common.settings import currency_code_default, currency_code_mappings
+from .models import (Company, ManufacturerPart, ManufacturerPartAttachment,
+                     ManufacturerPartParameter, SupplierPart,
+                     SupplierPriceBreak)
 
 
 class CompanyBriefSerializer(InvenTreeModelSerializer):
@@ -139,6 +137,29 @@ class ManufacturerPartSerializer(InvenTreeModelSerializer):
             'description',
             'MPN',
             'link',
+        ]
+
+
+class ManufacturerPartAttachmentSerializer(InvenTreeAttachmentSerializer):
+    """
+    Serializer for the ManufacturerPartAttachment class
+    """
+
+    class Meta:
+        model = ManufacturerPartAttachment
+
+        fields = [
+            'pk',
+            'manufacturer_part',
+            'attachment',
+            'filename',
+            'link',
+            'comment',
+            'upload_date',
+        ]
+
+        read_only_fields = [
+            'upload_date',
         ]
 
 

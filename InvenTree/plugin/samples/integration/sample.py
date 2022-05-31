@@ -2,22 +2,22 @@
 Sample implementations for IntegrationPlugin
 """
 
-from plugin import IntegrationPluginBase
-from plugin.mixins import AppMixin, SettingsMixin, UrlsMixin, NavigationMixin
-
 from django.http import HttpResponse
-from django.utils.translation import gettext_lazy as _
 from django.urls import include, re_path
+from django.utils.translation import gettext_lazy as _
+
+from plugin import InvenTreePlugin
+from plugin.mixins import AppMixin, NavigationMixin, SettingsMixin, UrlsMixin
 
 
-class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixin, IntegrationPluginBase):
+class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixin, InvenTreePlugin):
     """
-    A full integration plugin example
+    A full plugin example
     """
 
-    PLUGIN_NAME = "SampleIntegrationPlugin"
-    PLUGIN_SLUG = "sample"
-    PLUGIN_TITLE = "Sample Plugin"
+    NAME = "SampleIntegrationPlugin"
+    SLUG = "sample"
+    TITLE = "Sample Plugin"
 
     NAVIGATION_TAB_NAME = "Sample Nav"
     NAVIGATION_TAB_ICON = 'fas fa-plus'
@@ -64,6 +64,16 @@ class SampleIntegrationPlugin(AppMixin, SettingsMixin, UrlsMixin, NavigationMixi
                 ('D', 'Dog'),
             ],
             'default': 'A',
+        },
+        'SELECT_COMPANY': {
+            'name': 'Company',
+            'description': 'Select a company object from the database',
+            'model': 'company.company',
+        },
+        'SELECT_PART': {
+            'name': 'Part',
+            'description': 'Select a part object from the database',
+            'model': 'part.part',
         },
     }
 

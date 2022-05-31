@@ -2,35 +2,27 @@
 Report template model definitions
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
+import datetime
+import logging
 import os
 import sys
-import logging
 
-import datetime
-
-from django.urls import reverse
-from django.db import models
 from django.conf import settings
 from django.core.cache import cache
-from django.core.exceptions import ValidationError, FieldError
-
-from django.template.loader import render_to_string
-from django.template import Template, Context
-
+from django.core.exceptions import FieldError, ValidationError
 from django.core.validators import FileExtensionValidator
+from django.db import models
+from django.template import Context, Template
+from django.template.loader import render_to_string
+from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 import build.models
 import common.models
+import order.models
 import part.models
 import stock.models
-import order.models
-
 from InvenTree.helpers import validateFilterString
-
-from django.utils.translation import gettext_lazy as _
 
 try:
     from django_weasyprint import WeasyTemplateResponseMixin
@@ -389,7 +381,7 @@ class BuildReport(ReportTemplateBase):
 
         my_build = self.object_to_print
 
-        if not type(my_build) == build.models.Build:
+        if type(my_build) != build.models.Build:
             raise TypeError('Provided model is not a Build object')
 
         return {

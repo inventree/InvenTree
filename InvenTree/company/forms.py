@@ -2,17 +2,13 @@
 Django Forms for interacting with Company app
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-from InvenTree.forms import HelperForm
-from InvenTree.fields import RoundingDecimalFormField
-
-from django.utils.translation import gettext_lazy as _
 import django.forms
+from django.utils.translation import gettext_lazy as _
 
-from .models import Company
-from .models import SupplierPriceBreak
+from InvenTree.fields import RoundingDecimalFormField
+from InvenTree.forms import HelperForm
+
+from .models import Company, SupplierPriceBreak
 
 
 class CompanyImageDownloadForm(HelperForm):

@@ -2,37 +2,32 @@
 Django views for interacting with Order app
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-from django.db.utils import IntegrityError
-from django.http.response import JsonResponse
-from django.shortcuts import get_object_or_404
-from django.urls import reverse
-from django.http import HttpResponseRedirect
-from django.utils.translation import gettext_lazy as _
-from django.views.generic import DetailView, ListView
-from django.forms import HiddenInput, IntegerField
-
 import logging
 from decimal import Decimal, InvalidOperation
 
-from .models import PurchaseOrder, PurchaseOrderLineItem
-from .models import SalesOrder, SalesOrderLineItem
-from .admin import PurchaseOrderLineItemResource, SalesOrderLineItemResource
-from company.models import SupplierPart  # ManufacturerPart
-from part.models import Part
+from django.db.utils import IntegrityError
+from django.forms import HiddenInput, IntegerField
+from django.http import HttpResponseRedirect
+from django.http.response import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
+from django.views.generic import DetailView, ListView
 
-from common.forms import UploadFileForm, MatchFieldForm
-from common.views import FileManagementFormView
 from common.files import FileManager
+from common.forms import MatchFieldForm, UploadFileForm
+from common.views import FileManagementFormView
+from company.models import SupplierPart  # ManufacturerPart
+from InvenTree.helpers import DownloadFile
+from InvenTree.views import AjaxView, InvenTreeRoleMixin
+from part.models import Part
+from part.views import PartPricing
+from plugin.views import InvenTreePluginViewMixin
 
 from . import forms as order_forms
-from part.views import PartPricing
-
-from InvenTree.helpers import DownloadFile
-from InvenTree.views import InvenTreeRoleMixin, AjaxView
-
+from .admin import PurchaseOrderLineItemResource, SalesOrderLineItemResource
+from .models import (PurchaseOrder, PurchaseOrderLineItem, SalesOrder,
+                     SalesOrderLineItem)
 
 logger = logging.getLogger("inventree")
 
@@ -65,7 +60,7 @@ class SalesOrderIndex(InvenTreeRoleMixin, ListView):
     context_object_name = 'orders'
 
 
-class PurchaseOrderDetail(InvenTreeRoleMixin, DetailView):
+class PurchaseOrderDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
     """ Detail view for a PurchaseOrder object """
 
     context_object_name = 'order'
@@ -78,7 +73,7 @@ class PurchaseOrderDetail(InvenTreeRoleMixin, DetailView):
         return ctx
 
 
-class SalesOrderDetail(InvenTreeRoleMixin, DetailView):
+class SalesOrderDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
     """ Detail view for a SalesOrder object """
 
     context_object_name = 'order'

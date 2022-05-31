@@ -1,18 +1,19 @@
-from django.shortcuts import HttpResponseRedirect
-from django.urls import reverse_lazy, Resolver404
-from django.shortcuts import redirect
-from django.urls import include, re_path
-from django.conf import settings
-from django.contrib.auth.middleware import PersistentRemoteUserMiddleware
+# -*- coding: utf-8 -*-
 
 import logging
 
+from django.conf import settings
+from django.contrib.auth.middleware import PersistentRemoteUserMiddleware
+from django.http import HttpResponse
+from django.shortcuts import redirect
+from django.urls import Resolver404, include, re_path, reverse_lazy
+
+from allauth_2fa.middleware import (AllauthTwoFactorMiddleware,
+                                    BaseRequire2FAMiddleware)
 from rest_framework.authtoken.models import Token
-from allauth_2fa.middleware import BaseRequire2FAMiddleware, AllauthTwoFactorMiddleware
 
-from InvenTree.urls import frontendpatterns
 from common.models import InvenTreeSetting
-
+from InvenTree.urls import frontendpatterns
 
 logger = logging.getLogger("inventree")
 
@@ -68,10 +69,6 @@ class AuthRequiredMiddleware(object):
 
             # No authorization was found for the request
             if not authorized:
-                # A logout request will redirect the user to the login screen
-                if request.path_info == reverse_lazy('account_logout'):
-                    return HttpResponseRedirect(reverse_lazy('account_login'))
-
                 path = request.path_info
 
                 # List of URL endpoints we *do not* want to redirect to
@@ -82,10 +79,22 @@ class AuthRequiredMiddleware(object):
                     reverse_lazy('admin:logout'),
                 ]
 
-                if path not in urls and not path.startswith('/api/'):
+                # Do not redirect requests to any of these paths
+                paths_ignore = [
+                    '/api/',
+                    '/js/',
+                    '/media/',
+                    '/static/',
+                ]
+
+                if path not in urls and not any([path.startswith(p) for p in paths_ignore]):
                     # Save the 'next' parameter to pass through to the login view
 
                     return redirect('{}?next={}'.format(reverse_lazy('account_login'), request.path))
+
+                else:
+                    # Return a 401 (Unauthorized) response code for this request
+                    return HttpResponse('Unauthorized', status=401)
 
         response = self.get_response(request)
 

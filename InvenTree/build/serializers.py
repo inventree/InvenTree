@@ -2,9 +2,6 @@
 JSON serializers for Build API
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.db import transaction
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import gettext_lazy as _
@@ -202,7 +199,7 @@ class BuildOutputCreateSerializer(serializers.Serializer):
 
     def validate_quantity(self, quantity):
 
-        if quantity < 0:
+        if quantity <= 0:
             raise ValidationError(_("Quantity must be greater than zero"))
 
         part = self.get_part()
@@ -212,7 +209,7 @@ class BuildOutputCreateSerializer(serializers.Serializer):
             if part.trackable:
                 raise ValidationError(_("Integer quantity required for trackable parts"))
 
-            if part.has_trackable_parts():
+            if part.has_trackable_parts:
                 raise ValidationError(_("Integer quantity required, as the bill of materials contains trackable parts"))
 
         return quantity
@@ -235,7 +232,6 @@ class BuildOutputCreateSerializer(serializers.Serializer):
 
         serial_numbers = serial_numbers.strip()
 
-        # TODO: Field level validation necessary here?
         return serial_numbers
 
     auto_allocate = serializers.BooleanField(

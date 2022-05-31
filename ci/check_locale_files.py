@@ -1,10 +1,7 @@
 """ Check that there are no database migration files which have not been committed. """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-import sys
 import subprocess
+import sys
 
 print("Checking for uncommitted locale files...")
 

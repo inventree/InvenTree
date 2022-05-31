@@ -1,17 +1,14 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
+from django import forms
+from django.contrib import admin, messages
+from django.contrib.admin.widgets import FilteredSelectMultiple
+from django.contrib.auth import get_user_model
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import Group
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from django.contrib import admin, messages
-from django import forms
-from django.contrib.auth import get_user_model
-from django.contrib.admin.widgets import FilteredSelectMultiple
-from django.contrib.auth.models import Group
-from django.contrib.auth.admin import UserAdmin
-from django.utils.safestring import mark_safe
-
-from users.models import RuleSet, Owner
+from users.models import Owner, RuleSet
 
 User = get_user_model()
 

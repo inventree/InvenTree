@@ -11,8 +11,8 @@
     global_settings,
     handleFormErrors,
     imageHoverIcon,
-    inventreeDelete,
     inventreeGet,
+    inventreeMultiDelete,
     inventreePut,
     launchModalForm,
     linkButtonsToSelection,
@@ -202,7 +202,7 @@ function stockItemFields(options={}) {
                     } else {
                         clearFormInput('supplier_part', opts);
                         clearFormInput('purchase_price', opts);
-                        
+
                         disableFormInput('supplier_part', opts);
                         disableFormInput('purchase_price', opts);
                         disableFormInput('purchase_price_currency', opts);
@@ -315,11 +315,11 @@ function duplicateStockItem(pk, options) {
             delete data['serial'];
 
             options.data = data;
-            
+
             options.create = true;
             options.fields = stockItemFields(options);
             options.groups = stockItemGroups(options);
-            
+
             options.method = 'POST';
             options.title = '{% trans "Duplicate Stock Item" %}';
 
@@ -342,7 +342,7 @@ function editStockItem(pk, options={}) {
     options.groups = stockItemGroups(options);
 
     options.title = '{% trans "Edit Stock Item" %}';
-    
+
     // Query parameters for retrieving stock item data
     options.params = {
         part_detail: true,
@@ -443,7 +443,7 @@ function findStockItemBySerialNumber(part_id) {
         onSubmit: function(fields, opts) {
 
             var serial = getFormFieldValue('serial', fields['serial'], opts);
-        
+
             serial = serial.toString().trim();
 
             if (!serial) {
@@ -540,7 +540,7 @@ function assignStockToCustomer(items, options={}) {
     for (var idx = 0; idx < items.length; idx++) {
 
         var item = items[idx];
-        
+
         var pk = item.pk;
 
         var part = item.part_detail;
@@ -1069,7 +1069,7 @@ function adjustStock(action, items, options={}) {
             }
         },
         onSubmit: function(fields, opts) {
-          
+
             // Extract data elements from the form
             var data = {
                 items: [],
@@ -1094,7 +1094,7 @@ function adjustStock(action, items, options={}) {
                 if (row.exists()) {
 
                     item_pk_values.push(pk);
-                    
+
                     var quantity = getFormFieldValue(`items_quantity_${pk}`, {}, opts);
 
                     data.items.push({
@@ -1106,25 +1106,15 @@ function adjustStock(action, items, options={}) {
 
             // Delete action is handled differently
             if (action == 'delete') {
-                var requests = [];
 
-                item_pk_values.forEach(function(pk) {
-                    requests.push(
-                        inventreeDelete(
-                            `/api/stock/${pk}/`,
-                        )
-                    );
-                });
-
-                // Wait for *all* the requests to complete
-                $.when.apply($, requests).done(function() {
-                    // Destroy the modal window
-                    $(opts.modal).modal('hide');
-
-                    if (options.success) {
-                        options.success();
+                inventreeMultiDelete(
+                    '{% url "api-stock-list" %}',
+                    items,
+                    {
+                        modal: opts.modal,
+                        success: options.success,
                     }
-                });
+                );
 
                 return;
             }
@@ -1514,9 +1504,9 @@ function loadStockTestResultsTable(table, options) {
 
 
 function locationDetail(row, showLink=true) {
-    /* 
+    /*
      * Function to display a "location" of a StockItem.
-     * 
+     *
      * Complicating factors: A StockItem may not actually *be* in a location!
      * - Could be at a customer
      * - Could be installed in another stock item
@@ -1568,7 +1558,7 @@ function loadStockTable(table, options) {
     /* Load data into a stock table with adjustable options.
      * Fetches data (via AJAX) and loads into a bootstrap table.
      * Also links in default button callbacks.
-     * 
+     *
      * Options:
      *  url - URL for the stock query
      *  params - query params for augmenting stock data request
@@ -1657,7 +1647,7 @@ function loadStockTable(table, options) {
             return html;
         }
     };
-    
+
     if (!options.params.ordering) {
         col['sortable'] = true;
     }
@@ -1698,20 +1688,29 @@ function loadStockTable(table, options) {
         sortable: true,
         formatter: function(value, row) {
 
-            var val = parseFloat(value);
+            var val = '';
 
-            // If there is a single unit with a serial number, use the serial number
+            var available = Math.max(0, (row.quantity || 0) - (row.allocated || 0));
+
             if (row.serial && row.quantity == 1) {
+                // If there is a single unit with a serial number, use the serial number
                 val = '# ' + row.serial;
+            } else if (row.quantity != available) {
+                // Some quantity is available, show available *and* quantity
+                var ava = +parseFloat(available).toFixed(5);
+                var tot = +parseFloat(row.quantity).toFixed(5);
+
+                val = `${ava} / ${tot}`;
             } else {
-                val = +val.toFixed(5);
+                // Format floating point numbers with this one weird trick
+                val = +parseFloat(value).toFixed(5);
             }
 
             var html = renderLink(val, `/stock/item/${row.pk}/`);
 
             if (row.is_building) {
                 html += makeIconBadge('fa-tools', '{% trans "Stock item is in production" %}');
-            } 
+            }
 
             if (row.sales_order) {
                 // Stock item has been assigned to a sales order
@@ -1719,16 +1718,7 @@ function loadStockTable(table, options) {
             } else if (row.customer) {
                 // StockItem has been assigned to a customer
                 html += makeIconBadge('fa-user', '{% trans "Stock item assigned to customer" %}');
-            }
-
-            if (row.expired) {
-                html += makeIconBadge('fa-calendar-times icon-red', '{% trans "Stock item has expired" %}');
-            } else if (row.stale) {
-                html += makeIconBadge('fa-stopwatch', '{% trans "Stock item will expire soon" %}');
-            }
-
-            if (row.allocated) {
-
+            } else if (row.allocated) {
                 if (row.serial != null && row.quantity == 1) {
                     html += makeIconBadge('fa-bookmark icon-yellow', '{% trans "Serialized stock item has been allocated" %}');
                 } else if (row.allocated >= row.quantity) {
@@ -1736,10 +1726,14 @@ function loadStockTable(table, options) {
                 } else {
                     html += makeIconBadge('fa-bookmark', '{% trans "Stock item has been partially allocated" %}');
                 }
+            } else if (row.belongs_to) {
+                html += makeIconBadge('fa-box', '{% trans "Stock item has been installed in another item" %}');
             }
 
-            if (row.belongs_to) {
-                html += makeIconBadge('fa-box', '{% trans "Stock item has been installed in another item" %}');
+            if (row.expired) {
+                html += makeIconBadge('fa-calendar-times icon-red', '{% trans "Stock item has expired" %}');
+            } else if (row.stale) {
+                html += makeIconBadge('fa-stopwatch', '{% trans "Stock item will expire soon" %}');
             }
 
             // Special stock status codes
@@ -1760,7 +1754,7 @@ function loadStockTable(table, options) {
             return html;
         }
     };
-    
+
     columns.push(col);
 
     col = {
@@ -1870,7 +1864,7 @@ function loadStockTable(table, options) {
     });
 
     col = {
-        
+
         field: 'supplier_part',
         title: '{% trans "Supplier Part" %}',
         visible: params['supplier_part_detail'] || false,
@@ -1951,7 +1945,7 @@ function loadStockTable(table, options) {
     );
 
     function stockAdjustment(action) {
-        var items = $(table).bootstrapTable('getSelections');
+        var items = getTableData(table);
 
         adjustStock(action, items, {
             success: function() {
@@ -1963,7 +1957,7 @@ function loadStockTable(table, options) {
     // Automatically link button callbacks
 
     $('#multi-item-print-label').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
+        var selections = getTableData(table);
 
         var items = [];
 
@@ -1975,7 +1969,7 @@ function loadStockTable(table, options) {
     });
 
     $('#multi-item-print-test-report').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
+        var selections = getTableData(table);
 
         var items = [];
 
@@ -1987,8 +1981,8 @@ function loadStockTable(table, options) {
     });
 
     if (global_settings.BARCODE_ENABLE) {
-        $('#multi-item-barcode-scan-into-location').click(function() {        
-            var selections = $(table).bootstrapTable('getSelections');
+        $('#multi-item-barcode-scan-into-location').click(function() {
+            var selections = getTableData(table);
 
             var items = [];
 
@@ -2017,7 +2011,7 @@ function loadStockTable(table, options) {
     });
 
     $('#multi-item-merge').click(function() {
-        var items = $(table).bootstrapTable('getSelections');
+        var items = getTableData(table);
 
         mergeStockItems(items, {
             success: function(response) {
@@ -2032,7 +2026,7 @@ function loadStockTable(table, options) {
 
     $('#multi-item-assign').click(function() {
 
-        var items = $(table).bootstrapTable('getSelections');
+        var items = getTableData(table);
 
         assignStockToCustomer(items, {
             success: function() {
@@ -2042,7 +2036,8 @@ function loadStockTable(table, options) {
     });
 
     $('#multi-item-order').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
+
+        var selections = getTableData(table);
 
         var parts = [];
 
@@ -2059,7 +2054,7 @@ function loadStockTable(table, options) {
 
     $('#multi-item-set-status').click(function() {
         // Select and set the STATUS field for selected stock items
-        var selections = $(table).bootstrapTable('getSelections');
+        var selections = getTableData(table);
 
         // Select stock status
         var modal = '#modal-form';
@@ -2145,7 +2140,7 @@ function loadStockTable(table, options) {
     });
 
     $('#multi-item-delete').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
+        var selections = getTableData(table);
 
         var stock = [];
 
@@ -2158,7 +2153,7 @@ function loadStockTable(table, options) {
 }
 
 
-/* 
+/*
  * Display a table of stock locations
  */
 function loadStockLocationTable(table, options) {
@@ -2220,14 +2215,14 @@ function loadStockLocationTable(table, options) {
 
                     $('#view-location-list').removeClass('btn-secondary').addClass('btn-outline-secondary');
                     $('#view-location-tree').removeClass('btn-outline-secondary').addClass('btn-secondary');
-                    
+
                     table.treegrid({
                         treeColumn: 1,
                         onChange: function() {
                             table.bootstrapTable('resetView');
                         },
                         onExpand: function() {
-                            
+
                         }
                     });
                 } else {
@@ -2664,7 +2659,7 @@ function uninstallStockItem(installed_item_id, options={}) {
             },
             preFormContent: function(opts) {
                 var html = '';
-                
+
                 if (installed_item_id == null) {
                     html += `
                     <div class='alert alert-block alert-info'>

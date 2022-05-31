@@ -2,19 +2,19 @@
 Tests for the Order API
 """
 
+import io
 from datetime import datetime, timedelta
+
+from django.core.exceptions import ValidationError
+from django.urls import reverse
 
 from rest_framework import status
 
-from django.urls import reverse
-
+import order.models as models
 from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
-
 from part.models import Part
 from stock.models import StockItem
-
-import order.models as models
 
 
 class OrderTest(InvenTreeAPITestCase):
@@ -305,6 +305,93 @@ class PurchaseOrderTest(OrderTest):
         po.refresh_from_db()
 
         self.assertEqual(po.status, PurchaseOrderStatus.PLACED)
+
+    def test_po_metadata(self):
+        url = reverse('api-po-metadata', kwargs={'pk': 1})
+
+        self.patch(
+            url,
+            {
+                'metadata': {
+                    'yam': 'yum',
+                }
+            },
+            expected_code=200
+        )
+
+        order = models.PurchaseOrder.objects.get(pk=1)
+        self.assertEqual(order.get_metadata('yam'), 'yum')
+
+
+class PurchaseOrderDownloadTest(OrderTest):
+    """Unit tests for downloading PurchaseOrder data via the API endpoint"""
+
+    required_cols = [
+        'id',
+        'line_items',
+        'description',
+        'issue_date',
+        'notes',
+        'reference',
+        'status',
+        'supplier_reference',
+    ]
+
+    excluded_cols = [
+        'metadata',
+    ]
+
+    def test_download_wrong_format(self):
+        """Incorrect format should default raise an error"""
+
+        url = reverse('api-po-list')
+
+        with self.assertRaises(ValueError):
+            self.download_file(
+                url,
+                {
+                    'export': 'xyz',
+                }
+            )
+
+    def test_download_csv(self):
+        """Download PurchaseOrder data as .csv"""
+
+        with self.download_file(
+            reverse('api-po-list'),
+            {
+                'export': 'csv',
+            },
+            expected_code=200,
+            expected_fn='InvenTree_PurchaseOrders.csv',
+        ) as fo:
+
+            data = self.process_csv(
+                fo,
+                required_cols=self.required_cols,
+                excluded_cols=self.excluded_cols,
+                required_rows=models.PurchaseOrder.objects.count()
+            )
+
+            for row in data:
+                order = models.PurchaseOrder.objects.get(pk=row['id'])
+
+                self.assertEqual(order.description, row['description'])
+                self.assertEqual(order.reference, row['reference'])
+
+    def test_download_line_items(self):
+
+        with self.download_file(
+            reverse('api-po-line-list'),
+            {
+                'export': 'xlsx',
+            },
+            decode=False,
+            expected_code=200,
+            expected_fn='InvenTree_PurchaseOrderItems.xlsx',
+        ) as fo:
+
+            self.assertTrue(isinstance(fo, io.BytesIO))
 
 
 class PurchaseOrderReceiveTest(OrderTest):
@@ -875,6 +962,193 @@ class SalesOrderTest(OrderTest):
 
         self.assertEqual(so.status, SalesOrderStatus.CANCELLED)
 
+    def test_so_metadata(self):
+        url = reverse('api-so-metadata', kwargs={'pk': 1})
+
+        self.patch(
+            url,
+            {
+                'metadata': {
+                    'xyz': 'abc',
+                }
+            },
+            expected_code=200
+        )
+
+        order = models.SalesOrder.objects.get(pk=1)
+        self.assertEqual(order.get_metadata('xyz'), 'abc')
+
+
+class SalesOrderLineItemTest(OrderTest):
+    """
+    Tests for the SalesOrderLineItem API
+    """
+
+    def setUp(self):
+
+        super().setUp()
+
+        # List of salable parts
+        parts = Part.objects.filter(salable=True)
+
+        # Create a bunch of SalesOrderLineItems for each order
+        for idx, so in enumerate(models.SalesOrder.objects.all()):
+
+            for part in parts:
+                models.SalesOrderLineItem.objects.create(
+                    order=so,
+                    part=part,
+                    quantity=(idx + 1) * 5,
+                    reference=f"Order {so.reference} - line {idx}",
+                )
+
+        self.url = reverse('api-so-line-list')
+
+    def test_so_line_list(self):
+
+        # List *all* lines
+
+        response = self.get(
+            self.url,
+            {},
+            expected_code=200,
+        )
+
+        n = models.SalesOrderLineItem.objects.count()
+
+        # We should have received *all* lines
+        self.assertEqual(len(response.data), n)
+
+        # List *all* lines, but paginate
+        response = self.get(
+            self.url,
+            {
+                "limit": 5,
+            },
+            expected_code=200,
+        )
+
+        self.assertEqual(response.data['count'], n)
+        self.assertEqual(len(response.data['results']), 5)
+
+        n_orders = models.SalesOrder.objects.count()
+        n_parts = Part.objects.filter(salable=True).count()
+
+        # List by part
+        for part in Part.objects.filter(salable=True):
+            response = self.get(
+                self.url,
+                {
+                    'part': part.pk,
+                    'limit': 10,
+                }
+            )
+
+            self.assertEqual(response.data['count'], n_orders)
+
+        # List by order
+        for order in models.SalesOrder.objects.all():
+            response = self.get(
+                self.url,
+                {
+                    'order': order.pk,
+                    'limit': 10,
+                }
+            )
+
+            self.assertEqual(response.data['count'], n_parts)
+
+
+class SalesOrderDownloadTest(OrderTest):
+    """Unit tests for downloading SalesOrder data via the API endpoint"""
+
+    def test_download_fail(self):
+        """Test that downloading without the 'export' option fails"""
+
+        url = reverse('api-so-list')
+
+        with self.assertRaises(ValueError):
+            self.download_file(url, {}, expected_code=200)
+
+    def test_download_xls(self):
+        url = reverse('api-so-list')
+
+        # Download .xls file
+        with self.download_file(
+            url,
+            {
+                'export': 'xls',
+            },
+            expected_code=200,
+            expected_fn='InvenTree_SalesOrders.xls',
+            decode=False,
+        ) as fo:
+            self.assertTrue(isinstance(fo, io.BytesIO))
+
+    def test_download_csv(self):
+
+        url = reverse('api-so-list')
+
+        required_cols = [
+            'line_items',
+            'id',
+            'reference',
+            'customer',
+            'status',
+            'shipment_date',
+            'notes',
+            'description',
+        ]
+
+        excluded_cols = [
+            'metadata'
+        ]
+
+        # Download .xls file
+        with self.download_file(
+            url,
+            {
+                'export': 'csv',
+            },
+            expected_code=200,
+            expected_fn='InvenTree_SalesOrders.csv',
+            decode=True
+        ) as fo:
+
+            data = self.process_csv(
+                fo,
+                required_cols=required_cols,
+                excluded_cols=excluded_cols,
+                required_rows=models.SalesOrder.objects.count()
+            )
+
+            for line in data:
+
+                order = models.SalesOrder.objects.get(pk=line['id'])
+
+                self.assertEqual(line['description'], order.description)
+                self.assertEqual(line['status'], str(order.status))
+
+        # Download only outstanding sales orders
+        with self.download_file(
+            url,
+            {
+                'export': 'tsv',
+                'outstanding': True,
+            },
+            expected_code=200,
+            expected_fn='InvenTree_SalesOrders.tsv',
+            decode=True,
+        ) as fo:
+
+            self.process_csv(
+                fo,
+                required_cols=required_cols,
+                excluded_cols=excluded_cols,
+                required_rows=models.SalesOrder.objects.filter(status__in=SalesOrderStatus.OPEN).count(),
+                delimiter='\t',
+            )
+
 
 class SalesOrderAllocateTest(OrderTest):
     """
@@ -1002,3 +1276,100 @@ class SalesOrderAllocateTest(OrderTest):
 
         for line in self.order.lines.all():
             self.assertEqual(line.allocations.count(), 1)
+
+    def test_shipment_complete(self):
+        """Test that we can complete a shipment via the API"""
+
+        url = reverse('api-so-shipment-ship', kwargs={'pk': self.shipment.pk})
+
+        self.assertFalse(self.shipment.is_complete())
+        self.assertFalse(self.shipment.check_can_complete(raise_error=False))
+
+        with self.assertRaises(ValidationError):
+            self.shipment.check_can_complete()
+
+        # Attempting to complete this shipment via the API should fail
+        response = self.post(
+            url, {},
+            expected_code=400
+        )
+
+        self.assertIn('Shipment has no allocated stock items', str(response.data))
+
+        # Allocate stock against this shipment
+        line = self.order.lines.first()
+        part = line.part
+
+        models.SalesOrderAllocation.objects.create(
+            shipment=self.shipment,
+            line=line,
+            item=part.stock_items.last(),
+            quantity=5
+        )
+
+        # Shipment should now be able to be completed
+        self.assertTrue(self.shipment.check_can_complete())
+
+        # Attempt with an invalid date
+        response = self.post(
+            url,
+            {
+                'shipment_date': 'asfasd',
+            },
+            expected_code=400,
+        )
+
+        self.assertIn('Date has wrong format', str(response.data))
+
+        response = self.post(
+            url,
+            {
+                'invoice_number': 'INV01234',
+                'link': 'http://test.com/link.html',
+                'tracking_number': 'TRK12345',
+                'shipment_date': '2020-12-05',
+            },
+            expected_code=201,
+        )
+
+        self.shipment.refresh_from_db()
+
+        self.assertTrue(self.shipment.is_complete())
+        self.assertEqual(self.shipment.tracking_number, 'TRK12345')
+        self.assertEqual(self.shipment.invoice_number, 'INV01234')
+        self.assertEqual(self.shipment.link, 'http://test.com/link.html')
+
+    def test_sales_order_shipment_list(self):
+
+        url = reverse('api-so-shipment-list')
+
+        # Create some new shipments via the API
+        for order in models.SalesOrder.objects.all():
+
+            for idx in range(3):
+                self.post(
+                    url,
+                    {
+                        'order': order.pk,
+                        'reference': f"SH{idx + 1}",
+                        'tracking_number': f"TRK_{order.pk}_{idx}"
+                    },
+                    expected_code=201
+                )
+
+            # Filter API by order
+            response = self.get(
+                url,
+                {
+                    'order': order.pk,
+                },
+                expected_code=200,
+            )
+
+            # 3 shipments returned for each SalesOrder instance
+            self.assertGreaterEqual(len(response.data), 3)
+
+        # List *all* shipments
+        response = self.get(url, expected_code=200)
+
+        self.assertEqual(len(response.data), 1 + 3 * models.SalesOrder.objects.count())

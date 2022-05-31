@@ -16,6 +16,7 @@
 
 /* exported
     constructBomUploadTable,
+    deleteBomItems,
     downloadBomTemplate,
     exportBom,
     newPartFromBomWizard,
@@ -94,7 +95,7 @@ function constructBomUploadTable(data, options={}) {
 
         // Handle any errors raised by initial data import
         if (row.data.errors.part) {
-            addFieldErrorMessage(`items_sub_part_${idx}`, row.data.errors.part);   
+            addFieldErrorMessage(`items_sub_part_${idx}`, row.data.errors.part);
         }
 
         if (row.data.errors.quantity) {
@@ -155,7 +156,7 @@ function constructBomUploadTable(data, options={}) {
 
     // Request API endpoint options
     getApiEndpointOptions('{% url "api-bom-list" %}', function(response) {
-        
+
         var fields = response.actions.POST;
 
         data.rows.forEach(function(row, idx) {
@@ -542,7 +543,7 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
     ${part_thumb} ${part_name} - <em>${part_desc}</em>
     </div>
     `;
-    
+
     // Add a table of individual rows
     html += `
     <table class='table table-striped table-condensed' id='substitute-table'>
@@ -642,24 +643,84 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
 
             // Re-enable the "submit" button
             $(opts.modal).find('#modal-form-submit').prop('disabled', false);
-            
+
             // Reload the parent BOM table
             reloadParentTable();
         }
     });
+}
 
+
+function deleteBomItems(items, options={}) {
+    /* Delete the selected BOM items from the database
+     */
+
+    function renderItem(item, opts={}) {
+
+        var sub_part = item.sub_part_detail;
+        var thumb = thumbnailImage(sub_part.thumbnail || sub_part.image);
+
+        var html = `
+        <tr>
+            <td>${thumb} ${sub_part.full_name}</td>
+            <td>${item.reference}</td>
+            <td>${item.quantity}
+        </tr>
+        `;
+
+        return html;
+    }
+
+    var rows = '';
+
+    items.forEach(function(item) {
+        rows += renderItem(item);
+    });
+
+    var html = `
+    <div class='alert alert-block alert-danger'>
+    {% trans "All selected BOM items will be deleted" %}
+    </div>
+
+    <table class='table table-striped table-condensed'>
+        <tr>
+            <th>{% trans "Part" %}</th>
+            <th>{% trans "Reference" %}</th>
+            <th>{% trans "Quantity" %}</th>
+        </tr>
+        ${rows}
+    </table>
+    `;
+
+    constructFormBody({}, {
+        method: 'DELETE',
+        title: '{% trans "Delete selected BOM items?" %}',
+        fields: {},
+        preFormContent: html,
+        onSubmit: function(fields, opts) {
+
+            inventreeMultiDelete(
+                '{% url "api-bom-list" %}',
+                items,
+                {
+                    modal: opts.modal,
+                    success: options.success,
+                }
+            );
+        },
+    });
 }
 
 
 function loadBomTable(table, options={}) {
     /* Load a BOM table with some configurable options.
-     * 
+     *
      * Following options are available:
      * editable      - Should the BOM table be editable?
      * bom_url       - Address to request BOM data from
      * part_url      - Address to request Part data from
      * parent_id     - Parent ID of the owning part
-     * 
+     *
      * BOM data are retrieved from the server via AJAX query
      */
 
@@ -749,10 +810,10 @@ function loadBomTable(table, options={}) {
                 var html = '';
 
                 var sub_part = row.sub_part_detail;
-                
+
                 // Display an extra icon if this part is an assembly
                 if (sub_part.assembly) {
-                    
+
                     if (row.sub_assembly_received) {
                         // Data received, ignore
                     } else if (row.sub_assembly_requested) {
@@ -813,7 +874,7 @@ function loadBomTable(table, options={}) {
             text = parseFloat(text);
 
             if (row.optional) {
-                text += ' ({% trans "Optional" %})';    
+                text += ' ({% trans "Optional" %})';
             }
 
             if (row.overage) {
@@ -838,7 +899,7 @@ function loadBomTable(table, options={}) {
             var variant_stock = row.allow_variants ? (row.available_variant_stock || 0) : 0;
 
             var available_stock = availableQuantity(row);
-            
+
             var text = `${available_stock}`;
 
             if (available_stock <= 0) {
@@ -875,7 +936,7 @@ function loadBomTable(table, options={}) {
             }
         }
     });
-    
+
     if (show_pricing) {
         cols.push({
             field: 'purchase_price_range',
@@ -1057,7 +1118,7 @@ function loadBomTable(table, options={}) {
                     row.sub_assembly_received = true;
 
                     $(table).bootstrapTable('updateByUniqueId', bom_pk, row, true);
-                    
+
                     table.bootstrapTable('append', response);
                 },
                 error: function(xhr) {
@@ -1146,19 +1207,13 @@ function loadBomTable(table, options={}) {
 
             var pk = $(this).attr('pk');
 
-            var html = `
-            <div class='alert alert-block alert-danger'>
-            {% trans "Are you sure you want to delete this BOM item?" %}
-            </div>`;
+            var item = table.bootstrapTable('getRowByUniqueId', pk);
 
-            constructForm(`/api/bom/${pk}/`, {
-                method: 'DELETE',
-                title: '{% trans "Delete BOM Item" %}',
-                preFormContent: html,
-                onSuccess: function() {
+            deleteBomItems([item], {
+                success: function() {
                     reloadBomTable(table);
                 }
-            }); 
+            });
         });
 
         // Callback for "edit" button
@@ -1226,10 +1281,10 @@ function loadBomTable(table, options={}) {
  * Arguments:
  * - table: The ID string of the table element e.g. '#used-in-table'
  * - part_id: The ID (PK) of the part we are interested in
- * 
+ *
  * Options:
- * - 
- * 
+ * -
+ *
  * The following "options" are available.
  */
 function loadUsedInTable(table, part_id, options={}) {
@@ -1267,14 +1322,14 @@ function loadUsedInTable(table, part_id, options={}) {
                     // Iterate through each variant item
                     for (var jj = 0; jj < variantData.length; jj++) {
                         variantData[jj].parent = row.pk;
-                        
+
                         var variant = variantData[jj];
 
                         // Add this variant to the table, augmented
                         $(table).bootstrapTable('append', [{
-                            // Point the parent to the "master" assembly row 
+                            // Point the parent to the "master" assembly row
                             parent: row.pk,
-                            part: variant.pk,                       
+                            part: variant.pk,
                             part_detail: variant,
                             sub_part: row.sub_part,
                             sub_part_detail: row.sub_part_detail,

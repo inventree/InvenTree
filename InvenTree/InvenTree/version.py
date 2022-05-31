@@ -3,16 +3,17 @@ Version information for InvenTree.
 Provides information on the current InvenTree version
 """
 
-import subprocess
-import django
+import os
 import re
+import subprocess
+
+import django
 
 import common.models
-
 from InvenTree.api_version import INVENTREE_API_VERSION
 
 # InvenTree software version
-INVENTREE_SW_VERSION = "0.7.0 dev"
+INVENTREE_SW_VERSION = "0.8.0 dev"
 
 
 def inventreeInstanceName():
@@ -99,6 +100,12 @@ def inventreeDjangoVersion():
 def inventreeCommitHash():
     """ Returns the git commit hash for the running codebase """
 
+    # First look in the environment variables, i.e. if running in docker
+    commit_hash = os.environ.get('INVENTREE_COMMIT_HASH', '')
+
+    if commit_hash:
+        return commit_hash
+
     try:
         return str(subprocess.check_output('git rev-parse --short HEAD'.split()), 'utf-8').strip()
     except:  # pragma: no cover
@@ -107,6 +114,12 @@ def inventreeCommitHash():
 
 def inventreeCommitDate():
     """ Returns the git commit date for the running codebase """
+
+    # First look in the environment variables, e.g. if running in docker
+    commit_date = os.environ.get('INVENTREE_COMMIT_DATE', '')
+
+    if commit_date:
+        return commit_date.split(' ')[0]
 
     try:
         d = str(subprocess.check_output('git show -s --format=%ci'.split()), 'utf-8').strip()

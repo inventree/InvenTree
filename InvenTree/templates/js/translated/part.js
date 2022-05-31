@@ -210,7 +210,7 @@ function partFields(options={}) {
             help_text: '{% trans "Create initial supplier data for this part" %}',
             group: 'supplier',
         };
-        
+
         fields.supplier = {
             type: 'related field',
             model: 'company',
@@ -222,14 +222,14 @@ function partFields(options={}) {
             api_url: '{% url "api-company-list" %}',
             group: 'supplier',
         };
-        
+
         fields.SKU = {
             type: 'string',
-            label: '{% trans "SKU" %}', 
+            label: '{% trans "SKU" %}',
             help_text: '{% trans "Supplier stock keeping unit" %}',
             group: 'supplier',
         };
-        
+
         fields.manufacturer = {
             type: 'related field',
             model: 'company',
@@ -241,7 +241,7 @@ function partFields(options={}) {
             api_url: '{% url "api-company-list" %}',
             group: 'supplier',
         };
-        
+
         fields.MPN = {
             type: 'string',
             label: '{% trans "MPN" %}',
@@ -389,7 +389,7 @@ function duplicatePart(pk, options={}) {
     inventreeGet(`/api/part/${pk}/`, {}, {
 
         success: function(data) {
-            
+
             var fields = partFields({
                 duplicate: pk,
             });
@@ -410,7 +410,7 @@ function duplicatePart(pk, options={}) {
                 // By default, disable "is_template" when making a variant *of* a template
                 data.is_template = false;
             }
-            
+
             constructForm('{% url "api-part-list" %}', {
                 method: 'POST',
                 fields: fields,
@@ -429,7 +429,7 @@ function duplicatePart(pk, options={}) {
 
 /* Toggle the 'starred' status of a part.
  * Performs AJAX queries and updates the display on the button.
- * 
+ *
  * options:
  * - button: ID of the button (default = '#part-star-icon')
  * - URL: API url of the object
@@ -610,7 +610,7 @@ function makePartIcons(part) {
     }
 
     if (!part.active) {
-        html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span> `; 
+        html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span> `;
     }
 
     return html;
@@ -687,7 +687,7 @@ function loadPartVariantTable(table, partId, options={}) {
                 }
 
                 if (!row.active) {
-                    html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span>`; 
+                    html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span>`;
                 }
 
                 return html;
@@ -871,7 +871,7 @@ function loadPartParameterTable(table, url, options) {
 
 /*
  * Construct a table showing a list of purchase orders for a given part.
- * 
+ *
  * This requests API data from the PurchaseOrderLineItem endpoint
  */
 function loadPartPurchaseOrderTable(table, part_id, options={}) {
@@ -882,7 +882,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
     options.params.base_part = part_id;
     options.params.part_detail = true;
     options.params.order_detail = true;
-    
+
     var filters = loadTableFilters('purchaseorderlineitem');
 
     for (var key in options.params) {
@@ -1046,7 +1046,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                 title: '',
                 switchable: false,
                 formatter: function(value, row) {
-                    
+
                     if (row.received >= row.quantity) {
                         // Already recevied
                         return `<span class='badge bg-success rounded-pill'>{% trans "Received" %}</span>`;
@@ -1121,7 +1121,7 @@ function loadRelatedPartsTable(table, part_id, options={}) {
             title: '',
             switchable: false,
             formatter: function(value, row) {
-                
+
                 var html = `<div class='btn-group float-right' role='group'>`;
 
                 html += makeIconButton('fa-trash-alt icon-red', 'button-related-delete', row.pk, '{% trans "Delete part relationship" %}');
@@ -1266,7 +1266,7 @@ function partGridTile(part) {
     }
 
     var html = `
-    
+
     <div class='card product-card borderless'>
         <div class='panel product-card-panel'>
             <div class='panel-heading'>
@@ -1290,7 +1290,7 @@ function partGridTile(part) {
                 </div>
             </div>
         </div>
-    </div>    
+    </div>
     `;
 
     return html;
@@ -1299,7 +1299,7 @@ function partGridTile(part) {
 
 function loadPartTable(table, url, options={}) {
     /* Load part listing data into specified table.
-     * 
+     *
      * Args:
      *  - table: HTML reference to the table
      *  - url: Base URL for API query
@@ -1372,7 +1372,7 @@ function loadPartTable(table, url, options={}) {
 
             display += makePartIcons(row);
 
-            return display; 
+            return display;
         }
     };
 
@@ -1405,7 +1405,7 @@ function loadPartTable(table, url, options={}) {
             } else {
                 return '{% trans "No category" %}';
             }
-        }   
+        }
     };
 
     if (!options.params.ordering) {
@@ -1418,7 +1418,7 @@ function loadPartTable(table, url, options={}) {
         field: 'unallocated_stock',
         title: '{% trans "Stock" %}',
         searchable: false,
-        formatter: function(value, row) {            
+        formatter: function(value, row) {
             var link = '?display=part-stock';
 
             if (row.in_stock) {
@@ -1570,7 +1570,7 @@ function loadPartTable(table, url, options={}) {
             html = `<div class='row full-height'>`;
 
             data.forEach(function(row, index) {
-                
+
                 // Force a new row every 5 columns
                 if ((index > 0) && (index % 5 == 0) && (index < data.length)) {
                     html += `</div><div class='row full-height'>`;
@@ -1584,7 +1584,7 @@ function loadPartTable(table, url, options={}) {
             return html;
         }
     });
-    
+
     if (options.buttons) {
         linkButtonsToSelection($(table), options.buttons);
     }
@@ -1592,7 +1592,7 @@ function loadPartTable(table, url, options={}) {
     /* Button callbacks for part table buttons */
 
     $('#multi-part-order').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
+        var selections = getTableData(table);
 
         var parts = [];
 
@@ -1626,7 +1626,7 @@ function loadPartTable(table, url, options={}) {
     });
 
     $('#multi-part-print-label').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
+        var selections = getTableData(table);
 
         var items = [];
 
@@ -1656,11 +1656,11 @@ function loadPartCategoryTable(table, options) {
         filters = loadTableFilters(filterKey);
     }
 
-    
+
     var tree_view = options.allowTreeView && inventreeLoad('category-tree-view') == 1;
 
     if (tree_view) {
-        params.cascade = true;   
+        params.cascade = true;
     }
 
     var original = {};
@@ -1684,7 +1684,7 @@ function loadPartCategoryTable(table, options) {
         queryParams: filters,
         disablePagination: tree_view,
         sidePagination: tree_view ? 'client' : 'server',
-        serverSort: !tree_view, 
+        serverSort: !tree_view,
         search: !tree_view,
         name: 'category',
         original: original,
@@ -1739,14 +1739,14 @@ function loadPartCategoryTable(table, options) {
 
                     $('#view-category-list').removeClass('btn-secondary').addClass('btn-outline-secondary');
                     $('#view-category-tree').removeClass('btn-outline-secondary').addClass('btn-secondary');
-                    
+
                     table.treegrid({
                         treeColumn: 0,
                         onChange: function() {
                             table.bootstrapTable('resetView');
                         },
                         onExpand: function() {
-                            
+
                         }
                     });
                 } else {
@@ -1894,7 +1894,7 @@ function loadPartTestTemplateTable(table, options) {
                     } else {
                         var text = '{% trans "This test is defined for a parent part" %}';
 
-                        return renderLink(text, `/part/${row.part}/tests/`); 
+                        return renderLink(text, `/part/${row.part}/tests/`);
                     }
                 }
             }
@@ -1903,9 +1903,9 @@ function loadPartTestTemplateTable(table, options) {
 
             table.find('.button-test-edit').click(function() {
                 var pk = $(this).attr('pk');
-            
+
                 var url = `/api/part/test-template/${pk}/`;
-            
+
                 constructForm(url, {
                     fields: {
                         test_name: {},
@@ -1923,9 +1923,9 @@ function loadPartTestTemplateTable(table, options) {
 
             table.find('.button-test-delete').click(function() {
                 var pk = $(this).attr('pk');
-            
+
                 var url = `/api/part/test-template/${pk}/`;
-            
+
                 constructForm(url, {
                     method: 'DELETE',
                     title: '{% trans "Delete Test Result Template" %}',
@@ -2007,14 +2007,14 @@ function loadPriceBreakTable(table, options) {
                 sortable: true,
                 formatter: function(value, row) {
                     var html = value;
-    
+
                     html += `<div class='btn-group float-right' role='group'>`;
 
                     html += makeIconButton('fa-edit icon-blue', `button-${name}-edit`, row.pk, `{% trans "Edit ${human_name}" %}`);
                     html += makeIconButton('fa-trash-alt icon-red', `button-${name}-delete`, row.pk, `{% trans "Delete ${human_name}" %}`);
-    
+
                     html += `</div>`;
-    
+
                     return html;
                 }
             },

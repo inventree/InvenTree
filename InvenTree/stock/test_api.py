@@ -2,25 +2,21 @@
 Unit testing for the Stock API
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-import os
 import io
-import tablib
-
+import os
 from datetime import datetime, timedelta
 
 import django.http
 from django.urls import reverse
+
+import tablib
 from rest_framework import status
 
-from InvenTree.status_codes import StockStatus
-from InvenTree.api_tester import InvenTreeAPITestCase
-
-from common.models import InvenTreeSetting
 import company.models
 import part.models
+from common.models import InvenTreeSetting
+from InvenTree.api_tester import InvenTreeAPITestCase
+from InvenTree.status_codes import StockStatus
 from stock.models import StockItem, StockLocation
 
 
@@ -346,6 +342,13 @@ class StockItemListTest(StockAPITestCase):
 
         for h in headers:
             self.assertIn(h, dataset.headers)
+
+        excluded_headers = [
+            'metadata',
+        ]
+
+        for h in excluded_headers:
+            self.assertNotIn(h, dataset.headers)
 
         # Now, add a filter to the results
         dataset = self.export_data({'location': 1})

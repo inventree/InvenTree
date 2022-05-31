@@ -29,20 +29,23 @@ django-sslserver==0.22                  # Secure HTTP development server
 django-stdimage==5.1.1                  # Advanced ImageField management
 django-test-migrations==1.1.0           # Unit testing for database migrations
 django-user-sessions==1.7.1             # user sessions in DB
-django-weasyprint==1.0.1                # django weasyprint integration
+django-weasyprint==2.1.0                # django weasyprint integration
 djangorestframework==3.12.4             # DRF framework
 django-xforwardedfor-middleware==2.0    # IP forwarding metadata
 flake8==3.8.3                           # PEP checking
+flake8-docstrings==1.6.0                # docstring format testing
 gunicorn>=20.1.0                        # Gunicorn web server
 importlib_metadata                      # Backport for importlib.metadata
-inventree                               # Install the latest version of the InvenTree API python library
+isort==5.10.1                           # DEV: python import sorting
 markdown==3.3.4                         # Force particular version of markdown
+pdf2image==1.16.0                       # PDF to image conversion
 pep8-naming==0.11.1                     # PEP naming convention extension
-pillow==9.0.1                           # Image manipulation
+pre-commit==2.19.0                      # Git pre-commit
+pillow==9.1.0                           # Image manipulation
 py-moneyed==0.8.0                       # Specific version requirement for py-moneyed
 pygments==2.7.4                         # Syntax highlighting
 python-barcode[images]==0.13.1          # Barcode generator
 qrcode[pil]==6.1                        # QR code generator
 rapidfuzz==0.7.6                        # Fuzzy string matching
 tablib[xls,xlsx,yaml]                   # Support for XLS and XLSX formats
-weasyprint==52.5                        # PDF generation library (Note: in the future need to update to 53)
+weasyprint==55.0                        # PDF generation library

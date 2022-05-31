@@ -4,39 +4,46 @@ Order model definitions
 
 # -*- coding: utf-8 -*-
 
+import logging
 import os
-
+import sys
+import traceback
 from datetime import datetime
 from decimal import Decimal
 
-from django.db import models, transaction
-from django.db.models import Q, F, Sum
-from django.db.models.functions import Coalesce
-
-from django.core.validators import MinValueValidator
-from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
+from django.db import models, transaction
+from django.db.models import F, Q, Sum
+from django.db.models.functions import Coalesce
+from django.db.models.signals import post_save
+from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from djmoney.contrib.exchange.exceptions import MissingRate
+from djmoney.contrib.exchange.models import convert_money
+from djmoney.money import Money
+from error_report.models import Error
 from markdownx.models import MarkdownxField
 from mptt.models import TreeForeignKey
 
-from djmoney.contrib.exchange.models import convert_money
-from djmoney.money import Money
-from common.settings import currency_code_default
-
-from users import models as UserModels
-from part import models as PartModels
-from stock import models as stock_models
-from company.models import Company, SupplierPart
-from plugin.events import trigger_event
-
 import InvenTree.helpers
+from common.settings import currency_code_default
+from company.models import Company, SupplierPart
 from InvenTree.fields import InvenTreeModelMoneyField, RoundingDecimalField
-from InvenTree.helpers import decimal2string, increment, getSetting
-from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus, StockStatus, StockHistoryCode
+from InvenTree.helpers import decimal2string, getSetting, increment
 from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
+from InvenTree.status_codes import (PurchaseOrderStatus, SalesOrderStatus,
+                                    StockHistoryCode, StockStatus)
+from part import models as PartModels
+from plugin.events import trigger_event
+from plugin.models import MetadataMixin
+from stock import models as stock_models
+from users import models as UserModels
+
+logger = logging.getLogger('inventree')
 
 
 def get_next_po_number():
@@ -97,7 +104,7 @@ def get_next_so_number():
     return reference
 
 
-class Order(ReferenceIndexingMixin):
+class Order(MetadataMixin, ReferenceIndexingMixin):
     """ Abstract model for an order.
 
     Instances of this class:
@@ -151,23 +158,74 @@ class Order(ReferenceIndexingMixin):
 
     notes = MarkdownxField(blank=True, verbose_name=_('Notes'), help_text=_('Order notes'))
 
-    def get_total_price(self):
+    def get_total_price(self, target_currency=currency_code_default()):
         """
-        Calculates the total price of all order lines
+        Calculates the total price of all order lines, and converts to the specified target currency.
+
+        If not specified, the default system currency is used.
+
+        If currency conversion fails (e.g. there are no valid conversion rates),
+        then we simply return zero, rather than attempting some other calculation.
         """
-        target_currency = currency_code_default()
+
         total = Money(0, target_currency)
 
         # gather name reference
-        price_ref = 'sale_price' if isinstance(self, SalesOrder) else 'purchase_price'
-        # order items
-        total += sum(a.quantity * convert_money(getattr(a, price_ref), target_currency) for a in self.lines.all() if getattr(a, price_ref))
+        price_ref_tag = 'sale_price' if isinstance(self, SalesOrder) else 'purchase_price'
 
-        # extra lines
-        total += sum(a.quantity * convert_money(a.price, target_currency) for a in self.extra_lines.all() if a.price)
+        # order items
+        for line in self.lines.all():
+
+            price_ref = getattr(line, price_ref_tag)
+
+            if not price_ref:
+                continue
+
+            try:
+                total += line.quantity * convert_money(price_ref, target_currency)
+            except MissingRate:
+                # Record the error, try to press on
+                kind, info, data = sys.exc_info()
+
+                Error.objects.create(
+                    kind=kind.__name__,
+                    info=info,
+                    data='\n'.join(traceback.format_exception(kind, info, data)),
+                    path='order.get_total_price',
+                )
+
+                logger.error(f"Missing exchange rate for '{target_currency}'")
+
+                # Return None to indicate the calculated price is invalid
+                return None
+
+        # extra items
+        for line in self.extra_lines.all():
+
+            if not line.price:
+                continue
+
+            try:
+                total += line.quantity * convert_money(line.price, target_currency)
+            except MissingRate:
+                # Record the error, try to press on
+                kind, info, data = sys.exc_info()
+
+                Error.objects.create(
+                    kind=kind.__name__,
+                    info=info,
+                    data='\n'.join(traceback.format_exception(kind, info, data)),
+                    path='order.get_total_price',
+                )
+
+                logger.error(f"Missing exchange rate for '{target_currency}'")
+
+                # Return None to indicate the calculated price is invalid
+                return None
 
         # set decimal-places
         total.decimal_places = 4
+
         return total
 
 
@@ -306,7 +364,7 @@ class PurchaseOrder(Order):
         except ValueError:
             raise ValidationError({'quantity': _("Invalid quantity provided")})
 
-        if not supplier_part.supplier == self.supplier:
+        if supplier_part.supplier != self.supplier:
             raise ValidationError({'supplier': _("Part supplier must match PO supplier")})
 
         if group:
@@ -445,7 +503,7 @@ class PurchaseOrder(Order):
         if barcode is None:
             barcode = ''
 
-        if not self.status == PurchaseOrderStatus.PLACED:
+        if self.status != PurchaseOrderStatus.PLACED:
             raise ValidationError(
                 "Lines can only be received against an order marked as 'PLACED'"
             )
@@ -729,7 +787,7 @@ class SalesOrder(Order):
         Return True if this order can be cancelled
         """
 
-        if not self.status == SalesOrderStatus.PENDING:
+        if self.status != SalesOrderStatus.PENDING:
             return False
 
         return True
@@ -805,6 +863,21 @@ class SalesOrder(Order):
     @property
     def pending_shipment_count(self):
         return self.pending_shipments().count()
+
+
+@receiver(post_save, sender=SalesOrder, dispatch_uid='build_post_save_log')
+def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs):
+    """
+    Callback function to be executed after a SalesOrder instance is saved
+    """
+    if created and getSetting('SALESORDER_DEFAULT_SHIPMENT'):
+        # A new SalesOrder has just been created
+
+        # Create default shipment
+        SalesOrderShipment.objects.create(
+            order=instance,
+            reference='1',
+        )
 
 
 class PurchaseOrderAttachment(InvenTreeAttachment):
@@ -1187,17 +1260,40 @@ class SalesOrderShipment(models.Model):
         help_text=_('Shipment tracking information'),
     )
 
+    invoice_number = models.CharField(
+        max_length=100,
+        blank=True,
+        unique=False,
+        verbose_name=_('Invoice Number'),
+        help_text=_('Reference number for associated invoice'),
+    )
+
+    link = models.URLField(
+        blank=True,
+        verbose_name=_('Link'),
+        help_text=_('Link to external page')
+    )
+
     def is_complete(self):
         return self.shipment_date is not None
 
-    def check_can_complete(self):
+    def check_can_complete(self, raise_error=True):
 
-        if self.shipment_date:
-            # Shipment has already been sent!
-            raise ValidationError(_("Shipment has already been sent"))
+        try:
+            if self.shipment_date:
+                # Shipment has already been sent!
+                raise ValidationError(_("Shipment has already been sent"))
 
-        if self.allocations.count() == 0:
-            raise ValidationError(_("Shipment has no allocated stock items"))
+            if self.allocations.count() == 0:
+                raise ValidationError(_("Shipment has no allocated stock items"))
+
+        except ValidationError as e:
+            if raise_error:
+                raise e
+            else:
+                return False
+
+        return True
 
     @transaction.atomic
     def complete_shipment(self, user, **kwargs):
@@ -1220,7 +1316,7 @@ class SalesOrderShipment(models.Model):
             allocation.complete_allocation(user)
 
         # Update the "shipment" date
-        self.shipment_date = datetime.now()
+        self.shipment_date = kwargs.get('shipment_date', datetime.now())
         self.shipped_by = user
 
         # Was a tracking number provided?
@@ -1228,6 +1324,18 @@ class SalesOrderShipment(models.Model):
 
         if tracking_number is not None:
             self.tracking_number = tracking_number
+
+        # Was an invoice number provided?
+        invoice_number = kwargs.get('invoice_number', None)
+
+        if invoice_number is not None:
+            self.invoice_number = invoice_number
+
+        # Was a link provided?
+        link = kwargs.get('link', None)
+
+        if link is not None:
+            self.link = link
 
         self.save()
 
@@ -1267,12 +1375,6 @@ class SalesOrderAllocation(models.Model):
     def get_api_url():
         return reverse('api-so-allocation-list')
 
-    class Meta:
-        unique_together = [
-            # Cannot allocate any given StockItem to the same line more than once
-            ('line', 'item'),
-        ]
-
     def clean(self):
         """
         Validate the SalesOrderAllocation object:
@@ -1295,7 +1397,7 @@ class SalesOrderAllocation(models.Model):
             raise ValidationError({'item': _('Stock item has not been assigned')})
 
         try:
-            if not self.line.part == self.item.part:
+            if self.line.part != self.item.part:
                 errors['item'] = _('Cannot allocate stock item to a line with a different part')
         except PartModels.Part.DoesNotExist:
             errors['line'] = _('Cannot allocate stock to a line without a part')
@@ -1310,7 +1412,7 @@ class SalesOrderAllocation(models.Model):
         if self.quantity <= 0:
             errors['quantity'] = _('Allocation quantity must be greater than zero')
 
-        if self.item.serial and not self.quantity == 1:
+        if self.item.serial and self.quantity != 1:
             errors['quantity'] = _('Quantity must be 1 for serialized stock item')
 
         if self.line.order != self.shipment.order:

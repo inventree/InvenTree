@@ -2,13 +2,12 @@
 Unit testing for BOM upload / import functionality
 """
 
-import tablib
-
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
-from InvenTree.api_tester import InvenTreeAPITestCase
+import tablib
 
+from InvenTree.api_tester import InvenTreeAPITestCase
 from part.models import Part
 
 

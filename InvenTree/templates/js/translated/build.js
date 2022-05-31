@@ -157,7 +157,7 @@ function newBuildOrder(options={}) {
 
 /* Construct a form to cancel a build order */
 function cancelBuildOrder(build_id, options={}) {
-    
+
     constructForm(
         `/api/build/${build_id}/cancel/`,
         {
@@ -335,7 +335,7 @@ function createBuildOutput(build_id, options) {
  * Construct a set of output buttons for a particular build output
  */
 function makeBuildOutputButtons(output_id, build_info, options={}) {
- 
+
     var html = `<div class='btn-group float-right' role='group'>`;
 
     // Tracked parts? Must be individually allocated
@@ -386,7 +386,7 @@ function makeBuildOutputButtons(output_id, build_info, options={}) {
 
 /*
  * Unallocate stock against a particular build order
- * 
+ *
  * Options:
  * - output: pk value for a stock item "build output"
  * - bom_item: pk value for a particular BOMItem (build item)
@@ -432,7 +432,7 @@ function unallocateStock(build_id, options={}) {
  * Launch a modal form to complete selected build outputs
  */
 function completeBuildOutputs(build_id, outputs, options={}) {
-    
+
     if (outputs.length == 0) {
         showAlertDialog(
             '{% trans "Select Build Outputs" %}',
@@ -518,7 +518,7 @@ function completeBuildOutputs(build_id, outputs, options={}) {
             });
         },
         onSubmit: function(fields, opts) {
-            
+
             // Extract data elements from the form
             var data = {
                 outputs: [],
@@ -662,7 +662,7 @@ function deleteBuildOutputs(build_id, outputs, options={}) {
                 var pk = $(this).attr('pk');
 
                 $(opts.modal).find(`#output_row_${pk}`).remove();
-            }); 
+            });
         },
         onSubmit: function(fields, opts) {
             var data = {
@@ -784,7 +784,7 @@ function loadBuildOrderAllocationTable(table, options={}) {
                     if (!value) {
                         return '{% trans "Location not specified" %}';
                     }
-                    
+
                     var link = `/stock/location/${value}`;
                     var text = row.location_detail.description;
 
@@ -834,7 +834,7 @@ function sumAllocationsForBomRow(bom_row, allocations) {
  * Display a "build output" table for a particular build.
  *
  * This displays a list of "active" (i.e. "in production") build outputs for a given build
- * 
+ *
  */
 function loadBuildOutputTable(build_info, options={}) {
 
@@ -856,7 +856,7 @@ function loadBuildOutputTable(build_info, options={}) {
     setupFilterList('builditems', $(table), options.filterTarget || '#filter-list-incompletebuilditems');
 
     function setupBuildOutputButtonCallbacks() {
-        
+
         // Callback for the "allocate" button
         $(table).find('.button-output-allocate').click(function() {
             var pk = $(this).attr('pk');
@@ -865,12 +865,7 @@ function loadBuildOutputTable(build_info, options={}) {
             var subtable = $(`#output-sub-table-${pk}`);
 
             if (subtable.exists()) {
-                var rows = subtable.bootstrapTable('getSelections');
-
-                // None selected? Use all!
-                if (rows.length == 0) {
-                    rows = subtable.bootstrapTable('getData');
-                }
+                var rows = getTableData(`#output-sub-table-${pk}`);
 
                 allocateStockToBuild(
                     build_info.pk,
@@ -1028,7 +1023,7 @@ function loadBuildOutputTable(build_info, options={}) {
 
                         // Check how many BOM lines have been completely allocated for this build output
                         bom_items.forEach(function(bom_item) {
-                            
+
                             var required_quantity = bom_item.quantity * row.quantity;
 
                             if (sumAllocationsForBomRow(bom_item, row.allocations) >= required_quantity) {
@@ -1087,6 +1082,7 @@ function loadBuildOutputTable(build_info, options={}) {
             '{% url "api-stock-test-result-list" %}',
             {
                 build: build_info.pk,
+                ordering: '-date',
             },
             {
                 success: function(results) {
@@ -1311,7 +1307,7 @@ function loadBuildOutputTable(build_info, options={}) {
     $(table).on('expand-row.bs.table', function(detail, index, row) {
         $(`#button-output-allocate-${row.pk}`).prop('disabled', false);
     });
-    
+
     // Disable the "allocate" button when the sub-table is collapsed
     $(table).on('collapse-row.bs.table', function(detail, index, row) {
         $(`#button-output-allocate-${row.pk}`).prop('disabled', true);
@@ -1321,11 +1317,7 @@ function loadBuildOutputTable(build_info, options={}) {
 
     // Complete multiple outputs
     $('#multi-output-complete').click(function() {
-        var outputs = $(table).bootstrapTable('getSelections');
-
-        if (outputs.length == 0) {
-            outputs = $(table).bootstrapTable('getData');
-        }
+        var outputs = getTableData(table);
 
         completeBuildOutputs(
             build_info.pk,
@@ -1344,11 +1336,7 @@ function loadBuildOutputTable(build_info, options={}) {
 
     // Delete multiple build outputs
     $('#multi-output-delete').click(function() {
-        var outputs = $(table).bootstrapTable('getSelections');
-
-        if (outputs.length == 0) {
-            outputs = $(table).bootstrapTable('getData');
-        }
+        var outputs = getTableData(table);
 
         deleteBuildOutputs(
             build_info.pk,
@@ -1367,11 +1355,7 @@ function loadBuildOutputTable(build_info, options={}) {
 
     // Print stock item labels
     $('#incomplete-output-print-label').click(function() {
-        var outputs = $(table).bootstrapTable('getSelections');
-
-        if (outputs.length == 0) {
-            outputs = $(table).bootstrapTable('getData');
-        }
+        var outputs = getTableData(table);
 
         var stock_id_values = [];
 
@@ -1394,9 +1378,9 @@ function loadBuildOutputTable(build_info, options={}) {
 
 /*
  * Display the "allocation table" for a particular build output.
- * 
+ *
  * This displays a table of required allocations for a particular build output
- * 
+ *
  * Args:
  * - buildId: The PK of the Build object
  * - partId: The PK of the Part object
@@ -1405,7 +1389,7 @@ function loadBuildOutputTable(build_info, options={}) {
  * -- table: The #id of the table (will be auto-calculated if not provided)
  */
 function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
-    
+
     var buildId = buildInfo.pk;
     var partId = buildInfo.part;
 
@@ -1658,7 +1642,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
     $(table).inventreeTable({
         data: bom_items,
         disablePagination: true,
-        formatNoMatches: function() { 
+        formatNoMatches: function() {
             return '{% trans "No BOM items found" %}';
         },
         name: 'build-allocation',
@@ -1745,7 +1729,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         field: 'actions',
                         formatter: function(value, row) {
                             /* Actions available for a particular stock item allocation:
-                             * 
+                             *
                              * - Edit the allocation quantity
                              * - Delete the allocation
                              */
@@ -1842,15 +1826,15 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                     var variant_stock = row.allow_variants ? (row.available_variant_stock || 0) : 0;
 
                     var available_stock = availableQuantity(row);
-            
+
                     var required = requiredQuantity(row);
 
                     var text = '';
-                    
+
                     if (available_stock > 0) {
                         text += `${available_stock}`;
                     }
-                    
+
                     if (available_stock < required) {
                         text += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "Insufficient stock available" %}'></span>`;
                     } else {
@@ -1868,12 +1852,12 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         } else if (substitute_stock > 0) {
                             extra = '{% trans "Includes substitute stock" %}';
                         }
-        
+
                         if (extra) {
                             text += `<span title='${extra}' class='fas fa-info-circle float-right icon-blue'></span>`;
                         }
                     }
-        
+
                     return renderLink(text, url);
                 },
                 sorter: function(valA, valB, rowA, rowB) {
@@ -1892,7 +1876,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 },
                 sorter: function(valA, valB, rowA, rowB) {
                     // Custom sorting function for progress bars
-                    
+
                     var aA = allocatedQuantity(rowA);
                     var aB = allocatedQuantity(rowB);
 
@@ -1962,12 +1946,12 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
 /**
  * Allocate stock items to a build
- * 
+ *
  * arguments:
  * - buildId: ID / PK value for the build
  * - partId: ID / PK value for the part being built
  * - bom_items: A list of BomItem objects to be allocated
- * 
+ *
  * options:
  *  - output: ID / PK of the associated build output (or null for untracked items)
  *  - source_location: ID / PK of the top-level StockLocation to source stock from (or null)
@@ -2139,7 +2123,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
         </tbody>
     </table>
     `;
-              
+
     constructForm(`/api/build/${build_id}/allocate/`, {
         method: 'POST',
         fields: {},
@@ -2223,7 +2207,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
 
                             filters.location = location;
                             filters.cascade = true;
-                            
+
                             return filters;
                         },
                         noResults: function(query) {
@@ -2367,6 +2351,9 @@ function autoAllocateStockToBuild(build_id, bom_items=[], options={}) {
  */
 function loadBuildTable(table, options) {
 
+    // Ensure the table starts in a known state
+    $(table).bootstrapTable('destroy');
+
     var params = options.params || {};
 
     var filters = {};
@@ -2381,27 +2368,109 @@ function loadBuildTable(table, options) {
         filters[key] = params[key];
     }
 
-    options.url = options.url || '{% url "api-build-list" %}';
-
     var filterTarget = options.filterTarget || null;
 
-    setupFilterList('build', table, filterTarget);
+    setupFilterList('build', table, filterTarget, {download: true});
+
+    // Which display mode to use for the build table?
+    var display_mode = inventreeLoad('build-table-display-mode', 'list');
+    var tree_enable = display_mode == 'tree';
+
+    var loaded_calendar = false;
+
+    // Function for rendering BuildOrder calendar display
+    function buildEvents(calendar) {
+        var start = startDate(calendar);
+        var end = endDate(calendar);
+
+        clearEvents(calendar);
+
+        // Extract current filters from table
+        var table_options = $(table).bootstrapTable('getOptions');
+        var filters = table_options.query_params || {};
+
+        filters.min_date = start;
+        filters.max_date = end;
+        filters.part_detail = true;
+
+        // Request build orders from the server within specified date range
+        inventreeGet(
+            '{% url "api-build-list" %}',
+            filters,
+            {
+                success: function(response) {
+                    var prefix = global_settings.BUILDORDER_REFERENCE_PREFIX;
+
+                    for (var idx = 0; idx < response.length; idx++) {
+
+                        var order = response[idx];
+
+                        var date = order.creation_date;
+
+                        if (order.completion_date) {
+                            date = order.completion_date;
+                        } else if (order.target_date) {
+                            date = order.target_date;
+                        }
+
+                        var title = `${prefix}${order.reference}`;
+
+                        var color = '#4c68f5';
+
+                        if (order.completed) {
+                            color = '#25c234';
+                        } else if (order.overdue) {
+                            color = '#c22525';
+                        }
+
+                        var event = {
+                            title: title,
+                            start: date,
+                            end: date,
+                            url: `/build/${order.pk}/`,
+                            backgroundColor: color,
+                        };
+
+                        calendar.addEvent(event);
+                    }
+                }
+            }
+        );
+    }
 
     $(table).inventreeTable({
         method: 'get',
         formatNoMatches: function() {
             return '{% trans "No builds matching query" %}';
         },
-        url: options.url,
+        url: '{% url "api-build-list" %}',
         queryParams: filters,
         groupBy: false,
         sidePagination: 'server',
         name: 'builds',
         original: params,
+        treeEnable: tree_enable,
+        uniqueId: 'pk',
+        rootParentId: options.parentBuild || null,
+        idField: 'pk',
+        parentIdField: 'parent',
+        treeShowField: tree_enable ? 'reference' : null,
+        showColumns: display_mode == 'list' || display_mode == 'tree',
+        showCustomView: display_mode == 'calendar',
+        showCustomViewButton: false,
+        disablePagination: display_mode == 'calendar',
+        search: display_mode != 'calendar',
+        buttons: constructOrderTableButtons({
+            prefix: 'build',
+            callback: function() {
+                // Force complete reload of the table
+                loadBuildTable(table, options);
+            }
+        }),
         columns: [
             {
                 field: 'pk',
-                title: 'ID', 
+                title: 'ID',
                 visible: false,
                 switchable: false,
             },
@@ -2524,6 +2593,43 @@ function loadBuildTable(table, options) {
                 }
             },
         ],
+        customView: function(data) {
+            return `<div id='build-order-calendar'></div>`;
+        },
+        onRefresh: function() {
+            loadBuildTable(table, options);
+        },
+        onLoadSuccess: function() {
+
+            if (tree_enable) {
+                $(table).treegrid({
+                    treeColumn: 1,
+                });
+
+                table.treegrid('expandAll');
+            } else if (display_mode == 'calendar') {
+
+                if (!loaded_calendar) {
+                    loaded_calendar = true;
+
+                    var el = document.getElementById('build-order-calendar');
+
+                    calendar = new FullCalendar.Calendar(el, {
+                        initialView: 'dayGridMonth',
+                        nowIndicator: true,
+                        aspectRatio: 2.5,
+                        locale: options.locale,
+                        datesSet: function() {
+                            buildEvents(calendar);
+                        }
+                    });
+
+                    calendar.render();
+                } else {
+                    calendar.render();
+                }
+            }
+        }
     });
 
     linkButtonsToSelection(

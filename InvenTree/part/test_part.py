@@ -1,48 +1,114 @@
 # Tests for the Part model
 
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-from allauth.account.models import EmailAddress
-
-from django.contrib.auth import get_user_model
-
-from django.test import TestCase
-from django.core.exceptions import ValidationError
-
 import os
 
-from .models import Part, PartCategory, PartCategoryStar, PartStar, PartTestTemplate
-from .models import rename_part_image
-from .templatetags import inventree_extras
+from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.test import TestCase
+
+from allauth.account.models import EmailAddress
 
 import part.settings
+from common.models import (InvenTreeSetting, InvenTreeUserSetting,
+                           NotificationEntry, NotificationMessage)
+from common.notifications import UIMessageNotification, storage
+from InvenTree import version
+from InvenTree.helpers import InvenTreeTestCase
 
-from common.models import InvenTreeSetting, NotificationEntry, NotificationMessage
+from .models import (Part, PartCategory, PartCategoryStar, PartStar,
+                     PartTestTemplate, rename_part_image)
+from .templatetags import inventree_extras
 
 
-class TemplateTagTest(TestCase):
+class TemplateTagTest(InvenTreeTestCase):
     """ Tests for the custom template tag code """
+
+    def test_define(self):
+        self.assertEqual(int(inventree_extras.define(3)), 3)
+
+    def test_str2bool(self):
+        self.assertEqual(int(inventree_extras.str2bool('true')), True)
+        self.assertEqual(int(inventree_extras.str2bool('yes')), True)
+        self.assertEqual(int(inventree_extras.str2bool('none')), False)
+        self.assertEqual(int(inventree_extras.str2bool('off')), False)
+
+    def test_inrange(self):
+        self.assertEqual(inventree_extras.inrange(3), range(3))
 
     def test_multiply(self):
         self.assertEqual(int(inventree_extras.multiply(3, 5)), 15)
 
-    def test_version(self):
-        self.assertEqual(type(inventree_extras.inventree_version()), str)
+    def test_add(self):
+        self.assertEqual(int(inventree_extras.add(3, 5)), 8)
+
+    def test_plugins_enabled(self):
+        self.assertEqual(inventree_extras.plugins_enabled(), True)
+
+    def test_inventree_instance_name(self):
+        self.assertEqual(inventree_extras.inventree_instance_name(), 'InvenTree server')
+
+    def test_inventree_base_url(self):
+        self.assertEqual(inventree_extras.inventree_base_url(), '')
+
+    def test_inventree_is_release(self):
+        self.assertEqual(inventree_extras.inventree_is_release(), not version.isInvenTreeDevelopmentVersion())
+
+    def test_inventree_docs_version(self):
+        self.assertEqual(inventree_extras.inventree_docs_version(), version.inventreeDocsVersion())
 
     def test_hash(self):
         result_hash = inventree_extras.inventree_commit_hash()
-        self.assertGreater(len(result_hash), 5)
+        if settings.DOCKER:  # pragma: no cover
+            # Testing inside docker environment *may* return an empty git commit hash
+            # In such a case, skip this check
+            pass
+        else:
+            self.assertGreater(len(result_hash), 5)
 
     def test_date(self):
         d = inventree_extras.inventree_commit_date()
-        self.assertEqual(len(d.split('-')), 3)
+        if settings.DOCKER:  # pragma: no cover
+            # Testing inside docker environment *may* return an empty git commit hash
+            # In such a case, skip this check
+            pass
+        else:
+            self.assertEqual(len(d.split('-')), 3)
 
     def test_github(self):
         self.assertIn('github.com', inventree_extras.inventree_github_url())
 
     def test_docs(self):
         self.assertIn('inventree.readthedocs.io', inventree_extras.inventree_docs_url())
+
+    def test_keyvalue(self):
+        self.assertEqual(inventree_extras.keyvalue({'a': 'a'}, 'a'), 'a')
+
+    def test_mail_configured(self):
+        self.assertEqual(inventree_extras.mail_configured(), False)
+
+    def test_user_settings(self):
+        result = inventree_extras.user_settings(self.user)
+        self.assertEqual(len(result), len(InvenTreeUserSetting.SETTINGS))
+
+    def test_global_settings(self):
+        result = inventree_extras.global_settings()
+        self.assertEqual(len(result), len(InvenTreeSetting.SETTINGS))
+
+    def test_visible_global_settings(self):
+        result = inventree_extras.visible_global_settings()
+
+        n = len(result)
+
+        n_hidden = 0
+        n_visible = 0
+
+        for val in InvenTreeSetting.SETTINGS.values():
+            if val.get('hidden', False):
+                n_hidden += 1
+            else:
+                n_visible += 1
+
+        self.assertEqual(n, n_visible)
 
 
 class PartTest(TestCase):
@@ -134,7 +200,7 @@ class PartTest(TestCase):
         with self.assertRaises(ValidationError):
             part_2.validate_unique()
 
-    def test_metadata(self):
+    def test_attributes(self):
         self.assertEqual(self.r1.name, 'R_2K2_0805')
         self.assertEqual(self.r1.get_absolute_url(), '/part/3/')
 
@@ -179,6 +245,24 @@ class PartTest(TestCase):
         # check that the sell pricebreaks work
         self.assertEqual(float(self.r1.get_internal_price(1)), 0.08)
         self.assertEqual(float(self.r1.get_internal_price(10)), 0.5)
+
+    def test_metadata(self):
+        """Unit tests for the Part metadata field"""
+
+        p = Part.objects.get(pk=1)
+        self.assertIsNone(p.metadata)
+
+        self.assertIsNone(p.get_metadata('test'))
+        self.assertEqual(p.get_metadata('test', backup_value=123), 123)
+
+        # Test update via the set_metadata() method
+        p.set_metadata('test', 3)
+        self.assertEqual(p.get_metadata('test'), 3)
+
+        for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
+            p.set_metadata(k, k)
+
+        self.assertEqual(len(p.metadata.keys()), 4)
 
 
 class TestTemplateTest(TestCase):
@@ -239,23 +323,12 @@ class TestTemplateTest(TestCase):
         self.assertEqual(variant.getTestTemplates().count(), n + 1)
 
 
-class PartSettingsTest(TestCase):
+class PartSettingsTest(InvenTreeTestCase):
     """
     Tests to ensure that the user-configurable default values work as expected.
 
     Some fields for the Part model can have default values specified by the user.
     """
-
-    def setUp(self):
-        # Create a user for auth
-        user = get_user_model()
-
-        self.user = user.objects.create_user(
-            username='testuser',
-            email='test@testing.com',
-            password='password',
-            is_staff=True
-        )
 
     def make_part(self):
         """
@@ -370,7 +443,7 @@ class PartSettingsTest(TestCase):
         Part.objects.create(name='abc', revision='6', description='A part', IPN=' ')
 
 
-class PartSubscriptionTests(TestCase):
+class PartSubscriptionTests(InvenTreeTestCase):
 
     fixtures = [
         'location',
@@ -379,15 +452,7 @@ class PartSubscriptionTests(TestCase):
     ]
 
     def setUp(self):
-        # Create a user for auth
-        user = get_user_model()
-
-        self.user = user.objects.create_user(
-            username='testuser',
-            email='test@testing.com',
-            password='password',
-            is_staff=True
-        )
+        super().setUp()
 
         # electronics / IC / MCU
         self.category = PartCategory.objects.get(pk=4)
@@ -487,7 +552,7 @@ class PartSubscriptionTests(TestCase):
         self.assertTrue(self.part.is_starred_by(self.user))
 
 
-class BaseNotificationIntegrationTest(TestCase):
+class BaseNotificationIntegrationTest(InvenTreeTestCase):
     """ Integration test for notifications """
 
     fixtures = [
@@ -498,23 +563,22 @@ class BaseNotificationIntegrationTest(TestCase):
     ]
 
     def setUp(self):
-        # Create a user for auth
-        user = get_user_model()
-
-        self.user = user.objects.create_user(
-            username='testuser',
-            email='test@testing.com',
-            password='password',
-            is_staff=True
-        )
+        super().setUp()
         # Add Mailadress
         EmailAddress.objects.create(user=self.user, email='test@testing.com')
 
         # Define part that will be tested
         self.part = Part.objects.get(name='R_2K2_0805')
 
-    def _notification_run(self):
-        # There  should be no notification runs
+    def _notification_run(self, run_class=None):
+        """
+        Run a notification test suit through.
+        If you only want to test one class pass it to run_class
+        """
+        # reload notification methods
+        storage.collect(run_class)
+
+        # There should be no notification runs
         self.assertEqual(NotificationEntry.objects.all().count(), 0)
 
         # Test that notifications run through without errors
@@ -536,7 +600,7 @@ class PartNotificationTest(BaseNotificationIntegrationTest):
     """ Integration test for part notifications """
 
     def test_notification(self):
-        self._notification_run()
+        self._notification_run(UIMessageNotification)
 
         # There should be 1 notification message right now
         self.assertEqual(NotificationMessage.objects.all().count(), 1)

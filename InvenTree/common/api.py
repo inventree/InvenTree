@@ -2,28 +2,25 @@
 Provides a JSON API for common components.
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import json
 
 from django.http.response import HttpResponse
+from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
-from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
-from django.urls import include, re_path
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.exceptions import NotAcceptable, NotFound
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, generics, permissions
-from rest_framework import serializers
 from django_q.tasks import async_task
+from rest_framework import filters, generics, permissions, serializers
+from rest_framework.exceptions import NotAcceptable, NotFound
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 import common.models
 import common.serializers
 from InvenTree.helpers import inheritors
+from plugin.models import NotificationUserSetting
+from plugin.serializers import NotificationUserSettingSerializer
 
 
 class CsrfExemptMixin(object):
@@ -144,8 +141,13 @@ class GlobalSettingsPermissions(permissions.BasePermission):
         try:
             user = request.user
 
-            return user.is_staff
-        except AttributeError:
+            if request.method in ['GET', 'HEAD', 'OPTIONS']:
+                return True
+            else:
+                # Any other methods require staff access permissions
+                return user.is_staff
+
+        except AttributeError:  # pragma: no cover
             return False
 
 
@@ -156,10 +158,24 @@ class GlobalSettingsDetail(generics.RetrieveUpdateAPIView):
     - User must have 'staff' status to view / edit
     """
 
+    lookup_field = 'key'
     queryset = common.models.InvenTreeSetting.objects.all()
     serializer_class = common.serializers.GlobalSettingsSerializer
 
+    def get_object(self):
+        """
+        Attempt to find a global setting object with the provided key.
+        """
+
+        key = self.kwargs['key']
+
+        if key not in common.models.InvenTreeSetting.SETTINGS.keys():
+            raise NotFound()
+
+        return common.models.InvenTreeSetting.get_setting_object(key)
+
     permission_classes = [
+        permissions.IsAuthenticated,
         GlobalSettingsPermissions,
     ]
 
@@ -179,7 +195,7 @@ class UserSettingsList(SettingsList):
 
         try:
             user = self.request.user
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             return common.models.InvenTreeUserSetting.objects.none()
 
         queryset = super().filter_queryset(queryset)
@@ -198,7 +214,7 @@ class UserSettingsPermissions(permissions.BasePermission):
 
         try:
             user = request.user
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             return False
 
         return user == obj.user
@@ -211,8 +227,59 @@ class UserSettingsDetail(generics.RetrieveUpdateAPIView):
     - User can only view / edit settings their own settings objects
     """
 
+    lookup_field = 'key'
     queryset = common.models.InvenTreeUserSetting.objects.all()
     serializer_class = common.serializers.UserSettingsSerializer
+
+    def get_object(self):
+        """
+        Attempt to find a user setting object with the provided key.
+        """
+
+        key = self.kwargs['key']
+
+        if key not in common.models.InvenTreeUserSetting.SETTINGS.keys():
+            raise NotFound()
+
+        return common.models.InvenTreeUserSetting.get_setting_object(key, user=self.request.user)
+
+    permission_classes = [
+        UserSettingsPermissions,
+    ]
+
+
+class NotificationUserSettingsList(SettingsList):
+    """
+    API endpoint for accessing a list of notification user settings objects
+    """
+
+    queryset = NotificationUserSetting.objects.all()
+    serializer_class = NotificationUserSettingSerializer
+
+    def filter_queryset(self, queryset):
+        """
+        Only list settings which apply to the current user
+        """
+
+        try:
+            user = self.request.user
+        except AttributeError:
+            return NotificationUserSetting.objects.none()
+
+        queryset = super().filter_queryset(queryset)
+        queryset = queryset.filter(user=user)
+        return queryset
+
+
+class NotificationUserSettingsDetail(generics.RetrieveUpdateAPIView):
+    """
+    Detail view for an individual "notification user setting" object
+
+    - User can only view / edit settings their own settings objects
+    """
+
+    queryset = NotificationUserSetting.objects.all()
+    serializer_class = NotificationUserSettingSerializer
 
     permission_classes = [
         UserSettingsPermissions,
@@ -338,16 +405,25 @@ settings_api_urls = [
     # User settings
     re_path(r'^user/', include([
         # User Settings Detail
-        re_path(r'^(?P<pk>\d+)/', UserSettingsDetail.as_view(), name='api-user-setting-detail'),
+        re_path(r'^(?P<key>\w+)/', UserSettingsDetail.as_view(), name='api-user-setting-detail'),
 
         # User Settings List
         re_path(r'^.*$', UserSettingsList.as_view(), name='api-user-setting-list'),
     ])),
 
+    # Notification settings
+    re_path(r'^notification/', include([
+        # Notification Settings Detail
+        re_path(r'^(?P<pk>\d+)/', NotificationUserSettingsDetail.as_view(), name='api-notification-setting-detail'),
+
+        # Notification Settings List
+        re_path(r'^.*$', NotificationUserSettingsList.as_view(), name='api-notifcation-setting-list'),
+    ])),
+
     # Global settings
     re_path(r'^global/', include([
         # Global Settings Detail
-        re_path(r'^(?P<pk>\d+)/', GlobalSettingsDetail.as_view(), name='api-global-setting-detail'),
+        re_path(r'^(?P<key>\w+)/', GlobalSettingsDetail.as_view(), name='api-global-setting-detail'),
 
         # Global Settings List
         re_path(r'^.*$', GlobalSettingsList.as_view(), name='api-global-setting-list'),

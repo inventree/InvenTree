@@ -30,7 +30,7 @@
                     <span class='fas fa-sign-in-alt'></span> {% trans "Receive Items" %}
                 </button>
                 {% endif %}
-                {% endif %}  
+                {% endif %}
             </div>
         </div>
     </div>
@@ -38,7 +38,7 @@
         <div id='order-toolbar-buttons' class='btn-group' style='float: right;'>
             {% include "filter_list.html" with id="purchase-order-lines" %}
         </div>
-        
+
         <table class='table table-striped table-condensed' id='po-line-table' data-toolbar='#order-toolbar-buttons'>
         </table>
     </div>
@@ -191,11 +191,7 @@ $('#new-po-line').click(function() {
 {% elif order.status == PurchaseOrderStatus.PLACED %}
 
     $('#receive-selected-items').click(function() {
-        var items = $("#po-line-table").bootstrapTable('getSelections');
-
-        if (items.length == 0) {
-            items = $("#po-line-table").bootstrapTable('getData');
-        }
+        var items = getTableData('#po-line-table');
 
         receivePurchaseOrderItems(
             {{ order.id }},

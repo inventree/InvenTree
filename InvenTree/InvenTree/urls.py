@@ -4,62 +4,46 @@ Top-level URL lookup for InvenTree application.
 Passes URL lookup downstream to each app as required.
 """
 
-from django.urls import include, path, re_path
-from django.contrib import admin
-
-from company.urls import company_urls
-from company.urls import manufacturer_part_urls
-from company.urls import supplier_part_urls
-
-from common.urls import common_urls
-from part.urls import part_urls
-from stock.urls import stock_urls
-from build.urls import build_urls
-from order.urls import order_urls
-from plugin.urls import get_plugin_urls
-
-from barcodes.api import barcode_api_urls
-from common.api import common_api_urls, settings_api_urls
-from part.api import part_api_urls, bom_api_urls
-from company.api import company_api_urls
-from stock.api import stock_api_urls
-from build.api import build_api_urls
-from order.api import order_api_urls
-from label.api import label_api_urls
-from report.api import report_api_urls
-from plugin.api import plugin_api_urls
-
 from django.conf import settings
 from django.conf.urls.static import static
-
+from django.contrib import admin
+from django.urls import include, path, re_path
 from django.views.generic.base import RedirectView
+
 from rest_framework.documentation import include_docs_urls
 
-from .views import auth_request
-from .views import IndexView, SearchView, DatabaseStatsView
-from .views import SettingsView, EditUserView, SetPasswordView, CustomEmailView, CustomConnectionsView, CustomPasswordResetFromKeyView
-from .views import CustomSessionDeleteView, CustomSessionDeleteOtherView
-from .views import CurrencyRefreshView
-from .views import AppearanceSelectView, SettingCategorySelectView
-from .views import DynamicJsView
-from .views import NotificationsView
+from build.api import build_api_urls
+from build.urls import build_urls
+from common.api import common_api_urls, settings_api_urls
+from common.urls import common_urls
+from company.api import company_api_urls
+from company.urls import (company_urls, manufacturer_part_urls,
+                          supplier_part_urls)
+from label.api import label_api_urls
+from order.api import order_api_urls
+from order.urls import order_urls
+from part.api import bom_api_urls, part_api_urls
+from part.urls import part_urls
+from plugin.api import plugin_api_urls
+from plugin.urls import get_plugin_urls
+from report.api import report_api_urls
+from stock.api import stock_api_urls
+from stock.urls import stock_urls
+from users.api import user_urls
 
 from .api import InfoView, NotFoundView
-from .api import ActionPluginView
-
-from users.api import user_urls
+from .views import (AppearanceSelectView, CurrencyRefreshView,
+                    CustomConnectionsView, CustomEmailView,
+                    CustomPasswordResetFromKeyView,
+                    CustomSessionDeleteOtherView, CustomSessionDeleteView,
+                    DatabaseStatsView, DynamicJsView, EditUserView, IndexView,
+                    NotificationsView, SearchView, SetPasswordView,
+                    SettingCategorySelectView, SettingsView, auth_request)
 
 admin.site.site_header = "InvenTree Admin"
 
-apipatterns = []
 
-if settings.PLUGINS_ENABLED:
-    apipatterns.append(
-        re_path(r'^plugin/', include(plugin_api_urls))
-    )
-
-apipatterns += [
-    re_path(r'^barcode/', include(barcode_api_urls)),
+apipatterns = [
     re_path(r'^settings/', include(settings_api_urls)),
     re_path(r'^part/', include(part_api_urls)),
     re_path(r'^bom/', include(bom_api_urls)),
@@ -69,12 +53,10 @@ apipatterns += [
     re_path(r'^order/', include(order_api_urls)),
     re_path(r'^label/', include(label_api_urls)),
     re_path(r'^report/', include(report_api_urls)),
-
-    # User URLs
     re_path(r'^user/', include(user_urls)),
 
     # Plugin endpoints
-    re_path(r'^action/', ActionPluginView.as_view(), name='api-action-plugin'),
+    path('', include(plugin_api_urls)),
 
     # Webhook enpoint
     path('', include(common_api_urls)),
@@ -153,28 +135,24 @@ backendpatterns = [
 ]
 
 frontendpatterns = [
-    re_path(r'^part/', include(part_urls)),
-    re_path(r'^manufacturer-part/', include(manufacturer_part_urls)),
-    re_path(r'^supplier-part/', include(supplier_part_urls)),
 
+    # Apps
+    re_path(r'^build/', include(build_urls)),
     re_path(r'^common/', include(common_urls)),
-
-    re_path(r'^stock/', include(stock_urls)),
-
     re_path(r'^company/', include(company_urls)),
     re_path(r'^order/', include(order_urls)),
-
-    re_path(r'^build/', include(build_urls)),
-
-    re_path(r'^settings/', include(settings_urls)),
-
-    re_path(r'^notifications/', include(notifications_urls)),
+    re_path(r'^manufacturer-part/', include(manufacturer_part_urls)),
+    re_path(r'^part/', include(part_urls)),
+    re_path(r'^stock/', include(stock_urls)),
+    re_path(r'^supplier-part/', include(supplier_part_urls)),
 
     re_path(r'^edit-user/', EditUserView.as_view(), name='edit-user'),
     re_path(r'^set-password/', SetPasswordView.as_view(), name='set-password'),
 
     re_path(r'^index/', IndexView.as_view(), name='index'),
+    re_path(r'^notifications/', include(notifications_urls)),
     re_path(r'^search/', SearchView.as_view(), name='search'),
+    re_path(r'^settings/', include(settings_urls)),
     re_path(r'^stats/', DatabaseStatsView.as_view(), name='stats'),
 
     # admin sites

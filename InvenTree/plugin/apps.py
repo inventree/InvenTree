@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 import logging
 
@@ -9,10 +7,9 @@ from django.utils.translation import gettext_lazy as _
 
 from maintenance_mode.core import set_maintenance_mode
 
-from InvenTree.ready import isImportingData
+from InvenTree.ready import canAppAccessDatabase
 from plugin import registry
 from plugin.helpers import check_git_version, log_error
-
 
 logger = logging.getLogger('inventree')
 
@@ -22,9 +19,8 @@ class PluginAppConfig(AppConfig):
 
     def ready(self):
         if settings.PLUGINS_ENABLED:
-
-            if isImportingData():  # pragma: no cover
-                logger.info('Skipping plugin loading for data import')
+            if not canAppAccessDatabase(allow_test=True):
+                logger.info("Skipping plugin loading sequence")  # pragma: no cover
             else:
                 logger.info('Loading InvenTree plugins')
 
@@ -50,3 +46,6 @@ class PluginAppConfig(AppConfig):
             registry.git_is_modern = check_git_version()
             if not registry.git_is_modern:  # pragma: no cover  # simulating old git seems not worth it for coverage
                 log_error(_('Your enviroment has an outdated git version. This prevents InvenTree from loading plugin details.'), 'load')
+
+        else:
+            logger.info("Plugins not enabled - skipping loading sequence")  # pragma: no cover

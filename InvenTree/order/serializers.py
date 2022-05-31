@@ -2,41 +2,33 @@
 JSON serializers for the Order API
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
+from datetime import datetime
 from decimal import Decimal
-
-from django.utils.translation import gettext_lazy as _
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models, transaction
-from django.db.models import Case, When, Value
-from django.db.models import BooleanField, ExpressionWrapper, F, Q
+from django.db.models import (BooleanField, Case, ExpressionWrapper, F, Q,
+                              Value, When)
+from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
-
 from sql_util.utils import SubqueryCount
 
-from common.settings import currency_code_mappings
-from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
-
-from InvenTree.serializers import InvenTreeAttachmentSerializer
-from InvenTree.helpers import normalize, extract_serial_numbers
-from InvenTree.serializers import InvenTreeModelSerializer
-from InvenTree.serializers import InvenTreeDecimalField
-from InvenTree.serializers import InvenTreeMoneySerializer
-from InvenTree.serializers import ReferenceIndexingSerializerMixin
-from InvenTree.status_codes import StockStatus, PurchaseOrderStatus, SalesOrderStatus
-
 import order.models
-
-from part.serializers import PartBriefSerializer
-
 import stock.models
 import stock.serializers
-
+from common.settings import currency_code_mappings
+from company.serializers import CompanyBriefSerializer, SupplierPartSerializer
+from InvenTree.helpers import extract_serial_numbers, normalize
+from InvenTree.serializers import (InvenTreeAttachmentSerializer,
+                                   InvenTreeDecimalField,
+                                   InvenTreeModelSerializer,
+                                   InvenTreeMoneySerializer,
+                                   ReferenceIndexingSerializerMixin)
+from InvenTree.status_codes import (PurchaseOrderStatus, SalesOrderStatus,
+                                    StockStatus)
+from part.serializers import PartBriefSerializer
 from users.serializers import OwnerSerializer
 
 
@@ -894,6 +886,8 @@ class SalesOrderShipmentSerializer(InvenTreeModelSerializer):
             'checked_by',
             'reference',
             'tracking_number',
+            'invoice_number',
+            'link',
             'notes',
         ]
 
@@ -907,7 +901,10 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
         model = order.models.SalesOrderShipment
 
         fields = [
+            'shipment_date',
             'tracking_number',
+            'invoice_number',
+            'link',
         ]
 
     def validate(self, data):
@@ -919,7 +916,7 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
         if not shipment:
             raise ValidationError(_("No shipment details provided"))
 
-        shipment.check_can_complete()
+        shipment.check_can_complete(raise_error=True)
 
         return data
 
@@ -935,13 +932,19 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
         request = self.context['request']
         user = request.user
 
-        # Extract provided tracking number (optional)
-        tracking_number = data.get('tracking_number', None)
+        # Extract shipping date (defaults to today's date)
+        shipment_date = data.get('shipment_date', datetime.now())
 
-        shipment.complete_shipment(user, tracking_number=tracking_number)
+        shipment.complete_shipment(
+            user,
+            tracking_number=data.get('tracking_number', shipment.tracking_number),
+            invoice_number=data.get('invoice_number', shipment.invoice_number),
+            link=data.get('link', shipment.link),
+            shipment_date=shipment_date,
+        )
 
 
-class SOShipmentAllocationItemSerializer(serializers.Serializer):
+class SalesOrderShipmentAllocationItemSerializer(serializers.Serializer):
     """
     A serializer for allocating a single stock-item against a SalesOrder shipment
     """
@@ -1233,7 +1236,7 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
             'shipment',
         ]
 
-    items = SOShipmentAllocationItemSerializer(many=True)
+    items = SalesOrderShipmentAllocationItemSerializer(many=True)
 
     shipment = serializers.PrimaryKeyRelatedField(
         queryset=order.models.SalesOrderShipment.objects.all(),
@@ -1287,13 +1290,17 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
 
         with transaction.atomic():
             for entry in items:
+
                 # Create a new SalesOrderAllocation
-                order.models.SalesOrderAllocation.objects.create(
+                allocation = order.models.SalesOrderAllocation(
                     line=entry.get('line_item'),
                     item=entry.get('stock_item'),
                     quantity=entry.get('quantity'),
                     shipment=shipment,
                 )
+
+                allocation.full_clean()
+                allocation.save()
 
 
 class SalesOrderExtraLineSerializer(AbstractExtraLineSerializer, InvenTreeModelSerializer):

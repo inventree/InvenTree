@@ -274,7 +274,7 @@
     tree_id: 0
     lft: 0
     rght: 0
-  
+
 - model: stock.stockitem
   pk: 1002
   fields:
@@ -285,7 +285,7 @@
     tree_id: 0
     lft: 0
     rght: 0
-  
+
 - model: stock.stockitem
   pk: 1003
   fields:
@@ -307,7 +307,7 @@
     tree_id: 0
     lft: 0
     rght: 0
-  
+
 - model: stock.stockitem
   pk: 1005
   fields:
@@ -318,7 +318,7 @@
     tree_id: 0
     lft: 0
     rght: 0
-  
+
 - model: stock.stockitem
   pk: 1006
   fields:
@@ -329,7 +329,7 @@
     tree_id: 0
     lft: 0
     rght: 0
-  
+
 - model: stock.stockitem
   pk: 1007
   fields:
@@ -340,7 +340,7 @@
     tree_id: 0
     lft: 0
     rght: 0
-  
+
 - model: stock.stockitem
   pk: 1008
   fields:
@@ -351,4 +351,3 @@
     tree_id: 0
     lft: 0
     rght: 0
-  

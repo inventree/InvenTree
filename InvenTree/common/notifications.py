@@ -1,29 +1,27 @@
 import logging
 from datetime import timedelta
 
-from django.template.loader import render_to_string
-
-from allauth.account.models import EmailAddress
-
+from common.models import NotificationEntry, NotificationMessage
 from InvenTree.helpers import inheritors
 from InvenTree.ready import isImportingData
-from common.models import NotificationEntry, NotificationMessage
-from common.models import InvenTreeUserSetting
-
-import InvenTree.tasks
-
+from plugin import registry
+from plugin.models import NotificationUserSetting
 
 logger = logging.getLogger('inventree')
 
 
+# region methods
 class NotificationMethod:
     """
     Base class for notification methods
     """
 
     METHOD_NAME = ''
+    METHOD_ICON = None
     CONTEXT_BUILTIN = ['name', 'message', ]
     CONTEXT_EXTRA = []
+    GLOBAL_SETTING = None
+    USER_SETTING = None
 
     def __init__(self, obj, category, targets, context) -> None:
         # Check if a sending fnc is defined
@@ -33,6 +31,11 @@ class NotificationMethod:
         # No method name is no good
         if self.METHOD_NAME in ('', None):
             raise NotImplementedError(f'The NotificationMethod {self.__class__} did not provide a METHOD_NAME')
+
+        # Check if plugin is disabled - if so do not gather targets etc.
+        if self.global_setting_disable():
+            self.targets = None
+            return
 
         # Define arguments
         self.obj = obj
@@ -84,11 +87,39 @@ class NotificationMethod:
     def setup(self):
         return True
 
-    # def send(self, targets)
-    # def send_bulk(self)
-
     def cleanup(self):
         return True
+
+    # region plugins
+    def get_plugin(self):
+        """Returns plugin class"""
+        return False
+
+    def global_setting_disable(self):
+        """Check if the method is defined in a plugin and has a global setting"""
+        # Check if plugin has a setting
+        if not self.GLOBAL_SETTING:
+            return False
+
+        # Check if plugin is set
+        plg_cls = self.get_plugin()
+        if not plg_cls:
+            return False
+
+        # Check if method globally enabled
+        plg_instance = registry.plugins.get(plg_cls.NAME.lower())
+        if plg_instance and not plg_instance.get_setting(self.GLOBAL_SETTING):
+            return True
+
+        # Lets go!
+        return False
+
+    def usersetting(self, target):
+        """
+        Returns setting for this method for a given user
+        """
+        return NotificationUserSetting.get_setting(f'NOTIFICATION_METHOD_{self.METHOD_NAME.upper()}', user=target, method=self.METHOD_NAME)
+    # endregion
 
 
 class SingleNotificationMethod(NotificationMethod):
@@ -99,41 +130,59 @@ class SingleNotificationMethod(NotificationMethod):
 class BulkNotificationMethod(NotificationMethod):
     def send_bulk(self):
         raise NotImplementedError('The `send` method must be overriden!')
+# endregion
 
 
-class EmailNotification(BulkNotificationMethod):
-    METHOD_NAME = 'mail'
-    CONTEXT_EXTRA = [
-        ('template', ),
-        ('template', 'html', ),
-        ('template', 'subject', ),
-    ]
+class MethodStorageClass:
+    liste = None
+    user_settings = {}
 
-    def get_targets(self):
-        """
-        Return a list of target email addresses,
-        only for users which allow email notifications
-        """
+    def collect(self, selected_classes=None):
+        logger.info('collecting notification methods')
+        current_method = inheritors(NotificationMethod) - IGNORED_NOTIFICATION_CLS
 
-        allowed_users = []
+        # for testing selective loading is made available
+        if selected_classes:
+            current_method = [item for item in current_method if item is selected_classes]
 
-        for user in self.targets:
-            allows_emails = InvenTreeUserSetting.get_setting('NOTIFICATION_SEND_EMAILS', user=user)
+        # make sure only one of each method is added
+        filtered_list = {}
+        for item in current_method:
+            plugin = item.get_plugin(item)
+            ref = f'{plugin.package_path}_{item.METHOD_NAME}' if plugin else item.METHOD_NAME
+            filtered_list[ref] = item
 
-            if allows_emails:
-                allowed_users.append(user)
+        storage.liste = list(filtered_list.values())
+        logger.info(f'found {len(storage.liste)} notification methods')
 
-        return EmailAddress.objects.filter(
-            user__in=allowed_users,
-        )
+    def get_usersettings(self, user):
+        methods = []
+        for item in storage.liste:
+            if item.USER_SETTING:
+                new_key = f'NOTIFICATION_METHOD_{item.METHOD_NAME.upper()}'
 
-    def send_bulk(self):
-        html_message = render_to_string(self.context['template']['html'], self.context)
-        targets = self.get_targets().values_list('email', flat=True)
+                # make sure the setting exists
+                self.user_settings[new_key] = item.USER_SETTING
+                NotificationUserSetting.get_setting(
+                    key=new_key,
+                    user=user,
+                    method=item.METHOD_NAME,
+                )
 
-        InvenTree.tasks.send_email(self.context['template']['subject'], '', targets, html_message=html_message)
+                # save definition
+                methods.append({
+                    'key': new_key,
+                    'icon': getattr(item, 'METHOD_ICON', ''),
+                    'method': item.METHOD_NAME,
+                })
+        return methods
 
-        return True
+
+IGNORED_NOTIFICATION_CLS = set([
+    SingleNotificationMethod,
+    BulkNotificationMethod,
+])
+storage = MethodStorageClass()
 
 
 class UIMessageNotification(SingleNotificationMethod):
@@ -154,7 +203,7 @@ class UIMessageNotification(SingleNotificationMethod):
         return True
 
 
-def trigger_notifaction(obj, category=None, obj_ref='pk', **kwargs):
+def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
     """
     Send out a notification
     """
@@ -198,9 +247,11 @@ def trigger_notifaction(obj, category=None, obj_ref='pk', **kwargs):
 
         # Collect possible methods
         if delivery_methods is None:
-            delivery_methods = inheritors(NotificationMethod)
+            delivery_methods = storage.liste
+        else:
+            delivery_methods = (delivery_methods - IGNORED_NOTIFICATION_CLS)
 
-        for method in [a for a in delivery_methods if a not in [SingleNotificationMethod, BulkNotificationMethod]]:
+        for method in delivery_methods:
             logger.info(f"Triggering method '{method.METHOD_NAME}'")
             try:
                 deliver_notification(method, obj, category, targets, context)

@@ -1,21 +1,17 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.contrib import admin
 
-from import_export.admin import ImportExportModelAdmin
-from import_export.resources import ModelResource
-from import_export.fields import Field
 import import_export.widgets as widgets
-
-from .models import StockLocation, StockItem, StockItemAttachment
-from .models import StockItemTracking
-from .models import StockItemTestResult
+from import_export.admin import ImportExportModelAdmin
+from import_export.fields import Field
+from import_export.resources import ModelResource
 
 from build.models import Build
 from company.models import Company, SupplierPart
 from order.models import PurchaseOrder, SalesOrder
 from part.models import Part
+
+from .models import (StockItem, StockItemAttachment, StockItemTestResult,
+                     StockItemTracking, StockLocation)
 
 
 class LocationResource(ModelResource):
@@ -34,6 +30,7 @@ class LocationResource(ModelResource):
         exclude = [
             # Exclude MPTT internal model fields
             'lft', 'rght', 'tree_id', 'level',
+            'metadata',
         ]
 
     def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
@@ -122,7 +119,7 @@ class StockItemResource(ModelResource):
             # Exclude MPTT internal model fields
             'lft', 'rght', 'tree_id', 'level',
             # Exclude internal fields
-            'serial_int',
+            'serial_int', 'metadata',
         ]
 
 

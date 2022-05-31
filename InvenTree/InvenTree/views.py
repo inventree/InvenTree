@@ -5,41 +5,38 @@ In particular these views provide base functionality for rendering Django forms
 as JSON objects and passing them to modal forms (using jQuery / bootstrap).
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-import os
 import json
+import os
 
-from django.utils.translation import gettext_lazy as _
+from django.conf import settings
+from django.contrib.auth.mixins import (LoginRequiredMixin,
+                                        PermissionRequiredMixin)
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.shortcuts import redirect
 from django.template.loader import render_to_string
-from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.utils.timezone import now
-from django.shortcuts import redirect
-from django.conf import settings
-
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-
+from django.utils.translation import gettext_lazy as _
 from django.views import View
-from django.views.generic import ListView, DetailView, CreateView, FormView, DeleteView, UpdateView
+from django.views.generic import (CreateView, DeleteView, DetailView, FormView,
+                                  ListView, UpdateView)
 from django.views.generic.base import RedirectView, TemplateView
 
-from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from allauth.account.forms import AddEmailForm
-from allauth.socialaccount.forms import DisconnectForm
 from allauth.account.models import EmailAddress
 from allauth.account.views import EmailView, PasswordResetFromKeyView
+from allauth.socialaccount.forms import DisconnectForm
 from allauth.socialaccount.views import ConnectionsView
-from user_sessions.views import SessionDeleteView, SessionDeleteOtherView
+from djmoney.contrib.exchange.models import ExchangeBackend, Rate
+from user_sessions.views import SessionDeleteOtherView, SessionDeleteView
 
+from common.models import ColorTheme, InvenTreeSetting
 from common.settings import currency_code_default, currency_codes
-
 from part.models import PartCategory
-from common.models import InvenTreeSetting, ColorTheme
-from users.models import check_user_role, RuleSet
+from users.models import RuleSet, check_user_role
 
-from .forms import DeleteForm, EditUserForm, SetPasswordForm
-from .forms import SettingCategorySelectForm
+from .forms import (DeleteForm, EditUserForm, SetPasswordForm,
+                    SettingCategorySelectForm)
 from .helpers import str2bool
 
 
@@ -627,7 +624,7 @@ class SetPasswordView(AjaxUpdateView):
         if valid:
             # Passwords must match
 
-            if not p1 == p2:
+            if p1 != p2:
                 error = _('Password fields must match')
                 form.add_error('enter_password', error)
                 form.add_error('confirm_password', error)
@@ -654,7 +651,7 @@ class IndexView(TemplateView):
 
     def get_context_data(self, **kwargs):
 
-        context = super(TemplateView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         return context
 
@@ -797,13 +794,9 @@ class CurrencyRefreshView(RedirectView):
         On a POST request we will attempt to refresh the exchange rates
         """
 
-        from InvenTree.tasks import offload_task
+        from InvenTree.tasks import offload_task, update_exchange_rates
 
-        # Define associated task from InvenTree.tasks list of methods
-        taskname = 'InvenTree.tasks.update_exchange_rates'
-
-        # Run it
-        offload_task(taskname, force_sync=True)
+        offload_task(update_exchange_rates, force_sync=True)
 
         return redirect(reverse_lazy('settings'))
 
@@ -849,7 +842,7 @@ class SettingCategorySelectView(FormView):
     def get_initial(self):
         """ Set category selection """
 
-        initial = super(SettingCategorySelectView, self).get_initial()
+        initial = super().get_initial()
 
         category = self.request.GET.get('category', None)
         if category:

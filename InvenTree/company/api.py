@@ -2,27 +2,24 @@
 Provides a JSON API for the Company app
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-from django_filters.rest_framework import DjangoFilterBackend
-from django_filters import rest_framework as rest_filters
-
-from rest_framework import filters
-from rest_framework import generics
-
-from django.urls import include, re_path
 from django.db.models import Q
+from django.urls import include, re_path
 
+from django_filters import rest_framework as rest_filters
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, generics
+
+from InvenTree.api import AttachmentMixin
 from InvenTree.helpers import str2bool
 
-from .models import Company
-from .models import ManufacturerPart, ManufacturerPartParameter
-from .models import SupplierPart, SupplierPriceBreak
-
-from .serializers import CompanySerializer
-from .serializers import ManufacturerPartSerializer, ManufacturerPartParameterSerializer
-from .serializers import SupplierPartSerializer, SupplierPriceBreakSerializer
+from .models import (Company, ManufacturerPart, ManufacturerPartAttachment,
+                     ManufacturerPartParameter, SupplierPart,
+                     SupplierPriceBreak)
+from .serializers import (CompanySerializer,
+                          ManufacturerPartAttachmentSerializer,
+                          ManufacturerPartParameterSerializer,
+                          ManufacturerPartSerializer, SupplierPartSerializer,
+                          SupplierPriceBreakSerializer)
 
 
 class CompanyList(generics.ListCreateAPIView):
@@ -161,6 +158,32 @@ class ManufacturerPartDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = ManufacturerPart.objects.all()
     serializer_class = ManufacturerPartSerializer
+
+
+class ManufacturerPartAttachmentList(AttachmentMixin, generics.ListCreateAPIView):
+    """
+    API endpoint for listing (and creating) a ManufacturerPartAttachment (file upload).
+    """
+
+    queryset = ManufacturerPartAttachment.objects.all()
+    serializer_class = ManufacturerPartAttachmentSerializer
+
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+
+    filter_fields = [
+        'manufacturer_part',
+    ]
+
+
+class ManufacturerPartAttachmentDetail(AttachmentMixin, generics.RetrieveUpdateDestroyAPIView):
+    """
+    Detail endpooint for ManufacturerPartAttachment model
+    """
+
+    queryset = ManufacturerPartAttachment.objects.all()
+    serializer_class = ManufacturerPartAttachmentSerializer
 
 
 class ManufacturerPartParameterList(generics.ListCreateAPIView):
@@ -389,6 +412,12 @@ class SupplierPriceBreakDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 manufacturer_part_api_urls = [
+
+    # Base URL for ManufacturerPartAttachment API endpoints
+    re_path(r'^attachment/', include([
+        re_path(r'^(?P<pk>\d+)/', ManufacturerPartAttachmentDetail.as_view(), name='api-manufacturer-part-attachment-detail'),
+        re_path(r'^$', ManufacturerPartAttachmentList.as_view(), name='api-manufacturer-part-attachment-list'),
+    ])),
 
     re_path(r'^parameter/', include([
         re_path(r'^(?P<pk>\d+)/', ManufacturerPartParameterDetail.as_view(), name='api-manufacturer-part-parameter-detail'),

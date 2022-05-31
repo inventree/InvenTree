@@ -2,41 +2,30 @@
 JSON serializers for Stock app
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-from decimal import Decimal
 from datetime import datetime, timedelta
-from django.db import transaction
+from decimal import Decimal
 
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.utils.translation import gettext_lazy as _
+from django.db import transaction
+from django.db.models import BooleanField, Case, Q, Value, When
 from django.db.models.functions import Coalesce
-from django.db.models import Case, When, Value
-from django.db.models import BooleanField
-from django.db.models import Q
+from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
-
-from sql_util.utils import SubquerySum, SubqueryCount
-
-from .models import StockItem, StockLocation
-from .models import StockItemTracking
-from .models import StockItemAttachment
-from .models import StockItemTestResult
+from sql_util.utils import SubqueryCount, SubquerySum
 
 import common.models
-from common.settings import currency_code_default, currency_code_mappings
-
 import company.models
-from company.serializers import SupplierPartSerializer
-
 import InvenTree.helpers
 import InvenTree.serializers
+from common.settings import currency_code_default, currency_code_mappings
+from company.serializers import SupplierPartSerializer
 from InvenTree.serializers import InvenTreeDecimalField, extract_int
-
 from part.serializers import PartBriefSerializer
+
+from .models import (StockItem, StockItemAttachment, StockItemTestResult,
+                     StockItemTracking, StockLocation)
 
 
 class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):

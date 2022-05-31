@@ -1,19 +1,16 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 import os
 import shutil
 
+from django.conf import settings
 from django.http.response import StreamingHttpResponse
 from django.urls import reverse
-from django.conf import settings
-
-from InvenTree.api_tester import InvenTreeAPITestCase
 
 import report.models as report_models
-from common.models import InvenTreeUserSetting
-from stock.models import StockItem
 from build.models import Build
+from common.models import InvenTreeUserSetting
+from InvenTree.api_tester import InvenTreeAPITestCase
+from stock.models import StockItem
 
 
 class ReportTest(InvenTreeAPITestCase):
@@ -227,7 +224,7 @@ class BOMReportTest(ReportTest):
     print_url = 'api-bom-report-print'
 
 
-class POReportTest(ReportTest):
+class PurchaseOrderReportTest(ReportTest):
 
     model = report_models.PurchaseOrderReport
 
@@ -236,7 +233,7 @@ class POReportTest(ReportTest):
     print_url = 'api-po-report-print'
 
 
-class SOReportTest(ReportTest):
+class SalesOrderReportTest(ReportTest):
 
     model = report_models.SalesOrderReport
 

@@ -188,7 +188,7 @@
     </div>
     <div class='panel-content'>
         <table class='table table-striped table-condensed' data-toolbar='#part-button-toolbar' id='part-table'>
-        </table> 
+        </table>
     </div>
 </div>
 
@@ -221,9 +221,9 @@
                 {% include "filter_list.html" with id="category" %}
             </div>
         </div>
-    
+
         <table class='table table-striped table-condensed' id='subcategory-table' data-toolbar='#subcategory-button-toolbar'></table>
-    
+
     </div>
 </div>
 
@@ -255,7 +255,7 @@
     onPanelLoad('parameters', function() {
         loadParametricPartTable(
             "#parametric-part-table",
-            { 
+            {
                 category: {{ category.pk }},
             }
         );
@@ -341,7 +341,7 @@
                 location.href = `/part/${data.pk}/`;
             },
         });
-        
+
     });
     {% endif %}
 

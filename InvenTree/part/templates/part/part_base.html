@@ -153,7 +153,7 @@
                         {% endif %}
                         </h5>
                     </div>
-                    
+
                     {% include "spacer.html" %}
 
                     <button type='button' class='btn btn-outline-secondary' data-bs-toggle='collapse' href='#collapse-part-details' role='button' id='toggle-details-button'>
@@ -572,7 +572,7 @@
         $('#toggle-details-button').html('{% trans "Hide Part Details" %}');
         inventreeSave('show-part-details', true);
     });
-    
+
     // Callback function when the "part details" panel is hidden
     $('#collapse-part-details').on('hide.bs.collapse', function() {
         $('#toggle-details-button').html('{% trans "Show Part Details" %}');
@@ -585,6 +585,6 @@
 
     $('#serial-number-search').click(function() {
         findStockItemBySerialNumber({{ part.pk }});
-    });    
+    });
 
 {% endblock %}

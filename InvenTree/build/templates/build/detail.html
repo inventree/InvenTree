@@ -162,7 +162,7 @@
                 {% include "filter_list.html" with id='sub-build' %}
             </div>
         </div>
-        <table class='table table-striped table-condensed' id='sub-build-table' data-toolbar='#child-button-toolbar'></table>  
+        <table class='table table-striped table-condensed' id='sub-build-table' data-toolbar='#child-button-toolbar'></table>
     </div>
 </div>
 
@@ -349,14 +349,15 @@ onPanelLoad('completed', function() {
         buttons: [
             '#stock-options',
         ],
-        url: "{% url 'api-stock-list' %}",    
+        url: "{% url 'api-stock-list' %}",
     });
 });
 
 onPanelLoad('children', function() {
     loadBuildTable($('#sub-build-table'), {
-        url: '{% url "api-build-list" %}',
+        locale: '{{ request.LANGUAGE_CODE }}',
         filterTarget: "#filter-list-sub-build",
+        parentBuild: {{ build.pk }},
         params: {
             ancestor: {{ build.pk }},
         }
@@ -442,7 +443,7 @@ function loadUntrackedStockTable() {
         {% endif %}
         tracked_parts: false,
     };
-    
+
     $('#allocation-table-untracked').bootstrapTable('destroy');
 
     // Load allocation table for un-tracked parts
@@ -527,11 +528,7 @@ $('#btn-unallocate').on('click', function() {
 
 $('#allocate-selected-items').click(function() {
 
-    var bom_items = $("#allocation-table-untracked").bootstrapTable("getSelections");
-
-    if (bom_items.length == 0) {
-        bom_items = $("#allocation-table-untracked").bootstrapTable('getData');
-    }
+    var bom_items = getTableData('#allocation-table-untracked');
 
     allocateStockToBuild(
         {{ build.pk }},

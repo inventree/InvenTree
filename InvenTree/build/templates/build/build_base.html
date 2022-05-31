@@ -20,7 +20,7 @@
 src="{{ build.part.image.url }}"
 {% else %}
 src="{% static 'img/blank_image.png' %}"
-{% endif %}/>            
+{% endif %}/>
 {% endblock thumbnail %}
 
 {% block heading %}
@@ -253,5 +253,5 @@ src="{% static 'img/blank_image.png' %}"
             redirect: "{% url 'build-index' %}",
         });
     });
-    
+
 {% endblock %}

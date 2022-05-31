@@ -3,16 +3,16 @@
 import logging
 
 from django.apps import AppConfig
-from django.core.exceptions import AppRegistryNotReady
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.exceptions import AppRegistryNotReady
 from django.db import transaction
 from django.db.utils import IntegrityError
 
-from InvenTree.ready import isInTestMode, canAppAccessDatabase
-from .config import get_setting
 import InvenTree.tasks
+from InvenTree.ready import canAppAccessDatabase, isInTestMode
 
+from .config import get_setting
 
 logger = logging.getLogger("inventree")
 
@@ -30,6 +30,8 @@ class InvenTreeConfig(AppConfig):
 
             if not isInTestMode():  # pragma: no cover
                 self.update_exchange_rates()
+
+        self.collect_notification_methods()
 
         if canAppAccessDatabase() or settings.TESTING_ENV:
             self.add_user_on_startup()
@@ -109,8 +111,8 @@ class InvenTreeConfig(AppConfig):
         try:
             from djmoney.contrib.exchange.models import ExchangeBackend
 
-            from InvenTree.tasks import update_exchange_rates
             from common.settings import currency_code_default
+            from InvenTree.tasks import update_exchange_rates
         except AppRegistryNotReady:  # pragma: no cover
             pass
 
@@ -129,7 +131,7 @@ class InvenTreeConfig(AppConfig):
                 update = True
 
             # Backend currency has changed?
-            if not base_currency == backend.base_currency:
+            if base_currency != backend.base_currency:
                 logger.info(f"Base currency changed from {backend.base_currency} to {base_currency}")
                 update = True
 
@@ -188,12 +190,21 @@ class InvenTreeConfig(AppConfig):
         user = get_user_model()
         try:
             with transaction.atomic():
-                new_user = user.objects.create_superuser(add_user, add_email, add_password)
-            logger.info(f'User {str(new_user)} was created!')
+                if user.objects.filter(username=add_user).exists():
+                    logger.info(f"User {add_user} already exists - skipping creation")
+                else:
+                    new_user = user.objects.create_superuser(add_user, add_email, add_password)
+                    logger.info(f'User {str(new_user)} was created!')
         except IntegrityError as _e:
             logger.warning(f'The user "{add_user}" could not be created due to the following error:\n{str(_e)}')
-            if settings.TESTING_ENV:
-                raise _e
 
         # do not try again
         settings.USER_ADDED = True
+
+    def collect_notification_methods(self):
+        """
+        Collect all notification methods
+        """
+        from common.notifications import storage
+
+        storage.collect()

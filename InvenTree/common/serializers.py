@@ -2,15 +2,12 @@
 JSON serializers for common components
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-from InvenTree.serializers import InvenTreeModelSerializer
-from InvenTree.helpers import get_objectreference
-
 from rest_framework import serializers
 
-from common.models import InvenTreeSetting, InvenTreeUserSetting, NotificationMessage
+from common.models import (InvenTreeSetting, InvenTreeUserSetting,
+                           NotificationMessage)
+from InvenTree.helpers import get_objectreference
+from InvenTree.serializers import InvenTreeModelSerializer
 
 
 class SettingsSerializer(InvenTreeModelSerializer):
@@ -27,6 +24,10 @@ class SettingsSerializer(InvenTreeModelSerializer):
     type = serializers.CharField(source='setting_type', read_only=True)
 
     choices = serializers.SerializerMethodField()
+
+    model_name = serializers.CharField(read_only=True)
+
+    api_url = serializers.CharField(read_only=True)
 
     def get_choices(self, obj):
         """
@@ -75,6 +76,8 @@ class GlobalSettingsSerializer(SettingsSerializer):
             'description',
             'type',
             'choices',
+            'model_name',
+            'api_url',
         ]
 
 
@@ -96,7 +99,48 @@ class UserSettingsSerializer(SettingsSerializer):
             'user',
             'type',
             'choices',
+            'model_name',
+            'api_url',
         ]
+
+
+class GenericReferencedSettingSerializer(SettingsSerializer):
+    """
+    Serializer for a GenericReferencedSetting model
+
+    Args:
+        MODEL: model class for the serializer
+        EXTRA_FIELDS: fields that need to be appended to the serializer
+            field must also be defined in the custom class
+    """
+
+    MODEL = None
+    EXTRA_FIELDS = None
+
+    def __init__(self, *args, **kwargs):
+        """Init overrides the Meta class to make it dynamic"""
+        class CustomMeta:
+            """Scaffold for custom Meta class"""
+            fields = [
+                'pk',
+                'key',
+                'value',
+                'name',
+                'description',
+                'type',
+                'choices',
+                'model_name',
+                'api_url',
+            ]
+
+        # set Meta class
+        self.Meta = CustomMeta
+        self.Meta.model = self.MODEL
+        # extend the fields
+        self.Meta.fields.extend(self.EXTRA_FIELDS)
+
+        # resume operations
+        super().__init__(*args, **kwargs)
 
 
 class NotificationMessageSerializer(InvenTreeModelSerializer):

@@ -2,55 +2,44 @@
 Stock database model definitions
 """
 
-
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import os
+from datetime import datetime, timedelta
+from decimal import Decimal, InvalidOperation
+
+from django.contrib.auth.models import User
+from django.core.exceptions import FieldError, ValidationError
+from django.core.validators import MinValueValidator
+from django.db import models, transaction
+from django.db.models import Q, Sum
+from django.db.models.functions import Coalesce
+from django.db.models.signals import post_delete, post_save, pre_delete
+from django.dispatch import receiver
+from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 from jinja2 import Template
-
-from django.utils.translation import gettext_lazy as _
-from django.core.exceptions import ValidationError, FieldError
-from django.urls import reverse
-
-from django.db import models, transaction
-from django.db.models import Sum, Q
-from django.db.models.functions import Coalesce
-from django.core.validators import MinValueValidator
-from django.contrib.auth.models import User
-from django.db.models.signals import pre_delete, post_save, post_delete
-from django.dispatch import receiver
-
 from markdownx.models import MarkdownxField
-
-from mptt.models import MPTTModel, TreeForeignKey
 from mptt.managers import TreeManager
-
-from decimal import Decimal, InvalidOperation
-from datetime import datetime, timedelta
-
-from InvenTree import helpers
-import InvenTree.tasks
+from mptt.models import MPTTModel, TreeForeignKey
 
 import common.models
-import report.models
+import InvenTree.helpers
+import InvenTree.ready
+import InvenTree.tasks
 import label.models
-
-from plugin.events import trigger_event
-
-from InvenTree.status_codes import StockStatus, StockHistoryCode
-from InvenTree.models import InvenTreeTree, InvenTreeAttachment
+import report.models
+from company import models as CompanyModels
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
+from InvenTree.models import InvenTreeAttachment, InvenTreeTree
 from InvenTree.serializers import extract_int
-
+from InvenTree.status_codes import StockHistoryCode, StockStatus
+from part import models as PartModels
+from plugin.events import trigger_event
+from plugin.models import MetadataMixin
 from users.models import Owner
 
-from company import models as CompanyModels
-from part import models as PartModels
 
-
-class StockLocation(InvenTreeTree):
+class StockLocation(MetadataMixin, InvenTreeTree):
     """ Organization tree for StockItem objects
     A "StockLocation" can be considered a warehouse, or storage location
     Stock locations can be heirarchical as required
@@ -137,7 +126,7 @@ class StockLocation(InvenTreeTree):
     def format_barcode(self, **kwargs):
         """ Return a JSON string for formatting a barcode for this StockLocation object """
 
-        return helpers.MakeBarcode(
+        return InvenTree.helpers.MakeBarcode(
             'stocklocation',
             self.pk,
             {
@@ -241,7 +230,7 @@ def generate_batch_code():
     return Template(batch_template).render(context)
 
 
-class StockItem(MPTTModel):
+class StockItem(MetadataMixin, MPTTModel):
     """
     A StockItem object represents a quantity of physical instances of a part.
 
@@ -403,7 +392,7 @@ class StockItem(MPTTModel):
                 deltas = {}
 
                 # Status changed?
-                if not old.status == self.status:
+                if old.status != self.status:
                     deltas['status'] = self.status
 
                 # TODO - Other interesting changes we are interested in...
@@ -492,7 +481,7 @@ class StockItem(MPTTModel):
         try:
             if self.part.trackable:
                 # Trackable parts must have integer values for quantity field!
-                if not self.quantity == int(self.quantity):
+                if self.quantity != int(self.quantity):
                     raise ValidationError({
                         'quantity': _('Quantity must be integer value for trackable parts')
                     })
@@ -510,7 +499,7 @@ class StockItem(MPTTModel):
         # The 'supplier_part' field must point to the same part!
         try:
             if self.supplier_part is not None:
-                if not self.supplier_part.part == self.part:
+                if self.supplier_part.part != self.part:
                     raise ValidationError({'supplier_part': _("Part type ('{pf}') must be {pe}").format(
                                            pf=str(self.supplier_part.part),
                                            pe=str(self.part))
@@ -555,7 +544,14 @@ class StockItem(MPTTModel):
 
         # If the item points to a build, check that the Part references match
         if self.build:
-            if not self.part == self.build.part:
+
+            if self.part == self.build.part:
+                # Part references match exactly
+                pass
+            elif self.part in self.build.part.get_conversion_options():
+                # Part reference is one of the valid conversion options for the build output
+                pass
+            else:
                 raise ValidationError({
                     'build': _("Build reference does not point to the same part object")
                 })
@@ -577,7 +573,7 @@ class StockItem(MPTTModel):
         Voltagile data (e.g. stock quantity) should be looked up using the InvenTree API (as it may change)
         """
 
-        return helpers.MakeBarcode(
+        return InvenTree.helpers.MakeBarcode(
             "stockitem",
             self.id,
             {
@@ -1313,10 +1309,10 @@ class StockItem(MPTTModel):
         if quantity > self.quantity:
             raise ValidationError({"quantity": _("Quantity must not exceed available stock quantity ({n})").format(n=self.quantity)})
 
-        if not type(serials) in [list, tuple]:
+        if type(serials) not in [list, tuple]:
             raise ValidationError({"serial_numbers": _("Serial numbers must be a list of integers")})
 
-        if not quantity == len(serials):
+        if quantity != len(serials):
             raise ValidationError({"quantity": _("Quantity does not match serial numbers")})
 
         # Test if each of the serial numbers are valid
@@ -1775,7 +1771,7 @@ class StockItem(MPTTModel):
                 sn=self.serial)
         else:
             s = '{n} x {part}'.format(
-                n=helpers.decimal2string(self.quantity),
+                n=InvenTree.helpers.decimal2string(self.quantity),
                 part=self.part.full_name)
 
         if self.location:
@@ -1783,7 +1779,7 @@ class StockItem(MPTTModel):
 
         if self.purchase_order:
             s += " ({pre}{po})".format(
-                pre=helpers.getSetting("PURCHASEORDER_REFERENCE_PREFIX"),
+                pre=InvenTree.helpers.getSetting("PURCHASEORDER_REFERENCE_PREFIX"),
                 po=self.purchase_order,
             )
 
@@ -1851,7 +1847,7 @@ class StockItem(MPTTModel):
         result_map = {}
 
         for result in results:
-            key = helpers.generateTestKey(result.test)
+            key = InvenTree.helpers.generateTestKey(result.test)
             result_map[key] = result
 
         # Do we wish to "cascade" and include test results from installed stock items?
@@ -1898,7 +1894,7 @@ class StockItem(MPTTModel):
         failed = 0
 
         for test in required:
-            key = helpers.generateTestKey(test.test_name)
+            key = InvenTree.helpers.generateTestKey(test.test_name)
 
             if key in results:
                 result = results[key]
@@ -1949,7 +1945,7 @@ class StockItem(MPTTModel):
 
             # Attempt to validate report filter (skip if invalid)
             try:
-                filters = helpers.validateFilterString(test_report.filters)
+                filters = InvenTree.helpers.validateFilterString(test_report.filters)
                 if item_query.filter(**filters).exists():
                     reports.append(test_report)
             except (ValidationError, FieldError):
@@ -1977,7 +1973,7 @@ class StockItem(MPTTModel):
         for lbl in label.models.StockItemLabel.objects.filter(enabled=True):
 
             try:
-                filters = helpers.validateFilterString(lbl.filters)
+                filters = InvenTree.helpers.validateFilterString(lbl.filters)
 
                 if item_query.filter(**filters).exists():
                     labels.append(lbl)
@@ -2015,9 +2011,11 @@ def after_delete_stock_item(sender, instance: StockItem, **kwargs):
     """
     Function to be executed after a StockItem object is deleted
     """
+    from part import tasks as part_tasks
 
-    # Run this check in the background
-    InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance.part)
+    if not InvenTree.ready.isImportingData():
+        # Run this check in the background
+        InvenTree.tasks.offload_task(part_tasks.notify_low_stock_if_required, instance.part)
 
 
 @receiver(post_save, sender=StockItem, dispatch_uid='stock_item_post_save_log')
@@ -2025,9 +2023,11 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
     """
     Hook function to be executed after StockItem object is saved/updated
     """
+    from part import tasks as part_tasks
 
-    # Run this check in the background
-    InvenTree.tasks.offload_task('part.tasks.notify_low_stock_if_required', instance.part)
+    if not InvenTree.ready.isImportingData():
+        # Run this check in the background
+        InvenTree.tasks.offload_task(part_tasks.notify_low_stock_if_required, instance.part)
 
 
 class StockItemAttachment(InvenTreeAttachment):
@@ -2170,7 +2170,7 @@ class StockItemTestResult(models.Model):
 
     @property
     def key(self):
-        return helpers.generateTestKey(self.test)
+        return InvenTree.helpers.generateTestKey(self.test)
 
     stock_item = models.ForeignKey(
         StockItem,

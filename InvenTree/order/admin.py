@@ -1,16 +1,14 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.contrib import admin
 
+import import_export.widgets as widgets
 from import_export.admin import ImportExportModelAdmin
-
-from import_export.resources import ModelResource
 from import_export.fields import Field
+from import_export.resources import ModelResource
 
-from .models import PurchaseOrder, PurchaseOrderLineItem, PurchaseOrderExtraLine
-from .models import SalesOrder, SalesOrderLineItem, SalesOrderExtraLine
-from .models import SalesOrderShipment, SalesOrderAllocation
+from .models import (PurchaseOrder, PurchaseOrderExtraLine,
+                     PurchaseOrderLineItem, SalesOrder, SalesOrderAllocation,
+                     SalesOrderExtraLine, SalesOrderLineItem,
+                     SalesOrderShipment)
 
 
 # region general classes
@@ -92,6 +90,26 @@ class SalesOrderAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('customer',)
 
 
+class PurchaseOrderResource(ModelResource):
+    """
+    Class for managing import / export of PurchaseOrder data
+    """
+
+    # Add number of line items
+    line_items = Field(attribute='line_count', widget=widgets.IntegerWidget(), readonly=True)
+
+    # Is this order overdue?
+    overdue = Field(attribute='is_overdue', widget=widgets.BooleanWidget(), readonly=True)
+
+    class Meta:
+        model = PurchaseOrder
+        skip_unchanged = True
+        clean_model_instances = True
+        exclude = [
+            'metadata',
+        ]
+
+
 class PurchaseOrderLineItemResource(ModelResource):
     """ Class for managing import / export of PurchaseOrderLineItem data """
 
@@ -115,6 +133,26 @@ class PurchaseOrderExtraLineResource(ModelResource):
 
     class Meta(GeneralExtraLineMeta):
         model = PurchaseOrderExtraLine
+
+
+class SalesOrderResource(ModelResource):
+    """
+    Class for managing import / export of SalesOrder data
+    """
+
+    # Add number of line items
+    line_items = Field(attribute='line_count', widget=widgets.IntegerWidget(), readonly=True)
+
+    # Is this order overdue?
+    overdue = Field(attribute='is_overdue', widget=widgets.BooleanWidget(), readonly=True)
+
+    class Meta:
+        model = SalesOrder
+        skip_unchanged = True
+        clean_model_instances = True
+        exclude = [
+            'metadata',
+        ]
 
 
 class SalesOrderLineItemResource(ModelResource):

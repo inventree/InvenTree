@@ -2,28 +2,24 @@
 JSON API for the Order app
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
+from django.db.models import F, Q
 from django.urls import include, path, re_path
-from django.db.models import Q, F
 
 from django_filters import rest_framework as rest_filters
-from rest_framework import generics
-from rest_framework import filters, status
+from rest_framework import filters, generics, status
 from rest_framework.response import Response
 
-from company.models import SupplierPart
-
-from InvenTree.filters import InvenTreeOrderingFilter
-from InvenTree.helpers import str2bool, DownloadFile
-from InvenTree.api import AttachmentMixin
-from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
-
-from order.admin import PurchaseOrderLineItemResource
 import order.models as models
 import order.serializers as serializers
+from company.models import SupplierPart
+from InvenTree.api import APIDownloadMixin, AttachmentMixin
+from InvenTree.filters import InvenTreeOrderingFilter
+from InvenTree.helpers import DownloadFile, str2bool
+from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
+from order.admin import (PurchaseOrderLineItemResource, PurchaseOrderResource,
+                         SalesOrderResource)
 from part.models import Part
+from plugin.serializers import MetadataSerializer
 from users.models import Owner
 
 
@@ -110,7 +106,7 @@ class PurchaseOrderFilter(rest_filters.FilterSet):
         ]
 
 
-class PurchaseOrderList(generics.ListCreateAPIView):
+class PurchaseOrderList(APIDownloadMixin, generics.ListCreateAPIView):
     """ API endpoint for accessing a list of PurchaseOrder objects
 
     - GET: Return list of PurchaseOrder objects (with filters)
@@ -159,6 +155,15 @@ class PurchaseOrderList(generics.ListCreateAPIView):
         queryset = serializers.PurchaseOrderSerializer.annotate_queryset(queryset)
 
         return queryset
+
+    def download_queryset(self, queryset, export_format):
+        dataset = PurchaseOrderResource().export(queryset=queryset)
+
+        filedata = dataset.export(export_format)
+
+        filename = f"InvenTree_PurchaseOrders.{export_format}"
+
+        return DownloadFile(filedata, filename)
 
     def filter_queryset(self, queryset):
 
@@ -337,6 +342,15 @@ class PurchaseOrderIssue(PurchaseOrderContextMixin, generics.CreateAPIView):
     serializer_class = serializers.PurchaseOrderIssueSerializer
 
 
+class PurchaseOrderMetadata(generics.RetrieveUpdateAPIView):
+    """API endpoint for viewing / updating PurchaseOrder metadata"""
+
+    def get_serializer(self, *args, **kwargs):
+        return MetadataSerializer(models.PurchaseOrder, *args, **kwargs)
+
+    queryset = models.PurchaseOrder.objects.all()
+
+
 class PurchaseOrderReceive(PurchaseOrderContextMixin, generics.CreateAPIView):
     """
     API endpoint to receive stock items against a purchase order.
@@ -407,7 +421,7 @@ class PurchaseOrderLineItemFilter(rest_filters.FilterSet):
         return queryset
 
 
-class PurchaseOrderLineItemList(generics.ListCreateAPIView):
+class PurchaseOrderLineItemList(APIDownloadMixin, generics.ListCreateAPIView):
     """ API endpoint for accessing a list of PurchaseOrderLineItem objects
 
     - GET: Return a list of PurchaseOrder Line Item objects
@@ -460,24 +474,18 @@ class PurchaseOrderLineItemList(generics.ListCreateAPIView):
 
         return queryset
 
+    def download_queryset(self, queryset, export_format):
+        dataset = PurchaseOrderLineItemResource().export(queryset=queryset)
+
+        filedata = dataset.export(export_format)
+
+        filename = f"InvenTree_PurchaseOrderItems.{export_format}"
+
+        return DownloadFile(filedata, filename)
+
     def list(self, request, *args, **kwargs):
 
         queryset = self.filter_queryset(self.get_queryset())
-
-        # Check if we wish to export the queried data to a file
-        export_format = request.query_params.get('export', None)
-
-        if export_format:
-            export_format = str(export_format).strip().lower()
-
-            if export_format in ['csv', 'tsv', 'xls', 'xlsx']:
-                dataset = PurchaseOrderLineItemResource().export(queryset=queryset)
-
-                filedata = dataset.export(export_format)
-
-                filename = f"InvenTree_PurchaseOrderData.{export_format}"
-
-                return DownloadFile(filedata, filename)
 
         page = self.paginate_queryset(queryset)
 
@@ -580,7 +588,7 @@ class SalesOrderAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, Attachme
     serializer_class = serializers.SalesOrderAttachmentSerializer
 
 
-class SalesOrderList(generics.ListCreateAPIView):
+class SalesOrderList(APIDownloadMixin, generics.ListCreateAPIView):
     """
     API endpoint for accessing a list of SalesOrder objects.
 
@@ -630,6 +638,15 @@ class SalesOrderList(generics.ListCreateAPIView):
 
         return queryset
 
+    def download_queryset(self, queryset, export_format):
+        dataset = SalesOrderResource().export(queryset=queryset)
+
+        filedata = dataset.export(export_format)
+
+        filename = f"InvenTree_SalesOrders.{export_format}"
+
+        return DownloadFile(filedata, filename)
+
     def filter_queryset(self, queryset):
         """
         Perform custom filtering operations on the SalesOrder queryset.
@@ -646,9 +663,9 @@ class SalesOrderList(generics.ListCreateAPIView):
             outstanding = str2bool(outstanding)
 
             if outstanding:
-                queryset = queryset.filter(status__in=models.SalesOrderStatus.OPEN)
+                queryset = queryset.filter(status__in=SalesOrderStatus.OPEN)
             else:
-                queryset = queryset.exclude(status__in=models.SalesOrderStatus.OPEN)
+                queryset = queryset.exclude(status__in=SalesOrderStatus.OPEN)
 
         # Filter by 'overdue' status
         overdue = params.get('overdue', None)
@@ -903,6 +920,15 @@ class SalesOrderComplete(SalesOrderContextMixin, generics.CreateAPIView):
     serializer_class = serializers.SalesOrderCompleteSerializer
 
 
+class SalesOrderMetadata(generics.RetrieveUpdateAPIView):
+    """API endpoint for viewing / updating SalesOrder metadata"""
+
+    def get_serializer(self, *args, **kwargs):
+        return MetadataSerializer(models.SalesOrder, *args, **kwargs)
+
+    queryset = models.SalesOrder.objects.all()
+
+
 class SalesOrderAllocateSerials(SalesOrderContextMixin, generics.CreateAPIView):
     """
     API endpoint to allocation stock items against a SalesOrder,
@@ -1125,10 +1151,13 @@ order_api_urls = [
 
         # Individual purchase order detail URLs
         re_path(r'^(?P<pk>\d+)/', include([
-            re_path(r'^issue/', PurchaseOrderIssue.as_view(), name='api-po-issue'),
-            re_path(r'^receive/', PurchaseOrderReceive.as_view(), name='api-po-receive'),
             re_path(r'^cancel/', PurchaseOrderCancel.as_view(), name='api-po-cancel'),
             re_path(r'^complete/', PurchaseOrderComplete.as_view(), name='api-po-complete'),
+            re_path(r'^issue/', PurchaseOrderIssue.as_view(), name='api-po-issue'),
+            re_path(r'^metadata/', PurchaseOrderMetadata.as_view(), name='api-po-metadata'),
+            re_path(r'^receive/', PurchaseOrderReceive.as_view(), name='api-po-receive'),
+
+            # PurchaseOrder detail API endpoint
             re_path(r'.*$', PurchaseOrderDetail.as_view(), name='api-po-detail'),
         ])),
 
@@ -1165,10 +1194,13 @@ order_api_urls = [
 
         # Sales order detail view
         re_path(r'^(?P<pk>\d+)/', include([
-            re_path(r'^cancel/', SalesOrderCancel.as_view(), name='api-so-cancel'),
-            re_path(r'^complete/', SalesOrderComplete.as_view(), name='api-so-complete'),
             re_path(r'^allocate/', SalesOrderAllocate.as_view(), name='api-so-allocate'),
             re_path(r'^allocate-serials/', SalesOrderAllocateSerials.as_view(), name='api-so-allocate-serials'),
+            re_path(r'^cancel/', SalesOrderCancel.as_view(), name='api-so-cancel'),
+            re_path(r'^complete/', SalesOrderComplete.as_view(), name='api-so-complete'),
+            re_path(r'^metadata/', SalesOrderMetadata.as_view(), name='api-so-metadata'),
+
+            # SalesOrder detail endpoint
             re_path(r'^.*$', SalesOrderDetail.as_view(), name='api-so-detail'),
         ])),
 

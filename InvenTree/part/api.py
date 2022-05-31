@@ -2,56 +2,42 @@
 Provides a JSON API for the Part app
 """
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import datetime
-
-from django.urls import include, path, re_path
-from django.http import JsonResponse
-from django.db.models import Q, F, Count, Min, Max, Avg
-from django.db import transaction
-from django.utils.translation import gettext_lazy as _
-
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework import filters, serializers
-from rest_framework import generics
-from rest_framework.exceptions import ValidationError
-
-from django_filters.rest_framework import DjangoFilterBackend
-from django_filters import rest_framework as rest_filters
-
-from djmoney.money import Money
-from djmoney.contrib.exchange.models import convert_money
-from djmoney.contrib.exchange.exceptions import MissingRate
-
 from decimal import Decimal, InvalidOperation
 
-from part.admin import PartResource
+from django.db import transaction
+from django.db.models import Avg, Count, F, Max, Min, Q
+from django.http import JsonResponse
+from django.urls import include, path, re_path
+from django.utils.translation import gettext_lazy as _
 
-from .models import Part, PartCategory, PartRelated
-from .models import BomItem, BomItemSubstitute
-from .models import PartParameter, PartParameterTemplate
-from .models import PartAttachment, PartTestTemplate
-from .models import PartSellPriceBreak, PartInternalPriceBreak
-from .models import PartCategoryParameterTemplate
+from django_filters import rest_framework as rest_filters
+from django_filters.rest_framework import DjangoFilterBackend
+from djmoney.contrib.exchange.exceptions import MissingRate
+from djmoney.contrib.exchange.models import convert_money
+from djmoney.money import Money
+from rest_framework import filters, generics, serializers, status
+from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
 
+import order.models
+from build.models import Build, BuildItem
+from common.models import InvenTreeSetting
 from company.models import Company, ManufacturerPart, SupplierPart
-
+from InvenTree.api import APIDownloadMixin, AttachmentMixin
+from InvenTree.helpers import DownloadFile, increment, isNull, str2bool
+from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
+                                    SalesOrderStatus)
+from part.admin import PartResource
+from plugin.serializers import MetadataSerializer
 from stock.models import StockItem, StockLocation
 
-from common.models import InvenTreeSetting
-from build.models import Build, BuildItem
-import order.models
-
 from . import serializers as part_serializers
-
-from InvenTree.helpers import str2bool, isNull, increment
-from InvenTree.helpers import DownloadFile
-from InvenTree.api import AttachmentMixin
-
-from InvenTree.status_codes import BuildStatus, PurchaseOrderStatus, SalesOrderStatus
+from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
+                     PartCategory, PartCategoryParameterTemplate,
+                     PartInternalPriceBreak, PartParameter,
+                     PartParameterTemplate, PartRelated, PartSellPriceBreak,
+                     PartTestTemplate)
 
 
 class CategoryList(generics.ListCreateAPIView):
@@ -201,6 +187,15 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
         response = super().update(request, *args, **kwargs)
 
         return response
+
+
+class CategoryMetadata(generics.RetrieveUpdateAPIView):
+    """API endpoint for viewing / updating PartCategory metadata"""
+
+    def get_serializer(self, *args, **kwargs):
+        return MetadataSerializer(PartCategory, *args, **kwargs)
+
+    queryset = PartCategory.objects.all()
 
 
 class CategoryParameterList(generics.ListAPIView):
@@ -587,6 +582,17 @@ class PartScheduling(generics.RetrieveAPIView):
         return Response(schedule)
 
 
+class PartMetadata(generics.RetrieveUpdateAPIView):
+    """
+    API endpoint for viewing / updating Part metadata
+    """
+
+    def get_serializer(self, *args, **kwargs):
+        return MetadataSerializer(Part, *args, **kwargs)
+
+    queryset = Part.objects.all()
+
+
 class PartSerialNumberDetail(generics.RetrieveAPIView):
     """
     API endpoint for returning extra serial number information about a particular part
@@ -847,7 +853,7 @@ class PartFilter(rest_filters.FilterSet):
     virtual = rest_filters.BooleanFilter()
 
 
-class PartList(generics.ListCreateAPIView):
+class PartList(APIDownloadMixin, generics.ListCreateAPIView):
     """
     API endpoint for accessing a list of Part objects
 
@@ -897,6 +903,14 @@ class PartList(generics.ListCreateAPIView):
 
         return self.serializer_class(*args, **kwargs)
 
+    def download_queryset(self, queryset, export_format):
+        dataset = PartResource().export(queryset=queryset)
+
+        filedata = dataset.export(export_format)
+        filename = f"InvenTree_Parts.{export_format}"
+
+        return DownloadFile(filedata, filename)
+
     def list(self, request, *args, **kwargs):
         """
         Overide the 'list' method, as the PartCategory objects are
@@ -907,22 +921,6 @@ class PartList(generics.ListCreateAPIView):
         """
 
         queryset = self.filter_queryset(self.get_queryset())
-
-        # Check if we wish to export the queried data to a file.
-        # If so, skip pagination!
-        export_format = request.query_params.get('export', None)
-
-        if export_format:
-            export_format = str(export_format).strip().lower()
-
-            if export_format in ['csv', 'tsv', 'xls', 'xlsx']:
-                dataset = PartResource().export(queryset=queryset)
-
-                filedata = dataset.export(export_format)
-
-                filename = f"InvenTree_Parts.{export_format}"
-
-                return DownloadFile(filedata, filename)
 
         page = self.paginate_queryset(queryset)
 
@@ -1389,6 +1387,7 @@ class PartList(generics.ListCreateAPIView):
         'keywords',
         'category__name',
         'manufacturer_parts__MPN',
+        'supplier_parts__SKU',
     ]
 
 
@@ -1920,7 +1919,15 @@ part_api_urls = [
         re_path(r'^tree/', CategoryTree.as_view(), name='api-part-category-tree'),
         re_path(r'^parameters/', CategoryParameterList.as_view(), name='api-part-category-parameter-list'),
 
-        re_path(r'^(?P<pk>\d+)/?', CategoryDetail.as_view(), name='api-part-category-detail'),
+        # Category detail endpoints
+        re_path(r'^(?P<pk>\d+)/', include([
+
+            re_path(r'^metadata/', CategoryMetadata.as_view(), name='api-part-category-metadata'),
+
+            # PartCategory detail endpoint
+            re_path(r'^.*$', CategoryDetail.as_view(), name='api-part-category-detail'),
+        ])),
+
         path('', CategoryList.as_view(), name='api-part-category-list'),
     ])),
 
@@ -1980,6 +1987,9 @@ part_api_urls = [
 
         # Endpoint for validating a BOM for the specific Part
         re_path(r'^bom-validate/', PartValidateBOM.as_view(), name='api-part-bom-validate'),
+
+        # Part metadata
+        re_path(r'^metadata/', PartMetadata.as_view(), name='api-part-metadata'),
 
         # Part detail endpoint
         re_path(r'^.*$', PartDetail.as_view(), name='api-part-detail'),

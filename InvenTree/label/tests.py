@@ -1,24 +1,31 @@
 # Tests for labels
 
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import os
 
-from django.test import TestCase
-from django.conf import settings
 from django.apps import apps
+from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.urls import reverse
 
+from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.helpers import validateFilterString
-
-from .models import StockItemLabel, StockLocationLabel
+from part.models import Part
 from stock.models import StockItem
 
+from .models import PartLabel, StockItemLabel, StockLocationLabel
 
-class LabelTest(TestCase):
+
+class LabelTest(InvenTreeAPITestCase):
+
+    fixtures = [
+        'category',
+        'part',
+        'location',
+        'stock'
+    ]
 
     def setUp(self) -> None:
+        super().setUp()
         # ensure the labels were created
         apps.get_app_config('label').create_labels()
 
@@ -77,3 +84,13 @@ class LabelTest(TestCase):
 
         with self.assertRaises(ValidationError):
             validateFilterString(bad_filter_string, model=StockItem)
+
+    def test_label_rendering(self):
+        """Test label rendering"""
+
+        labels = PartLabel.objects.all()
+        part = Part.objects.first()
+
+        for label in labels:
+            url = reverse('api-part-label-print', kwargs={'pk': label.pk})
+            self.get(f'{url}?parts={part.pk}', expected_code=200)

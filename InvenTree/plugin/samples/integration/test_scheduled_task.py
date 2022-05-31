@@ -2,10 +2,10 @@
 
 from django.test import TestCase
 
-from plugin import registry, IntegrationPluginBase
+from plugin import InvenTreePlugin, registry
 from plugin.helpers import MixinImplementationError
-from plugin.registry import call_function
 from plugin.mixins import ScheduleMixin
+from plugin.registry import call_function
 
 
 class ExampleScheduledTaskPluginTests(TestCase):
@@ -45,7 +45,11 @@ class ExampleScheduledTaskPluginTests(TestCase):
 
     def test_calling(self):
         """check if a function can be called without errors"""
+        # Check with right parameters
         self.assertEqual(call_function('schedule', 'member_func'), False)
+
+        # Check with wrong key
+        self.assertEqual(call_function('does_not_exsist', 'member_func'), None)
 
 
 class ScheduledTaskPluginTests(TestCase):
@@ -53,8 +57,8 @@ class ScheduledTaskPluginTests(TestCase):
 
     def test_init(self):
         """Check that all MixinImplementationErrors raise"""
-        class Base(ScheduleMixin, IntegrationPluginBase):
-            PLUGIN_NAME = 'APlugin'
+        class Base(ScheduleMixin, InvenTreePlugin):
+            NAME = 'APlugin'
 
         class NoSchedules(Base):
             """Plugin without schedules"""

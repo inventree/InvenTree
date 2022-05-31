@@ -1,14 +1,10 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import logging
 
 from django.utils.translation import gettext_lazy as _
 
+import common.notifications
 import InvenTree.helpers
 import InvenTree.tasks
-import common.notifications
-
 import part.models
 
 logger = logging.getLogger("inventree")
@@ -28,7 +24,7 @@ def notify_low_stock(part: part.models.Part):
         },
     }
 
-    common.notifications.trigger_notifaction(
+    common.notifications.trigger_notification(
         part,
         'part.notify_low_stock',
         target_fnc=part.get_subscribers,
@@ -49,6 +45,6 @@ def notify_low_stock_if_required(part: part.models.Part):
     for p in parts:
         if p.is_part_low_on_stock():
             InvenTree.tasks.offload_task(
-                'part.tasks.notify_low_stock',
+                notify_low_stock,
                 p
             )
