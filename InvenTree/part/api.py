@@ -1387,6 +1387,7 @@ class PartList(APIDownloadMixin, generics.ListCreateAPIView):
         'keywords',
         'category__name',
         'manufacturer_parts__MPN',
+        'supplier_parts__SKU',
     ]
 
 
