@@ -717,4 +717,5 @@ def inheritors(cls):
 
 
 class InvenTreeTestCase(UserMixin, TestCase):
+    """Testcase with user setup buildin."""
     pass

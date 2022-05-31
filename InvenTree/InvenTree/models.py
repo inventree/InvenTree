@@ -114,15 +114,15 @@ class ReferenceIndexingMixin(models.Model):
         abstract = True
 
     def rebuild_reference_field(self):
-
+        """Extract integer out of reference for sorting."""
         reference = getattr(self, 'reference', '')
-
         self.reference_int = extract_int(reference)
 
     reference_int = models.BigIntegerField(default=0)
 
 
 def extract_int(reference, clip=0x7fffffff):
+    """Extract integer out of reference."""
     # Default value if we cannot convert to an integer
     ref_int = 0
 
@@ -167,6 +167,7 @@ class InvenTreeAttachment(models.Model):
         return "attachments"
 
     def save(self, *args, **kwargs):
+        """Provide better validation error."""
         # Either 'attachment' or 'link' must be specified!
         if not self.attachment and not self.link:
             raise ValidationError({
@@ -177,6 +178,7 @@ class InvenTreeAttachment(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
+        """Human name for attachment."""
         if self.attachment is not None:
             return os.path.basename(self.attachment.name)
         else:
@@ -207,6 +209,7 @@ class InvenTreeAttachment(models.Model):
 
     @property
     def basename(self):
+        """Base name/path for attachment."""
         if self.attachment:
             return os.path.basename(self.attachment.name)
         else:
@@ -303,7 +306,7 @@ class InvenTreeTree(MPTTModel):
         }
 
     def save(self, *args, **kwargs):
-
+        """Provide better error for invalid moves."""
         try:
             super().save(*args, **kwargs)
         except InvalidMove:
@@ -320,6 +323,7 @@ class InvenTreeTree(MPTTModel):
         unique_together = ('name', 'parent')
 
     class MPTTMeta:
+        """Set insert order."""
         order_insertion_by = ['name']
 
     name = models.CharField(

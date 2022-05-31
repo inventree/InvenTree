@@ -1,3 +1,5 @@
+"""General filters for InvenTree."""
+
 from rest_framework.filters import OrderingFilter
 
 
@@ -19,7 +21,7 @@ class InvenTreeOrderingFilter(OrderingFilter):
     """
 
     def get_ordering(self, request, queryset, view):
-
+        """Override ordering for supporting aliases."""
         ordering = super().get_ordering(request, queryset, view)
 
         aliases = getattr(view, 'ordering_field_aliases', None)
