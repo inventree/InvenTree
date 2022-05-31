@@ -1,3 +1,5 @@
+"""label app specification"""
+
 import hashlib
 import logging
 import os
@@ -25,6 +27,8 @@ def hashFile(filename):
 
 
 class LabelConfig(AppConfig):
+    """App configuration class for the 'label' app"""
+
     name = 'label'
 
     def ready(self):

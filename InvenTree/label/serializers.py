@@ -1,3 +1,5 @@
+"""API serializers for the label app"""
+
 from InvenTree.serializers import (InvenTreeAttachmentSerializerField,
                                    InvenTreeModelSerializer)
 

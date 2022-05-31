@@ -16,6 +16,7 @@ from .models import PartLabel, StockItemLabel, StockLocationLabel
 
 
 class LabelTest(InvenTreeAPITestCase):
+    """Unit test class for label models"""
 
     fixtures = [
         'category',
@@ -25,8 +26,8 @@ class LabelTest(InvenTreeAPITestCase):
     ]
 
     def setUp(self) -> None:
+        """Ensure that some label instances exist as part of init routine"""
         super().setUp()
-        # ensure the labels were created
         apps.get_app_config('label').create_labels()
 
     def test_default_labels(self):

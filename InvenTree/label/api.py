@@ -1,3 +1,5 @@
+"""API functionality for the 'label' app"""
+
 from django.conf import settings
 from django.core.exceptions import FieldError, ValidationError
 from django.http import HttpResponse, JsonResponse
@@ -403,7 +405,7 @@ class StockLocationLabelPrint(generics.RetrieveAPIView, StockLocationLabelMixin,
     seiralizer_class = StockLocationLabelSerializer
 
     def get(self, request, *args, **kwargs):
-
+        """Print labels based on the request parameters"""
         locations = self.get_locations()
 
         return self.print(request, locations)
@@ -442,7 +444,7 @@ class PartLabelList(LabelListView, PartLabelMixin):
     serializer_class = PartLabelSerializer
 
     def filter_queryset(self, queryset):
-
+        """Custom queryset filtering for the PartLabel list"""
         queryset = super().filter_queryset(queryset)
 
         parts = self.get_parts()

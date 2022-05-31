@@ -37,21 +37,21 @@ def rename_label(instance, filename):
 
 
 def validate_stock_item_filters(filters):
-
+    """Validate query filters for the StockItemLabel model"""
     filters = validateFilterString(filters, model=stock.models.StockItem)
 
     return filters
 
 
 def validate_stock_location_filters(filters):
-
+    """Validate query filters for the StockLocationLabel model"""
     filters = validateFilterString(filters, model=stock.models.StockLocation)
 
     return filters
 
 
 def validate_part_filters(filters):
-
+    """Validate query filters for the PartLabel model"""
     filters = validateFilterString(filters, model=part.models.Part)
 
     return filters
@@ -64,7 +64,7 @@ class WeasyprintLabelMixin(WeasyTemplateResponseMixin):
     pdf_attachment = True
 
     def __init__(self, request, template, **kwargs):
-
+        """Initialize a label mixin with certain properties"""
         self.request = request
         self.template_name = template
         self.pdf_filename = kwargs.get('filename', 'label.pdf')
@@ -86,9 +86,11 @@ class LabelTemplate(models.Model):
 
     @property
     def template(self):
+        """Return the file path of the template associated with this label instance"""
         return self.label.path
 
     def __str__(self):
+        """Format a string representation of a label instance"""
         return "{n} - {d}".format(
             n=self.name,
             d=self.description
@@ -221,6 +223,7 @@ class StockItemLabel(LabelTemplate):
 
     @staticmethod
     def get_api_url():
+        """Return the API URL associated with the StockItemLabel model"""
         return reverse('api-stockitem-label-list')  # pragma: no cover
 
     SUBDIR = "stockitem"
@@ -260,6 +263,7 @@ class StockLocationLabel(LabelTemplate):
 
     @staticmethod
     def get_api_url():
+        """Return the API URL associated with the StockLocationLabel model"""
         return reverse('api-stocklocation-label-list')  # pragma: no cover
 
     SUBDIR = "stocklocation"
@@ -287,6 +291,7 @@ class PartLabel(LabelTemplate):
 
     @staticmethod
     def get_api_url():
+        """Return the API url associated with the PartLabel model"""
         return reverse('api-part-label-list')  # pragma: no cover
 
     SUBDIR = 'part'
