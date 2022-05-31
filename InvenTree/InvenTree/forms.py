@@ -36,6 +36,7 @@ class HelperForm(forms.ModelForm):
     field_placeholder = {}
 
     def __init__(self, *args, **kwargs):
+        """Setup layout."""
         super(forms.ModelForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
 
@@ -53,7 +54,7 @@ class HelperForm(forms.ModelForm):
         self.rebuild_layout()
 
     def rebuild_layout(self):
-
+        """Build crispy layout out of current fields."""
         layouts = []
 
         for field in self.fields:
@@ -198,6 +199,7 @@ class SettingCategorySelectForm(forms.ModelForm):
         ]
 
     def __init__(self, *args, **kwargs):
+        """Setup form layout."""
         super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
@@ -219,7 +221,9 @@ class SettingCategorySelectForm(forms.ModelForm):
 # override allauth
 class CustomSignupForm(SignupForm):
     """Override to use dynamic settings."""
+
     def __init__(self, *args, **kwargs):
+        """Check settings to influence which fields are needed."""
         kwargs['email_required'] = InvenTreeSetting.get_setting('LOGIN_MAIL_REQUIRED')
 
         super().__init__(*args, **kwargs)
@@ -244,6 +248,7 @@ class CustomSignupForm(SignupForm):
         set_form_field_order(self, ["username", "email", "email2", "password1", "password2", ])
 
     def clean(self):
+        """Make sure the supllied emails match if enabled in settings."""
         cleaned_data = super().clean()
 
         # check for two mail fields
@@ -258,12 +263,15 @@ class CustomSignupForm(SignupForm):
 
 class RegistratonMixin:
     """Mixin to check if registration should be enabled."""
+
     def is_open_for_signup(self, request, *args, **kwargs):
+        """Check if signup is enabled in settings."""
         if settings.EMAIL_HOST and InvenTreeSetting.get_setting('LOGIN_ENABLE_REG', True):
             return super().is_open_for_signup(request, *args, **kwargs)
         return False
 
     def save_user(self, request, user, form, commit=True):
+        """Check if a default group is set in settings."""
         user = super().save_user(request, user, form)
         start_group = InvenTreeSetting.get_setting('SIGNUP_GROUP')
         if start_group:
@@ -287,7 +295,9 @@ class CustomAccountAdapter(RegistratonMixin, OTPAdapter, DefaultAccountAdapter):
 
 class CustomSocialAccountAdapter(RegistratonMixin, DefaultSocialAccountAdapter):
     """Override of adapter to use dynamic settings."""
+
     def is_auto_signup_allowed(self, request, sociallogin):
+        """Check if auto signup is enabled in settings."""
         if InvenTreeSetting.get_setting('LOGIN_SIGNUP_SSO_AUTO', True):
             return super().is_auto_signup_allowed(request, sociallogin)
         return False
@@ -298,6 +308,7 @@ class CustomSocialAccountAdapter(RegistratonMixin, DefaultSocialAccountAdapter):
         return user_has_valid_totp_device(user)
 
     def login(self, request, user):
+        """Ensure user is send to 2FA before login if enabled."""
         # Require two-factor authentication if it has been configured.
         if self.has_2fa_enabled(user):
             # Cast to string for the case when this is not a JSON serializable
