@@ -306,10 +306,17 @@ class AjaxView(AjaxMixin, View):
     """An 'AJAXified' View for displaying an object."""
 
     def post(self, request, *args, **kwargs):
+        """Return a json formatted response.
+
+        This renderJsonResponse function must be supplied by your function.
+        """
         return self.renderJsonResponse(request)
 
     def get(self, request, *args, **kwargs):
+        """Return a json formatted response.
 
+        This renderJsonResponse function must be supplied by your function.
+        """
         return self.renderJsonResponse(request)
 
 
@@ -322,6 +329,7 @@ class QRCodeView(AjaxView):
     ajax_template_name = "qr_code.html"
 
     def get(self, request, *args, **kwargs):
+        """Return json with qr-code data."""
         self.request = request
         self.pk = self.kwargs['pk']
         return self.renderJsonResponse(request, None, context=self.get_context_data())
@@ -516,6 +524,7 @@ class AjaxDeleteView(AjaxMixin, UpdateView):
     context_object_name = 'item'
 
     def get_object(self):
+        """Return object matched to the model of the calling class."""
         try:
             self.object = self.model.objects.get(pk=self.kwargs['pk'])
         except:
@@ -523,6 +532,7 @@ class AjaxDeleteView(AjaxMixin, UpdateView):
         return self.object
 
     def get_form(self):
+        """Returns a form instance for the form_class of the calling class."""
         return self.form_class(self.get_form_kwargs())
 
     def get(self, request, *args, **kwargs):
@@ -577,6 +587,7 @@ class EditUserView(AjaxUpdateView):
     form_class = EditUserForm
 
     def get_object(self):
+        """Set form to edit current user."""
         return self.request.user
 
 
@@ -588,10 +599,11 @@ class SetPasswordView(AjaxUpdateView):
     form_class = SetPasswordForm
 
     def get_object(self):
+        """Set form to edit current user."""
         return self.request.user
 
     def post(self, request, *args, **kwargs):
-
+        """Validate inputs and change password."""
         form = self.get_form()
 
         valid = form.is_valid()
@@ -626,12 +638,6 @@ class IndexView(TemplateView):
     """View for InvenTree index page."""
 
     template_name = 'InvenTree/index.html'
-
-    def get_context_data(self, **kwargs):
-
-        context = super().get_context_data(**kwargs)
-
-        return context
 
 
 class SearchView(TemplateView):
@@ -669,7 +675,7 @@ class SettingsView(TemplateView):
     template_name = "InvenTree/settings/settings.html"
 
     def get_context_data(self, **kwargs):
-
+        """Add data for template."""
         ctx = super().get_context_data(**kwargs).copy()
 
         ctx['settings'] = InvenTreeSetting.objects.all().order_by('key')
@@ -712,8 +718,9 @@ class SettingsView(TemplateView):
 
 class AllauthOverrides(LoginRequiredMixin):
     """Override allauths views to always redirect to success_url."""
+
     def get(self, request, *args, **kwargs):
-        # always redirect to settings
+        """Always redirect to success_url (set to settings)."""
         return HttpResponseRedirect(self.success_url)
 
 
@@ -733,16 +740,20 @@ class CustomPasswordResetFromKeyView(PasswordResetFromKeyView):
 
 
 class UserSessionOverride():
-    """overrides sucessurl to lead to settings."""
+    """Overrides sucessurl to lead to settings."""
+
     def get_success_url(self):
+        """Revert to settings page after success."""
         return str(reverse_lazy('settings'))
 
 
 class CustomSessionDeleteView(UserSessionOverride, SessionDeleteView):
+    """Revert to settings after session delete."""
     pass
 
 
 class CustomSessionDeleteOtherView(UserSessionOverride, SessionDeleteOtherView):
+    """Revert to settings after session delete."""
     pass
 
 

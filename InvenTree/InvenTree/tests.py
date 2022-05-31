@@ -1,3 +1,5 @@
+"""Test general functions and helpers."""
+
 import json
 import os
 import time
@@ -81,7 +83,7 @@ class TestHelpers(TestCase):
             self.assertFalse(helpers.str2bool(s, test=False))
 
     def test_isnull(self):
-
+        """Test isNull."""
         for s in ['null', 'none', '', '-1', 'false']:
             self.assertTrue(helpers.isNull(s))
 
@@ -89,17 +91,17 @@ class TestHelpers(TestCase):
             self.assertFalse(helpers.isNull(s))
 
     def testStaticUrl(self):
-
+        """Test static url helpers."""
         self.assertEqual(helpers.getStaticUrl('test.jpg'), '/static/test.jpg')
         self.assertEqual(helpers.getBlankImage(), '/static/img/blank_image.png')
         self.assertEqual(helpers.getBlankThumbnail(), '/static/img/blank_image.thumbnail.png')
 
     def testMediaUrl(self):
-
+        """Test getMediaUrl."""
         self.assertEqual(helpers.getMediaUrl('xx/yy.png'), '/media/xx/yy.png')
 
     def testDecimal2String(self):
-
+        """Test decimal2string."""
         self.assertEqual(helpers.decimal2string(Decimal('1.2345000')), '1.2345')
         self.assertEqual(helpers.decimal2string('test'), 'test')
 
@@ -108,12 +110,13 @@ class TestQuoteWrap(TestCase):
     """Tests for string wrapping."""
 
     def test_single(self):
-
+        """Test WrapWithQuotes."""
         self.assertEqual(helpers.WrapWithQuotes('hello'), '"hello"')
         self.assertEqual(helpers.WrapWithQuotes('hello"'), '"hello"')
 
 
 class TestIncrement(TestCase):
+    """Tests for increment function."""
 
     def tests(self):
         """Test 'intelligent' incrementing function."""
@@ -139,7 +142,7 @@ class TestMakeBarcode(TestCase):
     """Tests for barcode string creation."""
 
     def test_barcode_extended(self):
-
+        """Test creation of barcode with extended data."""
         bc = helpers.MakeBarcode(
             "part",
             3,
@@ -160,7 +163,7 @@ class TestMakeBarcode(TestCase):
         self.assertEqual(data['part']['url'], 'www.google.com')
 
     def test_barcode_brief(self):
-
+        """Test creation of simple barcode."""
         bc = helpers.MakeBarcode(
             "stockitem",
             7,
@@ -172,8 +175,10 @@ class TestMakeBarcode(TestCase):
 
 
 class TestDownloadFile(TestCase):
+    """Tests for DownloadFile."""
 
     def test_download(self):
+        """Tests for DownloadFile."""
         helpers.DownloadFile("hello world", "out.txt")
         helpers.DownloadFile(bytes(b"hello world"), "out.bin")
 
@@ -186,6 +191,7 @@ class TestMPTT(TestCase):
     ]
 
     def setUp(self):
+        """Setup for all tests."""
         super().setUp()
 
         StockLocation.objects.rebuild()
@@ -227,7 +233,7 @@ class TestSerialNumberExtraction(TestCase):
     """Tests for serial number extraction code."""
 
     def test_simple(self):
-
+        """Test simple serial numbers."""
         e = helpers.extract_serial_numbers
 
         sn = e("1-5", 5, 1)
@@ -292,7 +298,7 @@ class TestSerialNumberExtraction(TestCase):
         self.assertEqual(sn, [5, 6, 7, 8])
 
     def test_failures(self):
-
+        """Test wron serial numbers."""
         e = helpers.extract_serial_numbers
 
         # Test duplicates
@@ -323,6 +329,7 @@ class TestSerialNumberExtraction(TestCase):
             e("1, 2, 3, E-5", 5, 1)
 
     def test_combinations(self):
+        """Test complex serial number combinations."""
         e = helpers.extract_serial_numbers
 
         sn = e("1 3-5 9+2", 7, 1)
@@ -346,7 +353,7 @@ class TestVersionNumber(TestCase):
     """Unit tests for version number functions."""
 
     def test_tuple(self):
-
+        """Test inventreeVersionTuple."""
         v = version.inventreeVersionTuple()
         self.assertEqual(len(v), 3)
 
@@ -394,7 +401,7 @@ class CurrencyTests(TestCase):
     """Unit tests for currency / exchange rate functionality."""
 
     def test_rates(self):
-
+        """Test exchange rate update."""
         # Initially, there will not be any exchange rate information
         rates = Rate.objects.all()
 
@@ -449,9 +456,11 @@ class TestStatus(TestCase):
         self.assertEqual(status.check_system_health(), False)
 
     def test_TestMode(self):
+        """Test isInTestMode check."""
         self.assertTrue(ready.isInTestMode())
 
     def test_Importing(self):
+        """Test isImportingData check."""
         self.assertEqual(ready.isImportingData(), False)
 
 
@@ -465,6 +474,7 @@ class TestSettings(helpers.InvenTreeTestCase):
         return mock.patch.dict(os.environ, envs)
 
     def run_reload(self, envs={}):
+        """Helper function to reload InvenTree."""
         from plugin import registry
 
         with self.in_env_context(envs):
@@ -473,6 +483,7 @@ class TestSettings(helpers.InvenTreeTestCase):
 
     @override_settings(TESTING_ENV=True)
     def test_set_user_to_few(self):
+        """Test adding an admin user via env variables."""
         user_model = get_user_model()
         # add shortcut
         user_count = user_model.objects.count
@@ -532,6 +543,7 @@ class TestSettings(helpers.InvenTreeTestCase):
         self.assertEqual(response, True)
 
     def test_helpers_cfg_file(self):
+        """Test get_config_file."""
         # normal run - not configured
 
         valid = [
@@ -546,6 +558,7 @@ class TestSettings(helpers.InvenTreeTestCase):
             self.assertIn('inventree/my_special_conf.yaml', config.get_config_file().lower())
 
     def test_helpers_plugin_file(self):
+        """Test get_plugin_file."""
         # normal run - not configured
 
         valid = [
@@ -560,6 +573,7 @@ class TestSettings(helpers.InvenTreeTestCase):
             self.assertIn('my_special_plugins.txt', config.get_plugin_file())
 
     def test_helpers_setting(self):
+        """Test get_setting."""
         TEST_ENV_NAME = '123TEST'
         # check that default gets returned if not present
         self.assertEqual(config.get_setting(TEST_ENV_NAME, None, '123!'), '123!')
@@ -573,7 +587,7 @@ class TestInstanceName(helpers.InvenTreeTestCase):
     """Unit tests for instance name."""
 
     def test_instance_name(self):
-
+        """Test instance name settings."""
         # default setting
         self.assertEqual(version.inventreeInstanceTitle(), 'InvenTree')
 
