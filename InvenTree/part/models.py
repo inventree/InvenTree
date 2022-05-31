@@ -2899,9 +2899,6 @@ class BomItem(models.Model, DataImportMixin):
     class Meta:
         verbose_name = _("BOM Item")
 
-        # Prevent duplication of parent/child rows
-        unique_together = ('part', 'sub_part')
-
     def __str__(self):
         return "{n} x {child} to make {parent}".format(
             parent=self.part.full_name,
