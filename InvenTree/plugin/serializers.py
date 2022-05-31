@@ -20,7 +20,7 @@ class MetadataSerializer(serializers.ModelSerializer):
     metadata = serializers.JSONField(required=True)
 
     def __init__(self, model_type, *args, **kwargs):
-
+        """Initialize the metadata serializer with information on the model type"""
         self.Meta.model = model_type
         super().__init__(*args, **kwargs)
 
@@ -32,7 +32,11 @@ class MetadataSerializer(serializers.ModelSerializer):
         ]
 
     def update(self, instance, data):
+        """Perform update on the metadata field:
 
+        - If this is a partial (PATCH) update, try to 'merge' data in
+        - Else, if it is a PUT update, overwrite any existing metadata
+        """
         if self.partial:
             # Default behaviour is to "merge" new data in
             metadata = instance.metadata.copy() if instance.metadata else {}

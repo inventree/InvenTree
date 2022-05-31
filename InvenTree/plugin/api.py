@@ -104,6 +104,7 @@ class PluginInstall(generics.CreateAPIView):
     serializer_class = PluginSerializers.PluginConfigInstallSerializer
 
     def create(self, request, *args, **kwargs):
+        """Install a plugin via the API"""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         result = self.perform_create(serializer)
@@ -112,6 +113,7 @@ class PluginInstall(generics.CreateAPIView):
         return Response(result, status=status.HTTP_201_CREATED, headers=headers)
 
     def perform_create(self, serializer):
+        """Saving the serializer instance performs plugin installation"""
         return serializer.save()
 
 
