@@ -152,7 +152,7 @@ function updateSearch() {
     }
 
     if (checkPermission('part') && checkPermission('purchase_order')) {
-        
+
         var params = {
             part_detail: true,
             supplier_detail: true,
@@ -163,7 +163,7 @@ function updateSearch() {
             // Return *only* active parts
             params.active = true;
         }
-        
+
         if (user_settings.SEARCH_PREVIEW_SHOW_SUPPLIER_PARTS) {
             addSearchQuery(
                 'supplierpart',
@@ -190,7 +190,7 @@ function updateSearch() {
             );
         }
     }
-
+    
     if (checkPermission('part_category') && user_settings.SEARCH_PREVIEW_SHOW_CATEGORIES) {
         // Search for matching part categories
         addSearchQuery(
