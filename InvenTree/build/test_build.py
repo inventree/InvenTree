@@ -3,7 +3,6 @@
 from django.test import TestCase
 
 from django.core.exceptions import ValidationError
-from django.db.utils import IntegrityError
 
 from InvenTree import status_codes as status
 
