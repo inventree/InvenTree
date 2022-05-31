@@ -1,3 +1,5 @@
+"""Functions to check if certain parts of InvenTree are ready."""
+
 import sys
 
 

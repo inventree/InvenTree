@@ -367,8 +367,7 @@ class TestVersionNumber(TestCase):
         self.assertTrue(v_d > v_a)
 
     def test_commit_info(self):
-        """Test that the git commit information is extracted successfully"""
-
+        """Test that the git commit information is extracted successfully."""
         envs = {
             'INVENTREE_COMMIT_HASH': 'abcdef',
             'INVENTREE_COMMIT_DATE': '2022-12-31'

@@ -12,6 +12,10 @@ from rest_framework.test import APITestCase
 
 
 class UserMixin:
+    """Mixin to setup a user and login for tests.
+
+    Use parameters to set username, password, email, roles and permissions.
+    """
 
     # User information
     username = 'testuser'
@@ -26,7 +30,7 @@ class UserMixin:
     roles = []
 
     def setUp(self):
-
+        """Setup for all tests."""
         super().setUp()
 
         # Create a user to log in with

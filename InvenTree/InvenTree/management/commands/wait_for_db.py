@@ -11,7 +11,7 @@ class Command(BaseCommand):
     """Django command to pause execution until the database is ready."""
 
     def handle(self, *args, **kwargs):
-
+        """Wait till the database is ready."""
         self.stdout.write("Waiting for database...")
 
         connected = False

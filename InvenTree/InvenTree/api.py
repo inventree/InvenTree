@@ -22,7 +22,7 @@ class InfoView(AjaxView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request, *args, **kwargs):
-
+        """Serve current server information."""
         data = {
             'server': 'InvenTree',
             'version': inventreeVersion(),
@@ -41,7 +41,7 @@ class NotFoundView(AjaxView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request, *args, **kwargs):
-
+        """Proces an `not found` event on the API."""
         data = {
             'details': _('API endpoint not found'),
             'url': request.build_absolute_uri(),
@@ -72,7 +72,7 @@ class APIDownloadMixin:
     """
 
     def get(self, request, *args, **kwargs):
-
+        """Generic handler for a download request."""
         export_format = request.query_params.get('export', None)
 
         if export_format and export_format in ['csv', 'tsv', 'xls', 'xlsx']:
@@ -84,6 +84,7 @@ class APIDownloadMixin:
             return super().get(request, *args, **kwargs)
 
     def download_queryset(self, queryset, export_format):
+        """This function must be implemented to provide a downloadFile request."""
         raise NotImplementedError("download_queryset method not implemented!")
 
 

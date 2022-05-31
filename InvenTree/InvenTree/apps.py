@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+"""AppConfig for inventree app."""
 
 import logging
 
@@ -18,10 +18,11 @@ logger = logging.getLogger("inventree")
 
 
 class InvenTreeConfig(AppConfig):
+    """AppConfig for inventree app."""
     name = 'InvenTree'
 
     def ready(self):
-
+        """Setup background tasks and update exchange rates."""
         if canAppAccessDatabase():
 
             self.remove_obsolete_tasks()
@@ -52,7 +53,7 @@ class InvenTreeConfig(AppConfig):
         Schedule.objects.filter(func__in=obsolete).delete()
 
     def start_background_tasks(self):
-
+        """Start all background tests for InvenTree."""
         try:
             from django_q.models import Schedule
         except AppRegistryNotReady:  # pragma: no cover
@@ -98,8 +99,9 @@ class InvenTreeConfig(AppConfig):
         )
 
     def update_exchange_rates(self):  # pragma: no cover
-        """Update exchange rates each time the server is started, *if*:
+        """Update exchange rates each time the server is started.
 
+        Only runs *if*:
         a) Have not been updated recently (one day or less)
         b) The base exchange rate has been altered
         """

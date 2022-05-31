@@ -1,3 +1,5 @@
+"""Custom metadata for DRF."""
+
 import logging
 
 from rest_framework import serializers
@@ -25,7 +27,7 @@ class InvenTreeMetadata(SimpleMetadata):
     """
 
     def determine_metadata(self, request, view):
-
+        """Overwrite the metadata to adapt to hte request user."""
         self.request = request
         self.view = view
 

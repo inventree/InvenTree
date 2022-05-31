@@ -10,7 +10,7 @@ class Command(BaseCommand):
     """Rebuild all database models which leverage the MPTT structure."""
 
     def handle(self, *args, **kwargs):
-
+        """Rebuild all database models which leverage the MPTT structure."""
         # Part model
         try:
             print("Rebuilding Part objects")

@@ -8,10 +8,11 @@ class Command(BaseCommand):
     """Remove MFA for a user."""
 
     def add_arguments(self, parser):
+        """Add the arguments."""
         parser.add_argument('mail', type=str)
 
     def handle(self, *args, **kwargs):
-
+        """Remove MFA for the supplied user (by mail)."""
         # general settings
         mail = kwargs.get('mail')
         if not mail:

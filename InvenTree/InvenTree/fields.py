@@ -30,6 +30,7 @@ class InvenTreeURLField(models.URLField):
     default_validators = [validators.URLValidator(schemes=allowable_url_schemes())]
 
     def formfield(self, **kwargs):
+        """Return a Field instance for this field."""
         return super().formfield(**{
             'form_class': InvenTreeURLFormField
         })
@@ -49,6 +50,7 @@ class InvenTreeModelMoneyField(ModelMoneyField):
     """Custom MoneyField for clean migrations while using dynamic currency settings."""
 
     def __init__(self, **kwargs):
+        """Overwrite default values and validators."""
         # detect if creating migration
         if 'migrate' in sys.argv or 'makemigrations' in sys.argv:
             # remove currency information for a clean migration
@@ -79,7 +81,7 @@ class InvenTreeModelMoneyField(ModelMoneyField):
 class InvenTreeMoneyField(MoneyField):
     """Custom MoneyField for clean migrations while using dynamic currency settings."""
     def __init__(self, *args, **kwargs):
-        # override initial values with the real info from database
+        """Override initial values with the real info from database."""
         kwargs.update(money_kwargs())
         super().__init__(*args, **kwargs)
 
@@ -88,7 +90,7 @@ class DatePickerFormField(forms.DateField):
     """Custom date-picker field."""
 
     def __init__(self, **kwargs):
-
+        """Set up custom values."""
         help_text = kwargs.get('help_text', _('Enter date'))
         label = kwargs.get('label', None)
         required = kwargs.get('required', False)
@@ -119,7 +121,10 @@ def round_decimal(value, places):
 
 
 class RoundingDecimalFormField(forms.DecimalField):
+    """Custom FormField that automatically rounds inputs."""
+
     def to_python(self, value):
+        """Convert value to python type."""
         value = super().to_python(value)
         value = round_decimal(value, self.decimal_places)
         return value
@@ -136,11 +141,15 @@ class RoundingDecimalFormField(forms.DecimalField):
 
 
 class RoundingDecimalField(models.DecimalField):
+    """Custom Field that automatically rounds inputs."""
+
     def to_python(self, value):
+        """Convert value to python type."""
         value = super().to_python(value)
         return round_decimal(value, self.decimal_places)
 
     def formfield(self, **kwargs):
+        """Return a Field instance for this field."""
         defaults = {
             'form_class': RoundingDecimalFormField
         }

@@ -312,6 +312,8 @@ class InvenTreeTree(MPTTModel):
             })
 
     class Meta:
+        """Metaclass defines extra model properties."""
+
         abstract = True
 
         # Names must be unique at any given level in the tree

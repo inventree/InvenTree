@@ -61,7 +61,7 @@ class InvenTreeMoneySerializer(MoneyField):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """Serializer for User - provides all fields"""
+    """Serializer for User - provides all fields."""
 
     class Meta:
         """Metaclass options."""
@@ -71,7 +71,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserSerializerBrief(serializers.ModelSerializer):
-    """Serializer for User - provides limited information"""
+    """Serializer for User - provides limited information."""
 
     class Meta:
         """Metaclass options."""
@@ -288,8 +288,9 @@ class InvenTreeImageSerializerField(serializers.ImageField):
 
 
 class InvenTreeDecimalField(serializers.FloatField):
-    """Custom serializer for decimal fields. Solves the following issues:
+    """Custom serializer for decimal fields.
 
+    Solves the following issues:
     - The normal DRF DecimalField renders values with trailing zeros
     - Using a FloatField can result in rounding issues: https://code.djangoproject.com/ticket/30290
     """
@@ -379,7 +380,7 @@ class DataFileUploadSerializer(serializers.Serializer):
         return data_file
 
     def match_column(self, column_name, field_names, exact=False):
-        """Attempt to match a column name (from the file) to a field (defined in the model)
+        """Attempt to match a column name (from the file) to a field (defined in the model).
 
         Order of matching is:
         - Direct match

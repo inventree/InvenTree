@@ -24,6 +24,7 @@ class Command(BaseCommand):
     """Django command to prerender files."""
 
     def handle(self, *args, **kwargs):
+        """Django command to prerender files."""
         # static directories
         LC_DIR = settings.LOCALE_PATHS[0]
         SOURCE_DIR = settings.STATICFILES_I18_SRC

@@ -17,7 +17,7 @@ class RenderJavascriptFiles(InvenTreeTestCase):  # pragma: no cover
     """
 
     def download_file(self, filename, prefix):
-
+        """Function to `download`(copy) a file to a temporay firectory."""
         url = os.path.join(prefix, filename)
 
         response = self.client.get(url)
@@ -45,6 +45,7 @@ class RenderJavascriptFiles(InvenTreeTestCase):  # pragma: no cover
             output.write(response.content)
 
     def download_files(self, subdir, prefix):
+        """Download files in directory."""
         here = os.path.abspath(os.path.dirname(__file__))
 
         js_template_dir = os.path.join(

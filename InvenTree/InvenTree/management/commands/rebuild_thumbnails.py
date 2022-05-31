@@ -41,7 +41,7 @@ class Command(BaseCommand):
                 logger.warning(f"Warning: Image file '{img}' is not a valid image")
 
     def handle(self, *args, **kwargs):
-
+        """Rebuild all thumbnail images."""
         logger.info("Rebuilding Part thumbnails")
 
         for part in Part.objects.exclude(image=None):

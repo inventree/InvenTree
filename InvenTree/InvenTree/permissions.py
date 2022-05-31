@@ -1,3 +1,5 @@
+"""Permission set for InvenTree."""
+
 from rest_framework import permissions
 
 import users.models

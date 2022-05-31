@@ -9,6 +9,7 @@ from django.urls import reverse
 
 
 class URLTest(TestCase):
+    """Test all files for broken url tags."""
 
     # Need fixture data in the database
     fixtures = [
@@ -120,14 +121,14 @@ class URLTest(TestCase):
             self.reverse_url(url)
 
     def test_html_templates(self):
-
+        """Test all HTML templates for broken url tags."""
         template_files = self.find_files("*.html")
 
         for f in template_files:
             self.check_file(f)
 
     def test_js_templates(self):
-
+        """Test all JS templates for broken url tags."""
         template_files = self.find_files("*.js")
 
         for f in template_files:

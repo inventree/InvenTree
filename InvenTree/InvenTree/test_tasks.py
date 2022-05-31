@@ -19,7 +19,7 @@ class ScheduledTaskTests(TestCase):
     """Unit tests for scheduled tasks."""
 
     def get_tasks(self, name):
-
+        """Helper function to get a Schedule object."""
         return Schedule.objects.filter(func=name)
 
     def test_add_task(self):
