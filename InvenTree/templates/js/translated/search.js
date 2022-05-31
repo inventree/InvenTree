@@ -151,6 +151,46 @@ function updateSearch() {
         );
     }
 
+    if (checkPermission('part') && checkPermission('purchase_order')) {
+
+        var params = {
+            part_detail: true,
+            supplier_detail: true,
+            manufacturer_detail: true,
+        };
+
+        if (user_settings.SEARCH_HIDE_INACTIVE_PARTS) {
+            // Return *only* active parts
+            params.active = true;
+        }
+
+        if (user_settings.SEARCH_PREVIEW_SHOW_SUPPLIER_PARTS) {
+            addSearchQuery(
+                'supplierpart',
+                '{% trans "Supplier Parts" %}',
+                '{% url "api-supplier-part-list" %}',
+                params,
+                renderSupplierPart,
+                {
+                    url: '/supplier-part',
+                }
+            );
+        }
+
+        if (user_settings.SEARCH_PREVIEW_SHOW_MANUFACTURER_PARTS) {
+            addSearchQuery(
+                'manufacturerpart',
+                '{% trans "Manufacturer Parts" %}',
+                '{% url "api-manufacturer-part-list" %}',
+                params,
+                renderManufacturerPart,
+                {
+                    url: '/manufacturer-part',
+                }
+            );
+        }
+    }
+
     if (checkPermission('part_category') && user_settings.SEARCH_PREVIEW_SHOW_CATEGORIES) {
         // Search for matching part categories
         addSearchQuery(
