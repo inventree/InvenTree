@@ -190,7 +190,7 @@ function updateSearch() {
             );
         }
     }
-    
+
     if (checkPermission('part_category') && user_settings.SEARCH_PREVIEW_SHOW_CATEGORIES) {
         // Search for matching part categories
         addSearchQuery(
