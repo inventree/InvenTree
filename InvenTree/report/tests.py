@@ -1,3 +1,4 @@
+"""Unit testing for the various report models"""
 
 import os
 import shutil
@@ -14,7 +15,7 @@ from stock.models import StockItem
 
 
 class ReportTest(InvenTreeAPITestCase):
-
+    """Base class for unit testing reporting models"""
     fixtures = [
         'category',
         'part',
@@ -31,9 +32,6 @@ class ReportTest(InvenTreeAPITestCase):
     list_url = None
     detail_url = None
     print_url = None
-
-    def setUp(self):
-        super().setUp()
 
     def copyReportTemplate(self, filename, description):
         """Copy the provided report template into the required media directory."""
@@ -115,7 +113,7 @@ class ReportTest(InvenTreeAPITestCase):
 
 
 class TestReportTest(ReportTest):
-
+    """Unit testing class for the stock item TestReport model"""
     model = report_models.TestReport
 
     list_url = 'api-stockitem-testreport-list'
@@ -123,7 +121,7 @@ class TestReportTest(ReportTest):
     print_url = 'api-stockitem-testreport-print'
 
     def setUp(self):
-
+        """Setup function for the stock item TestReport"""
         self.copyReportTemplate('inventree_test_report.html', 'stock item test report')
 
         return super().setUp()
@@ -154,7 +152,7 @@ class TestReportTest(ReportTest):
 
 
 class BuildReportTest(ReportTest):
-
+    """Unit test class for the BuildReport model"""
     model = report_models.BuildReport
 
     list_url = 'api-build-report-list'
@@ -162,7 +160,7 @@ class BuildReportTest(ReportTest):
     print_url = 'api-build-report-print'
 
     def setUp(self):
-
+        """Setup unit testing functions"""
         self.copyReportTemplate('inventree_build_order.html', 'build order template')
 
         return super().setUp()
@@ -204,7 +202,7 @@ class BuildReportTest(ReportTest):
 
 
 class BOMReportTest(ReportTest):
-
+    """Unit test class fot the BillOfMaterialsReport model"""
     model = report_models.BillOfMaterialsReport
 
     list_url = 'api-bom-report-list'
@@ -213,7 +211,7 @@ class BOMReportTest(ReportTest):
 
 
 class PurchaseOrderReportTest(ReportTest):
-
+    """Unit test class fort he PurchaseOrderReport model"""
     model = report_models.PurchaseOrderReport
 
     list_url = 'api-po-report-list'
@@ -222,7 +220,7 @@ class PurchaseOrderReportTest(ReportTest):
 
 
 class SalesOrderReportTest(ReportTest):
-
+    """Unit test class for the SalesOrderReport model"""
     model = report_models.SalesOrderReport
 
     list_url = 'api-so-report-list'

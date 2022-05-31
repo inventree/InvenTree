@@ -74,7 +74,7 @@ class WeasyprintReportMixin(WeasyTemplateResponseMixin):
     pdf_attachment = True
 
     def __init__(self, request, template, **kwargs):
-
+        """Initialize the report mixin with some standard attributes"""
         self.request = request
         self.template_name = template
         self.pdf_filename = kwargs.get('filename', 'report.pdf')
@@ -89,21 +89,23 @@ class ReportBase(models.Model):
         abstract = True
 
     def save(self, *args, **kwargs):
-
+        """Perform additional actions when the report is saved"""
         # Increment revision number
         self.revision += 1
 
         super().save()
 
     def __str__(self):
+        """Format a string representation of a report instance"""
         return "{n} - {d}".format(n=self.name, d=self.description)
 
     @classmethod
     def getSubdir(cls):
+        """Return the subdirectory where template files for this report model will be located."""
         return ''
 
     def rename_file(self, filename):
-        # Function for renaming uploaded file
+        """Function for renaming uploaded file"""
 
         filename = os.path.basename(filename)
 
@@ -127,6 +129,7 @@ class ReportBase(models.Model):
 
     @property
     def extension(self):
+        """Return the filename extension of the associated template file"""
         return os.path.splitext(self.template.name)[1].lower()
 
     @property
@@ -262,10 +265,12 @@ class TestReport(ReportTemplateBase):
 
     @staticmethod
     def get_api_url():
+        """Return the API URL associated with the TestReport model"""
         return reverse('api-stockitem-testreport-list')
 
     @classmethod
     def getSubdir(cls):
+        """Return the subdirectory where TestReport templates are located"""
         return 'test'
 
     filters = models.CharField(
@@ -298,7 +303,7 @@ class TestReport(ReportTemplateBase):
         return items.exists()
 
     def get_context_data(self, request):
-
+        """Return custom context data for the TestReport template"""
         stock_item = self.object_to_print
 
         return {
@@ -317,10 +322,12 @@ class BuildReport(ReportTemplateBase):
 
     @staticmethod
     def get_api_url():
+        """Return the API URL associated with the BuildReport model"""
         return reverse('api-build-report-list')
 
     @classmethod
     def getSubdir(cls):
+        """Return the subdirectory where BuildReport templates are located"""
         return 'build'
 
     filters = models.CharField(
@@ -355,10 +362,12 @@ class BillOfMaterialsReport(ReportTemplateBase):
 
     @staticmethod
     def get_api_url():
+        """Return the API URL associated with the BillOfMaterialsReport model"""
         return reverse('api-bom-report-list')
 
     @classmethod
     def getSubdir(cls):
+        """Retun the directory where BillOfMaterialsReport templates are located"""
         return 'bom'
 
     filters = models.CharField(
@@ -372,7 +381,7 @@ class BillOfMaterialsReport(ReportTemplateBase):
     )
 
     def get_context_data(self, request):
-
+        """Return custom context data for the BillOfMaterialsReport template"""
         part = self.object_to_print
 
         return {
@@ -387,10 +396,12 @@ class PurchaseOrderReport(ReportTemplateBase):
 
     @staticmethod
     def get_api_url():
+        """Return the API URL associated with the PurchaseOrderReport model"""
         return reverse('api-po-report-list')
 
     @classmethod
     def getSubdir(cls):
+        """Return the directory where PurchaseOrderReport templates are stored"""
         return 'purchaseorder'
 
     filters = models.CharField(
@@ -404,7 +415,7 @@ class PurchaseOrderReport(ReportTemplateBase):
     )
 
     def get_context_data(self, request):
-
+        """Return custom context data for the PurchaseOrderReport template"""
         order = self.object_to_print
 
         return {
@@ -424,10 +435,12 @@ class SalesOrderReport(ReportTemplateBase):
 
     @staticmethod
     def get_api_url():
+        """Return the API URL associated with the SalesOrderReport model"""
         return reverse('api-so-report-list')
 
     @classmethod
     def getSubdir(cls):
+        """Retun the subdirectory where SalesOrderReport templates are located"""
         return 'salesorder'
 
     filters = models.CharField(
@@ -441,7 +454,7 @@ class SalesOrderReport(ReportTemplateBase):
     )
 
     def get_context_data(self, request):
-
+        """Return custom context data for a SalesOrderReport template"""
         order = self.object_to_print
 
         return {
@@ -457,6 +470,7 @@ class SalesOrderReport(ReportTemplateBase):
 
 
 def rename_snippet(instance, filename):
+    """Function to rename a report snippet once uploaded"""
 
     filename = os.path.basename(filename)
 
@@ -496,6 +510,7 @@ class ReportSnippet(models.Model):
 
 
 def rename_asset(instance, filename):
+    """Function to rename an asset file when uploaded"""
 
     filename = os.path.basename(filename)
 
@@ -523,6 +538,7 @@ class ReportAsset(models.Model):
     """
 
     def __str__(self):
+        """String representation of a ReportAsset instance"""
         return os.path.basename(self.asset.name)
 
     asset = models.FileField(

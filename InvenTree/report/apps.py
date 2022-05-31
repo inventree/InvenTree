@@ -1,3 +1,5 @@
+"""Config options for the 'report' app"""
+
 import logging
 import os
 import shutil
@@ -11,6 +13,7 @@ logger = logging.getLogger("inventree")
 
 
 class ReportConfig(AppConfig):
+    """Configuration class for the 'report' app"""
     name = 'report'
 
     def ready(self):

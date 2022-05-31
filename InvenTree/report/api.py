@@ -1,3 +1,4 @@
+"""API functionality for the 'report' app"""
 
 from django.core.exceptions import FieldError, ValidationError
 from django.http import HttpResponse
@@ -263,7 +264,7 @@ class StockItemTestReportList(ReportListView, StockItemReportMixin):
     serializer_class = TestReportSerializer
 
     def filter_queryset(self, queryset):
-
+        """Custom queryset filtering"""
         queryset = super().filter_queryset(queryset)
 
         # List of StockItem objects to match against
@@ -345,7 +346,7 @@ class BOMReportList(ReportListView, PartReportMixin):
     serializer_class = BOMReportSerializer
 
     def filter_queryset(self, queryset):
-
+        """Custom queryset filtering"""
         queryset = super().filter_queryset(queryset)
 
         # List of Part objects to match against
@@ -426,7 +427,7 @@ class BuildReportList(ReportListView, BuildReportMixin):
     serializer_class = BuildReportSerializer
 
     def filter_queryset(self, queryset):
-
+        """Custom queryset filtering"""
         queryset = super().filter_queryset(queryset)
 
         # List of Build objects to match against
@@ -489,21 +490,21 @@ class BuildReportPrint(generics.RetrieveAPIView, BuildReportMixin, ReportPrintMi
     serializer_class = BuildReportSerializer
 
     def get(self, request, *ars, **kwargs):
-
+        """Perform a GET action to print the report"""
         builds = self.get_builds()
 
         return self.print(request, builds)
 
 
 class PurchaseOrderReportList(ReportListView, OrderReportMixin):
-
+    """API list endpoint for the PurchaseOrderReport model"""
     OrderModel = order.models.PurchaseOrder
 
     queryset = PurchaseOrderReport.objects.all()
     serializer_class = PurchaseOrderReportSerializer
 
     def filter_queryset(self, queryset):
-
+        """Custom queryset filter for the PurchaseOrderReport list"""
         queryset = super().filter_queryset(queryset)
 
         orders = self.get_orders()
@@ -568,21 +569,21 @@ class PurchaseOrderReportPrint(generics.RetrieveAPIView, OrderReportMixin, Repor
     serializer_class = PurchaseOrderReportSerializer
 
     def get(self, request, *args, **kwargs):
-
+        """Perform GET request to print the report"""
         orders = self.get_orders()
 
         return self.print(request, orders)
 
 
 class SalesOrderReportList(ReportListView, OrderReportMixin):
-
+    """API list endpoint for the SalesOrderReport model"""
     OrderModel = order.models.SalesOrder
 
     queryset = SalesOrderReport.objects.all()
     serializer_class = SalesOrderReportSerializer
 
     def filter_queryset(self, queryset):
-
+        """Custom queryset filtering for the SalesOrderReport API list"""
         queryset = super().filter_queryset(queryset)
 
         orders = self.get_orders()
@@ -647,7 +648,7 @@ class SalesOrderReportPrint(generics.RetrieveAPIView, OrderReportMixin, ReportPr
     serializer_class = SalesOrderReportSerializer
 
     def get(self, request, *args, **kwargs):
-
+        """Perform a GET request to print the report"""
         orders = self.get_orders()
 
         return self.print(request, orders)
