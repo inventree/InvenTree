@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-31 04:27+0000\n"
-"PO-Revision-Date: 2022-05-29 01:47\n"
+"POT-Creation-Date: 2022-05-31 03:35+0000\n"
+"PO-Revision-Date: 2022-05-31 14:36\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -2277,20 +2277,16 @@ msgid "Display parts in search preview window"
 msgstr ""
 
 #: common/models.py:1429
-#, fuzzy
-#| msgid "Select Supplier Part"
 msgid "Seach Supplier Parts"
-msgstr "Wybierz dostawcę części"
+msgstr ""
 
 #: common/models.py:1430
 msgid "Display supplier parts in search preview window"
 msgstr ""
 
 #: common/models.py:1436
-#, fuzzy
-#| msgid "Manufacturer Parts"
 msgid "Search Manufacturer Parts"
-msgstr "Części producenta"
+msgstr ""
 
 #: common/models.py:1437
 msgid "Display manufacturer parts in search preview window"
@@ -5241,12 +5237,10 @@ msgstr "Wybierz z istniejących obrazów"
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
-msgstr ""
-"Część '<strong>%(full_name)s</strong>' nie może zostać usunięta, ponieważ jest nadal oznaczona jako <strong>aktywna</strong>.\n"
+msgstr "Część '<strong>%(full_name)s</strong>' nie może zostać usunięta, ponieważ jest nadal oznaczona jako <strong>aktywna</strong>.\n"
 "    <br>Wyłącz atrybut części \"Aktywne\" i spróbuj ponownie.\n"
 "    "
 
@@ -7437,22 +7431,18 @@ msgstr "Zaloguj się"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
-msgstr ""
-"Zaloguj się za pomocą jednego\n"
+msgstr "Zaloguj się za pomocą jednego\n"
 "istniejących kont stron trzecich lub  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">zarejestruj się</a>\n"
 "w celu założenia konta i zaloguj się poniżej:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
-msgstr ""
-"Jeżeli jeszcze nie utworzyłeś konta, to proszę najpierw\n"
+msgstr "Jeżeli jeszcze nie utworzyłeś konta, to proszę najpierw\n"
 "<a href=\"%(signup_url)s\">zarejstruj się</a>."
 
 #: templates/account/login.html:45
@@ -10329,3 +10319,4 @@ msgstr "Uprawnienie do edycji przedmiotów"
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
+
