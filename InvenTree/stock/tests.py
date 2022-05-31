@@ -1,3 +1,5 @@
+"""Tests for stock app."""
+
 import datetime
 
 from django.core.exceptions import ValidationError
@@ -25,6 +27,7 @@ class StockTest(InvenTreeTestCase):
     ]
 
     def setUp(self):
+        """Setup for all tests."""
         super().setUp()
 
         # Extract some shortcuts from the fixtures
@@ -99,25 +102,29 @@ class StockTest(InvenTreeTestCase):
         self.assertEqual(part.quantity_being_built, 1)
 
     def test_loc_count(self):
+        """Test count function."""
         self.assertEqual(StockLocation.objects.count(), 7)
 
     def test_url(self):
+        """Test get_absolute_url function."""
         it = StockItem.objects.get(pk=2)
         self.assertEqual(it.get_absolute_url(), '/stock/item/2/')
 
         self.assertEqual(self.home.get_absolute_url(), '/stock/location/1/')
 
     def test_barcode(self):
+        """Test format_barcode."""
         barcode = self.office.format_barcode(brief=False)
 
         self.assertIn('"name": "Office"', barcode)
 
     def test_strings(self):
+        """Test str function."""
         it = StockItem.objects.get(pk=1)
         self.assertEqual(str(it), '4000 x M2x4 LPHS @ Dining Room')
 
     def test_parent_locations(self):
-
+        """Test parent."""
         self.assertEqual(self.office.parent, None)
         self.assertEqual(self.drawer1.parent, self.office)
         self.assertEqual(self.drawer2.parent, self.office)
@@ -134,6 +141,7 @@ class StockTest(InvenTreeTestCase):
         self.assertEqual(self.drawer3.pathstring, 'Home/Drawer_3')
 
     def test_children(self):
+        """Test has_children."""
         self.assertTrue(self.office.has_children)
 
         self.assertFalse(self.drawer2.has_children)
@@ -146,6 +154,7 @@ class StockTest(InvenTreeTestCase):
         self.assertNotIn(self.bathroom.id, childs)
 
     def test_items(self):
+        """Test has_items."""
         self.assertTrue(self.drawer1.has_items())
         self.assertTrue(self.drawer3.has_items())
         self.assertFalse(self.drawer2.has_items())
@@ -155,6 +164,7 @@ class StockTest(InvenTreeTestCase):
         self.assertEqual(self.drawer3.item_count, 18)
 
     def test_stock_count(self):
+        """Test stock count."""
         part = Part.objects.get(pk=1)
         entries = part.stock_entries()
 
@@ -169,7 +179,7 @@ class StockTest(InvenTreeTestCase):
         )
 
     def test_delete_location(self):
-
+        """Test deleting stock."""
         # How many stock items are there?
         n_stock = StockItem.objects.count()
 
@@ -206,6 +216,7 @@ class StockTest(InvenTreeTestCase):
         self.assertEqual(track.notes, 'Moved to the bathroom')
 
     def test_self_move(self):
+        """Test moving stock to itself does not work."""
         # Try to move an item to its current location (should fail)
         it = StockItem.objects.get(pk=1)
 
@@ -216,6 +227,7 @@ class StockTest(InvenTreeTestCase):
         self.assertEqual(it.tracking_info.count(), n)
 
     def test_partial_move(self):
+        """Test partial stock moving."""
         w1 = StockItem.objects.get(pk=100)
 
         # A batch code is required to split partial stock!
@@ -240,6 +252,7 @@ class StockTest(InvenTreeTestCase):
         self.assertFalse(widget.move(None, 'null', None))
 
     def test_split_stock(self):
+        """Test stock splitting."""
         # Split the 1234 x 2K2 resistors in Drawer_1
 
         n = StockItem.objects.filter(part=3).count()
@@ -259,6 +272,7 @@ class StockTest(InvenTreeTestCase):
         self.assertEqual(StockItem.objects.filter(part=3).count(), n + 1)
 
     def test_stocktake(self):
+        """Test stocktake function."""
         # Perform stocktake
         it = StockItem.objects.get(pk=2)
         self.assertEqual(it.quantity, 5000)
@@ -279,6 +293,7 @@ class StockTest(InvenTreeTestCase):
         self.assertEqual(it.tracking_info.count(), n)
 
     def test_add_stock(self):
+        """Test adding stock."""
         it = StockItem.objects.get(pk=2)
         n = it.quantity
         it.add_stock(45, None, notes='Added some items')
@@ -294,6 +309,7 @@ class StockTest(InvenTreeTestCase):
         self.assertFalse(it.add_stock(-10, None))
 
     def test_take_stock(self):
+        """Test stock removal."""
         it = StockItem.objects.get(pk=2)
         n = it.quantity
         it.take_stock(15, None, notes='Removed some items')
@@ -311,7 +327,7 @@ class StockTest(InvenTreeTestCase):
         self.assertFalse(it.take_stock(-10, None))
 
     def test_deplete_stock(self):
-
+        """Test depleted stock deletion."""
         w1 = StockItem.objects.get(pk=100)
         w2 = StockItem.objects.get(pk=101)
 
@@ -671,6 +687,7 @@ class VariantTest(StockTest):
     """Tests for calculation stock counts against templates / variants."""
 
     def test_variant_stock(self):
+        """Test variant functions."""
         # Check the 'Chair' variant
         chair = Part.objects.get(pk=10000)
 
@@ -684,8 +701,7 @@ class VariantTest(StockTest):
         self.assertEqual(green.stock_entries().count(), 3)
 
     def test_serial_numbers(self):
-        # Test serial number functionality for variant / template parts
-
+        """Test serial number functionality for variant / template parts."""
         chair = Part.objects.get(pk=10000)
 
         # Operations on the top-level object
@@ -752,6 +768,7 @@ class TestResultTest(StockTest):
     """Tests for the StockItemTestResult model."""
 
     def test_test_count(self):
+        """Test test count."""
         item = StockItem.objects.get(pk=105)
         tests = item.test_results
         self.assertEqual(tests.count(), 4)
@@ -773,7 +790,7 @@ class TestResultTest(StockTest):
             self.assertIn(test, result_map.keys())
 
     def test_test_results(self):
-
+        """Test test results."""
         item = StockItem.objects.get(pk=522)
 
         status = item.requiredTestStatus()
@@ -810,7 +827,7 @@ class TestResultTest(StockTest):
         self.assertTrue(item.passedAllRequiredTests())
 
     def test_duplicate_item_tests(self):
-
+        """Test duplicate item behaviour."""
         # Create an example stock item by copying one from the database (because we are lazy)
         item = StockItem.objects.get(pk=522)
 

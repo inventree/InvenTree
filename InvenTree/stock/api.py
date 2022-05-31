@@ -53,21 +53,21 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = StockSerializers.StockItemSerializer
 
     def get_queryset(self, *args, **kwargs):
-
+        """Annotate queryset."""
         queryset = super().get_queryset(*args, **kwargs)
         queryset = StockSerializers.StockItemSerializer.annotate_queryset(queryset)
 
         return queryset
 
     def get_serializer_context(self):
-
+        """Extend serializer context."""
         ctx = super().get_serializer_context()
         ctx['user'] = getattr(self.request, 'user', None)
 
         return ctx
 
     def get_serializer(self, *args, **kwargs):
-
+        """Set context before returning serializer."""
         kwargs['part_detail'] = True
         kwargs['location_detail'] = True
         kwargs['supplier_part_detail'] = True
@@ -81,6 +81,7 @@ class StockMetadata(generics.RetrieveUpdateAPIView):
     """API endpoint for viewing / updating StockItem metadata."""
 
     def get_serializer(self, *args, **kwargs):
+        """Return serializer."""
         return MetadataSerializer(StockItem, *args, **kwargs)
 
     queryset = StockItem.objects.all()
@@ -90,7 +91,7 @@ class StockItemContextMixin:
     """Mixin class for adding StockItem object to serializer context."""
 
     def get_serializer_context(self):
-
+        """Extend serializer context."""
         context = super().get_serializer_context()
         context['request'] = self.request
 
@@ -142,9 +143,8 @@ class StockAdjustView(generics.CreateAPIView):
     queryset = StockItem.objects.none()
 
     def get_serializer_context(self):
-
+        """Extend serializer context."""
         context = super().get_serializer_context()
-
         context['request'] = self.request
 
         return context
@@ -181,9 +181,8 @@ class StockAssign(generics.CreateAPIView):
     serializer_class = StockSerializers.StockAssignmentSerializer
 
     def get_serializer_context(self):
-
+        """Extend serializer context."""
         ctx = super().get_serializer_context()
-
         ctx['request'] = self.request
 
         return ctx
@@ -196,13 +195,14 @@ class StockMerge(generics.CreateAPIView):
     serializer_class = StockSerializers.StockMergeSerializer
 
     def get_serializer_context(self):
+        """Extend serializer context."""
         ctx = super().get_serializer_context()
         ctx['request'] = self.request
         return ctx
 
 
 class StockLocationList(generics.ListCreateAPIView):
-    """API endpoint for list view of StockLocation objects:
+    """API endpoint for list view of StockLocation objects.
 
     - GET: Return list of StockLocation objects
     - POST: Create a new StockLocation
@@ -212,7 +212,7 @@ class StockLocationList(generics.ListCreateAPIView):
     serializer_class = StockSerializers.LocationSerializer
 
     def filter_queryset(self, queryset):
-        """Custom filtering: - Allow filtering by "null" parent to retrieve top-level stock locations"""
+        """Custom filtering: - Allow filtering by "null" parent to retrieve top-level stock locations."""
         queryset = super().filter_queryset(queryset)
 
         params = self.request.query_params
@@ -331,7 +331,7 @@ class StockFilter(rest_filters.FilterSet):
     in_stock = rest_filters.BooleanFilter(label='In Stock', method='filter_in_stock')
 
     def filter_in_stock(self, queryset, name, value):
-
+        """Filter by if item is in stock."""
         if str2bool(value):
             queryset = queryset.filter(StockItem.IN_STOCK_FILTER)
         else:
@@ -369,7 +369,7 @@ class StockFilter(rest_filters.FilterSet):
     serialized = rest_filters.BooleanFilter(label='Has serial number', method='filter_serialized')
 
     def filter_serialized(self, queryset, name, value):
-        """Filter by whether the StockItem has a serial number (or not)"""
+        """Filter by whether the StockItem has a serial number (or not)."""
         q = Q(serial=None) | Q(serial='')
 
         if str2bool(value):
@@ -382,7 +382,7 @@ class StockFilter(rest_filters.FilterSet):
     has_batch = rest_filters.BooleanFilter(label='Has batch code', method='filter_has_batch')
 
     def filter_has_batch(self, queryset, name, value):
-        """Filter by whether the StockItem has a batch code (or not)"""
+        """Filter by whether the StockItem has a batch code (or not)."""
         q = Q(batch=None) | Q(batch='')
 
         if str2bool(value):
@@ -425,7 +425,7 @@ class StockFilter(rest_filters.FilterSet):
     sent_to_customer = rest_filters.BooleanFilter(label='Sent to customer', method='filter_sent_to_customer')
 
     def filter_sent_to_customer(self, queryset, name, value):
-
+        """Filter by sent to customer."""
         if str2bool(value):
             queryset = queryset.exclude(customer=None)
         else:
@@ -436,7 +436,7 @@ class StockFilter(rest_filters.FilterSet):
     depleted = rest_filters.BooleanFilter(label='Depleted', method='filter_depleted')
 
     def filter_depleted(self, queryset, name, value):
-
+        """Filter by depleted items."""
         if str2bool(value):
             queryset = queryset.filter(quantity__lte=0)
         else:
@@ -447,9 +447,9 @@ class StockFilter(rest_filters.FilterSet):
     has_purchase_price = rest_filters.BooleanFilter(label='Has purchase price', method='filter_has_purchase_price')
 
     def filter_has_purchase_price(self, queryset, name, value):
-
+        """Filter by having a purchase price."""
         if str2bool(value):
-            queryset = queryset.exclude(purcahse_price=None)
+            queryset = queryset.exclude(purchase_price=None)
         else:
             queryset = queryset.filter(purchase_price=None)
 
@@ -472,7 +472,7 @@ class StockList(APIDownloadMixin, generics.ListCreateAPIView):
     filterset_class = StockFilter
 
     def get_serializer_context(self):
-
+        """Extend serializer context."""
         ctx = super().get_serializer_context()
         ctx['user'] = getattr(self.request, 'user', None)
 
@@ -719,7 +719,7 @@ class StockList(APIDownloadMixin, generics.ListCreateAPIView):
             return Response(data)
 
     def get_queryset(self, *args, **kwargs):
-
+        """Annotate queryset before returning."""
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = StockSerializers.StockItemSerializer.annotate_queryset(queryset)
@@ -1039,7 +1039,7 @@ class StockList(APIDownloadMixin, generics.ListCreateAPIView):
 
 
 class StockAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
-    """API endpoint for listing (and creating) a StockItemAttachment (file upload)"""
+    """API endpoint for listing (and creating) a StockItemAttachment (file upload)."""
 
     queryset = StockItemAttachment.objects.all()
     serializer_class = StockSerializers.StockItemAttachmentSerializer
@@ -1091,7 +1091,7 @@ class StockItemTestResultList(generics.ListCreateAPIView):
     ordering = 'date'
 
     def filter_queryset(self, queryset):
-
+        """Filter by build or stock_item."""
         params = self.request.query_params
 
         queryset = super().filter_queryset(queryset)
@@ -1136,6 +1136,7 @@ class StockItemTestResultList(generics.ListCreateAPIView):
         return queryset
 
     def get_serializer(self, *args, **kwargs):
+        """Set context before returning serializer."""
         try:
             kwargs['user_detail'] = str2bool(self.request.query_params.get('user_detail', False))
         except:
@@ -1177,6 +1178,7 @@ class StockTrackingList(generics.ListAPIView):
     serializer_class = StockSerializers.StockTrackingSerializer
 
     def get_serializer(self, *args, **kwargs):
+        """Set context before returning serializer."""
         try:
             kwargs['item_detail'] = str2bool(self.request.query_params.get('item_detail', False))
         except:
@@ -1192,7 +1194,7 @@ class StockTrackingList(generics.ListAPIView):
         return self.serializer_class(*args, **kwargs)
 
     def list(self, request, *args, **kwargs):
-
+        """List all stock tracking entries."""
         queryset = self.filter_queryset(self.get_queryset())
 
         serializer = self.get_serializer(queryset, many=True)
@@ -1304,6 +1306,7 @@ class LocationMetadata(generics.RetrieveUpdateAPIView):
     """API endpoint for viewing / updating StockLocation metadata."""
 
     def get_serializer(self, *args, **kwargs):
+        """Return serializer."""
         return MetadataSerializer(StockLocation, *args, **kwargs)
 
     queryset = StockLocation.objects.all()

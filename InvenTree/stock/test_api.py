@@ -19,6 +19,7 @@ from stock.models import StockItem, StockLocation
 
 
 class StockAPITestCase(InvenTreeAPITestCase):
+    """Mixin for stock api tests."""
 
     fixtures = [
         'category',
@@ -39,10 +40,6 @@ class StockAPITestCase(InvenTreeAPITestCase):
         'stock.delete',
     ]
 
-    def setUp(self):
-
-        super().setUp()
-
 
 class StockLocationTest(StockAPITestCase):
     """Series of API tests for the StockLocation API."""
@@ -50,18 +47,21 @@ class StockLocationTest(StockAPITestCase):
     list_url = reverse('api-location-list')
 
     def setUp(self):
+        """Setup for all tests."""
         super().setUp()
 
         # Add some stock locations
         StockLocation.objects.create(name='top', description='top category')
 
     def test_list(self):
+        """Test StockLocation list."""
         # Check that we can request the StockLocation list
         response = self.client.get(self.list_url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 1)
 
     def test_add(self):
+        """Test adding StockLocation."""
         # Check that we can add a new StockLocation
         data = {
             'parent': 1,
@@ -257,7 +257,7 @@ class StockItemListTest(StockAPITestCase):
             self.assertEqual(len(response['results']), n)
 
     def export_data(self, filters=None):
-
+        """Helper to test exports."""
         if not filters:
             filters = {}
 
@@ -318,6 +318,7 @@ class StockItemTest(StockAPITestCase):
     list_url = reverse('api-stock-list')
 
     def setUp(self):
+        """Setup for all tests."""
         super().setUp()
         # Create some stock locations
         top = StockLocation.objects.create(name='A', description='top')
@@ -752,7 +753,7 @@ class StockItemDeletionTest(StockAPITestCase):
     """Tests for stock item deletion via the API."""
 
     def test_delete(self):
-
+        """Test stock item deletion."""
         n = StockItem.objects.count()
 
         # Create and then delete a bunch of stock items
@@ -783,12 +784,14 @@ class StockItemDeletionTest(StockAPITestCase):
 
 
 class StockTestResultTest(StockAPITestCase):
+    """Tests for StockTestResult APIs."""
 
     def get_url(self):
+        """Helper funtion to get test-result api url."""
         return reverse('api-stock-test-result-list')
 
     def test_list(self):
-
+        """Test list endpoint."""
         url = self.get_url()
         response = self.client.get(url)
 
@@ -800,6 +803,7 @@ class StockTestResultTest(StockAPITestCase):
         self.assertGreaterEqual(len(response.data), 4)
 
     def test_post_fail(self):
+        """Test failing posts."""
         # Attempt to post a new test result without specifying required data
 
         url = self.get_url()
@@ -829,8 +833,7 @@ class StockTestResultTest(StockAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_post(self):
-        # Test creation of a new test result
-
+        """Test creation of a new test result."""
         url = self.get_url()
 
         response = self.client.get(url)
@@ -899,7 +902,7 @@ class StockAssignTest(StockAPITestCase):
     URL = reverse('api-stock-assign')
 
     def test_invalid(self):
-
+        """Test invalid assign."""
         # Test with empty data
         response = self.post(
             self.URL,
@@ -966,7 +969,7 @@ class StockAssignTest(StockAPITestCase):
         self.assertIn('Item must be in stock', str(response.data['items'][0]))
 
     def test_valid(self):
-
+        """Test valid assign."""
         stock_items = []
 
         for i in range(5):
@@ -1005,7 +1008,7 @@ class StockMergeTest(StockAPITestCase):
     URL = reverse('api-stock-merge')
 
     def setUp(self):
-
+        """Setup for all tests."""
         super().setUp()
 
         self.part = part.models.Part.objects.get(pk=25)

@@ -1,3 +1,5 @@
+"""Admin for stock app."""
+
 from django.contrib import admin
 
 import import_export.widgets as widgets
@@ -22,6 +24,8 @@ class LocationResource(ModelResource):
     parent_name = Field(attribute='parent__name', readonly=True)
 
     class Meta:
+        """Metaclass options."""
+
         model = StockLocation
         skip_unchanged = True
         report_skipped = False
@@ -34,7 +38,7 @@ class LocationResource(ModelResource):
         ]
 
     def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
-
+        """Rebuild after import to keep tree intact."""
         super().after_import(dataset, result, using_transactions, dry_run, **kwargs)
 
         # Rebuild the StockLocation tree(s)
@@ -47,6 +51,7 @@ class LocationInline(admin.TabularInline):
 
 
 class LocationAdmin(ImportExportModelAdmin):
+    """Admin class for Location."""
 
     resource_class = LocationResource
 
@@ -101,13 +106,15 @@ class StockItemResource(ModelResource):
     stocktake_date = Field(attribute='stocktake_date', widget=widgets.DateWidget())
 
     def after_import(self, dataset, result, using_transactions, dry_run, **kwargs):
-
+        """Rebuild after import to keep tree intact."""
         super().after_import(dataset, result, using_transactions, dry_run, **kwargs)
 
         # Rebuild the StockItem tree(s)
         StockItem.objects.rebuild()
 
     class Meta:
+        """Metaclass options."""
+
         model = StockItem
         skip_unchanged = True
         report_skipped = False
@@ -122,6 +129,7 @@ class StockItemResource(ModelResource):
 
 
 class StockItemAdmin(ImportExportModelAdmin):
+    """Admin class for StockItem."""
 
     resource_class = StockItemResource
 
@@ -150,6 +158,7 @@ class StockItemAdmin(ImportExportModelAdmin):
 
 
 class StockAttachmentAdmin(admin.ModelAdmin):
+    """Admin class for StockAttachment."""
 
     list_display = ('stock_item', 'attachment', 'comment')
 
@@ -159,6 +168,8 @@ class StockAttachmentAdmin(admin.ModelAdmin):
 
 
 class StockTrackingAdmin(ImportExportModelAdmin):
+    """Admin class for StockTracking."""
+
     list_display = ('item', 'date', 'label')
 
     autocomplete_fields = [
@@ -167,6 +178,7 @@ class StockTrackingAdmin(ImportExportModelAdmin):
 
 
 class StockItemTestResultAdmin(admin.ModelAdmin):
+    """Admin class for StockItemTestResult."""
 
     list_display = ('stock_item', 'test', 'result', 'value')
 

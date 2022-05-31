@@ -8,6 +8,7 @@ from InvenTree.helpers import InvenTreeTestCase
 
 
 class StockViewTestCase(InvenTreeTestCase):
+    """Mixin for Stockview tests."""
 
     fixtures = [
         'category',
@@ -25,6 +26,7 @@ class StockListTest(StockViewTestCase):
     """Tests for Stock list views."""
 
     def test_stock_index(self):
+        """Test stock index page."""
         response = self.client.get(reverse('stock-index'))
         self.assertEqual(response.status_code, 200)
 
