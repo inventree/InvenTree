@@ -2720,9 +2720,6 @@ class BomItem(DataImportMixin, models.Model):
         """Metaclass providing extra model definition"""
         verbose_name = _("BOM Item")
 
-        # Prevent duplication of parent/child rows
-        unique_together = ('part', 'sub_part')
-
     def __str__(self):
         """Return a string representation of this BomItem instance"""
         return "{n} x {child} to make {parent}".format(

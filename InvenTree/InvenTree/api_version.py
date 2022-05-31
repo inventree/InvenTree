@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 51
+INVENTREE_API_VERSION = 52
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v52 -> 2022-05-31 : https://github.com/inventree/InvenTree/pull/3103
+    - Allow part list API to be searched by supplier SKU
 
 v51 -> 2022-05-24 : https://github.com/inventree/InvenTree/pull/3058
     - Adds new fields to the SalesOrderShipment model

@@ -1341,6 +1341,20 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
 
+        'SEARCH_PREVIEW_SHOW_SUPPLIER_PARTS': {
+            'name': _('Seach Supplier Parts'),
+            'description': _('Display supplier parts in search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'SEARCH_PREVIEW_SHOW_MANUFACTURER_PARTS': {
+            'name': _('Search Manufacturer Parts'),
+            'description': _('Display manufacturer parts in search preview window'),
+            'default': True,
+            'validator': bool,
+        },
+
         'SEARCH_HIDE_INACTIVE_PARTS': {
             'name': _("Hide Inactive Parts"),
             'description': _('Excluded inactive parts from search preview window'),
