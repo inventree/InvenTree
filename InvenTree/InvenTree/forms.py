@@ -52,12 +52,6 @@ class HelperForm(forms.ModelForm):
 
         self.rebuild_layout()
 
-    def is_valid(self):
-
-        valid = super().is_valid()
-
-        return valid
-
     def rebuild_layout(self):
 
         layouts = []
@@ -204,7 +198,7 @@ class SettingCategorySelectForm(forms.ModelForm):
         ]
 
     def __init__(self, *args, **kwargs):
-        super(SettingCategorySelectForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
         # Form rendering

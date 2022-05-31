@@ -1,3 +1,5 @@
+"""Status codes for InvenTree."""
+
 from django.utils.translation import gettext_lazy as _
 
 
@@ -49,18 +51,22 @@ class StatusCode:
 
     @classmethod
     def text(cls, key):
+        """Text for supplied status code."""
         return cls.options.get(key, None)
 
     @classmethod
     def items(cls):
+        """All status code items."""
         return cls.options.items()
 
     @classmethod
     def keys(cls):
+        """All status code keys."""
         return cls.options.keys()
 
     @classmethod
     def labels(cls):
+        """All status code labels."""
         return cls.options.values()
 
     @classmethod
@@ -158,6 +164,7 @@ class SalesOrderStatus(StatusCode):
 
 
 class StockStatus(StatusCode):
+    """Status codes for Stock."""
 
     OK = 10  # Item is OK
     ATTENTION = 50  # Item requires attention
@@ -199,6 +206,7 @@ class StockStatus(StatusCode):
 
 
 class StockHistoryCode(StatusCode):
+    """Status codes for StockHistory."""
 
     LEGACY = 0
 
@@ -287,8 +295,8 @@ class StockHistoryCode(StatusCode):
 
 
 class BuildStatus(StatusCode):
+    """Build status codes."""
 
-    # Build status codes
     PENDING = 10  # Build is pending / active
     PRODUCTION = 20  # BuildOrder is in production
     CANCELLED = 30  # Build was cancelled

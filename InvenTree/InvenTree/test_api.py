@@ -21,6 +21,7 @@ class HTMLAPITests(InvenTreeTestCase):
     roles = 'all'
 
     def test_part_api(self):
+        """Test that part list is working."""
         url = reverse('api-part-list')
 
         # Check JSON response
@@ -32,6 +33,7 @@ class HTMLAPITests(InvenTreeTestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_build_api(self):
+        """Test that build list is working."""
         url = reverse('api-build-list')
 
         # Check JSON response
@@ -43,6 +45,7 @@ class HTMLAPITests(InvenTreeTestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_stock_api(self):
+        """Test that stock list is working."""
         url = reverse('api-stock-list')
 
         # Check JSON response
@@ -54,6 +57,7 @@ class HTMLAPITests(InvenTreeTestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_company_list(self):
+        """Test that company list is working."""
         url = reverse('api-company-list')
 
         # Check JSON response
@@ -79,16 +83,11 @@ class APITests(InvenTreeAPITestCase):
         'part',
         'stock'
     ]
-
     token = None
-
     auto_login = False
 
-    def setUp(self):
-
-        super().setUp()
-
     def basicAuth(self):
+        """Helper function to use basic auth."""
         # Use basic authentication
 
         authstring = bytes("{u}:{p}".format(u=self.username, p=self.password), "ascii")
@@ -98,7 +97,7 @@ class APITests(InvenTreeAPITestCase):
         self.client.credentials(HTTP_AUTHORIZATION="Basic {auth}".format(auth=auth))
 
     def tokenAuth(self):
-
+        """Helper function to use token auth."""
         self.basicAuth()
         token_url = reverse('api-token')
         response = self.client.get(token_url, format='json', data={})
@@ -110,6 +109,7 @@ class APITests(InvenTreeAPITestCase):
         self.token = token
 
     def test_token_failure(self):
+        """Test token resolve endpoint does not work without basic auth."""
         # Test token endpoint without basic auth
         url = reverse('api-token')
         response = self.client.get(url, format='json')
@@ -118,7 +118,7 @@ class APITests(InvenTreeAPITestCase):
         self.assertIsNone(self.token)
 
     def test_token_success(self):
-
+        """Test token auth works."""
         self.tokenAuth()
         self.assertIsNotNone(self.token)
 

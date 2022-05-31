@@ -30,7 +30,7 @@ class InvenTreeMoneySerializer(MoneyField):
     """
 
     def __init__(self, *args, **kwargs):
-
+        """Overrite default values."""
         kwargs["max_digits"] = kwargs.get("max_digits", 19)
         kwargs["decimal_places"] = kwargs.get("decimal_places", 4)
 
@@ -220,7 +220,9 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
 
 class ReferenceIndexingSerializerMixin():
     """This serializer mixin ensures the the reference is not to big / small for the BigIntegerField."""
+
     def validate_reference(self, value):
+        """Ensures the reference is not to big / small for the BigIntegerField."""
         if extract_int(value) > models.BigIntegerField.MAX_BIGINT:
             raise serializers.ValidationError('reference is to to big')
         return value
@@ -246,7 +248,7 @@ class InvenTreeAttachmentSerializerField(serializers.FileField):
     """
 
     def to_representation(self, value):
-
+        """To json-serializable type."""
         if not value:
             return None
 
@@ -280,7 +282,7 @@ class InvenTreeImageSerializerField(serializers.ImageField):
     """
 
     def to_representation(self, value):
-
+        """To json-serializable type."""
         if not value:
             return None
 
@@ -296,7 +298,7 @@ class InvenTreeDecimalField(serializers.FloatField):
     """
 
     def to_internal_value(self, data):
-
+        """Convert to python type."""
         # Convert the value to a string, and then a decimal
         try:
             return Decimal(str(data))
@@ -452,6 +454,7 @@ class DataFileUploadSerializer(serializers.Serializer):
         }
 
     def save(self):
+        """Empty overwrite for save."""
         ...
 
 
@@ -490,7 +493,7 @@ class DataFileExtractSerializer(serializers.Serializer):
     )
 
     def validate(self, data):
-
+        """Clean data."""
         data = super().validate(data)
 
         self.columns = data.get('columns', [])
@@ -508,7 +511,7 @@ class DataFileExtractSerializer(serializers.Serializer):
 
     @property
     def data(self):
-
+        """Returns current data."""
         if self.TARGET_MODEL:
             try:
                 model_fields = self.TARGET_MODEL.get_import_fields()
