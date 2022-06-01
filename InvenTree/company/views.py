@@ -27,6 +27,7 @@ class CompanyIndex(InvenTreeRoleMixin, ListView):
     permission_required = 'company.view_company'
 
     def get_context_data(self, **kwargs):
+        """Add extra context data to the company index page"""
 
         ctx = super().get_context_data(**kwargs)
 
@@ -100,11 +101,6 @@ class CompanyDetail(InvenTreePluginViewMixin, DetailView):
     queryset = Company.objects.all()
     model = Company
     permission_required = 'company.view_company'
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-
-        return ctx
 
 
 class CompanyImageDownloadFromURL(AjaxUpdateView):
@@ -187,11 +183,6 @@ class ManufacturerPartDetail(InvenTreePluginViewMixin, DetailView):
     queryset = ManufacturerPart.objects.all()
     permission_required = 'purchase_order.view'
 
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-
-        return ctx
-
 
 class SupplierPartDetail(InvenTreePluginViewMixin, DetailView):
     """Detail view for SupplierPart."""
@@ -200,8 +191,3 @@ class SupplierPartDetail(InvenTreePluginViewMixin, DetailView):
     context_object_name = 'part'
     queryset = SupplierPart.objects.all()
     permission_required = 'purchase_order.view'
-
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-
-        return ctx

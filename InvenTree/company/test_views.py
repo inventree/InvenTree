@@ -5,7 +5,8 @@ from django.urls import reverse
 from InvenTree.helpers import InvenTreeTestCase
 
 
-class CompanyViewTestBase(InvenTreeTestCase):
+class CompanyViewTest(InvenTreeTestCase):
+    """Tests for various 'Company' views."""
 
     fixtures = [
         'category',
@@ -17,10 +18,6 @@ class CompanyViewTestBase(InvenTreeTestCase):
     ]
 
     roles = 'all'
-
-
-class CompanyViewTest(CompanyViewTestBase):
-    """Tests for various 'Company' views."""
 
     def test_company_index(self):
         """Test the company index."""

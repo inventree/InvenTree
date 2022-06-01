@@ -146,11 +146,6 @@ class PartCategory(MetadataMixin, InvenTreeTree):
 
         return query.count()
 
-    @property
-    def has_parts(self):
-        """True if there are any parts in this category."""
-        return self.partcount() > 0
-
     def prefetch_parts_parameters(self, cascade=True):
         """Prefectch parts parameters."""
         return self.get_parts(cascade=cascade).prefetch_related('parameters', 'parameters__template').all()
@@ -1976,14 +1971,6 @@ class Part(MetadataMixin, MPTTModel):
                     orders.append(order)
 
         return orders
-
-    def open_purchase_orders(self):
-        """Return a list of open purchase orders against this part."""
-        return [order for order in self.purchase_orders() if order.status in PurchaseOrderStatus.OPEN]
-
-    def closed_purchase_orders(self):
-        """Return a list of closed purchase orders against this part."""
-        return [order for order in self.purchase_orders() if order.status not in PurchaseOrderStatus.OPEN]
 
     @property
     def on_order(self):

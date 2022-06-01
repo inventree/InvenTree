@@ -6,6 +6,7 @@ from InvenTree import helpers
 
 
 class TestForwardMigrations(MigratorTestCase):
+    """Unit testing class for testing 'company' app migrations"""
 
     migrate_from = ('company', helpers.getOldestMigrationFile('company'))
     migrate_to = ('company', helpers.getNewestMigrationFile('company'))
@@ -21,7 +22,7 @@ class TestForwardMigrations(MigratorTestCase):
         )
 
     def test_migrations(self):
-
+        """Test the database state after applying all migrations"""
         Company = self.new_state.apps.get_model('company', 'company')
 
         self.assertEqual(Company.objects.count(), 1)
@@ -270,7 +271,7 @@ class TestCurrencyMigration(MigratorTestCase):
             self.assertIsNone(pb.price)
 
     def test_currency_migration(self):
-
+        """Test database state after applying migrations"""
         PB = self.new_state.apps.get_model('company', 'supplierpricebreak')
 
         for pb in PB.objects.all():

@@ -1,3 +1,5 @@
+"""Admin class for the 'company' app"""
+
 from django.contrib import admin
 
 import import_export.widgets as widgets
@@ -16,6 +18,7 @@ class CompanyResource(ModelResource):
     """Class for managing Company data import/export."""
 
     class Meta:
+        """Metaclass defines extra options"""
         model = Company
         skip_unchanged = True
         report_skipped = False
@@ -23,6 +26,7 @@ class CompanyResource(ModelResource):
 
 
 class CompanyAdmin(ImportExportModelAdmin):
+    """Admin class for the Company model"""
 
     resource_class = CompanyResource
 
@@ -46,6 +50,7 @@ class SupplierPartResource(ModelResource):
     supplier_name = Field(attribute='supplier__name', readonly=True)
 
     class Meta:
+        """Metaclass defines extra admin options"""
         model = SupplierPart
         skip_unchanged = True
         report_skipped = True
@@ -53,6 +58,7 @@ class SupplierPartResource(ModelResource):
 
 
 class SupplierPartAdmin(ImportExportModelAdmin):
+    """Admin class for the SupplierPart model"""
 
     resource_class = SupplierPartResource
 
@@ -80,6 +86,7 @@ class ManufacturerPartResource(ModelResource):
     manufacturer_name = Field(attribute='manufacturer__name', readonly=True)
 
     class Meta:
+        """Metaclass defines extra admin options"""
         model = ManufacturerPart
         skip_unchanged = True
         report_skipped = True
@@ -114,6 +121,7 @@ class ManufacturerPartParameterResource(ModelResource):
     """Class for managing ManufacturerPartParameter data import/export."""
 
     class Meta:
+        """Metaclass defines extra admin options"""
         model = ManufacturerPartParameter
         skip_unchanged = True
         report_skipped = True
@@ -152,6 +160,7 @@ class SupplierPriceBreakResource(ModelResource):
     MPN = Field(attribute='part__MPN', readonly=True)
 
     class Meta:
+        """Metaclass defines extra admin options"""
         model = SupplierPriceBreak
         skip_unchanged = True
         report_skipped = False
@@ -159,6 +168,7 @@ class SupplierPriceBreakResource(ModelResource):
 
 
 class SupplierPriceBreakAdmin(ImportExportModelAdmin):
+    """Admin class for the SupplierPriceBreak model"""
 
     resource_class = SupplierPriceBreakResource
 

@@ -1,3 +1,5 @@
+"""Unit testing for the company app API functions"""
+
 from django.urls import reverse
 
 from rest_framework import status
@@ -16,7 +18,7 @@ class CompanyTest(InvenTreeAPITestCase):
     ]
 
     def setUp(self):
-
+        """Perform initialization for the unit test class"""
         super().setUp()
 
         self.acme = Company.objects.create(name='ACME', description='Supplier', is_customer=False, is_supplier=True)
@@ -24,6 +26,7 @@ class CompanyTest(InvenTreeAPITestCase):
         Company.objects.create(name='Sippy Cup Emporium', description='Another supplier')
 
     def test_company_list(self):
+        """Test the list API endpoint for the Company model"""
         url = reverse('api-company-list')
 
         # There should be three companies
@@ -151,6 +154,7 @@ class ManufacturerTest(InvenTreeAPITestCase):
     ]
 
     def test_manufacturer_part_list(self):
+        """Test the ManufacturerPart API list functionality"""
         url = reverse('api-manufacturer-part-list')
 
         # There should be three manufacturer parts
@@ -195,13 +199,14 @@ class ManufacturerTest(InvenTreeAPITestCase):
         self.assertEqual(response.data['MPN'], 'MPN-TEST-123')
 
     def test_manufacturer_part_search(self):
-        # Test search functionality in manufacturer list
+        """Test search functionality in manufacturer list"""
         url = reverse('api-manufacturer-part-list')
         data = {'search': 'MPN'}
         response = self.get(url, data)
         self.assertEqual(len(response.data), 3)
 
     def test_supplier_part_create(self):
+        """Test a SupplierPart can be created via the API"""
         url = reverse('api-supplier-part-list')
 
         # Create a manufacturer part

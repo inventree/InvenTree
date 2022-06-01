@@ -1,3 +1,5 @@
+"""Unit tests for the models in the 'company' app"""
+
 import os
 from decimal import Decimal
 
@@ -11,6 +13,7 @@ from .models import (Company, Contact, ManufacturerPart, SupplierPart,
 
 
 class CompanySimpleTest(TestCase):
+    """Unit tests for the Company model"""
 
     fixtures = [
         'company',
@@ -24,6 +27,7 @@ class CompanySimpleTest(TestCase):
     ]
 
     def setUp(self):
+        """Perform initialization for the tests in this class"""
         Company.objects.create(name='ABC Co.',
                                description='Seller of ABC products',
                                website='www.abc-sales.com',
@@ -37,15 +41,18 @@ class CompanySimpleTest(TestCase):
         self.zergm312 = SupplierPart.objects.get(SKU='ZERGM312')
 
     def test_company_model(self):
+        """Tests for the company model data"""
         c = Company.objects.get(name='ABC Co.')
         self.assertEqual(c.name, 'ABC Co.')
         self.assertEqual(str(c), 'ABC Co. - Seller of ABC products')
 
     def test_company_url(self):
+        """Test the detail URL for a company"""
         c = Company.objects.get(pk=1)
         self.assertEqual(c.get_absolute_url(), '/company/1/')
 
     def test_image_renamer(self):
+        """Test the company image upload functionality"""
         c = Company.objects.get(pk=1)
         rn = rename_company_image(c, 'test.png')
         self.assertEqual(rn, 'company_images' + os.path.sep + 'company_1_img.png')
@@ -53,23 +60,8 @@ class CompanySimpleTest(TestCase):
         rn = rename_company_image(c, 'test2')
         self.assertEqual(rn, 'company_images' + os.path.sep + 'company_1_img')
 
-    def test_part_count(self):
-
-        acme = Company.objects.get(pk=1)
-        appel = Company.objects.get(pk=2)
-        zerg = Company.objects.get(pk=3)
-
-        self.assertTrue(acme.has_parts)
-        self.assertEqual(acme.supplied_part_count, 4)
-
-        self.assertTrue(appel.has_parts)
-        self.assertEqual(appel.supplied_part_count, 4)
-
-        self.assertTrue(zerg.has_parts)
-        self.assertEqual(zerg.supplied_part_count, 2)
-
     def test_price_breaks(self):
-
+        """Unit tests for price breaks"""
         self.assertTrue(self.acme0001.has_price_breaks)
         self.assertTrue(self.acme0002.has_price_breaks)
         self.assertTrue(self.zergm312.has_price_breaks)
@@ -98,6 +90,7 @@ class CompanySimpleTest(TestCase):
         self.assertEqual(p(55), 68.75)
 
     def test_part_pricing(self):
+        """Unit tests for supplier part pricing"""
         m2x4 = Part.objects.get(name='M2x4 LPHS')
 
         self.assertEqual(m2x4.get_price_info(5.5), "38.5 - 41.25")
@@ -137,8 +130,10 @@ class CompanySimpleTest(TestCase):
 
 
 class ContactSimpleTest(TestCase):
+    """Unit tests for the Contact model"""
 
     def setUp(self):
+        """Initialization for the tests in this class"""
         # Create a simple company
         self.c = Company.objects.create(name='Test Corp.', description='We make stuff good')
 
@@ -148,15 +143,18 @@ class ContactSimpleTest(TestCase):
         Contact.objects.create(name='Sally Smith', company=self.c)
 
     def test_exists(self):
+        """Test that contacts exist"""
         self.assertEqual(Contact.objects.count(), 3)
 
     def test_delete(self):
+        """Test deletion of a Contact instance"""
         # Remove the parent company
         Company.objects.get(pk=self.c.pk).delete()
         self.assertEqual(Contact.objects.count(), 0)
 
 
 class ManufacturerPartSimpleTest(TestCase):
+    """Unit tests for the ManufacturerPart model"""
 
     fixtures = [
         'category',
@@ -167,6 +165,8 @@ class ManufacturerPartSimpleTest(TestCase):
     ]
 
     def setUp(self):
+        """Initialization for the unit tests in this class"""
+
         # Create a manufacturer part
         self.part = Part.objects.get(pk=1)
         manufacturer = Company.objects.get(pk=1)
@@ -189,6 +189,7 @@ class ManufacturerPartSimpleTest(TestCase):
         supplier_part.save()
 
     def test_exists(self):
+        """That that a ManufacturerPart has been created"""
         self.assertEqual(ManufacturerPart.objects.count(), 4)
 
         # Check that manufacturer part was created from supplier part creation
@@ -196,7 +197,7 @@ class ManufacturerPartSimpleTest(TestCase):
         self.assertEqual(manufacturer_parts.count(), 1)
 
     def test_delete(self):
-        # Remove a part
+        """Test deletion of a ManufacturerPart"""
         Part.objects.get(pk=self.part.id).delete()
         # Check that ManufacturerPart was deleted
         self.assertEqual(ManufacturerPart.objects.count(), 3)

@@ -33,7 +33,7 @@ class CompanyList(generics.ListCreateAPIView):
     queryset = Company.objects.all()
 
     def get_queryset(self):
-
+        """Return annotated queryset for the company list endpoint"""
         queryset = super().get_queryset()
         queryset = CompanySerializer.annotate_queryset(queryset)
 
@@ -74,7 +74,7 @@ class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CompanySerializer
 
     def get_queryset(self):
-
+        """Return annotated queryset for the company detail endpoint"""
         queryset = super().get_queryset()
         queryset = CompanySerializer.annotate_queryset(queryset)
 
@@ -115,7 +115,7 @@ class ManufacturerPartList(generics.ListCreateAPIView):
     filterset_class = ManufacturerPartFilter
 
     def get_serializer(self, *args, **kwargs):
-
+        """Return serializer instance for this endpoint"""
         # Do we wish to include extra detail?
         try:
             params = self.request.query_params
@@ -187,7 +187,7 @@ class ManufacturerPartParameterList(generics.ListCreateAPIView):
     serializer_class = ManufacturerPartParameterSerializer
 
     def get_serializer(self, *args, **kwargs):
-
+        """Return serializer instance for this endpoint"""
         # Do we wish to include any extra detail?
         try:
             params = self.request.query_params
@@ -262,12 +262,6 @@ class SupplierPartList(generics.ListCreateAPIView):
 
     queryset = SupplierPart.objects.all()
 
-    def get_queryset(self):
-
-        queryset = super().get_queryset()
-
-        return queryset
-
     def filter_queryset(self, queryset):
         """Custom filtering for the queryset."""
         queryset = super().filter_queryset(queryset)
@@ -314,6 +308,7 @@ class SupplierPartList(generics.ListCreateAPIView):
         return queryset
 
     def get_serializer(self, *args, **kwargs):
+        """Return serializer instance for this endpoint"""
 
         # Do we wish to include extra detail?
         try:

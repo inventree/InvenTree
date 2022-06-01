@@ -77,9 +77,11 @@ class Company(models.Model):
 
     @staticmethod
     def get_api_url():
+        """Return the API URL associated with the Company model"""
         return reverse('api-company-list')
 
     class Meta:
+        """Metaclass defines extra model options"""
         ordering = ['name', ]
         constraints = [
             UniqueConstraint(fields=['name', 'email'], name='unique_name_email_pair')
@@ -183,72 +185,15 @@ class Company(models.Model):
             return getBlankThumbnail()
 
     @property
-    def manufactured_part_count(self):
-        """The number of parts manufactured by this company."""
-        return self.manufactured_parts.count()
-
-    @property
-    def has_manufactured_parts(self):
-        return self.manufactured_part_count > 0
-
-    @property
-    def supplied_part_count(self):
-        """The number of parts supplied by this company."""
-        return self.supplied_parts.count()
-
-    @property
-    def has_supplied_parts(self):
-        """Return True if this company supplies any parts."""
-        return self.supplied_part_count > 0
-
-    @property
     def parts(self):
         """Return SupplierPart objects which are supplied or manufactured by this company."""
         return SupplierPart.objects.filter(Q(supplier=self.id) | Q(manufacturer_part__manufacturer=self.id))
-
-    @property
-    def part_count(self):
-        """The number of parts manufactured (or supplied) by this Company."""
-        return self.parts.count()
-
-    @property
-    def has_parts(self):
-        return self.part_count > 0
 
     @property
     def stock_items(self):
         """Return a list of all stock items supplied or manufactured by this company."""
         stock = apps.get_model('stock', 'StockItem')
         return stock.objects.filter(Q(supplier_part__supplier=self.id) | Q(supplier_part__manufacturer_part__manufacturer=self.id)).all()
-
-    @property
-    def stock_count(self):
-        """Return the number of stock items supplied or manufactured by this company."""
-        return self.stock_items.count()
-
-    def outstanding_purchase_orders(self):
-        """Return purchase orders which are 'outstanding'."""
-        return self.purchase_orders.filter(status__in=PurchaseOrderStatus.OPEN)
-
-    def pending_purchase_orders(self):
-        """Return purchase orders which are PENDING (not yet issued)."""
-        return self.purchase_orders.filter(status=PurchaseOrderStatus.PENDING)
-
-    def closed_purchase_orders(self):
-        """Return purchase orders which are not 'outstanding'.
-
-        - Complete
-        - Failed / lost
-        - Returned
-        """
-        return self.purchase_orders.exclude(status__in=PurchaseOrderStatus.OPEN)
-
-    def complete_purchase_orders(self):
-        return self.purchase_orders.filter(status=PurchaseOrderStatus.COMPLETE)
-
-    def failed_purchase_orders(self):
-        """Return any purchase orders which were not successful."""
-        return self.purchase_orders.filter(status__in=PurchaseOrderStatus.FAILED)
 
 
 class Contact(models.Model):
@@ -287,9 +232,11 @@ class ManufacturerPart(models.Model):
 
     @staticmethod
     def get_api_url():
+        """Return the API URL associated with the ManufacturerPart instance"""
         return reverse('api-manufacturer-part-list')
 
     class Meta:
+        """Metaclass defines extra model options"""
         unique_together = ('part', 'manufacturer', 'MPN')
 
     part = models.ForeignKey('part.Part', on_delete=models.CASCADE,
@@ -349,6 +296,7 @@ class ManufacturerPart(models.Model):
         return manufacturer_part
 
     def __str__(self):
+        """Format a string representation of a ManufacturerPart"""
         s = ''
 
         if self.manufacturer:
@@ -365,9 +313,11 @@ class ManufacturerPartAttachment(InvenTreeAttachment):
 
     @staticmethod
     def get_api_url():
+        """Return the API URL associated with the ManufacturerPartAttachment model"""
         return reverse('api-manufacturer-part-attachment-list')
 
     def getSubdir(self):
+        """Return the subdirectory where attachment files for the ManufacturerPart model are located"""
         return os.path.join("manufacturer_part_files", str(self.manufacturer_part.id))
 
     manufacturer_part = models.ForeignKey(ManufacturerPart, on_delete=models.CASCADE,
@@ -384,9 +334,11 @@ class ManufacturerPartParameter(models.Model):
 
     @staticmethod
     def get_api_url():
+        """Return the API URL associated with the ManufacturerPartParameter model"""
         return reverse('api-manufacturer-part-parameter-list')
 
     class Meta:
+        """Metaclass defines extra model options"""
         unique_together = ('manufacturer_part', 'name')
 
     manufacturer_part = models.ForeignKey(
@@ -426,6 +378,7 @@ class SupplierPartManager(models.Manager):
     """
 
     def get_queryset(self):
+        """Prefetch related fields when querying against the SupplierPart model"""
         # Always prefetch related models
         return super().get_queryset().prefetch_related(
             'part',
@@ -455,13 +408,15 @@ class SupplierPart(models.Model):
 
     @staticmethod
     def get_api_url():
+        """Return the API URL associated with the SupplierPart model"""
         return reverse('api-supplier-part-list')
 
     def get_absolute_url(self):
+        """Return the web URL of the detail view for this SupplierPart"""
         return reverse('supplier-part-detail', kwargs={'pk': self.id})
 
     def api_instance_filters(self):
-
+        """Return custom API filters for this particular instance"""
         return {
             'manufacturer_part': {
                 'part': self.part.pk
@@ -469,13 +424,17 @@ class SupplierPart(models.Model):
         }
 
     class Meta:
+        """Metaclass defines extra model options"""
         unique_together = ('part', 'supplier', 'SKU')
 
         # This model was moved from the 'Part' app
         db_table = 'part_supplierpart'
 
     def clean(self):
+        """Custom clean action for the SupplierPart model:
 
+        - Ensure that manufacturer_part.part and part are the same!
+        """
         super().clean()
 
         # Ensure that the linked manufacturer_part points to the same part!
@@ -587,6 +546,7 @@ class SupplierPart(models.Model):
 
     @property
     def has_price_breaks(self):
+        """Return True if this SupplierPart has associated price breaks"""
         return self.price_breaks.count() > 0
 
     @property
@@ -596,6 +556,7 @@ class SupplierPart(models.Model):
 
     @property
     def unit_pricing(self):
+        """Return the single-quantity pricing for this SupplierPart"""
         return self.get_price(1)
 
     def add_price_break(self, quantity, price) -> None:
@@ -645,9 +606,11 @@ class SupplierPart(models.Model):
 
     @property
     def pretty_name(self):
+        """Format a 'pretty' name for this SupplierPart"""
         return str(self)
 
     def __str__(self):
+        """Format a string representation of a SupplierPart"""
         s = ''
 
         if self.part.IPN:
@@ -678,6 +641,7 @@ class SupplierPriceBreak(common.models.PriceBreak):
 
     @staticmethod
     def get_api_url():
+        """Return the API URL associated with the SupplierPriceBreak model"""
         return reverse('api-part-supplier-price-list')
 
     part = models.ForeignKey(SupplierPart, on_delete=models.CASCADE, related_name='pricebreaks', verbose_name=_('Part'),)
@@ -685,10 +649,12 @@ class SupplierPriceBreak(common.models.PriceBreak):
     updated = models.DateTimeField(auto_now=True, null=True, verbose_name=_('last updated'))
 
     class Meta:
+        """Metaclass defines extra model options"""
         unique_together = ("part", "quantity")
 
         # This model was moved from the 'Part' app
         db_table = 'part_supplierpricebreak'
 
     def __str__(self):
+        """Format a string representation of a SupplierPriceBreak instance"""
         return f'{self.part.SKU} - {self.price} @ {self.quantity}'

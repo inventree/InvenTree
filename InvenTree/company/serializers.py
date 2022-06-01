@@ -43,7 +43,7 @@ class CompanySerializer(InvenTreeModelSerializer):
 
     @staticmethod
     def annotate_queryset(queryset):
-
+        """Annoate the supplied queryset with aggregated information"""
         # Add count of parts manufactured
         queryset = queryset.annotate(
             parts_manufactured=SubqueryCount('manufactured_parts')
@@ -107,7 +107,7 @@ class ManufacturerPartSerializer(InvenTreeModelSerializer):
     pretty_name = serializers.CharField(read_only=True)
 
     def __init__(self, *args, **kwargs):
-
+        """Initialize this serializer with extra detail fields as required"""
         part_detail = kwargs.pop('part_detail', True)
         manufacturer_detail = kwargs.pop('manufacturer_detail', True)
         prettify = kwargs.pop('pretty', False)
@@ -171,7 +171,7 @@ class ManufacturerPartParameterSerializer(InvenTreeModelSerializer):
     manufacturer_part_detail = ManufacturerPartSerializer(source='manufacturer_part', many=False, read_only=True)
 
     def __init__(self, *args, **kwargs):
-
+        """Initialize this serializer with extra detail fields as required"""
         man_detail = kwargs.pop('manufacturer_part_detail', False)
 
         super(ManufacturerPartParameterSerializer, self).__init__(*args, **kwargs)
@@ -206,7 +206,7 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
     pretty_name = serializers.CharField(read_only=True)
 
     def __init__(self, *args, **kwargs):
-
+        """Initialize this serializer with extra detail fields as required"""
         part_detail = kwargs.pop('part_detail', True)
         supplier_detail = kwargs.pop('supplier_detail', True)
         manufacturer_detail = kwargs.pop('manufacturer_detail', True)

@@ -73,9 +73,6 @@ class CategoryTest(TestCase):
 
     def test_part_count(self):
         """Test that the Category part count works."""
-        self.assertTrue(self.resistors.has_parts)
-        self.assertTrue(self.fasteners.has_parts)
-        self.assertFalse(self.transceivers.has_parts)
 
         self.assertEqual(self.fasteners.partcount(), 2)
         self.assertEqual(self.capacitors.partcount(), 1)
