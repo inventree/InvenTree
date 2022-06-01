@@ -158,14 +158,6 @@ class StockLocation(MetadataMixin, InvenTreeTree):
         """Return the number of StockItem objects which live in or under this category."""
         return self.get_stock_items(cascade).count()
 
-    def has_items(self, cascade=True):
-        """Return True if there are StockItems existing in this category.
-
-        Args:
-            cascade: If True, also search an sublocations (default = True)
-        """
-        return self.stock_item_count(cascade) > 0
-
     @property
     def item_count(self):
         """Simply returns the number of stock items in this location.

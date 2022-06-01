@@ -155,9 +155,6 @@ class StockTest(InvenTreeTestCase):
 
     def test_items(self):
         """Test has_items."""
-        self.assertTrue(self.drawer1.has_items())
-        self.assertTrue(self.drawer3.has_items())
-        self.assertFalse(self.drawer2.has_items())
 
         # Drawer 3 should have three stock items
         self.assertEqual(self.drawer3.stock_items.count(), 18)
