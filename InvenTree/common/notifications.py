@@ -9,6 +9,10 @@ from InvenTree.ready import isImportingData
 from plugin import registry
 from plugin.models import NotificationUserSetting
 
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
+from users.models import Owner
+
 logger = logging.getLogger('inventree')
 
 
@@ -266,7 +270,7 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
     if isImportingData():
         return
 
-    # Resolve objekt reference
+    # Resolve object reference
     obj_ref_value = getattr(obj, obj_ref)
 
     # Try with some defaults
@@ -285,11 +289,33 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
         return
 
     logger.info(f"Gathering users for notification '{category}'")
+
     # Collect possible targets
     if not targets:
         targets = target_fnc(*target_args, **target_kwargs)
 
+    # Convert list of targets to a list of users
+    # (targets may include 'owner' or 'group' classes)
+    target_users = set()
+
     if targets:
+        for target in targets:
+            # User instance is provided
+            if isinstance(target, get_user_model()):
+                target_users.add(target)
+            # Group instance is provided
+            elif isinstance(target, Group):
+                for user in get_user_model().objects.filter(groups__name=target.name):
+                    target_users.add(target)
+            # Owner instance (either 'user' or 'group' is provided)
+            elif isinstance(target, Owner):
+                for owner in target.get_related_owners(include_group=False):
+                    target_users.add(owner.owner)
+            # Unhandled type
+            else:
+                logger.error(f"Unknown target passed to trigger_notification method: {target}")
+
+    if target_users:
         logger.info(f"Sending notification '{category}' for '{str(obj)}'")
 
         # Collect possible methods
@@ -301,7 +327,7 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
         for method in delivery_methods:
             logger.info(f"Triggering method '{method.METHOD_NAME}'")
             try:
-                deliver_notification(method, obj, category, targets, context)
+                deliver_notification(method, obj, category, target_users, context)
             except NotImplementedError as error:
                 raise error
             except Exception as error:
