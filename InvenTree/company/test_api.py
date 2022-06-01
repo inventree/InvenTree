@@ -1,3 +1,5 @@
+"""Unit testing for the company app API functions"""
+
 from django.urls import reverse
 
 from rest_framework import status
@@ -8,9 +10,7 @@ from .models import Company
 
 
 class CompanyTest(InvenTreeAPITestCase):
-    """
-    Series of tests for the Company DRF API
-    """
+    """Series of tests for the Company DRF API."""
 
     roles = [
         'purchase_order.add',
@@ -18,7 +18,7 @@ class CompanyTest(InvenTreeAPITestCase):
     ]
 
     def setUp(self):
-
+        """Perform initialization for the unit test class"""
         super().setUp()
 
         self.acme = Company.objects.create(name='ACME', description='Supplier', is_customer=False, is_supplier=True)
@@ -26,6 +26,7 @@ class CompanyTest(InvenTreeAPITestCase):
         Company.objects.create(name='Sippy Cup Emporium', description='Another supplier')
 
     def test_company_list(self):
+        """Test the list API endpoint for the Company model"""
         url = reverse('api-company-list')
 
         # There should be three companies
@@ -45,10 +46,7 @@ class CompanyTest(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), 2)
 
     def test_company_detail(self):
-        """
-        Tests for the Company detail endpoint
-        """
-
+        """Tests for the Company detail endpoint."""
         url = reverse('api-company-detail', kwargs={'pk': self.acme.pk})
         response = self.get(url)
 
@@ -71,20 +69,14 @@ class CompanyTest(InvenTreeAPITestCase):
         self.assertEqual(response.data['currency'], 'NZD')
 
     def test_company_search(self):
-        """
-        Test search functionality in company list
-        """
-
+        """Test search functionality in company list."""
         url = reverse('api-company-list')
         data = {'search': 'cup'}
         response = self.get(url, data)
         self.assertEqual(len(response.data), 2)
 
     def test_company_create(self):
-        """
-        Test that we can create a company via the API!
-        """
-
+        """Test that we can create a company via the API!"""
         url = reverse('api-company-list')
 
         # Name is required
@@ -146,9 +138,7 @@ class CompanyTest(InvenTreeAPITestCase):
 
 
 class ManufacturerTest(InvenTreeAPITestCase):
-    """
-    Series of tests for the Manufacturer DRF API
-    """
+    """Series of tests for the Manufacturer DRF API."""
 
     fixtures = [
         'category',
@@ -164,6 +154,7 @@ class ManufacturerTest(InvenTreeAPITestCase):
     ]
 
     def test_manufacturer_part_list(self):
+        """Test the ManufacturerPart API list functionality"""
         url = reverse('api-manufacturer-part-list')
 
         # There should be three manufacturer parts
@@ -191,9 +182,7 @@ class ManufacturerTest(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), 2)
 
     def test_manufacturer_part_detail(self):
-        """
-        Tests for the ManufacturerPart detail endpoint
-        """
+        """Tests for the ManufacturerPart detail endpoint."""
         url = reverse('api-manufacturer-part-detail', kwargs={'pk': 1})
 
         response = self.get(url)
@@ -210,13 +199,14 @@ class ManufacturerTest(InvenTreeAPITestCase):
         self.assertEqual(response.data['MPN'], 'MPN-TEST-123')
 
     def test_manufacturer_part_search(self):
-        # Test search functionality in manufacturer list
+        """Test search functionality in manufacturer list"""
         url = reverse('api-manufacturer-part-list')
         data = {'search': 'MPN'}
         response = self.get(url, data)
         self.assertEqual(len(response.data), 3)
 
     def test_supplier_part_create(self):
+        """Test a SupplierPart can be created via the API"""
         url = reverse('api-supplier-part-list')
 
         # Create a manufacturer part

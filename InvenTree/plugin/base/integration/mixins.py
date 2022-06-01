@@ -1,6 +1,4 @@
-"""
-Plugin mixin classes
-"""
+"""Plugin mixin classes."""
 
 import json
 import logging
@@ -21,37 +19,29 @@ logger = logging.getLogger('inventree')
 
 
 class SettingsMixin:
-    """
-    Mixin that enables global settings for the plugin
-    """
+    """Mixin that enables global settings for the plugin."""
 
     class MixinMeta:
+        """Meta for mixin."""
         MIXIN_NAME = 'Settings'
 
     def __init__(self):
+        """Register mixin."""
         super().__init__()
         self.add_mixin('settings', 'has_settings', __class__)
         self.settings = getattr(self, 'SETTINGS', {})
 
     @property
     def has_settings(self):
-        """
-        Does this plugin use custom global settings
-        """
+        """Does this plugin use custom global settings."""
         return bool(self.settings)
 
     def get_setting(self, key):
-        """
-        Return the 'value' of the setting associated with this plugin
-        """
-
+        """Return the 'value' of the setting associated with this plugin."""
         return PluginSetting.get_setting(key, plugin=self)
 
     def set_setting(self, key, value, user=None):
-        """
-        Set plugin setting value by key
-        """
-
+        """Set plugin setting value by key."""
         try:
             plugin, _ = PluginConfig.objects.get_or_create(key=self.plugin_slug(), name=self.plugin_name())
         except (OperationalError, ProgrammingError):  # pragma: no cover
@@ -66,8 +56,7 @@ class SettingsMixin:
 
 
 class ScheduleMixin:
-    """
-    Mixin that provides support for scheduled tasks.
+    """Mixin that provides support for scheduled tasks.
 
     Implementing classes must provide a dict object called SCHEDULED_TASKS,
     which provides information on the tasks to be scheduled.
@@ -99,12 +88,12 @@ class ScheduleMixin:
     SCHEDULED_TASKS = {}
 
     class MixinMeta:
-        """
-        Meta options for this mixin
-        """
+        """Meta options for this mixin."""
+
         MIXIN_NAME = 'Schedule'
 
     def __init__(self):
+        """Register mixin."""
         super().__init__()
         self.scheduled_tasks = self.get_scheduled_tasks()
         self.validate_scheduled_tasks()
@@ -112,20 +101,19 @@ class ScheduleMixin:
         self.add_mixin('schedule', 'has_scheduled_tasks', __class__)
 
     def get_scheduled_tasks(self):
+        """Returns `SCHEDULED_TASKS` context.
+
+        Override if you want the scheduled tasks to be dynamic (influenced by settings for example).
+        """
         return getattr(self, 'SCHEDULED_TASKS', {})
 
     @property
     def has_scheduled_tasks(self):
-        """
-        Are tasks defined for this plugin
-        """
+        """Are tasks defined for this plugin."""
         return bool(self.scheduled_tasks)
 
     def validate_scheduled_tasks(self):
-        """
-        Check that the provided scheduled tasks are valid
-        """
-
+        """Check that the provided scheduled tasks are valid."""
         if not self.has_scheduled_tasks:
             raise MixinImplementationError("SCHEDULED_TASKS not defined")
 
@@ -147,25 +135,18 @@ class ScheduleMixin:
                 raise MixinImplementationError(f"Task '{key}' is missing 'minutes' parameter")
 
     def get_task_name(self, key):
-        """
-        Task name for key
-        """
+        """Task name for key."""
         # Generate a 'unique' task name
         slug = self.plugin_slug()
         return f"plugin.{slug}.{key}"
 
     def get_task_names(self):
-        """
-        All defined task names
-        """
+        """All defined task names."""
         # Returns a list of all task names associated with this plugin instance
         return [self.get_task_name(key) for key in self.scheduled_tasks.keys()]
 
     def register_tasks(self):
-        """
-        Register the tasks with the database
-        """
-
+        """Register the tasks with the database."""
         try:
             from django_q.models import Schedule
 
@@ -182,10 +163,7 @@ class ScheduleMixin:
                 func_name = task['func'].strip()
 
                 if '.' in func_name:
-                    """
-                    Dotted notation indicates that we wish to run a globally defined function,
-                    from a specified Python module.
-                    """
+                    """Dotted notation indicates that we wish to run a globally defined function, from a specified Python module."""
 
                     Schedule.objects.create(
                         name=task_name,
@@ -218,10 +196,7 @@ class ScheduleMixin:
             logger.warning("register_tasks failed, database not ready")
 
     def unregister_tasks(self):
-        """
-        Deregister the tasks with the database
-        """
-
+        """Deregister the tasks with the database."""
         try:
             from django_q.models import Schedule
 
@@ -240,81 +215,65 @@ class ScheduleMixin:
 
 
 class UrlsMixin:
-    """
-    Mixin that enables custom URLs for the plugin
-    """
+    """Mixin that enables custom URLs for the plugin."""
 
     class MixinMeta:
-        """
-        Meta options for this mixin
-        """
+        """Meta options for this mixin."""
+
         MIXIN_NAME = 'URLs'
 
     def __init__(self):
+        """Register mixin."""
         super().__init__()
         self.add_mixin('urls', 'has_urls', __class__)
         self.urls = self.setup_urls()
 
     def setup_urls(self):
-        """
-        Setup url endpoints for this plugin
-        """
+        """Setup url endpoints for this plugin."""
         return getattr(self, 'URLS', None)
 
     @property
     def base_url(self):
-        """
-        Base url for this plugin
-        """
+        """Base url for this plugin."""
         return f'{PLUGIN_BASE}/{self.slug}/'
 
     @property
     def internal_name(self):
-        """
-        Internal url pattern name
-        """
+        """Internal url pattern name."""
         return f'plugin:{self.slug}:'
 
     @property
     def urlpatterns(self):
-        """
-        Urlpatterns for this plugin
-        """
+        """Urlpatterns for this plugin."""
         if self.has_urls:
             return re_path(f'^{self.slug}/', include((self.urls, self.slug)), name=self.slug)
         return None
 
     @property
     def has_urls(self):
-        """
-        Does this plugin use custom urls
-        """
+        """Does this plugin use custom urls."""
         return bool(self.urls)
 
 
 class NavigationMixin:
-    """
-    Mixin that enables custom navigation links with the plugin
-    """
+    """Mixin that enables custom navigation links with the plugin."""
 
     NAVIGATION_TAB_NAME = None
     NAVIGATION_TAB_ICON = "fas fa-question"
 
     class MixinMeta:
-        """
-        Meta options for this mixin
-        """
+        """Meta options for this mixin."""
+
         MIXIN_NAME = 'Navigation Links'
 
     def __init__(self):
+        """Register mixin."""
         super().__init__()
         self.add_mixin('navigation', 'has_naviation', __class__)
         self.navigation = self.setup_navigation()
 
     def setup_navigation(self):
-        """
-        Setup navigation links for this plugin
-        """
+        """Setup navigation links for this plugin."""
         nav_links = getattr(self, 'NAVIGATION', None)
         if nav_links:
             # check if needed values are configured
@@ -325,16 +284,12 @@ class NavigationMixin:
 
     @property
     def has_naviation(self):
-        """
-        Does this plugin define navigation elements
-        """
+        """Does this plugin define navigation elements."""
         return bool(self.navigation)
 
     @property
     def navigation_name(self):
-        """
-        Name for navigation tab
-        """
+        """Name for navigation tab."""
         name = getattr(self, 'NAVIGATION_TAB_NAME', None)
         if not name:
             name = self.human_name
@@ -342,38 +297,31 @@ class NavigationMixin:
 
     @property
     def navigation_icon(self):
-        """
-        Icon-name for navigation tab
-        """
+        """Icon-name for navigation tab."""
         return getattr(self, 'NAVIGATION_TAB_ICON', "fas fa-question")
 
 
 class AppMixin:
-    """
-    Mixin that enables full django app functions for a plugin
-    """
+    """Mixin that enables full django app functions for a plugin."""
 
     class MixinMeta:
-        """m
-        Mta options for this mixin
-        """
+        """Meta options for this mixin."""
+
         MIXIN_NAME = 'App registration'
 
     def __init__(self):
+        """Register mixin."""
         super().__init__()
         self.add_mixin('app', 'has_app', __class__)
 
     @property
     def has_app(self):
-        """
-        This plugin is always an app with this plugin
-        """
+        """This plugin is always an app with this plugin."""
         return True
 
 
 class APICallMixin:
-    """
-    Mixin that enables easier API calls for a plugin
+    """Mixin that enables easier API calls for a plugin.
 
     Steps to set up:
     1. Add this mixin before (left of) SettingsMixin and PluginBase
@@ -424,10 +372,11 @@ class APICallMixin:
     API_TOKEN = 'Bearer'
 
     class MixinMeta:
-        """meta options for this mixin"""
+        """Meta options for this mixin."""
         MIXIN_NAME = 'API calls'
 
     def __init__(self):
+        """Register mixin."""
         super().__init__()
         self.add_mixin('api_call', 'has_api_call', __class__)
 
@@ -442,22 +391,49 @@ class APICallMixin:
 
     @property
     def api_url(self):
+        """Base url path."""
         return f'{self.API_METHOD}://{self.get_setting(self.API_URL_SETTING)}'
 
     @property
     def api_headers(self):
+        """Returns the default headers for requests with api_call.
+
+        Contains a header with the key set in `API_TOKEN` for the plugin it `API_TOKEN_SETTING` is defined.
+        Check the mixin class docstring for a full example.
+        """
         headers = {'Content-Type': 'application/json'}
         if getattr(self, 'API_TOKEN_SETTING'):
             headers[self.API_TOKEN] = self.get_setting(self.API_TOKEN_SETTING)
         return headers
 
-    def api_build_url_args(self, arguments):
+    def api_build_url_args(self, arguments: dict) -> str:
+        """Returns an encoded path for the provided dict."""
         groups = []
         for key, val in arguments.items():
             groups.append(f'{key}={",".join([str(a) for a in val])}')
         return f'?{"&".join(groups)}'
 
-    def api_call(self, endpoint, method: str = 'GET', url_args=None, data=None, headers=None, simple_response: bool = True, endpoint_is_url: bool = False):
+    def api_call(self, endpoint: str, method: str = 'GET', url_args: dict = None, data=None, headers: dict = None, simple_response: bool = True, endpoint_is_url: bool = False):
+        """Do an API call.
+
+        Simplest call example:
+        ```python
+        self.api_call('hello')
+        ```
+        Will call the `{base_url}/hello` with a GET request and - if set - the token for this plugin.
+
+        Args:
+            endpoint (str): Path to current endpoint. Either the endpoint or the full or if the flag is set
+            method (str, optional): HTTP method that should be uses - capitalized. Defaults to 'GET'.
+            url_args (dict, optional): arguments that should be appended to the url. Defaults to None.
+            data (Any, optional): Data that should be transmitted in the body - must be JSON serializable. Defaults to None.
+            headers (dict, optional): Headers that should be used for the request. Defaults to self.api_headers.
+            simple_response (bool, optional): Return the response as JSON. Defaults to True.
+            endpoint_is_url (bool, optional): The provided endpoint is the full url - do not use self.api_url as base. Defaults to False.
+
+        Returns:
+            Response
+        """
         if url_args:
             endpoint += self.api_build_url_args(url_args)
 
@@ -487,8 +463,7 @@ class APICallMixin:
 
 
 class PanelMixin:
-    """
-    Mixin which allows integration of custom 'panels' into a particular page.
+    """Mixin which allows integration of custom 'panels' into a particular page.
 
     The mixin provides a number of key functionalities:
 
@@ -529,28 +504,29 @@ class PanelMixin:
         'javascript': 'alert("You just loaded this panel!")',
         'content': '<b>Hello world</b>',
     }
-
     """
 
     class MixinMeta:
+        """Meta for mixin."""
+
         MIXIN_NAME = 'Panel'
 
     def __init__(self):
+        """Register mixin."""
         super().__init__()
         self.add_mixin('panel', True, __class__)
 
     def get_custom_panels(self, view, request):
-        """ This method *must* be implemented by the plugin class """
+        """This method *must* be implemented by the plugin class."""
         raise MixinNotImplementedError(f"{__class__} is missing the 'get_custom_panels' method")
 
     def get_panel_context(self, view, request, context):
-        """
-        Build the context data to be used for template rendering.
+        """Build the context data to be used for template rendering.
+
         Custom class can override this to provide any custom context data.
 
         (See the example in "custom_panel_sample.py")
         """
-
         # Provide some standard context items to the template for rendering
         context['plugin'] = self
         context['request'] = request
@@ -565,7 +541,16 @@ class PanelMixin:
         return context
 
     def render_panels(self, view, request, context):
+        """Get panels for a view.
 
+        Args:
+            view: Current view context
+            request: Current request for passthrough
+            context: Rendering context
+
+        Returns:
+            Array of panels
+        """
         panels = []
 
         # Construct an updated context object for template rendering

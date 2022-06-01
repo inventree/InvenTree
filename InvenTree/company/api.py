@@ -1,6 +1,4 @@
-"""
-Provides a JSON API for the Company app
-"""
+"""Provides a JSON API for the Company app."""
 
 from django.db.models import Q
 from django.urls import include, re_path
@@ -23,7 +21,7 @@ from .serializers import (CompanySerializer,
 
 
 class CompanyList(generics.ListCreateAPIView):
-    """ API endpoint for accessing a list of Company objects
+    """API endpoint for accessing a list of Company objects.
 
     Provides two methods:
 
@@ -35,7 +33,7 @@ class CompanyList(generics.ListCreateAPIView):
     queryset = Company.objects.all()
 
     def get_queryset(self):
-
+        """Return annotated queryset for the company list endpoint"""
         queryset = super().get_queryset()
         queryset = CompanySerializer.annotate_queryset(queryset)
 
@@ -70,13 +68,13 @@ class CompanyList(generics.ListCreateAPIView):
 
 
 class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ API endpoint for detail of a single Company object """
+    """API endpoint for detail of a single Company object."""
 
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
 
     def get_queryset(self):
-
+        """Return annotated queryset for the company detail endpoint"""
         queryset = super().get_queryset()
         queryset = CompanySerializer.annotate_queryset(queryset)
 
@@ -84,11 +82,11 @@ class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class ManufacturerPartFilter(rest_filters.FilterSet):
-    """
-    Custom API filters for the ManufacturerPart list endpoint.
-    """
+    """Custom API filters for the ManufacturerPart list endpoint."""
 
     class Meta:
+        """Metaclass options."""
+
         model = ManufacturerPart
         fields = [
             'manufacturer',
@@ -101,7 +99,7 @@ class ManufacturerPartFilter(rest_filters.FilterSet):
 
 
 class ManufacturerPartList(generics.ListCreateAPIView):
-    """ API endpoint for list view of ManufacturerPart object
+    """API endpoint for list view of ManufacturerPart object.
 
     - GET: Return list of ManufacturerPart objects
     - POST: Create a new ManufacturerPart object
@@ -117,7 +115,7 @@ class ManufacturerPartList(generics.ListCreateAPIView):
     filterset_class = ManufacturerPartFilter
 
     def get_serializer(self, *args, **kwargs):
-
+        """Return serializer instance for this endpoint"""
         # Do we wish to include extra detail?
         try:
             params = self.request.query_params
@@ -149,7 +147,7 @@ class ManufacturerPartList(generics.ListCreateAPIView):
 
 
 class ManufacturerPartDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ API endpoint for detail view of ManufacturerPart object
+    """API endpoint for detail view of ManufacturerPart object.
 
     - GET: Retrieve detail view
     - PATCH: Update object
@@ -161,9 +159,7 @@ class ManufacturerPartDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class ManufacturerPartAttachmentList(AttachmentMixin, generics.ListCreateAPIView):
-    """
-    API endpoint for listing (and creating) a ManufacturerPartAttachment (file upload).
-    """
+    """API endpoint for listing (and creating) a ManufacturerPartAttachment (file upload)."""
 
     queryset = ManufacturerPartAttachment.objects.all()
     serializer_class = ManufacturerPartAttachmentSerializer
@@ -178,24 +174,20 @@ class ManufacturerPartAttachmentList(AttachmentMixin, generics.ListCreateAPIView
 
 
 class ManufacturerPartAttachmentDetail(AttachmentMixin, generics.RetrieveUpdateDestroyAPIView):
-    """
-    Detail endpooint for ManufacturerPartAttachment model
-    """
+    """Detail endpooint for ManufacturerPartAttachment model."""
 
     queryset = ManufacturerPartAttachment.objects.all()
     serializer_class = ManufacturerPartAttachmentSerializer
 
 
 class ManufacturerPartParameterList(generics.ListCreateAPIView):
-    """
-    API endpoint for list view of ManufacturerPartParamater model.
-    """
+    """API endpoint for list view of ManufacturerPartParamater model."""
 
     queryset = ManufacturerPartParameter.objects.all()
     serializer_class = ManufacturerPartParameterSerializer
 
     def get_serializer(self, *args, **kwargs):
-
+        """Return serializer instance for this endpoint"""
         # Do we wish to include any extra detail?
         try:
             params = self.request.query_params
@@ -215,10 +207,7 @@ class ManufacturerPartParameterList(generics.ListCreateAPIView):
         return self.serializer_class(*args, **kwargs)
 
     def filter_queryset(self, queryset):
-        """
-        Custom filtering for the queryset
-        """
-
+        """Custom filtering for the queryset."""
         queryset = super().filter_queryset(queryset)
 
         params = self.request.query_params
@@ -258,16 +247,14 @@ class ManufacturerPartParameterList(generics.ListCreateAPIView):
 
 
 class ManufacturerPartParameterDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API endpoint for detail view of ManufacturerPartParameter model
-    """
+    """API endpoint for detail view of ManufacturerPartParameter model."""
 
     queryset = ManufacturerPartParameter.objects.all()
     serializer_class = ManufacturerPartParameterSerializer
 
 
 class SupplierPartList(generics.ListCreateAPIView):
-    """ API endpoint for list view of SupplierPart object
+    """API endpoint for list view of SupplierPart object.
 
     - GET: Return list of SupplierPart objects
     - POST: Create a new SupplierPart object
@@ -275,17 +262,8 @@ class SupplierPartList(generics.ListCreateAPIView):
 
     queryset = SupplierPart.objects.all()
 
-    def get_queryset(self):
-
-        queryset = super().get_queryset()
-
-        return queryset
-
     def filter_queryset(self, queryset):
-        """
-        Custom filtering for the queryset.
-        """
-
+        """Custom filtering for the queryset."""
         queryset = super().filter_queryset(queryset)
 
         params = self.request.query_params
@@ -330,6 +308,7 @@ class SupplierPartList(generics.ListCreateAPIView):
         return queryset
 
     def get_serializer(self, *args, **kwargs):
+        """Return serializer instance for this endpoint"""
 
         # Do we wish to include extra detail?
         try:
@@ -369,7 +348,7 @@ class SupplierPartList(generics.ListCreateAPIView):
 
 
 class SupplierPartDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ API endpoint for detail view of SupplierPart object
+    """API endpoint for detail view of SupplierPart object.
 
     - GET: Retrieve detail view
     - PATCH: Update object
@@ -384,7 +363,7 @@ class SupplierPartDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class SupplierPriceBreakList(generics.ListCreateAPIView):
-    """ API endpoint for list view of SupplierPriceBreak object
+    """API endpoint for list view of SupplierPriceBreak object.
 
     - GET: Retrieve list of SupplierPriceBreak objects
     - POST: Create a new SupplierPriceBreak object
@@ -403,9 +382,7 @@ class SupplierPriceBreakList(generics.ListCreateAPIView):
 
 
 class SupplierPriceBreakDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Detail endpoint for SupplierPriceBreak object
-    """
+    """Detail endpoint for SupplierPriceBreak object."""
 
     queryset = SupplierPriceBreak.objects.all()
     serializer_class = SupplierPriceBreakSerializer

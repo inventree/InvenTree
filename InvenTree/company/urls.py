@@ -1,6 +1,4 @@
-"""
-URL lookup for Company app
-"""
+"""URL lookup for Company app."""
 
 from django.urls import include, re_path
 

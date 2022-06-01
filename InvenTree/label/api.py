@@ -1,3 +1,5 @@
+"""API functionality for the 'label' app"""
+
 from django.conf import settings
 from django.core.exceptions import FieldError, ValidationError
 from django.http import HttpResponse, JsonResponse
@@ -21,9 +23,7 @@ from .serializers import (PartLabelSerializer, StockItemLabelSerializer,
 
 
 class LabelListView(generics.ListAPIView):
-    """
-    Generic API class for label templates
-    """
+    """Generic API class for label templates."""
 
     filter_backends = [
         DjangoFilterBackend,
@@ -41,13 +41,11 @@ class LabelListView(generics.ListAPIView):
 
 
 class LabelPrintMixin:
-    """
-    Mixin for printing labels
-    """
+    """Mixin for printing labels."""
 
     def get_plugin(self, request):
-        """
-        Return the label printing plugin associated with this request.
+        """Return the label printing plugin associated with this request.
+
         This is provided in the url, e.g. ?plugin=myprinter
 
         Requires:
@@ -56,7 +54,6 @@ class LabelPrintMixin:
         - matching plugin implements the 'labels' mixin
         - matching plugin is enabled
         """
-
         if not settings.PLUGINS_ENABLED:
             return None  # pragma: no cover
 
@@ -80,10 +77,7 @@ class LabelPrintMixin:
             raise NotFound(f"Plugin '{plugin_key}' not found")
 
     def print(self, request, items_to_print):
-        """
-        Print this label template against a number of pre-validated items
-        """
-
+        """Print this label template against a number of pre-validated items."""
         # Check the request to determine if the user has selected a label printing plugin
         plugin = self.get_plugin(request)
 
@@ -119,26 +113,20 @@ class LabelPrintMixin:
             label_name += ".pdf"
 
         if plugin is not None:
-            """
-            Label printing is to be handled by a plugin,
-            rather than being exported to PDF.
+            """Label printing is to be handled by a plugin, rather than being exported to PDF.
 
             In this case, we do the following:
 
             - Individually generate each label, exporting as an image file
             - Pass all the images through to the label printing plugin
             - Return a JSON response indicating that the printing has been offloaded
-
             """
 
             # Label instance
             label_instance = self.get_object()
 
             for idx, output in enumerate(outputs):
-                """
-                For each output, we generate a temporary image file,
-                which will then get sent to the printer
-                """
+                """For each output, we generate a temporary image file, which will then get sent to the printer."""
 
                 # Generate PDF data for the label
                 pdf = output.get_document().write_pdf()
@@ -159,20 +147,14 @@ class LabelPrintMixin:
             })
 
         elif debug_mode:
-            """
-            Contatenate all rendered templates into a single HTML string,
-            and return the string as a HTML response.
-            """
+            """Contatenate all rendered templates into a single HTML string, and return the string as a HTML response."""
 
             html = "\n".join(outputs)
 
             return HttpResponse(html)
 
         else:
-            """
-            Concatenate all rendered pages into a single PDF object,
-            and return the resulting document!
-            """
+            """Concatenate all rendered pages into a single PDF object, and return the resulting document!"""
 
             pages = []
 
@@ -198,15 +180,10 @@ class LabelPrintMixin:
 
 
 class StockItemLabelMixin:
-    """
-    Mixin for extracting stock items from query params
-    """
+    """Mixin for extracting stock items from query params."""
 
     def get_items(self):
-        """
-        Return a list of requested stock items
-        """
-
+        """Return a list of requested stock items."""
         items = []
 
         params = self.request.query_params
@@ -231,25 +208,20 @@ class StockItemLabelMixin:
 
 
 class StockItemLabelList(LabelListView, StockItemLabelMixin):
-    """
-    API endpoint for viewing list of StockItemLabel objects.
+    """API endpoint for viewing list of StockItemLabel objects.
 
     Filterable by:
 
     - enabled: Filter by enabled / disabled status
     - item: Filter by single stock item
     - items: Filter by list of stock items
-
     """
 
     queryset = StockItemLabel.objects.all()
     serializer_class = StockItemLabelSerializer
 
     def filter_queryset(self, queryset):
-        """
-        Filter the StockItem label queryset.
-        """
-
+        """Filter the StockItem label queryset."""
         queryset = super().filter_queryset(queryset)
 
         # List of StockItem objects to match against
@@ -304,42 +276,30 @@ class StockItemLabelList(LabelListView, StockItemLabelMixin):
 
 
 class StockItemLabelDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API endpoint for a single StockItemLabel object
-    """
+    """API endpoint for a single StockItemLabel object."""
 
     queryset = StockItemLabel.objects.all()
     serializer_class = StockItemLabelSerializer
 
 
 class StockItemLabelPrint(generics.RetrieveAPIView, StockItemLabelMixin, LabelPrintMixin):
-    """
-    API endpoint for printing a StockItemLabel object
-    """
+    """API endpoint for printing a StockItemLabel object."""
 
     queryset = StockItemLabel.objects.all()
     serializer_class = StockItemLabelSerializer
 
     def get(self, request, *args, **kwargs):
-        """
-        Check if valid stock item(s) have been provided.
-        """
-
+        """Check if valid stock item(s) have been provided."""
         items = self.get_items()
 
         return self.print(request, items)
 
 
 class StockLocationLabelMixin:
-    """
-    Mixin for extracting stock locations from query params
-    """
+    """Mixin for extracting stock locations from query params."""
 
     def get_locations(self):
-        """
-        Return a list of requested stock locations
-        """
-
+        """Return a list of requested stock locations."""
         locations = []
 
         params = self.request.query_params
@@ -364,8 +324,7 @@ class StockLocationLabelMixin:
 
 
 class StockLocationLabelList(LabelListView, StockLocationLabelMixin):
-    """
-    API endpoint for viewiing list of StockLocationLabel objects.
+    """API endpoint for viewiing list of StockLocationLabel objects.
 
     Filterable by:
 
@@ -378,10 +337,7 @@ class StockLocationLabelList(LabelListView, StockLocationLabelMixin):
     serializer_class = StockLocationLabelSerializer
 
     def filter_queryset(self, queryset):
-        """
-        Filter the StockLocationLabel queryset
-        """
-
+        """Filter the StockLocationLabel queryset."""
         queryset = super().filter_queryset(queryset)
 
         # List of StockLocation objects to match against
@@ -436,39 +392,30 @@ class StockLocationLabelList(LabelListView, StockLocationLabelMixin):
 
 
 class StockLocationLabelDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API endpoint for a single StockLocationLabel object
-    """
+    """API endpoint for a single StockLocationLabel object."""
 
     queryset = StockLocationLabel.objects.all()
     serializer_class = StockLocationLabelSerializer
 
 
 class StockLocationLabelPrint(generics.RetrieveAPIView, StockLocationLabelMixin, LabelPrintMixin):
-    """
-    API endpoint for printing a StockLocationLabel object
-    """
+    """API endpoint for printing a StockLocationLabel object."""
 
     queryset = StockLocationLabel.objects.all()
     seiralizer_class = StockLocationLabelSerializer
 
     def get(self, request, *args, **kwargs):
-
+        """Print labels based on the request parameters"""
         locations = self.get_locations()
 
         return self.print(request, locations)
 
 
 class PartLabelMixin:
-    """
-    Mixin for extracting Part objects from query parameters
-    """
+    """Mixin for extracting Part objects from query parameters."""
 
     def get_parts(self):
-        """
-        Return a list of requested Part objects
-        """
-
+        """Return a list of requested Part objects."""
         parts = []
 
         params = self.request.query_params
@@ -491,15 +438,13 @@ class PartLabelMixin:
 
 
 class PartLabelList(LabelListView, PartLabelMixin):
-    """
-    API endpoint for viewing list of PartLabel objects
-    """
+    """API endpoint for viewing list of PartLabel objects."""
 
     queryset = PartLabel.objects.all()
     serializer_class = PartLabelSerializer
 
     def filter_queryset(self, queryset):
-
+        """Custom queryset filtering for the PartLabel list"""
         queryset = super().filter_queryset(queryset)
 
         parts = self.get_parts()
@@ -539,27 +484,20 @@ class PartLabelList(LabelListView, PartLabelMixin):
 
 
 class PartLabelDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API endpoint for a single PartLabel object
-    """
+    """API endpoint for a single PartLabel object."""
 
     queryset = PartLabel.objects.all()
     serializer_class = PartLabelSerializer
 
 
 class PartLabelPrint(generics.RetrieveAPIView, PartLabelMixin, LabelPrintMixin):
-    """
-    API endpoint for printing a PartLabel object
-    """
+    """API endpoint for printing a PartLabel object."""
 
     queryset = PartLabel.objects.all()
     serializer_class = PartLabelSerializer
 
     def get(self, request, *args, **kwargs):
-        """
-        Check if valid part(s) have been provided
-        """
-
+        """Check if valid part(s) have been provided."""
         parts = self.get_parts()
 
         return self.print(request, parts)

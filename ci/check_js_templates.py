@@ -1,9 +1,6 @@
-"""
-Test that the "translated" javascript files to not contain template tags
-which need to be determined at "run time".
+"""Test that the "translated" javascript files to not contain template tags which need to be determined at "run time".
 
 This is because the "translated" javascript files are compiled into the "static" directory.
-
 They should only contain template tags that render static information.
 """
 

@@ -1,6 +1,4 @@
-"""
-Django Forms for interacting with Order objects
-"""
+"""Django Forms for interacting with Order objects."""
 
 from django import forms
 from django.utils.translation import gettext_lazy as _
@@ -11,11 +9,10 @@ from InvenTree.helpers import clean_decimal
 
 
 class OrderMatchItemForm(MatchItemForm):
-    """ Override MatchItemForm fields """
+    """Override MatchItemForm fields."""
 
     def get_special_field(self, col_guess, row, file_manager):
-        """ Set special fields """
-
+        """Set special fields."""
         # set quantity field
         if 'quantity' in col_guess.lower():
             return forms.CharField(

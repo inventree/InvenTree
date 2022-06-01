@@ -1,3 +1,5 @@
+"""Basic unit tests for the BuildOrder app"""
+
 from django.urls import reverse
 
 from datetime import datetime, timedelta
@@ -11,6 +13,7 @@ from InvenTree.status_codes import BuildStatus
 
 
 class BuildTestSimple(InvenTreeTestCase):
+    """Basic set of tests for the BuildOrder model functionality"""
 
     fixtures = [
         'category',
@@ -26,7 +29,7 @@ class BuildTestSimple(InvenTreeTestCase):
     ]
 
     def test_build_objects(self):
-        # Ensure the Build objects were correctly created
+        """Ensure the Build objects were correctly created"""
         self.assertEqual(Build.objects.count(), 5)
         b = Build.objects.get(pk=2)
         self.assertEqual(b.batch, 'B2')
@@ -35,10 +38,12 @@ class BuildTestSimple(InvenTreeTestCase):
         self.assertEqual(str(b), 'BO0002')
 
     def test_url(self):
+        """Test URL lookup"""
         b1 = Build.objects.get(pk=1)
         self.assertEqual(b1.get_absolute_url(), '/build/1/')
 
     def test_is_complete(self):
+        """Test build completion status"""
         b1 = Build.objects.get(pk=1)
         b2 = Build.objects.get(pk=2)
 
@@ -48,10 +53,7 @@ class BuildTestSimple(InvenTreeTestCase):
         self.assertEqual(b2.status, BuildStatus.COMPLETE)
 
     def test_overdue(self):
-        """
-        Test overdue status functionality
-        """
-
+        """Test overdue status functionality."""
         today = datetime.now().date()
 
         build = Build.objects.get(pk=1)
@@ -66,6 +68,7 @@ class BuildTestSimple(InvenTreeTestCase):
         self.assertFalse(build.is_overdue)
 
     def test_is_active(self):
+        """Test active / inactive build status"""
         b1 = Build.objects.get(pk=1)
         b2 = Build.objects.get(pk=2)
 
@@ -73,12 +76,12 @@ class BuildTestSimple(InvenTreeTestCase):
         self.assertEqual(b2.is_active, False)
 
     def test_required_parts(self):
-        # TODO - Generate BOM for test part
-        pass
+        """Test set of required BOM items for the build"""
+        # TODO: Generate BOM for test part
+        ...
 
     def test_cancel_build(self):
-        """ Test build cancellation function """
-
+        """Test build cancellation function."""
         build = Build.objects.get(id=1)
 
         self.assertEqual(build.status, BuildStatus.PENDING)
@@ -89,7 +92,7 @@ class BuildTestSimple(InvenTreeTestCase):
 
 
 class TestBuildViews(InvenTreeTestCase):
-    """ Tests for Build app views """
+    """Tests for Build app views."""
 
     fixtures = [
         'category',
@@ -105,6 +108,7 @@ class TestBuildViews(InvenTreeTestCase):
     ]
 
     def setUp(self):
+        """Fixturing for this suite of unit tests"""
         super().setUp()
 
         # Create a build output for build # 1
@@ -118,14 +122,12 @@ class TestBuildViews(InvenTreeTestCase):
         )
 
     def test_build_index(self):
-        """ test build index view """
-
+        """Test build index view."""
         response = self.client.get(reverse('build-index'))
         self.assertEqual(response.status_code, 200)
 
     def test_build_detail(self):
-        """ Test the detail view for a Build object """
-
+        """Test the detail view for a Build object."""
         pk = 1
 
         response = self.client.get(reverse('build-detail', args=(pk,)))

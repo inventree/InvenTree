@@ -1,6 +1,4 @@
-"""
-Sample plugin which supports task scheduling
-"""
+"""Sample plugin which supports task scheduling."""
 
 from plugin import InvenTreePlugin
 from plugin.mixins import ScheduleMixin, SettingsMixin
@@ -8,17 +6,23 @@ from plugin.mixins import ScheduleMixin, SettingsMixin
 
 # Define some simple tasks to perform
 def print_hello():
+    """Sample function that can be called on schedule.
+
+    Contents do not matter - therefore no coverage.
+    """
     print("Hello")  # pragma: no cover
 
 
 def print_world():
+    """Sample function that can be called on schedule.
+
+    Contents do not matter - therefore no coverage.
+    """
     print("World")  # pragma: no cover
 
 
 class ScheduledTaskPlugin(ScheduleMixin, SettingsMixin, InvenTreePlugin):
-    """
-    A sample plugin which provides support for scheduled tasks
-    """
+    """A sample plugin which provides support for scheduled tasks."""
 
     NAME = "ScheduledTasksPlugin"
     SLUG = "schedule"
@@ -51,10 +55,7 @@ class ScheduledTaskPlugin(ScheduleMixin, SettingsMixin, InvenTreePlugin):
     }
 
     def member_func(self, *args, **kwargs):
-        """
-        A simple member function to demonstrate functionality
-        """
-
+        """A simple member function to demonstrate functionality."""
         t_or_f = self.get_setting('T_OR_F')
 
         print(f"Called member_func - value is {t_or_f}")

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+"""Various unit tests for order models"""
 
 from datetime import datetime, timedelta
 
@@ -14,9 +14,7 @@ from .models import PurchaseOrder, PurchaseOrderLineItem
 
 
 class OrderTest(TestCase):
-    """
-    Tests to ensure that the order models are functioning correctly.
-    """
+    """Tests to ensure that the order models are functioning correctly."""
 
     fixtures = [
         'company',
@@ -30,8 +28,7 @@ class OrderTest(TestCase):
     ]
 
     def test_basics(self):
-        """ Basic tests e.g. repr functions etc """
-
+        """Basic tests e.g. repr functions etc."""
         order = PurchaseOrder.objects.get(pk=1)
 
         self.assertEqual(order.get_absolute_url(), '/order/purchase-order/1/')
@@ -42,11 +39,19 @@ class OrderTest(TestCase):
 
         self.assertEqual(str(line), "100 x ACME0001 from ACME (for PO0001 - ACME)")
 
-    def test_overdue(self):
-        """
-        Test overdue status functionality
-        """
+    def test_rebuild_reference(self):
+        """Test that the reference_int field is correctly updated when the model is saved"""
 
+        order = PurchaseOrder.objects.get(pk=1)
+        order.save()
+        self.assertEqual(order.reference_int, 1)
+
+        order.reference = '12345XYZ'
+        order.save()
+        self.assertEqual(order.reference_int, 12345)
+
+    def test_overdue(self):
+        """Test overdue status functionality."""
         today = datetime.now().date()
 
         order = PurchaseOrder.objects.get(pk=1)
@@ -61,8 +66,7 @@ class OrderTest(TestCase):
         self.assertFalse(order.is_overdue)
 
     def test_on_order(self):
-        """ There should be 3 separate items on order for the M2x4 LPHS part """
-
+        """There should be 3 separate items on order for the M2x4 LPHS part."""
         part = Part.objects.get(name='M2x4 LPHS')
 
         open_orders = []
@@ -76,8 +80,7 @@ class OrderTest(TestCase):
         self.assertEqual(part.on_order, 1400)
 
     def test_add_items(self):
-        """ Test functions for adding line items to an order """
-
+        """Test functions for adding line items to an order."""
         order = PurchaseOrder.objects.get(pk=1)
 
         self.assertEqual(order.status, PurchaseOrderStatus.PENDING)
@@ -113,8 +116,7 @@ class OrderTest(TestCase):
             order.add_line_item(sku, 99)
 
     def test_pricing(self):
-        """ Test functions for adding line items to an order including price-breaks """
-
+        """Test functions for adding line items to an order including price-breaks."""
         order = PurchaseOrder.objects.get(pk=7)
 
         self.assertEqual(order.status, PurchaseOrderStatus.PENDING)
@@ -146,8 +148,7 @@ class OrderTest(TestCase):
         self.assertEqual(order.lines.first().purchase_price.amount, 1.25)
 
     def test_receive(self):
-        """ Test order receiving functions """
-
+        """Test order receiving functions."""
         part = Part.objects.get(name='M2x4 LPHS')
 
         # Receive some items

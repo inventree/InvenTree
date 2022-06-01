@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""
-Provides extra global data to all templates.
-"""
+"""Provides extra global data to all templates."""
 
 import InvenTree.status
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
@@ -12,13 +10,11 @@ from users.models import RuleSet
 
 
 def health_status(request):
-    """
-    Provide system health status information to the global context.
+    """Provide system health status information to the global context.
 
     - Not required for AJAX requests
     - Do not provide if it is already provided to the context
     """
-
     if request.path.endswith('.js'):
         # Do not provide to script requests
         return {}  # pragma: no cover
@@ -53,10 +49,7 @@ def health_status(request):
 
 
 def status_codes(request):
-    """
-    Provide status code enumerations.
-    """
-
+    """Provide status code enumerations."""
     if hasattr(request, '_inventree_status_codes'):
         # Do not duplicate efforts
         return {}
@@ -74,8 +67,7 @@ def status_codes(request):
 
 
 def user_roles(request):
-    """
-    Return a map of the current roles assigned to the user.
+    """Return a map of the current roles assigned to the user.
 
     Roles are denoted by their simple names, and then the permission type.
 
@@ -86,7 +78,6 @@ def user_roles(request):
 
     Each value will return a boolean True / False
     """
-
     user = request.user
 
     roles = {

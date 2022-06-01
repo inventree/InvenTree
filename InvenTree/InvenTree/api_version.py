@@ -1,6 +1,4 @@
-"""
-InvenTree API version information
-"""
+"""InvenTree API version information."""
 
 
 # InvenTree API version

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+"""AppConfig for inventree app."""
 
 import logging
 
@@ -18,10 +18,11 @@ logger = logging.getLogger("inventree")
 
 
 class InvenTreeConfig(AppConfig):
+    """AppConfig for inventree app."""
     name = 'InvenTree'
 
     def ready(self):
-
+        """Setup background tasks and update exchange rates."""
         if canAppAccessDatabase():
 
             self.remove_obsolete_tasks()
@@ -37,10 +38,7 @@ class InvenTreeConfig(AppConfig):
             self.add_user_on_startup()
 
     def remove_obsolete_tasks(self):
-        """
-        Delete any obsolete scheduled tasks in the database
-        """
-
+        """Delete any obsolete scheduled tasks in the database."""
         obsolete = [
             'InvenTree.tasks.delete_expired_sessions',
             'stock.tasks.delete_old_stock_items',
@@ -55,7 +53,7 @@ class InvenTreeConfig(AppConfig):
         Schedule.objects.filter(func__in=obsolete).delete()
 
     def start_background_tasks(self):
-
+        """Start all background tests for InvenTree."""
         try:
             from django_q.models import Schedule
         except AppRegistryNotReady:  # pragma: no cover
@@ -101,13 +99,12 @@ class InvenTreeConfig(AppConfig):
         )
 
     def update_exchange_rates(self):  # pragma: no cover
-        """
-        Update exchange rates each time the server is started, *if*:
+        """Update exchange rates each time the server is started.
 
+        Only runs *if*:
         a) Have not been updated recently (one day or less)
         b) The base exchange rate has been altered
         """
-
         try:
             from djmoney.contrib.exchange.models import ExchangeBackend
 
@@ -150,7 +147,7 @@ class InvenTreeConfig(AppConfig):
                 logger.error(f"Error updating exchange rates: {e}")
 
     def add_user_on_startup(self):
-        """Add a user on startup"""
+        """Add a user on startup."""
         # stop if checks were already created
         if hasattr(settings, 'USER_ADDED') and settings.USER_ADDED:
             return
@@ -202,9 +199,7 @@ class InvenTreeConfig(AppConfig):
         settings.USER_ADDED = True
 
     def collect_notification_methods(self):
-        """
-        Collect all notification methods
-        """
+        """Collect all notification methods."""
         from common.notifications import storage
 
         storage.collect()

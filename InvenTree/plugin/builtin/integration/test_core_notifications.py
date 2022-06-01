@@ -1,3 +1,5 @@
+"""Tests for core_notifications."""
+
 from part.test_part import BaseNotificationIntegrationTest
 from plugin import registry
 from plugin.builtin.integration.core_notifications import \
@@ -6,12 +8,10 @@ from plugin.models import NotificationUserSetting
 
 
 class CoreNotificationTestTests(BaseNotificationIntegrationTest):
+    """Tests for CoreNotificationsPlugin."""
 
     def test_email(self):
-        """
-        Ensure that the email notifications run
-        """
-
+        """Ensure that the email notifications run."""
         # enable plugin and set mail setting to true
         plugin = registry.plugins.get('corenotificationsplugin')
         plugin.set_setting('ENABLE_NOTIFICATION_EMAILS', True)

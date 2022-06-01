@@ -1,3 +1,4 @@
+"""Admin for plugin app."""
 
 from django.contrib import admin
 
@@ -6,10 +7,7 @@ import plugin.registry as pl_registry
 
 
 def plugin_update(queryset, new_status: bool):
-    """
-    General function for bulk changing plugins
-    """
-
+    """General function for bulk changing plugins."""
     apps_changed = False
 
     # Run through all plugins in the queryset as the save method needs to be overridden
@@ -26,25 +24,18 @@ def plugin_update(queryset, new_status: bool):
 
 @admin.action(description='Activate plugin(s)')
 def plugin_activate(modeladmin, request, queryset):
-    """
-    Activate a set of plugins
-    """
+    """Activate a set of plugins."""
     plugin_update(queryset, True)
 
 
 @admin.action(description='Deactivate plugin(s)')
 def plugin_deactivate(modeladmin, request, queryset):
-    """
-    Deactivate a set of plugins
-    """
-
+    """Deactivate a set of plugins."""
     plugin_update(queryset, False)
 
 
 class PluginSettingInline(admin.TabularInline):
-    """
-    Inline admin class for PluginSetting
-    """
+    """Inline admin class for PluginSetting."""
 
     model = models.PluginSetting
 
@@ -53,13 +44,12 @@ class PluginSettingInline(admin.TabularInline):
     ]
 
     def has_add_permission(self, request, obj):
+        """The plugin settings should not be meddled with manually."""
         return False
 
 
 class PluginConfigAdmin(admin.ModelAdmin):
-    """
-    Custom admin with restricted id fields
-    """
+    """Custom admin with restricted id fields."""
 
     readonly_fields = ["key", "name", ]
     list_display = ['name', 'key', '__str__', 'active', ]
@@ -69,9 +59,7 @@ class PluginConfigAdmin(admin.ModelAdmin):
 
 
 class NotificationUserSettingAdmin(admin.ModelAdmin):
-    """
-    Admin class for NotificationUserSetting
-    """
+    """Admin class for NotificationUserSetting."""
 
     model = models.NotificationUserSetting
 
@@ -80,6 +68,7 @@ class NotificationUserSettingAdmin(admin.ModelAdmin):
     ]
 
     def has_add_permission(self, request):
+        """Notifications should not be changed."""
         return False
 
 

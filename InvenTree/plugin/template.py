@@ -1,4 +1,4 @@
-"""Load templates for loaded plugins"""
+"""Load templates for loaded plugins."""
 
 from pathlib import Path
 
@@ -8,8 +8,7 @@ from plugin import registry
 
 
 class PluginTemplateLoader(FilesystemLoader):
-    """
-    A custom template loader which allows loading of templates from installed plugins.
+    """A custom template loader which allows loading of templates from installed plugins.
 
     Each plugin can register templates simply by providing a 'templates' directory in its root path.
 
@@ -22,6 +21,7 @@ class PluginTemplateLoader(FilesystemLoader):
     """
 
     def get_dirs(self):
+        """Returns all template dir paths in plugins."""
         dirname = 'templates'
         template_dirs = []
 

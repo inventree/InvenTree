@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import json
 import os
 import pathlib
@@ -10,10 +8,7 @@ from invoke import task
 
 
 def apps():
-    """
-    Returns a list of installed apps
-    """
-
+    """Returns a list of installed apps"""
     return [
         'build',
         'common',
@@ -30,8 +25,8 @@ def apps():
 
 
 def localDir():
-    """
-    Returns the directory of *THIS* file.
+    """Returns the directory of *THIS* file.
+
     Used to ensure that the various scripts always run
     in the correct directory.
     """
@@ -39,30 +34,22 @@ def localDir():
 
 
 def managePyDir():
-    """
-    Returns the directory of the manage.py file
-    """
-
+    """Returns the directory of the manage.py file"""
     return os.path.join(localDir(), 'InvenTree')
 
 
 def managePyPath():
-    """
-    Return the path of the manage.py file
-    """
-
+    """Return the path of the manage.py file"""
     return os.path.join(managePyDir(), 'manage.py')
 
 
 def manage(c, cmd, pty=False):
-    """
-    Runs a given command against django's "manage.py" script.
+    """Runs a given command against django's "manage.py" script.
 
     Args:
         c - Command line context
         cmd - django command to run
     """
-
     c.run('cd "{path}" && python3 manage.py {cmd}'.format(
         path=managePyDir(),
         cmd=cmd
@@ -71,10 +58,7 @@ def manage(c, cmd, pty=False):
 
 @task
 def plugins(c):
-    """
-    Installs all plugins as specified in 'plugins.txt'
-    """
-
+    """Installs all plugins as specified in 'plugins.txt'"""
     from InvenTree.InvenTree.config import get_plugin_file
 
     plugin_file = get_plugin_file()
@@ -87,10 +71,7 @@ def plugins(c):
 
 @task(post=[plugins])
 def install(c):
-    """
-    Installs required python packages
-    """
-
+    """Installs required python packages"""
     print("Installing required python packages from 'requirements.txt'")
 
     # Install required Python packages with PIP
@@ -99,10 +80,7 @@ def install(c):
 
 @task
 def setup_dev(c):
-    """
-    Sets up everything needed for the dev enviroment
-    """
-
+    """Sets up everything needed for the dev enviroment"""
     print("Installing required python packages from 'requirements.txt'")
 
     # Install required Python packages with PIP
@@ -117,82 +95,55 @@ def setup_dev(c):
 
 @task
 def shell(c):
-    """
-    Open a python shell with access to the InvenTree database models.
-    """
-
+    """Open a python shell with access to the InvenTree database models."""
     manage(c, 'shell', pty=True)
 
 
 @task
 def superuser(c):
-    """
-    Create a superuser (admin) account for the database.
-    """
-
+    """Create a superuser/admin account for the database."""
     manage(c, 'createsuperuser', pty=True)
 
 
 @task
 def check(c):
-    """
-    Check validity of django codebase
-    """
-
+    """Check validity of django codebase"""
     manage(c, "check")
 
 
 @task
 def wait(c):
-    """
-    Wait until the database connection is ready
-    """
-
+    """Wait until the database connection is ready"""
     return manage(c, "wait_for_db")
 
 
 @task(pre=[wait])
 def worker(c):
-    """
-    Run the InvenTree background worker process
-    """
-
+    """Run the InvenTree background worker process"""
     manage(c, 'qcluster', pty=True)
 
 
 @task
 def rebuild_models(c):
-    """
-    Rebuild database models with MPTT structures
-    """
-
+    """Rebuild database models with MPTT structures"""
     manage(c, "rebuild_models", pty=True)
 
 
 @task
 def rebuild_thumbnails(c):
-    """
-    Rebuild missing image thumbnails
-    """
-
+    """Rebuild missing image thumbnails"""
     manage(c, "rebuild_thumbnails", pty=True)
 
 
 @task
 def clean_settings(c):
-    """
-    Clean the setting tables of old settings
-    """
-
+    """Clean the setting tables of old settings"""
     manage(c, "clean_settings")
 
 
 @task(help={'mail': 'mail of the user whos MFA should be disabled'})
 def remove_mfa(c, mail=''):
-    """
-    Remove MFA for a user
-    """
-
+    """Remove MFA for a user"""
     if not mail:
         print('You must provide a users mail')
 
@@ -201,11 +152,10 @@ def remove_mfa(c, mail=''):
 
 @task(post=[rebuild_models, rebuild_thumbnails])
 def migrate(c):
-    """
-    Performs database migrations.
+    """Performs database migrations.
+
     This is a critical step if the database schema have been altered!
     """
-
     print("Running InvenTree database migrations...")
     print("========================================")
 
@@ -220,35 +170,28 @@ def migrate(c):
 
 @task
 def static(c):
-    """
-    Copies required static files to the STATIC_ROOT directory,
-    as per Django requirements.
-    """
-
+    """Copies required static files to the STATIC_ROOT directory, as per Django requirements."""
     manage(c, "prerender")
     manage(c, "collectstatic --no-input")
 
 
 @task
 def translate_stats(c):
-    """
-    Collect translation stats.
+    """Collect translation stats.
+
     The file generated from this is needed for the UI.
     """
-
     path = os.path.join('InvenTree', 'script', 'translation_stats.py')
     c.run(f'python3 {path}')
 
 
 @task(post=[translate_stats, static])
 def translate(c):
-    """
-    Rebuild translation source files. (Advanced use only!)
+    """Rebuild translation source files. (Advanced use only!)
 
     Note: This command should not be used on a local install,
     it is performed as part of the InvenTree translation toolchain.
     """
-
     # Translate applicable .py / .html / .js files
     manage(c, "makemessages --all -e py,html,js --no-wrap")
     manage(c, "compilemessages")
@@ -256,8 +199,7 @@ def translate(c):
 
 @task(pre=[install, migrate, static, clean_settings])
 def update(c):
-    """
-    Update InvenTree installation.
+    """Update InvenTree installation.
 
     This command should be invoked after source code has been updated,
     e.g. downloading new code from GitHub.
@@ -270,7 +212,6 @@ def update(c):
     - static
     - clean_settings
     """
-
     # Recompile the translation files (.mo)
     # We do not run 'invoke translate' here, as that will touch the source (.po) files too!
     manage(c, 'compilemessages', pty=True)
@@ -278,19 +219,14 @@ def update(c):
 
 @task
 def style(c):
-    """
-    Run PEP style checks against InvenTree sourcecode
-    """
-
+    """Run PEP style checks against InvenTree sourcecode"""
     print("Running PEP style checks...")
     c.run('flake8 InvenTree')
 
 
 @task
 def test(c, database=None):
-    """
-    Run unit-tests for InvenTree codebase.
-    """
+    """Run unit-tests for InvenTree codebase."""
     # Run sanity check on the django install
     manage(c, 'check')
 
@@ -300,13 +236,10 @@ def test(c, database=None):
 
 @task
 def coverage(c):
-    """
-    Run code-coverage of the InvenTree codebase,
-    using the 'coverage' code-analysis tools.
+    """Run code-coverage of the InvenTree codebase, using the 'coverage' code-analysis tools.
 
     Generates a code coverage report (available in the htmlcov directory)
     """
-
     # Run sanity check on the django install
     manage(c, 'check')
 
@@ -321,10 +254,7 @@ def coverage(c):
 
 
 def content_excludes():
-    """
-    Returns a list of content types to exclude from import/export
-    """
-
+    """Returns a list of content types to exclude from import/export"""
     excludes = [
         "contenttypes",
         "auth.permission",
@@ -351,10 +281,7 @@ def content_excludes():
 
 @task(help={'filename': "Output filename (default = 'data.json')"})
 def export_records(c, filename='data.json'):
-    """
-    Export all database records to a file
-    """
-
+    """Export all database records to a file"""
     # Get an absolute path to the file
     if not os.path.isabs(filename):
         filename = os.path.join(localDir(), filename)
@@ -403,10 +330,7 @@ def export_records(c, filename='data.json'):
 
 @task(help={'filename': 'Input filename', 'clear': 'Clear existing data before import'}, post=[rebuild_models, rebuild_thumbnails])
 def import_records(c, filename='data.json', clear=False):
-    """
-    Import database records from a file
-    """
-
+    """Import database records from a file"""
     # Get an absolute path to the supplied filename
     if not os.path.isabs(filename):
         filename = os.path.join(localDir(), filename)
@@ -450,12 +374,10 @@ def import_records(c, filename='data.json', clear=False):
 
 @task
 def delete_data(c, force=False):
-    """
-    Delete all database records!
+    """Delete all database records!
 
     Warning: This will REALLY delete all records in the database!!
     """
-
     print("Deleting all data from InvenTree database...")
 
     if force:
@@ -466,8 +388,7 @@ def delete_data(c, force=False):
 
 @task(post=[rebuild_models, rebuild_thumbnails])
 def import_fixtures(c):
-    """
-    Import fixture data into the database.
+    """Import fixture data into the database.
 
     This command imports all existing test fixture data into the database.
 
@@ -476,7 +397,6 @@ def import_fixtures(c):
         - Running this command may overwrite existing database data!!
         - Don't say you were not warned...
     """
-
     fixtures = [
         # Build model
         'build',
@@ -515,20 +435,16 @@ def import_fixtures(c):
 
 @task(help={'address': 'Server address:port (default=127.0.0.1:8000)'})
 def server(c, address="127.0.0.1:8000"):
-    """
-    Launch a (deveopment) server using Django's in-built webserver.
+    """Launch a (deveopment) server using Django's in-built webserver.
 
     Note: This is *not* sufficient for a production installation.
     """
-
     manage(c, "runserver {address}".format(address=address), pty=True)
 
 
 @task(post=[translate_stats, static, server])
 def test_translations(c):
-    """
-    Add a fictional language to test if each component is ready for translations
-    """
+    """Add a fictional language to test if each component is ready for translations"""
     import django
     from django.conf import settings
 
@@ -595,8 +511,5 @@ def test_translations(c):
 
 @task
 def render_js_files(c):
-    """
-    Render templated javascript files (used for static testing).
-    """
-
+    """Render templated javascript files (used for static testing)."""
     manage(c, "test InvenTree.ci_render_js")

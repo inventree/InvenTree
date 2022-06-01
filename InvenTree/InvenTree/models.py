@@ -1,6 +1,4 @@
-"""
-Generic models which provide extra functionality over base Django model types.
-"""
+"""Generic models which provide extra functionality over base Django model types."""
 
 import logging
 import os
@@ -25,25 +23,21 @@ logger = logging.getLogger('inventree')
 
 
 def rename_attachment(instance, filename):
-    """
-    Function for renaming an attachment file.
-    The subdirectory for the uploaded file is determined by the implementing class.
+    """Function for renaming an attachment file. The subdirectory for the uploaded file is determined by the implementing class.
 
-        Args:
+    Args:
         instance: Instance of a PartAttachment object
         filename: name of uploaded file
 
     Returns:
         path to store file, format: '<subdir>/<id>/filename'
     """
-
     # Construct a path to store a file attachment for a given model type
     return os.path.join(instance.getSubdir(), filename)
 
 
 class DataImportMixin(object):
-    """
-    Model mixin class which provides support for 'data import' functionality.
+    """Model mixin class which provides support for 'data import' functionality.
 
     Models which implement this mixin should provide information on the fields available for import
     """
@@ -53,12 +47,10 @@ class DataImportMixin(object):
 
     @classmethod
     def get_import_fields(cls):
-        """
-        Return all available import fields
+        """Return all available import fields.
 
         Where information on a particular field is not explicitly provided,
         introspect the base model to (attempt to) find that information.
-
         """
         fields = cls.IMPORT_FIELDS
 
@@ -85,7 +77,7 @@ class DataImportMixin(object):
 
     @classmethod
     def get_required_import_fields(cls):
-        """ Return all *required* import fields """
+        """Return all *required* import fields."""
         fields = {}
 
         for name, field in cls.get_import_fields().items():
@@ -98,8 +90,7 @@ class DataImportMixin(object):
 
 
 class ReferenceIndexingMixin(models.Model):
-    """
-    A mixin for keeping track of numerical copies of the "reference" field.
+    """A mixin for keeping track of numerical copies of the "reference" field.
 
     !!DANGER!! always add `ReferenceIndexingSerializerMixin`to all your models serializers to
     ensure the reference field is not too big
@@ -118,18 +109,20 @@ class ReferenceIndexingMixin(models.Model):
     """
 
     class Meta:
+        """Metaclass options. Abstract ensures no database table is created."""
+
         abstract = True
 
     def rebuild_reference_field(self):
-
+        """Extract integer out of reference for sorting."""
         reference = getattr(self, 'reference', '')
-
         self.reference_int = extract_int(reference)
 
     reference_int = models.BigIntegerField(default=0)
 
 
 def extract_int(reference, clip=0x7fffffff):
+    """Extract integer out of reference."""
     # Default value if we cannot convert to an integer
     ref_int = 0
 
@@ -155,7 +148,7 @@ def extract_int(reference, clip=0x7fffffff):
 
 
 class InvenTreeAttachment(models.Model):
-    """ Provides an abstracted class for managing file attachments.
+    """Provides an abstracted class for managing file attachments.
 
     An attachment can be either an uploaded file, or an external URL
 
@@ -167,14 +160,14 @@ class InvenTreeAttachment(models.Model):
     """
 
     def getSubdir(self):
-        """
-        Return the subdirectory under which attachments should be stored.
+        """Return the subdirectory under which attachments should be stored.
+
         Note: Re-implement this for each subclass of InvenTreeAttachment
         """
-
         return "attachments"
 
     def save(self, *args, **kwargs):
+        """Provide better validation error."""
         # Either 'attachment' or 'link' must be specified!
         if not self.attachment and not self.link:
             raise ValidationError({
@@ -185,6 +178,7 @@ class InvenTreeAttachment(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
+        """Human name for attachment."""
         if self.attachment is not None:
             return os.path.basename(self.attachment.name)
         else:
@@ -215,6 +209,7 @@ class InvenTreeAttachment(models.Model):
 
     @property
     def basename(self):
+        """Base name/path for attachment."""
         if self.attachment:
             return os.path.basename(self.attachment.name)
         else:
@@ -222,15 +217,13 @@ class InvenTreeAttachment(models.Model):
 
     @basename.setter
     def basename(self, fn):
-        """
-        Function to rename the attachment file.
+        """Function to rename the attachment file.
 
         - Filename cannot be empty
         - Filename cannot contain illegal characters
         - Filename must specify an extension
         - Filename cannot match an existing file
         """
-
         fn = fn.strip()
 
         if len(fn) == 0:
@@ -287,11 +280,13 @@ class InvenTreeAttachment(models.Model):
             raise ValidationError(_("Error renaming file"))
 
     class Meta:
+        """Metaclass options. Abstract ensures no database table is created."""
+
         abstract = True
 
 
 class InvenTreeTree(MPTTModel):
-    """ Provides an abstracted self-referencing tree model for data categories.
+    """Provides an abstracted self-referencing tree model for data categories.
 
     - Each Category has one parent Category, which can be blank (for a top-level Category).
     - Each Category can have zero-or-more child Categor(y/ies)
@@ -303,10 +298,7 @@ class InvenTreeTree(MPTTModel):
     """
 
     def api_instance_filters(self):
-        """
-        Instance filters for InvenTreeTree models
-        """
-
+        """Instance filters for InvenTreeTree models."""
         return {
             'parent': {
                 'exclude_tree': self.pk,
@@ -314,7 +306,7 @@ class InvenTreeTree(MPTTModel):
         }
 
     def save(self, *args, **kwargs):
-
+        """Provide better error for invalid moves."""
         try:
             super().save(*args, **kwargs)
         except InvalidMove:
@@ -323,12 +315,15 @@ class InvenTreeTree(MPTTModel):
             })
 
     class Meta:
+        """Metaclass defines extra model properties."""
+
         abstract = True
 
         # Names must be unique at any given level in the tree
         unique_together = ('name', 'parent')
 
     class MPTTMeta:
+        """Set insert order."""
         order_insertion_by = ['name']
 
     name = models.CharField(
@@ -356,7 +351,7 @@ class InvenTreeTree(MPTTModel):
 
     @property
     def item_count(self):
-        """ Return the number of items which exist *under* this node in the tree.
+        """Return the number of items which exist *under* this node in the tree.
 
         Here an 'item' is considered to be the 'leaf' at the end of each branch,
         and the exact nature here will depend on the class implementation.
@@ -366,30 +361,29 @@ class InvenTreeTree(MPTTModel):
         return 0
 
     def getUniqueParents(self):
-        """ Return a flat set of all parent items that exist above this node.
+        """Return a flat set of all parent items that exist above this node.
+
         If any parents are repeated (which would be very bad!), the process is halted
         """
-
         return self.get_ancestors()
 
     def getUniqueChildren(self, include_self=True):
-        """ Return a flat set of all child items that exist under this node.
+        """Return a flat set of all child items that exist under this node.
+
         If any child items are repeated, the repetitions are omitted.
         """
-
         return self.get_descendants(include_self=include_self)
 
     @property
     def has_children(self):
-        """ True if there are any children under this item """
+        """True if there are any children under this item."""
         return self.getUniqueChildren(include_self=False).count() > 0
 
     def getAcceptableParents(self):
-        """ Returns a list of acceptable parent items within this model
-        Acceptable parents are ones which are not underneath this item.
+        """Returns a list of acceptable parent items within this model Acceptable parents are ones which are not underneath this item.
+
         Setting the parent of an item to its own child results in recursion.
         """
-
         contents = ContentType.objects.get_for_model(type(self))
 
         available = contents.get_all_objects_for_this_type()
@@ -407,17 +401,16 @@ class InvenTreeTree(MPTTModel):
 
     @property
     def parentpath(self):
-        """ Get the parent path of this category
+        """Get the parent path of this category.
 
         Returns:
             List of category names from the top level to the parent of this category
         """
-
         return [a for a in self.get_ancestors()]
 
     @property
     def path(self):
-        """ Get the complete part of this category.
+        """Get the complete part of this category.
 
         e.g. ["Top", "Second", "Third", "This"]
 
@@ -428,25 +421,23 @@ class InvenTreeTree(MPTTModel):
 
     @property
     def pathstring(self):
-        """ Get a string representation for the path of this item.
+        """Get a string representation for the path of this item.
 
         e.g. "Top/Second/Third/This"
         """
         return '/'.join([item.name for item in self.path])
 
     def __str__(self):
-        """ String representation of a category is the full path to that category """
-
+        """String representation of a category is the full path to that category."""
         return "{path} - {desc}".format(path=self.pathstring, desc=self.description)
 
 
 @receiver(pre_delete, sender=InvenTreeTree, dispatch_uid='tree_pre_delete_log')
 def before_delete_tree_item(sender, instance, using, **kwargs):
-    """ Receives pre_delete signal from InvenTreeTree object.
+    """Receives pre_delete signal from InvenTreeTree object.
 
     Before an item is deleted, update each child object to point to the parent of the object being deleted.
     """
-
     # Update each tree item below this one
     for child in instance.children.all():
         child.parent = instance.parent
