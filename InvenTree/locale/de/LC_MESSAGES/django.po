@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-31 03:35+0000\n"
-"PO-Revision-Date: 2022-05-31 14:37\n"
+"POT-Creation-Date: 2022-06-01 07:24+0000\n"
+"PO-Revision-Date: 2022-06-01 14:45\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -125,7 +125,8 @@ msgid "Missing external link"
 msgstr "Fehlender externer Link"
 
 #: InvenTree/models.py:193 stock/models.py:2202
-#: templates/js/translated/attachment.js:119
+#: templates/js/translated/attachment.js:101
+#: templates/js/translated/attachment.js:198
 msgid "Attachment"
 msgstr "Anhang"
 
@@ -148,7 +149,8 @@ msgstr "Link"
 msgid "Link to external URL"
 msgstr "Link zu einer externen URL"
 
-#: InvenTree/models.py:204 templates/js/translated/attachment.js:163
+#: InvenTree/models.py:204 templates/js/translated/attachment.js:102
+#: templates/js/translated/attachment.js:242
 msgid "Comment"
 msgstr "Kommentar"
 
@@ -3987,7 +3989,8 @@ msgid "Pending Shipments"
 msgstr "Ausstehende Sendungen"
 
 #: order/templates/order/sales_order_detail.html:70
-#: templates/js/translated/bom.js:1053 templates/js/translated/build.js:1880
+#: templates/attachment_table.html:6 templates/js/translated/bom.js:1053
+#: templates/js/translated/build.js:1880
 msgid "Actions"
 msgstr "Aktionen"
 
@@ -7587,6 +7590,14 @@ msgstr "Link hinzufügen"
 msgid "Add Attachment"
 msgstr "Anhang hinzufügen"
 
+#: templates/attachment_table.html:11
+msgid "Delete selected attachments"
+msgstr ""
+
+#: templates/attachment_table.html:12 templates/js/translated/attachment.js:110
+msgid "Delete Attachments"
+msgstr ""
+
 #: templates/base.html:101
 msgid "Server Restart Required"
 msgstr "Server-Neustart erforderlich"
@@ -7723,31 +7734,27 @@ msgstr "Unbehandelter Fehler-Code"
 msgid "Error code"
 msgstr "Fehler-Code"
 
-#: templates/js/translated/attachment.js:78
+#: templates/js/translated/attachment.js:96
+msgid "All selected attachments will be deleted"
+msgstr ""
+
+#: templates/js/translated/attachment.js:156
 msgid "No attachments found"
 msgstr "Keine Anhänge gefunden"
 
-#: templates/js/translated/attachment.js:100
+#: templates/js/translated/attachment.js:180
 msgid "Edit Attachment"
 msgstr "Anhang bearbeiten"
 
-#: templates/js/translated/attachment.js:110
-msgid "Confirm Delete"
-msgstr "Löschen bestätigen"
-
-#: templates/js/translated/attachment.js:111
-msgid "Delete Attachment"
-msgstr "Anhang löschen"
-
-#: templates/js/translated/attachment.js:167
+#: templates/js/translated/attachment.js:246
 msgid "Upload Date"
 msgstr "Hochladedatum"
 
-#: templates/js/translated/attachment.js:183
+#: templates/js/translated/attachment.js:262
 msgid "Edit attachment"
 msgstr "Anhang bearbeiten"
 
-#: templates/js/translated/attachment.js:190
+#: templates/js/translated/attachment.js:269
 msgid "Delete attachment"
 msgstr "Anhang löschen"
 
