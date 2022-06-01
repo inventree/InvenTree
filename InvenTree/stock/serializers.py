@@ -65,13 +65,14 @@ class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
         ]
 
     def validate_serial(self, value):
+        """Make sure serial is not to big."""
         if extract_int(value) > 2147483647:
             raise serializers.ValidationError('serial is to to big')
         return value
 
 
 class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
-    """Serializer for a StockItem:
+    """Serializer for a StockItem.
 
     - Includes serialization for the linked part
     - Includes serialization for the item location
@@ -165,7 +166,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     purchase_price_string = serializers.SerializerMethodField()
 
     def get_purchase_price_string(self, obj):
-
+        """Return purchase price as string."""
         return str(obj.purchase_price) if obj.purchase_price else '-'
 
     purchase_order_reference = serializers.CharField(source='purchase_order.reference', read_only=True)
@@ -173,7 +174,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     sales_order_reference = serializers.CharField(source='sales_order.reference', read_only=True)
 
     def __init__(self, *args, **kwargs):
-
+        """Add detail fields."""
         part_detail = kwargs.pop('part_detail', False)
         location_detail = kwargs.pop('location_detail', False)
         supplier_part_detail = kwargs.pop('supplier_part_detail', False)
@@ -348,7 +349,7 @@ class SerializeStockItemSerializer(serializers.Serializer):
         return data
 
     def save(self):
-
+        """Serialize stock item."""
         item = self.context['item']
         request = self.context['request']
         user = request.user
@@ -446,7 +447,7 @@ class UninstallStockItemSerializer(serializers.Serializer):
     )
 
     def save(self):
-
+        """Uninstall stock item."""
         item = self.context['item']
 
         data = self.validated_data
@@ -507,6 +508,7 @@ class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSer
     """Serializer for StockItemAttachment model."""
 
     def __init__(self, *args, **kwargs):
+        """Add detail fields."""
         user_detail = kwargs.pop('user_detail', False)
 
         super().__init__(*args, **kwargs)
@@ -552,6 +554,7 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
     attachment = InvenTree.serializers.InvenTreeAttachmentSerializerField(required=False)
 
     def __init__(self, *args, **kwargs):
+        """Add detail fields."""
         user_detail = kwargs.pop('user_detail', False)
 
         super().__init__(*args, **kwargs)
@@ -589,7 +592,7 @@ class StockTrackingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for StockItemTracking model."""
 
     def __init__(self, *args, **kwargs):
-
+        """Add detail fields."""
         item_detail = kwargs.pop('item_detail', False)
         user_detail = kwargs.pop('user_detail', False)
 
@@ -659,7 +662,13 @@ class StockAssignmentItemSerializer(serializers.Serializer):
     )
 
     def validate_item(self, item):
+        """Validate item.
 
+        Ensures:
+        - is in stock
+        - Is salable
+        - Is not allocated
+        """
         # The item must currently be "in stock"
         if not item.in_stock:
             raise ValidationError(_("Item must be in stock"))
@@ -709,7 +718,7 @@ class StockAssignmentSerializer(serializers.Serializer):
     )
 
     def validate_customer(self, customer):
-
+        """Make sure provided company is customer."""
         if customer and not customer.is_customer:
             raise ValidationError(_('Selected company is not a customer'))
 
@@ -723,7 +732,7 @@ class StockAssignmentSerializer(serializers.Serializer):
     )
 
     def validate(self, data):
-
+        """Make sure items were provided."""
         data = super().validate(data)
 
         items = data.get('items', [])
@@ -734,7 +743,7 @@ class StockAssignmentSerializer(serializers.Serializer):
         return data
 
     def save(self):
-
+        """Assign stock."""
         request = self.context['request']
 
         user = getattr(request, 'user', None)
@@ -779,7 +788,7 @@ class StockMergeItemSerializer(serializers.Serializer):
     )
 
     def validate_item(self, item):
-
+        """Make sure item can be merged."""
         # Check that the stock item is able to be merged
         item.can_merge(raise_error=True)
 
@@ -834,7 +843,7 @@ class StockMergeSerializer(serializers.Serializer):
     )
 
     def validate(self, data):
-
+        """Make sure all needed values are provided and that the items can be merged."""
         data = super().validate(data)
 
         items = data['items']
@@ -954,7 +963,7 @@ class StockAdjustmentSerializer(serializers.Serializer):
     )
 
     def validate(self, data):
-
+        """Make sure items are provided."""
         super().validate(data)
 
         items = data.get('items', [])
@@ -969,7 +978,7 @@ class StockCountSerializer(StockAdjustmentSerializer):
     """Serializer for counting stock items."""
 
     def save(self):
-
+        """Count stock."""
         request = self.context['request']
 
         data = self.validated_data
@@ -990,10 +999,10 @@ class StockCountSerializer(StockAdjustmentSerializer):
 
 
 class StockAddSerializer(StockAdjustmentSerializer):
-    """Serializer for adding stock to stock item(s)"""
+    """Serializer for adding stock to stock item(s)."""
 
     def save(self):
-
+        """Add stock."""
         request = self.context['request']
 
         data = self.validated_data
@@ -1013,10 +1022,10 @@ class StockAddSerializer(StockAdjustmentSerializer):
 
 
 class StockRemoveSerializer(StockAdjustmentSerializer):
-    """Serializer for removing stock from stock item(s)"""
+    """Serializer for removing stock from stock item(s)."""
 
     def save(self):
-
+        """Remove stock."""
         request = self.context['request']
 
         data = self.validated_data
@@ -1036,7 +1045,7 @@ class StockRemoveSerializer(StockAdjustmentSerializer):
 
 
 class StockTransferSerializer(StockAdjustmentSerializer):
-    """Serializer for transferring (moving) stock item(s)"""
+    """Serializer for transferring (moving) stock item(s)."""
 
     location = serializers.PrimaryKeyRelatedField(
         queryset=StockLocation.objects.all(),
@@ -1056,16 +1065,8 @@ class StockTransferSerializer(StockAdjustmentSerializer):
             'location',
         ]
 
-    def validate(self, data):
-
-        data = super().validate(data)
-
-        # TODO: Any specific validation of location field?
-
-        return data
-
     def save(self):
-
+        """Transfer stock."""
         request = self.context['request']
 
         data = self.validated_data

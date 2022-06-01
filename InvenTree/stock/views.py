@@ -26,6 +26,7 @@ class StockIndex(InvenTreeRoleMixin, InvenTreePluginViewMixin, ListView):
     context_obect_name = 'locations'
 
     def get_context_data(self, **kwargs):
+        """Extend template context."""
         context = super().get_context_data(**kwargs).copy()
 
         # Return all top-level locations
@@ -54,7 +55,7 @@ class StockLocationDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailVi
     model = StockLocation
 
     def get_context_data(self, **kwargs):
-
+        """Extend template context."""
         context = super().get_context_data(**kwargs)
 
         context['ownership_enabled'] = common.models.InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
@@ -133,20 +134,21 @@ class StockItemReturnToStock(AjaxUpdateView):
     form_class = StockForms.ReturnStockItemForm
 
     def validate(self, item, form, **kwargs):
-
+        """Make sure required data is there."""
         location = form.cleaned_data.get('location', None)
 
         if not location:
             form.add_error('location', _('Specify a valid location'))
 
     def save(self, item, form, **kwargs):
-
+        """Return stock."""
         location = form.cleaned_data.get('location', None)
 
         if location:
             item.returnFromCustomer(location, self.request.user)
 
     def get_data(self):
+        """Set success message."""
         return {
             'success': _('Stock item returned from customer')
         }
@@ -162,10 +164,11 @@ class StockItemDeleteTestData(AjaxUpdateView):
     role_required = ['stock.change', 'stock.delete']
 
     def get_form(self):
+        """Require confirm."""
         return ConfirmForm()
 
     def post(self, request, *args, **kwargs):
-
+        """Delete test data."""
         valid = False
 
         stock_item = StockItem.objects.get(pk=self.kwargs['pk'])
@@ -221,7 +224,7 @@ class StockItemConvert(AjaxUpdateView):
         return form
 
     def save(self, obj, form):
-
+        """Convert item to variant."""
         stock_item = self.get_object()
 
         variant = form.cleaned_data.get('part', None)
@@ -284,7 +287,7 @@ class StockItemTrackingCreate(AjaxCreateView):
     form_class = StockForms.TrackingEntryForm
 
     def post(self, request, *args, **kwargs):
-
+        """Create StockItemTracking object."""
         self.request = request
         self.form = self.get_form()
 

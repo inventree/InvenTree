@@ -76,6 +76,7 @@ class StockLocation(MetadataMixin, InvenTreeTree):
 
     @staticmethod
     def get_api_url():
+        """Return API url."""
         return reverse('api-location-list')
 
     owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, blank=True, null=True,
@@ -116,6 +117,7 @@ class StockLocation(MetadataMixin, InvenTreeTree):
         return user in owner.get_related_owners(include_group=True)
 
     def get_absolute_url(self):
+        """Return url for instance."""
         return reverse('stock-location-detail', kwargs={'pk': self.id})
 
     def format_barcode(self, **kwargs):
@@ -180,7 +182,7 @@ class StockItemManager(TreeManager):
     """
 
     def get_queryset(self):
-
+        """Prefetch queryset to optimise db hits."""
         return super().get_queryset().prefetch_related(
             'belongs_to',
             'build',
@@ -253,6 +255,7 @@ class StockItem(MetadataMixin, MPTTModel):
 
     @staticmethod
     def get_api_url():
+        """Return API url."""
         return reverse('api-stock-list')
 
     def api_instance_filters(self):
@@ -410,7 +413,7 @@ class StockItem(MetadataMixin, MPTTModel):
 
     @property
     def status_label(self):
-
+        """Return label."""
         return StockStatus.label(self.status)
 
     @property
@@ -536,9 +539,11 @@ class StockItem(MetadataMixin, MPTTModel):
                 })
 
     def get_absolute_url(self):
+        """Return url for instance."""
         return reverse('stock-item-detail', kwargs={'pk': self.id})
 
     def get_part_name(self):
+        """Returns part name."""
         return self.part.full_name
 
     def format_barcode(self, **kwargs):
@@ -1166,10 +1171,12 @@ class StockItem(MetadataMixin, MPTTModel):
 
     @property
     def tracking_info_count(self):
+        """How many tracking entries are available?"""
         return self.tracking_info.count()
 
     @property
     def has_tracking_info(self):
+        """Is tracking info available?"""
         return self.tracking_info_count > 0
 
     def add_tracking_entry(self, entry_type: int, user: User, deltas: dict = None, notes: str = '', **kwargs):
@@ -1685,6 +1692,7 @@ class StockItem(MetadataMixin, MPTTModel):
         return True
 
     def __str__(self):
+        """Human friendly name."""
         if self.part.trackable and self.serial:
             s = '{part} #{sn}'.format(
                 part=self.part.full_name,
@@ -1916,9 +1924,11 @@ class StockItemAttachment(InvenTreeAttachment):
 
     @staticmethod
     def get_api_url():
+        """Return API url."""
         return reverse('api-stock-attachment-list')
 
     def getSubdir(self):
+        """Override attachment location."""
         return os.path.join("stock_files", str(self.stock_item.id))
 
     stock_item = models.ForeignKey(
@@ -1950,13 +1960,15 @@ class StockItemTracking(models.Model):
 
     @staticmethod
     def get_api_url():
+        """Return API url."""
         return reverse('api-stock-tracking-list')
 
     def get_absolute_url(self):
+        """Return url for instance."""
         return '/stock/track/{pk}'.format(pk=self.id)
 
     def label(self):
-
+        """Return label."""
         if self.tracking_type in StockHistoryCode.keys():
             return StockHistoryCode.label(self.tracking_type)
         else:
@@ -1987,7 +1999,7 @@ class StockItemTracking(models.Model):
 
 
 def rename_stock_item_test_result_attachment(instance, filename):
-
+    """Rename test result."""
     return os.path.join('stock_files', str(instance.stock_item.pk), os.path.basename(filename))
 
 
@@ -2012,16 +2024,17 @@ class StockItemTestResult(models.Model):
 
     @staticmethod
     def get_api_url():
+        """Return API url."""
         return reverse('api-stock-test-result-list')
 
     def save(self, *args, **kwargs):
-
+        """Validate result is unique before saving."""
         super().clean()
         super().validate_unique()
         super().save(*args, **kwargs)
 
     def clean(self):
-
+        """Make sure all values - including for templates - are provided."""
         super().clean()
 
         # If this test result corresponds to a template, check the requirements of the template
@@ -2048,6 +2061,7 @@ class StockItemTestResult(models.Model):
 
     @property
     def key(self):
+        """Return key for test."""
         return InvenTree.helpers.generateTestKey(self.test)
 
     stock_item = models.ForeignKey(
