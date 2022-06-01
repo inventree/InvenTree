@@ -137,6 +137,7 @@ The tags describe issues and PRs in multiple areas:
 | Area | Name | Description |
 |---|---|---|
 | Type Labels |  |  |
+|  | breaking | Indicates a major update or change which breaks compatibility |
 |  | bug | Identifies a bug which needs to be addressed |
 |  | dependency | Relates to a project dependency |
 |  | duplicate | Duplicate of another issue or PR |

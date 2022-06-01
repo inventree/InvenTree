@@ -2,7 +2,6 @@
 # This workflow runs under any of the following conditions:
 #
 # - Push to the master branch
-# - Push to the stable branch
 # - Publish release
 #
 # The following actions are performed:
@@ -21,7 +20,6 @@ on:
   push:
     branches:
       - 'master'
-      - 'stable'
 
 jobs:
 
@@ -29,12 +27,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
       - name: Check out repo
         uses: actions/checkout@v2
       - name: Version Check
         run: |
-          python3 ci/check_version_number.py
+          python3 ci/version_check.py
           echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_ENV
       - name: Run Unit Tests
@@ -65,5 +66,14 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
           target: production
-          tags: inventree/inventree:${{ env.docker_tag }}
-          build-args: commit_hash=${{ env.git_commit_hash }},commit_date=${{ env.git_commit_date }},commit_tag=${{ env.docker_tag }}
+          tags: ${{ env.docker_tags }}
+          build-args: |
+            commit_hash=${{ env.git_commit_hash }}
+            commit_date=${{ env.git_commit_date }}
+      - name: Push to Stable Branch
+        uses: ad-m/github-push-action@master
+        if: env.stable_release == 'true'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: stable
+          force: true

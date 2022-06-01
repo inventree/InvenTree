@@ -105,10 +105,9 @@ COPY docker/init.sh ${INVENTREE_MNG_DIR}/init.sh
 WORKDIR ${INVENTREE_MNG_DIR}
 
 # Drop to the inventree user for the production image
-RUN adduser inventree
-RUN chown -R inventree:inventree ${INVENTREE_HOME}
-
-USER inventree
+#RUN adduser inventree
+#RUN chown -R inventree:inventree ${INVENTREE_HOME}
+#USER inventree
 
 # Install InvenTree packages
 RUN pip3 install --user --disable-pip-version-check -r ${INVENTREE_HOME}/requirements.txt
