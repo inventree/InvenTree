@@ -16,7 +16,7 @@ from stock.models import StockItem
 
 
 class OrderTest(InvenTreeAPITestCase):
-
+    """Base class for order API unit testing"""
     fixtures = [
         'category',
         'part',
@@ -32,9 +32,6 @@ class OrderTest(InvenTreeAPITestCase):
         'purchase_order.change',
         'sales_order.change',
     ]
-
-    def setUp(self):
-        super().setUp()
 
     def filter(self, filters, count):
         """Test API filters."""
@@ -55,7 +52,7 @@ class PurchaseOrderTest(OrderTest):
     LIST_URL = reverse('api-po-list')
 
     def test_po_list(self):
-
+        """Test the PurchaseOrder list API endpoint"""
         # List *ALL* PurchaseOrder items
         self.filter({}, 7)
 
@@ -84,7 +81,7 @@ class PurchaseOrderTest(OrderTest):
         self.filter({'overdue': False}, 6)
 
     def test_po_detail(self):
-
+        """Test the PurchaseOrder detail API endpoint"""
         url = '/api/order/po/1/'
 
         response = self.get(url)
@@ -115,7 +112,7 @@ class PurchaseOrderTest(OrderTest):
         )
 
     def test_po_attachments(self):
-
+        """Test the list endpoint for the PurchaseOrderAttachment model"""
         url = reverse('api-po-attachment-list')
 
         response = self.get(url)
@@ -286,6 +283,7 @@ class PurchaseOrderTest(OrderTest):
         self.assertEqual(po.status, PurchaseOrderStatus.PLACED)
 
     def test_po_metadata(self):
+        """Test the 'metadata' endpoint for the PurchaseOrder model"""
         url = reverse('api-po-metadata', kwargs={'pk': 1})
 
         self.patch(
@@ -357,7 +355,7 @@ class PurchaseOrderDownloadTest(OrderTest):
                 self.assertEqual(order.reference, row['reference'])
 
     def test_download_line_items(self):
-
+        """Test that the PurchaseOrderLineItems can be downloaded to a file"""
         with self.download_file(
             reverse('api-po-line-list'),
             {
@@ -375,6 +373,7 @@ class PurchaseOrderReceiveTest(OrderTest):
     """Unit tests for receiving items against a PurchaseOrder."""
 
     def setUp(self):
+        """Init routines for this unit test class"""
         super().setUp()
 
         self.assignRole('purchase_order.add')
@@ -737,7 +736,7 @@ class SalesOrderTest(OrderTest):
     LIST_URL = reverse('api-so-list')
 
     def test_so_list(self):
-
+        """Test the SalesOrder list API endpoint"""
         # All orders
         self.filter({}, 5)
 
@@ -768,7 +767,7 @@ class SalesOrderTest(OrderTest):
         self.filter({'overdue': False}, 3)
 
     def test_so_detail(self):
-
+        """Test the SalesOrder detail endpoint"""
         url = '/api/order/so/1/'
 
         response = self.get(url)
@@ -778,7 +777,7 @@ class SalesOrderTest(OrderTest):
         self.assertEqual(data['pk'], 1)
 
     def test_so_attachments(self):
-
+        """Test the list endpoint for the SalesOrderAttachment model"""
         url = reverse('api-so-attachment-list')
 
         self.get(url)
@@ -897,6 +896,7 @@ class SalesOrderTest(OrderTest):
         self.assertEqual(so.status, SalesOrderStatus.CANCELLED)
 
     def test_so_metadata(self):
+        """Test the 'metadata' API endpoint for the SalesOrder model"""
         url = reverse('api-so-metadata', kwargs={'pk': 1})
 
         self.patch(
@@ -917,7 +917,7 @@ class SalesOrderLineItemTest(OrderTest):
     """Tests for the SalesOrderLineItem API."""
 
     def setUp(self):
-
+        """Init routine for this unit test class"""
         super().setUp()
 
         # List of salable parts
@@ -937,9 +937,7 @@ class SalesOrderLineItemTest(OrderTest):
         self.url = reverse('api-so-line-list')
 
     def test_so_line_list(self):
-
-        # List *all* lines
-
+        """Test list endpoint"""
         response = self.get(
             self.url,
             {},
@@ -1002,6 +1000,7 @@ class SalesOrderDownloadTest(OrderTest):
             self.download_file(url, {}, expected_code=200)
 
     def test_download_xls(self):
+        """Test xls file download"""
         url = reverse('api-so-list')
 
         # Download .xls file
@@ -1017,7 +1016,7 @@ class SalesOrderDownloadTest(OrderTest):
             self.assertTrue(isinstance(fo, io.BytesIO))
 
     def test_download_csv(self):
-
+        """Tesst that the list of sales orders can be downloaded as a .csv file"""
         url = reverse('api-so-list')
 
         required_cols = [
@@ -1085,6 +1084,7 @@ class SalesOrderAllocateTest(OrderTest):
     """Unit tests for allocating stock items against a SalesOrder."""
 
     def setUp(self):
+        """Init routines for this unit testing class"""
         super().setUp()
 
         self.assignRole('sales_order.add')
@@ -1261,7 +1261,7 @@ class SalesOrderAllocateTest(OrderTest):
         self.assertEqual(self.shipment.link, 'http://test.com/link.html')
 
     def test_sales_order_shipment_list(self):
-
+        """Test the SalesOrderShipment list API endpoint"""
         url = reverse('api-so-shipment-list')
 
         # Create some new shipments via the API
