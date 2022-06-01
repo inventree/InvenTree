@@ -22,6 +22,7 @@
 
 /* exported
     deletePart,
+    deletePartCategory,
     duplicateBom,
     duplicatePart,
     editCategory,
@@ -322,6 +323,9 @@ function editCategory(pk) {
 }
 
 
+/*
+ * Launch a modal form to delete a part from the database
+ */
 function deletePart(part_id, options={}) {
     constructForm(
         `/api/part/${part_id}/`,
@@ -342,6 +346,39 @@ function deletePart(part_id, options={}) {
                         <li>{% trans "Any existing stock items for this part will be deleted" %}</li>
                     </ul>
                 </div>`;
+
+                return html;
+            },
+            onSuccess: function(response) {
+                handleFormSuccess(response, options);
+            }
+        }
+    );
+}
+
+
+/*
+ * Launch a moal form to delete a PartCategory from the database
+ */
+function deletePartCategory(cat_id, options={}) {
+    constructForm(
+        `/api/part/category/${cat_id}/`,
+        {
+            method: 'DELETE',
+            title: '{% trans "Delete Part Category" %}',
+            preFormContent: function(opts) {
+                var category = opts.instance;
+
+                var html = `
+                <div class='alert alert-block alert-danger'>
+                    <strong>{% trans "Category" %}: ${category.name}</strong><br>/${category.pathstring}<br>
+                    {% trans "Are you sure you want to delete this part category?" %}
+                    <ul>
+                        <li>{% trans "Any parts in this category will be moved to the parent category" %}</li>
+                        <li>{% trans "Any subcategories will be moved to the parent category" %}</li>
+                    </ul>
+                </div>
+                `;
 
                 return html;
             },

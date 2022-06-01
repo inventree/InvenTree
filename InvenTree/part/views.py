@@ -973,23 +973,6 @@ class CategoryDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
         return context
 
 
-class CategoryDelete(AjaxDeleteView):
-    """
-    Delete view to delete a PartCategory
-    """
-
-    model = PartCategory
-    ajax_template_name = 'part/category_delete.html'
-    ajax_form_title = _('Delete Part Category')
-    context_object_name = 'category'
-    success_url = '/part/'
-
-    def get_data(self):
-        return {
-            'danger': _('Part category was deleted'),
-        }
-
-
 class CategoryParameterTemplateCreate(AjaxCreateView):
     """ View for creating a new PartCategoryParameterTemplate """
 

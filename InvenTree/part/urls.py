@@ -48,7 +48,6 @@ category_urls = [
 
     # Category detail views
     re_path(r'(?P<pk>\d+)/', include([
-        re_path(r'^delete/', views.CategoryDelete.as_view(), name='category-delete'),
         re_path(r'^parameters/', include(category_parameter_urls)),
 
         # Anything else

@@ -358,12 +358,9 @@
     {% endif %}
 
     $('#cat-delete').click(function() {
-        launchModalForm(
-            "{% url 'category-delete' category.id %}",
-            {
-                redirect: redirect
-            }
-        );
+        deletePartCategory({{ category.pk }}, {
+            redirect: redirect,
+        });
     });
 
     {% endif %}
