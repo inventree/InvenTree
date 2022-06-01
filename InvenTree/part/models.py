@@ -1133,13 +1133,6 @@ class Part(MetadataMixin, MPTTModel):
             # if the user is subscribed to a parent part or category
             PartStar.objects.filter(part=self, user=user).delete()
 
-    def need_to_restock(self):
-        """Return True if this part needs to be restocked (either by purchasing or building).
-
-        If the allocated_stock exceeds the total_stock, then we need to restock.
-        """
-        return (self.total_stock + self.on_order - self.allocation_count) < self.minimum_stock
-
     @property
     def can_build(self):
         """Return the number of units that can be build with available stock."""
@@ -1177,11 +1170,6 @@ class Part(MetadataMixin, MPTTModel):
         Builds marked as 'complete' or 'cancelled' are ignored
         """
         return self.builds.filter(status__in=BuildStatus.ACTIVE_CODES)
-
-    @property
-    def inactive_builds(self):
-        """Return a list of inactive builds."""
-        return self.builds.exclude(status__in=BuildStatus.ACTIVE_CODES)
 
     @property
     def quantity_being_built(self):
@@ -1533,25 +1521,6 @@ class Part(MetadataMixin, MPTTModel):
 
                 if recursive:
                     sub_part.getRequiredParts(recursive=True, parts=parts)
-
-        return parts
-
-    def get_allowed_bom_items(self):
-        """Return a list of parts which can be added to a BOM for this part.
-
-        - Exclude parts which are not 'component' parts
-        - Exclude parts which this part is in the BOM for
-        """
-        # Start with a list of all parts designated as 'sub components'
-        parts = Part.objects.filter(component=True)
-
-        # Exclude this part
-        parts = parts.exclude(id=self.id)
-
-        # Exclude any parts that this part is used *in* (to prevent recursive BOMs)
-        used_in = self.get_used_in().all()
-
-        parts = parts.exclude(id__in=[part.id for part in used_in])
 
         return parts
 
