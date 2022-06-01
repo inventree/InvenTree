@@ -113,7 +113,10 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
     """
 
     def save(self, *args, **kwargs):
+        """Custom save method for the order models:
 
+        Ensures that the reference field is rebuilt whenever the instance is saved.
+        """
         self.rebuild_reference_field()
 
         if not self.creation_date:
@@ -231,6 +234,7 @@ class PurchaseOrder(Order):
 
     @staticmethod
     def get_api_url():
+        """Return the API URL associated with the PurchaseOrder model"""
         return reverse('api-po-list')
 
     OVERDUE_FILTER = Q(status__in=PurchaseOrderStatus.OPEN) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
@@ -271,7 +275,7 @@ class PurchaseOrder(Order):
         return queryset
 
     def __str__(self):
-
+        """Render a string representation of this PurchaseOrder"""
         prefix = getSetting('PURCHASEORDER_REFERENCE_PREFIX')
 
         return f"{prefix}{self.reference} - {self.supplier.name if self.supplier else _('deleted')}"
@@ -328,6 +332,7 @@ class PurchaseOrder(Order):
     )
 
     def get_absolute_url(self):
+        """Return the web URL of the detail view for this order"""
         return reverse('po-detail', kwargs={'pk': self.id})
 
     @transaction.atomic
@@ -458,15 +463,17 @@ class PurchaseOrder(Order):
 
     @property
     def line_count(self):
+        """Return the total number of line items associated with this order"""
         return self.lines.count()
 
     @property
     def completed_line_count(self):
-
+        """Return the number of complete line items associated with this order"""
         return self.completed_line_items().count()
 
     @property
     def pending_line_count(self):
+        """Return the number of pending line items associated with this order"""
         return self.pending_line_items().count()
 
     @property
@@ -573,6 +580,7 @@ class SalesOrder(Order):
 
     @staticmethod
     def get_api_url():
+        """Return the API URL associated with the SalesOrder model"""
         return reverse('api-so-list')
 
     OVERDUE_FILTER = Q(status__in=SalesOrderStatus.OPEN) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
@@ -612,19 +620,14 @@ class SalesOrder(Order):
 
         return queryset
 
-    def save(self, *args, **kwargs):
-
-        self.rebuild_reference_field()
-
-        super().save(*args, **kwargs)
-
     def __str__(self):
-
+        """Render a string representation of this SalesOrder"""
         prefix = getSetting('SALESORDER_REFERENCE_PREFIX')
 
         return f"{prefix}{self.reference} - {self.customer.name if self.customer else _('deleted')}"
 
     def get_absolute_url(self):
+        """Return the web URL for the detail view of this order"""
         return reverse('so-detail', kwargs={'pk': self.id})
 
     reference = models.CharField(
@@ -680,6 +683,7 @@ class SalesOrder(Order):
 
     @property
     def is_pending(self):
+        """Return True if this order is 'pending'"""
         return self.status == SalesOrderStatus.PENDING
 
     @property
@@ -785,6 +789,7 @@ class SalesOrder(Order):
 
     @property
     def line_count(self):
+        """Return the total number of lines associated with this order"""
         return self.lines.count()
 
     def completed_line_items(self):
@@ -797,10 +802,12 @@ class SalesOrder(Order):
 
     @property
     def completed_line_count(self):
+        """Return the number of completed lines for this order"""
         return self.completed_line_items().count()
 
     @property
     def pending_line_count(self):
+        """Return the number of pending (incomplete) lines associated with this order"""
         return self.pending_line_items().count()
 
     def completed_shipments(self):
@@ -813,14 +820,17 @@ class SalesOrder(Order):
 
     @property
     def shipment_count(self):
+        """Return the total number of shipments associated with this order"""
         return self.shipments.count()
 
     @property
     def completed_shipment_count(self):
+        """Return the number of completed shipments associated with this order"""
         return self.completed_shipments().count()
 
     @property
     def pending_shipment_count(self):
+        """Return the number of pending shipments associated with this order"""
         return self.pending_shipments().count()
 
 
@@ -842,9 +852,11 @@ class PurchaseOrderAttachment(InvenTreeAttachment):
 
     @staticmethod
     def get_api_url():
+        """Return the API URL associated with the PurchaseOrderAttachment model"""
         return reverse('api-po-attachment-list')
 
     def getSubdir(self):
+        """Return the directory path where PurchaseOrderAttachment files are located"""
         return os.path.join("po_files", str(self.order.id))
 
     order = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, related_name="attachments")
@@ -855,9 +867,11 @@ class SalesOrderAttachment(InvenTreeAttachment):
 
     @staticmethod
     def get_api_url():
+        """Return the API URL associated with the SalesOrderAttachment class"""
         return reverse('api-so-attachment-list')
 
     def getSubdir(self):
+        """Return the directory path where SalesOrderAttachment files are located"""
         return os.path.join("so_files", str(self.order.id))
 
     order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='attachments')
@@ -931,12 +945,6 @@ class OrderExtraLine(OrderLineItem):
         help_text=_('Unit price'),
     )
 
-    def price_converted(self):
-        return convert_money(self.price, currency_code_default())
-
-    def price_converted_currency(self):
-        return currency_code_default()
-
 
 class PurchaseOrderLineItem(OrderLineItem):
     """Model for a purchase order line item.
@@ -947,10 +955,14 @@ class PurchaseOrderLineItem(OrderLineItem):
 
     @staticmethod
     def get_api_url():
+        """Return the API URL associated with the PurchaseOrderLineItem model"""
         return reverse('api-po-line-list')
 
     def clean(self):
+        """Custom clean method for the PurchaseOrderLineItem model:
 
+        - Ensure the supplier part matches the supplier
+        """
         super().clean()
 
         if self.order.supplier and self.part:
@@ -961,6 +973,7 @@ class PurchaseOrderLineItem(OrderLineItem):
                 })
 
     def __str__(self):
+        """Render a string representation of a PurchaseOrderLineItem instance"""
         return "{n} x {part} from {supplier} (for {po})".format(
             n=decimal2string(self.quantity),
             part=self.part.SKU if self.part else 'unknown part',
@@ -1047,6 +1060,7 @@ class PurchaseOrderExtraLine(OrderExtraLine):
     """
     @staticmethod
     def get_api_url():
+        """Return the API URL associated with the PurchaseOrderExtraLine model"""
         return reverse('api-po-extra-line-list')
 
     order = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, related_name='extra_lines', verbose_name=_('Order'), help_text=_('Purchase Order'))
@@ -1064,6 +1078,7 @@ class SalesOrderLineItem(OrderLineItem):
 
     @staticmethod
     def get_api_url():
+        """Return the API URL associated with the SalesOrderLineItem model"""
         return reverse('api-so-line-list')
 
     order = models.ForeignKey(
@@ -1139,6 +1154,7 @@ class SalesOrderShipment(models.Model):
     """
 
     class Meta:
+        """Metaclass defines extra model options"""
         # Shipment reference must be unique for a given sales order
         unique_together = [
             'order', 'reference',
@@ -1146,6 +1162,7 @@ class SalesOrderShipment(models.Model):
 
     @staticmethod
     def get_api_url():
+        """Return the API URL associated with the SalesOrderShipment model"""
         return reverse('api-so-shipment-list')
 
     order = models.ForeignKey(
@@ -1209,10 +1226,11 @@ class SalesOrderShipment(models.Model):
     )
 
     def is_complete(self):
+        """Return True if this shipment has already been completed"""
         return self.shipment_date is not None
 
     def check_can_complete(self, raise_error=True):
-
+        """Check if this shipment is able to be completed"""
         try:
             if self.shipment_date:
                 # Shipment has already been sent!
@@ -1285,6 +1303,7 @@ class SalesOrderExtraLine(OrderExtraLine):
     """
     @staticmethod
     def get_api_url():
+        """Return the API URL associated with the SalesOrderExtraLine model"""
         return reverse('api-so-extra-line-list')
 
     order = models.ForeignKey(SalesOrder, on_delete=models.CASCADE, related_name='extra_lines', verbose_name=_('Order'), help_text=_('Sales Order'))
@@ -1302,6 +1321,7 @@ class SalesOrderAllocation(models.Model):
 
     @staticmethod
     def get_api_url():
+        """Return the API URL associated with the SalesOrderAllocation model"""
         return reverse('api-so-allocation-list')
 
     def clean(self):
@@ -1380,19 +1400,12 @@ class SalesOrderAllocation(models.Model):
 
     quantity = RoundingDecimalField(max_digits=15, decimal_places=5, validators=[MinValueValidator(0)], default=1, verbose_name=_('Quantity'), help_text=_('Enter stock allocation quantity'))
 
-    def get_serial(self):
-        return self.item.serial
-
     def get_location(self):
+        """Return the <pk> value of the location associated with this allocation"""
         return self.item.location.id if self.item.location else None
 
-    def get_location_path(self):
-        if self.item.location:
-            return self.item.location.pathstring
-        else:
-            return ""
-
     def get_po(self):
+        """Return the PurchaseOrder associated with this allocation"""
         return self.item.purchase_order
 
     def complete_allocation(self, user):
