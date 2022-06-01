@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-31 03:35+0000\n"
-"PO-Revision-Date: 2022-05-31 14:36\n"
+"POT-Creation-Date: 2022-06-01 07:24+0000\n"
+"PO-Revision-Date: 2022-06-01 14:44\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -125,7 +125,8 @@ msgid "Missing external link"
 msgstr "Lien externe manquant"
 
 #: InvenTree/models.py:193 stock/models.py:2202
-#: templates/js/translated/attachment.js:119
+#: templates/js/translated/attachment.js:101
+#: templates/js/translated/attachment.js:198
 msgid "Attachment"
 msgstr "Pièce jointe"
 
@@ -148,7 +149,8 @@ msgstr "Lien"
 msgid "Link to external URL"
 msgstr "Lien vers une url externe"
 
-#: InvenTree/models.py:204 templates/js/translated/attachment.js:163
+#: InvenTree/models.py:204 templates/js/translated/attachment.js:102
+#: templates/js/translated/attachment.js:242
 msgid "Comment"
 msgstr "Commentaire"
 
@@ -3987,7 +3989,8 @@ msgid "Pending Shipments"
 msgstr "Expéditions en attente"
 
 #: order/templates/order/sales_order_detail.html:70
-#: templates/js/translated/bom.js:1053 templates/js/translated/build.js:1880
+#: templates/attachment_table.html:6 templates/js/translated/bom.js:1053
+#: templates/js/translated/build.js:1880
 msgid "Actions"
 msgstr ""
 
@@ -7585,6 +7588,14 @@ msgstr "Ajouter un lien"
 msgid "Add Attachment"
 msgstr "Ajouter une pièce jointe"
 
+#: templates/attachment_table.html:11
+msgid "Delete selected attachments"
+msgstr ""
+
+#: templates/attachment_table.html:12 templates/js/translated/attachment.js:110
+msgid "Delete Attachments"
+msgstr ""
+
 #: templates/base.html:101
 msgid "Server Restart Required"
 msgstr "Redémarrage du serveur nécessaire"
@@ -7721,31 +7732,27 @@ msgstr "Code d'erreur non géré"
 msgid "Error code"
 msgstr "Code d’erreur"
 
-#: templates/js/translated/attachment.js:78
+#: templates/js/translated/attachment.js:96
+msgid "All selected attachments will be deleted"
+msgstr ""
+
+#: templates/js/translated/attachment.js:156
 msgid "No attachments found"
 msgstr "Aucune pièce jointe trouvée"
 
-#: templates/js/translated/attachment.js:100
+#: templates/js/translated/attachment.js:180
 msgid "Edit Attachment"
 msgstr "Modifier la pièce jointe"
 
-#: templates/js/translated/attachment.js:110
-msgid "Confirm Delete"
-msgstr "Confirmer la suppression"
-
-#: templates/js/translated/attachment.js:111
-msgid "Delete Attachment"
-msgstr "Supprimer la pièce jointe"
-
-#: templates/js/translated/attachment.js:167
+#: templates/js/translated/attachment.js:246
 msgid "Upload Date"
 msgstr "Date d'upload"
 
-#: templates/js/translated/attachment.js:183
+#: templates/js/translated/attachment.js:262
 msgid "Edit attachment"
 msgstr "Modifier la pièce jointe"
 
-#: templates/js/translated/attachment.js:190
+#: templates/js/translated/attachment.js:269
 msgid "Delete attachment"
 msgstr "Supprimer la pièce jointe"
 
