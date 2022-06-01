@@ -1,3 +1,5 @@
+"""Admin functionality for the 'order' app"""
+
 from django.contrib import admin
 
 import import_export.widgets as widgets
@@ -13,6 +15,7 @@ from .models import (PurchaseOrder, PurchaseOrderExtraLine,
 
 # region general classes
 class GeneralExtraLineAdmin:
+    """Admin class template for the 'ExtraLineItem' models"""
     list_display = (
         'order',
         'quantity',
@@ -29,6 +32,7 @@ class GeneralExtraLineAdmin:
 
 
 class GeneralExtraLineMeta:
+    """Metaclass template for the 'ExtraLineItem' models"""
     skip_unchanged = True
     report_skipped = False
     clean_model_instances = True
@@ -36,11 +40,13 @@ class GeneralExtraLineMeta:
 
 
 class PurchaseOrderLineItemInlineAdmin(admin.StackedInline):
+    """Inline admin class for the PurchaseOrderLineItem model"""
     model = PurchaseOrderLineItem
     extra = 0
 
 
 class PurchaseOrderAdmin(ImportExportModelAdmin):
+    """Admin class for the PurchaseOrder model"""
 
     exclude = [
         'reference_int',
@@ -68,6 +74,7 @@ class PurchaseOrderAdmin(ImportExportModelAdmin):
 
 
 class SalesOrderAdmin(ImportExportModelAdmin):
+    """Admin class for the SalesOrder model"""
 
     exclude = [
         'reference_int',
@@ -100,6 +107,7 @@ class PurchaseOrderResource(ModelResource):
     overdue = Field(attribute='is_overdue', widget=widgets.BooleanWidget(), readonly=True)
 
     class Meta:
+        """Metaclass"""
         model = PurchaseOrder
         skip_unchanged = True
         clean_model_instances = True
@@ -120,6 +128,7 @@ class PurchaseOrderLineItemResource(ModelResource):
     SKU = Field(attribute='part__SKU', readonly=True)
 
     class Meta:
+        """Metaclass"""
         model = PurchaseOrderLineItem
         skip_unchanged = True
         report_skipped = False
@@ -145,6 +154,7 @@ class SalesOrderResource(ModelResource):
     overdue = Field(attribute='is_overdue', widget=widgets.BooleanWidget(), readonly=True)
 
     class Meta:
+        """Metaclass options"""
         model = SalesOrder
         skip_unchanged = True
         clean_model_instances = True
@@ -175,6 +185,7 @@ class SalesOrderLineItemResource(ModelResource):
             return ''
 
     class Meta:
+        """Metaclass options"""
         model = SalesOrderLineItem
         skip_unchanged = True
         report_skipped = False
@@ -191,6 +202,7 @@ class SalesOrderExtraLineResource(ModelResource):
 
 
 class PurchaseOrderLineItemAdmin(ImportExportModelAdmin):
+    """Admin class for the PurchaseOrderLine model"""
 
     resource_class = PurchaseOrderLineItemResource
 
@@ -207,11 +219,12 @@ class PurchaseOrderLineItemAdmin(ImportExportModelAdmin):
 
 
 class PurchaseOrderExtraLineAdmin(GeneralExtraLineAdmin, ImportExportModelAdmin):
-
+    """Admin class for the PurchaseOrderExtraLine model"""
     resource_class = PurchaseOrderExtraLineResource
 
 
 class SalesOrderLineItemAdmin(ImportExportModelAdmin):
+    """Admin class for the SalesOrderLine model"""
 
     resource_class = SalesOrderLineItemResource
 
@@ -233,11 +246,12 @@ class SalesOrderLineItemAdmin(ImportExportModelAdmin):
 
 
 class SalesOrderExtraLineAdmin(GeneralExtraLineAdmin, ImportExportModelAdmin):
-
+    """Admin class for the SalesOrderExtraLine model"""
     resource_class = SalesOrderExtraLineResource
 
 
 class SalesOrderShipmentAdmin(ImportExportModelAdmin):
+    """Admin class for the SalesOrderShipment model"""
 
     list_display = [
         'order',
@@ -255,6 +269,7 @@ class SalesOrderShipmentAdmin(ImportExportModelAdmin):
 
 
 class SalesOrderAllocationAdmin(ImportExportModelAdmin):
+    """Admin class for the SalesOrderAllocation model"""
 
     list_display = (
         'line',
