@@ -106,8 +106,10 @@ class BuildList(APIDownloadMixin, generics.ListCreateAPIView):
 
     search_fields = [
         'reference',
-        'part__name',
         'title',
+        'part__name',
+        'part__IPN',
+        'part__description',
     ]
 
     def get_queryset(self):
