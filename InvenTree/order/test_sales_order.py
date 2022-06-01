@@ -45,6 +45,19 @@ class SalesOrderTest(TestCase):
         # Create a line item
         self.line = SalesOrderLineItem.objects.create(quantity=50, order=self.order, part=self.part)
 
+    def test_rebuild_reference(self):
+        """Test that the 'reference_int' field gets rebuilt when the model is saved"""
+
+        self.assertEqual(self.order.reference_int, 1234)
+
+        self.order.reference = '999'
+        self.order.save()
+        self.assertEqual(self.order.reference_int, 999)
+
+        self.order.reference = '1000K'
+        self.order.save()
+        self.assertEqual(self.order.reference_int, 1000)
+
     def test_overdue(self):
         """Tests for overdue functionality."""
         today = datetime.now().date()

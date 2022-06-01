@@ -39,6 +39,17 @@ class OrderTest(TestCase):
 
         self.assertEqual(str(line), "100 x ACME0001 from ACME (for PO0001 - ACME)")
 
+    def test_rebuild_reference(self):
+        """Test that the reference_int field is correctly updated when the model is saved"""
+
+        order = PurchaseOrder.objects.get(pk=1)
+        order.save()
+        self.assertEqual(order.reference_int, 1)
+
+        order.reference = '12345XYZ'
+        order.save()
+        self.assertEqual(order.reference_int, 12345)
+
     def test_overdue(self):
         """Test overdue status functionality."""
         today = datetime.now().date()
