@@ -30,20 +30,9 @@ stock_item_detail_urls = [
     re_path('^.*$', views.StockItemDetail.as_view(), name='stock-item-detail'),
 ]
 
-stock_tracking_urls = [
-
-    # edit
-    re_path(r'^(?P<pk>\d+)/edit/', views.StockItemTrackingEdit.as_view(), name='stock-tracking-edit'),
-
-    # delete
-    re_path(r'^(?P<pk>\d+)/delete', views.StockItemTrackingDelete.as_view(), name='stock-tracking-delete'),
-]
-
 stock_urls = [
     # Stock location
     re_path(r'^location/', include(location_urls)),
-
-    re_path(r'^track/', include(stock_tracking_urls)),
 
     # Individual stock items
     re_path(r'^item/(?P<pk>\d+)/', include(stock_item_detail_urls)),
