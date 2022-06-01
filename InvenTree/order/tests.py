@@ -1,3 +1,5 @@
+"""Various unit tests for order models"""
+
 from datetime import datetime, timedelta
 
 import django.core.exceptions as django_exceptions

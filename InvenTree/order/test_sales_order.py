@@ -1,3 +1,5 @@
+"""Unit tests for the SalesOrder models"""
+
 from datetime import datetime, timedelta
 
 from django.core.exceptions import ValidationError
@@ -16,7 +18,7 @@ class SalesOrderTest(TestCase):
     """Run tests to ensure that the SalesOrder model is working correctly."""
 
     def setUp(self):
-
+        """Initial setup for this set of unit tests"""
         # Create a Company to ship the goods to
         self.customer = Company.objects.create(name="ABC Co", description="My customer", is_customer=True)
 
@@ -61,6 +63,7 @@ class SalesOrderTest(TestCase):
         self.assertFalse(self.order.is_overdue)
 
     def test_empty_order(self):
+        """Test for an empty order"""
         self.assertEqual(self.line.quantity, 50)
         self.assertEqual(self.line.allocated_quantity(), 0)
         self.assertEqual(self.line.fulfilled_quantity(), 0)
@@ -71,14 +74,13 @@ class SalesOrderTest(TestCase):
         self.assertFalse(self.order.is_fully_allocated())
 
     def test_add_duplicate_line_item(self):
-        # Adding a duplicate line item to a SalesOrder is accepted
+        """Adding a duplicate line item to a SalesOrder is accepted"""
 
         for ii in range(1, 5):
             SalesOrderLineItem.objects.create(order=self.order, part=self.part, quantity=ii)
 
     def allocate_stock(self, full=True):
-
-        # Allocate stock to the order
+        """Allocate stock to the order"""
         SalesOrderAllocation.objects.create(
             line=self.line,
             shipment=self.shipment,
@@ -93,7 +95,7 @@ class SalesOrderTest(TestCase):
         )
 
     def test_allocate_partial(self):
-        # Partially allocate stock
+        """Partially allocate stock"""
         self.allocate_stock(False)
 
         self.assertFalse(self.order.is_fully_allocated())
@@ -102,7 +104,7 @@ class SalesOrderTest(TestCase):
         self.assertEqual(self.line.fulfilled_quantity(), 0)
 
     def test_allocate_full(self):
-        # Fully allocate stock
+        """Fully allocate stock"""
         self.allocate_stock(True)
 
         self.assertTrue(self.order.is_fully_allocated())
@@ -110,8 +112,7 @@ class SalesOrderTest(TestCase):
         self.assertEqual(self.line.allocated_quantity(), 50)
 
     def test_order_cancel(self):
-        # Allocate line items then cancel the order
-
+        """Allocate line items then cancel the order"""
         self.allocate_stock(True)
 
         self.assertEqual(SalesOrderAllocation.objects.count(), 2)
@@ -129,8 +130,7 @@ class SalesOrderTest(TestCase):
         self.assertFalse(result)
 
     def test_complete_order(self):
-        # Allocate line items, then ship the order
-
+        """Allocate line items, then ship the order"""
         # Assert some stuff before we run the test
         # Initially there are two stock items
         self.assertEqual(StockItem.objects.count(), 2)
@@ -191,8 +191,7 @@ class SalesOrderTest(TestCase):
         self.assertEqual(self.line.allocated_quantity(), 50)
 
     def test_default_shipment(self):
-        # Test sales order default shipment creation
-
+        """Test sales order default shipment creation"""
         # Default setting value should be False
         self.assertEqual(False, InvenTreeSetting.get_setting('SALESORDER_DEFAULT_SHIPMENT'))
 

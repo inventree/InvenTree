@@ -6,7 +6,7 @@ from InvenTree.helpers import InvenTreeTestCase
 
 
 class OrderViewTestCase(InvenTreeTestCase):
-
+    """Base unit test class for order views"""
     fixtures = [
         'category',
         'part',
@@ -29,8 +29,9 @@ class OrderViewTestCase(InvenTreeTestCase):
 
 
 class OrderListTest(OrderViewTestCase):
-
+    """Unit tests for the PurchaseOrder index page"""
     def test_order_list(self):
+        """Tests for the PurchaseOrder index page"""
         response = self.client.get(reverse('po-index'))
 
         self.assertEqual(response.status_code, 200)
