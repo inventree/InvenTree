@@ -63,7 +63,7 @@ function addAttachmentButtonCallbacks(url, fields={}) {
 function deleteAttachments(attachments, url, options={}) {
 
     if (attachments.length == 0) {
-        console.warn("deleteAttachments function called with zero attachments provided");
+        console.warn('deleteAttachments function called with zero attachments provided');
         return;
     }
 
@@ -120,10 +120,9 @@ function deleteAttachments(attachments, url, options={}) {
                         $('#attachment-table').bootstrapTable('refresh');
                     }
                 }
-            )
+            );
         }
-    })
-
+    });
 }
 
 
