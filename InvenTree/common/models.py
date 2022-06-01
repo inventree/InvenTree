@@ -1,5 +1,5 @@
-"""
-Common database model definitions.
+"""Common database model definitions.
+
 These models are 'generic' and do not fit a particular business logic object.
 """
 
@@ -42,9 +42,10 @@ logger = logging.getLogger('inventree')
 
 
 class EmptyURLValidator(URLValidator):
+    """Validator for filed with url - that can be empty."""
 
     def __call__(self, value):
-
+        """Make sure empty values pass."""
         value = str(value).strip()
 
         if len(value) == 0:
@@ -55,21 +56,17 @@ class EmptyURLValidator(URLValidator):
 
 
 class BaseInvenTreeSetting(models.Model):
-    """
-    An base InvenTreeSetting object is a key:value pair used for storing
-    single values (e.g. one-off settings values).
-    """
+    """An base InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values)."""
 
     SETTINGS = {}
 
     class Meta:
+        """Meta options for BaseInvenTreeSetting -> abstract stops creation of database entry."""
+
         abstract = True
 
     def save(self, *args, **kwargs):
-        """
-        Enforce validation and clean before saving
-        """
-
+        """Enforce validation and clean before saving."""
         self.key = str(self.key).upper()
 
         self.clean(**kwargs)
@@ -79,14 +76,12 @@ class BaseInvenTreeSetting(models.Model):
 
     @classmethod
     def allValues(cls, user=None, exclude_hidden=False):
-        """
-        Return a dict of "all" defined global settings.
+        """Return a dict of "all" defined global settings.
 
         This performs a single database lookup,
         and then any settings which are not *in* the database
         are assigned their default values
         """
-
         results = cls.objects.all()
 
         # Optionally filter by user
@@ -131,28 +126,23 @@ class BaseInvenTreeSetting(models.Model):
         return settings
 
     def get_kwargs(self):
-        """
-        Construct kwargs for doing class-based settings lookup,
-        depending on *which* class we are.
+        """Construct kwargs for doing class-based settings lookup, depending on *which* class we are.
 
         This is necessary to abtract the settings object
         from the implementing class (e.g plugins)
 
         Subclasses should override this function to ensure the kwargs are correctly set.
         """
-
         return {}
 
     @classmethod
     def get_setting_definition(cls, key, **kwargs):
-        """
-        Return the 'definition' of a particular settings value, as a dict object.
+        """Return the 'definition' of a particular settings value, as a dict object.
 
         - The 'settings' dict can be passed as a kwarg
         - If not passed, look for cls.SETTINGS
         - Returns an empty dict if the key is not found
         """
-
         settings = kwargs.get('settings', cls.SETTINGS)
 
         key = str(key).strip().upper()
@@ -164,69 +154,56 @@ class BaseInvenTreeSetting(models.Model):
 
     @classmethod
     def get_setting_name(cls, key, **kwargs):
-        """
-        Return the name of a particular setting.
+        """Return the name of a particular setting.
 
         If it does not exist, return an empty string.
         """
-
         setting = cls.get_setting_definition(key, **kwargs)
         return setting.get('name', '')
 
     @classmethod
     def get_setting_description(cls, key, **kwargs):
-        """
-        Return the description for a particular setting.
+        """Return the description for a particular setting.
 
         If it does not exist, return an empty string.
         """
-
         setting = cls.get_setting_definition(key, **kwargs)
 
         return setting.get('description', '')
 
     @classmethod
     def get_setting_units(cls, key, **kwargs):
-        """
-        Return the units for a particular setting.
+        """Return the units for a particular setting.
 
         If it does not exist, return an empty string.
         """
-
         setting = cls.get_setting_definition(key, **kwargs)
 
         return setting.get('units', '')
 
     @classmethod
     def get_setting_validator(cls, key, **kwargs):
-        """
-        Return the validator for a particular setting.
+        """Return the validator for a particular setting.
 
         If it does not exist, return None
         """
-
         setting = cls.get_setting_definition(key, **kwargs)
 
         return setting.get('validator', None)
 
     @classmethod
     def get_setting_default(cls, key, **kwargs):
-        """
-        Return the default value for a particular setting.
+        """Return the default value for a particular setting.
 
         If it does not exist, return an empty string
         """
-
         setting = cls.get_setting_definition(key, **kwargs)
 
         return setting.get('default', '')
 
     @classmethod
     def get_setting_choices(cls, key, **kwargs):
-        """
-        Return the validator choices available for a particular setting.
-        """
-
+        """Return the validator choices available for a particular setting."""
         setting = cls.get_setting_definition(key, **kwargs)
 
         choices = setting.get('choices', None)
@@ -239,13 +216,11 @@ class BaseInvenTreeSetting(models.Model):
 
     @classmethod
     def get_setting_object(cls, key, **kwargs):
-        """
-        Return an InvenTreeSetting object matching the given key.
+        """Return an InvenTreeSetting object matching the given key.
 
         - Key is case-insensitive
         - Returns None if no match is made
         """
-
         key = str(key).strip().upper()
 
         settings = cls.objects.all()
@@ -311,11 +286,10 @@ class BaseInvenTreeSetting(models.Model):
 
     @classmethod
     def get_setting(cls, key, backup_value=None, **kwargs):
-        """
-        Get the value of a particular setting.
+        """Get the value of a particular setting.
+
         If it does not exist, return the backup value (default = None)
         """
-
         # If no backup value is specified, atttempt to retrieve a "default" value
         if backup_value is None:
             backup_value = cls.get_setting_default(key, **kwargs)
@@ -343,9 +317,7 @@ class BaseInvenTreeSetting(models.Model):
 
     @classmethod
     def set_setting(cls, key, value, change_user, create=True, **kwargs):
-        """
-        Set the value of a particular setting.
-        If it does not exist, option to create it.
+        """Set the value of a particular setting. If it does not exist, option to create it.
 
         Args:
             key: settings key
@@ -353,7 +325,6 @@ class BaseInvenTreeSetting(models.Model):
             change_user: User object (must be staff member to update a core setting)
             create: If True, create a new setting if the specified key does not exist.
         """
-
         if change_user is not None and not change_user.is_staff:
             return
 
@@ -397,26 +368,26 @@ class BaseInvenTreeSetting(models.Model):
 
     @property
     def name(self):
+        """Return name for setting."""
         return self.__class__.get_setting_name(self.key, **self.get_kwargs())
 
     @property
     def default_value(self):
+        """Return default_value for setting."""
         return self.__class__.get_setting_default(self.key, **self.get_kwargs())
 
     @property
     def description(self):
+        """Return description for setting."""
         return self.__class__.get_setting_description(self.key, **self.get_kwargs())
 
     @property
     def units(self):
+        """Return units for setting."""
         return self.__class__.get_setting_units(self.key, **self.get_kwargs())
 
     def clean(self, **kwargs):
-        """
-        If a validator (or multiple validators) are defined for a particular setting key,
-        run them against the 'value' field.
-        """
-
+        """If a validator (or multiple validators) are defined for a particular setting key, run them against the 'value' field."""
         super().clean()
 
         # Encode as native values
@@ -437,10 +408,7 @@ class BaseInvenTreeSetting(models.Model):
             raise ValidationError(_("Chosen value is not a valid option"))
 
     def run_validator(self, validator):
-        """
-        Run a validator against the 'value' field for this InvenTreeSetting object.
-        """
-
+        """Run a validator against the 'value' field for this InvenTreeSetting object."""
         if validator is None:
             return
 
@@ -485,15 +453,11 @@ class BaseInvenTreeSetting(models.Model):
             validator(value)
 
     def validate_unique(self, exclude=None, **kwargs):
-        """
-        Ensure that the key:value pair is unique.
-        In addition to the base validators, this ensures that the 'key'
-        is unique, using a case-insensitive comparison.
+        """Ensure that the key:value pair is unique. In addition to the base validators, this ensures that the 'key' is unique, using a case-insensitive comparison.
 
         Note that sub-classes (UserSetting, PluginSetting) use other filters
         to determine if the setting is 'unique' or not
         """
-
         super().validate_unique(exclude)
 
         filters = {
@@ -520,17 +484,11 @@ class BaseInvenTreeSetting(models.Model):
             pass
 
     def choices(self):
-        """
-        Return the available choices for this setting (or None if no choices are defined)
-        """
-
+        """Return the available choices for this setting (or None if no choices are defined)."""
         return self.__class__.get_setting_choices(self.key, **self.get_kwargs())
 
     def valid_options(self):
-        """
-        Return a list of valid options for this setting
-        """
-
+        """Return a list of valid options for this setting."""
         choices = self.choices()
 
         if not choices:
@@ -539,21 +497,17 @@ class BaseInvenTreeSetting(models.Model):
         return [opt[0] for opt in choices]
 
     def is_choice(self):
-        """
-        Check if this setting is a "choice" field
-        """
-
+        """Check if this setting is a "choice" field."""
         return self.__class__.get_setting_choices(self.key, **self.get_kwargs()) is not None
 
     def as_choice(self):
-        """
-        Render this setting as the "display" value of a choice field,
-        e.g. if the choices are:
+        """Render this setting as the "display" value of a choice field.
+
+        E.g. if the choices are:
         [('A4', 'A4 paper'), ('A3', 'A3 paper')],
         and the value is 'A4',
         then display 'A4 paper'
         """
-
         choices = self.get_setting_choices(self.key, **self.get_kwargs())
 
         if not choices:
@@ -566,30 +520,23 @@ class BaseInvenTreeSetting(models.Model):
         return self.value
 
     def is_model(self):
-        """
-        Check if this setting references a model instance in the database
-        """
-
+        """Check if this setting references a model instance in the database."""
         return self.model_name() is not None
 
     def model_name(self):
-        """
-        Return the model name associated with this setting
-        """
-
+        """Return the model name associated with this setting."""
         setting = self.get_setting_definition(self.key, **self.get_kwargs())
 
         return setting.get('model', None)
 
     def model_class(self):
-        """
-        Return the model class associated with this setting, if (and only if):
+        """Return the model class associated with this setting.
 
+        If (and only if):
         - It has a defined 'model' parameter
         - The 'model' parameter is of the form app.model
         - The 'model' parameter has matches a known app model
         """
-
         model_name = self.model_name()
 
         if not model_name:
@@ -617,11 +564,7 @@ class BaseInvenTreeSetting(models.Model):
         return model
 
     def api_url(self):
-        """
-        Return the API url associated with the linked model,
-        if provided, and valid!
-        """
-
+        """Return the API url associated with the linked model, if provided, and valid!"""
         model_class = self.model_class()
 
         if model_class:
@@ -634,28 +577,20 @@ class BaseInvenTreeSetting(models.Model):
         return None
 
     def is_bool(self):
-        """
-        Check if this setting is required to be a boolean value
-        """
-
+        """Check if this setting is required to be a boolean value."""
         validator = self.__class__.get_setting_validator(self.key, **self.get_kwargs())
 
         return self.__class__.validator_is_bool(validator)
 
     def as_bool(self):
-        """
-        Return the value of this setting converted to a boolean value.
+        """Return the value of this setting converted to a boolean value.
 
         Warning: Only use on values where is_bool evaluates to true!
         """
-
         return InvenTree.helpers.str2bool(self.value)
 
     def setting_type(self):
-        """
-        Return the field type identifier for this setting object
-        """
-
+        """Return the field type identifier for this setting object."""
         if self.is_bool():
             return 'boolean'
 
@@ -670,7 +605,7 @@ class BaseInvenTreeSetting(models.Model):
 
     @classmethod
     def validator_is_bool(cls, validator):
-
+        """Return if validator is for bool."""
         if validator == bool:
             return True
 
@@ -682,17 +617,14 @@ class BaseInvenTreeSetting(models.Model):
         return False
 
     def is_int(self,):
-        """
-        Check if the setting is required to be an integer value:
-        """
-
+        """Check if the setting is required to be an integer value."""
         validator = self.__class__.get_setting_validator(self.key, **self.get_kwargs())
 
         return self.__class__.validator_is_int(validator)
 
     @classmethod
     def validator_is_int(cls, validator):
-
+        """Return if validator is for int."""
         if validator == int:
             return True
 
@@ -704,12 +636,10 @@ class BaseInvenTreeSetting(models.Model):
         return False
 
     def as_int(self):
-        """
-        Return the value of this setting converted to a boolean value.
+        """Return the value of this setting converted to a boolean value.
 
         If an error occurs, return the default value
         """
-
         try:
             value = int(self.value)
         except (ValueError, TypeError):
@@ -719,41 +649,34 @@ class BaseInvenTreeSetting(models.Model):
 
     @classmethod
     def is_protected(cls, key, **kwargs):
-        """
-        Check if the setting value is protected
-        """
-
+        """Check if the setting value is protected."""
         setting = cls.get_setting_definition(key, **kwargs)
 
         return setting.get('protected', False)
 
     @property
     def protected(self):
+        """Returns if setting is protected from rendering."""
         return self.__class__.is_protected(self.key, **self.get_kwargs())
 
 
 def settings_group_options():
-    """
-    Build up group tuple for settings based on your choices
-    """
+    """Build up group tuple for settings based on your choices."""
     return [('', _('No group')), *[(str(a.id), str(a)) for a in Group.objects.all()]]
 
 
 class InvenTreeSetting(BaseInvenTreeSetting):
-    """
-    An InvenTreeSetting object is a key:value pair used for storing
-    single values (e.g. one-off settings values).
+    """An InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
 
     The class provides a way of retrieving the value for a particular key,
     even if that key does not exist.
     """
 
     def save(self, *args, **kwargs):
-        """
-        When saving a global setting, check to see if it requires a server restart.
+        """When saving a global setting, check to see if it requires a server restart.
+
         If so, set the "SERVER_RESTART_REQUIRED" setting to True
         """
-
         super().save()
 
         if self.requires_restart():
@@ -1235,6 +1158,8 @@ class InvenTreeSetting(BaseInvenTreeSetting):
     }
 
     class Meta:
+        """Meta options for InvenTreeSetting."""
+
         verbose_name = "InvenTree Setting"
         verbose_name_plural = "InvenTree Settings"
 
@@ -1246,18 +1171,11 @@ class InvenTreeSetting(BaseInvenTreeSetting):
     )
 
     def to_native_value(self):
-        """
-        Return the "pythonic" value,
-        e.g. convert "True" to True, and "1" to 1
-        """
-
+        """Return the "pythonic" value, e.g. convert "True" to True, and "1" to 1."""
         return self.__class__.get_setting(self.key)
 
     def requires_restart(self):
-        """
-        Return True if this setting requires a server restart after changing
-        """
-
+        """Return True if this setting requires a server restart after changing."""
         options = InvenTreeSetting.SETTINGS.get(self.key, None)
 
         if options:
@@ -1267,9 +1185,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
 
 class InvenTreeUserSetting(BaseInvenTreeSetting):
-    """
-    An InvenTreeSetting object with a usercontext
-    """
+    """An InvenTreeSetting object with a usercontext."""
 
     SETTINGS = {
         'HOMEPAGE_PART_STARRED': {
@@ -1561,6 +1477,8 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
     }
 
     class Meta:
+        """Meta options for InvenTreeUserSetting."""
+
         verbose_name = "InvenTree User Setting"
         verbose_name_plural = "InvenTree User Settings"
         constraints = [
@@ -1584,36 +1502,30 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
 
     @classmethod
     def get_setting_object(cls, key, user=None):
+        """Return setting object for provided user."""
         return super().get_setting_object(key, user=user)
 
     def validate_unique(self, exclude=None, **kwargs):
+        """Return if the setting (including key) is unique."""
         return super().validate_unique(exclude=exclude, user=self.user)
 
     def to_native_value(self):
-        """
-        Return the "pythonic" value,
-        e.g. convert "True" to True, and "1" to 1
-        """
-
+        """Return the "pythonic" value, e.g. convert "True" to True, and "1" to 1."""
         return self.__class__.get_setting(self.key, user=self.user)
 
     def get_kwargs(self):
-        """
-        Explicit kwargs required to uniquely identify a particular setting object,
-        in addition to the 'key' parameter
-        """
-
+        """Explicit kwargs required to uniquely identify a particular setting object, in addition to the 'key' parameter."""
         return {
             'user': self.user,
         }
 
 
 class PriceBreak(models.Model):
-    """
-    Represents a PriceBreak model
-    """
+    """Represents a PriceBreak model."""
 
     class Meta:
+        """Define this as abstract -> no DB entry is created."""
+
         abstract = True
 
     quantity = InvenTree.fields.RoundingDecimalField(
@@ -1634,13 +1546,11 @@ class PriceBreak(models.Model):
     )
 
     def convert_to(self, currency_code):
-        """
-        Convert the unit-price at this price break to the specified currency code.
+        """Convert the unit-price at this price break to the specified currency code.
 
         Args:
-            currency_code - The currency code to convert to (e.g "USD" or "AUD")
+            currency_code: The currency code to convert to (e.g "USD" or "AUD")
         """
-
         try:
             converted = convert_money(self.price, currency_code)
         except MissingRate:
@@ -1651,7 +1561,7 @@ class PriceBreak(models.Model):
 
 
 def get_price(instance, quantity, moq=True, multiples=True, currency=None, break_name: str = 'price_breaks'):
-    """ Calculate the price based on quantity price breaks.
+    """Calculate the price based on quantity price breaks.
 
     - Don't forget to add in flat-fee cost (base_cost field)
     - If MOQ (minimum order quantity) is required, bump quantity
@@ -1721,7 +1631,7 @@ def get_price(instance, quantity, moq=True, multiples=True, currency=None, break
 
 
 class ColorTheme(models.Model):
-    """ Color Theme Setting """
+    """Color Theme Setting."""
     name = models.CharField(max_length=20,
                             default='',
                             blank=True)
@@ -1731,7 +1641,7 @@ class ColorTheme(models.Model):
 
     @classmethod
     def get_color_themes_choices(cls):
-        """ Get all color themes from static folder """
+        """Get all color themes from static folder."""
         if settings.TESTING and not os.path.exists(settings.STATIC_COLOR_THEMES_DIR):
             logger.error('Theme directory does not exsist')
             return []
@@ -1750,7 +1660,7 @@ class ColorTheme(models.Model):
 
     @classmethod
     def is_valid_choice(cls, user_color_theme):
-        """ Check if color theme is valid choice """
+        """Check if color theme is valid choice."""
         try:
             user_color_theme_name = user_color_theme.name
         except AttributeError:
@@ -1764,13 +1674,15 @@ class ColorTheme(models.Model):
 
 
 class VerificationMethod:
+    """Class to hold method references."""
+
     NONE = 0
     TOKEN = 1
     HMAC = 2
 
 
 class WebhookEndpoint(models.Model):
-    """ Defines a Webhook entdpoint
+    """Defines a Webhook entdpoint.
 
     Attributes:
         endpoint_id: Path to the webhook,
@@ -1835,9 +1747,19 @@ class WebhookEndpoint(models.Model):
     # To be overridden
 
     def init(self, request, *args, **kwargs):
+        """Set verification method.
+
+        Args:
+            request: Original request object.
+        """
         self.verify = self.VERIFICATION_METHOD
 
     def process_webhook(self):
+        """Process the webhook incomming.
+
+        This does not deal with the data itself - that happens in process_payload.
+        Do not touch or pickle data here - it was not verified to be safe.
+        """
         if self.token:
             self.verify = VerificationMethod.TOKEN
         if self.secret:
@@ -1845,6 +1767,10 @@ class WebhookEndpoint(models.Model):
         return True
 
     def validate_token(self, payload, headers, request):
+        """Make sure that the provided token (if any) confirms to the setting for this endpoint.
+
+        This can be overridden to create your own token validation method.
+        """
         token = headers.get(self.TOKEN_NAME, "")
 
         # no token
@@ -1866,7 +1792,14 @@ class WebhookEndpoint(models.Model):
 
         return True
 
-    def save_data(self, payload, headers=None, request=None):
+    def save_data(self, payload=None, headers=None, request=None):
+        """Safes payload to database.
+
+        Args:
+            payload  (optional): Payload that was send along. Defaults to None.
+            headers (optional): Headers that were send along. Defaults to None.
+            request (optional): Original request object. Defaults to None.
+        """
         return WebhookMessage.objects.create(
             host=request.get_host(),
             header=json.dumps({key: val for key, val in headers.items()}),
@@ -1874,15 +1807,35 @@ class WebhookEndpoint(models.Model):
             endpoint=self,
         )
 
-    def process_payload(self, message, payload=None, headers=None):
+    def process_payload(self, message, payload=None, headers=None) -> bool:
+        """Process a payload.
+
+        Args:
+            message: DB entry for this message mm
+            payload (optional): Payload that was send along. Defaults to None.
+            headers (optional): Headers that were included. Defaults to None.
+
+        Returns:
+            bool: Was the message processed
+        """
         return True
 
-    def get_return(self, payload, headers=None, request=None):
+    def get_return(self, payload=None, headers=None, request=None) -> str:
+        """Returns the message that should be returned to the endpoint caller.
+
+        Args:
+            payload  (optional): Payload that was send along. Defaults to None.
+            headers (optional): Headers that were send along. Defaults to None.
+            request (optional): Original request object. Defaults to None.
+
+        Returns:
+            str: Message for caller.
+        """
         return self.MESSAGE_OK
 
 
 class WebhookMessage(models.Model):
-    """ Defines a webhook message
+    """Defines a webhook message.
 
     Attributes:
         message_id: Unique identifier for this message,
@@ -1939,8 +1892,7 @@ class WebhookMessage(models.Model):
 
 
 class NotificationEntry(models.Model):
-    """
-    A NotificationEntry records the last time a particular notifaction was sent out.
+    """A NotificationEntry records the last time a particular notifaction was sent out.
 
     It is recorded to ensure that notifications are not sent out "too often" to users.
 
@@ -1951,6 +1903,8 @@ class NotificationEntry(models.Model):
     """
 
     class Meta:
+        """Meta options for NotificationEntry."""
+
         unique_together = [
             ('key', 'uid'),
         ]
@@ -1970,10 +1924,7 @@ class NotificationEntry(models.Model):
 
     @classmethod
     def check_recent(cls, key: str, uid: int, delta: timedelta):
-        """
-        Test if a particular notification has been sent in the specified time period
-        """
-
+        """Test if a particular notification has been sent in the specified time period."""
         since = datetime.now().date() - delta
 
         entries = cls.objects.filter(
@@ -1986,10 +1937,7 @@ class NotificationEntry(models.Model):
 
     @classmethod
     def notify(cls, key: str, uid: int):
-        """
-        Notify the database that a particular notification has been sent out
-        """
-
+        """Notify the database that a particular notification has been sent out."""
         entry, created = cls.objects.get_or_create(
             key=key,
             uid=uid
@@ -1999,8 +1947,7 @@ class NotificationEntry(models.Model):
 
 
 class NotificationMessage(models.Model):
-    """
-    A NotificationEntry records the last time a particular notifaction was sent out.
+    """A NotificationEntry records the last time a particular notifaction was sent out.
 
     It is recorded to ensure that notifications are not sent out "too often" to users.
 
@@ -2073,13 +2020,14 @@ class NotificationMessage(models.Model):
 
     @staticmethod
     def get_api_url():
+        """Return API endpoint."""
         return reverse('api-notifications-list')
 
     def age(self):
-        """age of the message in seconds"""
+        """Age of the message in seconds."""
         delta = now() - self.creation
         return delta.seconds
 
     def age_human(self):
-        """humanized age"""
+        """Humanized age."""
         return naturaltime(self.creation)

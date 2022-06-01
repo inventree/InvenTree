@@ -1,6 +1,4 @@
-"""
-Serializers used in various InvenTree apps
-"""
+"""Serializers used in various InvenTree apps."""
 
 import os
 from collections import OrderedDict
@@ -26,25 +24,20 @@ from .models import extract_int
 
 
 class InvenTreeMoneySerializer(MoneyField):
-    """
-    Custom serializer for 'MoneyField',
-    which ensures that passed values are numerically valid
+    """Custom serializer for 'MoneyField', which ensures that passed values are numerically valid.
 
     Ref: https://github.com/django-money/django-money/blob/master/djmoney/contrib/django_rest_framework/fields.py
     """
 
     def __init__(self, *args, **kwargs):
-
+        """Overrite default values."""
         kwargs["max_digits"] = kwargs.get("max_digits", 19)
         kwargs["decimal_places"] = kwargs.get("decimal_places", 4)
 
         super().__init__(*args, **kwargs)
 
     def get_value(self, data):
-        """
-        Test that the returned amount is a valid Decimal
-        """
-
+        """Test that the returned amount is a valid Decimal."""
         amount = super(DecimalField, self).get_value(data)
 
         # Convert an empty string to None
@@ -68,17 +61,21 @@ class InvenTreeMoneySerializer(MoneyField):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """ Serializer for User - provides all fields """
+    """Serializer for User - provides all fields."""
 
     class Meta:
+        """Metaclass options."""
+
         model = User
         fields = 'all'
 
 
 class UserSerializerBrief(serializers.ModelSerializer):
-    """ Serializer for User - provides limited information """
+    """Serializer for User - provides limited information."""
 
     class Meta:
+        """Metaclass options."""
+
         model = User
         fields = [
             'pk',
@@ -87,17 +84,10 @@ class UserSerializerBrief(serializers.ModelSerializer):
 
 
 class InvenTreeModelSerializer(serializers.ModelSerializer):
-    """
-    Inherits the standard Django ModelSerializer class,
-    but also ensures that the underlying model class data are checked on validation.
-    """
+    """Inherits the standard Django ModelSerializer class, but also ensures that the underlying model class data are checked on validation."""
 
     def __init__(self, instance=None, data=empty, **kwargs):
-        """
-        Custom __init__ routine to ensure that *default* values (as specified in the ORM)
-        are used by the DRF serializers, *if* the values are not provided by the user.
-        """
-
+        """Custom __init__ routine to ensure that *default* values (as specified in the ORM) are used by the DRF serializers, *if* the values are not provided by the user."""
         # If instance is None, we are creating a new instance
         if instance is None and data is not empty:
 
@@ -118,6 +108,7 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
 
                 """
                 Update the field IF (and ONLY IF):
+
                 - The field has a specified default value
                 - The field does not already have a value set
                 """
@@ -137,11 +128,10 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
         super().__init__(instance, data, **kwargs)
 
     def get_initial(self):
-        """
-        Construct initial data for the serializer.
+        """Construct initial data for the serializer.
+
         Use the 'default' values specified by the django model definition
         """
-
         initials = super().get_initial().copy()
 
         # Are we creating a new instance?
@@ -168,11 +158,7 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
         return initials
 
     def save(self, **kwargs):
-        """
-        Catch any django ValidationError thrown at the moment save() is called,
-        and re-throw as a DRF ValidationError
-        """
-
+        """Catch any django ValidationError thrown at the moment `save` is called, and re-throw as a DRF ValidationError."""
         try:
             super().save(**kwargs)
         except (ValidationError, DjangoValidationError) as exc:
@@ -181,10 +167,7 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
         return self.instance
 
     def update(self, instance, validated_data):
-        """
-        Catch any django ValidationError, and re-throw as a DRF ValidationError
-        """
-
+        """Catch any django ValidationError, and re-throw as a DRF ValidationError."""
         try:
             instance = super().update(instance, validated_data)
         except (ValidationError, DjangoValidationError) as exc:
@@ -193,12 +176,11 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
         return instance
 
     def run_validation(self, data=empty):
-        """
-        Perform serializer validation.
+        """Perform serializer validation.
+
         In addition to running validators on the serializer fields,
         this class ensures that the underlying model is also validated.
         """
-
         # Run any native validation checks first (may raise a ValidationError)
         data = super().run_validation(data)
 
@@ -237,20 +219,17 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
 
 
 class ReferenceIndexingSerializerMixin():
-    """
-    This serializer mixin ensures the the reference is not to big / small
-    for the BigIntegerField
-    """
+    """This serializer mixin ensures the the reference is not to big / small for the BigIntegerField."""
+
     def validate_reference(self, value):
+        """Ensures the reference is not to big / small for the BigIntegerField."""
         if extract_int(value) > models.BigIntegerField.MAX_BIGINT:
             raise serializers.ValidationError('reference is to to big')
         return value
 
 
 class InvenTreeAttachmentSerializerField(serializers.FileField):
-    """
-    Override the DRF native FileField serializer,
-    to remove the leading server path.
+    """Override the DRF native FileField serializer, to remove the leading server path.
 
     For example, the FileField might supply something like:
 
@@ -269,7 +248,7 @@ class InvenTreeAttachmentSerializerField(serializers.FileField):
     """
 
     def to_representation(self, value):
-
+        """To json-serializable type."""
         if not value:
             return None
 
@@ -277,8 +256,7 @@ class InvenTreeAttachmentSerializerField(serializers.FileField):
 
 
 class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):
-    """
-    Special case of an InvenTreeModelSerializer, which handles an "attachment" model.
+    """Special case of an InvenTreeModelSerializer, which handles an "attachment" model.
 
     The only real addition here is that we support "renaming" of the attachment file.
     """
@@ -298,13 +276,13 @@ class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):
 
 
 class InvenTreeImageSerializerField(serializers.ImageField):
-    """
-    Custom image serializer.
+    """Custom image serializer.
+
     On upload, validate that the file is a valid image file
     """
 
     def to_representation(self, value):
-
+        """To json-serializable type."""
         if not value:
             return None
 
@@ -312,15 +290,15 @@ class InvenTreeImageSerializerField(serializers.ImageField):
 
 
 class InvenTreeDecimalField(serializers.FloatField):
-    """
-    Custom serializer for decimal fields. Solves the following issues:
+    """Custom serializer for decimal fields.
 
+    Solves the following issues:
     - The normal DRF DecimalField renders values with trailing zeros
     - Using a FloatField can result in rounding issues: https://code.djangoproject.com/ticket/30290
     """
 
     def to_internal_value(self, data):
-
+        """Convert to python type."""
         # Convert the value to a string, and then a decimal
         try:
             return Decimal(str(data))
@@ -329,8 +307,7 @@ class InvenTreeDecimalField(serializers.FloatField):
 
 
 class DataFileUploadSerializer(serializers.Serializer):
-    """
-    Generic serializer for uploading a data file, and extracting a dataset.
+    """Generic serializer for uploading a data file, and extracting a dataset.
 
     - Validates uploaded file
     - Extracts column names
@@ -341,6 +318,8 @@ class DataFileUploadSerializer(serializers.Serializer):
     TARGET_MODEL = None
 
     class Meta:
+        """Metaclass options."""
+
         fields = [
             'data_file',
         ]
@@ -353,10 +332,7 @@ class DataFileUploadSerializer(serializers.Serializer):
     )
 
     def validate_data_file(self, data_file):
-        """
-        Perform validation checks on the uploaded data file.
-        """
-
+        """Perform validation checks on the uploaded data file."""
         self.filename = data_file.name
 
         name, ext = os.path.splitext(data_file.name)
@@ -406,15 +382,13 @@ class DataFileUploadSerializer(serializers.Serializer):
         return data_file
 
     def match_column(self, column_name, field_names, exact=False):
-        """
-        Attempt to match a column name (from the file) to a field (defined in the model)
+        """Attempt to match a column name (from the file) to a field (defined in the model).
 
         Order of matching is:
         - Direct match
         - Case insensitive match
         - Fuzzy match
         """
-
         if not column_name:
             return None
 
@@ -439,10 +413,7 @@ class DataFileUploadSerializer(serializers.Serializer):
         return None
 
     def extract_data(self):
-        """
-        Returns dataset extracted from the file
-        """
-
+        """Returns dataset extracted from the file."""
         # Provide a dict of available import fields for the model
         model_fields = {}
 
@@ -483,12 +454,12 @@ class DataFileUploadSerializer(serializers.Serializer):
         }
 
     def save(self):
+        """Empty overwrite for save."""
         ...
 
 
 class DataFileExtractSerializer(serializers.Serializer):
-    """
-    Generic serializer for extracting data from an imported dataset.
+    """Generic serializer for extracting data from an imported dataset.
 
     - User provides an array of matched headers
     - User provides an array of raw data rows
@@ -498,6 +469,8 @@ class DataFileExtractSerializer(serializers.Serializer):
     TARGET_MODEL = None
 
     class Meta:
+        """Metaclass options."""
+
         fields = [
             'columns',
             'rows',
@@ -520,7 +493,7 @@ class DataFileExtractSerializer(serializers.Serializer):
     )
 
     def validate(self, data):
-
+        """Clean data."""
         data = super().validate(data)
 
         self.columns = data.get('columns', [])
@@ -538,7 +511,7 @@ class DataFileExtractSerializer(serializers.Serializer):
 
     @property
     def data(self):
-
+        """Returns current data."""
         if self.TARGET_MODEL:
             try:
                 model_fields = self.TARGET_MODEL.get_import_fields()
@@ -548,9 +521,7 @@ class DataFileExtractSerializer(serializers.Serializer):
         rows = []
 
         for row in self.rows:
-            """
-            Optionally pre-process each row, before sending back to the client
-            """
+            """Optionally pre-process each row, before sending back to the client."""
 
             processed_row = self.process_row(self.row_to_dict(row))
 
@@ -567,22 +538,17 @@ class DataFileExtractSerializer(serializers.Serializer):
         }
 
     def process_row(self, row):
-        """
-        Process a 'row' of data, which is a mapped column:value dict
+        """Process a 'row' of data, which is a mapped column:value dict.
 
         Returns either a mapped column:value dict, or None.
 
         If the function returns None, the column is ignored!
         """
-
         # Default implementation simply returns the original row data
         return row
 
     def row_to_dict(self, row):
-        """
-        Convert a "row" to a named data dict
-        """
-
+        """Convert a "row" to a named data dict."""
         row_dict = {
             'errors': {},
         }
@@ -598,10 +564,7 @@ class DataFileExtractSerializer(serializers.Serializer):
         return row_dict
 
     def validate_extracted_columns(self):
-        """
-        Perform custom validation of header mapping.
-        """
-
+        """Perform custom validation of header mapping."""
         if self.TARGET_MODEL:
             try:
                 model_fields = self.TARGET_MODEL.get_import_fields()
@@ -631,7 +594,5 @@ class DataFileExtractSerializer(serializers.Serializer):
             cols_seen.add(col)
 
     def save(self):
-        """
-        No "save" action for this serializer
-        """
-        ...
+        """No "save" action for this serializer."""
+        pass

@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
-Base Class for InvenTree plugins
-"""
+"""Base Class for InvenTree plugins."""
+
 import inspect
 import logging
 import os
@@ -21,7 +19,7 @@ logger = logging.getLogger("inventree")
 
 
 class MetaBase:
-    """Base class for a plugins metadata"""
+    """Base class for a plugins metadata."""
 
     # Override the plugin name for each concrete plugin instance
     NAME = ''
@@ -29,7 +27,7 @@ class MetaBase:
     TITLE = None
 
     def get_meta_value(self, key: str, old_key: str = None, __default=None):
-        """Reference a meta item with a key
+        """Reference a meta item with a key.
 
         Args:
             key (str): key for the value
@@ -55,24 +53,19 @@ class MetaBase:
         return value
 
     def plugin_name(self):
-        """
-        Name of plugin
-        """
+        """Name of plugin."""
         return self.get_meta_value('NAME', 'PLUGIN_NAME')
 
     @property
     def name(self):
-        """
-        Name of plugin
-        """
+        """Name of plugin."""
         return self.plugin_name()
 
     def plugin_slug(self):
-        """
-        Slug of plugin
+        """Slug of plugin.
+
         If not set plugin name slugified
         """
-
         slug = self.get_meta_value('SLUG', 'PLUGIN_SLUG', None)
         if not slug:
             slug = self.plugin_name()
@@ -81,16 +74,11 @@ class MetaBase:
 
     @property
     def slug(self):
-        """
-        Slug of plugin
-        """
+        """Slug of plugin."""
         return self.plugin_slug()
 
     def plugin_title(self):
-        """
-        Title of plugin
-        """
-
+        """Title of plugin."""
         title = self.get_meta_value('TITLE', 'PLUGIN_TITLE', None)
         if title:
             return title
@@ -98,16 +86,11 @@ class MetaBase:
 
     @property
     def human_name(self):
-        """
-        Human readable name of plugin
-        """
+        """Human readable name of plugin."""
         return self.plugin_title()
 
     def plugin_config(self):
-        """
-        Return the PluginConfig object associated with this plugin
-        """
-
+        """Return the PluginConfig object associated with this plugin."""
         try:
             import plugin.models
 
@@ -121,10 +104,7 @@ class MetaBase:
         return cfg
 
     def is_active(self):
-        """
-        Return True if this plugin is currently active
-        """
-
+        """Return True if this plugin is currently active."""
         cfg = self.plugin_config()
 
         if cfg:
@@ -134,25 +114,23 @@ class MetaBase:
 
 
 class MixinBase:
-    """
-    Base set of mixin functions and mechanisms
-    """
+    """Base set of mixin functions and mechanisms."""
 
     def __init__(self, *args, **kwargs) -> None:
+        """Init sup-parts.
+
+        Adds state dicts.
+        """
         self._mixinreg = {}
         self._mixins = {}
         super().__init__(*args, **kwargs)
 
     def mixin(self, key):
-        """
-        Check if mixin is registered
-        """
+        """Check if mixin is registered."""
         return key in self._mixins
 
     def mixin_enabled(self, key):
-        """
-        Check if mixin is registered, enabled and ready
-        """
+        """Check if mixin is registered, enabled and ready."""
         if self.mixin(key):
             fnc_name = self._mixins.get(key)
 
@@ -164,18 +142,12 @@ class MixinBase:
         return False
 
     def add_mixin(self, key: str, fnc_enabled=True, cls=None):
-        """
-        Add a mixin to the plugins registry
-        """
-
+        """Add a mixin to the plugins registry."""
         self._mixins[key] = fnc_enabled
         self.setup_mixin(key, cls=cls)
 
     def setup_mixin(self, key, cls=None):
-        """
-        Define mixin details for the current mixin -> provides meta details for all active mixins
-        """
-
+        """Define mixin details for the current mixin -> provides meta details for all active mixins."""
         # get human name
         human_name = getattr(cls.MixinMeta, 'MIXIN_NAME', key) if cls and hasattr(cls, 'MixinMeta') else key
 
@@ -187,10 +159,7 @@ class MixinBase:
 
     @property
     def registered_mixins(self, with_base: bool = False):
-        """
-        Get all registered mixins for the plugin
-        """
-
+        """Get all registered mixins for the plugin."""
         mixins = getattr(self, '_mixinreg', None)
         if mixins:
             # filter out base
@@ -202,8 +171,7 @@ class MixinBase:
 
 
 class InvenTreePlugin(MixinBase, MetaBase):
-    """
-    The InvenTreePlugin class is used to integrate with 3rd party software
+    """The InvenTreePlugin class is used to integrate with 3rd party software.
 
     DO NOT USE THIS DIRECTLY, USE plugin.InvenTreePlugin
     """
@@ -216,6 +184,10 @@ class InvenTreePlugin(MixinBase, MetaBase):
     LICENSE = None
 
     def __init__(self):
+        """Init a plugin.
+
+        Set paths and load metadata.
+        """
         super().__init__()
         self.add_mixin('base')
         self.def_path = inspect.getfile(self.__class__)
@@ -226,9 +198,7 @@ class InvenTreePlugin(MixinBase, MetaBase):
     # region properties
     @property
     def description(self):
-        """
-        Description of plugin
-        """
+        """Description of plugin."""
         description = getattr(self, 'DESCRIPTION', None)
         if not description:
             description = self.plugin_name()
@@ -236,9 +206,7 @@ class InvenTreePlugin(MixinBase, MetaBase):
 
     @property
     def author(self):
-        """
-        Author of plugin - either from plugin settings or git
-        """
+        """Author of plugin - either from plugin settings or git."""
         author = getattr(self, 'AUTHOR', None)
         if not author:
             author = self.package.get('author')
@@ -248,9 +216,7 @@ class InvenTreePlugin(MixinBase, MetaBase):
 
     @property
     def pub_date(self):
-        """
-        Publishing date of plugin - either from plugin settings or git
-        """
+        """Publishing date of plugin - either from plugin settings or git."""
         pub_date = getattr(self, 'PUBLISH_DATE', None)
         if not pub_date:
             pub_date = self.package.get('date')
@@ -262,77 +228,57 @@ class InvenTreePlugin(MixinBase, MetaBase):
 
     @property
     def version(self):
-        """
-        Version of plugin
-        """
+        """Version of plugin."""
         version = getattr(self, 'VERSION', None)
         return version
 
     @property
     def website(self):
-        """
-        Website of plugin - if set else None
-        """
+        """Website of plugin - if set else None."""
         website = getattr(self, 'WEBSITE', None)
         return website
 
     @property
     def license(self):
-        """
-        License of plugin
-        """
+        """License of plugin."""
         lic = getattr(self, 'LICENSE', None)
         return lic
     # endregion
 
     @property
     def _is_package(self):
-        """
-        Is the plugin delivered as a package
-        """
+        """Is the plugin delivered as a package."""
         return getattr(self, 'is_package', False)
 
     @property
     def is_sample(self):
-        """
-        Is this plugin part of the samples?
-        """
+        """Is this plugin part of the samples?"""
         path = str(self.package_path)
         return path.startswith('plugin/samples/')
 
     @property
     def package_path(self):
-        """
-        Path to the plugin
-        """
+        """Path to the plugin."""
         if self._is_package:
             return self.__module__  # pragma: no cover
         return pathlib.Path(self.def_path).relative_to(settings.BASE_DIR)
 
     @property
     def settings_url(self):
-        """
-        URL to the settings panel for this plugin
-        """
+        """URL to the settings panel for this plugin."""
         return f'{reverse("settings")}#select-plugin-{self.slug}'
 
     # region package info
     def _get_package_commit(self):
-        """
-        Get last git commit for the plugin
-        """
+        """Get last git commit for the plugin."""
         return get_git_log(self.def_path)
 
     def _get_package_metadata(self):
-        """
-        Get package metadata for plugin
-        """
+        """Get package metadata for plugin."""
         return {}  # pragma: no cover  # TODO add usage for package metadata
 
     def define_package(self):
-        """
-        Add package info of the plugin into plugins context
-        """
+        """Add package info of the plugin into plugins context."""
         package = self._get_package_metadata() if self._is_package else self._get_package_commit()
 
         # process date
@@ -355,8 +301,13 @@ class InvenTreePlugin(MixinBase, MetaBase):
 
 
 class IntegrationPluginBase(InvenTreePlugin):
+    """Legacy base class for plugins.
+
+    Do not use!
+    """
+
     def __init__(self, *args, **kwargs):
-        """Send warning about using this reference"""
+        """Send warning about using this reference."""
         # TODO remove in 0.8.0
         warnings.warn("This import is deprecated - use InvenTreePlugin", DeprecationWarning)
         super().__init__(*args, **kwargs)

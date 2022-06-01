@@ -57,6 +57,75 @@ function addAttachmentButtonCallbacks(url, fields={}) {
 }
 
 
+/*
+ * Construct a form to delete attachment files
+ */
+function deleteAttachments(attachments, url, options={}) {
+
+    if (attachments.length == 0) {
+        console.warn('deleteAttachments function called with zero attachments provided');
+        return;
+    }
+
+    function renderAttachment(attachment, opts={}) {
+
+        var icon = '';
+
+        if (attachment.filename) {
+            icon = `<span class='fas fa-file-alt'></span>`;
+        } else if (attachment.link) {
+            icon = `<span class='fas fa-link'></span>`;
+        }
+
+        return `
+        <tr>
+            <td>${icon}</td>
+            <td>${attachment.filename || attachment.link}</td>
+            <td>${attachment.comment}</td>
+        </tr>`;
+    }
+
+    var rows = '';
+
+    attachments.forEach(function(att) {
+        rows += renderAttachment(att);
+    });
+
+    var html = `
+    <div class='alert alert-block alert-danger'>
+    {% trans "All selected attachments will be deleted" %}
+    </div>
+    <table class='table table-striped table-condensed'>
+    <tr>
+        <th></th>
+        <th>{% trans "Attachment" %}</th>
+        <th>{% trans "Comment" %}</th>
+    </tr>
+    ${rows}
+    </table>
+    `;
+
+    constructFormBody({}, {
+        method: 'DELETE',
+        title: '{% trans "Delete Attachments" %}',
+        preFormContent: html,
+        onSubmit: function(fields, opts) {
+            inventreeMultiDelete(
+                url,
+                attachments,
+                {
+                    modal: opts.modal,
+                    success: function() {
+                        // Refresh the table once all attachments are deleted
+                        $('#attachment-table').bootstrapTable('refresh');
+                    }
+                }
+            );
+        }
+    });
+}
+
+
 function reloadAttachmentTable() {
 
     $('#attachment-table').bootstrapTable('refresh');
@@ -71,6 +140,15 @@ function loadAttachmentTable(url, options) {
 
     addAttachmentButtonCallbacks(url, options.fields || {});
 
+    // Add callback for the 'multi delete' button
+    $('#multi-attachment-delete').click(function() {
+        var attachments = getTableData(table);
+
+        if (attachments.length > 0) {
+            deleteAttachments(attachments, url);
+        }
+    });
+
     $(table).inventreeTable({
         url: url,
         name: options.name || 'attachments',
@@ -80,7 +158,9 @@ function loadAttachmentTable(url, options) {
         sortable: true,
         search: true,
         queryParams: options.filters || {},
+        uniqueId: 'pk',
         onPostBody: function() {
+
             // Add callback for 'edit' button
             $(table).find('.button-attachment-edit').click(function() {
                 var pk = $(this).attr('pk');
@@ -105,15 +185,14 @@ function loadAttachmentTable(url, options) {
             $(table).find('.button-attachment-delete').click(function() {
                 var pk = $(this).attr('pk');
 
-                constructForm(`${url}${pk}/`, {
-                    method: 'DELETE',
-                    confirmMessage: '{% trans "Confirm Delete" %}',
-                    title: '{% trans "Delete Attachment" %}',
-                    onSuccess: reloadAttachmentTable,
-                });
+                var attachment = $(table).bootstrapTable('getRowByUniqueId', pk);
+                deleteAttachments([attachment], url);
             });
         },
         columns: [
+            {
+                checkbox: true,
+            },
             {
                 field: 'attachment',
                 title: '{% trans "Attachment" %}',

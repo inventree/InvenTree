@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+"""Unit tests for the 'build' models"""
 
 from django.test import TestCase
 
@@ -12,13 +12,10 @@ from stock.models import StockItem
 
 
 class BuildTestBase(TestCase):
-    """
-    Run some tests to ensure that the Build model is working properly.
-    """
+    """Run some tests to ensure that the Build model is working properly."""
 
     def setUp(self):
-        """
-        Initialize data to use for these tests.
+        """Initialize data to use for these tests.
 
         The base Part 'assembly' has a BOM consisting of three parts:
 
@@ -119,11 +116,10 @@ class BuildTestBase(TestCase):
 
 
 class BuildTest(BuildTestBase):
+    """Unit testing class for the Build model"""
 
     def test_ref_int(self):
-        """
-        Test the "integer reference" field used for natural sorting
-        """
+        """Test the "integer reference" field used for natural sorting"""
 
         for ii in range(10):
             build = Build(
@@ -141,7 +137,7 @@ class BuildTest(BuildTestBase):
             self.assertEqual(build.reference_int, ii)
 
     def test_init(self):
-        # Perform some basic tests before we start the ball rolling
+        """Perform some basic tests before we start the ball rolling"""
 
         self.assertEqual(StockItem.objects.count(), 10)
 
@@ -166,7 +162,7 @@ class BuildTest(BuildTestBase):
         self.assertFalse(self.build.is_complete)
 
     def test_build_item_clean(self):
-        # Ensure that dodgy BuildItem objects cannot be created
+        """Ensure that dodgy BuildItem objects cannot be created"""
 
         stock = StockItem.objects.create(part=self.assembly, quantity=99)
 
@@ -193,7 +189,7 @@ class BuildTest(BuildTestBase):
         b.save()
 
     def test_duplicate_bom_line(self):
-        # Try to add a duplicate BOM item - it should be allowed
+        """Try to add a duplicate BOM item - it should be allowed"""
 
         BomItem.objects.create(
             part=self.assembly,
@@ -202,12 +198,11 @@ class BuildTest(BuildTestBase):
         )
 
     def allocate_stock(self, output, allocations):
-        """
-        Allocate stock to this build, against a particular output
+        """Allocate stock to this build, against a particular output
 
         Args:
-            output - StockItem object (or None)
-            allocations - Map of {StockItem: quantity}
+            output: StockItem object (or None)
+            allocations: Map of {StockItem: quantity}
         """
 
         for item, quantity in allocations.items():
@@ -219,9 +214,7 @@ class BuildTest(BuildTestBase):
             )
 
     def test_partial_allocation(self):
-        """
-        Test partial allocation of stock
-        """
+        """Test partial allocation of stock"""
 
         # Fully allocate tracked stock against build output 1
         self.allocate_stock(
@@ -294,9 +287,7 @@ class BuildTest(BuildTestBase):
         self.assertTrue(self.build.are_untracked_parts_allocated())
 
     def test_cancel(self):
-        """
-        Test cancellation of the build
-        """
+        """Test cancellation of the build"""
 
         # TODO
 
@@ -309,9 +300,7 @@ class BuildTest(BuildTestBase):
         pass
 
     def test_complete(self):
-        """
-        Test completion of a build output
-        """
+        """Test completion of a build output"""
 
         self.stock_1_1.quantity = 1000
         self.stock_1_1.save()
@@ -385,12 +374,10 @@ class BuildTest(BuildTestBase):
 
 
 class AutoAllocationTests(BuildTestBase):
-    """
-    Tests for auto allocating stock against a build order
-    """
+    """Tests for auto allocating stock against a build order"""
 
     def setUp(self):
-
+        """Init routines for this unit test class"""
         super().setUp()
 
         # Add a "substitute" part for bom_item_2
@@ -411,8 +398,7 @@ class AutoAllocationTests(BuildTestBase):
         )
 
     def test_auto_allocate(self):
-        """
-        Run the 'auto-allocate' function. What do we expect to happen?
+        """Run the 'auto-allocate' function. What do we expect to happen?
 
         There are two "untracked" parts:
             - sub_part_1 (quantity 5 per BOM = 50 required total) / 103 in stock (2 items)
@@ -474,9 +460,7 @@ class AutoAllocationTests(BuildTestBase):
         self.assertTrue(self.build.is_bom_item_allocated(self.bom_item_2))
 
     def test_fully_auto(self):
-        """
-        We should be able to auto-allocate against a build in a single go
-        """
+        """We should be able to auto-allocate against a build in a single go"""
 
         self.build.auto_allocate_stock(
             interchangeable=True,

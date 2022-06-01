@@ -1,3 +1,5 @@
+"""label app specification"""
+
 import hashlib
 import logging
 import os
@@ -14,10 +16,7 @@ logger = logging.getLogger("inventree")
 
 
 def hashFile(filename):
-    """
-    Calculate the MD5 hash of a file
-    """
-
+    """Calculate the MD5 hash of a file."""
     md5 = hashlib.md5()
 
     with open(filename, 'rb') as f:
@@ -28,20 +27,17 @@ def hashFile(filename):
 
 
 class LabelConfig(AppConfig):
+    """App configuration class for the 'label' app"""
+
     name = 'label'
 
     def ready(self):
-        """
-        This function is called whenever the label app is loaded
-        """
-
+        """This function is called whenever the label app is loaded."""
         if canAppAccessDatabase():
             self.create_labels()  # pragma: no cover
 
     def create_labels(self):
-        """
-        Create all default templates
-        """
+        """Create all default templates."""
         # Test if models are ready
         try:
             from .models import StockLocationLabel
@@ -56,11 +52,7 @@ class LabelConfig(AppConfig):
         self.create_part_labels()
 
     def create_stock_item_labels(self):
-        """
-        Create database entries for the default StockItemLabel templates,
-        if they do not already exist
-        """
-
+        """Create database entries for the default StockItemLabel templates, if they do not already exist."""
         from .models import StockItemLabel
 
         src_dir = os.path.join(
@@ -139,11 +131,7 @@ class LabelConfig(AppConfig):
             )
 
     def create_stock_location_labels(self):
-        """
-        Create database entries for the default StockItemLocation templates,
-        if they do not already exist
-        """
-
+        """Create database entries for the default StockItemLocation templates, if they do not already exist."""
         from .models import StockLocationLabel
 
         src_dir = os.path.join(
@@ -229,11 +217,7 @@ class LabelConfig(AppConfig):
             )
 
     def create_part_labels(self):
-        """
-        Create database entries for the default PartLabel templates,
-        if they do not already exist.
-        """
-
+        """Create database entries for the default PartLabel templates, if they do not already exist."""
         from .models import PartLabel
 
         src_dir = os.path.join(

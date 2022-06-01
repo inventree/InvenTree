@@ -1,3 +1,4 @@
+"""Unit testing for the various report models"""
 
 import os
 import shutil
@@ -14,7 +15,7 @@ from stock.models import StockItem
 
 
 class ReportTest(InvenTreeAPITestCase):
-
+    """Base class for unit testing reporting models"""
     fixtures = [
         'category',
         'part',
@@ -32,14 +33,8 @@ class ReportTest(InvenTreeAPITestCase):
     detail_url = None
     print_url = None
 
-    def setUp(self):
-        super().setUp()
-
     def copyReportTemplate(self, filename, description):
-        """
-        Copy the provided report template into the required media directory
-        """
-
+        """Copy the provided report template into the required media directory."""
         src_dir = os.path.join(
             os.path.dirname(os.path.realpath(__file__)),
             'templates',
@@ -81,10 +76,7 @@ class ReportTest(InvenTreeAPITestCase):
         )
 
     def test_list_endpoint(self):
-        """
-        Test that the LIST endpoint works for each report
-        """
-
+        """Test that the LIST endpoint works for each report."""
         if not self.list_url:
             return
 
@@ -121,7 +113,7 @@ class ReportTest(InvenTreeAPITestCase):
 
 
 class TestReportTest(ReportTest):
-
+    """Unit testing class for the stock item TestReport model"""
     model = report_models.TestReport
 
     list_url = 'api-stockitem-testreport-list'
@@ -129,16 +121,13 @@ class TestReportTest(ReportTest):
     print_url = 'api-stockitem-testreport-print'
 
     def setUp(self):
-
+        """Setup function for the stock item TestReport"""
         self.copyReportTemplate('inventree_test_report.html', 'stock item test report')
 
         return super().setUp()
 
     def test_print(self):
-        """
-        Printing tests for the TestReport
-        """
-
+        """Printing tests for the TestReport."""
         report = self.model.objects.first()
 
         url = reverse(self.print_url, kwargs={'pk': report.pk})
@@ -163,7 +152,7 @@ class TestReportTest(ReportTest):
 
 
 class BuildReportTest(ReportTest):
-
+    """Unit test class for the BuildReport model"""
     model = report_models.BuildReport
 
     list_url = 'api-build-report-list'
@@ -171,16 +160,13 @@ class BuildReportTest(ReportTest):
     print_url = 'api-build-report-print'
 
     def setUp(self):
-
+        """Setup unit testing functions"""
         self.copyReportTemplate('inventree_build_order.html', 'build order template')
 
         return super().setUp()
 
     def test_print(self):
-        """
-        Printing tests for the BuildReport
-        """
-
+        """Printing tests for the BuildReport."""
         report = self.model.objects.first()
 
         url = reverse(self.print_url, kwargs={'pk': report.pk})
@@ -216,7 +202,7 @@ class BuildReportTest(ReportTest):
 
 
 class BOMReportTest(ReportTest):
-
+    """Unit test class fot the BillOfMaterialsReport model"""
     model = report_models.BillOfMaterialsReport
 
     list_url = 'api-bom-report-list'
@@ -225,7 +211,7 @@ class BOMReportTest(ReportTest):
 
 
 class PurchaseOrderReportTest(ReportTest):
-
+    """Unit test class fort he PurchaseOrderReport model"""
     model = report_models.PurchaseOrderReport
 
     list_url = 'api-po-report-list'
@@ -234,7 +220,7 @@ class PurchaseOrderReportTest(ReportTest):
 
 
 class SalesOrderReportTest(ReportTest):
-
+    """Unit test class for the SalesOrderReport model"""
     model = report_models.SalesOrderReport
 
     list_url = 'api-so-report-list'

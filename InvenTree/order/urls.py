@@ -1,5 +1,4 @@
-"""
-URL lookup for the Order app. Provides URL endpoints for:
+"""URL lookup for the Order app. Provides URL endpoints for:
 
 - List view of Purchase Orders
 - Detail view of Purchase Orders

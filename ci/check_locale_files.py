@@ -1,4 +1,4 @@
-""" Check that there are no database migration files which have not been committed. """
+"""Check that there are no database migration files which have not been committed."""
 
 import subprocess
 import sys

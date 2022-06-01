@@ -1,3 +1,5 @@
+"""Tasks (processes that get offloaded) for common app."""
+
 import logging
 from datetime import datetime, timedelta
 
@@ -7,12 +9,10 @@ logger = logging.getLogger('inventree')
 
 
 def delete_old_notifications():
-    """
-    Remove old notifications from the database.
+    """Remove old notifications from the database.
 
     Anything older than ~3 months is removed
     """
-
     try:
         from common.models import NotificationEntry
     except AppRegistryNotReady:  # pragma: no cover

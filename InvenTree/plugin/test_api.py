@@ -1,3 +1,4 @@
+"""Tests for general API tests for the plugin app."""
 
 from django.urls import reverse
 
@@ -5,9 +6,7 @@ from InvenTree.api_tester import InvenTreeAPITestCase
 
 
 class PluginDetailAPITest(InvenTreeAPITestCase):
-    """
-    Tests the plugin API endpoints
-    """
+    """Tests the plugin API endpoints."""
 
     roles = [
         'admin.add',
@@ -17,6 +16,7 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
     ]
 
     def setUp(self):
+        """Setup for all tests."""
         self.MSG_NO_PKG = 'Either packagename of URL must be provided'
 
         self.PKG_NAME = 'minimal'
@@ -24,9 +24,7 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
         super().setUp()
 
     def test_plugin_install(self):
-        """
-        Test the plugin install command
-        """
+        """Test the plugin install command."""
         url = reverse('api-plugin-install')
 
         # valid - Pypi
@@ -73,9 +71,7 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
         self.assertEqual(data['confirm'][0].title().upper(), 'Installation not confirmed'.upper())
 
     def test_admin_action(self):
-        """
-        Test the PluginConfig action commands
-        """
+        """Test the PluginConfig action commands."""
         from plugin import registry
         from plugin.models import PluginConfig
 
@@ -132,9 +128,7 @@ class PluginDetailAPITest(InvenTreeAPITestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_model(self):
-        """
-        Test the PluginConfig model
-        """
+        """Test the PluginConfig model."""
         from plugin import registry
         from plugin.models import PluginConfig
 

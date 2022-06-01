@@ -1,6 +1,4 @@
-"""
-Django views for interacting with Build objects
-"""
+"""Django views for interacting with Build objects."""
 
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView
@@ -15,42 +13,25 @@ from plugin.views import InvenTreePluginViewMixin
 
 
 class BuildIndex(InvenTreeRoleMixin, ListView):
-    """
-    View for displaying list of Builds
-    """
+    """View for displaying list of Builds."""
     model = Build
     template_name = 'build/index.html'
     context_object_name = 'builds'
 
     def get_queryset(self):
-        """ Return all Build objects (order by date, newest first) """
+        """Return all Build objects (order by date, newest first)"""
         return Build.objects.order_by('status', '-completion_date')
-
-    def get_context_data(self, **kwargs):
-
-        context = super().get_context_data(**kwargs)
-
-        context['BuildStatus'] = BuildStatus
-
-        context['active'] = self.get_queryset().filter(status__in=BuildStatus.ACTIVE_CODES)
-
-        context['completed'] = self.get_queryset().filter(status=BuildStatus.COMPLETE)
-        context['cancelled'] = self.get_queryset().filter(status=BuildStatus.CANCELLED)
-
-        return context
 
 
 class BuildDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
-    """
-    Detail view of a single Build object.
-    """
+    """Detail view of a single Build object."""
 
     model = Build
     template_name = 'build/detail.html'
     context_object_name = 'build'
 
     def get_context_data(self, **kwargs):
-
+        """Return extra context information for the BuildDetail view"""
         ctx = super().get_context_data(**kwargs)
 
         build = self.get_object()
@@ -71,9 +52,7 @@ class BuildDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
 
 
 class BuildDelete(AjaxDeleteView):
-    """
-    View to delete a build
-    """
+    """View to delete a build."""
 
     model = Build
     ajax_template_name = 'build/delete_build.html'

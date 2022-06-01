@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-
-"""
-This module provides template tags for extra functionality,
-over and above the built-in Django tags.
-"""
+"""This module provides template tags for extra functionality, over and above the built-in Django tags."""
 
 import logging
 import os
@@ -33,26 +28,22 @@ logger = logging.getLogger('inventree')
 
 @register.simple_tag()
 def define(value, *args, **kwargs):
-    """
-    Shortcut function to overcome the shortcomings of the django templating language
+    """Shortcut function to overcome the shortcomings of the django templating language.
 
     Use as follows: {% define "hello_world" as hello %}
 
     Ref: https://stackoverflow.com/questions/1070398/how-to-set-a-value-of-a-variable-inside-a-template-code
     """
-
     return value
 
 
 @register.simple_tag(takes_context=True)
 def render_date(context, date_object):
-    """
-    Renders a date according to the preference of the provided user
+    """Renders a date according to the preference of the provided user.
 
     Note that the user preference is stored using the formatting adopted by moment.js,
     which differs from the python formatting!
     """
-
     if date_object is None:
         return None
 
@@ -105,59 +96,43 @@ def render_date(context, date_object):
 
 @register.simple_tag()
 def decimal(x, *args, **kwargs):
-    """ Simplified rendering of a decimal number """
-
+    """Simplified rendering of a decimal number."""
     return InvenTree.helpers.decimal2string(x)
 
 
 @register.simple_tag()
 def str2bool(x, *args, **kwargs):
-    """ Convert a string to a boolean value """
-
+    """Convert a string to a boolean value."""
     return InvenTree.helpers.str2bool(x)
 
 
 @register.simple_tag()
-def inrange(n, *args, **kwargs):
-    """ Return range(n) for iterating through a numeric quantity """
-    return range(n)
-
-
-@register.simple_tag()
-def multiply(x, y, *args, **kwargs):
-    """ Multiply two numbers together """
-    return InvenTree.helpers.decimal2string(x * y)
-
-
-@register.simple_tag()
 def add(x, y, *args, **kwargs):
-    """ Add two numbers together """
+    """Add two numbers together."""
     return x + y
 
 
 @register.simple_tag()
 def to_list(*args):
-    """ Return the input arguments as list """
+    """Return the input arguments as list."""
     return args
 
 
 @register.simple_tag()
 def part_allocation_count(build, part, *args, **kwargs):
-    """ Return the total number of <part> allocated to <build> """
-
+    """Return the total number of <part> allocated to <build>"""
     return InvenTree.helpers.decimal2string(build.getAllocatedQuantity(part))
 
 
 @register.simple_tag()
 def inventree_in_debug_mode(*args, **kwargs):
-    """ Return True if the server is running in DEBUG mode """
-
+    """Return True if the server is running in DEBUG mode."""
     return djangosettings.DEBUG
 
 
 @register.simple_tag()
 def inventree_show_about(user, *args, **kwargs):
-    """ Return True if the about modal should be shown """
+    """Return True if the about modal should be shown."""
     if InvenTreeSetting.get_setting('INVENTREE_RESTRICT_ABOUT') and not user.is_superuser:
         return False
     return True
@@ -165,22 +140,19 @@ def inventree_show_about(user, *args, **kwargs):
 
 @register.simple_tag()
 def inventree_docker_mode(*args, **kwargs):
-    """ Return True if the server is running as a Docker image """
-
+    """Return True if the server is running as a Docker image."""
     return djangosettings.DOCKER
 
 
 @register.simple_tag()
 def plugins_enabled(*args, **kwargs):
-    """ Return True if plugins are enabled for the server instance """
-
+    """Return True if plugins are enabled for the server instance."""
     return djangosettings.PLUGINS_ENABLED
 
 
 @register.simple_tag()
 def inventree_db_engine(*args, **kwargs):
-    """ Return the InvenTree database backend e.g. 'postgresql' """
-
+    """Return the InvenTree database backend e.g. 'postgresql'."""
     db = djangosettings.DATABASES['default']
 
     engine = db.get('ENGINE', _('Unknown database'))
@@ -192,33 +164,31 @@ def inventree_db_engine(*args, **kwargs):
 
 @register.simple_tag()
 def inventree_instance_name(*args, **kwargs):
-    """ Return the InstanceName associated with the current database """
+    """Return the InstanceName associated with the current database."""
     return version.inventreeInstanceName()
 
 
 @register.simple_tag()
 def inventree_title(*args, **kwargs):
-    """ Return the title for the current instance - respecting the settings """
+    """Return the title for the current instance - respecting the settings"""
     return version.inventreeInstanceTitle()
 
 
 @register.simple_tag()
 def inventree_base_url(*args, **kwargs):
-    """ Return the INVENTREE_BASE_URL setting """
+    """Return the INVENTREE_BASE_URL setting."""
     return InvenTreeSetting.get_setting('INVENTREE_BASE_URL')
 
 
 @register.simple_tag()
 def python_version(*args, **kwargs):
-    """
-    Return the current python version
-    """
+    """Return the current python version."""
     return sys.version.split(' ')[0]
 
 
 @register.simple_tag()
 def inventree_version(shortstring=False, *args, **kwargs):
-    """ Return InvenTree version string """
+    """Return InvenTree version string."""
     if shortstring:
         return _("{title} v{version}".format(
             title=version.inventreeInstanceTitle(),
@@ -229,53 +199,55 @@ def inventree_version(shortstring=False, *args, **kwargs):
 
 @register.simple_tag()
 def inventree_is_development(*args, **kwargs):
+    """Returns True if this is a development version of InvenTree"""
     return version.isInvenTreeDevelopmentVersion()
 
 
 @register.simple_tag()
 def inventree_is_release(*args, **kwargs):
+    """Returns True if this is a release version of InvenTree"""
     return not version.isInvenTreeDevelopmentVersion()
 
 
 @register.simple_tag()
 def inventree_docs_version(*args, **kwargs):
+    """Returns the InvenTree documentation version"""
     return version.inventreeDocsVersion()
 
 
 @register.simple_tag()
 def inventree_api_version(*args, **kwargs):
-    """ Return InvenTree API version """
+    """Return InvenTree API version."""
     return version.inventreeApiVersion()
 
 
 @register.simple_tag()
 def django_version(*args, **kwargs):
-    """ Return Django version string """
+    """Return Django version string."""
     return version.inventreeDjangoVersion()
 
 
 @register.simple_tag()
 def inventree_commit_hash(*args, **kwargs):
-    """ Return InvenTree git commit hash string """
+    """Return InvenTree git commit hash string."""
     return version.inventreeCommitHash()
 
 
 @register.simple_tag()
 def inventree_commit_date(*args, **kwargs):
-    """ Return InvenTree git commit date string """
+    """Return InvenTree git commit date string."""
     return version.inventreeCommitDate()
 
 
 @register.simple_tag()
 def inventree_github_url(*args, **kwargs):
-    """ Return URL for InvenTree github site """
+    """Return URL for InvenTree github site."""
     return "https://github.com/InvenTree/InvenTree/"
 
 
 @register.simple_tag()
 def inventree_docs_url(*args, **kwargs):
-    """ Return URL for InvenTree documenation site """
-
+    """Return URL for InvenTree documenation site."""
     tag = version.inventreeDocsVersion()
 
     return f"https://inventree.readthedocs.io/en/{tag}"
@@ -283,24 +255,23 @@ def inventree_docs_url(*args, **kwargs):
 
 @register.simple_tag()
 def inventree_credits_url(*args, **kwargs):
-    """ Return URL for InvenTree credits site """
+    """Return URL for InvenTree credits site."""
     return "https://inventree.readthedocs.io/en/latest/credits/"
 
 
 @register.simple_tag()
 def default_currency(*args, **kwargs):
-    """ Returns the default currency code """
+    """Returns the default currency code."""
     return currency_code_default()
 
 
 @register.simple_tag()
 def setting_object(key, *args, **kwargs):
-    """
-    Return a setting object speciifed by the given key
+    """Return a setting object speciifed by the given key.
+
     (Or return None if the setting does not exist)
     if a user-setting was requested return that
     """
-
     if 'plugin' in kwargs:
         # Note, 'plugin' is an instance of an InvenTreePlugin class
 
@@ -319,10 +290,7 @@ def setting_object(key, *args, **kwargs):
 
 @register.simple_tag()
 def settings_value(key, *args, **kwargs):
-    """
-    Return a settings value specified by the given key
-    """
-
+    """Return a settings value specified by the given key."""
     if 'user' in kwargs:
         if not kwargs['user'] or (kwargs['user'] and kwargs['user'].is_authenticated is False):
             return InvenTreeUserSetting.get_setting(key)
@@ -333,37 +301,25 @@ def settings_value(key, *args, **kwargs):
 
 @register.simple_tag()
 def user_settings(user, *args, **kwargs):
-    """
-    Return all USER settings as a key:value dict
-    """
-
+    """Return all USER settings as a key:value dict."""
     return InvenTreeUserSetting.allValues(user=user)
 
 
 @register.simple_tag()
 def global_settings(*args, **kwargs):
-    """
-    Return all GLOBAL InvenTree settings as a key:value dict
-    """
-
+    """Return all GLOBAL InvenTree settings as a key:value dict."""
     return InvenTreeSetting.allValues()
 
 
 @register.simple_tag()
 def visible_global_settings(*args, **kwargs):
-    """
-    Return any global settings which are not marked as 'hidden'
-    """
-
+    """Return any global settings which are not marked as 'hidden'."""
     return InvenTreeSetting.allValues(exclude_hidden=True)
 
 
 @register.simple_tag()
 def progress_bar(val, max_val, *args, **kwargs):
-    """
-    Render a progress bar element
-    """
-
+    """Render a progress bar element."""
     item_id = kwargs.get('id', 'progress-bar')
 
     val = InvenTree.helpers.normalize(val)
@@ -402,6 +358,7 @@ def progress_bar(val, max_val, *args, **kwargs):
 
 @register.simple_tag()
 def get_color_theme_css(username):
+    """Return the cutsom theme .css file for the selected user"""
     user_theme_name = get_user_color_theme(username)
     # Build path to CSS sheet
     inventree_css_sheet = os.path.join('css', 'color-themes', user_theme_name + '.css')
@@ -414,7 +371,7 @@ def get_color_theme_css(username):
 
 @register.simple_tag()
 def get_user_color_theme(username):
-    """ Get current user color theme """
+    """Get current user color theme."""
     try:
         user_theme = ColorTheme.objects.filter(user=username).get()
         user_theme_name = user_theme.name
@@ -428,10 +385,7 @@ def get_user_color_theme(username):
 
 @register.simple_tag()
 def get_available_themes(*args, **kwargs):
-    """
-    Return the available theme choices
-    """
-
+    """Return the available theme choices."""
     themes = []
 
     for key, name in ColorTheme.get_color_themes_choices():
@@ -445,13 +399,11 @@ def get_available_themes(*args, **kwargs):
 
 @register.simple_tag()
 def primitive_to_javascript(primitive):
-    """
-    Convert a python primitive to a javascript primitive.
+    """Convert a python primitive to a javascript primitive.
 
     e.g. True -> true
          'hello' -> '"hello"'
     """
-
     if type(primitive) is bool:
         return str(primitive).lower()
 
@@ -465,10 +417,9 @@ def primitive_to_javascript(primitive):
 
 @register.filter
 def keyvalue(dict, key):
-    """
-    access to key of supplied dict
+    """Access to key of supplied dict.
 
-    usage:
+    Usage:
     {% mydict|keyvalue:mykey %}
     """
     return dict.get(key)
@@ -476,10 +427,9 @@ def keyvalue(dict, key):
 
 @register.simple_tag()
 def call_method(obj, method_name, *args):
-    """
-    enables calling model methods / functions from templates with arguments
+    """Enables calling model methods / functions from templates with arguments.
 
-    usage:
+    Usage:
     {% call_method model_object 'fnc_name' argument1 %}
     """
     method = getattr(obj, method_name)
@@ -488,8 +438,7 @@ def call_method(obj, method_name, *args):
 
 @register.simple_tag()
 def authorized_owners(group):
-    """ Return authorized owners """
-
+    """Return authorized owners."""
     owners = []
 
     try:
@@ -507,41 +456,39 @@ def authorized_owners(group):
 
 @register.simple_tag()
 def object_link(url_name, pk, ref):
-    """ Return highlighted link to object """
-
+    """Return highlighted link to object."""
     ref_url = reverse(url_name, kwargs={'pk': pk})
     return mark_safe('<b><a href="{}">{}</a></b>'.format(ref_url, ref))
 
 
 @register.simple_tag()
 def mail_configured():
-    """ Return if mail is configured """
+    """Return if mail is configured."""
     return bool(settings.EMAIL_HOST)
 
 
 @register.simple_tag()
 def inventree_customize(reference, *args, **kwargs):
-    """ Return customization values for the user interface """
-
+    """Return customization values for the user interface."""
     return djangosettings.CUSTOMIZE.get(reference, '')
 
 
 @register.simple_tag()
 def inventree_logo(*args, **kwargs):
-    """ Return the path to the logo-file """
-
+    """Return the path to the logo-file."""
     if settings.CUSTOM_LOGO:
         return default_storage.url(settings.CUSTOM_LOGO)
     return static('img/inventree.png')
 
 
 class I18nStaticNode(StaticNode):
-    """
-    custom StaticNode
-    replaces a variable named *lng* in the path with the current language
-    """
-    def render(self, context):  # pragma: no cover
+    """Custom StaticNode.
 
+    Replaces a variable named *lng* in the path with the current language
+    """
+
+    def render(self, context):  # pragma: no cover
+        """Render this node with the determined locale context."""
         self.original = getattr(self, 'original', None)
 
         if not self.original:
@@ -561,17 +508,16 @@ if settings.DEBUG:
 
     @register.simple_tag()
     def i18n_static(url_name):
-        """ simple tag to enable {% url %} functionality instead of {% static %} """
+        """Simple tag to enable {% url %} functionality instead of {% static %}"""
         return reverse(url_name)
 
 else:  # pragma: no cover
 
     @register.tag('i18n_static')
     def do_i18n_static(parser, token):
-        """
-        Overrides normal static, adds language - lookup for prerenderd files #1485
+        """Overrides normal static, adds language - lookup for prerenderd files #1485
 
-        usage (like static):
+        Usage (like static):
         {% i18n_static path [as varname] %}
         """
         bits = token.split_contents()

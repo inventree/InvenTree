@@ -1,6 +1,4 @@
-"""
-Django views for interacting with Part app
-"""
+"""Django views for interacting with Part app."""
 
 import io
 import os
@@ -43,18 +41,23 @@ from .models import (Part, PartCategory, PartCategoryParameterTemplate,
 
 
 class PartIndex(InvenTreeRoleMixin, ListView):
-    """ View for displaying list of Part objects
-    """
+    """View for displaying list of Part objects."""
 
     model = Part
     template_name = 'part/category.html'
     context_object_name = 'parts'
 
     def get_queryset(self):
+        """Custom queryset lookup to prefetch related fields"""
         return Part.objects.all().select_related('category')
 
     def get_context_data(self, **kwargs):
+        """Returns custom context data for the PartIndex view:
 
+        - children: Number of child categories
+        - category_count: Number of child categories
+        - part_count: Number of parts contained
+        """
         context = super().get_context_data(**kwargs).copy()
 
         # View top-level categories
@@ -68,7 +71,7 @@ class PartIndex(InvenTreeRoleMixin, ListView):
 
 
 class PartSetCategory(AjaxUpdateView):
-    """ View for settings the part category for multiple parts at once """
+    """View for settings the part category for multiple parts at once."""
 
     ajax_template_name = 'part/set_category.html'
     ajax_form_title = _('Set Part Category')
@@ -80,8 +83,7 @@ class PartSetCategory(AjaxUpdateView):
     parts = []
 
     def get(self, request, *args, **kwargs):
-        """ Respond to a GET request to this view """
-
+        """Respond to a GET request to this view."""
         self.request = request
 
         if 'parts[]' in request.GET:
@@ -92,8 +94,7 @@ class PartSetCategory(AjaxUpdateView):
         return self.renderJsonResponse(request, form=self.get_form(), context=self.get_context_data())
 
     def post(self, request, *args, **kwargs):
-        """ Respond to a POST request to this view """
-
+        """Respond to a POST request to this view."""
         self.parts = []
 
         for item in request.POST:
@@ -125,17 +126,15 @@ class PartSetCategory(AjaxUpdateView):
         }
 
         if valid:
-            self.set_category()
+            with transaction.atomic():
+                for part in self.parts:
+                    part.category = self.category
+                    part.save()
 
         return self.renderJsonResponse(request, data=data, form=self.get_form(), context=self.get_context_data())
 
-    @transaction.atomic
-    def set_category(self):
-        for part in self.parts:
-            part.set_category(self.category)
-
     def get_context_data(self):
-        """ Return context data for rendering in the form """
+        """Return context data for rendering in the form."""
         ctx = {}
 
         ctx['parts'] = self.parts
@@ -146,10 +145,11 @@ class PartSetCategory(AjaxUpdateView):
 
 
 class PartImport(FileManagementFormView):
-    ''' Part: Upload file, match to fields and import parts(using multi-Step form) '''
+    """Part: Upload file, match to fields and import parts(using multi-Step form)"""
     permission_required = 'part.add'
 
     class PartFileManager(FileManager):
+        """Import field definitions"""
         REQUIRED_HEADERS = [
             'Name',
             'Description',
@@ -226,7 +226,7 @@ class PartImport(FileManagementFormView):
     file_manager_class = PartFileManager
 
     def get_field_selection(self):
-        """ Fill the form fields for step 3 """
+        """Fill the form fields for step 3."""
         # fetch available elements
         self.allowed_items = {}
         self.matches = {}
@@ -269,7 +269,7 @@ class PartImport(FileManagementFormView):
                 row[idx.lower()] = data
 
     def done(self, form_list, **kwargs):
-        """ Create items """
+        """Create items."""
         items = self.get_clean_items()
 
         import_done = 0
@@ -343,6 +343,7 @@ class PartImport(FileManagementFormView):
 
 
 class PartImportAjax(FileManagementAjaxView, PartImport):
+    """Multi-step form wizard for importing Part data"""
     ajax_form_steps_template = [
         'part/import_wizard/ajax_part_upload.html',
         'part/import_wizard/ajax_match_fields.html',
@@ -350,12 +351,12 @@ class PartImportAjax(FileManagementAjaxView, PartImport):
     ]
 
     def validate(self, obj, form, **kwargs):
+        """Validation is performed based on the current form step"""
         return PartImport.validate(self, self.steps.current, form, **kwargs)
 
 
 class PartDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
-    """ Detail view for Part object
-    """
+    """Detail view for Part object."""
 
     context_object_name = 'part'
     queryset = Part.objects.all().select_related('category')
@@ -364,9 +365,7 @@ class PartDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
 
     # Add in some extra context information based on query params
     def get_context_data(self, **kwargs):
-        """
-        Provide extra context data to template
-        """
+        """Provide extra context data to template."""
         context = super().get_context_data(**kwargs)
 
         part = self.get_object()
@@ -389,14 +388,15 @@ class PartDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
         return context
 
     def get_quantity(self):
-        """ Return set quantity in decimal format """
+        """Return set quantity in decimal format."""
         return Decimal(self.request.POST.get('quantity', 1))
 
     def get_part(self):
+        """Return the Part instance associated with this view"""
         return self.get_object()
 
     def get_pricing(self, quantity=1, currency=None):
-        """ returns context with pricing information """
+        """Returns context with pricing information."""
         ctx = PartPricing.get_pricing(self, quantity, currency)
         part = self.get_part()
         default_currency = inventree_settings.currency_code_default()
@@ -503,10 +503,11 @@ class PartDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
         return ctx
 
     def get_initials(self):
-        """ returns initials for form """
+        """Returns initials for form."""
         return {'quantity': self.get_quantity()}
 
     def post(self, request, *args, **kwargs):
+        """POST action performs as a GET action"""
         self.object = self.get_object()
         kwargs['object'] = self.object
         ctx = self.get_context_data(**kwargs)
@@ -514,11 +515,13 @@ class PartDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
 
 
 class PartDetailFromIPN(PartDetail):
+    """Part detail view using the IPN (internal part number) of the Part as the lookup field"""
+
     slug_field = 'IPN'
     slug_url_kwarg = 'slug'
 
     def get_object(self):
-        """ Return Part object which IPN field matches the slug value """
+        """Return Part object which IPN field matches the slug value."""
         queryset = self.get_queryset()
         # Get slug
         slug = self.kwargs.get(self.slug_url_kwarg)
@@ -541,7 +544,7 @@ class PartDetailFromIPN(PartDetail):
         return None
 
     def get(self, request, *args, **kwargs):
-        """ Attempt to match slug to a Part, else redirect to PartIndex view """
+        """Attempt to match slug to a Part, else redirect to PartIndex view."""
         self.object = self.get_object()
 
         if not self.object:
@@ -551,15 +554,14 @@ class PartDetailFromIPN(PartDetail):
 
 
 class PartQRCode(QRCodeView):
-    """ View for displaying a QR code for a Part object """
+    """View for displaying a QR code for a Part object."""
 
     ajax_form_title = _("Part QR Code")
 
     role_required = 'part.view'
 
     def get_qr_data(self):
-        """ Generate QR code data for the Part """
-
+        """Generate QR code data for the Part."""
         try:
             part = Part.objects.get(id=self.pk)
             return part.format_barcode()
@@ -568,9 +570,7 @@ class PartQRCode(QRCodeView):
 
 
 class PartImageDownloadFromURL(AjaxUpdateView):
-    """
-    View for downloading an image from a provided URL
-    """
+    """View for downloading an image from a provided URL."""
 
     model = Part
 
@@ -579,12 +579,10 @@ class PartImageDownloadFromURL(AjaxUpdateView):
     ajax_form_title = _('Download Image')
 
     def validate(self, part, form):
-        """
-        Validate that the image data are correct.
+        """Validate that the image data are correct.
 
         - Try to download the image!
         """
-
         # First ensure that the normal validation routines pass
         if not form.is_valid():
             return
@@ -628,10 +626,7 @@ class PartImageDownloadFromURL(AjaxUpdateView):
             return
 
     def save(self, part, form, **kwargs):
-        """
-        Save the downloaded image to the part
-        """
-
+        """Save the downloaded image to the part."""
         fmt = self.image.format
 
         if not fmt:
@@ -651,7 +646,7 @@ class PartImageDownloadFromURL(AjaxUpdateView):
 
 
 class PartImageSelect(AjaxUpdateView):
-    """ View for selecting Part image from existing images. """
+    """View for selecting Part image from existing images."""
 
     model = Part
     ajax_template_name = 'part/select_image.html'
@@ -662,7 +657,7 @@ class PartImageSelect(AjaxUpdateView):
     ]
 
     def post(self, request, *args, **kwargs):
-
+        """Perform POST action to assign selected image to the Part instance"""
         part = self.get_object()
         form = self.get_form()
 
@@ -690,7 +685,7 @@ class PartImageSelect(AjaxUpdateView):
 
 
 class BomUpload(InvenTreeRoleMixin, DetailView):
-    """ View for uploading a BOM file, and handling BOM data importing. """
+    """View for uploading a BOM file, and handling BOM data importing."""
 
     context_object_name = 'part'
     queryset = Part.objects.all()
@@ -698,21 +693,21 @@ class BomUpload(InvenTreeRoleMixin, DetailView):
 
 
 class BomUploadTemplate(AjaxView):
-    """
-    Provide a BOM upload template file for download.
+    """Provide a BOM upload template file for download.
+
     - Generates a template file in the provided format e.g. ?format=csv
     """
 
     def get(self, request, *args, **kwargs):
-
+        """Perform a GET request to download the 'BOM upload' template"""
         export_format = request.GET.get('format', 'csv')
 
         return MakeBomTemplate(export_format)
 
 
 class BomDownload(AjaxView):
-    """
-    Provide raw download of a BOM file.
+    """Provide raw download of a BOM file.
+
     - File format should be passed as a query param e.g. ?format=csv
     """
 
@@ -721,7 +716,7 @@ class BomDownload(AjaxView):
     model = Part
 
     def get(self, request, *args, **kwargs):
-
+        """Perform GET request to download BOM data"""
         part = get_object_or_404(Part, pk=self.kwargs['pk'])
 
         export_format = request.GET.get('format', 'csv')
@@ -762,13 +757,14 @@ class BomDownload(AjaxView):
                          )
 
     def get_data(self):
+        """Return a cutsom message"""
         return {
             'info': 'Exported BOM'
         }
 
 
 class PartDelete(AjaxDeleteView):
-    """ View to delete a Part object """
+    """View to delete a Part object."""
 
     model = Part
     ajax_template_name = 'part/partial_delete.html'
@@ -778,13 +774,14 @@ class PartDelete(AjaxDeleteView):
     success_url = '/part/'
 
     def get_data(self):
+        """Returns custom message once the part deletion has been performed"""
         return {
             'danger': _('Part was deleted'),
         }
 
 
 class PartPricing(AjaxView):
-    """ View for inspecting part pricing information """
+    """View for inspecting part pricing information."""
 
     model = Part
     ajax_template_name = "part/part_pricing.html"
@@ -794,17 +791,18 @@ class PartPricing(AjaxView):
     role_required = ['sales_order.view', 'part.view']
 
     def get_quantity(self):
-        """ Return set quantity in decimal format """
+        """Return set quantity in decimal format."""
         return Decimal(self.request.POST.get('quantity', 1))
 
     def get_part(self):
+        """Return the Part instance associated with this view"""
         try:
             return Part.objects.get(id=self.kwargs['pk'])
         except Part.DoesNotExist:
             return None
 
     def get_pricing(self, quantity=1, currency=None):
-        """ returns context with pricing information """
+        """Returns context with pricing information."""
         if quantity <= 0:
             quantity = 1
 
@@ -898,16 +896,18 @@ class PartPricing(AjaxView):
         return ctx
 
     def get_initials(self):
-        """ returns initials for form """
+        """Returns initials for form."""
         return {'quantity': self.get_quantity()}
 
     def get(self, request, *args, **kwargs):
+        """Perform custom GET action for this view"""
         init = self.get_initials()
         qty = self.get_quantity()
+
         return self.renderJsonResponse(request, self.form_class(initial=init), context=self.get_pricing(qty))
 
     def post(self, request, *args, **kwargs):
-
+        """Perform custom POST action for this view"""
         currency = None
 
         quantity = self.get_quantity()
@@ -931,9 +931,7 @@ class PartPricing(AjaxView):
 
 
 class PartParameterTemplateCreate(AjaxCreateView):
-    """
-    View for creating a new PartParameterTemplate
-    """
+    """View for creating a new PartParameterTemplate."""
 
     model = PartParameterTemplate
     form_class = part_forms.EditPartParameterTemplateForm
@@ -941,9 +939,7 @@ class PartParameterTemplateCreate(AjaxCreateView):
 
 
 class PartParameterTemplateEdit(AjaxUpdateView):
-    """
-    View for editing a PartParameterTemplate
-    """
+    """View for editing a PartParameterTemplate."""
 
     model = PartParameterTemplate
     form_class = part_forms.EditPartParameterTemplateForm
@@ -951,14 +947,14 @@ class PartParameterTemplateEdit(AjaxUpdateView):
 
 
 class PartParameterTemplateDelete(AjaxDeleteView):
-    """ View for deleting an existing PartParameterTemplate """
+    """View for deleting an existing PartParameterTemplate."""
 
     model = PartParameterTemplate
     ajax_form_title = _("Delete Part Parameter Template")
 
 
 class CategoryDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
-    """ Detail view for PartCategory """
+    """Detail view for PartCategory."""
 
     model = PartCategory
     context_object_name = 'category'
@@ -966,7 +962,12 @@ class CategoryDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
     template_name = 'part/category.html'
 
     def get_context_data(self, **kwargs):
+        """Returns custom context data for the CategoryDetail view:
 
+        - part_count: Number of parts in this category
+        - starred_directly: True if this category is starred directly by the requesting user
+        - starred: True if this category is starred by the requesting user
+        """
         context = super().get_context_data(**kwargs).copy()
 
         try:
@@ -980,20 +981,22 @@ class CategoryDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
         if category:
 
             # Insert "starred" information
-            context['starred'] = category.is_starred_by(self.request.user)
             context['starred_directly'] = context['starred'] and category.is_starred_by(
                 self.request.user,
                 include_parents=False,
             )
 
+            if context['starred_directly']:
+                # Save a database lookup - if 'starred_directly' is True, we know 'starred' is also
+                context['starred'] = True
+            else:
+                context['starred'] = category.is_starred_by(self.request.user)
+
         return context
 
 
 class CategoryDelete(AjaxDeleteView):
-    """
-    Delete view to delete a PartCategory
-    """
-
+    """Delete view to delete a PartCategory."""
     model = PartCategory
     ajax_template_name = 'part/category_delete.html'
     ajax_form_title = _('Delete Part Category')
@@ -1001,20 +1004,21 @@ class CategoryDelete(AjaxDeleteView):
     success_url = '/part/'
 
     def get_data(self):
+        """Return custom context data when the category is deleted"""
         return {
             'danger': _('Part category was deleted'),
         }
 
 
 class CategoryParameterTemplateCreate(AjaxCreateView):
-    """ View for creating a new PartCategoryParameterTemplate """
+    """View for creating a new PartCategoryParameterTemplate."""
 
     model = PartCategoryParameterTemplate
     form_class = part_forms.EditCategoryParameterTemplateForm
     ajax_form_title = _('Create Category Parameter Template')
 
     def get_initial(self):
-        """ Get initial data for Category """
+        """Get initial data for Category."""
         initials = super().get_initial()
 
         category_id = self.kwargs.get('pk', None)
@@ -1028,11 +1032,11 @@ class CategoryParameterTemplateCreate(AjaxCreateView):
         return initials
 
     def get_form(self):
-        """ Create a form to upload a new CategoryParameterTemplate
+        """Create a form to upload a new CategoryParameterTemplate.
+
         - Hide the 'category' field (parent part)
         - Display parameter templates which are not yet related
         """
-
         form = super().get_form()
 
         form.fields['category'].widget = HiddenInput()
@@ -1062,14 +1066,13 @@ class CategoryParameterTemplateCreate(AjaxCreateView):
         return form
 
     def post(self, request, *args, **kwargs):
-        """ Capture the POST request
+        """Capture the POST request.
 
         - If the add_to_all_categories object is set, link parameter template to
           all categories
         - If the add_to_same_level_categories object is set, link parameter template to
           same level categories
         """
-
         form = self.get_form()
 
         valid = form.is_valid()
@@ -1108,13 +1111,18 @@ class CategoryParameterTemplateCreate(AjaxCreateView):
 
 
 class CategoryParameterTemplateEdit(AjaxUpdateView):
-    """ View for editing a PartCategoryParameterTemplate """
+    """View for editing a PartCategoryParameterTemplate."""
 
     model = PartCategoryParameterTemplate
     form_class = part_forms.EditCategoryParameterTemplateForm
     ajax_form_title = _('Edit Category Parameter Template')
 
     def get_object(self):
+        """Returns the PartCategoryParameterTemplate associated with this view
+
+        - First, attempt lookup based on supplied 'pid' kwarg
+        - Else, attempt lookup based on supplied 'pk' kwarg
+        """
         try:
             self.object = self.model.objects.get(pk=self.kwargs['pid'])
         except:
@@ -1123,11 +1131,11 @@ class CategoryParameterTemplateEdit(AjaxUpdateView):
         return self.object
 
     def get_form(self):
-        """ Create a form to upload a new CategoryParameterTemplate
+        """Create a form to upload a new CategoryParameterTemplate.
+
         - Hide the 'category' field (parent part)
         - Display parameter templates which are not yet related
         """
-
         form = super().get_form()
 
         form.fields['category'].widget = HiddenInput()
@@ -1165,12 +1173,17 @@ class CategoryParameterTemplateEdit(AjaxUpdateView):
 
 
 class CategoryParameterTemplateDelete(AjaxDeleteView):
-    """ View for deleting an existing PartCategoryParameterTemplate """
+    """View for deleting an existing PartCategoryParameterTemplate."""
 
     model = PartCategoryParameterTemplate
     ajax_form_title = _("Delete Category Parameter Template")
 
     def get_object(self):
+        """Returns the PartCategoryParameterTemplate associated with this view
+
+        - First, attempt lookup based on supplied 'pid' kwarg
+        - Else, attempt lookup based on supplied 'pk' kwarg
+        """
         try:
             self.object = self.model.objects.get(pk=self.kwargs['pid'])
         except:

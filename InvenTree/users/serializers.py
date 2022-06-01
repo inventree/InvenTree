@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+"""DRF API serializers for the 'users' app"""
 
 from django.contrib.auth.models import User
 
@@ -10,10 +10,10 @@ from .models import Owner
 
 
 class UserSerializer(InvenTreeModelSerializer):
-    """ Serializer for a User
-    """
+    """Serializer for a User."""
 
     class Meta:
+        """Metaclass defines serializer fields."""
         model = User
         fields = ('pk',
                   'username',
@@ -23,15 +23,14 @@ class UserSerializer(InvenTreeModelSerializer):
 
 
 class OwnerSerializer(InvenTreeModelSerializer):
-    """
-    Serializer for an "Owner" (either a "user" or a "group")
-    """
+    """Serializer for an "Owner" (either a "user" or a "group")"""
 
     name = serializers.CharField(read_only=True)
 
     label = serializers.CharField(read_only=True)
 
     class Meta:
+        """Metaclass defines serializer fields."""
         model = Owner
         fields = [
             'pk',

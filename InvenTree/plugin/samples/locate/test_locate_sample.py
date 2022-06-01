@@ -1,4 +1,4 @@
-"""Unit tests for locate_sample sample plugins"""
+"""Unit tests for locate_sample sample plugins."""
 
 from django.urls import reverse
 
@@ -9,7 +9,7 @@ from plugin.mixins import LocateMixin
 
 
 class SampleLocatePlugintests(InvenTreeAPITestCase):
-    """Tests for SampleLocatePlugin"""
+    """Tests for SampleLocatePlugin."""
 
     fixtures = [
         'location',
@@ -19,7 +19,7 @@ class SampleLocatePlugintests(InvenTreeAPITestCase):
     ]
 
     def test_run_locator(self):
-        """Check if the event is issued"""
+        """Check if the event is issued."""
         # Activate plugin
         config = registry.get_plugin('samplelocate').plugin_config()
         config.active = True
@@ -50,8 +50,7 @@ class SampleLocatePlugintests(InvenTreeAPITestCase):
         self.post(url, {'plugin': 'samplelocate', 'location': 1}, expected_code=200)
 
     def test_mixin(self):
-        """Test that MixinNotImplementedError is raised"""
-
+        """Test that MixinNotImplementedError is raised."""
         with self.assertRaises(MixinNotImplementedError):
             class Wrong(LocateMixin, InvenTreePlugin):
                 pass

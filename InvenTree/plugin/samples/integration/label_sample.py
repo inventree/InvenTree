@@ -1,12 +1,14 @@
+"""Simple sample for a plugin with the LabelPrintingMixin.
+
+This does not function in real usage and is more to show the required components and for unit tests.
+"""
 
 from plugin import InvenTreePlugin
 from plugin.mixins import LabelPrintingMixin
 
 
 class SampleLabelPrinter(LabelPrintingMixin, InvenTreePlugin):
-    """
-    Sample plugin which provides a 'fake' label printer endpoint
-    """
+    """Sample plugin which provides a 'fake' label printer endpoint."""
 
     NAME = "Label Printer"
     SLUG = "samplelabel"
@@ -15,7 +17,10 @@ class SampleLabelPrinter(LabelPrintingMixin, InvenTreePlugin):
     VERSION = "0.2"
 
     def print_label(self, **kwargs):
+        """Sample printing step.
 
+        Normally here the connection to the printer and transfer of the label would take place.
+        """
         # Test that the expected kwargs are present
         print(f"Printing Label: {kwargs['filename']} (User: {kwargs['user']})")
         print(f"Width: {kwargs['width']} x Height: {kwargs['height']}")
