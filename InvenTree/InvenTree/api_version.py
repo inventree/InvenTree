@@ -4,14 +4,17 @@ InvenTree API version information
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 53
+INVENTREE_API_VERSION = 54
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
 
-v53 -> 2022-06-01 : https://github.com/inventree/InvenTree/pull/2934
+v54 -> 2022-06-01 : https://github.com/inventree/InvenTree/pull/2934
     - Converting more server-side actions to use the API
     - Build orders can now be deleted via the API
+
+v53 -> 2022-06-01 : https://github.com/inventree/InvenTree/pull/3110
+    - Adds extra search fields to the BuildOrder list API endpoint
 
 v52 -> 2022-05-31 : https://github.com/inventree/InvenTree/pull/3103
     - Allow part list API to be searched by supplier SKU
