@@ -263,7 +263,7 @@ function openNotificationPanel() {
                     response.forEach(function(item, index) {
                         html += '<li class="list-group-item">';
                         html += `<div>`;
-                        html += `<span class="ms-2 badge bg-secondary rounded-pill">${item.name}</span>`;
+                        html += `<span class="badge bg-secondary rounded-pill">${item.name}</span>`;
                         html += getReadEditButton(item.pk, item.read, true);
                         html += `</div>`;
 
