@@ -887,14 +887,6 @@ class OrderLineItem(models.Model):
         target_date: An (optional) date for expected shipment of this line item.
     """
 
-    """
-    Query filter for determining if an individual line item is "overdue":
-    - Amount received is less than the required quantity
-    - Target date is not None
-    - Target date is in the past
-    """
-    OVERDUE_FILTER = Q(received__lt=F('quantity')) & ~Q(target_date=None) & Q(target_date__lt=datetime.now().date())
-
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""
 
@@ -952,6 +944,9 @@ class PurchaseOrderLineItem(OrderLineItem):
     Attributes:
         order: Reference to a PurchaseOrder object
     """
+
+    # Filter for determining if a particular PurchaseOrderLineItem is overdue
+    OVERDUE_FILTER = Q(received__lt=F('quantity')) & ~Q(target_date=None) & Q(target_date__lt=datetime.now().date())
 
     @staticmethod
     def get_api_url():
@@ -1075,6 +1070,9 @@ class SalesOrderLineItem(OrderLineItem):
         sale_price: The unit sale price for this OrderLineItem
         shipped: The number of items which have actually shipped against this line item
     """
+
+    # Filter for determining if a particular SalesOrderLineItem is overdue
+    OVERDUE_FILTER = Q(shipped__lt=F('quantity')) & ~Q(target_date=None) & Q(target_date__lt=datetime.now().date())
 
     @staticmethod
     def get_api_url():

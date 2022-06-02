@@ -14,6 +14,7 @@ from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount
 
 import order.models
+import part.filters
 import stock.models
 import stock.serializers
 from common.settings import currency_code_mappings
@@ -248,7 +249,7 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
         queryset = queryset.annotate(
             overdue=Case(
                 When(
-                    Q(order__status__in=PurchaseOrderStatus.OPEN) & order.models.OrderLineItem.OVERDUE_FILTER, then=Value(True, output_field=BooleanField())
+                    Q(order__status__in=PurchaseOrderStatus.OPEN) & order.models.PurchaseOrderLineItem.OVERDUE_FILTER, then=Value(True, output_field=BooleanField())
                 ),
                 default=Value(False, output_field=BooleanField()),
             )
@@ -790,16 +791,35 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
     def annotate_queryset(queryset):
         """Add some extra annotations to this queryset:
 
-        - "Overdue" status (boolean field)
+        - "overdue" status (boolean field)
+        - "available_quantity"
         """
+
         queryset = queryset.annotate(
             overdue=Case(
                 When(
-                    Q(order__status__in=SalesOrderStatus.OPEN) & order.models.OrderLineItem.OVERDUE_FILTER, then=Value(True, output_field=BooleanField()),
+                    Q(order__status__in=SalesOrderStatus.OPEN) & order.models.SalesOrderLineItem.OVERDUE_FILTER, then=Value(True, output_field=BooleanField()),
                 ),
                 default=Value(False, output_field=BooleanField()),
             )
         )
+
+        # Annotate each line with the available stock quantity
+        # To do this, we need to look at the total stock and any allocations
+        queryset = queryset.alias(
+            total_stock=part.filters.annotate_total_stock(reference='part__'),
+            allocated_to_sales_orders=part.filters.annotate_sales_order_allocations(reference='part__'),
+            allocated_to_build_orders=part.filters.annotate_build_order_allocations(reference='part__'),
+        )
+
+        queryset = queryset.annotate(
+            available_stock=ExpressionWrapper(
+                F('total_stock') - F('allocated_to_sales_orders') - F('allocated_to_build_orders'),
+                output_field=models.DecimalField()
+            )
+        )
+
+        return queryset
 
     def __init__(self, *args, **kwargs):
         """Initializion routine for the serializer:
@@ -825,7 +845,9 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     allocations = SalesOrderAllocationSerializer(many=True, read_only=True, location_detail=True)
 
+    # Annotated fields
     overdue = serializers.BooleanField(required=False, read_only=True)
+    available_stock = serializers.FloatField(read_only=True)
 
     quantity = InvenTreeDecimalField()
 
@@ -853,6 +875,7 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
             'pk',
             'allocated',
             'allocations',
+            'available_stock',
             'quantity',
             'reference',
             'notes',
