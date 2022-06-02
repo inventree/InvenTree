@@ -105,6 +105,18 @@ class InvenTreeConfig(AppConfig):
             schedule_type=Schedule.DAILY
         )
 
+        # Check for overdue sales orders
+        InvenTree.tasks.schedule_task(
+            'order.tasks.check_overdue_sales_orders',
+            schedule_type=Schedule.DAILY,
+        )
+
+        # Check for overdue build orders
+        InvenTree.tasks.schedule_task(
+            'build.tasks.check_overdue_build_orders',
+            schedule_type=Schedule.DAILY
+        )
+
     def update_exchange_rates(self):  # pragma: no cover
         """Update exchange rates each time the server is started.
 

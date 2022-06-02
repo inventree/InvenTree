@@ -118,7 +118,7 @@ def notify_overdue_sales_order(so: order.models.SalesOrder):
 
 
 def check_overdue_sales_orders():
-    """Check if any outstanding SalesOrders have just become overdueL
+    """Check if any outstanding SalesOrders have just become overdue
 
     - This check is performed daily
     - Look at the 'target_date' of any outstanding SalesOrder objects
