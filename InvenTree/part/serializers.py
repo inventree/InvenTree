@@ -14,6 +14,7 @@ from djmoney.contrib.django_rest_framework import MoneyField
 from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
 
+import part.filters
 from common.settings import currency_code_default, currency_code_mappings
 from InvenTree.serializers import (DataFileExtractSerializer,
                                    DataFileUploadSerializer,
@@ -23,8 +24,7 @@ from InvenTree.serializers import (DataFileExtractSerializer,
                                    InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer,
                                    InvenTreeMoneySerializer)
-from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
-                                    SalesOrderStatus)
+from InvenTree.status_codes import BuildStatus, SalesOrderStatus
 from stock.models import StockItem
 
 from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
@@ -311,19 +311,13 @@ class PartSerializer(InvenTreeModelSerializer):
 
         Performing database queries as efficiently as possible, to reduce database trips.
         """
-        # Annotate with the total 'in stock' quantity
-        queryset = queryset.annotate(
-            in_stock=Coalesce(
-                SubquerySum('stock_items__quantity', filter=StockItem.IN_STOCK_FILTER),
-                Decimal(0),
-                output_field=models.DecimalField(),
-            ),
-        )
 
         # Annotate with the total number of stock items
         queryset = queryset.annotate(
             stock_item_count=SubqueryCount('stock_items')
         )
+
+        # TODO: Refactor this variant stock filter out
 
         # Annotate with the total variant stock quantity
         variant_query = StockItem.objects.filter(
@@ -357,24 +351,6 @@ class PartSerializer(InvenTreeModelSerializer):
             )
         )
 
-        # Filter to limit orders to "open"
-        order_filter = Q(
-            order__status__in=PurchaseOrderStatus.OPEN
-        )
-
-        # Annotate with the total 'on order' quantity
-        queryset = queryset.annotate(
-            ordering=Coalesce(
-                SubquerySum('supplier_parts__purchase_order_line_items__quantity', filter=order_filter),
-                Decimal(0),
-                output_field=models.DecimalField(),
-            ) - Coalesce(
-                SubquerySum('supplier_parts__purchase_order_line_items__received', filter=order_filter),
-                Decimal(0),
-                output_field=models.DecimalField(),
-            )
-        )
-
         # Annotate with the number of 'suppliers'
         queryset = queryset.annotate(
             suppliers=Coalesce(
@@ -384,40 +360,11 @@ class PartSerializer(InvenTreeModelSerializer):
             ),
         )
 
-        """
-        Annotate with the number of stock items allocated to sales orders.
-        This annotation is modeled on Part.sales_order_allocations() method:
-
-        - Only look for "open" orders
-        - Stock items have not been "shipped"
-        """
-        so_allocation_filter = Q(
-            line__order__status__in=SalesOrderStatus.OPEN,  # LineItem points to an OPEN order
-            shipment__shipment_date=None,  # Allocated item has *not* been shipped out
-        )
-
         queryset = queryset.annotate(
-            allocated_to_sales_orders=Coalesce(
-                SubquerySum('stock_items__sales_order_allocations__quantity', filter=so_allocation_filter),
-                Decimal(0),
-                output_field=models.DecimalField(),
-            )
-        )
-
-        """
-        Annotate with the number of stock items allocated to build orders.
-        This annotation is modeled on Part.build_order_allocations() method
-        """
-        bo_allocation_filter = Q(
-            build__status__in=BuildStatus.ACTIVE_CODES,
-        )
-
-        queryset = queryset.annotate(
-            allocated_to_build_orders=Coalesce(
-                SubquerySum('stock_items__allocations__quantity', filter=bo_allocation_filter),
-                Decimal(0),
-                output_field=models.DecimalField(),
-            )
+            ordering=part.filters.annotate_on_order_quantity(),
+            in_stock=part.filters.annotate_total_stock(),
+            allocated_to_sales_orders=part.filters.annotate_sales_order_allocations(),
+            allocated_to_build_orders=part.filters.annotate_build_order_allocations(),
         )
 
         # Annotate with the total 'available stock' quantity
