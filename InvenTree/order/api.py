@@ -788,6 +788,8 @@ class SalesOrderLineItemList(generics.ListCreateAPIView):
             'order__stock_items',
         )
 
+        queryset = serializers.SalesOrderLineItemSerializer.annotate_queryset(queryset)
+
         return queryset
 
     filter_backends = [
@@ -834,6 +836,13 @@ class SalesOrderLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = models.SalesOrderLineItem.objects.all()
     serializer_class = serializers.SalesOrderLineItemSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = serializers.SalesOrderLineItemSerializer.annotate_queryset(queryset)
+
+        return queryset
 
 
 class SalesOrderContextMixin:

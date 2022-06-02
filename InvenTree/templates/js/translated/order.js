@@ -3540,7 +3540,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
         columns.push(
             {
                 field: 'stock',
-                title: '{% trans "In Stock" %}',
+                title: '{% trans "Available Stock" %}',
                 formatter: function(value, row) {
                     return row.part_detail.stock;
                 },
