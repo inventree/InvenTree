@@ -3,14 +3,14 @@
 import logging
 from datetime import timedelta
 
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
+
 from common.models import NotificationEntry, NotificationMessage
 from InvenTree.helpers import inheritors
 from InvenTree.ready import isImportingData
 from plugin import registry
 from plugin.models import NotificationUserSetting
-
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
 from users.models import Owner
 
 logger = logging.getLogger('inventree')
