@@ -838,6 +838,7 @@ class SalesOrderLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.SalesOrderLineItemSerializer
 
     def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for this endpoint"""
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = serializers.SalesOrderLineItemSerializer.annotate_queryset(queryset)
