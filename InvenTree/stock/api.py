@@ -106,7 +106,7 @@ class StockItemContextMixin:
 class StockItemSerialize(StockItemContextMixin, generics.CreateAPIView):
     """API endpoint for serializing a stock item."""
 
-    queryset = StockItem.objects.none()
+    queryset = StockItem.objects.all()
     serializer_class = StockSerializers.SerializeStockItemSerializer
 
 
@@ -118,15 +118,22 @@ class StockItemInstall(StockItemContextMixin, generics.CreateAPIView):
     - stock_item must be serialized (and not belong to another item)
     """
 
-    queryset = StockItem.objects.none()
+    queryset = StockItem.objects.all()
     serializer_class = StockSerializers.InstallStockItemSerializer
 
 
 class StockItemUninstall(StockItemContextMixin, generics.CreateAPIView):
     """API endpoint for removing (uninstalling) items from this item."""
 
-    queryset = StockItem.objects.none()
+    queryset = StockItem.objects.all()
     serializer_class = StockSerializers.UninstallStockItemSerializer
+
+
+class StockItemReturn(StockItemContextMixin, generics.CreateAPIView):
+    """API endpoint for returning a stock item from a customer"""
+
+    queryset = StockItem.objects.all()
+    serializer_class = StockSerializers.ReturnStockItemSerializer
 
 
 class StockAdjustView(generics.CreateAPIView):
@@ -1370,6 +1377,7 @@ stock_api_urls = [
     re_path(r'^(?P<pk>\d+)/', include([
         re_path(r'^install/', StockItemInstall.as_view(), name='api-stock-item-install'),
         re_path(r'^metadata/', StockMetadata.as_view(), name='api-stock-item-metadata'),
+        re_path(r'^return/', StockItemReturn.as_view(), name='api-stock-item-return'),
         re_path(r'^serialize/', StockItemSerialize.as_view(), name='api-stock-item-serialize'),
         re_path(r'^uninstall/', StockItemUninstall.as_view(), name='api-stock-item-uninstall'),
         re_path(r'^.*$', StockDetail.as_view(), name='api-stock-detail'),

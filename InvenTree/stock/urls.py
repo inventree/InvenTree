@@ -21,7 +21,6 @@ stock_item_detail_urls = [
     re_path(r'^delete/', views.StockItemDelete.as_view(), name='stock-item-delete'),
     re_path(r'^qr_code/', views.StockItemQRCode.as_view(), name='stock-item-qr'),
     re_path(r'^delete_test_data/', views.StockItemDeleteTestData.as_view(), name='stock-item-delete-test-data'),
-    re_path(r'^return/', views.StockItemReturnToStock.as_view(), name='stock-item-return'),
 
     re_path(r'^add_tracking/', views.StockItemTrackingCreate.as_view(), name='stock-tracking-create'),
 

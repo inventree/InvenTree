@@ -125,35 +125,6 @@ class StockLocationQRCode(QRCodeView):
             return None
 
 
-class StockItemReturnToStock(AjaxUpdateView):
-    """View for returning a stock item (which is assigned to a customer) to stock."""
-
-    model = StockItem
-    ajax_form_title = _("Return to Stock")
-    context_object_name = "item"
-    form_class = StockForms.ReturnStockItemForm
-
-    def validate(self, item, form, **kwargs):
-        """Make sure required data is there."""
-        location = form.cleaned_data.get('location', None)
-
-        if not location:
-            form.add_error('location', _('Specify a valid location'))
-
-    def save(self, item, form, **kwargs):
-        """Return stock."""
-        location = form.cleaned_data.get('location', None)
-
-        if location:
-            item.returnFromCustomer(location, self.request.user)
-
-    def get_data(self):
-        """Set success message."""
-        return {
-            'success': _('Stock item returned from customer')
-        }
-
-
 class StockItemDeleteTestData(AjaxUpdateView):
     """View for deleting all test data."""
 

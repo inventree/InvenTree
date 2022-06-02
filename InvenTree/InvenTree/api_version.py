@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 54
+INVENTREE_API_VERSION = 55
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v55 -> 2022-06-02 : https://github.com/inventree/InvenTree/pull/3120
+    - Converts the 'StockItemReturn' functionality to make use of the API
 
 v54 -> 2022-06-02 : https://github.com/inventree/InvenTree/pull/3117
     - Adds 'available_stock' annotation on the SalesOrderLineItem API

@@ -464,6 +464,48 @@ class UninstallStockItemSerializer(serializers.Serializer):
         )
 
 
+class ReturnStockItemSerializer(serializers.Serializer):
+    """DRF serializer for returning a stock item from a customer"""
+
+    class Meta:
+        """Metaclass options"""
+
+        fields = [
+            'location',
+            'note',
+        ]
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        many=False, required=True, allow_null=False,
+        label=_('Location'),
+        help_text=_('Destination location for returned item'),
+    )
+
+    notes = serializers.CharField(
+        label=_('Notes'),
+        help_text=_('Add transaction note (optional)'),
+        required=False, allow_blank=True,
+    )
+
+    def save(self):
+        """Save the serialzier to return the item into stock"""
+
+        item = self.context['item']
+        request = self.context['request']
+
+        data = self.validated_data
+
+        location = data['location']
+        notes = data.get('notes', '')
+
+        item.return_from_customer(
+            location,
+            user=request.user,
+            notes=notes
+        )
+
+
 class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for a simple tree view."""
 
