@@ -2,19 +2,19 @@
 
 from datetime import datetime, timedelta
 
+import django.core.exceptions as django_exceptions
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-import django.core.exceptions as django_exceptions
 from django.test import TestCase
 
 import common.models
+import order.tasks
 from company.models import SupplierPart
 from InvenTree.status_codes import PurchaseOrderStatus
 from part.models import Part
 from stock.models import StockLocation
 from users.models import Owner
 
-import order.tasks
 from .models import PurchaseOrder, PurchaseOrderLineItem
 
 
@@ -232,8 +232,8 @@ class OrderTest(TestCase):
             )
 
             self.assertTrue(messages.exists())
-            
+
             msg = messages.first()
-            
+
             self.assertEqual(msg.target_object_id, 1)
             self.assertEqual(msg.name, 'Overdue Purchase Order')
