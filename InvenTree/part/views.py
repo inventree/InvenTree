@@ -981,7 +981,7 @@ class CategoryDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
         if category:
 
             # Insert "starred" information
-            context['starred_directly'] = context['starred'] and category.is_starred_by(
+            context['starred_directly'] = category.is_starred_by(
                 self.request.user,
                 include_parents=False,
             )
