@@ -19,7 +19,7 @@ Relevant PRs:
 from decimal import Decimal
 
 from django.db import models
-from django.db.models import Q
+from django.db.models import OuterRef, Q
 from django.db.models.functions import Coalesce
 
 from sql_util.utils import SubquerySum
@@ -122,3 +122,20 @@ def annotate_sales_order_allocations(reference: str = ''):
         Decimal(0),
         output_field=models.DecimalField(),
     )
+
+
+def variant_stock_query(reference: str = '', filter: Q = stock.models.StockItem.IN_STOCK_FILTER):
+    """Create a queryset to retrieve all stock items for variant parts under the specified part
+
+    - Useful for annotating a queryset with aggregated information about variant parts
+
+    Args:
+        reference: The relationship reference of the part from the current model
+        filter: Q object which defines how to filter the returned StockItem instances
+    """
+
+    return stock.models.StockItem.objects.filter(
+        part__tree_id=OuterRef(f'{reference}tree_id'),
+        part__lft__gt=OuterRef(f'{reference}lft'),
+        part__rght__lt=OuterRef(f'{reference}rght'),
+    ).filter(filter)

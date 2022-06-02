@@ -4,8 +4,8 @@ import imghdr
 from decimal import Decimal
 
 from django.db import models, transaction
-from django.db.models import (ExpressionWrapper, F, FloatField, Func, OuterRef,
-                              Q, Subquery)
+from django.db.models import (ExpressionWrapper, F, FloatField, Func, Q,
+                              Subquery)
 from django.db.models.functions import Coalesce
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -25,7 +25,6 @@ from InvenTree.serializers import (DataFileExtractSerializer,
                                    InvenTreeModelSerializer,
                                    InvenTreeMoneySerializer)
 from InvenTree.status_codes import BuildStatus
-from stock.models import StockItem
 
 from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
                      PartCategory, PartCategoryParameterTemplate,
@@ -317,14 +316,8 @@ class PartSerializer(InvenTreeModelSerializer):
             stock_item_count=SubqueryCount('stock_items')
         )
 
-        # TODO: Refactor this variant stock filter out
-
         # Annotate with the total variant stock quantity
-        variant_query = StockItem.objects.filter(
-            part__tree_id=OuterRef('tree_id'),
-            part__lft__gt=OuterRef('lft'),
-            part__rght__lt=OuterRef('rght'),
-        ).filter(StockItem.IN_STOCK_FILTER)
+        variant_query = part.filters.variant_stock_query()
 
         queryset = queryset.annotate(
             variant_stock=Coalesce(
@@ -644,11 +637,7 @@ class BomItemSerializer(InvenTreeModelSerializer):
         )
 
         # Annotate the queryset with 'available variant stock' information
-        variant_stock_query = StockItem.objects.filter(
-            part__tree_id=OuterRef('sub_part__tree_id'),
-            part__lft__gt=OuterRef('sub_part__lft'),
-            part__rght__lt=OuterRef('sub_part__rght'),
-        ).filter(StockItem.IN_STOCK_FILTER)
+        variant_stock_query = part.filters.variant_stock_query(reference='sub_part__')
 
         queryset = queryset.alias(
             variant_stock_total=Coalesce(
