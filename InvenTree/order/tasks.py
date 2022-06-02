@@ -1,15 +1,14 @@
 """Background tasks for the 'order' app"""
 
-from django.utils.translation import gettext_lazy as _
-
 from datetime import datetime, timedelta
+
+from django.utils.translation import gettext_lazy as _
 
 import common.notifications
 import InvenTree.helpers
-from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
 import InvenTree.tasks
 import order.models
-
+from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
 from plugin.events import trigger_event
 
 
@@ -82,7 +81,7 @@ def notify_overdue_sales_order(so: order.models.SalesOrder):
 
     if so.created_by:
         targets.append(so.created_by)
-    
+
     if so.responsible:
         targets.append(so.responsible)
 
@@ -120,12 +119,12 @@ def notify_overdue_sales_order(so: order.models.SalesOrder):
 
 def check_overdue_sales_orders():
     """Check if any outstanding SalesOrders have just become overdueL
-    
+
     - This check is performed daily
     - Look at the 'target_date' of any outstanding SalesOrder objects
     - If the 'target_date' expired *yesterday* then the order is just out of date
     """
-    
+
     yesterday = datetime.now().date() - timedelta(days=1)
 
     overdue_orders = order.models.SalesOrder.objects.filter(
