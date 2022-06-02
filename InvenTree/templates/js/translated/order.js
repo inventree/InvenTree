@@ -3542,7 +3542,33 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 field: 'stock',
                 title: '{% trans "Available Stock" %}',
                 formatter: function(value, row) {
-                    return row.part_detail.stock;
+                    var available = row.available_stock;
+                    var total = row.part_detail.stock;
+                    var required = Math.max(row.quantity - row.allocated - row.shipped, 0);
+
+                    var html = '';
+
+                    if (total > 0) {
+                        var url = `/part/${row.part}/?display=part-stock`;
+
+                        var text = available;
+
+                        if (total != available) {
+                            text += ` / ${total}`;
+                        }
+
+                        html = renderLink(text, url);
+                    } else {
+                        html += `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
+                    }
+
+                    if (available >= required) {
+                        html += `<span class='fas fa-check-circle icon-green float-right' title='{% trans "Sufficient stock available" %}'></span>`;
+                    } else {
+                        html += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "Insufficient stock available" %}'></span>`;
+                    }
+
+                    return html;
                 },
             },
         );
