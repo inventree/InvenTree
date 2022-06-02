@@ -894,7 +894,8 @@ class StockItem(MetadataMixin, MPTTModel):
         # Return the reference to the stock item
         return item
 
-    def returnFromCustomer(self, location, user=None, **kwargs):
+    @transaction.atomic
+    def return_from_customer(self, location, user=None, **kwargs):
         """Return stock item from customer, back into the specified location."""
         notes = kwargs.get('notes', '')
 
