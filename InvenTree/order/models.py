@@ -26,6 +26,7 @@ from markdownx.models import MarkdownxField
 from mptt.models import TreeForeignKey
 
 import InvenTree.helpers
+import InvenTree.ready
 from common.settings import currency_code_default
 from company.models import Company, SupplierPart
 from InvenTree.fields import InvenTreeModelMoneyField, RoundingDecimalField
@@ -836,7 +837,19 @@ class SalesOrder(Order):
 
 @receiver(post_save, sender=SalesOrder, dispatch_uid='build_post_save_log')
 def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs):
-    """Callback function to be executed after a SalesOrder instance is saved."""
+    """Callback function to be executed after a SalesOrder instance is saved.
+
+    - If the SALESORDER_DEFAULT_SHIPMENT setting is enabled, create a default shipment
+    - Ignore if the database is not ready for access
+    - Ignore if data import is active
+    """
+
+    if not InvenTree.ready.canAppAccessDatabase(allow_test=True):
+        return
+
+    if InvenTree.ready.isImportingData():
+        return
+
     if created and getSetting('SALESORDER_DEFAULT_SHIPMENT'):
         # A new SalesOrder has just been created
 
