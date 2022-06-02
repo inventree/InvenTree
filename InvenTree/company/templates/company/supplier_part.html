@@ -309,7 +309,9 @@ $('#new-price-break').click(function() {
 });
 
 loadPurchaseOrderTable($("#purchase-order-table"), {
-    url: "{% url 'api-po-list' %}?supplier_part={{ part.id }}",
+    params: {
+        supplier_part: {{ part.id }},
+    }
 });
 
 loadStockTable($("#stock-table"), {
