@@ -2,20 +2,27 @@
 
 from datetime import datetime, timedelta
 
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from common.models import InvenTreeSetting
+from common.models import InvenTreeSetting, NotificationMessage
 from company.models import Company
 from InvenTree import status_codes as status
+import order.tasks
 from order.models import (SalesOrder, SalesOrderAllocation, SalesOrderLineItem,
                           SalesOrderShipment)
 from part.models import Part
 from stock.models import StockItem
-
+from users.models import Owner
 
 class SalesOrderTest(TestCase):
     """Run tests to ensure that the SalesOrder model is working correctly."""
+
+    fixtures = [
+        'users',
+    ]
 
     def setUp(self):
         """Initial setup for this set of unit tests"""
@@ -235,3 +242,20 @@ class SalesOrderTest(TestCase):
 
         # Shipment should have default reference of '1'
         self.assertEqual('1', order_2.pending_shipments()[0].reference)
+
+    def test_overdue_notification(self):
+        """Test overdue sales order notification"""
+
+        self.order.created_by = get_user_model().objects.get(pk=3)
+        self.order.responsible = Owner.create(obj=Group.objects.get(pk=2))
+        self.order.target_date = datetime.now().date() - timedelta(days=1)
+        self.order.save()
+
+        # Check for overdue sales orders
+        order.tasks.check_overdue_sales_orders()
+
+        messages = NotificationMessage.objects.filter(
+            category='order.overdue_sales_order',
+        )
+
+        self.assertEqual(len(messages), 2)
