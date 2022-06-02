@@ -24,7 +24,7 @@ from InvenTree.serializers import (DataFileExtractSerializer,
                                    InvenTreeImageSerializerField,
                                    InvenTreeModelSerializer,
                                    InvenTreeMoneySerializer)
-from InvenTree.status_codes import BuildStatus, SalesOrderStatus
+from InvenTree.status_codes import BuildStatus
 from stock.models import StockItem
 
 from .models import (BomItem, BomItemSubstitute, Part, PartAttachment,
@@ -606,40 +606,16 @@ class BomItemSerializer(InvenTreeModelSerializer):
         Construct an "available stock" quantity:
         available_stock = total_stock - build_order_allocations - sales_order_allocations
         """
-        build_order_filter = Q(build__status__in=BuildStatus.ACTIVE_CODES)
-        sales_order_filter = Q(
-            line__order__status__in=SalesOrderStatus.OPEN,
-            shipment__shipment_date=None,
-        )
+
+        ref = 'sub_part__'
 
         # Calculate "total stock" for the referenced sub_part
         # Calculate the "build_order_allocations" for the sub_part
         # Note that these fields are only aliased, not annotated
         queryset = queryset.alias(
-            total_stock=Coalesce(
-                SubquerySum(
-                    'sub_part__stock_items__quantity',
-                    filter=StockItem.IN_STOCK_FILTER
-                ),
-                Decimal(0),
-                output_field=models.DecimalField(),
-            ),
-            allocated_to_sales_orders=Coalesce(
-                SubquerySum(
-                    'sub_part__stock_items__sales_order_allocations__quantity',
-                    filter=sales_order_filter,
-                ),
-                Decimal(0),
-                output_field=models.DecimalField(),
-            ),
-            allocated_to_build_orders=Coalesce(
-                SubquerySum(
-                    'sub_part__stock_items__allocations__quantity',
-                    filter=build_order_filter,
-                ),
-                Decimal(0),
-                output_field=models.DecimalField(),
-            ),
+            total_stock=part.filters.annotate_total_stock(reference=ref),
+            allocated_to_sales_orders=part.filters.annotate_sales_order_allocations(reference=ref),
+            allocated_to_build_orders=part.filters.annotate_build_order_allocations(reference=ref),
         )
 
         # Calculate 'available_stock' based on previously annotated fields
@@ -650,32 +626,13 @@ class BomItemSerializer(InvenTreeModelSerializer):
             )
         )
 
+        ref = 'substitutes__part__'
+
         # Extract similar information for any 'substitute' parts
         queryset = queryset.alias(
-            substitute_stock=Coalesce(
-                SubquerySum(
-                    'substitutes__part__stock_items__quantity',
-                    filter=StockItem.IN_STOCK_FILTER,
-                ),
-                Decimal(0),
-                output_field=models.DecimalField(),
-            ),
-            substitute_build_allocations=Coalesce(
-                SubquerySum(
-                    'substitutes__part__stock_items__allocations__quantity',
-                    filter=build_order_filter,
-                ),
-                Decimal(0),
-                output_field=models.DecimalField(),
-            ),
-            substitute_sales_allocations=Coalesce(
-                SubquerySum(
-                    'substitutes__part__stock_items__sales_order_allocations__quantity',
-                    filter=sales_order_filter,
-                ),
-                Decimal(0),
-                output_field=models.DecimalField(),
-            ),
+            substitute_stock=part.filters.annotate_total_stock(reference=ref),
+            substitute_build_allocations=part.filters.annotate_build_order_allocations(reference=ref),
+            substitute_sales_allocations=part.filters.annotate_sales_order_allocations(reference=ref)
         )
 
         # Calculate 'available_substitute_stock' field

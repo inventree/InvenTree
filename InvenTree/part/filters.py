@@ -19,7 +19,7 @@ Relevant PRs:
 from decimal import Decimal
 
 from django.db import models
-from django.db.models import ExpressionWrapper, F, Q
+from django.db.models import Q
 from django.db.models.functions import Coalesce
 
 from sql_util.utils import SubquerySum
@@ -122,68 +122,3 @@ def annotate_sales_order_allocations(reference: str = ''):
         Decimal(0),
         output_field=models.DecimalField(),
     )
-
-
-def annotate_stock_allocations(queryset, reference: str = '', alias: bool = True, prefix: str = ''):
-    """Annotate stock allocation data to each part in a queryset:
-
-    This function can be used to annotate the 'available stock' count
-    to each part in a queryset, without incurring the "1 + N" query penalty.
-
-    It uses a number of subquery annotations to achieve this (refer to the functions above).
-
-    Each required subquery annotation is applied in sequence to the queryset,
-    to perform the equivalent of the following mathematical operation:
-
-    unallocated_stock = in_stock - build_order_allocation_quantity - sales_order_allocation_quantity
-
-    Args:
-        queryset: The QuerySet instance to annotate
-        reference: The relationship reference of the 'part' object from the current model
-        alias: If True, intermediate steps are performed as an alias operation (more efficient)
-        prefix: Optional prefix to prepend to output annotated fields
-    """
-
-    print(f"annotate_stock_allocations: reference='{reference}', prefix='{prefix}'")
-
-    # Construct a set of intermediate annotations to perform
-    annotations = {
-        f'{prefix}in_stock': annotate_total_stock(reference),
-        f'{prefix}build_order_allocation_quantity': annotate_build_order_allocations(reference),
-        f'{prefix}sales_order_allocation_quantity': annotate_sales_order_allocations(reference),
-    }
-
-    # Alias or annotate the intermediate annotations to the queryset
-    # if alias:
-    #     queryset = queryset.alias(**annotations)
-    # else:
-    #     queryset = queryset.annotate(**annotations)
-
-    queryset = queryset.annotate(
-        in_stock=annotate_total_stock(reference),
-        build_order_allocation_quantity=annotate_build_order_allocations(reference),
-        sales_order_allocation_quantity=annotate_sales_order_allocations(reference),
-    )
-
-    # Next, calculate the 'unallocated_stock' annotation based on previous calculations
-    # annotations = {
-    #     f'{prefix}unallocated_stock': ExpressionWrapper(
-    #         F(f'{prefix}in_stock') - F(f'{prefix}build_order_allocation_quantity') - F(f'{prefix}sales_order_allocation_quantity'),
-    #         output_field=models.DecimalField(),
-    #     )
-    # }
-
-    print("Annotations:")
-    print(annotations)
-
-    queryset = queryset.annotate(
-        unallocated_quantity=ExpressionWrapper(
-            F('in_stock') - F('build_order_allocation-quantity') - F('sales_order_allocation_quantity'),
-            output_field=models.DecimalField()
-        )
-    )
-    # queryset = queryset.annotate(**annotations)
-
-    print(queryset)
-
-    return queryset
