@@ -359,14 +359,23 @@ $('#edit-part').click(function () {
 });
 
 $('#delete-part').click(function() {
-
-    deleteSupplierPart({{ part.pk }}, {
-        onSuccess: function() {
-            {% if part.supplier %}
-            window.location.href = "{% url 'company-detail' part.supplier.id %}";
-            {% endif %}
+    inventreeGet(
+        '{% url "api-supplier-part-detail" part.pk %}',
+        {},
+        {
+            success: function(part) {
+                deleteSupplierParts([part], {
+                    success: function() {
+                        {% if part.supplier %}
+                        window.location.href = '{% url "company-detail" part.supplier.id %}';
+                        {% else %}
+                        window.location.href = '{% url "index" %}';
+                        {% endif %}
+                    }
+                });
+            }
         }
-    });
+    );
 });
 
 enableSidebar('supplierpart');
