@@ -97,7 +97,7 @@ def check_build_stock(build: build.models.Build):
         # Render the HTML message
         html_message = render_to_string('email/build_order_required_stock.html', context)
 
-        subject = "[InvenTree] " + _("Stock required for build order")
+        subject = _("Stock required for build order")
 
         recipients = emails.values_list('email', flat=True)
 
@@ -126,7 +126,7 @@ def notify_overdue_build_order(bo: build.models.Build):
         ),
         'template': {
             'html': 'email/overdue_build_order.html',
-            'subject': f'[Inventree] {name}',
+            'subject': name,
         }
     }
 

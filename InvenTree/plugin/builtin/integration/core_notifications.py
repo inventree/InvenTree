@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from allauth.account.models import EmailAddress
 
+import common.models
 import InvenTree.tasks
 from plugin import InvenTreePlugin
 from plugin.mixins import BulkNotificationMethod, SettingsMixin
@@ -74,6 +75,14 @@ class CoreNotificationsPlugin(SettingsMixin, InvenTreePlugin):
             html_message = render_to_string(self.context['template']['html'], self.context)
             targets = self.targets.values_list('email', flat=True)
 
-            InvenTree.tasks.send_email(self.context['template']['subject'], '', targets, html_message=html_message)
+            # Prefix the 'instance title' to the email subject
+            instance_title = common.models.InvenTreeSetting.get_setting('INVENTREE_INSTANCE')
+
+            subject = self.context['template'].get('subject', '')
+
+            if instance_title:
+                subject = f'[{instance_title}] {subject}'
+
+            InvenTree.tasks.send_email(subject, '', targets, html_message=html_message)
 
             return True

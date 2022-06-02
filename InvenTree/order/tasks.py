@@ -34,7 +34,7 @@ def notify_overdue_purchase_order(po: order.models.PurchaseOrder):
         ),
         'template': {
             'html': 'email/overdue_purchase_order.html',
-            'subject': f'[InvenTree] {name}',
+            'subject': name,
         }
     }
 
@@ -96,7 +96,7 @@ def notify_overdue_sales_order(so: order.models.SalesOrder):
         ),
         'template': {
             'html': 'email/overdue_sales_order.html',
-            'subject': f'[InvenTree] {name}'
+            'subject': name,
         }
     }
 

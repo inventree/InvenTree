@@ -710,7 +710,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'INVENTREE_INSTANCE': {
             'name': _('Server Instance Name'),
-            'default': 'InvenTree server',
+            'default': 'InvenTree',
             'description': _('String descriptor for the server instance'),
         },
 
