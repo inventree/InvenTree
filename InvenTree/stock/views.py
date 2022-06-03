@@ -1,7 +1,5 @@
 """Django views for interacting with Stock app."""
 
-from datetime import datetime
-
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -10,12 +8,12 @@ from django.views.generic import DetailView, ListView
 import common.settings
 from InvenTree.forms import ConfirmForm
 from InvenTree.helpers import str2bool
-from InvenTree.views import (AjaxCreateView, AjaxDeleteView, AjaxUpdateView,
+from InvenTree.views import (AjaxDeleteView, AjaxUpdateView,
                              InvenTreeRoleMixin, QRCodeView)
 from plugin.views import InvenTreePluginViewMixin
 
 from . import forms as StockForms
-from .models import StockItem, StockItemTracking, StockLocation
+from .models import StockItem, StockLocation
 
 
 class StockIndex(InvenTreeRoleMixin, InvenTreePluginViewMixin, ListView):
@@ -229,65 +227,3 @@ class StockItemDelete(AjaxDeleteView):
     ajax_template_name = 'stock/item_delete.html'
     context_object_name = 'item'
     ajax_form_title = _('Delete Stock Item')
-
-
-class StockItemTrackingDelete(AjaxDeleteView):
-    """View to delete a StockItemTracking object.
-
-    Presents a deletion confirmation form to the user
-    """
-
-    model = StockItemTracking
-    ajax_template_name = 'stock/tracking_delete.html'
-    ajax_form_title = _('Delete Stock Tracking Entry')
-
-
-class StockItemTrackingEdit(AjaxUpdateView):
-    """View for editing a StockItemTracking object."""
-
-    model = StockItemTracking
-    ajax_form_title = _('Edit Stock Tracking Entry')
-    form_class = StockForms.TrackingEntryForm
-
-
-class StockItemTrackingCreate(AjaxCreateView):
-    """View for creating a new StockItemTracking object."""
-
-    model = StockItemTracking
-    ajax_form_title = _("Add Stock Tracking Entry")
-    form_class = StockForms.TrackingEntryForm
-
-    def post(self, request, *args, **kwargs):
-        """Create StockItemTracking object."""
-        self.request = request
-        self.form = self.get_form()
-
-        valid = False
-
-        if self.form.is_valid():
-            stock_id = self.kwargs['pk']
-
-            if stock_id:
-                try:
-                    stock_item = StockItem.objects.get(id=stock_id)
-
-                    # Save new tracking information
-                    tracking = self.form.save(commit=False)
-                    tracking.item = stock_item
-                    tracking.user = self.request.user
-                    tracking.quantity = stock_item.quantity
-                    tracking.date = datetime.now().date()
-                    tracking.system = False
-
-                    tracking.save()
-
-                    valid = True
-
-                except (StockItem.DoesNotExist, ValueError):
-                    pass
-
-        data = {
-            'form_valid': valid
-        }
-
-        return self.renderJsonResponse(request, self.form, data=data)
