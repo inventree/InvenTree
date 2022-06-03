@@ -44,7 +44,7 @@ class TemplateTagTest(InvenTreeTestCase):
 
     def test_inventree_instance_name(self):
         """Test the 'instance name' setting"""
-        self.assertEqual(inventree_extras.inventree_instance_name(), 'InvenTree server')
+        self.assertEqual(inventree_extras.inventree_instance_name(), 'InvenTree')
 
     def test_inventree_base_url(self):
         """Test that the base URL tag returns correctly"""
