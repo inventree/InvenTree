@@ -11,8 +11,7 @@ from InvenTree.forms import HelperForm
 from InvenTree.helpers import clean_decimal
 
 from .models import (Part, PartCategory, PartCategoryParameterTemplate,
-                     PartInternalPriceBreak, PartParameterTemplate,
-                     PartSellPriceBreak)
+                     PartInternalPriceBreak, PartSellPriceBreak)
 
 
 class PartImageDownloadForm(HelperForm):
@@ -58,18 +57,6 @@ class SetPartCategoryForm(forms.Form):
     """Form for setting the category of multiple Part objects."""
 
     part_category = TreeNodeChoiceField(queryset=PartCategory.objects.all(), required=True, help_text=_('Select part category'))
-
-
-class EditPartParameterTemplateForm(HelperForm):
-    """Form for editing a PartParameterTemplate object."""
-
-    class Meta:
-        """Metaclass defines fields for this form"""
-        model = PartParameterTemplate
-        fields = [
-            'name',
-            'units'
-        ]
 
 
 class EditCategoryParameterTemplateForm(HelperForm):

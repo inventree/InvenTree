@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 55
+INVENTREE_API_VERSION = 56
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v56 -> 2022-06-02 : https://github.com/inventree/InvenTree/pull/3123
+    - Expose the PartParameterTemplate model to use the API
 
 v55 -> 2022-06-02 : https://github.com/inventree/InvenTree/pull/3120
     - Converts the 'StockItemReturn' functionality to make use of the API

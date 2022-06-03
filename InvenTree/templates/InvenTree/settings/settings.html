@@ -346,8 +346,14 @@ $("#param-table").inventreeTable({
 });
 
 $("#new-param").click(function() {
-    launchModalForm("{% url 'part-param-template-create' %}", {
-        success: function() {
+    constructForm('{% url "api-part-parameter-template-list" %}', {
+        fields: {
+            name: {},
+            units: {},
+        },
+        method: 'POST',
+        title: '{% trans "Create Part Parameter Template" %}',
+        onSuccess: function() {
             $("#param-table").bootstrapTable('refresh');
         },
     });
@@ -355,26 +361,43 @@ $("#new-param").click(function() {
 
 $("#param-table").on('click', '.template-edit', function() {
     var button = $(this);
+    var pk = button.attr('pk');
 
-    var url = "/part/parameter/template/" + button.attr('pk') + "/edit/";
-
-    launchModalForm(url, {
-        success: function() {
-            $("#param-table").bootstrapTable('refresh');
+    constructForm(
+        `/api/part/parameter/template/${pk}/`,
+        {
+            fields: {
+                name: {},
+                units: {},
+            },
+            title: '{% trans "Edit Part Parameter Template" %}',
+            onSuccess: function() {
+                $("#param-table").bootstrapTable('refresh');
+            },
         }
-    });
+    );
 });
 
 $("#param-table").on('click', '.template-delete', function() {
     var button = $(this);
+    var pk = button.attr('pk');
 
-    var url = "/part/parameter/template/" + button.attr('pk') + "/delete/";
+    var html = `
+    <div class='alert alert-block alert-danger'>
+        {% trans "Any parameters which reference this template will also be deleted" %}
+    </div>`;
 
-    launchModalForm(url, {
-        success: function() {
-            $("#param-table").bootstrapTable('refresh');
+    constructForm(
+        `/api/part/parameter/template/${pk}/`,
+        {
+            method: 'DELETE',
+            preFormContent: html,
+            title: '{% trans "Delete Part Parameter Template" %}',
+            onSuccess: function() {
+                $("#param-table").bootstrapTable('refresh');
+            },
         }
-    });
+    );
 });
 
 $("#import-part").click(function() {
