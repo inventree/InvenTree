@@ -90,6 +90,8 @@ class StockMetadata(generics.RetrieveUpdateAPIView):
 class StockItemContextMixin:
     """Mixin class for adding StockItem object to serializer context."""
 
+    queryset = StockItem.objects.none()
+
     def get_serializer_context(self):
         """Extend serializer context."""
         context = super().get_serializer_context()
@@ -106,7 +108,6 @@ class StockItemContextMixin:
 class StockItemSerialize(StockItemContextMixin, generics.CreateAPIView):
     """API endpoint for serializing a stock item."""
 
-    queryset = StockItem.objects.all()
     serializer_class = StockSerializers.SerializeStockItemSerializer
 
 
@@ -118,21 +119,18 @@ class StockItemInstall(StockItemContextMixin, generics.CreateAPIView):
     - stock_item must be serialized (and not belong to another item)
     """
 
-    queryset = StockItem.objects.all()
     serializer_class = StockSerializers.InstallStockItemSerializer
 
 
 class StockItemUninstall(StockItemContextMixin, generics.CreateAPIView):
     """API endpoint for removing (uninstalling) items from this item."""
 
-    queryset = StockItem.objects.all()
     serializer_class = StockSerializers.UninstallStockItemSerializer
 
 
 class StockItemReturn(StockItemContextMixin, generics.CreateAPIView):
     """API endpoint for returning a stock item from a customer"""
 
-    queryset = StockItem.objects.all()
     serializer_class = StockSerializers.ReturnStockItemSerializer
 
 
