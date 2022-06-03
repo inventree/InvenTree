@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-03 10:21+0000\n"
-"PO-Revision-Date: 2022-06-02 14:43\n"
+"PO-Revision-Date: 2022-06-03 14:41\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1058,8 +1058,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:370
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:439
@@ -5244,8 +5243,7 @@ msgstr "Válassz a meglévő képek közül"
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr "A(z) '<strong>%(full_name)s</strong>' alkatrész nem törölhető mert még mindig <strong>aktív</strong>. Előbb állítsd az alkatrészt inaktív állapotúra és probáld újra!    "
@@ -6124,10 +6122,8 @@ msgid "Add transaction note (optional)"
 msgstr "Tranzakció megjegyzés hozzáadása (opcionális)"
 
 #: stock/serializers.py:482
-#, fuzzy
-#| msgid "Destination location for uninstalled item"
 msgid "Destination location for returned item"
-msgstr "Cél hely a kiszedett tételeknek"
+msgstr ""
 
 #: stock/serializers.py:720
 msgid "Part must be salable"
@@ -7419,16 +7415,14 @@ msgstr "Bejelentkezés"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Kérlek jelentkezz be az egyik meglévő külső fiókkal vagy <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">Regisztrálj</a> fiókért és jelentkezz be lentebb:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Ha még nem hoztál létre fiókot akkor előbb <a href=\"%(signup_url)s\">regisztrálj</a>."
 
@@ -10312,23 +10306,3 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
 
-#~ msgid "New Entry"
-#~ msgstr "Új bejegyzés"
-
-#~ msgid "Are you sure you want to delete this stock tracking entry?"
-#~ msgstr "Biztosan törölni akarod ezt a készlettörténeti bejegyzést?"
-
-#~ msgid "Specify a valid location"
-#~ msgstr "Adj meg egy érvényes helyet"
-
-#~ msgid "Stock item returned from customer"
-#~ msgstr "Készlet tétel vevőtől visszahozva"
-
-#~ msgid "Delete Stock Tracking Entry"
-#~ msgstr "Készlettörténet bejegyzés törlése"
-
-#~ msgid "Edit Stock Tracking Entry"
-#~ msgstr "Készlettörténet bejegyzés szerkesztése"
-
-#~ msgid "Add Stock Tracking Entry"
-#~ msgstr "Készlettörténet bejegyzés hozzáadása"
