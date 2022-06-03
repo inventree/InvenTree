@@ -1441,6 +1441,13 @@ class PartParameterTemplateList(generics.ListCreateAPIView):
         return queryset
 
 
+class PartParameterTemplateDetail(generics.RetrieveUpdateDestroyAPIView):
+    """API endpoint for accessing the detail view for a PartParameterTemplate object"""
+
+    queryset = PartParameterTemplate.objects.all()
+    serializer_class = part_serializers.PartParameterTemplateSerializer
+
+
 class PartParameterList(generics.ListCreateAPIView):
     """API endpoint for accessing a list of PartParameter objects.
 
@@ -1894,7 +1901,10 @@ part_api_urls = [
 
     # Base URL for PartParameter API endpoints
     re_path(r'^parameter/', include([
-        path('template/', PartParameterTemplateList.as_view(), name='api-part-parameter-template-list'),
+        path('template/', include([
+            re_path(r'^(?P<pk>\d+)/', PartParameterTemplateDetail.as_view(), name='api-part-parameter-template-detail'),
+            re_path(r'^.*$', PartParameterTemplateList.as_view(), name='api-part-parameter-template-list'),
+        ])),
 
         re_path(r'^(?P<pk>\d+)/', PartParameterDetail.as_view(), name='api-part-parameter-detail'),
         re_path(r'^.*$', PartParameterList.as_view(), name='api-part-parameter-list'),
