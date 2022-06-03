@@ -135,7 +135,7 @@
             },
             label: 'attachment',
             success: function(data, status, xhr) {
-                location.reload();
+                $('#attachment-table').bootstrapTable('refresh');
             }
         }
     );
