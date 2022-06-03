@@ -1,6 +1,4 @@
-"""
-Test that the root API endpoint is available.
-"""
+"""Test that the root API endpoint is available."""
 
 import json
 

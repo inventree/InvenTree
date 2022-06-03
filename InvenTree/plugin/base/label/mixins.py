@@ -1,11 +1,10 @@
-"""Plugin mixin classes for label plugins"""
+"""Plugin mixin classes for label plugins."""
 
 from plugin.helpers import MixinNotImplementedError
 
 
 class LabelPrintingMixin:
-    """
-    Mixin which enables direct printing of stock labels.
+    """Mixin which enables direct printing of stock labels.
 
     Each plugin must provide a NAME attribute, which is used to uniquely identify the printer.
 
@@ -13,18 +12,16 @@ class LabelPrintingMixin:
     """
 
     class MixinMeta:
-        """
-        Meta options for this mixin
-        """
+        """Meta options for this mixin."""
         MIXIN_NAME = 'Label printing'
 
     def __init__(self):  # pragma: no cover
+        """Register mixin."""
         super().__init__()
         self.add_mixin('labels', True, __class__)
 
     def print_label(self, **kwargs):
-        """
-        Callback to print a single label
+        """Callback to print a single label.
 
         kwargs:
             pdf_data: Raw PDF data of the rendered label
@@ -35,6 +32,5 @@ class LabelPrintingMixin:
             filename: The filename of this PDF label
             user: The user who printed this label
         """
-
         # Unimplemented (to be implemented by the particular plugin class)
         raise MixinNotImplementedError('This Plugin must implement a `print_label` method')

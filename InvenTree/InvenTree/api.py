@@ -1,6 +1,4 @@
-"""
-Main JSON interface views
-"""
+"""Main JSON interface views."""
 
 from django.conf import settings
 from django.http import JsonResponse
@@ -16,14 +14,15 @@ from .views import AjaxView
 
 
 class InfoView(AjaxView):
-    """ Simple JSON endpoint for InvenTree information.
+    """Simple JSON endpoint for InvenTree information.
+
     Use to confirm that the server is running, etc.
     """
 
     permission_classes = [permissions.AllowAny]
 
     def get(self, request, *args, **kwargs):
-
+        """Serve current server information."""
         data = {
             'server': 'InvenTree',
             'version': inventreeVersion(),
@@ -37,14 +36,12 @@ class InfoView(AjaxView):
 
 
 class NotFoundView(AjaxView):
-    """
-    Simple JSON view when accessing an invalid API view.
-    """
+    """Simple JSON view when accessing an invalid API view."""
 
     permission_classes = [permissions.AllowAny]
 
     def get(self, request, *args, **kwargs):
-
+        """Proces an `not found` event on the API."""
         data = {
             'details': _('API endpoint not found'),
             'url': request.build_absolute_uri(),
@@ -54,8 +51,7 @@ class NotFoundView(AjaxView):
 
 
 class APIDownloadMixin:
-    """
-    Mixin for enabling a LIST endpoint to be downloaded a file.
+    """Mixin for enabling a LIST endpoint to be downloaded a file.
 
     To download the data, add the ?export=<fmt> to the query string.
 
@@ -76,7 +72,7 @@ class APIDownloadMixin:
     """
 
     def get(self, request, *args, **kwargs):
-
+        """Generic handler for a download request."""
         export_format = request.query_params.get('export', None)
 
         if export_format and export_format in ['csv', 'tsv', 'xls', 'xlsx']:
@@ -88,14 +84,12 @@ class APIDownloadMixin:
             return super().get(request, *args, **kwargs)
 
     def download_queryset(self, queryset, export_format):
+        """This function must be implemented to provide a downloadFile request."""
         raise NotImplementedError("download_queryset method not implemented!")
 
 
 class AttachmentMixin:
-    """
-    Mixin for creating attachment objects,
-    and ensuring the user information is saved correctly.
-    """
+    """Mixin for creating attachment objects, and ensuring the user information is saved correctly."""
 
     permission_classes = [permissions.IsAuthenticated]
 
@@ -106,8 +100,7 @@ class AttachmentMixin:
     ]
 
     def perform_create(self, serializer):
-        """ Save the user information when a file is uploaded """
-
+        """Save the user information when a file is uploaded."""
         attachment = serializer.save()
         attachment.user = self.request.user
         attachment.save()

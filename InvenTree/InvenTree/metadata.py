@@ -1,3 +1,5 @@
+"""Custom metadata for DRF."""
+
 import logging
 
 from rest_framework import serializers
@@ -12,8 +14,7 @@ logger = logging.getLogger('inventree')
 
 
 class InvenTreeMetadata(SimpleMetadata):
-    """
-    Custom metadata class for the DRF API.
+    """Custom metadata class for the DRF API.
 
     This custom metadata class imits the available "actions",
     based on the user's role permissions.
@@ -23,11 +24,10 @@ class InvenTreeMetadata(SimpleMetadata):
 
     Additionally, we include some extra information about database models,
     so we can perform lookup for ForeignKey related fields.
-
     """
 
     def determine_metadata(self, request, view):
-
+        """Overwrite the metadata to adapt to hte request user."""
         self.request = request
         self.view = view
 
@@ -106,11 +106,7 @@ class InvenTreeMetadata(SimpleMetadata):
         return metadata
 
     def get_serializer_info(self, serializer):
-        """
-        Override get_serializer_info so that we can add 'default' values
-        to any fields whose Meta.model specifies a default value
-        """
-
+        """Override get_serializer_info so that we can add 'default' values to any fields whose Meta.model specifies a default value."""
         self.serializer = serializer
 
         serializer_info = super().get_serializer_info(serializer)
@@ -208,10 +204,7 @@ class InvenTreeMetadata(SimpleMetadata):
                         pass
 
         if instance is not None:
-            """
-            If there is an instance associated with this API View,
-            introspect that instance to find any specific API info.
-            """
+            """If there is an instance associated with this API View, introspect that instance to find any specific API info."""
 
             if hasattr(instance, 'api_instance_filters'):
 
@@ -233,13 +226,10 @@ class InvenTreeMetadata(SimpleMetadata):
         return serializer_info
 
     def get_field_info(self, field):
-        """
-        Given an instance of a serializer field, return a dictionary
-        of metadata about it.
+        """Given an instance of a serializer field, return a dictionary of metadata about it.
 
         We take the regular DRF metadata and add our own unique flavor
         """
-
         # Run super method first
         field_info = super().get_field_info(field)
 

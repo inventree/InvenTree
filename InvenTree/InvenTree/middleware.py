@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+"""Middleware for InvenTree."""
 
 import logging
 
@@ -19,10 +19,17 @@ logger = logging.getLogger("inventree")
 
 
 class AuthRequiredMiddleware(object):
+    """Check for user to be authenticated."""
+
     def __init__(self, get_response):
+        """Save response object."""
         self.get_response = get_response
 
     def __call__(self, request):
+        """Check if user needs to be authenticated and is.
+
+        Redirects to login if not authenticated.
+        """
         # Code to be executed for each request before
         # the view (and later middleware) are called.
 
@@ -35,6 +42,7 @@ class AuthRequiredMiddleware(object):
         if not request.user.is_authenticated:
             """
             Normally, a web-based session would use csrftoken based authentication.
+
             However when running an external application (e.g. the InvenTree app or Python library),
             we must validate the user token manually.
             """
@@ -105,9 +113,9 @@ url_matcher = re_path('', include(frontendpatterns))
 
 
 class Check2FAMiddleware(BaseRequire2FAMiddleware):
-    """check if user is required to have MFA enabled"""
+    """Check if user is required to have MFA enabled."""
     def require_2fa(self, request):
-        # Superusers are require to have 2FA.
+        """Use setting to check if MFA should be enforced for frontend page."""
         try:
             if url_matcher.resolve(request.path[1:]):
                 return InvenTreeSetting.get_setting('LOGIN_ENFORCE_MFA')
@@ -117,8 +125,9 @@ class Check2FAMiddleware(BaseRequire2FAMiddleware):
 
 
 class CustomAllauthTwoFactorMiddleware(AllauthTwoFactorMiddleware):
-    """This function ensures only frontend code triggers the MFA auth cycle"""
+    """This function ensures only frontend code triggers the MFA auth cycle."""
     def process_request(self, request):
+        """Check if requested url is forntend and enforce MFA check."""
         try:
             if not url_matcher.resolve(request.path[1:]):
                 super().process_request(request)
@@ -127,12 +136,11 @@ class CustomAllauthTwoFactorMiddleware(AllauthTwoFactorMiddleware):
 
 
 class InvenTreeRemoteUserMiddleware(PersistentRemoteUserMiddleware):
-    """
-    Middleware to check if HTTP-header based auth is enabled and to set it up
-    """
+    """Middleware to check if HTTP-header based auth is enabled and to set it up."""
     header = settings.REMOTE_LOGIN_HEADER
 
     def process_request(self, request):
+        """Check if proxy login is enabled."""
         if not settings.REMOTE_LOGIN:
             return
 

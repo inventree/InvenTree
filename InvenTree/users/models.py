@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+"""Database model definitions for the 'users' app"""
 
 import logging
 
@@ -20,9 +20,7 @@ logger = logging.getLogger("inventree")
 
 
 class RuleSet(models.Model):
-    """
-    A RuleSet is somewhat like a superset of the django permission  class,
-    in that in encapsulates a bunch of permissions.
+    """A RuleSet is somewhat like a superset of the django permission  class, in that in encapsulates a bunch of permissions.
 
     There are *many* apps models used within InvenTree,
     so it makes sense to group them into "roles".
@@ -192,6 +190,7 @@ class RuleSet(models.Model):
     ]
 
     class Meta:
+        """Metaclass defines additional model properties"""
         unique_together = (
             ('name', 'group'),
         )
@@ -221,10 +220,7 @@ class RuleSet(models.Model):
 
     @classmethod
     def check_table_permission(cls, user, table, permission):
-        """
-        Check if the provided user has the specified permission against the table
-        """
-
+        """Check if the provided user has the specified permission against the table."""
         # If the table does *not* require permissions
         if table in cls.RULESET_IGNORE:
             return True
@@ -255,11 +251,7 @@ class RuleSet(models.Model):
 
     @staticmethod
     def get_model_permission_string(model, permission):
-        """
-        Construct the correctly formatted permission string,
-        given the app_model name, and the permission type.
-        """
-
+        """Construct the correctly formatted permission string, given the app_model name, and the permission type."""
         model, app = split_model(model)
 
         return "{app}.{perm}_{model}".format(
@@ -269,7 +261,7 @@ class RuleSet(models.Model):
         )
 
     def __str__(self, debug=False):  # pragma: no cover
-        """ Ruleset string representation """
+        """Ruleset string representation."""
         if debug:
             # Makes debugging easier
             return f'{str(self.group).ljust(15)}: {self.name.title().ljust(15)} | ' \
@@ -279,10 +271,11 @@ class RuleSet(models.Model):
             return self.name
 
     def save(self, *args, **kwargs):
+        """Intercept the 'save' functionality to make addtional permission changes:
 
-        # It does not make sense to be able to change / create something,
-        # but not be able to view it!
-
+        It does not make sense to be able to change / create something,
+        but not be able to view it!
+        """
         if self.can_add or self.can_change or self.can_delete:
             self.can_view = True
 
@@ -296,15 +289,12 @@ class RuleSet(models.Model):
             self.group.save()
 
     def get_models(self):
-        """
-        Return the database tables / models that this ruleset covers.
-        """
-
+        """Return the database tables / models that this ruleset covers."""
         return self.RULESET_MODELS.get(self.name, [])
 
 
 def split_model(model):
-    """get modelname and app from modelstring"""
+    """Get modelname and app from modelstring."""
     *app, model = model.split('_')
 
     # handle models that have
@@ -317,7 +307,7 @@ def split_model(model):
 
 
 def split_permission(app, perm):
-    """split permission string into permission and model"""
+    """Split permission string into permission and model."""
     permission_name, *model = perm.split('_')
     # handle models that have underscores
     if len(model) > 1:  # pragma: no cover
@@ -328,10 +318,7 @@ def split_permission(app, perm):
 
 
 def update_group_roles(group, debug=False):
-    """
-
-    Iterates through all of the RuleSets associated with the group,
-    and ensures that the correct permissions are either applied or removed from the group.
+    """Iterates through all of the RuleSets associated with the group, and ensures that the correct permissions are either applied or removed from the group.
 
     This function is called under the following conditions:
 
@@ -339,9 +326,7 @@ def update_group_roles(group, debug=False):
     b) Whenver the group object is updated
 
     The RuleSet model has complete control over the permissions applied to any group.
-
     """
-
     if not canAppAccessDatabase(allow_test=True):
         return  # pragma: no cover
 
@@ -367,15 +352,13 @@ def update_group_roles(group, debug=False):
     permissions_to_delete = set()
 
     def add_model(name, action, allowed):
-        """
-        Add a new model to the pile:
+        """Add a new model to the pile.
 
-        args:
-            name - The name of the model e.g. part_part
-            action - The permission action e.g. view
-            allowed - Whether or not the action is allowed
+        Args:
+            name: The name of the model e.g. part_part
+            action: The permission action e.g. view
+            allowed: Whether or not the action is allowed
         """
-
         if action not in ['view', 'add', 'change', 'delete']:  # pragma: no cover
             raise ValueError("Action {a} is invalid".format(a=action))
 
@@ -418,16 +401,13 @@ def update_group_roles(group, debug=False):
             add_model(model, 'delete', ruleset.can_delete)
 
     def get_permission_object(permission_string):
-        """
-        Find the permission object in the database,
-        from the simplified permission string
+        """Find the permission object in the database, from the simplified permission string.
 
         Args:
-            permission_string - a simplified permission_string e.g. 'part.view_partcategory'
+            permission_string: a simplified permission_string e.g. 'part.view_partcategory'
 
         Returns the permission object in the database associated with the permission string
         """
-
         (app, perm) = permission_string.split('.')
 
         perm, model = split_permission(app, perm)
@@ -496,23 +476,18 @@ def update_group_roles(group, debug=False):
 
 @receiver(post_save, sender=Group, dispatch_uid='create_missing_rule_sets')
 def create_missing_rule_sets(sender, instance, **kwargs):
-    """
-    Called *after* a Group object is saved.
-    As the linked RuleSet instances are saved *before* the Group,
-    then we can now use these RuleSet values to update the
-    group permissions.
-    """
+    """Called *after* a Group object is saved.
 
+    As the linked RuleSet instances are saved *before* the Group, then we can now use these RuleSet values to update the group permissions.
+    """
     update_group_roles(instance)
 
 
 def check_user_role(user, role, permission):
-    """
-    Check if a user has a particular role:permission combination.
+    """Check if a user has a particular role:permission combination.
 
     If the user is a superuser, this will return True
     """
-
     if user.is_superuser:
         return True
 
@@ -539,8 +514,8 @@ def check_user_role(user, role, permission):
 
 
 class Owner(models.Model):
-    """
-    The Owner class is a proxy for a Group or User instance.
+    """The Owner class is a proxy for a Group or User instance.
+
     Owner can be associated to any InvenTree model (part, stock, build, etc.)
 
     owner_type: Model type (Group or User)
@@ -550,13 +525,12 @@ class Owner(models.Model):
 
     @classmethod
     def get_owners_matching_user(cls, user):
-        """
-        Return all "owner" objects matching the provided user:
+        """Return all "owner" objects matching the provided user.
 
-        A) An exact match for the user
-        B) Any groups that the user is a part of
+        Includes:
+        - An exact match for the user
+        - Any groups that the user is a part of
         """
-
         user_type = ContentType.objects.get(app_label='auth', model='user')
         group_type = ContentType.objects.get(app_label='auth', model='group')
 
@@ -578,9 +552,11 @@ class Owner(models.Model):
 
     @staticmethod
     def get_api_url():  # pragma: no cover
+        """Returns the API endpoint URL associated with the Owner model"""
         return reverse('api-owner-list')
 
     class Meta:
+        """Metaclass defines extra model properties"""
         # Ensure all owners are unique
         constraints = [
             UniqueConstraint(fields=['owner_type', 'owner_id'],
@@ -594,25 +570,20 @@ class Owner(models.Model):
     owner = GenericForeignKey('owner_type', 'owner_id')
 
     def __str__(self):
-        """ Defines the owner string representation """
+        """Defines the owner string representation."""
         return f'{self.owner} ({self.owner_type.name})'
 
     def name(self):
-        """
-        Return the 'name' of this owner
-        """
+        """Return the 'name' of this owner."""
         return str(self.owner)
 
     def label(self):
-        """
-        Return the 'type' label of this owner i.e. 'user' or 'group'
-        """
+        """Return the 'type' label of this owner i.e. 'user' or 'group'."""
         return str(self.owner_type.name)
 
     @classmethod
     def create(cls, obj):
-        """ Check if owner exist then create new owner entry """
-
+        """Check if owner exist then create new owner entry."""
         # Check for existing owner
         existing_owner = cls.get_owner(obj)
 
@@ -627,8 +598,7 @@ class Owner(models.Model):
 
     @classmethod
     def get_owner(cls, user_or_group):
-        """ Get owner instance for a group or user """
-
+        """Get owner instance for a group or user."""
         user_model = get_user_model()
         owner = None
         content_type_id = 0
@@ -651,11 +621,10 @@ class Owner(models.Model):
         return owner
 
     def get_related_owners(self, include_group=False):
-        """
-        Get all owners "related" to an owner.
+        """Get all owners "related" to an owner.
+
         This method is useful to retrieve all "user-type" owners linked to a "group-type" owner
         """
-
         user_model = get_user_model()
         related_owners = None
 
@@ -680,21 +649,13 @@ class Owner(models.Model):
 @receiver(post_save, sender=Group, dispatch_uid='create_owner')
 @receiver(post_save, sender=get_user_model(), dispatch_uid='create_owner')
 def create_owner(sender, instance, **kwargs):
-    """
-    Callback function to create a new owner instance
-    after either a new group or user instance is saved.
-    """
-
+    """Callback function to create a new owner instance after either a new group or user instance is saved."""
     Owner.create(obj=instance)
 
 
 @receiver(post_delete, sender=Group, dispatch_uid='delete_owner')
 @receiver(post_delete, sender=get_user_model(), dispatch_uid='delete_owner')
 def delete_owner(sender, instance, **kwargs):
-    """
-    Callback function to delete an owner instance
-    after either a new group or user instance is deleted.
-    """
-
+    """Callback function to delete an owner instance after either a new group or user instance is deleted."""
     owner = Owner.get_owner(instance)
     owner.delete()

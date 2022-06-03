@@ -1,6 +1,4 @@
-"""
-JSON serializers for common components
-"""
+"""JSON serializers for common components."""
 
 from rest_framework import serializers
 
@@ -11,9 +9,7 @@ from InvenTree.serializers import InvenTreeModelSerializer
 
 
 class SettingsSerializer(InvenTreeModelSerializer):
-    """
-    Base serializer for a settings object
-    """
+    """Base serializer for a settings object."""
 
     key = serializers.CharField(read_only=True)
 
@@ -30,10 +26,7 @@ class SettingsSerializer(InvenTreeModelSerializer):
     api_url = serializers.CharField(read_only=True)
 
     def get_choices(self, obj):
-        """
-        Returns the choices available for a given item
-        """
-
+        """Returns the choices available for a given item."""
         results = []
 
         choices = obj.choices()
@@ -48,10 +41,7 @@ class SettingsSerializer(InvenTreeModelSerializer):
         return results
 
     def get_value(self, obj):
-        """
-        Make sure protected values are not returned
-        """
-
+        """Make sure protected values are not returned."""
         # never return protected values
         if obj.protected:
             result = '***'
@@ -62,11 +52,11 @@ class SettingsSerializer(InvenTreeModelSerializer):
 
 
 class GlobalSettingsSerializer(SettingsSerializer):
-    """
-    Serializer for the InvenTreeSetting model
-    """
+    """Serializer for the InvenTreeSetting model."""
 
     class Meta:
+        """Meta options for GlobalSettingsSerializer."""
+
         model = InvenTreeSetting
         fields = [
             'pk',
@@ -82,13 +72,13 @@ class GlobalSettingsSerializer(SettingsSerializer):
 
 
 class UserSettingsSerializer(SettingsSerializer):
-    """
-    Serializer for the InvenTreeUserSetting model
-    """
+    """Serializer for the InvenTreeUserSetting model."""
 
     user = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
+        """Meta options for UserSettingsSerializer."""
+
         model = InvenTreeUserSetting
         fields = [
             'pk',
@@ -105,8 +95,7 @@ class UserSettingsSerializer(SettingsSerializer):
 
 
 class GenericReferencedSettingSerializer(SettingsSerializer):
-    """
-    Serializer for a GenericReferencedSetting model
+    """Serializer for a GenericReferencedSetting model.
 
     Args:
         MODEL: model class for the serializer
@@ -118,9 +107,9 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
     EXTRA_FIELDS = None
 
     def __init__(self, *args, **kwargs):
-        """Init overrides the Meta class to make it dynamic"""
+        """Init overrides the Meta class to make it dynamic."""
         class CustomMeta:
-            """Scaffold for custom Meta class"""
+            """Scaffold for custom Meta class."""
             fields = [
                 'pk',
                 'key',
@@ -144,9 +133,7 @@ class GenericReferencedSettingSerializer(SettingsSerializer):
 
 
 class NotificationMessageSerializer(InvenTreeModelSerializer):
-    """
-    Serializer for the InvenTreeUserSetting model
-    """
+    """Serializer for the InvenTreeUserSetting model."""
 
     target = serializers.SerializerMethodField(read_only=True)
 
@@ -169,12 +156,16 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
     read = serializers.BooleanField(read_only=True)
 
     def get_target(self, obj):
+        """Function to resolve generic object reference to target."""
         return get_objectreference(obj, 'target_content_type', 'target_object_id')
 
     def get_source(self, obj):
+        """Function to resolve generic object reference to source."""
         return get_objectreference(obj, 'source_content_type', 'source_object_id')
 
     class Meta:
+        """Meta options for NotificationMessageSerializer."""
+
         model = NotificationMessage
         fields = [
             'pk',
@@ -192,8 +183,10 @@ class NotificationMessageSerializer(InvenTreeModelSerializer):
 
 
 class NotificationReadSerializer(NotificationMessageSerializer):
+    """Serializer for reading a notification."""
 
     def is_valid(self, raise_exception=False):
+        """Ensure instance data is available for view and let validation pass."""
         self.instance = self.context['instance']  # set instance that should be returned
         self._validated_data = True
         return True

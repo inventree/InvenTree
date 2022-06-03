@@ -1,3 +1,5 @@
+"""Unit tests for the 'users' app"""
+
 from django.apps import apps
 from django.contrib.auth.models import Group
 from django.test import TestCase
@@ -10,12 +12,10 @@ from users.models import Owner, RuleSet
 
 
 class RuleSetModelTest(TestCase):
-    """
-    Some simplistic tests to ensure the RuleSet model is setup correctly.
-    """
+    """Some simplistic tests to ensure the RuleSet model is setup correctly."""
 
     def test_ruleset_models(self):
-
+        """Test that the role rulesets work as intended"""
         keys = RuleSet.RULESET_MODELS.keys()
 
         # Check if there are any rulesets which do not have models defined
@@ -48,11 +48,7 @@ class RuleSetModelTest(TestCase):
         self.assertEqual(len(empty), 0)
 
     def test_model_names(self):
-        """
-        Test that each model defined in the rulesets is valid,
-        based on the database schema!
-        """
-
+        """Test that each model defined in the rulesets is valid, based on the database schema!"""
         available_models = apps.get_models()
 
         available_tables = set()
@@ -108,10 +104,7 @@ class RuleSetModelTest(TestCase):
         self.assertEqual(len(extra_models), 0)
 
     def test_permission_assign(self):
-        """
-        Test that the permission assigning works!
-        """
-
+        """Test that the permission assigning works!"""
         # Create a new group
         group = Group.objects.create(name="Test group")
 
@@ -161,17 +154,16 @@ class RuleSetModelTest(TestCase):
 
 
 class OwnerModelTest(InvenTreeTestCase):
-    """
-    Some simplistic tests to ensure the Owner model is setup correctly.
-    """
+    """Some simplistic tests to ensure the Owner model is setup correctly."""
 
     def do_request(self, endpoint, filters, status_code=200):
+        """Perform an API request"""
         response = self.client.get(endpoint, filters, format='json')
         self.assertEqual(response.status_code, status_code)
         return response.data
 
     def test_owner(self):
-
+        """Tests for the 'owner' model"""
         # Check that owner was created for user
         user_as_owner = Owner.get_owner(self.user)
         self.assertEqual(type(user_as_owner), Owner)
@@ -212,9 +204,7 @@ class OwnerModelTest(InvenTreeTestCase):
         self.assertEqual(group_as_owner, None)
 
     def test_api(self):
-        """
-        Test user APIs
-        """
+        """Test user APIs."""
         self.client.logout()
 
         # not authed
@@ -231,9 +221,7 @@ class OwnerModelTest(InvenTreeTestCase):
         # self.do_request(reverse('api-owner-detail', kwargs={'pk': self.user.id}), {})
 
     def test_token(self):
-        """
-        Test token mechanisms
-        """
+        """Test token mechanisms."""
         self.client.logout()
 
         token = Token.objects.filter(user=self.user)

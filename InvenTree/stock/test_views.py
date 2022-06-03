@@ -1,4 +1,4 @@
-""" Unit tests for Stock views (see views.py) """
+"""Unit tests for Stock views (see views.py)."""
 
 from django.urls import reverse
 
@@ -8,6 +8,7 @@ from InvenTree.helpers import InvenTreeTestCase
 
 
 class StockViewTestCase(InvenTreeTestCase):
+    """Mixin for Stockview tests."""
 
     fixtures = [
         'category',
@@ -22,18 +23,19 @@ class StockViewTestCase(InvenTreeTestCase):
 
 
 class StockListTest(StockViewTestCase):
-    """ Tests for Stock list views """
+    """Tests for Stock list views."""
 
     def test_stock_index(self):
+        """Test stock index page."""
         response = self.client.get(reverse('stock-index'))
         self.assertEqual(response.status_code, 200)
 
 
 class StockOwnershipTest(StockViewTestCase):
-    """ Tests for stock ownership views """
+    """Tests for stock ownership views."""
 
     def setUp(self):
-        """ Add another user for ownership tests """
+        """Add another user for ownership tests."""
 
     """
     TODO: Refactor this following test to use the new API form

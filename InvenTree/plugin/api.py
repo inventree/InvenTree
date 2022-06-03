@@ -1,6 +1,4 @@
-"""
-JSON API for the plugin app
-"""
+"""JSON API for the plugin app."""
 
 from django.conf import settings
 from django.urls import include, re_path
@@ -20,7 +18,7 @@ from plugin.registry import registry
 
 
 class PluginList(generics.ListAPIView):
-    """ API endpoint for list of PluginConfig objects
+    """API endpoint for list of PluginConfig objects.
 
     - GET: Return a list of all PluginConfig objects
     """
@@ -34,6 +32,10 @@ class PluginList(generics.ListAPIView):
     queryset = PluginConfig.objects.all()
 
     def filter_queryset(self, queryset):
+        """Filter for API requests.
+
+        Filter by mixin with the `mixin` flag
+        """
         queryset = super().filter_queryset(queryset)
 
         params = self.request.query_params
@@ -79,7 +81,7 @@ class PluginList(generics.ListAPIView):
 
 
 class PluginDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ API detail endpoint for PluginConfig object
+    """API detail endpoint for PluginConfig object.
 
     get:
     Return a single PluginConfig object
@@ -96,13 +98,13 @@ class PluginDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class PluginInstall(generics.CreateAPIView):
-    """
-    Endpoint for installing a new plugin
-    """
+    """Endpoint for installing a new plugin."""
+
     queryset = PluginConfig.objects.none()
     serializer_class = PluginSerializers.PluginConfigInstallSerializer
 
     def create(self, request, *args, **kwargs):
+        """Install a plugin via the API"""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         result = self.perform_create(serializer)
@@ -111,12 +113,12 @@ class PluginInstall(generics.CreateAPIView):
         return Response(result, status=status.HTTP_201_CREATED, headers=headers)
 
     def perform_create(self, serializer):
+        """Saving the serializer instance performs plugin installation"""
         return serializer.save()
 
 
 class PluginSettingList(generics.ListAPIView):
-    """
-    List endpoint for all plugin related settings.
+    """List endpoint for all plugin related settings.
 
     - read only
     - only accessible by staff users
@@ -140,8 +142,7 @@ class PluginSettingList(generics.ListAPIView):
 
 
 class PluginSettingDetail(generics.RetrieveUpdateAPIView):
-    """
-    Detail endpoint for a plugin-specific setting.
+    """Detail endpoint for a plugin-specific setting.
 
     Note that these cannot be created or deleted via the API
     """
@@ -150,13 +151,11 @@ class PluginSettingDetail(generics.RetrieveUpdateAPIView):
     serializer_class = PluginSerializers.PluginSettingSerializer
 
     def get_object(self):
-        """
-        Lookup the plugin setting object, based on the URL.
-        The URL provides the 'slug' of the plugin, and the 'key' of the setting.
+        """Lookup the plugin setting object, based on the URL.
 
+        The URL provides the 'slug' of the plugin, and the 'key' of the setting.
         Both the 'slug' and 'key' must be valid, else a 404 error is raised
         """
-
         plugin_slug = self.kwargs['plugin']
         key = self.kwargs['key']
 

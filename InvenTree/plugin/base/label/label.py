@@ -1,4 +1,5 @@
-"""Functions to print a label to a mixin printer"""
+"""Functions to print a label to a mixin printer."""
+
 import logging
 import sys
 import traceback
@@ -16,20 +17,19 @@ from plugin.registry import registry
 logger = logging.getLogger('inventree')
 
 
-def print_label(plugin_slug, pdf_data, filename=None, label_instance=None, user=None):
-    """
-    Print label with the provided plugin.
+def print_label(plugin_slug: str, pdf_data, filename=None, label_instance=None, user=None):
+    """Print label with the provided plugin.
 
     This task is nominally handled by the background worker.
-
     If the printing fails (throws an exception) then the user is notified.
 
-    Arguments:
-        plugin_slug: The unique slug (key) of the plugin
-        pdf_data: Binary PDF data
-        filename: The intended name of the printed label
+    Args:
+        plugin_slug (str): The unique slug (key) of the plugin.
+        pdf_data: Binary PDF data.
+        filename: The intended name of the printed label. Defaults to None.
+        label_instance (Union[LabelTemplate, None], optional): The template instance that should be printed. Defaults to None.
+        user (Union[User, None], optional): User that should be informed of errors. Defaults to None.
     """
-
     logger.info(f"Plugin '{plugin_slug}' is printing a label '{filename}'")
 
     plugin = registry.plugins.get(plugin_slug, None)

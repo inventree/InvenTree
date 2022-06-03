@@ -1,6 +1,4 @@
-"""
-Helper forms which subclass Django forms to provide additional functionality
-"""
+"""Helper forms which subclass Django forms to provide additional functionality."""
 
 import logging
 from urllib.parse import urlencode
@@ -30,7 +28,7 @@ logger = logging.getLogger('inventree')
 
 
 class HelperForm(forms.ModelForm):
-    """ Provides simple integration of crispy_forms extension. """
+    """Provides simple integration of crispy_forms extension."""
 
     # Custom field decorations can be specified here, per form class
     field_prefix = {}
@@ -38,6 +36,7 @@ class HelperForm(forms.ModelForm):
     field_placeholder = {}
 
     def __init__(self, *args, **kwargs):
+        """Setup layout."""
         super(forms.ModelForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
 
@@ -54,14 +53,8 @@ class HelperForm(forms.ModelForm):
 
         self.rebuild_layout()
 
-    def is_valid(self):
-
-        valid = super().is_valid()
-
-        return valid
-
     def rebuild_layout(self):
-
+        """Build crispy layout out of current fields."""
         layouts = []
 
         for field in self.fields:
@@ -117,7 +110,7 @@ class HelperForm(forms.ModelForm):
 
 
 class ConfirmForm(forms.Form):
-    """ Generic confirmation form """
+    """Generic confirmation form."""
 
     confirm = forms.BooleanField(
         required=False, initial=False,
@@ -125,14 +118,15 @@ class ConfirmForm(forms.Form):
     )
 
     class Meta:
+        """Metaclass options."""
+
         fields = [
             'confirm'
         ]
 
 
 class DeleteForm(forms.Form):
-    """ Generic deletion form which provides simple user confirmation
-    """
+    """Generic deletion form which provides simple user confirmation."""
 
     confirm_delete = forms.BooleanField(
         required=False,
@@ -142,17 +136,19 @@ class DeleteForm(forms.Form):
     )
 
     class Meta:
+        """Metaclass options."""
+
         fields = [
             'confirm_delete'
         ]
 
 
 class EditUserForm(HelperForm):
-    """
-    Form for editing user information
-    """
+    """Form for editing user information."""
 
     class Meta:
+        """Metaclass options."""
+
         model = User
         fields = [
             'first_name',
@@ -161,8 +157,7 @@ class EditUserForm(HelperForm):
 
 
 class SetPasswordForm(HelperForm):
-    """ Form for setting user password
-    """
+    """Form for setting user password."""
 
     enter_password = forms.CharField(max_length=100,
                                      min_length=8,
@@ -181,6 +176,8 @@ class SetPasswordForm(HelperForm):
                                        help_text=_('Confirm new password'))
 
     class Meta:
+        """Metaclass options."""
+
         model = User
         fields = [
             'enter_password',
@@ -189,18 +186,21 @@ class SetPasswordForm(HelperForm):
 
 
 class SettingCategorySelectForm(forms.ModelForm):
-    """ Form for setting category settings """
+    """Form for setting category settings."""
 
     category = forms.ModelChoiceField(queryset=PartCategory.objects.all())
 
     class Meta:
+        """Metaclass options."""
+
         model = PartCategory
         fields = [
             'category'
         ]
 
     def __init__(self, *args, **kwargs):
-        super(SettingCategorySelectForm, self).__init__(*args, **kwargs)
+        """Setup form layout."""
+        super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
         # Form rendering
@@ -220,10 +220,10 @@ class SettingCategorySelectForm(forms.ModelForm):
 
 # override allauth
 class CustomSignupForm(SignupForm):
-    """
-    Override to use dynamic settings
-    """
+    """Override to use dynamic settings."""
+
     def __init__(self, *args, **kwargs):
+        """Check settings to influence which fields are needed."""
         kwargs['email_required'] = InvenTreeSetting.get_setting('LOGIN_MAIL_REQUIRED')
 
         super().__init__(*args, **kwargs)
@@ -248,6 +248,7 @@ class CustomSignupForm(SignupForm):
         set_form_field_order(self, ["username", "email", "email2", "password1", "password2", ])
 
     def clean(self):
+        """Make sure the supllied emails match if enabled in settings."""
         cleaned_data = super().clean()
 
         # check for two mail fields
@@ -261,15 +262,16 @@ class CustomSignupForm(SignupForm):
 
 
 class RegistratonMixin:
-    """
-    Mixin to check if registration should be enabled
-    """
+    """Mixin to check if registration should be enabled."""
+
     def is_open_for_signup(self, request, *args, **kwargs):
+        """Check if signup is enabled in settings."""
         if settings.EMAIL_HOST and InvenTreeSetting.get_setting('LOGIN_ENABLE_REG', True):
             return super().is_open_for_signup(request, *args, **kwargs)
         return False
 
     def save_user(self, request, user, form, commit=True):
+        """Check if a default group is set in settings."""
         user = super().save_user(request, user, form)
         start_group = InvenTreeSetting.get_setting('SIGNUP_GROUP')
         if start_group:
@@ -283,21 +285,19 @@ class RegistratonMixin:
 
 
 class CustomAccountAdapter(RegistratonMixin, OTPAdapter, DefaultAccountAdapter):
-    """
-    Override of adapter to use dynamic settings
-    """
+    """Override of adapter to use dynamic settings."""
     def send_mail(self, template_prefix, email, context):
-        """only send mail if backend configured"""
+        """Only send mail if backend configured."""
         if settings.EMAIL_HOST:
             return super().send_mail(template_prefix, email, context)
         return False
 
 
 class CustomSocialAccountAdapter(RegistratonMixin, DefaultSocialAccountAdapter):
-    """
-    Override of adapter to use dynamic settings
-    """
+    """Override of adapter to use dynamic settings."""
+
     def is_auto_signup_allowed(self, request, sociallogin):
+        """Check if auto signup is enabled in settings."""
         if InvenTreeSetting.get_setting('LOGIN_SIGNUP_SSO_AUTO', True):
             return super().is_auto_signup_allowed(request, sociallogin)
         return False
@@ -308,6 +308,7 @@ class CustomSocialAccountAdapter(RegistratonMixin, DefaultSocialAccountAdapter):
         return user_has_valid_totp_device(user)
 
     def login(self, request, user):
+        """Ensure user is send to 2FA before login if enabled."""
         # Require two-factor authentication if it has been configured.
         if self.has_2fa_enabled(user):
             # Cast to string for the case when this is not a JSON serializable
