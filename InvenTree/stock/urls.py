@@ -10,7 +10,7 @@ location_urls = [
         re_path(r'^delete/?', views.StockLocationDelete.as_view(), name='stock-location-delete'),
         re_path(r'^qr_code/?', views.StockLocationQRCode.as_view(), name='stock-location-qr'),
 
-        # Anything else
+        # Anything else - direct to the location detail view
         re_path('^.*$', views.StockLocationDetail.as_view(), name='stock-location-detail'),
     ])),
 
@@ -22,8 +22,7 @@ stock_item_detail_urls = [
     re_path(r'^qr_code/', views.StockItemQRCode.as_view(), name='stock-item-qr'),
     re_path(r'^delete_test_data/', views.StockItemDeleteTestData.as_view(), name='stock-item-delete-test-data'),
 
-    re_path(r'^add_tracking/', views.StockItemTrackingCreate.as_view(), name='stock-tracking-create'),
-
+    # Anything else - direct to the item detail view
     re_path('^.*$', views.StockItemDetail.as_view(), name='stock-item-detail'),
 ]
 
@@ -34,7 +33,6 @@ stock_urls = [
     # Individual stock items
     re_path(r'^item/(?P<pk>\d+)/', include(stock_item_detail_urls)),
 
-    re_path(r'^sublocations/', views.StockIndex.as_view(template_name='stock/sublocation.html'), name='stock-sublocations'),
-
+    # Default to the stock index page
     re_path(r'^.*$', views.StockIndex.as_view(), name='stock-index'),
 ]
