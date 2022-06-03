@@ -10,12 +10,6 @@ from django.urls import include, re_path
 
 from . import views
 
-part_parameter_urls = [
-    re_path(r'^template/new/', views.PartParameterTemplateCreate.as_view(), name='part-param-template-create'),
-    re_path(r'^template/(?P<pk>\d+)/edit/', views.PartParameterTemplateEdit.as_view(), name='part-param-template-edit'),
-    re_path(r'^template/(?P<pk>\d+)/delete/', views.PartParameterTemplateDelete.as_view(), name='part-param-template-edit'),
-]
-
 part_detail_urls = [
     re_path(r'^delete/?', views.PartDelete.as_view(), name='part-delete'),
     re_path(r'^bom-download/?', views.BomDownload.as_view(), name='bom-download'),
@@ -70,9 +64,6 @@ part_urls = [
 
     # Part category
     re_path(r'^category/', include(category_urls)),
-
-    # Part parameters
-    re_path(r'^parameter/', include(part_parameter_urls)),
 
     # Change category for multiple parts
     re_path(r'^set-category/?', views.PartSetCategory.as_view(), name='part-set-category'),

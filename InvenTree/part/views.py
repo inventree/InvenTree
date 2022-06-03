@@ -36,8 +36,7 @@ from stock.models import StockItem, StockLocation
 from . import forms as part_forms
 from . import settings as part_settings
 from .bom import ExportBom, IsValidBOMFormat, MakeBomTemplate
-from .models import (Part, PartCategory, PartCategoryParameterTemplate,
-                     PartParameterTemplate)
+from .models import Part, PartCategory, PartCategoryParameterTemplate
 
 
 class PartIndex(InvenTreeRoleMixin, ListView):
@@ -928,29 +927,6 @@ class PartPricing(AjaxView):
         data['form_valid'] = False
 
         return self.renderJsonResponse(request, form, data=data, context=self.get_pricing(quantity, currency))
-
-
-class PartParameterTemplateCreate(AjaxCreateView):
-    """View for creating a new PartParameterTemplate."""
-
-    model = PartParameterTemplate
-    form_class = part_forms.EditPartParameterTemplateForm
-    ajax_form_title = _('Create Part Parameter Template')
-
-
-class PartParameterTemplateEdit(AjaxUpdateView):
-    """View for editing a PartParameterTemplate."""
-
-    model = PartParameterTemplate
-    form_class = part_forms.EditPartParameterTemplateForm
-    ajax_form_title = _('Edit Part Parameter Template')
-
-
-class PartParameterTemplateDelete(AjaxDeleteView):
-    """View for deleting an existing PartParameterTemplate."""
-
-    model = PartParameterTemplate
-    ajax_form_title = _("Delete Part Parameter Template")
 
 
 class CategoryDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
