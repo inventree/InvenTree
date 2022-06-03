@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-03 10:21+0000\n"
-"PO-Revision-Date: 2022-06-02 14:42\n"
+"PO-Revision-Date: 2022-06-03 14:41\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -5242,8 +5242,7 @@ msgstr ""
 
 #: part/templates/part/partial_delete.html:9
 #, python-format
-msgid ""
-"Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
+msgid "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
 "    <br>Disable the \"Active\" part attribute and re-try.\n"
 "    "
 msgstr ""
@@ -6122,10 +6121,8 @@ msgid "Add transaction note (optional)"
 msgstr "İşlem notu ekle (isteğe bağlı)"
 
 #: stock/serializers.py:482
-#, fuzzy
-#| msgid "Destination location not specified"
 msgid "Destination location for returned item"
-msgstr "Hedef konumu belirtilmedi"
+msgstr ""
 
 #: stock/serializers.py:720
 msgid "Part must be salable"
@@ -7417,16 +7414,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -10310,5 +10305,3 @@ msgstr "Parçaları düzenleme izni"
 msgid "Permission to delete items"
 msgstr "Parçaları silme izni"
 
-#~ msgid "Specify a valid location"
-#~ msgstr "Geçerli bir konum belirtiniz"
