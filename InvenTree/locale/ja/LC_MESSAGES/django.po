@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-03 10:21+0000\n"
-"PO-Revision-Date: 2022-06-03 14:41\n"
+"PO-Revision-Date: 2022-06-04 14:38\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -903,7 +903,7 @@ msgstr "パーツを割り当てるためにビルドする"
 #: templates/js/translated/stock.js:532 templates/js/translated/stock.js:697
 #: templates/js/translated/stock.js:2449
 msgid "Stock Item"
-msgstr ""
+msgstr "在庫商品"
 
 #: build/models.py:1283
 msgid "Source stock item"
@@ -3506,7 +3506,7 @@ msgstr ""
 #: stock/serializers.py:153 stock/templates/stock/item_base.html:191
 #: templates/js/translated/stock.js:1900
 msgid "Purchase Price"
-msgstr ""
+msgstr "購入金額"
 
 #: order/models.py:1029
 msgid "Unit purchase price"
@@ -4201,7 +4201,7 @@ msgstr ""
 #: templates/InvenTree/settings/settings.html:231
 #: templates/js/translated/part.js:1369
 msgid "Category"
-msgstr ""
+msgstr "カテゴリ"
 
 #: part/models.py:777
 msgid "Part category"
@@ -4694,7 +4694,7 @@ msgstr ""
 
 #: part/templates/part/category.html:62
 msgid "New Category"
-msgstr ""
+msgstr "新規カテゴリ"
 
 #: part/templates/part/category.html:80 part/templates/part/category.html:93
 msgid "Category Path"
@@ -4752,7 +4752,7 @@ msgstr ""
 
 #: part/templates/part/category.html:337
 msgid "Create another part after this one"
-msgstr ""
+msgstr "続けて別のパーツを作る"
 
 #: part/templates/part/category.html:338
 msgid "Part created successfully"
@@ -5354,7 +5354,7 @@ msgstr ""
 #: part/templates/part/stock_count.html:7 templates/js/translated/part.js:543
 #: templates/js/translated/part.js:1221 templates/js/translated/part.js:1425
 msgid "No Stock"
-msgstr ""
+msgstr "在庫切れ"
 
 #: part/templates/part/stock_count.html:9 templates/InvenTree/index.html:158
 msgid "Low Stock"
@@ -6395,7 +6395,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:433
 #: templates/js/translated/table_filters.js:261
 msgid "Expired"
-msgstr ""
+msgstr "期限切れ"
 
 #: stock/templates/stock/item_base.html:435
 #, python-format
@@ -6669,7 +6669,7 @@ msgstr ""
 
 #: templates/InvenTree/index.html:191
 msgid "Expired Stock"
-msgstr ""
+msgstr "期限切れ在庫"
 
 #: templates/InvenTree/index.html:202
 msgid "Stale Stock"
