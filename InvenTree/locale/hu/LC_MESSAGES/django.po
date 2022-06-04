@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-03 10:21+0000\n"
-"PO-Revision-Date: 2022-06-03 14:41\n"
+"PO-Revision-Date: 2022-06-04 14:38\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -467,7 +467,7 @@ msgstr "Elutasított"
 
 #: InvenTree/status_codes.py:185
 msgid "Quarantined"
-msgstr ""
+msgstr "Karanténban"
 
 #: InvenTree/status_codes.py:259
 msgid "Legacy stock tracking entry"
@@ -2282,19 +2282,19 @@ msgstr "Alkatrészek megjelenítése a keresési előnézetben"
 
 #: common/models.py:1345
 msgid "Seach Supplier Parts"
-msgstr ""
+msgstr "Beszállítói alkatrészek keresése"
 
 #: common/models.py:1346
 msgid "Display supplier parts in search preview window"
-msgstr ""
+msgstr "Beszállítói alkatrészek megjelenítése a keresési előnézetben"
 
 #: common/models.py:1352
 msgid "Search Manufacturer Parts"
-msgstr ""
+msgstr "Gyártói alkatrészek keresése"
 
 #: common/models.py:1353
 msgid "Display manufacturer parts in search preview window"
-msgstr ""
+msgstr "Gyártói alkatrészek megjelenítése a keresési előnézetben"
 
 #: common/models.py:1359
 msgid "Hide Inactive Parts"
@@ -3429,7 +3429,7 @@ msgstr "Csak függő rendelés jelölhető késznek"
 
 #: order/models.py:733
 msgid "Order cannot be completed as there are incomplete shipments"
-msgstr "A rendelés nem jelölhető késznek mivel nem teljesített szállítások vannak"
+msgstr "A rendelés nem jelölhető késznek mivel függő szállítmányok vannak"
 
 #: order/models.py:736
 msgid "Order cannot be completed as there are incomplete line items"
@@ -3548,7 +3548,7 @@ msgstr "Szállítmány száma"
 
 #: order/models.py:1214
 msgid "Shipment notes"
-msgstr "Szállítás megjegyzései"
+msgstr "Szállítmány megjegyzései"
 
 #: order/models.py:1221
 msgid "Tracking Number"
@@ -3560,11 +3560,11 @@ msgstr "Szállítmány nyomkövetési információ"
 
 #: order/models.py:1229
 msgid "Invoice Number"
-msgstr ""
+msgstr "Számlaszám"
 
 #: order/models.py:1230
 msgid "Reference number for associated invoice"
-msgstr ""
+msgstr "Hozzátartozó számla referencia száma"
 
 #: order/models.py:1248
 msgid "Shipment has already been sent"
@@ -3600,11 +3600,11 @@ msgstr "Egyedi követésre kötelezett tételeknél a menyiség 1 kell legyen"
 
 #: order/models.py:1378
 msgid "Sales order does not match shipment"
-msgstr "Vevői rendelés nem egyezik a szállítással"
+msgstr "Vevői rendelés nem egyezik a szállítmánnyal"
 
 #: order/models.py:1379
 msgid "Shipment does not match sales order"
-msgstr "Szállítás nem egyezik a vevői rendeléssel"
+msgstr "Szállítmány nem egyezik a vevői rendeléssel"
 
 #: order/models.py:1387
 msgid "Line"
@@ -3617,7 +3617,7 @@ msgstr "Szállítmány"
 
 #: order/models.py:1396
 msgid "Sales order shipment reference"
-msgstr "Vevői rendelés szállítás azonosító"
+msgstr "Vevői rendelés szállítmány azonosító"
 
 #: order/models.py:1408 templates/InvenTree/notifications/notifications.html:70
 msgid "Item"
@@ -3737,7 +3737,7 @@ msgstr "Szállítmány kiszállítva"
 
 #: order/serializers.py:1164 order/serializers.py:1284
 msgid "Shipment is not associated with this order"
-msgstr "Szállítás nincs hozzárendelve ehhez a rendeléshez"
+msgstr "Szállítmány nincs hozzárendelve ehhez a rendeléshez"
 
 #: order/serializers.py:1214
 msgid "No match found for the following serial numbers"
@@ -3836,7 +3836,7 @@ msgstr "Teljes költség"
 #: order/templates/order/order_base.html:187
 #: order/templates/order/sales_order_base.html:194
 msgid "Total cost could not be calculated"
-msgstr ""
+msgstr "A teljes költség nem számolható"
 
 #: order/templates/order/order_base.html:243
 msgid "Edit Purchase Order"
@@ -3955,7 +3955,7 @@ msgstr "Csomagolási lista nyomtatása"
 #: order/templates/order/sales_order_base.html:60
 #: templates/js/translated/order.js:226
 msgid "Complete Shipments"
-msgstr ""
+msgstr "Szállítmányok készen"
 
 #: order/templates/order/sales_order_base.html:67
 #: order/templates/order/sales_order_base.html:258
@@ -3975,7 +3975,7 @@ msgstr "Vevői azonosító"
 #: order/templates/order/sales_order_detail.html:100
 #: order/templates/order/so_sidebar.html:11
 msgid "Completed Shipments"
-msgstr "Kész szállítások"
+msgstr "Kész szállítmányok"
 
 #: order/templates/order/sales_order_base.html:230
 msgid "Edit Sales Order"
@@ -6123,7 +6123,7 @@ msgstr "Tranzakció megjegyzés hozzáadása (opcionális)"
 
 #: stock/serializers.py:482
 msgid "Destination location for returned item"
-msgstr ""
+msgstr "Cél hely a visszatérő tételeknek"
 
 #: stock/serializers.py:720
 msgid "Part must be salable"
@@ -6377,7 +6377,7 @@ msgstr "Menj a következő sorozatszámhoz"
 
 #: stock/templates/stock/item_base.html:350
 msgid "Available Quantity"
-msgstr ""
+msgstr "Elérhető mennyiség"
 
 #: stock/templates/stock/item_base.html:394
 #: templates/js/translated/build.js:1693
@@ -7027,7 +7027,7 @@ msgstr "Alkatrész paraméter sablon módosítása"
 
 #: templates/InvenTree/settings/settings.html:387
 msgid "Any parameters which reference this template will also be deleted"
-msgstr ""
+msgstr "Az összes erre a sablonra hivatkozó paraméter is törlésre kerül"
 
 #: templates/InvenTree/settings/settings.html:395
 msgid "Delete Part Parameter Template"
@@ -7573,11 +7573,11 @@ msgstr "Melléklet hozzáadása"
 
 #: templates/attachment_table.html:11
 msgid "Delete selected attachments"
-msgstr ""
+msgstr "Kiválasztott mellékletek törlése"
 
 #: templates/attachment_table.html:12 templates/js/translated/attachment.js:110
 msgid "Delete Attachments"
-msgstr ""
+msgstr "Mellékletek törlése"
 
 #: templates/base.html:101
 msgid "Server Restart Required"
@@ -7717,7 +7717,7 @@ msgstr "Hiba kód"
 
 #: templates/js/translated/attachment.js:96
 msgid "All selected attachments will be deleted"
-msgstr ""
+msgstr "Az összes kijelölt melléklet törlésre kerül"
 
 #: templates/js/translated/attachment.js:156
 msgid "No attachments found"
@@ -8328,7 +8328,7 @@ msgstr "Az összes kiválasztott beszállítói alkatrész törölve lesz"
 
 #: templates/js/translated/company.js:263
 msgid "Delete Supplier Parts"
-msgstr ""
+msgstr "Beszállítói alkatrészek törlése"
 
 #: templates/js/translated/company.js:342
 msgid "Add new Company"
@@ -8348,7 +8348,7 @@ msgstr "Nem található céginformáció"
 
 #: templates/js/translated/company.js:482
 msgid "All selected manufacturer parts will be deleted"
-msgstr ""
+msgstr "Az összes kijelölt gyártói alkatrész törlésre kerül"
 
 #: templates/js/translated/company.js:496
 msgid "Delete Manufacturer Parts"
@@ -8356,7 +8356,7 @@ msgstr "Gyártói alkatrészek törlése"
 
 #: templates/js/translated/company.js:535
 msgid "All selected parameters will be deleted"
-msgstr ""
+msgstr "Az összes kijelölt paraméter törlésre kerül"
 
 #: templates/js/translated/company.js:548
 msgid "Delete Parameters"
@@ -8695,15 +8695,15 @@ msgstr "Szállítmány megerősítése"
 
 #: templates/js/translated/order.js:212
 msgid "No pending shipments found"
-msgstr ""
+msgstr "Nincs függő szállítmány"
 
 #: templates/js/translated/order.js:216
 msgid "No stock items have been allocated to pending shipments"
-msgstr ""
+msgstr "A függő a szállítmányokhoz nincs készlet hozzárendelve"
 
 #: templates/js/translated/order.js:248
 msgid "Skip"
-msgstr ""
+msgstr "Kihagyás"
 
 #: templates/js/translated/order.js:278
 msgid "Complete Purchase Order"
@@ -8972,19 +8972,19 @@ msgstr "Szállítmány azonosító"
 
 #: templates/js/translated/order.js:2662
 msgid "Not shipped"
-msgstr "Nincs szállítva"
+msgstr "Nincs kiszállítva"
 
 #: templates/js/translated/order.js:2668
 msgid "Tracking"
-msgstr "Követés"
+msgstr "Nyomkövetés"
 
 #: templates/js/translated/order.js:2672
 msgid "Invoice"
-msgstr ""
+msgstr "Számla"
 
 #: templates/js/translated/order.js:2841
 msgid "Add Shipment"
-msgstr ""
+msgstr "Szállítmány hozzáadása"
 
 #: templates/js/translated/order.js:2892
 msgid "Confirm stock allocation"
@@ -9986,7 +9986,7 @@ msgstr "Lista nézet megjenítése"
 
 #: templates/js/translated/tables.js:90
 msgid "Display tree view"
-msgstr ""
+msgstr "Fa nézet megjelenítése"
 
 #: templates/js/translated/tables.js:142
 msgid "Export Table Data"
