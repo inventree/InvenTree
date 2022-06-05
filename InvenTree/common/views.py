@@ -65,19 +65,21 @@ class InvenTreeMultiStepMixin():
 
 
 class MultiStepFormView(InvenTreeMultiStepMixin, SessionWizardView):
-    """ Setup basic methods of multi-step form
+    """Setup basic methods of multi-step form.
 
-        form_list: list of forms
-        form_steps_description: description for each form
+    Needs:
+    - form_list: list of forms
+    - form_steps_description: description for each form
     """
     pass
 
 
 class NamedMultiStepFormView(InvenTreeMultiStepMixin, NamedUrlSessionWizardView):
-    """ Setup basic methods of multi-step form
+    """Setup basic methods of multi-step form.
 
-        form_list: list of forms
-        form_steps_description: description for each form
+    Needs:
+    - form_list: list of forms
+    - form_steps_description: description for each form
     """
     pass
 
