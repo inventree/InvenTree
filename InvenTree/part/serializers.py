@@ -753,10 +753,9 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
 
 class CategoryParameterTemplateSerializer(InvenTreeModelSerializer):
-    """Serializer for PartCategoryParameterTemplate."""
+    """Serializer for the PartCategoryParameterTemplate model."""
 
-    parameter_template = PartParameterTemplateSerializer(many=False,
-                                                         read_only=True)
+    parameter_template_detail = PartParameterTemplateSerializer(source='parameter_template', many=False, read_only=True)
 
     category_detail = CategorySerializer(source='category', many=False, read_only=True)
 
@@ -768,6 +767,7 @@ class CategoryParameterTemplateSerializer(InvenTreeModelSerializer):
             'category',
             'category_detail',
             'parameter_template',
+            'parameter_template_detail',
             'default_value',
         ]
 

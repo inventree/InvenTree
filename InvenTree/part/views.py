@@ -9,8 +9,6 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.db import transaction
-from django.db.utils import IntegrityError
-from django.forms import HiddenInput
 from django.shortcuts import HttpResponseRedirect, get_object_or_404
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -27,8 +25,8 @@ from common.models import InvenTreeSetting
 from common.views import FileManagementAjaxView, FileManagementFormView
 from company.models import SupplierPart
 from InvenTree.helpers import str2bool
-from InvenTree.views import (AjaxCreateView, AjaxDeleteView, AjaxUpdateView,
-                             AjaxView, InvenTreeRoleMixin, QRCodeView)
+from InvenTree.views import (AjaxDeleteView, AjaxUpdateView, AjaxView,
+                             InvenTreeRoleMixin, QRCodeView)
 from order.models import PurchaseOrderLineItem
 from plugin.views import InvenTreePluginViewMixin
 from stock.models import StockItem, StockLocation
@@ -36,7 +34,7 @@ from stock.models import StockItem, StockLocation
 from . import forms as part_forms
 from . import settings as part_settings
 from .bom import ExportBom, IsValidBOMFormat, MakeBomTemplate
-from .models import Part, PartCategory, PartCategoryParameterTemplate
+from .models import Part, PartCategory
 
 
 class PartIndex(InvenTreeRoleMixin, ListView):
@@ -984,185 +982,3 @@ class CategoryDelete(AjaxDeleteView):
         return {
             'danger': _('Part category was deleted'),
         }
-
-
-class CategoryParameterTemplateCreate(AjaxCreateView):
-    """View for creating a new PartCategoryParameterTemplate."""
-
-    model = PartCategoryParameterTemplate
-    form_class = part_forms.EditCategoryParameterTemplateForm
-    ajax_form_title = _('Create Category Parameter Template')
-
-    def get_initial(self):
-        """Get initial data for Category."""
-        initials = super().get_initial()
-
-        category_id = self.kwargs.get('pk', None)
-
-        if category_id:
-            try:
-                initials['category'] = PartCategory.objects.get(pk=category_id)
-            except (PartCategory.DoesNotExist, ValueError):
-                pass
-
-        return initials
-
-    def get_form(self):
-        """Create a form to upload a new CategoryParameterTemplate.
-
-        - Hide the 'category' field (parent part)
-        - Display parameter templates which are not yet related
-        """
-        form = super().get_form()
-
-        form.fields['category'].widget = HiddenInput()
-
-        if form.is_valid():
-            form.cleaned_data['category'] = self.kwargs.get('pk', None)
-
-        try:
-            # Get selected category
-            category = self.get_initial()['category']
-
-            # Get existing parameter templates
-            parameters = [template.parameter_template.pk
-                          for template in category.get_parameter_templates()]
-
-            # Exclude templates already linked to category
-            updated_choices = []
-            for choice in form.fields["parameter_template"].choices:
-                if (choice[0] not in parameters):
-                    updated_choices.append(choice)
-
-            # Update choices for parameter templates
-            form.fields['parameter_template'].choices = updated_choices
-        except KeyError:
-            pass
-
-        return form
-
-    def post(self, request, *args, **kwargs):
-        """Capture the POST request.
-
-        - If the add_to_all_categories object is set, link parameter template to
-          all categories
-        - If the add_to_same_level_categories object is set, link parameter template to
-          same level categories
-        """
-        form = self.get_form()
-
-        valid = form.is_valid()
-
-        if valid:
-            add_to_same_level_categories = form.cleaned_data['add_to_same_level_categories']
-            add_to_all_categories = form.cleaned_data['add_to_all_categories']
-
-            selected_category = PartCategory.objects.get(pk=int(self.kwargs['pk']))
-            parameter_template = form.cleaned_data['parameter_template']
-            default_value = form.cleaned_data['default_value']
-
-            categories = PartCategory.objects.all()
-
-            if add_to_same_level_categories and not add_to_all_categories:
-                # Get level
-                level = selected_category.level
-                # Filter same level categories
-                categories = categories.filter(level=level)
-
-            if add_to_same_level_categories or add_to_all_categories:
-                # Add parameter template and default value to categories
-                for category in categories:
-                    # Skip selected category (will be processed in the post call)
-                    if category.pk != selected_category.pk:
-                        try:
-                            cat_template = PartCategoryParameterTemplate.objects.create(category=category,
-                                                                                        parameter_template=parameter_template,
-                                                                                        default_value=default_value)
-                            cat_template.save()
-                        except IntegrityError:
-                            # Parameter template is already linked to category
-                            pass
-
-        return super().post(request, *args, **kwargs)
-
-
-class CategoryParameterTemplateEdit(AjaxUpdateView):
-    """View for editing a PartCategoryParameterTemplate."""
-
-    model = PartCategoryParameterTemplate
-    form_class = part_forms.EditCategoryParameterTemplateForm
-    ajax_form_title = _('Edit Category Parameter Template')
-
-    def get_object(self):
-        """Returns the PartCategoryParameterTemplate associated with this view
-
-        - First, attempt lookup based on supplied 'pid' kwarg
-        - Else, attempt lookup based on supplied 'pk' kwarg
-        """
-        try:
-            self.object = self.model.objects.get(pk=self.kwargs['pid'])
-        except:
-            return None
-
-        return self.object
-
-    def get_form(self):
-        """Create a form to upload a new CategoryParameterTemplate.
-
-        - Hide the 'category' field (parent part)
-        - Display parameter templates which are not yet related
-        """
-        form = super().get_form()
-
-        form.fields['category'].widget = HiddenInput()
-        form.fields['add_to_all_categories'].widget = HiddenInput()
-        form.fields['add_to_same_level_categories'].widget = HiddenInput()
-
-        if form.is_valid():
-            form.cleaned_data['category'] = self.kwargs.get('pk', None)
-
-        try:
-            # Get selected category
-            category = PartCategory.objects.get(pk=self.kwargs.get('pk', None))
-            # Get selected template
-            selected_template = self.get_object().parameter_template
-
-            # Get existing parameter templates
-            parameters = [template.parameter_template.pk
-                          for template in category.get_parameter_templates()
-                          if template.parameter_template.pk != selected_template.pk]
-
-            # Exclude templates already linked to category
-            updated_choices = []
-            for choice in form.fields["parameter_template"].choices:
-                if (choice[0] not in parameters):
-                    updated_choices.append(choice)
-
-            # Update choices for parameter templates
-            form.fields['parameter_template'].choices = updated_choices
-            # Set initial choice to current template
-            form.fields['parameter_template'].initial = selected_template
-        except KeyError:
-            pass
-
-        return form
-
-
-class CategoryParameterTemplateDelete(AjaxDeleteView):
-    """View for deleting an existing PartCategoryParameterTemplate."""
-
-    model = PartCategoryParameterTemplate
-    ajax_form_title = _("Delete Category Parameter Template")
-
-    def get_object(self):
-        """Returns the PartCategoryParameterTemplate associated with this view
-
-        - First, attempt lookup based on supplied 'pid' kwarg
-        - Else, attempt lookup based on supplied 'pk' kwarg
-        """
-        try:
-            self.object = self.model.objects.get(pk=self.kwargs['pid'])
-        except:
-            return None
-
-        return self.object
