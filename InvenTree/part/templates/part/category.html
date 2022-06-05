@@ -165,7 +165,7 @@
         <div class='btn-group' role='group'>
             <div class='btn-group' role='group'>
                 <button id='part-options' class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle="dropdown">
-                    {% trans "Options" %}
+                    <span class='fas fa-tools' title='{% trans "Options" %}'></span>
                 </button>
                 <ul class='dropdown-menu'>
                     {% if roles.part.change %}
@@ -378,7 +378,6 @@
                     {% else %}category: "null",
                     {% endif %}
                 },
-                buttons: ['#part-options'],
                 checkbox: true,
                 gridView: true,
             },

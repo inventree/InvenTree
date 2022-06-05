@@ -1569,31 +1569,82 @@ function loadPartTable(table, url, options={}) {
             parts.push(part);
         });
 
-        orderParts(
-            parts,
-            {
-
-            }
-        );
+        orderParts(parts, {});
     });
 
+    // Callback function for the "set category" button
     $('#multi-part-category').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
-
+        var selections = getTableData(table);
         var parts = [];
 
         selections.forEach(function(item) {
             parts.push(item.pk);
         });
 
-        launchModalForm('/part/set-category/', {
-            data: {
-                parts: parts,
+        var html = `
+        <div class='alert alert-block alert-info'>
+            {% trans "Set the part category for the selected parts" %}
+        </div>
+        `;
+
+        constructFormBody({}, {
+            title: '{% trans "Set Part Category" %}',
+            preFormContent: html,
+            fields: {
+                category: {
+                    label: '{% trans "Category" %}',
+                    help_text: '{% trans "Select Part Category" %}',
+                    required: true,
+                    type: 'related field',
+                    model: 'partcategory',
+                    api_url: '{% url "api-part-category-list" %}',
+                }
             },
-            reload: true,
+            onSubmit: function(fields, opts) {
+                var category = getFormFieldValue('category', fields['category'], opts);
+
+                if (category == null) {
+                    handleFormErrors(
+                        {
+                            'category': ['{% trans "Category is required" %}']
+                        },
+                        opts.fields,
+                        opts
+                    );
+                    return;
+                }
+
+                // Set the category for each part in sequence
+                function setCategory() {
+                    if (parts.length > 0) {
+                        var part = parts.shift();
+
+                        inventreePut(
+                            `/api/part/${part}/`,
+                            {
+                                category: category,
+                            },
+                            {
+                                method: 'PATCH',
+                                complete: setCategory,
+                            }
+                        );
+                    } else {
+                        // We are done!
+                        $(opts.modal).modal('hide');
+
+                        $(table).bootstrapTable('refresh');
+                    }
+                };
+
+                // Start the ball rolling
+                showModalSpinner(opts.modal);
+                setCategory();
+            },
         });
     });
 
+    // Callback function for the "print label" button
     $('#multi-part-print-label').click(function() {
         var selections = getTableData(table);
 
