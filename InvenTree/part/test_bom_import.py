@@ -228,7 +228,7 @@ class BomUploadTest(InvenTreeAPITestCase):
 
         components = Part.objects.filter(component=True)
 
-        for idx, cmp in enumerate(components):
+        for idx, _ in enumerate(components):
             dataset.append([
                 f"Component {idx}",
                 10,
@@ -257,7 +257,7 @@ class BomUploadTest(InvenTreeAPITestCase):
 
         dataset.headers = ['part_ipn', 'quantity']
 
-        for idx, cmp in enumerate(components):
+        for idx, _ in enumerate(components):
             dataset.append([
                 f"CMP_{idx}",
                 10,

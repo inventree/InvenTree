@@ -417,7 +417,7 @@ class CurrencyTests(TestCase):
         update_successful = False
 
         # Note: the update sometimes fails in CI, let's give it a few chances
-        for idx in range(10):
+        for _ in range(10):
             InvenTree.tasks.update_exchange_rates()
 
             rates = Rate.objects.all()

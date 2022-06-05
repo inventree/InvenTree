@@ -1231,7 +1231,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         self.assertEqual(data['stock_item_count'], 4)
 
         # Add some more stock items!!
-        for i in range(100):
+        for _ in range(100):
             StockItem.objects.create(part=self.part, quantity=5)
 
         # Add another stock item which is assigned to a customer (and shouldn't count)
@@ -1574,7 +1574,7 @@ class BomItemTest(InvenTreeAPITestCase):
             Part.objects.rebuild()
 
             # Create some stock items for this new part
-            for jj in range(ii):
+            for _ in range(ii):
                 StockItem.objects.create(
                     part=variant,
                     location=loc,
