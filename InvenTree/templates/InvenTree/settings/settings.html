@@ -321,6 +321,7 @@ $("#cat-param-table").on('click', '.template-delete', function() {
 
     constructForm(`/api/part/category/parameters/${pk}/`, {
         method: 'DELETE',
+        title: '{% trans "Delete Category Parameter Template" %}',
         onSuccess: function() {
             loadTemplateTable(pk);
         }
