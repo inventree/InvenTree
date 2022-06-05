@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-03 10:21+0000\n"
-"PO-Revision-Date: 2022-06-04 14:38\n"
+"POT-Creation-Date: 2022-06-05 14:26+0000\n"
+"PO-Revision-Date: 2022-06-05 14:34\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -208,7 +208,7 @@ msgstr "Érvénytelen választás"
 #: templates/InvenTree/settings/plugin.html:49
 #: templates/InvenTree/settings/plugin.html:132
 #: templates/InvenTree/settings/plugin_settings.html:23
-#: templates/InvenTree/settings/settings.html:327
+#: templates/InvenTree/settings/settings.html:346
 #: templates/js/translated/company.js:539
 #: templates/js/translated/company.js:757 templates/js/translated/part.js:615
 #: templates/js/translated/part.js:767 templates/js/translated/part.js:1736
@@ -248,7 +248,7 @@ msgstr "Leírás (opcionális)"
 msgid "parent"
 msgstr "szülő"
 
-#: InvenTree/serializers.py:52 part/models.py:2650
+#: InvenTree/serializers.py:52 part/models.py:2652
 msgid "Must be a valid number"
 msgstr "Érvényes számnak kell lennie"
 
@@ -647,7 +647,7 @@ msgid "Build Order Reference"
 msgstr "Gyártási utasítás azonosító"
 
 #: build/models.py:189 order/models.py:288 order/models.py:638
-#: order/models.py:916 part/models.py:2568
+#: order/models.py:916 part/models.py:2570
 #: part/templates/part/upload_bom.html:54
 #: report/templates/report/inventree_po_report.html:91
 #: report/templates/report/inventree_so_report.html:92
@@ -676,7 +676,7 @@ msgstr "Gyártás, amihez ez a gyártás hozzá van rendelve"
 #: order/models.py:1012 order/models.py:1103 part/models.py:336
 #: part/models.py:2099 part/models.py:2114 part/models.py:2133
 #: part/models.py:2151 part/models.py:2250 part/models.py:2370
-#: part/models.py:2458 part/models.py:2543 part/models.py:2819
+#: part/models.py:2460 part/models.py:2545 part/models.py:2821
 #: part/serializers.py:793 part/templates/part/part_app_base.html:8
 #: part/templates/part/part_pricing.html:12
 #: part/templates/part/set_category.html:13
@@ -914,8 +914,8 @@ msgstr "Forrás készlet tétel"
 #: build/templates/build/detail.html:34 common/models.py:1536
 #: company/forms.py:36 company/templates/company/supplier_part.html:258
 #: order/models.py:909 order/models.py:1412 order/serializers.py:1134
-#: order/templates/order/order_wizard/match_parts.html:30 part/forms.py:91
-#: part/forms.py:106 part/forms.py:121 part/models.py:2559
+#: order/templates/order/order_wizard/match_parts.html:30 part/forms.py:68
+#: part/forms.py:83 part/forms.py:98 part/models.py:2561
 #: part/templates/part/detail.html:935 part/templates/part/detail.html:1021
 #: part/templates/part/part_pricing.html:16
 #: part/templates/part/upload_bom.html:53
@@ -1109,8 +1109,8 @@ msgstr "A gyártási utasítás befejezetlen kimeneteket tartalmaz"
 msgid "No build outputs have been created for this build order"
 msgstr "Ehhez a gyártási utasításhoz nem készült kimenet"
 
-#: build/serializers.py:535 build/serializers.py:580 part/models.py:2677
-#: part/models.py:2811
+#: build/serializers.py:535 build/serializers.py:580 part/models.py:2679
+#: part/models.py:2813
 msgid "BOM Item"
 msgstr "Alkatrészjegyzék tétel"
 
@@ -2523,14 +2523,14 @@ msgid "Was the work on this message finished?"
 msgstr "Befejeződött a munka ezzel az üzenettel?"
 
 #: common/views.py:87 order/templates/order/purchase_order_detail.html:23
-#: order/views.py:102 part/views.py:193
+#: order/views.py:102 part/views.py:191
 #: templates/patterns/wizard/upload.html:37
 msgid "Upload File"
 msgstr "Fájl feltöltése"
 
 #: common/views.py:88 order/views.py:103
 #: part/templates/part/import_wizard/ajax_match_fields.html:45
-#: part/views.py:194 templates/patterns/wizard/match_fields.html:51
+#: part/views.py:192 templates/patterns/wizard/match_fields.html:51
 msgid "Match Fields"
 msgstr "Mezők egyeztetése"
 
@@ -2727,7 +2727,7 @@ msgstr "Paraméter értéke"
 
 #: company/models.py:368 part/models.py:878 part/models.py:2339
 #: part/templates/part/part_base.html:280
-#: templates/InvenTree/settings/settings.html:332
+#: templates/InvenTree/settings/settings.html:351
 #: templates/js/translated/company.js:769 templates/js/translated/part.js:782
 msgid "Units"
 msgstr "Mértékegységek"
@@ -2780,7 +2780,7 @@ msgid "Supplier part description"
 msgstr "Beszállítói alkatrész leírása"
 
 #: company/models.py:518 company/templates/company/supplier_part.html:125
-#: part/models.py:2571 part/templates/part/upload_bom.html:59
+#: part/models.py:2573 part/templates/part/upload_bom.html:59
 #: report/templates/report/inventree_po_report.html:92
 #: report/templates/report/inventree_so_report.html:93 stock/serializers.py:387
 msgid "Note"
@@ -3239,20 +3239,20 @@ msgstr "Cégek"
 msgid "New Company"
 msgstr "Új cég"
 
-#: company/views.py:112 part/views.py:578
+#: company/views.py:112 part/views.py:576
 msgid "Download Image"
 msgstr "Kép letöltése"
 
-#: company/views.py:139 part/views.py:608
+#: company/views.py:139 part/views.py:606
 msgid "Image size exceeds maximum allowable size for download"
 msgstr "A kép mérete meghaladja a maximum megengedett letöltés méretét"
 
-#: company/views.py:146 part/views.py:615
+#: company/views.py:146 part/views.py:613
 #, python-brace-format
 msgid "Invalid response: {code}"
 msgstr "Érvénytelen válasz: {code}"
 
-#: company/views.py:155 part/views.py:624
+#: company/views.py:155 part/views.py:622
 msgid "Supplied URL is not a valid image file"
 msgstr "A megadott URL nem egy érvényes kép fájl"
 
@@ -4022,47 +4022,47 @@ msgstr "A {part} egységára {price}-ra módosítva"
 msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr "A {part} alkatrész módosított egységára {price} mennyisége pedig {qty}"
 
-#: part/api.py:474
+#: part/api.py:481
 msgid "Incoming Purchase Order"
 msgstr "Beérkező beszerzési rendelés"
 
-#: part/api.py:494
+#: part/api.py:501
 msgid "Outgoing Sales Order"
 msgstr "Kimenő vevői rendelés"
 
-#: part/api.py:512
+#: part/api.py:519
 msgid "Stock produced by Build Order"
 msgstr "Gyártással előállított készlet"
 
-#: part/api.py:544
+#: part/api.py:551
 msgid "Stock required for Build Order"
 msgstr "A gyártási utasításhoz szükséges készlet"
 
-#: part/api.py:630
+#: part/api.py:637
 msgid "Valid"
 msgstr "Érvényes"
 
-#: part/api.py:631
+#: part/api.py:638
 msgid "Validate entire Bill of Materials"
 msgstr "Teljes alkatrészjegyzék jóváhagyása"
 
-#: part/api.py:637
+#: part/api.py:644
 msgid "This option must be selected"
 msgstr "Ennek az opciónak ki kll lennie választva"
 
-#: part/api.py:1003
+#: part/api.py:1010
 msgid "Must be greater than zero"
 msgstr "Nullánál nagyobb kell legyen"
 
-#: part/api.py:1007
+#: part/api.py:1014
 msgid "Must be a valid quantity"
 msgstr "Érvényes mennyiségnek kell lennie"
 
-#: part/api.py:1022
+#: part/api.py:1029
 msgid "Specify location for initial part stock"
 msgstr "Hely megadása a kezdeti alkarész készlethez"
 
-#: part/api.py:1053 part/api.py:1057 part/api.py:1072 part/api.py:1076
+#: part/api.py:1060 part/api.py:1064 part/api.py:1079 part/api.py:1083
 msgid "This field is required"
 msgstr "Ez a mező kötelező"
 
@@ -4091,15 +4091,7 @@ msgstr "Rendelve"
 msgid "Select part category"
 msgstr "Alkatrész kategória kiválasztása"
 
-#: part/forms.py:67
-msgid "Add parameter template to same level categories"
-msgstr "Paraméter sablon hozzáadása az azonos szintű kategóriákhoz"
-
-#: part/forms.py:71
-msgid "Add parameter template to all categories"
-msgstr "Paraméter sablon hozzáadása az összes kategóriához"
-
-#: part/forms.py:92
+#: part/forms.py:69
 msgid "Input quantity for price calculation"
 msgstr "Add meg a mennyiséget az árszámításhoz"
 
@@ -4115,7 +4107,7 @@ msgstr "Alapértelmezett kulcsszavak"
 msgid "Default keywords for parts in this category"
 msgstr "Ebben a kategóriában évő alkatrészek kulcsszavai alapban"
 
-#: part/models.py:115 part/models.py:2413 part/templates/part/category.html:15
+#: part/models.py:115 part/models.py:2415 part/templates/part/category.html:15
 #: part/templates/part/part_app_base.html:10
 msgid "Part Category"
 msgstr "Alkatrész kategória"
@@ -4162,7 +4154,7 @@ msgstr "A legutóbbi sorozatszám"
 msgid "Duplicate IPN not allowed in part settings"
 msgstr "Azonos IPN nem engedélyezett az alkatrész beállításokban"
 
-#: part/models.py:738 part/models.py:2467
+#: part/models.py:738 part/models.py:2469
 msgid "Part name"
 msgstr "Alkatrész neve"
 
@@ -4195,7 +4187,7 @@ msgstr "Kulcsszavak"
 msgid "Part keywords to improve visibility in search results"
 msgstr "Alkatrész kulcsszavak amik segítik a megjelenést a keresési eredményekben"
 
-#: part/models.py:776 part/models.py:2171 part/models.py:2412
+#: part/models.py:776 part/models.py:2171 part/models.py:2414
 #: part/templates/part/part_base.html:257
 #: part/templates/part/set_category.html:15
 #: templates/InvenTree/notifications/notifications.html:65
@@ -4386,7 +4378,7 @@ msgstr "Paraméter mértékegysége"
 msgid "Parent Part"
 msgstr "Szülő alkatrész"
 
-#: part/models.py:2372 part/models.py:2418 part/models.py:2419
+#: part/models.py:2372 part/models.py:2420 part/models.py:2421
 #: templates/InvenTree/settings/settings.html:226
 msgid "Parameter Template"
 msgstr "Paraméter sablon"
@@ -4399,153 +4391,153 @@ msgstr "Adat"
 msgid "Parameter Value"
 msgstr "Paraméter értéke"
 
-#: part/models.py:2423 templates/InvenTree/settings/settings.html:235
+#: part/models.py:2425 templates/InvenTree/settings/settings.html:235
 msgid "Default Value"
 msgstr "Alapértelmezett érték"
 
-#: part/models.py:2424
+#: part/models.py:2426
 msgid "Default Parameter Value"
 msgstr "Alapértelmezett paraméter érték"
 
-#: part/models.py:2459
+#: part/models.py:2461
 msgid "Part ID or part name"
 msgstr "Alkatrész ID vagy alkatrész név"
 
-#: part/models.py:2462 templates/js/translated/model_renderers.js:200
+#: part/models.py:2464 templates/js/translated/model_renderers.js:200
 msgid "Part ID"
 msgstr "Alkatrész ID"
 
-#: part/models.py:2463
+#: part/models.py:2465
 msgid "Unique part ID value"
 msgstr "Egyedi alkatrész ID értéke"
 
-#: part/models.py:2466
+#: part/models.py:2468
 msgid "Part Name"
 msgstr "Alkatrész neve"
 
-#: part/models.py:2470
+#: part/models.py:2472
 msgid "Part IPN"
 msgstr "Alkatrész IPN"
 
-#: part/models.py:2471
+#: part/models.py:2473
 msgid "Part IPN value"
 msgstr "Alkatrész IPN érték"
 
-#: part/models.py:2474
+#: part/models.py:2476
 msgid "Level"
 msgstr "Szint"
 
-#: part/models.py:2475
+#: part/models.py:2477
 msgid "BOM level"
 msgstr "Alkatrészjegyzék szint"
 
-#: part/models.py:2544
+#: part/models.py:2546
 msgid "Select parent part"
 msgstr "Szülő alkatrész kiválasztása"
 
-#: part/models.py:2552
+#: part/models.py:2554
 msgid "Sub part"
 msgstr "Al alkatrész"
 
-#: part/models.py:2553
+#: part/models.py:2555
 msgid "Select part to be used in BOM"
 msgstr "Válaszd ki az alkatrészjegyzékben használandó alkatrészt"
 
-#: part/models.py:2559
+#: part/models.py:2561
 msgid "BOM quantity for this BOM item"
 msgstr "Alkatrészjegyzék mennyiség ehhez az alkatrészjegyzék tételhez"
 
-#: part/models.py:2561 part/templates/part/upload_bom.html:58
+#: part/models.py:2563 part/templates/part/upload_bom.html:58
 #: templates/js/translated/bom.js:877 templates/js/translated/bom.js:971
 #: templates/js/translated/table_filters.js:92
 msgid "Optional"
 msgstr "Opcionális"
 
-#: part/models.py:2561
+#: part/models.py:2563
 msgid "This BOM item is optional"
 msgstr "Ez az alkatrészjegyzék tétel opcionális"
 
-#: part/models.py:2564 part/templates/part/upload_bom.html:55
+#: part/models.py:2566 part/templates/part/upload_bom.html:55
 msgid "Overage"
 msgstr "Többlet"
 
-#: part/models.py:2565
+#: part/models.py:2567
 msgid "Estimated build wastage quantity (absolute or percentage)"
 msgstr "Becsült gyártási veszteség (abszolút vagy százalékos)"
 
-#: part/models.py:2568
+#: part/models.py:2570
 msgid "BOM item reference"
 msgstr "Alkatrészjegyzék tétel azonosító"
 
-#: part/models.py:2571
+#: part/models.py:2573
 msgid "BOM item notes"
 msgstr "Alkatrészjegyzék tétel megjegyzései"
 
-#: part/models.py:2573
+#: part/models.py:2575
 msgid "Checksum"
 msgstr "Ellenőrző összeg"
 
-#: part/models.py:2573
+#: part/models.py:2575
 msgid "BOM line checksum"
 msgstr "Alkatrészjegyzék sor ellenőrző összeg"
 
-#: part/models.py:2577 part/templates/part/upload_bom.html:57
+#: part/models.py:2579 part/templates/part/upload_bom.html:57
 #: templates/js/translated/bom.js:988
 #: templates/js/translated/table_filters.js:68
 #: templates/js/translated/table_filters.js:88
 msgid "Inherited"
 msgstr "Örökölt"
 
-#: part/models.py:2578
+#: part/models.py:2580
 msgid "This BOM item is inherited by BOMs for variant parts"
 msgstr "Ezt az alkatrészjegyzék tételt az alkatrész változatok alkatrészjegyzékei is öröklik"
 
-#: part/models.py:2583 part/templates/part/upload_bom.html:56
+#: part/models.py:2585 part/templates/part/upload_bom.html:56
 #: templates/js/translated/bom.js:980
 msgid "Allow Variants"
 msgstr "Változatok"
 
-#: part/models.py:2584
+#: part/models.py:2586
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr "Alkatrészváltozatok készlet tételei használhatók ehhez az alkatrészjegyzék tételhez"
 
-#: part/models.py:2662 stock/models.py:460
+#: part/models.py:2664 stock/models.py:460
 msgid "Quantity must be integer value for trackable parts"
 msgstr "A mennyiség egész szám kell legyen a követésre kötelezett alkatrészek esetén"
 
-#: part/models.py:2671 part/models.py:2673
+#: part/models.py:2673 part/models.py:2675
 msgid "Sub part must be specified"
 msgstr "Al alkatrészt kötelező megadni"
 
-#: part/models.py:2778
+#: part/models.py:2780
 msgid "BOM Item Substitute"
 msgstr "Alkatrészjegyzék tétel helyettesítő"
 
-#: part/models.py:2799
+#: part/models.py:2801
 msgid "Substitute part cannot be the same as the master part"
 msgstr "A helyettesítő alkatrész nem lehet ugyanaz mint a fő alkatrész"
 
-#: part/models.py:2812
+#: part/models.py:2814
 msgid "Parent BOM item"
 msgstr "Szülő alkatrészjegyzék tétel"
 
-#: part/models.py:2820
+#: part/models.py:2822
 msgid "Substitute part"
 msgstr "Helyettesítő alkatrész"
 
-#: part/models.py:2831
+#: part/models.py:2833
 msgid "Part 1"
 msgstr "1.rész"
 
-#: part/models.py:2835
+#: part/models.py:2837
 msgid "Part 2"
 msgstr "2.rész"
 
-#: part/models.py:2835
+#: part/models.py:2837
 msgid "Select Related Part"
 msgstr "Válassz kapcsolódó alkatrészt"
 
-#: part/models.py:2866
+#: part/models.py:2868
 msgid "Error creating relationship: check that the part is not related to itself and that the relationship is unique"
 msgstr "Hiba a kapcsolat létrehozása közben: ellenőrizd hogy az alkatrész nem kapcsolódik-e saját magához és azt hogy a kapcsolat egyedi"
 
@@ -5416,70 +5408,58 @@ msgstr "Ismeretlen adatbázis"
 msgid "{title} v{version}"
 msgstr "{title} v{version}"
 
-#: part/views.py:76
+#: part/views.py:74
 msgid "Set Part Category"
 msgstr "Alkatrész kategória beállítása"
 
-#: part/views.py:124
+#: part/views.py:122
 #, python-brace-format
 msgid "Set category for {n} parts"
 msgstr "Állítsd be {n} alkatrész kategóriáját"
 
-#: part/views.py:195
+#: part/views.py:193
 msgid "Match References"
 msgstr "Azonosítók egyeztetése"
 
-#: part/views.py:496
+#: part/views.py:494
 msgid "None"
 msgstr "Egyik sem"
 
-#: part/views.py:558
+#: part/views.py:556
 msgid "Part QR Code"
 msgstr "Alkatrész QR kódja"
 
-#: part/views.py:652
+#: part/views.py:650
 msgid "Select Part Image"
 msgstr "Válassz képet az alkatrészhez"
 
-#: part/views.py:678
+#: part/views.py:676
 msgid "Updated part image"
 msgstr "Alkatrész képe frissítve"
 
-#: part/views.py:681
+#: part/views.py:679
 msgid "Part image not found"
 msgstr "Az alkatrész képe nem található"
 
-#: part/views.py:770
+#: part/views.py:768
 msgid "Confirm Part Deletion"
 msgstr "Alkatrész törlés megerősítése"
 
-#: part/views.py:778
+#: part/views.py:776
 msgid "Part was deleted"
 msgstr "Alkatrész törölve"
 
-#: part/views.py:787
+#: part/views.py:785
 msgid "Part Pricing"
 msgstr "Alkatrész árak"
 
-#: part/views.py:978
+#: part/views.py:976
 msgid "Delete Part Category"
 msgstr "Alkatrész kategória törlése"
 
-#: part/views.py:985
+#: part/views.py:983
 msgid "Part category was deleted"
 msgstr "Alkatrész kategória törölve"
-
-#: part/views.py:994
-msgid "Create Category Parameter Template"
-msgstr "Kategória paraméter sablon létrehozása"
-
-#: part/views.py:1094
-msgid "Edit Category Parameter Template"
-msgstr "Kategória paraméter sablon szerkesztése"
-
-#: part/views.py:1155
-msgid "Delete Category Parameter Template"
-msgstr "Kategória paraméter sablon törlése"
 
 #: plugin/apps.py:56
 msgid "Your enviroment has an outdated git version. This prevents InvenTree from loading plugin details."
@@ -6730,7 +6710,7 @@ msgid "Notifications"
 msgstr "Értesítések"
 
 #: templates/InvenTree/notifications/notifications.html:51
-#: templates/InvenTree/settings/settings.html:321
+#: templates/InvenTree/settings/settings.html:340
 msgid "ID"
 msgstr "Azonosító"
 
@@ -7004,32 +6984,40 @@ msgid "No category parameter templates found"
 msgstr "Nincs kategória paraméter sablon"
 
 #: templates/InvenTree/settings/settings.html:238
-#: templates/InvenTree/settings/settings.html:337
+#: templates/InvenTree/settings/settings.html:356
 msgid "Edit Template"
 msgstr "Sablon szerkesztése"
 
 #: templates/InvenTree/settings/settings.html:239
-#: templates/InvenTree/settings/settings.html:338
+#: templates/InvenTree/settings/settings.html:357
 msgid "Delete Template"
 msgstr "Sablon törlése"
 
-#: templates/InvenTree/settings/settings.html:317
+#: templates/InvenTree/settings/settings.html:279
+msgid "Create Category Parameter Template"
+msgstr "Kategória paraméter sablon létrehozása"
+
+#: templates/InvenTree/settings/settings.html:324
+msgid "Delete Category Parameter Template"
+msgstr "Kategória paraméter sablon törlése"
+
+#: templates/InvenTree/settings/settings.html:336
 msgid "No part parameter templates found"
 msgstr "Nincs alkatrész paraméter sablon"
 
-#: templates/InvenTree/settings/settings.html:355
+#: templates/InvenTree/settings/settings.html:374
 msgid "Create Part Parameter Template"
 msgstr "Alkatrész paraméter sablon létrehozása"
 
-#: templates/InvenTree/settings/settings.html:373
+#: templates/InvenTree/settings/settings.html:392
 msgid "Edit Part Parameter Template"
 msgstr "Alkatrész paraméter sablon módosítása"
 
-#: templates/InvenTree/settings/settings.html:387
+#: templates/InvenTree/settings/settings.html:406
 msgid "Any parameters which reference this template will also be deleted"
 msgstr "Az összes erre a sablonra hivatkozó paraméter is törlésre kerül"
 
-#: templates/InvenTree/settings/settings.html:395
+#: templates/InvenTree/settings/settings.html:414
 msgid "Delete Part Parameter Template"
 msgstr "Alkatrész paraméter sablon törlése"
 
