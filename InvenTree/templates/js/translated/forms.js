@@ -1228,7 +1228,7 @@ function handleFormErrors(errors, fields={}, options={}) {
 
     // Reset the status of the "submit" button
     if (options.modal) {
-        $(options.modal).find('#modal-form-submit').prop('disabled', false);
+        enableSubmitButton(options, true);
     }
 
     // Remove any existing error messages from the form

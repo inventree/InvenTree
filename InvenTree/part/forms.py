@@ -3,15 +3,12 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from mptt.fields import TreeNodeChoiceField
-
 from common.forms import MatchItemForm
 from InvenTree.fields import RoundingDecimalFormField
 from InvenTree.forms import HelperForm
 from InvenTree.helpers import clean_decimal
 
-from .models import (Part, PartCategory, PartInternalPriceBreak,
-                     PartSellPriceBreak)
+from .models import Part, PartInternalPriceBreak, PartSellPriceBreak
 
 
 class PartImageDownloadForm(HelperForm):
@@ -51,12 +48,6 @@ class BomMatchItemForm(MatchItemForm):
             )
 
         return super().get_special_field(col_guess, row, file_manager)
-
-
-class SetPartCategoryForm(forms.Form):
-    """Form for setting the category of multiple Part objects."""
-
-    part_category = TreeNodeChoiceField(queryset=PartCategory.objects.all(), required=True, help_text=_('Select part category'))
 
 
 class PartPriceForm(forms.Form):
