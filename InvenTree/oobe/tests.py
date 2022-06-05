@@ -1,4 +1,4 @@
-"""Tests for setups"""
+"""Tests for setups."""
 
 from django.urls import reverse
 
@@ -6,15 +6,15 @@ from InvenTree.api_tester import InvenTreeAPITestCase
 
 
 class OOBEApiTest(InvenTreeAPITestCase):
-    """Tests for the setups listing API"""
+    """Tests for the setups listing API."""
 
     def test_api_list(self):
-        """Test list URL"""
+        """Test list URL."""
         url = reverse('api-setup-list')
         self.get(url, expected_code=200)
 
     def test_view(self):
-        """Test initial setup view"""
+        """Test initial setup view."""
         url = reverse('dynamic_setup', kwargs={'setup': 'initial'})
 
         # Check that the setup redirects to the first setup page

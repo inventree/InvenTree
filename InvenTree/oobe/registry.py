@@ -1,4 +1,5 @@
-"""Registry for setups"""
+"""Registry for setups."""
+
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List
@@ -12,22 +13,16 @@ import yaml
 from . import forms as oobe_forms
 
 
-class SerializableObject():
-    def toJson(self):
-        """Get JSON compatible representation"""
-        return self.__dict__()
-
-
 @dataclass()
-class Page(SerializableObject):
-    """Page in a Setup"""
+class Page():
+    """Page in a Setup."""
     title: str = ''
     slug: str = ''
     items: dict = None
     is_done: bool = False
 
     def get_form(self):
-        """Returns form for this page - calculated from yaml"""
+        """Returns form for this page - calculated from yaml."""
         # Make sure there are items - return if not
         if not self.items:
             return
@@ -39,7 +34,7 @@ class Page(SerializableObject):
 
         # helper function
         def unique_name(reference):
-            """Ensure name is unique"""
+            """Ensure name is unique."""
             if reference in attrs:
                 reference = reference + '_'
                 return unique_name(reference)
@@ -81,7 +76,8 @@ class Page(SerializableObject):
         # Create form and return it
         return type(form)(class_name, (form,), attrs)
 
-    def __dict__(self):
+    def toJson(self):
+        """Get JSON compatible representation."""
         return {
             'title': self.title,
             'slug': self.slug,
@@ -91,15 +87,16 @@ class Page(SerializableObject):
 
 
 class PageDict(dict):
-    """Collection of Pages"""
+    """Collection of Pages."""
 
     def toJson(self):
-        """Returns json-compatible representation of collection"""
+        """Returns json-compatible representation of collection."""
         return {key: item.toJson() for key, item in self.items()}
 
 
-class SetupInstance(SerializableObject):
-    """Represents a setup instance"""
+class SetupInstance():
+    """Represents a setup instance."""
+
     title: str
     """Title of setup"""
     pages: PageDict
@@ -111,7 +108,14 @@ class SetupInstance(SerializableObject):
     _data: dict = None
 
     def __init__(self, data: dict, pages: PageDict = None, title: str = None, done: str = None) -> None:
-        """Create instance"""
+        """Create instance.
+
+        Args:
+            data (dict): Data for setup.
+            pages (PageDict, optional): All contained pages. Defaults to None.
+            title (str, optional): Title for renderings. Defaults to None.
+            done (str, optional): action to take once the setup is done. Defaults to None.
+        """
         self.pages = PageDict(pages)
         self.title = title if title else data.get('title')
         self.done = done if done else data.get('done', _('All done here'))
@@ -120,7 +124,8 @@ class SetupInstance(SerializableObject):
         # process formlist
         self.form_list = self.get_formlist()
 
-    def __dict__(self, *args, **kwargs):
+    def toJson(self):
+        """Get JSON compatible representation."""
         return {
             'title': self.title,
             'done': self.done,
@@ -128,7 +133,7 @@ class SetupInstance(SerializableObject):
         }
 
     def get_formlist(self):
-        """Returns formlist for SetupView"""
+        """Returns formlist for SetupView."""
         form_list = []
         for item in self.pages.values():
             form = item.get_form()
@@ -140,16 +145,16 @@ class SetupInstance(SerializableObject):
 
 
 class SetupRegistry:
-    """Registry for keeping SetupInstance instances"""
+    """Registry for keeping SetupInstance instances."""
     collection: List[SetupInstance] = {}
     path: list = ['oobe', 'setups']
 
     def __init__(self) -> None:
-        """Creation instance"""
+        """Creation instance."""
         self.collect()
 
     def collect(self) -> None:
-        """Collects all static setups"""
+        """Collects all static setups."""
         new_collection = {}
 
         # Define base path
@@ -181,11 +186,11 @@ class SetupRegistry:
         self.collection = new_collection
 
     def get(self, key: str, __default=None) -> SetupInstance:
-        """Return SetupInstance of key"""
+        """Return SetupInstance of key."""
         return self.collection.get(key, __default)
 
     def to_representation(self):
-        """Returns json-compatible representation of collection"""
+        """Returns json-compatible representation of collection."""
         return {key: item.toJson() for key, item in self.collection.items()}
 
 

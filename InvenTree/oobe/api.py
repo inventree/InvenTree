@@ -1,4 +1,5 @@
-"""APIs for setups"""
+"""APIs for oobe app."""
+
 from django.urls import re_path
 
 from rest_framework.generics import ListAPIView
@@ -9,10 +10,11 @@ from .registry import setups
 
 
 class OOBEListView(ListAPIView):
-    """Endpoint for listing setups"""
+    """Endpoint for listing setups."""
     permission_classes = [IsAuthenticated]
 
     def list(self, *args, **kwargs):
+        """List all setups."""
         data = setups.to_representation()
         return Response(data)
 

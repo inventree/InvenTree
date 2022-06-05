@@ -1,6 +1,4 @@
-"""
-URL lookup for setups
-"""
+"""URL lookup for setups."""
 
 from django.urls import re_path
 

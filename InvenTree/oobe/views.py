@@ -1,4 +1,5 @@
-"""Views for OOBE"""
+"""Views for OOBE."""
+
 from django.http import Http404
 from django.shortcuts import render
 from django.urls import reverse
@@ -10,38 +11,39 @@ from . import forms
 
 
 class SetupWizard(NamedMultiStepFormView):
+    """View for a setup wizard."""
     form_list = [forms.EmptyForm, ]
     template_name = 'oobe/setup.html'
 
     # region overrides
     @classmethod
     def get_initkwargs(cls, *args, **kwargs):
-        """Override form_list if not supplied"""
+        """Override form_list if not supplied."""
         if not args and not hasattr(kwargs, 'form_list'):
             kwargs['form_list'] = cls.form_list
         return super().get_initkwargs(*args, **kwargs)
 
     def __init__(self, *args, **kwargs):
-        """Set dynamic flags"""
+        """Set dynamic flags."""
         self.from_list_overriden = False
         super().__init__(*args, **kwargs)
 
     def get_form_list(self):
-        """Make sure the dynamic form_list is used"""
+        """Make sure the dynamic form_list is used."""
         self._set_form_list()
         return super().get_form_list()
 
     def get_form(self, step=None, data=None, files=None):
-        """Make sure the dynamic form_list is used"""
+        """Make sure the dynamic form_list is used."""
         self._set_form_list()
         return super().get_form(step, data, files)
 
     def get_step_url(self, step):
-        """Override url lookup to introduce current setup into lookup"""
+        """Override url lookup to introduce current setup into lookup."""
         return reverse(self.url_name, kwargs={'step': step, 'setup': self.kwargs.get('setup')})
 
     def get_context_data(self, **kwargs):
-        """Override to add setup title to context"""
+        """Override to add setup title to context."""
         context = super().get_context_data(**kwargs)
         context['title'] = f'{self.setup_context.title} | {self.step.title}'
         return context
@@ -49,7 +51,7 @@ class SetupWizard(NamedMultiStepFormView):
 
     @property
     def step(self):
-        """The current steps page"""
+        """The current steps page."""
         if hasattr(self, 'setup_context') and hasattr(self, 'kwargs') and self.kwargs.get('step'):
             return self.setup_context.pages[self.kwargs["step"]]
 
@@ -57,7 +59,7 @@ class SetupWizard(NamedMultiStepFormView):
         raise Http404()  # pragma: no cover
 
     def _set_form_list(self):
-        """Helper function to make sure the dynamic form_list is used"""
+        """Helper function to make sure the dynamic form_list is used."""
         if self.from_list_overriden:
             return
 
@@ -69,7 +71,7 @@ class SetupWizard(NamedMultiStepFormView):
         self.from_list_overriden = True
 
     def set_setup_context(self):
-        """Set the setup context for the current context"""
+        """Set the setup context for the current context."""
         # Check if setup slug is valid
         reference = self.kwargs.get('setup', None)
         if not reference:
@@ -82,7 +84,7 @@ class SetupWizard(NamedMultiStepFormView):
         return self.setup_context
 
     def done(self, form_list, **kwargs):
-        """Final action with data"""
+        """Final action with data."""
         # TODO take actions
 
         return render(self.request, 'oobe/done.html', {
