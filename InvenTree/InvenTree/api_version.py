@@ -1,13 +1,27 @@
-"""
-InvenTree API version information
-"""
+"""InvenTree API version information."""
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 51
+INVENTREE_API_VERSION = 56
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v56 -> 2022-06-02 : https://github.com/inventree/InvenTree/pull/3123
+    - Expose the PartParameterTemplate model to use the API
+
+v55 -> 2022-06-02 : https://github.com/inventree/InvenTree/pull/3120
+    - Converts the 'StockItemReturn' functionality to make use of the API
+
+v54 -> 2022-06-02 : https://github.com/inventree/InvenTree/pull/3117
+    - Adds 'available_stock' annotation on the SalesOrderLineItem API
+    - Adds (well, fixes) 'overdue' annotation on the SalesOrderLineItem API
+
+v53 -> 2022-06-01 : https://github.com/inventree/InvenTree/pull/3110
+    - Adds extra search fields to the BuildOrder list API endpoint
+
+v52 -> 2022-05-31 : https://github.com/inventree/InvenTree/pull/3103
+    - Allow part list API to be searched by supplier SKU
 
 v51 -> 2022-05-24 : https://github.com/inventree/InvenTree/pull/3058
     - Adds new fields to the SalesOrderShipment model

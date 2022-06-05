@@ -1,6 +1,4 @@
-"""
-Django views for interacting with common models
-"""
+"""Django views for interacting with common models."""
 
 import os
 
@@ -18,7 +16,7 @@ from .files import FileManager
 
 
 class InvenTreeMultiStepMixin():
-    """Mixin to setup basic methods of multi-step forms"""
+    """Mixin to setup basic methods of multi-step forms."""
 
     form_steps_template = []
     form_steps_description = []
@@ -27,14 +25,13 @@ class InvenTreeMultiStepMixin():
     file_storage = FileSystemStorage(settings.MEDIA_ROOT)
 
     def __init__(self, *args, **kwargs):
-        """ Override init method to set media folder """
+        """Override init method to set media folder."""
         super().__init__(**kwargs)
 
         self.process_media_folder()
 
     def process_media_folder(self):
-        """ Process media folder """
-
+        """Process media folder."""
         if self.media_folder:
             media_folder_abs = os.path.join(settings.MEDIA_ROOT, self.media_folder)
             if not os.path.exists(media_folder_abs):
@@ -42,8 +39,7 @@ class InvenTreeMultiStepMixin():
             self.file_storage = FileSystemStorage(location=media_folder_abs)
 
     def get_template_names(self):
-        """ Select template """
-
+        """Select template."""
         try:
             # Get template
             template = self.form_steps_template[self.steps.index]
@@ -53,8 +49,7 @@ class InvenTreeMultiStepMixin():
         return template
 
     def get_context_data(self, **kwargs):
-        """ Update context data """
-
+        """Update context data."""
         # Retrieve current context
         context = super().get_context_data(**kwargs)
 
@@ -88,7 +83,9 @@ class NamedMultiStepFormView(InvenTreeMultiStepMixin, NamedUrlSessionWizardView)
 
 
 class FileManagementFormView(MultiStepFormView):
-    """ Setup form wizard to perform the following steps:
+    """File management form wizard.
+
+    Perform the following steps:
         1. Upload tabular data file
         2. Match headers to InvenTree fields
         3. Edit row data and match InvenTree items
@@ -109,8 +106,7 @@ class FileManagementFormView(MultiStepFormView):
     extra_context_data = {}
 
     def __init__(self, *args, **kwargs):
-        """ Initialize the FormView """
-
+        """Initialize the FormView."""
         # Perform all checks and inits for MultiStepFormView
         super().__init__(self, *args, **kwargs)
 
@@ -119,8 +115,7 @@ class FileManagementFormView(MultiStepFormView):
             raise NotImplementedError('A subclass of a file manager class needs to be set!')
 
     def get_context_data(self, form=None, **kwargs):
-        """ Handle context data """
-
+        """Handle context data."""
         if form is None:
             form = self.get_form()
 
@@ -150,8 +145,7 @@ class FileManagementFormView(MultiStepFormView):
         return context
 
     def get_file_manager(self, step=None, form=None):
-        """ Get FileManager instance from uploaded file """
-
+        """Get FileManager instance from uploaded file."""
         if self.file_manager:
             return
 
@@ -165,8 +159,7 @@ class FileManagementFormView(MultiStepFormView):
                     self.file_manager = self.file_manager_class(file=file, name=self.name)
 
     def get_form_kwargs(self, step=None):
-        """ Update kwargs to dynamically build forms """
-
+        """Update kwargs to dynamically build forms."""
         # Always retrieve FileManager instance from uploaded file
         self.get_file_manager(step)
 
@@ -205,7 +198,7 @@ class FileManagementFormView(MultiStepFormView):
         return super().get_form_kwargs()
 
     def get_form(self, step=None, data=None, files=None):
-        """ add crispy-form helper to form """
+        """Add crispy-form helper to form."""
         form = super().get_form(step=step, data=data, files=files)
 
         form.helper = FormHelper()
@@ -214,17 +207,14 @@ class FileManagementFormView(MultiStepFormView):
         return form
 
     def get_form_table_data(self, form_data):
-        """ Extract table cell data from form data and fields.
-        These data are used to maintain state between sessions.
+        """Extract table cell data from form data and fields. These data are used to maintain state between sessions.
 
         Table data keys are as follows:
 
             col_name_<idx> - Column name at idx as provided in the uploaded file
             col_guess_<idx> - Column guess at idx as selected
             row_<x>_col<y> - Cell data as provided in the uploaded file
-
         """
-
         # Map the columns
         self.column_names = {}
         self.column_selections = {}
@@ -278,8 +268,7 @@ class FileManagementFormView(MultiStepFormView):
                 self.row_data[row_id][col_id] = value
 
     def set_form_table_data(self, form=None):
-        """ Set the form table data """
-
+        """Set the form table data."""
         if self.column_names:
             # Re-construct the column data
             self.columns = []
@@ -338,10 +327,10 @@ class FileManagementFormView(MultiStepFormView):
                     row[field_key] = field_key + '-' + str(row['index'])
 
     def get_column_index(self, name):
-        """ Return the index of the column with the given name.
+        """Return the index of the column with the given name.
+
         It named column is not found, return -1
         """
-
         try:
             idx = list(self.column_selections.values()).index(name)
         except ValueError:
@@ -350,9 +339,7 @@ class FileManagementFormView(MultiStepFormView):
         return idx
 
     def get_field_selection(self):
-        """ Once data columns have been selected, attempt to pre-select the proper data from the database.
-        This function is called once the field selection has been validated.
-        The pre-fill data are then passed through to the part selection form.
+        """Once data columns have been selected, attempt to pre-select the proper data from the database. This function is called once the field selection has been validated. The pre-fill data are then passed through to the part selection form.
 
         This method is very specific to the type of data found in the file,
         therefore overwrite it in the subclass.
@@ -360,7 +347,7 @@ class FileManagementFormView(MultiStepFormView):
         pass
 
     def get_clean_items(self):
-        """ returns dict with all cleaned values """
+        """Returns dict with all cleaned values."""
         items = {}
 
         for form_key, form_value in self.get_all_cleaned_data().items():
@@ -387,8 +374,7 @@ class FileManagementFormView(MultiStepFormView):
         return items
 
     def check_field_selection(self, form):
-        """ Check field matching """
-
+        """Check field matching."""
         # Are there any missing columns?
         missing_columns = []
 
@@ -436,8 +422,7 @@ class FileManagementFormView(MultiStepFormView):
         return valid
 
     def validate(self, step, form):
-        """ Validate forms """
-
+        """Validate forms."""
         valid = True
 
         # Get form table data
@@ -456,8 +441,7 @@ class FileManagementFormView(MultiStepFormView):
         return valid
 
     def post(self, request, *args, **kwargs):
-        """ Perform validations before posting data """
-
+        """Perform validations before posting data."""
         wizard_goto_step = self.request.POST.get('wizard_goto_step', None)
 
         form = self.get_form(data=self.request.POST, files=self.request.FILES)
@@ -472,14 +456,21 @@ class FileManagementFormView(MultiStepFormView):
 
 
 class FileManagementAjaxView(AjaxView):
-    """ Use a FileManagementFormView as base for a AjaxView
-    Inherit this class before inheriting the base FileManagementFormView
+    """Use a FileManagementFormView as base for a AjaxView Inherit this class before inheriting the base FileManagementFormView.
 
     ajax_form_steps_template: templates for rendering ajax
     validate: function to validate the current form -> normally point to the same function in the base FileManagementFormView
     """
 
     def post(self, request):
+        """Handle wizard step call.
+
+        Possible actions:
+        - Step back -> render previous step
+        - Invalid  form -> render error
+        - Valid form and not done -> render next step
+        - Valid form and done -> render final step
+        """
         # check if back-step button was selected
         wizard_back = self.request.POST.get('act-btn_back', None)
         if wizard_back:
@@ -511,6 +502,7 @@ class FileManagementAjaxView(AjaxView):
         return self.renderJsonResponse(request, data={'form_valid': None})
 
     def get(self, request):
+        """Reset storage if flag is set, proceed to render JsonResponse."""
         if 'reset' in request.GET:
             # reset form
             self.storage.reset()
@@ -518,11 +510,12 @@ class FileManagementAjaxView(AjaxView):
         return self.renderJsonResponse(request)
 
     def renderJsonResponse(self, request, form=None, data={}, context=None):
-        """ always set the right templates before rendering """
+        """Always set the right templates before rendering."""
         self.setTemplate()
         return super().renderJsonResponse(request, form=form, data=data, context=context)
 
-    def get_data(self):
+    def get_data(self) -> dict:
+        """Get extra context data."""
         data = super().get_data()
         data['hideErrorMessage'] = '1'  # hide the error
         buttons = [{'name': 'back', 'title': _('Previous Step')}] if self.get_step_index() > 0 else []
@@ -530,9 +523,13 @@ class FileManagementAjaxView(AjaxView):
         return data
 
     def setTemplate(self):
-        """ set template name and title """
+        """Set template name and title."""
         self.ajax_template_name = self.ajax_form_steps_template[self.get_step_index()]
         self.ajax_form_title = self.form_steps_description[self.get_step_index()]
 
     def validate(self, obj, form, **kwargs):
+        """Generic validate action.
+
+        This is the point to process provided userinput.
+        """
         raise NotImplementedError('This function needs to be overridden!')

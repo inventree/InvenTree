@@ -1,6 +1,4 @@
-"""
-Provides helper functions used throughout the InvenTree project
-"""
+"""Provides helper functions used throughout the InvenTree project."""
 
 import io
 import json
@@ -27,21 +25,15 @@ from .settings import MEDIA_URL, STATIC_URL
 
 
 def getSetting(key, backup_value=None):
-    """
-    Shortcut for reading a setting value from the database
-    """
-
+    """Shortcut for reading a setting value from the database."""
     return InvenTreeSetting.get_setting(key, backup_value=backup_value)
 
 
 def generateTestKey(test_name):
-    """
-    Generate a test 'key' for a given test name.
-    This must not have illegal chars as it will be used for dict lookup in a template.
+    """Generate a test 'key' for a given test name. This must not have illegal chars as it will be used for dict lookup in a template.
 
     Tests must be named such that they will have unique keys.
     """
-
     key = test_name.strip().lower()
     key = key.replace(" ", "")
 
@@ -52,33 +44,23 @@ def generateTestKey(test_name):
 
 
 def getMediaUrl(filename):
-    """
-    Return the qualified access path for the given file,
-    under the media directory.
-    """
-
+    """Return the qualified access path for the given file, under the media directory."""
     return os.path.join(MEDIA_URL, str(filename))
 
 
 def getStaticUrl(filename):
-    """
-    Return the qualified access path for the given file,
-    under the static media directory.
-    """
-
+    """Return the qualified access path for the given file, under the static media directory."""
     return os.path.join(STATIC_URL, str(filename))
 
 
 def construct_absolute_url(*arg):
-    """
-    Construct (or attempt to construct) an absolute URL from a relative URL.
+    """Construct (or attempt to construct) an absolute URL from a relative URL.
 
     This is useful when (for example) sending an email to a user with a link
     to something in the InvenTree web framework.
 
     This requires the BASE_URL configuration option to be set!
     """
-
     base = str(InvenTreeSetting.get_setting('INVENTREE_BASE_URL'))
 
     url = '/'.join(arg)
@@ -99,23 +81,17 @@ def construct_absolute_url(*arg):
 
 
 def getBlankImage():
-    """
-    Return the qualified path for the 'blank image' placeholder.
-    """
-
+    """Return the qualified path for the 'blank image' placeholder."""
     return getStaticUrl("img/blank_image.png")
 
 
 def getBlankThumbnail():
-    """
-    Return the qualified path for the 'blank image' thumbnail placeholder.
-    """
-
+    """Return the qualified path for the 'blank image' thumbnail placeholder."""
     return getStaticUrl("img/blank_image.thumbnail.png")
 
 
 def TestIfImage(img):
-    """ Test if an image file is indeed an image """
+    """Test if an image file is indeed an image."""
     try:
         Image.open(img).verify()
         return True
@@ -124,12 +100,12 @@ def TestIfImage(img):
 
 
 def TestIfImageURL(url):
-    """ Test if an image URL (or filename) looks like a valid image format.
+    """Test if an image URL (or filename) looks like a valid image format.
 
     Simply tests the extension against a set of allowed values
     """
     return os.path.splitext(os.path.basename(url))[-1].lower() in [
-        '.jpg', '.jpeg',
+        '.jpg', '.jpeg', '.j2k',
         '.png', '.bmp',
         '.tif', '.tiff',
         '.webp', '.gif',
@@ -137,7 +113,7 @@ def TestIfImageURL(url):
 
 
 def str2bool(text, test=True):
-    """ Test if a string 'looks' like a boolean value.
+    """Test if a string 'looks' like a boolean value.
 
     Args:
         text: Input text
@@ -153,10 +129,7 @@ def str2bool(text, test=True):
 
 
 def is_bool(text):
-    """
-    Determine if a string value 'looks' like a boolean.
-    """
-
+    """Determine if a string value 'looks' like a boolean."""
     if str2bool(text, True):
         return True
     elif str2bool(text, False):
@@ -166,9 +139,7 @@ def is_bool(text):
 
 
 def isNull(text):
-    """
-    Test if a string 'looks' like a null value.
-    This is useful for querying the API against a null key.
+    """Test if a string 'looks' like a null value. This is useful for querying the API against a null key.
 
     Args:
         text: Input text
@@ -176,15 +147,11 @@ def isNull(text):
     Returns:
         True if the text looks like a null value
     """
-
     return str(text).strip().lower() in ['top', 'null', 'none', 'empty', 'false', '-1', '']
 
 
 def normalize(d):
-    """
-    Normalize a decimal number, and remove exponential formatting.
-    """
-
+    """Normalize a decimal number, and remove exponential formatting."""
     if type(d) is not Decimal:
         d = Decimal(d)
 
@@ -195,8 +162,7 @@ def normalize(d):
 
 
 def increment(n):
-    """
-    Attempt to increment an integer (or a string that looks like an integer!)
+    """Attempt to increment an integer (or a string that looks like an integer).
 
     e.g.
 
@@ -204,9 +170,7 @@ def increment(n):
     2 -> 3
     AB01 -> AB02
     QQQ -> QQQ
-
     """
-
     value = str(n).strip()
 
     # Ignore empty strings
@@ -248,10 +212,7 @@ def increment(n):
 
 
 def decimal2string(d):
-    """
-    Format a Decimal number as a string,
-    stripping out any trailing zeroes or decimal points.
-    Essentially make it look like a whole number if it is one.
+    """Format a Decimal number as a string, stripping out any trailing zeroes or decimal points. Essentially make it look like a whole number if it is one.
 
     Args:
         d: A python Decimal object
@@ -259,7 +220,6 @@ def decimal2string(d):
     Returns:
         A string representation of the input number
     """
-
     if type(d) is Decimal:
         d = normalize(d)
 
@@ -280,8 +240,7 @@ def decimal2string(d):
 
 
 def decimal2money(d, currency=None):
-    """
-    Format a Decimal number as Money
+    """Format a Decimal number as Money.
 
     Args:
         d: A python Decimal object
@@ -296,7 +255,7 @@ def decimal2money(d, currency=None):
 
 
 def WrapWithQuotes(text, quote='"'):
-    """ Wrap the supplied text with quotes
+    """Wrap the supplied text with quotes.
 
     Args:
         text: Input text to wrap
@@ -305,7 +264,6 @@ def WrapWithQuotes(text, quote='"'):
     Returns:
         Supplied text wrapped in quote char
     """
-
     if not text.startswith(quote):
         text = quote + text
 
@@ -316,7 +274,7 @@ def WrapWithQuotes(text, quote='"'):
 
 
 def MakeBarcode(object_name, object_pk, object_data=None, **kwargs):
-    """ Generate a string for a barcode. Adds some global InvenTree parameters.
+    """Generate a string for a barcode. Adds some global InvenTree parameters.
 
     Args:
         object_type: string describing the object type e.g. 'StockItem'
@@ -363,8 +321,7 @@ def MakeBarcode(object_name, object_pk, object_data=None, **kwargs):
 
 
 def GetExportFormats():
-    """ Return a list of allowable file formats for exporting data """
-
+    """Return a list of allowable file formats for exporting data."""
     return [
         'csv',
         'tsv',
@@ -375,9 +332,8 @@ def GetExportFormats():
     ]
 
 
-def DownloadFile(data, filename, content_type='application/text', inline=False):
-    """
-    Create a dynamic file for the user to download.
+def DownloadFile(data, filename, content_type='application/text', inline=False) -> StreamingHttpResponse:
+    """Create a dynamic file for the user to download.
 
     Args:
         data: Raw file data (string or bytes)
@@ -388,7 +344,6 @@ def DownloadFile(data, filename, content_type='application/text', inline=False):
     Return:
         A StreamingHttpResponse object wrapping the supplied data
     """
-
     filename = WrapWithQuotes(filename)
 
     if type(data) == str:
@@ -407,8 +362,7 @@ def DownloadFile(data, filename, content_type='application/text', inline=False):
 
 
 def extract_serial_numbers(serials, expected_quantity, next_number: int):
-    """
-    Attempt to extract serial numbers from an input string:
+    """Attempt to extract serial numbers from an input string.
 
     Requirements:
         - Serial numbers can be either strings, or integers
@@ -423,7 +377,6 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
         expected_quantity: The number of (unique) serial numbers we expect
         next_number(int): the next possible serial number
     """
-
     serials = serials.strip()
 
     # fill in the next serial number into the serial
@@ -543,8 +496,7 @@ def extract_serial_numbers(serials, expected_quantity, next_number: int):
 
 
 def validateFilterString(value, model=None):
-    """
-    Validate that a provided filter string looks like a list of comma-separated key=value pairs
+    """Validate that a provided filter string looks like a list of comma-separated key=value pairs.
 
     These should nominally match to a valid database filter based on the model being filtered.
 
@@ -559,7 +511,6 @@ def validateFilterString(value, model=None):
 
     Returns a map of key:value pairs
     """
-
     # Empty results map
     results = {}
 
@@ -605,28 +556,19 @@ def validateFilterString(value, model=None):
 
 
 def addUserPermission(user, permission):
-    """
-    Shortcut function for adding a certain permission to a user.
-    """
-
+    """Shortcut function for adding a certain permission to a user."""
     perm = Permission.objects.get(codename=permission)
     user.user_permissions.add(perm)
 
 
 def addUserPermissions(user, permissions):
-    """
-    Shortcut function for adding multiple permissions to a user.
-    """
-
+    """Shortcut function for adding multiple permissions to a user."""
     for permission in permissions:
         addUserPermission(user, permission)
 
 
 def getMigrationFileNames(app):
-    """
-    Return a list of all migration filenames for provided app
-    """
-
+    """Return a list of all migration filenames for provided app."""
     local_dir = os.path.dirname(os.path.abspath(__file__))
 
     migration_dir = os.path.join(local_dir, '..', app, 'migrations')
@@ -646,10 +588,7 @@ def getMigrationFileNames(app):
 
 
 def getOldestMigrationFile(app, exclude_extension=True, ignore_initial=True):
-    """
-    Return the filename associated with the oldest migration
-    """
-
+    """Return the filename associated with the oldest migration."""
     oldest_num = -1
     oldest_file = None
 
@@ -671,10 +610,7 @@ def getOldestMigrationFile(app, exclude_extension=True, ignore_initial=True):
 
 
 def getNewestMigrationFile(app, exclude_extension=True):
-    """
-    Return the filename associated with the newest migration
-    """
-
+    """Return the filename associated with the newest migration."""
     newest_file = None
     newest_num = -1
 
@@ -692,8 +628,7 @@ def getNewestMigrationFile(app, exclude_extension=True):
 
 
 def clean_decimal(number):
-    """ Clean-up decimal value """
-
+    """Clean-up decimal value."""
     # Check if empty
     if number is None or number == '' or number == 0:
         return Decimal(0)
@@ -729,7 +664,7 @@ def clean_decimal(number):
 
 
 def get_objectreference(obj, type_ref: str = 'content_type', object_ref: str = 'object_id'):
-    """lookup method for the GenericForeignKey fields
+    """Lookup method for the GenericForeignKey fields.
 
     Attributes:
     - obj: object that will be resolved
@@ -769,9 +704,7 @@ def get_objectreference(obj, type_ref: str = 'content_type', object_ref: str = '
 
 
 def inheritors(cls):
-    """
-    Return all classes that are subclasses from the supplied cls
-    """
+    """Return all classes that are subclasses from the supplied cls."""
     subcls = set()
     work = [cls]
     while work:
@@ -784,4 +717,5 @@ def inheritors(cls):
 
 
 class InvenTreeTestCase(UserMixin, TestCase):
+    """Testcase with user setup buildin."""
     pass

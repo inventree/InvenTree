@@ -1,6 +1,4 @@
-"""
-Custom exception handling for the DRF API
-"""
+"""Custom exception handling for the DRF API."""
 
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
@@ -21,13 +19,11 @@ from rest_framework.response import Response
 
 
 def exception_handler(exc, context):
-    """
-    Custom exception handler for DRF framework.
-    Ref: https://www.django-rest-framework.org/api-guide/exceptions/#custom-exception-handling
+    """Custom exception handler for DRF framework.
 
+    Ref: https://www.django-rest-framework.org/api-guide/exceptions/#custom-exception-handling
     Catches any errors not natively handled by DRF, and re-throws as an error DRF can handle
     """
-
     response = None
 
     # Catch any django validation error, and re-throw a DRF validation error
@@ -40,7 +36,11 @@ def exception_handler(exc, context):
     if response is None:
         # DRF handler did not provide a default response for this exception
 
-        if settings.DEBUG:
+        if settings.TESTING:
+            # If in TESTING mode, re-throw the exception for traceback
+            raise exc
+        elif settings.DEBUG:
+            # If in DEBUG mode, provide error information in the response
             error_detail = str(exc)
         else:
             error_detail = _("Error details can be found in the admin panel")

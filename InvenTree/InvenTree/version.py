@@ -1,8 +1,9 @@
-"""
-Version information for InvenTree.
+"""Version information for InvenTree.
+
 Provides information on the current InvenTree version
 """
 
+import os
 import re
 import subprocess
 
@@ -12,16 +13,16 @@ import common.models
 from InvenTree.api_version import INVENTREE_API_VERSION
 
 # InvenTree software version
-INVENTREE_SW_VERSION = "0.7.0 dev"
+INVENTREE_SW_VERSION = "0.8.0 dev"
 
 
 def inventreeInstanceName():
-    """ Returns the InstanceName settings for the current database """
+    """Returns the InstanceName settings for the current database."""
     return common.models.InvenTreeSetting.get_setting("INVENTREE_INSTANCE", "")
 
 
 def inventreeInstanceTitle():
-    """ Returns the InstanceTitle for the current database """
+    """Returns the InstanceTitle for the current database."""
     if common.models.InvenTreeSetting.get_setting("INVENTREE_INSTANCE_TITLE", False):
         return common.models.InvenTreeSetting.get_setting("INVENTREE_INSTANCE", "")
     else:
@@ -29,13 +30,12 @@ def inventreeInstanceTitle():
 
 
 def inventreeVersion():
-    """ Returns the InvenTree version string """
+    """Returns the InvenTree version string."""
     return INVENTREE_SW_VERSION.lower().strip()
 
 
 def inventreeVersionTuple(version=None):
-    """ Return the InvenTree version string as (maj, min, sub) tuple """
-
+    """Return the InvenTree version string as (maj, min, sub) tuple."""
     if version is None:
         version = INVENTREE_SW_VERSION
 
@@ -45,21 +45,16 @@ def inventreeVersionTuple(version=None):
 
 
 def isInvenTreeDevelopmentVersion():
-    """
-    Return True if current InvenTree version is a "development" version
-    """
+    """Return True if current InvenTree version is a "development" version."""
     return inventreeVersion().endswith('dev')
 
 
 def inventreeDocsVersion():
-    """
-    Return the version string matching the latest documentation.
+    """Return the version string matching the latest documentation.
 
     Development -> "latest"
     Release -> "major.minor.sub" e.g. "0.5.2"
-
     """
-
     if isInvenTreeDevelopmentVersion():
         return "latest"
     else:
@@ -67,13 +62,10 @@ def inventreeDocsVersion():
 
 
 def isInvenTreeUpToDate():
-    """
-    Test if the InvenTree instance is "up to date" with the latest version.
+    """Test if the InvenTree instance is "up to date" with the latest version.
 
-    A background task periodically queries GitHub for latest version,
-    and stores it to the database as INVENTREE_LATEST_VERSION
+    A background task periodically queries GitHub for latest version, and stores it to the database as INVENTREE_LATEST_VERSION
     """
-
     latest = common.models.InvenTreeSetting.get_setting('INVENTREE_LATEST_VERSION', backup_value=None, create=False)
 
     # No record for "latest" version - we must assume we are up to date!
@@ -88,16 +80,22 @@ def isInvenTreeUpToDate():
 
 
 def inventreeApiVersion():
+    """Returns current API version of InvenTree."""
     return INVENTREE_API_VERSION
 
 
 def inventreeDjangoVersion():
-    """ Return the version of Django library """
+    """Returns the version of Django library."""
     return django.get_version()
 
 
 def inventreeCommitHash():
-    """ Returns the git commit hash for the running codebase """
+    """Returns the git commit hash for the running codebase."""
+    # First look in the environment variables, i.e. if running in docker
+    commit_hash = os.environ.get('INVENTREE_COMMIT_HASH', '')
+
+    if commit_hash:
+        return commit_hash
 
     try:
         return str(subprocess.check_output('git rev-parse --short HEAD'.split()), 'utf-8').strip()
@@ -106,7 +104,12 @@ def inventreeCommitHash():
 
 
 def inventreeCommitDate():
-    """ Returns the git commit date for the running codebase """
+    """Returns the git commit date for the running codebase."""
+    # First look in the environment variables, e.g. if running in docker
+    commit_date = os.environ.get('INVENTREE_COMMIT_DATE', '')
+
+    if commit_date:
+        return commit_date.split(' ')[0]
 
     try:
         d = str(subprocess.check_output('git show -s --format=%ci'.split()), 'utf-8').strip()

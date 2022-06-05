@@ -1,6 +1,4 @@
-"""
-Sample plugin which renders custom panels on certain pages
-"""
+"""Sample plugin which renders custom panels on certain pages."""
 
 from part.views import PartDetail
 from plugin import InvenTreePlugin
@@ -9,9 +7,7 @@ from stock.views import StockLocationDetail
 
 
 class CustomPanelSample(PanelMixin, SettingsMixin, InvenTreePlugin):
-    """
-    A sample plugin which renders some custom panels.
-    """
+    """A sample plugin which renders some custom panels."""
 
     NAME = "CustomPanelExample"
     SLUG = "samplepanel"
@@ -35,7 +31,7 @@ class CustomPanelSample(PanelMixin, SettingsMixin, InvenTreePlugin):
     }
 
     def get_panel_context(self, view, request, context):
-
+        """Returns enriched context."""
         ctx = super().get_panel_context(view, request, context)
 
         # If we are looking at a StockLocationDetail view, add location context object
@@ -45,16 +41,13 @@ class CustomPanelSample(PanelMixin, SettingsMixin, InvenTreePlugin):
         return ctx
 
     def get_custom_panels(self, view, request):
-
-        """
-        You can decide at run-time which custom panels you want to display!
+        """You can decide at run-time which custom panels you want to display!
 
         - Display on every page
         - Only on a single page or set of pages
         - Only for a specific instance (e.g. part)
         - Based on the user viewing the page!
         """
-
         panels = [
             {
                 # Simple panel without any actual content

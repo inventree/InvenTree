@@ -1,5 +1,4 @@
-"""
-Django settings for InvenTree project.
+"""Django settings for InvenTree project.
 
 In practice the settings in this file should not be adjusted,
 instead settings can be configured in the config.yaml file
@@ -8,7 +7,6 @@ located in the top level project directory.
 This allows implementation configuration to be hidden from source control,
 as well as separate configuration parameters from the more complex
 database setup in this file.
-
 """
 
 import logging

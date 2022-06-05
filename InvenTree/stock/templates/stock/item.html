@@ -17,11 +17,6 @@
             <h4>{% trans "Stock Tracking Information" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                {% if user_owns_item and roles.stock.change and not item.is_building %}
-                <button class='btn btn-success' type='button' title='New tracking entry' id='new-entry'>
-                    <span class='fas fa-plus-circle'></span> {% trans "New Entry" %}
-                </button>
-                {% endif %}
             </div>
         </div>
     </div>
@@ -314,15 +309,6 @@
         url: "{% url 'api-stock-list' %}",
     });
     {% endif %}
-
-    $("#new-entry").click(function() {
-        launchModalForm(
-            "{% url 'stock-tracking-create' item.id %}",
-            {
-                reload: true,
-            }
-        );
-    });
 
     loadStockTrackingTable($("#track-table"), {
         params: {

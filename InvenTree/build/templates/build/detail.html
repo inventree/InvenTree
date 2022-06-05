@@ -355,8 +355,9 @@ onPanelLoad('completed', function() {
 
 onPanelLoad('children', function() {
     loadBuildTable($('#sub-build-table'), {
-        url: '{% url "api-build-list" %}',
+        locale: '{{ request.LANGUAGE_CODE }}',
         filterTarget: "#filter-list-sub-build",
+        parentBuild: {{ build.pk }},
         params: {
             ancestor: {{ build.pk }},
         }
@@ -374,7 +375,7 @@ onPanelLoad('attachments', function() {
             },
             label: 'attachment',
             success: function(data, status, xhr) {
-                location.reload();
+                $('#attachment-table').bootstrapTable('refresh');
             }
         }
     );

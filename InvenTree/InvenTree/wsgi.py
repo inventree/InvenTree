@@ -1,5 +1,4 @@
-"""
-WSGI config for InvenTree project.
+"""WSGI config for InvenTree project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 

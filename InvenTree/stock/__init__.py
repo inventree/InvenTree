@@ -1,5 +1,4 @@
-"""
-The Stock module is responsible for Stock management.
+"""The Stock module is responsible for Stock management.
 
 It includes models for:
 

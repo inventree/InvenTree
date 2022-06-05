@@ -1,6 +1,4 @@
-"""
-JSON API for the Order app
-"""
+"""JSON API for the Order app."""
 
 from django.db.models import F, Q
 from django.urls import include, path, re_path
@@ -24,11 +22,10 @@ from users.models import Owner
 
 
 class GeneralExtraLineList:
-    """
-    General template for ExtraLine API classes
-    """
+    """General template for ExtraLine API classes."""
 
     def get_serializer(self, *args, **kwargs):
+        """Return the serializer instance for this endpoint"""
         try:
             params = self.request.query_params
 
@@ -41,7 +38,7 @@ class GeneralExtraLineList:
         return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
-
+        """Return the annotated queryset for this endpoint"""
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = queryset.prefetch_related(
@@ -76,17 +73,12 @@ class GeneralExtraLineList:
 
 
 class PurchaseOrderFilter(rest_filters.FilterSet):
-    """
-    Custom API filters for the PurchaseOrderList endpoint
-    """
+    """Custom API filters for the PurchaseOrderList endpoint."""
 
     assigned_to_me = rest_filters.BooleanFilter(label='assigned_to_me', method='filter_assigned_to_me')
 
     def filter_assigned_to_me(self, queryset, name, value):
-        """
-        Filter by orders which are assigned to the current user
-        """
-
+        """Filter by orders which are assigned to the current user."""
         value = str2bool(value)
 
         # Work out who "me" is!
@@ -100,6 +92,8 @@ class PurchaseOrderFilter(rest_filters.FilterSet):
         return queryset
 
     class Meta:
+        """Metaclass options."""
+
         model = models.PurchaseOrder
         fields = [
             'supplier',
@@ -107,7 +101,7 @@ class PurchaseOrderFilter(rest_filters.FilterSet):
 
 
 class PurchaseOrderList(APIDownloadMixin, generics.ListCreateAPIView):
-    """ API endpoint for accessing a list of PurchaseOrder objects
+    """API endpoint for accessing a list of PurchaseOrder objects.
 
     - GET: Return list of PurchaseOrder objects (with filters)
     - POST: Create a new PurchaseOrder object
@@ -118,9 +112,7 @@ class PurchaseOrderList(APIDownloadMixin, generics.ListCreateAPIView):
     filterset_class = PurchaseOrderFilter
 
     def create(self, request, *args, **kwargs):
-        """
-        Save user information on create
-        """
+        """Save user information on create."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -132,7 +124,7 @@ class PurchaseOrderList(APIDownloadMixin, generics.ListCreateAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def get_serializer(self, *args, **kwargs):
-
+        """Return the serializer instance for this endpoint"""
         try:
             kwargs['supplier_detail'] = str2bool(self.request.query_params.get('supplier_detail', False))
         except AttributeError:
@@ -144,7 +136,7 @@ class PurchaseOrderList(APIDownloadMixin, generics.ListCreateAPIView):
         return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
-
+        """Return the annotated queryset for this endpoint"""
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = queryset.prefetch_related(
@@ -157,6 +149,8 @@ class PurchaseOrderList(APIDownloadMixin, generics.ListCreateAPIView):
         return queryset
 
     def download_queryset(self, queryset, export_format):
+        """Download the filtered queryset as a file"""
+
         dataset = PurchaseOrderResource().export(queryset=queryset)
 
         filedata = dataset.export(export_format)
@@ -166,7 +160,7 @@ class PurchaseOrderList(APIDownloadMixin, generics.ListCreateAPIView):
         return DownloadFile(filedata, filename)
 
     def filter_queryset(self, queryset):
-
+        """Custom queryset filtering"""
         # Perform basic filtering
         queryset = super().filter_queryset(queryset)
 
@@ -260,13 +254,13 @@ class PurchaseOrderList(APIDownloadMixin, generics.ListCreateAPIView):
 
 
 class PurchaseOrderDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ API endpoint for detail view of a PurchaseOrder object """
+    """API endpoint for detail view of a PurchaseOrder object."""
 
     queryset = models.PurchaseOrder.objects.all()
     serializer_class = serializers.PurchaseOrderSerializer
 
     def get_serializer(self, *args, **kwargs):
-
+        """Return serializer instance for this endpoint"""
         try:
             kwargs['supplier_detail'] = str2bool(self.request.query_params.get('supplier_detail', False))
         except AttributeError:
@@ -278,7 +272,7 @@ class PurchaseOrderDetail(generics.RetrieveUpdateDestroyAPIView):
         return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
-
+        """Return annotated queryset for this endpoint"""
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = queryset.prefetch_related(
@@ -292,11 +286,10 @@ class PurchaseOrderDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class PurchaseOrderContextMixin:
-    """ Mixin to add purchase order object as serializer context variable """
+    """Mixin to add purchase order object as serializer context variable."""
 
     def get_serializer_context(self):
-        """ Add the PurchaseOrder object to the serializer context """
-
+        """Add the PurchaseOrder object to the serializer context."""
         context = super().get_serializer_context()
 
         # Pass the purchase order through to the serializer for validation
@@ -311,8 +304,7 @@ class PurchaseOrderContextMixin:
 
 
 class PurchaseOrderCancel(PurchaseOrderContextMixin, generics.CreateAPIView):
-    """
-    API endpoint to 'cancel' a purchase order.
+    """API endpoint to 'cancel' a purchase order.
 
     The purchase order must be in a state which can be cancelled
     """
@@ -323,9 +315,7 @@ class PurchaseOrderCancel(PurchaseOrderContextMixin, generics.CreateAPIView):
 
 
 class PurchaseOrderComplete(PurchaseOrderContextMixin, generics.CreateAPIView):
-    """
-    API endpoint to 'complete' a purchase order
-    """
+    """API endpoint to 'complete' a purchase order."""
 
     queryset = models.PurchaseOrder.objects.all()
 
@@ -333,9 +323,7 @@ class PurchaseOrderComplete(PurchaseOrderContextMixin, generics.CreateAPIView):
 
 
 class PurchaseOrderIssue(PurchaseOrderContextMixin, generics.CreateAPIView):
-    """
-    API endpoint to 'complete' a purchase order
-    """
+    """API endpoint to 'complete' a purchase order."""
 
     queryset = models.PurchaseOrder.objects.all()
 
@@ -343,17 +331,17 @@ class PurchaseOrderIssue(PurchaseOrderContextMixin, generics.CreateAPIView):
 
 
 class PurchaseOrderMetadata(generics.RetrieveUpdateAPIView):
-    """API endpoint for viewing / updating PurchaseOrder metadata"""
+    """API endpoint for viewing / updating PurchaseOrder metadata."""
 
     def get_serializer(self, *args, **kwargs):
+        """Return MetadataSerializer instance for a PurchaseOrder"""
         return MetadataSerializer(models.PurchaseOrder, *args, **kwargs)
 
     queryset = models.PurchaseOrder.objects.all()
 
 
 class PurchaseOrderReceive(PurchaseOrderContextMixin, generics.CreateAPIView):
-    """
-    API endpoint to receive stock items against a purchase order.
+    """API endpoint to receive stock items against a purchase order.
 
     - The purchase order is specified in the URL.
     - Items to receive are specified as a list called "items" with the following options:
@@ -370,11 +358,11 @@ class PurchaseOrderReceive(PurchaseOrderContextMixin, generics.CreateAPIView):
 
 
 class PurchaseOrderLineItemFilter(rest_filters.FilterSet):
-    """
-    Custom filters for the PurchaseOrderLineItemList endpoint
-    """
+    """Custom filters for the PurchaseOrderLineItemList endpoint."""
 
     class Meta:
+        """Metaclass options."""
+
         model = models.PurchaseOrderLineItem
         fields = [
             'order',
@@ -384,10 +372,7 @@ class PurchaseOrderLineItemFilter(rest_filters.FilterSet):
     pending = rest_filters.BooleanFilter(label='pending', method='filter_pending')
 
     def filter_pending(self, queryset, name, value):
-        """
-        Filter by "pending" status (order status = pending)
-        """
-
+        """Filter by "pending" status (order status = pending)"""
         value = str2bool(value)
 
         if value:
@@ -402,12 +387,10 @@ class PurchaseOrderLineItemFilter(rest_filters.FilterSet):
     received = rest_filters.BooleanFilter(label='received', method='filter_received')
 
     def filter_received(self, queryset, name, value):
-        """
-        Filter by lines which are "received" (or "not" received)
+        """Filter by lines which are "received" (or "not" received)
 
         A line is considered "received" when received >= quantity
         """
-
         value = str2bool(value)
 
         q = Q(received__gte=F('quantity'))
@@ -422,7 +405,7 @@ class PurchaseOrderLineItemFilter(rest_filters.FilterSet):
 
 
 class PurchaseOrderLineItemList(APIDownloadMixin, generics.ListCreateAPIView):
-    """ API endpoint for accessing a list of PurchaseOrderLineItem objects
+    """API endpoint for accessing a list of PurchaseOrderLineItem objects.
 
     - GET: Return a list of PurchaseOrder Line Item objects
     - POST: Create a new PurchaseOrderLineItem object
@@ -433,7 +416,7 @@ class PurchaseOrderLineItemList(APIDownloadMixin, generics.ListCreateAPIView):
     filterset_class = PurchaseOrderLineItemFilter
 
     def get_queryset(self, *args, **kwargs):
-
+        """Return annotated queryset for this endpoint"""
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = serializers.PurchaseOrderLineItemSerializer.annotate_queryset(queryset)
@@ -441,7 +424,7 @@ class PurchaseOrderLineItemList(APIDownloadMixin, generics.ListCreateAPIView):
         return queryset
 
     def get_serializer(self, *args, **kwargs):
-
+        """Return serializer instance for this endpoint"""
         try:
             kwargs['part_detail'] = str2bool(self.request.query_params.get('part_detail', False))
             kwargs['order_detail'] = str2bool(self.request.query_params.get('order_detail', False))
@@ -453,10 +436,7 @@ class PurchaseOrderLineItemList(APIDownloadMixin, generics.ListCreateAPIView):
         return self.serializer_class(*args, **kwargs)
 
     def filter_queryset(self, queryset):
-        """
-        Additional filtering options
-        """
-
+        """Additional filtering options."""
         params = self.request.query_params
 
         queryset = super().filter_queryset(queryset)
@@ -475,6 +455,8 @@ class PurchaseOrderLineItemList(APIDownloadMixin, generics.ListCreateAPIView):
         return queryset
 
     def download_queryset(self, queryset, export_format):
+        """Download the requested queryset as a file"""
+
         dataset = PurchaseOrderLineItemResource().export(queryset=queryset)
 
         filedata = dataset.export(export_format)
@@ -482,19 +464,6 @@ class PurchaseOrderLineItemList(APIDownloadMixin, generics.ListCreateAPIView):
         filename = f"InvenTree_PurchaseOrderItems.{export_format}"
 
         return DownloadFile(filedata, filename)
-
-    def list(self, request, *args, **kwargs):
-
-        queryset = self.filter_queryset(self.get_queryset())
-
-        page = self.paginate_queryset(queryset)
-
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
 
     filter_backends = [
         rest_filters.DjangoFilterBackend,
@@ -530,15 +499,13 @@ class PurchaseOrderLineItemList(APIDownloadMixin, generics.ListCreateAPIView):
 
 
 class PurchaseOrderLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Detail API endpoint for PurchaseOrderLineItem object
-    """
+    """Detail API endpoint for PurchaseOrderLineItem object."""
 
     queryset = models.PurchaseOrderLineItem.objects.all()
     serializer_class = serializers.PurchaseOrderLineItemSerializer
 
     def get_queryset(self):
-
+        """Return annotated queryset for this endpoint"""
         queryset = super().get_queryset()
 
         queryset = serializers.PurchaseOrderLineItemSerializer.annotate_queryset(queryset)
@@ -547,25 +514,21 @@ class PurchaseOrderLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class PurchaseOrderExtraLineList(GeneralExtraLineList, generics.ListCreateAPIView):
-    """
-    API endpoint for accessing a list of PurchaseOrderExtraLine objects.
-    """
+    """API endpoint for accessing a list of PurchaseOrderExtraLine objects."""
 
     queryset = models.PurchaseOrderExtraLine.objects.all()
     serializer_class = serializers.PurchaseOrderExtraLineSerializer
 
 
 class PurchaseOrderExtraLineDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ API endpoint for detail view of a PurchaseOrderExtraLine object """
+    """API endpoint for detail view of a PurchaseOrderExtraLine object."""
 
     queryset = models.PurchaseOrderExtraLine.objects.all()
     serializer_class = serializers.PurchaseOrderExtraLineSerializer
 
 
 class SalesOrderAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
-    """
-    API endpoint for listing (and creating) a SalesOrderAttachment (file upload)
-    """
+    """API endpoint for listing (and creating) a SalesOrderAttachment (file upload)"""
 
     queryset = models.SalesOrderAttachment.objects.all()
     serializer_class = serializers.SalesOrderAttachmentSerializer
@@ -580,17 +543,14 @@ class SalesOrderAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
 
 
 class SalesOrderAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):
-    """
-    Detail endpoint for SalesOrderAttachment
-    """
+    """Detail endpoint for SalesOrderAttachment."""
 
     queryset = models.SalesOrderAttachment.objects.all()
     serializer_class = serializers.SalesOrderAttachmentSerializer
 
 
 class SalesOrderList(APIDownloadMixin, generics.ListCreateAPIView):
-    """
-    API endpoint for accessing a list of SalesOrder objects.
+    """API endpoint for accessing a list of SalesOrder objects.
 
     - GET: Return list of SalesOrder objects (with filters)
     - POST: Create a new SalesOrder
@@ -600,9 +560,7 @@ class SalesOrderList(APIDownloadMixin, generics.ListCreateAPIView):
     serializer_class = serializers.SalesOrderSerializer
 
     def create(self, request, *args, **kwargs):
-        """
-        Save user information on create
-        """
+        """Save user information on create."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -614,7 +572,7 @@ class SalesOrderList(APIDownloadMixin, generics.ListCreateAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def get_serializer(self, *args, **kwargs):
-
+        """Return serializer instance for this endpoint"""
         try:
             kwargs['customer_detail'] = str2bool(self.request.query_params.get('customer_detail', False))
         except AttributeError:
@@ -626,7 +584,7 @@ class SalesOrderList(APIDownloadMixin, generics.ListCreateAPIView):
         return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
-
+        """Return annotated queryset for this endpoint"""
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = queryset.prefetch_related(
@@ -639,6 +597,7 @@ class SalesOrderList(APIDownloadMixin, generics.ListCreateAPIView):
         return queryset
 
     def download_queryset(self, queryset, export_format):
+        """Download this queryset as a file"""
         dataset = SalesOrderResource().export(queryset=queryset)
 
         filedata = dataset.export(export_format)
@@ -648,10 +607,7 @@ class SalesOrderList(APIDownloadMixin, generics.ListCreateAPIView):
         return DownloadFile(filedata, filename)
 
     def filter_queryset(self, queryset):
-        """
-        Perform custom filtering operations on the SalesOrder queryset.
-        """
-
+        """Perform custom filtering operations on the SalesOrder queryset."""
         queryset = super().filter_queryset(queryset)
 
         params = self.request.query_params
@@ -739,15 +695,13 @@ class SalesOrderList(APIDownloadMixin, generics.ListCreateAPIView):
 
 
 class SalesOrderDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API endpoint for detail view of a SalesOrder object.
-    """
+    """API endpoint for detail view of a SalesOrder object."""
 
     queryset = models.SalesOrder.objects.all()
     serializer_class = serializers.SalesOrderSerializer
 
     def get_serializer(self, *args, **kwargs):
-
+        """Return the serializer instance for this endpoint"""
         try:
             kwargs['customer_detail'] = str2bool(self.request.query_params.get('customer_detail', False))
         except AttributeError:
@@ -758,7 +712,7 @@ class SalesOrderDetail(generics.RetrieveUpdateDestroyAPIView):
         return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
-
+        """Return the annotated queryset for this serializer"""
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = queryset.prefetch_related('customer', 'lines')
@@ -769,11 +723,11 @@ class SalesOrderDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class SalesOrderLineItemFilter(rest_filters.FilterSet):
-    """
-    Custom filters for SalesOrderLineItemList endpoint
-    """
+    """Custom filters for SalesOrderLineItemList endpoint."""
 
     class Meta:
+        """Metaclass options."""
+
         model = models.SalesOrderLineItem
         fields = [
             'order',
@@ -783,12 +737,10 @@ class SalesOrderLineItemFilter(rest_filters.FilterSet):
     completed = rest_filters.BooleanFilter(label='completed', method='filter_completed')
 
     def filter_completed(self, queryset, name, value):
-        """
-        Filter by lines which are "completed"
+        """Filter by lines which are "completed".
 
         A line is completed when shipped >= quantity
         """
-
         value = str2bool(value)
 
         q = Q(shipped__gte=F('quantity'))
@@ -802,16 +754,14 @@ class SalesOrderLineItemFilter(rest_filters.FilterSet):
 
 
 class SalesOrderLineItemList(generics.ListCreateAPIView):
-    """
-    API endpoint for accessing a list of SalesOrderLineItem objects.
-    """
+    """API endpoint for accessing a list of SalesOrderLineItem objects."""
 
     queryset = models.SalesOrderLineItem.objects.all()
     serializer_class = serializers.SalesOrderLineItemSerializer
     filterset_class = SalesOrderLineItemFilter
 
     def get_serializer(self, *args, **kwargs):
-
+        """Return serializer for this endpoint with extra data as requested"""
         try:
             params = self.request.query_params
 
@@ -826,7 +776,7 @@ class SalesOrderLineItemList(generics.ListCreateAPIView):
         return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
-
+        """Return annotated queryset for this endpoint"""
         queryset = super().get_queryset(*args, **kwargs)
 
         queryset = queryset.prefetch_related(
@@ -837,6 +787,8 @@ class SalesOrderLineItemList(generics.ListCreateAPIView):
             'order',
             'order__stock_items',
         )
+
+        queryset = serializers.SalesOrderLineItemSerializer.annotate_queryset(queryset)
 
         return queryset
 
@@ -866,33 +818,39 @@ class SalesOrderLineItemList(generics.ListCreateAPIView):
 
 
 class SalesOrderExtraLineList(GeneralExtraLineList, generics.ListCreateAPIView):
-    """
-    API endpoint for accessing a list of SalesOrderExtraLine objects.
-    """
+    """API endpoint for accessing a list of SalesOrderExtraLine objects."""
 
     queryset = models.SalesOrderExtraLine.objects.all()
     serializer_class = serializers.SalesOrderExtraLineSerializer
 
 
 class SalesOrderExtraLineDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ API endpoint for detail view of a SalesOrderExtraLine object """
+    """API endpoint for detail view of a SalesOrderExtraLine object."""
 
     queryset = models.SalesOrderExtraLine.objects.all()
     serializer_class = serializers.SalesOrderExtraLineSerializer
 
 
 class SalesOrderLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
-    """ API endpoint for detail view of a SalesOrderLineItem object """
+    """API endpoint for detail view of a SalesOrderLineItem object."""
 
     queryset = models.SalesOrderLineItem.objects.all()
     serializer_class = serializers.SalesOrderLineItemSerializer
 
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for this endpoint"""
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = serializers.SalesOrderLineItemSerializer.annotate_queryset(queryset)
+
+        return queryset
+
 
 class SalesOrderContextMixin:
-    """ Mixin to add sales order object as serializer context variable """
+    """Mixin to add sales order object as serializer context variable."""
 
     def get_serializer_context(self):
-
+        """Add the 'order' reference to the serializer context for any classes which inherit this mixin"""
         ctx = super().get_serializer_context()
 
         ctx['request'] = self.request
@@ -906,42 +864,38 @@ class SalesOrderContextMixin:
 
 
 class SalesOrderCancel(SalesOrderContextMixin, generics.CreateAPIView):
+    """API endpoint to cancel a SalesOrder"""
 
     queryset = models.SalesOrder.objects.all()
     serializer_class = serializers.SalesOrderCancelSerializer
 
 
 class SalesOrderComplete(SalesOrderContextMixin, generics.CreateAPIView):
-    """
-    API endpoint for manually marking a SalesOrder as "complete".
-    """
+    """API endpoint for manually marking a SalesOrder as "complete"."""
 
     queryset = models.SalesOrder.objects.all()
     serializer_class = serializers.SalesOrderCompleteSerializer
 
 
 class SalesOrderMetadata(generics.RetrieveUpdateAPIView):
-    """API endpoint for viewing / updating SalesOrder metadata"""
+    """API endpoint for viewing / updating SalesOrder metadata."""
 
     def get_serializer(self, *args, **kwargs):
+        """Return a metadata serializer for the SalesOrder model"""
         return MetadataSerializer(models.SalesOrder, *args, **kwargs)
 
     queryset = models.SalesOrder.objects.all()
 
 
 class SalesOrderAllocateSerials(SalesOrderContextMixin, generics.CreateAPIView):
-    """
-    API endpoint to allocation stock items against a SalesOrder,
-    by specifying serial numbers.
-    """
+    """API endpoint to allocation stock items against a SalesOrder, by specifying serial numbers."""
 
     queryset = models.SalesOrder.objects.none()
     serializer_class = serializers.SalesOrderSerialAllocationSerializer
 
 
 class SalesOrderAllocate(SalesOrderContextMixin, generics.CreateAPIView):
-    """
-    API endpoint to allocate stock items against a SalesOrder
+    """API endpoint to allocate stock items against a SalesOrder.
 
     - The SalesOrder is specified in the URL
     - See the SalesOrderShipmentAllocationSerializer class
@@ -952,24 +906,23 @@ class SalesOrderAllocate(SalesOrderContextMixin, generics.CreateAPIView):
 
 
 class SalesOrderAllocationDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API endpoint for detali view of a SalesOrderAllocation object
-    """
+    """API endpoint for detali view of a SalesOrderAllocation object."""
 
     queryset = models.SalesOrderAllocation.objects.all()
     serializer_class = serializers.SalesOrderAllocationSerializer
 
 
 class SalesOrderAllocationList(generics.ListAPIView):
-    """
-    API endpoint for listing SalesOrderAllocation objects
-    """
+    """API endpoint for listing SalesOrderAllocation objects."""
 
     queryset = models.SalesOrderAllocation.objects.all()
     serializer_class = serializers.SalesOrderAllocationSerializer
 
     def get_serializer(self, *args, **kwargs):
+        """Return the serializer instance for this endpoint.
 
+        Adds extra detail serializers if requested
+        """
         try:
             params = self.request.query_params
 
@@ -984,7 +937,7 @@ class SalesOrderAllocationList(generics.ListAPIView):
         return self.serializer_class(*args, **kwargs)
 
     def filter_queryset(self, queryset):
-
+        """Custom queryset filtering"""
         queryset = super().filter_queryset(queryset)
 
         # Filter by order
@@ -1039,14 +992,12 @@ class SalesOrderAllocationList(generics.ListAPIView):
 
 
 class SalesOrderShipmentFilter(rest_filters.FilterSet):
-    """
-    Custom filterset for the SalesOrderShipmentList endpoint
-    """
+    """Custom filterset for the SalesOrderShipmentList endpoint."""
 
     shipped = rest_filters.BooleanFilter(label='shipped', method='filter_shipped')
 
     def filter_shipped(self, queryset, name, value):
-
+        """Filter SalesOrder list by 'shipped' status (boolean)"""
         value = str2bool(value)
 
         if value:
@@ -1057,6 +1008,8 @@ class SalesOrderShipmentFilter(rest_filters.FilterSet):
         return queryset
 
     class Meta:
+        """Metaclass options."""
+
         model = models.SalesOrderShipment
         fields = [
             'order',
@@ -1064,9 +1017,7 @@ class SalesOrderShipmentFilter(rest_filters.FilterSet):
 
 
 class SalesOrderShipmentList(generics.ListCreateAPIView):
-    """
-    API list endpoint for SalesOrderShipment model
-    """
+    """API list endpoint for SalesOrderShipment model."""
 
     queryset = models.SalesOrderShipment.objects.all()
     serializer_class = serializers.SalesOrderShipmentSerializer
@@ -1078,27 +1029,20 @@ class SalesOrderShipmentList(generics.ListCreateAPIView):
 
 
 class SalesOrderShipmentDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API detail endpooint for SalesOrderShipment model
-    """
+    """API detail endpooint for SalesOrderShipment model."""
 
     queryset = models.SalesOrderShipment.objects.all()
     serializer_class = serializers.SalesOrderShipmentSerializer
 
 
 class SalesOrderShipmentComplete(generics.CreateAPIView):
-    """
-    API endpoint for completing (shipping) a SalesOrderShipment
-    """
+    """API endpoint for completing (shipping) a SalesOrderShipment."""
 
     queryset = models.SalesOrderShipment.objects.all()
     serializer_class = serializers.SalesOrderShipmentCompleteSerializer
 
     def get_serializer_context(self):
-        """
-        Pass the request object to the serializer
-        """
-
+        """Pass the request object to the serializer."""
         ctx = super().get_serializer_context()
         ctx['request'] = self.request
 
@@ -1113,9 +1057,7 @@ class SalesOrderShipmentComplete(generics.CreateAPIView):
 
 
 class PurchaseOrderAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
-    """
-    API endpoint for listing (and creating) a PurchaseOrderAttachment (file upload)
-    """
+    """API endpoint for listing (and creating) a PurchaseOrderAttachment (file upload)"""
 
     queryset = models.PurchaseOrderAttachment.objects.all()
     serializer_class = serializers.PurchaseOrderAttachmentSerializer
@@ -1130,9 +1072,7 @@ class PurchaseOrderAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
 
 
 class PurchaseOrderAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):
-    """
-    Detail endpoint for a PurchaseOrderAttachment
-    """
+    """Detail endpoint for a PurchaseOrderAttachment."""
 
     queryset = models.PurchaseOrderAttachment.objects.all()
     serializer_class = serializers.PurchaseOrderAttachmentSerializer

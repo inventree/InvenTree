@@ -1,6 +1,6 @@
-"""
-Part database model definitions
-"""
+"""Part database model definitions."""
+
+from __future__ import annotations
 
 import decimal
 import hashlib
@@ -54,7 +54,7 @@ logger = logging.getLogger("inventree")
 
 
 class PartCategory(MetadataMixin, InvenTreeTree):
-    """ PartCategory provides hierarchical organization of Part objects.
+    """PartCategory provides hierarchical organization of Part objects.
 
     Attributes:
         name: Name of this category
@@ -64,11 +64,10 @@ class PartCategory(MetadataMixin, InvenTreeTree):
     """
 
     def delete(self, *args, **kwargs):
-        """
-        Custom model deletion routine, which updates any child categories or parts.
+        """Custom model deletion routine, which updates any child categories or parts.
+
         This must be handled within a transaction.atomic(), otherwise the tree structure is damaged
         """
-
         with transaction.atomic():
 
             parent = self.parent
@@ -104,24 +103,29 @@ class PartCategory(MetadataMixin, InvenTreeTree):
 
     @staticmethod
     def get_api_url():
+        """Return the API url associated with the PartCategory model"""
         return reverse('api-part-category-list')
 
     def get_absolute_url(self):
+        """Return the web URL associated with the detail view for this PartCategory instance"""
         return reverse('category-detail', kwargs={'pk': self.id})
 
     class Meta:
+        """Metaclass defines extra model properties"""
         verbose_name = _("Part Category")
         verbose_name_plural = _("Part Categories")
 
-    def get_parts(self, cascade=True):
-        """ Return a queryset for all parts under this category.
+    def get_parts(self, cascade=True) -> set[Part]:
+        """Return a queryset for all parts under this category.
 
-        args:
-            cascade - If True, also look under subcategories (default = True)
+        Args:
+            cascade (bool, optional): If True, also look under subcategories. Defaults to True.
+
+        Returns:
+            set[Part]: All matching parts
         """
-
         if cascade:
-            """ Select any parts which exist in this category or any child categories """
+            """Select any parts which exist in this category or any child categories."""
             queryset = Part.objects.filter(category__in=self.getUniqueChildren(include_self=True))
         else:
             queryset = Part.objects.filter(category=self.pk)
@@ -130,13 +134,11 @@ class PartCategory(MetadataMixin, InvenTreeTree):
 
     @property
     def item_count(self):
+        """Return the number of parts contained in this PartCategory"""
         return self.partcount()
 
     def partcount(self, cascade=True, active=False):
-        """ Return the total part count under this category
-        (including children of child categories)
-        """
-
+        """Return the total part count under this category (including children of child categories)."""
         query = self.get_parts(cascade=cascade)
 
         if active:
@@ -144,19 +146,12 @@ class PartCategory(MetadataMixin, InvenTreeTree):
 
         return query.count()
 
-    @property
-    def has_parts(self):
-        """ True if there are any parts in this category """
-        return self.partcount() > 0
-
     def prefetch_parts_parameters(self, cascade=True):
-        """ Prefectch parts parameters """
-
+        """Prefectch parts parameters."""
         return self.get_parts(cascade=cascade).prefetch_related('parameters', 'parameters__template').all()
 
     def get_unique_parameters(self, cascade=True, prefetch=None):
-        """ Get all unique parameter names for all parts from this category """
-
+        """Get all unique parameter names for all parts from this category."""
         unique_parameters_names = []
 
         if prefetch:
@@ -173,8 +168,7 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         return sorted(unique_parameters_names)
 
     def get_parts_parameters(self, cascade=True, prefetch=None):
-        """ Get all parameter names and values for all parts from this category """
-
+        """Get all parameter names and values for all parts from this category."""
         category_parameters = []
 
         if prefetch:
@@ -203,8 +197,7 @@ class PartCategory(MetadataMixin, InvenTreeTree):
 
     @classmethod
     def get_parent_categories(cls):
-        """ Return tuple list of parent (root) categories """
-
+        """Return tuple list of parent (root) categories."""
         # Get root nodes
         root_categories = cls.objects.filter(level=0)
 
@@ -215,17 +208,13 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         return parent_categories
 
     def get_parameter_templates(self):
-        """ Return parameter templates associated to category """
-
+        """Return parameter templates associated to category."""
         prefetch = PartCategoryParameterTemplate.objects.prefetch_related('category', 'parameter_template')
 
         return prefetch.filter(category=self.id)
 
     def get_subscribers(self, include_parents=True):
-        """
-        Return a list of users who subscribe to this PartCategory
-        """
-
+        """Return a list of users who subscribe to this PartCategory."""
         cats = self.get_ancestors(include_self=True)
 
         subscribers = set()
@@ -245,17 +234,11 @@ class PartCategory(MetadataMixin, InvenTreeTree):
         return [s for s in subscribers]
 
     def is_starred_by(self, user, **kwargs):
-        """
-        Returns True if the specified user subscribes to this category
-        """
-
+        """Returns True if the specified user subscribes to this category."""
         return user in self.get_subscribers(**kwargs)
 
     def set_starred(self, user, status):
-        """
-        Set the "subscription" status of this PartCategory against the specified user
-        """
-
+        """Set the "subscription" status of this PartCategory against the specified user."""
         if not user:
             return
 
@@ -277,7 +260,7 @@ class PartCategory(MetadataMixin, InvenTreeTree):
 
 
 def rename_part_image(instance, filename):
-    """ Function for renaming a part image file
+    """Function for renaming a part image file.
 
     Args:
         instance: Instance of a Part object
@@ -286,7 +269,6 @@ def rename_part_image(instance, filename):
     Returns:
         Cleaned filename in format part_<n>_img
     """
-
     base = 'part_images'
     fname = os.path.basename(filename)
 
@@ -294,15 +276,14 @@ def rename_part_image(instance, filename):
 
 
 class PartManager(TreeManager):
-    """
-    Defines a custom object manager for the Part model.
+    """Defines a custom object manager for the Part model.
 
     The main purpose of this manager is to reduce the number of database hits,
     as the Part model has a large number of ForeignKey fields!
     """
 
     def get_queryset(self):
-
+        """Perform default prefetch operations when accessing Part model from the database"""
         return super().get_queryset().prefetch_related(
             'category',
             'category__parent',
@@ -313,7 +294,7 @@ class PartManager(TreeManager):
 
 @cleanup.ignore
 class Part(MetadataMixin, MPTTModel):
-    """ The Part object represents an abstract part, the 'concept' of an actual entity.
+    """The Part object represents an abstract part, the 'concept' of an actual entity.
 
     An actual physical instance of a Part is a StockItem which is treated separately.
 
@@ -351,6 +332,7 @@ class Part(MetadataMixin, MPTTModel):
     objects = PartManager()
 
     class Meta:
+        """Metaclass defines extra model properties"""
         verbose_name = _("Part")
         verbose_name_plural = _("Parts")
         ordering = ['name', ]
@@ -359,19 +341,17 @@ class Part(MetadataMixin, MPTTModel):
         ]
 
     class MPTTMeta:
+        """MPTT metaclass definitions"""
         # For legacy reasons the 'variant_of' field is used to indicate the MPTT parent
         parent_attr = 'variant_of'
 
     @staticmethod
     def get_api_url():
-
+        """Return the list API endpoint URL associated with the Part model"""
         return reverse('api-part-list')
 
     def api_instance_filters(self):
-        """
-        Return API query filters for limiting field results against this instance
-        """
-
+        """Return API query filters for limiting field results against this instance."""
         return {
             'variant_of': {
                 'exclude_tree': self.pk,
@@ -379,10 +359,7 @@ class Part(MetadataMixin, MPTTModel):
         }
 
     def get_context_data(self, request, **kwargs):
-        """
-        Return some useful context data about this part for template rendering
-        """
-
+        """Return some useful context data about this part for template rendering."""
         context = {}
 
         context['disabled'] = not self.active
@@ -415,13 +392,11 @@ class Part(MetadataMixin, MPTTModel):
         return context
 
     def save(self, *args, **kwargs):
-        """
-        Overrides the save() function for the Part model.
-        If the part image has been updated,
-        then check if the "old" (previous) image is still used by another part.
+        """Overrides the save function for the Part model.
+
+        If the part image has been updated, then check if the "old" (previous) image is still used by another part.
         If not, it is considered "orphaned" and will be deleted.
         """
-
         # Get category templates settings
         add_category_templates = kwargs.pop('add_category_templates', False)
 
@@ -476,14 +451,14 @@ class Part(MetadataMixin, MPTTModel):
                                 pass
 
     def __str__(self):
+        """Return a string representation of the Part (for use in the admin interface)"""
         return f"{self.full_name} - {self.description}"
 
     def get_parts_in_bom(self, **kwargs):
-        """
-        Return a list of all parts in the BOM for this part.
+        """Return a list of all parts in the BOM for this part.
+
         Takes into account substitutes, variant parts, and inherited BOM items
         """
-
         parts = set()
 
         for bom_item in self.get_bom_items(**kwargs):
@@ -493,28 +468,23 @@ class Part(MetadataMixin, MPTTModel):
         return parts
 
     def check_if_part_in_bom(self, other_part, **kwargs):
-        """
-        Check if the other_part is in the BOM for *this* part.
+        """Check if the other_part is in the BOM for *this* part.
 
         Note:
             - Accounts for substitute parts
             - Accounts for variant BOMs
         """
-
         return other_part in self.get_parts_in_bom(**kwargs)
 
     def check_add_to_bom(self, parent, raise_error=False, recursive=True):
-        """
-        Check if this Part can be added to the BOM of another part.
+        """Check if this Part can be added to the BOM of another part.
 
         This will fail if:
 
         a) The parent part is the same as this one
         b) The parent part is used in the BOM for *this* part
         c) The parent part is used in the BOM for any child parts under this one
-
         """
-
         result = True
 
         try:
@@ -553,13 +523,10 @@ class Part(MetadataMixin, MPTTModel):
         return result
 
     def checkIfSerialNumberExists(self, sn, exclude_self=False):
-        """
-        Check if a serial number exists for this Part.
+        """Check if a serial number exists for this Part.
 
-        Note: Serial numbers must be unique across an entire Part "tree",
-        so here we filter by the entire tree.
+        Note: Serial numbers must be unique across an entire Part "tree", so here we filter by the entire tree.
         """
-
         parts = Part.objects.filter(tree_id=self.tree_id)
 
         stock = StockModels.StockItem.objects.filter(part__in=parts, serial=sn)
@@ -570,10 +537,7 @@ class Part(MetadataMixin, MPTTModel):
         return stock.exists()
 
     def find_conflicting_serial_numbers(self, serials):
-        """
-        For a provided list of serials, return a list of those which are conflicting.
-        """
-
+        """For a provided list of serials, return a list of those which are conflicting."""
         conflicts = []
 
         for serial in serials:
@@ -583,8 +547,7 @@ class Part(MetadataMixin, MPTTModel):
         return conflicts
 
     def getLatestSerialNumber(self):
-        """
-        Return the "latest" serial number for this Part.
+        """Return the "latest" serial number for this Part.
 
         If *all* the serial numbers are integers, then this will return the highest one.
         Otherwise, it will simply return the serial number most recently added.
@@ -592,7 +555,6 @@ class Part(MetadataMixin, MPTTModel):
         Note: Serial numbers must be unique across an entire Part "tree",
         so we filter by the entire tree.
         """
-
         parts = Part.objects.filter(tree_id=self.tree_id)
         stock = StockModels.StockItem.objects.filter(part__in=parts).exclude(serial=None)
 
@@ -617,11 +579,10 @@ class Part(MetadataMixin, MPTTModel):
         return None
 
     def getLatestSerialNumberInt(self):
-        """
-        Return the "latest" serial number for this Part as a integer.
+        """Return the "latest" serial number for this Part as a integer.
+
         If it is not an integer the result is 0
         """
-
         latest = self.getLatestSerialNumber()
 
         # No serial number = > 0
@@ -637,11 +598,7 @@ class Part(MetadataMixin, MPTTModel):
             return 0
 
     def getSerialNumberString(self, quantity=1):
-        """
-        Return a formatted string representing the next available serial numbers,
-        given a certain quantity of items.
-        """
-
+        """Return a formatted string representing the next available serial numbers, given a certain quantity of items."""
         latest = self.getLatestSerialNumber()
 
         quantity = int(quantity)
@@ -674,9 +631,9 @@ class Part(MetadataMixin, MPTTModel):
 
     @property
     def full_name(self):
-        """ Format a 'full name' for this Part based on the format PART_NAME_FORMAT defined in Inventree settings
+        """Format a 'full name' for this Part based on the format PART_NAME_FORMAT defined in Inventree settings.
 
-        As a failsafe option, the following is done
+        As a failsafe option, the following is done:
 
         - IPN (if not null)
         - Part name
@@ -684,7 +641,6 @@ class Part(MetadataMixin, MPTTModel):
 
         Elements are joined by the | character
         """
-
         full_name_pattern = InvenTreeSetting.get_setting('PART_NAME_FORMAT')
 
         try:
@@ -711,48 +667,34 @@ class Part(MetadataMixin, MPTTModel):
 
             return ' | '.join(elements)
 
-    def set_category(self, category):
-
-        # Ignore if the category is already the same
-        if self.category == category:
-            return
-
-        self.category = category
-        self.save()
-
     def get_absolute_url(self):
-        """ Return the web URL for viewing this part """
+        """Return the web URL for viewing this part."""
         return reverse('part-detail', kwargs={'pk': self.id})
 
     def get_image_url(self):
-        """ Return the URL of the image for this part """
-
+        """Return the URL of the image for this part."""
         if self.image:
             return helpers.getMediaUrl(self.image.url)
         else:
             return helpers.getBlankImage()
 
     def get_thumbnail_url(self):
-        """
-        Return the URL of the image thumbnail for this part
-        """
-
+        """Return the URL of the image thumbnail for this part."""
         if self.image:
             return helpers.getMediaUrl(self.image.thumbnail.url)
         else:
             return helpers.getBlankThumbnail()
 
     def validate_unique(self, exclude=None):
-        """ Validate that a part is 'unique'.
-        Uniqueness is checked across the following (case insensitive) fields:
+        """Validate that a part is 'unique'.
 
-        * Name
-        * IPN
-        * Revision
+        Uniqueness is checked across the following (case insensitive) fields:
+        - Name
+        - IPN
+        - Revision
 
         e.g. there can exist multiple parts with the same name, but only if
         they have a different revision or internal part number.
-
         """
         super().validate_unique(exclude)
 
@@ -770,15 +712,13 @@ class Part(MetadataMixin, MPTTModel):
                 })
 
     def clean(self):
-        """
-        Perform cleaning operations for the Part model
+        """Perform cleaning operations for the Part model.
 
         Update trackable status:
             If this part is trackable, and it is used in the BOM
             for a parent part which is *not* trackable,
             then we will force the parent part to be trackable.
         """
-
         super().clean()
 
         # Strip IPN field
@@ -875,13 +815,12 @@ class Part(MetadataMixin, MPTTModel):
     )
 
     def get_default_location(self):
-        """ Get the default location for a Part (may be None).
+        """Get the default location for a Part (may be None).
 
         If the Part does not specify a default location,
         look at the Category this part is in.
         The PartCategory object may also specify a default stock location
         """
-
         if self.default_location:
             return self.default_location
         elif self.category:
@@ -896,13 +835,12 @@ class Part(MetadataMixin, MPTTModel):
         return None
 
     def get_default_supplier(self):
-        """ Get the default supplier part for this part (may be None).
+        """Get the default supplier part for this part (may be None).
 
         - If the part specifies a default_supplier, return that
         - If there is only one supplier part available, return that
         - Else, return None
         """
-
         if self.default_supplier:
             return self.default_supplier
 
@@ -998,8 +936,7 @@ class Part(MetadataMixin, MPTTModel):
     responsible = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('Responsible'), related_name='parts_responible')
 
     def format_barcode(self, **kwargs):
-        """ Return a JSON string for formatting a barcode for this Part object """
-
+        """Return a JSON string for formatting a barcode for this Part object."""
         return helpers.MakeBarcode(
             "part",
             self.id,
@@ -1012,28 +949,24 @@ class Part(MetadataMixin, MPTTModel):
 
     @property
     def category_path(self):
+        """Return the category path of this Part instance"""
         if self.category:
             return self.category.pathstring
         return ''
 
     @property
     def available_stock(self):
-        """
-        Return the total available stock.
+        """Return the total available stock.
 
         - This subtracts stock which is already allocated to builds
         """
-
         total = self.total_stock
         total -= self.allocation_count()
 
         return max(total, 0)
 
     def requiring_build_orders(self):
-        """
-        Return list of outstanding build orders which require this part
-        """
-
+        """Return list of outstanding build orders which require this part."""
         # List parts that this part is required for
         parts = self.get_used_in().all()
 
@@ -1048,10 +981,7 @@ class Part(MetadataMixin, MPTTModel):
         return builds
 
     def required_build_order_quantity(self):
-        """
-        Return the quantity of this part required for active build orders
-        """
-
+        """Return the quantity of this part required for active build orders."""
         # List active build orders which reference this part
         builds = self.requiring_build_orders()
 
@@ -1074,10 +1004,7 @@ class Part(MetadataMixin, MPTTModel):
         return quantity
 
     def requiring_sales_orders(self):
-        """
-        Return a list of sales orders which require this part
-        """
-
+        """Return a list of sales orders which require this part."""
         orders = set()
 
         # Get a list of line items for open orders which match this part
@@ -1092,10 +1019,7 @@ class Part(MetadataMixin, MPTTModel):
         return orders
 
     def required_sales_order_quantity(self):
-        """
-        Return the quantity of this part required for active sales orders
-        """
-
+        """Return the quantity of this part required for active sales orders."""
         # Get a list of line items for open orders which match this part
         open_lines = OrderModels.SalesOrderLineItem.objects.filter(
             order__status__in=SalesOrderStatus.OPEN,
@@ -1112,16 +1036,12 @@ class Part(MetadataMixin, MPTTModel):
         return quantity
 
     def required_order_quantity(self):
-        """
-        Return total required to fulfil orders
-        """
-
+        """Return total required to fulfil orders."""
         return self.required_build_order_quantity() + self.required_sales_order_quantity()
 
     @property
     def quantity_to_order(self):
-        """
-        Return the quantity needing to be ordered for this part.
+        """Return the quantity needing to be ordered for this part.
 
         Here, an "order" could be one of:
         - Build Order
@@ -1133,9 +1053,7 @@ class Part(MetadataMixin, MPTTModel):
         Required for orders = self.required_order_quantity()
         Currently on order = self.on_order
         Currently building = self.quantity_being_built
-
         """
-
         # Total requirement
         required = self.required_order_quantity()
 
@@ -1152,20 +1070,19 @@ class Part(MetadataMixin, MPTTModel):
 
     @property
     def net_stock(self):
-        """ Return the 'net' stock. It takes into account:
+        """Return the 'net' stock.
 
+        It takes into account:
         - Stock on hand (total_stock)
         - Stock on order (on_order)
         - Stock allocated (allocation_count)
 
         This number (unlike 'available_stock') can be negative.
         """
-
         return self.total_stock - self.allocation_count() + self.on_order
 
     def get_subscribers(self, include_variants=True, include_categories=True):
-        """
-        Return a list of users who are 'subscribed' to this part.
+        """Return a list of users who are 'subscribed' to this part.
 
         A user may 'subscribe' to this part in the following ways:
 
@@ -1173,9 +1090,7 @@ class Part(MetadataMixin, MPTTModel):
         b) Subscribing to a template part "above" this part (if it is a variant)
         c) Subscribing to the part category that this part belongs to
         d) Subscribing to a parent category of the category in c)
-
         """
-
         subscribers = set()
 
         # Start by looking at direct subscriptions to a Part model
@@ -1199,17 +1114,11 @@ class Part(MetadataMixin, MPTTModel):
         return [s for s in subscribers]
 
     def is_starred_by(self, user, **kwargs):
-        """
-        Return True if the specified user subscribes to this part
-        """
-
+        """Return True if the specified user subscribes to this part."""
         return user in self.get_subscribers(**kwargs)
 
     def set_starred(self, user, status):
-        """
-        Set the "subscription" status of this Part against the specified user
-        """
-
+        """Set the "subscription" status of this Part against the specified user."""
         if not user:
             return
 
@@ -1224,21 +1133,9 @@ class Part(MetadataMixin, MPTTModel):
             # if the user is subscribed to a parent part or category
             PartStar.objects.filter(part=self, user=user).delete()
 
-    def need_to_restock(self):
-        """ Return True if this part needs to be restocked
-        (either by purchasing or building).
-
-        If the allocated_stock exceeds the total_stock,
-        then we need to restock.
-        """
-
-        return (self.total_stock + self.on_order - self.allocation_count) < self.minimum_stock
-
     @property
     def can_build(self):
-        """ Return the number of units that can be build with available stock
-        """
-
+        """Return the number of units that can be build with available stock."""
         # If this part does NOT have a BOM, result is simply the currently available stock
         if not self.has_bom:
             return 0
@@ -1268,28 +1165,19 @@ class Part(MetadataMixin, MPTTModel):
 
     @property
     def active_builds(self):
-        """ Return a list of outstanding builds.
+        """Return a list of outstanding builds.
+
         Builds marked as 'complete' or 'cancelled' are ignored
         """
-
         return self.builds.filter(status__in=BuildStatus.ACTIVE_CODES)
 
     @property
-    def inactive_builds(self):
-        """ Return a list of inactive builds
-        """
-
-        return self.builds.exclude(status__in=BuildStatus.ACTIVE_CODES)
-
-    @property
     def quantity_being_built(self):
-        """
-        Return the current number of parts currently being built.
+        """Return the current number of parts currently being built.
 
         Note: This is the total quantity of Build orders, *not* the number of build outputs.
               In this fashion, it is the "projected" quantity of builds
         """
-
         builds = self.active_builds
 
         quantity = 0
@@ -1301,10 +1189,7 @@ class Part(MetadataMixin, MPTTModel):
         return quantity
 
     def build_order_allocations(self, **kwargs):
-        """
-        Return all 'BuildItem' objects which allocate this part to Build objects
-        """
-
+        """Return all 'BuildItem' objects which allocate this part to Build objects."""
         include_variants = kwargs.get('include_variants', True)
 
         queryset = BuildModels.BuildItem.objects.all()
@@ -1320,10 +1205,7 @@ class Part(MetadataMixin, MPTTModel):
         return queryset
 
     def build_order_allocation_count(self, **kwargs):
-        """
-        Return the total amount of this part allocated to build orders
-        """
-
+        """Return the total amount of this part allocated to build orders."""
         query = self.build_order_allocations(**kwargs).aggregate(
             total=Coalesce(
                 Sum(
@@ -1338,10 +1220,7 @@ class Part(MetadataMixin, MPTTModel):
         return query['total']
 
     def sales_order_allocations(self, **kwargs):
-        """
-        Return all sales-order-allocation objects which allocate this part to a SalesOrder
-        """
-
+        """Return all sales-order-allocation objects which allocate this part to a SalesOrder."""
         include_variants = kwargs.get('include_variants', True)
 
         queryset = OrderModels.SalesOrderAllocation.objects.all()
@@ -1375,10 +1254,7 @@ class Part(MetadataMixin, MPTTModel):
         return queryset
 
     def sales_order_allocation_count(self, **kwargs):
-        """
-        Return the total quantity of this part allocated to sales orders
-        """
-
+        """Return the total quantity of this part allocated to sales orders."""
         query = self.sales_order_allocations(**kwargs).aggregate(
             total=Coalesce(
                 Sum(
@@ -1393,11 +1269,7 @@ class Part(MetadataMixin, MPTTModel):
         return query['total']
 
     def allocation_count(self, **kwargs):
-        """
-        Return the total quantity of stock allocated for this part,
-        against both build orders and sales orders.
-        """
-
+        """Return the total quantity of stock allocated for this part, against both build orders and sales orders."""
         return sum(
             [
                 self.build_order_allocation_count(**kwargs),
@@ -1406,14 +1278,13 @@ class Part(MetadataMixin, MPTTModel):
         )
 
     def stock_entries(self, include_variants=True, in_stock=None):
-        """ Return all stock entries for this Part.
+        """Return all stock entries for this Part.
 
         - If this is a template part, include variants underneath this.
 
         Note: To return all stock-entries for all part variants under this one,
         we need to be creative with the filtering.
         """
-
         if include_variants:
             query = StockModels.StockItem.objects.filter(part__in=self.get_descendants(include_self=True))
         else:
@@ -1427,10 +1298,7 @@ class Part(MetadataMixin, MPTTModel):
         return query
 
     def get_stock_count(self, include_variants=True):
-        """
-        Return the total "in stock" count for this part
-        """
-
+        """Return the total "in stock" count for this part."""
         entries = self.stock_entries(in_stock=True, include_variants=include_variants)
 
         query = entries.aggregate(t=Coalesce(Sum('quantity'), Decimal(0)))
@@ -1439,17 +1307,15 @@ class Part(MetadataMixin, MPTTModel):
 
     @property
     def total_stock(self):
-        """ Return the total stock quantity for this part.
+        """Return the total stock quantity for this part.
 
         - Part may be stored in multiple locations
         - If this part is a "template" (variants exist) then these are counted too
         """
-
         return self.get_stock_count(include_variants=True)
 
     def get_bom_item_filter(self, include_inherited=True):
-        """
-        Returns a query filter for all BOM items associated with this Part.
+        """Returns a query filter for all BOM items associated with this Part.
 
         There are some considerations:
 
@@ -1461,9 +1327,7 @@ class Part(MetadataMixin, MPTTModel):
         Note: This does *not* return a queryset, it returns a Q object,
               which can be used by some other query operation!
               Because we want to keep our code DRY!
-
         """
-
         bom_filter = Q(part=self)
 
         if include_inherited:
@@ -1486,25 +1350,21 @@ class Part(MetadataMixin, MPTTModel):
         return bom_filter
 
     def get_bom_items(self, include_inherited=True):
-        """
-        Return a queryset containing all BOM items for this part
+        """Return a queryset containing all BOM items for this part.
 
         By default, will include inherited BOM items
         """
-
         queryset = BomItem.objects.filter(self.get_bom_item_filter(include_inherited=include_inherited))
 
         return queryset.prefetch_related('sub_part')
 
-    def get_installed_part_options(self, include_inherited=True, include_variants=True):
-        """
-        Return a set of all Parts which can be "installed" into this part, based on the BOM.
+    def get_installed_part_options(self, include_inherited: bool = True, include_variants: bool = True):
+        """Return a set of all Parts which can be "installed" into this part, based on the BOM.
 
-        arguments:
-            include_inherited - If set, include BomItem entries defined for parent parts
-            include_variants - If set, include variant parts for BomItems which allow variants
+        Arguments:
+            include_inherited (bool): If set, include BomItem entries defined for parent parts
+            include_variants (bool): If set, include variant parts for BomItems which allow variants
         """
-
         parts = set()
 
         for bom_item in self.get_bom_items(include_inherited=include_inherited):
@@ -1518,8 +1378,7 @@ class Part(MetadataMixin, MPTTModel):
         return parts
 
     def get_used_in_filter(self, include_inherited=True):
-        """
-        Return a query filter for all parts that this part is used in.
+        """Return a query filter for all parts that this part is used in.
 
         There are some considerations:
 
@@ -1529,7 +1388,6 @@ class Part(MetadataMixin, MPTTModel):
         Note: This function returns a Q object, not an actual queryset.
               The Q object is used to filter against a list of Part objects
         """
-
         # This is pretty expensive - we need to traverse multiple variant lists!
         # TODO - In the future, could this be improved somehow?
 
@@ -1558,8 +1416,7 @@ class Part(MetadataMixin, MPTTModel):
         return Q(id__in=part_ids)
 
     def get_used_in(self, include_inherited=True):
-        """
-        Return a queryset containing all parts this part is used in.
+        """Return a queryset containing all parts this part is used in.
 
         Includes consideration of inherited BOMs
         """
@@ -1567,13 +1424,11 @@ class Part(MetadataMixin, MPTTModel):
 
     @property
     def has_bom(self):
+        """Return True if this Part instance has any BOM items"""
         return self.get_bom_items().count() > 0
 
     def get_trackable_parts(self):
-        """
-        Return a queryset of all trackable parts in the BOM for this part
-        """
-
+        """Return a queryset of all trackable parts in the BOM for this part."""
         queryset = self.get_bom_items()
         queryset = queryset.filter(sub_part__trackable=True)
 
@@ -1581,32 +1436,28 @@ class Part(MetadataMixin, MPTTModel):
 
     @property
     def has_trackable_parts(self):
-        """
-        Return True if any parts linked in the Bill of Materials are trackable.
+        """Return True if any parts linked in the Bill of Materials are trackable.
+
         This is important when building the part.
         """
-
         return self.get_trackable_parts().count() > 0
 
     @property
     def bom_count(self):
-        """ Return the number of items contained in the BOM for this part """
+        """Return the number of items contained in the BOM for this part."""
         return self.get_bom_items().count()
 
     @property
     def used_in_count(self):
-        """ Return the number of part BOMs that this part appears in """
+        """Return the number of part BOMs that this part appears in."""
         return self.get_used_in().count()
 
     def get_bom_hash(self):
-        """ Return a checksum hash for the BOM for this part.
+        """Return a checksum hash for the BOM for this part.
+
         Used to determine if the BOM has changed (and needs to be signed off!)
-
-        The hash is calculated by hashing each line item in the BOM.
-
-        returns a string representation of a hash object which can be compared with a stored value
+        The hash is calculated by hashing each line item in the BOM. Returns a string representation of a hash object which can be compared with a stored value
         """
-
         result_hash = hashlib.md5(str(self.id).encode())
 
         # List *all* BOM items (including inherited ones!)
@@ -1618,19 +1469,16 @@ class Part(MetadataMixin, MPTTModel):
         return str(result_hash.digest())
 
     def is_bom_valid(self):
-        """ Check if the BOM is 'valid' - if the calculated checksum matches the stored value
-        """
-
+        """Check if the BOM is 'valid' - if the calculated checksum matches the stored value."""
         return self.get_bom_hash() == self.bom_checksum or not self.has_bom
 
     @transaction.atomic
     def validate_bom(self, user):
-        """ Validate the BOM (mark the BOM as validated by the given User.
+        """Validate the BOM (mark the BOM as validated by the given User.
 
         - Calculates and stores the hash for the BOM
         - Saves the current date and the checking user
         """
-
         # Validate each line item, ignoring inherited ones
         bom_items = self.get_bom_items(include_inherited=False)
 
@@ -1645,23 +1493,19 @@ class Part(MetadataMixin, MPTTModel):
 
     @transaction.atomic
     def clear_bom(self):
-        """
-        Clear the BOM items for the part (delete all BOM lines).
+        """Clear the BOM items for the part (delete all BOM lines).
 
         Note: Does *NOT* delete inherited BOM items!
         """
-
         self.bom_items.all().delete()
 
     def getRequiredParts(self, recursive=False, parts=None):
-        """
-        Return a list of parts required to make this part (i.e. BOM items).
+        """Return a list of parts required to make this part (i.e. BOM items).
 
         Args:
             recursive: If True iterate down through sub-assemblies
             parts: Set of parts already found (to prevent recursion issues)
         """
-
         if parts is None:
             parts = set()
 
@@ -1680,40 +1524,19 @@ class Part(MetadataMixin, MPTTModel):
 
         return parts
 
-    def get_allowed_bom_items(self):
-        """
-        Return a list of parts which can be added to a BOM for this part.
-
-        - Exclude parts which are not 'component' parts
-        - Exclude parts which this part is in the BOM for
-        """
-
-        # Start with a list of all parts designated as 'sub components'
-        parts = Part.objects.filter(component=True)
-
-        # Exclude this part
-        parts = parts.exclude(id=self.id)
-
-        # Exclude any parts that this part is used *in* (to prevent recursive BOMs)
-        used_in = self.get_used_in().all()
-
-        parts = parts.exclude(id__in=[part.id for part in used_in])
-
-        return parts
-
     @property
     def supplier_count(self):
-        """ Return the number of supplier parts available for this part """
+        """Return the number of supplier parts available for this part."""
         return self.supplier_parts.count()
 
     @property
     def has_pricing_info(self, internal=False):
-        """ Return true if there is pricing information for this part """
+        """Return true if there is pricing information for this part."""
         return self.get_price_range(internal=internal) is not None
 
     @property
     def has_complete_bom_pricing(self):
-        """ Return true if there is pricing information for each item in the BOM. """
+        """Return true if there is pricing information for each item in the BOM."""
         use_internal = common.models.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
         for item in self.get_bom_items().all().select_related('sub_part'):
             if not item.sub_part.has_pricing_info(use_internal):
@@ -1722,7 +1545,7 @@ class Part(MetadataMixin, MPTTModel):
         return True
 
     def get_price_info(self, quantity=1, buy=True, bom=True, internal=False):
-        """ Return a simplified pricing string for this part
+        """Return a simplified pricing string for this part.
 
         Args:
             quantity: Number of units to calculate price for
@@ -1730,7 +1553,6 @@ class Part(MetadataMixin, MPTTModel):
             bom: Include BOM pricing (default = True)
             internal: Include internal pricing (default = False)
         """
-
         price_range = self.get_price_range(quantity, buy, bom, internal)
 
         if price_range is None:
@@ -1747,7 +1569,17 @@ class Part(MetadataMixin, MPTTModel):
         return "{a} - {b}".format(a=min_price, b=max_price)
 
     def get_supplier_price_range(self, quantity=1):
+        """Return the supplier price range of this part:
 
+        - Checks if there is any supplier pricing information associated with this Part
+        - Iterate through available supplier pricing and select (min, max)
+        - Returns tuple of (min, max)
+
+        Arguments:
+            quantity: Quantity at which to calculate price (default=1)
+
+        Returns: (min, max) tuple or (None, None) if no supplier pricing available
+        """
         min_price = None
         max_price = None
 
@@ -1773,13 +1605,12 @@ class Part(MetadataMixin, MPTTModel):
         return (min_price, max_price)
 
     def get_bom_price_range(self, quantity=1, internal=False, purchase=False):
-        """ Return the price range of the BOM for this part.
-        Adds the minimum price for all components in the BOM.
+        """Return the price range of the BOM for this part.
 
+        Adds the minimum price for all components in the BOM.
         Note: If the BOM contains items without pricing information,
         these items cannot be included in the BOM!
         """
-
         min_price = None
         max_price = None
 
@@ -1817,9 +1648,9 @@ class Part(MetadataMixin, MPTTModel):
         return (min_price, max_price)
 
     def get_price_range(self, quantity=1, buy=True, bom=True, internal=False, purchase=False):
+        """Return the price range for this part.
 
-        """ Return the price range for this part. This price can be either:
-
+        This price can be either:
         - Supplier price (if purchased from suppliers)
         - BOM price (if built from other parts)
         - Internal price (if set for the part)
@@ -1828,7 +1659,6 @@ class Part(MetadataMixin, MPTTModel):
         Returns:
             Minimum of the supplier, BOM, internal or purchase price. If no pricing available, returns None
         """
-
         # only get internal price if set and should be used
         if internal and self.has_internal_price_breaks:
             internal_price = self.get_internal_price(quantity)
@@ -1863,26 +1693,26 @@ class Part(MetadataMixin, MPTTModel):
 
     @property
     def has_price_breaks(self):
+        """Return True if this part has sale price breaks"""
         return self.price_breaks.count() > 0
 
     @property
     def price_breaks(self):
-        """ Return the associated price breaks in the correct order """
+        """Return the associated price breaks in the correct order."""
         return self.salepricebreaks.order_by('quantity').all()
 
     @property
     def unit_pricing(self):
+        """Returns the price of this Part at quantity=1"""
         return self.get_price(1)
 
     def add_price_break(self, quantity, price):
-        """
-        Create a new price break for this part
+        """Create a new price break for this part.
 
-        args:
-            quantity - Numerical quantity
-            price - Must be a Money object
+        Args:
+            quantity: Numerical quantity
+            price: Must be a Money object
         """
-
         # Check if a price break at that quantity already exists...
         if self.price_breaks.filter(quantity=quantity, part=self.pk).exists():
             return
@@ -1894,22 +1724,25 @@ class Part(MetadataMixin, MPTTModel):
         )
 
     def get_internal_price(self, quantity, moq=True, multiples=True, currency=None):
+        """Return the internal price of this Part at the specified quantity"""
         return common.models.get_price(self, quantity, moq, multiples, currency, break_name='internal_price_breaks')
 
     @property
     def has_internal_price_breaks(self):
+        """Return True if this Part has internal pricing information"""
         return self.internal_price_breaks.count() > 0
 
     @property
     def internal_price_breaks(self):
-        """ Return the associated price breaks in the correct order """
+        """Return the associated price breaks in the correct order."""
         return self.internalpricebreaks.order_by('quantity').all()
 
-    @property
-    def internal_unit_pricing(self):
-        return self.get_internal_price(1)
-
     def get_purchase_price(self, quantity):
+        """Calculate the purchase price for this part at the specified quantity
+
+        - Looks at available supplier pricing data
+        - Calculates the price base on the closest price point
+        """
         currency = currency_code_default()
         try:
             prices = [convert_money(item.purchase_price, currency).amount for item in self.stock_items.all() if item.purchase_price]
@@ -1923,14 +1756,12 @@ class Part(MetadataMixin, MPTTModel):
 
     @transaction.atomic
     def copy_bom_from(self, other, clear=True, **kwargs):
-        """
-        Copy the BOM from another part.
+        """Copy the BOM from another part.
 
-        args:
-            other - The part to copy the BOM from
-            clear - Remove existing BOM items first (default=True)
+        Args:
+            other: The part to copy the BOM from
+            clear (bool, optional): Remove existing BOM items first. Defaults to True.
         """
-
         # Ignore if the other part is actually this part?
         if other == self:
             return
@@ -1991,7 +1822,7 @@ class Part(MetadataMixin, MPTTModel):
 
     @transaction.atomic
     def copy_parameters_from(self, other, **kwargs):
-
+        """Copy all parameter values from another Part instance"""
         clear = kwargs.get('clear', True)
 
         if clear:
@@ -2015,16 +1846,15 @@ class Part(MetadataMixin, MPTTModel):
 
     @transaction.atomic
     def deep_copy(self, other, **kwargs):
-        """ Duplicates non-field data from another part.
-        Does not alter the normal fields of this part,
-        but can be used to copy other data linked by ForeignKey refernce.
+        """Duplicates non-field data from another part.
+
+        Does not alter the normal fields of this part, but can be used to copy other data linked by ForeignKey refernce.
 
         Keyword Args:
             image: If True, copies Part image (default = True)
             bom: If True, copies BOM data (default = False)
             parameters: If True, copies Parameters data (default = True)
         """
-
         # Copy the part image
         if kwargs.get('image', True):
             if other.image:
@@ -2050,15 +1880,14 @@ class Part(MetadataMixin, MPTTModel):
         self.save()
 
     def getTestTemplates(self, required=None, include_parent=True):
-        """
-        Return a list of all test templates associated with this Part.
+        """Return a list of all test templates associated with this Part.
+
         These are used for validation of a StockItem.
 
-        args:
+        Args:
             required: Set to True or False to filter by "required" status
             include_parent: Set to True to traverse upwards
         """
-
         if include_parent:
             tests = PartTestTemplate.objects.filter(part__in=self.get_ancestors(include_self=True))
         else:
@@ -2070,30 +1899,21 @@ class Part(MetadataMixin, MPTTModel):
         return tests
 
     def getRequiredTests(self):
-        # Return the tests which are required by this part
+        """Return the tests which are required by this part"""
         return self.getTestTemplates(required=True)
-
-    def requiredTestCount(self):
-        return self.getRequiredTests().count()
 
     @property
     def attachment_count(self):
-        """
-        Count the number of attachments for this part.
+        """Count the number of attachments for this part.
+
         If the part is a variant of a template part,
         include the number of attachments for the template part.
         """
-
         return self.part_attachments.count()
 
     @property
     def part_attachments(self):
-        """
-        Return *all* attachments for this part,
-        potentially including attachments for template parts
-        above this one.
-        """
-
+        """Return *all* attachments for this part, potentially including attachments for template parts above this one."""
         ancestors = self.get_ancestors(include_self=True)
 
         attachments = PartAttachment.objects.filter(part__in=ancestors)
@@ -2101,8 +1921,7 @@ class Part(MetadataMixin, MPTTModel):
         return attachments
 
     def sales_orders(self):
-        """ Return a list of sales orders which reference this part """
-
+        """Return a list of sales orders which reference this part."""
         orders = []
 
         for line in self.sales_order_line_items.all().prefetch_related('order'):
@@ -2112,8 +1931,7 @@ class Part(MetadataMixin, MPTTModel):
         return orders
 
     def purchase_orders(self):
-        """ Return a list of purchase orders which reference this part """
-
+        """Return a list of purchase orders which reference this part."""
         orders = []
 
         for part in self.supplier_parts.all().prefetch_related('purchase_order_line_items'):
@@ -2123,20 +1941,9 @@ class Part(MetadataMixin, MPTTModel):
 
         return orders
 
-    def open_purchase_orders(self):
-        """ Return a list of open purchase orders against this part """
-
-        return [order for order in self.purchase_orders() if order.status in PurchaseOrderStatus.OPEN]
-
-    def closed_purchase_orders(self):
-        """ Return a list of closed purchase orders against this part """
-
-        return [order for order in self.purchase_orders() if order.status not in PurchaseOrderStatus.OPEN]
-
     @property
     def on_order(self):
-        """ Return the total number of items on order for this part. """
-
+        """Return the total number of items on order for this part."""
         orders = self.supplier_parts.filter(purchase_order_line_items__order__status__in=PurchaseOrderStatus.OPEN).aggregate(
             quantity=Sum('purchase_order_line_items__quantity'),
             received=Sum('purchase_order_line_items__received')
@@ -2154,20 +1961,18 @@ class Part(MetadataMixin, MPTTModel):
         return quantity - received
 
     def get_parameters(self):
-        """ Return all parameters for this part, ordered by name """
-
+        """Return all parameters for this part, ordered by name."""
         return self.parameters.order_by('template__name')
 
     def parameters_map(self):
-        """
-        Return a map (dict) of parameter values assocaited with this Part instance,
-        of the form:
+        """Return a map (dict) of parameter values assocaited with this Part instance, of the form.
+
+        Example:
         {
             "name_1": "value_1",
             "name_2": "value_2",
         }
         """
-
         params = {}
 
         for parameter in self.parameters.all():
@@ -2177,39 +1982,31 @@ class Part(MetadataMixin, MPTTModel):
 
     @property
     def has_variants(self):
-        """ Check if this Part object has variants underneath it. """
-
+        """Check if this Part object has variants underneath it."""
         return self.get_all_variants().count() > 0
 
     def get_all_variants(self):
-        """ Return all Part object which exist as a variant under this part. """
-
+        """Return all Part object which exist as a variant under this part."""
         return self.get_descendants(include_self=False)
 
     @property
     def can_convert(self):
-        """
-        Check if this Part can be "converted" to a different variant:
+        """Check if this Part can be "converted" to a different variant.
 
         It can be converted if:
-
         a) It has non-virtual variant parts underneath it
         b) It has non-virtual template parts above it
         c) It has non-virtual sibling variants
-
         """
-
         return self.get_conversion_options().count() > 0
 
     def get_conversion_options(self):
-        """
-        Return options for converting this part to a "variant" within the same tree
+        """Return options for converting this part to a "variant" within the same tree.
 
         a) Variants underneath this one
         b) Immediate parent
         c) Siblings
         """
-
         parts = []
 
         # Child parts
@@ -2240,44 +2037,43 @@ class Part(MetadataMixin, MPTTModel):
         return filtered_parts
 
     def get_related_parts(self):
-        """ Return list of tuples for all related parts:
-            - first value is PartRelated object
-            - second value is matching Part object
-        """
+        """Return list of tuples for all related parts.
 
+        Includes:
+        - first value is PartRelated object
+        - second value is matching Part object
+        """
         related_parts = []
 
         related_parts_1 = self.related_parts_1.filter(part_1__id=self.pk)
 
         related_parts_2 = self.related_parts_2.filter(part_2__id=self.pk)
 
+        related_parts.append()
+
         for related_part in related_parts_1:
             # Add to related parts list
-            related_parts.append((related_part, related_part.part_2))
+            related_parts.append(related_part.part_2)
 
         for related_part in related_parts_2:
             # Add to related parts list
-            related_parts.append((related_part, related_part.part_1))
+            related_parts.append(related_part.part_1)
 
         return related_parts
 
     @property
     def related_count(self):
+        """Return the number of 'related parts' which point to this Part"""
         return len(self.get_related_parts())
 
     def is_part_low_on_stock(self):
-        """
-        Returns True if the total stock for this part is less than the minimum stock level
-        """
-
+        """Returns True if the total stock for this part is less than the minimum stock level."""
         return self.get_stock_count() < self.minimum_stock
 
 
 @receiver(post_save, sender=Part, dispatch_uid='part_post_save_log')
 def after_save_part(sender, instance: Part, created, **kwargs):
-    """
-    Function to be executed after a Part is saved
-    """
+    """Function to be executed after a Part is saved."""
     from part import tasks as part_tasks
 
     if not created and not InvenTree.ready.isImportingData():
@@ -2288,15 +2084,15 @@ def after_save_part(sender, instance: Part, created, **kwargs):
 
 
 class PartAttachment(InvenTreeAttachment):
-    """
-    Model for storing file attachments against a Part object
-    """
+    """Model for storing file attachments against a Part object."""
 
     @staticmethod
     def get_api_url():
+        """Return the list API endpoint URL associated with the PartAttachment model"""
         return reverse('api-part-attachment-list')
 
     def getSubdir(self):
+        """Returns the media subdirectory where part attachments are stored"""
         return os.path.join("part_files", str(self.part.id))
 
     part = models.ForeignKey(Part, on_delete=models.CASCADE,
@@ -2304,12 +2100,11 @@ class PartAttachment(InvenTreeAttachment):
 
 
 class PartSellPriceBreak(common.models.PriceBreak):
-    """
-    Represents a price break for selling this part
-    """
+    """Represents a price break for selling this part."""
 
     @staticmethod
     def get_api_url():
+        """Return the list API endpoint URL associated with the PartSellPriceBreak model"""
         return reverse('api-part-sale-price-list')
 
     part = models.ForeignKey(
@@ -2320,16 +2115,16 @@ class PartSellPriceBreak(common.models.PriceBreak):
     )
 
     class Meta:
+        """Metaclass providing extra model definition"""
         unique_together = ('part', 'quantity')
 
 
 class PartInternalPriceBreak(common.models.PriceBreak):
-    """
-    Represents a price break for internally selling this part
-    """
+    """Represents a price break for internally selling this part."""
 
     @staticmethod
     def get_api_url():
+        """Return the list API endpoint URL associated with the PartInternalPriceBreak model"""
         return reverse('api-part-internal-price-list')
 
     part = models.ForeignKey(
@@ -2339,11 +2134,12 @@ class PartInternalPriceBreak(common.models.PriceBreak):
     )
 
     class Meta:
+        """Metaclass providing extra model definition"""
         unique_together = ('part', 'quantity')
 
 
 class PartStar(models.Model):
-    """ A PartStar object creates a subscription relationship between a User and a Part.
+    """A PartStar object creates a subscription relationship between a User and a Part.
 
     It is used to designate a Part as 'subscribed' for a given User.
 
@@ -2357,6 +2153,7 @@ class PartStar(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('User'), related_name='starred_parts')
 
     class Meta:
+        """Metaclass providing extra model definition"""
         unique_together = [
             'part',
             'user'
@@ -2364,8 +2161,7 @@ class PartStar(models.Model):
 
 
 class PartCategoryStar(models.Model):
-    """
-    A PartCategoryStar creates a subscription relationship between a User and a PartCategory.
+    """A PartCategoryStar creates a subscription relationship between a User and a PartCategory.
 
     Attributes:
         category: Link to a PartCategory object
@@ -2377,6 +2173,7 @@ class PartCategoryStar(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('User'), related_name='starred_categories')
 
     class Meta:
+        """Metaclass providing extra model definition"""
         unique_together = [
             'category',
             'user',
@@ -2384,9 +2181,7 @@ class PartCategoryStar(models.Model):
 
 
 class PartTestTemplate(models.Model):
-    """
-    A PartTestTemplate defines a 'template' for a test which is required to be run
-    against a StockItem (an instance of the Part).
+    """A PartTestTemplate defines a 'template' for a test which is required to be run against a StockItem (an instance of the Part).
 
     The test template applies "recursively" to part variants, allowing tests to be
     defined in a heirarchy.
@@ -2400,26 +2195,24 @@ class PartTestTemplate(models.Model):
 
     @staticmethod
     def get_api_url():
+        """Return the list API endpoint URL associated with the PartTestTemplate model"""
         return reverse('api-part-test-template-list')
 
     def save(self, *args, **kwargs):
-
+        """Enforce 'clean' operation when saving a PartTestTemplate instance"""
         self.clean()
 
         super().save(*args, **kwargs)
 
     def clean(self):
-
+        """Clean fields for the PartTestTemplate model"""
         self.test_name = self.test_name.strip()
 
         self.validate_unique()
         super().clean()
 
     def validate_unique(self, exclude=None):
-        """
-        Test that this test template is 'unique' within this part tree.
-        """
-
+        """Test that this test template is 'unique' within this part tree."""
         if not self.part.trackable:
             raise ValidationError({
                 'part': _('Test templates can only be created for trackable parts')
@@ -2446,7 +2239,7 @@ class PartTestTemplate(models.Model):
 
     @property
     def key(self):
-        """ Generate a key for this test """
+        """Generate a key for this test."""
         return helpers.generateTestKey(self.test_name)
 
     part = models.ForeignKey(
@@ -2489,21 +2282,16 @@ class PartTestTemplate(models.Model):
 
 
 def validate_template_name(name):
-    """
-    Prevent illegal characters in "name" field for PartParameterTemplate
-    """
-
+    """Prevent illegal characters in "name" field for PartParameterTemplate."""
     for c in "!@#$%^&*()<>{}[].,?/\\|~`_+-=\'\"":
         if c in str(name):
             raise ValidationError(_(f"Illegal character in template name ({c})"))
 
 
 class PartParameterTemplate(models.Model):
-    """
-    A PartParameterTemplate provides a template for key:value pairs for extra
-    parameters fields/values to be added to a Part.
-    This allows users to arbitrarily assign data fields to a Part
-    beyond the built-in attributes.
+    """A PartParameterTemplate provides a template for key:value pairs for extra parameters fields/values to be added to a Part.
+
+    This allows users to arbitrarily assign data fields to a Part beyond the built-in attributes.
 
     Attributes:
         name: The name (key) of the Parameter [string]
@@ -2512,19 +2300,21 @@ class PartParameterTemplate(models.Model):
 
     @staticmethod
     def get_api_url():
+        """Return the list API endpoint URL associated with the PartParameterTemplate model"""
         return reverse('api-part-parameter-template-list')
 
     def __str__(self):
+        """Return a string representation of a PartParameterTemplate instance"""
         s = str(self.name)
         if self.units:
             s += " ({units})".format(units=self.units)
         return s
 
     def validate_unique(self, exclude=None):
-        """ Ensure that PartParameterTemplates cannot be created with the same name.
+        """Ensure that PartParameterTemplates cannot be created with the same name.
+
         This test should be case-insensitive (which the unique caveat does not cover).
         """
-
         super().validate_unique(exclude)
 
         try:
@@ -2550,8 +2340,7 @@ class PartParameterTemplate(models.Model):
 
 
 class PartParameter(models.Model):
-    """
-    A PartParameter is a specific instance of a PartParameterTemplate. It assigns a particular parameter <key:value> pair to a part.
+    """A PartParameter is a specific instance of a PartParameterTemplate. It assigns a particular parameter <key:value> pair to a part.
 
     Attributes:
         part: Reference to a single Part object
@@ -2561,10 +2350,11 @@ class PartParameter(models.Model):
 
     @staticmethod
     def get_api_url():
+        """Return the list API endpoint URL associated with the PartParameter model"""
         return reverse('api-part-parameter-list')
 
     def __str__(self):
-        # String representation of a PartParameter (used in the admin interface)
+        """String representation of a PartParameter (used in the admin interface)"""
         return "{part} : {param} = {data}{units}".format(
             part=str(self.part.full_name),
             param=str(self.template.name),
@@ -2573,6 +2363,7 @@ class PartParameter(models.Model):
         )
 
     class Meta:
+        """Metaclass providing extra model definition"""
         # Prevent multiple instances of a parameter for a single part
         unique_together = ('part', 'template')
 
@@ -2584,6 +2375,7 @@ class PartParameter(models.Model):
 
     @classmethod
     def create(cls, part, template, data, save=False):
+        """Custom save method for the PartParameter class"""
         part_parameter = cls(part=part, template=template, data=data)
         if save:
             part_parameter.save()
@@ -2591,11 +2383,7 @@ class PartParameter(models.Model):
 
 
 class PartCategoryParameterTemplate(models.Model):
-    """
-    A PartCategoryParameterTemplate creates a unique relationship between a PartCategory
-    and a PartParameterTemplate.
-    Multiple PartParameterTemplate instances can be associated to a PartCategory to drive
-    a default list of parameter templates attached to a Part instance upon creation.
+    """A PartCategoryParameterTemplate creates a unique relationship between a PartCategory and a PartParameterTemplate. Multiple PartParameterTemplate instances can be associated to a PartCategory to drive a default list of parameter templates attached to a Part instance upon creation.
 
     Attributes:
         category: Reference to a single PartCategory object
@@ -2605,14 +2393,14 @@ class PartCategoryParameterTemplate(models.Model):
     """
 
     class Meta:
+        """Metaclass providing extra model definition"""
         constraints = [
             UniqueConstraint(fields=['category', 'parameter_template'],
                              name='unique_category_parameter_template_pair')
         ]
 
     def __str__(self):
-        """ String representation of a PartCategoryParameterTemplate (admin interface) """
-
+        """String representation of a PartCategoryParameterTemplate (admin interface)."""
         if self.default_value:
             return f'{self.category.name} | {self.parameter_template.name} | {self.default_value}'
         else:
@@ -2636,8 +2424,9 @@ class PartCategoryParameterTemplate(models.Model):
                                      help_text=_('Default Parameter Value'))
 
 
-class BomItem(models.Model, DataImportMixin):
-    """ A BomItem links a part to its component items.
+class BomItem(DataImportMixin, models.Model):
+    """A BomItem links a part to its component items.
+
     A part can have a BOM (bill of materials) which defines
     which parts are required (and in what quantity) to make it.
 
@@ -2689,17 +2478,17 @@ class BomItem(models.Model, DataImportMixin):
 
     @staticmethod
     def get_api_url():
+        """Return the list API endpoint URL associated with the BomItem model"""
         return reverse('api-bom-list')
 
     def get_valid_parts_for_allocation(self, allow_variants=True, allow_substitutes=True):
-        """
-        Return a list of valid parts which can be allocated against this BomItem:
+        """Return a list of valid parts which can be allocated against this BomItem.
 
-        - Include the referenced sub_part
-        - Include any directly specvified substitute parts
-        - If allow_variants is True, allow all variants of sub_part
+        Includes:
+        - The referenced sub_part
+        - Any directly specvified substitute parts
+        - If allow_variants is True, all variants of sub_part
         """
-
         # Set of parts we will allow
         parts = set()
 
@@ -2732,25 +2521,19 @@ class BomItem(models.Model, DataImportMixin):
         return valid_parts
 
     def is_stock_item_valid(self, stock_item):
-        """
-        Check if the provided StockItem object is "valid" for assignment against this BomItem
-        """
-
+        """Check if the provided StockItem object is "valid" for assignment against this BomItem."""
         return stock_item.part in self.get_valid_parts_for_allocation()
 
     def get_stock_filter(self):
-        """
-        Return a queryset filter for selecting StockItems which match this BomItem
+        """Return a queryset filter for selecting StockItems which match this BomItem.
 
         - Allow stock from all directly specified substitute parts
         - If allow_variants is True, allow all part variants
-
         """
-
         return Q(part__in=[part.pk for part in self.get_valid_parts_for_allocation()])
 
     def save(self, *args, **kwargs):
-
+        """Enforce 'clean' operation when saving a BomItem instance"""
         self.clean()
         super().save(*args, **kwargs)
 
@@ -2802,19 +2585,16 @@ class BomItem(models.Model, DataImportMixin):
     )
 
     def get_item_hash(self):
-        """ Calculate the checksum hash of this BOM line item:
+        """Calculate the checksum hash of this BOM line item.
 
         The hash is calculated from the following fields:
-
         - Part.full_name (if the part name changes, the BOM checksum is invalidated)
         - Quantity
         - Reference field
         - Note field
         - Optional field
         - Inherited field
-
         """
-
         # Seed the hash with the ID of this BOM item
         result_hash = hashlib.md5(str(self.id).encode())
 
@@ -2830,12 +2610,11 @@ class BomItem(models.Model, DataImportMixin):
         return str(result_hash.digest())
 
     def validate_hash(self, valid=True):
-        """ Mark this item as 'valid' (store the checksum hash).
+        """Mark this item as 'valid' (store the checksum hash).
 
         Args:
             valid: If true, validate the hash, otherwise invalidate it (default = True)
         """
-
         if valid:
             self.checksum = str(self.get_item_hash())
         else:
@@ -2845,8 +2624,7 @@ class BomItem(models.Model, DataImportMixin):
 
     @property
     def is_line_valid(self):
-        """ Check if this line item has been validated by the user """
-
+        """Check if this line item has been validated by the user."""
         # Ensure an empty checksum returns False
         if len(self.checksum) == 0:
             return False
@@ -2854,8 +2632,7 @@ class BomItem(models.Model, DataImportMixin):
         return self.get_item_hash() == self.checksum
 
     def clean(self):
-        """
-        Check validity of the BomItem model.
+        """Check validity of the BomItem model.
 
         Performs model checks beyond simple field validation.
 
@@ -2864,7 +2641,6 @@ class BomItem(models.Model, DataImportMixin):
 
         - If the "sub_part" is trackable, then the "part" must be trackable too!
         """
-
         super().clean()
 
         try:
@@ -2897,21 +2673,18 @@ class BomItem(models.Model, DataImportMixin):
             raise ValidationError({'sub_part': _('Sub part must be specified')})
 
     class Meta:
+        """Metaclass providing extra model definition"""
         verbose_name = _("BOM Item")
 
-        # Prevent duplication of parent/child rows
-        unique_together = ('part', 'sub_part')
-
     def __str__(self):
+        """Return a string representation of this BomItem instance"""
         return "{n} x {child} to make {parent}".format(
             parent=self.part.full_name,
             child=self.sub_part.full_name,
             n=decimal2string(self.quantity))
 
     def get_overage_quantity(self, quantity):
-        """ Calculate overage quantity
-        """
-
+        """Calculate overage quantity."""
         # Most of the time overage string will be empty
         if len(self.overage) == 0:
             return 0
@@ -2952,8 +2725,7 @@ class BomItem(models.Model, DataImportMixin):
         return 0
 
     def get_required_quantity(self, build_quantity):
-        """ Calculate the required part quantity, based on the supplier build_quantity.
-        Includes overage estimate in the returned value.
+        """Calculate the required part quantity, based on the supplier build_quantity. Includes overage estimate in the returned value.
 
         Args:
             build_quantity: Number of parts to build
@@ -2961,7 +2733,6 @@ class BomItem(models.Model, DataImportMixin):
         Returns:
             Quantity required for this build (including overage)
         """
-
         # Base quantity requirement
         base_quantity = self.quantity * build_quantity
 
@@ -2974,8 +2745,7 @@ class BomItem(models.Model, DataImportMixin):
 
     @property
     def price_range(self, internal=False):
-        """ Return the price-range for this BOM item. """
-
+        """Return the price-range for this BOM item."""
         # get internal price setting
         use_internal = common.models.InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
         prange = self.sub_part.get_price_range(self.quantity, internal=use_internal and internal)
@@ -2996,9 +2766,7 @@ class BomItem(models.Model, DataImportMixin):
 
 
 class BomItemSubstitute(models.Model):
-    """
-    A BomItemSubstitute provides a specification for alternative parts,
-    which can be used in a bill of materials.
+    """A BomItemSubstitute provides a specification for alternative parts, which can be used in a bill of materials.
 
     Attributes:
         bom_item: Link to the parent BomItem instance
@@ -3006,24 +2774,24 @@ class BomItemSubstitute(models.Model):
     """
 
     class Meta:
+        """Metaclass providing extra model definition"""
         verbose_name = _("BOM Item Substitute")
 
         # Prevent duplication of substitute parts
         unique_together = ('part', 'bom_item')
 
     def save(self, *args, **kwargs):
-
+        """Enforce a full_clean when saving the BomItemSubstitute model"""
         self.full_clean()
 
         super().save(*args, **kwargs)
 
     def validate_unique(self, exclude=None):
-        """
-        Ensure that this BomItemSubstitute is "unique":
+        """Ensure that this BomItemSubstitute is "unique".
 
+        Ensure:
         - It cannot point to the same "part" as the "sub_part" of the parent "bom_item"
         """
-
         super().validate_unique(exclude=exclude)
 
         if self.part == self.bom_item.sub_part:
@@ -3033,6 +2801,7 @@ class BomItemSubstitute(models.Model):
 
     @staticmethod
     def get_api_url():
+        """Returns the list API endpoint URL associated with this model"""
         return reverse('api-bom-substitute-list')
 
     bom_item = models.ForeignKey(
@@ -3056,7 +2825,7 @@ class BomItemSubstitute(models.Model):
 
 
 class PartRelated(models.Model):
-    """ Store and handle related parts (eg. mating connector, crimps, etc.) """
+    """Store and handle related parts (eg. mating connector, crimps, etc.)."""
 
     part_1 = models.ForeignKey(Part, related_name='related_parts_1',
                                verbose_name=_('Part 1'), on_delete=models.DO_NOTHING)
@@ -3066,11 +2835,11 @@ class PartRelated(models.Model):
                                verbose_name=_('Part 2'), help_text=_('Select Related Part'))
 
     def __str__(self):
+        """Return a string representation of this Part-Part relationship"""
         return f'{self.part_1} <--> {self.part_2}'
 
     def validate(self, part_1, part_2):
-        ''' Validate that the two parts relationship is unique '''
-
+        """Validate that the two parts relationship is unique."""
         validate = True
 
         parts = Part.objects.all()
@@ -3090,8 +2859,7 @@ class PartRelated(models.Model):
         return validate
 
     def clean(self):
-        ''' Overwrite clean method to check that relation is unique '''
-
+        """Overwrite clean method to check that relation is unique."""
         validate = self.validate(self.part_1, self.part_2)
 
         if not validate:

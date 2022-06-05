@@ -12,6 +12,7 @@
     reloadtable,
     renderLink,
     reloadTableFilters,
+    constructOrderTableButtons,
 */
 
 /**
@@ -24,7 +25,80 @@ function reloadtable(table) {
 
 
 /*
- * Return the 'selected' data rows from a bootstrap table.
+ * Construct a set of extra buttons to display against a list of orders,
+ * allowing the orders to be displayed in various 'view' modes:
+ *
+ * - Calendar view
+ * - List view
+ * - Tree view
+ *
+ * Options:
+ * - callback: Callback function to be called when one of the buttons is pressed
+ * - prefix: The prefix to use when saving display data to user session
+ * - display: Which button to set as 'active' by default
+ *
+ */
+function constructOrderTableButtons(options={}) {
+
+    var display_mode = options.display;
+
+    var key = `${options.prefix || order}-table-display-mode`;
+
+    // If display mode is not provided, look up from session
+    if (!display_mode) {
+        display_mode = inventreeLoad(key, 'list');
+    }
+
+    var idx = 0;
+    var buttons = [];
+
+    function buttonCallback(view_mode) {
+        inventreeSave(key, view_mode);
+
+        if (options.callback) {
+            options.callback(view_mode);
+        }
+    }
+
+    var class_calendar = display_mode == 'calendar' ? 'btn-secondary' : 'btn-outline-secondary';
+    var class_list = display_mode == 'list' ? 'btn-secondary' : 'btn-outline-secondary';
+    var class_tree = display_mode == 'tree' ? 'btn-secondary' : 'btn-outline-secondary';
+
+    // Calendar view button
+    if (!options.disableCalendarView) {
+        buttons.push({
+            html: `<button type='button' name='${idx++}' class='btn ${class_calendar}' title='{% trans "Display calendar view" %}'><span class='fas fa-calendar-alt'></span></button>`,
+            event: function() {
+                buttonCallback('calendar');
+            }
+        });
+    }
+
+    // List view button
+    if (!options.disableListView) {
+        buttons.push({
+            html: `<button type='button' name='${idx++}' class='btn ${class_list}' title='{% trans "Display list view" %}'><span class='fas fa-th-list'></span></button>`,
+            event: function() {
+                buttonCallback('list');
+            }
+        });
+    }
+
+    // Tree view button
+    if (!options.disableTreeView) {
+        buttons.push({
+            html: `<button type='button' name='${idx++}' class='btn ${class_tree}' title='{% trans "Display tree view" %}'><span class='fas fa-sitemap'></span></button>`,
+            event: function() {
+                buttonCallback('tree');
+            }
+        });
+    }
+
+    return buttons;
+}
+
+
+/* Return the 'selected' data rows from a bootstrap table.
  * If allowEmpty = false, and the returned dataset is empty,
  * then instead try to return *all* the data
  */

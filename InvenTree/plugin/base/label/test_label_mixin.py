@@ -1,7 +1,11 @@
-"""Unit tests for the label printing mixin"""
+"""Unit tests for the label printing mixin."""
+
+import os
 
 from django.apps import apps
 from django.urls import reverse
+
+from PIL import Image
 
 from common.models import InvenTreeSetting
 from InvenTree.api_tester import InvenTreeAPITestCase
@@ -15,7 +19,7 @@ from stock.models import StockItem, StockLocation
 
 
 class LabelMixinTests(InvenTreeAPITestCase):
-    """Test that the Label mixin operates correctly"""
+    """Test that the Label mixin operates correctly."""
 
     fixtures = [
         'category',
@@ -27,14 +31,13 @@ class LabelMixinTests(InvenTreeAPITestCase):
     roles = 'all'
 
     def do_activate_plugin(self):
-        """Activate the 'samplelabel' plugin"""
-
+        """Activate the 'samplelabel' plugin."""
         config = registry.get_plugin('samplelabel').plugin_config()
         config.active = True
         config.save()
 
     def do_url(self, parts, plugin_ref, label, url_name: str = 'api-part-label-print', url_single: str = 'part', invalid: bool = False):
-        """Generate an URL to print a label"""
+        """Generate an URL to print a label."""
         # Construct URL
         kwargs = {}
         if label:
@@ -61,18 +64,17 @@ class LabelMixinTests(InvenTreeAPITestCase):
         return url
 
     def test_wrong_implementation(self):
-        """Test that a wrong implementation raises an error"""
+        """Test that a wrong implementation raises an error."""
 
         class WrongPlugin(LabelPrintingMixin, InvenTreePlugin):
             pass
 
         with self.assertRaises(MixinNotImplementedError):
             plugin = WrongPlugin()
-            plugin.print_label('test')
+            plugin.print_label(filename='test')
 
     def test_installed(self):
-        """Test that the sample printing plugin is installed"""
-
+        """Test that the sample printing plugin is installed."""
         # Get all label plugins
         plugins = registry.with_mixin('labels')
         self.assertEqual(len(plugins), 1)
@@ -82,8 +84,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
         self.assertEqual(len(plugins), 0)
 
     def test_api(self):
-        """Test that we can filter the API endpoint by mixin"""
-
+        """Test that we can filter the API endpoint by mixin."""
         url = reverse('api-plugin-list')
 
         # Try POST (disallowed)
@@ -127,8 +128,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
         self.assertEqual(data['key'], 'samplelabel')
 
     def test_printing_process(self):
-        """Test that a label can be printed"""
-
+        """Test that a label can be printed."""
         # Ensure the labels were created
         apps.get_app_config('label').create_labels()
 
@@ -167,8 +167,23 @@ class LabelMixinTests(InvenTreeAPITestCase):
         # Print no part
         self.get(self.do_url(None, plugin_ref, label), expected_code=400)
 
+        # Test that the labels have been printed
+        # The sample labelling plugin simply prints to file
+        self.assertTrue(os.path.exists('label.pdf'))
+
+        # Read the raw .pdf data - ensure it contains some sensible information
+        with open('label.pdf', 'rb') as f:
+            pdf_data = str(f.read())
+            self.assertIn('WeasyPrint', pdf_data)
+
+        # Check that the .png file has already been created
+        self.assertTrue(os.path.exists('label.png'))
+
+        # And that it is a valid image file
+        Image.open('label.png')
+
     def test_printing_endpoints(self):
-        """Cover the endpoints not covered by `test_printing_process`"""
+        """Cover the endpoints not covered by `test_printing_process`."""
         plugin_ref = 'samplelabel'
 
         # Activate the label components
@@ -176,13 +191,13 @@ class LabelMixinTests(InvenTreeAPITestCase):
         self.do_activate_plugin()
 
         def run_print_test(label, qs, url_name, url_single):
-            """Run tests on single and multiple page printing
+            """Run tests on single and multiple page printing.
 
             Args:
-                label (_type_): class of the label
-                qs (_type_): class of the base queryset
-                url_name (_type_): url for endpoints
-                url_single (_type_): item lookup reference
+                label: class of the label
+                qs: class of the base queryset
+                url_name: url for endpoints
+                url_single: item lookup reference
             """
             label = label.objects.first()
             qs = qs.objects.all()

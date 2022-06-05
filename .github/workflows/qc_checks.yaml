@@ -14,120 +14,94 @@ on:
 env:
   python_version: 3.9
   node_version: 16
+  # The OS version must be set per job
 
   server_start_sleep: 60
 
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   INVENTREE_DB_ENGINE: sqlite3
   INVENTREE_DB_NAME: inventree
-  INVENTREE_MEDIA_ROOT: ./media
-  INVENTREE_STATIC_ROOT: ./static
-
+  INVENTREE_MEDIA_ROOT: ../test_inventree_media
+  INVENTREE_STATIC_ROOT: ../test_inventree_static
 
 jobs:
   pep_style:
-    name: PEP style (python)
-    runs-on: ubuntu-latest
+    name: Style [Python]
+    runs-on: ubuntu-20.04
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v1
+      - name: Enviroment Setup
+        uses: ./.github/actions/setup
         with:
-          python-version: ${{ env.python_version }}
-          cache: 'pip'
-      - name: Install deps
-        run: |
-          pip install flake8==3.8.3
-          pip install pep8-naming==0.11.1
-      - name: flake8
-        run: |
-          flake8 InvenTree
+          install: true
+      - name: Run flake8
+        run: flake8 InvenTree --extend-ignore=D
 
   javascript:
-    name: javascript template files
+    name: Style [JS]
+    runs-on: ubuntu-20.04
+
     needs: pep_style
-    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-      - name: Install node.js ${{ env.node_version }}
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v1
+      - name: Enviroment Setup
+        uses: ./.github/actions/setup
         with:
-          node-version: ${{ env.node_version }}
-          cache: 'npm'
-      - run: npm install
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ env.python_version }}
-          cache: 'pip'
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install gettext
-          pip3 install invoke
-          invoke install
-          invoke static
-      - name: Check Templated Files
+          npm: true
+          install: true
+      - name: Check Templated JS Files
         run: |
           cd ci
-          python check_js_templates.py
+          python3 check_js_templates.py
       - name: Lint Javascript Files
         run: |
           invoke render-js-files
           npx eslint js_tmp/*.js
 
   html:
-    name: html template files
+    name: Style [HTML]
+    runs-on: ubuntu-20.04
+
     needs: pep_style
-    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-      - name: Install node.js ${{ env.node_version }}
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v1
+      - name: Enviroment Setup
+        uses: ./.github/actions/setup
         with:
-          node-version: ${{ env.node_version }}
-          cache: 'npm'
-      - run: npm install
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ env.python_version }}
-          cache: 'pip'
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install gettext
-          pip3 install invoke
-          invoke install
-          invoke static
+          npm: true
+          install: true
       - name: Check HTML Files
-        run: |
-          npx markuplint InvenTree/build/templates/build/*.html
-          npx markuplint InvenTree/company/templates/company/*.html
-          npx markuplint InvenTree/order/templates/order/*.html
-          npx markuplint InvenTree/part/templates/part/*.html
-          npx markuplint InvenTree/stock/templates/stock/*.html
-          npx markuplint InvenTree/templates/*.html
-          npx markuplint InvenTree/templates/InvenTree/*.html
-          npx markuplint InvenTree/templates/InvenTree/settings/*.html
+        run: npx markuplint **/templates/*.html
+
+  pre-commit:
+    name: Style [pre-commit]
+    runs-on: ubuntu-20.04
+
+    needs: pep_style
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ env.python_version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ env.python_version }}
+        cache: 'pip'
+    - name: Run pre-commit Checks
+      uses: pre-commit/action@v2.0.3
 
   python:
-    name: python bindings
-    needs: pep_style
-    runs-on: ubuntu-latest
+    name: Tests - inventree-python
+    runs-on: ubuntu-20.04
+
+    needs: pre-commit
 
     env:
       wrapper_name: inventree-python
       INVENTREE_DB_ENGINE: django.db.backends.sqlite3
       INVENTREE_DB_NAME: ../inventree_unit_test_db.sqlite3
-      INVENTREE_MEDIA_ROOT: ../test_inventree_media
-      INVENTREE_STATIC_ROOT: ../test_inventree_static
       INVENTREE_ADMIN_USER: testuser
       INVENTREE_ADMIN_PASSWORD: testpassword
       INVENTREE_ADMIN_EMAIL: test@test.com
@@ -136,34 +110,48 @@ jobs:
       INVENTREE_PYTHON_TEST_PASSWORD: testpassword
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-      - name: Install InvenTree
-        run: |
-          sudo apt-get update
-          sudo apt-get install python3-dev python3-pip python3-venv
-          pip3 install invoke
-          invoke install
-          invoke migrate
-      - name: Download Python Code
-        run: |
-          git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }} ./${{ env.wrapper_name }}
-      - name: Start Server
+      - uses: actions/checkout@v1
+      - name: Enviroment Setup
+        uses: ./.github/actions/setup
+        with:
+          apt-dependency: gettext poppler-utils
+          update: true
+      - name: Download Python Code For `${{ env.wrapper_name }}`
+        run: git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }} ./${{ env.wrapper_name }}
+      - name: Start InvenTree Server
         run: |
           invoke delete-data -f
           invoke import-fixtures
           invoke server -a 127.0.0.1:12345 &
           invoke wait
-      - name: Run Tests
+      - name: Run Tests For `${{ env.wrapper_name }}`
         run: |
           cd ${{ env.wrapper_name }}
           invoke check-server
           coverage run -m unittest discover -s test/
 
+  docstyle:
+    name: Style [Python Docstrings]
+    runs-on: ubuntu-20.04
+
+    needs: pre-commit
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Enviroment Setup
+        uses: ./.github/actions/setup
+        with:
+          install: true
+      - name: Run flake8
+        run: flake8 InvenTree --statistics
+
   coverage:
-    name: Sqlite / coverage
-    needs: ['javascript', 'html']
-    runs-on: ubuntu-latest
+    name: Tests - DB [SQLite] + Coverage
+    runs-on: ubuntu-20.04
+
+    needs: ['javascript', 'html', 'pre-commit']
+    continue-on-error: true   # continue if a step fails so that coverage gets pushed
 
     env:
       INVENTREE_DB_NAME: ./inventree.sqlite
@@ -171,32 +159,16 @@ jobs:
       INVENTREE_PLUGINS_ENABLED: true
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-      - name: Setup Python ${{ env.python_version }}
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v1
+      - name: Enviroment Setup
+        uses: ./.github/actions/setup
         with:
-          python-version: ${{ env.python_version }}
-          cache: 'pip'
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install gettext
-          python -m pip install -U pip
-          pip3 install invoke
-          invoke update
+          apt-dependency: gettext poppler-utils
+          update: true
       - name: Coverage Tests
-        run: |
-          invoke coverage
-      - name: Data Import Export
-        run: |
-          invoke migrate
-          invoke import-fixtures
-          invoke export-records -f data.json
-          rm inventree.sqlite
-          invoke migrate
-          invoke import-records -f data.json
-          invoke import-records -f data.json
+        run: invoke coverage
+      - name: Data Export Test
+        uses: ./.github/actions/migration
       - name: Test Translations
         run: invoke translate
       - name: Check Migration Files
@@ -205,9 +177,10 @@ jobs:
         run: coveralls
 
   postgres:
-    name: Postgres
-    needs: ['javascript', 'html']
-    runs-on: ubuntu-latest
+    name: Tests - DB [PostgreSQL]
+    runs-on: ubuntu-20.04
+
+    needs: ['javascript', 'html', 'pre-commit']
     if: github.event_name == 'push'
 
     env:
@@ -235,38 +208,23 @@ jobs:
           - 6379:6379
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-      - name: Setup Python ${{ env.python_version }}
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v1
+      - name: Enviroment Setup
+        uses: ./.github/actions/setup
         with:
-          python-version: ${{ env.python_version }}
-          cache: 'pip'
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install libpq-dev gettext
-          python -m pip install -U pip
-          pip3 install invoke
-          pip3 install psycopg2
-          pip3 install django-redis>=5.0.0
-          invoke update
+          apt-dependency: gettext poppler-utils libpq-dev
+          pip-dependency: psycopg2 django-redis>=5.0.0
+          update: true
       - name: Run Tests
         run: invoke test
-      - name: Data Import Export
-        run: |
-          invoke migrate
-          python3 ./InvenTree/manage.py flush --noinput
-          invoke import-fixtures
-          invoke export-records -f data.json
-          python3 ./InvenTree/manage.py flush --noinput
-          invoke import-records -f data.json
-          invoke import-records -f data.json
+      - name: Data Export Test
+        uses: ./.github/actions/migration
 
   mysql:
-    name: MySql
-    needs: ['javascript', 'html']
-    runs-on: ubuntu-latest
+    name: Tests - DB [MySQL]
+    runs-on: ubuntu-20.04
+
+    needs: ['javascript', 'html', 'pre-commit']
     if: github.event_name == 'push'
 
     env:
@@ -293,29 +251,14 @@ jobs:
           - 3306:3306
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-      - name: Setup Python ${{ env.python_version }}
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v1
+      - name: Enviroment Setup
+        uses: ./.github/actions/setup
         with:
-          python-version: ${{ env.python_version }}
-          cache: 'pip'
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install libmysqlclient-dev gettext
-          python -m pip install -U pip
-          pip3 install invoke
-          pip3 install mysqlclient
-          invoke update
+          apt-dependency: gettext poppler-utils libmysqlclient-dev
+          pip-dependency: mysqlclient
+          update: true
       - name: Run Tests
         run: invoke test
-      - name: Data Import Export
-        run: |
-          invoke migrate
-          python3 ./InvenTree/manage.py flush --noinput
-          invoke import-fixtures
-          invoke export-records -f data.json
-          python3 ./InvenTree/manage.py flush --noinput
-          invoke import-records -f data.json
-          invoke import-records -f data.json
+      - name: Data Export Test
+        uses: ./.github/actions/migration

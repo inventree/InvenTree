@@ -1,6 +1,4 @@
-"""
-Build database model definitions
-"""
+"""Build database model definitions."""
 
 import decimal
 
@@ -42,10 +40,7 @@ from users import models as UserModels
 
 
 def get_next_build_number():
-    """
-    Returns the next available BuildOrder reference number
-    """
-
+    """Returns the next available BuildOrder reference number."""
     if Build.objects.count() == 0:
         return '0001'
 
@@ -71,7 +66,7 @@ def get_next_build_number():
 
 
 class Build(MPTTModel, ReferenceIndexingMixin):
-    """ A Build object organises the creation of new StockItem objects from other existing StockItem objects.
+    """A Build object organises the creation of new StockItem objects from other existing StockItem objects.
 
     Attributes:
         part: The part to be built (from component BOM items)
@@ -97,10 +92,11 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @staticmethod
     def get_api_url():
+        """Return the API URL associated with the BuildOrder model"""
         return reverse('api-build-list')
 
     def api_instance_filters(self):
-
+        """Returns custom API filters for the particular BuildOrder instance"""
         return {
             'parent': {
                 'exclude_tree': self.pk,
@@ -109,10 +105,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @classmethod
     def api_defaults(cls, request):
-        """
-        Return default values for this model when issuing an API OPTIONS request
-        """
-
+        """Return default values for this model when issuing an API OPTIONS request."""
         defaults = {
             'reference': get_next_build_number(),
         }
@@ -123,7 +116,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         return defaults
 
     def save(self, *args, **kwargs):
-
+        """Custom save method for the BuildOrder model"""
         self.rebuild_reference_field()
 
         try:
@@ -134,14 +127,12 @@ class Build(MPTTModel, ReferenceIndexingMixin):
             })
 
     class Meta:
+        """Metaclass options for the BuildOrder model"""
         verbose_name = _("Build Order")
         verbose_name_plural = _("Build Orders")
 
     def format_barcode(self, **kwargs):
-        """
-        Return a JSON string to represent this build as a barcode
-        """
-
+        """Return a JSON string to represent this build as a barcode."""
         return MakeBarcode(
             "buildorder",
             self.pk,
@@ -153,13 +144,11 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
-        """
-        Filter by 'minimum and maximum date range'
+        """Filter by 'minimum and maximum date range'.
 
         - Specified as min_date, max_date
         - Both must be specified for filter to be applied
         """
-
         date_fmt = '%Y-%m-%d'  # ISO format date string
 
         # Ensure that both dates are valid
@@ -183,12 +172,13 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         return queryset
 
     def __str__(self):
-
+        """String representation of a BuildOrder"""
         prefix = getSetting("BUILDORDER_REFERENCE_PREFIX")
 
         return f"{prefix}{self.reference}"
 
     def get_absolute_url(self):
+        """Return the web URL associated with this BuildOrder"""
         return reverse('build-detail', kwargs={'pk': self.id})
 
     reference = models.CharField(
@@ -336,10 +326,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
     )
 
     def sub_builds(self, cascade=True):
-        """
-        Return all Build Order objects under this one.
-        """
-
+        """Return all Build Order objects under this one."""
         if cascade:
             return Build.objects.filter(parent=self.pk)
         else:
@@ -347,23 +334,22 @@ class Build(MPTTModel, ReferenceIndexingMixin):
             Build.objects.filter(parent__pk__in=[d.pk for d in descendants])
 
     def sub_build_count(self, cascade=True):
-        """
-        Return the number of sub builds under this one.
+        """Return the number of sub builds under this one.
 
         Args:
             cascade: If True (defualt), include cascading builds under sub builds
         """
-
         return self.sub_builds(cascade=cascade).count()
 
     @property
     def is_overdue(self):
-        """
-        Returns true if this build is "overdue":
+        """Returns true if this build is "overdue".
 
         Makes use of the OVERDUE_FILTER to avoid code duplication
-        """
 
+        Returns:
+            bool: Is the build overdue
+        """
         query = Build.objects.filter(pk=self.pk)
         query = query.filter(Build.OVERDUE_FILTER)
 
@@ -371,80 +357,59 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @property
     def active(self):
-        """
-        Return True if this build is active
-        """
-
+        """Return True if this build is active."""
         return self.status in BuildStatus.ACTIVE_CODES
 
     @property
     def bom_items(self):
-        """
-        Returns the BOM items for the part referenced by this BuildOrder
-        """
-
+        """Returns the BOM items for the part referenced by this BuildOrder."""
         return self.part.get_bom_items()
 
     @property
     def tracked_bom_items(self):
-        """
-        Returns the "trackable" BOM items for this BuildOrder
-        """
-
+        """Returns the "trackable" BOM items for this BuildOrder."""
         items = self.bom_items
         items = items.filter(sub_part__trackable=True)
 
         return items
 
     def has_tracked_bom_items(self):
-        """
-        Returns True if this BuildOrder has trackable BomItems
-        """
-
+        """Returns True if this BuildOrder has trackable BomItems."""
         return self.tracked_bom_items.count() > 0
 
     @property
     def untracked_bom_items(self):
-        """
-        Returns the "non trackable" BOM items for this BuildOrder
-        """
-
+        """Returns the "non trackable" BOM items for this BuildOrder."""
         items = self.bom_items
         items = items.filter(sub_part__trackable=False)
 
         return items
 
     def has_untracked_bom_items(self):
-        """
-        Returns True if this BuildOrder has non trackable BomItems
-        """
-
+        """Returns True if this BuildOrder has non trackable BomItems."""
         return self.untracked_bom_items.count() > 0
 
     @property
     def remaining(self):
-        """
-        Return the number of outputs remaining to be completed.
-        """
-
+        """Return the number of outputs remaining to be completed."""
         return max(0, self.quantity - self.completed)
 
     @property
     def output_count(self):
+        """Return the number of build outputs (StockItem) associated with this build order"""
         return self.build_outputs.count()
 
     def has_build_outputs(self):
+        """Returns True if this build has more than zero build outputs"""
         return self.output_count > 0
 
     def get_build_outputs(self, **kwargs):
-        """
-        Return a list of build outputs.
+        """Return a list of build outputs.
 
         kwargs:
             complete = (True / False) - If supplied, filter by completed status
             in_stock = (True / False) - If supplied, filter by 'in-stock' status
         """
-
         outputs = self.build_outputs.all()
 
         # Filter by 'in stock' status
@@ -469,17 +434,14 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @property
     def complete_outputs(self):
-        """
-        Return all the "completed" build outputs
-        """
-
+        """Return all the "completed" build outputs."""
         outputs = self.get_build_outputs(complete=True)
 
         return outputs
 
     @property
     def complete_count(self):
-
+        """Return the total quantity of completed outputs"""
         quantity = 0
 
         for output in self.complete_outputs:
@@ -489,20 +451,14 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @property
     def incomplete_outputs(self):
-        """
-        Return all the "incomplete" build outputs
-        """
-
+        """Return all the "incomplete" build outputs."""
         outputs = self.get_build_outputs(complete=False)
 
         return outputs
 
     @property
     def incomplete_count(self):
-        """
-        Return the total number of "incomplete" outputs
-        """
-
+        """Return the total number of "incomplete" outputs."""
         quantity = 0
 
         for output in self.incomplete_outputs:
@@ -512,10 +468,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @classmethod
     def getNextBuildNumber(cls):
-        """
-        Try to predict the next Build Order reference:
-        """
-
+        """Try to predict the next Build Order reference."""
         if cls.objects.count() == 0:
             return None
 
@@ -552,13 +505,11 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @property
     def can_complete(self):
-        """
-        Returns True if this build can be "completed"
+        """Returns True if this build can be "completed".
 
         - Must not have any outstanding build outputs
         - 'completed' value must meet (or exceed) the 'quantity' value
         """
-
         if self.incomplete_count > 0:
             return False
 
@@ -573,10 +524,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @transaction.atomic
     def complete_build(self, user):
-        """
-        Mark this build as complete
-        """
-
+        """Mark this build as complete."""
         if self.incomplete_count > 0:
             return
 
@@ -597,13 +545,12 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @transaction.atomic
     def cancel_build(self, user, **kwargs):
-        """ Mark the Build as CANCELLED
+        """Mark the Build as CANCELLED.
 
         - Delete any pending BuildItem objects (but do not remove items from stock)
         - Set build status to CANCELLED
         - Save the Build object
         """
-
         remove_allocated_stock = kwargs.get('remove_allocated_stock', False)
         remove_incomplete_outputs = kwargs.get('remove_incomplete_outputs', False)
 
@@ -633,14 +580,12 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @transaction.atomic
     def unallocateStock(self, bom_item=None, output=None):
-        """
-        Unallocate stock from this Build
+        """Unallocate stock from this Build.
 
-        arguments:
-            - bom_item: Specify a particular BomItem to unallocate stock against
-            - output: Specify a particular StockItem (output) to unallocate stock against
+        Args:
+            bom_item: Specify a particular BomItem to unallocate stock against
+            output: Specify a particular StockItem (output) to unallocate stock against
         """
-
         allocations = BuildItem.objects.filter(
             build=self,
             install_into=output
@@ -653,19 +598,17 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @transaction.atomic
     def create_build_output(self, quantity, **kwargs):
-        """
-        Create a new build output against this BuildOrder.
+        """Create a new build output against this BuildOrder.
 
-        args:
+        Args:
             quantity: The quantity of the item to produce
 
-        kwargs:
+        Kwargs:
             batch: Override batch code
             serials: Serial numbers
             location: Override location
             auto_allocate: Automatically allocate stock with matching serial numbers
         """
-
         batch = kwargs.get('batch', self.batch)
         location = kwargs.get('location', self.destination)
         serials = kwargs.get('serials', None)
@@ -687,9 +630,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
             multiple = True
 
         if multiple:
-            """
-            Create multiple build outputs with a single quantity of 1
-            """
+            """Create multiple build outputs with a single quantity of 1."""
 
             # Quantity *must* be an integer at this point!
             quantity = int(quantity)
@@ -743,9 +684,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
                                 )
 
         else:
-            """
-            Create a single build output of the given quantity
-            """
+            """Create a single build output of the given quantity."""
 
             StockModels.StockItem.objects.create(
                 quantity=quantity,
@@ -762,13 +701,12 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @transaction.atomic
     def delete_output(self, output):
-        """
-        Remove a build output from the database:
+        """Remove a build output from the database.
 
+        Executes:
         - Unallocate any build items against the output
         - Delete the output StockItem
         """
-
         if not output:
             raise ValidationError(_("No build output specified"))
 
@@ -786,11 +724,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @transaction.atomic
     def subtract_allocated_stock(self, user):
-        """
-        Called when the Build is marked as "complete",
-        this function removes the allocated untracked items from stock.
-        """
-
+        """Called when the Build is marked as "complete", this function removes the allocated untracked items from stock."""
         items = self.allocated_stock.filter(
             stock_item__part__trackable=False
         )
@@ -804,13 +738,11 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @transaction.atomic
     def complete_build_output(self, output, user, **kwargs):
-        """
-        Complete a particular build output
+        """Complete a particular build output.
 
         - Remove allocated StockItems
         - Mark the output as complete
         """
-
         # Select the location for the build output
         location = kwargs.get('location', self.destination)
         status = kwargs.get('status', StockStatus.OK)
@@ -850,10 +782,9 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @transaction.atomic
     def auto_allocate_stock(self, **kwargs):
-        """
-        Automatically allocate stock items against this build order,
-        following a number of 'guidelines':
+        """Automatically allocate stock items against this build order.
 
+        Following a number of 'guidelines':
         - Only "untracked" BOM items are considered (tracked BOM items must be manually allocated)
         - If a particular BOM item is already fully allocated, it is skipped
         - Extract all available stock items for the BOM part
@@ -863,7 +794,6 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         - If multiple stock items are found, we *may* be able to allocate:
             - If the calling function has specified that items are interchangeable
         """
-
         location = kwargs.get('location', None)
         exclude_location = kwargs.get('exclude_location', None)
         interchangeable = kwargs.get('interchangeable', False)
@@ -958,14 +888,12 @@ class Build(MPTTModel, ReferenceIndexingMixin):
                         break
 
     def required_quantity(self, bom_item, output=None):
-        """
-        Get the quantity of a part required to complete the particular build output.
+        """Get the quantity of a part required to complete the particular build output.
 
         Args:
-            part: The Part object
-            output - The particular build output (StockItem)
+            bom_item: The Part object
+            output: The particular build output (StockItem)
         """
-
         quantity = bom_item.quantity
 
         if output:
@@ -976,17 +904,15 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         return quantity
 
     def allocated_bom_items(self, bom_item, output=None):
-        """
-        Return all BuildItem objects which allocate stock of <bom_item> to <output>
+        """Return all BuildItem objects which allocate stock of <bom_item> to <output>.
 
         Note that the bom_item may allow variants, or direct substitutes,
         making things difficult.
 
         Args:
-            bom_item - The BomItem object
-            output - Build output (StockItem).
+            bom_item: The BomItem object
+            output: Build output (StockItem).
         """
-
         allocations = BuildItem.objects.filter(
             build=self,
             bom_item=bom_item,
@@ -996,10 +922,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         return allocations
 
     def allocated_quantity(self, bom_item, output=None):
-        """
-        Return the total quantity of given part allocated to a given build output.
-        """
-
+        """Return the total quantity of given part allocated to a given build output."""
         allocations = self.allocated_bom_items(bom_item, output)
 
         allocated = allocations.aggregate(
@@ -1013,27 +936,18 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         return allocated['q']
 
     def unallocated_quantity(self, bom_item, output=None):
-        """
-        Return the total unallocated (remaining) quantity of a part against a particular output.
-        """
-
+        """Return the total unallocated (remaining) quantity of a part against a particular output."""
         required = self.required_quantity(bom_item, output)
         allocated = self.allocated_quantity(bom_item, output)
 
         return max(required - allocated, 0)
 
     def is_bom_item_allocated(self, bom_item, output=None):
-        """
-        Test if the supplied BomItem has been fully allocated!
-        """
-
+        """Test if the supplied BomItem has been fully allocated!"""
         return self.unallocated_quantity(bom_item, output) == 0
 
     def is_fully_allocated(self, output):
-        """
-        Returns True if the particular build output is fully allocated.
-        """
-
+        """Returns True if the particular build output is fully allocated."""
         # If output is not specified, we are talking about "untracked" items
         if output is None:
             bom_items = self.untracked_bom_items
@@ -1049,10 +963,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         return True
 
     def is_partially_allocated(self, output):
-        """
-        Returns True if the particular build output is (at least) partially allocated
-        """
-
+        """Returns True if the particular build output is (at least) partially allocated."""
         # If output is not specified, we are talking about "untracked" items
         if output is None:
             bom_items = self.untracked_bom_items
@@ -1067,17 +978,11 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         return False
 
     def are_untracked_parts_allocated(self):
-        """
-        Returns True if the un-tracked parts are fully allocated for this BuildOrder
-        """
-
+        """Returns True if the un-tracked parts are fully allocated for this BuildOrder."""
         return self.is_fully_allocated(None)
 
     def unallocated_bom_items(self, output):
-        """
-        Return a list of bom items which have *not* been fully allocated against a particular output
-        """
-
+        """Return a list of bom items which have *not* been fully allocated against a particular output."""
         unallocated = []
 
         # If output is not specified, we are talking about "untracked" items
@@ -1095,7 +1000,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @property
     def required_parts(self):
-        """ Returns a list of parts required to build this part (BOM) """
+        """Returns a list of parts required to build this part (BOM)."""
         parts = []
 
         for item in self.bom_items:
@@ -1105,7 +1010,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @property
     def required_parts_to_complete_build(self):
-        """ Returns a list of parts required to complete the full build """
+        """Returns a list of parts required to complete the full build."""
         parts = []
 
         for bom_item in self.bom_items:
@@ -1119,26 +1024,23 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     @property
     def is_active(self):
-        """ Is this build active? An active build is either:
+        """Is this build active?
 
+        An active build is either:
         - PENDING
         - HOLDING
         """
-
         return self.status in BuildStatus.ACTIVE_CODES
 
     @property
     def is_complete(self):
-        """ Returns True if the build status is COMPLETE """
-
+        """Returns True if the build status is COMPLETE."""
         return self.status == BuildStatus.COMPLETE
 
 
 @receiver(post_save, sender=Build, dispatch_uid='build_post_save_log')
 def after_save_build(sender, instance: Build, created: bool, **kwargs):
-    """
-    Callback function to be executed after a Build instance is saved
-    """
+    """Callback function to be executed after a Build instance is saved."""
     from . import tasks as build_tasks
 
     if created:
@@ -1149,21 +1051,19 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
 
 
 class BuildOrderAttachment(InvenTreeAttachment):
-    """
-    Model for storing file attachments against a BuildOrder object
-    """
+    """Model for storing file attachments against a BuildOrder object."""
 
     def getSubdir(self):
+        """Return the media file subdirectory for storing BuildOrder attachments"""
         return os.path.join('bo_files', str(self.build.id))
 
     build = models.ForeignKey(Build, on_delete=models.CASCADE, related_name='attachments')
 
 
 class BuildItem(models.Model):
-    """ A BuildItem links multiple StockItem objects to a Build.
-    These are used to allocate part stock to a build.
-    Once the Build is completed, the parts are removed from stock and the
-    BuildItemAllocation objects are removed.
+    """A BuildItem links multiple StockItem objects to a Build.
+
+    These are used to allocate part stock to a build. Once the Build is completed, the parts are removed from stock and the BuildItemAllocation objects are removed.
 
     Attributes:
         build: Link to a Build object
@@ -1175,33 +1075,28 @@ class BuildItem(models.Model):
 
     @staticmethod
     def get_api_url():
+        """Return the API URL used to access this model"""
         return reverse('api-build-item-list')
 
-    def get_absolute_url(self):
-        # TODO - Fix!
-        return '/build/item/{pk}/'.format(pk=self.id)
-        # return reverse('build-detail', kwargs={'pk': self.id})
-
     class Meta:
+        """Serializer metaclass"""
         unique_together = [
             ('build', 'stock_item', 'install_into'),
         ]
 
     def save(self, *args, **kwargs):
-
+        """Custom save method for the BuildItem model"""
         self.clean()
 
         super().save()
 
     def clean(self):
-        """
-        Check validity of this BuildItem instance.
-        The following checks are performed:
+        """Check validity of this BuildItem instance.
 
+        The following checks are performed:
         - StockItem.part must be in the BOM of the Part object referenced by Build
         - Allocation quantity cannot exceed available quantity
         """
-
         self.validate_unique()
 
         super().clean()
@@ -1303,13 +1198,11 @@ class BuildItem(models.Model):
 
     @transaction.atomic
     def complete_allocation(self, user, notes=''):
-        """
-        Complete the allocation of this BuildItem into the output stock item.
+        """Complete the allocation of this BuildItem into the output stock item.
 
         - If the referenced part is trackable, the stock item will be *installed* into the build output
         - If the referenced part is *not* trackable, the stock item will be removed from stock
         """
-
         item = self.stock_item
 
         # For a trackable part, special consideration needed!
@@ -1344,10 +1237,7 @@ class BuildItem(models.Model):
             )
 
     def getStockItemThumbnail(self):
-        """
-        Return qualified URL for part thumbnail image
-        """
-
+        """Return qualified URL for part thumbnail image."""
         thumb_url = None
 
         if self.stock_item and self.stock_item.part:

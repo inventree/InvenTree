@@ -1,8 +1,4 @@
-"""
-Django views for interacting with Stock app
-"""
-
-from datetime import datetime
+"""Django views for interacting with Stock app."""
 
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -12,22 +8,23 @@ from django.views.generic import DetailView, ListView
 import common.settings
 from InvenTree.forms import ConfirmForm
 from InvenTree.helpers import str2bool
-from InvenTree.views import (AjaxCreateView, AjaxDeleteView, AjaxUpdateView,
+from InvenTree.views import (AjaxDeleteView, AjaxUpdateView,
                              InvenTreeRoleMixin, QRCodeView)
 from plugin.views import InvenTreePluginViewMixin
 
 from . import forms as StockForms
-from .models import StockItem, StockItemTracking, StockLocation
+from .models import StockItem, StockLocation
 
 
 class StockIndex(InvenTreeRoleMixin, InvenTreePluginViewMixin, ListView):
-    """ StockIndex view loads all StockLocation and StockItem object
-    """
+    """StockIndex view loads all StockLocation and StockItem object."""
+
     model = StockItem
     template_name = 'stock/location.html'
     context_obect_name = 'locations'
 
     def get_context_data(self, **kwargs):
+        """Extend template context."""
         context = super().get_context_data(**kwargs).copy()
 
         # Return all top-level locations
@@ -48,9 +45,7 @@ class StockIndex(InvenTreeRoleMixin, InvenTreePluginViewMixin, ListView):
 
 
 class StockLocationDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
-    """
-    Detailed view of a single StockLocation object
-    """
+    """Detailed view of a single StockLocation object."""
 
     context_object_name = 'location'
     template_name = 'stock/location.html'
@@ -58,7 +53,7 @@ class StockLocationDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailVi
     model = StockLocation
 
     def get_context_data(self, **kwargs):
-
+        """Extend template context."""
         context = super().get_context_data(**kwargs)
 
         context['ownership_enabled'] = common.models.InvenTreeSetting.get_setting('STOCK_OWNERSHIP_CONTROL')
@@ -69,9 +64,7 @@ class StockLocationDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailVi
 
 
 class StockItemDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
-    """
-    Detailed view of a single StockItem object
-    """
+    """Detailed view of a single StockItem object."""
 
     context_object_name = 'item'
     template_name = 'stock/item.html'
@@ -79,11 +72,7 @@ class StockItemDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
     model = StockItem
 
     def get_context_data(self, **kwargs):
-        """
-        Add information on the "next" and "previous" StockItem objects,
-        based on the serial numbers.
-        """
-
+        """Add information on the "next" and "previous" StockItem objects, based on the serial numbers."""
         data = super().get_context_data(**kwargs)
 
         if self.object.serialized:
@@ -103,8 +92,7 @@ class StockItemDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
         return data
 
     def get(self, request, *args, **kwargs):
-        """ check if item exists else return to stock index """
-
+        """Check if item exists else return to stock index."""
         stock_pk = kwargs.get('pk', None)
 
         if stock_pk:
@@ -120,14 +108,14 @@ class StockItemDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
 
 
 class StockLocationQRCode(QRCodeView):
-    """ View for displaying a QR code for a StockLocation object """
+    """View for displaying a QR code for a StockLocation object."""
 
     ajax_form_title = _("Stock Location QR code")
 
     role_required = ['stock_location.view', 'stock.view']
 
     def get_qr_data(self):
-        """ Generate QR code data for the StockLocation """
+        """Generate QR code data for the StockLocation."""
         try:
             loc = StockLocation.objects.get(id=self.pk)
             return loc.format_barcode()
@@ -135,40 +123,8 @@ class StockLocationQRCode(QRCodeView):
             return None
 
 
-class StockItemReturnToStock(AjaxUpdateView):
-    """
-    View for returning a stock item (which is assigned to a customer) to stock.
-    """
-
-    model = StockItem
-    ajax_form_title = _("Return to Stock")
-    context_object_name = "item"
-    form_class = StockForms.ReturnStockItemForm
-
-    def validate(self, item, form, **kwargs):
-
-        location = form.cleaned_data.get('location', None)
-
-        if not location:
-            form.add_error('location', _('Specify a valid location'))
-
-    def save(self, item, form, **kwargs):
-
-        location = form.cleaned_data.get('location', None)
-
-        if location:
-            item.returnFromCustomer(location, self.request.user)
-
-    def get_data(self):
-        return {
-            'success': _('Stock item returned from customer')
-        }
-
-
 class StockItemDeleteTestData(AjaxUpdateView):
-    """
-    View for deleting all test data
-    """
+    """View for deleting all test data."""
 
     model = StockItem
     form_class = ConfirmForm
@@ -177,10 +133,11 @@ class StockItemDeleteTestData(AjaxUpdateView):
     role_required = ['stock.change', 'stock.delete']
 
     def get_form(self):
+        """Require confirm."""
         return ConfirmForm()
 
     def post(self, request, *args, **kwargs):
-
+        """Delete test data."""
         valid = False
 
         stock_item = StockItem.objects.get(pk=self.kwargs['pk'])
@@ -203,13 +160,13 @@ class StockItemDeleteTestData(AjaxUpdateView):
 
 
 class StockItemQRCode(QRCodeView):
-    """ View for displaying a QR code for a StockItem object """
+    """View for displaying a QR code for a StockItem object."""
 
     ajax_form_title = _("Stock Item QR Code")
     role_required = 'stock.view'
 
     def get_qr_data(self):
-        """ Generate QR code data for the StockItem """
+        """Generate QR code data for the StockItem."""
         try:
             item = StockItem.objects.get(id=self.pk)
             return item.format_barcode()
@@ -218,9 +175,7 @@ class StockItemQRCode(QRCodeView):
 
 
 class StockItemConvert(AjaxUpdateView):
-    """
-    View for 'converting' a StockItem to a variant of its current part.
-    """
+    """View for 'converting' a StockItem to a variant of its current part."""
 
     model = StockItem
     form_class = StockForms.ConvertStockItemForm
@@ -229,10 +184,7 @@ class StockItemConvert(AjaxUpdateView):
     context_object_name = 'item'
 
     def get_form(self):
-        """
-        Filter the available parts.
-        """
-
+        """Filter the available parts."""
         form = super().get_form()
         item = self.get_object()
 
@@ -241,7 +193,7 @@ class StockItemConvert(AjaxUpdateView):
         return form
 
     def save(self, obj, form):
-
+        """Convert item to variant."""
         stock_item = self.get_object()
 
         variant = form.cleaned_data.get('part', None)
@@ -252,8 +204,8 @@ class StockItemConvert(AjaxUpdateView):
 
 
 class StockLocationDelete(AjaxDeleteView):
-    """
-    View to delete a StockLocation
+    """View to delete a StockLocation.
+
     Presents a deletion confirmation form to the user
     """
 
@@ -265,8 +217,8 @@ class StockLocationDelete(AjaxDeleteView):
 
 
 class StockItemDelete(AjaxDeleteView):
-    """
-    View to delete a StockItem
+    """View to delete a StockItem.
+
     Presents a deletion confirmation form to the user
     """
 
@@ -275,66 +227,3 @@ class StockItemDelete(AjaxDeleteView):
     ajax_template_name = 'stock/item_delete.html'
     context_object_name = 'item'
     ajax_form_title = _('Delete Stock Item')
-
-
-class StockItemTrackingDelete(AjaxDeleteView):
-    """
-    View to delete a StockItemTracking object
-    Presents a deletion confirmation form to the user
-    """
-
-    model = StockItemTracking
-    ajax_template_name = 'stock/tracking_delete.html'
-    ajax_form_title = _('Delete Stock Tracking Entry')
-
-
-class StockItemTrackingEdit(AjaxUpdateView):
-    """ View for editing a StockItemTracking object """
-
-    model = StockItemTracking
-    ajax_form_title = _('Edit Stock Tracking Entry')
-    form_class = StockForms.TrackingEntryForm
-
-
-class StockItemTrackingCreate(AjaxCreateView):
-    """ View for creating a new StockItemTracking object.
-    """
-
-    model = StockItemTracking
-    ajax_form_title = _("Add Stock Tracking Entry")
-    form_class = StockForms.TrackingEntryForm
-
-    def post(self, request, *args, **kwargs):
-
-        self.request = request
-        self.form = self.get_form()
-
-        valid = False
-
-        if self.form.is_valid():
-            stock_id = self.kwargs['pk']
-
-            if stock_id:
-                try:
-                    stock_item = StockItem.objects.get(id=stock_id)
-
-                    # Save new tracking information
-                    tracking = self.form.save(commit=False)
-                    tracking.item = stock_item
-                    tracking.user = self.request.user
-                    tracking.quantity = stock_item.quantity
-                    tracking.date = datetime.now().date()
-                    tracking.system = False
-
-                    tracking.save()
-
-                    valid = True
-
-                except (StockItem.DoesNotExist, ValueError):
-                    pass
-
-        data = {
-            'form_valid': valid
-        }
-
-        return self.renderJsonResponse(request, self.form, data=data)

@@ -1,3 +1,5 @@
+"""Unit tests for the various part API endpoints"""
+
 from django.urls import reverse
 
 import PIL
@@ -11,12 +13,13 @@ from company.models import Company
 from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     StockStatus)
-from part.models import BomItem, BomItemSubstitute, Part, PartCategory
+from part.models import (BomItem, BomItemSubstitute, Part, PartCategory,
+                         PartRelated)
 from stock.models import StockItem, StockLocation
 
 
 class PartCategoryAPITest(InvenTreeAPITestCase):
-    """Unit tests for the PartCategory API"""
+    """Unit tests for the PartCategory API."""
 
     fixtures = [
         'category',
@@ -40,8 +43,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
     ]
 
     def test_category_list(self):
-
-        # List all part categories
+        """Test the PartCategoryList API endpoint"""
         url = reverse('api-part-category-list')
 
         response = self.get(url, expected_code=200)
@@ -73,8 +75,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), 5)
 
     def test_category_metadata(self):
-        """Test metadata endpoint for the PartCategory"""
-
+        """Test metadata endpoint for the PartCategory."""
         cat = PartCategory.objects.get(pk=1)
 
         cat.metadata = {
@@ -95,8 +96,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
 
 
 class PartOptionsAPITest(InvenTreeAPITestCase):
-    """
-    Tests for the various OPTIONS endpoints in the /part/ API
+    """Tests for the various OPTIONS endpoints in the /part/ API.
 
     Ensure that the required field details are provided!
     """
@@ -105,15 +105,8 @@ class PartOptionsAPITest(InvenTreeAPITestCase):
         'part.add',
     ]
 
-    def setUp(self):
-
-        super().setUp()
-
     def test_part(self):
-        """
-        Test the Part API OPTIONS
-        """
-
+        """Test the Part API OPTIONS."""
         actions = self.getActions(reverse('api-part-list'))['POST']
 
         # Check that a bunch o' fields are contained
@@ -147,10 +140,7 @@ class PartOptionsAPITest(InvenTreeAPITestCase):
         self.assertEqual(category['help_text'], 'Part category')
 
     def test_category(self):
-        """
-        Test the PartCategory API OPTIONS endpoint
-        """
-
+        """Test the PartCategory API OPTIONS endpoint."""
         actions = self.getActions(reverse('api-part-category-list'))
 
         # actions should *not* contain 'POST' as we do not have the correct role
@@ -169,10 +159,7 @@ class PartOptionsAPITest(InvenTreeAPITestCase):
         self.assertEqual(loc['api_url'], reverse('api-location-list'))
 
     def test_bom_item(self):
-        """
-        Test the BomItem API OPTIONS endpoint
-        """
-
+        """Test the BomItem API OPTIONS endpoint."""
         actions = self.getActions(reverse('api-bom-list'))['POST']
 
         inherited = actions['inherited']
@@ -195,8 +182,8 @@ class PartOptionsAPITest(InvenTreeAPITestCase):
 
 
 class PartAPITest(InvenTreeAPITestCase):
-    """
-    Series of tests for the Part DRF API
+    """Series of tests for the Part DRF API.
+
     - Tests for Part API
     - Tests for PartCategory API
     """
@@ -218,67 +205,57 @@ class PartAPITest(InvenTreeAPITestCase):
         'part_category.add',
     ]
 
-    def setUp(self):
-        super().setUp()
-
     def test_get_categories(self):
-        """
-        Test that we can retrieve list of part categories,
-        with various filtering options.
-        """
-
+        """Test that we can retrieve list of part categories, with various filtering options."""
         url = reverse('api-part-category-list')
 
         # Request *all* part categories
-        response = self.client.get(url, format='json')
+        response = self.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 8)
 
         # Request top-level part categories only
-        response = self.client.get(
+        response = self.get(
             url,
             {
                 'parent': 'null',
-            },
-            format='json'
+            }
         )
 
         self.assertEqual(len(response.data), 2)
 
         # Children of PartCategory<1>, cascade
-        response = self.client.get(
+        response = self.get(
             url,
             {
                 'parent': 1,
                 'cascade': 'true',
-            },
-            format='json',
+            }
         )
 
         self.assertEqual(len(response.data), 5)
 
         # Children of PartCategory<1>, do not cascade
-        response = self.client.get(
+        response = self.get(
             url,
             {
                 'parent': 1,
                 'cascade': 'false',
-            },
-            format='json',
+            }
         )
 
         self.assertEqual(len(response.data), 3)
 
     def test_add_categories(self):
-        """ Check that we can add categories """
+        """Check that we can add categories."""
         data = {
             'name': 'Animals',
             'description': 'All animals go here'
         }
 
         url = reverse('api-part-category-list')
-        response = self.client.post(url, data, format='json')
+        response = self.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         parent = response.data['pk']
@@ -290,19 +267,20 @@ class PartAPITest(InvenTreeAPITestCase):
                 'description': 'A sort of animal',
                 'parent': parent,
             }
-            response = self.client.post(url, data, format='json')
+            response = self.post(url, data)
             self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(response.data['parent'], parent)
             self.assertEqual(response.data['name'], animal)
             self.assertEqual(response.data['pathstring'], 'Animals/' + animal)
 
         # There should be now 8 categories
-        response = self.client.get(url, format='json')
+        response = self.get(url)
         self.assertEqual(len(response.data), 12)
 
     def test_cat_detail(self):
+        """Test the PartCategoryDetail API endpoint"""
         url = reverse('api-part-category-detail', kwargs={'pk': 4})
-        response = self.client.get(url, format='json')
+        response = self.get(url)
 
         # Test that we have retrieved the category
         self.assertEqual(response.data['description'], 'Integrated Circuits')
@@ -313,22 +291,22 @@ class PartAPITest(InvenTreeAPITestCase):
         data['name'] = 'Changing category'
         data['parent'] = None
         data['description'] = 'Changing the description'
-        response = self.client.patch(url, data, format='json')
+        response = self.patch(url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['description'], 'Changing the description')
         self.assertIsNone(response.data['parent'])
 
-    def test_get_all_parts(self):
+    def test_filter_parts(self):
+        """Test part filtering using the API"""
         url = reverse('api-part-list')
         data = {'cascade': True}
-        response = self.client.get(url, data, format='json')
+        response = self.get(url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), Part.objects.count())
 
-    def test_get_parts_by_cat(self):
-        url = reverse('api-part-list')
+        # Test filtering parts by category
         data = {'category': 2}
-        response = self.client.get(url, data, format='json')
+        response = self.get(url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # There should only be 2 objects in category C
@@ -337,39 +315,62 @@ class PartAPITest(InvenTreeAPITestCase):
         for part in response.data:
             self.assertEqual(part['category'], 2)
 
+    def test_filter_by_related(self):
+        """Test that we can filter by the 'related' status"""
+        url = reverse('api-part-list')
+
+        # Initially there are no relations, so this should return zero results
+        response = self.get(url, {'related': 1}, expected_code=200)
+        self.assertEqual(len(response.data), 0)
+
+        # Add some relationships
+        PartRelated.objects.create(
+            part_1=Part.objects.get(pk=1),
+            part_2=Part.objects.get(pk=2),
+        )
+
+        PartRelated.objects.create(
+            part_2=Part.objects.get(pk=1),
+            part_1=Part.objects.get(pk=3)
+        )
+
+        response = self.get(url, {'related': 1}, expected_code=200)
+        self.assertEqual(len(response.data), 2)
+
     def test_include_children(self):
-        """ Test the special 'include_child_categories' flag
+        """Test the special 'include_child_categories' flag.
+
         If provided, parts are provided for ANY child category (recursive)
         """
         url = reverse('api-part-list')
         data = {'category': 1, 'cascade': True}
 
         # Now request to include child categories
-        response = self.client.get(url, data, format='json')
+        response = self.get(url, data)
 
         # Now there should be 5 total parts
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 3)
 
     def test_test_templates(self):
-
+        """Test the PartTestTemplate API"""
         url = reverse('api-part-test-template-list')
 
         # List ALL items
-        response = self.client.get(url)
+        response = self.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 7)
 
         # Request for a particular part
-        response = self.client.get(url, data={'part': 10000})
+        response = self.get(url, data={'part': 10000})
         self.assertEqual(len(response.data), 5)
 
-        response = self.client.get(url, data={'part': 10004})
+        response = self.get(url, data={'part': 10004})
         self.assertEqual(len(response.data), 7)
 
         # Try to post a new object (missing description)
-        response = self.client.post(
+        response = self.post(
             url,
             data={
                 'part': 10000,
@@ -381,34 +382,32 @@ class PartAPITest(InvenTreeAPITestCase):
         self.assertEqual(response.status_code, 400)
 
         # Try to post a new object (should succeed)
-        response = self.client.post(
+        response = self.post(
             url,
             data={
                 'part': 10000,
                 'test_name': 'New Test',
                 'required': True,
                 'description': 'a test description'
-            },
-            format='json',
+            }
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # Try to post a new test with the same name (should fail)
-        response = self.client.post(
+        response = self.post(
             url,
             data={
                 'part': 10004,
                 'test_name': "   newtest",
                 'description': 'dafsdf',
-            },
-            format='json',
+            }
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         # Try to post a new test against a non-trackable part (should fail)
-        response = self.client.post(
+        response = self.post(
             url,
             data={
                 'part': 1,
@@ -419,21 +418,15 @@ class PartAPITest(InvenTreeAPITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_get_thumbs(self):
-        """
-        Return list of part thumbnails
-        """
-
+        """Return list of part thumbnails."""
         url = reverse('api-part-thumbs')
 
-        response = self.client.get(url)
+        response = self.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_paginate(self):
-        """
-        Test pagination of the Part list API
-        """
-
+        """Test pagination of the Part list API."""
         for n in [1, 5, 10]:
             response = self.get(reverse('api-part-list'), {'limit': n})
 
@@ -445,16 +438,14 @@ class PartAPITest(InvenTreeAPITestCase):
             self.assertEqual(len(data['results']), n)
 
     def test_default_values(self):
-        """
-        Tests for 'default' values:
+        """Tests for 'default' values:
 
         Ensure that unspecified fields revert to "default" values
         (as specified in the model field definition)
         """
-
         url = reverse('api-part-list')
 
-        response = self.client.post(url, {
+        response = self.post(url, {
             'name': 'all defaults',
             'description': 'my test part',
             'category': 1,
@@ -476,7 +467,7 @@ class PartAPITest(InvenTreeAPITestCase):
             self.user
         )
 
-        response = self.client.post(url, {
+        response = self.post(url, {
             'name': 'all defaults',
             'description': 'my test part 2',
             'category': 1,
@@ -486,7 +477,7 @@ class PartAPITest(InvenTreeAPITestCase):
         self.assertTrue(response.data['purchaseable'])
 
         # "default" values should not be used if the value is specified
-        response = self.client.post(url, {
+        response = self.post(url, {
             'name': 'all defaults',
             'description': 'my test part 2',
             'category': 1,
@@ -498,10 +489,7 @@ class PartAPITest(InvenTreeAPITestCase):
         self.assertFalse(response.data['purchaseable'])
 
     def test_initial_stock(self):
-        """
-        Tests for initial stock quantity creation
-        """
-
+        """Tests for initial stock quantity creation."""
         url = reverse('api-part-list')
 
         # Track how many parts exist at the start of this test
@@ -555,10 +543,7 @@ class PartAPITest(InvenTreeAPITestCase):
         self.assertEqual(new_part.total_stock, 12345)
 
     def test_initial_supplier_data(self):
-        """
-        Tests for initial creation of supplier / manufacturer data
-        """
-
+        """Tests for initial creation of supplier / manufacturer data."""
         url = reverse('api-part-list')
 
         n = Part.objects.count()
@@ -620,10 +605,7 @@ class PartAPITest(InvenTreeAPITestCase):
         self.assertEqual(new_part.manufacturer_parts.count(), 1)
 
     def test_strange_chars(self):
-        """
-        Test that non-standard ASCII chars are accepted
-        """
-
+        """Test that non-standard ASCII chars are accepted."""
         url = reverse('api-part-list')
 
         name = "KaltgerÃ¤testecker"
@@ -641,15 +623,13 @@ class PartAPITest(InvenTreeAPITestCase):
         self.assertEqual(response.data['description'], description)
 
     def test_template_filters(self):
-        """
-        Unit tests for API filters related to template parts:
+        """Unit tests for API filters related to template parts:
 
         - variant_of : Return children of specified part
         - ancestor : Return descendants of specified part
 
         Uses the 'chair template' part (pk=10000)
         """
-
         # Rebuild the MPTT structure before running these tests
         Part.objects.rebuild()
 
@@ -732,11 +712,7 @@ class PartAPITest(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), 101)
 
     def test_variant_stock(self):
-        """
-        Unit tests for the 'variant_stock' annotation,
-        which provides a stock count for *variant* parts
-        """
-
+        """Unit tests for the 'variant_stock' annotation, which provides a stock count for *variant* parts."""
         # Ensure the MPTT structure is in a known state before running tests
         Part.objects.rebuild()
 
@@ -820,8 +796,7 @@ class PartAPITest(InvenTreeAPITestCase):
         self.assertEqual(response.data['variant_stock'], 500)
 
     def test_part_download(self):
-        """Test download of part data via the API"""
-
+        """Test download of part data via the API."""
         url = reverse('api-part-list')
 
         required_cols = [
@@ -873,9 +848,7 @@ class PartAPITest(InvenTreeAPITestCase):
 
 
 class PartDetailTests(InvenTreeAPITestCase):
-    """
-    Test that we can create / edit / delete Part objects via the API
-    """
+    """Test that we can create / edit / delete Part objects via the API."""
 
     fixtures = [
         'category',
@@ -898,14 +871,12 @@ class PartDetailTests(InvenTreeAPITestCase):
         'part_category.add',
     ]
 
-    def setUp(self):
-        super().setUp()
-
     def test_part_operations(self):
+        """Test that Part instances can be adjusted via the API"""
         n = Part.objects.count()
 
         # Create a part
-        response = self.client.post(
+        response = self.post(
             reverse('api-part-list'),
             {
                 'name': 'my test api part',
@@ -930,7 +901,7 @@ class PartDetailTests(InvenTreeAPITestCase):
 
         # Let's change the name of the part
 
-        response = self.client.patch(url, {
+        response = self.patch(url, {
             'name': 'a new better name',
         })
 
@@ -948,14 +919,14 @@ class PartDetailTests(InvenTreeAPITestCase):
 
         # Now, try to set the name to the *same* value
         # 2021-06-22 this test is to check that the "duplicate part" checks don't do strange things
-        response = self.client.patch(url, {
+        response = self.patch(url, {
             'name': 'a new better name',
         })
 
         self.assertEqual(response.status_code, 200)
 
         # Try to remove the part
-        response = self.client.delete(url)
+        response = self.delete(url)
 
         # As the part is 'active' we cannot delete it
         self.assertEqual(response.status_code, 405)
@@ -963,19 +934,16 @@ class PartDetailTests(InvenTreeAPITestCase):
         # So, let's make it not active
         response = self.patch(url, {'active': False}, expected_code=200)
 
-        response = self.client.delete(url)
+        response = self.delete(url)
         self.assertEqual(response.status_code, 204)
 
         # Part count should have reduced
         self.assertEqual(Part.objects.count(), n)
 
     def test_duplicates(self):
-        """
-        Check that trying to create 'duplicate' parts results in errors
-        """
-
+        """Check that trying to create 'duplicate' parts results in errors."""
         # Create a part
-        response = self.client.post(reverse('api-part-list'), {
+        response = self.post(reverse('api-part-list'), {
             'name': 'part',
             'description': 'description',
             'IPN': 'IPN-123',
@@ -988,7 +956,7 @@ class PartDetailTests(InvenTreeAPITestCase):
         n = Part.objects.count()
 
         # Check that we cannot create a duplicate in a different category
-        response = self.client.post(reverse('api-part-list'), {
+        response = self.post(reverse('api-part-list'), {
             'name': 'part',
             'description': 'description',
             'IPN': 'IPN-123',
@@ -1011,7 +979,7 @@ class PartDetailTests(InvenTreeAPITestCase):
         self.assertEqual(Part.objects.count(), n)
 
         # But a different 'revision' *can* be created
-        response = self.client.post(reverse('api-part-list'), {
+        response = self.post(reverse('api-part-list'), {
             'name': 'part',
             'description': 'description',
             'IPN': 'IPN-123',
@@ -1028,18 +996,17 @@ class PartDetailTests(InvenTreeAPITestCase):
         url = reverse('api-part-detail', kwargs={'pk': pk})
 
         # Attempt to alter the revision code
-        response = self.client.patch(
+        response = self.patch(
             url,
             {
                 'revision': 'A',
-            },
-            format='json',
+            }
         )
 
         self.assertEqual(response.status_code, 400)
 
         # But we *can* change it to a unique revision code
-        response = self.client.patch(
+        response = self.patch(
             url,
             {
                 'revision': 'C',
@@ -1049,14 +1016,11 @@ class PartDetailTests(InvenTreeAPITestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_image_upload(self):
-        """
-        Test that we can upload an image to the part API
-        """
-
+        """Test that we can upload an image to the part API."""
         self.assignRole('part.add')
 
         # Create a new part
-        response = self.client.post(
+        response = self.post(
             reverse('api-part-list'),
             {
                 'name': 'imagine',
@@ -1098,7 +1062,7 @@ class PartDetailTests(InvenTreeAPITestCase):
             self.assertIn('Upload a valid image', str(response.data))
 
         # Now try to upload a valid image file, in multiple formats
-        for fmt in ['jpg', 'png', 'bmp', 'webp']:
+        for fmt in ['jpg', 'j2k', 'png', 'bmp', 'webp']:
             fn = f'dummy_image.{fmt}'
 
             img = PIL.Image.new('RGB', (128, 128), color='red')
@@ -1120,10 +1084,7 @@ class PartDetailTests(InvenTreeAPITestCase):
             self.assertIsNotNone(p.image)
 
     def test_details(self):
-        """
-        Test that the required details are available
-        """
-
+        """Test that the required details are available."""
         p = Part.objects.get(pk=1)
 
         url = reverse('api-part-detail', kwargs={'pk': 1})
@@ -1152,10 +1113,7 @@ class PartDetailTests(InvenTreeAPITestCase):
         self.assertEqual(data['unallocated_stock'], 9000)
 
     def test_part_metadata(self):
-        """
-        Tests for the part metadata endpoint
-        """
-
+        """Tests for the part metadata endpoint."""
         url = reverse('api-part-metadata', kwargs={'pk': 1})
 
         part = Part.objects.get(pk=1)
@@ -1206,9 +1164,7 @@ class PartDetailTests(InvenTreeAPITestCase):
 
 
 class PartAPIAggregationTest(InvenTreeAPITestCase):
-    """
-    Tests to ensure that the various aggregation annotations are working correctly...
-    """
+    """Tests to ensure that the various aggregation annotations are working correctly..."""
 
     fixtures = [
         'category',
@@ -1229,7 +1185,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
     ]
 
     def setUp(self):
-
+        """Create test data as part of setup routine"""
         super().setUp()
 
         # Ensure the part "variant" tree is correctly structured
@@ -1253,9 +1209,10 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         StockItem.objects.create(part=self.part, quantity=400, status=StockStatus.LOST)
 
     def get_part_data(self):
+        """Helper function for retrieving part data"""
         url = reverse('api-part-list')
 
-        response = self.client.get(url, format='json')
+        response = self.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -1267,10 +1224,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         self.assertTrue(False)  # pragma: no cover
 
     def test_stock_quantity(self):
-        """
-        Simple test for the stock quantity
-        """
-
+        """Simple test for the stock quantity."""
         data = self.get_part_data()
 
         self.assertEqual(data['in_stock'], 600)
@@ -1290,11 +1244,10 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         self.assertEqual(data['stock_item_count'], 105)
 
     def test_allocation_annotations(self):
-        """
-        Tests for query annotations which add allocation information.
+        """Tests for query annotations which add allocation information.
+
         Ref: https://github.com/inventree/InvenTree/pull/2797
         """
-
         # We are looking at Part ID 100 ("Bob")
         url = reverse('api-part-detail', kwargs={'pk': 100})
 
@@ -1438,9 +1391,7 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
 
 
 class BomItemTest(InvenTreeAPITestCase):
-    """
-    Unit tests for the BomItem API
-    """
+    """Unit tests for the BomItem API."""
 
     fixtures = [
         'category',
@@ -1457,14 +1408,8 @@ class BomItemTest(InvenTreeAPITestCase):
         'part.delete',
     ]
 
-    def setUp(self):
-        super().setUp()
-
     def test_bom_list(self):
-        """
-        Tests for the BomItem list endpoint
-        """
-
+        """Tests for the BomItem list endpoint."""
         # How many BOM items currently exist in the database?
         n = BomItem.objects.count()
 
@@ -1529,10 +1474,7 @@ class BomItemTest(InvenTreeAPITestCase):
                 self.assertTrue(key in el)
 
     def test_get_bom_detail(self):
-        """
-        Get the detail view for a single BomItem object
-        """
-
+        """Get the detail view for a single BomItem object."""
         url = reverse('api-bom-item-detail', kwargs={'pk': 3})
 
         response = self.get(url, expected_code=200)
@@ -1570,10 +1512,7 @@ class BomItemTest(InvenTreeAPITestCase):
         self.assertEqual(response.data['note'], 'Added a note')
 
     def test_add_bom_item(self):
-        """
-        Test that we can create a new BomItem via the API
-        """
-
+        """Test that we can create a new BomItem via the API."""
         url = reverse('api-bom-list')
 
         data = {
@@ -1587,13 +1526,10 @@ class BomItemTest(InvenTreeAPITestCase):
         # Now try to create a BomItem which references itself
         data['part'] = 100
         data['sub_part'] = 100
-        self.client.post(url, data, expected_code=400)
+        self.post(url, data, expected_code=400)
 
     def test_variants(self):
-        """
-        Tests for BomItem use with variants
-        """
-
+        """Tests for BomItem use with variants."""
         stock_url = reverse('api-stock-list')
 
         # BOM item we are interested in
@@ -1675,10 +1611,7 @@ class BomItemTest(InvenTreeAPITestCase):
         self.assertEqual(len(response.data), 2)
 
     def test_substitutes(self):
-        """
-        Tests for BomItem substitutes
-        """
-
+        """Tests for BomItem substitutes."""
         url = reverse('api-bom-substitute-list')
         stock_url = reverse('api-stock-list')
 
@@ -1760,10 +1693,7 @@ class BomItemTest(InvenTreeAPITestCase):
         self.assertEqual(data['available_stock'], 9000)
 
     def test_bom_item_uses(self):
-        """
-        Tests for the 'uses' field
-        """
-
+        """Tests for the 'uses' field."""
         url = reverse('api-bom-list')
 
         # Test that the direct 'sub_part' association works
@@ -1813,10 +1743,7 @@ class BomItemTest(InvenTreeAPITestCase):
             self.assertEqual(len(response.data), i)
 
     def test_bom_variant_stock(self):
-        """
-        Test for 'available_variant_stock' annotation
-        """
-
+        """Test for 'available_variant_stock' annotation."""
         Part.objects.rebuild()
 
         # BOM item we are interested in
@@ -1852,10 +1779,7 @@ class BomItemTest(InvenTreeAPITestCase):
 
 
 class PartParameterTest(InvenTreeAPITestCase):
-    """
-    Tests for the ParParameter API
-    """
-
+    """Tests for the ParParameter API."""
     superuser = True
 
     fixtures = [
@@ -1865,51 +1789,39 @@ class PartParameterTest(InvenTreeAPITestCase):
         'params',
     ]
 
-    def setUp(self):
-
-        super().setUp()
-
     def test_list_params(self):
-        """
-        Test for listing part parameters
-        """
-
+        """Test for listing part parameters."""
         url = reverse('api-part-parameter-list')
 
-        response = self.client.get(url, format='json')
+        response = self.get(url)
 
         self.assertEqual(len(response.data), 5)
 
         # Filter by part
-        response = self.client.get(
+        response = self.get(
             url,
             {
                 'part': 3,
-            },
-            format='json'
+            }
         )
 
         self.assertEqual(len(response.data), 3)
 
         # Filter by template
-        response = self.client.get(
+        response = self.get(
             url,
             {
                 'template': 1,
-            },
-            format='json',
+            }
         )
 
         self.assertEqual(len(response.data), 3)
 
     def test_create_param(self):
-        """
-        Test that we can create a param via the API
-        """
-
+        """Test that we can create a param via the API."""
         url = reverse('api-part-parameter-list')
 
-        response = self.client.post(
+        response = self.post(
             url,
             {
                 'part': '2',
@@ -1920,18 +1832,15 @@ class PartParameterTest(InvenTreeAPITestCase):
 
         self.assertEqual(response.status_code, 201)
 
-        response = self.client.get(url, format='json')
+        response = self.get(url)
 
         self.assertEqual(len(response.data), 6)
 
     def test_param_detail(self):
-        """
-        Tests for the PartParameter detail endpoint
-        """
-
+        """Tests for the PartParameter detail endpoint."""
         url = reverse('api-part-parameter-detail', kwargs={'pk': 5})
 
-        response = self.client.get(url)
+        response = self.get(url)
 
         self.assertEqual(response.status_code, 200)
 
@@ -1942,12 +1851,12 @@ class PartParameterTest(InvenTreeAPITestCase):
         self.assertEqual(data['data'], '12')
 
         # PATCH data back in
-        response = self.client.patch(url, {'data': '15'}, format='json')
+        response = self.patch(url, {'data': '15'})
 
         self.assertEqual(response.status_code, 200)
 
         # Check that the data changed!
-        response = self.client.get(url, format='json')
+        response = self.get(url)
 
         data = response.data
 

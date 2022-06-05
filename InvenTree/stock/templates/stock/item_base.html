@@ -156,7 +156,7 @@
             {% endif %}
         </td>
     </tr>
-    
+
     {% if item.uid %}
     <tr>
         <td><span class='fas fa-barcode'></span></td>
@@ -452,7 +452,7 @@
         {% endif %}
     </tr>
 
-    
+
 </table>
 {% endblock details_right %}
 
@@ -632,11 +632,21 @@ $('#stock-remove').click(function() {
 {% else %}
 
 $("#stock-return-from-customer").click(function() {
-    launchModalForm("{% url 'stock-item-return' item.id %}",
-        {
-            reload: true,
-        }
-    );
+
+    constructForm('{% url "api-stock-item-return" item.pk %}', {
+        fields: {
+            location: {
+                {% if item.part.default_location %}
+                value: {{ item.part.default_location.pk }},
+                {% endif %}
+            },
+            notes: {},
+        },
+        method: 'POST',
+        title: '{% trans "Return to Stock" %}',
+        reload: true,
+    });
+
 });
 
 {% endif %}
