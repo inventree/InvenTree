@@ -2383,7 +2383,9 @@ class PartParameter(models.Model):
 
 
 class PartCategoryParameterTemplate(models.Model):
-    """A PartCategoryParameterTemplate creates a unique relationship between a PartCategory and a PartParameterTemplate. Multiple PartParameterTemplate instances can be associated to a PartCategory to drive a default list of parameter templates attached to a Part instance upon creation.
+    """A PartCategoryParameterTemplate creates a unique relationship between a PartCategory and a PartParameterTemplate.
+
+    Multiple PartParameterTemplate instances can be associated to a PartCategory to drive a default list of parameter templates attached to a Part instance upon creation.
 
     Attributes:
         category: Reference to a single PartCategory object

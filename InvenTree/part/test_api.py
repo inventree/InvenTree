@@ -14,6 +14,7 @@ from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     StockStatus)
 from part.models import (BomItem, BomItemSubstitute, Part, PartCategory,
+                         PartCategoryParameterTemplate, PartParameterTemplate,
                          PartRelated)
 from stock.models import StockItem, StockLocation
 
@@ -24,6 +25,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
     fixtures = [
         'category',
         'part',
+        'params',
         'location',
         'bom',
         'company',
@@ -40,6 +42,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         'part.delete',
         'part_category.change',
         'part_category.add',
+        'part_category.delete',
     ]
 
     def test_category_list(self):
@@ -93,6 +96,57 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         self.assertEqual(metadata['foo'], 'bar')
         self.assertEqual(metadata['water'], 'melon')
         self.assertEqual(metadata['abc'], 'ABC')
+
+    def test_category_parameters(self):
+        """Test that the PartCategoryParameterTemplate API function work"""
+
+        url = reverse('api-part-category-parameter-list')
+
+        response = self.get(url, {}, expected_code=200)
+
+        self.assertEqual(len(response.data), 2)
+
+        # Add some more category templates via the API
+        n = PartParameterTemplate.objects.count()
+
+        for template in PartParameterTemplate.objects.all():
+            response = self.post(
+                url,
+                {
+                    'category': 2,
+                    'parameter_template': template.pk,
+                    'default_value': 'xyz',
+                }
+            )
+
+        # Total number of category templates should have increased
+        response = self.get(url, {}, expected_code=200)
+        self.assertEqual(len(response.data), 2 + n)
+
+        # Filter by category
+        response = self.get(
+            url,
+            {
+                'category': 2,
+            }
+        )
+
+        self.assertEqual(len(response.data), n)
+
+        # Test that we can retrieve individual templates via the API
+        for template in PartCategoryParameterTemplate.objects.all():
+            url = reverse('api-part-category-parameter-detail', kwargs={'pk': template.pk})
+
+            data = self.get(url, {}, expected_code=200).data
+
+            for key in ['pk', 'category', 'category_detail', 'parameter_template', 'parameter_template_detail', 'default_value']:
+                self.assertIn(key, data.keys())
+
+            # Test that we can delete via the API also
+            response = self.delete(url, expected_code=204)
+
+        # There should not be any templates left at this point
+        self.assertEqual(PartCategoryParameterTemplate.objects.count(), 0)
 
 
 class PartOptionsAPITest(InvenTreeAPITestCase):

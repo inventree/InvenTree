@@ -10,8 +10,8 @@ from InvenTree.fields import RoundingDecimalFormField
 from InvenTree.forms import HelperForm
 from InvenTree.helpers import clean_decimal
 
-from .models import (Part, PartCategory, PartCategoryParameterTemplate,
-                     PartInternalPriceBreak, PartSellPriceBreak)
+from .models import (Part, PartCategory, PartInternalPriceBreak,
+                     PartSellPriceBreak)
 
 
 class PartImageDownloadForm(HelperForm):
@@ -57,29 +57,6 @@ class SetPartCategoryForm(forms.Form):
     """Form for setting the category of multiple Part objects."""
 
     part_category = TreeNodeChoiceField(queryset=PartCategory.objects.all(), required=True, help_text=_('Select part category'))
-
-
-class EditCategoryParameterTemplateForm(HelperForm):
-    """Form for editing a PartCategoryParameterTemplate object."""
-
-    add_to_same_level_categories = forms.BooleanField(required=False,
-                                                      initial=False,
-                                                      help_text=_('Add parameter template to same level categories'))
-
-    add_to_all_categories = forms.BooleanField(required=False,
-                                               initial=False,
-                                               help_text=_('Add parameter template to all categories'))
-
-    class Meta:
-        """Metaclass defines fields for this form"""
-        model = PartCategoryParameterTemplate
-        fields = [
-            'category',
-            'parameter_template',
-            'default_value',
-            'add_to_same_level_categories',
-            'add_to_all_categories',
-        ]
 
 
 class PartPriceForm(forms.Form):
