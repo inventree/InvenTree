@@ -469,12 +469,20 @@ class TestSettings(helpers.InvenTreeTestCase):
 
     superuser = True
 
-    def in_env_context(self, envs={}):
+    def in_env_context(self, envs=None):
         """Patch the env to include the given dict."""
+        # Set default - see B006
+        if envs is None:
+            envs = {}
+
         return mock.patch.dict(os.environ, envs)
 
-    def run_reload(self, envs={}):
+    def run_reload(self, envs=None):
         """Helper function to reload InvenTree."""
+        # Set default - see B006
+        if envs is None:
+            envs = {}
+
         from plugin import registry
 
         with self.in_env_context(envs):

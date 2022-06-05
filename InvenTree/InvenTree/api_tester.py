@@ -105,8 +105,12 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
 
         return actions
 
-    def get(self, url, data={}, expected_code=200):
+    def get(self, url, data=None, expected_code=200):
         """Issue a GET request."""
+        # Set default - see B006
+        if data is None:
+            data = {}
+
         response = self.client.get(url, data, format='json')
 
         if expected_code is not None:
