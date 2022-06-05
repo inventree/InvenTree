@@ -642,7 +642,7 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
             addRemoveCallback(opts.modal, `#button-row-remove-${response.pk}`);
 
             // Re-enable the "submit" button
-            $(opts.modal).find('#modal-form-submit').prop('disabled', false);
+            enableSubmitButton(opts, true);
 
             // Reload the parent BOM table
             reloadParentTable();

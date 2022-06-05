@@ -1559,6 +1559,7 @@ function loadPartTable(table, url, options={}) {
 
     /* Button callbacks for part table buttons */
 
+    // Callback function for the "order parts" button
     $('#multi-part-order').click(function() {
         var selections = getTableData(table);
 
