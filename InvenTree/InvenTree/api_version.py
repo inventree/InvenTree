@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 56
+INVENTREE_API_VERSION = 57
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v57 -> 2022-06-05 : https://github.com/inventree/InvenTree/pull/3130
+    - Transfer PartCategoryTemplateParameter actions to the API
 
 v56 -> 2022-06-02 : https://github.com/inventree/InvenTree/pull/3123
     - Expose the PartParameterTemplate model to use the API
