@@ -25,7 +25,7 @@ def update_serials(apps, schema_editor):
         if result and len(result.groups()) == 1:
             try:
                 serial = int(result.groups()[0])
-            except:
+            except Exception:
                 serial = 0
 
 

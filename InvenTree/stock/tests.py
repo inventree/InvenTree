@@ -439,7 +439,7 @@ class StockTest(InvenTreeTestCase):
                     serial=i,
                     quantity=1,
                 )
-            except:
+            except Exception:
                 pass
 
         item_next = item.get_next_serialized_item()

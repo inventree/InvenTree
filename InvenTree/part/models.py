@@ -593,7 +593,7 @@ class Part(MetadataMixin, MPTTModel):
         try:
             latest = int(latest)
             return latest
-        except:
+        except Exception:
             # not an integer so 0
             return 0
 
@@ -610,7 +610,7 @@ class Part(MetadataMixin, MPTTModel):
         # Attempt to turn into an integer
         try:
             latest = int(latest)
-        except:
+        except Exception:
             pass
 
         if type(latest) is int:

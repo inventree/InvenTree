@@ -1244,13 +1244,13 @@ class BuildItem(models.Model):
             try:
                 # Try to extract the thumbnail
                 thumb_url = self.stock_item.part.image.thumbnail.url
-            except:
+            except Exception:
                 pass
 
         if thumb_url is None and self.bom_item and self.bom_item.sub_part:
             try:
                 thumb_url = self.bom_item.sub_part.image.thumbnail.url
-            except:
+            except Exception:
                 pass
 
         if thumb_url is not None:

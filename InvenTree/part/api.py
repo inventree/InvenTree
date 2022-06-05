@@ -599,7 +599,7 @@ class PartCopyBOM(generics.CreateAPIView):
 
         try:
             ctx['part'] = Part.objects.get(pk=self.kwargs.get('pk', None))
-        except:
+        except Exception:
             pass
 
         return ctx
@@ -1035,12 +1035,12 @@ class PartList(APIDownloadMixin, generics.ListCreateAPIView):
 
             try:
                 manufacturer = Company.objects.get(pk=request.data.get('manufacturer', None))
-            except:
+            except Exception:
                 manufacturer = None
 
             try:
                 supplier = Company.objects.get(pk=request.data.get('supplier', None))
-            except:
+            except Exception:
                 supplier = None
 
             mpn = str(request.data.get('MPN', '')).strip()

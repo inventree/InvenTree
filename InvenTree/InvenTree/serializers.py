@@ -47,7 +47,7 @@ class InvenTreeMoneySerializer(MoneyField):
         try:
             if amount is not None and amount is not empty:
                 amount = Decimal(amount)
-        except:
+        except Exception:
             raise ValidationError({
                 self.field_name: [_("Must be a valid number")],
             })
@@ -120,7 +120,7 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
                     if callable(value):
                         try:
                             value = value()
-                        except:
+                        except Exception:
                             continue
 
                     data[field_name] = value
@@ -150,7 +150,7 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
                     if callable(value):
                         try:
                             value = value()
-                        except:
+                        except Exception:
                             continue
 
                     initials[field_name] = value
@@ -302,7 +302,7 @@ class InvenTreeDecimalField(serializers.FloatField):
         # Convert the value to a string, and then a decimal
         try:
             return Decimal(str(data))
-        except:
+        except Exception:
             raise serializers.ValidationError(_("Invalid value"))
 
 
@@ -423,7 +423,7 @@ class DataFileUploadSerializer(serializers.Serializer):
         if self.TARGET_MODEL:
             try:
                 model_fields = self.TARGET_MODEL.get_import_fields()
-            except:
+            except Exception:
                 pass
 
         # Extract a list of valid model field names
@@ -515,7 +515,7 @@ class DataFileExtractSerializer(serializers.Serializer):
         if self.TARGET_MODEL:
             try:
                 model_fields = self.TARGET_MODEL.get_import_fields()
-            except:
+            except Exception:
                 model_fields = {}
 
         rows = []
@@ -568,7 +568,7 @@ class DataFileExtractSerializer(serializers.Serializer):
         if self.TARGET_MODEL:
             try:
                 model_fields = self.TARGET_MODEL.get_import_fields()
-            except:
+            except Exception:
                 model_fields = {}
 
         cols_seen = set()

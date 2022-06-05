@@ -363,7 +363,7 @@ class StockLocationLabelList(LabelListView, StockLocationLabelMixin):
                 # Filter string defined for the StockLocationLabel object
                 try:
                     filters = InvenTree.helpers.validateFilterString(label.filters)
-                except:  # pragma: no cover
+                except Exception:  # pragma: no cover
                     # Skip if there was an error validating the filters...
                     continue
 

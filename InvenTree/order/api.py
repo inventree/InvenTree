@@ -295,7 +295,7 @@ class PurchaseOrderContextMixin:
         # Pass the purchase order through to the serializer for validation
         try:
             context['order'] = models.PurchaseOrder.objects.get(pk=self.kwargs.get('pk', None))
-        except:
+        except Exception:
             pass
 
         context['request'] = self.request
@@ -857,7 +857,7 @@ class SalesOrderContextMixin:
 
         try:
             ctx['order'] = models.SalesOrder.objects.get(pk=self.kwargs.get('pk', None))
-        except:
+        except Exception:
             pass
 
         return ctx
@@ -1050,7 +1050,7 @@ class SalesOrderShipmentComplete(generics.CreateAPIView):
             ctx['shipment'] = models.SalesOrderShipment.objects.get(
                 pk=self.kwargs.get('pk', None)
             )
-        except:
+        except Exception:
             pass
 
         return ctx

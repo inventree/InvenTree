@@ -43,7 +43,7 @@ class InvenTreeExchange(SimpleExchangeBackend):
             context = ssl.create_default_context(cafile=certifi.where())
             response = urlopen(url, timeout=5, context=context)
             return response.read()
-        except:
+        except Exception:
             # Returning None here will raise an error upstream
             return None
 

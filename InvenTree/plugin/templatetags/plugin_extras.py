@@ -57,7 +57,7 @@ def safe_url(view_name, *args, **kwargs):
     """
     try:
         return reverse(view_name, args=args, kwargs=kwargs)
-    except:
+    except Exception:
         return None
 
 

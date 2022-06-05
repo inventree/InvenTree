@@ -242,7 +242,7 @@ def update_exchange_rates():
         # Apps not yet loaded!
         logger.info("Could not perform 'update_exchange_rates' - App registry not ready")
         return
-    except:  # pragma: no cover
+    except Exception:  # pragma: no cover
         # Other error?
         return
 
@@ -251,7 +251,7 @@ def update_exchange_rates():
         backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
     except ExchangeBackend.DoesNotExist:
         pass
-    except:  # pragma: no cover
+    except Exception:  # pragma: no cover
         # Some other error
         logger.warning("update_exchange_rates: Database not ready")
         return
