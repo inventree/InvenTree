@@ -593,7 +593,7 @@ class Part(MetadataMixin, MPTTModel):
         try:
             latest = int(latest)
             return latest
-        except:
+        except Exception:
             # not an integer so 0
             return 0
 
@@ -610,7 +610,7 @@ class Part(MetadataMixin, MPTTModel):
         # Attempt to turn into an integer
         try:
             latest = int(latest)
-        except:
+        except Exception:
             pass
 
         if type(latest) is int:
@@ -2283,7 +2283,7 @@ class PartTestTemplate(models.Model):
 
 def validate_template_name(name):
     """Prevent illegal characters in "name" field for PartParameterTemplate."""
-    for c in "!@#$%^&*()<>{}[].,?/\\|~`_+-=\'\"":
+    for c in "!@#$%^&*()<>{}[].,?/\\|~`_+-=\'\"":  # noqa: P103
         if c in str(name):
             raise ValidationError(_(f"Illegal character in template name ({c})"))
 

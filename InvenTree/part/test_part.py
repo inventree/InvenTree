@@ -190,7 +190,7 @@ class PartTest(TestCase):
         try:
             part.save()
             self.assertTrue(False)  # pragma: no cover
-        except:
+        except Exception:
             pass
 
         self.assertEqual(Part.objects.count(), n + 1)

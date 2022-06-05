@@ -571,7 +571,7 @@ class BaseInvenTreeSetting(models.Model):
             # If a valid class has been found, see if it has registered an API URL
             try:
                 return model_class.get_api_url()
-            except:
+            except Exception:
                 pass
 
         return None

@@ -95,7 +95,7 @@ def TestIfImage(img):
     try:
         Image.open(img).verify()
         return True
-    except:
+    except Exception:
         return False
 
 

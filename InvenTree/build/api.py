@@ -223,7 +223,7 @@ class BuildUnallocate(generics.CreateAPIView):
 
         try:
             ctx['build'] = Build.objects.get(pk=self.kwargs.get('pk', None))
-        except:
+        except Exception:
             pass
 
         ctx['request'] = self.request
@@ -243,7 +243,7 @@ class BuildOrderContextMixin:
 
         try:
             ctx['build'] = Build.objects.get(pk=self.kwargs.get('pk', None))
-        except:
+        except Exception:
             pass
 
         return ctx

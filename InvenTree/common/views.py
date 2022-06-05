@@ -495,8 +495,12 @@ class FileManagementAjaxView(AjaxView):
             self.storage.current_step = self.steps.first
         return self.renderJsonResponse(request)
 
-    def renderJsonResponse(self, request, form=None, data={}, context=None):
+    def renderJsonResponse(self, request, form=None, data=None, context=None):
         """Always set the right templates before rendering."""
+        # Set default - see B006
+        if data is None:
+            data = {}
+
         self.setTemplate()
         return super().renderJsonResponse(request, form=form, data=data, context=context)
 

@@ -98,7 +98,7 @@ class AuthRequiredMiddleware(object):
                 if path not in urls and not any([path.startswith(p) for p in paths_ignore]):
                     # Save the 'next' parameter to pass through to the login view
 
-                    return redirect('{}?next={}'.format(reverse_lazy('account_login'), request.path))
+                    return redirect(f'{reverse_lazy("account_login")}?next={request.path}')
 
                 else:
                     # Return a 401 (Unauthorized) response code for this request

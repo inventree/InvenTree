@@ -133,7 +133,7 @@ def extract_int(reference, clip=0x7fffffff):
         ref = result.groups()[0]
         try:
             ref_int = int(ref)
-        except:
+        except Exception:
             ref_int = 0
 
     # Ensure that the returned values are within the range that can be stored in an IntegerField
@@ -276,7 +276,7 @@ class InvenTreeAttachment(models.Model):
             os.rename(old_file, new_file)
             self.attachment.name = os.path.join(self.getSubdir(), fn)
             self.save()
-        except:
+        except Exception:
             raise ValidationError(_("Error renaming file"))
 
     class Meta:

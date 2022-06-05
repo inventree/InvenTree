@@ -289,7 +289,7 @@ class StockItemTestReportList(ReportListView, StockItemReportMixin):
                 # Filter string defined for the report object
                 try:
                     filters = InvenTree.helpers.validateFilterString(report.filters)
-                except:
+                except Exception:
                     continue
 
                 for item in items:
@@ -528,7 +528,7 @@ class PurchaseOrderReportList(ReportListView, OrderReportMixin):
                 # Filter string defined for the report object
                 try:
                     filters = InvenTree.helpers.validateFilterString(report.filters)
-                except:
+                except Exception:
                     continue
 
                 for o in orders:
@@ -607,7 +607,7 @@ class SalesOrderReportList(ReportListView, OrderReportMixin):
                 # Filter string defined for the report object
                 try:
                     filters = InvenTree.helpers.validateFilterString(report.filters)
-                except:
+                except Exception:
                     continue
 
                 for o in orders:

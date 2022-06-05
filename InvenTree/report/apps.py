@@ -75,14 +75,14 @@ class ReportConfig(AppConfig):
                     enabled=True
                 )
 
-            except:
+            except Exception:
                 pass
 
     def create_default_test_reports(self):
         """Create database entries for the default TestReport templates, if they do not already exist."""
         try:
             from .models import TestReport
-        except:  # pragma: no cover
+        except Exception:  # pragma: no cover
             # Database is not ready yet
             return
 
@@ -101,7 +101,7 @@ class ReportConfig(AppConfig):
         """Create database entries for the default BuildReport templates (if they do not already exist)"""
         try:
             from .models import BuildReport
-        except:  # pragma: no cover
+        except Exception:  # pragma: no cover
             # Database is not ready yet
             return
 

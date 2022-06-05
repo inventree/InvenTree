@@ -527,7 +527,7 @@ class AjaxDeleteView(AjaxMixin, UpdateView):
         """Return object matched to the model of the calling class."""
         try:
             self.object = self.model.objects.get(pk=self.kwargs['pk'])
-        except:
+        except Exception:
             return None
         return self.object
 
@@ -691,14 +691,14 @@ class SettingsView(TemplateView):
         try:
             backend = ExchangeBackend.objects.get(name='InvenTreeExchange')
             ctx["rates_updated"] = backend.last_update
-        except:
+        except Exception:
             ctx["rates_updated"] = None
 
         # load locale stats
         STAT_FILE = os.path.abspath(os.path.join(settings.BASE_DIR, 'InvenTree/locale_stats.json'))
         try:
             ctx["locale_stats"] = json.load(open(STAT_FILE, 'r'))
-        except:
+        except Exception:
             ctx["locale_stats"] = {}
 
         # Forms and context for allauth
