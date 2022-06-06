@@ -527,7 +527,7 @@ class PurchaseOrderExtraLineDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.PurchaseOrderExtraLineSerializer
 
 
-class SalesOrderAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
+class SalesOrderAttachmentList(AttachmentMixin, generics.ListCreateAPIView):
     """API endpoint for listing (and creating) a SalesOrderAttachment (file upload)"""
 
     queryset = models.SalesOrderAttachment.objects.all()
@@ -542,7 +542,7 @@ class SalesOrderAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     ]
 
 
-class SalesOrderAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):
+class SalesOrderAttachmentDetail(AttachmentMixin, generics.RetrieveUpdateDestroyAPIView):
     """Detail endpoint for SalesOrderAttachment."""
 
     queryset = models.SalesOrderAttachment.objects.all()
@@ -1056,7 +1056,7 @@ class SalesOrderShipmentComplete(generics.CreateAPIView):
         return ctx
 
 
-class PurchaseOrderAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
+class PurchaseOrderAttachmentList(AttachmentMixin, generics.ListCreateAPIView):
     """API endpoint for listing (and creating) a PurchaseOrderAttachment (file upload)"""
 
     queryset = models.PurchaseOrderAttachment.objects.all()
@@ -1071,7 +1071,7 @@ class PurchaseOrderAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     ]
 
 
-class PurchaseOrderAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):
+class PurchaseOrderAttachmentDetail(AttachmentMixin, generics.RetrieveUpdateDestroyAPIVie):
     """Detail endpoint for a PurchaseOrderAttachment."""
 
     queryset = models.PurchaseOrderAttachment.objects.all()
