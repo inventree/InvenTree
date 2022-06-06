@@ -719,3 +719,34 @@ def inheritors(cls):
 class InvenTreeTestCase(UserMixin, TestCase):
     """Testcase with user setup buildin."""
     pass
+
+
+def notify_responsible(instance, sender, exclude):
+    """Notifiy all responsible parties.
+
+    Args:
+        instance: The newly created instance.
+        sender: Sender model reference.
+        exclude: User instance that should be excluded.
+    """
+    from common.notifications import trigger_notification
+
+    if instance.responsible is not None:
+        context = {
+            'order': instance,
+            'name': _(f"New {sender._meta.verbose_name}"),
+            'message': _(f"A new {sender._meta.verbose_name} has been created and assigned to you"),
+            'link': InvenTree.helpers.construct_absolute_url(instance.get_absolute_url()),
+            'template': {
+                'html': 'email/new_order_assigned.html',
+                'subject': _(f"New {sender._meta.verbose_name}"),
+            }
+        }
+
+        trigger_notification(
+            instance,
+            f'{sender._meta.app_label}.new_{sender._meta.model_name}',
+            targets=[instance.responsible],
+            target_exclude=[exclude],
+            context=context,
+        )

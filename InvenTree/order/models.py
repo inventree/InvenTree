@@ -27,11 +27,11 @@ from mptt.models import TreeForeignKey
 
 import InvenTree.helpers
 import InvenTree.ready
-from common.notifications import trigger_notification
 from common.settings import currency_code_default
 from company.models import Company, SupplierPart
 from InvenTree.fields import InvenTreeModelMoneyField, RoundingDecimalField
-from InvenTree.helpers import decimal2string, getSetting, increment
+from InvenTree.helpers import (decimal2string, getSetting, increment,
+                               notify_responsible)
 from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
 from InvenTree.status_codes import (PurchaseOrderStatus, SalesOrderStatus,
                                     StockHistoryCode, StockStatus)
@@ -586,30 +586,8 @@ def after_save_purchase_order(sender, instance: PurchaseOrder, created: bool, **
         return
 
     if created:
-
-        # Notify the responsible owner(s) - if different from the creating user
-        if instance.responsible is not None:
-
-            # Notify the responsible user(s) that the new purchase order has been created
-            name = _("New Purchase Order")
-            context = {
-                'order': instance,
-                'name': name,
-                'message': _('A new Purchase Order has been created and assigned to you'),
-                'link': InvenTree.helpers.construct_absolute_url(instance.get_absolute_url()),
-                'template': {
-                    'html': 'email/new_order_assigned.html',
-                    'subject': name,
-                }
-            }
-
-            trigger_notification(
-                instance,
-                'order.new_purchase_order',
-                targets=[instance.responsible],
-                targets_exclude=set(instance.created_by),
-                context=context,
-            )
+        # Notify the responsible users that the purchase order has been created
+        notify_responsible(instance, sender, instance.created_by)
 
 
 class SalesOrder(Order):
@@ -902,29 +880,8 @@ def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs
                 reference='1',
             )
 
-        # Notify the responsible owner(s) - if different from the creating user
-        if instance.responsible is not None:
-
-            # Notify the responsible users that the new sales order has been created
-            name = _("New Sales Order")
-            context = {
-                'order': instance,
-                'name': name,
-                'message': _("A new Sales Order has been created and assigned to you"),
-                'link': InvenTree.helpers.construct_absolute_url(instance.get_absolute_url()),
-                'template': {
-                    'html': 'email/new_order_assigned.html',
-                    'subject': name,
-                }
-            }
-
-            trigger_notification(
-                instance,
-                'order.new_sales_order',
-                targets=[instance.responsible],
-                target_exclude=set(instance.created_by),
-                context=context,
-            )
+        # Notify the responsible users that the sales order has been created
+        notify_responsible(instance, sender, instance.created_by)
 
 
 class PurchaseOrderAttachment(InvenTreeAttachment):
