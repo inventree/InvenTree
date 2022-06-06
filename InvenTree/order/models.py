@@ -577,12 +577,8 @@ class PurchaseOrder(Order):
 
 @receiver(post_save, sender=PurchaseOrder, dispatch_uid='purchase_order_post_save')
 def after_save_purchase_order(sender, instance: PurchaseOrder, created: bool, **kwargs):
-    """Callback function to be executed after a PurchaseOrder is saved"""
-
-    if not InvenTree.ready.canAppAccessDatabase(allow_test=True):
-        return
-
-    if InvenTree.ready.isImportingData():
+    """Callback function to be executed after a PurchaseOrder is saved."""
+    if not InvenTree.ready.canAppAccessDatabase(allow_test=True) or InvenTree.ready.isImportingData():
         return
 
     if created:
@@ -863,11 +859,7 @@ def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs
     - Ignore if the database is not ready for access
     - Ignore if data import is active
     """
-
-    if not InvenTree.ready.canAppAccessDatabase(allow_test=True):
-        return
-
-    if InvenTree.ready.isImportingData():
+    if not InvenTree.ready.canAppAccessDatabase(allow_test=True) or InvenTree.ready.isImportingData():
         return
 
     if created:
