@@ -22,7 +22,7 @@ import stock.serializers as StockSerializers
 from build.models import Build
 from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer, SupplierPartSerializer
-from InvenTree.api import APIDownloadMixin, AttachmentMixin
+from InvenTree.api import APIDownloadMixin, AttachmentMixin, BulkDeleteMixin
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import (DownloadFile, extract_serial_numbers, isNull,
                                str2bool)
@@ -1074,7 +1074,7 @@ class StockItemTestResultDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = StockSerializers.StockItemTestResultSerializer
 
 
-class StockItemTestResultList(generics.ListCreateAPIView):
+class StockItemTestResultList(BulkDeleteMixin, generics.ListCreateAPIView):
     """API endpoint for listing (and creating) a StockItemTestResult object."""
 
     queryset = StockItemTestResult.objects.all()

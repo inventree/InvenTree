@@ -76,7 +76,7 @@ class BulkDeleteMixin:
         model = self.serializer_class.Meta.model
 
         # Extract the items from the request body
-        items = request.data.get('items', None)
+        items = request.data.getlist('items', None)
 
         if items is None or type(items) is not list or not items:
             raise ValidationError({

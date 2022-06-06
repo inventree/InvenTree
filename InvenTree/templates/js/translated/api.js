@@ -160,16 +160,20 @@ function inventreePut(url, data={}, options={}) {
 }
 
 
+/*
+ * Performs a DELETE API call to the server
+ */
 function inventreeDelete(url, options={}) {
-    /*
-     * Delete a record
-     */
 
     options = options || {};
 
     options.method = 'DELETE';
 
-    return inventreePut(url, {}, options);
+    return inventreePut(
+        url,
+        options.data || {},
+        options
+    );
 }
 
 

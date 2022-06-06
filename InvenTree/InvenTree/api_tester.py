@@ -128,13 +128,18 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
         response = self.client.post(url, data=data, format=format)
 
         if expected_code is not None:
+
+            if response.status_code != expected_code:
+                print(f"Unexpected response at '{url}':")
+                print(response.data)
+
             self.assertEqual(response.status_code, expected_code)
 
         return response
 
-    def delete(self, url, expected_code=None):
+    def delete(self, url, data, expected_code=None, format='json'):
         """Issue a DELETE request."""
-        response = self.client.delete(url)
+        response = self.client.delete(url, data=data, foramt=format)
 
         if expected_code is not None:
             self.assertEqual(response.status_code, expected_code)
@@ -155,6 +160,11 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
         response = self.client.put(url, data=data, format=format)
 
         if expected_code is not None:
+
+            if response.status_code != expected_code:
+                print(f"Unexpected response at '{url}':")
+                print(response.data)
+
             self.assertEqual(response.status_code, expected_code)
 
         return response
