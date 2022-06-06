@@ -528,6 +528,18 @@ class SupplierPart(models.Model):
     # TODO - Reimplement lead-time as a charfield with special validation (pattern matching).
     # lead_time = models.DurationField(blank=True, null=True)
 
+    available = models.DecimalField(
+        max_digits=10, decimal_places=3, default=0,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Available'),
+        help_text=_('Quantity available from supplier'),
+    )
+
+    availability_updated = models.DateTimeField(
+        null=True, verbose_name=_('Availability Updated'),
+        help_text=_('Date of last update of availability data'),
+    )
+
     @property
     def manufacturer_string(self):
         """Format a MPN string for this SupplierPart.
