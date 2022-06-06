@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-06 11:28+0000\n"
-"PO-Revision-Date: 2022-06-05 14:34\n"
+"PO-Revision-Date: 2022-06-06 14:33\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -1182,16 +1182,13 @@ msgid "Stock required for build order"
 msgstr ""
 
 #: build/tasks.py:118
-#, fuzzy
-#| msgid "New Build Order"
 msgid "Overdue Build Order"
-msgstr "新建生产订单"
+msgstr ""
 
 #: build/tasks.py:123
-#, fuzzy, python-brace-format
-#| msgid "Build Order is incomplete"
+#, python-brace-format
 msgid "Build order {bo} is now overdue"
-msgstr "生产订单未完成"
+msgstr ""
 
 #: build/templates/build/build_base.html:39
 #: order/templates/order/order_base.html:28
@@ -1892,20 +1889,16 @@ msgid "Default page size for PDF reports"
 msgstr "PDF 报表默认页面大小"
 
 #: common/models.py:968
-#, fuzzy
-#| msgid "Test Reports"
 msgid "Enable Test Reports"
-msgstr "测试报表"
+msgstr ""
 
 #: common/models.py:969
 msgid "Enable generation of test reports"
 msgstr "启用生成测试报表"
 
 #: common/models.py:975
-#, fuzzy
-#| msgid "Test Reports"
 msgid "Attach Test Reports"
-msgstr "测试报表"
+msgstr ""
 
 #: common/models.py:976
 msgid "When printing a Test Report, attach a copy of the Test Report to the associated Stock Item"
@@ -3774,10 +3767,8 @@ msgid "The following serial numbers are already allocated"
 msgstr ""
 
 #: order/tasks.py:26
-#, fuzzy
-#| msgid "New Purchase Order"
 msgid "Overdue Purchase Order"
-msgstr "新建采购订单"
+msgstr ""
 
 #: order/tasks.py:31
 #, python-brace-format
@@ -3785,10 +3776,8 @@ msgid "Purchase order {po} is now overdue"
 msgstr ""
 
 #: order/tasks.py:88
-#, fuzzy
-#| msgid "New Sales Order"
 msgid "Overdue Sales Order"
-msgstr "新建销售订单"
+msgstr ""
 
 #: order/tasks.py:93
 #, python-brace-format
@@ -5643,10 +5632,8 @@ msgid "Template file '{template}' is missing or does not exist"
 msgstr ""
 
 #: report/api.py:359
-#, fuzzy
-#| msgid "Test Reports"
 msgid "Test report"
-msgstr "测试报表"
+msgstr ""
 
 #: report/models.py:152
 msgid "Template name"
@@ -7391,16 +7378,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -9136,10 +9121,8 @@ msgid "Create Part Variant"
 msgstr ""
 
 #: templates/js/translated/part.js:405
-#, fuzzy
-#| msgid "Duplicate Part"
 msgid "Active Part"
-msgstr "复制部件"
+msgstr ""
 
 #: templates/js/translated/part.js:406
 msgid "Part cannot be deleted as it is currently active"
@@ -9150,26 +9133,20 @@ msgid "Deleting this part cannot be reversed"
 msgstr ""
 
 #: templates/js/translated/part.js:422
-#, fuzzy
-#| msgid "All selected supplier parts will be deleted"
 msgid "Any stock items for this part will be deleted"
-msgstr "删除所有选定的供应商商品"
+msgstr ""
 
 #: templates/js/translated/part.js:423
 msgid "This part will be removed from any Bills of Material"
 msgstr ""
 
 #: templates/js/translated/part.js:424
-#, fuzzy
-#| msgid "All selected supplier parts will be deleted"
 msgid "All manufacturer and supplier information for this part will be deleted"
-msgstr "删除所有选定的供应商商品"
+msgstr ""
 
 #: templates/js/translated/part.js:431
-#, fuzzy
-#| msgid "Delete Parts"
 msgid "Delete Part"
-msgstr "删除商品"
+msgstr ""
 
 #: templates/js/translated/part.js:467
 msgid "You are subscribed to notifications for this item"
@@ -9262,26 +9239,20 @@ msgid "Display as grid"
 msgstr ""
 
 #: templates/js/translated/part.js:1630
-#, fuzzy
-#| msgid "Set category for the following parts"
 msgid "Set the part category for the selected parts"
-msgstr "为以下商品设置类别"
+msgstr ""
 
 #: templates/js/translated/part.js:1635
 msgid "Set Part Category"
 msgstr "设置商品类别"
 
 #: templates/js/translated/part.js:1640
-#, fuzzy
-#| msgid "Set Part Category"
 msgid "Select Part Category"
-msgstr "设置商品类别"
+msgstr ""
 
 #: templates/js/translated/part.js:1653
-#, fuzzy
-#| msgid "This field is required"
 msgid "Category is required"
-msgstr "此字段为必填"
+msgstr ""
 
 #: templates/js/translated/part.js:1779 templates/js/translated/stock.js:2257
 msgid "Display as tree"
@@ -10348,26 +10319,3 @@ msgstr "编辑项目权限"
 msgid "Permission to delete items"
 msgstr "删除项目权限"
 
-#~ msgid "Select Category"
-#~ msgstr "选择分类"
-
-#~ msgid "Select part category"
-#~ msgstr "选择类别"
-
-#~ msgid "Are you sure you want to delete part '<strong>%(full_name)s</strong>'?"
-#~ msgstr "您确定要删除商品 '<strong>%(full_name)s</strong> '吗？"
-
-#~ msgid "Remove part"
-#~ msgstr "移除商品"
-
-#~ msgid "Set category for {n} parts"
-#~ msgstr "为 {n} 个商品设置类别"
-
-#~ msgid "Confirm Part Deletion"
-#~ msgstr "确认删除商品"
-
-#~ msgid "Part was deleted"
-#~ msgstr "商品已删除"
-
-#~ msgid "Check the confirmation box"
-#~ msgstr "选中确认框"
