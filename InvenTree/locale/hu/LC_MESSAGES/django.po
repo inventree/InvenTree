@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-06 11:28+0000\n"
-"PO-Revision-Date: 2022-06-05 14:34\n"
+"PO-Revision-Date: 2022-06-06 14:33\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -239,10 +239,8 @@ msgid "parent"
 msgstr "szülő"
 
 #: InvenTree/models.py:466
-#, fuzzy
-#| msgid "Server error"
 msgid "Server Error"
-msgstr "Kiszolgálóhiba"
+msgstr ""
 
 #: InvenTree/models.py:467
 msgid "An error has been logged by the server."
@@ -1059,8 +1057,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:370
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:439
@@ -1186,16 +1183,13 @@ msgid "Stock required for build order"
 msgstr "A gyártási utasításhoz készlet szükséges"
 
 #: build/tasks.py:118
-#, fuzzy
-#| msgid "Overdue Build Orders"
 msgid "Overdue Build Order"
-msgstr "Késésben lévő gyártások"
+msgstr ""
 
 #: build/tasks.py:123
-#, fuzzy, python-brace-format
-#| msgid "Build order is overdue"
+#, python-brace-format
 msgid "Build order {bo} is now overdue"
-msgstr "Gyártás késésben van"
+msgstr ""
 
 #: build/templates/build/build_base.html:39
 #: order/templates/order/order_base.html:28
@@ -1896,20 +1890,16 @@ msgid "Default page size for PDF reports"
 msgstr "Alapértelmezett lapméret a PDF riportokhoz"
 
 #: common/models.py:968
-#, fuzzy
-#| msgid "Enable Reports"
 msgid "Enable Test Reports"
-msgstr "Riportok engedélyezése"
+msgstr ""
 
 #: common/models.py:969
 msgid "Enable generation of test reports"
 msgstr "Teszt riportok előállításának engedélyezése"
 
 #: common/models.py:975
-#, fuzzy
-#| msgid "Test Reports"
 msgid "Attach Test Reports"
-msgstr "Teszt riportok"
+msgstr ""
 
 #: common/models.py:976
 msgid "When printing a Test Report, attach a copy of the Test Report to the associated Stock Item"
@@ -3778,28 +3768,22 @@ msgid "The following serial numbers are already allocated"
 msgstr "A következő sorozatszámok már ki lettek osztva"
 
 #: order/tasks.py:26
-#, fuzzy
-#| msgid "Overdue Purchase Orders"
 msgid "Overdue Purchase Order"
-msgstr "Késésben lévő beszerzések"
+msgstr ""
 
 #: order/tasks.py:31
-#, fuzzy, python-brace-format
-#| msgid "Purchase order no longer exists"
+#, python-brace-format
 msgid "Purchase order {po} is now overdue"
-msgstr "Beszerzési megrendelés már nem létezik"
+msgstr ""
 
 #: order/tasks.py:88
-#, fuzzy
-#| msgid "Overdue Sales Orders"
 msgid "Overdue Sales Order"
-msgstr "Késésben lévő vevői rendelések"
+msgstr ""
 
 #: order/tasks.py:93
-#, fuzzy, python-brace-format
-#| msgid "Build order is overdue"
+#, python-brace-format
 msgid "Sales order {so} is now overdue"
-msgstr "Gyártás késésben van"
+msgstr ""
 
 #: order/templates/order/order_base.html:33
 msgid "Print purchase order report"
@@ -4591,10 +4575,8 @@ msgid "Part relationship cannot be created between a part and itself"
 msgstr ""
 
 #: part/models.py:2851
-#, fuzzy
-#| msgid "Duplicate line item"
 msgid "Duplicate relationship already exists"
-msgstr "Sortétel másolása"
+msgstr ""
 
 #: part/serializers.py:140 part/serializers.py:171 stock/serializers.py:163
 msgid "Purchase currency of this stock item"
@@ -5651,10 +5633,8 @@ msgid "Template file '{template}' is missing or does not exist"
 msgstr "A '{template}' sablon fájl hiányzik vagy nem érhető el"
 
 #: report/api.py:359
-#, fuzzy
-#| msgid "Test Report"
 msgid "Test report"
-msgstr "Teszt riport"
+msgstr ""
 
 #: report/models.py:152
 msgid "Template name"
@@ -6203,10 +6183,8 @@ msgid "Install Stock Item"
 msgstr "Készlet tétel beépítése"
 
 #: stock/templates/stock/item.html:290
-#, fuzzy
-#| msgid "Select a matching supplier part for this stock item"
 msgid "Delete all test results for this stock item"
-msgstr "Válassz egy egyező beszállítói alkatrészt ehhez a készlet tételhez"
+msgstr ""
 
 #: stock/templates/stock/item.html:331 templates/js/translated/stock.js:1455
 msgid "Add Test Result"
@@ -7401,16 +7379,14 @@ msgstr "Bejelentkezés"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Kérlek jelentkezz be az egyik meglévő külső fiókkal vagy <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">Regisztrálj</a> fiókért és jelentkezz be lentebb:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Ha még nem hoztál létre fiókot akkor előbb <a href=\"%(signup_url)s\">regisztrálj</a>."
 
@@ -7626,10 +7602,8 @@ msgstr "Minimum mennyiség"
 #: templates/email/overdue_build_order.html:9
 #: templates/email/overdue_purchase_order.html:9
 #: templates/email/overdue_sales_order.html:9
-#, fuzzy
-#| msgid "Click on the following link to view this build order"
 msgid "Click on the following link to view this order"
-msgstr "Klikk a következő linkre a gyártási utasítás megjelenítéséhez"
+msgstr ""
 
 #: templates/image_download.html:8
 msgid "Specify URL for downloading image"
@@ -9148,44 +9122,32 @@ msgid "Create Part Variant"
 msgstr "Alkatrész változat létrehozása"
 
 #: templates/js/translated/part.js:405
-#, fuzzy
-#| msgid "Active parts"
 msgid "Active Part"
-msgstr "Aktív alkatrész"
+msgstr ""
 
 #: templates/js/translated/part.js:406
-#, fuzzy
-#| msgid "Cannot be deleted as items have been allocated"
 msgid "Part cannot be deleted as it is currently active"
-msgstr "Nem törölhető mivel tételek vannak lefoglalva"
+msgstr ""
 
 #: templates/js/translated/part.js:420
-#, fuzzy
-#| msgid "This part cannot be serialized"
 msgid "Deleting this part cannot be reversed"
-msgstr "Ezt az alkatrészt nem lehet sorozatszámozni"
+msgstr ""
 
 #: templates/js/translated/part.js:422
-#, fuzzy
-#| msgid "Show stock items which are depleted"
 msgid "Any stock items for this part will be deleted"
-msgstr "Kimerült készlet tételek megjelenítése"
+msgstr ""
 
 #: templates/js/translated/part.js:423
 msgid "This part will be removed from any Bills of Material"
 msgstr ""
 
 #: templates/js/translated/part.js:424
-#, fuzzy
-#| msgid "All selected supplier parts will be deleted"
 msgid "All manufacturer and supplier information for this part will be deleted"
-msgstr "Az összes kiválasztott beszállítói alkatrész törölve lesz"
+msgstr ""
 
 #: templates/js/translated/part.js:431
-#, fuzzy
-#| msgid "Delete Parts"
 msgid "Delete Part"
-msgstr "Alkatrész törlés"
+msgstr ""
 
 #: templates/js/translated/part.js:467
 msgid "You are subscribed to notifications for this item"
@@ -9278,26 +9240,20 @@ msgid "Display as grid"
 msgstr "Megjelenítés rácsnézetként"
 
 #: templates/js/translated/part.js:1630
-#, fuzzy
-#| msgid "Set category for the following parts"
 msgid "Set the part category for the selected parts"
-msgstr "Állítsd be a következő alkatrészek kategóriáját"
+msgstr ""
 
 #: templates/js/translated/part.js:1635
 msgid "Set Part Category"
 msgstr "Alkatrész kategória beállítása"
 
 #: templates/js/translated/part.js:1640
-#, fuzzy
-#| msgid "Set Part Category"
 msgid "Select Part Category"
-msgstr "Alkatrész kategória beállítása"
+msgstr ""
 
 #: templates/js/translated/part.js:1653
-#, fuzzy
-#| msgid "Quantity is required"
 msgid "Category is required"
-msgstr "Mennyiség megadása kötelező"
+msgstr ""
 
 #: templates/js/translated/part.js:1779 templates/js/translated/stock.js:2257
 msgid "Display as tree"
@@ -10364,56 +10320,3 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
 
-#~ msgid "Select Category"
-#~ msgstr "Válassz kategóriát"
-
-#~ msgid "Select part category"
-#~ msgstr "Alkatrész kategória kiválasztása"
-
-#~ msgid "Error creating relationship: check that the part is not related to itself and that the relationship is unique"
-#~ msgstr "Hiba a kapcsolat létrehozása közben: ellenőrizd hogy az alkatrész nem kapcsolódik-e saját magához és azt hogy a kapcsolat egyedi"
-
-#~ msgid ""
-#~ "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
-#~ "    <br>Disable the \"Active\" part attribute and re-try.\n"
-#~ "    "
-#~ msgstr "A(z) '<strong>%(full_name)s</strong>' alkatrész nem törölhető mert még mindig <strong>aktív</strong>. Előbb állítsd az alkatrészt inaktív állapotúra és probáld újra!    "
-
-#~ msgid "Are you sure you want to delete part '<strong>%(full_name)s</strong>'?"
-#~ msgstr "Biztosan töröljük a <strong>%(full_name)s</strong> alkatrészt?"
-
-#~ msgid "This part is used in BOMs for %(count)s other parts. If you delete this part, the BOMs for the following parts will be updated"
-#~ msgstr "Ez a alkatrész %(count)s másik alkatrész alkatrészjegyzékében szerepel. Ha törlöd a következő alkatrészek módosítva lesznek"
-
-#~ msgid "There are %(count)s stock entries defined for this part. If you delete this part, the following stock entries will also be deleted:"
-#~ msgstr "Ennek az alkatrésznek %(count)s készlet tétele van. Ha törlöd a következő készlet tételek is törölve lesznek:"
-
-#~ msgid "There are %(count)s manufacturers defined for this part. If you delete this part, the following manufacturer parts will also be deleted:"
-#~ msgstr "Ennek az alkatrésznek %(count)s gyártója van. Ha törlöd a következő gyártói alkatrészek is törölve lesznek:"
-
-#~ msgid "There are %(count)s suppliers defined for this part. If you delete this part, the following supplier parts will also be deleted:"
-#~ msgstr "Ennek az alkatrésznek %(count)s beszállítója van. Ha törlöd a következő beszállítói alkatrészek is törölve lesznek:"
-
-#~ msgid "There are %(count)s unique parts tracked for '%(full_name)s'. Deleting this part will permanently remove this tracking information."
-#~ msgstr "Összesen %(count)s követésre kötelezett '%(full_name)s' alkatrész van. Ha törlöd, a követési információk véglegesen elvesznek."
-
-#~ msgid "Remove part"
-#~ msgstr "Alkatrész eltávolítása"
-
-#~ msgid "Set category for {n} parts"
-#~ msgstr "Állítsd be {n} alkatrész kategóriáját"
-
-#~ msgid "Confirm Part Deletion"
-#~ msgstr "Alkatrész törlés megerősítése"
-
-#~ msgid "Part was deleted"
-#~ msgstr "Alkatrész törölve"
-
-#~ msgid "Delete All Test Data"
-#~ msgstr "Minden teszt adat törlése"
-
-#~ msgid "Confirm test data deletion"
-#~ msgstr "Teszt adat törlésének megerősítése"
-
-#~ msgid "Check the confirmation box"
-#~ msgstr "Klikkeld be a megerősítő mezőt"
