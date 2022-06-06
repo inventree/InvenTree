@@ -549,19 +549,6 @@ class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSerializer):
     """Serializer for StockItemAttachment model."""
 
-    def __init__(self, *args, **kwargs):
-        """Add detail fields."""
-        user_detail = kwargs.pop('user_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if user_detail is not True:
-            self.fields.pop('user_detail')
-
-    user_detail = InvenTree.serializers.UserSerializerBrief(source='user', read_only=True)
-
-    # TODO: Record the uploading user when creating or updating an attachment!
-
     class Meta:
         """Metaclass options."""
 
@@ -589,7 +576,7 @@ class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSer
 class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for the StockItemTestResult model."""
 
-    user_detail = InvenTree.serializers.UserSerializerBrief(source='user', read_only=True)
+    user_detail = InvenTree.serializers.UserSerializer(source='user', read_only=True)
 
     key = serializers.CharField(read_only=True)
 
@@ -650,7 +637,7 @@ class StockTrackingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     item_detail = StockItemSerializerBrief(source='item', many=False, read_only=True)
 
-    user_detail = InvenTree.serializers.UserSerializerBrief(source='user', many=False, read_only=True)
+    user_detail = InvenTree.serializers.UserSerializer(source='user', many=False, read_only=True)
 
     deltas = serializers.JSONField(read_only=True)
 

@@ -1071,7 +1071,7 @@ class PurchaseOrderAttachmentList(AttachmentMixin, generics.ListCreateAPIView):
     ]
 
 
-class PurchaseOrderAttachmentDetail(AttachmentMixin, generics.RetrieveUpdateDestroyAPIVie):
+class PurchaseOrderAttachmentDetail(AttachmentMixin, generics.RetrieveUpdateDestroyAPIView):
     """Detail endpoint for a PurchaseOrderAttachment."""
 
     queryset = models.PurchaseOrderAttachment.objects.all()

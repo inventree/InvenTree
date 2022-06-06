@@ -60,29 +60,6 @@ class InvenTreeMoneySerializer(MoneyField):
         return amount
 
 
-class UserSerializer(serializers.ModelSerializer):
-    """Serializer for User - provides all fields."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = User
-        fields = 'all'
-
-
-class UserSerializerBrief(serializers.ModelSerializer):
-    """Serializer for User - provides limited information."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = User
-        fields = [
-            'pk',
-            'username',
-        ]
-
-
 class InvenTreeModelSerializer(serializers.ModelSerializer):
     """Inherits the standard Django ModelSerializer class, but also ensures that the underlying model class data are checked on validation."""
 
@@ -218,6 +195,21 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
         return data
 
 
+class UserSerializer(InvenTreeModelSerializer):
+    """Serializer for a User."""
+
+    class Meta:
+        """Metaclass defines serializer fields."""
+        model = User
+        fields = [
+            'pk',
+            'username',
+            'first_name',
+            'last_name',
+            'email'
+        ]
+
+
 class ReferenceIndexingSerializerMixin():
     """This serializer mixin ensures the the reference is not to big / small for the BigIntegerField."""
 
@@ -239,9 +231,7 @@ class InvenTreeAttachmentSerializerField(serializers.FileField):
 
     /media/foo/bar.jpg
 
-    Why? You can't handle the why!
-
-    Actually, if the server process is serving the data at 127.0.0.1,
+    If the server process is serving the data at 127.0.0.1,
     but a proxy service (e.g. nginx) is then providing DNS lookup to the outside world,
     then an attachment which prefixes the "address" of the internal server
     will not be accessible from the outside world.
@@ -260,6 +250,8 @@ class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):
 
     The only real addition here is that we support "renaming" of the attachment file.
     """
+
+    user_detail = UserSerializer(source='user', read_only=True, many=False)
 
     attachment = InvenTreeAttachmentSerializerField(
         required=False,

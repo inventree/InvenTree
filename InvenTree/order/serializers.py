@@ -630,6 +630,8 @@ class PurchaseOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
             'filename',
             'comment',
             'upload_date',
+            'user',
+            'user_detail',
         ]
 
         read_only_fields = [
@@ -1348,6 +1350,8 @@ class SalesOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
             'link',
             'comment',
             'upload_date',
+            'user',
+            'user_detail',
         ]
 
         read_only_fields = [
