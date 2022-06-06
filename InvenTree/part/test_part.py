@@ -633,6 +633,10 @@ class BaseNotificationIntegrationTest(InvenTreeTestCase):
         self.part.save()
 
         # There should be 1 notification
+
+        nots = NotificationEntry.objects.all()
+        print(nots)
+
         self.assertEqual(NotificationEntry.objects.all().count(), 1)
 
 
