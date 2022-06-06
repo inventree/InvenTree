@@ -91,6 +91,9 @@ jobs:
         cache: 'pip'
     - name: Run pre-commit Checks
       uses: pre-commit/action@v2.0.3
+    - name: Check Version
+      run: |
+        python3 ci/version_check.py
 
   python:
     name: Tests - inventree-python
