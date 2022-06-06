@@ -725,7 +725,8 @@ function submitFormData(fields, options) {
     // Only used if file / image upload is required
     var form_data = new FormData();
 
-    var data = {};
+    // We can (optionally) provide a "starting point" for the submitted data
+    var data = options.form_data || {};
 
     var has_files = false;
 

@@ -22,7 +22,8 @@ import stock.serializers as StockSerializers
 from build.models import Build
 from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer, SupplierPartSerializer
-from InvenTree.api import APIDownloadMixin, AttachmentMixin
+from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
+                           ListCreateDestroyAPIView)
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import (DownloadFile, extract_serial_numbers, isNull,
                                str2bool)
@@ -465,7 +466,7 @@ class StockFilter(rest_filters.FilterSet):
     updated_after = rest_filters.DateFilter(label='Updated after', field_name='updated', lookup_expr='gte')
 
 
-class StockList(APIDownloadMixin, generics.ListCreateAPIView):
+class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
     """API endpoint for list view of Stock objects.
 
     - GET: Return a list of all StockItem objects (with optional query filters)
@@ -1043,7 +1044,7 @@ class StockList(APIDownloadMixin, generics.ListCreateAPIView):
     ]
 
 
-class StockAttachmentList(AttachmentMixin, generics.ListCreateAPIView):
+class StockAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     """API endpoint for listing (and creating) a StockItemAttachment (file upload)."""
 
     queryset = StockItemAttachment.objects.all()
@@ -1074,7 +1075,7 @@ class StockItemTestResultDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = StockSerializers.StockItemTestResultSerializer
 
 
-class StockItemTestResultList(generics.ListCreateAPIView):
+class StockItemTestResultList(ListCreateDestroyAPIView):
     """API endpoint for listing (and creating) a StockItemTestResult object."""
 
     queryset = StockItemTestResult.objects.all()

@@ -22,7 +22,8 @@ import order.models
 from build.models import Build, BuildItem
 from common.models import InvenTreeSetting
 from company.models import Company, ManufacturerPart, SupplierPart
-from InvenTree.api import APIDownloadMixin, AttachmentMixin
+from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
+                           ListCreateDestroyAPIView)
 from InvenTree.helpers import DownloadFile, increment, isNull, str2bool
 from InvenTree.status_codes import (BuildStatus, PurchaseOrderStatus,
                                     SalesOrderStatus)
@@ -302,7 +303,7 @@ class PartInternalPriceList(generics.ListCreateAPIView):
     ]
 
 
-class PartAttachmentList(AttachmentMixin, generics.ListCreateAPIView):
+class PartAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     """API endpoint for listing (and creating) a PartAttachment (file upload)."""
 
     queryset = PartAttachment.objects.all()
@@ -1522,7 +1523,7 @@ class BomFilter(rest_filters.FilterSet):
         return queryset
 
 
-class BomList(generics.ListCreateAPIView):
+class BomList(ListCreateDestroyAPIView):
     """API endpoint for accessing a list of BomItem objects.
 
     - GET: Return list of BomItem objects

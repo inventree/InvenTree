@@ -7,7 +7,7 @@ from rest_framework import filters, generics
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as rest_filters
 
-from InvenTree.api import AttachmentMixin, APIDownloadMixin
+from InvenTree.api import AttachmentMixin, APIDownloadMixin, ListCreateDestroyAPIView
 from InvenTree.helpers import str2bool, isNull, DownloadFile
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.status_codes import BuildStatus
@@ -413,7 +413,7 @@ class BuildItemList(generics.ListCreateAPIView):
     ]
 
 
-class BuildAttachmentList(AttachmentMixin, generics.ListCreateAPIView):
+class BuildAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     """API endpoint for listing (and creating) BuildOrderAttachment objects."""
 
     queryset = BuildOrderAttachment.objects.all()

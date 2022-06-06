@@ -86,9 +86,11 @@ function deleteAttachments(attachments, url, options={}) {
     }
 
     var rows = '';
+    var ids = [];
 
     attachments.forEach(function(att) {
         rows += renderAttachment(att);
+        ids.push(att.pk);
     });
 
     var html = `
@@ -105,22 +107,16 @@ function deleteAttachments(attachments, url, options={}) {
     </table>
     `;
 
-    constructFormBody({}, {
+    constructForm(url, {
         method: 'DELETE',
         title: '{% trans "Delete Attachments" %}',
         preFormContent: html,
-        onSubmit: function(fields, opts) {
-            inventreeMultiDelete(
-                url,
-                attachments,
-                {
-                    modal: opts.modal,
-                    success: function() {
-                        // Refresh the table once all attachments are deleted
-                        $('#attachment-table').bootstrapTable('refresh');
-                    }
-                }
-            );
+        form_data: {
+            items: ids,
+        },
+        onSuccess: function() {
+            // Refresh the table once all attachments are deleted
+            $('#attachment-table').bootstrapTable('refresh');
         }
     });
 }
