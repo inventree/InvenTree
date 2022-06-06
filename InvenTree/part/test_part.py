@@ -616,6 +616,8 @@ class BaseNotificationIntegrationTest(InvenTreeTestCase):
         # reload notification methods
         storage.collect(run_class)
 
+        NotificationEntry.objects.all().delete()
+
         # There should be no notification runs
         self.assertEqual(NotificationEntry.objects.all().count(), 0)
 
@@ -631,7 +633,7 @@ class BaseNotificationIntegrationTest(InvenTreeTestCase):
         self.part.save()
 
         # There should be 1 notification
-        self.assertEqual(NotificationEntry.objects.all().count(), 2)
+        self.assertEqual(NotificationEntry.objects.all().count(), 1)
 
 
 class PartNotificationTest(BaseNotificationIntegrationTest):
