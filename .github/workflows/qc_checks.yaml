@@ -93,6 +93,7 @@ jobs:
       uses: pre-commit/action@v2.0.3
     - name: Check Version
       run: |
+        pip install requests
         python3 ci/version_check.py
 
   python:
