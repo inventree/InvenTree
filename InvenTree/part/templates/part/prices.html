@@ -64,9 +64,9 @@
                             <td>Max: {% include "price.html" with price=max_total_bom_price %}</td>
                         </tr>
                     {% endif %}
+                {% endif %}
 
-
-                    {% if min_total_bom_purchase_price %}
+                {% if min_total_bom_purchase_price %}
                     <tr>
                         <td></td>
                         <td>{% trans 'Unit Purchase Price' %}</td>
@@ -81,15 +81,17 @@
                         <td>Max: {% include "price.html" with price=max_total_bom_purchase_price %}</td>
                     </tr>
                     {% endif %}
-                    {% endif %}
+                {% endif %}
 
-                    {% if part.has_complete_bom_pricing == False %}
-                        <tr>
-                            <td colspan='4'>
-                                <span class='warning-msg'><em>{% trans 'Note: BOM pricing is incomplete for this part' %}</em></span>
-                            </td>
-                        </tr>
-                    {% endif %}
+                {% if part.has_complete_bom_pricing == False %}
+                    <tr>
+                        <td colspan='4'>
+                            <span class='warning-msg'><em>{% trans 'Note: BOM pricing is incomplete for this part' %}</em></span>
+                        </td>
+                    </tr>
+                {% endif %}
+
+                {% if min_total_bom_price or min_total_bom_purchase_price %}
                 {% else %}
                     <tr>
                         <td colspan='4'>
@@ -131,7 +133,7 @@
             {% endif %}
             </table>
 
-            {% if min_unit_buy_price or min_unit_bom_price %}
+            {% if min_unit_buy_price or min_unit_bom_price or min_unit_bom_purchase_price %}
             {% else %}
                 <div class='alert alert-danger alert-block'>
                     {% trans 'No pricing information is available for this part.' %}
