@@ -593,7 +593,7 @@ class Part(MetadataMixin, MPTTModel):
         try:
             latest = int(latest)
             return latest
-        except:
+        except Exception:
             # not an integer so 0
             return 0
 
@@ -610,7 +610,7 @@ class Part(MetadataMixin, MPTTModel):
         # Attempt to turn into an integer
         try:
             latest = int(latest)
-        except:
+        except Exception:
             pass
 
         if type(latest) is int:
@@ -1530,16 +1530,11 @@ class Part(MetadataMixin, MPTTModel):
         return self.supplier_parts.count()
 
     @property
-    def has_pricing_info(self, internal=False):
-        """Return true if there is pricing information for this part."""
-        return self.get_price_range(internal=internal) is not None
-
-    @property
     def has_complete_bom_pricing(self):
         """Return true if there is pricing information for each item in the BOM."""
-        use_internal = common.models.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
+        use_internal = common.models.InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
         for item in self.get_bom_items().all().select_related('sub_part'):
-            if not item.sub_part.has_pricing_info(use_internal):
+            if item.sub_part.get_price_range(internal=use_internal) is None:
                 return False
 
         return True
@@ -2037,27 +2032,20 @@ class Part(MetadataMixin, MPTTModel):
         return filtered_parts
 
     def get_related_parts(self):
-        """Return list of tuples for all related parts.
-
-        Includes:
-        - first value is PartRelated object
-        - second value is matching Part object
-        """
-        related_parts = []
+        """Return a set of all related parts for this part"""
+        related_parts = set()
 
         related_parts_1 = self.related_parts_1.filter(part_1__id=self.pk)
 
         related_parts_2 = self.related_parts_2.filter(part_2__id=self.pk)
 
-        related_parts.append()
-
         for related_part in related_parts_1:
             # Add to related parts list
-            related_parts.append(related_part.part_2)
+            related_parts.add(related_part.part_2)
 
         for related_part in related_parts_2:
             # Add to related parts list
-            related_parts.append(related_part.part_1)
+            related_parts.add(related_part.part_1)
 
         return related_parts
 
@@ -2283,7 +2271,7 @@ class PartTestTemplate(models.Model):
 
 def validate_template_name(name):
     """Prevent illegal characters in "name" field for PartParameterTemplate."""
-    for c in "!@#$%^&*()<>{}[].,?/\\|~`_+-=\'\"":
+    for c in "!@#$%^&*()<>{}[].,?/\\|~`_+-=\'\"":  # noqa: P103
         if c in str(name):
             raise ValidationError(_(f"Illegal character in template name ({c})"))
 
@@ -2383,7 +2371,9 @@ class PartParameter(models.Model):
 
 
 class PartCategoryParameterTemplate(models.Model):
-    """A PartCategoryParameterTemplate creates a unique relationship between a PartCategory and a PartParameterTemplate. Multiple PartParameterTemplate instances can be associated to a PartCategory to drive a default list of parameter templates attached to a Part instance upon creation.
+    """A PartCategoryParameterTemplate creates a unique relationship between a PartCategory and a PartParameterTemplate.
+
+    Multiple PartParameterTemplate instances can be associated to a PartCategory to drive a default list of parameter templates attached to a Part instance upon creation.
 
     Attributes:
         category: Reference to a single PartCategory object
@@ -2827,44 +2817,35 @@ class BomItemSubstitute(models.Model):
 class PartRelated(models.Model):
     """Store and handle related parts (eg. mating connector, crimps, etc.)."""
 
+    class Meta:
+        """Metaclass defines extra model properties"""
+        unique_together = ('part_1', 'part_2')
+
     part_1 = models.ForeignKey(Part, related_name='related_parts_1',
-                               verbose_name=_('Part 1'), on_delete=models.DO_NOTHING)
+                               verbose_name=_('Part 1'), on_delete=models.CASCADE)
 
     part_2 = models.ForeignKey(Part, related_name='related_parts_2',
-                               on_delete=models.DO_NOTHING,
+                               on_delete=models.CASCADE,
                                verbose_name=_('Part 2'), help_text=_('Select Related Part'))
 
     def __str__(self):
         """Return a string representation of this Part-Part relationship"""
         return f'{self.part_1} <--> {self.part_2}'
 
-    def validate(self, part_1, part_2):
-        """Validate that the two parts relationship is unique."""
-        validate = True
-
-        parts = Part.objects.all()
-        related_parts = PartRelated.objects.all()
-
-        # Check if part exist and there are not the same part
-        if (part_1 in parts and part_2 in parts) and (part_1.pk != part_2.pk):
-            # Check if relation exists already
-            for relation in related_parts:
-                if (part_1 == relation.part_1 and part_2 == relation.part_2) \
-                   or (part_1 == relation.part_2 and part_2 == relation.part_1):
-                    validate = False
-                    break
-        else:
-            validate = False
-
-        return validate
+    def save(self, *args, **kwargs):
+        """Enforce a 'clean' operation when saving a PartRelated instance"""
+        self.clean()
+        self.validate_unique()
+        super().save(*args, **kwargs)
 
     def clean(self):
         """Overwrite clean method to check that relation is unique."""
-        validate = self.validate(self.part_1, self.part_2)
 
-        if not validate:
-            error_message = _('Error creating relationship: check that '
-                              'the part is not related to itself '
-                              'and that the relationship is unique')
+        super().clean()
 
-            raise ValidationError(error_message)
+        if self.part_1 == self.part_2:
+            raise ValidationError(_("Part relationship cannot be created between a part and itself"))
+
+        # Check for inverse relationship
+        if PartRelated.objects.filter(part_1=self.part_2, part_2=self.part_1).exists():
+            raise ValidationError(_("Duplicate relationship already exists"))

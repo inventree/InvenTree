@@ -93,7 +93,7 @@ class BulkNotificationMethodTests(BaseNotificationIntegrationTest):
             def get_targets(self):
                 return [1, ]
 
-        with self.assertRaises(NotImplementedError):
+        with self.assertLogs(logger='inventree', level='ERROR'):
             self._notification_run(WrongImplementation)
 
 
@@ -115,7 +115,7 @@ class SingleNotificationMethodTests(BaseNotificationIntegrationTest):
             def get_targets(self):
                 return [1, ]
 
-        with self.assertRaises(NotImplementedError):
+        with self.assertLogs(logger='inventree', level='ERROR'):
             self._notification_run(WrongImplementation)
 
 # A integration test for notifications is provided in test_part.PartNotificationTest

@@ -47,7 +47,7 @@ class InvenTreeMoneySerializer(MoneyField):
         try:
             if amount is not None and amount is not empty:
                 amount = Decimal(amount)
-        except:
+        except Exception:
             raise ValidationError({
                 self.field_name: [_("Must be a valid number")],
             })
@@ -58,29 +58,6 @@ class InvenTreeMoneySerializer(MoneyField):
             return Money(amount, currency)
 
         return amount
-
-
-class UserSerializer(serializers.ModelSerializer):
-    """Serializer for User - provides all fields."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = User
-        fields = 'all'
-
-
-class UserSerializerBrief(serializers.ModelSerializer):
-    """Serializer for User - provides limited information."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = User
-        fields = [
-            'pk',
-            'username',
-        ]
 
 
 class InvenTreeModelSerializer(serializers.ModelSerializer):
@@ -120,7 +97,7 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
                     if callable(value):
                         try:
                             value = value()
-                        except:
+                        except Exception:
                             continue
 
                     data[field_name] = value
@@ -150,7 +127,7 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
                     if callable(value):
                         try:
                             value = value()
-                        except:
+                        except Exception:
                             continue
 
                     initials[field_name] = value
@@ -218,6 +195,21 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
         return data
 
 
+class UserSerializer(InvenTreeModelSerializer):
+    """Serializer for a User."""
+
+    class Meta:
+        """Metaclass defines serializer fields."""
+        model = User
+        fields = [
+            'pk',
+            'username',
+            'first_name',
+            'last_name',
+            'email'
+        ]
+
+
 class ReferenceIndexingSerializerMixin():
     """This serializer mixin ensures the the reference is not to big / small for the BigIntegerField."""
 
@@ -239,9 +231,7 @@ class InvenTreeAttachmentSerializerField(serializers.FileField):
 
     /media/foo/bar.jpg
 
-    Why? You can't handle the why!
-
-    Actually, if the server process is serving the data at 127.0.0.1,
+    If the server process is serving the data at 127.0.0.1,
     but a proxy service (e.g. nginx) is then providing DNS lookup to the outside world,
     then an attachment which prefixes the "address" of the internal server
     will not be accessible from the outside world.
@@ -260,6 +250,8 @@ class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):
 
     The only real addition here is that we support "renaming" of the attachment file.
     """
+
+    user_detail = UserSerializer(source='user', read_only=True, many=False)
 
     attachment = InvenTreeAttachmentSerializerField(
         required=False,
@@ -302,7 +294,7 @@ class InvenTreeDecimalField(serializers.FloatField):
         # Convert the value to a string, and then a decimal
         try:
             return Decimal(str(data))
-        except:
+        except Exception:
             raise serializers.ValidationError(_("Invalid value"))
 
 
@@ -423,7 +415,7 @@ class DataFileUploadSerializer(serializers.Serializer):
         if self.TARGET_MODEL:
             try:
                 model_fields = self.TARGET_MODEL.get_import_fields()
-            except:
+            except Exception:
                 pass
 
         # Extract a list of valid model field names
@@ -515,7 +507,7 @@ class DataFileExtractSerializer(serializers.Serializer):
         if self.TARGET_MODEL:
             try:
                 model_fields = self.TARGET_MODEL.get_import_fields()
-            except:
+            except Exception:
                 model_fields = {}
 
         rows = []
@@ -568,7 +560,7 @@ class DataFileExtractSerializer(serializers.Serializer):
         if self.TARGET_MODEL:
             try:
                 model_fields = self.TARGET_MODEL.get_import_fields()
-            except:
+            except Exception:
                 model_fields = {}
 
         cols_seen = set()

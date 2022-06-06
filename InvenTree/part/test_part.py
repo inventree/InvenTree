@@ -15,8 +15,8 @@ from common.notifications import UIMessageNotification, storage
 from InvenTree import version
 from InvenTree.helpers import InvenTreeTestCase
 
-from .models import (Part, PartCategory, PartCategoryStar, PartStar,
-                     PartTestTemplate, rename_part_image)
+from .models import (Part, PartCategory, PartCategoryStar, PartRelated,
+                     PartStar, PartTestTemplate, rename_part_image)
 from .templatetags import inventree_extras
 
 
@@ -44,7 +44,7 @@ class TemplateTagTest(InvenTreeTestCase):
 
     def test_inventree_instance_name(self):
         """Test the 'instance name' setting"""
-        self.assertEqual(inventree_extras.inventree_instance_name(), 'InvenTree server')
+        self.assertEqual(inventree_extras.inventree_instance_name(), 'InvenTree')
 
     def test_inventree_base_url(self):
         """Test that the base URL tag returns correctly"""
@@ -190,7 +190,7 @@ class PartTest(TestCase):
         try:
             part.save()
             self.assertTrue(False)  # pragma: no cover
-        except:
+        except Exception:
             pass
 
         self.assertEqual(Part.objects.count(), n + 1)
@@ -279,6 +279,53 @@ class PartTest(TestCase):
             p.set_metadata(k, k)
 
         self.assertEqual(len(p.metadata.keys()), 4)
+
+    def test_related(self):
+        """Unit tests for the PartRelated model"""
+
+        # Create a part relationship
+        PartRelated.objects.create(part_1=self.r1, part_2=self.r2)
+        self.assertEqual(PartRelated.objects.count(), 1)
+
+        # Creating a duplicate part relationship should fail
+        with self.assertRaises(ValidationError):
+            PartRelated.objects.create(part_1=self.r1, part_2=self.r2)
+
+        # Creating an 'inverse' duplicate relationship should also fail
+        with self.assertRaises(ValidationError):
+            PartRelated.objects.create(part_1=self.r2, part_2=self.r1)
+
+        # Try to add a self-referential relationship
+        with self.assertRaises(ValidationError):
+            PartRelated.objects.create(part_1=self.r2, part_2=self.r2)
+
+        # Test relation lookup for each part
+        r1_relations = self.r1.get_related_parts()
+        self.assertEqual(len(r1_relations), 1)
+        self.assertIn(self.r2, r1_relations)
+
+        r2_relations = self.r2.get_related_parts()
+        self.assertEqual(len(r2_relations), 1)
+        self.assertIn(self.r1, r2_relations)
+
+        # Delete a part, ensure the relationship also gets deleted
+        self.r1.delete()
+
+        self.assertEqual(PartRelated.objects.count(), 0)
+        self.assertEqual(len(self.r2.get_related_parts()), 0)
+
+        # Add multiple part relationships to self.r2
+        for p in Part.objects.all().exclude(pk=self.r2.pk):
+            PartRelated.objects.create(part_1=p, part_2=self.r2)
+
+        n = Part.objects.count() - 1
+
+        self.assertEqual(PartRelated.objects.count(), n)
+        self.assertEqual(len(self.r2.get_related_parts()), n)
+
+        # Deleting r2 should remove *all* relationships
+        self.r2.delete()
+        self.assertEqual(PartRelated.objects.count(), 0)
 
 
 class TestTemplateTest(TestCase):

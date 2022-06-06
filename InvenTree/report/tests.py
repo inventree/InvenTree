@@ -9,9 +9,9 @@ from django.urls import reverse
 
 import report.models as report_models
 from build.models import Build
-from common.models import InvenTreeUserSetting
+from common.models import InvenTreeSetting, InvenTreeUserSetting
 from InvenTree.api_tester import InvenTreeAPITestCase
-from stock.models import StockItem
+from stock.models import StockItem, StockItemAttachment
 
 
 class ReportTest(InvenTreeAPITestCase):
@@ -141,14 +141,27 @@ class TestReportTest(ReportTest):
         # Now print with a valid StockItem
         item = StockItem.objects.first()
 
-        response = self.get(url, {'item': item.pk})
+        response = self.get(url, {'item': item.pk}, expected_code=200)
 
         # Response should be a StreamingHttpResponse (PDF file)
         self.assertEqual(type(response), StreamingHttpResponse)
 
         headers = response.headers
-
         self.assertEqual(headers['Content-Type'], 'application/pdf')
+
+        # By default, this should *not* have created an attachment against this stockitem
+        self.assertFalse(StockItemAttachment.objects.filter(stock_item=item).exists())
+
+        # Change the setting, now the test report should be attached automatically
+        InvenTreeSetting.set_setting('REPORT_ATTACH_TEST_REPORT', True, None)
+
+        response = self.get(url, {'item': item.pk}, expected_code=200)
+        headers = response.headers
+        self.assertEqual(headers['Content-Type'], 'application/pdf')
+
+        # Check that a report has been uploaded
+        attachment = StockItemAttachment.objects.filter(stock_item=item).first()
+        self.assertIsNotNone(attachment)
 
 
 class BuildReportTest(ReportTest):

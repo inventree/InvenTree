@@ -154,7 +154,7 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
 
     notes = MarkdownxField(blank=True, verbose_name=_('Notes'), help_text=_('Order notes'))
 
-    def get_total_price(self, target_currency=currency_code_default()):
+    def get_total_price(self, target_currency=None):
         """Calculates the total price of all order lines, and converts to the specified target currency.
 
         If not specified, the default system currency is used.
@@ -162,6 +162,10 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
         If currency conversion fails (e.g. there are no valid conversion rates),
         then we simply return zero, rather than attempting some other calculation.
         """
+        # Set default - see B008
+        if target_currency is None:
+            target_currency = currency_code_default()
+
         total = Money(0, target_currency)
 
         # gather name reference

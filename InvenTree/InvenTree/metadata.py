@@ -137,7 +137,7 @@ class InvenTreeMetadata(SimpleMetadata):
                         if callable(default):
                             try:
                                 default = default()
-                            except:
+                            except Exception:
                                 continue
 
                         serializer_info[name]['default'] = default

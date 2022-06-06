@@ -169,7 +169,7 @@ class GitStatus:
 def get_modules(pkg):
     """Get all modules in a package."""
     context = {}
-    for loader, name, ispkg in pkgutil.walk_packages(pkg.__path__):
+    for loader, name, _ in pkgutil.walk_packages(pkg.__path__):
         try:
             module = loader.find_module(name).load_module(name)
             pkg_names = getattr(module, '__all__', None)

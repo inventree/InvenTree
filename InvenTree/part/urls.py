@@ -11,7 +11,6 @@ from django.urls import include, re_path
 from . import views
 
 part_detail_urls = [
-    re_path(r'^delete/?', views.PartDelete.as_view(), name='part-delete'),
     re_path(r'^bom-download/?', views.BomDownload.as_view(), name='bom-download'),
 
     re_path(r'^pricing/', views.PartPricing.as_view(), name='part-pricing'),
@@ -28,12 +27,6 @@ part_detail_urls = [
     re_path(r'^.*$', views.PartDetail.as_view(), name='part-detail'),
 ]
 
-category_parameter_urls = [
-    re_path(r'^new/', views.CategoryParameterTemplateCreate.as_view(), name='category-param-template-create'),
-    re_path(r'^(?P<pid>\d+)/edit/', views.CategoryParameterTemplateEdit.as_view(), name='category-param-template-edit'),
-    re_path(r'^(?P<pid>\d+)/delete/', views.CategoryParameterTemplateDelete.as_view(), name='category-param-template-delete'),
-]
-
 category_urls = [
 
     # Top level subcategory display
@@ -42,8 +35,6 @@ category_urls = [
     # Category detail views
     re_path(r'(?P<pk>\d+)/', include([
         re_path(r'^delete/', views.CategoryDelete.as_view(), name='category-delete'),
-        re_path(r'^parameters/', include(category_parameter_urls)),
-
         # Anything else
         re_path(r'^.*$', views.CategoryDetail.as_view(), name='category-detail'),
     ]))
@@ -64,9 +55,6 @@ part_urls = [
 
     # Part category
     re_path(r'^category/', include(category_urls)),
-
-    # Change category for multiple parts
-    re_path(r'^set-category/?', views.PartSetCategory.as_view(), name='part-set-category'),
 
     # Individual part using IPN as slug
     re_path(r'^(?P<slug>[-\w]+)/', views.PartDetailFromIPN.as_view(), name='part-detail-from-ipn'),

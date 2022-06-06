@@ -99,7 +99,7 @@ def inventreeCommitHash():
 
     try:
         return str(subprocess.check_output('git rev-parse --short HEAD'.split()), 'utf-8').strip()
-    except:  # pragma: no cover
+    except Exception:  # pragma: no cover
         return None
 
 
@@ -114,5 +114,5 @@ def inventreeCommitDate():
     try:
         d = str(subprocess.check_output('git show -s --format=%ci'.split()), 'utf-8').strip()
         return d.split(' ')[0]
-    except:  # pragma: no cover
+    except Exception:  # pragma: no cover
         return None

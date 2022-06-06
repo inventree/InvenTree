@@ -538,14 +538,14 @@ class Owner(models.Model):
 
         try:
             owners.append(cls.objects.get(owner_id=user.pk, owner_type=user_type))
-        except:  # pragma: no cover
+        except Exception:  # pragma: no cover
             pass
 
         for group in user.groups.all():
             try:
                 owner = cls.objects.get(owner_id=group.pk, owner_type=group_type)
                 owners.append(owner)
-            except:  # pragma: no cover
+            except Exception:  # pragma: no cover
                 pass
 
         return owners

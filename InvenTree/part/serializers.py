@@ -94,6 +94,8 @@ class PartAttachmentSerializer(InvenTreeAttachmentSerializer):
             'link',
             'comment',
             'upload_date',
+            'user',
+            'user_detail',
         ]
 
         read_only_fields = [
@@ -753,10 +755,9 @@ class BomItemSerializer(InvenTreeModelSerializer):
 
 
 class CategoryParameterTemplateSerializer(InvenTreeModelSerializer):
-    """Serializer for PartCategoryParameterTemplate."""
+    """Serializer for the PartCategoryParameterTemplate model."""
 
-    parameter_template = PartParameterTemplateSerializer(many=False,
-                                                         read_only=True)
+    parameter_template_detail = PartParameterTemplateSerializer(source='parameter_template', many=False, read_only=True)
 
     category_detail = CategorySerializer(source='category', many=False, read_only=True)
 
@@ -768,6 +769,7 @@ class CategoryParameterTemplateSerializer(InvenTreeModelSerializer):
             'category',
             'category_detail',
             'parameter_template',
+            'parameter_template_detail',
             'default_value',
         ]
 
@@ -902,7 +904,7 @@ class BomImportExtractSerializer(DataFileExtractSerializer):
                 if level != 1:
                     # Skip this row
                     return None
-            except:
+            except Exception:
                 pass
 
         # Attempt to extract a valid part based on the provided data
@@ -954,7 +956,7 @@ class BomImportExtractSerializer(DataFileExtractSerializer):
 
                 if quantity <= 0:
                     row['errors']['quantity'] = _('Quantity must be greater than zero')
-            except:
+            except Exception:
                 row['errors']['quantity'] = _('Invalid quantity')
 
         return row

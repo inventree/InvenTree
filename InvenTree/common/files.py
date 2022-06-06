@@ -142,7 +142,7 @@ class FileManager:
             guess = self.guess_header(header, threshold=95)
             # Check if already present
             guess_exists = False
-            for idx, data in enumerate(headers):
+            for _idx, data in enumerate(headers):
                 if guess == data['guess']:
                     guess_exists = True
                     break

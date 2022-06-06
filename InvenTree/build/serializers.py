@@ -11,7 +11,7 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
 from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentSerializer
-from InvenTree.serializers import UserSerializerBrief, ReferenceIndexingSerializerMixin
+from InvenTree.serializers import ReferenceIndexingSerializerMixin, UserSerializer
 
 import InvenTree.helpers
 from InvenTree.helpers import extract_serial_numbers
@@ -40,7 +40,7 @@ class BuildSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSerializer
 
     overdue = serializers.BooleanField(required=False, read_only=True)
 
-    issued_by_detail = UserSerializerBrief(source='issued_by', read_only=True)
+    issued_by_detail = UserSerializer(source='issued_by', read_only=True)
 
     responsible_detail = OwnerSerializer(source='responsible', read_only=True)
 
@@ -860,6 +860,8 @@ class BuildAttachmentSerializer(InvenTreeAttachmentSerializer):
             'filename',
             'comment',
             'upload_date',
+            'user',
+            'user_detail',
         ]
 
         read_only_fields = [

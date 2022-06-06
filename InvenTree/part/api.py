@@ -194,7 +194,7 @@ class CategoryMetadata(generics.RetrieveUpdateAPIView):
     queryset = PartCategory.objects.all()
 
 
-class CategoryParameterList(generics.ListAPIView):
+class CategoryParameterList(generics.ListCreateAPIView):
     """API endpoint for accessing a list of PartCategoryParameterTemplate objects.
 
     - GET: Return a list of PartCategoryParameterTemplate objects
@@ -233,6 +233,13 @@ class CategoryParameterList(generics.ListAPIView):
                 pass
 
         return queryset
+
+
+class CategoryParameterDetail(generics.RetrieveUpdateDestroyAPIView):
+    """Detail endpoint fro the PartCategoryParameterTemplate model"""
+
+    queryset = PartCategoryParameterTemplate.objects.all()
+    serializer_class = part_serializers.CategoryParameterTemplateSerializer
 
 
 class CategoryTree(generics.ListAPIView):
@@ -295,7 +302,7 @@ class PartInternalPriceList(generics.ListCreateAPIView):
     ]
 
 
-class PartAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
+class PartAttachmentList(AttachmentMixin, generics.ListCreateAPIView):
     """API endpoint for listing (and creating) a PartAttachment (file upload)."""
 
     queryset = PartAttachment.objects.all()
@@ -310,7 +317,7 @@ class PartAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     ]
 
 
-class PartAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):
+class PartAttachmentDetail(AttachmentMixin, generics.RetrieveUpdateDestroyAPIView):
     """Detail endpoint for PartAttachment model."""
 
     queryset = PartAttachment.objects.all()
@@ -599,7 +606,7 @@ class PartCopyBOM(generics.CreateAPIView):
 
         try:
             ctx['part'] = Part.objects.get(pk=self.kwargs.get('pk', None))
-        except:
+        except Exception:
             pass
 
         return ctx
@@ -1035,12 +1042,12 @@ class PartList(APIDownloadMixin, generics.ListCreateAPIView):
 
             try:
                 manufacturer = Company.objects.get(pk=request.data.get('manufacturer', None))
-            except:
+            except Exception:
                 manufacturer = None
 
             try:
                 supplier = Company.objects.get(pk=request.data.get('supplier', None))
-            except:
+            except Exception:
                 supplier = None
 
             mpn = str(request.data.get('MPN', '')).strip()
@@ -1855,7 +1862,11 @@ part_api_urls = [
     # Base URL for PartCategory API endpoints
     re_path(r'^category/', include([
         re_path(r'^tree/', CategoryTree.as_view(), name='api-part-category-tree'),
-        re_path(r'^parameters/', CategoryParameterList.as_view(), name='api-part-category-parameter-list'),
+
+        re_path(r'^parameters/', include([
+            re_path('^(?P<pk>\d+)/', CategoryParameterDetail.as_view(), name='api-part-category-parameter-detail'),
+            re_path('^.*$', CategoryParameterList.as_view(), name='api-part-category-parameter-list'),
+        ])),
 
         # Category detail endpoints
         re_path(r'^(?P<pk>\d+)/', include([

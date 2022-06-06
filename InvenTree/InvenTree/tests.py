@@ -417,7 +417,7 @@ class CurrencyTests(TestCase):
         update_successful = False
 
         # Note: the update sometimes fails in CI, let's give it a few chances
-        for idx in range(10):
+        for _ in range(10):
             InvenTree.tasks.update_exchange_rates()
 
             rates = Rate.objects.all()
@@ -469,12 +469,20 @@ class TestSettings(helpers.InvenTreeTestCase):
 
     superuser = True
 
-    def in_env_context(self, envs={}):
+    def in_env_context(self, envs=None):
         """Patch the env to include the given dict."""
+        # Set default - see B006
+        if envs is None:
+            envs = {}
+
         return mock.patch.dict(os.environ, envs)
 
-    def run_reload(self, envs={}):
+    def run_reload(self, envs=None):
         """Helper function to reload InvenTree."""
+        # Set default - see B006
+        if envs is None:
+            envs = {}
+
         from plugin import registry
 
         with self.in_env_context(envs):

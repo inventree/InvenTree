@@ -295,7 +295,7 @@ class PurchaseOrderContextMixin:
         # Pass the purchase order through to the serializer for validation
         try:
             context['order'] = models.PurchaseOrder.objects.get(pk=self.kwargs.get('pk', None))
-        except:
+        except Exception:
             pass
 
         context['request'] = self.request
@@ -527,7 +527,7 @@ class PurchaseOrderExtraLineDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.PurchaseOrderExtraLineSerializer
 
 
-class SalesOrderAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
+class SalesOrderAttachmentList(AttachmentMixin, generics.ListCreateAPIView):
     """API endpoint for listing (and creating) a SalesOrderAttachment (file upload)"""
 
     queryset = models.SalesOrderAttachment.objects.all()
@@ -542,7 +542,7 @@ class SalesOrderAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     ]
 
 
-class SalesOrderAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):
+class SalesOrderAttachmentDetail(AttachmentMixin, generics.RetrieveUpdateDestroyAPIView):
     """Detail endpoint for SalesOrderAttachment."""
 
     queryset = models.SalesOrderAttachment.objects.all()
@@ -857,7 +857,7 @@ class SalesOrderContextMixin:
 
         try:
             ctx['order'] = models.SalesOrder.objects.get(pk=self.kwargs.get('pk', None))
-        except:
+        except Exception:
             pass
 
         return ctx
@@ -1050,13 +1050,13 @@ class SalesOrderShipmentComplete(generics.CreateAPIView):
             ctx['shipment'] = models.SalesOrderShipment.objects.get(
                 pk=self.kwargs.get('pk', None)
             )
-        except:
+        except Exception:
             pass
 
         return ctx
 
 
-class PurchaseOrderAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
+class PurchaseOrderAttachmentList(AttachmentMixin, generics.ListCreateAPIView):
     """API endpoint for listing (and creating) a PurchaseOrderAttachment (file upload)"""
 
     queryset = models.PurchaseOrderAttachment.objects.all()
@@ -1071,7 +1071,7 @@ class PurchaseOrderAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     ]
 
 
-class PurchaseOrderAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):
+class PurchaseOrderAttachmentDetail(AttachmentMixin, generics.RetrieveUpdateDestroyAPIView):
     """Detail endpoint for a PurchaseOrderAttachment."""
 
     queryset = models.PurchaseOrderAttachment.objects.all()
