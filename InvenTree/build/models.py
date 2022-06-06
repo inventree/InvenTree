@@ -1050,7 +1050,7 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
         InvenTree.tasks.offload_task(build_tasks.check_build_stock, instance)
 
         # Notify the responsible users that the build order has been created
-        notify_responsible(instance, sender, instance.issued_by)
+        notify_responsible(instance, sender, exclude=instance.issued_by)
 
 
 class BuildOrderAttachment(InvenTreeAttachment):

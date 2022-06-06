@@ -18,6 +18,8 @@ from PIL import Image
 
 import InvenTree.version
 from common.models import InvenTreeSetting
+from common.notifications import (InvenTreeNotificationBodies,
+                                  NotificationBody, trigger_notification)
 from common.settings import currency_code_default
 
 from .api_tester import UserMixin
@@ -721,31 +723,39 @@ class InvenTreeTestCase(UserMixin, TestCase):
     pass
 
 
-def notify_responsible(instance, sender, exclude):
-    """Notifiy all responsible parties.
+def notify_responsible(instance, sender, content: NotificationBody = InvenTreeNotificationBodies.NewOrder, exclude=None):
+    """Notify all responsible parties of a change in an instance.
 
     Args:
-        instance: The newly created instance.
-        sender: Sender model reference.
-        exclude: User instance that should be excluded.
+        instance: The newly created instance
+        sender: Sender model reference
+        content (NotificationBody, optional): _description_. Defaults to InvenTreeNotificationBodies.NewOrder.
+        exclude (User, optional): User instance that should be excluded. Defaults to None.
     """
-    from common.notifications import trigger_notification
-
     if instance.responsible is not None:
+        # Setup context for notification parsing
+        content_context = {
+            'instance_name': sender._meta.verbose_name,
+            'app_label': sender._meta.app_label,
+            'model_name': sender._meta.model_name,
+        }
+
+        # Setup notification context
         context = {
-            'order': instance,
-            'name': _(f"New {sender._meta.verbose_name}"),
-            'message': _(f"A new {sender._meta.verbose_name} has been created and assigned to you"),
+            'instance': instance,
+            'name': content.name.format(**content_context),
+            'message': content.message.format(**content_context),
             'link': InvenTree.helpers.construct_absolute_url(instance.get_absolute_url()),
             'template': {
-                'html': 'email/new_order_assigned.html',
-                'subject': _(f"New {sender._meta.verbose_name}"),
+                'html': content.template.format(**content_context),
+                'subject': content.name.format(**content_context),
             }
         }
 
+        # Create notification
         trigger_notification(
             instance,
-            f'{sender._meta.app_label}.new_{sender._meta.model_name}',
+            content.slug.format(**content_context),
             targets=[instance.responsible],
             target_exclude=[exclude],
             context=context,

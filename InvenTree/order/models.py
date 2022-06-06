@@ -583,7 +583,7 @@ def after_save_purchase_order(sender, instance: PurchaseOrder, created: bool, **
 
     if created:
         # Notify the responsible users that the purchase order has been created
-        notify_responsible(instance, sender, instance.created_by)
+        notify_responsible(instance, sender, exclude=instance.created_by)
 
 
 class SalesOrder(Order):
@@ -873,7 +873,7 @@ def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs
             )
 
         # Notify the responsible users that the sales order has been created
-        notify_responsible(instance, sender, instance.created_by)
+        notify_responsible(instance, sender, exclude=instance.created_by)
 
 
 class PurchaseOrderAttachment(InvenTreeAttachment):
