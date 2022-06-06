@@ -57,6 +57,7 @@ class InvenTreeConfig(AppConfig):
         try:
             from django_q.models import Schedule
         except AppRegistryNotReady:  # pragma: no cover
+            logger.warning("Cannot start background tasks - app registry not ready")
             return
 
         logger.info("Starting background tasks...")
@@ -96,6 +97,24 @@ class InvenTreeConfig(AppConfig):
         InvenTree.tasks.schedule_task(
             'common.tasks.delete_old_notifications',
             schedule_type=Schedule.DAILY,
+        )
+
+        # Check for overdue purchase orders
+        InvenTree.tasks.schedule_task(
+            'order.tasks.check_overdue_purchase_orders',
+            schedule_type=Schedule.DAILY
+        )
+
+        # Check for overdue sales orders
+        InvenTree.tasks.schedule_task(
+            'order.tasks.check_overdue_sales_orders',
+            schedule_type=Schedule.DAILY,
+        )
+
+        # Check for overdue build orders
+        InvenTree.tasks.schedule_task(
+            'build.tasks.check_overdue_build_orders',
+            schedule_type=Schedule.DAILY
         )
 
     def update_exchange_rates(self):  # pragma: no cover

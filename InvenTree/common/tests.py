@@ -78,7 +78,7 @@ class SettingsTest(InvenTreeTestCase):
 
         # check as_int
         self.assertEqual(stale_days.as_int(), 0)
-        self.assertEqual(instance_obj.as_int(), 'InvenTree server')  # not an int -> return default
+        self.assertEqual(instance_obj.as_int(), 'InvenTree')  # not an int -> return default
 
         # check as_bool
         self.assertEqual(report_test_obj.as_bool(), True)
@@ -258,7 +258,7 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
         # Access via the API, and the default value should be received
         response = self.get(url, expected_code=200)
 
-        self.assertEqual(response.data['value'], 'InvenTree server')
+        self.assertEqual(response.data['value'], 'InvenTree')
 
         # Now, the object should have been created in the DB
         self.patch(
