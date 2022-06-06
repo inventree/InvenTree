@@ -1,6 +1,7 @@
 """API functionality for the 'report' app"""
 
 from django.core.exceptions import FieldError, ValidationError
+from django.core.files.base import ContentFile
 from django.http import HttpResponse
 from django.template.exceptions import TemplateDoesNotExist
 from django.urls import include, path, re_path
@@ -15,7 +16,7 @@ import common.models
 import InvenTree.helpers
 import order.models
 import part.models
-from stock.models import StockItem
+from stock.models import StockItem, StockItemAttachment
 
 from .models import (BillOfMaterialsReport, BuildReport, PurchaseOrderReport,
                      SalesOrderReport, TestReport)
@@ -158,6 +159,18 @@ class PartReportMixin:
 class ReportPrintMixin:
     """Mixin for printing reports."""
 
+    def report_callback(self, object, report, request):
+        """Callback function for each object/report combination.
+
+        Allows functionality to be performed before returning the consolidated PDF
+
+        Arguments:
+            object: The model instance to be printed
+            report: The individual PDF file object
+            request: The request instance associated with this print call
+        """
+        ...
+
     def print(self, request, items_to_print):
         """Print this report template against a number of pre-validated items."""
         if len(items_to_print) == 0:
@@ -182,12 +195,16 @@ class ReportPrintMixin:
             report.object_to_print = item
 
             report_name = report.generate_filename(request)
+            output = report.render(request)
+
+            # Run report callback for each generated report
+            self.report_callback(item, output, request)
 
             try:
                 if debug_mode:
                     outputs.append(report.render_as_string(request))
                 else:
-                    outputs.append(report.render(request))
+                    outputs.append(output)
             except TemplateDoesNotExist as e:
                 template = str(e)
                 if not template:
@@ -325,6 +342,22 @@ class StockItemTestReportPrint(generics.RetrieveAPIView, StockItemReportMixin, R
 
     queryset = TestReport.objects.all()
     serializer_class = TestReportSerializer
+
+    def report_callback(self, item, report, request):
+        """Callback to (optionally) save a copy of the generated report"""
+
+        if common.models.InvenTreeSetting.get_setting('REPORT_ATTACH_TEST_REPORT'):
+
+            # Construct a PDF file object
+            pdf = report.get_document().write_pdf()
+            pdf_content = ContentFile(pdf, "test_report.pdf")
+
+            StockItemAttachment.objects.create(
+                attachment=pdf_content,
+                stock_item=item,
+                user=request.user,
+                comment=_("Test report")
+            )
 
     def get(self, request, *args, **kwargs):
         """Check if valid stock item(s) have been provided."""

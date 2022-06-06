@@ -10,8 +10,9 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from InvenTree.serializers import UserSerializer
 from users.models import Owner, RuleSet, check_user_role
-from users.serializers import OwnerSerializer, UserSerializer
+from users.serializers import OwnerSerializer
 
 
 class OwnerList(generics.ListAPIView):

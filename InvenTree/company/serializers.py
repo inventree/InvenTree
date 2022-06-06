@@ -158,6 +158,8 @@ class ManufacturerPartAttachmentSerializer(InvenTreeAttachmentSerializer):
             'link',
             'comment',
             'upload_date',
+            'user',
+            'user_detail',
         ]
 
         read_only_fields = [
