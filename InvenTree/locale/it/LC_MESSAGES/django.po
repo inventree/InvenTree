@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-06 11:28+0000\n"
-"PO-Revision-Date: 2022-06-05 14:34\n"
+"PO-Revision-Date: 2022-06-06 14:33\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -1182,16 +1182,13 @@ msgid "Stock required for build order"
 msgstr ""
 
 #: build/tasks.py:118
-#, fuzzy
-#| msgid "Delete Build Order"
 msgid "Overdue Build Order"
-msgstr "Elimina Ordine Build"
+msgstr ""
 
 #: build/tasks.py:123
-#, fuzzy, python-brace-format
-#| msgid "Build Orders In Progress"
+#, python-brace-format
 msgid "Build order {bo} is now overdue"
-msgstr "Ordini di Produzione Attivi"
+msgstr ""
 
 #: build/templates/build/build_base.html:39
 #: order/templates/order/order_base.html:28
@@ -1892,20 +1889,16 @@ msgid "Default page size for PDF reports"
 msgstr "Dimensione predefinita della pagina per i report PDF"
 
 #: common/models.py:968
-#, fuzzy
-#| msgid "Enable Reports"
 msgid "Enable Test Reports"
-msgstr "Abilita Report di Stampa"
+msgstr ""
 
 #: common/models.py:969
 msgid "Enable generation of test reports"
 msgstr "Abilita generazione di stampe di prova"
 
 #: common/models.py:975
-#, fuzzy
-#| msgid "Test Reports"
 msgid "Attach Test Reports"
-msgstr "Stampa di prova"
+msgstr ""
 
 #: common/models.py:976
 msgid "When printing a Test Report, attach a copy of the Test Report to the associated Stock Item"
@@ -3774,22 +3767,17 @@ msgid "The following serial numbers are already allocated"
 msgstr ""
 
 #: order/tasks.py:26
-#, fuzzy
-#| msgid "Create Purchase Order"
 msgid "Overdue Purchase Order"
-msgstr "Crea ordine d'acquisto"
+msgstr ""
 
 #: order/tasks.py:31
-#, fuzzy, python-brace-format
-#| msgid "Purchase order status"
+#, python-brace-format
 msgid "Purchase order {po} is now overdue"
-msgstr "Stato ordine d'acquisto"
+msgstr ""
 
 #: order/tasks.py:88
-#, fuzzy
-#| msgid "Sales Order"
 msgid "Overdue Sales Order"
-msgstr "Ordini di Vendita"
+msgstr ""
 
 #: order/tasks.py:93
 #, python-brace-format
@@ -5644,10 +5632,8 @@ msgid "Template file '{template}' is missing or does not exist"
 msgstr ""
 
 #: report/api.py:359
-#, fuzzy
-#| msgid "Test Reports"
 msgid "Test report"
-msgstr "Stampa di prova"
+msgstr ""
 
 #: report/models.py:152
 msgid "Template name"
@@ -6196,10 +6182,8 @@ msgid "Install Stock Item"
 msgstr ""
 
 #: stock/templates/stock/item.html:290
-#, fuzzy
-#| msgid "Enter initial quantity for this stock item"
 msgid "Delete all test results for this stock item"
-msgstr "Inserisci quantità iniziale per questo articolo in giacenza"
+msgstr ""
 
 #: stock/templates/stock/item.html:331 templates/js/translated/stock.js:1455
 msgid "Add Test Result"
@@ -7394,16 +7378,14 @@ msgstr "Accedi"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -9139,10 +9121,8 @@ msgid "Create Part Variant"
 msgstr ""
 
 #: templates/js/translated/part.js:405
-#, fuzzy
-#| msgid "Active parts"
 msgid "Active Part"
-msgstr "Elementi attivi"
+msgstr ""
 
 #: templates/js/translated/part.js:406
 msgid "Part cannot be deleted as it is currently active"
@@ -9153,26 +9133,20 @@ msgid "Deleting this part cannot be reversed"
 msgstr ""
 
 #: templates/js/translated/part.js:422
-#, fuzzy
-#| msgid "All selected supplier parts will be deleted"
 msgid "Any stock items for this part will be deleted"
-msgstr "Tutte gli articoli del fornitore selezionati saranno eliminati"
+msgstr ""
 
 #: templates/js/translated/part.js:423
 msgid "This part will be removed from any Bills of Material"
 msgstr ""
 
 #: templates/js/translated/part.js:424
-#, fuzzy
-#| msgid "All selected supplier parts will be deleted"
 msgid "All manufacturer and supplier information for this part will be deleted"
-msgstr "Tutte gli articoli del fornitore selezionati saranno eliminati"
+msgstr ""
 
 #: templates/js/translated/part.js:431
-#, fuzzy
-#| msgid "Delete Parts"
 msgid "Delete Part"
-msgstr "Cancella articoli"
+msgstr ""
 
 #: templates/js/translated/part.js:467
 msgid "You are subscribed to notifications for this item"
@@ -9265,26 +9239,20 @@ msgid "Display as grid"
 msgstr "Visualizza come griglia"
 
 #: templates/js/translated/part.js:1630
-#, fuzzy
-#| msgid "Set category for the following parts"
 msgid "Set the part category for the selected parts"
-msgstr "Imposta categoria per i seguenti articoli"
+msgstr ""
 
 #: templates/js/translated/part.js:1635
 msgid "Set Part Category"
 msgstr "Imposta categoria articolo"
 
 #: templates/js/translated/part.js:1640
-#, fuzzy
-#| msgid "Set Part Category"
 msgid "Select Part Category"
-msgstr "Imposta categoria articolo"
+msgstr ""
 
 #: templates/js/translated/part.js:1653
-#, fuzzy
-#| msgid "Quantity is required"
 msgid "Category is required"
-msgstr "La quantità è richiesta"
+msgstr ""
 
 #: templates/js/translated/part.js:1779 templates/js/translated/stock.js:2257
 msgid "Display as tree"
@@ -10351,20 +10319,3 @@ msgstr "Permessi per modificare gli elementi"
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
 
-#~ msgid "Select Category"
-#~ msgstr "Selezione una categoria"
-
-#~ msgid "Select part category"
-#~ msgstr "Seleziona categoria articolo"
-
-#~ msgid "There are %(count)s manufacturers defined for this part. If you delete this part, the following manufacturer parts will also be deleted:"
-#~ msgstr "Ci sono %(count)s produttori definiti per questa parte. Se elimini questa parte, verranno eliminate anche le seguenti parti del produttore:"
-
-#~ msgid "There are %(count)s suppliers defined for this part. If you delete this part, the following supplier parts will also be deleted:"
-#~ msgstr "Ci sono %(count)s fornitori definiti per questo articolo. Se elimini questo, verranno eliminate anche i seguenti articoli del fornitore:"
-
-#~ msgid "Remove part"
-#~ msgstr "Rimuovi parte"
-
-#~ msgid "Set category for {n} parts"
-#~ msgstr "Imposta categoria per {n} articoli"
