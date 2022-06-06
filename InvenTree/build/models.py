@@ -1053,34 +1053,26 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
         # Notify the responsible users that the build order has been created
         if instance.responsible is not None:
 
-            targets = []
-
-            for owner in instance.responsible.get_related_owners(include_group=False):
-                user = owner.owner
-
-                if user != instance.issued_by:
-                    targets.append(user)
-
-            if len(targets) > 0:
-                # Notify the responsible user(s) that the new build order has been created
-                name = _("New Build Order")
-                context = {
-                    'build': instance,
-                    'name': name,
-                    'message': _("A new Build Order has been created and assigned to you"),
-                    'link': InvenTree.helpers.construct_absolute_url(instance.get_absolute_url()),
-                    'template': {
-                        'html': 'email/new_order_assigned.html',
-                        'subject': name,
-                    }
+            # Notify the responsible user(s) that the new build order has been created
+            name = _("New Build Order")
+            context = {
+                'build': instance,
+                'name': name,
+                'message': _("A new Build Order has been created and assigned to you"),
+                'link': InvenTree.helpers.construct_absolute_url(instance.get_absolute_url()),
+                'template': {
+                    'html': 'email/new_order_assigned.html',
+                    'subject': name,
                 }
+            }
 
-                common.notifications.trigger_notification(
-                    instance,
-                    'build.new_build_order',
-                    targets=targets,
-                    context=context,
-                )
+            common.notifications.trigger_notification(
+                instance,
+                'build.new_build_order',
+                targets=set(instance.responsible),
+                target_exclude=set(instance.issued_by),
+                context=context,
+            )
 
 
 class BuildOrderAttachment(InvenTreeAttachment):

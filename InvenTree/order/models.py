@@ -590,34 +590,26 @@ def after_save_purchase_order(sender, instance: PurchaseOrder, created: bool, **
         # Notify the responsible owner(s) - if different from the creating user
         if instance.responsible is not None:
 
-            targets = []
-
-            for owner in instance.responsible.get_related_owners(include_group=False):
-                user = owner.owner
-
-                if user != instance.created_by:
-                    targets.append(user)
-
-            if len(targets) > 0:
-                # Notify the responsible user(s) that the new purchase order has been created
-                name = _("New Purchase Order")
-                context = {
-                    'order': instance,
-                    'name': name,
-                    'message': _('A new Purchase Order has been created and assigned to you'),
-                    'link': InvenTree.helpers.construct_absolute_url(instance.get_absolute_url()),
-                    'template': {
-                        'html': 'email/new_order_assigned.html',
-                        'subject': name,
-                    }
+            # Notify the responsible user(s) that the new purchase order has been created
+            name = _("New Purchase Order")
+            context = {
+                'order': instance,
+                'name': name,
+                'message': _('A new Purchase Order has been created and assigned to you'),
+                'link': InvenTree.helpers.construct_absolute_url(instance.get_absolute_url()),
+                'template': {
+                    'html': 'email/new_order_assigned.html',
+                    'subject': name,
                 }
+            }
 
-                trigger_notification(
-                    instance,
-                    'order.new_purchase_order',
-                    targets=targets,
-                    context=context,
-                )
+            trigger_notification(
+                instance,
+                'order.new_purchase_order',
+                targets=set(instance.responsible),
+                targets_exclude=set(instance.created_by),
+                context=context,
+            )
 
 
 class SalesOrder(Order):
@@ -913,34 +905,26 @@ def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs
         # Notify the responsible owner(s) - if different from the creating user
         if instance.responsible is not None:
 
-            targets = []
-
-            for owner in instance.responsible.get_related_owners(include_group=False):
-                user = owner.owner
-
-                if user != instance.created_by:
-                    targets.append(user)
-
-            if len(targets) > 0:
-                # Notify the responsible users that the new sales order has been created
-                name = _("New Sales Order")
-                context = {
-                    'order': instance,
-                    'name': name,
-                    'message': _("A new Sales Order has been created and assigned to you"),
-                    'link': InvenTree.helpers.construct_absolute_url(instance.get_absolute_url()),
-                    'template': {
-                        'html': 'email/new_order_assigned.html',
-                        'subject': name,
-                    }
+            # Notify the responsible users that the new sales order has been created
+            name = _("New Sales Order")
+            context = {
+                'order': instance,
+                'name': name,
+                'message': _("A new Sales Order has been created and assigned to you"),
+                'link': InvenTree.helpers.construct_absolute_url(instance.get_absolute_url()),
+                'template': {
+                    'html': 'email/new_order_assigned.html',
+                    'subject': name,
                 }
+            }
 
-                trigger_notification(
-                    instance,
-                    'order.new_sales_order',
-                    targets=targets,
-                    context=context,
-                )
+            trigger_notification(
+                instance,
+                'order.new_sales_order',
+                targets=set(instance.responsible),
+                target_exclude=set(instance.created_by),
+                context=context,
+            )
 
 
 class PurchaseOrderAttachment(InvenTreeAttachment):
