@@ -575,6 +575,48 @@ class PurchaseOrder(Order):
             self.complete_order()  # This will save the model
 
 
+@receiver(post_save, sender=PurchaseOrder, dispatch_uid='purchase_order_post_save')
+def after_save_purchase_order(sender, instance: PurchaseOrder, created: bool, **kwargs):
+    """Callback function to be executed after a PurchaseOrder is saved"""
+
+    if not InvenTree.ready.canAppAccessDatabase(allow_test=True):
+        return
+
+    if InvenTree.ready.isImportingData():
+        return
+
+    if created:
+
+        # Notify the responsible owner(s) - if different from the creating user
+        if instance.responsible is not None:
+
+            targets = []
+
+            for owner in instance.responsible.get_related_owners(include_group=False):
+                user = owner.owner
+
+                if user != instance.created_by:
+                    targets.append(user)
+
+            if len(targets) > 0:
+                # Notify the responsible user(s) that the new purchase order has been created
+                name = _("New Purchase Order")
+                context = {
+                    'order': instance,
+                    'name': name,
+                    'message': _('A new Purchase Order has been created and assigned to you'),
+                    'link': InvenTree.helpers.construct_absolute_url(instance.get_absolute_url()),
+                }
+
+                trigger_notification(
+                    instance,
+                    'order.new_purchase_order',
+                    targets=targets,
+                    context=context,
+                    delivery_methods=set([UIMessageNotification]),
+                )
+
+
 class SalesOrder(Order):
     """A SalesOrder represents a list of goods shipped outwards to a customer.
 
