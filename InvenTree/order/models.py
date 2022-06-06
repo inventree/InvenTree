@@ -29,7 +29,8 @@ from common.settings import currency_code_default
 from company.models import Company, SupplierPart
 from InvenTree.exceptions import log_error
 from InvenTree.fields import InvenTreeModelMoneyField, RoundingDecimalField
-from InvenTree.helpers import decimal2string, getSetting, increment
+from InvenTree.helpers import (decimal2string, getSetting, increment,
+                               notify_responsible)
 from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
 from InvenTree.status_codes import (PurchaseOrderStatus, SalesOrderStatus,
                                     StockHistoryCode, StockStatus)
@@ -560,6 +561,17 @@ class PurchaseOrder(Order):
             self.complete_order()  # This will save the model
 
 
+@receiver(post_save, sender=PurchaseOrder, dispatch_uid='purchase_order_post_save')
+def after_save_purchase_order(sender, instance: PurchaseOrder, created: bool, **kwargs):
+    """Callback function to be executed after a PurchaseOrder is saved."""
+    if not InvenTree.ready.canAppAccessDatabase(allow_test=True) or InvenTree.ready.isImportingData():
+        return
+
+    if created:
+        # Notify the responsible users that the purchase order has been created
+        notify_responsible(instance, sender, exclude=instance.created_by)
+
+
 class SalesOrder(Order):
     """A SalesOrder represents a list of goods shipped outwards to a customer.
 
@@ -825,29 +837,29 @@ class SalesOrder(Order):
         return self.pending_shipments().count()
 
 
-@receiver(post_save, sender=SalesOrder, dispatch_uid='build_post_save_log')
+@receiver(post_save, sender=SalesOrder, dispatch_uid='sales_order_post_save')
 def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs):
-    """Callback function to be executed after a SalesOrder instance is saved.
+    """Callback function to be executed after a SalesOrder is saved.
 
     - If the SALESORDER_DEFAULT_SHIPMENT setting is enabled, create a default shipment
     - Ignore if the database is not ready for access
     - Ignore if data import is active
     """
-
-    if not InvenTree.ready.canAppAccessDatabase(allow_test=True):
+    if not InvenTree.ready.canAppAccessDatabase(allow_test=True) or InvenTree.ready.isImportingData():
         return
 
-    if InvenTree.ready.isImportingData():
-        return
-
-    if created and getSetting('SALESORDER_DEFAULT_SHIPMENT'):
+    if created:
         # A new SalesOrder has just been created
 
-        # Create default shipment
-        SalesOrderShipment.objects.create(
-            order=instance,
-            reference='1',
-        )
+        if getSetting('SALESORDER_DEFAULT_SHIPMENT'):
+            # Create default shipment
+            SalesOrderShipment.objects.create(
+                order=instance,
+                reference='1',
+            )
+
+        # Notify the responsible users that the sales order has been created
+        notify_responsible(instance, sender, exclude=instance.created_by)
 
 
 class PurchaseOrderAttachment(InvenTreeAttachment):

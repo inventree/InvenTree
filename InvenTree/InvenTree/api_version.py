@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 57
+INVENTREE_API_VERSION = 58
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v58 -> 2022-06-06 : https://github.com/inventree/InvenTree/pull/3146
+    - Adds a BulkDelete API mixin class for fast, safe deletion of multiple objects with a single API request
 
 v57 -> 2022-06-05 : https://github.com/inventree/InvenTree/pull/3130
     - Transfer PartCategoryTemplateParameter actions to the API

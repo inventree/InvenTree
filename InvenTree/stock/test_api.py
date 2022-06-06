@@ -15,7 +15,7 @@ import part.models
 from common.models import InvenTreeSetting
 from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.status_codes import StockStatus
-from stock.models import StockItem, StockLocation
+from stock.models import StockItem, StockItemTestResult, StockLocation
 
 
 class StockAPITestCase(InvenTreeAPITestCase):
@@ -933,6 +933,50 @@ class StockTestResultTest(StockAPITestCase):
 
             # Check that an attachment has been uploaded
             self.assertIsNotNone(response.data['attachment'])
+
+    def test_bulk_delete(self):
+        """Test that the BulkDelete endpoint works for this model"""
+
+        n = StockItemTestResult.objects.count()
+
+        tests = []
+
+        url = reverse('api-stock-test-result-list')
+
+        # Create some objects (via the API)
+        for _ii in range(50):
+            response = self.post(
+                url,
+                {
+                    'stock_item': 1,
+                    'test': f"Some test {_ii}",
+                    'result': True,
+                    'value': 'Test result value'
+                },
+                expected_code=201
+            )
+
+            tests.append(response.data['pk'])
+
+        self.assertEqual(StockItemTestResult.objects.count(), n + 50)
+
+        # Attempt a delete without providing items
+        self.delete(
+            url,
+            {},
+            expected_code=400,
+        )
+
+        # Now, let's delete all the newly created items with a single API request
+        response = self.delete(
+            url,
+            {
+                'items': tests,
+            },
+            expected_code=204
+        )
+
+        self.assertEqual(StockItemTestResult.objects.count(), n)
 
 
 class StockAssignTest(StockAPITestCase):
