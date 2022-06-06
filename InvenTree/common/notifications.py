@@ -299,11 +299,12 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
             delivery_methods = (delivery_methods - IGNORED_NOTIFICATION_CLS)
 
         for method in delivery_methods:
-            logger.info(f"Triggering method '{method.METHOD_NAME}'")
+            logger.info(f"Triggering notification method '{method.METHOD_NAME}'")
             try:
                 deliver_notification(method, obj, category, targets, context)
             except NotImplementedError as error:
-                raise error
+                # Allow any single notification method to fail, without failing the others
+                logger.error(error)
             except Exception as error:
                 logger.error(error)
 
