@@ -195,7 +195,7 @@ class BuildTest(BuildAPITest):
         self.assertEqual(self.build.incomplete_outputs.count(), 0)
 
         # Create some more build outputs
-        for ii in range(10):
+        for _ in range(10):
             self.build.create_build_output(10)
 
         # Check that we are in a known state

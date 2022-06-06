@@ -43,12 +43,16 @@ class InvenTreeExchange(SimpleExchangeBackend):
             context = ssl.create_default_context(cafile=certifi.where())
             response = urlopen(url, timeout=5, context=context)
             return response.read()
-        except:
+        except Exception:
             # Returning None here will raise an error upstream
             return None
 
-    def update_rates(self, base_currency=currency_code_default()):
+    def update_rates(self, base_currency=None):
         """Set the requested currency codes and get rates."""
+        # Set default - see B008
+        if base_currency is None:
+            base_currency = currency_code_default()
+
         symbols = ','.join(currency_codes())
 
         try:

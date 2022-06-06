@@ -382,7 +382,7 @@ class PluginsRegistry:
 
         if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_SCHEDULE'):
 
-            for slug, plugin in plugins:
+            for _, plugin in plugins:
 
                 if plugin.mixin_enabled('schedule'):
                     config = plugin.plugin_config()
@@ -437,7 +437,7 @@ class PluginsRegistry:
             apps_changed = False
 
             # add them to the INSTALLED_APPS
-            for slug, plugin in plugins:
+            for _, plugin in plugins:
                 if plugin.mixin_enabled('app'):
                     plugin_path = self._get_plugin_path(plugin)
                     if plugin_path not in settings.INSTALLED_APPS:
@@ -522,7 +522,7 @@ class PluginsRegistry:
                     # remove model from admin site
                     try:
                         admin.site.unregister(model)
-                    except:  # pragma: no cover
+                    except Exception:  # pragma: no cover
                         pass
                     models += [model._meta.model_name]
             except LookupError:  # pragma: no cover

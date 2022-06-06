@@ -2,22 +2,7 @@
 
 from InvenTree.forms import HelperForm
 
-from .models import StockItem, StockItemTracking
-
-
-class ReturnStockItemForm(HelperForm):
-    """Form for manually returning a StockItem into stock.
-
-    TODO: This could be a simple API driven form!
-    """
-
-    class Meta:
-        """Metaclass options."""
-
-        model = StockItem
-        fields = [
-            'location',
-        ]
+from .models import StockItem
 
 
 class ConvertStockItemForm(HelperForm):
@@ -32,20 +17,4 @@ class ConvertStockItemForm(HelperForm):
         model = StockItem
         fields = [
             'part'
-        ]
-
-
-class TrackingEntryForm(HelperForm):
-    """Form for creating / editing a StockItemTracking object.
-
-    Note: 2021-05-11 - This form is not currently used - should delete?
-    """
-
-    class Meta:
-        """Metaclass options."""
-
-        model = StockItemTracking
-
-        fields = [
-            'notes',
         ]

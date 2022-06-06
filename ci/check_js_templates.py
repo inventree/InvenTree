@@ -24,7 +24,7 @@ print("=================================")
 
 
 def check_invalid_tag(data):
-
+    """Check for invalid tags."""
     pattern = r"{%(\w+)"
 
     err_count = 0
@@ -42,7 +42,7 @@ def check_invalid_tag(data):
 
 
 def check_prohibited_tags(data):
-
+    """Check for prohibited tags."""
     allowed_tags = [
         'if',
         'elif',

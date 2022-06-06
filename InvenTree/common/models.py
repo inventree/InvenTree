@@ -571,7 +571,7 @@ class BaseInvenTreeSetting(models.Model):
             # If a valid class has been found, see if it has registered an API URL
             try:
                 return model_class.get_api_url()
-            except:
+            except Exception:
                 pass
 
         return None
@@ -965,9 +965,16 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
 
         'REPORT_ENABLE_TEST_REPORT': {
-            'name': _('Test Reports'),
+            'name': _('Enable Test Reports'),
             'description': _('Enable generation of test reports'),
             'default': True,
+            'validator': bool,
+        },
+
+        'REPORT_ATTACH_TEST_REPORT': {
+            'name': _('Attach Test Reports'),
+            'description': _('When printing a Test Report, attach a copy of the Test Report to the associated Stock Item'),
+            'default': False,
             'validator': bool,
         },
 

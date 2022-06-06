@@ -5,17 +5,21 @@ import os
 import re
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models.signals import pre_delete
+from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from error_report.models import Error
 from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
 
+import InvenTree.helpers
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.validators import validate_tree_name
 
@@ -133,7 +137,7 @@ def extract_int(reference, clip=0x7fffffff):
         ref = result.groups()[0]
         try:
             ref_int = int(ref)
-        except:
+        except Exception:
             ref_int = 0
 
     # Ensure that the returned values are within the range that can be stored in an IntegerField
@@ -276,7 +280,7 @@ class InvenTreeAttachment(models.Model):
             os.rename(old_file, new_file)
             self.attachment.name = os.path.join(self.getSubdir(), fn)
             self.save()
-        except:
+        except Exception:
             raise ValidationError(_("Error renaming file"))
 
     class Meta:
@@ -442,3 +446,37 @@ def before_delete_tree_item(sender, instance, using, **kwargs):
     for child in instance.children.all():
         child.parent = instance.parent
         child.save()
+
+
+@receiver(post_save, sender=Error, dispatch_uid='error_post_save_notification')
+def after_error_logged(sender, instance: Error, created: bool, **kwargs):
+    """Callback when a server error is logged.
+
+    - Send a UI notification to all users with staff status
+    """
+
+    if created:
+        try:
+            import common.notifications
+
+            users = get_user_model().objects.filter(is_staff=True)
+
+            context = {
+                'error': instance,
+                'name': _('Server Error'),
+                'message': _('An error has been logged by the server.'),
+                'link': InvenTree.helpers.construct_absolute_url(
+                    reverse('admin:error_report_error_change', kwargs={'object_id': instance.pk})
+                )
+            }
+
+            common.notifications.trigger_notification(
+                instance,
+                'inventree.error_log',
+                context=context,
+                targets=users,
+            )
+
+        except Exception as exc:
+            """We do not want to throw an exception while reporting an exception"""
+            logger.error(exc)

@@ -26,6 +26,7 @@ from markdownx.models import MarkdownxField
 from mptt.models import TreeForeignKey
 
 import InvenTree.helpers
+import InvenTree.ready
 from common.settings import currency_code_default
 from company.models import Company, SupplierPart
 from InvenTree.fields import InvenTreeModelMoneyField, RoundingDecimalField
@@ -153,7 +154,7 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
 
     notes = MarkdownxField(blank=True, verbose_name=_('Notes'), help_text=_('Order notes'))
 
-    def get_total_price(self, target_currency=currency_code_default()):
+    def get_total_price(self, target_currency=None):
         """Calculates the total price of all order lines, and converts to the specified target currency.
 
         If not specified, the default system currency is used.
@@ -161,6 +162,10 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
         If currency conversion fails (e.g. there are no valid conversion rates),
         then we simply return zero, rather than attempting some other calculation.
         """
+        # Set default - see B008
+        if target_currency is None:
+            target_currency = currency_code_default()
+
         total = Money(0, target_currency)
 
         # gather name reference
@@ -836,7 +841,19 @@ class SalesOrder(Order):
 
 @receiver(post_save, sender=SalesOrder, dispatch_uid='build_post_save_log')
 def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs):
-    """Callback function to be executed after a SalesOrder instance is saved."""
+    """Callback function to be executed after a SalesOrder instance is saved.
+
+    - If the SALESORDER_DEFAULT_SHIPMENT setting is enabled, create a default shipment
+    - Ignore if the database is not ready for access
+    - Ignore if data import is active
+    """
+
+    if not InvenTree.ready.canAppAccessDatabase(allow_test=True):
+        return
+
+    if InvenTree.ready.isImportingData():
+        return
+
     if created and getSetting('SALESORDER_DEFAULT_SHIPMENT'):
         # A new SalesOrder has just been created
 
@@ -886,14 +903,6 @@ class OrderLineItem(models.Model):
         note: Annotation for the item
         target_date: An (optional) date for expected shipment of this line item.
     """
-
-    """
-    Query filter for determining if an individual line item is "overdue":
-    - Amount received is less than the required quantity
-    - Target date is not None
-    - Target date is in the past
-    """
-    OVERDUE_FILTER = Q(received__lt=F('quantity')) & ~Q(target_date=None) & Q(target_date__lt=datetime.now().date())
 
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""
@@ -952,6 +961,9 @@ class PurchaseOrderLineItem(OrderLineItem):
     Attributes:
         order: Reference to a PurchaseOrder object
     """
+
+    # Filter for determining if a particular PurchaseOrderLineItem is overdue
+    OVERDUE_FILTER = Q(received__lt=F('quantity')) & ~Q(target_date=None) & Q(target_date__lt=datetime.now().date())
 
     @staticmethod
     def get_api_url():
@@ -1075,6 +1087,9 @@ class SalesOrderLineItem(OrderLineItem):
         sale_price: The unit sale price for this OrderLineItem
         shipped: The number of items which have actually shipped against this line item
     """
+
+    # Filter for determining if a particular SalesOrderLineItem is overdue
+    OVERDUE_FILTER = Q(shipped__lt=F('quantity')) & ~Q(target_date=None) & Q(target_date__lt=datetime.now().date())
 
     @staticmethod
     def get_api_url():

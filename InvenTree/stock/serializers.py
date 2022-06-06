@@ -464,6 +464,48 @@ class UninstallStockItemSerializer(serializers.Serializer):
         )
 
 
+class ReturnStockItemSerializer(serializers.Serializer):
+    """DRF serializer for returning a stock item from a customer"""
+
+    class Meta:
+        """Metaclass options"""
+
+        fields = [
+            'location',
+            'note',
+        ]
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        many=False, required=True, allow_null=False,
+        label=_('Location'),
+        help_text=_('Destination location for returned item'),
+    )
+
+    notes = serializers.CharField(
+        label=_('Notes'),
+        help_text=_('Add transaction note (optional)'),
+        required=False, allow_blank=True,
+    )
+
+    def save(self):
+        """Save the serialzier to return the item into stock"""
+
+        item = self.context['item']
+        request = self.context['request']
+
+        data = self.validated_data
+
+        location = data['location']
+        notes = data.get('notes', '')
+
+        item.return_from_customer(
+            location,
+            user=request.user,
+            notes=notes
+        )
+
+
 class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for a simple tree view."""
 
@@ -507,19 +549,6 @@ class LocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSerializer):
     """Serializer for StockItemAttachment model."""
 
-    def __init__(self, *args, **kwargs):
-        """Add detail fields."""
-        user_detail = kwargs.pop('user_detail', False)
-
-        super().__init__(*args, **kwargs)
-
-        if user_detail is not True:
-            self.fields.pop('user_detail')
-
-    user_detail = InvenTree.serializers.UserSerializerBrief(source='user', read_only=True)
-
-    # TODO: Record the uploading user when creating or updating an attachment!
-
     class Meta:
         """Metaclass options."""
 
@@ -547,7 +576,7 @@ class StockItemAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSer
 class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for the StockItemTestResult model."""
 
-    user_detail = InvenTree.serializers.UserSerializerBrief(source='user', read_only=True)
+    user_detail = InvenTree.serializers.UserSerializer(source='user', read_only=True)
 
     key = serializers.CharField(read_only=True)
 
@@ -608,7 +637,7 @@ class StockTrackingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     item_detail = StockItemSerializerBrief(source='item', many=False, read_only=True)
 
-    user_detail = InvenTree.serializers.UserSerializerBrief(source='user', many=False, read_only=True)
+    user_detail = InvenTree.serializers.UserSerializer(source='user', many=False, read_only=True)
 
     deltas = serializers.JSONField(read_only=True)
 

@@ -8,7 +8,6 @@
     imageHoverIcon,
     inventreeGet,
     inventreePut,
-    launchModalForm,
     linkButtonsToSelection,
     loadTableFilters,
     makeIconBadge,
@@ -21,6 +20,7 @@
 */
 
 /* exported
+    deletePart,
     duplicateBom,
     duplicatePart,
     editCategory,
@@ -394,6 +394,50 @@ function duplicatePart(pk, options={}) {
     });
 }
 
+
+// Launch form to delete a part
+function deletePart(pk, options={}) {
+
+    inventreeGet(`/api/part/${pk}/`, {}, {
+        success: function(part) {
+            if (part.active) {
+                showAlertDialog(
+                    '{% trans "Active Part" %}',
+                    '{% trans "Part cannot be deleted as it is currently active" %}',
+                    {
+                        alert_style: 'danger',
+                    }
+                );
+                return;
+            }
+
+            var thumb = thumbnailImage(part.thumbnail || part.image);
+
+            var html = `
+            <div class='alert alert-block alert-danger'>
+            <p>${thumb} ${part.full_name} - <em>${part.description}</em></p>
+
+            {% trans "Deleting this part cannot be reversed" %}
+            <ul>
+            <li>{% trans "Any stock items for this part will be deleted" %}</li>
+            <li>{% trans "This part will be removed from any Bills of Material" %}</li>
+            <li>{% trans "All manufacturer and supplier information for this part will be deleted" %}</li>
+            </div>`;
+
+            constructForm(
+                `/api/part/${pk}/`,
+                {
+                    method: 'DELETE',
+                    title: '{% trans "Delete Part" %}',
+                    preFormContent: html,
+                    onSuccess: function(response) {
+                        handleFormSuccess(response, options);
+                    }
+                }
+            );
+        }
+    });
+}
 
 /* Toggle the 'starred' status of a part.
  * Performs AJAX queries and updates the display on the button.
@@ -1559,6 +1603,7 @@ function loadPartTable(table, url, options={}) {
 
     /* Button callbacks for part table buttons */
 
+    // Callback function for the "order parts" button
     $('#multi-part-order').click(function() {
         var selections = getTableData(table);
 
@@ -1568,31 +1613,82 @@ function loadPartTable(table, url, options={}) {
             parts.push(part);
         });
 
-        orderParts(
-            parts,
-            {
-
-            }
-        );
+        orderParts(parts, {});
     });
 
+    // Callback function for the "set category" button
     $('#multi-part-category').click(function() {
-        var selections = $(table).bootstrapTable('getSelections');
-
+        var selections = getTableData(table);
         var parts = [];
 
         selections.forEach(function(item) {
             parts.push(item.pk);
         });
 
-        launchModalForm('/part/set-category/', {
-            data: {
-                parts: parts,
+        var html = `
+        <div class='alert alert-block alert-info'>
+            {% trans "Set the part category for the selected parts" %}
+        </div>
+        `;
+
+        constructFormBody({}, {
+            title: '{% trans "Set Part Category" %}',
+            preFormContent: html,
+            fields: {
+                category: {
+                    label: '{% trans "Category" %}',
+                    help_text: '{% trans "Select Part Category" %}',
+                    required: true,
+                    type: 'related field',
+                    model: 'partcategory',
+                    api_url: '{% url "api-part-category-list" %}',
+                }
             },
-            reload: true,
+            onSubmit: function(fields, opts) {
+                var category = getFormFieldValue('category', fields['category'], opts);
+
+                if (category == null) {
+                    handleFormErrors(
+                        {
+                            'category': ['{% trans "Category is required" %}']
+                        },
+                        opts.fields,
+                        opts
+                    );
+                    return;
+                }
+
+                // Set the category for each part in sequence
+                function setCategory() {
+                    if (parts.length > 0) {
+                        var part = parts.shift();
+
+                        inventreePut(
+                            `/api/part/${part}/`,
+                            {
+                                category: category,
+                            },
+                            {
+                                method: 'PATCH',
+                                complete: setCategory,
+                            }
+                        );
+                    } else {
+                        // We are done!
+                        $(opts.modal).modal('hide');
+
+                        $(table).bootstrapTable('refresh');
+                    }
+                };
+
+                // Start the ball rolling
+                showModalSpinner(opts.modal);
+                setCategory();
+            },
         });
     });
 
+    // Callback function for the "print label" button
     $('#multi-part-print-label').click(function() {
         var selections = getTableData(table);
 

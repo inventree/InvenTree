@@ -295,7 +295,7 @@ class PurchaseOrderContextMixin:
         # Pass the purchase order through to the serializer for validation
         try:
             context['order'] = models.PurchaseOrder.objects.get(pk=self.kwargs.get('pk', None))
-        except:
+        except Exception:
             pass
 
         context['request'] = self.request
@@ -527,7 +527,7 @@ class PurchaseOrderExtraLineDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.PurchaseOrderExtraLineSerializer
 
 
-class SalesOrderAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
+class SalesOrderAttachmentList(AttachmentMixin, generics.ListCreateAPIView):
     """API endpoint for listing (and creating) a SalesOrderAttachment (file upload)"""
 
     queryset = models.SalesOrderAttachment.objects.all()
@@ -542,7 +542,7 @@ class SalesOrderAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     ]
 
 
-class SalesOrderAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):
+class SalesOrderAttachmentDetail(AttachmentMixin, generics.RetrieveUpdateDestroyAPIView):
     """Detail endpoint for SalesOrderAttachment."""
 
     queryset = models.SalesOrderAttachment.objects.all()
@@ -788,6 +788,8 @@ class SalesOrderLineItemList(generics.ListCreateAPIView):
             'order__stock_items',
         )
 
+        queryset = serializers.SalesOrderLineItemSerializer.annotate_queryset(queryset)
+
         return queryset
 
     filter_backends = [
@@ -835,6 +837,14 @@ class SalesOrderLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = models.SalesOrderLineItem.objects.all()
     serializer_class = serializers.SalesOrderLineItemSerializer
 
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for this endpoint"""
+        queryset = super().get_queryset(*args, **kwargs)
+
+        queryset = serializers.SalesOrderLineItemSerializer.annotate_queryset(queryset)
+
+        return queryset
+
 
 class SalesOrderContextMixin:
     """Mixin to add sales order object as serializer context variable."""
@@ -847,7 +857,7 @@ class SalesOrderContextMixin:
 
         try:
             ctx['order'] = models.SalesOrder.objects.get(pk=self.kwargs.get('pk', None))
-        except:
+        except Exception:
             pass
 
         return ctx
@@ -1040,13 +1050,13 @@ class SalesOrderShipmentComplete(generics.CreateAPIView):
             ctx['shipment'] = models.SalesOrderShipment.objects.get(
                 pk=self.kwargs.get('pk', None)
             )
-        except:
+        except Exception:
             pass
 
         return ctx
 
 
-class PurchaseOrderAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
+class PurchaseOrderAttachmentList(AttachmentMixin, generics.ListCreateAPIView):
     """API endpoint for listing (and creating) a PurchaseOrderAttachment (file upload)"""
 
     queryset = models.PurchaseOrderAttachment.objects.all()
@@ -1061,7 +1071,7 @@ class PurchaseOrderAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     ]
 
 
-class PurchaseOrderAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):
+class PurchaseOrderAttachmentDetail(AttachmentMixin, generics.RetrieveUpdateDestroyAPIView):
     """Detail endpoint for a PurchaseOrderAttachment."""
 
     queryset = models.PurchaseOrderAttachment.objects.all()

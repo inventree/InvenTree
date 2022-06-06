@@ -894,7 +894,8 @@ class StockItem(MetadataMixin, MPTTModel):
         # Return the reference to the stock item
         return item
 
-    def returnFromCustomer(self, location, user=None, **kwargs):
+    @transaction.atomic
+    def return_from_customer(self, location, user=None, **kwargs):
         """Return stock item from customer, back into the specified location."""
         notes = kwargs.get('notes', '')
 
@@ -1299,8 +1300,12 @@ class StockItem(MetadataMixin, MPTTModel):
             item.save()
 
     @transaction.atomic
-    def copyTestResultsFrom(self, other, filters={}):
+    def copyTestResultsFrom(self, other, filters=None):
         """Copy all test results from another StockItem."""
+        # Set default - see B006
+        if filters is None:
+            filters = {}
+
         for result in other.test_results.all().filter(**filters):
 
             # Create a copy of the test result by nulling-out the pk

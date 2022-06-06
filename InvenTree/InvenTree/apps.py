@@ -155,7 +155,7 @@ class InvenTreeConfig(AppConfig):
             logger.info("Exchange backend not found - updating")
             update = True
 
-        except:
+        except Exception:
             # Some other error - potentially the tables are not ready yet
             return
 

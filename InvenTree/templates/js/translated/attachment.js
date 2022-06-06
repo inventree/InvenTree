@@ -244,8 +244,14 @@ function loadAttachmentTable(url, options) {
             {
                 field: 'upload_date',
                 title: '{% trans "Upload Date" %}',
-                formatter: function(value) {
-                    return renderDate(value);
+                formatter: function(value, row) {
+                    var html = renderDate(value);
+
+                    if (row.user_detail) {
+                        html += `<span class='badge bg-dark rounded-pill float-right'>${row.user_detail.username}</div>`;
+                    }
+
+                    return html;
                 }
             },
             {

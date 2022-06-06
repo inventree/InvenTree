@@ -1,6 +1,6 @@
-"""
-Ensure that the release tag matches the InvenTree version number:
+"""Ensure that the release tag matches the InvenTree version number.
 
+Behaviour:
 master / main branch:
     - version number must end with 'dev'
 

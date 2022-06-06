@@ -90,6 +90,8 @@ class StockMetadata(generics.RetrieveUpdateAPIView):
 class StockItemContextMixin:
     """Mixin class for adding StockItem object to serializer context."""
 
+    queryset = StockItem.objects.none()
+
     def get_serializer_context(self):
         """Extend serializer context."""
         context = super().get_serializer_context()
@@ -97,7 +99,7 @@ class StockItemContextMixin:
 
         try:
             context['item'] = StockItem.objects.get(pk=self.kwargs.get('pk', None))
-        except:
+        except Exception:
             pass
 
         return context
@@ -106,7 +108,6 @@ class StockItemContextMixin:
 class StockItemSerialize(StockItemContextMixin, generics.CreateAPIView):
     """API endpoint for serializing a stock item."""
 
-    queryset = StockItem.objects.none()
     serializer_class = StockSerializers.SerializeStockItemSerializer
 
 
@@ -118,15 +119,19 @@ class StockItemInstall(StockItemContextMixin, generics.CreateAPIView):
     - stock_item must be serialized (and not belong to another item)
     """
 
-    queryset = StockItem.objects.none()
     serializer_class = StockSerializers.InstallStockItemSerializer
 
 
 class StockItemUninstall(StockItemContextMixin, generics.CreateAPIView):
     """API endpoint for removing (uninstalling) items from this item."""
 
-    queryset = StockItem.objects.none()
     serializer_class = StockSerializers.UninstallStockItemSerializer
+
+
+class StockItemReturn(StockItemContextMixin, generics.CreateAPIView):
+    """API endpoint for returning a stock item from a customer"""
+
+    serializer_class = StockSerializers.ReturnStockItemSerializer
 
 
 class StockAdjustView(generics.CreateAPIView):
@@ -825,7 +830,7 @@ class StockList(APIDownloadMixin, generics.ListCreateAPIView):
 
                 if part.tree_id is not None:
                     queryset = queryset.filter(part__tree_id=part.tree_id)
-            except:
+            except Exception:
                 pass
 
         # Filter by 'allocated' parts?
@@ -1038,7 +1043,7 @@ class StockList(APIDownloadMixin, generics.ListCreateAPIView):
     ]
 
 
-class StockAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
+class StockAttachmentList(AttachmentMixin, generics.ListCreateAPIView):
     """API endpoint for listing (and creating) a StockItemAttachment (file upload)."""
 
     queryset = StockItemAttachment.objects.all()
@@ -1055,7 +1060,7 @@ class StockAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     ]
 
 
-class StockAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):
+class StockAttachmentDetail(AttachmentMixin, generics.RetrieveUpdateDestroyAPIView):
     """Detail endpoint for StockItemAttachment."""
 
     queryset = StockItemAttachment.objects.all()
@@ -1139,7 +1144,7 @@ class StockItemTestResultList(generics.ListCreateAPIView):
         """Set context before returning serializer."""
         try:
             kwargs['user_detail'] = str2bool(self.request.query_params.get('user_detail', False))
-        except:
+        except Exception:
             pass
 
         kwargs['context'] = self.get_serializer_context()
@@ -1181,12 +1186,12 @@ class StockTrackingList(generics.ListAPIView):
         """Set context before returning serializer."""
         try:
             kwargs['item_detail'] = str2bool(self.request.query_params.get('item_detail', False))
-        except:
+        except Exception:
             pass
 
         try:
             kwargs['user_detail'] = str2bool(self.request.query_params.get('user_detail', False))
-        except:
+        except Exception:
             pass
 
         kwargs['context'] = self.get_serializer_context()
@@ -1214,7 +1219,7 @@ class StockTrackingList(generics.ListAPIView):
                     part = Part.objects.get(pk=deltas['part'])
                     serializer = PartBriefSerializer(part)
                     deltas['part_detail'] = serializer.data
-                except:
+                except Exception:
                     pass
 
             # Add location detail
@@ -1223,7 +1228,7 @@ class StockTrackingList(generics.ListAPIView):
                     location = StockLocation.objects.get(pk=deltas['location'])
                     serializer = StockSerializers.LocationSerializer(location)
                     deltas['location_detail'] = serializer.data
-                except:
+                except Exception:
                     pass
 
             # Add stockitem detail
@@ -1232,7 +1237,7 @@ class StockTrackingList(generics.ListAPIView):
                     stockitem = StockItem.objects.get(pk=deltas['stockitem'])
                     serializer = StockSerializers.StockItemSerializer(stockitem)
                     deltas['stockitem_detail'] = serializer.data
-                except:
+                except Exception:
                     pass
 
             # Add customer detail
@@ -1241,7 +1246,7 @@ class StockTrackingList(generics.ListAPIView):
                     customer = Company.objects.get(pk=deltas['customer'])
                     serializer = CompanySerializer(customer)
                     deltas['customer_detail'] = serializer.data
-                except:
+                except Exception:
                     pass
 
             # Add purchaseorder detail
@@ -1250,7 +1255,7 @@ class StockTrackingList(generics.ListAPIView):
                     order = PurchaseOrder.objects.get(pk=deltas['purchaseorder'])
                     serializer = PurchaseOrderSerializer(order)
                     deltas['purchaseorder_detail'] = serializer.data
-                except:
+                except Exception:
                     pass
 
         if request.is_ajax():
@@ -1370,6 +1375,7 @@ stock_api_urls = [
     re_path(r'^(?P<pk>\d+)/', include([
         re_path(r'^install/', StockItemInstall.as_view(), name='api-stock-item-install'),
         re_path(r'^metadata/', StockMetadata.as_view(), name='api-stock-item-metadata'),
+        re_path(r'^return/', StockItemReturn.as_view(), name='api-stock-item-return'),
         re_path(r'^serialize/', StockItemSerialize.as_view(), name='api-stock-item-serialize'),
         re_path(r'^uninstall/', StockItemUninstall.as_view(), name='api-stock-item-uninstall'),
         re_path(r'^.*$', StockDetail.as_view(), name='api-stock-detail'),

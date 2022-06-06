@@ -663,6 +663,45 @@ class StockItemTest(StockAPITestCase):
         self.assertIsNone(sub_item.belongs_to)
         self.assertEqual(sub_item.location.pk, 1)
 
+    def test_return_from_customer(self):
+        """Test that we can return a StockItem from a customer, via the API"""
+
+        # Assign item to customer
+        item = StockItem.objects.get(pk=521)
+        customer = company.models.Company.objects.get(pk=4)
+
+        item.customer = customer
+        item.save()
+
+        n_entries = item.tracking_info_count
+
+        url = reverse('api-stock-item-return', kwargs={'pk': item.pk})
+
+        # Empty POST will fail
+        response = self.post(
+            url, {},
+            expected_code=400
+        )
+
+        self.assertIn('This field is required', str(response.data['location']))
+
+        response = self.post(
+            url,
+            {
+                'location': '1',
+                'notes': 'Returned from this customer for testing',
+            },
+            expected_code=201,
+        )
+
+        item.refresh_from_db()
+
+        # A new stock tracking entry should have been created
+        self.assertEqual(n_entries + 1, item.tracking_info_count)
+
+        # The item is now in stock
+        self.assertIsNone(item.customer)
+
 
 class StocktakeTest(StockAPITestCase):
     """Series of tests for the Stocktake API."""
