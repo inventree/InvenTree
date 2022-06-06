@@ -1,11 +1,14 @@
 """Main JSON interface views."""
 
 from django.conf import settings
+from django.db import transaction
 from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, permissions
+from rest_framework.response import Response
+from rest_framework.serializers import ValidationError
 
 from .status import is_worker_running
 from .version import (inventreeApiVersion, inventreeInstanceName,
@@ -48,6 +51,52 @@ class NotFoundView(AjaxView):
         }
 
         return JsonResponse(data, status=404)
+
+
+class BulkDeleteMixin:
+    """Mixin class for enabling 'bulk delete' operations for various models.
+
+    Bulk delete allows for multiple items to be deleted in a single API query,
+    rather than using multiple APi calls to the various detail endpoints.
+
+    This is implemented for two major reasons:
+    - Atomicity (guaranteed that either *all* items are deleted, or *none*)
+    - Speed (single API call and DB query)
+    """
+
+    def delete(self, request, *args, **kwargs):
+        """Perform a DELETE operation against this list endpoint.
+
+        We expect a list of primary-key (ID) values to be supplied as a JSON object, e.g.
+        {
+            items: [4, 8, 15, 16, 23, 42]
+        }
+
+        """
+        model = self.serializer_class.Meta.model
+
+        # Extract the items from the request body
+        items = request.data.get('items', None)
+
+        if items is None or type(items) is not list or not items:
+            raise ValidationError({
+                "non_field_errors": ["List of items must be provided for bulk deletion"]
+            })
+
+        # Keep track of how many items we deleted
+        n_deleted = 0
+
+        with transaction.atomic():
+            objects = model.objects.filter(id__in=items)
+            n_deleted = objects.count()
+            objects.delete()
+
+        return Response(
+            {
+                'success': f"Deleted {n_deleted} items",
+            },
+            status=204
+        )
 
 
 class APIDownloadMixin:
