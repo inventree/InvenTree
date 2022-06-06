@@ -265,10 +265,49 @@
 
     {% if user.is_staff %}
     $("#delete-test-results").click(function() {
-        launchModalForm(
-            "{% url 'stock-item-delete-test-data' item.id %}",
+
+        var url = '{% url "api-stock-test-result-list" %}';
+
+        inventreeGet(
+            url,
             {
-                success: reloadTable,
+                stock_item: {{ item.pk }},
+            },
+            {
+                success: function(response) {
+
+                    var results = [];
+
+                    // Ensure that we are only deleting the correct test results
+                    response.forEach(function(item) {
+                        if (item.stock_item == {{ item.pk }}) {
+                            results.push(item);
+                        }
+                    });
+
+                    var html = `
+                    <div class='alert alert-block alert-danger'>
+                        {% trans "Delete all test results for this stock item" %}
+                    </div>`;
+
+                    constructFormBody({}, {
+                        method: 'DELETE',
+                        title: '{% trans "Delete Test Data" %}',
+                        preFormContent: html,
+                        onSubmit: function(fields, opts) {
+                            inventreeMultiDelete(
+                                url,
+                                results,
+                                {
+                                    modal: opts.modal,
+                                    success: function() {
+                                        reloadTable();
+                                    }
+                                }
+                            )
+                        }
+                    });
+                }
             }
         );
     });
