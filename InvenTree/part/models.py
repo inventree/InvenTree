@@ -1530,16 +1530,11 @@ class Part(MetadataMixin, MPTTModel):
         return self.supplier_parts.count()
 
     @property
-    def has_pricing_info(self, internal=False):
-        """Return true if there is pricing information for this part."""
-        return self.get_price_range(internal=internal) is not None
-
-    @property
     def has_complete_bom_pricing(self):
         """Return true if there is pricing information for each item in the BOM."""
-        use_internal = common.models.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
+        use_internal = common.models.InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
         for item in self.get_bom_items().all().select_related('sub_part'):
-            if not item.sub_part.has_pricing_info(use_internal):
+            if item.sub_part.get_price_range(internal=use_internal) is None:
                 return False
 
         return True

@@ -27,7 +27,7 @@ def notify_low_stock(part: part.models.Part):
         'link': InvenTree.helpers.construct_absolute_url(part.get_absolute_url()),
         'template': {
             'html': 'email/low_stock_notification.html',
-            'subject': "[InvenTree] " + name,
+            'subject': name,
         },
     }
 

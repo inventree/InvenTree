@@ -76,7 +76,7 @@
     {% endif %}
     {% endif %}
 
-    {% if part.has_complete_bom_pricing == False %}
+    {% if not part.has_complete_bom_pricing %}
     <tr>
         <td colspan='3'>
             <span class='warning-msg'><em>{% trans 'Note: BOM pricing is incomplete for this part' %}</em></span>

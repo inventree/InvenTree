@@ -274,6 +274,7 @@ class NotificationList(generics.ListAPIView):
         'category',
         'name',
         'read',
+        'creation',
     ]
 
     search_fields = [
