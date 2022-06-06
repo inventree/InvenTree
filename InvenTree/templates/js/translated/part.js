@@ -435,8 +435,7 @@ function deletePart(pk, options={}) {
                         handleFormSuccess(response, options);
                     }
                 }
-            )
-
+            );
         }
     });
 }
