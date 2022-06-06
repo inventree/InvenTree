@@ -20,7 +20,6 @@ stock_item_detail_urls = [
     re_path(r'^convert/', views.StockItemConvert.as_view(), name='stock-item-convert'),
     re_path(r'^delete/', views.StockItemDelete.as_view(), name='stock-item-delete'),
     re_path(r'^qr_code/', views.StockItemQRCode.as_view(), name='stock-item-qr'),
-    re_path(r'^delete_test_data/', views.StockItemDeleteTestData.as_view(), name='stock-item-delete-test-data'),
 
     # Anything else - direct to the item detail view
     re_path('^.*$', views.StockItemDetail.as_view(), name='stock-item-detail'),
