@@ -18,6 +18,8 @@ from PIL import Image
 
 import InvenTree.version
 from common.models import InvenTreeSetting
+from common.notifications import (InvenTreeNotificationBodies,
+                                  NotificationBody, trigger_notification)
 from common.settings import currency_code_default
 
 from .api_tester import UserMixin
@@ -719,3 +721,46 @@ def inheritors(cls):
 class InvenTreeTestCase(UserMixin, TestCase):
     """Testcase with user setup buildin."""
     pass
+
+
+def notify_responsible(instance, sender, content: NotificationBody = InvenTreeNotificationBodies.NewOrder, exclude=None):
+    """Notify all responsible parties of a change in an instance.
+
+    Parses the supplied content with the provided instance and sender and sends a notification to all responsible users,
+    excluding the optional excluded list.
+
+    Args:
+        instance: The newly created instance
+        sender: Sender model reference
+        content (NotificationBody, optional): _description_. Defaults to InvenTreeNotificationBodies.NewOrder.
+        exclude (User, optional): User instance that should be excluded. Defaults to None.
+    """
+    if instance.responsible is not None:
+        # Setup context for notification parsing
+        content_context = {
+            'instance': str(instance),
+            'verbose_name': sender._meta.verbose_name,
+            'app_label': sender._meta.app_label,
+            'model_name': sender._meta.model_name,
+        }
+
+        # Setup notification context
+        context = {
+            'instance': instance,
+            'name': content.name.format(**content_context),
+            'message': content.message.format(**content_context),
+            'link': InvenTree.helpers.construct_absolute_url(instance.get_absolute_url()),
+            'template': {
+                'html': content.template.format(**content_context),
+                'subject': content.name.format(**content_context),
+            }
+        }
+
+        # Create notification
+        trigger_notification(
+            instance,
+            content.slug.format(**content_context),
+            targets=[instance.responsible],
+            target_exclude=[exclude],
+            context=context,
+        )

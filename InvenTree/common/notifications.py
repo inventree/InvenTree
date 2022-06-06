@@ -1,13 +1,15 @@
 """Base classes and functions for notifications."""
 
 import logging
+from dataclasses import dataclass
 from datetime import timedelta
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.utils.translation import gettext_lazy as _
 
+import InvenTree.helpers
 from common.models import NotificationEntry, NotificationMessage
-from InvenTree.helpers import inheritors
 from InvenTree.ready import isImportingData
 from plugin import registry
 from plugin.models import NotificationUserSetting
@@ -179,7 +181,7 @@ class MethodStorageClass:
             selected_classes (class, optional): References to the classes that should be registered. Defaults to None.
         """
         logger.info('collecting notification methods')
-        current_method = inheritors(NotificationMethod) - IGNORED_NOTIFICATION_CLS
+        current_method = InvenTree.helpers.inheritors(NotificationMethod) - IGNORED_NOTIFICATION_CLS
 
         # for testing selective loading is made available
         if selected_classes:
@@ -257,12 +259,51 @@ class UIMessageNotification(SingleNotificationMethod):
         return True
 
 
+@dataclass()
+class NotificationBody:
+    """Information needed to create a notification.
+
+    Attributes:
+        name (str): Name (or subject) of the notification
+        slug (str): Slugified reference for notification
+        message (str): Notification message as text. Should not be longer than 120 chars.
+        template (str): Reference to the html template for the notification.
+
+    The strings support f-string sytle fomratting with context variables parsed at runtime.
+
+    Context variables:
+        instance: Text representing the instance
+        verbose_name: Verbose name of the model
+        app_label: App label (slugified) of the model
+        model_name': Name (slugified) of the model
+    """
+    name: str
+    slug: str
+    message: str
+    template: str
+
+
+class InvenTreeNotificationBodies:
+    """Default set of notifications for InvenTree.
+
+    Contains regularly used notification bodies.
+    """
+    NewOrder = NotificationBody(
+        name=_("New {verbose_name}"),
+        slug='{app_label}.new_{model_name}',
+        message=_("A new {verbose_name} has been created and ,assigned to you"),
+        template='email/new_order_assigned.html',
+    )
+    """Send when a new order (build, sale or purchase) was created."""
+
+
 def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
     """Send out a notification."""
     targets = kwargs.get('targets', None)
     target_fnc = kwargs.get('target_fnc', None)
     target_args = kwargs.get('target_args', [])
     target_kwargs = kwargs.get('target_kwargs', {})
+    target_exclude = kwargs.get('target_exclude', None)
     context = kwargs.get('context', {})
     delivery_methods = kwargs.get('delivery_methods', None)
 
@@ -290,6 +331,9 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
 
     logger.info(f"Gathering users for notification '{category}'")
 
+    if target_exclude is None:
+        target_exclude = set()
+
     # Collect possible targets
     if not targets:
         targets = target_fnc(*target_args, **target_kwargs)
@@ -302,15 +346,19 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
         for target in targets:
             # User instance is provided
             if isinstance(target, get_user_model()):
-                target_users.add(target)
+                if target not in target_exclude:
+                    target_users.add(target)
             # Group instance is provided
             elif isinstance(target, Group):
                 for user in get_user_model().objects.filter(groups__name=target.name):
-                    target_users.add(user)
+                    if user not in target_exclude:
+                        target_users.add(user)
             # Owner instance (either 'user' or 'group' is provided)
             elif isinstance(target, Owner):
                 for owner in target.get_related_owners(include_group=False):
-                    target_users.add(owner.owner)
+                    user = owner.owner
+                    if user not in target_exclude:
+                        target_users.add(user)
             # Unhandled type
             else:
                 logger.error(f"Unknown target passed to trigger_notification method: {target}")
