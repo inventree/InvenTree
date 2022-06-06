@@ -960,6 +960,13 @@ class StockTestResultTest(StockAPITestCase):
 
         self.assertEqual(StockItemTestResult.objects.count(), n + 50)
 
+        # Attempt a delete without providing items
+        self.delete(
+            url,
+            {},
+            expected_code=400,
+        )
+
         # Now, let's delete all the newly created items with a single API request
         response = self.delete(
             url,

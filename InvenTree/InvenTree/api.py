@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, permissions
+from rest_framework import filters, generics, permissions
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
@@ -57,7 +57,7 @@ class BulkDeleteMixin:
     """Mixin class for enabling 'bulk delete' operations for various models.
 
     Bulk delete allows for multiple items to be deleted in a single API query,
-    rather than using multiple APi calls to the various detail endpoints.
+    rather than using multiple API calls to the various detail endpoints.
 
     This is implemented for two major reasons:
     - Atomicity (guaranteed that either *all* items are deleted, or *none*)
@@ -76,7 +76,10 @@ class BulkDeleteMixin:
         model = self.serializer_class.Meta.model
 
         # Extract the items from the request body
-        items = request.data.getlist('items', None)
+        try:
+            items = request.data.getlist('items', None)
+        except AttributeError:
+            items = request.data.get('items', None)
 
         if items is None or type(items) is not list or not items:
             raise ValidationError({
@@ -97,6 +100,11 @@ class BulkDeleteMixin:
             },
             status=204
         )
+
+
+class ListCreateDestroyAPIView(BulkDeleteMixin, generics.ListCreateAPIView):
+    """Custom API endpoint which provides BulkDelete functionality in addition to List and Create"""
+    ...
 
 
 class APIDownloadMixin:
