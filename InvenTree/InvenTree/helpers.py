@@ -738,7 +738,8 @@ def notify_responsible(instance, sender, content: NotificationBody = InvenTreeNo
     if instance.responsible is not None:
         # Setup context for notification parsing
         content_context = {
-            'instance_name': sender._meta.verbose_name,
+            'instance': str(instance),
+            'verbose_name': sender._meta.verbose_name,
             'app_label': sender._meta.app_label,
             'model_name': sender._meta.model_name,
         }

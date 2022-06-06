@@ -268,6 +268,14 @@ class NotificationBody:
         slug (str): Slugified reference for notification
         message (str): Notification message as text. Should not be longer than 120 chars.
         template (str): Reference to the html template for the notification.
+
+    The strings support f-string sytle fomratting with context variables parsed at runtime.
+
+    Context variables:
+        instance: Text representing the instance
+        verbose_name: Verbose name of the model
+        app_label: App label (slugified) of the model
+        model_name': Name (slugified) of the model
     """
     name: str
     slug: str
@@ -281,9 +289,9 @@ class InvenTreeNotificationBodies:
     Contains regularly used notification bodies.
     """
     NewOrder = NotificationBody(
-        name=_("New {instance_name}"),
+        name=_("New {verbose_name}"),
         slug='{app_label}.new_{model_name}',
-        message=_("A new {instance_name} has been created and ,assigned to you"),
+        message=_("A new {verbose_name} has been created and ,assigned to you"),
         template='email/new_order_assigned.html',
     )
     """Send when a new order (build, sale or purchase) was created."""
