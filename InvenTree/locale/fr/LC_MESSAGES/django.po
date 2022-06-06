@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-06 11:28+0000\n"
-"PO-Revision-Date: 2022-06-05 14:34\n"
+"PO-Revision-Date: 2022-06-06 14:33\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -239,10 +239,8 @@ msgid "parent"
 msgstr "parent"
 
 #: InvenTree/models.py:466
-#, fuzzy
-#| msgid "Server error"
 msgid "Server Error"
-msgstr "Erreur serveur"
+msgstr ""
 
 #: InvenTree/models.py:467
 msgid "An error has been logged by the server."
@@ -1184,16 +1182,13 @@ msgid "Stock required for build order"
 msgstr "Stock requis pour la commande de construction"
 
 #: build/tasks.py:118
-#, fuzzy
-#| msgid "New Build Order"
 msgid "Overdue Build Order"
-msgstr "Nouvel ordre de construction"
+msgstr ""
 
 #: build/tasks.py:123
-#, fuzzy, python-brace-format
-#| msgid "Order is overdue"
+#, python-brace-format
 msgid "Build order {bo} is now overdue"
-msgstr "Commande en retard"
+msgstr ""
 
 #: build/templates/build/build_base.html:39
 #: order/templates/order/order_base.html:28
@@ -1894,20 +1889,16 @@ msgid "Default page size for PDF reports"
 msgstr ""
 
 #: common/models.py:968
-#, fuzzy
-#| msgid "Test Reports"
 msgid "Enable Test Reports"
-msgstr "Rapports de test"
+msgstr ""
 
 #: common/models.py:969
 msgid "Enable generation of test reports"
 msgstr ""
 
 #: common/models.py:975
-#, fuzzy
-#| msgid "Test Reports"
 msgid "Attach Test Reports"
-msgstr "Rapports de test"
+msgstr ""
 
 #: common/models.py:976
 msgid "When printing a Test Report, attach a copy of the Test Report to the associated Stock Item"
@@ -3776,28 +3767,22 @@ msgid "The following serial numbers are already allocated"
 msgstr "Les numéros de série suivants sont déjà alloués"
 
 #: order/tasks.py:26
-#, fuzzy
-#| msgid "New Purchase Order"
 msgid "Overdue Purchase Order"
-msgstr "Nouvelle commande achat"
+msgstr ""
 
 #: order/tasks.py:31
-#, fuzzy, python-brace-format
-#| msgid "Purchase order no longer exists"
+#, python-brace-format
 msgid "Purchase order {po} is now overdue"
-msgstr "La commande d'achat n'existe plus"
+msgstr ""
 
 #: order/tasks.py:88
-#, fuzzy
-#| msgid "New Sales Order"
 msgid "Overdue Sales Order"
-msgstr "Nouvelle commande de vente"
+msgstr ""
 
 #: order/tasks.py:93
-#, fuzzy, python-brace-format
-#| msgid "Order is overdue"
+#, python-brace-format
 msgid "Sales order {so} is now overdue"
-msgstr "Commande en retard"
+msgstr ""
 
 #: order/templates/order/order_base.html:33
 msgid "Print purchase order report"
@@ -5647,10 +5632,8 @@ msgid "Template file '{template}' is missing or does not exist"
 msgstr ""
 
 #: report/api.py:359
-#, fuzzy
-#| msgid "Test Reports"
 msgid "Test report"
-msgstr "Rapports de test"
+msgstr ""
 
 #: report/models.py:152
 msgid "Template name"
@@ -7395,16 +7378,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -9140,20 +9121,16 @@ msgid "Create Part Variant"
 msgstr "Créer une variante de pièce"
 
 #: templates/js/translated/part.js:405
-#, fuzzy
-#| msgid "Active parts"
 msgid "Active Part"
-msgstr "Pièces actives"
+msgstr ""
 
 #: templates/js/translated/part.js:406
 msgid "Part cannot be deleted as it is currently active"
 msgstr ""
 
 #: templates/js/translated/part.js:420
-#, fuzzy
-#| msgid "Warning: Merge operation cannot be reversed"
 msgid "Deleting this part cannot be reversed"
-msgstr "Attention : l'opération de fusion est irréversible"
+msgstr ""
 
 #: templates/js/translated/part.js:422
 msgid "Any stock items for this part will be deleted"
@@ -9168,10 +9145,8 @@ msgid "All manufacturer and supplier information for this part will be deleted"
 msgstr ""
 
 #: templates/js/translated/part.js:431
-#, fuzzy
-#| msgid "Delete Item"
 msgid "Delete Part"
-msgstr "Supprimer cet élément"
+msgstr ""
 
 #: templates/js/translated/part.js:467
 msgid "You are subscribed to notifications for this item"
@@ -9272,16 +9247,12 @@ msgid "Set Part Category"
 msgstr ""
 
 #: templates/js/translated/part.js:1640
-#, fuzzy
-#| msgid "Select Category"
 msgid "Select Part Category"
-msgstr "Sélectionnez une catégorie"
+msgstr ""
 
 #: templates/js/translated/part.js:1653
-#, fuzzy
-#| msgid "Email required"
 msgid "Category is required"
-msgstr "Email requis"
+msgstr ""
 
 #: templates/js/translated/part.js:1779 templates/js/translated/stock.js:2257
 msgid "Display as tree"
@@ -10348,5 +10319,3 @@ msgstr "Droit de modifier des élément"
 msgid "Permission to delete items"
 msgstr "Droit de supprimer des éléments"
 
-#~ msgid "Check the confirmation box"
-#~ msgstr "Cocher la case de confirmation"
