@@ -1044,7 +1044,7 @@ class StockList(APIDownloadMixin, generics.ListCreateAPIView):
     ]
 
 
-class StockAttachmentList(AttachmentMixin, generics.ListCreateAPIView):
+class StockAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     """API endpoint for listing (and creating) a StockItemAttachment (file upload)."""
 
     queryset = StockItemAttachment.objects.all()

@@ -7,7 +7,7 @@ from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, generics
 
-from InvenTree.api import AttachmentMixin
+from InvenTree.api import AttachmentMixin, ListCreateDestroyAPIView
 from InvenTree.helpers import str2bool
 
 from .models import (Company, ManufacturerPart, ManufacturerPartAttachment,
@@ -158,7 +158,7 @@ class ManufacturerPartDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ManufacturerPartSerializer
 
 
-class ManufacturerPartAttachmentList(AttachmentMixin, generics.ListCreateAPIView):
+class ManufacturerPartAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     """API endpoint for listing (and creating) a ManufacturerPartAttachment (file upload)."""
 
     queryset = ManufacturerPartAttachment.objects.all()

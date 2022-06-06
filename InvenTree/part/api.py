@@ -303,7 +303,7 @@ class PartInternalPriceList(generics.ListCreateAPIView):
     ]
 
 
-class PartAttachmentList(AttachmentMixin, generics.ListCreateAPIView):
+class PartAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     """API endpoint for listing (and creating) a PartAttachment (file upload)."""
 
     queryset = PartAttachment.objects.all()
