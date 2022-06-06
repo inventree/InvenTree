@@ -726,6 +726,9 @@ class InvenTreeTestCase(UserMixin, TestCase):
 def notify_responsible(instance, sender, content: NotificationBody = InvenTreeNotificationBodies.NewOrder, exclude=None):
     """Notify all responsible parties of a change in an instance.
 
+    Parses the supplied content with the provided instance and sender and sends a notification to all responsible users,
+    excluding the optional excluded list.
+
     Args:
         instance: The newly created instance
         sender: Sender model reference
