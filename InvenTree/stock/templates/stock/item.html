@@ -276,12 +276,12 @@
             {
                 success: function(response) {
 
-                    var results = [];
+                    var items = [];
 
                     // Ensure that we are only deleting the correct test results
-                    response.forEach(function(item) {
-                        if (item.stock_item == {{ item.pk }}) {
-                            results.push(item);
+                    response.forEach(function(result) {
+                        if (result.stock_item == {{ item.pk }}) {
+                            items.push(result.pk);
                         }
                     });
 
@@ -290,22 +290,14 @@
                         {% trans "Delete all test results for this stock item" %}
                     </div>`;
 
-                    constructFormBody({}, {
+                    constructForm(url, {
+                        form_data: {
+                            items: items,
+                        },
                         method: 'DELETE',
                         title: '{% trans "Delete Test Data" %}',
                         preFormContent: html,
-                        onSubmit: function(fields, opts) {
-                            inventreeMultiDelete(
-                                url,
-                                results,
-                                {
-                                    modal: opts.modal,
-                                    success: function() {
-                                        reloadTable();
-                                    }
-                                }
-                            )
-                        }
+                        onSuccess: reloadTable,
                     });
                 }
             }

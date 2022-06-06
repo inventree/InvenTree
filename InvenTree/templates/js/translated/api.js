@@ -7,7 +7,6 @@
 /* exported
     inventreeGet,
     inventreeDelete,
-    inventreeMultiDelete,
     inventreeFormDataUpload,
     showApiError,
 */
@@ -160,59 +159,20 @@ function inventreePut(url, data={}, options={}) {
 }
 
 
+/*
+ * Performs a DELETE API call to the server
+ */
 function inventreeDelete(url, options={}) {
-    /*
-     * Delete a record
-     */
 
     options = options || {};
 
     options.method = 'DELETE';
 
-    return inventreePut(url, {}, options);
-}
-
-
-/*
- * Perform a 'multi delete' operation:
- *
- * - Items are deleted sequentially from the database, rather than simultaneous requests
- * - This prevents potential overload / transaction issues in the DB backend
- *
- * Notes:
- * - Assumes that each item in the 'items' list has a parameter 'pk'
- */
-function inventreeMultiDelete(url, items, options={}) {
-
-    if (!url.endsWith('/')) {
-        url += '/';
-    }
-
-    function doNextDelete() {
-        if (items.length > 0) {
-            var item = items.shift();
-
-            inventreeDelete(`${url}${item.pk}/`, {
-                complete: doNextDelete
-            });
-        } else {
-            if (options.modal) {
-                $(options.modal).modal('hide');
-            }
-
-            if (options.success) {
-                options.success();
-            }
-        }
-    }
-
-    if (options.modal) {
-        showModalSpinner(options.modal);
-    }
-
-    // Initiate the process
-    doNextDelete();
-
+    return inventreePut(
+        url,
+        options.data || {},
+        options
+    );
 }
 
 

@@ -10,7 +10,8 @@ from rest_framework.response import Response
 import order.models as models
 import order.serializers as serializers
 from company.models import SupplierPart
-from InvenTree.api import APIDownloadMixin, AttachmentMixin
+from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
+                           ListCreateDestroyAPIView)
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import DownloadFile, str2bool
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
@@ -527,7 +528,7 @@ class PurchaseOrderExtraLineDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.PurchaseOrderExtraLineSerializer
 
 
-class SalesOrderAttachmentList(AttachmentMixin, generics.ListCreateAPIView):
+class SalesOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     """API endpoint for listing (and creating) a SalesOrderAttachment (file upload)"""
 
     queryset = models.SalesOrderAttachment.objects.all()
@@ -1056,7 +1057,7 @@ class SalesOrderShipmentComplete(generics.CreateAPIView):
         return ctx
 
 
-class PurchaseOrderAttachmentList(AttachmentMixin, generics.ListCreateAPIView):
+class PurchaseOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     """API endpoint for listing (and creating) a PurchaseOrderAttachment (file upload)"""
 
     queryset = models.PurchaseOrderAttachment.objects.all()
