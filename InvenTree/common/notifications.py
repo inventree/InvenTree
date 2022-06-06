@@ -306,7 +306,7 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
             # Group instance is provided
             elif isinstance(target, Group):
                 for user in get_user_model().objects.filter(groups__name=target.name):
-                    target_users.add(target)
+                    target_users.add(user)
             # Owner instance (either 'user' or 'group' is provided)
             elif isinstance(target, Owner):
                 for owner in target.get_related_owners(include_group=False):
