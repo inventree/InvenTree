@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-06 11:28+0000\n"
-"PO-Revision-Date: 2022-06-05 14:34\n"
+"PO-Revision-Date: 2022-06-06 14:33\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -239,10 +239,8 @@ msgid "parent"
 msgstr "родитель"
 
 #: InvenTree/models.py:466
-#, fuzzy
-#| msgid "Server error"
 msgid "Server Error"
-msgstr "Ошибка сервера"
+msgstr ""
 
 #: InvenTree/models.py:467
 msgid "An error has been logged by the server."
@@ -1184,10 +1182,8 @@ msgid "Stock required for build order"
 msgstr "Для заказа сборки необходим остаток"
 
 #: build/tasks.py:118
-#, fuzzy
-#| msgid "New Build Order"
 msgid "Overdue Build Order"
-msgstr "Новый заказ на сборку"
+msgstr ""
 
 #: build/tasks.py:123
 #, python-brace-format
@@ -1901,10 +1897,8 @@ msgid "Enable generation of test reports"
 msgstr ""
 
 #: common/models.py:975
-#, fuzzy
-#| msgid "Attachments"
 msgid "Attach Test Reports"
-msgstr "Приложения"
+msgstr ""
 
 #: common/models.py:976
 msgid "When printing a Test Report, attach a copy of the Test Report to the associated Stock Item"
@@ -3773,10 +3767,8 @@ msgid "The following serial numbers are already allocated"
 msgstr ""
 
 #: order/tasks.py:26
-#, fuzzy
-#| msgid "New Purchase Order"
 msgid "Overdue Purchase Order"
-msgstr "Новый заказ на закупку"
+msgstr ""
 
 #: order/tasks.py:31
 #, python-brace-format
@@ -3784,16 +3776,13 @@ msgid "Purchase order {po} is now overdue"
 msgstr ""
 
 #: order/tasks.py:88
-#, fuzzy
-#| msgid "New Sales Order"
 msgid "Overdue Sales Order"
-msgstr "Новый заказ на продажу"
+msgstr ""
 
 #: order/tasks.py:93
-#, fuzzy, python-brace-format
-#| msgid "Sales order not found"
+#, python-brace-format
 msgid "Sales order {so} is now overdue"
-msgstr "Заказ на продажу не найден"
+msgstr ""
 
 #: order/templates/order/order_base.html:33
 msgid "Print purchase order report"
@@ -6193,10 +6182,8 @@ msgid "Install Stock Item"
 msgstr "Установить единицу хранения"
 
 #: stock/templates/stock/item.html:290
-#, fuzzy
-#| msgid "Batch code for this stock item"
 msgid "Delete all test results for this stock item"
-msgstr "Код партии для этой единицы хранения"
+msgstr ""
 
 #: stock/templates/stock/item.html:331 templates/js/translated/stock.js:1455
 msgid "Add Test Result"
@@ -7391,16 +7378,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -9136,42 +9121,32 @@ msgid "Create Part Variant"
 msgstr "Создать разновидность детали"
 
 #: templates/js/translated/part.js:405
-#, fuzzy
-#| msgid "Duplicate Part"
 msgid "Active Part"
-msgstr "Дублировать деталь"
+msgstr ""
 
 #: templates/js/translated/part.js:406
 msgid "Part cannot be deleted as it is currently active"
 msgstr ""
 
 #: templates/js/translated/part.js:420
-#, fuzzy
-#| msgid "Warning: Merge operation cannot be reversed"
 msgid "Deleting this part cannot be reversed"
-msgstr "Предупреждение: Операция объединения не может быть отменена"
+msgstr ""
 
 #: templates/js/translated/part.js:422
-#, fuzzy
-#| msgid "All selected supplier parts will be deleted"
 msgid "Any stock items for this part will be deleted"
-msgstr "Все выбранные детали поставщика будут удалены"
+msgstr ""
 
 #: templates/js/translated/part.js:423
 msgid "This part will be removed from any Bills of Material"
 msgstr ""
 
 #: templates/js/translated/part.js:424
-#, fuzzy
-#| msgid "All selected supplier parts will be deleted"
 msgid "All manufacturer and supplier information for this part will be deleted"
-msgstr "Все выбранные детали поставщика будут удалены"
+msgstr ""
 
 #: templates/js/translated/part.js:431
-#, fuzzy
-#| msgid "Delete Parts"
 msgid "Delete Part"
-msgstr "Удалить детали"
+msgstr ""
 
 #: templates/js/translated/part.js:467
 msgid "You are subscribed to notifications for this item"
@@ -9272,16 +9247,12 @@ msgid "Set Part Category"
 msgstr "Укажите категорию"
 
 #: templates/js/translated/part.js:1640
-#, fuzzy
-#| msgid "Set Part Category"
 msgid "Select Part Category"
-msgstr "Укажите категорию"
+msgstr ""
 
 #: templates/js/translated/part.js:1653
-#, fuzzy
-#| msgid "Email required"
 msgid "Category is required"
-msgstr "Необходимо указать EMail"
+msgstr ""
 
 #: templates/js/translated/part.js:1779 templates/js/translated/stock.js:2257
 msgid "Display as tree"
@@ -10348,14 +10319,3 @@ msgstr "Разрешение на редактирование элементо�
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
 
-#~ msgid "Select Category"
-#~ msgstr "Выбрать категорию"
-
-#~ msgid "Select part category"
-#~ msgstr "Выберите категорию"
-
-#~ msgid "Remove part"
-#~ msgstr "Удалить деталь"
-
-#~ msgid "Part was deleted"
-#~ msgstr "Деталь была удалена"
