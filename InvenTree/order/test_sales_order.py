@@ -276,7 +276,7 @@ class SalesOrderTest(TestCase):
         )
 
         messages = NotificationMessage.objects.filter(
-            category='order.new_sales_order',
+            category='order.new_salesorder',
         )
 
         # A notification should have been generated for user 4 (who is a member of group 3)

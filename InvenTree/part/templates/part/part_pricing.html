@@ -60,6 +60,7 @@
         <td>Max: {% include "price.html" with price=max_total_bom_price %}</td>
     </tr>
     {% endif %}
+    {% endif %}
     {% if min_total_bom_purchase_price %}
     <tr>
         <td><strong>{% trans 'Unit Purchase Price' %}</strong></td>
@@ -82,6 +83,8 @@
         </td>
     </tr>
     {% endif %}
+
+    {% if min_total_bom_price or min_total_bom_purchase_price %}
     {% else %}
     <tr>
         <td colspan='3'>
@@ -122,7 +125,7 @@
     </table>
 {% endif %}
 
-{% if min_unit_buy_price or min_unit_bom_price %}
+{% if min_unit_buy_price or min_unit_bom_price or min_unit_bom_purchase_price %}
 {% else %}
 <div class='alert alert-danger alert-block'>
     {% trans 'No pricing information is available for this part.' %}

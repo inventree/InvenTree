@@ -24,11 +24,10 @@ from mptt.exceptions import InvalidMove
 from rest_framework import serializers
 
 from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode
-from InvenTree.helpers import increment, getSetting, normalize, MakeBarcode
+from InvenTree.helpers import increment, getSetting, normalize, MakeBarcode, notify_responsible
 from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
 from InvenTree.validators import validate_build_order_reference
 
-import common.notifications
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.tasks
@@ -1051,28 +1050,7 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
         InvenTree.tasks.offload_task(build_tasks.check_build_stock, instance)
 
         # Notify the responsible users that the build order has been created
-        if instance.responsible is not None:
-
-            # Notify the responsible user(s) that the new build order has been created
-            name = _("New Build Order")
-            context = {
-                'build': instance,
-                'name': name,
-                'message': _("A new Build Order has been created and assigned to you"),
-                'link': InvenTree.helpers.construct_absolute_url(instance.get_absolute_url()),
-                'template': {
-                    'html': 'email/new_order_assigned.html',
-                    'subject': name,
-                }
-            }
-
-            common.notifications.trigger_notification(
-                instance,
-                'build.new_build_order',
-                targets=set([instance.responsible]),
-                target_exclude=set([instance.issued_by]),
-                context=context,
-            )
+        notify_responsible(instance, sender, exclude=instance.issued_by)
 
 
 class BuildOrderAttachment(InvenTreeAttachment):

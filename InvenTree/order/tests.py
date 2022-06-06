@@ -253,7 +253,7 @@ class OrderTest(TestCase):
         )
 
         messages = common.models.NotificationMessage.objects.filter(
-            category='order.new_purchase_order',
+            category='order.new_purchaseorder',
         )
 
         self.assertEqual(messages.count(), 1)
