@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-06 11:28+0000\n"
-"PO-Revision-Date: 2022-06-05 14:34\n"
+"PO-Revision-Date: 2022-06-06 14:33\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -1182,16 +1182,13 @@ msgid "Stock required for build order"
 msgstr "Voorraad vereist voor productieorder"
 
 #: build/tasks.py:118
-#, fuzzy
-#| msgid "New Build Order"
 msgid "Overdue Build Order"
-msgstr "Nieuwe Productieopdracht"
+msgstr ""
 
 #: build/tasks.py:123
-#, fuzzy, python-brace-format
-#| msgid "Build Order is incomplete"
+#, python-brace-format
 msgid "Build order {bo} is now overdue"
-msgstr "Productieopdracht is onvolledig"
+msgstr ""
 
 #: build/templates/build/build_base.html:39
 #: order/templates/order/order_base.html:28
@@ -1892,20 +1889,16 @@ msgid "Default page size for PDF reports"
 msgstr "Standaard paginagrootte voor PDF rapporten"
 
 #: common/models.py:968
-#, fuzzy
-#| msgid "Enable Reports"
 msgid "Enable Test Reports"
-msgstr "Activeer Rapportages"
+msgstr ""
 
 #: common/models.py:969
 msgid "Enable generation of test reports"
 msgstr "Activeer het genereren van testrapporten"
 
 #: common/models.py:975
-#, fuzzy
-#| msgid "Test Reports"
 msgid "Attach Test Reports"
-msgstr "Testrapporten"
+msgstr ""
 
 #: common/models.py:976
 msgid "When printing a Test Report, attach a copy of the Test Report to the associated Stock Item"
@@ -3774,10 +3767,8 @@ msgid "The following serial numbers are already allocated"
 msgstr ""
 
 #: order/tasks.py:26
-#, fuzzy
-#| msgid "Received against purchase order"
 msgid "Overdue Purchase Order"
-msgstr "Ontvangen tegen inkoopopdracht"
+msgstr ""
 
 #: order/tasks.py:31
 #, python-brace-format
@@ -3785,10 +3776,8 @@ msgid "Purchase order {po} is now overdue"
 msgstr ""
 
 #: order/tasks.py:88
-#, fuzzy
-#| msgid "Sales Order"
 msgid "Overdue Sales Order"
-msgstr "Verkooporder"
+msgstr ""
 
 #: order/tasks.py:93
 #, python-brace-format
@@ -5643,10 +5632,8 @@ msgid "Template file '{template}' is missing or does not exist"
 msgstr ""
 
 #: report/api.py:359
-#, fuzzy
-#| msgid "Test Reports"
 msgid "Test report"
-msgstr "Testrapporten"
+msgstr ""
 
 #: report/models.py:152
 msgid "Template name"
@@ -7391,16 +7378,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -9136,10 +9121,8 @@ msgid "Create Part Variant"
 msgstr ""
 
 #: templates/js/translated/part.js:405
-#, fuzzy
-#| msgid "Allocated Parts"
 msgid "Active Part"
-msgstr "Toegewezen Onderdelen"
+msgstr ""
 
 #: templates/js/translated/part.js:406
 msgid "Part cannot be deleted as it is currently active"
@@ -9162,10 +9145,8 @@ msgid "All manufacturer and supplier information for this part will be deleted"
 msgstr ""
 
 #: templates/js/translated/part.js:431
-#, fuzzy
-#| msgid "Select Parts"
 msgid "Delete Part"
-msgstr "Onderdelen selecteren"
+msgstr ""
 
 #: templates/js/translated/part.js:467
 msgid "You are subscribed to notifications for this item"
@@ -9266,16 +9247,12 @@ msgid "Set Part Category"
 msgstr ""
 
 #: templates/js/translated/part.js:1640
-#, fuzzy
-#| msgid "Select Category"
 msgid "Select Part Category"
-msgstr "Categorie selecteren"
+msgstr ""
 
 #: templates/js/translated/part.js:1653
-#, fuzzy
-#| msgid "Restart required"
 msgid "Category is required"
-msgstr "Opnieuw opstarten vereist"
+msgstr ""
 
 #: templates/js/translated/part.js:1779 templates/js/translated/stock.js:2257
 msgid "Display as tree"
@@ -10342,5 +10319,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "There are %(count)s manufacturers defined for this part. If you delete this part, the following manufacturer parts will also be deleted:"
-#~ msgstr "Er zijn %(count)s fabrikanten gedefinieerd voor dit onderdeel. Als u dit onderdeel verwijdert, worden de volgende onderdelen ook verwijderd:"
