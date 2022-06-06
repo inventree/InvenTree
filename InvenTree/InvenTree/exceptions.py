@@ -9,13 +9,29 @@ import traceback
 from django.conf import settings
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import gettext_lazy as _
-from django.views.debug import ExceptionReporter
 
 import rest_framework.views as drfviews
 from error_report.models import Error
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError as DRFValidationError
 from rest_framework.response import Response
+
+
+def log_error(path):
+    """Log an error to the database.
+
+    - Uses python exception handling to extract error details
+
+    Arguments:
+        path: The 'path' (most likely a URL) associated with this error (optional)
+    """
+    kind, info, data = sys.exc_info()
+    Error.objects.create(
+        kind=kind.__name__,
+        info=info,
+        data='\n'.join(traceback.format_exception(kind, info, data)),
+        path=path,
+    )
 
 
 def exception_handler(exc, context):
@@ -55,16 +71,7 @@ def exception_handler(exc, context):
 
         response = Response(response_data, status=500)
 
-        # Log the exception to the database, too
-        kind, info, data = sys.exc_info()
-
-        Error.objects.create(
-            kind=kind.__name__,
-            info=info,
-            data='\n'.join(traceback.format_exception(kind, info, data)),
-            path=context['request'].path,
-            html=ExceptionReporter(context['request'], kind, info, data).get_traceback_html(),
-        )
+        log_error(context['request'].path)
 
     if response is not None:
         # Convert errors returned under the label '__all__' to 'non_field_errors'

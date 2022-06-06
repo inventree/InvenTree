@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 
 from common.models import NotificationEntry, NotificationMessage
+from InvenTree.exceptions import log_error
 from InvenTree.helpers import inheritors
 from InvenTree.ready import isImportingData
 from plugin import registry
@@ -328,11 +329,12 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
             logger.info(f"Triggering notification method '{method.METHOD_NAME}'")
             try:
                 deliver_notification(method, obj, category, target_users, context)
-            except NotImplementedError as error:
+            except Exception as exc:
                 # Allow any single notification method to fail, without failing the others
-                logger.error(error)
-            except Exception as error:
-                logger.error(error)
+                # However we will log an error message to ensure this is not missed
+                logger.error(exc)
+
+                log_error(f"notification_{method.METHOD_NAME}")
 
         # Set delivery flag
         NotificationEntry.notify(category, obj_ref_value)

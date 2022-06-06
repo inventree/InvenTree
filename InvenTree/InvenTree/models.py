@@ -475,6 +475,7 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
                 'inventree.error_log',
                 context=context,
                 targets=users,
+                delivery_methods=set([common.notifications.UIMessageNotification]),
             )
 
         except Exception as exc:
