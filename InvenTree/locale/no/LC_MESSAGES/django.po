@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-06 11:28+0000\n"
-"PO-Revision-Date: 2022-06-05 14:34\n"
+"PO-Revision-Date: 2022-06-06 14:33\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -1182,10 +1182,8 @@ msgid "Stock required for build order"
 msgstr ""
 
 #: build/tasks.py:118
-#, fuzzy
-#| msgid "Build Order"
 msgid "Overdue Build Order"
-msgstr "Build ordre"
+msgstr ""
 
 #: build/tasks.py:123
 #, python-brace-format
@@ -1891,20 +1889,16 @@ msgid "Default page size for PDF reports"
 msgstr ""
 
 #: common/models.py:968
-#, fuzzy
-#| msgid "Enable registration"
 msgid "Enable Test Reports"
-msgstr "Aktiver registrering"
+msgstr ""
 
 #: common/models.py:969
 msgid "Enable generation of test reports"
 msgstr ""
 
 #: common/models.py:975
-#, fuzzy
-#| msgid "Attachments"
 msgid "Attach Test Reports"
-msgstr "Vedlegg"
+msgstr ""
 
 #: common/models.py:976
 msgid "When printing a Test Report, attach a copy of the Test Report to the associated Stock Item"
@@ -3773,10 +3767,8 @@ msgid "The following serial numbers are already allocated"
 msgstr ""
 
 #: order/tasks.py:26
-#, fuzzy
-#| msgid "New Purchase Order"
 msgid "Overdue Purchase Order"
-msgstr "Ny bestillingsorder"
+msgstr ""
 
 #: order/tasks.py:31
 #, python-brace-format
@@ -3784,10 +3776,8 @@ msgid "Purchase order {po} is now overdue"
 msgstr ""
 
 #: order/tasks.py:88
-#, fuzzy
-#| msgid "New Sales Order"
 msgid "Overdue Sales Order"
-msgstr "Ny salgsorder"
+msgstr ""
 
 #: order/tasks.py:93
 #, python-brace-format
@@ -7388,16 +7378,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -9133,10 +9121,8 @@ msgid "Create Part Variant"
 msgstr ""
 
 #: templates/js/translated/part.js:405
-#, fuzzy
-#| msgid "Active"
 msgid "Active Part"
-msgstr "Aktiv"
+msgstr ""
 
 #: templates/js/translated/part.js:406
 msgid "Part cannot be deleted as it is currently active"
@@ -9147,26 +9133,20 @@ msgid "Deleting this part cannot be reversed"
 msgstr ""
 
 #: templates/js/translated/part.js:422
-#, fuzzy
-#| msgid "All selected supplier parts will be deleted"
 msgid "Any stock items for this part will be deleted"
-msgstr "Alle valgte leverandørdeler vil slettes"
+msgstr ""
 
 #: templates/js/translated/part.js:423
 msgid "This part will be removed from any Bills of Material"
 msgstr ""
 
 #: templates/js/translated/part.js:424
-#, fuzzy
-#| msgid "All selected supplier parts will be deleted"
 msgid "All manufacturer and supplier information for this part will be deleted"
-msgstr "Alle valgte leverandørdeler vil slettes"
+msgstr ""
 
 #: templates/js/translated/part.js:431
-#, fuzzy
-#| msgid "Delete Parts"
 msgid "Delete Part"
-msgstr "Slett deler"
+msgstr ""
 
 #: templates/js/translated/part.js:467
 msgid "You are subscribed to notifications for this item"
@@ -9267,16 +9247,12 @@ msgid "Set Part Category"
 msgstr ""
 
 #: templates/js/translated/part.js:1640
-#, fuzzy
-#| msgid "Select Category"
 msgid "Select Part Category"
-msgstr "Velg kategori"
+msgstr ""
 
 #: templates/js/translated/part.js:1653
-#, fuzzy
-#| msgid "Email required"
 msgid "Category is required"
-msgstr "E-postadresse kreves"
+msgstr ""
 
 #: templates/js/translated/part.js:1779 templates/js/translated/stock.js:2257
 msgid "Display as tree"
@@ -10343,5 +10319,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "Check the confirmation box"
-#~ msgstr "Sjekk bekreftelsesboksen"
