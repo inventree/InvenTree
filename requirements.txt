@@ -20,7 +20,7 @@ django-import-export==2.5.0             # Data import / export for admin interfa
 django-maintenance-mode==0.16.1         # Shut down application while reloading etc.
 django-markdownify==0.8.0               # Markdown rendering
 django-markdownx==3.0.1                 # Markdown form fields
-django-money==1.1                       # Django app for currency management
+django-money==2.1.1                     # Django app for currency management
 django-mptt==0.11.0                     # Modified Preorder Tree Traversal
 django-redis>=5.0.0                     # Redis integration
 django-q==1.3.4                         # Background task scheduling
@@ -42,7 +42,6 @@ pdf2image==1.16.0                       # PDF to image conversion
 pep8-naming==0.11.1                     # PEP naming convention extension
 pre-commit==2.19.0                      # Git pre-commit
 pillow==9.1.1                           # Image manipulation
-py-moneyed==0.8.0                       # Specific version requirement for py-moneyed
 pygments==2.7.4                         # Syntax highlighting
 python-barcode[images]==0.13.1          # Barcode generator
 qrcode[pil]==6.1                        # QR code generator
