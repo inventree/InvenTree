@@ -152,7 +152,7 @@ function createNewModal(options={}) {
 function enableSubmitButton(options, enable=true) {
 
     if (!options || !options.modal) {
-        console.warn("enableSubmitButton() called without modal reference");
+        console.warn('enableSubmitButton() called without modal reference');
         return;
     }
 

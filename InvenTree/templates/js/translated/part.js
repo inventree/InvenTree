@@ -8,7 +8,6 @@
     imageHoverIcon,
     inventreeGet,
     inventreePut,
-    launchModalForm,
     linkButtonsToSelection,
     loadTableFilters,
     makeIconBadge,
