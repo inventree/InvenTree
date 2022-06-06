@@ -11,7 +11,6 @@ from django.urls import include, re_path
 from . import views
 
 part_detail_urls = [
-    re_path(r'^delete/?', views.PartDelete.as_view(), name='part-delete'),
     re_path(r'^bom-download/?', views.BomDownload.as_view(), name='bom-download'),
 
     re_path(r'^pricing/', views.PartPricing.as_view(), name='part-pricing'),

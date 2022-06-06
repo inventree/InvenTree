@@ -760,23 +760,6 @@ class BomDownload(AjaxView):
         }
 
 
-class PartDelete(AjaxDeleteView):
-    """View to delete a Part object."""
-
-    model = Part
-    ajax_template_name = 'part/partial_delete.html'
-    ajax_form_title = _('Confirm Part Deletion')
-    context_object_name = 'part'
-
-    success_url = '/part/'
-
-    def get_data(self):
-        """Returns custom message once the part deletion has been performed"""
-        return {
-            'danger': _('Part was deleted'),
-        }
-
-
 class PartPricing(AjaxView):
     """View for inspecting part pricing information."""
 
