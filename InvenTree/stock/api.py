@@ -466,7 +466,7 @@ class StockFilter(rest_filters.FilterSet):
     updated_after = rest_filters.DateFilter(label='Updated after', field_name='updated', lookup_expr='gte')
 
 
-class StockList(APIDownloadMixin, generics.ListCreateAPIView):
+class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
     """API endpoint for list view of Stock objects.
 
     - GET: Return a list of all StockItem objects (with optional query filters)

@@ -12,7 +12,6 @@
     handleFormErrors,
     imageHoverIcon,
     inventreeGet,
-    inventreeMultiDelete,
     inventreePut,
     launchModalForm,
     linkButtonsToSelection,
@@ -1107,12 +1106,23 @@ function adjustStock(action, items, options={}) {
             // Delete action is handled differently
             if (action == 'delete') {
 
-                inventreeMultiDelete(
+                var ids = [];
+
+                items.forEach(function(item) {
+                    ids.push(item.pk);
+                });
+
+                showModalSpinner(opts.modal, true);
+                inventreeDelete(
                     '{% url "api-stock-list" %}',
-                    items,
                     {
-                        modal: opts.modal,
-                        success: options.success,
+                        data: {
+                            items: ids,
+                        },
+                        success: function(response) {
+                            $(opts.modal).modal('hide');
+                            options.success(response);
+                        }
                     }
                 );
 
