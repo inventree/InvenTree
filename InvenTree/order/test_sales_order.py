@@ -260,3 +260,27 @@ class SalesOrderTest(TestCase):
         )
 
         self.assertEqual(len(messages), 2)
+
+    def test_new_so_notification(self):
+        """Test that a notification is sent when a new SalesOrder is created.
+
+        - The responsible user should receive a notification
+        - The creating user should *not* receive a notification
+        """
+
+        SalesOrder.objects.create(
+            customer=self.customer,
+            reference='1234567',
+            created_by=get_user_model().objects.get(pk=3),
+            responsible=Owner.create(obj=Group.objects.get(pk=3))
+        )
+
+        messages = NotificationMessage.objects.filter(
+            category='order.new_sales_order',
+        )
+
+        # A notification should have been generated for user 4 (who is a member of group 3)
+        self.assertTrue(messages.filter(user__pk=4).exists())
+
+        # However *no* notification should have been generated for the creating user
+        self.assertFalse(messages.filter(user__pk=3).exists())

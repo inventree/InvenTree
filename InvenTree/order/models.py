@@ -27,6 +27,7 @@ from mptt.models import TreeForeignKey
 
 import InvenTree.helpers
 import InvenTree.ready
+from common.notifications import UIMessageNotification, trigger_notification
 from common.settings import currency_code_default
 from company.models import Company, SupplierPart
 from InvenTree.fields import InvenTreeModelMoneyField, RoundingDecimalField
@@ -839,9 +840,9 @@ class SalesOrder(Order):
         return self.pending_shipments().count()
 
 
-@receiver(post_save, sender=SalesOrder, dispatch_uid='build_post_save_log')
+@receiver(post_save, sender=SalesOrder, dispatch_uid='sales_order_post_save')
 def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs):
-    """Callback function to be executed after a SalesOrder instance is saved.
+    """Callback function to be executed after a SalesOrder is saved.
 
     - If the SALESORDER_DEFAULT_SHIPMENT setting is enabled, create a default shipment
     - Ignore if the database is not ready for access
@@ -854,14 +855,44 @@ def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs
     if InvenTree.ready.isImportingData():
         return
 
-    if created and getSetting('SALESORDER_DEFAULT_SHIPMENT'):
+    if created:
         # A new SalesOrder has just been created
 
-        # Create default shipment
-        SalesOrderShipment.objects.create(
-            order=instance,
-            reference='1',
-        )
+        if getSetting('SALESORDER_DEFAULT_SHIPMENT'):
+            # Create default shipment
+            SalesOrderShipment.objects.create(
+                order=instance,
+                reference='1',
+            )
+
+        # Notify the responsible owner(s) - if different from the creating user
+        if instance.responsible is not None:
+
+            targets = []
+
+            for owner in instance.responsible.get_related_owners(include_group=False):
+                user = owner.owner
+
+                if user != instance.created_by:
+                    targets.append(user)
+
+            if len(targets) > 0:
+                # Notify the responsible users that the new sales order has been created
+                name = _("New Sales Order")
+                context = {
+                    'order': instance,
+                    'name': name,
+                    'message': _("A new Sales Order has been created and assigned to you"),
+                    'link': InvenTree.helpers.construct_absolute_url(instance.get_absolute_url()),
+                }
+
+                trigger_notification(
+                    instance,
+                    'order.new_sales_order',
+                    targets=targets,
+                    context=context,
+                    delivery_methods=set([UIMessageNotification]),
+                )
 
 
 class PurchaseOrderAttachment(InvenTreeAttachment):
