@@ -17,8 +17,8 @@ from django.urls import reverse_lazy
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
 from django.views import View
-from django.views.generic import (CreateView, DeleteView, DetailView, FormView,
-                                  ListView, UpdateView)
+from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
+                                  UpdateView)
 from django.views.generic.base import RedirectView, TemplateView
 
 from allauth.account.forms import AddEmailForm
@@ -34,8 +34,7 @@ from common.settings import currency_code_default, currency_codes
 from part.models import PartCategory
 from users.models import RuleSet, check_user_role
 
-from .forms import (DeleteForm, EditUserForm, SetPasswordForm,
-                    SettingCategorySelectForm)
+from .forms import DeleteForm, EditUserForm, SetPasswordForm
 from .helpers import str2bool
 
 
@@ -799,40 +798,6 @@ class AppearanceSelectView(RedirectView):
         user_theme.save()
 
         return redirect(reverse_lazy('settings'))
-
-
-class SettingCategorySelectView(FormView):
-    """View for selecting categories in settings."""
-
-    form_class = SettingCategorySelectForm
-    success_url = reverse_lazy('settings-category')
-    template_name = "InvenTree/settings/category.html"
-
-    def get_initial(self):
-        """Set category selection."""
-        initial = super().get_initial()
-
-        category = self.request.GET.get('category', None)
-        if category:
-            initial['category'] = category
-
-        return initial
-
-    def post(self, request, *args, **kwargs):
-        """Handle POST request (which contains category selection).
-
-        Pass the selected category to the page template
-        """
-        form = self.get_form()
-
-        if form.is_valid():
-            context = self.get_context_data()
-
-            context['category'] = form.cleaned_data['category']
-
-            return super(SettingCategorySelectView, self).render_to_response(context)
-
-        return self.form_invalid(form)
 
 
 class DatabaseStatsView(AjaxView):

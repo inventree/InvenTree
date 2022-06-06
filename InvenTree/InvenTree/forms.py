@@ -16,13 +16,12 @@ from allauth.exceptions import ImmediateHttpResponse
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth_2fa.adapter import OTPAdapter
 from allauth_2fa.utils import user_has_valid_totp_device
-from crispy_forms.bootstrap import (AppendedText, Div, PrependedAppendedText,
-                                    PrependedText, StrictButton)
+from crispy_forms.bootstrap import (AppendedText, PrependedAppendedText,
+                                    PrependedText)
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout
 
 from common.models import InvenTreeSetting
-from part.models import PartCategory
 
 logger = logging.getLogger('inventree')
 
@@ -109,22 +108,6 @@ class HelperForm(forms.ModelForm):
         self.helper.layout = Layout(*layouts)
 
 
-class ConfirmForm(forms.Form):
-    """Generic confirmation form."""
-
-    confirm = forms.BooleanField(
-        required=False, initial=False,
-        help_text=_("Confirm")
-    )
-
-    class Meta:
-        """Metaclass options."""
-
-        fields = [
-            'confirm'
-        ]
-
-
 class DeleteForm(forms.Form):
     """Generic deletion form which provides simple user confirmation."""
 
@@ -183,39 +166,6 @@ class SetPasswordForm(HelperForm):
             'enter_password',
             'confirm_password'
         ]
-
-
-class SettingCategorySelectForm(forms.ModelForm):
-    """Form for setting category settings."""
-
-    category = forms.ModelChoiceField(queryset=PartCategory.objects.all())
-
-    class Meta:
-        """Metaclass options."""
-
-        model = PartCategory
-        fields = [
-            'category'
-        ]
-
-    def __init__(self, *args, **kwargs):
-        """Setup form layout."""
-        super().__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        # Form rendering
-        self.helper.form_show_labels = False
-        self.helper.layout = Layout(
-            Div(
-                Div(Field('category'),
-                    css_class='col-sm-6',
-                    style='width: 70%;'),
-                Div(StrictButton(_('Select Category'), css_class='btn btn-primary', type='submit'),
-                    css_class='col-sm-6',
-                    style='width: 30%; padding-left: 0;'),
-                css_class='row',
-            ),
-        )
 
 
 # override allauth
