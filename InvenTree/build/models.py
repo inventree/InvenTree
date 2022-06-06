@@ -1069,7 +1069,7 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
             common.notifications.trigger_notification(
                 instance,
                 'build.new_build_order',
-                targets=set(instance.responsible),
+                targets=[instance.responsible],
                 target_exclude=set(instance.issued_by),
                 context=context,
             )
