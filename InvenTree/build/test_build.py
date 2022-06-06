@@ -414,7 +414,7 @@ class BuildTest(BuildTestBase):
 
         # Two notifications should have been sent
         messages = common.models.NotificationMessage.objects.filter(
-            category='build.new_build_order',
+            category='build.new_build',
         )
 
         self.assertEqual(messages.count(), 2)
