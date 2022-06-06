@@ -123,9 +123,12 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
 
         return response
 
-    def post(self, url, data, expected_code=None, format='json'):
+    def post(self, url, data=None, expected_code=None, format='json'):
         """Issue a POST request."""
         response = self.client.post(url, data=data, format=format)
+
+        if data is None:
+            data = {}
 
         if expected_code is not None:
 
@@ -137,8 +140,12 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
 
         return response
 
-    def delete(self, url, data, expected_code=None, format='json'):
+    def delete(self, url, data=None, expected_code=None, format='json'):
         """Issue a DELETE request."""
+
+        if data is None:
+            data = {}
+
         response = self.client.delete(url, data=data, foramt=format)
 
         if expected_code is not None:
