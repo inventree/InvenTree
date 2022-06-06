@@ -8,7 +8,6 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
-from django.db import transaction
 from django.shortcuts import HttpResponseRedirect, get_object_or_404
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -65,80 +64,6 @@ class PartIndex(InvenTreeRoleMixin, ListView):
         context['part_count'] = Part.objects.count()
 
         return context
-
-
-class PartSetCategory(AjaxUpdateView):
-    """View for settings the part category for multiple parts at once."""
-
-    ajax_template_name = 'part/set_category.html'
-    ajax_form_title = _('Set Part Category')
-    form_class = part_forms.SetPartCategoryForm
-
-    role_required = 'part.change'
-
-    category = None
-    parts = []
-
-    def get(self, request, *args, **kwargs):
-        """Respond to a GET request to this view."""
-        self.request = request
-
-        if 'parts[]' in request.GET:
-            self.parts = Part.objects.filter(id__in=request.GET.getlist('parts[]'))
-        else:
-            self.parts = []
-
-        return self.renderJsonResponse(request, form=self.get_form(), context=self.get_context_data())
-
-    def post(self, request, *args, **kwargs):
-        """Respond to a POST request to this view."""
-        self.parts = []
-
-        for item in request.POST:
-            if item.startswith('part_id_'):
-                pk = item.replace('part_id_', '')
-
-                try:
-                    part = Part.objects.get(pk=pk)
-                except (Part.DoesNotExist, ValueError):
-                    continue
-
-                self.parts.append(part)
-
-        self.category = None
-
-        if 'part_category' in request.POST:
-            pk = request.POST['part_category']
-
-            try:
-                self.category = PartCategory.objects.get(pk=pk)
-            except (PartCategory.DoesNotExist, ValueError):
-                self.category = None
-
-        valid = self.category is not None
-
-        data = {
-            'form_valid': valid,
-            'success': _('Set category for {n} parts').format(n=len(self.parts))
-        }
-
-        if valid:
-            with transaction.atomic():
-                for part in self.parts:
-                    part.category = self.category
-                    part.save()
-
-        return self.renderJsonResponse(request, data=data, form=self.get_form(), context=self.get_context_data())
-
-    def get_context_data(self):
-        """Return context data for rendering in the form."""
-        ctx = {}
-
-        ctx['parts'] = self.parts
-        ctx['categories'] = PartCategory.objects.all()
-        ctx['category'] = self.category
-
-        return ctx
 
 
 class PartImport(FileManagementFormView):

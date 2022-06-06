@@ -56,9 +56,6 @@ part_urls = [
     # Part category
     re_path(r'^category/', include(category_urls)),
 
-    # Change category for multiple parts
-    re_path(r'^set-category/?', views.PartSetCategory.as_view(), name='part-set-category'),
-
     # Individual part using IPN as slug
     re_path(r'^(?P<slug>[-\w]+)/', views.PartDetailFromIPN.as_view(), name='part-detail-from-ipn'),
 
