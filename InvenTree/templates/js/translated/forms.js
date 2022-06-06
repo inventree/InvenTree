@@ -639,13 +639,13 @@ function insertConfirmButton(options) {
     $(options.modal).find('#modal-footer-buttons').append(html);
 
     // Disable the 'submit' button
-    enableSubmitButton(options, true);
+    enableSubmitButton(options, false);
 
     // Trigger event
     $(options.modal).find('#modal-confirm').change(function() {
         var enabled = this.checked;
 
-        enableSubmitButton(options, !enabled);
+        enableSubmitButton(options, enabled);
     });
 }
 
