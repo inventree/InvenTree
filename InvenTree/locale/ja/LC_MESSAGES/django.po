@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-06 11:28+0000\n"
-"PO-Revision-Date: 2022-06-05 14:34\n"
+"PO-Revision-Date: 2022-06-06 14:33\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -3767,10 +3767,8 @@ msgid "The following serial numbers are already allocated"
 msgstr ""
 
 #: order/tasks.py:26
-#, fuzzy
-#| msgid "Purchase Price"
 msgid "Overdue Purchase Order"
-msgstr "購入金額"
+msgstr ""
 
 #: order/tasks.py:31
 #, python-brace-format
@@ -7380,16 +7378,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -9125,10 +9121,8 @@ msgid "Create Part Variant"
 msgstr ""
 
 #: templates/js/translated/part.js:405
-#, fuzzy
-#| msgid "New Part"
 msgid "Active Part"
-msgstr "新規パーツ"
+msgstr ""
 
 #: templates/js/translated/part.js:406
 msgid "Part cannot be deleted as it is currently active"
@@ -9151,10 +9145,8 @@ msgid "All manufacturer and supplier information for this part will be deleted"
 msgstr ""
 
 #: templates/js/translated/part.js:431
-#, fuzzy
-#| msgid "Delete Parts"
 msgid "Delete Part"
-msgstr "パーツを削除"
+msgstr ""
 
 #: templates/js/translated/part.js:467
 msgid "You are subscribed to notifications for this item"
@@ -9255,10 +9247,8 @@ msgid "Set Part Category"
 msgstr ""
 
 #: templates/js/translated/part.js:1640
-#, fuzzy
-#| msgid "Select Category"
 msgid "Select Part Category"
-msgstr "カテゴリの選択"
+msgstr ""
 
 #: templates/js/translated/part.js:1653
 msgid "Category is required"
@@ -10328,3 +10318,4 @@ msgstr ""
 #: users/models.py:219
 msgid "Permission to delete items"
 msgstr ""
+
