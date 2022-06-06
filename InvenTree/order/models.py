@@ -27,7 +27,7 @@ from mptt.models import TreeForeignKey
 
 import InvenTree.helpers
 import InvenTree.ready
-from common.notifications import UIMessageNotification, trigger_notification
+from common.notifications import trigger_notification
 from common.settings import currency_code_default
 from company.models import Company, SupplierPart
 from InvenTree.fields import InvenTreeModelMoneyField, RoundingDecimalField
@@ -606,6 +606,10 @@ def after_save_purchase_order(sender, instance: PurchaseOrder, created: bool, **
                     'name': name,
                     'message': _('A new Purchase Order has been created and assigned to you'),
                     'link': InvenTree.helpers.construct_absolute_url(instance.get_absolute_url()),
+                    'template': {
+                        'html': 'email/new_order_assigned.html',
+                        'subject': name,
+                    }
                 }
 
                 trigger_notification(
@@ -613,7 +617,6 @@ def after_save_purchase_order(sender, instance: PurchaseOrder, created: bool, **
                     'order.new_purchase_order',
                     targets=targets,
                     context=context,
-                    delivery_methods=set([UIMessageNotification]),
                 )
 
 
@@ -926,6 +929,10 @@ def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs
                     'name': name,
                     'message': _("A new Sales Order has been created and assigned to you"),
                     'link': InvenTree.helpers.construct_absolute_url(instance.get_absolute_url()),
+                    'template': {
+                        'html': 'email/new_order_assigned.html',
+                        'subject': name,
+                    }
                 }
 
                 trigger_notification(
@@ -933,7 +940,6 @@ def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs
                     'order.new_sales_order',
                     targets=targets,
                     context=context,
-                    delivery_methods=set([UIMessageNotification]),
                 )
 
 
