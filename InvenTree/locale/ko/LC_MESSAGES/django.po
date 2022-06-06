@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-06 11:28+0000\n"
-"PO-Revision-Date: 2022-06-05 14:34\n"
+"PO-Revision-Date: 2022-06-06 14:33\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -239,10 +239,8 @@ msgid "parent"
 msgstr ""
 
 #: InvenTree/models.py:466
-#, fuzzy
-#| msgid "Server error"
 msgid "Server Error"
-msgstr "서버 오류"
+msgstr ""
 
 #: InvenTree/models.py:467
 msgid "An error has been logged by the server."
@@ -7380,16 +7378,14 @@ msgstr "로그인"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -9149,10 +9145,8 @@ msgid "All manufacturer and supplier information for this part will be deleted"
 msgstr ""
 
 #: templates/js/translated/part.js:431
-#, fuzzy
-#| msgid "Delete"
 msgid "Delete Part"
-msgstr "삭제"
+msgstr ""
 
 #: templates/js/translated/part.js:467
 msgid "You are subscribed to notifications for this item"
@@ -9257,10 +9251,8 @@ msgid "Select Part Category"
 msgstr ""
 
 #: templates/js/translated/part.js:1653
-#, fuzzy
-#| msgid "Email required"
 msgid "Category is required"
-msgstr "이메일 필요"
+msgstr ""
 
 #: templates/js/translated/part.js:1779 templates/js/translated/stock.js:2257
 msgid "Display as tree"
@@ -10326,3 +10318,4 @@ msgstr ""
 #: users/models.py:219
 msgid "Permission to delete items"
 msgstr ""
+
