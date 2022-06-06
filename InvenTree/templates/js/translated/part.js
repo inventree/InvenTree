@@ -21,6 +21,7 @@
 */
 
 /* exported
+    deletePart,
     duplicateBom,
     duplicatePart,
     editCategory,
@@ -394,6 +395,51 @@ function duplicatePart(pk, options={}) {
     });
 }
 
+
+// Launch form to delete a part
+function deletePart(pk, options={}) {
+
+    inventreeGet(`/api/part/${pk}/`, {}, {
+        success: function(part) {
+            if (part.active) {
+                showAlertDialog(
+                    '{% trans "Active Part" %}',
+                    '{% trans "Part cannot be deleted as it is currently active" %}',
+                    {
+                        alert_style: 'danger',
+                    }
+                );
+                return;
+            }
+
+            var thumb = thumbnailImage(part.thumbnail || part.image);
+
+            var html = `
+            <div class='alert alert-block alert-danger'>
+            <p>${thumb} ${part.full_name} - <em>${part.description}</em></p>
+
+            {% trans "Deleting this part cannot be reversed" %}
+            <ul>
+            <li>{% trans "Any stock items for this part will be deleted" %}</li>
+            <li>{% trans "This part will be removed from any Bills of Material" %}</li>
+            <li>{% trans "All manufacturer and supplier information for this part will be deleted" %}</li>
+            </div>`;
+
+            constructForm(
+                `/api/part/${pk}/`,
+                {
+                    method: 'DELETE',
+                    title: '{% trans "Delete Part" %}',
+                    preFormContent: html,
+                    onSuccess: function(response) {
+                        handleFormSuccess(response, options);
+                    }
+                }
+            )
+
+        }
+    });
+}
 
 /* Toggle the 'starred' status of a part.
  * Performs AJAX queries and updates the display on the button.
