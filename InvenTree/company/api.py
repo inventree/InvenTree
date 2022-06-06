@@ -98,7 +98,7 @@ class ManufacturerPartFilter(rest_filters.FilterSet):
     active = rest_filters.BooleanFilter(field_name='part__active')
 
 
-class ManufacturerPartList(generics.ListCreateAPIView):
+class ManufacturerPartList(ListCreateDestroyAPIView):
     """API endpoint for list view of ManufacturerPart object.
 
     - GET: Return list of ManufacturerPart objects
@@ -180,7 +180,7 @@ class ManufacturerPartAttachmentDetail(AttachmentMixin, generics.RetrieveUpdateD
     serializer_class = ManufacturerPartAttachmentSerializer
 
 
-class ManufacturerPartParameterList(generics.ListCreateAPIView):
+class ManufacturerPartParameterList(ListCreateDestroyAPIView):
     """API endpoint for list view of ManufacturerPartParamater model."""
 
     queryset = ManufacturerPartParameter.objects.all()
@@ -253,7 +253,7 @@ class ManufacturerPartParameterDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ManufacturerPartParameterSerializer
 
 
-class SupplierPartList(generics.ListCreateAPIView):
+class SupplierPartList(ListCreateDestroyAPIView):
     """API endpoint for list view of SupplierPart object.
 
     - GET: Return list of SupplierPart objects
