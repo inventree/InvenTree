@@ -606,8 +606,8 @@ def after_save_purchase_order(sender, instance: PurchaseOrder, created: bool, **
             trigger_notification(
                 instance,
                 'order.new_purchase_order',
-                targets=[instance.responsible],
-                targets_exclude=set(instance.created_by),
+                targets=set([instance.responsible]),
+                targets_exclude=set([instance.created_by]),
                 context=context,
             )
 
@@ -921,8 +921,8 @@ def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs
             trigger_notification(
                 instance,
                 'order.new_sales_order',
-                targets=[instance.responsible],
-                target_exclude=set(instance.created_by),
+                targets=set([instance.responsible]),
+                target_exclude=set([instance.created_by]),
                 context=context,
             )
 
