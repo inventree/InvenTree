@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-06 11:28+0000\n"
-"PO-Revision-Date: 2022-06-05 14:34\n"
+"PO-Revision-Date: 2022-06-06 14:34\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -7378,16 +7378,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -9249,10 +9247,8 @@ msgid "Set Part Category"
 msgstr ""
 
 #: templates/js/translated/part.js:1640
-#, fuzzy
-#| msgid "Select Category"
 msgid "Select Part Category"
-msgstr "Vyberte kategorii"
+msgstr ""
 
 #: templates/js/translated/part.js:1653
 msgid "Category is required"
@@ -10322,3 +10318,4 @@ msgstr ""
 #: users/models.py:219
 msgid "Permission to delete items"
 msgstr ""
+
