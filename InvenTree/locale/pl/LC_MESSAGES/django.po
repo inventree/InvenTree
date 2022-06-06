@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-06 11:28+0000\n"
-"PO-Revision-Date: 2022-06-05 14:34\n"
+"PO-Revision-Date: 2022-06-06 14:33\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -239,10 +239,8 @@ msgid "parent"
 msgstr "nadrzędny"
 
 #: InvenTree/models.py:466
-#, fuzzy
-#| msgid "Server error"
 msgid "Server Error"
-msgstr "Błąd serwera"
+msgstr ""
 
 #: InvenTree/models.py:467
 msgid "An error has been logged by the server."
@@ -1184,10 +1182,8 @@ msgid "Stock required for build order"
 msgstr ""
 
 #: build/tasks.py:118
-#, fuzzy
-#| msgid "New Build Order"
 msgid "Overdue Build Order"
-msgstr "Nowe zlecenie budowy"
+msgstr ""
 
 #: build/tasks.py:123
 #, python-brace-format
@@ -1893,20 +1889,16 @@ msgid "Default page size for PDF reports"
 msgstr ""
 
 #: common/models.py:968
-#, fuzzy
-#| msgid "Enable Reports"
 msgid "Enable Test Reports"
-msgstr "Włącz raporty"
+msgstr ""
 
 #: common/models.py:969
 msgid "Enable generation of test reports"
 msgstr "Włącz generowanie raportów testów"
 
 #: common/models.py:975
-#, fuzzy
-#| msgid "Test Reports"
 msgid "Attach Test Reports"
-msgstr "Raporty testów"
+msgstr ""
 
 #: common/models.py:976
 msgid "When printing a Test Report, attach a copy of the Test Report to the associated Stock Item"
@@ -3005,7 +2997,7 @@ msgstr ""
 #: company/templates/company/detail.html:147
 #: order/templates/order/sales_orders.html:20
 msgid "Create new sales order"
-msgstr ""
+msgstr "Utwórz nowe zlecenie sprzedaży"
 
 #: company/templates/company/detail.html:148
 #: order/templates/order/sales_orders.html:21
@@ -3775,22 +3767,17 @@ msgid "The following serial numbers are already allocated"
 msgstr ""
 
 #: order/tasks.py:26
-#, fuzzy
-#| msgid "New Purchase Order"
 msgid "Overdue Purchase Order"
-msgstr "Nowe zamówienie zakupu"
+msgstr ""
 
 #: order/tasks.py:31
-#, fuzzy, python-brace-format
-#| msgid "Purchase order no longer exists"
+#, python-brace-format
 msgid "Purchase order {po} is now overdue"
-msgstr "Zamówienie zakupu już nie istnieje"
+msgstr ""
 
 #: order/tasks.py:88
-#, fuzzy
-#| msgid "Sales Order"
 msgid "Overdue Sales Order"
-msgstr "Zamówienie zakupu"
+msgstr ""
 
 #: order/tasks.py:93
 #, python-brace-format
@@ -4210,7 +4197,7 @@ msgstr "Czy szablon"
 
 #: part/models.py:746
 msgid "Is this part a template part?"
-msgstr ""
+msgstr "Czy ta część stanowi szablon części?"
 
 #: part/models.py:756
 msgid "Is this part a variant of another part?"
@@ -4306,7 +4293,7 @@ msgstr "Czy ta część może być użyta do budowy innych części?"
 
 #: part/models.py:897
 msgid "Does this part have tracking for unique items?"
-msgstr ""
+msgstr "Czy ta część wymaga śledzenia każdego towaru z osobna?"
 
 #: part/models.py:902
 msgid "Can this part be purchased from external suppliers?"
@@ -5645,10 +5632,8 @@ msgid "Template file '{template}' is missing or does not exist"
 msgstr ""
 
 #: report/api.py:359
-#, fuzzy
-#| msgid "Test Reports"
 msgid "Test report"
-msgstr "Raporty testów"
+msgstr ""
 
 #: report/models.py:152
 msgid "Template name"
@@ -6197,10 +6182,8 @@ msgid "Install Stock Item"
 msgstr ""
 
 #: stock/templates/stock/item.html:290
-#, fuzzy
-#| msgid "Select a matching supplier part for this stock item"
 msgid "Delete all test results for this stock item"
-msgstr "Wybierz pasującą część dostawcy dla tego towaru"
+msgstr ""
 
 #: stock/templates/stock/item.html:331 templates/js/translated/stock.js:1455
 msgid "Add Test Result"
@@ -6457,7 +6440,7 @@ msgstr "Nowa lokalizacja"
 #: stock/templates/stock/location.html:109
 #: stock/templates/stock/location.html:115
 msgid "Location Path"
-msgstr ""
+msgstr "Ścieżka lokalizacji"
 
 #: stock/templates/stock/location.html:116
 msgid "Top level stock location"
@@ -6475,7 +6458,7 @@ msgstr ""
 #: stock/templates/stock/location.html:189
 #: stock/templates/stock/location_sidebar.html:5
 msgid "Sublocations"
-msgstr ""
+msgstr "Podlokalizacje"
 
 #: stock/templates/stock/location.html:156 templates/InvenTree/search.html:165
 #: templates/js/translated/search.js:238 users/models.py:38
@@ -6650,23 +6633,23 @@ msgstr ""
 
 #: templates/InvenTree/index.html:235
 msgid "Overdue Build Orders"
-msgstr ""
+msgstr "Zaległe zlecenia budowy"
 
 #: templates/InvenTree/index.html:255
 msgid "Outstanding Purchase Orders"
-msgstr ""
+msgstr "Trwające zlecenia zakupu"
 
 #: templates/InvenTree/index.html:266
 msgid "Overdue Purchase Orders"
-msgstr ""
+msgstr "Zaległe zlecenia zakupu"
 
 #: templates/InvenTree/index.html:286
 msgid "Outstanding Sales Orders"
-msgstr ""
+msgstr "Trwające zlecenia sprzedaży"
 
 #: templates/InvenTree/index.html:297
 msgid "Overdue Sales Orders"
-msgstr ""
+msgstr "Zaległe zlecenia sprzedaży"
 
 #: templates/InvenTree/notifications/history.html:9
 msgid "Notification History"
@@ -7395,22 +7378,18 @@ msgstr "Zaloguj się"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
-msgstr ""
-"Zaloguj się za pomocą jednego\n"
+msgstr "Zaloguj się za pomocą jednego\n"
 "istniejących kont stron trzecich lub  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">zarejestruj się</a>\n"
 "w celu założenia konta i zaloguj się poniżej:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
-msgstr ""
-"Jeżeli jeszcze nie utworzyłeś konta, to proszę najpierw\n"
+msgstr "Jeżeli jeszcze nie utworzyłeś konta, to proszę najpierw\n"
 "<a href=\"%(signup_url)s\">zarejstruj się</a>."
 
 #: templates/account/login.html:45
@@ -7840,7 +7819,7 @@ msgstr "Dane wiersza"
 
 #: templates/js/translated/bom.js:250
 msgid "Download BOM Template"
-msgstr ""
+msgstr "Pobierz szablon BOM-u"
 
 #: templates/js/translated/bom.js:253 templates/js/translated/bom.js:287
 #: templates/js/translated/order.js:709 templates/js/translated/tables.js:145
@@ -9145,10 +9124,8 @@ msgid "Create Part Variant"
 msgstr "Utwórz wariant części"
 
 #: templates/js/translated/part.js:405
-#, fuzzy
-#| msgid "Active parts"
 msgid "Active Part"
-msgstr "Aktywne części"
+msgstr ""
 
 #: templates/js/translated/part.js:406
 msgid "Part cannot be deleted as it is currently active"
@@ -9159,26 +9136,20 @@ msgid "Deleting this part cannot be reversed"
 msgstr ""
 
 #: templates/js/translated/part.js:422
-#, fuzzy
-#| msgid "All selected supplier parts will be deleted"
 msgid "Any stock items for this part will be deleted"
-msgstr "Wszystkie wybrane komponenty dostawcy zostaną usunięte"
+msgstr ""
 
 #: templates/js/translated/part.js:423
 msgid "This part will be removed from any Bills of Material"
 msgstr ""
 
 #: templates/js/translated/part.js:424
-#, fuzzy
-#| msgid "All selected supplier parts will be deleted"
 msgid "All manufacturer and supplier information for this part will be deleted"
-msgstr "Wszystkie wybrane komponenty dostawcy zostaną usunięte"
+msgstr ""
 
 #: templates/js/translated/part.js:431
-#, fuzzy
-#| msgid "Delete Parts"
 msgid "Delete Part"
-msgstr "Usuń części"
+msgstr ""
 
 #: templates/js/translated/part.js:467
 msgid "You are subscribed to notifications for this item"
@@ -9279,16 +9250,12 @@ msgid "Set Part Category"
 msgstr "Ustaw kategorię części"
 
 #: templates/js/translated/part.js:1640
-#, fuzzy
-#| msgid "Set Part Category"
 msgid "Select Part Category"
-msgstr "Ustaw kategorię części"
+msgstr ""
 
 #: templates/js/translated/part.js:1653
-#, fuzzy
-#| msgid "Email required"
 msgid "Category is required"
-msgstr "Adres e-mail jest wymagany"
+msgstr ""
 
 #: templates/js/translated/part.js:1779 templates/js/translated/stock.js:2257
 msgid "Display as tree"
@@ -10355,35 +10322,3 @@ msgstr "Uprawnienie do edycji przedmiotów"
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
 
-#~ msgid "Select Category"
-#~ msgstr "Wybierz kategorię"
-
-#~ msgid "Select part category"
-#~ msgstr "Wybierz kategorię części"
-
-#~ msgid ""
-#~ "Part '<strong>%(full_name)s</strong>' cannot be deleted as it is still marked as <strong>active</strong>.\n"
-#~ "    <br>Disable the \"Active\" part attribute and re-try.\n"
-#~ "    "
-#~ msgstr ""
-#~ "Część '<strong>%(full_name)s</strong>' nie może zostać usunięta, ponieważ jest nadal oznaczona jako <strong>aktywna</strong>.\n"
-#~ "    <br>Wyłącz atrybut części \"Aktywne\" i spróbuj ponownie.\n"
-#~ "    "
-
-#~ msgid "Are you sure you want to delete part '<strong>%(full_name)s</strong>'?"
-#~ msgstr "Czy na pewno chcesz usunąć część '<strong>%(full_name)s</strong>'?"
-
-#~ msgid "This part is used in BOMs for %(count)s other parts. If you delete this part, the BOMs for the following parts will be updated"
-#~ msgstr "Ta część jest używana w BOM-ach dla %(count)s innych części. Jeśli usuniesz tę część, BOM-y dla następujących części zostaną zaktualizowane"
-
-#~ msgid "Remove part"
-#~ msgstr "Usuń część"
-
-#~ msgid "Confirm Part Deletion"
-#~ msgstr "Potwierdź usunięcie części"
-
-#~ msgid "Part was deleted"
-#~ msgstr "Część została usunięta"
-
-#~ msgid "Delete All Test Data"
-#~ msgstr "Usuń wszystkie dane testowe"
