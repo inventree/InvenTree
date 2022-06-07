@@ -105,20 +105,24 @@ class SetupInstance():
     """Formlist fir SetupView (in order of apperance)"""
     done: str
     """Message at the successfull end of the setup"""
+    done_function: str
+    """Reference to the function that should be called when the setup is done."""
     _data: dict = None
 
-    def __init__(self, data: dict, pages: PageDict = None, title: str = None, done: str = None) -> None:
+    def __init__(self, data: dict, pages: PageDict = None, title: str = None, done: str = None, done_function: str = None) -> None:
         """Create instance.
 
         Args:
             data (dict): Data for setup.
             pages (PageDict, optional): All contained pages. Defaults to None.
             title (str, optional): Title for renderings. Defaults to None.
-            done (str, optional): action to take once the setup is done. Defaults to None.
+            done (str, optional): Title of the final step once the setup is done. Defaults to All done here.
+            done_function (str, optional): Action to take once the setup is done. Defaults to None.
         """
         self.pages = PageDict(pages)
         self.title = title if title else data.get('title')
         self.done = done if done else data.get('done', _('All done here'))
+        self.done_function = done_function if done_function else data.get('done_function', None)
         self._data = data
 
         # process formlist
@@ -177,12 +181,15 @@ class SetupRegistry:
 
             # Get done text. First check if it is declared - else look at the steps
             done = data.get('done', None)
+            done_function = None
             pages = data.get('pages', PageDict())
             if not done and pages and len(pages) > 0:
                 last_page = list(pages.values())[len(pages) - 1]
                 is_done = last_page.get('is_done', None)
                 if is_done:
                     done = last_page.get('title', None)
+                    if isinstance(done, str):
+                        done_function = done
 
             # Convert pages
             if pages:
