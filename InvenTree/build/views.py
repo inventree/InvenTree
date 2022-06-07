@@ -1,11 +1,9 @@
 """Django views for interacting with Build objects."""
 
-from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView
 
 from .models import Build
 
-from InvenTree.views import AjaxDeleteView
 from InvenTree.views import InvenTreeRoleMixin
 from InvenTree.status_codes import BuildStatus
 
@@ -49,11 +47,3 @@ class BuildDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
         ctx['has_untracked_bom_items'] = build.has_untracked_bom_items()
 
         return ctx
-
-
-class BuildDelete(AjaxDeleteView):
-    """View to delete a build."""
-
-    model = Build
-    ajax_template_name = 'build/delete_build.html'
-    ajax_form_title = _('Delete Build Order')
