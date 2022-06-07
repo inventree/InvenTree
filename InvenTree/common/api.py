@@ -265,6 +265,10 @@ class NotificationList(BulkDeleteMixin, generics.ListAPIView):
     queryset = common.models.NotificationMessage.objects.all()
     serializer_class = common.serializers.NotificationMessageSerializer
 
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
     filter_backends = [
         DjangoFilterBackend,
         filters.SearchFilter,
