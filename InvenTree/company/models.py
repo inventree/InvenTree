@@ -536,7 +536,7 @@ class SupplierPart(models.Model):
     )
 
     availability_updated = models.DateTimeField(
-        null=True, verbose_name=_('Availability Updated'),
+        null=True, blank=True, verbose_name=_('Availability Updated'),
         help_text=_('Date of last update of availability data'),
     )
 
