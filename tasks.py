@@ -328,7 +328,9 @@ def export_records(c, filename='data.json', overwrite = False):
     with open(filename, "w") as f_out:
         f_out.write(json.dumps(data, indent=2))
 
-    print("Data export completed")
+    print("Data export completed. Removing temporary files")
+    
+    os.remove(tmpfile)
 
 
 @task(help={'filename': 'Input filename', 'clear': 'Clear existing data before import'}, post=[rebuild_models, rebuild_thumbnails])
