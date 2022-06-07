@@ -1,6 +1,7 @@
 {% load i18n %}
 
 /* exported
+    loadNotificationTable,
     showAlertOrCache,
     showCachedAlerts,
     startNotificationWatcher,
@@ -8,6 +9,91 @@
     openNotificationPanel,
     closeNotificationPanel,
 */
+
+
+/*
+ * Load notification table
+ */
+function loadNotificationTable(table, options={}, enableDelete=false) {
+
+    var params = options.params || {};
+    var read = typeof(params.read) === 'undefined' ? true : params.read;
+
+    setupFilterList('notifications', table);
+
+    $(table).inventreeTable({
+        url: options.url,
+        name: options.name,
+        groupBy: false,
+        search: true,
+        queryParams: {
+            ordering: 'age',
+            read: read,
+        },
+        paginationVAlign: 'bottom',
+        formatNoMatches: options.no_matches,
+        columns: [
+            {
+                field: 'pk',
+                title: '{% trans "ID" %}',
+                visible: false,
+                switchable: false,
+            },
+            {
+                field: 'age',
+                title: '{% trans "Age" %}',
+                sortable: 'true',
+                formatter: function(value, row) {
+                    return row.age_human
+                }
+            },
+            {
+                field: 'category',
+                title: '{% trans "Category" %}',
+                sortable: 'true',
+            },
+            {
+                field: 'target',
+                title: '{% trans "Item" %}',
+                sortable: 'true',
+                formatter: function(value, row, index, field) {
+                    if (value == null) {
+                        return '';
+                    }
+
+                    var html = `${value.model}: ${value.name}`;
+                    if (value.link ) {html = `<a href='${value.link}'>${html}</a>`;}
+                    return html;
+                }
+            },
+            {
+                field: 'name',
+                title: '{% trans "Name" %}',
+            },
+            {
+                field: 'message',
+                title: '{% trans "Message" %}',
+            },
+            {
+                formatter: function(value, row, index, field) {
+                    var bRead = getReadEditButton(row.pk, row.read)
+                    if (enableDelete) {
+                        var bDel = `<button title='{% trans "Delete Notification" %}' class='notification-delete btn btn-outline-secondary' type='button' pk='${row.pk}'><span class='fas fa-trash-alt icon-red'></span></button>`;
+                    } else {
+                        var bDel = '';
+                    }
+                    var html = `<div class='btn-group float-right' role='group'>${bRead}${bDel}</div>`;
+                    return html;
+                }
+            }
+        ]
+    });
+
+    $(table).on('click', '.notification-read', function() {
+        updateNotificationReadState($(this));
+    });
+}
+
 
 /*
  * Add a cached alert message to sesion storage

@@ -17,8 +17,27 @@
 
 {% block content %}
 
+<div id='history-buttons'>
+    <div class='btn-group' role='group'>
+        <div class='btn-group'>
+            <button class='btn btn-primary dropdown-toggle' type='button' data-bs-toggle='dropdown' title='{% trans "Actions" %}'>
+                <span class='fas fa-tools'></span> <span class='caret'></span>
+            </button>
+            <ul class='dropdown-menu'>
+                <li>
+                    <a class='dropdown-item' href='#' id='history-delete' title='{% trans "Delete Notifications" %}'>
+                        <span class='fas fa-trash-alt icon-red'></span> {% trans "Delete Notifications" %}
+                    </a>
+                </li>
+            </ul>
+        </div>
+        {% include "filter_list.html" with id="notifications" %}
+    </div>
+</div>
+
 <div class='row'>
-    <table class='table table-striped table-condensed' id='history-table'>
+
+    <table class='table table-striped table-condensed' id='history-table' data-toobar='#history-buttons'>
     </table>
 </div>
 
