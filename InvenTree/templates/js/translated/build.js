@@ -795,7 +795,7 @@ function sumAllocationsForBomRow(bom_row, allocations) {
         quantity += allocation.quantity;
     });
 
-    return parseFloat(quantity).toFixed(15);
+    return formatDecimal(quantity, 10);
 }
 
 
@@ -1490,8 +1490,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
 
         // Store the required quantity in the row data
         // Prevent weird rounding issues
-        row.required = parseFloat(quantity.toFixed(15));
-
+        row.required = formatDecimal(quantity, 15);
         return row.required;
     }
 
@@ -2043,7 +2042,7 @@ function allocateStockToBuild(build_id, part_id, bom_items, options={}) {
         }
 
         // Ensure the quantity sent to the form field is correctly formatted
-        remaining = parseFloat(remaining.toFixed(15));
+        remaining = formatDecimal(remaining, 15);
 
         // We only care about entries which are not yet fully allocated
         if (remaining > 0) {

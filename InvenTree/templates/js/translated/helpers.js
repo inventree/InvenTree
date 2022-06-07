@@ -4,6 +4,7 @@
     blankImage,
     deleteButton,
     editButton,
+    formatDecimal,
     imageHoverIcon,
     makeIconBadge,
     makeIconButton,
@@ -31,6 +32,13 @@ function editButton(url, text='{% trans "Edit" %}') {
 
 function deleteButton(url, text='{% trans "Delete" %}') {
     return `<button class='btn btn-danger delete-button btn-sm' type='button' url='${url}'>${text}</button>`;
+}
+
+
+/* Format a decimal (floating point) number, to strip trailing zeros
+ */
+function formatDecimal(number, places=5) {
+    return +parseFloat(number).toFixed(places);
 }
 
 

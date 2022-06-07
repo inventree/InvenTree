@@ -953,6 +953,21 @@ function loadSupplierPartTable(table, url, options) {
                 sortable: false,
             },
             {
+                field: 'available',
+                title: '{% trans "Available" %}',
+                sortable: true,
+                formatter: function(value, row) {
+                    if (row.availability_updated) {
+                        var html = formatDecimal(value);
+                        var date = renderDate(row.availability_updated, {showTime: true});
+                        html += `<span class='fas fa-info-circle float-right' title='{% trans "Last Updated" %}: ${date}'></span>`;
+                        return html;
+                    } else {
+                        return '-';
+                    }
+                }
+            },
+            {
                 field: 'actions',
                 title: '',
                 sortable: false,

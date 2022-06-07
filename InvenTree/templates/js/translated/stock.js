@@ -1191,7 +1191,7 @@ function noResultBadge() {
 
 function formatDate(row) {
     // Function for formatting date field
-    var html = row.date;
+    var html = renderDate(row.date);
 
     if (row.user_detail) {
         html += `<span class='badge badge-right rounded-pill bg-secondary'>${row.user_detail.username}</span>`;

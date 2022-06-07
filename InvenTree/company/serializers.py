@@ -277,7 +277,7 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
         available = validated_data.get('available', None)
 
         if available is not None:
-            supplier_part.availability_updated = datetime.now().date()
+            supplier_part.availability_updated = datetime.now()
             supplier_part.save()
 
         # Get ManufacturerPart raw data (unvalidated)
