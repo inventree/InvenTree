@@ -280,9 +280,7 @@
 
                     // Ensure that we are only deleting the correct test results
                     response.forEach(function(result) {
-                        if (result.stock_item == {{ item.pk }}) {
-                            items.push(result.pk);
-                        }
+                        items.push(result.pk);
                     });
 
                     var html = `
@@ -293,6 +291,9 @@
                     constructForm(url, {
                         form_data: {
                             items: items,
+                            filters: {
+                                stock_item: {{ item.pk }},
+                            }
                         },
                         method: 'DELETE',
                         title: '{% trans "Delete Test Data" %}',

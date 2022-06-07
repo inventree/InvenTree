@@ -968,10 +968,28 @@ class StockTestResultTest(StockAPITestCase):
         )
 
         # Now, let's delete all the newly created items with a single API request
+        # However, we will provide incorrect filters
         response = self.delete(
             url,
             {
                 'items': tests,
+                'filters': {
+                    'stock_item': 10,
+                }
+            },
+            expected_code=204
+        )
+
+        self.assertEqual(StockItemTestResult.objects.count(), n + 50)
+
+        # Try again, but with the correct filters this time
+        response = self.delete(
+            url,
+            {
+                'items': tests,
+                'filters': {
+                    'stock_item': 1,
+                }
             },
             expected_code=204
         )
