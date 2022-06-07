@@ -19,7 +19,7 @@ function loadNotificationTable(table, options={}, enableDelete=false) {
     var params = options.params || {};
     var read = typeof(params.read) === 'undefined' ? true : params.read;
 
-    setupFilterList('notifications', table);
+    setupFilterList(`notifications-${options.name}`, table);
 
     $(table).inventreeTable({
         url: options.url,

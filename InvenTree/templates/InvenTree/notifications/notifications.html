@@ -39,10 +39,6 @@ loadNotificationTable("#inbox-table", {
     no_matches: function() { return '{% trans "No unread notifications found" %}'; },
 });
 
-$("#inbox-refresh").on('click', function() {
-    $("#inbox-table").bootstrapTable('refresh');
-});
-
 $("#mark-all").on('click', function() {
     inventreeGet(
         '{% url "api-notifications-readall" %}',
