@@ -266,3 +266,45 @@ class APITests(InvenTreeAPITestCase):
         self.assertIn('GET', actions.keys())
         self.assertIn('PUT', actions.keys())
         self.assertIn('DELETE', actions.keys())
+
+
+class BulkDeleteTests(InvenTreeAPITestCase):
+    """Unit tests for the BulkDelete endpoints"""
+
+    superuser = True
+
+    def test_errors(self):
+        """Test that the correct errors are thrown"""
+
+        url = reverse('api-stock-test-result-list')
+
+        # DELETE without any of the required fields
+        response = self.delete(
+            url,
+            {},
+            expected_code=400
+        )
+
+        self.assertIn('List of items or filters must be provided for bulk deletion', str(response.data))
+
+        # DELETE with invalid 'items'
+        response = self.delete(
+            url,
+            {
+                'items': {"hello": "world"},
+            },
+            expected_code=400,
+        )
+
+        self.assertIn("'items' must be supplied as a list object", str(response.data))
+
+        # DELETE with invalid 'filters'
+        response = self.delete(
+            url,
+            {
+                'filters': [1, 2, 3],
+            },
+            expected_code=400,
+        )
+
+        self.assertIn("'filters' must be supplied as a dict object", str(response.data))

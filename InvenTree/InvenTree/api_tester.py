@@ -146,7 +146,7 @@ class InvenTreeAPITestCase(UserMixin, APITestCase):
         if data is None:
             data = {}
 
-        response = self.client.delete(url, data=data, foramt=format)
+        response = self.client.delete(url, data=data, format=format)
 
         if expected_code is not None:
             self.assertEqual(response.status_code, expected_code)

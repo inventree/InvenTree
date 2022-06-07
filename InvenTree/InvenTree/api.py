@@ -64,6 +64,10 @@ class BulkDeleteMixin:
     - Speed (single API call and DB query)
     """
 
+    def filter_delete_queryset(self, queryset, request):
+        """Provide custom filtering for the queryset *before* it is deleted"""
+        return queryset
+
     def delete(self, request, *args, **kwargs):
         """Perform a DELETE operation against this list endpoint.
 
@@ -81,18 +85,43 @@ class BulkDeleteMixin:
         except AttributeError:
             items = request.data.get('items', None)
 
-        if items is None or type(items) is not list or not items:
+        # Extract the filters from the request body
+        try:
+            filters = request.data.getlist('filters', None)
+        except AttributeError:
+            filters = request.data.get('filters', None)
+
+        if not items and not filters:
             raise ValidationError({
-                "non_field_errors": ["List of items must be provided for bulk deletion"]
+                "non_field_errors": ["List of items or filters must be provided for bulk deletion"],
+            })
+
+        if items and type(items) is not list:
+            raise ValidationError({
+                "items": ["'items' must be supplied as a list object"]
+            })
+
+        if filters and type(filters) is not dict:
+            raise ValidationError({
+                "filters": ["'filters' must be supplied as a dict object"]
             })
 
         # Keep track of how many items we deleted
         n_deleted = 0
 
         with transaction.atomic():
-            objects = model.objects.filter(id__in=items)
-            n_deleted = objects.count()
-            objects.delete()
+
+            queryset = model.objects.all()
+            queryset = self.filter_delete_queryset(queryset, request)
+
+            if items:
+                queryset = queryset.filter(id__in=items)
+
+            if filters:
+                queryset = queryset.filter(**filters)
+
+            n_deleted = queryset.count()
+            queryset.delete()
 
         return Response(
             {
