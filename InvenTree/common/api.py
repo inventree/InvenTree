@@ -16,6 +16,7 @@ from rest_framework.views import APIView
 
 import common.models
 import common.serializers
+from InvenTree.api import BulkDeleteMixin
 from InvenTree.helpers import inheritors
 from plugin.models import NotificationUserSetting
 from plugin.serializers import NotificationUserSettingSerializer
@@ -258,7 +259,7 @@ class NotificationUserSettingsDetail(generics.RetrieveUpdateAPIView):
     ]
 
 
-class NotificationList(generics.ListAPIView):
+class NotificationList(BulkDeleteMixin, generics.ListAPIView):
     """List view for all notifications of the current user."""
 
     queryset = common.models.NotificationMessage.objects.all()
