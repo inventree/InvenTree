@@ -682,6 +682,7 @@ def get_objectreference(obj, type_ref: str = 'content_type', object_ref: str = '
 
     The method name must always be the name of the field prefixed by 'get_'
     """
+
     model_cls = getattr(obj, type_ref)
     obj_id = getattr(obj, object_ref)
 
@@ -691,7 +692,12 @@ def get_objectreference(obj, type_ref: str = 'content_type', object_ref: str = '
 
     # resolve referenced data into objects
     model_cls = model_cls.model_class()
-    item = model_cls.objects.get(id=obj_id)
+
+    try:
+        item = model_cls.objects.get(id=obj_id)
+    except model_cls.DoesNotExist:
+        return None
+
     url_fnc = getattr(item, 'get_absolute_url', None)
 
     # create output

@@ -13,15 +13,18 @@
 <div class='btn btn-outline-secondary' type='button' id='mark-all' title='{% trans "Mark all as read" %}'>
     <span class='fa fa-bookmark'></span> {% trans "Mark all as read" %}
 </div>
-<div class='btn btn-secondary' type='button' id='inbox-refresh' title='{% trans "Refresh Pending Notifications" %}'>
-    <span class='fa fa-sync'></span> {% trans "Refresh Pending Notifications" %}
-</div>
 {% endblock %}
 
 {% block content %}
 
+<div id='inbox-buttons'>
+    <div class='btn-group' role='group'>
+        {% include "filter_list.html" with id="notifications-inbox" %}
+    </div>
+</div>
+
 <div class='row'>
-    <table class='table table-striped table-condensed' id='inbox-table'>
+    <table class='table table-striped table-condensed' id='inbox-table' data-toolbar='#inbox-buttons'>
     </table>
 </div>
 

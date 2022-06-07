@@ -215,15 +215,15 @@ class APITests(InvenTreeAPITestCase):
 
         actions = self.getActions(url)
 
-        # No actions, as there are no permissions!
-        self.assertEqual(len(actions), 0)
+        # Even without permissions, GET action is available
+        self.assertEqual(len(actions), 1)
 
         # Assign a new role
         self.assignRole('part.view')
         actions = self.getActions(url)
 
-        # As we don't have "add" permission, there should be no available API actions
-        self.assertEqual(len(actions), 0)
+        # As we don't have "add" permission, there should be only the GET API action
+        self.assertEqual(len(actions), 1)
 
         # But let's make things interesting...
         # Why don't we treat ourselves to some "add" permissions
@@ -244,7 +244,8 @@ class APITests(InvenTreeAPITestCase):
         actions = self.getActions(url)
 
         # No actions, as we do not have any permissions!
-        self.assertEqual(len(actions), 0)
+        self.assertEqual(len(actions), 1)
+        self.assertIn('GET', actions.keys())
 
         # Add a 'add' permission
         # Note: 'add' permission automatically implies 'change' also
@@ -266,3 +267,45 @@ class APITests(InvenTreeAPITestCase):
         self.assertIn('GET', actions.keys())
         self.assertIn('PUT', actions.keys())
         self.assertIn('DELETE', actions.keys())
+
+
+class BulkDeleteTests(InvenTreeAPITestCase):
+    """Unit tests for the BulkDelete endpoints"""
+
+    superuser = True
+
+    def test_errors(self):
+        """Test that the correct errors are thrown"""
+
+        url = reverse('api-stock-test-result-list')
+
+        # DELETE without any of the required fields
+        response = self.delete(
+            url,
+            {},
+            expected_code=400
+        )
+
+        self.assertIn('List of items or filters must be provided for bulk deletion', str(response.data))
+
+        # DELETE with invalid 'items'
+        response = self.delete(
+            url,
+            {
+                'items': {"hello": "world"},
+            },
+            expected_code=400,
+        )
+
+        self.assertIn("'items' must be supplied as a list object", str(response.data))
+
+        # DELETE with invalid 'filters'
+        response = self.delete(
+            url,
+            {
+                'filters': [1, 2, 3],
+            },
+            expected_code=400,
+        )
+
+        self.assertIn("'filters' must be supplied as a dict object", str(response.data))
