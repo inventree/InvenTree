@@ -151,7 +151,7 @@ class CompanyImageDownloadFromURL(AjaxUpdateView):
         try:
             self.image = Image.open(response.raw).convert()
             self.image.verify()
-        except:
+        except Exception:
             form.add_error('url', _("Supplied URL is not a valid image file"))
             return
 

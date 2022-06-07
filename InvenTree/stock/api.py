@@ -22,7 +22,8 @@ import stock.serializers as StockSerializers
 from build.models import Build
 from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer, SupplierPartSerializer
-from InvenTree.api import APIDownloadMixin, AttachmentMixin
+from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
+                           ListCreateDestroyAPIView)
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import (DownloadFile, extract_serial_numbers, isNull,
                                str2bool)
@@ -99,7 +100,7 @@ class StockItemContextMixin:
 
         try:
             context['item'] = StockItem.objects.get(pk=self.kwargs.get('pk', None))
-        except:
+        except Exception:
             pass
 
         return context
@@ -465,7 +466,7 @@ class StockFilter(rest_filters.FilterSet):
     updated_after = rest_filters.DateFilter(label='Updated after', field_name='updated', lookup_expr='gte')
 
 
-class StockList(APIDownloadMixin, generics.ListCreateAPIView):
+class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
     """API endpoint for list view of Stock objects.
 
     - GET: Return a list of all StockItem objects (with optional query filters)
@@ -830,7 +831,7 @@ class StockList(APIDownloadMixin, generics.ListCreateAPIView):
 
                 if part.tree_id is not None:
                     queryset = queryset.filter(part__tree_id=part.tree_id)
-            except:
+            except Exception:
                 pass
 
         # Filter by 'allocated' parts?
@@ -1043,7 +1044,7 @@ class StockList(APIDownloadMixin, generics.ListCreateAPIView):
     ]
 
 
-class StockAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
+class StockAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     """API endpoint for listing (and creating) a StockItemAttachment (file upload)."""
 
     queryset = StockItemAttachment.objects.all()
@@ -1060,7 +1061,7 @@ class StockAttachmentList(generics.ListCreateAPIView, AttachmentMixin):
     ]
 
 
-class StockAttachmentDetail(generics.RetrieveUpdateDestroyAPIView, AttachmentMixin):
+class StockAttachmentDetail(AttachmentMixin, generics.RetrieveUpdateDestroyAPIView):
     """Detail endpoint for StockItemAttachment."""
 
     queryset = StockItemAttachment.objects.all()
@@ -1074,7 +1075,7 @@ class StockItemTestResultDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = StockSerializers.StockItemTestResultSerializer
 
 
-class StockItemTestResultList(generics.ListCreateAPIView):
+class StockItemTestResultList(ListCreateDestroyAPIView):
     """API endpoint for listing (and creating) a StockItemTestResult object."""
 
     queryset = StockItemTestResult.objects.all()
@@ -1144,7 +1145,7 @@ class StockItemTestResultList(generics.ListCreateAPIView):
         """Set context before returning serializer."""
         try:
             kwargs['user_detail'] = str2bool(self.request.query_params.get('user_detail', False))
-        except:
+        except Exception:
             pass
 
         kwargs['context'] = self.get_serializer_context()
@@ -1186,12 +1187,12 @@ class StockTrackingList(generics.ListAPIView):
         """Set context before returning serializer."""
         try:
             kwargs['item_detail'] = str2bool(self.request.query_params.get('item_detail', False))
-        except:
+        except Exception:
             pass
 
         try:
             kwargs['user_detail'] = str2bool(self.request.query_params.get('user_detail', False))
-        except:
+        except Exception:
             pass
 
         kwargs['context'] = self.get_serializer_context()
@@ -1219,7 +1220,7 @@ class StockTrackingList(generics.ListAPIView):
                     part = Part.objects.get(pk=deltas['part'])
                     serializer = PartBriefSerializer(part)
                     deltas['part_detail'] = serializer.data
-                except:
+                except Exception:
                     pass
 
             # Add location detail
@@ -1228,7 +1229,7 @@ class StockTrackingList(generics.ListAPIView):
                     location = StockLocation.objects.get(pk=deltas['location'])
                     serializer = StockSerializers.LocationSerializer(location)
                     deltas['location_detail'] = serializer.data
-                except:
+                except Exception:
                     pass
 
             # Add stockitem detail
@@ -1237,7 +1238,7 @@ class StockTrackingList(generics.ListAPIView):
                     stockitem = StockItem.objects.get(pk=deltas['stockitem'])
                     serializer = StockSerializers.StockItemSerializer(stockitem)
                     deltas['stockitem_detail'] = serializer.data
-                except:
+                except Exception:
                     pass
 
             # Add customer detail
@@ -1246,7 +1247,7 @@ class StockTrackingList(generics.ListAPIView):
                     customer = Company.objects.get(pk=deltas['customer'])
                     serializer = CompanySerializer(customer)
                     deltas['customer_detail'] = serializer.data
-                except:
+                except Exception:
                     pass
 
             # Add purchaseorder detail
@@ -1255,7 +1256,7 @@ class StockTrackingList(generics.ListAPIView):
                     order = PurchaseOrder.objects.get(pk=deltas['purchaseorder'])
                     serializer = PurchaseOrderSerializer(order)
                     deltas['purchaseorder_detail'] = serializer.data
-                except:
+                except Exception:
                     pass
 
         if request.is_ajax():

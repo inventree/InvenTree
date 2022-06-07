@@ -44,7 +44,7 @@ class InvenTreeMetadata(SimpleMetadata):
 
         if str2bool(request.query_params.get('context', False)):
 
-            if hasattr(self.serializer, 'get_context_data'):
+            if hasattr(self, 'serializer') and hasattr(self.serializer, 'get_context_data'):
                 context = self.serializer.get_context_data()
 
             metadata['context'] = context
@@ -70,33 +70,36 @@ class InvenTreeMetadata(SimpleMetadata):
 
             actions = metadata.get('actions', None)
 
-            if actions is not None:
+            if actions is None:
+                actions = {}
 
-                check = users.models.RuleSet.check_table_permission
+            check = users.models.RuleSet.check_table_permission
 
-                # Map the request method to a permission type
-                rolemap = {
-                    'POST': 'add',
-                    'PUT': 'change',
-                    'PATCH': 'change',
-                    'DELETE': 'delete',
-                }
+            # Map the request method to a permission type
+            rolemap = {
+                'POST': 'add',
+                'PUT': 'change',
+                'PATCH': 'change',
+                'DELETE': 'delete',
+            }
 
-                # Remove any HTTP methods that the user does not have permission for
-                for method, permission in rolemap.items():
+            # Remove any HTTP methods that the user does not have permission for
+            for method, permission in rolemap.items():
 
-                    result = check(user, table, permission)
+                result = check(user, table, permission)
 
-                    if method in actions and not result:
-                        del actions[method]
+                if method in actions and not result:
+                    del actions[method]
 
-                # Add a 'DELETE' action if we are allowed to delete
-                if 'DELETE' in view.allowed_methods and check(user, table, 'delete'):
-                    actions['DELETE'] = True
+            # Add a 'DELETE' action if we are allowed to delete
+            if 'DELETE' in view.allowed_methods and check(user, table, 'delete'):
+                actions['DELETE'] = True
 
-                # Add a 'VIEW' action if we are allowed to view
-                if 'GET' in view.allowed_methods and check(user, table, 'view'):
-                    actions['GET'] = True
+            # Add a 'VIEW' action if we are allowed to view
+            if 'GET' in view.allowed_methods and check(user, table, 'view'):
+                actions['GET'] = True
+
+            metadata['actions'] = actions
 
         except AttributeError:
             # We will assume that if the serializer class does *not* have a Meta
@@ -137,7 +140,7 @@ class InvenTreeMetadata(SimpleMetadata):
                         if callable(default):
                             try:
                                 default = default()
-                            except:
+                            except Exception:
                                 continue
 
                         serializer_info[name]['default'] = default

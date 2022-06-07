@@ -39,7 +39,7 @@ from .views import (AppearanceSelectView, CurrencyRefreshView,
                     CustomSessionDeleteOtherView, CustomSessionDeleteView,
                     DatabaseStatsView, DynamicJsView, EditUserView, IndexView,
                     NotificationsView, SearchView, SetPasswordView,
-                    SettingCategorySelectView, SettingsView, auth_request)
+                    SettingsView, auth_request)
 
 admin.site.site_header = "InvenTree Admin"
 
@@ -78,8 +78,6 @@ settings_urls = [
 
     re_path(r'^appearance/?', AppearanceSelectView.as_view(), name='settings-appearance'),
     re_path(r'^currencies-refresh/', CurrencyRefreshView.as_view(), name='settings-currencies-refresh'),
-
-    re_path(r'^category/', SettingCategorySelectView.as_view(), name='settings-category'),
 
     # Catch any other urls
     re_path(r'^.*$', SettingsView.as_view(template_name='InvenTree/settings/settings.html'), name='settings'),

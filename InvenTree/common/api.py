@@ -16,6 +16,7 @@ from rest_framework.views import APIView
 
 import common.models
 import common.serializers
+from InvenTree.api import BulkDeleteMixin
 from InvenTree.helpers import inheritors
 from plugin.models import NotificationUserSetting
 from plugin.serializers import NotificationUserSettingSerializer
@@ -258,11 +259,15 @@ class NotificationUserSettingsDetail(generics.RetrieveUpdateAPIView):
     ]
 
 
-class NotificationList(generics.ListAPIView):
+class NotificationList(BulkDeleteMixin, generics.ListAPIView):
     """List view for all notifications of the current user."""
 
     queryset = common.models.NotificationMessage.objects.all()
     serializer_class = common.serializers.NotificationMessageSerializer
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
 
     filter_backends = [
         DjangoFilterBackend,
@@ -274,6 +279,7 @@ class NotificationList(generics.ListAPIView):
         'category',
         'name',
         'read',
+        'creation',
     ]
 
     search_fields = [
@@ -295,6 +301,12 @@ class NotificationList(generics.ListAPIView):
 
         queryset = super().filter_queryset(queryset)
         queryset = queryset.filter(user=user)
+        return queryset
+
+    def filter_delete_queryset(self, queryset, request):
+        """Ensure that the user can only delete their *own* notifications"""
+
+        queryset = queryset.filter(user=request.user)
         return queryset
 
 

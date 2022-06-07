@@ -3,7 +3,6 @@
 import logging
 import os
 import sys
-import traceback
 from datetime import datetime
 from decimal import Decimal
 
@@ -21,7 +20,6 @@ from django.utils.translation import gettext_lazy as _
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
-from error_report.models import Error
 from markdownx.models import MarkdownxField
 from mptt.models import TreeForeignKey
 
@@ -29,8 +27,10 @@ import InvenTree.helpers
 import InvenTree.ready
 from common.settings import currency_code_default
 from company.models import Company, SupplierPart
+from InvenTree.exceptions import log_error
 from InvenTree.fields import InvenTreeModelMoneyField, RoundingDecimalField
-from InvenTree.helpers import decimal2string, getSetting, increment
+from InvenTree.helpers import (decimal2string, getSetting, increment,
+                               notify_responsible)
 from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
 from InvenTree.status_codes import (PurchaseOrderStatus, SalesOrderStatus,
                                     StockHistoryCode, StockStatus)
@@ -154,7 +154,7 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
 
     notes = MarkdownxField(blank=True, verbose_name=_('Notes'), help_text=_('Order notes'))
 
-    def get_total_price(self, target_currency=currency_code_default()):
+    def get_total_price(self, target_currency=None):
         """Calculates the total price of all order lines, and converts to the specified target currency.
 
         If not specified, the default system currency is used.
@@ -162,6 +162,10 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
         If currency conversion fails (e.g. there are no valid conversion rates),
         then we simply return zero, rather than attempting some other calculation.
         """
+        # Set default - see B008
+        if target_currency is None:
+            target_currency = currency_code_default()
+
         total = Money(0, target_currency)
 
         # gather name reference
@@ -181,13 +185,7 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
                 # Record the error, try to press on
                 kind, info, data = sys.exc_info()
 
-                Error.objects.create(
-                    kind=kind.__name__,
-                    info=info,
-                    data='\n'.join(traceback.format_exception(kind, info, data)),
-                    path='order.get_total_price',
-                )
-
+                log_error('order.get_total_price')
                 logger.error(f"Missing exchange rate for '{target_currency}'")
 
                 # Return None to indicate the calculated price is invalid
@@ -203,15 +201,8 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
                 total += line.quantity * convert_money(line.price, target_currency)
             except MissingRate:
                 # Record the error, try to press on
-                kind, info, data = sys.exc_info()
 
-                Error.objects.create(
-                    kind=kind.__name__,
-                    info=info,
-                    data='\n'.join(traceback.format_exception(kind, info, data)),
-                    path='order.get_total_price',
-                )
-
+                log_error('order.get_total_price')
                 logger.error(f"Missing exchange rate for '{target_currency}'")
 
                 # Return None to indicate the calculated price is invalid
@@ -570,6 +561,17 @@ class PurchaseOrder(Order):
             self.complete_order()  # This will save the model
 
 
+@receiver(post_save, sender=PurchaseOrder, dispatch_uid='purchase_order_post_save')
+def after_save_purchase_order(sender, instance: PurchaseOrder, created: bool, **kwargs):
+    """Callback function to be executed after a PurchaseOrder is saved."""
+    if not InvenTree.ready.canAppAccessDatabase(allow_test=True) or InvenTree.ready.isImportingData():
+        return
+
+    if created:
+        # Notify the responsible users that the purchase order has been created
+        notify_responsible(instance, sender, exclude=instance.created_by)
+
+
 class SalesOrder(Order):
     """A SalesOrder represents a list of goods shipped outwards to a customer.
 
@@ -835,29 +837,29 @@ class SalesOrder(Order):
         return self.pending_shipments().count()
 
 
-@receiver(post_save, sender=SalesOrder, dispatch_uid='build_post_save_log')
+@receiver(post_save, sender=SalesOrder, dispatch_uid='sales_order_post_save')
 def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs):
-    """Callback function to be executed after a SalesOrder instance is saved.
+    """Callback function to be executed after a SalesOrder is saved.
 
     - If the SALESORDER_DEFAULT_SHIPMENT setting is enabled, create a default shipment
     - Ignore if the database is not ready for access
     - Ignore if data import is active
     """
-
-    if not InvenTree.ready.canAppAccessDatabase(allow_test=True):
+    if not InvenTree.ready.canAppAccessDatabase(allow_test=True) or InvenTree.ready.isImportingData():
         return
 
-    if InvenTree.ready.isImportingData():
-        return
-
-    if created and getSetting('SALESORDER_DEFAULT_SHIPMENT'):
+    if created:
         # A new SalesOrder has just been created
 
-        # Create default shipment
-        SalesOrderShipment.objects.create(
-            order=instance,
-            reference='1',
-        )
+        if getSetting('SALESORDER_DEFAULT_SHIPMENT'):
+            # Create default shipment
+            SalesOrderShipment.objects.create(
+                order=instance,
+                reference='1',
+            )
+
+        # Notify the responsible users that the sales order has been created
+        notify_responsible(instance, sender, exclude=instance.created_by)
 
 
 class PurchaseOrderAttachment(InvenTreeAttachment):

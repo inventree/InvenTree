@@ -1,18 +1,29 @@
 """Unit tests for the 'build' models"""
 
+from datetime import datetime, timedelta
+
 from django.test import TestCase
 
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 
 from InvenTree import status_codes as status
 
+import common.models
+import build.tasks
 from build.models import Build, BuildItem, get_next_build_number
 from part.models import Part, BomItem, BomItemSubstitute
 from stock.models import StockItem
+from users.models import Owner
 
 
 class BuildTestBase(TestCase):
     """Run some tests to ensure that the Build model is working properly."""
+
+    fixtures = [
+        'users',
+    ]
 
     def setUp(self):
         """Initialize data to use for these tests.
@@ -84,7 +95,8 @@ class BuildTestBase(TestCase):
             reference=ref,
             title="This is a build",
             part=self.assembly,
-            quantity=10
+            quantity=10,
+            issued_by=get_user_model().objects.get(pk=1),
         )
 
         # Create some build output (StockItem) objects
@@ -372,6 +384,46 @@ class BuildTest(BuildTestBase):
         for output in outputs:
             self.assertFalse(output.is_building)
 
+    def test_overdue_notification(self):
+        """Test sending of notifications when a build order is overdue."""
+
+        self.build.target_date = datetime.now().date() - timedelta(days=1)
+        self.build.save()
+
+        # Check for overdue orders
+        build.tasks.check_overdue_build_orders()
+
+        message = common.models.NotificationMessage.objects.get(
+            category='build.overdue_build_order',
+            user__id=1,
+        )
+
+        self.assertEqual(message.name, 'Overdue Build Order')
+
+    def test_new_build_notification(self):
+        """Test that a notification is sent when a new build is created"""
+
+        Build.objects.create(
+            reference='IIIII',
+            title='Some new build',
+            part=self.assembly,
+            quantity=5,
+            issued_by=get_user_model().objects.get(pk=2),
+            responsible=Owner.create(obj=Group.objects.get(pk=3))
+        )
+
+        # Two notifications should have been sent
+        messages = common.models.NotificationMessage.objects.filter(
+            category='build.new_build',
+        )
+
+        self.assertEqual(messages.count(), 2)
+
+        self.assertFalse(messages.filter(user__pk=2).exists())
+
+        self.assertTrue(messages.filter(user__pk=3).exists())
+        self.assertTrue(messages.filter(user__pk=4).exists())
+
 
 class AutoAllocationTests(BuildTestBase):
     """Tests for auto allocating stock against a build order"""
@@ -449,8 +501,6 @@ class AutoAllocationTests(BuildTestBase):
             interchangeable=True,
             substitutes=True,
         )
-
-        # self.assertTrue(self.build.are_untracked_parts_allocated())
 
         # self.assertEqual(self.build.allocated_stock.count(), 8)
         self.assertEqual(self.build.unallocated_quantity(self.bom_item_1), 0)

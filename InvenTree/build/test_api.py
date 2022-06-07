@@ -90,7 +90,7 @@ class BuildAPITest(InvenTreeAPITestCase):
     # Required roles to access Build API endpoints
     roles = [
         'build.change',
-        'build.add'
+        'build.add',
     ]
 
 
@@ -195,7 +195,7 @@ class BuildTest(BuildAPITest):
         self.assertEqual(self.build.incomplete_outputs.count(), 0)
 
         # Create some more build outputs
-        for ii in range(10):
+        for _ in range(10):
             self.build.create_build_output(10)
 
         # Check that we are in a known state
@@ -267,6 +267,39 @@ class BuildTest(BuildAPITest):
         bo.refresh_from_db()
 
         self.assertEqual(bo.status, BuildStatus.CANCELLED)
+
+    def test_delete(self):
+        """Test that we can delete a BuildOrder via the API"""
+
+        bo = Build.objects.get(pk=1)
+
+        url = reverse('api-build-detail', kwargs={'pk': bo.pk})
+
+        # At first we do not have the required permissions
+        self.delete(
+            url,
+            expected_code=403,
+        )
+
+        self.assignRole('build.delete')
+
+        # As build is currently not 'cancelled', it cannot be deleted
+        self.delete(
+            url,
+            expected_code=400,
+        )
+
+        bo.status = BuildStatus.CANCELLED
+        bo.save()
+
+        # Now, we should be able to delete
+        self.delete(
+            url,
+            expected_code=204,
+        )
+
+        with self.assertRaises(Build.DoesNotExist):
+            Build.objects.get(pk=1)
 
     def test_create_delete_output(self):
         """Test that we can create and delete build outputs via the API."""

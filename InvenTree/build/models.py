@@ -24,7 +24,7 @@ from mptt.exceptions import InvalidMove
 from rest_framework import serializers
 
 from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode
-from InvenTree.helpers import increment, getSetting, normalize, MakeBarcode
+from InvenTree.helpers import increment, getSetting, normalize, MakeBarcode, notify_responsible
 from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
 from InvenTree.validators import validate_build_order_reference
 
@@ -1049,6 +1049,9 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
         # Run checks on required parts
         InvenTree.tasks.offload_task(build_tasks.check_build_stock, instance)
 
+        # Notify the responsible users that the build order has been created
+        notify_responsible(instance, sender, exclude=instance.issued_by)
+
 
 class BuildOrderAttachment(InvenTreeAttachment):
     """Model for storing file attachments against a BuildOrder object."""
@@ -1244,13 +1247,13 @@ class BuildItem(models.Model):
             try:
                 # Try to extract the thumbnail
                 thumb_url = self.stock_item.part.image.thumbnail.url
-            except:
+            except Exception:
                 pass
 
         if thumb_url is None and self.bom_item and self.bom_item.sub_part:
             try:
                 thumb_url = self.bom_item.sub_part.image.thumbnail.url
-            except:
+            except Exception:
                 pass
 
         if thumb_url is not None:

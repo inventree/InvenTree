@@ -14,7 +14,8 @@ from plugin.models import NotificationUserSetting, PluginConfig
 
 from .api import WebhookView
 from .models import (ColorTheme, InvenTreeSetting, InvenTreeUserSetting,
-                     NotificationEntry, WebhookEndpoint, WebhookMessage)
+                     NotificationEntry, NotificationMessage, WebhookEndpoint,
+                     WebhookMessage)
 
 CONTENT_TYPE_JSON = 'application/json'
 
@@ -78,7 +79,7 @@ class SettingsTest(InvenTreeTestCase):
 
         # check as_int
         self.assertEqual(stale_days.as_int(), 0)
-        self.assertEqual(instance_obj.as_int(), 'InvenTree server')  # not an int -> return default
+        self.assertEqual(instance_obj.as_int(), 'InvenTree')  # not an int -> return default
 
         # check as_bool
         self.assertEqual(report_test_obj.as_bool(), True)
@@ -258,7 +259,7 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
         # Access via the API, and the default value should be received
         response = self.get(url, expected_code=200)
 
-        self.assertEqual(response.data['value'], 'InvenTree server')
+        self.assertEqual(response.data['value'], 'InvenTree')
 
         # Now, the object should have been created in the DB
         self.patch(
@@ -665,6 +666,10 @@ class WebhookMessageTests(TestCase):
 class NotificationTest(InvenTreeAPITestCase):
     """Tests for NotificationEntriy."""
 
+    fixtures = [
+        'users',
+    ]
+
     def test_check_notification_entries(self):
         """Test that notification entries can be created."""
         # Create some notification entries
@@ -684,8 +689,83 @@ class NotificationTest(InvenTreeAPITestCase):
 
     def test_api_list(self):
         """Test list URL."""
+
         url = reverse('api-notifications-list')
+
         self.get(url, expected_code=200)
+
+        # Test the OPTIONS endpoint for the 'api-notification-list'
+        # Ref: https://github.com/inventree/InvenTree/pull/3154
+        response = self.options(url)
+
+        self.assertIn('DELETE', response.data['actions'])
+        self.assertIn('GET', response.data['actions'])
+        self.assertNotIn('POST', response.data['actions'])
+
+        self.assertEqual(response.data['description'], 'List view for all notifications of the current user.')
+
+        # POST action should fail (not allowed)
+        response = self.post(url, {}, expected_code=405)
+
+    def test_bulk_delete(self):
+        """Tests for bulk deletion of user notifications"""
+
+        from error_report.models import Error
+
+        # Create some notification messages by throwing errors
+        for _ii in range(10):
+            Error.objects.create()
+
+        # Check that messsages have been created
+        messages = NotificationMessage.objects.all()
+
+        # As there are three staff users (including the 'test' user) we expect 30 notifications
+        self.assertEqual(messages.count(), 30)
+
+        # Only 10 messages related to *this* user
+        my_notifications = messages.filter(user=self.user)
+        self.assertEqual(my_notifications.count(), 10)
+
+        # Get notification via the API
+        url = reverse('api-notifications-list')
+        response = self.get(url, {}, expected_code=200)
+        self.assertEqual(len(response.data), 10)
+
+        # Mark some as read
+        for ntf in my_notifications[0:3]:
+            ntf.read = True
+            ntf.save()
+
+        # Read out via API again
+        response = self.get(
+            url,
+            {
+                'read': True,
+            },
+            expected_code=200
+        )
+
+        # Check validity of returned data
+        self.assertEqual(len(response.data), 3)
+        for ntf in response.data:
+            self.assertTrue(ntf['read'])
+
+        # Now, let's bulk delete all 'unread' notifications via the API,
+        # but only associated with the logged in user
+        response = self.delete(
+            url,
+            {
+                'filters': {
+                    'read': False,
+                }
+            },
+            expected_code=204,
+        )
+
+        # Only 7 notifications should have been deleted,
+        # as the notifications associated with other users must remain untouched
+        self.assertEqual(NotificationMessage.objects.count(), 23)
+        self.assertEqual(NotificationMessage.objects.filter(user=self.user).count(), 3)
 
 
 class LoadingTest(TestCase):

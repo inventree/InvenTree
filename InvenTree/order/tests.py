@@ -3,12 +3,17 @@
 from datetime import datetime, timedelta
 
 import django.core.exceptions as django_exceptions
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.test import TestCase
 
-from company.models import SupplierPart
+import common.models
+import order.tasks
+from company.models import Company, SupplierPart
 from InvenTree.status_codes import PurchaseOrderStatus
 from part.models import Part
 from stock.models import StockLocation
+from users.models import Owner
 
 from .models import PurchaseOrder, PurchaseOrderLineItem
 
@@ -24,7 +29,8 @@ class OrderTest(TestCase):
         'part',
         'location',
         'stock',
-        'order'
+        'order',
+        'users',
     ]
 
     def test_basics(self):
@@ -197,3 +203,63 @@ class OrderTest(TestCase):
             order.receive_line_item(line, loc, line.quantity, user=None)
 
         self.assertEqual(order.status, PurchaseOrderStatus.COMPLETE)
+
+    def test_overdue_notification(self):
+        """Test overdue purchase order notification
+
+        Ensure that a notification is sent when a PurchaseOrder becomes overdue
+        """
+        po = PurchaseOrder.objects.get(pk=1)
+
+        # Created by 'sam'
+        po.created_by = get_user_model().objects.get(pk=4)
+
+        # Responsible : 'Engineers' group
+        responsible = Owner.create(obj=Group.objects.get(pk=2))
+        po.responsible = responsible
+
+        # Target date = yesterday
+        po.target_date = datetime.now().date() - timedelta(days=1)
+        po.save()
+
+        # Check for overdue purchase orders
+        order.tasks.check_overdue_purchase_orders()
+
+        for user_id in [2, 3, 4]:
+            messages = common.models.NotificationMessage.objects.filter(
+                category='order.overdue_purchase_order',
+                user__id=user_id,
+            )
+
+            self.assertTrue(messages.exists())
+
+            msg = messages.first()
+
+            self.assertEqual(msg.target_object_id, 1)
+            self.assertEqual(msg.name, 'Overdue Purchase Order')
+
+    def test_new_po_notification(self):
+        """Test that a notification is sent when a new PurchaseOrder is created
+
+        - The responsible user(s) should receive a notification
+        - The creating user should *not* receive a notification
+        """
+
+        PurchaseOrder.objects.create(
+            supplier=Company.objects.get(pk=1),
+            reference='XYZABC',
+            created_by=get_user_model().objects.get(pk=3),
+            responsible=Owner.create(obj=get_user_model().objects.get(pk=4)),
+        )
+
+        messages = common.models.NotificationMessage.objects.filter(
+            category='order.new_purchaseorder',
+        )
+
+        self.assertEqual(messages.count(), 1)
+
+        # A notification should have been generated for user 4 (who is a member of group 3)
+        self.assertTrue(messages.filter(user__pk=4).exists())
+
+        # However *no* notification should have been generated for the creating user
+        self.assertFalse(messages.filter(user__pk=3).exists())

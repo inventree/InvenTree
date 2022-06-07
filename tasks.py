@@ -1,3 +1,5 @@
+"""Tasks for automating certain actions and interacting with InvenTree from the CLI."""
+
 import json
 import os
 import pathlib
@@ -8,7 +10,7 @@ from invoke import task
 
 
 def apps():
-    """Returns a list of installed apps"""
+    """Returns a list of installed apps."""
     return [
         'build',
         'common',
@@ -43,12 +45,13 @@ def managePyPath():
     return os.path.join(managePyDir(), 'manage.py')
 
 
-def manage(c, cmd, pty=False):
+def manage(c, cmd, pty: bool = False):
     """Runs a given command against django's "manage.py" script.
 
     Args:
-        c - Command line context
-        cmd - django command to run
+        c: Command line context.
+        cmd: Django command to run.
+        pty (bool, optional): Run an interactive session. Defaults to False.
     """
     c.run('cd "{path}" && python3 manage.py {cmd}'.format(
         path=managePyDir(),

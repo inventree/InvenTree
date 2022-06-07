@@ -1,6 +1,6 @@
-"""
-Ensure that the release tag matches the InvenTree version number:
+"""Ensure that the release tag matches the InvenTree version number.
 
+Behaviour:
 master / main branch:
     - version number must end with 'dev'
 
@@ -114,15 +114,13 @@ if __name__ == '__main__':
     docker_tags = None
 
     if GITHUB_REF_TYPE == 'tag':
-        # GITHUB_REF should be of th eform /refs/heads/<tag>
+        # GITHUB_REF should be of the form /refs/heads/<tag>
         version_tag = GITHUB_REF.split('/')[-1]
         print(f"Checking requirements for tagged release - '{version_tag}':")
 
         if version_tag != version:
             print(f"Version number '{version}' does not match tag '{version_tag}'")
             sys.exit
-
-        # TODO: Check if there is already a release with this tag!
 
         if highest_release:
             docker_tags = [version_tag, 'stable']
@@ -131,17 +129,6 @@ if __name__ == '__main__':
 
     elif GITHUB_REF_TYPE == 'branch':
         # Otherwise we know we are targetting the 'master' branch
-        print("Checking requirements for 'master' development branch:")
-
-        pattern = r"^\d+(\.\d+)+ dev$"
-        result = re.match(pattern, version)
-
-        if result is None:
-            print(f"Version number '{version}' does not match required pattern for development branch")
-            sys.exit(1)
-        else:
-            print(f"Version number '{version}' matches development branch")
-
         docker_tags = ['latest']
 
     else:
@@ -153,7 +140,7 @@ if __name__ == '__main__':
         sys.exit(1)
 
     if docker_tags is None:
-        print("Docker tag could not be determined")
+        print("Docker tags could not be determined")
         sys.exit(1)
 
     print(f"Version check passed for '{version}'!")

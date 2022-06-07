@@ -22,8 +22,12 @@ class TestReportTests(InvenTreeAPITestCase):
 
     list_url = reverse('api-stockitem-testreport-list')
 
-    def do_list(self, filters={}):
+    def do_list(self, filters=None):
         """Helper function to request list of labels with provided filters"""
+        # Set default - see B006
+        if filters is None:
+            filters = {}
+
         response = self.client.get(self.list_url, filters, format='json')
 
         self.assertEqual(response.status_code, 200)

@@ -1,25 +1,11 @@
 """DRF API serializers for the 'users' app"""
 
-from django.contrib.auth.models import User
 
 from rest_framework import serializers
 
 from InvenTree.serializers import InvenTreeModelSerializer
 
 from .models import Owner
-
-
-class UserSerializer(InvenTreeModelSerializer):
-    """Serializer for a User."""
-
-    class Meta:
-        """Metaclass defines serializer fields."""
-        model = User
-        fields = ('pk',
-                  'username',
-                  'first_name',
-                  'last_name',
-                  'email',)
 
 
 class OwnerSerializer(InvenTreeModelSerializer):

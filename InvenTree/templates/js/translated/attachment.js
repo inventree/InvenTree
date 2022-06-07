@@ -86,9 +86,11 @@ function deleteAttachments(attachments, url, options={}) {
     }
 
     var rows = '';
+    var ids = [];
 
     attachments.forEach(function(att) {
         rows += renderAttachment(att);
+        ids.push(att.pk);
     });
 
     var html = `
@@ -105,22 +107,17 @@ function deleteAttachments(attachments, url, options={}) {
     </table>
     `;
 
-    constructFormBody({}, {
+    constructForm(url, {
         method: 'DELETE',
         title: '{% trans "Delete Attachments" %}',
         preFormContent: html,
-        onSubmit: function(fields, opts) {
-            inventreeMultiDelete(
-                url,
-                attachments,
-                {
-                    modal: opts.modal,
-                    success: function() {
-                        // Refresh the table once all attachments are deleted
-                        $('#attachment-table').bootstrapTable('refresh');
-                    }
-                }
-            );
+        form_data: {
+            items: ids,
+            filters: options.filters,
+        },
+        onSuccess: function() {
+            // Refresh the table once all attachments are deleted
+            $('#attachment-table').bootstrapTable('refresh');
         }
     });
 }
@@ -132,6 +129,9 @@ function reloadAttachmentTable() {
 }
 
 
+/* Load a table of attachments against a specific model.
+ * Note that this is a 'generic' table which is used for multiple attachment model classes
+ */
 function loadAttachmentTable(url, options) {
 
     var table = options.table || '#attachment-table';
@@ -145,7 +145,7 @@ function loadAttachmentTable(url, options) {
         var attachments = getTableData(table);
 
         if (attachments.length > 0) {
-            deleteAttachments(attachments, url);
+            deleteAttachments(attachments, url, options);
         }
     });
 
@@ -186,7 +186,7 @@ function loadAttachmentTable(url, options) {
                 var pk = $(this).attr('pk');
 
                 var attachment = $(table).bootstrapTable('getRowByUniqueId', pk);
-                deleteAttachments([attachment], url);
+                deleteAttachments([attachment], url, options);
             });
         },
         columns: [
@@ -244,8 +244,14 @@ function loadAttachmentTable(url, options) {
             {
                 field: 'upload_date',
                 title: '{% trans "Upload Date" %}',
-                formatter: function(value) {
-                    return renderDate(value);
+                formatter: function(value, row) {
+                    var html = renderDate(value);
+
+                    if (row.user_detail) {
+                        html += `<span class='badge bg-dark rounded-pill float-right'>${row.user_detail.username}</div>`;
+                    }
+
+                    return html;
                 }
             },
             {

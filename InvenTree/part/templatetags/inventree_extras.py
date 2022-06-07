@@ -412,7 +412,7 @@ def primitive_to_javascript(primitive):
 
     else:
         # Wrap with quotes
-        return format_html("'{}'", primitive)
+        return format_html("'{}'", primitive)  # noqa: P103
 
 
 @register.filter
@@ -458,7 +458,7 @@ def authorized_owners(group):
 def object_link(url_name, pk, ref):
     """Return highlighted link to object."""
     ref_url = reverse(url_name, kwargs={'pk': pk})
-    return mark_safe('<b><a href="{}">{}</a></b>'.format(ref_url, ref))
+    return mark_safe(f'<b><a href="{ref_url}">{ref}</a></b>')
 
 
 @register.simple_tag()

@@ -596,7 +596,7 @@ function constructFormBody(fields, options) {
 
         // Immediately disable the "submit" button,
         // to prevent the form being submitted multiple times!
-        $(options.modal).find('#modal-form-submit').prop('disabled', true);
+        enableSubmitButton(options, false);
 
         // Run custom code before normal form submission
         if (options.beforeSubmit) {
@@ -639,13 +639,13 @@ function insertConfirmButton(options) {
     $(options.modal).find('#modal-footer-buttons').append(html);
 
     // Disable the 'submit' button
-    $(options.modal).find('#modal-form-submit').prop('disabled', true);
+    enableSubmitButton(options, false);
 
     // Trigger event
     $(options.modal).find('#modal-confirm').change(function() {
         var enabled = this.checked;
 
-        $(options.modal).find('#modal-form-submit').prop('disabled', !enabled);
+        enableSubmitButton(options, enabled);
     });
 }
 
@@ -725,7 +725,8 @@ function submitFormData(fields, options) {
     // Only used if file / image upload is required
     var form_data = new FormData();
 
-    var data = {};
+    // We can (optionally) provide a "starting point" for the submitted data
+    var data = options.form_data || {};
 
     var has_files = false;
 
@@ -1063,7 +1064,7 @@ function handleFormSuccess(response, options) {
 
         // Reset the status of the "submit" button
         if (options.modal) {
-            $(options.modal).find('#modal-form-submit').prop('disabled', false);
+            enableSubmitButton(options, true);
         }
 
         // Remove any error flags from the form
@@ -1228,7 +1229,7 @@ function handleFormErrors(errors, fields={}, options={}) {
 
     // Reset the status of the "submit" button
     if (options.modal) {
-        $(options.modal).find('#modal-form-submit').prop('disabled', false);
+        enableSubmitButton(options, true);
     }
 
     // Remove any existing error messages from the form

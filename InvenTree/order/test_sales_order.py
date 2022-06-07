@@ -2,20 +2,28 @@
 
 from datetime import datetime, timedelta
 
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from common.models import InvenTreeSetting
+import order.tasks
+from common.models import InvenTreeSetting, NotificationMessage
 from company.models import Company
 from InvenTree import status_codes as status
 from order.models import (SalesOrder, SalesOrderAllocation, SalesOrderLineItem,
                           SalesOrderShipment)
 from part.models import Part
 from stock.models import StockItem
+from users.models import Owner
 
 
 class SalesOrderTest(TestCase):
     """Run tests to ensure that the SalesOrder model is working correctly."""
+
+    fixtures = [
+        'users',
+    ]
 
     def setUp(self):
         """Initial setup for this set of unit tests"""
@@ -235,3 +243,44 @@ class SalesOrderTest(TestCase):
 
         # Shipment should have default reference of '1'
         self.assertEqual('1', order_2.pending_shipments()[0].reference)
+
+    def test_overdue_notification(self):
+        """Test overdue sales order notification"""
+
+        self.order.created_by = get_user_model().objects.get(pk=3)
+        self.order.responsible = Owner.create(obj=Group.objects.get(pk=2))
+        self.order.target_date = datetime.now().date() - timedelta(days=1)
+        self.order.save()
+
+        # Check for overdue sales orders
+        order.tasks.check_overdue_sales_orders()
+
+        messages = NotificationMessage.objects.filter(
+            category='order.overdue_sales_order',
+        )
+
+        self.assertEqual(len(messages), 2)
+
+    def test_new_so_notification(self):
+        """Test that a notification is sent when a new SalesOrder is created.
+
+        - The responsible user should receive a notification
+        - The creating user should *not* receive a notification
+        """
+
+        SalesOrder.objects.create(
+            customer=self.customer,
+            reference='1234567',
+            created_by=get_user_model().objects.get(pk=3),
+            responsible=Owner.create(obj=Group.objects.get(pk=3))
+        )
+
+        messages = NotificationMessage.objects.filter(
+            category='order.new_salesorder',
+        )
+
+        # A notification should have been generated for user 4 (who is a member of group 3)
+        self.assertTrue(messages.filter(user__pk=4).exists())
+
+        # However *no* notification should have been generated for the creating user
+        self.assertFalse(messages.filter(user__pk=3).exists())

@@ -90,7 +90,7 @@ class StockTest(InvenTreeTestCase):
         build = Build.objects.create(reference='12345', part=part, title='A test build', quantity=1)
 
         # Add some stock items which are "building"
-        for i in range(10):
+        for _ in range(10):
             StockItem.objects.create(
                 part=part, build=build,
                 quantity=10, is_building=True
@@ -439,7 +439,7 @@ class StockTest(InvenTreeTestCase):
                     serial=i,
                     quantity=1,
                 )
-            except:
+            except Exception:
                 pass
 
         item_next = item.get_next_serialized_item()
@@ -616,7 +616,7 @@ class StockTest(InvenTreeTestCase):
         # - C32 should move directly under A
 
         # Add some stock items to B3
-        for i in range(10):
+        for _ in range(10):
             StockItem.objects.create(
                 part=Part.objects.get(pk=1),
                 quantity=10,

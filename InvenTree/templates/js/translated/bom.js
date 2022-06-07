@@ -642,7 +642,7 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
             addRemoveCallback(opts.modal, `#button-row-remove-${response.pk}`);
 
             // Re-enable the "submit" button
-            $(opts.modal).find('#modal-form-submit').prop('disabled', false);
+            enableSubmitButton(opts, true);
 
             // Reload the parent BOM table
             reloadParentTable();
@@ -672,9 +672,11 @@ function deleteBomItems(items, options={}) {
     }
 
     var rows = '';
+    var ids = [];
 
     items.forEach(function(item) {
         rows += renderItem(item);
+        ids.push(item.pk);
     });
 
     var html = `
@@ -692,22 +694,14 @@ function deleteBomItems(items, options={}) {
     </table>
     `;
 
-    constructFormBody({}, {
+    constructForm('{% url "api-bom-list"  %}', {
         method: 'DELETE',
         title: '{% trans "Delete selected BOM items?" %}',
-        fields: {},
-        preFormContent: html,
-        onSubmit: function(fields, opts) {
-
-            inventreeMultiDelete(
-                '{% url "api-bom-list" %}',
-                items,
-                {
-                    modal: opts.modal,
-                    success: options.success,
-                }
-            );
+        form_data: {
+            items: ids,
         },
+        preFormContent: html,
+        onSuccess: options.success,
     });
 }
 

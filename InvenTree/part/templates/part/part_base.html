@@ -559,13 +559,13 @@
 
     {% if roles.part.delete %}
     $("#part-delete").click(function() {
-        launchModalForm(
-            "{% url 'part-delete' part.id %}",
-            {
-                redirect: {% if part.category %}"{% url 'category-detail' part.category.id %}"{% else %}"{% url 'part-index' %}"{% endif %},
-                no_post: {% if part.active %}true{% else %}false{% endif %},
-            }
-        );
+        deletePart({{ part.pk }}, {
+            {% if part.category %}
+            redirect: '{% url "category-detail" part.category.pk %}',
+            {% else %}
+            redirect: '{% url "part-index" %}',
+            {% endif %}
+        });
     });
     {% endif %}
 

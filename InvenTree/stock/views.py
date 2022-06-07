@@ -6,8 +6,6 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView
 
 import common.settings
-from InvenTree.forms import ConfirmForm
-from InvenTree.helpers import str2bool
 from InvenTree.views import (AjaxDeleteView, AjaxUpdateView,
                              InvenTreeRoleMixin, QRCodeView)
 from plugin.views import InvenTreePluginViewMixin
@@ -121,42 +119,6 @@ class StockLocationQRCode(QRCodeView):
             return loc.format_barcode()
         except StockLocation.DoesNotExist:
             return None
-
-
-class StockItemDeleteTestData(AjaxUpdateView):
-    """View for deleting all test data."""
-
-    model = StockItem
-    form_class = ConfirmForm
-    ajax_form_title = _("Delete All Test Data")
-
-    role_required = ['stock.change', 'stock.delete']
-
-    def get_form(self):
-        """Require confirm."""
-        return ConfirmForm()
-
-    def post(self, request, *args, **kwargs):
-        """Delete test data."""
-        valid = False
-
-        stock_item = StockItem.objects.get(pk=self.kwargs['pk'])
-        form = self.get_form()
-
-        confirm = str2bool(request.POST.get('confirm', False))
-
-        if confirm is not True:
-            form.add_error('confirm', _('Confirm test data deletion'))
-            form.add_error(None, _('Check the confirmation box'))
-        else:
-            stock_item.test_results.all().delete()
-            valid = True
-
-        data = {
-            'form_valid': valid,
-        }
-
-        return self.renderJsonResponse(request, form, data)
 
 
 class StockItemQRCode(QRCodeView):

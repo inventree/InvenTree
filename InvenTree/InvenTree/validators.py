@@ -92,7 +92,7 @@ def validate_sales_order_reference(value):
 
 def validate_tree_name(value):
     """Prevent illegal characters in tree item names."""
-    for c in "!@#$%^&*'\"\\/[]{}<>,|+=~`\"":
+    for c in "!@#$%^&*'\"\\/[]{}<>,|+=~`\"":  # noqa: P103
         if c in str(value):
             raise ValidationError(_('Illegal character in name ({x})'.format(x=c)))
 

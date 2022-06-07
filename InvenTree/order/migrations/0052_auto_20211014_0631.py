@@ -20,7 +20,7 @@ def build_refs(apps, schema_editor):
         if result and len(result.groups()) == 1:
             try:
                 ref = int(result.groups()[0])
-            except:  # pragma: no cover
+            except Exception:  # pragma: no cover
                 ref = 0
 
         order.reference_int = ref
@@ -37,7 +37,7 @@ def build_refs(apps, schema_editor):
         if result and len(result.groups()) == 1:
             try:
                 ref = int(result.groups()[0])
-            except:  # pragma: no cover
+            except Exception:  # pragma: no cover
                 ref = 0
 
         order.reference_int = ref
