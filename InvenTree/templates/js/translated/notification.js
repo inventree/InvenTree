@@ -44,7 +44,7 @@ function loadNotificationTable(table, options={}, enableDelete=false) {
                 title: '{% trans "Age" %}',
                 sortable: 'true',
                 formatter: function(value, row) {
-                    return row.age_human
+                    return row.age_human;
                 }
             },
             {
@@ -62,7 +62,9 @@ function loadNotificationTable(table, options={}, enableDelete=false) {
                     }
 
                     var html = `${value.model}: ${value.name}`;
-                    if (value.link ) {html = `<a href='${value.link}'>${html}</a>`;}
+                    if (value.link ) {
+                        html = `<a href='${value.link}'>${html}</a>`;
+                    }
                     return html;
                 }
             },
@@ -76,13 +78,16 @@ function loadNotificationTable(table, options={}, enableDelete=false) {
             },
             {
                 formatter: function(value, row, index, field) {
-                    var bRead = getReadEditButton(row.pk, row.read)
+                    var bRead = getReadEditButton(row.pk, row.read);
+
                     if (enableDelete) {
                         var bDel = `<button title='{% trans "Delete Notification" %}' class='notification-delete btn btn-outline-secondary' type='button' pk='${row.pk}'><span class='fas fa-trash-alt icon-red'></span></button>`;
                     } else {
                         var bDel = '';
                     }
+
                     var html = `<div class='btn-group float-right' role='group'>${bRead}${bDel}</div>`;
+
                     return html;
                 }
             }
