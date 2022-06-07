@@ -684,8 +684,23 @@ class NotificationTest(InvenTreeAPITestCase):
 
     def test_api_list(self):
         """Test list URL."""
+
         url = reverse('api-notifications-list')
+
         self.get(url, expected_code=200)
+
+        # Test the OPTIONS endpoint for the 'api-notification-list'
+        # Ref: https://github.com/inventree/InvenTree/pull/3154
+        response = self.options(url)
+
+        self.assertIn('DELETE', response.data['actions'])
+        self.assertIn('GET', response.data['actions'])
+        self.assertNotIn('POST', response.data['actions'])
+
+        self.assertEqual(response.data['description'], 'List view for all notifications of the current user.')
+
+        # POST action should fail
+        response = self.post(url, {}, expected_code=403)
 
 
 class LoadingTest(TestCase):
