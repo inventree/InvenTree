@@ -1,8 +1,10 @@
 """JSON API for the Build app."""
 
 from django.urls import include, re_path
+from django.utils.translation import gettext_lazy as _
 
 from rest_framework import filters, generics
+from rest_framework.exceptions import ValidationError
 
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as rest_filters
@@ -198,11 +200,23 @@ class BuildList(APIDownloadMixin, generics.ListCreateAPIView):
         return self.serializer_class(*args, **kwargs)
 
 
-class BuildDetail(generics.RetrieveUpdateAPIView):
+class BuildDetail(generics.RetrieveUpdateDestroyAPIView):
     """API endpoint for detail view of a Build object."""
 
     queryset = Build.objects.all()
     serializer_class = build.serializers.BuildSerializer
+
+    def destroy(self, request, *args, **kwargs):
+        """Only allow deletion of a BuildOrder if the build status is CANCELLED"""
+
+        build = self.get_object()
+
+        if build.status != BuildStatus.CANCELLED:
+            raise ValidationError({
+                "non_field_errors": [_("Build must be cancelled before it can be deleted")]
+            })
+
+        return super().destroy(request, *args, **kwargs)
 
 
 class BuildUnallocate(generics.CreateAPIView):

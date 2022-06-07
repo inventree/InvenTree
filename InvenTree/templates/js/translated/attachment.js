@@ -113,6 +113,7 @@ function deleteAttachments(attachments, url, options={}) {
         preFormContent: html,
         form_data: {
             items: ids,
+            filters: options.filters,
         },
         onSuccess: function() {
             // Refresh the table once all attachments are deleted
@@ -128,6 +129,9 @@ function reloadAttachmentTable() {
 }
 
 
+/* Load a table of attachments against a specific model.
+ * Note that this is a 'generic' table which is used for multiple attachment model classes
+ */
 function loadAttachmentTable(url, options) {
 
     var table = options.table || '#attachment-table';
@@ -141,7 +145,7 @@ function loadAttachmentTable(url, options) {
         var attachments = getTableData(table);
 
         if (attachments.length > 0) {
-            deleteAttachments(attachments, url);
+            deleteAttachments(attachments, url, options);
         }
     });
 
@@ -182,7 +186,7 @@ function loadAttachmentTable(url, options) {
                 var pk = $(this).attr('pk');
 
                 var attachment = $(table).bootstrapTable('getRowByUniqueId', pk);
-                deleteAttachments([attachment], url);
+                deleteAttachments([attachment], url, options);
             });
         },
         columns: [

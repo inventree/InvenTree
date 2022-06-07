@@ -3,7 +3,6 @@
 import logging
 import os
 import sys
-import traceback
 from datetime import datetime
 from decimal import Decimal
 
@@ -21,7 +20,6 @@ from django.utils.translation import gettext_lazy as _
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
-from error_report.models import Error
 from markdownx.models import MarkdownxField
 from mptt.models import TreeForeignKey
 
@@ -29,6 +27,7 @@ import InvenTree.helpers
 import InvenTree.ready
 from common.settings import currency_code_default
 from company.models import Company, SupplierPart
+from InvenTree.exceptions import log_error
 from InvenTree.fields import InvenTreeModelMoneyField, RoundingDecimalField
 from InvenTree.helpers import (decimal2string, getSetting, increment,
                                notify_responsible)
@@ -186,13 +185,7 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
                 # Record the error, try to press on
                 kind, info, data = sys.exc_info()
 
-                Error.objects.create(
-                    kind=kind.__name__,
-                    info=info,
-                    data='\n'.join(traceback.format_exception(kind, info, data)),
-                    path='order.get_total_price',
-                )
-
+                log_error('order.get_total_price')
                 logger.error(f"Missing exchange rate for '{target_currency}'")
 
                 # Return None to indicate the calculated price is invalid
@@ -208,15 +201,8 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
                 total += line.quantity * convert_money(line.price, target_currency)
             except MissingRate:
                 # Record the error, try to press on
-                kind, info, data = sys.exc_info()
 
-                Error.objects.create(
-                    kind=kind.__name__,
-                    info=info,
-                    data='\n'.join(traceback.format_exception(kind, info, data)),
-                    path='order.get_total_price',
-                )
-
+                log_error('order.get_total_price')
                 logger.error(f"Missing exchange rate for '{target_currency}'")
 
                 # Return None to indicate the calculated price is invalid

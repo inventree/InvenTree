@@ -1,17 +1,14 @@
 """Functions to print a label to a mixin printer."""
 
 import logging
-import sys
-import traceback
 
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
-from django.views.debug import ExceptionReporter
 
 import pdf2image
-from error_report.models import Error
 
 import common.notifications
+from InvenTree.exceptions import log_error
 from plugin.registry import registry
 
 logger = logging.getLogger('inventree')
@@ -63,16 +60,7 @@ def print_label(plugin_slug: str, pdf_data, filename=None, label_instance=None, 
         }
 
         # Log an error message to the database
-        kind, info, data = sys.exc_info()
-
-        Error.objects.create(
-            kind=kind.__name__,
-            info=info,
-            data='\n'.join(traceback.format_exception(kind, info, data)),
-            path='print_label',
-            html=ExceptionReporter(None, kind, info, data).get_traceback_html(),
-        )
-
+        log_error('plugin.print_label')
         logger.error(f"Label printing failed: Sending notification to user '{user}'")  # pragma: no cover
 
         # Throw an error against the plugin instance
