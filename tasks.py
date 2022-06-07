@@ -282,8 +282,8 @@ def content_excludes():
     return output
 
 
-@task(help={'filename': "Output filename (default = 'data.json')"})
-def export_records(c, filename='data.json'):
+@task(help={'filename': "Output filename (default = 'data.json')", 'overwrite': "Overwrite existing files without asking first (default False)"})
+def export_records(c, filename='data.json', overwrite = False):
     """Export all database records to a file"""
     # Get an absolute path to the file
     if not os.path.isabs(filename):
@@ -292,7 +292,7 @@ def export_records(c, filename='data.json'):
 
     print(f"Exporting database records to file '{filename}'")
 
-    if os.path.exists(filename):
+    if os.path.exists(filename) and overwrite is False:
         response = input("Warning: file already exists. Do you want to overwrite? [y/N]: ")
         response = str(response).strip().lower()
 
