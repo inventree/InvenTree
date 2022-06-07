@@ -224,7 +224,7 @@ def update(c):
 def style(c):
     """Run PEP style checks against InvenTree sourcecode"""
     print("Running PEP style checks...")
-    c.run('flake8 InvenTree')
+    c.run('flake8 InvenTree tasks.py')
 
 
 @task
