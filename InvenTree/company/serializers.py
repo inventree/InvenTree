@@ -1,5 +1,7 @@
 """JSON serializers for Company app."""
 
+from datetime import datetime
+
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
@@ -242,6 +244,8 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
         model = SupplierPart
         fields = [
+            'available',
+            'availability_updated',
             'description',
             'link',
             'manufacturer',
@@ -260,10 +264,21 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             'supplier_detail',
         ]
 
+        read_only_fields = [
+            'availability_updated',
+        ]
+
     def create(self, validated_data):
         """Extract manufacturer data and process ManufacturerPart."""
         # Create SupplierPart
         supplier_part = super().create(validated_data)
+
+        # If the available quantity is updated, save the 'availability_updated' field
+        available = validated_data.get('available', None)
+
+        if available is not None:
+            supplier_part.availability_updated = datetime.now().date()
+            supplier_part.save()
 
         # Get ManufacturerPart raw data (unvalidated)
         manufacturer = self.initial_data.get('manufacturer', None)
