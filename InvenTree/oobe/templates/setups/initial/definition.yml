@@ -1,3 +1,6 @@
+version: 1
+inventree_setup: true
+
 title: Intital InvenTree Setup
 pages:
   welcome:

@@ -147,7 +147,8 @@ class SetupInstance():
 class SetupRegistry:
     """Registry for keeping SetupInstance instances."""
     collection: List[SetupInstance] = {}
-    path: list = ['oobe', 'setups']
+    path: list = ['oobe', 'templates', 'setups']
+    valid_versions: list = [1, ]
 
     def __init__(self) -> None:
         """Creation instance."""
@@ -165,6 +166,14 @@ class SetupRegistry:
             # Load data
             with open(item) as f:
                 data = yaml.safe_load(f)
+
+            # Check if it is a setup
+            if not data.get('inventree_setup', False):
+                continue
+
+            # Check if the template has a valid version
+            if data.get('version', None) not in self.valid_versions:
+                continue
 
             # Get done text. First check if it is declared - else look at the steps
             done = data.get('done', None)
