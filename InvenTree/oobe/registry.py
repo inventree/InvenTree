@@ -188,8 +188,12 @@ class SetupRegistry:
             if pages:
                 pages = {key: Page(**page, slug=key) for key, page in pages.items()}
 
+            # Instance reference
+            reference = data.get('slug', None)
+            reference = item.stem if not reference else reference
+
             # Add instance
-            new_collection[item.stem] = SetupInstance(data, pages=pages, done=done)
+            new_collection[reference] = SetupInstance(data, pages=pages, done=done, done_function=done_function)
 
         # Save new list
         self.collection = new_collection

@@ -2,6 +2,7 @@ version: 1
 inventree_setup: true
 
 title: Intital InvenTree Setup
+slug: initial
 pages:
   welcome:
     title: Welcome to InvenTree
