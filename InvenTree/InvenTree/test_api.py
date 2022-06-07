@@ -215,15 +215,15 @@ class APITests(InvenTreeAPITestCase):
 
         actions = self.getActions(url)
 
-        # No actions, as there are no permissions!
-        self.assertEqual(len(actions), 0)
+        # Even without permissions, GET action is available
+        self.assertEqual(len(actions), 1)
 
         # Assign a new role
         self.assignRole('part.view')
         actions = self.getActions(url)
 
-        # As we don't have "add" permission, there should be no available API actions
-        self.assertEqual(len(actions), 0)
+        # As we don't have "add" permission, there should be only the GET API action
+        self.assertEqual(len(actions), 1)
 
         # But let's make things interesting...
         # Why don't we treat ourselves to some "add" permissions
@@ -244,7 +244,8 @@ class APITests(InvenTreeAPITestCase):
         actions = self.getActions(url)
 
         # No actions, as we do not have any permissions!
-        self.assertEqual(len(actions), 0)
+        self.assertEqual(len(actions), 1)
+        self.assertIn('GET', actions.keys())
 
         # Add a 'add' permission
         # Note: 'add' permission automatically implies 'change' also

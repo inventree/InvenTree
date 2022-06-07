@@ -704,8 +704,8 @@ class NotificationTest(InvenTreeAPITestCase):
 
         self.assertEqual(response.data['description'], 'List view for all notifications of the current user.')
 
-        # POST action should fail
-        response = self.post(url, {}, expected_code=403)
+        # POST action should fail (not allowed)
+        response = self.post(url, {}, expected_code=405)
 
     def test_bulk_delete(self):
         """Tests for bulk deletion of user notifications"""
