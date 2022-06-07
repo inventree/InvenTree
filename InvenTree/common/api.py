@@ -299,6 +299,12 @@ class NotificationList(BulkDeleteMixin, generics.ListAPIView):
         queryset = queryset.filter(user=user)
         return queryset
 
+    def filter_delete_queryset(self, queryset, request):
+        """Ensure that the user can only delete their *own* notifications"""
+
+        queryset = queryset.filter(user=request.user)
+        return queryset
+
 
 class NotificationDetail(generics.RetrieveUpdateDestroyAPIView):
     """Detail view for an individual notification object.

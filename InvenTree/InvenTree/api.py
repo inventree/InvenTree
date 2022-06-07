@@ -111,12 +111,15 @@ class BulkDeleteMixin:
 
         with transaction.atomic():
 
+            # Start with *all* models and perform basic filtering
             queryset = model.objects.all()
             queryset = self.filter_delete_queryset(queryset, request)
 
+            # Filter by provided item ID values
             if items:
                 queryset = queryset.filter(id__in=items)
 
+            # Filter by provided filters
             if filters:
                 queryset = queryset.filter(**filters)
 

@@ -63,8 +63,31 @@ loadNotificationTable("#history-table", {
     no_matches: function() { return '{% trans "No notification history found" %}'; },
 }, true);
 
-$("#history-refresh").on('click', function() {
-    $("#history-table").bootstrapTable('refresh');
+
+$('#history-delete').click(function() {
+
+    var html = `
+    <div class='alert alert-block alert-danger'>
+        {% trans "Delete all read notifications" %}
+    </div>`;
+
+    // Perform a bulk delete of all 'read' notifications for this user
+    constructForm(
+        '{% url "api-notifications-list" %}',
+        {
+            method: 'DELETE',
+            preFormContent: html,
+            title: '{% trans "Delete Notifications" %}',
+            onSuccess: function() {
+                $('#history-table').bootstrapTable('refresh');
+            },
+            form_data: {
+                filters: {
+                    read: true,
+                }
+            }
+        }
+    );
 });
 
 $("#history-table").on('click', '.notification-delete', function() {
