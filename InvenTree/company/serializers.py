@@ -1,7 +1,5 @@
 """JSON serializers for Company app."""
 
-from datetime import datetime
-
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
@@ -211,6 +209,10 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
 
     def __init__(self, *args, **kwargs):
         """Initialize this serializer with extra detail fields as required"""
+
+        # Check if 'available' quantity was supplied
+        self.has_available_quantity = 'available' in kwargs.get('data', {})
+
         part_detail = kwargs.pop('part_detail', True)
         supplier_detail = kwargs.pop('supplier_detail', True)
         manufacturer_detail = kwargs.pop('manufacturer_detail', True)
@@ -268,17 +270,29 @@ class SupplierPartSerializer(InvenTreeModelSerializer):
             'availability_updated',
         ]
 
+    def update(self, supplier_part, data):
+        """Custom update functionality for the serializer"""
+
+        available = data.pop('available', None)
+
+        response = super().update(supplier_part, data)
+
+        if available is not None and self.has_available_quantity:
+            supplier_part.update_available_quantity(available)
+
+        return response
+
     def create(self, validated_data):
         """Extract manufacturer data and process ManufacturerPart."""
+
+        # Extract 'available' quantity from the serializer
+        available = validated_data.pop('available', None)
+
         # Create SupplierPart
         supplier_part = super().create(validated_data)
 
-        # If the available quantity is updated, save the 'availability_updated' field
-        available = validated_data.get('available', None)
-
-        if available is not None:
-            supplier_part.availability_updated = datetime.now()
-            supplier_part.save()
+        if available is not None and self.has_available_quantity:
+            supplier_part.update_available_quantity(available)
 
         # Get ManufacturerPart raw data (unvalidated)
         manufacturer = self.initial_data.get('manufacturer', None)
