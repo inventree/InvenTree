@@ -806,29 +806,6 @@ class DatabaseStatsView(AjaxView):
     ajax_template_name = "stats.html"
     ajax_form_title = _("System Information")
 
-    def get_context_data(self, **kwargs):
-
-        ctx = {}
-
-        # Part stats
-        ctx['part_count'] = Part.objects.count()
-        ctx['part_cat_count'] = PartCategory.objects.count()
-
-        # Stock stats
-        ctx['stock_item_count'] = StockItem.objects.count()
-        ctx['stock_loc_count'] = StockLocation.objects.count()
-
-        """
-        TODO: Other ideas for database metrics
-
-        - "Popular" parts (used to make other parts?)
-        - Most ordered part
-        - Most sold part
-        - etc etc etc
-        """
-
-        return ctx
-
 
 class NotificationsView(TemplateView):
     """View for showing notifications."""
