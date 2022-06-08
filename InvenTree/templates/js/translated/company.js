@@ -189,14 +189,16 @@ function createSupplierPart(options={}) {
 
 function editSupplierPart(part, options={}) {
 
-    var fields = supplierPartFields();
+    var fields = options.fields || supplierPartFields();
 
     // Hide the "part" field
-    fields.part.hidden = true;
+    if (fields.part) {
+        fields.part.hidden = true;
+    }
 
     constructForm(`/api/company/part/${part}/`, {
         fields: fields,
-        title: '{% trans "Edit Supplier Part" %}',
+        title: options.title || '{% trans "Edit Supplier Part" %}',
         onSuccess: options.onSuccess
     });
 }
