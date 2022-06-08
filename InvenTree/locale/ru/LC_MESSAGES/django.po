@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-08 11:50+0000\n"
-"PO-Revision-Date: 2022-06-07 14:34\n"
+"PO-Revision-Date: 2022-06-08 15:13\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -3148,10 +3148,8 @@ msgid "Supplier Part"
 msgstr "Деталь поставщика"
 
 #: company/templates/company/supplier_part.html:35
-#, fuzzy
-#| msgid "Supplier Options"
 msgid "Supplier part actions"
-msgstr "Настройки поставщика"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:40
 #: company/templates/company/supplier_part.html:41
@@ -3172,16 +3170,12 @@ msgid "Edit Supplier Part"
 msgstr "Редактировать деталь поставщика"
 
 #: company/templates/company/supplier_part.html:53
-#, fuzzy
-#| msgid "Select Supplier Part"
 msgid "Delete Supplier Part"
-msgstr "Выберите деталь поставщика"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:54
-#, fuzzy
-#| msgid "Delete supplier part"
 msgid "Delete Supplier  Part"
-msgstr "Удалить деталь поставщика"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:112
 msgid "No supplier information available"
@@ -3246,10 +3240,8 @@ msgid "Last updated"
 msgstr "Последнее обновление"
 
 #: company/templates/company/supplier_part.html:382
-#, fuzzy
-#| msgid "Create Part Variant"
 msgid "Update Part Availability"
-msgstr "Создать разновидность детали"
+msgstr ""
 
 #: company/templates/company/supplier_part_navbar.html:15
 #: part/templates/part/part_sidebar.html:14
@@ -6716,10 +6708,8 @@ msgstr ""
 #: templates/InvenTree/notifications/history.html:13
 #: templates/InvenTree/notifications/history.html:14
 #: templates/InvenTree/notifications/notifications.html:76
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete Notifications"
-msgstr "Удалить место хранения"
+msgstr ""
 
 #: templates/InvenTree/notifications/inbox.html:9
 msgid "Pending Notifications"
@@ -6745,10 +6735,8 @@ msgid "No notification history found"
 msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:67
-#, fuzzy
-#| msgid "Enable email notifications"
 msgid "Delete all read notifications"
-msgstr "Включить уведомления по электронной почте"
+msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:92
 #: templates/js/translated/notification.js:84
@@ -7436,16 +7424,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -10379,8 +10365,3 @@ msgstr "Разрешение на редактирование элементо�
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
 
-#~ msgid "Are you sure you want to delete this build?"
-#~ msgstr "Вы уверены, что хотите удалить эту сборку?"
-
-#~ msgid "Refresh Notification History"
-#~ msgstr "Обновить историю уведомлений"
