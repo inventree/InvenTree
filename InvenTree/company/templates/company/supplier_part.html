@@ -74,6 +74,13 @@ src="{% static 'img/blank_image.png' %}"
         <td>{{ part.description }}{% include "clip.html"%}</td>
     </tr>
     {% endif %}
+    {% if part.availability_updated %}
+    <tr>
+        <td></td>
+        <td>{% trans "Available" %}</td>
+        <td>{% decimal part.available %}<span class='badge bg-dark rounded-pill float-right'>{% render_date part.availability_updated %}</span></td>
+    </tr>
+    {% endif %}
 </table>
 
 {% endblock details %}
