@@ -1010,7 +1010,7 @@ function loadBomTable(table, options={}) {
                     can_build = available / row.quantity;
                 }
 
-                return +can_build.toFixed(2);
+                return formatDecimal(can_build, 2);
             },
             sorter: function(valA, valB, rowA, rowB) {
                 // Function to sort the "can build" quantity

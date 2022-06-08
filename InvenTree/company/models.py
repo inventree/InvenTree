@@ -1,6 +1,7 @@
 """Company database model definitions."""
 
 import os
+from datetime import datetime
 
 from django.apps import apps
 from django.core.exceptions import ValidationError
@@ -527,6 +528,25 @@ class SupplierPart(models.Model):
 
     # TODO - Reimplement lead-time as a charfield with special validation (pattern matching).
     # lead_time = models.DurationField(blank=True, null=True)
+
+    available = models.DecimalField(
+        max_digits=10, decimal_places=3, default=0,
+        validators=[MinValueValidator(0)],
+        verbose_name=_('Available'),
+        help_text=_('Quantity available from supplier'),
+    )
+
+    availability_updated = models.DateTimeField(
+        null=True, blank=True, verbose_name=_('Availability Updated'),
+        help_text=_('Date of last update of availability data'),
+    )
+
+    def update_available_quantity(self, quantity):
+        """Update the available quantity for this SupplierPart"""
+
+        self.available = quantity
+        self.availability_updated = datetime.now()
+        self.save()
 
     @property
     def manufacturer_string(self):

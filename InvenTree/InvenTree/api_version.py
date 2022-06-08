@@ -2,10 +2,13 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 59
+INVENTREE_API_VERSION = 60
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v60 -> 2022-06-08 : https://github.com/inventree/InvenTree/pull/3148
+    - Add availability data fields to the SupplierPart model
 
 v59 -> 2022-06-07 : https://github.com/inventree/InvenTree/pull/3154
     - Adds further improvements to BulkDelete mixin class

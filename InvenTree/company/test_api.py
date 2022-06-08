@@ -6,7 +6,7 @@ from rest_framework import status
 
 from InvenTree.api_tester import InvenTreeAPITestCase
 
-from .models import Company
+from .models import Company, SupplierPart
 
 
 class CompanyTest(InvenTreeAPITestCase):
@@ -146,6 +146,7 @@ class ManufacturerTest(InvenTreeAPITestCase):
         'location',
         'company',
         'manufacturer_part',
+        'supplier_part',
     ]
 
     roles = [
@@ -238,3 +239,111 @@ class ManufacturerTest(InvenTreeAPITestCase):
         url = reverse('api-manufacturer-part-detail', kwargs={'pk': manufacturer_part_id})
         response = self.get(url)
         self.assertEqual(response.data['MPN'], 'PART_NUMBER')
+
+
+class SupplierPartTest(InvenTreeAPITestCase):
+    """Unit tests for the SupplierPart API endpoints"""
+
+    fixtures = [
+        'category',
+        'part',
+        'location',
+        'company',
+        'manufacturer_part',
+        'supplier_part',
+    ]
+
+    roles = [
+        'part.add',
+        'part.change',
+        'part.add',
+        'purchase_order.change',
+    ]
+
+    def test_supplier_part_list(self):
+        """Test the SupplierPart API list functionality"""
+        url = reverse('api-supplier-part-list')
+
+        # Return *all* SupplierParts
+        response = self.get(url, {}, expected_code=200)
+
+        self.assertEqual(len(response.data), SupplierPart.objects.count())
+
+        # Filter by Supplier reference
+        for supplier in Company.objects.filter(is_supplier=True):
+            response = self.get(url, {'supplier': supplier.pk}, expected_code=200)
+            self.assertEqual(len(response.data), supplier.supplied_parts.count())
+
+        # Filter by Part reference
+        expected = {
+            1: 4,
+            25: 2,
+        }
+
+        for pk, n in expected.items():
+            response = self.get(url, {'part': pk}, expected_code=200)
+            self.assertEqual(len(response.data), n)
+
+    def test_available(self):
+        """Tests for updating the 'available' field"""
+
+        url = reverse('api-supplier-part-list')
+
+        # Should fail when sending an invalid 'available' field
+        response = self.post(
+            url,
+            {
+                'part': 1,
+                'supplier': 2,
+                'SKU': 'QQ',
+                'available': 'not a number',
+            },
+            expected_code=400,
+        )
+
+        self.assertIn('A valid number is required', str(response.data))
+
+        # Create a SupplierPart without specifying available quantity
+        response = self.post(
+            url,
+            {
+                'part': 1,
+                'supplier': 2,
+                'SKU': 'QQ',
+            },
+            expected_code=201
+        )
+
+        sp = SupplierPart.objects.get(pk=response.data['pk'])
+
+        self.assertIsNone(sp.availability_updated)
+        self.assertEqual(sp.available, 0)
+
+        # Now, *update* the availabile quantity via the API
+        self.patch(
+            reverse('api-supplier-part-detail', kwargs={'pk': sp.pk}),
+            {
+                'available': 1234,
+            },
+            expected_code=200,
+        )
+
+        sp.refresh_from_db()
+        self.assertIsNotNone(sp.availability_updated)
+        self.assertEqual(sp.available, 1234)
+
+        # We should also be able to create a SupplierPart with initial 'available' quantity
+        response = self.post(
+            url,
+            {
+                'part': 1,
+                'supplier': 2,
+                'SKU': 'QQQ',
+                'available': 999,
+            },
+            expected_code=201,
+        )
+
+        sp = SupplierPart.objects.get(pk=response.data['pk'])
+        self.assertEqual(sp.available, 999)
+        self.assertIsNotNone(sp.availability_updated)

@@ -189,14 +189,16 @@ function createSupplierPart(options={}) {
 
 function editSupplierPart(part, options={}) {
 
-    var fields = supplierPartFields();
+    var fields = options.fields || supplierPartFields();
 
     // Hide the "part" field
-    fields.part.hidden = true;
+    if (fields.part) {
+        fields.part.hidden = true;
+    }
 
     constructForm(`/api/company/part/${part}/`, {
         fields: fields,
-        title: '{% trans "Edit Supplier Part" %}',
+        title: options.title || '{% trans "Edit Supplier Part" %}',
         onSuccess: options.onSuccess
     });
 }
@@ -951,6 +953,21 @@ function loadSupplierPartTable(table, url, options) {
                 field: 'packaging',
                 title: '{% trans "Packaging" %}',
                 sortable: false,
+            },
+            {
+                field: 'available',
+                title: '{% trans "Available" %}',
+                sortable: true,
+                formatter: function(value, row) {
+                    if (row.availability_updated) {
+                        var html = formatDecimal(value);
+                        var date = renderDate(row.availability_updated, {showTime: true});
+                        html += `<span class='fas fa-info-circle float-right' title='{% trans "Last Updated" %}: ${date}'></span>`;
+                        return html;
+                    } else {
+                        return '-';
+                    }
+                }
             },
             {
                 field: 'actions',
