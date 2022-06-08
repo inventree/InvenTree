@@ -282,7 +282,7 @@ def content_excludes():
     return output
 
 
-@task(help={'filename': "Output filename (default = 'data.json')", 'overwrite': "Overwrite existing files without asking first (default False)"})
+@task(help={'filename': "Output filename (default = 'data.json')", 'overwrite': "Overwrite existing files without asking first (default = False)"})
 def export_records(c, filename='data.json', overwrite=False):
     """Export all database records to a file"""
     # Get an absolute path to the file
