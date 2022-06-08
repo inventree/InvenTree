@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-08 11:50+0000\n"
-"PO-Revision-Date: 2022-06-07 14:34\n"
+"PO-Revision-Date: 2022-06-08 15:14\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -2854,10 +2854,8 @@ msgid "Quantity available from supplier"
 msgstr ""
 
 #: company/models.py:540
-#, fuzzy
-#| msgid "Last Updated"
 msgid "Availability Updated"
-msgstr "Ultimo aggiornamento"
+msgstr ""
 
 #: company/models.py:541
 msgid "Date of last update of availability data"
@@ -3150,10 +3148,8 @@ msgid "Supplier Part"
 msgstr "Articolo Fornitore"
 
 #: company/templates/company/supplier_part.html:35
-#, fuzzy
-#| msgid "Supplier part description"
 msgid "Supplier part actions"
-msgstr "Descrizione articolo fornitore"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:40
 #: company/templates/company/supplier_part.html:41
@@ -3174,16 +3170,12 @@ msgid "Edit Supplier Part"
 msgstr "Modifica fornitore articolo"
 
 #: company/templates/company/supplier_part.html:53
-#, fuzzy
-#| msgid "Select Supplier Part"
 msgid "Delete Supplier Part"
-msgstr "Seleziona l'articolo del fornitore"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:54
-#, fuzzy
-#| msgid "Delete supplier part"
 msgid "Delete Supplier  Part"
-msgstr "Elimina articolo fornitore"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:112
 msgid "No supplier information available"
@@ -6716,10 +6708,8 @@ msgstr ""
 #: templates/InvenTree/notifications/history.html:13
 #: templates/InvenTree/notifications/history.html:14
 #: templates/InvenTree/notifications/notifications.html:76
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete Notifications"
-msgstr "Elimina la posizione"
+msgstr ""
 
 #: templates/InvenTree/notifications/inbox.html:9
 msgid "Pending Notifications"
@@ -6745,10 +6735,8 @@ msgid "No notification history found"
 msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:67
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete all read notifications"
-msgstr "Elimina la posizione"
+msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:92
 #: templates/js/translated/notification.js:84
@@ -7436,16 +7424,14 @@ msgstr "Accedi"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -10378,3 +10364,4 @@ msgstr "Permessi per modificare gli elementi"
 #: users/models.py:219
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
+
