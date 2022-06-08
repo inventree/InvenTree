@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-08 11:50+0000\n"
-"PO-Revision-Date: 2022-06-07 14:34\n"
+"PO-Revision-Date: 2022-06-08 15:14\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -3148,10 +3148,8 @@ msgid "Supplier Part"
 msgstr ""
 
 #: company/templates/company/supplier_part.html:35
-#, fuzzy
-#| msgid "Supplier Parts"
 msgid "Supplier part actions"
-msgstr "Leverandør deler"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:40
 #: company/templates/company/supplier_part.html:41
@@ -3172,16 +3170,12 @@ msgid "Edit Supplier Part"
 msgstr ""
 
 #: company/templates/company/supplier_part.html:53
-#, fuzzy
-#| msgid "Delete supplier parts"
 msgid "Delete Supplier Part"
-msgstr "Slett leverandørdeler"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:54
-#, fuzzy
-#| msgid "Delete supplier parts"
 msgid "Delete Supplier  Part"
-msgstr "Slett leverandørdeler"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:112
 msgid "No supplier information available"
@@ -6714,10 +6708,8 @@ msgstr ""
 #: templates/InvenTree/notifications/history.html:13
 #: templates/InvenTree/notifications/history.html:14
 #: templates/InvenTree/notifications/notifications.html:76
-#, fuzzy
-#| msgid "Delete parts"
 msgid "Delete Notifications"
-msgstr "Slett deler"
+msgstr ""
 
 #: templates/InvenTree/notifications/inbox.html:9
 msgid "Pending Notifications"
@@ -7432,16 +7424,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -10374,3 +10364,4 @@ msgstr ""
 #: users/models.py:219
 msgid "Permission to delete items"
 msgstr ""
+
