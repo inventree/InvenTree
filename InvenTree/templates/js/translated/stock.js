@@ -1707,13 +1707,13 @@ function loadStockTable(table, options) {
                 val = '# ' + row.serial;
             } else if (row.quantity != available) {
                 // Some quantity is available, show available *and* quantity
-                var ava = +parseFloat(available).toFixed(5);
-                var tot = +parseFloat(row.quantity).toFixed(5);
+                var ava = formatDecimal(available);
+                var tot = formatDecimal(row.quantity);
 
                 val = `${ava} / ${tot}`;
             } else {
                 // Format floating point numbers with this one weird trick
-                val = +parseFloat(value).toFixed(5);
+                val = formatDecimal(value);
             }
 
             var html = renderLink(val, `/stock/item/${row.pk}/`);
