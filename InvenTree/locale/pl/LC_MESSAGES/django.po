@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-08 11:50+0000\n"
-"PO-Revision-Date: 2022-06-07 14:34\n"
+"PO-Revision-Date: 2022-06-08 15:13\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -2854,10 +2854,8 @@ msgid "Quantity available from supplier"
 msgstr ""
 
 #: company/models.py:540
-#, fuzzy
-#| msgid "Last Updated"
 msgid "Availability Updated"
-msgstr "Ostatnia aktualizacja"
+msgstr ""
 
 #: company/models.py:541
 msgid "Date of last update of availability data"
@@ -3150,10 +3148,8 @@ msgid "Supplier Part"
 msgstr ""
 
 #: company/templates/company/supplier_part.html:35
-#, fuzzy
-#| msgid "Supplier Parts"
 msgid "Supplier part actions"
-msgstr "Komponenty dostawcy"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:40
 #: company/templates/company/supplier_part.html:41
@@ -3164,10 +3160,8 @@ msgstr "Zamów komponent"
 
 #: company/templates/company/supplier_part.html:45
 #: company/templates/company/supplier_part.html:46
-#, fuzzy
-#| msgid "Update Available"
 msgid "Update Availability"
-msgstr "Dostępna aktualizacja"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:48
 #: company/templates/company/supplier_part.html:49
@@ -3176,16 +3170,12 @@ msgid "Edit Supplier Part"
 msgstr ""
 
 #: company/templates/company/supplier_part.html:53
-#, fuzzy
-#| msgid "Select Supplier Part"
 msgid "Delete Supplier Part"
-msgstr "Wybierz dostawcę części"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:54
-#, fuzzy
-#| msgid "Select Supplier Part"
 msgid "Delete Supplier  Part"
-msgstr "Wybierz dostawcę części"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:112
 msgid "No supplier information available"
@@ -3250,10 +3240,8 @@ msgid "Last updated"
 msgstr "Ostatnio aktualizowane"
 
 #: company/templates/company/supplier_part.html:382
-#, fuzzy
-#| msgid "Update Available"
 msgid "Update Part Availability"
-msgstr "Dostępna aktualizacja"
+msgstr ""
 
 #: company/templates/company/supplier_part_navbar.html:15
 #: part/templates/part/part_sidebar.html:14
@@ -6720,10 +6708,8 @@ msgstr ""
 #: templates/InvenTree/notifications/history.html:13
 #: templates/InvenTree/notifications/history.html:14
 #: templates/InvenTree/notifications/notifications.html:76
-#, fuzzy
-#| msgid "New Notifications"
 msgid "Delete Notifications"
-msgstr "Nowe powiadomienia"
+msgstr ""
 
 #: templates/InvenTree/notifications/inbox.html:9
 msgid "Pending Notifications"
@@ -6749,10 +6735,8 @@ msgid "No notification history found"
 msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:67
-#, fuzzy
-#| msgid "New Notifications"
 msgid "Delete all read notifications"
-msgstr "Nowe powiadomienia"
+msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:92
 #: templates/js/translated/notification.js:84
@@ -7440,22 +7424,18 @@ msgstr "Zaloguj się"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
-msgstr ""
-"Zaloguj się za pomocą jednego\n"
+msgstr "Zaloguj się za pomocą jednego\n"
 "istniejących kont stron trzecich lub  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">zarejestruj się</a>\n"
 "w celu założenia konta i zaloguj się poniżej:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
-msgstr ""
-"Jeżeli jeszcze nie utworzyłeś konta, to proszę najpierw\n"
+msgstr "Jeżeli jeszcze nie utworzyłeś konta, to proszę najpierw\n"
 "<a href=\"%(signup_url)s\">zarejstruj się</a>."
 
 #: templates/account/login.html:45
@@ -10387,3 +10367,4 @@ msgstr "Uprawnienie do edycji przedmiotów"
 #: users/models.py:219
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
+
