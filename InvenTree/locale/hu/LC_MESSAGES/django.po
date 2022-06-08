@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-08 11:50+0000\n"
-"PO-Revision-Date: 2022-06-07 14:34\n"
+"PO-Revision-Date: 2022-06-08 15:14\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -620,10 +620,8 @@ msgid "System Information"
 msgstr "Rendszerinformáció"
 
 #: build/api.py:216
-#, fuzzy
-#| msgid "Build(s) must be selected before printing reports"
 msgid "Build must be cancelled before it can be deleted"
-msgstr "Gyártási utasítás(oka)t ki kell választani a riport nyomtatás előtt"
+msgstr ""
 
 #: build/models.py:126
 msgid "Invalid choice for parent build"
@@ -1063,8 +1061,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:370
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:439
@@ -2854,16 +2851,12 @@ msgid "Available"
 msgstr "Elérhető"
 
 #: company/models.py:536
-#, fuzzy
-#| msgid "Stock is available for use"
 msgid "Quantity available from supplier"
-msgstr "Felhasználható készlet"
+msgstr ""
 
 #: company/models.py:540
-#, fuzzy
-#| msgid "Last Updated"
 msgid "Availability Updated"
-msgstr "Utoljára módosítva"
+msgstr ""
 
 #: company/models.py:541
 msgid "Date of last update of availability data"
@@ -3156,10 +3149,8 @@ msgid "Supplier Part"
 msgstr "Beszállítói alkatrész"
 
 #: company/templates/company/supplier_part.html:35
-#, fuzzy
-#| msgid "Supplier part description"
 msgid "Supplier part actions"
-msgstr "Beszállítói alkatrész leírása"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:40
 #: company/templates/company/supplier_part.html:41
@@ -3170,10 +3161,8 @@ msgstr "Alkatrész rendelése"
 
 #: company/templates/company/supplier_part.html:45
 #: company/templates/company/supplier_part.html:46
-#, fuzzy
-#| msgid "Update Available"
 msgid "Update Availability"
-msgstr "Frissítés elérhető"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:48
 #: company/templates/company/supplier_part.html:49
@@ -3182,16 +3171,12 @@ msgid "Edit Supplier Part"
 msgstr "Beszállítói alkatrész szerkesztése"
 
 #: company/templates/company/supplier_part.html:53
-#, fuzzy
-#| msgid "Delete Supplier Parts"
 msgid "Delete Supplier Part"
-msgstr "Beszállítói alkatrészek törlése"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:54
-#, fuzzy
-#| msgid "Delete Supplier Parts"
 msgid "Delete Supplier  Part"
-msgstr "Beszállítói alkatrészek törlése"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:112
 msgid "No supplier information available"
@@ -3256,10 +3241,8 @@ msgid "Last updated"
 msgstr "Utoljára módosítva"
 
 #: company/templates/company/supplier_part.html:382
-#, fuzzy
-#| msgid "Update Available"
 msgid "Update Part Availability"
-msgstr "Frissítés elérhető"
+msgstr ""
 
 #: company/templates/company/supplier_part_navbar.html:15
 #: part/templates/part/part_sidebar.html:14
@@ -6726,10 +6709,8 @@ msgstr "Értesítések előzményei"
 #: templates/InvenTree/notifications/history.html:13
 #: templates/InvenTree/notifications/history.html:14
 #: templates/InvenTree/notifications/notifications.html:76
-#, fuzzy
-#| msgid "Delete Notification"
 msgid "Delete Notifications"
-msgstr "Értesítés törlése"
+msgstr ""
 
 #: templates/InvenTree/notifications/inbox.html:9
 msgid "Pending Notifications"
@@ -6755,10 +6736,8 @@ msgid "No notification history found"
 msgstr "Nem található régebbi értesítés"
 
 #: templates/InvenTree/notifications/notifications.html:67
-#, fuzzy
-#| msgid "Delete Notification"
 msgid "Delete all read notifications"
-msgstr "Értesítés törlése"
+msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:92
 #: templates/js/translated/notification.js:84
@@ -7446,16 +7425,14 @@ msgstr "Bejelentkezés"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Kérlek jelentkezz be az egyik meglévő külső fiókkal vagy <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">Regisztrálj</a> fiókért és jelentkezz be lentebb:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Ha még nem hoztál létre fiókot akkor előbb <a href=\"%(signup_url)s\">regisztrálj</a>."
 
@@ -10389,11 +10366,3 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
 
-#~ msgid "Are you sure you want to delete this build?"
-#~ msgstr "Biztosan törölni szeretnéd ezt a gyártási utasítást?"
-
-#~ msgid "Refresh Notification History"
-#~ msgstr "Előzmények frissítése"
-
-#~ msgid "Refresh Pending Notifications"
-#~ msgstr "Függő értesítések frissítése"
