@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-08 11:50+0000\n"
-"PO-Revision-Date: 2022-06-07 14:34\n"
+"PO-Revision-Date: 2022-06-08 15:14\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -240,7 +240,7 @@ msgstr "Eltern"
 
 #: InvenTree/models.py:466
 msgid "Server Error"
-msgstr ""
+msgstr "Serverfehler"
 
 #: InvenTree/models.py:467
 msgid "An error has been logged by the server."
@@ -465,7 +465,7 @@ msgstr "Zurückgewiesen"
 
 #: InvenTree/status_codes.py:185
 msgid "Quarantined"
-msgstr ""
+msgstr "In Quarantäne"
 
 #: InvenTree/status_codes.py:259
 msgid "Legacy stock tracking entry"
@@ -620,10 +620,8 @@ msgid "System Information"
 msgstr "Systeminformationen"
 
 #: build/api.py:216
-#, fuzzy
-#| msgid "Build(s) must be selected before printing reports"
 msgid "Build must be cancelled before it can be deleted"
-msgstr "Bauauftrag muss vor dem Berichtsdruck ausgewählt werden"
+msgstr ""
 
 #: build/models.py:126
 msgid "Invalid choice for parent build"
@@ -2852,16 +2850,12 @@ msgid "Available"
 msgstr "Verfügbar"
 
 #: company/models.py:536
-#, fuzzy
-#| msgid "Stock is available for use"
 msgid "Quantity available from supplier"
-msgstr "Lagerartikel ist zur Verwendung verfügbar"
+msgstr ""
 
 #: company/models.py:540
-#, fuzzy
-#| msgid "Last Updated"
 msgid "Availability Updated"
-msgstr "Zuletzt aktualisiert"
+msgstr ""
 
 #: company/models.py:541
 msgid "Date of last update of availability data"
@@ -3154,10 +3148,8 @@ msgid "Supplier Part"
 msgstr "Zuliefererteil"
 
 #: company/templates/company/supplier_part.html:35
-#, fuzzy
-#| msgid "Supplier part description"
 msgid "Supplier part actions"
-msgstr "Zuliefererbeschreibung des Teils"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:40
 #: company/templates/company/supplier_part.html:41
@@ -3168,10 +3160,8 @@ msgstr "Teil bestellen"
 
 #: company/templates/company/supplier_part.html:45
 #: company/templates/company/supplier_part.html:46
-#, fuzzy
-#| msgid "Update Available"
 msgid "Update Availability"
-msgstr "Aktualisierung verfügbar"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:48
 #: company/templates/company/supplier_part.html:49
@@ -3180,16 +3170,12 @@ msgid "Edit Supplier Part"
 msgstr "Zuliefererteil bearbeiten"
 
 #: company/templates/company/supplier_part.html:53
-#, fuzzy
-#| msgid "Delete Supplier Parts"
 msgid "Delete Supplier Part"
-msgstr "Zuliefererteil entfernen"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:54
-#, fuzzy
-#| msgid "Delete Supplier Parts"
 msgid "Delete Supplier  Part"
-msgstr "Zuliefererteil entfernen"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:112
 msgid "No supplier information available"
@@ -3254,10 +3240,8 @@ msgid "Last updated"
 msgstr "Zuletzt aktualisiert"
 
 #: company/templates/company/supplier_part.html:382
-#, fuzzy
-#| msgid "Update Available"
 msgid "Update Part Availability"
-msgstr "Aktualisierung verfügbar"
+msgstr ""
 
 #: company/templates/company/supplier_part_navbar.html:15
 #: part/templates/part/part_sidebar.html:14
@@ -6724,10 +6708,8 @@ msgstr "Benachrichtigungsverlauf"
 #: templates/InvenTree/notifications/history.html:13
 #: templates/InvenTree/notifications/history.html:14
 #: templates/InvenTree/notifications/notifications.html:76
-#, fuzzy
-#| msgid "Delete Notification"
 msgid "Delete Notifications"
-msgstr "Benachrichtigung löschen"
+msgstr "Benachrichtigungen löschen"
 
 #: templates/InvenTree/notifications/inbox.html:9
 msgid "Pending Notifications"
@@ -6753,10 +6735,8 @@ msgid "No notification history found"
 msgstr "Kein Benachrichtigungsverlauf"
 
 #: templates/InvenTree/notifications/notifications.html:67
-#, fuzzy
-#| msgid "Delete Notification"
 msgid "Delete all read notifications"
-msgstr "Benachrichtigung löschen"
+msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:92
 #: templates/js/translated/notification.js:84
@@ -7444,16 +7424,14 @@ msgstr "Einloggen"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Bitte melden Sie sich mit einem Ihrer bestehenden Drittkonten an oder  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">registrieren Sie sich</a> für ein Konto und melden Sie sich unten an:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Wenn Sie noch kein Konto erstellt haben, dann bitte<a href=\"%(signup_url)s\">registrieren Sie sich</a> zuerst."
 
@@ -10387,11 +10365,3 @@ msgstr "Berechtigungen Einträge zu ändern"
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
 
-#~ msgid "Are you sure you want to delete this build?"
-#~ msgstr "Möchten Sie diesen Bauauftrag wirklich löschen?"
-
-#~ msgid "Refresh Notification History"
-#~ msgstr "Benachrichtigungsverlauf aktualisieren"
-
-#~ msgid "Refresh Pending Notifications"
-#~ msgstr "Ausstehende Benachrichtigungen aktualisieren"
