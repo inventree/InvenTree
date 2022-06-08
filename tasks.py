@@ -224,7 +224,7 @@ def update(c):
 def style(c):
     """Run PEP style checks against InvenTree sourcecode"""
     print("Running PEP style checks...")
-    c.run('flake8 InvenTree')
+    c.run('flake8 InvenTree tasks.py')
 
 
 @task
@@ -282,8 +282,8 @@ def content_excludes():
     return output
 
 
-@task(help={'filename': "Output filename (default = 'data.json')", 'overwrite': "Overwrite existing files without asking first (default False)"})
-def export_records(c, filename='data.json', overwrite = False):
+@task(help={'filename': "Output filename (default = 'data.json')", 'overwrite': "Overwrite existing files without asking first (default = False, type bool)"})
+def export_records(c, filename='data.json', overwrite=False):
     """Export all database records to a file"""
     # Get an absolute path to the file
     if not os.path.isabs(filename):
@@ -329,7 +329,7 @@ def export_records(c, filename='data.json', overwrite = False):
         f_out.write(json.dumps(data, indent=2))
 
     print("Data export completed. Removing temporary files")
-    
+
     os.remove(tmpfile)
 
 
