@@ -941,19 +941,15 @@ class SalesOrderTest(OrderTest):
             )
 
         # Valid reference fields
-        for ref in [
-            ' cat ',
-            'the cat sat on the mat',
-        ]:
-            self.post(
-                url,
-                {
-                    'reference': ref,
-                    'customer': 4,
-                    'description': 'Valid reference field',
-                },
-                expected_code=201,
-            )
+        self.post(
+            url,
+            {
+                'reference': 'the cat sat on the mat',
+                'customer': 4,
+                'description': 'Valid reference field',
+            },
+            expected_code=201,
+        )
 
     def test_so_cancel(self):
         """Test API endpoint for cancelling a SalesOrder."""

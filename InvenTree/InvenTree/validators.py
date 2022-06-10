@@ -45,7 +45,7 @@ class ReferenceRegexValidator(BaseValidator):
     def __call__(self, value):
         """Run regex validation against the provided value"""
 
-        pattern = common.models.InvenTreeSetting.get_setting(self.setting).strip()
+        pattern = common.models.InvenTreeSetting.get_setting(self.setting)
 
         if pattern:
             # Compile the pattern to make sure it is valid (ignore if not)
@@ -54,7 +54,7 @@ class ReferenceRegexValidator(BaseValidator):
             except Exception:
                 return
 
-            match = re.match(pattern, value)
+            match = re.search(pattern, value)
 
             if match is None:
                 raise ValidationError(_('Reference must match pattern {pattern}').format(pattern=pattern))
