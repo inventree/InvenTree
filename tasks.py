@@ -26,6 +26,32 @@ def apps():
     ]
 
 
+def content_excludes():
+    """Returns a list of content types to exclude from import/export."""
+    excludes = [
+        "contenttypes",
+        "auth.permission",
+        "authtoken.token",
+        "error_report.error",
+        "admin.logentry",
+        "django_q.schedule",
+        "django_q.task",
+        "django_q.ormq",
+        "users.owner",
+        "exchange.rate",
+        "exchange.exchangebackend",
+        "common.notificationentry",
+        "user_sessions.session",
+    ]
+
+    output = ""
+
+    for e in excludes:
+        output += f"--exclude {e} "
+
+    return output
+
+
 def localDir():
     """Returns the directory of *THIS* file.
 
@@ -235,32 +261,6 @@ def coverage(c):
 
     # Generate coverage report
     c.run('coverage html')
-
-
-def content_excludes():
-    """Returns a list of content types to exclude from import/export."""
-    excludes = [
-        "contenttypes",
-        "auth.permission",
-        "authtoken.token",
-        "error_report.error",
-        "admin.logentry",
-        "django_q.schedule",
-        "django_q.task",
-        "django_q.ormq",
-        "users.owner",
-        "exchange.rate",
-        "exchange.exchangebackend",
-        "common.notificationentry",
-        "user_sessions.session",
-    ]
-
-    output = ""
-
-    for e in excludes:
-        output += f"--exclude {e} "
-
-    return output
 
 
 @task(help={
