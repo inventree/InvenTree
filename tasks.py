@@ -222,35 +222,6 @@ def update(c):
     manage(c, 'compilemessages', pty=True)
 
 
-@task
-def test(c, database=None):
-    """Run unit-tests for InvenTree codebase."""
-    # Run sanity check on the django install
-    manage(c, 'check')
-
-    # Run coverage tests
-    manage(c, 'test', pty=True)
-
-
-@task
-def coverage(c):
-    """Run code-coverage of the InvenTree codebase, using the 'coverage' code-analysis tools.
-
-    Generates a code coverage report (available in the htmlcov directory)
-    """
-    # Run sanity check on the django install
-    manage(c, 'check')
-
-    # Run coverage tests
-    c.run('coverage run {manage} test {apps}'.format(
-        manage=managePyPath(),
-        apps=' '.join(apps())
-    ))
-
-    # Generate coverage report
-    c.run('coverage html')
-
-
 @task(help={
     'filename': "Output filename (default = 'data.json')",
     'overwrite': "Overwrite existing files without asking first (default = off/False)",
@@ -476,3 +447,32 @@ def test_translations(c):
 def render_js_files(c):
     """Render templated javascript files (used for static testing)."""
     manage(c, "test InvenTree.ci_render_js")
+
+
+@task
+def test(c, database=None):
+    """Run unit-tests for InvenTree codebase."""
+    # Run sanity check on the django install
+    manage(c, 'check')
+
+    # Run coverage tests
+    manage(c, 'test', pty=True)
+
+
+@task
+def coverage(c):
+    """Run code-coverage of the InvenTree codebase, using the 'coverage' code-analysis tools.
+
+    Generates a code coverage report (available in the htmlcov directory)
+    """
+    # Run sanity check on the django install
+    manage(c, 'check')
+
+    # Run coverage tests
+    c.run('coverage run {manage} test {apps}'.format(
+        manage=managePyPath(),
+        apps=' '.join(apps())
+    ))
+
+    # Generate coverage report
+    c.run('coverage html')
