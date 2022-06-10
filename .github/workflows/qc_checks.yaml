@@ -57,7 +57,7 @@ jobs:
           python3 check_js_templates.py
       - name: Lint Javascript Files
         run: |
-          invoke render-js-files
+          invoke test.render-js-files
           npx eslint js_tmp/*.js
 
   html:
@@ -124,10 +124,10 @@ jobs:
         run: git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }} ./${{ env.wrapper_name }}
       - name: Start InvenTree Server
         run: |
-          invoke delete-data -f
-          invoke import-fixtures
+          invoke data.delete -f
+          invoke data.import
           invoke server -a 127.0.0.1:12345 &
-          invoke wait
+          invoke main.wait
       - name: Run Tests For `${{ env.wrapper_name }}`
         run: |
           cd ${{ env.wrapper_name }}
@@ -170,11 +170,11 @@ jobs:
           apt-dependency: gettext poppler-utils
           update: true
       - name: Coverage Tests
-        run: invoke coverage
+        run: invoke test.coverage
       - name: Data Export Test
         uses: ./.github/actions/migration
       - name: Test Translations
-        run: invoke translate
+        run: invoke main.translate
       - name: Check Migration Files
         run: python3 ci/check_migration_files.py
       - name: Upload Coverage Report

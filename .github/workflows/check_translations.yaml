@@ -32,6 +32,6 @@ jobs:
           pip3 install invoke
           invoke install
       - name: Test Translations
-        run: invoke translate
+        run: invoke main.translate
       - name: Check Migration Files
         run: python3 ci/check_migration_files.py

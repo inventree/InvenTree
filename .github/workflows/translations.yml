@@ -30,10 +30,10 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y gettext
             pip3 install invoke
-            invoke install
+            invoke inst.install
       - name: Make Translations
         run: |
-          invoke translate
+          invoke main.translate
       - name: Commit files
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"

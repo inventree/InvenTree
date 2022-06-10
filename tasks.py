@@ -6,7 +6,7 @@ import pathlib
 import re
 import sys
 
-from invoke import task
+from invoke import Collection, task
 
 
 def apps():
@@ -86,6 +86,10 @@ def manage(c, cmd, pty: bool = False):
 
 
 # Install tasks
+# region
+ns_install = Collection('inst')
+
+
 @task
 def plugins(c):
     """Installs all plugins as specified in 'plugins.txt'."""
@@ -108,8 +112,8 @@ def install(c):
     c.run('pip3 install --no-cache-dir --disable-pip-version-check -U -r requirements.txt')
 
 
-@task
-def setup_dev(c):
+@task(aliases=['setup_dev'])
+def dev(c):
     """Sets up everything needed for the dev enviroment."""
     print("Installing required python packages from 'requirements.txt'")
 
@@ -123,21 +127,30 @@ def setup_dev(c):
     c.run('pre-commit autoupdate')
 
 
+ns_install.add_task(plugins)
+ns_install.add_task(install, default=True)
+ns_install.add_task(dev)
+# endregion
+
 # Setup / maintenance tasks
+# region
+ns_main = Collection('main')
+
+
 @task
 def superuser(c):
     """Create a superuser/admin account for the database."""
     manage(c, 'createsuperuser', pty=True)
 
 
-@task
-def rebuild_models(c):
+@task(aliases=['rebuild_models', ])
+def clean_models(c):
     """Rebuild database models with MPTT structures."""
     manage(c, "rebuild_models", pty=True)
 
 
-@task
-def rebuild_thumbnails(c):
+@task(aliases=['rebuild_thumbnails', ])
+def clean_thumbnails(c):
     """Rebuild missing image thumbnails."""
     manage(c, "rebuild_thumbnails", pty=True)
 
@@ -148,8 +161,8 @@ def clean_settings(c):
     manage(c, "clean_settings")
 
 
-@task(help={'mail': 'mail of the user whos MFA should be disabled'})
-def remove_mfa(c, mail=''):
+@task(help={'mail': 'mail of the user whos MFA should be disabled'}, aliases=['remove_mfa', ])
+def clean_mfa(c, mail=''):
     """Remove MFA for a user."""
     if not mail:
         print('You must provide a users mail')
@@ -164,8 +177,8 @@ def static(c):
     manage(c, "collectstatic --no-input")
 
 
-@task
-def translate_stats(c):
+@task(aliases=['translate_stats', ])
+def stats(c):
     """Collect translation stats.
 
     The file generated from this is needed for the UI.
@@ -174,7 +187,13 @@ def translate_stats(c):
     c.run(f'python3 {path}')
 
 
-@task(post=[translate_stats, static])
+@task
+def wait(c):
+    """Wait until the database connection is ready."""
+    return manage(c, "wait_for_db")
+
+
+@task(post=[stats, static])
 def translate(c):
     """Rebuild translation source files. Advanced use only!
 
@@ -186,7 +205,7 @@ def translate(c):
     manage(c, "compilemessages")
 
 
-@task(post=[rebuild_models, rebuild_thumbnails])
+@task(post=[clean_models, clean_thumbnails])
 def migrate(c):
     """Performs database migrations.
 
@@ -204,7 +223,7 @@ def migrate(c):
     print("InvenTree database migrations completed!")
 
 
-@task(pre=[install, migrate, static, clean_settings, translate_stats])
+@task(pre=[install, migrate, static, clean_settings, stats])
 def update(c):
     """Update InvenTree installation.
 
@@ -224,14 +243,31 @@ def update(c):
     manage(c, 'compilemessages', pty=True)
 
 
+ns_main.add_task(superuser)
+ns_main.add_task(clean_models)
+ns_main.add_task(clean_thumbnails)
+ns_main.add_task(clean_settings)
+ns_main.add_task(clean_mfa)
+ns_main.add_task(static)
+ns_main.add_task(stats)
+ns_main.add_task(translate)
+ns_main.add_task(wait)
+ns_main.add_task(migrate)
+ns_main.add_task(update, default=True)
+# endregion
+
 # Data tasks
+# region
+ns_data = Collection('data')
+
+
 @task(help={
     'filename': "Output filename (default = 'data.json')",
     'overwrite': "Overwrite existing files without asking first (default = off/False)",
     'include_permissions': "Include user and group permissions in the output file (filename) (default = off/False)",
     'delete_temp': "Delete temporary files (containing permissions) at end of run. Note that this will delete temporary files from previous runs as well. (default = off/False)"
-})
-def export_records(c, filename='data.json', overwrite=False, include_permissions=False, delete_temp=False):
+}, aliases=['export_records', ])
+def export(c, filename='data.json', overwrite=False, include_permissions=False, delete_temp=False):
     """Export all database records to a file.
 
     Write data to the file defined by filename.
@@ -300,7 +336,7 @@ def export_records(c, filename='data.json', overwrite=False, include_permissions
         os.remove(tmpfile)
 
 
-@task(help={'filename': 'Input filename', 'clear': 'Clear existing data before import'}, post=[rebuild_models, rebuild_thumbnails])
+@task(help={'filename': 'Input filename', 'clear': 'Clear existing data before import'}, post=[clean_models, clean_thumbnails], name='import', aliases=['import_records', ])
 def import_records(c, filename='data.json', clear=False):
     """Import database records from a file."""
     # Get an absolute path to the supplied filename
@@ -312,7 +348,7 @@ def import_records(c, filename='data.json', clear=False):
         sys.exit(1)
 
     if clear:
-        delete_data(c, force=True)
+        delete(c, force=True)
 
     print(f"Importing database records from '{filename}'")
 
@@ -344,8 +380,8 @@ def import_records(c, filename='data.json', clear=False):
     print("Data import completed")
 
 
-@task
-def delete_data(c, force=False):
+@task(aliases=['delete_data', ])
+def delete(c, force=False):
     """Delete all database records!
 
     Warning: This will REALLY delete all records in the database!!
@@ -358,8 +394,8 @@ def delete_data(c, force=False):
         manage(c, 'flush')
 
 
-@task(post=[rebuild_models, rebuild_thumbnails])
-def import_fixtures(c):
+@task(post=[clean_models, clean_thumbnails], aliases=['import_fixtures', ])
+def fixtures(c):
     """Import fixture data into the database.
 
     This command imports all existing test fixture data into the database.
@@ -405,6 +441,13 @@ def import_fixtures(c):
     manage(c, command, pty=True)
 
 
+ns_data.add_task(export)
+ns_data.add_task(import_records)
+ns_data.add_task(delete)
+ns_data.add_task(fixtures)
+# endregion
+
+
 # Execution tasks
 @task(help={'address': 'Server address:port (default=127.0.0.1:8000)'})
 def server(c, address="127.0.0.1:8000"):
@@ -415,12 +458,6 @@ def server(c, address="127.0.0.1:8000"):
     manage(c, "runserver {address}".format(address=address), pty=True)
 
 
-@task
-def wait(c):
-    """Wait until the database connection is ready."""
-    return manage(c, "wait_for_db")
-
-
 @task(pre=[wait])
 def worker(c):
     """Run the InvenTree background worker process."""
@@ -428,13 +465,17 @@ def worker(c):
 
 
 # Testing tasks
+# region
+ns_test = Collection('test')
+
+
 @task
 def render_js_files(c):
     """Render templated javascript files (used for static testing)."""
     manage(c, "test InvenTree.ci_render_js")
 
 
-@task(post=[translate_stats, static, server])
+@task(post=[stats, static, server])
 def test_translations(c):
     """Add a fictional language to test if each component is ready for translations."""
     import django
@@ -528,3 +569,21 @@ def coverage(c):
 
     # Generate coverage report
     c.run('coverage html')
+
+
+ns_test.add_task(render_js_files)
+ns_test.add_task(test_translations)
+ns_test.add_task(test, default=True)
+ns_test.add_task(coverage)
+# endregion
+
+
+# Default collection
+ns = Collection()
+ns.add_task(server)
+ns.add_task(worker)
+
+ns.add_collection(ns_install)
+ns.add_collection(ns_main, default=True)
+ns.add_collection(ns_data)
+ns.add_collection(ns_test)

@@ -39,7 +39,7 @@ fi
 cd ${INVENTREE_HOME}
 
 # Collect translation file stats
-invoke translate-stats
+invoke main.stats
 
 # Launch the CMD *after* the ENTRYPOINT completes
 exec "$@"

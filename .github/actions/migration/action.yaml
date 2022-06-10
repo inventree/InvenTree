@@ -8,10 +8,10 @@ runs:
       - name: Data Import Export
         shell: bash
         run: |
-          invoke migrate
-          invoke import-fixtures
-          invoke export-records -f data.json
+          invoke main.migrate
+          invoke data.import
+          invoke data.export -f data.json
           python3 ./InvenTree/manage.py flush --noinput
-          invoke migrate
-          invoke import-records -f data.json
-          invoke import-records -f data.json
+          invoke main.migrate
+          invoke data.import -f data.json
+          invoke data.import -f data.json

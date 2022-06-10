@@ -10,9 +10,9 @@ tasks:
       python3 -m venv venv
       source venv/bin/activate
       pip install invoke
-      inv install
+      inv inst.install
       mkdir dev
-      inv update
+      inv main.update
       gp sync-done setup_server
 
  - name: Start server
@@ -27,8 +27,8 @@ tasks:
       source venv/bin/activate
       rm /workspace/InvenTree/inventree-data -r
       git clone https://github.com/inventree/demo-dataset /workspace/InvenTree/inventree-data
-      invoke delete-data -f
-      invoke import-records -f /workspace/InvenTree/inventree-data/inventree_data.json
+      invoke data.delete -f
+      invoke data.import -f /workspace/InvenTree/inventree-data/inventree_data.json
 
       inv server
 

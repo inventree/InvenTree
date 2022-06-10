@@ -42,9 +42,9 @@ jobs:
       - name: Run Unit Tests
         run: |
           docker-compose build
-          docker-compose run inventree-dev-server invoke update
+          docker-compose run inventree-dev-server invoke main.update
           docker-compose up -d
-          docker-compose run inventree-dev-server invoke wait
+          docker-compose run inventree-dev-server invoke main.wait
           docker-compose run inventree-dev-server invoke test
           docker-compose down
       - name: Set up QEMU
