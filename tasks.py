@@ -224,7 +224,7 @@ def update(c):
 def style(c):
     """Run PEP style checks against InvenTree sourcecode"""
     print("Running PEP style checks...")
-    c.run('flake8 InvenTree')
+    c.run('flake8 InvenTree tasks.py')
 
 
 @task
@@ -282,9 +282,30 @@ def content_excludes():
     return output
 
 
-@task(help={'filename': "Output filename (default = 'data.json')"})
-def export_records(c, filename='data.json'):
-    """Export all database records to a file"""
+@task(help={
+    'filename': "Output filename (default = 'data.json')",
+    'overwrite': "Overwrite existing files without asking first (default = off/False)",
+    'include_permissions': "Include user and group permissions in the output file (filename) (default = off/False)",
+    'delete_temp': "Delete temporary files (containing permissions) at end of run. Note that this will delete temporary files from previous runs as well. (default = off/False)"
+})
+def export_records(c, filename='data.json', overwrite=False, include_permissions=False, delete_temp=False):
+    """Export all database records to a file.
+
+    Write data to the file defined by filename.
+    If --overwrite is not set, the user will be prompted about overwriting an existing files.
+    If --include-permissions is not set, the file defined by filename will have permissions specified for a user or group removed.
+    If --delete-temp is not set, the temporary file (which includes permissions) will not be deleted. This file is named filename.tmp
+
+    For historical reasons, calling this function without any arguments will thus result in two files:
+    - data.json: does not include permissions
+    - data.json.tmp: includes permissions
+
+    If you want the script to overwrite any existing files without asking, add argument -o / --overwrite.
+
+    If you only want one file, add argument - d / --delete-temp.
+
+    If you want only one file, with permissions, then additionally add argument -i / --include-permissions
+    """
     # Get an absolute path to the file
     if not os.path.isabs(filename):
         filename = os.path.join(localDir(), filename)
@@ -292,7 +313,7 @@ def export_records(c, filename='data.json'):
 
     print(f"Exporting database records to file '{filename}'")
 
-    if os.path.exists(filename):
+    if os.path.exists(filename) and overwrite is False:
         response = input("Warning: file already exists. Do you want to overwrite? [y/N]: ")
         response = str(response).strip().lower()
 
@@ -313,22 +334,27 @@ def export_records(c, filename='data.json'):
     with open(tmpfile, "r") as f_in:
         data = json.loads(f_in.read())
 
-    for entry in data:
-        if "model" in entry:
+    if include_permissions is False:
+        for entry in data:
+            if "model" in entry:
 
-            # Clear out any permissions specified for a group
-            if entry["model"] == "auth.group":
-                entry["fields"]["permissions"] = []
+                # Clear out any permissions specified for a group
+                if entry["model"] == "auth.group":
+                    entry["fields"]["permissions"] = []
 
-            # Clear out any permissions specified for a user
-            if entry["model"] == "auth.user":
-                entry["fields"]["user_permissions"] = []
+                # Clear out any permissions specified for a user
+                if entry["model"] == "auth.user":
+                    entry["fields"]["user_permissions"] = []
 
     # Write the processed data to file
     with open(filename, "w") as f_out:
         f_out.write(json.dumps(data, indent=2))
 
     print("Data export completed")
+
+    if delete_temp is True:
+        print("Removing temporary file")
+        os.remove(tmpfile)
 
 
 @task(help={'filename': 'Input filename', 'clear': 'Clear existing data before import'}, post=[rebuild_models, rebuild_thumbnails])

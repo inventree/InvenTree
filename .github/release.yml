@@ -1,6 +1,9 @@
 # .github/release.yml
 
 changelog:
+  exclude:
+    labels:
+      - translation
   categories:
     - title: Breaking Changes
       labels:
