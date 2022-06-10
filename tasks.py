@@ -475,8 +475,8 @@ def render_js_files(c):
     manage(c, "test InvenTree.ci_render_js")
 
 
-@task(post=[stats, static, server])
-def test_translations(c):
+@task(post=[stats, static, server], aliases=['test_translations', ])
+def translations(c):
     """Add a fictional language to test if each component is ready for translations."""
     import django
     from django.conf import settings
@@ -572,7 +572,7 @@ def coverage(c):
 
 
 ns_test.add_task(render_js_files)
-ns_test.add_task(test_translations)
+ns_test.add_task(translations)
 ns_test.add_task(test, default=True)
 ns_test.add_task(coverage)
 # endregion
