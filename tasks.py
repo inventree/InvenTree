@@ -97,12 +97,6 @@ def setup_dev(c):
 
 
 @task
-def shell(c):
-    """Open a python shell with access to the InvenTree database models."""
-    manage(c, 'shell', pty=True)
-
-
-@task
 def superuser(c):
     """Create a superuser/admin account for the database."""
     manage(c, 'createsuperuser', pty=True)
