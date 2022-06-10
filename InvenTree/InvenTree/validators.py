@@ -5,11 +5,59 @@ from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
 from django.core.exceptions import FieldDoesNotExist, ValidationError
+from django.core.validators import BaseValidator, URLValidator
 from django.utils.translation import gettext_lazy as _
 
 from moneyed import CURRENCIES
 
 import common.models
+
+
+class EmptyURLValidator(URLValidator):
+    """Validator for filed with url - that can be empty."""
+
+    def __call__(self, value):
+        """Make sure empty values pass."""
+        value = str(value).strip()
+
+        if len(value) == 0:
+            pass
+
+        else:
+            super().__call__(value)
+
+
+class ReferenceRegexValidator(BaseValidator):
+    """Class for validating a 'reference' field against a regex pattern.
+
+    The regex pattern is determined by providing a global setting value to the class when instantiating.
+
+    e.g. ReferenceRegexValidator('BUILDORDER_REFERENCE_REGEX')
+    """
+
+    def __init__(self, setting):
+        """Initialize the validator class with the name of a global setting"""
+        self.setting = setting
+
+        if setting not in common.models.InvenTreeSetting.SETTINGS:
+            raise ValueError(f'{setting} is not a valid global setting key')
+
+    def __call__(self, value):
+        """Run regex validation against the provided value"""
+
+        pattern = common.models.InvenTreeSetting.get_setting(self.setting).strip()
+
+        if pattern:
+            # Compile the pattern to make sure it is valid (ignore if not)
+            try:
+                re.compile(pattern)
+            except Exception:
+                return
+
+            match = re.match(pattern, value)
+
+            if match is None:
+                raise ValidationError(_('Reference must match pattern {pattern}').format(pattern=pattern))
 
 
 def validate_currency_code(code):
@@ -78,39 +126,6 @@ def validate_reference_regex(value):
 
     if regex.groups > 1:
         raise ValidationError(_('Cannot have more than one matching group'))
-
-
-def validate_build_order_reference(value):
-    """Validate the 'reference' field of a BuildOrder."""
-    pattern = common.models.InvenTreeSetting.get_setting('BUILDORDER_REFERENCE_REGEX')
-
-    if pattern:
-        match = re.search(pattern, value)
-
-        if match is None:
-            raise ValidationError(_('Reference must match pattern {pattern}').format(pattern=pattern))
-
-
-def validate_purchase_order_reference(value):
-    """Validate the 'reference' field of a PurchaseOrder."""
-    pattern = common.models.InvenTreeSetting.get_setting('PURCHASEORDER_REFERENCE_REGEX')
-
-    if pattern:
-        match = re.search(pattern, value)
-
-        if match is None:
-            raise ValidationError(_('Reference must match pattern {pattern}').format(pattern=pattern))
-
-
-def validate_sales_order_reference(value):
-    """Validate the 'reference' field of a SalesOrder."""
-    pattern = common.models.InvenTreeSetting.get_setting('SALESORDER_REFERENCE_REGEX')
-
-    if pattern:
-        match = re.search(pattern, value)
-
-        if match is None:
-            raise ValidationError(_('Reference must match pattern {pattern}').format(pattern=pattern))
 
 
 def validate_tree_name(value):

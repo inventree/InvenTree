@@ -15,6 +15,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='build',
             name='reference',
-            field=models.CharField(default=build.models.get_next_build_number, help_text='Build Order Reference', max_length=64, unique=True, validators=[InvenTree.validators.validate_build_order_reference], verbose_name='Reference'),
+            field=models.CharField(
+                default=build.models.get_next_build_number,
+                help_text='Build Order Reference',
+                max_length=64,
+                unique=True,
+                # validators=[InvenTree.validators.validate_build_order_reference], verbose_name='Reference'),
+            )
         ),
     ]

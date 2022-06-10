@@ -315,14 +315,6 @@ class BuildCompleteTest(BuildAPITest):
 
         url = reverse('api-build-detail', kwargs={'pk': bo.pk})
 
-        # At first we do not have the required permissions
-        self.delete(
-            url,
-            expected_code=403,
-        )
-
-        self.assignRole('build.delete')
-
         # As build is currently not 'cancelled', it cannot be deleted
         self.delete(
             url,

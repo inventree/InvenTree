@@ -22,8 +22,8 @@ from common.settings import currency_codes
 from stock.models import StockLocation
 
 from . import config, helpers, ready, status, version
-from .validators import (validate_overage, validate_part_name,
-                         validate_reference_regex)
+from .validators import (ReferenceRegexValidator, validate_overage,
+                         validate_part_name, validate_reference_regex)
 
 
 class ValidatorTest(TestCase):
@@ -79,6 +79,34 @@ class ValidatorTest(TestCase):
         ]:
             with self.assertRaises(django_exceptions.ValidationError):
                 validate_reference_regex(pattern)
+
+    def test_reference_validator(self):
+        """Tests for the ReferenceRegexValidator class"""
+
+        # Cannot instantiate with a setting that does not exist
+        with self.assertRaises(ValueError):
+            ReferenceRegexValidator('INVALID_SETTING')
+
+        validator = ReferenceRegexValidator('SALESORDER_REFERENCE_REGEX')
+
+        InvenTreeSetting.set_setting('SALESORDER_REFERENCE_REGEX', r'.*ABC\d+', None)
+
+        # Run checks with invalid values
+        for value in [
+            'AB123',
+            '123ABC',
+            'ABC'
+        ]:
+            with self.assertRaises(ValidationError):
+                validator(value)
+
+        # Run checks with valid values
+        for value in [
+            'ABC123',
+            'ABC1',
+            'XYZABC2',
+        ]:
+            validator(value)
 
 
 class TestHelpers(TestCase):

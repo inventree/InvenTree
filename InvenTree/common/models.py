@@ -22,7 +22,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator, URLValidator
+from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.utils import IntegrityError, OperationalError
 from django.urls import reverse
@@ -39,20 +39,6 @@ import InvenTree.helpers
 import InvenTree.validators
 
 logger = logging.getLogger('inventree')
-
-
-class EmptyURLValidator(URLValidator):
-    """Validator for filed with url - that can be empty."""
-
-    def __call__(self, value):
-        """Make sure empty values pass."""
-        value = str(value).strip()
-
-        if len(value) == 0:
-            pass
-
-        else:
-            super().__call__(value)
 
 
 class BaseInvenTreeSetting(models.Model):
@@ -737,7 +723,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'INVENTREE_BASE_URL': {
             'name': _('Base URL'),
             'description': _('Base URL for server instance'),
-            'validator': EmptyURLValidator(),
+            'validator': InvenTree.validators.EmptyURLValidator(),
             'default': '',
         },
 

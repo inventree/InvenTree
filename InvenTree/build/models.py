@@ -26,7 +26,7 @@ from rest_framework import serializers
 from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode
 from InvenTree.helpers import increment, getSetting, normalize, MakeBarcode, notify_responsible
 from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
-from InvenTree.validators import validate_build_order_reference
+from InvenTree.validators import ReferenceRegexValidator
 
 import InvenTree.fields
 import InvenTree.helpers
@@ -189,7 +189,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         verbose_name=_('Reference'),
         default=get_next_build_number,
         validators=[
-            validate_build_order_reference
+            ReferenceRegexValidator('BUILDORDER_REFERENCE_REGEX'),
         ]
     )
 
