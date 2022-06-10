@@ -47,5 +47,6 @@ pygments==2.7.4                         # Syntax highlighting
 python-barcode[images]==0.13.1          # Barcode generator
 qrcode[pil]==6.1                        # QR code generator
 rapidfuzz==0.7.6                        # Fuzzy string matching
+sentry-sdk==1.5.12                      # Error reporting (optional)
 tablib[xls,xlsx,yaml]                   # Support for XLS and XLSX formats
 weasyprint==55.0                        # PDF generation library
