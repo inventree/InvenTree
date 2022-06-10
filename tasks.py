@@ -129,18 +129,6 @@ def superuser(c):
 
 
 @task
-def wait(c):
-    """Wait until the database connection is ready."""
-    return manage(c, "wait_for_db")
-
-
-@task(pre=[wait])
-def worker(c):
-    """Run the InvenTree background worker process."""
-    manage(c, 'qcluster', pty=True)
-
-
-@task
 def rebuild_models(c):
     """Rebuild database models with MPTT structures."""
     manage(c, "rebuild_models", pty=True)
@@ -403,6 +391,18 @@ def server(c, address="127.0.0.1:8000"):
     Note: This is *not* sufficient for a production installation.
     """
     manage(c, "runserver {address}".format(address=address), pty=True)
+
+
+@task
+def wait(c):
+    """Wait until the database connection is ready."""
+    return manage(c, "wait_for_db")
+
+
+@task(pre=[wait])
+def worker(c):
+    """Run the InvenTree background worker process."""
+    manage(c, 'qcluster', pty=True)
 
 
 @task(post=[translate_stats, static, server])
