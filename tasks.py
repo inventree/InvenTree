@@ -376,6 +376,12 @@ def worker(c):
     manage(c, 'qcluster', pty=True)
 
 
+@task
+def render_js_files(c):
+    """Render templated javascript files (used for static testing)."""
+    manage(c, "test InvenTree.ci_render_js")
+
+
 @task(post=[translate_stats, static, server])
 def test_translations(c):
     """Add a fictional language to test if each component is ready for translations."""
@@ -441,12 +447,6 @@ def test_translations(c):
 
     # set env flag
     os.environ['TEST_TRANSLATIONS'] = 'True'
-
-
-@task
-def render_js_files(c):
-    """Render templated javascript files (used for static testing)."""
-    manage(c, "test InvenTree.ci_render_js")
 
 
 @task
