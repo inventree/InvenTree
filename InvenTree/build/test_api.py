@@ -6,6 +6,7 @@ from django.urls import reverse
 
 from rest_framework import status
 
+from common.models import InvenTreeSetting
 from part.models import Part
 from build.models import Build, BuildItem
 from stock.models import StockItem
@@ -14,25 +15,32 @@ from InvenTree.status_codes import BuildStatus
 from InvenTree.api_tester import InvenTreeAPITestCase
 
 
-class TestBuildAPI(InvenTreeAPITestCase):
-    """Series of tests for the Build DRF API.
-
-    - Tests for Build API
-    - Tests for BuildItem API
-    """
+class BuildAPITest(InvenTreeAPITestCase):
+    """Series of tests for the Build DRF API."""
 
     fixtures = [
         'category',
         'part',
         'location',
+        'bom',
         'build',
+        'stock',
     ]
 
+    # Required roles to access Build API endpoints
     roles = [
         'build.change',
         'build.add',
         'build.delete',
     ]
+
+
+class TestBuildAPI(BuildAPITest):
+    """Series of tests for the Build DRF API.
+
+    - Tests for Build API
+    - Tests for BuildItem API
+    """
 
     def test_get_build_list(self):
         """Test that we can retrieve list of build objects."""
@@ -74,27 +82,59 @@ class TestBuildAPI(InvenTreeAPITestCase):
         response = self.client.get(url, {'part': '1'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_reference_regex(self):
+        """Unit tests for the build-order reference regex.
 
-class BuildAPITest(InvenTreeAPITestCase):
-    """Series of tests for the Build DRF API."""
+        By testing via the API we ensure that the validators work "top to bottom"
+        """
 
-    fixtures = [
-        'category',
-        'part',
-        'location',
-        'bom',
-        'build',
-        'stock',
-    ]
+        url = reverse('api-build-list')
 
-    # Required roles to access Build API endpoints
-    roles = [
-        'build.change',
-        'build.add',
-    ]
+        # Specify a regex validator for the BuildOrder reference field
+        InvenTreeSetting.set_setting('BUILDORDER_REFERENCE_REGEX', '^BUILD-(\d{4})$', None)
+
+        # Attempt to create a build order with invalid values provided
+        for ref in [
+            'BUILD-123',
+            'BUILD-12345',
+            'aBUILD-1234',
+            'BUILD-ABCD',
+            'BUILD-1234ttt',
+            'BUILD',
+            'BUILD1234',
+        ]:
+            response = self.post(
+                url,
+                {
+                    'reference': ref,
+                    'title': 'Making some parts',
+                    'part': 25,
+                    'quantity': 10,
+                },
+                expected_code=400,
+            )
+
+            self.assertIn(r'Reference must match pattern ^BUILD-(\\d{4})$', str(response.data['reference']))
+
+        # Now attempt to create build orders with valid reference values (according to the regex pattern)
+        for ref in [
+            'BUILD-1234',
+            'BUILD-1235',
+            'BUILD-9999',
+        ]:
+            response = self.post(
+                url,
+                {
+                    'reference': ref,
+                    'title': 'Making some parts',
+                    'part': 25,
+                    'quantity': 10,
+                },
+                expected_code=201
+            )
 
 
-class BuildTest(BuildAPITest):
+class BuildCompleteTest(BuildAPITest):
     """Unit testing for the build complete API endpoint."""
 
     def setUp(self):
