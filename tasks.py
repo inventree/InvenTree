@@ -215,13 +215,6 @@ def update(c):
 
 
 @task
-def style(c):
-    """Run PEP style checks against InvenTree sourcecode"""
-    print("Running PEP style checks...")
-    c.run('flake8 InvenTree tasks.py')
-
-
-@task
 def test(c, database=None):
     """Run unit-tests for InvenTree codebase."""
     # Run sanity check on the django install
