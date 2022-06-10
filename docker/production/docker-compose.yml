@@ -121,8 +121,8 @@ services:
             - inventree-db
         env_file:
             - .env
-        expose:
-            - ${INVENTREE_CACHE_PORT:-6397}
+        ports:
+            - ${INVENTREE_CACHE_PORT:-6379}:6379
         restart: unless-stopped
 
 volumes:
