@@ -9,6 +9,7 @@ from django.urls import reverse
 from rest_framework import status
 
 import order.models as models
+from common.models import InvenTreeSetting
 from InvenTree.api_tester import InvenTreeAPITestCase
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
 from part.models import Part
@@ -210,8 +211,10 @@ class PurchaseOrderTest(OrderTest):
         """Test that we can create a new PurchaseOrder via the API."""
         self.assignRole('purchase_order.add')
 
+        url = reverse('api-po-list')
+
         self.post(
-            reverse('api-po-list'),
+            url,
             {
                 'reference': '12345678',
                 'supplier': 1,
@@ -219,6 +222,45 @@ class PurchaseOrderTest(OrderTest):
             },
             expected_code=201
         )
+
+        # Test reference regex functionality
+        InvenTreeSetting.set_setting('PURCHASEORDER_REFERENCE_REGEX', '\d\d\d\d', None)
+
+        # Attempt to create a PurchaseOrder with invalid reference field
+        for ref in [
+            'ABC-123',
+            '111',
+            'abcd',
+            '123-456',
+        ]:
+            response = self.post(
+                url,
+                {
+                    'reference': ref,
+                    'supplier': 1,
+                    'description': 'A test purchase order',
+                },
+                expected_code=400,
+            )
+
+            self.assertIn('Reference must match pattern \d\d\d\d', response.data['reference'])
+
+        # Attempt to create a PurchaseOrder with a valid reference field
+        for ref in [
+            '1234',
+            '5678',
+            '1111111111',
+            '1111abcd2222',
+        ]:
+            response = self.post(
+                url,
+                {
+                    'reference': ref,
+                    'supplier': 1,
+                    'description': 'A valid PurchaseOrder',
+                },
+                expected_code=201,
+            )
 
     def test_po_cancel(self):
         """Test the PurchaseOrderCancel API endpoint."""
@@ -866,8 +908,10 @@ class SalesOrderTest(OrderTest):
         """Test that we can create a new SalesOrder via the API."""
         self.assignRole('sales_order.add')
 
+        url = reverse('api-so-list')
+
         self.post(
-            reverse('api-so-list'),
+            url,
             {
                 'reference': '1234566778',
                 'customer': 4,
@@ -875,6 +919,41 @@ class SalesOrderTest(OrderTest):
             },
             expected_code=201
         )
+
+        # Test regex reference functionality
+        InvenTreeSetting.set_setting('SALESORDER_REFERENCE_REGEX', '\scat\s', None)
+
+        # Invalid reference fields
+        for ref in [
+            'cat',
+            ' dog ',
+            'cat ',
+            ' cat',
+        ]:
+            self.post(
+                url,
+                {
+                    'reference': ref,
+                    'customer': 4,
+                    'description': 'reference field is invalid!',
+                },
+                expected_code=400,
+            )
+
+        # Valid reference fields
+        for ref in [
+            ' cat ',
+            'the cat sat on the mat',
+        ]:
+            self.post(
+                url,
+                {
+                    'reference': ref,
+                    'customer': 4,
+                    'description': 'Valid reference field',
+                },
+                expected_code=201,
+            )
 
     def test_so_cancel(self):
         """Test API endpoint for cancelling a SalesOrder."""

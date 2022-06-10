@@ -34,6 +34,7 @@ from InvenTree.helpers import (decimal2string, getSetting, increment,
 from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
 from InvenTree.status_codes import (PurchaseOrderStatus, SalesOrderStatus,
                                     StockHistoryCode, StockStatus)
+from InvenTree.validators import ReferenceRegexValidator
 from part import models as PartModels
 from plugin.events import trigger_event
 from plugin.models import MetadataMixin
@@ -279,6 +280,9 @@ class PurchaseOrder(Order):
         verbose_name=_('Reference'),
         help_text=_('Order reference'),
         default=get_next_po_number,
+        validators=[
+            ReferenceRegexValidator('PURCHASEORDER_REFERENCE_REGEX'),
+        ]
     )
 
     status = models.PositiveIntegerField(default=PurchaseOrderStatus.PENDING, choices=PurchaseOrderStatus.items(),
@@ -640,6 +644,9 @@ class SalesOrder(Order):
         verbose_name=_('Reference'),
         help_text=_('Order reference'),
         default=get_next_so_number,
+        validators=[
+            ReferenceRegexValidator('SALESORDER_REFERENCE_REGEX'),
+        ]
     )
 
     customer = models.ForeignKey(
