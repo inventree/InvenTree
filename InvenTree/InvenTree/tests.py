@@ -22,7 +22,8 @@ from common.settings import currency_codes
 from stock.models import StockLocation
 
 from . import config, helpers, ready, status, version
-from .validators import validate_overage, validate_part_name
+from .validators import (validate_overage, validate_part_name,
+                         validate_reference_regex)
 
 
 class ValidatorTest(TestCase):
@@ -55,6 +56,29 @@ class ValidatorTest(TestCase):
 
         with self.assertRaises(django_exceptions.ValidationError):
             validate_overage("aaaa")
+
+    def test_reference_regex(self):
+        """Test validator function for reference regex patterns"""
+
+        # Valid tests
+        for pattern in [
+            "",
+            "           ",
+            r"(\d+)",
+            r"REF-(\d{4})-[\w\s{4}]$",
+            r"^ORDER-(\d{4})$",
+        ]:
+            validate_reference_regex(pattern)
+
+        # Invalid tests
+        for pattern in [
+            r"(((",
+            r"()((",
+            r"(\d+)-(\d?)$",
+            r"(P.TTE.N)-(\d+)",
+        ]:
+            with self.assertRaises(django_exceptions.ValidationError):
+                validate_reference_regex(pattern)
 
 
 class TestHelpers(TestCase):

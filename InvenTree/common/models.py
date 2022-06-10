@@ -1028,7 +1028,8 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'BUILDORDER_REFERENCE_REGEX': {
             'name': _('Build Order Reference Regex'),
-            'description': _('Regular expression pattern for matching order reference field')
+            'description': _('Regular expression pattern for matching order reference field'),
+            'validator': InvenTree.validators.validate_reference_regex,
         },
 
         'SALESORDER_REFERENCE_PREFIX': {
@@ -1039,7 +1040,8 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'SALESORDER_REFERENCE_REGEX': {
             'name': _('Sales Order Reference Regex'),
-            'description': _('Regular expression pattern for matching order reference field')
+            'description': _('Regular expression pattern for matching order reference field'),
+            'validator': InvenTree.validators.validate_reference_regex,
         },
 
         'SALESORDER_DEFAULT_SHIPMENT': {
@@ -1057,7 +1059,8 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
         'PURCHASEORDER_REFERENCE_REGEX': {
             'name': _('Purchase Order Reference Regex'),
-            'description': _('Regular expression pattern for matching order reference field')
+            'description': _('Regular expression pattern for matching order reference field'),
+            'validator': InvenTree.validators.validate_reference_regex,
         },
 
         # login / SSO

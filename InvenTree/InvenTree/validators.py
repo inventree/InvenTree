@@ -57,6 +57,29 @@ def validate_part_ipn(value):
             raise ValidationError(_('IPN must match regex pattern {pat}').format(pat=pattern))
 
 
+def validate_reference_regex(value):
+    """Validate regex pattern for a 'reference' field.
+
+    - Must be a valid regex pattern string
+    - Must have either zero or one matching groups
+    """
+
+    value = value.strip()
+
+    # Ignore empty values
+    if not value:
+        return
+
+    # Check that the reference field compiles to a valid regex pattern
+    try:
+        regex = re.compile(value)
+    except Exception:
+        raise ValidationError(_('Must be a valid regular expression pattern'))
+
+    if regex.groups > 1:
+        raise ValidationError(_('Cannot have more than one matching group'))
+
+
 def validate_build_order_reference(value):
     """Validate the 'reference' field of a BuildOrder."""
     pattern = common.models.InvenTreeSetting.get_setting('BUILDORDER_REFERENCE_REGEX')
