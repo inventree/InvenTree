@@ -155,24 +155,6 @@ def remove_mfa(c, mail=''):
     manage(c, f"remove_mfa {mail}")
 
 
-@task(post=[rebuild_models, rebuild_thumbnails])
-def migrate(c):
-    """Performs database migrations.
-
-    This is a critical step if the database schema have been altered!
-    """
-    print("Running InvenTree database migrations...")
-    print("========================================")
-
-    manage(c, "makemigrations")
-    manage(c, "migrate --noinput")
-    manage(c, "migrate --run-syncdb")
-    manage(c, "check")
-
-    print("========================================")
-    print("InvenTree database migrations completed!")
-
-
 @task
 def static(c):
     """Copies required static files to the STATIC_ROOT directory, as per Django requirements."""
@@ -200,6 +182,24 @@ def translate(c):
     # Translate applicable .py / .html / .js files
     manage(c, "makemessages --all -e py,html,js --no-wrap")
     manage(c, "compilemessages")
+
+
+@task(post=[rebuild_models, rebuild_thumbnails])
+def migrate(c):
+    """Performs database migrations.
+
+    This is a critical step if the database schema have been altered!
+    """
+    print("Running InvenTree database migrations...")
+    print("========================================")
+
+    manage(c, "makemigrations")
+    manage(c, "migrate --noinput")
+    manage(c, "migrate --run-syncdb")
+    manage(c, "check")
+
+    print("========================================")
+    print("InvenTree database migrations completed!")
 
 
 @task(pre=[install, migrate, static, clean_settings, translate_stats])
