@@ -358,6 +358,53 @@ def delete_data(c, force=False):
         manage(c, 'flush')
 
 
+@task(post=[rebuild_models, rebuild_thumbnails])
+def import_fixtures(c):
+    """Import fixture data into the database.
+
+    This command imports all existing test fixture data into the database.
+
+    Warning:
+        - Intended for testing / development only!
+        - Running this command may overwrite existing database data!!
+        - Don't say you were not warned...
+    """
+    fixtures = [
+        # Build model
+        'build',
+
+        # Common models
+        'settings',
+
+        # Company model
+        'company',
+        'price_breaks',
+        'supplier_part',
+
+        # Order model
+        'order',
+
+        # Part model
+        'bom',
+        'category',
+        'params',
+        'part',
+        'test_templates',
+
+        # Stock model
+        'location',
+        'stock_tests',
+        'stock',
+
+        # Users
+        'users'
+    ]
+
+    command = 'loaddata ' + ' '.join(fixtures)
+
+    manage(c, command, pty=True)
+
+
 # Execution tasks
 @task(help={'address': 'Server address:port (default=127.0.0.1:8000)'})
 def server(c, address="127.0.0.1:8000"):
