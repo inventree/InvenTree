@@ -194,7 +194,7 @@ def translate(c):
     manage(c, "compilemessages")
 
 
-@task(pre=[install, migrate, static, clean_settings])
+@task(pre=[install, migrate, static, clean_settings, translate_stats])
 def update(c):
     """Update InvenTree installation.
 
@@ -205,9 +205,9 @@ def update(c):
 
     - install
     - migrate
-    - translate_stats
     - static
     - clean_settings
+    - translate_stats
     """
     # Recompile the translation files (.mo)
     # We do not run 'invoke translate' here, as that will touch the source (.po) files too!
