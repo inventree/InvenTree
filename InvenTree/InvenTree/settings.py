@@ -551,7 +551,7 @@ db_config['TEST'] = {
 
 # Set collation option for mysql test database
 if 'mysql' in db_engine:
-    db_config['TEST']['COLLATION'] = 'utf8_general_ci'
+    db_config['TEST']['COLLATION'] = 'utf8_general_ci'  # pragma: no cover
 
 DATABASES = {
     'default': db_config
@@ -891,7 +891,7 @@ MARKDOWNIFY_BLEACH = False
 SENTRY_ENABLED = get_setting('INVENTREE_SENTRY_ENABLED', CONFIG.get('sentry_enabled', False))
 SENTRY_DSN = get_setting('INVENTREE_SENTRY_DSN', CONFIG.get('sentry_dsn', INVENTREE_DSN))
 
-if SENTRY_ENABLED and SENTRY_DSN:
+if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
     sentry_sdk.init(
         dsn=SENTRY_DSN,
         integrations=[DjangoIntegration(), ],
@@ -950,6 +950,6 @@ CUSTOM_LOGO = get_setting(
 )
 
 # check that the logo-file exsists in media
-if CUSTOM_LOGO and not default_storage.exists(CUSTOM_LOGO):
+if CUSTOM_LOGO and not default_storage.exists(CUSTOM_LOGO):  # pragma: no cover
     CUSTOM_LOGO = False
     logger.warning("The custom logo file could not be found in the default media storage")
