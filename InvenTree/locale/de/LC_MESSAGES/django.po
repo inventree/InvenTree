@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-08 11:50+0000\n"
-"PO-Revision-Date: 2022-06-08 15:14\n"
+"PO-Revision-Date: 2022-06-10 15:05\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -9192,7 +9192,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:431
 msgid "Delete Part"
-msgstr ""
+msgstr "Teil löschen"
 
 #: templates/js/translated/part.js:467
 msgid "You are subscribed to notifications for this item"
@@ -9294,11 +9294,11 @@ msgstr "Teil-Kategorie auswählen"
 
 #: templates/js/translated/part.js:1640
 msgid "Select Part Category"
-msgstr ""
+msgstr "Teil-Kategorie wählen"
 
 #: templates/js/translated/part.js:1653
 msgid "Category is required"
-msgstr ""
+msgstr "Kategorie erforderlich"
 
 #: templates/js/translated/part.js:1779 templates/js/translated/stock.js:2267
 msgid "Display as tree"
