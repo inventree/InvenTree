@@ -85,6 +85,7 @@ def manage(c, cmd, pty: bool = False):
     ), pty=pty)
 
 
+# Install tasks
 @task
 def plugins(c):
     """Installs all plugins as specified in 'plugins.txt'."""
@@ -122,6 +123,7 @@ def setup_dev(c):
     c.run('pre-commit autoupdate')
 
 
+# Setup / maintenance tasks
 @task
 def superuser(c):
     """Create a superuser/admin account for the database."""
@@ -222,6 +224,7 @@ def update(c):
     manage(c, 'compilemessages', pty=True)
 
 
+# Data tasks
 @task(help={
     'filename': "Output filename (default = 'data.json')",
     'overwrite': "Overwrite existing files without asking first (default = off/False)",
@@ -355,6 +358,7 @@ def delete_data(c, force=False):
         manage(c, 'flush')
 
 
+# Execution tasks
 @task(help={'address': 'Server address:port (default=127.0.0.1:8000)'})
 def server(c, address="127.0.0.1:8000"):
     """Launch a (deveopment) server using Django's in-built webserver.
@@ -376,6 +380,7 @@ def worker(c):
     manage(c, 'qcluster', pty=True)
 
 
+# Testing tasks
 @task
 def render_js_files(c):
     """Render templated javascript files (used for static testing)."""
