@@ -103,12 +103,6 @@ def superuser(c):
 
 
 @task
-def check(c):
-    """Check validity of django codebase"""
-    manage(c, "check")
-
-
-@task
 def wait(c):
     """Wait until the database connection is ready"""
     return manage(c, "wait_for_db")
