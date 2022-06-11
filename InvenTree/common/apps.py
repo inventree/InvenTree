@@ -24,7 +24,7 @@ class CommonConfig(AppConfig):
         try:
             import common.models
 
-            if common.models.InvenTreeSetting.get_setting('SERVER_RESTART_REQUIRED', backup_value=False, create=False):
+            if common.models.InvenTreeSetting.get_setting('SERVER_RESTART_REQUIRED', backup_value=False, create=False, cache=False):
                 logger.info("Clearing SERVER_RESTART_REQUIRED flag")
                 common.models.InvenTreeSetting.set_setting('SERVER_RESTART_REQUIRED', False, None)
         except Exception:

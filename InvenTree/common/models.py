@@ -21,7 +21,8 @@ from django.contrib.auth.models import Group, User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
-from django.core.exceptions import ValidationError
+from django.core.cache import cache
+from django.core.exceptions import AppRegistryNotReady, ValidationError
 from django.core.validators import MinValueValidator, URLValidator
 from django.db import models, transaction
 from django.db.utils import IntegrityError, OperationalError
@@ -69,10 +70,49 @@ class BaseInvenTreeSetting(models.Model):
         """Enforce validation and clean before saving."""
         self.key = str(self.key).upper()
 
+        do_cache = kwargs.pop('cache', True)
+
         self.clean(**kwargs)
         self.validate_unique(**kwargs)
 
+        # Update this setting in the cache
+        if do_cache:
+            self.save_to_cache()
+
         super().save()
+
+    def save_to_cache(self):
+        """Save this setting object to cache"""
+
+        ckey = self.cache_key(self.key, **self.get_kwargs())
+
+        logger.info(f"Saving setting '{ckey}' to cache")
+
+        cache.set(
+            ckey,
+            self,
+            timeout=3600
+        )
+
+    @classmethod
+    def cache_key(cls, setting_key, **kwargs):
+        """Create a unique cache key for a particular setting object.
+
+        - Settings are often used, rarely updated
+        - This key is used to store and retrieve the setting value from django cache
+
+        The cache key uses the following elements to ensure the key is 'unique':
+        - The name of the class
+        - The unique KEY string
+        - Any key:value kwargs associated with the particular setting type (e.g. user-id)
+        """
+
+        key = f"{str(cls.__name__)}:{setting_key}"
+
+        for k, v in kwargs.items():
+            key += f"_{k}:{v}:"
+
+        return key
 
     @classmethod
     def allValues(cls, user=None, exclude_hidden=False):
@@ -220,10 +260,11 @@ class BaseInvenTreeSetting(models.Model):
 
         - Key is case-insensitive
         - Returns None if no match is made
+
+        First checks the cache to see if this object has recently been accessed,
+        and returns the cached version if so.
         """
         key = str(key).strip().upper()
-
-        settings = cls.objects.all()
 
         filters = {
             'key__iexact': key,
@@ -253,7 +294,25 @@ class BaseInvenTreeSetting(models.Model):
         if method is not None:
             filters['method'] = method
 
+        ckey = cls.cache_key(key, **kwargs)
+
+        # Perform cache lookup by default
+        do_cache = kwargs.pop('cache', True)
+
+        if do_cache:
+            try:
+                # First attempt to find the setting object in the cache
+                cached_setting = cache.get(ckey)
+
+                if cached_setting is not None:
+                    return cached_setting
+
+            except AppRegistryNotReady:
+                # Cache is not ready yet
+                do_cache = False
+
         try:
+            settings = cls.objects.all()
             setting = settings.filter(**filters).first()
         except (ValueError, cls.DoesNotExist):
             setting = None
@@ -281,6 +340,10 @@ class BaseInvenTreeSetting(models.Model):
                 except (IntegrityError, OperationalError):
                     # It might be the case that the database isn't created yet
                     pass
+
+        if setting and do_cache:
+            # Cache this setting object
+            setting.save_to_cache()
 
         return setting
 
