@@ -39,6 +39,7 @@
     assignStockToCustomer,
     createNewStockItem,
     createStockLocation,
+    deleteStockLocation,
     duplicateStockItem,
     editStockItem,
     editStockLocation,
@@ -154,6 +155,34 @@ function createStockLocation(options={}) {
 
     constructForm(url, options);
 }
+
+
+/*
+ * Launch an API form to delete a StockLocation
+ */
+function deleteStockLocation(pk, options={}) {
+    var url = `/api/stock/location/${pk}/`;
+
+    var html = `
+    <div class='alert alert-block alert-danger'>
+    {% trans "Are you sure you want to delete this stock location?" %}
+    <ul>
+        <li>{% trans "Any child locations will be moved to the parent of this location" %}</li>
+        <li>{% trans "Any stock items in this location will be moved to the parent of this location" %}</li>
+    </ul>
+    </div>
+    `;
+
+    constructForm(url, {
+        title: '{% trans "Delete Stock Location" %}',
+        method: 'DELETE',
+        preFormContent: html,
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
+
 
 
 function stockItemFields(options={}) {

@@ -7,7 +7,6 @@ from stock import views
 location_urls = [
 
     re_path(r'^(?P<pk>\d+)/', include([
-        re_path(r'^delete/?', views.StockLocationDelete.as_view(), name='stock-location-delete'),
         re_path(r'^qr_code/?', views.StockLocationQRCode.as_view(), name='stock-location-qr'),
 
         # Anything else - direct to the location detail view

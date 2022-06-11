@@ -165,19 +165,6 @@ class StockItemConvert(AjaxUpdateView):
         return stock_item
 
 
-class StockLocationDelete(AjaxDeleteView):
-    """View to delete a StockLocation.
-
-    Presents a deletion confirmation form to the user
-    """
-
-    model = StockLocation
-    success_url = '/stock'
-    ajax_template_name = 'stock/location_delete.html'
-    context_object_name = 'location'
-    ajax_form_title = _('Delete Stock Location')
-
-
 class StockItemDelete(AjaxDeleteView):
     """View to delete a StockItem.
 
