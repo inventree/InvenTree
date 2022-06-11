@@ -21,6 +21,7 @@
 
 /* exported
     deletePart,
+    deletePartCategory,
     duplicateBom,
     duplicatePart,
     editCategory,
@@ -317,7 +318,30 @@ function editCategory(pk) {
         title: '{% trans "Edit Part Category" %}',
         reload: true,
     });
+}
 
+/*
+ * Delete a PartCategory via the API
+ */
+function deletePartCategory(pk, options={}) {
+    var url = `/api/part/category/${pk}/`;
+
+    var html = `
+    <div class='alert alert-block alert-danger'>
+    {% trans "Are you sure you want to delete this part category?" %}
+    <ul>
+    <li>{% trans "Any child categories will be moved to the parent of this category" %}</li>
+    <li>{% trans "Any parts in this category will be moved to the parent of this category" %}</li>
+    </div>`;
+
+    constructForm(url, {
+        title: '{% trans "Delete Part Category" %}',
+        method: 'DELETE',
+        preFormContent: html,
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
 }
 
 
