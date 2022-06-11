@@ -108,24 +108,6 @@ class HelperForm(forms.ModelForm):
         self.helper.layout = Layout(*layouts)
 
 
-class DeleteForm(forms.Form):
-    """Generic deletion form which provides simple user confirmation."""
-
-    confirm_delete = forms.BooleanField(
-        required=False,
-        initial=False,
-        label=_('Confirm delete'),
-        help_text=_('Confirm item deletion')
-    )
-
-    class Meta:
-        """Metaclass options."""
-
-        fields = [
-            'confirm_delete'
-        ]
-
-
 class EditUserForm(HelperForm):
     """Form for editing user information."""
 
