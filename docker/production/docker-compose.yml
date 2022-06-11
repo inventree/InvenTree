@@ -57,6 +57,18 @@ services:
             - inventree_data:/var/lib/postgresql/data/
         restart: unless-stopped
 
+    # redis acts as database cache manager
+    inventree-cache:
+        container_name: inventree-cache
+        image: redis:7.0
+        depends_on:
+            - inventree-db
+        env_file:
+            - .env
+        ports:
+            - ${INVENTREE_CACHE_PORT:-6379}:6379
+        restart: unless-stopped
+
     # InvenTree web server services
     # Uses gunicorn as the web server
     inventree-server:
@@ -67,6 +79,7 @@ services:
             - 8000
         depends_on:
             - inventree-db
+            - inventree-cache
         env_file:
             - .env
         volumes:
@@ -81,7 +94,6 @@ services:
         image: inventree/inventree:stable
         command: invoke worker
         depends_on:
-            - inventree-db
             - inventree-server
         env_file:
             - .env
@@ -111,18 +123,6 @@ services:
             - ./nginx.prod.conf:/etc/nginx/conf.d/default.conf:ro
             # nginx proxy needs access to static and media files
             - inventree_data:/var/www
-        restart: unless-stopped
-
-    # redis acts as database cache manager
-    inventree-cache:
-        container_name: inventree-cache
-        image: redis:7.0
-        depends_on:
-            - inventree-db
-        env_file:
-            - .env
-        ports:
-            - ${INVENTREE_CACHE_PORT:-6379}:6379
         restart: unless-stopped
 
 volumes:
