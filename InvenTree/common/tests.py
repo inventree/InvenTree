@@ -47,10 +47,10 @@ class SettingsTest(InvenTreeTestCase):
         """Test settings functions and properties."""
         # define settings to check
         instance_ref = 'INVENTREE_INSTANCE'
-        instance_obj = InvenTreeSetting.get_setting_object(instance_ref)
+        instance_obj = InvenTreeSetting.get_setting_object(instance_ref, cache=False)
 
         stale_ref = 'STOCK_STALE_DAYS'
-        stale_days = InvenTreeSetting.get_setting_object(stale_ref)
+        stale_days = InvenTreeSetting.get_setting_object(stale_ref, cache=False)
 
         report_size_obj = InvenTreeSetting.get_setting_object('REPORT_DEFAULT_PAGE_SIZE')
         report_test_obj = InvenTreeSetting.get_setting_object('REPORT_ENABLE_TEST_REPORT')
@@ -199,6 +199,8 @@ class SettingsTest(InvenTreeTestCase):
         cache_key = InvenTreeSetting.create_cache_key(key)
         self.assertEqual(cache_key, 'InvenTreeSetting:PART_NAME_FORMAT')
 
+        cache.clear()
+
         self.assertIsNone(cache.get(cache_key))
 
         # First request should set cache
@@ -214,6 +216,8 @@ class SettingsTest(InvenTreeTestCase):
     def test_user_setting_caching(self):
         """Test caching operation for the user settings class"""
 
+        cache.clear()
+
         # Generate a number of new usesr
         for idx in range(5):
             get_user_model().objects.create(
@@ -226,7 +230,6 @@ class SettingsTest(InvenTreeTestCase):
 
         # Check that the settings are correctly cached for each separate user
         for user in get_user_model().objects.all():
-            print(user)
             setting = InvenTreeUserSetting.get_setting_object(key, user=user)
             cache_key = setting.cache_key
             self.assertEqual(cache_key, f"InvenTreeUserSetting:SEARCH_PREVIEW_RESULTS_user:{user.username}")
@@ -248,7 +251,7 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
 
         # Read out each of the global settings value, to ensure they are instantiated in the database
         for key in InvenTreeSetting.SETTINGS:
-            InvenTreeSetting.get_setting_object(key)
+            InvenTreeSetting.get_setting_object(key, cache=False)
 
         response = self.get(url, expected_code=200)
 
@@ -471,7 +474,8 @@ class UserSettingsApiTest(InvenTreeAPITestCase):
         """Test a integer user setting value."""
         setting = InvenTreeUserSetting.get_setting_object(
             'SEARCH_PREVIEW_RESULTS',
-            user=self.user
+            user=self.user,
+            cache=False,
         )
 
         url = reverse('api-user-setting-detail', kwargs={'key': setting.key})

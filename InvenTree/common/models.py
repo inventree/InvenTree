@@ -91,20 +91,21 @@ class BaseInvenTreeSetting(models.Model):
 
         ckey = self.cache_key
 
-        logger.info(f"Saving setting '{ckey}' to cache")
+        logger.debug(f"Saving setting '{ckey}' to cache")
 
-        cache.set(
-            ckey,
-            self,
-            timeout=3600
-        )
+        try:
+            cache.set(
+                ckey,
+                self,
+                timeout=3600
+            )
+        except TypeError:
+            # Some characters cause issues with caching; ignore and move on
+            pass
 
     @classmethod
     def create_cache_key(cls, setting_key, **kwargs):
         """Create a unique cache key for a particular setting object.
-
-        - Settings are often used, rarely updated
-        - This key is used to store and retrieve the setting value from django cache
 
         The cache key uses the following elements to ensure the key is 'unique':
         - The name of the class
@@ -1574,11 +1575,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         verbose_name=_('User'),
         help_text=_('User'),
     )
-
-    @classmethod
-    def get_setting_object(cls, key, user=None):
-        """Return setting object for provided user."""
-        return super().get_setting_object(key, user=user)
 
     def validate_unique(self, exclude=None, **kwargs):
         """Return if the setting (including key) is unique."""

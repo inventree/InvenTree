@@ -5,34 +5,34 @@ from common.models import InvenTreeSetting
 
 def part_assembly_default():
     """Returns the default value for the 'assembly' field of a Part object."""
-    return InvenTreeSetting.get_setting('PART_ASSEMBLY')
+    return InvenTreeSetting.get_setting('PART_ASSEMBLY', cache=False)
 
 
 def part_template_default():
     """Returns the default value for the 'is_template' field of a Part object."""
-    return InvenTreeSetting.get_setting('PART_TEMPLATE')
+    return InvenTreeSetting.get_setting('PART_TEMPLATE', cache=False)
 
 
 def part_virtual_default():
     """Returns the default value for the 'is_virtual' field of Part object."""
-    return InvenTreeSetting.get_setting('PART_VIRTUAL')
+    return InvenTreeSetting.get_setting('PART_VIRTUAL', cache=False)
 
 
 def part_component_default():
     """Returns the default value for the 'component' field of a Part object."""
-    return InvenTreeSetting.get_setting('PART_COMPONENT')
+    return InvenTreeSetting.get_setting('PART_COMPONENT', cache=False)
 
 
 def part_purchaseable_default():
     """Returns the default value for the 'purchasable' field for a Part object."""
-    return InvenTreeSetting.get_setting('PART_PURCHASEABLE')
+    return InvenTreeSetting.get_setting('PART_PURCHASEABLE', cache=False)
 
 
 def part_salable_default():
     """Returns the default value for the 'salable' field for a Part object."""
-    return InvenTreeSetting.get_setting('PART_SALABLE')
+    return InvenTreeSetting.get_setting('PART_SALABLE', cache=False)
 
 
 def part_trackable_default():
     """Returns the default value for the 'trackable' field for a Part object."""
-    return InvenTreeSetting.get_setting('PART_TRACKABLE')
+    return InvenTreeSetting.get_setting('PART_TRACKABLE', cache=False)

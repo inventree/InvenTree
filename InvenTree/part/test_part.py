@@ -3,6 +3,7 @@
 import os
 
 from django.conf import settings
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
@@ -394,6 +395,9 @@ class PartSettingsTest(InvenTreeTestCase):
 
     def make_part(self):
         """Helper function to create a simple part."""
+
+        cache.clear()
+
         part = Part.objects.create(
             name='Test Part',
             description='I am but a humble test part',
