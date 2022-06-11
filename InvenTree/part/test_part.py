@@ -408,6 +408,9 @@ class PartSettingsTest(InvenTreeTestCase):
 
     def test_defaults(self):
         """Test that the default values for the part settings are correct."""
+
+        cache.clear()
+
         self.assertTrue(part.settings.part_component_default())
         self.assertTrue(part.settings.part_purchaseable_default())
         self.assertFalse(part.settings.part_salable_default())
