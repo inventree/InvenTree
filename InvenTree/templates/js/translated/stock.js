@@ -370,8 +370,13 @@ function deleteStockItem(pk, options={}) {
     </div>`;
 
     constructForm(url, {
-
-    })
+        method: 'DELETE',
+        title: '{% trans "Delete Stock Item" %}',
+        preFormContent: html,
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
 }
 
 
