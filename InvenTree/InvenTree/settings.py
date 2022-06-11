@@ -35,8 +35,8 @@ def _is_true(x):
     return str(x).strip().lower() in ['1', 'y', 'yes', 't', 'true']
 
 
-# Default DSN
-INVENTREE_DSN = 'https://9fb6cb0b9b524fe99884360fecb213da@o1047628.ingest.sentry.io/6493900'
+# Default Sentry DSN (can be overriden if user wants custom sentry integration)
+INVENTREE_DSN = 'https://3928ccdba1d34895abde28031fd00100@o378676.ingest.sentry.io/6494600'
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv
