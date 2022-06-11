@@ -4,6 +4,8 @@ import json
 from datetime import timedelta
 from http import HTTPStatus
 
+from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.test import Client, TestCase
 from django.urls import reverse
 
@@ -188,6 +190,53 @@ class SettingsTest(InvenTreeTestCase):
 
                 if setting.default_value not in [True, False]:
                     raise ValueError(f'Non-boolean default value specified for {key}')  # pragma: no cover
+
+    def test_global_setting_caching(self):
+        """Test caching operations for the global settings class"""
+
+        key = 'PART_NAME_FORMAT'
+
+        cache_key = InvenTreeSetting.create_cache_key(key)
+        self.assertEqual(cache_key, 'InvenTreeSetting:PART_NAME_FORMAT')
+
+        self.assertIsNone(cache.get(cache_key))
+
+        # First request should set cache
+        val = InvenTreeSetting.get_setting(key)
+        self.assertEqual(cache.get(cache_key).value, val)
+
+        for val in ['A', '{{ part.IPN }}', 'C']:
+            # Check that the cached value is updated whenever the setting is saved
+            InvenTreeSetting.set_setting(key, val, None)
+            self.assertEqual(cache.get(cache_key).value, val)
+            self.assertEqual(InvenTreeSetting.get_setting(key), val)
+
+    def test_user_setting_caching(self):
+        """Test caching operation for the user settings class"""
+
+        # Generate a number of new usesr
+        for idx in range(5):
+            get_user_model().objects.create(
+                username=f"User_{idx}",
+                password="hunter42",
+                email="email@dot.com",
+            )
+
+        key = 'SEARCH_PREVIEW_RESULTS'
+
+        # Check that the settings are correctly cached for each separate user
+        for user in get_user_model().objects.all():
+            print(user)
+            setting = InvenTreeUserSetting.get_setting_object(key, user=user)
+            cache_key = setting.cache_key
+            self.assertEqual(cache_key, f"InvenTreeUserSetting:SEARCH_PREVIEW_RESULTS_user:{user.username}")
+            InvenTreeUserSetting.set_setting(key, user.pk, None, user=user)
+            self.assertIsNotNone(cache.get(cache_key))
+
+        # Iterate through a second time, ensure the values have been cached correctly
+        for user in get_user_model().objects.all():
+            value = InvenTreeUserSetting.get_setting(key, user=user)
+            self.assertEqual(value, user.pk)
 
 
 class GlobalSettingsApiTest(InvenTreeAPITestCase):

@@ -81,10 +81,15 @@ class BaseInvenTreeSetting(models.Model):
 
         super().save()
 
+    @property
+    def cache_key(self):
+        """Generate a unique cache key for this settings object"""
+        return self.__class__.create_cache_key(self.key, **self.get_kwargs())
+
     def save_to_cache(self):
         """Save this setting object to cache"""
 
-        ckey = self.cache_key(self.key, **self.get_kwargs())
+        ckey = self.cache_key
 
         logger.info(f"Saving setting '{ckey}' to cache")
 
@@ -95,7 +100,7 @@ class BaseInvenTreeSetting(models.Model):
         )
 
     @classmethod
-    def cache_key(cls, setting_key, **kwargs):
+    def create_cache_key(cls, setting_key, **kwargs):
         """Create a unique cache key for a particular setting object.
 
         - Settings are often used, rarely updated
@@ -110,7 +115,7 @@ class BaseInvenTreeSetting(models.Model):
         key = f"{str(cls.__name__)}:{setting_key}"
 
         for k, v in kwargs.items():
-            key += f"_{k}:{v}:"
+            key += f"_{k}:{v}"
 
         return key
 
@@ -294,10 +299,10 @@ class BaseInvenTreeSetting(models.Model):
         if method is not None:
             filters['method'] = method
 
-        ckey = cls.cache_key(key, **kwargs)
-
         # Perform cache lookup by default
         do_cache = kwargs.pop('cache', True)
+
+        ckey = cls.create_cache_key(key, **kwargs)
 
         if do_cache:
             try:
