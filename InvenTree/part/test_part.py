@@ -415,6 +415,9 @@ class PartSettingsTest(InvenTreeTestCase):
 
     def test_initial(self):
         """Test the 'initial' default values (no default values have been set)"""
+
+        cache.clear()
+
         part = self.make_part()
 
         self.assertTrue(part.component)
