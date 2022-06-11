@@ -23,7 +23,9 @@ from django.core.files.storage import default_storage
 from django.utils.translation import gettext_lazy as _
 
 import moneyed
+import sentry_sdk
 import yaml
+from sentry_sdk.integrations.django import DjangoIntegration
 
 from .config import get_base_dir, get_config_file, get_plugin_file, get_setting
 
@@ -32,6 +34,9 @@ def _is_true(x):
     # Shortcut function to determine if a value "looks" like a boolean
     return str(x).strip().lower() in ['1', 'y', 'yes', 't', 'true']
 
+
+# Default Sentry DSN (can be overriden if user wants custom sentry integration)
+INVENTREE_DSN = 'https://3928ccdba1d34895abde28031fd00100@o378676.ingest.sentry.io/6494600'
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv
@@ -546,7 +551,7 @@ db_config['TEST'] = {
 
 # Set collation option for mysql test database
 if 'mysql' in db_engine:
-    db_config['TEST']['COLLATION'] = 'utf8_general_ci'
+    db_config['TEST']['COLLATION'] = 'utf8_general_ci'  # pragma: no cover
 
 DATABASES = {
     'default': db_config
@@ -882,6 +887,26 @@ MARKDOWNIFY_WHITELIST_ATTRS = [
 
 MARKDOWNIFY_BLEACH = False
 
+# Error reporting
+SENTRY_ENABLED = get_setting('INVENTREE_SENTRY_ENABLED', CONFIG.get('sentry_enabled', False))
+SENTRY_DSN = get_setting('INVENTREE_SENTRY_DSN', CONFIG.get('sentry_dsn', INVENTREE_DSN))
+
+if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration(), ],
+        traces_sample_rate=1.0 if DEBUG else 0.15,
+        send_default_pii=True
+    )
+    inventree_tags = {
+        'testing': TESTING,
+        'docker': DOCKER,
+        'debug': DEBUG,
+        'remote': REMOTE_LOGIN,
+    }
+    for key, val in inventree_tags.items():
+        sentry_sdk.set_tag(f'inventree_{key}', val)
+
 # Maintenance mode
 MAINTENANCE_MODE_RETRY_AFTER = 60
 MAINTENANCE_MODE_STATE_BACKEND = 'maintenance_mode.backends.DefaultStorageBackend'
@@ -925,6 +950,6 @@ CUSTOM_LOGO = get_setting(
 )
 
 # check that the logo-file exsists in media
-if CUSTOM_LOGO and not default_storage.exists(CUSTOM_LOGO):
+if CUSTOM_LOGO and not default_storage.exists(CUSTOM_LOGO):  # pragma: no cover
     CUSTOM_LOGO = False
     logger.warning("The custom logo file could not be found in the default media storage")
