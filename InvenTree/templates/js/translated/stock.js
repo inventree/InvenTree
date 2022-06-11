@@ -39,6 +39,7 @@
     assignStockToCustomer,
     createNewStockItem,
     createStockLocation,
+    deleteStockItem,
     deleteStockLocation,
     duplicateStockItem,
     editStockItem,
@@ -354,6 +355,23 @@ function duplicateStockItem(pk, options) {
             constructForm('{% url "api-stock-list" %}', options);
         }
     });
+}
+
+
+/*
+ * Launch a modal form to delete a given StockItem
+ */
+function deleteStockItem(pk, options={}) {
+    var url = `/api/stock/${pk}/`;
+
+    var html = `
+    <div class='alert alert-block alert-danger'>
+    {% trans "Are you sure you want to delete this stock item?" %}
+    </div>`;
+
+    constructForm(url, {
+
+    })
 }
 
 
