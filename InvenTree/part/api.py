@@ -820,6 +820,18 @@ class PartFilter(rest_filters.FilterSet):
 
         return queryset
 
+    exclude_tree = rest_filters.ModelChoiceFilter(label="Exclude Part tree", queryset=Part.objects.all(), method='filter_exclude_tree')
+
+    def filter_exclude_tree(self, queryset, name, part):
+        """Exclude all parts and variants 'down' from the specified part from the queryset"""
+
+        children = part.get_descendants(include_self=True)
+        queryset = queryset.exclude(
+            pk__in=[p.pk for p in children]
+        )
+
+        return queryset
+
     is_template = rest_filters.BooleanFilter()
 
     assembly = rest_filters.BooleanFilter()
@@ -1138,20 +1150,6 @@ class PartList(APIDownloadMixin, generics.ListCreateAPIView):
                     pass
 
             queryset = queryset.exclude(pk__in=id_values)
-
-        # Exclude part variant tree?
-        exclude_tree = params.get('exclude_tree', None)
-
-        if exclude_tree is not None:
-            try:
-                top_level_part = Part.objects.get(pk=exclude_tree)
-
-                queryset = queryset.exclude(
-                    pk__in=[prt.pk for prt in top_level_part.get_descendants(include_self=True)]
-                )
-
-            except (ValueError, Part.DoesNotExist):
-                pass
 
         # Filter by 'ancestor'?
         ancestor = params.get('ancestor', None)
