@@ -816,7 +816,7 @@ class PartFilter(rest_filters.FilterSet):
         """Limit the queryset to valid conversion options for the specified part"""
         conversion_options = part.get_conversion_options()
 
-        queryset = queryset.filter(pk__in=[p.pk for p in conversion_options])
+        queryset = queryset.filter(pk__in=conversion_options)
 
         return queryset
 
@@ -826,9 +826,18 @@ class PartFilter(rest_filters.FilterSet):
         """Exclude all parts and variants 'down' from the specified part from the queryset"""
 
         children = part.get_descendants(include_self=True)
-        queryset = queryset.exclude(
-            pk__in=[p.pk for p in children]
-        )
+
+        queryset = queryset.exclude(id__in=children)
+
+        return queryset
+
+    ancestor = rest_filters.ModelChoiceFilter(label='Ancestor', queryset=Part.objects.all(), method='filter_ancestor')
+
+    def filter_ancestor(self, queryset, name, part):
+        """Limit queryset to descendants of the specified ancestor part"""
+
+        descendants = part.get_descendants(include_self=False)
+        queryset = queryset.filter(id__in=descendants)
 
         return queryset
 
@@ -1150,18 +1159,6 @@ class PartList(APIDownloadMixin, generics.ListCreateAPIView):
                     pass
 
             queryset = queryset.exclude(pk__in=id_values)
-
-        # Filter by 'ancestor'?
-        ancestor = params.get('ancestor', None)
-
-        if ancestor is not None:
-            # If an 'ancestor' part is provided, filter to match only children
-            try:
-                ancestor = Part.objects.get(pk=ancestor)
-                descendants = ancestor.get_descendants(include_self=False)
-                queryset = queryset.filter(pk__in=[d.pk for d in descendants])
-            except (ValueError, Part.DoesNotExist):
-                pass
 
         # Filter by 'variant_of'
         # Note that this is subtly different from 'ancestor' filter (above)
