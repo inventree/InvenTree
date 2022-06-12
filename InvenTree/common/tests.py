@@ -245,6 +245,11 @@ class SettingsTest(InvenTreeTestCase):
 class GlobalSettingsApiTest(InvenTreeAPITestCase):
     """Tests for the global settings API."""
 
+    def setUp(self):
+        """Ensure cache is cleared as part of test setup"""
+        cache.clear()
+        return super().setUp()
+
     def test_global_settings_api_list(self):
         """Test list URL for global settings."""
         url = reverse('api-global-setting-list')

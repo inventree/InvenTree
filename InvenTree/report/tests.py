@@ -4,6 +4,7 @@ import os
 import shutil
 
 from django.conf import settings
+from django.core.cache import cache
 from django.http.response import StreamingHttpResponse
 from django.urls import reverse
 
@@ -32,6 +33,11 @@ class ReportTest(InvenTreeAPITestCase):
     list_url = None
     detail_url = None
     print_url = None
+
+    def setUp(self):
+        """Ensure cache is cleared as part of test setup"""
+        cache.clear()
+        return super().setUp()
 
     def copyReportTemplate(self, filename, description):
         """Copy the provided report template into the required media directory."""
