@@ -18,7 +18,6 @@ import sys
 from datetime import datetime
 
 import django.conf.locale
-from django.contrib.messages import constants as messages
 from django.core.files.storage import default_storage
 from django.utils.translation import gettext_lazy as _
 
@@ -302,11 +301,23 @@ AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
     'allauth.account.auth_backends.AuthenticationBackend',      # SSO login via external providers
 ])
 
+DEBUG_TOOLBAR_ENABLED = DEBUG and CONFIG.get('debug_toolbar', False)
+
 # If the debug toolbar is enabled, add the modules
-if DEBUG and CONFIG.get('debug_toolbar', False):  # pragma: no cover
+if DEBUG_TOOLBAR_ENABLED:  # pragma: no cover
     logger.info("Running with DEBUG_TOOLBAR enabled")
     INSTALLED_APPS.append('debug_toolbar')
     MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+
+# Internal IP addresses allowed to see the debug toolbar
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
+
+if DOCKER:
+    # Internal IP addresses are different when running under docker
+    hostname, ___, ips = socket.gethostbyname_ex(socket.gethostname())
+    INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]
 
 # Allow secure http developer server in debug mode
 if DEBUG:
@@ -353,6 +364,12 @@ TEMPLATES = [
         },
     },
 ]
+
+if DEBUG_TOOLBAR_ENABLED:
+    # Note that the APP_DIRS value must be set when using debug_toolbar
+    # But this will kill template loading for plugins
+    TEMPLATES[0]['APP_DIRS'] = True
+    del TEMPLATES[0]['OPTIONS']['loaders']
 
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'InvenTree.exceptions.exception_handler',
@@ -809,17 +826,6 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # Use database transactions when importing / exporting data
 IMPORT_EXPORT_USE_TRANSACTIONS = True
-
-# Internal IP addresses allowed to see the debug toolbar
-INTERNAL_IPS = [
-    '127.0.0.1',
-]
-
-MESSAGE_TAGS = {
-    messages.SUCCESS: 'alert alert-block alert-success',
-    messages.ERROR: 'alert alert-block alert-danger',
-    messages.INFO: 'alert alert-block alert-info',
-}
 
 SITE_ID = 1
 

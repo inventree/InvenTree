@@ -204,7 +204,7 @@ class BuildReportTest(ReportTest):
         self.assertEqual(headers['Content-Disposition'], 'attachment; filename="report.pdf"')
 
         # Now, set the download type to be "inline"
-        inline = InvenTreeUserSetting.get_setting_object('REPORT_INLINE', self.user)
+        inline = InvenTreeUserSetting.get_setting_object('REPORT_INLINE', user=self.user)
         inline.value = True
         inline.save()
 
