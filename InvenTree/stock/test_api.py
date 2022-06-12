@@ -702,6 +702,69 @@ class StockItemTest(StockAPITestCase):
         # The item is now in stock
         self.assertIsNone(item.customer)
 
+    def test_convert_to_variant(self):
+        """Test that we can convert a StockItem to a variant part via the API"""
+
+        category = part.models.PartCategory.objects.get(pk=3)
+
+        # First, construct a set of template / variant parts
+        master_part = part.models.Part.objects.create(
+            name='Master', description='Master part',
+            category=category,
+            is_template=True,
+        )
+
+        variants = []
+
+        # Construct a set of variant parts
+        for color in ['Red', 'Green', 'Blue', 'Yellow', 'Pink', 'Black']:
+            variants.append(part.models.Part.objects.create(
+                name=f"{color} Variant", description="Variant part with a specific color",
+                variant_of=master_part,
+                category=category,
+            ))
+
+        stock_item = StockItem.objects.create(
+            part=master_part,
+            quantity=1000,
+        )
+
+        url = reverse('api-stock-item-convert', kwargs={'pk': stock_item.pk})
+
+        # Attempt to convert to a part which does not exist
+        response = self.post(
+            url,
+            {
+                'part': 999999,
+            },
+            expected_code=400,
+        )
+
+        self.assertIn('object does not exist', str(response.data['part']))
+
+        # Attempt to convert to a part which is not a valid option
+        response = self.post(
+            url,
+            {
+                'part': 1,
+            },
+            expected_code=400
+        )
+
+        self.assertIn('Selected part is not a valid option', str(response.data['part']))
+
+        for variant in variants:
+            response = self.post(
+                url,
+                {
+                    'part': variant.pk,
+                },
+                expected_code=201,
+            )
+
+            stock_item.refresh_from_db()
+            self.assertEqual(stock_item.part, variant)
+
 
 class StocktakeTest(StockAPITestCase):
     """Series of tests for the Stocktake API."""
