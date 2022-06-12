@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-12 06:07+0000\n"
-"PO-Revision-Date: 2022-06-11 15:03\n"
+"PO-Revision-Date: 2022-06-12 15:03\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -6075,16 +6075,12 @@ msgid "Add transaction note (optional)"
 msgstr ""
 
 #: stock/serializers.py:480
-#, fuzzy
-#| msgid "Select part to be used in BOM"
 msgid "Select part to convert stock item into"
-msgstr "Выбрать деталь для использования в BOM"
+msgstr ""
 
 #: stock/serializers.py:491
-#, fuzzy
-#| msgid "Selected part is not in the Bill of Materials"
 msgid "Selected part is not a valid option for conversion"
-msgstr "Выбранная деталь отсутствует в спецификации"
+msgstr ""
 
 #: stock/serializers.py:522
 msgid "Destination location for returned item"
@@ -7326,16 +7322,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -10308,3 +10302,4 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:219
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
+
