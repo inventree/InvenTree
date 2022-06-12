@@ -391,6 +391,64 @@ class PartAPITest(InvenTreeAPITestCase):
         response = self.get(url, {'related': 1}, expected_code=200)
         self.assertEqual(len(response.data), 2)
 
+    def test_filter_by_convert(self):
+        """Test that we can correctly filter the Part list by conversion options"""
+
+        category = PartCategory.objects.get(pk=3)
+
+        # First, construct a set of template / variant parts
+        master_part = Part.objects.create(
+            name='Master', description='Master part',
+            category=category,
+            is_template=True,
+        )
+
+        # Construct a set of variant parts
+        variants = []
+
+        for color in ['Red', 'Green', 'Blue', 'Yellow', 'Pink', 'Black']:
+            variants.append(Part.objects.create(
+                name=f"{color} Variant", description="Variant part with a specific color",
+                variant_of=master_part,
+                category=category,
+            ))
+
+        url = reverse('api-part-list')
+
+        # An invalid part ID will return an error
+        response = self.get(
+            url,
+            {
+                'convert_from': 999999,
+            },
+            expected_code=400
+        )
+
+        self.assertIn('Select a valid choice', str(response.data['convert_from']))
+
+        for variant in variants:
+            response = self.get(
+                url,
+                {
+                    'convert_from': variant.pk,
+                },
+                expected_code=200
+            )
+
+            # There should be the same number of results for each request
+            self.assertEqual(len(response.data), 6)
+
+            id_values = [p['pk'] for p in response.data]
+
+            self.assertIn(master_part.pk, id_values)
+
+            for v in variants:
+                # Check that all *other* variants are included also
+                if v == variant:
+                    continue
+
+                self.assertIn(v.pk, id_values)
+
     def test_include_children(self):
         """Test the special 'include_child_categories' flag.
 

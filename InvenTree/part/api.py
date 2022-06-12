@@ -810,6 +810,53 @@ class PartFilter(rest_filters.FilterSet):
 
         return queryset
 
+    convert_from = rest_filters.ModelChoiceFilter(label="Can convert from", queryset=Part.objects.all(), method='filter_convert_from')
+
+    def filter_convert_from(self, queryset, name, part):
+        """Limit the queryset to valid conversion options for the specified part"""
+        conversion_options = part.get_conversion_options()
+
+        queryset = queryset.filter(pk__in=conversion_options)
+
+        return queryset
+
+    exclude_tree = rest_filters.ModelChoiceFilter(label="Exclude Part tree", queryset=Part.objects.all(), method='filter_exclude_tree')
+
+    def filter_exclude_tree(self, queryset, name, part):
+        """Exclude all parts and variants 'down' from the specified part from the queryset"""
+
+        children = part.get_descendants(include_self=True)
+
+        queryset = queryset.exclude(id__in=children)
+
+        return queryset
+
+    ancestor = rest_filters.ModelChoiceFilter(label='Ancestor', queryset=Part.objects.all(), method='filter_ancestor')
+
+    def filter_ancestor(self, queryset, name, part):
+        """Limit queryset to descendants of the specified ancestor part"""
+
+        descendants = part.get_descendants(include_self=False)
+        queryset = queryset.filter(id__in=descendants)
+
+        return queryset
+
+    variant_of = rest_filters.ModelChoiceFilter(label='Variant Of', queryset=Part.objects.all(), method='filter_variant_of')
+
+    def filter_variant_of(self, queryset, name, part):
+        """Limit queryset to direct children (variants) of the specified part"""
+
+        queryset = queryset.filter(id__in=part.get_children())
+        return queryset
+
+    in_bom_for = rest_filters.ModelChoiceFilter(label='In BOM Of', queryset=Part.objects.all(), method='filter_in_bom')
+
+    def filter_in_bom(self, queryset, name, part):
+        """Limit queryset to parts in the BOM for the specified part"""
+
+        queryset = queryset.filter(id__in=part.get_parts_in_bom())
+        return queryset
+
     is_template = rest_filters.BooleanFilter()
 
     assembly = rest_filters.BooleanFilter()
@@ -1128,61 +1175,6 @@ class PartList(APIDownloadMixin, generics.ListCreateAPIView):
                     pass
 
             queryset = queryset.exclude(pk__in=id_values)
-
-        # Exclude part variant tree?
-        exclude_tree = params.get('exclude_tree', None)
-
-        if exclude_tree is not None:
-            try:
-                top_level_part = Part.objects.get(pk=exclude_tree)
-
-                queryset = queryset.exclude(
-                    pk__in=[prt.pk for prt in top_level_part.get_descendants(include_self=True)]
-                )
-
-            except (ValueError, Part.DoesNotExist):
-                pass
-
-        # Filter by 'ancestor'?
-        ancestor = params.get('ancestor', None)
-
-        if ancestor is not None:
-            # If an 'ancestor' part is provided, filter to match only children
-            try:
-                ancestor = Part.objects.get(pk=ancestor)
-                descendants = ancestor.get_descendants(include_self=False)
-                queryset = queryset.filter(pk__in=[d.pk for d in descendants])
-            except (ValueError, Part.DoesNotExist):
-                pass
-
-        # Filter by 'variant_of'
-        # Note that this is subtly different from 'ancestor' filter (above)
-        variant_of = params.get('variant_of', None)
-
-        if variant_of is not None:
-            try:
-                template = Part.objects.get(pk=variant_of)
-                variants = template.get_children()
-                queryset = queryset.filter(pk__in=[v.pk for v in variants])
-            except (ValueError, Part.DoesNotExist):
-                pass
-
-        # Filter only parts which are in the "BOM" for a given part
-        in_bom_for = params.get('in_bom_for', None)
-
-        if in_bom_for is not None:
-            try:
-                in_bom_for = Part.objects.get(pk=in_bom_for)
-
-                # Extract a list of parts within the BOM
-                bom_parts = in_bom_for.get_parts_in_bom()
-                print("bom_parts:", bom_parts)
-                print([p.pk for p in bom_parts])
-
-                queryset = queryset.filter(pk__in=[p.pk for p in bom_parts])
-
-            except (ValueError, Part.DoesNotExist):
-                pass
 
         # Filter by whether the BOM has been validated (or not)
         bom_valid = params.get('bom_valid', None)
