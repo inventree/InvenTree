@@ -472,7 +472,6 @@ class ConvertStockItemSerializer(serializers.Serializer):
         """Metaclass options"""
         fields = [
             'part',
-            'notes',
         ]
 
     part = serializers.PrimaryKeyRelatedField(
@@ -480,12 +479,6 @@ class ConvertStockItemSerializer(serializers.Serializer):
         label=_('Part'),
         help_text=_('Select part to convert stock item into'),
         many=False, required=True, allow_null=False
-    )
-
-    notes = serializers.CharField(
-        label=_('Notes'),
-        help_text=_('Add transaction note (optional)'),
-        required=False, allow_blank=True,
     )
 
     def validate_part(self, part):
@@ -504,12 +497,11 @@ class ConvertStockItemSerializer(serializers.Serializer):
         data = self.validated_data
 
         part = data['part']
-        note = data.get('notes', '')
 
         stock_item = self.context['item']
         request = self.context['request']
 
-        stock_item.convert_to_variant(part, request.user, notes=note)
+        stock_item.convert_to_variant(part, request.user)
 
 
 class ReturnStockItemSerializer(serializers.Serializer):

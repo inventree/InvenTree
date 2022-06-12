@@ -588,9 +588,31 @@ $("#stock-delete").click(function () {
 
 {% if item.part.can_convert %}
 $("#stock-convert").click(function() {
-    launchModalForm("{% url 'stock-item-convert' item.id %}",
+
+    var html = `
+    <div class='alert alert-block alert-info'>
+        {% trans "Select one of the part variants listed below." %}
+    </div>
+    <div class='alert alert-block alert-warning'>
+        <strong>{% trans "Warning" %}</strong>
+        {% trans "This action cannot be easily undone" %}
+    </div>
+    `;
+
+    constructForm(
+        '{% url "api-stock-item-convert" item.pk %}',
         {
+            method: 'POST',
+            title: '{% trans "Convert Stock Item" %}',
+            preFormContent: html,
             reload: true,
+            fields: {
+                part: {
+                    filters: {
+                        convert_from: {{ item.part.pk }}
+                    }
+                },
+            }
         }
     );
 });
