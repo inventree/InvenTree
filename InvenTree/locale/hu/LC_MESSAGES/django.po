@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-12 06:07+0000\n"
-"PO-Revision-Date: 2022-06-11 15:03\n"
+"PO-Revision-Date: 2022-06-12 15:03\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1045,8 +1045,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:370
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:439
@@ -6077,16 +6076,12 @@ msgid "Add transaction note (optional)"
 msgstr "Tranzakció megjegyzés hozzáadása (opcionális)"
 
 #: stock/serializers.py:480
-#, fuzzy
-#| msgid "Select part to be used in BOM"
 msgid "Select part to convert stock item into"
-msgstr "Válaszd ki az alkatrészjegyzékben használandó alkatrészt"
+msgstr ""
 
 #: stock/serializers.py:491
-#, fuzzy
-#| msgid "Selected part is not in the Bill of Materials"
 msgid "Selected part is not a valid option for conversion"
-msgstr "A kiválasztott alkatrész nincs az alkatrészjegyzékben"
+msgstr ""
 
 #: stock/serializers.py:522
 msgid "Destination location for returned item"
@@ -6397,10 +6392,8 @@ msgid "Edit Stock Status"
 msgstr "Készlet állapot szerkesztése"
 
 #: stock/templates/stock/item_base.html:594
-#, fuzzy
-#| msgid "It can be converted to one of the part variants listed below."
 msgid "Select one of the part variants listed below."
-msgstr "Átalakítható a lentebbi változatok egyikére."
+msgstr ""
 
 #: stock/templates/stock/item_base.html:597
 msgid "Warning"
@@ -7330,16 +7323,14 @@ msgstr "Bejelentkezés"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Kérlek jelentkezz be az egyik meglévő külső fiókkal vagy <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">Regisztrálj</a> fiókért és jelentkezz be lentebb:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Ha még nem hoztál létre fiókot akkor előbb <a href=\"%(signup_url)s\">regisztrálj</a>."
 
@@ -10313,5 +10304,3 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
 
-#~ msgid "This stock item is current an instance of <em>%(part)s</em>"
-#~ msgstr "Ez a készlet tétel jelenleg a <em>%(part)s</em> egyik példánya"
