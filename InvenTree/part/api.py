@@ -810,6 +810,16 @@ class PartFilter(rest_filters.FilterSet):
 
         return queryset
 
+    convert_from = rest_filters.ModelChoiceFilter(label="Can convert from", queryset=Part.objects.all(), method='filter_convert_from')
+
+    def filter_convert_from(self, queryset, name, part):
+        """Limit the queryset to valid conversion options for the specified part"""
+        conversion_options = part.get_conversion_options()
+
+        queryset = queryset.filter(pk__in=[p.pk for p in conversion_options])
+
+        return queryset
+
     is_template = rest_filters.BooleanFilter()
 
     assembly = rest_filters.BooleanFilter()
