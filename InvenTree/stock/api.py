@@ -129,6 +129,12 @@ class StockItemUninstall(StockItemContextMixin, generics.CreateAPIView):
     serializer_class = StockSerializers.UninstallStockItemSerializer
 
 
+class StockItemConvert(StockItemContextMixin, generics.CreateAPIView):
+    """API endpoint for converting a stock item to a variant part"""
+
+    serializer_class = StockSerializers.ConvertStockItemSerializer
+
+
 class StockItemReturn(StockItemContextMixin, generics.CreateAPIView):
     """API endpoint for returning a stock item from a customer"""
 
@@ -1374,6 +1380,7 @@ stock_api_urls = [
 
     # Detail views for a single stock item
     re_path(r'^(?P<pk>\d+)/', include([
+        re_path(r'^convert/', StockItemConvert.as_view(), name='api-stock-item-convert'),
         re_path(r'^install/', StockItemInstall.as_view(), name='api-stock-item-install'),
         re_path(r'^metadata/', StockMetadata.as_view(), name='api-stock-item-metadata'),
         re_path(r'^return/', StockItemReturn.as_view(), name='api-stock-item-return'),
