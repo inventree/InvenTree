@@ -227,6 +227,9 @@ class PluginsRegistry:
         except subprocess.CalledProcessError as error:  # pragma: no cover
             logger.error(f'Ran into error while trying to install plugins!\n{str(error)}')
             return False
+        except FileNotFoundError:  # pragma: no cover
+            # System most likely does not have 'git' installed
+            return False
 
         logger.info(f'plugin requirements were run\n{output}')
 
