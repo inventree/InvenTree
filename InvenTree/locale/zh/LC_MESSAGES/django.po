@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-12 06:07+0000\n"
-"PO-Revision-Date: 2022-06-12 15:03\n"
+"PO-Revision-Date: 2022-06-13 15:44\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -23,7 +23,7 @@ msgstr "未找到 API 端点"
 
 #: InvenTree/exceptions.py:62
 msgid "Error details can be found in the admin panel"
-msgstr ""
+msgstr "在管理面板中可以找到错误详细信息"
 
 #: InvenTree/fields.py:94
 msgid "Enter date"
@@ -60,7 +60,7 @@ msgstr "您必须输入相同的 Email 。"
 #: InvenTree/helpers.py:404
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
-msgstr ""
+msgstr "重复的序列号: {sn}"
 
 #: InvenTree/helpers.py:411 order/models.py:356 order/models.py:508
 msgid "Invalid quantity provided"
@@ -73,7 +73,7 @@ msgstr "空序列号字符串"
 #: InvenTree/helpers.py:446
 #, python-brace-format
 msgid "Invalid group range: {g}"
-msgstr ""
+msgstr "无效的组范围: {g}"
 
 #: InvenTree/helpers.py:449
 #, python-brace-format
@@ -83,12 +83,12 @@ msgstr "无效的群组: {g}"
 #: InvenTree/helpers.py:477
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
-msgstr ""
+msgstr "无效的组序列: {g}"
 
 #: InvenTree/helpers.py:485
 #, python-brace-format
 msgid "Invalid/no group {group}"
-msgstr ""
+msgstr "无效的群组: {group}"
 
 #: InvenTree/helpers.py:491
 msgid "No serial numbers found"
@@ -97,7 +97,7 @@ msgstr "未找到序列号"
 #: InvenTree/helpers.py:495
 #, python-brace-format
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
-msgstr ""
+msgstr "唯一序列号 ({s}) 必须匹配数量 ({q})"
 
 #: InvenTree/models.py:178
 msgid "Missing file"
@@ -105,7 +105,7 @@ msgstr "缺少文件"
 
 #: InvenTree/models.py:179
 msgid "Missing external link"
-msgstr ""
+msgstr "缺少外部链接"
 
 #: InvenTree/models.py:191 stock/models.py:2091
 #: templates/js/translated/attachment.js:103
@@ -232,11 +232,11 @@ msgstr "上级项"
 
 #: InvenTree/models.py:466
 msgid "Server Error"
-msgstr ""
+msgstr "服务器错误"
 
 #: InvenTree/models.py:467
 msgid "An error has been logged by the server."
-msgstr ""
+msgstr "服务器记录了一个错误。"
 
 #: InvenTree/serializers.py:52 part/models.py:2640
 msgid "Must be a valid number"
@@ -248,53 +248,53 @@ msgstr "文件名"
 
 #: InvenTree/serializers.py:298
 msgid "Invalid value"
-msgstr ""
+msgstr "无效值"
 
 #: InvenTree/serializers.py:320
 msgid "Data File"
-msgstr ""
+msgstr "数据文件"
 
 #: InvenTree/serializers.py:321
 msgid "Select data file for upload"
-msgstr ""
+msgstr "选择要上传的文件"
 
 #: InvenTree/serializers.py:342
 msgid "Unsupported file type"
-msgstr ""
+msgstr "不支持的文件类型"
 
 #: InvenTree/serializers.py:348
 msgid "File is too large"
-msgstr ""
+msgstr "文件过大"
 
 #: InvenTree/serializers.py:369
 msgid "No columns found in file"
-msgstr ""
+msgstr "在文件中没有找到列"
 
 #: InvenTree/serializers.py:372
 msgid "No data rows found in file"
-msgstr ""
+msgstr "在文件中没有找到数据行"
 
 #: InvenTree/serializers.py:495
 msgid "No data rows provided"
-msgstr ""
+msgstr "没有提供数据行"
 
 #: InvenTree/serializers.py:498
 msgid "No data columns supplied"
-msgstr ""
+msgstr "没有提供数据列"
 
 #: InvenTree/serializers.py:575
 #, python-brace-format
 msgid "Missing required column: '{name}'"
-msgstr ""
+msgstr "缺少必需的列：'{name}'"
 
 #: InvenTree/serializers.py:584
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
-msgstr ""
+msgstr "复制列: '{col}'"
 
 #: InvenTree/settings.py:689
 msgid "Czech"
-msgstr ""
+msgstr "捷克语"
 
 #: InvenTree/settings.py:690
 msgid "German"
@@ -314,11 +314,11 @@ msgstr "西班牙语"
 
 #: InvenTree/settings.py:694
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "西班牙语(墨西哥)"
 
 #: InvenTree/settings.py:695
 msgid "Farsi / Persian"
-msgstr ""
+msgstr "波斯语"
 
 #: InvenTree/settings.py:696
 msgid "French"
@@ -330,7 +330,7 @@ msgstr "希伯来语"
 
 #: InvenTree/settings.py:698
 msgid "Hungarian"
-msgstr ""
+msgstr "匈牙利语"
 
 #: InvenTree/settings.py:699
 msgid "Italian"
@@ -358,11 +358,11 @@ msgstr "波兰语"
 
 #: InvenTree/settings.py:705
 msgid "Portuguese"
-msgstr ""
+msgstr "葡萄牙语"
 
 #: InvenTree/settings.py:706
 msgid "Portuguese (Brazilian)"
-msgstr ""
+msgstr "葡萄牙语 (巴西)"
 
 #: InvenTree/settings.py:707
 msgid "Russian"
@@ -437,7 +437,7 @@ msgstr "已发货"
 
 #: InvenTree/status_codes.py:179
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: InvenTree/status_codes.py:180
 msgid "Attention needed"
@@ -453,7 +453,7 @@ msgstr "已销毁"
 
 #: InvenTree/status_codes.py:184
 msgid "Rejected"
-msgstr ""
+msgstr "已拒绝"
 
 #: InvenTree/status_codes.py:185
 msgid "Quarantined"
@@ -517,7 +517,7 @@ msgstr "拆分子项"
 
 #: InvenTree/status_codes.py:281 templates/js/translated/stock.js:2082
 msgid "Merged stock items"
-msgstr ""
+msgstr "合并的库存项目"
 
 #: InvenTree/status_codes.py:283
 msgid "Converted to variant"
@@ -6036,11 +6036,11 @@ msgstr ""
 
 #: stock/serializers.py:299
 msgid "Enter serial numbers for new items"
-msgstr ""
+msgstr "输入新项目的序列号"
 
 #: stock/serializers.py:310 stock/serializers.py:892 stock/serializers.py:1125
 msgid "Destination stock location"
-msgstr ""
+msgstr "目标库存位置"
 
 #: stock/serializers.py:317
 msgid "Optional note field"
@@ -6072,7 +6072,7 @@ msgstr ""
 
 #: stock/serializers.py:446 stock/serializers.py:527
 msgid "Add transaction note (optional)"
-msgstr ""
+msgstr "添加交易备注 (可选)"
 
 #: stock/serializers.py:480
 msgid "Select part to convert stock item into"
