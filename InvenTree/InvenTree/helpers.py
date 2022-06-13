@@ -163,7 +163,7 @@ def normalize(d):
     return d.quantize(Decimal(1)) if d == d.to_integral() else d.normalize()
 
 
-def increment(n):
+def increment(n, pattern=r".*?(\d+)?$"):
     """Attempt to increment an integer (or a string that looks like an integer).
 
     e.g.
@@ -172,14 +172,20 @@ def increment(n):
     2 -> 3
     AB01 -> AB02
     QQQ -> QQQ
+    
+    This function extracts a part of the given value, and increments this part.
+    
+    The default matchin pattern is:
+        .*?(\d+)?$
+    
+    This can be changed using the pattern argument. The pattern should have exactly one matching group - the content of this group should be convertable to an integer.
+    
     """
     value = str(n).strip()
 
     # Ignore empty strings
     if not value:
         return value
-
-    pattern = r"(.*?)(\d+)?$"
 
     result = re.search(pattern, value)
 
@@ -190,10 +196,10 @@ def increment(n):
     groups = result.groups()
 
     # If we cannot match the regex, then simply return the provided value
-    if len(groups) != 2:
+    if len(groups) != 1:
         return value
 
-    prefix, number = groups
+    number = groups[0]
 
     # No number extracted? Simply return the prefix (without incrementing!)
     if not number:
@@ -203,15 +209,14 @@ def increment(n):
     width = len(number)
 
     try:
-        number = int(number) + 1
-        number = str(number)
+        number_rep = int(number) + 1
+        number_rep = str(number_rep)
     except ValueError:
         pass
 
-    number = number.zfill(width)
+    number_rep = number_rep.zfill(width)
 
-    return prefix + number
-
+    return value.replace(number, number_rep)
 
 def decimal2string(d):
     """Format a Decimal number as a string, stripping out any trailing zeroes or decimal points. Essentially make it look like a whole number if it is one.
