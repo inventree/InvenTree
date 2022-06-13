@@ -191,7 +191,7 @@
     $('#stock-item-install').click(function() {
 
         installStockItem({{ item.pk }}, {{ item.part.pk }}, {
-            onSuccess: function(response) {
+           success: function(response) {
                 $("#installed-table").bootstrapTable('refresh');
             }
         });
@@ -298,7 +298,7 @@
                         method: 'DELETE',
                         title: '{% trans "Delete Test Data" %}',
                         preFormContent: html,
-                        onSuccess: reloadTable,
+                       success: reloadTable,
                     });
                 }
             }
@@ -322,7 +322,7 @@
                 }
             },
             title: '{% trans "Add Test Result" %}',
-            onSuccess: reloadTable,
+           success: reloadTable,
         });
     });
 

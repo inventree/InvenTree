@@ -76,7 +76,7 @@ function createManufacturerPart(options={}) {
         fields: fields,
         method: 'POST',
         title: '{% trans "Add Manufacturer Part" %}',
-        onSuccess: options.onSuccess
+        success: options.success
     });
 }
 
@@ -97,7 +97,7 @@ function editManufacturerPart(part, options={}) {
     constructForm(url, {
         fields: fields,
         title: '{% trans "Edit Manufacturer Part" %}',
-        onSuccess: options.onSuccess
+        success: options.success
     });
 }
 
@@ -182,7 +182,7 @@ function createSupplierPart(options={}) {
         fields: fields,
         method: 'POST',
         title: '{% trans "Add Supplier Part" %}',
-        onSuccess: options.onSuccess,
+        success: options.success,
     });
 }
 
@@ -199,7 +199,7 @@ function editSupplierPart(part, options={}) {
     constructForm(`/api/company/part/${part}/`, {
         fields: fields,
         title: options.title || '{% trans "Edit Supplier Part" %}',
-        onSuccess: options.onSuccess
+        success: options.success
     });
 }
 
@@ -268,7 +268,7 @@ function deleteSupplierParts(parts, options={}) {
         form_data: {
             items: ids,
         },
-        onSuccess: options.success,
+        success: options.success,
     });
 }
 
@@ -496,7 +496,7 @@ function deleteManufacturerParts(selections, options={}) {
         form_data: {
             items: ids,
         },
-        onSuccess: options.success,
+        success: options.success,
     });
 }
 
@@ -543,7 +543,7 @@ function deleteManufacturerPartParameters(selections, options={}) {
         form_data: {
             items: ids,
         },
-        onSuccess: options.success,
+        success: options.success,
     });
 
 }
@@ -681,7 +681,7 @@ function loadManufacturerPartTable(table, url, options) {
                 editManufacturerPart(
                     pk,
                     {
-                        onSuccess: function() {
+                        success: function() {
                             $(table).bootstrapTable('refresh');
                         }
                     }
@@ -789,7 +789,7 @@ function loadManufacturerPartParameterTable(table, url, options) {
                         units: {},
                     },
                     title: '{% trans "Edit Parameter" %}',
-                    onSuccess: function() {
+                    success: function() {
                         $(table).bootstrapTable('refresh');
                     }
                 });
@@ -800,7 +800,7 @@ function loadManufacturerPartParameterTable(table, url, options) {
                 constructForm(`/api/company/part/manufacturer/parameter/${pk}/`, {
                     method: 'DELETE',
                     title: '{% trans "Delete Parameter" %}',
-                    onSuccess: function() {
+                    success: function() {
                         $(table).bootstrapTable('refresh');
                     }
                 });
@@ -996,7 +996,7 @@ function loadSupplierPartTable(table, url, options) {
                 editSupplierPart(
                     pk,
                     {
-                        onSuccess: function() {
+                        success: function() {
                             $(table).bootstrapTable('refresh');
                         }
                     }

@@ -286,7 +286,7 @@ $("#new-cat-param").click(function() {
             },
             default_value: {},
         },
-        onSuccess: function() {
+        success: function() {
             loadTemplateTable(pk);
         }
     });
@@ -305,7 +305,7 @@ $("#cat-param-table").on('click', '.template-edit', function() {
             },
             default_value: {},
         },
-        onSuccess: function() {
+        success: function() {
             loadTemplateTable(pk);
         }
     });
@@ -322,7 +322,7 @@ $("#cat-param-table").on('click', '.template-delete', function() {
     constructForm(`/api/part/category/parameters/${pk}/`, {
         method: 'DELETE',
         title: '{% trans "Delete Category Parameter Template" %}',
-        onSuccess: function() {
+        success: function() {
             loadTemplateTable(pk);
         }
     });
@@ -372,7 +372,7 @@ $("#new-param").click(function() {
         },
         method: 'POST',
         title: '{% trans "Create Part Parameter Template" %}',
-        onSuccess: function() {
+        success: function() {
             $("#param-table").bootstrapTable('refresh');
         },
     });
@@ -390,7 +390,7 @@ $("#param-table").on('click', '.template-edit', function() {
                 units: {},
             },
             title: '{% trans "Edit Part Parameter Template" %}',
-            onSuccess: function() {
+            success: function() {
                 $("#param-table").bootstrapTable('refresh');
             },
         }
@@ -412,7 +412,7 @@ $("#param-table").on('click', '.template-delete', function() {
             method: 'DELETE',
             preFormContent: html,
             title: '{% trans "Delete Part Parameter Template" %}',
-            onSuccess: function() {
+            success: function() {
                 $("#param-table").bootstrapTable('refresh');
             },
         }

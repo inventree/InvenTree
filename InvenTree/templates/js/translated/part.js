@@ -339,7 +339,7 @@ function deletePartCategory(pk, options={}) {
         title: '{% trans "Delete Part Category" %}',
         method: 'DELETE',
         preFormContent: html,
-        onSuccess: function(response) {
+        success: function(response) {
             handleFormSuccess(response, options);
         }
     });
@@ -410,7 +410,7 @@ function duplicatePart(pk, options={}) {
                 groups: partGroups(),
                 title: title,
                 data: data,
-                onSuccess: function(data) {
+                success: function(data) {
                     // Follow the new part
                     location.href = `/part/${data.pk}/`;
                 }
@@ -455,7 +455,7 @@ function deletePart(pk, options={}) {
                     method: 'DELETE',
                     title: '{% trans "Delete Part" %}',
                     preFormContent: html,
-                    onSuccess: function(response) {
+                    success: function(response) {
                         handleFormSuccess(response, options);
                     }
                 }
@@ -527,7 +527,7 @@ function validateBom(part_id, options={}) {
         preFormContent: html,
         title: '{% trans "Validate Bill of Materials" %}',
         reload: options.reload,
-        onSuccess: function(response) {
+        success: function(response) {
             showMessage('{% trans "Validated Bill of Materials" %}');
         }
     });
@@ -554,7 +554,7 @@ function duplicateBom(part_id, options={}) {
         },
         confirm: true,
         title: '{% trans "Copy Bill of Materials" %}',
-        onSuccess: function(response) {
+        success: function(response) {
             if (options.success) {
                 options.success(response);
             }
@@ -884,7 +884,7 @@ function loadPartParameterTable(table, url, options) {
                         data: {},
                     },
                     title: '{% trans "Edit Parameter" %}',
-                    onSuccess: function() {
+                    success: function() {
                         $(table).bootstrapTable('refresh');
                     }
                 });
@@ -896,7 +896,7 @@ function loadPartParameterTable(table, url, options) {
                 constructForm(`/api/part/parameter/${pk}/`, {
                     method: 'DELETE',
                     title: '{% trans "Delete Parameter" %}',
-                    onSuccess: function() {
+                    success: function() {
                         $(table).bootstrapTable('refresh');
                     }
                 });
@@ -1186,7 +1186,7 @@ function loadRelatedPartsTable(table, part_id, options={}) {
                 constructForm(`/api/part/related/${pk}/`, {
                     method: 'DELETE',
                     title: '{% trans "Delete Part Relationship" %}',
-                    onSuccess: function() {
+                    success: function() {
                         $(table).bootstrapTable('refresh');
                     }
                 });
@@ -2004,7 +2004,7 @@ function loadPartTestTemplateTable(table, options) {
                         requires_attachment: {},
                     },
                     title: '{% trans "Edit Test Result Template" %}',
-                    onSuccess: function() {
+                    success: function() {
                         table.bootstrapTable('refresh');
                     },
                 });
@@ -2018,7 +2018,7 @@ function loadPartTestTemplateTable(table, options) {
                 constructForm(url, {
                     method: 'DELETE',
                     title: '{% trans "Delete Test Result Template" %}',
-                    onSuccess: function() {
+                    success: function() {
                         table.bootstrapTable('refresh');
                     },
                 });
@@ -2165,7 +2165,7 @@ function initPriceBreakSet(table, options) {
             },
             method: 'POST',
             title: '{% trans "Add Price Break" %}',
-            onSuccess: reloadPriceBreakTable,
+            success: reloadPriceBreakTable,
         });
     });
 
@@ -2175,7 +2175,7 @@ function initPriceBreakSet(table, options) {
         constructForm(`${pb_url}${pk}/`, {
             method: 'DELETE',
             title: '{% trans "Delete Price Break" %}',
-            onSuccess: reloadPriceBreakTable,
+            success: reloadPriceBreakTable,
         });
     });
 
@@ -2189,7 +2189,7 @@ function initPriceBreakSet(table, options) {
                 price_currency: {},
             },
             title: '{% trans "Edit Price Break" %}',
-            onSuccess: reloadPriceBreakTable,
+            success: reloadPriceBreakTable,
         });
     });
 }

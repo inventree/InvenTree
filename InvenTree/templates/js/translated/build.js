@@ -119,7 +119,7 @@ function newBuildOrder(options={}) {
         follow: true,
         method: 'POST',
         title: '{% trans "Create Build Order" %}',
-        onSuccess: options.onSuccess,
+        success: options.success,
     });
 }
 
@@ -159,7 +159,7 @@ function cancelBuildOrder(build_id, options={}) {
 
                 return html;
             },
-            onSuccess: function(response) {
+            success: function(response) {
                 handleFormSuccess(response, options);
             }
         }
@@ -288,7 +288,7 @@ function createBuildOutput(build_id, options) {
                     confirm: true,
                     fields: fields,
                     preFormContent: html,
-                    onSuccess: function(response) {
+                    success: function(response) {
                         location.reload();
                     },
                 });
@@ -385,9 +385,9 @@ function unallocateStock(build_id, options={}) {
             },
         },
         title: '{% trans "Unallocate Stock Items" %}',
-        onSuccess: function(response, opts) {
-            if (options.onSuccess) {
-                options.onSuccess(response, opts);
+        success: function(response, opts) {
+            if (options.success) {
+                options.success(response, opts);
             } else if (options.table) {
                 // Reload the parent table
                 $(options.table).bootstrapTable('refresh');
@@ -1599,7 +1599,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 bom_item: row.pk,
                 output: outputId == 'untracked' ? null : outputId,
                 table: table,
-                onSuccess: function(response, opts) {
+                success: function(response, opts) {
                     reloadAllocationData();
                 }
             });
@@ -1727,7 +1727,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                         quantity: {},
                     },
                     title: '{% trans "Edit Allocation" %}',
-                    onSuccess: reloadAllocationData,
+                    success: reloadAllocationData,
                 });
             });
 
@@ -1737,7 +1737,7 @@ function loadBuildOutputAllocationTable(buildInfo, output, options={}) {
                 constructForm(`/api/build/item/${pk}/`, {
                     method: 'DELETE',
                     title: '{% trans "Remove Allocation" %}',
-                    onSuccess: reloadAllocationData,
+                    success: reloadAllocationData,
                 });
             });
         },
@@ -2305,9 +2305,9 @@ function autoAllocateStockToBuild(build_id, bom_items=[], options={}) {
         title: '{% trans "Allocate Stock Items" %}',
         confirm: true,
         preFormContent: html,
-        onSuccess: function(response) {
-            if (options.onSuccess) {
-                options.onSuccess(response);
+        success: function(response) {
+            if (options.success) {
+                options.success(response);
             }
         }
     });

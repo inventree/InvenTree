@@ -481,7 +481,7 @@ $("#btn-auto-allocate").on('click', function() {
             {% if build.take_from %}
             location: {{ build.take_from.pk }},
             {% endif %}
-            onSuccess: loadUntrackedStockTable,
+           success: loadUntrackedStockTable,
         }
     );
 });
@@ -522,7 +522,7 @@ $("#btn-allocate").on('click', function() {
 $('#btn-unallocate').on('click', function() {
     unallocateStock({{ build.id }}, {
         table: '#allocation-table-untracked',
-        onSuccess: loadUntrackedStockTable,
+       success: loadUntrackedStockTable,
     });
 });
 

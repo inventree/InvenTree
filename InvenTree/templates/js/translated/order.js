@@ -155,14 +155,14 @@ function completeShipment(shipment_id, options={}) {
                 confirm: true,
                 confirmMessage: '{% trans "Confirm Shipment" %}',
                 buttons: options.buttons,
-                onSuccess: function(data) {
+                success: function(data) {
                     // Reload tables
                     $('#so-lines-table').bootstrapTable('refresh');
                     $('#pending-shipments-table').bootstrapTable('refresh');
                     $('#completed-shipments-table').bootstrapTable('refresh');
 
-                    if (options.onSuccess instanceof Function) {
-                        options.onSuccess(data);
+                    if (options.success instanceof Function) {
+                        options.success(data);
                     }
                 },
                 reload: options.reload
@@ -255,7 +255,7 @@ function completePendingShipmentsHelper(shipments, shipment_idx, options={}) {
                         }
                     }
                 ],
-                onSuccess: function(data) {
+                success: function(data) {
                     completePendingShipmentsHelper(shipments, shipment_idx + 1, options);
                 },
             }
@@ -299,7 +299,7 @@ function completePurchaseOrder(order_id, options={}) {
 
                 return html;
             },
-            onSuccess: function(response) {
+            success: function(response) {
                 handleFormSuccess(response, options);
             }
         }
@@ -333,7 +333,7 @@ function cancelPurchaseOrder(order_id, options={}) {
 
                 return html;
             },
-            onSuccess: function(response) {
+            success: function(response) {
                 handleFormSuccess(response, options);
             }
         }
@@ -360,7 +360,7 @@ function issuePurchaseOrder(order_id, options={}) {
 
                 return html;
             },
-            onSuccess: function(response) {
+            success: function(response) {
                 handleFormSuccess(response, options);
             }
         }
@@ -387,7 +387,7 @@ function cancelSalesOrder(order_id, options={}) {
 
                 return html;
             },
-            onSuccess: function(response) {
+            success: function(response) {
                 handleFormSuccess(response, options);
             }
         }
@@ -437,9 +437,9 @@ function createSalesOrderShipment(options={}) {
                     method: 'POST',
                     fields: fields,
                     title: '{% trans "Create New Shipment" %}',
-                    onSuccess: function(data) {
-                        if (options.onSuccess) {
-                            options.onSuccess(data);
+                    success: function(data) {
+                        if (options.success) {
+                            options.success(data);
                         }
                     }
                 });
@@ -483,7 +483,7 @@ function createSalesOrder(options={}) {
                 icon: 'fa-user',
             }
         },
-        onSuccess: function(data) {
+        success: function(data) {
             location.href = `/order/sales-order/${data.pk}/`;
         },
         title: '{% trans "Create Sales Order" %}',
@@ -525,10 +525,10 @@ function createPurchaseOrder(options={}) {
                 icon: 'fa-user',
             }
         },
-        onSuccess: function(data) {
+        success: function(data) {
 
-            if (options.onSuccess) {
-                options.onSuccess(data);
+            if (options.success) {
+                options.success(data);
             } else {
                 // Default action is to redirect browser to the new PurchaseOrder
                 location.href = `/order/purchase-order/${data.pk}/`;
@@ -651,7 +651,7 @@ function newSupplierPartFromOrderWizard(e) {
 
     createSupplierPart({
         part: part,
-        onSuccess: function(data) {
+        success: function(data) {
 
             // TODO: 2021-08-23 - This whole form wizard needs to be refactored.
             // In the future, use the API forms functionality to add the new item
@@ -1022,7 +1022,7 @@ function orderParts(parts_list, options={}) {
                 // Launch dialog to create new supplier part
                 createSupplierPart({
                     part: pk,
-                    onSuccess: function(response) {
+                    success: function(response) {
                         setRelatedFieldData(
                             `part_${pk}`,
                             response,
@@ -1038,7 +1038,7 @@ function orderParts(parts_list, options={}) {
 
                 // Launch dialog to create new purchase order
                 createPurchaseOrder({
-                    onSuccess: function(response) {
+                    success: function(response) {
                         setRelatedFieldData(
                             `order_${pk}`,
                             response,
@@ -1066,7 +1066,7 @@ function newPurchaseOrderFromOrderWizard(e) {
 
     createPurchaseOrder({
         supplier: supplier,
-        onSuccess: function(data) {
+        success: function(data) {
 
             // TODO: 2021-08-23 - The whole form wizard needs to be refactored
             // In the future, the drop-down should be using a dynamic AJAX request
@@ -1781,7 +1781,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                             fields: fields,
                             data: data,
                             title: '{% trans "Duplicate Line Item" %}',
-                            onSuccess: function(response) {
+                            success: function(response) {
                                 $(table).bootstrapTable('refresh');
                             }
                         });
@@ -1798,7 +1798,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 constructForm(`/api/order/po-line/${pk}/`, {
                     fields: fields,
                     title: '{% trans "Edit Line Item" %}',
-                    onSuccess: function() {
+                    success: function() {
                         $(table).bootstrapTable('refresh');
                     }
                 });
@@ -1811,7 +1811,7 @@ function loadPurchaseOrderLineItemTable(table, options={}) {
                 constructForm(`/api/order/po-line/${pk}/`, {
                     method: 'DELETE',
                     title: '{% trans "Delete Line Item" %}',
-                    onSuccess: function() {
+                    success: function() {
                         $(table).bootstrapTable('refresh');
                     }
                 });
@@ -2234,7 +2234,7 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
                         fields: fields,
                         data: data,
                         title: '{% trans "Duplicate Line" %}',
-                        onSuccess: function(response) {
+                        success: function(response) {
                             $(table).bootstrapTable('refresh');
                         }
                     });
@@ -2255,7 +2255,7 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
                     notes: {},
                 },
                 title: '{% trans "Edit Line" %}',
-                onSuccess: reloadTable,
+                success: reloadTable,
             });
         });
 
@@ -2266,7 +2266,7 @@ function loadPurchaseOrderExtraLineTable(table, options={}) {
             constructForm(`/api/order/po-extra-line/${pk}/`, {
                 method: 'DELETE',
                 title: '{% trans "Delete Line" %}',
-                onSuccess: reloadTable,
+                success: reloadTable,
             });
         });
     }
@@ -2575,7 +2575,7 @@ function loadSalesOrderShipmentTable(table, options={}) {
             constructForm(`/api/order/so/shipment/${pk}/`, {
                 fields: fields,
                 title: '{% trans "Edit Shipment" %}',
-                onSuccess: function() {
+                success: function() {
                     $(table).bootstrapTable('refresh');
                 }
             });
@@ -2593,7 +2593,7 @@ function loadSalesOrderShipmentTable(table, options={}) {
             constructForm(`/api/order/so/shipment/${pk}/`, {
                 title: '{% trans "Delete Shipment" %}',
                 method: 'DELETE',
-                onSuccess: function() {
+                success: function() {
                     $(table).bootstrapTable('refresh');
                 }
             });
@@ -3180,7 +3180,7 @@ function showAllocationSubTable(index, row, element, options) {
                         quantity: {},
                     },
                     title: '{% trans "Edit Stock Allocation" %}',
-                    onSuccess: function() {
+                    success: function() {
                         // Refresh the parent table
                         $(options.table).bootstrapTable('refresh');
                     },
@@ -3198,7 +3198,7 @@ function showAllocationSubTable(index, row, element, options) {
                     method: 'DELETE',
                     confirmMessage: '{% trans "Confirm Delete Operation" %}',
                     title: '{% trans "Delete Stock Allocation" %}',
-                    onSuccess: function() {
+                    success: function() {
                         // Refresh the parent table
                         $(options.table).bootstrapTable('refresh');
                     }
@@ -3709,7 +3709,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                         fields: fields,
                         data: data,
                         title: '{% trans "Duplicate Line Item" %}',
-                        onSuccess: function(response) {
+                        success: function(response) {
                             $(table).bootstrapTable('refresh');
                         }
                     });
@@ -3731,7 +3731,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                     notes: {},
                 },
                 title: '{% trans "Edit Line Item" %}',
-                onSuccess: reloadTable,
+                success: reloadTable,
             });
         });
 
@@ -3742,7 +3742,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
             constructForm(`/api/order/so-line/${pk}/`, {
                 method: 'DELETE',
                 title: '{% trans "Delete Line Item" %}',
-                onSuccess: reloadTable,
+                success: reloadTable,
             });
         });
 
@@ -3772,7 +3772,7 @@ function loadSalesOrderLineItemTable(table, options={}) {
                                     auto_fill: true,
                                 }
                             },
-                            onSuccess: function() {
+                            success: function() {
                                 $(table).bootstrapTable('refresh');
                             }
                         });
@@ -4073,7 +4073,7 @@ function loadSalesOrderExtraLineTable(table, options={}) {
                         fields: fields,
                         data: data,
                         title: '{% trans "Duplicate Line" %}',
-                        onSuccess: function(response) {
+                        success: function(response) {
                             $(table).bootstrapTable('refresh');
                         }
                     });
@@ -4094,7 +4094,7 @@ function loadSalesOrderExtraLineTable(table, options={}) {
                     notes: {},
                 },
                 title: '{% trans "Edit Line" %}',
-                onSuccess: reloadTable,
+                success: reloadTable,
             });
         });
 
@@ -4105,7 +4105,7 @@ function loadSalesOrderExtraLineTable(table, options={}) {
             constructForm(`/api/order/so-extra-line/${pk}/`, {
                 method: 'DELETE',
                 title: '{% trans "Delete Line" %}',
-                onSuccess: reloadTable,
+                success: reloadTable,
             });
         });
     }

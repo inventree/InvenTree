@@ -290,7 +290,7 @@
 
         createManufacturerPart({
             manufacturer: {{ company.pk }},
-            onSuccess: function() {
+           success: function() {
                 $("#part-table").bootstrapTable("refresh");
             }
         });
@@ -346,7 +346,7 @@
 
         createSupplierPart({
             supplier: {{ company.pk }},
-            onSuccess: reloadSupplierPartTable,
+           success: reloadSupplierPartTable,
         });
     });
 

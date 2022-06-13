@@ -172,7 +172,7 @@
             createSalesOrderShipment({
                 order: {{ order.pk }},
                 reference: '{{ order.reference }}',
-                onSuccess: function(data) {
+               success: function(data) {
                     $('#pending-shipments-table').bootstrapTable('refresh');
                 }
             });
@@ -247,7 +247,7 @@
             fields: fields,
             method: 'POST',
             title: '{% trans "Add Line Item" %}',
-            onSuccess: function() {
+           success: function() {
                 $("#so-lines-table").bootstrapTable("refresh");
             },
         });
@@ -272,7 +272,7 @@
             fields: fields,
             method: 'POST',
             title: '{% trans "Add Extra Line" %}',
-            onSuccess: function() {
+           success: function() {
                 $("#so-extra-lines-table").bootstrapTable("refresh");
             },
         });

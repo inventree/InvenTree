@@ -336,7 +336,7 @@
             persist: true,
             persistMessage: '{% trans "Create another part after this one" %}',
             successMessage: '{% trans "Part created successfully" %}',
-            onSuccess: function(data) {
+           success: function(data) {
                 // Follow the new part
                 location.href = `/part/${data.pk}/`;
             },

@@ -182,7 +182,7 @@ $('#new-po-line').click(function() {
         fields: fields,
         method: 'POST',
         title: '{% trans "Add Line Item" %}',
-        onSuccess: function() {
+       success: function() {
             $('#po-line-table').bootstrapTable('refresh');
         },
     });
@@ -233,7 +233,7 @@ $("#new-po-extra-line").click(function() {
         fields: fields,
         method: 'POST',
         title: '{% trans "Add Order Line" %}',
-        onSuccess: function() {
+       success: function() {
             $("#po-extra-lines-table").bootstrapTable("refresh");
         },
     });

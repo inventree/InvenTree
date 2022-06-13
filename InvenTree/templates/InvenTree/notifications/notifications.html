@@ -74,7 +74,7 @@ $('#history-delete').click(function() {
             method: 'DELETE',
             preFormContent: html,
             title: '{% trans "Delete Notifications" %}',
-            onSuccess: function() {
+            success: function() {
                 $('#history-table').bootstrapTable('refresh');
             },
             form_data: {
@@ -90,7 +90,7 @@ $("#history-table").on('click', '.notification-delete', function() {
     constructForm(`/api/notifications/${$(this).attr('pk')}/`, {
         method: 'DELETE',
         title: '{% trans "Delete Notification" %}',
-        onSuccess: function(data) {
+        success: function(data) {
             updateNotificationTables();
         }
     });

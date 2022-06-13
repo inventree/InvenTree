@@ -116,7 +116,7 @@ function editSetting(key, options={}) {
 
                     return data;
                 },
-                onSuccess: function(response) {
+                success: function(response) {
 
                     var setting = response.key;
 

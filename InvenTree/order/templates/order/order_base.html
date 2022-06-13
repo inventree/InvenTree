@@ -274,7 +274,7 @@ $("#complete-order").click(function() {
     completePurchaseOrder(
         {{ order.pk }},
         {
-            onSuccess: function() {
+           success: function() {
                 window.location.reload();
             }
         }
@@ -286,7 +286,7 @@ $("#cancel-order").click(function() {
     cancelPurchaseOrder(
         {{ order.pk }},
         {
-            onSuccess: function() {
+           success: function() {
                 window.location.reload();
             }
         },

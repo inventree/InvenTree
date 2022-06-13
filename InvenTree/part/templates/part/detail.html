@@ -439,7 +439,7 @@
 
             createSupplierPart({
                 part: {{ part.pk }},
-                onSuccess: reloadSupplierPartTable,
+               success: reloadSupplierPartTable,
             });
         });
 
@@ -496,7 +496,7 @@
 
             createManufacturerPart({
                 part: {{ part.pk }},
-                onSuccess: function() {
+               success: function() {
                     $("#manufacturer-part-table").bootstrapTable("refresh");
                 }
             });
@@ -609,7 +609,7 @@
                 method: 'POST',
                 title: '{% trans "Create BOM Item" %}',
                 focus: 'sub_part',
-                onSuccess: function() {
+               success: function() {
                     $('#bom-table').bootstrapTable('refresh');
                 }
             });
@@ -660,7 +660,7 @@
                 },
                 focus: 'part_2',
                 title: '{% trans "Add Related Part" %}',
-                onSuccess: function() {
+               success: function() {
                     $('#related-parts-table').bootstrapTable('refresh');
                 }
             });
@@ -763,7 +763,7 @@
                     }
                 },
                 title: '{% trans "Add Test Result Template" %}',
-                onSuccess: function() {
+               success: function() {
                     $("#test-template-table").bootstrapTable("refresh");
                 }
             });
@@ -833,7 +833,7 @@
                     data: {},
                 },
                 title: '{% trans "Add Parameter" %}',
-                onSuccess: function() {
+               success: function() {
                     $('#parameter-table').bootstrapTable('refresh');
                 }
             });

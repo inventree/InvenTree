@@ -243,7 +243,7 @@ $('#parameter-create').click(function() {
             }
         },
         title: '{% trans "Add Parameter" %}',
-        onSuccess: reloadParameters
+       success: reloadParameters
     });
 });
 
@@ -255,7 +255,7 @@ $('#supplier-create').click(function () {
     createSupplierPart({
         manufacturer_part: {{ part.pk }},
         part: {{ part.part.pk }},
-        onSuccess: reloadSupplierPartTable,
+       success: reloadSupplierPartTable,
     });
 });
 
@@ -324,7 +324,7 @@ $('#order-part, #order-part2').click(function() {
 $('#edit-part').click(function () {
 
     editManufacturerPart({{ part.pk }}, {
-        onSuccess: function() {
+       success: function() {
             location.reload();
         }
     });

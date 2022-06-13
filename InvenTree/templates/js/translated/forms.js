@@ -299,7 +299,7 @@ function constructDeleteForm(fields, options) {
  * - data: map of data to fill out field values with
  * - focus: Name of field to focus on when modal is displayed
  * - preventClose: Set to true to prevent form from closing on success
- * - onSuccess: callback function when form action is successful
+ * - success: callback function when form action is successful
  * - follow: If a 'url' is provided by the API on success, redirect to it
  * - redirect: A URL to redirect to after form success
  * - reload: Set to true to reload the current page after form success
@@ -1078,9 +1078,9 @@ function handleFormSuccess(response, options) {
             $(options.modal).modal('hide');
         }
 
-        if (options.onSuccess) {
+        if (options.success) {
             // Callback function
-            options.onSuccess(response, options);
+            options.success(response, options);
         }
 
         if (options.follow && response.url) {
@@ -1594,9 +1594,9 @@ function addSecondaryModal(field, fields, options) {
             secondary.fields = secondary.fields(data);
         }
 
-        // If no onSuccess function is defined, provide a default one
-        if (!secondary.onSuccess) {
-            secondary.onSuccess = function(data) {
+        // If no success function is defined, provide a default one
+        if (!secondary.success) {
+            secondary.success = function(data) {
 
                 // Force refresh from the API, to get full detail
                 inventreeGet(`${url}${data.pk}/`, {}, {

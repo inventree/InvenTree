@@ -88,7 +88,7 @@ $('#bom-upload').click(function() {
             clear_existing_bom: {},
         },
         title: '{% trans "Upload BOM File" %}',
-        onSuccess: function(response) {
+       success: function(response) {
 
             // Clear existing entries from the table
             $('.bom-import-row').remove();

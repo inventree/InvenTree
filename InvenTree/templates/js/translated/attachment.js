@@ -32,7 +32,7 @@ function addAttachmentButtonCallbacks(url, fields={}) {
         constructForm(url, {
             fields: file_fields,
             method: 'POST',
-            onSuccess: reloadAttachmentTable,
+            success: reloadAttachmentTable,
             title: '{% trans "Add Attachment" %}',
         });
     });
@@ -50,7 +50,7 @@ function addAttachmentButtonCallbacks(url, fields={}) {
         constructForm(url, {
             fields: link_fields,
             method: 'POST',
-            onSuccess: reloadAttachmentTable,
+            success: reloadAttachmentTable,
             title: '{% trans "Add Link" %}',
         });
     });
@@ -115,7 +115,7 @@ function deleteAttachments(attachments, url, options={}) {
             items: ids,
             filters: options.filters,
         },
-        onSuccess: function() {
+        success: function() {
             // Refresh the table once all attachments are deleted
             $('#attachment-table').bootstrapTable('refresh');
         }
@@ -176,7 +176,7 @@ function loadAttachmentTable(url, options) {
                             delete opts.fields.link;
                         }
                     },
-                    onSuccess: reloadAttachmentTable,
+                    success: reloadAttachmentTable,
                     title: '{% trans "Edit Attachment" %}',
                 });
             });

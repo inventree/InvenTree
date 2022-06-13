@@ -13974,7 +13974,7 @@ var FullCalendar = (function (exports) {
             }
             return null;
         },
-        fetch: function (arg, onSuccess, onFailure) {
+        fetch: function (arg,success, onFailure) {
             var _a = arg.context, dateEnv = _a.dateEnv, options = _a.options;
             var meta = arg.eventSource.meta;
             var apiKey = meta.googleCalendarApiKey || options.googleCalendarApiKey;
@@ -13998,7 +13998,7 @@ var FullCalendar = (function (exports) {
                         });
                     }
                     else {
-                        onSuccess({
+                       success({
                             rawEvents: gcalItemsToRawEventDefs(body.items, requestParams_1.timeZone),
                             xhr: xhr,
                         });

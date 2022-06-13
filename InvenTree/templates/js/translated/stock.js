@@ -178,7 +178,7 @@ function deleteStockLocation(pk, options={}) {
         title: '{% trans "Delete Stock Location" %}',
         method: 'DELETE',
         preFormContent: html,
-        onSuccess: function(response) {
+        success: function(response) {
             handleFormSuccess(response, options);
         }
     });
@@ -327,8 +327,8 @@ function stockItemGroups(options={}) {
 function duplicateStockItem(pk, options) {
 
     // If no "success" function provided, add a default
-    if (!options.onSuccess) {
-        options.onSuccess = function(response) {
+    if (!options.success) {
+        options.success = function(response) {
 
             showAlertOrCache('{% trans "Stock item duplicated" %}', true, {style: 'success'});
 
@@ -373,7 +373,7 @@ function deleteStockItem(pk, options={}) {
         method: 'DELETE',
         title: '{% trans "Delete Stock Item" %}',
         preFormContent: html,
-        onSuccess: function(response) {
+        success: function(response) {
             handleFormSuccess(response, options);
         }
     });
@@ -436,8 +436,8 @@ function createNewStockItem(options={}) {
     options.fields = stockItemFields(options);
     options.groups = stockItemGroups(options);
 
-    if (!options.onSuccess) {
-        options.onSuccess = function(response) {
+    if (!options.success) {
+        options.success = function(response) {
             // If a single stock item has been created, follow it!
             if (response.pk) {
                 var url = `/stock/item/${response.pk}/`;
@@ -1515,7 +1515,7 @@ function loadStockTestResultsTable(table, options) {
                 }
             },
             title: '{% trans "Add Test Result" %}',
-            onSuccess: reloadTestTable,
+            success: reloadTestTable,
         });
     });
 
@@ -1536,7 +1536,7 @@ function loadStockTestResultsTable(table, options) {
                 notes: {},
             },
             title: '{% trans "Edit Test Result" %}',
-            onSuccess: reloadTestTable,
+            success: reloadTestTable,
         });
     });
 
@@ -1558,7 +1558,7 @@ function loadStockTestResultsTable(table, options) {
         constructForm(url, {
             method: 'DELETE',
             title: '{% trans "Delete Test Result" %}',
-            onSuccess: reloadTestTable,
+            success: reloadTestTable,
             preFormContent: html,
         });
     });
@@ -2691,7 +2691,7 @@ function loadInstalledInTable(table, options) {
                 uninstallStockItem(
                     pk,
                     {
-                        onSuccess: function(response) {
+                        success: function(response) {
                             table.bootstrapTable('refresh');
                         }
                     }
@@ -2731,7 +2731,7 @@ function uninstallStockItem(installed_item_id, options={}) {
 
                 return html;
             },
-            onSuccess: function(response) {
+            success: function(response) {
                 handleFormSuccess(response, options);
             }
         }
@@ -2794,9 +2794,9 @@ function installStockItem(stock_item_id, part_id, options={}) {
             confirm: true,
             title: '{% trans "Install Stock Item" %}',
             preFormContent: html,
-            onSuccess: function(response) {
-                if (options.onSuccess) {
-                    options.onSuccess(response);
+            success: function(response) {
+                if (options.Success) {
+                    options.Success(response);
                 }
             }
         }

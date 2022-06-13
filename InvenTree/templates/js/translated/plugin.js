@@ -19,7 +19,7 @@ function installPlugin() {
             url: {},
             confirm: {},
         },
-        onSuccess: function(data) {
+        success: function(data) {
             msg = '{% trans "The Plugin was installed" %}';
             showMessage(msg, {style: 'success', details: data.result, timeout: 30000});
         }

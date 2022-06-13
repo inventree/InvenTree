@@ -248,7 +248,7 @@ $('#price-break-table').inventreeTable({
 
             constructForm(`/api/company/price-break/${pk}/`, {
                 method: 'DELETE',
-                onSuccess: reloadPriceBreaks,
+               success: reloadPriceBreaks,
                 title: '{% trans "Delete Price Break" %}',
             });
         });
@@ -262,7 +262,7 @@ $('#price-break-table').inventreeTable({
                     price: {},
                     price_currency: {},
                 },
-                onSuccess: reloadPriceBreaks,
+               success: reloadPriceBreaks,
                 title: '{% trans "Edit Price Break" %}',
             });
         });
@@ -324,7 +324,7 @@ $('#new-price-break').click(function() {
                 },
             },
             title: '{% trans "Add Price Break" %}',
-            onSuccess: reloadPriceBreaks,
+           success: reloadPriceBreaks,
         }
     );
 });
@@ -380,7 +380,7 @@ $('#update-part-availability').click(function() {
             available: {},
         },
         title: '{% trans "Update Part Availability" %}',
-        onSuccess: function() {
+       success: function() {
             location.reload();
         }
     });
@@ -389,7 +389,7 @@ $('#update-part-availability').click(function() {
 $('#edit-part').click(function () {
 
     editSupplierPart({{ part.pk }}, {
-        onSuccess: function() {
+       success: function() {
             location.reload();
         }
     });

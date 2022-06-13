@@ -583,7 +583,7 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
                 title: '{% trans "Remove Substitute Part" %}',
                 preFormContent: pre,
                 confirm: true,
-                onSuccess: function() {
+                success: function() {
                     $(modal).find(`#substitute-row-${pk}`).remove();
                     reloadParentTable();
                 }
@@ -625,7 +625,7 @@ function bomSubstitutesDialog(bom_item_id, substitutes, options={}) {
             addRemoveCallback(opts.modal, '.button-row-remove');
         },
         preventClose: true,
-        onSuccess: function(response, opts) {
+        success: function(response, opts) {
 
             // Clear the form
             var field = {
@@ -701,7 +701,7 @@ function deleteBomItems(items, options={}) {
             items: ids,
         },
         preFormContent: html,
-        onSuccess: options.success,
+        success: options.success,
     });
 }
 
@@ -1221,7 +1221,7 @@ function loadBomTable(table, options={}) {
                 fields: fields,
                 title: '{% trans "Edit BOM Item" %}',
                 focus: 'sub_part',
-                onSuccess: function() {
+                success: function() {
                     reloadBomTable(table);
                 }
             });
