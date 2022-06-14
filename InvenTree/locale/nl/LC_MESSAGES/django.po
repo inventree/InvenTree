@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-12 06:07+0000\n"
-"PO-Revision-Date: 2022-06-13 15:44\n"
+"PO-Revision-Date: 2022-06-14 16:02\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -236,7 +236,7 @@ msgstr "Serverfout"
 
 #: InvenTree/models.py:467
 msgid "An error has been logged by the server."
-msgstr ""
+msgstr "Er is een fout gelogd door de server."
 
 #: InvenTree/serializers.py:52 part/models.py:2640
 msgid "Must be a valid number"
@@ -605,7 +605,7 @@ msgstr "Systeeminformatie"
 
 #: build/api.py:216
 msgid "Build must be cancelled before it can be deleted"
-msgstr ""
+msgstr "Productie moet geannuleerd worden voordat het kan worden verwijderd"
 
 #: build/models.py:126
 msgid "Invalid choice for parent build"
@@ -1412,7 +1412,7 @@ msgstr "Geselecteerde items toewijzen"
 
 #: build/templates/build/detail.html:220
 msgid "This Build Order does not have any associated untracked BOM items"
-msgstr "Deze Productieopdracht heeft geen bijbehorende ongetrackte BOM items"
+msgstr "Deze Productieopdracht heeft geen bijbehorende niet getrackte BOM artikelen"
 
 #: build/templates/build/detail.html:229
 msgid "Incomplete Build Outputs"
@@ -1647,11 +1647,11 @@ msgstr "Streepjescodescanner ondersteuning inschakelen"
 
 #: common/models.py:835
 msgid "Barcode Webcam Support"
-msgstr ""
+msgstr "Barcode Webcam Ondersteuning"
 
 #: common/models.py:836
 msgid "Allow barcode scanning via webcam in browser"
-msgstr ""
+msgstr "Barcode via webcam scannen in browser toestaan"
 
 #: common/models.py:842
 msgid "IPN Regex"
@@ -1886,7 +1886,7 @@ msgstr "Testrapporten Toevoegen"
 
 #: common/models.py:1045
 msgid "When printing a Test Report, attach a copy of the Test Report to the associated Stock Item"
-msgstr ""
+msgstr "Bij het afdrukken van een Testrapport, voeg een kopie van het Testrapport toe aan het bijbehorende Voorraadartikel"
 
 #: common/models.py:1051
 msgid "Batch Code Template"
@@ -1930,7 +1930,7 @@ msgstr "Produceer Verlopen Voorraad"
 
 #: common/models.py:1080
 msgid "Allow building with expired stock"
-msgstr ""
+msgstr "Sta productie met verlopen voorraad toe"
 
 #: common/models.py:1086
 msgid "Stock Ownership Control"
@@ -1982,27 +1982,27 @@ msgstr ""
 
 #: common/models.py:1124
 msgid "Enable password forgot"
-msgstr ""
+msgstr "Wachtwoord vergeten functie inschakelen"
 
 #: common/models.py:1125
 msgid "Enable password forgot function on the login pages"
-msgstr ""
+msgstr "Wachtwoord vergeten functie inschakelen op de inlogpagina's"
 
 #: common/models.py:1131
 msgid "Enable registration"
-msgstr ""
+msgstr "Registratie inschakelen"
 
 #: common/models.py:1132
 msgid "Enable self-registration for users on the login pages"
-msgstr ""
+msgstr "Zelfregistratie voor gebruikers op de inlogpagina's inschakelen"
 
 #: common/models.py:1138
 msgid "Enable SSO"
-msgstr ""
+msgstr "SSO inschakelen"
 
 #: common/models.py:1139
 msgid "Enable SSO on the login pages"
-msgstr ""
+msgstr "SSO inschakelen op de inlogpagina's"
 
 #: common/models.py:1145
 msgid "Email required"
@@ -2010,7 +2010,7 @@ msgstr "E-mailadres verplicht"
 
 #: common/models.py:1146
 msgid "Require user to supply mail on signup"
-msgstr ""
+msgstr "Vereis gebruiker om e-mailadres te registreren bij aanmelding"
 
 #: common/models.py:1152
 msgid "Auto-fill SSO users"
@@ -2034,23 +2034,23 @@ msgstr ""
 
 #: common/models.py:1167
 msgid "On signup ask users twice for their password"
-msgstr ""
+msgstr "Laat gebruikers twee keer om hun wachtwoord vragen tijdens het aanmelden"
 
 #: common/models.py:1173
 msgid "Group on signup"
-msgstr ""
+msgstr "Groep bij aanmelding"
 
 #: common/models.py:1174
 msgid "Group to which new users are assigned on registration"
-msgstr ""
+msgstr "Groep waaraan nieuwe gebruikers worden toegewezen bij registratie"
 
 #: common/models.py:1180
 msgid "Enforce MFA"
-msgstr ""
+msgstr "MFA afdwingen"
 
 #: common/models.py:1181
 msgid "Users must use multifactor security."
-msgstr ""
+msgstr "Gebruikers moeten multifactor-beveiliging gebruiken."
 
 #: common/models.py:1187
 msgid "Check plugins on startup"
@@ -2130,7 +2130,7 @@ msgstr "Toon laatste onderdelen op de startpagina"
 
 #: common/models.py:1289
 msgid "Recent Part Count"
-msgstr ""
+msgstr "Recente Voorraadtelling"
 
 #: common/models.py:1290
 msgid "Number of recent parts to display on index page"
@@ -2314,7 +2314,7 @@ msgstr ""
 
 #: common/models.py:1449
 msgid "Search Stock"
-msgstr ""
+msgstr "Zoek in Voorraad"
 
 #: common/models.py:1450
 msgid "Display stock items in search preview window"
@@ -2362,7 +2362,7 @@ msgstr ""
 
 #: common/models.py:1491
 msgid "Search Sales Orders"
-msgstr ""
+msgstr "Verkooporders zoeken"
 
 #: common/models.py:1492
 msgid "Display sales orders in search preview window"
@@ -2432,7 +2432,7 @@ msgstr ""
 #: company/templates/company/supplier_part.html:284 order/models.py:951
 #: templates/js/translated/part.js:1067 templates/js/translated/part.js:2095
 msgid "Price"
-msgstr ""
+msgstr "Prijs"
 
 #: common/models.py:1616
 msgid "Unit price at specified quantity"
@@ -2456,7 +2456,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:308
 #: templates/js/translated/table_filters.js:439
 msgid "Active"
-msgstr ""
+msgstr "Actief"
 
 #: common/models.py:1792
 msgid "Is this webhook active"
@@ -2464,15 +2464,15 @@ msgstr ""
 
 #: common/models.py:1806
 msgid "Token"
-msgstr ""
+msgstr "Token"
 
 #: common/models.py:1807
 msgid "Token for access"
-msgstr ""
+msgstr "Token voor toegang"
 
 #: common/models.py:1814
 msgid "Secret"
-msgstr ""
+msgstr "Geheim"
 
 #: common/models.py:1815
 msgid "Shared secret for HMAC"
@@ -2480,7 +2480,7 @@ msgstr ""
 
 #: common/models.py:1921
 msgid "Message ID"
-msgstr ""
+msgstr "Bericht ID"
 
 #: common/models.py:1922
 msgid "Unique identifier for this message"
@@ -2588,7 +2588,7 @@ msgstr "Website"
 
 #: company/models.py:106
 msgid "Company website URL"
-msgstr ""
+msgstr "URL bedrijfswebsite"
 
 #: company/models.py:110 company/templates/company/company_base.html:118
 msgid "Address"
@@ -2621,7 +2621,7 @@ msgstr "Contact"
 
 #: company/models.py:122
 msgid "Point of contact"
-msgstr ""
+msgstr "Contactpunt"
 
 #: company/models.py:124
 msgid "Link to external company information"
@@ -2698,7 +2698,7 @@ msgstr "Fabrikant selecteren"
 #: templates/js/translated/company.js:922 templates/js/translated/order.js:1907
 #: templates/js/translated/part.js:247 templates/js/translated/part.js:1025
 msgid "MPN"
-msgstr ""
+msgstr "MPN"
 
 #: company/models.py:268 templates/js/translated/part.js:248
 msgid "Manufacturer Part Number"
@@ -2721,7 +2721,7 @@ msgstr "Fabrikant onderdeel"
 
 #: company/models.py:356
 msgid "Parameter name"
-msgstr ""
+msgstr "Parameternaam"
 
 #: company/models.py:362
 #: report/templates/report/inventree_test_report_base.html:95
@@ -2744,7 +2744,7 @@ msgstr "Eenheden"
 
 #: company/models.py:370
 msgid "Parameter units"
-msgstr ""
+msgstr "Parameter eenheden"
 
 #: company/models.py:446
 msgid "Linked manufacturer part must reference the same base part"
@@ -2817,11 +2817,11 @@ msgstr ""
 
 #: company/models.py:527 part/models.py:1685
 msgid "multiple"
-msgstr ""
+msgstr "meerdere"
 
 #: company/models.py:527
 msgid "Order multiple"
-msgstr ""
+msgstr "Order meerdere"
 
 #: company/models.py:535 company/templates/company/supplier_part.html:94
 #: templates/email/build_order_required_stock.html:19
@@ -2847,7 +2847,7 @@ msgstr ""
 
 #: company/models.py:669
 msgid "last updated"
-msgstr ""
+msgstr "laatst bijgewerkt"
 
 #: company/serializers.py:68
 msgid "Default currency used for this supplier"
@@ -2855,18 +2855,18 @@ msgstr ""
 
 #: company/serializers.py:69
 msgid "Currency Code"
-msgstr ""
+msgstr "Valutacode"
 
 #: company/templates/company/company_base.html:8
 #: company/templates/company/company_base.html:12
 #: templates/InvenTree/search.html:177 templates/js/translated/company.js:374
 msgid "Company"
-msgstr ""
+msgstr "Bedrijf"
 
 #: company/templates/company/company_base.html:22
 #: templates/js/translated/order.js:537
 msgid "Create Purchase Order"
-msgstr ""
+msgstr "Inkooporder aanmaken"
 
 #: company/templates/company/company_base.html:28
 msgid "Company actions"
@@ -2874,31 +2874,31 @@ msgstr ""
 
 #: company/templates/company/company_base.html:33
 msgid "Edit company information"
-msgstr ""
+msgstr "Bedrijfsinformatie bewerken"
 
 #: company/templates/company/company_base.html:34
 #: templates/js/translated/company.js:317
 msgid "Edit Company"
-msgstr ""
+msgstr "Bedrijf bewerken"
 
 #: company/templates/company/company_base.html:38
 msgid "Delete company"
-msgstr ""
+msgstr "Bedrijf verwijderen"
 
 #: company/templates/company/company_base.html:39
 #: company/templates/company/company_base.html:162
 msgid "Delete Company"
-msgstr ""
+msgstr "Bedrijf verwijderen"
 
 #: company/templates/company/company_base.html:56
 #: part/templates/part/part_thumb.html:12
 msgid "Upload new image"
-msgstr ""
+msgstr "Nieuwe afbeelding uploaden"
 
 #: company/templates/company/company_base.html:59
 #: part/templates/part/part_thumb.html:14
 msgid "Download image from URL"
-msgstr ""
+msgstr "Afbeelding downloaden van URL"
 
 #: company/templates/company/company_base.html:86 order/models.py:651
 #: order/templates/order/sales_order_base.html:116 stock/models.py:627
@@ -2909,11 +2909,11 @@ msgstr ""
 #: templates/js/translated/stock.js:2493
 #: templates/js/translated/table_filters.js:419
 msgid "Customer"
-msgstr ""
+msgstr "Klant"
 
 #: company/templates/company/company_base.html:111
 msgid "Uses default currency"
-msgstr ""
+msgstr "Gebruik standaard valuta"
 
 #: company/templates/company/company_base.html:125
 msgid "Phone"
@@ -2944,17 +2944,17 @@ msgstr ""
 #: company/templates/company/detail.html:84
 #: part/templates/part/category.html:176
 msgid "Order parts"
-msgstr ""
+msgstr "Bestel onderdelen"
 
 #: company/templates/company/detail.html:41
 #: company/templates/company/detail.html:89
 msgid "Delete parts"
-msgstr ""
+msgstr "Verwijder onderdelen"
 
 #: company/templates/company/detail.html:42
 #: company/templates/company/detail.html:90
 msgid "Delete Parts"
-msgstr ""
+msgstr "Verwijder Onderdelen"
 
 #: company/templates/company/detail.html:61 templates/InvenTree/search.html:103
 #: templates/js/translated/search.js:183
@@ -2985,17 +2985,17 @@ msgstr ""
 #: templates/js/translated/search.js:275 templates/navbar.html:50
 #: users/models.py:41
 msgid "Purchase Orders"
-msgstr ""
+msgstr "Inkooporders"
 
 #: company/templates/company/detail.html:121
 #: order/templates/order/purchase_orders.html:17
 msgid "Create new purchase order"
-msgstr ""
+msgstr "Nieuwe inkooporder aanmaken"
 
 #: company/templates/company/detail.html:122
 #: order/templates/order/purchase_orders.html:18
 msgid "New Purchase Order"
-msgstr ""
+msgstr "Nieuwe Inkooporder"
 
 #: company/templates/company/detail.html:143
 #: company/templates/company/sidebar.html:20
@@ -3008,17 +3008,17 @@ msgstr ""
 #: templates/js/translated/search.js:299 templates/navbar.html:61
 #: users/models.py:42
 msgid "Sales Orders"
-msgstr ""
+msgstr "Verkooporders"
 
 #: company/templates/company/detail.html:147
 #: order/templates/order/sales_orders.html:20
 msgid "Create new sales order"
-msgstr ""
+msgstr "Nieuwe inkooporder aanmaken"
 
 #: company/templates/company/detail.html:148
 #: order/templates/order/sales_orders.html:21
 msgid "New Sales Order"
-msgstr ""
+msgstr "Nieuwe Verkooporder"
 
 #: company/templates/company/detail.html:168
 #: templates/js/translated/build.js:1657
@@ -3043,7 +3043,7 @@ msgstr "Fabrikanten"
 #: company/templates/company/supplier_part.html:186
 #: part/templates/part/detail.html:80 part/templates/part/part_base.html:80
 msgid "Order part"
-msgstr ""
+msgstr "Order onderdeel"
 
 #: company/templates/company/manufacturer_part.html:39
 #: templates/js/translated/company.js:667
@@ -3062,7 +3062,7 @@ msgstr ""
 
 #: company/templates/company/manufacturer_part.html:95
 msgid "No manufacturer information available"
-msgstr ""
+msgstr "Geen fabrikanten informatie beschikbaar"
 
 #: company/templates/company/manufacturer_part.html:119
 #: company/templates/company/supplier_part.html:15 company/views.py:39
@@ -3089,23 +3089,23 @@ msgstr "Verwijderen"
 #: part/templates/part/category_sidebar.html:19
 #: part/templates/part/detail.html:179 part/templates/part/part_sidebar.html:8
 msgid "Parameters"
-msgstr ""
+msgstr "Parameters"
 
 #: company/templates/company/manufacturer_part.html:170
 #: part/templates/part/detail.html:184
 #: templates/InvenTree/settings/category.html:12
 #: templates/InvenTree/settings/part.html:66
 msgid "New Parameter"
-msgstr ""
+msgstr "Nieuwe Parameter"
 
 #: company/templates/company/manufacturer_part.html:183
 msgid "Delete parameters"
-msgstr ""
+msgstr "Parameter verwijderen"
 
 #: company/templates/company/manufacturer_part.html:245
 #: part/templates/part/detail.html:835
 msgid "Add Parameter"
-msgstr ""
+msgstr "Parameter toevoegen"
 
 #: company/templates/company/sidebar.html:6
 msgid "Manufactured Parts"
@@ -3140,7 +3140,7 @@ msgstr ""
 #: company/templates/company/supplier_part.html:187
 #: part/templates/part/detail.html:81
 msgid "Order Part"
-msgstr ""
+msgstr "Order Onderdeel"
 
 #: company/templates/company/supplier_part.html:45
 #: company/templates/company/supplier_part.html:46
@@ -3163,7 +3163,7 @@ msgstr ""
 
 #: company/templates/company/supplier_part.html:112
 msgid "No supplier information available"
-msgstr ""
+msgstr "Geen leveranciersinformatie beschikbaar"
 
 #: company/templates/company/supplier_part.html:165
 #: company/templates/company/supplier_part_navbar.html:12
@@ -3173,23 +3173,23 @@ msgstr ""
 #: company/templates/company/supplier_part.html:168
 #: part/templates/part/detail.html:23 stock/templates/stock/location.html:176
 msgid "Create new stock item"
-msgstr ""
+msgstr "Nieuw voorraadartikel aanmaken"
 
 #: company/templates/company/supplier_part.html:169
 #: part/templates/part/detail.html:24 stock/templates/stock/location.html:177
 #: templates/js/translated/stock.js:431
 msgid "New Stock Item"
-msgstr ""
+msgstr "Nieuw Voorraadartikel"
 
 #: company/templates/company/supplier_part.html:182
 #: company/templates/company/supplier_part_navbar.html:19
 msgid "Supplier Part Orders"
-msgstr ""
+msgstr "Leverancier Onderdelenorders"
 
 #: company/templates/company/supplier_part.html:207
 #: part/templates/part/prices.html:10
 msgid "Pricing Information"
-msgstr ""
+msgstr "Prijsinformatie"
 
 #: company/templates/company/supplier_part.html:212
 #: company/templates/company/supplier_part.html:326
@@ -3221,7 +3221,7 @@ msgstr ""
 
 #: company/templates/company/supplier_part.html:301
 msgid "Last updated"
-msgstr ""
+msgstr "Laatst bijgewerkt"
 
 #: company/templates/company/supplier_part.html:382
 msgid "Update Part Availability"
@@ -3252,7 +3252,7 @@ msgstr ""
 #: company/templates/company/supplier_part_navbar.html:29
 #: part/templates/part/part_sidebar.html:31
 msgid "Pricing"
-msgstr ""
+msgstr "Prijzen"
 
 #: company/templates/company/supplier_part_sidebar.html:5
 #: part/templates/part/category.html:197
@@ -3306,7 +3306,7 @@ msgstr ""
 
 #: company/views.py:155 part/views.py:547
 msgid "Supplied URL is not a valid image file"
-msgstr ""
+msgstr "Opgegeven URL is geen geldig afbeeldingsbestand"
 
 #: label/models.py:102
 msgid "Label name"
@@ -3350,7 +3350,7 @@ msgstr "Label hoogte, gespecificeerd in mm"
 
 #: label/models.py:143 report/models.py:246
 msgid "Filename Pattern"
-msgstr ""
+msgstr "Bestandsnaam Patroon"
 
 #: label/models.py:144
 msgid "Pattern for generating label filenames"
@@ -3379,7 +3379,7 @@ msgstr "Order beschrijving"
 
 #: order/models.py:135 order/models.py:1238
 msgid "Link to external page"
-msgstr ""
+msgstr "Link naar externe pagina"
 
 #: order/models.py:143
 msgid "Created By"
@@ -3387,7 +3387,7 @@ msgstr "Aangemaakt Door"
 
 #: order/models.py:150
 msgid "User or group responsible for this order"
-msgstr ""
+msgstr "Gebruiker of groep verantwoordelijk voor deze order"
 
 #: order/models.py:155
 msgid "Order notes"
@@ -3399,11 +3399,11 @@ msgstr "Orderreferentie"
 
 #: order/models.py:285 order/models.py:656
 msgid "Purchase order status"
-msgstr ""
+msgstr "Inkooporder status"
 
 #: order/models.py:295
 msgid "Company from which the items are being ordered"
-msgstr ""
+msgstr "Bedrijf waar de artikelen van worden besteld"
 
 #: order/models.py:298 order/templates/order/order_base.html:124
 #: templates/js/translated/order.js:1652
@@ -3412,7 +3412,7 @@ msgstr ""
 
 #: order/models.py:298
 msgid "Supplier order reference code"
-msgstr ""
+msgstr "Order referentiecode van leverancier"
 
 #: order/models.py:305
 msgid "received by"
@@ -3424,7 +3424,7 @@ msgstr "Datum van uitgifte"
 
 #: order/models.py:311
 msgid "Date order was issued"
-msgstr ""
+msgstr "Order uitgegeven op datum"
 
 #: order/models.py:316
 msgid "Target Delivery Date"
@@ -3432,11 +3432,11 @@ msgstr ""
 
 #: order/models.py:317
 msgid "Expected date for order delivery. Order will be overdue after this date."
-msgstr ""
+msgstr "Verwachte datum voor levering van de bestelling. De bestelling wordt achterstallig na deze datum."
 
 #: order/models.py:323
 msgid "Date order was completed"
-msgstr ""
+msgstr "Order voltooid op datum"
 
 #: order/models.py:359
 msgid "Part supplier must match PO supplier"
@@ -3456,11 +3456,11 @@ msgstr ""
 
 #: order/models.py:658
 msgid "Customer order reference code"
-msgstr ""
+msgstr "Klant order referentiecode"
 
 #: order/models.py:663
 msgid "Target date for order completion. Order will be overdue after this date."
-msgstr ""
+msgstr "Streefdatum voor voltooien order. De order is na deze datum achterstallig."
 
 #: order/models.py:666 order/models.py:1192
 #: templates/js/translated/order.js:2505 templates/js/translated/order.js:2656
@@ -3473,35 +3473,35 @@ msgstr "verzonden door"
 
 #: order/models.py:728
 msgid "Order cannot be completed as no parts have been assigned"
-msgstr ""
+msgstr "Order kan niet worden voltooid omdat er geen onderdelen aangewezen zijn"
 
 #: order/models.py:732
 msgid "Only a pending order can be marked as complete"
-msgstr ""
+msgstr "Alleen orders in afwachting kunnen als voltooid worden gemarkeerd"
 
 #: order/models.py:735
 msgid "Order cannot be completed as there are incomplete shipments"
-msgstr ""
+msgstr "Bestelling kan niet worden voltooid omdat er onvolledige verzendingen aanwezig zijn"
 
 #: order/models.py:738
 msgid "Order cannot be completed as there are incomplete line items"
-msgstr ""
+msgstr "Order kan niet worden voltooid omdat er onvolledige artikelen aanwezig zijn"
 
 #: order/models.py:912
 msgid "Item quantity"
-msgstr ""
+msgstr "Hoeveelheid artikelen"
 
 #: order/models.py:918
 msgid "Line item reference"
-msgstr ""
+msgstr "Artikelregel referentie"
 
 #: order/models.py:920
 msgid "Line item notes"
-msgstr ""
+msgstr "Artikel notities"
 
 #: order/models.py:925
 msgid "Target shipping date for this line item"
-msgstr ""
+msgstr "Verwachte verzenddatum van het artikel"
 
 #: order/models.py:943
 msgid "Context"
@@ -3527,7 +3527,7 @@ msgstr ""
 #: order/models.py:1186 order/models.py:1322
 #: templates/js/translated/order.js:3112
 msgid "Order"
-msgstr ""
+msgstr "Order"
 
 #: order/models.py:997 order/models.py:1076
 #: order/templates/order/order_base.html:9
@@ -3539,7 +3539,7 @@ msgstr ""
 #: templates/js/translated/part.js:968 templates/js/translated/stock.js:1908
 #: templates/js/translated/stock.js:2474
 msgid "Purchase Order"
-msgstr ""
+msgstr "Inkooporder"
 
 #: order/models.py:1015
 msgid "Supplier part"
@@ -3633,7 +3633,7 @@ msgstr ""
 
 #: order/models.py:1362
 msgid "Cannot allocate stock item to a line with a different part"
-msgstr ""
+msgstr "Kan het voorraadartikel niet toewijzen aan een regel met een ander onderdeel"
 
 #: order/models.py:1364
 msgid "Cannot allocate stock to a line without a part"
@@ -3653,11 +3653,11 @@ msgstr ""
 
 #: order/models.py:1380
 msgid "Sales order does not match shipment"
-msgstr ""
+msgstr "Verkooporder komt niet overeen met zending"
 
 #: order/models.py:1381
 msgid "Shipment does not match sales order"
-msgstr ""
+msgstr "Verzending komt niet overeen met verkooporder"
 
 #: order/models.py:1389
 msgid "Line"
@@ -3670,7 +3670,7 @@ msgstr ""
 
 #: order/models.py:1398
 msgid "Sales order shipment reference"
-msgstr ""
+msgstr "Verzendreferentie verkooporder"
 
 #: order/models.py:1410 templates/js/translated/notification.js:57
 msgid "Item"
@@ -3690,11 +3690,11 @@ msgstr ""
 
 #: order/serializers.py:192
 msgid "Order cannot be cancelled"
-msgstr ""
+msgstr "Order kan niet worden geannuleerd"
 
 #: order/serializers.py:287
 msgid "Order is not open"
-msgstr ""
+msgstr "Order is niet open"
 
 #: order/serializers.py:311
 msgid "Purchase price currency"
@@ -3706,23 +3706,23 @@ msgstr ""
 
 #: order/serializers.py:335
 msgid "Purchase order must be specified"
-msgstr ""
+msgstr "Inkooporder moet worden gespecificeerd"
 
 #: order/serializers.py:341
 msgid "Supplier must match purchase order"
-msgstr ""
+msgstr "De leverancier moet overeenkomen met de inkooporder"
 
 #: order/serializers.py:342
 msgid "Purchase order must match supplier"
-msgstr ""
+msgstr "Inkooporder moet overeenkomen met de leverancier"
 
 #: order/serializers.py:406 order/serializers.py:1119
 msgid "Line Item"
-msgstr ""
+msgstr "Artikel"
 
 #: order/serializers.py:412
 msgid "Line item does not match purchase order"
-msgstr ""
+msgstr "Artikelregel komt niet overeen met inkooporder"
 
 #: order/serializers.py:422 order/serializers.py:526
 msgid "Select destination location for received items"
@@ -3754,7 +3754,7 @@ msgstr ""
 
 #: order/serializers.py:542
 msgid "Line items must be provided"
-msgstr ""
+msgstr "Artikelen moeten worden opgegeven"
 
 #: order/serializers.py:559
 msgid "Destination location must be specified"
@@ -3774,7 +3774,7 @@ msgstr ""
 
 #: order/serializers.py:1008 order/serializers.py:1128
 msgid "Line item is not associated with this order"
-msgstr ""
+msgstr "Artikelregel is niet gekoppeld aan deze bestelling"
 
 #: order/serializers.py:1030
 msgid "Quantity must be positive"
@@ -3790,7 +3790,7 @@ msgstr ""
 
 #: order/serializers.py:1166 order/serializers.py:1286
 msgid "Shipment is not associated with this order"
-msgstr ""
+msgstr "Zending is niet gekoppeld aan deze bestelling"
 
 #: order/serializers.py:1216
 msgid "No match found for the following serial numbers"
@@ -3802,49 +3802,49 @@ msgstr ""
 
 #: order/tasks.py:26
 msgid "Overdue Purchase Order"
-msgstr ""
+msgstr "Achterstallige inkooporder"
 
 #: order/tasks.py:31
 #, python-brace-format
 msgid "Purchase order {po} is now overdue"
-msgstr ""
+msgstr "Inkooporder {po} is nu achterstallig"
 
 #: order/tasks.py:88
 msgid "Overdue Sales Order"
-msgstr ""
+msgstr "Achterstallige Verkooporder"
 
 #: order/tasks.py:93
 #, python-brace-format
 msgid "Sales order {so} is now overdue"
-msgstr ""
+msgstr "Verkooporder {so} is nu achterstallig"
 
 #: order/templates/order/order_base.html:33
 msgid "Print purchase order report"
-msgstr ""
+msgstr "Print rapport inkooporder"
 
 #: order/templates/order/order_base.html:35
 #: order/templates/order/sales_order_base.html:45
 msgid "Export order to file"
-msgstr ""
+msgstr "Exporteer order naar bestand"
 
 #: order/templates/order/order_base.html:41
 #: order/templates/order/sales_order_base.html:54
 msgid "Order actions"
-msgstr ""
+msgstr "Order acties"
 
 #: order/templates/order/order_base.html:45
 #: order/templates/order/sales_order_base.html:58
 msgid "Edit order"
-msgstr ""
+msgstr "Order bewerken"
 
 #: order/templates/order/order_base.html:47
 #: order/templates/order/sales_order_base.html:61
 msgid "Cancel order"
-msgstr ""
+msgstr "Order annuleren"
 
 #: order/templates/order/order_base.html:52
 msgid "Place order"
-msgstr ""
+msgstr "Order plaatsen"
 
 #: order/templates/order/order_base.html:56
 msgid "Receive items"
@@ -3857,27 +3857,27 @@ msgstr ""
 
 #: order/templates/order/order_base.html:60
 msgid "Mark order as complete"
-msgstr ""
+msgstr "Order markeren als voltooid"
 
 #: order/templates/order/order_base.html:62
 #: order/templates/order/sales_order_base.html:68
 msgid "Complete Order"
-msgstr ""
+msgstr "Order Voltooien"
 
 #: order/templates/order/order_base.html:84
 #: order/templates/order/sales_order_base.html:80
 msgid "Order Reference"
-msgstr ""
+msgstr "Order Referentie"
 
 #: order/templates/order/order_base.html:89
 #: order/templates/order/sales_order_base.html:85
 msgid "Order Description"
-msgstr ""
+msgstr "Order Beschrijving"
 
 #: order/templates/order/order_base.html:94
 #: order/templates/order/sales_order_base.html:90
 msgid "Order Status"
-msgstr ""
+msgstr "Order Status"
 
 #: order/templates/order/order_base.html:117
 msgid "No suppplier information available"
@@ -3886,7 +3886,7 @@ msgstr ""
 #: order/templates/order/order_base.html:130
 #: order/templates/order/sales_order_base.html:129
 msgid "Completed Line Items"
-msgstr ""
+msgstr "Afgeronde artikelen"
 
 #: order/templates/order/order_base.html:136
 #: order/templates/order/sales_order_base.html:135
@@ -3911,7 +3911,7 @@ msgstr ""
 
 #: order/templates/order/order_base.html:243
 msgid "Edit Purchase Order"
-msgstr ""
+msgstr "Bewerk Inkooporder"
 
 #: order/templates/order/order_wizard/match_parts.html:12
 #: part/templates/part/import_wizard/ajax_match_references.html:12
@@ -3950,22 +3950,22 @@ msgstr "Rij verwijderen"
 
 #: order/templates/order/order_wizard/po_upload.html:8
 msgid "Return to Orders"
-msgstr ""
+msgstr "Terug naar Orders"
 
 #: order/templates/order/order_wizard/po_upload.html:13
 msgid "Upload File for Purchase Order"
-msgstr ""
+msgstr "Bestand uploaden voor Inkooporder"
 
 #: order/templates/order/order_wizard/po_upload.html:14
 msgid "Order is already processed. Files cannot be uploaded."
-msgstr ""
+msgstr "Order is al verwerkt. Bestanden kunnen niet meer worden geüpload."
 
 #: order/templates/order/po_sidebar.html:5
 #: order/templates/order/so_sidebar.html:5
 #: report/templates/report/inventree_po_report.html:84
 #: report/templates/report/inventree_so_report.html:85
 msgid "Line Items"
-msgstr ""
+msgstr "Artikelen"
 
 #: order/templates/order/po_sidebar.html:7
 msgid "Received Stock"
@@ -3973,14 +3973,14 @@ msgstr ""
 
 #: order/templates/order/purchase_order_detail.html:17
 msgid "Purchase Order Items"
-msgstr ""
+msgstr "Inkooporder Artikelen"
 
 #: order/templates/order/purchase_order_detail.html:26
 #: order/templates/order/purchase_order_detail.html:184
 #: order/templates/order/sales_order_detail.html:22
 #: order/templates/order/sales_order_detail.html:249
 msgid "Add Line Item"
-msgstr ""
+msgstr "Artikel toevoegen"
 
 #: order/templates/order/purchase_order_detail.html:29
 msgid "Receive selected items"
@@ -4004,20 +4004,20 @@ msgstr ""
 #: order/templates/order/purchase_order_detail.html:97
 #: order/templates/order/sales_order_detail.html:144
 msgid "Order Notes"
-msgstr ""
+msgstr "Ordernotities"
 
 #: order/templates/order/purchase_order_detail.html:235
 msgid "Add Order Line"
-msgstr ""
+msgstr "Voeg Orderregel toe"
 
 #: order/templates/order/purchase_orders.html:30
 #: order/templates/order/sales_orders.html:33
 msgid "Print Order Reports"
-msgstr ""
+msgstr "Print Rapporten Order"
 
 #: order/templates/order/sales_order_base.html:43
 msgid "Print sales order report"
-msgstr ""
+msgstr "Print verkooporderrapport"
 
 #: order/templates/order/sales_order_base.html:47
 msgid "Print packing list"
@@ -4031,11 +4031,11 @@ msgstr ""
 #: order/templates/order/sales_order_base.html:67
 #: order/templates/order/sales_order_base.html:258
 msgid "Complete Sales Order"
-msgstr ""
+msgstr "Voltooi Verkooporder"
 
 #: order/templates/order/sales_order_base.html:103
 msgid "This Sales Order has not been fully allocated"
-msgstr ""
+msgstr "Deze Verkooporder is niet volledig toegewezen"
 
 #: order/templates/order/sales_order_base.html:123
 #: templates/js/translated/order.js:2471
@@ -4050,11 +4050,11 @@ msgstr ""
 
 #: order/templates/order/sales_order_base.html:230
 msgid "Edit Sales Order"
-msgstr ""
+msgstr "Verkooporder bewerken"
 
 #: order/templates/order/sales_order_detail.html:17
 msgid "Sales Order Items"
-msgstr ""
+msgstr "Verkoooporder Artikelen"
 
 #: order/templates/order/sales_order_detail.html:66
 #: order/templates/order/so_sidebar.html:8
@@ -4077,7 +4077,7 @@ msgstr ""
 
 #: order/views.py:377
 msgid "Sales order not found"
-msgstr ""
+msgstr "Verkooporder niet gevonden"
 
 #: order/views.py:383
 msgid "Price not found"
@@ -4095,11 +4095,11 @@ msgstr ""
 
 #: part/api.py:482
 msgid "Incoming Purchase Order"
-msgstr ""
+msgstr "Binnenkomende Inkooporder"
 
 #: part/api.py:502
 msgid "Outgoing Sales Order"
-msgstr ""
+msgstr "Uitgaande Verkooporder"
 
 #: part/api.py:520
 msgid "Stock produced by Build Order"
@@ -4156,7 +4156,7 @@ msgstr ""
 #: templates/js/translated/part.js:1298 templates/js/translated/part.js:1470
 #: templates/js/translated/part.js:1486
 msgid "On Order"
-msgstr ""
+msgstr "In bestelling"
 
 #: part/forms.py:60
 msgid "Input quantity for price calculation"
@@ -4430,15 +4430,15 @@ msgstr ""
 
 #: part/models.py:2312
 msgid "Parameter template name must be unique"
-msgstr ""
+msgstr "De template van de parameter moet uniek zijn"
 
 #: part/models.py:2320
 msgid "Parameter Name"
-msgstr ""
+msgstr "Parameternaam"
 
 #: part/models.py:2327
 msgid "Parameter Units"
-msgstr ""
+msgstr "Parameter Eenheden"
 
 #: part/models.py:2358
 msgid "Parent Part"
@@ -4447,7 +4447,7 @@ msgstr ""
 #: part/models.py:2360 part/models.py:2408 part/models.py:2409
 #: templates/InvenTree/settings/settings.html:226
 msgid "Parameter Template"
-msgstr ""
+msgstr "Parameter Template"
 
 #: part/models.py:2362
 msgid "Data"
@@ -4455,7 +4455,7 @@ msgstr ""
 
 #: part/models.py:2362
 msgid "Parameter Value"
-msgstr ""
+msgstr "Parameterwaarde"
 
 #: part/models.py:2413 templates/InvenTree/settings/settings.html:235
 msgid "Default Value"
@@ -4463,7 +4463,7 @@ msgstr ""
 
 #: part/models.py:2414
 msgid "Default Parameter Value"
-msgstr ""
+msgstr "Standaard Parameter Waarde"
 
 #: part/models.py:2449
 msgid "Part ID or part name"
@@ -4803,7 +4803,7 @@ msgstr ""
 
 #: part/templates/part/category.html:206
 msgid "Part Parameters"
-msgstr ""
+msgstr "Onderdeel Parameters"
 
 #: part/templates/part/category.html:314
 msgid "Create Part Category"
@@ -4883,7 +4883,7 @@ msgstr ""
 
 #: part/templates/part/detail.html:183
 msgid "Add new parameter"
-msgstr ""
+msgstr "Een parameter toevoegen"
 
 #: part/templates/part/detail.html:220 part/templates/part/part_sidebar.html:54
 msgid "Related Parts"
@@ -5157,7 +5157,7 @@ msgstr "Toegewezen aan Productieopdracht"
 #: part/templates/part/part_base.html:224
 #: stock/templates/stock/item_base.html:377
 msgid "Allocated to Sales Orders"
-msgstr ""
+msgstr "Toegewezen aan verkooporders"
 
 #: part/templates/part/part_base.html:232 templates/js/translated/bom.js:1003
 msgid "Can Build"
@@ -5188,7 +5188,7 @@ msgstr ""
 
 #: part/templates/part/part_base.html:486
 msgid "No matching images found"
-msgstr ""
+msgstr "Geen overeenkomende afbeeldingen gevonden"
 
 #: part/templates/part/part_base.html:574
 msgid "Hide Part Details"
@@ -5270,7 +5270,7 @@ msgstr ""
 
 #: part/templates/part/part_thumb.html:11
 msgid "Select from existing images"
-msgstr ""
+msgstr "Selecteer uit bestaande afbeeldingen"
 
 #: part/templates/part/prices.html:19
 msgid "Pricing ranges"
@@ -5416,15 +5416,15 @@ msgstr ""
 
 #: part/views.py:575
 msgid "Select Part Image"
-msgstr ""
+msgstr "Selecteer afbeelding onderdeel"
 
 #: part/views.py:601
 msgid "Updated part image"
-msgstr ""
+msgstr "Afbeelding onderdeel bijgewerkt"
 
 #: part/views.py:604
 msgid "Part image not found"
-msgstr ""
+msgstr "Afbeelding van onderdeel niet gevonden"
 
 #: part/views.py:693
 msgid "Part Pricing"
@@ -5683,7 +5683,7 @@ msgstr ""
 
 #: report/models.py:411
 msgid "Purchase order query filters"
-msgstr ""
+msgstr "Filters inkooporder"
 
 #: report/models.py:450
 msgid "Sales order query filters"
@@ -6326,7 +6326,7 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:328
 msgid "previous page"
-msgstr ""
+msgstr "vorige pagina"
 
 #: stock/templates/stock/item_base.html:328
 msgid "Navigate to previous serial number"
@@ -6334,7 +6334,7 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:337
 msgid "next page"
-msgstr ""
+msgstr "volgende pagina"
 
 #: stock/templates/stock/item_base.html:337
 msgid "Navigate to next serial number"
@@ -6504,15 +6504,15 @@ msgstr ""
 
 #: templates/403.html:15
 msgid "You do not have permission to view this page."
-msgstr ""
+msgstr "U heeft geen rechten om deze pagina te bekijken."
 
 #: templates/404.html:6 templates/404.html:12
 msgid "Page Not Found"
-msgstr ""
+msgstr "Pagina niet gevonden"
 
 #: templates/404.html:15
 msgid "The requested page does not exist"
-msgstr ""
+msgstr "De opgevraagde pagina bestaat niet"
 
 #: templates/500.html:6 templates/500.html:12
 msgid "Internal Server Error"
@@ -6787,7 +6787,7 @@ msgstr ""
 #: templates/InvenTree/settings/plugin.html:133
 #: templates/js/translated/notification.js:77
 msgid "Message"
-msgstr ""
+msgstr "Bericht"
 
 #: templates/InvenTree/settings/plugin_settings.html:10
 #, python-format
@@ -6820,7 +6820,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:86
 msgid "This plugin was installed as a package"
-msgstr ""
+msgstr "Deze plugin is als pakket geïnstalleerd"
 
 #: templates/InvenTree/settings/plugin_settings.html:88
 msgid "This plugin was found in a local server path"
@@ -6846,7 +6846,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:112
 msgid "Commit Message"
-msgstr ""
+msgstr "Bericht indienen"
 
 #: templates/InvenTree/settings/plugin_settings.html:117
 msgid "Sign Status"
@@ -6953,7 +6953,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:13
 msgid "Home Page"
-msgstr ""
+msgstr "Startpagina"
 
 #: templates/InvenTree/settings/sidebar.html:15
 #: templates/InvenTree/settings/user_search.html:9
@@ -7171,11 +7171,11 @@ msgstr ""
 
 #: templates/InvenTree/settings/user_display.html:56
 msgid "Language Settings"
-msgstr ""
+msgstr "Taalinstellingen"
 
 #: templates/InvenTree/settings/user_display.html:65
 msgid "Select language"
-msgstr ""
+msgstr "Taal selecteren"
 
 #: templates/InvenTree/settings/user_display.html:81
 #, python-format
@@ -7188,11 +7188,11 @@ msgstr ""
 
 #: templates/InvenTree/settings/user_display.html:90
 msgid "Set Language"
-msgstr ""
+msgstr "Taal instellen"
 
 #: templates/InvenTree/settings/user_display.html:93
 msgid "Some languages are not complete"
-msgstr ""
+msgstr "Een aantal talen zijn nog niet compleet"
 
 #: templates/InvenTree/settings/user_display.html:95
 msgid "Show only sufficent"
@@ -7217,7 +7217,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user_homepage.html:9
 msgid "Home Page Settings"
-msgstr ""
+msgstr "Startpagina Instellingen"
 
 #: templates/InvenTree/settings/user_labels.html:9
 msgid "Label Settings"
@@ -7505,7 +7505,7 @@ msgstr "Voorraad is vereist voor de volgende productieopdracht"
 #: templates/email/build_order_required_stock.html:8
 #, python-format
 msgid "Build order %(build)s - building %(quantity)s x %(part)s"
-msgstr ""
+msgstr "Productieopdracht %(build)s - In productie %(quantity)s x %(part)s"
 
 #: templates/email/build_order_required_stock.html:10
 msgid "Click on the following link to view this build order"
@@ -7542,15 +7542,15 @@ msgstr "Klik op de volgende link om deze order te bekijken"
 
 #: templates/image_download.html:8
 msgid "Specify URL for downloading image"
-msgstr ""
+msgstr "Specificeer URL om afbeelding te downloaden"
 
 #: templates/image_download.html:11
 msgid "Must be a valid image URL"
-msgstr ""
+msgstr "Moet een geldige afbeeldings-URL zijn"
 
 #: templates/image_download.html:12
 msgid "Remote server must be accessible"
-msgstr ""
+msgstr "Externe server moet toegankelijk zijn"
 
 #: templates/image_download.html:13
 msgid "Remote image must not exceed maximum allowable file size"
@@ -7884,7 +7884,7 @@ msgstr ""
 
 #: templates/js/translated/bom.js:944
 msgid "Purchase Price Average"
-msgstr ""
+msgstr "Gemiddelde inkoopprijs"
 
 #: templates/js/translated/bom.js:993 templates/js/translated/bom.js:1084
 msgid "View BOM"
@@ -8261,7 +8261,7 @@ msgstr ""
 
 #: templates/js/translated/company.js:541
 msgid "Delete Parameters"
-msgstr ""
+msgstr "Parameter verwijderen"
 
 #: templates/js/translated/company.js:582
 msgid "No manufacturer parts found"
@@ -8281,23 +8281,23 @@ msgstr "Samengesteld onderdeel"
 
 #: templates/js/translated/company.js:734 templates/js/translated/part.js:826
 msgid "No parameters found"
-msgstr ""
+msgstr "Geen parameters gevonden"
 
 #: templates/js/translated/company.js:771 templates/js/translated/part.js:868
 msgid "Edit parameter"
-msgstr ""
+msgstr "Parameter bewerken"
 
 #: templates/js/translated/company.js:772 templates/js/translated/part.js:869
 msgid "Delete parameter"
-msgstr ""
+msgstr "Parameter verwijderen"
 
 #: templates/js/translated/company.js:791 templates/js/translated/part.js:886
 msgid "Edit Parameter"
-msgstr ""
+msgstr "Parameter bewerken"
 
 #: templates/js/translated/company.js:802 templates/js/translated/part.js:898
 msgid "Delete Parameter"
-msgstr ""
+msgstr "Parameter verwijderen"
 
 #: templates/js/translated/company.js:841
 msgid "No supplier parts found"
@@ -8572,7 +8572,7 @@ msgstr ""
 
 #: templates/js/translated/notification.js:44
 msgid "Age"
-msgstr ""
+msgstr "Leeftijd"
 
 #: templates/js/translated/notification.js:322
 msgid "Mark as unread"
@@ -8620,51 +8620,51 @@ msgstr ""
 
 #: templates/js/translated/order.js:278
 msgid "Complete Purchase Order"
-msgstr ""
+msgstr "Voltooi Inkooporder"
 
 #: templates/js/translated/order.js:284
 msgid "Mark this order as complete?"
-msgstr ""
+msgstr "Order markeren als voltooid?"
 
 #: templates/js/translated/order.js:290
 msgid "All line items have been received"
-msgstr ""
+msgstr "Alle artikelen zijn ontvangen"
 
 #: templates/js/translated/order.js:295
 msgid "This order has line items which have not been marked as received."
-msgstr ""
+msgstr "Deze order heeft artikelen die niet zijn gemarkeerd als ontvangen."
 
 #: templates/js/translated/order.js:296
 msgid "Completing this order means that the order and line items will no longer be editable."
-msgstr ""
+msgstr "Na het voltooien van de order zijn de order en de artikelen langer bewerkbaar."
 
 #: templates/js/translated/order.js:319
 msgid "Cancel Purchase Order"
-msgstr ""
+msgstr "Inkooporder annuleren"
 
 #: templates/js/translated/order.js:324
 msgid "Are you sure you wish to cancel this purchase order?"
-msgstr ""
+msgstr "Weet u zeker dat u deze inkooporder wilt annuleren?"
 
 #: templates/js/translated/order.js:330
 msgid "This purchase order can not be cancelled"
-msgstr ""
+msgstr "Deze inkooporder kan niet geannuleerd worden"
 
 #: templates/js/translated/order.js:353
 msgid "Issue Purchase Order"
-msgstr ""
+msgstr "Geef inkooporder uit"
 
 #: templates/js/translated/order.js:358
 msgid "After placing this purchase order, line items will no longer be editable."
-msgstr ""
+msgstr "Na het plaatsen van de inkooporder zijn de artikelen niet meer bewerkbaar."
 
 #: templates/js/translated/order.js:380
 msgid "Cancel Sales Order"
-msgstr ""
+msgstr "Verkooporder annuleren"
 
 #: templates/js/translated/order.js:385
 msgid "Cancelling this order means that the order will no longer be editable."
-msgstr ""
+msgstr "Na annulering van de order kan de order niet meer bewerkt worden."
 
 #: templates/js/translated/order.js:439
 msgid "Create New Shipment"
@@ -8676,11 +8676,11 @@ msgstr ""
 
 #: templates/js/translated/order.js:489
 msgid "Create Sales Order"
-msgstr ""
+msgstr "Verkooporder aanmaken"
 
 #: templates/js/translated/order.js:706
 msgid "Export Order"
-msgstr ""
+msgstr "Export Order"
 
 #: templates/js/translated/order.js:757
 msgid "At least one purchaseable part must be selected"
@@ -8688,7 +8688,7 @@ msgstr ""
 
 #: templates/js/translated/order.js:782
 msgid "Quantity to order"
-msgstr ""
+msgstr "Te bestellen aantal"
 
 #: templates/js/translated/order.js:791
 msgid "New supplier part"
@@ -8696,11 +8696,11 @@ msgstr ""
 
 #: templates/js/translated/order.js:809
 msgid "New purchase order"
-msgstr ""
+msgstr "Nieuwe inkooporder"
 
 #: templates/js/translated/order.js:842
 msgid "Add to purchase order"
-msgstr ""
+msgstr "Toevoegen aan inkooporder"
 
 #: templates/js/translated/order.js:951
 msgid "No matching supplier parts"
@@ -8708,15 +8708,15 @@ msgstr ""
 
 #: templates/js/translated/order.js:966
 msgid "No matching purchase orders"
-msgstr ""
+msgstr "Geen overeenkomende inkooporders"
 
 #: templates/js/translated/order.js:1122
 msgid "Select Line Items"
-msgstr ""
+msgstr "Selecteer artikelen"
 
 #: templates/js/translated/order.js:1123
 msgid "At least one line item must be selected"
-msgstr ""
+msgstr "Ten minste één artikel moet worden geselecteerd"
 
 #: templates/js/translated/order.js:1143 templates/js/translated/order.js:1242
 msgid "Add batch code"
@@ -8736,11 +8736,11 @@ msgstr ""
 
 #: templates/js/translated/order.js:1316
 msgid "Order Code"
-msgstr ""
+msgstr "Order Code"
 
 #: templates/js/translated/order.js:1317
 msgid "Ordered"
-msgstr ""
+msgstr "Besteld"
 
 #: templates/js/translated/order.js:1319
 msgid "Quantity to Receive"
@@ -8752,15 +8752,15 @@ msgstr ""
 
 #: templates/js/translated/order.js:1339
 msgid "Receive Purchase Order Items"
-msgstr ""
+msgstr "Ontvang Artikelen Inkooporder"
 
 #: templates/js/translated/order.js:1602 templates/js/translated/part.js:939
 msgid "No purchase orders found"
-msgstr ""
+msgstr "Geen inkooporder gevonden"
 
 #: templates/js/translated/order.js:1635 templates/js/translated/order.js:2448
 msgid "Order is overdue"
-msgstr ""
+msgstr "Order is achterstallig"
 
 #: templates/js/translated/order.js:1685 templates/js/translated/order.js:2513
 #: templates/js/translated/order.js:2643
@@ -8769,19 +8769,19 @@ msgstr ""
 
 #: templates/js/translated/order.js:1783 templates/js/translated/order.js:3711
 msgid "Duplicate Line Item"
-msgstr ""
+msgstr "Artikel dupliceren"
 
 #: templates/js/translated/order.js:1800 templates/js/translated/order.js:3733
 msgid "Edit Line Item"
-msgstr ""
+msgstr "Artikel wijzigen"
 
 #: templates/js/translated/order.js:1813 templates/js/translated/order.js:3744
 msgid "Delete Line Item"
-msgstr ""
+msgstr "Artikel verwijderen"
 
 #: templates/js/translated/order.js:1856
 msgid "No line items found"
-msgstr ""
+msgstr "Geen artikelen gevonden"
 
 #: templates/js/translated/order.js:1883 templates/js/translated/order.js:3442
 msgid "Total"
@@ -8801,23 +8801,23 @@ msgstr ""
 #: templates/js/translated/order.js:1993 templates/js/translated/order.js:3525
 #: templates/js/translated/part.js:1048
 msgid "This line item is overdue"
-msgstr ""
+msgstr "Dit artikel is achterstallig"
 
 #: templates/js/translated/order.js:2052 templates/js/translated/part.js:1094
 msgid "Receive line item"
-msgstr ""
+msgstr "Artikel ontvangen"
 
 #: templates/js/translated/order.js:2056 templates/js/translated/order.js:3665
 msgid "Duplicate line item"
-msgstr ""
+msgstr "Artikel dupliceren"
 
 #: templates/js/translated/order.js:2057 templates/js/translated/order.js:3666
 msgid "Edit line item"
-msgstr ""
+msgstr "Artikel bewerken"
 
 #: templates/js/translated/order.js:2058 templates/js/translated/order.js:3670
 msgid "Delete line item"
-msgstr ""
+msgstr "Artikel verwijderen"
 
 #: templates/js/translated/order.js:2204 templates/js/translated/order.js:4043
 msgid "Duplicate line"
@@ -8849,7 +8849,7 @@ msgstr ""
 
 #: templates/js/translated/order.js:2392
 msgid "No sales orders found"
-msgstr ""
+msgstr "Geen verkooporder gevonden"
 
 #: templates/js/translated/order.js:2462
 msgid "Invalid Customer"
@@ -8905,11 +8905,11 @@ msgstr "Bevestig de voorraadtoewijzing"
 
 #: templates/js/translated/order.js:2893
 msgid "Allocate Stock Items to Sales Order"
-msgstr ""
+msgstr "Voorraadartikel toewijzen aan Verkooporder"
 
 #: templates/js/translated/order.js:3101
 msgid "No sales order allocations found"
-msgstr ""
+msgstr "Geen verkooporder toewijzingen gevonden"
 
 #: templates/js/translated/order.js:3182
 msgid "Edit Stock Allocation"
@@ -8962,7 +8962,7 @@ msgstr ""
 
 #: templates/js/translated/order.js:3882
 msgid "No matching line items"
-msgstr ""
+msgstr "Geen overeenkomende artikelen"
 
 #: templates/js/translated/order.js:4118
 msgid "No matching lines"
@@ -9026,11 +9026,11 @@ msgstr ""
 
 #: templates/js/translated/part.js:266
 msgid "Copy Image"
-msgstr ""
+msgstr "Afbeelding kopiëren"
 
 #: templates/js/translated/part.js:267
 msgid "Copy image from original part"
-msgstr ""
+msgstr "Afbeelding kopiëren van het oorspronkelijke onderdeel"
 
 #: templates/js/translated/part.js:275
 msgid "Copy bill of materials from original part"
@@ -9038,11 +9038,11 @@ msgstr ""
 
 #: templates/js/translated/part.js:282
 msgid "Copy Parameters"
-msgstr ""
+msgstr "Parameters kopiëren"
 
 #: templates/js/translated/part.js:283
 msgid "Copy parameter data from original part"
-msgstr ""
+msgstr "Parameter data kopiëren van het originele onderdeel"
 
 #: templates/js/translated/part.js:296
 msgid "Parent part category"
@@ -9126,7 +9126,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:518
 msgid "Validating the BOM will mark each line item as valid"
-msgstr ""
+msgstr "Validatie van de BOM markeert ieder artikel als geldig"
 
 #: templates/js/translated/part.js:528
 msgid "Validate Bill of Materials"
@@ -9687,7 +9687,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:2484
 msgid "Purchase order no longer exists"
-msgstr ""
+msgstr "Inkooporder bestaat niet meer"
 
 #: templates/js/translated/stock.js:2503
 msgid "Customer no longer exists"
@@ -9937,7 +9937,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:344
 #: templates/js/translated/table_filters.js:374
 msgid "Order status"
-msgstr ""
+msgstr "Order status"
 
 #: templates/js/translated/table_filters.js:349
 #: templates/js/translated/table_filters.js:366
@@ -9999,7 +9999,7 @@ msgstr ""
 
 #: templates/js/translated/tables.js:528
 msgid "rows per page"
-msgstr ""
+msgstr "rijen per pagina"
 
 #: templates/js/translated/tables.js:533
 msgid "Showing all rows"
@@ -10221,7 +10221,7 @@ msgstr ""
 
 #: templates/stock_table.html:50
 msgid "Order selected items"
-msgstr ""
+msgstr "Geselecteerde artikelen bestellen"
 
 #: templates/stock_table.html:52
 msgid "Change status"
