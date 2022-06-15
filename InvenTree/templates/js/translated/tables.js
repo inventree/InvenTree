@@ -184,6 +184,13 @@ function renderLink(text, url, options={}) {
 
     var max_length = options.max_length || -1;
 
+    var extra = '';
+
+    if (options.download) {
+        var fn = url.split('/').at(-1);
+        extra += ` download='${fn}'`;
+    }
+
     // Shorten the displayed length if required
     if ((max_length > 0) && (text.length > max_length)) {
         var slice_length = (max_length - 3) / 2;
@@ -194,7 +201,7 @@ function renderLink(text, url, options={}) {
         text = `${text_start}...${text_end}`;
     }
 
-    return '<a href="' + url + '">' + text + '</a>';
+    return `<a href='${url}'${extra}>${text}</a>`;
 }
 
 

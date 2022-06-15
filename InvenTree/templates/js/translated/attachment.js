@@ -228,7 +228,7 @@ function loadAttachmentTable(url, options) {
 
                         var html = `<span class='fas ${icon}'></span> ${filename}`;
 
-                        return renderLink(html, value);
+                        return renderLink(html, value, {download: true});
                     } else if (row.link) {
                         var html = `<span class='fas fa-link'></span> ${row.link}`;
                         return renderLink(html, row.link);
