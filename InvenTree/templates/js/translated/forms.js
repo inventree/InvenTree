@@ -204,6 +204,9 @@ function constructChangeForm(fields, options) {
         },
         success: function(data) {
 
+            // Ensure the data are fully sanitized before we operate on it
+            data = sanitizeData(data);
+
             // An optional function can be provided to process the returned results,
             // before they are rendered to the form
             if (options.processResults) {

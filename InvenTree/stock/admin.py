@@ -3,10 +3,10 @@ from django.contrib import admin
 import import_export.widgets as widgets
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
-from import_export.resources import ModelResource
 
 from build.models import Build
 from company.models import Company, SupplierPart
+from InvenTree.admin import InvenTreeResource
 from order.models import PurchaseOrder, SalesOrder
 from part.models import Part
 
@@ -14,8 +14,8 @@ from .models import (StockItem, StockItemAttachment, StockItemTestResult,
                      StockItemTracking, StockLocation)
 
 
-class LocationResource(ModelResource):
-    """ Class for managing StockLocation data import/export """
+class LocationResource(InvenTreeResource):
+    """Class for managing StockLocation data import/export."""
 
     parent = Field(attribute='parent', widget=widgets.ForeignKeyWidget(StockLocation))
 
@@ -65,8 +65,8 @@ class LocationAdmin(ImportExportModelAdmin):
     ]
 
 
-class StockItemResource(ModelResource):
-    """ Class for managing StockItem data import/export """
+class StockItemResource(InvenTreeResource):
+    """Class for managing StockItem data import/export."""
 
     # Custom managers for ForeignKey fields
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
