@@ -3,15 +3,15 @@ from django.contrib import admin
 import import_export.widgets as widgets
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
-from import_export.resources import ModelResource
 
 import part.models as models
 from company.models import SupplierPart
+from InvenTree.admin import InvenTreeResource
 from stock.models import StockLocation
 
 
-class PartResource(ModelResource):
-    """ Class for managing Part data import/export """
+class PartResource(InvenTreeResource):
+    """Class for managing Part data import/export."""
 
     # ForeignKey fields
     category = Field(attribute='category', widget=widgets.ForeignKeyWidget(models.PartCategory))
@@ -81,8 +81,8 @@ class PartAdmin(ImportExportModelAdmin):
     ]
 
 
-class PartCategoryResource(ModelResource):
-    """ Class for managing PartCategory data import/export """
+class PartCategoryResource(InvenTreeResource):
+    """Class for managing PartCategory data import/export."""
 
     parent = Field(attribute='parent', widget=widgets.ForeignKeyWidget(models.PartCategory))
 
@@ -157,8 +157,8 @@ class PartTestTemplateAdmin(admin.ModelAdmin):
     autocomplete_fields = ('part',)
 
 
-class BomItemResource(ModelResource):
-    """ Class for managing BomItem data import/export """
+class BomItemResource(InvenTreeResource):
+    """Class for managing BomItem data import/export."""
 
     level = Field(attribute='level', readonly=True)
 
@@ -269,8 +269,8 @@ class ParameterTemplateAdmin(ImportExportModelAdmin):
     search_fields = ('name', 'units')
 
 
-class ParameterResource(ModelResource):
-    """ Class for managing PartParameter data import/export """
+class ParameterResource(InvenTreeResource):
+    """Class for managing PartParameter data import/export."""
 
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(models.Part))
 

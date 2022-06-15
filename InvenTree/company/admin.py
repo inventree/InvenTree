@@ -3,8 +3,8 @@ from django.contrib import admin
 import import_export.widgets as widgets
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
-from import_export.resources import ModelResource
 
+from InvenTree.admin import InvenTreeResource
 from part.models import Part
 
 from .models import (Company, ManufacturerPart, ManufacturerPartAttachment,
@@ -12,8 +12,8 @@ from .models import (Company, ManufacturerPart, ManufacturerPartAttachment,
                      SupplierPriceBreak)
 
 
-class CompanyResource(ModelResource):
-    """ Class for managing Company data import/export """
+class CompanyResource(InvenTreeResource):
+    """Class for managing Company data import/export."""
 
     class Meta:
         model = Company
@@ -34,10 +34,8 @@ class CompanyAdmin(ImportExportModelAdmin):
     ]
 
 
-class SupplierPartResource(ModelResource):
-    """
-    Class for managing SupplierPart data import/export
-    """
+class SupplierPartResource(InvenTreeResource):
+    """Class for managing SupplierPart data import/export."""
 
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
 
@@ -70,10 +68,8 @@ class SupplierPartAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('part', 'supplier', 'manufacturer_part',)
 
 
-class ManufacturerPartResource(ModelResource):
-    """
-    Class for managing ManufacturerPart data import/export
-    """
+class ManufacturerPartResource(InvenTreeResource):
+    """Class for managing ManufacturerPart data import/export."""
 
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(Part))
 
@@ -118,10 +114,8 @@ class ManufacturerPartAttachmentAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('manufacturer_part',)
 
 
-class ManufacturerPartParameterResource(ModelResource):
-    """
-    Class for managing ManufacturerPartParameter data import/export
-    """
+class ManufacturerPartParameterResource(InvenTreeResource):
+    """Class for managing ManufacturerPartParameter data import/export."""
 
     class Meta:
         model = ManufacturerPartParameter
@@ -148,8 +142,8 @@ class ManufacturerPartParameterAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('manufacturer_part',)
 
 
-class SupplierPriceBreakResource(ModelResource):
-    """ Class for managing SupplierPriceBreak data import/export """
+class SupplierPriceBreakResource(InvenTreeResource):
+    """Class for managing SupplierPriceBreak data import/export."""
 
     part = Field(attribute='part', widget=widgets.ForeignKeyWidget(SupplierPart))
 
