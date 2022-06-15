@@ -18,12 +18,13 @@ import sys
 from datetime import datetime
 
 import django.conf.locale
-from django.contrib.messages import constants as messages
 from django.core.files.storage import default_storage
 from django.utils.translation import gettext_lazy as _
 
 import moneyed
+import sentry_sdk
 import yaml
+from sentry_sdk.integrations.django import DjangoIntegration
 
 from .config import get_base_dir, get_config_file, get_plugin_file, get_setting
 
@@ -32,6 +33,9 @@ def _is_true(x):
     # Shortcut function to determine if a value "looks" like a boolean
     return str(x).strip().lower() in ['1', 'y', 'yes', 't', 'true']
 
+
+# Default Sentry DSN (can be overriden if user wants custom sentry integration)
+INVENTREE_DSN = 'https://3928ccdba1d34895abde28031fd00100@o378676.ingest.sentry.io/6494600'
 
 # Determine if we are running in "test" mode e.g. "manage.py test"
 TESTING = 'test' in sys.argv
@@ -297,11 +301,23 @@ AUTHENTICATION_BACKENDS = CONFIG.get('authentication_backends', [
     'allauth.account.auth_backends.AuthenticationBackend',      # SSO login via external providers
 ])
 
+DEBUG_TOOLBAR_ENABLED = DEBUG and CONFIG.get('debug_toolbar', False)
+
 # If the debug toolbar is enabled, add the modules
-if DEBUG and CONFIG.get('debug_toolbar', False):  # pragma: no cover
+if DEBUG_TOOLBAR_ENABLED:  # pragma: no cover
     logger.info("Running with DEBUG_TOOLBAR enabled")
     INSTALLED_APPS.append('debug_toolbar')
     MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+
+# Internal IP addresses allowed to see the debug toolbar
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
+
+if DOCKER:
+    # Internal IP addresses are different when running under docker
+    hostname, ___, ips = socket.gethostbyname_ex(socket.gethostname())
+    INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]
 
 # Allow secure http developer server in debug mode
 if DEBUG:
@@ -348,6 +364,12 @@ TEMPLATES = [
         },
     },
 ]
+
+if DEBUG_TOOLBAR_ENABLED:
+    # Note that the APP_DIRS value must be set when using debug_toolbar
+    # But this will kill template loading for plugins
+    TEMPLATES[0]['APP_DIRS'] = True
+    del TEMPLATES[0]['OPTIONS']['loaders']
 
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'InvenTree.exceptions.exception_handler',
@@ -546,7 +568,7 @@ db_config['TEST'] = {
 
 # Set collation option for mysql test database
 if 'mysql' in db_engine:
-    db_config['TEST']['COLLATION'] = 'utf8_general_ci'
+    db_config['TEST']['COLLATION'] = 'utf8_general_ci'  # pragma: no cover
 
 DATABASES = {
     'default': db_config
@@ -805,17 +827,6 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # Use database transactions when importing / exporting data
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 
-# Internal IP addresses allowed to see the debug toolbar
-INTERNAL_IPS = [
-    '127.0.0.1',
-]
-
-MESSAGE_TAGS = {
-    messages.SUCCESS: 'alert alert-block alert-success',
-    messages.ERROR: 'alert alert-block alert-danger',
-    messages.INFO: 'alert alert-block alert-info',
-}
-
 SITE_ID = 1
 
 # Load the allauth social backends
@@ -882,6 +893,26 @@ MARKDOWNIFY_WHITELIST_ATTRS = [
 
 MARKDOWNIFY_BLEACH = False
 
+# Error reporting
+SENTRY_ENABLED = get_setting('INVENTREE_SENTRY_ENABLED', CONFIG.get('sentry_enabled', False))
+SENTRY_DSN = get_setting('INVENTREE_SENTRY_DSN', CONFIG.get('sentry_dsn', INVENTREE_DSN))
+
+if SENTRY_ENABLED and SENTRY_DSN:  # pragma: no cover
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration(), ],
+        traces_sample_rate=1.0 if DEBUG else 0.15,
+        send_default_pii=True
+    )
+    inventree_tags = {
+        'testing': TESTING,
+        'docker': DOCKER,
+        'debug': DEBUG,
+        'remote': REMOTE_LOGIN,
+    }
+    for key, val in inventree_tags.items():
+        sentry_sdk.set_tag(f'inventree_{key}', val)
+
 # Maintenance mode
 MAINTENANCE_MODE_RETRY_AFTER = 60
 MAINTENANCE_MODE_STATE_BACKEND = 'maintenance_mode.backends.DefaultStorageBackend'
@@ -925,6 +956,6 @@ CUSTOM_LOGO = get_setting(
 )
 
 # check that the logo-file exsists in media
-if CUSTOM_LOGO and not default_storage.exists(CUSTOM_LOGO):
+if CUSTOM_LOGO and not default_storage.exists(CUSTOM_LOGO):  # pragma: no cover
     CUSTOM_LOGO = False
     logger.warning("The custom logo file could not be found in the default media storage")

@@ -1,10 +1,11 @@
 version: "3.8"
 
-# Docker compose recipe for InvenTree production server
+# Docker compose recipe for InvenTree production server, with the following containerized processes
 # - PostgreSQL as the database backend
 # - gunicorn as the InvenTree web server
 # - django-q as the InvenTree background worker process
 # - nginx as a reverse proxy
+# - redis as the cache manager
 
 # ---------------------
 # READ BEFORE STARTING!
@@ -56,6 +57,18 @@ services:
             - inventree_data:/var/lib/postgresql/data/
         restart: unless-stopped
 
+    # redis acts as database cache manager
+    inventree-cache:
+        container_name: inventree-cache
+        image: redis:7.0
+        depends_on:
+            - inventree-db
+        env_file:
+            - .env
+        ports:
+            - ${INVENTREE_CACHE_PORT:-6379}:6379
+        restart: unless-stopped
+
     # InvenTree web server services
     # Uses gunicorn as the web server
     inventree-server:
@@ -66,6 +79,7 @@ services:
             - 8000
         depends_on:
             - inventree-db
+            - inventree-cache
         env_file:
             - .env
         volumes:
@@ -80,7 +94,6 @@ services:
         image: inventree/inventree:stable
         command: invoke worker
         depends_on:
-            - inventree-db
             - inventree-server
         env_file:
             - .env

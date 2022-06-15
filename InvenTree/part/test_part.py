@@ -3,6 +3,7 @@
 import os
 
 from django.conf import settings
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
@@ -394,6 +395,9 @@ class PartSettingsTest(InvenTreeTestCase):
 
     def make_part(self):
         """Helper function to create a simple part."""
+
+        cache.clear()
+
         part = Part.objects.create(
             name='Test Part',
             description='I am but a humble test part',
@@ -404,6 +408,9 @@ class PartSettingsTest(InvenTreeTestCase):
 
     def test_defaults(self):
         """Test that the default values for the part settings are correct."""
+
+        cache.clear()
+
         self.assertTrue(part.settings.part_component_default())
         self.assertTrue(part.settings.part_purchaseable_default())
         self.assertFalse(part.settings.part_salable_default())
@@ -411,6 +418,9 @@ class PartSettingsTest(InvenTreeTestCase):
 
     def test_initial(self):
         """Test the 'initial' default values (no default values have been set)"""
+
+        cache.clear()
+
         part = self.make_part()
 
         self.assertTrue(part.component)

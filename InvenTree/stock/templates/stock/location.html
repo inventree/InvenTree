@@ -291,14 +291,15 @@
     });
 
     $('#location-delete').click(function() {
-        launchModalForm("{% url 'stock-location-delete' location.id %}",
-                         {
-                             redirect: "{% url 'stock-index' %}"
-                         });
-        return false;
-    });
 
-    {% if location %}
+        deleteStockLocation({{ location.pk }}, {
+            {% if location.parent %}
+            redirect: '{% url "stock-location-detail" location.parent.pk %}',
+            {% else %}
+            redirect: '{% url "stock-index" %}',
+            {% endif %}
+        });
+    });
 
     function adjustLocationStock(action) {
         inventreeGet(
@@ -328,8 +329,6 @@
     $("#location-move").click(function() {
         adjustLocationStock('move');
     });
-
-    {% endif %}
 
     $('#show-qr-code').click(function() {
         launchModalForm("{% url 'stock-location-qr' location.id %}",

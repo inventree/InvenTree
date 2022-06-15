@@ -4,15 +4,14 @@ from django.contrib import admin
 
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
-from import_export.resources import ModelResource
 import import_export.widgets as widgets
 
 from build.models import Build, BuildItem
-
+from InvenTree.admin import InvenTreeResource
 import part.models
 
 
-class BuildResource(ModelResource):
+class BuildResource(InvenTreeResource):
     """Class for managing import/export of Build data."""
     # For some reason, we need to specify the fields individually for this ModelResource,
     # but we don't for other ones.

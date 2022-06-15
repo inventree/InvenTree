@@ -39,6 +39,8 @@
     assignStockToCustomer,
     createNewStockItem,
     createStockLocation,
+    deleteStockItem,
+    deleteStockLocation,
     duplicateStockItem,
     editStockItem,
     editStockLocation,
@@ -154,6 +156,34 @@ function createStockLocation(options={}) {
 
     constructForm(url, options);
 }
+
+
+/*
+ * Launch an API form to delete a StockLocation
+ */
+function deleteStockLocation(pk, options={}) {
+    var url = `/api/stock/location/${pk}/`;
+
+    var html = `
+    <div class='alert alert-block alert-danger'>
+    {% trans "Are you sure you want to delete this stock location?" %}
+    <ul>
+        <li>{% trans "Any child locations will be moved to the parent of this location" %}</li>
+        <li>{% trans "Any stock items in this location will be moved to the parent of this location" %}</li>
+    </ul>
+    </div>
+    `;
+
+    constructForm(url, {
+        title: '{% trans "Delete Stock Location" %}',
+        method: 'DELETE',
+        preFormContent: html,
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
+
 
 
 function stockItemFields(options={}) {
@@ -323,6 +353,28 @@ function duplicateStockItem(pk, options) {
             options.title = '{% trans "Duplicate Stock Item" %}';
 
             constructForm('{% url "api-stock-list" %}', options);
+        }
+    });
+}
+
+
+/*
+ * Launch a modal form to delete a given StockItem
+ */
+function deleteStockItem(pk, options={}) {
+    var url = `/api/stock/${pk}/`;
+
+    var html = `
+    <div class='alert alert-block alert-danger'>
+    {% trans "Are you sure you want to delete this stock item?" %}
+    </div>`;
+
+    constructForm(url, {
+        method: 'DELETE',
+        title: '{% trans "Delete Stock Item" %}',
+        preFormContent: html,
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
         }
     });
 }
@@ -1306,7 +1358,8 @@ function loadStockTestResultsTable(table, options) {
                     var html = value;
 
                     if (row.attachment) {
-                        html += `<a href='${row.attachment}'><span class='fas fa-file-alt float-right'></span></a>`;
+                        var text = `<span class='fas fa-file-alt float-right'></span>`;
+                        html += renderLink(text, row.attachment, {download: true});
                     }
 
                     return html;

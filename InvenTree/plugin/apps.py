@@ -36,7 +36,7 @@ class PluginAppConfig(AppConfig):
                     # this is the first startup
                     try:
                         from common.models import InvenTreeSetting
-                        if InvenTreeSetting.get_setting('PLUGIN_ON_STARTUP', create=False):
+                        if InvenTreeSetting.get_setting('PLUGIN_ON_STARTUP', create=False, cache=False):
                             # make sure all plugins are installed
                             registry.install_plugin_file()
                     except Exception:  # pragma: no cover

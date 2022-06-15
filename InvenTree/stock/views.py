@@ -6,11 +6,9 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, ListView
 
 import common.settings
-from InvenTree.views import (AjaxDeleteView, AjaxUpdateView,
-                             InvenTreeRoleMixin, QRCodeView)
+from InvenTree.views import InvenTreeRoleMixin, QRCodeView
 from plugin.views import InvenTreePluginViewMixin
 
-from . import forms as StockForms
 from .models import StockItem, StockLocation
 
 
@@ -134,58 +132,3 @@ class StockItemQRCode(QRCodeView):
             return item.format_barcode()
         except StockItem.DoesNotExist:
             return None
-
-
-class StockItemConvert(AjaxUpdateView):
-    """View for 'converting' a StockItem to a variant of its current part."""
-
-    model = StockItem
-    form_class = StockForms.ConvertStockItemForm
-    ajax_form_title = _('Convert Stock Item')
-    ajax_template_name = 'stock/stockitem_convert.html'
-    context_object_name = 'item'
-
-    def get_form(self):
-        """Filter the available parts."""
-        form = super().get_form()
-        item = self.get_object()
-
-        form.fields['part'].queryset = item.part.get_conversion_options()
-
-        return form
-
-    def save(self, obj, form):
-        """Convert item to variant."""
-        stock_item = self.get_object()
-
-        variant = form.cleaned_data.get('part', None)
-
-        stock_item.convert_to_variant(variant, user=self.request.user)
-
-        return stock_item
-
-
-class StockLocationDelete(AjaxDeleteView):
-    """View to delete a StockLocation.
-
-    Presents a deletion confirmation form to the user
-    """
-
-    model = StockLocation
-    success_url = '/stock'
-    ajax_template_name = 'stock/location_delete.html'
-    context_object_name = 'location'
-    ajax_form_title = _('Delete Stock Location')
-
-
-class StockItemDelete(AjaxDeleteView):
-    """View to delete a StockItem.
-
-    Presents a deletion confirmation form to the user
-    """
-
-    model = StockItem
-    success_url = '/stock/'
-    ajax_template_name = 'stock/item_delete.html'
-    context_object_name = 'item'
-    ajax_form_title = _('Delete Stock Item')

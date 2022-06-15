@@ -34,8 +34,7 @@ from common.settings import currency_code_default, currency_codes
 from part.models import PartCategory
 from users.models import RuleSet, check_user_role
 
-from .forms import DeleteForm, EditUserForm, SetPasswordForm
-from .helpers import str2bool
+from .forms import EditUserForm, SetPasswordForm
 
 
 def auth_request(request):
@@ -508,74 +507,6 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
                 pass
 
         return self.renderJsonResponse(request, form, data)
-
-
-class AjaxDeleteView(AjaxMixin, UpdateView):
-    """An 'AJAXified DeleteView for removing an object from the DB.
-
-    - Returns a HTML object (not a form!) in JSON format (for delivery to a modal window)
-    - Handles deletion
-    """
-
-    form_class = DeleteForm
-    ajax_form_title = _("Delete Item")
-    ajax_template_name = "modal_delete_form.html"
-    context_object_name = 'item'
-
-    def get_object(self):
-        """Return object matched to the model of the calling class."""
-        try:
-            self.object = self.model.objects.get(pk=self.kwargs['pk'])
-        except Exception:
-            return None
-        return self.object
-
-    def get_form(self):
-        """Returns a form instance for the form_class of the calling class."""
-        return self.form_class(self.get_form_kwargs())
-
-    def get(self, request, *args, **kwargs):
-        """Respond to GET request.
-
-        - Render a DELETE confirmation form to JSON
-        - Return rendered form to client
-        """
-        super(UpdateView, self).get(request, *args, **kwargs)
-
-        form = self.get_form()
-
-        context = self.get_context_data()
-
-        context[self.context_object_name] = self.get_object()
-
-        return self.renderJsonResponse(request, form, context=context)
-
-    def post(self, request, *args, **kwargs):
-        """Respond to POST request.
-
-        - DELETE the object
-        - Render success message to JSON and return to client
-        """
-        obj = self.get_object()
-        pk = obj.id
-
-        form = self.get_form()
-
-        confirmed = str2bool(request.POST.get('confirm_delete', False))
-        context = self.get_context_data()
-
-        if confirmed:
-            obj.delete()
-        else:
-            form.add_error('confirm_delete', _('Check box to confirm item deletion'))
-            context[self.context_object_name] = self.get_object()
-
-        data = {
-            'id': pk,
-            'form_valid': confirmed
-        }
-
-        return self.renderJsonResponse(request, form, data=data, context=context)
 
 
 class EditUserView(AjaxUpdateView):

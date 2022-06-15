@@ -24,8 +24,8 @@ from common.models import InvenTreeSetting
 from common.views import FileManagementAjaxView, FileManagementFormView
 from company.models import SupplierPart
 from InvenTree.helpers import str2bool
-from InvenTree.views import (AjaxDeleteView, AjaxUpdateView, AjaxView,
-                             InvenTreeRoleMixin, QRCodeView)
+from InvenTree.views import (AjaxUpdateView, AjaxView, InvenTreeRoleMixin,
+                             QRCodeView)
 from order.models import PurchaseOrderLineItem
 from plugin.views import InvenTreePluginViewMixin
 from stock.models import StockItem, StockLocation
@@ -875,18 +875,3 @@ class CategoryDetail(InvenTreeRoleMixin, InvenTreePluginViewMixin, DetailView):
                 context['starred'] = category.is_starred_by(self.request.user)
 
         return context
-
-
-class CategoryDelete(AjaxDeleteView):
-    """Delete view to delete a PartCategory."""
-    model = PartCategory
-    ajax_template_name = 'part/category_delete.html'
-    ajax_form_title = _('Delete Part Category')
-    context_object_name = 'category'
-    success_url = '/part/'
-
-    def get_data(self):
-        """Return custom context data when the category is deleted"""
-        return {
-            'danger': _('Part category was deleted'),
-        }
