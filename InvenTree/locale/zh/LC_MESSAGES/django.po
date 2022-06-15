@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-11 13:14+0000\n"
-"PO-Revision-Date: 2022-06-11 15:03\n"
+"POT-Creation-Date: 2022-06-15 08:34+0000\n"
+"PO-Revision-Date: 2022-06-15 16:23\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -23,7 +23,7 @@ msgstr "未找到 API 端点"
 
 #: InvenTree/exceptions.py:62
 msgid "Error details can be found in the admin panel"
-msgstr ""
+msgstr "在管理面板中可以找到错误详细信息"
 
 #: InvenTree/fields.py:94
 msgid "Enter date"
@@ -60,7 +60,7 @@ msgstr "您必须输入相同的 Email 。"
 #: InvenTree/helpers.py:404
 #, python-brace-format
 msgid "Duplicate serial: {sn}"
-msgstr ""
+msgstr "重复的序列号: {sn}"
 
 #: InvenTree/helpers.py:411 order/models.py:356 order/models.py:508
 msgid "Invalid quantity provided"
@@ -73,7 +73,7 @@ msgstr "空序列号字符串"
 #: InvenTree/helpers.py:446
 #, python-brace-format
 msgid "Invalid group range: {g}"
-msgstr ""
+msgstr "无效的组范围: {g}"
 
 #: InvenTree/helpers.py:449
 #, python-brace-format
@@ -83,12 +83,12 @@ msgstr "无效的群组: {g}"
 #: InvenTree/helpers.py:477
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
-msgstr ""
+msgstr "无效的组序列: {g}"
 
 #: InvenTree/helpers.py:485
 #, python-brace-format
 msgid "Invalid/no group {group}"
-msgstr ""
+msgstr "无效的群组: {group}"
 
 #: InvenTree/helpers.py:491
 msgid "No serial numbers found"
@@ -97,7 +97,7 @@ msgstr "未找到序列号"
 #: InvenTree/helpers.py:495
 #, python-brace-format
 msgid "Number of unique serial numbers ({s}) must match quantity ({q})"
-msgstr ""
+msgstr "唯一序列号 ({s}) 必须匹配数量 ({q})"
 
 #: InvenTree/models.py:178
 msgid "Missing file"
@@ -105,7 +105,7 @@ msgstr "缺少文件"
 
 #: InvenTree/models.py:179
 msgid "Missing external link"
-msgstr ""
+msgstr "缺少外部链接"
 
 #: InvenTree/models.py:191 stock/models.py:2091
 #: templates/js/translated/attachment.js:103
@@ -141,12 +141,12 @@ msgstr "注释"
 msgid "File comment"
 msgstr "文件注释"
 
-#: InvenTree/models.py:208 InvenTree/models.py:209 common/models.py:1506
-#: common/models.py:1507 common/models.py:1735 common/models.py:1736
-#: common/models.py:1998 common/models.py:1999 part/models.py:2141
+#: InvenTree/models.py:208 InvenTree/models.py:209 common/models.py:1575
+#: common/models.py:1576 common/models.py:1799 common/models.py:1800
+#: common/models.py:2062 common/models.py:2063 part/models.py:2141
 #: part/models.py:2161 plugin/models.py:238 plugin/models.py:239
 #: report/templates/report/inventree_test_report_base.html:96
-#: templates/js/translated/stock.js:2575
+#: templates/js/translated/stock.js:2576
 msgid "User"
 msgstr "用户"
 
@@ -183,7 +183,7 @@ msgstr "重命名文件出错"
 msgid "Invalid choice"
 msgstr "选择无效"
 
-#: InvenTree/models.py:337 InvenTree/models.py:338 common/models.py:1721
+#: InvenTree/models.py:337 InvenTree/models.py:338 common/models.py:1785
 #: company/models.py:355 label/models.py:101 part/models.py:739
 #: part/models.py:2319 plugin/models.py:93 report/models.py:151
 #: templates/InvenTree/settings/mixins/urls.html:13
@@ -195,7 +195,7 @@ msgstr "选择无效"
 #: templates/js/translated/company.js:744
 #: templates/js/translated/notification.js:73
 #: templates/js/translated/part.js:684 templates/js/translated/part.js:836
-#: templates/js/translated/part.js:1857 templates/js/translated/stock.js:2345
+#: templates/js/translated/part.js:1857 templates/js/translated/stock.js:2346
 msgid "Name"
 msgstr "名称"
 
@@ -217,8 +217,8 @@ msgstr "名称"
 #: templates/js/translated/order.js:1888 templates/js/translated/order.js:2476
 #: templates/js/translated/part.js:743 templates/js/translated/part.js:1151
 #: templates/js/translated/part.js:1424 templates/js/translated/part.js:1876
-#: templates/js/translated/part.js:1945 templates/js/translated/stock.js:1738
-#: templates/js/translated/stock.js:2357 templates/js/translated/stock.js:2412
+#: templates/js/translated/part.js:1945 templates/js/translated/stock.js:1739
+#: templates/js/translated/stock.js:2358 templates/js/translated/stock.js:2413
 msgid "Description"
 msgstr "描述信息"
 
@@ -232,11 +232,11 @@ msgstr "上级项"
 
 #: InvenTree/models.py:466
 msgid "Server Error"
-msgstr ""
+msgstr "服务器错误"
 
 #: InvenTree/models.py:467
 msgid "An error has been logged by the server."
-msgstr ""
+msgstr "服务器记录了一个错误。"
 
 #: InvenTree/serializers.py:52 part/models.py:2640
 msgid "Must be a valid number"
@@ -248,143 +248,143 @@ msgstr "文件名"
 
 #: InvenTree/serializers.py:298
 msgid "Invalid value"
-msgstr ""
+msgstr "无效值"
 
 #: InvenTree/serializers.py:320
 msgid "Data File"
-msgstr ""
+msgstr "数据文件"
 
 #: InvenTree/serializers.py:321
 msgid "Select data file for upload"
-msgstr ""
+msgstr "选择要上传的文件"
 
 #: InvenTree/serializers.py:342
 msgid "Unsupported file type"
-msgstr ""
+msgstr "不支持的文件类型"
 
 #: InvenTree/serializers.py:348
 msgid "File is too large"
-msgstr ""
+msgstr "文件过大"
 
 #: InvenTree/serializers.py:369
 msgid "No columns found in file"
-msgstr ""
+msgstr "在文件中没有找到列"
 
 #: InvenTree/serializers.py:372
 msgid "No data rows found in file"
-msgstr ""
+msgstr "在文件中没有找到数据行"
 
 #: InvenTree/serializers.py:495
 msgid "No data rows provided"
-msgstr ""
+msgstr "没有提供数据行"
 
 #: InvenTree/serializers.py:498
 msgid "No data columns supplied"
-msgstr ""
+msgstr "没有提供数据列"
 
 #: InvenTree/serializers.py:575
 #, python-brace-format
 msgid "Missing required column: '{name}'"
-msgstr ""
+msgstr "缺少必需的列：'{name}'"
 
 #: InvenTree/serializers.py:584
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
-msgstr ""
+msgstr "复制列: '{col}'"
 
-#: InvenTree/settings.py:672
+#: InvenTree/settings.py:689
 msgid "Czech"
-msgstr ""
+msgstr "捷克语"
 
-#: InvenTree/settings.py:673
+#: InvenTree/settings.py:690
 msgid "German"
 msgstr "德语"
 
-#: InvenTree/settings.py:674
+#: InvenTree/settings.py:691
 msgid "Greek"
 msgstr "希腊语"
 
-#: InvenTree/settings.py:675
+#: InvenTree/settings.py:692
 msgid "English"
 msgstr "英语"
 
-#: InvenTree/settings.py:676
+#: InvenTree/settings.py:693
 msgid "Spanish"
 msgstr "西班牙语"
 
-#: InvenTree/settings.py:677
+#: InvenTree/settings.py:694
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "西班牙语(墨西哥)"
 
-#: InvenTree/settings.py:678
+#: InvenTree/settings.py:695
 msgid "Farsi / Persian"
-msgstr ""
+msgstr "波斯语"
 
-#: InvenTree/settings.py:679
+#: InvenTree/settings.py:696
 msgid "French"
 msgstr "法语"
 
-#: InvenTree/settings.py:680
+#: InvenTree/settings.py:697
 msgid "Hebrew"
 msgstr "希伯来语"
 
-#: InvenTree/settings.py:681
+#: InvenTree/settings.py:698
 msgid "Hungarian"
-msgstr ""
+msgstr "匈牙利语"
 
-#: InvenTree/settings.py:682
+#: InvenTree/settings.py:699
 msgid "Italian"
 msgstr "意大利语"
 
-#: InvenTree/settings.py:683
+#: InvenTree/settings.py:700
 msgid "Japanese"
 msgstr "日语"
 
-#: InvenTree/settings.py:684
+#: InvenTree/settings.py:701
 msgid "Korean"
 msgstr "韩语"
 
-#: InvenTree/settings.py:685
+#: InvenTree/settings.py:702
 msgid "Dutch"
 msgstr "荷兰语"
 
-#: InvenTree/settings.py:686
+#: InvenTree/settings.py:703
 msgid "Norwegian"
 msgstr "挪威语"
 
-#: InvenTree/settings.py:687
+#: InvenTree/settings.py:704
 msgid "Polish"
 msgstr "波兰语"
 
-#: InvenTree/settings.py:688
+#: InvenTree/settings.py:705
 msgid "Portuguese"
-msgstr ""
+msgstr "葡萄牙语"
 
-#: InvenTree/settings.py:689
+#: InvenTree/settings.py:706
 msgid "Portuguese (Brazilian)"
-msgstr ""
+msgstr "葡萄牙语 (巴西)"
 
-#: InvenTree/settings.py:690
+#: InvenTree/settings.py:707
 msgid "Russian"
 msgstr "俄语"
 
-#: InvenTree/settings.py:691
+#: InvenTree/settings.py:708
 msgid "Swedish"
 msgstr "瑞典语"
 
-#: InvenTree/settings.py:692
+#: InvenTree/settings.py:709
 msgid "Thai"
 msgstr "泰语"
 
-#: InvenTree/settings.py:693
+#: InvenTree/settings.py:710
 msgid "Turkish"
 msgstr "土耳其语"
 
-#: InvenTree/settings.py:694
+#: InvenTree/settings.py:711
 msgid "Vietnamese"
 msgstr "越南语"
 
-#: InvenTree/settings.py:695
+#: InvenTree/settings.py:712
 msgid "Chinese"
 msgstr "中文（简体）"
 
@@ -437,7 +437,7 @@ msgstr "已发货"
 
 #: InvenTree/status_codes.py:179
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: InvenTree/status_codes.py:180
 msgid "Attention needed"
@@ -453,7 +453,7 @@ msgstr "已销毁"
 
 #: InvenTree/status_codes.py:184
 msgid "Rejected"
-msgstr ""
+msgstr "已拒绝"
 
 #: InvenTree/status_codes.py:185
 msgid "Quarantined"
@@ -515,9 +515,9 @@ msgstr "从父项拆分"
 msgid "Split child item"
 msgstr "拆分子项"
 
-#: InvenTree/status_codes.py:281 templates/js/translated/stock.js:2082
+#: InvenTree/status_codes.py:281 templates/js/translated/stock.js:2083
 msgid "Merged stock items"
-msgstr ""
+msgstr "合并的库存项目"
 
 #: InvenTree/status_codes.py:283
 msgid "Converted to variant"
@@ -669,7 +669,7 @@ msgstr "此次生产匹配的订单"
 #: part/templates/part/upload_bom.html:52
 #: report/templates/report/inventree_build_order_base.html:110
 #: report/templates/report/inventree_po_report.html:89
-#: report/templates/report/inventree_so_report.html:90
+#: report/templates/report/inventree_so_report.html:90 stock/serializers.py:479
 #: templates/InvenTree/search.html:80
 #: templates/email/build_order_required_stock.html:17
 #: templates/email/low_stock_notification.html:16
@@ -688,8 +688,8 @@ msgstr "此次生产匹配的订单"
 #: templates/js/translated/part.js:1136 templates/js/translated/part.js:1206
 #: templates/js/translated/part.js:1402 templates/js/translated/stock.js:582
 #: templates/js/translated/stock.js:747 templates/js/translated/stock.js:954
-#: templates/js/translated/stock.js:1695 templates/js/translated/stock.js:2438
-#: templates/js/translated/stock.js:2633 templates/js/translated/stock.js:2767
+#: templates/js/translated/stock.js:1696 templates/js/translated/stock.js:2439
+#: templates/js/translated/stock.js:2634 templates/js/translated/stock.js:2768
 msgid "Part"
 msgstr "商品"
 
@@ -815,14 +815,14 @@ msgstr "外部链接"
 #: part/templates/part/part_sidebar.html:59
 #: report/templates/report/inventree_build_order_base.html:173
 #: stock/models.py:713 stock/models.py:1989 stock/models.py:2097
-#: stock/serializers.py:315 stock/serializers.py:444 stock/serializers.py:486
-#: stock/serializers.py:759 stock/serializers.py:858 stock/serializers.py:990
+#: stock/serializers.py:316 stock/serializers.py:445 stock/serializers.py:526
+#: stock/serializers.py:799 stock/serializers.py:898 stock/serializers.py:1030
 #: stock/templates/stock/stock_sidebar.html:25
 #: templates/js/translated/barcode.js:100 templates/js/translated/bom.js:1038
 #: templates/js/translated/company.js:949 templates/js/translated/order.js:2040
 #: templates/js/translated/order.js:2191 templates/js/translated/order.js:2687
 #: templates/js/translated/order.js:3632 templates/js/translated/order.js:4030
-#: templates/js/translated/stock.js:1369 templates/js/translated/stock.js:1978
+#: templates/js/translated/stock.js:1370 templates/js/translated/stock.js:1979
 msgid "Notes"
 msgstr "备注"
 
@@ -878,8 +878,8 @@ msgid "Build to allocate parts"
 msgstr ""
 
 #: build/models.py:1285 build/serializers.py:603 order/serializers.py:996
-#: order/serializers.py:1017 stock/serializers.py:382 stock/serializers.py:690
-#: stock/serializers.py:816 stock/templates/stock/item_base.html:10
+#: order/serializers.py:1017 stock/serializers.py:383 stock/serializers.py:730
+#: stock/serializers.py:856 stock/templates/stock/item_base.html:10
 #: stock/templates/stock/item_base.html:23
 #: stock/templates/stock/item_base.html:199
 #: templates/js/translated/build.js:738 templates/js/translated/build.js:743
@@ -888,7 +888,7 @@ msgstr ""
 #: templates/js/translated/order.js:3124 templates/js/translated/order.js:3129
 #: templates/js/translated/order.js:3224 templates/js/translated/order.js:3314
 #: templates/js/translated/stock.js:583 templates/js/translated/stock.js:748
-#: templates/js/translated/stock.js:2511
+#: templates/js/translated/stock.js:2512
 msgid "Stock Item"
 msgstr "库存项"
 
@@ -898,7 +898,7 @@ msgstr "源库存项"
 
 #: build/models.py:1298 build/serializers.py:183
 #: build/templates/build/build_base.html:82
-#: build/templates/build/detail.html:34 common/models.py:1543
+#: build/templates/build/detail.html:34 common/models.py:1607
 #: company/forms.py:36 company/templates/company/supplier_part.html:279
 #: order/models.py:911 order/models.py:1414 order/serializers.py:1136
 #: order/templates/order/order_wizard/match_parts.html:30 part/forms.py:59
@@ -911,7 +911,7 @@ msgstr "源库存项"
 #: report/templates/report/inventree_so_report.html:91
 #: report/templates/report/inventree_test_report_base.html:81
 #: report/templates/report/inventree_test_report_base.html:139
-#: stock/serializers.py:279 stock/templates/stock/item_base.html:292
+#: stock/serializers.py:280 stock/templates/stock/item_base.html:292
 #: stock/templates/stock/item_base.html:300
 #: templates/js/translated/barcode.js:437 templates/js/translated/bom.js:691
 #: templates/js/translated/bom.js:860 templates/js/translated/build.js:422
@@ -928,7 +928,7 @@ msgstr "源库存项"
 #: templates/js/translated/part.js:2321 templates/js/translated/part.js:2355
 #: templates/js/translated/part.js:2433 templates/js/translated/stock.js:454
 #: templates/js/translated/stock.js:608 templates/js/translated/stock.js:778
-#: templates/js/translated/stock.js:2560 templates/js/translated/stock.js:2645
+#: templates/js/translated/stock.js:2561 templates/js/translated/stock.js:2646
 msgid "Quantity"
 msgstr "数量"
 
@@ -972,7 +972,7 @@ msgstr "输入生产产出数量"
 #: build/serializers.py:198 build/serializers.py:623 order/models.py:354
 #: order/serializers.py:280 order/serializers.py:435 part/serializers.py:514
 #: part/serializers.py:958 stock/models.py:470 stock/models.py:1239
-#: stock/serializers.py:288
+#: stock/serializers.py:289
 msgid "Quantity must be greater than zero"
 msgstr ""
 
@@ -985,7 +985,7 @@ msgid "Integer quantity required, as the bill of materials contains trackable pa
 msgstr ""
 
 #: build/serializers.py:222 order/serializers.py:448 order/serializers.py:1140
-#: stock/serializers.py:297 templates/js/translated/order.js:1186
+#: stock/serializers.py:298 templates/js/translated/order.js:1186
 #: templates/js/translated/stock.js:267 templates/js/translated/stock.js:455
 msgid "Serial Numbers"
 msgstr "序列号"
@@ -1002,7 +1002,7 @@ msgstr ""
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr ""
 
-#: build/serializers.py:268 stock/api.py:553
+#: build/serializers.py:268 stock/api.py:559
 msgid "The following serial numbers already exist"
 msgstr ""
 
@@ -1011,8 +1011,8 @@ msgid "A list of build outputs must be provided"
 msgstr ""
 
 #: build/serializers.py:356 order/serializers.py:421 order/serializers.py:525
-#: stock/serializers.py:308 stock/serializers.py:439 stock/serializers.py:481
-#: stock/serializers.py:851 stock/serializers.py:1084
+#: stock/serializers.py:309 stock/serializers.py:440 stock/serializers.py:521
+#: stock/serializers.py:891 stock/serializers.py:1124
 #: stock/templates/stock/item_base.html:390
 #: templates/js/translated/barcode.js:436
 #: templates/js/translated/barcode.js:618 templates/js/translated/build.js:750
@@ -1021,7 +1021,7 @@ msgstr ""
 #: templates/js/translated/order.js:3247 templates/js/translated/order.js:3328
 #: templates/js/translated/part.js:181 templates/js/translated/stock.js:584
 #: templates/js/translated/stock.js:749 templates/js/translated/stock.js:956
-#: templates/js/translated/stock.js:1849 templates/js/translated/stock.js:2452
+#: templates/js/translated/stock.js:1850 templates/js/translated/stock.js:2453
 msgid "Location"
 msgstr "地点"
 
@@ -1034,8 +1034,8 @@ msgstr ""
 #: order/serializers.py:458 stock/templates/stock/item_base.html:423
 #: templates/js/translated/barcode.js:182 templates/js/translated/build.js:2509
 #: templates/js/translated/order.js:1320 templates/js/translated/order.js:1660
-#: templates/js/translated/order.js:2481 templates/js/translated/stock.js:1824
-#: templates/js/translated/stock.js:2529 templates/js/translated/stock.js:2661
+#: templates/js/translated/order.js:2481 templates/js/translated/stock.js:1825
+#: templates/js/translated/stock.js:2530 templates/js/translated/stock.js:2662
 msgid "Status"
 msgstr "状态"
 
@@ -1112,7 +1112,7 @@ msgstr ""
 msgid "bom_item.part must point to the same part as the build order"
 msgstr ""
 
-#: build/serializers.py:609 stock/serializers.py:703
+#: build/serializers.py:609 stock/serializers.py:743
 msgid "Item must be in stock"
 msgstr ""
 
@@ -1333,8 +1333,8 @@ msgstr ""
 #: stock/templates/stock/item_base.html:170
 #: templates/js/translated/build.js:1179
 #: templates/js/translated/model_renderers.js:112
-#: templates/js/translated/stock.js:1022 templates/js/translated/stock.js:1838
-#: templates/js/translated/stock.js:2668
+#: templates/js/translated/stock.js:1022 templates/js/translated/stock.js:1839
+#: templates/js/translated/stock.js:2669
 #: templates/js/translated/table_filters.js:151
 #: templates/js/translated/table_filters.js:242
 msgid "Batch"
@@ -1545,912 +1545,912 @@ msgstr ""
 msgid "Select {name} file to upload"
 msgstr ""
 
-#: common/models.py:365
+#: common/models.py:434
 msgid "Settings key (must be unique - case insensitive)"
 msgstr ""
 
-#: common/models.py:367
+#: common/models.py:436
 msgid "Settings value"
 msgstr ""
 
-#: common/models.py:408
+#: common/models.py:477
 msgid "Chosen value is not a valid option"
 msgstr ""
 
-#: common/models.py:425
+#: common/models.py:494
 msgid "Value must be a boolean value"
 msgstr ""
 
-#: common/models.py:436
+#: common/models.py:505
 msgid "Value must be an integer value"
 msgstr ""
 
-#: common/models.py:481
+#: common/models.py:550
 msgid "Key string must be unique"
 msgstr ""
 
-#: common/models.py:665
+#: common/models.py:734
 msgid "No group"
 msgstr ""
 
-#: common/models.py:704
+#: common/models.py:773
 msgid "Restart required"
 msgstr ""
 
-#: common/models.py:705
+#: common/models.py:774
 msgid "A setting has been changed which requires a server restart"
 msgstr ""
 
-#: common/models.py:712
+#: common/models.py:781
 msgid "Server Instance Name"
 msgstr ""
 
-#: common/models.py:714
+#: common/models.py:783
 msgid "String descriptor for the server instance"
 msgstr ""
 
-#: common/models.py:718
+#: common/models.py:787
 msgid "Use instance name"
 msgstr ""
 
-#: common/models.py:719
+#: common/models.py:788
 msgid "Use the instance name in the title-bar"
 msgstr ""
 
-#: common/models.py:725
+#: common/models.py:794
 msgid "Restrict showing `about`"
 msgstr ""
 
-#: common/models.py:726
+#: common/models.py:795
 msgid "Show the `about` modal only to superusers"
 msgstr ""
 
-#: common/models.py:732 company/models.py:93 company/models.py:94
+#: common/models.py:801 company/models.py:93 company/models.py:94
 msgid "Company name"
 msgstr "公司名称"
 
-#: common/models.py:733
+#: common/models.py:802
 msgid "Internal company name"
 msgstr "内部公司名称"
 
-#: common/models.py:738
+#: common/models.py:807
 msgid "Base URL"
 msgstr ""
 
-#: common/models.py:739
+#: common/models.py:808
 msgid "Base URL for server instance"
 msgstr ""
 
-#: common/models.py:745
+#: common/models.py:814
 msgid "Default Currency"
 msgstr ""
 
-#: common/models.py:746
+#: common/models.py:815
 msgid "Default currency"
 msgstr ""
 
-#: common/models.py:752
+#: common/models.py:821
 msgid "Download from URL"
 msgstr ""
 
-#: common/models.py:753
+#: common/models.py:822
 msgid "Allow download of remote images and files from external URL"
 msgstr ""
 
-#: common/models.py:759 templates/InvenTree/settings/sidebar.html:33
+#: common/models.py:828 templates/InvenTree/settings/sidebar.html:33
 msgid "Barcode Support"
 msgstr ""
 
-#: common/models.py:760
+#: common/models.py:829
 msgid "Enable barcode scanner support"
 msgstr "启用条形码扫描支持"
 
-#: common/models.py:766
+#: common/models.py:835
 msgid "Barcode Webcam Support"
 msgstr ""
 
-#: common/models.py:767
+#: common/models.py:836
 msgid "Allow barcode scanning via webcam in browser"
 msgstr ""
 
-#: common/models.py:773
+#: common/models.py:842
 msgid "IPN Regex"
 msgstr ""
 
-#: common/models.py:774
+#: common/models.py:843
 msgid "Regular expression pattern for matching Part IPN"
 msgstr ""
 
-#: common/models.py:778
+#: common/models.py:847
 msgid "Allow Duplicate IPN"
 msgstr ""
 
-#: common/models.py:779
+#: common/models.py:848
 msgid "Allow multiple parts to share the same IPN"
 msgstr ""
 
-#: common/models.py:785
+#: common/models.py:854
 msgid "Allow Editing IPN"
 msgstr ""
 
-#: common/models.py:786
+#: common/models.py:855
 msgid "Allow changing the IPN value while editing a part"
 msgstr ""
 
-#: common/models.py:792
+#: common/models.py:861
 msgid "Copy Part BOM Data"
 msgstr ""
 
-#: common/models.py:793
+#: common/models.py:862
 msgid "Copy BOM data by default when duplicating a part"
 msgstr ""
 
-#: common/models.py:799
+#: common/models.py:868
 msgid "Copy Part Parameter Data"
 msgstr ""
 
-#: common/models.py:800
+#: common/models.py:869
 msgid "Copy parameter data by default when duplicating a part"
 msgstr ""
 
-#: common/models.py:806
+#: common/models.py:875
 msgid "Copy Part Test Data"
 msgstr ""
 
-#: common/models.py:807
+#: common/models.py:876
 msgid "Copy test data by default when duplicating a part"
 msgstr ""
 
-#: common/models.py:813
+#: common/models.py:882
 msgid "Copy Category Parameter Templates"
 msgstr ""
 
-#: common/models.py:814
+#: common/models.py:883
 msgid "Copy category parameter templates when creating a part"
 msgstr ""
 
-#: common/models.py:820 part/models.py:2360 report/models.py:157
+#: common/models.py:889 part/models.py:2360 report/models.py:157
 #: templates/js/translated/table_filters.js:38
 #: templates/js/translated/table_filters.js:444
 msgid "Template"
 msgstr "模板"
 
-#: common/models.py:821
+#: common/models.py:890
 msgid "Parts are templates by default"
 msgstr ""
 
-#: common/models.py:827 part/models.py:884 templates/js/translated/bom.js:1384
+#: common/models.py:896 part/models.py:884 templates/js/translated/bom.js:1384
 #: templates/js/translated/table_filters.js:168
 #: templates/js/translated/table_filters.js:460
 msgid "Assembly"
 msgstr "组装"
 
-#: common/models.py:828
+#: common/models.py:897
 msgid "Parts can be assembled from other components by default"
 msgstr ""
 
-#: common/models.py:834 part/models.py:890
+#: common/models.py:903 part/models.py:890
 #: templates/js/translated/table_filters.js:464
 msgid "Component"
 msgstr "组件"
 
-#: common/models.py:835
+#: common/models.py:904
 msgid "Parts can be used as sub-components by default"
 msgstr ""
 
-#: common/models.py:841 part/models.py:901
+#: common/models.py:910 part/models.py:901
 msgid "Purchaseable"
 msgstr "可购买"
 
-#: common/models.py:842
+#: common/models.py:911
 msgid "Parts are purchaseable by default"
 msgstr "商品默认可购买"
 
-#: common/models.py:848 part/models.py:906
+#: common/models.py:917 part/models.py:906
 #: templates/js/translated/table_filters.js:472
 msgid "Salable"
 msgstr "可销售"
 
-#: common/models.py:849
+#: common/models.py:918
 msgid "Parts are salable by default"
 msgstr "商品默认可销售"
 
-#: common/models.py:855 part/models.py:896
+#: common/models.py:924 part/models.py:896
 #: templates/js/translated/table_filters.js:46
 #: templates/js/translated/table_filters.js:100
 #: templates/js/translated/table_filters.js:476
 msgid "Trackable"
 msgstr "可追踪"
 
-#: common/models.py:856
+#: common/models.py:925
 msgid "Parts are trackable by default"
 msgstr "商品默认可跟踪"
 
-#: common/models.py:862 part/models.py:916
+#: common/models.py:931 part/models.py:916
 #: part/templates/part/part_base.html:151
 #: templates/js/translated/table_filters.js:42
 msgid "Virtual"
 msgstr "虚拟"
 
-#: common/models.py:863
+#: common/models.py:932
 msgid "Parts are virtual by default"
 msgstr "商品默认是虚拟的"
 
-#: common/models.py:869
+#: common/models.py:938
 msgid "Show Import in Views"
 msgstr "视图中显示导入"
 
-#: common/models.py:870
+#: common/models.py:939
 msgid "Display the import wizard in some part views"
 msgstr "在一些商品视图中显示导入向导"
 
-#: common/models.py:876
+#: common/models.py:945
 msgid "Show Price in Forms"
 msgstr "在表格中显示价格"
 
-#: common/models.py:877
+#: common/models.py:946
 msgid "Display part price in some forms"
 msgstr "以某些表格显示商品价格"
 
-#: common/models.py:888
+#: common/models.py:957
 msgid "Show Price in BOM"
 msgstr ""
 
-#: common/models.py:889
+#: common/models.py:958
 msgid "Include pricing information in BOM tables"
 msgstr ""
 
-#: common/models.py:900
+#: common/models.py:969
 msgid "Show Price History"
 msgstr ""
 
-#: common/models.py:901
+#: common/models.py:970
 msgid "Display historical pricing for Part"
 msgstr ""
 
-#: common/models.py:907
+#: common/models.py:976
 msgid "Show related parts"
 msgstr "显示相关商品"
 
-#: common/models.py:908
+#: common/models.py:977
 msgid "Display related parts for a part"
 msgstr ""
 
-#: common/models.py:914
+#: common/models.py:983
 msgid "Create initial stock"
 msgstr "创建初始库存"
 
-#: common/models.py:915
+#: common/models.py:984
 msgid "Create initial stock on part creation"
 msgstr ""
 
-#: common/models.py:921
+#: common/models.py:990
 msgid "Internal Prices"
 msgstr "内部价格"
 
-#: common/models.py:922
+#: common/models.py:991
 msgid "Enable internal prices for parts"
 msgstr "启用内部商品价格"
 
-#: common/models.py:928
+#: common/models.py:997
 msgid "Internal Price as BOM-Price"
 msgstr "内部价格为BOM价格"
 
-#: common/models.py:929
+#: common/models.py:998
 msgid "Use the internal price (if set) in BOM-price calculations"
 msgstr "在 BOM价格计算中使用内部价格(如设置)"
 
-#: common/models.py:935
+#: common/models.py:1004
 msgid "Part Name Display Format"
 msgstr ""
 
-#: common/models.py:936
+#: common/models.py:1005
 msgid "Format to display the part name"
 msgstr ""
 
-#: common/models.py:943
+#: common/models.py:1012
 msgid "Enable Reports"
 msgstr ""
 
-#: common/models.py:944
+#: common/models.py:1013
 msgid "Enable generation of reports"
 msgstr ""
 
-#: common/models.py:950 templates/stats.html:25
+#: common/models.py:1019 templates/stats.html:25
 msgid "Debug Mode"
 msgstr "调试模式"
 
-#: common/models.py:951
+#: common/models.py:1020
 msgid "Generate reports in debug mode (HTML output)"
 msgstr "在调试模式生成报告(HTML输出)"
 
-#: common/models.py:957
+#: common/models.py:1026
 msgid "Page Size"
 msgstr "页面大小"
 
-#: common/models.py:958
+#: common/models.py:1027
 msgid "Default page size for PDF reports"
 msgstr "PDF 报表默认页面大小"
 
-#: common/models.py:968
+#: common/models.py:1037
 msgid "Enable Test Reports"
 msgstr ""
 
-#: common/models.py:969
+#: common/models.py:1038
 msgid "Enable generation of test reports"
 msgstr "启用生成测试报表"
 
-#: common/models.py:975
+#: common/models.py:1044
 msgid "Attach Test Reports"
 msgstr ""
 
-#: common/models.py:976
+#: common/models.py:1045
 msgid "When printing a Test Report, attach a copy of the Test Report to the associated Stock Item"
 msgstr ""
 
-#: common/models.py:982
+#: common/models.py:1051
 msgid "Batch Code Template"
 msgstr ""
 
-#: common/models.py:983
+#: common/models.py:1052
 msgid "Template for generating default batch codes for stock items"
 msgstr ""
 
-#: common/models.py:988
+#: common/models.py:1057
 msgid "Stock Expiry"
 msgstr "库存到期"
 
-#: common/models.py:989
+#: common/models.py:1058
 msgid "Enable stock expiry functionality"
 msgstr "启用库存到期功能"
 
-#: common/models.py:995
+#: common/models.py:1064
 msgid "Sell Expired Stock"
 msgstr "销售过期库存"
 
-#: common/models.py:996
+#: common/models.py:1065
 msgid "Allow sale of expired stock"
 msgstr "允许销售过期库存"
 
-#: common/models.py:1002
+#: common/models.py:1071
 msgid "Stock Stale Time"
 msgstr ""
 
-#: common/models.py:1003
+#: common/models.py:1072
 msgid "Number of days stock items are considered stale before expiring"
 msgstr ""
 
-#: common/models.py:1005
+#: common/models.py:1074
 msgid "days"
 msgstr "天"
 
-#: common/models.py:1010
+#: common/models.py:1079
 msgid "Build Expired Stock"
 msgstr ""
 
-#: common/models.py:1011
+#: common/models.py:1080
 msgid "Allow building with expired stock"
 msgstr ""
 
-#: common/models.py:1017
+#: common/models.py:1086
 msgid "Stock Ownership Control"
 msgstr "库存所有权控制"
 
-#: common/models.py:1018
+#: common/models.py:1087
 msgid "Enable ownership control over stock locations and items"
 msgstr ""
 
-#: common/models.py:1024
+#: common/models.py:1093
 msgid "Build Order Reference Prefix"
 msgstr "生产订单参考前缀"
 
-#: common/models.py:1025
+#: common/models.py:1094
 msgid "Prefix value for build order reference"
 msgstr ""
 
-#: common/models.py:1030
+#: common/models.py:1099
 msgid "Build Order Reference Regex"
 msgstr ""
 
-#: common/models.py:1031
+#: common/models.py:1100
 msgid "Regular expression pattern for matching build order reference"
 msgstr ""
 
-#: common/models.py:1035
+#: common/models.py:1104
 msgid "Sales Order Reference Prefix"
 msgstr ""
 
-#: common/models.py:1036
+#: common/models.py:1105
 msgid "Prefix value for sales order reference"
 msgstr ""
 
-#: common/models.py:1041
+#: common/models.py:1110
 msgid "Sales Order Default Shipment"
 msgstr ""
 
-#: common/models.py:1042
+#: common/models.py:1111
 msgid "Enable creation of default shipment with sales orders"
 msgstr ""
 
-#: common/models.py:1048
+#: common/models.py:1117
 msgid "Purchase Order Reference Prefix"
 msgstr ""
 
-#: common/models.py:1049
+#: common/models.py:1118
 msgid "Prefix value for purchase order reference"
 msgstr ""
 
-#: common/models.py:1055
+#: common/models.py:1124
 msgid "Enable password forgot"
 msgstr ""
 
-#: common/models.py:1056
+#: common/models.py:1125
 msgid "Enable password forgot function on the login pages"
 msgstr ""
 
-#: common/models.py:1062
+#: common/models.py:1131
 msgid "Enable registration"
 msgstr ""
 
-#: common/models.py:1063
+#: common/models.py:1132
 msgid "Enable self-registration for users on the login pages"
 msgstr ""
 
-#: common/models.py:1069
+#: common/models.py:1138
 msgid "Enable SSO"
 msgstr ""
 
-#: common/models.py:1070
+#: common/models.py:1139
 msgid "Enable SSO on the login pages"
 msgstr ""
 
-#: common/models.py:1076
+#: common/models.py:1145
 msgid "Email required"
 msgstr ""
 
-#: common/models.py:1077
+#: common/models.py:1146
 msgid "Require user to supply mail on signup"
 msgstr ""
 
-#: common/models.py:1083
+#: common/models.py:1152
 msgid "Auto-fill SSO users"
 msgstr ""
 
-#: common/models.py:1084
+#: common/models.py:1153
 msgid "Automatically fill out user-details from SSO account-data"
 msgstr ""
 
-#: common/models.py:1090
+#: common/models.py:1159
 msgid "Mail twice"
 msgstr ""
 
-#: common/models.py:1091
+#: common/models.py:1160
 msgid "On signup ask users twice for their mail"
 msgstr ""
 
-#: common/models.py:1097
+#: common/models.py:1166
 msgid "Password twice"
 msgstr ""
 
-#: common/models.py:1098
+#: common/models.py:1167
 msgid "On signup ask users twice for their password"
 msgstr ""
 
-#: common/models.py:1104
+#: common/models.py:1173
 msgid "Group on signup"
 msgstr ""
 
-#: common/models.py:1105
+#: common/models.py:1174
 msgid "Group to which new users are assigned on registration"
 msgstr ""
 
-#: common/models.py:1111
+#: common/models.py:1180
 msgid "Enforce MFA"
 msgstr ""
 
-#: common/models.py:1112
+#: common/models.py:1181
 msgid "Users must use multifactor security."
 msgstr ""
 
-#: common/models.py:1118
+#: common/models.py:1187
 msgid "Check plugins on startup"
 msgstr ""
 
-#: common/models.py:1119
+#: common/models.py:1188
 msgid "Check that all plugins are installed on startup - enable in container enviroments"
 msgstr ""
 
-#: common/models.py:1127
+#: common/models.py:1196
 msgid "Enable URL integration"
 msgstr ""
 
-#: common/models.py:1128
+#: common/models.py:1197
 msgid "Enable plugins to add URL routes"
 msgstr ""
 
-#: common/models.py:1135
+#: common/models.py:1204
 msgid "Enable navigation integration"
 msgstr ""
 
-#: common/models.py:1136
+#: common/models.py:1205
 msgid "Enable plugins to integrate into navigation"
 msgstr ""
 
-#: common/models.py:1143
+#: common/models.py:1212
 msgid "Enable app integration"
 msgstr ""
 
-#: common/models.py:1144
+#: common/models.py:1213
 msgid "Enable plugins to add apps"
 msgstr ""
 
-#: common/models.py:1151
+#: common/models.py:1220
 msgid "Enable schedule integration"
 msgstr ""
 
-#: common/models.py:1152
+#: common/models.py:1221
 msgid "Enable plugins to run scheduled tasks"
 msgstr ""
 
-#: common/models.py:1159
+#: common/models.py:1228
 msgid "Enable event integration"
 msgstr ""
 
-#: common/models.py:1160
+#: common/models.py:1229
 msgid "Enable plugins to respond to internal events"
 msgstr ""
 
-#: common/models.py:1177 common/models.py:1499
+#: common/models.py:1246 common/models.py:1568
 msgid "Settings key (must be unique - case insensitive"
 msgstr ""
 
-#: common/models.py:1199
+#: common/models.py:1268
 msgid "Show subscribed parts"
 msgstr ""
 
-#: common/models.py:1200
+#: common/models.py:1269
 msgid "Show subscribed parts on the homepage"
 msgstr ""
 
-#: common/models.py:1206
+#: common/models.py:1275
 msgid "Show subscribed categories"
 msgstr ""
 
-#: common/models.py:1207
+#: common/models.py:1276
 msgid "Show subscribed part categories on the homepage"
 msgstr ""
 
-#: common/models.py:1213
+#: common/models.py:1282
 msgid "Show latest parts"
 msgstr "显示最近商品"
 
-#: common/models.py:1214
+#: common/models.py:1283
 msgid "Show latest parts on the homepage"
 msgstr "在主页上显示最近商品"
 
-#: common/models.py:1220
+#: common/models.py:1289
 msgid "Recent Part Count"
 msgstr ""
 
-#: common/models.py:1221
+#: common/models.py:1290
 msgid "Number of recent parts to display on index page"
 msgstr ""
 
-#: common/models.py:1227
+#: common/models.py:1296
 msgid "Show unvalidated BOMs"
 msgstr ""
 
-#: common/models.py:1228
+#: common/models.py:1297
 msgid "Show BOMs that await validation on the homepage"
 msgstr ""
 
-#: common/models.py:1234
+#: common/models.py:1303
 msgid "Show recent stock changes"
 msgstr ""
 
-#: common/models.py:1235
+#: common/models.py:1304
 msgid "Show recently changed stock items on the homepage"
 msgstr ""
 
-#: common/models.py:1241
+#: common/models.py:1310
 msgid "Recent Stock Count"
 msgstr ""
 
-#: common/models.py:1242
+#: common/models.py:1311
 msgid "Number of recent stock items to display on index page"
 msgstr ""
 
-#: common/models.py:1248
+#: common/models.py:1317
 msgid "Show low stock"
 msgstr ""
 
-#: common/models.py:1249
+#: common/models.py:1318
 msgid "Show low stock items on the homepage"
 msgstr ""
 
-#: common/models.py:1255
+#: common/models.py:1324
 msgid "Show depleted stock"
 msgstr ""
 
-#: common/models.py:1256
+#: common/models.py:1325
 msgid "Show depleted stock items on the homepage"
 msgstr ""
 
-#: common/models.py:1262
+#: common/models.py:1331
 msgid "Show needed stock"
 msgstr ""
 
-#: common/models.py:1263
+#: common/models.py:1332
 msgid "Show stock items needed for builds on the homepage"
 msgstr ""
 
-#: common/models.py:1269
+#: common/models.py:1338
 msgid "Show expired stock"
 msgstr ""
 
-#: common/models.py:1270
+#: common/models.py:1339
 msgid "Show expired stock items on the homepage"
 msgstr ""
 
-#: common/models.py:1276
+#: common/models.py:1345
 msgid "Show stale stock"
 msgstr ""
 
-#: common/models.py:1277
+#: common/models.py:1346
 msgid "Show stale stock items on the homepage"
 msgstr ""
 
-#: common/models.py:1283
+#: common/models.py:1352
 msgid "Show pending builds"
 msgstr ""
 
-#: common/models.py:1284
+#: common/models.py:1353
 msgid "Show pending builds on the homepage"
 msgstr ""
 
-#: common/models.py:1290
+#: common/models.py:1359
 msgid "Show overdue builds"
 msgstr "显示逾期生产"
 
-#: common/models.py:1291
+#: common/models.py:1360
 msgid "Show overdue builds on the homepage"
 msgstr "在主页上显示逾期的生产"
 
-#: common/models.py:1297
+#: common/models.py:1366
 msgid "Show outstanding POs"
 msgstr ""
 
-#: common/models.py:1298
+#: common/models.py:1367
 msgid "Show outstanding POs on the homepage"
 msgstr ""
 
-#: common/models.py:1304
+#: common/models.py:1373
 msgid "Show overdue POs"
 msgstr ""
 
-#: common/models.py:1305
+#: common/models.py:1374
 msgid "Show overdue POs on the homepage"
 msgstr ""
 
-#: common/models.py:1311
+#: common/models.py:1380
 msgid "Show outstanding SOs"
 msgstr ""
 
-#: common/models.py:1312
+#: common/models.py:1381
 msgid "Show outstanding SOs on the homepage"
 msgstr ""
 
-#: common/models.py:1318
+#: common/models.py:1387
 msgid "Show overdue SOs"
 msgstr ""
 
-#: common/models.py:1319
+#: common/models.py:1388
 msgid "Show overdue SOs on the homepage"
 msgstr ""
 
-#: common/models.py:1324
+#: common/models.py:1393
 msgid "Enable label printing"
 msgstr ""
 
-#: common/models.py:1325
+#: common/models.py:1394
 msgid "Enable label printing from the web interface"
 msgstr ""
 
-#: common/models.py:1331
+#: common/models.py:1400
 msgid "Inline label display"
 msgstr "内嵌标签显示"
 
-#: common/models.py:1332
+#: common/models.py:1401
 msgid "Display PDF labels in the browser, instead of downloading as a file"
 msgstr "在浏览器中显示 PDF 标签，而不是以文件形式下载"
 
-#: common/models.py:1338
+#: common/models.py:1407
 msgid "Inline report display"
 msgstr ""
 
-#: common/models.py:1339
+#: common/models.py:1408
 msgid "Display PDF reports in the browser, instead of downloading as a file"
 msgstr "在浏览器中显示 PDF 报告，而不是以文件形式下载"
 
-#: common/models.py:1345
+#: common/models.py:1414
 msgid "Search Parts"
 msgstr ""
 
-#: common/models.py:1346
+#: common/models.py:1415
 msgid "Display parts in search preview window"
 msgstr ""
 
-#: common/models.py:1352
+#: common/models.py:1421
 msgid "Seach Supplier Parts"
 msgstr ""
 
-#: common/models.py:1353
+#: common/models.py:1422
 msgid "Display supplier parts in search preview window"
 msgstr ""
 
-#: common/models.py:1359
+#: common/models.py:1428
 msgid "Search Manufacturer Parts"
 msgstr ""
 
-#: common/models.py:1360
+#: common/models.py:1429
 msgid "Display manufacturer parts in search preview window"
 msgstr ""
 
-#: common/models.py:1366
+#: common/models.py:1435
 msgid "Hide Inactive Parts"
 msgstr ""
 
-#: common/models.py:1367
+#: common/models.py:1436
 msgid "Excluded inactive parts from search preview window"
 msgstr ""
 
-#: common/models.py:1373
+#: common/models.py:1442
 msgid "Search Categories"
 msgstr ""
 
-#: common/models.py:1374
+#: common/models.py:1443
 msgid "Display part categories in search preview window"
 msgstr ""
 
-#: common/models.py:1380
+#: common/models.py:1449
 msgid "Search Stock"
 msgstr ""
 
-#: common/models.py:1381
+#: common/models.py:1450
 msgid "Display stock items in search preview window"
 msgstr ""
 
-#: common/models.py:1387
+#: common/models.py:1456
 msgid "Hide Unavailable Stock Items"
 msgstr ""
 
-#: common/models.py:1388
+#: common/models.py:1457
 msgid "Exclude stock items which are not available from the search preview window"
 msgstr ""
 
-#: common/models.py:1394
+#: common/models.py:1463
 msgid "Search Locations"
 msgstr ""
 
-#: common/models.py:1395
+#: common/models.py:1464
 msgid "Display stock locations in search preview window"
 msgstr ""
 
-#: common/models.py:1401
+#: common/models.py:1470
 msgid "Search Companies"
 msgstr ""
 
-#: common/models.py:1402
+#: common/models.py:1471
 msgid "Display companies in search preview window"
 msgstr ""
 
-#: common/models.py:1408
+#: common/models.py:1477
 msgid "Search Purchase Orders"
 msgstr ""
 
-#: common/models.py:1409
+#: common/models.py:1478
 msgid "Display purchase orders in search preview window"
 msgstr ""
 
-#: common/models.py:1415
+#: common/models.py:1484
 msgid "Exclude Inactive Purchase Orders"
 msgstr ""
 
-#: common/models.py:1416
+#: common/models.py:1485
 msgid "Exclude inactive purchase orders from search preview window"
 msgstr ""
 
-#: common/models.py:1422
+#: common/models.py:1491
 msgid "Search Sales Orders"
 msgstr ""
 
-#: common/models.py:1423
+#: common/models.py:1492
 msgid "Display sales orders in search preview window"
 msgstr ""
 
-#: common/models.py:1429
+#: common/models.py:1498
 msgid "Exclude Inactive Sales Orders"
 msgstr ""
 
-#: common/models.py:1430
+#: common/models.py:1499
 msgid "Exclude inactive sales orders from search preview window"
 msgstr ""
 
-#: common/models.py:1436
+#: common/models.py:1505
 msgid "Search Preview Results"
 msgstr "搜索预览结果"
 
-#: common/models.py:1437
+#: common/models.py:1506
 msgid "Number of results to show in each section of the search preview window"
 msgstr ""
 
-#: common/models.py:1443
+#: common/models.py:1512
 msgid "Show Quantity in Forms"
 msgstr "在表格中显示数量"
 
-#: common/models.py:1444
+#: common/models.py:1513
 msgid "Display available part quantity in some forms"
 msgstr "在某些表格中显示可用的商品数量"
 
-#: common/models.py:1450
+#: common/models.py:1519
 msgid "Escape Key Closes Forms"
 msgstr ""
 
-#: common/models.py:1451
+#: common/models.py:1520
 msgid "Use the escape key to close modal forms"
 msgstr ""
 
-#: common/models.py:1457
+#: common/models.py:1526
 msgid "Fixed Navbar"
 msgstr ""
 
-#: common/models.py:1458
+#: common/models.py:1527
 msgid "The navbar position is fixed to the top of the screen"
 msgstr ""
 
-#: common/models.py:1464
+#: common/models.py:1533
 msgid "Date Format"
 msgstr ""
 
-#: common/models.py:1465
+#: common/models.py:1534
 msgid "Preferred format for displaying dates"
 msgstr ""
 
-#: common/models.py:1479 part/templates/part/detail.html:39
+#: common/models.py:1548 part/templates/part/detail.html:39
 msgid "Part Scheduling"
 msgstr ""
 
-#: common/models.py:1480
+#: common/models.py:1549
 msgid "Display part scheduling information"
 msgstr ""
 
-#: common/models.py:1544 company/forms.py:37
+#: common/models.py:1608 company/forms.py:37
 msgid "Price break quantity"
 msgstr ""
 
-#: common/models.py:1551 company/serializers.py:319
+#: common/models.py:1615 company/serializers.py:319
 #: company/templates/company/supplier_part.html:284 order/models.py:951
 #: templates/js/translated/part.js:1067 templates/js/translated/part.js:2095
 msgid "Price"
 msgstr "价格"
 
-#: common/models.py:1552
+#: common/models.py:1616
 msgid "Unit price at specified quantity"
 msgstr ""
 
-#: common/models.py:1712 common/models.py:1890
+#: common/models.py:1776 common/models.py:1954
 msgid "Endpoint"
 msgstr ""
 
-#: common/models.py:1713
+#: common/models.py:1777
 msgid "Endpoint at which this webhook is received"
 msgstr ""
 
-#: common/models.py:1722
+#: common/models.py:1786
 msgid "Name for this webhook"
 msgstr ""
 
-#: common/models.py:1727 part/models.py:911 plugin/models.py:99
+#: common/models.py:1791 part/models.py:911 plugin/models.py:99
 #: templates/js/translated/table_filters.js:34
 #: templates/js/translated/table_filters.js:96
 #: templates/js/translated/table_filters.js:308
@@ -2458,67 +2458,67 @@ msgstr ""
 msgid "Active"
 msgstr ""
 
-#: common/models.py:1728
+#: common/models.py:1792
 msgid "Is this webhook active"
 msgstr ""
 
-#: common/models.py:1742
+#: common/models.py:1806
 msgid "Token"
 msgstr ""
 
-#: common/models.py:1743
+#: common/models.py:1807
 msgid "Token for access"
 msgstr ""
 
-#: common/models.py:1750
+#: common/models.py:1814
 msgid "Secret"
 msgstr ""
 
-#: common/models.py:1751
+#: common/models.py:1815
 msgid "Shared secret for HMAC"
 msgstr ""
 
-#: common/models.py:1857
+#: common/models.py:1921
 msgid "Message ID"
 msgstr ""
 
-#: common/models.py:1858
+#: common/models.py:1922
 msgid "Unique identifier for this message"
 msgstr ""
 
-#: common/models.py:1866
+#: common/models.py:1930
 msgid "Host"
 msgstr ""
 
-#: common/models.py:1867
+#: common/models.py:1931
 msgid "Host from which this message was received"
 msgstr ""
 
-#: common/models.py:1874
+#: common/models.py:1938
 msgid "Header"
 msgstr ""
 
-#: common/models.py:1875
+#: common/models.py:1939
 msgid "Header of this message"
 msgstr ""
 
-#: common/models.py:1881
+#: common/models.py:1945
 msgid "Body"
 msgstr ""
 
-#: common/models.py:1882
+#: common/models.py:1946
 msgid "Body of this message"
 msgstr ""
 
-#: common/models.py:1891
+#: common/models.py:1955
 msgid "Endpoint on which this message was received"
 msgstr ""
 
-#: common/models.py:1896
+#: common/models.py:1960
 msgid "Worked on"
 msgstr ""
 
-#: common/models.py:1897
+#: common/models.py:1961
 msgid "Was the work on this message finished?"
 msgstr ""
 
@@ -2657,7 +2657,7 @@ msgstr "该公司制造商品吗？"
 
 #: company/models.py:145 company/serializers.py:325
 #: company/templates/company/company_base.html:106 part/serializers.py:139
-#: part/serializers.py:170 stock/serializers.py:162
+#: part/serializers.py:170 stock/serializers.py:163
 msgid "Currency"
 msgstr "货币"
 
@@ -2793,7 +2793,7 @@ msgstr "供应商商品描述"
 #: company/models.py:519 company/templates/company/supplier_part.html:146
 #: part/models.py:2561 part/templates/part/upload_bom.html:59
 #: report/templates/report/inventree_po_report.html:92
-#: report/templates/report/inventree_so_report.html:93 stock/serializers.py:387
+#: report/templates/report/inventree_so_report.html:93 stock/serializers.py:388
 msgid "Note"
 msgstr "备注"
 
@@ -2807,7 +2807,7 @@ msgstr "最低收费(例如库存费)"
 
 #: company/models.py:525 company/templates/company/supplier_part.html:139
 #: stock/models.py:608 stock/templates/stock/item_base.html:245
-#: templates/js/translated/company.js:954 templates/js/translated/stock.js:1974
+#: templates/js/translated/company.js:954 templates/js/translated/stock.js:1975
 msgid "Packaging"
 msgstr "打包"
 
@@ -2902,11 +2902,11 @@ msgstr "从 URL 下载图片"
 
 #: company/templates/company/company_base.html:86 order/models.py:651
 #: order/templates/order/sales_order_base.html:116 stock/models.py:627
-#: stock/models.py:628 stock/serializers.py:745
+#: stock/models.py:628 stock/serializers.py:785
 #: stock/templates/stock/item_base.html:401
 #: templates/email/overdue_sales_order.html:16
 #: templates/js/translated/company.js:381 templates/js/translated/order.js:2458
-#: templates/js/translated/stock.js:2493
+#: templates/js/translated/stock.js:2494
 #: templates/js/translated/table_filters.js:419
 msgid "Customer"
 msgstr "客户"
@@ -3079,7 +3079,7 @@ msgstr "删除供应商商品"
 #: company/templates/company/manufacturer_part.html:136
 #: company/templates/company/manufacturer_part.html:183
 #: part/templates/part/detail.html:364 part/templates/part/detail.html:394
-#: templates/js/translated/forms.js:439 templates/js/translated/helpers.js:33
+#: templates/js/translated/forms.js:442 templates/js/translated/helpers.js:33
 #: users/models.py:219
 msgid "Delete"
 msgstr "删除"
@@ -3127,7 +3127,7 @@ msgstr ""
 #: company/templates/company/supplier_part.html:24 stock/models.py:592
 #: stock/templates/stock/item_base.html:238
 #: templates/js/translated/company.js:894 templates/js/translated/order.js:884
-#: templates/js/translated/stock.js:1931
+#: templates/js/translated/stock.js:1932
 msgid "Supplier Part"
 msgstr "供应商商品"
 
@@ -3235,7 +3235,7 @@ msgstr ""
 #: templates/InvenTree/settings/sidebar.html:43
 #: templates/js/translated/bom.js:554 templates/js/translated/part.js:747
 #: templates/js/translated/part.js:1295 templates/js/translated/part.js:1456
-#: templates/js/translated/stock.js:955 templates/js/translated/stock.js:1749
+#: templates/js/translated/stock.js:955 templates/js/translated/stock.js:1750
 #: templates/navbar.html:31
 msgid "Stock"
 msgstr "库存"
@@ -3262,7 +3262,7 @@ msgstr "定价"
 #: stock/templates/stock/location.html:173
 #: stock/templates/stock/location_sidebar.html:7
 #: templates/InvenTree/search.html:153 templates/js/translated/search.js:223
-#: templates/js/translated/stock.js:2369 users/models.py:39
+#: templates/js/translated/stock.js:2370 users/models.py:39
 msgid "Stock Items"
 msgstr "库存项"
 
@@ -3536,8 +3536,8 @@ msgstr ""
 #: stock/templates/stock/item_base.html:184
 #: templates/email/overdue_purchase_order.html:15
 #: templates/js/translated/order.js:885 templates/js/translated/order.js:1621
-#: templates/js/translated/part.js:968 templates/js/translated/stock.js:1908
-#: templates/js/translated/stock.js:2474
+#: templates/js/translated/part.js:968 templates/js/translated/stock.js:1909
+#: templates/js/translated/stock.js:2475
 msgid "Purchase Order"
 msgstr ""
 
@@ -3557,8 +3557,8 @@ msgid "Number of items received"
 msgstr ""
 
 #: order/models.py:1030 part/templates/part/prices.html:181 stock/models.py:722
-#: stock/serializers.py:153 stock/templates/stock/item_base.html:191
-#: templates/js/translated/stock.js:1962
+#: stock/serializers.py:154 stock/templates/stock/item_base.html:191
+#: templates/js/translated/stock.js:1963
 msgid "Purchase Price"
 msgstr "采购价格"
 
@@ -4121,19 +4121,19 @@ msgstr ""
 msgid "This option must be selected"
 msgstr ""
 
-#: part/api.py:1011
+#: part/api.py:1058
 msgid "Must be greater than zero"
 msgstr "必须大于0"
 
-#: part/api.py:1015
+#: part/api.py:1062
 msgid "Must be a valid quantity"
 msgstr "必须是有效的数量"
 
-#: part/api.py:1030
+#: part/api.py:1077
 msgid "Specify location for initial part stock"
 msgstr "指定初始初始商品仓储地点"
 
-#: part/api.py:1061 part/api.py:1065 part/api.py:1080 part/api.py:1084
+#: part/api.py:1108 part/api.py:1112 part/api.py:1127 part/api.py:1131
 msgid "This field is required"
 msgstr "此字段为必填"
 
@@ -4268,7 +4268,7 @@ msgstr "商品类别"
 
 #: part/models.py:782 part/templates/part/part_base.html:266
 #: templates/js/translated/part.js:735 templates/js/translated/part.js:1391
-#: templates/js/translated/stock.js:1721
+#: templates/js/translated/stock.js:1722
 msgid "IPN"
 msgstr ""
 
@@ -4611,7 +4611,7 @@ msgstr ""
 msgid "Duplicate relationship already exists"
 msgstr ""
 
-#: part/serializers.py:140 part/serializers.py:171 stock/serializers.py:163
+#: part/serializers.py:140 part/serializers.py:171 stock/serializers.py:164
 msgid "Purchase currency of this stock item"
 msgstr ""
 
@@ -5752,7 +5752,7 @@ msgstr ""
 #: report/templates/report/inventree_test_report_base.html:97
 #: templates/InvenTree/settings/plugin.html:51
 #: templates/InvenTree/settings/plugin_settings.html:38
-#: templates/js/translated/order.js:1669 templates/js/translated/stock.js:2402
+#: templates/js/translated/order.js:1669 templates/js/translated/stock.js:2403
 msgid "Date"
 msgstr ""
 
@@ -5771,19 +5771,19 @@ msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:137
 #: templates/js/translated/stock.js:606 templates/js/translated/stock.js:776
-#: templates/js/translated/stock.js:2651
+#: templates/js/translated/stock.js:2652
 msgid "Serial"
 msgstr ""
 
-#: stock/api.py:505
+#: stock/api.py:511
 msgid "Quantity is required"
 msgstr ""
 
-#: stock/api.py:512
+#: stock/api.py:518
 msgid "Valid part must be supplied"
 msgstr ""
 
-#: stock/api.py:537
+#: stock/api.py:543
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr ""
 
@@ -5891,7 +5891,7 @@ msgid "Destination Sales Order"
 msgstr ""
 
 #: stock/models.py:690 stock/templates/stock/item_base.html:429
-#: templates/js/translated/stock.js:1878
+#: templates/js/translated/stock.js:1879
 msgid "Expiry Date"
 msgstr ""
 
@@ -5969,7 +5969,7 @@ msgstr ""
 msgid "Serialized stock cannot be merged"
 msgstr ""
 
-#: stock/models.py:1347 stock/serializers.py:895
+#: stock/models.py:1347 stock/serializers.py:935
 msgid "Duplicate stock items"
 msgstr ""
 
@@ -6021,120 +6021,128 @@ msgstr ""
 msgid "Test notes"
 msgstr ""
 
-#: stock/serializers.py:156
+#: stock/serializers.py:157
 msgid "Purchase price of this stock item"
 msgstr ""
 
-#: stock/serializers.py:280
+#: stock/serializers.py:281
 msgid "Enter number of stock items to serialize"
 msgstr ""
 
-#: stock/serializers.py:292
+#: stock/serializers.py:293
 #, python-brace-format
 msgid "Quantity must not exceed available stock quantity ({q})"
 msgstr ""
 
-#: stock/serializers.py:298
+#: stock/serializers.py:299
 msgid "Enter serial numbers for new items"
-msgstr ""
+msgstr "输入新项目的序列号"
 
-#: stock/serializers.py:309 stock/serializers.py:852 stock/serializers.py:1085
+#: stock/serializers.py:310 stock/serializers.py:892 stock/serializers.py:1125
 msgid "Destination stock location"
-msgstr ""
+msgstr "目标库存位置"
 
-#: stock/serializers.py:316
+#: stock/serializers.py:317
 msgid "Optional note field"
 msgstr ""
 
-#: stock/serializers.py:326
+#: stock/serializers.py:327
 msgid "Serial numbers cannot be assigned to this part"
 msgstr ""
 
-#: stock/serializers.py:343
+#: stock/serializers.py:344
 msgid "Serial numbers already exist"
 msgstr "序列号已存在"
 
-#: stock/serializers.py:383
+#: stock/serializers.py:384
 msgid "Select stock item to install"
 msgstr ""
 
-#: stock/serializers.py:396
+#: stock/serializers.py:397
 msgid "Stock item is unavailable"
 msgstr ""
 
-#: stock/serializers.py:403
+#: stock/serializers.py:404
 msgid "Selected part is not in the Bill of Materials"
 msgstr ""
 
-#: stock/serializers.py:440
+#: stock/serializers.py:441
 msgid "Destination location for uninstalled item"
 msgstr ""
 
-#: stock/serializers.py:445 stock/serializers.py:487
+#: stock/serializers.py:446 stock/serializers.py:527
 msgid "Add transaction note (optional)"
+msgstr "添加交易备注 (可选)"
+
+#: stock/serializers.py:480
+msgid "Select part to convert stock item into"
 msgstr ""
 
-#: stock/serializers.py:482
+#: stock/serializers.py:491
+msgid "Selected part is not a valid option for conversion"
+msgstr ""
+
+#: stock/serializers.py:522
 msgid "Destination location for returned item"
 msgstr ""
 
-#: stock/serializers.py:707
+#: stock/serializers.py:747
 msgid "Part must be salable"
 msgstr ""
 
-#: stock/serializers.py:711
+#: stock/serializers.py:751
 msgid "Item is allocated to a sales order"
 msgstr ""
 
-#: stock/serializers.py:715
+#: stock/serializers.py:755
 msgid "Item is allocated to a build order"
 msgstr ""
 
-#: stock/serializers.py:746
+#: stock/serializers.py:786
 msgid "Customer to assign stock items"
 msgstr ""
 
-#: stock/serializers.py:752
+#: stock/serializers.py:792
 msgid "Selected company is not a customer"
 msgstr ""
 
-#: stock/serializers.py:760
+#: stock/serializers.py:800
 msgid "Stock assignment notes"
 msgstr ""
 
-#: stock/serializers.py:770 stock/serializers.py:1001
+#: stock/serializers.py:810 stock/serializers.py:1041
 msgid "A list of stock items must be provided"
 msgstr ""
 
-#: stock/serializers.py:859
+#: stock/serializers.py:899
 msgid "Stock merging notes"
 msgstr ""
 
-#: stock/serializers.py:864
+#: stock/serializers.py:904
 msgid "Allow mismatched suppliers"
 msgstr ""
 
-#: stock/serializers.py:865
+#: stock/serializers.py:905
 msgid "Allow stock items with different supplier parts to be merged"
 msgstr ""
 
-#: stock/serializers.py:870
+#: stock/serializers.py:910
 msgid "Allow mismatched status"
 msgstr ""
 
-#: stock/serializers.py:871
+#: stock/serializers.py:911
 msgid "Allow stock items with different status codes to be merged"
 msgstr ""
 
-#: stock/serializers.py:881
+#: stock/serializers.py:921
 msgid "At least two stock items must be provided"
 msgstr ""
 
-#: stock/serializers.py:963
+#: stock/serializers.py:1003
 msgid "StockItem primary key value"
 msgstr ""
 
-#: stock/serializers.py:991
+#: stock/serializers.py:1031
 msgid "Stock transaction notes"
 msgstr ""
 
@@ -6171,7 +6179,7 @@ msgstr ""
 msgid "Installed Stock Items"
 msgstr ""
 
-#: stock/templates/stock/item.html:151 templates/js/translated/stock.js:2795
+#: stock/templates/stock/item.html:151 templates/js/translated/stock.js:2796
 msgid "Install Stock Item"
 msgstr ""
 
@@ -6179,7 +6187,7 @@ msgstr ""
 msgid "Delete all test results for this stock item"
 msgstr ""
 
-#: stock/templates/stock/item.html:324 templates/js/translated/stock.js:1517
+#: stock/templates/stock/item.html:324 templates/js/translated/stock.js:1518
 msgid "Add Test Result"
 msgstr ""
 
@@ -6366,7 +6374,7 @@ msgid "Stale"
 msgstr ""
 
 #: stock/templates/stock/item_base.html:442
-#: templates/js/translated/company.js:965 templates/js/translated/stock.js:1894
+#: templates/js/translated/company.js:965 templates/js/translated/stock.js:1895
 msgid "Last Updated"
 msgstr ""
 
@@ -6382,7 +6390,23 @@ msgstr ""
 msgid "Edit Stock Status"
 msgstr ""
 
-#: stock/templates/stock/item_base.html:642
+#: stock/templates/stock/item_base.html:594
+msgid "Select one of the part variants listed below."
+msgstr ""
+
+#: stock/templates/stock/item_base.html:597
+msgid "Warning"
+msgstr "警告"
+
+#: stock/templates/stock/item_base.html:598
+msgid "This action cannot be easily undone"
+msgstr ""
+
+#: stock/templates/stock/item_base.html:606
+msgid "Convert Stock Item"
+msgstr ""
+
+#: stock/templates/stock/item_base.html:664
 msgid "Return to Stock"
 msgstr ""
 
@@ -6466,32 +6490,11 @@ msgstr ""
 msgid "Child Items"
 msgstr ""
 
-#: stock/templates/stock/stockitem_convert.html:7 stock/views.py:143
-msgid "Convert Stock Item"
-msgstr ""
-
-#: stock/templates/stock/stockitem_convert.html:8
-#, python-format
-msgid "This stock item is current an instance of <em>%(part)s</em>"
-msgstr ""
-
-#: stock/templates/stock/stockitem_convert.html:9
-msgid "It can be converted to one of the part variants listed below."
-msgstr ""
-
-#: stock/templates/stock/stockitem_convert.html:13
-msgid "Warning"
-msgstr "警告"
-
-#: stock/templates/stock/stockitem_convert.html:14
-msgid "This action cannot be easily undone"
-msgstr ""
-
-#: stock/views.py:110
+#: stock/views.py:109
 msgid "Stock Location QR code"
 msgstr "仓储地点二维码"
 
-#: stock/views.py:126
+#: stock/views.py:125
 msgid "Stock Item QR Code"
 msgstr ""
 
@@ -7303,7 +7306,7 @@ msgstr ""
 msgid "Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an email address for user %(user_display)s."
 msgstr ""
 
-#: templates/account/email_confirm.html:20 templates/js/translated/forms.js:630
+#: templates/account/email_confirm.html:20 templates/js/translated/forms.js:633
 msgid "Confirm"
 msgstr "确认"
 
@@ -8175,8 +8178,8 @@ msgid "No builds matching query"
 msgstr ""
 
 #: templates/js/translated/build.js:2447 templates/js/translated/part.js:1383
-#: templates/js/translated/part.js:1850 templates/js/translated/stock.js:1681
-#: templates/js/translated/stock.js:2339
+#: templates/js/translated/part.js:1850 templates/js/translated/stock.js:1682
+#: templates/js/translated/stock.js:2340
 msgid "Select"
 msgstr ""
 
@@ -8188,7 +8191,7 @@ msgstr ""
 msgid "Progress"
 msgstr ""
 
-#: templates/js/translated/build.js:2531 templates/js/translated/stock.js:2581
+#: templates/js/translated/build.js:2531 templates/js/translated/stock.js:2582
 msgid "No user information"
 msgstr "没有用户信息"
 
@@ -8342,61 +8345,61 @@ msgstr ""
 msgid "Create filter"
 msgstr ""
 
-#: templates/js/translated/forms.js:353 templates/js/translated/forms.js:368
-#: templates/js/translated/forms.js:382 templates/js/translated/forms.js:396
+#: templates/js/translated/forms.js:356 templates/js/translated/forms.js:371
+#: templates/js/translated/forms.js:385 templates/js/translated/forms.js:399
 msgid "Action Prohibited"
 msgstr ""
 
-#: templates/js/translated/forms.js:355
+#: templates/js/translated/forms.js:358
 msgid "Create operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:370
+#: templates/js/translated/forms.js:373
 msgid "Update operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:384
+#: templates/js/translated/forms.js:387
 msgid "Delete operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:398
+#: templates/js/translated/forms.js:401
 msgid "View operation not allowed"
 msgstr ""
 
-#: templates/js/translated/forms.js:656
+#: templates/js/translated/forms.js:659
 msgid "Keep this form open"
 msgstr ""
 
-#: templates/js/translated/forms.js:757
+#: templates/js/translated/forms.js:760
 msgid "Enter a valid number"
 msgstr ""
 
-#: templates/js/translated/forms.js:1249 templates/modals.html:19
+#: templates/js/translated/forms.js:1252 templates/modals.html:19
 #: templates/modals.html:43
 msgid "Form errors exist"
 msgstr ""
 
-#: templates/js/translated/forms.js:1682
+#: templates/js/translated/forms.js:1685
 msgid "No results found"
 msgstr ""
 
-#: templates/js/translated/forms.js:1897 templates/search.html:29
+#: templates/js/translated/forms.js:1900 templates/search.html:29
 msgid "Searching"
 msgstr ""
 
-#: templates/js/translated/forms.js:2150
+#: templates/js/translated/forms.js:2153
 msgid "Clear input"
 msgstr ""
 
-#: templates/js/translated/forms.js:2616
+#: templates/js/translated/forms.js:2619
 msgid "File Column"
 msgstr ""
 
-#: templates/js/translated/forms.js:2616
+#: templates/js/translated/forms.js:2619
 msgid "Field Name"
 msgstr ""
 
-#: templates/js/translated/forms.js:2628
+#: templates/js/translated/forms.js:2631
 msgid "Select Columns"
 msgstr ""
 
@@ -8727,7 +8730,7 @@ msgstr ""
 msgid "Quantity to receive"
 msgstr ""
 
-#: templates/js/translated/order.js:1225 templates/js/translated/stock.js:2142
+#: templates/js/translated/order.js:1225 templates/js/translated/stock.js:2143
 msgid "Stock Status"
 msgstr ""
 
@@ -8921,7 +8924,7 @@ msgid "Delete Stock Allocation"
 msgstr ""
 
 #: templates/js/translated/order.js:3243 templates/js/translated/order.js:3332
-#: templates/js/translated/stock.js:1597
+#: templates/js/translated/stock.js:1598
 msgid "Shipped to customer"
 msgstr ""
 
@@ -9187,7 +9190,7 @@ msgid "No category"
 msgstr "没有分类"
 
 #: templates/js/translated/part.js:1573 templates/js/translated/part.js:1785
-#: templates/js/translated/stock.js:2300
+#: templates/js/translated/stock.js:2301
 msgid "Display as list"
 msgstr ""
 
@@ -9211,7 +9214,7 @@ msgstr ""
 msgid "Category is required"
 msgstr ""
 
-#: templates/js/translated/part.js:1804 templates/js/translated/stock.js:2319
+#: templates/js/translated/part.js:1804 templates/js/translated/stock.js:2320
 msgid "Display as tree"
 msgstr ""
 
@@ -9219,7 +9222,7 @@ msgstr ""
 msgid "Subscribed category"
 msgstr ""
 
-#: templates/js/translated/part.js:1882 templates/js/translated/stock.js:2363
+#: templates/js/translated/part.js:1882 templates/js/translated/stock.js:2364
 msgid "Path"
 msgstr ""
 
@@ -9232,7 +9235,7 @@ msgid "Edit test result"
 msgstr ""
 
 #: templates/js/translated/part.js:1978 templates/js/translated/stock.js:1296
-#: templates/js/translated/stock.js:1555
+#: templates/js/translated/stock.js:1556
 msgid "Delete test result"
 msgstr ""
 
@@ -9565,180 +9568,180 @@ msgstr ""
 msgid "No test results found"
 msgstr ""
 
-#: templates/js/translated/stock.js:1373
+#: templates/js/translated/stock.js:1374
 msgid "Test Date"
 msgstr ""
 
-#: templates/js/translated/stock.js:1538
+#: templates/js/translated/stock.js:1539
 msgid "Edit Test Result"
 msgstr ""
 
-#: templates/js/translated/stock.js:1560
+#: templates/js/translated/stock.js:1561
 msgid "Delete Test Result"
 msgstr ""
 
-#: templates/js/translated/stock.js:1589
+#: templates/js/translated/stock.js:1590
 msgid "In production"
 msgstr "正在生产"
 
-#: templates/js/translated/stock.js:1593
+#: templates/js/translated/stock.js:1594
 msgid "Installed in Stock Item"
 msgstr ""
 
-#: templates/js/translated/stock.js:1601
+#: templates/js/translated/stock.js:1602
 msgid "Assigned to Sales Order"
 msgstr ""
 
-#: templates/js/translated/stock.js:1607
+#: templates/js/translated/stock.js:1608
 msgid "No stock location set"
 msgstr "未设置仓储地点"
 
-#: templates/js/translated/stock.js:1774
+#: templates/js/translated/stock.js:1775
 msgid "Stock item is in production"
 msgstr "库存品正在生产"
 
-#: templates/js/translated/stock.js:1779
+#: templates/js/translated/stock.js:1780
 msgid "Stock item assigned to sales order"
 msgstr ""
 
-#: templates/js/translated/stock.js:1782
+#: templates/js/translated/stock.js:1783
 msgid "Stock item assigned to customer"
 msgstr ""
 
-#: templates/js/translated/stock.js:1785
+#: templates/js/translated/stock.js:1786
 msgid "Serialized stock item has been allocated"
 msgstr ""
 
-#: templates/js/translated/stock.js:1787
+#: templates/js/translated/stock.js:1788
 msgid "Stock item has been fully allocated"
 msgstr ""
 
-#: templates/js/translated/stock.js:1789
+#: templates/js/translated/stock.js:1790
 msgid "Stock item has been partially allocated"
 msgstr ""
 
-#: templates/js/translated/stock.js:1792
+#: templates/js/translated/stock.js:1793
 msgid "Stock item has been installed in another item"
 msgstr ""
 
-#: templates/js/translated/stock.js:1796
+#: templates/js/translated/stock.js:1797
 msgid "Stock item has expired"
 msgstr ""
 
-#: templates/js/translated/stock.js:1798
+#: templates/js/translated/stock.js:1799
 msgid "Stock item will expire soon"
 msgstr ""
 
-#: templates/js/translated/stock.js:1805
+#: templates/js/translated/stock.js:1806
 msgid "Stock item has been rejected"
 msgstr ""
 
-#: templates/js/translated/stock.js:1807
+#: templates/js/translated/stock.js:1808
 msgid "Stock item is lost"
 msgstr ""
 
-#: templates/js/translated/stock.js:1809
+#: templates/js/translated/stock.js:1810
 msgid "Stock item is destroyed"
 msgstr ""
 
-#: templates/js/translated/stock.js:1813
+#: templates/js/translated/stock.js:1814
 #: templates/js/translated/table_filters.js:188
 msgid "Depleted"
 msgstr ""
 
-#: templates/js/translated/stock.js:1864
+#: templates/js/translated/stock.js:1865
 msgid "Stocktake"
 msgstr ""
 
-#: templates/js/translated/stock.js:1946
+#: templates/js/translated/stock.js:1947
 msgid "Supplier part not specified"
 msgstr ""
 
-#: templates/js/translated/stock.js:1984
+#: templates/js/translated/stock.js:1985
 msgid "No stock items matching query"
 msgstr ""
 
-#: templates/js/translated/stock.js:2157
+#: templates/js/translated/stock.js:2158
 msgid "Set Stock Status"
 msgstr ""
 
-#: templates/js/translated/stock.js:2171
+#: templates/js/translated/stock.js:2172
 msgid "Select Status Code"
 msgstr ""
 
-#: templates/js/translated/stock.js:2172
+#: templates/js/translated/stock.js:2173
 msgid "Status code must be selected"
 msgstr ""
 
-#: templates/js/translated/stock.js:2427
+#: templates/js/translated/stock.js:2428
 msgid "Details"
 msgstr "详情"
 
-#: templates/js/translated/stock.js:2443
+#: templates/js/translated/stock.js:2444
 msgid "Part information unavailable"
 msgstr ""
 
-#: templates/js/translated/stock.js:2465
+#: templates/js/translated/stock.js:2466
 msgid "Location no longer exists"
 msgstr ""
 
-#: templates/js/translated/stock.js:2484
+#: templates/js/translated/stock.js:2485
 msgid "Purchase order no longer exists"
 msgstr ""
 
-#: templates/js/translated/stock.js:2503
+#: templates/js/translated/stock.js:2504
 msgid "Customer no longer exists"
 msgstr ""
 
-#: templates/js/translated/stock.js:2521
+#: templates/js/translated/stock.js:2522
 msgid "Stock item no longer exists"
 msgstr ""
 
-#: templates/js/translated/stock.js:2544
+#: templates/js/translated/stock.js:2545
 msgid "Added"
 msgstr ""
 
-#: templates/js/translated/stock.js:2552
+#: templates/js/translated/stock.js:2553
 msgid "Removed"
 msgstr ""
 
-#: templates/js/translated/stock.js:2628
+#: templates/js/translated/stock.js:2629
 msgid "No installed items"
 msgstr ""
 
-#: templates/js/translated/stock.js:2679 templates/js/translated/stock.js:2715
+#: templates/js/translated/stock.js:2680 templates/js/translated/stock.js:2716
 msgid "Uninstall Stock Item"
 msgstr ""
 
-#: templates/js/translated/stock.js:2728
+#: templates/js/translated/stock.js:2729
 msgid "Select stock item to uninstall"
 msgstr ""
 
-#: templates/js/translated/stock.js:2749
+#: templates/js/translated/stock.js:2750
 msgid "Install another stock item into this item"
 msgstr ""
 
-#: templates/js/translated/stock.js:2750
+#: templates/js/translated/stock.js:2751
 msgid "Stock items can only be installed if they meet the following criteria"
 msgstr ""
 
-#: templates/js/translated/stock.js:2752
+#: templates/js/translated/stock.js:2753
 msgid "The Stock Item links to a Part which is the BOM for this Stock Item"
 msgstr ""
 
-#: templates/js/translated/stock.js:2753
+#: templates/js/translated/stock.js:2754
 msgid "The Stock Item is currently available in stock"
 msgstr ""
 
-#: templates/js/translated/stock.js:2754
+#: templates/js/translated/stock.js:2755
 msgid "The Stock Item is not already installed in another item"
 msgstr ""
 
-#: templates/js/translated/stock.js:2755
+#: templates/js/translated/stock.js:2756
 msgid "The Stock Item is tracked by either a batch code or serial number"
 msgstr ""
 
-#: templates/js/translated/stock.js:2768
+#: templates/js/translated/stock.js:2769
 msgid "Select part to install"
 msgstr ""
 
@@ -9990,61 +9993,61 @@ msgstr ""
 msgid "Select File Format"
 msgstr ""
 
-#: templates/js/translated/tables.js:525
+#: templates/js/translated/tables.js:534
 msgid "Loading data"
 msgstr ""
 
-#: templates/js/translated/tables.js:528
+#: templates/js/translated/tables.js:537
 msgid "rows per page"
 msgstr ""
 
-#: templates/js/translated/tables.js:533
+#: templates/js/translated/tables.js:542
 msgid "Showing all rows"
 msgstr ""
 
-#: templates/js/translated/tables.js:535
+#: templates/js/translated/tables.js:544
 msgid "Showing"
 msgstr ""
 
-#: templates/js/translated/tables.js:535
+#: templates/js/translated/tables.js:544
 msgid "to"
 msgstr ""
 
-#: templates/js/translated/tables.js:535
+#: templates/js/translated/tables.js:544
 msgid "of"
 msgstr ""
 
-#: templates/js/translated/tables.js:535
+#: templates/js/translated/tables.js:544
 msgid "rows"
 msgstr ""
 
-#: templates/js/translated/tables.js:539 templates/navbar.html:102
+#: templates/js/translated/tables.js:548 templates/navbar.html:102
 #: templates/search.html:8 templates/search_form.html:6
 #: templates/search_form.html:7
 msgid "Search"
 msgstr "搜索"
 
-#: templates/js/translated/tables.js:542
+#: templates/js/translated/tables.js:551
 msgid "No matching results"
 msgstr ""
 
-#: templates/js/translated/tables.js:545
+#: templates/js/translated/tables.js:554
 msgid "Hide/Show pagination"
 msgstr ""
 
-#: templates/js/translated/tables.js:548
+#: templates/js/translated/tables.js:557
 msgid "Refresh"
 msgstr ""
 
-#: templates/js/translated/tables.js:551
+#: templates/js/translated/tables.js:560
 msgid "Toggle"
 msgstr ""
 
-#: templates/js/translated/tables.js:554
+#: templates/js/translated/tables.js:563
 msgid "Columns"
 msgstr ""
 
-#: templates/js/translated/tables.js:557
+#: templates/js/translated/tables.js:566
 msgid "All"
 msgstr ""
 
