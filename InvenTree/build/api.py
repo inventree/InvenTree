@@ -3,7 +3,7 @@
 from django.urls import include, re_path
 from django.utils.translation import gettext_lazy as _
 
-from rest_framework import filters, generics
+from rest_framework import filters
 from rest_framework.exceptions import ValidationError
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -13,6 +13,7 @@ from InvenTree.api import AttachmentMixin, APIDownloadMixin, ListCreateDestroyAP
 from InvenTree.helpers import str2bool, isNull, DownloadFile
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.status_codes import BuildStatus
+from InvenTree.mixins import CreateAPI, RetrieveUpdateDestroyAPI, ListCreateAPI
 
 import build.admin
 import build.serializers
@@ -65,7 +66,7 @@ class BuildFilter(rest_filters.FilterSet):
         return queryset
 
 
-class BuildList(APIDownloadMixin, generics.ListCreateAPIView):
+class BuildList(APIDownloadMixin, ListCreateAPI):
     """API endpoint for accessing a list of Build objects.
 
     - GET: Return list of objects (with filters)
@@ -200,7 +201,7 @@ class BuildList(APIDownloadMixin, generics.ListCreateAPIView):
         return self.serializer_class(*args, **kwargs)
 
 
-class BuildDetail(generics.RetrieveUpdateDestroyAPIView):
+class BuildDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a Build object."""
 
     queryset = Build.objects.all()
@@ -219,7 +220,7 @@ class BuildDetail(generics.RetrieveUpdateDestroyAPIView):
         return super().destroy(request, *args, **kwargs)
 
 
-class BuildUnallocate(generics.CreateAPIView):
+class BuildUnallocate(CreateAPI):
     """API endpoint for unallocating stock items from a build order.
 
     - The BuildOrder object is specified by the URL
@@ -263,7 +264,7 @@ class BuildOrderContextMixin:
         return ctx
 
 
-class BuildOutputCreate(BuildOrderContextMixin, generics.CreateAPIView):
+class BuildOutputCreate(BuildOrderContextMixin, CreateAPI):
     """API endpoint for creating new build output(s)."""
 
     queryset = Build.objects.none()
@@ -271,7 +272,7 @@ class BuildOutputCreate(BuildOrderContextMixin, generics.CreateAPIView):
     serializer_class = build.serializers.BuildOutputCreateSerializer
 
 
-class BuildOutputComplete(BuildOrderContextMixin, generics.CreateAPIView):
+class BuildOutputComplete(BuildOrderContextMixin, CreateAPI):
     """API endpoint for completing build outputs."""
 
     queryset = Build.objects.none()
@@ -279,7 +280,7 @@ class BuildOutputComplete(BuildOrderContextMixin, generics.CreateAPIView):
     serializer_class = build.serializers.BuildOutputCompleteSerializer
 
 
-class BuildOutputDelete(BuildOrderContextMixin, generics.CreateAPIView):
+class BuildOutputDelete(BuildOrderContextMixin, CreateAPI):
     """API endpoint for deleting multiple build outputs."""
 
     def get_serializer_context(self):
@@ -295,7 +296,7 @@ class BuildOutputDelete(BuildOrderContextMixin, generics.CreateAPIView):
     serializer_class = build.serializers.BuildOutputDeleteSerializer
 
 
-class BuildFinish(BuildOrderContextMixin, generics.CreateAPIView):
+class BuildFinish(BuildOrderContextMixin, CreateAPI):
     """API endpoint for marking a build as finished (completed)."""
 
     queryset = Build.objects.none()
@@ -303,7 +304,7 @@ class BuildFinish(BuildOrderContextMixin, generics.CreateAPIView):
     serializer_class = build.serializers.BuildCompleteSerializer
 
 
-class BuildAutoAllocate(BuildOrderContextMixin, generics.CreateAPIView):
+class BuildAutoAllocate(BuildOrderContextMixin, CreateAPI):
     """API endpoint for 'automatically' allocating stock against a build order.
 
     - Only looks at 'untracked' parts
@@ -317,7 +318,7 @@ class BuildAutoAllocate(BuildOrderContextMixin, generics.CreateAPIView):
     serializer_class = build.serializers.BuildAutoAllocationSerializer
 
 
-class BuildAllocate(BuildOrderContextMixin, generics.CreateAPIView):
+class BuildAllocate(BuildOrderContextMixin, CreateAPI):
     """API endpoint to allocate stock items to a build order.
 
     - The BuildOrder object is specified by the URL
@@ -333,21 +334,21 @@ class BuildAllocate(BuildOrderContextMixin, generics.CreateAPIView):
     serializer_class = build.serializers.BuildAllocationSerializer
 
 
-class BuildCancel(BuildOrderContextMixin, generics.CreateAPIView):
+class BuildCancel(BuildOrderContextMixin, CreateAPI):
     """API endpoint for cancelling a BuildOrder."""
 
     queryset = Build.objects.all()
     serializer_class = build.serializers.BuildCancelSerializer
 
 
-class BuildItemDetail(generics.RetrieveUpdateDestroyAPIView):
+class BuildItemDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a BuildItem object."""
 
     queryset = BuildItem.objects.all()
     serializer_class = build.serializers.BuildItemSerializer
 
 
-class BuildItemList(generics.ListCreateAPIView):
+class BuildItemList(ListCreateAPI):
     """API endpoint for accessing a list of BuildItem objects.
 
     - GET: Return list of objects
@@ -442,7 +443,7 @@ class BuildAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     ]
 
 
-class BuildAttachmentDetail(AttachmentMixin, generics.RetrieveUpdateDestroyAPIView):
+class BuildAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for a BuildOrderAttachment object."""
 
     queryset = BuildOrderAttachment.objects.all()

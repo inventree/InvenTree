@@ -5,10 +5,11 @@ from django.urls import include, re_path
 
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, generics
+from rest_framework import filters
 
 from InvenTree.api import AttachmentMixin, ListCreateDestroyAPIView
 from InvenTree.helpers import str2bool
+from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
 
 from .models import (Company, ManufacturerPart, ManufacturerPartAttachment,
                      ManufacturerPartParameter, SupplierPart,
@@ -20,7 +21,7 @@ from .serializers import (CompanySerializer,
                           SupplierPriceBreakSerializer)
 
 
-class CompanyList(generics.ListCreateAPIView):
+class CompanyList(ListCreateAPI):
     """API endpoint for accessing a list of Company objects.
 
     Provides two methods:
@@ -67,7 +68,7 @@ class CompanyList(generics.ListCreateAPIView):
     ordering = 'name'
 
 
-class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
+class CompanyDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for detail of a single Company object."""
 
     queryset = Company.objects.all()
@@ -146,7 +147,7 @@ class ManufacturerPartList(ListCreateDestroyAPIView):
     ]
 
 
-class ManufacturerPartDetail(generics.RetrieveUpdateDestroyAPIView):
+class ManufacturerPartDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of ManufacturerPart object.
 
     - GET: Retrieve detail view
@@ -173,7 +174,7 @@ class ManufacturerPartAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     ]
 
 
-class ManufacturerPartAttachmentDetail(AttachmentMixin, generics.RetrieveUpdateDestroyAPIView):
+class ManufacturerPartAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
     """Detail endpooint for ManufacturerPartAttachment model."""
 
     queryset = ManufacturerPartAttachment.objects.all()
@@ -246,7 +247,7 @@ class ManufacturerPartParameterList(ListCreateDestroyAPIView):
     ]
 
 
-class ManufacturerPartParameterDetail(generics.RetrieveUpdateDestroyAPIView):
+class ManufacturerPartParameterDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of ManufacturerPartParameter model."""
 
     queryset = ManufacturerPartParameter.objects.all()
@@ -347,7 +348,7 @@ class SupplierPartList(ListCreateDestroyAPIView):
     ]
 
 
-class SupplierPartDetail(generics.RetrieveUpdateDestroyAPIView):
+class SupplierPartDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of SupplierPart object.
 
     - GET: Retrieve detail view
@@ -362,7 +363,7 @@ class SupplierPartDetail(generics.RetrieveUpdateDestroyAPIView):
     ]
 
 
-class SupplierPriceBreakList(generics.ListCreateAPIView):
+class SupplierPriceBreakList(ListCreateAPI):
     """API endpoint for list view of SupplierPriceBreak object.
 
     - GET: Retrieve list of SupplierPriceBreak objects
@@ -381,7 +382,7 @@ class SupplierPriceBreakList(generics.ListCreateAPIView):
     ]
 
 
-class SupplierPriceBreakDetail(generics.RetrieveUpdateDestroyAPIView):
+class SupplierPriceBreakDetail(RetrieveUpdateDestroyAPI):
     """Detail endpoint for SupplierPriceBreak object."""
 
     queryset = SupplierPriceBreak.objects.all()

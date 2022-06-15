@@ -6,9 +6,11 @@ from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, generics, permissions
+from rest_framework import filters, permissions
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
+
+from InvenTree.mixins import ListCreateAPI
 
 from .status import is_worker_running
 from .version import (inventreeApiVersion, inventreeInstanceName,
@@ -134,7 +136,7 @@ class BulkDeleteMixin:
         )
 
 
-class ListCreateDestroyAPIView(BulkDeleteMixin, generics.ListCreateAPIView):
+class ListCreateDestroyAPIView(BulkDeleteMixin, ListCreateAPI):
     """Custom API endpoint which provides BulkDelete functionality in addition to List and Create"""
     ...
 
