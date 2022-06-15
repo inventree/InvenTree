@@ -278,7 +278,7 @@ function loadBrandIcon(element, name) {
 /*
  * Function to sanitize a (potentially nested) object.
  * Iterates through all levels, and sanitizes each primitive string.
- * 
+ *
  * Note that this function effectively provides a "deep copy" of the provided data,
  * and the original data structure is unaltered.
  */
@@ -287,10 +287,12 @@ function sanitizeData(data) {
         return null;
     } else if (Array.isArray(data)) {
         // Handle arrays
-        var ret = [];
+        var arr = [];
         data.forEach(function(val) {
-            ret.push(sanitizeData(val));
+            arr.push(sanitizeData(val));
         });
+
+        return arr;
     } else if (typeof(data) === 'object') {
         // Handle nested structures
         var nested = {};
