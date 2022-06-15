@@ -17,6 +17,7 @@ import common.models
 import company.models
 import InvenTree.helpers
 import InvenTree.serializers
+import part.models as part_models
 from common.settings import currency_code_default, currency_code_mappings
 from company.serializers import SupplierPartSerializer
 from InvenTree.serializers import InvenTreeDecimalField, extract_int
@@ -462,6 +463,45 @@ class UninstallStockItemSerializer(serializers.Serializer):
             request.user,
             note
         )
+
+
+class ConvertStockItemSerializer(serializers.Serializer):
+    """DRF serializer class for converting a StockItem to a valid variant part"""
+
+    class Meta:
+        """Metaclass options"""
+        fields = [
+            'part',
+        ]
+
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=part_models.Part.objects.all(),
+        label=_('Part'),
+        help_text=_('Select part to convert stock item into'),
+        many=False, required=True, allow_null=False
+    )
+
+    def validate_part(self, part):
+        """Ensure that the provided part is a valid option for the stock item"""
+
+        stock_item = self.context['item']
+        valid_options = stock_item.part.get_conversion_options()
+
+        if part not in valid_options:
+            raise ValidationError(_("Selected part is not a valid option for conversion"))
+
+        return part
+
+    def save(self):
+        """Save the serializer to convert the StockItem to the selected Part"""
+        data = self.validated_data
+
+        part = data['part']
+
+        stock_item = self.context['item']
+        request = self.context['request']
+
+        stock_item.convert_to_variant(part, request.user)
 
 
 class ReturnStockItemSerializer(serializers.Serializer):

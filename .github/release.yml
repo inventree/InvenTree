@@ -9,6 +9,9 @@ changelog:
       labels:
         - Semver-Major
         - breaking
+    - title: Security Patches
+      labels:
+        - security
     - title: New Features
       labels:
         - Semver-Minor
@@ -23,7 +26,6 @@ changelog:
         - setup
         - demo
         - CI
-        - security
     - title: Other Changes
       labels:
         - "*"

@@ -2,10 +2,14 @@
 
 
 # InvenTree API version
-INVENTREE_API_VERSION = 60
+INVENTREE_API_VERSION = 61
 
 """
 Increment this API version number whenever there is a significant change to the API that any clients need to know about
+
+v61 -> 2022-06-12 : https://github.com/inventree/InvenTree/pull/3183
+    - Migrate the "Convert Stock Item" form class to use the API
+    - There is now an API endpoint for converting a stock item to a valid variant
 
 v60 -> 2022-06-08 : https://github.com/inventree/InvenTree/pull/3148
     - Add availability data fields to the SupplierPart model
