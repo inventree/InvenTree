@@ -1306,7 +1306,8 @@ function loadStockTestResultsTable(table, options) {
                     var html = value;
 
                     if (row.attachment) {
-                        html += `<a href='${row.attachment}'><span class='fas fa-file-alt float-right'></span></a>`;
+                        var text = `<span class='fas fa-file-alt float-right'></span>`;
+                        html += renderLink(text, row.attachment, {download: true});
                     }
 
                     return html;
