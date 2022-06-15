@@ -114,6 +114,9 @@ def get_git_log(path):
                 output = output.split('\n')
         except subprocess.CalledProcessError:  # pragma: no cover
             pass
+        except FileNotFoundError:  # pragma: no cover
+            # Most likely the system does not have 'git' installed
+            pass
 
     if not output:
         output = 7 * ['']  # pragma: no cover
@@ -128,6 +131,9 @@ def check_git_version():
     try:
         output = str(subprocess.check_output(['git', '--version'], cwd=os.path.dirname(settings.BASE_DIR)), 'utf-8')
     except subprocess.CalledProcessError:  # pragma: no cover
+        return False
+    except FileNotFoundError:  # pragma: no cover
+        # Most likely the system does not have 'git' installed
         return False
 
     # process version string
