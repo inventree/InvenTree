@@ -19,7 +19,7 @@ Relevant PRs:
 from decimal import Decimal
 
 from django.db import models
-from django.db.models import OuterRef, Q
+from django.db.models import F, FloatField, Func, OuterRef, Q, Subquery
 from django.db.models.functions import Coalesce
 
 from sql_util.utils import SubquerySum
@@ -139,3 +139,22 @@ def variant_stock_query(reference: str = '', filter: Q = stock.models.StockItem.
         part__lft__gt=OuterRef(f'{reference}lft'),
         part__rght__lt=OuterRef(f'{reference}rght'),
     ).filter(filter)
+
+
+def annotate_variant_quantity(subquery: Q, reference: str = 'quantity'):
+    """Create a subquery annotation for all variant part stock items on the given parent query
+
+    Args:
+        subquery: A 'variant_stock_query' Q object
+        reference: The relationship reference of the variant stock items from the current queryset
+    """
+
+    return Coalesce(
+        Subquery(
+            subquery.annotate(
+                total=Func(F(reference), function='SUM', output_field=FloatField())
+            ).values('total')
+        ),
+        0,
+        output_field=FloatField(),
+    )

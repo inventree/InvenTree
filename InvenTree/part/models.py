@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
-from django.db.models import Q, Sum, UniqueConstraint
+from django.db.models import ExpressionWrapper, F, Q, Sum, UniqueConstraint
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_save
 from django.db.utils import IntegrityError
@@ -34,6 +34,7 @@ from stdimage.models import StdImageField
 import common.models
 import InvenTree.ready
 import InvenTree.tasks
+import part.filters as part_filters
 import part.settings as part_settings
 from build import models as BuildModels
 from common.models import InvenTreeSetting
@@ -74,9 +75,9 @@ class PartCategory(MetadataMixin, InvenTreeTree):
             tree_id = self.tree_id
 
             # Update each part in this category to point to the parent category
-            for part in self.parts.all():
-                part.category = self.parent
-                part.save()
+            for p in self.parts.all():
+                p.category = self.parent
+                p.save()
 
             # Update each child category
             for child in self.children.all():
@@ -221,7 +222,7 @@ class PartCategory(MetadataMixin, InvenTreeTree):
 
         if include_parents:
             queryset = PartCategoryStar.objects.filter(
-                category__pk__in=[cat.pk for cat in cats]
+                category__in=cats,
             )
         else:
             queryset = PartCategoryStar.objects.filter(
@@ -968,13 +969,10 @@ class Part(MetadataMixin, MPTTModel):
     def requiring_build_orders(self):
         """Return list of outstanding build orders which require this part."""
         # List parts that this part is required for
-        parts = self.get_used_in().all()
-
-        part_ids = [part.pk for part in parts]
 
         # Now, get a list of outstanding build orders which require this part
         builds = BuildModels.Build.objects.filter(
-            part__in=part_ids,
+            part__in=self.get_used_in().all(),
             status__in=BuildStatus.ACTIVE_CODES
         )
 
@@ -1098,7 +1096,7 @@ class Part(MetadataMixin, MPTTModel):
 
         if include_variants:
             queryset = queryset.filter(
-                part__pk__in=[part.pk for part in self.get_ancestors(include_self=True)]
+                part__in=self.get_ancestors(include_self=True),
             )
         else:
             queryset = queryset.filter(part=self)
@@ -1142,18 +1140,70 @@ class Part(MetadataMixin, MPTTModel):
 
         total = None
 
-        bom_items = self.get_bom_items().prefetch_related('sub_part__stock_items')
+        # Prefetch related tables, to reduce query expense
+        queryset = self.get_bom_items().prefetch_related(
+            'sub_part__stock_items',
+            'sub_part__stock_items__allocations',
+            'sub_part__stock_items__sales_order_allocations',
+            'substitutes',
+            'substitutes__part__stock_items',
+        )
 
-        # Calculate the minimum number of parts that can be built using each sub-part
-        for item in bom_items.all():
-            stock = item.sub_part.available_stock
+        # Annotate the 'available stock' for each part in the BOM
+        ref = 'sub_part__'
+        queryset = queryset.alias(
+            total_stock=part_filters.annotate_total_stock(reference=ref),
+            so_allocations=part_filters.annotate_sales_order_allocations(reference=ref),
+            bo_allocations=part_filters.annotate_build_order_allocations(reference=ref),
+        )
 
-            # If (by some chance) we get here but the BOM item quantity is invalid,
-            # ignore!
-            if item.quantity <= 0:
-                continue
+        # Calculate the 'available stock' based on previous annotations
+        queryset = queryset.annotate(
+            available_stock=ExpressionWrapper(
+                F('total_stock') - F('so_allocations') - F('bo_allocations'),
+                output_field=models.DecimalField(),
+            )
+        )
 
-            n = int(stock / item.quantity)
+        # Extract similar information for any 'substitute' parts
+        ref = 'substitutes__part__'
+        queryset = queryset.alias(
+            sub_total_stock=part_filters.annotate_total_stock(reference=ref),
+            sub_so_allocations=part_filters.annotate_sales_order_allocations(reference=ref),
+            sub_bo_allocations=part_filters.annotate_build_order_allocations(reference=ref),
+        )
+
+        queryset = queryset.annotate(
+            substitute_stock=ExpressionWrapper(
+                F('sub_total_stock') - F('sub_so_allocations') - F('sub_bo_allocations'),
+                output_field=models.DecimalField(),
+            )
+        )
+
+        # Extract similar information for any 'variant' parts
+        variant_stock_query = part_filters.variant_stock_query(reference='sub_part__')
+
+        queryset = queryset.alias(
+            var_total_stock=part_filters.annotate_variant_quantity(variant_stock_query, reference='quantity'),
+            var_bo_allocations=part_filters.annotate_variant_quantity(variant_stock_query, reference='allocations__quantity'),
+            var_so_allocations=part_filters.annotate_variant_quantity(variant_stock_query, reference='sales_order_allocations__quantity'),
+        )
+
+        queryset = queryset.annotate(
+            variant_stock=ExpressionWrapper(
+                F('var_total_stock') - F('var_bo_allocations') - F('var_so_allocations'),
+                output_field=models.DecimalField(),
+            )
+        )
+
+        for item in queryset.all():
+            # Iterate through each item in the queryset, work out the limiting quantity
+            quantity = item.available_stock + item.substitute_stock
+
+            if item.allow_variants:
+                quantity += item.variant_stock
+
+            n = int(quantity / item.quantity)
 
             if total is None or n < total:
                 total = n
@@ -1337,10 +1387,9 @@ class Part(MetadataMixin, MPTTModel):
 
             # There are parents available
             if parents.count() > 0:
-                parent_ids = [p.pk for p in parents]
 
                 parent_filter = Q(
-                    part__id__in=parent_ids,
+                    part__in=parents,
                     inherited=True
                 )
 
@@ -2520,7 +2569,7 @@ class BomItem(DataImportMixin, models.Model):
         - Allow stock from all directly specified substitute parts
         - If allow_variants is True, allow all part variants
         """
-        return Q(part__in=[part.pk for part in self.get_valid_parts_for_allocation()])
+        return Q(part__in=self.get_valid_parts_for_allocation())
 
     def save(self, *args, **kwargs):
         """Enforce 'clean' operation when saving a BomItem instance"""

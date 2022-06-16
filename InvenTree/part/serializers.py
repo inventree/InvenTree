@@ -4,8 +4,7 @@ import imghdr
 from decimal import Decimal
 
 from django.db import models, transaction
-from django.db.models import (ExpressionWrapper, F, FloatField, Func, Q,
-                              Subquery)
+from django.db.models import ExpressionWrapper, F, FloatField, Q
 from django.db.models.functions import Coalesce
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -322,14 +321,7 @@ class PartSerializer(InvenTreeModelSerializer):
         variant_query = part.filters.variant_stock_query()
 
         queryset = queryset.annotate(
-            variant_stock=Coalesce(
-                Subquery(
-                    variant_query.annotate(
-                        total=Func(F('quantity'), function='SUM', output_field=FloatField())
-                    ).values('total')),
-                0,
-                output_field=FloatField(),
-            )
+            variant_stock=part.filters.annotate_variant_quantity(variant_query, reference='quantity'),
         )
 
         # Filter to limit builds to "active"
@@ -642,35 +634,14 @@ class BomItemSerializer(InvenTreeModelSerializer):
         variant_stock_query = part.filters.variant_stock_query(reference='sub_part__')
 
         queryset = queryset.alias(
-            variant_stock_total=Coalesce(
-                Subquery(
-                    variant_stock_query.annotate(
-                        total=Func(F('quantity'), function='SUM', output_field=FloatField())
-                    ).values('total')),
-                0,
-                output_field=FloatField()
-            ),
-            variant_stock_build_order_allocations=Coalesce(
-                Subquery(
-                    variant_stock_query.annotate(
-                        total=Func(F('sales_order_allocations__quantity'), function='SUM', output_field=FloatField()),
-                    ).values('total')),
-                0,
-                output_field=FloatField(),
-            ),
-            variant_stock_sales_order_allocations=Coalesce(
-                Subquery(
-                    variant_stock_query.annotate(
-                        total=Func(F('allocations__quantity'), function='SUM', output_field=FloatField()),
-                    ).values('total')),
-                0,
-                output_field=FloatField(),
-            )
+            variant_stock_total=part.filters.annotate_variant_quantity(variant_stock_query, reference='quantity'),
+            variant_bo_allocations=part.filters.annotate_variant_quantity(variant_stock_query, reference='sales_order_allocations__quantity'),
+            variant_so_allocations=part.filters.annotate_variant_quantity(variant_stock_query, reference='allocations__quantity'),
         )
 
         queryset = queryset.annotate(
             available_variant_stock=ExpressionWrapper(
-                F('variant_stock_total') - F('variant_stock_build_order_allocations') - F('variant_stock_sales_order_allocations'),
+                F('variant_stock_total') - F('variant_bo_allocations') - F('variant_so_allocations'),
                 output_field=FloatField(),
             )
         )
