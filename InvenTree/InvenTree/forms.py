@@ -124,21 +124,25 @@ class EditUserForm(HelperForm):
 class SetPasswordForm(HelperForm):
     """Form for setting user password."""
 
-    enter_password = forms.CharField(max_length=100,
-                                     min_length=8,
-                                     required=True,
-                                     initial='',
-                                     widget=forms.PasswordInput(attrs={'autocomplete': 'off'}),
-                                     label=_('Enter password'),
-                                     help_text=_('Enter new password'))
+    enter_password = forms.CharField(
+        max_length=100,
+        min_length=8,
+        required=True,
+        initial='',
+        widget=forms.PasswordInput(attrs={'autocomplete': 'off'}),
+        label=_('Enter password'),
+        help_text=_('Enter new password')
+    )
 
-    confirm_password = forms.CharField(max_length=100,
-                                       min_length=8,
-                                       required=True,
-                                       initial='',
-                                       widget=forms.PasswordInput(attrs={'autocomplete': 'off'}),
-                                       label=_('Confirm password'),
-                                       help_text=_('Confirm new password'))
+    confirm_password = forms.CharField(
+        max_length=100,
+        min_length=8,
+        required=True,
+        initial='',
+        widget=forms.PasswordInput(attrs={'autocomplete': 'off'}),
+        label=_('Confirm password'),
+        help_text=_('Confirm new password')
+    )
 
     class Meta:
         """Metaclass options."""
