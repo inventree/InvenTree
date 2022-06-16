@@ -5,17 +5,18 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.urls import include, path, re_path
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, generics, permissions, status
+from rest_framework import filters, permissions, status
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from InvenTree.mixins import ListAPI, RetrieveAPI
 from InvenTree.serializers import UserSerializer
 from users.models import Owner, RuleSet, check_user_role
 from users.serializers import OwnerSerializer
 
 
-class OwnerList(generics.ListAPIView):
+class OwnerList(ListAPI):
     """List API endpoint for Owner model.
 
     Cannot create.
@@ -54,7 +55,7 @@ class OwnerList(generics.ListAPIView):
         return results
 
 
-class OwnerDetail(generics.RetrieveAPIView):
+class OwnerDetail(RetrieveAPI):
     """Detail API endpoint for Owner model.
 
     Cannot edit or delete
@@ -107,7 +108,7 @@ class RoleDetails(APIView):
         return Response(data)
 
 
-class UserDetail(generics.RetrieveAPIView):
+class UserDetail(RetrieveAPI):
     """Detail endpoint for a single user."""
 
     queryset = User.objects.all()
@@ -115,7 +116,7 @@ class UserDetail(generics.RetrieveAPIView):
     permission_classes = (permissions.IsAuthenticated,)
 
 
-class UserList(generics.ListAPIView):
+class UserList(ListAPI):
     """List endpoint for detail on all users."""
 
     queryset = User.objects.all()
