@@ -738,6 +738,13 @@ class DatabaseStatsView(AjaxView):
     ajax_form_title = _("System Information")
 
 
+class AboutView(AjaxView):
+    """A view for displaying InvenTree version information"""
+
+    ajax_template_name = "about.html"
+    ajax_form_title = _("About InvenTree")
+
+
 class NotificationsView(TemplateView):
     """View for showing notifications."""
 

@@ -31,7 +31,7 @@ from stock.urls import stock_urls
 from users.api import user_urls
 
 from .api import InfoView, NotFoundView
-from .views import (AppearanceSelectView, CurrencyRefreshView,
+from .views import (AboutView, AppearanceSelectView, CurrencyRefreshView,
                     CustomConnectionsView, CustomEmailView,
                     CustomPasswordResetFromKeyView,
                     CustomSessionDeleteOtherView, CustomSessionDeleteView,
@@ -150,6 +150,7 @@ frontendpatterns = [
     re_path(r'^notifications/', include(notifications_urls)),
     re_path(r'^search/', SearchView.as_view(), name='search'),
     re_path(r'^settings/', include(settings_urls)),
+    re_path(r'^about/', AboutView.as_view(), name='about'),
     re_path(r'^stats/', DatabaseStatsView.as_view(), name='stats'),
 
     # admin sites

@@ -106,14 +106,9 @@ function inventreeDocReady() {
 
     // Callback to launch the 'About' window
     $('#launch-about').click(function() {
-        var modal = $('#modal-about');
-
-        modal.modal({
-            backdrop: 'static',
-            keyboard: true,
+        launchModalForm(`/about/`, {
+            no_post: true,
         });
-
-        modal.modal('show');
     });
 
     // Callback to launch the 'Database Stats' window
@@ -125,8 +120,6 @@ function inventreeDocReady() {
 
     // Initialize clipboard-buttons
     attachClipboard('.clip-btn');
-    attachClipboard('.clip-btn', 'modal-about');
-    attachClipboard('.clip-btn-version', 'modal-about', 'about-copy-text');
 
     // Generate brand-icons
     $('.brand-icon').each(function(i, obj) {
