@@ -248,9 +248,6 @@ function setupNotesField(element, url, options={}) {
         },
     });
 
-    // Ensure markdown data is sanitized against XSS attacks
-    initial = sanitizeData(initial);
-
     var toolbar_icons = [
         'preview', '|',
     ];
@@ -277,6 +274,11 @@ function setupNotesField(element, url, options={}) {
         initialValue: initial,
         toolbar: toolbar_icons,
         shortcuts: [],
+        renderingConfig: {
+            markedOptions: {
+                sanitize: true,
+            }
+        }
     });
 
 
