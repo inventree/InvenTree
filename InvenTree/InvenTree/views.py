@@ -540,6 +540,8 @@ class SetPasswordView(AjaxUpdateView):
 
         p1 = request.POST.get('enter_password', '')
         p2 = request.POST.get('confirm_password', '')
+        old_password = request.POST.get('old_password', '')
+        user = self.request.user
 
         if valid:
             # Passwords must match
@@ -548,20 +550,20 @@ class SetPasswordView(AjaxUpdateView):
                 error = _('Password fields must match')
                 form.add_error('enter_password', error)
                 form.add_error('confirm_password', error)
-
                 valid = False
 
-        data = {
-            'form_valid': valid
-        }
+        if valid:
+            # Old password must be correct
+
+            if not user.check_password(old_password):
+                form.add_error('old_password', _('Wrong password provided'))
+                valid = False
 
         if valid:
-            user = self.request.user
-
             user.set_password(p1)
             user.save()
 
-        return self.renderJsonResponse(request, form, data=data)
+        return self.renderJsonResponse(request, form, data={'form_valid': valid})
 
 
 class IndexView(TemplateView):

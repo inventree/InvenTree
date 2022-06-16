@@ -144,13 +144,20 @@ class SetPasswordForm(HelperForm):
         help_text=_('Confirm new password')
     )
 
+    old_password = forms.CharField(
+        label=_("Old password"),
+        strip=False,
+        widget=forms.PasswordInput(attrs={'autocomplete': 'current-password', 'autofocus': True}),
+    )
+
     class Meta:
         """Metaclass options."""
 
         model = User
         fields = [
             'enter_password',
-            'confirm_password'
+            'confirm_password',
+            'old_password',
         ]
 
 
