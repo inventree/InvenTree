@@ -801,7 +801,10 @@ class Part(MetadataMixin, MPTTModel):
         upload_to=rename_part_image,
         null=True,
         blank=True,
-        variations={'thumbnail': (128, 128)},
+        variations={
+            'thumbnail': (128, 128),
+            'preview': (256, 256),
+        },
         delete_orphans=False,
         verbose_name=_('Image'),
     )
