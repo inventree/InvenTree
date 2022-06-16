@@ -8,8 +8,10 @@ import json
 import os
 
 from django.conf import settings
+from django.contrib.auth import password_validation
 from django.contrib.auth.mixins import (LoginRequiredMixin,
                                         PermissionRequiredMixin)
+from django.core.exceptions import ValidationError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
@@ -560,8 +562,16 @@ class SetPasswordView(AjaxUpdateView):
                 valid = False
 
         if valid:
-            user.set_password(p1)
-            user.save()
+            try:
+                # Validate password
+                password_validation.validate_password(p1, user)
+
+                # Update the user
+                user.set_password(p1)
+                user.save()
+            except ValidationError as error:
+                form.add_error('confirm_password', str(error))
+                valid = False
 
         return self.renderJsonResponse(request, form, data={'form_valid': valid})
 
