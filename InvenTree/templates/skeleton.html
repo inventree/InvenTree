@@ -65,15 +65,7 @@
 {% block body_scripts_general %}
 {% endblock %}
 
-
-<!-- 3rd party general js -->
-<script type="text/javascript" src="{% static 'fullcalendar/main.js' %}"></script>
-<script type="text/javascript" src="{% static 'fullcalendar/locales-all.js' %}"></script>
-<script type="text/javascript" src="{% static 'select2/js/select2.full.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/moment.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/chart.min.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/clipboard.min.js' %}"></script>
-<script type='text/javascript' src="{% static 'script/randomColor.min.js' %}"></script>
+{% include "third_party_js.html" %}
 
 <!-- general JS -->
 <script type='text/javascript' src="{% static 'script/inventree/inventree.js' %}"></script>
