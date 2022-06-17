@@ -1389,7 +1389,7 @@ class Part(MetadataMixin, MPTTModel):
             parents = self.get_ancestors(include_self=False)
 
             # There are parents available
-            if parents.count() > 0:
+            if parents.exists():
 
                 parent_filter = Q(
                     part__in=parents,
@@ -1477,7 +1477,7 @@ class Part(MetadataMixin, MPTTModel):
     @property
     def has_bom(self):
         """Return True if this Part instance has any BOM items"""
-        return self.get_bom_items().count() > 0
+        return self.get_bom_items().exists()
 
     def get_trackable_parts(self):
         """Return a queryset of all trackable parts in the BOM for this part."""
@@ -1492,7 +1492,7 @@ class Part(MetadataMixin, MPTTModel):
 
         This is important when building the part.
         """
-        return self.get_trackable_parts().count() > 0
+        return self.get_trackable_parts().exists()
 
     @property
     def bom_count(self):
@@ -1534,7 +1534,7 @@ class Part(MetadataMixin, MPTTModel):
         # Validate each line item, ignoring inherited ones
         bom_items = self.get_bom_items(include_inherited=False)
 
-        for item in bom_items.all():
+        for item in bom_items:
             item.validate_hash()
 
         self.bom_checksum = self.get_bom_hash()
@@ -1561,7 +1561,7 @@ class Part(MetadataMixin, MPTTModel):
         if parts is None:
             parts = set()
 
-        bom_items = self.get_bom_items().all()
+        bom_items = self.get_bom_items()
 
         for bom_item in bom_items:
 
@@ -1585,7 +1585,7 @@ class Part(MetadataMixin, MPTTModel):
     def has_complete_bom_pricing(self):
         """Return true if there is pricing information for each item in the BOM."""
         use_internal = common.models.InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False)
-        for item in self.get_bom_items().all().select_related('sub_part'):
+        for item in self.get_bom_items().select_related('sub_part'):
             if item.sub_part.get_price_range(internal=use_internal) is None:
                 return False
 
@@ -1661,7 +1661,7 @@ class Part(MetadataMixin, MPTTModel):
         min_price = None
         max_price = None
 
-        for item in self.get_bom_items().all().select_related('sub_part'):
+        for item in self.get_bom_items().select_related('sub_part'):
 
             if item.sub_part.pk == self.pk:
                 logger.warning(f"WARNING: BomItem ID {item.pk} contains itself in BOM")
@@ -1741,7 +1741,7 @@ class Part(MetadataMixin, MPTTModel):
     @property
     def has_price_breaks(self):
         """Return True if this part has sale price breaks"""
-        return self.price_breaks.count() > 0
+        return self.price_breaks.exists()
 
     @property
     def price_breaks(self):
@@ -1777,7 +1777,7 @@ class Part(MetadataMixin, MPTTModel):
     @property
     def has_internal_price_breaks(self):
         """Return True if this Part has internal pricing information"""
-        return self.internal_price_breaks.count() > 0
+        return self.internal_price_breaks.exists()
 
     @property
     def internal_price_breaks(self):
@@ -2030,7 +2030,7 @@ class Part(MetadataMixin, MPTTModel):
     @property
     def has_variants(self):
         """Check if this Part object has variants underneath it."""
-        return self.get_all_variants().count() > 0
+        return self.get_all_variants().exists()
 
     def get_all_variants(self):
         """Return all Part object which exist as a variant under this part."""
@@ -2045,7 +2045,7 @@ class Part(MetadataMixin, MPTTModel):
         b) It has non-virtual template parts above it
         c) It has non-virtual sibling variants
         """
-        return self.get_conversion_options().count() > 0
+        return self.get_conversion_options().exists()
 
     def get_conversion_options(self):
         """Return options for converting this part to a "variant" within the same tree.
