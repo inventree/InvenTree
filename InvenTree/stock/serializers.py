@@ -383,7 +383,7 @@ class InstallStockItemSerializer(serializers.Serializer):
 
     def validate_stock_item(self, stock_item):
         """Validate the selected stock item."""
-        if not stock_item.is_in_stock:
+        if not stock_item.in_stock:
             # StockItem must be in stock to be "installed"
             raise ValidationError(_("Stock item is unavailable"))
 
