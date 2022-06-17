@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.core.cache import cache
 from django.db import models
 from django.db.models import Q, UniqueConstraint
 from django.db.models.signals import post_delete, post_save
@@ -474,13 +475,19 @@ def update_group_roles(group, debug=False):
                         logger.info(f"Adding permission {child_perm} to group {group.name}")
 
 
-@receiver(post_save, sender=Group, dispatch_uid='create_missing_rule_sets')
-def create_missing_rule_sets(sender, instance, **kwargs):
-    """Called *after* a Group object is saved.
+def clear_user_role_cache(user):
+    """Remove user role permission information from the cache.
 
-    As the linked RuleSet instances are saved *before* the Group, then we can now use these RuleSet values to update the group permissions.
+    - This function is called whenever the user / group is updated
+
+    Args:
+        user: The User object to be expunged from the cache
     """
-    update_group_roles(instance)
+
+    for role in RuleSet.RULESET_MODELS.keys():
+        for perm in ['add', 'change', 'view', 'delete']:
+            key = f"role_{user}_{role}_{perm}"
+            cache.delete(key)
 
 
 def check_user_role(user, role, permission):
@@ -491,6 +498,17 @@ def check_user_role(user, role, permission):
     if user.is_superuser:
         return True
 
+    # First, check the cache
+    key = f"role_{user}_{role}_{permission}"
+
+    result = cache.get(key)
+
+    if result is not None:
+        return result
+
+    # Default for no match
+    result = False
+
     for group in user.groups.all():
 
         for rule in group.rule_sets.all():
@@ -498,19 +516,24 @@ def check_user_role(user, role, permission):
             if rule.name == role:
 
                 if permission == 'add' and rule.can_add:
-                    return True
+                    result = True
+                    break
 
                 if permission == 'change' and rule.can_change:
-                    return True
+                    result = True
+                    break
 
                 if permission == 'view' and rule.can_view:
-                    return True
+                    result = True
+                    break
 
                 if permission == 'delete' and rule.can_delete:
-                    return True
+                    result = True
+                    break
 
-    # No matching permissions found
-    return False
+    # Save result to cache
+    cache.set(key, result, timeout=3600)
+    return result
 
 
 class Owner(models.Model):
@@ -659,3 +682,22 @@ def delete_owner(sender, instance, **kwargs):
     """Callback function to delete an owner instance after either a new group or user instance is deleted."""
     owner = Owner.get_owner(instance)
     owner.delete()
+
+
+@receiver(post_save, sender=get_user_model(), dispatch_uid='clear_user_cache')
+def clear_user_cache(sender, instance, **kwargs):
+    """Callback function when a user object is saved"""
+
+    clear_user_role_cache(instance)
+
+
+@receiver(post_save, sender=Group, dispatch_uid='create_missing_rule_sets')
+def create_missing_rule_sets(sender, instance, **kwargs):
+    """Called *after* a Group object is saved.
+
+    As the linked RuleSet instances are saved *before* the Group, then we can now use these RuleSet values to update the group permissions.
+    """
+    update_group_roles(instance)
+
+    for user in get_user_model().objects.filter(groups__name=instance.name):
+        clear_user_role_cache(user)

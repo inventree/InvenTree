@@ -12,7 +12,7 @@ from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, generics, status
+from rest_framework import filters, status
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
@@ -27,6 +27,8 @@ from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import (DownloadFile, extract_serial_numbers, isNull,
                                str2bool)
+from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI, RetrieveAPI,
+                              RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
 from order.models import PurchaseOrder, SalesOrder, SalesOrderAllocation
 from order.serializers import PurchaseOrderSerializer
 from part.models import BomItem, Part, PartCategory
@@ -37,7 +39,7 @@ from stock.models import (StockItem, StockItemAttachment, StockItemTestResult,
                           StockItemTracking, StockLocation)
 
 
-class StockDetail(generics.RetrieveUpdateDestroyAPIView):
+class StockDetail(RetrieveUpdateDestroyAPI):
     """API detail endpoint for Stock object.
 
     get:
@@ -72,13 +74,12 @@ class StockDetail(generics.RetrieveUpdateDestroyAPIView):
         kwargs['part_detail'] = True
         kwargs['location_detail'] = True
         kwargs['supplier_part_detail'] = True
-        kwargs['test_detail'] = True
         kwargs['context'] = self.get_serializer_context()
 
         return self.serializer_class(*args, **kwargs)
 
 
-class StockMetadata(generics.RetrieveUpdateAPIView):
+class StockMetadata(RetrieveUpdateAPI):
     """API endpoint for viewing / updating StockItem metadata."""
 
     def get_serializer(self, *args, **kwargs):
@@ -106,13 +107,13 @@ class StockItemContextMixin:
         return context
 
 
-class StockItemSerialize(StockItemContextMixin, generics.CreateAPIView):
+class StockItemSerialize(StockItemContextMixin, CreateAPI):
     """API endpoint for serializing a stock item."""
 
     serializer_class = StockSerializers.SerializeStockItemSerializer
 
 
-class StockItemInstall(StockItemContextMixin, generics.CreateAPIView):
+class StockItemInstall(StockItemContextMixin, CreateAPI):
     """API endpoint for installing a particular stock item into this stock item.
 
     - stock_item.part must be in the BOM for this part
@@ -123,25 +124,25 @@ class StockItemInstall(StockItemContextMixin, generics.CreateAPIView):
     serializer_class = StockSerializers.InstallStockItemSerializer
 
 
-class StockItemUninstall(StockItemContextMixin, generics.CreateAPIView):
+class StockItemUninstall(StockItemContextMixin, CreateAPI):
     """API endpoint for removing (uninstalling) items from this item."""
 
     serializer_class = StockSerializers.UninstallStockItemSerializer
 
 
-class StockItemConvert(StockItemContextMixin, generics.CreateAPIView):
+class StockItemConvert(StockItemContextMixin, CreateAPI):
     """API endpoint for converting a stock item to a variant part"""
 
     serializer_class = StockSerializers.ConvertStockItemSerializer
 
 
-class StockItemReturn(StockItemContextMixin, generics.CreateAPIView):
+class StockItemReturn(StockItemContextMixin, CreateAPI):
     """API endpoint for returning a stock item from a customer"""
 
     serializer_class = StockSerializers.ReturnStockItemSerializer
 
 
-class StockAdjustView(generics.CreateAPIView):
+class StockAdjustView(CreateAPI):
     """A generic class for handling stocktake actions.
 
     Subclasses exist for:
@@ -186,7 +187,7 @@ class StockTransfer(StockAdjustView):
     serializer_class = StockSerializers.StockTransferSerializer
 
 
-class StockAssign(generics.CreateAPIView):
+class StockAssign(CreateAPI):
     """API endpoint for assigning stock to a particular customer."""
 
     queryset = StockItem.objects.all()
@@ -200,7 +201,7 @@ class StockAssign(generics.CreateAPIView):
         return ctx
 
 
-class StockMerge(generics.CreateAPIView):
+class StockMerge(CreateAPI):
     """API endpoint for merging multiple stock items."""
 
     queryset = StockItem.objects.none()
@@ -213,7 +214,7 @@ class StockMerge(generics.CreateAPIView):
         return ctx
 
 
-class StockLocationList(generics.ListCreateAPIView):
+class StockLocationList(ListCreateAPI):
     """API endpoint for list view of StockLocation objects.
 
     - GET: Return list of StockLocation objects
@@ -305,7 +306,7 @@ class StockLocationList(generics.ListCreateAPIView):
     ]
 
 
-class StockLocationTree(generics.ListAPIView):
+class StockLocationTree(ListAPI):
     """API endpoint for accessing a list of StockLocation objects, ready for rendering as a tree."""
 
     queryset = StockLocation.objects.all()
@@ -502,7 +503,8 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         # Copy the request data, to side-step "mutability" issues
         data = OrderedDict()
-        data.update(request.data)
+        # Update with cleaned input data
+        data.update(self.clean_data(request.data))
 
         quantity = data.get('quantity', None)
 
@@ -1067,14 +1069,14 @@ class StockAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     ]
 
 
-class StockAttachmentDetail(AttachmentMixin, generics.RetrieveUpdateDestroyAPIView):
+class StockAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for StockItemAttachment."""
 
     queryset = StockItemAttachment.objects.all()
     serializer_class = StockSerializers.StockItemAttachmentSerializer
 
 
-class StockItemTestResultDetail(generics.RetrieveUpdateDestroyAPIView):
+class StockItemTestResultDetail(RetrieveUpdateDestroyAPI):
     """Detail endpoint for StockItemTestResult."""
 
     queryset = StockItemTestResult.objects.all()
@@ -1170,14 +1172,14 @@ class StockItemTestResultList(ListCreateDestroyAPIView):
         test_result.save()
 
 
-class StockTrackingDetail(generics.RetrieveAPIView):
+class StockTrackingDetail(RetrieveAPI):
     """Detail API endpoint for StockItemTracking model."""
 
     queryset = StockItemTracking.objects.all()
     serializer_class = StockSerializers.StockTrackingSerializer
 
 
-class StockTrackingList(generics.ListAPIView):
+class StockTrackingList(ListAPI):
     """API endpoint for list view of StockItemTracking objects.
 
     StockItemTracking objects are read-only
@@ -1276,7 +1278,10 @@ class StockTrackingList(generics.ListAPIView):
         Here we override the default 'create' implementation,
         to save the user information associated with the request object.
         """
-        serializer = self.get_serializer(data=request.data)
+        # Clean up input data
+        data = self.clean_data(request.data)
+
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
 
         # Record the user who created this Part object
@@ -1314,7 +1319,7 @@ class StockTrackingList(generics.ListAPIView):
     ]
 
 
-class LocationMetadata(generics.RetrieveUpdateAPIView):
+class LocationMetadata(RetrieveUpdateAPI):
     """API endpoint for viewing / updating StockLocation metadata."""
 
     def get_serializer(self, *args, **kwargs):
@@ -1324,7 +1329,7 @@ class LocationMetadata(generics.RetrieveUpdateAPIView):
     queryset = StockLocation.objects.all()
 
 
-class LocationDetail(generics.RetrieveUpdateDestroyAPIView):
+class LocationDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of StockLocation object.
 
     - GET: Return a single StockLocation object

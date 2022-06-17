@@ -4,7 +4,7 @@ from django.db.models import F, Q
 from django.urls import include, path, re_path
 
 from django_filters import rest_framework as rest_filters
-from rest_framework import filters, generics, status
+from rest_framework import filters, status
 from rest_framework.response import Response
 
 import order.models as models
@@ -14,6 +14,8 @@ from InvenTree.api import (APIDownloadMixin, AttachmentMixin,
                            ListCreateDestroyAPIView)
 from InvenTree.filters import InvenTreeOrderingFilter
 from InvenTree.helpers import DownloadFile, str2bool
+from InvenTree.mixins import (CreateAPI, ListAPI, ListCreateAPI,
+                              RetrieveUpdateAPI, RetrieveUpdateDestroyAPI)
 from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
 from order.admin import (PurchaseOrderLineItemResource, PurchaseOrderResource,
                          SalesOrderResource)
@@ -101,7 +103,7 @@ class PurchaseOrderFilter(rest_filters.FilterSet):
         ]
 
 
-class PurchaseOrderList(APIDownloadMixin, generics.ListCreateAPIView):
+class PurchaseOrderList(APIDownloadMixin, ListCreateAPI):
     """API endpoint for accessing a list of PurchaseOrder objects.
 
     - GET: Return list of PurchaseOrder objects (with filters)
@@ -114,7 +116,7 @@ class PurchaseOrderList(APIDownloadMixin, generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         """Save user information on create."""
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(data=self.clean_data(request.data))
         serializer.is_valid(raise_exception=True)
 
         item = serializer.save()
@@ -254,7 +256,7 @@ class PurchaseOrderList(APIDownloadMixin, generics.ListCreateAPIView):
     ordering = '-creation_date'
 
 
-class PurchaseOrderDetail(generics.RetrieveUpdateDestroyAPIView):
+class PurchaseOrderDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a PurchaseOrder object."""
 
     queryset = models.PurchaseOrder.objects.all()
@@ -304,7 +306,7 @@ class PurchaseOrderContextMixin:
         return context
 
 
-class PurchaseOrderCancel(PurchaseOrderContextMixin, generics.CreateAPIView):
+class PurchaseOrderCancel(PurchaseOrderContextMixin, CreateAPI):
     """API endpoint to 'cancel' a purchase order.
 
     The purchase order must be in a state which can be cancelled
@@ -315,7 +317,7 @@ class PurchaseOrderCancel(PurchaseOrderContextMixin, generics.CreateAPIView):
     serializer_class = serializers.PurchaseOrderCancelSerializer
 
 
-class PurchaseOrderComplete(PurchaseOrderContextMixin, generics.CreateAPIView):
+class PurchaseOrderComplete(PurchaseOrderContextMixin, CreateAPI):
     """API endpoint to 'complete' a purchase order."""
 
     queryset = models.PurchaseOrder.objects.all()
@@ -323,7 +325,7 @@ class PurchaseOrderComplete(PurchaseOrderContextMixin, generics.CreateAPIView):
     serializer_class = serializers.PurchaseOrderCompleteSerializer
 
 
-class PurchaseOrderIssue(PurchaseOrderContextMixin, generics.CreateAPIView):
+class PurchaseOrderIssue(PurchaseOrderContextMixin, CreateAPI):
     """API endpoint to 'complete' a purchase order."""
 
     queryset = models.PurchaseOrder.objects.all()
@@ -331,7 +333,7 @@ class PurchaseOrderIssue(PurchaseOrderContextMixin, generics.CreateAPIView):
     serializer_class = serializers.PurchaseOrderIssueSerializer
 
 
-class PurchaseOrderMetadata(generics.RetrieveUpdateAPIView):
+class PurchaseOrderMetadata(RetrieveUpdateAPI):
     """API endpoint for viewing / updating PurchaseOrder metadata."""
 
     def get_serializer(self, *args, **kwargs):
@@ -341,7 +343,7 @@ class PurchaseOrderMetadata(generics.RetrieveUpdateAPIView):
     queryset = models.PurchaseOrder.objects.all()
 
 
-class PurchaseOrderReceive(PurchaseOrderContextMixin, generics.CreateAPIView):
+class PurchaseOrderReceive(PurchaseOrderContextMixin, CreateAPI):
     """API endpoint to receive stock items against a purchase order.
 
     - The purchase order is specified in the URL.
@@ -405,7 +407,7 @@ class PurchaseOrderLineItemFilter(rest_filters.FilterSet):
         return queryset
 
 
-class PurchaseOrderLineItemList(APIDownloadMixin, generics.ListCreateAPIView):
+class PurchaseOrderLineItemList(APIDownloadMixin, ListCreateAPI):
     """API endpoint for accessing a list of PurchaseOrderLineItem objects.
 
     - GET: Return a list of PurchaseOrder Line Item objects
@@ -499,7 +501,7 @@ class PurchaseOrderLineItemList(APIDownloadMixin, generics.ListCreateAPIView):
     ]
 
 
-class PurchaseOrderLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
+class PurchaseOrderLineItemDetail(RetrieveUpdateDestroyAPI):
     """Detail API endpoint for PurchaseOrderLineItem object."""
 
     queryset = models.PurchaseOrderLineItem.objects.all()
@@ -514,14 +516,14 @@ class PurchaseOrderLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
         return queryset
 
 
-class PurchaseOrderExtraLineList(GeneralExtraLineList, generics.ListCreateAPIView):
+class PurchaseOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
     """API endpoint for accessing a list of PurchaseOrderExtraLine objects."""
 
     queryset = models.PurchaseOrderExtraLine.objects.all()
     serializer_class = serializers.PurchaseOrderExtraLineSerializer
 
 
-class PurchaseOrderExtraLineDetail(generics.RetrieveUpdateDestroyAPIView):
+class PurchaseOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a PurchaseOrderExtraLine object."""
 
     queryset = models.PurchaseOrderExtraLine.objects.all()
@@ -543,14 +545,14 @@ class SalesOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     ]
 
 
-class SalesOrderAttachmentDetail(AttachmentMixin, generics.RetrieveUpdateDestroyAPIView):
+class SalesOrderAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for SalesOrderAttachment."""
 
     queryset = models.SalesOrderAttachment.objects.all()
     serializer_class = serializers.SalesOrderAttachmentSerializer
 
 
-class SalesOrderList(APIDownloadMixin, generics.ListCreateAPIView):
+class SalesOrderList(APIDownloadMixin, ListCreateAPI):
     """API endpoint for accessing a list of SalesOrder objects.
 
     - GET: Return list of SalesOrder objects (with filters)
@@ -562,7 +564,7 @@ class SalesOrderList(APIDownloadMixin, generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         """Save user information on create."""
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(data=self.clean_data(request.data))
         serializer.is_valid(raise_exception=True)
 
         item = serializer.save()
@@ -695,7 +697,7 @@ class SalesOrderList(APIDownloadMixin, generics.ListCreateAPIView):
     ordering = '-creation_date'
 
 
-class SalesOrderDetail(generics.RetrieveUpdateDestroyAPIView):
+class SalesOrderDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a SalesOrder object."""
 
     queryset = models.SalesOrder.objects.all()
@@ -754,7 +756,7 @@ class SalesOrderLineItemFilter(rest_filters.FilterSet):
         return queryset
 
 
-class SalesOrderLineItemList(generics.ListCreateAPIView):
+class SalesOrderLineItemList(ListCreateAPI):
     """API endpoint for accessing a list of SalesOrderLineItem objects."""
 
     queryset = models.SalesOrderLineItem.objects.all()
@@ -818,21 +820,21 @@ class SalesOrderLineItemList(generics.ListCreateAPIView):
     ]
 
 
-class SalesOrderExtraLineList(GeneralExtraLineList, generics.ListCreateAPIView):
+class SalesOrderExtraLineList(GeneralExtraLineList, ListCreateAPI):
     """API endpoint for accessing a list of SalesOrderExtraLine objects."""
 
     queryset = models.SalesOrderExtraLine.objects.all()
     serializer_class = serializers.SalesOrderExtraLineSerializer
 
 
-class SalesOrderExtraLineDetail(generics.RetrieveUpdateDestroyAPIView):
+class SalesOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a SalesOrderExtraLine object."""
 
     queryset = models.SalesOrderExtraLine.objects.all()
     serializer_class = serializers.SalesOrderExtraLineSerializer
 
 
-class SalesOrderLineItemDetail(generics.RetrieveUpdateDestroyAPIView):
+class SalesOrderLineItemDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a SalesOrderLineItem object."""
 
     queryset = models.SalesOrderLineItem.objects.all()
@@ -864,21 +866,21 @@ class SalesOrderContextMixin:
         return ctx
 
 
-class SalesOrderCancel(SalesOrderContextMixin, generics.CreateAPIView):
+class SalesOrderCancel(SalesOrderContextMixin, CreateAPI):
     """API endpoint to cancel a SalesOrder"""
 
     queryset = models.SalesOrder.objects.all()
     serializer_class = serializers.SalesOrderCancelSerializer
 
 
-class SalesOrderComplete(SalesOrderContextMixin, generics.CreateAPIView):
+class SalesOrderComplete(SalesOrderContextMixin, CreateAPI):
     """API endpoint for manually marking a SalesOrder as "complete"."""
 
     queryset = models.SalesOrder.objects.all()
     serializer_class = serializers.SalesOrderCompleteSerializer
 
 
-class SalesOrderMetadata(generics.RetrieveUpdateAPIView):
+class SalesOrderMetadata(RetrieveUpdateAPI):
     """API endpoint for viewing / updating SalesOrder metadata."""
 
     def get_serializer(self, *args, **kwargs):
@@ -888,14 +890,14 @@ class SalesOrderMetadata(generics.RetrieveUpdateAPIView):
     queryset = models.SalesOrder.objects.all()
 
 
-class SalesOrderAllocateSerials(SalesOrderContextMixin, generics.CreateAPIView):
+class SalesOrderAllocateSerials(SalesOrderContextMixin, CreateAPI):
     """API endpoint to allocation stock items against a SalesOrder, by specifying serial numbers."""
 
     queryset = models.SalesOrder.objects.none()
     serializer_class = serializers.SalesOrderSerialAllocationSerializer
 
 
-class SalesOrderAllocate(SalesOrderContextMixin, generics.CreateAPIView):
+class SalesOrderAllocate(SalesOrderContextMixin, CreateAPI):
     """API endpoint to allocate stock items against a SalesOrder.
 
     - The SalesOrder is specified in the URL
@@ -906,14 +908,14 @@ class SalesOrderAllocate(SalesOrderContextMixin, generics.CreateAPIView):
     serializer_class = serializers.SalesOrderShipmentAllocationSerializer
 
 
-class SalesOrderAllocationDetail(generics.RetrieveUpdateDestroyAPIView):
+class SalesOrderAllocationDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for detali view of a SalesOrderAllocation object."""
 
     queryset = models.SalesOrderAllocation.objects.all()
     serializer_class = serializers.SalesOrderAllocationSerializer
 
 
-class SalesOrderAllocationList(generics.ListAPIView):
+class SalesOrderAllocationList(ListAPI):
     """API endpoint for listing SalesOrderAllocation objects."""
 
     queryset = models.SalesOrderAllocation.objects.all()
@@ -1017,7 +1019,7 @@ class SalesOrderShipmentFilter(rest_filters.FilterSet):
         ]
 
 
-class SalesOrderShipmentList(generics.ListCreateAPIView):
+class SalesOrderShipmentList(ListCreateAPI):
     """API list endpoint for SalesOrderShipment model."""
 
     queryset = models.SalesOrderShipment.objects.all()
@@ -1029,14 +1031,14 @@ class SalesOrderShipmentList(generics.ListCreateAPIView):
     ]
 
 
-class SalesOrderShipmentDetail(generics.RetrieveUpdateDestroyAPIView):
+class SalesOrderShipmentDetail(RetrieveUpdateDestroyAPI):
     """API detail endpooint for SalesOrderShipment model."""
 
     queryset = models.SalesOrderShipment.objects.all()
     serializer_class = serializers.SalesOrderShipmentSerializer
 
 
-class SalesOrderShipmentComplete(generics.CreateAPIView):
+class SalesOrderShipmentComplete(CreateAPI):
     """API endpoint for completing (shipping) a SalesOrderShipment."""
 
     queryset = models.SalesOrderShipment.objects.all()
@@ -1072,7 +1074,7 @@ class PurchaseOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
     ]
 
 
-class PurchaseOrderAttachmentDetail(AttachmentMixin, generics.RetrieveUpdateDestroyAPIView):
+class PurchaseOrderAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for a PurchaseOrderAttachment."""
 
     queryset = models.PurchaseOrderAttachment.objects.all()

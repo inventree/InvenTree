@@ -8,8 +8,10 @@ import json
 import os
 
 from django.conf import settings
+from django.contrib.auth import password_validation
 from django.contrib.auth.mixins import (LoginRequiredMixin,
                                         PermissionRequiredMixin)
+from django.core.exceptions import ValidationError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
@@ -540,6 +542,8 @@ class SetPasswordView(AjaxUpdateView):
 
         p1 = request.POST.get('enter_password', '')
         p2 = request.POST.get('confirm_password', '')
+        old_password = request.POST.get('old_password', '')
+        user = self.request.user
 
         if valid:
             # Passwords must match
@@ -548,20 +552,28 @@ class SetPasswordView(AjaxUpdateView):
                 error = _('Password fields must match')
                 form.add_error('enter_password', error)
                 form.add_error('confirm_password', error)
-
                 valid = False
 
-        data = {
-            'form_valid': valid
-        }
+        if valid:
+            # Old password must be correct
+
+            if not user.check_password(old_password):
+                form.add_error('old_password', _('Wrong password provided'))
+                valid = False
 
         if valid:
-            user = self.request.user
+            try:
+                # Validate password
+                password_validation.validate_password(p1, user)
 
-            user.set_password(p1)
-            user.save()
+                # Update the user
+                user.set_password(p1)
+                user.save()
+            except ValidationError as error:
+                form.add_error('confirm_password', str(error))
+                valid = False
 
-        return self.renderJsonResponse(request, form, data=data)
+        return self.renderJsonResponse(request, form, data={'form_valid': valid})
 
 
 class IndexView(TemplateView):
@@ -736,6 +748,13 @@ class DatabaseStatsView(AjaxView):
 
     ajax_template_name = "stats.html"
     ajax_form_title = _("System Information")
+
+
+class AboutView(AjaxView):
+    """A view for displaying InvenTree version information"""
+
+    ajax_template_name = "about.html"
+    ajax_form_title = _("About InvenTree")
 
 
 class NotificationsView(TemplateView):

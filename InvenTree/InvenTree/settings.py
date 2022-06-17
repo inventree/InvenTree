@@ -309,6 +309,11 @@ if DEBUG_TOOLBAR_ENABLED:  # pragma: no cover
     INSTALLED_APPS.append('debug_toolbar')
     MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
 
+    DEBUG_TOOLBAR_CONFIG = {
+        'RESULTS_CACHE_SIZE': 100,
+        'OBSERVE_REQUEST_CALLBACK': lambda x: False,
+    }
+
 # Internal IP addresses allowed to see the debug toolbar
 INTERNAL_IPS = [
     '127.0.0.1',
