@@ -7,12 +7,20 @@
 </h3>
 
 <p>{% trans "Are you sure?" %}</p>
+<hr>
 
 <form method="post">
   {% csrf_token %}
-  <button type="submit" class="btn btn-danger w-100">
-    {% trans 'Disable Two-Factor' %}
-  </button>
+  <div class='btn-group float-right' role='group'>
+    <button type="submit" class="btn btn-danger w-100">
+      <span class='fas fa-times-circle'></span> {% trans 'Disable 2FA' %}
+    </button>
+  </div>
 </form>
 
+<div>
+  <a type='button' href="{% url 'settings' %}" class="btn btn-secondary">
+    <span class='fas fa-undo-alt'></span> {% trans "Return to Site" %}
+  </a>
+</div>
 {% endblock %}

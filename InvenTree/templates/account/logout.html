@@ -5,7 +5,7 @@
 {% block head_title %}{% trans "Sign Out" %}{% endblock %}
 
 {% block content %}
-<h1>{% trans "Sign Out" %}</h1>
+<h3>{% trans "Sign Out" %}</h3>
 
 <p>{% trans 'Are you sure you want to sign out?' %}</p>
 
@@ -16,10 +16,16 @@
   {% endif %}
   <hr>
   <div class='btn-group float-right' role='group'>
-    <a type='button' class='btn btn-secondary' href='{% url "index" %}'><span class='fas fa-undo-alt'></span> {% trans "Back to Site" %}</a>
-    <button type="submit" class="btn btn-danger btn-block">{% trans 'Sign Out' %}</button>
+    <button type="submit" class="btn btn-danger btn-block">
+      <span class='fas fa-sign-out-alt'></span> {% trans 'Sign Out' %}
+    </button>
   </div>
 </form>
 
+<div>
+  <a type='button' class='btn btn-secondary' href='{% url "index" %}'>
+    <span class='fas fa-undo-alt'></span> {% trans "Return to Site" %}
+  </a>
+</div>
 
 {% endblock %}
