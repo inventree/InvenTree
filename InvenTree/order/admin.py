@@ -5,7 +5,8 @@ from django.contrib import admin
 import import_export.widgets as widgets
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
-from import_export.resources import ModelResource
+
+from InvenTree.admin import InvenTreeResource
 
 from .models import (PurchaseOrder, PurchaseOrderExtraLine,
                      PurchaseOrderLineItem, SalesOrder, SalesOrderAllocation,
@@ -97,7 +98,7 @@ class SalesOrderAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('customer',)
 
 
-class PurchaseOrderResource(ModelResource):
+class PurchaseOrderResource(InvenTreeResource):
     """Class for managing import / export of PurchaseOrder data."""
 
     # Add number of line items
@@ -116,7 +117,7 @@ class PurchaseOrderResource(ModelResource):
         ]
 
 
-class PurchaseOrderLineItemResource(ModelResource):
+class PurchaseOrderLineItemResource(InvenTreeResource):
     """Class for managing import / export of PurchaseOrderLineItem data."""
 
     part_name = Field(attribute='part__part__name', readonly=True)
@@ -135,7 +136,7 @@ class PurchaseOrderLineItemResource(ModelResource):
         clean_model_instances = True
 
 
-class PurchaseOrderExtraLineResource(ModelResource):
+class PurchaseOrderExtraLineResource(InvenTreeResource):
     """Class for managing import / export of PurchaseOrderExtraLine data."""
 
     class Meta(GeneralExtraLineMeta):
@@ -144,7 +145,7 @@ class PurchaseOrderExtraLineResource(ModelResource):
         model = PurchaseOrderExtraLine
 
 
-class SalesOrderResource(ModelResource):
+class SalesOrderResource(InvenTreeResource):
     """Class for managing import / export of SalesOrder data."""
 
     # Add number of line items
@@ -163,7 +164,7 @@ class SalesOrderResource(ModelResource):
         ]
 
 
-class SalesOrderLineItemResource(ModelResource):
+class SalesOrderLineItemResource(InvenTreeResource):
     """Class for managing import / export of SalesOrderLineItem data."""
 
     part_name = Field(attribute='part__name', readonly=True)
@@ -192,7 +193,7 @@ class SalesOrderLineItemResource(ModelResource):
         clean_model_instances = True
 
 
-class SalesOrderExtraLineResource(ModelResource):
+class SalesOrderExtraLineResource(InvenTreeResource):
     """Class for managing import / export of SalesOrderExtraLine data."""
 
     class Meta(GeneralExtraLineMeta):

@@ -13,6 +13,7 @@
     inventreeDocReady,
     inventreeLoad,
     inventreeSave,
+    sanitizeData,
 */
 
 function attachClipboard(selector, containerselector, textElement) {
@@ -265,6 +266,42 @@ function loadBrandIcon(element, name) {
         element.addClass('fab fa-' + name);
     }
 }
+
+
+/*
+ * Function to sanitize a (potentially nested) object.
+ * Iterates through all levels, and sanitizes each primitive string.
+ *
+ * Note that this function effectively provides a "deep copy" of the provided data,
+ * and the original data structure is unaltered.
+ */
+function sanitizeData(data) {
+    if (data == null) {
+        return null;
+    } else if (Array.isArray(data)) {
+        // Handle arrays
+        var arr = [];
+        data.forEach(function(val) {
+            arr.push(sanitizeData(val));
+        });
+
+        return arr;
+    } else if (typeof(data) === 'object') {
+        // Handle nested structures
+        var nested = {};
+        $.each(data, function(k, v) {
+            nested[k] = sanitizeData(v);
+        });
+
+        return nested;
+    } else if (typeof(data) === 'string') {
+        // Perform string replacement
+        return data.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;').replace(/`/g, '&#x60;');
+    } else {
+        return data;
+    }
+}
+
 
 // Convenience function to determine if an element exists
 $.fn.exists = function() {
