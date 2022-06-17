@@ -1,5 +1,5 @@
 {% extends "account/base.html" %}
-{% load i18n %}
+{% load i18n crispy_forms_tags %}
 
 {% block content %}
 <h3>
@@ -7,10 +7,11 @@
 </h3>
 
 <p>{% trans "Are you sure?" %}</p>
-<hr>
 
 <form method="post">
   {% csrf_token %}
+  {{ form|crispy }}
+  <hr>
   <div class='btn-group float-right' role='group'>
     <button type="submit" class="btn btn-danger w-100">
       <span class='fas fa-times-circle'></span> {% trans 'Disable 2FA' %}
