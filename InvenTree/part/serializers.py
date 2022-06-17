@@ -250,8 +250,6 @@ class PartBriefSerializer(InvenTreeModelSerializer):
 
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
-    stock = serializers.FloatField(source='total_stock')
-
     class Meta:
         """Metaclass defining serializer fields"""
         model = Part
@@ -269,7 +267,6 @@ class PartBriefSerializer(InvenTreeModelSerializer):
             'is_template',
             'purchaseable',
             'salable',
-            'stock',
             'trackable',
             'virtual',
             'units',
