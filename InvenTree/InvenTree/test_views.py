@@ -1,7 +1,6 @@
 """Unit tests for the main web views."""
 
 import os
-import re
 
 from django.urls import reverse
 
@@ -42,17 +41,3 @@ class ViewTests(InvenTreeTestCase):
         self.assertIn("<div id='detail-panels'>", content)
 
         # TODO: In future, run the javascript and ensure that the panels get created!
-
-    def test_js_load(self):
-        """Test that the required javascript files are loaded correctly."""
-        # Change this number as more javascript files are added to the index page
-        N_SCRIPT_FILES = 40
-
-        content = self.get_index_page()
-
-        # Extract all required javascript files from the index page content
-        script_files = re.findall("<script type='text\\/javascript' src=\"([^\"]*)\"><\\/script>", content)
-
-        self.assertEqual(len(script_files), N_SCRIPT_FILES)
-
-        # TODO: Request the javascript files from the server, and ensure they are correcty loaded

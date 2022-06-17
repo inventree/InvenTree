@@ -470,8 +470,8 @@ main {
 }
 
 .part-thumb {
-    width: 200px;
-    height: 200px;
+    width: 256px;
+    height: 256px;
     margin: 2px;
     padding: 3px;
     object-fit: contain;

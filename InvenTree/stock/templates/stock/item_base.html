@@ -136,7 +136,7 @@
 {% endblock actions %}
 
 {% block thumbnail %}
-<img class='part-thumb' {% if item.part.image %}src="{{ item.part.image.url }}"{% else %}src="{% static 'img/blank_image.png' %}"{% endif %}/>
+<img class='part-thumb' {% if item.part.image %}src="{{ item.part.image.preview.url }}"{% else %}src="{% static 'img/blank_image.png' %}"{% endif %}/>
 {% endblock thumbnail %}
 
 {% block details %}
