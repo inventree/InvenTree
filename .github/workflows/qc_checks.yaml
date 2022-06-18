@@ -119,6 +119,7 @@ jobs:
         uses: ./.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils
+          dev-install: true
           update: true
       - name: Download Python Code For `${{ env.wrapper_name }}`
         run: git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }} ./${{ env.wrapper_name }}
@@ -168,6 +169,7 @@ jobs:
         uses: ./.github/actions/setup
         with:
           apt-dependency: gettext poppler-utils
+          dev-install: true
           update: true
       - name: Coverage Tests
         run: invoke coverage
