@@ -34,7 +34,7 @@ jobs:
       - name: Enviroment Setup
         uses: ./.github/actions/setup
         with:
-          install: true
+          dev-install: true
       - name: Run flake8
         run: flake8 InvenTree --extend-ignore=D
 
