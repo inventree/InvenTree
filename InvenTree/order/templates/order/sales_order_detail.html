@@ -86,6 +86,8 @@
         {% if roles.sales_order.change %}
         <div id='pending-shipment-toolbar' class='btn-group' style='float: right;'>
             <div class='btn-group' role='group'>
+                {% include "expand_rows.html" with label="pending-shipments" %}
+                {% include "collapse_rows.html" with label="pending-shipments" %}
                 {% include "filter_list.html" with id="pending-shipments" %}
             </div>
         </div>
@@ -102,6 +104,8 @@
     <div class='panel-content'>
         <div id='completed-shipment-toolbar' class='btn-group' style='float: right;'>
             <div class='btn-group' role='group'>
+                {% include "expand_rows.html" with label="completed-shipments" %}
+                {% include "collapse_rows.html" with label="completed-shipments" %}
                 {% include "filter_list.html" with id="completed-shipments" %}
             </div>
         </div>
