@@ -11,6 +11,7 @@ from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
 from InvenTree.mixins import ListCreateAPI
+from InvenTree.permissions import RolePermission
 
 from .status import is_worker_running
 from .version import (inventreeApiVersion, inventreeInstanceName,
@@ -182,7 +183,10 @@ class APIDownloadMixin:
 class AttachmentMixin:
     """Mixin for creating attachment objects, and ensuring the user information is saved correctly."""
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        RolePermission,
+    ]
 
     filter_backends = [
         DjangoFilterBackend,
