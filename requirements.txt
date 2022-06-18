@@ -178,8 +178,10 @@ pillow==9.1.1
     #   weasyprint
 progressbar2==4.0.0
     # via django-stdimage
-py-moneyed==2.0
-    # via django-money
+py-moneyed==1.2
+    # via
+    #   -r requirements.in
+    #   django-money
 pycparser==2.21
     # via cffi
 pydyf==0.2.0
@@ -242,8 +244,6 @@ tinycss2==1.1.1
     # via
     #   cssselect2
     #   weasyprint
-typing-extensions==4.2.0
-    # via py-moneyed
 uritemplate==4.1.1
     # via coreapi
 urllib3==1.26.9

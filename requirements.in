@@ -14,7 +14,7 @@ django-import-export==2.5.0             # Data import / export for admin interfa
 django-maintenance-mode                 # Shut down application while reloading etc.
 django-markdownify==0.8.0               # Markdown rendering
 django-markdownx                        # Markdown form fields
-django-money<=2.0                       # Django app for currency management
+django-money                            # Django app for currency management
 django-mptt==0.11.0                     # Modified Preorder Tree Traversal
 django-redis>=5.0.0                     # Redis integration
 django-q                                # Background task scheduling
@@ -35,3 +35,6 @@ rapidfuzz==0.7.6                        # Fuzzy string matching
 sentry-sdk                              # Error reporting (optional)
 setuptools                              # Standard depenedency
 tablib[xls,xlsx,yaml]                   # Support for XLS and XLSX formats
+
+# Fixed sub-dependencies
+py-moneyed<2.0                          # For django-money # FIXED 2022-06-18 as we need `moneyed.localization`
