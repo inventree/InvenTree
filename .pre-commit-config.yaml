@@ -33,9 +33,9 @@ repos:
     hooks:
       - id: pip-compile
         name: pip-compile requirements-dev.in
-        args: [requirements-dev.in]
-        files: ^requirements-dev\.(in)$
+        args: [requirements-dev.in --generate-hashes]
+        files: ^requirements-dev\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
-        args: [requirements.in]
-        files: ^requirements\.(in)$
+        args: [requirements.in --generate-hashes]
+        files: ^requirements\.(in|txt)$
