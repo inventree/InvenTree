@@ -1,37 +1,37 @@
 # Please keep this list sorted
 Django==3.2.13                          # Django package
-coreapi==2.3.0                          # API documentation for drf
+coreapi                                 # API documentation for djangorestframework
 django-admin-shell==0.1.2               # Python shell for the admin interface
-django-allauth==0.48.0                  # SSO for external providers via OpenID
-django-allauth-2fa==0.9                 # MFA / 2FA
+django-allauth                          # SSO for external providers via OpenID
+django-allauth-2fa                      # MFA / 2FA
 django-cleanup==5.1.0                   # Manage deletion of old / unused uploaded files
-django-cors-headers==3.2.0              # CORS headers extension for DRF
+django-cors-headers                     # CORS headers extension for DRF
 django-crispy-forms==1.11.2             # Form helpers
-django-error-report==0.2.0              # Error report viewer for the admin interface
+django-error-report                     # Error report viewer for the admin interface
 django-filter==2.4.0                    # Extended filtering options
-django-formtools==2.3                   # Form wizard tools
+django-formtools                        # Form wizard tools
 django-import-export==2.5.0             # Data import / export for admin interface
-django-maintenance-mode==0.16.1         # Shut down application while reloading etc.
+django-maintenance-mode                 # Shut down application while reloading etc.
 django-markdownify==0.8.0               # Markdown rendering
-django-markdownx==3.0.1                 # Markdown form fields
+django-markdownx                        # Markdown form fields
 django-money==1.1                       # Django app for currency management
 django-mptt==0.11.0                     # Modified Preorder Tree Traversal
 django-redis>=5.0.0                     # Redis integration
-django-q==1.3.4                         # Background task scheduling
+django-q                                # Background task scheduling
 django-sql-utils==0.5.0                 # Advanced query annotation / aggregation
-django-sslserver==0.22                  # Secure HTTP development server
+django-sslserver                        # Secure HTTP development server
 django-stdimage==5.1.1                  # Advanced ImageField management
-django-user-sessions==1.7.1             # user sessions in DB
-django-weasyprint==2.1.0                # django weasyprint integration
-djangorestframework==3.12.4             # DRF framework
-django-xforwardedfor-middleware==2.0    # IP forwarding metadata
-gunicorn>=20.1.0                        # Gunicorn web server
-pdf2image==1.16.0                       # PDF to image conversion
-pillow==9.1.1                           # Image manipulation
+django-user-sessions                    # user sessions in DB
+django-weasyprint                       # django weasyprint integration
+djangorestframework                     # DRF framework
+django-xforwardedfor-middleware         # IP forwarding metadata
+gunicorn                                # Gunicorn web server
+pdf2image                               # PDF to image conversion
+pillow                                  # Image manipulation
 pygments==2.7.4                         # Syntax highlighting
-python-barcode[images]==0.13.1          # Barcode generator
+python-barcode[images]                  # Barcode generator
 qrcode[pil]==6.1                        # QR code generator
 rapidfuzz==0.7.6                        # Fuzzy string matching
-sentry-sdk==1.5.12                      # Error reporting (optional)
+sentry-sdk                              # Error reporting (optional)
 setuptools                              # Standard depenedency
 tablib[xls,xlsx,yaml]                   # Support for XLS and XLSX formats
