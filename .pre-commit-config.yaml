@@ -37,5 +37,5 @@ repos:
         files: ^requirements-dev\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
-        args: [--generate-hashes, requirements.in]
+        args: [requirements.in]
         files: ^requirements\.(in|txt)$
