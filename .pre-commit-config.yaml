@@ -28,3 +28,14 @@ repos:
     rev: '5.10.1'
     hooks:
     -   id: isort
+-   repo: https://github.com/jazzband/pip-tools
+    rev: 6.6.2
+    hooks:
+      - id: pip-compile
+        name: pip-compile requirements-dev.in
+        args: [requirements-dev.in]
+        files: ^requirements-dev\.(in)$
+      - id: pip-compile
+        name: pip-compile requirements.txt
+        args: [requirements.in]
+        files: ^requirements\.(in)$

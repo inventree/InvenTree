@@ -1,9 +1,6 @@
 # Please keep this list sorted
 Django==3.2.13                          # Django package
-bleach==4.1.0                           # HTML santization
-certifi                                 # Certifi is (most likely) installed through one of the requirements above
-coreapi==2.3.0                          # API documentation
-cryptography==3.4.8                     # Cryptography support
+coreapi==2.3.0                          # API documentation for drf
 django-admin-shell==0.1.2               # Python shell for the admin interface
 django-allauth==0.45.0                  # SSO for external providers via OpenID
 django-allauth-2fa==0.8                 # MFA / 2FA
@@ -29,14 +26,11 @@ django-weasyprint==2.1.0                # django weasyprint integration
 djangorestframework==3.12.4             # DRF framework
 django-xforwardedfor-middleware==2.0    # IP forwarding metadata
 gunicorn>=20.1.0                        # Gunicorn web server
-markdown==3.3.4                         # Force particular version of markdown
 pdf2image==1.16.0                       # PDF to image conversion
 pillow==9.1.1                           # Image manipulation
-py-moneyed==0.8.0                       # Specific version requirement for py-moneyed
 pygments==2.7.4                         # Syntax highlighting
 python-barcode[images]==0.13.1          # Barcode generator
 qrcode[pil]==6.1                        # QR code generator
 rapidfuzz==0.7.6                        # Fuzzy string matching
 sentry-sdk==1.5.12                      # Error reporting (optional)
 tablib[xls,xlsx,yaml]                   # Support for XLS and XLSX formats
-weasyprint==55.0                        # PDF generation library
