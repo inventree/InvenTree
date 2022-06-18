@@ -220,6 +220,7 @@ django==3.2.13 \
     #   -r requirements.in
     #   django-admin-shell
     #   django-allauth
+    #   django-allauth-2fa
     #   django-cors-headers
     #   django-error-report
     #   django-filter
@@ -230,6 +231,7 @@ django==3.2.13 \
     #   django-markdownx
     #   django-money
     #   django-mptt
+    #   django-otp
     #   django-picklefield
     #   django-q
     #   django-redis
@@ -246,6 +248,12 @@ django-admin-shell==0.1.2 \
     # via -r requirements.in
 django-allauth==0.48.0 \
     --hash=sha256:531821ce6a2278168054add13421776c9f8e565cf39926e799fa02d6c29da920
+    # via
+    #   -r requirements.in
+    #   django-allauth-2fa
+django-allauth-2fa==0.9 \
+    --hash=sha256:710bf1fe2235edd9280d0ebc908c3b425ce0ff1e31ce9826eea8816521692128 \
+    --hash=sha256:fd4d7eb75b78284f3476bc4824c30516b0494be27c3717bfd67c1a0d98187655
     # via -r requirements.in
 django-cleanup==5.1.0 \
     --hash=sha256:71e098c7d9ac3f3da40b95cff9c0bc51218d40ef419261232f46ba3141c50acc \
@@ -298,6 +306,10 @@ django-mptt==0.11.0 \
     --hash=sha256:90eb236eb4f1a92124bd7c37852bbe09c0d21158477cc237556d59842a91c509 \
     --hash=sha256:dfdb3af75ad27cdd4458b0544ec8574174f2b90f99bc2cafab6a15b4bc1895a8
     # via -r requirements.in
+django-otp==1.1.3 \
+    --hash=sha256:8637be826c0465d0fd1710e4472efe9fc83883853a2141fefdbace9358d20003 \
+    --hash=sha256:f002c71d4ea7f514590be00492980d3c87397b73dc20542e1c4fc00b66f2dda1
+    # via django-allauth-2fa
 django-picklefield==3.0.1 \
     --hash=sha256:15ccba592ca953b9edf9532e64640329cd47b136b7f8f10f2939caa5f9ce4287 \
     --hash=sha256:3c702a54fde2d322fe5b2f39b8f78d9f655b8f77944ab26f703be6c0ed335a35
@@ -581,7 +593,9 @@ pyyaml==6.0 \
 qrcode[pil]==6.1 \
     --hash=sha256:3996ee560fc39532910603704c82980ff6d4d5d629f9c3f25f34174ce8606cf5 \
     --hash=sha256:505253854f607f2abf4d16092c61d4e9d511a3b4392e60bff957a68592b04369
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   django-allauth-2fa
 rapidfuzz==0.7.6 \
     --hash=sha256:0249c78c594e7d663d9d3c6fa214025e930ebbcbad0e27d6114080288bb08ada \
     --hash=sha256:159755faa477e75bdc7b8ff6f80629d503960af27089b62459d5e2bb67532dcc \
