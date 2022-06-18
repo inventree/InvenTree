@@ -9,3 +9,4 @@ isort==5.10.1                           # DEV: python import sorting
 pep8-naming==0.11.1                     # PEP naming convention extension
 pip-tools==6.6.2                        # Compile pip requirements
 pre-commit==2.19.0                      # Git pre-commit
+setuptools                              # Standard depenedency
