@@ -154,7 +154,9 @@
         </form>
 
         {% else %}
-        <p>{% trans 'You currently have no social network accounts connected to this account.' %}</p>
+        <div class='alert alert-block alert-warning'>
+            {% trans 'There are no social network accounts connected to this account.' %}
+        </div>
         {% endif %}
     </div>
 
@@ -198,9 +200,9 @@
     </table>
 
     {% else %}
-    <p><strong>{% trans 'Warning:'%}</strong>
-        {% trans "You currently do not have any factors set up." %}
-    </p>
+    <div class='alert alert-block alert-warning'>
+        {% trans "Multifactor authentication is not configured for your account" %}
+    </div>
 
     {% endif %}
     </div>
@@ -224,7 +226,7 @@
                 <form method="post" action="{% url 'session_delete_other' %}">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-sm btn-default btn-danger" title='{% trans "Log out active sessions (except this one)" %}'>
-                        {% trans "Log Out Active Sessions" %}
+                        <span class='fas fa-sign-out-alt'></span> {% trans "Log Out Active Sessions" %}
                     </button>
                 </form>
                 {% endif %}

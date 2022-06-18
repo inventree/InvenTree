@@ -136,18 +136,55 @@ function loadAttachmentTable(url, options) {
 
     var table = options.table || '#attachment-table';
 
-    setupFilterList('attachments', $(table), '#filter-list-attachments');
+    var permissions = {};
 
-    addAttachmentButtonCallbacks(url, options.fields || {});
+    // First we determine which permissions the user has for this attachment table
+    $.ajax({
+        url: url,
+        async: false,
+        type: 'OPTIONS',
+        contentType: 'application/json',
+        dataType: 'json',
+        accepts: {
+            json: 'application/json',
+        },
+        success: function(response) {
+            if (response.actions.DELETE) {
+                permissions.delete = true;
+            }
 
-    // Add callback for the 'multi delete' button
-    $('#multi-attachment-delete').click(function() {
-        var attachments = getTableData(table);
-
-        if (attachments.length > 0) {
-            deleteAttachments(attachments, url, options);
+            if (response.actions.POST) {
+                permissions.change = true;
+                permissions.add = true;
+            }
+        },
+        error: function(xhr) {
+            showApiError(xhr, url);
         }
     });
+
+    setupFilterList('attachments', $(table), '#filter-list-attachments');
+
+    if (permissions.add) {
+        addAttachmentButtonCallbacks(url, options.fields || {});
+    } else {
+        // Hide the buttons
+        $('#new-attachment').hide();
+        $('#new-attachment-link').hide();
+    }
+
+    if (permissions.delete) {
+        // Add callback for the 'multi delete' button
+        $('#multi-attachment-delete').click(function() {
+            var attachments = getTableData(table);
+
+            if (attachments.length > 0) {
+                deleteAttachments(attachments, url, options);
+            }
+        });
+    } else {
+        $('#multi-attachment-actions').hide();
+    }
 
     $(table).inventreeTable({
         url: url,
@@ -162,32 +199,36 @@ function loadAttachmentTable(url, options) {
         onPostBody: function() {
 
             // Add callback for 'edit' button
-            $(table).find('.button-attachment-edit').click(function() {
-                var pk = $(this).attr('pk');
+            if (permissions.change) {
+                $(table).find('.button-attachment-edit').click(function() {
+                    var pk = $(this).attr('pk');
 
-                constructForm(`${url}${pk}/`, {
-                    fields: {
-                        link: {},
-                        comment: {},
-                    },
-                    processResults: function(data, fields, opts) {
-                        // Remove the "link" field if the attachment is a file!
-                        if (data.attachment) {
-                            delete opts.fields.link;
-                        }
-                    },
-                    onSuccess: reloadAttachmentTable,
-                    title: '{% trans "Edit Attachment" %}',
+                    constructForm(`${url}${pk}/`, {
+                        fields: {
+                            link: {},
+                            comment: {},
+                        },
+                        processResults: function(data, fields, opts) {
+                            // Remove the "link" field if the attachment is a file!
+                            if (data.attachment) {
+                                delete opts.fields.link;
+                            }
+                        },
+                        onSuccess: reloadAttachmentTable,
+                        title: '{% trans "Edit Attachment" %}',
+                    });
                 });
-            });
+            }
 
-            // Add callback for 'delete' button
-            $(table).find('.button-attachment-delete').click(function() {
-                var pk = $(this).attr('pk');
+            if (permissions.delete) {
+                // Add callback for 'delete' button
+                $(table).find('.button-attachment-delete').click(function() {
+                    var pk = $(this).attr('pk');
 
-                var attachment = $(table).bootstrapTable('getRowByUniqueId', pk);
-                deleteAttachments([attachment], url, options);
-            });
+                    var attachment = $(table).bootstrapTable('getRowByUniqueId', pk);
+                    deleteAttachments([attachment], url, options);
+                });
+            }
         },
         columns: [
             {
@@ -261,19 +302,23 @@ function loadAttachmentTable(url, options) {
 
                     html = `<div class='btn-group float-right' role='group'>`;
 
-                    html += makeIconButton(
-                        'fa-edit icon-blue',
-                        'button-attachment-edit',
-                        row.pk,
-                        '{% trans "Edit attachment" %}',
-                    );
+                    if (permissions.change) {
+                        html += makeIconButton(
+                            'fa-edit icon-blue',
+                            'button-attachment-edit',
+                            row.pk,
+                            '{% trans "Edit attachment" %}',
+                        );
+                    }
 
-                    html += makeIconButton(
-                        'fa-trash-alt icon-red',
-                        'button-attachment-delete',
-                        row.pk,
-                        '{% trans "Delete attachment" %}',
-                    );
+                    if (permissions.delete) {
+                        html += makeIconButton(
+                            'fa-trash-alt icon-red',
+                            'button-attachment-delete',
+                            row.pk,
+                            '{% trans "Delete attachment" %}',
+                        );
+                    }
 
                     html += `</div>`;
 

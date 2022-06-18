@@ -148,6 +148,37 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         # There should not be any templates left at this point
         self.assertEqual(PartCategoryParameterTemplate.objects.count(), 0)
 
+    def test_bleach(self):
+        """Test that the data cleaning functionality is working"""
+
+        url = reverse('api-part-category-detail', kwargs={'pk': 1})
+
+        self.patch(
+            url,
+            {
+                'description': '<img src=# onerror=alert("pwned")>',
+            },
+            expected_code=200
+        )
+
+        cat = PartCategory.objects.get(pk=1)
+
+        # Image tags have been stripped
+        self.assertEqual(cat.description, '&lt;img src=# onerror=alert("pwned")&gt;')
+
+        self.patch(
+            url,
+            {
+                'description': '<a href="www.google.com">LINK</a><script>alert("h4x0r")</script>',
+            },
+            expected_code=200,
+        )
+
+        # Tags must have been bleached out
+        cat.refresh_from_db()
+
+        self.assertEqual(cat.description, '<a href="www.google.com">LINK</a>&lt;script&gt;alert("h4x0r")&lt;/script&gt;')
+
 
 class PartOptionsAPITest(InvenTreeAPITestCase):
     """Tests for the various OPTIONS endpoints in the /part/ API.

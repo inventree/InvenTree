@@ -244,8 +244,8 @@ django-admin-shell==0.1.2 \
     --hash=sha256:19eea0e0890db7e264fad20ff9c8c88c26643939fae986775ebe4682d0788207 \
     --hash=sha256:d0b433b05524332b0707771d325cda42d96d363aeb74bf3380e89347ddd34159
     # via -r requirements.in
-django-allauth==0.45.0 \
-    --hash=sha256:6d46be0e1480316ccd45476db3aefb39db70e038d2a543112d314b76bb999a4e
+django-allauth==0.48.0 \
+    --hash=sha256:531821ce6a2278168054add13421776c9f8e565cf39926e799fa02d6c29da920
     # via -r requirements.in
 django-cleanup==5.1.0 \
     --hash=sha256:71e098c7d9ac3f3da40b95cff9c0bc51218d40ef419261232f46ba3141c50acc \

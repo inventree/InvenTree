@@ -2540,7 +2540,7 @@ function loadBuildTable(table, options) {
                     if (value) {
                         return row.responsible_detail.name;
                     } else {
-                        return '{% trans "No information" %}';
+                        return '-';
                     }
                 }
             },

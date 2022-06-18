@@ -2,108 +2,87 @@
 {% load inventree_extras %}
 {% load i18n %}
 
-<div class='modal fade modal-fixed-footer' tabindex='-1' role='dialog' id='modal-about'>
-    <div class='modal-dialog'>
-        <div class='modal-content'>
-            <div class="modal-header">
-              <img src="{% static 'img/inventree.png' %}" height='40px' style='float: left; padding-right: 25px;' alt='Inventree Logo'>
-              <h4>{% trans "InvenTree Version Information" %}</h4>
-              <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='{% trans "Close" %}'></button>
-            </div>
-            <div class='modal-form-content-wrapper'>
-                <div class='modal-form-content'>
-                    <div>
-                        <table class='table table-striped table-condensed'>
-                            <col width='25'>
-                            <tr>
-                                <td><span class='fas fa-hashtag'></span></td>
-                                <td>{% trans "InvenTree Version" %}</td>
-                                <td>
-                                    <a href="https://github.com/inventree/InvenTree/releases">{% inventree_version %}</a>{% include "clip.html" %}
-                                    {% inventree_is_development as dev %}
-                                    {% if dev %}
-                                    <span class='badge badge-right rounded-pill bg-primary'>{% trans "Development Version" %}</span>
-                                    {% else %}
-                                    {% if up_to_date %}
-                                    <span class='badge badge-right rounded-pill bg-success'>{% trans "Up to Date" %}</span>
-                                    {% else %}
-                                    <span class='badge badge-right rounded-pill bg-info'>{% trans "Update Available" %}</span>
-                                    {% endif %}
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% if dev %}
-                            {% inventree_commit_hash as hash %}
-                            {% if hash %}
-                            <tr>
-                                <td><span class='fas fa-code-branch'></span></td>
-                                <td>{% trans "Commit Hash" %}</td><td>{{ hash }}{% include "clip.html" %}</td>
-                            </tr>
-                            {% endif %}
-                            {% inventree_commit_date as commit_date %}
-                            {% if commit_date %}
-                            <tr>
-                                <td><span class='fas fa-calendar-alt'></span></td>
-                                <td>{% trans "Commit Date" %}</td><td>{% render_date commit_date %}{% include "clip.html" %}</td>
-                            </tr>
-                            {% endif %}
-                            {% endif %}
-                            <tr>
-                                <td><span class='fas fa-book'></span></td>
-                                <td>{% trans "InvenTree Documentation" %}</td>
-                                <td><a href="{% inventree_docs_url %}">{% inventree_docs_url %}</a></td>
-                            </tr>
-                            <tr>
-                                <td><span class='fas fa-code'></span></td>
-                                <td>{% trans "API Version" %}</td>
-                                <td>{% inventree_api_version %}{% include "clip.html" %}</td>
-                            </tr>
-                            <tr>
-                                <td><span class='fas fa-hashtag'></span></td>
-                                <td>{% trans "Python Version" %}</td>
-                                <td>{% python_version %}</td>
-                            </tr>
-                            <tr>
-                                <td><span class='fas fa-hashtag'></span></td>
-                                <td>{% trans "Django Version" %}</td>
-                                <td><a href="https://www.djangoproject.com/">{% django_version %}</a>{% include "clip.html" %}</td>
-                            </tr>
-                            <tr>
-                                <td><span class='fab fa-github'></span></td>
-                                <td>{% trans "View Code on GitHub" %}</td>
-                                <td><a href="{% inventree_github_url %}">{% inventree_github_url %}</a></td>
-                            </tr>
-                            <tr>
-                                <td><span class='fas fa-balance-scale'></span></td>
-                                <td>{% trans "Credits" %}</td>
-                                <td><a href="{% inventree_credits_url %}">{% inventree_credits_url %}</a></td>
-                            </tr>
-                            <tr>
-                                <td><span class='fas fa-mobile-alt'></span></td>
-                                <td>{% trans "Mobile App" %}</td>
-                                <td><a href="{% inventree_docs_url %}/app/app">{% inventree_docs_url %}/app/app</a></td>
-                            </tr>
-                            <tr>
-                                <td><span class='fas fa-bug'></span></td>
-                                <td>{% trans "Submit Bug Report" %}</td>
-                                <td><a href='{% inventree_github_url %}/issues'>{% inventree_github_url %}issues</a></td>
-                            </tr>
-                            <tr><td></td><td></td>
-                                <td>
-                                    <span style="display: none;" id="about-copy-text">{% include "version.html" %}</span>
-                                    <span class="float-right">
-                                        <button class="btn clip-btn-version" type="button" data-bs-toggle='tooltip' title='{% trans "copy to clipboard" %}'><em class="fas fa-copy"></em> {% trans "copy version information" %}</button>
-                                    </span>
-                                </td>
-                            </tr>
-                        </table>
-
-                    </div>
-                </div>
-            </div>
-            <div class='modal-footer'>
-                <button type='button' class='btn btn-outline-secondary' data-bs-dismiss='modal'>{% trans "Close" %}</button>
-            </div>
-        </div>
-    </div>
-</div>
+<table class='table table-striped table-condensed'>
+    <col width='25'>
+    <tr>
+        <td><span class='fas fa-hashtag'></span></td>
+        <td>{% trans "InvenTree Version" %}</td>
+        <td>
+            <a href="https://github.com/inventree/InvenTree/releases">{% inventree_version %}</a>{% include "clip.html" %}
+            {% inventree_is_development as dev %}
+            {% if dev %}
+            <span class='badge badge-right rounded-pill bg-primary'>{% trans "Development Version" %}</span>
+            {% else %}
+            {% if up_to_date %}
+            <span class='badge badge-right rounded-pill bg-success'>{% trans "Up to Date" %}</span>
+            {% else %}
+            <span class='badge badge-right rounded-pill bg-info'>{% trans "Update Available" %}</span>
+            {% endif %}
+            {% endif %}
+        </td>
+    </tr>
+    {% if dev %}
+    {% inventree_commit_hash as hash %}
+    {% if hash %}
+    <tr>
+        <td><span class='fas fa-code-branch'></span></td>
+        <td>{% trans "Commit Hash" %}</td><td>{{ hash }}{% include "clip.html" %}</td>
+    </tr>
+    {% endif %}
+    {% inventree_commit_date as commit_date %}
+    {% if commit_date %}
+    <tr>
+        <td><span class='fas fa-calendar-alt'></span></td>
+        <td>{% trans "Commit Date" %}</td><td>{% render_date commit_date %}{% include "clip.html" %}</td>
+    </tr>
+    {% endif %}
+    {% endif %}
+    <tr>
+        <td><span class='fas fa-book'></span></td>
+        <td>{% trans "InvenTree Documentation" %}</td>
+        <td><a href="{% inventree_docs_url %}">{% inventree_docs_url %}</a></td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-code'></span></td>
+        <td>{% trans "API Version" %}</td>
+        <td>{% inventree_api_version %}{% include "clip.html" %}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-hashtag'></span></td>
+        <td>{% trans "Python Version" %}</td>
+        <td>{% python_version %}</td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-hashtag'></span></td>
+        <td>{% trans "Django Version" %}</td>
+        <td><a href="https://www.djangoproject.com/">{% django_version %}</a>{% include "clip.html" %}</td>
+    </tr>
+    <tr>
+        <td><span class='fab fa-github'></span></td>
+        <td>{% trans "View Code on GitHub" %}</td>
+        <td><a href="{% inventree_github_url %}">{% inventree_github_url %}</a></td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-balance-scale'></span></td>
+        <td>{% trans "Credits" %}</td>
+        <td><a href="{% inventree_credits_url %}">{% inventree_credits_url %}</a></td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-mobile-alt'></span></td>
+        <td>{% trans "Mobile App" %}</td>
+        <td><a href="{% inventree_docs_url %}/app/app">{% inventree_docs_url %}/app/app</a></td>
+    </tr>
+    <tr>
+        <td><span class='fas fa-bug'></span></td>
+        <td>{% trans "Submit Bug Report" %}</td>
+        <td><a href='{% inventree_github_url %}/issues'>{% inventree_github_url %}issues</a></td>
+    </tr>
+    <tr><td></td><td></td>
+        <td>
+            <span style="display: none;" id="about-copy-text">{% include "version.html" %}</span>
+            <span class="float-right">
+                <button class="btn clip-btn-version" type="button" data-bs-toggle='tooltip' title='{% trans "copy to clipboard" %}'><em class="fas fa-copy"></em> {% trans "copy version information" %}</button>
+            </span>
+        </td>
+    </tr>
+</table>
