@@ -4,5 +4,6 @@ coveralls==2.1.2                        # Coveralls linking (for Travis)
 django-debug-toolbar==3.2.4             # Debug / profiling toolbar
 flake8==3.8.3                           # PEP checking
 flake8-docstrings==1.6.0                # docstring format testing
+isort==5.10.1                           # DEV: python import sorting
 pep8-naming==0.11.1                     # PEP naming convention extension
 pre-commit==2.19.0                      # Git pre-commit

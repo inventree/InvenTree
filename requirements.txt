@@ -30,7 +30,6 @@ django-weasyprint==2.1.0                # django weasyprint integration
 djangorestframework==3.12.4             # DRF framework
 django-xforwardedfor-middleware==2.0    # IP forwarding metadata
 gunicorn>=20.1.0                        # Gunicorn web server
-isort==5.10.1                           # DEV: python import sorting
 markdown==3.3.4                         # Force particular version of markdown
 pdf2image==1.16.0                       # PDF to image conversion
 pillow==9.1.1                           # Image manipulation
