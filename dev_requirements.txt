@@ -2,6 +2,7 @@
 coverage==5.3                           # Unit test coverage
 coveralls==2.1.2                        # Coveralls linking (for Travis)
 django-debug-toolbar==3.2.4             # Debug / profiling toolbar
+django-test-migrations==1.1.0           # Unit testing for database migrations
 flake8==3.8.3                           # PEP checking
 flake8-docstrings==1.6.0                # docstring format testing
 isort==5.10.1                           # DEV: python import sorting

@@ -24,7 +24,6 @@ django-q==1.3.4                         # Background task scheduling
 django-sql-utils==0.5.0                 # Advanced query annotation / aggregation
 django-sslserver==0.22                  # Secure HTTP development server
 django-stdimage==5.1.1                  # Advanced ImageField management
-django-test-migrations==1.1.0           # Unit testing for database migrations
 django-user-sessions==1.7.1             # user sessions in DB
 django-weasyprint==2.1.0                # django weasyprint integration
 djangorestframework==3.12.4             # DRF framework
