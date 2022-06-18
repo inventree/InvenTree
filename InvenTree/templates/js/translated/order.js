@@ -2540,6 +2540,17 @@ function loadSalesOrderShipmentTable(table, options={}) {
 
     setupFilterList('salesordershipment', $(table), options.filter_target);
 
+    // Add callbacks for expand / collapse buttons
+    var prefix = options.shipped ? 'completed' : 'pending';
+
+    $(`#${prefix}-shipments-expand`).click(function() {
+        $(table).bootstrapTable('expandAllRows');
+    });
+
+    $(`#${prefix}-shipments-collapse`).click(function() {
+        $(table).bootstrapTable('collapseAllRows');
+    });
+
     function makeShipmentActions(row) {
         // Construct "actions" for the given shipment row
         var pk = row.pk;
