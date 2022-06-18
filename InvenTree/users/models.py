@@ -222,6 +222,11 @@ class RuleSet(models.Model):
     @classmethod
     def check_table_permission(cls, user, table, permission):
         """Check if the provided user has the specified permission against the table."""
+
+        # Superuser knows no bounds
+        if user.is_superuser:
+            return True
+
         # If the table does *not* require permissions
         if table in cls.RULESET_IGNORE:
             return True
