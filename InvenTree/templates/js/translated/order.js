@@ -3427,6 +3427,15 @@ function loadSalesOrderLineItemTable(table, options={}) {
     // Show detail view if the PurchaseOrder is PENDING or SHIPPED
     var show_detail = pending || shipped;
 
+    // Add callbacks for expand / collapse buttons
+    $('#sales-lines-expand').click(function() {
+        $(table).bootstrapTable('expandAllRows');
+    });
+
+    $('#sales-lines-collapse').click(function() {
+        $(table).bootstrapTable('collapseAllRows');
+    });
+
     // Table columns to display
     var columns = [
         /*
@@ -3554,29 +3563,26 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 title: '{% trans "Available Stock" %}',
                 formatter: function(value, row) {
                     var available = row.available_stock;
-                    var total = row.part_detail.stock;
                     var required = Math.max(row.quantity - row.allocated - row.shipped, 0);
 
                     var html = '';
 
-                    if (total > 0) {
+                    if (available > 0) {
                         var url = `/part/${row.part}/?display=part-stock`;
 
                         var text = available;
-
-                        if (total != available) {
-                            text += ` / ${total}`;
-                        }
 
                         html = renderLink(text, url);
                     } else {
                         html += `<span class='badge rounded-pill bg-danger'>{% trans "No Stock Available" %}</span>`;
                     }
 
-                    if (available >= required) {
-                        html += `<span class='fas fa-check-circle icon-green float-right' title='{% trans "Sufficient stock available" %}'></span>`;
-                    } else {
-                        html += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "Insufficient stock available" %}'></span>`;
+                    if (required > 0) {
+                        if (available >= required) {
+                            html += `<span class='fas fa-check-circle icon-green float-right' title='{% trans "Sufficient stock available" %}'></span>`;
+                        } else {
+                            html += `<span class='fas fa-times-circle icon-red float-right' title='{% trans "Insufficient stock available" %}'></span>`;
+                        }
                     }
 
                     return html;
