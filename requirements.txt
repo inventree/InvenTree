@@ -35,7 +35,6 @@ django-xforwardedfor-middleware==2.0    # IP forwarding metadata
 flake8==3.8.3                           # PEP checking
 flake8-docstrings==1.6.0                # docstring format testing
 gunicorn>=20.1.0                        # Gunicorn web server
-importlib_metadata                      # Backport for importlib.metadata
 isort==5.10.1                           # DEV: python import sorting
 markdown==3.3.4                         # Force particular version of markdown
 pdf2image==1.16.0                       # PDF to image conversion
