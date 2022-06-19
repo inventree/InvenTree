@@ -12,7 +12,7 @@ django-filter==2.4.0                    # Extended filtering options
 django-formtools                        # Form wizard tools
 django-import-export==2.5.0             # Data import / export for admin interface
 django-maintenance-mode                 # Shut down application while reloading etc.
-django-markdownify==0.8.0               # Markdown rendering
+django-markdownify                      # Markdown rendering
 django-markdownx                        # Markdown form fields
 django-money                            # Django app for currency management
 django-mptt==0.11.0                     # Modified Preorder Tree Traversal
