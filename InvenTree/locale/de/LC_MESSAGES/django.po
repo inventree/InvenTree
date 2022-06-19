@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-18 12:23+0000\n"
-"PO-Revision-Date: 2022-06-18 16:39\n"
+"PO-Revision-Date: 2022-06-19 16:36\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -47,7 +47,7 @@ msgstr "Neues Passwort bestätigen"
 
 #: InvenTree/forms.py:148
 msgid "Old password"
-msgstr ""
+msgstr "Altes Passwort"
 
 #: InvenTree/forms.py:177
 msgid "Email (again)"
@@ -240,7 +240,7 @@ msgstr "Serverfehler"
 
 #: InvenTree/models.py:467
 msgid "An error has been logged by the server."
-msgstr ""
+msgstr "Ein Fehler wurde vom Server protokolliert."
 
 #: InvenTree/serializers.py:52 part/models.py:2692
 msgid "Must be a valid number"
@@ -605,7 +605,7 @@ msgstr "Passwörter stimmen nicht überein"
 
 #: InvenTree/views.py:561
 msgid "Wrong password provided"
-msgstr ""
+msgstr "Falsches Passwort angegeben"
 
 #: InvenTree/views.py:750 templates/navbar.html:152
 msgid "System Information"
@@ -1894,7 +1894,7 @@ msgstr "Standardseitenformat für PDF-Bericht"
 
 #: common/models.py:1054
 msgid "Enable Test Reports"
-msgstr ""
+msgstr "Testberichte aktivieren"
 
 #: common/models.py:1055
 msgid "Enable generation of test reports"
@@ -1902,11 +1902,11 @@ msgstr "Erstellung von Test-Berichten aktivieren"
 
 #: common/models.py:1061
 msgid "Attach Test Reports"
-msgstr ""
+msgstr "Testberichte anhängen"
 
 #: common/models.py:1062
 msgid "When printing a Test Report, attach a copy of the Test Report to the associated Stock Item"
-msgstr ""
+msgstr "Beim Drucken eines Testberichts dem zugehörigen Lagerbestand eine Kopie des Testberichts beifügen"
 
 #: common/models.py:1068
 msgid "Batch Code Template"
@@ -2294,19 +2294,19 @@ msgstr "Teile in der Suchvorschau anzeigen"
 
 #: common/models.py:1432
 msgid "Seach Supplier Parts"
-msgstr ""
+msgstr "Zuliefererteile durchsuchen"
 
 #: common/models.py:1433
 msgid "Display supplier parts in search preview window"
-msgstr ""
+msgstr "Zuliefererteile in der Suchvorschau anzeigen"
 
 #: common/models.py:1439
 msgid "Search Manufacturer Parts"
-msgstr ""
+msgstr "Herstellerteile durchsuchen"
 
 #: common/models.py:1440
 msgid "Display manufacturer parts in search preview window"
-msgstr ""
+msgstr "Herstellerteile in der Suchvorschau anzeigen"
 
 #: common/models.py:1446
 msgid "Hide Inactive Parts"
@@ -2537,12 +2537,12 @@ msgstr "Wurde die Arbeit an dieser Nachricht abgeschlossen?"
 #: common/notifications.py:292
 #, python-brace-format
 msgid "New {verbose_name}"
-msgstr ""
+msgstr "Neue {verbose_name}"
 
 #: common/notifications.py:294
 #, python-brace-format
 msgid "A new {verbose_name} has been created and ,assigned to you"
-msgstr ""
+msgstr "Eine neue {verbose_name} wurde erstellt und Ihnen zugewiesen"
 
 #: common/views.py:87 order/templates/order/purchase_order_detail.html:23
 #: order/views.py:102 part/views.py:116
@@ -2847,11 +2847,11 @@ msgstr "Verfügbar"
 
 #: company/models.py:539
 msgid "Quantity available from supplier"
-msgstr ""
+msgstr "Verfügbare Menge von Lieferanten"
 
 #: company/models.py:543
 msgid "Availability Updated"
-msgstr ""
+msgstr "Verfügbarkeit aktualisiert"
 
 #: company/models.py:544
 msgid "Date of last update of availability data"
@@ -3157,7 +3157,7 @@ msgstr "Teil bestellen"
 #: company/templates/company/supplier_part.html:45
 #: company/templates/company/supplier_part.html:46
 msgid "Update Availability"
-msgstr ""
+msgstr "Verfügbarkeit aktualisieren"
 
 #: company/templates/company/supplier_part.html:48
 #: company/templates/company/supplier_part.html:49
@@ -3167,11 +3167,11 @@ msgstr "Zuliefererteil bearbeiten"
 
 #: company/templates/company/supplier_part.html:53
 msgid "Delete Supplier Part"
-msgstr ""
+msgstr "Zuliefererteil entfernen"
 
 #: company/templates/company/supplier_part.html:54
 msgid "Delete Supplier  Part"
-msgstr ""
+msgstr "Zuliefererteil entfernen"
 
 #: company/templates/company/supplier_part.html:112
 msgid "No supplier information available"
@@ -3237,7 +3237,7 @@ msgstr "Zuletzt aktualisiert"
 
 #: company/templates/company/supplier_part.html:382
 msgid "Update Part Availability"
-msgstr ""
+msgstr "Teilverfügbarkeit aktualisieren"
 
 #: company/templates/company/supplier_part_navbar.html:15
 #: part/templates/part/part_sidebar.html:14
@@ -3919,7 +3919,7 @@ msgstr "Gesamtsumme"
 #: order/templates/order/order_base.html:187
 #: order/templates/order/sales_order_base.html:194
 msgid "Total cost could not be calculated"
-msgstr ""
+msgstr "Gesamtkosten konnten nicht berechnet werden"
 
 #: order/templates/order/order_base.html:243
 msgid "Edit Purchase Order"
@@ -4621,7 +4621,7 @@ msgstr ""
 
 #: part/models.py:2903
 msgid "Duplicate relationship already exists"
-msgstr ""
+msgstr "Doppelte Beziehung existiert bereits"
 
 #: part/serializers.py:139 part/serializers.py:170 stock/serializers.py:164
 msgid "Purchase currency of this stock item"
@@ -5639,7 +5639,7 @@ msgstr "Vorlagendatei '{template}' fehlt oder existiert nicht"
 
 #: report/api.py:360
 msgid "Test report"
-msgstr ""
+msgstr "Testbericht"
 
 #: report/models.py:152
 msgid "Template name"
@@ -6646,7 +6646,7 @@ msgstr "Kein Benachrichtigungsverlauf"
 
 #: templates/InvenTree/notifications/notifications.html:67
 msgid "Delete all read notifications"
-msgstr ""
+msgstr "Lösche alle gelesenen Benachrichtigungen"
 
 #: templates/InvenTree/notifications/notifications.html:92
 #: templates/js/translated/notification.js:84
@@ -7090,7 +7090,7 @@ msgstr "Sie können sich mit einem der folgenden Drittanbieterkonten bei Ihrem K
 
 #: templates/InvenTree/settings/user.html:158
 msgid "There are no social network accounts connected to this account."
-msgstr ""
+msgstr "Es sind keine sozialen Netzwerke mit diesem Konto verbunden."
 
 #: templates/InvenTree/settings/user.html:164
 msgid "Add a 3rd Party Account"
@@ -7114,7 +7114,7 @@ msgstr "Statisch"
 
 #: templates/InvenTree/settings/user.html:204
 msgid "Multifactor authentication is not configured for your account"
-msgstr ""
+msgstr "Multifaktor-Authentifizierung ist nicht für Ihr Konto eingerichtet"
 
 #: templates/InvenTree/settings/user.html:211
 msgid "Change factors"
@@ -7229,11 +7229,11 @@ msgstr "Hilf bei der Übersetzung!"
 
 #: templates/InvenTree/settings/user_display.html:105
 msgid "Native language translation of the web application is community contributed via crowdin. Contributions are welcomed and encouraged."
-msgstr ""
+msgstr "Die Übersetzung der Website wird von Nutzern mit Crowdin betrieben. Wir ermutigen zur und freuen uns über jeden Mithilfe!"
 
 #: templates/InvenTree/settings/user_display.html:106
 msgid "InvenTree Translation Project"
-msgstr ""
+msgstr "InvenTree Übersetzungsprojekt"
 
 #: templates/InvenTree/settings/user_homepage.html:9
 msgid "Home Page Settings"
@@ -7356,7 +7356,7 @@ msgstr "Möchten Sie sich wirklich abmelden?"
 #: templates/account/logout.html:27 templates/allauth_2fa/backup_tokens.html:35
 #: templates/allauth_2fa/remove.html:24 templates/allauth_2fa/setup.html:44
 msgid "Return to Site"
-msgstr ""
+msgstr "Zurück zur Seite"
 
 #: templates/account/password_reset.html:5
 #: templates/account/password_reset.html:12
@@ -7427,11 +7427,11 @@ msgstr "Backup-Token wurden generiert, werden aber aus Sicherheitsgründen hier 
 
 #: templates/allauth_2fa/backup_tokens.html:20
 msgid "No backup tokens are available. Press the button below to generate some."
-msgstr ""
+msgstr "Es sind keine Backup-Token verfügbar. Drücken Sie die Schaltfläche unten, um einige zu generieren."
 
 #: templates/allauth_2fa/backup_tokens.html:28
 msgid "Generate Tokens"
-msgstr ""
+msgstr "Tokens generieren"
 
 #: templates/allauth_2fa/remove.html:6
 msgid "Disable Two-Factor Authentication"
@@ -7443,7 +7443,7 @@ msgstr "Bist du sicher?"
 
 #: templates/allauth_2fa/remove.html:17
 msgid "Disable 2FA"
-msgstr ""
+msgstr "Deaktiviere 2FA"
 
 #: templates/allauth_2fa/setup.html:6
 msgid "Setup Two-Factor Authentication"
@@ -7479,11 +7479,11 @@ msgstr "Anhang hinzufügen"
 
 #: templates/attachment_table.html:11
 msgid "Delete selected attachments"
-msgstr ""
+msgstr "Markierte Anhänge löschen"
 
 #: templates/attachment_table.html:12 templates/js/translated/attachment.js:112
 msgid "Delete Attachments"
-msgstr ""
+msgstr "Anhänge entfernen"
 
 #: templates/base.html:101
 msgid "Server Restart Required"
@@ -7499,7 +7499,7 @@ msgstr "Bitte kontaktieren Sie Ihren Administrator für mehr Informationen"
 
 #: templates/collapse_rows.html:3
 msgid "Collapse all rows"
-msgstr ""
+msgstr "Alle Zeilen einklappen"
 
 #: templates/email/build_order_required_stock.html:7
 msgid "Stock is required for the following build order"
@@ -7541,11 +7541,11 @@ msgstr "Mindestmenge"
 #: templates/email/overdue_purchase_order.html:9
 #: templates/email/overdue_sales_order.html:9
 msgid "Click on the following link to view this order"
-msgstr ""
+msgstr "Klicken Sie auf den folgenden Link, um diesen Auftrag anzuzeigen"
 
 #: templates/expand_rows.html:3
 msgid "Expand all rows"
-msgstr ""
+msgstr "Alle Zeilen erweitern"
 
 #: templates/image_download.html:8
 msgid "Specify URL for downloading image"
@@ -7629,7 +7629,7 @@ msgstr "Fehler-Code"
 
 #: templates/js/translated/attachment.js:98
 msgid "All selected attachments will be deleted"
-msgstr ""
+msgstr "Alle ausgewählten anhänge werden gelöscht"
 
 #: templates/js/translated/attachment.js:193
 msgid "No attachments found"
@@ -9093,15 +9093,15 @@ msgstr "Teil-Variante anlegen"
 
 #: templates/js/translated/part.js:430
 msgid "Active Part"
-msgstr ""
+msgstr "Aktives Teil"
 
 #: templates/js/translated/part.js:431
 msgid "Part cannot be deleted as it is currently active"
-msgstr ""
+msgstr "Teil kann nicht gelöscht werden, da es derzeit aktiv ist"
 
 #: templates/js/translated/part.js:445
 msgid "Deleting this part cannot be reversed"
-msgstr ""
+msgstr "Das Löschen dieses Teils kann nicht rückgängig gemacht werden"
 
 #: templates/js/translated/part.js:447
 msgid "Any stock items for this part will be deleted"
