@@ -126,9 +126,6 @@ backendpatterns = [
 
     re_path(r'^api/', include(apipatterns)),
     re_path(r'^api-doc/', include_docs_urls(title='InvenTree API')),
-
-    # 3rd party endpoints
-    re_path(r'^markdownx/', include('markdownx.urls')),
 ]
 
 frontendpatterns = [

@@ -25,7 +25,6 @@ from django_cleanup import cleanup
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from jinja2 import Template
-from markdownx.models import MarkdownxField
 from mptt.exceptions import InvalidMove
 from mptt.managers import TreeManager
 from mptt.models import MPTTModel, TreeForeignKey
@@ -41,7 +40,7 @@ from common.models import InvenTreeSetting
 from common.settings import currency_code_default
 from company.models import SupplierPart
 from InvenTree import helpers, validators
-from InvenTree.fields import InvenTreeURLField
+from InvenTree.fields import InvenTreeNotesField, InvenTreeURLField
 from InvenTree.helpers import decimal2money, decimal2string, normalize
 from InvenTree.models import (DataImportMixin, InvenTreeAttachment,
                               InvenTreeTree)
@@ -920,11 +919,7 @@ class Part(MetadataMixin, MPTTModel):
         verbose_name=_('Virtual'),
         help_text=_('Is this a virtual part, such as a software product or license?'))
 
-    notes = MarkdownxField(
-        blank=True, null=True,
-        verbose_name=_('Notes'),
-        help_text=_('Part notes - supports Markdown formatting')
-    )
+    notes = InvenTreeNotesField(help_text=_('Part notes'))
 
     bom_checksum = models.CharField(max_length=128, blank=True, verbose_name=_('BOM checksum'), help_text=_('Stored BOM checksum'))
 

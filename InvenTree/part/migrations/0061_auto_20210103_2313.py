@@ -4,7 +4,6 @@ import InvenTree.fields
 import InvenTree.validators
 from django.db import migrations, models
 import django.db.models.deletion
-import markdownx.models
 import mptt.fields
 import part.settings
 
@@ -65,7 +64,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='part',
             name='notes',
-            field=markdownx.models.MarkdownxField(blank=True, help_text='Part notes - supports Markdown formatting', null=True, verbose_name='Notes'),
+            field=models.TextField(blank=True, help_text='Part notes - supports Markdown formatting', null=True, verbose_name='Notes'),
         ),
         migrations.AlterField(
             model_name='part',

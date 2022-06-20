@@ -18,7 +18,6 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from jinja2 import Template
-from markdownx.models import MarkdownxField
 from mptt.managers import TreeManager
 from mptt.models import MPTTModel, TreeForeignKey
 
@@ -29,7 +28,8 @@ import InvenTree.tasks
 import label.models
 import report.models
 from company import models as CompanyModels
-from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
+from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeNotesField,
+                              InvenTreeURLField)
 from InvenTree.models import InvenTreeAttachment, InvenTreeTree
 from InvenTree.serializers import extract_int
 from InvenTree.status_codes import StockHistoryCode, StockStatus
@@ -708,11 +708,7 @@ class StockItem(MetadataMixin, MPTTModel):
         choices=StockStatus.items(),
         validators=[MinValueValidator(0)])
 
-    notes = MarkdownxField(
-        blank=True, null=True,
-        verbose_name=_("Notes"),
-        help_text=_('Stock Item Notes')
-    )
+    notes = InvenTreeNotesField(help_text=_('Stock Item Notes'))
 
     purchase_price = InvenTreeModelMoneyField(
         max_digits=19,

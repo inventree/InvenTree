@@ -16,8 +16,6 @@ from django.dispatch.dispatcher import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from markdownx.models import MarkdownxField
-
 from mptt.models import MPTTModel, TreeForeignKey
 from mptt.exceptions import InvalidMove
 
@@ -320,9 +318,8 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         blank=True, help_text=_('Link to external URL')
     )
 
-    notes = MarkdownxField(
-        verbose_name=_('Notes'),
-        blank=True, help_text=_('Extra build notes')
+    notes = InvenTree.fields.InvenTreeNotesField(
+        help_text=_('Extra build notes')
     )
 
     def sub_builds(self, cascade=True):
