@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-20 12:21+0000\n"
-"PO-Revision-Date: 2022-06-18 16:39\n"
+"PO-Revision-Date: 2022-06-20 16:35\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -4357,10 +4357,8 @@ msgid "Is this a virtual part, such as a software product or license?"
 msgstr "È una parte virtuale, come un prodotto software o una licenza?"
 
 #: part/models.py:922
-#, fuzzy
-#| msgid "Part name"
 msgid "Part notes"
-msgstr "Nome articolo"
+msgstr ""
 
 #: part/models.py:924
 msgid "BOM checksum"
@@ -7326,16 +7324,14 @@ msgstr "Accedi"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -10313,5 +10309,3 @@ msgstr "Permessi per modificare gli elementi"
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
 
-#~ msgid "Part notes - supports Markdown formatting"
-#~ msgstr "Note dell'articolo - supporta la formattazione Markdown"
