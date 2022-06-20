@@ -135,7 +135,7 @@ class Company(models.Model):
         verbose_name=_('Image'),
     )
 
-    notes = InvenTree.fields.InvenTreeNotesField
+    notes = InvenTree.fields.InvenTreeNotesField(help_text=_("Company Notes"))
 
     is_customer = models.BooleanField(default=False, verbose_name=_('is customer'), help_text=_('Do you sell items to this company?'))
 
