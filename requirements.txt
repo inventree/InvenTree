@@ -19,7 +19,6 @@ django-formtools==2.3                   # Form wizard tools
 django-import-export==2.5.0             # Data import / export for admin interface
 django-maintenance-mode==0.16.1         # Shut down application while reloading etc.
 django-markdownify==0.8.0               # Markdown rendering
-django-markdownx==3.0.1                 # Markdown form fields
 django-money==1.1                       # Django app for currency management
 django-mptt==0.11.0                     # Modified Preorder Tree Traversal
 django-redis>=5.0.0                     # Redis integration

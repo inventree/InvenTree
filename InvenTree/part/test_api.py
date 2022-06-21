@@ -1305,6 +1305,22 @@ class PartDetailTests(InvenTreeAPITestCase):
         self.assertFalse('hello' in part.metadata)
         self.assertEqual(part.metadata['x'], 'y')
 
+    def test_part_notes(self):
+        """Unit tests for the part 'notes' field"""
+
+        # Ensure that we cannot upload a very long piece of text
+        url = reverse('api-part-detail', kwargs={'pk': 1})
+
+        response = self.patch(
+            url,
+            {
+                'notes': 'abcde' * 10001
+            },
+            expected_code=400
+        )
+
+        self.assertIn('Ensure this field has no more than 50000 characters', str(response.data['notes']))
+
 
 class PartAPIAggregationTest(InvenTreeAPITestCase):
     """Tests to ensure that the various aggregation annotations are working correctly..."""
