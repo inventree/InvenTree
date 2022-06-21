@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-20 12:21+0000\n"
-"PO-Revision-Date: 2022-06-20 16:35\n"
+"PO-Revision-Date: 2022-06-21 16:42\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -66,7 +66,7 @@ msgstr "Potwierdź nowe hasło"
 
 #: InvenTree/forms.py:148
 msgid "Old password"
-msgstr ""
+msgstr "Stare hasło"
 
 #: InvenTree/forms.py:177
 msgid "Email (again)"
@@ -255,11 +255,11 @@ msgstr "nadrzędny"
 
 #: InvenTree/models.py:466
 msgid "Server Error"
-msgstr ""
+msgstr "Błąd serwera"
 
 #: InvenTree/models.py:467
 msgid "An error has been logged by the server."
-msgstr ""
+msgstr "Błąd został zapisany w logach serwera."
 
 #: InvenTree/serializers.py:52 part/models.py:2687
 msgid "Must be a valid number"
@@ -540,7 +540,7 @@ msgstr "Podziel element podrzędny"
 
 #: InvenTree/status_codes.py:281 templates/js/translated/stock.js:2083
 msgid "Merged stock items"
-msgstr ""
+msgstr "Scalone przedmioty magazynowe"
 
 #: InvenTree/status_codes.py:283
 msgid "Converted to variant"
@@ -1570,7 +1570,7 @@ msgstr "Wartość musi być liczbą całkowitą"
 
 #: common/models.py:550
 msgid "Key string must be unique"
-msgstr ""
+msgstr "Ciąg musi być unikatowy"
 
 #: common/models.py:734
 msgid "No group"
@@ -1582,7 +1582,7 @@ msgstr "Wymagane ponowne uruchomienie"
 
 #: common/models.py:774
 msgid "A setting has been changed which requires a server restart"
-msgstr ""
+msgstr "Zmieniono ustawienie, które wymaga restartu serwera"
 
 #: common/models.py:781
 msgid "Server Instance Name"
@@ -1853,15 +1853,15 @@ msgstr ""
 
 #: common/models.py:1012
 msgid "Enable label printing"
-msgstr ""
+msgstr "Włącz drukowanie etykiet"
 
 #: common/models.py:1013
 msgid "Enable label printing from the web interface"
-msgstr ""
+msgstr "Włącz drukowanie etykiet z interfejsu WWW"
 
 #: common/models.py:1019
 msgid "Label Image DPI"
-msgstr ""
+msgstr "DPI etykiety"
 
 #: common/models.py:1020
 msgid "DPI resolution when generating image files to supply to label printing plugins"
@@ -1889,7 +1889,7 @@ msgstr "Rozmiar strony"
 
 #: common/models.py:1044
 msgid "Default page size for PDF reports"
-msgstr ""
+msgstr "Domyślna wielkość strony dla raportów PDF"
 
 #: common/models.py:1054
 msgid "Enable Test Reports"
@@ -2073,7 +2073,7 @@ msgstr "Użytkownicy muszą używać zabezpieczeń wieloskładnikowych."
 
 #: common/models.py:1204
 msgid "Check plugins on startup"
-msgstr ""
+msgstr "Sprawdź wtyczki przy starcie"
 
 #: common/models.py:1205
 msgid "Check that all plugins are installed on startup - enable in container enviroments"
@@ -2197,7 +2197,7 @@ msgstr ""
 
 #: common/models.py:1348
 msgid "Show needed stock"
-msgstr ""
+msgstr "Pokaż wymagany stan zapasów"
 
 #: common/models.py:1349
 msgid "Show stock items needed for builds on the homepage"
@@ -2309,7 +2309,7 @@ msgstr ""
 
 #: common/models.py:1446
 msgid "Hide Inactive Parts"
-msgstr ""
+msgstr "Ukryj nieaktywne części"
 
 #: common/models.py:1447
 msgid "Excluded inactive parts from search preview window"
