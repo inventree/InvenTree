@@ -126,6 +126,9 @@ class Build(MPTTModel, ReferenceIndexingMixin):
                 'parent': _('Invalid choice for parent build'),
             })
 
+        # Check for overallocated stock, which might happen if the quantity was reduced.
+        self.trim_allocated_stock()
+
     class Meta:
         """Metaclass options for the BuildOrder model"""
         verbose_name = _("Build Order")
@@ -721,6 +724,34 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
         # Remove the build output from the database
         output.delete()
+
+    @transaction.atomic
+    def trim_allocated_stock(self):
+        """Called after save to reduce allocated stock if the build order is now overallocated."""
+        allocations = BuildItem.objects.filter(build=self)
+
+        # Only need to worry about untracked stock here
+        for bom_item in self.untracked_bom_items:
+            reduce_by = self.allocated_quantity(bom_item) - self.required_quantity(bom_item)
+            if reduce_by <= 0:
+                continue  # all OK
+
+            # find builditem(s) to trim
+            for a in allocations.filter(bom_item=bom_item):
+                # Previous item completed the job
+                if reduce_by == 0:
+                    break
+
+                # Easy case - this item can just be reduced.
+                if a.quantity > reduce_by:
+                    a.quantity -= reduce_by
+                    a.save()
+                    break
+
+                # Harder case, this item needs to be deleted, and any remainder
+                # taken from the next items in the list.
+                reduce_by -= a.quantity
+                a.delete()
 
     @transaction.atomic
     def subtract_allocated_stock(self, user):
