@@ -28,6 +28,7 @@ from allauth.account.models import EmailAddress
 from allauth.account.views import EmailView, PasswordResetFromKeyView
 from allauth.socialaccount.forms import DisconnectForm
 from allauth.socialaccount.views import ConnectionsView
+from allauth_2fa.views import TwoFactorRemove
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from user_sessions.views import SessionDeleteOtherView, SessionDeleteView
 
@@ -36,7 +37,7 @@ from common.settings import currency_code_default, currency_codes
 from part.models import PartCategory
 from users.models import RuleSet, check_user_role
 
-from .forms import EditUserForm, SetPasswordForm
+from .forms import CustomTOTPDeviceRemoveForm, EditUserForm, SetPasswordForm
 
 
 def auth_request(request):
@@ -761,3 +762,11 @@ class NotificationsView(TemplateView):
     """View for showing notifications."""
 
     template_name = "InvenTree/notifications/notifications.html"
+
+
+# Temporary fix for django-allauth-2fa # TODO remove
+# See https://github.com/inventree/InvenTree/security/advisories/GHSA-8j76-mm54-52xq
+
+class CustomTwoFactorRemove(TwoFactorRemove):
+    """Use custom form."""
+    form_class = CustomTOTPDeviceRemoveForm
