@@ -770,3 +770,4 @@ class NotificationsView(TemplateView):
 class CustomTwoFactorRemove(TwoFactorRemove):
     """Use custom form."""
     form_class = CustomTOTPDeviceRemoveForm
+    success_url = reverse_lazy("settings")
