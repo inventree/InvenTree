@@ -15,7 +15,6 @@ import random
 import socket
 import string
 import sys
-from datetime import datetime
 
 import django.conf.locale
 from django.core.files.storage import default_storage
@@ -253,7 +252,6 @@ INSTALLED_APPS = [
     'import_export',                        # Import / export tables to file
     'django_cleanup.apps.CleanupConfig',    # Automatically delete orphaned MEDIA files
     'mptt',                                 # Modified Preorder Tree Traversal
-    'markdownx',                            # Markdown editing
     'markdownify',                          # Markdown template rendering
     'django_admin_shell',                   # Python shell for the admin interface
     'djmoney',                              # django-money integration
@@ -874,10 +872,6 @@ ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'
 # login settings
 REMOTE_LOGIN = get_setting('INVENTREE_REMOTE_LOGIN', CONFIG.get('remote_login', False))
 REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', CONFIG.get('remote_login_header', 'REMOTE_USER'))
-
-# Markdownx configuration
-# Ref: https://neutronx.github.io/django-markdownx/customization/
-MARKDOWNX_MEDIA_PATH = datetime.now().strftime('markdownx/%Y/%m/%d')
 
 # Markdownify configuration
 # Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html
