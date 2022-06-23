@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-22 10:51+0000\n"
-"PO-Revision-Date: 2022-06-22 16:49\n"
+"POT-Creation-Date: 2022-06-23 02:22+0000\n"
+"PO-Revision-Date: 2022-06-23 16:49\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -23,7 +23,7 @@ msgstr "Endpoint API non trovato"
 
 #: InvenTree/exceptions.py:62
 msgid "Error details can be found in the admin panel"
-msgstr ""
+msgstr "I dettagli dell'errore possono essere trovati nel pannello di amministrazione"
 
 #: InvenTree/fields.py:94
 msgid "Enter date"
@@ -48,37 +48,45 @@ msgstr "Inserisci la data"
 msgid "Notes"
 msgstr "Note"
 
-#: InvenTree/forms.py:133
+#: InvenTree/forms.py:134
 msgid "Enter password"
 msgstr "Inserire la password"
 
-#: InvenTree/forms.py:134
+#: InvenTree/forms.py:135
 msgid "Enter new password"
 msgstr "Inserire una nuova password"
 
-#: InvenTree/forms.py:143
+#: InvenTree/forms.py:144
 msgid "Confirm password"
 msgstr "Conferma la password"
 
-#: InvenTree/forms.py:144
+#: InvenTree/forms.py:145
 msgid "Confirm new password"
 msgstr "Conferma la nuova password"
 
-#: InvenTree/forms.py:148
+#: InvenTree/forms.py:149
 msgid "Old password"
-msgstr ""
+msgstr "Vecchia password"
 
-#: InvenTree/forms.py:177
+#: InvenTree/forms.py:178
 msgid "Email (again)"
 msgstr "Email (ancora)"
 
-#: InvenTree/forms.py:181
+#: InvenTree/forms.py:182
 msgid "Email address confirmation"
 msgstr "Conferma indirizzo email"
 
-#: InvenTree/forms.py:202
+#: InvenTree/forms.py:203
 msgid "You must type the same email each time."
 msgstr "È necessario digitare la stessa e-mail ogni volta."
+
+#: InvenTree/forms.py:282 common/models.py:1817
+msgid "Token"
+msgstr "Token"
+
+#: InvenTree/forms.py:305
+msgid "The entered token is not valid"
+msgstr "Il token inserito non è valido"
 
 #: InvenTree/helpers.py:404
 #, python-brace-format
@@ -96,7 +104,7 @@ msgstr "Numero seriale vuoto"
 #: InvenTree/helpers.py:446
 #, python-brace-format
 msgid "Invalid group range: {g}"
-msgstr ""
+msgstr "Range gruppo: {g}"
 
 #: InvenTree/helpers.py:449
 #, python-brace-format
@@ -106,7 +114,7 @@ msgstr "Gruppo non valido: {g}"
 #: InvenTree/helpers.py:477
 #, python-brace-format
 msgid "Invalid group sequence: {g}"
-msgstr ""
+msgstr "Sequenza gruppo non valida: {g}"
 
 #: InvenTree/helpers.py:485
 #, python-brace-format
@@ -255,11 +263,11 @@ msgstr "genitore"
 
 #: InvenTree/models.py:466
 msgid "Server Error"
-msgstr ""
+msgstr "Errore del server"
 
 #: InvenTree/models.py:467
 msgid "An error has been logged by the server."
-msgstr ""
+msgstr "Un errore è stato loggato dal server."
 
 #: InvenTree/serializers.py:52 part/models.py:2692
 msgid "Must be a valid number"
@@ -610,27 +618,27 @@ msgstr "L'eccesso non deve superare il 100%"
 msgid "Invalid value for overage"
 msgstr ""
 
-#: InvenTree/views.py:518 templates/InvenTree/settings/user.html:22
+#: InvenTree/views.py:519 templates/InvenTree/settings/user.html:22
 msgid "Edit User Information"
 msgstr "Modifica informazioni utente"
 
-#: InvenTree/views.py:530 templates/InvenTree/settings/user.html:19
+#: InvenTree/views.py:531 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
 msgstr "Imposta Password"
 
-#: InvenTree/views.py:552
+#: InvenTree/views.py:553
 msgid "Password fields must match"
 msgstr "Le password devono coincidere"
 
-#: InvenTree/views.py:561
+#: InvenTree/views.py:562
 msgid "Wrong password provided"
 msgstr ""
 
-#: InvenTree/views.py:750 templates/navbar.html:152
+#: InvenTree/views.py:751 templates/navbar.html:152
 msgid "System Information"
 msgstr "Informazioni sistema"
 
-#: InvenTree/views.py:757 templates/navbar.html:163
+#: InvenTree/views.py:758 templates/navbar.html:163
 msgid "About InvenTree"
 msgstr "Informazioni Su InvenTree"
 
@@ -2471,10 +2479,6 @@ msgstr "Attivo"
 
 #: common/models.py:1803
 msgid "Is this webhook active"
-msgstr ""
-
-#: common/models.py:1817
-msgid "Token"
 msgstr ""
 
 #: common/models.py:1818
@@ -7308,11 +7312,11 @@ msgstr "Conferma l'indirizzo e-mail"
 msgid "Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an email address for user %(user_display)s."
 msgstr ""
 
-#: templates/account/email_confirm.html:20 templates/js/translated/forms.js:633
+#: templates/account/email_confirm.html:22 templates/js/translated/forms.js:633
 msgid "Confirm"
 msgstr "Conferma"
 
-#: templates/account/email_confirm.html:27
+#: templates/account/email_confirm.html:30
 #, python-format
 msgid "This email confirmation link expired or is invalid. Please <a href=\"%(email_url)s\">issue a new email confirmation request</a>."
 msgstr ""
@@ -7412,7 +7416,7 @@ msgstr "Visualizza nel pannello di amministrazione"
 msgid "Two-Factor Authentication"
 msgstr ""
 
-#: templates/allauth_2fa/authenticate.html:12
+#: templates/allauth_2fa/authenticate.html:13
 msgid "Authenticate"
 msgstr ""
 
