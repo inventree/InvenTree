@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load js_i18n %}
 
 /* globals
     attachSelect,
