@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-22 10:51+0000\n"
-"PO-Revision-Date: 2022-06-22 16:49\n"
+"POT-Creation-Date: 2022-06-23 02:22+0000\n"
+"PO-Revision-Date: 2022-06-23 16:49\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -48,37 +48,45 @@ msgstr "Voer datum in"
 msgid "Notes"
 msgstr "Opmerkingen"
 
-#: InvenTree/forms.py:133
+#: InvenTree/forms.py:134
 msgid "Enter password"
 msgstr "Voer wachtwoord in"
 
-#: InvenTree/forms.py:134
+#: InvenTree/forms.py:135
 msgid "Enter new password"
 msgstr "Voer een nieuw wachtwoord in"
 
-#: InvenTree/forms.py:143
+#: InvenTree/forms.py:144
 msgid "Confirm password"
 msgstr "Wachtwoord bevestigen"
 
-#: InvenTree/forms.py:144
+#: InvenTree/forms.py:145
 msgid "Confirm new password"
 msgstr "Nieuw wachtwoord bevestigen"
 
-#: InvenTree/forms.py:148
+#: InvenTree/forms.py:149
 msgid "Old password"
 msgstr "Oude wachtwoord"
 
-#: InvenTree/forms.py:177
+#: InvenTree/forms.py:178
 msgid "Email (again)"
 msgstr "E-mailadres (opnieuw)"
 
-#: InvenTree/forms.py:181
+#: InvenTree/forms.py:182
 msgid "Email address confirmation"
 msgstr "E-mailadres bevestiging"
 
-#: InvenTree/forms.py:202
+#: InvenTree/forms.py:203
 msgid "You must type the same email each time."
 msgstr "Er moet hetzelfde e-mailadres ingevoerd worden."
+
+#: InvenTree/forms.py:282 common/models.py:1817
+msgid "Token"
+msgstr "Token"
+
+#: InvenTree/forms.py:305
+msgid "The entered token is not valid"
+msgstr ""
 
 #: InvenTree/helpers.py:404
 #, python-brace-format
@@ -610,27 +618,27 @@ msgstr "Overschot mag niet groter zijn dan 100%"
 msgid "Invalid value for overage"
 msgstr "Ongeldige waarde voor overschot"
 
-#: InvenTree/views.py:518 templates/InvenTree/settings/user.html:22
+#: InvenTree/views.py:519 templates/InvenTree/settings/user.html:22
 msgid "Edit User Information"
 msgstr "Gebruikersgegevens bewerken"
 
-#: InvenTree/views.py:530 templates/InvenTree/settings/user.html:19
+#: InvenTree/views.py:531 templates/InvenTree/settings/user.html:19
 msgid "Set Password"
 msgstr "Wachtwoord instellen"
 
-#: InvenTree/views.py:552
+#: InvenTree/views.py:553
 msgid "Password fields must match"
 msgstr "Wachtwoordvelden komen niet overeen"
 
-#: InvenTree/views.py:561
+#: InvenTree/views.py:562
 msgid "Wrong password provided"
 msgstr "Onjuist wachtwoord opgegeven"
 
-#: InvenTree/views.py:750 templates/navbar.html:152
+#: InvenTree/views.py:751 templates/navbar.html:152
 msgid "System Information"
 msgstr "Systeeminformatie"
 
-#: InvenTree/views.py:757 templates/navbar.html:163
+#: InvenTree/views.py:758 templates/navbar.html:163
 msgid "About InvenTree"
 msgstr "Over InvenTree"
 
@@ -2472,10 +2480,6 @@ msgstr "Actief"
 #: common/models.py:1803
 msgid "Is this webhook active"
 msgstr ""
-
-#: common/models.py:1817
-msgid "Token"
-msgstr "Token"
 
 #: common/models.py:1818
 msgid "Token for access"
@@ -7308,11 +7312,11 @@ msgstr ""
 msgid "Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an email address for user %(user_display)s."
 msgstr ""
 
-#: templates/account/email_confirm.html:20 templates/js/translated/forms.js:633
+#: templates/account/email_confirm.html:22 templates/js/translated/forms.js:633
 msgid "Confirm"
 msgstr "Bevestigen"
 
-#: templates/account/email_confirm.html:27
+#: templates/account/email_confirm.html:30
 #, python-format
 msgid "This email confirmation link expired or is invalid. Please <a href=\"%(email_url)s\">issue a new email confirmation request</a>."
 msgstr ""
@@ -7412,7 +7416,7 @@ msgstr ""
 msgid "Two-Factor Authentication"
 msgstr ""
 
-#: templates/allauth_2fa/authenticate.html:12
+#: templates/allauth_2fa/authenticate.html:13
 msgid "Authenticate"
 msgstr ""
 
