@@ -966,7 +966,7 @@
     {% if bom_parts %}
         var bom_colors =  randomColor({hue: 'green', count: {{ bom_parts|length }} })
         var bomdata = {
-            labels: [{% for line in bom_parts %}'{{ line.name }}',{% endfor %}],
+            labels: [{% for line in bom_parts %}'{{ line.name|escapejs }}',{% endfor %}],
             datasets:  [
             {
               label: 'Price',
