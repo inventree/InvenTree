@@ -2,7 +2,6 @@
 
 from base64 import b64encode
 
-from django.conf import settings
 from django.urls import reverse
 
 from rest_framework import status
@@ -29,10 +28,6 @@ class HTMLAPITests(InvenTreeTestCase):
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
 
-        # Check HTTP response
-        response = self.client.get(url, HTTP_ACCEPT='text/html')
-        self.assertEqual(response.status_code, 200 if settings.DEBUG else 406)
-
     def test_build_api(self):
         """Test that build list is working."""
         url = reverse('api-build-list')
@@ -40,10 +35,6 @@ class HTMLAPITests(InvenTreeTestCase):
         # Check JSON response
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
-
-        # Check HTTP response
-        response = self.client.get(url, HTTP_ACCEPT='text/html')
-        self.assertEqual(response.status_code, 200 if settings.DEBUG else 406)
 
     def test_stock_api(self):
         """Test that stock list is working."""
@@ -53,10 +44,6 @@ class HTMLAPITests(InvenTreeTestCase):
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
 
-        # Check HTTP response
-        response = self.client.get(url, HTTP_ACCEPT='text/html')
-        self.assertEqual(response.status_code, 200 if settings.DEBUG else 406)
-
     def test_company_list(self):
         """Test that company list is working."""
         url = reverse('api-company-list')
@@ -64,10 +51,6 @@ class HTMLAPITests(InvenTreeTestCase):
         # Check JSON response
         response = self.client.get(url, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 200)
-
-        # Check HTTP response
-        response = self.client.get(url, HTTP_ACCEPT='text/html')
-        self.assertEqual(response.status_code, 200 if settings.DEBUG else 406)
 
     def test_not_found(self):
         """Test that the NotFoundView is working."""
