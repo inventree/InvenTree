@@ -58,6 +58,8 @@ jobs:
       - name: Lint Javascript Files
         run: |
           python InvenTree/manage.py prerender
+          echo "Checking translated javascript files:"
+          ls InvenTree/InvenTree/static_i18n/i18n/
           npx eslint InvenTree/InvenTree/static_i18n/i18n/*.js
 
   html:
