@@ -6,8 +6,6 @@
 
 /* exported
     loadNotificationTable,
-    showAlertOrCache,
-    showCachedAlerts,
     startNotificationWatcher,
     stopNotificationWatcher,
     openNotificationPanel,
@@ -101,71 +99,6 @@ function loadNotificationTable(table, options={}, enableDelete=false) {
     $(table).on('click', '.notification-read', function() {
         updateNotificationReadState($(this));
     });
-}
-
-
-/*
- * Add a cached alert message to sesion storage
- */
-function addCachedAlert(message, options={}) {
-
-    var alerts = sessionStorage.getItem('inventree-alerts');
-
-    if (alerts) {
-        alerts = JSON.parse(alerts);
-    } else {
-        alerts = [];
-    }
-
-    alerts.push({
-        message: message,
-        style: options.style || 'success',
-        icon: options.icon,
-    });
-
-    sessionStorage.setItem('inventree-alerts', JSON.stringify(alerts));
-}
-
-
-/*
- * Remove all cached alert messages
- */
-function clearCachedAlerts() {
-    sessionStorage.removeItem('inventree-alerts');
-}
-
-
-/*
- * Display an alert, or cache to display on reload
- */
-function showAlertOrCache(message, cache, options={}) {
-
-    if (cache) {
-        addCachedAlert(message, options);
-    } else {
-        showMessage(message, options);
-    }
-}
-
-
-/*
- * Display cached alert messages when loading a page
- */
-function showCachedAlerts() {
-
-    var alerts = JSON.parse(sessionStorage.getItem('inventree-alerts')) || [];
-
-    alerts.forEach(function(alert) {
-        showMessage(
-            alert.message,
-            {
-                style: alert.style || 'success',
-                icon: alert.icon,
-            }
-        );
-    });
-
-    clearCachedAlerts();
 }
 
 
