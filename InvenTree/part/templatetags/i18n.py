@@ -8,6 +8,8 @@ from django import template
 from django.template import TemplateSyntaxError
 from django.templatetags.i18n import TranslateNode
 
+import bleach
+
 register = template.Library()
 
 
@@ -19,6 +21,21 @@ class CustomTranslateNode(TranslateNode):
 
         result = super().render(context)
 
+        result = bleach.clean(result)
+
+        # Remove any escape sequences
+        for seq in ['\a', '\b', '\f', '\n', '\r', '\t', '\v']:
+            result = result.replace(seq, '')
+
+        # Remove other disallowed characters
+        for c in ['\\', '`', ';', '|', '&']:
+            result = result.replace(c, '')
+
+        # Escape any quotes contained in the string
+        result = result.replace("'", r"\'")
+        result = result.replace('"', r'\"')
+
+        # Return the 'clean' resulting string
         return result
 
 
