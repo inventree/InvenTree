@@ -1,9 +1,5 @@
 {% load i18n %}
 
-/* globals
-    showMessage,
-*/
-
 /* exported
     loadNotificationTable,
     startNotificationWatcher,
