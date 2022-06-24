@@ -3,6 +3,7 @@
 Translated strings are escaped, such that they can be used as string literals in a javascript file.
 """
 
+import django.templatetags.i18n
 from django import template
 from django.template import TemplateSyntaxError
 from django.templatetags.i18n import TranslateNode
@@ -100,3 +101,21 @@ def do_translate(parser, token):
         seen.add(option)
 
     return CustomTranslateNode(message_string, noop, asvar, message_context)
+
+
+# Re-register tags which we have not explicitly overridden
+register.tag("blocktrans", django.templatetags.i18n.do_block_translate)
+register.tag("blocktranslate", django.templatetags.i18n.do_block_translate)
+
+register.tag("language", django.templatetags.i18n.language)
+
+register.tag("get_available_languages", django.templatetags.i18n.do_get_available_languages)
+register.tag("get_language_info", django.templatetags.i18n.do_get_language_info)
+register.tag("get_language_info_list", django.templatetags.i18n.do_get_language_info_list)
+register.tag("get_current_language", django.templatetags.i18n.do_get_current_language)
+register.tag("get_current_language_bidi", django.templatetags.i18n.do_get_current_language_bidi)
+
+register.filter("language_name", django.templatetags.i18n.language_name)
+register.filter("language_name_translated", django.templatetags.i18n.language_name_translated)
+register.filter("language_name_local", django.templatetags.i18n.language_name_local)
+register.filter("language_bidi", django.templatetags.i18n.language_bidi)

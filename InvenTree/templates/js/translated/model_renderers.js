@@ -1,4 +1,4 @@
-{% load js_i18n %}
+{% load i18n %}
 
 /* globals
     blankImage,
