@@ -89,5 +89,21 @@
 <!-- general JS -->
 {% include "third_party_js.html" %}
 
+<script type='text/javascript' src='{% static "script/inventree/message.js" %}'></script>
+
+<script type='text/javascript'>
+
+$(document).ready(function () {
+
+    {% if messages %}
+    {% for message in messages %}
+        showMessage(messsage);
+    {% endfor %}
+    {% endif %}
+
+});
+
+</script>
+
 </body>
 </html>
