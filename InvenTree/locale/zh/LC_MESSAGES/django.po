@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-24 10:44+0000\n"
-"PO-Revision-Date: 2022-06-24 16:56\n"
+"POT-Creation-Date: 2022-06-24 21:46+0000\n"
+"PO-Revision-Date: 2022-06-25 17:08\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -66,7 +66,7 @@ msgstr "确认新密码"
 
 #: InvenTree/forms.py:149
 msgid "Old password"
-msgstr ""
+msgstr "旧密码"
 
 #: InvenTree/forms.py:178
 msgid "Email (again)"
@@ -82,11 +82,11 @@ msgstr "您必须输入相同的 Email 。"
 
 #: InvenTree/forms.py:282 common/models.py:1818
 msgid "Token"
-msgstr ""
+msgstr "令牌"
 
 #: InvenTree/forms.py:305
 msgid "The entered token is not valid"
-msgstr ""
+msgstr "输入的令牌无效"
 
 #: InvenTree/helpers.py:404
 #, python-brace-format
@@ -224,7 +224,7 @@ msgstr "选择无效"
 #: templates/InvenTree/settings/settings.html:347
 #: templates/js/translated/company.js:532
 #: templates/js/translated/company.js:744
-#: templates/js/translated/notification.js:73
+#: templates/js/translated/notification.js:71
 #: templates/js/translated/part.js:684 templates/js/translated/part.js:836
 #: templates/js/translated/part.js:1857 templates/js/translated/stock.js:2346
 msgid "Name"
@@ -488,7 +488,7 @@ msgstr "已拒绝"
 
 #: InvenTree/status_codes.py:185
 msgid "Quarantined"
-msgstr ""
+msgstr "隔离"
 
 #: InvenTree/status_codes.py:259
 msgid "Legacy stock tracking entry"
@@ -552,7 +552,7 @@ msgstr "合并的库存项目"
 
 #: InvenTree/status_codes.py:283
 msgid "Converted to variant"
-msgstr ""
+msgstr "转换为变量"
 
 #: InvenTree/status_codes.py:285 templates/js/translated/table_filters.js:213
 msgid "Sent to customer"
@@ -572,7 +572,7 @@ msgstr "生产订单输出已完成"
 
 #: InvenTree/status_codes.py:290
 msgid "Consumed by build order"
-msgstr ""
+msgstr "被构建的物料清单消耗"
 
 #: InvenTree/status_codes.py:292
 msgid "Received against purchase order"
@@ -616,7 +616,7 @@ msgstr "备损不能超过 100%"
 
 #: InvenTree/validators.py:141
 msgid "Invalid value for overage"
-msgstr ""
+msgstr "无效的损耗值"
 
 #: InvenTree/views.py:519 templates/InvenTree/settings/user.html:22
 msgid "Edit User Information"
@@ -632,7 +632,7 @@ msgstr "密码字段必须相匹配。"
 
 #: InvenTree/views.py:562
 msgid "Wrong password provided"
-msgstr ""
+msgstr "密码错误"
 
 #: InvenTree/views.py:751 templates/navbar.html:152
 msgid "System Information"
@@ -640,11 +640,11 @@ msgstr "系统信息"
 
 #: InvenTree/views.py:758 templates/navbar.html:163
 msgid "About InvenTree"
-msgstr ""
+msgstr "关于 InventTree"
 
 #: build/api.py:217
 msgid "Build must be cancelled before it can be deleted"
-msgstr ""
+msgstr "物料清单必须先取消才能删除"
 
 #: build/models.py:124
 msgid "Invalid choice for parent build"
@@ -751,7 +751,7 @@ msgstr "来源地点"
 
 #: build/models.py:239
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
-msgstr ""
+msgstr "此次构建从何处取货(留空即可从任何存货位置取出)"
 
 #: build/models.py:244
 msgid "Destination Location"
@@ -863,12 +863,12 @@ msgstr "生产产出与订单不匹配"
 
 #: build/models.py:1108
 msgid "Build item must specify a build output, as master part is marked as trackable"
-msgstr ""
+msgstr "构建项目必填，因为主部件已被标记追踪"
 
 #: build/models.py:1117
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
-msgstr ""
+msgstr "分配数量 ({q}) 不得超过可用库存数量 ({a})"
 
 #: build/models.py:1127
 msgid "Stock item is over-allocated"
@@ -880,11 +880,11 @@ msgstr "分配数量必须大于0"
 
 #: build/models.py:1139
 msgid "Quantity must be 1 for serialized stock"
-msgstr ""
+msgstr "序列化库存的数量必须是 1"
 
 #: build/models.py:1196
 msgid "Selected stock item not found in BOM"
-msgstr ""
+msgstr "在物料清单中找不到选定的库存项"
 
 #: build/models.py:1265 stock/templates/stock/item_base.html:177
 #: templates/InvenTree/search.html:137 templates/js/translated/build.js:2453
@@ -894,7 +894,7 @@ msgstr "生产"
 
 #: build/models.py:1266
 msgid "Build to allocate parts"
-msgstr ""
+msgstr "构建以分配元件"
 
 #: build/models.py:1282 build/serializers.py:603 order/serializers.py:996
 #: order/serializers.py:1017 stock/serializers.py:375 stock/serializers.py:722
@@ -953,7 +953,7 @@ msgstr "数量"
 
 #: build/models.py:1296
 msgid "Stock quantity to allocate to build"
-msgstr ""
+msgstr "分配到构建的数量"
 
 #: build/models.py:1304
 msgid "Install into"
@@ -961,24 +961,24 @@ msgstr "安装到"
 
 #: build/models.py:1305
 msgid "Destination stock item"
-msgstr ""
+msgstr "目标库存物品"
 
 #: build/serializers.py:128 build/serializers.py:632
 #: templates/js/translated/build.js:1163
 msgid "Build Output"
-msgstr ""
+msgstr "构建输出"
 
 #: build/serializers.py:140
 msgid "Build output does not match the parent build"
-msgstr ""
+msgstr "构建输出与父构建不匹配"
 
 #: build/serializers.py:144
 msgid "Output part does not match BuildOrder part"
-msgstr ""
+msgstr "输出部件与构建不匹配"
 
 #: build/serializers.py:148
 msgid "This build output has already been completed"
-msgstr ""
+msgstr "此构建产出已经完成"
 
 #: build/serializers.py:159
 msgid "This build output is not fully allocated"
@@ -3687,7 +3687,7 @@ msgstr ""
 msgid "Sales order shipment reference"
 msgstr ""
 
-#: order/models.py:1406 templates/js/translated/notification.js:57
+#: order/models.py:1406 templates/js/translated/notification.js:55
 msgid "Item"
 msgstr ""
 
@@ -4272,7 +4272,7 @@ msgstr "提高搜索结果可见性的关键字"
 #: part/models.py:776 part/models.py:2211 part/models.py:2454
 #: part/templates/part/part_base.html:257
 #: templates/InvenTree/settings/settings.html:232
-#: templates/js/translated/notification.js:52
+#: templates/js/translated/notification.js:50
 #: templates/js/translated/part.js:1438 templates/js/translated/part.js:1664
 msgid "Category"
 msgstr "类别"
@@ -6652,7 +6652,7 @@ msgid "Delete all read notifications"
 msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:92
-#: templates/js/translated/notification.js:84
+#: templates/js/translated/notification.js:82
 msgid "Delete Notification"
 msgstr ""
 
@@ -6805,7 +6805,7 @@ msgid "Stage"
 msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:133
-#: templates/js/translated/notification.js:77
+#: templates/js/translated/notification.js:75
 msgid "Message"
 msgstr ""
 
@@ -6936,7 +6936,7 @@ msgid "No part parameter templates found"
 msgstr "未找到商品参数模板"
 
 #: templates/InvenTree/settings/settings.html:341
-#: templates/js/translated/notification.js:38
+#: templates/js/translated/notification.js:36
 msgid "ID"
 msgstr ""
 
@@ -8584,23 +8584,23 @@ msgstr "制造商商品ID"
 msgid "Supplier Part ID"
 msgstr "供应商商品ID"
 
-#: templates/js/translated/notification.js:44
+#: templates/js/translated/notification.js:42
 msgid "Age"
 msgstr ""
 
-#: templates/js/translated/notification.js:322
+#: templates/js/translated/notification.js:198
 msgid "Mark as unread"
 msgstr ""
 
-#: templates/js/translated/notification.js:326
+#: templates/js/translated/notification.js:202
 msgid "Mark as read"
 msgstr ""
 
-#: templates/js/translated/notification.js:351
+#: templates/js/translated/notification.js:227
 msgid "No unread notifications"
 msgstr ""
 
-#: templates/js/translated/notification.js:393 templates/notifications.html:10
+#: templates/js/translated/notification.js:269 templates/notifications.html:10
 msgid "Notifications will load here"
 msgstr ""
 
