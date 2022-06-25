@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-24 10:44+0000\n"
-"PO-Revision-Date: 2022-06-24 16:57\n"
+"POT-Creation-Date: 2022-06-24 21:46+0000\n"
+"PO-Revision-Date: 2022-06-25 17:09\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -224,7 +224,7 @@ msgstr "Érvénytelen választás"
 #: templates/InvenTree/settings/settings.html:347
 #: templates/js/translated/company.js:532
 #: templates/js/translated/company.js:744
-#: templates/js/translated/notification.js:73
+#: templates/js/translated/notification.js:71
 #: templates/js/translated/part.js:684 templates/js/translated/part.js:836
 #: templates/js/translated/part.js:1857 templates/js/translated/stock.js:2346
 msgid "Name"
@@ -3688,7 +3688,7 @@ msgstr "Szállítmány"
 msgid "Sales order shipment reference"
 msgstr "Vevői rendelés szállítmány azonosító"
 
-#: order/models.py:1406 templates/js/translated/notification.js:57
+#: order/models.py:1406 templates/js/translated/notification.js:55
 msgid "Item"
 msgstr "Tétel"
 
@@ -4273,7 +4273,7 @@ msgstr "Alkatrész kulcsszavak amik segítik a megjelenést a keresési eredmén
 #: part/models.py:776 part/models.py:2211 part/models.py:2454
 #: part/templates/part/part_base.html:257
 #: templates/InvenTree/settings/settings.html:232
-#: templates/js/translated/notification.js:52
+#: templates/js/translated/notification.js:50
 #: templates/js/translated/part.js:1438 templates/js/translated/part.js:1664
 msgid "Category"
 msgstr "Kategória"
@@ -6653,7 +6653,7 @@ msgid "Delete all read notifications"
 msgstr "Olvasott értesítések törlése"
 
 #: templates/InvenTree/notifications/notifications.html:92
-#: templates/js/translated/notification.js:84
+#: templates/js/translated/notification.js:82
 msgid "Delete Notification"
 msgstr "Értesítés törlése"
 
@@ -6806,7 +6806,7 @@ msgid "Stage"
 msgstr "Szakasz"
 
 #: templates/InvenTree/settings/plugin.html:133
-#: templates/js/translated/notification.js:77
+#: templates/js/translated/notification.js:75
 msgid "Message"
 msgstr "Üzenet"
 
@@ -6937,7 +6937,7 @@ msgid "No part parameter templates found"
 msgstr "Nincs alkatrész paraméter sablon"
 
 #: templates/InvenTree/settings/settings.html:341
-#: templates/js/translated/notification.js:38
+#: templates/js/translated/notification.js:36
 msgid "ID"
 msgstr "Azonosító"
 
@@ -8585,23 +8585,23 @@ msgstr "Gyártói cikkszám"
 msgid "Supplier Part ID"
 msgstr "Beszállítói cikkszám"
 
-#: templates/js/translated/notification.js:44
+#: templates/js/translated/notification.js:42
 msgid "Age"
 msgstr "Életkor"
 
-#: templates/js/translated/notification.js:322
+#: templates/js/translated/notification.js:198
 msgid "Mark as unread"
 msgstr "Megjelölés olvasatlanként"
 
-#: templates/js/translated/notification.js:326
+#: templates/js/translated/notification.js:202
 msgid "Mark as read"
 msgstr "Megjelölés olvasottként"
 
-#: templates/js/translated/notification.js:351
+#: templates/js/translated/notification.js:227
 msgid "No unread notifications"
 msgstr "Nincs olvasatlan értesítés"
 
-#: templates/js/translated/notification.js:393 templates/notifications.html:10
+#: templates/js/translated/notification.js:269 templates/notifications.html:10
 msgid "Notifications will load here"
 msgstr "Az értesítések itt fognak megjelenni"
 
