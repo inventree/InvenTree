@@ -217,18 +217,6 @@ logger.debug(f"STATIC_ROOT: '{STATIC_ROOT}'")
 
 INSTALLED_APPS = [
 
-    # Core django modules
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'user_sessions',                # db user sessions
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.sites',
-
-    # Maintenance
-    'maintenance_mode',
-
     # InvenTree apps
     'build.apps.BuildConfig',
     'common.apps.CommonConfig',
@@ -241,6 +229,18 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'plugin.apps.PluginAppConfig',
     'InvenTree.apps.InvenTreeConfig',       # InvenTree app runs last
+
+    # Core django modules
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'user_sessions',                # db user sessions
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.sites',
+
+    # Maintenance
+    'maintenance_mode',
 
     # Third part add-ons
     'django_filters',                       # Extended filter functionality
