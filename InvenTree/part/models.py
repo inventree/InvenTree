@@ -1318,6 +1318,11 @@ class Part(MetadataMixin, MPTTModel):
 
     def allocation_count(self, **kwargs):
         """Return the total quantity of stock allocated for this part, against both build orders and sales orders."""
+
+        if self.id is None:
+            # If this instance has not been saved, foreign-key lookups will fail
+            return 0
+
         return sum(
             [
                 self.build_order_allocation_count(**kwargs),
