@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-24 10:44+0000\n"
-"PO-Revision-Date: 2022-06-24 16:57\n"
+"POT-Creation-Date: 2022-06-24 21:46+0000\n"
+"PO-Revision-Date: 2022-06-25 17:09\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -224,7 +224,7 @@ msgstr "Neplatný výběr"
 #: templates/InvenTree/settings/settings.html:347
 #: templates/js/translated/company.js:532
 #: templates/js/translated/company.js:744
-#: templates/js/translated/notification.js:73
+#: templates/js/translated/notification.js:71
 #: templates/js/translated/part.js:684 templates/js/translated/part.js:836
 #: templates/js/translated/part.js:1857 templates/js/translated/stock.js:2346
 msgid "Name"
@@ -3687,7 +3687,7 @@ msgstr ""
 msgid "Sales order shipment reference"
 msgstr ""
 
-#: order/models.py:1406 templates/js/translated/notification.js:57
+#: order/models.py:1406 templates/js/translated/notification.js:55
 msgid "Item"
 msgstr ""
 
@@ -4272,7 +4272,7 @@ msgstr ""
 #: part/models.py:776 part/models.py:2211 part/models.py:2454
 #: part/templates/part/part_base.html:257
 #: templates/InvenTree/settings/settings.html:232
-#: templates/js/translated/notification.js:52
+#: templates/js/translated/notification.js:50
 #: templates/js/translated/part.js:1438 templates/js/translated/part.js:1664
 msgid "Category"
 msgstr ""
@@ -6652,7 +6652,7 @@ msgid "Delete all read notifications"
 msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:92
-#: templates/js/translated/notification.js:84
+#: templates/js/translated/notification.js:82
 msgid "Delete Notification"
 msgstr ""
 
@@ -6805,7 +6805,7 @@ msgid "Stage"
 msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:133
-#: templates/js/translated/notification.js:77
+#: templates/js/translated/notification.js:75
 msgid "Message"
 msgstr ""
 
@@ -6936,7 +6936,7 @@ msgid "No part parameter templates found"
 msgstr ""
 
 #: templates/InvenTree/settings/settings.html:341
-#: templates/js/translated/notification.js:38
+#: templates/js/translated/notification.js:36
 msgid "ID"
 msgstr ""
 
@@ -8584,23 +8584,23 @@ msgstr ""
 msgid "Supplier Part ID"
 msgstr ""
 
-#: templates/js/translated/notification.js:44
+#: templates/js/translated/notification.js:42
 msgid "Age"
 msgstr ""
 
-#: templates/js/translated/notification.js:322
+#: templates/js/translated/notification.js:198
 msgid "Mark as unread"
 msgstr ""
 
-#: templates/js/translated/notification.js:326
+#: templates/js/translated/notification.js:202
 msgid "Mark as read"
 msgstr ""
 
-#: templates/js/translated/notification.js:351
+#: templates/js/translated/notification.js:227
 msgid "No unread notifications"
 msgstr ""
 
-#: templates/js/translated/notification.js:393 templates/notifications.html:10
+#: templates/js/translated/notification.js:269 templates/notifications.html:10
 msgid "Notifications will load here"
 msgstr ""
 
