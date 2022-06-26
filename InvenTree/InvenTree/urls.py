@@ -152,7 +152,6 @@ frontendpatterns = [
 
     # admin sites
     re_path(f'^{settings.INVENTREE_ADMIN_URL}/error_log/', include('error_report.urls')),
-    re_path(f'^{settings.INVENTREE_ADMIN_URL}/shell/', include('django_admin_shell.urls')),
     re_path(f'^{settings.INVENTREE_ADMIN_URL}/', admin.site.urls, name='inventree-admin'),
 
     # DB user sessions
