@@ -37,6 +37,7 @@ from rest_framework.exceptions import PermissionDenied
 
 import InvenTree.fields
 import InvenTree.helpers
+import InvenTree.ready
 import InvenTree.validators
 
 logger = logging.getLogger('inventree')
@@ -748,7 +749,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         """
         super().save()
 
-        if self.requires_restart():
+        if self.requires_restart() and not InvenTree.ready.isImportingData():
             InvenTreeSetting.set_setting('SERVER_RESTART_REQUIRED', True, None)
 
     """

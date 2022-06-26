@@ -4,9 +4,7 @@
 """
 
 import logging
-import os
 
-from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db.utils import OperationalError, ProgrammingError
 
@@ -27,18 +25,15 @@ class Command(BaseCommand):
             return
 
         img = model.image
-        url = img.thumbnail.name
-        loc = os.path.join(settings.MEDIA_ROOT, url)
 
-        if not os.path.exists(loc):
-            logger.info(f"Generating thumbnail image for '{img}'")
+        logger.info(f"Generating thumbnail image for '{img}'")
 
-            try:
-                model.image.render_variations(replace=False)
-            except FileNotFoundError:
-                logger.warning(f"Warning: Image file '{img}' is missing")
-            except UnidentifiedImageError:
-                logger.warning(f"Warning: Image file '{img}' is not a valid image")
+        try:
+            model.image.render_variations(replace=False)
+        except FileNotFoundError:
+            logger.warning(f"Warning: Image file '{img}' is missing")
+        except UnidentifiedImageError:
+            logger.warning(f"Warning: Image file '{img}' is not a valid image")
 
     def handle(self, *args, **kwargs):
         """Rebuild all thumbnail images."""

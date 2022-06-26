@@ -16,6 +16,7 @@
     sanitizeData,
 */
 
+
 function attachClipboard(selector, containerselector, textElement) {
     // set container
     if (containerselector) {

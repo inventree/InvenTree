@@ -44,8 +44,9 @@ class InvenTreeExchange(SimpleExchangeBackend):
             response = urlopen(url, timeout=5, context=context)
             return response.read()
         except Exception:
-            # Returning None here will raise an error upstream
-            return None
+            # Something has gone wrong, but we can just try again next time
+            # Raise a TypeError so the outer function can handle this
+            raise TypeError
 
     def update_rates(self, base_currency=None):
         """Set the requested currency codes and get rates."""
@@ -60,6 +61,8 @@ class InvenTreeExchange(SimpleExchangeBackend):
         # catch connection errors
         except URLError:
             print('Encountered connection error while updating')
+        except TypeError:
+            print('Exchange returned invalid response')
         except OperationalError as e:
             if 'SerializationFailure' in e.__cause__.__class__.__name__:
                 print('Serialization Failure while updating exchange rates')
