@@ -20,7 +20,6 @@ from django.utils.translation import gettext_lazy as _
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
-from markdownx.models import MarkdownxField
 from mptt.models import TreeForeignKey
 
 import InvenTree.helpers
@@ -28,7 +27,8 @@ import InvenTree.ready
 from common.settings import currency_code_default
 from company.models import Company, SupplierPart
 from InvenTree.exceptions import log_error
-from InvenTree.fields import InvenTreeModelMoneyField, RoundingDecimalField
+from InvenTree.fields import (InvenTreeModelMoneyField, InvenTreeNotesField,
+                              RoundingDecimalField)
 from InvenTree.helpers import (decimal2string, getSetting, increment,
                                notify_responsible)
 from InvenTree.models import InvenTreeAttachment, ReferenceIndexingMixin
@@ -152,7 +152,7 @@ class Order(MetadataMixin, ReferenceIndexingMixin):
         related_name='+',
     )
 
-    notes = MarkdownxField(blank=True, verbose_name=_('Notes'), help_text=_('Order notes'))
+    notes = InvenTreeNotesField(help_text=_('Order notes'))
 
     def get_total_price(self, target_currency=None):
         """Calculates the total price of all order lines, and converts to the specified target currency.
@@ -1210,11 +1210,7 @@ class SalesOrderShipment(models.Model):
         default='1',
     )
 
-    notes = MarkdownxField(
-        blank=True,
-        verbose_name=_('Notes'),
-        help_text=_('Shipment notes'),
-    )
+    notes = InvenTreeNotesField(help_text=_('Shipment notes'))
 
     tracking_number = models.CharField(
         max_length=100,

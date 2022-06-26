@@ -6,7 +6,6 @@ from django.conf import settings
 import django.core.validators
 from django.db import migrations, models
 import django.db.models.deletion
-import markdownx.models
 
 
 class Migration(migrations.Migration):
@@ -29,7 +28,7 @@ class Migration(migrations.Migration):
                 ('status', models.PositiveIntegerField(choices=[(10, 'Pending'), (20, 'Placed'), (30, 'Complete'), (40, 'Cancelled'), (50, 'Lost'), (60, 'Returned')], default=10, help_text='Order status')),
                 ('issue_date', models.DateField(blank=True, null=True)),
                 ('complete_date', models.DateField(blank=True, null=True)),
-                ('notes', markdownx.models.MarkdownxField(blank=True, help_text='Order notes')),
+                ('notes', models.TextField(blank=True, help_text='Order notes')),
                 ('customer_reference', models.CharField(blank=True, help_text='Customer order reference code', max_length=64)),
                 ('created_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
                 ('customer', models.ForeignKey(help_text='Customer', limit_choices_to={True, 'is_supplier'}, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='sales_orders', to='company.Company')),

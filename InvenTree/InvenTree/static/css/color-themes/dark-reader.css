@@ -3539,15 +3539,6 @@ a.ui-button:active,
 .index-action-selected {
     background-color: rgb(32, 34, 36);
 }
-.markdownx .row {
-    border-color: rgb(31, 31, 92);
-}
-.markdownx-editor {
-    border-color: rgb(31, 31, 92);
-}
-.markdownx-preview {
-    border-color: rgb(31, 31, 92);
-}
 .progress {
     background-image: initial;
     background-color: rgb(32, 34, 36);

@@ -57,8 +57,8 @@ jobs:
           python3 check_js_templates.py
       - name: Lint Javascript Files
         run: |
-          invoke render-js-files
-          npx eslint js_tmp/*.js
+          python InvenTree/manage.py prerender
+          npx eslint InvenTree/InvenTree/static_i18n/i18n/*.js
 
   html:
     name: Style [HTML]

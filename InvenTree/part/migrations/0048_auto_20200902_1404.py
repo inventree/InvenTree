@@ -3,8 +3,6 @@
 import InvenTree.fields
 import InvenTree.validators
 
-import markdownx
-
 from django.db import migrations, models
 
 
@@ -38,7 +36,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='part',
             name='notes',
-            field=markdownx.models.MarkdownxField(blank=True, help_text='Part notes - supports Markdown formatting', null=True),
+            field=models.TextField(blank=True, help_text='Part notes - supports Markdown formatting', null=True),
         ),
         migrations.AlterField(
             model_name='part',
