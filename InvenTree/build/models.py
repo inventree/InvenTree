@@ -32,6 +32,7 @@ import InvenTree.tasks
 
 from plugin.events import trigger_event
 
+import common.notifications
 from part import models as PartModels
 from stock import models as StockModels
 from users import models as UserModels
@@ -534,11 +535,50 @@ class Build(MPTTModel, ReferenceIndexingMixin):
         self.subtract_allocated_stock(user)
 
         # Ensure that there are no longer any BuildItem objects
-        # which point to thisFcan Build Order
+        # which point to this Build Order
         self.allocated_stock.all().delete()
 
         # Register an event
         trigger_event('build.completed', id=self.pk)
+
+        # Notify users that this build has been completed
+        targets = [
+            self.issued_by,
+            self.responsible,
+        ]
+
+        # Notify those users interested in the parent build
+        if self.parent:
+            targets.append(self.parent.issued_by)
+            targets.append(self.parent.responsible)
+
+        # Notify users if this build points to a sales order
+        if self.sales_order:
+            targets.append(self.sales_order.created_by)
+            targets.append(self.sales_order.responsible)
+
+        build = self
+        name = _(f'Build order {build} has been completed')
+
+        context = {
+            'build': build,
+            'name': name,
+            'slug': 'build.completed',
+            'message': _('A build order has been completed'),
+            'link': InvenTree.helpers.construct_absolute_url(self.get_absolute_url()),
+            'template': {
+                'html': 'email/build_order_completed.html',
+                'subject': name,
+            }
+        }
+
+        common.notifications.trigger_notification(
+            build,
+            'build.completed',
+            targets=targets,
+            context=context,
+            target_exclude=[user],
+        )
 
     @transaction.atomic
     def cancel_build(self, user, **kwargs):
