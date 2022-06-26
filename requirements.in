@@ -12,7 +12,7 @@ django-formtools                        # Form wizard tools
 django-import-export==2.5.0             # Data import / export for admin interface
 django-maintenance-mode                 # Shut down application while reloading etc.
 django-markdownify                      # Markdown rendering
-django-money                            # Django app for currency management
+django-money<3.0.0                      # Django app for currency management  # FIXED 2022-06-26 to make sure py-moneyed is not conflicting
 django-mptt==0.11.0                     # Modified Preorder Tree Traversal
 django-redis>=5.0.0                     # Redis integration
 django-q                                # Background task scheduling
