@@ -909,7 +909,7 @@
                     },
                     {% if 'price_diff' in price_history.0 %}
                     {
-                        label: '{% blocktrans %}Unit Price-Cost Difference - {{currency}}{% endblocktrans %}',
+                        label: '{% blocktrans %}Unit Price-Cost Difference - {{ currency }}{% endblocktrans %}',
                         backgroundColor: 'rgba(68, 157, 68, 0.2)',
                         borderColor: 'rgb(68, 157, 68)',
                         yAxisID: 'y2',
@@ -950,7 +950,7 @@
         {% if bom_parts %}
             var bom_colors =  randomColor({hue: 'green', count: {{ bom_parts|length }} })
             var bomdata = {
-                labels: [{% for line in bom_parts %}'{{ line.name }}',{% endfor %}],
+                labels: [{% for line in bom_parts %}'{{ line.name|escapejs }}',{% endfor %}],
                 datasets:  [
                 {
                 label: 'Price',
