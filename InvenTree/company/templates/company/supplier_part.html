@@ -62,7 +62,7 @@
 {% block thumbnail %}
 <img class='part-thumb'
 {% if part.part.image %}
-src='{{ part.part.image.url }}'
+src='{{ part.part.image.preview.url }}'
 {% else %}
 src="{% static 'img/blank_image.png' %}"
 {% endif %}/>

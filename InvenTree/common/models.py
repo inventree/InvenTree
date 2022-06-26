@@ -1008,6 +1008,23 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': InvenTree.validators.validate_part_name_format
         },
 
+        'LABEL_ENABLE': {
+            'name': _('Enable label printing'),
+            'description': _('Enable label printing from the web interface'),
+            'default': True,
+            'validator': bool,
+        },
+
+        'LABEL_DPI': {
+            'name': _('Label Image DPI'),
+            'description': _('DPI resolution when generating image files to supply to label printing plugins'),
+            'default': 300,
+            'validator': [
+                int,
+                MinValueValidator(100),
+            ]
+        },
+
         'REPORT_ENABLE': {
             'name': _('Enable Reports'),
             'description': _('Enable generation of reports'),
@@ -1386,12 +1403,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
         'HOMEPAGE_SO_OVERDUE': {
             'name': _('Show overdue SOs'),
             'description': _('Show overdue SOs on the homepage'),
-            'default': True,
-            'validator': bool,
-        },
-        'LABEL_ENABLE': {
-            'name': _('Enable label printing'),
-            'description': _('Enable label printing from the web interface'),
             'default': True,
             'validator': bool,
         },

@@ -11,12 +11,12 @@ from django.db.models import Q, Sum, UniqueConstraint
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from markdownx.models import MarkdownxField
 from moneyed import CURRENCIES
 from stdimage.models import StdImageField
 
 import common.models
 import common.settings
+import InvenTree.fields
 import InvenTree.validators
 from common.settings import currency_code_default
 from InvenTree.fields import InvenTreeURLField
@@ -127,12 +127,15 @@ class Company(models.Model):
         upload_to=rename_company_image,
         null=True,
         blank=True,
-        variations={'thumbnail': (128, 128)},
+        variations={
+            'thumbnail': (128, 128),
+            'preview': (256, 256),
+        },
         delete_orphans=True,
         verbose_name=_('Image'),
     )
 
-    notes = MarkdownxField(blank=True, verbose_name=_('Notes'))
+    notes = InvenTree.fields.InvenTreeNotesField(help_text=_("Company Notes"))
 
     is_customer = models.BooleanField(default=False, verbose_name=_('is customer'), help_text=_('Do you sell items to this company?'))
 

@@ -18,7 +18,7 @@
     {% endif %}
     <img class="part-thumb" id='part-image'
         {% if part.image %}
-        src="{{ part.image.url }}"
+        src="{{ part.image.preview.url }}"
         {% else %}
         src="{% static 'img/blank_image.png' %}"
         {% endif %}/>

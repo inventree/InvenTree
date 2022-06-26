@@ -17,17 +17,23 @@
     {% trans 'Backup tokens have been generated, but are not revealed here for security reasons. Press the button below to generate new ones.' %}
   {% endif %}
 {% else %}
-  {% trans 'No tokens. Press the button below to generate some.' %}
+  {% trans 'No backup tokens are available. Press the button below to generate some.' %}
 {% endif %}
 
-<br>
+<hr>
 <form method="post">
   {% csrf_token %}
-  <button type="submit" class="btn btn-primary w-100">
-    {% trans 'Generate backup tokens' %}
-  </button>
+  <div class='btn-group float-right' role='group'>
+    <button type="submit" class="btn btn-primary w-100">
+      <span class='fas fa-key'></span> {% trans 'Generate Tokens' %}
+    </button>
+  </div>
 </form>
-<br>
-<a href="{% url 'settings' %}" class="btn btn-secondary w-100 btn-sm">{% trans "Back to settings" %}</a>
+
+<div>
+  <a type='button' href="{% url 'settings' %}" class="btn btn-secondary">
+    <span class='fas fa-undo-alt'></span> {% trans "Return to Site" %}
+  </a>
+</div>
 
 {% endblock %}

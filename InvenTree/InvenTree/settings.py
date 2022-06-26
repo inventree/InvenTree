@@ -15,7 +15,6 @@ import random
 import socket
 import string
 import sys
-from datetime import datetime
 
 import django.conf.locale
 from django.core.files.storage import default_storage
@@ -253,7 +252,6 @@ INSTALLED_APPS = [
     'import_export',                        # Import / export tables to file
     'django_cleanup.apps.CleanupConfig',    # Automatically delete orphaned MEDIA files
     'mptt',                                 # Modified Preorder Tree Traversal
-    'markdownx',                            # Markdown editing
     'markdownify',                          # Markdown template rendering
     'django_admin_shell',                   # Python shell for the admin interface
     'djmoney',                              # django-money integration
@@ -308,6 +306,11 @@ if DEBUG_TOOLBAR_ENABLED:  # pragma: no cover
     logger.info("Running with DEBUG_TOOLBAR enabled")
     INSTALLED_APPS.append('debug_toolbar')
     MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+
+    DEBUG_TOOLBAR_CONFIG = {
+        'RESULTS_CACHE_SIZE': 100,
+        'OBSERVE_REQUEST_CALLBACK': lambda x: False,
+    }
 
 # Internal IP addresses allowed to see the debug toolbar
 INTERNAL_IPS = [
@@ -386,8 +389,15 @@ REST_FRAMEWORK = {
         'InvenTree.permissions.RolePermission',
     ),
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
-    'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata'
+    'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata',
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ]
 }
+
+if DEBUG:
+    # Enable browsable API if in DEBUG mode
+    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append('rest_framework.renderers.BrowsableAPIRenderer')
 
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
 
@@ -836,12 +846,13 @@ for app in SOCIAL_BACKENDS:
 
 SOCIALACCOUNT_PROVIDERS = CONFIG.get('social_providers', [])
 
+SOCIALACCOUNT_STORE_TOKENS = True
+
 # settings for allauth
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting('INVENTREE_LOGIN_CONFIRM_DAYS', CONFIG.get('login_confirm_days', 3))
-
 ACCOUNT_LOGIN_ATTEMPTS_LIMIT = get_setting('INVENTREE_LOGIN_ATTEMPTS', CONFIG.get('login_attempts', 5))
-
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
+ACCOUNT_PREVENT_ENUMERATION = True
 
 # override forms / adapters
 ACCOUNT_FORMS = {
@@ -861,10 +872,6 @@ ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'
 # login settings
 REMOTE_LOGIN = get_setting('INVENTREE_REMOTE_LOGIN', CONFIG.get('remote_login', False))
 REMOTE_LOGIN_HEADER = get_setting('INVENTREE_REMOTE_LOGIN_HEADER', CONFIG.get('remote_login_header', 'REMOTE_USER'))
-
-# Markdownx configuration
-# Ref: https://neutronx.github.io/django-markdownx/customization/
-MARKDOWNX_MEDIA_PATH = datetime.now().strftime('markdownx/%Y/%m/%d')
 
 # Markdownify configuration
 # Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html

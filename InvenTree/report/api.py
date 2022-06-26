@@ -8,7 +8,7 @@ from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, generics
+from rest_framework import filters
 from rest_framework.response import Response
 
 import build.models
@@ -16,6 +16,7 @@ import common.models
 import InvenTree.helpers
 import order.models
 import part.models
+from InvenTree.mixins import ListAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
 from stock.models import StockItem, StockItemAttachment
 
 from .models import (BillOfMaterialsReport, BuildReport, PurchaseOrderReport,
@@ -25,7 +26,7 @@ from .serializers import (BOMReportSerializer, BuildReportSerializer,
                           SalesOrderReportSerializer, TestReportSerializer)
 
 
-class ReportListView(generics.ListAPIView):
+class ReportListView(ListAPI):
     """Generic API class for report templates."""
 
     filter_backends = [
@@ -330,14 +331,14 @@ class StockItemTestReportList(ReportListView, StockItemReportMixin):
         return queryset
 
 
-class StockItemTestReportDetail(generics.RetrieveUpdateDestroyAPIView):
+class StockItemTestReportDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for a single TestReport object."""
 
     queryset = TestReport.objects.all()
     serializer_class = TestReportSerializer
 
 
-class StockItemTestReportPrint(generics.RetrieveAPIView, StockItemReportMixin, ReportPrintMixin):
+class StockItemTestReportPrint(RetrieveAPI, StockItemReportMixin, ReportPrintMixin):
     """API endpoint for printing a TestReport object."""
 
     queryset = TestReport.objects.all()
@@ -427,14 +428,14 @@ class BOMReportList(ReportListView, PartReportMixin):
         return queryset
 
 
-class BOMReportDetail(generics.RetrieveUpdateDestroyAPIView):
+class BOMReportDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for a single BillOfMaterialReport object."""
 
     queryset = BillOfMaterialsReport.objects.all()
     serializer_class = BOMReportSerializer
 
 
-class BOMReportPrint(generics.RetrieveAPIView, PartReportMixin, ReportPrintMixin):
+class BOMReportPrint(RetrieveAPI, PartReportMixin, ReportPrintMixin):
     """API endpoint for printing a BillOfMaterialReport object."""
 
     queryset = BillOfMaterialsReport.objects.all()
@@ -509,14 +510,14 @@ class BuildReportList(ReportListView, BuildReportMixin):
         return queryset
 
 
-class BuildReportDetail(generics.RetrieveUpdateDestroyAPIView):
+class BuildReportDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for a single BuildReport object."""
 
     queryset = BuildReport.objects.all()
     serializer_class = BuildReportSerializer
 
 
-class BuildReportPrint(generics.RetrieveAPIView, BuildReportMixin, ReportPrintMixin):
+class BuildReportPrint(RetrieveAPI, BuildReportMixin, ReportPrintMixin):
     """API endpoint for printing a BuildReport."""
 
     queryset = BuildReport.objects.all()
@@ -586,14 +587,14 @@ class PurchaseOrderReportList(ReportListView, OrderReportMixin):
         return queryset
 
 
-class PurchaseOrderReportDetail(generics.RetrieveUpdateDestroyAPIView):
+class PurchaseOrderReportDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for a single PurchaseOrderReport object."""
 
     queryset = PurchaseOrderReport.objects.all()
     serializer_class = PurchaseOrderReportSerializer
 
 
-class PurchaseOrderReportPrint(generics.RetrieveAPIView, OrderReportMixin, ReportPrintMixin):
+class PurchaseOrderReportPrint(RetrieveAPI, OrderReportMixin, ReportPrintMixin):
     """API endpoint for printing a PurchaseOrderReport object."""
 
     OrderModel = order.models.PurchaseOrder
@@ -665,14 +666,14 @@ class SalesOrderReportList(ReportListView, OrderReportMixin):
         return queryset
 
 
-class SalesOrderReportDetail(generics.RetrieveUpdateDestroyAPIView):
+class SalesOrderReportDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for a single SalesOrderReport object."""
 
     queryset = SalesOrderReport.objects.all()
     serializer_class = SalesOrderReportSerializer
 
 
-class SalesOrderReportPrint(generics.RetrieveAPIView, OrderReportMixin, ReportPrintMixin):
+class SalesOrderReportPrint(RetrieveAPI, OrderReportMixin, ReportPrintMixin):
     """API endpoint for printing a PurchaseOrderReport object."""
 
     OrderModel = order.models.SalesOrder
