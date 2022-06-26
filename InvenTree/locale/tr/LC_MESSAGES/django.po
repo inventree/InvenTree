@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-24 21:46+0000\n"
-"PO-Revision-Date: 2022-06-25 17:08\n"
+"POT-Creation-Date: 2022-06-26 08:11+0000\n"
+"PO-Revision-Date: 2022-06-26 17:10\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -158,7 +158,7 @@ msgstr "Eklenecek dosyayı seç"
 msgid "Link"
 msgstr "Bağlantı"
 
-#: InvenTree/models.py:199 build/models.py:318 part/models.py:796
+#: InvenTree/models.py:199 build/models.py:319 part/models.py:796
 #: stock/models.py:642
 msgid "Link to external URL"
 msgstr "Harici URL'ye bağlantı"
@@ -230,7 +230,7 @@ msgstr "Geçersiz seçim"
 msgid "Name"
 msgstr "Adı"
 
-#: InvenTree/models.py:344 build/models.py:195
+#: InvenTree/models.py:344 build/models.py:196
 #: build/templates/build/detail.html:24 company/models.py:282
 #: company/models.py:516 company/templates/company/company_base.html:71
 #: company/templates/company/manufacturer_part.html:75
@@ -646,19 +646,20 @@ msgstr "InvenTree Hakkında"
 msgid "Build must be cancelled before it can be deleted"
 msgstr ""
 
-#: build/models.py:124
+#: build/models.py:125
 msgid "Invalid choice for parent build"
 msgstr ""
 
-#: build/models.py:129 build/templates/build/build_base.html:9
+#: build/models.py:130 build/templates/build/build_base.html:9
 #: build/templates/build/build_base.html:27
 #: report/templates/report/inventree_build_order_base.html:106
+#: templates/email/build_order_completed.html:16
 #: templates/email/overdue_build_order.html:15
 #: templates/js/translated/build.js:727
 msgid "Build Order"
 msgstr "Yapım İşi Emri"
 
-#: build/models.py:130 build/templates/build/build_base.html:13
+#: build/models.py:131 build/templates/build/build_base.html:13
 #: build/templates/build/index.html:8 build/templates/build/index.html:12
 #: order/templates/order/sales_order_detail.html:120
 #: order/templates/order/so_sidebar.html:13
@@ -668,11 +669,11 @@ msgstr "Yapım İşi Emri"
 msgid "Build Orders"
 msgstr "Yapım İşi Emirleri"
 
-#: build/models.py:186
+#: build/models.py:187
 msgid "Build Order Reference"
 msgstr "Yapım İşi Emri Referansı"
 
-#: build/models.py:187 order/models.py:279 order/models.py:640
+#: build/models.py:188 order/models.py:279 order/models.py:640
 #: order/models.py:918 part/models.py:2610
 #: part/templates/part/upload_bom.html:54
 #: report/templates/report/inventree_po_report.html:91
@@ -684,20 +685,20 @@ msgstr "Yapım İşi Emri Referansı"
 msgid "Reference"
 msgstr "Referans"
 
-#: build/models.py:198
+#: build/models.py:199
 msgid "Brief description of the build"
 msgstr "Yapım işinin kısa açıklaması"
 
-#: build/models.py:207 build/templates/build/build_base.html:169
+#: build/models.py:208 build/templates/build/build_base.html:169
 #: build/templates/build/detail.html:87
 msgid "Parent Build"
 msgstr "Üst Yapım İşi"
 
-#: build/models.py:208
+#: build/models.py:209
 msgid "BuildOrder to which this build is allocated"
 msgstr "Bu yapım işinin tahsis edildiği yapım işi emri"
 
-#: build/models.py:213 build/templates/build/build_base.html:77
+#: build/models.py:214 build/templates/build/build_base.html:77
 #: build/templates/build/detail.html:29 company/models.py:670
 #: order/models.py:1014 order/models.py:1105 part/models.py:336
 #: part/models.py:2139 part/models.py:2154 part/models.py:2173
@@ -710,6 +711,7 @@ msgstr "Bu yapım işinin tahsis edildiği yapım işi emri"
 #: report/templates/report/inventree_po_report.html:89
 #: report/templates/report/inventree_so_report.html:90 stock/serializers.py:471
 #: templates/InvenTree/search.html:80
+#: templates/email/build_order_completed.html:17
 #: templates/email/build_order_required_stock.html:17
 #: templates/email/low_stock_notification.html:16
 #: templates/email/overdue_build_order.html:16
@@ -732,99 +734,99 @@ msgstr "Bu yapım işinin tahsis edildiği yapım işi emri"
 msgid "Part"
 msgstr "Parça"
 
-#: build/models.py:221
+#: build/models.py:222
 msgid "Select part to build"
 msgstr "Yapım işi için parça seçin"
 
-#: build/models.py:226
+#: build/models.py:227
 msgid "Sales Order Reference"
 msgstr "Satış Emri Referansı"
 
-#: build/models.py:230
+#: build/models.py:231
 msgid "SalesOrder to which this build is allocated"
 msgstr "Bu yapım işinin tahsis edildiği satış emri"
 
-#: build/models.py:235 build/serializers.py:758
+#: build/models.py:236 build/serializers.py:758
 #: templates/js/translated/build.js:2070 templates/js/translated/order.js:2818
 msgid "Source Location"
 msgstr "Kaynak Konum"
 
-#: build/models.py:239
+#: build/models.py:240
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
 msgstr "Bu yapım işi için stok alınacak konumu seçin (her hangi bir stok konumundan alınması için boş bırakın)"
 
-#: build/models.py:244
+#: build/models.py:245
 msgid "Destination Location"
 msgstr "Hedef Konum"
 
-#: build/models.py:248
+#: build/models.py:249
 msgid "Select location where the completed items will be stored"
 msgstr "Tamamlanmış ögelerin saklanacağı konumu seçiniz"
 
-#: build/models.py:252
+#: build/models.py:253
 msgid "Build Quantity"
 msgstr "Yapım İşi Miktarı"
 
-#: build/models.py:255
+#: build/models.py:256
 msgid "Number of stock items to build"
 msgstr "Yapım işi stok kalemlerinin sayısı"
 
-#: build/models.py:259
+#: build/models.py:260
 msgid "Completed items"
 msgstr "Tamamlanmış ögeler"
 
-#: build/models.py:261
+#: build/models.py:262
 msgid "Number of stock items which have been completed"
 msgstr "Tamamlanan stok kalemlerinin sayısı"
 
-#: build/models.py:265
+#: build/models.py:266
 msgid "Build Status"
 msgstr "Yapım İşi Durumu"
 
-#: build/models.py:269
+#: build/models.py:270
 msgid "Build status code"
 msgstr "Yapım işi durum kodu"
 
-#: build/models.py:273 build/serializers.py:215 order/serializers.py:440
+#: build/models.py:274 build/serializers.py:215 order/serializers.py:440
 #: stock/models.py:646 templates/js/translated/order.js:1175
 msgid "Batch Code"
 msgstr "Sıra numarası"
 
-#: build/models.py:277 build/serializers.py:216
+#: build/models.py:278 build/serializers.py:216
 msgid "Batch code for this build output"
 msgstr "Yapım işi çıktısı için sıra numarası"
 
-#: build/models.py:280 order/models.py:137 part/models.py:931
+#: build/models.py:281 order/models.py:137 part/models.py:931
 #: part/templates/part/part_base.html:305 templates/js/translated/order.js:2489
 msgid "Creation Date"
 msgstr "Oluşturulma tarihi"
 
-#: build/models.py:284 order/models.py:662
+#: build/models.py:285 order/models.py:662
 msgid "Target completion date"
 msgstr "Hedef tamamlama tarihi"
 
-#: build/models.py:285
+#: build/models.py:286
 msgid "Target date for build completion. Build will be overdue after this date."
 msgstr "Yapım işinin tamamlanması için hedef tarih. Bu tarihten sonra yapım işi gecikmiş olacak."
 
-#: build/models.py:288 order/models.py:322
+#: build/models.py:289 order/models.py:322
 #: templates/js/translated/build.js:2557
 msgid "Completion Date"
 msgstr "Tamamlama tarihi"
 
-#: build/models.py:294
+#: build/models.py:295
 msgid "completed by"
 msgstr "tamamlayan"
 
-#: build/models.py:302 templates/js/translated/build.js:2525
+#: build/models.py:303 templates/js/translated/build.js:2525
 msgid "Issued by"
 msgstr "Veren"
 
-#: build/models.py:303
+#: build/models.py:304
 msgid "User who issued this build order"
 msgstr "Bu yapım işi emrini veren kullanıcı"
 
-#: build/models.py:311 build/templates/build/build_base.html:190
+#: build/models.py:312 build/templates/build/build_base.html:190
 #: build/templates/build/detail.html:115 order/models.py:151
 #: order/templates/order/order_base.html:176
 #: order/templates/order/sales_order_base.html:183 part/models.py:935
@@ -833,11 +835,11 @@ msgstr "Bu yapım işi emrini veren kullanıcı"
 msgid "Responsible"
 msgstr "Sorumlu"
 
-#: build/models.py:312
+#: build/models.py:313
 msgid "User responsible for this build order"
 msgstr "Bu yapım işi emrinden sorumlu kullanıcı"
 
-#: build/models.py:317 build/templates/build/detail.html:101
+#: build/models.py:318 build/templates/build/detail.html:101
 #: company/templates/company/manufacturer_part.html:107
 #: company/templates/company/supplier_part.html:153
 #: part/templates/part/part_base.html:346 stock/models.py:640
@@ -845,58 +847,67 @@ msgstr "Bu yapım işi emrinden sorumlu kullanıcı"
 msgid "External Link"
 msgstr "Harici Bağlantı"
 
-#: build/models.py:322
+#: build/models.py:323
 msgid "Extra build notes"
 msgstr "Yapım işi için ekstra notlar"
 
-#: build/models.py:708
+#: build/models.py:561
+#, python-brace-format
+msgid "Build order {build} has been completed"
+msgstr ""
+
+#: build/models.py:567
+msgid "A build order has been completed"
+msgstr ""
+
+#: build/models.py:748
 msgid "No build output specified"
 msgstr "Yapım işi çıktısı belirtilmedi"
 
-#: build/models.py:711
+#: build/models.py:751
 msgid "Build output is already completed"
 msgstr "Yapım işi çıktısı zaten tamamlanmış"
 
-#: build/models.py:714
+#: build/models.py:754
 msgid "Build output does not match Build Order"
 msgstr "Yapım işi çıktısı, yapım işi emri ile eşleşmiyor"
 
-#: build/models.py:1108
+#: build/models.py:1148
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr "Ana parça izlenebilir olarak işaretlendiğinden, yapım işi çıktısı için bir yapım işi ögesi belirtmelidir"
 
-#: build/models.py:1117
+#: build/models.py:1157
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr ""
 
-#: build/models.py:1127
+#: build/models.py:1167
 msgid "Stock item is over-allocated"
 msgstr "Stok kalemi fazladan tahsis edilmiş"
 
-#: build/models.py:1133 order/models.py:1370
+#: build/models.py:1173 order/models.py:1370
 msgid "Allocation quantity must be greater than zero"
 msgstr "Tahsis edilen miktar sıfırdan büyük olmalıdır"
 
-#: build/models.py:1139
+#: build/models.py:1179
 msgid "Quantity must be 1 for serialized stock"
 msgstr "Seri numaralı stok için miktar bir olmalı"
 
-#: build/models.py:1196
+#: build/models.py:1236
 msgid "Selected stock item not found in BOM"
 msgstr ""
 
-#: build/models.py:1265 stock/templates/stock/item_base.html:177
+#: build/models.py:1305 stock/templates/stock/item_base.html:177
 #: templates/InvenTree/search.html:137 templates/js/translated/build.js:2453
 #: templates/navbar.html:38
 msgid "Build"
 msgstr "Yapım İşi"
 
-#: build/models.py:1266
+#: build/models.py:1306
 msgid "Build to allocate parts"
 msgstr "Yapım işi için tahsis edilen parçalar"
 
-#: build/models.py:1282 build/serializers.py:603 order/serializers.py:996
+#: build/models.py:1322 build/serializers.py:603 order/serializers.py:996
 #: order/serializers.py:1017 stock/serializers.py:375 stock/serializers.py:722
 #: stock/serializers.py:848 stock/templates/stock/item_base.html:10
 #: stock/templates/stock/item_base.html:23
@@ -911,11 +922,11 @@ msgstr "Yapım işi için tahsis edilen parçalar"
 msgid "Stock Item"
 msgstr "Stok Kalemi"
 
-#: build/models.py:1283
+#: build/models.py:1323
 msgid "Source stock item"
 msgstr "Kaynak stok kalemi"
 
-#: build/models.py:1295 build/serializers.py:183
+#: build/models.py:1335 build/serializers.py:183
 #: build/templates/build/build_base.html:82
 #: build/templates/build/detail.html:34 common/models.py:1619
 #: company/forms.py:36 company/templates/company/supplier_part.html:279
@@ -932,12 +943,13 @@ msgstr "Kaynak stok kalemi"
 #: report/templates/report/inventree_test_report_base.html:139
 #: stock/serializers.py:272 stock/templates/stock/item_base.html:292
 #: stock/templates/stock/item_base.html:300
+#: templates/email/build_order_completed.html:18
 #: templates/js/translated/barcode.js:437 templates/js/translated/bom.js:691
 #: templates/js/translated/bom.js:860 templates/js/translated/build.js:422
 #: templates/js/translated/build.js:574 templates/js/translated/build.js:765
 #: templates/js/translated/build.js:1175 templates/js/translated/build.js:1672
 #: templates/js/translated/build.js:2085
-#: templates/js/translated/model_renderers.js:108
+#: templates/js/translated/model_renderers.js:120
 #: templates/js/translated/order.js:117 templates/js/translated/order.js:886
 #: templates/js/translated/order.js:1925 templates/js/translated/order.js:2126
 #: templates/js/translated/order.js:2832 templates/js/translated/order.js:3154
@@ -951,15 +963,15 @@ msgstr "Kaynak stok kalemi"
 msgid "Quantity"
 msgstr "Miktar"
 
-#: build/models.py:1296
+#: build/models.py:1336
 msgid "Stock quantity to allocate to build"
 msgstr "Yapım işi için tahsis edilen stok miktarı"
 
-#: build/models.py:1304
+#: build/models.py:1344
 msgid "Install into"
 msgstr "Kurulduğu yer"
 
-#: build/models.py:1305
+#: build/models.py:1345
 msgid "Destination stock item"
 msgstr "Hedef stok kalemi"
 
@@ -1351,7 +1363,7 @@ msgstr ""
 #: build/templates/build/detail.html:80
 #: stock/templates/stock/item_base.html:170
 #: templates/js/translated/build.js:1179
-#: templates/js/translated/model_renderers.js:112
+#: templates/js/translated/model_renderers.js:124
 #: templates/js/translated/stock.js:1022 templates/js/translated/stock.js:1839
 #: templates/js/translated/stock.js:2669
 #: templates/js/translated/table_filters.js:151
@@ -2543,8 +2555,7 @@ msgid "New {verbose_name}"
 msgstr ""
 
 #: common/notifications.py:294
-#, python-brace-format
-msgid "A new {verbose_name} has been created and ,assigned to you"
+msgid "A new order has been created and assigned to you"
 msgstr ""
 
 #: common/views.py:87 order/templates/order/purchase_order_detail.html:23
@@ -3679,7 +3690,7 @@ msgid "Line"
 msgstr ""
 
 #: order/models.py:1393 order/serializers.py:1151 order/serializers.py:1275
-#: templates/js/translated/model_renderers.js:301
+#: templates/js/translated/model_renderers.js:313
 msgid "Shipment"
 msgstr ""
 
@@ -4484,7 +4495,7 @@ msgstr ""
 msgid "Part ID or part name"
 msgstr ""
 
-#: part/models.py:2504 templates/js/translated/model_renderers.js:200
+#: part/models.py:2504 templates/js/translated/model_renderers.js:212
 msgid "Part ID"
 msgstr ""
 
@@ -5144,7 +5155,7 @@ msgstr ""
 #: part/templates/part/part_base.html:143
 #: templates/js/translated/company.js:610
 #: templates/js/translated/company.js:869
-#: templates/js/translated/model_renderers.js:192
+#: templates/js/translated/model_renderers.js:204
 #: templates/js/translated/part.js:650 templates/js/translated/part.js:727
 msgid "Inactive"
 msgstr "Pasif"
@@ -5744,7 +5755,7 @@ msgstr ""
 #: stock/models.py:632 stock/templates/stock/item_base.html:322
 #: templates/js/translated/build.js:420 templates/js/translated/build.js:572
 #: templates/js/translated/build.js:1173 templates/js/translated/build.js:1670
-#: templates/js/translated/model_renderers.js:106
+#: templates/js/translated/model_renderers.js:118
 #: templates/js/translated/order.js:115 templates/js/translated/order.js:3240
 #: templates/js/translated/order.js:3329 templates/js/translated/stock.js:486
 msgid "Serial Number"
@@ -6513,13 +6524,25 @@ msgstr "Stok Konumu QR Kodu"
 msgid "Stock Item QR Code"
 msgstr ""
 
-#: templates/403.html:6 templates/403.html:12
+#: templates/403.html:6 templates/403.html:12 templates/403_csrf.html:7
 msgid "Permission Denied"
 msgstr ""
 
 #: templates/403.html:15
 msgid "You do not have permission to view this page."
 msgstr ""
+
+#: templates/403_csrf.html:11
+msgid "Authentication Failure"
+msgstr ""
+
+#: templates/403_csrf.html:14
+msgid "You have been logged out from InvenTree."
+msgstr ""
+
+#: templates/403_csrf.html:19 templates/navbar.html:142
+msgid "Login"
+msgstr "Giriş"
 
 #: templates/404.html:6 templates/404.html:12
 msgid "Page Not Found"
@@ -7504,6 +7527,14 @@ msgstr ""
 msgid "Collapse all rows"
 msgstr ""
 
+#: templates/email/build_order_completed.html:9
+#: templates/email/new_order_assigned.html:9
+#: templates/email/overdue_build_order.html:9
+#: templates/email/overdue_purchase_order.html:9
+#: templates/email/overdue_sales_order.html:9
+msgid "Click on the following link to view this order"
+msgstr ""
+
 #: templates/email/build_order_required_stock.html:7
 msgid "Stock is required for the following build order"
 msgstr ""
@@ -7537,13 +7568,6 @@ msgstr ""
 
 #: templates/email/low_stock_notification.html:19
 msgid "Minimum Quantity"
-msgstr ""
-
-#: templates/email/new_order_assigned.html:9
-#: templates/email/overdue_build_order.html:9
-#: templates/email/overdue_purchase_order.html:9
-#: templates/email/overdue_sales_order.html:9
-msgid "Click on the following link to view this order"
 msgstr ""
 
 #: templates/expand_rows.html:3
@@ -8388,32 +8412,32 @@ msgstr ""
 msgid "Enter a valid number"
 msgstr ""
 
-#: templates/js/translated/forms.js:1252 templates/modals.html:19
+#: templates/js/translated/forms.js:1253 templates/modals.html:19
 #: templates/modals.html:43
 msgid "Form errors exist"
 msgstr ""
 
-#: templates/js/translated/forms.js:1685
+#: templates/js/translated/forms.js:1686
 msgid "No results found"
 msgstr ""
 
-#: templates/js/translated/forms.js:1900 templates/search.html:29
+#: templates/js/translated/forms.js:1901 templates/search.html:29
 msgid "Searching"
 msgstr ""
 
-#: templates/js/translated/forms.js:2153
+#: templates/js/translated/forms.js:2154
 msgid "Clear input"
 msgstr ""
 
-#: templates/js/translated/forms.js:2619
+#: templates/js/translated/forms.js:2620
 msgid "File Column"
 msgstr ""
 
-#: templates/js/translated/forms.js:2619
+#: templates/js/translated/forms.js:2620
 msgid "Field Name"
 msgstr ""
 
-#: templates/js/translated/forms.js:2631
+#: templates/js/translated/forms.js:2632
 msgid "Select Columns"
 msgstr ""
 
@@ -8546,41 +8570,41 @@ msgstr ""
 msgid "Error requesting form data"
 msgstr ""
 
-#: templates/js/translated/model_renderers.js:60
+#: templates/js/translated/model_renderers.js:72
 msgid "Company ID"
 msgstr ""
 
-#: templates/js/translated/model_renderers.js:121
+#: templates/js/translated/model_renderers.js:133
 msgid "Stock ID"
 msgstr ""
 
-#: templates/js/translated/model_renderers.js:147
+#: templates/js/translated/model_renderers.js:159
 msgid "Location ID"
 msgstr ""
 
-#: templates/js/translated/model_renderers.js:165
+#: templates/js/translated/model_renderers.js:177
 msgid "Build ID"
 msgstr ""
 
-#: templates/js/translated/model_renderers.js:262
-#: templates/js/translated/model_renderers.js:288
+#: templates/js/translated/model_renderers.js:274
+#: templates/js/translated/model_renderers.js:300
 msgid "Order ID"
 msgstr ""
 
-#: templates/js/translated/model_renderers.js:303
-#: templates/js/translated/model_renderers.js:307
+#: templates/js/translated/model_renderers.js:315
+#: templates/js/translated/model_renderers.js:319
 msgid "Shipment ID"
 msgstr ""
 
-#: templates/js/translated/model_renderers.js:325
+#: templates/js/translated/model_renderers.js:337
 msgid "Category ID"
 msgstr ""
 
-#: templates/js/translated/model_renderers.js:368
+#: templates/js/translated/model_renderers.js:380
 msgid "Manufacturer Part ID"
 msgstr ""
 
-#: templates/js/translated/model_renderers.js:405
+#: templates/js/translated/model_renderers.js:417
 msgid "Supplier Part ID"
 msgstr ""
 
@@ -10084,10 +10108,6 @@ msgstr "Yeni Bildirimler"
 #: templates/navbar.html:140
 msgid "Logout"
 msgstr "Çıkış"
-
-#: templates/navbar.html:142
-msgid "Login"
-msgstr "Giriş"
 
 #: templates/notes_buttons.html:6 templates/notes_buttons.html:7
 msgid "Save"
