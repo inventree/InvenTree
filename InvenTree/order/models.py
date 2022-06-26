@@ -24,6 +24,7 @@ from mptt.models import TreeForeignKey
 
 import InvenTree.helpers
 import InvenTree.ready
+from common.notifications import InvenTreeNotificationBodies
 from common.settings import currency_code_default
 from company.models import Company, SupplierPart
 from InvenTree.exceptions import log_error
@@ -559,6 +560,14 @@ class PurchaseOrder(Order):
 
             self.received_by = user
             self.complete_order()  # This will save the model
+
+        # Issue a notification to interested parties, that this order has been "updated"
+        notify_responsible(
+            self,
+            PurchaseOrder,
+            exclude=user,
+            content=InvenTreeNotificationBodies.ItemsReceived,
+        )
 
 
 @receiver(post_save, sender=PurchaseOrder, dispatch_uid='purchase_order_post_save')
