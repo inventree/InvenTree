@@ -12,7 +12,6 @@ django-formtools                        # Form wizard tools
 django-import-export==2.5.0             # Data import / export for admin interface
 django-maintenance-mode                 # Shut down application while reloading etc.
 django-markdownify                      # Markdown rendering
-django-markdownx                        # Markdown form fields
 django-money                            # Django app for currency management
 django-mptt==0.11.0                     # Modified Preorder Tree Traversal
 django-redis>=5.0.0                     # Redis integration
@@ -27,7 +26,6 @@ django-xforwardedfor-middleware         # IP forwarding metadata
 gunicorn                                # Gunicorn web server
 pdf2image                               # PDF to image conversion
 pillow                                  # Image manipulation
-pygments==2.7.4                         # Syntax highlighting
 python-barcode[images]                  # Barcode generator
 qrcode[pil]==6.1                        # QR code generator
 rapidfuzz==0.7.6                        # Fuzzy string matching
