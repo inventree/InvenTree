@@ -296,6 +296,13 @@ class InvenTreeNotificationBodies:
     )
     """Send when a new order (build, sale or purchase) was created."""
 
+    ItemsReceived = NotificationBody(
+        name=_("Items Received"),
+        slug='purchase_order.items_received',
+        message=_('Items have been received against a purchase order'),
+        template='email/purchase_order_received.html',
+    )
+
 
 def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
     """Send out a notification."""
