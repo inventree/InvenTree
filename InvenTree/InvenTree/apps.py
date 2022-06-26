@@ -9,6 +9,9 @@ from django.core.exceptions import AppRegistryNotReady
 from django.db import transaction
 from django.db.utils import IntegrityError
 
+from maintenance_mode.core import (get_maintenance_mode, maintenance_mode_on,
+                                   set_maintenance_mode)
+
 import InvenTree.tasks
 from InvenTree.ready import canAppAccessDatabase, isInTestMode
 
@@ -22,7 +25,19 @@ class InvenTreeConfig(AppConfig):
     name = 'InvenTree'
 
     def ready(self):
-        """Setup background tasks and update exchange rates."""
+        """Run system wide setup init steps.
+
+        Like:
+        - Checking if migrations should be run
+        - Cleaning up tasks
+        - Starting regular tasks
+        - Updateing exchange rates
+        - Collecting notification mehods
+        - Adding users set in the current enviroment
+        """
+        # Check for migrations.
+        self.check_for_migrations()
+
         if canAppAccessDatabase():
 
             self.remove_obsolete_tasks()
@@ -222,3 +237,51 @@ class InvenTreeConfig(AppConfig):
         from common.notifications import storage
 
         storage.collect()
+
+    def check_for_migrations(self):
+        """Checks if migrations are needed.
+
+        If the setting # TODO is enabled we will start updateing.
+        """
+        from plugin import registry
+
+        needs_updating: bool = False
+
+        # TODO check if migrations are open
+
+        # TODO check setting
+
+        if not needs_updating:
+            return
+
+        logger.info('There are open migrations')
+
+        # Set the application to maintenance mode - no access from now on.
+        logger.info('Going into maintenance')
+        set_maintenance_mode(True)
+        logger.info('Migration mode is on now')
+
+        # Check if we are worker - go kill all other workers then.
+        # Only the frontend workers run updates.
+
+        # TODO
+        if True:
+            logger.info('Current process is a worker - shutting down cluster')
+
+        # Ok now we are ready to go ahead!
+        # To be sure we are in maintenance this is wrapped
+        with maintenance_mode_on():
+            # TODO run migrations
+            pass
+
+        # Make sure we are out of maintenance again
+        logger.info('Checking InvenTree left maintenance mode')
+        if get_maintenance_mode():
+
+            logger.warning('Mainentance was still on - releasing now')
+            set_maintenance_mode(False)
+            logger.info('Released out of maintenance')
+
+        # We should be current now - triggering full reload to make sure all models
+        # are loaded fully in their new state.
+        registry.reload_plugins(full_reload=True)
