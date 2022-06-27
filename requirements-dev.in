@@ -1,6 +1,6 @@
 # Dev requirements for InvenTree
 coverage                                # Unit test coverage
-coveralls                               # Coveralls linking (for Travis)
+coveralls==2.1.2                        # Coveralls linking (for tracking coverage)  # PINNED 2022-06-28 - Old version needed for correct upload
 django-debug-toolbar                    # Debug / profiling toolbar
 django-test-migrations                  # Unit testing for database migrations
 flake8                                  # PEP checking
