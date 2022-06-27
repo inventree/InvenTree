@@ -168,7 +168,11 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     def get_purchase_price_string(self, obj):
         """Return purchase price as string."""
-        return str(obj.purchase_price) if obj.purchase_price else '-'
+        if obj.purchase_price:
+            obj.purchase_price.decimal_places_display = 4
+            return str(obj.purchase_price)
+
+        return '-'
 
     purchase_order_reference = serializers.CharField(source='purchase_order.reference', read_only=True)
     sales_order_reference = serializers.CharField(source='sales_order.reference', read_only=True)
