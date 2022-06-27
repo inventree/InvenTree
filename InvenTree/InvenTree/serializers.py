@@ -33,6 +33,7 @@ class InvenTreeMoneySerializer(MoneyField):
         """Overrite default values."""
         kwargs["max_digits"] = kwargs.get("max_digits", 19)
         kwargs["decimal_places"] = kwargs.get("decimal_places", 4)
+        kwargs["required"] =  kwargs.get("required", False)
 
         super().__init__(*args, **kwargs)
 
