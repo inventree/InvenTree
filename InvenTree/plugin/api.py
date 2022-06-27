@@ -62,7 +62,7 @@ class PluginList(ListAPI):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'active',
     ]
 
@@ -140,7 +140,7 @@ class PluginSettingList(ListAPI):
         DjangoFilterBackend,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'plugin__active',
         'plugin__key',
     ]

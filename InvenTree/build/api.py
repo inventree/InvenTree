@@ -420,7 +420,7 @@ class BuildItemList(ListCreateAPI):
         DjangoFilterBackend,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'build',
         'stock_item',
         'bom_item',
@@ -438,7 +438,7 @@ class BuildAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
         DjangoFilterBackend,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'build',
     ]
 
