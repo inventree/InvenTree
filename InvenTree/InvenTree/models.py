@@ -20,6 +20,7 @@ from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
 
 import InvenTree.helpers
+from common.models import InvenTreeSetting
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.validators import validate_tree_name
 
@@ -111,6 +112,21 @@ class ReferenceIndexingMixin(models.Model):
     - If the 'reference' field *starts* with an integer, it is stored here
     - Otherwise, we store zero
     """
+
+    # Name of the global setting which defines the required reference pattern for this model
+    REFERENCE_PATTERN_SETTING = None
+
+    def get_reference_pattern(self):
+        """Returns the reference pattern associated with this model.
+
+        This is defined by a global setting object, specified by the REFERENCE_PATTERN_SETTING attribute
+        """
+
+        # By default, we return an empty string
+        if self.REFERENCE_PATTERN_SETTING is None:
+            return ''
+
+        return InvenTreeSetting.get_setting(self.REFERENCE_PATTERN_SETTING, create=False)
 
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""
