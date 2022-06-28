@@ -9,6 +9,7 @@ from unittest import mock
 import django.core.exceptions as django_exceptions
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 
@@ -23,7 +24,6 @@ from stock.models import StockLocation
 
 from . import config, helpers, ready, status, version
 from .validators import validate_overage, validate_part_name
-from django.contrib.sites.models import Site
 
 
 class ValidatorTest(TestCase):
