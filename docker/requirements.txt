@@ -9,7 +9,7 @@ invoke>=1.4.0                   # Invoke build tool
 psycopg2>=2.9.1
 mysqlclient>=2.0.3
 pgcli>=3.1.0
-mariadb>=1.0.7,<=1.1.0
+mariadb>=1.0.7,<1.1.0
 
 # gunicorn web server
 gunicorn>=20.1.0
