@@ -21,6 +21,7 @@ from django.contrib.auth.models import Group, User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.core.exceptions import AppRegistryNotReady, ValidationError
 from django.core.validators import MinValueValidator, URLValidator
@@ -81,6 +82,14 @@ class BaseInvenTreeSetting(models.Model):
             self.save_to_cache()
 
         super().save()
+
+        # Get after_save action
+        setting = self.get_setting_definition(self.key, *args, **kwargs)
+        after_save = setting.get('after_save', None)
+
+        # Execute if callable
+        if callable(after_save):
+            after_save(self)
 
     @property
     def cache_key(self):
@@ -735,6 +744,20 @@ def settings_group_options():
     return [('', _('No group')), *[(str(a.id), str(a)) for a in Group.objects.all()]]
 
 
+def update_instance_url(setting):
+    """Update the first site objects domain to url."""
+    site_obj = Site.objects.all().order_by('id').first()
+    site_obj.domain = setting.value
+    site_obj.save()
+
+
+def update_instance_name(setting):
+    """Update the first site objects name to instance name."""
+    site_obj = Site.objects.all().order_by('id').first()
+    site_obj.name = setting.value
+    site_obj.save()
+
+
 class InvenTreeSetting(BaseInvenTreeSetting):
     """An InvenTreeSetting object is a key:value pair used for storing single values (e.g. one-off settings values).
 
@@ -782,6 +805,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Server Instance Name'),
             'default': 'InvenTree',
             'description': _('String descriptor for the server instance'),
+            'after_save': update_instance_name,
         },
 
         'INVENTREE_INSTANCE_TITLE': {
@@ -809,6 +833,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Base URL for server instance'),
             'validator': EmptyURLValidator(),
             'default': '',
+            'after_save': update_instance_url,
         },
 
         'INVENTREE_DEFAULT_CURRENCY': {
