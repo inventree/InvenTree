@@ -1,5 +1,6 @@
 """Generic models which provide extra functionality over base Django model types."""
 
+import fnmatch
 import logging
 import os
 import re
@@ -127,6 +128,18 @@ class ReferenceIndexingMixin(models.Model):
             return ''
 
         return InvenTreeSetting.get_setting(self.REFERENCE_PATTERN_SETTING, create=False)
+
+    def validate_reference_field(self):
+        """Check that the provided 'reference' value matches the requisite pattern"""
+
+        value = self.reference
+        pattern = self.get_reference_pattern()
+
+        # Confirm that the reference matches the required pattern
+        if not fnmatch.fnmatch(value, pattern):
+            raise ValidationError({
+                'reference': _(f"Reference does not match required pattern {pattern}")
+            })
 
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""

@@ -1,11 +1,14 @@
 """Basic unit tests for the BuildOrder app"""
 
+
+from django.core.exceptions import ValidationError
 from django.urls import reverse
 
 from datetime import datetime, timedelta
 
 from InvenTree.helpers import InvenTreeTestCase
 
+from common.models import InvenTreeSetting
 from .models import Build
 from stock.models import StockItem
 
@@ -27,6 +30,41 @@ class BuildTestSimple(InvenTreeTestCase):
         'build.add',
         'build.delete',
     ]
+
+    def test_reference(self):
+        """Unit tests for the BuildOrder 'reference' field"""
+        pattern = 'BUILDORDER_REFERENCE_PATTERN'
+
+        build = Build.objects.get(pk=1)
+
+        # Simple test with wildcard matches
+        InvenTreeSetting.set_setting(pattern, 'BO-[ABC]-????', None)
+
+        # These values should pass the validator test
+        for value in [
+            'BO-A-1234',
+            'BO-B-wxyz',
+            'BO-C-----',
+        ]:
+            build.reference = value
+            build.save()
+
+        # These values should fail the validator test
+        for value in [
+            'BO-D-1234',
+            'SO-A-1234',
+            'BO-A-ABC',
+            'BO-A-',
+            'BO.A-',
+        ]:
+            with self.assertRaises(ValidationError):
+                build.reference = value
+                build.save()
+
+        # Test for required numerical field (5 digit number)
+        InvenTreeSetting.set_setting(pattern, 'BO-#####', None)
+
+        # TODO
 
     def test_build_objects(self):
         """Ensure the Build objects were correctly created"""

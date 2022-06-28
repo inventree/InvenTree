@@ -89,6 +89,9 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     OVERDUE_FILTER = Q(status__in=BuildStatus.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
 
+    # Global setting for specifying reference pattern
+    REFERENCE_PATTERN_SETTING = 'BUILDORDER_REFERENCE_PATTERN'
+
     @staticmethod
     def get_api_url():
         """Return the API URL associated with the BuildOrder model"""
@@ -116,6 +119,7 @@ class Build(MPTTModel, ReferenceIndexingMixin):
 
     def save(self, *args, **kwargs):
         """Custom save method for the BuildOrder model"""
+        self.validate_reference_field()
         self.rebuild_reference_field()
 
         try:
