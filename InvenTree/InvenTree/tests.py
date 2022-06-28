@@ -9,6 +9,7 @@ from unittest import mock
 import django.core.exceptions as django_exceptions
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
 
@@ -604,3 +605,16 @@ class TestInstanceName(helpers.InvenTreeTestCase):
         InvenTreeSetting.set_setting("INVENTREE_INSTANCE", "Testing title", self.user)
 
         self.assertEqual(version.inventreeInstanceTitle(), 'Testing title')
+
+        # The site should also be changed
+        site_obj = Site.objects.all().order_by('id').first()
+        self.assertEqual(site_obj.name, 'Testing title')
+
+    def test_instance_url(self):
+        """Test instance url settings."""
+        # Set up required setting
+        InvenTreeSetting.set_setting("INVENTREE_BASE_URL", "http://127.1.2.3", self.user)
+
+        # The site should also be changed
+        site_obj = Site.objects.all().order_by('id').first()
+        self.assertEqual(site_obj.domain, 'http://127.1.2.3')
