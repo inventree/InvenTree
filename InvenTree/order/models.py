@@ -1103,6 +1103,22 @@ class SalesOrderLineItem(OrderLineItem):
         """Return the API URL associated with the SalesOrderLineItem model"""
         return reverse('api-so-line-list')
 
+    def clean(self):
+        """Perform extra validation steps for this SalesOrderLineItem instance"""
+
+        super().clean()
+
+        if self.part:
+            if self.part.virtual:
+                raise ValidationError({
+                    'part': _("Virtual part cannot be assigned to a sales order")
+                })
+
+            if not self.part.salable:
+                raise ValidationError({
+                    'part': _("Only salable parts can be assigned to a sales order")
+                })
+
     order = models.ForeignKey(
         SalesOrder,
         on_delete=models.CASCADE,
