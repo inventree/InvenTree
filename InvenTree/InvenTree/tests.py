@@ -23,6 +23,7 @@ from stock.models import StockLocation
 
 from . import config, helpers, ready, status, version
 from .validators import validate_overage, validate_part_name
+from django.contrib.sites.models import Site
 
 
 class ValidatorTest(TestCase):
@@ -604,3 +605,16 @@ class TestInstanceName(helpers.InvenTreeTestCase):
         InvenTreeSetting.set_setting("INVENTREE_INSTANCE", "Testing title", self.user)
 
         self.assertEqual(version.inventreeInstanceTitle(), 'Testing title')
+
+        # The site should also be changed
+        site_obj = Site.objects.all().order_by('id').first()
+        self.assertEqual(site_obj.name, 'Testing title')
+
+    def test_instance_url(self):
+        """Test instance url settings."""
+        # Set up required setting
+        InvenTreeSetting.set_setting("INVENTREE_BASE_URL", "http://127.1.2.3", self.user)
+
+        # The site should also be changed
+        site_obj = Site.objects.all().order_by('id').first()
+        self.assertEqual(site_obj.domain, 'http://127.1.2.3')
