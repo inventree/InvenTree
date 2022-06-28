@@ -79,6 +79,21 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     - Includes serialization for the item location
     """
 
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=part_models.Part.objects.all(),
+        many=False, allow_null=False,
+        help_text=_("Base Part"),
+        label=_("Part"),
+    )
+
+    def validate_part(self, part):
+        """Ensure the provided Part instance is valid"""
+
+        if part.virtual:
+            raise ValidationError(_("Stock item cannot be created for virtual parts"))
+
+        return part
+
     def update(self, instance, validated_data):
         """Custom update method to pass the user information through to the instance."""
         instance._user = self.context['user']

@@ -20,7 +20,7 @@
             <h4>{% trans "Part Stock" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
-                {% if roles.stock.add %}
+                {% if roles.stock.add and not part.virtual %}
                 <button type='button' class='btn btn-success' id='new-stock-item' title='{% trans "Create new stock item" %}'>
                     <span class='fas fa-plus-circle'></span> {% trans "New Stock Item" %}
                 </button>
