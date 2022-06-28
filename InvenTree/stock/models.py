@@ -342,6 +342,7 @@ class StockItem(MetadataMixin, MPTTModel):
         - Unique serial number requirement
         - Adds a transaction note when the item is first created.
         """
+
         self.validate_unique()
         self.clean()
 
@@ -439,6 +440,7 @@ class StockItem(MetadataMixin, MPTTModel):
 
         The following validation checks are performed:
         - The 'part' and 'supplier_part.part' fields cannot point to the same Part object
+        - The 'part' is not virtual
         - The 'part' does not belong to itself
         - Quantity must be 1 if the StockItem has a serial number
         """
@@ -453,12 +455,18 @@ class StockItem(MetadataMixin, MPTTModel):
             self.batch = self.batch.strip()
 
         try:
+            # Trackable parts must have integer values for quantity field!
             if self.part.trackable:
-                # Trackable parts must have integer values for quantity field!
                 if self.quantity != int(self.quantity):
                     raise ValidationError({
                         'quantity': _('Quantity must be integer value for trackable parts')
                     })
+
+            # Virtual parts cannot have stock items created against them
+            if self.part.virtual:
+                raise ValidationError({
+                    'part': _("Stock items cannot be created for virtual parts"),
+                })
         except PartModels.Part.DoesNotExist:
             # For some reason the 'clean' process sometimes throws errors because self.part does not exist
             # It *seems* that this only occurs in unit testing, though.
@@ -582,7 +590,8 @@ class StockItem(MetadataMixin, MPTTModel):
     part = models.ForeignKey(
         'part.Part', on_delete=models.CASCADE,
         verbose_name=_('Base Part'),
-        related_name='stock_items', help_text=_('Base part'),
+        related_name='stock_items',
+        help_text=_('Base part'),
         limit_choices_to={
             'virtual': False
         })
