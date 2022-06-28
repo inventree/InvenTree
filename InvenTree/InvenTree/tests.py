@@ -23,7 +23,8 @@ from common.settings import currency_codes
 from stock.models import StockLocation
 
 from . import config, helpers, ready, status, version
-from .validators import validate_overage, validate_part_name
+from .validators import (validate_overage, validate_part_name,
+                         validate_reference_pattern)
 
 
 class ValidatorTest(TestCase):
@@ -56,6 +57,37 @@ class ValidatorTest(TestCase):
 
         with self.assertRaises(django_exceptions.ValidationError):
             validate_overage("aaaa")
+
+    def test_reference_pattern(self):
+        """Tests for the reference pattern validator"""
+
+        # Valid tests must pass
+        valid_values = [
+            'BO-#####',
+            'BO-%d%m%y-#####',
+            'BO-*',
+            '######',
+            '??#####??',
+        ]
+
+        for value in valid_values:
+            validate_reference_pattern(value)
+
+        # Invalid due to illegal characters or combos
+        invalid_values = [
+            'BO-#####-$',
+            '^^^',
+            'ABC-123-&###',
+            '||',
+            'BO-#####-####',
+            '####-####',
+            '#.#.#.#',
+            '##-BO-##',
+        ]
+
+        for value in invalid_values:
+            with self.assertRaises(ValidationError):
+                validate_reference_pattern(value)
 
 
 class TestHelpers(TestCase):

@@ -57,6 +57,32 @@ def validate_part_ipn(value):
             raise ValidationError(_('IPN must match regex pattern {pat}').format(pat=pattern))
 
 
+def validate_reference_pattern(value):
+    """Ensure a reference pattern string is valid.
+
+    A reference pattern is an enforcable pattern string which is applied to 'reference' fields,
+    on various models.
+
+    - Simple string matching based on the fnmatch:
+        ? matches a single character
+        * matches a group of characters
+        [] matches a set of potential characters
+    - Number matching with the # character (one group allowed)
+    - Implements strptime functionality e.g. %B -> January
+    """
+
+    # First, prevent any illegal characters from appearing in the pattern
+    for char in ['$', '@', '^', '&', '|']:
+        if char in value:
+            raise ValidationError(_(f"Illegal character found: {char}"))
+
+    # Ensure that at most one group of # chars is included
+    results = re.findall('(#)+', value)
+
+    if len(results) > 1:
+        raise ValidationError(_("Only one group of # characters is allowed"))
+
+
 def validate_build_order_reference(value):
     """Validate the 'reference' field of a BuildOrder."""
     pattern = common.models.InvenTreeSetting.get_setting('BUILDORDER_REFERENCE_REGEX')
