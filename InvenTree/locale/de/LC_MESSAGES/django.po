@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-28 12:13+0000\n"
-"PO-Revision-Date: 2022-06-27 17:09\n"
+"PO-Revision-Date: 2022-06-28 17:25\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -3608,16 +3608,12 @@ msgid "Where does the Purchaser want this item to be stored?"
 msgstr "Wo möchte der Käufer diesen Artikel gelagert haben?"
 
 #: order/models.py:1114
-#, fuzzy
-#| msgid "Stock item has been assigned to a sales order"
 msgid "Virtual part cannot be assigned to a sales order"
-msgstr "Artikel wurde einem Kundenauftrag zugewiesen"
+msgstr ""
 
 #: order/models.py:1119
-#, fuzzy
-#| msgid "Stock item has been assigned to a sales order"
 msgid "Only salable parts can be assigned to a sales order"
-msgstr "Artikel wurde einem Kundenauftrag zugewiesen"
+msgstr ""
 
 #: order/models.py:1145 part/templates/part/part_pricing.html:115
 #: part/templates/part/prices.html:121 part/templates/part/prices.html:290
@@ -5850,10 +5846,8 @@ msgid "StockItem with this serial number already exists"
 msgstr "Ein Lagerartikel mit dieser Seriennummer existiert bereits"
 
 #: stock/models.py:468 stock/serializers.py:93
-#, fuzzy
-#| msgid "Test templates can only be created for trackable parts"
 msgid "Stock item cannot be created for virtual parts"
-msgstr "Test-Vorlagen können nur für verfolgbare Teile angelegt werden"
+msgstr ""
 
 #: stock/models.py:485
 #, python-brace-format
@@ -7380,16 +7374,14 @@ msgstr "Einloggen"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Bitte melden Sie sich mit einem Ihrer bestehenden Drittkonten an oder  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">registrieren Sie sich</a> für ein Konto und melden Sie sich unten an:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Wenn Sie noch kein Konto erstellt haben, dann bitte<a href=\"%(signup_url)s\">registrieren Sie sich</a> zuerst."
 
@@ -10364,3 +10356,4 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
