@@ -1111,7 +1111,16 @@ class SalesOrderLineItem(OrderLineItem):
         help_text=_('Sales Order')
     )
 
-    part = models.ForeignKey('part.Part', on_delete=models.SET_NULL, related_name='sales_order_line_items', null=True, verbose_name=_('Part'), help_text=_('Part'), limit_choices_to={'salable': True})
+    part = models.ForeignKey(
+        'part.Part', on_delete=models.SET_NULL,
+        related_name='sales_order_line_items',
+        null=True,
+        verbose_name=_('Part'),
+        help_text=_('Part'),
+        limit_choices_to={
+            'salable': True,
+            'virtual': False,
+        })
 
     sale_price = InvenTreeModelMoneyField(
         max_digits=19,
@@ -1409,6 +1418,7 @@ class SalesOrderAllocation(models.Model):
         related_name='sales_order_allocations',
         limit_choices_to={
             'part__salable': True,
+            'part__virtual': False,
             'belongs_to': None,
             'sales_order': None,
         },
