@@ -1,6 +1,5 @@
 """Generic models which provide extra functionality over base Django model types."""
 
-import fnmatch
 import logging
 import os
 import re
@@ -16,6 +15,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from datetime_matcher import DatetimeMatcher
 from error_report.models import Error
 from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
@@ -117,29 +117,77 @@ class ReferenceIndexingMixin(models.Model):
     # Name of the global setting which defines the required reference pattern for this model
     REFERENCE_PATTERN_SETTING = None
 
-    def get_reference_pattern(self):
+    @classmethod
+    def get_reference_pattern(cls):
         """Returns the reference pattern associated with this model.
 
         This is defined by a global setting object, specified by the REFERENCE_PATTERN_SETTING attribute
         """
 
         # By default, we return an empty string
-        if self.REFERENCE_PATTERN_SETTING is None:
+        if cls.REFERENCE_PATTERN_SETTING is None:
             return ''
 
-        return InvenTreeSetting.get_setting(self.REFERENCE_PATTERN_SETTING, create=False)
+        return InvenTreeSetting.get_setting(cls.REFERENCE_PATTERN_SETTING, create=False).strip()
 
-    def validate_reference_field(self):
+    @classmethod
+    def get_reference_regex(cls, enforce_width=False, enforce_endings=True):
+        """Convert the reference field to a regular expression which can be matched against the input
+
+        Instead of Python's re module, we use DatetimeMatcher which handles datetime formatting
+        """
+
+        pattern = cls.get_reference_pattern()
+
+        # Find and replace any characters which have special regex meaning
+        for char in '.-+':
+            pattern = pattern.replace(char, f"\\{char}")
+
+        # Find and replace any ? characters with a .
+        pattern = pattern.replace('?', '.')
+
+        # Find and replace any * characters
+        pattern = pattern.replace("*", ".+")
+
+        # Find and replace any groups of '#' characters with a regex string
+        matches = re.findall('(#+)', pattern)
+
+        for match in matches:
+            if enforce_width:
+                w = len(match)
+                pattern = pattern.replace(match, f"(\d{{{w}}})")
+            else:
+                pattern = pattern.replace(match, r'(\d+)')
+
+        if enforce_endings:
+            pattern = '^' + pattern + '$'
+
+        return pattern
+
+    @classmethod
+    def validate_reference_field(cls, value):
         """Check that the provided 'reference' value matches the requisite pattern"""
 
-        value = self.reference
-        pattern = self.get_reference_pattern()
+        # Prevent illegal chars being included in the final value
+        for char in '$@^&|/\\~+':
+            if char in value:
+                raise ValidationError(_(f"Illegal character in reference field: {char}"))
 
-        # Confirm that the reference matches the required pattern
-        if not fnmatch.fnmatch(value, pattern):
-            raise ValidationError({
-                'reference': _(f"Reference does not match required pattern {pattern}")
-            })
+        pattern = cls.get_reference_pattern()
+
+        # No pattern specified - no error!
+        if not pattern:
+            return
+
+        # Construct a regex to match the required pattern
+        regex = cls.get_reference_regex()
+
+        matcher = DatetimeMatcher()
+
+        match = matcher.match(regex, value)
+
+        if match is None:
+            raise ValidationError(_(f"Reference does not match required pattern: {pattern}"))
 
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""

@@ -74,6 +74,16 @@ class BuildSerializer(ReferenceIndexingSerializerMixin, InvenTreeModelSerializer
         if part_detail is not True:
             self.fields.pop('part_detail')
 
+    reference = serializers.CharField(required=True)
+
+    def validate_reference(self, reference):
+        """Custom validation for the Build serializer"""
+
+        # Ensure the reference matches the required pattern
+        Build.validate_reference_field(reference)
+
+        return reference
+
     class Meta:
         """Serializer metaclass"""
         model = Build

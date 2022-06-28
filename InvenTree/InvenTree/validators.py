@@ -73,7 +73,7 @@ def validate_reference_pattern(value):
     """
 
     # First, prevent any illegal characters from appearing in the pattern
-    for char in ['$', '@', '^', '&', '|']:
+    for char in '$@^&|/\\~+':
         if char in value:
             raise ValidationError(_(f"Illegal character found: {char}"))
 

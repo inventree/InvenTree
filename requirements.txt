@@ -6,6 +6,7 @@ coreapi==2.3.0                          # API documentation
 coverage==5.3                           # Unit test coverage
 coveralls==2.1.2                        # Coveralls linking (for Travis)
 cryptography==3.4.8                     # Cryptography support
+datetime-matcher==0.2.1                 # Datetime regex matching
 django-admin-shell==0.1.2               # Python shell for the admin interface
 django-allauth==0.48.0                  # SSO for external providers via OpenID
 django-allauth-2fa==0.9                 # MFA / 2FA  # IMPORTANT: Do only change after reviewing GHSA-8j76-mm54-52xq
