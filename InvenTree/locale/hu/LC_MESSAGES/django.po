@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-28 12:13+0000\n"
-"PO-Revision-Date: 2022-06-27 17:09\n"
+"PO-Revision-Date: 2022-06-28 17:25\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1077,8 +1077,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:370
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:439
@@ -3610,16 +3609,12 @@ msgid "Where does the Purchaser want this item to be stored?"
 msgstr "Mit szeretne a vevő hol tároljuk ezt az alkatrészt?"
 
 #: order/models.py:1114
-#, fuzzy
-#| msgid "Stock item has been assigned to a sales order"
 msgid "Virtual part cannot be assigned to a sales order"
-msgstr "Készlet tétel hozzárendelve egy vevői rendeléshez"
+msgstr ""
 
 #: order/models.py:1119
-#, fuzzy
-#| msgid "Stock item has been assigned to a sales order"
 msgid "Only salable parts can be assigned to a sales order"
-msgstr "Készlet tétel hozzárendelve egy vevői rendeléshez"
+msgstr ""
 
 #: order/models.py:1145 part/templates/part/part_pricing.html:115
 #: part/templates/part/prices.html:121 part/templates/part/prices.html:290
@@ -5852,10 +5847,8 @@ msgid "StockItem with this serial number already exists"
 msgstr "Létezik már készlet tétel ilyen a sorozatszámmal"
 
 #: stock/models.py:468 stock/serializers.py:93
-#, fuzzy
-#| msgid "Test templates can only be created for trackable parts"
 msgid "Stock item cannot be created for virtual parts"
-msgstr "Teszt sablont csak követésre kötelezett alkatrészhez lehet csinálni"
+msgstr ""
 
 #: stock/models.py:485
 #, python-brace-format
@@ -7382,16 +7375,14 @@ msgstr "Bejelentkezés"
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr "Kérlek jelentkezz be az egyik meglévő külső fiókkal vagy <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">Regisztrálj</a> fiókért és jelentkezz be lentebb:"
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr "Ha még nem hoztál létre fiókot akkor előbb <a href=\"%(signup_url)s\">regisztrálj</a>."
 
@@ -10366,3 +10357,4 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
+
