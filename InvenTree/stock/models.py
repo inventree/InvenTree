@@ -465,7 +465,7 @@ class StockItem(MetadataMixin, MPTTModel):
             # Virtual parts cannot have stock items created against them
             if self.part.virtual:
                 raise ValidationError({
-                    'part': _("Stock items cannot be created for virtual parts"),
+                    'part': _("Stock item cannot be created for virtual parts"),
                 })
         except PartModels.Part.DoesNotExist:
             # For some reason the 'clean' process sometimes throws errors because self.part does not exist
