@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-28 12:13+0000\n"
-"PO-Revision-Date: 2022-06-27 17:08\n"
+"PO-Revision-Date: 2022-06-28 17:25\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -3608,16 +3608,12 @@ msgid "Where does the Purchaser want this item to be stored?"
 msgstr ""
 
 #: order/models.py:1114
-#, fuzzy
-#| msgid "Stock item assigned to sales order"
 msgid "Virtual part cannot be assigned to a sales order"
-msgstr "L'article en stock a été assigné à une commande de vente"
+msgstr ""
 
 #: order/models.py:1119
-#, fuzzy
-#| msgid "Stock item assigned to sales order"
 msgid "Only salable parts can be assigned to a sales order"
-msgstr "L'article en stock a été assigné à une commande de vente"
+msgstr ""
 
 #: order/models.py:1145 part/templates/part/part_pricing.html:115
 #: part/templates/part/prices.html:121 part/templates/part/prices.html:290
@@ -7378,16 +7374,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -10362,3 +10356,4 @@ msgstr "Droit de modifier des élément"
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr "Droit de supprimer des éléments"
+
