@@ -429,19 +429,27 @@ function getAvailableTableFilters(tableKey) {
                 title: '{% trans "Include subcategories" %}',
                 description: '{% trans "Include parts in subcategories" %}',
             },
-            has_ipn: {
-                type: 'bool',
-                title: '{% trans "Has IPN" %}',
-                description: '{% trans "Part has internal part number" %}',
-            },
             active: {
                 type: 'bool',
                 title: '{% trans "Active" %}',
                 description: '{% trans "Show active parts" %}',
             },
-            is_template: {
+            assembly: {
                 type: 'bool',
-                title: '{% trans "Template" %}',
+                title: '{% trans "Assembly" %}',
+            },
+            unallocated_stock: {
+                type: 'bool',
+                title: '{% trans "Available stock" %}',
+            },
+            component: {
+                type: 'bool',
+                title: '{% trans "Component" %}',
+            },
+            has_ipn: {
+                type: 'bool',
+                title: '{% trans "Has IPN" %}',
+                description: '{% trans "Part has internal part number" %}',
             },
             has_stock: {
                 type: 'bool',
@@ -451,34 +459,30 @@ function getAvailableTableFilters(tableKey) {
                 type: 'bool',
                 title: '{% trans "Low stock" %}',
             },
-            unallocated_stock: {
+            purchaseable: {
                 type: 'bool',
-                title: '{% trans "Available stock" %}',
-            },
-            assembly: {
-                type: 'bool',
-                title: '{% trans "Assembly" %}',
-            },
-            component: {
-                type: 'bool',
-                title: '{% trans "Component" %}',
-            },
-            starred: {
-                type: 'bool',
-                title: '{% trans "Subscribed" %}',
+                title: '{% trans "Purchasable" %}',
             },
             salable: {
                 type: 'bool',
                 title: '{% trans "Salable" %}',
             },
+            starred: {
+                type: 'bool',
+                title: '{% trans "Subscribed" %}',
+            },
+            is_template: {
+                type: 'bool',
+                title: '{% trans "Template" %}',
+            },
             trackable: {
                 type: 'bool',
                 title: '{% trans "Trackable" %}',
             },
-            purchaseable: {
+            virtual: {
                 type: 'bool',
-                title: '{% trans "Purchasable" %}',
-            },
+                title: '{% trans "Virtual" %}',
+            }
         };
     }
 
