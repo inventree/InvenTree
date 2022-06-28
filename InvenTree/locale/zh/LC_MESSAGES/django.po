@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-28 12:13+0000\n"
-"PO-Revision-Date: 2022-06-27 17:09\n"
+"PO-Revision-Date: 2022-06-28 17:25\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -572,7 +572,7 @@ msgstr "生产订单输出已完成"
 
 #: InvenTree/status_codes.py:290
 msgid "Consumed by build order"
-msgstr "被构建的物料清单消耗"
+msgstr "被生产订单消耗"
 
 #: InvenTree/status_codes.py:292
 msgid "Received against purchase order"
@@ -616,7 +616,7 @@ msgstr "备损不能超过 100%"
 
 #: InvenTree/validators.py:141
 msgid "Invalid value for overage"
-msgstr "无效的损耗值"
+msgstr "无效的备损值"
 
 #: InvenTree/views.py:519 templates/InvenTree/settings/user.html:22
 msgid "Edit User Information"
@@ -644,7 +644,7 @@ msgstr "关于 InventTree"
 
 #: build/api.py:217
 msgid "Build must be cancelled before it can be deleted"
-msgstr "物料清单必须先取消才能删除"
+msgstr "在删除前必须取消生产"
 
 #: build/models.py:125
 msgid "Invalid choice for parent build"
@@ -754,7 +754,7 @@ msgstr "来源地点"
 
 #: build/models.py:240
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
-msgstr "此次构建从何处取货(留空即可从任何存货位置取出)"
+msgstr "此次生产从哪个仓储位置获取库存(留空即可从任何仓储位置取出)"
 
 #: build/models.py:245
 msgid "Destination Location"
@@ -855,11 +855,11 @@ msgstr "额外的生产备注"
 #: build/models.py:561
 #, python-brace-format
 msgid "Build order {build} has been completed"
-msgstr ""
+msgstr "生产订单 {build} 已完成"
 
 #: build/models.py:567
 msgid "A build order has been completed"
-msgstr ""
+msgstr "生产订单已完成"
 
 #: build/models.py:748
 msgid "No build output specified"
@@ -875,7 +875,7 @@ msgstr "生产产出与订单不匹配"
 
 #: build/models.py:1148
 msgid "Build item must specify a build output, as master part is marked as trackable"
-msgstr "构建项目必填，因为主部件已被标记追踪"
+msgstr "生产项必须指定生产产出，因为主部件已经被标记为可追踪的"
 
 #: build/models.py:1157
 #, python-brace-format
@@ -896,7 +896,7 @@ msgstr "序列化库存的数量必须是 1"
 
 #: build/models.py:1236
 msgid "Selected stock item not found in BOM"
-msgstr "在物料清单中找不到选定的库存项"
+msgstr "在BOM中找不到选定的库存项"
 
 #: build/models.py:1305 stock/templates/stock/item_base.html:177
 #: templates/InvenTree/search.html:137 templates/js/translated/build.js:2453
@@ -906,7 +906,7 @@ msgstr "生产"
 
 #: build/models.py:1306
 msgid "Build to allocate parts"
-msgstr "构建以分配元件"
+msgstr "生产以分配部件"
 
 #: build/models.py:1322 build/serializers.py:603 order/serializers.py:996
 #: order/serializers.py:1017 stock/serializers.py:394 stock/serializers.py:741
@@ -966,7 +966,7 @@ msgstr "数量"
 
 #: build/models.py:1336
 msgid "Stock quantity to allocate to build"
-msgstr "分配到构建的数量"
+msgstr "分配到生产的数量"
 
 #: build/models.py:1344
 msgid "Install into"
@@ -974,28 +974,28 @@ msgstr "安装到"
 
 #: build/models.py:1345
 msgid "Destination stock item"
-msgstr "目标库存物品"
+msgstr "目标库存项"
 
 #: build/serializers.py:128 build/serializers.py:632
 #: templates/js/translated/build.js:1163
 msgid "Build Output"
-msgstr "构建输出"
+msgstr "生产产出"
 
 #: build/serializers.py:140
 msgid "Build output does not match the parent build"
-msgstr "构建输出与父构建不匹配"
+msgstr "生产产出与对应生产不匹配"
 
 #: build/serializers.py:144
 msgid "Output part does not match BuildOrder part"
-msgstr "输出部件与构建不匹配"
+msgstr "产出部件与生产订单部件不匹配"
 
 #: build/serializers.py:148
 msgid "This build output has already been completed"
-msgstr "此构建产出已经完成"
+msgstr "此生产产出已经完成"
 
 #: build/serializers.py:159
 msgid "This build output is not fully allocated"
-msgstr ""
+msgstr "生产产出未被完成分配"
 
 #: build/serializers.py:184
 msgid "Enter quantity for build output"
@@ -1006,15 +1006,15 @@ msgstr "输入生产产出数量"
 #: part/serializers.py:926 stock/models.py:478 stock/models.py:1244
 #: stock/serializers.py:300
 msgid "Quantity must be greater than zero"
-msgstr ""
+msgstr "数量必须大于0"
 
 #: build/serializers.py:205
 msgid "Integer quantity required for trackable parts"
-msgstr ""
+msgstr "对于可追踪的部件，需要整数型数值"
 
 #: build/serializers.py:208
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
-msgstr ""
+msgstr "需要整数型数值，因为BOM包含可追踪的部件"
 
 #: build/serializers.py:222 order/serializers.py:448 order/serializers.py:1140
 #: stock/serializers.py:309 templates/js/translated/order.js:1186
@@ -1028,19 +1028,19 @@ msgstr "输入生产产出的序列号"
 
 #: build/serializers.py:236
 msgid "Auto Allocate Serial Numbers"
-msgstr ""
+msgstr "自动分配序列号"
 
 #: build/serializers.py:237
 msgid "Automatically allocate required items with matching serial numbers"
-msgstr ""
+msgstr "自动为所需项分配对应的序列号"
 
 #: build/serializers.py:268 stock/api.py:561
 msgid "The following serial numbers already exist"
-msgstr ""
+msgstr "以下的序列号已存在"
 
 #: build/serializers.py:317 build/serializers.py:386
 msgid "A list of build outputs must be provided"
-msgstr ""
+msgstr "必须提供生产产出列表"
 
 #: build/serializers.py:356 order/serializers.py:421 order/serializers.py:525
 #: stock/serializers.py:320 stock/serializers.py:451 stock/serializers.py:532
@@ -1059,7 +1059,7 @@ msgstr "地点"
 
 #: build/serializers.py:357
 msgid "Location for completed build outputs"
-msgstr ""
+msgstr "已完成生产产出的仓储地点"
 
 #: build/serializers.py:363 build/templates/build/build_base.html:142
 #: build/templates/build/detail.html:62 order/models.py:665
@@ -1073,35 +1073,35 @@ msgstr "状态"
 
 #: build/serializers.py:369
 msgid "Accept Incomplete Allocation"
-msgstr ""
+msgstr "接受不完整的分配"
 
 #: build/serializers.py:370
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
+msgstr "如果库存尚未完成分配，完成产出"
 
 #: build/serializers.py:439
 msgid "Remove Allocated Stock"
-msgstr ""
+msgstr "移除已分配的库存"
 
 #: build/serializers.py:440
 msgid "Subtract any stock which has already been allocated to this build"
-msgstr ""
+msgstr "减去已经分配至此生产的库存"
 
 #: build/serializers.py:446
 msgid "Remove Incomplete Outputs"
-msgstr ""
+msgstr "移除未完成的产出"
 
 #: build/serializers.py:447
 msgid "Delete any build outputs which have not been completed"
-msgstr ""
+msgstr "删除所有未完成的生产产出"
 
 #: build/serializers.py:470
 msgid "Accept Unallocated"
-msgstr ""
+msgstr "接受未分配的"
 
 #: build/serializers.py:471
 msgid "Accept that stock items have not been fully allocated to this build order"
-msgstr ""
+msgstr "接受库存项未被完成分配至此生产订单"
 
 #: build/serializers.py:481 templates/js/translated/build.js:195
 msgid "Required stock has not been fully allocated"
@@ -1109,11 +1109,11 @@ msgstr "所需库存尚未完全分配"
 
 #: build/serializers.py:486
 msgid "Accept Incomplete"
-msgstr ""
+msgstr "接受未完成"
 
 #: build/serializers.py:487
 msgid "Accept that the required number of build outputs have not been completed"
-msgstr ""
+msgstr "接受所需的生产产出未完成"
 
 #: build/serializers.py:497 templates/js/translated/build.js:199
 msgid "Required build quantity has not been completed"
@@ -1121,37 +1121,37 @@ msgstr "所需生产数量尚未完成"
 
 #: build/serializers.py:506
 msgid "Build order has incomplete outputs"
-msgstr ""
+msgstr "生产订单有未完成的产出"
 
 #: build/serializers.py:509 build/templates/build/build_base.html:95
 msgid "No build outputs have been created for this build order"
-msgstr ""
+msgstr "针对此生产订单，尚未创建生产产出"
 
 #: build/serializers.py:535 build/serializers.py:580 part/models.py:2719
 #: part/models.py:2853
 msgid "BOM Item"
-msgstr ""
+msgstr "BOM项"
 
 #: build/serializers.py:545
 msgid "Build output"
-msgstr ""
+msgstr "生产产出"
 
 #: build/serializers.py:553
 msgid "Build output must point to the same build"
-msgstr ""
+msgstr "生产产出必须指向相同的生产"
 
 #: build/serializers.py:594
 msgid "bom_item.part must point to the same part as the build order"
-msgstr ""
+msgstr "bom_item.part 必须与生产订单指向相同的部件"
 
 #: build/serializers.py:609 stock/serializers.py:754
 msgid "Item must be in stock"
-msgstr ""
+msgstr "项目必须在库存中"
 
 #: build/serializers.py:667 order/serializers.py:1054
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
-msgstr ""
+msgstr "可用量 ({q}) 超出了限制"
 
 #: build/serializers.py:673
 msgid "Build output must be specified for allocation of tracked parts"
@@ -5846,10 +5846,8 @@ msgid "StockItem with this serial number already exists"
 msgstr ""
 
 #: stock/models.py:468 stock/serializers.py:93
-#, fuzzy
-#| msgid "Stock item(s) must be selected before printing reports"
 msgid "Stock item cannot be created for virtual parts"
-msgstr "在打印报表之前必须选择库存项目"
+msgstr ""
 
 #: stock/models.py:485
 #, python-brace-format
@@ -7376,16 +7374,14 @@ msgstr ""
 
 #: templates/account/login.html:21
 #, python-format
-msgid ""
-"Please sign in with one\n"
+msgid "Please sign in with one\n"
 "of your existing third party accounts or  <a class=\"btn btn-primary btn-small\" href=\"%(signup_url)s\">sign up</a>\n"
 "for a account and sign in below:"
 msgstr ""
 
 #: templates/account/login.html:25
 #, python-format
-msgid ""
-"If you have not created an account yet, then please\n"
+msgid "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
@@ -10360,3 +10356,4 @@ msgstr "编辑项目权限"
 #: users/models.py:220
 msgid "Permission to delete items"
 msgstr "删除项目权限"
+
