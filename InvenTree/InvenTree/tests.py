@@ -68,6 +68,7 @@ class ValidatorTest(TestCase):
             'BO-*',
             '######',
             '??#####??',
+            "BO-%d%m%y-#####",
         ]
 
         for value in valid_values:
@@ -83,6 +84,7 @@ class ValidatorTest(TestCase):
             '####-####',
             '#.#.#.#',
             '##-BO-##',
+            'BO-1234-%5'
         ]
 
         for value in invalid_values:

@@ -1,6 +1,7 @@
 """Custom field validators for InvenTree."""
 
 import re
+from datetime import datetime
 from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
@@ -68,7 +69,7 @@ def validate_reference_pattern(value):
         * matches a group of characters
         [] matches a set of potential characters
     - Number matching with the # character (one group allowed)
-    - Implements strptime functionality e.g. %B -> January
+    - Implements strftime functionality e.g. %B -> January
     """
 
     # First, prevent any illegal characters from appearing in the pattern
@@ -81,6 +82,14 @@ def validate_reference_pattern(value):
 
     if len(results) > 1:
         raise ValidationError(_("Only one group of # characters is allowed"))
+
+    # Ensure that the provided strftime format is correctly specified
+    try:
+        result = datetime.now().strftime(value)
+        if '%' in result:
+            raise ValidationError(_("Invalid date / time formatting"))
+    except Exception:
+        raise ValidationError(_("Invalid date / time formatting"))
 
 
 def validate_build_order_reference(value):
