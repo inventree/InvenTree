@@ -289,7 +289,7 @@ class NotificationList(BulkDeleteMixin, ListAPI):
         'message',
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'category',
         'read',
     ]

@@ -135,7 +135,7 @@ class CategoryList(ListCreateAPI):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
     ]
 
     ordering_fields = [
@@ -281,7 +281,7 @@ class PartSalePriceList(ListCreateAPI):
         DjangoFilterBackend
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'part',
     ]
 
@@ -304,7 +304,7 @@ class PartInternalPriceList(ListCreateAPI):
         DjangoFilterBackend
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'part',
     ]
 
@@ -319,7 +319,7 @@ class PartAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
         DjangoFilterBackend,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'part',
     ]
 
@@ -1412,7 +1412,7 @@ class PartParameterTemplateList(ListCreateAPI):
         filters.SearchFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'name',
     ]
 
@@ -1477,7 +1477,7 @@ class PartParameterList(ListCreateAPI):
         DjangoFilterBackend
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'part',
         'template',
     ]
@@ -1758,7 +1758,7 @@ class BomList(ListCreateDestroyAPIView):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
     ]
 
 
@@ -1857,7 +1857,7 @@ class BomItemSubstituteList(ListCreateAPI):
         filters.OrderingFilter,
     ]
 
-    filter_fields = [
+    filterset_fields = [
         'part',
         'bom_item',
     ]

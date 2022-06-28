@@ -1,0 +1,37 @@
+# Please keep this list sorted - if you pin a version provide a reason
+Django<4                                # Django package
+coreapi                                 # API documentation for djangorestframework
+django-allauth                          # SSO for external providers via OpenID
+django-allauth-2fa                      # MFA / 2FA
+django-cleanup                          # Automated deletion of old / unused uploaded files
+django-cors-headers                     # CORS headers extension for DRF
+django-crispy-forms                     # Form helpers
+django-error-report                     # Error report viewer for the admin interface
+django-filter                           # Extended filtering options
+django-formtools                        # Form wizard tools
+django-import-export==2.5.0             # Data import / export for admin interface
+django-maintenance-mode                 # Shut down application while reloading etc.
+django-markdownify                      # Markdown rendering
+django-money<3.0.0                      # Django app for currency management  # FIXED 2022-06-26 to make sure py-moneyed is not conflicting
+django-mptt==0.11.0                     # Modified Preorder Tree Traversal
+django-redis>=5.0.0                     # Redis integration
+django-q                                # Background task scheduling
+django-sql-utils                        # Advanced query annotation / aggregation
+django-sslserver                        # Secure HTTP development server
+django-stdimage                         # Advanced ImageField management
+django-user-sessions                    # user sessions in DB
+django-weasyprint                       # django weasyprint integration
+djangorestframework                     # DRF framework
+django-xforwardedfor-middleware         # IP forwarding metadata
+gunicorn                                # Gunicorn web server
+pdf2image                               # PDF to image conversion
+pillow                                  # Image manipulation
+python-barcode[images]                  # Barcode generator
+qrcode[pil]                             # QR code generator
+rapidfuzz==0.7.6                        # Fuzzy string matching
+sentry-sdk                              # Error reporting (optional)
+setuptools                              # Standard depenedency
+tablib[xls,xlsx,yaml]                   # Support for XLS and XLSX formats
+
+# Fixed sub-dependencies
+py-moneyed<2.0                          # For django-money # FIXED 2022-06-18 as we need `moneyed.localization`
