@@ -38,8 +38,6 @@ cryptography==37.0.2
     # via pyjwt
 cssselect2==0.6.0
     # via weasyprint
-datetime-matcher==0.2.1
-    # via -r requirements.in
 defusedxml==0.7.1
     # via
     #   odfpy
